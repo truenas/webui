@@ -106,15 +106,12 @@ jobs:
           fail_ci_if_error: true
 
   resort-strings:
-    name: Resort Strings and Commit if only translations were added
-    needs: [check-files, install]
     runs-on: ubuntu-latest
-    if: ${{ needs.check-files.outputs.translations-only == 'true' }}
     steps:
-      - name: Checkout
+      - name: Checkout PR Branch
         uses: actions/checkout@v3
         with:
-          ref: ${{ github.event.pull_request.head.sha }}
+          ref: refs/pull/${{ github.event.pull_request.number }}/head
           fetch-depth: 1
 
       - name: Install
@@ -130,20 +127,10 @@ jobs:
         run: |
           git config --global user.name 'BugClerk'
           git config --global user.email 'bugclerk@ixsystems.com'
-          # Stash any changes made by previous steps
-          git stash
-          # Checkout the base branch of the PR
-          git checkout ${{ github.base_ref }}
-          # Fetch the latest changes of the base branch
-          git pull origin ${{ github.base_ref }}
-          # Apply stashed changes
-          git stash pop
-          # Add and commit changes
           git add src/assets/i18n
           if ! git diff --quiet --cached; then
             git commit -m "NAS-XXXXXX: Auto resort translation strings"
-            git push origin ${{ github.base_ref }}
+            git push origin HEAD:refs/pull/${{ github.event.pull_request.number }}/head
           else
             echo "No changes to commit."
           fi
-
