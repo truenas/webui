@@ -35,11 +35,15 @@
   }
 }
 
-.ix-slide-in2-body {
+:host ::ng-deep .ix-slide-in2-body {
   background: #fff;
   /* margin exposes part of the modal background */
   margin: 40px;
   padding: 0 20px 20px;
+
+  .mat-mdc-card {
+    margin: 0;
+  }
 }
 
 .ix-slide-in2-form .ix-slide-in2-body {

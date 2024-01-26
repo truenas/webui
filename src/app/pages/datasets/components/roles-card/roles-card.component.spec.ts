@@ -2,7 +2,7 @@ import { FormGroup } from '@angular/forms';
 import { MatIconTestingModule } from '@angular/material/icon/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
-import { mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { IscsiExtentType } from 'app/enums/iscsi.enum';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
@@ -43,7 +43,7 @@ describe('RolesCardComponent', () => {
       MatIconTestingModule,
     ],
     providers: [
-      mockWebsocket(),
+      mockWebSocket(),
       mockProvider(IxSlideInService, {
         open: jest.fn(() => ({
           slideInClosed$: of(),

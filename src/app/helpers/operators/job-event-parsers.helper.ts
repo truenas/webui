@@ -3,22 +3,22 @@ import {
 } from 'rxjs';
 import { JobState } from 'app/enums/job-state.enum';
 import { Job } from 'app/interfaces/job.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
+import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 
 /**
  * Treats both job state FAILURE and error thrown by the observable as failure.
  * Will throw the error again for further processing
  */
 export function onJobFailureOrError(
-  failureCallback: (job: Job | WebsocketError) => void,
-): OperatorFunction<Job, Job | WebsocketError> {
+  failureCallback: (job: Job | WebSocketError) => void,
+): OperatorFunction<Job, Job | WebSocketError> {
   return pipe(
     tap((job) => {
       if (job.state === JobState.Error || job.state === JobState.Failed) {
         failureCallback(job);
       }
     }),
-    catchError((error: Job | WebsocketError) => {
+    catchError((error: Job | WebSocketError) => {
       failureCallback(error);
       return throwError(() => error);
     }),

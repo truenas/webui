@@ -6,7 +6,7 @@ import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { SmartTestResultPageType } from 'app/enums/smart-test-results-page-type.enum';
 import { Choices } from 'app/interfaces/choices.interface';
 import { Disk, UnusedDisk } from 'app/interfaces/storage.interface';
@@ -103,7 +103,7 @@ describe('DiskListComponent', () => {
       mockProvider(MatDialog, {
         open: jest.fn(),
       }),
-      mockWebsocket([
+      mockWebSocket([
         mockCall('disk.query', fakeDisks),
         mockCall('disk.get_unused', fakeUnusedDisks),
         mockCall('smart.test.disk_choices', fakeSmartDiskChoices),

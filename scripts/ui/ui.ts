@@ -351,8 +351,6 @@ function mockConfigLoader(): void {
         console.info(error);
       }
     });
-
-
 }
 
 function mockConfig(command: Command, options: CommandOptions): void {

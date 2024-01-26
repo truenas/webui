@@ -4,7 +4,7 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatListItemHarness } from '@angular/material/list/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { SystemSecurityConfig } from 'app/interfaces/system-security-config.interface';
 import { SystemSecurityCardComponent } from 'app/pages/system/advanced/system-security/system-security-card/system-security-card.component';
 import { SystemSecurityFormComponent } from 'app/pages/system/advanced/system-security/system-security-form/system-security-form.component';
@@ -20,7 +20,7 @@ describe('SystemSecurityCardComponent', () => {
   const createComponent = createComponentFactory({
     component: SystemSecurityCardComponent,
     providers: [
-      mockWebsocket([
+      mockWebSocket([
         mockCall('system.security.config', fakeSystemSecurityConfig),
       ]),
       mockProvider(IxSlideInService, {

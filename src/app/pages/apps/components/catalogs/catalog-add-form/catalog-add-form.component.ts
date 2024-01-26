@@ -70,6 +70,7 @@ export class CatalogAddFormComponent {
     dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((error) => {
       this.isFormLoading = false;
       this.cdr.markForCheck();
+      dialogRef.close();
       this.dialogService.closeAllDialogs();
       this.errorHandler.handleWsFormError(error, this.form);
     });

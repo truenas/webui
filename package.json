@@ -145,7 +145,6 @@
     "ngx-skeleton-loader": "~5.0.0",
     "ngx-translate-messageformat-compiler": "~5.0.1",
     "ngx-webstorage": "~12.0.0",
-    "paths-filter": "dorny/paths-filter",
     "pixi-filters": "~2.7.1",
     "pixi.js": "~4.7.1",
     "popmotion": "~8.7.1",

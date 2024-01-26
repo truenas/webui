@@ -10,7 +10,7 @@ import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { officialCatalog } from 'app/constants/catalog.constants';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
 import { AppCardLogoComponent } from 'app/pages/apps/components/app-card-logo/app-card-logo.component';
 import {
@@ -63,7 +63,7 @@ describe('AppDetailsHeaderComponent', () => {
           appsAgreement: true,
         },
       }),
-      mockWebsocket([
+      mockWebSocket([
         mockCall('auth.set_attribute'),
       ]),
     ],

@@ -80,8 +80,9 @@ export class SelectPoolDialogComponent implements OnInit {
         this.dialogRef.close(true);
       });
     });
-    dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err) => {
-      this.dialogService.error(this.errorHandler.parseError(err));
+    dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((error) => {
+      dialogRef.close();
+      this.errorHandler.showErrorModal(error);
     });
   }
 
@@ -109,7 +110,7 @@ export class SelectPoolDialogComponent implements OnInit {
           }
         },
         error: (error) => {
-          this.dialogService.error(this.errorHandler.parseError(error));
+          this.errorHandler.showErrorModal(error);
           this.dialogRef.close(false);
         },
       });

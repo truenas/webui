@@ -4,7 +4,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { Role } from 'app/enums/role.enum';
 import { Group } from 'app/interfaces/group.interface';
 import { Privilege, PrivilegeRole } from 'app/interfaces/privilege.interface';
@@ -25,7 +25,11 @@ describe('PrivilegeFormComponent', () => {
     id: 10,
     name: 'privilege',
     web_shell: true,
-    local_groups: [{ gid: 111, group: 'Group A' }, { gid: 222, group: 'Group B' }],
+    local_groups: [
+      { gid: 111, group: 'Group A' },
+      { gid: 222, group: 'Group B' },
+      { gid: 333, group: null },
+    ],
     ds_groups: [],
     roles: [Role.ReadonlyAdmin],
   } as Privilege;
@@ -37,7 +41,7 @@ describe('PrivilegeFormComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
-      mockWebsocket([
+      mockWebSocket([
         mockCall('group.query', [
           { group: 'Group A', gid: 111 },
           { group: 'Group B', gid: 222 },
@@ -116,7 +120,7 @@ describe('PrivilegeFormComponent', () => {
       expect(values).toEqual({
         Name: 'privilege',
         'Web Shell Access': true,
-        'Local Groups': ['Group A', 'Group B'],
+        'Local Groups': ['Group A', 'Group B', 'Missing group - 333'],
         'Directory Services Groups': [],
         Roles: ['Readonly Admin'],
       });

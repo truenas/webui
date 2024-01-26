@@ -10,7 +10,7 @@ import { Role } from 'app/enums/role.enum';
 import { helptextSystemCertificates } from 'app/helptext/system/certificates';
 import { Certificate } from 'app/interfaces/certificate.interface';
 import { Job } from 'app/interfaces/job.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
+import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { AsyncDataProvider } from 'app/modules/ix-table2/classes/async-data-provider/async-data-provider';
 import {
@@ -189,7 +189,7 @@ export class CertificateSigningRequestsListComponent implements OnInit {
               },
             });
         },
-        error: (err: WebsocketError | Job) => {
+        error: (err: WebSocketError | Job) => {
           this.dialogService.error(this.errorHandler.parseError(err));
         },
       });

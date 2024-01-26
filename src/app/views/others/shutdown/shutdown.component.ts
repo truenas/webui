@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { WebsocketConnectionService } from 'app/services/websocket-connection.service';
+import { WebSocketConnectionService } from 'app/services/websocket-connection.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
@@ -16,7 +16,7 @@ import { WebSocketService } from 'app/services/ws.service';
 export class ShutdownComponent implements OnInit {
   constructor(
     protected ws: WebSocketService,
-    private wsManager: WebsocketConnectionService,
+    private wsManager: WebSocketConnectionService,
     private errorHandler: ErrorHandlerService,
     protected router: Router,
     protected dialogService: DialogService,

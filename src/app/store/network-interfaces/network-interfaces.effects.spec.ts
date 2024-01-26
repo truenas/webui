@@ -4,7 +4,7 @@ import { provideMockActions } from '@ngrx/effects/testing';
 import { firstValueFrom, of, ReplaySubject } from 'rxjs';
 import { MockAuthService } from 'app/core/testing/classes/mock-auth.service';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { helptextInterfaces } from 'app/helptext/network/interfaces/interfaces-list';
 import { DialogService } from 'app/services/dialog.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -22,7 +22,7 @@ describe('NetworkInterfacesEffects', () => {
     service: NetworkInterfacesEffects,
     providers: [
       provideMockActions(() => actions$),
-      mockWebsocket([
+      mockWebSocket([
         mockCall('interface.has_pending_changes', true),
         mockCall('interface.checkin_waiting', 60),
       ]),

@@ -1,10 +1,12 @@
 <div
+  cdkTrapFocus
   [class.not-top]="!isTop"
   [class.is-top]="isTop"
   [id]="componentInfo.id"
   [class]="['ix-' + componentInfo.id, 'ix-slide-in2-form']"
   [class.open]="isSlideInOpen"
   [class.wide]="wide"
+  [cdkTrapFocusAutoCapture]="true"
 >
   <div
     class="ix-slide-in2-body"

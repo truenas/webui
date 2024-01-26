@@ -5,7 +5,7 @@ import { MatListItemHarness } from '@angular/material/list/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { AdvancedSettingsService } from 'app/pages/system/advanced/advanced-settings.service';
 import {
   SelfEncryptingDriveCardComponent,
@@ -22,7 +22,7 @@ describe('SelfEncryptingDriveCardComponent', () => {
   const createComponent = createComponentFactory({
     component: SelfEncryptingDriveCardComponent,
     providers: [
-      mockWebsocket([
+      mockWebSocket([
         mockCall('system.advanced.sed_global_password', '12345678'),
       ]),
       provideMockStore({

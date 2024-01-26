@@ -6,7 +6,7 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { Direction } from 'app/enums/direction.enum';
 import { RsyncMode } from 'app/enums/rsync-mode.enum';
 import { KeychainCredential } from 'app/interfaces/keychain-credential.interface';
@@ -70,7 +70,7 @@ describe('RsyncTaskFormComponent', () => {
     ],
     providers: [
       mockAuth(),
-      mockWebsocket([
+      mockWebSocket([
         mockCall('rsynctask.create', existingTask),
         mockCall('rsynctask.update', existingTask),
         mockCall('keychaincredential.query', [

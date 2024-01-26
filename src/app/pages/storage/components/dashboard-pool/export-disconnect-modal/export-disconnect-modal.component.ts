@@ -16,7 +16,7 @@ import { PoolAttachment } from 'app/interfaces/pool-attachment.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { Process } from 'app/interfaces/process.interface';
 import { SystemDatasetConfig } from 'app/interfaces/system-dataset-config.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
+import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
@@ -146,7 +146,7 @@ export class ExportDisconnectModalComponent implements OnInit {
         entityJobRef.close(true);
         this.cdr.markForCheck();
       },
-      error: (error: WebsocketError | Job) => {
+      error: (error: WebSocketError | Job) => {
         this.dialogService.error(this.errorHandler.parseError(error));
       },
     });
@@ -159,7 +159,7 @@ export class ExportDisconnectModalComponent implements OnInit {
         this.handleDisconnectJobFailure(failureData);
         this.cdr.markForCheck();
       },
-      error: (error: WebsocketError | Job) => {
+      error: (error: WebSocketError | Job) => {
         this.dialogService.error(this.errorHandler.parseError(error));
       },
     });
@@ -273,7 +273,7 @@ export class ExportDisconnectModalComponent implements OnInit {
           this.prepareForm();
           this.cdr.markForCheck();
         },
-        error: (error: WebsocketError) => {
+        error: (error: WebSocketError) => {
           this.dialogService.error({
             title: helptextVolumes.exportError,
             message: error.reason,

@@ -70,9 +70,9 @@ export class AppSettingsButtonComponent {
           this.translate.instant('Pool has been unset.'),
         );
       });
-
-      dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err) => {
-        this.dialogService.error(this.errorHandler.parseError(err));
+      dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((error) => {
+        dialogRef.close();
+        this.errorHandler.showErrorModal(error);
       });
     });
   }
