@@ -134,8 +134,8 @@ jobs:
 
       - name: Commit and Push Changes
         run: |
-          git config --global user.name 'BugClerk'
-          git config --global user.email 'bugclerk@ixsystems.com'
+          git config --global user.name 'Alex Karpov'
+          git config --global user.email 'akarpov@ixsystems.com'
           git add src/assets/i18n
           if ! git diff --quiet --cached; then
             git commit -m "NAS-XXXXXX: Auto resort translation strings"
