@@ -2,7 +2,7 @@
   "": "",
   "\n              It looks like your session has been inactive for more than {lifetime} seconds.<br>\n              For security reasons we will log you out at {time}.\n            ": "",
   " Est. Usable Raw Capacity": "",
-  " Please click the button below to add {item}.": "",
+  " Please click the button below to add {item}.": "ccc",
   " When the <b>UPS Mode</b> is set to <i>slave</i>. Enter the open network port number of the UPS <i>Master</i> system. The default port is <i>3493</i>.": "",
   " as of {dateTime}": "",
   " cores at ": "",
