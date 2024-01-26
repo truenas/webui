@@ -39,12 +39,6 @@ jobs:
           echo "$CHANGED_FILES"
 
           TRANSLATIONS_ONLY="true"
-          for file in $CHANGED_FILES; do
-            if [[ "$file" != "src/assets/i18n/"* ]]; then
-              TRANSLATIONS_ONLY="false"
-              break
-            fi
-          done
 
           echo "::set-output name=translations-only::$TRANSLATIONS_ONLY"
 
@@ -112,31 +106,31 @@ jobs:
           fail_ci_if_error: true
 
   resort-strings:
-    name: Resort Strings and Commit if only translations were added
-    needs: [check-files, install]
     runs-on: ubuntu-latest
-    if: ${{ needs.check-files.outputs.translations-only == 'true' }}
     steps:
-      - name: Checkout
+      - name: Checkout PR Branch
         uses: actions/checkout@v3
         with:
-          ref: ${{ github.event.pull_request.head.ref }}
+          ref: refs/pull/${{ github.event.pull_request.number }}/head
           fetch-depth: 1
+
       - name: Install
         uses: ./.github/actions/prepare
+
       - name: Extract Messages
         run: yarn run extract
+
       - name: Validate Translations
         run: yarn run validate-translations
+
       - name: Commit and Push Changes
         run: |
           git config --global user.name 'BugClerk'
           git config --global user.email 'bugclerk@ixsystems.com'
-          git pull origin ${{ github.head_ref }} --no-edit
           git add src/assets/i18n
           if ! git diff --quiet --cached; then
             git commit -m "NAS-XXXXXX: Auto resort translation strings"
-            git push origin ${{ github.head_ref }}
+            git push origin HEAD:refs/pull/${{ github.event.pull_request.number }}/head
           else
             echo "No changes to commit."
           fi
