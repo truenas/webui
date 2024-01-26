@@ -81,9 +81,10 @@ def on_the_add_dataset_slide_input_name_my_ad_dataset_and_share_type_smb(driver,
     driver.find_element_by_xpath(xpaths.add_Dataset.share_Type_SMB_Option).click()
     time.sleep(2)
     save_screenshot(driver, 'screenshot/scale/before_uncheck_smb.png')
-    #rsc.unset_checkbox(driver, xpaths.add_Dataset.create_Smb_Checkbox)
-    time.sleep(2)
+    rsc.unset_checkbox(driver, xpaths.add_Dataset.create_Smb_Checkbox)
+    time.sleep(1)
     save_screenshot(driver, 'screenshot/scale/after_uncheck_smb.png')
+    time.sleep(1)
 
 
 @then(parsers.parse('click Save the "{dataset_name}" data should be created'))
@@ -92,6 +93,7 @@ def click_save_the_my_ad_dataset_data_should_be_created(driver, dataset_name):
     rsc.Click_On_Element(driver, xpaths.button.save)
     save_screenshot(driver, 'screenshot/scale/after_saving_dataset.png')
     assert wait_on_element_disappear(driver, 60, xpaths.progress.progressbar)
+    save_screenshot(driver, 'screenshot/scale/after_progress_dataset.png')
     assert wait_on_element(driver, 10, xpaths.dataset.dataset_Name(dataset_name))
 
 
