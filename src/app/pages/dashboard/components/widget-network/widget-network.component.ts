@@ -8,7 +8,6 @@ import { TranslateService } from '@ngx-translate/core';
 import { ChartData, ChartOptions } from 'chart.js';
 import { sub } from 'date-fns';
 import { utcToZonedTime } from 'date-fns-tz';
-import prettyBytes from 'pretty-bytes';
 import { Subscription, timer } from 'rxjs';
 import {
   filter, map, skipWhile, take, throttleTime,
@@ -16,6 +15,7 @@ import {
 import { KiB } from 'app/constants/bytes.constant';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { LinkState, NetworkInterfaceAliasType } from 'app/enums/network-interface.enum';
+import { base10Conversion } from 'app/helpers/filesize.utils';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { BaseNetworkInterface, NetworkInterfaceAlias } from 'app/interfaces/network-interface.interface';
 import { NetworkInterfaceUpdate, ReportingDatabaseError, ReportingNameAndId } from 'app/interfaces/reporting.interface';
@@ -104,7 +104,8 @@ export class WidgetNetworkComponent extends WidgetComponent implements OnInit, A
             if (tooltipItem.parsed.y === 0) {
               label += 0;
             } else {
-              label = prettyBytes(Math.abs(Number(tooltipItem.parsed.y)), { bits: true }) + '/s';
+              const [formatted, unit] = base10Conversion(Math.abs(Number(tooltipItem.parsed.y)), 'b');
+              label = formatted + ' ' + unit + '/s';
             }
             return label;
           },
@@ -134,7 +135,8 @@ export class WidgetNetworkComponent extends WidgetComponent implements OnInit, A
             if (value === 0) {
               return 0;
             }
-            return prettyBytes(Number(value), { bits: true });
+            const [formatted, unit] = base10Conversion(Math.abs(Number(value)), 'b');
+            return formatted + ' ' + unit;
           },
         },
       },

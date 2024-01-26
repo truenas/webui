@@ -121,7 +121,7 @@
                           <strong>{{ 'In' | translate }}: &nbsp;</strong>
                         </div>
                         <div class="td value">
-                          <span class="stat">{{ traffic.bitsReceived | bits  }}</span>/s
+                          <span class="stat">{{ traffic.bitsReceived | base10Bytes: { bits: true } }}</span>/s
                         </div>
                       </div>
                       <div class="tr">
@@ -129,7 +129,7 @@
                           <strong>{{ 'Out' | translate }}: </strong>&nbsp;
                         </div>
                         <div class="td value">
-                          <span class="stat">{{ traffic.bitsSent | bits }}</span>/s
+                          <span class="stat">{{ traffic.bitsSent | base10Bytes: { bits: true } }}</span>/s
                         </div>
                       </div>
                     </div>

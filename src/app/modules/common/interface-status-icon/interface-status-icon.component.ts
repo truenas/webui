@@ -4,10 +4,10 @@ import {
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { UUID } from 'angular2-uuid';
-import prettyBytes from 'pretty-bytes';
 import { timer } from 'rxjs';
 import { KiB } from 'app/constants/bytes.constant';
 import { LinkState } from 'app/enums/network-interface.enum';
+import { base10Conversion } from 'app/helpers/filesize.utils';
 import { NetworkInterfaceUpdate } from 'app/interfaces/reporting.interface';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 
@@ -36,7 +36,8 @@ export class InterfaceStatusIconComponent implements OnChanges {
   get tooltipText(): string {
     const handleBytesResult = (bytes: number): string => {
       if (bytes !== undefined && bytes !== null) {
-        return prettyBytes(bytes * 8, { bits: true });
+        const [formatted, unit] = base10Conversion(bytes * 8, 'b');
+        return formatted + ' ' + unit;
       }
 
       return this.translate.instant('N/A');
