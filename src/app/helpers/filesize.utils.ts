@@ -5,7 +5,15 @@ import {
   GiB, KiB, MiB, TiB,
 } from 'app/constants/bytes.constant';
 
-export function normalizeFileSizeBase2(value: number, baseUnit: 'b' | 'B'): [formatted: number, unit: string] {
+export function normalizeFileSize(
+  value: number,
+  baseUnit: 'b' | 'B',
+  base: 10 | 2,
+): [formatted: number, unit: string] {
+  return base === 10 ? normalizeFileSizeBase10(value, baseUnit) : normalizeFileSizeBase2(value, baseUnit);
+}
+
+function normalizeFileSizeBase2(value: number, baseUnit: 'b' | 'B'): [formatted: number, unit: string] {
   let formatted = value;
   let increment = 1;
   while (formatted >= 1024) {
@@ -27,7 +35,7 @@ export function normalizeFileSizeBase2(value: number, baseUnit: 'b' | 'B'): [for
   }
 }
 
-export function normalizeFileSizeBase10(value: number, baseUnit: 'b' | 'B'): [formatted: number, unit: string] {
+function normalizeFileSizeBase10(value: number, baseUnit: 'b' | 'B'): [formatted: number, unit: string] {
   let formatted = value;
   let increment = 1;
   while (formatted >= 1000) {
