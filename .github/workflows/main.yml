@@ -124,7 +124,7 @@ jobs:
 
       - name: Create a new branch for the PR
         run: |
-          PR_BRANCH="NAS-XXXXXX_pr-${{ github.event.pull_request.number }}"
+          PR_BRANCH="NAS-${{ github.event.pull_request.number }}XX"
           git checkout -b $PR_BRANCH
           git pull https://github.com/${{ github.event.pull_request.head.repo.full_name }} ${{ github.event.pull_request.head.ref }}
 
