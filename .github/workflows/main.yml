@@ -117,8 +117,10 @@ jobs:
     runs-on: ubuntu-latest
     if: ${{ needs.check-files.outputs.translations-only == 'true' }}
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout
+        uses: actions/checkout@v3
         with:
+          ref: ${{ github.event.pull_request.head.sha }}
           fetch-depth: 2
       - name: Install
         uses: ./.github/actions/prepare
@@ -130,11 +132,12 @@ jobs:
         run: |
           git config --global user.name 'BugClerk'
           git config --global user.email 'bugclerk@ixsystems.com'
-          git pull origin ${{ github.head_ref }} --no-edit
+          git fetch origin ${{ github.event.pull_request.head.ref }}:${{ github.event.pull_request.head.ref }}
+          git checkout ${{ github.event.pull_request.head.ref }}
           git add src/assets/i18n
           if ! git diff --quiet --cached; then
             git commit -m "NAS-XXXXXX: Auto resort translation strings"
-            git push origin ${{ github.head_ref }}
+            git push https://${{ secrets.GITHUB_PAT }}@github.com/${{ github.repository }} HEAD:${{ github.event.pull_request.head.ref }}
           else
             echo "No changes to commit."
           fi
