@@ -117,11 +117,16 @@ jobs:
     runs-on: ubuntu-latest
     if: ${{ needs.check-files.outputs.translations-only == 'true' }}
     steps:
-      - name: Checkout
+      - name: Checkout the base repository
         uses: actions/checkout@v3
         with:
-          ref: ${{ github.event.pull_request.head.sha }}
-          fetch-depth: 2
+          ref: master
+
+      - name: Create a new branch for the PR
+        run: |
+          PR_BRANCH="pr-${{ github.event.pull_request.number }}"
+          git checkout -b $PR_BRANCH
+          git pull https://github.com/${{ github.event.pull_request.head.repo.full_name }} ${{ github.event.pull_request.head.ref }}
 
       - name: Install
         uses: ./.github/actions/prepare
@@ -134,13 +139,9 @@ jobs:
 
       - name: Commit and Push Changes
         run: |
-          git config --global user.name 'Alex Karpov'
-          git config --global user.email 'akarpov@ixsystems.com'
-          git add src/assets/i18n
-          if ! git diff --quiet --cached; then
-            git commit -m "NAS-XXXXXX: Auto resort translation strings"
-            git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }} HEAD:${{ github.head_ref }}
-          else
-            echo "No changes to commit."
-          fi
+          git config --global user.name 'GitHub Action'
+          git config --global user.email 'action@github.com'
+          git add .
+          git commit -m "NAS-XXXXXX: Auto resort translation strings"
+          git push origin $PR_BRANCH
 
