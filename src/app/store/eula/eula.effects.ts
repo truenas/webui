@@ -2,7 +2,9 @@ import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
-import { filter, mergeMap, switchMap } from 'rxjs/operators';
+import {
+  filter, mergeMap, switchMap, take,
+} from 'rxjs/operators';
 import { Role } from 'app/enums/role.enum';
 import { filterAsync } from 'app/helpers/operators/filter-async.operator';
 import { AuthService } from 'app/services/auth/auth.service';
@@ -17,7 +19,7 @@ export class EulaEffects {
   checkEula$ = createEffect(() => this.actions$.pipe(
     ofType(adminUiInitialized),
     filter(() => this.systemGeneralService.isEnterprise),
-    filterAsync(this.authService.hasRole([Role.FullAdmin])),
+    filterAsync(this.authService.hasRole([Role.FullAdmin]).pipe(take(1))),
     mergeMap(() => {
       return this.ws.call('truenas.is_eula_accepted').pipe(
         filter((isEulaAccepted) => !isEulaAccepted),

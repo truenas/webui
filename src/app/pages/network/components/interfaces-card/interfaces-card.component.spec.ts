@@ -5,7 +5,7 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { MockComponent } from 'ng-mocks';
 import { of, Subject } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { LinkState, NetworkInterfaceAliasType, NetworkInterfaceType } from 'app/enums/network-interface.enum';
 import { AllNetworkInterfacesUpdate, NetworkInterfaceUpdate } from 'app/interfaces/reporting.interface';
 import {
@@ -81,7 +81,7 @@ describe('InterfacesCardComponent', () => {
           isLoading: false,
         } as InterfacesState),
       }),
-      mockWebsocket([
+      mockWebSocket([
         mockCall('interface.delete'),
       ]),
       mockProvider(NetworkService, {
@@ -187,6 +187,6 @@ describe('InterfacesCardComponent', () => {
 
     const statusIcons = spectator.queryAll(InterfaceStatusIconComponent);
     expect(statusIcons).toHaveLength(3);
-    expect(statusIcons[0].update).toBe(someUpdate);
+    expect(statusIcons[0].update).toEqual(someUpdate);
   });
 });

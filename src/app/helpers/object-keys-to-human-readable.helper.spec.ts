@@ -19,6 +19,10 @@ describe('Converts object to human readable', () => {
     expect(toHumanReadableKey('not_user_friendly')).toBe('Not User Friendly');
     expect(toHumanReadableKey('notUserFriendly')).toBe('Not User Friendly');
     expect(toHumanReadableKey('not-user-friendly')).toBe('Not User Friendly');
+    expect(toHumanReadableKey('not-user-friendly-ip')).toBe('Not User Friendly IP');
+    expect(toHumanReadableKey('not-user-friendly-ips')).toBe('Not User Friendly IPs');
+    expect(toHumanReadableKey('not-user-friendly-id')).toBe('Not User Friendly ID');
+    expect(toHumanReadableKey('not-user-friendly-ids')).toBe('Not User Friendly IDs');
   });
 
   it('converts whole object to human readable keys', () => {

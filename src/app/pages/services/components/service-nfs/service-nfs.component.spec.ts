@@ -6,7 +6,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { createRoutingFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { DirectoryServiceState } from 'app/enums/directory-service-state.enum';
 import { NfsProtocol } from 'app/enums/nfs-protocol.enum';
 import { NfsConfig } from 'app/interfaces/nfs-config.interface';
@@ -34,7 +34,7 @@ describe('ServiceNfsComponent', () => {
     ],
     providers: [
       mockAuth(),
-      mockWebsocket([
+      mockWebSocket([
         mockCall('nfs.config', {
           allow_nonroot: false,
           servers: 3,

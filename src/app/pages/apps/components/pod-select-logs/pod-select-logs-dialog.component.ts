@@ -4,10 +4,13 @@ import {
 import { FormBuilder, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { Observable, of } from 'rxjs';
+import {
+  EMPTY, Observable, catchError, of,
+} from 'rxjs';
 import { Option } from 'app/interfaces/option.interface';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 export type LogsDialogFormValue = PodSelectLogsDialogComponent['form']['value'];
@@ -47,6 +50,7 @@ export class PodSelectLogsDialogComponent implements OnInit {
     private formBuilder: FormBuilder,
     private appService: ApplicationsService,
     private cdr: ChangeDetectorRef,
+    private errorHandler: ErrorHandlerService,
   ) {
     this.title = data.title;
     this.selectedApp = data.appName;
@@ -54,7 +58,14 @@ export class PodSelectLogsDialogComponent implements OnInit {
 
   ngOnInit(): void {
     this.loader.open();
-    this.appService.getChartReleaseNames().pipe(untilDestroyed(this)).subscribe((charts) => {
+    this.appService.getChartReleaseNames().pipe(
+      catchError((error) => {
+        this.loader.close();
+        this.errorHandler.showErrorModal(error);
+        return EMPTY;
+      }),
+      untilDestroyed(this),
+    ).subscribe((charts) => {
       charts.forEach((chart) => {
         this.apps.push(chart.name);
       });

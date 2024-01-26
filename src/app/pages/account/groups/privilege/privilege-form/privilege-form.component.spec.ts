@@ -4,7 +4,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { Role } from 'app/enums/role.enum';
 import { Group } from 'app/interfaces/group.interface';
 import { Privilege, PrivilegeRole } from 'app/interfaces/privilege.interface';
@@ -25,9 +25,13 @@ describe('PrivilegeFormComponent', () => {
     id: 10,
     name: 'privilege',
     web_shell: true,
-    local_groups: [{ gid: 111, group: 'Group A' }, { gid: 222, group: 'Group B' }],
+    local_groups: [
+      { gid: 111, group: 'Group A' },
+      { gid: 222, group: 'Group B' },
+      { gid: 333, group: null },
+    ],
     ds_groups: [],
-    roles: [Role.Readonly],
+    roles: [Role.ReadonlyAdmin],
   } as Privilege;
 
   const createComponent = createComponentFactory({
@@ -37,7 +41,7 @@ describe('PrivilegeFormComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
-      mockWebsocket([
+      mockWebSocket([
         mockCall('group.query', [
           { group: 'Group A', gid: 111 },
           { group: 'Group B', gid: 222 },
@@ -46,8 +50,8 @@ describe('PrivilegeFormComponent', () => {
         mockCall('privilege.update'),
         mockCall('privilege.roles', [
           { name: Role.FullAdmin, title: Role.FullAdmin, builtin: false },
-          { name: Role.SharingManager, title: Role.SharingManager, builtin: false },
-          { name: Role.Readonly, title: Role.Readonly, builtin: false },
+          { name: Role.SharingAdmin, title: Role.SharingAdmin, builtin: false },
+          { name: Role.ReadonlyAdmin, title: Role.ReadonlyAdmin, builtin: false },
           { name: Role.SharingSmbRead, title: Role.SharingSmbRead, builtin: false },
           { name: Role.SharingSmbWrite, title: Role.SharingSmbWrite, builtin: false },
         ] as PrivilegeRole[]),
@@ -70,8 +74,8 @@ describe('PrivilegeFormComponent', () => {
       const options = await roles.getOptionLabels();
       expect(options).toEqual([
         'Full Admin',
-        'Readonly',
-        'Sharing Manager',
+        'Readonly Admin',
+        'Sharing Admin',
         'Sharing SMB Read',
         'Sharing SMB Write',
       ]);
@@ -81,7 +85,7 @@ describe('PrivilegeFormComponent', () => {
       const form = await loader.getHarness(IxFormHarness);
       await form.fillForm({
         Name: 'new privilege',
-        Roles: 'Sharing Manager',
+        Roles: 'Sharing Admin',
         'Web Shell Access': true,
       });
 
@@ -92,7 +96,7 @@ describe('PrivilegeFormComponent', () => {
         ds_groups: [],
         local_groups: [],
         name: 'new privilege',
-        roles: [Role.SharingManager],
+        roles: [Role.SharingAdmin],
         web_shell: true,
       }]);
     });
@@ -116,9 +120,9 @@ describe('PrivilegeFormComponent', () => {
       expect(values).toEqual({
         Name: 'privilege',
         'Web Shell Access': true,
-        'Local Groups': ['Group A', 'Group B'],
+        'Local Groups': ['Group A', 'Group B', 'Missing group - 333'],
         'Directory Services Groups': [],
-        Roles: ['Readonly'],
+        Roles: ['Readonly Admin'],
       });
     });
 
@@ -126,7 +130,7 @@ describe('PrivilegeFormComponent', () => {
       const form = await loader.getHarness(IxFormHarness);
       await form.fillForm({
         Name: 'updated privilege',
-        Roles: ['Full Admin', 'Readonly'],
+        Roles: ['Full Admin', 'Readonly Admin'],
         'Web Shell Access': false,
       });
 
@@ -137,7 +141,7 @@ describe('PrivilegeFormComponent', () => {
         ds_groups: [],
         local_groups: [111, 222],
         name: 'updated privilege',
-        roles: [Role.FullAdmin, Role.Readonly],
+        roles: [Role.FullAdmin, Role.ReadonlyAdmin],
         web_shell: false,
       }]);
     });

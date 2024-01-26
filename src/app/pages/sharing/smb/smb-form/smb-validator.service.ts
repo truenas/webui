@@ -21,40 +21,42 @@ export class SmbValidationService {
     private translate: TranslateService,
   ) { }
 
-  validate = (control: AbstractControl, existingName: string): Observable<ValidationErrors | null> => {
-    return control.valueChanges.pipe(
-      debounceTime(300),
-      distinctUntilChanged(),
-      take(1),
-      switchMap((value: string) => {
-        if (existingName === value) {
-          return of(null);
-        }
+  validate = (originalName: string) => {
+    return (control: AbstractControl<string>): Observable<ValidationErrors | null> => {
+      return control.valueChanges.pipe(
+        debounceTime(300),
+        distinctUntilChanged(),
+        take(1),
+        switchMap((value: string) => {
+          if (originalName === value) {
+            return of(null);
+          }
 
-        return this.ws.call('sharing.smb.share_precheck', [{ name: value }]).pipe(
-          catchError((error: { reason: string }) => {
-            this.errorText = this.extractError(error.reason);
+          return this.ws.call('sharing.smb.share_precheck', [{ name: value }]).pipe(
+            catchError((error: { reason: string }) => {
+              this.errorText = this.extractError(error.reason);
 
-            return of({
-              customValidator: {
-                message: this.errorText,
-              },
-              preCheckFailed: true,
-            });
-          }),
-          switchMap((response) => {
-            return response === null
-              ? of(null)
-              : of({
+              return of({
                 customValidator: {
                   message: this.errorText,
                 },
                 preCheckFailed: true,
               });
-          }),
-        );
-      }),
-    );
+            }),
+            switchMap((response) => {
+              return response === null
+                ? of(null)
+                : of({
+                  customValidator: {
+                    message: this.errorText,
+                  },
+                  preCheckFailed: true,
+                });
+            }),
+          );
+        }),
+      );
+    };
   };
 
   private extractError(error: string): string {

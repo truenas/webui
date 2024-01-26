@@ -8,7 +8,7 @@ import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { MockModule } from 'ng-mocks';
 import { of } from 'rxjs';
 import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-datetime.pipe';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { JobState } from 'app/enums/job-state.enum';
 import { Job } from 'app/interfaces/job.interface';
 import { IxEmptyRowHarness } from 'app/modules/ix-tables/components/ix-empty-row/ix-empty-row.component.harness';
@@ -77,7 +77,7 @@ describe('JobsListComponent', () => {
     providers: [
       mockProvider(DialogService),
       mockProvider(MatSnackBar),
-      mockWebsocket([
+      mockWebSocket([
         mockCall('core.job_download_logs', 'http://localhost/download/log'),
       ]),
       mockProvider(StorageService, {

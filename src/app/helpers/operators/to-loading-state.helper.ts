@@ -2,12 +2,12 @@ import { of, OperatorFunction, pipe } from 'rxjs';
 import {
   catchError, map, startWith,
 } from 'rxjs/operators';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
+import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 
 export interface LoadingState<T> {
   isLoading: boolean;
   value?: T;
-  error?: WebsocketError | Error;
+  error?: WebSocketError | Error;
 }
 
 /**
@@ -25,7 +25,7 @@ export interface LoadingState<T> {
 export function toLoadingState<T>(): OperatorFunction<T, LoadingState<T>> {
   return pipe(
     map((value) => ({ isLoading: false, value })),
-    catchError((error: WebsocketError | Error) => of({ isLoading: false, error })),
+    catchError((error: WebSocketError | Error) => of({ isLoading: false, error })),
     startWith({ isLoading: true }),
   );
 }

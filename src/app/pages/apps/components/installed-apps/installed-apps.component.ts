@@ -38,6 +38,7 @@ import { ApplicationsService } from 'app/pages/apps/services/applications.servic
 import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.service';
 import { KubernetesStore } from 'app/pages/apps/store/kubernetes-store.service';
 import { DialogService } from 'app/services/dialog.service';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 enum SortableField {
@@ -69,7 +70,6 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
     active: SortableField.Application,
     direction: SortDirection.Asc,
   };
-  ixTreeHeaderWidth: number | null = null;
   readonly sortableField = SortableField;
 
   entityEmptyConf: EmptyConfig = {
@@ -146,6 +146,7 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
     private kubernetesStore: KubernetesStore,
     private slideInService: IxSlideInService,
     private breakpointObserver: BreakpointObserver,
+    private errorHandler: ErrorHandlerService,
     @Inject(WINDOW) private window: Window,
   ) {
     this.router.events
@@ -198,6 +199,10 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
 
   viewDetails(app: ChartRelease): void {
     this.selectAppForDetails(app.id);
+
+    this.router.navigate([
+      '/apps/installed', app.catalog, app.catalog_train, app.id,
+    ]);
 
     if (this.isMobileView) {
       this.showMobileDetails = true;
@@ -301,18 +306,20 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
 
   start(name: string): void {
     this.appService.startApplication(name)
-      .pipe(untilDestroyed(this))
+      .pipe(this.errorHandler.catchError(), untilDestroyed(this))
       .subscribe((job: Job<ChartScaleResult, ChartScaleQueryParams>) => {
         this.appJobs.set(name, job);
+        this.sortChanged(this.sortingInfo);
         this.cdr.markForCheck();
       });
   }
 
   stop(name: string): void {
     this.appService.stopApplication(name)
-      .pipe(untilDestroyed(this))
+      .pipe(this.errorHandler.catchError(), untilDestroyed(this))
       .subscribe((job: Job<ChartScaleResult, ChartScaleQueryParams>) => {
         this.appJobs.set(name, job);
+        this.sortChanged(this.sortingInfo);
         this.cdr.markForCheck();
       });
   }
@@ -383,6 +390,10 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
           }
         },
       );
+      dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((error) => {
+        dialogRef.close();
+        this.errorHandler.showErrorModal(error);
+      });
     });
   }
 
@@ -439,11 +450,11 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
     this.dataSource = (charts || this.dataSource).sort((a, b) => {
       const isAsc = sort.direction === SortDirection.Asc;
 
-      switch (sort.active) {
+      switch (sort.active as SortableField) {
         case SortableField.Application:
           return doSortCompare(a.name, b.name, isAsc);
         case SortableField.Status:
-          return doSortCompare(a.status, b.status, isAsc);
+          return doSortCompare(this.getAppStatus(a.name), this.getAppStatus(b.name), isAsc);
         case SortableField.Updates:
           return doSortCompare(
             (a.update_available || a.container_images_update_available) ? 1 : 0,
@@ -500,6 +511,7 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
       .subscribe((event) => {
         const [name] = event.fields.arguments;
         this.appJobs.set(name, event.fields);
+        this.sortChanged(this.sortingInfo);
         this.cdr.markForCheck();
       });
   }

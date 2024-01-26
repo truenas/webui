@@ -1,4 +1,4 @@
-export enum WebsocketErrorName {
+export enum WebSocketErrorName {
   NotAuthenticated = 'ENOTAUTHENTICATED',
   NoAccess = 'EACCES',
   NoMemory = 'ENOMEM',

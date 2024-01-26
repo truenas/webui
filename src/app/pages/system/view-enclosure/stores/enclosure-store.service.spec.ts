@@ -2,7 +2,7 @@ import { createServiceFactory, SpectatorService } from '@ngneat/spectator';
 import { mockProvider } from '@ngneat/spectator/jest';
 import { EnclosureDispersalStrategy, MockStorageScenario } from 'app/core/testing/enums/mock-storage.enum';
 import { MockStorageGenerator } from 'app/core/testing/utils/mock-storage-generator.utils';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { TopologyItemType } from 'app/enums/v-dev-type.enum';
 import {
   EnclosureElement, EnclosureElementsGroup,
@@ -43,7 +43,7 @@ describe('EnclosureStore', () => {
       service: EnclosureStore,
       providers: [
         StorageService,
-        mockWebsocket([
+        mockWebSocket([
           mockCall('enclosure.query', mockStorage.enclosures),
           mockCall('pool.query', [mockStorage.poolState]),
           mockCall('disk.query', mockStorage.disks),
@@ -121,7 +121,7 @@ describe('EnclosureStore', () => {
       service: EnclosureStore,
       providers: [
         StorageService,
-        mockWebsocket([
+        mockWebSocket([
           mockCall('enclosure.query', mockStorage.enclosures),
           mockCall('pool.query', [mockStorage.poolState]),
           mockCall('disk.query', mockStorage.disks),
@@ -187,7 +187,7 @@ describe('EnclosureStore', () => {
       service: EnclosureStore,
       providers: [
         StorageService,
-        mockWebsocket([
+        mockWebSocket([
           mockCall('enclosure.query', mockStorage.enclosures),
           mockCall('pool.query', [mockStorage.poolState]),
           mockCall('disk.query', mockStorage.disks),

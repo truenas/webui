@@ -2,19 +2,21 @@ import { TitleCasePipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
-  Component, Inject, Input, OnInit,
+  Component, Inject, Input, OnDestroy, OnInit,
 } from '@angular/core';
 import { MediaObserver } from '@angular/flex-layout';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
-import { take } from 'rxjs/operators';
+import { filter, take } from 'rxjs/operators';
 import { JobState } from 'app/enums/job-state.enum';
 import { ScreenType } from 'app/enums/screen-type.enum';
 import { SystemUpdateStatus } from 'app/enums/system-update.enum';
+import { filterAsync } from 'app/helpers/operators/filter-async.operator';
 import { WINDOW } from 'app/helpers/window.helper';
 import { SystemInfo } from 'app/interfaces/system-info.interface';
+import { Interval } from 'app/interfaces/timeout.interface';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { WidgetComponent } from 'app/pages/dashboard/components/widget/widget.component';
 import {
@@ -25,7 +27,7 @@ import { SystemGeneralService } from 'app/services/system-general.service';
 import { ThemeService } from 'app/services/theme/theme.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
-import { selectHasOnlyMismatchVersionsReason, selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
+import { selectHaStatus, selectHasOnlyMismatchVersionsReason, selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import { selectIsIxHardware, waitForSystemFeatures } from 'app/store/system-info/system-info.selectors';
 
 @UntilDestroy()
@@ -39,7 +41,7 @@ import { selectIsIxHardware, waitForSystemFeatures } from 'app/store/system-info
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [TitleCasePipe],
 })
-export class WidgetSysInfoComponent extends WidgetComponent implements OnInit {
+export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, OnDestroy {
   protected isHaLicensed = false;
   @Input() isPassive = false;
   protected enclosureSupport = false;
@@ -56,9 +58,10 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit {
   updateAvailable = false;
   isIxHardware = false;
   isUpdateRunning = false;
-  hasHa: boolean;
+  hasHa = this.window.localStorage.getItem('ha_status') === 'true';
   updateMethod = 'update.update';
   screenType = ScreenType.Desktop;
+  uptimeInterval: Interval;
 
   readonly ScreenType = ScreenType;
 
@@ -87,8 +90,6 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit {
       const currentScreenType = changes[0].mqAlias === 'xs' ? ScreenType.Mobile : ScreenType.Desktop;
       this.screenType = currentScreenType;
     });
-
-    this.hasHa = this.window.localStorage.getItem('ha_status') === 'true';
   }
 
   get licenseString(): string {
@@ -100,16 +101,16 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit {
 
   ngOnInit(): void {
     this.checkForUpdate();
-    this.loadSystemInfo();
+    this.getSystemInfo();
     this.getEnclosureSupport();
     this.getIsIxHardware();
+    this.getIsHaLicensed();
+    this.listenForHaStatus();
   }
 
-  loadSystemInfo(): void {
-    this.getSystemInfo();
-
-    if (this.sysGenService.isEnterprise) {
-      this.getIsHaLicensed();
+  ngOnDestroy(): void {
+    if (this.uptimeInterval) {
+      clearInterval(this.uptimeInterval);
     }
   }
 
@@ -137,11 +138,16 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit {
     this.ws.call('webui.main.dashboard.sys_info')
       .pipe(untilDestroyed(this))
       .subscribe((systemInfo) => {
-        if (this.isPassive) {
-          this.processSysInfo(systemInfo.remote_info);
-        } else {
-          this.processSysInfo(systemInfo);
-        }
+        this.processSysInfo(this.isPassive ? systemInfo.remote_info : systemInfo);
+        this.cdr.markForCheck();
+      });
+  }
+
+  private listenForHaStatus(): void {
+    this.store$.select(selectHaStatus)
+      .pipe(filter(Boolean), untilDestroyed(this))
+      .subscribe(({ hasHa }) => {
+        this.hasHa = hasHa;
         this.cdr.markForCheck();
       });
   }
@@ -149,7 +155,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit {
   getIsHaLicensed(): void {
     this.store$
       .select(selectIsHaLicensed)
-      .pipe(untilDestroyed(this))
+      .pipe(filterAsync(this.sysGenService.isEnterprise$), untilDestroyed(this))
       .subscribe((isHaLicensed) => {
         this.isHaLicensed = isHaLicensed;
         if (isHaLicensed) {
@@ -183,8 +189,20 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit {
 
   processSysInfo(systemInfo: SystemInfo): void {
     this.systemInfo = systemInfo;
+    this.setUptimeUpdates();
     this.setProductImage();
     this.ready = true;
+  }
+
+  setUptimeUpdates(): void {
+    if (this.uptimeInterval) {
+      clearInterval(this.uptimeInterval);
+    }
+    this.uptimeInterval = setInterval(() => {
+      this.systemInfo.uptime_seconds += 1;
+      this.systemInfo.datetime.$date += 1000;
+      this.cdr.markForCheck();
+    }, 1000);
   }
 
   setProductImage(): void {

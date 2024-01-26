@@ -8,7 +8,7 @@ import {
 } from '@ngneat/spectator/jest';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import {
-  mockCall, mockJob, mockWebsocket,
+  mockCall, mockJob, mockWebSocket,
 } from 'app/core/testing/utils/mock-websocket.utils';
 import { PoolStatus } from 'app/enums/pool-status.enum';
 import { DatasetAttachment, PoolAttachment } from 'app/interfaces/pool-attachment.interface';
@@ -71,7 +71,7 @@ describe('ExportDisconnectModalComponent', () => {
         EntityModule,
       ],
       providers: [
-        mockWebsocket([
+        mockWebSocket([
           mockCall('pool.attachments', data.attachments),
           mockCall('pool.processes', data.processes),
           mockCall('systemdataset.config', { pool: 'fakeSystemPool' } as SystemDatasetConfig),

@@ -12,7 +12,7 @@ import { MockComponents } from 'ng-mocks';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { of } from 'rxjs';
 import { mockEntityJobComponentRef } from 'app/core/testing/utils/mock-entity-job-component-ref.utils';
-import { mockCall, mockJob, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
 import { CatalogApp } from 'app/interfaces/catalog.interface';
 import { ChartFormValue, ChartRelease } from 'app/interfaces/chart-release.interface';
@@ -533,7 +533,7 @@ describe('Finding app', () => {
     providers: [
       KubernetesStore,
       InstalledAppsStore,
-      mockWebsocket([]),
+      mockWebSocket([]),
       mockProvider(AppsStore, {
         isLoading$: of(false),
         availableApps$: of([]),
@@ -592,7 +592,7 @@ describe('Redirect to install app', () => {
     providers: [
       KubernetesStore,
       InstalledAppsStore,
-      mockWebsocket([
+      mockWebSocket([
         mockJob('chart.release.create'),
         mockJob('chart.release.update'),
         mockCall('catalog.get_item_details', existingCatalogApp),
@@ -646,7 +646,7 @@ describe('Install app', () => {
     ],
     providers: [
       KubernetesStore,
-      mockWebsocket([
+      mockWebSocket([
         mockJob('chart.release.create'),
         mockJob('chart.release.update'),
         mockCall('catalog.get_item_details', existingCatalogApp),

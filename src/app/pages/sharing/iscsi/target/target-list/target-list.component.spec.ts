@@ -4,8 +4,9 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { Spectator, createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { of, pipe } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { IscsiTarget } from 'app/interfaces/iscsi.interface';
+import { AppCommonModule } from 'app/modules/common/app-common.module';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTable2Harness } from 'app/modules/ix-table2/components/ix-table2/ix-table2.harness';
@@ -36,6 +37,7 @@ describe('TargetListComponent', () => {
     imports: [
       IxTable2Module,
       AppLoaderModule,
+      AppCommonModule,
     ],
     providers: [
       mockProvider(AppLoaderService),
@@ -44,7 +46,7 @@ describe('TargetListComponent', () => {
       mockProvider(AppLoaderService, {
         withLoader: jest.fn(() => pipe()),
       }),
-      mockWebsocket([
+      mockWebSocket([
         mockCall('iscsi.target.query', targets),
         mockCall('iscsi.target.delete'),
         mockCall('iscsi.global.sessions', []),
@@ -84,6 +86,7 @@ describe('TargetListComponent', () => {
 
     expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(TargetFormComponent, {
       data: targets[0],
+      wide: true,
     });
   });
 

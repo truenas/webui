@@ -3,8 +3,9 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory } from '@ngneat/spectator/jest';
-import { mockWebsocket, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockWebSocket, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
 import { SmbLockInfo, SmbOpenInfo } from 'app/interfaces/smb-status.interface';
+import { AppCommonModule } from 'app/modules/common/app-common.module';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxTable2Harness } from 'app/modules/ix-table2/components/ix-table2/ix-table2.harness';
 import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
@@ -61,9 +62,14 @@ describe('SmbLockListComponent', () => {
 
   const createComponent = createComponentFactory({
     component: SmbLockListComponent,
-    imports: [AppLoaderModule, EntityModule, IxTable2Module],
+    imports: [
+      AppLoaderModule,
+      EntityModule,
+      IxTable2Module,
+      AppCommonModule,
+    ],
     providers: [
-      mockWebsocket([
+      mockWebSocket([
         mockCall('smb.status', locks),
       ]),
     ],

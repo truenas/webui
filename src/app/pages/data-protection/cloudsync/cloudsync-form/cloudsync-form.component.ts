@@ -13,20 +13,20 @@ import { Observable, of } from 'rxjs';
 import {
   filter, map, pairwise, startWith, tap,
 } from 'rxjs/operators';
-import { CloudsyncProviderName } from 'app/enums/cloudsync-provider.enum';
+import { CloudSyncProviderName } from 'app/enums/cloudsync-provider.enum';
 import { Direction, directionNames } from 'app/enums/direction.enum';
 import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
 import { mntPath } from 'app/enums/mnt-path.enum';
 import { Role } from 'app/enums/role.enum';
 import { TransferMode, transferModeNames } from 'app/enums/transfer-mode.enum';
 import { mapToOptions } from 'app/helpers/options.helper';
-import { helptextCloudsync } from 'app/helptext/data-protection/cloudsync/cloudsync';
+import { helptextCloudSync } from 'app/helptext/data-protection/cloudsync/cloudsync';
 import { CloudSyncTask, CloudSyncTaskUi, CloudSyncTaskUpdate } from 'app/interfaces/cloud-sync-task.interface';
-import { CloudsyncCredential } from 'app/interfaces/cloudsync-credential.interface';
-import { CloudsyncProvider } from 'app/interfaces/cloudsync-provider.interface';
+import { CloudSyncCredential } from 'app/interfaces/cloudsync-credential.interface';
+import { CloudSyncProvider } from 'app/interfaces/cloudsync-provider.interface';
 import { newOption, SelectOption } from 'app/interfaces/option.interface';
 import { ExplorerNodeData, TreeNode } from 'app/interfaces/tree-node.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
+import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { TreeNodeProvider } from 'app/modules/ix-forms/components/ix-explorer/tree-node-provider.interface';
 import { addNewIxSelectValue } from 'app/modules/ix-forms/components/ix-select/ix-select-with-new-option.directive';
@@ -36,7 +36,7 @@ import { crontabToSchedule } from 'app/modules/scheduler/utils/crontab-to-schedu
 import { CronPresetValue } from 'app/modules/scheduler/utils/get-default-crontab-presets.utils';
 import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { CloudsyncWizardComponent } from 'app/pages/data-protection/cloudsync/cloudsync-wizard/cloudsync-wizard.component';
+import { CloudSyncWizardComponent } from 'app/pages/data-protection/cloudsync/cloudsync-wizard/cloudsync-wizard.component';
 import { CreateStorjBucketDialogComponent } from 'app/pages/data-protection/cloudsync/create-storj-bucket-dialog/create-storj-bucket-dialog.component';
 import { CustomTransfersDialogComponent } from 'app/pages/data-protection/cloudsync/custom-transfers-dialog/custom-transfers-dialog.component';
 import { CloudCredentialService } from 'app/services/cloud-credential.service';
@@ -47,7 +47,7 @@ import { WebSocketService } from 'app/services/ws.service';
 
 const customOptionValue = -1;
 
-type FormValue = CloudsyncFormComponent['form']['value'];
+type FormValue = CloudSyncFormComponent['form']['value'];
 
 @UntilDestroy()
 @Component({
@@ -56,7 +56,7 @@ type FormValue = CloudsyncFormComponent['form']['value'];
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [CloudCredentialService],
 })
-export class CloudsyncFormComponent implements OnInit {
+export class CloudSyncFormComponent implements OnInit {
   get isNew(): boolean {
     return !this.editingTask;
   }
@@ -120,25 +120,25 @@ export class CloudsyncFormComponent implements OnInit {
   });
 
   isLoading = false;
-  bucketPlaceholder: string = helptextCloudsync.bucket_placeholder;
-  bucketTooltip: string = helptextCloudsync.bucket_tooltip;
-  bucketInputPlaceholder: string = helptextCloudsync.bucket_input_placeholder;
-  bucketInputTooltip: string = helptextCloudsync.bucket_input_tooltip;
+  bucketPlaceholder: string = helptextCloudSync.bucket_placeholder;
+  bucketTooltip: string = helptextCloudSync.bucket_tooltip;
+  bucketInputPlaceholder: string = helptextCloudSync.bucket_input_placeholder;
+  bucketInputTooltip: string = helptextCloudSync.bucket_input_tooltip;
 
   readonly transferModeTooltip = `
-    ${helptextCloudsync.transfer_mode_warning_sync}<br><br>
-    ${helptextCloudsync.transfer_mode_warning_copy}<br><br>
-    ${helptextCloudsync.transfer_mode_warning_move}
+    ${helptextCloudSync.transfer_mode_warning_sync}<br><br>
+    ${helptextCloudSync.transfer_mode_warning_copy}<br><br>
+    ${helptextCloudSync.transfer_mode_warning_move}
   `;
 
-  readonly helptext = helptextCloudsync;
+  readonly helptext = helptextCloudSync;
   readonly requiresRoles = [Role.CloudSyncWrite];
 
   readonly directionOptions$ = of(mapToOptions(directionNames, this.translate));
   readonly transferModeOptions$ = of(mapToOptions(transferModeNames, this.translate));
 
-  credentialsList: CloudsyncCredential[] = [];
-  providersList: CloudsyncProvider[] = [];
+  credentialsList: CloudSyncCredential[] = [];
+  providersList: CloudSyncProvider[] = [];
 
   readonly encryptionOptions$ = of([
     { label: 'AES-256', value: 'AES256' },
@@ -186,15 +186,15 @@ export class CloudsyncFormComponent implements OnInit {
   ) { }
 
   getCredentialsList(): void {
-    this.fetchCloudsyncCredentialsList().pipe(untilDestroyed(this)).subscribe();
+    this.fetchCloudSyncCredentialsList().pipe(untilDestroyed(this)).subscribe();
   }
 
-  fetchCloudsyncCredentialsList(): Observable<CloudsyncCredential[]> {
-    return this.cloudCredentialService.getCloudsyncCredentials().pipe(
+  fetchCloudSyncCredentialsList(): Observable<CloudSyncCredential[]> {
+    return this.cloudCredentialService.getCloudSyncCredentials().pipe(
       tap((credentials) => {
         this.credentialsList = credentials;
         for (const credential of credentials) {
-          if (credential.provider === CloudsyncProviderName.GoogleDrive) {
+          if (credential.provider === CloudSyncProviderName.GoogleDrive) {
             this.googleDriveProviderIds.push(credential.id);
           }
         }
@@ -314,7 +314,7 @@ export class CloudsyncFormComponent implements OnInit {
         return;
       }
 
-      this.fetchCloudsyncCredentialsList().pipe(untilDestroyed(this)).subscribe({
+      this.fetchCloudSyncCredentialsList().pipe(untilDestroyed(this)).subscribe({
         next: () => {
           this.handleCredentialsChange(currentCreds);
         },
@@ -322,78 +322,11 @@ export class CloudsyncFormComponent implements OnInit {
     });
 
     this.form.controls.path_source.valueChanges.pipe(untilDestroyed(this)).subscribe((values: string | string[]) => {
-      if (!values) {
-        return;
-      }
-      const paths = Array.isArray(values) ? values : [values];
-      if (!paths.length) {
-        return;
-      }
-
-      const parentDirectories = paths.map((value: string) => {
-        const split = value.split('/');
-        const sliced = split.slice(0, split.length - 1);
-        return sliced.join('/');
-      });
-      const allMatch = parentDirectories.every((directory: string) => directory === parentDirectories[0]);
-
-      const pathSourceControl = this.form.controls.path_source;
-      let prevErrors = pathSourceControl.errors;
-      if (prevErrors === null) {
-        prevErrors = {};
-      }
-      if (!allMatch) {
-        pathSourceControl.setErrors({
-          ...prevErrors,
-          misMatchDirectories: {
-            message: this.translate.instant('All selected directories must be at the same level i.e., must have the same parent directory.'),
-          },
-        });
-      } else {
-        delete prevErrors.misMatchDirectories;
-        if (Object.keys(prevErrors).length) {
-          pathSourceControl.setErrors({ ...prevErrors });
-        } else {
-          pathSourceControl.setErrors(null);
-        }
-      }
+      this.handleFolderChange(this.form.controls.path_source, values);
     });
 
     this.form.controls.folder_source.valueChanges.pipe(untilDestroyed(this)).subscribe((values: string | string[]) => {
-      if (!values) {
-        return;
-      }
-      const sources = Array.isArray(values) ? values : [values];
-      if (!sources.length) {
-        return;
-      }
-      const parentDirectories = sources.map((value: string) => {
-        const split = value.split('/');
-        const sliced = split.slice(0, split.length - 1);
-        return sliced.join('/');
-      });
-      const allMatch = parentDirectories.every((directory: string) => directory === parentDirectories[0]);
-
-      const folderSourceControl = this.form.controls.folder_source;
-      let prevErrors = folderSourceControl.errors;
-      if (prevErrors === null) {
-        prevErrors = {};
-      }
-      if (!allMatch) {
-        folderSourceControl.setErrors({
-          ...prevErrors,
-          misMatchDirectories: {
-            message: this.translate.instant('All selected directories must be at the same level i.e., must have the same parent directory.'),
-          },
-        });
-      } else {
-        delete prevErrors.misMatchDirectories;
-        if (Object.keys(prevErrors).length) {
-          folderSourceControl.setErrors({ ...prevErrors });
-        } else {
-          folderSourceControl.setErrors(null);
-        }
-      }
+      this.handleFolderChange(this.form.controls.folder_source, values);
     });
 
     this.form.controls.transfers.valueChanges.pipe(untilDestroyed(this)).subscribe((value: number) => {
@@ -423,7 +356,7 @@ export class CloudsyncFormComponent implements OnInit {
             value: bucket.Path,
             disabled: !bucket.Enabled,
           }));
-          if (targetCredentials.provider === CloudsyncProviderName.Storj) {
+          if (targetCredentials.provider === CloudSyncProviderName.Storj) {
             bucketOptions.unshift({
               label: this.translate.instant('Add new'),
               value: newOption,
@@ -436,7 +369,7 @@ export class CloudsyncFormComponent implements OnInit {
           this.form.controls.bucket_input.disable();
           this.cdr.markForCheck();
         },
-        error: (error: WebsocketError) => {
+        error: (error: WebSocketError) => {
           this.isLoading = false;
           this.form.controls.bucket.disable();
           this.form.controls.bucket_input.enable();
@@ -511,18 +444,18 @@ export class CloudsyncFormComponent implements OnInit {
       const targetProvider = _.find(this.providersList, { name: targetCredentials?.provider });
       if (targetProvider?.buckets) {
         this.isLoading = true;
-        if (targetCredentials.provider === CloudsyncProviderName.MicrosoftAzure
-            || targetCredentials.provider === CloudsyncProviderName.Hubic
+        if (targetCredentials.provider === CloudSyncProviderName.MicrosoftAzure
+            || targetCredentials.provider === CloudSyncProviderName.Hubic
         ) {
           this.bucketPlaceholder = this.translate.instant('Container');
           this.bucketTooltip = this.translate.instant('Select the pre-defined container to use.');
           this.bucketInputPlaceholder = this.translate.instant('Container');
           this.bucketInputTooltip = this.translate.instant('Input the pre-defined container to use.');
         } else {
-          this.bucketPlaceholder = helptextCloudsync.bucket_placeholder;
-          this.bucketTooltip = helptextCloudsync.bucket_tooltip;
-          this.bucketInputPlaceholder = helptextCloudsync.bucket_input_placeholder;
-          this.bucketInputTooltip = helptextCloudsync.bucket_input_tooltip;
+          this.bucketPlaceholder = helptextCloudSync.bucket_placeholder;
+          this.bucketTooltip = helptextCloudSync.bucket_tooltip;
+          this.bucketInputPlaceholder = helptextCloudSync.bucket_input_placeholder;
+          this.bucketInputTooltip = helptextCloudSync.bucket_input_tooltip;
         }
 
         this.loadBucketOptions();
@@ -533,7 +466,7 @@ export class CloudsyncFormComponent implements OnInit {
         this.form.controls.bucket_input.disable();
       }
 
-      if (targetProvider?.name === CloudsyncProviderName.GoogleCloudStorage) {
+      if (targetProvider?.name === CloudSyncProviderName.GoogleCloudStorage) {
         this.form.controls.bucket_policy_only.enable();
       } else {
         this.form.controls.bucket_policy_only.disable();
@@ -747,7 +680,7 @@ export class CloudsyncFormComponent implements OnInit {
   onDryRun(): void {
     const payload = this.prepareData(this.form.value);
     const dialogRef = this.matDialog.open(EntityJobComponent, {
-      data: { title: helptextCloudsync.job_dialog_title_dry_run },
+      data: { title: helptextCloudSync.job_dialog_title_dry_run },
       disableClose: true,
     });
     dialogRef.componentInstance.setCall('cloudsync.sync_onetime', [payload, { dry_run: true }]);
@@ -802,7 +735,7 @@ export class CloudsyncFormComponent implements OnInit {
 
   onSwitchToWizard(): void {
     this.chainedSlideInRef.swap(
-      CloudsyncWizardComponent,
+      CloudSyncWizardComponent,
       true,
     );
   }
@@ -810,6 +743,47 @@ export class CloudsyncFormComponent implements OnInit {
   goToManageCredentials(): void {
     this.router.navigate(['/', 'credentials', 'backup-credentials']);
     this.chainedSlideInRef.close({ response: false, error: null });
+  }
+
+  private handleFolderChange(formControl: FormControl, values: string | string[]): void {
+    if (!values) {
+      return;
+    }
+
+    const sources = Array.isArray(values) ? values : [values];
+
+    if (!sources.length) {
+      return;
+    }
+
+    const parentDirectories = sources.map((value: string) => {
+      const split = value.split('/');
+      const sliced = split.slice(0, split.length - 1);
+      return sliced.join('/');
+    });
+
+    const allMatch = parentDirectories.every((directory: string) => directory === parentDirectories[0]);
+
+    let prevErrors = formControl.errors;
+    if (prevErrors === null) {
+      prevErrors = {};
+    }
+
+    if (!allMatch) {
+      formControl.setErrors({
+        ...prevErrors,
+        misMatchDirectories: {
+          message: this.translate.instant('All selected directories must be at the same level i.e., must have the same parent directory.'),
+        },
+      });
+    } else {
+      delete prevErrors.misMatchDirectories;
+      if (Object.keys(prevErrors).length) {
+        formControl.setErrors({ ...prevErrors });
+      } else {
+        formControl.setErrors(null);
+      }
+    }
   }
 
   private enableRemoteExplorer(): void {

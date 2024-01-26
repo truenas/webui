@@ -50,7 +50,7 @@ import { SystemDatasetConfig, SystemDatasetUpdate } from 'app/interfaces/system-
 import { UpdateParams } from 'app/interfaces/system-update.interface';
 import { Tunable, TunableCreate, TunableUpdate } from 'app/interfaces/tunable.interface';
 import { VmStopParams } from 'app/interfaces/virtual-machine.interface';
-import { AttachTicketParams, CreateNewTicket, NewTicketResponse } from 'app/modules/ix-feedback/interfaces/file-ticket.interface';
+import { AttachTicketParams, CreateNewTicket, NewTicketResponse } from 'app/modules/feedback/interfaces/file-ticket.interface';
 
 export interface ApiJobDirectory {
   // Active Directory
@@ -85,7 +85,7 @@ export interface ApiJobDirectory {
   'chart.release.update': { params: [name: string, update: ChartReleaseUpdate]; response: ChartRelease };
   'chart.release.upgrade': { params: [name: string, upgrade: ChartReleaseUpgrade]; response: ChartRelease };
 
-  // Cloudsync
+  // CloudSync
   'cloudsync.sync': { params: [id: number, params?: { dry_run: boolean }]; response: number };
   'cloudsync.sync_onetime': { params: [task: CloudSyncTaskUpdate, params: { dry_run?: boolean }]; response: void };
 

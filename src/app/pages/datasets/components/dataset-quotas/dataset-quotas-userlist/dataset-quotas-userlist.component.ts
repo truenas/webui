@@ -23,7 +23,7 @@ import { DatasetQuota, SetDatasetQuota } from 'app/interfaces/dataset-quota.inte
 import { ConfirmOptions } from 'app/interfaces/dialog.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { QueryFilter, QueryParams } from 'app/interfaces/query-api.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
+import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
 import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
@@ -225,7 +225,7 @@ export class DatasetQuotasUserlistComponent implements OnInit, OnDestroy {
       tap(() => {
         this.getUserQuotas();
       }),
-      catchError((error: WebsocketError | Job) => {
+      catchError((error: WebSocketError | Job) => {
         this.handleError(error);
         return EMPTY;
       }),
@@ -271,7 +271,7 @@ export class DatasetQuotasUserlistComponent implements OnInit, OnDestroy {
       tap(() => {
         this.getUserQuotas();
       }),
-      catchError((error: WebsocketError | Job) => {
+      catchError((error: WebSocketError | Job) => {
         this.handleError(error);
         return EMPTY;
       }),

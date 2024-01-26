@@ -8,7 +8,7 @@ import {
 import { sentryCustomExceptionExtraction } from 'app/helpers/error-parser.helper';
 import { ErrorReport } from 'app/interfaces/error-report.interface';
 import { Job } from 'app/interfaces/job.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
+import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { DialogService } from 'app/services/dialog.service';
 
 @Injectable({
@@ -43,11 +43,14 @@ export class ErrorHandlerService implements ErrorHandler {
   }
 
   parseError(error: unknown): ErrorReport | ErrorReport[] {
-    if (this.isWebsocketError(error)) {
+    if (this.isWebSocketError(error)) {
       return this.parseWsError(error);
     }
     if (this.isJobError(error)) {
       return this.parseJobError(error);
+    }
+    if (this.isHttpError(error)) {
+      return this.parseHttpError(error);
     }
     if (error instanceof Error) {
       return {
@@ -63,7 +66,7 @@ export class ErrorHandlerService implements ErrorHandler {
     Sentry.captureException(sentryCustomExceptionExtraction(error));
   }
 
-  isWebsocketError(error: unknown): error is WebsocketError {
+  isWebSocketError(error: unknown): error is WebSocketError {
     return typeof error === 'object'
       && 'error' in error
       && 'extra' in error
@@ -79,18 +82,26 @@ export class ErrorHandlerService implements ErrorHandler {
       && 'exc_info' in obj);
   }
 
+  isHttpError(obj: unknown): obj is HttpErrorResponse {
+    return obj instanceof HttpErrorResponse;
+  }
+
   catchError<T>(): MonoTypeOperatorFunction<T> {
     return (source$: Observable<T>) => {
       return source$.pipe(
-        catchError((error: WebsocketError | Job) => {
-          this.dialog.error(this.parseError(error));
+        catchError((error: unknown) => {
+          this.showErrorModal(error);
           return EMPTY;
         }),
       );
     };
   }
 
-  private parseWsError(error: WebsocketError): ErrorReport {
+  showErrorModal(error: unknown): void {
+    this.dialog.error(this.parseError(error));
+  }
+
+  private parseWsError(error: WebSocketError): ErrorReport {
     return {
       title: error.type || error.trace?.class || this.translate.instant('Error'),
       message: error.reason || error?.error?.toString(),
@@ -119,7 +130,7 @@ export class ErrorHandlerService implements ErrorHandler {
     const errors: ErrorReport[] = [];
     (errorJob.extra as unknown as unknown[]).forEach((extraItem: [string, unknown]) => {
       const field = extraItem[0].split('.')[1];
-      const extractedError = extraItem[1] as string | WebsocketError | Job;
+      const extractedError = extraItem[1] as string | WebSocketError | Job;
 
       const parsedError = this.parseJobExtractedError(errorJob, extractedError);
 
@@ -146,10 +157,10 @@ export class ErrorHandlerService implements ErrorHandler {
 
   private parseJobExtractedError(
     errorJob: Job,
-    extractedError: string | WebsocketError | Job,
+    extractedError: string | WebSocketError | Job,
   ): ErrorReport | ErrorReport[] {
     let parsedError: ErrorReport | ErrorReport[];
-    if (this.isWebsocketError(extractedError)) {
+    if (this.isWebSocketError(extractedError)) {
       parsedError = this.parseWsError(extractedError);
     } else if (this.isJobError(extractedError)) {
       parsedError = this.parseJobError(extractedError);

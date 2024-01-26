@@ -5,7 +5,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { SystemInfo } from 'app/interfaces/system-info.interface';
-import { FeedbackDialogComponent } from 'app/modules/ix-feedback/feedback-dialog/feedback-dialog.component';
+import { FeedbackDialogComponent } from 'app/modules/feedback/components/feedback-dialog/feedback-dialog.component';
 import { NewPageBadgeComponent } from 'app/modules/page-header/is-new-indicator/new-page-badge.component';
 import { selectSystemInfo } from 'app/store/system-info/system-info.selectors';
 

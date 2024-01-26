@@ -18,7 +18,7 @@ describe('AppRowComponent', () => {
     catalog: officialCatalog,
     stats: {
       cpu: 50.155,
-      memory: 20,
+      memory: 20000000,
       network: {
         incoming: 50000000,
         outgoing: 55500000,
@@ -60,7 +60,7 @@ describe('AppRowComponent', () => {
 
   it('checks usage columns', () => {
     expect(spectator.query('.cell-cpu')).toHaveText('50%');
-    expect(spectator.query('.cell-ram')).toHaveText('20 MiB');
+    expect(spectator.query('.cell-ram')).toHaveText('19.07 MiB');
     expect(spectator.query('.cell-network')).toHaveText('47.68 MiB / 52.93 MiB');
   });
 });

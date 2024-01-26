@@ -29,7 +29,11 @@ export const routes: Routes = [
         }, {
           path: 'sessions',
           component: NfsSessionListComponent,
-          data: { title: T('NFS Sessions'), breadcrumb: null },
+          data: {
+            title: T('NFS Sessions'),
+            breadcrumb: null,
+            isNew: true,
+          },
         }],
       },
       {
@@ -50,7 +54,10 @@ export const routes: Routes = [
             {
               path: ':activeTab',
               component: SmbStatusComponent,
-              data: { title: T('Smb Status') },
+              data: {
+                title: T('Smb Status'),
+                isNew: true,
+              },
             },
           ],
         }],

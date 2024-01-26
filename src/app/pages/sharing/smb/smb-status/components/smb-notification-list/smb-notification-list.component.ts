@@ -15,6 +15,7 @@ import { WebSocketService } from 'app/services/ws.service';
 @UntilDestroy()
 @Component({
   selector: 'ix-smb-notification-list',
+  styleUrls: ['./smb-notification-list.component.scss'],
   templateUrl: './smb-notification-list.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

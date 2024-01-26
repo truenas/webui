@@ -182,7 +182,6 @@ tr.details-row:hover {
   }
 }
 
-
 .entity-table-controls {
   min-width: 460px;
   width: 460px;
@@ -315,11 +314,11 @@ button div.label-warning-icon .mat-icon {
 
   .mat-icon {
     cursor: help;
+    display: block;
     flex-shrink: 0;
     font-size: 14px;
     height: 14px;
     top: auto;
-    vertical-align: middle;
     width: 14px;
 
     &.prepend {

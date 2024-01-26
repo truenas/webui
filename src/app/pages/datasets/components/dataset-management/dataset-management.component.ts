@@ -38,7 +38,7 @@ import { WINDOW } from 'app/helpers/window.helper';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { Job } from 'app/interfaces/job.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
+import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { TreeDataSource } from 'app/modules/ix-tree/tree-datasource';
 import { TreeFlattener } from 'app/modules/ix-tree/tree-flattener';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
@@ -177,7 +177,7 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
     });
   }
 
-  handleError = (error: WebsocketError | Job): void => {
+  handleError = (error: WebSocketError | Job): void => {
     this.dialogService.error(this.errorHandler.parseError(error));
   };
 
@@ -234,7 +234,11 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
       .pipe(filter(Boolean), untilDestroyed(this))
       .subscribe({
         next: (selectedBranch: DatasetDetails[]) => {
-          selectedBranch.forEach((dataset) => this.treeControl.expand(dataset));
+          selectedBranch.forEach((datasetFromSelectedBranch) => {
+            const expandedDataset = this.treeControl.dataNodes
+              .find((dataset) => dataset.id === datasetFromSelectedBranch.id);
+            this.treeControl.expand(expandedDataset);
+          });
         },
         error: this.handleError,
       });

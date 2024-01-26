@@ -7,7 +7,7 @@ import { of } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import {
-  mockWebsocket, mockCall, mockJob,
+  mockWebSocket, mockCall, mockJob,
 } from 'app/core/testing/utils/mock-websocket.utils';
 import { Tunable } from 'app/interfaces/tunable.interface';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
@@ -110,7 +110,7 @@ describe('TunableListComponent', () => {
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
-      mockWebsocket([
+      mockWebSocket([
         mockCall('core.get_jobs'),
         mockCall('tunable.query', tunables),
         mockJob('tunable.delete', fakeSuccessfulJob()),
