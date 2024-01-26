@@ -10,8 +10,6 @@ on:
       - '**'
     paths-ignore:
       - 'tests/**'
-  pull_request_target:
-    types: [opened, synchronize, reopened]
 
 jobs:
   install:
@@ -41,12 +39,6 @@ jobs:
           echo "$CHANGED_FILES"
 
           TRANSLATIONS_ONLY="true"
-          for file in $CHANGED_FILES; do
-            if [[ "$file" != "src/assets/i18n/"* ]]; then
-              TRANSLATIONS_ONLY="false"
-              break
-            fi
-          done
 
           echo "::set-output name=translations-only::$TRANSLATIONS_ONLY"
 
