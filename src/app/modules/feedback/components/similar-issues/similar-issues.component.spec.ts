@@ -78,4 +78,9 @@ describe('SimilarIssuesComponent', () => {
       'background-image': 'url(https://ixsystems.atlassian.net/rest/api/2/universal_avatar/view/type/issuetype/avatar/10311?size=medium)',
     });
   }));
+
+  it('should add "outdated" class to issues container when a new query is made', () => {
+    spectator.setInput('query', 'gmail');
+    expect(spectator.query('.similar-issues-body')).toHaveClass('outdated');
+  });
 });

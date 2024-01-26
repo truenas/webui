@@ -1,4 +1,4 @@
-<div *ngIf="hasSimilarIssues$ | async as issues" class="similar-issues">
+<div *ngIf="similarIssues$ | async as issues" class="similar-issues">
   <div *ngIf="issues.length" class="similar-issues-header">
     <div class="similar-issues-title">
       {{ 'The following issues were already reported.' | translate }}
@@ -7,7 +7,11 @@
       {{ 'Do any of them look similar?' | translate }}
     </div>
   </div>
-  <div *ngIf="issues.length" class="similar-issues-body">
+
+  <div
+    class="similar-issues-body"
+    [class.outdated]="areResultsOutdated$ | async"
+  >
     <a
       *ngFor="let issue of issues"
       class="similar-issue"
