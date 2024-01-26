@@ -120,13 +120,10 @@ jobs:
       - name: Checkout the base repository
         uses: actions/checkout@v3
         with:
-          ref: master
-
-      - name: Create a new branch for the PR
-        run: |
-          PR_BRANCH="NAS-${{ github.event.pull_request.number }}XX"
-          git checkout -b $PR_BRANCH
-          git pull https://github.com/${{ github.event.pull_request.head.repo.full_name }} ${{ github.event.pull_request.head.ref }}
+          ref: ${{ github.event.pull_request.head.ref }}
+          repository: ${{ github.event.pull_request.head.repo.full_name }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
 
       - name: Install
         uses: ./.github/actions/prepare
@@ -143,5 +140,5 @@ jobs:
           git config --global user.email 'action@github.com'
           git add .
           git commit -m "NAS-XXXXXX: Auto resort translation strings"
-          git push origin $PR_BRANCH
+          git push
 
