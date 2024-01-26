@@ -1,11 +1,11 @@
 import { SpectatorPipe, createPipeFactory } from '@ngneat/spectator/jest';
-import { Base2SizePipe } from 'app/core/pipes/base-2-size.pipe';
+import { FileSizeBase2Pipe } from 'app/core/pipes/file-size-base-2.pipe';
 
 describe('BitSizePipe', () => {
-  let spectator: SpectatorPipe<Base2SizePipe>;
+  let spectator: SpectatorPipe<FileSizeBase2Pipe>;
   const inputValue = 1024;
   const createPipe = createPipeFactory({
-    pipe: Base2SizePipe,
+    pipe: FileSizeBase2Pipe,
   });
 
   beforeEach(() => {

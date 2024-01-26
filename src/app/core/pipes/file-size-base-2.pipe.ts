@@ -2,9 +2,9 @@ import { Pipe, PipeTransform } from '@angular/core';
 import { normalizeFileSizeBase2 } from 'app/helpers/filesize.utils';
 
 @Pipe({
-  name: 'base2Size',
+  name: 'fileSizeBase2',
 })
-export class Base2SizePipe implements PipeTransform {
+export class FileSizeBase2Pipe implements PipeTransform {
   transform(
     value: number,
     { baseUnit }: { baseUnit: 'b' | 'B' },
