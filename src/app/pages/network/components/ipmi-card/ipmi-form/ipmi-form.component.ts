@@ -13,9 +13,8 @@ import { OnOff } from 'app/enums/on-off.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { Role } from 'app/enums/role.enum';
 import { helptextIpmi } from 'app/helptext/network/ipmi/ipmi';
-import { Ipmi, IpmiUpdate } from 'app/interfaces/ipmi.interface';
+import { Ipmi, IpmiQueryParams, IpmiUpdate } from 'app/interfaces/ipmi.interface';
 import { RadioOption } from 'app/interfaces/option.interface';
-import { QueryParams } from 'app/interfaces/query-api.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
@@ -44,7 +43,7 @@ export class IpmiFormComponent implements OnInit {
   managementIp: string;
   isFlashing = false;
 
-  queryFilter: QueryParams<Ipmi> = null;
+  queryParams: IpmiQueryParams;
 
   readonly helptext = helptextIpmi;
 
@@ -107,7 +106,13 @@ export class IpmiFormComponent implements OnInit {
   }
 
   setIdIpmi(): void {
-    this.queryFilter = [[['id', '=', this.ipmiId]]];
+    this.queryParams = [
+      [['id', '=', this.ipmiId]],
+      {},
+      {
+        'query-remote': true,
+      },
+    ];
   }
 
   toggleFlashing(): void {
@@ -133,7 +138,7 @@ export class IpmiFormComponent implements OnInit {
     this.cdr.markForCheck();
 
     forkJoin([
-      this.ws.call('ipmi.lan.query', this.queryFilter),
+      this.ws.call('ipmi.lan.query', this.queryParams),
       this.loadFlashingStatus(),
     ])
       .pipe(
@@ -188,15 +193,16 @@ export class IpmiFormComponent implements OnInit {
         switchMap((controlState) => {
           this.isLoading = true;
           isUsingRemote = controlState;
+          this.queryParams[2]['query-remote'] = controlState;
 
           if (isUsingRemote) {
             return this.remoteControllerData
               ? of([this.remoteControllerData])
-              : this.ws.call('ipmi.lan.query', this.queryFilter); // TODO: Add remote param when available
+              : this.ws.call('ipmi.lan.query', this.queryParams); // TODO: Add remote param when available
           }
           return this.defaultControllerData
             ? of([this.defaultControllerData])
-            : this.ws.call('ipmi.lan.query', this.queryFilter);
+            : this.ws.call('ipmi.lan.query', this.queryParams);
         }),
         untilDestroyed(this),
       )
