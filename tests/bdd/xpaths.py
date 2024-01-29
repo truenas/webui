@@ -175,6 +175,7 @@ class button:
     leave_Domain = '//button[contains(.,"Leave Domain")]'
     reload_Now = '//button[@data-test="button-dialog-confirm"]'
     dialog_Cancel = '//button[@data-test="button-dialog-cancel"]'
+    save_changes = '//*[@data-test="button-save-changes"]'
 
 
 class certificates:
@@ -536,6 +537,7 @@ class popup:
     configuring = '//h1[contains(.,"Configuring...")]'
     installing = '//h1[contains(.,"Installing")]'
     deleting = '//*[contains(.,"Deleting")]'
+    save_changes = xpaths.popup.save_changes
 
 
 class progress:
