@@ -5,7 +5,7 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { of, Subject } from 'rxjs';
+import { of } from 'rxjs';
 import { fakeFile } from 'app/core/testing/utils/fake-file.uitls';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
@@ -18,13 +18,11 @@ import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { DatasetUnlockComponent } from 'app/pages/datasets/modules/encryption/components/dataset-unlock/dataset-unlock.component';
 import { AuthService } from 'app/services/auth/auth.service';
 import { DialogService } from 'app/services/dialog.service';
-import { IxFileUploadService } from 'app/services/ix-file-upload.service';
 
 describe('DatasetUnlockComponent', () => {
   let spectator: Spectator<DatasetUnlockComponent>;
   let loader: HarnessLoader;
 
-  const fileUploaded$ = new Subject<void>();
   const mockDialogRef = {
     componentInstance: {
       setDescription: jest.fn(),
@@ -58,13 +56,6 @@ describe('DatasetUnlockComponent', () => {
       mockProvider(DialogService),
       mockProvider(MatDialog, {
         open: jest.fn(() => mockDialogRef),
-      }),
-      mockProvider(IxFileUploadService, {
-        onUploaded$: fileUploaded$,
-        onUploading$: of(),
-        upload: jest.fn(() => {
-          fileUploaded$.next();
-        }),
       }),
       mockProvider(MatDialogRef),
       mockProvider(AuthService, {
