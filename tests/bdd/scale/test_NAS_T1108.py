@@ -9,7 +9,7 @@ from function import (
     wait_on_element,
     is_element_present,
     wait_on_element_disappear,
-    save_screenshot
+    service_Start
 )
 from pytest_bdd import (
     given,
@@ -18,9 +18,6 @@ from pytest_bdd import (
     when,
     parsers
 )
-from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.common.action_chains import ActionChains
-from pytest_dependency import depends
 
 
 @pytest.mark.dependency(name='AD_Dataset')
@@ -47,6 +44,8 @@ def the_browser_is_open_the_truenas_url_and_logged_in(driver, nas_ip, root_passw
     else:
         assert wait_on_element(driver, 5, xpaths.side_Menu.dashboard, 'clickable')
         driver.find_element_by_xpath(xpaths.side_Menu.dashboard).click()
+    # TODO: remove when https://ixsystems.atlassian.net/browse/NAS-127071 is fixed.
+    service_Start(nas_ip, ('root', root_password), 'cifs')
 
 
 @when('on the Dashboard, click Dataset on the left sidebar')
@@ -54,14 +53,14 @@ def on_the_dashboard_click_dataset_on_the_left_sidebar(driver):
     """on the Dashboard, click Dataset on the left sidebar."""
     assert wait_on_element(driver, 10, xpaths.dashboard.title)
     assert wait_on_element(driver, 10, xpaths.dashboard.system_Info_Card_Title)
-    assert wait_on_element(driver, 10, xpaths.side_Menu.datasets, 'clickable')
-    driver.find_element_by_xpath(xpaths.side_Menu.datasets).click()
+    rsc.Click_On_Element(driver, xpaths.side_Menu.datasets)
 
 
 @then('on the Dataset page, click on the system pool tree and click Add Dataset')
 def on_the_dataset_page_click_on_the_system_pool_tree_and_click_add_dataset(driver):
     """on the Dataset page, click on the system pool tree and click Add Dataset."""
     assert wait_on_element(driver, 7, xpaths.dataset.title)
+    assert  wait_on_element_disappear(driver, 15, xpaths.progress.progress_Spinner)
     assert wait_on_element(driver, 7, xpaths.dataset.pool_Tree_Name('system'))
     driver.find_element_by_xpath(xpaths.dataset.pool_Tree('system')).click()
     assert wait_on_element(driver, 7, xpaths.dataset.pool_Selected('system'))
@@ -77,28 +76,16 @@ def on_the_add_dataset_slide_input_name_my_ad_dataset_and_share_type_smb(driver,
     assert wait_on_element(driver, 5, xpaths.add_Dataset.name_Textarea, 'inputable')
     driver.find_element_by_xpath(xpaths.add_Dataset.name_Textarea).clear()
     driver.find_element_by_xpath(xpaths.add_Dataset.name_Textarea).send_keys(dataset_name)
-    assert wait_on_element(driver, 5, xpaths.add_Dataset.share_Type_Select)
-    driver.find_element_by_xpath(xpaths.add_Dataset.share_Type_Select).click()
-    assert wait_on_element(driver, 5, xpaths.add_Dataset.share_Type_SMB_Option, 'clickable')
-    driver.find_element_by_xpath(xpaths.add_Dataset.share_Type_SMB_Option).click()
-    time.sleep(2)
-    save_screenshot(driver, 'screenshot/scale/before_uncheck_smb.png')
+    rsc.Click_On_Element(driver, xpaths.add_Dataset.share_Type_Select)
+    rsc.Click_On_Element(driver, xpaths.add_Dataset.share_Type_SMB_Option)
     rsc.unset_checkbox(driver, xpaths.add_Dataset.create_Smb_Checkbox)
-    time.sleep(1)
-    save_screenshot(driver, 'screenshot/scale/after_uncheck_smb.png')
-    action = ActionChains(driver)
-    action.send_keys(Keys.TAB).perform()
-    time.sleep(1)
-    save_screenshot(driver, 'screenshot/scale/after_tab_smb.png')
 
 
 @then(parsers.parse('click Save the "{dataset_name}" data should be created'))
 def click_save_the_my_ad_dataset_data_should_be_created(driver, dataset_name):
     """click Save the "my_ad_dataset" data should be created."""
     rsc.Click_On_Element(driver, xpaths.button.save)
-    save_screenshot(driver, 'screenshot/scale/after_saving_dataset.png')
     assert wait_on_element_disappear(driver, 60, xpaths.progress.progressbar)
-    save_screenshot(driver, 'screenshot/scale/after_progress_dataset.png')
     assert wait_on_element(driver, 10, xpaths.dataset.dataset_Name(dataset_name))
 
 
@@ -114,7 +101,7 @@ def click_on_the_my_ad_dataset_tree_click_on_edit_beside_permissions(driver, dat
 
 @then(parsers.parse('on the Edit ACL page, input "{user_name}" for Owner, click Apply Owner'))
 def on_the_edit_acl_input_the_user_name(driver, user_name):
-    """On the Edit ACL, input "{user_name}" for User name."""
+    """on the Edit ACL page, input "{user_name}" for Owner, click Apply Owner."""
     assert wait_on_element(driver, 5, xpaths.edit_Acl.title)
     assert wait_on_element(driver, 5, xpaths.edit_Acl.owner_Combobox, 'inputable')
     driver.find_element_by_xpath(xpaths.edit_Acl.owner_Combobox).clear()

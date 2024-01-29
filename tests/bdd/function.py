@@ -361,5 +361,19 @@ def create_Encrypted_Pool(hostname, auth, pool_name):
     post_Pool(hostname, auth, pool_name, payload)
 
 
+def service_Start(hostname, auth, service_name):
+    """
+    Start service.
+    :param hostname: Hostname of IP of the NAS.
+    :param auth: (username, password) tuple.
+    :param service_name: Service name to start.
+
+    Example:
+        - service_Start('244.178.44.111', ('admin', 'admin'), 'smb')
+    """
+    results = post(hostname, f'/service/start/', auth, {"service": service_name})
+    assert results.status_code == 200, results.text
+
+
 def save_screenshot(driver, name):
     driver.save_screenshot(name)
