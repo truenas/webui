@@ -537,7 +537,7 @@ class popup:
     configuring = '//h1[contains(.,"Configuring...")]'
     installing = '//h1[contains(.,"Installing")]'
     deleting = '//*[contains(.,"Deleting")]'
-    save_changes = xpaths.popup.save_changes
+    save_changes = '//h1[contains(.,"Save Changes")]'
 
 
 class progress:
