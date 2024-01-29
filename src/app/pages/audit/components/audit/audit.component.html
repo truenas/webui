@@ -82,7 +82,9 @@
 <ng-template #exportButton>
   <ix-export-button
     *ngIf="dataProvider.totalRows"
-    method="audit.export"
+    jobMethod="audit.export"
+    downloadMethod="audit.download_report"
+    [addReportNameArgument]="true"
     [searchQuery]="searchQuery"
     [sorting]="dataProvider.sorting"
     [defaultFilters]="basicQueryFilters"

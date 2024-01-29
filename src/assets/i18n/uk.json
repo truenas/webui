@@ -244,7 +244,7 @@
   "Error validating target name": "",
   "Est. Usable Raw Capacity": "",
   "Export": "",
-  "Export As CSV": "",
+  "Export As {fileType}": "",
   "Exporters": "",
   "Extends the validity of OTP by that many windows of intervals before and after the current interval": "",
   "FTP": "",

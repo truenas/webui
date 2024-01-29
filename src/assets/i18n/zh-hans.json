@@ -275,7 +275,7 @@
   "Event": "",
   "Event Data": "",
   "Export": "",
-  "Export As CSV": "",
+  "Export As {fileType}": "",
   "Exporters": "",
   "Extend session": "",
   "Extends the validity of OTP by that many windows of intervals before and after the current interval": "",
