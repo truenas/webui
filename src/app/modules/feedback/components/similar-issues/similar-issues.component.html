@@ -10,7 +10,7 @@
 
   <div
     class="similar-issues-body"
-    [class.outdated]="areResultsOutdated$ | async"
+    [class.outdated]="isLoading$ | async"
   >
     <a
       *ngFor="let issue of issues"

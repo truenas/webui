@@ -2,6 +2,7 @@ import { discardPeriodicTasks, fakeAsync, tick } from '@angular/core/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { SimilarIssuesComponent } from 'app/modules/feedback/components/similar-issues/similar-issues.component';
+import { SimilarIssue } from 'app/modules/feedback/interfaces/file-ticket.interface';
 import { FeedbackService } from 'app/modules/feedback/services/feedback.service';
 
 describe('SimilarIssuesComponent', () => {
@@ -38,21 +39,21 @@ describe('SimilarIssuesComponent', () => {
 
   it('loads similar tickets when title is changed', fakeAsync(() => {
     spectator.setInput('query', 'Similar');
-    tick(500);
+    tick(300);
 
     expect(feedbackService.getSimilarIssues).toHaveBeenCalledWith('Similar');
   }));
 
   it('does not check for similar tickets when title is too short', fakeAsync(() => {
     spectator.setInput('query', 't');
-    tick(500);
+    tick(300);
 
     expect(feedbackService.getSimilarIssues).not.toHaveBeenCalled();
   }));
 
   it('debounces further changes to title', fakeAsync(() => {
     spectator.setInput('query', 'Similar');
-    tick(500);
+    tick(300);
     spectator.setInput('query', 'Similar another');
 
     expect(feedbackService.getSimilarIssues).toHaveBeenCalledTimes(1);
@@ -61,7 +62,7 @@ describe('SimilarIssuesComponent', () => {
 
   it('shows similar tickets', fakeAsync(() => {
     spectator.setInput('query', 'Similar');
-    tick(500);
+    tick(300);
     spectator.detectChanges();
 
     const similarIssues = spectator.queryAll('.similar-issue');
@@ -79,8 +80,56 @@ describe('SimilarIssuesComponent', () => {
     });
   }));
 
-  it('should add "outdated" class to issues container when a new query is made', () => {
+  it('should reset similar issues when query is empty', fakeAsync(() => {
+    spectator.setInput('query', 'Similar');
+    tick(300);
+    spectator.detectChanges();
+    expect(feedbackService.getSimilarIssues).toHaveBeenCalledWith('Similar');
+    expect(spectator.queryAll('.similar-issue')).toHaveLength(2);
+
+    spectator.setInput('query', '');
+    tick(300);
+    spectator.fixture.whenStable().then(() => {
+      expect(spectator.queryAll('.similar-issue')).toHaveLength(0);
+    });
+  }));
+
+  it('should fetch and combine similar issues when query has more than 3 characters', fakeAsync(() => {
+    jest.spyOn(feedbackService, 'getSimilarIssues').mockReturnValue(of([
+      {
+        url: 'https://ixsystems.atlassian.net/browse/NAS-124850',
+        id: 79258,
+        key: 'NAS-124850',
+        img: '/rest/api/2/universal_avatar/view/type/issuetype/avatar/10303?size=medium',
+        summaryText: 'GMail OAuth setup not working',
+      },
+      {
+        url: 'https://ixsystems.atlassian.net/browse/NAS-122424',
+        id: 79259,
+        key: 'NAS-122424',
+        img: '/rest/api/2/universal_avatar/view/type/issuetype/avatar/10303?size=medium',
+        summaryText: 'Gmail Oauth for alerts keeps expiring',
+      },
+    ] as SimilarIssue[]));
+
     spectator.setInput('query', 'gmail');
-    expect(spectator.query('.similar-issues-body')).toHaveClass('outdated');
-  });
+    tick(300);
+    expect(feedbackService.getSimilarIssues).toHaveBeenCalledWith('gmail');
+    spectator.fixture.whenStable().then(() => {
+      expect(spectator.queryAll('.similar-issue')).toHaveLength(2);
+    });
+
+    spectator.setInput('query', 'gmail not working');
+    tick(300);
+    expect(feedbackService.getSimilarIssues).toHaveBeenCalledWith('gmail not working');
+    spectator.fixture.whenStable().then(() => {
+      expect(spectator.queryAll('.similar-issue')).toHaveLength(2);
+    });
+
+    spectator.setInput('query', '');
+    tick(300);
+    spectator.fixture.whenStable().then(() => {
+      expect(spectator.queryAll('.similar-issue')).toHaveLength(0);
+    });
+  }));
 });

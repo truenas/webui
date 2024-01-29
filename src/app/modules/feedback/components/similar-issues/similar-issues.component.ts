@@ -4,7 +4,7 @@ import {
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import _ from 'lodash';
 import {
-  BehaviorSubject, Observable, debounceTime, distinctUntilChanged, filter, map, pairwise, switchMap,
+  BehaviorSubject, Observable, debounceTime, distinctUntilChanged, filter, pairwise, switchMap,
 } from 'rxjs';
 import { SimilarIssue } from 'app/modules/feedback/interfaces/file-ticket.interface';
 import { FeedbackService } from 'app/modules/feedback/services/feedback.service';
@@ -21,53 +21,55 @@ export class SimilarIssuesComponent {
     this.query$.next(value);
   }
 
-  protected areResultsOutdated$ = new BehaviorSubject<boolean>(false);
   protected similarIssues$ = new BehaviorSubject<SimilarIssue[]>([]);
+  protected isLoading$ = new BehaviorSubject<boolean>(false);
   private query$ = new BehaviorSubject<string>(null);
-
-  protected getSimilarIssues$ = this.query$.pipe(
-    filter((query) => query?.split(' ').length > 1),
-    debounceTime(300),
-    distinctUntilChanged(),
-    switchMap((query) => this.fetchAndCombineSimilarIssues(query)),
-  );
-
-  protected isQueryDrasticallyChanged$ = this.query$.pipe(
-    debounceTime(500),
-    distinctUntilChanged(),
-    pairwise(),
-    map(([oldQuery, newQuery]) => {
-      if (!newQuery?.length) {
-        this.similarIssues$.next([]);
-        return true;
-      }
-      if (oldQuery?.length && newQuery?.length) {
-        const isQueryDrasticallyChanged = !newQuery.includes(oldQuery);
-        if (isQueryDrasticallyChanged) {
-          this.similarIssues$.next([]);
-        }
-        return isQueryDrasticallyChanged;
-      }
-      return false;
-    }),
-  );
 
   protected readonly jiraHostname = 'https://ixsystems.atlassian.net';
 
   constructor(
     private feedbackService: FeedbackService,
   ) {
-    this.isQueryDrasticallyChanged$.pipe(untilDestroyed(this)).subscribe();
-    this.getSimilarIssues$.pipe(untilDestroyed(this)).subscribe();
+    this.listenForQueryChanges();
+  }
+
+  private listenForQueryChanges(): void {
+    this.query$.pipe(
+      filter((query) => query?.length >= 3),
+      debounceTime(300),
+      distinctUntilChanged(),
+      switchMap((query) => this.fetchAndCombineSimilarIssues(query)),
+      untilDestroyed(this),
+    ).subscribe();
+
+    this.query$.pipe(
+      debounceTime(300),
+      distinctUntilChanged(),
+      pairwise(),
+      untilDestroyed(this),
+    ).subscribe(([oldQuery, newQuery]) => {
+      if (!newQuery?.length) {
+        this.similarIssues$.next([]);
+      }
+      if (oldQuery?.length && newQuery?.length) {
+        const resetSimilarIssues = !newQuery.trim().includes(oldQuery);
+        if (resetSimilarIssues) {
+          this.similarIssues$.next([]);
+        }
+      }
+    });
   }
 
   private fetchAndCombineSimilarIssues(query: string): Observable<SimilarIssue[]> {
-    this.areResultsOutdated$.next(true);
+    this.isLoading$.next(true);
     return this.feedbackService.getSimilarIssues(query).pipe(
       switchMap((newIssues) => {
-        const combinedUniqueIssues = _.uniqBy([...this.similarIssues$.value, ...newIssues], 'id');
+        const combinedUniqueIssues = _.sortBy(_.uniqBy([
+          ...this.similarIssues$.value,
+          ...newIssues,
+        ], 'id'), { summaryText: query });
         this.similarIssues$.next(combinedUniqueIssues);
-        this.areResultsOutdated$.next(false);
+        this.isLoading$.next(false);
         return this.similarIssues$;
       }),
     );
