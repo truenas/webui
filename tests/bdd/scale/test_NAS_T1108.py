@@ -19,6 +19,7 @@ from pytest_bdd import (
     parsers
 )
 from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.common.action_chains import ActionChains
 from pytest_dependency import depends
 
 
@@ -85,7 +86,8 @@ def on_the_add_dataset_slide_input_name_my_ad_dataset_and_share_type_smb(driver,
     rsc.unset_checkbox(driver, xpaths.add_Dataset.create_Smb_Checkbox)
     time.sleep(1)
     save_screenshot(driver, 'screenshot/scale/after_uncheck_smb.png')
-    driver.find_element_by_xpath(xpaths.add_Dataset.create_Smb_Checkbox).send_keys(Keys.TAB)
+    action = ActionChains(driver)
+    action.send_keys(Keys.TAB).perform()
     time.sleep(1)
     save_screenshot(driver, 'screenshot/scale/after_tab_smb.png')
 
