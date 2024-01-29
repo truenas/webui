@@ -50,11 +50,6 @@ export class UploadIsoDialogComponent {
 
     this.uploadService.upload(file, 'filesystem.put', [uploadPath, { mode: 493 }])
       .pipe(
-        catchError((error) => {
-          this.loader.close();
-          this.dialogService.error(this.errorHandler.parseError(error));
-          return of(error);
-        }),
         tap((event: HttpProgressEvent) => {
           if (event instanceof HttpResponse) {
             this.loader.close();
@@ -67,6 +62,11 @@ export class UploadIsoDialogComponent {
               this.translate.instant('{n}% Uploaded', { n: percentDone }),
             );
           }
+        }),
+        catchError((error) => {
+          this.loader.close();
+          this.dialogService.error(this.errorHandler.parseError(error));
+          return of(error);
         }),
         untilDestroyed(this),
       )

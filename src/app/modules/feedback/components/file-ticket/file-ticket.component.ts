@@ -116,14 +116,14 @@ export class FileTicketComponent {
       takeScreenshot,
       attachments: images,
     }).pipe(
-      catchError((error) => {
+      catchError(() => {
         // Do not fail if attachments were not uploaded.
         this.dialogService.error({
           title: this.translate.instant(helptext.attachmentsFailed.title),
           message: this.translate.instant(helptext.attachmentsFailed.message),
         });
 
-        return of(error);
+        return of(undefined);
       }),
     );
   }
