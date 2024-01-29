@@ -1,4 +1,5 @@
 import { IpmiChassisIdentifyState, IpmiIpAddressSource } from 'app/enums/ipmi.enum';
+import { QueryFilters, QueryOptions } from 'app/interfaces/query-api.interface';
 
 export interface Ipmi {
   backup_gateway_ip_address: string;
@@ -14,6 +15,14 @@ export interface Ipmi {
   vlan_id: number;
   vlan_priority: number;
 }
+
+export type IpmiQueryParams = [
+  QueryFilters<Ipmi>,
+  QueryOptions<Ipmi>,
+  {
+    'query-remote': boolean;
+  },
+];
 
 export interface IpmiUpdate {
   dhcp: boolean;

@@ -66,6 +66,10 @@ export class IpmiCardComponent implements OnInit {
     const ipmi$ = this.ws.call('ipmi.lan.query').pipe(untilDestroyed(this));
     this.dataProvider = new AsyncDataProvider<Ipmi>(ipmi$);
     this.loadIpmiEntries();
+    this.slideInService.open(IpmiFormComponent, { data: 1 })
+      .slideInClosed$
+      .pipe(filter(Boolean), untilDestroyed(this))
+      .subscribe(() => this.loadIpmiEntries());
   }
 
   canOpen(ipmi: Ipmi): boolean {
