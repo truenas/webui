@@ -1,5 +1,5 @@
 import { SpectatorPipe, createPipeFactory } from '@ngneat/spectator/jest';
-import { FileSizePipe } from 'app/core/pipes/file-size.pipe';
+import { FileSizePipe } from 'app/modules/ix-file-size/ix-file-size.pipe';
 
 let spectator: SpectatorPipe<FileSizePipe>;
 const createPipe = createPipeFactory({

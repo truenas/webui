@@ -300,9 +300,6 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
       if (this.report.name === ReportingGraphName.NetworkInterface) {
         const [formatted, unit] = normalizeFileSize(item.y * 1000, 'b', 10);
         clone.series[index].yHTML = formatted + ' ' + unit + '/s';
-        if (item.y < 1) {
-          clone.series[index].yHTML = clone.series[index].yHTML.replace('b/s', 'bit/s');
-        }
       } else {
         const yConverted = this.formatLabelValue(item.y, this.inferUnits(this.labelY), 1, true);
         const ySuffix = this.getSuffix(yConverted);
