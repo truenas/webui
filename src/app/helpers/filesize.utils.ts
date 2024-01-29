@@ -7,8 +7,8 @@ import {
 
 export function normalizeFileSize(
   value: number,
-  baseUnit: 'b' | 'B',
-  base: 10 | 2,
+  baseUnit: 'b' | 'B' = 'B',
+  base: 10 | 2 = 2,
 ): [formatted: number, unit: string] {
   return base === 10 ? normalizeFileSizeBase10(value, baseUnit) : normalizeFileSizeBase2(value, baseUnit);
 }

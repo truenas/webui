@@ -23,7 +23,7 @@ export function formatData(data: ReportingData): ReportingData {
     delete data.aggregations.min; // Will always be showing bogus small values
     Object.keys(data.aggregations).forEach((key) => {
       _.set(data.aggregations, key, (data.aggregations[key as ReportingAggregationKeys] as string[]).map(
-        (value) => formatInterfaceUnit(value),
+        (value) => formatInterfaceUnit(value.includes('k') ? value : value.toUpperCase()),
       ));
     });
   }
