@@ -84,6 +84,7 @@
     *ngIf="dataProvider.totalRows"
     jobMethod="audit.export"
     downloadMethod="audit.download_report"
+    [addReportNameArgument]="true"
     [searchQuery]="searchQuery"
     [sorting]="dataProvider.sorting"
     [defaultFilters]="basicQueryFilters"

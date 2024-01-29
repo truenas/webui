@@ -99,6 +99,17 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
     });
   }
 
+  get updateBtnLabel(): string {
+    if (this.updateAvailable) {
+      return this.translate.instant('Updates Available');
+    }
+    return this.translate.instant('Check for Updates');
+  }
+
+  get productImageSrc(): string {
+    return 'assets/images' + (this.productImage.startsWith('/') ? this.productImage : ('/' + this.productImage));
+  }
+
   ngOnInit(): void {
     this.checkForUpdate();
     this.getSystemInfo();
@@ -178,13 +189,6 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
         console.error(err);
       },
     });
-  }
-
-  get updateBtnLabel(): string {
-    if (this.updateAvailable) {
-      return this.translate.instant('Updates Available');
-    }
-    return this.translate.instant('Check for Updates');
   }
 
   processSysInfo(systemInfo: SystemInfo): void {

@@ -4,7 +4,7 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { of, Subject } from 'rxjs';
+import { of } from 'rxjs';
 import { fakeFile } from 'app/core/testing/utils/fake-file.uitls';
 import { mockEntityJobComponentRef } from 'app/core/testing/utils/mock-entity-job-component-ref.utils';
 import { IxFileInputHarness } from 'app/modules/ix-forms/components/ix-file-input/ix-file-input.harness';
@@ -12,12 +12,10 @@ import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { AuthService } from 'app/services/auth/auth.service';
 import { DialogService } from 'app/services/dialog.service';
-import { IxFileUploadService } from 'app/services/ix-file-upload.service';
 import { UploadConfigDialogComponent } from './upload-config-dialog.component';
 
 describe('UploadConfigDialogComponent', () => {
   let spectator: Spectator<UploadConfigDialogComponent>;
-  const fileUploaded$ = new Subject<void>();
   const createComponent = createComponentFactory({
     component: UploadConfigDialogComponent,
     imports: [
@@ -26,13 +24,6 @@ describe('UploadConfigDialogComponent', () => {
       AppLoaderModule,
     ],
     providers: [
-      mockProvider(IxFileUploadService, {
-        onUploaded$: fileUploaded$,
-        onUploading$: of(),
-        upload: jest.fn(() => {
-          fileUploaded$.next();
-        }),
-      }),
       mockProvider(MatDialogRef),
       mockProvider(Router),
       mockProvider(DialogService),

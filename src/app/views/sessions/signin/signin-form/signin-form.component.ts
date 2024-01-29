@@ -6,7 +6,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import _ from 'lodash';
 import {
-  distinctUntilChanged, EMPTY, switchMap,
+  distinctUntilChanged, EMPTY, firstValueFrom, switchMap,
 } from 'rxjs';
 import { LoginResult } from 'app/enums/login-result.enum';
 import { WINDOW } from 'app/helpers/window.helper';
@@ -66,7 +66,10 @@ export class SigninFormComponent implements OnInit {
     });
   }
 
-  login(): void {
+  async login(): Promise<void> {
+    if (await firstValueFrom(this.signinStore.isLoading$)) {
+      return;
+    }
     this.isLastLoginAttemptFailed = false;
     this.signinStore.setLoadingState(true);
     const formValues = this.form.value;

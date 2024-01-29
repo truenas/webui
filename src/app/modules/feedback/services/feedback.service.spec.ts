@@ -37,7 +37,7 @@ describe('FeedbackService', () => {
         sessionId$: of('testSessionId'),
       }),
       mockProvider(IxFileUploadService, {
-        upload2: jest.fn(() => of(new HttpResponse({ status: 200 }))),
+        upload: jest.fn(() => of(new HttpResponse({ status: 200 }))),
       }),
     ],
   });
@@ -99,7 +99,7 @@ describe('FeedbackService', () => {
       expect(await lastValueFrom(spectator.service.addTicketAttachments(settings))).toBeUndefined();
 
       expect(spectator.service.takeScreenshot).toHaveBeenCalled();
-      expect(fileUploadService.upload2).toHaveBeenCalledWith(fakeScreenshot, 'support.attach_ticket', [{
+      expect(fileUploadService.upload).toHaveBeenCalledWith(fakeScreenshot, 'support.attach_ticket', [{
         token: 'test-token',
         ticket: 1,
         filename: 'screenshot.png',
@@ -119,18 +119,18 @@ describe('FeedbackService', () => {
 
       expect(spectator.service.takeScreenshot).toHaveBeenCalled();
 
-      expect(fileUploadService.upload2).toHaveBeenCalledTimes(3);
-      expect(fileUploadService.upload2).toHaveBeenCalledWith(fakeScreenshot, 'support.attach_ticket', [{
+      expect(fileUploadService.upload).toHaveBeenCalledTimes(3);
+      expect(fileUploadService.upload).toHaveBeenCalledWith(fakeScreenshot, 'support.attach_ticket', [{
         token: 'test-token',
         ticket: 1,
         filename: 'screenshot.png',
       }]);
-      expect(fileUploadService.upload2).toHaveBeenCalledWith(file1, 'support.attach_ticket', [{
+      expect(fileUploadService.upload).toHaveBeenCalledWith(file1, 'support.attach_ticket', [{
         token: 'test-token',
         ticket: 1,
         filename: 'file1.png',
       }]);
-      expect(fileUploadService.upload2).toHaveBeenCalledWith(file2, 'support.attach_ticket', [{
+      expect(fileUploadService.upload).toHaveBeenCalledWith(file2, 'support.attach_ticket', [{
         token: 'test-token',
         ticket: 1,
         filename: 'file2.png',
