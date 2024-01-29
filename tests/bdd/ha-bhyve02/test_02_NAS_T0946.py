@@ -292,11 +292,14 @@ def switch_to_the_virtual_hostname_virtual_hostname_and_login(driver, virtual_ho
 def on_the_virtual_hostname_dashboard_save_the_network_interface_changes(driver):
     """on the virtual hostname Dashboard Save the network interface changes."""
     assert wait_on_element(driver, 7, xpaths.dashboard.title)
-    assert wait_on_element(driver, 7, '//h1[contains(.,"Save Changes")]')
-    assert wait_on_element(driver, 7, xpaths.button.save, 'clickable')
-    driver.find_element_by_xpath(xpaths.button.save).click()
+    assert wait_on_element(driver, 7, xpaths.popup.save_changes)
+    rsc.Click_On_Element(driver, f'({xpaths.button.Continue})[2]')
     assert wait_on_element_disappear(driver, 20, xpaths.popup.please_Wait)
-
+    rsc.Click_On_Element(driver, xpaths.button.Continue)
+    assert wait_on_element(driver, 10, xpaths.network.title)
+    rsc.Click_On_Element(driver, xpaths.button.save_changes)
+    assert wait_on_element(driver, 10, xpaths.popup.save_changes)
+    rsc.Click_On_Element(driver, xpaths.button.save)
 
 @then('navigate to Storage then click the gear icon and click Disks')
 def navigate_to_storage_then_click_the_gear_icon_and_click_disks(driver):

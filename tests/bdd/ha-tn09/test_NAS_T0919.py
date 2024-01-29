@@ -288,7 +288,7 @@ def please_wait_should_appear_while_settings_are_being_applied(driver):
     assert wait_on_element(driver, 0.5, 30, '//h6[contains(.,"Please wait")]')
     assert wait_on_element(driver, 0.5, 30, '//button[contains(.,"SAVE CHANGES")]')
     driver.find_element_by_xpath('//button[contains(.,"SAVE CHANGES")]').click()
-    assert wait_on_element(driver, 0.5, 30, '//h1[contains(.,"Save Changes")]')
+    assert wait_on_element(driver, 0.5, 30, xpaths.popup.save_changes)
     driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
     assert wait_on_element(driver, 0.5, 30, '//button[@ix-auto="button__CLOSE"]')
     driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()

@@ -142,9 +142,9 @@ def when_save_changes_appear_click_the_save_changes_button(driver):
     """when Save Changes appear click the "Save Changes" button."""
     assert wait_on_element_disappear(driver, 65, xpaths.popup.please_Wait)
     assert wait_on_element(driver, 10, xpaths.network.title)
-    assert wait_on_element(driver, 7, '//button[@data-test="button-save-changes"]', 'clickable')
-    driver.find_element_by_xpath('//button[@data-test="button-save-changes"]').click()
-    assert wait_on_element(driver, 10, '//h1[contains(.,"Save Changes")]')
+    assert wait_on_element(driver, 7, xpaths.button.save_changes, 'clickable')
+    driver.find_element_by_xpath(xpaths.button.save_changes).click()
+    assert wait_on_element(driver, 10, xpaths.popup.save_changes)
     assert wait_on_element(driver, 7, xpaths.button.save, 'clickable')
     driver.find_element_by_xpath(xpaths.button.save).click()
 
