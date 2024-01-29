@@ -11,7 +11,7 @@ import { select, Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { environment } from 'environments/environment';
 import {
-  EMPTY, finalize, forkJoin, Observable, of, switchMap, throwError,
+  finalize, forkJoin, Observable, of, switchMap, throwError,
 } from 'rxjs';
 import {
   catchError, filter, map, take,
@@ -29,6 +29,7 @@ import { FeedbackService } from 'app/modules/feedback/services/feedback.service'
 import { ImageValidatorService } from 'app/modules/ix-forms/validators/image-validator/image-validator.service';
 import { rangeValidator } from 'app/modules/ix-forms/validators/range-validation/range-validation';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { AppState } from 'app/store';
@@ -70,6 +71,7 @@ export class FileReviewComponent {
     private feedbackService: FeedbackService,
     private translate: TranslateService,
     private snackbar: SnackbarService,
+    private dialogService: DialogService,
     @Inject(WINDOW) private window: Window,
   ) {}
 
@@ -80,13 +82,16 @@ export class FileReviewComponent {
       switchMap((review) => this.addReview(review)),
       switchMap((reviewAdded) => {
         return this.addAttachmentsIfNeeded(reviewAdded.review_id).pipe(
-          catchError(() => {
-            // Silently fail if attachments were not uploaded.
-            return EMPTY;
+          catchError((error) => {
+            this.dialogService.error({
+              title: this.translate.instant(helptext.attachmentsFailed.title),
+              message: this.translate.instant(helptext.attachmentsFailed.reviewMessage),
+            });
+
+            return of(error);
           }),
         );
       }),
-      this.errorHandler.catchError(),
       finalize(() => this.isLoadingChange.emit(false)),
       untilDestroyed(this),
     )

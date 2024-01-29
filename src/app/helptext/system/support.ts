@@ -133,5 +133,6 @@ export const helptextSystemSupport = {
   attachmentsFailed: {
     title: T('Attachments not uploaded'),
     message: T('Ticket was created, but we were unable to upload one or more attachments.'),
+    reviewMessage: T('Review was created, but we were unable to upload one or more attachments.'),
   },
 };
