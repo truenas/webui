@@ -172,11 +172,8 @@ def set_checkbox(driver: classmethod, xpath: str) -> None:
 
 def set_checkbox_by_state(driver: classmethod, xpath: str, state: bool) -> None:
     assert wait_on_element(driver, 5, xpath, 'clickable')
-    print(driver.find_element_by_xpath(f'{xpath}//input').get_property('checked'), state)
     if driver.find_element_by_xpath(f'{xpath}//input').get_property('checked') != state:
-        print(driver.find_element_by_xpath(f'{xpath}//input').get_property('checked'), state)
         driver.find_element_by_xpath(xpath).click()
-    print(driver.find_element_by_xpath(f'{xpath}//input').get_property('checked'), state)
     assert driver.find_element_by_xpath(f'{xpath}//input').get_property('checked') == state
 
 
