@@ -3,10 +3,10 @@ import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import filesize from 'filesize';
 import { filter, switchMap } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { DiskType } from 'app/enums/disk-type.enum';
+import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
 import { UnusedDisk } from 'app/interfaces/storage.interface';
 import { DiskTypeSizeMap } from 'app/pages/storage/modules/pool-manager/interfaces/disk-type-size-map.interface';
 import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
@@ -45,7 +45,7 @@ export class InventoryComponent implements OnInit {
   }
 
   getFilesize(size: string): string {
-    return filesize(Number(size), { standard: 'iec' });
+    return buildNormalizedFileSize(Number(size));
   }
 
   orderBySize(a: KeyValue<string, UnusedDisk[]>, b: KeyValue<string, UnusedDisk[]>): number {

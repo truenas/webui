@@ -105,7 +105,7 @@
       {{ 'Space' | translate }}
     </th>
     <td *matCellDef="let bootenv; dataSource: dataSource" mat-cell>
-      {{ bootenv.rawspace | filesize: { standard: 'iec', round: 0 } }}
+      {{ bootenv.rawspace | ixFileSize }}
     </td>
   </ng-container>
 

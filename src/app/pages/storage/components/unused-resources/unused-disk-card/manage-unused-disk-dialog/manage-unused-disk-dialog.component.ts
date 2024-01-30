@@ -6,10 +6,10 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import filesize from 'filesize';
 import * as _ from 'lodash';
 import { Observable, of } from 'rxjs';
 import { PoolStatus } from 'app/enums/pool-status.enum';
+import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
 import { Option, SelectOption } from 'app/interfaces/option.interface';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { AddToPoolType, ManageUnusedDiskDialogResource } from 'app/pages/storage/components/unused-resources/unused-disk-card/manage-unused-disk-dialog/manage-unused-disk-dialog.interface';
@@ -64,7 +64,7 @@ export class ManageUnusedDiskDialogComponent implements OnInit {
   get groupedDisks(): { formattedDisk: string; exportedPool: string }[] {
     const diskInfoFormats = this.resource.unusedDisks.map((disk) => {
       return {
-        detailedDisk: `${filesize(disk.size, { standard: 'iec' })} ${disk.subsystem === 'nvme' ? disk.subsystem.toUpperCase() : disk.type}`,
+        detailedDisk: `${buildNormalizedFileSize(disk.size)} ${disk.subsystem === 'nvme' ? disk.subsystem.toUpperCase() : disk.type}`,
         exportedPool: disk.exported_zpool,
       };
     });

@@ -6,10 +6,10 @@ import { Router } from '@angular/router';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import filesize from 'filesize';
 import { PoolCardIconType } from 'app/enums/pool-card-icon-type.enum';
 import { PoolStatus } from 'app/enums/pool-status.enum';
 import { TopologyWarning, VdevType } from 'app/enums/v-dev-type.enum';
+import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
 import { Pool, PoolTopology } from 'app/interfaces/pool.interface';
 import { SmartTestResult } from 'app/interfaces/smart-test.interface';
 import {
@@ -158,7 +158,7 @@ export class TopologyCardComponent implements OnInit, OnChanges {
       || warning.includes(TopologyWarning.MixedDiskCapacity);
 
     if (!isMixedVdevCapacity && size) {
-      outputString += filesize(size, { standard: 'iec' });
+      outputString += buildNormalizedFileSize(size);
     } else if (isMixedVdevCapacity) {
       outputString += this.translate.instant('Mixed Capacity');
     } else {
