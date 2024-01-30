@@ -12,7 +12,7 @@ import { WebSocketService } from 'app/services/ws.service';
 
 interface SmartTestResultsRow extends SmartTestResult {
   disk: string;
-  id: number;
+  identifier: string;
 }
 
 @UntilDestroy()
@@ -37,7 +37,7 @@ export class SmartResultsComponent implements EntityTableConfig {
   };
 
   columns = [
-    { name: this.translate.instant('ID'), prop: 'id', always_display: true },
+    { name: this.translate.instant('ID'), prop: 'num', always_display: true },
     { name: this.translate.instant('Disk'), prop: 'disk', always_display: true },
     { name: this.translate.instant('Description'), prop: 'description' },
     { name: this.translate.instant('Status'), prop: 'status' },
@@ -91,7 +91,12 @@ export class SmartResultsComponent implements EntityTableConfig {
     const rows: SmartTestResultsRow[] = [];
     data.forEach((item) => {
       item?.tests.forEach((test) => {
-        rows.push({ ...test, disk: item.disk, id: test.num });
+        rows.push({
+          ...test,
+          identifier: item.identifier,
+          disk: item.disk,
+          num: test.num,
+        });
       });
     });
     return rows;
