@@ -67,14 +67,28 @@ describe('IpmiFormComponent', () => {
       mockWebSocket([
         mockCall('failover.licensed', true),
         mockCall('failover.node', 'A'),
-        mockCall('ipmi.lan.query', [{
-          channel: 1,
-          ip_address_source: IpmiIpAddressSource.Static,
-          default_gateway_ip_address: '10.220.0.1',
-          id: 1,
-          ip_address: '10.220.15.114',
-          subnet_mask: '255.255.240.0',
-        }] as Ipmi[]),
+        mockCall('ipmi.lan.query', (params) => {
+          if (params?.length ? params[0]['ipmi-options']['query-remote'] : false) {
+            // TODO: Not correct. Figure out how to solve this for query endpoints.
+            return [{
+              channel: 1,
+              ip_address_source: IpmiIpAddressSource.Static,
+              default_gateway_ip_address: '10.220.0.2',
+              id: 1,
+              ip_address: '10.220.15.115',
+              subnet_mask: '255.255.240.0',
+            }] as Ipmi[];
+          }
+
+          return [{
+            channel: 1,
+            ip_address_source: IpmiIpAddressSource.Static,
+            default_gateway_ip_address: '10.220.0.1',
+            id: 1,
+            ip_address: '10.220.15.114',
+            subnet_mask: '255.255.240.0',
+          }] as Ipmi[];
+        }),
         mockCall('ipmi.lan.update', {
           channel: 1,
           ip_address_source: IpmiIpAddressSource.Static,
@@ -123,7 +137,7 @@ describe('IpmiFormComponent', () => {
       });
     });
 
-    it.skip('loads remote controller data', async () => {
+    it('loads remote controller data', async () => {
       const remoteController = await loader.getHarness(IxRadioGroupHarness);
       form = await loader.getHarness(IxFormHarness);
       await remoteController.setValue('Standby: TrueNAS Controller 2');
