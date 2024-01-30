@@ -192,7 +192,9 @@ export class IpmiFormComponent implements OnInit {
         switchMap((controlState) => {
           this.isLoading = true;
           isUsingRemote = controlState;
-          this.queryParams[0]['ipmi-options']['query-remote'] = controlState;
+          if (this.queryParams?.length) {
+            this.queryParams[0]['ipmi-options']['query-remote'] = controlState;
+          }
 
           if (isUsingRemote) {
             return this.remoteControllerData
