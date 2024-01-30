@@ -102,8 +102,7 @@ def change_the_users_email_to_an_invalid_email_ie_email_and_click_save(driver, i
     assert wait_on_element(driver, 7, xpaths.add_User.email_Input, 'inputable')
     driver.find_element_by_xpath(xpaths.add_User.email_Input).clear()
     driver.find_element_by_xpath(xpaths.add_User.email_Input).send_keys(invalid_email)
-    # assert wait_on_element(driver, 7, xpaths.button.save, 'clickable')
-    driver.find_element_by_xpath(xpaths.button.save).click()
+    assert wait_on_element(driver, 5, xpaths.button.save, 'clickable') is False
 
 
 @then('You should not be allowed to save the invalid email')
