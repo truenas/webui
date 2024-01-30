@@ -5,6 +5,7 @@
 import time
 import glob
 import os
+import reusableSeleniumCode as rsc
 import xpaths
 from function import (
     wait_on_element,
@@ -80,8 +81,7 @@ def on_the_waring_box_click_continue(driver):
 @then('on the Kerberos Keytab card click Add')
 def on_the_kerberos_keytab_card_click_add(driver):
     """on the Kerberos Keytab card click Add."""
-    assert wait_on_element(driver, 7, xpaths.directory_Services.kerberos_Keytab_Add_Button, 'clickable')
-    driver.find_element_by_xpath(xpaths.directory_Services.kerberos_Keytab_Add_Button).click()
+    rsc.Click_On_Element(driver, xpaths.directory_Services.kerberos_Keytab_Add_Button)
 
 
 @then(parsers.parse('decode the tabfile with "{tabfile_string}"'))
@@ -121,4 +121,4 @@ def click_save_and_verify_that_the_file_was_accepted_and_utilized(driver):
     driver.find_element_by_xpath(xpaths.button.save).click()
     assert wait_on_element_disappear(driver, 10, xpaths.popup.please_Wait)
     assert wait_on_element(driver, 7, xpaths.directory_Services.title)
-    assert wait_on_element(driver, 7, '//mat-card[contains(.,"Kerberos Keytab")]//div[contains(text(),"keytab_test")]')
+    assert wait_on_element(driver, 7, '//ix-kerberos-keytabs-list//span[contains(text(),"keytab_test")]')
