@@ -10,7 +10,8 @@ from function import (
     wait_on_element,
     is_element_present,
     wait_on_element_disappear,
-    ssh_cmd
+    ssh_cmd,
+    service_Start
 )
 from pytest_bdd import (
     given,
@@ -48,6 +49,8 @@ def if_the_login_page_appears_enter_root_and_testing(driver, user, password):
     root_password = password
     os.environ["nas_password"] = password
     rsc.Login_If_Not_On_Dashboard(driver, user, password)
+    # TODO: remove when https://ixsystems.atlassian.net/browse/NAS-127071 is fixed.
+    service_Start(host, (user, password), 'cifs')
 
 
 @then('on the Dashboard, click Network on the left sidebar')
