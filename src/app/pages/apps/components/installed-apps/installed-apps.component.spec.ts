@@ -636,6 +636,7 @@ describe('Redirect to install app', () => {
   });
 });
 
+// TODO: Why is this here?
 describe('Install app', () => {
   let spectator: Spectator<ChartWizardComponent>;
   let loader: HarnessLoader;
@@ -684,6 +685,7 @@ describe('Install app', () => {
           routeConfig: { path: 'install' },
         },
       },
+      mockAuth(),
     ],
   });
 
