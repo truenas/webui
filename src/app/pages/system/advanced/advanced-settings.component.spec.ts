@@ -1,7 +1,7 @@
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { MockComponents } from 'ng-mocks';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { AccessCardComponent } from 'app/pages/system/advanced/access/access-card/access-card.component';
 import { AdvancedSettingsComponent } from 'app/pages/system/advanced/advanced-settings.component';
 import {
@@ -51,7 +51,7 @@ describe('AdvancedSettingsComponent', () => {
       ),
     ],
     providers: [
-      mockWebsocket([
+      mockWebSocket([
         mockCall('system.security.info.fips_available', true),
       ]),
       mockAuth(),

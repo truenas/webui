@@ -2,7 +2,7 @@ import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { createServiceFactory, mockProvider, SpectatorService } from '@ngneat/spectator/jest';
 import { BehaviorSubject, firstValueFrom, of } from 'rxjs';
 import { TiB } from 'app/constants/bytes.constant';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { DiskType } from 'app/enums/disk-type.enum';
 import { CreateVdevLayout, VdevType } from 'app/enums/v-dev-type.enum';
 import { Enclosure } from 'app/interfaces/enclosure.interface';
@@ -54,7 +54,7 @@ describe('PoolManagerStore', () => {
   const createService = createServiceFactory({
     service: PoolManagerStore,
     providers: [
-      mockWebsocket([
+      mockWebSocket([
         mockCall('disk.get_unused', disks),
         mockCall('enclosure.query', enclosures),
       ]),

@@ -8,7 +8,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { helptextVolumes } from 'app/helptext/storage/volumes/volume-list';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { Job } from 'app/interfaces/job.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
+import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DialogService } from 'app/services/dialog.service';
@@ -52,7 +52,7 @@ export class LockDatasetDialogComponent {
         this.snackbar.success(this.translate.instant('Dataset locked'));
         this.dialogRef.close(true);
       },
-      error: (error: WebsocketError | Job) => {
+      error: (error: WebSocketError | Job) => {
         this.dialogService.error(this.errorHandler.parseError(error));
       },
     });
@@ -62,7 +62,7 @@ export class LockDatasetDialogComponent {
         this.dialogRef.close(true);
         this.dialogService.error(this.errorHandler.parseError(job));
       },
-      error: (error: WebsocketError | Job) => {
+      error: (error: WebSocketError | Job) => {
         this.dialogService.error(this.errorHandler.parseError(error));
       },
     });

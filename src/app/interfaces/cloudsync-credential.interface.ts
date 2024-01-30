@@ -1,23 +1,23 @@
-import { CloudsyncProviderName } from 'app/enums/cloudsync-provider.enum';
+import { CloudSyncProviderName } from 'app/enums/cloudsync-provider.enum';
 
-export interface CloudsyncCredential {
+export interface CloudSyncCredential {
   attributes: Record<string, string | number | boolean>;
   id: number;
   name: string;
-  provider: CloudsyncProviderName;
+  provider: CloudSyncProviderName;
 }
 
-export type CloudsyncCredentialUpdate = Omit<CloudsyncCredential, 'id'>;
+export type CloudSyncCredentialUpdate = Omit<CloudSyncCredential, 'id'>;
 
-export type CloudsyncCredentialVerify = Pick<CloudsyncCredential, 'provider' | 'attributes'>;
+export type CloudSyncCredentialVerify = Pick<CloudSyncCredential, 'provider' | 'attributes'>;
 
-export interface CloudsyncCredentialVerifyResult {
+export interface CloudSyncCredentialVerifyResult {
   error?: string;
   excerpt?: string;
   valid: boolean;
 }
 
-export interface CloudsyncBucket {
+export interface CloudSyncBucket {
   Name: string;
   Path: string;
   Enabled: boolean;

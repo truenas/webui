@@ -1185,7 +1185,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
 
   // focus state styles for mat-form-field
   .mat-mdc-form-field.mat-focused:focus-within {
-    outline: 1px solid var(--primary);
+    outline: 1.5px solid var(--primary);
   }
 
   .error-warning-icon {

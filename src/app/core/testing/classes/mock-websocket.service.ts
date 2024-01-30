@@ -13,7 +13,7 @@ import { ApiEventDirectory } from 'app/interfaces/api/api-event-directory.interf
 import { ApiJobDirectory, ApiJobMethod, ApiJobParams } from 'app/interfaces/api/api-job-directory.interface';
 import { ApiEvent } from 'app/interfaces/api-message.interface';
 import { Job } from 'app/interfaces/job.interface';
-import { WebsocketConnectionService } from 'app/services/websocket-connection.service';
+import { WebSocketConnectionService } from 'app/services/websocket-connection.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 /**
@@ -22,25 +22,25 @@ import { WebSocketService } from 'app/services/ws.service';
 const anyArgument = when((_: unknown) => true);
 
 /**
- * MockWebsocketService can be used to update websocket mocks on the fly.
- * For initial setup prefer mockWebsocket();
+ * MockWebSocketService can be used to update websocket mocks on the fly.
+ * For initial setup prefer mockWebSocket();
  *
  * To update on the fly:
  * @example
  * ```
  * // In test case:
- * const websocketService = spectator.inject(MockWebsocketService);
+ * const websocketService = spectator.inject(MockWebSocketService);
  * websocketService.mockCallOnce('filesystem.stat', { gid: 5 } as FileSystemStat);
  * ```
  */
 @Injectable()
-export class MockWebsocketService extends WebSocketService {
+export class MockWebSocketService extends WebSocketService {
   private subscribeStream$ = new Subject<ApiEvent>();
   private jobIdCounter = 1;
 
   constructor(
     protected router: Router,
-    protected wsManager: WebsocketConnectionService,
+    protected wsManager: WebSocketConnectionService,
     protected translate: TranslateService,
   ) {
     super(router, wsManager, translate);

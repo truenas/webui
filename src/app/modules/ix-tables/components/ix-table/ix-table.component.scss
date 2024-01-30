@@ -41,6 +41,15 @@
     font-size: 12px;
     font-weight: 500;
     letter-spacing: 0.3px;
+
+    .mat-sort-header-content {
+      -webkit-box-orient: vertical;
+      display: inline-box;
+      -webkit-line-clamp: 2;
+      overflow: hidden;
+      white-space: normal;
+      word-break: break-word;
+    }
   }
 
   tbody td {

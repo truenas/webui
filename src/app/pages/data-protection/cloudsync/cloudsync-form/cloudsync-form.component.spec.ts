@@ -5,8 +5,8 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
-import { CloudsyncProviderName } from 'app/enums/cloudsync-provider.enum';
+import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { CloudSyncProviderName } from 'app/enums/cloudsync-provider.enum';
 import { Direction } from 'app/enums/direction.enum';
 import { mntPath } from 'app/enums/mnt-path.enum';
 import { TransferMode } from 'app/enums/transfer-mode.enum';
@@ -15,7 +15,7 @@ import { CloudCredentialsSelectModule } from 'app/modules/custom-selects/cloud-c
 import { CHAINED_SLIDE_IN_REF, SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { SchedulerModule } from 'app/modules/scheduler/scheduler.module';
-import { CloudsyncFormComponent } from 'app/pages/data-protection/cloudsync/cloudsync-form/cloudsync-form.component';
+import { CloudSyncFormComponent } from 'app/pages/data-protection/cloudsync/cloudsync-form/cloudsync-form.component';
 import {
   TransferModeExplanationComponent,
 } from 'app/pages/data-protection/cloudsync/transfer-mode-explanation/transfer-mode-explanation.component';
@@ -24,7 +24,7 @@ import { FilesystemService } from 'app/services/filesystem.service';
 import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 
-describe('CloudsyncFormComponent', () => {
+describe('CloudSyncFormComponent', () => {
   const existingTask = {
     id: 1,
     description: 'New Cloud Sync Task',
@@ -74,12 +74,12 @@ describe('CloudsyncFormComponent', () => {
   } as CloudSyncTaskUi;
 
   let loader: HarnessLoader;
-  let spectator: Spectator<CloudsyncFormComponent>;
+  let spectator: Spectator<CloudSyncFormComponent>;
   const chainedComponentRef = {
     close: jest.fn(),
   };
   const createComponent = createComponentFactory({
-    component: CloudsyncFormComponent,
+    component: CloudSyncFormComponent,
     imports: [
       IxFormsModule,
       SchedulerModule,
@@ -92,14 +92,14 @@ describe('CloudsyncFormComponent', () => {
     providers: [
       mockAuth(),
       mockProvider(DialogService),
-      mockWebsocket([
+      mockWebSocket([
         mockCall('cloudsync.create', existingTask),
         mockCall('cloudsync.update', existingTask),
         mockCall('cloudsync.credentials.query', [
           {
             id: 1,
             name: 'test1',
-            provider: CloudsyncProviderName.Http,
+            provider: CloudSyncProviderName.Http,
             attributes: {
               url: 'http',
             },
@@ -107,7 +107,7 @@ describe('CloudsyncFormComponent', () => {
           {
             id: 2,
             name: 'test2',
-            provider: CloudsyncProviderName.Mega,
+            provider: CloudSyncProviderName.Mega,
             attributes: {
               user: 'login',
               pass: 'password',
@@ -115,7 +115,7 @@ describe('CloudsyncFormComponent', () => {
           },
         ]),
         mockCall('cloudsync.providers', [{
-          name: CloudsyncProviderName.Http,
+          name: CloudSyncProviderName.Http,
           title: 'Http',
           buckets: false,
           bucket_title: 'Bucket',
@@ -124,7 +124,7 @@ describe('CloudsyncFormComponent', () => {
           credentials_oauth: null,
         },
         {
-          name: CloudsyncProviderName.Mega,
+          name: CloudSyncProviderName.Mega,
           title: 'Mega',
           buckets: false,
           bucket_title: 'Bucket',

@@ -13,4 +13,5 @@ import {
 })
 export class TestOverrideDirective {
   @Input('ixTestOverride') overrideDescription: number | string | (string | number)[];
+  @Input() keepLastPart?: boolean;
 }

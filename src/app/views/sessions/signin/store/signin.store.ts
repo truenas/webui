@@ -19,7 +19,7 @@ import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { UpdateService } from 'app/services/update.service';
-import { WebsocketConnectionService } from 'app/services/websocket-connection.service';
+import { WebSocketConnectionService } from 'app/services/websocket-connection.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 interface SigninState {
@@ -65,7 +65,7 @@ export class SigninStore extends ComponentStore<SigninState> {
     private systemGeneralService: SystemGeneralService,
     private router: Router,
     private snackbar: MatSnackBar,
-    private wsManager: WebsocketConnectionService,
+    private wsManager: WebSocketConnectionService,
     private errorHandler: ErrorHandlerService,
     private authService: AuthService,
     private updateService: UpdateService,

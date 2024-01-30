@@ -69,12 +69,12 @@ import {
   CloudSyncTaskUpdate,
 } from 'app/interfaces/cloud-sync-task.interface';
 import {
-  CloudsyncBucket,
-  CloudsyncCredential,
-  CloudsyncCredentialUpdate,
-  CloudsyncCredentialVerify, CloudsyncCredentialVerifyResult,
+  CloudSyncBucket,
+  CloudSyncCredential,
+  CloudSyncCredentialUpdate,
+  CloudSyncCredentialVerify, CloudSyncCredentialVerifyResult,
 } from 'app/interfaces/cloudsync-credential.interface';
-import { CloudsyncProvider, CloudsyncRestoreParams } from 'app/interfaces/cloudsync-provider.interface';
+import { CloudSyncProvider, CloudSyncRestoreParams } from 'app/interfaces/cloudsync-provider.interface';
 import { ContainerConfig, ContainerConfigUpdate } from 'app/interfaces/container-config.interface';
 import {
   ContainerImage, DeleteContainerImageParams,
@@ -315,6 +315,7 @@ export interface ApiCallDirectory {
   'audit.config': { params: void; response: AuditConfig };
   'audit.query': { params: [AuditQueryParams]; response: AuditEntry[] };
   'audit.update': { params: [AuditConfig]; response: AuditEntry[] };
+  'audit.download_report': { params: [{ report_name?: string }]; response: string[] };
 
   // Auth
   'auth.generate_token': { params: void; response: string };
@@ -377,21 +378,21 @@ export interface ApiCallDirectory {
   'chart.release.query': { params: ChartReleaseQueryParams; response: ChartRelease[] };
   'chart.release.upgrade_summary': { params: ChartReleaseUpgradeParams; response: UpgradeSummary };
 
-  // Cloudsync
+  // CloudSync
   'cloudsync.abort': { params: [id: number]; response: boolean };
   'cloudsync.create': { params: [CloudSyncTaskUpdate]; response: CloudSyncTask };
   'cloudsync.create_bucket': { params: [number, string]; response: void };
-  'cloudsync.credentials.create': { params: [CloudsyncCredentialUpdate]; response: CloudsyncCredential };
+  'cloudsync.credentials.create': { params: [CloudSyncCredentialUpdate]; response: CloudSyncCredential };
   'cloudsync.credentials.delete': { params: [id: number]; response: boolean };
-  'cloudsync.credentials.query': { params: QueryParams<CloudsyncCredential>; response: CloudsyncCredential[] };
-  'cloudsync.credentials.update': { params: [id: number, update: CloudsyncCredentialUpdate]; response: CloudsyncCredential };
-  'cloudsync.credentials.verify': { params: [CloudsyncCredentialVerify]; response: CloudsyncCredentialVerifyResult };
+  'cloudsync.credentials.query': { params: QueryParams<CloudSyncCredential>; response: CloudSyncCredential[] };
+  'cloudsync.credentials.update': { params: [id: number, update: CloudSyncCredentialUpdate]; response: CloudSyncCredential };
+  'cloudsync.credentials.verify': { params: [CloudSyncCredentialVerify]; response: CloudSyncCredentialVerifyResult };
   'cloudsync.delete': { params: [id: number]; response: boolean };
-  'cloudsync.list_buckets': { params: [id: number]; response: CloudsyncBucket[] };
+  'cloudsync.list_buckets': { params: [id: number]; response: CloudSyncBucket[] };
   'cloudsync.list_directory': { params: [CloudSyncListDirectoryParams]; response: CloudSyncDirectoryListing[] };
-  'cloudsync.providers': { params: void; response: CloudsyncProvider[] };
+  'cloudsync.providers': { params: void; response: CloudSyncProvider[] };
   'cloudsync.query': { params: QueryParams<CloudSyncTask>; response: CloudSyncTask[] };
-  'cloudsync.restore': { params: CloudsyncRestoreParams; response: void };
+  'cloudsync.restore': { params: CloudSyncRestoreParams; response: void };
   'cloudsync.update': { params: [id: number, task: CloudSyncTaskUpdate]; response: CloudSyncTask };
 
   // Container
@@ -777,7 +778,6 @@ export interface ApiCallDirectory {
   'system.general.update': { params: [SystemGeneralConfigUpdate]; response: SystemGeneralConfig };
   'system.host_id': { params: void; response: string };
   'system.info': { params: void; response: SystemInfo };
-  'system.is_ix_hardware': { params: void; response: boolean };
   'system.is_stable': { params: void; response: boolean };
   'system.license': { params: void; response: null | object };
   'system.license_update': { params: [license: string]; response: void };
@@ -805,6 +805,7 @@ export interface ApiCallDirectory {
   'truenas.get_eula': { params: void; response: string };
   'truenas.is_eula_accepted': { params: void; response: boolean };
   'truenas.is_production': { params: void; response: boolean };
+  'truenas.is_ix_hardware': { params: void; response: boolean };
 
   // Tunable
   'tunable.query': { params: QueryParams<Tunable>; response: Tunable[] };

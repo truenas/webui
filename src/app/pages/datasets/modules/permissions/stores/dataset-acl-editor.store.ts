@@ -19,7 +19,7 @@ import {
   Acl, AclTemplateByPath, NfsAclItem, PosixAclItem, SetAcl,
 } from 'app/interfaces/acl.interface';
 import { Job } from 'app/interfaces/job.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
+import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import {
   AclSaveFormParams,
@@ -203,7 +203,7 @@ export class DatasetAclEditorStore extends ComponentStore<DatasetAclEditorState>
             dialogRef.close();
             this.router.navigate(ngUrl);
           },
-          error: (error: WebsocketError | Job) => {
+          error: (error: WebSocketError | Job) => {
             dialogRef.close();
             this.dialogService.error(this.errorHandler.parseError(error));
           },
@@ -213,7 +213,7 @@ export class DatasetAclEditorStore extends ComponentStore<DatasetAclEditorState>
             dialogRef.close();
             this.dialogService.error(this.errorHandler.parseError(failedJob));
           },
-          error: (error: WebsocketError | Job) => {
+          error: (error: WebSocketError | Job) => {
             dialogRef.close();
             this.dialogService.error(this.errorHandler.parseError(error));
           },

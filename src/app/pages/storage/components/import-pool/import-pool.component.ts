@@ -18,7 +18,7 @@ import { Dataset } from 'app/interfaces/dataset.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { PoolFindResult } from 'app/interfaces/pool-import.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
+import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { DialogService } from 'app/services/dialog.service';
@@ -84,7 +84,7 @@ export class ImportPoolComponent implements OnInit {
         this.pool.options = of(opts);
         this.cdr.markForCheck();
       },
-      error: (error: WebsocketError | Job) => {
+      error: (error: WebSocketError | Job) => {
         this.isLoading = false;
         this.cdr.markForCheck();
 
@@ -117,7 +117,7 @@ export class ImportPoolComponent implements OnInit {
           this.router.navigate(['/datasets', datasets[0].id, 'unlock']);
         }
       },
-      error: (error: WebsocketError | Job) => {
+      error: (error: WebSocketError | Job) => {
         this.dialogService.error(this.errorHandler.parseError(error));
       },
     });
@@ -127,13 +127,13 @@ export class ImportPoolComponent implements OnInit {
         this.isLoading = false;
         this.errorReport(failureData);
       },
-      error: (error: WebsocketError | Job) => {
+      error: (error: WebSocketError | Job) => {
         this.dialogService.error(this.errorHandler.parseError(error));
       },
     });
   }
 
-  errorReport(error: Job | WebsocketError): void {
+  errorReport(error: Job | WebSocketError): void {
     if ('reason' in error && error.reason && error.trace) {
       this.dialogService.error({
         title: this.translate.instant('Error importing pool'),

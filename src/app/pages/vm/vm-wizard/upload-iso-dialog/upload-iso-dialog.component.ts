@@ -1,8 +1,12 @@
+import { HttpEventType, HttpProgressEvent, HttpResponse } from '@angular/common/http';
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import {
+  catchError, of, tap,
+} from 'rxjs';
 import { mntPath } from 'app/enums/mnt-path.enum';
 import { helptextVmWizard } from 'app/helptext/vm/vm-wizard/vm-wizard';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
@@ -43,25 +47,29 @@ export class UploadIsoDialogComponent {
     const uploadPath = `${path}/${file.name}`;
 
     this.loader.open();
-    this.uploadService.onUploading$.pipe(untilDestroyed(this)).subscribe({
-      next: (event) => {
-        const percentDone = Math.round(100 * event.loaded / event.total);
-        this.loader.setTitle(
-          this.translate.instant('{n}% Uploaded', { n: percentDone }),
-        );
-      },
-      error: (error: unknown) => {
-        this.loader.close();
-        this.dialogService.error(this.errorHandler.parseError(error));
-      },
-    });
-    this.uploadService.onUploaded$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.loader.close();
-      this.dialogRef.close(uploadPath);
-    });
 
     this.uploadService.upload(file, 'filesystem.put', [uploadPath, { mode: 493 }])
-      .pipe(untilDestroyed(this))
+      .pipe(
+        tap((event: HttpProgressEvent) => {
+          if (event instanceof HttpResponse) {
+            this.loader.close();
+            this.dialogRef.close(uploadPath);
+          }
+
+          if (event.type === HttpEventType.UploadProgress) {
+            const percentDone = Math.round(100 * event.loaded / event.total);
+            this.loader.setTitle(
+              this.translate.instant('{n}% Uploaded', { n: percentDone }),
+            );
+          }
+        }),
+        catchError((error) => {
+          this.loader.close();
+          this.dialogService.error(this.errorHandler.parseError(error));
+          return of(error);
+        }),
+        untilDestroyed(this),
+      )
       .subscribe();
   }
 }

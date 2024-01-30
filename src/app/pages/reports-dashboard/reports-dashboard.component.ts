@@ -92,7 +92,7 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy {
   activateTab(activeTab: ReportTab): void {
     const reportCategories = activeTab.value === ReportType.Disk ? this.diskReports : this.otherReports.filter(
       (report) => {
-        const graphName = report.name as ReportingGraphName;
+        const graphName = report.name;
         let condition;
         switch (activeTab.value) {
           case ReportType.Cpu:

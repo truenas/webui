@@ -3,7 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatIconHarness } from '@angular/material/icon/testing';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { TransferMode } from 'app/enums/transfer-mode.enum';
-import { helptextCloudsync } from 'app/helptext/data-protection/cloudsync/cloudsync';
+import { helptextCloudSync } from 'app/helptext/data-protection/cloudsync/cloudsync';
 import { TransferModeExplanationComponent } from './transfer-mode-explanation.component';
 
 describe('TransferModeExplanationComponent', () => {
@@ -31,6 +31,6 @@ describe('TransferModeExplanationComponent', () => {
   it('shows the transfer mode description', () => {
     const description = spectator.query('.description');
 
-    expect(description.innerHTML).toEqual(helptextCloudsync.transfer_mode_warning_sync);
+    expect(description.innerHTML).toEqual(helptextCloudSync.transfer_mode_warning_sync);
   });
 });

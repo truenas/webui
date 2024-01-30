@@ -6,7 +6,7 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { KiB } from 'app/constants/bytes.constant';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { IscsiExtentRpm, IscsiExtentType } from 'app/enums/iscsi.enum';
 import { mntPath } from 'app/enums/mnt-path.enum';
 import { Choices } from 'app/interfaces/choices.interface';
@@ -57,7 +57,7 @@ describe('ExtentFormComponent', () => {
       mockProvider(IxSlideInService),
       mockProvider(StorageService),
       mockProvider(DialogService),
-      mockWebsocket([
+      mockWebSocket([
         mockCall('iscsi.extent.create'),
         mockCall('iscsi.extent.update'),
         mockCall('iscsi.extent.disk_choices', {

@@ -6,12 +6,12 @@ import { TranslateService } from '@ngx-translate/core';
 import {
   BehaviorSubject, Observable, merge,
 } from 'rxjs';
-import { cloudsyncProviderNameMap } from 'app/enums/cloudsync-provider.enum';
+import { cloudSyncProviderNameMap } from 'app/enums/cloudsync-provider.enum';
 import { CloudSyncTask, CloudSyncTaskUpdate } from 'app/interfaces/cloud-sync-task.interface';
-import { CloudsyncCredential } from 'app/interfaces/cloudsync-credential.interface';
+import { CloudSyncCredential } from 'app/interfaces/cloudsync-credential.interface';
 import { CHAINED_SLIDE_IN_REF } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { CloudsyncWhatAndWhenComponent } from 'app/pages/data-protection/cloudsync/cloudsync-wizard/steps/cloudsync-what-and-when/cloudsync-what-and-when.component';
+import { CloudSyncWhatAndWhenComponent } from 'app/pages/data-protection/cloudsync/cloudsync-wizard/steps/cloudsync-what-and-when/cloudsync-what-and-when.component';
 import { CloudCredentialService } from 'app/services/cloud-credential.service';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
@@ -25,12 +25,12 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [CloudCredentialService],
 })
-export class CloudsyncWizardComponent {
-  @ViewChild(forwardRef(() => CloudsyncWhatAndWhenComponent)) whatAndWhen: CloudsyncWhatAndWhenComponent;
+export class CloudSyncWizardComponent {
+  @ViewChild(forwardRef(() => CloudSyncWhatAndWhenComponent)) whatAndWhen: CloudSyncWhatAndWhenComponent;
   isLoading$ = new BehaviorSubject(false);
   isProviderLoading$ = new BehaviorSubject(false);
   mergedLoading$: Observable<boolean> = merge(this.isLoading$, this.isProviderLoading$);
-  existingCredential: CloudsyncCredential;
+  existingCredential: CloudSyncCredential;
 
   constructor(
     @Inject(CHAINED_SLIDE_IN_REF) private chainedSlideInRef: ChainedComponentRef,
@@ -46,7 +46,7 @@ export class CloudsyncWizardComponent {
     return this.ws.call('cloudsync.create', [payload]);
   }
 
-  onProviderSaved(credential: CloudsyncCredential): void {
+  onProviderSaved(credential: CloudSyncCredential): void {
     this.existingCredential = credential;
     if (!credential) {
       return;
@@ -87,7 +87,7 @@ export class CloudsyncWizardComponent {
 
     const sourcePath = this.whatAndWhen?.form.controls.path_source.value.join(', ');
     this.whatAndWhen?.form.patchValue({
-      description: `${cloudsyncProviderNameMap.get(provider)} - ${sourcePath}`,
+      description: `${cloudSyncProviderNameMap.get(provider)} - ${sourcePath}`,
     });
     this.cdr.markForCheck();
   }
