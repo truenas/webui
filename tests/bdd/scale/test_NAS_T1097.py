@@ -83,8 +83,7 @@ def the_user_edit_page_should_open_change_the_user_email_with_invalid_email(driv
 @then('you should not be able to save the changes and an error message should appear')
 def you_should_not_be_able_to_save_the_changes_and_an_error_message_should_appear(driver):
     """you should not be able to save the changes and an error message should appear."""
-    wait_on_element(driver, 10, xpaths.button.save, 'clickable')
-    driver.find_element_by_xpath(xpaths.button.save).click()
+    assert wait_on_element(driver, 10, xpaths.button.save, 'clickable') is False
     assert wait_on_element(driver, 7, xpaths.add_User.email_Error_Message)
     time.sleep(0.5)
     assert wait_on_element(driver, 5, xpaths.button.close_Icon, 'clickable')
