@@ -28,6 +28,7 @@ import { IscsiService } from 'app/services/iscsi.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { UrlOptionsService } from 'app/services/url-options.service';
 import { WebSocketService } from 'app/services/ws.service';
+import { serviceDisabled, serviceEnabled } from 'app/store/services/services.actions';
 import { ServicesState } from 'app/store/services/services.reducer';
 import { waitForServices } from 'app/store/services/services.selectors';
 
@@ -217,13 +218,17 @@ export class ServicesComponent implements OnInit {
   }
 
   enableToggle(service: Service): void {
+    if (service.enable) {
+      this.store$.dispatch(serviceEnabled({ id: service.id }));
+    } else {
+      this.store$.dispatch(serviceDisabled({ id: service.id }));
+    }
+
     this.ws.call('service.update', [service.id, { enable: service.enable }])
       .pipe(untilDestroyed(this))
       .subscribe((updated) => {
         if (!updated) {
-          // To uncheck the checkbox
-          service.enable = false;
-          // Middleware should return the service id
+          this.store$.dispatch(serviceDisabled({ id: service.id }));
           throw new Error('Method service.update failed. No response from server');
         }
         this.cdr.markForCheck();
