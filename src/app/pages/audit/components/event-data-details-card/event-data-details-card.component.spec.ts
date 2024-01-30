@@ -1,7 +1,8 @@
-import { By } from '@angular/platform-browser';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
-import { AuditEvent } from 'app/enums/audit-event.enum';
-import { AuditEntry, AuditEventData } from 'app/interfaces/audit.interface';
+import { MockComponent } from 'ng-mocks';
+import { CopyButtonComponent } from 'app/core/components/copy-btn/copy-btn.component';
+import { AuditEvent, AuditService } from 'app/enums/audit.enum';
+import { AuditEntry } from 'app/interfaces/audit/audit.interface';
 import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
 import {
   EventDataDetailsCardComponent,
@@ -16,7 +17,7 @@ const logEntry = {
   address: '10.220.2.21',
   username: 'Administrator',
   session: '',
-  service: 'SMB',
+  service: AuditService.Smb,
   service_data: {
     vers: {
       major: 0,
@@ -56,11 +57,11 @@ const logEntry = {
       value_raw: 0,
       value_parsed: 'SUCCESS',
     },
-  } as unknown as AuditEventData,
+  },
   success: true,
 } as AuditEntry;
 
-const yamlContent = `Logon Id: '0'
+const yamlContent = `Logon ID: '0'
 Logon Type: 3
 Local Address: ipv4:10.238.238.168:445
 Remote Address: ipv4:10.220.2.21:10876
@@ -99,7 +100,9 @@ describe('EventDataDetailsCardComponent', () => {
     imports: [
       IxTable2Module,
     ],
-    providers: [],
+    declarations: [
+      MockComponent(CopyButtonComponent),
+    ],
   });
 
   beforeEach(() => {
@@ -116,7 +119,13 @@ describe('EventDataDetailsCardComponent', () => {
   });
 
   it('renders Event Data in Yaml format', () => {
-    const cardContent = spectator.debugElement.query(By.css('mat-card pre')).nativeElement as HTMLElement;
-    expect(cardContent.textContent).toContain(yamlContent);
+    const cardContent = spectator.query('mat-card pre');
+    expect(cardContent.textContent).toBe(yamlContent);
+  });
+
+  it('shows a Copy button', () => {
+    const copyButton = spectator.query(CopyButtonComponent);
+    expect(copyButton).toExist();
+    expect(copyButton.text).toBe(yamlContent);
   });
 });

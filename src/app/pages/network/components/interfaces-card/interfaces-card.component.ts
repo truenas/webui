@@ -11,10 +11,12 @@ import {
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
+import _ from 'lodash';
 import { BehaviorSubject, of } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
 import { NetworkInterfaceType } from 'app/enums/network-interface.enum';
-import helptext from 'app/helptext/network/interfaces/interfaces-list';
+import { Role } from 'app/enums/role.enum';
+import { helptextInterfaces } from 'app/helptext/network/interfaces/interfaces-list';
 import { NetworkInterface } from 'app/interfaces/network-interface.interface';
 import { AllNetworkInterfacesUpdate } from 'app/interfaces/reporting.interface';
 import { ArrayDataProvider } from 'app/modules/ix-table2/classes/array-data-provider/array-data-provider';
@@ -74,25 +76,29 @@ export class InterfacesCardComponent implements OnInit, OnChanges {
         },
         {
           iconName: 'refresh',
+          requiresRoles: [Role.NetworkInterfaceWrite],
           hidden: (row) => of(!this.isPhysical(row)),
           disabled: () => this.isHaEnabled$,
           dynamicTooltip: () => this.isHaEnabled$.pipe(map((isHaEnabled) => (isHaEnabled
-            ? this.translate.instant(helptext.ha_enabled_reset_msg)
+            ? this.translate.instant(helptextInterfaces.ha_enabled_reset_msg)
             : this.translate.instant('Reset configuration')))),
           onClick: (row) => this.onReset(row),
         },
         {
           iconName: 'delete',
-          tooltip: this.isHaEnabled ? this.translate.instant(helptext.ha_enabled_delete_msg) : '',
+          requiresRoles: [Role.NetworkInterfaceWrite],
+          tooltip: this.isHaEnabled ? this.translate.instant(helptextInterfaces.ha_enabled_delete_msg) : '',
           hidden: (row) => of(this.isPhysical(row)),
           onClick: (row) => this.onDelete(row),
           disabled: () => this.isHaEnabled$,
         },
       ],
     }),
-  ]);
+  ], {
+    rowTestId: (row) => 'interface-' + row.name,
+  });
 
-  readonly helptext = helptext;
+  readonly helptext = helptextInterfaces;
 
   constructor(
     private interfacesStore$: InterfacesStore,
@@ -117,10 +123,20 @@ export class InterfacesCardComponent implements OnInit, OnChanges {
 
   ngOnInit(): void {
     this.interfacesStore$.loadInterfaces();
-    this.subscribeToUpdates();
     this.interfacesStore$.state$.pipe(untilDestroyed(this)).subscribe((state) => {
       this.isLoading = state.isLoading;
       this.dataProvider.setRows(state.interfaces);
+      this.inOutUpdates = {};
+      for (const nic of state.interfaces) {
+        this.inOutUpdates[nic.name] = {
+          link_state: nic.state?.link_state,
+          received_bytes_rate: 0,
+          sent_bytes_rate: 0,
+          speed: 0,
+        };
+      }
+      this.subscribeToUpdates();
+
       this.cdr.markForCheck();
     });
   }
@@ -150,7 +166,7 @@ export class InterfacesCardComponent implements OnInit, OnChanges {
   onDelete(row: NetworkInterface): void {
     this.dialogService.confirm({
       title: this.translate.instant('Delete Interface'),
-      message: this.translate.instant(helptext.delete_dialog_text),
+      message: this.translate.instant(helptextInterfaces.delete_dialog_text),
       buttonText: this.translate.instant('Delete'),
     })
       .pipe(filter(Boolean), untilDestroyed(this))
@@ -160,7 +176,7 @@ export class InterfacesCardComponent implements OnInit, OnChanges {
   onReset(row: NetworkInterface): void {
     this.dialogService.confirm({
       title: this.translate.instant('Reset Configuration'),
-      message: this.translate.instant(helptext.delete_dialog_text),
+      message: this.translate.instant(helptextInterfaces.delete_dialog_text),
       buttonText: this.translate.instant('Reset'),
     })
       .pipe(filter(Boolean), untilDestroyed(this))
@@ -183,7 +199,17 @@ export class InterfacesCardComponent implements OnInit, OnChanges {
 
   private subscribeToUpdates(): void {
     this.networkService.subscribeToInOutUpdates().pipe(untilDestroyed(this)).subscribe((updates) => {
-      this.inOutUpdates = updates;
+      if (!updates) {
+        return;
+      }
+      const newInOutUpdates = _.cloneDeep(this.inOutUpdates);
+      const updatedInterfaces = Object.keys(updates);
+      for (const nic of updatedInterfaces) {
+        newInOutUpdates[nic] = {
+          ...updates[nic],
+        };
+      }
+      this.inOutUpdates = newInOutUpdates;
       this.cdr.markForCheck();
     });
   }

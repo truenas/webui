@@ -4,7 +4,7 @@ import _ from 'lodash';
 import { filter, switchMap, tap } from 'rxjs';
 import { Pool, PoolTopology } from 'app/interfaces/pool.interface';
 import { Disk } from 'app/interfaces/storage.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
+import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -59,11 +59,11 @@ export class AddVdevsStore extends ComponentStore<AddVdevsState> {
             pool: _.cloneDeep(pools[0]),
           });
         },
-        (error: WebsocketError) => {
+        (error: unknown) => {
           this.patchState({
             isLoading: false,
           });
-          this.dialogService.error(this.errorHandler.parseWsError(error));
+          this.dialogService.error(this.errorHandler.parseError(error));
         },
       ),
       filter((pools) => !!pools),
@@ -74,7 +74,7 @@ export class AddVdevsStore extends ComponentStore<AddVdevsState> {
           { extra: { pools: true } },
         ],
       )),
-      tapResponse<Disk[], WebsocketError>(
+      tapResponse<Disk[], WebSocketError>(
         (disks: Disk[]) => {
           this.setState((state: AddVdevsState): AddVdevsState => {
             return {
@@ -88,7 +88,7 @@ export class AddVdevsStore extends ComponentStore<AddVdevsState> {
           this.patchState({
             isLoading: false,
           });
-          this.dialogService.error(this.errorHandler.parseWsError(error));
+          this.dialogService.error(this.errorHandler.parseError(error));
         },
       ),
     );

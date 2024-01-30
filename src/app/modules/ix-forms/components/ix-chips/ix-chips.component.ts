@@ -9,13 +9,14 @@ import {
   ViewChild,
 } from '@angular/core';
 import { ControlValueAccessor, NgControl } from '@angular/forms';
-import { UntilDestroy } from '@ngneat/until-destroy';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import {
   fromEvent, merge, Observable, Subject,
 } from 'rxjs';
 import {
   debounceTime, distinctUntilChanged, startWith, switchMap,
 } from 'rxjs/operators';
+import { Option } from 'app/interfaces/option.interface';
 import { ChipsProvider } from 'app/modules/ix-forms/components/ix-chips/chips-provider';
 
 @UntilDestroy()
@@ -32,13 +33,49 @@ export class IxChipsComponent implements OnChanges, ControlValueAccessor {
   @Input() tooltip: string;
   @Input() required: boolean;
   @Input() allowNewEntries = true;
+  /**
+   * A function that provides the options for the autocomplete dropdown.
+   * This function is called when the user types into the input field,
+   * and it should return an Observable that emits an array of options.
+   * Each option is an object with a `value` and `label` property.
+   * The component uses these options to suggest possible completions to the user.
+   */
   @Input() autocompleteProvider: ChipsProvider;
+  /**
+   * Determines whether the component should resolve labels instead of values.
+   * If set to true, the component will perform a lookup to find the corresponding label for a value.
+   * This is useful when the component is used with a set of predefined options,
+   * and you want to display the label of an option instead of its value.
+   */
+  @Input() resolveValue = false;
+  /**
+   * An Observable that emits an array of options for label resolution.
+   * Each option is an object with a `value` and `label` property.
+   * The component uses these options to map values to their corresponding labels when `resolveValue` is set to true.
+   * This is useful when the component is used with a set of predefined options,
+   * and you want to display the label of an option instead of its value.
+   */
+  @Input() resolveOptions: Observable<Option[]>;
+  private resolvedOptions: Option[] = [];
 
   @ViewChild('chipInput', { static: true }) chipInput: ElementRef<HTMLInputElement>;
 
   suggestions$: Observable<string[]>;
   values: string[] = [];
   isDisabled = false;
+
+  get labels(): string[] {
+    if (!this.resolveValue) {
+      return this.values;
+    }
+
+    return this.values?.map((value) => {
+      if (this.resolvedOptions?.length) {
+        return this.resolvedOptions.find((option) => option.value === parseInt(value))?.label;
+      }
+      return value;
+    }).filter(Boolean);
+  }
 
   inputReset$ = new Subject<void>();
 
@@ -56,6 +93,7 @@ export class IxChipsComponent implements OnChanges, ControlValueAccessor {
 
   ngOnChanges(): void {
     this.setAutocomplete();
+    this.setOptions();
   }
 
   writeValue(value: string[]): void {
@@ -77,14 +115,27 @@ export class IxChipsComponent implements OnChanges, ControlValueAccessor {
   }
 
   onRemove(itemToRemove: string): void {
-    const updatedValues = this.values.filter((value) => value !== itemToRemove);
+    if (this.resolveValue && this.resolvedOptions?.length) {
+      itemToRemove = this.resolvedOptions.find((option) => option.label === itemToRemove)?.value.toString();
+    }
+    const updatedValues = this.values.filter((value) => String(value) !== String(itemToRemove));
     this.updateValues(updatedValues);
   }
 
   onAdd(value: string): void {
-    const newValue = (value || '').trim();
+    let newValue = (value || '')?.trim();
     if (!newValue || this.values.includes(newValue)) {
       return;
+    }
+
+    if (this.resolveValue && this.resolvedOptions?.length) {
+      const newOption = this.resolvedOptions.find((option) => option.label === newValue);
+      if (newOption) {
+        newValue = newOption.value as string;
+      } else {
+        // Do not allow to add string values for number arrays
+        return;
+      }
     }
 
     this.clearInput();
@@ -92,11 +143,22 @@ export class IxChipsComponent implements OnChanges, ControlValueAccessor {
   }
 
   onInputBlur(): void {
-    if (!this.allowNewEntries) {
+    if (!this.allowNewEntries || this.resolveValue) {
       this.chipInput.nativeElement.value = null;
       return;
     }
     this.onAdd(this.chipInput.nativeElement.value);
+  }
+
+  private setOptions(): void {
+    if (!this.resolveValue) {
+      this.resolvedOptions = null;
+      return;
+    }
+
+    this.resolveOptions?.pipe(untilDestroyed(this)).subscribe((options) => {
+      this.resolvedOptions = options;
+    });
   }
 
   private setAutocomplete(): void {
@@ -122,7 +184,7 @@ export class IxChipsComponent implements OnChanges, ControlValueAccessor {
 
   private updateValues(updatedValues: string[]): void {
     this.values = updatedValues;
-    this.onChange(updatedValues);
+    this.onChange(this.values);
     this.onTouch();
   }
 

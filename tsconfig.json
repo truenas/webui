@@ -10,6 +10,7 @@
     "noImplicitAny": true,
     "noImplicitThis": true,
     "strictBindCallApply": true,
+    "useUnknownInCatchVariables": true,
     "module": "es2020",
     "target": "ES2022",
     "allowSyntheticDefaultImports": true,

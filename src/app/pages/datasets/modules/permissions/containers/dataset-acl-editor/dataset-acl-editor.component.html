@@ -90,6 +90,7 @@
 
               <div class="control-buttons">
                 <button
+                  *ixRequiresRoles="[Role.FilesystemAttrsWrite, Role.FilesystemFullControl]"
                   mat-button
                   color="primary"
                   class="action"
@@ -113,6 +114,7 @@
                 </a>
                 <ng-template #stripButton>
                   <button
+                    *ixRequiresRoles="[Role.FilesystemAttrsWrite, Role.FilesystemFullControl]"
                     mat-button
                     color="warn"
                     class="action"
@@ -135,6 +137,7 @@
                   {{ 'Use Preset' | translate }}
                 </button>
                 <button
+                  *ixRequiresRoles="[Role.FullAdmin]"
                   mat-button
                   class="action"
                   ixTest="save-as-preset"

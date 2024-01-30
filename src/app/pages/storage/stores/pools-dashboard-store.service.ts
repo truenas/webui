@@ -12,7 +12,7 @@ import { Dataset } from 'app/interfaces/dataset.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { SmartTestResults } from 'app/interfaces/smart-test.interface';
 import { Disk, DiskTemperatureAgg, StorageDashboardDisk } from 'app/interfaces/storage.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
+import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -97,11 +97,11 @@ export class PoolsDashboardStore extends ComponentStore<PoolsDashboardState> {
           rootDatasets: _.keyBy(rootDatasets, (dataset) => dataset.id),
         });
       },
-      (error: WebsocketError) => {
+      (error: unknown) => {
         this.patchState({
           arePoolsLoading: false,
         });
-        this.dialogService.error(this.errorHandler.parseWsError(error));
+        this.dialogService.error(this.errorHandler.parseError(error));
       },
     );
   }
@@ -133,11 +133,11 @@ export class PoolsDashboardStore extends ComponentStore<PoolsDashboardState> {
           areDisksLoading: false,
         });
       },
-      (error: WebsocketError) => {
+      (error: unknown) => {
         this.patchState({
           areDisksLoading: false,
         });
-        this.dialogService.error(this.errorHandler.parseWsError(error));
+        this.dialogService.error(this.errorHandler.parseError(error));
       },
     );
   }
@@ -171,7 +171,7 @@ export class PoolsDashboardStore extends ComponentStore<PoolsDashboardState> {
 
   getDiskTempAggregates(disksNames: string[]): Observable<DiskTemperatureAgg> {
     return this.ws.call('disk.temperature_agg', [disksNames, 14]).pipe(
-      catchError((error: WebsocketError) => {
+      catchError((error: WebSocketError) => {
         console.error('Error loading temperature: ', error);
         return of({});
       }),

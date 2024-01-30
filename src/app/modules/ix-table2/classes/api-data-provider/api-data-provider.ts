@@ -2,7 +2,7 @@ import { Observable, switchMap } from 'rxjs';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { ApiCallDirectory, ApiCallMethod } from 'app/interfaces/api/api-call-directory.interface';
 import { QueryFilters } from 'app/interfaces/query-api.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
+import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { PaginationServerSide } from 'app/modules/ix-table2/classes/api-data-provider/pagination-server-side.class';
 import { SortingServerSide } from 'app/modules/ix-table2/classes/api-data-provider/sorting-server-side.class';
 import { BaseDataProvider } from 'app/modules/ix-table2/classes/base-data-provider';
@@ -50,7 +50,7 @@ export class ApiDataProvider<T, M extends ApiCallMethod> extends BaseDataProvide
           this.currentPage$.next(this.rows);
           this.emptyType$.next(rows.length ? EmptyType.NoSearchResults : EmptyType.NoPageData);
         },
-        error: (error: WebsocketError) => {
+        error: (error: WebSocketError) => {
           console.error(this.method, error);
           this.totalRows = 0;
           this.rows = [];
@@ -92,7 +92,7 @@ export class ApiDataProvider<T, M extends ApiCallMethod> extends BaseDataProvide
       {
         'query-filters': (params as unknown as QueryFilters<T>)[0] || [],
         'query-options': {
-          ...this.paginationStrategy.getParams(this.pagination),
+          ...this.paginationStrategy.getParams(this.pagination, this.totalRows),
           ...this.sortingStrategy.getParams(this.sorting),
         },
       },

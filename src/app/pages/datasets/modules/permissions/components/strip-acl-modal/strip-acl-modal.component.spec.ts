@@ -5,7 +5,7 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { mockEntityJobComponentRef } from 'app/core/testing/utils/mock-entity-job-component-ref.utils';
-import helptext from 'app/helptext/storage/volumes/datasets/dataset-acl';
+import { helptextAcl } from 'app/helptext/storage/volumes/datasets/dataset-acl';
 import { IxCheckboxHarness } from 'app/modules/ix-forms/components/ix-checkbox/ix-checkbox.harness';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import {
@@ -62,7 +62,7 @@ describe('StripAclModalComponent', () => {
 
   it('strips ACL with traverse when "Remove ACL from children" checkbox is ticked', async () => {
     const traverseCheckbox = await loader.getHarness(
-      IxCheckboxHarness.with({ label: helptext.stripACL_dialog.traverse_checkbox }),
+      IxCheckboxHarness.with({ label: helptextAcl.stripACL_dialog.traverse_checkbox }),
     );
     await traverseCheckbox.setValue(true);
 

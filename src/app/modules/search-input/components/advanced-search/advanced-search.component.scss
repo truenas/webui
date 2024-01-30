@@ -1,3 +1,6 @@
+@import 'scss-imports/splitview';
+@import 'mixins/layout';
+
 :host {
   align-items: flex-start;
   background: rgba(0, 0, 0, 0.1);
@@ -23,7 +26,7 @@
   }
 
   &:focus-within {
-    border: thin solid var(--primary);
+    outline: 1.5px solid var(--primary);
   }
 
   .reset-input {
@@ -69,23 +72,32 @@
   margin-top: 5px;
   user-select: none;
   white-space: nowrap;
+
+  @media (max-width: $breakpoint-sm) {
+    margin-top: 0;
+    white-space: inherit;
+    width: 70px;
+  }
 }
 
 .input-area {
   background-color: transparent;
   border: 0;
   flex-grow: 1;
-  min-width: 240px;
   outline: none;
-  padding: 7px 8px;
+  padding: 6.2px 8px;
   width: 100%;
+
+  @media (min-width: $breakpoint-md) {
+    min-width: 340px;
+  }
 
   ::ng-deep {
     .cm-content {
       caret-color: auto;
       color: var(--fg2);
       font-family: var(--mdc-dialog-subhead-font);
-      font-size: 12px;
+      font-size: 1.1em;
       padding: 0;
     }
 
@@ -93,10 +105,11 @@
       background-color: var(--bg2);
       left: 0;
       margin: 5px auto;
+      max-width: 300px;
       position: absolute;
       top: 100%;
       width: 100%;
-      z-index: 1;
+      z-index: 2;
 
       ::ng-deep {
         .mat-calendar-table {
@@ -117,16 +130,33 @@
       }
     }
 
+    .cm-tooltip {
+      background-color: var(--bg2);
+      border: none !important;
+      border-radius: 4px !important;
+      margin-top: 5px;
+
+      .cm-tooltip-lint {
+        color: var(--error);
+        max-width: max-content;
+      }
+
+      .cm-diagnostic {
+        margin: 0;
+        padding: 5px;
+      }
+    }
+
+    .cm-lintRange {
+      border-bottom: 1px dashed var(--error);
+    }
+
     .cm-line {
       padding: 0;
     }
 
-    .cm-tooltip.cm-tooltip-autocomplete {
-      border: none !important;
-      border-radius: 4px !important;
-    }
-
     .cm-tooltip.cm-tooltip-autocomplete ul {
+      background-color: var(--bg2);
       border: 0;
       border-radius: 4px;
       height: 100%;

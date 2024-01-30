@@ -9,15 +9,17 @@ import { Observable, of } from 'rxjs';
 import { filter, pairwise, tap } from 'rxjs/operators';
 import { JobState } from 'app/enums/job-state.enum';
 import { ProductType } from 'app/enums/product-type.enum';
+import { Role } from 'app/enums/role.enum';
 import { SystemUpdateOperationType, SystemUpdateStatus } from 'app/enums/system-update.enum';
+import { filterAsync } from 'app/helpers/operators/filter-async.operator';
 import { WINDOW } from 'app/helpers/window.helper';
-import globalHelptext from 'app/helptext/global-helptext';
+import { helptextGlobal } from 'app/helptext/global-helptext';
 import { helptextSystemUpdate as helptext } from 'app/helptext/system/update';
 import { ApiJobMethod } from 'app/interfaces/api/api-job-directory.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { SystemUpdateTrain } from 'app/interfaces/system-update.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
+import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -25,6 +27,7 @@ import {
   SaveConfigDialogComponent, SaveConfigDialogMessages,
 } from 'app/pages/system/general-settings/save-config-dialog/save-config-dialog.component';
 import { updateAgainCode } from 'app/pages/system/update/update-again-code.constant';
+import { AuthService } from 'app/services/auth/auth.service';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { StorageService } from 'app/services/storage.service';
@@ -70,8 +73,8 @@ export class UpdateComponent implements OnInit {
   singleDescription: string;
   updateType: string;
   isHaLicensed: boolean;
-  sysUpdateMessage = globalHelptext.sysUpdateMessage;
-  sysUpdateMsgPt2 = globalHelptext.sysUpdateMessagePt2;
+  sysUpdateMessage = helptextGlobal.sysUpdateMessage;
+  sysUpdateMsgPt2 = helptextGlobal.sysUpdateMessagePt2;
   updatecheckTooltip = this.translate.instant('Check the update server daily for \
                                   any updates on the chosen train. \
                                   Automatically download an update if \
@@ -92,6 +95,7 @@ export class UpdateComponent implements OnInit {
 
   readonly ProductType = ProductType;
   readonly SystemUpdateStatus = SystemUpdateStatus;
+  protected readonly Role = Role;
 
   constructor(
     protected router: Router,
@@ -106,6 +110,7 @@ export class UpdateComponent implements OnInit {
     private store$: Store<AppState>,
     private fb: FormBuilder,
     private snackbar: SnackbarService,
+    private authService: AuthService,
     @Inject(WINDOW) private window: Window,
   ) {
     this.sysGenService.updateRunning.pipe(untilDestroyed(this)).subscribe((isUpdating: string) => {
@@ -181,7 +186,7 @@ export class UpdateComponent implements OnInit {
           // To remember train description if user switches away and then switches back
           this.trainDescriptionOnPageLoad = this.currentTrainDescription;
         },
-        error: (error: WebsocketError) => {
+        error: (error: WebSocketError) => {
           this.dialogService.warn(
             error.trace.class,
             this.translate.instant('TrueNAS was unable to reach update servers.'),
@@ -208,7 +213,10 @@ export class UpdateComponent implements OnInit {
       this.onTrainChanged(newTrain, prevTrain);
     });
 
-    this.form.controls.auto_check.valueChanges.pipe(untilDestroyed(this)).subscribe(() => {
+    this.form.controls.auto_check.valueChanges.pipe(
+      filterAsync(this.authService.hasRole(Role.FullAdmin)),
+      untilDestroyed(this),
+    ).subscribe(() => {
       this.toggleAutoCheck();
     });
   }
@@ -284,8 +292,8 @@ export class UpdateComponent implements OnInit {
       next: () => {
         this.check();
       },
-      error: (error: WebsocketError) => {
-        this.dialogService.error(this.errorHandler.parseWsError(error));
+      error: (error: unknown) => {
+        this.dialogService.error(this.errorHandler.parseError(error));
         this.trainValue = prevTrain;
         this.showSpinner = false;
       },
@@ -366,7 +374,7 @@ export class UpdateComponent implements OnInit {
         }
         this.showSpinner = false;
       },
-      error: (err: WebsocketError) => {
+      error: (err: WebSocketError) => {
         this.generalUpdateError = `${err.reason.replace('>', '').replace('<', '')}: ${this.translate.instant('Automatic update check failed. Please check system network settings.')}`;
         this.showSpinner = false;
       },
@@ -388,7 +396,7 @@ export class UpdateComponent implements OnInit {
       this.router.navigate(['/others/reboot'], { skipLocationChange: true });
     });
     dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err) => {
-      this.dialogService.error(this.errorHandler.parseJobError(err));
+      this.dialogService.error(this.errorHandler.parseError(err));
     });
   }
 
@@ -471,7 +479,7 @@ export class UpdateComponent implements OnInit {
           this.dialogService.info(this.translate.instant('Check Now'), this.translate.instant('No updates available.'));
         }
       },
-      error: (error: WebsocketError) => {
+      error: (error: WebSocketError) => {
         this.dialogService.error({
           title: this.translate.instant('Error checking for updates.'),
           message: error.reason,
@@ -521,7 +529,7 @@ export class UpdateComponent implements OnInit {
             this.pendingUpdates();
           });
           dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((error) => {
-            this.dialogService.error(this.errorHandler.parseJobError(error));
+            this.dialogService.error(this.errorHandler.parseError(error));
           });
         } else {
           this.update();
@@ -621,6 +629,6 @@ export class UpdateComponent implements OnInit {
       });
       return;
     }
-    this.dialogService.error(this.errorHandler.parseJobError(error));
+    this.dialogService.error(this.errorHandler.parseError(error));
   }
 }

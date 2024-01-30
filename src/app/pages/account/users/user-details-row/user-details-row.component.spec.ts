@@ -8,11 +8,12 @@ import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { MockModule } from 'ng-mocks';
 import { of } from 'rxjs';
-import { mockWebsocket, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockWebSocket, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
 import { Preferences } from 'app/interfaces/preferences.interface';
 import { User } from 'app/interfaces/user.interface';
 import { AlertsModule } from 'app/modules/alerts/alerts.module';
-import { IxTableModule } from 'app/modules/ix-tables/ix-table.module';
+import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import {
   DeleteUserDialogComponent,
@@ -54,14 +55,14 @@ describe('UserDetailsRowComponent', () => {
     component: UserDetailsRowComponent,
     imports: [
       MockModule(AlertsModule),
-      IxTableModule,
+      IxTable2Module,
     ],
     declarations: [
       UserFormComponent,
     ],
     providers: [
       mockProvider(IxSlideInService),
-      mockWebsocket([
+      mockWebSocket([
         mockCall('user.delete'),
         mockCall('group.query', []),
       ]),
@@ -72,6 +73,7 @@ describe('UserDetailsRowComponent', () => {
       }),
       mockProvider(AppLoaderService),
       mockProvider(DialogService),
+      mockAuth(),
       provideMockStore({
         selectors: [
           {

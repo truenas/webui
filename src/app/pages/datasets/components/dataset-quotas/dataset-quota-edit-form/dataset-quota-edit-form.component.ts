@@ -9,12 +9,13 @@ import {
 } from 'rxjs';
 import { catchError, filter, tap } from 'rxjs/operators';
 import { DatasetQuotaType } from 'app/enums/dataset.enum';
-import globalHelptext from 'app/helptext/global-helptext';
-import helptext from 'app/helptext/storage/volumes/datasets/dataset-quotas';
+import { Role } from 'app/enums/role.enum';
+import { helptextGlobal } from 'app/helptext/global-helptext';
+import { helptextQuotas } from 'app/helptext/storage/volumes/datasets/dataset-quotas';
 import { DatasetQuota, SetDatasetQuota } from 'app/interfaces/dataset-quota.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { QueryFilter, QueryParams } from 'app/interfaces/query-api.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
+import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
@@ -42,8 +43,8 @@ export class DatasetQuotaEditFormComponent implements OnInit {
   }
   get nameLabel(): string {
     return this.quotaType === DatasetQuotaType.User
-      ? helptext.users.dialog.user.placeholder
-      : helptext.groups.dialog.group.placeholder;
+      ? helptextQuotas.users.dialog.user.placeholder
+      : helptextQuotas.groups.dialog.group.placeholder;
   }
   get dataQuotaLabel(): string {
     return this.quotaType === DatasetQuotaType.User
@@ -52,19 +53,19 @@ export class DatasetQuotaEditFormComponent implements OnInit {
   }
 
   private getUserDataQuotaLabel(): string {
-    return this.translate.instant(helptext.users.data_quota.placeholder)
-      + this.translate.instant(globalHelptext.human_readable.suggestion_label);
+    return this.translate.instant(helptextQuotas.users.data_quota.placeholder)
+      + this.translate.instant(helptextGlobal.human_readable.suggestion_label);
   }
 
   private getGroupDataQuotaLabel(): string {
-    return this.translate.instant(helptext.groups.data_quota.placeholder)
-      + this.translate.instant(globalHelptext.human_readable.suggestion_label);
+    return this.translate.instant(helptextQuotas.groups.data_quota.placeholder)
+      + this.translate.instant(helptextGlobal.human_readable.suggestion_label);
   }
 
   get objectQuotaLabel(): string {
     return this.quotaType === DatasetQuotaType.User
-      ? helptext.users.obj_quota.placeholder
-      : helptext.groups.obj_quota.placeholder;
+      ? helptextQuotas.users.obj_quota.placeholder
+      : helptextQuotas.groups.obj_quota.placeholder;
   }
   get dataQuotaTooltip(): string {
     return this.quotaType === DatasetQuotaType.User
@@ -73,21 +74,21 @@ export class DatasetQuotaEditFormComponent implements OnInit {
   }
 
   private getUserDataQuotaTooltip(): string {
-    return this.translate.instant(helptext.users.data_quota.tooltip)
-      + this.translate.instant(globalHelptext.human_readable.suggestion_tooltip)
+    return this.translate.instant(helptextQuotas.users.data_quota.tooltip)
+      + this.translate.instant(helptextGlobal.human_readable.suggestion_tooltip)
       + this.translate.instant(' bytes.');
   }
 
   private getGroupDataQuotaTooltip(): string {
-    return this.translate.instant(helptext.groups.data_quota.tooltip)
-      + this.translate.instant(globalHelptext.human_readable.suggestion_tooltip)
+    return this.translate.instant(helptextQuotas.groups.data_quota.tooltip)
+      + this.translate.instant(helptextGlobal.human_readable.suggestion_tooltip)
       + this.translate.instant(' bytes.');
   }
 
   get objectQuotaTooltip(): string {
     return this.quotaType === DatasetQuotaType.User
-      ? helptext.users.obj_quota.tooltip
-      : helptext.groups.obj_quota.tooltip;
+      ? helptextQuotas.users.obj_quota.tooltip
+      : helptextQuotas.groups.obj_quota.tooltip;
   }
 
   form = this.formBuilder.group({
@@ -95,6 +96,8 @@ export class DatasetQuotaEditFormComponent implements OnInit {
     data_quota: [null as number],
     obj_quota: [null as number],
   });
+
+  protected readonly Role = Role;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -133,7 +136,7 @@ export class DatasetQuotaEditFormComponent implements OnInit {
         });
         this.cdr.markForCheck();
       }),
-      catchError((error: WebsocketError | Job) => {
+      catchError((error: WebSocketError | Job) => {
         this.isFormLoading = false;
         this.errorHandler.handleWsFormError(error, this.form);
         this.cdr.markForCheck();
@@ -187,7 +190,7 @@ export class DatasetQuotaEditFormComponent implements OnInit {
         this.slideInRef.close(true);
         this.cdr.markForCheck();
       },
-      error: (error) => {
+      error: (error: unknown) => {
         this.isFormLoading = false;
         this.cdr.markForCheck();
         this.errorHandler.handleWsFormError(error, this.form);

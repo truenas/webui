@@ -6,11 +6,12 @@ import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { mockWindow } from 'app/core/testing/utils/mock-window.utils';
 import { ProductType } from 'app/enums/product-type.enum';
 import { helptextSystemUpdate as helptext } from 'app/helptext/system/update';
-import { AuthMeUser } from 'app/interfaces/ds-cache.interface';
+import { LoggedInUser } from 'app/interfaces/ds-cache.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { Preferences } from 'app/interfaces/preferences.interface';
 import { SystemInfo } from 'app/interfaces/system-info.interface';
@@ -19,7 +20,7 @@ import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { ManualUpdateFormComponent } from 'app/pages/system/update/manual-update-form/manual-update-form.component';
 import { DialogService } from 'app/services/dialog.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
-import { WebsocketConnectionService } from 'app/services/websocket-connection.service';
+import { WebSocketConnectionService } from 'app/services/websocket-connection.service';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import { selectPreferences } from 'app/store/preferences/preferences.selectors';
 import { selectSystemInfo } from 'app/store/system-info/system-info.selectors';
@@ -35,14 +36,14 @@ describe('ManualUpdateFormComponent', () => {
       IxFormsModule,
     ],
     providers: [
-      mockWebsocket([
+      mockWebSocket([
         mockCall('auth.me', {
           attributes: {
             preferences: {
               rebootAfterManualUpdate: false,
             } as Preferences,
           },
-        } as AuthMeUser),
+        } as LoggedInUser),
         mockCall('pool.query', [
           {
             name: 'pool2',
@@ -67,7 +68,7 @@ describe('ManualUpdateFormComponent', () => {
           getItem: () => ProductType.ScaleEnterprise,
         },
       }),
-      mockProvider(WebsocketConnectionService, {
+      mockProvider(WebSocketConnectionService, {
         isConnected$: of(true),
       }),
       provideMockStore({
@@ -90,6 +91,7 @@ describe('ManualUpdateFormComponent', () => {
           },
         ],
       }),
+      mockAuth(),
     ],
   });
 

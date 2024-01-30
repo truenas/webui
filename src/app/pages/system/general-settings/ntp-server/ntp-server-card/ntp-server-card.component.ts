@@ -6,6 +6,7 @@ import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { filter, switchMap } from 'rxjs/operators';
 import { EmptyType } from 'app/enums/empty-type.enum';
+import { Role } from 'app/enums/role.enum';
 import { NtpServer } from 'app/interfaces/ntp-server.interface';
 import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
 import { NtpServerFormComponent } from 'app/pages/system/general-settings/ntp-server/ntp-server-form/ntp-server-form.component';
@@ -33,6 +34,7 @@ export class NtpServerCardComponent implements OnInit {
   ];
   loading = false;
   error = false;
+  protected readonly Role = Role;
 
   get emptyType(): EmptyType {
     if (this.loading) {

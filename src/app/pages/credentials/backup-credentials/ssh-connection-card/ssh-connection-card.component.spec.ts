@@ -4,7 +4,8 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialog } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { KeychainSshCredentials } from 'app/interfaces/keychain-credential.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
@@ -13,7 +14,7 @@ import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
 import { SshConnectionCardComponent } from 'app/pages/credentials/backup-credentials/ssh-connection-card/ssh-connection-card.component';
 import { SshConnectionFormComponent } from 'app/pages/credentials/backup-credentials/ssh-connection-form/ssh-connection-form.component';
 import { DialogService } from 'app/services/dialog.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 describe('SshConnectionCardComponent', () => {
@@ -56,18 +57,15 @@ describe('SshConnectionCardComponent', () => {
       IxTable2Module,
     ],
     providers: [
-      mockWebsocket([
+      mockWebSocket([
         mockCall('keychaincredential.query', connections),
         mockCall('keychaincredential.delete'),
       ]),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
-      mockProvider(IxSlideInService, {
-        open: jest.fn(() => {
-          return { slideInClosed$: of(true) };
-        }),
-        onClose$: of(),
+      mockProvider(IxChainedSlideInService, {
+        pushComponent: jest.fn(() => of()),
       }),
       mockProvider(IxSlideInRef),
       mockProvider(MatDialog, {
@@ -75,6 +73,7 @@ describe('SshConnectionCardComponent', () => {
           afterClosed: () => of(true),
         })),
       }),
+      mockAuth(),
     ],
   });
 
@@ -93,15 +92,17 @@ describe('SshConnectionCardComponent', () => {
     const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
     await addButton.click();
 
-    expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(SshConnectionFormComponent);
+    expect(spectator.inject(IxChainedSlideInService).pushComponent).toHaveBeenCalledWith(SshConnectionFormComponent);
   });
 
   it('opens form when "Edit" button is pressed', async () => {
     const editButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'edit' }), 1, 1);
     await editButton.click();
 
-    expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(SshConnectionFormComponent, {
-      data: {
+    expect(spectator.inject(IxChainedSlideInService).pushComponent).toHaveBeenCalledWith(
+      SshConnectionFormComponent,
+      false,
+      {
         attributes: {
           connect_timeout: 10,
           host: 'fake.host.name',
@@ -114,7 +115,7 @@ describe('SshConnectionCardComponent', () => {
         name: 'test-conn-1',
         type: 'SSH_CREDENTIALS',
       },
-    });
+    );
   });
 
   it('opens delete dialog when "Delete" button is pressed', async () => {

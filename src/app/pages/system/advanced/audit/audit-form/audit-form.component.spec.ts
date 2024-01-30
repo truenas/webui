@@ -4,8 +4,9 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
-import { AuditConfig } from 'app/interfaces/audit.interface';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { AuditConfig } from 'app/interfaces/audit/audit.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
@@ -26,7 +27,7 @@ describe('AuditFormComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
-      mockWebsocket([
+      mockWebSocket([
         mockCall('audit.config', {
           retention: 30,
           reservation: 100,
@@ -41,6 +42,7 @@ describe('AuditFormComponent', () => {
       provideMockStore(),
       mockProvider(IxSlideInRef),
       { provide: SLIDE_IN_DATA, useValue: undefined },
+      mockAuth(),
     ],
   });
 

@@ -12,14 +12,14 @@ import {
 } from 'rxjs/operators';
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
 import { FailoverStatus } from 'app/enums/failover-status.enum';
+import { LoginResult } from 'app/enums/login-result.enum';
 import { WINDOW } from 'app/helpers/window.helper';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { AuthService } from 'app/services/auth/auth.service';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { UpdateService } from 'app/services/update.service';
-import { WebsocketConnectionService } from 'app/services/websocket-connection.service';
+import { WebSocketConnectionService } from 'app/services/websocket-connection.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 interface SigninState {
@@ -65,7 +65,7 @@ export class SigninStore extends ComponentStore<SigninState> {
     private systemGeneralService: SystemGeneralService,
     private router: Router,
     private snackbar: MatSnackBar,
-    private wsManager: WebsocketConnectionService,
+    private wsManager: WebSocketConnectionService,
     private errorHandler: ErrorHandlerService,
     private authService: AuthService,
     private updateService: UpdateService,
@@ -87,8 +87,8 @@ export class SigninStore extends ComponentStore<SigninState> {
         this.systemGeneralService.loadProductType(),
       ]).pipe(
         switchMap(() => this.authService.loginWithToken()),
-        tap((wasLoggedIn: boolean) => {
-          if (!wasLoggedIn) {
+        tap((loginResult) => {
+          if (loginResult !== LoginResult.Success) {
             this.authService.clearAuthToken();
             return;
           }
@@ -96,8 +96,8 @@ export class SigninStore extends ComponentStore<SigninState> {
         }),
         tapResponse(
           () => {},
-          (error: WebsocketError) => {
-            this.dialogService.error(this.errorHandler.parseWsError(error));
+          (error: unknown) => {
+            this.dialogService.error(this.errorHandler.parseError(error));
           },
         ),
       );
@@ -122,9 +122,9 @@ export class SigninStore extends ComponentStore<SigninState> {
         this.disabledReasonsSubscription = null;
       }
     }),
-    catchError((error: WebsocketError) => {
+    catchError((error: unknown) => {
       this.setLoadingState(false);
-      this.dialogService.error(this.errorHandler.parseWsError(error));
+      this.dialogService.error(this.errorHandler.parseError(error));
       return EMPTY;
     }),
   ));
@@ -199,7 +199,7 @@ export class SigninStore extends ComponentStore<SigninState> {
     ])
       .pipe(
         tap(
-          ([ips, reasons]) => {
+          ([ips, reasons]: [string[], FailoverDisabledReason[]]) => {
             this.setFailoverDisabledReasons(reasons);
             this.setFailoverIps(ips);
           },

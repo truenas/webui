@@ -9,9 +9,10 @@ import { EMPTY } from 'rxjs';
 import {
   catchError, filter, switchMap, take, tap,
 } from 'rxjs/operators';
+import { Role } from 'app/enums/role.enum';
 import { helptextSystemAdvanced } from 'app/helptext/system/advanced';
 import { Job } from 'app/interfaces/job.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
+import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
@@ -27,6 +28,8 @@ import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SaveDebugButtonComponent {
+  protected readonly Role = Role;
+
   constructor(
     private ws: WebSocketService,
     private store$: Store<AppState>,
@@ -75,7 +78,7 @@ export class SaveDebugButtonComponent {
                     this.storage.downloadBlob(blob, fileName);
                     dialogRef.close();
                   },
-                  error: (error: WebsocketError | HttpErrorResponse | Job) => {
+                  error: (error: WebSocketError | HttpErrorResponse | Job) => {
                     dialogRef.close();
                     if (error instanceof HttpErrorResponse) {
                       this.dialogService.error(this.errorHandler.parseHttpError(error));
@@ -86,12 +89,12 @@ export class SaveDebugButtonComponent {
                 });
               dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((error) => {
                 this.matDialog.closeAll();
-                this.dialogService.error(this.errorHandler.parseJobError(error));
+                this.dialogService.error(this.errorHandler.parseError(error));
               });
             }),
           );
       }),
-      catchError((error: WebsocketError | Job) => {
+      catchError((error: WebSocketError | Job) => {
         this.dialogService.error(this.errorHandler.parseError(error));
         return EMPTY;
       }),

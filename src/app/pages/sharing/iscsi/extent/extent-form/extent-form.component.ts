@@ -12,6 +12,7 @@ import {
 import { map } from 'rxjs/operators';
 import { IscsiExtentRpm, IscsiExtentType } from 'app/enums/iscsi.enum';
 import { mntPath } from 'app/enums/mnt-path.enum';
+import { Role } from 'app/enums/role.enum';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { helptextSharingIscsi } from 'app/helptext/sharing';
 import { IscsiExtent } from 'app/interfaces/iscsi.interface';
@@ -72,6 +73,12 @@ export class ExtentFormComponent implements OnInit {
   private extentDiskBeingEdited$ = new BehaviorSubject<Option>(undefined);
 
   readonly helptext = helptextSharingIscsi;
+
+  readonly requiresRoles = [
+    Role.SharingIscsiExtentWrite,
+    Role.SharingIscsiWrite,
+    Role.SharingWrite,
+  ];
 
   readonly rpms$ = of(this.helptext.extent_form_enum_rpm);
   readonly types$ = of(this.helptext.extent_form_enum_type);
@@ -160,7 +167,7 @@ export class ExtentFormComponent implements OnInit {
         this.isLoading = false;
         this.slideInRef.close(true);
       },
-      error: (error) => {
+      error: (error: unknown) => {
         this.isLoading = false;
         this.errorHandler.handleWsFormError(error, this.form);
         this.cdr.markForCheck();

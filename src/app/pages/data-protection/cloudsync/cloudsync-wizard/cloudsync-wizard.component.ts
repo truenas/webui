@@ -1,21 +1,21 @@
 import {
-  AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, ViewChild, forwardRef,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, ViewChild, forwardRef,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import {
-  BehaviorSubject, Observable, filter, merge,
+  BehaviorSubject, Observable, merge,
 } from 'rxjs';
-import { cloudsyncProviderNameMap } from 'app/enums/cloudsync-provider.enum';
+import { cloudSyncProviderNameMap } from 'app/enums/cloudsync-provider.enum';
 import { CloudSyncTask, CloudSyncTaskUpdate } from 'app/interfaces/cloud-sync-task.interface';
-import { CloudsyncCredential } from 'app/interfaces/cloudsync-credential.interface';
-import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { CloudSyncCredential } from 'app/interfaces/cloudsync-credential.interface';
+import { CHAINED_SLIDE_IN_REF } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { CloudsyncProviderComponent } from 'app/pages/data-protection/cloudsync/cloudsync-wizard/steps/cloudsync-provider/cloudsync-provider.component';
-import { CloudsyncWhatAndWhenComponent } from 'app/pages/data-protection/cloudsync/cloudsync-wizard/steps/cloudsync-what-and-when/cloudsync-what-and-when.component';
+import { CloudSyncWhatAndWhenComponent } from 'app/pages/data-protection/cloudsync/cloudsync-wizard/steps/cloudsync-what-and-when/cloudsync-what-and-when.component';
 import { CloudCredentialService } from 'app/services/cloud-credential.service';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ChainedComponentRef } from 'app/services/ix-chained-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
@@ -25,15 +25,15 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [CloudCredentialService],
 })
-export class CloudsyncWizardComponent implements AfterViewInit {
-  @ViewChild(forwardRef(() => CloudsyncProviderComponent)) provider: CloudsyncProviderComponent;
-  @ViewChild(forwardRef(() => CloudsyncWhatAndWhenComponent)) whatAndWhen: CloudsyncWhatAndWhenComponent;
+export class CloudSyncWizardComponent {
+  @ViewChild(forwardRef(() => CloudSyncWhatAndWhenComponent)) whatAndWhen: CloudSyncWhatAndWhenComponent;
   isLoading$ = new BehaviorSubject(false);
-  mergedLoading$: Observable<boolean>;
-  existingCredential: CloudsyncCredential;
+  isProviderLoading$ = new BehaviorSubject(false);
+  mergedLoading$: Observable<boolean> = merge(this.isLoading$, this.isProviderLoading$);
+  existingCredential: CloudSyncCredential;
 
   constructor(
-    public slideInRef: IxSlideInRef<CloudsyncWizardComponent>,
+    @Inject(CHAINED_SLIDE_IN_REF) private chainedSlideInRef: ChainedComponentRef,
     private ws: WebSocketService,
     private snackbarService: SnackbarService,
     private cdr: ChangeDetectorRef,
@@ -42,28 +42,22 @@ export class CloudsyncWizardComponent implements AfterViewInit {
     private errorHandler: ErrorHandlerService,
   ) {}
 
-  ngAfterViewInit(): void {
-    this.mergedLoading$ = merge(this.isLoading$, this.provider.isLoading$);
-    this.provider.form.controls.exist_credential.valueChanges
-      .pipe(filter(Boolean), untilDestroyed(this))
-      .subscribe((credential) => {
-        if (typeof credential === 'number') {
-          this.whatAndWhen?.form.patchValue({ credentials: credential });
-        } else {
-          this.whatAndWhen?.form.patchValue({ credentials: null });
-        }
-        this.updateDescriptionValue();
-        this.cdr.markForCheck();
-      });
-  }
-
   createTask(payload: CloudSyncTaskUpdate): Observable<CloudSyncTask> {
     return this.ws.call('cloudsync.create', [payload]);
   }
 
-  onProviderSaved(credential: CloudsyncCredential): void {
+  onProviderSaved(credential: CloudSyncCredential): void {
     this.existingCredential = credential;
+    if (!credential) {
+      return;
+    }
+    this.whatAndWhen?.form.patchValue({ credentials: credential.id });
+    this.updateDescriptionValue();
     this.cdr.markForCheck();
+  }
+
+  onProviderLoading(loading: boolean): void {
+    this.isProviderLoading$.next(loading);
   }
 
   onSubmit(): void {
@@ -74,26 +68,26 @@ export class CloudsyncWizardComponent implements AfterViewInit {
     this.createTask(payload).pipe(
       untilDestroyed(this),
     ).subscribe({
-      next: () => {
+      next: (response) => {
         this.snackbarService.success(this.translate.instant('Task created'));
         this.isLoading$.next(false);
-        this.slideInRef.close(true);
+        this.chainedSlideInRef.close({ response, error: null });
+
         this.cdr.markForCheck();
       },
       error: (err) => {
-        this.dialogService.error(this.errorHandler.parseWsError(err));
+        this.isLoading$.next(false);
+        this.dialogService.error(this.errorHandler.parseError(err));
       },
     });
   }
 
   updateDescriptionValue(): void {
-    const provider = this.existingCredential?.provider
-      ? this.existingCredential.provider
-      : this.provider.form.controls.provider.value;
+    const provider = this.existingCredential.provider;
 
     const sourcePath = this.whatAndWhen?.form.controls.path_source.value.join(', ');
     this.whatAndWhen?.form.patchValue({
-      description: `${cloudsyncProviderNameMap.get(provider)} - ${sourcePath}`,
+      description: `${cloudSyncProviderNameMap.get(provider)} - ${sourcePath}`,
     });
     this.cdr.markForCheck();
   }

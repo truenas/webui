@@ -6,8 +6,9 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { of } from 'rxjs';
 import { GiB } from 'app/constants/bytes.constant';
 import { CoreComponents } from 'app/core/core-components.module';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockEntityJobComponentRef } from 'app/core/testing/utils/mock-entity-job-component-ref.utils';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { DiskType } from 'app/enums/disk-type.enum';
 import { TopologyItemType } from 'app/enums/v-dev-type.enum';
 import { Enclosure } from 'app/interfaces/enclosure.interface';
@@ -44,7 +45,7 @@ describe('AddVdevsComponent – Add Vdev to existing pool', () => {
     ],
     providers: [
       ...commonProviders,
-      mockWebsocket([
+      mockWebSocket([
         mockCall('pool.validate_name', true),
         mockCall('disk.get_unused', [
           {
@@ -155,6 +156,7 @@ describe('AddVdevsComponent – Add Vdev to existing pool', () => {
           };
         }),
       }),
+      mockAuth(),
     ],
   });
 

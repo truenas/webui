@@ -51,11 +51,15 @@
 
 .ix-chained-slide-in-form.open.wide {
   width: 800px;
+
+  @media(max-width: $breakpoint-sm) {
+    width: 100%;
+  }
 }
 
 @media #{$media-lt-sm} {
   .ix-chained-slide-in2-form {
-    min-width: auto;
-    width: auto;
+    min-width: 100%;
+    width: 100%;
   }
 }

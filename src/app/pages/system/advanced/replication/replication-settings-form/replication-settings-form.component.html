@@ -16,6 +16,7 @@
 
       <ix-form-actions>
         <button
+          *ixRequiresRoles="[Role.ReplicationTaskConfigWrite]"
           mat-button
           type="submit"
           color="primary"

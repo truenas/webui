@@ -72,13 +72,14 @@
       </div>
 
       <div fxFlex="50%">
-        <ix-select
+        <ix-chips
           formControlName="groups"
           [label]="'Auxiliary Groups' | translate"
           [tooltip]="tooltips.groups | translate"
-          [options]="groupOptions$"
-          [multiple]="true"
-        ></ix-select>
+          [resolveValue]="true"
+          [resolveOptions]="groupOptions$"
+          [autocompleteProvider]="autocompleteProvider"
+        ></ix-chips>
 
         <ix-combobox
           formControlName="group"
@@ -179,6 +180,7 @@
 
   <ix-form-actions>
     <button
+      *ixRequiresRoles="[Role.AccountWrite]"
       mat-button
       type="submit"
       color="primary"

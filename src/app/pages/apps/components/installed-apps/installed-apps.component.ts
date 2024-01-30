@@ -22,7 +22,7 @@ import { ChartReleaseStatus } from 'app/enums/chart-release-status.enum';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { WINDOW } from 'app/helpers/window.helper';
-import helptext from 'app/helptext/apps/apps';
+import { helptextApps } from 'app/helptext/apps/apps';
 import { ChartScaleResult, ChartScaleQueryParams } from 'app/interfaces/chart-release-event.interface';
 import { ChartRelease } from 'app/interfaces/chart-release.interface';
 import { CoreBulkResponse } from 'app/interfaces/core-bulk.interface';
@@ -38,6 +38,7 @@ import { ApplicationsService } from 'app/pages/apps/services/applications.servic
 import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.service';
 import { KubernetesStore } from 'app/pages/apps/store/kubernetes-store.service';
 import { DialogService } from 'app/services/dialog.service';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 enum SortableField {
@@ -69,13 +70,12 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
     active: SortableField.Application,
     direction: SortDirection.Asc,
   };
-  ixTreeHeaderWidth: number | null = null;
   readonly sortableField = SortableField;
 
   entityEmptyConf: EmptyConfig = {
     type: EmptyType.Loading,
     large: false,
-    title: helptext.message.loading,
+    title: helptextApps.message.loading,
   };
 
   get filteredApps(): ChartRelease[] {
@@ -146,6 +146,7 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
     private kubernetesStore: KubernetesStore,
     private slideInService: IxSlideInService,
     private breakpointObserver: BreakpointObserver,
+    private errorHandler: ErrorHandlerService,
     @Inject(WINDOW) private window: Window,
   ) {
     this.router.events
@@ -199,6 +200,10 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
   viewDetails(app: ChartRelease): void {
     this.selectAppForDetails(app.id);
 
+    this.router.navigate([
+      '/apps/installed', app.catalog, app.catalog_train, app.id,
+    ]);
+
     if (this.isMobileView) {
       this.showMobileDetails = true;
 
@@ -226,7 +231,7 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
     switch (type) {
       case EmptyType.FirstUse:
       case EmptyType.NoPageData:
-        this.entityEmptyConf.title = helptext.message.no_installed;
+        this.entityEmptyConf.title = helptextApps.message.no_installed;
         this.entityEmptyConf.message = this.translate.instant('Applications you install will automatically appear here. Click below and browse available apps to get started.');
         this.entityEmptyConf.button = {
           label: this.translate.instant('Check Available Apps'),
@@ -234,7 +239,7 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
         };
         break;
       case EmptyType.Errors:
-        this.entityEmptyConf.title = helptext.message.not_running;
+        this.entityEmptyConf.title = helptextApps.message.not_running;
         this.entityEmptyConf.message = undefined;
         this.entityEmptyConf.button = {
           label: this.translate.instant('Open Settings'),
@@ -242,7 +247,7 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
         };
         break;
       case EmptyType.NoSearchResults:
-        this.entityEmptyConf.title = helptext.message.no_search_result;
+        this.entityEmptyConf.title = helptextApps.message.no_search_result;
         this.entityEmptyConf.message = undefined;
         this.entityEmptyConf.button = {
           label: this.translate.instant('Reset Search'),
@@ -301,18 +306,20 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
 
   start(name: string): void {
     this.appService.startApplication(name)
-      .pipe(untilDestroyed(this))
+      .pipe(this.errorHandler.catchError(), untilDestroyed(this))
       .subscribe((job: Job<ChartScaleResult, ChartScaleQueryParams>) => {
         this.appJobs.set(name, job);
+        this.sortChanged(this.sortingInfo);
         this.cdr.markForCheck();
       });
   }
 
   stop(name: string): void {
     this.appService.stopApplication(name)
-      .pipe(untilDestroyed(this))
+      .pipe(this.errorHandler.catchError(), untilDestroyed(this))
       .subscribe((job: Job<ChartScaleResult, ChartScaleQueryParams>) => {
         this.appJobs.set(name, job);
+        this.sortChanged(this.sortingInfo);
         this.cdr.markForCheck();
       });
   }
@@ -329,13 +336,13 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
 
   onBulkStart(): void {
     this.stoppedCheckedApps.forEach((app) => this.start(app.name));
-    this.snackbar.success(this.translate.instant(helptext.bulkActions.finished));
+    this.snackbar.success(this.translate.instant(helptextApps.bulkActions.finished));
     this.toggleAppsChecked(false);
   }
 
   onBulkStop(): void {
     this.startedCheckedApps.forEach((app) => this.stop(app.name));
-    this.snackbar.success(this.translate.instant(helptext.bulkActions.finished));
+    this.snackbar.success(this.translate.instant(helptextApps.bulkActions.finished));
     this.toggleAppsChecked(false);
   }
 
@@ -353,12 +360,12 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
     const checkedNames = this.checkedAppsNames;
     const name = checkedNames.join(', ');
     this.dialogService.confirm({
-      title: helptext.charts.delete_dialog.title,
+      title: helptextApps.charts.delete_dialog.title,
       message: this.translate.instant('Delete {name}?', { name }),
     }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
       const dialogRef = this.matDialog.open(EntityJobComponent, {
         data: {
-          title: helptext.charts.delete_dialog.job,
+          title: helptextApps.charts.delete_dialog.job,
         },
       });
       this.toggleAppsChecked(false);
@@ -379,10 +386,14 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
 
           if (message !== '') {
             message = '<ul>' + message + '</ul>';
-            this.dialogService.error({ title: helptext.bulkActions.title, message });
+            this.dialogService.error({ title: helptextApps.bulkActions.title, message });
           }
         },
       );
+      dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((error) => {
+        dialogRef.close();
+        this.errorHandler.showErrorModal(error);
+      });
     });
   }
 
@@ -439,11 +450,11 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
     this.dataSource = (charts || this.dataSource).sort((a, b) => {
       const isAsc = sort.direction === SortDirection.Asc;
 
-      switch (sort.active) {
+      switch (sort.active as SortableField) {
         case SortableField.Application:
           return doSortCompare(a.name, b.name, isAsc);
         case SortableField.Status:
-          return doSortCompare(a.status, b.status, isAsc);
+          return doSortCompare(this.getAppStatus(a.name), this.getAppStatus(b.name), isAsc);
         case SortableField.Updates:
           return doSortCompare(
             (a.update_available || a.container_images_update_available) ? 1 : 0,
@@ -500,6 +511,7 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
       .subscribe((event) => {
         const [name] = event.fields.arguments;
         this.appJobs.set(name, event.fields);
+        this.sortChanged(this.sortingInfo);
         this.cdr.markForCheck();
       });
   }

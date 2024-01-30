@@ -5,9 +5,10 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialog } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
-import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
+import { MockWebSocketService } from 'app/core/testing/classes/mock-websocket.service';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockEntityJobComponentRef } from 'app/core/testing/utils/mock-entity-job-component-ref.utils';
-import { mockCall, mockJob, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { mockWindow } from 'app/core/testing/utils/mock-window.utils';
 import { MailSecurity } from 'app/enums/mail-security.enum';
 import { ProductType } from 'app/enums/product-type.enum';
@@ -59,7 +60,7 @@ describe('EmailFormComponent', () => {
           { selector: selectSystemInfo, value: { hostname: 'host.truenas.com' } },
         ],
       }),
-      mockWebsocket([
+      mockWebSocket([
         mockCall('mail.local_administrator_email', 'authuser@ixsystems.com'),
         mockCall('mail.update'),
         mockCall('user.query', [
@@ -96,6 +97,7 @@ describe('EmailFormComponent', () => {
       }),
       mockProvider(IxSlideInRef),
       { provide: SLIDE_IN_DATA, useValue: fakeEmailConfig },
+      mockAuth(),
     ],
   });
 
@@ -108,7 +110,7 @@ describe('EmailFormComponent', () => {
     });
 
     it('checks if root email is set when Send Test Mail is pressed and shows a warning if it\'s not', async () => {
-      spectator.inject(MockWebsocketService).mockCall('mail.local_administrator_email', null);
+      spectator.inject(MockWebSocketService).mockCall('mail.local_administrator_email', null);
 
       const button = await loader.getHarness(MatButtonHarness.with({ text: 'Send Test Mail' }));
       await button.click();

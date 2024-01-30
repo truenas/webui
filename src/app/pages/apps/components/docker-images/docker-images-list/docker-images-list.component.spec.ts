@@ -2,7 +2,8 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of, Subject } from 'rxjs';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxEmptyRowHarness } from 'app/modules/ix-tables/components/ix-empty-row/ix-empty-row.component.harness';
 import { IxTableModule } from 'app/modules/ix-tables/ix-table.module';
@@ -27,8 +28,9 @@ describe('DockerImagesListComponent', () => {
       IxTableModule,
     ],
     providers: [
+      mockAuth(),
       DockerImagesComponentStore,
-      mockWebsocket([
+      mockWebSocket([
         mockCall('container.image.query', fakeDockerImagesDataSource),
         mockCall('container.image.delete'),
       ]),

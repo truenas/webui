@@ -5,8 +5,9 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialog } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockEntityJobComponentRef } from 'app/core/testing/utils/mock-entity-job-component-ref.utils';
-import { mockJob, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { PoolStatus } from 'app/enums/pool-status.enum';
 import { PoolFindResult } from 'app/interfaces/pool-import.interface';
 import { IxSelectHarness } from 'app/modules/ix-forms/components/ix-select/ix-select.harness';
@@ -29,7 +30,7 @@ describe('ImportPoolComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
-      mockWebsocket([
+      mockWebSocket([
         mockJob('pool.import_pool', fakeSuccessfulJob()),
         mockJob(
           'pool.import_find',
@@ -56,6 +57,7 @@ describe('ImportPoolComponent', () => {
       mockProvider(MatDialog, {
         open: () => mockEntityJobComponentRef,
       }),
+      mockAuth(),
     ],
   });
 

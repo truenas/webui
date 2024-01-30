@@ -1,10 +1,11 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { HttpResponse } from '@angular/common/http';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { of, Subject } from 'rxjs';
+import { of } from 'rxjs';
 import { fakeFile } from 'app/core/testing/utils/fake-file.uitls';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
@@ -17,7 +18,6 @@ describe('UploadIsoDialogComponent', () => {
   let loader: HarnessLoader;
   let form: IxFormHarness;
 
-  const fileUploaded$ = new Subject<void>();
   const createComponent = createComponentFactory({
     component: UploadIsoDialogComponent,
     imports: [
@@ -26,11 +26,7 @@ describe('UploadIsoDialogComponent', () => {
     ],
     providers: [
       mockProvider(IxFileUploadService, {
-        onUploaded$: fileUploaded$,
-        onUploading$: of(),
-        upload: jest.fn(() => {
-          fileUploaded$.next();
-        }),
+        upload: jest.fn(() => of(new HttpResponse({ status: 200 }))),
       }),
       mockProvider(FilesystemService, {
         getFilesystemNodeProvider: jest.fn(() => of()),

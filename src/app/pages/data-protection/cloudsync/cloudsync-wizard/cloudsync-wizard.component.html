@@ -1,11 +1,14 @@
-<ix-modal-header [title]="'Cloudsync Task Wizard' | translate" [loading]="mergedLoading$ | async"></ix-modal-header>
+<ix-modal-header2 [title]="'Cloud Sync Task Wizard' | translate" [loading]="mergedLoading$ | async"></ix-modal-header2>
 
 <mat-card>
   <mat-card-content>
     <mat-vertical-stepper [linear]="true">
-      <mat-step [stepControl]="provider?.form">
+      <mat-step [completed]="!!existingCredential">
         <ng-template matStepLabel>{{ 'Provider' | translate }}</ng-template>
-        <ix-cloudsync-provider (save)="onProviderSaved($event)"></ix-cloudsync-provider>
+        <ix-cloudsync-provider
+          (save)="onProviderSaved($event)"
+          (loading)="onProviderLoading($event)"
+        ></ix-cloudsync-provider>
       </mat-step>
 
       <mat-step [stepControl]="whatAndWhen?.form">

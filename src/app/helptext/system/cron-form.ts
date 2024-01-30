@@ -1,6 +1,6 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
-export default {
+export const helptextCron = {
   cron_description_tooltip: T('Enter a description of the cron job.'),
   cron_command_tooltip: T('Enter the full path to the command or script to\
                 be run.'),

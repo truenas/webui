@@ -5,8 +5,9 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { Router } from '@angular/router';
 import { createRoutingFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import {
-  mockCall, mockJob, mockWebsocket,
+  mockCall, mockJob, mockWebSocket,
 } from 'app/core/testing/utils/mock-websocket.utils';
 import { DatasetAclType } from 'app/enums/dataset.enum';
 import { Dataset } from 'app/interfaces/dataset.interface';
@@ -36,7 +37,7 @@ describe('DatasetTrivialPermissionsComponent', () => {
       datasetId: 'pool/trivial',
     },
     providers: [
-      mockWebsocket([
+      mockWebSocket([
         mockCall('pool.dataset.query', [{
           acltype: {
             value: DatasetAclType.Posix,
@@ -64,6 +65,7 @@ describe('DatasetTrivialPermissionsComponent', () => {
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
+      mockAuth(),
     ],
   });
 

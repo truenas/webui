@@ -7,11 +7,12 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import {
-  mockCall, mockJob, mockWebsocket,
+  mockCall, mockJob, mockWebSocket,
 } from 'app/core/testing/utils/mock-websocket.utils';
 import { IdmapBackend, IdmapName, IdmapSslEncryptionMode } from 'app/enums/idmap.enum';
-import helptext from 'app/helptext/directory-service/idmap';
+import { helptextIdmap } from 'app/helptext/directory-service/idmap';
 import { IdmapBackendOptions, IdmapBackendParameter } from 'app/interfaces/idmap-backend-options.interface';
 import { Idmap } from 'app/interfaces/idmap.interface';
 import { EntityModule } from 'app/modules/entity/entity.module';
@@ -59,7 +60,7 @@ describe('IdmapFormComponent', () => {
       MockComponent(WithManageCertificatesLinkComponent),
     ],
     providers: [
-      mockWebsocket([
+      mockWebSocket([
         mockCall('idmap.create'),
         mockCall('idmap.update'),
         mockJob('idmap.clear_idmap_cache', fakeSuccessfulJob()),
@@ -103,6 +104,7 @@ describe('IdmapFormComponent', () => {
         confirm: jest.fn(() => of(false)),
       }),
       mockProvider(IxSlideInRef),
+      mockAuth(),
       { provide: SLIDE_IN_DATA, useValue: undefined },
     ],
   });
@@ -207,8 +209,8 @@ describe('IdmapFormComponent', () => {
       await saveButton.click();
 
       expect(confirm).toHaveBeenCalledWith({
-        title: helptext.idmap.clear_cache_dialog.title,
-        message: helptext.idmap.clear_cache_dialog.message,
+        title: helptextIdmap.idmap.clear_cache_dialog.title,
+        message: helptextIdmap.idmap.clear_cache_dialog.message,
         hideCheckbox: true,
       });
       expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('idmap.clear_idmap_cache', []);

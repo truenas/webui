@@ -9,7 +9,7 @@ import {
   PosixAclTag, posixAclTagLabels, PosixPermission, posixPermissionLabels,
 } from 'app/enums/posix-acl.enum';
 import { mapToOptions } from 'app/helpers/options.helper';
-import helptext from 'app/helptext/storage/volumes/datasets/dataset-acl';
+import { helptextAcl } from 'app/helptext/storage/volumes/datasets/dataset-acl';
 import { PosixAclItem } from 'app/interfaces/acl.interface';
 import { GroupComboboxProvider } from 'app/modules/ix-forms/classes/group-combobox-provider';
 import { UserComboboxProvider } from 'app/modules/ix-forms/classes/user-combobox-provider';
@@ -38,11 +38,11 @@ export class EditPosixAceComponent implements OnInit, OnChanges {
   readonly permissions$ = of(mapToOptions(posixPermissionLabels, this.translate));
 
   readonly tooltips = {
-    tag: helptext.posix_tag.tooltip,
-    user: helptext.dataset_acl_user_tooltip,
-    group: helptext.dataset_acl_group_tooltip,
-    permissions: helptext.posix_perms.tooltip,
-    default: helptext.posix_default.tooltip,
+    tag: helptextAcl.posix_tag.tooltip,
+    user: helptextAcl.dataset_acl_user_tooltip,
+    group: helptextAcl.dataset_acl_group_tooltip,
+    permissions: helptextAcl.posix_perms.tooltip,
+    default: helptextAcl.posix_default.tooltip,
   };
 
   readonly userProvider = new UserComboboxProvider(this.userService);

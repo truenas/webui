@@ -7,7 +7,8 @@ import {
   byText, createComponentFactory, mockProvider, Spectator,
 } from '@ngneat/spectator/jest';
 import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-datetime.pipe';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { SmartTestType } from 'app/enums/smart-test-type.enum';
 import { ManualSmartTest } from 'app/interfaces/smart-test.interface';
 import { Disk } from 'app/interfaces/storage.interface';
@@ -31,7 +32,7 @@ describe('ManualTestDialogComponent', () => {
     ],
     providers: [
       mockProvider(DialogService),
-      mockWebsocket([
+      mockWebSocket([
         mockCall('smart.test.manual_test', [
           { disk: 'sda', expected_result_time: { $date: 1647438105 } },
           { disk: 'sdb', error: 'Disk is on fire.' },
@@ -50,6 +51,7 @@ describe('ManualTestDialogComponent', () => {
         } as ManualTestDialogParams,
       },
       mockProvider(MatDialogRef),
+      mockAuth(),
     ],
   });
 

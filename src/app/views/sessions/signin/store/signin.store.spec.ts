@@ -2,11 +2,12 @@ import { Router } from '@angular/router';
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator';
 import { mockProvider } from '@ngneat/spectator/jest';
 import { firstValueFrom, of } from 'rxjs';
-import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
+import { MockWebSocketService } from 'app/core/testing/classes/mock-websocket.service';
 import { getTestScheduler } from 'app/core/testing/utils/get-test-scheduler.utils';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
 import { FailoverStatus } from 'app/enums/failover-status.enum';
+import { LoginResult } from 'app/enums/login-result.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { ApiEvent } from 'app/interfaces/api-message.interface';
 import { FailoverDisabledReasonEvent } from 'app/interfaces/failover-disabled-reasons.interface';
@@ -15,27 +16,27 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import { AuthService } from 'app/services/auth/auth.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { UpdateService } from 'app/services/update.service';
-import { WebsocketConnectionService } from 'app/services/websocket-connection.service';
+import { WebSocketConnectionService } from 'app/services/websocket-connection.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { SigninStore } from 'app/views/sessions/signin/store/signin.store';
 
 describe('SigninStore', () => {
   let spectator: SpectatorService<SigninStore>;
-  let websocket: MockWebsocketService;
+  let websocket: MockWebSocketService;
   let authService: AuthService;
   const testScheduler = getTestScheduler();
 
   const createService = createServiceFactory({
     service: SigninStore,
     providers: [
-      mockWebsocket([
+      mockWebSocket([
         mockCall('user.has_local_administrator_set_up', true),
         mockCall('failover.status', FailoverStatus.Single),
         mockCall('failover.get_ips', ['123.23.44.54']),
         mockCall('auth.twofactor.config', { enabled: false } as GlobalTwoFactorConfig),
         mockCall('failover.disabled.reasons', [FailoverDisabledReason.NoLicense]),
       ]),
-      mockProvider(WebsocketConnectionService, {
+      mockProvider(WebSocketConnectionService, {
         isConnected$: of(true),
         websocket$: of(),
       }),
@@ -63,7 +64,7 @@ describe('SigninStore', () => {
 
   beforeEach(() => {
     spectator = createService();
-    websocket = spectator.inject(MockWebsocketService);
+    websocket = spectator.inject(MockWebSocketService);
     authService = spectator.inject(AuthService);
 
     Object.defineProperty(authService, 'authToken$', {
@@ -72,7 +73,7 @@ describe('SigninStore', () => {
     Object.defineProperty(authService, 'user$', {
       get: () => of({ twofactor_auth_configured: false }),
     });
-    jest.spyOn(authService, 'loginWithToken').mockReturnValue(of(true));
+    jest.spyOn(authService, 'loginWithToken').mockReturnValue(of(LoginResult.Success));
   });
 
   describe('selectors', () => {

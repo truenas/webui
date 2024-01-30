@@ -3,7 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { SpectatorRouting } from '@ngneat/spectator';
 import { mockProvider, createRoutingFactory } from '@ngneat/spectator/jest';
 import { CoreComponents } from 'app/core/core-components.module';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { Catalog, CatalogTrain } from 'app/interfaces/catalog.interface';
 import { IxTable2Harness } from 'app/modules/ix-table2/components/ix-table2/ix-table2.harness';
 import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
@@ -47,7 +47,7 @@ describe('CatalogsComponent', () => {
     declarations: [],
     providers: [
       mockProvider(DialogService),
-      mockWebsocket([
+      mockWebSocket([
         mockCall('core.get_jobs'),
         mockCall('catalog.query', fakeCatalogDataSource),
         mockCall('catalog.delete', true),

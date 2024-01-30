@@ -8,8 +8,8 @@ import { TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { mntPath } from 'app/enums/mnt-path.enum';
 import { TransferMode } from 'app/enums/transfer-mode.enum';
-import helptext_cloudsync from 'app/helptext/data-protection/cloudsync/cloudsync-form';
-import { CloudsyncRestoreParams } from 'app/interfaces/cloudsync-provider.interface';
+import { helptextCloudSync } from 'app/helptext/data-protection/cloudsync/cloudsync';
+import { CloudSyncRestoreParams } from 'app/interfaces/cloudsync-provider.interface';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { FilesystemService } from 'app/services/filesystem.service';
@@ -21,7 +21,7 @@ import { WebSocketService } from 'app/services/ws.service';
   styleUrls: ['./cloudsync-restore-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class CloudsyncRestoreDialogComponent {
+export class CloudSyncRestoreDialogComponent {
   readonly form = this.formBuilder.group({
     description: ['', Validators.required],
     transfer_mode: [TransferMode.Copy],
@@ -29,7 +29,7 @@ export class CloudsyncRestoreDialogComponent {
   });
 
   readonly treeNodeProvider = this.filesystem.getFilesystemNodeProvider({ directoriesOnly: true });
-  readonly helptext = helptext_cloudsync;
+  readonly helptext = helptextCloudSync;
   readonly transferModes$ = of([
     {
       value: TransferMode.Sync,
@@ -46,20 +46,20 @@ export class CloudsyncRestoreDialogComponent {
     private formBuilder: FormBuilder,
     private filesystem: FilesystemService,
     private translate: TranslateService,
-    private dialogRef: MatDialogRef<CloudsyncRestoreDialogComponent>,
+    private dialogRef: MatDialogRef<CloudSyncRestoreDialogComponent>,
     private errorHandler: FormErrorHandlerService,
     private loader: AppLoaderService,
     @Inject(MAT_DIALOG_DATA) private parentTaskId: number,
   ) { }
 
   onSubmit(): void {
-    this.ws.call('cloudsync.restore', [this.parentTaskId, this.form.value] as CloudsyncRestoreParams)
+    this.ws.call('cloudsync.restore', [this.parentTaskId, this.form.value] as CloudSyncRestoreParams)
       .pipe(this.loader.withLoader(), untilDestroyed(this))
       .subscribe({
         next: () => {
           this.dialogRef.close(true);
         },
-        error: (error) => {
+        error: (error: unknown) => {
           this.errorHandler.handleWsFormError(error, this.form);
         },
       });

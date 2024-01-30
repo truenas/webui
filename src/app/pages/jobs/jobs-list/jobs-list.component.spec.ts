@@ -8,7 +8,7 @@ import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { MockModule } from 'ng-mocks';
 import { of } from 'rxjs';
 import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-datetime.pipe';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { JobState } from 'app/enums/job-state.enum';
 import { Job } from 'app/interfaces/job.interface';
 import { IxEmptyRowHarness } from 'app/modules/ix-tables/components/ix-empty-row/ix-empty-row.component.harness';
@@ -77,8 +77,8 @@ describe('JobsListComponent', () => {
     providers: [
       mockProvider(DialogService),
       mockProvider(MatSnackBar),
-      mockWebsocket([
-        mockCall('core.download', [1, 'http://localhost/download/log']),
+      mockWebSocket([
+        mockCall('core.job_download_logs', 'http://localhost/download/log'),
       ]),
       mockProvider(StorageService, {
         downloadUrl: jest.fn(() => of(undefined)),
@@ -147,7 +147,7 @@ describe('JobsListComponent', () => {
     const [downloadLogsButton] = await loader.getAllHarnesses(MatButtonHarness.with({ text: 'Download Logs' }));
     await downloadLogsButton.click();
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('core.download', ['filesystem.get', ['/var/log/jobs/446.log'], '446.log']);
+    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('core.job_download_logs', [446, '446.log']);
     expect(spectator.inject(StorageService).downloadUrl).toHaveBeenCalledWith('http://localhost/download/log', '446.log', 'text/plain');
   });
 });

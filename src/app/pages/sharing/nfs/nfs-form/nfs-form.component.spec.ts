@@ -7,8 +7,9 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { Store } from '@ngrx/store';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
-import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { MockWebSocketService } from 'app/core/testing/classes/mock-websocket.service';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { NfsProtocol } from 'app/enums/nfs-protocol.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { NfsConfig } from 'app/interfaces/nfs-config.interface';
@@ -65,13 +66,14 @@ describe('NfsFormComponent', () => {
       IxFormsModule,
     ],
     providers: [
-      mockWebsocket([
+      mockWebSocket([
         mockCall('sharing.nfs.create'),
         mockCall('sharing.nfs.update'),
         mockCall('nfs.config', {
           protocols: [NfsProtocol.V3],
         } as NfsConfig),
       ]),
+      mockAuth(),
       mockProvider(IxSlideInService),
       mockProvider(FilesystemService),
       mockProvider(UserService, {
@@ -129,7 +131,7 @@ describe('NfsFormComponent', () => {
     });
 
     it('loads NFS config and shows Security select in Access fieldset when NFS is version 4', async () => {
-      const websocketMock = spectator.inject(MockWebsocketService);
+      const websocketMock = spectator.inject(MockWebSocketService);
       websocketMock.mockCallOnce('nfs.config', {
         protocols: [NfsProtocol.V4],
       } as NfsConfig);
@@ -191,7 +193,7 @@ describe('NfsFormComponent', () => {
     beforeEach(async () => {
       spectator = createComponent({
         providers: [
-          { provide: SLIDE_IN_DATA, useValue: existingShare },
+          { provide: SLIDE_IN_DATA, useValue: { existingNfsShare: existingShare } },
         ],
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);

@@ -4,7 +4,7 @@ import { MockComponent } from 'ng-mocks';
 import { MockStorageScenario } from 'app/core/testing/enums/mock-storage.enum';
 import { diskToDashboardDisk } from 'app/core/testing/utils/mock-storage-dashboard.utils';
 import { MockStorageGenerator } from 'app/core/testing/utils/mock-storage-generator.utils';
-import { mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { PoolCardIconType } from 'app/enums/pool-card-icon-type.enum';
 import { PoolStatus } from 'app/enums/pool-status.enum';
 import { TopologyItemType } from 'app/enums/v-dev-type.enum';
@@ -31,7 +31,7 @@ describe('TopologyCardComponent', () => {
       MockComponent(PoolCardIconComponent),
     ],
     providers: [
-      mockWebsocket([]),
+      mockWebSocket([]),
     ],
   });
 
@@ -154,6 +154,68 @@ describe('TopologyCardComponent', () => {
       spectator.setInput('poolState', { healthy: true, status: PoolStatus.Faulted } as Pool);
       expect(spectator.query(PoolCardIconComponent).type).toBe(PoolCardIconType.Error);
       expect(spectator.query(PoolCardIconComponent).tooltip).toBe('Pool contains FAULTED Data VDEVs');
+    });
+  });
+
+  describe('tests with offline pools', () => {
+    beforeEach(() => {
+      // Create storage object with empty topologies
+      const storage = new MockStorageGenerator();
+
+      // Add Topologies to Storage
+      storage.addDataTopology({
+        scenario: MockStorageScenario.Uniform,
+        layout: TopologyItemType.Raidz3,
+        diskSize: 4,
+        width: 7,
+        repeats: 2,
+      })
+        .addSpecialTopology({
+          scenario: MockStorageScenario.Uniform,
+          layout: TopologyItemType.Mirror,
+          diskSize: 4,
+          width: 3,
+          repeats: 1,
+        }).addLogTopology(2, true, 2)
+        .addCacheTopology(2, 2)
+        .addSpareTopology(3, 8);
+
+      spectator = createComponent({
+        props: {
+          poolState: { ...storage.poolState, status: PoolStatus.Offline },
+          disks: storage.disks.map((disk: Disk) => diskToDashboardDisk(disk)),
+        },
+      });
+    });
+    it('rendering VDEVs rows', () => {
+      const captions = spectator.queryAll('.vdev-line b');
+      const values = spectator.queryAll('.vdev-line .vdev-value');
+
+      expect(spectator.queryAll('.vdev-line .warning ix-icon')).toHaveLength(1);
+      expect(captions).toHaveLength(6);
+      expect(values).toHaveLength(5);
+
+      expect(captions[0]).toHaveText('Data VDEVs');
+      expect(spectator.query('.offline-data-vdevs').textContent).toBe('Offline VDEVs');
+
+      // Redundancy level should match data VDEVs
+      expect(captions[1]).toHaveText('Metadata');
+      expect(values[0]).toHaveText('N/A');
+
+      // Can be Disk or MIRROR
+      expect(captions[2]).toHaveText('Log VDEVs');
+      expect(values[1]).toHaveText('N/A');
+
+      // Can be DISK Only
+      expect(captions[3]).toHaveText('Cache VDEVs');
+      expect(values[2]).toHaveText('N/A');
+
+      // Can be DISK only but should also be same size or larger than disk sizes used in data VDEVs
+      expect(captions[4]).toHaveText('Spare VDEVs');
+      expect(values[3]).toHaveText('N/A');
+
+      expect(captions[5]).toHaveText('Dedup VDEVs');
+      expect(values[4]).toHaveText('N/A');
     });
   });
 });

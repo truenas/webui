@@ -4,7 +4,8 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { PoolScrubTask } from 'app/interfaces/pool-scrub.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
@@ -45,8 +46,9 @@ describe('ScrubTaskFormComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
+      mockAuth(),
       mockProvider(DialogService),
-      mockWebsocket([
+      mockWebSocket([
         mockCall('pool.scrub.create'),
         mockCall('pool.scrub.update'),
         mockCall('pool.query', [

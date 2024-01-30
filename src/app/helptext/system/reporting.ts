@@ -1,6 +1,6 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
-export const helptext = {
+export const helptextReporting = {
   graph_age_tooltip: T('Maximum time a graph is stored in months (allowed values are 1-60). \
  Changing this value causes the <i>Confirm RRD Destroy</i> \
  dialog to appear. Changes do not take effect until the existing \

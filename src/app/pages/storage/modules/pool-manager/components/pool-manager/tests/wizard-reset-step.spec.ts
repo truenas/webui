@@ -6,7 +6,8 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { of } from 'rxjs';
 import { GiB } from 'app/constants/bytes.constant';
 import { CoreComponents } from 'app/core/core-components.module';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { DiskType } from 'app/enums/disk-type.enum';
 import { Enclosure } from 'app/interfaces/enclosure.interface';
 import { UnusedDisk } from 'app/interfaces/storage.interface';
@@ -40,7 +41,7 @@ describe('PoolManagerComponent – wizard step reset', () => {
     ],
     providers: [
       ...commonProviders,
-      mockWebsocket([
+      mockWebSocket([
         mockCall('pool.validate_name', true),
         mockCall('disk.get_unused', [
           {
@@ -133,6 +134,7 @@ describe('PoolManagerComponent – wizard step reset', () => {
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
+      mockAuth(),
     ],
   });
 

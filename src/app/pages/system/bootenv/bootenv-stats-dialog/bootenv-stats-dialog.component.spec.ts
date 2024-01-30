@@ -7,8 +7,9 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { provideMockStore } from '@ngrx/store/testing';
 import { CoreComponents } from 'app/core/core-components.module';
 import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-datetime.pipe';
-import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { MockWebSocketService } from 'app/core/testing/classes/mock-websocket.service';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { PoolStatus } from 'app/enums/pool-status.enum';
 import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
 import { PoolInstance } from 'app/interfaces/pool.interface';
@@ -48,7 +49,7 @@ describe('BootenvStatsDialogComponent', () => {
       mockProvider(DialogService),
       mockProvider(SnackbarService),
       mockProvider(MatDialogRef),
-      mockWebsocket([
+      mockWebSocket([
         mockCall('boot.get_state', poolInstance),
         mockCall('boot.set_scrub_interval'),
       ]),
@@ -60,6 +61,7 @@ describe('BootenvStatsDialogComponent', () => {
           },
         ],
       }),
+      mockAuth(),
     ],
     declarations: [
       FakeFormatDateTimePipe,
@@ -118,7 +120,7 @@ describe('BootenvStatsDialogComponent', () => {
   });
 
   it('tells user to look at alerts if boot pool status is degraded', () => {
-    const websocketMock = spectator.inject(MockWebsocketService);
+    const websocketMock = spectator.inject(MockWebSocketService);
     websocketMock.mockCall('boot.get_state', {
       ...poolInstance,
       status: PoolStatus.Degraded,

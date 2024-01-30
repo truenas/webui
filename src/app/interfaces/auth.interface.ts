@@ -1,4 +1,5 @@
-export type CheckUserQuery = [
+export type LoginQuery = [
   username: string,
   password: string,
+  otp?: string,
 ];

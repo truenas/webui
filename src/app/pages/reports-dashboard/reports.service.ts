@@ -9,13 +9,7 @@ import { ReportingData } from 'app/interfaces/reporting.interface';
 import { ReportTab, reportTypeLabels, ReportType } from 'app/pages/reports-dashboard/interfaces/report-tab.interface';
 import { LegendDataWithStackedTotalHtml, Report } from 'app/pages/reports-dashboard/interfaces/report.interface';
 import { convertAggregations, optimizeLegend } from 'app/pages/reports-dashboard/utils/report.utils';
-import { SystemGeneralService } from 'app/services/system-general.service';
 import { WebSocketService } from 'app/services/ws.service';
-
-/*
- * This service acts as a proxy between middleware/web worker
- * and reports page components.
- * */
 
 @Injectable({
   providedIn: 'root',
@@ -34,15 +28,21 @@ export class ReportsService {
 
   constructor(
     private ws: WebSocketService,
-    private systemGeneralService: SystemGeneralService,
   ) {
     this.ws.call('reporting.netdata_graphs').subscribe((reportingGraphs) => {
-      this.hasUps = reportingGraphs.some((graph) => graph.name === ReportingGraphName.Ups);
-      this.hasTarget = reportingGraphs.some((graph) => graph.name === ReportingGraphName.Target);
-      this.hasNfs = reportingGraphs.some((graph) => {
-        return [ReportingGraphName.NfsStat, ReportingGraphName.NfsStatBytes].includes(graph.name as ReportingGraphName);
+      this.hasUps = reportingGraphs.some((graph) => graph.name.startsWith(ReportingGraphName.Ups));
+      this.hasTarget = reportingGraphs.some((graph) => {
+        return graph.name === ReportingGraphName.Target;
       });
-      this.hasPartitions = reportingGraphs.some((graph) => graph.name === ReportingGraphName.Partition);
+      this.hasNfs = reportingGraphs.some((graph) => {
+        return [
+          ReportingGraphName.NfsStat,
+          ReportingGraphName.NfsStatBytes,
+        ].includes(graph.name);
+      });
+      this.hasPartitions = reportingGraphs.some((graph) => {
+        return graph.name === ReportingGraphName.Partition;
+      });
       this.reportingGraphs$.next(reportingGraphs);
     });
 
@@ -136,7 +136,8 @@ export class ReportsService {
           .map((disk) => {
             const [value] = disk.devname.split(' ');
             return { label: disk.devname, value };
-          });
+          })
+          .sort((a, b) => a.label.localeCompare(b.label));
       }),
       shareReplay({ refCount: true, bufferSize: 1 }),
     );

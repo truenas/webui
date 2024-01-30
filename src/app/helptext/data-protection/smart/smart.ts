@@ -1,6 +1,6 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
-export default {
+export const helptextSmart = {
   smarttest_all_disks_placeholder: T('All Disks'),
 
   smarttest_disks_tooltip: T('Select the disks to monitor.'),

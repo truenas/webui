@@ -13,7 +13,6 @@
         mat-button
         color="primary"
         ixTest="add-smb-share"
-        [disabled]="isClustered$ | async"
         (click)="doAdd()"
       >
         {{ 'Add' | translate }}

@@ -4,7 +4,8 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { StoreModule } from '@ngrx/store';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { IpmiChassisIdentifyState, IpmiIpAddressSource } from 'app/enums/ipmi.enum';
 import { OnOff } from 'app/enums/on-off.enum';
 import { ProductType } from 'app/enums/product-type.enum';
@@ -63,7 +64,7 @@ describe('IpmiFormComponent', () => {
       mockProvider(SnackbarService),
       mockProvider(IxSlideInRef),
       { provide: SLIDE_IN_DATA, useValue: undefined },
-      mockWebsocket([
+      mockWebSocket([
         mockCall('failover.licensed', true),
         mockCall('failover.call_remote', [{
           channel: 1,
@@ -87,6 +88,7 @@ describe('IpmiFormComponent', () => {
         } as IpmiChassis),
         mockCall('ipmi.chassis.identify'),
       ]),
+      mockAuth(),
     ],
   });
 

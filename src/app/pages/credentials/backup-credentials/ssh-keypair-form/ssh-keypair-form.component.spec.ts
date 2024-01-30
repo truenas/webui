@@ -6,7 +6,8 @@ import { MatMenuHarness } from '@angular/material/menu/testing';
 import {
   createComponentFactory, mockProvider, Spectator,
 } from '@ngneat/spectator/jest';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { KeychainCredentialType } from 'app/enums/keychain-credential-type.enum';
 import { KeychainSshKeyPair, SshKeyPair } from 'app/interfaces/keychain-credential.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
@@ -41,7 +42,7 @@ describe('SshKeypairFormComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
-      mockWebsocket([
+      mockWebSocket([
         mockCall('keychaincredential.generate_ssh_key_pair', {
           private_key: 'Generated private key',
           public_key: 'Generated public key',
@@ -53,6 +54,7 @@ describe('SshKeypairFormComponent', () => {
       mockProvider(StorageService),
       mockProvider(FormErrorHandlerService),
       mockProvider(DialogService),
+      mockAuth(),
       { provide: SLIDE_IN_DATA, useValue: undefined },
     ],
   });

@@ -21,7 +21,7 @@ import {
 } from 'rxjs/operators';
 import { ixChartApp } from 'app/constants/catalog.constants';
 import { DynamicFormSchemaType } from 'app/enums/dynamic-form-schema-type.enum';
-import helptext from 'app/helptext/apps/apps';
+import { helptextApps } from 'app/helptext/apps/apps';
 import { AppDetailsRouteParams } from 'app/interfaces/app-details-route-params.interface';
 import { CatalogApp } from 'app/interfaces/catalog.interface';
 import {
@@ -38,18 +38,20 @@ import {
   DynamicWizardSchema,
 } from 'app/interfaces/dynamic-form-schema.interface';
 import { Option } from 'app/interfaces/option.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
+import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { CustomUntypedFormField } from 'app/modules/ix-dynamic-form/components/ix-dynamic-form/classes/custom-untyped-form-field';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { forbiddenAsyncValues, forbiddenValuesError } from 'app/modules/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { DockerHubRateInfoDialogComponent } from 'app/pages/apps/components/dockerhub-rate-limit-info.dialog.ts/dockerhub-rate-limit-info-dialog.component';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { KubernetesStore } from 'app/pages/apps/store/kubernetes-store.service';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { AppSchemaService } from 'app/services/schema/app-schema.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -81,7 +83,7 @@ export class ChartWizardComponent implements OnInit, OnDestroy {
   searchControl = this.formBuilder.control('');
   searchOptions: Option[] = [];
 
-  readonly helptext = helptext;
+  readonly helptext = helptextApps;
 
   private _pageTitle$ = new BehaviorSubject<string>('...');
   pageTitle$ = this._pageTitle$.asObservable().pipe(
@@ -117,9 +119,11 @@ export class ChartWizardComponent implements OnInit, OnDestroy {
     private router: Router,
     private errorHandler: ErrorHandlerService,
     private kubernetesStore: KubernetesStore,
+    private ws: WebSocketService,
   ) {}
 
   ngOnInit(): void {
+    this.getDockerHubRateLimitInfo();
     this.listenForRouteChanges();
     this.handleSearchControl();
   }
@@ -150,7 +154,7 @@ export class ChartWizardComponent implements OnInit, OnDestroy {
           this.setChartForCreation(app);
           this.afterAppLoaded();
         },
-        error: (error: WebsocketError) => this.afterAppLoadError(error),
+        error: (error: WebSocketError) => this.afterAppLoadError(error),
       });
   }
 
@@ -213,7 +217,7 @@ export class ChartWizardComponent implements OnInit, OnDestroy {
   saveData(data: ChartFormValues): void {
     this.dialogRef = this.matDialog.open(EntityJobComponent, {
       data: {
-        title: this.isNew ? helptext.installing : helptext.updating,
+        title: this.isNew ? helptextApps.installing : helptextApps.updating,
       },
       disableClose: true,
     });
@@ -244,6 +248,7 @@ export class ChartWizardComponent implements OnInit, OnDestroy {
 
     this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((failedJob) => {
       this.formErrorHandler.handleWsFormError(failedJob, this.form);
+      this.dialogRef.close();
       this.cdr.markForCheck();
     });
   }
@@ -287,7 +292,7 @@ export class ChartWizardComponent implements OnInit, OnDestroy {
           this.setChartForEdit(releases[0]);
           this.afterAppLoaded();
         },
-        error: (error: WebsocketError) => this.afterAppLoadError(error),
+        error: (error: WebSocketError) => this.afterAppLoadError(error),
       });
   }
 
@@ -328,13 +333,13 @@ export class ChartWizardComponent implements OnInit, OnDestroy {
         {
           controlName: 'release_name',
           type: DynamicFormSchemaType.Input,
-          title: helptext.chartForm.release_name.placeholder,
+          title: helptextApps.chartForm.release_name.placeholder,
           required: true,
         },
         {
           controlName: 'version',
           type: DynamicFormSchemaType.Select,
-          title: helptext.chartWizard.nameGroup.version,
+          title: helptextApps.chartWizard.nameGroup.version,
           required: true,
           options: of(versionKeys.map((version) => ({ value: version, label: version }))),
           hidden: hideVersion,
@@ -397,7 +402,7 @@ export class ChartWizardComponent implements OnInit, OnDestroy {
         {
           controlName: 'release_name',
           type: DynamicFormSchemaType.Input,
-          title: helptext.chartForm.release_name.placeholder,
+          title: helptextApps.chartForm.release_name.placeholder,
           required: true,
           editable: false,
         },
@@ -414,9 +419,9 @@ export class ChartWizardComponent implements OnInit, OnDestroy {
     this.cdr.markForCheck();
   }
 
-  private afterAppLoadError(error: WebsocketError): void {
+  private afterAppLoadError(error: unknown): void {
     this.router.navigate(['/apps', 'available']).then(() => {
-      this.dialogService.error(this.errorHandler.parseWsError(error));
+      this.errorHandler.showErrorModal(error);
     });
   }
 
@@ -443,8 +448,8 @@ export class ChartWizardComponent implements OnInit, OnDestroy {
     } catch (error: unknown) {
       console.error(error);
       this.dialogService.error({
-        title: helptext.chartForm.parseError.title,
-        message: helptext.chartForm.parseError.message,
+        title: helptextApps.chartForm.parseError.title,
+        message: helptextApps.chartForm.parseError.message,
       });
     }
   }
@@ -507,6 +512,16 @@ export class ChartWizardComponent implements OnInit, OnDestroy {
     this.form.controls.version?.valueChanges.pipe(filter(Boolean), untilDestroyed(this)).subscribe((version) => {
       this.catalogApp.schema = this.catalogApp.versions[version].schema;
       this.buildDynamicForm(this.catalogApp.schema);
+    });
+  }
+
+  private getDockerHubRateLimitInfo(): void {
+    this.ws.call('container.image.dockerhub_rate_limit').pipe(untilDestroyed(this)).subscribe((info) => {
+      if (info.remaining_pull_limit < 5) {
+        this.matDialog.open(DockerHubRateInfoDialogComponent, {
+          data: info,
+        });
+      }
     });
   }
 }

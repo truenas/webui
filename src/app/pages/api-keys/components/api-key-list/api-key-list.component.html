@@ -57,11 +57,11 @@
           <ix-icon name="more_vert"></ix-icon>
         </button>
         <mat-menu #actionsMenu="matMenu">
-          <button mat-menu-item ixTest="edit-key" (click)="openApiKeyForm(apiKey)">
+          <button mat-menu-item [ixTest]="['edit-key', apiKey.name]" (click)="openApiKeyForm(apiKey)">
             <ix-icon name="edit"></ix-icon>
             <span>{{ 'Edit' | translate }}</span>
           </button>
-          <button mat-menu-item ixTest="delete" (click)="doDelete(apiKey)">
+          <button mat-menu-item [ixTest]="['delete', apiKey.name]" (click)="doDelete(apiKey)">
             <ix-icon name="delete"></ix-icon>
             <span>{{ 'Delete' | translate }}</span>
           </button>

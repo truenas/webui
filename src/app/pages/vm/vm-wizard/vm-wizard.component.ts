@@ -7,12 +7,12 @@ import * as _ from 'lodash';
 import {
   forkJoin, Observable, of, switchMap,
 } from 'rxjs';
-import { catchError, map } from 'rxjs/operators';
+import { catchError, defaultIfEmpty, map } from 'rxjs/operators';
 import { GiB, MiB } from 'app/constants/bytes.constant';
 import { VmDeviceType, VmNicType, VmOs } from 'app/enums/vm.enum';
 import { VirtualMachine, VirtualMachineUpdate } from 'app/interfaces/virtual-machine.interface';
 import { VmDevice, VmDeviceUpdate } from 'app/interfaces/vm-device.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
+import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { SummarySection } from 'app/modules/common/summary/summary.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -118,9 +118,9 @@ export class VmWizardComponent implements OnInit {
           this.snackbar.success(this.translate.instant('Virtual machine created'));
           this.cdr.markForCheck();
         },
-        error: (error: WebsocketError) => {
+        error: (error: unknown) => {
           this.isLoading = false;
-          this.dialogService.error(this.errorHandler.parseWsError(error));
+          this.dialogService.error(this.errorHandler.parseError(error));
           this.cdr.markForCheck();
         },
       });
@@ -249,15 +249,16 @@ export class VmWizardComponent implements OnInit {
     const gpusIds = this.gpuForm.gpus as unknown as string[];
 
     const pciIdsRequests$ = gpusIds.map((gpu) => {
-      return this.ws.call('device.get_pci_ids_for_gpu_isolation', [gpu]);
+      return this.ws.call('vm.device.get_pci_ids_for_gpu_isolation', [gpu]);
     });
 
     return forkJoin(pciIdsRequests$).pipe(
+      defaultIfEmpty([]),
       map((pciIds) => pciIds.flat()),
-      switchMap((pciIds) => [
+      switchMap((pciIds) => forkJoin([
         this.vmGpuService.updateVmGpus(vm, gpusIds.concat(pciIds)),
         this.gpuService.addIsolatedGpuPciIds(gpusIds.concat(pciIds)),
-      ]),
+      ])),
     );
   }
 
@@ -284,7 +285,7 @@ export class VmWizardComponent implements OnInit {
       ...payload,
     }])
       .pipe(
-        catchError((error: WebsocketError) => {
+        catchError((error: WebSocketError) => {
           this.dialogService.error({
             title: this.translate.instant('Error creating device'),
             message: error.reason,

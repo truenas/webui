@@ -75,3 +75,8 @@ export interface SelectedEnclosureSlot {
   selected: EnclosureSlot;
   vdevSlots: EnclosureSlot[]; // All members including selected
 }
+
+export interface DiskEnclosureInfo {
+  enclosure: number;
+  slot: number;
+}

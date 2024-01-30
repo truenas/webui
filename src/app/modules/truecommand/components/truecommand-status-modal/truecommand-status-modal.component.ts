@@ -5,7 +5,7 @@ import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TrueCommandStatus } from 'app/enums/true-command-status.enum';
 import { WINDOW } from 'app/helpers/window.helper';
-import helptext from 'app/helptext/topbar';
+import { helptextTopbar } from 'app/helptext/topbar';
 import { TrueCommandConfig } from 'app/interfaces/true-command-config.interface';
 import { TruecommandButtonComponent } from 'app/modules/truecommand/truecommand-button.component';
 import { DialogService } from 'app/services/dialog.service';
@@ -31,10 +31,10 @@ export class TruecommandStatusModalComponent {
 
   goToTrueCommand(): void {
     this.dialogService.generalDialog({
-      title: helptext.tcDialog.title,
-      message: helptext.tcDialog.message,
+      title: helptextTopbar.tcDialog.title,
+      message: helptextTopbar.tcDialog.message,
       is_html: true,
-      confirmBtnMsg: helptext.tcDialog.confirmBtnMsg,
+      confirmBtnMsg: helptextTopbar.tcDialog.confirmBtnMsg,
     }).pipe(untilDestroyed(this)).subscribe((confirmed) => {
       if (confirmed) {
         this.window.open(this.tc.remote_url);

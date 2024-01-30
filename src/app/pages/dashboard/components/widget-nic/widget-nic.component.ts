@@ -17,13 +17,13 @@ import { ResourcesUsageStore } from 'app/pages/dashboard/store/resources-usage-s
 import { deepCloneState } from 'app/pages/dashboard/utils/deep-clone-state.helper';
 
 interface NetTraffic {
-  sent: number;
-  received: number;
+  bitsSent: number;
+  bitsReceived: number;
   linkState: LinkState;
 }
 
 interface Slide {
-  name: string;
+  name: Path;
   index?: string;
 }
 
@@ -56,7 +56,7 @@ export class WidgetNicComponent extends WidgetComponent implements AfterViewInit
 
   readonly LinkState = LinkState;
   readonly NetworkInterfaceAliasType = NetworkInterfaceAliasType;
-  readonly PathEnum = Path;
+  readonly Path = Path;
 
   get currentSlideName(): string {
     return this.path[parseInt(this.currentSlide)].name;
@@ -70,9 +70,9 @@ export class WidgetNicComponent extends WidgetComponent implements AfterViewInit
   title = this.defaultTitle;
 
   path: Slide[] = [
-    { name: this.PathEnum.Overview },
-    { name: this.PathEnum.Empty },
-    { name: this.PathEnum.Empty },
+    { name: Path.Overview },
+    { name: Path.Empty },
+    { name: Path.Empty },
   ];
 
   get ipAddresses(): NetworkInterfaceAlias[] {
@@ -126,17 +126,17 @@ export class WidgetNicComponent extends WidgetComponent implements AfterViewInit
       untilDestroyed(this),
     ).subscribe((nicUpdate) => {
       this.traffic = {
-        sent: nicUpdate.sent_bytes_rate,
-        received: nicUpdate.received_bytes_rate,
+        bitsSent: nicUpdate.sent_bytes_rate * 8,
+        bitsReceived: nicUpdate.received_bytes_rate * 8,
         linkState: nicUpdate.link_state,
       };
       this.cdr.markForCheck();
     });
   }
 
-  updateSlide(name: string, verified: boolean, slideIndex: number, dataIndex?: number): void {
-    if (name !== this.PathEnum.Overview && !verified) { return; }
-    const slide: Slide = {
+  updateSlide(name: Path, verified: boolean, slideIndex: number, dataIndex?: number): void {
+    if (name !== this.Path.Overview && !verified) { return; }
+    const slide = {
       name,
       index: typeof dataIndex !== 'undefined' ? dataIndex.toString() : null,
     };

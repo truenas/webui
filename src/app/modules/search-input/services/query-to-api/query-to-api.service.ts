@@ -31,7 +31,9 @@ export class QueryToApiService<T> {
       return;
     }
 
-    paramsGroup.filter(...this.buildCondition(node));
+    if (node) {
+      paramsGroup.filter(...this.buildCondition(node));
+    }
   }
 
   private buildGroup(paramsGroup: ParamsBuilderGroup<T>, conditionGroup: ConditionGroup): void {
@@ -79,7 +81,7 @@ export class QueryToApiService<T> {
     value: LiteralValue | LiteralValue[],
   ): LiteralValue | LiteralValue[] {
     if (property?.propertyType === PropertyType.Date) {
-      return this.parseDateAsMilliseconds(value);
+      return this.parseDateAsUnixSeconds(value);
     }
 
     if (property?.propertyType === PropertyType.Memory) {
@@ -93,13 +95,13 @@ export class QueryToApiService<T> {
     return value;
   }
 
-  private parseDateAsMilliseconds(value: LiteralValue | LiteralValue[]): number | number[] {
+  private parseDateAsUnixSeconds(value: LiteralValue | LiteralValue[]): number | number[] {
     const convertDate = (dateValue: LiteralValue): number | null => {
       const date = parseISO(dateValue as string);
       if (Number.isNaN(date.getTime())) {
         return null;
       }
-      return startOfDay(date).getTime();
+      return startOfDay(date).getTime() / 1000;
     };
 
     if (Array.isArray(value)) {

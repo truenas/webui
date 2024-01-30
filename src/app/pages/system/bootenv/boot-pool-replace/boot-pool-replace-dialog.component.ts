@@ -10,6 +10,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import filesize from 'filesize';
 import { map } from 'rxjs/operators';
+import { Role } from 'app/enums/role.enum';
 import { helptextSystemBootenv } from 'app/helptext/system/boot-env';
 import { UnusedDisk } from 'app/interfaces/storage.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
@@ -28,7 +29,7 @@ export class BootPoolReplaceDialogComponent implements OnInit {
   form = this.fb.group({
     dev: ['', Validators.required],
   });
-
+  protected readonly Role = Role;
   dev = {
     fcName: 'dev' as const,
     label: this.translate.instant(helptextSystemBootenv.replace_name_placeholder),

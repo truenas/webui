@@ -197,12 +197,9 @@ module.exports = {
 
         // Other temporary disables
         "@typescript-eslint/no-unsafe-return": "off",
-        "@typescript-eslint/no-unsafe-argument": "off",
         "rxjs/no-implicit-any-catch": ["off"],
         "rxjs/no-nested-subscribe": ["off"],
         "sonarjs/cognitive-complexity": ["error", 40],
-        "@typescript-eslint/consistent-indexed-object-style": ["off"], // Maybe enable later.
-        "@typescript-eslint/no-unsafe-enum-comparison": ["off"],
         "@typescript-eslint/no-base-to-string": ["off"],
         "@typescript-eslint/class-literal-property-style": ["off"],
         "@typescript-eslint/no-unnecessary-condition": ["off"],
@@ -291,6 +288,8 @@ module.exports = {
         }],
         "@shopify/typescript/prefer-singular-enums": "error",
         "@shopify/prefer-early-return": ["error", { maximumStatements: 3 }],
+        "import/no-default-export": "error",
+        "@typescript-eslint/consistent-indexed-object-style": "error",
 
         // RxJS rules
         "rxjs/no-unsafe-takeuntil": ["error", {
@@ -323,7 +322,6 @@ module.exports = {
         "angular-file-naming/service-filename-suffix": ["error", {
           "suffixes": ["service", "effects", "store", "guard", "pipe"]
         }],
-        "@typescript-eslint/consistent-indexed-object-style": "error"
       }
     },
     {

@@ -7,7 +7,8 @@ import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
-import { mockWebsocket, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockWebSocket, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
 import { Job } from 'app/interfaces/job.interface';
 import { ReplicationTaskUi } from 'app/interfaces/replication-task.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
@@ -21,7 +22,7 @@ import { ReplicationRestoreDialogComponent } from 'app/pages/data-protection/rep
 import { ReplicationTaskCardComponent } from 'app/pages/data-protection/replication/replication-task-card/replication-task-card.component';
 import { ReplicationWizardComponent } from 'app/pages/data-protection/replication/replication-wizard/replication-wizard.component';
 import { DialogService } from 'app/services/dialog.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 import { StorageService } from 'app/services/storage.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { selectSystemConfigState } from 'app/store/system-config/system-config.selectors';
@@ -65,6 +66,7 @@ describe('ReplicationTaskCardComponent', () => {
       IxTable2Module,
     ],
     providers: [
+      mockAuth(),
       provideMockStore({
         initialState: {},
         selectors: [
@@ -78,7 +80,7 @@ describe('ReplicationTaskCardComponent', () => {
           },
         ],
       }),
-      mockWebsocket([
+      mockWebSocket([
         mockCall('replication.query', replicationTasks),
         mockCall('core.get_jobs', []),
         mockCall('replication.delete'),
@@ -88,10 +90,8 @@ describe('ReplicationTaskCardComponent', () => {
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
-      mockProvider(IxSlideInService, {
-        open: jest.fn(() => {
-          return { slideInClosed$: of() };
-        }),
+      mockProvider(IxChainedSlideInService, {
+        pushComponent: jest.fn(() => of()),
       }),
       mockProvider(IxSlideInRef),
       mockProvider(MatDialog, {
@@ -126,19 +126,21 @@ describe('ReplicationTaskCardComponent', () => {
     const editButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'edit' }), 1, 5);
     await editButton.click();
 
-    expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(ReplicationFormComponent, {
-      data: replicationTasks[0],
-      wide: true,
-    });
+    expect(spectator.inject(IxChainedSlideInService).pushComponent).toHaveBeenCalledWith(
+      ReplicationFormComponent,
+      true,
+      replicationTasks[0],
+    );
   });
 
   it('shows form to create new Replication Task when Add button is pressed', async () => {
     const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
     await addButton.click();
 
-    expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(ReplicationWizardComponent, {
-      wide: true,
-    });
+    expect(spectator.inject(IxChainedSlideInService).pushComponent).toHaveBeenCalledWith(
+      ReplicationWizardComponent,
+      true,
+    );
   });
 
   it('shows confirmation dialog when Run Now button is pressed', async () => {

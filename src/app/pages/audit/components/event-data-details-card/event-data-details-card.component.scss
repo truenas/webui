@@ -1,3 +1,6 @@
+@import 'scss-imports/splitview';
+@import 'mixins/layout';
+
 pre {
   font-family: var(--mdc-dialog-subhead-font);
   line-height: 32px;

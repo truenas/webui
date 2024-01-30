@@ -5,9 +5,10 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
-import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
+import { MockWebSocketService } from 'app/core/testing/classes/mock-websocket.service';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
-import { mockCall, mockJob, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockCall, mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { Service } from 'app/interfaces/service.interface';
@@ -23,10 +24,10 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { selectServices } from 'app/store/services/services.selectors';
 import { selectAdvancedConfig } from 'app/store/system-config/system-config.selectors';
 
-describe('SystemDatasetPoolComponent', () => {
+describe('StorageSettingsFormComponent', () => {
   let spectator: Spectator<StorageSettingsFormComponent>;
   let loader: HarnessLoader;
-  let ws: MockWebsocketService;
+  let ws: MockWebSocketService;
   const createComponent = createComponentFactory({
     component: StorageSettingsFormComponent,
     imports: [
@@ -34,7 +35,7 @@ describe('SystemDatasetPoolComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
-      mockWebsocket([
+      mockWebSocket([
         mockCall('systemdataset.pool_choices', {
           'current-pool': 'current-pool',
           'new-pool': 'new-pool',
@@ -69,13 +70,14 @@ describe('SystemDatasetPoolComponent', () => {
       }),
       mockProvider(IxSlideInRef),
       { provide: SLIDE_IN_DATA, useValue: undefined },
+      mockAuth(),
     ],
   });
 
   beforeEach(() => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    ws = spectator.inject(MockWebsocketService);
+    ws = spectator.inject(MockWebSocketService);
   });
 
   it('loads and shows current system dataset pool', async () => {

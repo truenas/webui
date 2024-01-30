@@ -1,7 +1,7 @@
 import { Routes } from '@angular/router';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { TranslationsLoadedGuard } from 'app/core/guards/translations-loaded.guard';
-import { WebsocketConnectionGuard } from 'app/core/guards/websocket-connection.guard';
+import { WebSocketConnectionGuard } from 'app/core/guards/websocket-connection.guard';
 import { AdminLayoutComponent } from 'app/modules/layout/components/admin-layout/admin-layout.component';
 import { TwoFactorGuardService } from 'app/services/auth/two-factor-guard.service';
 import { AuthLayoutComponent } from './modules/layout/components/auth-layout/auth-layout.component';
@@ -16,7 +16,7 @@ export const rootRouterConfig: Routes = [
   {
     path: '',
     component: AuthLayoutComponent,
-    canActivate: [TranslationsLoadedGuard, WebsocketConnectionGuard],
+    canActivate: [TranslationsLoadedGuard, WebSocketConnectionGuard],
     children: [
       {
         path: 'sessions',
@@ -33,7 +33,7 @@ export const rootRouterConfig: Routes = [
   {
     path: '',
     component: AdminLayoutComponent,
-    canActivate: [AuthGuardService, TranslationsLoadedGuard, WebsocketConnectionGuard],
+    canActivate: [AuthGuardService, TranslationsLoadedGuard, WebSocketConnectionGuard],
     canActivateChild: [TwoFactorGuardService],
     children: [
       {
@@ -113,7 +113,7 @@ export const rootRouterConfig: Routes = [
       },
       {
         path: 'two-factor-auth',
-        loadChildren: () => import('./pages/two-factor-auth/two-factor-auth.module').then((module) => module.default),
+        loadChildren: () => import('./pages/two-factor-auth/two-factor-auth.module').then((module) => module.TwoFactorAuthModule),
         data: { title: T('Two-Factor Authentication'), breadcrumb: T('Two-Factor Authentication') },
       },
       {

@@ -4,12 +4,11 @@ import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { AlertSlice } from 'app/modules/alerts/store/alert.selectors';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { WebsocketConnectionService } from 'app/services/websocket-connection.service';
+import { WebSocketConnectionService } from 'app/services/websocket-connection.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { passiveNodeReplaced } from 'app/store/system-info/system-info.actions';
 
@@ -22,7 +21,7 @@ export class FailoverComponent implements OnInit {
   constructor(
     protected ws: WebSocketService,
     private errorHandler: ErrorHandlerService,
-    private wsManager: WebsocketConnectionService,
+    private wsManager: WebSocketConnectionService,
     protected router: Router,
     protected loader: AppLoaderService,
     protected dialogService: DialogService,
@@ -52,8 +51,8 @@ export class FailoverComponent implements OnInit {
     this.location.replaceState('/sessions/signin');
     this.matDialog.closeAll();
     this.ws.call('failover.become_passive').pipe(untilDestroyed(this)).subscribe({
-      error: (error: WebsocketError) => { // error on reboot
-        this.dialogService.error(this.errorHandler.parseWsError(error))
+      error: (error: unknown) => { // error on reboot
+        this.dialogService.error(this.errorHandler.parseError(error))
           .pipe(untilDestroyed(this))
           .subscribe(() => {
             this.router.navigate(['/sessions/signin']);

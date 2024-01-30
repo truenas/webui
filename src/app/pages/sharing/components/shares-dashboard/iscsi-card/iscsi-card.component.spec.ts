@@ -8,7 +8,8 @@ import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { MockComponents } from 'ng-mocks';
 import { of } from 'rxjs';
-import { mockWebsocket, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockWebSocket, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { IscsiTarget } from 'app/interfaces/iscsi.interface';
@@ -62,7 +63,8 @@ describe('IscsiCardComponent', () => {
       ),
     ],
     providers: [
-      mockWebsocket([
+      mockAuth(),
+      mockWebSocket([
         mockCall('iscsi.target.query', iscsiShares),
         mockCall('iscsi.target.delete'),
       ]),

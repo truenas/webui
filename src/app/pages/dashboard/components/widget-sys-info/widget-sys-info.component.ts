@@ -2,21 +2,21 @@ import { TitleCasePipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
-  Component, Inject, Input, OnInit,
+  Component, Inject, Input, OnDestroy, OnInit,
 } from '@angular/core';
 import { MediaObserver } from '@angular/flex-layout';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
-import {
-  filter, repeat, skipWhile, take,
-} from 'rxjs/operators';
+import { filter, take } from 'rxjs/operators';
 import { JobState } from 'app/enums/job-state.enum';
 import { ScreenType } from 'app/enums/screen-type.enum';
 import { SystemUpdateStatus } from 'app/enums/system-update.enum';
+import { filterAsync } from 'app/helpers/operators/filter-async.operator';
 import { WINDOW } from 'app/helpers/window.helper';
 import { SystemInfo } from 'app/interfaces/system-info.interface';
+import { Interval } from 'app/interfaces/timeout.interface';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { WidgetComponent } from 'app/pages/dashboard/components/widget/widget.component';
 import {
@@ -27,8 +27,8 @@ import { SystemGeneralService } from 'app/services/system-general.service';
 import { ThemeService } from 'app/services/theme/theme.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
-import { selectHasOnlyMismatchVersionsReason, selectHaStatus, selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
-import { selectIsIxHardware, waitForSystemFeatures, waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
+import { selectHaStatus, selectHasOnlyMismatchVersionsReason, selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
+import { selectIsIxHardware, waitForSystemFeatures } from 'app/store/system-info/system-info.selectors';
 
 @UntilDestroy()
 @Component({
@@ -41,7 +41,7 @@ import { selectIsIxHardware, waitForSystemFeatures, waitForSystemInfo } from 'ap
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [TitleCasePipe],
 })
-export class WidgetSysInfoComponent extends WidgetComponent implements OnInit {
+export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, OnDestroy {
   protected isHaLicensed = false;
   @Input() isPassive = false;
   protected enclosureSupport = false;
@@ -49,7 +49,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit {
 
   hasOnlyMismatchVersionsReason$ = this.store$.select(selectHasOnlyMismatchVersionsReason);
 
-  data: SystemInfo;
+  systemInfo: SystemInfo;
   ready = false;
   productImage = '';
   productModel = '';
@@ -58,9 +58,10 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit {
   updateAvailable = false;
   isIxHardware = false;
   isUpdateRunning = false;
-  hasHa: boolean;
+  hasHa = this.window.localStorage.getItem('ha_status') === 'true';
   updateMethod = 'update.update';
   screenType = ScreenType.Desktop;
+  uptimeInterval: Interval;
 
   readonly ScreenType = ScreenType;
 
@@ -89,45 +90,42 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit {
       const currentScreenType = changes[0].mqAlias === 'xs' ? ScreenType.Mobile : ScreenType.Desktop;
       this.screenType = currentScreenType;
     });
-
-    this.hasHa = this.window.localStorage.getItem('ha_status') === 'true';
   }
 
   get licenseString(): string {
     return this.translate.instant('{license} contract, expires {date}', {
-      license: this.titleCase.transform(this.data.license.contract_type.toLowerCase()),
-      date: this.data.license.contract_end.$value,
+      license: this.titleCase.transform(this.systemInfo.license.contract_type.toLowerCase()),
+      date: this.systemInfo.license.contract_end.$value,
     });
+  }
+
+  get updateBtnLabel(): string {
+    if (this.updateAvailable) {
+      return this.translate.instant('Updates Available');
+    }
+    return this.translate.instant('Check for Updates');
+  }
+
+  get productImageSrc(): string {
+    return 'assets/images' + (this.productImage.startsWith('/') ? this.productImage : ('/' + this.productImage));
   }
 
   ngOnInit(): void {
     this.checkForUpdate();
-    this.loadSystemInfo();
-    this.loadEnclosureSupport();
-    this.loadIsIxHardware();
+    this.getSystemInfo();
+    this.getEnclosureSupport();
+    this.getIsIxHardware();
+    this.getIsHaLicensed();
+    this.listenForHaStatus();
   }
 
-  loadSystemInfo(): void {
-    this.loadSystemInfoForActive();
-    if (this.sysGenService.isEnterprise) {
-      this.store$
-        .select(selectIsHaLicensed)
-        .pipe(untilDestroyed(this))
-        .subscribe((isHaLicensed) => {
-          this.isHaLicensed = isHaLicensed;
-          if (isHaLicensed) {
-            this.updateMethod = 'failover.upgrade';
-          }
-          if (isHaLicensed && this.isPassive) {
-            this.loadSystemInfoForPassive();
-          }
-          this.checkForRunningUpdate();
-          this.cdr.markForCheck();
-        });
+  ngOnDestroy(): void {
+    if (this.uptimeInterval) {
+      clearInterval(this.uptimeInterval);
     }
   }
 
-  loadIsIxHardware(): void {
+  getIsIxHardware(): void {
     this.store$
       .select(selectIsIxHardware)
       .pipe(untilDestroyed(this))
@@ -138,7 +136,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit {
       });
   }
 
-  loadEnclosureSupport(): void {
+  getEnclosureSupport(): void {
     this.store$
       .pipe(waitForSystemFeatures, untilDestroyed(this))
       .subscribe((features) => {
@@ -147,39 +145,36 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit {
       });
   }
 
-  loadSystemInfoForActive(): void {
-    this.store$
-      .pipe(
-        waitForSystemInfo,
-        skipWhile(() => this.isPassive),
-        untilDestroyed(this),
-      )
+  getSystemInfo(): void {
+    this.ws.call('webui.main.dashboard.sys_info')
+      .pipe(untilDestroyed(this))
       .subscribe((systemInfo) => {
-        this.processSysInfo(systemInfo);
+        this.processSysInfo(this.isPassive ? systemInfo.remote_info : systemInfo);
         this.cdr.markForCheck();
       });
   }
 
-  loadSystemInfoForPassive(): void {
-    this.store$.select(selectHaStatus).pipe(
-      filter((haStatus) => !!haStatus),
-      untilDestroyed(this),
-    ).subscribe((haStatus) => {
-      if (haStatus.hasHa) {
-        this.data = null;
+  private listenForHaStatus(): void {
+    this.store$.select(selectHaStatus)
+      .pipe(filter(Boolean), untilDestroyed(this))
+      .subscribe(({ hasHa }) => {
+        this.hasHa = hasHa;
         this.cdr.markForCheck();
+      });
+  }
 
-        this.ws.call('failover.call_remote', ['system.info'])
-          .pipe(repeat({ delay: 30000 }), untilDestroyed(this))
-          .subscribe((systemInfo: SystemInfo) => {
-            this.processSysInfo(systemInfo);
-            this.cdr.markForCheck();
-          });
-      } else if (!haStatus.hasHa) {
-        this.productImage = '';
-      }
-      this.hasHa = haStatus.hasHa;
-    });
+  getIsHaLicensed(): void {
+    this.store$
+      .select(selectIsHaLicensed)
+      .pipe(filterAsync(this.sysGenService.isEnterprise$), untilDestroyed(this))
+      .subscribe((isHaLicensed) => {
+        this.isHaLicensed = isHaLicensed;
+        if (isHaLicensed) {
+          this.updateMethod = 'failover.upgrade';
+        }
+        this.checkForRunningUpdate();
+        this.cdr.markForCheck();
+      });
   }
 
   checkForRunningUpdate(): void {
@@ -196,28 +191,33 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit {
     });
   }
 
-  get updateBtnLabel(): string {
-    if (this.updateAvailable) {
-      return this.translate.instant('Updates Available');
-    }
-    return this.translate.instant('Check for Updates');
-  }
-
   processSysInfo(systemInfo: SystemInfo): void {
-    this.data = systemInfo;
+    this.systemInfo = systemInfo;
+    this.setUptimeUpdates();
     this.setProductImage();
     this.ready = true;
   }
 
-  setProductImage(): void {
-    if (!this.isIxHardware || !this.data) return;
+  setUptimeUpdates(): void {
+    if (this.uptimeInterval) {
+      clearInterval(this.uptimeInterval);
+    }
+    this.uptimeInterval = setInterval(() => {
+      this.systemInfo.uptime_seconds += 1;
+      this.systemInfo.datetime.$date += 1000;
+      this.cdr.markForCheck();
+    }, 1000);
+  }
 
-    if (this.data.system_product.includes('MINI')) {
-      this.setMiniImage(this.data.system_product);
-    } else if (this.data.system_product.includes('CERTIFIED')) {
+  setProductImage(): void {
+    if (!this.isIxHardware || !this.systemInfo) return;
+
+    if (this.systemInfo.platform.includes('MINI')) {
+      this.setMiniImage(this.systemInfo.platform);
+    } else if (this.systemInfo.platform.includes('CERTIFIED')) {
       this.certified = true;
     } else {
-      const product = this.productImgServ.getServerProduct(this.data.system_product);
+      const product = this.productImgServ.getServerProduct(this.systemInfo.platform);
       this.productImage = product ? `/servers/${product}.png` : 'ix-original.svg';
       this.productModel = product || '';
       this.productEnclosure = 'rackmount';

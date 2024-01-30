@@ -4,8 +4,9 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { format } from 'date-fns-tz';
-import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { MockWebSocketService } from 'app/core/testing/classes/mock-websocket.service';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { IxInputHarness } from 'app/modules/ix-forms/components/ix-input/ix-input.harness';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
@@ -26,7 +27,7 @@ const mockNamingSchema = ['%Y %H %d %M %m'];
 describe('SnapshotAddFormComponent', () => {
   let spectator: Spectator<SnapshotAddFormComponent>;
   let loader: HarnessLoader;
-  let ws: MockWebsocketService;
+  let ws: MockWebSocketService;
 
   const createComponent = createComponentFactory({
     component: SnapshotAddFormComponent,
@@ -35,7 +36,8 @@ describe('SnapshotAddFormComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
-      mockWebsocket([
+      mockAuth(),
+      mockWebSocket([
         mockCall('zfs.snapshot.create'),
         mockCall('pool.dataset.query', mockDatasets),
         mockCall('replication.list_naming_schemas', mockNamingSchema),
@@ -45,6 +47,7 @@ describe('SnapshotAddFormComponent', () => {
       mockProvider(IxSlideInService),
       mockProvider(FormErrorHandlerService),
       mockProvider(IxSlideInRef),
+      mockAuth(),
       { provide: SLIDE_IN_DATA, useValue: undefined },
     ],
   });
@@ -52,7 +55,7 @@ describe('SnapshotAddFormComponent', () => {
   beforeEach(() => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    ws = spectator.inject(MockWebsocketService);
+    ws = spectator.inject(MockWebSocketService);
   });
 
   it('presets name with current date and time', async () => {

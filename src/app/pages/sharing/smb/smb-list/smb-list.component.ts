@@ -6,12 +6,11 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import {
-  BehaviorSubject, filter, of, take, tap,
+  filter, of, take, tap,
 } from 'rxjs';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { helptextSharingSmb, shared } from 'app/helptext/sharing';
 import { SmbShare } from 'app/interfaces/smb-share.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { AsyncDataProvider } from 'app/modules/ix-table2/classes/async-data-provider/async-data-provider';
 import { actionsColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
 import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
@@ -35,7 +34,6 @@ import { selectService } from 'app/store/services/services.selectors';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SmbListComponent implements OnInit {
-  isClustered$ = new BehaviorSubject(false);
   service$ = this.store$.select(selectService(ServiceName.Cifs));
 
   filterString = '';
@@ -68,9 +66,9 @@ export class SmbListComponent implements OnInit {
           next: (share) => {
             row.enabled = share.enabled;
           },
-          error: (error: WebsocketError) => {
+          error: (error: unknown) => {
             row.enabled = !row.enabled;
-            this.dialog.error(this.errorHandler.parseWsError(error));
+            this.dialog.error(this.errorHandler.parseError(error));
           },
         });
       },
@@ -80,9 +78,8 @@ export class SmbListComponent implements OnInit {
         {
           iconName: 'edit',
           tooltip: this.translate.instant('Edit'),
-          disabled: () => this.isClustered$,
           onClick: (smbShare) => {
-            const slideInRef = this.slideInService.open(SmbFormComponent, { data: smbShare });
+            const slideInRef = this.slideInService.open(SmbFormComponent, { data: { existingSmbShare: smbShare } });
             slideInRef.slideInClosed$
               .pipe(filter(Boolean), untilDestroyed(this))
               .subscribe(() => this.dataProvider.load());
@@ -91,29 +88,23 @@ export class SmbListComponent implements OnInit {
         {
           iconName: 'share',
           tooltip: helptextSharingSmb.action_share_acl,
-          disabled: () => this.isClustered$,
           onClick: (row) => {
-            this.appLoader.open();
-            this.ws.call('pool.dataset.path_in_locked_datasets', [row.path]).pipe(untilDestroyed(this)).subscribe(
-              (isLocked) => {
-                if (isLocked) {
+            if (row.locked) {
+              this.lockedPathDialog(row.path);
+            } else {
+              // A home share has a name (homes) set; row.name works for other shares
+              const searchName = row.home ? 'homes' : row.name;
+              this.appLoader.open();
+              this.ws.call('sharing.smb.getacl', [{ share_name: searchName }])
+                .pipe(untilDestroyed(this))
+                .subscribe((shareAcl) => {
                   this.appLoader.close();
-                  this.lockedPathDialog(row.path);
-                } else {
-                  // A home share has a name (homes) set; row.name works for other shares
-                  const searchName = row.home ? 'homes' : row.name;
-                  this.ws.call('sharing.smb.getacl', [{ share_name: searchName }])
-                    .pipe(untilDestroyed(this))
-                    .subscribe((shareAcl) => {
-                      this.appLoader.close();
-                      const slideInRef = this.slideInService.open(SmbAclComponent, { data: shareAcl.share_name });
-                      slideInRef.slideInClosed$.pipe(take(1), untilDestroyed(this)).subscribe(() => {
-                        this.dataProvider.load();
-                      });
-                    });
-                }
-              },
-            );
+                  const slideInRef = this.slideInService.open(SmbAclComponent, { data: shareAcl.share_name });
+                  slideInRef.slideInClosed$.pipe(take(1), untilDestroyed(this)).subscribe(() => {
+                    this.dataProvider.load();
+                  });
+                });
+            }
           },
         },
         {
@@ -121,32 +112,20 @@ export class SmbListComponent implements OnInit {
           tooltip: helptextSharingSmb.action_edit_acl,
           disabled: (row) => of(!row.path.replace('/mnt/', '').includes('/')),
           onClick: (row) => {
-            this.ws.call('pool.dataset.path_in_locked_datasets', [row.path]).pipe(untilDestroyed(this)).subscribe({
-              next: (isLocked) => {
-                if (isLocked) {
-                  this.lockedPathDialog(row.path);
-                } else {
-                  this.router.navigate(['/', 'datasets', 'acl', 'edit'], {
-                    queryParams: {
-                      path: row.path_local,
-                    },
-                  });
-                }
-              },
-              error: (error: WebsocketError) => {
-                this.dialog.error({
-                  title: helptextSharingSmb.action_edit_acl_dialog.title,
-                  message: error.reason,
-                  backtrace: error.trace?.formatted,
-                });
-              },
-            });
+            if (row.locked) {
+              this.lockedPathDialog(row.path);
+            } else {
+              this.router.navigate(['/', 'datasets', 'acl', 'edit'], {
+                queryParams: {
+                  path: row.path_local,
+                },
+              });
+            }
           },
         },
         {
           iconName: 'delete',
           tooltip: this.translate.instant('Unshare'),
-          disabled: () => this.isClustered$,
           onClick: (row) => {
             this.dialog.confirm({
               title: this.translate.instant('Unshare {name}', { name: row.name }),
@@ -169,7 +148,9 @@ export class SmbListComponent implements OnInit {
         },
       ],
     }),
-  ]);
+  ], {
+    rowTestId: (row) => 'smb-' + row.name,
+  });
 
   constructor(
     private appLoader: AppLoaderService,
@@ -191,10 +172,6 @@ export class SmbListComponent implements OnInit {
     );
     this.dataProvider = new AsyncDataProvider<SmbShare>(shares$);
     this.dataProvider.load();
-
-    this.ws.call('cluster.utils.is_clustered').pipe(untilDestroyed(this)).subscribe((isClustered) => {
-      this.isClustered$.next(isClustered);
-    });
   }
 
   setDefaultSort(): void {

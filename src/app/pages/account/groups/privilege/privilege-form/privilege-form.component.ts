@@ -7,7 +7,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable, map } from 'rxjs';
 import { Role, roleNames } from 'app/enums/role.enum';
-import helptext from 'app/helptext/account/priviledge';
+import { helptextPriviledge } from 'app/helptext/account/priviledge';
 import { Group } from 'app/interfaces/group.interface';
 import { Privilege, PrivilegeUpdate } from 'app/interfaces/privilege.interface';
 import { ChipsProvider } from 'app/modules/ix-forms/components/ix-chips/chips-provider';
@@ -34,7 +34,7 @@ export class PrivilegeFormComponent implements OnInit {
     roles: [[] as Role[]],
   });
 
-  protected readonly helptext = helptext;
+  protected readonly helptext = helptextPriviledge;
 
   get isNew(): boolean {
     return !this.existingPrivilege;
@@ -84,6 +84,8 @@ export class PrivilegeFormComponent implements OnInit {
     );
   };
 
+  protected readonly Role = Role;
+
   constructor(
     private formBuilder: FormBuilder,
     private translate: TranslateService,
@@ -103,7 +105,9 @@ export class PrivilegeFormComponent implements OnInit {
   setPrivilegeForEdit(): void {
     this.form.patchValue({
       ...this.existingPrivilege,
-      local_groups: this.existingPrivilege.local_groups.map((group) => group.group),
+      local_groups: this.existingPrivilege.local_groups.map(
+        (group) => group.group || this.translate.instant('Missing group - {gid}', { gid: group.gid }),
+      ),
       ds_groups: this.existingPrivilege.ds_groups.map((group) => group.group),
     });
     this.cdr.markForCheck();
@@ -130,7 +134,7 @@ export class PrivilegeFormComponent implements OnInit {
         this.slideInRef.close(true);
         this.cdr.markForCheck();
       },
-      error: (error) => {
+      error: (error: unknown) => {
         this.isLoading = false;
         this.errorHandler.handleWsFormError(error, this.form);
         this.cdr.markForCheck();

@@ -64,3 +64,9 @@ export interface UserUpdate {
   group_create?: boolean;
   home_create?: boolean;
 }
+
+export interface SetPasswordParams {
+  username: string;
+  old_password: string;
+  new_password: string;
+}

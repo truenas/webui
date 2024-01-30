@@ -11,9 +11,8 @@ import {
 } from 'rxjs/operators';
 import { JobState } from 'app/enums/job-state.enum';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
-import helptext from 'app/helptext/apps/apps';
+import { helptextApps } from 'app/helptext/apps/apps';
 import { KubernetesConfig, KubernetesConfigUpdate } from 'app/interfaces/kubernetes-config.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
@@ -47,7 +46,7 @@ export class KubernetesSettingsComponent implements OnInit {
     force: [false],
   });
 
-  readonly reInitHelpText = helptext.kubForm.reInit.formWarning;
+  readonly reInitHelpText = helptextApps.kubForm.reInit.formWarning;
 
   readonly nodeIpOptions$ = this.appService.getBindIpChoices().pipe(choicesToOptions());
 
@@ -95,7 +94,7 @@ export class KubernetesSettingsComponent implements OnInit {
             }
             this.slideInRef.close();
           }),
-          catchError((error) => {
+          catchError((error: unknown) => {
             this.formErrorHandler.handleWsFormError(error, this.form);
             return EMPTY;
           }),
@@ -121,10 +120,10 @@ export class KubernetesSettingsComponent implements OnInit {
         this.isFormLoading = false;
         this.cdr.markForCheck();
       },
-      error: (error: WebsocketError) => {
+      error: (error: unknown) => {
         this.isFormLoading = false;
         this.cdr.markForCheck();
-        this.dialogService.error(this.errorHandler.parseWsError(error));
+        this.errorHandler.showErrorModal(error);
       },
     });
   }
@@ -138,8 +137,8 @@ export class KubernetesSettingsComponent implements OnInit {
   private showReInitConfirm(values: Partial<KubernetesConfigUpdate>): Observable<boolean> {
     return this.wereReInitFieldsChanged(values)
       ? this.dialogService.confirm({
-        title: helptext.kubForm.reInit.title,
-        message: helptext.kubForm.reInit.modalWarning,
+        title: helptextApps.kubForm.reInit.title,
+        message: helptextApps.kubForm.reInit.modalWarning,
       })
       : of(true);
   }

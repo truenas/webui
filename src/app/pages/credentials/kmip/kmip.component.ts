@@ -6,10 +6,10 @@ import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { forkJoin } from 'rxjs';
+import { Role } from 'app/enums/role.enum';
 import { idNameArrayToOptions } from 'app/helpers/operators/options.operators';
 import { helptextSystemKmip } from 'app/helptext/system/kmip';
 import { KmipConfigUpdate } from 'app/interfaces/kmip-config.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DialogService } from 'app/services/dialog.service';
@@ -40,6 +40,8 @@ export class KmipComponent implements OnInit {
     validate: [false],
     force_clear: [false],
   });
+
+  protected readonly requiredRoles = [Role.KmipWrite];
 
   readonly helptext = helptextSystemKmip;
   readonly certificates$ = this.systemGeneralService.getCertificates().pipe(idNameArrayToOptions());
@@ -72,8 +74,8 @@ export class KmipComponent implements OnInit {
         this.isLoading = false;
         this.cdr.markForCheck();
       },
-      error: (err: WebsocketError) => {
-        this.dialogService.error(this.errorHandler.parseWsError(err));
+      error: (err: unknown) => {
+        this.dialogService.error(this.errorHandler.parseError(err));
         this.isLoading = false;
         this.cdr.markForCheck();
       },
@@ -91,8 +93,8 @@ export class KmipComponent implements OnInit {
         this.isLoading = false;
         this.cdr.markForCheck();
       },
-      error: (err: WebsocketError) => {
-        this.dialogService.error(this.errorHandler.parseWsError(err));
+      error: (err: unknown) => {
+        this.dialogService.error(this.errorHandler.parseError(err));
         this.isLoading = false;
         this.cdr.markForCheck();
       },
@@ -102,7 +104,6 @@ export class KmipComponent implements OnInit {
   onSubmit(): void {
     const dialogRef = this.matDialog.open(EntityJobComponent, {
       data: { title: helptextSystemKmip.jobDialog.title },
-      disableClose: true,
     });
     dialogRef.componentInstance.setCall('kmip.update', [this.form.value as KmipConfigUpdate]);
     dialogRef.componentInstance.submit();
@@ -127,9 +128,9 @@ export class KmipComponent implements OnInit {
           this.isLoading = false;
           this.cdr.markForCheck();
         },
-        error: (error: WebsocketError) => {
+        error: (error: unknown) => {
           this.isLoading = false;
-          this.dialogService.error(this.errorHandler.parseWsError(error));
+          this.dialogService.error(this.errorHandler.parseError(error));
           this.cdr.markForCheck();
         },
       });

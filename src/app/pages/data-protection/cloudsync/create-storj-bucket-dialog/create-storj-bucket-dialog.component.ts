@@ -29,16 +29,18 @@ export class CreateStorjBucketDialogComponent {
   ) {}
 
   onSubmit(): void {
-    this.appLoader.open();
-    this.ws.call('cloudsync.create_bucket', [this.data.credentialsId, this.form.controls.bucket.value]).pipe(untilDestroyed(this)).subscribe({
-      next: () => {
-        this.appLoader.close();
-        this.dialogRef.close(this.form.controls.bucket.value);
-      },
-      error: (error) => {
-        this.appLoader.close();
-        this.formErrorHandler.handleWsFormError(error, this.form);
-      },
-    });
+    this.ws.call('cloudsync.create_bucket', [this.data.credentialsId, this.form.controls.bucket.value])
+      .pipe(
+        this.appLoader.withLoader(),
+        untilDestroyed(this),
+      )
+      .subscribe({
+        next: () => {
+          this.dialogRef.close(this.form.controls.bucket.value);
+        },
+        error: (error: unknown) => {
+          this.formErrorHandler.handleWsFormError(error, this.form);
+        },
+      });
   }
 }

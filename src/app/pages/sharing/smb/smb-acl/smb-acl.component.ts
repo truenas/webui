@@ -16,8 +16,8 @@ import { Option } from 'app/interfaces/option.interface';
 import { QueryFilter } from 'app/interfaces/query-api.interface';
 import { SmbSharesecAce } from 'app/interfaces/smb-share.interface';
 import { User } from 'app/interfaces/user.interface';
-import { GroupComboboxProvider } from 'app/modules/ix-forms/classes/group-combobox-provider';
-import { UserComboboxProvider } from 'app/modules/ix-forms/classes/user-combobox-provider';
+import { SmbGroupComboboxProvider } from 'app/modules/ix-forms/classes/smb-group-combobox-provider';
+import { SmbUserComboboxProvider } from 'app/modules/ix-forms/classes/smb-user-combobox-provider';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
@@ -78,8 +78,8 @@ export class SmbAclComponent implements OnInit {
 
   readonly helptext = helptextSharingSmb;
   readonly nfsAclTag = NfsAclTag;
-  readonly userProvider = new UserComboboxProvider(this.userService, 'uid');
-  protected groupProvider: GroupComboboxProvider;
+  readonly userProvider = new SmbUserComboboxProvider(this.userService, 'uid');
+  protected groupProvider: SmbGroupComboboxProvider;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -130,7 +130,7 @@ export class SmbAclComponent implements OnInit {
           this.isLoading = false;
           this.slideInRef.close(true);
         },
-        error: (error) => {
+        error: (error: unknown) => {
           this.isLoading = false;
           this.errorHandler.handleWsFormError(error, this.form);
           this.cdr.markForCheck();
@@ -187,12 +187,12 @@ export class SmbAclComponent implements OnInit {
     ace: SmbSharesecAce,
   ): Observable<Group[]> | Observable<User[]> | Observable<string[]> {
     if (ace.ae_who_id?.id_type === NfsAclTag.UserGroup) {
-      const queryArgs: QueryFilter<Group>[] = [['gid', '=', ace.ae_who_id?.id]];
+      const queryArgs: QueryFilter<Group>[] = [['gid', '=', ace.ae_who_id?.id], ['smb', '=', true]];
       return this.ws.call('group.query', [queryArgs]);
     }
 
     if (ace.ae_who_id?.id_type === NfsAclTag.User) {
-      const queryArgs: QueryFilter<User>[] = [['uid', '=', ace.ae_who_id?.id]];
+      const queryArgs: QueryFilter<User>[] = [['uid', '=', ace.ae_who_id?.id], ['smb', '=', true]];
       return this.ws.call('user.query', [queryArgs]);
     }
 
@@ -228,7 +228,7 @@ export class SmbAclComponent implements OnInit {
           initialOptions.push(option);
         }
 
-        this.groupProvider = new GroupComboboxProvider(this.userService, 'gid', initialOptions);
+        this.groupProvider = new SmbGroupComboboxProvider(this.userService, 'gid', initialOptions);
         this.isLoading = false;
         this.cdr.markForCheck();
       });

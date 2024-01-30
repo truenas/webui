@@ -5,8 +5,9 @@ import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockEntityJobComponentRef } from 'app/core/testing/utils/mock-entity-job-component-ref.utils';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { SystemInfo } from 'app/interfaces/system-info.interface';
 import { DialogService } from 'app/services/dialog.service';
 import { StorageService } from 'app/services/storage.service';
@@ -19,7 +20,7 @@ describe('SaveDebugButtonComponent', () => {
   const createComponent = createComponentFactory({
     component: SaveDebugButtonComponent,
     providers: [
-      mockWebsocket([
+      mockWebSocket([
         mockCall('core.download', [45, 'http://localhost/download/url']),
       ]),
       mockProvider(DialogService, {
@@ -46,6 +47,7 @@ describe('SaveDebugButtonComponent', () => {
           },
         ],
       }),
+      mockAuth(),
     ],
   });
 

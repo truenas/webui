@@ -1,0 +1,153 @@
+<mat-dialog-content>
+  <form [formGroup]="form">
+    <div class="columns">
+      <div class="column">
+        <ix-input
+          formControlName="name"
+          [label]="'Name' | translate"
+          [tooltip]="tooltips.name | translate"
+          [required]="true"
+        ></ix-input>
+      </div>
+      <div class="column">
+        <ix-input
+          formControlName="phone"
+          [label]="'Phone' | translate"
+          [tooltip]="tooltips.phone | translate"
+          [required]="true"
+        ></ix-input>
+      </div>
+    </div>
+
+    <div class="columns">
+      <div class="column">
+        <ix-input
+          formControlName="email"
+          [label]="'Email' | translate"
+          [tooltip]="tooltips.email | translate"
+          [required]="true"
+        ></ix-input>
+      </div>
+
+      <div class="column">
+        <ix-chips
+          formControlName="cc"
+          [label]="'CC' | translate"
+          [tooltip]="tooltips.cc | translate"
+        ></ix-chips>
+      </div>
+    </div>
+
+    <div class="columns">
+      <div class="column">
+        <ix-select
+          formControlName="category"
+          [label]="'Type' | translate"
+          [options]="categoryOptions$"
+          [tooltip]="tooltips.category | translate"
+          [required]="true"
+        ></ix-select>
+      </div>
+      <div class="column"></div>
+    </div>
+
+    <div class="columns">
+      <div class="column">
+        <ix-select
+          formControlName="environment"
+          [label]="'Environment' | translate"
+          [options]="environmentOptions$"
+          [tooltip]="tooltips.environment | translate"
+          [required]="true"
+        ></ix-select>
+      </div>
+
+      <div class="column">
+        <ix-select
+          formControlName="criticality"
+          [label]="'Criticality' | translate"
+          [options]="criticalityOptions$"
+          [tooltip]="tooltips.criticality | translate"
+          [required]="true"
+        ></ix-select>
+      </div>
+    </div>
+
+    <ix-input
+      formControlName="title"
+      [label]="'Subject' | translate"
+      [tooltip]="tooltips.title | translate"
+      [placeholder]="tooltips.title | translate"
+      [required]="true"
+    ></ix-input>
+
+    <ix-textarea
+      formControlName="message"
+      [label]="'Message' | translate"
+      [rows]="8"
+      [placeholder]="messagePlaceholder | translate"
+      [required]="true"
+    ></ix-textarea>
+
+    <ix-checkbox
+      formControlName="attach_debug"
+      [label]="'Attach debug' | translate"
+      [tooltip]="tooltips.attach_debug | translate"
+      [hint]="'Debugs may contain log files with personal information such as usernames or other identifying information about your system.' | translate"
+    ></ix-checkbox>
+
+    <ix-checkbox
+      formControlName="take_screenshot"
+      [label]="'Take screenshot of the current page' | translate"
+      [tooltip]="'Capture and attach screenshot to the review' | translate"
+    ></ix-checkbox>
+
+    <ix-checkbox
+      formControlName="attach_images"
+      [label]="'Attach additional images' | translate"
+    ></ix-checkbox>
+
+    <ix-file-input
+      *ngIf="form.controls.attach_images.value"
+      formControlName="images"
+      class="attach-images"
+      [label]="'Attach images (optional)' | translate"
+      [tooltip]="'Select images you want attach to review' | translate"
+      [multiple]="true"
+      [acceptedFiles]="acceptedFiles"
+    ></ix-file-input>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions>
+  <ix-form-actions>
+    <button
+      mat-button
+      type="button"
+      ixTest="user-guide"
+      (click)="onUserGuidePressed()"
+    >
+      {{ 'User Guide' | translate }}
+    </button>
+
+    <button
+      mat-button
+      type="button"
+      ixTest="eula"
+      (click)="onEulaPressed()"
+    >
+      {{ 'EULA' | translate }}
+    </button>
+
+    <button
+      mat-button
+      type="submit"
+      color="primary"
+      ixTest="submit"
+      [disabled]="form.invalid || isLoading"
+      (click)="onSubmit()"
+    >
+      {{ 'Submit' | translate }}
+    </button>
+  </ix-form-actions>
+</mat-dialog-actions>

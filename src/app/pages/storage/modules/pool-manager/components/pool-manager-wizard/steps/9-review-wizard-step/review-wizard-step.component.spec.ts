@@ -8,6 +8,7 @@ import {
 import { BehaviorSubject, of } from 'rxjs';
 import { GiB } from 'app/constants/bytes.constant';
 import { CoreComponents } from 'app/core/core-components.module';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { DiskType } from 'app/enums/disk-type.enum';
 import { CreateVdevLayout, VdevType } from 'app/enums/v-dev-type.enum';
 import {
@@ -81,6 +82,7 @@ describe('ReviewWizardStepComponent', () => {
         totalUsableCapacity$: of(2 * GiB),
       }),
       mockProvider(MatDialog),
+      mockAuth(),
     ],
   });
 

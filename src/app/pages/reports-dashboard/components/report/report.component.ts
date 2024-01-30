@@ -11,6 +11,7 @@ import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { UUID } from 'angular2-uuid';
 import { add, isToday, sub } from 'date-fns';
+import _ from 'lodash';
 import {
   BehaviorSubject, Subscription, timer,
 } from 'rxjs';
@@ -23,7 +24,7 @@ import { ReportingGraphName } from 'app/enums/reporting.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { ReportingData, ReportingDatabaseError } from 'app/interfaces/reporting.interface';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
+import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { WidgetComponent } from 'app/pages/dashboard/components/widget/widget.component';
 import { LineChartComponent } from 'app/pages/reports-dashboard/components/line-chart/line-chart.component';
 import { ReportStepDirection } from 'app/pages/reports-dashboard/enums/report-step-direction.enum';
@@ -33,7 +34,7 @@ import {
 } from 'app/pages/reports-dashboard/interfaces/report.interface';
 import { refreshInterval } from 'app/pages/reports-dashboard/reports.constants';
 import { ReportsService } from 'app/pages/reports-dashboard/reports.service';
-import { formatData, formatLegendSeries } from 'app/pages/reports-dashboard/utils/report.utils';
+import { formatData } from 'app/pages/reports-dashboard/utils/report.utils';
 import { DialogService } from 'app/services/dialog.service';
 import { LocaleService } from 'app/services/locale.service';
 import { ThemeService } from 'app/services/theme/theme.service';
@@ -140,7 +141,6 @@ export class ReportComponent extends WidgetComponent implements OnInit, OnChange
     this.reportsService.legendEventEmitterObs$.pipe(untilDestroyed(this)).subscribe({
       next: (data: LegendDataWithStackedTotalHtml) => {
         const clone = { ...data };
-        clone.series = formatLegendSeries(data.series, this.data);
         clone.xHTML = this.formatTime(data.x);
         this.legendData = clone as LegendDataWithStackedTotalHtml;
       },
@@ -453,23 +453,23 @@ export class ReportComponent extends WidgetComponent implements OnInit, OnChange
       untilDestroyed(this),
     ).subscribe({
       next: (event) => {
-        this.data = formatData(event);
+        this.data = formatData(_.cloneDeep(event));
       },
-      error: (err: WebsocketError) => {
+      error: (err: WebSocketError) => {
         this.handleError(err);
       },
     });
   }
 
-  handleError(err: WebsocketError): void {
-    if (err?.error === ReportingDatabaseError.FailedExport) {
+  handleError(err: WebSocketError): void {
+    if (err?.error === (ReportingDatabaseError.FailedExport as number)) {
       this.report.errorConf = {
         type: EmptyType.Errors,
         title: this.translate.instant('Error getting chart data'),
         message: err.reason,
       };
     }
-    if (err?.error === ReportingDatabaseError.InvalidTimestamp) {
+    if (err?.error === (ReportingDatabaseError.InvalidTimestamp as number)) {
       this.report.errorConf = {
         type: EmptyType.Errors,
         title: this.translate.instant('The reporting database is broken'),

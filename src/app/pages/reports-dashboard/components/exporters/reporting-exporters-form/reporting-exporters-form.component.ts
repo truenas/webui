@@ -6,12 +6,14 @@ import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { BehaviorSubject, Observable, of } from 'rxjs';
-import { DynamicFormSchemaType } from 'app/enums/dynamic-form-schema-type.enum';
-import { toHumanReadableKey } from 'app/helpers/object-keys-to-human-readable.helper';
-import { DynamicFormSchema, DynamicFormSchemaNode } from 'app/interfaces/dynamic-form-schema.interface';
+import { Role } from 'app/enums/role.enum';
+import { getDynamicFormSchemaNode } from 'app/helpers/get-dynamic-form-schema-node';
+import {
+  DynamicFormSchema, DynamicFormSchemaNode,
+} from 'app/interfaces/dynamic-form-schema.interface';
 import { Option } from 'app/interfaces/option.interface';
 import {
-  ExportingExporterList as ReportingExporterList,
+  ReportingExporterList,
   ReportingExporterKey as ReportingExporterType,
   ReportingExporterSchema,
   ReportingExporter,
@@ -32,7 +34,7 @@ import { WebSocketService } from 'app/services/ws.service';
 })
 export class ReportingExportersFormComponent implements OnInit {
   get isNew(): boolean {
-    return !this.editingExpoter;
+    return !this.editingExporter;
   }
 
   get title(): string {
@@ -58,6 +60,7 @@ export class ReportingExportersFormComponent implements OnInit {
 
   protected exporterTypeOptions$: Observable<Option[]>;
   protected reportingExporterList: ReportingExporterList[] = [];
+  protected readonly requiredRoles = [Role.ReportingWrite];
 
   constructor(
     private fb: FormBuilder,
@@ -68,7 +71,7 @@ export class ReportingExportersFormComponent implements OnInit {
     private formErrorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
     private dialogService: DialogService,
-    @Inject(SLIDE_IN_DATA) private editingExpoter: ReportingExporter,
+    @Inject(SLIDE_IN_DATA) private editingExporter: ReportingExporter,
   ) { }
 
   ngOnInit(): void {
@@ -94,7 +97,7 @@ export class ReportingExportersFormComponent implements OnInit {
         this.createExporterControls(schemas);
 
         if (!this.isNew) {
-          this.form.patchValue(this.editingExpoter);
+          this.form.patchValue(this.editingExporter);
         }
 
         this.isLoading = false;
@@ -102,7 +105,7 @@ export class ReportingExportersFormComponent implements OnInit {
         this.cdr.markForCheck();
       },
       error: (error) => {
-        this.dialogService.error(this.errorHandler.parseWsError(error));
+        this.dialogService.error(this.errorHandler.parseError(error));
         this.isLoading = false;
         this.isLoadingSchemas = false;
         this.cdr.markForCheck();
@@ -143,12 +146,7 @@ export class ReportingExportersFormComponent implements OnInit {
   }
 
   parseSchemaForDynamicSchema(schema: ReportingExporterSchema): DynamicFormSchemaNode[] {
-    return schema.schema.map((input) => ({
-      controlName: input._name_,
-      type: DynamicFormSchemaType.Input,
-      title: toHumanReadableKey(input.title),
-      required: input._required_,
-    }));
+    return schema.schema.map((input) => getDynamicFormSchemaNode(input));
   }
 
   parseSchemaForExporterList(schema: ReportingExporterSchema): ReportingExporterList {
@@ -190,7 +188,7 @@ export class ReportingExportersFormComponent implements OnInit {
     }
 
     for (const [key, value] of Object.entries(values.attributes)) {
-      if (!value) {
+      if (value == null || value === '') {
         delete values.attributes[key];
       }
     }
@@ -202,7 +200,7 @@ export class ReportingExportersFormComponent implements OnInit {
       request$ = this.ws.call('reporting.exporters.create', [values]);
     } else {
       request$ = this.ws.call('reporting.exporters.update', [
-        this.editingExpoter.id,
+        this.editingExporter.id,
         values,
       ]);
     }
@@ -212,7 +210,7 @@ export class ReportingExportersFormComponent implements OnInit {
         this.isLoading = false;
         this.slideInRef.close(true);
       },
-      error: (error) => {
+      error: (error: unknown) => {
         this.isLoading = false;
         this.formErrorHandler.handleWsFormError(error, this.form);
         this.cdr.markForCheck();

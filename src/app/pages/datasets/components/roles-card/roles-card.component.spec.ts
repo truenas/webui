@@ -1,9 +1,15 @@
+import { FormGroup } from '@angular/forms';
 import { MatIconTestingModule } from '@angular/material/icon/testing';
-import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
+import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { of } from 'rxjs';
+import { mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { IscsiExtentType } from 'app/enums/iscsi.enum';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { RolesCardComponent } from 'app/pages/datasets/components/roles-card/roles-card.component';
+import { NfsFormComponent } from 'app/pages/sharing/nfs/nfs-form/nfs-form.component';
+import { SmbFormComponent } from 'app/pages/sharing/smb/smb-form/smb-form.component';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 const datasetDummy = {
   id: '/mnt/pool/ds',
@@ -19,7 +25,7 @@ const datasetDummy = {
   key_format: null,
   key_loaded: null,
   locked: null,
-  mountpoint: null,
+  mountpoint: '/mnt/pool/ds',
   name: null,
   pool: null,
   type: null,
@@ -35,6 +41,18 @@ describe('RolesCardComponent', () => {
     imports: [
       IxIconModule,
       MatIconTestingModule,
+    ],
+    providers: [
+      mockWebSocket(),
+      mockProvider(IxSlideInService, {
+        open: jest.fn(() => ({
+          slideInClosed$: of(),
+          componentInstance: {
+            form: new FormGroup({}),
+            setNameFromPath: jest.fn(),
+          },
+        })),
+      }),
     ],
     component: RolesCardComponent,
   });
@@ -141,5 +159,33 @@ describe('RolesCardComponent', () => {
     expect(spectator.query('.system-dataset.value')).toHaveText(
       'This dataset is used by the system',
     );
+  });
+
+  it('shows not shared row', () => {
+    spectator.setInput('dataset', {
+      ...datasetDummy,
+      smb_shares: [],
+      nfs_shares: [],
+      iscsi_shares: [],
+      children: [],
+      apps: [],
+      vms: [],
+    });
+    spectator.setInput('hasChildrenWithShares', false);
+
+    expect(spectator.query('.details-item .label')).toHaveText('Not Shared');
+
+    const createSmbShareLink = spectator.queryAll('.details-item .action')[0] as HTMLAnchorElement;
+    const createNfsShareLink = spectator.queryAll('.details-item .action')[1] as HTMLAnchorElement;
+
+    createSmbShareLink.click();
+    expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(SmbFormComponent, {
+      data: { defaultSmbShare: { path: '/mnt/pool/ds' } },
+    });
+
+    createNfsShareLink.click();
+    expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(NfsFormComponent, {
+      data: { defaultNfsShare: { path: '/mnt/pool/ds' } },
+    });
   });
 });

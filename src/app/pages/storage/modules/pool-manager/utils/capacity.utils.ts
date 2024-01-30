@@ -71,7 +71,7 @@ export function vdevCapacity({
       return vdev.reduce((sum, disk) => sum + disk.size - swapOnDrive, 0);
     default:
       assertUnreachable(layout);
-      throw new Error(`Unknown layout: ${layout}`);
+      return 0;
   }
 }
 

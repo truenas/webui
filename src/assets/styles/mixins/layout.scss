@@ -66,6 +66,10 @@ $scrollbar-offset: 20px;
     position: sticky;
     top: -16px;
     z-index: 2;
+
+    @media(max-width: $breakpoint-xs) {
+      top: -1px;
+    }
   }
 
   .close-details-container-mobile {
@@ -113,7 +117,7 @@ $scrollbar-offset: 20px;
     }
 
     ::ng-deep .cards .scroll-window {
-      display: inline-block;
+      display: inline-table;
     }
 
     ix-dataset-details-panel {

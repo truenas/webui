@@ -5,7 +5,8 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { IxSelectHarness } from 'app/modules/ix-forms/components/ix-select/ix-select.harness';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
@@ -26,7 +27,7 @@ describe('SignCsrDialogComponent', () => {
       AppLoaderModule,
     ],
     providers: [
-      mockWebsocket([
+      mockWebSocket([
         mockCall('certificateauthority.ca_sign_csr'),
       ]),
       mockProvider(MatDialogRef),
@@ -41,6 +42,7 @@ describe('SignCsrDialogComponent', () => {
         provide: MAT_DIALOG_DATA,
         useValue: 13,
       },
+      mockAuth(),
     ],
   });
 

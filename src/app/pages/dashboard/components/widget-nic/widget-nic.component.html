@@ -121,7 +121,7 @@
                           <strong>{{ 'In' | translate }}: &nbsp;</strong>
                         </div>
                         <div class="td value">
-                          <span class="stat">{{ traffic.received | filesize: { standard: 'iec' }  }}</span>/s
+                          <span class="stat">{{ traffic.bitsReceived | ixFileSize: { baseUnit: 'b', base: 10 } }}</span>/s
                         </div>
                       </div>
                       <div class="tr">
@@ -129,7 +129,7 @@
                           <strong>{{ 'Out' | translate }}: </strong>&nbsp;
                         </div>
                         <div class="td value">
-                          <span class="stat">{{ traffic.sent | filesize: { standard: 'iec' } }}</span>/s
+                          <span class="stat">{{ traffic.bitsSent | ixFileSize: { baseUnit: 'b', base: 10 } }}</span>/s
                         </div>
                       </div>
                     </div>
@@ -171,7 +171,7 @@
                   </mat-list-item>
                   <mat-list-item
                     [ngClass]="{ clickable: ipAddresses.length > 1 }"
-                    (click)="updateSlide(PathEnum.Addresses, ipAddresses.length > 1, 1)"
+                    (click)="updateSlide(Path.Addresses, ipAddresses.length > 1, 1)"
                   >
                     <strong>{{ 'IP Addresses' | translate }}:</strong>
                     {{ ipAddresses.length > 0 ? ipAddresses[0].address : ipAddresses.length }}
@@ -190,7 +190,7 @@
                   <mat-list-item
                     *ngIf="nicState.vlans"
                     [ngClass]="{ clickable: nicState.vlans.length > 0 }"
-                    (click)="updateSlide('vlans', nicState.vlans.length > 0, 1)"
+                    (click)="updateSlide(Path.Vlans, nicState.vlans.length > 0, 1)"
                   >
                     <strong>{{ 'VLANs' | translate }}:</strong>
                     {{ nicState.vlans.length }}
@@ -203,7 +203,7 @@
                   <mat-list-item
                     *ngIf="nicState.lagg_ports"
                     [ngClass]="{ clickable: nicState.lagg_ports.length > 0 }"
-                    (click)="updateSlide(PathEnum.Interfaces, nicState.lagg_ports.length > 0, 1)"
+                    (click)="updateSlide(Path.Interfaces, nicState.lagg_ports.length > 0, 1)"
                   >
                     <strong>{{ 'Interfaces' | translate }}:</strong>
                     {{ nicState.lagg_ports.length }}
@@ -219,7 +219,7 @@
           </div>
 
           <div
-            *ngIf="path[1].name === PathEnum.Addresses"
+            *ngIf="path[1].name === Path.Addresses"
             class="slide addresses"
             fxFlex="100"
           >
@@ -237,7 +237,7 @@
           </div>
 
           <div
-            *ngIf="path[1].name === PathEnum.Vlans"
+            *ngIf="path[1].name === Path.Vlans"
             class="slide vlans"
             fxFlex="100"
           >
@@ -247,7 +247,7 @@
                 *ngFor="let vlan of nicState.vlans; let i = index"
                 role="listitem"
                 [class.clickable]="vlan.aliases.length"
-                (click)="updateSlide(PathEnum.VlanAddresses, vlanAliases(i).length > 0, 2, i)"
+                (click)="updateSlide(Path.VlanAddresses, vlanAliases(i).length > 0, 2, i)"
               >
                 <strong>{{ vlan.name }}:</strong>&nbsp;&nbsp;
                 {{ vlanAliases(i).length }} addresses
@@ -261,7 +261,7 @@
           </div>
 
           <div
-            *ngIf="nicState.lagg_ports && path[1].name === PathEnum.Interfaces"
+            *ngIf="nicState.lagg_ports && path[1].name === Path.Interfaces"
             class="slide lagg-ports"
             fxFlex="100"
           >
@@ -278,13 +278,13 @@
           </div>
 
           <div
-            *ngIf="path[1].name === PathEnum.Empty"
+            *ngIf="path[1].name === Path.Empty"
             class="slide empty"
             fxFlex="100"
           ></div>
 
           <div
-            *ngIf="path[2].name === PathEnum.VlanAddresses"
+            *ngIf="path[2].name === Path.VlanAddresses"
             class="slide vlan-addresses"
             fxFlex="100"
           >
@@ -302,7 +302,7 @@
           </div>
 
           <div
-            *ngIf="path[2].name === PathEnum.Empty"
+            *ngIf="path[2].name === Path.Empty"
             class="slide empty"
             fxFlex="100"
           ></div>

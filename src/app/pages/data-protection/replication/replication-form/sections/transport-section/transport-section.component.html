@@ -1,12 +1,11 @@
 <ix-fieldset [title]="'Transport Options' | translate" [formGroup]="form">
-  <ix-select
+  <ix-ssh-credentials-select
     *ngIf="!isLocal"
     formControlName="ssh_credentials"
     [label]="'SSH Connection' | translate"
     [required]="true"
-    [options]="sshCredentialsOptions$"
     [tooltip]="helptext.ssh_credentials_tooltip | translate"
-  ></ix-select>
+  ></ix-ssh-credentials-select>
   <ng-container *ngIf="isNetcat">
     <ix-select
       formControlName="netcat_active_side"

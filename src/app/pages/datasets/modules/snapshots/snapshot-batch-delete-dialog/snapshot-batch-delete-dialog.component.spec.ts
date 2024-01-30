@@ -5,7 +5,7 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
-import { mockCall, mockJob, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { CoreBulkResponse } from 'app/interfaces/core-bulk.interface';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
@@ -41,7 +41,7 @@ describe('SnapshotBatchDeleteDialogComponent', () => {
       mockProvider(AppLoaderService),
       mockProvider(MatDialogRef),
       mockProvider(DialogService),
-      mockWebsocket([
+      mockWebSocket([
         mockJob('core.bulk', fakeSuccessfulJob(mockJobSuccessResponse)),
         mockCall('zfs.snapshot.delete'),
       ]),

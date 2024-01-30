@@ -7,7 +7,8 @@ import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-datetime.pipe';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
-import { mockWebsocket, mockCall, mockJob } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockWebSocket, mockCall, mockJob } from 'app/core/testing/utils/mock-websocket.utils';
 import { Certificate } from 'app/interfaces/certificate.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
@@ -77,7 +78,7 @@ describe('CertificateListComponent', () => {
       FakeFormatDateTimePipe,
     ],
     providers: [
-      mockWebsocket([
+      mockWebSocket([
         mockCall('certificate.query', certificates),
         mockJob('certificate.delete', fakeSuccessfulJob(true)),
       ]),
@@ -98,6 +99,7 @@ describe('CertificateListComponent', () => {
       }),
       mockProvider(StorageService),
       mockProvider(ErrorHandlerService),
+      mockAuth(),
     ],
   });
 

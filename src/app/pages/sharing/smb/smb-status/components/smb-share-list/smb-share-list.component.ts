@@ -15,6 +15,7 @@ import { WebSocketService } from 'app/services/ws.service';
 @UntilDestroy()
 @Component({
   selector: 'ix-smb-share-list',
+  styleUrls: ['./smb-share-list.component.scss'],
   templateUrl: './smb-share-list.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -38,7 +39,9 @@ export class SmbShareListComponent implements OnInit {
       propertyName: 'signing',
       getValue: (row) => row.signing.cipher,
     }),
-  ]);
+  ], {
+    rowTestId: (row) => 'smb-share-' + row.server_id.unique_id + '-' + row.machine,
+  });
 
   constructor(
     private ws: WebSocketService,

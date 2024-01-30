@@ -6,9 +6,10 @@ import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
-import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
-import helptext from 'app/helptext/directory-service/ldap';
+import { MockWebSocketService } from 'app/core/testing/classes/mock-websocket.service';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { helptextLdap } from 'app/helptext/directory-service/ldap';
 import { KerberosRealm } from 'app/interfaces/kerberos-realm.interface';
 import { LdapConfig, LdapConfigUpdateResult } from 'app/interfaces/ldap-config.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
@@ -53,7 +54,7 @@ describe('LdapComponent', () => {
       IxFormsModule,
     ],
     providers: [
-      mockWebsocket([
+      mockWebSocket([
         mockCall('ldap.config', existingLdapConfig),
         mockCall('ldap.update', {} as LdapConfigUpdateResult),
         mockCall('kerberos.keytab.kerberos_principal_choices', [
@@ -78,6 +79,7 @@ describe('LdapComponent', () => {
       mockProvider(SnackbarService),
       mockProvider(MatDialog),
       mockProvider(IxSlideInRef),
+      mockAuth(),
       { provide: SLIDE_IN_DATA, useValue: undefined },
     ],
     declarations: [
@@ -138,7 +140,7 @@ describe('LdapComponent', () => {
 
     expect(spectator.inject(SystemGeneralService).refreshDirServicesCache).toHaveBeenCalled();
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith(
-      helptext.ldap_custactions_clearcache_dialog_message,
+      helptextLdap.ldap_custactions_clearcache_dialog_message,
     );
   });
 
@@ -165,7 +167,7 @@ describe('LdapComponent', () => {
   });
 
   it('shows job dialog when form is submitted and there is a job_id in the response', async () => {
-    const websocketMock = spectator.inject(MockWebsocketService);
+    const websocketMock = spectator.inject(MockWebSocketService);
     websocketMock.mockCall('ldap.update', { job_id: 2 } as LdapConfigUpdateResult);
     const matDialog = spectator.inject(MatDialog);
     const jobComponent = {

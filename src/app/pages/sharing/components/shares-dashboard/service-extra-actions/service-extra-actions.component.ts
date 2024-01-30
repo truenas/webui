@@ -3,10 +3,11 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { AuditService } from 'app/enums/audit.enum';
+import { Role } from 'app/enums/role.enum';
 import { ServiceName, serviceNames } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { Service } from 'app/interfaces/service.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
+import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { ServiceNfsComponent } from 'app/pages/services/components/service-nfs/service-nfs.component';
 import { ServiceSmbComponent } from 'app/pages/services/components/service-smb/service-smb.component';
 import { DialogService } from 'app/services/dialog.service';
@@ -23,6 +24,7 @@ import { WebSocketService } from 'app/services/ws.service';
 })
 export class ServiceExtraActionsComponent {
   @Input() service: Service;
+  @Input() requiresRoles: Role[];
 
   configServiceLabel = this.translate.instant('Config Service');
   readonly serviceNames = serviceNames;
@@ -76,7 +78,7 @@ export class ServiceExtraActionsComponent {
             );
           }
         },
-        error: (error: WebsocketError) => {
+        error: (error: WebSocketError) => {
           let message = this.translate.instant(
             'Error starting service {serviceName}.',
             { serviceName: serviceNames.get(service.service) || service.service },

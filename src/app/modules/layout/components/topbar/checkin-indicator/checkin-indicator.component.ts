@@ -4,8 +4,8 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { filter } from 'rxjs/operators';
-import network_interfaces_helptext from 'app/helptext/network/interfaces/interfaces-list';
-import helptext from 'app/helptext/topbar';
+import { helptextInterfaces } from 'app/helptext/network/interfaces/interfaces-list';
+import { helptextTopbar } from 'app/helptext/topbar';
 import { DialogService } from 'app/services/dialog.service';
 import { AppState } from 'app/store';
 import { checkinIndicatorPressed } from 'app/store/network-interfaces/network-interfaces.actions';
@@ -23,7 +23,7 @@ import {
 export class CheckinIndicatorComponent implements OnInit {
   protected hasPendingNetworkChanges$ = this.store$.select(selectHasPendingNetworkChanges);
 
-  protected readonly tooltips = helptext.mat_tooltips;
+  protected readonly tooltips = helptextTopbar.mat_tooltips;
 
   private isWaitingForCheckin = false;
 
@@ -60,8 +60,8 @@ export class CheckinIndicatorComponent implements OnInit {
 
   private showPendingNetworkChangesDialog(): void {
     this.dialogService.confirm({
-      title: this.translate.instant(network_interfaces_helptext.pending_changes_title),
-      message: this.translate.instant(network_interfaces_helptext.pending_changes_message),
+      title: this.translate.instant(helptextInterfaces.pending_changes_title),
+      message: this.translate.instant(helptextInterfaces.pending_changes_message),
       hideCheckbox: true,
       buttonText: this.translate.instant('Continue'),
     }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {

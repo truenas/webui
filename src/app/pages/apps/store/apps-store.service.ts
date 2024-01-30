@@ -7,7 +7,6 @@ import {
 } from 'rxjs';
 import { AppExtraCategory } from 'app/enums/app-extra-category.enum';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
@@ -61,7 +60,8 @@ export class AppsStore extends ComponentStore<AppsState> {
     this.initialize();
   }
 
-  private handleError(): void {
+  private handleError(error: unknown): void {
+    this.errorHandler.showErrorModal(error);
     this.patchState((state: AppsState): AppsState => {
       return {
         ...state,
@@ -93,8 +93,8 @@ export class AppsStore extends ComponentStore<AppsState> {
           };
         });
       }),
-      catchError(() => {
-        this.handleError();
+      catchError((error) => {
+        this.handleError(error);
         return EMPTY;
       }),
     );
@@ -102,11 +102,10 @@ export class AppsStore extends ComponentStore<AppsState> {
 
   private loadLatestApps(): Observable<unknown> {
     return this.appsService.getLatestApps().pipe(
-      catchError((error: WebsocketError) => {
-        this.dialogService.error(this.errorHandler.parseWsError(error));
+      catchError((error) => {
+        this.handleError(error);
         return of([]);
       }),
-    ).pipe(
       tap((latestApps: AvailableApp[]) => {
         this.patchState((state) => {
           return {
@@ -120,11 +119,10 @@ export class AppsStore extends ComponentStore<AppsState> {
 
   private loadAvailableApps(): Observable<unknown> {
     return this.appsService.getAvailableApps().pipe(
-      catchError((error: WebsocketError) => {
-        this.dialogService.error(this.errorHandler.parseWsError(error));
+      catchError((error) => {
+        this.handleError(error);
         return of([]);
       }),
-    ).pipe(
       tap((availableApps: AvailableApp[]) => {
         this.patchState((state) => {
           return {
@@ -142,11 +140,10 @@ export class AppsStore extends ComponentStore<AppsState> {
 
   private loadCategories(): Observable<unknown> {
     return this.appsService.getAllAppsCategories().pipe(
-      catchError((error: WebsocketError) => {
-        this.dialogService.error(this.errorHandler.parseWsError(error));
+      catchError((error) => {
+        this.handleError(error);
         return of([]);
       }),
-    ).pipe(
       tap((categories: string[]) => {
         this.patchState((state) => {
           return {

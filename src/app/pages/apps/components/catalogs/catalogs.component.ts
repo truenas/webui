@@ -6,7 +6,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { filter, tap } from 'rxjs/operators';
 import { JobState } from 'app/enums/job-state.enum';
-import helptext from 'app/helptext/apps/apps';
+import { helptextApps } from 'app/helptext/apps/apps';
 import { Catalog } from 'app/interfaces/catalog.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { AsyncDataProvider } from 'app/modules/ix-table2/classes/async-data-provider/async-data-provider';
@@ -22,6 +22,7 @@ import {
   ManageCatalogSummaryDialogComponent,
 } from 'app/pages/apps/components/catalogs/manage-catalog-summary/manage-catalog-summary-dialog.component';
 import { DialogService } from 'app/services/dialog.service';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { CatalogEditFormComponent } from './catalog-edit-form/catalog-edit-form.component';
@@ -58,7 +59,9 @@ export class CatalogsComponent implements OnInit {
       propertyName: 'preferred_trains',
       sortable: true,
     }),
-  ]);
+  ], {
+    rowTestId: (row) => 'catalog-' + row.label,
+  });
 
   constructor(
     private matDialog: MatDialog,
@@ -67,6 +70,7 @@ export class CatalogsComponent implements OnInit {
     private slideInService: IxSlideInService,
     private translate: TranslateService,
     protected emptyService: EmptyService,
+    private errorHandler: ErrorHandlerService,
   ) {}
 
   ngOnInit(): void {
@@ -121,9 +125,9 @@ export class CatalogsComponent implements OnInit {
 
   doAdd(): void {
     this.dialogService.confirm({
-      title: helptext.thirdPartyRepoWarning.title,
-      message: helptext.thirdPartyRepoWarning.message,
-      buttonText: helptext.thirdPartyRepoWarning.btnMsg,
+      title: helptextApps.thirdPartyRepoWarning.title,
+      message: helptextApps.thirdPartyRepoWarning.message,
+      buttonText: helptextApps.thirdPartyRepoWarning.btnMsg,
       hideCheckbox: true,
     }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
       const slideInRef = this.slideInService.open(CatalogAddFormComponent);
@@ -161,7 +165,7 @@ export class CatalogsComponent implements OnInit {
   onRefreshAll(): void {
     const dialogRef = this.matDialog.open(EntityJobComponent, {
       data: {
-        title: helptext.refreshing,
+        title: helptextApps.refreshing,
       },
     });
     dialogRef.componentInstance.setCall('catalog.sync_all');
@@ -170,12 +174,16 @@ export class CatalogsComponent implements OnInit {
       this.dialogService.closeAllDialogs();
       this.refresh();
     });
+    dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((error) => {
+      dialogRef.close();
+      this.errorHandler.showErrorModal(error);
+    });
   }
 
   syncRow(row: Catalog): void {
     const dialogRef = this.matDialog.open(EntityJobComponent, {
       data: {
-        title: helptext.refreshing,
+        title: helptextApps.refreshing,
       },
     });
     dialogRef.componentInstance.setCall('catalog.sync', [row.label]);
@@ -183,6 +191,10 @@ export class CatalogsComponent implements OnInit {
     dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
       this.dialogService.closeAllDialogs();
       this.refresh();
+    });
+    dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((error) => {
+      dialogRef.close();
+      this.errorHandler.showErrorModal(error);
     });
   }
 }

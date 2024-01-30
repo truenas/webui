@@ -4,7 +4,8 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { DatasetType } from 'app/enums/dataset.enum';
 import { MatchDatastoresWithDatasets, VmwareSnapshot } from 'app/interfaces/vmware.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
@@ -37,7 +38,8 @@ describe('VmwareSnapshotFormComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
-      mockWebsocket([
+      mockAuth(),
+      mockWebSocket([
         mockCall('vmware.match_datastores_with_datasets', {
           filesystems: [
             {

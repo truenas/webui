@@ -5,7 +5,7 @@ import { Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import helptext_replication from 'app/helptext/data-protection/replication/replication';
+import { helptextReplication } from 'app/helptext/data-protection/replication/replication';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { DatasetService } from 'app/services/dataset-service/dataset.service';
@@ -24,7 +24,7 @@ export class ReplicationRestoreDialogComponent {
   });
 
   readonly treeNodeProvider = this.datasetService.getDatasetNodeProvider();
-  readonly helptext = helptext_replication;
+  readonly helptext = helptextReplication;
 
   constructor(
     private ws: WebSocketService,
@@ -43,7 +43,7 @@ export class ReplicationRestoreDialogComponent {
         next: () => {
           this.dialogRef.close(true);
         },
-        error: (error) => {
+        error: (error: unknown) => {
           this.errorHandler.handleWsFormError(error, this.form);
         },
       });

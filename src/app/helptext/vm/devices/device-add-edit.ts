@@ -1,6 +1,6 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
-export default {
+export const helptextDevice = {
   cd_path_tooltip: T('Browse to a CD-ROM file present on the system storage.'),
   zvol_path_tooltip: T('Define the path to an existing zvol for VM use.'),
 
@@ -51,8 +51,6 @@ export default {
 
   resolution_tooltip: T('Select a screen resolution to use for VNC sessions.'),
   bind_tooltip: T('Select an IP address to use for VNC sessions.'),
-  password_tooltip: T('Enter a VNC password to automatically pass to the\
- VNC session. Passwords cannot be longer than 8\
- characters.'),
+  password_tooltip: T('Enter a VNC password to automatically pass to the VNC session.'),
   web_tooltip: T('Set to enable connecting to the VNC web interface.'),
 };

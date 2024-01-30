@@ -1,7 +1,7 @@
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { BehaviorSubject, of } from 'rxjs';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { AppResourcesCardComponent } from 'app/pages/apps/components/app-detail-view/app-resources-card/app-resources-card.component';
 import { KubernetesStore } from 'app/pages/apps/store/kubernetes-store.service';
@@ -16,7 +16,7 @@ describe('AppResourcesCardComponent', () => {
   const createComponent = createComponentFactory({
     component: AppResourcesCardComponent,
     providers: [
-      mockWebsocket([
+      mockWebSocket([
         mockCall('pool.dataset.get_instance', {
           available: {
             rawvalue: '2500',

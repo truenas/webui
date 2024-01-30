@@ -4,8 +4,8 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
-import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { MockWebSocketService } from 'app/core/testing/classes/mock-websocket.service';
+import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import {
   VmDeviceType, VmDiskMode, VmDisplayType, VmNicType,
 } from 'app/enums/vm.enum';
@@ -44,7 +44,7 @@ describe('DeviceFormComponent', () => {
       IxFormsModule,
     ],
     providers: [
-      mockWebsocket([
+      mockWebSocket([
         mockCall('vm.device.create'),
         mockCall('vm.device.update'),
         mockCall('vm.get_display_devices', [{}, {}] as VmDisplayDevice[]),
@@ -265,7 +265,7 @@ describe('DeviceFormComponent', () => {
         await form.fillForm({
           Type: 'NIC',
         });
-        spectator.inject(MockWebsocketService).call.mockClear();
+        spectator.inject(MockWebSocketService).call.mockClear();
 
         const generateButton = await loader.getHarness(MatButtonHarness.with({ text: 'Generate' }));
         await generateButton.click();
@@ -649,7 +649,7 @@ describe('DeviceFormComponent', () => {
       dtype: VmDeviceType.Display,
       attributes: {
         bind: '0.0.0.0',
-        password: '12345678',
+        password: '12345678910',
         web: true,
         type: VmDisplayType.Spice,
         resolution: '1024x768',
@@ -683,7 +683,7 @@ describe('DeviceFormComponent', () => {
         expect(values).toEqual({
           Bind: '0.0.0.0',
           'Device Order': '1002',
-          Password: '12345678',
+          Password: '12345678910',
           Port: '5900',
           Resolution: '1024x768',
           'Web Interface': true,
@@ -710,7 +710,7 @@ describe('DeviceFormComponent', () => {
       });
 
       it('hides Display type option when VM already has 2 or more displays (proxy for having 1 display of each type)', async () => {
-        spectator.inject(MockWebsocketService).mockCall('vm.get_display_devices', [{}, {}] as VmDisplayDevice[]);
+        spectator.inject(MockWebSocketService).mockCall('vm.get_display_devices', [{}, {}] as VmDisplayDevice[]);
         const typeSelect = await loader.getHarness(IxSelectHarness.with({ label: 'Type' }));
         expect(websocket.call).toHaveBeenCalledWith('vm.get_display_devices', [46]);
         expect(await typeSelect.getOptionLabels()).not.toContain('Display');

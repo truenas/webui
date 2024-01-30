@@ -1,6 +1,6 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
-export default {
+export const helptextDatasetForm = {
   dataset_parent_name_tooltip: T('Parent dataset path (read-only).'),
   dataset_form_name_tooltip: T('Enter a unique name for the dataset. The dataset name length is calculated by adding the length of this field\'s value and the length of the parent path field value. The length of \'Parent Path\' and \'Name\' added together cannot exceed 200 characters. Because of this length validation on this field accounts for the parent path as well. Furthermore, the maximum nested directory levels allowed is 50. You can\'t create a dataset that\'s at the 51st level in the directory hierarchy after you account for the nested levels in the parent path.'),
   dataset_form_comments_tooltip: T('Enter any notes about this dataset.'),
@@ -118,7 +118,8 @@ export default {
   dataset_form_encryption: {
     inherit_checkbox_tooltip: T('Use the encryption properties of the root dataset.'),
     encryption_checkbox_tooltip: T('Secure data within this dataset. Data is unusable until \
-     unlocked with an encryption key or passphrase.'),
+     unlocked with an encryption key or passphrase. If parent dataset has encryption enabled, it is \
+     not possible to disable this option.'),
     encryption_type_tooltip: T('How the dataset is secured. Choose between securing with\
  an encryption <i>Key</i> or a user-defined <i>Passphrase</i>. Creating a new key file\
  invalidates any previously downloaded key file for this dataset.\
@@ -142,9 +143,6 @@ export default {
      defining the encryption key.<br> WARNING: the encryption key is the only means to decrypt the information stored in this \
      dataset. Store the encryption key in a secure location.'),
     key_tooltip: T('Enter or paste a string to use as the encryption key for this dataset.'),
-    non_encrypted_warning_title: T('Warning'),
-    non_encrypted_warning_warning: T('All data stored in this dataset will be decrypted and the dataset marked \
- as non-encrypted. Do you want to continue?'),
   },
   pathWarningTitle: T('Action Not Possible'),
   pathIsTooLongWarning: T('Dataset name is set by appending the parent path with the name entered by you. The max allowed length for the dataset name is 200. The parent path for this dataset already exceeds that limit. It is not possible to create anymore nested datasets under this path.'),

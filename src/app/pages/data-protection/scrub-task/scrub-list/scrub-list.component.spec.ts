@@ -3,7 +3,8 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { PoolScrubTask } from 'app/interfaces/pool-scrub.interface';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTable2Harness } from 'app/modules/ix-table2/components/ix-table2/ix-table2.harness';
@@ -58,6 +59,7 @@ describe('ScrubListComponent', () => {
       IxTable2Module,
     ],
     providers: [
+      mockAuth(),
       mockProvider(IxSlideInService, {
         open: jest.fn(() => {
           return { slideInClosed$: of() };
@@ -66,7 +68,7 @@ describe('ScrubListComponent', () => {
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
-      mockWebsocket([
+      mockWebSocket([
         mockCall('pool.scrub.query', scrubTasks),
       ]),
       mockProvider(TaskService, {

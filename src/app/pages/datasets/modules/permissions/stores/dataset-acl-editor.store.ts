@@ -14,12 +14,12 @@ import { AclType, DefaultAclType } from 'app/enums/acl-type.enum';
 import { mntPath } from 'app/enums/mnt-path.enum';
 import { NfsAclTag } from 'app/enums/nfs-acl.enum';
 import { PosixAclTag } from 'app/enums/posix-acl.enum';
-import helptext from 'app/helptext/storage/volumes/datasets/dataset-acl';
+import { helptextAcl } from 'app/helptext/storage/volumes/datasets/dataset-acl';
 import {
   Acl, AclTemplateByPath, NfsAclItem, PosixAclItem, SetAcl,
 } from 'app/interfaces/acl.interface';
 import { Job } from 'app/interfaces/job.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
+import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import {
   AclSaveFormParams,
@@ -77,8 +77,8 @@ export class DatasetAclEditorStore extends ComponentStore<DatasetAclEditorState>
               isLoading: false,
             });
           }),
-          catchError((error: WebsocketError) => {
-            this.dialogService.error(this.errorHandler.parseWsError(error));
+          catchError((error: unknown) => {
+            this.dialogService.error(this.errorHandler.parseError(error));
 
             this.patchState({
               isLoading: false,
@@ -178,8 +178,8 @@ export class DatasetAclEditorStore extends ComponentStore<DatasetAclEditorState>
       switchMap(() => {
         if (this.storageService.isDatasetTopLevel(this.get().mountpoint.replace('mnt/', ''))) {
           return this.dialogService.confirm({
-            title: helptext.dataset_acl_dialog_warning,
-            message: helptext.dataset_acl_toplevel_dialog_message,
+            title: helptextAcl.dataset_acl_dialog_warning,
+            message: helptextAcl.dataset_acl_toplevel_dialog_message,
           });
         }
 
@@ -193,8 +193,8 @@ export class DatasetAclEditorStore extends ComponentStore<DatasetAclEditorState>
 
       // Save
       tap((setAcl: SetAcl) => {
-        const dialogRef = this.matDialog.open(EntityJobComponent, { data: { title: helptext.save_dialog.title } });
-        dialogRef.componentInstance.setDescription(helptext.save_dialog.message);
+        const dialogRef = this.matDialog.open(EntityJobComponent, { data: { title: helptextAcl.save_dialog.title } });
+        dialogRef.componentInstance.setDescription(helptextAcl.save_dialog.message);
 
         dialogRef.componentInstance.setCall('filesystem.setacl', [setAcl]);
         dialogRef.componentInstance.success.pipe(takeUntil(this.destroy$)).subscribe({
@@ -203,7 +203,7 @@ export class DatasetAclEditorStore extends ComponentStore<DatasetAclEditorState>
             dialogRef.close();
             this.router.navigate(ngUrl);
           },
-          error: (error: WebsocketError | Job) => {
+          error: (error: WebSocketError | Job) => {
             dialogRef.close();
             this.dialogService.error(this.errorHandler.parseError(error));
           },
@@ -211,9 +211,9 @@ export class DatasetAclEditorStore extends ComponentStore<DatasetAclEditorState>
         dialogRef.componentInstance.failure.pipe(takeUntil(this.destroy$)).subscribe({
           next: (failedJob) => {
             dialogRef.close();
-            this.dialogService.error(this.errorHandler.parseJobError(failedJob));
+            this.dialogService.error(this.errorHandler.parseError(failedJob));
           },
-          error: (error: WebsocketError | Job) => {
+          error: (error: WebSocketError | Job) => {
             dialogRef.close();
             this.dialogService.error(this.errorHandler.parseError(error));
           },
@@ -258,7 +258,7 @@ export class DatasetAclEditorStore extends ComponentStore<DatasetAclEditorState>
               ? DefaultAclType.Nfs4Home
               : DefaultAclType.PosixHome;
 
-            const homePreset = presets.find((preset) => preset.name === homePresetName);
+            const homePreset = presets.find((preset) => (preset.name as DefaultAclType) === homePresetName);
             if (!homePreset) {
               console.error(`Home preset ${homePresetName} not found`);
               return;
@@ -295,8 +295,8 @@ export class DatasetAclEditorStore extends ComponentStore<DatasetAclEditorState>
         requests.push(
           this.userService.getUserByName(ace.who).pipe(
             tap((user) => userWhoToIds.set(ace.who, user.pw_uid)),
-            catchError((error: WebsocketError) => {
-              this.dialogService.error(this.errorHandler.parseWsError(error));
+            catchError((error: unknown) => {
+              this.dialogService.error(this.errorHandler.parseError(error));
               markAceAsHavingErrors(index);
               return EMPTY;
             }),
@@ -310,8 +310,8 @@ export class DatasetAclEditorStore extends ComponentStore<DatasetAclEditorState>
         requests.push(
           this.userService.getGroupByName(ace.who).pipe(
             tap((group) => groupWhoToIds.set(ace.who, group.gr_gid)),
-            catchError((error: WebsocketError) => {
-              this.dialogService.error(this.errorHandler.parseWsError(error));
+            catchError((error: unknown) => {
+              this.dialogService.error(this.errorHandler.parseError(error));
               markAceAsHavingErrors(index);
               return EMPTY;
             }),
@@ -323,8 +323,8 @@ export class DatasetAclEditorStore extends ComponentStore<DatasetAclEditorState>
     requests.push(
       this.userService.getUserByName(options.owner).pipe(
         tap((user) => userWhoToIds.set(options.owner, user.pw_uid)),
-        catchError((error: WebsocketError) => {
-          this.dialogService.error(this.errorHandler.parseWsError(error));
+        catchError((error: unknown) => {
+          this.dialogService.error(this.errorHandler.parseError(error));
           return EMPTY;
         }),
       ),
@@ -333,8 +333,8 @@ export class DatasetAclEditorStore extends ComponentStore<DatasetAclEditorState>
     requests.push(
       this.userService.getGroupByName(options.ownerGroup).pipe(
         tap((group) => groupWhoToIds.set(options.ownerGroup, group.gr_gid)),
-        catchError((error: WebsocketError) => {
-          this.dialogService.error(this.errorHandler.parseWsError(error));
+        catchError((error: unknown) => {
+          this.dialogService.error(this.errorHandler.parseError(error));
           return EMPTY;
         }),
       ),

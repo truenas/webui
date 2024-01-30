@@ -63,7 +63,9 @@ export class UserListComponent implements OnInit {
         .join(', ') || this.translate.instant('N/A'),
       sortable: true,
     }),
-  ]);
+  ], {
+    rowTestId: (row) => 'user-' + row.username,
+  });
 
   isLoading$ = this.store$.select(selectUserState).pipe(map((state) => state.isLoading));
   emptyType$: Observable<EmptyType> = combineLatest([

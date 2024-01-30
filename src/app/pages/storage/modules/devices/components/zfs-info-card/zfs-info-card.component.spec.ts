@@ -6,7 +6,8 @@ import {
   byText, createComponentFactory, Spectator, mockProvider,
 } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
-import { mockWebsocket, mockCall, mockJob } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockWebSocket, mockCall, mockJob } from 'app/core/testing/utils/mock-websocket.utils';
 import { DiskStandby } from 'app/enums/disk-standby.enum';
 import { DiskType } from 'app/enums/disk-type.enum';
 import { TopologyItemType } from 'app/enums/v-dev-type.enum';
@@ -27,7 +28,7 @@ describe('ZfsInfoCardComponent', () => {
   const createComponent = createComponentFactory({
     component: ZfsInfoCardComponent,
     providers: [
-      mockWebsocket([
+      mockWebSocket([
         mockCall('pool.detach'),
         mockCall('pool.offline'),
         mockCall('pool.online'),
@@ -42,6 +43,7 @@ describe('ZfsInfoCardComponent', () => {
         })),
       }),
       mockProvider(DevicesStore),
+      mockAuth(),
     ],
   });
 

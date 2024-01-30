@@ -36,27 +36,32 @@
       </dl>
 
       <div class="table-details-row-actions">
-        <button
-          *ngIf="!task.job || task.job?.state !== jobState.Running"
-          mat-button
-          [ixTest]="[task.id, 'run_now']"
-          (click)="runNow(task)"
-        >
-          <ix-icon name="play_arrow"></ix-icon>
-          <span>{{ 'Run Now' | translate }}</span>
-        </button>
+        <ng-container *ngIf="!task.job || task.job?.state !== jobState.Running">
+          <button
+            *ixRequiresRoles="requiresRoles"
+            mat-button
+            [ixTest]="[task.id, 'run_now']"
+            (click)="runNow(task)"
+          >
+            <ix-icon name="play_arrow"></ix-icon>
+            <span>{{ 'Run Now' | translate }}</span>
+          </button>
+        </ng-container>
+
+        <ng-container *ngIf="task.job && task.job.state === jobState.Running">
+          <button
+            *ixRequiresRoles="requiresRoles"
+            mat-button
+            [ixTest]="[task.id, 'stop']"
+            (click)="stopCloudSyncTask(task)"
+          >
+            <ix-icon name="stop"></ix-icon>
+            <span>{{ 'Stop' | translate }}</span>
+          </button>
+        </ng-container>
 
         <button
-          *ngIf="task.job && task.job.state === jobState.Running"
-          mat-button
-          [ixTest]="[task.id, 'stop']"
-          (click)="stopCloudSyncTask(task)"
-        >
-          <ix-icon name="stop"></ix-icon>
-          <span>{{ 'Stop' | translate }}</span>
-        </button>
-
-        <button
+          *ixRequiresRoles="requiresRoles"
           mat-button
           [ixTest]="[task.id, 'dry_run']"
           (click)="dryRun(task)"
@@ -66,6 +71,7 @@
         </button>
 
         <button
+          *ixRequiresRoles="requiresRoles"
           mat-button
           [ixTest]="[task.id, 'restore']"
           (click)="restore(task)"
@@ -84,6 +90,7 @@
         </button>
 
         <button
+          *ixRequiresRoles="requiresRoles"
           mat-button
           [ixTest]="[task.id, 'delete']"
           (click)="doDelete(task)"

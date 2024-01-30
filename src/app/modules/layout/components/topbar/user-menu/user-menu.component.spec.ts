@@ -5,27 +5,14 @@ import { MatMenuHarness } from '@angular/material/menu/testing';
 import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
-import { of } from 'rxjs';
-import { mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { AboutDialogComponent } from 'app/modules/common/dialog/about/about-dialog.component';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import {
   ChangePasswordDialogComponent,
 } from 'app/modules/layout/components/change-password-dialog/change-password-dialog.component';
 import { UserMenuComponent } from 'app/modules/layout/components/topbar/user-menu/user-menu.component';
-import { AuthService } from 'app/services/auth/auth.service';
-
-const loggedInUser = {
-  pw_name: 'root',
-  pw_uid: 0,
-  pw_gid: 0,
-  pw_gecos: 'root',
-  pw_dir: '/root',
-  pw_shell: '/usr/bin/zsh',
-  id: 1,
-  local: true,
-  username: 'root',
-};
 
 describe('UserMenuComponent', () => {
   let spectator: Spectator<UserMenuComponent>;
@@ -38,10 +25,8 @@ describe('UserMenuComponent', () => {
     ],
     providers: [
       mockProvider(MatDialog),
-      mockProvider(AuthService, {
-        user$: of(loggedInUser),
-      }),
-      mockWebsocket(),
+      mockAuth(),
+      mockWebSocket(),
     ],
   });
 

@@ -1,7 +1,7 @@
-import { CloudsyncProviderName } from 'app/enums/cloudsync-provider.enum';
+import { CloudSyncProviderName } from 'app/enums/cloudsync-provider.enum';
 import { CloudSyncTaskUpdate } from 'app/interfaces/cloud-sync-task.interface';
 
-export interface CloudsyncWizardData extends CloudSyncTaskUpdate {
-  provider: CloudsyncProviderName;
+export interface CloudSyncWizardData extends CloudSyncTaskUpdate {
+  provider: CloudSyncProviderName;
   name: string;
 }

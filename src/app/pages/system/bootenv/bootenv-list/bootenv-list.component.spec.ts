@@ -4,8 +4,9 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of, Subject } from 'rxjs';
 import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-datetime.pipe';
-import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { MockWebSocketService } from 'app/core/testing/classes/mock-websocket.service';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxEmptyRowHarness } from 'app/modules/ix-tables/components/ix-empty-row/ix-empty-row.component.harness';
 import { IxTableModule } from 'app/modules/ix-tables/ix-table.module';
@@ -29,7 +30,7 @@ describe('BootEnvironmentListComponent', () => {
       FakeFormatDateTimePipe,
     ],
     providers: [
-      mockWebsocket([
+      mockWebSocket([
         mockCall('bootenv.query', fakeBootEnvironmentsDataSource),
       ]),
       mockProvider(DialogService, {
@@ -40,6 +41,7 @@ describe('BootEnvironmentListComponent', () => {
         onClose$: new Subject<unknown>(),
         open: jest.fn(),
       }),
+      mockAuth(),
     ],
   });
 
@@ -86,7 +88,7 @@ describe('BootEnvironmentListComponent', () => {
   });
 
   it('should show empty message when loaded and datasource is empty', async () => {
-    spectator.inject(MockWebsocketService).mockCall('bootenv.query', []);
+    spectator.inject(MockWebSocketService).mockCall('bootenv.query', []);
     spectator.component.ngOnInit();
 
     spectator.detectChanges();
@@ -96,7 +98,7 @@ describe('BootEnvironmentListComponent', () => {
   });
 
   it('should show error message when can not retrieve response', async () => {
-    spectator.inject(MockWebsocketService).mockCall('bootenv.query', []);
+    spectator.inject(MockWebSocketService).mockCall('bootenv.query', []);
     spectator.component.ngOnInit();
     spectator.component.isError$.next(true);
 

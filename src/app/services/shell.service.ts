@@ -4,7 +4,7 @@ import {
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { environment } from 'environments/environment';
 import { tap } from 'rxjs';
-import { webSocket as rxjsWebsocket, WebSocketSubject } from 'rxjs/webSocket';
+import { webSocket as rxjsWebSocket, WebSocketSubject } from 'rxjs/webSocket';
 import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
 import { WEBSOCKET } from 'app/helpers/websocket.helper';
 import { WINDOW } from 'app/helpers/window.helper';
@@ -27,7 +27,7 @@ export class ShellService {
 
   constructor(
     @Inject(WINDOW) private window: Window,
-    @Inject(WEBSOCKET) private webSocket: typeof rxjsWebsocket,
+    @Inject(WEBSOCKET) private webSocket: typeof rxjsWebSocket,
   ) {}
 
   connect(connectionData: TerminalConnectionData, token: string): void {
@@ -85,12 +85,13 @@ export class ShellService {
   }
 
   private onMessage(msg: MessageEvent<ArrayBuffer | string>): void {
-    let data: { id?: string; msg: string };
+    let data: { id?: string; msg: IncomingApiMessageType };
 
     try {
-      data = JSON.parse(msg.data as string) as { id?: string; msg: string };
+      data = JSON.parse(msg.data as string) as { id?: string; msg: IncomingApiMessageType };
     } catch (error: unknown) {
-      data = { msg: 'please discard this' };
+      // TODO: Figure out why we need this.
+      data = { msg: IncomingApiMessageType.Discard } as { id?: string; msg: IncomingApiMessageType };
     }
 
     if (data.msg === IncomingApiMessageType.Connected) {

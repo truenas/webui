@@ -6,10 +6,11 @@ import { Store } from '@ngrx/store';
 import { of } from 'rxjs';
 import { DeepPartial } from 'utility-types';
 import { MockAuthService } from 'app/core/testing/classes/mock-auth.service';
+import { AccountAttribute } from 'app/enums/account-attribute.enum';
 import { Role } from 'app/enums/role.enum';
-import { AuthMeUser, LoggedInUser } from 'app/interfaces/ds-cache.interface';
+import { LoggedInUser } from 'app/interfaces/ds-cache.interface';
 import { AuthService } from 'app/services/auth/auth.service';
-import { WebsocketConnectionService } from 'app/services/websocket-connection.service';
+import { WebSocketConnectionService } from 'app/services/websocket-connection.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 const dummyUser = {
@@ -19,11 +20,12 @@ const dummyUser = {
     },
     web_shell: true,
   },
+  account_attributes: [AccountAttribute.Local, AccountAttribute.SysAdmin],
   pw_name: 'root',
-  attributes: {} as AuthMeUser['attributes'],
-  two_factor_config: {} as AuthMeUser['two_factor_config'],
+  attributes: {} as LoggedInUser['attributes'],
+  two_factor_config: {} as LoggedInUser['two_factor_config'],
   pw_uid: 0,
-} as AuthMeUser;
+} as LoggedInUser;
 
 /**
  * Provides a dummy user with full admin privileges.
@@ -37,7 +39,7 @@ export function mockAuth(
       provide: AuthService,
       useFactory: () => {
         const mockService = new MockAuthService(
-          createSpyObject(WebsocketConnectionService, {
+          createSpyObject(WebSocketConnectionService, {
             isConnected$: of(true),
           }),
           createSpyObject(Store),

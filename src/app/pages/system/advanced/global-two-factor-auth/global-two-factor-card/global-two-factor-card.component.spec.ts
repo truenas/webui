@@ -4,7 +4,7 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatListItemHarness } from '@angular/material/list/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { GlobalTwoFactorConfig } from 'app/interfaces/two-factor-config.interface';
 import { AdvancedSettingsService } from 'app/pages/system/advanced/advanced-settings.service';
 import { GlobalTwoFactorAuthCardComponent } from 'app/pages/system/advanced/global-two-factor-auth/global-two-factor-card/global-two-factor-card.component';
@@ -21,7 +21,7 @@ describe('GlobalTwoFactorAuthCardComponent', () => {
       mockProvider(AdvancedSettingsService, {
         showFirstTimeWarningIfNeeded: jest.fn(() => of()),
       }),
-      mockWebsocket([
+      mockWebSocket([
         mockCall('auth.twofactor.config', {
           window: 3,
           enabled: false,
@@ -42,7 +42,7 @@ describe('GlobalTwoFactorAuthCardComponent', () => {
 
     expect(itemTexts).toEqual([
       'Global 2FA: Disabled',
-      'Window: 3',
+      'Tolerance Window: 3',
       'Two Factor Authentication for SSH: Disabled',
     ]);
   });

@@ -10,6 +10,8 @@
           [label]="'Path' | translate"
           [tooltip]="helptext.tooltip_path | translate"
           [nodeProvider]="treeNodeProvider"
+          [canCreateDataset]="isNew"
+          [createDatasetProps]="createDatasetProps"
         ></ix-explorer>
       </ix-fieldset>
 
@@ -116,6 +118,7 @@
 
       <ix-form-actions>
         <button
+          *ixRequiresRoles="requiresRoles"
           mat-button
           type="submit"
           color="primary"

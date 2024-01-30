@@ -10,7 +10,7 @@
 
 .alert-sidenav {
   max-width: 30%;
-  min-width: 350px;
+  min-width: 330px;
   width: 400px;
 }
 
@@ -71,7 +71,7 @@
 .logo:focus-visible,
 .logo-text:focus-visible {
   background: var(--focus-bg);
-  box-shadow: 0 0 0 1px var(--focus-brd) inset !important;
+  box-shadow: 0 0 0 1.5px var(--focus-brd) inset !important;
   outline-width: 0;
 }
 

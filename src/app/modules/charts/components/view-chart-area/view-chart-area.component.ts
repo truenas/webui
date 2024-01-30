@@ -13,7 +13,7 @@ import 'chartjs-adapter-date-fns';
   styleUrls: ['./view-chart-area.component.scss'],
 })
 export class ViewChartAreaComponent implements OnDestroy, OnChanges {
-  @ViewChild('canvas', { static: true }) canvas: ElementRef;
+  @ViewChild('canvas', { static: true }) canvas: ElementRef<HTMLCanvasElement>;
   @Input() data: ChartData<'line'>;
   @Input() options: ChartOptions<'line'>;
 

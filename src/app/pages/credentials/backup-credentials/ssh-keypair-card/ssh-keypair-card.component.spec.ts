@@ -4,7 +4,8 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialog } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { KeychainSshKeyPair } from 'app/interfaces/keychain-credential.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
@@ -50,7 +51,7 @@ describe('SshKeypairCardComponent', () => {
       IxTable2Module,
     ],
     providers: [
-      mockWebsocket([
+      mockWebSocket([
         mockCall('keychaincredential.query', credentials),
         mockCall('keychaincredential.delete'),
       ]),
@@ -72,6 +73,7 @@ describe('SshKeypairCardComponent', () => {
       mockProvider(KeychainCredentialService, {
         getSshKeys: jest.fn(() => of(credentials)),
       }),
+      mockAuth(),
     ],
   });
 

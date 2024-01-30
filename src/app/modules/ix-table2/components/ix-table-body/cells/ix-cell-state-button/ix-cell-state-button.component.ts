@@ -3,12 +3,13 @@ import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { JobState } from 'app/enums/job-state.enum';
-import globalHelptext from 'app/helptext/global-helptext';
+import { helptextGlobal } from 'app/helptext/global-helptext';
 import { Job } from 'app/interfaces/job.interface';
 import { ShowLogsDialogComponent } from 'app/modules/common/dialog/show-logs-dialog/show-logs-dialog.component';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { Column, ColumnComponent } from 'app/modules/ix-table2/interfaces/table-column.interface';
 import { DialogService } from 'app/services/dialog.service';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 
 interface RowState {
   state: {
@@ -26,16 +27,10 @@ interface RowState {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class IxCellStateButtonComponent<T> extends ColumnComponent<T> {
-  matDialog: MatDialog;
-  translate: TranslateService;
-  dialogService: DialogService;
-
-  constructor() {
-    super();
-    this.matDialog = inject(MatDialog);
-    this.translate = inject(TranslateService);
-    this.dialogService = inject(DialogService);
-  }
+  matDialog: MatDialog = inject(MatDialog);
+  translate: TranslateService = inject(TranslateService);
+  dialogService: DialogService = inject(DialogService);
+  errorHandler: ErrorHandlerService = inject(ErrorHandlerService);
 
   getWarnings?: (row: T) => unknown[];
   getJob?: (row: T) => Job;
@@ -72,8 +67,9 @@ export class IxCellStateButtonComponent<T> extends ColumnComponent<T> {
         dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
           dialogRef.close();
         });
-        dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe(() => {
+        dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((error) => {
           dialogRef.close();
+          this.errorHandler.showErrorModal(error);
         });
         dialogRef.componentInstance.aborted.pipe(untilDestroyed(this)).subscribe(() => {
           dialogRef.close();
@@ -93,7 +89,7 @@ export class IxCellStateButtonComponent<T> extends ColumnComponent<T> {
         this.matDialog.open(ShowLogsDialogComponent, { data: this.job });
       }
     } else {
-      this.dialogService.warn(globalHelptext.noLogDialog.title, globalHelptext.noLogDialog.message);
+      this.dialogService.warn(helptextGlobal.noLogDialog.title, helptextGlobal.noLogDialog.message);
     }
   }
 

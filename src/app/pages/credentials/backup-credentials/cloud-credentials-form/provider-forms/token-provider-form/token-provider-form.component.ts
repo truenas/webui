@@ -4,7 +4,7 @@ import {
 import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { BehaviorSubject } from 'rxjs';
-import { CloudsyncProviderName } from 'app/enums/cloudsync-provider.enum';
+import { CloudSyncProviderName } from 'app/enums/cloudsync-provider.enum';
 import { helptextSystemCloudcredentials as helptext } from 'app/helptext/system/cloud-credentials';
 import { CloudCredential } from 'app/interfaces/cloud-sync-task.interface';
 import {
@@ -39,13 +39,13 @@ export class TokenProviderFormComponent extends BaseProviderFormComponent implem
 
   get tooltip(): string {
     switch (this.provider.name) {
-      case CloudsyncProviderName.Box:
+      case CloudSyncProviderName.Box:
         return helptext.token_box.tooltip;
-      case CloudsyncProviderName.Dropbox:
+      case CloudSyncProviderName.Dropbox:
         return helptext.token_dropbox.tooltip;
-      case CloudsyncProviderName.Hubic:
+      case CloudSyncProviderName.Hubic:
         return helptext.token_hubic.tooltip;
-      case CloudsyncProviderName.Yandex:
+      case CloudSyncProviderName.Yandex:
         return helptext.token_yandex.tooltip;
       default:
         return '';

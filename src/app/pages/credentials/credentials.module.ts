@@ -66,6 +66,7 @@ import {
 } from 'app/pages/credentials/certificates-dash/view-certificate-dialog/view-certificate-dialog.component';
 import { routing } from 'app/pages/credentials/credentials.routing';
 import { KmipComponent } from 'app/pages/credentials/kmip/kmip.component';
+import { CloudSyncProviderDescriptionComponent } from 'app/pages/data-protection/cloudsync/cloudsync-provider-description/cloudsync-provider-description.component';
 import { BackupCredentialsComponent } from './backup-credentials/backup-credentials.component';
 import { CloudCredentialsCardComponent } from './backup-credentials/cloud-credentials-card/cloud-credentials-card.component';
 import { AzureProviderFormComponent } from './backup-credentials/cloud-credentials-form/provider-forms/azure-provider-form/azure-provider-form.component';
@@ -74,7 +75,6 @@ import { GoogleCloudProviderFormComponent } from './backup-credentials/cloud-cre
 import { GoogleDriveProviderFormComponent } from './backup-credentials/cloud-credentials-form/provider-forms/google-drive-provider-form/google-drive-provider-form.component';
 import { HttpProviderFormComponent } from './backup-credentials/cloud-credentials-form/provider-forms/http-provider-form/http-provider-form.component';
 import { MegaProviderFormComponent } from './backup-credentials/cloud-credentials-form/provider-forms/mega-provider-form/mega-provider-form.component';
-import { OneDriveProviderFormComponent } from './backup-credentials/cloud-credentials-form/provider-forms/one-drive-provider-form/one-drive-provider-form.component';
 import { OpenstackSwiftProviderFormComponent } from './backup-credentials/cloud-credentials-form/provider-forms/openstack-swift-provider-form/openstack-swift-provider-form.component';
 import { PcloudProviderFormComponent } from './backup-credentials/cloud-credentials-form/provider-forms/pcloud-provider-form/pcloud-provider-form.component';
 import { S3ProviderFormComponent } from './backup-credentials/cloud-credentials-form/provider-forms/s3-provider-form/s3-provider-form.component';
@@ -121,7 +121,6 @@ import { CertificateSubjectComponent } from './certificates-dash/forms/common-st
     TokenProviderFormComponent,
     MegaProviderFormComponent,
     AzureProviderFormComponent,
-    OneDriveProviderFormComponent,
     OpenstackSwiftProviderFormComponent,
     PcloudProviderFormComponent,
     SftpProviderFormComponent,
@@ -175,6 +174,7 @@ import { CertificateSubjectComponent } from './certificates-dash/forms/common-st
     TestIdModule,
     TranslateModule,
     OauthButtonModule,
+    CloudSyncProviderDescriptionComponent,
   ],
 })
 export class CredentialsModule { }

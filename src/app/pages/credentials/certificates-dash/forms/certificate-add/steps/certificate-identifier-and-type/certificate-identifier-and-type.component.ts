@@ -69,7 +69,7 @@ export class CertificateIdentifierAndTypeComponent implements OnInit, SummaryPro
   }
 
   private loadProfiles(): void {
-    this.ws.call('certificate.profiles')
+    this.ws.call('webui.crypto.certificate_profiles')
       .pipe(this.errorHandler.catchError(), untilDestroyed(this))
       .subscribe((profiles) => {
         this.profiles = profiles;

@@ -8,6 +8,10 @@
     height: 100%;
   }
 
+  ix-table2 {
+    height: 100%;
+  }
+
   .user-avatar,
   .user-avatar > div {
     align-items: center;
@@ -21,6 +25,10 @@
   .sticky-header {
     height: inherit;
     top: 38px;
+
+    @media(max-width: $breakpoint-md) {
+      position: static;
+    }
 
     > thead {
       align-items: center;
@@ -38,12 +46,31 @@
     flex: 2;
     max-width: 100%;
 
+    @media(max-width: $breakpoint-xs) {
+      table {
+        width: auto;
+      }
+    }
+
     table tbody tr,
     .audit-header-row tr {
       align-items: center;
       display: grid;
       grid-gap: 8px;
-      grid-template-columns: minmax(auto, 1.1fr) 1fr 1.2fr 0.8fr 1.3fr;
+      grid-template-columns: minmax(auto, 0.8fr) 1fr 1fr 0.8fr 1fr;
+
+      @media (max-width: $breakpoint-sm) {
+        grid-template-columns: 1fr 1fr 1fr 1fr 1.2fr;
+
+        th,
+        td {
+          padding: 0 8px !important;
+        }
+      }
+
+      @media(max-width: $breakpoint-xs) {
+        grid-template-columns: 90px 80px 100px 110px 110px;
+      }
     }
 
     .audit-header-row tr {
@@ -98,13 +125,44 @@
   justify-content: space-between;
   padding: 8px 12px;
 
+  @media (max-width: $breakpoint-sm) {
+    display: block;
+  }
+
   .search-container {
     column-gap: 12px;
     display: flex;
 
-    .search-input {
-      max-width: 400px;
+    @media (max-width: $breakpoint-singlecolumn) {
       width: 100%;
     }
+
+    @media (max-width: $breakpoint-sm) {
+      display: block;
+    }
+
+    .search-button-wrapper {
+      display: flex;
+      gap: 8px;
+      justify-content: flex-end;
+
+      @media (max-width: $breakpoint-sm) {
+        margin-top: 8px;
+      }
+    }
+
+    .search-input {
+      @media (min-width: $breakpoint-sm) {
+        max-width: 90%;
+      }
+
+      width: 100%;
+    }
+  }
+}
+
+.mobile-hidden {
+  @media (max-width: $breakpoint-md) {
+    display: none;
   }
 }

@@ -1,6 +1,6 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
-export default {
+export const helptextSshKeypairs = {
   name_tooltip: T('A unique name to identify this keypair. Automatically\
  generated keypairs are named after the object that generated the keypair\
  with " Key" appended to the name.'),

@@ -3,8 +3,8 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of, Subject } from 'rxjs';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
-import helptext from 'app/helptext/storage/volumes/manager/manager';
+import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { helptextManager } from 'app/helptext/storage/volumes/manager/manager';
 import { IxCheckboxHarness } from 'app/modules/ix-forms/components/ix-checkbox/ix-checkbox.harness';
 import { IxInputHarness } from 'app/modules/ix-forms/components/ix-input/ix-input.harness';
 import { IxSelectHarness } from 'app/modules/ix-forms/components/ix-select/ix-select.harness';
@@ -33,7 +33,7 @@ describe('GeneralWizardStepComponent', () => {
       PoolWarningsComponent,
     ],
     providers: [
-      mockWebsocket([
+      mockWebSocket([
         mockCall('pool.query', []),
         mockCall('pool.validate_name', true),
         mockCall('pool.dataset.encryption_algorithm_choices', {
@@ -108,7 +108,7 @@ describe('GeneralWizardStepComponent', () => {
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith(
       expect.objectContaining({
-        message: helptext.manager_encryption_message,
+        message: helptextManager.manager_encryption_message,
         buttonText: 'I Understand',
       }),
     );

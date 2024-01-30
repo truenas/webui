@@ -116,6 +116,10 @@ export class IxTable2Harness extends ContentContainerComponentHarness {
     const texts = await parallel(() => cells.map((cell) => cell.getText()));
     const columnCount = await this.getColumnCount();
 
+    if (!columnCount) {
+      throw new Error('Could not determine column count');
+    }
+
     const result: string[][] = [];
     for (let i = 0; i < texts.length; i += columnCount) {
       result.push(texts.slice(i, i + columnCount));

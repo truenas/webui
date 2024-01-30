@@ -7,10 +7,13 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { BehaviorSubject, Observable, of } from 'rxjs';
 import { DnsAuthenticatorType } from 'app/enums/dns-authenticator-type.enum';
-import { DynamicFormSchemaType } from 'app/enums/dynamic-form-schema-type.enum';
+import { Role } from 'app/enums/role.enum';
+import { getDynamicFormSchemaNode } from 'app/helpers/get-dynamic-form-schema-node';
 import { helptextSystemAcme as helptext } from 'app/helptext/system/acme';
 import { AuthenticatorSchema, DnsAuthenticator } from 'app/interfaces/dns-authenticator.interface';
-import { DynamicFormSchema, DynamicFormSchemaNode } from 'app/interfaces/dynamic-form-schema.interface';
+import {
+  DynamicFormSchema, DynamicFormSchemaNode,
+} from 'app/interfaces/dynamic-form-schema.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { CustomUntypedFormField } from 'app/modules/ix-dynamic-form/components/ix-dynamic-form/classes/custom-untyped-form-field';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
@@ -19,7 +22,7 @@ import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-erro
 import { WebSocketService } from 'app/services/ws.service';
 
 interface DnsAuthenticatorList {
-  key: string;
+  key: DnsAuthenticatorType;
   variables: string[];
 }
 
@@ -62,6 +65,8 @@ export class AcmednsFormComponent implements OnInit {
 
   authenticatorOptions$: Observable<Option[]>;
   private editingAcmedns: DnsAuthenticator;
+
+  protected readonly Role = Role;
 
   constructor(
     private translate: TranslateService,
@@ -123,12 +128,7 @@ export class AcmednsFormComponent implements OnInit {
   }
 
   parseSchemaForDynamicSchema(schema: AuthenticatorSchema): DynamicFormSchemaNode[] {
-    return schema.schema.map((input) => ({
-      controlName: input._name_,
-      type: DynamicFormSchemaType.Input,
-      title: input.title,
-      required: input._required_,
-    }));
+    return schema.schema.map((input) => getDynamicFormSchemaNode(input));
   }
 
   parseSchemaForDnsAuthList(schema: AuthenticatorSchema): DnsAuthenticatorList {
@@ -170,7 +170,7 @@ export class AcmednsFormComponent implements OnInit {
     }
 
     for (const [key, value] of Object.entries(values.attributes)) {
-      if (!value) {
+      if (value == null || value === '') {
         delete values.attributes[key];
       }
     }
@@ -192,7 +192,7 @@ export class AcmednsFormComponent implements OnInit {
         this.isLoading = false;
         this.slideInRef.close(true);
       },
-      error: (error) => {
+      error: (error: unknown) => {
         this.isLoading = false;
         this.errorHandler.handleWsFormError(error, this.form);
         this.cdr.markForCheck();

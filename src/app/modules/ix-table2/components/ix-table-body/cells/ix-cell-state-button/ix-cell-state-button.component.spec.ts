@@ -41,6 +41,7 @@ describe('IxCellStateButtonComponent', () => {
           warnings: [{}, {}],
         } as TestTableData,
         getJob: (row) => row.job,
+        rowTestId: () => '',
       } as Partial<IxCellStateButtonComponent<TestTableData>>,
     });
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);

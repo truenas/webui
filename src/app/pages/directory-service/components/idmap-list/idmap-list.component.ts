@@ -8,9 +8,9 @@ import {
   filter, map, of, switchMap, tap,
 } from 'rxjs';
 import { DirectoryServiceState } from 'app/enums/directory-service-state.enum';
-import { IdmapName } from 'app/enums/idmap.enum';
-import helptext from 'app/helptext/directory-service/idmap';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
+import { IdmapBackend, IdmapName } from 'app/enums/idmap.enum';
+import { Role } from 'app/enums/role.enum';
+import { helptextIdmap } from 'app/helptext/directory-service/idmap';
 import { AsyncDataProvider } from 'app/modules/ix-table2/classes/async-data-provider/async-data-provider';
 import { actionsColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
 import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
@@ -34,7 +34,7 @@ import { WebSocketService } from 'app/services/ws.service';
   styleUrls: ['./idmap-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export default class IdmapListComponent implements OnInit {
+export class IdmapListComponent implements OnInit {
   @Input() paginator = true;
   @Input() toolbar = false;
   requiredIdmapDomains = requiredIdmapDomains as string[];
@@ -89,6 +89,7 @@ export default class IdmapListComponent implements OnInit {
           iconName: 'delete',
           hidden: (row) => of(requiredIdmapDomains.includes(row.name as IdmapName)),
           tooltip: this.translateService.instant('Delete'),
+          requiresRoles: [Role.FullAdmin],
           onClick: (row) => {
             this.dialogService.confirm({
               title: this.translateService.instant('Confirm'),
@@ -99,8 +100,8 @@ export default class IdmapListComponent implements OnInit {
               switchMap(() => this.ws.call('idmap.delete', [row.id])),
               untilDestroyed(this),
             ).subscribe({
-              error: (error: WebsocketError) => {
-                this.dialogService.error(this.errorHandler.parseWsError(error));
+              error: (error: unknown) => {
+                this.dialogService.error(this.errorHandler.parseError(error));
               },
               complete: () => {
                 this.getIdmaps();
@@ -110,7 +111,9 @@ export default class IdmapListComponent implements OnInit {
         },
       ],
     }),
-  ]);
+  ], {
+    rowTestId: (row) => 'idmap-' + row.name,
+  });
 
   constructor(
     private translateService: TranslateService,
@@ -140,14 +143,16 @@ export default class IdmapListComponent implements OnInit {
           if (row.certificate) {
             row.cert_name = row.certificate.cert_name;
           }
-          if (row.name === IdmapName.DsTypeActiveDirectory && row.idmap_backend === 'AUTORID') {
-            const obj = transformed.find((idmapRow) => idmapRow.name === IdmapName.DsTypeDefaultDomain);
+          if (row.name === IdmapName.DsTypeActiveDirectory as string && row.idmap_backend === IdmapBackend.Autorid) {
+            const obj = transformed.find((idmapRow) => {
+              return idmapRow.name === IdmapName.DsTypeDefaultDomain as string;
+            });
             obj.disableEdit = true;
           }
           row.label = row.name;
-          const index = helptext.idmap.name.options.findIndex((option) => option.value === row.name);
+          const index = helptextIdmap.idmap.name.options.findIndex((option) => option.value === row.name);
           if (index >= 0) {
-            row.label = helptext.idmap.name.options[index].label;
+            row.label = helptextIdmap.idmap.name.options[index].label;
           }
         });
         return transformed;
@@ -183,10 +188,10 @@ export default class IdmapListComponent implements OnInit {
         });
       } else {
         this.dialogService.confirm({
-          title: helptext.idmap.enable_ad_dialog.title,
-          message: helptext.idmap.enable_ad_dialog.message,
+          title: helptextIdmap.idmap.enable_ad_dialog.title,
+          message: helptextIdmap.idmap.enable_ad_dialog.message,
           hideCheckbox: true,
-          buttonText: helptext.idmap.enable_ad_dialog.button,
+          buttonText: helptextIdmap.idmap.enable_ad_dialog.button,
         }).pipe(
           filter(Boolean),
           untilDestroyed(this),

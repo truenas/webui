@@ -6,7 +6,8 @@ import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-datetime.pipe';
-import { mockWebsocket, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockWebSocket, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
 import { CertificateAuthority } from 'app/interfaces/certificate-authority.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
@@ -44,7 +45,7 @@ describe('CertificateAuthorityListComponent', () => {
     ],
     declarations: [FakeFormatDateTimePipe],
     providers: [
-      mockWebsocket([
+      mockWebSocket([
         mockCall('certificateauthority.query', certificates),
         mockCall('certificateauthority.delete', true),
       ]),
@@ -67,6 +68,7 @@ describe('CertificateAuthorityListComponent', () => {
       }),
       mockProvider(StorageService),
       mockProvider(ErrorHandlerService),
+      mockAuth(),
     ],
   });
 

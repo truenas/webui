@@ -6,7 +6,7 @@ import { Spectator, createComponentFactory, mockProvider } from '@ngneat/spectat
 import { provideMockStore } from '@ngrx/store/testing';
 import { MockComponents } from 'ng-mocks';
 import { of, pipe } from 'rxjs';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { Service } from 'app/interfaces/service.interface';
@@ -64,12 +64,10 @@ describe('SmbListComponent', () => {
       mockProvider(AppLoaderService, {
         withLoader: jest.fn(() => pipe()),
       }),
-      mockWebsocket([
+      mockWebSocket([
         mockCall('sharing.smb.query', shares as SmbShare[]),
         mockCall('sharing.smb.delete'),
         mockCall('sharing.smb.update'),
-        mockCall('cluster.utils.is_clustered', false),
-        mockCall('pool.dataset.path_in_locked_datasets', false),
         mockCall('sharing.smb.getacl', { share_name: 'acl_share_name' } as SmbSharesec),
       ]),
       mockProvider(IxSlideInRef),
@@ -119,7 +117,7 @@ describe('SmbListComponent', () => {
     await editButton.click();
 
     expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(SmbFormComponent, {
-      data: shares[0],
+      data: { existingSmbShare: shares[0] },
     });
   });
 

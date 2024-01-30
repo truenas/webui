@@ -5,27 +5,32 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialog } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
+import { CHAINED_SLIDE_IN_REF, SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { SchedulerModule } from 'app/modules/scheduler/scheduler.module';
-import { CloudsyncFormComponent } from 'app/pages/data-protection/cloudsync/cloudsync-form/cloudsync-form.component';
+import { CloudSyncFormComponent } from 'app/pages/data-protection/cloudsync/cloudsync-form/cloudsync-form.component';
 import { googlePhotosCreds, googlePhotosProvider } from 'app/pages/data-protection/cloudsync/cloudsync-wizard/cloudsync-wizard.testing.utils';
-import { CloudsyncWhatAndWhenComponent } from 'app/pages/data-protection/cloudsync/cloudsync-wizard/steps/cloudsync-what-and-when/cloudsync-what-and-when.component';
+import { CloudSyncWhatAndWhenComponent } from 'app/pages/data-protection/cloudsync/cloudsync-wizard/steps/cloudsync-what-and-when/cloudsync-what-and-when.component';
 import { TransferModeExplanationComponent } from 'app/pages/data-protection/cloudsync/transfer-mode-explanation/transfer-mode-explanation.component';
 import { DatasetService } from 'app/services/dataset-service/dataset.service';
 import { DialogService } from 'app/services/dialog.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
-describe('CloudsyncWhatAndWhenComponent', () => {
-  let spectator: Spectator<CloudsyncWhatAndWhenComponent>;
+describe('CloudSyncWhatAndWhenComponent', () => {
+  let spectator: Spectator<CloudSyncWhatAndWhenComponent>;
   let loader: HarnessLoader;
   let form: IxFormHarness;
+  const chainedComponentRef = {
+    close: jest.fn(),
+    swap: jest.fn(),
+  };
 
   const createComponent = createComponentFactory({
-    component: CloudsyncWhatAndWhenComponent,
+    component: CloudSyncWhatAndWhenComponent,
     imports: [
       ReactiveFormsModule,
       IxFormsModule,
@@ -35,7 +40,9 @@ describe('CloudsyncWhatAndWhenComponent', () => {
       TransferModeExplanationComponent,
     ],
     providers: [
-      mockWebsocket([
+      { provide: CHAINED_SLIDE_IN_REF, useValue: chainedComponentRef },
+      mockAuth(),
+      mockWebSocket([
         mockCall('cloudsync.create'),
         mockCall('cloudsync.update'),
         mockCall('cloudsync.credentials.query', [googlePhotosCreds]),
@@ -126,6 +133,6 @@ describe('CloudsyncWhatAndWhenComponent', () => {
       title: 'Switch to Advanced Options',
       hideCheckbox: true,
     });
-    expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(CloudsyncFormComponent, { wide: true });
+    expect(chainedComponentRef.swap).toHaveBeenCalledWith(CloudSyncFormComponent, true);
   });
 });

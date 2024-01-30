@@ -1,8 +1,6 @@
-import { ApiTimestamp } from 'app/interfaces/api-date.interface';
 import { Certificate } from 'app/interfaces/certificate.interface';
 
 export interface SystemGeneralConfig {
-  birthday: ApiTimestamp;
   id: number;
   kbdmap: string;
   language: string;
@@ -19,10 +17,10 @@ export interface SystemGeneralConfig {
   usage_collection: boolean;
   usage_collection_is_set: boolean;
   wizardshown: boolean;
+  ds_auth: boolean;
 }
 
 export interface SystemGeneralConfigUpdate {
-  birthday?: ApiTimestamp;
   kbdmap?: string;
   language?: string;
   timezone?: string;
@@ -38,4 +36,5 @@ export interface SystemGeneralConfigUpdate {
   sysloglevel?: string;
   syslogserver?: string;
   ui_certificate?: number;
+  ds_auth?: boolean;
 }

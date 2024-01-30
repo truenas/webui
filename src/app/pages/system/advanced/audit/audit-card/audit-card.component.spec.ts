@@ -5,7 +5,7 @@ import { MatListItemHarness } from '@angular/material/list/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { CoreComponents } from 'app/core/core-components.module';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { AuditCardComponent } from 'app/pages/system/advanced/audit/audit-card/audit-card.component';
 import { AuditFormComponent } from 'app/pages/system/advanced/audit/audit-form/audit-form.component';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -22,7 +22,7 @@ describe('AuditCardComponent', () => {
       mockProvider(IxSlideInService, {
         onClose$: of(),
       }),
-      mockWebsocket([
+      mockWebSocket([
         mockCall('audit.config', {
           retention: 30,
           reservation: 100,

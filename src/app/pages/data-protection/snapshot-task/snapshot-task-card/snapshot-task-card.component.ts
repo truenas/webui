@@ -4,8 +4,8 @@ import {
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { filter, map, switchMap } from 'rxjs';
+import { Role } from 'app/enums/role.enum';
 import { PeriodicSnapshotTaskUi } from 'app/interfaces/periodic-snapshot-task.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { AsyncDataProvider } from 'app/modules/ix-table2/classes/async-data-provider/async-data-provider';
 import { actionsColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
 import { relativeDateColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-relative-date/ix-cell-relative-date.component';
@@ -57,6 +57,7 @@ export class SnapshotTaskCardComponent implements OnInit {
     toggleColumn({
       title: this.translate.instant('Enabled'),
       propertyName: 'enabled',
+      requiresRoles: [Role.FullAdmin],
       onRowToggle: (row: PeriodicSnapshotTaskUi) => this.onChangeEnabledState(row),
     }),
     stateButtonColumn({
@@ -74,11 +75,14 @@ export class SnapshotTaskCardComponent implements OnInit {
         {
           iconName: 'delete',
           tooltip: this.translate.instant('Delete'),
+          requiresRoles: [Role.FullAdmin],
           onClick: (row) => this.doDelete(row),
         },
       ],
     }),
-  ]);
+  ], {
+    rowTestId: (row) => 'snapshot-task-' + row.dataset + '-' + row.state.state,
+  });
 
   constructor(
     private slideInService: IxSlideInService,
@@ -140,9 +144,9 @@ export class SnapshotTaskCardComponent implements OnInit {
         next: () => {
           this.getSnapshotTasks();
         },
-        error: (err: WebsocketError) => {
+        error: (err: unknown) => {
           this.getSnapshotTasks();
-          this.dialogService.error(this.errorHandler.parseWsError(err));
+          this.dialogService.error(this.errorHandler.parseError(err));
         },
       });
   }

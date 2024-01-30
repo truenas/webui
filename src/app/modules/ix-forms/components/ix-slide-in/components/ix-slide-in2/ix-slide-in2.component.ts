@@ -17,8 +17,10 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import {
   Observable, Subscription, filter, merge, timer,
 } from 'rxjs';
-import { SLIDE_IN_CLOSER, SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
-import { ChainedComponentSeralized, IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
+import { CHAINED_SLIDE_IN_REF, SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
+import {
+  ChainedComponentSerialized, ChainedComponentResponse, ChainedComponentRef, IxChainedSlideInService,
+} from 'app/services/ix-chained-slide-in.service';
 
 @UntilDestroy()
 @Component({
@@ -27,7 +29,7 @@ import { ChainedComponentSeralized, IxChainedSlideInService } from 'app/services
   styleUrls: ['./ix-slide-in2.component.scss'],
 })
 export class IxSlideIn2Component implements OnInit, OnDestroy {
-  @Input() componentInfo: ChainedComponentSeralized;
+  @Input() componentInfo: ChainedComponentSerialized;
   @Input() index: number;
   @Input() lastIndex: number;
   @ViewChild('chainedBody', { static: true, read: ViewContainerRef }) slideInBody: ViewContainerRef;
@@ -76,14 +78,12 @@ export class IxSlideIn2Component implements OnInit, OnDestroy {
     ).subscribe((wide) => {
       this.wide = wide;
     });
-    this.componentInfo.close$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.closeSlideIn();
-    });
   }
 
   onBackdropClicked(): void {
     if (!this.element || !this.isSlideInOpen) { return; }
-    // this.close$.next(null);/
+    this.componentInfo.close$.next({ response: false, error: null });
+    this.componentInfo.close$.complete();
     this.closeSlideIn();
   }
 
@@ -99,8 +99,7 @@ export class IxSlideIn2Component implements OnInit, OnDestroy {
         this.slideInBody.clear();
         this.wasBodyCleared = false;
       });
-      this.componentInfo.close$.next(null);
-      this.chainedSlideInService.popComponent();
+      this.chainedSlideInService.popComponent(this.componentInfo.id);
     });
   }
 
@@ -135,7 +134,25 @@ export class IxSlideIn2Component implements OnInit, OnDestroy {
     const injector = Injector.create({
       providers: [
         { provide: SLIDE_IN_DATA, useValue: data },
-        { provide: SLIDE_IN_CLOSER, useValue: this.componentInfo.close$ },
+        {
+          provide: CHAINED_SLIDE_IN_REF,
+          useValue: {
+            close: (response: ChainedComponentResponse) => {
+              this.componentInfo.close$.next(response);
+              this.componentInfo.close$.complete();
+              this.closeSlideIn();
+            },
+            swap: (component: Type<unknown>, wide = false, incomingComponentData?: unknown) => {
+              this.chainedSlideInService.swapComponent({
+                swapComponentId: this.componentInfo.id,
+                component,
+                wide,
+                data: incomingComponentData,
+              });
+              this.closeSlideIn();
+            },
+          } as ChainedComponentRef,
+        },
       ],
     });
     this.slideInBody.createComponent<T>(componentType, { injector });
@@ -143,7 +160,6 @@ export class IxSlideIn2Component implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.element.remove();
-    this.componentInfo.close$.next(null);
   }
 
   private closeOnNavigation(): void {

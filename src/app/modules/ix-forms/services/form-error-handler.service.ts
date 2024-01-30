@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { AbstractControl, UntypedFormArray, UntypedFormGroup } from '@angular/forms';
 import { ResponseErrorType } from 'app/enums/response-error-type.enum';
 import { Job } from 'app/interfaces/job.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
+import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 
@@ -20,16 +20,20 @@ export class FormErrorHandlerService {
    * TODO: See if second `string` in fieldsMap can be typed to key of formGroup.
    */
   handleWsFormError(
-    error: WebsocketError | Job,
+    error: unknown,
     formGroup: UntypedFormGroup,
     fieldsMap: Record<string, string> = {},
   ): void {
-    if ('type' in error && error.type === ResponseErrorType.Validation && error.extra) {
+    if (this.errorHandler.isWebSocketError(error) && error.type === ResponseErrorType.Validation && error.extra) {
       this.handleValidationError(error, formGroup, fieldsMap);
       return;
     }
 
-    if ('exc_info' in error && error.exc_info.type === ResponseErrorType.Validation && error.exc_info.extra) {
+    if (
+      this.errorHandler.isJobError(error)
+      && error.exc_info.type === ResponseErrorType.Validation
+      && error.exc_info.extra
+    ) {
       this.handleValidationError({ ...error, extra: error.exc_info.extra as Job['extra'] }, formGroup, fieldsMap);
       return;
     }
@@ -39,13 +43,13 @@ export class FormErrorHandlerService {
   }
 
   private handleValidationError(
-    error: WebsocketError | Job,
+    error: WebSocketError | Job,
     formGroup: UntypedFormGroup,
     fieldsMap: Record<string, string>,
   ): void {
-    const extra = (error as WebsocketError).extra as string[][];
+    const extra = (error as WebSocketError).extra as string[][];
     for (const extraItem of extra) {
-      const field = extraItem[0].split('.')[1];
+      const field = extraItem[0].split('.').pop();
       const errorMessage = extraItem[1];
 
       let control = this.getFormField(formGroup, field, fieldsMap);
@@ -61,7 +65,7 @@ export class FormErrorHandlerService {
         const isExactMatch = (text: string, match: string): boolean => new RegExp(`\\b${match}\\b`).test(text);
 
         control = (control as UntypedFormArray).controls
-          .find((controlOfArray) => isExactMatch(errorMessage, controlOfArray.value));
+          .find((controlOfArray) => isExactMatch(errorMessage, controlOfArray.value as string));
       }
 
       if (!control) {
