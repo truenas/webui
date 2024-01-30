@@ -10,7 +10,7 @@ import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockJob, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { CertificateCreateType } from 'app/enums/certificate-create-type.enum';
 import { CertificateDigestAlgorithm } from 'app/enums/certificate-digest-algorithm.enum';
 import { CertificateKeyType } from 'app/enums/certificate-key-type.enum';
@@ -73,7 +73,7 @@ describe('CsrAddComponent', () => {
       MockComponent(SummaryComponent),
     ],
     providers: [
-      mockWebsocket([
+      mockWebSocket([
         mockCall('webui.crypto.certificate_profiles', {
           'HTTPS RSA Certificate': profile,
         }),

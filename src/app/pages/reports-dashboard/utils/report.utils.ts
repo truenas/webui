@@ -1,4 +1,3 @@
-import { dygraphs } from 'dygraphs';
 import _ from 'lodash';
 import {
   TiB, GiB, MiB, KiB,
@@ -8,21 +7,14 @@ import { ReportingAggregationKeys, ReportingData } from 'app/interfaces/reportin
 
 export function formatInterfaceUnit(value: string): string {
   if (value && value.split(' ', 2)[0] !== '0' && !value?.endsWith('/s')) {
-    value += value?.endsWith('b') || value?.endsWith('B') ? '/s' : 'b/s';
+    if (Number.isNaN(Number(value[value.length - 1]))) {
+      let changedValue = value.substring(0, value.length - 1);
+      changedValue += ' ' + value[value.length - 1];
+      value = changedValue;
+    }
+    value += 'b/s';
   }
   return value;
-}
-
-export function formatLegendSeries(
-  series: dygraphs.SeriesLegendData[],
-  data: ReportingData,
-): dygraphs.SeriesLegendData[] {
-  if (data?.name === (ReportingGraphName.NetworkInterface as string)) {
-    series.forEach((element) => {
-      element.yHTML = formatInterfaceUnit(element.yHTML);
-    });
-  }
-  return series;
 }
 
 // TODO: Messy. Nuke.
@@ -31,7 +23,7 @@ export function formatData(data: ReportingData): ReportingData {
     delete data.aggregations.min; // Will always be showing bogus small values
     Object.keys(data.aggregations).forEach((key) => {
       _.set(data.aggregations, key, (data.aggregations[key as ReportingAggregationKeys] as string[]).map(
-        (value) => formatInterfaceUnit(value),
+        (value) => formatInterfaceUnit(value.includes('k') ? value : value.toUpperCase()),
       ));
     });
   }

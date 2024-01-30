@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy } from '@ngneat/until-destroy';
-import { helptextCloudsync } from 'app/helptext/data-protection/cloudsync/cloudsync';
+import { helptextCloudSync } from 'app/helptext/data-protection/cloudsync/cloudsync';
 
 @UntilDestroy()
 @Component({
@@ -11,7 +11,7 @@ import { helptextCloudsync } from 'app/helptext/data-protection/cloudsync/clouds
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CustomTransfersDialogComponent {
-  readonly helptext = helptextCloudsync;
+  readonly helptext = helptextCloudSync;
   readonly transfers = this.formBuilder.control(null as number, [Validators.required, Validators.min(0)]);
 
   constructor(

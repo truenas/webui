@@ -7,7 +7,7 @@ import { provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
 import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-datetime.pipe';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { CredentialType } from 'app/interfaces/credential-type.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
@@ -50,7 +50,7 @@ describe('AccessCardComponent', () => {
     component: AccessCardComponent,
     imports: [AppLoaderModule, IxTable2Module, FakeFormatDateTimePipe],
     providers: [
-      mockWebsocket([
+      mockWebSocket([
         mockCall('auth.sessions', sessions),
         mockCall('auth.terminate_session'),
         mockCall('auth.terminate_other_sessions'),
@@ -60,7 +60,7 @@ describe('AccessCardComponent', () => {
           {
             selector: selectPreferences,
             value: {
-              lifetime: 60,
+              lifetime: 2147482,
             },
           },
           {
@@ -93,7 +93,7 @@ describe('AccessCardComponent', () => {
 
   it('shows current token lifetime', async () => {
     const lifetime = (await loader.getAllHarnesses(MatListItemHarness))[0];
-    expect(await lifetime.getFullText()).toBe('Token Lifetime: 1 minute');
+    expect(await lifetime.getFullText()).toBe('Token Lifetime: 24 days 20 hours 31 minutes 22 seconds');
   });
 
   it('shows whether DS users are allowed access to WebUI', async () => {

@@ -7,7 +7,7 @@ import {
   createComponentFactory, mockProvider, Spectator, SpectatorFactory,
 } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { TrueCommandStatus } from 'app/enums/true-command-status.enum';
 import { TrueCommandConfig } from 'app/interfaces/true-command-config.interface';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
@@ -46,7 +46,7 @@ describe('TruecommandConnectModalComponent', () => {
         ReactiveFormsModule,
       ],
       providers: [
-        mockWebsocket([
+        mockWebSocket([
           mockCall('truecommand.update'),
         ]),
         mockProvider(AppLoaderService),

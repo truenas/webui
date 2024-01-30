@@ -16,7 +16,7 @@ import { DatasetEncryptionSummary, DatasetEncryptionSummaryQueryParams, DatasetE
 import { DatasetUnlockParams, DatasetUnlockResult } from 'app/interfaces/dataset-lock.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { RadioOption } from 'app/interfaces/option.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
+import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { UnlockSummaryDialogComponent } from 'app/pages/datasets/modules/encryption/components/unlock-summary-dialog/unlock-summary-dialog.component';
 import { AuthService } from 'app/services/auth/auth.service';
@@ -175,7 +175,7 @@ export class DatasetUnlockComponent implements OnInit {
     });
   }
 
-  handleError = (error: WebsocketError | Job): void => {
+  handleError = (error: WebSocketError | Job): void => {
     this.dialogService.error(this.errorHandler.parseError(error));
   };
 

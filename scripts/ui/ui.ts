@@ -351,8 +351,6 @@ function mockConfigLoader(): void {
         console.info(error);
       }
     });
-
-
 }
 
 function mockConfig(command: Command, options: CommandOptions): void {
@@ -406,7 +404,6 @@ function mockConfigReport(options: ReportOptions, mockConfig: MockEnclosureConfi
     console.info(environment);
     process.exit(0);
   }
-
 
   const headers = generateHeaders('current mock configuration');
   const header: string = options.showHeader ? headers.header : '';

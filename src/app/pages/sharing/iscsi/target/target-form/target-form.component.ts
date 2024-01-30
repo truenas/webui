@@ -17,6 +17,7 @@ import { Option } from 'app/interfaces/option.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
+import { TargetNameValidationService } from 'app/pages/sharing/iscsi/target/target-name-validation.service';
 import { IscsiService } from 'app/services/iscsi.service';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -88,7 +89,11 @@ export class TargetFormComponent implements OnInit {
   isLoading = false;
 
   form = this.formBuilder.group({
-    name: ['', Validators.required],
+    name: [
+      '',
+      [Validators.required],
+      [this.targetNameValidationService.validateTargetName(this.editingTarget?.name)],
+    ],
     alias: [''],
     mode: [IscsiTargetMode.Iscsi],
     groups: this.formBuilder.array<IscsiTargetGroup>([]),
@@ -103,6 +108,7 @@ export class TargetFormComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private ws: WebSocketService,
     private slideInRef: IxSlideInRef<TargetFormComponent>,
+    private targetNameValidationService: TargetNameValidationService,
     @Inject(SLIDE_IN_DATA) private editingTarget: IscsiTarget,
   ) {}
 

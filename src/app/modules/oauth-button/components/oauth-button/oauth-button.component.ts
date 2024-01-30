@@ -5,7 +5,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { WINDOW } from 'app/helpers/window.helper';
 import { GmailOauthConfig } from 'app/interfaces/mail-config.interface';
 import { OauthMessage } from 'app/interfaces/oauth-message.interface';
-import { OauthJiraMessage } from 'app/modules/ix-feedback/interfaces/file-ticket.interface';
+import { OauthJiraMessage } from 'app/modules/feedback/interfaces/file-ticket.interface';
 import { OauthButtonType } from 'app/modules/oauth-button/interfaces/oauth-button.interface';
 import { OauthProviderData } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/oauth-provider/oauth-provider.component';
 import { DialogService } from 'app/services/dialog.service';
@@ -19,6 +19,7 @@ import { DialogService } from 'app/services/dialog.service';
 export class OauthButtonComponent {
   @Input() oauthType: OauthButtonType;
   @Input() isLoggedIn = false;
+  @Input() disabled = false;
   @Input() oauthUrl: string;
   @Input() testId: string;
 

@@ -23,7 +23,7 @@ import { WebSocketService } from 'app/services/ws.service';
 export class HardwareDiskEncryptionComponent implements OnChanges {
   @Input() topologyDisk: TopologyDisk;
 
-  hasGlobalEncryption$ = this.ws.call('system.advanced.sed_global_password').pipe(toLoadingState());
+  hasGlobalEncryption$ = this.ws.call('system.advanced.sed_global_password_is_set').pipe(toLoadingState());
   hasDiskEncryption$: Observable<LoadingState<boolean>>;
 
   protected readonly Role = Role;

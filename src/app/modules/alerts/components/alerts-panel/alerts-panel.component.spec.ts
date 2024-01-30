@@ -2,8 +2,8 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { EffectsModule } from '@ngrx/effects';
 import { Store, StoreModule } from '@ngrx/store';
 import { MockComponent } from 'ng-mocks';
-import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { MockWebSocketService } from 'app/core/testing/classes/mock-websocket.service';
+import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { AlertLevel } from 'app/enums/alert-level.enum';
 import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
 import { Alert } from 'app/interfaces/alert.interface';
@@ -70,7 +70,7 @@ describe('AlertsPanelComponent', () => {
             },
             isHaLicensed: true,
             isUpgradePending: false,
-            hasOnlyMissmatchVersionsReason: false,
+            hasOnlyMismatchVersionsReason: false,
           },
         },
       }),
@@ -80,7 +80,7 @@ describe('AlertsPanelComponent', () => {
       MockComponent(AlertComponent),
     ],
     providers: [
-      mockWebsocket([
+      mockWebSocket([
         mockCall('alert.list', [...unreadAlerts, ...dismissedAlerts]),
         mockCall('alert.dismiss'),
         mockCall('alert.restore'),
@@ -154,7 +154,7 @@ describe('AlertsPanelComponent', () => {
   it('adds an alert when websocket alert.list subscription sends an "add" event', () => {
     spectator.inject(Store).dispatch(adminUiInitialized());
 
-    const websocketMock = spectator.inject(MockWebsocketService);
+    const websocketMock = spectator.inject(MockWebSocketService);
     websocketMock.emitSubscribeEvent({
       msg: IncomingApiMessageType.Added,
       collection: 'alert.list',
@@ -173,7 +173,7 @@ describe('AlertsPanelComponent', () => {
   it('updates an alert when websocket alert.list subscription sends a "change" event', () => {
     spectator.inject(Store).dispatch(adminUiInitialized());
 
-    const websocketMock = spectator.inject(MockWebsocketService);
+    const websocketMock = spectator.inject(MockWebSocketService);
     websocketMock.emitSubscribeEvent({
       msg: IncomingApiMessageType.Changed,
       collection: 'alert.list',

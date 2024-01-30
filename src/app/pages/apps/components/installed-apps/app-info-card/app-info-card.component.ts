@@ -112,7 +112,8 @@ export class AppInfoCardComponent {
         });
         jobDialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((error) => {
           this.dialogService.closeAllDialogs();
-          this.dialogService.error(this.errorHandler.parseError(error));
+          dialogRef.close();
+          this.errorHandler.showErrorModal(error);
         });
       });
     });
@@ -152,6 +153,10 @@ export class AppInfoCardComponent {
         }
         this.dialogService.closeAllDialogs();
       });
+    });
+    dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((error) => {
+      dialogRef.close();
+      this.errorHandler.showErrorModal(error);
     });
   }
 

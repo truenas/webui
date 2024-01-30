@@ -12,6 +12,7 @@ import {
   Input,
   IterableDiffers,
   OnChanges,
+  OnDestroy,
   OnInit,
   Output,
   TrackByFunction,
@@ -42,7 +43,7 @@ export const scrollFrameScheduler = typeof requestAnimationFrame !== 'undefined'
     { provide: Tree, useExisting: this },
   ],
 })
-export class TreeVirtualScrollViewComponent<T> extends Tree<T> implements OnChanges, OnInit {
+export class TreeVirtualScrollViewComponent<T> extends Tree<T> implements OnChanges, OnInit, OnDestroy {
   @ViewChild(TreeNodeOutletDirective, { static: true }) readonly nodeOutlet!: TreeNodeOutletDirective<T>;
   @ViewChild(CdkVirtualScrollViewport, { static: true }) readonly virtualScrollViewport!: CdkVirtualScrollViewport;
   @HostBinding('class.ix-tree') get ixTreeClass(): boolean { return true; }
@@ -86,6 +87,12 @@ export class TreeVirtualScrollViewComponent<T> extends Tree<T> implements OnChan
     this.scrollableElement = document.querySelector('.rightside-content-hold');
     if (this.scrollableElement) {
       this.scrollableElement.addEventListener('scroll', this.scrolled.bind(this));
+    }
+  }
+
+  ngOnDestroy(): void {
+    if (this.scrollableElement) {
+      this.scrollableElement.removeEventListener('scroll', this.scrolled.bind(this));
     }
   }
 

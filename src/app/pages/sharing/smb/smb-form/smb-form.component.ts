@@ -7,7 +7,7 @@ import {
   OnInit,
 } from '@angular/core';
 import {
-  Validators, FormBuilder, AbstractControl,
+  Validators, FormBuilder,
 } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
@@ -36,7 +36,7 @@ import {
   SmbPresetType,
   SmbShare,
 } from 'app/interfaces/smb-share.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
+import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { ChipsProvider } from 'app/modules/ix-forms/components/ix-chips/chips-provider';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
@@ -240,7 +240,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit(): void {
     this.form.controls.name.addAsyncValidators([
-      (control: AbstractControl) => this.smbValidationService.validate(control, this.existingSmbShare?.name),
+      this.smbValidationService.validate(this.existingSmbShare?.name),
     ]);
   }
 
@@ -475,7 +475,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
           this.slideInRef.close(true);
         }
       },
-      error: (error: WebsocketError) => {
+      error: (error: WebSocketError) => {
         if (error?.reason?.includes('[ENOENT]') || error?.reason?.includes('[EXDEV]')) {
           this.dialogService.closeAllDialogs();
         }

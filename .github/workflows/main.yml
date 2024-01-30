@@ -21,32 +21,38 @@ jobs:
       - name: Install
         uses: ./.github/actions/prepare
 
-  check-if-only-translation-changed:
+  check-files:
+    name: Check if translations only were changed
     runs-on: ubuntu-latest
-    name: 'Check if only translation files were changed'
     outputs:
-      only_translations: ${{ steps.only_translations.outputs.result }}
+      translations-only: ${{ steps.determine-changes.outputs.translations-only }}
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-      - name: Check if only translation files were changed
-        id: only_translations
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 2
+
+      - name: Determine if only translations were changed
+        id: determine-changes
         run: |
-          FILES_API_URL="https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.number }}/files"
-          FILES=$(curl -s -X GET -G $FILES_API_URL -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" | jq -r '.[] | .filename')
-          TRANSLATION_FILES_CHANGED=$(echo "$FILES" | grep -c "src/assets/i18n" || true)
-          TOTAL_FILES_CHANGED=$(echo "$FILES" | wc -l | xargs)
-          if [ "$TOTAL_FILES_CHANGED" == "$TRANSLATION_FILES_CHANGED" ]; then
-            echo "::set-output name=result::true"
-          else
-            echo "::set-output name=result::false"
-          fi
+          CHANGED_FILES=$(git diff --name-only HEAD~1 ${{ github.sha }})
+          echo "Changed files:"
+          echo "$CHANGED_FILES"
+
+          TRANSLATIONS_ONLY="true"
+          for file in $CHANGED_FILES; do
+            if [[ "$file" != "src/assets/i18n/"* ]]; then
+              TRANSLATIONS_ONLY="false"
+              break
+            fi
+          done
+
+          echo "::set-output name=translations-only::$TRANSLATIONS_ONLY"
 
   build:
     name: Build
-    needs: [check-if-only-translation-changed, install]
+    needs: [check-files, install]
     runs-on: ubuntu-latest
-    if: ${{ needs.check-if-only-translation-changed.outputs.only_translations == 'false' }}
+    if: ${{ needs.check-files.outputs.translations-only == 'false' }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -57,9 +63,9 @@ jobs:
 
   lint:
     name: Validate code style
-    needs: [check-if-only-translation-changed, install]
+    needs: [check-files, install]
     runs-on: ubuntu-latest
-    if: ${{ needs.check-if-only-translation-changed.outputs.only_translations == 'false' }}
+    if: ${{ needs.check-files.outputs.translations-only == 'false' }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -72,8 +78,8 @@ jobs:
 
   lint-translations:
     name: Validate translation strings
-    needs: [check-if-only-translation-changed, install]
-    if: ${{ needs.check-if-only-translation-changed.outputs.only_translations == 'false' }}
+    needs: [check-files, install]
+    if: ${{ needs.check-files.outputs.translations-only == 'false' }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -85,9 +91,9 @@ jobs:
 
   test:
     name: Run tests
-    needs: [check-if-only-translation-changed, install]
+    needs: [check-files, install]
     runs-on: ubuntu-latest
-    if: ${{ needs.check-if-only-translation-changed.outputs.only_translations == 'false' }}
+    if: ${{ needs.check-files.outputs.translations-only == 'false' }}
     env:
       CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
     steps:
@@ -107,9 +113,9 @@ jobs:
 
   resort-strings:
     name: Resort Strings and Commit if only translations were added
-    needs: [check-if-only-translation-changed, install]
+    needs: [check-files, install]
     runs-on: ubuntu-latest
-    if: ${{ needs.check-if-only-translation-changed.outputs.only_translations == 'true' }}
+    if: ${{ needs.check-files.outputs.translations-only == 'true' }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3

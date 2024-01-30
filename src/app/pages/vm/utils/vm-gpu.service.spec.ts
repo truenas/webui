@@ -1,7 +1,7 @@
 import { createServiceFactory, SpectatorService, SpyObject } from '@ngneat/spectator';
 import { mockProvider } from '@ngneat/spectator/jest';
 import { lastValueFrom, of } from 'rxjs';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { VmDeviceType } from 'app/enums/vm.enum';
 import { Device } from 'app/interfaces/device.interface';
 import { VirtualMachine } from 'app/interfaces/virtual-machine.interface';
@@ -61,7 +61,7 @@ describe('VmGpuService', () => {
           arc,
         ] as Device[]),
       }),
-      mockWebsocket([
+      mockWebSocket([
         mockCall('vm.device.create'),
         mockCall('vm.device.delete'),
       ]),

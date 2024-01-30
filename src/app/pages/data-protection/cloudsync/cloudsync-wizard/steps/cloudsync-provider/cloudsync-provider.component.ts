@@ -12,13 +12,13 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { pairwise, startWith } from 'rxjs';
 import { helptextSystemCloudcredentials as helptext } from 'app/helptext/system/cloud-credentials';
-import { CloudsyncCredential } from 'app/interfaces/cloudsync-credential.interface';
+import { CloudSyncCredential } from 'app/interfaces/cloudsync-credential.interface';
 import { newOption } from 'app/interfaces/option.interface';
 import { addNewIxSelectValue } from 'app/modules/ix-forms/components/ix-select/ix-select-with-new-option.directive';
 import { CHAINED_SLIDE_IN_REF } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { CloudsyncFormComponent } from 'app/pages/data-protection/cloudsync/cloudsync-form/cloudsync-form.component';
+import { CloudSyncFormComponent } from 'app/pages/data-protection/cloudsync/cloudsync-form/cloudsync-form.component';
 import { CloudCredentialService } from 'app/services/cloud-credential.service';
 import { DialogService } from 'app/services/dialog.service';
 import { ChainedComponentRef } from 'app/services/ix-chained-slide-in.service';
@@ -31,8 +31,8 @@ import { WebSocketService } from 'app/services/ws.service';
   styleUrls: ['./cloudsync-provider.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class CloudsyncProviderComponent implements OnInit {
-  @Output() save = new EventEmitter<CloudsyncCredential>();
+export class CloudSyncProviderComponent implements OnInit {
+  @Output() save = new EventEmitter<CloudSyncCredential>();
 
   protected form = this.formBuilder.group({
     exist_credential: [null as number | typeof newOption],
@@ -40,8 +40,8 @@ export class CloudsyncProviderComponent implements OnInit {
 
   protected isLoading: boolean;
   @Output() loading = new EventEmitter<boolean>();
-  private credentials: CloudsyncCredential[] = [];
-  private existingCredential: CloudsyncCredential;
+  private credentials: CloudSyncCredential[] = [];
+  private existingCredential: CloudSyncCredential;
 
   readonly helptext = helptext;
 
@@ -69,7 +69,7 @@ export class CloudsyncProviderComponent implements OnInit {
 
   getExistingCredentials(): void {
     this.loading.emit(true);
-    this.cloudCredentialService.getCloudsyncCredentials().pipe(untilDestroyed(this)).subscribe({
+    this.cloudCredentialService.getCloudSyncCredentials().pipe(untilDestroyed(this)).subscribe({
       next: (creds) => {
         this.credentials = creds;
       },
@@ -125,7 +125,7 @@ export class CloudsyncProviderComponent implements OnInit {
 
   openAdvanced(): void {
     this.chainedComponentRef.swap(
-      CloudsyncFormComponent,
+      CloudSyncFormComponent,
       true,
     );
   }
@@ -151,7 +151,7 @@ export class CloudsyncProviderComponent implements OnInit {
         }
 
         this.loading.emit(true);
-        this.cloudCredentialService.getCloudsyncCredentials().pipe(untilDestroyed(this)).subscribe({
+        this.cloudCredentialService.getCloudSyncCredentials().pipe(untilDestroyed(this)).subscribe({
           next: (creds) => {
             this.credentials = creds;
             this.emitSelectedCredential(currentCreds as number);

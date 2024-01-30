@@ -145,17 +145,35 @@
               <div class="label">{{ 'Actions' | translate }}</div>
             </div>
             <div class="details-item">
-              <a class="action" ixTest="cloud-sync" (click)="addCloudSyncTask()">
+              <a
+                class="action"
+                tabIndex="0"
+                ixTest="cloud-sync"
+                (click)="addCloudSyncTask()"
+                (keydown.enter)="addCloudSyncTask()"
+              >
                 {{ 'Cloud Sync to Storj or similar provider' | translate }}
               </a>
             </div>
             <div class="details-item">
-              <a class="action" ixTest="replication" (click)="addReplicationTask()">
+              <a
+                class="action"
+                tabIndex="0"
+                ixTest="replication"
+                (click)="addReplicationTask()"
+                (keydown.enter)="addReplicationTask()"
+              >
                 {{ 'ZFS Replication to another TrueNAS' | translate }}
               </a>
             </div>
             <div class="details-item">
-              <a class="action" ixTest="rsync" (click)="addRsyncTask()">
+              <a
+                class="action"
+                tabIndex="0"
+                ixTest="rsync"
+                (click)="addRsyncTask()"
+                (keydown.enter)="addRsyncTask()"
+              >
                 {{ 'Rsync to another server' | translate }}
               </a>
             </div>

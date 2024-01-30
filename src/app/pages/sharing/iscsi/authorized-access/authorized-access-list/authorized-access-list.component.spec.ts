@@ -5,7 +5,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { Spectator, createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { of, pipe } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { IscsiAuthAccess } from 'app/interfaces/iscsi.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
@@ -46,7 +46,7 @@ describe('AuthorizedAccessListComponent', () => {
       mockProvider(AppLoaderService, {
         withLoader: jest.fn(() => pipe()),
       }),
-      mockWebsocket([
+      mockWebSocket([
         mockCall('iscsi.auth.query', authAccess),
         mockCall('iscsi.auth.delete'),
       ]),
@@ -69,7 +69,7 @@ describe('AuthorizedAccessListComponent', () => {
     table = await loader.getHarness(IxTable2Harness);
   });
 
-  it('shows acurate page title', () => {
+  it('shows accurate page title', () => {
     const title = spectator.query('h3');
     expect(title).toHaveText('Authorized Access');
   });

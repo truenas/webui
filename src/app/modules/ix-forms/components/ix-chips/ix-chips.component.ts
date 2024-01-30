@@ -33,10 +33,30 @@ export class IxChipsComponent implements OnChanges, ControlValueAccessor {
   @Input() tooltip: string;
   @Input() required: boolean;
   @Input() allowNewEntries = true;
+  /**
+   * A function that provides the options for the autocomplete dropdown.
+   * This function is called when the user types into the input field,
+   * and it should return an Observable that emits an array of options.
+   * Each option is an object with a `value` and `label` property.
+   * The component uses these options to suggest possible completions to the user.
+   */
   @Input() autocompleteProvider: ChipsProvider;
-  @Input() options: Observable<Option[]>;
+  /**
+   * Determines whether the component should resolve labels instead of values.
+   * If set to true, the component will perform a lookup to find the corresponding label for a value.
+   * This is useful when the component is used with a set of predefined options,
+   * and you want to display the label of an option instead of its value.
+   */
   @Input() resolveValue = false;
-  private resolveOptions: Option[] = [];
+  /**
+   * An Observable that emits an array of options for label resolution.
+   * Each option is an object with a `value` and `label` property.
+   * The component uses these options to map values to their corresponding labels when `resolveValue` is set to true.
+   * This is useful when the component is used with a set of predefined options,
+   * and you want to display the label of an option instead of its value.
+   */
+  @Input() resolveOptions: Observable<Option[]>;
+  private resolvedOptions: Option[] = [];
 
   @ViewChild('chipInput', { static: true }) chipInput: ElementRef<HTMLInputElement>;
 
@@ -50,8 +70,8 @@ export class IxChipsComponent implements OnChanges, ControlValueAccessor {
     }
 
     return this.values?.map((value) => {
-      if (this.resolveOptions?.length) {
-        return this.resolveOptions.find((option) => option.value === parseInt(value))?.label;
+      if (this.resolvedOptions?.length) {
+        return this.resolvedOptions.find((option) => option.value === parseInt(value))?.label;
       }
       return value;
     }).filter(Boolean);
@@ -95,8 +115,8 @@ export class IxChipsComponent implements OnChanges, ControlValueAccessor {
   }
 
   onRemove(itemToRemove: string): void {
-    if (this.resolveValue && this.resolveOptions?.length) {
-      itemToRemove = this.resolveOptions.find((option) => option.label === itemToRemove)?.value.toString();
+    if (this.resolveValue && this.resolvedOptions?.length) {
+      itemToRemove = this.resolvedOptions.find((option) => option.label === itemToRemove)?.value.toString();
     }
     const updatedValues = this.values.filter((value) => String(value) !== String(itemToRemove));
     this.updateValues(updatedValues);
@@ -108,10 +128,13 @@ export class IxChipsComponent implements OnChanges, ControlValueAccessor {
       return;
     }
 
-    if (this.resolveValue && this.resolveOptions?.length) {
-      const newOption = this.resolveOptions.find((option) => option.label === newValue);
+    if (this.resolveValue && this.resolvedOptions?.length) {
+      const newOption = this.resolvedOptions.find((option) => option.label === newValue);
       if (newOption) {
         newValue = newOption.value as string;
+      } else {
+        // Do not allow to add string values for number arrays
+        return;
       }
     }
 
@@ -129,12 +152,12 @@ export class IxChipsComponent implements OnChanges, ControlValueAccessor {
 
   private setOptions(): void {
     if (!this.resolveValue) {
-      this.options = null;
+      this.resolvedOptions = null;
       return;
     }
 
-    this.options?.pipe(untilDestroyed(this)).subscribe((options) => {
-      this.resolveOptions = options;
+    this.resolveOptions?.pipe(untilDestroyed(this)).subscribe((options) => {
+      this.resolvedOptions = options;
     });
   }
 

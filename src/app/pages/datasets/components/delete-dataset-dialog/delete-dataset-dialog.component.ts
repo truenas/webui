@@ -14,7 +14,7 @@ import { DatasetType } from 'app/enums/dataset.enum';
 import { DatasetAttachment } from 'app/interfaces/pool-attachment.interface';
 import { Process } from 'app/interfaces/process.interface';
 import { VolumesListDataset } from 'app/interfaces/volumes-list-pool.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
+import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { DialogService } from 'app/services/dialog.service';
@@ -64,7 +64,7 @@ export class DeleteDatasetDialogComponent implements OnInit {
 
   onDelete(): void {
     this.deleteDataset().pipe(
-      catchError((error: WebsocketError) => {
+      catchError((error: WebSocketError) => {
         if (error.reason.includes('Device busy')) {
           return this.askToForceDelete();
         }

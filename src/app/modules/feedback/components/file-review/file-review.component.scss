@@ -1,0 +1,11 @@
+// TODO: Consider extracting image uploads in a separate component
+.attach-images {
+  margin-bottom: 0;
+  margin-top: -16px;
+  padding-left: 30px;
+}
+
+:host mat-dialog-content {
+  overflow-y: auto !important;
+  padding-top: 0;
+}

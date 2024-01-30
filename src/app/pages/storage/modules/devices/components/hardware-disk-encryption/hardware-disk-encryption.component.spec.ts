@@ -4,7 +4,7 @@ import {
 } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { Disk, TopologyDisk } from 'app/interfaces/storage.interface';
 import {
   ManageDiskSedDialogComponent,
@@ -17,9 +17,9 @@ describe('HardwareDiskEncryptionComponent', () => {
   const createComponent = createComponentFactory({
     component: HardwareDiskEncryptionComponent,
     providers: [
-      mockWebsocket([
+      mockWebSocket([
         mockCall('disk.query', [{ passwd: '' } as Disk]),
-        mockCall('system.advanced.sed_global_password', '123456'),
+        mockCall('system.advanced.sed_global_password_is_set', true),
       ]),
       mockProvider(MatDialog, {
         open: jest.fn(() => ({
@@ -49,7 +49,7 @@ describe('HardwareDiskEncryptionComponent', () => {
   });
 
   it('loads and shows whether SED password is set globally', () => {
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('system.advanced.sed_global_password');
+    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('system.advanced.sed_global_password_is_set');
 
     const detailsItem = spectator.query(byText('Global SED Password:', { exact: true }));
     expect(detailsItem.nextElementSibling).toHaveText('Password is set');

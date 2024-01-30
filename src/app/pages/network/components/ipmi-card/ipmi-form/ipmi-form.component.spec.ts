@@ -5,7 +5,7 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { StoreModule } from '@ngrx/store';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { IpmiChassisIdentifyState, IpmiIpAddressSource } from 'app/enums/ipmi.enum';
 import { OnOff } from 'app/enums/on-off.enum';
 import { ProductType } from 'app/enums/product-type.enum';
@@ -47,7 +47,7 @@ describe('IpmiFormComponent', () => {
             },
             isHaLicensed: true,
             isUpgradePending: false,
-            hasOnlyMissmatchVersionsReason: false,
+            hasOnlyMismatchVersionsReason: false,
           },
         },
       }),
@@ -64,7 +64,7 @@ describe('IpmiFormComponent', () => {
       mockProvider(SnackbarService),
       mockProvider(IxSlideInRef),
       { provide: SLIDE_IN_DATA, useValue: undefined },
-      mockWebsocket([
+      mockWebSocket([
         mockCall('failover.licensed', true),
         mockCall('failover.node', 'A'),
         mockCall('ipmi.lan.query', [{

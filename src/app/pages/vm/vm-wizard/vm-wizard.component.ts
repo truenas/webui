@@ -12,7 +12,7 @@ import { GiB, MiB } from 'app/constants/bytes.constant';
 import { VmDeviceType, VmNicType, VmOs } from 'app/enums/vm.enum';
 import { VirtualMachine, VirtualMachineUpdate } from 'app/interfaces/virtual-machine.interface';
 import { VmDevice, VmDeviceUpdate } from 'app/interfaces/vm-device.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
+import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { SummarySection } from 'app/modules/common/summary/summary.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -285,7 +285,7 @@ export class VmWizardComponent implements OnInit {
       ...payload,
     }])
       .pipe(
-        catchError((error: WebsocketError) => {
+        catchError((error: WebSocketError) => {
           this.dialogService.error({
             title: this.translate.instant('Error creating device'),
             message: error.reason,
