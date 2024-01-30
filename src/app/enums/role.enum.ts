@@ -20,8 +20,6 @@ export enum Role {
   FilesystemFullControl = 'FILESYSTEM_FULL_CONTROL',
   FullAdmin = 'FULL_ADMIN',
   HasAllowList = 'HAS_ALLOW_LIST',
-  IpmiRead = 'IPMI_READ',
-  IpmiWrite = 'IPMI_WRITE',
   KeychainCredentialRead = 'KEYCHAIN_CREDENTIAL_READ',
   KeychainCredentialWrite = 'KEYCHAIN_CREDENTIAL_WRITE',
   KmipRead = 'KMIP_READ',
