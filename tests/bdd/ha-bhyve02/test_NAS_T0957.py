@@ -116,8 +116,7 @@ def try_saving_a_blank_email(driver):
     """Try saving a blank email."""
     assert wait_on_element(driver, 7, xpaths.add_User.email_Input, 'clickable')
     driver.find_element_by_xpath(xpaths.add_User.email_Input).clear()
-    assert wait_on_element(driver, 7, xpaths.button.save, 'clickable')
-    driver.find_element_by_xpath(xpaths.button.save).click()
+    assert wait_on_element(driver, 5, xpaths.button.save, 'clickable') is False
 
 
 @then('You should not be allowed to save a blank email')

@@ -62,7 +62,7 @@ class add_User:
     ericbsd_Root_Chip = '//mat-chip-row[contains(.,"root")]'
     full_Name_Input = '//ix-input[@formcontrolname="full_name"]//input'
     games_Group_Option = '//mat-option[contains(.,"games")]'
-    games_Is_Selected = '//mat-select[contains(.,"games")]'
+    games_Is_Selected = '//mat-chip-row[contains(.,"games")]'
     home_Input = '//ix-explorer[@formcontrolname="home"]//input'
     home_Mode_Group_Exec_Checkbox = '//mat-checkbox[@data-test="checkbox-group-execute"]'
     home_Mode_Group_Read_Checkbox = '//mat-checkbox[@data-test="checkbox-group-read"]'
