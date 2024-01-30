@@ -16,13 +16,13 @@ export interface Ipmi {
   vlan_priority: number;
 }
 
-export type IpmiQueryParams = [
-  QueryFilters<Ipmi>,
-  QueryOptions<Ipmi>,
-  {
+export type IpmiQueryParams = [{
+  'query-filters'?: QueryFilters<Ipmi>;
+  'query-options'?: QueryOptions<Ipmi>;
+  'ipmi-options'?: {
     'query-remote': boolean;
-  },
-];
+  };
+}];
 
 export interface IpmiUpdate {
   dhcp: boolean;

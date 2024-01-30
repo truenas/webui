@@ -106,13 +106,12 @@ export class IpmiFormComponent implements OnInit {
   }
 
   setIdIpmi(): void {
-    this.queryParams = [
-      [['id', '=', this.ipmiId]],
-      {},
-      {
-        'query-remote': true,
+    this.queryParams = [{
+      'query-filters': [['id', '=', this.ipmiId]],
+      'ipmi-options': {
+        'query-remote': false,
       },
-    ];
+    }];
   }
 
   toggleFlashing(): void {
@@ -193,12 +192,12 @@ export class IpmiFormComponent implements OnInit {
         switchMap((controlState) => {
           this.isLoading = true;
           isUsingRemote = controlState;
-          this.queryParams[2]['query-remote'] = controlState;
+          this.queryParams[0]['ipmi-options']['query-remote'] = controlState;
 
           if (isUsingRemote) {
             return this.remoteControllerData
               ? of([this.remoteControllerData])
-              : this.ws.call('ipmi.lan.query', this.queryParams); // TODO: Add remote param when available
+              : this.ws.call('ipmi.lan.query', this.queryParams);
           }
           return this.defaultControllerData
             ? of([this.defaultControllerData])
