@@ -3,6 +3,7 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import { Role } from 'app/enums/role.enum';
 import { helptextApps } from 'app/helptext/apps/apps';
 import { CatalogCreate } from 'app/interfaces/catalog.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
@@ -34,6 +35,8 @@ export class CatalogAddFormComponent {
     preferred_trains: helptextApps.catalogForm.preferredTrains.tooltip,
     branch: helptextApps.catalogForm.branch.tooltip,
   };
+
+  protected readonly requiredRoles = [Role.CatalogWrite];
 
   constructor(
     private slideInRef: IxSlideInRef<CatalogAddFormComponent>,

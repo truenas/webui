@@ -54,7 +54,7 @@
     ></ix-icon>
   </ng-container>
 </div>
-<div class="cell cell-action">
+<div *ixRequiresRoles="requiredRoles" class="cell cell-action">
   <button
     *ngIf="isAppStopped"
     mat-icon-button

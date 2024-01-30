@@ -11,6 +11,7 @@ import {
 import { MockComponents } from 'ng-mocks';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { of } from 'rxjs';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockEntityJobComponentRef } from 'app/core/testing/utils/mock-entity-job-component-ref.utils';
 import { mockCall, mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
@@ -38,6 +39,7 @@ import { KubernetesStore } from 'app/pages/apps/store/kubernetes-store.service';
 import { AppCatalogPipe } from 'app/pages/apps/utils/app-catalog.pipe';
 import { AuthService } from 'app/services/auth/auth.service';
 
+// TODO: Clean up
 const existingCatalogApp = {
   name: 'webdav',
   versions: {
@@ -546,6 +548,7 @@ describe('Finding app', () => {
         searchedApps$: of([{ apps: appsResponse }]),
         searchQuery$: of('webdav'),
       }),
+      mockAuth(),
     ],
   });
 

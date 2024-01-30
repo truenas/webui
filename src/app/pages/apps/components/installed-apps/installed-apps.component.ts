@@ -21,6 +21,7 @@ import {
 import { ChartReleaseStatus } from 'app/enums/chart-release-status.enum';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { JobState } from 'app/enums/job-state.enum';
+import { Role } from 'app/enums/role.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { helptextApps } from 'app/helptext/apps/apps';
 import { ChartScaleResult, ChartScaleQueryParams } from 'app/interfaces/chart-release-event.interface';
@@ -132,6 +133,8 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
       (app) => app.status === ChartReleaseStatus.Stopped && this.selection.isSelected(app.id),
     );
   }
+
+  protected readonly requiredRoles = [Role.AppsWrite];
 
   constructor(
     private appService: ApplicationsService,
