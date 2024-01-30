@@ -34,14 +34,14 @@
 </div>
 <div class="cell cell-ram" [matTooltip]="'Memory usage of app' | translate">
   <span *ngIf="app.stats && app.stats.memory !== undefined; else notAvailable">
-    {{ app.stats.memory | filesize: { standard: 'iec' } }}
+    {{ app.stats.memory | ixFileSize }}
   </span>
 </div>
 <div class="cell cell-network" [matTooltip]="'Incoming / Outgoing network traffic' | translate">
   <span *ngIf="app.stats && app.stats.network?.incoming !== undefined; else notAvailable">
-    {{ app.stats.network.incoming | filesize: { standard: 'iec' } }}
+    {{ app.stats.network.incoming | ixFileSize: { baseUnit: 'b', base: 10 } }}
     /
-    {{ app.stats.network.outgoing | filesize: { standard: 'iec' } }}
+    {{ app.stats.network.outgoing | ixFileSize: { baseUnit: 'b', base: 10 } }}
   </span>
 </div>
 <div class="cell cell-update">

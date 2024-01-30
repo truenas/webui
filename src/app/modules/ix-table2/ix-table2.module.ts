@@ -9,10 +9,10 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
-import { NgxFilesizeModule } from 'ngx-filesize';
 import { CoreComponents } from 'app/core/core-components.module';
 import { FormatDateTimePipe } from 'app/core/pipes/format-datetime.pipe';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
+import { IxFileSizeModule } from 'app/modules/ix-file-size/ix-file-size.module';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { IxTable2EmptyRowComponent } from 'app/modules/ix-table2/components/ix-empty-row/ix-empty-row.component';
 import { IxCellActionsComponent } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
@@ -51,9 +51,9 @@ import { IxTableColumnsSelectorComponent } from './components/ix-table-columns-s
     MatTooltipModule,
     MatCheckboxModule,
     MatSelectModule,
+    IxFileSizeModule,
     MatSlideToggleModule,
     TranslateModule,
-    NgxFilesizeModule,
     CommonDirectivesModule,
     TestIdModule,
     CoreComponents,

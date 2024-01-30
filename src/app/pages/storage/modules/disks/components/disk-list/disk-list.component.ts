@@ -4,7 +4,6 @@ import { TooltipPosition } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import * as filesize from 'filesize';
 import {
   forkJoin, lastValueFrom, of, Subject, switchMap,
 } from 'rxjs';
@@ -13,6 +12,7 @@ import {
 } from 'rxjs/operators';
 import { YesNoPipe } from 'app/core/pipes/yes-no.pipe';
 import { SmartTestResultPageType } from 'app/enums/smart-test-results-page-type.enum';
+import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
 import { ApiEvent } from 'app/interfaces/api-message.interface';
 import { Choices } from 'app/interfaces/choices.interface';
 import { QueryParams } from 'app/interfaces/query-api.interface';
@@ -239,7 +239,7 @@ export class DiskListComponent implements EntityTableConfig<Disk>, OnDestroy {
     return disks.map((disk) => ({
       ...disk,
       pool: this.getPoolColumn(disk),
-      readable_size: filesize(disk.size, { standard: 'iec' }),
+      readable_size: buildNormalizedFileSize(disk.size),
       togglesmart: this.yesNoPipe.transform(disk.togglesmart) as unknown as boolean,
     }));
   }

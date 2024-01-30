@@ -2,7 +2,6 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { FileSizePipe } from 'ngx-filesize';
 import { of } from 'rxjs';
 import { GiB } from 'app/constants/bytes.constant';
 import { DiskType } from 'app/enums/disk-type.enum';
@@ -30,7 +29,6 @@ describe('ManualSelectionDiskFiltersComponent', () => {
       IxFormsModule,
     ],
     providers: [
-      FileSizePipe,
       mockProvider(ManualDiskSelectionStore, {
         inventory$: of([
           {

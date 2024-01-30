@@ -28,7 +28,6 @@ import {
   MissingTranslationHandler, TranslateCompiler, TranslateLoader, TranslateModule, TranslateFakeLoader,
 } from '@ngx-translate/core';
 import { MockProvider } from 'ng-mocks';
-import { NgxFilesizeModule } from 'ngx-filesize';
 import { TranslateMessageFormatCompiler } from 'ngx-translate-messageformat-compiler';
 import { Observable } from 'rxjs';
 import { IcuMissingTranslationHandler } from 'app/core/classes/icu-missing-translation-handler';
@@ -67,7 +66,6 @@ defineGlobalsInjections({
     MatButtonModule,
     RouterModule.forRoot([]),
     CommonDirectivesModule,
-    NgxFilesizeModule,
     CastModule,
     SnackbarModule,
     TestIdModule,
