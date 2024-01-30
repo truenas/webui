@@ -30,7 +30,6 @@ def test_verify_recursive_and_transverse_acl_options():
 @given('the browser is open, the TrueNAS URL and logged in')
 def the_browser_is_open_the_truenas_url_and_logged_in(driver, nas_ip, root_password, request):
     """the browser is open, the TrueNAS URL and logged in."""
-    depends(request, ['tank_pool', 'LDAP_SMB'], scope='session')
     if nas_ip not in driver.current_url:
         driver.get(f"http://{nas_ip}")
         assert wait_on_element(driver, 10, xpaths.login.user_Input)
@@ -153,7 +152,7 @@ def verify_that_the_acl_was_set_to_rtacltest1(driver):
 @then(parsers.parse('verify that the ACL was set to rt-acl-test-2'))
 def verify_that_the_acl_was_set_to_rtacltest2(driver):
     """verify that the ACL was set to rt-acl-test-2."""
-    driver.find_element_by_xpath(xpaths.dataset.dataset_expand('tank', 'rt-acl-test-1')).click()
+    # driver.find_element_by_xpath(xpaths.dataset.dataset_expand('tank', 'rt-acl-test-1')).click()
     assert wait_on_element(driver, 5, xpaths.dataset.dataset_Name('rt-acl-test-2'))
     assert wait_on_element(driver, 5, xpaths.dataset.dataset_Tree('rt-acl-test-2'))
     driver.find_element_by_xpath(xpaths.dataset.dataset_Tree('rt-acl-test-2')).click()
@@ -182,6 +181,7 @@ def create_a_third_smb_dataset_rtacltest3(driver, dataset3_name, dataset1_name):
     rsc.Click_On_Element(driver, xpaths.add_Dataset.create_Smb_Checkbox)
     assert wait_on_element(driver, 5, xpaths.button.save, 'clickable')
     driver.find_element_by_xpath(xpaths.button.save).click()
+    assert wait_on_element(driver, 5, xpaths.progress.progressbar)
     rsc.Return_To_Pool_list(driver)
     assert wait_on_element_disappear(driver, 30, xpaths.progress.progressbar)
     assert wait_on_element(driver, 7, xpaths.dataset.dataset_Name(dataset3_name))
@@ -260,7 +260,6 @@ def apply_acl_to_rtacltest1_with_recusrive_checked(driver, dataset1_name):
 @then(parsers.parse('verify that the ACL was not set to {dataset3_name}'))
 def verify_that_the_acl_was_not_set_to_rtacltest3(driver, dataset3_name):
     """verify that the ACL was not set to rt-acl-test-3."""
-    driver.find_element_by_xpath(xpaths.dataset.dataset_expand('tank', 'rt-acl-test-1')).click()
     assert wait_on_element(driver, 5, xpaths.dataset.dataset_Name(dataset3_name))
     assert wait_on_element(driver, 5, xpaths.dataset.dataset_Tree(dataset3_name))
     driver.find_element_by_xpath(xpaths.dataset.dataset_Tree(dataset3_name)).click()

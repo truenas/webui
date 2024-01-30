@@ -12,7 +12,8 @@ from function import (
     attribute_value_exist,
     wait_for_attribute_value,
     run_cmd,
-    post
+    post,
+    delete_dataset
 )
 from pytest_bdd import (
     given,
@@ -192,7 +193,7 @@ def click_on_network_and_click_on_global_configuration(driver):
 
 
 @then(parsers.parse('change nameservers to "{nameserver1}" and "{nameserver2}" then save'))
-def change_nameservers_to_nameserver1_and_nameserve2_then_save(driver, nameserver1, nameserver2):
+def change_nameservers_to_nameserver1_and_nameserve2_then_save(driver, nameserver1, nameserver2, nas_ip, root_password):
     """change nameservers to "{nameserver1}" and "{nameserver2}" then save."""
     assert wait_on_element(driver, 5, xpaths.global_Configuration.nameserver1_Input, 'inputable')
     driver.find_element_by_xpath(xpaths.global_Configuration.nameserver1_Input).clear()
@@ -203,3 +204,4 @@ def change_nameservers_to_nameserver1_and_nameserve2_then_save(driver, nameserve
     assert wait_on_element(driver, 7, xpaths.button.save, 'clickable')
     driver.find_element_by_xpath(xpaths.button.save).click()
     assert wait_on_element_disappear(driver, 20, xpaths.progress.progressbar)
+    delete_dataset(nas_ip, ('root', root_password), 'system/my_ad_dataset')
