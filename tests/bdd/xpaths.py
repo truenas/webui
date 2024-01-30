@@ -22,6 +22,7 @@ class add_Catalog:
 
 class add_Dataset:
     title = '//h3[text()="Add Dataset"]'
+    create_Smb_Checkbox = '//*[@data-test="checkbox-create-smb"]'
     name_Textarea = '//textarea[@data-test="textarea-name"]'
     share_Type_Select = '//mat-select[@data-test="select-share-type"]'
     share_Type_Select_Text = '//mat-select[@data-test="select-share-type"]//mat-select-trigger'
@@ -50,41 +51,44 @@ class add_NFS:
 
 
 class add_User:
-    title = '//h3[text()="Add User"]'
-    edit_Title = '//h3[text()="Edit User"]'
-    full_Name_Input = '//ix-input[@formcontrolname="full_name"]//input'
-    username_Input = '//ix-input[@formcontrolname="username"]//input'
-    password_Input = '//ix-input[@formcontrolname="password"]//input'
-    confirm_Password_Input = '//ix-input[@formcontrolname="password_conf"]//input'
-    shell_Select = '//mat-select[@data-test="select-shell"]'
+    authentication_Legend = '//legend[normalize-space(text())="Authentication"]'
+    auxiliary_Groups_Select = '//*[@data-test="input-groups"]'
     bash_Shell_Option = '//mat-option[contains(.,"bash")]'
-    sudo_Checkbox = '//mat-checkbox[contains(.,"Allow all sudo commands")]'
-    ssh_Password_Enabled_Checkbox = '//*[@data-test="checkbox-ssh-password-enabled"]'
-    email_Input = '//ix-input[@formcontrolname="email"]//input'
-    auxiliary_Groups_Select = '//ix-select[@formcontrolname="groups"]//mat-select'
-    root_Group_Option = '//mat-option[contains(.,"root")]'
-    wheel_Group_Option = '//mat-option[contains(.,"wheel")]'
-    qatest_Group_Option = '//mat-option[contains(.,"qatest")]'
-    games_Group_Option = '//mat-option[contains(.,"games")]'
-    games_Is_Selected = '//mat-select[contains(.,"games")]'
-    wheel_Is_Selected = '//mat-select[contains(.,"wheel")]'
-    home_Input = '//ix-explorer[@formcontrolname="home"]//input'
+    confirm_Password_Input = '//ix-input[@formcontrolname="password_conf"]//input'
     create_Home_Directory_Checkbox = '//ix-checkbox[@formcontrolname="home_create"]//mat-checkbox'
-    password_Disabled_Slide = '//*[@data-test="toggle-password-disabled"]'
-    home_Mode_Owner_Write_Checkbox = '//mat-checkbox[@data-test="checkbox-user-read"]'
-    home_Mode_Owner_Read_Checkbox = '//mat-checkbox[@data-test="checkbox-user-write"]'
-    home_Mode_Owner_Exec_Checkbox = '//mat-checkbox[@data-test="checkbox-user-execute"]'
+    edit_Title = '//h3[text()="Edit User"]'
+    email_Error_Message = '//div[contains(.,"Value must be a valid email address")]'
+    email_Input = '//ix-input[@formcontrolname="email"]//input'
+    ericbsd_Root_Chip = '//mat-chip-row[contains(.,"root")]'
+    full_Name_Input = '//ix-input[@formcontrolname="full_name"]//input'
+    games_Group_Option = '//mat-option[contains(.,"games")]'
+    games_Is_Selected = '//mat-chip-row[contains(.,"games")]'
+    home_Input = '//ix-explorer[@formcontrolname="home"]//input'
+    home_Mode_Group_Exec_Checkbox = '//mat-checkbox[@data-test="checkbox-group-execute"]'
     home_Mode_Group_Read_Checkbox = '//mat-checkbox[@data-test="checkbox-group-read"]'
     home_Mode_Group_Write_Checkbox = '//mat-checkbox[@data-test="checkbox-group-write"]'
-    home_Mode_Group_Exec_Checkbox = '//mat-checkbox[@data-test="checkbox-group-execute"]'
+    home_Mode_Other_Exec_Checkbox = '//mat-checkbox[@data-test="checkbox-other-execute"]'
     home_Mode_Other_Read_Checkbox = '//mat-checkbox[@data-test="checkbox-other-read"]'
     home_Mode_Other_Write_Checkbox = '//mat-checkbox[@data-test="checkbox-other-write"]'
-    home_Mode_Other_Exec_Checkbox = '//mat-checkbox[@data-test="checkbox-other-execute"]'
-    ssh_Pubkey_Textarea = '//ix-textarea[@formcontrolname="sshpubkey"]//textarea'
-    user_Id_And_Groups = '//legend[contains(text(),"User ID and Groups")]'
+    home_Mode_Owner_Exec_Checkbox = '//mat-checkbox[@data-test="checkbox-user-execute"]'
+    home_Mode_Owner_Read_Checkbox = '//mat-checkbox[@data-test="checkbox-user-write"]'
+    home_Mode_Owner_Write_Checkbox = '//mat-checkbox[@data-test="checkbox-user-read"]'
     identification_Legend = '//legend[normalize-space(text())="Identification"]'
-    authentication_Legend = '//legend[normalize-space(text())="Authentication"]'
+    password_Disabled_Slide = '//*[@data-test="toggle-password-disabled"]'
+    password_Input = '//ix-input[@formcontrolname="password"]//input'
+    qatest_Group_Option = '//mat-option[contains(.,"qatest")]'
+    root_Group_Option = '//mat-option[contains(.,"root")]'
     samba_Authentication_Checkbox = '//*[@data-test="checkbox-smb"]'
+    shell_Select = '//mat-select[@data-test="select-shell"]'
+    ssh_Password_Enabled_Checkbox = '//*[@data-test="checkbox-ssh-password-enabled"]'
+    ssh_Pubkey_Textarea = '//ix-textarea[@formcontrolname="sshpubkey"]//textarea'
+    sudo_Checkbox = '//mat-checkbox[contains(.,"Allow all sudo commands")]'
+    title = '//h3[text()="Add User"]'
+    user_Id_And_Groups = '//legend[contains(text(),"User ID and Groups")]'
+    username_Input = '//ix-input[@formcontrolname="username"]//input'
+    wheel_Group_Option = '//mat-option[contains(.,"wheel")]'
+    wheel_Is_Selected = '//mat-select[contains(.,"wheel")]'
+
 
 
 class add_Zvol:
@@ -171,6 +175,7 @@ class button:
     leave_Domain = '//button[contains(.,"Leave Domain")]'
     reload_Now = '//button[@data-test="button-dialog-confirm"]'
     dialog_Cancel = '//button[@data-test="button-dialog-cancel"]'
+    save_changes = '//*[@data-test="button-save-changes"]'
 
 
 class certificates:
@@ -303,7 +308,7 @@ class directory_Services:
     delete_AD_Account_Button = '//tr[contains(.,"AD_MACHINE_ACCOUNT")]//button'
     ldap_Card_Title = '//mat-card//h3[text()="LDAP"]'
     service_Status = '//span[contains(.,"Status:") and contains(.,"HEALTHY")]'
-    kerberos_Keytab_Add_Button = '//mat-card[contains(.,"Kerberos Keytab")]//span[contains(text(),"Add")]'
+    kerberos_Keytab_Add_Button = '//button[@data-test="button-add-kerberos-keytabs"]'
 
     def ldap_Hostname(hostname):
         return f'//span[contains(.,"Hostname:") and contains(.,"{hostname}")]'
@@ -497,8 +502,8 @@ class network:
     def interface_Row(interface):
         return f'//td[contains(.,"{interface}")]'
 
-    def interface_Edit_Button(interface):
-        return f'//*[@data-test="button-edit-interface-{interface}"]'
+    def interface_Edit_Button(interface) -> str:
+        return f'//*[@data-test="button-interface-{interface}-edit-row-action"]'
 
 
 class pool_manager:
@@ -532,6 +537,7 @@ class popup:
     configuring = '//h1[contains(.,"Configuring...")]'
     installing = '//h1[contains(.,"Installing")]'
     deleting = '//*[contains(.,"Deleting")]'
+    save_changes = '//h1[contains(.,"Save Changes")]'
 
 
 class progress:
@@ -569,22 +575,22 @@ class services:
 
 class sharing:
     title = '//h1[text()="Sharing"]'
-    smb_Panel_Title = '//a[contains(text(),"Windows (SMB) Shares")]'
-    smb_Add_Button = '//span[contains(.,"Windows (SMB) Shares")]//button[contains(.,"Add")]'
-    smb_Service_Status = '//span[contains(.,"Windows (SMB) Shares")]//span[contains(text(),"RUNNING")]'
+    smb_Panel_Title = '//h3[contains(text(),"Windows (SMB) Shares")]'
+    smb_Add_Button = '//*[@data-test="button-smb-share-add"]'
+    smb_Service_Status = '//mat-toolbar-row[contains(.,"Windows (SMB) Shares")]//span[contains(text(),"RUNNING")]'
 
-    nfs_Panel_Title = '//a[contains(text(),"UNIX (NFS) Shares")]'
-    nfs_Add_Button = '//span[contains(.,"UNIX (NFS) Shares")]//button[contains(.,"Add")]'
-    nfs_Service_Status = '//span[contains(.,"UNIX (NFS) Shares")]//span[contains(text(),"RUNNING")]'
+    nfs_Panel_Title = '//h3[contains(text(),"UNIX (NFS) Shares")]'
+    nfs_Add_Button = '//*[@data-test="button-nfs-share-add"]'
+    nfs_Service_Status = '//mat-toolbar-row[contains(.,"UNIX (NFS) Shares")]//span[contains(text(),"RUNNING")]'
 
-    iscsi_Wizard_Button = '//button[contains(.,"Wizard")]'
-    iscsi_Configure_Button = '//button[@data-test="button-configure"]'
-    iscsi_Burger_Button = '//span[contains(.,"Block (iSCSI) Shares Targets")]//button[contains(.,"more_vert")]'
-    iscsi_Service_Status = '//span[contains(.,"Block (iSCSI) Shares Targets")]//span[contains(text(),"RUNNING")]'
+    iscsi_Wizard_Button = '//*[@data-test="button-iscsi-share-wizard"]'
+    iscsi_Configure_Button = '//*[@data-test="button-iscsi-share-configure"]'
+    iscsi_Burger_Button = '//mat-toolbar-row[contains(.,"Block (iSCSI) Shares Targets")]//button[contains(.,"more_vert")]'
+    iscsi_Service_Status = '//mat-toolbar-row[contains(.,"Block (iSCSI) Shares Targets")]//span[contains(text(),"RUNNING")]'
     turn_On_Service_Button = '//button[contains(.,"Turn On Service")]'
 
     def smb_Share_Name(share_name):
-        return f'//div[normalize-space(text())="{share_name}"]'
+        return f'//*[normalize-space(text())="{share_name}"]'
 
 
 class side_Menu:
