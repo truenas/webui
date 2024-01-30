@@ -64,19 +64,19 @@ export class ServicesEffects {
           .pipe(
             map((data) => {
               if (data.start && data.startAutomatically) {
-                return serviceEnabled();
+                return serviceEnabled({ id: service.id });
               }
               if (data.start && !data.startAutomatically) {
                 return serviceStarted();
               }
-              return data.startAutomatically ? serviceEnabled() : serviceDisabled();
+              return data.startAutomatically ? serviceEnabled({ id: service.id }) : serviceDisabled({ id: service.id });
             }),
             catchError(() => of(serviceStartFailed())),
           );
       }
 
       if (service.enable) {
-        return of(serviceEnabled());
+        return of(serviceEnabled({ id: service.id }));
       }
 
       return of(serviceStarted());
