@@ -34,6 +34,7 @@ import { IcuMissingTranslationHandler } from 'app/core/classes/icu-missing-trans
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { WINDOW } from 'app/helpers/window.helper';
 import { CastModule } from 'app/modules/cast/cast.module';
+import { IxFileSizeModule } from 'app/modules/ix-file-size/ix-file-size.module';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
@@ -58,6 +59,7 @@ defineGlobalsInjections({
     MatProgressBarModule,
     MatTooltipModule,
     MatCardModule,
+    IxFileSizeModule,
     MatListModule,
     MatToolbarModule,
     MatBadgeModule,

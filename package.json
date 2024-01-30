@@ -43,9 +43,6 @@
     "url": "https://jira.ixsystems.com"
   },
   "private": true,
-  "resolutions": {
-    "filesize": "~6.3.0"
-  },
   "dependencies": {
     "@angular/animations": "^16.1.2",
     "@angular/cdk": "^16.1.2",

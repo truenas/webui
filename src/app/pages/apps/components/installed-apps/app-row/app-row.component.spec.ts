@@ -61,6 +61,6 @@ describe('AppRowComponent', () => {
   it('checks usage columns', () => {
     expect(spectator.query('.cell-cpu')).toHaveText('50%');
     expect(spectator.query('.cell-ram')).toHaveText('19.07 MiB');
-    expect(spectator.query('.cell-network')).toHaveText('47.68 MiB / 52.93 MiB');
+    expect(spectator.query('.cell-network')).toHaveText('50 Mb / 55.5 Mb');
   });
 });
