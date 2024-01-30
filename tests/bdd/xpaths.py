@@ -308,7 +308,7 @@ class directory_Services:
     delete_AD_Account_Button = '//tr[contains(.,"AD_MACHINE_ACCOUNT")]//button'
     ldap_Card_Title = '//mat-card//h3[text()="LDAP"]'
     service_Status = '//span[contains(.,"Status:") and contains(.,"HEALTHY")]'
-    kerberos_Keytab_Add_Button = '//mat-card[contains(.,"Kerberos Keytab")]//span[contains(text(),"Add")]'
+    kerberos_Keytab_Add_Button = '//button[@data-test="button-add-kerberos-keytabs"]'
 
     def ldap_Hostname(hostname):
         return f'//span[contains(.,"Hostname:") and contains(.,"{hostname}")]'
