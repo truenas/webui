@@ -51,7 +51,7 @@ export class FileReviewComponent {
 
   protected form = this.formBuilder.group({
     rating: [undefined as number, [Validators.required, rangeValidator(1, maxRatingValue)]],
-    message: [''],
+    message: ['', [Validators.maxLength(4067)]],
 
     images: [[] as File[], [], this.imageValidator.validateImages()],
     attach_images: [false],
@@ -89,8 +89,7 @@ export class FileReviewComponent {
       this.errorHandler.catchError(),
       finalize(() => this.isLoadingChange.emit(false)),
       untilDestroyed(this),
-    )
-      .subscribe(() => this.onSuccess());
+    ).subscribe(() => this.onSuccess());
   }
 
   private addReview(review: AddReview): Observable<ReviewAddedResponse> {

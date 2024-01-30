@@ -62,9 +62,9 @@ export class FileTicketLicensedComponent {
     category: [TicketCategory.Bug, [Validators.required]],
     environment: [TicketEnvironment.Production, [Validators.required]],
     criticality: [TicketCriticality.Inquiry, [Validators.required]],
-    title: ['', Validators.required],
+    title: ['', [Validators.required, Validators.maxLength(200)]],
 
-    message: [''],
+    message: ['', [Validators.maxLength(20000)]],
     images: [[] as File[], [], this.imageValidator.validateImages()],
     attach_debug: [true],
     attach_images: [false],
