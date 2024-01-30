@@ -21,7 +21,11 @@ import { AccountAttribute } from 'app/enums/account-attribute.enum';
 import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
 import { LoginResult } from 'app/enums/login-result.enum';
 import { Role } from 'app/enums/role.enum';
-import { ApiCallDirectory, ApiCallMethod } from 'app/interfaces/api/api-call-directory.interface';
+import {
+  ApiCallMethod,
+  ApiCallParams,
+  ApiCallResponse,
+} from 'app/interfaces/api/api-call-directory.interface';
 import { IncomingWebSocketMessage, ResultMessage } from 'app/interfaces/api-message.interface';
 import { LoggedInUser } from 'app/interfaces/ds-cache.interface';
 import { GlobalTwoFactorConfig } from 'app/interfaces/two-factor-config.interface';
@@ -219,7 +223,7 @@ export class AuthService {
 
   // TODO: See if we can move this somewhere, like in wsManager.
   // TODO: Rewrite tests not to rely on mocking this private method.
-  makeRequest<M extends ApiCallMethod>(method: M, params?: ApiCallDirectory[M]['params']): Observable<ApiCallDirectory[M]['response']> {
+  makeRequest<M extends ApiCallMethod>(method: M, params?: ApiCallParams<M>): Observable<ApiCallResponse<M>> {
     const uuid = UUID.UUID();
     const payload = {
       method,

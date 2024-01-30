@@ -196,3 +196,4 @@ export interface ApiJobDirectory {
 
 export type ApiJobMethod = keyof ApiJobDirectory;
 export type ApiJobParams<T extends ApiJobMethod> = ApiJobDirectory[T]['params'];
+export type ApiJobResponse<T extends ApiJobMethod> = ApiJobDirectory[T]['response'];

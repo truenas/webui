@@ -40,8 +40,8 @@ export class AppDetailsHeaderComponent {
   ) {}
 
   get description(): string {
-    const splittedText = this.app?.app_readme?.split('</h1>');
-    const readyHtml = splittedText[1] || splittedText[0];
+    const splitText = this.app?.app_readme?.split('</h1>');
+    const readyHtml = splitText[1] || splitText[0];
     return readyHtml?.replace(/<[^>]*>/g, '').trim();
   }
 

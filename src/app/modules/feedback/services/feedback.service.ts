@@ -79,14 +79,6 @@ export class FeedbackService {
     });
   }
 
-  getOauthToken(): string {
-    return this.oauthToken$.getValue();
-  }
-
-  setOauthToken(token: string): void {
-    this.oauthToken$.next(token);
-  }
-
   checkIfReviewAllowed(): Observable<boolean> {
     if (this.isFeedbackAllowed !== undefined) {
       return of(this.isFeedbackAllowed);

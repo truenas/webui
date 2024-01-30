@@ -81,7 +81,7 @@ describe('AssociatedTargetListComponent', () => {
     table = await loader.getHarness(IxTable2Harness);
   });
 
-  it('shows acurate page title', () => {
+  it('shows accurate page title', () => {
     const title = spectator.query('h3');
     expect(title).toHaveText('Associated Targets');
   });

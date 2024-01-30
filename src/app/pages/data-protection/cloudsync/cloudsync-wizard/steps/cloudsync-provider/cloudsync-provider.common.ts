@@ -75,8 +75,3 @@ export function getName(name: string, others: string[]): string {
 
   return result;
 }
-
-export const defaultCloudProvider = {
-  name: 'Storj',
-  provider: CloudSyncProviderName.Storj,
-};
