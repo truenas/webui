@@ -183,7 +183,7 @@ export class FeedbackService {
     attachment: File;
     token?: string;
   }): Observable<boolean> {
-    return this.fileUpload.upload2(attachment, 'support.attach_ticket', [{
+    return this.fileUpload.upload(attachment, 'support.attach_ticket', [{
       token,
       ticket: ticketId,
       filename: attachment.name,

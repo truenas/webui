@@ -2,7 +2,7 @@ import {
   ChangeDetectionStrategy,
   Component, EventEmitter, Input, Output,
 } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { FormBuilder, Validators } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
@@ -38,8 +38,8 @@ export class FileTicketComponent {
   @Output() isLoadingChange = new EventEmitter<boolean>();
 
   protected form = this.formBuilder.group({
-    title: [''],
-    message: [''],
+    title: ['', [Validators.maxLength(200)]],
+    message: ['', [Validators.maxLength(20000)]],
 
     images: [[] as File[], [], this.imageValidator.validateImages()],
     attach_debug: [true],

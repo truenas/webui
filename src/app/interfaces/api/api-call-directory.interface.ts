@@ -781,7 +781,6 @@ export interface ApiCallDirectory {
   'system.general.update': { params: [SystemGeneralConfigUpdate]; response: SystemGeneralConfig };
   'system.host_id': { params: void; response: string };
   'system.info': { params: void; response: SystemInfo };
-  'system.is_ix_hardware': { params: void; response: boolean };
   'system.is_stable': { params: void; response: boolean };
   'system.license': { params: void; response: null | object };
   'system.license_update': { params: [license: string]; response: void };
@@ -809,6 +808,7 @@ export interface ApiCallDirectory {
   'truenas.get_eula': { params: void; response: string };
   'truenas.is_eula_accepted': { params: void; response: boolean };
   'truenas.is_production': { params: void; response: boolean };
+  'truenas.is_ix_hardware': { params: void; response: boolean };
 
   // Tunable
   'tunable.query': { params: QueryParams<Tunable>; response: Tunable[] };
