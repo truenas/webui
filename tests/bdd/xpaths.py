@@ -577,20 +577,20 @@ class sharing:
     title = '//h1[text()="Sharing"]'
     smb_Panel_Title = '//h3[contains(text(),"Windows (SMB) Shares")]'
     smb_Add_Button = '//*[@data-test="button-smb-share-add"]'
-    smb_Service_Status = '//span[contains(.,"Windows (SMB) Shares")]//span[contains(text(),"RUNNING")]'
+    smb_Service_Status = '//mat-toolbar-row[contains(.,"Windows (SMB) Shares")]//span[contains(text(),"RUNNING")]'
 
     nfs_Panel_Title = '//h3[contains(text(),"UNIX (NFS) Shares")]'
     nfs_Add_Button = '//*[@data-test="button-nfs-share-add"]'
-    nfs_Service_Status = '//span[contains(.,"UNIX (NFS) Shares")]//span[contains(text(),"RUNNING")]'
+    nfs_Service_Status = '//mat-toolbar-row[contains(.,"UNIX (NFS) Shares")]//span[contains(text(),"RUNNING")]'
 
     iscsi_Wizard_Button = '//*[@data-test="button-iscsi-share-wizard"]'
     iscsi_Configure_Button = '//*[@data-test="button-iscsi-share-configure"]'
-    iscsi_Burger_Button = '//span[contains(.,"Block (iSCSI) Shares Targets")]//button[contains(.,"more_vert")]'
-    iscsi_Service_Status = '//span[contains(.,"Block (iSCSI) Shares Targets")]//span[contains(text(),"RUNNING")]'
+    iscsi_Burger_Button = '//mat-toolbar-row[contains(.,"Block (iSCSI) Shares Targets")]//button[contains(.,"more_vert")]'
+    iscsi_Service_Status = '//mat-toolbar-row[contains(.,"Block (iSCSI) Shares Targets")]//span[contains(text(),"RUNNING")]'
     turn_On_Service_Button = '//button[contains(.,"Turn On Service")]'
 
     def smb_Share_Name(share_name):
-        return f'//div[normalize-space(text())="{share_name}"]'
+        return f'//span[normalize-space(text())="{share_name}"]'
 
 
 class side_Menu:
