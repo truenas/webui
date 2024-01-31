@@ -188,16 +188,19 @@ def Start_Or_Restart_SMB_Service(driver):
 def Start_SMB_Service(driver):
     assert wait_on_element(driver, 7, xpaths.popup.smb_Start_Title)
     Click_On_Element(driver, xpaths.popup.start_Service_Button)
+    time.sleep(1)
 
 
 def Start_iSCSI_Service(driver):
     assert wait_on_element(driver, 7, xpaths.popup.iscsi_Start_Title)
     Click_On_Element(driver, xpaths.popup.start_Service_Button)
+    time.sleep(1)
 
 
 def start_nfs_service(driver):
     assert wait_on_element(driver, 7, xpaths.popup.nfs_Start_Title)
     Click_On_Element(driver, xpaths.popup.start_Service_Button)
+    time.sleep(1)
 
 
 def Trigger_Failover(driver):

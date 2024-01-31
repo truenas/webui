@@ -433,7 +433,7 @@ class iscsi:
     protals_Tab = '//a[@data-test="link-portals"]'
     targets_Tab = '//a[@data-test="link-targets"]'
     extents_Tab = '//a[@data-test="link-extents"]'
-    iscsitest1_Text = '//div[normalize-space(text())="iscsitest1"]'
+    iscsitest1_Text = '//div[contains(text(),"iscsitest1")]'
 
 
 class iscsi_Wizard:
