@@ -13,7 +13,7 @@ import { OnOff } from 'app/enums/on-off.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { Role } from 'app/enums/role.enum';
 import { helptextIpmi } from 'app/helptext/network/ipmi/ipmi';
-import { Ipmi, IpmiQueryParams } from 'app/interfaces/ipmi.interface';
+import { Ipmi, IpmiQueryParams, IpmiUpdate } from 'app/interfaces/ipmi.interface';
 import { RadioOption } from 'app/interfaces/option.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
@@ -47,10 +47,10 @@ export class IpmiFormComponent implements OnInit {
 
   readonly helptext = helptextIpmi;
 
-  protected readonly Role = Role;
+  protected readonly requiresRoles = [Role.IpmiWrite];
 
   form = this.fb.group({
-    remoteController: [null as boolean],
+    apply_remote: [null as boolean],
     dhcp: [false],
     ipaddress: ['', [
       this.validatorsService.withMessage(
@@ -108,9 +108,6 @@ export class IpmiFormComponent implements OnInit {
   setIdIpmi(): void {
     this.queryParams = [{
       'query-filters': [['id', '=', this.ipmiId]],
-      'ipmi-options': {
-        'query-remote': false,
-      },
     }];
   }
 
@@ -187,13 +184,13 @@ export class IpmiFormComponent implements OnInit {
   loadDataOnRemoteControllerChange(): void {
     let isUsingRemote: boolean;
 
-    this.form.controls.remoteController.valueChanges
+    this.form.controls.apply_remote.valueChanges
       .pipe(
         switchMap((controlState) => {
           this.isLoading = true;
           isUsingRemote = controlState;
-          if (this.queryParams?.length) {
-            this.queryParams[0]['ipmi-options']['query-remote'] = controlState;
+          if (this.queryParams?.length && controlState) {
+            this.queryParams[0]['ipmi-options'] = { 'query-remote': controlState };
           }
 
           if (isUsingRemote) {
@@ -223,16 +220,17 @@ export class IpmiFormComponent implements OnInit {
   onSubmit(): void {
     this.isLoading = true;
 
-    const value = { ...this.form.value };
-    delete value.remoteController;
-    if (!value.password) {
-      delete value.password;
+    const updateParams: IpmiUpdate = { ...this.form.value };
+    if (!updateParams.apply_remote) {
+      delete updateParams.apply_remote;
     }
-    if (!value.vlan) {
-      delete value.vlan;
+    if (!updateParams.password) {
+      delete updateParams.password;
     }
-
-    this.ws.call('ipmi.lan.update', [this.ipmiId, { ...value, apply_remote: this.form.controls.remoteController.value }])
+    if (!updateParams.vlan) {
+      delete updateParams.vlan;
+    }
+    this.ws.call('ipmi.lan.update', [this.ipmiId, updateParams])
       .pipe(untilDestroyed(this))
       .subscribe({
         next: () => {
@@ -289,7 +287,7 @@ export class IpmiFormComponent implements OnInit {
           tap((node) => {
             this.createControllerOptions(node);
             this.loadDataOnRemoteControllerChange();
-            this.form.controls.remoteController.setValue(false);
+            this.form.controls.apply_remote.setValue(false);
           }),
         );
       }),
