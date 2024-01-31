@@ -539,7 +539,7 @@
   "Expand": "",
   "Export": "",
   "Export All Keys": "",
-  "Export As CSV": "",
+  "Export As {fileType}": "",
   "Export/disconnect pool: {pool}": "",
   "Exported": "",
   "Exporters": "",
