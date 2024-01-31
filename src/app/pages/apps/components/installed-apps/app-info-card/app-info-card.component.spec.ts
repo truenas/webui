@@ -10,6 +10,7 @@ import { MockComponents, MockDirective } from 'ng-mocks';
 import { ImgFallbackDirective } from 'ngx-img-fallback';
 import { NgxSkeletonLoaderComponent } from 'ngx-skeleton-loader';
 import { of } from 'rxjs';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { UpgradeSummary } from 'app/interfaces/application.interface';
 import { ChartRelease } from 'app/interfaces/chart-release.interface';
 import { AppCardLogoComponent } from 'app/pages/apps/components/app-card-logo/app-card-logo.component';
@@ -87,6 +88,7 @@ describe('AppInfoCardComponent', () => {
         open: jest.fn(() => mockDialogRef),
       }),
       mockProvider(RedirectService),
+      mockAuth(),
     ],
   });
 

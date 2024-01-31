@@ -13,6 +13,7 @@
 
   <div class="actions">
     <button
+      *ixRequiresRoles="requiredRoles"
       mat-button
       ixTest="update-selected"
       [disabled]="!selectionHasUpdates"
@@ -21,7 +22,12 @@
       <ix-icon name="update"></ix-icon>
       {{ 'Update' | translate }}
     </button>
-    <button mat-button ixTest="delete-selected" (click)="doDelete(checkboxColumn?.selection.selected)">
+    <button
+      *ixRequiresRoles="requiredRoles"
+      mat-button
+      ixTest="delete-selected"
+      (click)="doDelete(checkboxColumn?.selection.selected)"
+    >
       <ix-icon name="delete"></ix-icon>
       {{ 'Delete' | translate }}
     </button>
@@ -101,6 +107,7 @@
       </button>
       <mat-menu #actionsMenu="matMenu">
         <button
+          *ixRequiresRoles="requiredRoles"
           mat-menu-item
           [ixTest]="['update', image.repo_tags.join(', ')]"
           [disabled]="!image.update_available"
@@ -109,7 +116,7 @@
           {{ image.update_available ? ('Update available' | translate) : ('Up to date' | translate) }}
         </button>
         <button
-          *ixRequiresRoles="[Role.FullAdmin]"
+          *ixRequiresRoles="requiredRoles"
           mat-menu-item
           [ixTest]="['delete', image.repo_tags.join(', ')]"
           (click)="doDelete([image])"

@@ -40,6 +40,7 @@
         <div class="bulk-button-wrapper">
           <label>{{ 'Bulk Actions' | translate }}</label>
           <button
+            *ixRequiresRoles="requiredRoles"
             mat-button
             ixTest="bulk-actions-menu"
             [matMenuTriggerFor]="menu"

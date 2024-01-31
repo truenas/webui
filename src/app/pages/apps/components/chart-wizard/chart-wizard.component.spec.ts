@@ -7,6 +7,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Spectator } from '@ngneat/spectator';
 import { mockProvider, createComponentFactory } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockEntityJobComponentRef } from 'app/core/testing/utils/mock-entity-job-component-ref.utils';
 import { mockCall, mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { CatalogApp, CatalogAppVersion } from 'app/interfaces/catalog.interface';
@@ -384,6 +385,7 @@ describe('ChartWizardComponent', () => {
       }),
       mockProvider(IxSlideInRef),
       mockProvider(Router),
+      mockAuth(),
       { provide: SLIDE_IN_DATA, useValue: undefined },
     ],
   });

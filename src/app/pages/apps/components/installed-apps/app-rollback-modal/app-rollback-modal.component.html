@@ -19,6 +19,7 @@
 <div mat-dialog-actions class="buttons">
   <button mat-button matDialogClose ixTest="cancel">{{ 'Cancel' | translate }}</button>
   <button
+    *ixRequiresRoles="requiredRoles"
     mat-button
     color="primary"
     ixTest="roll-back"
