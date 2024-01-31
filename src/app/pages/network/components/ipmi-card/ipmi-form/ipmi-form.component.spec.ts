@@ -184,7 +184,6 @@ describe('IpmiFormComponent', () => {
         ipaddress: '10.220.15.114',
         gateway: '10.220.0.1',
         netmask: '255.255.240.0',
-        apply_remote: false,
       }]);
       expect(spectator.inject(IxSlideInRef).close).toHaveBeenCalled();
       expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Successfully saved IPMI settings.');
