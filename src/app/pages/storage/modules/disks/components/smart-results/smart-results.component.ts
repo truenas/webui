@@ -93,7 +93,7 @@ export class SmartResultsComponent implements EntityTableConfig {
       item?.tests.forEach((test) => {
         rows.push({
           ...test,
-          identifier: item.identifier,
+          identifier: `${item.identifier}_${test.num}`,
           disk: item.disk,
           num: test.num,
         });
