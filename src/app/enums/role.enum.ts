@@ -4,6 +4,7 @@ export enum Role {
   AccountRead = 'ACCOUNT_READ',
   AccountWrite = 'ACCOUNT_WRITE',
   AlertListRead = 'ALERT_LIST_READ',
+  AlertListWrite = 'ALERT_LIST_WRITE',
   AuthSessionsRead = 'AUTH_SESSIONS_READ',
   AuthSessionsWrite = 'AUTH_SESSIONS_WRITE',
   CloudSyncRead = 'CLOUD_SYNC_READ',
@@ -101,6 +102,7 @@ export enum Role {
 
 export const roleNames = new Map<Role, string>([
   [Role.AlertListRead, T('Alert List Read')],
+  [Role.AlertListWrite, T('Alert List Write')],
   [Role.AuthSessionsRead, T('Auth Sessions Read')],
   [Role.AuthSessionsWrite, T('Auth Sessions Write')],
   [Role.DatasetDelete, T('Dataset Delete')],

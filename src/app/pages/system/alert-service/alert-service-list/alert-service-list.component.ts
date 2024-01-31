@@ -29,7 +29,7 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AlertServiceListComponent implements OnInit {
-  readonly requiresRoles = [Role.AlertListRead];
+  readonly requiresRoles = [Role.AlertListWrite];
   readonly providerList = alertServiceNames.map((alertService) => alertService.value);
 
   dataProvider: AsyncDataProvider<AlertService>;
@@ -65,7 +65,6 @@ export class AlertServiceListComponent implements OnInit {
           tooltip: this.translate.instant('Edit'),
           onClick: (row) => this.editAlertService(row),
           hidden: (row) => of(!this.providerList.includes(row.type)),
-          requiresRoles: this.requiresRoles,
         },
         {
           iconName: 'delete',
