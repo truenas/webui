@@ -2,9 +2,7 @@ import { EntityState, createEntityAdapter } from '@ngrx/entity';
 import { createReducer, on } from '@ngrx/store';
 import { serviceNames } from 'app/enums/service-name.enum';
 import { Service } from 'app/interfaces/service.interface';
-import {
-  serviceChanged, servicesLoaded,
-} from 'app/store/services/services.actions';
+import { serviceChanged, servicesLoaded } from 'app/store/services/services.actions';
 
 export interface ServicesState extends EntityState<Service> {
   areLoaded: boolean;
