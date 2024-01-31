@@ -158,6 +158,7 @@
       {{ 'Roll Back' | translate }}
     </button>
     <button
+      *ixRequiresRoles="requiredRoles"
       mat-button
       [ixTest]="[app.name, 'delete']"
       (click)="deleteButtonPressed()"

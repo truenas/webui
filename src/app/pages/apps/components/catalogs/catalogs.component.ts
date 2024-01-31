@@ -6,6 +6,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { filter, tap } from 'rxjs/operators';
 import { JobState } from 'app/enums/job-state.enum';
+import { Role } from 'app/enums/role.enum';
 import { helptextApps } from 'app/helptext/apps/apps';
 import { Catalog } from 'app/interfaces/catalog.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
@@ -62,6 +63,8 @@ export class CatalogsComponent implements OnInit {
   ], {
     rowTestId: (row) => 'catalog-' + row.label,
   });
+
+  protected readonly requiredRoles = [Role.CatalogWrite];
 
   constructor(
     private matDialog: MatDialog,
