@@ -6,7 +6,8 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
-import { map, switchMap } from 'rxjs/operators';
+import { EMPTY, of } from 'rxjs';
+import { catchError, map, switchMap } from 'rxjs/operators';
 import { AuditService } from 'app/enums/audit.enum';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { Role } from 'app/enums/role.enum';
@@ -24,11 +25,12 @@ import { ServiceSnmpComponent } from 'app/pages/services/components/service-snmp
 import { ServiceSshComponent } from 'app/pages/services/components/service-ssh/service-ssh.component';
 import { ServiceUpsComponent } from 'app/pages/services/components/service-ups/service-ups.component';
 import { DialogService } from 'app/services/dialog.service';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IscsiService } from 'app/services/iscsi.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { UrlOptionsService } from 'app/services/url-options.service';
 import { WebSocketService } from 'app/services/ws.service';
-import { serviceDisabled, serviceEnabled } from 'app/store/services/services.actions';
+import { serviceChanged } from 'app/store/services/services.actions';
 import { ServicesState } from 'app/store/services/services.reducer';
 import { waitForServices } from 'app/store/services/services.selectors';
 
@@ -76,6 +78,7 @@ export class ServicesComponent implements OnInit {
     private slideInService: IxSlideInService,
     private store$: Store<ServicesState>,
     private urlOptions: UrlOptionsService,
+    private errorHandler: ErrorHandlerService,
   ) {}
 
   ngOnInit(): void {
@@ -218,21 +221,18 @@ export class ServicesComponent implements OnInit {
   }
 
   enableToggle(service: Service): void {
-    if (service.enable) {
-      this.store$.dispatch(serviceEnabled({ id: service.id }));
-    } else {
-      this.store$.dispatch(serviceDisabled({ id: service.id }));
-    }
+    this.store$.dispatch(serviceChanged({ service }));
 
     this.ws.call('service.update', [service.id, { enable: service.enable }])
-      .pipe(untilDestroyed(this))
-      .subscribe((updated) => {
-        if (!updated) {
-          this.store$.dispatch(serviceDisabled({ id: service.id }));
-          throw new Error('Method service.update failed. No response from server');
-        }
-        this.cdr.markForCheck();
-      });
+      .pipe(
+        catchError((error) => {
+          this.errorHandler.showErrorModal(error);
+          this.store$.dispatch(serviceChanged({ service: { ...service, enable: !service.enable } }));
+          return of(EMPTY);
+        }),
+        untilDestroyed(this),
+      )
+      .subscribe();
   }
 
   configureService(row: Service): void {

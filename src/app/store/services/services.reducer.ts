@@ -3,7 +3,7 @@ import { createReducer, on } from '@ngrx/store';
 import { serviceNames } from 'app/enums/service-name.enum';
 import { Service } from 'app/interfaces/service.interface';
 import {
-  serviceChanged, serviceDisabled, serviceEnabled, servicesLoaded,
+  serviceChanged, servicesLoaded,
 } from 'app/store/services/services.actions';
 
 export interface ServicesState extends EntityState<Service> {
@@ -23,8 +23,6 @@ export const servicesReducer = createReducer(
   initialState,
 
   on(servicesLoaded, (state, { services }) => adapter.setAll(services, { ...state, areLoaded: true })),
-  on(serviceEnabled, (state, { id }) => adapter.updateOne({ id, changes: { enable: true } }, state)),
-  on(serviceDisabled, (state, { id }) => adapter.updateOne({ id, changes: { enable: false } }, state)),
   on(serviceChanged, (state, { service }) => adapter.updateOne({
     id: service.id,
     changes: service,
