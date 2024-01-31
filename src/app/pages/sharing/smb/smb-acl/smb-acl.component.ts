@@ -8,6 +8,7 @@ import {
   concatMap, forkJoin, from, Observable, of,
 } from 'rxjs';
 import { NfsAclTag, smbAclTagLabels } from 'app/enums/nfs-acl.enum';
+import { Role } from 'app/enums/role.enum';
 import { SmbSharesecPermission, SmbSharesecType } from 'app/enums/smb-sharesec.enum';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextSharingSmb } from 'app/helptext/sharing';
@@ -49,7 +50,7 @@ export class SmbAclComponent implements OnInit {
   private shareAclName: string;
 
   readonly tags$ = of(mapToOptions(smbAclTagLabels, this.translate));
-
+  readonly requiresRoles = [Role.SharingSmbWrite, Role.SharingWrite];
   readonly permissions$ = of([
     {
       label: 'FULL',
