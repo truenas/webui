@@ -121,7 +121,7 @@ describe('ServicesEffects', () => {
       actions$.next(checkIfServiceIsEnabled({ serviceName: ServiceName.Cifs }));
 
       const dispatchedAction = await firstValueFrom(spectator.service.checkIfServiceIsEnabled$);
-      expect(dispatchedAction).toEqual(serviceEnabled({ id: 4 }));
+      expect(dispatchedAction).toEqual(serviceEnabled());
 
       expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(StartServiceDialogComponent, {
         data: ServiceName.Cifs,
@@ -199,7 +199,7 @@ describe('ServicesEffects', () => {
       actions$.next(checkIfServiceIsEnabled({ serviceName: ServiceName.Cifs }));
 
       const dispatchedAction = await firstValueFrom(spectator.service.checkIfServiceIsEnabled$);
-      expect(dispatchedAction).toEqual(serviceEnabled({ id: 4 }));
+      expect(dispatchedAction).toEqual(serviceEnabled());
 
       expect(spectator.inject(MatDialog).open).not.toHaveBeenCalledWith(StartServiceDialogComponent, {
         data: ServiceName.Cifs,
