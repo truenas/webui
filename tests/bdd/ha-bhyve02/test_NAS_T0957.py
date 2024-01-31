@@ -125,6 +125,5 @@ def try_saving_a_blank_email(driver):
 @then('You should not be allowed to save a blank email')
 def You_should_not_be_allowed_to_save_a_blank_email(driver):
     """You should not be allowed to save a blank email."""
-    # Can't change the step above this as different behaviour than 23.10.1
-    assert wait_on_element_disappear(driver, 15, xpaths.progress.progressbar)
-    assert wait_on_element_disappear(driver, 5, xpaths.add_User.edit_Title)
+    assert wait_on_element(driver, 7, '//div[contains(.,"Not a valid E-Mail address")]')
+    driver.find_element_by_xpath(xpaths.button.close_Icon).click()
