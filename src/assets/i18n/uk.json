@@ -523,6 +523,7 @@
   "Select the minimum priority level to send to the remote syslog server.  The system only sends logs matching this level or higher.": "",
   "Sensitive": "",
   "Sent: {sent} Received: {received}": "",
+  "Service Name": "",
   "Service Read": "",
   "Service Write": "",
   "Service configuration saved": "",

@@ -1376,6 +1376,7 @@
   "Service = \"SMB\" AND Event = \"CLOSE\"": "",
   "Service Account Key": "",
   "Service CIDR": "",
+  "Service Name": "",
   "Service Read": "",
   "Service Write": "",
   "Service configuration saved": "",

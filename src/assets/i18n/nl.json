@@ -501,6 +501,7 @@
   "Sent: {sent} Received: {received}": "",
   "Service": "",
   "Service = \"SMB\" AND Event = \"CLOSE\"": "",
+  "Service Name": "",
   "Service Read": "",
   "Service Write": "",
   "Session ID": "",

@@ -37,7 +37,7 @@ export class AlertServiceListComponent implements OnInit {
 
   columns = createTable<AlertService>([
     textColumn({
-      title: this.translate.instant('Name'),
+      title: this.translate.instant('Service Name'),
       propertyName: 'name',
     }),
     textColumn({
@@ -82,13 +82,13 @@ export class AlertServiceListComponent implements OnInit {
   private alertServices: AlertService[] = [];
 
   constructor(
-    protected dialogService: DialogService,
+    protected emptyService: EmptyService,
     private errorHandler: ErrorHandlerService,
     private translate: TranslateService,
     private ws: WebSocketService,
     private slideInService: IxSlideInService,
+    private dialogService: DialogService,
     private cdr: ChangeDetectorRef,
-    protected emptyService: EmptyService,
   ) { }
 
   ngOnInit(): void {
@@ -141,8 +141,8 @@ export class AlertServiceListComponent implements OnInit {
       next: () => {
         this.getAlertServices();
       },
-      error: (err) => {
-        this.dialogService.error(this.errorHandler.parseError(err));
+      error: (error) => {
+        this.errorHandler.showErrorModal(error);
       },
     });
   }

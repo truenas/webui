@@ -1758,6 +1758,7 @@
   "Service Account Key": "",
   "Service CIDR": "",
   "Service Key": "",
+  "Service Name": "",
   "Service configuration saved": "",
   "Service failed to start": "",
   "Service failed to stop": "",
