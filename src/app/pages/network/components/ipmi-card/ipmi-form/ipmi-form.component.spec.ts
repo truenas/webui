@@ -184,7 +184,8 @@ describe('IpmiFormComponent', () => {
         ipaddress: '10.220.15.114',
         gateway: '10.220.0.1',
         netmask: '255.255.240.0',
-      }, false]);
+        apply_remote: false,
+      }]);
       expect(spectator.inject(IxSlideInRef).close).toHaveBeenCalled();
       expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Successfully saved IPMI settings.');
     });
@@ -207,7 +208,8 @@ describe('IpmiFormComponent', () => {
         ipaddress: '10.220.15.115',
         gateway: '10.220.0.2',
         netmask: '255.255.240.0',
-      }, true]);
+        apply_remote: true,
+      }]);
       expect(spectator.inject(IxSlideInRef).close).toHaveBeenCalled();
       expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Successfully saved IPMI settings.');
     });
