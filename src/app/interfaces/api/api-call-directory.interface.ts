@@ -515,7 +515,7 @@ export interface ApiCallDirectory {
   'ipmi.chassis.info': { params: void; response: IpmiChassis };
   'ipmi.is_loaded': { params: void; response: boolean };
   'ipmi.lan.query': { params: IpmiQueryParams; response: Ipmi[] };
-  'ipmi.lan.update': { params: [id: number, update: IpmiUpdate, apply_remote: boolean]; response: Ipmi };
+  'ipmi.lan.update': { params: [id: number, update: IpmiUpdate]; response: Ipmi };
 
   // iSCSI
   'iscsi.auth.create': { params: [IscsiAuthAccessUpdate]; response: IscsiAuthAccess };

@@ -31,6 +31,7 @@ export interface IpmiUpdate {
   netmask: string;
   vlan: unknown;
   password: string;
+  apply_remote: boolean;
 }
 
 export interface IpmiEvent {
