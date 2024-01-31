@@ -13,7 +13,7 @@ import { OnOff } from 'app/enums/on-off.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { Role } from 'app/enums/role.enum';
 import { helptextIpmi } from 'app/helptext/network/ipmi/ipmi';
-import { Ipmi, IpmiQueryParams, IpmiUpdate } from 'app/interfaces/ipmi.interface';
+import { Ipmi, IpmiQueryParams } from 'app/interfaces/ipmi.interface';
 import { RadioOption } from 'app/interfaces/option.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
@@ -231,10 +231,8 @@ export class IpmiFormComponent implements OnInit {
     if (!value.vlan) {
       delete value.vlan;
     }
-    const ipmiUpdate: IpmiUpdate = { ...value };
-    const applyRemote = this.form.controls.remoteController.value;
 
-    this.ws.call('ipmi.lan.update', [this.ipmiId, ipmiUpdate, applyRemote])
+    this.ws.call('ipmi.lan.update', [this.ipmiId, { ...value, apply_remote: this.form.controls.remoteController.value }])
       .pipe(untilDestroyed(this))
       .subscribe({
         next: () => {
