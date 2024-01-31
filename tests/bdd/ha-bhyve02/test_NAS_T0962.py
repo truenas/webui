@@ -86,10 +86,10 @@ def on_the_network_global_configuration_page_change_the_first_nameserver_to_name
 @then('remove nameserver 2 and nameserver 3 IPs')
 def remove_nameserver_2_and_nameserver_3_ips(driver):
     """remove nameserver 2 and nameserver 3 IPs."""
-    if is_element_present(driver, xpaths.global_Configuration.nameserver2_Input):
-        driver.find_element_by_xpath(xpaths.global_Configuration.nameserver2_Input).clear()
-    if is_element_present(driver, xpaths.global_Configuration.nameserver3_Input):
-        driver.find_element_by_xpath(xpaths.global_Configuration.nameserver3_Input).clear()
+    if is_element_present(driver, xpaths.global_Configuration.nameserver2_Delete):
+        driver.find_element_by_xpath(xpaths.global_Configuration.nameserver2_Delete).click()
+    if is_element_present(driver, xpaths.global_Configuration.nameserver3_Delete):
+        driver.find_element_by_xpath(xpaths.global_Configuration.nameserver3_Delete).click()
 
 
 @then('click Save, the progress bar should appear while settings are being applied')
