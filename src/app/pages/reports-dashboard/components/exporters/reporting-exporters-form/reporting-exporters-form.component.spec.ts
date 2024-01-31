@@ -4,7 +4,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { mockProvider, Spectator, createComponentFactory } from '@ngneat/spectator/jest';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { SchemaType } from 'app/enums/schema.enum';
 import { ReportingExporter, ReportingExporterKey } from 'app/interfaces/reporting-exporters.interface';
 import { Schema } from 'app/interfaces/schema.interface';
@@ -43,7 +43,7 @@ describe('ReportingExportersFormComponent', () => {
     ],
     providers: [
       mockProvider(IxSlideInRef),
-      mockWebsocket([
+      mockWebSocket([
         mockCall('reporting.exporters.exporter_schemas', [{
           key: ReportingExporterKey.Graphite,
           schema: [

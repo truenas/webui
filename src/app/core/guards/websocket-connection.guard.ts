@@ -4,14 +4,14 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { DialogService } from 'app/services/dialog.service';
-import { WebsocketConnectionService } from 'app/services/websocket-connection.service';
+import { WebSocketConnectionService } from 'app/services/websocket-connection.service';
 
 @UntilDestroy()
 @Injectable({ providedIn: 'root' })
-export class WebsocketConnectionGuard {
+export class WebSocketConnectionGuard {
   isConnected = false;
   constructor(
-    private wsManager: WebsocketConnectionService,
+    private wsManager: WebSocketConnectionService,
     protected router: Router,
     private matDialog: MatDialog,
     private dialogService: DialogService,

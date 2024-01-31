@@ -11,7 +11,7 @@ import {
 import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
 import { Role } from 'app/enums/role.enum';
 import { SmartTestType } from 'app/enums/smart-test-type.enum';
-import { IncomingWebsocketMessage } from 'app/interfaces/api-message.interface';
+import { IncomingWebSocketMessage } from 'app/interfaces/api-message.interface';
 import { ManualSmartTest } from 'app/interfaces/smart-test.interface';
 import { Disk } from 'app/interfaces/storage.interface';
 import { DialogService } from 'app/services/dialog.service';
@@ -93,7 +93,7 @@ export class ManualTestDialogComponent {
             map((event) => event.fields),
             takeWhile((result) => {
               const condition = result
-                && (result as unknown as IncomingWebsocketMessage).msg === IncomingApiMessageType.NoSub;
+                && (result as unknown as IncomingWebSocketMessage).msg === IncomingApiMessageType.NoSub;
               this.endedTests = condition;
               return !condition;
             }),

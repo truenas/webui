@@ -66,6 +66,10 @@ $scrollbar-offset: 20px;
     position: sticky;
     top: -16px;
     z-index: 2;
+
+    @media(max-width: $breakpoint-xs) {
+      top: -1px;
+    }
   }
 
   .close-details-container-mobile {

@@ -1,5 +1,5 @@
 import { Type } from 'ng-mocks';
-import { CloudsyncProviderName } from 'app/enums/cloudsync-provider.enum';
+import { CloudSyncProviderName } from 'app/enums/cloudsync-provider.enum';
 import { AzureProviderFormComponent } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/provider-forms/azure-provider-form/azure-provider-form.component';
 import { BackblazeB2ProviderFormComponent } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/provider-forms/backblaze-b2-provider-form/backblaze-b2-provider-form.component';
 import { BaseProviderFormComponent } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/provider-forms/base-provider-form';
@@ -17,31 +17,31 @@ import { StorjProviderFormComponent } from 'app/pages/credentials/backup-credent
 import { TokenProviderFormComponent } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/provider-forms/token-provider-form/token-provider-form.component';
 import { WebdavProviderFormComponent } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/provider-forms/webdav-provider-form/webdav-provider-form.component';
 
-export const cloudsyncProviderFormMap = new Map<CloudsyncProviderName, Type<BaseProviderFormComponent>>([
-  [CloudsyncProviderName.MicrosoftAzure, AzureProviderFormComponent],
-  [CloudsyncProviderName.BackblazeB2, BackblazeB2ProviderFormComponent],
-  [CloudsyncProviderName.Ftp, FtpProviderFormComponent],
-  [CloudsyncProviderName.GoogleCloudStorage, GoogleCloudProviderFormComponent],
-  [CloudsyncProviderName.GoogleDrive, GoogleDriveProviderFormComponent],
-  [CloudsyncProviderName.GooglePhotos, GooglePhotosProviderFormComponent],
-  [CloudsyncProviderName.Http, HttpProviderFormComponent],
-  [CloudsyncProviderName.Mega, MegaProviderFormComponent],
-  [CloudsyncProviderName.OpenstackSwift, OpenstackSwiftProviderFormComponent],
-  [CloudsyncProviderName.Pcloud, PcloudProviderFormComponent],
-  [CloudsyncProviderName.AmazonS3, S3ProviderFormComponent],
-  [CloudsyncProviderName.Sftp, SftpProviderFormComponent],
-  [CloudsyncProviderName.Storj, StorjProviderFormComponent],
-  [CloudsyncProviderName.Webdav, WebdavProviderFormComponent],
+export const cloudsyncProviderFormMap = new Map<CloudSyncProviderName, Type<BaseProviderFormComponent>>([
+  [CloudSyncProviderName.MicrosoftAzure, AzureProviderFormComponent],
+  [CloudSyncProviderName.BackblazeB2, BackblazeB2ProviderFormComponent],
+  [CloudSyncProviderName.Ftp, FtpProviderFormComponent],
+  [CloudSyncProviderName.GoogleCloudStorage, GoogleCloudProviderFormComponent],
+  [CloudSyncProviderName.GoogleDrive, GoogleDriveProviderFormComponent],
+  [CloudSyncProviderName.GooglePhotos, GooglePhotosProviderFormComponent],
+  [CloudSyncProviderName.Http, HttpProviderFormComponent],
+  [CloudSyncProviderName.Mega, MegaProviderFormComponent],
+  [CloudSyncProviderName.OpenstackSwift, OpenstackSwiftProviderFormComponent],
+  [CloudSyncProviderName.Pcloud, PcloudProviderFormComponent],
+  [CloudSyncProviderName.AmazonS3, S3ProviderFormComponent],
+  [CloudSyncProviderName.Sftp, SftpProviderFormComponent],
+  [CloudSyncProviderName.Storj, StorjProviderFormComponent],
+  [CloudSyncProviderName.Webdav, WebdavProviderFormComponent],
 ]);
 
 export const tokenOnlyProviders = [
-  CloudsyncProviderName.Box,
-  CloudsyncProviderName.Dropbox,
-  CloudsyncProviderName.Hubic,
-  CloudsyncProviderName.Yandex,
+  CloudSyncProviderName.Box,
+  CloudSyncProviderName.Dropbox,
+  CloudSyncProviderName.Hubic,
+  CloudSyncProviderName.Yandex,
 ];
 
-export function getProviderFormClass(providerName: CloudsyncProviderName): Type<BaseProviderFormComponent> {
+export function getProviderFormClass(providerName: CloudSyncProviderName): Type<BaseProviderFormComponent> {
   if (tokenOnlyProviders.includes(providerName)) {
     return TokenProviderFormComponent;
   }
@@ -75,8 +75,3 @@ export function getName(name: string, others: string[]): string {
 
   return result;
 }
-
-export const defaultCloudProvider = {
-  name: 'Storj',
-  provider: CloudsyncProviderName.Storj,
-};

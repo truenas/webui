@@ -4,8 +4,15 @@
   fxLayoutAlign="space-between center"
 >
   <h3 class="ix-formtitle">{{ title | translate }}</h3>
+
   <ng-container *ngIf="!disableClose">
-    <ix-icon name="cancel" id="ix-close-icon" (click)="close()"></ix-icon>
+    <ix-icon
+      tabindex="0"
+      name="cancel"
+      id="ix-close-icon"
+      (click)="close()"
+      (keydown.enter)="close()"
+    ></ix-icon>
   </ng-container>
 </div>
 

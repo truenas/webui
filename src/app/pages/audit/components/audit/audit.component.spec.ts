@@ -2,7 +2,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { MockComponents } from 'ng-mocks';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { AuditEvent, AuditService } from 'app/enums/audit.enum';
 import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
 import { AuditEntry } from 'app/interfaces/audit/audit.interface';
@@ -70,7 +70,7 @@ describe('AuditComponent', () => {
       ),
     ],
     providers: [
-      mockWebsocket([
+      mockWebSocket([
         mockCall('audit.query', (params) => {
           if (params[0]['query-options'].count) {
             // TODO: Not correct. Figure out how to solve this for query endpoints.

@@ -88,7 +88,6 @@ export class ZvolFormComponent implements OnInit {
   protected passphraseParent = false;
   protected encryptionType: 'key' | 'passphrase' = 'key';
   protected inheritEncryption = true;
-  protected nonEncryptedWarned = false;
   protected generateKey = true;
   protected minimumRecommendedBlockSize: DatasetRecordSize;
   protected origVolSize: number;

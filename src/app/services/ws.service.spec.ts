@@ -7,10 +7,10 @@ import {
 } from 'rxjs';
 import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
 import { JobState } from 'app/enums/job-state.enum';
-import { WebsocketConnectionService } from 'app/services/websocket-connection.service';
+import { WebSocketConnectionService } from 'app/services/websocket-connection.service';
 import { WebSocketService } from 'app/services/ws.service';
 
-const mockWebsocketConnectionService = {
+const mockWebSocketConnectionService = {
   send: jest.fn(),
   buildSubscriber: jest.fn().mockReturnValue(new Subject<unknown>()),
   websocket$: new BehaviorSubject<unknown>(null),
@@ -31,7 +31,7 @@ describe('WebSocketService', () => {
       providers: [
         WebSocketService,
         mockProvider(TranslateService),
-        { provide: WebsocketConnectionService, useValue: mockWebsocketConnectionService },
+        { provide: WebSocketConnectionService, useValue: mockWebSocketConnectionService },
       ],
     });
 
@@ -51,7 +51,7 @@ describe('WebSocketService', () => {
     it('should make a WS call and get a response', () => {
       const uuid = 'fakeUUID';
       jest.spyOn(UUID, 'UUID').mockReturnValue(uuid);
-      mockWebsocketConnectionService.websocket$.next({
+      mockWebSocketConnectionService.websocket$.next({
         id: uuid,
         msg: IncomingApiMessageType.Result,
         result: {},
@@ -61,13 +61,13 @@ describe('WebSocketService', () => {
         expect(result).toEqual({});
       });
 
-      expect(mockWebsocketConnectionService.send).toHaveBeenCalled();
+      expect(mockWebSocketConnectionService.send).toHaveBeenCalled();
     });
 
     it('should handle WS call errors', () => {
       const uuid = 'fakeUUID';
       jest.spyOn(UUID, 'UUID').mockReturnValue(uuid);
-      mockWebsocketConnectionService.websocket$.next({
+      mockWebSocketConnectionService.websocket$.next({
         id: uuid,
         msg: IncomingApiMessageType.Result,
         error: 'Test Error',
@@ -89,7 +89,7 @@ describe('WebSocketService', () => {
       const uuid = 'fakeUUID';
       const mockJobId = 1234;
       jest.spyOn(UUID, 'UUID').mockReturnValue(uuid);
-      mockWebsocketConnectionService.websocket$.next({
+      mockWebSocketConnectionService.websocket$.next({
         id: uuid,
         msg: IncomingApiMessageType.Result,
         result: mockJobId,
@@ -110,20 +110,20 @@ describe('WebSocketService', () => {
   describe('subscribe', () => {
     it('should successfully subscribe', () => {
       const eventData = { data: 'test' };
-      (mockWebsocketConnectionService.buildSubscriber() as Subject<unknown>).next(eventData);
+      (mockWebSocketConnectionService.buildSubscriber() as Subject<unknown>).next(eventData);
 
       service.subscribe('alert.list').subscribe((data) => {
         expect(data).toEqual(eventData);
       });
 
-      expect(mockWebsocketConnectionService.buildSubscriber).toHaveBeenCalled();
+      expect(mockWebSocketConnectionService.buildSubscriber).toHaveBeenCalled();
     });
   });
 
   describe('subscribeToLogs', () => {
     it('should successfully subscribe to logs', () => {
       const logData = { data: 'log test' };
-      (mockWebsocketConnectionService.buildSubscriber() as Subject<unknown>).next(logData);
+      (mockWebSocketConnectionService.buildSubscriber() as Subject<unknown>).next(logData);
 
       service.subscribeToLogs('logName').subscribe((data) => {
         expect(data).toEqual(logData);

@@ -8,8 +8,8 @@ import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
-import { CloudsyncProviderName } from 'app/enums/cloudsync-provider.enum';
+import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { CloudSyncProviderName } from 'app/enums/cloudsync-provider.enum';
 import { Direction } from 'app/enums/direction.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { TransferMode } from 'app/enums/transfer-mode.enum';
@@ -21,14 +21,14 @@ import { IxTable2Harness } from 'app/modules/ix-table2/components/ix-table2/ix-t
 import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
 import { selectJobs } from 'app/modules/jobs/store/job.selectors';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
-import { CloudsyncFormComponent } from 'app/pages/data-protection/cloudsync/cloudsync-form/cloudsync-form.component';
+import { CloudSyncFormComponent } from 'app/pages/data-protection/cloudsync/cloudsync-form/cloudsync-form.component';
 import {
-  CloudsyncRestoreDialogComponent,
+  CloudSyncRestoreDialogComponent,
 } from 'app/pages/data-protection/cloudsync/cloudsync-restore-dialog/cloudsync-restore-dialog.component';
 import {
   CloudSyncTaskCardComponent,
 } from 'app/pages/data-protection/cloudsync/cloudsync-task-card/cloudsync-task-card.component';
-import { CloudsyncWizardComponent } from 'app/pages/data-protection/cloudsync/cloudsync-wizard/cloudsync-wizard.component';
+import { CloudSyncWizardComponent } from 'app/pages/data-protection/cloudsync/cloudsync-wizard/cloudsync-wizard.component';
 import { DialogService } from 'app/services/dialog.service';
 import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -59,7 +59,7 @@ describe('CloudSyncTaskCardComponent', () => {
       credentials: {
         id: 1,
         name: 'Google Drive',
-        provider: CloudsyncProviderName.GoogleDrive,
+        provider: CloudSyncProviderName.GoogleDrive,
         attributes: {
           client_id: '',
           client_secret: '',
@@ -117,7 +117,7 @@ describe('CloudSyncTaskCardComponent', () => {
           },
         ],
       }),
-      mockWebsocket([
+      mockWebSocket([
         mockCall('cloudsync.query', cloudsyncTasks),
         mockCall('cloudsync.delete'),
         mockCall('cloudsync.update'),
@@ -168,7 +168,7 @@ describe('CloudSyncTaskCardComponent', () => {
     await editButton.click();
 
     expect(spectator.inject(IxChainedSlideInService).pushComponent).toHaveBeenCalledWith(
-      CloudsyncFormComponent,
+      CloudSyncFormComponent,
       true,
       cloudsyncTasks[0],
     );
@@ -179,7 +179,7 @@ describe('CloudSyncTaskCardComponent', () => {
     await addButton.click();
 
     expect(spectator.inject(IxChainedSlideInService).pushComponent).toHaveBeenCalledWith(
-      CloudsyncWizardComponent,
+      CloudSyncWizardComponent,
       true,
     );
   });
@@ -216,7 +216,7 @@ describe('CloudSyncTaskCardComponent', () => {
     const runNowButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'restore' }), 1, 6);
     await runNowButton.click();
 
-    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(CloudsyncRestoreDialogComponent, {
+    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(CloudSyncRestoreDialogComponent, {
       data: 3,
     });
   });

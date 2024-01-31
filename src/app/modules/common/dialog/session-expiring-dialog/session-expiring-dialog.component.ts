@@ -3,7 +3,6 @@ import {
   Component, Inject,
 } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { Router } from '@angular/router';
 import { ConfirmOptionsWithSecondaryCheckbox } from 'app/interfaces/dialog.interface';
 
 @Component({
@@ -15,12 +14,8 @@ import { ConfirmOptionsWithSecondaryCheckbox } from 'app/interfaces/dialog.inter
 export class SessionExpiringDialogComponent {
   options: ConfirmOptionsWithSecondaryCheckbox;
 
-  isSubmitEnabled = false;
-  isSecondaryCheckboxChecked = false;
-
   constructor(
     private dialogRef: MatDialogRef<SessionExpiringDialogComponent>,
-    private router: Router,
     @Inject(MAT_DIALOG_DATA) options: ConfirmOptionsWithSecondaryCheckbox,
   ) {
     this.options = { ...options };
@@ -32,6 +27,5 @@ export class SessionExpiringDialogComponent {
 
   viewSessionsCard(): void {
     this.extendSession();
-    this.router.navigate(['/system', 'advanced'], { fragment: 'access' });
   }
 }

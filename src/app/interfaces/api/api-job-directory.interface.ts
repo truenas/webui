@@ -1,5 +1,6 @@
 import { SetAcl } from 'app/interfaces/acl.interface';
-import { LeaveActiveDirectory } from 'app/interfaces/active-directory-config.interface';
+import { ActiveDirectoryConfig, LeaveActiveDirectory } from 'app/interfaces/active-directory-config.interface';
+import { ActiveDirectoryUpdate } from 'app/interfaces/active-directory.interface';
 import { AuditEntry } from 'app/interfaces/audit/audit.interface';
 import { Catalog, CatalogCreate } from 'app/interfaces/catalog.interface';
 import { Certificate, CertificateCreate, CertificateUpdate } from 'app/interfaces/certificate.interface';
@@ -32,6 +33,7 @@ import { IpmiEvent } from 'app/interfaces/ipmi.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { KmipConfig, KmipConfigUpdate } from 'app/interfaces/kmip-config.interface';
 import { KubernetesConfig, KubernetesConfigUpdate } from 'app/interfaces/kubernetes-config.interface';
+import { LdapConfig, LdapConfigUpdate } from 'app/interfaces/ldap-config.interface';
 import { MailConfigUpdate, SendMailParams } from 'app/interfaces/mail-config.interface';
 import { PoolExportParams } from 'app/interfaces/pool-export.interface';
 import { PoolFindResult, PoolImportParams } from 'app/interfaces/pool-import.interface';
@@ -54,6 +56,7 @@ import { AttachTicketParams, CreateNewTicket, NewTicketResponse } from 'app/modu
 
 export interface ApiJobDirectory {
   // Active Directory
+  'activedirectory.update': { params: [ActiveDirectoryUpdate]; response: ActiveDirectoryConfig };
   'activedirectory.leave': { params: [LeaveActiveDirectory]; response: void };
 
   // Audit
@@ -85,7 +88,7 @@ export interface ApiJobDirectory {
   'chart.release.update': { params: [name: string, update: ChartReleaseUpdate]; response: ChartRelease };
   'chart.release.upgrade': { params: [name: string, upgrade: ChartReleaseUpgrade]; response: ChartRelease };
 
-  // Cloudsync
+  // CloudSync
   'cloudsync.sync': { params: [id: number, params?: { dry_run: boolean }]; response: number };
   'cloudsync.sync_onetime': { params: [task: CloudSyncTaskUpdate, params: { dry_run?: boolean }]; response: void };
 
@@ -125,6 +128,9 @@ export interface ApiJobDirectory {
 
   // Kubernetes
   'kubernetes.update': { params: [Partial<KubernetesConfigUpdate>]; response: KubernetesConfig };
+
+  // LDAP
+  'ldap.update': { params: [LdapConfigUpdate]; response: LdapConfig };
 
   // Mail
   'mail.send': { params: [SendMailParams, MailConfigUpdate]; response: boolean };
@@ -190,3 +196,4 @@ export interface ApiJobDirectory {
 
 export type ApiJobMethod = keyof ApiJobDirectory;
 export type ApiJobParams<T extends ApiJobMethod> = ApiJobDirectory[T]['params'];
+export type ApiJobResponse<T extends ApiJobMethod> = ApiJobDirectory[T]['response'];

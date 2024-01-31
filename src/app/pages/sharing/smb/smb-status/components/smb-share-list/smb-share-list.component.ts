@@ -15,6 +15,7 @@ import { WebSocketService } from 'app/services/ws.service';
 @UntilDestroy()
 @Component({
   selector: 'ix-smb-share-list',
+  styleUrls: ['./smb-share-list.component.scss'],
   templateUrl: './smb-share-list.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

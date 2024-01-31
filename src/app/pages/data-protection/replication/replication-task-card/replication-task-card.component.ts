@@ -43,7 +43,6 @@ import { AppState } from 'app/store';
 export class ReplicationTaskCardComponent implements OnInit {
   dataProvider: AsyncDataProvider<ReplicationTaskUi>;
   jobStates = new Map<number, string>();
-  readonly jobState = JobState;
   readonly requiresRoles = [Role.ReplicationTaskWrite, Role.ReplicationTaskWritePull];
 
   columns = createTable<ReplicationTaskUi>([

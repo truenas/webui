@@ -181,7 +181,7 @@ def the_following_message_network_changes_have_been_applied_keep_changes_permane
 @then('You should be able to select keep network change permanently.')
 def you_should_be_able_to_select_keep_network_change_permanently(driver):
     """You should be able to select keep network change permanently."""
-    wait_on_element(driver, 0.5, 30, '//h1[contains(.,"Save Changes")]')
+    wait_on_element(driver, 0.5, 30, xpaths.popup.save_changes)
     driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
 
 

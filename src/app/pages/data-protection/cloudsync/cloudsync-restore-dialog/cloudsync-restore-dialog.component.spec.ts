@@ -4,7 +4,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { TransferMode } from 'app/enums/transfer-mode.enum';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
@@ -15,13 +15,13 @@ import {
 import { DialogService } from 'app/services/dialog.service';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { WebSocketService } from 'app/services/ws.service';
-import { CloudsyncRestoreDialogComponent } from './cloudsync-restore-dialog.component';
+import { CloudSyncRestoreDialogComponent } from './cloudsync-restore-dialog.component';
 
-describe('CloudsyncRestoreDialogComponent', () => {
-  let spectator: Spectator<CloudsyncRestoreDialogComponent>;
+describe('CloudSyncRestoreDialogComponent', () => {
+  let spectator: Spectator<CloudSyncRestoreDialogComponent>;
   let loader: HarnessLoader;
   const createComponent = createComponentFactory({
-    component: CloudsyncRestoreDialogComponent,
+    component: CloudSyncRestoreDialogComponent,
     imports: [
       ReactiveFormsModule,
       IxFormsModule,
@@ -31,7 +31,7 @@ describe('CloudsyncRestoreDialogComponent', () => {
       TransferModeExplanationComponent,
     ],
     providers: [
-      mockWebsocket([
+      mockWebSocket([
         mockCall('cloudsync.restore'),
       ]),
       mockProvider(DialogService),

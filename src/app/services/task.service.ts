@@ -124,20 +124,6 @@ export class TaskService {
     return this.timeOptions;
   }
 
-  /**
-   * Takes a cron expression and returns an array of Date objects
-   * representing future scheduled runs.
-   * @param scheduleExpression A cron expression such as `0 0 * * mon`
-   * @param count The desired number of future runs
-   */
-  getTaskNextRuns(scheduleExpression: string, count = 10): Date[] {
-    const schedule = cronParser.parseExpression(scheduleExpression, { iterator: true });
-
-    return new Array(count)
-      .fill(null)
-      .map(() => schedule.next().value.toDate());
-  }
-
   getTaskNextRun(scheduleExpression: string): string {
     const schedule = cronParser.parseExpression(scheduleExpression, {
       iterator: true,

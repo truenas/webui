@@ -6,7 +6,7 @@ import { ScrubListComponent } from 'app/pages/data-protection/scrub-task/scrub-l
 import { SmartTaskListComponent } from 'app/pages/data-protection/smart-task/smart-task-list/smart-task-list.component';
 import { SnapshotTaskListComponent } from 'app/pages/data-protection/snapshot-task/snapshot-task-list/snapshot-task-list.component';
 import { VmwareSnapshotListComponent } from 'app/pages/data-protection/vmware-snapshot/vmware-snapshot-list/vmware-snapshot-list.component';
-import { CloudsyncListComponent } from './cloudsync/cloudsync-list/cloudsync-list.component';
+import { CloudSyncListComponent } from './cloudsync/cloudsync-list/cloudsync-list.component';
 import { ReplicationListComponent } from './replication/replication-list/replication-list.component';
 import { ReplicationWizardComponent } from './replication/replication-wizard/replication-wizard.component';
 import { ResilverConfigComponent } from './scrub-task/resilver-config/resilver-config.component';
@@ -24,11 +24,11 @@ export const dataProtectionRoutes: Routes = [{
       data: { title: T('Cloud Sync Tasks'), breadcrumb: null, icon: 'event_note' },
       children: [{
         path: '',
-        component: CloudsyncListComponent,
+        component: CloudSyncListComponent,
         data: { title: T('Cloud Sync Tasks'), breadcrumb: null },
       }, {
         path: ':dataset',
-        component: CloudsyncListComponent,
+        component: CloudSyncListComponent,
         data: { title: T('Cloud Sync Tasks'), breadcrumb: null },
       }],
     }, {

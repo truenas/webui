@@ -133,14 +133,6 @@ export class FeedbackService {
     });
   }
 
-  getOauthToken(): string {
-    return this.oauthToken$.getValue();
-  }
-
-  setOauthToken(token: string): void {
-    this.oauthToken$.next(token);
-  }
-
   checkIfReviewAllowed(): Observable<boolean> {
     if (this.isFeedbackAllowed !== undefined) {
       return of(this.isFeedbackAllowed);
@@ -371,7 +363,7 @@ export class FeedbackService {
     attachment: File;
     token?: string;
   }): Observable<boolean> {
-    return this.fileUpload.upload2(attachment, 'support.attach_ticket', [{
+    return this.fileUpload.upload(attachment, 'support.attach_ticket', [{
       token,
       ticket: ticketId,
       filename: attachment.name,

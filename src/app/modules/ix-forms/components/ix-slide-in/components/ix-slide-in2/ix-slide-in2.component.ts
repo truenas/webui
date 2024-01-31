@@ -47,7 +47,6 @@ export class IxSlideIn2Component implements OnInit, OnDestroy {
   private element: HTMLElement;
   private wasBodyCleared = false;
   private timeOutOfClear: Subscription;
-  counterId = 0;
 
   constructor(
     private el: ElementRef,

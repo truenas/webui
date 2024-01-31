@@ -4,7 +4,7 @@ import {
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { combineLatest } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
-import { WebsocketConnectionService } from 'app/services/websocket-connection.service';
+import { WebSocketConnectionService } from 'app/services/websocket-connection.service';
 import { SigninStore } from 'app/views/sessions/signin/store/signin.store';
 
 @UntilDestroy()
@@ -24,7 +24,7 @@ export class SigninComponent implements OnInit {
   );
 
   constructor(
-    private wsManager: WebsocketConnectionService,
+    private wsManager: WebSocketConnectionService,
     private signinStore: SigninStore,
   ) {}
 

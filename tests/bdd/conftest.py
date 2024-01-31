@@ -81,10 +81,10 @@ def browser():
     firefox_capabilities['marionette'] = True
     firefox_capabilities['firefox_profile'] = profile.encoded
     firefox_capabilities['binary'] = binary
-    web_driver = webdriver.Firefox(capabilities=firefox_capabilities)
-    web_driver.set_window_size(1920, 1080)
-    web_driver.implicitly_wait(2)
-    return web_driver
+    driver = webdriver.Firefox(capabilities=firefox_capabilities)
+    driver.set_window_size(1920, 1080)
+    driver.implicitly_wait(2)
+    return driver
 
 
 web_driver = browser()
@@ -100,7 +100,7 @@ def driver():
 #     web_driver.quit()
 
 
-@pytest.mark.hookwrapper
+@pytest.hookimpl(hookwrapper=True)
 def pytest_runtest_makereport(item):
     """
     Extends the PyTest Plugin to take and embed screenshot whenever test fails.

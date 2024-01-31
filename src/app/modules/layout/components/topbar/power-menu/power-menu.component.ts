@@ -6,7 +6,7 @@ import { filter } from 'rxjs/operators';
 import { helptextTopbar } from 'app/helptext/topbar';
 import { AuthService } from 'app/services/auth/auth.service';
 import { DialogService } from 'app/services/dialog.service';
-import { WebsocketConnectionService } from 'app/services/websocket-connection.service';
+import { WebSocketConnectionService } from 'app/services/websocket-connection.service';
 
 @UntilDestroy()
 @Component({
@@ -24,7 +24,7 @@ export class PowerMenuComponent {
     private translate: TranslateService,
     private dialogService: DialogService,
     private router: Router,
-    private wsManager: WebsocketConnectionService,
+    private wsManager: WebSocketConnectionService,
   ) { }
 
   onSignOut(): void {

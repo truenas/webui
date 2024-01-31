@@ -6,9 +6,9 @@ import { MatDialog } from '@angular/material/dialog';
 import { createComponentFactory, Spectator, mockProvider } from '@ngneat/spectator/jest';
 import { Store, StoreModule } from '@ngrx/store';
 import { of } from 'rxjs';
-import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
+import { MockWebSocketService } from 'app/core/testing/classes/mock-websocket.service';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import {
   LacpduRate,
   LinkAggregationProtocol, NetworkInterfaceAliasType,
@@ -72,7 +72,7 @@ describe('InterfaceFormComponent', () => {
             },
             isHaLicensed: true,
             isUpgradePending: false,
-            hasOnlyMissmatchVersionsReason: false,
+            hasOnlyMismatchVersionsReason: false,
           },
         },
       }),
@@ -87,7 +87,7 @@ describe('InterfaceFormComponent', () => {
           dispatch: jest.fn(),
         },
       },
-      mockWebsocket([
+      mockWebSocket([
         mockCall('interface.xmit_hash_policy_choices', {
           [XmitHashPolicy.Layer2]: XmitHashPolicy.Layer2,
           [XmitHashPolicy.Layer2Plus3]: XmitHashPolicy.Layer2Plus3,
@@ -412,7 +412,7 @@ describe('InterfaceFormComponent', () => {
     });
 
     beforeEach(() => {
-      const websocketMock = spectator.inject(MockWebsocketService);
+      const websocketMock = spectator.inject(MockWebSocketService);
       websocketMock.mockCall('failover.licensed', true);
       spectator.component.ngOnInit();
     });
