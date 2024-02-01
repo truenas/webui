@@ -1,6 +1,6 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
-export const helptextCloudsync = {
+export const helptextCloudSync = {
   fieldset_transfer: T('Transfer'),
   fieldset_remote: T('Remote'),
   fieldset_control: T('Control'),

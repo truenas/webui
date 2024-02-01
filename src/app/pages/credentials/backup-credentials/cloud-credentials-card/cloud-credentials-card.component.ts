@@ -5,7 +5,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { switchMap, filter, tap } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
-import { CloudsyncCredential } from 'app/interfaces/cloudsync-credential.interface';
+import { CloudSyncCredential } from 'app/interfaces/cloudsync-credential.interface';
 import { AsyncDataProvider } from 'app/modules/ix-table2/classes/async-data-provider/async-data-provider';
 import { actionsColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
 import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
@@ -27,10 +27,10 @@ import { WebSocketService } from 'app/services/ws.service';
   providers: [CloudCredentialService],
 })
 export class CloudCredentialsCardComponent implements OnInit {
-  dataProvider: AsyncDataProvider<CloudsyncCredential>;
+  dataProvider: AsyncDataProvider<CloudSyncCredential>;
   providers = new Map<string, string>();
-  credentials: CloudsyncCredential[] = [];
-  columns = createTable<CloudsyncCredential>([
+  credentials: CloudSyncCredential[] = [];
+  columns = createTable<CloudSyncCredential>([
     textColumn({
       title: this.translate.instant('Name'),
       propertyName: 'name',
@@ -75,7 +75,7 @@ export class CloudCredentialsCardComponent implements OnInit {
       tap((credentials) => this.credentials = credentials),
       untilDestroyed(this),
     );
-    this.dataProvider = new AsyncDataProvider<CloudsyncCredential>(credentials$);
+    this.dataProvider = new AsyncDataProvider<CloudSyncCredential>(credentials$);
     this.setDefaultSort();
     this.getCredentials();
 
@@ -107,14 +107,14 @@ export class CloudCredentialsCardComponent implements OnInit {
     });
   }
 
-  doEdit(credential: CloudsyncCredential): void {
+  doEdit(credential: CloudSyncCredential): void {
     const close$ = this.chainedSlideinService.pushComponent(CloudCredentialsFormComponent, false, credential);
     close$.pipe(filter((response) => !!response.response), untilDestroyed(this)).subscribe(() => {
       this.getCredentials();
     });
   }
 
-  doDelete(credential: CloudsyncCredential): void {
+  doDelete(credential: CloudSyncCredential): void {
     this.dialog
       .confirm({
         title: this.translate.instant('Delete Cloud Credential'),

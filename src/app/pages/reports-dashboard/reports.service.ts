@@ -32,16 +32,16 @@ export class ReportsService {
     this.ws.call('reporting.netdata_graphs').subscribe((reportingGraphs) => {
       this.hasUps = reportingGraphs.some((graph) => graph.name.startsWith(ReportingGraphName.Ups));
       this.hasTarget = reportingGraphs.some((graph) => {
-        return (graph.name as ReportingGraphName) === ReportingGraphName.Target;
+        return graph.name === ReportingGraphName.Target;
       });
       this.hasNfs = reportingGraphs.some((graph) => {
         return [
           ReportingGraphName.NfsStat,
           ReportingGraphName.NfsStatBytes,
-        ].includes(graph.name as ReportingGraphName);
+        ].includes(graph.name);
       });
       this.hasPartitions = reportingGraphs.some((graph) => {
-        return (graph.name as ReportingGraphName) === ReportingGraphName.Partition;
+        return graph.name === ReportingGraphName.Partition;
       });
       this.reportingGraphs$.next(reportingGraphs);
     });
@@ -136,7 +136,8 @@ export class ReportsService {
           .map((disk) => {
             const [value] = disk.devname.split(' ');
             return { label: disk.devname, value };
-          });
+          })
+          .sort((a, b) => a.label.localeCompare(b.label));
       }),
       shareReplay({ refCount: true, bufferSize: 1 }),
     );

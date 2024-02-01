@@ -88,7 +88,6 @@
                   ></ix-icon>
                 </ng-template>
               </div>
-
               <div
                 class="content-left"
                 fxFlex.gt-xs="60"
@@ -109,7 +108,7 @@
                     [id]="productModel"
                     [class.clickable]="enclosureSupport"
                     [matTooltipDisabled]="!enclosureSupport"
-                    [src]="'assets/images' + productImage"
+                    [src]="productImageSrc"
                     [src-fallback]="'assets/images/truenas_scale_ondark_favicon.png'"
                     (click)="goToEnclosure()"
                   />
@@ -179,7 +178,7 @@
               </div>
 
               <div
-                *ngIf="!systemInfo || (isHaLicensed && isPassive && !hasHa)"
+                *ngIf="!systemInfo && isHaLicensed && isPassive && !hasHa"
                 class="data-container ha-status"
                 fxFlex
               >

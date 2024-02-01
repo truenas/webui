@@ -90,7 +90,7 @@ describe('PoolsDashboardStore', () => {
 
   it('loads pool topology and root datasets and sets loading indicators when loadNodes is called', () => {
     testScheduler.run(({ cold, expectObservable }) => {
-      const mockWebsocket = spectator.inject(WebSocketService);
+      const mockWebSocket = spectator.inject(WebSocketService);
       const pools = [
         { name: 'pool1' },
         { name: 'pool2' },
@@ -99,7 +99,7 @@ describe('PoolsDashboardStore', () => {
         { id: 'pool1' },
         { id: 'pool2' },
       ] as Dataset[];
-      jest.spyOn(mockWebsocket, 'call').mockImplementation((method: string) => {
+      jest.spyOn(mockWebSocket, 'call').mockImplementation((method: string) => {
         switch (method) {
           case 'pool.dataset.query':
             return cold('-a|', { a: rootDatasets });

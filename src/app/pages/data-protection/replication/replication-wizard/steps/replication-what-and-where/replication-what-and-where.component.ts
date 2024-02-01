@@ -7,19 +7,23 @@ import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import {
-  debounceTime, map, merge, Observable, of,
+  debounceTime, map, merge, Observable, of, switchMap,
 } from 'rxjs';
 import { DatasetSource } from 'app/enums/dataset.enum';
 import { Direction } from 'app/enums/direction.enum';
 import { EncryptionKeyFormat } from 'app/enums/encryption-key-format.enum';
 import { mntPath } from 'app/enums/mnt-path.enum';
+import { Role } from 'app/enums/role.enum';
 import { SnapshotNamingOption } from 'app/enums/snapshot-naming-option.enum';
 import { TransportMode } from 'app/enums/transport-mode.enum';
 import { helptextReplicationWizard } from 'app/helptext/data-protection/replication/replication-wizard';
+import { CountManualSnapshotsParams, EligibleManualSnapshotsCount } from 'app/interfaces/count-manual-snapshots.interface';
 import { KeychainSshCredentials } from 'app/interfaces/keychain-credential.interface';
 import { newOption, Option } from 'app/interfaces/option.interface';
 import { ReplicationTask } from 'app/interfaces/replication-task.interface';
+import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { SummaryProvider, SummarySection } from 'app/modules/common/summary/summary.interface';
+import { ixManualValidateError } from 'app/modules/ix-forms/components/ix-errors/ix-errors.component';
 import { TreeNodeProvider } from 'app/modules/ix-forms/components/ix-explorer/tree-node-provider.interface';
 import { CHAINED_SLIDE_IN_REF } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import {
@@ -367,6 +371,60 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
   }
 
   getSnapshots(): void {
+    const value = this.form.value;
+    let transport = value.transport || TransportMode.Local;
+    if (value.ssh_credentials_target) {
+      transport = TransportMode.Local;
+    }
+
+    const payload: CountManualSnapshotsParams = {
+      datasets: value.source_datasets?.map((item) => item.replace(`${mntPath}/`, '')) || [],
+      transport: value.ssh_credentials_target ? TransportMode.Local : transport,
+      ssh_credentials: transport === TransportMode.Local ? null : value.ssh_credentials_source as number,
+    };
+
+    if (value.schema_or_regex === SnapshotNamingOption.NameRegex) {
+      payload.name_regex = value.name_regex;
+    } else {
+      payload.naming_schema = value.naming_schema ? value.naming_schema?.split(' ') : [this.defaultNamingSchema];
+    }
+
+    if (payload.datasets.length > 0 && (payload.naming_schema || payload.name_regex)) {
+      this.authService.hasRole([
+        Role.ReplicationTaskWrite,
+        Role.ReplicationTaskWritePull,
+      ]).pipe(
+        switchMap((hasRole) => {
+          if (hasRole) {
+            return this.ws.call('replication.count_eligible_manual_snapshots', [payload]);
+          }
+          return of({ eligible: 0, total: 0 });
+        }),
+        untilDestroyed(this),
+      ).subscribe({
+        next: (snapshotCount: EligibleManualSnapshotsCount) => {
+          let snapexpl = '';
+          this.isSnapshotsWarning = false;
+          if (snapshotCount.eligible === 0) {
+            if (value.source_datasets_from === DatasetSource.Local) {
+              snapexpl = this.translate.instant('Snapshots will be created automatically.');
+            } else {
+              this.isSnapshotsWarning = true;
+            }
+          }
+          this.snapshotsText = `${this.translate.instant('{count} snapshots found.', { count: snapshotCount.eligible })} ${snapexpl}`;
+          this.cdr.markForCheck();
+        },
+        error: (error: WebSocketError) => {
+          this.snapshotsText = '';
+          this.form.controls.source_datasets.setErrors({ [ixManualValidateError]: { message: error.reason } });
+          this.cdr.markForCheck();
+        },
+      });
+    } else {
+      this.snapshotsText = '';
+      this.cdr.markForCheck();
+    }
   }
 
   checkCustomVisible(): void {

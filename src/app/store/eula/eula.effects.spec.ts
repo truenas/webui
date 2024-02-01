@@ -3,7 +3,7 @@ import { provideMockActions } from '@ngrx/effects/testing';
 import { of, ReplaySubject } from 'rxjs';
 import { MockAuthService } from 'app/core/testing/classes/mock-auth.service';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { Role } from 'app/enums/role.enum';
 import { DialogService } from 'app/services/dialog.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
@@ -18,7 +18,7 @@ describe('EulaEffects', () => {
     service: EulaEffects,
     providers: [
       provideMockActions(() => actions$),
-      mockWebsocket([
+      mockWebSocket([
         mockCall('truenas.get_eula', 'Please do not sue us.'),
         mockCall('truenas.accept_eula'),
         mockCall('truenas.is_eula_accepted', false),
@@ -53,7 +53,7 @@ describe('EulaEffects', () => {
     jest.clearAllMocks();
 
     const authMock = spectator.inject(MockAuthService);
-    authMock.setRoles([Role.Readonly]);
+    authMock.setRoles([Role.ReadonlyAdmin]);
     actions$.next(adminUiInitialized());
 
     expect(spectator.inject(WebSocketService).call).not.toHaveBeenCalledWith('truenas.is_eula_accepted');

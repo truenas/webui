@@ -29,13 +29,21 @@
 
 .ix-slide-in2-form.open.wide {
   width: 800px;
+
+  @media(max-width: $breakpoint-sm) {
+    width: 100%;
+  }
 }
 
-.ix-slide-in2-body {
+:host ::ng-deep .ix-slide-in2-body {
   background: #fff;
   /* margin exposes part of the modal background */
   margin: 40px;
   padding: 0 20px 20px;
+
+  .mat-mdc-card {
+    margin: 0;
+  }
 }
 
 .ix-slide-in2-form .ix-slide-in2-body {
@@ -67,8 +75,8 @@
 
 @media #{$media-lt-sm} {
   .ix-slide-in2-form {
-    min-width: auto;
-    width: auto;
+    min-width: 100%;
+    width: 100%;
   }
 }
 

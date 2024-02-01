@@ -95,45 +95,6 @@ export class ApplicationsService {
     return this.ws.call('app.similar', [app.name, app.catalog, app.train]);
   }
 
-  private getAppsFetchCall(
-    endPoint: 'app.available' | 'app.latest',
-    filters?: AppsFiltersValues,
-  ): Observable<AvailableApp[]> {
-    if (filters && !filters.categories?.length) {
-      delete filters.categories;
-    }
-    if (filters && !filters.catalogs?.length) {
-      delete filters.catalogs;
-    }
-    if (filters && !filters.sort?.length) {
-      delete filters.sort;
-    }
-    if (!filters || (filters && !Object.keys(filters).length)) {
-      return this.ws.call(endPoint).pipe(filterIgnoredApps());
-    }
-
-    const firstOption: QueryFilters<AvailableApp> = [];
-    if (filters.catalogs?.length) {
-      firstOption.push(['catalog', 'in', filters.catalogs]);
-    }
-
-    if (filters.categories?.includes(AppExtraCategory.Recommended)) {
-      firstOption.push(['recommended', '=', true]);
-    }
-
-    filters.categories = filters.categories?.filter((category) => !category?.includes(AppExtraCategory.Recommended));
-
-    if (filters.categories?.length) {
-      firstOption.push(
-        ['OR', filters.categories.map((category) => ['categories', 'rin', category])] as QueryFilters<AvailableApp>,
-      );
-    }
-
-    const secondOption = filters.sort ? { order_by: [filters.sort] } : {};
-
-    return this.ws.call(endPoint, [firstOption, secondOption]).pipe(filterIgnoredApps());
-  }
-
   getAllChartReleases(): Observable<ChartRelease[]> {
     const secondOption = { extra: { history: true, stats: true } };
     return this.ws.call('chart.release.query', [[], secondOption]);
@@ -178,13 +139,6 @@ export class ApplicationsService {
     return this.ws.call('chart.release.upgrade_summary', payload);
   }
 
-  getChartReleaesUsingChartReleaseImages(name: string): Observable<Choices> {
-    return this.ws.call(
-      'chart.release.get_chart_releases_using_chart_release_images',
-      [name],
-    );
-  }
-
   startApplication(name: string): Observable<Job<ChartScaleResult>> {
     return this.ws.job('chart.release.scale', [name, { replica_count: 1 }]);
   }
@@ -202,5 +156,44 @@ export class ApplicationsService {
     if (diff < day * 14) { return this.translate.instant('Last week'); }
     if (diff < day * 60) { return this.translate.instant('Last month'); }
     return this.translate.instant('Long time ago');
+  }
+
+  private getAppsFetchCall(
+    endPoint: 'app.available' | 'app.latest',
+    filters?: AppsFiltersValues,
+  ): Observable<AvailableApp[]> {
+    if (filters && !filters.categories?.length) {
+      delete filters.categories;
+    }
+    if (filters && !filters.catalogs?.length) {
+      delete filters.catalogs;
+    }
+    if (filters && !filters.sort?.length) {
+      delete filters.sort;
+    }
+    if (!filters || (filters && !Object.keys(filters).length)) {
+      return this.ws.call(endPoint).pipe(filterIgnoredApps());
+    }
+
+    const firstOption: QueryFilters<AvailableApp> = [];
+    if (filters.catalogs?.length) {
+      firstOption.push(['catalog', 'in', filters.catalogs]);
+    }
+
+    if (filters.categories?.includes(AppExtraCategory.Recommended)) {
+      firstOption.push(['recommended', '=', true]);
+    }
+
+    filters.categories = filters.categories?.filter((category) => !category?.includes(AppExtraCategory.Recommended));
+
+    if (filters.categories?.length) {
+      firstOption.push(
+        ['OR', filters.categories.map((category) => ['categories', 'rin', category])] as QueryFilters<AvailableApp>,
+      );
+    }
+
+    const secondOption = filters.sort ? { order_by: [filters.sort] } : {};
+
+    return this.ws.call(endPoint, [firstOption, secondOption]).pipe(filterIgnoredApps());
   }
 }

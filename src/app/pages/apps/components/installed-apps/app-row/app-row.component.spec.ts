@@ -2,6 +2,7 @@ import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { MockComponents } from 'ng-mocks';
 import { ImgFallbackModule } from 'ngx-img-fallback';
 import { officialCatalog } from 'app/constants/catalog.constants';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { ChartReleaseStatus } from 'app/enums/chart-release-status.enum';
 import { ChartRelease } from 'app/interfaces/chart-release.interface';
 import { AppRowComponent } from 'app/pages/apps/components/installed-apps/app-row/app-row.component';
@@ -18,7 +19,7 @@ describe('AppRowComponent', () => {
     catalog: officialCatalog,
     stats: {
       cpu: 50.155,
-      memory: 20,
+      memory: 20000000,
       network: {
         incoming: 50000000,
         outgoing: 55500000,
@@ -33,6 +34,9 @@ describe('AppRowComponent', () => {
     imports: [ImgFallbackModule, AppCatalogPipe],
     declarations: [
       MockComponents(AppStatusCellComponent),
+    ],
+    providers: [
+      mockAuth(),
     ],
   });
 
@@ -60,7 +64,7 @@ describe('AppRowComponent', () => {
 
   it('checks usage columns', () => {
     expect(spectator.query('.cell-cpu')).toHaveText('50%');
-    expect(spectator.query('.cell-ram')).toHaveText('20 MiB');
+    expect(spectator.query('.cell-ram')).toHaveText('19.07 MiB');
     expect(spectator.query('.cell-network')).toHaveText('47.68 MiB / 52.93 MiB');
   });
 });

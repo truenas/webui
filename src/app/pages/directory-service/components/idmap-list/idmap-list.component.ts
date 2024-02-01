@@ -37,8 +37,6 @@ import { WebSocketService } from 'app/services/ws.service';
 export class IdmapListComponent implements OnInit {
   @Input() paginator = true;
   @Input() toolbar = false;
-  requiredIdmapDomains = requiredIdmapDomains as string[];
-  IdmapName = IdmapName;
   filterString = '';
   dataProvider: AsyncDataProvider<IdmapRow>;
   idmaps: IdmapRow[] = [];

@@ -34,7 +34,7 @@
 </div>
 <div class="cell cell-ram" [matTooltip]="'Memory usage of app' | translate">
   <span *ngIf="app.stats && app.stats.memory !== undefined; else notAvailable">
-    {{ (app.stats.memory) * 1048576 | filesize: { standard: 'iec' } }}
+    {{ app.stats.memory | filesize: { standard: 'iec' } }}
   </span>
 </div>
 <div class="cell cell-network" [matTooltip]="'Incoming / Outgoing network traffic' | translate">
@@ -54,7 +54,7 @@
     ></ix-icon>
   </ng-container>
 </div>
-<div class="cell cell-action">
+<div *ixRequiresRoles="requiredRoles" class="cell cell-action">
   <button
     *ngIf="isAppStopped"
     mat-icon-button

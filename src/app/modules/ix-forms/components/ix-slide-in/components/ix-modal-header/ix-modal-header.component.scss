@@ -23,6 +23,11 @@
 #ix-close-icon {
   color: var(--fg1);
   cursor: pointer;
+
+  &:focus {
+    border-radius: 50%;
+    outline: 1.5px solid var(--primary);
+  }
 }
 
 mat-progress-bar {

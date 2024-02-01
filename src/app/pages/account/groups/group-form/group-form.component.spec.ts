@@ -8,7 +8,7 @@ import {
 import { provideMockStore } from '@ngrx/store/testing';
 import { allCommands } from 'app/constants/all-commands.constant';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { Role } from 'app/enums/role.enum';
 import { Group } from 'app/interfaces/group.interface';
 import { Privilege } from 'app/interfaces/privilege.interface';
@@ -33,7 +33,7 @@ describe('GroupFormComponent', () => {
       web_shell: true,
       local_groups: [{ gid: 1111, group: 'Group A' }, { gid: 2222, group: 'Group B' }],
       ds_groups: [],
-      roles: [Role.SharingManager],
+      roles: [Role.SharingAdmin],
     },
     {
       id: 2,
@@ -41,7 +41,7 @@ describe('GroupFormComponent', () => {
       web_shell: false,
       local_groups: [],
       ds_groups: [],
-      roles: [Role.FullAdmin, Role.Readonly],
+      roles: [Role.FullAdmin, Role.ReadonlyAdmin],
     },
   ] as Privilege[];
 
@@ -62,7 +62,7 @@ describe('GroupFormComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
-      mockWebsocket([
+      mockWebSocket([
         mockCall('group.query', [{ group: 'existing', gid: 1111 }] as Group[]),
         mockCall('privilege.query', fakePrivilegeDataSource),
         mockCall('group.create', 1111),
@@ -181,7 +181,7 @@ describe('GroupFormComponent', () => {
       ]);
 
       expect(ws.call).toHaveBeenCalledWith('privilege.update', [1, {
-        ds_groups: [], local_groups: [2222], name: 'Privilege 1', roles: ['SHARING_MANAGER'], web_shell: true,
+        ds_groups: [], local_groups: [2222], name: 'Privilege 1', roles: ['SHARING_ADMIN'], web_shell: true,
       }]);
     });
 
@@ -198,7 +198,7 @@ describe('GroupFormComponent', () => {
       await saveButton.click();
 
       expect(ws.call).toHaveBeenCalledWith('privilege.update', [1, {
-        ds_groups: [], local_groups: [2222], name: 'Privilege 1', roles: ['SHARING_MANAGER'], web_shell: true,
+        ds_groups: [], local_groups: [2222], name: 'Privilege 1', roles: ['SHARING_ADMIN'], web_shell: true,
       }]);
     });
   });

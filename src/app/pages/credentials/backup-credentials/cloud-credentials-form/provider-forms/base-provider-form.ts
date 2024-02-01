@@ -3,11 +3,11 @@ import _ from 'lodash';
 import { BehaviorSubject, Observable, of } from 'rxjs';
 import { helptextSystemCloudcredentials as helptext } from 'app/helptext/system/cloud-credentials';
 import { CloudCredential } from 'app/interfaces/cloud-sync-task.interface';
-import { CloudsyncProvider } from 'app/interfaces/cloudsync-provider.interface';
+import { CloudSyncProvider } from 'app/interfaces/cloudsync-provider.interface';
 
 export abstract class BaseProviderFormComponent<T = CloudCredential['attributes']> {
   abstract readonly form: FormGroup;
-  provider: CloudsyncProvider;
+  provider: CloudSyncProvider;
 
   readonly helptext = helptext;
 

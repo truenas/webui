@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { CompletionContext, CompletionResult } from '@codemirror/autocomplete';
+import { CompletionContext, CompletionResult, startCompletion } from '@codemirror/autocomplete';
 import { EditorView } from '@codemirror/view';
 import { TranslateService } from '@ngx-translate/core';
 import { uniqBy } from 'lodash';
@@ -16,7 +16,7 @@ import { PropertyType, SearchProperty } from 'app/modules/search-input/types/sea
 const inComparator = 'in';
 const ninComparator = 'nin';
 const comparatorSuggestions: QueryComparator[] = [
-  '=', '!=', '<', '>', '<=', '>=', inComparator, ninComparator, '~', '^', '!^', '$', '!$',
+  '=', '!=', '>', '<', '<=', '>=', '~', '^', '$', '!^', '!$', inComparator, ninComparator,
 ];
 
 const orSuggestion = 'OR';
@@ -87,9 +87,10 @@ export class AdvancedSearchAutocompleteService<T> {
           to,
           options: uniqBy(suggestions, 'label')
             .sort((a, b) => a.label.localeCompare(b.label))
-            .map((suggestion) => ({
-              label: this.translate.instant(suggestion.label),
-              apply: () => this.applySuggestionTransformation(suggestion, currentQuery, from, to),
+            .map((hint) => ({
+              label: this.translate.instant(hint.label),
+              apply: () => this.applySuggestionTransformation(hint, currentQuery, from, to),
+              boost: (hint as unknown as { boost: number })?.boost,
             })),
         })),
       ),
@@ -127,10 +128,15 @@ export class AdvancedSearchAutocompleteService<T> {
       anchor = anchor + 2;
     }
 
+    const shouldAppendSpace = !updatedValue.startsWith('(') && currentQuery[to] !== ')'
+      && currentQuery[to] !== '"' && currentQuery[to] !== "'";
+
     this.editorView?.dispatch({
-      changes: { from, to, insert: updatedValue },
-      selection: { anchor },
+      changes: { from, to, insert: shouldAppendSpace ? `${updatedValue} ` : updatedValue },
+      selection: { anchor: shouldAppendSpace ? anchor + 1 : anchor },
     });
+
+    startCompletion(this.editorView);
   }
 
   private getQueryContext(query: string, cursorPosition: number): QueryContext {
@@ -275,8 +281,10 @@ export class AdvancedSearchAutocompleteService<T> {
         return of(logicalSuggestions.map((property) => ({ label: property, value: property })));
 
       case ContextType.Comparator:
-        return of(comparatorSuggestions.map((property) => ({
-          label: this.comparatorHints?.[property] || property, value: property.toUpperCase(),
+        return of(comparatorSuggestions.map((property, index) => ({
+          label: this.comparatorHints?.[property] || property,
+          value: property.toUpperCase(),
+          boost: comparatorSuggestions.length - index,
         })));
       default:
         return of([]);

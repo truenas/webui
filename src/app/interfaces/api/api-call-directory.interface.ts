@@ -19,7 +19,6 @@ import {
   AclTemplateCreateResponse,
 } from 'app/interfaces/acl.interface';
 import { ActiveDirectoryConfig } from 'app/interfaces/active-directory-config.interface';
-import { ActiveDirectoryUpdate } from 'app/interfaces/active-directory.interface';
 import { AdvancedConfig, AdvancedConfigUpdate } from 'app/interfaces/advanced-config.interface';
 import { AlertService, AlertServiceEdit } from 'app/interfaces/alert-service.interface';
 import {
@@ -70,12 +69,12 @@ import {
   CloudSyncTaskUpdate,
 } from 'app/interfaces/cloud-sync-task.interface';
 import {
-  CloudsyncBucket,
-  CloudsyncCredential,
-  CloudsyncCredentialUpdate,
-  CloudsyncCredentialVerify, CloudsyncCredentialVerifyResult,
+  CloudSyncBucket,
+  CloudSyncCredential,
+  CloudSyncCredentialUpdate,
+  CloudSyncCredentialVerify, CloudSyncCredentialVerifyResult,
 } from 'app/interfaces/cloudsync-credential.interface';
-import { CloudsyncProvider, CloudsyncRestoreParams } from 'app/interfaces/cloudsync-provider.interface';
+import { CloudSyncProvider, CloudSyncRestoreParams } from 'app/interfaces/cloudsync-provider.interface';
 import { ContainerConfig, ContainerConfigUpdate } from 'app/interfaces/container-config.interface';
 import {
   ContainerImage, DeleteContainerImageParams,
@@ -153,7 +152,7 @@ import {
 import { KmipConfig } from 'app/interfaces/kmip-config.interface';
 import { KubernetesConfig } from 'app/interfaces/kubernetes-config.interface';
 import { KubernetesStatusData } from 'app/interfaces/kubernetes-status-data.interface';
-import { LdapConfig, LdapConfigUpdate, LdapConfigUpdateResult } from 'app/interfaces/ldap-config.interface';
+import { LdapConfig } from 'app/interfaces/ldap-config.interface';
 import { MailConfig, MailConfigUpdate } from 'app/interfaces/mail-config.interface';
 import {
   NetworkConfiguration,
@@ -262,9 +261,10 @@ import {
   ZfsSnapshot,
 } from 'app/interfaces/zfs-snapshot.interface';
 import {
-  FetchSupportParams,
+  SimilarIssue,
+  SimilarIssuesParams,
   SupportConfig, SupportConfigUpdate,
-} from 'app/modules/ix-feedback/interfaces/file-ticket.interface';
+} from 'app/modules/feedback/interfaces/file-ticket.interface';
 
 /**
  * API definitions for `call` methods.
@@ -282,7 +282,6 @@ export interface ApiCallDirectory {
   // Active Directory
   'activedirectory.config': { params: void; response: ActiveDirectoryConfig };
   'activedirectory.nss_info_choices': { params: void; response: string[] };
-  'activedirectory.update': { params: [ActiveDirectoryUpdate]; response: ActiveDirectoryConfig };
 
   // Alert
   'alert.dismiss': { params: string[]; response: void };
@@ -316,6 +315,7 @@ export interface ApiCallDirectory {
   'audit.config': { params: void; response: AuditConfig };
   'audit.query': { params: [AuditQueryParams]; response: AuditEntry[] };
   'audit.update': { params: [AuditConfig]; response: AuditEntry[] };
+  'audit.download_report': { params: [{ report_name?: string }]; response: string[] };
 
   // Auth
   'auth.generate_token': { params: void; response: string };
@@ -378,21 +378,21 @@ export interface ApiCallDirectory {
   'chart.release.query': { params: ChartReleaseQueryParams; response: ChartRelease[] };
   'chart.release.upgrade_summary': { params: ChartReleaseUpgradeParams; response: UpgradeSummary };
 
-  // Cloudsync
+  // CloudSync
   'cloudsync.abort': { params: [id: number]; response: boolean };
   'cloudsync.create': { params: [CloudSyncTaskUpdate]; response: CloudSyncTask };
   'cloudsync.create_bucket': { params: [number, string]; response: void };
-  'cloudsync.credentials.create': { params: [CloudsyncCredentialUpdate]; response: CloudsyncCredential };
+  'cloudsync.credentials.create': { params: [CloudSyncCredentialUpdate]; response: CloudSyncCredential };
   'cloudsync.credentials.delete': { params: [id: number]; response: boolean };
-  'cloudsync.credentials.query': { params: QueryParams<CloudsyncCredential>; response: CloudsyncCredential[] };
-  'cloudsync.credentials.update': { params: [id: number, update: CloudsyncCredentialUpdate]; response: CloudsyncCredential };
-  'cloudsync.credentials.verify': { params: [CloudsyncCredentialVerify]; response: CloudsyncCredentialVerifyResult };
+  'cloudsync.credentials.query': { params: QueryParams<CloudSyncCredential>; response: CloudSyncCredential[] };
+  'cloudsync.credentials.update': { params: [id: number, update: CloudSyncCredentialUpdate]; response: CloudSyncCredential };
+  'cloudsync.credentials.verify': { params: [CloudSyncCredentialVerify]; response: CloudSyncCredentialVerifyResult };
   'cloudsync.delete': { params: [id: number]; response: boolean };
-  'cloudsync.list_buckets': { params: [id: number]; response: CloudsyncBucket[] };
+  'cloudsync.list_buckets': { params: [id: number]; response: CloudSyncBucket[] };
   'cloudsync.list_directory': { params: [CloudSyncListDirectoryParams]; response: CloudSyncDirectoryListing[] };
-  'cloudsync.providers': { params: void; response: CloudsyncProvider[] };
+  'cloudsync.providers': { params: void; response: CloudSyncProvider[] };
   'cloudsync.query': { params: QueryParams<CloudSyncTask>; response: CloudSyncTask[] };
-  'cloudsync.restore': { params: CloudsyncRestoreParams; response: void };
+  'cloudsync.restore': { params: CloudSyncRestoreParams; response: void };
   'cloudsync.update': { params: [id: number, task: CloudSyncTaskUpdate]; response: CloudSyncTask };
 
   // Container
@@ -549,8 +549,7 @@ export interface ApiCallDirectory {
   'iscsi.targetextent.delete': { params: [id: number, force?: boolean]; response: boolean };
   'iscsi.targetextent.query': { params: QueryParams<IscsiTargetExtent>; response: IscsiTargetExtent[] };
   'iscsi.targetextent.update': { params: [id: number, extent: IscsiTargetExtentUpdate]; response: IscsiTargetExtent };
-
-  // HERE
+  'iscsi.target.validate_name': { params: string[]; response: null | string };
 
   // Kerberos
   'kerberos.config': { params: void; response: KerberosConfig };
@@ -590,7 +589,6 @@ export interface ApiCallDirectory {
   'ldap.config': { params: void; response: LdapConfig };
   'ldap.schema_choices': { params: void; response: string[] };
   'ldap.ssl_choices': { params: void; response: string[] };
-  'ldap.update': { params: [LdapConfigUpdate]; response: LdapConfigUpdateResult };
 
   // Mail
   'mail.config': { params: void; response: MailConfig };
@@ -751,14 +749,16 @@ export interface ApiCallDirectory {
 
   // Support
   'support.config': { params: void; response: SupportConfig };
-  'support.fetch_categories': { params: FetchSupportParams; response: Choices };
   'support.is_available': { params: void; response: boolean };
   'support.is_available_and_enabled': { params: void; response: boolean };
   'support.update': { params: [SupportConfigUpdate]; response: SupportConfig };
+  'support.similar_issues': { params: SimilarIssuesParams; response: SimilarIssue[] };
+  'support.attach_ticket_max_size': { params: void; response: number };
 
   // System
   'system.advanced.config': { params: void; response: AdvancedConfig };
   'system.advanced.sed_global_password': { params: void; response: string };
+  'system.advanced.sed_global_password_is_set': { params: void; response: boolean };
   'system.advanced.serial_port_choices': { params: void; response: Choices };
   'system.advanced.syslog_certificate_authority_choices': { params: void; response: Choices };
   'system.advanced.syslog_certificate_choices': { params: void; response: Choices };
@@ -778,7 +778,6 @@ export interface ApiCallDirectory {
   'system.general.update': { params: [SystemGeneralConfigUpdate]; response: SystemGeneralConfig };
   'system.host_id': { params: void; response: string };
   'system.info': { params: void; response: SystemInfo };
-  'system.is_ix_hardware': { params: void; response: boolean };
   'system.is_stable': { params: void; response: boolean };
   'system.license': { params: void; response: null | object };
   'system.license_update': { params: [license: string]; response: void };
@@ -788,6 +787,7 @@ export interface ApiCallDirectory {
   'system.ntpserver.update': { params: [id: number, params: CreateNtpServer]; response: NtpServer };
   'system.product_type': { params: void; response: ProductType };
   'system.security.config': { params: void; response: SystemSecurityConfig };
+  'system.security.info.fips_available': { params: void; response: boolean };
   'system.security.update': { params: [SystemSecurityConfig]; response: void };
   'system.set_time': { params: [number]; response: void };
 
@@ -805,6 +805,7 @@ export interface ApiCallDirectory {
   'truenas.get_eula': { params: void; response: string };
   'truenas.is_eula_accepted': { params: void; response: boolean };
   'truenas.is_production': { params: void; response: boolean };
+  'truenas.is_ix_hardware': { params: void; response: boolean };
 
   // Tunable
   'tunable.query': { params: QueryParams<Tunable>; response: Tunable[] };
@@ -904,3 +905,4 @@ export interface ApiCallDirectory {
 export type ApiCallMethod = keyof ApiCallDirectory;
 
 export type ApiCallParams<T extends ApiCallMethod> = ApiCallDirectory[T]['params'];
+export type ApiCallResponse<T extends ApiCallMethod> = ApiCallDirectory[T]['response'];

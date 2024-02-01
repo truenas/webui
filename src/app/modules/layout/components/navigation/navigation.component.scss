@@ -26,10 +26,10 @@
 
   a.sidenav-link:focus-visible {
     background: var(--hover-bg);
-    box-shadow: 0 0 0 1px var(--hover-bg) inset;
+    box-shadow: 0 0 0 1.5px var(--hover-bg) inset;
     outline-width: 0;
   }
-  
+
   mat-nav-list {
     padding-top: 0;
   }

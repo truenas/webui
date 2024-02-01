@@ -5,7 +5,7 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialog } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { CloudCredentialsSelectModule } from 'app/modules/custom-selects/cloud-credentials-select/cloud-credentials-select.module';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { CHAINED_SLIDE_IN_REF, SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
@@ -13,17 +13,17 @@ import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { GooglePhotosProviderFormComponent } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/provider-forms/google-photos-provider-form/google-photos-provider-form.component';
 import { StorjProviderFormComponent } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/provider-forms/storj-provider-form/storj-provider-form.component';
-import { CloudsyncProviderDescriptionComponent } from 'app/pages/data-protection/cloudsync/cloudsync-provider-description/cloudsync-provider-description.component';
+import { CloudSyncProviderDescriptionComponent } from 'app/pages/data-protection/cloudsync/cloudsync-provider-description/cloudsync-provider-description.component';
 import { storjProvider, googlePhotosProvider, googlePhotosCreds } from 'app/pages/data-protection/cloudsync/cloudsync-wizard/cloudsync-wizard.testing.utils';
-import { CloudsyncProviderComponent } from 'app/pages/data-protection/cloudsync/cloudsync-wizard/steps/cloudsync-provider/cloudsync-provider.component';
+import { CloudSyncProviderComponent } from 'app/pages/data-protection/cloudsync/cloudsync-wizard/steps/cloudsync-provider/cloudsync-provider.component';
 import { CloudCredentialService } from 'app/services/cloud-credential.service';
 import { DatasetService } from 'app/services/dataset-service/dataset.service';
 import { DialogService } from 'app/services/dialog.service';
 import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 
-describe('CloudsyncProviderComponent', () => {
-  let spectator: Spectator<CloudsyncProviderComponent>;
+describe('CloudSyncProviderComponent', () => {
+  let spectator: Spectator<CloudSyncProviderComponent>;
   let loader: HarnessLoader;
   let form: IxFormHarness;
   const chainedComponentRef = {
@@ -39,11 +39,11 @@ describe('CloudsyncProviderComponent', () => {
   };
 
   const createComponent = createComponentFactory({
-    component: CloudsyncProviderComponent,
+    component: CloudSyncProviderComponent,
     imports: [
       ReactiveFormsModule,
       IxFormsModule,
-      CloudsyncProviderDescriptionComponent,
+      CloudSyncProviderDescriptionComponent,
       CloudCredentialsSelectModule,
     ],
     declarations: [
@@ -52,7 +52,7 @@ describe('CloudsyncProviderComponent', () => {
     ],
     providers: [
       { provide: CHAINED_SLIDE_IN_REF, useValue: chainedComponentRef },
-      mockWebsocket([
+      mockWebSocket([
         mockCall('cloudsync.providers', [storjProvider, googlePhotosProvider]),
         mockCall('cloudsync.credentials.query', [googlePhotosCreds]),
         mockCall('cloudsync.credentials.verify', {
@@ -60,7 +60,7 @@ describe('CloudsyncProviderComponent', () => {
         }),
       ]),
       mockProvider(CloudCredentialService, {
-        getCloudsyncCredentials: jest.fn(() => of([googlePhotosCreds])),
+        getCloudSyncCredentials: jest.fn(() => of([googlePhotosCreds])),
         getProviders: jest.fn(() => of([storjProvider, googlePhotosProvider])),
       }),
       mockProvider(IxChainedSlideInService, {

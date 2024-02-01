@@ -34,6 +34,7 @@ import { Es24F } from 'app/pages/system/view-enclosure/classes/hardware/es24f';
 import { Es60 } from 'app/pages/system/view-enclosure/classes/hardware/es60';
 import { Es60G2 } from 'app/pages/system/view-enclosure/classes/hardware/es60g2';
 import { F60 } from 'app/pages/system/view-enclosure/classes/hardware/f60';
+import { H10 } from 'app/pages/system/view-enclosure/classes/hardware/h10';
 import { M50 } from 'app/pages/system/view-enclosure/classes/hardware/m50';
 import { MINIR } from 'app/pages/system/view-enclosure/classes/hardware/mini-r';
 import { R10 } from 'app/pages/system/view-enclosure/classes/hardware/r10';
@@ -237,7 +238,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
   subenclosure: { poolKeys: Record<string, number> }; // Declare rear and internal enclosure visualizations here
 
   chassis: Chassis;
-  view: string = EnclosureLocation.Front;
+  view = EnclosureLocation.Front;
   get chassisView(): ChassisView {
     if (!this.chassis) return null;
 
@@ -289,7 +290,9 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
     this.diskTemperatureService.listenForTemperatureUpdates();
 
     this.diskTemperatureService.temperature$.pipe(untilDestroyed(this)).subscribe((data) => {
-      const chassisView: ChassisView = this.chassisView && this.view === 'rear' ? this.chassis?.rear : this.chassis?.front;
+      const chassisView: ChassisView = this.chassisView && this.view === EnclosureLocation.Rear
+        ? this.chassis?.rear
+        : this.chassis?.front;
       if (!this.chassis || !chassisView?.driveTrayObjects) { return; }
 
       const clone: Temperature = { ...data };
@@ -443,7 +446,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
   }
 
   // Recreates enclosure when switching between enclosures or front/rear/internal visualizations
-  loadEnclosure(enclosureView: EnclosureView, view?: string, update?: boolean): void {
+  loadEnclosure(enclosureView: EnclosureView, view?: EnclosureLocation, update?: boolean): void {
     if (this.selectedSlotNumber > -1) {
       this.clearDisk();
     }
@@ -587,6 +590,10 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
       case 'TRUENAS-F60-HA':
       case 'F60':
         this.chassis = new F60();
+        break;
+      case 'H Series':
+      case 'H10':
+        this.chassis = new H10();
         break;
       default:
         this.controllerEvent$.next({
@@ -740,6 +747,10 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
       case 'TRUENAS-F60-HA':
       case 'F60':
         extractedChassis = new F60();
+        break;
+      case 'H Series':
+      case 'H10':
+        extractedChassis = new H10();
         break;
       default:
         this.controllerEvent$.next({
@@ -1017,7 +1028,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
 
     // Health based on disk.status
     if (enclosureSlot.disk && enclosureSlot.topologyStatus) {
-      switch (enclosureSlot.topologyStatus) {
+      switch (enclosureSlot.topologyStatus as string) {
         case 'ONLINE':
           enclosure.events.next({
             name: 'ChangeDriveTrayColor',
@@ -1218,7 +1229,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
   }
 
   // Changes front/rear/internal
-  enclosureOverride(view: string): void {
+  enclosureOverride(view: EnclosureLocation): void {
     if (view !== this.view) {
       this.clearDisk();
       this.loadEnclosure(this.selectedEnclosureView, view, true);

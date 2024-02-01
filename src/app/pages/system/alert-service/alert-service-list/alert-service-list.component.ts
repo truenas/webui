@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { filter } from 'rxjs';
@@ -60,7 +60,6 @@ export class AlertServiceListComponent implements EntityTableConfig<AlertService
 
   constructor(
     protected router: Router,
-    protected aroute: ActivatedRoute,
     protected ws: WebSocketService,
     protected dialogService: DialogService,
     private errorHandler: ErrorHandlerService,

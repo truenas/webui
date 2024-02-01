@@ -12,7 +12,7 @@ import { Role } from 'app/enums/role.enum';
 import { helptextPermissions } from 'app/helptext/storage/volumes/datasets/dataset-permissions';
 import { DatasetPermissionsUpdate } from 'app/interfaces/dataset-permissions.interface';
 import { Job } from 'app/interfaces/job.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
+import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { GroupComboboxProvider } from 'app/modules/ix-forms/classes/group-combobox-provider';
 import { UserComboboxProvider } from 'app/modules/ix-forms/classes/user-combobox-provider';
@@ -134,7 +134,7 @@ export class DatasetTrivialPermissionsComponent implements OnInit {
         dialogRef.close();
         this.router.navigate(['/datasets', this.datasetId]);
       },
-      error: (error: WebsocketError | Job) => {
+      error: (error: WebSocketError | Job) => {
         dialogRef.close();
         this.dialog.error(this.errorHandler.parseError(error));
       },

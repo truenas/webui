@@ -5,7 +5,8 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { User } from '@sentry/angular';
 import { of } from 'rxjs';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { NfsAclTag } from 'app/enums/nfs-acl.enum';
 import { SmbSharesecPermission, SmbSharesecType } from 'app/enums/smb-sharesec.enum';
 import { Group } from 'app/interfaces/group.interface';
@@ -56,6 +57,7 @@ describe('SmbAclComponent', () => {
     id: 0,
     uid: 0,
     username: 'root',
+    smb: true,
   };
 
   const createComponent = createComponentFactory({
@@ -65,21 +67,24 @@ describe('SmbAclComponent', () => {
       IxFormsModule,
     ],
     providers: [
-      mockWebsocket([
+      mockAuth(),
+      mockWebSocket([
         mockCall('sharing.smb.getacl', mockAcl),
         mockCall('sharing.smb.setacl'),
         mockCall('user.query', [rootUser] as TnUser[]),
-        mockCall('group.query', [{ group: 'wheel', id: 1, gid: 1 }] as Group[]),
+        mockCall('group.query', [{
+          group: 'wheel', id: 1, gid: 1, smb: true,
+        }] as Group[]),
       ]),
       mockProvider(IxSlideInService),
       mockProvider(DialogService),
       mockProvider(IxSlideInRef),
       mockProvider(UserService, {
-        userQueryDsCache: () => of([
+        smbUserQueryDsCache: () => of([
           { username: 'root', id: 0, uid: 0 },
           { username: 'trunk' },
         ] as User[]),
-        groupQueryDsCache: () => of([
+        smbGroupQueryDsCache: () => of([
           { group: 'wheel', id: 1, gid: 1 },
           { group: 'vip' },
         ]),

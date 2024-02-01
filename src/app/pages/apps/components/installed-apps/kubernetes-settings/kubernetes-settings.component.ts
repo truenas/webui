@@ -10,6 +10,7 @@ import {
   catchError, filter, map, switchMap, tap,
 } from 'rxjs/operators';
 import { JobState } from 'app/enums/job-state.enum';
+import { Role } from 'app/enums/role.enum';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { helptextApps } from 'app/helptext/apps/apps';
 import { KubernetesConfig, KubernetesConfigUpdate } from 'app/interfaces/kubernetes-config.interface';
@@ -58,6 +59,8 @@ export class KubernetesSettingsComponent implements OnInit {
       }));
     }),
   );
+
+  protected readonly requiredRoles = [Role.KubernetesWrite];
 
   private oldConfig: KubernetesConfig;
 
@@ -123,7 +126,7 @@ export class KubernetesSettingsComponent implements OnInit {
       error: (error: unknown) => {
         this.isFormLoading = false;
         this.cdr.markForCheck();
-        this.dialogService.error(this.errorHandler.parseError(error));
+        this.errorHandler.showErrorModal(error);
       },
     });
   }

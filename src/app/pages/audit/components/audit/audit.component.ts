@@ -207,7 +207,7 @@ export class AuditComponent implements OnInit, OnDestroy {
   }
 
   getUserAvatarForLog(row: AuditEntry): SafeHtml {
-    return this.sanitizer.bypassSecurityTrustHtml(toSvg(`${row.username}`, this.isMobileView ? 15 : 35));
+    return this.sanitizer.bypassSecurityTrustHtml(toSvg(row.username, this.isMobileView ? 15 : 35));
   }
 
   private initMobileView(): void {

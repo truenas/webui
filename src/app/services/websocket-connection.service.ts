@@ -1,21 +1,19 @@
 import { Inject, Injectable } from '@angular/core';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { UUID } from 'angular2-uuid';
 import { environment } from 'environments/environment';
 import {
   BehaviorSubject, interval, NEVER, Observable, of, switchMap, tap, timer,
 } from 'rxjs';
-import { webSocket as rxjsWebsocket, WebSocketSubject } from 'rxjs/webSocket';
+import { webSocket as rxjsWebSocket, WebSocketSubject } from 'rxjs/webSocket';
 import { IncomingApiMessageType, OutgoingApiMessageType } from 'app/enums/api-message-type.enum';
 import { WEBSOCKET } from 'app/helpers/websocket.helper';
 import { WINDOW } from 'app/helpers/window.helper';
-import { ApiEvent, IncomingWebsocketMessage } from 'app/interfaces/api-message.interface';
+import { ApiEvent, IncomingWebSocketMessage } from 'app/interfaces/api-message.interface';
 
-@UntilDestroy()
 @Injectable({
   providedIn: 'root',
 })
-export class WebsocketConnectionService {
+export class WebSocketConnectionService {
   private ws$: WebSocketSubject<unknown>;
 
   private readonly pingTimeoutMillis = 20 * 1000;
@@ -55,13 +53,14 @@ export class WebsocketConnectionService {
 
   constructor(
     @Inject(WINDOW) protected window: Window,
-    @Inject(WEBSOCKET) private webSocket: typeof rxjsWebsocket,
+    @Inject(WEBSOCKET) private webSocket: typeof rxjsWebSocket,
   ) {
-    this.initializeWebsocket();
+    this.initializeWebSocket();
+    this.subscribeToConnectionStatus();
     this.setupPing();
   }
 
-  private initializeWebsocket(): void {
+  private initializeWebSocket(): void {
     if (this.ws$) {
       this.ws$.complete();
     }
@@ -76,7 +75,7 @@ export class WebsocketConnectionService {
       },
     });
     this.wsAsObservable$ = this.ws$.asObservable().pipe(
-      switchMap((data: IncomingWebsocketMessage) => {
+      switchMap((data: IncomingWebSocketMessage) => {
         if (this.hasAuthError(data)) {
           this.ws$.complete();
         }
@@ -85,30 +84,17 @@ export class WebsocketConnectionService {
     );
     // At least one explicit subscription required to keep the connection open
     this.ws$.pipe(
-      tap((response: IncomingWebsocketMessage) => {
+      tap((response: IncomingWebSocketMessage) => {
         if (response.msg === IncomingApiMessageType.Connected) {
           this.isConnected$.next(true);
         }
       }),
-      untilDestroyed(this),
     ).subscribe();
-    this.isConnected$.pipe(untilDestroyed(this)).subscribe({
-      next: (isConnected) => {
-        this.isConnectionReady = isConnected;
-        if (isConnected) {
-          const keys = this.pendingCallsBeforeConnectionReady.keys();
-          for (const key of keys) {
-            this.send(this.pendingCallsBeforeConnectionReady.get(key));
-            this.pendingCallsBeforeConnectionReady.delete(key);
-          }
-        }
-      },
-    });
   }
 
   private onOpen(): void {
     if (this.isTryingReconnect) {
-      this.closeWebsocketConnection();
+      this.closeWebSocketConnection();
       return;
     }
     this.shutDownInProgress = false;
@@ -131,15 +117,15 @@ export class WebsocketConnectionService {
   }
 
   reconnect(): void {
-    timer(this.reconnectTimeoutMillis).pipe(untilDestroyed(this)).subscribe({
+    timer(this.reconnectTimeoutMillis).subscribe({
       next: () => {
         this.isTryingReconnect = false;
-        this.initializeWebsocket();
+        this.initializeWebSocket();
       },
     });
   }
 
-  private hasAuthError(data: IncomingWebsocketMessage): boolean {
+  private hasAuthError(data: IncomingWebSocketMessage): boolean {
     return 'error' in data && data.error.error === 207;
   }
 
@@ -152,7 +138,6 @@ export class WebsocketConnectionService {
 
         return interval(this.pingTimeoutMillis);
       }),
-      untilDestroyed(this),
     ).subscribe(() => {
       this.ws$.next({ msg: OutgoingApiMessageType.Ping, id: UUID.UUID() });
     });
@@ -194,7 +179,14 @@ export class WebsocketConnectionService {
     }
   }
 
-  closeWebsocketConnection(): void {
+  sendPendingCalls(): void {
+    this.pendingCallsBeforeConnectionReady.forEach((value, key) => {
+      this.send(value);
+      this.pendingCallsBeforeConnectionReady.delete(key);
+    });
+  }
+
+  closeWebSocketConnection(): void {
     this.ws$.complete();
   }
 
@@ -205,5 +197,16 @@ export class WebsocketConnectionService {
   setupConnectionUrl(protocol: string, remote: string): void {
     this.connectionUrl = (protocol === 'https:' ? 'wss://' : 'ws://')
       + remote + '/websocket';
+  }
+
+  private subscribeToConnectionStatus(): void {
+    this.isConnected$.subscribe({
+      next: (isConnected) => {
+        this.isConnectionReady = isConnected;
+        if (isConnected) {
+          this.sendPendingCalls();
+        }
+      },
+    });
   }
 }

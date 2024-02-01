@@ -24,9 +24,9 @@ import { LayoutModule } from 'app/modules/layout/layout.module';
 import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
 import { SchedulerModule } from 'app/modules/scheduler/scheduler.module';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
-import { CloudsyncProviderDescriptionComponent } from 'app/pages/data-protection/cloudsync/cloudsync-provider-description/cloudsync-provider-description.component';
+import { CloudSyncProviderDescriptionComponent } from 'app/pages/data-protection/cloudsync/cloudsync-provider-description/cloudsync-provider-description.component';
 import {
-  CloudsyncRestoreDialogComponent,
+  CloudSyncRestoreDialogComponent,
 } from 'app/pages/data-protection/cloudsync/cloudsync-restore-dialog/cloudsync-restore-dialog.component';
 import { CloudSyncTaskCardComponent } from 'app/pages/data-protection/cloudsync/cloudsync-task-card/cloudsync-task-card.component';
 import { CreateStorjBucketDialogComponent } from 'app/pages/data-protection/cloudsync/create-storj-bucket-dialog/create-storj-bucket-dialog.component';
@@ -57,11 +57,12 @@ import { SnapshotTaskFormComponent } from 'app/pages/data-protection/snapshot-ta
 import { SnapshotTaskListComponent } from 'app/pages/data-protection/snapshot-task/snapshot-task-list/snapshot-task-list.component';
 import { VmwareSnapshotFormComponent } from 'app/pages/data-protection/vmware-snapshot/vmware-snapshot-form/vmware-snapshot-form.component';
 import { VmwareSnapshotListComponent } from 'app/pages/data-protection/vmware-snapshot/vmware-snapshot-list/vmware-snapshot-list.component';
-import { CloudsyncFormComponent } from './cloudsync/cloudsync-form/cloudsync-form.component';
-import { CloudsyncListComponent } from './cloudsync/cloudsync-list/cloudsync-list.component';
-import { CloudsyncWizardComponent } from './cloudsync/cloudsync-wizard/cloudsync-wizard.component';
-import { CloudsyncProviderComponent } from './cloudsync/cloudsync-wizard/steps/cloudsync-provider/cloudsync-provider.component';
-import { CloudsyncWhatAndWhenComponent } from './cloudsync/cloudsync-wizard/steps/cloudsync-what-and-when/cloudsync-what-and-when.component';
+import { VmwareStatusCellComponent } from 'app/pages/data-protection/vmware-snapshot/vmware-snapshot-list/vmware-status-cell/vmware-status-cell.component';
+import { CloudSyncFormComponent } from './cloudsync/cloudsync-form/cloudsync-form.component';
+import { CloudSyncListComponent } from './cloudsync/cloudsync-list/cloudsync-list.component';
+import { CloudSyncWizardComponent } from './cloudsync/cloudsync-wizard/cloudsync-wizard.component';
+import { CloudSyncProviderComponent } from './cloudsync/cloudsync-wizard/steps/cloudsync-provider/cloudsync-provider.component';
+import { CloudSyncWhatAndWhenComponent } from './cloudsync/cloudsync-wizard/steps/cloudsync-what-and-when/cloudsync-what-and-when.component';
 import { dataProtectionRoutes } from './data-protection.routing';
 import { ReplicationFormComponent } from './replication/replication-form/replication-form.component';
 import { GeneralSectionComponent } from './replication/replication-form/sections/general-section/general-section.component';
@@ -84,6 +85,7 @@ import { SmartTaskListComponent } from './smart-task/smart-task-list/smart-task-
     EntityModule,
     ReactiveFormsModule,
     MatProgressBarModule,
+    MatTooltipModule,
     MatCardModule,
     TranslateModule,
     IxTable2Module,
@@ -102,13 +104,14 @@ import { SmartTaskListComponent } from './smart-task/smart-task-list/smart-task-
     MatToolbarModule,
     MatTooltipModule,
     MatDividerModule,
-    CloudsyncProviderDescriptionComponent,
+    CloudSyncProviderDescriptionComponent,
   ],
   declarations: [
     SnapshotTaskListComponent,
     SnapshotTaskFormComponent,
     VmwareSnapshotFormComponent,
     VmwareSnapshotListComponent,
+    VmwareStatusCellComponent,
     RsyncTaskListComponent,
     RsyncTaskFormComponent,
     SmartTaskListComponent,
@@ -120,11 +123,11 @@ import { SmartTaskListComponent } from './smart-task/smart-task-list/smart-task-
     ReplicationWhenComponent,
     CreateStorjBucketDialogComponent,
     ScrubTaskFormComponent,
-    CloudsyncListComponent,
-    CloudsyncFormComponent,
+    CloudSyncListComponent,
+    CloudSyncFormComponent,
     DataProtectionDashboardComponent,
     ResilverConfigComponent,
-    CloudsyncRestoreDialogComponent,
+    CloudSyncRestoreDialogComponent,
     TransferModeExplanationComponent,
     ReplicationRestoreDialogComponent,
     CustomTransfersDialogComponent,
@@ -139,9 +142,9 @@ import { SmartTaskListComponent } from './smart-task/smart-task-list/smart-task-
     ReplicationTaskCardComponent,
     ScrubTaskCardComponent,
     SnapshotTaskCardComponent,
-    CloudsyncWizardComponent,
-    CloudsyncProviderComponent,
-    CloudsyncWhatAndWhenComponent,
+    CloudSyncWizardComponent,
+    CloudSyncProviderComponent,
+    CloudSyncWhatAndWhenComponent,
     ScrubListComponent,
     RsyncTaskListComponent,
   ],

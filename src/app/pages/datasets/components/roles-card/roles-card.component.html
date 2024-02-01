@@ -77,12 +77,24 @@
       <div class="details-item">
         <ix-icon class="icon" name="share"></ix-icon>
         <div class="label">{{ 'Not Shared' | translate }}</div>
-        <a class="action" ixTest="create-smb-share" (click)="createSmbShare()">
+        <a
+          class="action"
+          tabindex="0"
+          ixTest="create-smb-share"
+          (click)="createSmbShare()"
+          (keydown.enter)="createSmbShare()"
+        >
           {{ 'Create SMB Share' | translate }}
         </a>
       </div>
       <div class="details-item">
-        <a class="action" ixTest="create-nfs-share" (click)="createNfsShare()">
+        <a
+          class="action"
+          tabindex="0"
+          ixTest="create-nfs-share"
+          (click)="createNfsShare()"
+          (keydown.enter)="createNfsShare()"
+        >
           {{ 'Create NFS Share' | translate }}
         </a>
       </div>

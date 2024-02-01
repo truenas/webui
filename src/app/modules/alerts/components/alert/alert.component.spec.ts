@@ -6,7 +6,7 @@ import { firstValueFrom } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { FormatDateTimePipe } from 'app/core/pipes/format-datetime.pipe';
 import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-datetime.pipe';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { AlertLevel } from 'app/enums/alert-level.enum';
 import { Alert } from 'app/interfaces/alert.interface';
 import { AlertComponent } from 'app/modules/alerts/components/alert/alert.component';
@@ -55,7 +55,7 @@ describe('AlertComponent', () => {
       FakeFormatDateTimePipe,
     ],
     providers: [
-      mockWebsocket([
+      mockWebSocket([
         mockCall('alert.dismiss'),
         mockCall('alert.restore'),
       ]),

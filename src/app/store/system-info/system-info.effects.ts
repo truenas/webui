@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { EMPTY, of } from 'rxjs';
 import {
-  catchError, map, mergeMap, repeat, switchMap,
+  catchError, map, mergeMap, switchMap,
 } from 'rxjs/operators';
 import { SystemFeatures } from 'app/interfaces/events/sys-info-event.interface';
 import { WebSocketService } from 'app/services/ws.service';
@@ -18,7 +18,6 @@ export class SystemInfoEffects {
     ofType(adminUiInitialized, systemInfoUpdated),
     mergeMap(() => {
       return this.ws.call('system.info').pipe(
-        repeat({ delay: 30000 }),
         map((systemInfo) => systemInfoLoaded({ systemInfo })),
         catchError((error) => {
           // TODO: Basically a fatal error. Handle it.
@@ -59,7 +58,7 @@ export class SystemInfoEffects {
   loadIsIxHardware = createEffect(() => this.actions$.pipe(
     ofType(adminUiInitialized),
     mergeMap(() => {
-      return this.ws.call('system.is_ix_hardware').pipe(
+      return this.ws.call('truenas.is_ix_hardware').pipe(
         map((isIxHardware) => ixHardwareLoaded({ isIxHardware })),
         catchError((error) => {
           // TODO: Show error message to user?
