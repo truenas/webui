@@ -4,7 +4,7 @@ import {
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import {
-  filter, of, switchMap, tap,
+  filter, switchMap, tap,
 } from 'rxjs';
 import { alertLevelLabels } from 'app/enums/alert-level.enum';
 import { alertServiceNames } from 'app/enums/alert-service-type.enum';
@@ -30,7 +30,6 @@ import { WebSocketService } from 'app/services/ws.service';
 })
 export class AlertServiceListComponent implements OnInit {
   readonly requiresRoles = [Role.AlertListWrite];
-  readonly providerList = alertServiceNames.map((alertService) => alertService.value);
 
   dataProvider: AsyncDataProvider<AlertService>;
   filterString = '';
@@ -64,7 +63,6 @@ export class AlertServiceListComponent implements OnInit {
           iconName: 'edit',
           tooltip: this.translate.instant('Edit'),
           onClick: (row) => this.editAlertService(row),
-          hidden: (row) => of(!this.providerList.includes(row.type)),
         },
         {
           iconName: 'delete',
@@ -135,18 +133,12 @@ export class AlertServiceListComponent implements OnInit {
     }).pipe(
       filter(Boolean),
       switchMap(() => this.ws.call('alertservice.delete', [alertService.id])),
+      this.errorHandler.catchError(),
       untilDestroyed(this),
-    ).subscribe({
-      next: () => {
-        this.getAlertServices();
-      },
-      error: (error) => {
-        this.errorHandler.showErrorModal(error);
-      },
-    });
+    ).subscribe(() => this.getAlertServices());
   }
 
   private getAlertServices(): void {
-    this.dataProvider.load();
+    this.dataProvider.load(false);
   }
 }
