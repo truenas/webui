@@ -166,6 +166,7 @@ def click_save_the_enable_service_box_should_appear_then_click_enable_service(dr
     driver.find_element_by_xpath(xpaths.button.save).click()
     assert wait_on_element_disappear(driver, 30, xpaths.progress.progressbar)
     rsc.start_nfs_service(driver)
+    assert wait_on_element(driver, 15, xpaths.sharing.nfs_Service_Status)
 
 
 @then(parsers.parse('the {mount_point} should appear in the UNIX (NFS) Shares list'))
