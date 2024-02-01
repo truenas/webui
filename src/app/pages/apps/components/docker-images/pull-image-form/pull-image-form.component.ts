@@ -4,6 +4,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { latestVersion } from 'app/constants/catalog.constants';
+import { Role } from 'app/enums/role.enum';
 import { helptextApps } from 'app/helptext/apps/apps';
 import { PullContainerImageParams } from 'app/interfaces/container-image.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
@@ -33,6 +34,8 @@ export class PullImageFormComponent {
     username: helptextApps.pullImageForm.username.tooltip,
     password: helptextApps.pullImageForm.password.tooltip,
   };
+
+  protected readonly requiredRoles = [Role.AppsWrite];
 
   constructor(
     private slideInRef: IxSlideInRef<PullImageFormComponent>,

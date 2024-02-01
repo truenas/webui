@@ -4,6 +4,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockJob, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { helptextApps } from 'app/helptext/apps/apps';
 import { ContainerConfig } from 'app/interfaces/container-config.interface';
@@ -61,6 +62,7 @@ describe('KubernetesSettingsComponent', () => {
       }),
       mockProvider(IxSlideInRef),
       mockProvider(FormErrorHandlerService),
+      mockAuth(),
     ],
   });
 

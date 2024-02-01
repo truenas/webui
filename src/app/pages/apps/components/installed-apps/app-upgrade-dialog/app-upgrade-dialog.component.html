@@ -90,24 +90,26 @@
       </div>
     </mat-expansion-panel>
   </mat-accordion>
-</div>
 
-<div class="button-bar" mat-dialog-actions align="end">
-  <button
-    mat-button
-    class="mat-mdc-button mat-button mat-secondary"
-    ixTest="close"
-    (click)="dialogRef.close(false)"
-  >
-    {{ 'Close' | translate }}
-  </button>
-  <button
-    mat-button
-    class="mat-mdc-button mat-button"
-    color="primary"
-    ixTest="upgrade"
-    (click)="dialogRef.close(selectedVersionKey)"
-  >
-    {{ 'Upgrade' | translate }}
-  </button>
+  <ix-form-actions>
+    <button
+      mat-button
+      class="mat-mdc-button mat-button mat-secondary"
+      ixTest="close"
+      (click)="dialogRef.close(false)"
+    >
+      {{ 'Close' | translate }}
+    </button>
+    <button
+      *ixRequiresRoles="requiredRoles"
+      mat-button
+      class="mat-mdc-button mat-button"
+      color="primary"
+      ixTest="upgrade"
+      (click)="dialogRef.close(selectedVersionKey)"
+    >
+      {{ 'Upgrade' | translate }}
+    </button>
+  </ix-form-actions>
+
 </div>
