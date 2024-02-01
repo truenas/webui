@@ -49,7 +49,7 @@ export class ScrubTaskCardComponent implements OnInit {
     toggleColumn({
       title: this.translate.instant('Enabled'),
       propertyName: 'enabled',
-      requiresRoles: [Role.FullAdmin],
+      requiredRoles: [Role.FullAdmin],
       onRowToggle: (row: PoolScrubTask) => this.onChangeEnabledState(row),
     }),
     actionsColumn({
@@ -62,7 +62,7 @@ export class ScrubTaskCardComponent implements OnInit {
         {
           iconName: 'delete',
           tooltip: this.translate.instant('Delete'),
-          requiresRoles: [Role.FullAdmin],
+          requiredRoles: [Role.FullAdmin],
           onClick: (row) => this.doDelete(row),
         },
       ],

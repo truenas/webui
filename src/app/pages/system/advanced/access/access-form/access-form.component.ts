@@ -42,7 +42,7 @@ export class AccessFormComponent implements OnInit {
   }
 
   protected readonly Role = Role;
-  readonly requiresRoles = [Role.FullAdmin];
+  readonly requiredRoles = [Role.FullAdmin];
 
   constructor(
     private fb: FormBuilder,
@@ -73,30 +73,37 @@ export class AccessFormComponent implements OnInit {
   }
 
   onSubmit(): void {
-    this.authService.hasRole(this.requiresRoles).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
+    this.authService.hasRole(this.requiredRoles).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
       this.store$.dispatch(lifetimeTokenUpdated({ lifetime: this.form.value.token_lifetime }));
 
       if (this.isEnterprise) {
-        this.isLoading = true;
-        this.ws.call('system.general.update', [{ ds_auth: this.form.value.ds_auth }])
-          .pipe(untilDestroyed(this)).subscribe({
-            next: () => {
-              this.isLoading = false;
-              this.store$.dispatch(generalConfigUpdated());
-              this.snackbar.success(this.translate.instant('Settings saved'));
-              this.slideInRef.close(true);
-              this.cdr.markForCheck();
-            },
-            error: (error) => {
-              this.isLoading = false;
-              this.dialogService.error(this.errorHandler.parseError(error));
-              this.cdr.markForCheck();
-            },
-          });
+        this.updateEnterpriseDsAuth();
       } else {
-        this.snackbar.success(this.translate.instant('Settings saved'));
-        this.slideInRef.close(true);
+        this.showSuccessNotificationAndClose();
       }
     });
+  }
+
+  private updateEnterpriseDsAuth(): void {
+    this.isLoading = true;
+    this.ws.call('system.general.update', [{ ds_auth: this.form.value.ds_auth }])
+      .pipe(untilDestroyed(this)).subscribe({
+        next: () => {
+          this.isLoading = false;
+          this.store$.dispatch(generalConfigUpdated());
+          this.showSuccessNotificationAndClose();
+          this.cdr.markForCheck();
+        },
+        error: (error) => {
+          this.isLoading = false;
+          this.dialogService.error(this.errorHandler.parseError(error));
+          this.cdr.markForCheck();
+        },
+      });
+  }
+
+  private showSuccessNotificationAndClose(): void {
+    this.snackbar.success(this.translate.instant('Settings saved'));
+    this.slideInRef.close(true);
   }
 }

@@ -46,7 +46,7 @@ export class VmwareSnapshotFormComponent implements OnInit {
 
   isLoading = false;
 
-  readonly requiresRoles = [Role.FullAdmin];
+  readonly requiredRoles = [Role.FullAdmin];
 
   readonly labels = {
     hostname: helptextVmwareSnapshot.VMware_snapshot_form_hostname_placeholder,

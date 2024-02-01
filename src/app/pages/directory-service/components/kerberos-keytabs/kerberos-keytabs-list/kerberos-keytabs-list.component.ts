@@ -53,7 +53,7 @@ export class KerberosKeytabsListComponent implements OnInit {
         {
           iconName: 'delete',
           tooltip: this.translateService.instant('Delete'),
-          requiresRoles: [Role.FullAdmin],
+          requiredRoles: [Role.FullAdmin],
           onClick: (row) => {
             this.dialogService.confirm({
               title: this.translateService.instant('Delete'),

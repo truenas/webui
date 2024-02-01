@@ -84,7 +84,7 @@ export class TargetListComponent implements OnInit {
               },
             );
           },
-          requiresRoles: [
+          requiredRoles: [
             Role.SharingIscsiTargetWrite,
             Role.SharingIscsiWrite,
             Role.SharingWrite,

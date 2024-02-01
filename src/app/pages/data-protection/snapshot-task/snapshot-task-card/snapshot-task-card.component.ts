@@ -57,7 +57,7 @@ export class SnapshotTaskCardComponent implements OnInit {
     toggleColumn({
       title: this.translate.instant('Enabled'),
       propertyName: 'enabled',
-      requiresRoles: [Role.FullAdmin],
+      requiredRoles: [Role.FullAdmin],
       onRowToggle: (row: PeriodicSnapshotTaskUi) => this.onChangeEnabledState(row),
     }),
     stateButtonColumn({
@@ -75,7 +75,7 @@ export class SnapshotTaskCardComponent implements OnInit {
         {
           iconName: 'delete',
           tooltip: this.translate.instant('Delete'),
-          requiresRoles: [Role.FullAdmin],
+          requiredRoles: [Role.FullAdmin],
           onClick: (row) => this.doDelete(row),
         },
       ],
