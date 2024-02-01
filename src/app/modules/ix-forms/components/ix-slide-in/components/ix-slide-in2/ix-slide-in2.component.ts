@@ -79,6 +79,10 @@ export class IxSlideIn2Component implements OnInit, OnDestroy {
     });
   }
 
+  ngOnDestroy(): void {
+    this.element.remove();
+  }
+
   onBackdropClicked(): void {
     if (!this.element || !this.isSlideInOpen) { return; }
     this.componentInfo.close$.next({ response: false, error: null });
@@ -155,10 +159,6 @@ export class IxSlideIn2Component implements OnInit, OnDestroy {
       ],
     });
     this.slideInBody.createComponent<T>(componentType, { injector });
-  }
-
-  ngOnDestroy(): void {
-    this.element.remove();
   }
 
   private closeOnNavigation(): void {
