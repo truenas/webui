@@ -4,7 +4,7 @@
   >
     <ng-container *ngIf="action.requiresRoles?.length">
       <div
-        *ixRequiresRoles="action.requiresRoles"
+        *ixRequiresRoles="action.requiresRoles" 
         [matTooltip]="action.dynamicTooltip ? (action.dynamicTooltip(row) | async) : action.tooltip || ''"
       >
         <button
@@ -34,6 +34,6 @@
         </button>
       </div>
     </ng-container>
-
+    
   </ng-container>
 </div>
