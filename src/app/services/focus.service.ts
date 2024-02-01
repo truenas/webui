@@ -9,24 +9,16 @@ export class FocusService {
     @Inject(DOCUMENT) private document: Document,
   ) {}
 
-    private lastFocusedItem: HTMLElement | null = null;
-
-    get lastFocusedElement(): HTMLElement | null {
-      return this.lastFocusedItem;
-    }
-
-    setLastFocusedElement(element: HTMLElement | null): void {
-      this.lastFocusedItem = element;
-    }
+    private lastFocusedElement: HTMLElement | null = null;
 
     captureCurrentFocus(): void {
-      this.lastFocusedItem = this.document.activeElement as HTMLElement;
+      this.lastFocusedElement = this.document.activeElement as HTMLElement;
     }
 
     restoreFocus(): void {
       if (this.lastFocusedElement) {
         this.lastFocusedElement.focus();
-        this.lastFocusedItem = null;
+        this.lastFocusedElement = null;
       }
     }
 
