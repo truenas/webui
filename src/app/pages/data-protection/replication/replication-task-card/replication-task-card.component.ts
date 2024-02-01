@@ -49,8 +49,6 @@ export class ReplicationTaskCardComponent implements OnInit {
     }),
     textColumn({
       title: this.translate.instant('Last Snapshot'),
-      propertyName: 'schedule',
-      hidden: true,
       getValue: (task) => {
         return task.state.last_snapshot
           ? task.state.last_snapshot
@@ -65,13 +63,13 @@ export class ReplicationTaskCardComponent implements OnInit {
     }),
     stateButtonColumn({
       title: this.translate.instant('State'),
-      getValue: (row) => row.job.state,
+      getValue: (row) => row.state.state,
       getJob: (row) => row.job,
       cssClass: 'state-button',
     }),
     relativeDateColumn({
       title: this.translate.instant('Last Run'),
-      getValue: (row) => row.job?.time_finished?.$date,
+      getValue: (row) => row.state?.datetime?.$date,
     }),
     actionsColumn({
       cssClass: 'wide-actions',

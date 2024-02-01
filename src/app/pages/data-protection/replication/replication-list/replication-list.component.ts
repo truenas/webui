@@ -4,22 +4,20 @@ import {
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { Actions } from '@ngrx/effects';
-import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import {
   filter, switchMap, tap,
 } from 'rxjs';
 import { JobState } from 'app/enums/job-state.enum';
 import { Role } from 'app/enums/role.enum';
-import { tapOnce } from 'app/helpers/operators/tap-once.operator';
 import { Job } from 'app/interfaces/job.interface';
 import { ReplicationTask } from 'app/interfaces/replication-task.interface';
 import { AsyncDataProvider } from 'app/modules/ix-table2/classes/async-data-provider/async-data-provider';
 import { relativeDateColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-relative-date/ix-cell-relative-date.component';
 import { stateButtonColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-state-button/ix-cell-state-button.component';
 import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
-import { yesNoColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-yesno/ix-cell-yesno.component';
+import { toggleColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-toggle/ix-cell-toggle.component';
+import { SortDirection } from 'app/modules/ix-table2/enums/sort-direction.enum';
 import { Column, ColumnComponent } from 'app/modules/ix-table2/interfaces/table-column.interface';
 import { createTable } from 'app/modules/ix-table2/utils';
 import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
@@ -31,11 +29,8 @@ import { ReplicationWizardComponent } from 'app/pages/data-protection/replicatio
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { StorageService } from 'app/services/storage.service';
-import { TaskService } from 'app/services/task.service';
 import { WebSocketService } from 'app/services/ws.service';
-import { AppState } from 'app/store';
 
 @UntilDestroy()
 @Component({
@@ -54,11 +49,11 @@ export class ReplicationListComponent implements OnInit {
     textColumn({
       title: this.translate.instant('Name'),
       propertyName: 'name',
+      sortable: true,
     }),
     textColumn({
       title: this.translate.instant('Direction'),
       propertyName: 'direction',
-      hidden: true,
     }),
     textColumn({
       title: this.translate.instant('Transport'),
@@ -67,10 +62,11 @@ export class ReplicationListComponent implements OnInit {
     }),
     textColumn({
       title: this.translate.instant('SSH Connection'),
-      propertyName: 'ssh_credentials',
       hidden: true,
       getValue: (task) => {
-        return task.ssh_credentials ? task.ssh_credentials.name : '-';
+        return task.ssh_credentials
+          ? task.ssh_credentials.name
+          : this.translate.instant('N/A');
       },
     }),
     textColumn({
@@ -95,9 +91,7 @@ export class ReplicationListComponent implements OnInit {
     }),
     relativeDateColumn({
       title: this.translate.instant('Last Run'),
-      propertyName: 'job',
-      hidden: true,
-      getValue: (row) => row.job?.time_finished?.$date,
+      getValue: (row) => row.state?.datetime?.$date,
     }),
     stateButtonColumn({
       title: this.translate.instant('State'),
@@ -105,14 +99,13 @@ export class ReplicationListComponent implements OnInit {
       getJob: (row) => row.job,
       cssClass: 'state-button',
     }),
-    yesNoColumn({
+    toggleColumn({
       title: this.translate.instant('Enabled'),
       propertyName: 'enabled',
+      onRowToggle: (row) => this.onChangeEnabledState(row),
     }),
     textColumn({
       title: this.translate.instant('Last Snapshot'),
-      propertyName: 'schedule',
-      hidden: true,
       getValue: (task) => {
         return task.state.last_snapshot
           ? task.state.last_snapshot
@@ -131,17 +124,13 @@ export class ReplicationListComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private ws: WebSocketService,
     private translate: TranslateService,
-    private taskService: TaskService,
     private chainedSlideInService: IxChainedSlideInService,
     private dialogService: DialogService,
     private errorHandler: ErrorHandlerService,
-    private slideInService: IxSlideInService,
     private matDialog: MatDialog,
     private snackbar: SnackbarService,
-    private store$: Store<AppState>,
-    private actions$: Actions,
     private storage: StorageService,
-    private loader: AppLoaderService,
+    private appLoader: AppLoaderService,
     protected emptyService: EmptyService,
   ) {}
 
@@ -150,11 +139,17 @@ export class ReplicationListComponent implements OnInit {
       extra: {
         check_dataset_encryption_keys: true,
       },
-    }]).pipe(
-      tap((replicationTasks) => this.replicationTasks = replicationTasks),
-    );
+    }]).pipe(tap((replicationTasks) => this.replicationTasks = replicationTasks));
     this.dataProvider = new AsyncDataProvider<ReplicationTask>(replicationTasks$);
     this.getReplicationTasks();
+  }
+
+  setDefaultSort(): void {
+    this.dataProvider.setSorting({
+      active: 1,
+      direction: SortDirection.Asc,
+      propertyName: 'name',
+    });
   }
 
   getReplicationTasks(): void {
@@ -170,14 +165,12 @@ export class ReplicationListComponent implements OnInit {
       filter(Boolean),
       tap(() => row.state = { state: JobState.Running }),
       switchMap(() => this.ws.job('replication.run', [row.id])),
-      tapOnce(() => this.snackbar.success(
-        this.translate.instant('Replication «{name}» has started.', { name: row.name }),
-      )),
       untilDestroyed(this),
     ).subscribe({
       next: (job: Job) => {
         row.state = { state: job.state };
         row.job = { ...job };
+        this.snackbar.success(this.translate.instant('Replication «{name}» has started.', { name: row.name }));
         this.cdr.markForCheck();
       },
       error: (error: unknown) => {
@@ -223,7 +216,7 @@ export class ReplicationListComponent implements OnInit {
       }),
     }).pipe(
       filter(Boolean),
-      switchMap(() => this.ws.call('replication.delete', [row.id])),
+      switchMap(() => this.ws.call('replication.delete', [row.id]).pipe(this.appLoader.withLoader())),
       untilDestroyed(this),
     ).subscribe({
       next: () => {
@@ -249,16 +242,15 @@ export class ReplicationListComponent implements OnInit {
   }
 
   downloadKeys(row: ReplicationTask): void {
-    this.loader.open();
-    this.ws.call('core.download', ['pool.dataset.export_keys_for_replication', [row.id], `${row.name}_encryption_keys.json`])
-      .pipe(untilDestroyed(this))
+    const fileName = `${row.name}_encryption_keys.json`;
+    this.ws.call('core.download', ['pool.dataset.export_keys_for_replication', [row.id], fileName])
+      .pipe(this.appLoader.withLoader(), untilDestroyed(this))
       .subscribe({
         next: ([, url]) => {
-          this.loader.close();
           const mimetype = 'application/json';
-          this.storage.streamDownloadFile(url, `${row.name}_encryption_keys.json`, mimetype).pipe(untilDestroyed(this)).subscribe({
+          this.storage.streamDownloadFile(url, fileName, mimetype).pipe(untilDestroyed(this)).subscribe({
             next: (file) => {
-              this.storage.downloadBlob(file, `${row.name}_encryption_keys.json`);
+              this.storage.downloadBlob(file, fileName);
             },
             error: (err: HttpErrorResponse) => {
               this.dialogService.error(this.errorHandler.parseHttpError(err));
@@ -266,19 +258,23 @@ export class ReplicationListComponent implements OnInit {
           });
         },
         error: (err) => {
-          this.loader.close();
           this.dialogService.error(this.errorHandler.parseError(err));
         },
       });
   }
 
-  private transformData(tasks: ReplicationTask[]): ReplicationTask[] {
-    return tasks.map((task: ReplicationTask) => {
-      return {
-        ...task,
-        task_last_snapshot:
-          task.state.last_snapshot ? task.state.last_snapshot : this.translate.instant('No snapshots sent yet'),
-      } as ReplicationTask;
-    });
+  private onChangeEnabledState(replicationTask: ReplicationTask): void {
+    this.ws
+      .call('replication.update', [replicationTask.id, { enabled: !replicationTask.enabled }])
+      .pipe(untilDestroyed(this))
+      .subscribe({
+        next: () => {
+          this.getReplicationTasks();
+        },
+        error: (err: unknown) => {
+          this.getReplicationTasks();
+          this.dialogService.error(this.errorHandler.parseError(err));
+        },
+      });
   }
 }

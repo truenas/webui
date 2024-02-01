@@ -9,13 +9,11 @@ import { provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockWebSocket, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
-import { Job } from 'app/interfaces/job.interface';
-import { ReplicationTaskUi } from 'app/interfaces/replication-task.interface';
+import { ReplicationTask } from 'app/interfaces/replication-task.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTable2Harness } from 'app/modules/ix-table2/components/ix-table2/ix-table2.harness';
 import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
-import { selectJob } from 'app/modules/jobs/store/job.selectors';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { ReplicationFormComponent } from 'app/pages/data-protection/replication/replication-form/replication-form.component';
 import { ReplicationRestoreDialogComponent } from 'app/pages/data-protection/replication/replication-restore-dialog/replication-restore-dialog.component';
@@ -55,8 +53,7 @@ describe('ReplicationTaskCardComponent', () => {
       },
       restrict_schedule: null,
       job: null,
-      task_last_snapshot: 'APPS/test2@auto-2023-09-19_00-00',
-    } as ReplicationTaskUi,
+    } as ReplicationTask,
   ];
 
   const createComponent = createComponentFactory({
@@ -70,10 +67,6 @@ describe('ReplicationTaskCardComponent', () => {
       provideMockStore({
         initialState: {},
         selectors: [
-          {
-            selector: selectJob(1),
-            value: {} as Job,
-          },
           {
             selector: selectSystemConfigState,
             value: {},
