@@ -8,12 +8,7 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as EmailValidator from 'email-validator';
-import {
-  finalize,
-  Observable,
-  of, switchMap,
-} from 'rxjs';
-import { catchError, map } from 'rxjs/operators';
+import { finalize, of } from 'rxjs';
 import {
   ticketAcceptedFiles,
   TicketCategory, ticketCategoryLabels,
@@ -24,15 +19,11 @@ import { mapToOptions } from 'app/helpers/options.helper';
 import { WINDOW } from 'app/helpers/window.helper';
 import { helptextSystemSupport as helptext } from 'app/helptext/system/support';
 import { FeedbackDialogComponent } from 'app/modules/feedback/components/feedback-dialog/feedback-dialog.component';
-import {
-  CreateNewTicket,
-} from 'app/modules/feedback/interfaces/file-ticket.interface';
 import { FeedbackService } from 'app/modules/feedback/services/feedback.service';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { emailValidator } from 'app/modules/ix-forms/validators/email-validation/email-validation';
 import { ImageValidatorService } from 'app/modules/ix-forms/validators/image-validator/image-validator.service';
-import { DialogService } from 'app/services/dialog.service';
 
 @UntilDestroy()
 @Component({
@@ -94,7 +85,6 @@ export class FileTicketLicensedComponent {
     private translate: TranslateService,
     private validatorsService: IxValidatorsService,
     private feedbackService: FeedbackService,
-    private dialogService: DialogService,
     private router: Router,
     private imageValidator: ImageValidatorService,
     private formErrorHandler: FormErrorHandlerService,
@@ -113,11 +103,7 @@ export class FileTicketLicensedComponent {
   onSubmit(): void {
     this.isLoadingChange.emit(true);
 
-    this.prepareTicket().pipe(
-      switchMap((ticket) => this.feedbackService.createNewTicket(ticket)),
-      switchMap((createdTicket) => {
-        return this.addAttachmentsIfNeeded(createdTicket.ticket).pipe(switchMap(() => of(createdTicket)));
-      }),
+    this.feedbackService.createTicketLicensed(this.form.value).pipe(
       finalize(() => this.isLoadingChange.emit(false)),
       untilDestroyed(this),
     ).subscribe({
@@ -126,51 +112,8 @@ export class FileTicketLicensedComponent {
     });
   }
 
-  private prepareTicket(): Observable<CreateNewTicket> {
-    const values = this.form.value;
-    return this.feedbackService.addDebugInfoToMessage(values.message).pipe(
-      map((body) => ({
-        body,
-        name: values.name,
-        email: values.email,
-        phone: values.phone,
-        cc: values.cc,
-        environment: values.environment,
-        criticality: values.criticality,
-        category: values.category,
-        title: values.title,
-        attach_debug: values.attach_debug,
-      })),
-    );
-  }
-
-  private addAttachmentsIfNeeded(ticketId: number): Observable<unknown> {
-    const takeScreenshot = this.form.value.take_screenshot;
-    const images = this.form.value.images;
-
-    if (!takeScreenshot && images.length === 0) {
-      return of(undefined);
-    }
-
-    return this.feedbackService.addTicketAttachments({
-      ticketId,
-      takeScreenshot,
-      attachments: images,
-    }).pipe(
-      catchError(() => {
-        // Do not fail if attachments were not uploaded.
-        this.dialogService.error({
-          title: this.translate.instant(helptext.attachmentsFailed.title),
-          message: this.translate.instant(helptext.attachmentsFailed.message),
-        });
-
-        return of(undefined);
-      }),
-    );
-  }
-
   private onSuccess(ticketUrl: string): void {
-    this.feedbackService.showSnackbar(ticketUrl);
+    this.feedbackService.showTicketSuccessMsg(ticketUrl);
     this.dialogRef.close();
   }
 }

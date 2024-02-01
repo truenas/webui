@@ -1,32 +1,43 @@
 import { HttpClient, HttpParams, HttpResponse } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
 import { MatSnackBar, MatSnackBarRef } from '@angular/material/snack-bar';
-import { Store } from '@ngrx/store';
+import { Store, select } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
+import { environment } from 'environments/environment';
 import html2canvas, { Options } from 'html2canvas';
 import {
   BehaviorSubject,
-  Observable, combineLatest, filter, first, map, of, switchMap, forkJoin, throwError,
+  Observable, combineLatest, filter, first, map, of, switchMap, forkJoin, throwError, EMPTY,
 } from 'rxjs';
 import { catchError, take } from 'rxjs/operators';
+import { TicketType } from 'app/enums/file-ticket.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { WINDOW } from 'app/helpers/window.helper';
+import { helptextSystemSupport } from 'app/helptext/system/support';
+import { FileReviewComponent } from 'app/modules/feedback/components/file-review/file-review.component';
+import { FileTicketComponent } from 'app/modules/feedback/components/file-ticket/file-ticket.component';
+import { FileTicketLicensedComponent } from 'app/modules/feedback/components/file-ticket-licensed/file-ticket-licensed.component';
 import {
-  AddReview, AttachmentAddedResponse, ReviewAddedResponse,
+  AddReview, AttachmentAddedResponse, FeedbackEnvironment, ReviewAddedResponse,
 } from 'app/modules/feedback/interfaces/feedback.interface';
 import {
   CreateNewTicket,
   NewTicketResponse,
   SimilarIssue,
 } from 'app/modules/feedback/interfaces/file-ticket.interface';
-import { SnackbarConfig } from 'app/modules/snackbar/components/snackbar/snackbar-config.interface';
 import { SnackbarComponent } from 'app/modules/snackbar/components/snackbar/snackbar.component';
+import { DialogService } from 'app/services/dialog.service';
 import { IxFileUploadService } from 'app/services/ix-file-upload.service';
 import { SentryService } from 'app/services/sentry.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
-import { selectSystemHostId, waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
+import { SystemInfoState } from 'app/store/system-info/system-info.reducer';
+import { selectSystemHostId, selectSystemInfoState, waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
+
+type ReviewData = FileReviewComponent['form']['value'];
+type TicketData = FileTicketComponent['form']['value'];
+type TicketLicensedData = FileTicketLicensedComponent['form']['value'];
 
 @Injectable({
   providedIn: 'root',
@@ -46,6 +57,7 @@ export class FeedbackService {
     private fileUpload: IxFileUploadService,
     private matSnackBar: MatSnackBar,
     private translate: TranslateService,
+    private dialogService: DialogService,
     @Inject(WINDOW) private window: Window,
   ) {}
 
@@ -53,17 +65,51 @@ export class FeedbackService {
     return this.store$.select(selectSystemHostId).pipe(filter(Boolean), take(1));
   }
 
-  addReview(body: AddReview): Observable<ReviewAddedResponse> {
-    return this.httpClient.post<ReviewAddedResponse>(`${this.hostname}/api/reviews/add/`, body);
+  createReview(data: ReviewData): Observable<unknown> {
+    return this.prepareReview(data).pipe(
+      switchMap((review) => this.addReview(review)),
+      switchMap((response) => {
+        if (!response.success) {
+          return throwError(() => new Error(
+            this.translate.instant('An error occurred while sending the review. Please try again later.'),
+          ));
+        }
+
+        return of(response);
+      }),
+      switchMap((reviewAdded) => {
+        return this.addReviewAttachmentsIfNeeded(reviewAdded.review_id, data).pipe(
+          catchError(() => {
+            // Silently fail if attachments were not uploaded.
+            return EMPTY;
+          }),
+        );
+      }),
+    );
   }
 
-  addReviewAttachment(reviewId: number, image: File): Observable<AttachmentAddedResponse> {
-    const formData = new FormData();
-    formData.append('image', image);
+  createTicket(token: string, type: TicketType, data: TicketData): Observable<NewTicketResponse> {
+    return this.prepareTicket(token, type, data).pipe(
+      switchMap((ticket) => this.addTicket(ticket)),
+      switchMap((createdTicket) => {
+        return this.addTicketAttachmentsIfNeeded(
+          createdTicket.ticket,
+          data,
+          token,
+        ).pipe(switchMap(() => of(createdTicket)));
+      }),
+    );
+  }
 
-    return this.httpClient.post<AttachmentAddedResponse>(
-      `${this.hostname}/api/reviews/${reviewId}/add-attachment/`,
-      formData,
+  createTicketLicensed(data: TicketLicensedData): Observable<NewTicketResponse> {
+    return this.prepareTicketLicensed(data).pipe(
+      switchMap((ticket) => this.addTicket(ticket)),
+      switchMap((createdTicket) => {
+        return this.addTicketAttachmentsIfNeeded(
+          createdTicket.ticket,
+          data,
+        ).pipe(switchMap(() => of(createdTicket)));
+      }),
     );
   }
 
@@ -143,26 +189,143 @@ export class FeedbackService {
     );
   }
 
-  createNewTicket(ticket: CreateNewTicket): Observable<NewTicketResponse> {
+  showTicketSuccessMsg(ticketUrl: string): MatSnackBarRef<SnackbarComponent> {
+    return this.matSnackBar.openFromComponent(SnackbarComponent, {
+      data: {
+        message: this.translate.instant('Thank you. Ticket was submitted succesfully.'),
+        icon: 'check',
+        iconCssColor: 'var(--green)',
+        button: {
+          title: this.translate.instant('Open ticket'),
+          action: () => this.window.open(ticketUrl, '_blank'),
+        },
+      },
+    });
+  }
+
+  showFeedbackSuccessMsg(): MatSnackBarRef<SnackbarComponent> {
+    return this.matSnackBar.openFromComponent(SnackbarComponent, {
+      data: {
+        message: this.translate.instant(
+          'Thank you for sharing your feedback with us! Your insights are valuable in helping us improve our product.',
+        ),
+        icon: 'check',
+        iconCssColor: 'var(--green)',
+      },
+    });
+  }
+
+  private addReview(body: AddReview): Observable<ReviewAddedResponse> {
+    return this.httpClient.post<ReviewAddedResponse>(`${this.hostname}/api/reviews/add/`, body);
+  }
+
+  private prepareReview(data: ReviewData): Observable<AddReview> {
+    return this.getSystemInfo().pipe(
+      map(({ systemInfo, isIxHardware, systemHostId }) => {
+        return {
+          host_u_id: systemHostId,
+          rating: data.rating,
+          message: data.message,
+          page: this.window.location.pathname,
+          user_agent: this.window.navigator.userAgent,
+          environment: environment.production ? FeedbackEnvironment.Production : FeedbackEnvironment.Development,
+          release: systemInfo.version,
+          product_type: this.systemGeneralService.getProductType(),
+          product_model: systemInfo.system_product && isIxHardware ? systemInfo.system_product : 'Generic',
+          extra: {},
+        };
+      }),
+    );
+  }
+
+  private addReviewAttachmentsIfNeeded(reviewId: number, data: ReviewData): Observable<unknown> {
+    const operations = [];
+
+    if (data.take_screenshot) {
+      operations.push(
+        this.takeScreenshot().pipe(
+          switchMap((file) => this.addReviewAttachment(reviewId, file)),
+        ),
+      );
+    }
+
+    if (data.attach_images && data.images?.length) {
+      operations.push(
+        ...data.images.map((image) => this.addReviewAttachment(reviewId, image)),
+      );
+    }
+
+    if (!operations.length) {
+      return of(undefined);
+    }
+
+    return forkJoin(operations);
+  }
+
+  private addReviewAttachment(reviewId: number, image: File): Observable<AttachmentAddedResponse> {
+    const formData = new FormData();
+    formData.append('image', image);
+
+    return this.httpClient.post<AttachmentAddedResponse>(
+      `${this.hostname}/api/reviews/${reviewId}/add-attachment/`,
+      formData,
+    );
+  }
+
+  private getSystemInfo(): Observable<SystemInfoState> {
+    return this.store$.pipe(
+      select(selectSystemInfoState),
+      filter((systemInfoState) => Boolean(systemInfoState.systemInfo)),
+      take(1),
+    );
+  }
+
+  private addTicket(ticket: CreateNewTicket): Observable<NewTicketResponse> {
     return this.ws.job('support.new_ticket', [ticket]).pipe(
       filter((job) => job.state === JobState.Success),
       map((job) => job.result),
     );
   }
 
-  addTicketAttachments({
-    ticketId,
-    token,
-    attachments,
-    takeScreenshot,
-  }: {
-    ticketId: number;
-    attachments: File[];
-    token?: string;
-    takeScreenshot: boolean;
-  }): Observable<void> {
+  private prepareTicket(token: string, type: TicketType, data: TicketData): Observable<CreateNewTicket> {
+    return this.addDebugInfoToMessage(data.message).pipe(
+      map((body) => ({
+        body,
+        token,
+        attach_debug: data.attach_debug,
+        type,
+        title: data.title,
+      })),
+    );
+  }
+
+  private prepareTicketLicensed(data: TicketLicensedData): Observable<CreateNewTicket> {
+    return this.addDebugInfoToMessage(data.message).pipe(
+      map((body) => ({
+        body,
+        name: data.name,
+        email: data.email,
+        phone: data.phone,
+        cc: data.cc,
+        environment: data.environment,
+        criticality: data.criticality,
+        category: data.category,
+        title: data.title,
+        attach_debug: data.attach_debug,
+      })),
+    );
+  }
+
+  private addTicketAttachmentsIfNeeded(
+    ticketId: number,
+    data: TicketData,
+    token?: string,
+  ): Observable<void> {
+    const takeScreenshot = data.take_screenshot;
+    const images = data.images;
+
     // Make requests and map to boolean for successful uploads.
-    const requests = attachments.map((attachment) => {
+    const requests = images.map((attachment) => {
       return this.addTicketAttachment({ ticketId, attachment, token });
     });
 
@@ -187,27 +350,16 @@ export class FeedbackService {
 
         return throwError(() => new Error('Not all images were uploaded.'));
       }),
+      catchError(() => {
+        // Do not fail if attachments were not uploaded.
+        this.dialogService.error({
+          title: this.translate.instant(helptextSystemSupport.attachmentsFailed.title),
+          message: this.translate.instant(helptextSystemSupport.attachmentsFailed.message),
+        });
+
+        return of(undefined);
+      }),
     );
-  }
-
-  showSnackbar(ticketUrl?: string): MatSnackBarRef<SnackbarComponent> {
-    const data: SnackbarConfig = {
-      message: this.translate.instant(
-        'Thank you for sharing your feedback with us! Your insights are valuable in helping us improve our product.',
-      ),
-      icon: 'check',
-      iconCssColor: 'var(--green)',
-    };
-
-    if (ticketUrl) {
-      data.message = this.translate.instant('Thank you. Ticket was submitted succesfully.');
-      data.button = {
-        title: this.translate.instant('Open ticket'),
-        action: () => this.window.open(ticketUrl, '_blank'),
-      };
-    }
-
-    return this.matSnackBar.openFromComponent(SnackbarComponent, { data });
   }
 
   private addTicketAttachment({
