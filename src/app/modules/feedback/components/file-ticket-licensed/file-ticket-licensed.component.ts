@@ -32,7 +32,6 @@ import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-erro
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { emailValidator } from 'app/modules/ix-forms/validators/email-validation/email-validation';
 import { ImageValidatorService } from 'app/modules/ix-forms/validators/image-validator/image-validator.service';
-import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DialogService } from 'app/services/dialog.service';
 
 @UntilDestroy()
@@ -99,7 +98,6 @@ export class FileTicketLicensedComponent {
     private router: Router,
     private imageValidator: ImageValidatorService,
     private formErrorHandler: FormErrorHandlerService,
-    private snackbar: SnackbarService,
     @Inject(WINDOW) private window: Window,
   ) { }
 
@@ -117,11 +115,13 @@ export class FileTicketLicensedComponent {
 
     this.prepareTicket().pipe(
       switchMap((ticket) => this.feedbackService.createNewTicket(ticket)),
-      switchMap((createdTicket) => this.addAttachmentsIfNeeded(createdTicket.ticket)),
+      switchMap((createdTicket) => {
+        return this.addAttachmentsIfNeeded(createdTicket.ticket).pipe(switchMap(() => of(createdTicket)));
+      }),
       finalize(() => this.isLoadingChange.emit(false)),
       untilDestroyed(this),
     ).subscribe({
-      complete: () => this.onSuccess(),
+      next: (createdTicket) => this.onSuccess(createdTicket.url),
       error: (error) => this.formErrorHandler.handleWsFormError(error, this.form),
     });
   }
@@ -169,12 +169,8 @@ export class FileTicketLicensedComponent {
     );
   }
 
-  private onSuccess(): void {
-    this.snackbar.success(
-      this.translate.instant(
-        'Thank you for sharing your feedback with us! Your insights are valuable in helping us improve our product.',
-      ),
-    );
+  private onSuccess(ticketUrl: string): void {
+    this.feedbackService.showSnackbar(ticketUrl);
     this.dialogRef.close();
   }
 }

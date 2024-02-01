@@ -38,7 +38,10 @@ describe('FileTicketLicensedFormComponent', () => {
     declarations: [],
     providers: [
       mockProvider(FeedbackService, {
-        createNewTicket: jest.fn(() => of({ ticket: 24 })),
+        createNewTicket: jest.fn(() => of({
+          ticket: 24,
+          url: 'https://jira-redirect.ixsystems.com/ticket',
+        })),
         addTicketAttachments: jest.fn(() => of(undefined)),
         addDebugInfoToMessage: (message: string) => of(`${message} Session ID: 12345`),
       }),
@@ -114,6 +117,7 @@ describe('FileTicketLicensedFormComponent', () => {
 
     expect(feedbackService.createNewTicket).toHaveBeenCalledWith(expectedTicket);
     expect(dialogRef.close).toHaveBeenCalled();
+    expect(feedbackService.showSnackbar).toHaveBeenCalledWith('https://jira-redirect.ixsystems.com/ticket');
   });
 
   it('takes screenshot and uploads attachments if they are added', async () => {

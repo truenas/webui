@@ -1,4 +1,5 @@
 import { HttpClient, HttpResponse } from '@angular/common/http';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import {
   createServiceFactory,
   mockProvider,
@@ -9,6 +10,7 @@ import { lastValueFrom, of } from 'rxjs';
 import { fakeFile } from 'app/core/testing/utils/fake-file.uitls';
 import { mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { FeedbackService } from 'app/modules/feedback/services/feedback.service';
+import { SnackbarComponent } from 'app/modules/snackbar/components/snackbar/snackbar.component';
 import { IxFileUploadService } from 'app/services/ix-file-upload.service';
 import { SentryService } from 'app/services/sentry.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
@@ -39,6 +41,7 @@ describe('FeedbackService', () => {
       mockProvider(IxFileUploadService, {
         upload2: jest.fn(() => of(new HttpResponse({ status: 200 }))),
       }),
+      mockProvider(MatSnackBar),
     ],
   });
 
@@ -135,6 +138,36 @@ describe('FeedbackService', () => {
         ticket: 1,
         filename: 'file2.png',
       }]);
+    });
+
+    describe('showSnackbar', () => {
+      it('opens a snackbar without a ticket url', () => {
+        spectator.service.showSnackbar();
+
+        expect(spectator.inject(MatSnackBar).openFromComponent).toHaveBeenCalledWith(SnackbarComponent, {
+          data: {
+            message: 'Thank you for sharing your feedback with us! Your insights are valuable in helping us improve our product.',
+            icon: 'check',
+            iconCssColor: 'var(--green)',
+          },
+        });
+      });
+
+      it('opens a snackbar with a ticket url', () => {
+        spectator.service.showSnackbar('https://jira-redirect.ixsystems.com/ticket');
+
+        expect(spectator.inject(MatSnackBar).openFromComponent).toHaveBeenCalledWith(SnackbarComponent, {
+          data: {
+            message: 'Thank you. Ticket was submitted succesfully.',
+            icon: 'check',
+            iconCssColor: 'var(--green)',
+            button: {
+              title: 'Open ticket',
+              action: expect.any(Function),
+            },
+          },
+        });
+      });
     });
 
     // TODO: Add tests testing that uploading an image or taking a screenshot continues when one of the requests fails.
