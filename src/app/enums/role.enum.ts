@@ -102,7 +102,7 @@ export enum Role {
 export const roleNames = new Map<Role, string>([
   [Role.AlertListRead, T('Alert List Read')],
   [Role.AuthSessionsRead, T('Auth Sessions Read')],
-  [Role.AuthSessionsWrite, T('Alert Sessions Write')],
+  [Role.AuthSessionsWrite, T('Auth Sessions Write')],
   [Role.DatasetDelete, T('Dataset Delete')],
   [Role.DatasetRead, T('Dataset Read')],
   [Role.DatasetWrite, T('Dataset Write')],
