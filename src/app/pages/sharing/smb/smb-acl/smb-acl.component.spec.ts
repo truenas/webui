@@ -5,6 +5,7 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { User } from '@sentry/angular';
 import { of } from 'rxjs';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { NfsAclTag } from 'app/enums/nfs-acl.enum';
 import { SmbSharesecPermission, SmbSharesecType } from 'app/enums/smb-sharesec.enum';
@@ -66,6 +67,7 @@ describe('SmbAclComponent', () => {
       IxFormsModule,
     ],
     providers: [
+      mockAuth(),
       mockWebsocket([
         mockCall('sharing.smb.getacl', mockAcl),
         mockCall('sharing.smb.setacl'),
