@@ -6,6 +6,7 @@ import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-tab
 import { EntityTableAction, EntityTableColumn } from 'app/modules/entity/entity-table/entity-table.interface';
 import { TaskService } from 'app/services/task.service';
 
+// eslint-disable-next-line @angular-eslint/prefer-on-push-component-change-detection
 @Component({
   selector: 'ix-entity-table-row-details',
   templateUrl: './entity-table-row-details.component.html',

@@ -1,6 +1,6 @@
 import { DOCUMENT } from '@angular/common';
 import {
-  AfterViewInit, Component, Inject, Input,
+  AfterViewInit, ChangeDetectionStrategy, Component, Inject, Input,
 } from '@angular/core';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 
@@ -8,6 +8,7 @@ import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-sli
   selector: 'ix-modal-header',
   templateUrl: './ix-modal-header.component.html',
   styleUrls: ['./ix-modal-header.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class IxModalHeaderComponent implements AfterViewInit {
   @Input() title: string;

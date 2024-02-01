@@ -165,13 +165,5 @@ describe('QueryParserService - values', () => {
       expect(withNewLines.hasErrors).toBe(false);
       expect(withNewLines.tree).toMatchObject({ value: ['Bob', 'Jones'] });
     });
-
-    // TODO: Not implemented.
-    it.skip('only supports IN or NIN comparator with arrays', () => {
-      const incorrectComparator = service.parseQuery('Age = (18, 19, 20)');
-      expect(incorrectComparator.hasErrors).toBe(true);
-      expect(incorrectComparator.errors).toHaveLength(1);
-      expect(incorrectComparator.errors[0]).toBeInstanceOf(QuerySyntaxError);
-    });
   });
 });

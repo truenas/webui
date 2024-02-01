@@ -1,5 +1,8 @@
+import { A11yModule } from '@angular/cdk/a11y';
 import { Location } from '@angular/common';
-import { Component, ElementRef, Inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, ElementRef, Inject,
+} from '@angular/core';
 import { fakeAsync, tick } from '@angular/core/testing';
 import { Router } from '@angular/router';
 import {
@@ -14,6 +17,7 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 /** Simple component for testing IxSlideInComponent */
 @Component({
   template: '<h1>{{text}}</h1>',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 class TestComponent {
   text: string;
@@ -45,6 +49,9 @@ describe('IxSlideInService', () => {
     providers: [
       mockProvider(ElementRef),
       IxSlideInService,
+    ],
+    imports: [
+      A11yModule,
     ],
   });
 

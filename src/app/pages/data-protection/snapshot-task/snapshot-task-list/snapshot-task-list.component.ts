@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
@@ -27,6 +27,7 @@ import { WebSocketService } from 'app/services/ws.service';
 @Component({
   template: '<ix-entity-table [title]="title" [conf]="this"></ix-entity-table>',
   providers: [TaskService, StorageService],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SnapshotTaskListComponent implements EntityTableConfig<PeriodicSnapshotTaskUi> {
   title = this.translate.instant('Periodic Snapshot Tasks');

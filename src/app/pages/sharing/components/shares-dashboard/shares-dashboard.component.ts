@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { Role } from 'app/enums/role.enum';
 
@@ -6,6 +6,7 @@ import { Role } from 'app/enums/role.enum';
 @Component({
   templateUrl: './shares-dashboard.component.html',
   styleUrls: ['./shares-dashboard.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SharesDashboardComponent {
   protected readonly Role = Role;

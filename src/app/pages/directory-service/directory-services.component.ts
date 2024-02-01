@@ -1,5 +1,7 @@
 import { CdkAccordionItem } from '@angular/cdk/accordion';
-import { Component, OnInit, ViewChild } from '@angular/core';
+import {
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, ViewChild,
+} from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import {
@@ -31,6 +33,7 @@ interface DataCard {
 @Component({
   templateUrl: './directory-services.component.html',
   styleUrls: ['./directory-services.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DirectoryServicesComponent implements OnInit {
   isActiveDirectoryEnabled = false;
@@ -57,6 +60,7 @@ export class DirectoryServicesComponent implements OnInit {
     private dialog: DialogService,
     private loader: AppLoaderService,
     private translate: TranslateService,
+    private cdr: ChangeDetectorRef,
   ) {
   }
 
@@ -132,6 +136,7 @@ export class DirectoryServicesComponent implements OnInit {
         };
 
         this.refreshTables();
+        this.cdr.markForCheck();
       });
   }
 
