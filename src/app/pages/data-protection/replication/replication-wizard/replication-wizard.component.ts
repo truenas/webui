@@ -55,7 +55,6 @@ export class ReplicationWizardComponent {
   @ViewChild(ReplicationWhatAndWhereComponent) whatAndWhere: ReplicationWhatAndWhereComponent;
   @ViewChild(ReplicationWhenComponent) when: ReplicationWhenComponent;
 
-  rowId: number;
   isLoading = false;
   defaultNamingSchema = 'auto-%Y-%m-%d_%H-%M';
   isCustomRetentionVisible = true;
@@ -78,10 +77,6 @@ export class ReplicationWizardComponent {
     @Inject(CHAINED_SLIDE_IN_REF) private chainedSlideInRef: ChainedComponentRef,
     private authService: AuthService,
   ) {}
-
-  setRowId(id: number): void {
-    this.rowId = id;
-  }
 
   getSteps(): [
     ReplicationWhatAndWhereComponent,

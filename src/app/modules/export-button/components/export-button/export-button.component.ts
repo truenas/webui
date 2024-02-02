@@ -81,6 +81,7 @@ export class ExportButtonComponent<T, M extends ApiJobMethod> {
       untilDestroyed(this),
     ).subscribe(() => {
       this.isLoading = false;
+      this.cdr.markForCheck();
     });
   }
 

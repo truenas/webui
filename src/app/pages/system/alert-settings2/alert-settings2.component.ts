@@ -20,7 +20,6 @@ import { WebSocketService } from 'app/services/ws.service';
 export class AlertSettings2Component implements OnInit {
   categories: AlertCategory[] = [];
   alertClasses: AlertClasses;
-  AlertPolicy = AlertPolicy;
 
   searchControl = this.fb.control('');
   searchOptions: Option[] = [];

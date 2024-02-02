@@ -115,25 +115,24 @@ export class LdapComponent implements OnInit {
     this.isLoading = true;
     const values = this.form.value;
 
-    this.ws.call('ldap.update', [values])
-      .pipe(untilDestroyed(this))
-      .subscribe({
-        next: (update) => {
-          this.isLoading = false;
-          this.cdr.markForCheck();
-
-          if (update.job_id) {
-            this.showStartingJob(update.job_id);
-          } else {
-            this.slideInRef.close();
-          }
-        },
-        error: (error: unknown) => {
-          this.isLoading = false;
-          this.formErrorHandler.handleWsFormError(error, this.form);
-          this.cdr.markForCheck();
-        },
-      });
+    const dialogRef = this.matDialog.open(EntityJobComponent, {
+      data: {
+        title: this.translate.instant('Active Directory'),
+      },
+      disableClose: true,
+    });
+    dialogRef.componentInstance.setCall('ldap.update', [values]);
+    dialogRef.componentInstance.submit();
+    dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
+      dialogRef.close(true);
+      this.slideInRef.close(true);
+    });
+    dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((error) => {
+      this.dialogService.error(this.errorHandler.parseError(error));
+      this.isLoading = false;
+      this.cdr.markForCheck();
+      dialogRef.close(true);
+    });
   }
 
   private loadFormValues(): void {
@@ -153,24 +152,5 @@ export class LdapComponent implements OnInit {
           this.cdr.markForCheck();
         },
       });
-  }
-
-  private showStartingJob(jobId: number): void {
-    const dialogRef = this.matDialog.open(EntityJobComponent, {
-      data: {
-        title: this.translate.instant('Setting up LDAP'),
-      },
-      disableClose: true,
-    });
-    dialogRef.componentInstance.jobId = jobId;
-    dialogRef.componentInstance.wsshow();
-    dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
-      dialogRef.close();
-      this.slideInRef.close();
-    });
-    dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((error) => {
-      this.dialogService.error(this.errorHandler.parseError(error));
-      dialogRef.close();
-    });
   }
 }

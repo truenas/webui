@@ -11,15 +11,17 @@
   <div class="app-image-holder">
     <ix-app-card-logo [url]="app?.icon_url"></ix-app-card-logo>
   </div>
-  <button
-    *ngIf="!(kubernetesStore.selectedPool$ | async)"
-    mat-button
-    color="primary"
-    ixTest="setup-pool"
-    (click)="showChoosePoolModal()"
-  >
-    {{ 'Setup Pool To Install' | translate }}
-  </button>
+  <ng-container *ngIf="!(kubernetesStore.selectedPool$ | async)">
+    <button
+      *ixRequiresRoles="setupPoolRequiredRoles"
+      mat-button
+      color="primary"
+      ixTest="setup-pool"
+      (click)="showChoosePoolModal()"
+    >
+      {{ 'Setup Pool To Install' | translate }}
+    </button>
+  </ng-container>
   <button
     *ngIf="!!(kubernetesStore.selectedPool$ | async)"
     mat-button

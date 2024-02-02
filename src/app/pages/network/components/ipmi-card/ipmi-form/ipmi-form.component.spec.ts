@@ -47,7 +47,7 @@ describe('IpmiFormComponent', () => {
             },
             isHaLicensed: true,
             isUpgradePending: false,
-            hasOnlyMissmatchVersionsReason: false,
+            hasOnlyMismatchVersionsReason: false,
           },
         },
       }),

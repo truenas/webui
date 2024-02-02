@@ -1,6 +1,3 @@
-// eslint-disable-next-line @typescript-eslint/naming-convention
-export const NULL_VALUE = 'null_value';
-
 export interface ItemBeforeFlattening {
   id: string | number;
   children?: ItemBeforeFlattening[];

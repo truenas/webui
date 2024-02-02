@@ -7,6 +7,7 @@ import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
 import { NgxSkeletonLoaderComponent } from 'ngx-skeleton-loader';
 import { of } from 'rxjs';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { ChartReleaseStatus } from 'app/enums/chart-release-status.enum';
 import { ChartContainerImage, ChartRelease } from 'app/interfaces/chart-release.interface';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
@@ -57,6 +58,7 @@ describe('AppContainersCardComponent', () => {
       mockProvider(MatDialog, {
         open: jest.fn(() => of(true)),
       }),
+      mockAuth(),
     ],
   });
 

@@ -147,7 +147,7 @@ def click_save_changes_click_save(driver):
     """click Save Changes, Click Save."""
     assert wait_on_element(driver, 0.5, 5, '//button[contains(.,"SAVE CHANGES")]')
     driver.find_element_by_xpath('//button[contains(.,"SAVE CHANGES")]').click()
-    assert wait_on_element(driver, 0.5, 5, '//h1[contains(.,"Save Changes")]')
+    assert wait_on_element(driver, 0.5, 5, xpaths.popup.save_changes)
     driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
 
 

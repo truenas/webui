@@ -8,7 +8,7 @@ import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import _ from 'lodash';
-import { Observable, of } from 'rxjs';
+import { Observable, forkJoin, of } from 'rxjs';
 import {
   filter, map, pairwise, startWith, tap,
 } from 'rxjs/operators';
@@ -185,8 +185,8 @@ export class CloudSyncFormComponent implements OnInit {
     @Inject(CHAINED_SLIDE_IN_REF) private chainedSlideInRef: ChainedComponentRef,
   ) { }
 
-  getCredentialsList(): void {
-    this.fetchCloudSyncCredentialsList().pipe(untilDestroyed(this)).subscribe();
+  getCredentialsList(): Observable<CloudSyncCredential[]> {
+    return this.fetchCloudSyncCredentialsList();
   }
 
   fetchCloudSyncCredentialsList(): Observable<CloudSyncCredential[]> {
@@ -202,25 +202,31 @@ export class CloudSyncFormComponent implements OnInit {
     );
   }
 
-  getProviders(): void {
-    this.cloudCredentialService.getProviders().pipe(
+  getProviders(): Observable<CloudSyncProvider[]> {
+    return this.cloudCredentialService.getProviders().pipe(
       tap((providers) => {
         this.providersList = providers;
       }),
-      untilDestroyed(this),
-    ).subscribe();
+    );
   }
 
   ngOnInit(): void {
-    this.getCredentialsList();
-    this.getProviders();
-    this.setFileNodeProvider();
-    this.setBucketNodeProvider();
-    this.setupForm();
+    this.isLoading = true;
+    forkJoin([
+      this.getCredentialsList(),
+      this.getProviders(),
+    ]).pipe(untilDestroyed(this)).subscribe(() => {
+      this.isLoading = false;
+      this.cdr.markForCheck();
 
-    if (this.editingTask) {
-      this.setTaskForEdit();
-    }
+      this.setFileNodeProvider();
+      this.setBucketNodeProvider();
+      this.setupForm();
+
+      if (this.editingTask) {
+        this.setTaskForEdit();
+      }
+    });
   }
 
   setupForm(): void {
@@ -233,6 +239,7 @@ export class CloudSyncFormComponent implements OnInit {
 
     this.form.controls.bucket.valueChanges.pipe(untilDestroyed(this)).subscribe((selectedOption) => {
       if (selectedOption !== newOption) {
+        this.setBucketNodeProvider();
         return;
       }
       const dialogRef = this.matDialog.open(CreateStorjBucketDialogComponent, {

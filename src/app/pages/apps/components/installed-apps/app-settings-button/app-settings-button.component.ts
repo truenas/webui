@@ -5,6 +5,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { officialCatalog } from 'app/constants/catalog.constants';
+import { Role } from 'app/enums/role.enum';
 import { helptextApps } from 'app/helptext/apps/apps';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -24,6 +25,8 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 })
 export class AppSettingsButtonComponent {
   readonly officialCatalog = officialCatalog;
+
+  protected readonly requiredRoles = [Role.KubernetesWrite];
 
   constructor(
     private slideInService: IxSlideInService,

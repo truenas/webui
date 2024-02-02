@@ -2,6 +2,7 @@ import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { MockComponents } from 'ng-mocks';
 import { ImgFallbackModule } from 'ngx-img-fallback';
 import { officialCatalog } from 'app/constants/catalog.constants';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { ChartReleaseStatus } from 'app/enums/chart-release-status.enum';
 import { ChartRelease } from 'app/interfaces/chart-release.interface';
 import { AppRowComponent } from 'app/pages/apps/components/installed-apps/app-row/app-row.component';
@@ -33,6 +34,9 @@ describe('AppRowComponent', () => {
     imports: [ImgFallbackModule, AppCatalogPipe],
     declarations: [
       MockComponents(AppStatusCellComponent),
+    ],
+    providers: [
+      mockAuth(),
     ],
   });
 
