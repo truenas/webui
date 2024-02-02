@@ -1286,6 +1286,7 @@
   "SMB - Vers Major": "",
   "SMB - Vers Minor": "",
   "SMB Name": "",
+  "SMB Sessions": "",
   "SMB multichannel allows servers to use multiple network connections  simultaneously by combining the bandwidth of several network interface cards (NICs) for  better performance. SMB multichannel does not function if you combine NICs into a LAGG. <a href=\"https://www.truenas.com/docs/scale/scaletutorials/shares/smb/smbmultichannel/\" target=\"_blank\">Read more in docs</a>": "",
   "SMB preset sets most optimal settings for SMB sharing.": "",
   "SMB/NFSv4": "",

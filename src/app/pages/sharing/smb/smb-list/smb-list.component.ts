@@ -200,6 +200,12 @@ export class SmbListComponent implements OnInit {
     this.cdr.markForCheck();
   }
 
+  columnsChange(columns: typeof this.columns): void {
+    this.columns = [...columns];
+    this.cdr.detectChanges();
+    this.cdr.markForCheck();
+  }
+
   private lockedPathDialog(path: string): void {
     this.dialog.error({
       title: helptextSharingSmb.action_edit_acl_dialog.title,

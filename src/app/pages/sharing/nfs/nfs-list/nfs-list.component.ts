@@ -170,4 +170,10 @@ export class NfsListComponent implements OnInit {
     this.dataProvider.setRows(filteredExporters);
     this.cdr.markForCheck();
   }
+
+  columnsChange(columns: typeof this.columns): void {
+    this.columns = [...columns];
+    this.cdr.detectChanges();
+    this.cdr.markForCheck();
+  }
 }
