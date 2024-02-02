@@ -205,10 +205,11 @@ export class DatasetFormComponent implements OnInit, AfterViewInit {
       untilDestroyed(this),
     ).subscribe({
       next: ([createdDataset, shouldGoToEditor]) => {
-        if (this.nameAndOptionsSection.isCreatingSmb) {
+        const datasetPresetFormValue = this.nameAndOptionsSection.datasetPresetForm.value;
+        if (this.nameAndOptionsSection.isCreatingSmb && datasetPresetFormValue.create_smb) {
           this.store$.dispatch(checkIfServiceIsEnabled({ serviceName: ServiceName.Cifs }));
         }
-        if (this.nameAndOptionsSection.isCreatingNfs) {
+        if (this.nameAndOptionsSection.isCreatingNfs && datasetPresetFormValue.create_nfs) {
           this.store$.dispatch(checkIfServiceIsEnabled({ serviceName: ServiceName.Nfs }));
         }
         this.isLoading = false;

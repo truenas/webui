@@ -42,16 +42,18 @@ describe('DatasetFormComponent', () => {
   let spectator: Spectator<DatasetFormComponent>;
   let loader: HarnessLoader;
 
+  const datasetPresetForm = new FormGroup({
+    create_smb: new FormControl(true),
+    create_nfs: new FormControl(true),
+    smb_name: new FormControl('new_sbm_name'),
+  });
+
   MockInstance(NameAndOptionsSectionComponent, 'form', new FormGroup({
     name: new FormControl(''),
     parent: new FormControl(''),
     share_type: new FormControl(DatasetPreset.Generic),
   }));
-  MockInstance(NameAndOptionsSectionComponent, 'datasetPresetForm', new FormGroup({
-    create_smb: new FormControl(true),
-    create_nfs: new FormControl(true),
-    smb_name: new FormControl('new_sbm_name'),
-  }));
+  MockInstance(NameAndOptionsSectionComponent, 'datasetPresetForm', datasetPresetForm);
   MockInstance(NameAndOptionsSectionComponent, 'isCreatingSmb', true);
   MockInstance(NameAndOptionsSectionComponent, 'isCreatingNfs', true);
   MockInstance(NameAndOptionsSectionComponent, 'getPayload', () => ({
@@ -197,6 +199,31 @@ describe('DatasetFormComponent', () => {
         checkIfServiceIsEnabled({ serviceName: ServiceName.Cifs }),
       );
       expect(spectator.inject(Store).dispatch).toHaveBeenCalledWith(
+        checkIfServiceIsEnabled({ serviceName: ServiceName.Nfs }),
+      );
+    });
+
+    it('skips creation new SMB and NFS when checkboxes are set to false', async () => {
+      datasetPresetForm.controls.create_smb.setValue(false);
+      datasetPresetForm.controls.create_nfs.setValue(false);
+
+      jest.spyOn(spectator.inject(Store), 'dispatch');
+      const submit = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      await submit.click();
+
+      expect(spectator.inject(WebSocketService).call).not.toHaveBeenCalledWith('sharing.smb.create', [{
+        name: 'new_sbm_name',
+        path: '/mnt/saved-id',
+      }]);
+
+      expect(spectator.inject(WebSocketService).call).not.toHaveBeenCalledWith('sharing.nfs.create', [{
+        path: '/mnt/saved-id',
+      }]);
+
+      expect(spectator.inject(Store).dispatch).not.toHaveBeenCalledWith(
+        checkIfServiceIsEnabled({ serviceName: ServiceName.Cifs }),
+      );
+      expect(spectator.inject(Store).dispatch).not.toHaveBeenCalledWith(
         checkIfServiceIsEnabled({ serviceName: ServiceName.Nfs }),
       );
     });
