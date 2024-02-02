@@ -115,8 +115,6 @@ export class GuiFormComponent {
     ).pipe(
       filter(Boolean),
       tap(() => {
-        this.store$.dispatch(guiFormSubmitted({ theme: values.theme }));
-
         // prevent to revert momentarily to previous value due to `guiFormSubmitted`
         this.formGroup.controls.ui_httpsredirect.setValue(values.ui_httpsredirect);
       }),
@@ -127,6 +125,8 @@ export class GuiFormComponent {
       untilDestroyed(this),
     ).subscribe({
       next: () => {
+        this.store$.dispatch(guiFormSubmitted({ theme: values.theme }));
+        this.themeService.updateThemeInLocalStorage(this.themeService.findTheme(values.theme));
         this.isFormLoading = false;
         this.cdr.markForCheck();
         this.handleServiceRestart(params as SystemGeneralConfigUpdate);
@@ -137,8 +137,6 @@ export class GuiFormComponent {
         this.cdr.markForCheck();
       },
     });
-
-    this.themeService.updateThemeInLocalStorage(this.themeService.findTheme(values.theme));
   }
 
   getIsServiceRestartRequired(current: SystemGeneralConfig, next: SystemGeneralConfigUpdate): boolean {
