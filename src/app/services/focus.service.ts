@@ -21,7 +21,7 @@ export class FocusService {
           const dataTestValue = this.lastFocusedElement.getAttribute('data-test');
 
           if (dataTestValue) {
-            const dataTestElement = document.querySelector(`[data-test="${dataTestValue}"]`);
+            const dataTestElement = this.document.querySelector(`[data-test="${dataTestValue}"]`);
             (dataTestElement as HTMLElement)?.focus();
           } else {
             this.lastFocusedElement?.focus();
