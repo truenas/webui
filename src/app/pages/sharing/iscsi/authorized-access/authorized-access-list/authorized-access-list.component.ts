@@ -76,7 +76,7 @@ export class AuthorizedAccessListComponent implements OnInit {
               },
             });
           },
-          requiresRoles: [
+          requiredRoles: [
             Role.SharingIscsiAuthWrite,
             Role.SharingIscsiWrite,
             Role.SharingWrite,

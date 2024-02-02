@@ -132,7 +132,7 @@ export class CloudsyncFormComponent implements OnInit {
   `;
 
   readonly helptext = helptextCloudsync;
-  readonly requiresRoles = [Role.CloudSyncWrite];
+  readonly requiredRoles = [Role.CloudSyncWrite];
 
   readonly directionOptions$ = of(mapToOptions(directionNames, this.translate));
   readonly transferModeOptions$ = of(mapToOptions(transferModeNames, this.translate));

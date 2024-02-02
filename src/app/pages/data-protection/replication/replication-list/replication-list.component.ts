@@ -58,7 +58,7 @@ export class ReplicationListComponent implements EntityTableConfig<ReplicationTa
   queryCallOption: QueryParams<void> = [[], { extra: { check_dataset_encryption_keys: true } }];
   entityList: EntityTableComponent<ReplicationTaskUi>;
   filterValue = '';
-  requiresRoles = [Role.ReplicationTaskWrite, Role.ReplicationTaskWritePull];
+  requiredRoles = [Role.ReplicationTaskWrite, Role.ReplicationTaskWritePull];
 
   columns = [
     { name: this.translate.instant('Name'), prop: 'name', always_display: true },
@@ -70,7 +70,7 @@ export class ReplicationListComponent implements EntityTableConfig<ReplicationTa
     { name: this.translate.instant('Recursive'), prop: 'recursive', hidden: true },
     { name: this.translate.instant('Auto'), prop: 'auto', hidden: true },
     {
-      name: this.translate.instant('Enabled'), prop: 'enabled', checkbox: true, requiresRoles: this.requiresRoles,
+      name: this.translate.instant('Enabled'), prop: 'enabled', checkbox: true, requiredRoles: this.requiredRoles,
     },
     { name: this.translate.instant('Last Run'), prop: 'last_run', hidden: true },
     {
@@ -131,7 +131,7 @@ export class ReplicationListComponent implements EntityTableConfig<ReplicationTa
         icon: 'play_arrow',
         name: 'run',
         label: this.translate.instant('Run Now'),
-        requiresRoles: this.requiresRoles,
+        requiredRoles: this.requiredRoles,
         onClick: (row: ReplicationTaskUi) => {
           this.dialogService.confirm({
             title: this.translate.instant('Run Now'),
@@ -163,7 +163,7 @@ export class ReplicationListComponent implements EntityTableConfig<ReplicationTa
         name: 'restore',
         label: this.translate.instant('Restore'),
         icon: 'restore',
-        requiresRoles: this.requiresRoles,
+        requiredRoles: this.requiredRoles,
         onClick: (row: ReplicationTaskUi) => {
           const dialog = this.matDialog.open(ReplicationRestoreDialogComponent, {
             data: row.id,
@@ -193,7 +193,7 @@ export class ReplicationListComponent implements EntityTableConfig<ReplicationTa
         icon: 'download',
         name: 'download_keys',
         label: this.translate.instant('Download keys'),
-        requiresRoles: this.requiresRoles,
+        requiredRoles: this.requiredRoles,
         onClick: (row) => {
           this.loader.open();
           this.ws.call('core.download', ['pool.dataset.export_keys_for_replication', [row.id], `${row.name}_encryption_keys.json`]).pipe(untilDestroyed(this)).subscribe({
@@ -222,7 +222,7 @@ export class ReplicationListComponent implements EntityTableConfig<ReplicationTa
       icon: 'delete',
       name: 'delete',
       label: this.translate.instant('Delete'),
-      requiresRoles: this.requiresRoles,
+      requiredRoles: this.requiredRoles,
       onClick: (row: ReplicationTaskUi) => {
         this.entityList.doDelete(row);
       },

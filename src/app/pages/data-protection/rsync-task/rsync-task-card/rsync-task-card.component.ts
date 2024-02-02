@@ -67,7 +67,7 @@ export class RsyncTaskCardComponent implements OnInit {
     toggleColumn({
       title: this.translate.instant('Enabled'),
       propertyName: 'enabled',
-      requiresRoles: [Role.FullAdmin],
+      requiredRoles: [Role.FullAdmin],
       onRowToggle: (row: RsyncTaskUi) => this.onChangeEnabledState(row),
     }),
     stateButtonColumn({
@@ -87,14 +87,14 @@ export class RsyncTaskCardComponent implements OnInit {
         {
           iconName: 'play_arrow',
           tooltip: this.translate.instant('Run job'),
-          requiresRoles: [Role.FullAdmin],
+          requiredRoles: [Role.FullAdmin],
           hidden: (row) => of(row.job?.state === JobState.Running),
           onClick: (row) => this.runNow(row),
         },
         {
           iconName: 'delete',
           tooltip: this.translate.instant('Delete'),
-          requiresRoles: [Role.FullAdmin],
+          requiredRoles: [Role.FullAdmin],
           onClick: (row) => this.doDelete(row),
         },
       ],

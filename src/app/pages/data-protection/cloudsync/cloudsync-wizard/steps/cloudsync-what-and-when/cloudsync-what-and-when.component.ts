@@ -101,7 +101,7 @@ export class CloudsyncWhatAndWhenComponent implements OnInit, OnChanges {
   readonly directionOptions$ = of(mapToOptions(directionNames, this.translate));
   readonly transferModeOptions$ = of(mapToOptions(transferModeNames, this.translate));
   readonly helptext = helptextCloudsync;
-  readonly requiresRoles = [Role.CloudSyncWrite];
+  readonly requiredRoles = [Role.CloudSyncWrite];
   readonly transferModeTooltip = `
     ${helptextCloudsync.transfer_mode_warning_sync}<br><br>
     ${helptextCloudsync.transfer_mode_warning_copy}<br><br>

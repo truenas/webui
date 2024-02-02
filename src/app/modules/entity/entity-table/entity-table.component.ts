@@ -1208,7 +1208,7 @@ export class EntityTableComponent<Row extends SomeRow = SomeRow> implements OnIn
 
   getRoles(column: string): Role[] {
     const item = this.currentColumns.find((obj) => obj.prop === column);
-    return item?.requiresRoles;
+    return item?.requiredRoles;
   }
 
   doRowClick(element: Row): void {

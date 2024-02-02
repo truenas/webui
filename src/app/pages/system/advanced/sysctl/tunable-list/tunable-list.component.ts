@@ -67,7 +67,7 @@ export class TunableListComponent implements OnInit {
           iconName: 'delete',
           tooltip: this.translate.instant('Delete'),
           onClick: (row) => this.doDelete(row),
-          requiresRoles: [Role.FullAdmin],
+          requiredRoles: [Role.FullAdmin],
         },
       ],
     }),

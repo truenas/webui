@@ -21,7 +21,7 @@
 >
   <div class="wrap-buttons-container">
     <ng-container *ngFor="let action of actions">
-      <ng-container *ixRequiresRoles="action.requiresRoles">
+      <ng-container *ixRequiresRoles="action.requiredRoles">
         <button
           *ngIf="!parent.conf.isActionVisible || parent.conf.isActionVisible.bind(parent.conf)(action.id, this.config)"
           mat-button

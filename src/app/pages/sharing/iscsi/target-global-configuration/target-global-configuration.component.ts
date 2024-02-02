@@ -43,7 +43,7 @@ export class TargetGlobalConfigurationComponent implements OnInit {
     alua: helptextSharingIscsi.globalconf_tooltip_alua,
   };
 
-  readonly requiresRoles = [
+  readonly requiredRoles = [
     Role.SharingIscsiGlobalWrite,
     Role.SharingIscsiWrite,
     Role.SharingWrite,
