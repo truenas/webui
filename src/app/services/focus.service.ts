@@ -17,8 +17,18 @@ export class FocusService {
 
     restoreFocus(): void {
       if (this.lastFocusedElement) {
-        this.lastFocusedElement.focus();
-        this.lastFocusedElement = null;
+        setTimeout(() => {
+          const dataTestValue = this.lastFocusedElement.getAttribute('data-test');
+
+          if (dataTestValue) {
+            const dataTestElement = document.querySelector(`[data-test="${dataTestValue}"]`);
+            (dataTestElement as HTMLElement)?.focus();
+          } else {
+            this.lastFocusedElement?.focus();
+          }
+
+          this.lastFocusedElement = null;
+        }, 200);
       }
     }
 
