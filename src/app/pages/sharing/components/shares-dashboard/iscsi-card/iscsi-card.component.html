@@ -1,29 +1,35 @@
 <mat-card>
   <mat-toolbar-row>
-    <a [ixTest]="['iscsi-share', 'open-in-new']" [routerLink]="['/sharing', 'iscsi', 'target']">
-      <h3 class="card-title">
-        {{ 'Block (iSCSI) Shares Targets' | translate }}
-        <ix-icon name="open_in_new" class="title-icon"></ix-icon>
-      </h3>
-    </a>
+    <div class="toolbar-row-title">
+      <a [ixTest]="['iscsi-share', 'open-in-new']" [routerLink]="['/sharing', 'iscsi', 'target']">
+        <h3 class="card-title">
+          {{ 'Block (iSCSI) Shares Targets' | translate }}
+          <ix-icon name="open_in_new" class="title-icon"></ix-icon>
+        </h3>
+      </a>
 
-    <ix-service-state-button
-      [service]="service$ | async"
-      [count]="dataProvider.currentPageCount$ | async"
-    ></ix-service-state-button>
+      <ix-service-state-button
+        [service]="service$ | async"
+        [count]="dataProvider.currentPageCount$ | async"
+      ></ix-service-state-button>
+    </div>
 
     <div class="actions">
       <button
         mat-button
         [ixTest]="['iscsi-share', 'configure']"
         [routerLink]="['/sharing', 'iscsi', 'configuration']"
-      >{{ 'Configure' | translate }}</button>
+      >
+        {{ 'Configure' | translate }}
+      </button>
 
       <button
         mat-button
         [ixTest]="['iscsi-share', 'wizard']"
         (click)="openForm(null, true)"
-      >{{ 'Wizard' | translate }}</button>
+      >
+        {{ 'Wizard' | translate }}
+      </button>
 
       <ix-service-extra-actions
         [service]="service$ | async"

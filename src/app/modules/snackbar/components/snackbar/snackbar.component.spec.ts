@@ -1,3 +1,6 @@
+import { HarnessLoader } from '@angular/cdk/testing';
+import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { MatButtonHarness } from '@angular/material/button/testing';
 import { MAT_SNACK_BAR_DATA } from '@angular/material/snack-bar';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
@@ -5,6 +8,8 @@ import { SnackbarConfig } from './snackbar-config.interface';
 import { SnackbarComponent } from './snackbar.component';
 
 describe('SnackbarComponent', () => {
+  const fakeAction = jest.fn();
+  let loader: HarnessLoader;
   let spectator: Spectator<SnackbarComponent>;
   const createComponent = createComponentFactory({
     component: SnackbarComponent,
@@ -14,6 +19,10 @@ describe('SnackbarComponent', () => {
         useValue: {
           message: 'Time to go to bed',
           icon: 'error',
+          button: {
+            title: 'Test Button',
+            action: fakeAction,
+          },
         } as SnackbarConfig,
       },
     ],
@@ -21,6 +30,7 @@ describe('SnackbarComponent', () => {
 
   beforeEach(() => {
     spectator = createComponent();
+    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
   it('shows a message from config', () => {
@@ -29,5 +39,13 @@ describe('SnackbarComponent', () => {
 
   it('shows an icon when it is set in config', () => {
     expect(spectator.query(IxIconComponent).name).toBe('error');
+  });
+
+  it('shows the button and executes the action when it is set in config', async () => {
+    const testButton = await loader.getHarnessOrNull(MatButtonHarness.with({ text: 'Test Button' }));
+    expect(testButton).not.toBeNull();
+
+    await testButton.click();
+    expect(fakeAction).toHaveBeenCalled();
   });
 });
