@@ -10,12 +10,11 @@ import {
 import { of } from 'rxjs';
 import { fakeFile } from 'app/core/testing/utils/fake-file.uitls';
 import { mockWindow } from 'app/core/testing/utils/mock-window.utils';
-import { TicketCategory, TicketEnvironment } from 'app/enums/file-ticket.enum';
+import { TicketCategory, TicketCriticality, TicketEnvironment } from 'app/enums/file-ticket.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import {
   FileTicketLicensedComponent,
 } from 'app/modules/feedback/components/file-ticket-licensed/file-ticket-licensed.component';
-import { CreateNewTicket } from 'app/modules/feedback/interfaces/file-ticket.interface';
 import { FeedbackService } from 'app/modules/feedback/services/feedback.service';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
@@ -38,9 +37,10 @@ describe('FileTicketLicensedFormComponent', () => {
     declarations: [],
     providers: [
       mockProvider(FeedbackService, {
-        createNewTicket: jest.fn(() => of({ ticket: 24 })),
-        addTicketAttachments: jest.fn(() => of(undefined)),
-        addDebugInfoToMessage: (message: string) => of(`${message} Session ID: 12345`),
+        createTicketLicensed: jest.fn(() => of({
+          ticket: 24,
+          url: 'https://jira-redirect.ixsystems.com/ticket',
+        })),
       }),
       mockProvider(ImageValidatorService, {
         validateImages: () => () => of(null as ValidationErrors),
@@ -49,19 +49,6 @@ describe('FileTicketLicensedFormComponent', () => {
       mockWindow(),
     ],
   });
-
-  const expectedTicket = {
-    attach_debug: true,
-    body: 'New request Session ID: 12345',
-    category: TicketCategory.Performance,
-    cc: ['marcus@gmail.com'],
-    criticality: 'total_down',
-    email: 'john.wick@gmail.com',
-    environment: TicketEnvironment.Staging,
-    name: 'John Wick',
-    phone: '310-564-8005',
-    title: 'Assassination Request',
-  } as CreateNewTicket;
 
   beforeEach(async () => {
     spectator = createComponent({
@@ -108,15 +95,6 @@ describe('FileTicketLicensedFormComponent', () => {
   });
 
   it('submits a new ticket for an enterprise system when Submit is pressed', async () => {
-    await fillTextFields();
-
-    await submitButton.click();
-
-    expect(feedbackService.createNewTicket).toHaveBeenCalledWith(expectedTicket);
-    expect(dialogRef.close).toHaveBeenCalled();
-  });
-
-  it('takes screenshot and uploads attachments if they are added', async () => {
     const fakeAttachments = [fakeFile('attachment1.png'), fakeFile('attachment2.png')];
 
     await fillTextFields();
@@ -129,12 +107,23 @@ describe('FileTicketLicensedFormComponent', () => {
 
     await submitButton.click();
 
-    expect(feedbackService.createNewTicket).toHaveBeenCalledWith(expectedTicket);
-    expect(feedbackService.addTicketAttachments).toHaveBeenCalledWith({
-      ticketId: 24,
-      takeScreenshot: true,
-      attachments: fakeAttachments,
+    expect(feedbackService.createTicketLicensed).toHaveBeenCalledWith({
+      attach_debug: true,
+      attach_images: true,
+      category: TicketCategory.Performance,
+      cc: ['marcus@gmail.com'],
+      criticality: TicketCriticality.TotalDown,
+      email: 'john.wick@gmail.com',
+      environment: TicketEnvironment.Staging,
+      images: fakeAttachments,
+      message: 'New request',
+      name: 'John Wick',
+      phone: '310-564-8005',
+      take_screenshot: true,
+      title: 'Assassination Request',
     });
+    expect(dialogRef.close).toHaveBeenCalled();
+    expect(feedbackService.showTicketSuccessMsg).toHaveBeenCalledWith('https://jira-redirect.ixsystems.com/ticket');
   });
 });
 

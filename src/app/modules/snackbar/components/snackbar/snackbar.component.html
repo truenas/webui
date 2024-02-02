@@ -3,3 +3,14 @@
 </ng-container>
 
 <div class="message">{{ config.message }}</div>
+
+<div *ngIf="config.button" class="action">
+  <button
+    mat-button
+    type="button"
+    ixTest="snackbar-button"
+    (click)="config.button.action()"
+  >
+    {{ config.button.title }}
+  </button>
+</div>
