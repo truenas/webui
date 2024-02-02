@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { take } from 'rxjs/operators';
+import { filter, take } from 'rxjs/operators';
 import { shared, helptextSharingSmb } from 'app/helptext/sharing';
 import { helptextVolumes } from 'app/helptext/storage/volumes/volume-list';
 import { SmbShare } from 'app/interfaces/smb-share.interface';
@@ -84,14 +84,22 @@ export class SmbListComponent implements EntityTableConfig<SmbShare> {
 
   doAdd(): void {
     const slideInRef = this.slideInService.open(SmbFormComponent);
-    slideInRef.slideInClosed$.pipe(take(1), untilDestroyed(this)).subscribe(() => this.entityList.getData());
+    slideInRef.slideInClosed$.pipe(
+      take(1),
+      filter(Boolean),
+      untilDestroyed(this),
+    ).subscribe(() => this.entityList.getData());
   }
 
   doEdit(id: string | number): void {
     const slideInRef = this.slideInService.open(SmbFormComponent, {
       data: { existingSmbShare: this.entityList.rows.find((share) => share.id === id) },
     });
-    slideInRef.slideInClosed$.pipe(take(1), untilDestroyed(this)).subscribe(() => this.entityList.getData());
+    slideInRef.slideInClosed$.pipe(
+      take(1),
+      filter(Boolean),
+      untilDestroyed(this),
+    ).subscribe(() => this.entityList.getData());
   }
 
   getActions(smbShare: SmbShare): EntityTableAction[] {
