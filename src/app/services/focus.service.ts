@@ -17,8 +17,19 @@ export class FocusService {
 
     restoreFocus(): void {
       if (this.lastFocusedElement) {
-        this.lastFocusedElement.focus();
-        this.lastFocusedElement = null;
+        setTimeout(() => {
+          const dataTestValue = this.lastFocusedElement.getAttribute('data-test');
+          const hasOverlayWithChildren = this.document.querySelector('.cdk-overlay-container')?.hasChildNodes();
+
+          if (dataTestValue && !hasOverlayWithChildren) {
+            const dataTestElement = this.document.querySelector(`[data-test="${dataTestValue}"]`);
+            (dataTestElement as HTMLElement)?.focus();
+          } else {
+            this.lastFocusedElement?.focus();
+          }
+
+          this.lastFocusedElement = null;
+        }, 200);
       }
     }
 
