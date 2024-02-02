@@ -81,7 +81,7 @@ export class InitShutdownListComponent implements OnInit {
           iconName: 'delete',
           tooltip: this.translate.instant('Delete'),
           onClick: (row) => this.deleteScript(row),
-          requiresRoles: [Role.FullAdmin],
+          requiredRoles: [Role.FullAdmin],
         },
       ],
     }),

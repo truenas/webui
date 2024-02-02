@@ -101,7 +101,7 @@ export interface EntityTableAction<Row extends SomeRow = SomeRow> {
   actions?: EntityTableAction<Row>[];
   matTooltip?: string;
   ttposition?: TooltipPosition;
-  requiresRoles?: Role[];
+  requiredRoles?: Role[];
 }
 
 export interface EntityTableMultiAction<Row = unknown> {
@@ -150,7 +150,7 @@ export interface EntityTableColumn {
   enableMatTooltip?: boolean;
   showLockedStatus?: boolean;
   emptyText?: string;
-  requiresRoles?: Role[];
+  requiredRoles?: Role[];
 
   icon?: string;
 

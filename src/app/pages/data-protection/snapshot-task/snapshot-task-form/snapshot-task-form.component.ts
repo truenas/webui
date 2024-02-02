@@ -57,7 +57,7 @@ export class SnapshotTaskFormComponent implements OnInit {
 
   isLoading = false;
 
-  readonly requiresRoles = [Role.FullAdmin];
+  readonly requiredRoles = [Role.FullAdmin];
 
   readonly labels = {
     dataset: helptextSnapshotForm.dataset_placeholder,

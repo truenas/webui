@@ -87,7 +87,7 @@ export class PortalFormComponent implements OnInit {
   );
   readonly listenOptions$ = this.iscsiService.getIpChoices().pipe(choicesToOptions());
 
-  readonly requiresRoles = [
+  readonly requiredRoles = [
     Role.SharingIscsiPortalWrite,
     Role.SharingIscsiWrite,
     Role.SharingWrite,

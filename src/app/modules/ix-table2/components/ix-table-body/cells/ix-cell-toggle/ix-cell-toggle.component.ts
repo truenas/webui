@@ -9,7 +9,7 @@ import { Column, ColumnComponent } from 'app/modules/ix-table2/interfaces/table-
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class IxCellToggleComponent<T> extends ColumnComponent<T> {
-  requiresRoles: Role[];
+  requiredRoles: Role[];
   onRowToggle: (row: T, checked: boolean) => void;
 
   get checked(): boolean {

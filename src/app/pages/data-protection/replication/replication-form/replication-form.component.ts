@@ -71,7 +71,7 @@ export class ReplicationFormComponent implements OnInit {
   isSudoDialogShown = false;
   sshCredentials: KeychainSshCredentials[] = [];
 
-  readonly requiresRoles = [Role.ReplicationTaskWrite, Role.ReplicationTaskWritePull];
+  readonly requiredRoles = [Role.ReplicationTaskWrite, Role.ReplicationTaskWritePull];
 
   constructor(
     private ws: WebSocketService,
@@ -235,7 +235,7 @@ export class ReplicationFormComponent implements OnInit {
     this.isLoading = true;
     this.cdr.markForCheck();
 
-    this.authService.hasRole(this.requiresRoles).pipe(
+    this.authService.hasRole(this.requiredRoles).pipe(
       switchMap((hasRole) => {
         if (hasRole) {
           return this.ws.call('replication.count_eligible_manual_snapshots', [payload]);

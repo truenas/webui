@@ -91,7 +91,7 @@ export class PortalListComponent implements OnInit {
               },
             });
           },
-          requiresRoles: [
+          requiredRoles: [
             Role.SharingIscsiPortalWrite,
             Role.SharingIscsiWrite,
             Role.SharingWrite,

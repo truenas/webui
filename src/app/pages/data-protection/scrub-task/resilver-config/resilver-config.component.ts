@@ -42,7 +42,7 @@ export class ResilverConfigComponent implements OnInit {
     ], Validators.required],
   });
 
-  readonly requiresRoles = [Role.FullAdmin];
+  readonly requiredRoles = [Role.FullAdmin];
 
   readonly tooltips = {
     enabled: helptextResilver.enabled_tooltip,
