@@ -2,9 +2,9 @@
   <ng-container
     *ngFor="let action of actions"
   >
-    <ng-container *ngIf="action.requiresRoles?.length">
+    <ng-container *ngIf="action.requiredRoles?.length">
       <div
-        *ixRequiresRoles="action.requiresRoles"
+        *ixRequiresRoles="action.requiredRoles"
         [matTooltip]="action.dynamicTooltip ? (action.dynamicTooltip(row) | async) : action.tooltip || ''"
       >
         <button
@@ -19,7 +19,7 @@
       </div>
     </ng-container>
 
-    <ng-container *ngIf="!action.requiresRoles?.length">
+    <ng-container *ngIf="!action.requiredRoles?.length">
       <div
         [matTooltip]="action.dynamicTooltip ? (action.dynamicTooltip(row) | async) : action.tooltip || ''"
       >

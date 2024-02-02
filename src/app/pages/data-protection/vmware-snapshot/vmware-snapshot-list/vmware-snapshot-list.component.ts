@@ -57,7 +57,7 @@ export class VmwareSnapshotListComponent implements OnInit {
     rowTestId: (row) => 'vmware-snapshot-' + row.hostname,
   });
 
-  readonly requiresRoles = [Role.FullAdmin];
+  readonly requiredRoles = [Role.FullAdmin];
 
   constructor(
     protected translate: TranslateService,

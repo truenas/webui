@@ -51,7 +51,7 @@ export class AssociatedTargetFormComponent implements OnInit {
     extent: helptextSharingIscsi.associated_target_tooltip_extent,
   };
 
-  readonly requiresRoles = [
+  readonly requiredRoles = [
     Role.SharingIscsiTargetExtentWrite,
     Role.SharingIscsiWrite,
     Role.SharingWrite,

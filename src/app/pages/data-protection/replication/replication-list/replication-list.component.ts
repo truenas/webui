@@ -43,7 +43,7 @@ export class ReplicationListComponent implements OnInit {
   filterString = '';
   dataProvider: AsyncDataProvider<ReplicationTask>;
   readonly jobState = JobState;
-  readonly requiresRoles = [Role.ReplicationTaskWrite, Role.ReplicationTaskWritePull];
+  readonly requiredRoles = [Role.ReplicationTaskWrite, Role.ReplicationTaskWritePull];
 
   columns = createTable<ReplicationTask>([
     textColumn({

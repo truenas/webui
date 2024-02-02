@@ -60,7 +60,7 @@ export class ServiceSmbComponent implements OnInit {
     multichannel: [false, []],
   });
 
-  readonly requiresRoles = [Role.SharingSmbWrite];
+  readonly requiredRoles = [Role.SharingSmbWrite];
   readonly helptext = helptextServiceSmb;
   readonly tooltips = {
     netbiosname: helptextServiceSmb.cifs_srv_netbiosname_tooltip,

@@ -38,7 +38,7 @@
       <div class="table-details-row-actions">
         <ng-container *ngIf="!task.job || task.job?.state !== jobState.Running">
           <button
-            *ixRequiresRoles="requiresRoles"
+            *ixRequiresRoles="requiredRoles"
             mat-button
             [ixTest]="[task.id, 'run_now']"
             (click)="runNow(task)"
@@ -49,7 +49,7 @@
         </ng-container>
 
         <button
-          *ixRequiresRoles="requiresRoles"
+          *ixRequiresRoles="requiredRoles"
           mat-button
           [ixTest]="[task.id, 'restore']"
           (click)="restore(task)"
@@ -60,7 +60,7 @@
 
         <ng-container *ngIf="task.has_encrypted_dataset_keys">
           <button
-            *ixRequiresRoles="requiresRoles"
+            *ixRequiresRoles="requiredRoles"
             mat-button
             [ixTest]="[task.id, 'download']"
             (click)="downloadKeys(task)"
@@ -80,7 +80,7 @@
         </button>
 
         <button
-          *ixRequiresRoles="requiresRoles"
+          *ixRequiresRoles="requiredRoles"
           mat-button
           [ixTest]="[task.id, 'delete']"
           (click)="doDelete(task)"

@@ -77,7 +77,7 @@ export class CertificateSigningRequestsListComponent implements OnInit {
         },
         {
           iconName: 'delete',
-          requiresRoles: [Role.FullAdmin],
+          requiredRoles: [Role.FullAdmin],
           tooltip: this.translate.instant('Delete'),
           onClick: (row) => this.doDelete(row),
         },

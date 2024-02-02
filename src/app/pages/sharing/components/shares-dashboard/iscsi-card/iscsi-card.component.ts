@@ -33,7 +33,7 @@ import { selectService } from 'app/store/services/services.selectors';
 })
 export class IscsiCardComponent implements OnInit {
   service$ = this.store$.select(selectService(ServiceName.Iscsi));
-  requiresRoles = [
+  requiredRoles = [
     Role.SharingIscsiTargetWrite,
     Role.SharingIscsiWrite,
     Role.SharingWrite,
@@ -62,7 +62,7 @@ export class IscsiCardComponent implements OnInit {
           iconName: 'delete',
           tooltip: this.translate.instant('Delete'),
           onClick: (row) => this.doDelete(row),
-          requiresRoles: this.requiresRoles,
+          requiredRoles: this.requiredRoles,
         },
       ],
     }),

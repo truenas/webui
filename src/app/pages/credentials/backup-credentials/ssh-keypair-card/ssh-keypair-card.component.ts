@@ -50,7 +50,7 @@ export class SshKeypairCardComponent implements OnInit {
         {
           iconName: 'delete',
           tooltip: this.translate.instant('Delete'),
-          requiresRoles: [Role.KeychainCredentialWrite],
+          requiredRoles: [Role.KeychainCredentialWrite],
           onClick: (row) => this.doDelete(row),
         },
       ],

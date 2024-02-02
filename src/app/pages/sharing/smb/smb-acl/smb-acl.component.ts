@@ -50,7 +50,7 @@ export class SmbAclComponent implements OnInit {
   private shareAclName: string;
 
   readonly tags$ = of(mapToOptions(smbAclTagLabels, this.translate));
-  readonly requiresRoles = [Role.SharingSmbWrite, Role.SharingWrite];
+  readonly requiredRoles = [Role.SharingSmbWrite, Role.SharingWrite];
   readonly permissions$ = of([
     {
       label: 'FULL',

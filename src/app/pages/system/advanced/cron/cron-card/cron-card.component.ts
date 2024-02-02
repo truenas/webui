@@ -72,7 +72,7 @@ export class CronCardComponent implements OnInit {
           iconName: 'play_arrow',
           tooltip: this.translate.instant('Run job'),
           onClick: (row) => this.runNow(row),
-          requiresRoles: [Role.FullAdmin],
+          requiredRoles: [Role.FullAdmin],
         },
         {
           iconName: 'edit',
@@ -83,7 +83,7 @@ export class CronCardComponent implements OnInit {
           iconName: 'delete',
           tooltip: this.translate.instant('Delete'),
           onClick: (row) => this.doDelete(row),
-          requiresRoles: [Role.FullAdmin],
+          requiredRoles: [Role.FullAdmin],
         },
       ],
     }),
