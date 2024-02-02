@@ -79,6 +79,7 @@ export class IdmapListComponent implements OnInit {
           onClick: (row) => {
             const slideInRef = this.slideInService.open(IdmapFormComponent, { data: row });
             slideInRef.slideInClosed$.pipe(
+              filter(Boolean),
               untilDestroyed(this),
             ).subscribe(() => this.getIdmaps());
           },
@@ -180,6 +181,7 @@ export class IdmapListComponent implements OnInit {
       if (adConfig.enable) {
         const slideInRef = this.slideInService.open(IdmapFormComponent);
         slideInRef.slideInClosed$.pipe(
+          filter(Boolean),
           untilDestroyed(this),
         ).subscribe(() => {
           this.getIdmaps();
