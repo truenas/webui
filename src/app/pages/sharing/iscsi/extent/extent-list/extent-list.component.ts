@@ -78,7 +78,7 @@ export class ExtentListComponent implements OnInit {
           iconName: 'delete',
           tooltip: this.translate.instant('Delete'),
           onClick: (row) => this.showDeleteDialog(row),
-          requiresRoles: [
+          requiredRoles: [
             Role.SharingIscsiExtentWrite,
             Role.SharingIscsiWrite,
             Role.SharingWrite,

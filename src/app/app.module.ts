@@ -36,6 +36,7 @@ import { AuthService } from 'app/services/auth/auth.service';
 import { TwoFactorGuardService } from 'app/services/auth/two-factor-guard.service';
 import { DisksUpdateService } from 'app/services/disks-update.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { FocusService } from 'app/services/focus.service';
 import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 import { IxFileUploadService } from 'app/services/ix-file-upload.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -126,6 +127,7 @@ import { RoutePartsService } from './services/route-parts/route-parts.service';
   ],
   providers: [
     RoutePartsService,
+    FocusService,
     AuthGuardService,
     TwoFactorGuardService,
     NavigationService,

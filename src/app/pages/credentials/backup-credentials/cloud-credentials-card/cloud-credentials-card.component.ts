@@ -51,7 +51,7 @@ export class CloudCredentialsCardComponent implements OnInit {
         },
         {
           iconName: 'delete',
-          requiresRoles: [Role.CloudSyncWrite],
+          requiredRoles: [Role.CloudSyncWrite],
           tooltip: this.translate.instant('Delete'),
           onClick: (row) => this.doDelete(row),
         },

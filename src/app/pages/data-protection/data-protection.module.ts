@@ -38,6 +38,7 @@ import { DataProtectionDashboardComponent } from 'app/pages/data-protection/data
 import {
   TransportSectionComponent,
 } from 'app/pages/data-protection/replication/replication-form/sections/transport-section/transport-section.component';
+import { ReplicationListComponent } from 'app/pages/data-protection/replication/replication-list/replication-list.component';
 import {
   ReplicationRestoreDialogComponent,
 } from 'app/pages/data-protection/replication/replication-restore-dialog/replication-restore-dialog.component';
@@ -69,7 +70,6 @@ import { GeneralSectionComponent } from './replication/replication-form/sections
 import { ScheduleSectionComponent } from './replication/replication-form/sections/schedule-section/schedule-section.component';
 import { SourceSectionComponent } from './replication/replication-form/sections/source-section/source-section.component';
 import { TargetSectionComponent } from './replication/replication-form/sections/target-section/target-section.component';
-import { ReplicationListComponent } from './replication/replication-list/replication-list.component';
 import { ReplicationWizardComponent } from './replication/replication-wizard/replication-wizard.component';
 import { RsyncTaskListComponent } from './rsync-task/rsync-task-list/rsync-task-list.component';
 import { ResilverConfigComponent } from './scrub-task/resilver-config/resilver-config.component';

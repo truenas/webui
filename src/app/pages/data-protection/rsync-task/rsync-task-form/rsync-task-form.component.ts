@@ -79,7 +79,7 @@ export class RsyncTaskFormComponent implements OnInit {
 
   isLoading = false;
 
-  readonly requiresRoles = [Role.FullAdmin];
+  readonly requiredRoles = [Role.FullAdmin];
 
   readonly helptext = helptextRsyncForm;
 

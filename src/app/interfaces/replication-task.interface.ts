@@ -68,12 +68,6 @@ export interface ReplicationTask {
   has_encrypted_dataset_keys?: boolean;
 }
 
-export interface ReplicationTaskUi extends ReplicationTask {
-  ssh_connection: string;
-  task_last_snapshot: string;
-  last_run: string;
-}
-
 export interface ReplicationCreate {
   name: string;
   direction: Direction;
