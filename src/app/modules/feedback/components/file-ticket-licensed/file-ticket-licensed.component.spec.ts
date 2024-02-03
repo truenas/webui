@@ -43,7 +43,7 @@ describe('FileTicketLicensedFormComponent', () => {
         })),
       }),
       mockProvider(ImageValidatorService, {
-        validateImages: () => () => of(null as ValidationErrors),
+        getImagesValidator: () => () => of(null as ValidationErrors),
       }),
       mockProvider(Router),
       mockWindow(),

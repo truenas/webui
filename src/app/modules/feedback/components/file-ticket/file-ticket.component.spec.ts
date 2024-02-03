@@ -44,7 +44,7 @@ describe('FileTicketComponent', () => {
         })),
       }),
       mockProvider(ImageValidatorService, {
-        validateImages: () => () => of(null as ValidationErrors),
+        getImagesValidator: () => () => of(null as ValidationErrors),
       }),
     ],
   });
