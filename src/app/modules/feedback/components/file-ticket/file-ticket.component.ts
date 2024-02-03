@@ -5,7 +5,8 @@ import {
 import { FormBuilder, Validators } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { finalize } from 'rxjs';
+import { BehaviorSubject, filter, finalize } from 'rxjs';
+import { MiB } from 'app/constants/bytes.constant';
 import { TicketType, ticketAcceptedFiles } from 'app/enums/file-ticket.enum';
 import { helptextSystemSupport as helptext } from 'app/helptext/system/support';
 import { FeedbackDialogComponent } from 'app/modules/feedback/components/feedback-dialog/feedback-dialog.component';
@@ -14,6 +15,7 @@ import { FeedbackService } from 'app/modules/feedback/services/feedback.service'
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { ImageValidatorService } from 'app/modules/ix-forms/validators/image-validator/image-validator.service';
 import { OauthButtonType } from 'app/modules/oauth-button/interfaces/oauth-button.interface';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -28,11 +30,18 @@ export class FileTicketComponent {
   @Input() isLoading: boolean;
   @Output() isLoadingChange = new EventEmitter<boolean>();
 
+  readonly fileSizeLimitMiBs$ = new BehaviorSubject<number>(null);
+
   protected form = this.formBuilder.group({
     title: ['', [Validators.maxLength(200)]],
     message: ['', [Validators.maxLength(20000)]],
-
-    images: [[] as File[], [], this.imageValidator.validateImages()],
+    images: [
+      [] as File[],
+      [],
+      this.imageValidator.getImagesValidator(
+        this.fileSizeLimitMiBs$.pipe(filter((sizeLimitBytes) => sizeLimitBytes != null)),
+      ),
+    ],
     attach_debug: [true],
     attach_images: [false],
     take_screenshot: [true],
@@ -57,7 +66,10 @@ export class FileTicketComponent {
     private feedbackService: FeedbackService,
     private imageValidator: ImageValidatorService,
     private formErrorHandler: FormErrorHandlerService,
-  ) {}
+    private ws: WebSocketService,
+  ) {
+    this.getSystemFileSizeLimit();
+  }
 
   onSubmit(token: string): void {
     // TODO: Cache token with setOauthToken inside the button
@@ -75,5 +87,11 @@ export class FileTicketComponent {
   private onSuccess(ticketUrl: string): void {
     this.feedbackService.showTicketSuccessMsg(ticketUrl);
     this.dialogRef.close();
+  }
+
+  private getSystemFileSizeLimit(): void {
+    this.ws.call('support.attach_ticket_max_size').pipe(untilDestroyed(this)).subscribe((size) => {
+      this.fileSizeLimitMiBs$.next(size * MiB);
+    });
   }
 }

@@ -8,7 +8,10 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as EmailValidator from 'email-validator';
-import { finalize, of } from 'rxjs';
+import {
+  BehaviorSubject, filter, finalize, of,
+} from 'rxjs';
+import { MiB } from 'app/constants/bytes.constant';
 import {
   ticketAcceptedFiles,
   TicketCategory, ticketCategoryLabels,
@@ -24,6 +27,7 @@ import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-erro
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { emailValidator } from 'app/modules/ix-forms/validators/email-validation/email-validation';
 import { ImageValidatorService } from 'app/modules/ix-forms/validators/image-validator/image-validator.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -36,6 +40,7 @@ export class FileTicketLicensedComponent {
   @Input() dialogRef: MatDialogRef<FeedbackDialogComponent>;
   @Input() isLoading: boolean;
   @Output() isLoadingChange = new EventEmitter<boolean>();
+  readonly fileSizeLimitMiBs$ = new BehaviorSubject<number>(null);
 
   protected form = this.formBuilder.group({
     name: ['', [Validators.required]],
@@ -55,7 +60,13 @@ export class FileTicketLicensedComponent {
     title: ['', [Validators.required, Validators.maxLength(200)]],
 
     message: ['', [Validators.maxLength(20000)]],
-    images: [[] as File[], [], this.imageValidator.validateImages()],
+    images: [
+      [] as File[],
+      [],
+      this.imageValidator.getImagesValidator(
+        this.fileSizeLimitMiBs$.pipe(filter((sizeLimitBytes) => sizeLimitBytes != null)),
+      ),
+    ],
     attach_debug: [true],
     attach_images: [false],
     take_screenshot: [true],
@@ -89,7 +100,10 @@ export class FileTicketLicensedComponent {
     private imageValidator: ImageValidatorService,
     private formErrorHandler: FormErrorHandlerService,
     @Inject(WINDOW) private window: Window,
-  ) { }
+    private ws: WebSocketService,
+  ) {
+    this.getSystemFileSizeLimit();
+  }
 
   onUserGuidePressed(): void {
     this.window.open('https://www.truenas.com/docs/hub/');
@@ -115,5 +129,11 @@ export class FileTicketLicensedComponent {
   private onSuccess(ticketUrl: string): void {
     this.feedbackService.showTicketSuccessMsg(ticketUrl);
     this.dialogRef.close();
+  }
+
+  private getSystemFileSizeLimit(): void {
+    this.ws.call('support.attach_ticket_max_size').pipe(untilDestroyed(this)).subscribe((size) => {
+      this.fileSizeLimitMiBs$.next(size * MiB);
+    });
   }
 }

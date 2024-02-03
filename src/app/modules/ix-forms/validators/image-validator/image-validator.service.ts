@@ -1,25 +1,32 @@
 import { Injectable } from '@angular/core';
 import { AsyncValidatorFn, FormControl, ValidationErrors } from '@angular/forms';
+import { TranslateService } from '@ngx-translate/core';
 import {
-  map, Observable, of, switchMap,
+  catchError,
+  combineLatest,
+  concatMap,
+  from,
+  map, Observable, Observer, of, switchMap, take, toArray,
 } from 'rxjs';
+import { MiB } from 'app/constants/bytes.constant';
+import { ValidatedFile } from 'app/interfaces/validated-file.interface';
 import { ixManualValidateError } from 'app/modules/ix-forms/components/ix-errors/ix-errors.component';
-import { IxFileUploadService } from 'app/services/ix-file-upload.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ImageValidatorService {
   constructor(
-    private fileUpload: IxFileUploadService,
-  ) {}
+    private translateService: TranslateService,
+  ) { }
 
-  // TODO: Move validateImages from fileUpload service here?
-  // TODO: Check if this works.
-  validateImages(): AsyncValidatorFn {
+  getImagesValidator(fileSizeLimitBytes$: Observable<number>): AsyncValidatorFn {
     return (control: FormControl<File[]>): Observable<ValidationErrors> | null => {
-      return of(control.value).pipe(
-        switchMap((images) => this.fileUpload.validateImages(images)),
+      return combineLatest([
+        fileSizeLimitBytes$,
+        of(control.value),
+      ]).pipe(
+        switchMap(([sizeLimitBytes, images]) => this.validateImages(images, sizeLimitBytes)),
         map((validatedFiles) => {
           const invalidFiles = validatedFiles
             .filter((file) => file.error)
@@ -34,5 +41,57 @@ export class ImageValidatorService {
         }),
       );
     };
+  }
+
+  private validateImages(screenshots: File[], sizeLimitBytes: number): Observable<ValidatedFile[]> {
+    return from(screenshots).pipe(
+      take(screenshots.length),
+      concatMap((file: File): Observable<ValidatedFile> => {
+        return this.validateImage(file, sizeLimitBytes).pipe(
+          catchError((error: ValidatedFile) => of(error)),
+        );
+      }),
+      toArray(),
+    );
+  }
+
+  private validateImage(file: File, sizeLimitBytes: number): Observable<ValidatedFile> {
+    const fileReader = new FileReader();
+    const { type, name, size } = file;
+    return new Observable((observer: Observer<ValidatedFile>) => {
+      if (
+        sizeLimitBytes != null
+        && !Number.isNaN(sizeLimitBytes)
+        && size > sizeLimitBytes
+      ) {
+        observer.error({
+          error: {
+            name,
+            errorMessage: this.translateService.instant('File size is limited to {n} MiB.', { n: sizeLimitBytes / MiB }),
+          },
+        });
+      }
+
+      fileReader.readAsDataURL(file);
+      fileReader.onload = () => {
+        if (type.startsWith('image/')) {
+          const image = new Image();
+          image.onload = () => {
+            observer.next({ file });
+            observer.complete();
+          };
+          image.onerror = () => {
+            observer.error({ error: { name, errorMessage: this.translateService.instant('Invalid image') } });
+          };
+          image.src = fileReader.result as string;
+        } else {
+          observer.next({ file });
+          observer.complete();
+        }
+      };
+      fileReader.onerror = () => {
+        observer.error({ error: { name, errorMessage: this.translateService.instant('Invalid file') } });
+      };
+    });
   }
 }
