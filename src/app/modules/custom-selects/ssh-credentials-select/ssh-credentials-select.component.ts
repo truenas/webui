@@ -1,5 +1,6 @@
 import { ComponentType } from '@angular/cdk/portal';
 import {
+  ChangeDetectionStrategy,
   Component, Input, forwardRef, inject,
 } from '@angular/core';
 import { NG_VALUE_ACCESSOR } from '@angular/forms';
@@ -23,6 +24,7 @@ import { KeychainCredentialService } from 'app/services/keychain-credential.serv
       multi: true,
     },
   ],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SshCredentialsSelectComponent extends IxSelectWithNewOption {
   @Input() label: string;

@@ -48,7 +48,6 @@ import { EntityTableActionsComponent } from 'app/modules/entity/entity-table/ent
 import { EntityTableAddActionsComponent } from 'app/modules/entity/entity-table/entity-table-add-actions/entity-table-add-actions.component';
 import { EntityTableRowDetailsComponent } from 'app/modules/entity/entity-table/entity-table-row-details/entity-table-row-details.component';
 import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-table.component';
-import { ToolbarMultimenuComponent } from 'app/modules/entity/entity-toolbar/components/toolbar-multimenu/toolbar-multimenu.component';
 import { ToolbarSliderComponent } from 'app/modules/entity/entity-toolbar/components/toolbar-slider/toolbar-slider.component';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { LayoutModule } from 'app/modules/layout/layout.module';
@@ -117,7 +116,6 @@ import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
     EntityTableActionsComponent,
     EntityTableAddActionsComponent,
     EntityJobComponent,
-    ToolbarMultimenuComponent,
     ToolbarSliderComponent,
     EntityEmptyComponent,
   ],
@@ -126,7 +124,6 @@ import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
     EntityTableAddActionsComponent,
     EntityTableActionsComponent,
     ToolbarSliderComponent,
-    ToolbarMultimenuComponent,
     CdkTreeModule,
     EntityEmptyComponent,
   ],

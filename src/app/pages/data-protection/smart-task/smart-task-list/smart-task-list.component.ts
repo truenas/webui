@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
@@ -20,6 +20,7 @@ import { AppState } from 'app/store';
 @Component({
   template: '<ix-entity-table [title]="title" [conf]="this"></ix-entity-table>',
   providers: [TaskService],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SmartTaskListComponent implements EntityTableConfig {
   title = this.translate.instant('Periodic S.M.A.R.T. Tests');

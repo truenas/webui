@@ -1,5 +1,5 @@
 import {
-  AfterViewInit, Component, Inject, Input,
+  AfterViewInit, ChangeDetectionStrategy, Component, Inject, Input,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
@@ -11,6 +11,7 @@ import { ChainedComponentRef, IxChainedSlideInService } from 'app/services/ix-ch
   selector: 'ix-modal-header2',
   templateUrl: './ix-modal-header2.component.html',
   styleUrls: ['./ix-modal-header2.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class IxModalHeader2Component implements AfterViewInit {
   @Input() title: string;

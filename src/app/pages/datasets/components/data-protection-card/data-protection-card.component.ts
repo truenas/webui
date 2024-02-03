@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { filter } from 'rxjs';
@@ -12,6 +12,7 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
   selector: 'ix-data-protection-card',
   templateUrl: './data-protection-card.component.html',
   styleUrls: ['./data-protection-card.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DataProtectionCardComponent {
   @Input() dataset: DatasetDetails;

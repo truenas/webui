@@ -11,12 +11,15 @@ import {
   Optional,
   OnInit,
   ViewChild,
-  ViewContainerRef,
+  ViewContainerRef, ChangeDetectionStrategy,
 } from '@angular/core';
 import { Observable, Subject, takeUntil } from 'rxjs';
 import { TreeNodeOutletDirective } from 'app/modules/ix-tree/directives/tree-node-outlet.directive';
 
-@Component({ template: '' })
+@Component({
+  template: '',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+})
 // eslint-disable-next-line @angular-eslint/component-class-suffix
 export class Tree<T, K = T> extends CdkTree<T, K> implements OnInit, OnDestroy {
   dir: Direction = 'ltr';
