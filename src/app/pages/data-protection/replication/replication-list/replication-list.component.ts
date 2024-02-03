@@ -1,307 +1,280 @@
-import { DatePipe } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, ChangeDetectorRef, ChangeDetectionStrategy } from '@angular/core';
+import {
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+} from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { Actions } from '@ngrx/effects';
 import { TranslateService } from '@ngx-translate/core';
 import {
   filter, switchMap, tap,
-} from 'rxjs/operators';
+} from 'rxjs';
 import { JobState } from 'app/enums/job-state.enum';
 import { Role } from 'app/enums/role.enum';
-import { formatDistanceToNowShortened } from 'app/helpers/format-distance-to-now-shortened';
-import { tapOnce } from 'app/helpers/operators/tap-once.operator';
-import { helptextGlobal } from 'app/helptext/global-helptext';
 import { Job } from 'app/interfaces/job.interface';
-import { QueryParams } from 'app/interfaces/query-api.interface';
-import { ReplicationTask, ReplicationTaskUi } from 'app/interfaces/replication-task.interface';
-import { ShowLogsDialogComponent } from 'app/modules/common/dialog/show-logs-dialog/show-logs-dialog.component';
-import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
-import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-table.component';
-import { EntityTableAction, EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.interface';
+import { ReplicationTask } from 'app/interfaces/replication-task.interface';
+import { AsyncDataProvider } from 'app/modules/ix-table2/classes/async-data-provider/async-data-provider';
+import { relativeDateColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-relative-date/ix-cell-relative-date.component';
+import { stateButtonColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-state-button/ix-cell-state-button.component';
+import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
+import { toggleColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-toggle/ix-cell-toggle.component';
+import { SortDirection } from 'app/modules/ix-table2/enums/sort-direction.enum';
+import { Column, ColumnComponent } from 'app/modules/ix-table2/interfaces/table-column.interface';
+import { createTable } from 'app/modules/ix-table2/utils';
+import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ReplicationFormComponent } from 'app/pages/data-protection/replication/replication-form/replication-form.component';
-import {
-  ReplicationRestoreDialogComponent,
-} from 'app/pages/data-protection/replication/replication-restore-dialog/replication-restore-dialog.component';
+import { ReplicationRestoreDialogComponent } from 'app/pages/data-protection/replication/replication-restore-dialog/replication-restore-dialog.component';
 import { ReplicationWizardComponent } from 'app/pages/data-protection/replication/replication-wizard/replication-wizard.component';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
-import { KeychainCredentialService } from 'app/services/keychain-credential.service';
-import { ReplicationService } from 'app/services/replication.service';
 import { StorageService } from 'app/services/storage.service';
-import { TaskService } from 'app/services/task.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
-  template: '<ix-entity-table [title]="title" [conf]="this"></ix-entity-table>',
-  providers: [
-    StorageService,
-    TaskService,
-    KeychainCredentialService,
-    ReplicationService,
-    DatePipe,
-  ],
+  templateUrl: './replication-list.component.html',
+  styleUrls: ['./replication-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ReplicationListComponent implements EntityTableConfig<ReplicationTaskUi> {
-  title = this.translate.instant('Replication Tasks');
-  queryCall = 'replication.query' as const;
-  wsDelete = 'replication.delete' as const;
-  routeAdd: string[] = ['tasks', 'replication', 'wizard'];
-  routeEdit: string[] = ['tasks', 'replication', 'edit'];
-  routeSuccess: string[] = ['tasks', 'replication'];
-  queryCallOption: QueryParams<void> = [[], { extra: { check_dataset_encryption_keys: true } }];
-  entityList: EntityTableComponent<ReplicationTaskUi>;
-  filterValue = '';
-  requiresRoles = [Role.ReplicationTaskWrite, Role.ReplicationTaskWritePull];
+export class ReplicationListComponent implements OnInit {
+  replicationTasks: ReplicationTask[] = [];
+  filterString = '';
+  dataProvider: AsyncDataProvider<ReplicationTask>;
+  readonly jobState = JobState;
+  readonly requiredRoles = [Role.ReplicationTaskWrite, Role.ReplicationTaskWritePull];
 
-  columns = [
-    { name: this.translate.instant('Name'), prop: 'name', always_display: true },
-    { name: this.translate.instant('Direction'), prop: 'direction' },
-    { name: this.translate.instant('Transport'), prop: 'transport', hidden: true },
-    { name: this.translate.instant('SSH Connection'), prop: 'ssh_connection', hidden: true },
-    { name: this.translate.instant('Source Dataset'), prop: 'source_datasets', hidden: true },
-    { name: this.translate.instant('Target Dataset'), prop: 'target_dataset', hidden: true },
-    { name: this.translate.instant('Recursive'), prop: 'recursive', hidden: true },
-    { name: this.translate.instant('Auto'), prop: 'auto', hidden: true },
-    {
-      name: this.translate.instant('Enabled'), prop: 'enabled', checkbox: true, requiresRoles: this.requiresRoles,
-    },
-    { name: this.translate.instant('Last Run'), prop: 'last_run', hidden: true },
-    {
-      name: this.translate.instant('State'), prop: 'state', button: true, state: 'state',
-    },
-    { name: this.translate.instant('Last Snapshot'), prop: 'task_last_snapshot' },
-  ];
+  columns = createTable<ReplicationTask>([
+    textColumn({
+      title: this.translate.instant('Name'),
+      propertyName: 'name',
+      sortable: true,
+    }),
+    textColumn({
+      title: this.translate.instant('Direction'),
+      propertyName: 'direction',
+    }),
+    textColumn({
+      title: this.translate.instant('Transport'),
+      propertyName: 'transport',
+      hidden: true,
+    }),
+    textColumn({
+      title: this.translate.instant('SSH Connection'),
+      hidden: true,
+      getValue: (task) => {
+        return task.ssh_credentials
+          ? task.ssh_credentials.name
+          : this.translate.instant('N/A');
+      },
+    }),
+    textColumn({
+      title: this.translate.instant('Source Dataset'),
+      propertyName: 'source_datasets',
+      hidden: true,
+    }),
+    textColumn({
+      title: this.translate.instant('Target Dataset'),
+      propertyName: 'target_dataset',
+      hidden: true,
+    }),
+    textColumn({
+      title: this.translate.instant('Recursive'),
+      propertyName: 'recursive',
+      hidden: true,
+    }),
+    textColumn({
+      title: this.translate.instant('Auto'),
+      propertyName: 'auto',
+      hidden: true,
+    }),
+    relativeDateColumn({
+      title: this.translate.instant('Last Run'),
+      getValue: (row) => row.state?.datetime?.$date,
+    }),
+    stateButtonColumn({
+      title: this.translate.instant('State'),
+      getValue: (row) => row.state.state,
+      getJob: (row) => row.job,
+      cssClass: 'state-button',
+    }),
+    toggleColumn({
+      title: this.translate.instant('Enabled'),
+      propertyName: 'enabled',
+      onRowToggle: (row) => this.onChangeEnabledState(row),
+    }),
+    textColumn({
+      title: this.translate.instant('Last Snapshot'),
+      getValue: (task) => {
+        return task.state.last_snapshot
+          ? task.state.last_snapshot
+          : this.translate.instant('No snapshots sent yet');
+      },
+    }),
+  ], {
+    rowTestId: (row) => 'replication-task-' + row.name,
+  });
 
-  config = {
-    paging: true,
-    sorting: { columns: this.columns },
-    deleteMsg: {
-      title: this.translate.instant('Replication Task'),
-      key_props: ['name'],
-    },
-  };
+  get hiddenColumns(): Column<ReplicationTask, ColumnComponent<ReplicationTask>>[] {
+    return this.columns.filter((column) => column?.hidden);
+  }
 
   constructor(
-    private ws: WebSocketService,
-    private dialogService: DialogService,
-    protected loader: AppLoaderService,
-    private chainedSlideInService: IxChainedSlideInService,
-    private translate: TranslateService,
-    private matDialog: MatDialog,
-    private errorHandler: ErrorHandlerService,
-    private route: ActivatedRoute,
-    private snackbar: SnackbarService,
     private cdr: ChangeDetectorRef,
+    private ws: WebSocketService,
+    private translate: TranslateService,
+    private chainedSlideInService: IxChainedSlideInService,
+    private dialogService: DialogService,
+    private errorHandler: ErrorHandlerService,
+    private matDialog: MatDialog,
+    private snackbar: SnackbarService,
     private storage: StorageService,
-    private actions$: Actions,
-  ) {
-    this.filterValue = this.route.snapshot.paramMap.get('dataset') || '';
+    private appLoader: AppLoaderService,
+    protected emptyService: EmptyService,
+  ) {}
+
+  ngOnInit(): void {
+    const replicationTasks$ = this.ws.call('replication.query', [[], {
+      extra: {
+        check_dataset_encryption_keys: true,
+      },
+    }]).pipe(tap((replicationTasks) => this.replicationTasks = replicationTasks));
+    this.dataProvider = new AsyncDataProvider<ReplicationTask>(replicationTasks$);
+    this.getReplicationTasks();
   }
 
-  afterInit(entityList: EntityTableComponent<ReplicationTaskUi>): void {
-    this.entityList = entityList;
-  }
-
-  resourceTransformIncomingRestData(tasks: ReplicationTask[]): ReplicationTaskUi[] {
-    return tasks.map((task) => {
-      return {
-        ...task,
-        last_run:
-          task.job?.time_finished?.$date
-            ? formatDistanceToNowShortened(task.job?.time_finished?.$date)
-            : this.translate.instant('N/A'),
-        ssh_connection: task.ssh_credentials ? task.ssh_credentials.name : '-',
-        task_last_snapshot:
-          task.state.last_snapshot ? task.state.last_snapshot : this.translate.instant('No snapshots sent yet'),
-      };
+  setDefaultSort(): void {
+    this.dataProvider.setSorting({
+      active: 1,
+      direction: SortDirection.Asc,
+      propertyName: 'name',
     });
   }
 
-  getActions(parentrow: ReplicationTaskUi): EntityTableAction[] {
-    const actions: EntityTableAction[] = [
-      {
-        id: parentrow.name,
-        icon: 'play_arrow',
-        name: 'run',
-        label: this.translate.instant('Run Now'),
-        requiresRoles: this.requiresRoles,
-        onClick: (row: ReplicationTaskUi) => {
-          this.dialogService.confirm({
-            title: this.translate.instant('Run Now'),
-            message: this.translate.instant('Replicate «{name}» now?', { name: row.name }),
-            hideCheckbox: true,
-          }).pipe(
-            filter(Boolean),
-            tap(() => row.state = { state: JobState.Running }),
-            switchMap(() => this.ws.job('replication.run', [row.id])),
-            tapOnce(() => this.snackbar.success(
-              this.translate.instant('Replication «{name}» has started.', { name: row.name }),
-            )),
-            untilDestroyed(this),
-          ).subscribe({
-            next: (job: Job) => {
-              row.state = { state: job.state };
-              row.job = { ...job };
-              this.cdr.markForCheck();
-            },
-            error: (error: unknown) => {
-              this.dialogService.error(this.errorHandler.parseError(error));
-            },
-          });
-        },
-      },
-      {
-        actionName: 'restore',
-        id: 'restore',
-        name: 'restore',
-        label: this.translate.instant('Restore'),
-        icon: 'restore',
-        requiresRoles: this.requiresRoles,
-        onClick: (row: ReplicationTaskUi) => {
-          const dialog = this.matDialog.open(ReplicationRestoreDialogComponent, {
-            data: row.id,
-          });
-          dialog
-            .afterClosed()
-            .pipe(untilDestroyed(this))
-            .subscribe(() => {
-              this.entityList.needRefreshTable = true;
-              this.entityList.getData();
-            });
-        },
-      },
-      {
-        id: parentrow.name,
-        icon: 'edit',
-        name: 'edit',
-        label: this.translate.instant('Edit'),
-        onClick: (row: ReplicationTaskUi) => {
-          this.doEdit(row.id);
-        },
-      },
-    ];
-    if (parentrow.has_encrypted_dataset_keys) {
-      actions.push({
-        id: parentrow.name,
-        icon: 'download',
-        name: 'download_keys',
-        label: this.translate.instant('Download keys'),
-        requiresRoles: this.requiresRoles,
-        onClick: (row) => {
-          this.loader.open();
-          this.ws.call('core.download', ['pool.dataset.export_keys_for_replication', [row.id], `${row.name}_encryption_keys.json`]).pipe(untilDestroyed(this)).subscribe({
-            next: ([, url]) => {
-              this.loader.close();
-              const mimetype = 'application/json';
-              this.storage.streamDownloadFile(url, `${row.name}_encryption_keys.json`, mimetype).pipe(untilDestroyed(this)).subscribe({
-                next: (file) => {
-                  this.storage.downloadBlob(file, `${row.name}_encryption_keys.json`);
-                },
-                error: (err: HttpErrorResponse) => {
-                  this.dialogService.error(this.errorHandler.parseHttpError(err));
-                },
-              });
-            },
-            error: (err) => {
-              this.loader.close();
-              this.dialogService.error(this.errorHandler.parseError(err));
-            },
-          });
-        },
-      });
-    }
-    actions.push({
-      id: parentrow.name,
-      icon: 'delete',
-      name: 'delete',
-      label: this.translate.instant('Delete'),
-      requiresRoles: this.requiresRoles,
-      onClick: (row: ReplicationTaskUi) => {
-        this.entityList.doDelete(row);
-      },
-    });
-    return actions;
+  getReplicationTasks(): void {
+    this.dataProvider.load();
   }
 
-  onButtonClick(row: ReplicationTaskUi): void {
-    this.stateButton(row);
-  }
-
-  stateButton(row: ReplicationTaskUi): void {
-    if (row.job) {
-      if (row.state.state === JobState.Running) {
-        const dialogRef = this.matDialog.open(EntityJobComponent, { data: { title: this.translate.instant('Task is running') } });
-        dialogRef.componentInstance.jobId = row.job.id;
-        dialogRef.componentInstance.job = row.job;
-        if (row.job.logs_path) {
-          dialogRef.componentInstance.enableRealtimeLogs(true);
-        }
-        dialogRef.componentInstance.wsshow();
-        dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
-          dialogRef.close();
-        });
-        dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe(() => {
-          dialogRef.close();
-        });
-        dialogRef.componentInstance.aborted.pipe(untilDestroyed(this)).subscribe(() => {
-          dialogRef.close();
-          this.dialogService.info(this.translate.instant('Task Aborted'), '');
-        });
-      } else if (row.state.state === JobState.Hold) {
-        this.dialogService.info(this.translate.instant('Task is on hold'), row.state.reason);
-      } else if (row.state.warnings && row.state.warnings.length > 0) {
-        let list = '';
-        row.state.warnings.forEach((warning: string) => {
-          list += warning + '\n';
-        });
-        this.dialogService.error({ title: row.state.state, message: `<pre>${list}</pre>` });
-      } else if (row.state.error) {
-        this.dialogService.error({ title: row.state.state, message: `<pre>${row.state.error}</pre>` });
-      } else {
-        this.matDialog.open(ShowLogsDialogComponent, { data: row.job });
-      }
-    } else {
-      this.dialogService.warn(helptextGlobal.noLogDialog.title, helptextGlobal.noLogDialog.message);
-    }
-  }
-
-  doEdit(id: number): void {
-    const replication = this.entityList.rows.find((row) => row.id === id);
-    const closer$ = this.chainedSlideInService.pushComponent(ReplicationFormComponent, true, replication);
-    closer$.pipe(
-      filter((response) => !!response.response),
+  runNow(row: ReplicationTask): void {
+    this.dialogService.confirm({
+      title: this.translate.instant('Run Now'),
+      message: this.translate.instant('Replicate «{name}» now?', { name: row.name }),
+      hideCheckbox: true,
+    }).pipe(
+      filter(Boolean),
+      tap(() => row.state = { state: JobState.Running }),
+      switchMap(() => this.ws.job('replication.run', [row.id])),
       untilDestroyed(this),
-    ).subscribe(() => this.entityList.getData());
+    ).subscribe({
+      next: (job: Job) => {
+        row.state = { state: job.state };
+        row.job = { ...job };
+        this.snackbar.success(this.translate.instant('Replication «{name}» has started.', { name: row.name }));
+        this.cdr.markForCheck();
+      },
+      error: (error: unknown) => {
+        this.dialogService.error(this.errorHandler.parseError(error));
+      },
+    });
   }
 
-  onCheckboxChange(row: ReplicationTaskUi): void {
-    this.ws.call('replication.update', [row.id, { enabled: row.enabled }]).pipe(untilDestroyed(this)).subscribe({
-      next: (task) => {
-        row.enabled = task.enabled;
-        if (!task) {
-          row.enabled = !row.enabled;
-        }
+  restore(row: ReplicationTask): void {
+    const dialog = this.matDialog.open(ReplicationRestoreDialogComponent, {
+      data: row.id,
+    });
+    dialog.afterClosed()
+      .pipe(filter(Boolean), untilDestroyed(this))
+      .subscribe(() => this.getReplicationTasks());
+  }
+
+  openForm(row?: ReplicationTask): void {
+    if (row) {
+      this.chainedSlideInService.pushComponent(ReplicationFormComponent, true, row)
+        .pipe(
+          filter((response) => !!response.response),
+          untilDestroyed(this),
+        ).subscribe({
+          next: () => {
+            this.getReplicationTasks();
+          },
+        });
+    } else {
+      this.chainedSlideInService.pushComponent(ReplicationWizardComponent, true)
+        .pipe(
+          filter((response) => !!response.response),
+          untilDestroyed(this),
+        ).subscribe(() => this.getReplicationTasks());
+    }
+  }
+
+  doDelete(row: ReplicationTask): void {
+    this.dialogService.confirm({
+      title: this.translate.instant('Confirmation'),
+      message: this.translate.instant('Delete Replication Task <b>"{name}"</b>?', {
+        name: row.name,
+      }),
+    }).pipe(
+      filter(Boolean),
+      switchMap(() => this.ws.call('replication.delete', [row.id]).pipe(this.appLoader.withLoader())),
+      untilDestroyed(this),
+    ).subscribe({
+      next: () => {
+        this.getReplicationTasks();
       },
-      error: (err: unknown) => {
-        row.enabled = !row.enabled;
+      error: (err) => {
         this.dialogService.error(this.errorHandler.parseError(err));
       },
     });
   }
 
-  doAdd(): void {
-    const closer$ = this.chainedSlideInService.pushComponent(ReplicationWizardComponent, true);
-    closer$.pipe(
-      filter((response) => !!response.response),
-      untilDestroyed(this),
-    ).subscribe(() => this.entityList.getData());
+  onListFiltered(query: string): void {
+    this.filterString = query.toLowerCase();
+    this.dataProvider.setRows(this.replicationTasks.filter((task) => {
+      return task.name.includes(this.filterString);
+    }));
+  }
+
+  columnsChange(columns: typeof this.columns): void {
+    this.columns = [...columns];
+    this.cdr.detectChanges();
+    this.cdr.markForCheck();
+  }
+
+  downloadKeys(row: ReplicationTask): void {
+    const fileName = `${row.name}_encryption_keys.json`;
+    this.ws.call('core.download', ['pool.dataset.export_keys_for_replication', [row.id], fileName])
+      .pipe(this.appLoader.withLoader(), untilDestroyed(this))
+      .subscribe({
+        next: ([, url]) => {
+          const mimetype = 'application/json';
+          this.storage.streamDownloadFile(url, fileName, mimetype).pipe(untilDestroyed(this)).subscribe({
+            next: (file) => {
+              this.storage.downloadBlob(file, fileName);
+            },
+            error: (err: HttpErrorResponse) => {
+              this.dialogService.error(this.errorHandler.parseHttpError(err));
+            },
+          });
+        },
+        error: (err) => {
+          this.dialogService.error(this.errorHandler.parseError(err));
+        },
+      });
+  }
+
+  private onChangeEnabledState(replicationTask: ReplicationTask): void {
+    this.ws
+      .call('replication.update', [replicationTask.id, { enabled: !replicationTask.enabled }])
+      .pipe(untilDestroyed(this))
+      .subscribe({
+        next: () => {
+          this.getReplicationTasks();
+        },
+        error: (err: unknown) => {
+          this.getReplicationTasks();
+          this.dialogService.error(this.errorHandler.parseError(err));
+        },
+      });
   }
 }

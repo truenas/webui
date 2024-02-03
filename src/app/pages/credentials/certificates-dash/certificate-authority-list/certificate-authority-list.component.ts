@@ -77,7 +77,7 @@ export class CertificateAuthorityListComponent implements OnInit {
         {
           iconName: 'mdi-undo',
           tooltip: this.translate.instant('Revoke'),
-          requiresRoles: [Role.FullAdmin],
+          requiredRoles: [Role.FullAdmin],
           hidden: (row) => of(row.revoked),
           onClick: (row) => this.doRevoke(row),
         },
@@ -93,7 +93,7 @@ export class CertificateAuthorityListComponent implements OnInit {
         },
         {
           iconName: 'delete',
-          requiresRoles: [Role.FullAdmin],
+          requiredRoles: [Role.FullAdmin],
           tooltip: this.translate.instant('Delete'),
           onClick: (row) => this.doDelete(row),
         },

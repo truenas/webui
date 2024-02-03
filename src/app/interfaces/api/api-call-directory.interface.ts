@@ -294,7 +294,7 @@ export interface ApiCallDirectory {
   'alertclasses.config': { params: void; response: AlertClasses };
   'alertclasses.update': { params: [AlertClassesUpdate]; response: AlertClasses };
   'alertservice.create': { params: [AlertServiceEdit]; response: AlertService };
-  'alertservice.delete': { params: number; response: boolean };
+  'alertservice.delete': { params: [number]; response: boolean };
   'alertservice.query': { params: QueryParams<AlertService>; response: AlertService[] };
   'alertservice.test': { params: [AlertServiceEdit]; response: boolean };
   'alertservice.update': { params: [id: number, update: AlertServiceEdit]; response: AlertService };

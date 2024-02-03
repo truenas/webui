@@ -116,7 +116,7 @@ export class SmartTaskListComponent implements EntityTableConfig {
       id: 'delete',
       icon: 'delete',
       label: 'Delete',
-      requiresRoles: [Role.FullAdmin],
+      requiredRoles: [Role.FullAdmin],
       onClick: (rowinner: SmartTestTaskUi) => {
         this.entityList.doDelete(rowinner);
       },

@@ -38,7 +38,7 @@
       <div class="table-details-row-actions">
         <ng-container *ngIf="!task.job || task.job?.state !== jobState.Running">
           <button
-            *ixRequiresRoles="requiresRoles"
+            *ixRequiresRoles="requiredRoles"
             mat-button
             [ixTest]="[task.id, 'run_now']"
             (click)="runNow(task)"
@@ -50,7 +50,7 @@
 
         <ng-container *ngIf="task.job && task.job.state === jobState.Running">
           <button
-            *ixRequiresRoles="requiresRoles"
+            *ixRequiresRoles="requiredRoles"
             mat-button
             [ixTest]="[task.id, 'stop']"
             (click)="stopCloudSyncTask(task)"
@@ -61,7 +61,7 @@
         </ng-container>
 
         <button
-          *ixRequiresRoles="requiresRoles"
+          *ixRequiresRoles="requiredRoles"
           mat-button
           [ixTest]="[task.id, 'dry_run']"
           (click)="dryRun(task)"
@@ -71,7 +71,7 @@
         </button>
 
         <button
-          *ixRequiresRoles="requiresRoles"
+          *ixRequiresRoles="requiredRoles"
           mat-button
           [ixTest]="[task.id, 'restore']"
           (click)="restore(task)"
@@ -90,7 +90,7 @@
         </button>
 
         <button
-          *ixRequiresRoles="requiresRoles"
+          *ixRequiresRoles="requiredRoles"
           mat-button
           [ixTest]="[task.id, 'delete']"
           (click)="doDelete(task)"
@@ -102,3 +102,4 @@
     </ng-template>
   </tbody>
 </ix-table2>
+<ix-table-pager [dataProvider]="dataProvider"></ix-table-pager>

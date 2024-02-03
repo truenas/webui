@@ -51,7 +51,7 @@ export class ScrubTaskFormComponent implements OnInit {
     }),
   );
 
-  readonly requiresRoles = [Role.FullAdmin];
+  readonly requiredRoles = [Role.FullAdmin];
 
   readonly tooltips = {
     pool: helptextScrubForm.scrub_volume_tooltip,

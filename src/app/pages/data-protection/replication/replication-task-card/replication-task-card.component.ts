@@ -5,14 +5,12 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import {
-  catchError, EMPTY, filter, map, of, switchMap, tap,
+  catchError, EMPTY, filter, of, switchMap, tap,
 } from 'rxjs';
 import { JobState } from 'app/enums/job-state.enum';
 import { Role } from 'app/enums/role.enum';
 import { tapOnce } from 'app/helpers/operators/tap-once.operator';
-import { helptextDataProtection } from 'app/helptext/data-protection/data-protection-dashboard/data-protection-dashboard';
-import { Job } from 'app/interfaces/job.interface';
-import { ReplicationTaskUi } from 'app/interfaces/replication-task.interface';
+import { ReplicationTask } from 'app/interfaces/replication-task.interface';
 import { AsyncDataProvider } from 'app/modules/ix-table2/classes/async-data-provider/async-data-provider';
 import { actionsColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
 import { relativeDateColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-relative-date/ix-cell-relative-date.component';
@@ -21,7 +19,6 @@ import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells
 import { toggleColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-toggle/ix-cell-toggle.component';
 import { createTable } from 'app/modules/ix-table2/utils';
 import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
-import { selectJob } from 'app/modules/jobs/store/job.selectors';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ReplicationFormComponent } from 'app/pages/data-protection/replication/replication-form/replication-form.component';
 import { ReplicationRestoreDialogComponent } from 'app/pages/data-protection/replication/replication-restore-dialog/replication-restore-dialog.component';
@@ -41,24 +38,28 @@ import { AppState } from 'app/store';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ReplicationTaskCardComponent implements OnInit {
-  dataProvider: AsyncDataProvider<ReplicationTaskUi>;
+  dataProvider: AsyncDataProvider<ReplicationTask>;
   jobStates = new Map<number, string>();
-  readonly requiresRoles = [Role.ReplicationTaskWrite, Role.ReplicationTaskWritePull];
+  readonly requiredRoles = [Role.ReplicationTaskWrite, Role.ReplicationTaskWritePull];
 
-  columns = createTable<ReplicationTaskUi>([
+  columns = createTable<ReplicationTask>([
     textColumn({
       title: this.translate.instant('Name'),
       propertyName: 'name',
     }),
     textColumn({
       title: this.translate.instant('Last Snapshot'),
-      propertyName: 'task_last_snapshot',
+      getValue: (task) => {
+        return task.state.last_snapshot
+          ? task.state.last_snapshot
+          : this.translate.instant('No snapshots sent yet');
+      },
     }),
     toggleColumn({
       title: this.translate.instant('Enabled'),
       propertyName: 'enabled',
-      onRowToggle: (row: ReplicationTaskUi) => this.onChangeEnabledState(row),
-      requiresRoles: this.requiresRoles,
+      onRowToggle: (row: ReplicationTask) => this.onChangeEnabledState(row),
+      requiredRoles: this.requiredRoles,
     }),
     stateButtonColumn({
       title: this.translate.instant('State'),
@@ -83,26 +84,26 @@ export class ReplicationTaskCardComponent implements OnInit {
           tooltip: this.translate.instant('Run job'),
           hidden: (row) => of(row.job?.state === JobState.Running),
           onClick: (row) => this.runNow(row),
-          requiresRoles: this.requiresRoles,
+          requiredRoles: this.requiredRoles,
         },
         {
           iconName: 'restore',
           tooltip: this.translate.instant('Restore'),
           onClick: (row) => this.restore(row),
-          requiresRoles: this.requiresRoles,
+          requiredRoles: this.requiredRoles,
         },
         {
           iconName: 'download',
           tooltip: this.translate.instant('Download encryption keys'),
           hidden: (row) => of(!row.has_encrypted_dataset_keys),
           onClick: (row) => this.downloadKeys(row),
-          requiresRoles: this.requiresRoles,
+          requiredRoles: this.requiredRoles,
         },
         {
           iconName: 'delete',
           tooltip: this.translate.instant('Delete'),
           onClick: (row) => this.doDelete(row),
-          requiresRoles: this.requiresRoles,
+          requiredRoles: this.requiredRoles,
         },
       ],
     }),
@@ -124,11 +125,10 @@ export class ReplicationTaskCardComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    const replicationTasks$ = this.ws.call('replication.query', [[], { extra: { check_dataset_encryption_keys: true } }]).pipe(
-      map((replicationTasks: ReplicationTaskUi[]) => this.transformReplicationTasks(replicationTasks)),
-      untilDestroyed(this),
-    );
-    this.dataProvider = new AsyncDataProvider<ReplicationTaskUi>(replicationTasks$);
+    const replicationTasks$ = this.ws.call('replication.query', [[], {
+      extra: { check_dataset_encryption_keys: true },
+    }]).pipe(untilDestroyed(this));
+    this.dataProvider = new AsyncDataProvider<ReplicationTask>(replicationTasks$);
     this.getReplicationTasks();
   }
 
@@ -136,7 +136,7 @@ export class ReplicationTaskCardComponent implements OnInit {
     this.dataProvider.load();
   }
 
-  doDelete(replicationTask: ReplicationTaskUi): void {
+  doDelete(replicationTask: ReplicationTask): void {
     this.dialogService.confirm({
       title: this.translate.instant('Confirmation'),
       message: this.translate.instant('Delete Replication Task <b>"{name}"</b>?', {
@@ -164,14 +164,14 @@ export class ReplicationTaskCardComponent implements OnInit {
     ).subscribe(() => this.getReplicationTasks());
   }
 
-  editReplicationTask(row: ReplicationTaskUi): void {
+  editReplicationTask(row: ReplicationTask): void {
     const closer$ = this.chainedSlideInService.pushComponent(ReplicationFormComponent, true, row);
 
     closer$.pipe(filter(Boolean), untilDestroyed(this))
       .subscribe(() => this.getReplicationTasks());
   }
 
-  runNow(row: ReplicationTaskUi): void {
+  runNow(row: ReplicationTask): void {
     this.dialogService.confirm({
       title: this.translate.instant('Run Now'),
       message: this.translate.instant('Replicate «{name}» now?', { name: row.name }),
@@ -203,14 +203,14 @@ export class ReplicationTaskCardComponent implements OnInit {
     ).subscribe();
   }
 
-  restore(row: ReplicationTaskUi): void {
+  restore(row: ReplicationTask): void {
     const dialog = this.matDialog.open(ReplicationRestoreDialogComponent, {
       data: row.id,
     });
     dialog.afterClosed().pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => this.getReplicationTasks());
   }
 
-  downloadKeys(row: ReplicationTaskUi): void {
+  downloadKeys(row: ReplicationTask): void {
     this.ws.call('core.download', [
       'pool.dataset.export_keys_for_replication',
       [row.id],
@@ -237,29 +237,7 @@ export class ReplicationTaskCardComponent implements OnInit {
     });
   }
 
-  private transformReplicationTasks(replicationTasks: ReplicationTaskUi[]): ReplicationTaskUi[] {
-    const tasks: ReplicationTaskUi[] = [];
-
-    replicationTasks.forEach((task) => {
-      task.task_last_snapshot = task.state.last_snapshot
-        ? task.state.last_snapshot
-        : this.translate.instant(helptextDataProtection.no_snapshot_sent_yet);
-
-      if (task.job !== null) {
-        this.store$.select(selectJob(task.job.id)).pipe(
-          filter(Boolean),
-          untilDestroyed(this),
-        ).subscribe((job: Job) => {
-          task.job = job;
-          this.jobStates.set(job.id, job.state);
-        });
-      }
-      tasks.push(task);
-    });
-    return tasks;
-  }
-
-  private onChangeEnabledState(replicationTask: ReplicationTaskUi): void {
+  private onChangeEnabledState(replicationTask: ReplicationTask): void {
     this.ws
       .call('replication.update', [replicationTask.id, { enabled: !replicationTask.enabled }])
       .pipe(untilDestroyed(this))

@@ -69,7 +69,7 @@ export class NfsFormComponent implements OnInit {
       : this.translate.instant('Edit NFS Share');
   }
 
-  readonly requiresRoles = [Role.SharingNfsWrite, Role.SharingWrite];
+  readonly requiredRoles = [Role.SharingNfsWrite, Role.SharingWrite];
   readonly helptext = helptextSharingNfs;
   readonly userProvider = new UserComboboxProvider(this.userService);
   readonly groupProvider = new GroupComboboxProvider(this.userService);

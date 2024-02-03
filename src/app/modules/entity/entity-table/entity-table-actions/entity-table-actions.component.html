@@ -3,7 +3,7 @@
   [style.paddingTop]="inlineActions ? 0 : '4px'"
 >
   <ng-container *ngIf="actions && isSingleAction && singleAction">
-    <ng-container *ixRequiresRoles="actions[0].actions[0].requiresRoles">
+    <ng-container *ixRequiresRoles="actions[0].actions[0].requiredRoles">
       <button
         *ngIf="!entity.conf.isActionVisible || entity.conf.isActionVisible.bind(entity.conf)(actions[0].actions[0].id, row)"
         mat-button
@@ -62,7 +62,7 @@
           [matTooltipDisabled]="!action.disabled"
           [matTooltipPosition]="action.ttposition ? action.ttposition : 'left'"
         >
-          <ng-container *ixRequiresRoles="action.requiresRoles">
+          <ng-container *ixRequiresRoles="action.requiredRoles">
             <button
               *ngIf="!entity.conf.isActionVisible || entity.conf.isActionVisible.bind(entity.conf)(action.id, row)"
               mat-menu-item
@@ -93,7 +93,7 @@
             [matTooltipDisabled]="!action.disabled"
             [matTooltipPosition]="action.ttposition ? action.ttposition : 'left'"
           >
-            <ng-container *ixRequiresRoles="action.requiresRoles">
+            <ng-container *ixRequiresRoles="action.requiredRoles">
               <button
                 *ngIf="!entity.conf.isActionVisible || entity.conf.isActionVisible.bind(entity.conf)(action.id, row)"
                 mat-menu-item
@@ -113,7 +113,7 @@
 
   <ng-template #inlineActionsTemplate>
     <ng-container *ngFor="let action of actions">
-      <ng-container *ixRequiresRoles="action.requiresRoles">
+      <ng-container *ixRequiresRoles="action.requiredRoles">
         <button
           *ngIf="!entity.conf.isActionVisible || entity.conf.isActionVisible.bind(entity.conf)(action.id, row)"
           mat-icon-button

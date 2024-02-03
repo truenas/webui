@@ -167,7 +167,10 @@ export class DirectoryServicesComponent implements OnInit {
 
   openKerberosSettingsForm(): void {
     const slideInRef = this.slideInService.open(KerberosSettingsComponent);
-    slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => this.refreshCards());
+    slideInRef.slideInClosed$.pipe(
+      filter(Boolean),
+      untilDestroyed(this),
+    ).subscribe(() => this.refreshCards());
   }
 
   refreshTables(): void {

@@ -1,7 +1,4 @@
-import { DOCUMENT } from '@angular/common';
-import {
-  AfterViewInit, ChangeDetectionStrategy, Component, Inject, Input,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 
 @Component({
@@ -10,19 +7,12 @@ import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-sli
   styleUrls: ['./ix-modal-header.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class IxModalHeaderComponent implements AfterViewInit {
+export class IxModalHeaderComponent {
   @Input() title: string;
   @Input() loading: boolean;
   @Input() disableClose = false;
 
-  constructor(
-    private slideInRef: IxSlideInRef<IxModalHeaderComponent>,
-    @Inject(DOCUMENT) private document: Document,
-  ) {}
-
-  ngAfterViewInit(): void {
-    this.document.getElementById('ix-close-icon')?.focus();
-  }
+  constructor(private slideInRef: IxSlideInRef<IxModalHeaderComponent>) {}
 
   close(): void {
     this.slideInRef.close();

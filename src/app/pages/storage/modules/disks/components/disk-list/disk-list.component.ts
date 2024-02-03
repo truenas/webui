@@ -224,9 +224,9 @@ export class DiskListComponent implements OnInit {
   }
 
   private filterDisk = (disk: Disk): boolean => {
-    return disk.name.includes(this.filterString)
-      || disk.pool.includes(this.filterString)
-      || disk.serial.includes(this.filterString);
+    return disk.name.toLowerCase().includes(this.filterString.toLowerCase())
+      || disk.pool.toLowerCase().includes(this.filterString.toLowerCase())
+      || disk.serial.toLowerCase().includes(this.filterString.toLowerCase());
   };
 
   private getPoolColumn(diskToCheck: Disk): string {

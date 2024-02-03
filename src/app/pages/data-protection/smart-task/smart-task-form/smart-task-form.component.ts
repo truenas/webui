@@ -50,7 +50,7 @@ export class SmartTaskFormComponent implements OnInit {
 
   isAllDisksSelected$ = this.form.select((values) => values.all_disks);
 
-  readonly requiresRoles = [Role.FullAdmin];
+  readonly requiredRoles = [Role.FullAdmin];
 
   readonly tooltips = {
     disks: helptextSmart.smarttest_disks_tooltip,

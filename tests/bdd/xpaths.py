@@ -433,7 +433,7 @@ class iscsi:
     protals_Tab = '//a[@data-test="link-portals"]'
     targets_Tab = '//a[@data-test="link-targets"]'
     extents_Tab = '//a[@data-test="link-extents"]'
-    iscsitest1_Text = '//div[normalize-space(text())="iscsitest1"]'
+    iscsitest1_Text = '//div[contains(.,"iscsitest1")]'
 
 
 class iscsi_Wizard:
@@ -522,11 +522,13 @@ class popup:
     smb_Restart_Title = '//h3[text()="Restart SMB Service"]'
     restart_Service_Button = '//button[contains(*/text(),"Restart Service")]'
     smb_Start_Title = '//h1[text()="Start SMB Service"]'
+    nfs_Start_Title = '//h1[text()="Start NFS Service"]'
     iscsi_Start_Title = '//h1[text()="Start iSCSI Service"]'
     # data-test is not proper but work since it is the only one like that in the UI.
     enable_Service_To_Start_Automatically_Checkbox = '//mat-checkbox[@data-test="checkbox"]'
     enable_Service_Title = '//h1[text()="Enable service"]'
     enable_Service_Button = '//button[contains(*/text(),"Enable Service")]'
+    start_Service_Button = '//button[contains(*/text(),"Start")]'
     license_Agrement_Title = '//h1[contains(.,"End User License Agreement - TrueNAS")]'
     please_Wait = '//h6[contains(.,"Please wait")]'
     active_Directory = '//h1[text()="Active Directory"]'
