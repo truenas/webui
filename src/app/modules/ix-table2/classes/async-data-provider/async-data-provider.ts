@@ -12,7 +12,6 @@ export class AsyncDataProvider<T> extends BaseDataProvider<T> {
   }
 
   load(): void {
-    this.emptyType$.next(EmptyType.Loading);
     this.subscription.add(
       this.request$.subscribe({
         next: (rows) => {
