@@ -9,7 +9,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as EmailValidator from 'email-validator';
 import {
-  BehaviorSubject, filter, finalize, of,
+  BehaviorSubject, finalize, of,
 } from 'rxjs';
 import { MiB } from 'app/constants/bytes.constant';
 import {
@@ -60,13 +60,7 @@ export class FileTicketLicensedComponent {
     title: ['', [Validators.required, Validators.maxLength(200)]],
 
     message: ['', [Validators.maxLength(20000)]],
-    images: [
-      [] as File[],
-      [],
-      this.imageValidator.getImagesValidator(
-        this.fileSizeLimitMiBs$.pipe(filter((sizeLimitBytes) => sizeLimitBytes != null)),
-      ),
-    ],
+    images: [[] as File[], []],
     attach_debug: [true],
     attach_images: [false],
     take_screenshot: [true],
@@ -133,7 +127,9 @@ export class FileTicketLicensedComponent {
 
   private getSystemFileSizeLimit(): void {
     this.ws.call('support.attach_ticket_max_size').pipe(untilDestroyed(this)).subscribe((size) => {
-      this.fileSizeLimitMiBs$.next(size * MiB);
+      this.form.controls.images.addAsyncValidators(
+        this.imageValidator.getImagesValidator(size * MiB),
+      );
     });
   }
 }

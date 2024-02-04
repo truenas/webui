@@ -5,7 +5,9 @@ import {
 import { FormBuilder, Validators } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { BehaviorSubject, filter, finalize } from 'rxjs';
+import {
+  BehaviorSubject, finalize,
+} from 'rxjs';
 import { MiB } from 'app/constants/bytes.constant';
 import { TicketType, ticketAcceptedFiles } from 'app/enums/file-ticket.enum';
 import { helptextSystemSupport as helptext } from 'app/helptext/system/support';
@@ -35,13 +37,7 @@ export class FileTicketComponent {
   protected form = this.formBuilder.group({
     title: ['', [Validators.maxLength(200)]],
     message: ['', [Validators.maxLength(20000)]],
-    images: [
-      [] as File[],
-      [],
-      this.imageValidator.getImagesValidator(
-        this.fileSizeLimitMiBs$.pipe(filter((sizeLimitBytes) => sizeLimitBytes != null)),
-      ),
-    ],
+    images: [[] as File[], []],
     attach_debug: [true],
     attach_images: [false],
     take_screenshot: [true],
@@ -91,7 +87,7 @@ export class FileTicketComponent {
 
   private getSystemFileSizeLimit(): void {
     this.ws.call('support.attach_ticket_max_size').pipe(untilDestroyed(this)).subscribe((size) => {
-      this.fileSizeLimitMiBs$.next(size * MiB);
+      this.form.controls.images.addAsyncValidators(this.imageValidator.getImagesValidator(size * MiB));
     });
   }
 }

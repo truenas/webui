@@ -3,10 +3,9 @@ import { AsyncValidatorFn, FormControl, ValidationErrors } from '@angular/forms'
 import { TranslateService } from '@ngx-translate/core';
 import {
   catchError,
-  combineLatest,
   concatMap,
   from,
-  map, Observable, Observer, of, switchMap, take, toArray,
+  map, Observable, Observer, of, take, toArray,
 } from 'rxjs';
 import { MiB } from 'app/constants/bytes.constant';
 import { ValidatedFile } from 'app/interfaces/validated-file.interface';
@@ -20,13 +19,9 @@ export class ImageValidatorService {
     private translateService: TranslateService,
   ) { }
 
-  getImagesValidator(fileSizeLimitBytes$: Observable<number>): AsyncValidatorFn {
+  getImagesValidator(fileSizeLimitBytes: number): AsyncValidatorFn {
     return (control: FormControl<File[]>): Observable<ValidationErrors> | null => {
-      return combineLatest([
-        fileSizeLimitBytes$,
-        of(control.value),
-      ]).pipe(
-        switchMap(([sizeLimitBytes, images]) => this.validateImages(images, sizeLimitBytes)),
+      return this.validateImages(control.value, fileSizeLimitBytes).pipe(
         map((validatedFiles) => {
           const invalidFiles = validatedFiles
             .filter((file) => file.error)

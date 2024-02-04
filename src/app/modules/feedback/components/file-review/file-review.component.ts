@@ -4,7 +4,7 @@ import {
 import { FormBuilder, Validators } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { finalize, of } from 'rxjs';
+import { finalize } from 'rxjs';
 import { MiB } from 'app/constants/bytes.constant';
 import { ticketAcceptedFiles } from 'app/enums/file-ticket.enum';
 import { helptextSystemSupport as helptext } from 'app/helptext/system/support';
@@ -33,7 +33,7 @@ export class FileReviewComponent {
     rating: [undefined as number, [Validators.required, rangeValidator(1, maxRatingValue)]],
     message: ['', [Validators.maxLength(4067)]],
 
-    images: [[] as File[], [], this.imageValidator.getImagesValidator(of(maxFileSizeBytes))],
+    images: [[] as File[], [], this.imageValidator.getImagesValidator(maxFileSizeBytes)],
     attach_images: [false],
     take_screenshot: [true],
   });
