@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import { UUID } from 'angular2-uuid';
 import { lastValueFrom, map, tap } from 'rxjs';
 import { SmartTestResultPageType } from 'app/enums/smart-test-results-page-type.enum';
 import { QueryParams } from 'app/interfaces/query-api.interface';
@@ -12,7 +13,7 @@ import { WebSocketService } from 'app/services/ws.service';
 
 interface SmartTestResultsRow extends SmartTestResult {
   disk: string;
-  identifier: string;
+  id: string;
 }
 
 @UntilDestroy()
@@ -91,12 +92,7 @@ export class SmartResultsComponent implements EntityTableConfig {
     const rows: SmartTestResultsRow[] = [];
     data.forEach((item) => {
       item?.tests.forEach((test) => {
-        rows.push({
-          ...test,
-          identifier: `${item.identifier}_${test.num}`,
-          disk: item.disk,
-          num: test.num,
-        });
+        rows.push({ ...test, disk: item.disk, id: UUID.UUID() });
       });
     });
     return rows;

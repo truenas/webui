@@ -39,7 +39,6 @@ export interface SmartManualTestParams {
 }
 
 export interface SmartTestResults {
-  identifier: string;
   disk: string;
   tests: SmartTestResult[];
 }
