@@ -1,5 +1,5 @@
 import {
-  Component, ElementRef, Input, OnInit, TrackByFunction, ViewChild,
+  Component, ElementRef, Input, OnDestroy, OnInit, TrackByFunction, ViewChild,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import {
@@ -13,7 +13,7 @@ import {
   templateUrl: './ix-chained-slide-in.component.html',
   styleUrls: ['./ix-chained-slide-in.component.scss'],
 })
-export class IxChainedSlideInComponent implements OnInit {
+export class IxChainedSlideInComponent implements OnInit, OnDestroy {
   @Input() id: string;
   @ViewChild('componentWrapper') container: HTMLElement;
   protected components: ChainedComponentSerialized[];
@@ -40,5 +40,9 @@ export class IxChainedSlideInComponent implements OnInit {
     this.ixChainedSlideInService.components$.pipe(untilDestroyed(this)).subscribe((components) => {
       this.components = components;
     });
+  }
+
+  ngOnDestroy(): void {
+    this.element.remove();
   }
 }
