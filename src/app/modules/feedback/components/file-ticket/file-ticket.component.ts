@@ -5,9 +5,7 @@ import {
 import { FormBuilder, Validators } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import {
-  BehaviorSubject, finalize,
-} from 'rxjs';
+import { finalize } from 'rxjs';
 import { MiB } from 'app/constants/bytes.constant';
 import { TicketType, ticketAcceptedFiles } from 'app/enums/file-ticket.enum';
 import { helptextSystemSupport as helptext } from 'app/helptext/system/support';
@@ -31,8 +29,6 @@ export class FileTicketComponent {
   @Input() dialogRef: MatDialogRef<FeedbackDialogComponent>;
   @Input() isLoading: boolean;
   @Output() isLoadingChange = new EventEmitter<boolean>();
-
-  readonly fileSizeLimitMiBs$ = new BehaviorSubject<number>(null);
 
   protected form = this.formBuilder.group({
     title: ['', [Validators.maxLength(200)]],

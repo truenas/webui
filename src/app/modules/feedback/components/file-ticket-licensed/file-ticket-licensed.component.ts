@@ -8,9 +8,7 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as EmailValidator from 'email-validator';
-import {
-  BehaviorSubject, finalize, of,
-} from 'rxjs';
+import { finalize, of } from 'rxjs';
 import { MiB } from 'app/constants/bytes.constant';
 import {
   ticketAcceptedFiles,
@@ -40,7 +38,6 @@ export class FileTicketLicensedComponent {
   @Input() dialogRef: MatDialogRef<FeedbackDialogComponent>;
   @Input() isLoading: boolean;
   @Output() isLoadingChange = new EventEmitter<boolean>();
-  readonly fileSizeLimitMiBs$ = new BehaviorSubject<number>(null);
 
   protected form = this.formBuilder.group({
     name: ['', [Validators.required]],
