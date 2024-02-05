@@ -63,7 +63,7 @@
                   "
                 ></div>
                 {{ pool }}
-                <span *ngIf="!systemState.pools[i] || !systemState.pools[i].healthy">
+                <span *ngIf="!isPoolHealthy(pool)" class="alert">
                   <ix-icon name="mdi-alert"></ix-icon>
                 </span>
               </div>

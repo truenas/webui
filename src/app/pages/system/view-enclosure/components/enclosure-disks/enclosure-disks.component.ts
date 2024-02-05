@@ -1129,6 +1129,10 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
     return this.systemState.pools.find((pool: Pool) => pool.name === name);
   }
 
+  isPoolHealthy(poolName: string): boolean {
+    return this.findPoolByName(poolName)?.healthy;
+  }
+
   // PIXI/Chassis trigger
   toggleHighlightMode(mode: string): void {
     const enclosureView = this.selectedEnclosureView;
