@@ -13,6 +13,15 @@ export function normalizeFileSize(
   return base === 10 ? normalizeFileSizeBase10(value, baseUnit) : normalizeFileSizeBase2(value, baseUnit);
 }
 
+export function buildNormalizedFileSize(
+  value: number,
+  baseUnit: 'b' | 'B' = 'B',
+  base: 10 | 2 = 2,
+): string {
+  const [formatted, unit] = normalizeFileSize(value, baseUnit, base);
+  return `${formatted} ${unit}`;
+}
+
 function normalizeFileSizeBase2(value: number, baseUnit: 'b' | 'B'): [formatted: number, unit: string] {
   let formatted = value;
   let increment = 1;

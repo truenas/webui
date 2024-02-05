@@ -2,10 +2,10 @@ import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import filesize from 'filesize';
 import { of } from 'rxjs';
 import { DatasetType } from 'app/enums/dataset.enum';
 import { VmDiskMode, vmDiskModeLabels } from 'app/enums/vm.enum';
+import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
 import { choicesToOptions, singleArrayToOptions } from 'app/helpers/operators/options.operators';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextVmWizard } from 'app/helptext/vm/vm-wizard/vm-wizard';
@@ -81,7 +81,7 @@ export class DiskStepComponent implements OnInit, SummaryProvider {
     let diskDescription: string;
     if (this.isCreatingNewDisk) {
       diskDescription = this.translate.instant('{size} {type} at {location}', {
-        size: filesize(values.volsize, { standard: 'iec' }),
+        size: buildNormalizedFileSize(values.volsize),
         type: values.hdd_type,
         location: values.datastore,
       });

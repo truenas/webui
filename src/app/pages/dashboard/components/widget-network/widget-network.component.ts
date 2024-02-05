@@ -15,7 +15,7 @@ import {
 import { KiB } from 'app/constants/bytes.constant';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { LinkState, NetworkInterfaceAliasType } from 'app/enums/network-interface.enum';
-import { normalizeFileSize } from 'app/helpers/filesize.utils';
+import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { BaseNetworkInterface, NetworkInterfaceAlias } from 'app/interfaces/network-interface.interface';
 import { NetworkInterfaceUpdate, ReportingDatabaseError, ReportingNameAndId } from 'app/interfaces/reporting.interface';
@@ -104,8 +104,7 @@ export class WidgetNetworkComponent extends WidgetComponent implements OnInit, A
             if (tooltipItem.parsed.y === 0) {
               label += 0;
             } else {
-              const [formatted, unit] = normalizeFileSize(Math.abs(Number(tooltipItem.parsed.y)), 'b', 10);
-              label = formatted + ' ' + unit + '/s';
+              label = buildNormalizedFileSize(Math.abs(Number(tooltipItem.parsed.y)), 'b', 10);
             }
             return label;
           },
@@ -135,8 +134,7 @@ export class WidgetNetworkComponent extends WidgetComponent implements OnInit, A
             if (value === 0) {
               return 0;
             }
-            const [formatted, unit] = normalizeFileSize(Math.abs(Number(value)), 'b', 10);
-            return formatted + ' ' + unit;
+            return buildNormalizedFileSize(Math.abs(Number(value)), 'b', 10);
           },
         },
       },

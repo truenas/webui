@@ -22,7 +22,7 @@
         <div *ngIf="dataset?.refreservation?.parsed" class="details-item">
           <div class="label">{{ 'Reserved for Dataset' | translate }}:</div>
           <div class="value">
-            {{ dataset.refreservation.parsed | filesize: { standard: 'iec', round: 0 } }}
+            {{ dataset.refreservation.parsed | ixFileSize }}
           </div>
         </div>
         <div *ngIf="dataset?.reservation?.parsed" class="details-item">
@@ -30,7 +30,7 @@
             {{ 'Reserved for Dataset & Children' | translate }}:
           </div>
           <div class="value">
-            {{ dataset.reservation.parsed | filesize: { standard: 'iec', round: 0 } }}
+            {{ dataset.reservation.parsed | ixFileSize }}
           </div>
         </div>
       </ng-container>
@@ -47,7 +47,7 @@
         <div *ngIf="dataset?.volsize?.parsed" class="details-item">
           <div class="label">{{ 'Volume Size' | translate }}:</div>
           <div class="value">
-            {{ dataset.volsize.parsed | filesize: { standard: 'iec', round: 0 } }}
+            {{ dataset.volsize.parsed | ixFileSize }}
           </div>
         </div>
       </ng-container>
@@ -64,7 +64,7 @@
           </ng-container>
         </div>
         <div class="value">
-          {{ dataset.available.parsed | filesize: { standard: 'iec', round: 0 } }}
+          {{ dataset.available.parsed | ixFileSize }}
         </div>
       </div>
       <div *ngIf="(isFilesystem && hasQuota) || hasRefQuota" class="details-item">
@@ -72,7 +72,7 @@
         <div *ngIf="hasQuota; else refquotaValue" class="value">
           {{
             '{n} (applies to descendants)' | translate : {
-              n: dataset.quota.parsed | filesize: { standard: 'iec', round: 0 }
+              n: dataset.quota.parsed | ixFileSize
             }
           }}
         </div>
@@ -80,7 +80,7 @@
           <div class="value">
             {{
               '{n}' | translate : {
-                n: dataset.refquota.parsed | filesize: { standard: 'iec', round: 0 }
+                n: dataset.refquota.parsed | ixFileSize
               }
             }}
           </div>
@@ -91,7 +91,7 @@
         <div class="value">
           {{
             '{n} from {dataset}' | translate : {
-              n: inheritedQuotasDataset.quota.parsed | filesize: { standard: 'iec', round: 0 },
+              n: inheritedQuotasDataset.quota.parsed | ixFileSize,
               dataset: inheritedQuotasDataset.name
             }
           }}

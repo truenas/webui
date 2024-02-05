@@ -5,7 +5,7 @@
       <ngx-skeleton-loader *ngIf="isLoading"></ngx-skeleton-loader>
       <dd *ngIf="!isLoading">
         <ng-container *ngIf="snapshotInfo?.properties?.used?.parsed; else notAvailable">
-          {{ +snapshotInfo.properties.used.parsed | filesize: { standard: 'iec' } }}
+          {{ +snapshotInfo.properties.used.parsed | ixFileSize }}
         </ng-container>
       </dd>
     </div>
@@ -23,7 +23,7 @@
       <ngx-skeleton-loader *ngIf="isLoading"></ngx-skeleton-loader>
       <dd *ngIf="!isLoading">
         <ng-container *ngIf="snapshotInfo?.properties?.referenced?.parsed; else notAvailable">
-          {{ +snapshotInfo.properties.referenced.parsed | filesize: { standard: 'iec' } }}
+          {{ +snapshotInfo.properties.referenced.parsed | ixFileSize }}
         </ng-container>
       </dd>
     </div>

@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import { FormGroup, ValidationErrors } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
-import filesize from 'filesize';
 import { Observable, of } from 'rxjs';
 import { map, shareReplay } from 'rxjs/operators';
+import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -74,7 +74,7 @@ export class FreeSpaceValidatorService {
     return this.validators.makeErrorMessage(
       'invalidFreeSpace',
       this.translate.instant('Not enough free space. Maximum available: {space}', {
-        space: filesize(freeSpace, { standard: 'iec' }),
+        space: buildNormalizedFileSize(freeSpace),
       }),
     );
   }

@@ -11,10 +11,10 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTableModule } from '@angular/material/table';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { TranslateModule } from '@ngx-translate/core';
-import { NgxFilesizeModule } from 'ngx-filesize';
 import { CoreComponents } from 'app/core/core-components.module';
 import { CastModule } from 'app/modules/cast/cast.module';
 import { EntityModule } from 'app/modules/entity/entity.module';
+import { IxFileSizeModule } from 'app/modules/ix-file-size/ix-file-size.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { LayoutModule } from 'app/modules/layout/layout.module';
@@ -43,6 +43,7 @@ import { EnclosureStore } from './stores/enclosure-store.service';
     MatTableModule,
     MatCardModule,
     MatToolbarModule,
+    IxFileSizeModule,
     LayoutModule,
     MatButtonModule,
     MatMenuModule,
@@ -51,7 +52,6 @@ import { EnclosureStore } from './stores/enclosure-store.service';
     IxFormsModule,
     CoreComponents,
     TestIdModule,
-    NgxFilesizeModule,
   ],
   declarations: [
     ViewEnclosureComponent,
