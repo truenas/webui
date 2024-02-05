@@ -127,6 +127,7 @@ export class FileTicketLicensedComponent {
       this.form.controls.images.addAsyncValidators(
         this.imageValidator.getImagesValidator(size * MiB),
       );
+      this.form.controls.images.updateValueAndValidity();
     });
   }
 }

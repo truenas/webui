@@ -84,6 +84,7 @@ export class FileTicketComponent {
   private getSystemFileSizeLimit(): void {
     this.ws.call('support.attach_ticket_max_size').pipe(untilDestroyed(this)).subscribe((size) => {
       this.form.controls.images.addAsyncValidators(this.imageValidator.getImagesValidator(size * MiB));
+      this.form.controls.images.updateValueAndValidity();
     });
   }
 }
