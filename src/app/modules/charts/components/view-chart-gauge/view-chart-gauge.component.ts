@@ -1,5 +1,5 @@
 import {
-  Component, AfterViewInit, Input, OnChanges,
+  Component, AfterViewInit, Input, OnChanges, ChangeDetectionStrategy,
 } from '@angular/core';
 import { UUID } from 'angular2-uuid';
 import * as d3 from 'd3';
@@ -24,6 +24,7 @@ export interface GaugeConfig {
 @Component({
   selector: 'ix-view-chart-gauge',
   templateUrl: './view-chart-gauge.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ViewChartGaugeComponent implements AfterViewInit, OnChanges {
   subtitle = '';

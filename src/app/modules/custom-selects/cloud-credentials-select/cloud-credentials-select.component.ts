@@ -1,6 +1,6 @@
 import { ComponentType } from '@angular/cdk/portal';
 import {
-  Component, Input, forwardRef, inject,
+  Component, Input, forwardRef, inject, ChangeDetectionStrategy,
 } from '@angular/core';
 import { NG_VALUE_ACCESSOR } from '@angular/forms';
 import { Observable, map } from 'rxjs';
@@ -23,6 +23,7 @@ import { ChainedComponentResponse } from 'app/services/ix-chained-slide-in.servi
       multi: true,
     },
   ],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CloudCredentialsSelectComponent extends IxSelectWithNewOption {
   @Input() label: string;

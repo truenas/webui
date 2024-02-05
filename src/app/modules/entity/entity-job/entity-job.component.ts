@@ -16,6 +16,7 @@ import { EntityJobConfig } from 'app/modules/entity/entity-job/entity-job-config
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
+// eslint-disable-next-line @angular-eslint/prefer-on-push-component-change-detection
 @Component({
   templateUrl: 'entity-job.component.html',
   styleUrls: ['./entity-job.component.scss'],

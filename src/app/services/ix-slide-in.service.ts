@@ -79,7 +79,7 @@ export class IxSlideInService {
       this.slideInComponent.closeSlideIn();
     }
 
-    timer(10).pipe(take(1), untilDestroyed(this)).subscribe(() => this.focusService.restoreFocus());
+    this.focusService.restoreFocus();
   }
 
   private closeOnNavigation(): void {

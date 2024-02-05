@@ -1,5 +1,7 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, ElementRef, ViewChild } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, ElementRef, ViewChild,
+} from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Job } from 'app/interfaces/job.interface';
@@ -13,6 +15,7 @@ import { WebSocketService } from 'app/services/ws.service';
   selector: 'ix-error-dialog',
   templateUrl: './error-dialog.component.html',
   styleUrls: ['./error-dialog.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ErrorDialogComponent {
   @ViewChild('errorMessageWrapper') errorMessageWrapper: ElementRef;

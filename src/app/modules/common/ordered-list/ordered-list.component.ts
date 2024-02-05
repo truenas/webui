@@ -1,5 +1,6 @@
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import {
+  ChangeDetectionStrategy,
   ChangeDetectorRef, Component, Input, OnInit,
 } from '@angular/core';
 import { NgControl } from '@angular/forms';
@@ -13,6 +14,7 @@ import { Option } from 'app/interfaces/option.interface';
   selector: 'ix-ordered-listbox',
   styleUrls: ['./ordered-list.component.scss'],
   templateUrl: 'ordered-list.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class OrderedListboxComponent implements ControlValueAccessor, OnInit {
   @Input() label: string;

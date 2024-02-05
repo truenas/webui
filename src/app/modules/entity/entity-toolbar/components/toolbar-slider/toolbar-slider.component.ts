@@ -1,11 +1,12 @@
 import {
-  Component, EventEmitter, Input, Output,
+  ChangeDetectionStrategy, Component, EventEmitter, Input, Output,
 } from '@angular/core';
 
 @Component({
   selector: 'ix-toolbar-slider',
   styleUrls: ['./toolbar-slider.component.scss'],
   templateUrl: './toolbar-slider.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ToolbarSliderComponent {
   @Input() value?: number;
