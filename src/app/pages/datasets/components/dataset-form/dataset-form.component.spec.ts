@@ -54,8 +54,8 @@ describe('DatasetFormComponent', () => {
     share_type: new FormControl(DatasetPreset.Generic),
   }));
   MockInstance(NameAndOptionsSectionComponent, 'datasetPresetForm', datasetPresetForm);
-  MockInstance(NameAndOptionsSectionComponent, 'isCreatingSmb', true);
-  MockInstance(NameAndOptionsSectionComponent, 'isCreatingNfs', true);
+  MockInstance(NameAndOptionsSectionComponent, 'canCreateSmb', true);
+  MockInstance(NameAndOptionsSectionComponent, 'canCreateNfs', true);
   MockInstance(NameAndOptionsSectionComponent, 'getPayload', () => ({
     name: 'dataset',
   }));

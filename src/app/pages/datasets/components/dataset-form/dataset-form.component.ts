@@ -206,10 +206,10 @@ export class DatasetFormComponent implements OnInit, AfterViewInit {
     ).subscribe({
       next: ([createdDataset, shouldGoToEditor]) => {
         const datasetPresetFormValue = this.nameAndOptionsSection.datasetPresetForm.value;
-        if (this.nameAndOptionsSection.isCreatingSmb && datasetPresetFormValue.create_smb) {
+        if (this.nameAndOptionsSection.canCreateSmb && datasetPresetFormValue.create_smb) {
           this.store$.dispatch(checkIfServiceIsEnabled({ serviceName: ServiceName.Cifs }));
         }
-        if (this.nameAndOptionsSection.isCreatingNfs && datasetPresetFormValue.create_nfs) {
+        if (this.nameAndOptionsSection.canCreateNfs && datasetPresetFormValue.create_nfs) {
           this.store$.dispatch(checkIfServiceIsEnabled({ serviceName: ServiceName.Nfs }));
         }
         this.isLoading = false;
@@ -266,7 +266,7 @@ export class DatasetFormComponent implements OnInit, AfterViewInit {
 
   private createSmb(dataset: Dataset): Observable<Dataset> {
     const datasetPresetFormValue = this.nameAndOptionsSection.datasetPresetForm.value;
-    if (!this.isNew || !datasetPresetFormValue.create_smb || !this.nameAndOptionsSection.isCreatingSmb) {
+    if (!this.isNew || !datasetPresetFormValue.create_smb || !this.nameAndOptionsSection.canCreateSmb) {
       return of(dataset);
     }
     return this.ws.call('sharing.smb.create', [{
@@ -280,7 +280,7 @@ export class DatasetFormComponent implements OnInit, AfterViewInit {
 
   private createNfs(dataset: Dataset): Observable<Dataset> {
     const datasetPresetFormValue = this.nameAndOptionsSection.datasetPresetForm.value;
-    if (!this.isNew || !datasetPresetFormValue.create_nfs || !this.nameAndOptionsSection.isCreatingNfs) {
+    if (!this.isNew || !datasetPresetFormValue.create_nfs || !this.nameAndOptionsSection.canCreateNfs) {
       return of(dataset);
     }
     return this.ws.call('sharing.nfs.create', [{
