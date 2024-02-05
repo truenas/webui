@@ -16,6 +16,7 @@ import {
 } from 'rxjs';
 import { appImagePlaceholder } from 'app/constants/catalog.constants';
 import { BulkListItem, BulkListItemState } from 'app/core/components/bulk-list-item/bulk-list-item.interface';
+import { Role } from 'app/enums/role.enum';
 import { UpgradeSummary } from 'app/interfaces/application.interface';
 import { ChartRelease, ChartReleaseUpgradeParams } from 'app/interfaces/chart-release.interface';
 import { Option } from 'app/interfaces/option.interface';
@@ -40,6 +41,7 @@ export class AppBulkUpgradeComponent {
 
   readonly trackByKey: TrackByFunction<KeyValue<string, BulkListItem<ChartRelease>>> = (_, entry) => entry.key;
   readonly imagePlaceholder = appImagePlaceholder;
+  protected readonly requiredRoles = [Role.AppsWrite];
 
   constructor(
     private formBuilder: FormBuilder,

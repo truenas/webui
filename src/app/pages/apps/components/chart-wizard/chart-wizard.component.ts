@@ -21,6 +21,7 @@ import {
 } from 'rxjs/operators';
 import { ixChartApp } from 'app/constants/catalog.constants';
 import { DynamicFormSchemaType } from 'app/enums/dynamic-form-schema-type.enum';
+import { Role } from 'app/enums/role.enum';
 import { helptextApps } from 'app/helptext/apps/apps';
 import { AppDetailsRouteParams } from 'app/interfaces/app-details-route-params.interface';
 import { CatalogApp } from 'app/interfaces/catalog.interface';
@@ -95,6 +96,8 @@ export class ChartWizardComponent implements OnInit, OnDestroy {
       return `${this.titlePrefix} ${name}`;
     }),
   );
+
+  protected readonly requiredRoles = [Role.AppsWrite];
 
   get titlePrefix(): string {
     return this.isNew ? this.translate.instant('Install') : this.translate.instant('Edit');

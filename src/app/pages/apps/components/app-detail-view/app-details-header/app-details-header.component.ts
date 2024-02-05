@@ -8,6 +8,7 @@ import { TranslateService } from '@ngx-translate/core';
 import {
   filter, map, Observable, of, switchMap, take,
 } from 'rxjs';
+import { Role } from 'app/enums/role.enum';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
 import { SelectPoolDialogComponent } from 'app/pages/apps/components/select-pool-dialog/select-pool-dialog.component';
 import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.service';
@@ -27,6 +28,8 @@ export class AppDetailsHeaderComponent {
   @Input() app: AvailableApp;
   @Input() isLoading$: Observable<boolean>;
 
+  protected readonly setupPoolRequiredRoles = [Role.KubernetesWrite];
+
   constructor(
     public kubernetesStore: KubernetesStore,
     private router: Router,
@@ -40,8 +43,8 @@ export class AppDetailsHeaderComponent {
   ) {}
 
   get description(): string {
-    const splittedText = this.app?.app_readme?.split('</h1>');
-    const readyHtml = splittedText[1] || splittedText[0];
+    const splitText = this.app?.app_readme?.split('</h1>');
+    const readyHtml = splitText[1] || splitText[0];
     return readyHtml?.replace(/<[^>]*>/g, '').trim();
   }
 

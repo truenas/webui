@@ -1,4 +1,6 @@
-import { Component, Input, TemplateRef } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, Input, TemplateRef,
+} from '@angular/core';
 
 @Component({
   selector: 'ix-requires-roles-wrapper',
@@ -8,6 +10,7 @@ import { Component, Input, TemplateRef } from '@angular/core';
 </span>
 `,
   styleUrls: ['./requires-roles-wrapper.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RequiresRolesWrapperComponent {
   @Input() template: TemplateRef<unknown>;

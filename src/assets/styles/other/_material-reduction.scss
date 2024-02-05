@@ -423,8 +423,27 @@ body .mdc-card__actions,
 
 .mat-mdc-card .mat-toolbar-row {
   border-bottom: solid 1px var(--lines);
-  height: 56px;
-  min-height: 48px !important;
+  flex-wrap: wrap;
+  gap: 8px;
+  height: initial;
+  justify-content: space-between;
+  padding: 8px 16px;
+
+  .toolbar-row-title {
+    align-items: center;
+    display: flex;
+
+    > a {
+      -webkit-box-orient: vertical;
+      display: inline-box;
+      -webkit-line-clamp: 2;
+      max-width: 75%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: normal;
+      word-break: break-word;
+    }
+  }
 
   .mat-card-title-text {
     margin: 0;
@@ -436,8 +455,7 @@ body .mdc-card__actions,
   display: flex;
   gap: 8px;
   justify-content: flex-end;
-  position: absolute;
-  right: 16px;
+  margin-left: auto;
 }
 
 .mat-mdc-card .mat-mdc-card-footer .actions button {
@@ -887,7 +905,7 @@ ix-table2,
 table {
   overflow: auto;
 
-  @media(max-width: $breakpoint-sm) {
+  @media(max-width: $breakpoint-md) {
     tr th {
       width: 78px;
     }
@@ -900,7 +918,7 @@ table {
 }
 
 mat-list-item {
-  height: inherit !important;
+  height: inherit;
   min-height: 48px;
 
   ul {

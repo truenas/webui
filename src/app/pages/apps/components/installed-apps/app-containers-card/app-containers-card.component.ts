@@ -8,6 +8,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { map } from 'rxjs';
 import { ChartReleaseStatus } from 'app/enums/chart-release-status.enum';
 import { PodSelectDialogType } from 'app/enums/pod-select-dialog.enum';
+import { Role } from 'app/enums/role.enum';
 import { ChartContainerImage, ChartRelease } from 'app/interfaces/chart-release.interface';
 import { PodDialogFormValue } from 'app/interfaces/pod-select-dialog.interface';
 import { PodSelectDialogComponent } from 'app/pages/apps/components/pod-select-dialog/pod-select-dialog.component';
@@ -27,6 +28,8 @@ export class AppContainersCardComponent implements OnChanges {
   readonly chartReleaseStatus = ChartReleaseStatus;
 
   containerImages: Record<string, ChartContainerImage>;
+
+  protected readonly requiredRoles = [Role.AppsWrite];
 
   constructor(
     private appService: ApplicationsService,

@@ -105,8 +105,6 @@ export interface DataPoolTopologyUpdate {
   draid_spare_disks?: number;
 }
 
-export type UpdatePoolTopologyGroup = keyof UpdatePoolTopology;
-
 export interface PoolAttachParams {
   target_vdev?: string;
   new_disk?: string;

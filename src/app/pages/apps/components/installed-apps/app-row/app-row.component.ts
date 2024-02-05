@@ -3,6 +3,7 @@ import {
   Component, EventEmitter, Input, Output,
 } from '@angular/core';
 import { appImagePlaceholder } from 'app/constants/catalog.constants';
+import { Role } from 'app/enums/role.enum';
 import { ChartScaleQueryParams, ChartScaleResult } from 'app/interfaces/chart-release-event.interface';
 import { ChartRelease } from 'app/interfaces/chart-release.interface';
 import { Job } from 'app/interfaces/job.interface';
@@ -25,6 +26,8 @@ export class AppRowComponent {
   @Output() selectionChange = new EventEmitter<void>();
 
   readonly imagePlaceholder = appImagePlaceholder;
+
+  protected readonly requiredRoles = [Role.AppsWrite];
 
   get hasUpdates(): boolean {
     return this.app.update_available || this.app.container_images_update_available;

@@ -108,10 +108,7 @@ def add_user_to_additional_groups_like_wheel_and_save_change(driver):
     driver.find_element_by_xpath(xpaths.add_User.auxiliary_Groups_Select).click()
     assert wait_on_element(driver, 7, xpaths.add_User.games_Group_Option, 'clickable')
     driver.find_element_by_xpath(xpaths.add_User.games_Group_Option).click()
-    ActionChains(driver).send_keys(Keys.TAB).perform()
-    assert wait_on_element(driver, 7, xpaths.add_User.games_Is_Selected)
-    wait_on_element(driver, 5, xpaths.button.save, 'clickable')
-    driver.find_element_by_xpath(xpaths.button.save).click()
+    rsc.Click_On_Element(driver, xpaths.button.save)
 
 
 @then('Change should be saved')

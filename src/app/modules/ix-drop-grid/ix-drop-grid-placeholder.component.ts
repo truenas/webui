@@ -1,5 +1,5 @@
 import {
-  AfterViewInit, Component, Inject, Optional, SkipSelf, ViewChild,
+  AfterViewInit, ChangeDetectionStrategy, Component, Inject, Optional, SkipSelf, ViewChild,
 } from '@angular/core';
 import { IxDropGridItemDirective } from 'app/modules/ix-drop-grid/ix-drop-grid-item.directive';
 import { IxDropGridDirective } from 'app/modules/ix-drop-grid/ix-drop-grid.directive';
@@ -8,6 +8,7 @@ import { ixDropGridDirectiveToken } from 'app/modules/ix-drop-grid/ix-drop-grid.
 @Component({
   selector: 'ix-drop-grid-placeholder',
   template: '<div ixDropGridItem></div>',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class IxDropGridPlaceholderComponent implements AfterViewInit {
   @ViewChild(IxDropGridItemDirective) itemInstance: IxDropGridItemDirective;

@@ -47,7 +47,6 @@ export class IxSlideIn2Component implements OnInit, OnDestroy {
   private element: HTMLElement;
   private wasBodyCleared = false;
   private timeOutOfClear: Subscription;
-  counterId = 0;
 
   constructor(
     private el: ElementRef,
@@ -78,6 +77,10 @@ export class IxSlideIn2Component implements OnInit, OnDestroy {
     ).subscribe((wide) => {
       this.wide = wide;
     });
+  }
+
+  ngOnDestroy(): void {
+    this.element.remove();
   }
 
   onBackdropClicked(): void {
@@ -156,10 +159,6 @@ export class IxSlideIn2Component implements OnInit, OnDestroy {
       ],
     });
     this.slideInBody.createComponent<T>(componentType, { injector });
-  }
-
-  ngOnDestroy(): void {
-    this.element.remove();
   }
 
   private closeOnNavigation(): void {

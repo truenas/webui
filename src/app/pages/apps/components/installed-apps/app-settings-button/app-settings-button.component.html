@@ -4,20 +4,27 @@
 </button>
 
 <mat-menu #menu="matMenu" overlapTrigger="false">
-  <button mat-menu-item ixTest="choose-pool" (click)="onChoosePool()">
+  <button
+    *ixRequiresRoles="requiredRoles"
+    mat-menu-item
+    ixTest="choose-pool"
+    (click)="onChoosePool()"
+  >
     {{ 'Choose Pool' | translate }}
   </button>
   <button mat-menu-item ixTest="advanced-settings" (click)="onAdvancedSettings()">
     {{ 'Advanced Settings' | translate }}
   </button>
-  <button
-    *ngIf="!!(kubernetesStore.selectedPool$ | async)"
-    mat-menu-item
-    ixTest="unset-pool"
-    (click)="onUnsetPool()"
-  >
-    {{ 'Unset Pool' | translate }}
-  </button>
+  <ng-container *ngIf="!!(kubernetesStore.selectedPool$ | async)">
+    <button
+      *ixRequiresRoles="requiredRoles"
+      mat-menu-item
+      ixTest="unset-pool"
+      (click)="onUnsetPool()"
+    >
+      {{ 'Unset Pool' | translate }}
+    </button>
+  </ng-container>
   <button mat-menu-item ixTest="container-images" [routerLink]="['/apps', 'installed', 'manage-container-images']">
     {{ 'Manage Container Images' | translate }}
   </button>

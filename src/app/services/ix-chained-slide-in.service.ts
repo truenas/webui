@@ -6,6 +6,7 @@ import { UUID } from 'angular2-uuid';
 import {
   Observable, Subject, take, tap, timer,
 } from 'rxjs';
+import { FocusService } from 'app/services/focus.service';
 
 export interface ChainedComponentRef {
   close: (response: ChainedComponentResponse) => void;
@@ -64,6 +65,7 @@ export class IxChainedSlideInService extends ComponentStore<ChainedSlideInState>
 
   constructor(
     @Inject(DOCUMENT) private document: Document,
+    private focusService: FocusService,
   ) {
     super({ components: new Map() });
     this.initialize();
@@ -103,7 +105,8 @@ export class IxChainedSlideInService extends ComponentStore<ChainedSlideInState>
       data,
       close$,
     });
-    return close$.asObservable();
+    this.focusService.captureCurrentFocus();
+    return close$.asObservable().pipe(tap(() => this.focusService.restoreFocus()));
   }
 
   popComponent = this.updater((state, id: string) => {
@@ -144,8 +147,6 @@ export class IxChainedSlideInService extends ComponentStore<ChainedSlideInState>
   }
 
   private focusOnTheCloseButton(): void {
-    timer(100).pipe(take(1)).subscribe(() => {
-      this.document.getElementById('ix-close-icon')?.focus();
-    });
+    timer(100).pipe(take(1)).subscribe(() => this.focusService.focusElementById('ix-close-icon'));
   }
 }

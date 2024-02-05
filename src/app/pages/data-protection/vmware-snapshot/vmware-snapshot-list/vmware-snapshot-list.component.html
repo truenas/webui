@@ -23,7 +23,7 @@
       [dataProvider]="dataProvider"
       [isLoading]="dataProvider.isLoading$ | async"
     >
-      
+
       <ng-template
         let-snapshot
         ix-table-cell
@@ -42,7 +42,7 @@
             (click)="doEdit(snapshot)"
           >{{ 'Edit' | translate }}</button>
           <button
-            *ixRequiresRoles="requiresRoles"
+            *ixRequiresRoles="requiredRoles"
             mat-button
             [ixTest]="[snapshot.hostname, snapshot.filesystem, 'delete']"
             (click)="doDelete(snapshot)"

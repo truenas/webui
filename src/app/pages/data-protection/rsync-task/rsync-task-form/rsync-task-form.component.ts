@@ -5,15 +5,13 @@ import { Validators } from '@angular/forms';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import {
-  BehaviorSubject, Observable, of,
-} from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { Direction } from 'app/enums/direction.enum';
 import { mntPath } from 'app/enums/mnt-path.enum';
 import { Role } from 'app/enums/role.enum';
 import { RsyncMode, RsyncSshConnectMode } from 'app/enums/rsync-mode.enum';
 import { helptextRsyncForm } from 'app/helptext/data-protection/rsync/rsync-form';
-import { newOption, Option } from 'app/interfaces/option.interface';
+import { newOption } from 'app/interfaces/option.interface';
 import { RsyncTask, RsyncTaskUpdate } from 'app/interfaces/rsync-task.interface';
 import { UserComboboxProvider } from 'app/modules/ix-forms/classes/user-combobox-provider';
 import { CHAINED_SLIDE_IN_REF, SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
@@ -81,7 +79,7 @@ export class RsyncTaskFormComponent implements OnInit {
 
   isLoading = false;
 
-  readonly requiresRoles = [Role.FullAdmin];
+  readonly requiredRoles = [Role.FullAdmin];
 
   readonly helptext = helptextRsyncForm;
 
@@ -99,8 +97,6 @@ export class RsyncTaskFormComponent implements OnInit {
     { label: this.translate.instant('SSH private key stored in user\'s home directory'), value: RsyncSshConnectMode.PrivateKey },
     { label: this.translate.instant('SSH connection from the keychain'), value: RsyncSshConnectMode.KeyChain },
   ]);
-
-  readonly sshCredentialsOptions$ = new BehaviorSubject<Option[]>([]);
 
   readonly userProvider = new UserComboboxProvider(this.userService);
   readonly treeNodeProvider = this.filesystemService.getFilesystemNodeProvider({ directoriesOnly: true });

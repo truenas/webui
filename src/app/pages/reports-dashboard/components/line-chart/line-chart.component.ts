@@ -1,5 +1,14 @@
 import {
-  Component, Input, AfterViewInit, OnDestroy, OnChanges, ViewChild, ElementRef, EventEmitter, Output,
+  Component,
+  Input,
+  AfterViewInit,
+  OnDestroy,
+  OnChanges,
+  ViewChild,
+  ElementRef,
+  EventEmitter,
+  Output,
+  ChangeDetectionStrategy,
 } from '@angular/core';
 import { UUID } from 'angular2-uuid';
 import { utcToZonedTime } from 'date-fns-tz';
@@ -31,6 +40,7 @@ interface Conversion {
   selector: 'ix-linechart',
   templateUrl: './line-chart.component.html',
   styleUrls: ['./line-chart.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
   @ViewChild('wrapper', { static: true }) el: ElementRef<HTMLElement>;

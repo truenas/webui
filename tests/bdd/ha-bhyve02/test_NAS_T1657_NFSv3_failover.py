@@ -164,12 +164,9 @@ def input_nobody_in_mapall_user_and_nogroup_in_mapall_group_entries(driver, user
 def click_save_the_enable_service_box_should_appear_then_click_enable_service(driver):
     """click Save, the Enable service box should appear, then click Enable Service."""
     driver.find_element_by_xpath(xpaths.button.save).click()
-
-    assert wait_on_element(driver, 7, xpaths.popup.enable_Service_Title)
-    assert wait_on_element(driver, 5, xpaths.popup.enable_Service_Button, 'clickable')
-    driver.find_element_by_xpath(xpaths.popup.enable_Service_Button).click()
-
     assert wait_on_element_disappear(driver, 30, xpaths.progress.progressbar)
+    rsc.start_nfs_service(driver)
+    assert wait_on_element(driver, 15, xpaths.sharing.nfs_Service_Status)
 
 
 @then(parsers.parse('the {mount_point} should appear in the UNIX (NFS) Shares list'))

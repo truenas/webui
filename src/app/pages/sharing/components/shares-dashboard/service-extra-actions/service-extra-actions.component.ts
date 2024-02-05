@@ -24,7 +24,7 @@ import { WebSocketService } from 'app/services/ws.service';
 })
 export class ServiceExtraActionsComponent {
   @Input() service: Service;
-  @Input() requiresRoles: Role[];
+  @Input() requiredRoles: Role[];
 
   configServiceLabel = this.translate.instant('Config Service');
   readonly serviceNames = serviceNames;

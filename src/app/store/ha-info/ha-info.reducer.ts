@@ -12,14 +12,14 @@ export interface HaInfoState {
   haStatus: HaStatus;
   isHaLicensed: boolean;
   isUpgradePending: boolean;
-  hasOnlyMissmatchVersionsReason: boolean;
+  hasOnlyMismatchVersionsReason: boolean;
 }
 
 const initialState: HaInfoState = {
   haStatus: null,
   isHaLicensed: false,
   isUpgradePending: false,
-  hasOnlyMissmatchVersionsReason: false,
+  hasOnlyMismatchVersionsReason: false,
 };
 
 export const haInfoReducer = createReducer(

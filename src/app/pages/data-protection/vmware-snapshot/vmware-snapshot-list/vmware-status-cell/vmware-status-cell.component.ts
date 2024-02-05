@@ -24,7 +24,6 @@ export interface VmwareState {
 })
 export class VmwareStatusCellComponent {
   @Input() state: VmwareState;
-  protected VmwareStates = VmwareSnapshotStatus;
 
   get tooltip(): string {
     if (this.state.state === VmwareSnapshotStatus.Error) {

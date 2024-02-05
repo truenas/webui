@@ -31,7 +31,7 @@
         </div>
 
         <ix-dual-listbox
-          *ngIf="!isAllowAll" 
+          *ngIf="!isAllowAll"
           minHeight="55vh"
           maxHeight="55vh"
           [items]="allInitiators"
@@ -45,7 +45,7 @@
         </ix-dual-listbox>
 
         <button
-          *ngIf="!isAllowAll" 
+          *ngIf="!isAllowAll"
           mat-flat-button
           color="primary"
           type="button"
@@ -65,10 +65,10 @@
 
       </div>
     </mat-card-content>
-  
+
     <mat-card-actions>
       <button
-        *ixRequiresRoles="requiresRoles"
+        *ixRequiresRoles="requiredRoles"
         mat-button
         color="primary"
         ixTest="save"

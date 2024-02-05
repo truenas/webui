@@ -2,7 +2,12 @@
   <ix-page-title-header>
     <ix-search-input (search)="onListFiltered($event)"></ix-search-input>
 
-    <button mat-button ixTest="refresh-all" (click)="onRefreshAll()">
+    <button
+      *ixRequiresRoles="requiredRoles"
+      mat-button
+      ixTest="refresh-all"
+      (click)="onRefreshAll()"
+    >
       {{ 'Refresh All' | translate }}
     </button>
 
@@ -36,6 +41,7 @@
             (click)="showSummary(catalog)"
           >{{ 'Summary' | translate }}</button>
           <button
+            *ixRequiresRoles="requiredRoles"
             mat-button
             [ixTest]="[catalog.label, 'refresh']"
             (click)="refreshRow(catalog)"
@@ -45,12 +51,15 @@
             [ixTest]="[catalog.label, 'edit']"
             (click)="doEdit(catalog)"
           >{{ 'Edit' | translate }}</button>
-          <button
-            *ngIf="!catalog.builtin"
-            mat-button
-            [ixTest]="[catalog.label, 'delete']"
-            (click)="doDelete(catalog)"
-          >{{ 'Delete' | translate }}</button>
+          <ng-container *ngIf="!catalog.builtin">
+            <button
+              *ixRequiresRoles="requiredRoles"
+              mat-button
+              [ixTest]="[catalog.label, 'delete']"
+              (click)="doDelete(catalog)"
+            >{{ 'Delete' | translate }}
+            </button>
+          </ng-container>
         </div>
       </ng-template>
     </tbody>

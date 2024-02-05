@@ -22,5 +22,5 @@ export const selectIsUpgradePending = createSelector(
 
 export const selectHasOnlyMismatchVersionsReason = createSelector(
   selectHaInfoState,
-  (state) => state.hasOnlyMissmatchVersionsReason,
+  (state) => state.hasOnlyMismatchVersionsReason,
 );

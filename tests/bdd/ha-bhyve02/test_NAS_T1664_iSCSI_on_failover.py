@@ -162,7 +162,7 @@ def when_it_is_saved_verify_the_portal_target_and_extent(driver):
     driver.find_element_by_xpath(xpaths.sharing.iscsi_Configure_Button).click()
     assert wait_on_element(driver, 7, xpaths.iscsi.protals_Tab, 'clickable')
     driver.find_element_by_xpath(xpaths.iscsi.protals_Tab).click()
-    assert wait_on_element(driver, 5, xpaths.iscsi.iscsitest1_Text)
+    assert wait_on_element(driver, 7, xpaths.iscsi.iscsitest1_Text)
     driver.find_element_by_xpath(xpaths.iscsi.targets_Tab).click()
     assert wait_on_element(driver, 5, xpaths.iscsi.iscsitest1_Text)
     driver.find_element_by_xpath(xpaths.iscsi.extents_Tab).click()

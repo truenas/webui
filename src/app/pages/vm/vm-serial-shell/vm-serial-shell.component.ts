@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Observable, Subscriber } from 'rxjs';
@@ -7,6 +7,7 @@ import { TerminalConfiguration, TerminalConnectionData } from 'app/interfaces/te
 @UntilDestroy()
 @Component({
   template: '<ix-terminal [conf]="this"></ix-terminal>',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class VmSerialShellComponent implements TerminalConfiguration {
   protected pk: string;

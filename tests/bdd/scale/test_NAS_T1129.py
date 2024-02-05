@@ -11,7 +11,8 @@ from function import (
     attribute_value_exist,
     wait_on_element_disappear,
     run_cmd,
-    post
+    post,
+    delete_dataset
 )
 from pytest_bdd import (
     given,
@@ -146,3 +147,4 @@ def verify_that_the_file_is_on_the_nas_dataset(driver, nas_ip, root_password):
     file = f'{dataset_path}/testfile.txt'
     results = post(nas_ip, '/filesystem/stat/', ('root', root_password), file)
     assert results.status_code == 200, results.text
+    delete_dataset(nas_ip, ('root', root_password), 'system/my_ldap_dataset')

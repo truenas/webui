@@ -37,8 +37,6 @@ import { WebSocketService } from 'app/services/ws.service';
 export class IdmapListComponent implements OnInit {
   @Input() paginator = true;
   @Input() toolbar = false;
-  requiredIdmapDomains = requiredIdmapDomains as string[];
-  IdmapName = IdmapName;
   filterString = '';
   dataProvider: AsyncDataProvider<IdmapRow>;
   idmaps: IdmapRow[] = [];
@@ -81,6 +79,7 @@ export class IdmapListComponent implements OnInit {
           onClick: (row) => {
             const slideInRef = this.slideInService.open(IdmapFormComponent, { data: row });
             slideInRef.slideInClosed$.pipe(
+              filter(Boolean),
               untilDestroyed(this),
             ).subscribe(() => this.getIdmaps());
           },
@@ -89,7 +88,7 @@ export class IdmapListComponent implements OnInit {
           iconName: 'delete',
           hidden: (row) => of(requiredIdmapDomains.includes(row.name as IdmapName)),
           tooltip: this.translateService.instant('Delete'),
-          requiresRoles: [Role.FullAdmin],
+          requiredRoles: [Role.FullAdmin],
           onClick: (row) => {
             this.dialogService.confirm({
               title: this.translateService.instant('Confirm'),
@@ -182,6 +181,7 @@ export class IdmapListComponent implements OnInit {
       if (adConfig.enable) {
         const slideInRef = this.slideInService.open(IdmapFormComponent);
         slideInRef.slideInClosed$.pipe(
+          filter(Boolean),
           untilDestroyed(this),
         ).subscribe(() => {
           this.getIdmaps();

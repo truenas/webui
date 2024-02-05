@@ -83,7 +83,7 @@ export class AuthorizedAccessFormComponent implements OnInit {
     peersecret: helptextSharingIscsi.authaccess_tooltip_peersecret,
   };
 
-  readonly requiresRoles = [
+  readonly requiredRoles = [
     Role.SharingIscsiAuthWrite,
     Role.SharingIscsiWrite,
     Role.SharingWrite,

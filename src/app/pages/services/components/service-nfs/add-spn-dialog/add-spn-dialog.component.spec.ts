@@ -36,7 +36,7 @@ describe('AddSpnDialogComponent', () => {
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
-  it('sumbit credentials', async () => {
+  it('submit credentials', async () => {
     const form = await loader.getHarness(IxFormHarness);
 
     await form.fillForm({

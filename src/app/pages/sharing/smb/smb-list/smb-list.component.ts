@@ -9,7 +9,7 @@ import {
   filter, of, take, tap,
 } from 'rxjs';
 import { ServiceName } from 'app/enums/service-name.enum';
-import { helptextSharingSmb, shared } from 'app/helptext/sharing';
+import { shared, helptextSharingSmb } from 'app/helptext/sharing';
 import { SmbShare } from 'app/interfaces/smb-share.interface';
 import { AsyncDataProvider } from 'app/modules/ix-table2/classes/async-data-provider/async-data-provider';
 import { actionsColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
@@ -81,7 +81,7 @@ export class SmbListComponent implements OnInit {
           onClick: (smbShare) => {
             const slideInRef = this.slideInService.open(SmbFormComponent, { data: { existingSmbShare: smbShare } });
             slideInRef.slideInClosed$
-              .pipe(filter(Boolean), untilDestroyed(this))
+              .pipe(take(1), filter(Boolean), untilDestroyed(this))
               .subscribe(() => this.dataProvider.load());
           },
         },
@@ -184,7 +184,7 @@ export class SmbListComponent implements OnInit {
 
   doAdd(): void {
     const slideInRef = this.slideInService.open(SmbFormComponent);
-    slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe({
+    slideInRef.slideInClosed$.pipe(take(1), filter(Boolean), untilDestroyed(this)).subscribe({
       next: () => {
         this.dataProvider.load();
       },

@@ -8,5 +8,5 @@ export interface IconActionConfig<T> {
   dynamicTooltip?: (row: T) => Observable<string>;
   hidden?: (row: T) => Observable<boolean>;
   disabled?: (row: T) => Observable<boolean>;
-  requiresRoles?: Role[];
+  requiredRoles?: Role[];
 }
