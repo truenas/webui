@@ -111,13 +111,15 @@
                   <div *ngIf="screenType !== ScreenType.Mobile" class="divider"></div>
                   <ul *ngIf="screenType !== ScreenType.Mobile" fxLayout="column" [fxFlex]="50">
                     <li fxLayout="row">
-                      <span class="label">
-                        {{ '{tasks, plural, =1 {# successful task} other {# successful tasks}} this week' | translate : { tasks: tile.lastWeekSend } }}
+                      <span *ngIf="!tile.lastWeekSend" class="dash">—</span>
+                      <span *ngIf="tile.lastWeekSend" class="label">
+                        {{ '{tasks, plural, =1 {# successful send task} other {# successful send tasks}} this week' | translate : { tasks: tile.lastWeekSend } }}
                       </span>
                     </li>
                     <li fxLayout="row">
-                      <span class="label">
-                        {{ '{tasks, plural, =1 {# successful task} other {# successful tasks}} this week' | translate : { tasks: tile.lastWeekReceive } }}
+                      <span *ngIf="!tile.lastWeekReceive" class="dash">—</span>
+                      <span *ngIf="tile.lastWeekReceive" class="label">
+                        {{ '{tasks, plural, =1 {# successful receive task} other {# successful receive tasks}} this week' | translate : { tasks: tile.lastWeekReceive } }}
                       </span>
                     </li>
                     <li fxLayout="row">
