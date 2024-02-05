@@ -46,12 +46,12 @@ export class NameAndOptionsSectionComponent implements OnInit, OnChanges {
   readonly helptext = helptextDatasetForm;
   readonly DatasetPreset = DatasetPreset;
 
-  get isCreatingSmb(): boolean {
+  get canCreateSmb(): boolean {
     return this.form.value.share_type === DatasetPreset.Smb
       || this.form.value.share_type === DatasetPreset.Multiprotocol;
   }
 
-  get isCreatingNfs(): boolean {
+  get canCreateNfs(): boolean {
     return this.form.value.share_type === DatasetPreset.Multiprotocol;
   }
 
