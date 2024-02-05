@@ -8,9 +8,10 @@
 
 <div class="input-container" [class.disabled]="isDisabled">
   <div>
-    <label>
+    <label tabindex="0" (keydown.enter)="fileInput.click()">
       {{ 'Choose File' | translate }}
       <input
+        #fileInput
         type="file"
         [accept]="acceptedFiles"
         [ixTest]="controlDirective.name"
@@ -24,9 +25,11 @@
   <div *ngIf="value && value.length">
     <p *ngFor="let file of value" class="file">
       <span
+        tabindex="0"
         class="file-action"
         [matTooltip]="'Remove file' | translate"
         (click)="removeFile(file)"
+        (keydown.enter)="removeFile(file)"
       >
         <ix-icon name="close"></ix-icon>
       </span>
