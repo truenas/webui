@@ -1,33 +1,53 @@
-:host .container {
+@import 'scss-imports/splitview';
 
-  border: none;
-  border-radius: 0;
-  height: 100%;
-  margin: 0;
-
-  .card-content {
-    height: 100%;
+::ng-deep {
+  .manual-disk-selection-ref {
+    @media (max-width: $breakpoint-tablet) {
+      min-width: 95%;
+    }
   }
+}
 
-  .inner-container {
-    display: flex;
-    flex-direction: row;
+:host {
+  .container {
+    border: none;
+    border-radius: 0;
     height: 100%;
-    padding: 0;
+    margin: 0;
 
-    .left-pane {
-      display: flex;
-      flex-direction: column;
-      flex-grow: 1;
-      flex-shrink: 0;
-      max-width: 400px;
-      min-width: 400px;
+    .card-content {
+      height: 100%;
     }
 
-    .right-pane {
+    .inner-container {
       display: flex;
-      flex-direction: column;
-      flex-grow: 1;
+      flex-direction: row;
+      height: 100%;
+      padding: 0;
+
+      @media (max-width: $breakpoint-tablet) {
+        display: block;
+      }
+
+      .left-pane {
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+        flex-shrink: 0;
+        max-width: 400px;
+        min-width: 400px;
+
+        @media (max-width: $breakpoint-tablet) {
+          max-width: 100%;
+          min-width: 100%;
+        }
+      }
+
+      .right-pane {
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+      }
     }
   }
 }

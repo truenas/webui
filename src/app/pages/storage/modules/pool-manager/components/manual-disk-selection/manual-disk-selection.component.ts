@@ -63,6 +63,7 @@ export class ManualDiskSelectionComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.dialogRef.addPanelClass('manual-disk-selection-ref');
     this.dialogRef.updateSize('80vw', '80vh');
     this.manualDiskSelectionStore.vdevs$.pipe(untilDestroyed(this)).subscribe((vdevs) => {
       this.currentVdevs = vdevs;

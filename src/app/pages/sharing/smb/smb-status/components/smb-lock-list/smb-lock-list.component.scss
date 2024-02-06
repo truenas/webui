@@ -8,9 +8,3 @@ ix-table2::ng-deep .details td {
     margin-bottom: 8px;
   }
 }
-
-.hide-xs {
-  @media(max-width: $breakpoint-xs) {
-    display: none;
-  }
-}

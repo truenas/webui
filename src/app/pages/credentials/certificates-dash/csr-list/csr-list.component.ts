@@ -158,6 +158,7 @@ export class CertificateSigningRequestsListComponent implements OnInit {
           this.getCertificates();
         });
         jobDialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err) => {
+          jobDialogRef.close();
           this.dialogService.error(this.errorHandler.parseError(err));
         });
       });

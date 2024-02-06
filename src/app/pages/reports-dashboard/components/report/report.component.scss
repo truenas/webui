@@ -1,4 +1,5 @@
 @import 'mixins/loader';
+@import 'scss-imports/splitview';
 
 .mat-mdc-card-content {
   height: 100%;
@@ -301,6 +302,10 @@ span.disk-detail-subtitle {
 div.line-chart-tools-wrapper {
   margin-right: -24px;
   text-align: right;
+
+  @media (max-width: $breakpoint-tablet) {
+    max-width: 100% !important;
+  }
 }
 
 div.line-chart-tools {
@@ -504,6 +509,7 @@ p.value {
   h3 {
     display: inline-block;
     font-size: 1.5rem;
+    margin: 0;
     max-width: 100%;
     overflow: hidden;
     text-overflow: ellipsis;
