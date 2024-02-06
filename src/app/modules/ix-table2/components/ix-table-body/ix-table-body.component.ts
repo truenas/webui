@@ -39,6 +39,10 @@ export class IxTableBodyComponent<T> implements AfterViewInit {
     return this.columns?.filter((column) => !column?.hidden);
   }
 
+  get detailsTemplate(): TemplateRef<{ $implicit: T }> | undefined {
+    return this.detailsRow?.templateRef;
+  }
+
   constructor(
     private cdr: ChangeDetectorRef,
   ) {}
@@ -58,10 +62,6 @@ export class IxTableBodyComponent<T> implements AfterViewInit {
       this.cdr.detectChanges();
       this.cdr.markForCheck();
     });
-  }
-
-  get detailsTemplate(): TemplateRef<{ $implicit: T }> | undefined {
-    return this.detailsRow?.templateRef;
   }
 
   getTestAttr(row: T): string {

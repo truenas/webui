@@ -1,6 +1,12 @@
+@import 'scss-imports/splitview';
+
 .layout-container {
   max-width: 50%;
   padding: 0 30px;
+
+  @media (max-width: $breakpoint-tablet) {
+    max-width: 100%;
+  }
 }
 
 .required-disks-hint {

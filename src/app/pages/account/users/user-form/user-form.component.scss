@@ -1,3 +1,5 @@
+@import 'scss-imports/splitview';
+
 :host {
   ix-slide-toggle {
     margin-bottom: 27px;
@@ -10,4 +12,12 @@
   column-gap: 16px;
   display: flex;
   flex-direction: row;
+
+  @media (max-width: $breakpoint-tablet) {
+    display: block !important;
+
+    > div {
+      max-width: 100% !important;
+    }
+  }
 }

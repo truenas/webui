@@ -16,6 +16,10 @@
   margin-left: 10px;
   margin-top: 5px;
 
+  @media(max-width: $breakpoint-sm) {
+    display: none;
+  }
+
   .healthy {
     color: var(--green);
   }
