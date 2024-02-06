@@ -1,4 +1,3 @@
-import { Location } from '@angular/common';
 import {
   Component,
   ElementRef,
@@ -12,11 +11,8 @@ import {
   ViewChild,
   ViewContainerRef,
 } from '@angular/core';
-import { NavigationEnd, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import {
-  Observable, Subscription, filter, merge, timer,
-} from 'rxjs';
+import { Subscription, timer } from 'rxjs';
 import { CHAINED_SLIDE_IN_REF, SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import {
   ChainedComponentSerialized, ChainedComponentResponse, ChainedComponentRef, IxChainedSlideInService,
@@ -52,11 +48,8 @@ export class IxSlideIn2Component implements OnInit, OnDestroy {
   constructor(
     private el: ElementRef,
     private renderer: Renderer2,
-    private location: Location,
-    private router: Router,
     private chainedSlideInService: IxChainedSlideInService,
   ) {
-    this.closeOnNavigation();
     this.element = this.el.nativeElement as HTMLElement;
   }
 
@@ -81,6 +74,8 @@ export class IxSlideIn2Component implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.componentInfo.close$.complete();
+    this.chainedSlideInService.popComponent(this.componentInfo.id);
     this.element.remove();
   }
 
@@ -160,20 +155,5 @@ export class IxSlideIn2Component implements OnInit, OnDestroy {
       ],
     });
     this.slideInBody.createComponent<T>(componentType, { injector });
-  }
-
-  private closeOnNavigation(): void {
-    merge(
-      new Observable((observer) => {
-        this.location.subscribe((event) => {
-          observer.next(event);
-        });
-      }),
-      this.router.events.pipe(filter((event) => event instanceof NavigationEnd)),
-    )
-      .pipe(untilDestroyed(this))
-      .subscribe(() => {
-        this.componentInfo.close$.next(null);
-      });
   }
 }
