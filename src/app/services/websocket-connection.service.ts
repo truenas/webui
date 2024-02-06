@@ -78,6 +78,7 @@ export class WebsocketConnectionService {
     this.wsAsObservable$ = this.ws$.asObservable().pipe(
       switchMap((data: IncomingWebsocketMessage) => {
         if (this.hasAuthError(data)) {
+          console.error(data);
           this.ws$.complete();
         }
         return of(data);
