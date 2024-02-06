@@ -176,6 +176,7 @@ export class EncryptionOptionsDialogComponent implements OnInit {
     });
     jobDialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe({
       next: (error) => {
+        jobDialogRef.close();
         this.formErrorHandler.handleWsFormError(error, this.form);
       },
     });

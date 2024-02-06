@@ -1,5 +1,11 @@
+@import 'scss-imports/splitview';
+
 .modal-body {
   max-width: 550px;
+
+  @media (max-width: $breakpoint-tablet) {
+    width: inherit;
+  }
 }
 
 .traverse-checkbox {

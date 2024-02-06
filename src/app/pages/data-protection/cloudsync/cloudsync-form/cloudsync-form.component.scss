@@ -7,7 +7,7 @@
   .fieldset {
     width: 50%;
 
-    @media(max-width: $breakpoint-sm) {
+    @media (max-width: $breakpoint-tablet) {
       padding-bottom: 0;
       width: 100%;
     }

@@ -176,6 +176,7 @@ export class CertificateListComponent implements OnInit {
           this.certificateDeleted.emit();
         });
         jobDialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err) => {
+          jobDialogRef.close();
           this.dialogService.error(this.errorHandler.parseError(err));
         });
       });

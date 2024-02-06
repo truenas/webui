@@ -1,8 +1,14 @@
+@import 'scss-imports/splitview';
+
 .content-container {
   border: 1px solid var(--lines);
   display: flex;
   margin: 20px 0;
   padding: 20px 0;
+
+  @media (max-width: $breakpoint-tablet) {
+    flex-wrap: wrap;
+  }
 
   .left-column {
     border-right: 1px solid var(--lines);
