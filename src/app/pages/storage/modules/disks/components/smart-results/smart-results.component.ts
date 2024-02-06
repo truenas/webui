@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import { UUID } from 'angular2-uuid';
 import { lastValueFrom, map, tap } from 'rxjs';
 import { SmartTestResultPageType } from 'app/enums/smart-test-results-page-type.enum';
 import { QueryParams } from 'app/interfaces/query-api.interface';
@@ -12,7 +13,7 @@ import { WebSocketService } from 'app/services/ws.service';
 
 interface SmartTestResultsRow extends SmartTestResult {
   disk: string;
-  id: number;
+  id: string;
 }
 
 @UntilDestroy()
@@ -37,7 +38,7 @@ export class SmartResultsComponent implements EntityTableConfig {
   };
 
   columns = [
-    { name: this.translate.instant('ID'), prop: 'id', always_display: true },
+    { name: this.translate.instant('ID'), prop: 'num', always_display: true },
     { name: this.translate.instant('Disk'), prop: 'disk', always_display: true },
     { name: this.translate.instant('Description'), prop: 'description' },
     { name: this.translate.instant('Status'), prop: 'status' },
@@ -91,7 +92,7 @@ export class SmartResultsComponent implements EntityTableConfig {
     const rows: SmartTestResultsRow[] = [];
     data.forEach((item) => {
       item?.tests.forEach((test) => {
-        rows.push({ ...test, disk: item.disk, id: test.num });
+        rows.push({ ...test, disk: item.disk, id: UUID.UUID() });
       });
     });
     return rows;
