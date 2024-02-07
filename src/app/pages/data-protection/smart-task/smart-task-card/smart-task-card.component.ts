@@ -44,7 +44,7 @@ export class SmartTaskCardComponent implements OnInit {
     }),
     textColumn({
       title: helptextSmart.smartlist_column_type,
-      getValue: (row) => row.type.replace(/\w\S*/g, (txt) => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase()),
+      propertyName: 'type',
     }),
     textColumn({
       title: helptextSmart.smartlist_column_description,
