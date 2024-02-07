@@ -7,6 +7,7 @@ import { TranslateService } from '@ngx-translate/core';
 import {
   Observable, filter, switchMap, take, tap,
 } from 'rxjs';
+import { Role } from 'app/enums/role.enum';
 import { PeriodicSnapshotTaskUi } from 'app/interfaces/periodic-snapshot-task.interface';
 import { AsyncDataProvider } from 'app/modules/ix-table2/classes/async-data-provider/async-data-provider';
 import { relativeDateColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-relative-date/ix-cell-relative-date.component';
@@ -35,6 +36,7 @@ export class SnapshotTaskListComponent implements OnInit {
   snapshotTasks: PeriodicSnapshotTaskUi[] = [];
   filterValue = '';
   dataProvider: AsyncDataProvider<PeriodicSnapshotTaskUi>;
+  readonly requiredRoles = [Role.SnapshotTaskWrite];
 
   protected columns = createTable<PeriodicSnapshotTaskUi>([
     textColumn({

@@ -50,6 +50,7 @@
             <span>{{ 'Edit' | translate }}</span>
           </button>
           <button
+            *ixRequiresRoles="requiredRoles"
             mat-button
             [ixTest]="[task.dataset, task.naming_schema, 'delete']"
             (click)="doDelete(task)"
