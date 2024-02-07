@@ -39,11 +39,16 @@
       color: var(--fg2);
     }
 
+    &:focus {
+      outline: 1.5px solid var(--primary);
+    }
+
     input {
       height: 0;
       opacity: 0;
       overflow: hidden;
       position: absolute;
+      visibility: hidden;
       width: 0;
       z-index: -1;
     }
@@ -63,6 +68,10 @@
 
     &:hover {
       opacity: 1;
+    }
+
+    &:focus {
+      outline: 1.5px solid var(--primary);
     }
   }
 
