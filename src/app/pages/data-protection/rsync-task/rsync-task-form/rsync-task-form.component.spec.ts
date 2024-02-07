@@ -234,15 +234,16 @@ describe('RsyncTaskFormComponent', () => {
     });
 
     it('shows SSH fields and saves them when Rsync Mode is SSH and Connect using SSH private key stored in user\'s home directory', async () => {
-      await form.fillForm({
-        'Rsync Mode': 'SSH',
-      });
-
-      await form.fillForm({
-        'Remote SSH Port': 45,
-        'Remote Path': '/mnt/path',
-        'Validate Remote Path': true,
-      });
+      await form.fillFormSections([
+        {
+          'Rsync Mode': 'SSH',
+        },
+        {
+          'Remote SSH Port': 45,
+          'Remote Path': '/mnt/path',
+          'Validate Remote Path': true,
+        },
+      ]);
 
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
@@ -265,18 +266,18 @@ describe('RsyncTaskFormComponent', () => {
     });
 
     it('shows SSH fields and saves them when Rsync Mode is SSH and Connect using SSH connection from the keychain', async () => {
-      await form.fillForm({
-        'Rsync Mode': 'SSH',
-      });
-
-      await form.fillForm({
-        'Connect using:': 'SSH connection from the keychain',
-      });
-
-      await form.fillForm({
-        'SSH Connection': 'ssh01',
-        'Remote Path': '/mnt/path',
-      });
+      await form.fillFormSections([
+        {
+          'Rsync Mode': 'SSH',
+        },
+        {
+          'Connect using:': 'SSH connection from the keychain',
+        },
+        {
+          'SSH Connection': 'ssh01',
+          'Remote Path': '/mnt/path',
+        },
+      ]);
 
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();

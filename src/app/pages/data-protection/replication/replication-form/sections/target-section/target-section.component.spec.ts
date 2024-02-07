@@ -170,12 +170,14 @@ describe('TargetSectionComponent', () => {
     });
 
     it('shows field for entering key manually when HEX is used and Generate Key is unticked', async () => {
-      await form.fillForm({
-        'Generate Encryption Key': false,
-      });
-      await form.fillForm({
-        'Encryption Key': '123456',
-      });
+      await form.fillFormSections([
+        {
+          'Generate Encryption Key': false,
+        },
+        {
+          'Encryption Key': '123456',
+        },
+      ]);
 
       expect(spectator.component.getPayload()).toMatchObject({
         encryption: true,
@@ -187,12 +189,14 @@ describe('TargetSectionComponent', () => {
     });
 
     it('shows encryption key location when `Store key in TrueNAS db` is unticked', async () => {
-      await form.fillForm({
-        'Store Encryption key in Sending TrueNAS database': false,
-      });
-      await form.fillForm({
-        'Encryption Key Location in Target System': '/dbpath',
-      });
+      await form.fillFormSections([
+        {
+          'Store Encryption key in Sending TrueNAS database': false,
+        },
+        {
+          'Encryption Key Location in Target System': '/dbpath',
+        },
+      ]);
 
       expect(spectator.component.getPayload()).toMatchObject({
         encryption: true,
@@ -203,12 +207,14 @@ describe('TargetSectionComponent', () => {
     });
 
     it('shows passphrase key when Passphrase encryption key is selected', async () => {
-      await form.fillForm({
-        'Encryption Key Format': 'PASSPHRASE',
-      });
-      await form.fillForm({
-        Passphrase: 'mypass',
-      });
+      await form.fillFormSections([
+        {
+          'Encryption Key Format': 'PASSPHRASE',
+        },
+        {
+          Passphrase: 'mypass',
+        },
+      ]);
 
       expect(spectator.component.getPayload()).toMatchObject({
         encryption: true,
@@ -235,14 +241,15 @@ describe('TargetSectionComponent', () => {
 
     it('shows snapshot lifetime fields when snapshot retention policy is custom', async () => {
       spectator.setInput('allowsCustomRetentionPolicy', true);
-      await form.fillForm({
-        'Snapshot Retention Policy': 'Custom',
-      });
-
-      await form.fillForm({
-        'Snapshot Lifetime': '2',
-        Unit: 'Week(s)',
-      });
+      await form.fillFormSections([
+        {
+          'Snapshot Retention Policy': 'Custom',
+        },
+        {
+          'Snapshot Lifetime': '2',
+          Unit: 'Week(s)',
+        },
+      ]);
 
       expect(spectator.component.getPayload()).toMatchObject({
         retention_policy: RetentionPolicy.Custom,

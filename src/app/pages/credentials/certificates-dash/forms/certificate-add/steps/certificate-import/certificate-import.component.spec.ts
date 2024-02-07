@@ -82,13 +82,15 @@ describe('CertificateImportComponent', () => {
 
   describe('using existing CSR', () => {
     beforeEach(async () => {
-      await form.fillForm({
-        Certificate: certificate,
-        'CSR exists on this system': true,
-      });
-      await form.fillForm({
-        'Certificate Signing Request': 'Test CSR',
-      });
+      await form.fillFormSections([
+        {
+          Certificate: certificate,
+          'CSR exists on this system': true,
+        },
+        {
+          'Certificate Signing Request': 'Test CSR',
+        },
+      ]);
     });
 
     it('returns fields to import certificate when getPayload() is called', () => {

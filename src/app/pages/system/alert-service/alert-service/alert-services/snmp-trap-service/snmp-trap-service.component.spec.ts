@@ -88,19 +88,21 @@ describe('SnmpTrapServiceComponent', () => {
     });
 
     it('returns alert service form values when getSubmitAttributes is called', async () => {
-      await form.fillForm({
-        Hostname: 'truenas.com',
-        Port: 163,
-        'SNMPv3 Security Model': true,
-        'SNMP Community': 'my-community',
-      });
-      await form.fillForm({
-        'Encryption Protocol': 'DES',
-        'Secret Authentication Key': 'authkey2',
-        'Secret Encryption Key': 'encryptionkey2',
-        'Authentication Protocol': 'SHA',
-        Username: 'eve',
-      });
+      await form.fillFormSections([
+        {
+          Hostname: 'truenas.com',
+          Port: 163,
+          'SNMPv3 Security Model': true,
+          'SNMP Community': 'my-community',
+        },
+        {
+          'Encryption Protocol': 'DES',
+          'Secret Authentication Key': 'authkey2',
+          'Secret Encryption Key': 'encryptionkey2',
+          'Authentication Protocol': 'SHA',
+          Username: 'eve',
+        },
+      ]);
 
       const submittedValues = spectator.component.getSubmitAttributes();
       expect(submittedValues).toEqual({

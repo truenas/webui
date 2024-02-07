@@ -125,17 +125,18 @@ describe('ReplicationWizardComponent', () => {
   }
 
   it('creates objects when wizard is submitted', async () => {
-    await form.fillForm({
-      'Source Location': 'On this System',
-      'Destination Location': 'On this System',
-    });
-
-    await form.fillForm({
-      Recursive: false,
-      'Replicate Custom Snapshots': true,
-      Source: ['pool1/', 'pool2/'],
-      Destination: 'pool3/',
-    });
+    await form.fillFormSections([
+      {
+        'Source Location': 'On this System',
+        'Destination Location': 'On this System',
+      },
+      {
+        Recursive: false,
+        'Replicate Custom Snapshots': true,
+        Source: ['pool1/', 'pool2/'],
+        Destination: 'pool3/',
+      },
+    ]);
 
     await goToNextStep();
 

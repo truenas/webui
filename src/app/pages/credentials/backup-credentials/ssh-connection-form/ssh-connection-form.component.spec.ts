@@ -137,18 +137,20 @@ describe('SshConnectionFormComponent', () => {
     });
 
     it('saves new SSH connection added manually', async () => {
-      await form.fillForm({
-        Name: 'New',
-        'Setup Method': 'Manual',
-      });
-      await form.fillForm({
-        Host: 'truenas.com',
-        Port: 23,
-        Username: 'john',
-        'Private Key': 'key2',
-        'Remote Host Key': 'ssh-rsaNew',
-        'Connect Timeout': '20',
-      });
+      await form.fillFormSections([
+        {
+          Name: 'New',
+          'Setup Method': 'Manual',
+        },
+        {
+          Host: 'truenas.com',
+          Port: 23,
+          Username: 'john',
+          'Private Key': 'key2',
+          'Remote Host Key': 'ssh-rsaNew',
+          'Connect Timeout': '20',
+        },
+      ]);
 
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
@@ -172,20 +174,22 @@ describe('SshConnectionFormComponent', () => {
     });
 
     it('saves new SSH connection added using semi-automatic setup', async () => {
-      await form.fillForm({
-        Name: 'Update',
-        'Setup Method': 'Semi-automatic (TrueNAS only)',
+      await form.fillFormSections([
+        {
+          Name: 'Update',
+          'Setup Method': 'Semi-automatic (TrueNAS only)',
 
-        'TrueNAS URL': '10.11.12.13',
-        Username: 'john',
-        'Admin Username': 'admin',
-        'Admin Password': '12345678',
-        'One-Time Password (if necessary)': '1234',
-        'Private Key': 'key2',
-      });
-      await form.fillForm({
-        'Enable passwordless sudo for zfs commands': true,
-      });
+          'TrueNAS URL': '10.11.12.13',
+          Username: 'john',
+          'Admin Username': 'admin',
+          'Admin Password': '12345678',
+          'One-Time Password (if necessary)': '1234',
+          'Private Key': 'key2',
+        },
+        {
+          'Enable passwordless sudo for zfs commands': true,
+        },
+      ]);
 
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
@@ -210,16 +214,18 @@ describe('SshConnectionFormComponent', () => {
     });
 
     it('gets remote host key and puts it in corresponding textarea when Discover Remote Host Key is pressed', async () => {
-      await form.fillForm({
-        'Setup Method': 'Manual',
-      });
-      await form.fillForm({
-        Port: '24',
-        Host: 'remote.com',
-        Username: 'john',
-        'Private Key': 'Generate New',
-        'Connect Timeout': '30',
-      });
+      await form.fillFormSections([
+        {
+          'Setup Method': 'Manual',
+        },
+        {
+          Port: '24',
+          Host: 'remote.com',
+          Username: 'john',
+          'Private Key': 'Generate New',
+          'Connect Timeout': '30',
+        },
+      ]);
 
       const discoverButton = await loader.getHarness(MatButtonHarness.with({ text: 'Discover Remote Host Key' }));
       await discoverButton.click();

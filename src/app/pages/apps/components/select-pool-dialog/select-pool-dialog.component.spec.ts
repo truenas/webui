@@ -99,13 +99,14 @@ describe('SelectPoolDialogComponent', () => {
   });
 
   it('sets new pool and migrates applications when form is submitted', async () => {
-    await form.fillForm({
-      Pool: 'pool2',
-    });
-
-    await form.fillForm({
-      'Migrate applications to the new pool': true,
-    });
+    await form.fillFormSections([
+      {
+        Pool: 'pool2',
+      },
+      {
+        'Migrate applications to the new pool': true,
+      },
+    ]);
 
     const chooseButton = await loader.getHarness(MatButtonHarness.with({ text: 'Choose' }));
     await chooseButton.click();

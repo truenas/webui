@@ -155,13 +155,15 @@ describe('DatasetTrivialPermissionsComponent', () => {
   });
 
   it('saves permissions recursively and with traverse when advanced checkboxes are checked', async () => {
-    await form.fillForm({
-      'Access Mode': '555',
-      'Apply permissions recursively': true,
-    });
-    await form.fillForm({
-      'Apply permissions to child datasets': true,
-    });
+    await form.fillFormSections([
+      {
+        'Access Mode': '555',
+        'Apply permissions recursively': true,
+      },
+      {
+        'Apply permissions to child datasets': true,
+      },
+    ]);
 
     await saveButton.click();
 
