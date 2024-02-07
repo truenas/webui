@@ -1,8 +1,14 @@
+@import 'scss-imports/splitview';
+
 :host {
   display: flex;
   flex-direction: column;
   height: 80vh;
   min-width: 450px;
+
+  @media (max-width: $breakpoint-tablet) {
+    min-width: 300px;
+  }
 }
 
 .events-container {

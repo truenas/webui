@@ -1,6 +1,12 @@
+@import 'scss-imports/splitview';
+
 :host {
   display: block;
   width: 550px;
+
+  @media (max-width: $breakpoint-tablet) {
+    width: inherit;
+  }
 }
 
 .key-section {

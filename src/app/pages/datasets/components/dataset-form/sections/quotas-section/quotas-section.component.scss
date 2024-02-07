@@ -1,10 +1,20 @@
+@import 'scss-imports/splitview';
+
 .columns {
   column-gap: 15px;
   display: flex;
   flex-direction: row;
 
+  @media (max-width: $breakpoint-tablet) {
+    display: block;
+  }
+
   > * {
     flex: 1;
+
+    @media (max-width: $breakpoint-tablet) {
+      width: 100%;
+    }
   }
 }
 

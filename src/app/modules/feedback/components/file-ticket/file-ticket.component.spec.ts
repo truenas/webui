@@ -8,6 +8,7 @@ import {
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { fakeFile } from 'app/core/testing/utils/fake-file.uitls';
+import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { FileTicketComponent } from 'app/modules/feedback/components/file-ticket/file-ticket.component';
 import { SimilarIssuesComponent } from 'app/modules/feedback/components/similar-issues/similar-issues.component';
 import { FeedbackType } from 'app/modules/feedback/interfaces/feedback.interface';
@@ -44,8 +45,11 @@ describe('FileTicketComponent', () => {
         })),
       }),
       mockProvider(ImageValidatorService, {
-        validateImages: () => () => of(null as ValidationErrors),
+        getImagesValidator: () => () => of(null as ValidationErrors),
       }),
+      mockWebSocket([
+        mockCall('support.attach_ticket_max_size', 5),
+      ]),
     ],
   });
 

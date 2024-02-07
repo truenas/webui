@@ -43,23 +43,23 @@ describe('DatasetTrivialPermissionsComponent', () => {
             value: DatasetAclType.Posix,
           },
         } as Dataset]),
-        mockJob('pool.dataset.permission'),
+        mockJob('filesystem.setperm'),
       ]),
       mockProvider(StorageService, {
         filesystemStat: jest.fn(() => of({
           mode: 16877,
-          user: 'root',
-          group: 'kmem',
+          uid: 0,
+          gid: 1001,
         })),
       }),
       mockProvider(UserService, {
         groupQueryDsCache: () => of([
-          { group: 'kmem' },
-          { group: 'wheel' },
+          { group: 'kmem', gid: 1001 },
+          { group: 'wheel', gid: 1002 },
         ]),
         userQueryDsCache: () => of([
-          { username: 'root' },
-          { username: 'games' },
+          { username: 'root', uid: 0 },
+          { username: 'games', uid: 103 },
         ]),
       }),
       mockProvider(DialogService, {
@@ -106,19 +106,16 @@ describe('DatasetTrivialPermissionsComponent', () => {
 
     await saveButton.click();
 
-    expect(websocket.job).toHaveBeenCalledWith('pool.dataset.permission', [
-      'pool/trivial',
-      {
-        user: 'games',
-        group: 'kmem',
-        acl: [],
-        options: {
-          recursive: false,
-          stripacl: false,
-          traverse: false,
-        },
+    expect(websocket.job).toHaveBeenCalledWith('filesystem.setperm', [{
+      path: '/mnt/pool/trivial',
+      uid: 103,
+      gid: 1001,
+      options: {
+        recursive: false,
+        stripacl: false,
+        traverse: false,
       },
-    ]);
+    }]);
   });
 
   it('saves permissions when they are saved', async () => {
@@ -128,18 +125,15 @@ describe('DatasetTrivialPermissionsComponent', () => {
 
     await saveButton.click();
 
-    expect(websocket.job).toHaveBeenCalledWith('pool.dataset.permission', [
-      'pool/trivial',
-      {
-        mode: '777',
-        acl: [],
-        options: {
-          recursive: false,
-          stripacl: true,
-          traverse: false,
-        },
+    expect(websocket.job).toHaveBeenCalledWith('filesystem.setperm', [{
+      path: '/mnt/pool/trivial',
+      mode: '777',
+      options: {
+        recursive: false,
+        stripacl: true,
+        traverse: false,
       },
-    ]);
+    }]);
   });
 
   it('shows a warning when Recursive checkbox is pressed', async () => {
@@ -165,18 +159,15 @@ describe('DatasetTrivialPermissionsComponent', () => {
 
     await saveButton.click();
 
-    expect(websocket.job).toHaveBeenCalledWith('pool.dataset.permission', [
-      'pool/trivial',
-      {
-        mode: '555',
-        acl: [],
-        options: {
-          recursive: true,
-          stripacl: true,
-          traverse: true,
-        },
+    expect(websocket.job).toHaveBeenCalledWith('filesystem.setperm', [{
+      path: '/mnt/pool/trivial',
+      mode: '555',
+      options: {
+        recursive: true,
+        stripacl: true,
+        traverse: true,
       },
-    ]);
+    }]);
   });
 
   it('goes to ACL editor when Set ACL is pressed', async () => {
