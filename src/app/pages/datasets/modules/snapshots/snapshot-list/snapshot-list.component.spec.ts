@@ -4,12 +4,12 @@ import { ActivatedRoute } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { MockModule, MockPipe } from 'ng-mocks';
-import { FileSizePipe } from 'ngx-filesize';
 import { CoreComponents } from 'app/core/core-components.module';
 import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-datetime.pipe';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { Preferences } from 'app/interfaces/preferences.interface';
+import { IxFileSizePipe } from 'app/modules/ix-file-size/ix-file-size.pipe';
 import { IxEmptyRowHarness } from 'app/modules/ix-tables/components/ix-empty-row/ix-empty-row.component.harness';
 import { IxTableModule } from 'app/modules/ix-tables/ix-table.module';
 import { IxTableHarness } from 'app/modules/ix-tables/testing/ix-table.harness';
@@ -40,7 +40,7 @@ describe('SnapshotListComponent', () => {
     ],
     declarations: [
       FakeFormatDateTimePipe,
-      MockPipe(FileSizePipe, jest.fn(() => '1.49 TiB')),
+      MockPipe(IxFileSizePipe, jest.fn(() => '1.49 TiB')),
     ],
     providers: [
       mockWebsocket([

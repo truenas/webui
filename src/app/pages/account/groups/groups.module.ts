@@ -19,7 +19,6 @@ import { RouterModule } from '@angular/router';
 import { EffectsModule } from '@ngrx/effects';
 import { StoreModule } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
-import { NgxFilesizeModule } from 'ngx-filesize';
 import { CoreComponents } from 'app/core/core-components.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { AppCommonModule } from 'app/modules/common/app-common.module';
@@ -73,7 +72,6 @@ import { DeleteGroupDialogComponent } from './group-details-row/delete-group-dia
     StoreModule.forFeature(groupStateKey, groupReducer),
     TranslateModule,
     TranslateModule,
-    NgxFilesizeModule,
     NgxDualListboxModule,
     AppCommonModule,
     MatSlideToggleModule,

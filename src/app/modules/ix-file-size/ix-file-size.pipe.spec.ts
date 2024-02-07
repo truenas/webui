@@ -1,9 +1,9 @@
 import { SpectatorPipe, createPipeFactory } from '@ngneat/spectator/jest';
-import { FileSizePipe } from 'app/modules/ix-file-size/ix-file-size.pipe';
+import { IxFileSizePipe } from 'app/modules/ix-file-size/ix-file-size.pipe';
 
-let spectator: SpectatorPipe<FileSizePipe>;
+let spectator: SpectatorPipe<IxFileSizePipe>;
 const createPipe = createPipeFactory({
-  pipe: FileSizePipe,
+  pipe: IxFileSizePipe,
 });
 describe('It converts 1024 bits to 1.02 kb with base 10', () => {
   beforeEach(() => {

@@ -5,9 +5,9 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { MatDialog, MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import filesize from 'filesize';
 import { Observable, map } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
+import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
 import { helptextVolumeStatus } from 'app/helptext/storage/volumes/volume-status';
 import { Option } from 'app/interfaces/option.interface';
 import { UnusedDisk } from 'app/interfaces/storage.interface';
@@ -64,7 +64,7 @@ export class ReplaceDiskDialogComponent implements OnInit {
         this.unusedDisks = unusedDisks;
         return unusedDisks.map((disk) => {
           const exportedPool = disk.exported_zpool ? ` (${disk.exported_zpool})` : '';
-          const size = filesize(disk.size, { standard: 'iec' });
+          const size = buildNormalizedFileSize(disk.size);
 
           return {
             label: `${disk.devname} - ${size} ${exportedPool}`,

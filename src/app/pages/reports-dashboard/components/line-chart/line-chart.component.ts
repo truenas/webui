@@ -11,7 +11,7 @@ import {
 } from 'app/constants/bytes.constant';
 import { ThemeUtils } from 'app/core/classes/theme-utils/theme-utils';
 import { ReportingGraphName } from 'app/enums/reporting.enum';
-import { normalizeFileSize } from 'app/helpers/filesize.utils';
+import { buildNormalizedFileSize, normalizeFileSize } from 'app/helpers/file-size.utils';
 import { ReportingData } from 'app/interfaces/reporting.interface';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { Theme } from 'app/interfaces/theme.interface';
@@ -298,8 +298,7 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
     clone.series.forEach((item: dygraphs.SeriesLegendData, index: number): void => {
       if (!item.y) { return; }
       if (this.report.name === ReportingGraphName.NetworkInterface) {
-        const [formatted, unit] = normalizeFileSize(item.y * 1000, 'b', 10);
-        clone.series[index].yHTML = formatted + ' ' + unit + '/s';
+        clone.series[index].yHTML = buildNormalizedFileSize(item.y * 1000, 'b', 10) + '/s';
       } else {
         const yConverted = this.formatLabelValue(item.y, this.inferUnits(this.labelY), 1, true);
         const ySuffix = this.getSuffix(yConverted);
