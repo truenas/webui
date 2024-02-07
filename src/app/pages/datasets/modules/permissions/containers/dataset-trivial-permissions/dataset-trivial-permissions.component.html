@@ -15,7 +15,7 @@
       <div class="owner-and-access">
         <ix-fieldset class="owner-fields" [title]="'Owner' | translate">
           <ix-combobox
-            formControlName="user"
+            formControlName="uid"
             [label]="'User' | translate"
             [tooltip]="tooltips.user | translate"
             [provider]="userProvider"
@@ -29,7 +29,7 @@
           ></ix-checkbox>
 
           <ix-combobox
-            formControlName="group"
+            formControlName="gid"
             [label]="'Group' | translate"
             [tooltip]="tooltips.group | translate"
             [provider]="groupProvider"
