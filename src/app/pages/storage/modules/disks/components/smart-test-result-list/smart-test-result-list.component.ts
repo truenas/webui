@@ -12,6 +12,7 @@ import { QueryParams } from 'app/interfaces/query-api.interface';
 import { SmartTestResults, SmartTestResultsRow } from 'app/interfaces/smart-test.interface';
 import { Disk } from 'app/interfaces/storage.interface';
 import { AsyncDataProvider } from 'app/modules/ix-table2/classes/async-data-provider/async-data-provider';
+import { stateButtonColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-state-button/ix-cell-state-button.component';
 import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { SortDirection } from 'app/modules/ix-table2/enums/sort-direction.enum';
 import { Column, ColumnComponent } from 'app/modules/ix-table2/interfaces/table-column.interface';
@@ -22,7 +23,6 @@ import { WebSocketService } from 'app/services/ws.service';
 @UntilDestroy()
 @Component({
   templateUrl: './smart-test-result-list.component.html',
-  styleUrls: ['./smart-test-result-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SmartTestResultListComponent implements OnInit {
@@ -37,11 +37,6 @@ export class SmartTestResultListComponent implements OnInit {
 
   columns = createTable<SmartTestResultsRow>([
     textColumn({
-      title: this.translate.instant('ID'),
-      propertyName: 'id',
-      sortable: true,
-    }),
-    textColumn({
       title: this.translate.instant('Disk'),
       propertyName: 'disk',
       sortable: true,
@@ -51,7 +46,7 @@ export class SmartTestResultListComponent implements OnInit {
       propertyName: 'description',
       sortable: true,
     }),
-    textColumn({
+    stateButtonColumn({
       title: this.translate.instant('Status'),
       propertyName: 'status',
       sortable: true,
@@ -60,19 +55,28 @@ export class SmartTestResultListComponent implements OnInit {
       title: this.translate.instant('Remaining'),
       propertyName: 'remaining',
       sortable: true,
+      getValue: (row) => {
+        return row.remaining || row.status_verbose;
+      },
     }),
     textColumn({
       title: this.translate.instant('Lifetime'),
       propertyName: 'lifetime',
       sortable: true,
+      getValue: (row) => {
+        return row.lifetime || this.translate.instant('N/A');
+      },
     }),
     textColumn({
       title: this.translate.instant('Error'),
       propertyName: 'lba_of_first_error',
       sortable: true,
+      getValue: (row) => {
+        return row.lba_of_first_error || this.translate.instant('No errors');
+      },
     }),
   ], {
-    rowTestId: (row) => 'smart-test-result-' + row.id,
+    rowTestId: (row) => `smart-test-result-${row.disk}-${row.num}`,
   });
 
   get hiddenColumns(): Column<SmartTestResultsRow, ColumnComponent<SmartTestResultsRow>>[] {
@@ -91,7 +95,6 @@ export class SmartTestResultListComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.updateQueryParams();
     this.createDataProvider();
   }
 
@@ -99,13 +102,14 @@ export class SmartTestResultListComponent implements OnInit {
     const smartTestResults$ = this.ws.call('disk.query', [[], { extra: { pools: true } }]).pipe(
       switchMap((disks) => {
         this.disks = disks;
+        this.updateQueryParams();
         return this.ws.call('smart.test.results', this.queryParams);
       }),
       map((smartTestResults: SmartTestResults[]) => {
         const rows: SmartTestResultsRow[] = [];
         smartTestResults.forEach((smartTestResult) => {
-          smartTestResult?.tests.forEach((test, id) => {
-            rows.push({ ...test, disk: smartTestResult.disk, id });
+          smartTestResult?.tests.forEach((test) => {
+            rows.push({ ...test, disk: smartTestResult.disk });
           });
         });
         return rows;
@@ -134,14 +138,14 @@ export class SmartTestResultListComponent implements OnInit {
     this.dataProvider.setSorting({
       active: 1,
       direction: SortDirection.Asc,
-      propertyName: 'id',
+      propertyName: 'disk',
     });
   }
 
   onListFiltered(query: string): void {
     this.filterString = query.toLowerCase();
     this.dataProvider.setRows(this.smartTestResults.filter((smartTestResult) => {
-      return smartTestResult.description.includes(this.filterString);
+      return JSON.stringify(smartTestResult).includes(this.filterString);
     }));
   }
 

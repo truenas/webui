@@ -64,5 +64,4 @@ export interface ManualSmartTest {
 
 export interface SmartTestResultsRow extends SmartTestResult {
   disk: string;
-  id: number;
 }

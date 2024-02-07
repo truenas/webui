@@ -1,7 +1,6 @@
 <ng-template ixPageHeader>
-  <ix-page-title-header [title]="'S.M.A.R.T. Test Results of {pk}' | translate: { pk }">
+  <ix-page-title-header [pageTitle]="'S.M.A.R.T. Test Results of {pk}' | translate: { pk }">
     <ix-search-input (search)="onListFiltered($event)"></ix-search-input>
-
     <ix-table-columns-selector [columns]="columns" (columnsChange)="columnsChange($event)"></ix-table-columns-selector>
   </ix-page-title-header>
 </ng-template>
@@ -25,13 +24,11 @@
     <ng-template let-task ix-table-details-row [dataProvider]="dataProvider">
       <dl *ngIf="hiddenColumns.length" class="table-hidden-columns">
         <div *ngFor="let column of hiddenColumns">
-          <b>{{ column.title }}:</b>
+          <b>{{ column.title }}: </b>
           <span>{{ column?.getValue?.(task) || task[column.propertyName] }}</span>
         </div>
         <mat-divider></mat-divider>
       </dl>
-
-      <div class="table-details-row-actions"></div>
     </ng-template>
   </tbody>
 </ix-table2>
