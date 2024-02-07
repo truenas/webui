@@ -5,6 +5,7 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { finalize } from 'rxjs';
+import { MiB } from 'app/constants/bytes.constant';
 import { ticketAcceptedFiles } from 'app/enums/file-ticket.enum';
 import { helptextSystemSupport as helptext } from 'app/helptext/system/support';
 import { FeedbackDialogComponent } from 'app/modules/feedback/components/feedback-dialog/feedback-dialog.component';
@@ -14,6 +15,7 @@ import { rangeValidator } from 'app/modules/ix-forms/validators/range-validation
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 
 export const maxRatingValue = 5;
+export const maxFileSizeBytes = 5 * MiB;
 
 @UntilDestroy()
 @Component({
@@ -31,7 +33,7 @@ export class FileReviewComponent {
     rating: [undefined as number, [Validators.required, rangeValidator(1, maxRatingValue)]],
     message: ['', [Validators.maxLength(4067)]],
 
-    images: [[] as File[], [], this.imageValidator.validateImages()],
+    images: [[] as File[], [], this.imageValidator.getImagesValidator(maxFileSizeBytes)],
     attach_images: [false],
     take_screenshot: [true],
   });

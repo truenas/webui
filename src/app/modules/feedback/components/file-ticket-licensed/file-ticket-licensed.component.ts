@@ -9,6 +9,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as EmailValidator from 'email-validator';
 import { finalize, of } from 'rxjs';
+import { MiB } from 'app/constants/bytes.constant';
 import {
   ticketAcceptedFiles,
   TicketCategory, ticketCategoryLabels,
@@ -24,6 +25,7 @@ import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-erro
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { emailValidator } from 'app/modules/ix-forms/validators/email-validation/email-validation';
 import { ImageValidatorService } from 'app/modules/ix-forms/validators/image-validator/image-validator.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -55,7 +57,7 @@ export class FileTicketLicensedComponent {
     title: ['', [Validators.required, Validators.maxLength(200)]],
 
     message: ['', [Validators.maxLength(20000)]],
-    images: [[] as File[], [], this.imageValidator.validateImages()],
+    images: [[] as File[], []],
     attach_debug: [true],
     attach_images: [false],
     take_screenshot: [true],
@@ -89,7 +91,10 @@ export class FileTicketLicensedComponent {
     private imageValidator: ImageValidatorService,
     private formErrorHandler: FormErrorHandlerService,
     @Inject(WINDOW) private window: Window,
-  ) { }
+    private ws: WebSocketService,
+  ) {
+    this.getSystemFileSizeLimit();
+  }
 
   onUserGuidePressed(): void {
     this.window.open('https://www.truenas.com/docs/hub/');
@@ -115,5 +120,14 @@ export class FileTicketLicensedComponent {
   private onSuccess(ticketUrl: string): void {
     this.feedbackService.showTicketSuccessMsg(ticketUrl);
     this.dialogRef.close();
+  }
+
+  private getSystemFileSizeLimit(): void {
+    this.ws.call('support.attach_ticket_max_size').pipe(untilDestroyed(this)).subscribe((size) => {
+      this.form.controls.images.addAsyncValidators(
+        this.imageValidator.getImagesValidator(size * MiB),
+      );
+      this.form.controls.images.updateValueAndValidity();
+    });
   }
 }
