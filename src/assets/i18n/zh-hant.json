@@ -4308,7 +4308,6 @@
   "Run «{name}» Cloud Sync now?": "立即執行雲端同步？",
   "Run «{name}» Rsync now?": "立即執行 «{name}» rsync？",
   "Running": "運作中",
-  "S.M.A.R.T. Test": "S.M.A.R.T 測試",
   "S.M.A.R.T. extra options": "S.M.A.R.T. 額外選項",
   "SED Password": "SED 密碼",
   "SNMP v3 Support": "SNMP v3 支援",
