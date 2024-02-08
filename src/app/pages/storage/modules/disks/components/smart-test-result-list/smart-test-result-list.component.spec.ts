@@ -1,0 +1,124 @@
+import { HarnessLoader } from '@angular/cdk/testing';
+import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { Spectator } from '@ngneat/spectator';
+import { createComponentFactory } from '@ngneat/spectator/jest';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockWebSocket, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
+import { SmartTestResultStatus } from 'app/enums/smart-test-result-status.enum';
+import { SmartTestResults } from 'app/interfaces/smart-test.interface';
+import { Disk } from 'app/interfaces/storage.interface';
+import { IxTable2Harness } from 'app/modules/ix-table2/components/ix-table2/ix-table2.harness';
+import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
+import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
+import { SmartTestResultListComponent } from 'app/pages/storage/modules/disks/components/smart-test-result-list/smart-test-result-list.component';
+
+describe('SmartTestResultListComponent', () => {
+  let spectator: Spectator<SmartTestResultListComponent>;
+  let table: IxTable2Harness;
+  let loader: HarnessLoader;
+
+  const smartTestResults: SmartTestResults[] = [{
+    disk: 'sda',
+    tests: [{
+      num: 1,
+      description: 'Background long',
+      status_verbose: 'Completed',
+      segment_number: null,
+      lifetime: 15959,
+      lba_of_first_error: null,
+      status: SmartTestResultStatus.Success,
+      remaining: null,
+    },
+    {
+      num: 2,
+      description: 'Background short',
+      status_verbose: 'Completed',
+      segment_number: null,
+      lifetime: 15929,
+      lba_of_first_error: null,
+      status: SmartTestResultStatus.Success,
+      remaining: null,
+    },
+    {
+      num: 1,
+      description: 'Background short',
+      status_verbose: 'Completed',
+      segment_number: null,
+      lifetime: 16939,
+      lba_of_first_error: null,
+      status: SmartTestResultStatus.Success,
+      remaining: null,
+    }],
+  }, {
+    disk: 'sdb',
+    tests: [{
+      num: 1,
+      description: 'Background long',
+      status_verbose: 'Completed',
+      segment_number: null,
+      lifetime: 15959,
+      lba_of_first_error: null,
+      status: SmartTestResultStatus.Success,
+      remaining: null,
+    },
+    {
+      num: 2,
+      description: 'Background short',
+      status_verbose: 'Completed',
+      segment_number: null,
+      lifetime: 15929,
+      lba_of_first_error: null,
+      status: SmartTestResultStatus.Success,
+      remaining: null,
+    },
+    {
+      num: 1,
+      description: 'Background short',
+      status_verbose: 'Completed',
+      segment_number: null,
+      lifetime: 16939,
+      lba_of_first_error: null,
+      status: SmartTestResultStatus.Success,
+      remaining: null,
+    }],
+  }];
+
+  const disks: Disk[] = [];
+
+  const createComponent = createComponentFactory({
+    component: SmartTestResultListComponent,
+    imports: [
+      AppLoaderModule,
+      IxTable2Module,
+    ],
+    providers: [
+      mockAuth(),
+      mockWebSocket([
+        mockCall('disk.query', disks),
+        mockCall('smart.test.results', smartTestResults),
+        mockCall('rsynctask.update'),
+      ]),
+    ],
+  });
+
+  beforeEach(async () => {
+    spectator = createComponent();
+    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    table = await loader.getHarness(IxTable2Harness);
+  });
+
+  it('should show table rows', async () => {
+    const expectedRows = [
+      ['Disk', 'Description', 'Status', 'Remaining', 'Lifetime', 'Error'],
+      ['sda', 'Background long', 'SUCCESS', 'Completed', '15959', 'No errors'],
+      ['sda', 'Background short', 'SUCCESS', 'Completed', '15929', 'No errors'],
+      ['sda', 'Background short', 'SUCCESS', 'Completed', '16939', 'No errors'],
+      ['sdb', 'Background long', 'SUCCESS', 'Completed', '15959', 'No errors'],
+      ['sdb', 'Background short', 'SUCCESS', 'Completed', '15929', 'No errors'],
+      ['sdb', 'Background short', 'SUCCESS', 'Completed', '16939', 'No errors'],
+    ];
+
+    const cells = await table.getCellTexts();
+    expect(cells).toEqual(expectedRows);
+  });
+});
