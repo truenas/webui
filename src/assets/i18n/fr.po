@@ -82,10 +82,10 @@ msgid " but datastore "
 msgstr " mais le magasin de données "
 
 msgid " day, "
-msgstr ""
+msgstr "jour"
 
 msgid " days, "
-msgstr ""
+msgstr "jours"
 
 msgid " disks"
 msgstr " disques"
@@ -161,7 +161,7 @@ msgid " to include all "
 msgstr " pour inclure tous les "
 
 msgid " to the latest available patch?"
-msgstr ""
+msgstr " vers le dernier patch disponible ?"
 
 msgid " update successful"
 msgstr " mise à jour réussie"
@@ -173,6 +173,9 @@ msgid ""
 " with properties. Destination datasets will be locked and can be unlocked "
 "with source datasets' encryption key."
 msgstr ""
+" avec des propriétés. Les datasets de destination seront verrouillés et "
+"pourront être déverrouillés à l'aide de la clé de chiffrements des "
+"datasets sources."
 
 msgid "% of all cores"
 msgstr "% de tous les cores"
@@ -1321,7 +1324,7 @@ msgid "Adding data vdevs of different types is not supported."
 msgstr "L'ajout de données vdevs de types différents n'est pas pris en charge."
 
 msgid "Adding data vdevs with different numbers of disks is not recommended."
-msgstr ""
+msgstr "L'ajout de vdevs de données avec un nombre différent de disques n'est pas recommandé."
 
 msgid ""
 "Additional      <a href=\"https://rsync.samba.org/ftp/rsync/rsync.html\" "
@@ -4153,7 +4156,7 @@ msgid "Create Theme"
 msgstr "Créer le thème"
 
 msgid "Create a custom ACL"
-msgstr ""
+msgstr "Créer une ACL personnalisée"
 
 msgid "Create a new Pool."
 msgstr "Créez un nouveau volume."
@@ -4168,10 +4171,10 @@ msgid "Create a recommended formation of vdevs in a pool."
 msgstr "Créer une formation recommandée de vdevs dans un volume."
 
 msgid "Create an ACL"
-msgstr ""
+msgstr "Créer une ACL"
 
 msgid "Create an SMB Share"
-msgstr ""
+msgstr "Créer un partage SMB"
 
 msgid "Create more data vdevs like the first."
 msgstr "Créez plus de vdevs de données comme le premier."
@@ -4198,7 +4201,7 @@ msgid "Create the pool with this layout?"
 msgstr ""
 
 msgid "Created"
-msgstr ""
+msgstr "Créé"
 
 msgid "Created Date"
 msgstr "Date de création"
@@ -7386,10 +7389,10 @@ msgid "Fix database"
 msgstr ""
 
 msgid "Flags"
-msgstr "Flags"
+msgstr ""
 
 msgid "Flags Type"
-msgstr "Type de drapeaux"
+msgstr "Type de Flags"
 
 msgid ""
 "Flags to pass to <a "
@@ -9671,7 +9674,7 @@ msgid "Model:"
 msgstr "Modèle:"
 
 msgid "Modify"
-msgstr ""
+msgstr "Modifier"
 
 msgid ""
 "Modify for disks that understand <a "
@@ -12737,7 +12740,7 @@ msgid "Select a power management profile from the menu."
 msgstr "Sélectionnez un profil de gestion de l'alimentation dans le menu."
 
 msgid "Select a preset ACL"
-msgstr ""
+msgstr "Sélectionnez une ACL prédéfinie"
 
 msgid ""
 "Select a preset schedule or  choose <i>Custom</i> to use the advanced "
@@ -16566,7 +16569,7 @@ msgstr ""
 "automatiquement le bon type de compte."
 
 msgid "Type to search"
-msgstr ""
+msgstr "Tapez pour rechercher"
 
 msgid "UDP"
 msgstr ""
@@ -16983,7 +16986,7 @@ msgstr ""
 "l'heure du système soit correctement réglée."
 
 msgid "Use ACL Manager"
-msgstr ""
+msgstr "Gestionnaire d'ACL"
 
 msgid "Use Apple-style Character Encoding"
 msgstr "Utiliser l'encodage de caractères de style Apple"
