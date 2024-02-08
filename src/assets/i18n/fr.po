@@ -12827,7 +12827,7 @@ msgstr ""
 "Certificats</b> à utiliser pour les connexions chiffrées."
 
 msgid "Select an ACL Preset"
-msgstr ""
+msgstr "Préréglage ACL"
 
 msgid "Select an IP address to use for VNC sessions."
 msgstr "Sélectionnez une adresse IP à utiliser pour les sessions VNC."
