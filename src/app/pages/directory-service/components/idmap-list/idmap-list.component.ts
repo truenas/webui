@@ -90,7 +90,7 @@ export class IdmapListComponent implements OnInit {
           iconName: 'delete',
           hidden: (row) => of(requiredIdmapDomains.includes(row.name as IdmapName)),
           tooltip: this.translateService.instant('Delete'),
-          requiredRoles: [Role.FullAdmin],
+          requiredRoles: [Role.DirectoryServiceWrite],
           onClick: (row) => {
             this.dialogService.confirm({
               title: this.translateService.instant('Confirm'),

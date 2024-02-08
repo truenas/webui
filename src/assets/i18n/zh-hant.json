@@ -877,6 +877,8 @@
   "Directory Inherit": "",
   "Directory Mask": "",
   "Directory Permissions": "",
+  "Directory Service Read": "",
+  "Directory Service Write": "",
   "Directory Services Groups": "",
   "Directory Services Monitor": "",
   "Disable AD User / Group Cache": "",
