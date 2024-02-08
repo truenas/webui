@@ -4527,7 +4527,7 @@
   "Yandex  <a href=\"https://tech.yandex.com/direct/doc/dg-v4/concepts/auth-token-docpage/\"  target=\"_blank\">Access Token</a>.": "<a href=\"https://tech.yandex.com/direct/doc/dg-v4/concepts/auth-token-docpage/\"  target=\"_blank\">Токен доступа</a> Яндекс.",
   "Years": "Годы",
   "Yes I understand the risks": "Да, я понимаю риски",
-  "You have left the domain.": "Вы вышли из домен.",
+  "You have left the domain.": "Вы покинули домен.",
   "ZFS Cache": "Кэш ZFS",
   "ZFS Deduplication": "Дедупликация ZFS",
   "ZFS Filesystem": "Файловая система ZFS",
