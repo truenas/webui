@@ -20,16 +20,6 @@
     [columns]="columns"
     [dataProvider]="dataProvider"
     [isLoading]="dataProvider.isLoading$ | async"
-  >
-    <ng-template let-task ix-table-details-row [dataProvider]="dataProvider">
-      <dl *ngIf="hiddenColumns.length" class="table-hidden-columns">
-        <div *ngFor="let column of hiddenColumns">
-          <b>{{ column.title }}: </b>
-          <span>{{ column?.getValue?.(task) || task[column.propertyName] }}</span>
-        </div>
-        <mat-divider></mat-divider>
-      </dl>
-    </ng-template>
-  </tbody>
+  ></tbody>
 </ix-table2>
 <ix-table-pager [dataProvider]="dataProvider"></ix-table-pager>

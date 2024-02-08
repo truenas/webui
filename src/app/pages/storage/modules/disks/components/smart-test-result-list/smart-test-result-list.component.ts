@@ -28,7 +28,6 @@ import { WebSocketService } from 'app/services/ws.service';
 export class SmartTestResultListComponent implements OnInit {
   @Input() type: SmartTestResultPageType;
   @Input() pk: string;
-  queryParams: QueryParams<SmartTestResults> = [];
   disks: Disk[] = [];
   smartTestResults: SmartTestResultsRow[];
   filterString = '';
@@ -102,8 +101,10 @@ export class SmartTestResultListComponent implements OnInit {
     const smartTestResults$ = this.ws.call('disk.query', [[], { extra: { pools: true } }]).pipe(
       switchMap((disks) => {
         this.disks = disks;
-        this.updateQueryParams();
-        return this.ws.call('smart.test.results', this.queryParams);
+        const queryParams: QueryParams<SmartTestResults> = this.type === SmartTestResultPageType.Disk
+          ? [[['disk', '=', this.pk]]]
+          : [[['disk', 'in', this.diskNames]]];
+        return this.ws.call('smart.test.results', queryParams);
       }),
       map((smartTestResults: SmartTestResults[]) => {
         const rows: SmartTestResultsRow[] = [];
@@ -119,19 +120,6 @@ export class SmartTestResultListComponent implements OnInit {
     this.dataProvider = new AsyncDataProvider<SmartTestResultsRow>(smartTestResults$);
     this.dataProvider.load();
     this.setDefaultSort();
-  }
-
-  updateQueryParams(): void {
-    switch (this.type) {
-      case SmartTestResultPageType.Disk:
-        this.queryParams = [[['disk', '=', this.pk]]];
-        break;
-      case SmartTestResultPageType.Pool:
-        this.queryParams = [[['disk', 'in', this.diskNames]]];
-        break;
-      default:
-        break;
-    }
   }
 
   setDefaultSort(): void {
