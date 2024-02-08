@@ -111,7 +111,7 @@ describe('CertificateAcmeAddComponent', () => {
   });
 
   it('allows custom ACME Server Directory URI', async () => {
-    await form.fillFormSections([
+    await form.fillForm(
       {
         Identifier: 'new',
         'Terms of Service': true,
@@ -122,7 +122,7 @@ describe('CertificateAcmeAddComponent', () => {
       {
         'ACME Server Directory URI': 'https://acme-staging-v02.api.letsencrypt.org/directory-custom',
       },
-    ]);
+    );
 
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();

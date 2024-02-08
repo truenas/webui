@@ -1,7 +1,6 @@
 import { ComponentHarness } from '@angular/cdk/testing';
 import { IxFormControlHarness } from 'app/modules/ix-forms/interfaces/ix-form-control-harness.interface';
 import {
-  fillControlValues,
   getControlValues,
   indexControlsByLabel, IxFormBasicValueType,
   SupportedFormControlHarness,
@@ -27,19 +26,7 @@ export class IxListItemHarness extends ComponentHarness {
     return getControlValues(controlsDict);
   }
 
-  async fillForm(values: Record<string, unknown>): Promise<void> {
-    const controls = await this.getControlHarnessesDict();
-    return fillControlValues(controls, values);
-  }
-
-  /**
-   * Sets the values section by section so that form can update as the values change.
-   * E.g., if some values only show up after a checkbox has been checked, this would ensure that
-   * the checkbox value is set first before trying to set the value for the attribute that's not
-   * visible yet. Giving form time to update its state so the value can be set.
-   * @param values An array of values in pairs that ensures form update as value changes one by one
-   */
-  async fillFormSections(sectionsValues: Record<string, unknown>[]): Promise<void> {
+  async fillForm(...sectionsValues: Record<string, unknown>[]): Promise<void> {
     for (const sectionValues of sectionsValues) {
       const controlsDict = await this.getControlHarnessesDict();
       const labels = Object.keys(sectionValues);

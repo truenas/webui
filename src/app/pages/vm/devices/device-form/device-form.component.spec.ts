@@ -224,7 +224,7 @@ describe('DeviceFormComponent', () => {
       });
 
       it('adds a new NIC device', async () => {
-        await form.fillFormSections([
+        await form.fillForm(
           {
             Type: 'NIC',
           },
@@ -234,7 +234,7 @@ describe('DeviceFormComponent', () => {
             'Device Order': 1006,
             'Trust Guest Filters': true,
           },
-        ]);
+        );
 
         await saveButton.click();
 
@@ -345,7 +345,7 @@ describe('DeviceFormComponent', () => {
       });
 
       it('adds a new disk', async () => {
-        await form.fillFormSections([
+        await form.fillForm(
           {
             Type: 'Disk',
           },
@@ -355,7 +355,7 @@ describe('DeviceFormComponent', () => {
             'Disk Sector Size': '512',
             'Device Order': '1002',
           },
-        ]);
+        );
 
         await saveButton.click();
 
@@ -460,7 +460,7 @@ describe('DeviceFormComponent', () => {
       });
 
       it('adds a new Raw File device', async () => {
-        await form.fillFormSections([
+        await form.fillForm(
           {
             Type: 'Raw File',
           },
@@ -471,7 +471,7 @@ describe('DeviceFormComponent', () => {
             'Raw Filesize': 3,
             'Device Order': '6',
           },
-        ]);
+        );
         await saveButton.click();
 
         expect(websocket.call).toHaveBeenLastCalledWith('vm.device.create', [{
@@ -572,7 +572,7 @@ describe('DeviceFormComponent', () => {
       });
 
       it('adds a new PCI Passthrough device', async () => {
-        await form.fillFormSections([
+        await form.fillForm(
           {
             Type: 'PCI Passthrough Device',
           },
@@ -580,7 +580,7 @@ describe('DeviceFormComponent', () => {
             'PCI Passthrough Device': 'pci_0000_00_1c_0',
             'Device Order': '6',
           },
-        ]);
+        );
         await saveButton.click();
 
         expect(spectator.inject(DialogService).confirm).not.toHaveBeenCalled();
@@ -754,7 +754,7 @@ describe('DeviceFormComponent', () => {
       });
 
       it('adds a new USB Passthrough device', async () => {
-        await form.fillFormSections([
+        await form.fillForm(
           {
             Type: 'USB Passthrough Device',
           },
@@ -762,7 +762,7 @@ describe('DeviceFormComponent', () => {
             'Controller Type': 'pci-ohci',
             Device: 'usb_device_2 prod_2 (vendor_2)',
           },
-        ]);
+        );
         await saveButton.click();
 
         expect(websocket.call).toHaveBeenLastCalledWith('vm.device.create', [{
@@ -824,7 +824,7 @@ describe('DeviceFormComponent', () => {
       });
 
       it('updates an existing USB Passthrough when custom is selected', async () => {
-        await form.fillFormSections([
+        await form.fillForm(
           {
             'Controller Type': 'piix3-uhci',
             Device: 'Specify custom',
@@ -833,7 +833,7 @@ describe('DeviceFormComponent', () => {
             'Vendor ID': 'vendor_1',
             'Product ID': 'product_1',
           },
-        ]);
+        );
 
         spectator.detectChanges();
 

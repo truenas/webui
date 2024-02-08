@@ -94,7 +94,7 @@ describe('DatasetUnlockComponent', () => {
   it('saves when set key manually', async () => {
     const form = await loader.getHarness(IxFormHarness);
 
-    await form.fillFormSections([
+    await form.fillForm(
       {
         'Unlock with Key file': 'Provide keys/passphrases manually',
         Force: true,
@@ -103,7 +103,7 @@ describe('DatasetUnlockComponent', () => {
         'Dataset Key': '0123456789012345678901234567890123456789012345678901234567890123',
         'Dataset Passphrase': '12345678',
       },
-    ]);
+    );
 
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();

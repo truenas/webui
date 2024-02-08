@@ -103,7 +103,7 @@ describe('SyslogFormComponent', () => {
   it('shows certificate fields when transport is TLS and saves it', async () => {
     const form = await loader.getHarness(IxFormHarness);
 
-    await form.fillFormSections([
+    await form.fillForm(
       {
         'Syslog Transport': SyslogTransport.Tls,
       },
@@ -111,7 +111,7 @@ describe('SyslogFormComponent', () => {
         'Syslog TLS Certificate': 'Certificate 2',
         'Syslog TLS Certificate Authority': 'Authority 2',
       },
-    ]);
+    );
 
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();

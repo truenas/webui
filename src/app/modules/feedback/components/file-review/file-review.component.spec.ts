@@ -49,7 +49,7 @@ describe('FileReviewComponent', () => {
   it('uploads a new rating when form is submitted', async () => {
     const fakeAttachments = [fakeFile('attachment1.png'), fakeFile('attachment2.png')];
 
-    await form.fillFormSections([
+    await form.fillForm(
       {
         'Select Rating': 1,
         Message: 'Git gud',
@@ -59,7 +59,7 @@ describe('FileReviewComponent', () => {
       {
         'Attach images (optional)': fakeAttachments,
       },
-    ]);
+    );
 
     await submitButton.click();
 

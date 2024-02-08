@@ -117,7 +117,7 @@ describe('IscsiWizardComponent', () => {
     const addIpAddressButton = await loader.getHarness(IxListHarness.with({ label: 'IP Address' }));
     await addIpAddressButton.pressAddButton();
 
-    await form.fillFormSections([
+    await form.fillForm(
       {
         'IP Address': '192.168.1.3',
       },
@@ -131,7 +131,7 @@ describe('IscsiWizardComponent', () => {
         Secret: '123456789qwerty',
         'Secret (Confirm)': '123456789qwerty',
       },
-    ]);
+    );
 
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();

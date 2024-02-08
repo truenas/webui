@@ -125,7 +125,7 @@ describe('ReplicationWizardComponent', () => {
   }
 
   it('creates objects when wizard is submitted', async () => {
-    await form.fillFormSections([
+    await form.fillForm(
       {
         'Source Location': 'On this System',
         'Destination Location': 'On this System',
@@ -136,7 +136,7 @@ describe('ReplicationWizardComponent', () => {
         Source: ['pool1/', 'pool2/'],
         Destination: 'pool3/',
       },
-    ]);
+    );
 
     await goToNextStep();
 

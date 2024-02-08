@@ -117,7 +117,7 @@ describe('IdmapFormComponent', () => {
     });
 
     it('creates a new idmap when form is submitted for creation', async () => {
-      await form.fillFormSections([
+      await form.fillForm(
         {
           Name: 'Custom Value',
         },
@@ -129,7 +129,7 @@ describe('IdmapFormComponent', () => {
           'Schema Mode': 'SFU',
           'Unix Primary Group': true,
         },
-      ]);
+      );
 
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
@@ -148,7 +148,7 @@ describe('IdmapFormComponent', () => {
     });
 
     it('sets name to TDB and hides it when SMB - Primary Domain is selected', async () => {
-      await form.fillFormSections([
+      await form.fillForm(
         {
           Name: 'SMB - Primary Domain',
         },
@@ -156,7 +156,7 @@ describe('IdmapFormComponent', () => {
           'Range Low': 2000000,
           'Range High': 2000001,
         },
-      ]);
+      );
 
       const controls = await form.getLabels();
       expect(controls).not.toContain('Idmap Backend');
@@ -201,7 +201,7 @@ describe('IdmapFormComponent', () => {
     it('asks and clears idmap cache after form is saved', async () => {
       const confirm = spectator.inject(DialogService).confirm as jest.Mock;
       confirm.mockReturnValue(of(true));
-      await form.fillFormSections([
+      await form.fillForm(
         {
           Name: 'SMB - Primary Domain',
         },
@@ -209,7 +209,7 @@ describe('IdmapFormComponent', () => {
           'Range Low': 2000000,
           'Range High': 2000001,
         },
-      ]);
+      );
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 

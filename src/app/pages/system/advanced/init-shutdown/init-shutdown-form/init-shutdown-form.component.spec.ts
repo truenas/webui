@@ -87,7 +87,7 @@ describe('InitShutdownFormComponent', () => {
     it('shows and saves script file when type is Script', async () => {
       const form = await loader.getHarness(IxFormHarness);
 
-      await form.fillFormSections([
+      await form.fillForm(
         {
           Description: 'New 2',
           Type: 'Script',
@@ -97,7 +97,7 @@ describe('InitShutdownFormComponent', () => {
         {
           Script: '/mnt/new.sh',
         },
-      ]);
+      );
 
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
@@ -152,7 +152,7 @@ describe('InitShutdownFormComponent', () => {
     it('sends an update payload to websocket and closes modal when save is pressed', async () => {
       const form = await loader.getHarness(IxFormHarness);
 
-      await form.fillFormSections([
+      await form.fillForm(
         {
           Enabled: false,
           Type: 'Command',
@@ -160,7 +160,7 @@ describe('InitShutdownFormComponent', () => {
         {
           Command: 'ls -la',
         },
-      ]);
+      );
 
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();

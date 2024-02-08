@@ -84,7 +84,7 @@ describe('CertificateOptionsComponent', () => {
 
   describe('EC key type', () => {
     beforeEach(async () => {
-      await form.fillFormSections([
+      await form.fillForm(
         {
           'Key Type': 'EC',
           'Digest Algorithm': 'SHA384',
@@ -92,7 +92,7 @@ describe('CertificateOptionsComponent', () => {
         {
           'EC Curve': 'SECP256K1',
         },
-      ]);
+      );
     });
 
     it('returns fields when getPayload() is called for a key of EC type', () => {

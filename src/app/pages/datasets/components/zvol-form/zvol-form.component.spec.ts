@@ -138,7 +138,7 @@ describe('ZvolFormComponent', () => {
     it('adds a new zvol when new form is saved', fakeAsync(async (): Promise<void> => {
       spectator.tick();
 
-      await form.fillFormSections([
+      await form.fillForm(
         {
           'Zvol name': 'new zvol',
           Comments: 'comments text',
@@ -160,7 +160,7 @@ describe('ZvolFormComponent', () => {
           Passphrase: '12345678',
           'Confirm Passphrase': '12345678',
         },
-      ]);
+      );
 
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();

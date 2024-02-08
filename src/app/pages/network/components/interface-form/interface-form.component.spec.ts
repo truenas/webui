@@ -196,7 +196,7 @@ describe('InterfaceFormComponent', () => {
     it('saves a new link aggregation interface when form is submitted for LAG', async () => {
       jest.spyOn(spectator.inject(MatDialog), 'open');
 
-      await form.fillFormSections([
+      await form.fillForm(
         {
           Type: 'Link Aggregation',
         },
@@ -212,7 +212,7 @@ describe('InterfaceFormComponent', () => {
           'LACPDU Rate': 'SLOW',
           'Link Aggregation Interfaces': ['enp0s3'],
         },
-      ]);
+      );
 
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
@@ -245,7 +245,7 @@ describe('InterfaceFormComponent', () => {
 
     it('saves a new VLAN interface when form is submitted for a VLAN', async () => {
       jest.spyOn(spectator.inject(MatDialog), 'open');
-      await form.fillFormSections([
+      await form.fillForm(
         {
           Type: 'VLAN',
         },
@@ -257,7 +257,7 @@ describe('InterfaceFormComponent', () => {
           'VLAN Tag': 2,
           'Priority Code Point': 'Excellent effort',
         },
-      ]);
+      );
 
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();

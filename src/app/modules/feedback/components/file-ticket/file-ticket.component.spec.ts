@@ -86,7 +86,7 @@ describe('FileTicketComponent', () => {
   it('submits a ticket using form values and type input once user fill form and logs in to Jira', async () => {
     const fakeAttachments = [fakeFile('attachment1.png'), fakeFile('attachment2.png')];
 
-    await form.fillFormSections([
+    await form.fillForm(
       {
         Subject: 'Cannot shutdown',
         Message: 'Help me',
@@ -97,7 +97,7 @@ describe('FileTicketComponent', () => {
       {
         'Attach images (optional)': fakeAttachments,
       },
-    ]);
+    );
 
     loginToJiraButton.loggedIn.emit('jira-token');
 

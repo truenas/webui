@@ -48,7 +48,7 @@ describe('CertificateConstraintsComponent', () => {
 
   describe('all constraints used', () => {
     beforeEach(async () => {
-      await form.fillFormSections([
+      await form.fillForm(
         {
           'Basic Constraints': true,
           'Authority Key Identifier': true,
@@ -63,7 +63,7 @@ describe('CertificateConstraintsComponent', () => {
           'Critical Extension': true,
           'Key Usage Config': ['CRL Sign', 'Digital Signature'],
         },
-      ]);
+      );
     });
 
     it('returns cert_extensions when getPayload is called', () => {
@@ -129,7 +129,7 @@ describe('CertificateConstraintsComponent', () => {
 
   describe('some constraints used', () => {
     beforeEach(async () => {
-      await form.fillFormSections([
+      await form.fillForm(
         {
           'Basic Constraints': true,
           'Authority Key Identifier': true,
@@ -141,7 +141,7 @@ describe('CertificateConstraintsComponent', () => {
           'Basic Constraints Config': ['CA', 'Critical Extension'],
           'Authority Key Config': ['Critical Extension'],
         },
-      ]);
+      );
     });
 
     it('returns cert_extensions when getPayload is called', () => {

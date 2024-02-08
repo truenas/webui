@@ -132,7 +132,7 @@ describe('SourceSectionComponent', () => {
   });
 
   it('returns payload when getPayload is called', async () => {
-    await form.fillFormSections([
+    await form.fillForm(
       {
         Source: ['tank/files'],
         'Full Filesystem Replication': true,
@@ -144,7 +144,7 @@ describe('SourceSectionComponent', () => {
       {
         'Matching regular expression': 'test-.*',
       },
-    ]);
+    );
 
     expect(spectator.component.getPayload()).toEqual({
       also_include_naming_schema: [],
@@ -190,14 +190,14 @@ describe('SourceSectionComponent', () => {
     });
 
     it('shows Exclude Child Datasets when Recursive is ticked', async () => {
-      await form.fillFormSections([
+      await form.fillForm(
         {
           Recursive: true,
         },
         {
           'Exclude Child Datasets': ['pool1/files', 'pool1/storage'],
         },
-      ]);
+      );
 
       expect(spectator.component.getPayload()).toMatchObject({
         recursive: true,
@@ -280,14 +280,14 @@ describe('SourceSectionComponent', () => {
     });
 
     it('shows regex specific fields when `Matching regular expression` is selected', async () => {
-      await form.fillFormSections([
+      await form.fillForm(
         {
           'Also include snapshots with the name': 'Matching regular expression',
         },
         {
           'Matching regular expression': 'test-.*',
         },
-      ]);
+      );
 
       const payload = spectator.component.getPayload();
       expect(payload).toMatchObject({
@@ -325,7 +325,7 @@ describe('SourceSectionComponent', () => {
     });
 
     it('shows Begin and End fields when Replicate Specific Snapshot is set and schedule is hourly', async () => {
-      await form.fillFormSections([
+      await form.fillForm(
         {
           'By snapshot creation time': '0 * * * *',
         },
@@ -333,7 +333,7 @@ describe('SourceSectionComponent', () => {
           Begin: '10:00:00',
           End: '23:15:00',
         },
-      ]);
+      );
 
       expect(spectator.component.getPayload()).toMatchObject({
         restrict_schedule: {

@@ -103,14 +103,14 @@ describe('FileTicketLicensedFormComponent', () => {
 
     await fillTextFields();
 
-    await form.fillFormSections([
+    await form.fillForm(
       {
         'Attach additional images': true,
       },
       {
         'Attach images (optional)': fakeAttachments,
       },
-    ]);
+    );
 
     await submitButton.click();
 

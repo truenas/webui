@@ -138,7 +138,7 @@ describe('CsrAddComponent', () => {
     await nextButton.click();
     await updateStepHarnesses();
 
-    await form.fillFormSections([
+    await form.fillForm(
       {
         'Basic Constraints': true,
         'Extended Key Usage': true,
@@ -150,7 +150,7 @@ describe('CsrAddComponent', () => {
         Usages: ['CLIENT_AUTH'],
         'Critical Extension': true,
       },
-    ]);
+    );
 
     await nextButton.click();
 

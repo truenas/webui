@@ -253,7 +253,7 @@ describe('UserFormComponent', () => {
     it('sends an update payload to websocket and closes modal when save is pressed', async () => {
       const form = await loader.getHarness(IxFormHarness);
 
-      await form.fillFormSections([
+      await form.fillForm(
         {
           'Auxiliary Groups': ['mock-group', 'test-group'],
           'Full Name': 'updated',
@@ -272,7 +272,7 @@ describe('UserFormComponent', () => {
         {
           'Home Directory Permissions': '755',
         },
-      ]);
+      );
 
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();

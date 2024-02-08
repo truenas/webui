@@ -85,7 +85,7 @@ describe('OpenstackSwiftProviderFormComponent', () => {
   });
 
   it('shows and returns additional attributes when AuthVersion is v3', async () => {
-    await form.fillFormSections([
+    await form.fillForm(
       {
         'User Name': 'johny',
         'API Key or Password': 'A12345',
@@ -104,7 +104,7 @@ describe('OpenstackSwiftProviderFormComponent', () => {
         'User Domain': 'accountants',
         'Tenant Domain': 'tenant-domain',
       },
-    ]);
+    );
 
     const values = spectator.component.getSubmitAttributes();
     expect(values).toMatchObject({

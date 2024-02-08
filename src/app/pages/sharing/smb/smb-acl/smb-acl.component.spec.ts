@@ -155,7 +155,7 @@ describe('SmbAclComponent', () => {
   it('saves updated acl when form is submitted', async () => {
     await entriesList.pressAddButton();
     const newListItem = await entriesList.getLastListItem();
-    await newListItem.fillFormSections([
+    await newListItem.fillForm(
       {
         Who: 'Group',
         Permission: 'FULL',
@@ -164,7 +164,7 @@ describe('SmbAclComponent', () => {
       {
         Group: 'wheel',
       },
-    ]);
+    );
 
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();

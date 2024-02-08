@@ -91,7 +91,7 @@ describe('ReplicationWhatAndWhereComponent', () => {
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     form = await loader.getHarness(IxFormHarness);
 
-    await form.fillFormSections([
+    await form.fillForm(
       {
         'Source Location': 'On this System',
         'Destination Location': 'On this System',
@@ -106,7 +106,7 @@ describe('ReplicationWhatAndWhereComponent', () => {
       {
         'Encryption Key Format': 'HEX',
       },
-    ]);
+    );
   });
 
   it('generates payload which will inherit dataset encryption from its parent dataset', async () => {
@@ -156,10 +156,10 @@ describe('ReplicationWhatAndWhereComponent', () => {
   });
 
   it('opens sudo enabled dialog when choosing to existing ssh credential', async () => {
-    await form.fillFormSections([
+    await form.fillForm(
       { 'Source Location': 'On a Different System' },
       { 'SSH Connection': 'non-root-ssh-connection' },
-    ]);
+    );
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({
       buttonText: 'Use Sudo For ZFS Commands',
       hideCheckbox: true,

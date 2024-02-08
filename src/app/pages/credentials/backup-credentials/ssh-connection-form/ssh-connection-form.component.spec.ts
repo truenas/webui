@@ -137,7 +137,7 @@ describe('SshConnectionFormComponent', () => {
     });
 
     it('saves new SSH connection added manually', async () => {
-      await form.fillFormSections([
+      await form.fillForm(
         {
           Name: 'New',
           'Setup Method': 'Manual',
@@ -150,7 +150,7 @@ describe('SshConnectionFormComponent', () => {
           'Remote Host Key': 'ssh-rsaNew',
           'Connect Timeout': '20',
         },
-      ]);
+      );
 
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
@@ -174,7 +174,7 @@ describe('SshConnectionFormComponent', () => {
     });
 
     it('saves new SSH connection added using semi-automatic setup', async () => {
-      await form.fillFormSections([
+      await form.fillForm(
         {
           Name: 'Update',
           'Setup Method': 'Semi-automatic (TrueNAS only)',
@@ -189,7 +189,7 @@ describe('SshConnectionFormComponent', () => {
         {
           'Enable passwordless sudo for zfs commands': true,
         },
-      ]);
+      );
 
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
@@ -214,7 +214,7 @@ describe('SshConnectionFormComponent', () => {
     });
 
     it('gets remote host key and puts it in corresponding textarea when Discover Remote Host Key is pressed', async () => {
-      await form.fillFormSections([
+      await form.fillForm(
         {
           'Setup Method': 'Manual',
         },
@@ -225,7 +225,7 @@ describe('SshConnectionFormComponent', () => {
           'Private Key': 'Generate New',
           'Connect Timeout': '30',
         },
-      ]);
+      );
 
       const discoverButton = await loader.getHarness(MatButtonHarness.with({ text: 'Discover Remote Host Key' }));
       await discoverButton.click();

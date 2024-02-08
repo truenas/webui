@@ -88,7 +88,7 @@ describe('SnmpTrapServiceComponent', () => {
     });
 
     it('returns alert service form values when getSubmitAttributes is called', async () => {
-      await form.fillFormSections([
+      await form.fillForm(
         {
           Hostname: 'truenas.com',
           Port: 163,
@@ -102,7 +102,7 @@ describe('SnmpTrapServiceComponent', () => {
           'Authentication Protocol': 'SHA',
           Username: 'eve',
         },
-      ]);
+      );
 
       const submittedValues = spectator.component.getSubmitAttributes();
       expect(submittedValues).toEqual({
