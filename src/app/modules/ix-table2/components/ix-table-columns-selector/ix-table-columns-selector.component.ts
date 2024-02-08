@@ -30,7 +30,7 @@ export class IxTableColumnsSelectorComponent<T = unknown> implements OnChanges {
 
   ngOnChanges(changes: IxSimpleChanges<this>): void {
     if (changes.columns.firstChange) {
-      this.defaultColumns = changes.columns.currentValue.filter((column) => !!column.title);
+      this.defaultColumns = changes.columns.currentValue;
       this.setInitialState();
     }
   }
