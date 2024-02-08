@@ -1032,6 +1032,8 @@
   "Directory Inherit": "",
   "Directory Mask": "",
   "Directory Permissions": "",
+  "Directory Service Read": "",
+  "Directory Service Write": "",
   "Directory Services": "",
   "Directory Services Groups": "",
   "Directory Services Monitor": "",
