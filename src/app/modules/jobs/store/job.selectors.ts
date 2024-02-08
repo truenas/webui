@@ -17,6 +17,11 @@ export const selectJobs = createSelector(
   selectAll,
 );
 
+export const selectAllNonTransientJobs = createSelector(
+  selectJobs,
+  (jobs) => jobs.filter((job) => !job.transient),
+);
+
 export const selectJob = (id: number): MemoizedSelector<object, Job> => createSelector(
   selectJobs,
   (jobs) => jobs.find((job) => job.id === id),
@@ -28,23 +33,18 @@ export const selectIsJobPanelOpen = createSelector(
 );
 
 export const selectRunningJobs = createSelector(
-  selectJobs,
-  (jobs) => jobs.filter((job) => job.state === JobState.Running && !job.transient),
-);
-
-export const selectUpdateJob = createSelector(
-  selectRunningJobs,
-  (jobs) => jobs.filter((job) => job.method === 'update.update' || job.method === 'failover.upgrade'),
+  selectAllNonTransientJobs,
+  (jobs) => jobs.filter((job) => job.state === JobState.Running),
 );
 
 export const selectFailedJobs = createSelector(
-  selectJobs,
-  (jobs) => jobs.filter((job) => job.state === JobState.Failed && !job.transient),
+  selectAllNonTransientJobs,
+  (jobs) => jobs.filter((job) => job.state === JobState.Failed),
 );
 
 export const selectWaitingJobs = createSelector(
-  selectJobs,
-  (jobs) => jobs.filter((job) => job.state === JobState.Waiting && !job.transient),
+  selectAllNonTransientJobs,
+  (jobs) => jobs.filter((job) => job.state === JobState.Waiting),
 );
 
 export const selectRunningJobsCount = createSelector(
@@ -67,4 +67,9 @@ export const selectJobsPanelSlice = createSelector(
   selectWaitingJobs,
   selectFailedJobs,
   (runningJobs, waitingJobs, failedJobs) => [...runningJobs, ...waitingJobs, ...failedJobs],
+);
+
+export const selectUpdateJob = createSelector(
+  selectRunningJobs,
+  (jobs) => jobs.filter((job) => job.method === 'update.update' || job.method === 'failover.upgrade'),
 );

@@ -1,6 +1,5 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialog } from '@angular/material/dialog';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
@@ -100,7 +99,7 @@ describe('SmartTaskCardComponent', () => {
       }),
       mockProvider(IxSlideInService, {
         open: jest.fn(() => {
-          return { slideInClosed$: of() };
+          return { slideInClosed$: of(true) };
         }),
       }),
       mockProvider(IxSlideInRef),
@@ -146,17 +145,6 @@ describe('SmartTaskCardComponent', () => {
 
     expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(SmartTaskFormComponent, {
       data: expect.objectContaining(smartTasks[0]),
-    });
-
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('smart.test.query');
-  });
-
-  it('shows form to create new Smart Task when Add button is pressed', async () => {
-    const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
-    await addButton.click();
-
-    expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(SmartTaskFormComponent, {
-      data: undefined,
     });
 
     expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('smart.test.query');

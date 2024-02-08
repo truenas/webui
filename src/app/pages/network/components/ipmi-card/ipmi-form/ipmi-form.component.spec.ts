@@ -66,23 +66,37 @@ describe('IpmiFormComponent', () => {
       { provide: SLIDE_IN_DATA, useValue: undefined },
       mockWebSocket([
         mockCall('failover.licensed', true),
-        mockCall('failover.call_remote', [{
+        mockCall('failover.node', 'A'),
+        mockCall('ipmi.lan.query', (params) => {
+          if (params?.length ? params[0]['ipmi-options']['query-remote'] : false) {
+            // TODO: Not correct. Figure out how to solve this for query endpoints.
+            return [{
+              channel: 1,
+              ip_address_source: IpmiIpAddressSource.Static,
+              default_gateway_ip_address: '10.220.0.2',
+              id: 1,
+              ip_address: '10.220.15.115',
+              subnet_mask: '255.255.240.0',
+            }] as Ipmi[];
+          }
+
+          return [{
+            channel: 1,
+            ip_address_source: IpmiIpAddressSource.Static,
+            default_gateway_ip_address: '10.220.0.1',
+            id: 1,
+            ip_address: '10.220.15.114',
+            subnet_mask: '255.255.240.0',
+          }] as Ipmi[];
+        }),
+        mockCall('ipmi.lan.update', {
           channel: 1,
           ip_address_source: IpmiIpAddressSource.Static,
           default_gateway_ip_address: '10.220.0.2',
           id: 1,
           ip_address: '10.220.15.115',
           subnet_mask: '255.255.240.0',
-        }] as Ipmi[]),
-        mockCall('failover.node', 'A'),
-        mockCall('ipmi.lan.query', [{
-          channel: 1,
-          ip_address_source: IpmiIpAddressSource.Static,
-          default_gateway_ip_address: '10.220.0.1',
-          id: 1,
-          ip_address: '10.220.15.114',
-          subnet_mask: '255.255.240.0',
-        }] as Ipmi[]),
+        } as Ipmi),
         mockCall('ipmi.chassis.info', {
           chassis_identify_state: IpmiChassisIdentifyState.Off,
         } as IpmiChassis),
@@ -152,8 +166,31 @@ describe('IpmiFormComponent', () => {
       expect(gateway.isDisabled()).toBeTruthy();
     });
 
-    it('sends a create payload to websocket and closes modal when save is pressed', async () => {
-      const dataForm = {
+    it('updates controller data and closes modal when save is pressed', async () => {
+      await form.fillForm({
+        'Remote Controller': 'Active: TrueNAS Controller 1',
+        DHCP: false,
+        'IPv4 Default Gateway': '10.220.0.1',
+        'IPv4 Address': '10.220.15.114',
+        'IPv4 Netmask': '255.255.240.0',
+        'VLAN ID': '',
+        Password: '',
+      });
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      await saveButton.click();
+
+      expect(ws.call).toHaveBeenCalledWith('ipmi.lan.update', [1, {
+        dhcp: false,
+        ipaddress: '10.220.15.114',
+        gateway: '10.220.0.1',
+        netmask: '255.255.240.0',
+      }]);
+      expect(spectator.inject(IxSlideInRef).close).toHaveBeenCalled();
+      expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Successfully saved IPMI settings.');
+    });
+
+    it('updates remote controller data and closes modal when save is pressed', async () => {
+      await form.fillForm({
         'Remote Controller': 'Standby: TrueNAS Controller 2',
         DHCP: false,
         'IPv4 Address': '10.220.15.115',
@@ -161,18 +198,17 @@ describe('IpmiFormComponent', () => {
         'IPv4 Netmask': '255.255.240.0',
         Password: '',
         'VLAN ID': '',
-      };
-      form = await loader.getHarness(IxFormHarness);
-      await form.fillForm(dataForm);
+      });
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(ws.call).toHaveBeenCalledWith('failover.call_remote', ['ipmi.lan.update', [1, {
+      expect(ws.call).toHaveBeenCalledWith('ipmi.lan.update', [1, {
         dhcp: false,
         ipaddress: '10.220.15.115',
         gateway: '10.220.0.2',
         netmask: '255.255.240.0',
-      }]]);
+        apply_remote: true,
+      }]);
       expect(spectator.inject(IxSlideInRef).close).toHaveBeenCalled();
       expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Successfully saved IPMI settings.');
     });

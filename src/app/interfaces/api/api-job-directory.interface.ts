@@ -25,10 +25,9 @@ import {
   DatasetEncryptionSummaryQueryParams,
 } from 'app/interfaces/dataset-encryption-summary.interface';
 import { DatasetLockParams, DatasetUnlockParams, DatasetUnlockResult } from 'app/interfaces/dataset-lock.interface';
-import { DatasetPermissionsUpdate } from 'app/interfaces/dataset-permissions.interface';
 import { ExportParams } from 'app/interfaces/export-params.interface';
 import { FailoverUpgradeParams } from 'app/interfaces/failover.interface';
-import { FilesystemPutParams } from 'app/interfaces/filesystem-stat.interface';
+import { FilesystemPutParams, FilesystemSetPermParams } from 'app/interfaces/filesystem-stat.interface';
 import { IpmiEvent } from 'app/interfaces/ipmi.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { KmipConfig, KmipConfigUpdate } from 'app/interfaces/kmip-config.interface';
@@ -115,6 +114,7 @@ export interface ApiJobDirectory {
   // Filesystem
   'filesystem.put': { params: FilesystemPutParams; response: boolean };
   'filesystem.setacl': { params: [SetAcl]; response: void };
+  'filesystem.setperm': { params: [FilesystemSetPermParams]; response: void };
 
   // idmap
   'idmap.clear_idmap_cache': { params: void; response: void };
@@ -153,7 +153,6 @@ export interface ApiJobDirectory {
   };
   'pool.dataset.export_key': { params: [id: string, download?: boolean]; response: string };
   'pool.dataset.lock': { params: DatasetLockParams; response: boolean };
-  'pool.dataset.permission': { params: DatasetPermissionsUpdate; response: number };
   'pool.dataset.unlock': { params: [path: string, params: DatasetUnlockParams]; response: DatasetUnlockResult };
 
   // Replication
