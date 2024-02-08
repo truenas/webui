@@ -21,10 +21,6 @@ export class IxTableColumnsSelectorComponent<T = unknown> implements OnChanges {
   private defaultColumns: Column<T, ColumnComponent<T>>[];
 
   get isAllChecked(): boolean {
-    return this.isOnlyOneColumnSelected;
-  }
-
-  get isOnlyOneColumnSelected(): boolean {
     return this.columns.filter((column) => !column.hidden && !!column.title).length === 1;
   }
 
@@ -62,7 +58,7 @@ export class IxTableColumnsSelectorComponent<T = unknown> implements OnChanges {
   }
 
   toggle(column: Column<T, ColumnComponent<T>>): void {
-    if (this.isOnlyOneColumnSelected && !this.isSelected(column)) {
+    if (this.isAllChecked && !this.isSelected(column)) {
       return;
     }
     this.hiddenColumns.toggle(column);
