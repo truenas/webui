@@ -73,10 +73,24 @@ describe('IxTableColumnsSelectorComponent', () => {
     await menu.open();
   });
 
-  it('checks when "Unselect All" is pressed', async () => {
-    await menu.clickItem({ text: 'Unselect All' });
+  it('initializes with the correct default and hidden columns', () => {
+    const hiddenColumnsTitles = spectator.component.hiddenColumns.selected.map((col) => col.title);
+    const selectedColumnsTitles = spectator.component.columns.filter((col) => !col.hidden).map((col) => col.title);
 
-    expect(spectator.component.hiddenColumns.selected).toHaveLength(spectator.component.columns.length - 1);
+    expect(hiddenColumnsTitles).toEqual(expect.arrayContaining(['Description', 'Enabled']));
+    expect(selectedColumnsTitles).toEqual(expect.arrayContaining(['Users', 'Command', 'Schedule']));
+  });
+
+  it('checks when "Select All" / "Unselect All" is pressed', async () => {
+    const columnsChangeSpy = jest.spyOn(spectator.component.columnsChange, 'emit');
+
+    await menu.clickItem({ text: 'Select All' });
+    expect(spectator.component.hiddenColumns.selected).toHaveLength(0);
+    expect(columnsChangeSpy).toHaveBeenCalled();
+
+    await menu.clickItem({ text: 'Unselect All' });
+    expect(spectator.component.hiddenColumns.selected).toHaveLength(4);
+    expect(columnsChangeSpy).toHaveBeenCalled();
   });
 
   it('checks when "Reset to Defaults" is pressed', async () => {
@@ -85,5 +99,15 @@ describe('IxTableColumnsSelectorComponent', () => {
 
     expect(spectator.component.hiddenColumns.selected).toHaveLength(2);
     expect(spectator.component.resetToDefaults).toHaveBeenCalled();
+  });
+
+  it('toggles an individual column correctly', async () => {
+    expect(spectator.component.hiddenColumns.selected).toHaveLength(2);
+
+    await menu.clickItem({ text: 'Users' });
+    expect(spectator.component.hiddenColumns.selected).toHaveLength(3);
+
+    await menu.clickItem({ text: 'Enabled' });
+    expect(spectator.component.hiddenColumns.selected).toHaveLength(2);
   });
 });

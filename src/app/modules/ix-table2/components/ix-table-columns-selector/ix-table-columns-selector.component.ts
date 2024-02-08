@@ -20,8 +20,12 @@ export class IxTableColumnsSelectorComponent<T = unknown> implements OnChanges {
   hiddenColumns = new SelectionModel<Column<T, ColumnComponent<T>>>(true, []);
   private defaultColumns: Column<T, ColumnComponent<T>>[];
 
-  get isAllChecked(): boolean {
+  get isOnlyOneColumnSelected(): boolean {
     return this.columns.filter((column) => !column.hidden && !!column.title).length === 1;
+  }
+
+  get isAllSelected(): boolean {
+    return !this.columns.filter((column) => column.hidden && !!column.title).length;
   }
 
   constructor(private cdr: ChangeDetectorRef) {
@@ -36,15 +40,14 @@ export class IxTableColumnsSelectorComponent<T = unknown> implements OnChanges {
   }
 
   toggleAll(): void {
-    if (this.isAllChecked) {
-      this.columns.forEach((column) => this.hiddenColumns.deselect(column));
+    if (this.isAllSelected) {
+      this.hiddenColumns.deselect(...this.columns);
+      this.toggle(this.columns[0]);
     } else {
-      this.columns.forEach((column) => this.hiddenColumns.select(column));
+      this.hiddenColumns.select(...this.columns);
     }
 
-    if (!this.columns.filter((column) => !column.hidden).length) {
-      this.toggle(this.columns[0]);
-    }
+    this.columns.forEach((_cell, index) => this.toggle(this.columns[index]));
 
     this.emitColumnsChange();
   }
@@ -58,7 +61,7 @@ export class IxTableColumnsSelectorComponent<T = unknown> implements OnChanges {
   }
 
   toggle(column: Column<T, ColumnComponent<T>>): void {
-    if (this.isAllChecked && !this.isSelected(column)) {
+    if (this.isOnlyOneColumnSelected && !this.isSelected(column)) {
       return;
     }
     this.hiddenColumns.toggle(column);
@@ -70,10 +73,11 @@ export class IxTableColumnsSelectorComponent<T = unknown> implements OnChanges {
     this.columns = _.cloneDeep(this.defaultColumns);
     this.hiddenColumns.select(...this.columns);
 
-    this.defaultColumns
-      .filter((column) => !column.hidden)
-      .map((column) => this.defaultColumns.findIndex((column2) => column.title === column2.title))
-      .forEach((val) => this.toggle(this.columns[val]));
+    this.defaultColumns.forEach((column, index) => {
+      if (!column.hidden) {
+        this.toggle(this.columns[index]);
+      }
+    });
 
     this.emitColumnsChange();
     this.cdr.markForCheck();
@@ -84,10 +88,10 @@ export class IxTableColumnsSelectorComponent<T = unknown> implements OnChanges {
       .pipe(untilDestroyed(this))
       .subscribe((values) => {
         if (values.removed.length) {
-          this.columns.find((column) => column.propertyName === values.removed[0].propertyName).hidden = false;
+          this.columns.find((column) => column.title === values.removed[0].title).hidden = false;
         }
         if (values.added.length) {
-          this.columns.find((column) => column.propertyName === values.added[0].propertyName).hidden = true;
+          this.columns.find((column) => column.title === values.added[0].title).hidden = true;
         }
         this.emitColumnsChange();
         this.cdr.markForCheck();
