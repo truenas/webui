@@ -5,13 +5,7 @@
 </mat-dialog-content>
 
 <ix-form-actions mat-dialog-actions class="form-actions">
-  <button
-    *ixRequiresRoles="requiredRoles"
-    mat-button
-    type="button"
-    ixTest="truecommand-signup"
-    (click)="onSignup()"
-  >
+  <button mat-button type="button" ixTest="truecommand-signup" (click)="onSignup()">
     {{ 'Signup' | translate }}
   </button>
 
