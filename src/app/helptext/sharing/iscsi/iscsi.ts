@@ -176,8 +176,7 @@ export const helptextSharingIscsi = {
 
   extent_placeholder_path: T('Path to the Extent'),
   extent_tooltip_path: T('Browse to an existing file. Create a new file by browsing to a\
- dataset and appending /<i>\'{\'filename.ext\'}\'</i> to the path. Extents cannot be\
- created inside a jail root directory.'),
+ dataset and appending /<i>(filename.ext)</i> to the path.'),
 
   extent_placeholder_filesize: T('Filesize'),
   extent_tooltip_filesize: T('Entering <i>0</i> uses the actual file size and requires that the\

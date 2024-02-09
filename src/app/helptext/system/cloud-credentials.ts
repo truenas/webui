@@ -44,7 +44,7 @@ export const helptextSystemCloudcredentials = {
  field can be empty to use the default endpoint for the region, and \
  available buckets are automatically fetched. Refer to the AWS \
  Documentation for a list of \
- <a href="https://docs.aws.amazon.com/general/latest/gr/rande.html#s3_website_region_endpoints \
+ <a href="https://docs.aws.amazon.com/general/latest/gr/rande.html#s3_website_region_endpoints" \
  target="_blank">Simple Storage Service Website Endpoints</a>.'),
   },
   region_s3: {
