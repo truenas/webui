@@ -4,15 +4,11 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatMenuHarness } from '@angular/material/menu/testing';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory } from '@ngneat/spectator/jest';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { EntityModule } from 'app/modules/entity/entity.module';
 import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { yesNoColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-yesno/ix-cell-yesno.component';
 import { IxTableColumnsSelectorComponent } from 'app/modules/ix-table2/components/ix-table-columns-selector/ix-table-columns-selector.component';
 import { Column, ColumnComponent } from 'app/modules/ix-table2/interfaces/table-column.interface';
-import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
 import { createTable } from 'app/modules/ix-table2/utils';
-import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { CronjobRow } from 'app/pages/system/advanced/cron/cron-list/cronjob-row.interface';
 
 describe('IxTableColumnsSelectorComponent', () => {
@@ -49,20 +45,13 @@ describe('IxTableColumnsSelectorComponent', () => {
 
   const createComponent = createComponentFactory({
     component: IxTableColumnsSelectorComponent,
-    imports: [
-      AppLoaderModule,
-      EntityModule,
-      IxTable2Module,
-      TranslateModule,
-    ],
-    providers: [
-      TranslateService,
-    ],
   });
 
   beforeEach(async () => {
     spectator = createComponent({
-      props: { columns: testColumns },
+      props: {
+        columns: testColumns,
+      },
     });
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     menu = await loader.getHarness(MatMenuHarness);
