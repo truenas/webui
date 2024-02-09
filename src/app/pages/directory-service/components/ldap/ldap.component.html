@@ -128,7 +128,7 @@
 
       <ix-form-actions>
         <button
-          *ixRequiresRoles="[Role.FullAdmin]"
+          *ixRequiresRoles="[Role.DirectoryServiceWrite]"
           mat-button
           type="submit"
           color="primary"
@@ -142,7 +142,7 @@
           {{ isAdvancedMode ? ('Basic Options' | translate) : ('Advanced Options' | translate) }}
         </button>
         <button
-          *ixRequiresRoles="[Role.FullAdmin]"
+          *ixRequiresRoles="[Role.DirectoryServiceWrite]"
           mat-button
           type="button"
           ixTest="rebuild-cache"

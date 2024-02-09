@@ -1694,6 +1694,8 @@
   "Directory Inherit": "Успадкування каталогу",
   "Directory Mask": "Маска каталогу",
   "Directory Permissions": "Дозвіл каталогу",
+  "Directory Service Read": "Службa Каталогів Read",
+  "Directory Service Write": "Службa Каталогів Write",
   "Directory Services": "Служби каталогів",
   "Directory Services Monitor": "Монітор служб каталогів",
   "Directory/Files": "Каталог/Файли",
