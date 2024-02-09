@@ -80,6 +80,7 @@ describe('ServicesEffects', () => {
     });
 
     it('should handle errors when loading services', () => {
+      jest.spyOn(console, 'error').mockImplementation();
       const error = new Error('Service loading error');
       jest.spyOn(ws, 'call').mockReturnValue(throwError(() => error));
 

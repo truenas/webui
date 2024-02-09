@@ -24,7 +24,7 @@ export function vdevCapacity({
   draidDataDisks?: number;
   draidSpareDisks?: number;
 }): number {
-  if (!vdev.length) {
+  if (!vdev.length || !layout) {
     return 0;
   }
 

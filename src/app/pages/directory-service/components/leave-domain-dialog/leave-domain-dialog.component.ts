@@ -4,6 +4,7 @@ import { MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { JobState } from 'app/enums/job-state.enum';
+import { Role } from 'app/enums/role.enum';
 import { helptextActiveDirectory } from 'app/helptext/directory-service/active-directory';
 import { LeaveActiveDirectory } from 'app/interfaces/active-directory-config.interface';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
@@ -23,6 +24,8 @@ export class LeaveDomainDialogComponent {
     username: ['', Validators.required],
     password: ['', Validators.required],
   });
+
+  protected readonly Role = Role;
 
   constructor(
     private errorHandler: ErrorHandlerService,

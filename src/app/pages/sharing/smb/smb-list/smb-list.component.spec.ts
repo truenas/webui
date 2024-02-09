@@ -4,8 +4,8 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { Router } from '@angular/router';
 import { Spectator, createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
-import { MockComponents } from 'ng-mocks';
-import { of, pipe } from 'rxjs';
+import { MockComponents, MockModule } from 'ng-mocks';
+import { of } from 'rxjs';
 import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
@@ -17,8 +17,6 @@ import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTable2Harness } from 'app/modules/ix-table2/components/ix-table2/ix-table2.harness';
 import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
 import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
-import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
-import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { ServiceStateButtonComponent } from 'app/pages/sharing/components/shares-dashboard/service-state-button/service-state-button.component';
 import { SmbAclComponent } from 'app/pages/sharing/smb/smb-acl/smb-acl.component';
 import { SmbFormComponent } from 'app/pages/sharing/smb/smb-form/smb-form.component';
@@ -49,8 +47,7 @@ describe('SmbListComponent', () => {
     component: SmbListComponent,
     imports: [
       IxTable2Module,
-      AppLoaderModule,
-      AppCommonModule,
+      MockModule(AppCommonModule),
     ],
     declarations: [
       MockComponents(
@@ -58,12 +55,8 @@ describe('SmbListComponent', () => {
       ),
     ],
     providers: [
-      mockProvider(AppLoaderService),
       mockProvider(ErrorHandlerService),
       mockProvider(EmptyService),
-      mockProvider(AppLoaderService, {
-        withLoader: jest.fn(() => pipe()),
-      }),
       mockWebSocket([
         mockCall('sharing.smb.query', shares as SmbShare[]),
         mockCall('sharing.smb.delete'),
@@ -100,7 +93,7 @@ describe('SmbListComponent', () => {
     jest.spyOn(spectator.inject(Router), 'navigate').mockImplementation();
   });
 
-  it('shows acurate page title', () => {
+  it('shows accurate page title', () => {
     const title = spectator.query('h3');
     expect(title).toHaveText('SMB');
   });

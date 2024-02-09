@@ -143,9 +143,11 @@ describe('CloudSyncListComponent', () => {
     });
 
     expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('cloudsync.sync', [1]);
+
+    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('cloudsync.query');
   });
 
-  it('shows form to edit an existing interface when Edit button is pressed', async () => {
+  it('shows form to edit an existing CloudSync when Edit button is pressed', async () => {
     await table.clickToggle(0);
 
     const editButton = await loader.getHarness(MatButtonHarness.with({ text: 'Edit' }));
@@ -156,6 +158,8 @@ describe('CloudSyncListComponent', () => {
       true,
       expect.objectContaining(cloudSyncList[0]),
     );
+
+    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('cloudsync.query');
   });
 
   it('deletes a Cloud Sync with confirmation when Delete button is pressed', async () => {
@@ -172,6 +176,8 @@ describe('CloudSyncListComponent', () => {
     });
 
     expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('cloudsync.delete', [1]);
+
+    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('cloudsync.query');
   });
 
   it('shows dialog when Restore button is pressed', async () => {
@@ -185,6 +191,8 @@ describe('CloudSyncListComponent', () => {
     expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(CloudSyncRestoreDialogComponent, {
       data: 1,
     });
+
+    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('cloudsync.query');
   });
 
   it('shows confirmation dialog when Dry Run button is pressed', async () => {
@@ -200,5 +208,7 @@ describe('CloudSyncListComponent', () => {
     });
 
     expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('cloudsync.sync', [1, { dry_run: true }]);
+
+    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('cloudsync.query');
   });
 });
