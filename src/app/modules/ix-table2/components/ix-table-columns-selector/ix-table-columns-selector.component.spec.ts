@@ -62,9 +62,7 @@ describe('IxTableColumnsSelectorComponent', () => {
 
   beforeEach(async () => {
     spectator = createComponent({
-      props: {
-        columns: testColumns,
-      },
+      props: { columns: testColumns },
     });
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     menu = await loader.getHarness(MatMenuHarness);
