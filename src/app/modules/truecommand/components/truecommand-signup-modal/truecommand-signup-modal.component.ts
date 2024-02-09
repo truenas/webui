@@ -2,6 +2,7 @@ import {
   ChangeDetectionStrategy, Component, Inject,
 } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
+import { Role } from 'app/enums/role.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { helptextTopbar } from 'app/helptext/topbar';
 
@@ -12,6 +13,8 @@ import { helptextTopbar } from 'app/helptext/topbar';
 })
 export class TruecommandSignupModalComponent {
   readonly helptext = helptextTopbar;
+  protected readonly requiredRoles = [Role.FullAdmin];
+
   constructor(
     private dialogRef: MatDialogRef<TruecommandSignupModalComponent>,
     @Inject(WINDOW) private window: Window,

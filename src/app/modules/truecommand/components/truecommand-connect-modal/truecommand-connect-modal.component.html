@@ -36,9 +36,9 @@
       {{ 'Cancel' | translate }}
     </button>
 
-    <span>
+    <span *ngIf="isConnected">
       <button
-        *ngIf="isConnected"
+        *ixRequiresRoles="requiredRoles"
         mat-button
         type="button"
         class="mat-mdc-button mat-button action-btn"
@@ -52,6 +52,7 @@
     </span>
 
     <button
+      *ixRequiresRoles="requiredRoles"
       mat-button
       type="submit"
       class="mat-mdc-button mat-button mat-primary"

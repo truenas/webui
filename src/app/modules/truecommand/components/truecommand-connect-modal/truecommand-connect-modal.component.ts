@@ -4,6 +4,7 @@ import {
 import { FormBuilder } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Role } from 'app/enums/role.enum';
 import { helptextTopbar } from 'app/helptext/topbar';
 import { TrueCommandConfig, UpdateTrueCommand } from 'app/interfaces/true-command-config.interface';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
@@ -26,6 +27,7 @@ export type TruecommandSignupModalResult = boolean | { deregistered: boolean };
 })
 export class TruecommandConnectModalComponent implements OnInit {
   readonly helptext = helptextTopbar;
+  protected readonly requiredRoles = [Role.FullAdmin];
 
   title: string;
   saveButtonText: string;
