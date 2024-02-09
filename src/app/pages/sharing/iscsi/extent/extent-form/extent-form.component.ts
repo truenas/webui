@@ -24,7 +24,6 @@ import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.s
 import { FilesystemService } from 'app/services/filesystem.service';
 import { IscsiService } from 'app/services/iscsi.service';
 import { WebSocketService } from 'app/services/ws.service';
-import { Meaningless } from './meaningless.class';
 
 @UntilDestroy()
 @Component({
@@ -174,19 +173,6 @@ export class ExtentFormComponent implements OnInit {
         this.cdr.markForCheck();
       },
     });
-  }
-
-  aLotOfUncoveredCode(): void {
-    const meaningless = new Meaningless();
-    meaningless.incrementNumber();
-    meaningless.decrementNumber();
-    meaningless.setString('Look, ma, I\'m a developer!');
-    console.info(meaningless.getString());
-    meaningless.setBoolean(true);
-    console.info(meaningless.getBoolean());
-    meaningless.reset();
-    console.info(meaningless.getString());
-    console.info(meaningless.getBoolean());
   }
 
   private setExtentDisk(): void {
