@@ -16,6 +16,7 @@
     [ixTest]="controlDirective.name"
     [required]="required"
     [disabled]="isDisabled"
+    [attr.aria-label]="'Enter a directory path value for {label}. Separate multiple values with commas.' | translate: { label }"
     (change)="onInputChanged(input.value)"
     (blur)="onTouch()"
   />
