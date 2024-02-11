@@ -32,6 +32,7 @@ describe('PrivilegeFormComponent', () => {
     ],
     ds_groups: [],
     roles: [Role.ReadonlyAdmin],
+    builtin_name: null,
   } as Privilege;
 
   const createComponent = createComponentFactory({
@@ -142,6 +143,43 @@ describe('PrivilegeFormComponent', () => {
         local_groups: [111, 222],
         name: 'updated privilege',
         roles: [Role.FullAdmin, Role.ReadonlyAdmin],
+        web_shell: false,
+      }]);
+    });
+  });
+
+  describe('editing a build-in privilege', () => {
+    beforeEach(() => {
+      spectator = createComponent({
+        providers: [
+          { provide: SLIDE_IN_DATA, useValue: { ...fakeDataPrivilege, builtin_name: 'ADMIN' } },
+        ],
+      });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      ws = spectator.inject(WebSocketService);
+    });
+
+    it('sends an update payload to websocket and closes modal when save is pressed', async () => {
+      const form = await loader.getHarness(IxFormHarness);
+
+      expect(await form.getDisabledState()).toEqual({
+        Name: true,
+        Roles: true,
+        'Directory Services Groups': false,
+        'Local Groups': false,
+        'Web Shell Access': false,
+      });
+
+      await form.fillForm({
+        'Web Shell Access': false,
+      });
+
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      await saveButton.click();
+
+      expect(ws.call).toHaveBeenLastCalledWith('privilege.update', [10, {
+        ds_groups: [],
+        local_groups: [111, 222],
         web_shell: false,
       }]);
     });
