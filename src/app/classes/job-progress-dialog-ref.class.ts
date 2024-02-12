@@ -1,33 +1,24 @@
 import { MatDialogRef } from '@angular/material/dialog';
-import { Observable } from 'rxjs';
-import { JobProgressDialog } from 'app/classes/job-progress-dialog.class';
-import { Job, JobProgress } from 'app/interfaces/job.interface';
+import { TranslateService } from '@ngx-translate/core';
+import {
+  merge, Observable, switchMap, take, throwError,
+} from 'rxjs';
+import { Job } from 'app/interfaces/job.interface';
 import { JobProgressDialogComponent } from 'app/modules/common/dialog/job-progress/job-progress-dialog.component';
 
-export class JobProgressDialogRef {
-  constructor(private readonly jobProgressDialog: JobProgressDialog) { }
+export class JobProgressDialogRef<T> {
+  constructor(
+    readonly matDialogRef: MatDialogRef<JobProgressDialogComponent<T>>,
+    readonly translate: TranslateService,
+  ) {}
 
-  getDialogRef(): MatDialogRef<JobProgressDialogComponent> {
-    return this.jobProgressDialog.matDialogRef;
-  }
-
-  onSuccess(): Observable<Job> {
-    return this.jobProgressDialog.afterSuccess$;
-  }
-
-  onAbort(): Observable<Job> {
-    return this.jobProgressDialog.afterAbort$;
-  }
-
-  onFailure(): Observable<Job> {
-    return this.jobProgressDialog.afterFailure$;
-  }
-
-  onProgressUpdate(): Observable<JobProgress> {
-    return this.jobProgressDialog.onProgress$;
-  }
-
-  onClose(): Observable<void> {
-    return this.jobProgressDialog.matDialogRef.afterClosed();
+  afterClosed(): Observable<Job<T>> {
+    return merge(
+      this.matDialogRef.componentInstance.jobSuccess,
+      this.matDialogRef.componentInstance.jobAborted.pipe(
+        switchMap(() => throwError(() => new Error(this.translate.instant('Job aborted')))),
+      ),
+      this.matDialogRef.componentInstance.jobFailure.pipe(switchMap((error) => throwError(() => error))),
+    ).pipe(take(1));
   }
 }

@@ -33,6 +33,7 @@ describe('DiskWipeDialogComponent', () => {
       ]),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
+        jobDialog: jest.fn(() => of(true)),
       }),
       mockProvider(MatDialogRef),
       {
