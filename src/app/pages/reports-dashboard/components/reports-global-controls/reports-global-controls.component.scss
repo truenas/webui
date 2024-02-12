@@ -10,6 +10,7 @@
   align-items: flex-end;
   display: flex;
   flex-direction: row;
+  flex-wrap: wrap;
   gap: 12px;
 
   ix-slide-toggle {

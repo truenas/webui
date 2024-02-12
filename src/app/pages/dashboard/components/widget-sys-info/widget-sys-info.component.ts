@@ -42,10 +42,12 @@ import { selectIsIxHardware, waitForSystemFeatures } from 'app/store/system-info
   providers: [TitleCasePipe],
 })
 export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, OnDestroy {
-  protected isHaLicensed = false;
   @Input() isPassive = false;
-  protected enclosureSupport = false;
   @Input() showReorderHandle = false;
+
+  protected isHaLicensed = false;
+  protected isHaEnabled = false;
+  protected enclosureSupport = false;
 
   hasOnlyMismatchVersionsReason$ = this.store$.select(selectHasOnlyMismatchVersionsReason);
 
@@ -58,7 +60,6 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
   updateAvailable = false;
   isIxHardware = false;
   isUpdateRunning = false;
-  hasHa = this.window.localStorage.getItem('ha_status') === 'true';
   updateMethod = 'update.update';
   screenType = ScreenType.Desktop;
   uptimeInterval: Interval;
@@ -158,7 +159,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
     this.store$.select(selectHaStatus)
       .pipe(filter(Boolean), untilDestroyed(this))
       .subscribe(({ hasHa }) => {
-        this.hasHa = hasHa;
+        this.isHaEnabled = hasHa;
         this.cdr.markForCheck();
       });
   }

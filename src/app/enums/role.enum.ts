@@ -4,6 +4,7 @@ export enum Role {
   AccountRead = 'ACCOUNT_READ',
   AccountWrite = 'ACCOUNT_WRITE',
   AlertListRead = 'ALERT_LIST_READ',
+  AlertListWrite = 'ALERT_LIST_WRITE',
   AuthSessionsRead = 'AUTH_SESSIONS_READ',
   AuthSessionsWrite = 'AUTH_SESSIONS_WRITE',
   CloudSyncRead = 'CLOUD_SYNC_READ',
@@ -97,12 +98,15 @@ export enum Role {
   VmDeviceWrite = 'VM_DEVICE_WRITE',
   VmRead = 'VM_READ',
   VmWrite = 'VM_WRITE',
+  DirectoryServiceRead = 'DIRECTORY_SERVICE_READ',
+  DirectoryServiceWrite = 'DIRECTORY_SERVICE_WRITE',
 }
 
 export const roleNames = new Map<Role, string>([
   [Role.AlertListRead, T('Alert List Read')],
+  [Role.AlertListWrite, T('Alert List Write')],
   [Role.AuthSessionsRead, T('Auth Sessions Read')],
-  [Role.AuthSessionsWrite, T('Alert Sessions Write')],
+  [Role.AuthSessionsWrite, T('Auth Sessions Write')],
   [Role.DatasetDelete, T('Dataset Delete')],
   [Role.DatasetRead, T('Dataset Read')],
   [Role.DatasetWrite, T('Dataset Write')],
@@ -199,4 +203,6 @@ export const roleNames = new Map<Role, string>([
   [Role.VmDeviceWrite, T('VM Device Write')],
   [Role.VmRead, T('VM Read')],
   [Role.VmWrite, T('VM Write')],
+  [Role.DirectoryServiceRead, T('Directory Service Read')],
+  [Role.DirectoryServiceWrite, T('Directory Service Write')],
 ]);

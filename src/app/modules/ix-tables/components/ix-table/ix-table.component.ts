@@ -39,6 +39,7 @@ import { MatTable } from '@angular/material/table';
   ],
   encapsulation: ViewEncapsulation.None,
   // See note on CdkTable for explanation on why this uses the default change detection strategy.
+  // eslint-disable-next-line @angular-eslint/prefer-on-push-component-change-detection
   changeDetection: ChangeDetectionStrategy.Default,
 })
 export class IxTableComponent<T> extends MatTable<T> {}

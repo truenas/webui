@@ -17,12 +17,12 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { NgxFilesizeModule } from 'ngx-filesize';
 import { CoreComponents } from 'app/core/core-components.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { CastModule } from 'app/modules/cast/cast.module';
 import { AppCommonModule } from 'app/modules/common/app-common.module';
 import { EntityModule } from 'app/modules/entity/entity.module';
+import { IxFileSizeModule } from 'app/modules/ix-file-size/ix-file-size.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
@@ -149,6 +149,7 @@ import { routing } from './system.routing';
     IxTableModule,
     TreeModule,
     SchedulerModule,
+    IxFileSizeModule,
     JobsModule,
     MatCardModule,
     IxIconModule,
@@ -166,7 +167,6 @@ import { routing } from './system.routing';
     routing,
     TooltipModule,
     TranslateModule,
-    NgxFilesizeModule,
     MatDialogModule,
     AppCommonModule,
     LayoutModule,

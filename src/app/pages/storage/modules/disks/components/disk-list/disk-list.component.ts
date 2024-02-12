@@ -5,9 +5,9 @@ import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import filesize from 'filesize';
 import { filter, forkJoin, map } from 'rxjs';
 import { SmartTestResultPageType } from 'app/enums/smart-test-results-page-type.enum';
+import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
 import { Choices } from 'app/interfaces/choices.interface';
 import { Disk, UnusedDisk } from 'app/interfaces/storage.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
@@ -64,7 +64,7 @@ export class DiskListComponent implements OnInit {
     textColumn({
       title: this.translate.instant('Disk Size'),
       propertyName: 'size',
-      getValue: (row) => (filesize(row.size, { standard: 'iec' })),
+      getValue: (row) => (buildNormalizedFileSize(row.size)),
     }),
     textColumn({
       title: this.translate.instant('Pool'),
@@ -224,9 +224,9 @@ export class DiskListComponent implements OnInit {
   }
 
   private filterDisk = (disk: Disk): boolean => {
-    return disk.name.includes(this.filterString)
-      || disk.pool.includes(this.filterString)
-      || disk.serial.includes(this.filterString);
+    return disk.name.toLowerCase().includes(this.filterString.toLowerCase())
+      || disk.pool.toLowerCase().includes(this.filterString.toLowerCase())
+      || disk.serial.toLowerCase().includes(this.filterString.toLowerCase());
   };
 
   private getPoolColumn(diskToCheck: Disk): string {

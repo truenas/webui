@@ -8428,16 +8428,6 @@ filelist@^1.0.4:
   dependencies:
     minimatch "^5.0.1"
 
-filesize@~6.3.0:
-  version "6.3.0"
-  resolved "https://registry.yarnpkg.com/filesize/-/filesize-6.3.0.tgz#dff53cfb3f104c9e422f346d53be8dbcc971bf11"
-  integrity sha512-ytx0ruGpDHKWVoiui6+BY/QMNngtDQ/pJaFwfBpQif0J63+E8DLdFyqS3NkKQn7vIruUEpoGD9JUJSg7Kp+I0g==
-
-filesize@~9.0.11:
-  version "9.0.11"
-  resolved "https://registry.yarnpkg.com/filesize/-/filesize-9.0.11.tgz#4ac3a42c084232dd9b2a1da0107f32d42fcfa5e4"
-  integrity sha512-gTAiTtI0STpKa5xesyTA9hA3LX4ga8sm2nWRcffEa1L/5vQwb4mj2MdzMkoHoGv4QzfDshQZuYscQSf8c4TKOA==
-
 fill-range@^7.0.1:
   version "7.0.1"
   resolved "https://registry.yarnpkg.com/fill-range/-/fill-range-7.0.1.tgz#1919a6a7c75fe38b2c7c77e5198535da9acdda40"
@@ -10011,6 +10001,11 @@ jest-environment-node@^29.7.0:
     jest-mock "^29.7.0"
     jest-util "^29.7.0"
 
+jest-fail-on-console@~3.1.2:
+  version "3.1.2"
+  resolved "https://registry.yarnpkg.com/jest-fail-on-console/-/jest-fail-on-console-3.1.2.tgz#7190113cc8ff20b735546f560367dfc2e3777323"
+  integrity sha512-Z4TDJn/QvhlGflxyh8JyqRU3ovEvR2OD8rIsZU8zHJxjC9rto9XeLdqH+RPHY65Tc6riSXq1HK93uLMABaRpbg==
+
 jest-get-type@^28.0.2:
   version "28.0.2"
   resolved "https://registry.yarnpkg.com/jest-get-type/-/jest-get-type-28.0.2.tgz#34622e628e4fdcd793d46db8a242227901fcf203"
@@ -11461,13 +11456,6 @@ ngx-drag-drop@~16.0.0:
   version "16.0.0"
   resolved "https://registry.yarnpkg.com/ngx-drag-drop/-/ngx-drag-drop-16.0.0.tgz#56e1c2f8d781296b1892f30a4696d99886dd1b87"
   integrity sha512-VIfQvvQ+6GDgWzzP+iTtLy1b6jTdv9lrELdjSl4ebKYcknk6eF4ddKisbh+a12yfrGkSMkFl/RK1tDBAKWqu1w==
-  dependencies:
-    tslib "^2.3.0"
-
-ngx-filesize@~3.0.1:
-  version "3.0.2"
-  resolved "https://registry.yarnpkg.com/ngx-filesize/-/ngx-filesize-3.0.2.tgz#aab5ce9ce6eaa421f0393447d9c01653f3839a2c"
-  integrity sha512-0h1gzcQYeNcGzDVcQcdhKK8RCrXdIXn4foT/DcXRwoht0KL3FQemJFKZowZmXESL7cnLlETaeRSnsHuqfchoWg==
   dependencies:
     tslib "^2.3.0"
 

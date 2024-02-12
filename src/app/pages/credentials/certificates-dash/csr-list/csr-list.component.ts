@@ -77,7 +77,7 @@ export class CertificateSigningRequestsListComponent implements OnInit {
         },
         {
           iconName: 'delete',
-          requiresRoles: [Role.FullAdmin],
+          requiredRoles: [Role.FullAdmin],
           tooltip: this.translate.instant('Delete'),
           onClick: (row) => this.doDelete(row),
         },
@@ -158,6 +158,7 @@ export class CertificateSigningRequestsListComponent implements OnInit {
           this.getCertificates();
         });
         jobDialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err) => {
+          jobDialogRef.close();
           this.dialogService.error(this.errorHandler.parseError(err));
         });
       });

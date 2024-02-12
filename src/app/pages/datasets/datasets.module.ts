@@ -11,12 +11,12 @@ import { MatSortModule } from '@angular/material/sort';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
 import { NgChartsModule } from 'ng2-charts';
-import { NgxFilesizeModule } from 'ngx-filesize';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { CoreComponents } from 'app/core/core-components.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { AppCommonModule } from 'app/modules/common/app-common.module';
 import { EntityModule } from 'app/modules/entity/entity.module';
+import { IxFileSizeModule } from 'app/modules/ix-file-size/ix-file-size.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { IxTableModule } from 'app/modules/ix-tables/ix-table.module';
@@ -65,6 +65,7 @@ import { DatasetNodeComponent } from './components/dataset-node/dataset-node.com
     MatTooltipModule,
     MatSortModule,
     MatSlideToggleModule,
+    IxFileSizeModule,
     MatRippleModule,
     MatProgressSpinnerModule,
     AppCommonModule,
@@ -80,7 +81,6 @@ import { DatasetNodeComponent } from './components/dataset-node/dataset-node.com
     MatDialogModule,
     EntityModule,
     NgxSkeletonLoaderModule,
-    NgxFilesizeModule,
     CoreComponents,
     AppLoaderModule,
     SnapshotsModule,

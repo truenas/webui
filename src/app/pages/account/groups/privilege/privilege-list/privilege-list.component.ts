@@ -62,7 +62,7 @@ export class PrivilegeListComponent implements OnInit {
           tooltip: this.translate.instant('Delete'),
           onClick: (row) => this.doDelete(row),
           hidden: (row) => of(!!row.builtin_name),
-          requiresRoles: [Role.FullAdmin],
+          requiredRoles: [Role.FullAdmin],
         },
       ],
     }),

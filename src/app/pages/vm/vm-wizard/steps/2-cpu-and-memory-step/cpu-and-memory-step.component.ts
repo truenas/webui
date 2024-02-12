@@ -4,10 +4,10 @@ import {
 import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import filesize from 'filesize';
 import { of } from 'rxjs';
 import { MiB } from 'app/constants/bytes.constant';
 import { VmCpuMode, vmCpuModeLabels } from 'app/enums/vm.enum';
+import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextVmWizard } from 'app/helptext/vm/vm-wizard/vm-wizard';
@@ -110,13 +110,13 @@ export class CpuAndMemoryStepComponent implements OnInit, SummaryProvider {
 
     summary.push({
       label: this.translate.instant('Memory'),
-      value: filesize(values.memory, { standard: 'iec' }),
+      value: buildNormalizedFileSize(values.memory),
     });
 
     if (values.min_memory) {
       summary.push({
         label: this.translate.instant('Minimum Memory'),
-        value: filesize(values.min_memory, { standard: 'iec' }),
+        value: buildNormalizedFileSize(values.min_memory),
       });
     }
 

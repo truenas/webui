@@ -5,6 +5,12 @@
     <div class="actions action-icon">
       <ix-search-input (search)="onListFiltered($event)"></ix-search-input>
 
+      <a mat-button ixTest="nfs-sessions" routerLink="/sharing/nfs/sessions">
+        {{ 'NFS Sessions' | translate }}
+      </a>
+
+      <ix-table-columns-selector [columns]="columns" (columnsChange)="columnsChange($event)"></ix-table-columns-selector>
+
       <button mat-button color="primary" ixTest="add-nfs-share" (click)="doAdd()">
         {{ 'Add' | translate }}
       </button>

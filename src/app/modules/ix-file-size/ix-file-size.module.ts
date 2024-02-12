@@ -1,12 +1,12 @@
 import { NgModule } from '@angular/core';
-import { FileSizePipe } from 'app/modules/ix-file-size/ix-file-size.pipe';
+import { IxFileSizePipe } from 'app/modules/ix-file-size/ix-file-size.pipe';
 
 @NgModule({
   declarations: [
-    FileSizePipe,
+    IxFileSizePipe,
   ],
   exports: [
-    FileSizePipe,
+    IxFileSizePipe,
   ],
 })
 export class IxFileSizeModule { }

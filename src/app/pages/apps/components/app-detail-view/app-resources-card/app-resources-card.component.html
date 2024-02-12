@@ -12,7 +12,7 @@
   <ngx-skeleton-loader *ngIf="isLoading$ | async; else memoryUsage"></ngx-skeleton-loader>
   <ng-template #memoryUsage>
     <ng-container *ngIf="memoryUsed && memoryTotal; else notAvailable">
-      {{ memoryUsed | filesize: { standard: 'iec', round: 2 } }} / {{ memoryTotal | filesize: { standard: 'iec', round: 2 } }}
+      {{ memoryUsed | ixFileSize }} / {{ memoryTotal | ixFileSize }}
     </ng-container>
   </ng-template>
 </div>
@@ -28,7 +28,7 @@
 <div class="app-list-item">
   <span class="label">{{ 'Available Space' | translate }}:</span>
   <span *ixWithLoadingState="availableSpace$ as availableSpace">
-    {{ +availableSpace | filesize: { standard: 'iec' } }}
+    {{ +availableSpace | ixFileSize }}
   </span>
 </div>
 

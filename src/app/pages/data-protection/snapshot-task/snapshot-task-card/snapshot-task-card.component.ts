@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+  ChangeDetectionStrategy, Component, OnInit,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
@@ -57,7 +57,7 @@ export class SnapshotTaskCardComponent implements OnInit {
     toggleColumn({
       title: this.translate.instant('Enabled'),
       propertyName: 'enabled',
-      requiresRoles: [Role.FullAdmin],
+      requiredRoles: [Role.SnapshotTaskWrite],
       onRowToggle: (row: PeriodicSnapshotTaskUi) => this.onChangeEnabledState(row),
     }),
     stateButtonColumn({
@@ -75,7 +75,7 @@ export class SnapshotTaskCardComponent implements OnInit {
         {
           iconName: 'delete',
           tooltip: this.translate.instant('Delete'),
-          requiresRoles: [Role.FullAdmin],
+          requiredRoles: [Role.SnapshotTaskWrite],
           onClick: (row) => this.doDelete(row),
         },
       ],
@@ -90,7 +90,6 @@ export class SnapshotTaskCardComponent implements OnInit {
     private errorHandler: ErrorHandlerService,
     private ws: WebSocketService,
     private dialogService: DialogService,
-    private cdr: ChangeDetectorRef,
     private taskService: TaskService,
     protected emptyService: EmptyService,
   ) {}
@@ -112,7 +111,7 @@ export class SnapshotTaskCardComponent implements OnInit {
     this.dialogService.confirm({
       title: this.translate.instant('Confirmation'),
       message: this.translate.instant('Delete Periodic Snapshot Task <b>"{value}"</b>?', {
-        value: `${snapshotTask.dataset} - ${snapshotTask.naming_schema} - ${snapshotTask.keepfor}`,
+        value: `${snapshotTask.dataset} - ${snapshotTask.naming_schema}`,
       }),
     }).pipe(
       filter(Boolean),

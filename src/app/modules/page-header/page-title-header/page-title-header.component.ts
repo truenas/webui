@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { map } from 'rxjs/operators';
 import { PageTitleService } from 'app/services/page-title.service';
 
@@ -6,6 +6,7 @@ import { PageTitleService } from 'app/services/page-title.service';
   selector: 'ix-page-title-header',
   templateUrl: './page-title-header.component.html',
   styleUrls: ['./page-title-header.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PageTitleHeaderComponent {
   @Input() pageTitle: string;

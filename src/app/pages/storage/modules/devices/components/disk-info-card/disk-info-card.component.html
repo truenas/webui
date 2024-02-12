@@ -12,7 +12,7 @@
     <div class="details-item">
       <div class="label">{{ 'Disk Size' | translate }}:</div>
       <div *ngIf="disk?.size; else notAvailable" class="value">
-        {{ disk.size | filesize: { standard: 'iec' } }}
+        {{ disk.size | ixFileSize }}
       </div>
     </div>
     <div class="details-item">

@@ -1,3 +1,5 @@
+@import 'scss-imports/splitview';
+
 .form-actions {
   display: flex;
   justify-content: space-between;
@@ -13,9 +15,17 @@
   border-top: 1px solid var(--lines);
   display: flex;
 
+  @media (max-width: $breakpoint-tablet) {
+    display: block;
+  }
+
   > * {
     display: block;
     width: 50%;
+
+    @media (max-width: $breakpoint-tablet) {
+      width: 100%;
+    }
   }
 }
 

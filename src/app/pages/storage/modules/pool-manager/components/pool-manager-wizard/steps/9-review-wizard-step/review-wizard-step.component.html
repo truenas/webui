@@ -40,7 +40,7 @@
 
     <div class="summary-item">
       <div class="label">{{ 'Est. Usable Raw Capacity' | translate }}</div>
-      <div class="value">{{ totalCapacity$ | async | filesize: { standard: 'iec' } }}</div>
+      <div class="value">{{ totalCapacity$ | async | ixFileSize }}</div>
     </div>
 
     <div

@@ -1,5 +1,5 @@
 import { Location } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -16,6 +16,7 @@ import { passiveNodeReplaced } from 'app/store/system-info/system-info.actions';
 @Component({
   templateUrl: './failover.component.html',
   styleUrls: ['./failover.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FailoverComponent implements OnInit {
   constructor(

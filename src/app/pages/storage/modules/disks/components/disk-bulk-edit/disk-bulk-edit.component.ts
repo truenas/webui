@@ -6,6 +6,7 @@ import { of } from 'rxjs';
 import { DiskPowerLevel } from 'app/enums/disk-power-level.enum';
 import { DiskStandby } from 'app/enums/disk-standby.enum';
 import { JobState } from 'app/enums/job-state.enum';
+import { Role } from 'app/enums/role.enum';
 import { translateOptions } from 'app/helpers/translate.helper';
 import { helptextDisks } from 'app/helptext/storage/disks/disks';
 import { Disk, DiskUpdate } from 'app/interfaces/storage.interface';
@@ -34,6 +35,7 @@ export class DiskBulkEditComponent {
   readonly helptextBulkEdit = helptextDisks.bulk_edit;
   readonly hddstandbyOptions$ = of(helptextDisks.disk_form_hddstandby_options);
   readonly advpowermgmtOptions$ = of(translateOptions(this.translate, this.helptext.disk_form_advpowermgmt_options));
+  protected readonly requiresRoles = [Role.FullAdmin];
 
   constructor(
     private fb: FormBuilder,

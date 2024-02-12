@@ -1,6 +1,6 @@
 import { Pipe, PipeTransform } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-import filesize from 'filesize';
+import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
 import { PoolManagerTopologyCategory } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
 
 @Pipe({
@@ -22,7 +22,7 @@ export class TopologyCategoryDescriptionPipe implements PipeTransform {
 
     const layoutTypeData = notLimitedToOneLayout ? `${category.vdevsNumber} × ${category.layout} | ` : '';
 
-    const diskSize = filesize(Number(category.diskSize || 0), { standard: 'iec' });
+    const diskSize = buildNormalizedFileSize(Number(category.diskSize || 0));
     return `${layoutTypeData}${category.width} × ${diskSize} (${category.diskType})`;
   }
 }

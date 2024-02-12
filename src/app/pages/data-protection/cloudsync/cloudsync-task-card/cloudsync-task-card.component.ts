@@ -3,7 +3,6 @@ import {
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { Actions } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import {
@@ -32,7 +31,6 @@ import { CloudSyncWizardComponent } from 'app/pages/data-protection/cloudsync/cl
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { TaskService } from 'app/services/task.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
@@ -70,7 +68,7 @@ export class CloudSyncTaskCardComponent implements OnInit {
       title: this.translate.instant('Enabled'),
       propertyName: 'enabled',
       onRowToggle: (row: CloudSyncTaskUi) => this.onChangeEnabledState(row),
-      requiresRoles: [Role.CloudSyncWrite],
+      requiredRoles: [Role.CloudSyncWrite],
     }),
     stateButtonColumn({
       title: this.translate.instant('State'),
@@ -91,32 +89,32 @@ export class CloudSyncTaskCardComponent implements OnInit {
           tooltip: this.translate.instant('Run job'),
           hidden: (row) => of(row.job?.state === JobState.Running),
           onClick: (row) => this.runNow(row),
-          requiresRoles: [Role.CloudSyncWrite],
+          requiredRoles: [Role.CloudSyncWrite],
         },
         {
           iconName: 'stop',
           tooltip: this.translate.instant('Stop'),
           hidden: (row) => of(row.job?.state !== JobState.Running),
           onClick: (row) => this.stopCloudSyncTask(row),
-          requiresRoles: [Role.CloudSyncWrite],
+          requiredRoles: [Role.CloudSyncWrite],
         },
         {
           iconName: 'sync',
           tooltip: this.translate.instant('Dry Run'),
           onClick: (row) => this.dryRun(row),
-          requiresRoles: [Role.CloudSyncWrite],
+          requiredRoles: [Role.CloudSyncWrite],
         },
         {
           iconName: 'restore',
           tooltip: this.translate.instant('Restore'),
           onClick: (row) => this.restore(row),
-          requiresRoles: [Role.CloudSyncWrite],
+          requiredRoles: [Role.CloudSyncWrite],
         },
         {
           iconName: 'delete',
           tooltip: this.translate.instant('Delete'),
           onClick: (row) => this.doDelete(row),
-          requiresRoles: [Role.CloudSyncWrite],
+          requiredRoles: [Role.CloudSyncWrite],
         },
       ],
     }),
@@ -129,14 +127,12 @@ export class CloudSyncTaskCardComponent implements OnInit {
     private errorHandler: ErrorHandlerService,
     private ws: WebSocketService,
     private dialogService: DialogService,
-    private slideInService: IxSlideInService,
     private ixChainedSlideInService: IxChainedSlideInService,
     private cdr: ChangeDetectorRef,
     private taskService: TaskService,
     private store$: Store<AppState>,
     private snackbar: SnackbarService,
     private matDialog: MatDialog,
-    private actions$: Actions,
     protected emptyService: EmptyService,
   ) {}
 

@@ -44,7 +44,7 @@ export const helptextSystemCloudcredentials = {
  field can be empty to use the default endpoint for the region, and \
  available buckets are automatically fetched. Refer to the AWS \
  Documentation for a list of \
- <a href="https://docs.aws.amazon.com/general/latest/gr/rande.html#s3_website_region_endpoints \
+ <a href="https://docs.aws.amazon.com/general/latest/gr/rande.html#s3_website_region_endpoints" \
  target="_blank">Simple Storage Service Website Endpoints</a>.'),
   },
   region_s3: {
@@ -59,16 +59,15 @@ export const helptextSystemCloudcredentials = {
   },
   skip_region_s3: {
     tooltip: T(
-      'Skip automatic detection of the Endpoint URL region. Set this \
- when configuring a custom Endpoint URL.',
+      'Skip automatic detection of the Endpoint URL region. Set this only if AWS provider does not support regions.',
     ),
   },
   signatures_v2_s3: {
     tooltip: T(
       'Force using \
  <a href="https://docs.aws.amazon.com/general/latest/gr/signature-version-2.html" \
- target="_blank">Signature Version 2</a> to sign API requests. Set this \
- when configuring a custom Endpoint URL.',
+ target="_blank">Signature Version 2</a> to sign API requests.  Set this only \
+ if your AWS provider does not support default version 4 signatures.',
     ),
   },
   account_b2: {

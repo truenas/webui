@@ -1,6 +1,10 @@
 import {
   AfterContentChecked,
-  Component, ElementRef, Input, OnChanges, ViewChild,
+  Component,
+  ElementRef,
+  Input,
+  OnChanges,
+  ViewChild,
 } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 

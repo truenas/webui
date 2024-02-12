@@ -5,9 +5,11 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
+import { filter } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { AuthService } from 'app/services/auth/auth.service';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
@@ -40,6 +42,7 @@ export class AccessFormComponent implements OnInit {
   }
 
   protected readonly Role = Role;
+  readonly requiredRoles = [Role.FullAdmin];
 
   constructor(
     private fb: FormBuilder,
@@ -52,6 +55,7 @@ export class AccessFormComponent implements OnInit {
     private errorHandler: ErrorHandlerService,
     private dialogService: DialogService,
     private systemGeneralService: SystemGeneralService,
+    private authService: AuthService,
   ) {}
 
   ngOnInit(): void {
@@ -69,28 +73,37 @@ export class AccessFormComponent implements OnInit {
   }
 
   onSubmit(): void {
-    this.store$.dispatch(lifetimeTokenUpdated({ lifetime: this.form.value.token_lifetime }));
+    this.authService.hasRole(this.requiredRoles).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
+      this.store$.dispatch(lifetimeTokenUpdated({ lifetime: this.form.value.token_lifetime }));
 
-    if (this.isEnterprise) {
-      this.isLoading = true;
-      this.ws.call('system.general.update', [{ ds_auth: this.form.value.ds_auth }])
-        .pipe(untilDestroyed(this)).subscribe({
-          next: () => {
-            this.isLoading = false;
-            this.store$.dispatch(generalConfigUpdated());
-            this.snackbar.success(this.translate.instant('Settings saved'));
-            this.slideInRef.close(true);
-            this.cdr.markForCheck();
-          },
-          error: (error) => {
-            this.isLoading = false;
-            this.dialogService.error(this.errorHandler.parseError(error));
-            this.cdr.markForCheck();
-          },
-        });
-    } else {
-      this.snackbar.success(this.translate.instant('Settings saved'));
-      this.slideInRef.close(true);
-    }
+      if (this.isEnterprise) {
+        this.updateEnterpriseDsAuth();
+      } else {
+        this.showSuccessNotificationAndClose();
+      }
+    });
+  }
+
+  private updateEnterpriseDsAuth(): void {
+    this.isLoading = true;
+    this.ws.call('system.general.update', [{ ds_auth: this.form.value.ds_auth }])
+      .pipe(untilDestroyed(this)).subscribe({
+        next: () => {
+          this.isLoading = false;
+          this.store$.dispatch(generalConfigUpdated());
+          this.showSuccessNotificationAndClose();
+          this.cdr.markForCheck();
+        },
+        error: (error) => {
+          this.isLoading = false;
+          this.dialogService.error(this.errorHandler.parseError(error));
+          this.cdr.markForCheck();
+        },
+      });
+  }
+
+  private showSuccessNotificationAndClose(): void {
+    this.snackbar.success(this.translate.instant('Settings saved'));
+    this.slideInRef.close(true);
   }
 }

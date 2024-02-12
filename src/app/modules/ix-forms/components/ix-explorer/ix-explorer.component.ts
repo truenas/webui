@@ -13,7 +13,7 @@ import {
   IActionMapping, ITreeOptions, KEYS, TREE_ACTIONS, TreeComponent,
 } from '@bugsplat/angular-tree-component';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { lastValueFrom, Observable, of } from 'rxjs';
+import { firstValueFrom, Observable, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
 import { mntPath } from 'app/enums/mnt-path.enum';
@@ -80,7 +80,7 @@ export class IxExplorerComponent implements OnInit, OnChanges, ControlValueAcces
   treeOptions: ITreeOptions = {
     idField: 'path',
     displayField: 'name',
-    getChildren: (node: TreeNode<ExplorerNodeData>) => lastValueFrom(this.loadChildren(node)),
+    getChildren: (node: TreeNode<ExplorerNodeData>) => firstValueFrom(this.loadChildren(node)),
     actionMapping: this.actionMapping,
     useTriState: false,
   };

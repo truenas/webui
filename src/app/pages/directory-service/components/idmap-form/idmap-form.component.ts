@@ -215,7 +215,7 @@ export class IdmapFormComponent implements OnInit {
       .subscribe({
         next: () => {
           this.isLoading = false;
-          this.slideInRef.close();
+          this.slideInRef.close(true);
         },
         error: (error: unknown) => {
           this.formErrorHandler.handleWsFormError(error, this.form);

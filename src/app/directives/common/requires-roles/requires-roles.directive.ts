@@ -2,6 +2,7 @@ import {
   ComponentRef, Directive, HostBinding, Input, TemplateRef, ViewContainerRef,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { isEqual } from 'lodash';
 import { RequiresRolesWrapperComponent } from 'app/directives/common/requires-roles/requires-roles-wrapper.component';
 import { Role } from 'app/enums/role.enum';
 import { AuthService } from 'app/services/auth/auth.service';
@@ -12,9 +13,16 @@ import { AuthService } from 'app/services/auth/auth.service';
 })
 export class RequiresRolesDirective {
   private wrapperContainer: ComponentRef<RequiresRolesWrapperComponent>;
+  private previousRoles: Role[] = [];
 
   @Input()
   set ixRequiresRoles(roles: Role[]) {
+    if (isEqual(this.previousRoles, roles)) {
+      return;
+    }
+
+    this.previousRoles = roles;
+
     if (!roles?.length) {
       this.viewContainerRef.createEmbeddedView(this.templateRef);
       return;

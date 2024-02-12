@@ -67,7 +67,7 @@ export class TunableListComponent implements OnInit {
           iconName: 'delete',
           tooltip: this.translate.instant('Delete'),
           onClick: (row) => this.doDelete(row),
-          requiresRoles: [Role.FullAdmin],
+          requiredRoles: [Role.FullAdmin],
         },
       ],
     }),
@@ -137,6 +137,7 @@ export class TunableListComponent implements OnInit {
           this.snackbar.success(this.translate.instant('Sysctl "{name}" deleted', { name: tunable.var }));
         });
         jobDialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((error) => {
+          jobDialogRef.close();
           this.dialogService.closeAllDialogs();
           this.dialogService.error(this.errorHandler.parseError(error));
         });

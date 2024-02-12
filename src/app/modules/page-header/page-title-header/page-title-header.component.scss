@@ -64,9 +64,9 @@ ix-fake-progress-bar {
     border-top: solid 1px var(--lines);
     flex-wrap: wrap;
     gap: 8px;
-    justify-content: center;
+    justify-content: flex-end;
     margin-top: 12px;
-    padding: 14px 0;
+    padding: 12px 0 0;
     width: 100%;
   }
 }
@@ -74,18 +74,6 @@ ix-fake-progress-bar {
 .actions-container:empty {
   display: none;
   opacity: 0;
-}
-
-.actions-container > ::ng-deep * {
-  @media (max-width: $breakpoint-tablet) {
-    margin: 0 8px;
-  }
-}
-
-.actions-container > ::ng-deep .mat-mdc-button {
-  @media (max-width: $breakpoint-tablet) {
-    min-width: 40%;
-  }
 }
 
 .actions-container > ::ng-deep ix-search-input {

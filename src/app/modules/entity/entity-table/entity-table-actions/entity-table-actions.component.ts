@@ -4,6 +4,7 @@ import {
 import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-table.component';
 import { EntityTableAction } from 'app/modules/entity/entity-table/entity-table.interface';
 
+// eslint-disable-next-line @angular-eslint/prefer-on-push-component-change-detection
 @Component({
   selector: 'ix-entity-table-actions',
   styleUrls: ['./entity-table-actions.component.scss'],

@@ -7,9 +7,8 @@ import { NavigationExtras, Router } from '@angular/router';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import filesize from 'filesize';
 import _ from 'lodash';
-import { Observable, of } from 'rxjs';
+import { Observable, forkJoin, of } from 'rxjs';
 import {
   filter, map, pairwise, startWith, tap,
 } from 'rxjs/operators';
@@ -19,6 +18,7 @@ import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
 import { mntPath } from 'app/enums/mnt-path.enum';
 import { Role } from 'app/enums/role.enum';
 import { TransferMode, transferModeNames } from 'app/enums/transfer-mode.enum';
+import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextCloudSync } from 'app/helptext/data-protection/cloudsync/cloudsync';
 import { CloudSyncTask, CloudSyncTaskUi, CloudSyncTaskUpdate } from 'app/interfaces/cloud-sync-task.interface';
@@ -132,7 +132,7 @@ export class CloudSyncFormComponent implements OnInit {
   `;
 
   readonly helptext = helptextCloudSync;
-  readonly requiresRoles = [Role.CloudSyncWrite];
+  readonly requiredRoles = [Role.CloudSyncWrite];
 
   readonly directionOptions$ = of(mapToOptions(directionNames, this.translate));
   readonly transferModeOptions$ = of(mapToOptions(transferModeNames, this.translate));
@@ -185,8 +185,8 @@ export class CloudSyncFormComponent implements OnInit {
     @Inject(CHAINED_SLIDE_IN_REF) private chainedSlideInRef: ChainedComponentRef,
   ) { }
 
-  getCredentialsList(): void {
-    this.fetchCloudSyncCredentialsList().pipe(untilDestroyed(this)).subscribe();
+  getCredentialsList(): Observable<CloudSyncCredential[]> {
+    return this.fetchCloudSyncCredentialsList();
   }
 
   fetchCloudSyncCredentialsList(): Observable<CloudSyncCredential[]> {
@@ -202,25 +202,31 @@ export class CloudSyncFormComponent implements OnInit {
     );
   }
 
-  getProviders(): void {
-    this.cloudCredentialService.getProviders().pipe(
+  getProviders(): Observable<CloudSyncProvider[]> {
+    return this.cloudCredentialService.getProviders().pipe(
       tap((providers) => {
         this.providersList = providers;
       }),
-      untilDestroyed(this),
-    ).subscribe();
+    );
   }
 
   ngOnInit(): void {
-    this.getCredentialsList();
-    this.getProviders();
-    this.setFileNodeProvider();
-    this.setBucketNodeProvider();
-    this.setupForm();
+    this.isLoading = true;
+    forkJoin([
+      this.getCredentialsList(),
+      this.getProviders(),
+    ]).pipe(untilDestroyed(this)).subscribe(() => {
+      this.isLoading = false;
+      this.cdr.markForCheck();
 
-    if (this.editingTask) {
-      this.setTaskForEdit();
-    }
+      this.setFileNodeProvider();
+      this.setBucketNodeProvider();
+      this.setupForm();
+
+      if (this.editingTask) {
+        this.setTaskForEdit();
+      }
+    });
   }
 
   setupForm(): void {
@@ -233,6 +239,7 @@ export class CloudSyncFormComponent implements OnInit {
 
     this.form.controls.bucket.valueChanges.pipe(untilDestroyed(this)).subscribe((selectedOption) => {
       if (selectedOption !== newOption) {
+        this.setBucketNodeProvider();
         return;
       }
       const dialogRef = this.matDialog.open(CreateStorjBucketDialogComponent, {
@@ -518,7 +525,7 @@ export class CloudSyncFormComponent implements OnInit {
       encryption: this.editingTask.encryption,
       bwlimit: this.editingTask.bwlimit.map((bwlimit) => {
         return bwlimit.bandwidth
-          ? `${bwlimit.time}, ${filesize(bwlimit.bandwidth, { standard: 'iec' })}`
+          ? `${bwlimit.time}, ${buildNormalizedFileSize(bwlimit.bandwidth, 'b', 10)}`
           : `${bwlimit.time}, off`;
       }),
     });

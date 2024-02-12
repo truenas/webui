@@ -43,8 +43,8 @@
   grid-template-columns: 50% 50%;
   grid-template-rows: fit-content(30vh);
 
-  @media #{$media-lt-md} {
-    grid-template-columns: auto;
+  @media #{$media-lt-lg} {
+    grid-template-columns: 100%;
   }
 
   @media #{$media-lt-sm} {

@@ -3,12 +3,12 @@ import {
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import filesize from 'filesize';
 import _, { isEqual } from 'lodash';
 import { merge, of } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { DiskType } from 'app/enums/disk-type.enum';
 import { CreateVdevLayout, VdevType } from 'app/enums/v-dev-type.enum';
+import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
 import { SelectOption } from 'app/interfaces/option.interface';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { UnusedDisk } from 'app/interfaces/storage.interface';
@@ -105,13 +105,13 @@ export class DiskSizeSelectsComponent implements OnChanges {
 
     const hddOptions = Object.keys(this.sizeDisksMap[DiskType.Hdd])
       .map((size): SelectOption<SizeAndType> => ({
-        label: `${filesize(Number(size), { standard: 'iec' })} (HDD)`,
+        label: `${buildNormalizedFileSize(Number(size))} (HDD)`,
         value: [Number(size), DiskType.Hdd],
       }));
 
     const ssdOptions = Object.keys(this.sizeDisksMap[DiskType.Ssd])
       .map((size): SelectOption<SizeAndType> => ({
-        label: `${filesize(Number(size), { standard: 'iec' })} (SSD)`,
+        label: `${buildNormalizedFileSize(Number(size))} (SSD)`,
         value: [Number(size), DiskType.Ssd],
       }));
 

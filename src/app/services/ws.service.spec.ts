@@ -65,6 +65,7 @@ describe('WebSocketService', () => {
     });
 
     it('should handle WS call errors', () => {
+      jest.spyOn(console, 'error').mockImplementation();
       const uuid = 'fakeUUID';
       jest.spyOn(UUID, 'UUID').mockReturnValue(uuid);
       mockWebSocketConnectionService.websocket$.next({

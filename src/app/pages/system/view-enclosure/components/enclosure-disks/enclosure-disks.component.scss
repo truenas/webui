@@ -187,6 +187,10 @@ nav.view-nav-bar {
   text-align: left;
   width: fit-content;
 
+  .alert {
+    display: inline-flex;
+  }
+
   ix-icon {
     font-size: 14px;
   }

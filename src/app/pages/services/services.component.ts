@@ -89,6 +89,19 @@ export class ServicesComponent implements OnInit {
     return !this.dataSource.filteredData.length;
   }
 
+  getRolesForService(serviceName: ServiceName): Role[] {
+    switch (serviceName) {
+      case ServiceName.Cifs:
+        return [Role.SharingSmbWrite, Role.ServiceWrite];
+      case ServiceName.Iscsi:
+        return [Role.SharingIscsiWrite, Role.ServiceWrite];
+      case ServiceName.Nfs:
+        return [Role.SharingNfsWrite, Role.ServiceWrite];
+      default:
+        return [Role.ServiceWrite];
+    }
+  }
+
   getData(): void {
     this.loading = true;
     this.error = false;

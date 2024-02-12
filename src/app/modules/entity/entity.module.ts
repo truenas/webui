@@ -39,7 +39,6 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule } from '@angular/router';
 import { TreeModule } from '@bugsplat/angular-tree-component';
 import { TranslateModule } from '@ngx-translate/core';
-import { NgxFilesizeModule } from 'ngx-filesize';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { CastModule } from 'app/modules/cast/cast.module';
 import { EntityEmptyComponent } from 'app/modules/entity/entity-empty/entity-empty.component';
@@ -48,7 +47,6 @@ import { EntityTableActionsComponent } from 'app/modules/entity/entity-table/ent
 import { EntityTableAddActionsComponent } from 'app/modules/entity/entity-table/entity-table-add-actions/entity-table-add-actions.component';
 import { EntityTableRowDetailsComponent } from 'app/modules/entity/entity-table/entity-table-row-details/entity-table-row-details.component';
 import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-table.component';
-import { ToolbarMultimenuComponent } from 'app/modules/entity/entity-toolbar/components/toolbar-multimenu/toolbar-multimenu.component';
 import { ToolbarSliderComponent } from 'app/modules/entity/entity-toolbar/components/toolbar-slider/toolbar-slider.component';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { LayoutModule } from 'app/modules/layout/layout.module';
@@ -102,7 +100,6 @@ import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
     CdkTreeModule,
     OverlayModule,
     A11yModule,
-    NgxFilesizeModule,
     CommonDirectivesModule,
     TooltipModule,
     CastModule,
@@ -117,7 +114,6 @@ import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
     EntityTableActionsComponent,
     EntityTableAddActionsComponent,
     EntityJobComponent,
-    ToolbarMultimenuComponent,
     ToolbarSliderComponent,
     EntityEmptyComponent,
   ],
@@ -126,7 +122,6 @@ import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
     EntityTableAddActionsComponent,
     EntityTableActionsComponent,
     ToolbarSliderComponent,
-    ToolbarMultimenuComponent,
     CdkTreeModule,
     EntityEmptyComponent,
   ],

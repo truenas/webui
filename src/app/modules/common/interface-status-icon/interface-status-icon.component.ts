@@ -7,7 +7,7 @@ import { UUID } from 'angular2-uuid';
 import { timer } from 'rxjs';
 import { KiB } from 'app/constants/bytes.constant';
 import { LinkState } from 'app/enums/network-interface.enum';
-import { normalizeFileSize } from 'app/helpers/filesize.utils';
+import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
 import { NetworkInterfaceUpdate } from 'app/interfaces/reporting.interface';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 
@@ -36,8 +36,7 @@ export class InterfaceStatusIconComponent implements OnChanges {
   get tooltipText(): string {
     const handleBytesResult = (bytes: number): string => {
       if (bytes !== undefined && bytes !== null) {
-        const [formatted, unit] = normalizeFileSize(bytes * 8, 'b', 10);
-        return formatted + ' ' + unit;
+        return buildNormalizedFileSize(bytes * 8, 'b', 10);
       }
 
       return this.translate.instant('N/A');

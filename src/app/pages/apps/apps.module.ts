@@ -15,7 +15,6 @@ import { TranslateModule } from '@ngx-translate/core';
 import { GalleryModule } from 'ng-gallery';
 import { LightboxModule } from 'ng-gallery/lightbox';
 import { LazyLoadImageModule } from 'ng-lazyload-image';
-import { NgxFilesizeModule } from 'ngx-filesize';
 import { ImgFallbackModule } from 'ngx-img-fallback';
 import { MarkdownModule } from 'ngx-markdown';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
@@ -25,6 +24,7 @@ import { CastModule } from 'app/modules/cast/cast.module';
 import { AppCommonModule } from 'app/modules/common/app-common.module';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxDynamicFormModule } from 'app/modules/ix-dynamic-form/ix-dynamic-form.module';
+import { IxFileSizeModule } from 'app/modules/ix-file-size/ix-file-size.module';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
 import { IxTableModule } from 'app/modules/ix-tables/ix-table.module';
@@ -153,7 +153,6 @@ import { KubernetesStatusComponent } from './components/installed-apps/kubernete
     ReactiveFormsModule,
     EntityModule,
     MatCardModule,
-    NgxFilesizeModule,
     CoreComponents,
     MatSelectModule,
     MatCheckboxModule,
@@ -161,6 +160,7 @@ import { KubernetesStatusComponent } from './components/installed-apps/kubernete
     FormsModule,
     MatDialogModule,
     MatMenuModule,
+    IxFileSizeModule,
     ImgFallbackModule,
     NgxSkeletonLoaderModule,
     IxIconModule,

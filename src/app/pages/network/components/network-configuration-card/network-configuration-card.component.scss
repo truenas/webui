@@ -1,3 +1,11 @@
+@import 'scss-imports/splitview';
+
+:host ::ng-deep {
+  mat-list-item {
+    height: inherit !important;
+  }
+}
+
 .card {
   width: 100%;
 }
@@ -10,11 +18,21 @@
 .columns {
   display: flex;
   min-height: 100px;
+  overflow: auto;
+
+  @media (max-width: $breakpoint-tablet) {
+    display: block;
+  }
 
   .first-column {
     flex-grow: 1;
     margin-right: 30px;
     max-width: 35%;
+
+    @media (max-width: $breakpoint-tablet) {
+      margin-right: 0;
+      max-width: 100%;
+    }
   }
 }
 

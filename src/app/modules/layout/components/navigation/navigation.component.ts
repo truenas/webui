@@ -1,4 +1,5 @@
 import {
+  ChangeDetectionStrategy,
   Component, EventEmitter, Input, Output,
 } from '@angular/core';
 import { UntilDestroy } from '@ngneat/until-destroy';
@@ -10,6 +11,7 @@ import { NavigationService } from 'app/services/navigation/navigation.service';
   selector: 'ix-navigation',
   templateUrl: './navigation.component.html',
   styleUrls: ['./navigation.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class NavigationComponent {
   @Input() isSidenavCollapsed = false;
