@@ -26,17 +26,15 @@ export class IxListItemHarness extends ComponentHarness {
     return getControlValues(controlsDict);
   }
 
-  async fillForm(...sectionsValues: Record<string, unknown>[]): Promise<void> {
-    for (const sectionValues of sectionsValues) {
+  async fillForm(values: Record<string, unknown>): Promise<void> {
+    const labels = Object.keys(values);
+    for (const label of labels) {
       const controlsDict = await this.getControlHarnessesDict();
-      const labels = Object.keys(sectionValues);
-      for (const label of labels) {
-        const control = controlsDict[label] as IxFormControlHarness;
-        if (!control) {
-          throw new Error(`Could not find control with label ${label}.`);
-        }
-        await control.setValue(sectionValues[label]);
+      const control = controlsDict[label] as IxFormControlHarness;
+      if (!control) {
+        throw new Error(`Could not find control with label ${label}.`);
       }
+      await control.setValue(values[label]);
     }
   }
 }

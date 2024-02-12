@@ -86,8 +86,6 @@ describe('CertificateImportComponent', () => {
         {
           Certificate: certificate,
           'CSR exists on this system': true,
-        },
-        {
           'Certificate Signing Request': 'Test CSR',
         },
       );

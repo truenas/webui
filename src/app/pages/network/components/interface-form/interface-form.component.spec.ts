@@ -199,15 +199,11 @@ describe('InterfaceFormComponent', () => {
       await form.fillForm(
         {
           Type: 'Link Aggregation',
-        },
-        {
           Name: 'bond0',
           Description: 'LAG',
           DHCP: true,
           'Link Aggregation Protocol': 'LACP',
           MTU: 1600,
-        },
-        {
           'Transmit Hash Policy': 'LAYER2+3',
           'LACPDU Rate': 'SLOW',
           'Link Aggregation Interfaces': ['enp0s3'],
@@ -248,8 +244,6 @@ describe('InterfaceFormComponent', () => {
       await form.fillForm(
         {
           Type: 'VLAN',
-        },
-        {
           Name: 'vlan1',
           Description: 'New VLAN',
           'Autoconfigure IPv6': true,

@@ -99,8 +99,6 @@ describe('DraidSelectionComponent', () => {
     await form.fillForm(
       {
         'Disk Size': '10 GiB (HDD)',
-      },
-      {
         'Data Devices': '2',
       },
     );
@@ -117,8 +115,6 @@ describe('DraidSelectionComponent', () => {
     await form.fillForm(
       {
         'Disk Size': '10 GiB (HDD)',
-      },
-      {
         'Data Devices': '2',
         'Distributed Hot Spares': '1',
       },
@@ -132,8 +128,6 @@ describe('DraidSelectionComponent', () => {
     await form.fillForm(
       {
         'Disk Size': '10 GiB (HDD)',
-      },
-      {
         'Data Devices': '2',
       },
     );
@@ -151,8 +145,6 @@ describe('DraidSelectionComponent', () => {
     await form.fillForm(
       {
         'Disk Size': '10 GiB (HDD)',
-      },
-      {
         'Treat Disk Size as Minimum': true,
         'Data Devices': '2',
       },
@@ -172,8 +164,6 @@ describe('DraidSelectionComponent', () => {
     await form.fillForm(
       {
         'Disk Size': '10 GiB (HDD)',
-      },
-      {
         'Treat Disk Size as Minimum': true,
         'Data Devices': '2',
         'Distributed Hot Spares': '1',
@@ -198,8 +188,6 @@ describe('DraidSelectionComponent', () => {
     await form.fillForm(
       {
         'Disk Size': '10 GiB (HDD)',
-      },
-      {
         'Treat Disk Size as Minimum': true,
         'Data Devices': '2',
         'Distributed Hot Spares': '1',

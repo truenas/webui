@@ -160,8 +160,6 @@ describe('SmbAclComponent', () => {
         Who: 'Group',
         Permission: 'FULL',
         Type: 'ALLOWED',
-      },
-      {
         Group: 'wheel',
       },
     );

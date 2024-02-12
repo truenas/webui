@@ -88,8 +88,6 @@ describe('CertificateOptionsComponent', () => {
         {
           'Key Type': 'EC',
           'Digest Algorithm': 'SHA384',
-        },
-        {
           'EC Curve': 'SECP256K1',
         },
       );

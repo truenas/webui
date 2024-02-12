@@ -98,8 +98,6 @@ describe('DatasetUnlockComponent', () => {
       {
         'Unlock with Key file': 'Provide keys/passphrases manually',
         Force: true,
-      },
-      {
         'Dataset Key': '0123456789012345678901234567890123456789012345678901234567890123',
         'Dataset Passphrase': '12345678',
       },

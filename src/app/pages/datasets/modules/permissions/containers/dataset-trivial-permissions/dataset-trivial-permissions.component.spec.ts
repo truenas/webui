@@ -159,8 +159,6 @@ describe('DatasetTrivialPermissionsComponent', () => {
       {
         'Access Mode': '555',
         'Apply permissions recursively': true,
-      },
-      {
         'Apply permissions to child datasets': true,
       },
     );

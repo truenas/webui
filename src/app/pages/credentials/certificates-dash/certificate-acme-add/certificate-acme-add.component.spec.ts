@@ -118,8 +118,6 @@ describe('CertificateAcmeAddComponent', () => {
         'Custom ACME Server Directory URI': true,
         'DNS:truenas.com': 'cloudflare',
         'DNS:truenas.io': 'route53',
-      },
-      {
         'ACME Server Directory URI': 'https://acme-staging-v02.api.letsencrypt.org/directory-custom',
       },
     );

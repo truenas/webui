@@ -147,8 +147,6 @@ describe('EncryptionOptionsDialogComponent', () => {
     await form.fillForm(
       {
         'Encryption Type': 'Key',
-      },
-      {
         Key: 'k'.repeat(64),
         Confirm: true,
       },
@@ -170,8 +168,6 @@ describe('EncryptionOptionsDialogComponent', () => {
     await form.fillForm(
       {
         'Encryption Type': 'Key',
-      },
-      {
         'Generate Key': true,
         Confirm: true,
       },
@@ -193,8 +189,6 @@ describe('EncryptionOptionsDialogComponent', () => {
     await form.fillForm(
       {
         'Encryption Type': 'Passphrase',
-      },
-      {
         Passphrase: '12345678',
         'Confirm Passphrase': '12345678',
         pbkdf2iters: '350001',

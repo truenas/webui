@@ -102,8 +102,6 @@ describe('SelectPoolDialogComponent', () => {
     await form.fillForm(
       {
         Pool: 'pool2',
-      },
-      {
         'Migrate applications to the new pool': true,
       },
     );

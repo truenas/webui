@@ -98,8 +98,6 @@ describe('OpenstackSwiftProviderFormComponent', () => {
         'Region Name': 'Europe',
         'Storage URL': 'http://new.openstack.com/storage',
         'Endpoint Type': 'Public',
-      },
-      {
         'User ID': 'johny-user',
         'User Domain': 'accountants',
         'Tenant Domain': 'tenant-domain',

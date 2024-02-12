@@ -275,8 +275,6 @@ describe('CloudCredentialsFormComponent', () => {
         await form.fillForm(
           {
             Name: 'My Box',
-          },
-          {
             Provider: 'Amazon S3',
           },
         );

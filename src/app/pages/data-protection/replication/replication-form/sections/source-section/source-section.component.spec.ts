@@ -140,8 +140,6 @@ describe('SourceSectionComponent', () => {
         'Also include snapshots with the name': 'Matching regular expression',
         'Properties Exclude': ['exclude1'],
         'Save Pending Snapshots': true,
-      },
-      {
         'Matching regular expression': 'test-.*',
       },
     );
@@ -193,8 +191,6 @@ describe('SourceSectionComponent', () => {
       await form.fillForm(
         {
           Recursive: true,
-        },
-        {
           'Exclude Child Datasets': ['pool1/files', 'pool1/storage'],
         },
       );
@@ -283,8 +279,6 @@ describe('SourceSectionComponent', () => {
       await form.fillForm(
         {
           'Also include snapshots with the name': 'Matching regular expression',
-        },
-        {
           'Matching regular expression': 'test-.*',
         },
       );
@@ -328,8 +322,6 @@ describe('SourceSectionComponent', () => {
       await form.fillForm(
         {
           'By snapshot creation time': '0 * * * *',
-        },
-        {
           Begin: '10:00:00',
           End: '23:15:00',
         },

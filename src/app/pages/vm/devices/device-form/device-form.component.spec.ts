@@ -227,8 +227,6 @@ describe('DeviceFormComponent', () => {
         await form.fillForm(
           {
             Type: 'NIC',
-          },
-          {
             'Adapter Type': 'VirtIO',
             'NIC To Attach': 'enp0s4',
             'Device Order': 1006,
@@ -348,8 +346,6 @@ describe('DeviceFormComponent', () => {
         await form.fillForm(
           {
             Type: 'Disk',
-          },
-          {
             Zvol: 'bassein/zvol1',
             Mode: 'VirtIO',
             'Disk Sector Size': '512',
@@ -463,8 +459,6 @@ describe('DeviceFormComponent', () => {
         await form.fillForm(
           {
             Type: 'Raw File',
-          },
-          {
             'Raw File': '/mnt/bassein/newraw',
             'Disk Sector Size': '512',
             Mode: 'AHCI',
@@ -575,8 +569,6 @@ describe('DeviceFormComponent', () => {
         await form.fillForm(
           {
             Type: 'PCI Passthrough Device',
-          },
-          {
             'PCI Passthrough Device': 'pci_0000_00_1c_0',
             'Device Order': '6',
           },
@@ -757,8 +749,6 @@ describe('DeviceFormComponent', () => {
         await form.fillForm(
           {
             Type: 'USB Passthrough Device',
-          },
-          {
             'Controller Type': 'pci-ohci',
             Device: 'usb_device_2 prod_2 (vendor_2)',
           },
@@ -828,8 +818,6 @@ describe('DeviceFormComponent', () => {
           {
             'Controller Type': 'piix3-uhci',
             Device: 'Specify custom',
-          },
-          {
             'Vendor ID': 'vendor_1',
             'Product ID': 'product_1',
           },

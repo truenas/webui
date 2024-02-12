@@ -81,8 +81,6 @@ describe('OsStepComponent', () => {
     await form.fillForm(
       {
         'Guest Operating System': 'Windows',
-      },
-      {
         'Enable Hyper-V Enlightenments': true,
       },
     );

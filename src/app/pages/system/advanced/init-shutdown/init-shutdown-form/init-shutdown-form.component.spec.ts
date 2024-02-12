@@ -93,8 +93,6 @@ describe('InitShutdownFormComponent', () => {
           Type: 'Script',
           When: 'Shutdown',
           Enabled: true,
-        },
-        {
           Script: '/mnt/new.sh',
         },
       );
@@ -156,8 +154,6 @@ describe('InitShutdownFormComponent', () => {
         {
           Enabled: false,
           Type: 'Command',
-        },
-        {
           Command: 'ls -la',
         },
       );

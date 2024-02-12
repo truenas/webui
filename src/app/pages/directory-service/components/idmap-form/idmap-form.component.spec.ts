@@ -120,8 +120,6 @@ describe('IdmapFormComponent', () => {
       await form.fillForm(
         {
           Name: 'Custom Value',
-        },
-        {
           'Custom Name': 'Test',
           'Idmap Backend': 'AD',
           'Range Low': 2000000,
@@ -151,8 +149,6 @@ describe('IdmapFormComponent', () => {
       await form.fillForm(
         {
           Name: 'SMB - Primary Domain',
-        },
-        {
           'Range Low': 2000000,
           'Range High': 2000001,
         },
@@ -204,8 +200,6 @@ describe('IdmapFormComponent', () => {
       await form.fillForm(
         {
           Name: 'SMB - Primary Domain',
-        },
-        {
           'Range Low': 2000000,
           'Range High': 2000001,
         },

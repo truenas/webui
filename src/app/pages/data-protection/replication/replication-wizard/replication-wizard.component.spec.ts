@@ -129,8 +129,6 @@ describe('ReplicationWizardComponent', () => {
       {
         'Source Location': 'On this System',
         'Destination Location': 'On this System',
-      },
-      {
         Recursive: false,
         'Replicate Custom Snapshots': true,
         Source: ['pool1/', 'pool2/'],

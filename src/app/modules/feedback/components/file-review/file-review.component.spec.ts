@@ -55,8 +55,6 @@ describe('FileReviewComponent', () => {
         Message: 'Git gud',
         'Take screenshot of the current page': true,
         'Attach additional images': true,
-      },
-      {
         'Attach images (optional)': fakeAttachments,
       },
     );

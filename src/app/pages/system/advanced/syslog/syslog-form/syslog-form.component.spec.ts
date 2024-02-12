@@ -106,8 +106,6 @@ describe('SyslogFormComponent', () => {
     await form.fillForm(
       {
         'Syslog Transport': SyslogTransport.Tls,
-      },
-      {
         'Syslog TLS Certificate': 'Certificate 2',
         'Syslog TLS Certificate Authority': 'Authority 2',
       },

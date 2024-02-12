@@ -54,8 +54,6 @@ describe('CertificateConstraintsComponent', () => {
           'Authority Key Identifier': true,
           'Extended Key Usage': true,
           'Key Usage': true,
-        },
-        {
           'Path Length': 128,
           'Basic Constraints Config': ['CA', 'Critical Extension'],
           'Authority Key Config': ['Critical Extension'],
@@ -135,8 +133,6 @@ describe('CertificateConstraintsComponent', () => {
           'Authority Key Identifier': true,
           'Extended Key Usage': false,
           'Key Usage': false,
-        },
-        {
           'Path Length': 256,
           'Basic Constraints Config': ['CA', 'Critical Extension'],
           'Authority Key Config': ['Critical Extension'],

@@ -150,12 +150,8 @@ describe('ZvolFormComponent', () => {
           'Inherit (non-encrypted)': false,
           'Read-only': 'On',
           Snapdev: 'Visible',
-        },
-        {
           'Encryption Type': 'Passphrase',
           Algorithm: 'AES-128-CCM',
-        },
-        {
           pbkdf2iters: 500000,
           Passphrase: '12345678',
           'Confirm Passphrase': '12345678',

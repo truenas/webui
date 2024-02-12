@@ -268,8 +268,6 @@ describe('UserFormComponent', () => {
           'Allowed sudo commands': ['pwd'],
           'Allowed sudo commands with no password': [],
           'Allow all sudo commands with no password': true,
-        },
-        {
           'Home Directory Permissions': '755',
         },
       );

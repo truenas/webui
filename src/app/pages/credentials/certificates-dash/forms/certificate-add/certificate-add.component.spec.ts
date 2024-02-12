@@ -154,8 +154,6 @@ describe('CertificateAddComponent', () => {
       {
         'Basic Constraints': true,
         'Extended Key Usage': true,
-      },
-      {
         'Path Length': 128,
         'Basic Constraints Config': ['CA', 'Critical Extension'],
 

@@ -88,8 +88,6 @@ describe('ManageUnusedDiskDialogComponent', () => {
     await form.fillForm(
       {
         'Add Disks To:': 'Existing Pool',
-      },
-      {
         'Existing Pool': 'TEST',
       },
     );

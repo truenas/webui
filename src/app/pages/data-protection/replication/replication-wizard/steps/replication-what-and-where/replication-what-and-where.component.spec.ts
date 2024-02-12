@@ -95,15 +95,11 @@ describe('ReplicationWhatAndWhereComponent', () => {
       {
         'Source Location': 'On this System',
         'Destination Location': 'On this System',
-      },
-      {
         Recursive: true,
         'Replicate Custom Snapshots': true,
         Encryption: true,
         Source: ['pool1/', 'pool2/'],
         Destination: 'pool3/',
-      },
-      {
         'Encryption Key Format': 'HEX',
       },
     );
@@ -157,8 +153,10 @@ describe('ReplicationWhatAndWhereComponent', () => {
 
   it('opens sudo enabled dialog when choosing to existing ssh credential', async () => {
     await form.fillForm(
-      { 'Source Location': 'On a Different System' },
-      { 'SSH Connection': 'non-root-ssh-connection' },
+      {
+        'Source Location': 'On a Different System',
+        'SSH Connection': 'non-root-ssh-connection',
+      },
     );
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({
       buttonText: 'Use Sudo For ZFS Commands',

@@ -86,8 +86,6 @@ describe('ReportingExportersFormComponent', () => {
           Name: 'exporter1',
           Type: ReportingExporterKey.Graphite,
           Enable: true,
-        },
-        {
           'Secret Access Key ID': 'abcd',
           'Access Key ID': 'abcde',
         },

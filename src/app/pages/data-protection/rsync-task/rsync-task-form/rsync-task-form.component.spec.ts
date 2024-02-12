@@ -237,8 +237,6 @@ describe('RsyncTaskFormComponent', () => {
       await form.fillForm(
         {
           'Rsync Mode': 'SSH',
-        },
-        {
           'Remote SSH Port': 45,
           'Remote Path': '/mnt/path',
           'Validate Remote Path': true,
@@ -269,11 +267,7 @@ describe('RsyncTaskFormComponent', () => {
       await form.fillForm(
         {
           'Rsync Mode': 'SSH',
-        },
-        {
           'Connect using:': 'SSH connection from the keychain',
-        },
-        {
           'SSH Connection': 'ssh01',
           'Remote Path': '/mnt/path',
         },

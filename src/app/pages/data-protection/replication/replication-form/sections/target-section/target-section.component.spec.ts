@@ -173,8 +173,6 @@ describe('TargetSectionComponent', () => {
       await form.fillForm(
         {
           'Generate Encryption Key': false,
-        },
-        {
           'Encryption Key': '123456',
         },
       );
@@ -192,8 +190,6 @@ describe('TargetSectionComponent', () => {
       await form.fillForm(
         {
           'Store Encryption key in Sending TrueNAS database': false,
-        },
-        {
           'Encryption Key Location in Target System': '/dbpath',
         },
       );
@@ -210,8 +206,6 @@ describe('TargetSectionComponent', () => {
       await form.fillForm(
         {
           'Encryption Key Format': 'PASSPHRASE',
-        },
-        {
           Passphrase: 'mypass',
         },
       );
@@ -244,8 +238,6 @@ describe('TargetSectionComponent', () => {
       await form.fillForm(
         {
           'Snapshot Retention Policy': 'Custom',
-        },
-        {
           'Snapshot Lifetime': '2',
           Unit: 'Week(s)',
         },

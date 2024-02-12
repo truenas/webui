@@ -93,8 +93,6 @@ describe('FileTicketComponent', () => {
         'Attach debug': true,
         'Take screenshot of the current page': true,
         'Attach additional images': true,
-      },
-      {
         'Attach images (optional)': fakeAttachments,
       },
     );

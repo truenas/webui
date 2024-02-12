@@ -94,8 +94,6 @@ describe('SnmpTrapServiceComponent', () => {
           Port: 163,
           'SNMPv3 Security Model': true,
           'SNMP Community': 'my-community',
-        },
-        {
           'Encryption Protocol': 'DES',
           'Secret Authentication Key': 'authkey2',
           'Secret Encryption Key': 'encryptionkey2',

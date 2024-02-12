@@ -100,8 +100,6 @@ describe('EditNfsAceComponent', () => {
         'ACL Type': 'Deny',
         'Permissions Type': 'Basic',
         'Flags Type': 'Basic',
-      },
-      {
         Permissions: 'Full Control',
         Flags: 'Inherit',
       },

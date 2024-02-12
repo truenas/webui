@@ -120,12 +120,8 @@ describe('IscsiWizardComponent', () => {
     await form.fillForm(
       {
         'IP Address': '192.168.1.3',
-      },
-      {
         'Discovery Authentication Method': 'CHAP',
         'Discovery Authentication Group': 'Create New',
-      },
-      {
         'Group ID': 1234,
         User: 'userName',
         Secret: '123456789qwerty',

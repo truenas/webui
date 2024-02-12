@@ -64,8 +64,6 @@ describe('ScheduleSectionComponent', () => {
     await form.fillForm(
       {
         Schedule: true,
-      },
-      {
         Frequency: '0 * * * *',
       },
     );

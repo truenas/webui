@@ -141,8 +141,6 @@ describe('SshConnectionFormComponent', () => {
         {
           Name: 'New',
           'Setup Method': 'Manual',
-        },
-        {
           Host: 'truenas.com',
           Port: 23,
           Username: 'john',
@@ -185,8 +183,6 @@ describe('SshConnectionFormComponent', () => {
           'Admin Password': '12345678',
           'One-Time Password (if necessary)': '1234',
           'Private Key': 'key2',
-        },
-        {
           'Enable passwordless sudo for zfs commands': true,
         },
       );
@@ -217,8 +213,6 @@ describe('SshConnectionFormComponent', () => {
       await form.fillForm(
         {
           'Setup Method': 'Manual',
-        },
-        {
           Port: '24',
           Host: 'remote.com',
           Username: 'john',
