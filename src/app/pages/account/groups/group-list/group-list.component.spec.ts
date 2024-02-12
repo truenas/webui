@@ -8,6 +8,9 @@ import { CoreComponents } from 'app/core/core-components.module';
 import { Role } from 'app/enums/role.enum';
 import { Group } from 'app/interfaces/group.interface';
 import { Preferences } from 'app/interfaces/preferences.interface';
+import {
+  IxTable2ExpandableRowComponent,
+} from 'app/modules/ix-table2/components/ix-table2-expandable-row/ix-table2-expandable-row.component';
 import { IxEmptyRowHarness } from 'app/modules/ix-tables/components/ix-empty-row/ix-empty-row.component.harness';
 import { IxTableModule } from 'app/modules/ix-tables/ix-table.module';
 import { IxTableHarness } from 'app/modules/ix-tables/testing/ix-table.harness';
@@ -55,6 +58,7 @@ describe('GroupListComponent', () => {
     ],
     declarations: [
       GroupDetailsRowComponent,
+      IxTable2ExpandableRowComponent,
     ],
     providers: [
       mockProvider(WebSocketService),

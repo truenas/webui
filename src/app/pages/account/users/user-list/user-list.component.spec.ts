@@ -2,7 +2,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
-import { CoreComponents } from 'app/core/core-components.module';
+import { MockComponent } from 'ng-mocks';
 import { Role } from 'app/enums/role.enum';
 import { Preferences } from 'app/interfaces/preferences.interface';
 import { User } from 'app/interfaces/user.interface';
@@ -71,11 +71,10 @@ describe('UserListComponent', () => {
   const createComponent = createComponentFactory({
     component: UserListComponent,
     imports: [
-      CoreComponents,
       IxTable2Module,
     ],
     declarations: [
-      UserDetailsRowComponent,
+      MockComponent(UserDetailsRowComponent),
     ],
     providers: [
       mockProvider(WebSocketService),

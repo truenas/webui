@@ -14,7 +14,6 @@ import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { Service } from 'app/interfaces/service.interface';
 import { SmbPresetType, SmbShare, SmbSharesec } from 'app/interfaces/smb-share.interface';
-import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTable2Harness } from 'app/modules/ix-table2/components/ix-table2/ix-table2.harness';
@@ -70,7 +69,6 @@ describe('SmbCardComponent', () => {
     component: SmbCardComponent,
     imports: [
       AppLoaderModule,
-      EntityModule,
       IxTable2Module,
     ],
     declarations: [

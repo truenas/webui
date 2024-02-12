@@ -1,5 +1,5 @@
 <h1 matDialogTitle>{{ helptext.title | translate }}</h1>
-<form class="ix-form-container" (submit)="onSubmit()">
+<form class="ix-form-container" (submit)="onSubmit($event)">
   <div [innerHtml]="helptext.message | translate"></div>
 
   <ix-checkbox

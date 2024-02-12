@@ -14,9 +14,9 @@
       [ixTest]="['toggle-all-columns']"
       (click)="toggleAll()"
     >
-      <ix-icon [name]="isAllChecked ? 'remove' : 'check_circle'"></ix-icon>
-      <span *ngIf="!isAllChecked">{{ 'Unselect All' | translate }}</span>
-      <span *ngIf="isAllChecked">{{ 'Select All' | translate }}</span>
+      <ix-icon [name]="!isAllSelected ? 'remove' : 'check_circle'"></ix-icon>
+      <span *ngIf="isAllSelected">{{ 'Unselect All' | translate }}</span>
+      <span *ngIf="!isAllSelected">{{ 'Select All' | translate }}</span>
     </button>
   </div>
 
