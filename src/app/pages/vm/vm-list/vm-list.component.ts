@@ -1,210 +1,160 @@
-import { Component } from '@angular/core';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { Router } from '@angular/router';
+import {
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+} from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { lastValueFrom, of } from 'rxjs';
-import {
-  catchError, filter, map, switchMap,
-} from 'rxjs/operators';
-import { EmptyType } from 'app/enums/empty-type.enum';
+import { filter, tap } from 'rxjs';
 import { ProductType } from 'app/enums/product-type.enum';
-import { ServiceStatus } from 'app/enums/service-status.enum';
 import { VmBootloader, VmDeviceType } from 'app/enums/vm.enum';
-import { WebSocketErrorName } from 'app/enums/websocket-error-name.enum';
-import { helptextGlobal } from 'app/helptext/global-helptext';
-import { helptextVmList } from 'app/helptext/vm/vm-list';
 import { helptextVmWizard } from 'app/helptext/vm/vm-wizard/vm-wizard';
-import { ApiCallParams } from 'app/interfaces/api/api-call-directory.interface';
-import { EmptyConfig } from 'app/interfaces/empty-config.interface';
-import { VirtualizationDetails, VirtualMachine, VirtualMachineUpdate } from 'app/interfaces/virtual-machine.interface';
-import { WebSocketError } from 'app/interfaces/websocket-error.interface';
-import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
-import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-table.component';
-import { EntityTableAction, EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.interface';
+import { VirtualMachine } from 'app/interfaces/virtual-machine.interface';
 import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
-import { AppLoaderService } from 'app/modules/loader/app-loader.service';
-import { VmEditFormComponent } from 'app/pages/vm/vm-edit-form/vm-edit-form.component';
-import { CloneVmDialogComponent } from 'app/pages/vm/vm-list/clone-vm-dialog/clone-vm-dialog.component';
-import { DeleteVmDialogComponent } from 'app/pages/vm/vm-list/delete-vm-dialog/delete-vm-dialog.component';
-import { StopVmDialogComponent } from 'app/pages/vm/vm-list/stop-vm-dialog/stop-vm-dialog.component';
-import { VirtualMachineRow } from 'app/pages/vm/vm-list/virtual-machine-row.interface';
+import { AsyncDataProvider } from 'app/modules/ix-table2/classes/async-data-provider/async-data-provider';
+import { stateButtonColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-state-button/ix-cell-state-button.component';
+import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
+import { yesNoColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-yesno/ix-cell-yesno.component';
+import { Column, ColumnComponent } from 'app/modules/ix-table2/interfaces/table-column.interface';
+import { createTable } from 'app/modules/ix-table2/utils';
+import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
 import { VmWizardComponent } from 'app/pages/vm/vm-wizard/vm-wizard.component';
-import { DialogService } from 'app/services/dialog.service';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { StorageService } from 'app/services/storage.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
-import { VmService } from 'app/services/vm.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
   templateUrl: './vm-list.component.html',
   styleUrls: ['./vm-list.component.scss'],
-  providers: [VmService],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class VmListComponent implements EntityTableConfig<VirtualMachineRow> {
-  title = this.translate.instant('Virtual Machines');
-  queryCall = 'vm.query' as const;
-  wsDelete = 'vm.delete' as const;
-  protected dialogRef: MatDialogRef<EntityJobComponent>;
-  private productType = this.systemGeneralService.getProductType();
-  hasVirtualizationSupport = false;
-  disableActionsConfig = true;
-  virtualizationDetails: VirtualizationDetails = null;
-  canAdd = false;
-
-  entityList: EntityTableComponent<VirtualMachineRow>;
-  columns = [
-    { name: this.translate.instant('Name'), prop: 'name', always_display: true },
-    {
-      name: this.translate.instant('State'), prop: 'state', always_display: true, toggle: true,
-    },
-    {
-      name: this.translate.instant('Autostart'), prop: 'autostart', checkbox: true, always_display: true,
-    },
-    { name: this.translate.instant('Virtual CPUs'), prop: 'vcpus', hidden: true },
-    { name: this.translate.instant('Cores'), prop: 'cores', hidden: true },
-    { name: this.translate.instant('Threads'), prop: 'threads', hidden: true },
-    { name: this.translate.instant('Memory Size'), prop: 'memoryString', hidden: true },
-    { name: this.translate.instant('Boot Loader Type'), prop: 'bootloader', hidden: true },
-    { name: this.translate.instant('System Clock'), prop: 'time', hidden: true },
-    { name: this.translate.instant('Display Port'), prop: 'port', hidden: true },
-    { name: this.translate.instant('Description'), prop: 'description', hidden: true },
-    { name: this.translate.instant('Shutdown Timeout'), prop: 'shutdownTimeoutString', hidden: true },
-  ];
-  config = {
-    paging: true,
-    sorting: { columns: this.columns },
-    deleteMsg: {
-      title: 'Name',
-      key_props: ['name'],
-    },
-  };
-
-  protected wsMethods = {
-    start: 'vm.start',
-    restart: 'vm.restart',
-    stop: 'vm.stop',
-    poweroff: 'vm.poweroff',
-    update: 'vm.update',
-    clone: 'vm.clone',
-  } as const;
-
-  availableMemory: string;
+export class VmListComponent implements OnInit {
+  vmMachines: VirtualMachine[] = [];
+  filterString = '';
+  dataProvider: AsyncDataProvider<VirtualMachine>;
   memTitle = helptextVmWizard.vm_mem_title;
   memWarning = helptextVmWizard.memory_warning;
+  hasVirtualizationSupport = false;
+  private productType = this.systemGeneralService.getProductType();
+  protected availableMemory: string;
+
+  columns = createTable<VirtualMachine>([
+    textColumn({
+      title: this.translate.instant('Name'),
+      propertyName: 'name',
+      sortable: true,
+    }),
+    stateButtonColumn({
+      title: this.translate.instant('State'),
+      sortable: true,
+      getValue: (row) => {
+        return row.status.state;
+      },
+    }),
+    yesNoColumn({
+      title: this.translate.instant('Autostart'),
+      propertyName: 'autostart',
+      sortable: true,
+    }),
+    textColumn({
+      title: this.translate.instant('Virtual CPUs'),
+      propertyName: 'vcpus',
+      sortable: true,
+      hidden: true,
+    }),
+    textColumn({
+      title: this.translate.instant('Cores'),
+      propertyName: 'cores',
+      sortable: true,
+      hidden: true,
+    }),
+    textColumn({
+      title: this.translate.instant('Threads'),
+      propertyName: 'threads',
+      sortable: true,
+      hidden: true,
+    }),
+    textColumn({
+      title: this.translate.instant('Memory Size'),
+      sortable: true,
+      hidden: true,
+      getValue: (row) => {
+        return this.formatter.convertBytesToHumanReadable(row.memory * 1048576, 2);
+      },
+    }),
+    textColumn({
+      title: this.translate.instant('Boot Loader Type'),
+      propertyName: 'bootloader',
+      sortable: true,
+      hidden: true,
+    }),
+    textColumn({
+      title: this.translate.instant('System Clock'),
+      propertyName: 'time',
+      sortable: true,
+      hidden: true,
+    }),
+    textColumn({
+      title: this.translate.instant('Display Port'),
+      sortable: true,
+      hidden: true,
+      getValue: (row) => this.getDisplayPort(row),
+    }),
+    textColumn({
+      title: this.translate.instant('Description'),
+      propertyName: 'description',
+      sortable: true,
+      hidden: true,
+    }),
+    textColumn({
+      title: this.translate.instant('Shutdown Timeout'),
+      sortable: true,
+      hidden: true,
+      getValue: (row) => {
+        return `${row.shutdown_timeout} seconds`;
+      },
+    }),
+  ], {
+    rowTestId: (row) => 'virtual-machine-' + row.name,
+  });
+
+  get hiddenColumns(): Column<VirtualMachine, ColumnComponent<VirtualMachine>>[] {
+    return this.columns.filter((column) => column?.hidden);
+  }
 
   constructor(
-    private ws: WebSocketService,
-    private storageService: StorageService,
     private formatter: IxFormatterService,
-    private loader: AppLoaderService,
-    private dialogService: DialogService,
-    private router: Router,
-    protected matDialog: MatDialog,
-    private errorHandler: ErrorHandlerService,
-    private vmService: VmService,
-    private translate: TranslateService,
-    private systemGeneralService: SystemGeneralService,
     private slideInService: IxSlideInService,
+    private systemGeneralService: SystemGeneralService,
+    private translate: TranslateService,
+    private ws: WebSocketService,
+    private cdr: ChangeDetectorRef,
+    protected emptyService: EmptyService,
   ) {}
 
-  prerequisite(): Promise<boolean> {
-    return lastValueFrom(
-      this.vmService.getVirtualizationDetails().pipe(
-        map((virtualization) => {
-          virtualization.error ||= '';
-          this.virtualizationDetails = virtualization;
-          this.hasVirtualizationSupport = virtualization.supported;
-          this.canAdd = virtualization.supported;
-          return true;
-        }),
-        catchError(() => {
-          return of(false);
-        }),
-      ),
-    );
-  }
-
-  prerequisiteFailedHandler(entity: EntityTableComponent<VirtualMachineRow>): void {
-    entity.configureEmptyTable(EmptyType.Errors, '');
-    entity.changeDetectorRef.detectChanges();
-  }
-
-  afterInit(entityList: EntityTableComponent<VirtualMachineRow>): void {
+  ngOnInit(): void {
     this.checkMemory();
-    this.entityList = entityList;
-
-    this.ws.subscribe('vm.query').pipe(untilDestroyed(this)).subscribe((event) => {
-      entityList.patchCurrentRows(
-        (row: VirtualMachineRow) => row.id === event.id,
-        (changedRow: VirtualMachineRow) => {
-          if (!event.fields) {
-            return undefined;
-          }
-
-          if (event.fields.status.state === ServiceStatus.Running) {
-            changedRow.state = ServiceStatus.Running;
-            changedRow.status.state = event.fields.status.state;
-            changedRow.status.domain_state = event.fields.status.domain_state;
-          } else {
-            changedRow.state = ServiceStatus.Stopped;
-            changedRow.status.state = event.fields.status.state;
-            changedRow.status.domain_state = event.fields.status.domain_state;
-          }
-          return changedRow;
-        },
-      );
-    });
+    this.createDataProvider();
   }
 
-  getCustomEmptyConfig(emptyType: EmptyType): EmptyConfig {
-    if (!this.virtualizationDetails) {
-      return null;
+  createDataProvider(): void {
+    const virtualMachines$ = this.ws.call('vm.query').pipe(
+      tap((vms) => this.vmMachines = vms),
+    );
+    this.dataProvider = new AsyncDataProvider(virtualMachines$);
+    this.dataProvider.load();
+  }
+
+  doAdd(): void {
+    const slideInRef = this.slideInService.open(VmWizardComponent);
+    slideInRef.slideInClosed$
+      .pipe(filter(Boolean), untilDestroyed(this))
+      .subscribe(() => this.dataProvider.load());
+  }
+
+  getDisplayPort(vm: VirtualMachine): boolean | number | string {
+    if (!vm.display_available) {
+      return this.translate.instant('N/A');
     }
-
-    if (
-      (emptyType === EmptyType.FirstUse || emptyType === EmptyType.NoPageData)
-      && !this.virtualizationDetails.supported
-    ) {
-      return {
-        large: true,
-        icon: 'laptop',
-        title: this.translate.instant('Virtualization is not supported'),
-        message: this.virtualizationDetails.error.replace('INFO: ', ''),
-        button: null,
-      };
-    }
-
-    return null;
-  }
-
-  resourceTransformIncomingRestData(vms: VirtualMachine[]): VirtualMachineRow[] {
-    return !this.hasVirtualizationSupport ? [] : vms.map((vm) => {
-      const transformed = {
-        ...vm,
-        state: vm.status.state,
-        com_port: `/dev/nmdm${vm.id}B`,
-        shutdownTimeoutString: `${vm.shutdown_timeout} seconds`,
-        memoryString: this.formatter.convertBytesToHumanReadable(vm.memory * 1048576, 2),
-      } as VirtualMachineRow;
-
-      if (vm.display_available) {
-        transformed.port = this.getDisplayPort(vm);
-      } else {
-        transformed.port = 'N/A';
-        if (transformed.vm_type === 'Container Provider') {
-          transformed.vm_type = helptextGlobal.dockerhost;
-        }
-      }
-
-      return transformed;
-    });
-  }
-
-  getDisplayPort(vm: VirtualMachine): boolean | number {
     const devices = vm.devices;
     if (!devices || devices.length === 0) {
       return false;
@@ -214,301 +164,31 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow> {
     }
     for (const device of devices) {
       if (devices && device.dtype === VmDeviceType.Display) {
-        return (device.attributes).port;
+        return device.attributes.port;
       }
     }
 
     return false;
   }
 
-  onSliderChange(row: VirtualMachineRow): void {
-    if (row.status.state === ServiceStatus.Running) {
-      this.openStopDialog(row);
-    } else {
-      this.doRowAction(row, this.wsMethods.start);
-    }
-  }
-
-  onMemoryError(row: VirtualMachineRow): void {
-    this.dialogService.confirm({
-      title: helptextVmList.memory_dialog.title,
-      message: helptextVmList.memory_dialog.message,
-      confirmationCheckboxText: helptextVmList.memory_dialog.secondaryCheckboxMessage,
-      buttonText: helptextVmList.memory_dialog.buttonMessage,
-    })
+  private checkMemory(): void {
+    this.ws.call('vm.get_available_memory')
       .pipe(untilDestroyed(this))
-      .subscribe((confirmed) => {
-        if (!confirmed) {
-          return;
-        }
-
-        this.doRowAction(row, this.wsMethods.start, [row.id, { overcommit: true }]);
+      .subscribe((availableMemory) => {
+        this.availableMemory = this.formatter.convertBytesToHumanReadable(availableMemory);
       });
   }
 
-  doRowAction<T extends 'vm.start' | 'vm.update' | 'vm.poweroff'>(
-    row: VirtualMachineRow,
-    method: T,
-    params: ApiCallParams<T> = [row.id],
-    updateTable = false,
-  ): void {
-    this.loader.open();
-    this.ws.call(method, params).pipe(untilDestroyed(this)).subscribe({
-      next: () => {
-        if (updateTable) {
-          this.entityList.getData();
-          this.loader.close();
-        } else {
-          this.updateRows([row]).then(() => {
-            this.loader.close();
-          });
-        }
-        this.checkMemory();
-      },
-      error: (error: WebSocketError) => {
-        this.loader.close();
-        if (method === this.wsMethods.start && error.errname === WebSocketErrorName.NoMemory) {
-          this.onMemoryError(row);
-          return;
-        }
-        if (method === this.wsMethods.update) {
-          row.autostart = !row.autostart;
-        }
-        this.dialogService.error(this.errorHandler.parseError(error));
-      },
-    });
+  protected columnsChange(columns: typeof this.columns): void {
+    this.columns = [...columns];
+    this.cdr.detectChanges();
+    this.cdr.markForCheck();
   }
 
-  updateRows(rows: VirtualMachineRow[]): Promise<VirtualMachineRow[]> {
-    return new Promise((resolve, reject) => {
-      this.ws.call(this.queryCall).pipe(untilDestroyed(this)).subscribe({
-        next: (vms) => {
-          rows = this.resourceTransformIncomingRestData(vms);
-          resolve(rows);
-        },
-        error: (error: unknown) => {
-          this.dialogService.error(this.errorHandler.parseError(error));
-          reject(error);
-        },
-      });
-    });
-  }
-
-  onCheckboxChange(row: VirtualMachineRow): void {
-    this.doRowAction(row, this.wsMethods.update, [row.id, { autostart: row.autostart } as VirtualMachineUpdate]);
-  }
-
-  getActions(row: VirtualMachineRow): EntityTableAction[] {
-    return [{
-      id: 'START',
-      icon: 'play_arrow',
-      label: this.translate.instant('Start'),
-      onClick: (vm: VirtualMachineRow) => {
-        this.onSliderChange(vm);
-      },
-    },
-    {
-      id: 'RESTART',
-      icon: 'replay',
-      label: this.translate.instant('Restart'),
-      onClick: (vm: VirtualMachineRow) => {
-        this.loader.open();
-        this.ws.startJob(this.wsMethods.restart, [vm.id]).pipe(untilDestroyed(this)).subscribe({
-          complete: () => {
-            this.updateRows([row]).then(() => {
-              this.loader.close();
-            });
-            this.checkMemory();
-          },
-          error: (error: unknown) => {
-            this.loader.close();
-            this.dialogService.error(this.errorHandler.parseError(error));
-          },
-        });
-      },
-    },
-    {
-      id: 'POWER_OFF',
-      icon: 'power_settings_new',
-      label: this.translate.instant('Power Off'),
-      onClick: (vm: VirtualMachineRow) => {
-        this.doRowAction(row, this.wsMethods.poweroff, [vm.id]);
-      },
-    },
-    {
-      id: 'STOP',
-      icon: 'stop',
-      label: this.translate.instant('Stop'),
-      onClick: (vm: VirtualMachineRow) => {
-        this.openStopDialog(vm);
-      },
-    },
-    {
-      id: 'EDIT',
-      icon: 'edit',
-      label: this.translate.instant('Edit'),
-      onClick: (vm: VirtualMachineRow) => {
-        const slideInRef = this.slideInService.open(VmEditFormComponent, { data: vm });
-        slideInRef.slideInClosed$.pipe(
-          filter(Boolean),
-          untilDestroyed(this),
-        ).subscribe(() => this.entityList.getData());
-      },
-    },
-    {
-      id: 'DELETE',
-      icon: 'delete',
-      label: this.translate.instant('Delete'),
-      onClick: (vm: VirtualMachineRow) => {
-        this.matDialog.open(DeleteVmDialogComponent, {
-          data: vm,
-        })
-          .afterClosed()
-          .pipe(untilDestroyed(this))
-          .subscribe((wasDeleted: boolean) => {
-            if (!wasDeleted) {
-              return;
-            }
-
-            this.entityList.getData();
-          });
-      },
-    },
-    {
-      id: 'DEVICES',
-      icon: 'device_hub',
-      label: this.translate.instant('Devices'),
-      onClick: (vm: VirtualMachineRow) => {
-        this.router.navigate(['/', 'vm', String(vm.id), 'devices']);
-      },
-    },
-    {
-      id: 'CLONE',
-      icon: 'filter_none',
-      label: this.translate.instant('Clone'),
-      onClick: (vm: VirtualMachineRow) => {
-        this.matDialog.open(CloneVmDialogComponent, {
-          data: vm,
-        })
-          .afterClosed()
-          .pipe(untilDestroyed(this))
-          .subscribe((wasCloned: boolean) => {
-            if (!wasCloned) {
-              return;
-            }
-
-            this.entityList.getData();
-          });
-      },
-    },
-    {
-      id: 'DISPLAY',
-      icon: 'settings_ethernet',
-      label: this.translate.instant('Display'),
-      onClick: (vm: VirtualMachineRow) => {
-        this.loader.open();
-        this.ws.call('vm.get_display_devices', [vm.id]).pipe(untilDestroyed(this)).subscribe({
-          next: () => {
-            this.vmService.openDisplayWebUri(vm.id);
-          },
-          error: (error: unknown) => {
-            this.loader.close();
-            this.dialogService.error(this.errorHandler.parseError(error));
-          },
-        });
-      },
-    },
-    {
-      id: 'SERIAL',
-      icon: 'keyboard_arrow_right',
-      label: this.translate.instant('Serial Shell'),
-      onClick: (vm: VirtualMachineRow) => {
-        this.router.navigate(new Array('').concat(['vm', 'serial', String(vm.id)]));
-      },
-    },
-    {
-      id: 'LOGS',
-      icon: 'content_paste',
-      label: this.translate.instant('Download Logs'),
-      onClick: (vm: VirtualMachineRow) => {
-        const path = `/var/log/libvirt/qemu/${vm.id}_${vm.name}.log`;
-        const filename = `${vm.id}_${vm.name}.log`;
-        this.ws.call('core.download', ['filesystem.get', [path], filename]).pipe(
-          switchMap(([, url]) => {
-            const mimetype = 'text/plain';
-            return this.storageService.downloadUrl(url, filename, mimetype);
-          }),
-          untilDestroyed(this),
-        ).subscribe({
-          error: (error: unknown) => this.dialogService.error(this.errorHandler.parseError(error)),
-        });
-      },
-    }] as EntityTableAction[];
-  }
-
-  isActionVisible(actionId: string, row: VirtualMachineRow): boolean {
-    if (actionId === 'DISPLAY' && (row.status.state !== ServiceStatus.Running || !row.display_available)) {
-      return false;
-    }
-    if ((actionId === 'POWER_OFF' || actionId === 'STOP' || actionId === 'RESTART'
-            || actionId === 'SERIAL') && row.status.state !== ServiceStatus.Running) {
-      return false;
-    }
-    if (actionId === 'START' && row.status.state === ServiceStatus.Running) {
-      return false;
-    }
-    return true;
-  }
-
-  checkMemory(): void {
-    this.ws.call('vm.get_available_memory').pipe(untilDestroyed(this)).subscribe((availableMemory) => {
-      this.availableMemory = this.formatter.convertBytesToHumanReadable(availableMemory);
-    });
-  }
-
-  doAdd(): void {
-    const slideInRef = this.slideInService.open(VmWizardComponent);
-    slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => this.entityList.getData());
-  }
-
-  private openStopDialog(vm: VirtualMachineRow): void {
-    this.matDialog.open(StopVmDialogComponent, {
-      data: vm,
-    })
-      .afterClosed()
-      .pipe(
-        filter((data: { wasStopped: boolean; forceAfterTimeout: boolean }) => data?.wasStopped),
-        untilDestroyed(this),
-      )
-      .subscribe((data: { forceAfterTimeout: boolean }) => {
-        this.stopVm(vm, data.forceAfterTimeout);
-
-        this.updateRows([vm]);
-        this.checkMemory();
-      });
-  }
-
-  stopVm(vm: VirtualMachine, forceAfterTimeout: boolean): void {
-    const jobDialogRef = this.matDialog.open(
-      EntityJobComponent,
-      {
-        data: {
-          title: this.translate.instant('Stopping {rowName}', { rowName: vm.name }),
-        },
-      },
-    );
-    jobDialogRef.componentInstance.setCall('vm.stop', [vm.id, {
-      force: false,
-      force_after_timeout: forceAfterTimeout,
-    }]);
-    jobDialogRef.componentInstance.submit();
-    jobDialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
-      jobDialogRef.close(false);
-      this.dialogService.info(
-        this.translate.instant('Finished'),
-        this.translate.instant(helptextVmList.stop_dialog.successMessage, { vmName: vm.name }),
-        true,
-      );
-    });
+  protected onListFiltered(query: string): void {
+    const filterString = query.toLowerCase();
+    this.dataProvider.setRows(this.vmMachines.filter((vm) => {
+      return JSON.stringify(vm).includes(filterString);
+    }));
   }
 }
