@@ -51,7 +51,6 @@ import { AppCommonModule } from './modules/common/app-common.module';
 import { AppLoaderModule } from './modules/loader/app-loader.module';
 import { AppLoaderService } from './modules/loader/app-loader.service';
 import { AuthGuardService } from './services/auth/auth-guard.service';
-import { EntityTableService } from './services/entity-table.service';
 import { RoutePartsService } from './services/route-parts/route-parts.service';
 
 @NgModule({
@@ -134,7 +133,6 @@ import { RoutePartsService } from './services/route-parts/route-parts.service';
     AuthService,
     WebSocketService,
     AppLoaderService,
-    EntityTableService,
     IxSlideInService,
     IxChainedSlideInService,
     IxFileUploadService,
