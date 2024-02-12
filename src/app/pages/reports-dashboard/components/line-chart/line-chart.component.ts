@@ -1,5 +1,14 @@
 import {
-  Component, Input, AfterViewInit, OnDestroy, OnChanges, ViewChild, ElementRef, EventEmitter, Output,
+  Component,
+  Input,
+  AfterViewInit,
+  OnDestroy,
+  OnChanges,
+  ViewChild,
+  ElementRef,
+  EventEmitter,
+  Output,
+  ChangeDetectionStrategy,
 } from '@angular/core';
 import { UUID } from 'angular2-uuid';
 import { utcToZonedTime } from 'date-fns-tz';
@@ -10,6 +19,8 @@ import {
   GiB, KiB, MiB, TiB,
 } from 'app/constants/bytes.constant';
 import { ThemeUtils } from 'app/core/classes/theme-utils/theme-utils';
+import { ReportingGraphName } from 'app/enums/reporting.enum';
+import { buildNormalizedFileSize, normalizeFileSize } from 'app/helpers/file-size.utils';
 import { ReportingData } from 'app/interfaces/reporting.interface';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { Theme } from 'app/interfaces/theme.interface';
@@ -29,9 +40,10 @@ interface Conversion {
   selector: 'ix-linechart',
   templateUrl: './line-chart.component.html',
   styleUrls: ['./line-chart.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
-  @ViewChild('wrapper', { static: true }) el: ElementRef;
+  @ViewChild('wrapper', { static: true }) el: ElementRef<HTMLElement>;
   @Input() chartId: string;
   @Input() chartColors: string[];
   @Input() data: ReportingData;
@@ -79,7 +91,12 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
     const labels = data.shift();
     const fg2 = this.themeService.currentTheme().fg2;
     const fg2Type = this.utils.getValueType(fg2);
-    const fg2Rgb = fg2Type === 'hex' ? this.utils.hexToRgb(this.themeService.currentTheme().fg2).rgb : this.utils.rgbToArray(fg2);
+    let fg2Rgb;
+    if (fg2Type === 'hex') {
+      fg2Rgb = this.utils.hexToRgb(this.themeService.currentTheme().fg2).rgb;
+    } else {
+      fg2Rgb = this.utils.rgbToArray(fg2);
+    }
     const gridLineColor = `rgba(${fg2Rgb[0]}, ${fg2Rgb[1]}, ${fg2Rgb[2]}, 0.25)`;
 
     const options: dygraphs.Options = {
@@ -98,78 +115,13 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
       axes: {
         y: {
           yRangePad: 24,
-          axisLabelFormatter: (numero: number) => {
-            const converted = this.formatLabelValue(numero, this.inferUnits(this.labelY), 1, true, true);
-            const suffix = converted.suffix ? converted.suffix : '';
-            return `${this.limitDecimals(converted.value)} ${suffix}`;
-          },
+          axisLabelFormatter: this.axisLabelFormatter.bind(this),
         },
       },
-      legendFormatter: (legend: dygraphs.LegendData) => {
-        const getSuffix = (converted: Conversion): string => {
-          if (converted.shortName !== undefined) {
-            return converted.shortName;
-          }
-
-          return converted.suffix !== undefined ? converted.suffix : '';
-        };
-
-        const clone = { ...legend } as LegendDataWithStackedTotalHtml;
-        clone.series.forEach((item: dygraphs.SeriesLegendData, index: number) => {
-          if (!item.y) { return; }
-          const converted = this.formatLabelValue(item.y, this.inferUnits(this.labelY), 1, true);
-          const suffix = getSuffix(converted);
-          clone.series[index].yHTML = `${this.limitDecimals(converted.value)} ${suffix}`;
-          if (!clone.stackedTotal) {
-            clone.stackedTotal = 0;
-          }
-          clone.stackedTotal += item.y;
-        });
-        if (clone.stackedTotal >= 0) {
-          const converted = this.formatLabelValue(clone.stackedTotal, this.inferUnits(this.labelY), 1, true);
-          const suffix = getSuffix(converted);
-          clone.stackedTotalHTML = `${this.limitDecimals(converted.value)} ${suffix}`;
-        }
-        this.reportsService.emitLegendEvent(clone);
-        return '';
-      },
-      series: () => {
-        const series: { [item: string]: { plotter: typeof smoothPlotter } } = {};
-        this.data.legend.forEach((item) => {
-          series[item] = { plotter: smoothPlotter };
-        });
-
-        return series;
-      },
-      drawCallback: (dygraph: Dygraph & { axes_: { maxyval: number }[] }) => {
-        if (dygraph.axes_.length) {
-          const numero = dygraph.axes_[0].maxyval;
-          const converted = this.formatLabelValue(numero, this.inferUnits(this.labelY));
-          if (converted.prefix) {
-            this.yLabelPrefix = converted.prefix;
-          } else {
-            this.yLabelPrefix = '';
-          }
-        } else {
-          console.warn('axes not found');
-        }
-      },
-      zoomCallback: (startDate: number, endDate: number) => {
-        const maxZoomLevel = 5 * 60 * 1000;
-        const zoomRange = endDate - startDate;
-
-        if (zoomRange < maxZoomLevel) {
-          this.chart.updateOptions({
-            dateWindow: [this.lastMinDate, this.lastMaxDate],
-            animatedZooms: false,
-          });
-          return;
-        }
-
-        this.lastMinDate = startDate;
-        this.lastMaxDate = endDate;
-        this.zoomChange.emit([startDate, endDate]);
-      },
+      legendFormatter: this.legendFormatter.bind(this),
+      series: this.series.bind(this),
+      drawCallback: this.drawCallback.bind(this),
+      zoomCallback: this.zoomCallback.bind(this),
       stackedGraph: this.stacked,
     } as unknown as dygraphs.Options;
 
@@ -237,6 +189,9 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
   }
 
   formatAxisName(): string {
+    if (this.report.name === ReportingGraphName.NetworkInterface) {
+      return this.yLabelPrefix + '/s';
+    }
     switch (true) {
       case this.labelY.toLowerCase() === 'seconds':
         return 'Days';
@@ -320,6 +275,100 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
     }
     return Math.round(numero);
   }
+
+  axisLabelFormatter = (numero: number): string => {
+    if (this.report?.name === ReportingGraphName.NetworkInterface) {
+      const [formatted] = normalizeFileSize(numero * 1000, 'b', 10);
+      return formatted.toString();
+    }
+    const converted = this.formatLabelValue(numero, this.inferUnits(this.labelY), 1, true, true);
+    const suffix = converted.suffix ? converted.suffix : '';
+    return `${this.limitDecimals(converted.value)} ${suffix}`;
+  };
+
+  series = (): Record<string, { plotter: typeof smoothPlotter }> => {
+    const series: Record<string, { plotter: typeof smoothPlotter }> = {};
+    this.data.legend.forEach((item) => {
+      series[item] = { plotter: smoothPlotter };
+    });
+
+    return series;
+  };
+
+  getSuffix = (converted: Conversion): string => {
+    if (converted.shortName !== undefined) {
+      return converted.shortName;
+    }
+
+    return converted.suffix !== undefined ? converted.suffix : '';
+  };
+
+  legendFormatter = (legend: dygraphs.LegendData): string => {
+    const clone = { ...legend } as LegendDataWithStackedTotalHtml;
+    clone.series.forEach((item: dygraphs.SeriesLegendData, index: number): void => {
+      if (!item.y) { return; }
+      if (this.report.name === ReportingGraphName.NetworkInterface) {
+        clone.series[index].yHTML = buildNormalizedFileSize(item.y * 1000, 'b', 10) + '/s';
+      } else {
+        const yConverted = this.formatLabelValue(item.y, this.inferUnits(this.labelY), 1, true);
+        const ySuffix = this.getSuffix(yConverted);
+        clone.series[index].yHTML = `${this.limitDecimals(yConverted.value)} ${ySuffix}`;
+        if (!clone.stackedTotal) {
+          clone.stackedTotal = 0;
+        }
+        clone.stackedTotal += item.y;
+        if (clone.stackedTotal >= 0) {
+          const stackedTotalConverted = this.formatLabelValue(
+            clone.stackedTotal,
+            this.inferUnits(this.labelY),
+            1,
+            true,
+          );
+          const stackedTotalSuffix = this.getSuffix(stackedTotalConverted);
+          clone.stackedTotalHTML = `${this.limitDecimals(stackedTotalConverted.value)} ${stackedTotalSuffix}`;
+        }
+      }
+    });
+
+    this.reportsService.emitLegendEvent(clone);
+    return '';
+  };
+
+  drawCallback = (dygraph: Dygraph & { axes_: { maxyval: number }[] }): void => {
+    if (dygraph.axes_.length) {
+      const numero = dygraph.axes_[0].maxyval;
+      if (this.report?.name === ReportingGraphName.NetworkInterface) {
+        const [, unit] = normalizeFileSize(numero * 1000, 'b', 10);
+        this.yLabelPrefix = unit;
+        return;
+      }
+      const converted = this.formatLabelValue(numero, this.inferUnits(this.labelY));
+      if (converted.prefix) {
+        this.yLabelPrefix = converted.prefix;
+      } else {
+        this.yLabelPrefix = '';
+      }
+    } else {
+      console.warn('axes not found');
+    }
+  };
+
+  zoomCallback = (startDate: number, endDate: number): void => {
+    const maxZoomLevel = 5 * 60 * 1000;
+    const zoomRange = endDate - startDate;
+
+    if (zoomRange < maxZoomLevel) {
+      this.chart.updateOptions({
+        dateWindow: [this.lastMinDate, this.lastMaxDate],
+        animatedZooms: false,
+      });
+      return;
+    }
+
+    this.lastMinDate = startDate;
+    this.lastMaxDate = endDate;
+    this.zoomChange.emit([startDate, endDate]);
+  };
 
   getValueForAxis(value: number, prefix: string): number {
     if (prefix === 'Tebi') return value / 1000 ** 4;

@@ -4,8 +4,9 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
-import { mockCall, mockJob, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
-import helptext from 'app/helptext/apps/apps';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockCall, mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { helptextApps } from 'app/helptext/apps/apps';
 import { ContainerConfig } from 'app/interfaces/container-config.interface';
 import { KubernetesConfig } from 'app/interfaces/kubernetes-config.interface';
 import { NetworkInterface } from 'app/interfaces/network-interface.interface';
@@ -29,7 +30,7 @@ describe('KubernetesSettingsComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
-      mockWebsocket([
+      mockWebSocket([
         mockCall('kubernetes.config', {
           node_ip: '10.123.45.67',
           route_v4_interface: 'enp0s7',
@@ -39,6 +40,7 @@ describe('KubernetesSettingsComponent', () => {
           cluster_cidr: '172.16.0.0/16',
           service_cidr: '172.17.0.0/16',
           cluster_dns_ip: '172.17.0.1',
+          metrics_server: true,
         } as KubernetesConfig),
         mockJob('kubernetes.update'),
       ]),
@@ -60,6 +62,7 @@ describe('KubernetesSettingsComponent', () => {
       }),
       mockProvider(IxSlideInRef),
       mockProvider(FormErrorHandlerService),
+      mockAuth(),
     ],
   });
 
@@ -82,6 +85,7 @@ describe('KubernetesSettingsComponent', () => {
       'Enable Container Image Updates': true,
       'Enable GPU support': true,
       'Enable Integrated Loadbalancer': true,
+      'Enable Integrated Metrics Server': true,
       'Cluster CIDR': '172.16.0.0/16',
       'Service CIDR': '172.17.0.0/16',
       'Cluster DNS IP': '172.17.0.1',
@@ -98,6 +102,7 @@ describe('KubernetesSettingsComponent', () => {
       'Enable Container Image Updates': false,
       'Enable GPU support': false,
       'Enable Integrated Loadbalancer': false,
+      'Enable Integrated Metrics Server': false,
       Force: true,
     });
 
@@ -114,6 +119,7 @@ describe('KubernetesSettingsComponent', () => {
       cluster_cidr: '172.16.0.0/16',
       service_cidr: '172.17.0.0/16',
       cluster_dns_ip: '172.17.0.1',
+      metrics_server: false,
       force: true,
     }]);
     expect(spectator.inject(ApplicationsService).updateContainerConfig).toHaveBeenCalledWith(false);
@@ -132,8 +138,8 @@ describe('KubernetesSettingsComponent', () => {
     await saveButton.click();
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({
-      title: helptext.kubForm.reInit.title,
-      message: helptext.kubForm.reInit.modalWarning,
+      title: helptextApps.kubForm.reInit.title,
+      message: helptextApps.kubForm.reInit.modalWarning,
     });
 
     expect(ws.job).toHaveBeenCalledWith('kubernetes.update', [{
@@ -145,6 +151,7 @@ describe('KubernetesSettingsComponent', () => {
       service_cidr: '172.17.1.0/16',
       cluster_dns_ip: '172.17.1.1',
       servicelb: true,
+      metrics_server: true,
       force: false,
     }]);
   });

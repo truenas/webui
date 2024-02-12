@@ -15,15 +15,16 @@ import { TranslateModule } from '@ngx-translate/core';
 import { GalleryModule } from 'ng-gallery';
 import { LightboxModule } from 'ng-gallery/lightbox';
 import { LazyLoadImageModule } from 'ng-lazyload-image';
-import { NgxFilesizeModule } from 'ngx-filesize';
 import { ImgFallbackModule } from 'ngx-img-fallback';
 import { MarkdownModule } from 'ngx-markdown';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { CoreComponents } from 'app/core/core-components.module';
+import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { CastModule } from 'app/modules/cast/cast.module';
 import { AppCommonModule } from 'app/modules/common/app-common.module';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxDynamicFormModule } from 'app/modules/ix-dynamic-form/ix-dynamic-form.module';
+import { IxFileSizeModule } from 'app/modules/ix-file-size/ix-file-size.module';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
 import { IxTableModule } from 'app/modules/ix-tables/ix-table.module';
@@ -39,6 +40,7 @@ import {
 import {
   AppDetailsSimilarComponent,
 } from 'app/pages/apps/components/app-detail-view/app-details-similar/app-details-similar.component';
+import { AppsScopeWrapperComponent } from 'app/pages/apps/components/apps-scope-wrapper.component';
 import {
   CatalogAddFormComponent,
 } from 'app/pages/apps/components/catalogs/catalog-add-form/catalog-add-form.component';
@@ -56,6 +58,7 @@ import { DockerImageUpdateDialogComponent } from 'app/pages/apps/components/dock
 import { DockerImagesListComponent } from 'app/pages/apps/components/docker-images/docker-images-list/docker-images-list.component';
 import { DockerImagesComponentStore } from 'app/pages/apps/components/docker-images/docker-images.store';
 import { PullImageFormComponent } from 'app/pages/apps/components/docker-images/pull-image-form/pull-image-form.component';
+import { DockerHubRateInfoDialogComponent } from 'app/pages/apps/components/dockerhub-rate-limit-info.dialog.ts/dockerhub-rate-limit-info-dialog.component';
 import { AppBulkUpgradeComponent } from 'app/pages/apps/components/installed-apps/app-bulk-upgrade/app-bulk-upgrade.component';
 import { AppInfoCardComponent } from 'app/pages/apps/components/installed-apps/app-info-card/app-info-card.component';
 import { AppRollbackModalComponent } from 'app/pages/apps/components/installed-apps/app-rollback-modal/app-rollback-modal.component';
@@ -67,12 +70,7 @@ import { PodShellComponent } from 'app/pages/apps/components/installed-apps/pod-
 import { PodSelectDialogComponent } from 'app/pages/apps/components/pod-select-dialog/pod-select-dialog.component';
 import { PodSelectLogsDialogComponent } from 'app/pages/apps/components/pod-select-logs/pod-select-logs-dialog.component';
 import { SelectPoolDialogComponent } from 'app/pages/apps/components/select-pool-dialog/select-pool-dialog.component';
-import { AppsNavigateAwayGuard } from 'app/pages/apps/guards/apps-navigate-away.guard';
 import { CustomFormsModule } from 'app/pages/apps/modules/custom-forms/custom-forms.module';
-import { AppsFilterStore } from 'app/pages/apps/store/apps-filter-store.service';
-import { AppsStore } from 'app/pages/apps/store/apps-store.service';
-import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.service';
-import { KubernetesStore } from 'app/pages/apps/store/kubernetes-store.service';
 import { AppCatalogPipe } from 'app/pages/apps/utils/app-catalog.pipe';
 import { AppCardLogoComponent } from './components/app-card-logo/app-card-logo.component';
 import { AppAvailableInfoCardComponent } from './components/app-detail-view/app-available-info-card/app-available-info-card.component';
@@ -119,6 +117,7 @@ import { KubernetesStatusComponent } from './components/installed-apps/kubernete
     KubernetesSettingsComponent,
     AppResourcesCardComponent,
     AppHelmChartCardComponent,
+    AppsScopeWrapperComponent,
     AppAvailableInfoCardComponent,
     PodLogsComponent,
     PodShellComponent,
@@ -129,6 +128,7 @@ import { KubernetesStatusComponent } from './components/installed-apps/kubernete
     AppDetailsHeaderComponent,
     AppBulkUpgradeComponent,
     AppRollbackModalComponent,
+    DockerHubRateInfoDialogComponent,
     SelectPoolDialogComponent,
     AppDetailsSimilarComponent,
     AppSettingsButtonComponent,
@@ -153,7 +153,6 @@ import { KubernetesStatusComponent } from './components/installed-apps/kubernete
     ReactiveFormsModule,
     EntityModule,
     MatCardModule,
-    NgxFilesizeModule,
     CoreComponents,
     MatSelectModule,
     MatCheckboxModule,
@@ -161,6 +160,7 @@ import { KubernetesStatusComponent } from './components/installed-apps/kubernete
     FormsModule,
     MatDialogModule,
     MatMenuModule,
+    IxFileSizeModule,
     ImgFallbackModule,
     NgxSkeletonLoaderModule,
     IxIconModule,
@@ -169,6 +169,7 @@ import { KubernetesStatusComponent } from './components/installed-apps/kubernete
     TestIdModule,
     AppLoaderModule,
     AppCommonModule,
+    CommonDirectivesModule,
     MatExpansionModule,
     CastModule,
     TerminalModule,
@@ -184,11 +185,6 @@ import { KubernetesStatusComponent } from './components/installed-apps/kubernete
     AppCatalogPipe,
   ],
   providers: [
-    AppsStore,
-    AppsFilterStore,
-    KubernetesStore,
-    InstalledAppsStore,
-    AppsNavigateAwayGuard,
     DockerImagesComponentStore,
   ],
 })

@@ -1,0 +1,53 @@
+<ix-fake-progress-bar [loading]="isLoading"></ix-fake-progress-bar>
+
+<h1 matDialogTitle>{{ 'Send Feedback' | translate }}</h1>
+
+<button
+  mat-icon-button
+  mat-dialog-close
+  class="close-feedback-dialog"
+  ixTest="close-feedback-dialog"
+>
+  <ix-icon name="clear"></ix-icon>
+</button>
+
+<div *ngIf="isLoadingTypes; else typesLoaded" class="placeholder">
+  <ngx-skeleton-loader [count]="3"></ngx-skeleton-loader>
+</div>
+
+<ng-template #typesLoaded>
+  <ix-button-group
+    *ngIf="allowedTypes.length > 1"
+    class="feedback-type"
+    [formControl]="typeControl"
+    [label]="'I would like to' | translate"
+    [options]="feedbackTypeOptions$"
+    [inlineFields]="true"
+    [attr.aria-label]="'Feedback Type' | translate"
+  ></ix-button-group>
+
+  <ix-file-review
+    *ngIf="isReview; else fileTicket"
+    [dialogRef]="dialogRef"
+    [isLoading]="isLoading"
+    (isLoadingChange)="onIsLoadingChange($event)"
+  ></ix-file-review>
+
+  <ng-template #fileTicket>
+    <ix-file-ticket-licensed
+      *ngIf="isEnterprise$ | async; else nonEnterpriseTicket"
+      [dialogRef]="dialogRef"
+      [isLoading]="isLoading"
+      (isLoadingChange)="onIsLoadingChange($event)"
+    ></ix-file-ticket-licensed>
+  </ng-template>
+
+  <ng-template #nonEnterpriseTicket>
+    <ix-file-ticket
+      [type]="typeControl.value | cast"
+      [dialogRef]="dialogRef"
+      [isLoading]="isLoading"
+      (isLoadingChange)="onIsLoadingChange($event)"
+    ></ix-file-ticket>
+  </ng-template>
+</ng-template>

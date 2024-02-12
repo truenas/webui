@@ -2,6 +2,7 @@
 """SCALE UI: feature tests."""
 
 import pytest
+import reusableSeleniumCode as rsc
 import time
 import xpaths
 from function import (
@@ -10,7 +11,8 @@ from function import (
     attribute_value_exist,
     wait_on_element_disappear,
     run_cmd,
-    post
+    post,
+    delete_dataset
 )
 from pytest_bdd import (
     given,
@@ -118,12 +120,7 @@ def input_my_ldap_smb_test_share_as_the_description_and_click_save(driver, descr
 @then('if Restart SMB Service box appears, click Restart Service')
 def if_restart_smb_service_box_appears_click_restart_service(driver):
     """if Restart SMB Service box appears, click Restart Service."""
-    if wait_on_element(driver, 3, xpaths.popup.smb_Restart_Title):
-        assert wait_on_element(driver, 3, xpaths.popup.smb_Restart_Button, 'clickable')
-        driver.find_element_by_xpath(xpaths.popup.smb_Restart_Button).click()
-    elif wait_on_element(driver, 3, xpaths.popup.smb_Start_Title):
-        assert wait_on_element(driver, 3, xpaths.popup.enable_Service_Button, 'clickable')
-        driver.find_element_by_xpath(xpaths.popup.enable_Service_Button).click()
+    rsc.Start_Or_Restart_SMB_Service(driver)
     assert wait_on_element_disappear(driver, 30, xpaths.progress.progressbar)
 
 
@@ -150,3 +147,4 @@ def verify_that_the_file_is_on_the_nas_dataset(driver, nas_ip, root_password):
     file = f'{dataset_path}/testfile.txt'
     results = post(nas_ip, '/filesystem/stat/', ('root', root_password), file)
     assert results.status_code == 200, results.text
+    delete_dataset(nas_ip, ('root', root_password), 'system/my_ldap_dataset')

@@ -4,7 +4,8 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { ActivatedRoute } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of, Subject } from 'rxjs';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { DatasetQuotaType } from 'app/enums/dataset.enum';
 import { DatasetQuota } from 'app/interfaces/dataset-quota.interface';
 import { EntityModule } from 'app/modules/entity/entity.module';
@@ -71,11 +72,12 @@ describe('DatasetQuotasUserlistComponent', () => {
           slideInClosed$: of(undefined),
         })),
       }),
-      mockWebsocket([
+      mockWebSocket([
         mockCall('pool.dataset.get_quota', fakeUserQuotas),
         mockCall('pool.dataset.set_quota'),
       ]),
       mockProvider(IxSlideInRef),
+      mockAuth(),
       { provide: SLIDE_IN_DATA, useValue: undefined },
     ],
   });
@@ -137,7 +139,8 @@ describe('DatasetQuotasUserlistComponent', () => {
     (secondRow as HTMLElement).click();
 
     expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(
-      DatasetQuotaEditFormComponent, { data: { datasetId: 'Test', id: 2, quotaType: 'USER' } },
+      DatasetQuotaEditFormComponent,
+      { data: { datasetId: 'Test', id: 2, quotaType: 'USER' } },
     );
   });
 });

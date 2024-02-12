@@ -2,10 +2,14 @@ import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
 import { Validators } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
-import { forkJoin, lastValueFrom } from 'rxjs';
+import {
+  lastValueFrom, forkJoin,
+} from 'rxjs';
 import { patterns } from 'app/constants/name-patterns.constant';
 import { DatasetType } from 'app/enums/dataset.enum';
 import {
@@ -13,9 +17,10 @@ import {
   IscsiExtentRpm,
   IscsiExtentType,
   IscsiExtentUsefor,
-  IscsiNewOption,
 } from 'app/enums/iscsi.enum';
 import { mntPath } from 'app/enums/mnt-path.enum';
+import { Role } from 'app/enums/role.enum';
+import { ServiceName } from 'app/enums/service-name.enum';
 import { Dataset, DatasetCreate } from 'app/interfaces/dataset.interface';
 import {
   IscsiAuthAccess,
@@ -32,14 +37,19 @@ import {
   IscsiTargetExtentUpdate,
   IscsiTargetUpdate,
 } from 'app/interfaces/iscsi.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
+import { newOption } from 'app/interfaces/option.interface';
+import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { forbiddenValues } from 'app/modules/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
 import { matchOthersFgValidator } from 'app/modules/ix-forms/validators/password-validation/password-validation';
+import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IscsiService } from 'app/services/iscsi.service';
 import { WebSocketService } from 'app/services/ws.service';
+import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
+import { ServicesState } from 'app/store/services/services.reducer';
 
 @UntilDestroy()
 @Component({
@@ -70,16 +80,16 @@ export class IscsiWizardComponent implements OnInit {
       type: [IscsiExtentType.Disk, [Validators.required]],
       path: [mntPath, [Validators.required]],
       filesize: [0, [Validators.required]],
-      disk: [null as IscsiNewOption | string, [Validators.required]],
+      disk: [null as string, [Validators.required]],
       dataset: ['', [Validators.required]],
       volsize: [0, [Validators.required]],
       usefor: [IscsiExtentUsefor.Vmware, [Validators.required]],
-      target: [IscsiNewOption.New as IscsiNewOption | number, [Validators.required]],
+      target: [newOption as typeof newOption | number, [Validators.required]],
     }),
     portal: this.fb.group({
-      portal: [null as IscsiNewOption | number, [Validators.required]],
+      portal: [null as typeof newOption | number, [Validators.required]],
       discovery_authmethod: [IscsiAuthMethod.None, [Validators.required]],
-      discovery_authgroup: [null as IscsiNewOption | number],
+      discovery_authgroup: [null as typeof newOption | number],
       tag: [0, [Validators.min(0), Validators.required]],
       user: ['', [Validators.required]],
       secret: ['', [Validators.minLength(12), Validators.maxLength(16), Validators.required]],
@@ -94,26 +104,32 @@ export class IscsiWizardComponent implements OnInit {
       matchOthersFgValidator(
         'portal.secret_confirm',
         ['portal.secret'],
-        this.translate.instant('Secret Confirm must match Secret'),
+        this.translateService.instant('Secret Confirm must match Secret'),
       ),
     ],
   });
 
+  readonly requiredRoles = [
+    Role.SharingIscsiTargetWrite,
+    Role.SharingIscsiWrite,
+    Role.SharingWrite,
+  ];
+
   get isNewZvol(): boolean {
-    return this.form.controls.device.enabled && this.form.value.device.disk === IscsiNewOption.New;
+    return this.form.controls.device.enabled && this.form.value.device.disk === newOption;
   }
 
   get isNewAuthgroup(): boolean {
     return this.form.controls.portal.controls.discovery_authgroup.enabled
-      && this.form.value.portal.discovery_authgroup === IscsiNewOption.New;
+      && this.form.value.portal.discovery_authgroup === newOption;
   }
 
   get isNewPortal(): boolean {
-    return this.form.controls.portal.controls.portal.enabled && this.form.value.portal.portal === IscsiNewOption.New;
+    return this.form.controls.portal.controls.portal.enabled && this.form.value.portal.portal === newOption;
   }
 
   get isNewTarget(): boolean {
-    return this.form.value.device.target === IscsiNewOption.New;
+    return this.form.value.device.target === newOption;
   }
 
   get isNewInitiator(): boolean {
@@ -148,7 +164,7 @@ export class IscsiWizardComponent implements OnInit {
         ? (filesize + (blocksizeDefault - filesize % blocksizeDefault)) : filesize;
       extentPayload.path = value.path;
     } else if (extentPayload.type === IscsiExtentType.Disk) {
-      if (value.disk === IscsiNewOption.New) {
+      if (value.disk === newOption) {
         extentPayload.disk = 'zvol/' + this.createdZvol.id.replace(' ', '+');
       } else {
         extentPayload.disk = value.disk;
@@ -215,7 +231,11 @@ export class IscsiWizardComponent implements OnInit {
     private errorHandler: ErrorHandlerService,
     private dialogService: DialogService,
     private cdr: ChangeDetectorRef,
-    private translate: TranslateService,
+    private matDialog: MatDialog,
+    private snackbar: SnackbarService,
+    private translateService: TranslateService,
+    private loader: AppLoaderService,
+    private store$: Store<ServicesState>,
   ) {
     this.iscsiService.getExtents().pipe(untilDestroyed(this)).subscribe((extents) => {
       this.namesInUse.push(...extents.map((extent) => extent.name));
@@ -233,7 +253,7 @@ export class IscsiWizardComponent implements OnInit {
     this.disablePortalGroup();
 
     this.form.controls.device.controls.target.valueChanges.pipe(untilDestroyed(this)).subscribe((target) => {
-      if (target === IscsiNewOption.New) {
+      if (target === newOption) {
         this.form.controls.portal.enable();
         this.form.controls.initiator.enable();
       } else {
@@ -324,9 +344,9 @@ export class IscsiWizardComponent implements OnInit {
     }
   }
 
-  handleError(err: WebsocketError): void {
+  handleError(err: unknown): void {
     this.toStop = true;
-    this.dialogService.error(this.errorHandler.parseWsError(err));
+    this.dialogService.error(this.errorHandler.parseError(err));
   }
 
   async onSubmit(): Promise<void> {
@@ -344,7 +364,7 @@ export class IscsiWizardComponent implements OnInit {
     if (this.isNewZvol) {
       await this.createZvol(this.zvolPayload).then(
         (createdZvol) => this.createdZvol = createdZvol,
-        (err: WebsocketError) => this.handleError(err),
+        (err: WebSocketError) => this.handleError(err),
       );
     }
 
@@ -355,7 +375,7 @@ export class IscsiWizardComponent implements OnInit {
 
     await this.createExtent(this.extentPayload).then(
       (createdExtent) => this.createdExtent = createdExtent,
-      (err: WebsocketError) => this.handleError(err),
+      (err: WebSocketError) => this.handleError(err),
     );
 
     if (this.toStop) {
@@ -366,7 +386,7 @@ export class IscsiWizardComponent implements OnInit {
     if (this.isNewAuthgroup) {
       await this.createAuthgroup(this.authgroupPayload).then(
         (createdAuthgroup) => this.createdAuthgroup = createdAuthgroup,
-        (err: WebsocketError) => this.handleError(err),
+        (err: WebSocketError) => this.handleError(err),
       );
     }
 
@@ -378,7 +398,7 @@ export class IscsiWizardComponent implements OnInit {
     if (this.isNewPortal) {
       await this.createPortal(this.portalPayload).then(
         (createdPortal) => this.createdPortal = createdPortal,
-        (err: WebsocketError) => this.handleError(err),
+        (err: WebSocketError) => this.handleError(err),
       );
     }
 
@@ -390,7 +410,7 @@ export class IscsiWizardComponent implements OnInit {
     if (this.isNewInitiator) {
       await this.createInitiator(this.initiatorPayload).then(
         (createdInitiator) => this.createdInitiator = createdInitiator,
-        (err: WebsocketError) => this.handleError(err),
+        (err: WebSocketError) => this.handleError(err),
       );
     }
 
@@ -402,7 +422,7 @@ export class IscsiWizardComponent implements OnInit {
     if (this.isNewTarget) {
       await this.createTarget(this.targetPayload).then(
         (createdTarget) => this.createdTarget = createdTarget,
-        (err: WebsocketError) => this.handleError(err),
+        (err: WebSocketError) => this.handleError(err),
       );
     }
 
@@ -413,7 +433,7 @@ export class IscsiWizardComponent implements OnInit {
 
     await this.createTargetExtent(this.targetExtentPayload).then(
       (createdTargetExtent) => this.createdTargetExtent = createdTargetExtent,
-      (err: WebsocketError) => this.handleError(err),
+      (err: WebSocketError) => this.handleError(err),
     );
 
     if (this.toStop) {
@@ -421,8 +441,11 @@ export class IscsiWizardComponent implements OnInit {
       return;
     }
 
+    this.store$.dispatch(checkIfServiceIsEnabled({ serviceName: ServiceName.Iscsi }));
+
+    this.loader.close();
     this.isLoading = false;
     this.cdr.markForCheck();
-    this.slideInRef.close();
+    this.slideInRef.close(true);
   }
 }

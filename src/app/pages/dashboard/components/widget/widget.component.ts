@@ -1,10 +1,11 @@
 import {
-  Component, Input, Output, EventEmitter,
+  Component, Input, Output, EventEmitter, ChangeDetectionStrategy,
 } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   template: '',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class WidgetComponent {
   @Input() showReorderHandle = false;

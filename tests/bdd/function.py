@@ -359,3 +359,35 @@ def create_Encrypted_Pool(hostname, auth, pool_name):
         }
     }
     post_Pool(hostname, auth, pool_name, payload)
+
+
+def service_Start(hostname, auth, service_name):
+    """
+    Start service.
+    :param hostname: Hostname of IP of the NAS.
+    :param auth: (username, password) tuple.
+    :param service_name: Service name to start.
+
+    Example:
+        - service_Start('00.00.00.00', ('admin', 'admin'), 'smb')
+    """
+    results = post(hostname, f'/service/start/', auth, {"service": service_name})
+    assert results.status_code == 200, results.text
+
+
+def delete_dataset(hostname: str, auth: tuple, dataset_name: str):
+    """
+    This function delete the given dataset.
+    :param hostname: Hostname of IP of the NAS.
+    :param auth: (username, password) tuple.
+    :param dataset_name: Dataset name to delete.
+
+    Example:
+        - delete_dataset('00.00.00.00', ('admin', 'admin'), 'data')
+    """
+    results = delete(hostname, f'/pool/dataset/id/{dataset_name.replace("/", "%2F")}', auth)
+    assert results.status_code == 200, results.text
+
+
+def save_screenshot(driver, name):
+    driver.save_screenshot(name)

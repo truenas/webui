@@ -15,6 +15,7 @@ import {
   filter, take, tap,
 } from 'rxjs/operators';
 import { JobState } from 'app/enums/job-state.enum';
+import { Role } from 'app/enums/role.enum';
 import { helptextSystemUpdate as helptext } from 'app/helptext/system/update';
 import { Job } from 'app/interfaces/job.interface';
 import { Option } from 'app/interfaces/option.interface';
@@ -24,7 +25,6 @@ import { AuthService } from 'app/services/auth/auth.service';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
-import { UpdateService } from 'app/services/update.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
@@ -53,10 +53,11 @@ export class ManualUpdateFormComponent implements OnInit {
   fileLocationOptions$: Observable<Option[]>;
 
   isHaLicensed = false;
+  protected readonly Role = Role;
 
   constructor(
     private dialogService: DialogService,
-    private mdDialog: MatDialog,
+    private matDialog: MatDialog,
     protected router: Router,
     public systemService: SystemGeneralService,
     private formBuilder: FormBuilder,
@@ -66,7 +67,6 @@ export class ManualUpdateFormComponent implements OnInit {
     private translate: TranslateService,
     private store$: Store<AppState>,
     private cdr: ChangeDetectorRef,
-    private updateService: UpdateService,
   ) {
     this.authService.authToken$.pipe(
       tap((token) => {
@@ -146,7 +146,7 @@ export class ManualUpdateFormComponent implements OnInit {
   }
 
   showRunningUpdate(jobId: number): void {
-    const dialogRef = this.mdDialog.open(EntityJobComponent, { data: { title: this.translate.instant('Update') } });
+    const dialogRef = this.matDialog.open(EntityJobComponent, { data: { title: this.translate.instant('Update') } });
     if (this.isHaLicensed) {
       dialogRef.componentInstance.disableProgressValue(true);
     }
@@ -156,7 +156,7 @@ export class ManualUpdateFormComponent implements OnInit {
       this.router.navigate(['/others/reboot'], { skipLocationChange: true });
     });
     dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err) => {
-      this.dialogService.error(this.errorHandler.parseJobError(err));
+      this.dialogService.error(this.errorHandler.parseError(err));
     });
     this.cdr.markForCheck();
   }
@@ -177,7 +177,7 @@ export class ManualUpdateFormComponent implements OnInit {
     if (!files.length) {
       return;
     }
-    const dialogRef = this.mdDialog.open(EntityJobComponent, {
+    const dialogRef = this.matDialog.open(EntityJobComponent, {
       data: { title: helptext.manual_update_action },
       disableClose: true,
     });
@@ -258,7 +258,6 @@ export class ManualUpdateFormComponent implements OnInit {
   }
 
   handleUpdateSuccess(): void {
-    this.updateService.setForHardRefresh();
     if (this.isHaLicensed) {
       this.finishHaUpdate();
     } else {
@@ -291,11 +290,11 @@ export class ManualUpdateFormComponent implements OnInit {
       });
       return;
     }
-    this.dialogService.error(this.errorHandler.parseJobError(failure));
+    this.dialogService.error(this.errorHandler.parseError(failure));
   };
 
   private resumeUpdateAfterFailure(): void {
-    const dialogRef = this.mdDialog.open(EntityJobComponent, {
+    const dialogRef = this.matDialog.open(EntityJobComponent, {
       data: { title: helptext.manual_update_action },
       disableClose: true,
     });

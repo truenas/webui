@@ -1,13 +1,14 @@
 import {
-  ChangeDetectionStrategy, Component, Input,
+  ChangeDetectionStrategy, Component, Input, ViewContainerRef,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import {
-  filter, map, Observable, of, switchMap, take, tap,
+  filter, map, Observable, of, switchMap, take,
 } from 'rxjs';
+import { Role } from 'app/enums/role.enum';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
 import { SelectPoolDialogComponent } from 'app/pages/apps/components/select-pool-dialog/select-pool-dialog.component';
 import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.service';
@@ -27,6 +28,8 @@ export class AppDetailsHeaderComponent {
   @Input() app: AvailableApp;
   @Input() isLoading$: Observable<boolean>;
 
+  protected readonly setupPoolRequiredRoles = [Role.KubernetesWrite];
+
   constructor(
     public kubernetesStore: KubernetesStore,
     private router: Router,
@@ -36,11 +39,12 @@ export class AppDetailsHeaderComponent {
     private dialogService: DialogService,
     private translate: TranslateService,
     private ws: WebSocketService,
+    private viewContainerRef: ViewContainerRef,
   ) {}
 
   get description(): string {
-    const splittedText = this.app?.app_readme?.split('</h1>');
-    const readyHtml = splittedText[1] || splittedText[0];
+    const splitText = this.app?.app_readme?.split('</h1>');
+    const readyHtml = splitText[1] || splitText[0];
     return readyHtml?.replace(/<[^>]*>/g, '').trim();
   }
 
@@ -80,7 +84,7 @@ export class AppDetailsHeaderComponent {
         }).pipe(
           filter(Boolean),
           switchMap(() => this.ws.call('auth.set_attribute', ['appsAgreement', true])),
-          tap(() => this.authService.getLoggedInUserInformation()),
+          switchMap(() => this.authService.refreshUser()),
         );
       }),
 
@@ -96,7 +100,7 @@ export class AppDetailsHeaderComponent {
   }
 
   showChoosePoolModal(): void {
-    const dialog = this.matDialog.open(SelectPoolDialogComponent);
+    const dialog = this.matDialog.open(SelectPoolDialogComponent, { viewContainerRef: this.viewContainerRef });
     dialog.afterClosed().pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
       this.navigateToInstallPage();
     });

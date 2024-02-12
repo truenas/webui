@@ -12,7 +12,6 @@ import { TopologyItemType } from 'app/enums/v-dev-type.enum';
 import { DeviceNestedDataNode } from 'app/interfaces/device-nested-data-node.interface';
 import { PoolInstance } from 'app/interfaces/pool.interface';
 import { TopologyItem } from 'app/interfaces/storage.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { NestedTreeDataSource } from 'app/modules/ix-tree/nested-tree-datasource';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { BootPoolAttachDialogComponent } from 'app/pages/system/bootenv/boot-pool-attach/boot-pool-attach-dialog.component';
@@ -60,7 +59,7 @@ export class BootStatusListComponent implements OnInit {
     private ws: WebSocketService,
     private dialogService: DialogService,
     private errorHandler: ErrorHandlerService,
-    private mdDialog: MatDialog,
+    private matDialog: MatDialog,
     private loader: AppLoaderService,
     private translate: TranslateService,
     private cdr: ChangeDetectorRef,
@@ -82,23 +81,23 @@ export class BootStatusListComponent implements OnInit {
         this.isLoading$.next(false);
         this.cdr.markForCheck();
       },
-      error: (error: WebsocketError) => {
+      error: (error: unknown) => {
         this.isLoading$.next(false);
         this.cdr.markForCheck();
-        this.dialogService.error(this.errorHandler.parseWsError(error));
+        this.dialogService.error(this.errorHandler.parseError(error));
       },
     });
   }
 
   attach(): void {
-    this.mdDialog.open(BootPoolAttachDialogComponent)
+    this.matDialog.open(BootPoolAttachDialogComponent)
       .afterClosed()
       .pipe(filter(Boolean), untilDestroyed(this))
       .subscribe(() => this.loadPoolInstance());
   }
 
   replace(diskPath: string): void {
-    this.mdDialog.open(BootPoolReplaceDialogComponent, { data: diskPath })
+    this.matDialog.open(BootPoolReplaceDialogComponent, { data: diskPath })
       .afterClosed()
       .pipe(filter(Boolean), untilDestroyed(this))
       .subscribe(() => this.loadPoolInstance());

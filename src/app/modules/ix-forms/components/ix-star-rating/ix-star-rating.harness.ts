@@ -15,8 +15,7 @@ export class IxStarRatingHarness extends ComponentHarness implements IxFormContr
 
   static with(options: IxStarRatingFilters): HarnessPredicate<IxStarRatingHarness> {
     return new HarnessPredicate(IxStarRatingHarness, options)
-      .addOption('label', options.label,
-        (harness, label) => HarnessPredicate.stringMatches(harness.getLabelText(), label));
+      .addOption('label', options.label, (harness, label) => HarnessPredicate.stringMatches(harness.getLabelText(), label));
   }
 
   getButtons = this.locatorForAll(MatButtonHarness);
@@ -31,6 +30,7 @@ export class IxStarRatingHarness extends ComponentHarness implements IxFormContr
   }
 
   async getValue(): Promise<number> {
+    // TODO: Infinite loop.
     return this.getValue();
   }
 
@@ -43,6 +43,8 @@ export class IxStarRatingHarness extends ComponentHarness implements IxFormContr
     const buttons = await this.getButtons();
     const inputState = await parallel(() => buttons.map((control) => control.isDisabled()));
 
-    return new Promise((resolve) => resolve(inputState.every(Boolean)));
+    return new Promise((resolve) => {
+      resolve(inputState.every(Boolean));
+    });
   }
 }

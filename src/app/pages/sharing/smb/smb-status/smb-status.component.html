@@ -1,0 +1,22 @@
+<nav mat-tab-nav-bar [tabPanel]="tabPanel">
+  <a
+    *ngFor="let link of navLinks"
+    #rla="routerLinkActive"
+    mat-tab-link
+    routerLinkActive
+    [ixTest]="link.label"
+    [routerLink]="link.path"
+    [active]="rla.isActive"
+  >
+    {{ link.label | translate }}
+  </a>
+</nav>
+
+<router-outlet mat-tab-nav-panel [ngSwitch]="activeTab">
+  <mat-tab-nav-panel #tabPanel>
+    <ix-smb-session-list *ngSwitchCase="'sessions'"></ix-smb-session-list>
+    <ix-smb-lock-list *ngSwitchCase="'locks'"></ix-smb-lock-list>
+    <ix-smb-share-list *ngSwitchCase="'shares'"></ix-smb-share-list>
+    <ix-smb-notification-list *ngSwitchCase="'notifications'"></ix-smb-notification-list>
+  </mat-tab-nav-panel>
+</router-outlet>

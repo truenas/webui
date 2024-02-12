@@ -1,5 +1,7 @@
 import { SetAcl } from 'app/interfaces/acl.interface';
-import { LeaveActiveDirectory } from 'app/interfaces/active-directory-config.interface';
+import { ActiveDirectoryConfig, LeaveActiveDirectory } from 'app/interfaces/active-directory-config.interface';
+import { ActiveDirectoryUpdate } from 'app/interfaces/active-directory.interface';
+import { AuditEntry } from 'app/interfaces/audit/audit.interface';
 import { Catalog, CatalogCreate } from 'app/interfaces/catalog.interface';
 import { Certificate, CertificateCreate, CertificateUpdate } from 'app/interfaces/certificate.interface';
 import {
@@ -23,13 +25,14 @@ import {
   DatasetEncryptionSummaryQueryParams,
 } from 'app/interfaces/dataset-encryption-summary.interface';
 import { DatasetLockParams, DatasetUnlockParams, DatasetUnlockResult } from 'app/interfaces/dataset-lock.interface';
-import { DatasetPermissionsUpdate } from 'app/interfaces/dataset-permissions.interface';
+import { ExportParams } from 'app/interfaces/export-params.interface';
 import { FailoverUpgradeParams } from 'app/interfaces/failover.interface';
-import { FilesystemPutParams } from 'app/interfaces/filesystem-stat.interface';
+import { FilesystemPutParams, FilesystemSetPermParams } from 'app/interfaces/filesystem-stat.interface';
 import { IpmiEvent } from 'app/interfaces/ipmi.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { KmipConfig, KmipConfigUpdate } from 'app/interfaces/kmip-config.interface';
 import { KubernetesConfig, KubernetesConfigUpdate } from 'app/interfaces/kubernetes-config.interface';
+import { LdapConfig, LdapConfigUpdate } from 'app/interfaces/ldap-config.interface';
 import { MailConfigUpdate, SendMailParams } from 'app/interfaces/mail-config.interface';
 import { PoolExportParams } from 'app/interfaces/pool-export.interface';
 import { PoolFindResult, PoolImportParams } from 'app/interfaces/pool-import.interface';
@@ -44,15 +47,19 @@ import {
   UpdatePool,
 } from 'app/interfaces/pool.interface';
 import { DiskWipeParams } from 'app/interfaces/storage.interface';
-import { AttachTicketParams, CreateNewTicket, NewTicketResponse } from 'app/interfaces/support.interface';
 import { SystemDatasetConfig, SystemDatasetUpdate } from 'app/interfaces/system-dataset-config.interface';
 import { UpdateParams } from 'app/interfaces/system-update.interface';
 import { Tunable, TunableCreate, TunableUpdate } from 'app/interfaces/tunable.interface';
 import { VmStopParams } from 'app/interfaces/virtual-machine.interface';
+import { AttachTicketParams, CreateNewTicket, NewTicketResponse } from 'app/modules/feedback/interfaces/file-ticket.interface';
 
 export interface ApiJobDirectory {
   // Active Directory
+  'activedirectory.update': { params: [ActiveDirectoryUpdate]; response: ActiveDirectoryConfig };
   'activedirectory.leave': { params: [LeaveActiveDirectory]; response: void };
+
+  // Audit
+  'audit.export': { params: [ExportParams<AuditEntry>]; response: string };
 
   // Boot
   'boot.attach': { params: [disk: string, params: { expand?: boolean }]; response: void };
@@ -80,7 +87,7 @@ export interface ApiJobDirectory {
   'chart.release.update': { params: [name: string, update: ChartReleaseUpdate]; response: ChartRelease };
   'chart.release.upgrade': { params: [name: string, upgrade: ChartReleaseUpgrade]; response: ChartRelease };
 
-  // Cloudsync
+  // CloudSync
   'cloudsync.sync': { params: [id: number, params?: { dry_run: boolean }]; response: number };
   'cloudsync.sync_onetime': { params: [task: CloudSyncTaskUpdate, params: { dry_run?: boolean }]; response: void };
 
@@ -107,6 +114,7 @@ export interface ApiJobDirectory {
   // Filesystem
   'filesystem.put': { params: FilesystemPutParams; response: boolean };
   'filesystem.setacl': { params: [SetAcl]; response: void };
+  'filesystem.setperm': { params: [FilesystemSetPermParams]; response: void };
 
   // idmap
   'idmap.clear_idmap_cache': { params: void; response: void };
@@ -120,6 +128,9 @@ export interface ApiJobDirectory {
 
   // Kubernetes
   'kubernetes.update': { params: [Partial<KubernetesConfigUpdate>]; response: KubernetesConfig };
+
+  // LDAP
+  'ldap.update': { params: [LdapConfigUpdate]; response: LdapConfig };
 
   // Mail
   'mail.send': { params: [SendMailParams, MailConfigUpdate]; response: boolean };
@@ -142,7 +153,6 @@ export interface ApiJobDirectory {
   };
   'pool.dataset.export_key': { params: [id: string, download?: boolean]; response: string };
   'pool.dataset.lock': { params: DatasetLockParams; response: boolean };
-  'pool.dataset.permission': { params: DatasetPermissionsUpdate; response: number };
   'pool.dataset.unlock': { params: [path: string, params: DatasetUnlockParams]; response: DatasetUnlockResult };
 
   // Replication
@@ -185,3 +195,4 @@ export interface ApiJobDirectory {
 
 export type ApiJobMethod = keyof ApiJobDirectory;
 export type ApiJobParams<T extends ApiJobMethod> = ApiJobDirectory[T]['params'];
+export type ApiJobResponse<T extends ApiJobMethod> = ApiJobDirectory[T]['response'];

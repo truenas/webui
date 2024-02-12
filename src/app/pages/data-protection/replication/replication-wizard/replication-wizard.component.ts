@@ -2,13 +2,14 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
+  Inject,
   ViewChild,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import {
-  catchError, EMPTY, forkJoin, map, Observable, of, switchMap,
+  catchError, EMPTY, forkJoin, map, Observable, of, switchMap, tap,
 } from 'rxjs';
 import { truenasDbKeyLocation } from 'app/constants/truenas-db-key-location.constant';
 import { DatasetSource } from 'app/enums/dataset.enum';
@@ -19,23 +20,27 @@ import { mntPath } from 'app/enums/mnt-path.enum';
 import { NetcatMode } from 'app/enums/netcat-mode.enum';
 import { ReadOnlyMode } from 'app/enums/readonly-mode.enum';
 import { RetentionPolicy } from 'app/enums/retention-policy.enum';
+import { Role } from 'app/enums/role.enum';
 import { ScheduleMethod } from 'app/enums/schedule-method.enum';
 import { SnapshotNamingOption } from 'app/enums/snapshot-naming-option.enum';
 import { TransportMode } from 'app/enums/transport-mode.enum';
-import helptext from 'app/helptext/data-protection/replication/replication-wizard';
+import { helptextReplicationWizard } from 'app/helptext/data-protection/replication/replication-wizard';
 import { CountManualSnapshotsParams, EligibleManualSnapshotsCount, TargetUnmatchedSnapshotsParams } from 'app/interfaces/count-manual-snapshots.interface';
 import { PeriodicSnapshotTask, PeriodicSnapshotTaskCreate } from 'app/interfaces/periodic-snapshot-task.interface';
 import { ReplicationCreate, ReplicationTask } from 'app/interfaces/replication-task.interface';
 import { Schedule } from 'app/interfaces/schedule.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { CreateZfsSnapshot, ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
-import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { CHAINED_SLIDE_IN_REF } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
+import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { crontabToSchedule } from 'app/modules/scheduler/utils/crontab-to-schedule.utils';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ReplicationWizardData } from 'app/pages/data-protection/replication/replication-wizard/replication-wizard-data.interface';
 import { ReplicationWhatAndWhereComponent } from 'app/pages/data-protection/replication/replication-wizard/steps/replication-what-and-where/replication-what-and-where.component';
 import { ReplicationWhenComponent } from 'app/pages/data-protection/replication/replication-wizard/steps/replication-when/replication-when.component';
+import { AuthService } from 'app/services/auth/auth.service';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ChainedComponentRef } from 'app/services/ix-chained-slide-in.service';
 import { ReplicationService } from 'app/services/replication.service';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -50,7 +55,6 @@ export class ReplicationWizardComponent {
   @ViewChild(ReplicationWhatAndWhereComponent) whatAndWhere: ReplicationWhatAndWhereComponent;
   @ViewChild(ReplicationWhenComponent) when: ReplicationWhenComponent;
 
-  rowId: number;
   isLoading = false;
   defaultNamingSchema = 'auto-%Y-%m-%d_%H-%M';
   isCustomRetentionVisible = true;
@@ -64,16 +68,15 @@ export class ReplicationWizardComponent {
   constructor(
     private ws: WebSocketService,
     private replicationService: ReplicationService,
-    private slideInRef: IxSlideInRef<ReplicationWizardComponent>,
     private errorHandler: ErrorHandlerService,
     private dialogService: DialogService,
     private cdr: ChangeDetectorRef,
     private translate: TranslateService,
+    private appLoader: AppLoaderService,
+    private snackbar: SnackbarService,
+    @Inject(CHAINED_SLIDE_IN_REF) private chainedSlideInRef: ChainedComponentRef,
+    private authService: AuthService,
   ) {}
-
-  setRowId(id: number): void {
-    this.rowId = id;
-  }
 
   getSteps(): [
     ReplicationWhatAndWhereComponent,
@@ -122,13 +125,39 @@ export class ReplicationWizardComponent {
     this.callCreateSnapshots(values).pipe(
       switchMap(() => this.callCreateTasks(values)),
       switchMap(() => this.callCreateReplication(values)),
-      catchError((err) => { this.handleError(err); return EMPTY; }),
+      tap((createdReplication) => {
+        this.snackbar.success(this.translate.instant('Replication task created.'));
+        this.isLoading = false;
+        this.createdReplication = createdReplication;
+      }),
+      switchMap((createdReplication) => {
+        if (values.schedule_method === ScheduleMethod.Once && createdReplication) {
+          return this.runReplicationOnce(createdReplication).pipe(
+            catchError((err) => { this.handleError(err); return EMPTY; }),
+            switchMap(() => of(createdReplication)),
+          );
+        }
+        return of(createdReplication);
+      }),
       untilDestroyed(this),
-    ).subscribe(() => {
-      this.isLoading = false;
+    ).subscribe((createdReplication) => {
       this.cdr.markForCheck();
-      this.slideInRef.close(true);
+      this.chainedSlideInRef.close({ response: createdReplication, error: null });
     });
+  }
+
+  private runReplicationOnce(createdReplication: ReplicationTask): Observable<boolean> {
+    this.appLoader.open(this.translate.instant('Starting task'));
+    return this.ws.startJob('replication.run', [createdReplication.id]).pipe(
+      switchMap(() => {
+        this.appLoader.close();
+        return this.dialogService.info(
+          this.translate.instant('Task started'),
+          this.translate.instant('Replication <i>{name}</i> has started.', { name: createdReplication.name }),
+          true,
+        );
+      }),
+    );
   }
 
   private preparePayload(): ReplicationWizardData {
@@ -142,10 +171,20 @@ export class ReplicationWizardComponent {
   }
 
   getSnapshotsCount(payload: CountManualSnapshotsParams): Observable<EligibleManualSnapshotsCount> {
-    return this.ws.call('replication.count_eligible_manual_snapshots', [payload]);
+    return this.authService.hasRole([
+      Role.ReplicationTaskWrite,
+      Role.ReplicationTaskWritePull,
+    ]).pipe(
+      switchMap((hasRole) => {
+        if (hasRole) {
+          return this.ws.call('replication.count_eligible_manual_snapshots', [payload]);
+        }
+        return of({ eligible: 0, total: 0 });
+      }),
+    );
   }
 
-  getUnmatchedSnapshots(payload: TargetUnmatchedSnapshotsParams): Observable<{ [dataset: string]: string[] }> {
+  getUnmatchedSnapshots(payload: TargetUnmatchedSnapshotsParams): Observable<Record<string, string[]>> {
     return this.ws.call('replication.target_unmatched_snapshots', payload);
   }
 
@@ -315,8 +354,8 @@ export class ReplicationWizardComponent {
     return values;
   }
 
-  handleError(err: WebsocketError): void {
-    this.dialogService.error(this.errorHandler.parseWsError(err));
+  handleError(err: unknown): void {
+    this.dialogService.error(this.errorHandler.parseError(err));
     this.rollBack();
   }
 
@@ -385,8 +424,8 @@ export class ReplicationWizardComponent {
           .some((snapshots: string[]) => snapshots.length > 0);
         if (hasBadSnapshots) {
           return this.dialogService.confirm({
-            title: helptext.clearSnapshotDialog_title,
-            message: helptext.clearSnapshotDialog_content,
+            title: helptextReplicationWizard.clearSnapshotDialog_title,
+            message: helptextReplicationWizard.clearSnapshotDialog_content,
           }).pipe(
             switchMap((dialogResult) => {
               replicationPayload.allow_from_scratch = dialogResult;
@@ -396,19 +435,7 @@ export class ReplicationWizardComponent {
         }
         return this.createReplication(replicationPayload);
       }),
-      map((createdReplication) => {
-        if (values.schedule_method === ScheduleMethod.Once && createdReplication) {
-          this.ws.startJob('replication.run', [createdReplication.id]).pipe(untilDestroyed(this)).subscribe(() => {
-            this.dialogService.info(
-              this.translate.instant('Task started'),
-              this.translate.instant('Replication <i>{name}</i> has started.', { name: values.name }),
-              true,
-            );
-          });
-        }
 
-        return this.createdReplication = createdReplication;
-      }),
     );
   }
 }

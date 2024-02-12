@@ -9,7 +9,6 @@ import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { range } from 'lodash';
 import { forkJoin, of } from 'rxjs';
-import { filter } from 'rxjs/operators';
 import {
   CreateNetworkInterfaceType,
   LacpduRate,
@@ -18,8 +17,9 @@ import {
   XmitHashPolicy,
 } from 'app/enums/network-interface.enum';
 import { ProductType } from 'app/enums/product-type.enum';
+import { Role } from 'app/enums/role.enum';
 import { choicesToOptions, singleArrayToOptions } from 'app/helpers/operators/options.operators';
-import helptext from 'app/helptext/network/interfaces/interfaces-form';
+import { helptextInterfacesForm } from 'app/helptext/network/interfaces/interfaces-form';
 import {
   NetworkInterface,
   NetworkInterfaceCreate,
@@ -126,7 +126,9 @@ export class InterfaceFormComponent implements OnInit {
 
   failoverGroups$ = of(range(1, 32)).pipe(singleArrayToOptions());
 
-  readonly helptext = helptext;
+  protected readonly Role = Role;
+
+  readonly helptext = helptextInterfacesForm;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -232,23 +234,23 @@ export class InterfaceFormComponent implements OnInit {
 
     request$.pipe(untilDestroyed(this)).subscribe({
       next: () => {
-        this.isLoading = false;
-        this.snackbar.success(this.translate.instant('Network interface updated'));
         this.store$.dispatch(networkInterfacesChanged({ commit: false, checkIn: false }));
-        this.slideInRef.close(true);
 
-        this.ws.call('interface.default_route_will_be_removed').pipe(
-          filter(Boolean),
-          untilDestroyed(this),
-        ).subscribe(() => {
-          this.matDialog.open(DefaultGatewayDialogComponent, {
-            width: '600px',
-          });
+        this.ws.call('interface.default_route_will_be_removed').pipe(untilDestroyed(this)).subscribe((approved) => {
+          if (approved) {
+            this.matDialog.open(DefaultGatewayDialogComponent, {
+              width: '600px',
+            });
+          }
+
+          this.slideInRef.close(true);
+          this.isLoading = false;
+          this.snackbar.success(this.translate.instant('Network interface updated'));
         });
 
         this.cdr.markForCheck();
       },
-      error: (error) => {
+      error: (error: unknown) => {
         this.isLoading = false;
         this.cdr.markForCheck();
         this.errorHandler.handleWsFormError(error, this.form);

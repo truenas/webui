@@ -70,11 +70,14 @@ export class FormatDateTimePipe implements PipeTransform {
     if (timeFormat) {
       this.timeFormat = timeFormat;
     }
+    if (timezone) {
+      this.timezone = timezone;
+    }
     if (typeof value === 'string') {
-      return this.formatDateTime(Date.parse(value), timezone);
+      return this.formatDateTime(Date.parse(value), this.timezone);
     }
 
-    return this.formatDateTime(value, timezone);
+    return this.formatDateTime(value, this.timezone);
   }
 
   formatDateTime(date: Date | number, tz?: string): string {
@@ -89,12 +92,14 @@ export class FormatDateTimePipe implements PipeTransform {
       }
 
       // Reason for below replacements: https://github.com/date-fns/date-fns/blob/master/docs/unicodeTokens.md
-      this.dateFormat = this.dateFormat
-        .replace('YYYY', 'yyyy')
-        .replace('YY', 'y')
-        .replace('DD', 'dd')
-        .replace('D', 'd')
-        .replace(' A', ' aa');
+      if (this.dateFormat) {
+        this.dateFormat = this.dateFormat
+          .replace('YYYY', 'yyyy')
+          .replace('YY', 'y')
+          .replace('DD', 'dd')
+          .replace('D', 'd')
+          .replace(' A', ' aa');
+      }
       if (this.timeFormat) {
         this.timeFormat = this.timeFormat.replace(' A', ' aa');
       }

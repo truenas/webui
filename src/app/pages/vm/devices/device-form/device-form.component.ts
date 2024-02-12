@@ -2,17 +2,19 @@ import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
 } from '@angular/core';
 import { FormBuilder, FormControl, Validators } from '@angular/forms';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { BehaviorSubject, forkJoin, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { mntPath } from 'app/enums/mnt-path.enum';
 import {
-  VmDeviceType, VmDiskMode, VmNicType,
+  VmDeviceType, vmDeviceTypeLabels, VmDiskMode, VmNicType,
 } from 'app/enums/vm.enum';
 import { assertUnreachable } from 'app/helpers/assert-unreachable.utils';
 import { arrayToOptions, choicesToOptions } from 'app/helpers/operators/options.operators';
-import helptext from 'app/helptext/vm/devices/device-add-edit';
+import { mapToOptions } from 'app/helpers/options.helper';
+import { helptextDevice } from 'app/helptext/vm/devices/device-add-edit';
 import {
   VmDevice, VmDeviceUpdate,
 } from 'app/interfaces/vm-device.interface';
@@ -27,7 +29,7 @@ import { NetworkService } from 'app/services/network.service';
 import { VmService } from 'app/services/vm.service';
 import { WebSocketService } from 'app/services/ws.service';
 
-const specifyCustom = 'Specify custom';
+const specifyCustom = T('Specify custom');
 
 @UntilDestroy()
 @Component({
@@ -85,7 +87,7 @@ export class DeviceFormComponent implements OnInit {
     port: [null as number],
     resolution: [''],
     bind: [''],
-    password: ['', Validators.maxLength(8)],
+    password: [''],
     web: [true],
   });
 
@@ -98,7 +100,7 @@ export class DeviceFormComponent implements OnInit {
     }),
   });
 
-  readonly helptext = helptext;
+  readonly helptext = helptextDevice;
   readonly VmDeviceType = VmDeviceType;
   readonly usbDeviceOptions$ = this.ws.call('vm.device.usb_passthrough_choices').pipe(
     map((usbDevices) => {
@@ -109,7 +111,7 @@ export class DeviceFormComponent implements OnInit {
         return { label, value: id };
       });
       options.push({
-        label: specifyCustom,
+        label: this.translate.instant(specifyCustom),
         value: specifyCustom,
       });
       return options;
@@ -147,30 +149,7 @@ export class DeviceFormComponent implements OnInit {
 
   readonly fileNodeProvider = this.filesystemService.getFilesystemNodeProvider();
 
-  readonly deviceTypeOptions = [
-    {
-      label: this.translate.instant('CD-ROM'),
-      value: VmDeviceType.Cdrom,
-    }, {
-      label: this.translate.instant('NIC'),
-      value: VmDeviceType.Nic,
-    }, {
-      label: this.translate.instant('Disk'),
-      value: VmDeviceType.Disk,
-    }, {
-      label: this.translate.instant('Raw File'),
-      value: VmDeviceType.Raw,
-    }, {
-      label: this.translate.instant('PCI Passthrough Device'),
-      value: VmDeviceType.Pci,
-    }, {
-      label: this.translate.instant('USB Passthrough Device'),
-      value: VmDeviceType.Usb,
-    }, {
-      label: this.translate.instant('Display'),
-      value: VmDeviceType.Display,
-    },
-  ];
+  readonly deviceTypeOptions = mapToOptions(vmDeviceTypeLabels, this.translate);
   readonly deviceTypes$ = new BehaviorSubject(this.deviceTypeOptions);
 
   readonly diskModes$ = of([
@@ -229,8 +208,6 @@ export class DeviceFormComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.generateMacWhenNicIsSelected();
-
     this.usbForm.controls.usb.disable();
     this.usbForm.controls.device.valueChanges.pipe(untilDestroyed(this)).subscribe((device) => {
       if (device === specifyCustom) {
@@ -249,6 +226,8 @@ export class DeviceFormComponent implements OnInit {
       this.existingDevice = this.slideInData.device;
       this.setDeviceForEdit();
     }
+
+    this.handleDeviceTypeChange();
   }
 
   setVirtualMachineId(): void {
@@ -304,7 +283,7 @@ export class DeviceFormComponent implements OnInit {
     });
   }
 
-  generateMacWhenNicIsSelected(): void {
+  handleDeviceTypeChange(): void {
     this.typeControl.valueChanges.pipe(untilDestroyed(this)).subscribe((type) => {
       if (type === VmDeviceType.Nic && this.nicForm.value.mac === '') {
         this.generateMacAddress();
@@ -360,9 +339,9 @@ export class DeviceFormComponent implements OnInit {
           }
           this.isLoading = false;
           this.cdr.markForCheck();
-          this.slideInRef.close();
+          this.slideInRef.close(true);
         },
-        error: (error) => {
+        error: (error: unknown) => {
           this.errorHandler.handleWsFormError(error, this.typeSpecificForm);
           this.isLoading = false;
           this.cdr.markForCheck();

@@ -4,11 +4,14 @@
 ></ix-modal-header>
 
 <mat-card>
+  <p>{{ helptext.shareAclDescription | translate }}</p>
+
   <mat-card-content>
     <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
       <ix-fieldset [title]="'ACL Entries' | translate">
         <ix-list
           formArrayName="entries"
+          [formArray]="form.get('entries')"
           [empty]="form.controls.entries.length === 0 && !isLoading"
           [label]="'Add entry' | translate"
           (add)="addAce()"
@@ -74,6 +77,7 @@
 
       <ix-form-actions>
         <button
+          *ixRequiresRoles="requiredRoles"
           mat-button
           type="submit"
           color="primary"

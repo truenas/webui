@@ -4,16 +4,16 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { DialogService } from 'app/services/dialog.service';
-import { WebsocketConnectionService } from 'app/services/websocket-connection.service';
+import { WebSocketConnectionService } from 'app/services/websocket-connection.service';
 
 @UntilDestroy()
 @Injectable({ providedIn: 'root' })
-export class WebsocketConnectionGuard {
+export class WebSocketConnectionGuard {
   isConnected = false;
   constructor(
-    private wsManager: WebsocketConnectionService,
+    private wsManager: WebSocketConnectionService,
     protected router: Router,
-    private dialog: MatDialog,
+    private matDialog: MatDialog,
     private dialogService: DialogService,
     private translate: TranslateService,
   ) {
@@ -40,7 +40,7 @@ export class WebsocketConnectionGuard {
   }
 
   private closeAllDialogs(): void {
-    for (const openDialog of this.dialog.openDialogs) {
+    for (const openDialog of this.matDialog.openDialogs) {
       openDialog.close();
     }
   }

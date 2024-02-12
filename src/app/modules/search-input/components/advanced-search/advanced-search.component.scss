@@ -1,0 +1,178 @@
+@import 'scss-imports/splitview';
+@import 'mixins/layout';
+
+:host {
+  align-items: flex-start;
+  background: rgba(0, 0, 0, 0.1);
+  border: 1px solid var(--lines);
+  color: var(--fg1);
+  display: flex;
+  padding: 2px 8px;
+  position: relative;
+
+  .prefix-icon {
+    display: inline-flex;
+    margin-right: 4px;
+    margin-top: 5px;
+
+    .mat-icon {
+      align-items: center;
+      display: inline-flex;
+      font-size: 18px;
+      height: 20px;
+      justify-content: center;
+      width: 20px;
+    }
+  }
+
+  &:focus-within {
+    outline: 1.5px solid var(--primary);
+  }
+
+  .reset-input {
+    align-items: center;
+    bottom: 0;
+    cursor: pointer;
+    display: flex;
+    opacity: 0.5;
+    user-select: none;
+
+    .ix-icon {
+      margin-left: 9px;
+      margin-right: 4px;
+    }
+
+    .mat-icon {
+      align-items: center;
+      display: inline-flex;
+      font-size: 16px;
+      margin-top: 0;
+    }
+  }
+}
+
+.hidden {
+  display: none !important;
+}
+
+.reset-icon {
+  margin-top: 2px;
+
+  .ix-icon {
+    margin-left: 9px;
+    margin-right: 4px;
+  }
+}
+
+.switch-link {
+  color: var(--primary);
+  cursor: pointer;
+  flex-grow: 0;
+  flex-shrink: 1;
+  margin-top: 5px;
+  user-select: none;
+  white-space: nowrap;
+
+  @media (max-width: $breakpoint-sm) {
+    margin-top: 0;
+    white-space: inherit;
+    width: 70px;
+  }
+}
+
+.input-area {
+  background-color: transparent;
+  border: 0;
+  flex-grow: 1;
+  outline: none;
+  padding: 6.2px 8px;
+  width: 100%;
+
+  @media (min-width: $breakpoint-md) {
+    min-width: 340px;
+  }
+
+  ::ng-deep {
+    .cm-content {
+      caret-color: auto;
+      color: var(--fg2);
+      font-family: var(--mdc-dialog-subhead-font);
+      font-size: 1.1em;
+      padding: 0;
+    }
+
+    .calendar {
+      background-color: var(--bg2);
+      left: 0;
+      margin: 5px auto;
+      max-width: 300px;
+      position: absolute;
+      top: 100%;
+      width: 100%;
+      z-index: 2;
+
+      ::ng-deep {
+        .mat-calendar-table {
+          width: 100%;
+        }
+
+        .mat-calendar-body-cell,
+        .mat-calendar-body-cell-content {
+          cursor: pointer;
+        }
+
+        .mat-calendar-content.cdk-mouse-focused,
+        .mat-calendar-content.cdk-keyboard-focused,
+        .mat-calendar-content.cdk-program-focused {
+          background-color: transparent !important;
+          box-shadow: none !important;
+        }
+      }
+    }
+
+    .cm-tooltip {
+      background-color: var(--bg2);
+      border: none !important;
+      border-radius: 4px !important;
+      margin-top: 5px;
+
+      .cm-tooltip-lint {
+        color: var(--error);
+        max-width: max-content;
+      }
+
+      .cm-diagnostic {
+        margin: 0;
+        padding: 5px;
+      }
+    }
+
+    .cm-lintRange {
+      border-bottom: 1px dashed var(--error);
+    }
+
+    .cm-line {
+      padding: 0;
+    }
+
+    .cm-tooltip.cm-tooltip-autocomplete ul {
+      background-color: var(--bg2);
+      border: 0;
+      border-radius: 4px;
+      height: 100%;
+
+      li {
+        background-color: var(--bg2);
+        color: var(--fg2);
+        font-family: var(--font-family-body);
+        font-size: 14px;
+        padding: 8px;
+
+        &[aria-selected='true'] {
+          background-color: var(--primary);
+          color: var(--primary-txt);
+        }
+      }
+    }
+  }
+}

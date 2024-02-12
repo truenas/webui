@@ -1,6 +1,6 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
-export default {
+export const helptextSshConnections = {
   name_tooltip: T('Name of this SSH connection. SSH connection names \
  must be unique.'),
 

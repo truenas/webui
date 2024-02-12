@@ -8,10 +8,8 @@ import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { take } from 'rxjs';
-import { ReportsConfigFormComponent } from 'app/pages/reports-dashboard/components/reports-config-form/reports-config-form.component';
 import { ReportTab, ReportType } from 'app/pages/reports-dashboard/interfaces/report-tab.interface';
 import { ReportsService } from 'app/pages/reports-dashboard/reports.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { AppState } from 'app/store';
 import { autoRefreshReportsToggled } from 'app/store/preferences/preferences.actions';
 import { waitForPreferences } from 'app/store/preferences/preferences.selectors';
@@ -30,7 +28,6 @@ export class ReportsGlobalControlsComponent implements OnInit {
     metrics: [[] as string[]],
   });
   activeTab: ReportTab;
-  selectedDisks: string[];
   allTabs: ReportTab[];
   diskDevices$ = this.reportsService.getDiskDevices();
   diskMetrics$ = this.reportsService.getDiskMetrics();
@@ -43,7 +40,6 @@ export class ReportsGlobalControlsComponent implements OnInit {
     private route: ActivatedRoute,
     private store$: Store<AppState>,
     private reportsService: ReportsService,
-    private slideInService: IxSlideInService,
     private cdr: ChangeDetectorRef,
   ) {}
 
@@ -53,20 +49,20 @@ export class ReportsGlobalControlsComponent implements OnInit {
     this.setupDisksTab();
   }
 
-  showConfigForm(): void {
-    this.slideInService.open(ReportsConfigFormComponent);
-  }
-
   isActiveTab(tab: ReportTab): boolean {
     return this.activeTab?.value === tab.value;
   }
 
   private setupTabs(): void {
-    this.reportsService.getReportGraphs().pipe(untilDestroyed(this)).subscribe(() => {
-      this.allTabs = this.reportsService.getReportTabs();
-      this.activeTab = this.allTabs.find((tab) => tab.value === this.route.routeConfig.path);
-      this.cdr.markForCheck();
-    });
+    this.reportsService.getReportGraphs()
+      .pipe(untilDestroyed(this))
+      .subscribe(() => {
+        this.allTabs = this.reportsService.getReportTabs();
+        this.activeTab = this.allTabs.find((tab) => {
+          return tab.value === (this.route.routeConfig.path as ReportType);
+        });
+        this.cdr.markForCheck();
+      });
   }
 
   private setupDisksTab(): void {

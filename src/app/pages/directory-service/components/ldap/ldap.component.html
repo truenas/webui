@@ -128,6 +128,7 @@
 
       <ix-form-actions>
         <button
+          *ixRequiresRoles="[Role.DirectoryServiceWrite]"
           mat-button
           type="submit"
           color="primary"
@@ -140,7 +141,13 @@
         <button mat-button type="button" ixTest="toggle-advanced-options" (click)="onAdvancedModeToggled()">
           {{ isAdvancedMode ? ('Basic Options' | translate) : ('Advanced Options' | translate) }}
         </button>
-        <button mat-button type="button" ixTest="rebuild-cache" (click)="onRebuildCachePressed()">
+        <button
+          *ixRequiresRoles="[Role.DirectoryServiceWrite]"
+          mat-button
+          type="button"
+          ixTest="rebuild-cache"
+          (click)="onRebuildCachePressed()"
+        >
           {{ 'Rebuild Directory Service Cache' | translate }}
         </button>
       </ix-form-actions>

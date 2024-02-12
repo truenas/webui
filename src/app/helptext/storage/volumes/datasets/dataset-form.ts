@@ -1,6 +1,6 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
-export default {
+export const helptextDatasetForm = {
   dataset_parent_name_tooltip: T('Parent dataset path (read-only).'),
   dataset_form_name_tooltip: T('Enter a unique name for the dataset. The dataset name length is calculated by adding the length of this field\'s value and the length of the parent path field value. The length of \'Parent Path\' and \'Name\' added together cannot exceed 200 characters. Because of this length validation on this field accounts for the parent path as well. Furthermore, the maximum nested directory levels allowed is 50. You can\'t create a dataset that\'s at the 51st level in the directory hierarchy after you account for the nested levels in the parent path.'),
   dataset_form_comments_tooltip: T('Enter any notes about this dataset.'),
@@ -8,6 +8,10 @@ export default {
  requested by the client software, <i>Always</i> waits for\
  data writes to complete, and <i>Disabled</i> never waits for\
  writes to complete.'),
+  dataset_form_sync_disabled_warning: T('TrueNAS recommends that the sync setting always \
+ be left to the default of "Standard" or increased to "Always". The "Disabled" setting should \
+ not be used in production and only where data roll back by few seconds \
+ in case of crash or power loss is not a concern.'),
   dataset_form_compression_tooltip: T('Encode information in less space than the \
  original data occupies. It is recommended to choose a compression algorithm \
  that balances disk performance with the amount of saved space.<br> <i>LZ4</i> is \
@@ -20,7 +24,7 @@ export default {
  when they are read. Choose <i>Off</i> to prevent\
  producing log traffic when reading files. This can\
  result in significant performance gains.'),
-  dataset_form_share_type_tooltip: T('Choose the type that matches the type of client\
+  dataset_form_dataset_preset_tooltip: T('Choose the type that matches the type of client\
  accessing the pool/dataset.'),
   dataset_form_refquota_tooltip: T('<i>0</i> disables quotas. Specify a maximum allowed\
  space for this dataset.'),
@@ -101,10 +105,21 @@ export default {
  special class. Before setting this property, a special class vdev must be added to the pool.\
  See <a href="https://zfsonlinux.org/manpages/0.7.13/man8/zpool.8.html" target="_blank">zpool(8)</a> for more details on the special allocation'),
 
+  dataset_form_preset: {
+    generic: T('Generic dataset suitable for any share type.'),
+    smb: T('SMB preset sets most optimal settings for SMB sharing.'),
+    multiprotocol: T('Configured for simultaneous use with SMB and NFS on the same dataset.'),
+    apps: T('Dataset for use by an application. If you plan to deploy container applications,\
+ the system automatically creates the ix-applications dataset but this is not used for application data storage.'),
+    smb_description: T('By clicking the share creation checkbox below, a new share will be created on form submission with the default\
+ share settings Additionally, local TrueNAS users will have access to the resulting share and some more configuration options will be available.'),
+  },
+
   dataset_form_encryption: {
     inherit_checkbox_tooltip: T('Use the encryption properties of the root dataset.'),
     encryption_checkbox_tooltip: T('Secure data within this dataset. Data is unusable until \
-     unlocked with an encryption key or passphrase.'),
+     unlocked with an encryption key or passphrase. If parent dataset has encryption enabled, it is \
+     not possible to disable this option.'),
     encryption_type_tooltip: T('How the dataset is secured. Choose between securing with\
  an encryption <i>Key</i> or a user-defined <i>Passphrase</i>. Creating a new key file\
  invalidates any previously downloaded key file for this dataset.\
@@ -128,9 +143,6 @@ export default {
      defining the encryption key.<br> WARNING: the encryption key is the only means to decrypt the information stored in this \
      dataset. Store the encryption key in a secure location.'),
     key_tooltip: T('Enter or paste a string to use as the encryption key for this dataset.'),
-    non_encrypted_warning_title: T('Warning'),
-    non_encrypted_warning_warning: T('All data stored in this dataset will be decrypted and the dataset marked \
- as non-encrypted. Do you want to continue?'),
   },
   pathWarningTitle: T('Action Not Possible'),
   pathIsTooLongWarning: T('Dataset name is set by appending the parent path with the name entered by you. The max allowed length for the dataset name is 200. The parent path for this dataset already exceeds that limit. It is not possible to create anymore nested datasets under this path.'),

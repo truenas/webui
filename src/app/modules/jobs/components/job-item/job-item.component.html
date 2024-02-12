@@ -2,6 +2,8 @@
   class="job-item"
   [class.abortable]="job?.state === JobState.Running && job?.abortable"
   [class.interactive]="clickable"
+  [matTooltip]="job?.state === JobState.Failed ? job.error : null"
+  [matTooltipPosition]="'left'"
 >
   <div class="job-item-body" (click)="clickable && open()">
     <div fxLayout="row" fxLayoutAlign="space-between baseline" fxLayoutGap="8px">
@@ -48,6 +50,17 @@
           </strong>
         </div>
       </ng-container>
+    </div>
+
+    <div *ngIf="job.credentials">
+      <div class="job-credentials">
+        {{
+          'Created by: {creationSource} ({creationType})' | translate: {
+            creationSource: getCredentialsCreationSource(job.credentials),
+            creationType: (job.credentials.type | mapValue: credentialTypeLabels | translate)
+          }
+        }}
+      </div>
     </div>
   </div>
 

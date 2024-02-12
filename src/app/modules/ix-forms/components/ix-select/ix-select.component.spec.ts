@@ -1,5 +1,6 @@
 import { HarnessLoader, parallel } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { fakeAsync, tick } from '@angular/core/testing';
 import {
   FormControl, FormsModule, NgControl, ReactiveFormsModule,
 } from '@angular/forms';
@@ -77,16 +78,16 @@ describe('IxSelectComponent', () => {
       expect(label.tooltip).toBe('Select group to use.');
     });
 
-    it('shows loader while options are loading', async () => {
+    it('shows loader while options are loading', fakeAsync(() => {
       const opt$ = options$.pipe(delay(100));
       spectator.setInput({ options: opt$ });
 
       expect(spectator.query('mat-progress-spinner')).toBeVisible();
-      await new Promise((smth) => setTimeout(smth, 100));
+      tick(100);
       spectator.detectChanges();
 
       expect(spectator.query('mat-progress-spinner')).not.toBeVisible();
-    });
+    }));
 
     it('shows a list of options', async () => {
       spectator.setInput({ options: options$ });
@@ -128,6 +129,8 @@ describe('IxSelectComponent', () => {
     });
 
     it('shows \'Options cannot be loaded\' if options has some error', async () => {
+      jest.spyOn(console, 'error').mockImplementation();
+
       spectator.component.options = throwError(() => new Error('Some Error'));
       spectator.component.ngOnChanges();
 
@@ -136,6 +139,7 @@ describe('IxSelectComponent', () => {
       const options = await select.getOptions();
       const optionLabels = await parallel(() => options.map((option) => option.getText()));
       expect(optionLabels).toEqual(['Options cannot be loaded']);
+      expect(console.error).toHaveBeenCalled();
     });
 
     it('allows some options to be disabled', async () => {
@@ -195,6 +199,19 @@ describe('IxSelectComponent', () => {
 
       expect(currentValue).toBe('GBR, GRL');
       expect(control.value).toEqual(['Great Britain', 'Greenland']);
+    });
+
+    // TODO: Refactor tests not to call methods directly.
+    it('should select all options when "Select All" is checked', () => {
+      spectator.setInput('showSelectAll', true);
+      spectator.component.toggleSelectAll(true);
+      expect(control.value).toEqual(['Great Britain', 'Greenland', 'France']);
+    });
+
+    it('should unselect all options when "Select All" is unchecked', () => {
+      spectator.setInput('showSelectAll', true);
+      spectator.component.toggleSelectAll(false);
+      expect(control.value).toEqual([]);
     });
   });
 });

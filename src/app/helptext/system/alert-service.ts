@@ -1,6 +1,6 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
-export default {
+export const helptextAlertService = {
   name_tooltip: T('Name of the new alert service.'),
 
   enabled_tooltip: T('Unset to disable this service without deleting it.'),
@@ -125,8 +125,8 @@ export default {
 
   Telegram_chat_ids_tooltip: T('Enter a list of chat IDs separated by space, comma or semicolon. \
  To find your chat ID send a message to the bot, group or channel and visit \
- <a href="https://api.telegram.org/bot<BOT_TOKEN>/getUpdates" \
- target="_blank">https://api.telegram.org/bot<BOT_TOKEN>/getUpdates</a>.'),
+ <a href="https://api.telegram.org/bot(BOT_TOKEN)/getUpdates" \
+ target="_blank">https://api.telegram.org/bot(BOT_TOKEN)/getUpdates</a>.'),
 
   VictorOps_api_key_tooltip: T('Enter or paste the <a\
  href="https://help.victorops.com/knowledge-base/api/"\

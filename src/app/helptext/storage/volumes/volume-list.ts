@@ -1,6 +1,6 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
-export default {
+export const helptextVolumes = {
   exportMessages: {
     onfail: {
       stopServices: T('These services must be stopped to export the pool:'),

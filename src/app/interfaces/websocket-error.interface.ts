@@ -1,21 +1,22 @@
 import { ResponseErrorType } from 'app/enums/response-error-type.enum';
+import { WebSocketErrorName } from 'app/enums/websocket-error-name.enum';
 
-export interface WebsocketError {
-  errname: string;
+export interface WebSocketError {
+  errname: WebSocketErrorName;
   error: number;
   extra: unknown;
   reason: string;
-  trace: WebsocketErrorTrace;
+  trace: WebSocketErrorTrace;
   type: ResponseErrorType | null;
 }
 
-export interface WebsocketErrorTrace {
+export interface WebSocketErrorTrace {
   class: string;
   formatted: string;
-  frames: WebsocketTraceFrame[];
+  frames: WebSocketTraceFrame[];
 }
 
-export interface WebsocketTraceFrame {
+export interface WebSocketTraceFrame {
   argspec: string[];
   filename: string;
   line: string;

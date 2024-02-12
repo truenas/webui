@@ -366,17 +366,19 @@
               (mouseover)="onHover($event, true)"
               (mouseout)="onHover($event, false)"
             >
-              <mat-checkbox
-                *ngIf="!(checkboxLoaders.get(getRowIdentifier(element)) | async)"
-                color="primary"
-                class="checkbox"
-                [id]="'checkbox__' + getRowIdentifier(element)"
-                [ixTest]="getRowIdentifier(element)"
-                [disabled]="getDisabled(column)"
-                [(ngModel)]="element[column]"
-                (change)="checkboxChanged(element)"
-                (click)="$event.stopPropagation()"
-              ></mat-checkbox>
+              <ng-container *ixRequiresRoles="getRoles(column)">
+                <mat-checkbox
+                  *ngIf="!(checkboxLoaders.get(getRowIdentifier(element)) | async)"
+                  color="primary"
+                  class="checkbox"
+                  [id]="'checkbox__' + getRowIdentifier(element)"
+                  [ixTest]="getRowIdentifier(element)"
+                  [disabled]="getDisabled(column)"
+                  [(ngModel)]="element[column]"
+                  (change)="checkboxChanged(element)"
+                  (click)="$event.stopPropagation()"
+                ></mat-checkbox>
+              </ng-container>
 
               <mat-spinner
                 *ngIf="checkboxLoaders.get(getRowIdentifier(element)) | async"

@@ -6,11 +6,20 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatStepperModule } from '@angular/material/stepper';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { Store } from '@ngrx/store';
+import { provideMockStore } from '@ngrx/store/testing';
+import { of } from 'rxjs';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { ServiceName } from 'app/enums/service-name.enum';
+import { ServiceStatus } from 'app/enums/service-status.enum';
 import { Dataset } from 'app/interfaces/dataset.interface';
+import { IscsiGlobalSession } from 'app/interfaces/iscsi-global-config.interface';
 import {
   IscsiAuthAccess, IscsiExtent, IscsiInitiatorGroup, IscsiPortal, IscsiTarget, IscsiTargetExtent,
 } from 'app/interfaces/iscsi.interface';
+import { Service } from 'app/interfaces/service.interface';
+import { IxListHarness } from 'app/modules/ix-forms/components/ix-list/ix-list.harness';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
@@ -22,11 +31,15 @@ import { PortalWizardStepComponent } from 'app/pages/sharing/iscsi/iscsi-wizard/
 import { DialogService } from 'app/services/dialog.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
+import { AppState } from 'app/store';
+import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
+import { selectServices } from 'app/store/services/services.selectors';
 
 describe('IscsiWizardComponent', () => {
   let spectator: Spectator<IscsiWizardComponent>;
   let loader: HarnessLoader;
   let form: IxFormHarness;
+  let store$: Store<AppState>;
 
   const createComponent = createComponentFactory({
     component: IscsiWizardComponent,
@@ -42,15 +55,22 @@ describe('IscsiWizardComponent', () => {
       InitiatorWizardStepComponent,
     ],
     providers: [
+      mockAuth(),
       mockProvider(IxSlideInService),
-      mockProvider(DialogService),
-      mockWebsocket([
+      mockProvider(DialogService, {
+        confirm: jest.fn(() => of(true)),
+      }),
+      mockWebSocket([
+        mockCall('iscsi.global.sessions', [] as IscsiGlobalSession[]),
         mockCall('iscsi.extent.query', []),
         mockCall('iscsi.target.query', []),
         mockCall('iscsi.portal.query', []),
         mockCall('iscsi.auth.query', []),
         mockCall('iscsi.extent.disk_choices', {}),
-        mockCall('iscsi.portal.listen_ip_choices', {}),
+        mockCall('iscsi.portal.listen_ip_choices', {
+          '0.0.0.0': '0.0.0.0',
+          '192.168.1.3': '192.168.1.3',
+        }),
         mockCall('pool.dataset.create', { id: 'my pool/test_zvol' } as Dataset),
         mockCall('iscsi.extent.create', { id: 11 } as IscsiExtent),
         mockCall('iscsi.auth.create', { id: 12, tag: 12 } as IscsiAuthAccess),
@@ -59,6 +79,17 @@ describe('IscsiWizardComponent', () => {
         mockCall('iscsi.target.create', { id: 15 } as IscsiTarget),
         mockCall('iscsi.targetextent.create', { id: 16 } as IscsiTargetExtent),
       ]),
+      provideMockStore({
+        selectors: [{
+          selector: selectServices,
+          value: [{
+            service: ServiceName.Iscsi,
+            id: 4,
+            enable: false,
+            state: ServiceStatus.Stopped,
+          } as Service],
+        }],
+      }),
       mockProvider(IxSlideInRef),
       { provide: SLIDE_IN_DATA, useValue: undefined },
     ],
@@ -69,6 +100,8 @@ describe('IscsiWizardComponent', () => {
 
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     form = await loader.getHarness(IxFormHarness);
+    store$ = spectator.inject(Store);
+    jest.spyOn(store$, 'dispatch');
   });
 
   it('creates objects when wizard is submitted', fakeAsync(async () => {
@@ -79,6 +112,13 @@ describe('IscsiWizardComponent', () => {
       Size: 1024,
       Portal: 'Create New',
       Initiators: ['initiator1', 'initiator2'],
+    });
+
+    const addIpAddressButton = await loader.getHarness(IxListHarness.with({ label: 'IP Address' }));
+    await addIpAddressButton.pressAddButton();
+
+    await form.fillForm({
+      'IP Address': '192.168.1.3',
     });
 
     await form.fillForm({
@@ -123,7 +163,7 @@ describe('IscsiWizardComponent', () => {
       comment: 'test-name',
       discovery_authgroup: 12,
       discovery_authmethod: 'CHAP',
-      listen: [],
+      listen: [{ ip: '192.168.1.3' }],
     }]);
 
     expect(spectator.inject(WebSocketService).call).toHaveBeenNthCalledWith(12, 'iscsi.initiator.create', [{
@@ -145,6 +185,8 @@ describe('IscsiWizardComponent', () => {
       extent: 11,
       target: 15,
     }]);
+
+    expect(store$.dispatch).toHaveBeenCalledWith(checkIfServiceIsEnabled({ serviceName: ServiceName.Iscsi }));
 
     expect(spectator.inject(IxSlideInRef).close).toHaveBeenCalled();
   }));

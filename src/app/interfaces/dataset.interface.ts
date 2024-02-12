@@ -3,8 +3,8 @@ import {
   DatasetAclType,
   DatasetCaseSensitivity,
   DatasetChecksum,
+  DatasetPreset,
   DatasetRecordSize,
-  DatasetShareType,
   DatasetSnapdev,
   DatasetSnapdir,
   DatasetSync,
@@ -13,6 +13,7 @@ import {
   DatasetXattr,
 } from 'app/enums/dataset.enum';
 import { DeduplicationSetting } from 'app/enums/deduplication-setting.enum';
+import { EncryptionKeyFormat } from 'app/enums/encryption-key-format.enum';
 import { IscsiExtentType } from 'app/enums/iscsi.enum';
 import { OnOff } from 'app/enums/on-off.enum';
 import { WithInherit } from 'app/enums/with-inherit.enum';
@@ -27,7 +28,7 @@ export interface Dataset {
   encryption_algorithm: ZfsProperty<string>;
   encryption_root: string;
   id: string;
-  key_format: ZfsProperty<string>;
+  key_format: ZfsProperty<EncryptionKeyFormat>;
   key_loaded: boolean;
   locked: boolean;
   mountpoint: string;
@@ -56,7 +57,7 @@ export interface Dataset {
   reservation: ZfsProperty<string, number>;
   snapdev: ZfsProperty<DatasetSnapdev, string>;
   snapdir: ZfsProperty<DatasetSnapdir, string>;
-  share_type: ZfsProperty<DatasetShareType, string>;
+  share_type: ZfsProperty<DatasetPreset, string>;
   special_small_block_size: ZfsProperty<string>;
   sync: ZfsProperty<DatasetSync, string>;
   xattr: ZfsProperty<DatasetXattr, boolean>;
@@ -77,7 +78,7 @@ export interface Dataset {
 }
 
 export interface ExtraDatasetQueryOptions {
-  extra: {
+  extra?: {
     retrieve_children?: boolean;
     flat?: boolean;
     properties?: string[];
@@ -116,7 +117,7 @@ export interface DatasetCreate {
   casesensitivity?: DatasetCaseSensitivity;
   aclmode?: AclMode;
   acltype?: DatasetAclType;
-  share_type?: DatasetShareType;
+  share_type?: DatasetPreset;
   xattr?: DatasetXattr;
   encryption_options?: {
     generate_key?: boolean;
@@ -170,7 +171,7 @@ export interface DatasetDetails {
   available: ZfsProperty<string, number>;
   encryption_algorithm: ZfsProperty<string>;
   encryption_root: string;
-  key_format: ZfsProperty<string>;
+  key_format: ZfsProperty<EncryptionKeyFormat>;
   key_loaded: boolean;
   locked: boolean;
   readonly: boolean;

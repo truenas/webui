@@ -6,3 +6,10 @@ ix-tree-view {
   flex-direction: column;
   min-width: fit-content;
 }
+
+::ng-deep {
+  .ix-tree-node-toggle {
+    height: 40px !important;
+    width: 40px !important;
+  }
+}

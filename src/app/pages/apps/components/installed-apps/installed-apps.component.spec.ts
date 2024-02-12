@@ -11,8 +11,9 @@ import {
 import { MockComponents } from 'ng-mocks';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { of } from 'rxjs';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockEntityJobComponentRef } from 'app/core/testing/utils/mock-entity-job-component-ref.utils';
-import { mockCall, mockJob, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
 import { CatalogApp } from 'app/interfaces/catalog.interface';
 import { ChartFormValue, ChartRelease } from 'app/interfaces/chart-release.interface';
@@ -38,6 +39,7 @@ import { KubernetesStore } from 'app/pages/apps/store/kubernetes-store.service';
 import { AppCatalogPipe } from 'app/pages/apps/utils/app-catalog.pipe';
 import { AuthService } from 'app/services/auth/auth.service';
 
+// TODO: Clean up
 const existingCatalogApp = {
   name: 'webdav',
   versions: {
@@ -501,7 +503,7 @@ const existingChartEdit = {
         type: 'ixVolume',
       },
     },
-  } as { [key: string]: ChartFormValue },
+  } as Record<string, ChartFormValue>,
 } as ChartRelease;
 
 const appsResponse = [{
@@ -533,7 +535,7 @@ describe('Finding app', () => {
     providers: [
       KubernetesStore,
       InstalledAppsStore,
-      mockWebsocket([]),
+      mockWebSocket([]),
       mockProvider(AppsStore, {
         isLoading$: of(false),
         availableApps$: of([]),
@@ -546,6 +548,7 @@ describe('Finding app', () => {
         searchedApps$: of([{ apps: appsResponse }]),
         searchQuery$: of('webdav'),
       }),
+      mockAuth(),
     ],
   });
 
@@ -592,7 +595,7 @@ describe('Redirect to install app', () => {
     providers: [
       KubernetesStore,
       InstalledAppsStore,
-      mockWebsocket([
+      mockWebSocket([
         mockJob('chart.release.create'),
         mockJob('chart.release.update'),
         mockCall('catalog.get_item_details', existingCatalogApp),
@@ -633,6 +636,7 @@ describe('Redirect to install app', () => {
   });
 });
 
+// TODO: Why is this here?
 describe('Install app', () => {
   let spectator: Spectator<ChartWizardComponent>;
   let loader: HarnessLoader;
@@ -646,7 +650,7 @@ describe('Install app', () => {
     ],
     providers: [
       KubernetesStore,
-      mockWebsocket([
+      mockWebSocket([
         mockJob('chart.release.create'),
         mockJob('chart.release.update'),
         mockCall('catalog.get_item_details', existingCatalogApp),
@@ -663,6 +667,13 @@ describe('Install app', () => {
           service_cidr: '172.17.0.0/16',
           cluster_dns_ip: '172.17.0.1',
         } as KubernetesConfig),
+        mockCall('container.image.dockerhub_rate_limit', {
+          total_pull_limit: 13,
+          total_time_limit_in_secs: 21600,
+          remaining_pull_limit: 3,
+          remaining_time_limit_in_secs: 21600,
+          error: null,
+        }),
       ]),
       mockProvider(MatDialog, {
         open: jest.fn(() => mockEntityJobComponentRef),
@@ -674,6 +685,7 @@ describe('Install app', () => {
           routeConfig: { path: 'install' },
         },
       },
+      mockAuth(),
     ],
   });
 
@@ -727,7 +739,8 @@ describe('Install app', () => {
     await saveButton.click();
 
     expect(mockEntityJobComponentRef.componentInstance.setCall).toHaveBeenCalledWith(
-      'chart.release.create', [{
+      'chart.release.create',
+      [{
         catalog: 'TRUENAS',
         item: 'webdav',
         release_name: 'appname',

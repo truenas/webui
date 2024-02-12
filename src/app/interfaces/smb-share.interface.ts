@@ -28,6 +28,11 @@ export interface SmbShare {
   timemachine: boolean;
   vuid: string;
   path_local: string;
+  audit: {
+    enable?: boolean;
+    watch_list?: string[];
+    ignore_list?: string[];
+  };
 }
 
 export enum SmbPresetType {
@@ -45,9 +50,7 @@ export interface SmbPreset {
   params: Partial<SmbShare>;
 }
 
-export interface SmbPresets {
-  [name: string]: SmbPreset;
-}
+export type SmbPresets = Record<string, SmbPreset>;
 
 export interface SmbSharesec {
   id: number;

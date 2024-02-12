@@ -6,4 +6,5 @@ import { TerminalConfiguration } from 'app/interfaces/terminal.interface';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ShellComponent implements TerminalConfiguration {
+  connectionData = {};
 }

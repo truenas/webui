@@ -1,9 +1,9 @@
 import { createServiceFactory, mockProvider, SpectatorService } from '@ngneat/spectator/jest';
 import { firstValueFrom, of } from 'rxjs';
 import { maxDatasetNesting, maxDatasetPath } from 'app/constants/dataset.constants';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { inherit } from 'app/enums/with-inherit.enum';
-import helptext from 'app/helptext/storage/volumes/datasets/dataset-form';
+import { helptextDatasetForm } from 'app/helptext/storage/volumes/datasets/dataset-form';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { DatasetFormService } from 'app/pages/datasets/components/dataset-form/utils/dataset-form.service';
 import { DialogService } from 'app/services/dialog.service';
@@ -16,7 +16,7 @@ describe('DatasetFormService', () => {
   const createService = createServiceFactory({
     service: DatasetFormService,
     providers: [
-      mockWebsocket([
+      mockWebSocket([
         mockCall('pool.dataset.query', [dataset]),
       ]),
       mockProvider(DialogService, {
@@ -31,22 +31,22 @@ describe('DatasetFormService', () => {
   describe('ensurePathLimits', () => {
     it('checks parent path, shows error if it is too long and closes slide in', async () => {
       const wrongPath = 'a'.repeat(maxDatasetPath);
-      await firstValueFrom(spectator.service.ensurePathLimits(wrongPath));
+      await firstValueFrom(spectator.service.checkAndWarnForLengthAndDepth(wrongPath));
 
       expect(spectator.inject(DialogService).warn).toHaveBeenCalledWith(
-        helptext.pathWarningTitle,
-        helptext.pathIsTooLongWarning,
+        helptextDatasetForm.pathWarningTitle,
+        helptextDatasetForm.pathIsTooLongWarning,
       );
       expect(spectator.inject(IxSlideInService).closeLast).toHaveBeenCalled();
     });
 
     it('checks parent path, shows error if it nesting level is too deep and closes slide in', async () => {
       const wrongPath = '/'.repeat(maxDatasetNesting);
-      await firstValueFrom(spectator.service.ensurePathLimits(wrongPath));
+      await firstValueFrom(spectator.service.checkAndWarnForLengthAndDepth(wrongPath));
 
       expect(spectator.inject(DialogService).warn).toHaveBeenCalledWith(
-        helptext.pathWarningTitle,
-        helptext.pathIsTooDeepWarning,
+        helptextDatasetForm.pathWarningTitle,
+        helptextDatasetForm.pathIsTooDeepWarning,
       );
       expect(spectator.inject(IxSlideInService).closeLast).toHaveBeenCalled();
     });

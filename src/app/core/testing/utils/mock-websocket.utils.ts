@@ -2,34 +2,37 @@ import {
   ExistingProvider, FactoryProvider, forwardRef, ValueProvider,
 } from '@angular/core';
 import { Router } from '@angular/router';
-import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
+import { TranslateService } from '@ngx-translate/core';
+import { MockWebSocketService } from 'app/core/testing/classes/mock-websocket.service';
 import {
-  MockWebsocketCallResponse, MockWebsocketJobResponse,
-  MockWebsocketResponseType,
+  CallResponseOrFactory, JobResponseOrFactory,
+  MockWebSocketCallResponse, MockWebSocketJobResponse,
+  MockWebSocketResponseType,
 } from 'app/core/testing/interfaces/mock-websocket-responses.interface';
-import { ApiCallDirectory, ApiCallMethod } from 'app/interfaces/api/api-call-directory.interface';
+import { ApiCallMethod } from 'app/interfaces/api/api-call-directory.interface';
 import { ApiJobDirectory, ApiJobMethod } from 'app/interfaces/api/api-job-directory.interface';
 import { Job } from 'app/interfaces/job.interface';
-import { WebsocketConnectionService } from 'app/services/websocket-connection.service';
+import { WebSocketConnectionService } from 'app/services/websocket-connection.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 /**
  * This is a sugar syntax for creating simple websocket mocks.
  * @example
  * providers: [
- *   mockWebsocket([
+ *   mockWebSocket([
  *     mockCall('filesystem.stat': { gid: 0 } as FileSystemStat),
+ *     mockCall('filesystem.stat', () => ({ gid: 0 } as FileSystemStat)),
  *     mockJob('filesystem.setacl', fakeSuccessfulJob()),
  *     ...
  *   }),
  * ]
  *
- * It also makes available MockWebsocketService, which allows customizing calls on the fly.
+ * It also makes available MockWebSocketService, which allows customizing calls on the fly.
  *
  * If you need more customization, use ordinary mockProvider().
  * @example
  * providers: [
- *   mockProvider(WebSocketService2, {
+ *   mockProvider(WebSocketService, {
  *     call: jest.fn((method) => {
  *       if (method === 'filesystem.stat') {
  *         return of({ user: 'john' } as FileSystemStat);
@@ -39,61 +42,61 @@ import { WebSocketService } from 'app/services/ws.service';
  * ]
  */
 
-export function mockWebsocket(
-  mockResponses?: (MockWebsocketCallResponse | MockWebsocketJobResponse)[],
+export function mockWebSocket(
+  mockResponses?: (MockWebSocketCallResponse | MockWebSocketJobResponse)[],
 ): (FactoryProvider | ExistingProvider | ValueProvider)[] {
   return [
     {
       provide: WebSocketService,
-      useFactory: (router: Router, wsManager: WebsocketConnectionService) => {
-        const mockWebsocketService = new MockWebsocketService(router, wsManager);
+      useFactory: (router: Router, wsManager: WebSocketConnectionService, translate: TranslateService) => {
+        const mockWebSocketService = new MockWebSocketService(router, wsManager, translate);
         (mockResponses || []).forEach((mockResponse) => {
-          if (mockResponse.type === MockWebsocketResponseType.Call) {
-            mockWebsocketService.mockCall(mockResponse.method, mockResponse.response);
-          } else if (mockResponse.type === MockWebsocketResponseType.Job) {
-            mockWebsocketService.mockJob(
+          if (mockResponse.type === MockWebSocketResponseType.Call) {
+            mockWebSocketService.mockCall(mockResponse.method, mockResponse.response);
+          } else if (mockResponse.type === MockWebSocketResponseType.Job) {
+            mockWebSocketService.mockJob(
               mockResponse.method,
               mockResponse.response as Job<ApiJobDirectory[ApiJobMethod]['response']>,
             );
           }
         });
-        return mockWebsocketService;
+        return mockWebSocketService;
       },
-      deps: [Router, WebsocketConnectionService],
+      deps: [Router, WebSocketConnectionService, TranslateService],
     },
     {
-      provide: MockWebsocketService,
+      provide: MockWebSocketService,
       useExisting: forwardRef(() => WebSocketService),
     },
     {
-      provide: WebsocketConnectionService,
-      useValue: ({ send: jest.fn() } as unknown as WebsocketConnectionService),
+      provide: WebSocketConnectionService,
+      useValue: ({ send: jest.fn() } as unknown as WebSocketConnectionService),
     },
   ];
 }
 
 export function mockCall<M extends ApiCallMethod>(
   method: M,
-  response: ApiCallDirectory[M]['response'] = undefined,
-): MockWebsocketCallResponse {
+  response: CallResponseOrFactory<M> = undefined,
+): MockWebSocketCallResponse {
   return {
     response,
     method,
-    type: MockWebsocketResponseType.Call,
+    type: MockWebSocketResponseType.Call,
   };
 }
 
 /**
  * Mocks immediate call() and job() responses and core.get_jobs when id is queried.
- * @see MockWebsocketService.mockJob()
+ * @see MockWebSocketService.mockJob()
  */
 export function mockJob<M extends ApiJobMethod>(
   method: M,
-  response: Job<ApiJobDirectory[M]['response']> = undefined,
-): MockWebsocketJobResponse {
+  response: JobResponseOrFactory<M> = undefined,
+): MockWebSocketJobResponse {
   return {
     response,
     method,
-    type: MockWebsocketResponseType.Job,
+    type: MockWebSocketResponseType.Job,
   };
 }

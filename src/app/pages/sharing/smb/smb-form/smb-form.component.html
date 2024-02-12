@@ -10,6 +10,8 @@
           [tooltip]="helptextSharingSmb.tooltip_path | translate"
           [label]="helptextSharingSmb.placeholder_path | translate"
           [nodeProvider]="treeNodeProvider"
+          [canCreateDataset]="isNew"
+          [createDatasetProps]="createDatasetProps"
         ></ix-explorer>
 
         <ix-input
@@ -83,6 +85,31 @@
           formControlName="hostsdeny"
           [label]="helptextSharingSmb.placeholder_hostsdeny | translate"
           [tooltip]="helptextSharingSmb.tooltip_hostsdeny | translate"
+        ></ix-chips>
+      </ix-fieldset>
+
+      <ix-fieldset *ngIf="isAdvancedMode" formGroupName="audit" [title]="'Audit Logging' | translate">
+        <ix-checkbox
+          formControlName="enable"
+          [label]="helptextSharingSmb.placeholder_enabled | translate"
+          [tooltip]="helptextSharingSmb.tooltip_enabled_audit_log | translate"
+        ></ix-checkbox>
+
+        <ix-chips
+          formControlName="watch_list"
+          hint="Keep this list empty to Watch All"
+          [label]="'Watch List' | translate"
+          [tooltip]="helptextSharingSmb.tooltip_watch_list | translate"
+          [autocompleteProvider]="groupProvider"
+          [allowNewEntries]="false"
+        ></ix-chips>
+
+        <ix-chips
+          formControlName="ignore_list"
+          [label]="'Ignore List' | translate"
+          [tooltip]="helptextSharingSmb.tooltip_ignore_list | translate"
+          [autocompleteProvider]="groupProvider"
+          [allowNewEntries]="false"
         ></ix-chips>
       </ix-fieldset>
 
@@ -160,11 +187,12 @@
 
       <ix-form-actions>
         <button
+          *ixRequiresRoles="requiredRoles"
           mat-button
           type="submit"
           color="primary"
           ixTest="save"
-          [disabled]="form.invalid || isLoading"
+          [disabled]="form.invalid || isLoading || (form.statusChanges | async) === 'PENDING'"
         >
           {{ 'Save' | translate }}
         </button>

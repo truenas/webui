@@ -8,7 +8,7 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { GiB } from 'app/constants/bytes.constant';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import {
   VmBootloader, VmCpuMode, VmDeviceType, VmDiskMode, VmDisplayType, VmTime,
 } from 'app/enums/vm.enum';
@@ -67,7 +67,7 @@ describe('VmWizardComponent', () => {
       mockProvider(IxSlideInService),
       mockProvider(GpuService),
       mockProvider(VmGpuService),
-      mockWebsocket([
+      mockWebSocket([
         mockCall('vm.create', { id: 4 } as VirtualMachine),
         mockCall('vm.query', []),
         mockCall('vm.port_wizard', { port: 13669 } as VmPortWizardResult),
@@ -79,7 +79,9 @@ describe('VmWizardComponent', () => {
         mockCall('vm.device.bind_choices', {
           '10.10.16.82': '10.10.16.82',
         }),
-        mockCall('vm.cpu_model_choices'),
+        mockCall('vm.cpu_model_choices', {
+          Pentium: 'Pentium',
+        }),
         mockCall('vm.maximum_supported_vcpus', 27),
         mockCall('pool.filesystem_choices', [
           'poolio',
@@ -91,6 +93,7 @@ describe('VmWizardComponent', () => {
         mockCall('vm.device.nic_attach_choices', {
           eno2: 'eno2',
         }),
+        mockCall('vm.device.get_pci_ids_for_gpu_isolation', ['10DE:1401']),
       ]),
       mockProvider(GpuService, {
         getGpuOptions: () => of([
@@ -316,8 +319,8 @@ describe('VmWizardComponent', () => {
         web: true,
       },
     }]);
-    expect(spectator.inject(VmGpuService).updateVmGpus).toHaveBeenCalledWith({ id: 4 }, ['0000:03:00.0']);
-    expect(spectator.inject(GpuService).addIsolatedGpuPciIds).toHaveBeenCalledWith(['0000:03:00.0']);
+    expect(spectator.inject(VmGpuService).updateVmGpus).toHaveBeenCalledWith({ id: 4 }, ['0000:03:00.0', '10DE:1401']);
+    expect(spectator.inject(GpuService).addIsolatedGpuPciIds).toHaveBeenCalledWith(['0000:03:00.0', '10DE:1401']);
     expect(spectator.inject(IxSlideInRef).close).toHaveBeenCalled();
   });
 });

@@ -2,10 +2,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
-import { DatasetCaseSensitivity, DatasetSync } from 'app/enums/dataset.enum';
-import { OnOff } from 'app/enums/on-off.enum';
-import { inherit } from 'app/enums/with-inherit.enum';
+import { DatasetCaseSensitivity, DatasetPreset } from 'app/enums/dataset.enum';
 import { ZfsPropertySource } from 'app/enums/zfs-property-source.enum';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { IxFieldsetHarness } from 'app/modules/ix-forms/components/ix-fieldset/ix-fieldset.harness';
@@ -22,49 +19,9 @@ describe('NameAndOptionsSectionComponent', () => {
   let form: IxFormHarness;
   const existingChildDataset = {
     name: 'parent/child',
-    comments: {
-      value: 'comments',
-      source: ZfsPropertySource.Inherited,
-      parsed: 'comments',
-    },
-    sync: {
-      parsed: 'standard',
-      source: ZfsPropertySource.Inherited,
-      value: DatasetSync.Standard,
-    },
-    compression: {
-      parsed: 'lzjb',
-      value: 'LZJB',
-      source: ZfsPropertySource.Local,
-    },
-    atime: {
-      parsed: false,
-      value: OnOff.Off,
-      source: ZfsPropertySource.Inherited,
-    },
   } as Dataset;
   const parentDataset = {
     name: 'parent',
-    comments: {
-      value: 'comments',
-      source: ZfsPropertySource.Local,
-      parsed: 'comments',
-    },
-    sync: {
-      parsed: 'standard',
-      source: ZfsPropertySource.Default,
-      value: DatasetSync.Standard,
-    },
-    compression: {
-      parsed: 'lzjb',
-      value: 'LZJB',
-      source: ZfsPropertySource.Local,
-    },
-    atime: {
-      parsed: false,
-      value: OnOff.Off,
-      source: ZfsPropertySource.Local,
-    },
     casesensitivity: {
       value: DatasetCaseSensitivity.Sensitive,
       source: ZfsPropertySource.Local,
@@ -77,15 +34,6 @@ describe('NameAndOptionsSectionComponent', () => {
     imports: [
       ReactiveFormsModule,
       IxFormsModule,
-    ],
-    providers: [
-      mockWebsocket([
-        mockCall('pool.dataset.compression_choices', {
-          LZ4: 'LZ4',
-          LZJB: 'LZJB',
-          OFF: 'OFF',
-        }),
-      ]),
     ],
   });
 
@@ -106,10 +54,7 @@ describe('NameAndOptionsSectionComponent', () => {
       expect(values).toEqual({
         'Parent Path': 'parent',
         Name: '',
-        Comments: '',
-        Sync: 'Inherit (STANDARD)',
-        'Compression Level': 'Inherit (LZJB)',
-        'Enable Atime': 'Inherit (OFF)',
+        'Dataset Preset': 'Generic',
       });
     });
 
@@ -120,18 +65,12 @@ describe('NameAndOptionsSectionComponent', () => {
 
       await form.fillForm({
         Name: 'new-dataset',
-        Comments: 'My new dataset',
-        Sync: 'Always',
-        'Compression Level': 'Inherit (LZJB)',
-        'Enable Atime': 'On',
+        'Dataset Preset': 'Apps',
       });
 
       expect(spectator.component.getPayload()).toEqual({
         name: 'parent/new-dataset',
-        atime: OnOff.On,
-        comments: 'My new dataset',
-        compression: inherit,
-        sync: DatasetSync.Always,
+        share_type: 'APPS',
       });
     });
   });
@@ -141,25 +80,10 @@ describe('NameAndOptionsSectionComponent', () => {
       spectator.setInput({
         existing: {
           name: 'pool1',
-          comments: {
-            value: 'comments',
-            source: ZfsPropertySource.Local,
-            parsed: 'comments',
-          },
-          sync: {
-            parsed: 'standard',
+          share_type: {
+            parsed: 'Multiprotocol',
             source: ZfsPropertySource.Default,
-            value: DatasetSync.Standard,
-          },
-          compression: {
-            parsed: 'lzjb',
-            value: 'LZJB',
-            source: ZfsPropertySource.Local,
-          },
-          atime: {
-            parsed: false,
-            value: OnOff.Off,
-            source: ZfsPropertySource.Local,
+            value: DatasetPreset.Multiprotocol,
           },
         } as Dataset,
         parent: null,
@@ -168,10 +92,6 @@ describe('NameAndOptionsSectionComponent', () => {
       const values = await form.getValues();
       expect(values).toEqual({
         Name: 'pool1',
-        Comments: 'comments',
-        Sync: 'Standard',
-        'Compression Level': 'LZJB',
-        'Enable Atime': 'Off',
       });
     });
 
@@ -184,32 +104,16 @@ describe('NameAndOptionsSectionComponent', () => {
       const values = await form.getValues();
       expect(values).toEqual({
         Name: 'parent/child',
-        Comments: '',
-        'Compression Level': 'LZJB',
-        'Enable Atime': 'Inherit (OFF)',
-        Sync: 'Inherit (STANDARD)',
       });
     });
 
-    it('returns payload for updating a dataset', async () => {
+    it('returns payload for updating a dataset', () => {
       spectator.setInput({
         existing: existingChildDataset,
         parent: parentDataset,
       });
 
-      await form.fillForm({
-        Comments: 'My updated dataset',
-        Sync: 'Always',
-        'Compression Level': 'LZ4',
-        'Enable Atime': 'Off',
-      });
-
-      expect(spectator.component.getPayload()).toEqual({
-        comments: 'My updated dataset',
-        atime: OnOff.Off,
-        compression: 'LZ4',
-        sync: DatasetSync.Always,
-      });
+      expect(spectator.component.getPayload()).toEqual({});
     });
   });
 

@@ -14,12 +14,11 @@ import { Observable } from 'rxjs';
 import { filter, switchMap } from 'rxjs/operators';
 import { DatasetQuotaType } from 'app/enums/dataset.enum';
 import { EmptyType } from 'app/enums/empty-type.enum';
+import { Role } from 'app/enums/role.enum';
 import { WINDOW } from 'app/helpers/window.helper';
-import helptext from 'app/helptext/storage/volumes/datasets/dataset-quotas';
+import { helptextQuotas } from 'app/helptext/storage/volumes/datasets/dataset-quotas';
 import { DatasetQuota, SetDatasetQuota } from 'app/interfaces/dataset-quota.interface';
-import { Job } from 'app/interfaces/job.interface';
 import { QueryFilter, QueryParams } from 'app/interfaces/query-api.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
 import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
@@ -58,6 +57,8 @@ export class DatasetQuotasGrouplistComponent implements OnInit, OnDestroy {
     return this.emptyService;
   }
 
+  protected readonly Role = Role;
+
   constructor(
     protected ws: WebSocketService,
     protected storageService: StorageService,
@@ -69,8 +70,8 @@ export class DatasetQuotasGrouplistComponent implements OnInit, OnDestroy {
     private translate: TranslateService,
     private slideInService: IxSlideInService,
     private cdr: ChangeDetectorRef,
-    @Inject(WINDOW) private window: Window,
     private emptyService: EmptyService,
+    @Inject(WINDOW) private window: Window,
   ) { }
 
   ngOnInit(): void {
@@ -84,7 +85,7 @@ export class DatasetQuotasGrouplistComponent implements OnInit, OnDestroy {
     this.window.localStorage.setItem('useFullFilter', 'true');
   }
 
-  handleError = (error: WebsocketError | Job): void => {
+  handleError = (error: unknown): void => {
     this.dialogService.error(this.errorHandler.parseError(error));
   };
 
@@ -95,7 +96,7 @@ export class DatasetQuotasGrouplistComponent implements OnInit, OnDestroy {
     switch (field) {
       case 'name':
         if (!row[field]) {
-          return `*ERR* (${this.translate.instant(helptext.shared.nameErr)}), ID: ${row.id}`;
+          return `*ERR* (${this.translate.instant(helptextQuotas.shared.nameErr)}), ID: ${row.id}`;
         }
         return row[field];
       case 'quota':
@@ -147,7 +148,7 @@ export class DatasetQuotasGrouplistComponent implements OnInit, OnDestroy {
         this.createDataSource(quotas);
         this.checkInvalidQuotas();
       },
-      error: (error) => {
+      error: (error: unknown) => {
         this.emptyType = EmptyType.Errors;
         this.handleError(error);
       },
@@ -196,19 +197,19 @@ export class DatasetQuotasGrouplistComponent implements OnInit, OnDestroy {
 
   private confirmShowAllUsers(): Observable<boolean> {
     return this.dialogService.confirm({
-      title: helptext.groups.filter_dialog.title_show,
-      message: helptext.groups.filter_dialog.message_show,
+      title: helptextQuotas.groups.filter_dialog.title_show,
+      message: helptextQuotas.groups.filter_dialog.message_show,
       hideCheckbox: true,
-      buttonText: helptext.groups.filter_dialog.button_show,
+      buttonText: helptextQuotas.groups.filter_dialog.button_show,
     });
   }
 
   private confirmFilterUsers(): Observable<boolean> {
     return this.dialogService.confirm({
-      title: helptext.groups.filter_dialog.title_filter,
-      message: helptext.groups.filter_dialog.message_filter,
+      title: helptextQuotas.groups.filter_dialog.title_filter,
+      message: helptextQuotas.groups.filter_dialog.message_filter,
       hideCheckbox: true,
-      buttonText: helptext.groups.filter_dialog.button_filter,
+      buttonText: helptextQuotas.groups.filter_dialog.button_filter,
     });
   }
 
@@ -231,7 +232,7 @@ export class DatasetQuotasGrouplistComponent implements OnInit, OnDestroy {
       next: () => {
         this.getGroupQuotas();
       },
-      error: (error) => {
+      error: (error: unknown) => {
         this.handleError(error);
       },
     });
@@ -241,14 +242,14 @@ export class DatasetQuotasGrouplistComponent implements OnInit, OnDestroy {
     const slideInRef = this.slideInService.open(DatasetQuotaAddFormComponent, {
       data: { quotaType: DatasetQuotaType.Group, datasetId: this.datasetId },
     });
-    slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => this.getGroupQuotas());
+    slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => this.getGroupQuotas());
   }
 
   doEdit(row: DatasetQuota): void {
     const slideInRef = this.slideInService.open(DatasetQuotaEditFormComponent, {
       data: { quotaType: DatasetQuotaType.Group, datasetId: this.datasetId, id: row.id },
     });
-    slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => this.getGroupQuotas());
+    slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => this.getGroupQuotas());
   }
 
   doDelete(row: DatasetQuota): void {

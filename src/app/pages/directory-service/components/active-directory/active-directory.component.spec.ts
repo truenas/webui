@@ -2,18 +2,19 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
-import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { MockWebSocketService } from 'app/core/testing/classes/mock-websocket.service';
+import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockEntityJobComponentRef } from 'app/core/testing/utils/mock-entity-job-component-ref.utils';
+import { mockCall, mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { DirectoryServiceState } from 'app/enums/directory-service-state.enum';
-import helptext from 'app/helptext/directory-service/active-directory';
+import { helptextActiveDirectory } from 'app/helptext/directory-service/active-directory';
 import { ActiveDirectoryConfig } from 'app/interfaces/active-directory-config.interface';
 import { DirectoryServicesState } from 'app/interfaces/directory-services-state.interface';
 import { KerberosRealm } from 'app/interfaces/kerberos-realm.interface';
-import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
@@ -63,12 +64,12 @@ describe('ActiveDirectoryComponent', () => {
       IxFormsModule,
     ],
     providers: [
-      mockWebsocket([
+      mockWebSocket([
+        mockJob('activedirectory.update', fakeSuccessfulJob()),
         mockCall('directoryservices.get_state', {
           activedirectory: DirectoryServiceState.Disabled,
         } as DirectoryServicesState),
         mockCall('activedirectory.config', existingConfig),
-        mockCall('activedirectory.update', {} as ActiveDirectoryConfig),
         mockCall('kerberos.realm.query', [
           { id: 1, realm: 'ad.ixsystems.net' },
           { id: 2, realm: 'directory.ixsystems.net' },
@@ -83,14 +84,17 @@ describe('ActiveDirectoryComponent', () => {
         refreshDirServicesCache: jest.fn(() => of(null)),
       }),
       mockProvider(DialogService),
+      mockProvider(MatDialog, {
+        open: jest.fn(() => mockEntityJobComponentRef),
+      }),
       mockProvider(SnackbarService),
       mockProvider(IxSlideInService),
       mockProvider(IxSlideInRef),
+      mockAuth(),
       { provide: SLIDE_IN_DATA, useValue: undefined },
     ],
     declarations: [
       LeaveDomainDialogComponent,
-      MockComponent(EntityJobComponent),
     ],
   });
 
@@ -115,7 +119,7 @@ describe('ActiveDirectoryComponent', () => {
   });
 
   it('does not show Account Name and Password when Kerberos principal is set', async () => {
-    spectator.inject(MockWebsocketService).mockCall('activedirectory.config', {
+    spectator.inject(MockWebSocketService).mockCall('activedirectory.config', {
       ...existingConfig,
       kerberos_principal: 'TRUENAS$@AD.IXSYSTEMS.NET',
     });
@@ -163,7 +167,7 @@ describe('ActiveDirectoryComponent', () => {
 
     expect(spectator.inject(SystemGeneralService).refreshDirServicesCache).toHaveBeenCalled();
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith(
-      helptext.activedirectory_custactions_clearcache_dialog_message,
+      helptextActiveDirectory.activedirectory_custactions_clearcache_dialog_message,
     );
   });
 
@@ -178,69 +182,37 @@ describe('ActiveDirectoryComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('activedirectory.update', [{
-      domainname: 'ad.truenas.com',
-      bindname: 'Administrator',
-      bindpw: '12345678',
-      enable: true,
-      verbose_logging: true,
-      allow_trusted_doms: false,
-      use_default_domain: false,
-      allow_dns_updates: true,
-      disable_freenas_cache: false,
-      restrict_pam: false,
-      site: 'site-name',
-      kerberos_realm: 2,
-      kerberos_principal: '',
-      createcomputer: 'Computers/Servers/NAS',
-      timeout: 60,
-      dns_timeout: 10,
-      nss_info: 'SFU20',
-      netbiosname: 'truenas',
-      netbiosalias: ['alias1', 'alias2'],
-    }]);
-    expect(spectator.inject(IxSlideInRef).close).toHaveBeenCalled();
-  });
-
-  it('shows EntityJobComponent when activedirectory.update returns a job id', async () => {
-    spectator.inject(MockWebsocketService).mockCall('activedirectory.update', {
-      job_id: 12345,
-    });
-    const matDialog = spectator.inject(MatDialog);
-    const entityJobComponent = {
-      jobId: undefined,
-      wsshow: jest.fn(),
-      success: of(null),
-      failure: of(),
-    } as unknown as EntityJobComponent;
-    jest.spyOn(matDialog, 'open').mockImplementation(() => ({
-      componentInstance: entityJobComponent,
-      close: () => {},
-    } as MatDialogRef<EntityJobComponent>));
-
-    await form.fillForm({
-      'Domain Name': 'ad.truenas.com',
-      'Domain Account Name': 'Administrator',
-      'Domain Account Password': '12345678',
-      'Enable (requires password or Kerberos principal)': true,
-    });
-
-    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-    await saveButton.click();
-
-    expect(matDialog.open).toHaveBeenCalledWith(EntityJobComponent, {
-      data: {
-        title: 'Active Directory',
-      },
-      disableClose: true,
-    });
-    expect(entityJobComponent.jobId).toBe(12345);
+    expect(mockEntityJobComponentRef.componentInstance.setCall).toHaveBeenCalledWith(
+      'activedirectory.update',
+      [{
+        domainname: 'ad.truenas.com',
+        bindname: 'Administrator',
+        bindpw: '12345678',
+        enable: true,
+        verbose_logging: true,
+        allow_trusted_doms: false,
+        use_default_domain: false,
+        allow_dns_updates: true,
+        disable_freenas_cache: false,
+        restrict_pam: false,
+        site: 'site-name',
+        kerberos_realm: 2,
+        kerberos_principal: '',
+        createcomputer: 'Computers/Servers/NAS',
+        timeout: 60,
+        dns_timeout: 10,
+        nss_info: 'SFU20',
+        netbiosname: 'truenas',
+        netbiosalias: ['alias1', 'alias2'],
+      }],
+    );
+    expect(mockEntityJobComponentRef.componentInstance.submit).toHaveBeenCalled();
     expect(spectator.inject(IxSlideInRef).close).toHaveBeenCalled();
   });
 
   describe('leave domain button', () => {
     beforeEach(() => {
-      spectator.inject(MockWebsocketService).mockCall('directoryservices.get_state', {
+      spectator.inject(MockWebSocketService).mockCall('directoryservices.get_state', {
         activedirectory: DirectoryServiceState.Healthy,
       } as DirectoryServicesState);
       spectator.component.ngOnInit();

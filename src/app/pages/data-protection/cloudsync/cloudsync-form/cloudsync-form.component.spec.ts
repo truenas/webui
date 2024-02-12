@@ -3,32 +3,34 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
-import { CloudsyncProviderName } from 'app/enums/cloudsync-provider.enum';
+import { of } from 'rxjs';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { CloudSyncProviderName } from 'app/enums/cloudsync-provider.enum';
 import { Direction } from 'app/enums/direction.enum';
 import { mntPath } from 'app/enums/mnt-path.enum';
 import { TransferMode } from 'app/enums/transfer-mode.enum';
 import { CloudSyncTaskUi } from 'app/interfaces/cloud-sync-task.interface';
-import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
+import { CloudCredentialsSelectModule } from 'app/modules/custom-selects/cloud-credentials-select/cloud-credentials-select.module';
+import { CHAINED_SLIDE_IN_REF, SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { SchedulerModule } from 'app/modules/scheduler/scheduler.module';
-import { CloudsyncFormComponent } from 'app/pages/data-protection/cloudsync/cloudsync-form/cloudsync-form.component';
+import { CloudSyncFormComponent } from 'app/pages/data-protection/cloudsync/cloudsync-form/cloudsync-form.component';
 import {
   TransferModeExplanationComponent,
 } from 'app/pages/data-protection/cloudsync/transfer-mode-explanation/transfer-mode-explanation.component';
 import { DialogService } from 'app/services/dialog.service';
 import { FilesystemService } from 'app/services/filesystem.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 
-describe('CloudsyncFormComponent', () => {
+describe('CloudSyncFormComponent', () => {
   const existingTask = {
     id: 1,
     description: 'New Cloud Sync Task',
     direction: Direction.Push,
     path: '/mnt/my pool',
-    attributes: { folder: '/test/' },
+    attributes: { folder: '/test/' } as Record<string, string>,
     enabled: false,
     transfer_mode: TransferMode.Copy,
     encryption: true,
@@ -52,7 +54,7 @@ describe('CloudsyncFormComponent', () => {
       id: 2,
       name: 'test2',
       provider: 'MEGA',
-      attributes: { user: 'login', pass: 'password' },
+      attributes: { user: 'login', pass: 'password' } as Record<string, string>,
     },
     schedule: {
       minute: '0',
@@ -69,31 +71,35 @@ describe('CloudsyncFormComponent', () => {
     next_run_time: 'Disabled',
     next_run: 'Disabled',
     state: { state: 'PENDING' },
-    last_run: '1 minute ago',
   } as CloudSyncTaskUi;
 
   let loader: HarnessLoader;
-  let spectator: Spectator<CloudsyncFormComponent>;
+  let spectator: Spectator<CloudSyncFormComponent>;
+  const chainedComponentRef = {
+    close: jest.fn(),
+  };
   const createComponent = createComponentFactory({
-    component: CloudsyncFormComponent,
+    component: CloudSyncFormComponent,
     imports: [
       IxFormsModule,
       SchedulerModule,
+      CloudCredentialsSelectModule,
       ReactiveFormsModule,
     ],
     declarations: [
       TransferModeExplanationComponent,
     ],
     providers: [
+      mockAuth(),
       mockProvider(DialogService),
-      mockWebsocket([
-        mockCall('cloudsync.create'),
-        mockCall('cloudsync.update'),
+      mockWebSocket([
+        mockCall('cloudsync.create', existingTask),
+        mockCall('cloudsync.update', existingTask),
         mockCall('cloudsync.credentials.query', [
           {
             id: 1,
             name: 'test1',
-            provider: CloudsyncProviderName.Http,
+            provider: CloudSyncProviderName.Http,
             attributes: {
               url: 'http',
             },
@@ -101,7 +107,7 @@ describe('CloudsyncFormComponent', () => {
           {
             id: 2,
             name: 'test2',
-            provider: CloudsyncProviderName.Mega,
+            provider: CloudSyncProviderName.Mega,
             attributes: {
               user: 'login',
               pass: 'password',
@@ -109,7 +115,7 @@ describe('CloudsyncFormComponent', () => {
           },
         ]),
         mockCall('cloudsync.providers', [{
-          name: CloudsyncProviderName.Http,
+          name: CloudSyncProviderName.Http,
           title: 'Http',
           buckets: false,
           bucket_title: 'Bucket',
@@ -118,7 +124,7 @@ describe('CloudsyncFormComponent', () => {
           credentials_oauth: null,
         },
         {
-          name: CloudsyncProviderName.Mega,
+          name: CloudSyncProviderName.Mega,
           title: 'Mega',
           buckets: false,
           bucket_title: 'Bucket',
@@ -127,10 +133,13 @@ describe('CloudsyncFormComponent', () => {
           credentials_oauth: null,
         }]),
       ]),
-      mockProvider(IxSlideInService),
+      mockProvider(IxChainedSlideInService, {
+        pushComponent: jest.fn(() => of()),
+        components$: of([]),
+      }),
       mockProvider(FilesystemService),
-      mockProvider(IxSlideInRef),
       { provide: SLIDE_IN_DATA, useValue: undefined },
+      { provide: CHAINED_SLIDE_IN_REF, useValue: chainedComponentRef },
     ],
   });
 
@@ -174,7 +183,7 @@ describe('CloudsyncFormComponent', () => {
         transfer_mode: TransferMode.Copy,
         transfers: 4,
       }]);
-      expect(spectator.inject(IxSlideInRef).close).toHaveBeenCalled();
+      expect(chainedComponentRef.close).toHaveBeenCalledWith({ response: existingTask, error: null });
     });
   });
 
@@ -191,7 +200,7 @@ describe('CloudsyncFormComponent', () => {
     it('shows values for an existing cloudsync task when it is open for edit', () => {
       expect(spectator.component.form.value).toEqual({
         acknowledge_abuse: false,
-        bwlimit: ['13:00, 1 KiB', '15:00, off'],
+        bwlimit: ['13:00, 1.02 kb', '15:00, off'],
         cloudsync_picker: '0 0 * * 0',
         create_empty_src_dirs: true,
         credentials: 2,
@@ -256,7 +265,7 @@ describe('CloudsyncFormComponent', () => {
         transfer_mode: TransferMode.Copy,
         transfers: 10,
       }]);
-      expect(spectator.inject(IxSlideInRef).close).toHaveBeenCalled();
+      expect(chainedComponentRef.close).toHaveBeenCalledWith({ response: existingTask, error: null });
     });
   });
 });

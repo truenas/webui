@@ -1,12 +1,14 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Inject, Input, Output } from '@angular/core';
+import {
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Inject, Input, Output,
+} from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { WINDOW } from 'app/helpers/window.helper';
 import { GmailOauthConfig } from 'app/interfaces/mail-config.interface';
 import { OauthMessage } from 'app/interfaces/oauth-message.interface';
-import { OauthJiraMessage } from 'app/interfaces/support.interface';
+import { OauthJiraMessage } from 'app/modules/feedback/interfaces/file-ticket.interface';
+import { OauthButtonType } from 'app/modules/oauth-button/interfaces/oauth-button.interface';
 import { OauthProviderData } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/oauth-provider/oauth-provider.component';
 import { DialogService } from 'app/services/dialog.service';
-import { OauthButtonType } from './../../interfaces/oauth-button.interface';
 
 @Component({
   selector: 'ix-oauth-button',
@@ -17,6 +19,7 @@ import { OauthButtonType } from './../../interfaces/oauth-button.interface';
 export class OauthButtonComponent {
   @Input() oauthType: OauthButtonType;
   @Input() isLoggedIn = false;
+  @Input() disabled = false;
   @Input() oauthUrl: string;
   @Input() testId: string;
 
@@ -27,22 +30,23 @@ export class OauthButtonComponent {
       case OauthButtonType.Jira:
         if (this.isLoggedIn) {
           return this.translate.instant('Logged In To Jira');
-        } else {
-          return this.translate.instant('Log In To Jira');
         }
+        return this.translate.instant('Login To Jira To Submit');
+
       case OauthButtonType.Provider:
         if (this.isLoggedIn) {
           return this.translate.instant('Logged In To Provider');
-        } else {
-          return this.translate.instant('Log In To Provider');
         }
+        return this.translate.instant('Log In To Provider');
+
       case OauthButtonType.Gmail:
         if (this.isLoggedIn) {
           return this.translate.instant('Logged In To Gmail');
-        } else {
-          return this.translate.instant('Log In To Gmail');
         }
+        return this.translate.instant('Log In To Gmail');
     }
+
+    return '';
   }
 
   constructor(
@@ -104,6 +108,9 @@ export class OauthButtonComponent {
   }
 
   onLoggedInWithProviderSuccess = (message: OauthMessage<OauthProviderData>): void => {
+    if (message.origin !== 'https://www.truenas.com') {
+      return;
+    }
     if (!('oauth_portal' in message.data)) {
       return;
     }

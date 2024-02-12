@@ -1,6 +1,7 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
 export const helptextSharingSmb = {
+  shareAclDescription: T('The SMB share ACL defines access rights for users of this SMB share up to, but not beyond, the access granted by filesystem ACLs.'),
   column_name: T('Name'),
   column_path: T('Path'),
   column_comment: T('Description'),
@@ -21,13 +22,23 @@ export const helptextSharingSmb = {
 
   placeholder_enabled: T('Enabled'),
   tooltip_enabled: T(
-    'Enable this SMB share. Unset to disable this SMB share \
- without deleting it.',
+    'Enable this SMB share. Unset to disable this SMB share without deleting it.',
+  ),
+  tooltip_enabled_audit_log: T(
+    'Controls whether audit messages will be generated for the share. \
+<br><br> <b>Note</b>: Auditing may not be enabled if SMB1 support is enabled for the server.',
+  ),
+  tooltip_watch_list: T(
+    'List of groups for which to generate audit messages. Keep this list empty to Watch All.',
+  ),
+  tooltip_ignore_list: T(
+    'List of groups to ignore when auditing. If conflict arises between Watch List and Ignore List \
+ (based on user group membership), then Watch List will take precedence and ops will be audited.',
   ),
 
   placeholder_home: T('Use as Home Share'),
   tooltip_home: T(
-    'Allows the share to host user home \
+    'Legacy feature. <br><br>Allows the share to host user home \
  directories. Each user is given a personal home directory when \
  connecting to the share which is not accessible by other users. This \
  allows for a personal, dynamic share. Only one share can be used \
@@ -83,7 +94,7 @@ export const helptextSharingSmb = {
 
   placeholder_guestok: T('Allow Guest Access'),
   tooltip_guestok: T(
-    'Privileges are the same as the guest account. \
+    'Legacy feature. <br><br>Privileges are the same as the guest account. \
  Guest access is disabled by default in Windows 10 version 1709 and \
  Windows Server version 1903. Additional client-side configuration is \
  required to provide guest access to these clients.<br><br> \
@@ -136,7 +147,7 @@ export const helptextSharingSmb = {
   placeholder_streams: T('Enable Alternate Data Streams'),
   tooltip_streams: T(
     'Allows multiple \
- <a href="http://www.ntfs.com/ntfs-multiple.htm" target"_blank">NTFS data streams</a>. \
+ <a href="http://www.ntfs.com/ntfs-multiple.htm">NTFS data streams</a>. \
  Disabling this option causes MacOS to write streams to files on the filesystem.',
   ),
 

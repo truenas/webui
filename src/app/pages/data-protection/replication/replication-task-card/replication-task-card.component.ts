@@ -1,30 +1,31 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
-import { formatDistanceToNow } from 'date-fns';
-import { catchError, EMPTY, filter, switchMap, tap } from 'rxjs';
+import {
+  catchError, EMPTY, filter, of, switchMap, tap,
+} from 'rxjs';
 import { JobState } from 'app/enums/job-state.enum';
+import { Role } from 'app/enums/role.enum';
 import { tapOnce } from 'app/helpers/operators/tap-once.operator';
-import helptext from 'app/helptext/data-protection/data-protection-dashboard/data-protection-dashboard';
-import { Job } from 'app/interfaces/job.interface';
-import { ReplicationTaskUi } from 'app/interfaces/replication-task.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
-import { ArrayDataProvider } from 'app/modules/ix-table2/array-data-provider';
+import { ReplicationTask } from 'app/interfaces/replication-task.interface';
+import { AsyncDataProvider } from 'app/modules/ix-table2/classes/async-data-provider/async-data-provider';
+import { actionsColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
+import { relativeDateColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-relative-date/ix-cell-relative-date.component';
 import { stateButtonColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-state-button/ix-cell-state-button.component';
 import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { toggleColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-toggle/ix-cell-toggle.component';
 import { createTable } from 'app/modules/ix-table2/utils';
-import { selectJob } from 'app/modules/jobs/store/job.selectors';
+import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ReplicationFormComponent } from 'app/pages/data-protection/replication/replication-form/replication-form.component';
 import { ReplicationRestoreDialogComponent } from 'app/pages/data-protection/replication/replication-restore-dialog/replication-restore-dialog.component';
 import { ReplicationWizardComponent } from 'app/pages/data-protection/replication/replication-wizard/replication-wizard.component';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 import { StorageService } from 'app/services/storage.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
@@ -37,25 +38,28 @@ import { AppState } from 'app/store';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ReplicationTaskCardComponent implements OnInit {
-  dataProvider = new ArrayDataProvider<ReplicationTaskUi>();
-  isLoading = false;
+  dataProvider: AsyncDataProvider<ReplicationTask>;
   jobStates = new Map<number, string>();
-  readonly jobState = JobState;
+  readonly requiredRoles = [Role.ReplicationTaskWrite, Role.ReplicationTaskWritePull];
 
-  columns = createTable<ReplicationTaskUi>([
+  columns = createTable<ReplicationTask>([
     textColumn({
       title: this.translate.instant('Name'),
       propertyName: 'name',
     }),
     textColumn({
       title: this.translate.instant('Last Snapshot'),
-      propertyName: 'task_last_snapshot',
+      getValue: (task) => {
+        return task.state.last_snapshot
+          ? task.state.last_snapshot
+          : this.translate.instant('No snapshots sent yet');
+      },
     }),
     toggleColumn({
       title: this.translate.instant('Enabled'),
       propertyName: 'enabled',
-      cssClass: 'justify-end',
-      onRowToggle: (row: ReplicationTaskUi) => this.onChangeEnabledState(row),
+      onRowToggle: (row: ReplicationTask) => this.onChangeEnabledState(row),
+      requiredRoles: this.requiredRoles,
     }),
     stateButtonColumn({
       title: this.translate.instant('State'),
@@ -63,46 +67,76 @@ export class ReplicationTaskCardComponent implements OnInit {
       getJob: (row) => row.job,
       cssClass: 'state-button',
     }),
-    textColumn({
+    relativeDateColumn({
       title: this.translate.instant('Last Run'),
-      propertyName: 'last_run',
+      getValue: (row) => row.state?.datetime?.$date,
     }),
-    textColumn({
-      propertyName: 'id',
+    actionsColumn({
       cssClass: 'wide-actions',
+      actions: [
+        {
+          iconName: 'edit',
+          tooltip: this.translate.instant('Edit'),
+          onClick: (row) => this.editReplicationTask(row),
+        },
+        {
+          iconName: 'play_arrow',
+          tooltip: this.translate.instant('Run job'),
+          hidden: (row) => of(row.job?.state === JobState.Running),
+          onClick: (row) => this.runNow(row),
+          requiredRoles: this.requiredRoles,
+        },
+        {
+          iconName: 'restore',
+          tooltip: this.translate.instant('Restore'),
+          onClick: (row) => this.restore(row),
+          requiredRoles: this.requiredRoles,
+        },
+        {
+          iconName: 'download',
+          tooltip: this.translate.instant('Download encryption keys'),
+          hidden: (row) => of(!row.has_encrypted_dataset_keys),
+          onClick: (row) => this.downloadKeys(row),
+          requiredRoles: this.requiredRoles,
+        },
+        {
+          iconName: 'delete',
+          tooltip: this.translate.instant('Delete'),
+          onClick: (row) => this.doDelete(row),
+          requiredRoles: this.requiredRoles,
+        },
+      ],
     }),
-  ]);
+  ], {
+    rowTestId: (row) => 'replication-task-' + row.name,
+  });
 
   constructor(
-    private slideInService: IxSlideInService,
+    private chainedSlideInService: IxChainedSlideInService,
     private translate: TranslateService,
     private errorHandler: ErrorHandlerService,
     private ws: WebSocketService,
     private dialogService: DialogService,
-    private cdr: ChangeDetectorRef,
     private store$: Store<AppState>,
     private snackbar: SnackbarService,
     private matDialog: MatDialog,
     private storage: StorageService,
+    protected emptyService: EmptyService,
   ) {}
 
   ngOnInit(): void {
+    const replicationTasks$ = this.ws.call('replication.query', [[], {
+      extra: { check_dataset_encryption_keys: true },
+    }]).pipe(untilDestroyed(this));
+    this.dataProvider = new AsyncDataProvider<ReplicationTask>(replicationTasks$);
     this.getReplicationTasks();
   }
 
   getReplicationTasks(): void {
-    this.isLoading = true;
-    this.ws.call('replication.query', [[], { extra: { check_dataset_encryption_keys: true } }]).pipe(
-      untilDestroyed(this),
-    ).subscribe((replicationTasks: ReplicationTaskUi[]) => {
-      const transformedReplicationTasks = this.transformReplicationTasks(replicationTasks);
-      this.dataProvider.setRows(transformedReplicationTasks);
-      this.isLoading = false;
-      this.cdr.markForCheck();
-    });
+    this.dataProvider.load();
   }
 
-  doDelete(replicationTask: ReplicationTaskUi): void {
+  doDelete(replicationTask: ReplicationTask): void {
     this.dialogService.confirm({
       title: this.translate.instant('Confirmation'),
       message: this.translate.instant('Delete Replication Task <b>"{name}"</b>?', {
@@ -123,20 +157,21 @@ export class ReplicationTaskCardComponent implements OnInit {
   }
 
   addReplicationTask(): void {
-    const slideInRef = this.slideInService.open(ReplicationWizardComponent, { wide: true });
-    slideInRef.slideInClosed$
-      .pipe(filter(Boolean), untilDestroyed(this))
+    const closer$ = this.chainedSlideInService.pushComponent(ReplicationWizardComponent, true);
+    closer$.pipe(
+      filter((response) => !!response.response),
+      untilDestroyed(this),
+    ).subscribe(() => this.getReplicationTasks());
+  }
+
+  editReplicationTask(row: ReplicationTask): void {
+    const closer$ = this.chainedSlideInService.pushComponent(ReplicationFormComponent, true, row);
+
+    closer$.pipe(filter(Boolean), untilDestroyed(this))
       .subscribe(() => this.getReplicationTasks());
   }
 
-  editReplicationTask(row: ReplicationTaskUi): void {
-    const slideInRef = this.slideInService.open(ReplicationFormComponent, { data: row, wide: true });
-    slideInRef.slideInClosed$
-      .pipe(filter(Boolean), untilDestroyed(this))
-      .subscribe(() => this.getReplicationTasks());
-  }
-
-  runNow(row: ReplicationTaskUi): void {
+  runNow(row: ReplicationTask): void {
     this.dialogService.confirm({
       title: this.translate.instant('Run Now'),
       message: this.translate.instant('Replicate «{name}» now?', { name: row.name }),
@@ -159,23 +194,23 @@ export class ReplicationTaskCardComponent implements OnInit {
         row.job = { ...job };
         this.jobStates.set(job.id, job.state);
       }),
-      catchError((error: Job) => {
+      catchError((error: unknown) => {
         this.getReplicationTasks();
-        this.dialogService.error(this.errorHandler.parseJobError(error));
+        this.dialogService.error(this.errorHandler.parseError(error));
         return EMPTY;
       }),
       untilDestroyed(this),
     ).subscribe();
   }
 
-  restore(row: ReplicationTaskUi): void {
+  restore(row: ReplicationTask): void {
     const dialog = this.matDialog.open(ReplicationRestoreDialogComponent, {
       data: row.id,
     });
     dialog.afterClosed().pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => this.getReplicationTasks());
   }
 
-  downloadKeys(row: ReplicationTaskUi): void {
+  downloadKeys(row: ReplicationTask): void {
     this.ws.call('core.download', [
       'pool.dataset.export_keys_for_replication',
       [row.id],
@@ -197,39 +232,12 @@ export class ReplicationTaskCardComponent implements OnInit {
         });
       },
       error: (err) => {
-        this.dialogService.error(this.errorHandler.parseWsError(err));
+        this.dialogService.error(this.errorHandler.parseError(err));
       },
     });
   }
 
-  private transformReplicationTasks(replicationTasks: ReplicationTaskUi[]): ReplicationTaskUi[] {
-    const tasks: ReplicationTaskUi[] = [];
-
-    replicationTasks.forEach((task) => {
-      if (task.state?.datetime?.$date) {
-        task.last_run = formatDistanceToNow(task.state.datetime.$date, { addSuffix: true });
-      } else {
-        task.last_run = this.translate.instant('N/A');
-      }
-      task.task_last_snapshot = task.state.last_snapshot
-        ? task.state.last_snapshot
-        : this.translate.instant(helptext.no_snapshot_sent_yet);
-
-      if (task.job !== null) {
-        this.store$.select(selectJob(task.job.id)).pipe(
-          filter(Boolean),
-          untilDestroyed(this),
-        ).subscribe((job: Job) => {
-          task.job = job;
-          this.jobStates.set(job.id, job.state);
-        });
-      }
-      tasks.push(task);
-    });
-    return tasks;
-  }
-
-  private onChangeEnabledState(replicationTask: ReplicationTaskUi): void {
+  private onChangeEnabledState(replicationTask: ReplicationTask): void {
     this.ws
       .call('replication.update', [replicationTask.id, { enabled: !replicationTask.enabled }])
       .pipe(untilDestroyed(this))
@@ -237,9 +245,9 @@ export class ReplicationTaskCardComponent implements OnInit {
         next: () => {
           this.getReplicationTasks();
         },
-        error: (err: WebsocketError) => {
+        error: (err: unknown) => {
           this.getReplicationTasks();
-          this.dialogService.error(this.errorHandler.parseWsError(err));
+          this.dialogService.error(this.errorHandler.parseError(err));
         },
       });
   }

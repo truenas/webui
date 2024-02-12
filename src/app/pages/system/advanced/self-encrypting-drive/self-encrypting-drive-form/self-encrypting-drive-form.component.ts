@@ -7,9 +7,9 @@ import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { forkJoin, of } from 'rxjs';
 import { take } from 'rxjs/operators';
+import { Role } from 'app/enums/role.enum';
 import { SedUser } from 'app/enums/sed-user.enum';
 import { helptextSystemAdvanced } from 'app/helptext/system/advanced';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { matchOthersFgValidator } from 'app/modules/ix-forms/validators/password-validation/password-validation';
@@ -43,7 +43,7 @@ export class SelfEncryptingDriveFormComponent implements OnInit {
       ),
     ],
   });
-
+  protected readonly Role = Role;
   readonly sedUserOptions$ = of([
     { label: SedUser.User, value: SedUser.User },
     { label: SedUser.Master, value: SedUser.Master },
@@ -91,9 +91,9 @@ export class SelfEncryptingDriveFormComponent implements OnInit {
         this.slideInRef.close();
         this.store$.dispatch(advancedConfigUpdated());
       },
-      error: (error: WebsocketError) => {
+      error: (error: unknown) => {
         this.isFormLoading = false;
-        this.dialogService.error(this.errorHandler.parseWsError(error));
+        this.dialogService.error(this.errorHandler.parseError(error));
         this.cdr.markForCheck();
       },
     });
@@ -120,8 +120,8 @@ export class SelfEncryptingDriveFormComponent implements OnInit {
           this.isFormLoading = false;
           this.cdr.markForCheck();
         },
-        error: (error: WebsocketError) => {
-          this.dialogService.error(this.errorHandler.parseWsError(error));
+        error: (error: unknown) => {
+          this.dialogService.error(this.errorHandler.parseError(error));
           this.isFormLoading = false;
           this.cdr.markForCheck();
         },

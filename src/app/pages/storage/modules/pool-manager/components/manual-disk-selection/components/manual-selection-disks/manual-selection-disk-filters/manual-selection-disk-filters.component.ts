@@ -4,8 +4,9 @@ import {
 import { FormBuilder } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import _ from 'lodash';
-import { FileSizePipe } from 'ngx-filesize';
 import { map } from 'rxjs/operators';
+import { DiskType } from 'app/enums/disk-type.enum';
+import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
 import { redundantListToUniqueOptions } from 'app/helpers/operators/options.operators';
 import {
   ManualDiskSelectionStore,
@@ -25,7 +26,7 @@ export class ManualSelectionDiskFiltersComponent implements OnInit {
 
   protected filterForm = this.formBuilder.group({
     search: [''],
-    diskType: [''],
+    diskType: ['' as DiskType],
     diskSize: [''],
   });
 
@@ -37,7 +38,7 @@ export class ManualSelectionDiskFiltersComponent implements OnInit {
   readonly sizeOptions$ = this.store$.inventory$.pipe(
     map((disks) => {
       const diskSizes = disks.sort((a, b) => a.size - b.size).map((disk) => disk.size);
-      const sizeLabels = diskSizes.map((size) => this.filesizePipe.transform(size, { standard: 'iec' }));
+      const sizeLabels = diskSizes.map((size) => buildNormalizedFileSize(size));
       const uniqueLabels = _.uniq(sizeLabels);
       return uniqueLabels.map((size: string) => ({ label: size, value: size }));
     }),
@@ -45,7 +46,6 @@ export class ManualSelectionDiskFiltersComponent implements OnInit {
 
   constructor(
     private formBuilder: FormBuilder,
-    private filesizePipe: FileSizePipe,
     public store$: ManualDiskSelectionStore,
   ) {}
 

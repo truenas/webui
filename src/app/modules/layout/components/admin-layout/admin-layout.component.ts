@@ -19,12 +19,12 @@ import { alertPanelClosed } from 'app/modules/alerts/store/alert.actions';
 import { selectIsAlertPanelOpen } from 'app/modules/alerts/store/alert.selectors';
 import { LanguageService } from 'app/services/language.service';
 import { LayoutService } from 'app/services/layout.service';
+import { SentryService } from 'app/services/sentry.service';
 import { SidenavService } from 'app/services/sidenav.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { ThemeService } from 'app/services/theme/theme.service';
 import { TokenLifetimeService } from 'app/services/token-lifetime.service';
 import { AppState } from 'app/store';
-import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
 import { selectHasConsoleFooter, waitForGeneralConfig } from 'app/store/system-config/system-config.selectors';
 import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 
@@ -87,16 +87,16 @@ export class AdminLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
     private cdr: ChangeDetectorRef,
     private languageService: LanguageService,
     private tokenLifetimeService: TokenLifetimeService,
+    private sentryService: SentryService,
   ) {}
 
   ngOnInit(): void {
     this.tokenLifetimeService.start();
     this.themeService.loadTheme$.next('');
-    this.sysGeneralService.toggleSentryInit();
+    this.sentryService.init();
     this.store$.pipe(waitForGeneralConfig, untilDestroyed(this)).subscribe((config) => {
       this.languageService.setLanguage(config.language);
     });
-    this.store$.dispatch(adminUiInitialized());
     this.listenForSidenavChanges();
   }
 

@@ -2,14 +2,14 @@ import { mockProvider, Spectator, createComponentFactory } from '@ngneat/spectat
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { CreateVdevLayout, VdevType } from 'app/enums/v-dev-type.enum';
-import helptext from 'app/helptext/storage/volumes/manager/manager';
+import { helptextManager } from 'app/helptext/storage/volumes/manager/manager';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { AddVdevsStore } from 'app/pages/storage/modules/pool-manager/components/add-vdevs/store/add-vdevs-store.service';
 import { LayoutStepComponent } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/components/layout-step/layout-step.component';
 import { LogWizardStepComponent } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/steps/4-log-wizard-step/log-wizard-step.component';
 import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
 
-describe('DataWizardStepComponent', () => {
+describe('LogWizardStepComponent', () => {
   let spectator: Spectator<LogWizardStepComponent>;
 
   const fakeInventory = [
@@ -55,7 +55,7 @@ describe('DataWizardStepComponent', () => {
 
   it('has the correct inputs', () => {
     const layoutComponent = spectator.query(LayoutStepComponent);
-    expect(layoutComponent.description).toBe(helptext.log_vdev_description);
+    expect(layoutComponent.description).toBe(helptextManager.log_vdev_description);
     expect(layoutComponent.canChangeLayout).toBeTruthy();
     expect(layoutComponent.inventory).toStrictEqual([...fakeInventory]);
     expect(layoutComponent.limitLayouts).toStrictEqual([CreateVdevLayout.Mirror, CreateVdevLayout.Stripe]);

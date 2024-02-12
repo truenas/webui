@@ -6,10 +6,8 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
 import { CoreComponents } from 'app/core/core-components.module';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { SyslogLevel, SyslogTransport } from 'app/enums/syslog.enum';
 import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
-import { SystemDatasetConfig } from 'app/interfaces/system-dataset-config.interface';
 import { AdvancedSettingsService } from 'app/pages/system/advanced/advanced-settings.service';
 import { SyslogCardComponent } from 'app/pages/system/advanced/syslog/syslog-card/syslog-card.component';
 import { SyslogFormComponent } from 'app/pages/system/advanced/syslog/syslog-form/syslog-form.component';
@@ -25,11 +23,6 @@ describe('SyslogCardComponent', () => {
       CoreComponents,
     ],
     providers: [
-      mockWebsocket([
-        mockCall('systemdataset.config', {
-          syslog: true,
-        } as SystemDatasetConfig),
-      ]),
       provideMockStore({
         selectors: [
           {
@@ -39,6 +32,7 @@ describe('SyslogCardComponent', () => {
               syslogserver: '127.1.2.3',
               sysloglevel: SyslogLevel.Alert,
               syslog_transport: SyslogTransport.Tcp,
+              syslog_audit: false,
             } as AdvancedConfig,
           },
         ],
@@ -64,7 +58,7 @@ describe('SyslogCardComponent', () => {
       'Syslog Level: Alert',
       'Syslog Server: 127.1.2.3',
       'Syslog Transport: TCP',
-      'Use System Dataset: Enabled',
+      'Include Audit Logs: No',
     ]);
   });
 

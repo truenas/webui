@@ -76,8 +76,8 @@ describe('HaStatusIconComponent', () => {
     expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(
       HaStatusPopoverComponent,
       expect.objectContaining({
-        'data': [],
-        'panelClass': 'topbar-panel',
+        data: [],
+        panelClass: 'topbar-panel',
       }),
     );
   });

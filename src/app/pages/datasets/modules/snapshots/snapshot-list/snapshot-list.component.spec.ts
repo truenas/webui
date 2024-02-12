@@ -3,16 +3,17 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ActivatedRoute } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
-import { MockPipe } from 'ng-mocks';
-import { FileSizePipe } from 'ngx-filesize';
+import { MockModule, MockPipe } from 'ng-mocks';
 import { CoreComponents } from 'app/core/core-components.module';
 import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-datetime.pipe';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { Preferences } from 'app/interfaces/preferences.interface';
-import { EntityModule } from 'app/modules/entity/entity.module';
+import { IxFileSizePipe } from 'app/modules/ix-file-size/ix-file-size.pipe';
 import { IxEmptyRowHarness } from 'app/modules/ix-tables/components/ix-empty-row/ix-empty-row.component.harness';
 import { IxTableModule } from 'app/modules/ix-tables/ix-table.module';
 import { IxTableHarness } from 'app/modules/ix-tables/testing/ix-table.harness';
+import { LayoutModule } from 'app/modules/layout/layout.module';
 import { snapshotsInitialState, SnapshotsState } from 'app/pages/datasets/modules/snapshots/store/snapshot.reducer';
 import {
   selectSnapshots, selectSnapshotState, selectSnapshotsTotal,
@@ -34,15 +35,15 @@ describe('SnapshotListComponent', () => {
     component: SnapshotListComponent,
     imports: [
       CoreComponents,
-      EntityModule,
       IxTableModule,
+      MockModule(LayoutModule),
     ],
     declarations: [
       FakeFormatDateTimePipe,
-      MockPipe(FileSizePipe, jest.fn(() => '1.49 TiB')),
+      MockPipe(IxFileSizePipe, jest.fn(() => '1.49 TiB')),
     ],
     providers: [
-      mockWebsocket([
+      mockWebSocket([
         mockCall('zfs.snapshot.query', []),
         mockCall('zfs.snapshot.delete'),
       ]),
@@ -76,6 +77,7 @@ describe('SnapshotListComponent', () => {
           },
         ],
       }),
+      mockAuth(),
     ],
   });
 

@@ -9,9 +9,10 @@ import {
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { CoreComponents } from 'app/core/core-components.module';
-import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
+import { MockWebSocketService } from 'app/core/testing/classes/mock-websocket.service';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
-import { mockCall, mockJob, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockCall, mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { AclType } from 'app/enums/acl-type.enum';
 import { NfsAclTag, NfsAclType, NfsBasicPermission } from 'app/enums/nfs-acl.enum';
 import { NfsAcl } from 'app/interfaces/acl.interface';
@@ -47,7 +48,7 @@ import { UserService } from 'app/services/user.service';
 
 describe('DatasetAclEditorComponent', () => {
   let spectator: SpectatorRouting<DatasetAclEditorComponent>;
-  let websocket: MockWebsocketService;
+  let websocket: MockWebSocketService;
   let matDialog: MatDialog;
   let loader: HarnessLoader;
   const acl = {
@@ -97,7 +98,7 @@ describe('DatasetAclEditorComponent', () => {
       StorageService,
       DatasetAclEditorStore,
       mockProvider(DialogService),
-      mockWebsocket([
+      mockWebSocket([
         mockCall('filesystem.getacl', acl),
         mockCall('filesystem.stat', {
           user: 'john',
@@ -114,6 +115,7 @@ describe('DatasetAclEditorComponent', () => {
           afterClosed: () => of(),
         })),
       }),
+      mockAuth(),
     ],
     queryParams: {
       path: '/mnt/pool/dataset',
@@ -122,20 +124,12 @@ describe('DatasetAclEditorComponent', () => {
 
   beforeEach(() => {
     spectator = createComponent();
-    websocket = spectator.inject(MockWebsocketService);
+    websocket = spectator.inject(MockWebSocketService);
     matDialog = spectator.inject(MatDialog);
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
   describe('preset modal', () => {
-    beforeEach(() => {
-      jest.spyOn(matDialog, 'open').mockImplementation();
-    });
-
-    afterEach(() => {
-      jest.restoreAllMocks();
-    });
-
     it('shows select preset modal if user presses "Use Preset"', async () => {
       const usePresetButton = await loader.getHarness(MatButtonHarness.with({ text: 'Use Preset' }));
       await usePresetButton.click();
@@ -185,7 +179,6 @@ describe('DatasetAclEditorComponent', () => {
 
   describe('editing', () => {
     it('opens Strip ACL dialog when Strip Acl is pressed', async () => {
-      jest.spyOn(matDialog, 'open').mockImplementation();
       const stripButton = await loader.getHarness(MatButtonHarness.with({ text: 'Strip ACL' }));
       await stripButton.click();
 

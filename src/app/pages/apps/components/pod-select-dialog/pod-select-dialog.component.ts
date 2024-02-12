@@ -1,5 +1,7 @@
 import { OnInit, Component, Inject } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import {
+  FormBuilder, FormControl, FormGroup, Validators,
+} from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Observable, of } from 'rxjs';
@@ -23,7 +25,12 @@ export class PodSelectDialogComponent implements OnInit {
   podList: string[] = [];
   podDetails: Record<string, string[]> = {};
 
-  form: FormGroup;
+  form: FormGroup<{
+    pods: FormControl<string>;
+    containers: FormControl<string>;
+    command?: FormControl<string>;
+    tail_lines?: FormControl<number>;
+  }>;
   pods$: Observable<Option[]>;
   containers$: Observable<Option[]>;
   title: string;
@@ -46,14 +53,14 @@ export class PodSelectDialogComponent implements OnInit {
           pods: ['', Validators.required],
           containers: ['', Validators.required],
           command: ['/bin/sh'],
-        });
+        }) as PodSelectDialogComponent['form'];
         break;
       case PodSelectDialogType.Logs:
         this.form = this.formBuilder.group({
           pods: ['', Validators.required],
           containers: ['', Validators.required],
           tail_lines: [this.tailLines, Validators.required],
-        });
+        }) as PodSelectDialogComponent['form'];
         break;
     }
   }
@@ -72,10 +79,13 @@ export class PodSelectDialogComponent implements OnInit {
           this.podDetails = { ...consoleChoices };
           this.podList = Object.keys(this.podDetails);
           if (this.podList.length) {
+            const initialPodKey = this.findBestMatchPodKey(this.podList, this.data.containerImageKey);
+
             this.pods$ = of(this.podList.map((item) => ({ label: item, value: item })));
-            this.containers$ = of(this.podDetails[this.podList[0]].map((item) => ({ label: item, value: item })));
-            this.form.controls.pods.patchValue(this.podList[0]);
-            this.form.controls.containers.patchValue(this.podDetails[this.podList[0]][0]);
+            this.containers$ = of(this.podDetails[initialPodKey].map((item) => ({ label: item, value: item })));
+
+            this.form.controls.pods.patchValue(initialPodKey);
+            this.form.controls.containers.patchValue(this.podDetails[initialPodKey][0]);
 
             this.form.controls.pods.valueChanges.pipe(untilDestroyed(this)).subscribe((value: string) => {
               this.containers$ = of(this.podDetails[value].map((item) => ({ label: item, value: item })));
@@ -94,5 +104,16 @@ export class PodSelectDialogComponent implements OnInit {
   onPodSelect(): void {
     this.data.customSubmit(this.form.value, this.selectedAppName);
     this.dialogRef.close();
+  }
+
+  private findBestMatchPodKey(pods: string[], key: string): string {
+    const keyMainPart = key.split('/').pop()?.split(':')[0]?.replace(/-/g, '');
+
+    const bestMatch = pods.find((item) => {
+      const normalizedItem = item.replace(/([a-z])([A-Z])/g, '$1-$2').replace(/[^a-z0-9]/gi, '').toLowerCase();
+      return normalizedItem.includes(keyMainPart);
+    });
+
+    return bestMatch || pods[0];
   }
 }

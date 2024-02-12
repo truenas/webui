@@ -1,11 +1,15 @@
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { MatSlideToggleChange } from '@angular/material/slide-toggle';
+import { Role } from 'app/enums/role.enum';
 import { Column, ColumnComponent } from 'app/modules/ix-table2/interfaces/table-column.interface';
 
 @Component({
+  selector: 'ix-cell-toggle',
   templateUrl: './ix-cell-toggle.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class IxCellToggleComponent<T> extends ColumnComponent<T> {
+  requiredRoles: Role[];
   onRowToggle: (row: T, checked: boolean) => void;
 
   get checked(): boolean {

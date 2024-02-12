@@ -10,10 +10,6 @@ export enum PoolCreationWizardStep {
   Review = 'review',
 }
 
-export type PoolCreationWizardRequiredStep = PoolCreationWizardStep.General
-| PoolCreationWizardStep.EnclosureOptions
-| PoolCreationWizardStep.Data;
-
 export const getPoolCreationWizardStepIndex: Record<PoolCreationWizardStep, number> = {
   [PoolCreationWizardStep.General]: 0,
   [PoolCreationWizardStep.EnclosureOptions]: 1,

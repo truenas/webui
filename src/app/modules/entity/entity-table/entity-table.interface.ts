@@ -3,6 +3,7 @@ import { Type } from '@angular/core';
 import { TooltipPosition } from '@angular/material/tooltip';
 import { Observable, Subject } from 'rxjs';
 import { EmptyType } from 'app/enums/empty-type.enum';
+import { Role } from 'app/enums/role.enum';
 import { ApiCallMethod } from 'app/interfaces/api/api-call-directory.interface';
 import { ApiJobMethod } from 'app/interfaces/api/api-job-directory.interface';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
@@ -100,6 +101,7 @@ export interface EntityTableAction<Row extends SomeRow = SomeRow> {
   actions?: EntityTableAction<Row>[];
   matTooltip?: string;
   ttposition?: TooltipPosition;
+  requiredRoles?: Role[];
 }
 
 export interface EntityTableMultiAction<Row = unknown> {
@@ -148,12 +150,9 @@ export interface EntityTableColumn {
   enableMatTooltip?: boolean;
   showLockedStatus?: boolean;
   emptyText?: string;
+  requiredRoles?: Role[];
 
   icon?: string;
-  widget?: {
-    component: string;
-    icon: string;
-  };
 
   /**
    * TODO: These below probably do not do anything.

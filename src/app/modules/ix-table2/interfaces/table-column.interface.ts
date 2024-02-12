@@ -1,16 +1,17 @@
-import { ArrayDataProvider } from 'app/modules/ix-table2/array-data-provider';
+import { DataProvider } from 'app/modules/ix-table2/interfaces/data-provider.interface';
 
 export abstract class ColumnComponent<T> {
   identifier?: boolean;
   propertyName: keyof T;
-  title?: string;
+  title: string;
   cssClass?: string;
+  rowTestId: (row: T) => string;
   sortBy?: (row: T) => string | number;
   sortable?: boolean;
-  getValue?: (row: T) => T[keyof T];
+  getValue?: (row: T) => unknown;
   hidden = false;
 
-  protected get value(): T[keyof T] {
+  protected get value(): unknown {
     return this.getValue ? this.getValue(this.row) : this.row[this.propertyName];
   }
 
@@ -21,7 +22,7 @@ export abstract class ColumnComponent<T> {
   setRow(row: T): void {
     this.row = row;
   }
-  dataProvider?: ArrayDataProvider<T>;
+  dataProvider?: DataProvider<T>;
 }
 
 export type Column<T, C extends ColumnComponent<T>> = {

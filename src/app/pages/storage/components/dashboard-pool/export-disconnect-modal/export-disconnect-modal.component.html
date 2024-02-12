@@ -100,13 +100,10 @@
     </ix-fieldset>
   </div>
 
-  <div mat-dialog-actions>
-    <span fxFlex></span>
-
+  <ix-form-actions>
     <button
       type="button"
       mat-button
-      class="mat-mdc-button mat-button mat-accent action-btn"
       name="cancel_button"
       ixTest="cancel"
       (click)="cancel()"
@@ -114,13 +111,14 @@
       {{ 'Cancel' | translate }}
     </button>
     <button
+      *ixRequiresRoles="[Role.FullAdmin]"
       type="submit"
       mat-button
-      class="mat-mdc-button mat-button mat-primary"
+      color="primary"
       ixTest="disconnect"
       [disabled]="form.invalid || isFormLoading"
     >
       {{ 'Export/Disconnect' | translate }}
     </button>
-  </div>
+  </ix-form-actions>
 </form>

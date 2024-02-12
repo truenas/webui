@@ -16,8 +16,7 @@ export class IxIpInputWithNetmaskHarness extends ComponentHarness implements IxF
 
   static with(options: IxIpInputWithNetmaskHarnessFilters): HarnessPredicate<IxIpInputWithNetmaskHarness> {
     return new HarnessPredicate(IxIpInputWithNetmaskHarness, options)
-      .addOption('label', options.label,
-        (harness, label) => HarnessPredicate.stringMatches(harness.getLabelText(), label));
+      .addOption('label', options.label, (harness, label) => HarnessPredicate.stringMatches(harness.getLabelText(), label));
   }
 
   getAddressHarness = this.locatorFor(MatInputHarness);

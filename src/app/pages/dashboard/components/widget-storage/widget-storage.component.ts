@@ -1,14 +1,14 @@
 import {
-  AfterViewInit, Component,
+  AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import filesize from 'filesize';
 import { filter, switchMap, tap } from 'rxjs';
 import { PoolScanFunction } from 'app/enums/pool-scan-function.enum';
 import { PoolScanState } from 'app/enums/pool-scan-state.enum';
 import { PoolStatus } from 'app/enums/pool-status.enum';
 import { countDisksTotal } from 'app/helpers/count-disks-total.helper';
+import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
 import { Pool } from 'app/interfaces/pool.interface';
 import { isTopologyDisk, TopologyItem } from 'app/interfaces/storage.interface';
 import { VolumesData } from 'app/interfaces/volume-data.interface';
@@ -43,9 +43,7 @@ interface PoolInfo {
   disksWithError: ItemInfo;
 }
 
-interface PoolInfoMap {
-  [poolName: string]: PoolInfo;
-}
+type PoolInfoMap = Record<string, PoolInfo>;
 
 @UntilDestroy()
 @Component({
@@ -55,6 +53,7 @@ interface PoolInfoMap {
     '../widget/widget.component.scss',
     './widget-storage.component.scss',
   ],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class WidgetStorageComponent extends WidgetComponent implements AfterViewInit {
   protected pools: Pool[];
@@ -105,6 +104,7 @@ export class WidgetStorageComponent extends WidgetComponent implements AfterView
   constructor(
     public translate: TranslateService,
     private dashboardStorageStore$: DashboardStorageStore,
+    private cdr: ChangeDetectorRef,
   ) {
     super(translate);
   }
@@ -129,6 +129,7 @@ export class WidgetStorageComponent extends WidgetComponent implements AfterView
       next: () => {
         this.updateGridInfo();
         this.updatePoolInfoMap();
+        this.cdr.markForCheck();
       },
     });
   }
@@ -221,33 +222,34 @@ export class WidgetStorageComponent extends WidgetComponent implements AfterView
   }
 
   getUsedSpaceItemInfo(pool: Pool): ItemInfo {
-    const volume = this.volumeData[pool.name];
     let level = StatusLevel.Safe;
     let icon = StatusIcon.CheckCircle;
     let value;
 
-    if (!volume?.used_pct) {
-      value = this.translate.instant('Unknown');
+    if (this.volumeData[pool.name]?.used == null) {
+      return {
+        value: this.translate.instant('Unknown'),
+        level: StatusLevel.Warn,
+        icon: StatusIcon.Error,
+      };
+    }
+
+    if (this.cols === 1) {
+      value = this.volumeData[pool.name].used_pct;
+    } else {
+      value = this.translate.instant('{used} of {total} ({used_pct})', {
+        used: buildNormalizedFileSize(this.volumeData[pool.name].used),
+        total: buildNormalizedFileSize(this.volumeData[pool.name].used + this.volumeData[pool.name].avail),
+        used_pct: this.volumeData[pool.name].used_pct,
+      });
+    }
+
+    if (this.convertPercentToNumber(this.volumeData[pool.name].used_pct) >= 90) {
+      level = StatusLevel.Error;
+      icon = StatusIcon.Error;
+    } else if (this.convertPercentToNumber(this.volumeData[pool.name].used_pct) >= 80) {
       level = StatusLevel.Warn;
       icon = StatusIcon.Error;
-    } else {
-      if (this.cols === 1) {
-        value = volume.used_pct;
-      } else {
-        value = this.translate.instant('{used} of {total} ({used_pct})', {
-          used: this.getSizeString(volume.used),
-          total: this.getSizeString(volume.used + volume.avail),
-          used_pct: volume.used_pct,
-        });
-      }
-
-      if (this.convertPercentToNumber(volume.used_pct) >= 90) {
-        level = StatusLevel.Error;
-        icon = StatusIcon.Error;
-      } else if (this.convertPercentToNumber(volume.used_pct) >= 80) {
-        level = StatusLevel.Warn;
-        icon = StatusIcon.Error;
-      }
     }
 
     return {
@@ -312,37 +314,10 @@ export class WidgetStorageComponent extends WidgetComponent implements AfterView
   }
 
   getFreeSpace(pool: Pool): string {
-    const volume = this.volumeData[pool.name];
-    if (volume?.used_pct) {
-      if (Number.isNaN(volume.used) ? volume.used : filesize(volume.used, { exponent: 3 }) !== 'Locked') {
-        return this.getSizeString(volume.avail);
-      }
-      return '';
-    }
-    if (!volume || typeof volume.avail === undefined) {
+    if (this.volumeData[pool.name]?.avail == null) {
       return this.translate.instant('Unknown');
     }
 
-    return this.translate.instant('Gathering data...');
-  }
-
-  getSizeString(volumeSize: number): string {
-    let unit;
-    let size;
-    let displayValue = filesize(volumeSize, { standard: 'iec' });
-    if (displayValue.endsWith(' B')) {
-      unit = displayValue.slice(-1);
-      size = new Intl.NumberFormat().format(parseFloat(displayValue.slice(0, -2)));
-    } else {
-      unit = displayValue.slice(-3);
-      size = new Intl.NumberFormat().format(parseFloat(displayValue.slice(0, -4)));
-    }
-    // Adds a zero to numbers with one (and only one) digit after the decimal
-    if (size.charAt(size.length - 2) === '.' || size.charAt(size.length - 2) === ',') {
-      size = size.concat('0');
-    }
-    displayValue = `${size} ${unit}`;
-
-    return displayValue;
+    return buildNormalizedFileSize(this.volumeData[pool.name].avail);
   }
 }

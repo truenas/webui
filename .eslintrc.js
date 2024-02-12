@@ -21,6 +21,7 @@ module.exports = {
         "project": true,
       },
       "extends": [
+        'airbnb-base',
         "airbnb-typescript/base",
         "plugin:@angular-eslint/recommended",
         "plugin:@typescript-eslint/strict-type-checked",
@@ -164,6 +165,18 @@ module.exports = {
             selector: 'MemberExpression[property.name="get"][object.name="form"], MemberExpression[property.name="get"] > MemberExpression[property.name="form"]',
             message: "For type safety reasons prefer `controls.name` over `get('name')`",
           },
+          {
+            selector: 'Identifier[name="mdDialog"]:has(Identifier[name="MatDialog"])',
+            message: "For consistency reasons prefer `matDialog` over `mdDialog`",
+          },
+          {
+            selector: 'Identifier[name="dialog"]:has(Identifier[name="MatDialog"])',
+            message: "For consistency reasons prefer `dialog` for `DialogService`",
+          },
+          {
+            selector: 'MemberExpression[property.name="email"][object.name="Validators"]',
+            message: 'For email validation, it is prefer to use the `emailValidator` validator.',
+          },
         ],
         "no-param-reassign": "off",
         "@typescript-eslint/no-loop-func": "off",
@@ -181,15 +194,12 @@ module.exports = {
         }],
         "default-case": "off",
         "@typescript-eslint/member-ordering": "off",
+        "@typescript-eslint/no-unsafe-return": "off",
 
         // Other temporary disables
-        "@typescript-eslint/no-unsafe-return": "off",
-        "@typescript-eslint/no-unsafe-argument": "off",
         "rxjs/no-implicit-any-catch": ["off"],
         "rxjs/no-nested-subscribe": ["off"],
         "sonarjs/cognitive-complexity": ["error", 40],
-        "@typescript-eslint/consistent-indexed-object-style": ["off"], // Maybe enable later.
-        "@typescript-eslint/no-unsafe-enum-comparison": ["off"],
         "@typescript-eslint/no-base-to-string": ["off"],
         "@typescript-eslint/class-literal-property-style": ["off"],
         "@typescript-eslint/no-unnecessary-condition": ["off"],
@@ -278,6 +288,8 @@ module.exports = {
         }],
         "@shopify/typescript/prefer-singular-enums": "error",
         "@shopify/prefer-early-return": ["error", { maximumStatements: 3 }],
+        "import/no-default-export": "error",
+        "@typescript-eslint/consistent-indexed-object-style": "error",
 
         // RxJS rules
         "rxjs/no-unsafe-takeuntil": ["error", {
@@ -320,6 +332,7 @@ module.exports = {
         "jest/no-large-snapshots": ["error"],
         "jest/prefer-equality-matcher": ["error"],
         "jest/prefer-lowercase-title": ["error", { "ignore": ["describe"] }],
+        "@typescript-eslint/consistent-indexed-object-style": "error",
         "jest/expect-expect": [
           "error",
           {

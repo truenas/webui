@@ -14,7 +14,7 @@
   <h3 class="chart-header">
     <span class="chart-title">{{ 'Total Allocation' | translate }}:</span>
     <span>
-      {{ dataset.used.parsed | filesize: { standard: 'iec', round: 0 } }}
+      {{ dataset.used.parsed | ixFileSize }}
     </span>
   </h3>
   <div class="legend-wrapper">
@@ -28,7 +28,7 @@
       </span>
       <span class="legend-value">
         {{
-          dataset.usedbydataset.parsed | filesize: { standard: 'iec', round: 0 }
+          dataset.usedbydataset.parsed | ixFileSize
         }}
         <ng-container *ngIf="dataset.usedbydataset.parsed">
           ({{ dataset.usedbydataset.parsed / dataset.used.parsed | percent }})
@@ -47,7 +47,7 @@
         <span class="legend-value">
           {{
             dataset.usedbychildren.parsed
-              | filesize: { standard: 'iec', round: 0 }
+              | ixFileSize
           }}
           <ng-container *ngIf="dataset.usedbychildren.parsed">
             ({{

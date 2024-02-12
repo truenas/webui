@@ -5,6 +5,7 @@ import _ from 'lodash';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { helptextSystemCertificates } from 'app/helptext/system/certificates';
 import { SummaryProvider, SummarySection } from 'app/modules/common/summary/summary.interface';
+import { emailValidator } from 'app/modules/ix-forms/validators/email-validation/email-validation';
 import { SystemGeneralService } from 'app/services/system-general.service';
 
 @Component({
@@ -19,7 +20,7 @@ export class CertificateSubjectComponent implements SummaryProvider {
     city: ['', Validators.required],
     organization: ['', Validators.required],
     organizational_unit: [''],
-    email: ['', [Validators.required, Validators.email]],
+    email: ['', [Validators.required, emailValidator()]],
     common: [''],
     san: [[] as string[], Validators.required],
   });

@@ -1,8 +1,10 @@
-import { ChangeDetectionStrategy, Component, Input, OnChanges } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, Input, OnChanges,
+} from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { merge, of } from 'rxjs';
-import { filter } from 'rxjs/operators';
+import { filter, take } from 'rxjs/operators';
 import { CreateVdevLayout, vdevLayoutOptions, VdevType } from 'app/enums/v-dev-type.enum';
 import { SelectOption } from 'app/interfaces/option.interface';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
@@ -35,6 +37,8 @@ export class AutomatedDiskSelectionComponent implements OnChanges {
     if (this.isDataVdev) {
       return 'Read only field: The layout of this device has been preselected to match the layout of the existing Data devices in the pool';
     }
+
+    return '';
   }
 
   protected vdevLayoutOptions$ = of<SelectOption<CreateVdevLayout>[]>([]);
@@ -56,7 +60,21 @@ export class AutomatedDiskSelectionComponent implements OnChanges {
     return isDraidLayout(this.layoutControl.value);
   }
 
+  get isMetadataVdev(): boolean {
+    return this.type === VdevType.Special;
+  }
+
   private updateStoreOnChanges(): void {
+    this.store.isLoading$.pipe(filter((isLoading) => !isLoading), take(1), untilDestroyed(this)).subscribe({
+      next: () => {
+        if (
+          (!this.canChangeLayout && !this.isDataVdev)
+            && (this.type && this.limitLayouts.length)
+        ) {
+          this.store.setTopologyCategoryLayout(this.type, this.limitLayouts[0]);
+        }
+      },
+    });
     this.layoutControl.valueChanges.pipe(untilDestroyed(this)).subscribe((layout) => {
       this.store.setTopologyCategoryLayout(this.type, layout);
     });

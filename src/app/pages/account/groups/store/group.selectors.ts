@@ -1,4 +1,5 @@
-import { createFeatureSelector, createSelector } from '@ngrx/store';
+import { MemoizedSelector, createFeatureSelector, createSelector } from '@ngrx/store';
+import { Group } from 'app/interfaces/group.interface';
 import { adapter, GroupsState } from 'app/pages/account/groups/store/group.reducer';
 
 export const groupStateKey = 'groups';
@@ -18,4 +19,9 @@ export const selectGroups = createSelector(
 export const selectGroupsTotal = createSelector(
   selectGroupState,
   selectTotal,
+);
+
+export const selectGroup = (id: number): MemoizedSelector<object, Group> => createSelector(
+  selectGroups,
+  (groups) => groups.find((group) => group.id === id),
 );

@@ -12,9 +12,14 @@ export const systemFeaturesLoaded = createAction(
   props<{ systemFeatures: SystemFeatures }>(),
 );
 
-export const systemHaCapabilityLoaded = createAction(
-  '[System Info API] System is HA capable Loaded',
-  props<{ isSystemHaCapable: boolean }>(),
+export const systemHostIdLoaded = createAction(
+  '[System Info API] System Host ID Loaded',
+  props<{ systemHostId: string }>(),
+);
+
+export const systemIsStableLoaded = createAction(
+  '[System Info API] System is stable Loaded',
+  props<{ systemIsStable: boolean }>(),
 );
 
 export const ixHardwareLoaded = createAction(

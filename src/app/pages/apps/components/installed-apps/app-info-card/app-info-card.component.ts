@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, Input,
+  ChangeDetectionStrategy, Component, EventEmitter, Input, Output,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
@@ -8,7 +8,8 @@ import { TranslateService } from '@ngx-translate/core';
 import { startCase, isEmpty } from 'lodash';
 import { filter, map, take } from 'rxjs';
 import { appImagePlaceholder, ixChartApp } from 'app/constants/catalog.constants';
-import helptext from 'app/helptext/apps/apps';
+import { Role } from 'app/enums/role.enum';
+import { helptextApps } from 'app/helptext/apps/apps';
 import { UpgradeSummary } from 'app/interfaces/application.interface';
 import { ChartRelease } from 'app/interfaces/chart-release.interface';
 import { ChartUpgradeDialogConfig } from 'app/interfaces/chart-upgrade-dialog-config.interface';
@@ -16,6 +17,7 @@ import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.com
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { AppRollbackModalComponent } from 'app/pages/apps/components/installed-apps/app-rollback-modal/app-rollback-modal.component';
 import { AppUpgradeDialogComponent } from 'app/pages/apps/components/installed-apps/app-upgrade-dialog/app-upgrade-dialog.component';
+import { AppStatus } from 'app/pages/apps/enum/app-status.enum';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.service';
 import { DialogService } from 'app/services/dialog.service';
@@ -31,9 +33,26 @@ import { RedirectService } from 'app/services/redirect.service';
 })
 export class AppInfoCardComponent {
   @Input() app: ChartRelease;
+  @Output() startApp = new EventEmitter<void>();
+  @Output() stopApp = new EventEmitter<void>();
+  @Input() status: AppStatus;
 
   readonly imagePlaceholder = appImagePlaceholder;
   readonly isEmpty = isEmpty;
+
+  get inProgress(): boolean {
+    return [AppStatus.Deploying].includes(this.status) || this.isStartingOrStopping;
+  }
+
+  get isAppStopped(): boolean {
+    return this.status === AppStatus.Stopped;
+  }
+
+  get isStartingOrStopping(): boolean {
+    return [AppStatus.Starting, AppStatus.Stopping].includes(this.status);
+  }
+
+  protected readonly requiredRoles = [Role.AppsWrite];
 
   constructor(
     private loader: AppLoaderService,
@@ -86,7 +105,7 @@ export class AppInfoCardComponent {
       ).subscribe((version: string) => {
         const jobDialogRef = this.matDialog.open(EntityJobComponent, {
           data: {
-            title: helptext.charts.upgrade_dialog.job,
+            title: helptextApps.charts.upgrade_dialog.job,
           },
         });
         jobDialogRef.componentInstance.setCall('chart.release.upgrade', [name, { item_version: version }]);
@@ -96,7 +115,8 @@ export class AppInfoCardComponent {
         });
         jobDialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((error) => {
           this.dialogService.closeAllDialogs();
-          this.dialogService.error(this.errorHandler.parseJobError(error));
+          dialogRef.close();
+          this.errorHandler.showErrorModal(error);
         });
       });
     });
@@ -110,7 +130,7 @@ export class AppInfoCardComponent {
     const name = this.app.name;
 
     this.dialogService.confirm({
-      title: helptext.charts.delete_dialog.title,
+      title: helptextApps.charts.delete_dialog.title,
       message: this.translate.instant('Delete {name}?', { name }),
     })
       .pipe(filter(Boolean), untilDestroyed(this))
@@ -120,7 +140,7 @@ export class AppInfoCardComponent {
   executeDelete(name: string): void {
     const dialogRef = this.matDialog.open(EntityJobComponent, {
       data: {
-        title: helptext.charts.delete_dialog.job,
+        title: helptextApps.charts.delete_dialog.job,
       },
     });
     dialogRef.componentInstance.setCall('chart.release.delete', [name, { delete_unused_images: true }]);
@@ -136,6 +156,10 @@ export class AppInfoCardComponent {
         }
         this.dialogService.closeAllDialogs();
       });
+    });
+    dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((error) => {
+      dialogRef.close();
+      this.errorHandler.showErrorModal(error);
     });
   }
 

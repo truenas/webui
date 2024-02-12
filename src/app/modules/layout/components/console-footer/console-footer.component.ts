@@ -19,7 +19,7 @@ export class ConsoleFooterComponent implements OnInit {
   lastThreeLogLines$ = this.messagesStore.lastThreeLogLines$;
 
   constructor(
-    private dialog: MatDialog,
+    private matDialog: MatDialog,
     private messagesStore: ConsoleMessagesStore,
   ) { }
 
@@ -29,7 +29,7 @@ export class ConsoleFooterComponent implements OnInit {
   }
 
   onShowConsolePanel(): void {
-    this.dialog.open(ConsolePanelDialogComponent);
+    this.matDialog.open(ConsolePanelDialogComponent);
   }
 
   private scrollToBottomOnNewMessages(): void {

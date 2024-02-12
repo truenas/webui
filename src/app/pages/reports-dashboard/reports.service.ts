@@ -1,8 +1,6 @@
 import { Injectable } from '@angular/core';
-import { Store } from '@ngrx/store';
-import { addSeconds } from 'date-fns';
 import {
-  map, Observable, shareReplay, BehaviorSubject, switchMap, interval, Subject,
+  map, Observable, shareReplay, BehaviorSubject, Subject,
 } from 'rxjs';
 import { ReportingGraphName } from 'app/enums/reporting.enum';
 import { Option } from 'app/interfaces/option.interface';
@@ -12,19 +10,11 @@ import { ReportTab, reportTypeLabels, ReportType } from 'app/pages/reports-dashb
 import { LegendDataWithStackedTotalHtml, Report } from 'app/pages/reports-dashboard/interfaces/report.interface';
 import { convertAggregations, optimizeLegend } from 'app/pages/reports-dashboard/utils/report.utils';
 import { WebSocketService } from 'app/services/ws.service';
-import { AppState } from 'app/store';
-import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
-
-/*
- * This service acts as a proxy between middleware/web worker
- * and reports page components.
- * */
 
 @Injectable({
   providedIn: 'root',
 })
 export class ReportsService {
-  serverTime: Date;
   private reportingGraphs$ = new BehaviorSubject<ReportingGraph[]>([]);
   private diskMetrics$ = new BehaviorSubject<Option[]>([]);
   private hasUps = false;
@@ -38,34 +28,27 @@ export class ReportsService {
 
   constructor(
     private ws: WebSocketService,
-    private store$: Store<AppState>,
   ) {
     this.ws.call('reporting.netdata_graphs').subscribe((reportingGraphs) => {
-      this.hasUps = reportingGraphs.some((graph) => graph.name === ReportingGraphName.Ups);
-      this.hasTarget = reportingGraphs.some((graph) => graph.name === ReportingGraphName.Target);
-      this.hasNfs = reportingGraphs.some((graph) => {
-        return [ReportingGraphName.NfsStat, ReportingGraphName.NfsStatBytes].includes(graph.name as ReportingGraphName);
+      this.hasUps = reportingGraphs.some((graph) => graph.name.startsWith(ReportingGraphName.Ups));
+      this.hasTarget = reportingGraphs.some((graph) => {
+        return graph.name === ReportingGraphName.Target;
       });
-      this.hasPartitions = reportingGraphs.some((graph) => graph.name === ReportingGraphName.Partition);
+      this.hasNfs = reportingGraphs.some((graph) => {
+        return [
+          ReportingGraphName.NfsStat,
+          ReportingGraphName.NfsStatBytes,
+        ].includes(graph.name);
+      });
+      this.hasPartitions = reportingGraphs.some((graph) => {
+        return graph.name === ReportingGraphName.Partition;
+      });
       this.reportingGraphs$.next(reportingGraphs);
     });
 
     this.ws.call('disk.temperatures').subscribe((values) => {
       this.hasDiskTemperature = Boolean(Object.values(values).filter(Boolean).length);
     });
-
-    this.store$
-      .pipe(
-        waitForSystemInfo,
-        map((systemInfo) => systemInfo.datetime.$date),
-        switchMap((timestamp) => {
-          this.serverTime = new Date(timestamp);
-          return interval(1000);
-        }),
-      )
-      .subscribe(() => {
-        this.serverTime = addSeconds(this.serverTime, 1);
-      });
   }
 
   emitLegendEvent(data: LegendDataWithStackedTotalHtml): void {
@@ -81,7 +64,8 @@ export class ReportsService {
     },
   ): Observable<ReportingData> {
     return this.ws.call(
-      'reporting.netdata_get_data', [[queryData.params], queryData.timeFrame],
+      'reporting.netdata_get_data',
+      [[queryData.params], queryData.timeFrame],
     ).pipe(
       map((reportingData) => reportingData[0]),
       map((reportingData) => {
@@ -152,7 +136,8 @@ export class ReportsService {
           .map((disk) => {
             const [value] = disk.devname.split(' ');
             return { label: disk.devname, value };
-          });
+          })
+          .sort((a, b) => a.label.localeCompare(b.label));
       }),
       shareReplay({ refCount: true, bufferSize: 1 }),
     );

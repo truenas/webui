@@ -4,7 +4,8 @@ import {
 import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { of } from 'rxjs';
-import helptext from 'app/helptext/apps/apps';
+import { Role } from 'app/enums/role.enum';
+import { helptextApps } from 'app/helptext/apps/apps';
 import { Catalog, CatalogUpdate } from 'app/interfaces/catalog.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
@@ -28,9 +29,11 @@ export class CatalogEditFormComponent implements OnInit {
   trainOptions$ = of<Option[]>([]);
 
   readonly tooltips = {
-    label: helptext.catalogForm.name.tooltip,
-    preferred_trains: helptext.catalogForm.preferredTrains.tooltip,
+    label: helptextApps.catalogForm.name.tooltip,
+    preferred_trains: helptextApps.catalogForm.preferredTrains.tooltip,
   };
+
+  protected readonly requiredRoles = [Role.CatalogWrite];
 
   constructor(
     private ws: WebSocketService,
@@ -66,9 +69,9 @@ export class CatalogEditFormComponent implements OnInit {
         next: () => {
           this.isFormLoading = false;
           this.cdr.markForCheck();
-          this.slideInRef.close();
+          this.slideInRef.close(true);
         },
-        error: (error) => {
+        error: (error: unknown) => {
           this.isFormLoading = false;
           this.errorHandler.handleWsFormError(error, this.form);
           this.cdr.markForCheck();

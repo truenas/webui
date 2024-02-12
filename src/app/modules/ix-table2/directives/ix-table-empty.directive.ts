@@ -2,8 +2,9 @@ import {
   AfterViewInit, ComponentRef, Directive, Input, OnChanges, ViewContainerRef,
 } from '@angular/core';
 import { UntilDestroy } from '@ngneat/until-destroy';
+import { EmptyType } from 'app/enums/empty-type.enum';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
-import { IxEmptyRowComponent } from 'app/modules/ix-tables/components/ix-empty-row/ix-empty-row.component';
+import { IxTable2EmptyRowComponent } from 'app/modules/ix-table2/components/ix-empty-row/ix-empty-row.component';
 
 @UntilDestroy()
 @Directive({
@@ -12,7 +13,7 @@ import { IxEmptyRowComponent } from 'app/modules/ix-tables/components/ix-empty-r
 export class IxTable2EmptyDirective implements AfterViewInit, OnChanges {
   @Input('ix-table2-empty') showEmptyRow: boolean;
   @Input() emptyConfig: EmptyConfig;
-  componentRef: ComponentRef<IxEmptyRowComponent> = null;
+  componentRef: ComponentRef<IxTable2EmptyRowComponent> = null;
   constructor(
     private viewContainerRef: ViewContainerRef,
   ) { }
@@ -26,7 +27,7 @@ export class IxTable2EmptyDirective implements AfterViewInit, OnChanges {
   }
 
   toggleEmptyComponent(): void {
-    if (this.showEmptyRow) {
+    if (this.showEmptyRow && this.emptyConfig?.type !== EmptyType.Loading) {
       this.updateComponentConfig();
     } else {
       this.destroyRowComponent();
@@ -40,7 +41,7 @@ export class IxTable2EmptyDirective implements AfterViewInit, OnChanges {
 
   updateComponentConfig(): void {
     if (!this.componentRef) {
-      this.componentRef = this.viewContainerRef.createComponent(IxEmptyRowComponent);
+      this.componentRef = this.viewContainerRef.createComponent(IxTable2EmptyRowComponent);
     }
     if (this.emptyConfig) {
       this.componentRef?.setInput('conf', this.emptyConfig);

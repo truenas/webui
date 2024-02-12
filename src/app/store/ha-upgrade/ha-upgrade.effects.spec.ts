@@ -5,7 +5,7 @@ import { provideMockStore } from '@ngrx/store/testing';
 import { firstValueFrom, of, ReplaySubject } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockEntityJobComponentRef } from 'app/core/testing/utils/mock-entity-job-component-ref.utils';
-import { mockCall, mockJob, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
 import { DialogService } from 'app/services/dialog.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -27,7 +27,7 @@ describe('HaUpgradeEffects', () => {
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
-      mockWebsocket([
+      mockWebSocket([
         mockCall('failover.upgrade_pending', true),
         mockJob('failover.upgrade_finish', fakeSuccessfulJob()),
       ]),
@@ -65,7 +65,7 @@ describe('HaUpgradeEffects', () => {
       expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('failover.upgrade_pending');
     });
 
-    it('does not check whether upgrade is pending when HA is disabled',  () => {
+    it('does not check whether upgrade is pending when HA is disabled', () => {
       actions$.next(haStatusLoaded({
         haStatus: {
           hasHa: false,

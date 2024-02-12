@@ -13,8 +13,7 @@ export class IxInputHarness extends ComponentHarness implements IxFormControlHar
 
   static with(options: IxInputHarnessFilters): HarnessPredicate<IxInputHarness> {
     return new HarnessPredicate(IxInputHarness, options)
-      .addOption('label', options.label,
-        (harness, label) => HarnessPredicate.stringMatches(harness.getLabelText(), label));
+      .addOption('label', options.label, (harness, label) => HarnessPredicate.stringMatches(harness.getLabelText(), label));
   }
 
   getMatInputHarness = this.locatorFor(MatInputHarness);
@@ -39,13 +38,19 @@ export class IxInputHarness extends ComponentHarness implements IxFormControlHar
     // (for example for <input type="number">).
     // https://github.com/angular/components/issues/23894
     if (typeof value === 'number') {
-      const nativeInput = await harness.host();
-      await nativeInput.setInputValue(value as unknown as string);
-      await nativeInput.dispatchEvent('input');
-      return nativeInput.blur();
+      return this.setValueAndTriggerBlur(value);
     }
 
     return harness.setValue(value);
+  }
+
+  async setValueAndTriggerBlur(value: string | number): Promise<void> {
+    const harness = (await this.getMatInputHarness());
+
+    const nativeInput = await harness.host();
+    await nativeInput.setInputValue(value as unknown as string);
+    await nativeInput.dispatchEvent('input');
+    return nativeInput.blur();
   }
 
   async isDisabled(): Promise<boolean> {

@@ -1,10 +1,14 @@
 github_checks:
   annotations: false
+ignore:
+  - "**/*.module.ts"
+  - "**/*.routing.ts"
 coverage:
   status:
     patch:
       default:
-        informational: true
+        target: 50%
+        base: auto
     project:
       default:
         informational: true

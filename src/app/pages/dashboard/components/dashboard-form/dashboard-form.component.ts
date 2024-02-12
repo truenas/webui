@@ -17,9 +17,7 @@ import { WidgetName } from 'app/pages/dashboard/components/dashboard/dashboard.c
 import { DashConfigItem } from 'app/pages/dashboard/components/widget-controller/widget-controller.component';
 import { WebSocketService } from 'app/services/ws.service';
 
-interface DashboardFormValue {
-  [key: string]: boolean;
-}
+type DashboardFormValue = Record<string, boolean>;
 
 @UntilDestroy()
 @Component({
@@ -73,6 +71,7 @@ export class DashboardFormComponent implements OnInit {
         case WidgetName.Cpu:
         case WidgetName.Help:
         case WidgetName.Memory:
+        case WidgetName.Backup:
           this.systemWidgets.push(widget);
           break;
       }

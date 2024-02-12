@@ -18,6 +18,7 @@
       {{ 'Add' | translate }}
     </button>
   </div>
+  <ix-errors *ngIf="formArray" [control]="formArray" [label]="label"></ix-errors>
 
   <div class="input-container" [class.disabled]="isDisabled">
     <ng-content></ng-content>

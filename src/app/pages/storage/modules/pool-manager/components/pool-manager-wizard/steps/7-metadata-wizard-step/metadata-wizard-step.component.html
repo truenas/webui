@@ -2,8 +2,8 @@
   [description]="helptext.special_vdev_description | translate"
   [type]="VdevType.Special"
   [inventory]="inventory$ | async"
-  [canChangeLayout]="false"
-  [limitLayouts]="dataVdevLayout$ | async"
+  [canChangeLayout]="canChangeLayout"
+  [limitLayouts]="allowedLayouts"
   [isStepActive]="isStepActive"
 ></ix-layout-step>
 
@@ -17,7 +17,7 @@
     matStepperPrevious
     color="accent"
     type="button"
-    ixTest="back"
+    ixTest="back-metadata"
   >
     {{ 'Back' | translate }}
   </button>
@@ -26,7 +26,7 @@
     matStepperNext
     color="primary"
     type="button"
-    ixTest="next"
+    ixTest="next-metadata"
   >
     {{ 'Next' | translate }}
   </button>
@@ -35,7 +35,7 @@
     mat-button
     color="error"
     type="button"
-    ixTest="reset-fields-in-step"
+    ixTest="reset-fields-in-metadata-step"
     (click)="resetStep()"
   >
     {{ 'Reset Step' | translate }}
@@ -45,7 +45,7 @@
     mat-button
     color="accent"
     type="button"
-    ixTest="save-ang-go-to-review"
+    ixTest="save-and-go-to-review-metadata"
     (click)="goToReviewStep()"
   >
     {{ 'Save And Go To Review' | translate }}

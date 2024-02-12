@@ -13,11 +13,12 @@ import { combineLatest, of } from 'rxjs';
 import {
   filter, switchMap, takeUntil, tap,
 } from 'rxjs/operators';
+import { Role } from 'app/enums/role.enum';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { WINDOW } from 'app/helpers/window.helper';
 import { helptextSystemGeneral as helptext } from 'app/helptext/system/general';
 import { SystemGeneralConfig, SystemGeneralConfigUpdate } from 'app/interfaces/system-config.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
+import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { ipValidator } from 'app/modules/ix-forms/validators/ip-validation';
@@ -25,7 +26,7 @@ import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { DialogService } from 'app/services/dialog.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { ThemeService } from 'app/services/theme/theme.service';
-import { WebsocketConnectionService } from 'app/services/websocket-connection.service';
+import { WebSocketConnectionService } from 'app/services/websocket-connection.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 import { guiFormSubmitted, themeChangedInGuiForm } from 'app/store/preferences/preferences.actions';
@@ -64,6 +65,7 @@ export class GuiFormComponent {
   };
 
   readonly helptext = helptext;
+  protected readonly Role = Role;
 
   constructor(
     private fb: FormBuilder,
@@ -72,7 +74,7 @@ export class GuiFormComponent {
     private themeService: ThemeService,
     private cdr: ChangeDetectorRef,
     private ws: WebSocketService,
-    private wsManager: WebsocketConnectionService,
+    private wsManager: WebSocketConnectionService,
     private dialog: DialogService,
     private loader: AppLoaderService,
     private translate: TranslateService,
@@ -113,8 +115,6 @@ export class GuiFormComponent {
     ).pipe(
       filter(Boolean),
       tap(() => {
-        this.store$.dispatch(guiFormSubmitted({ theme: values.theme }));
-
         // prevent to revert momentarily to previous value due to `guiFormSubmitted`
         this.formGroup.controls.ui_httpsredirect.setValue(values.ui_httpsredirect);
       }),
@@ -125,18 +125,18 @@ export class GuiFormComponent {
       untilDestroyed(this),
     ).subscribe({
       next: () => {
+        this.store$.dispatch(guiFormSubmitted({ theme: values.theme }));
+        this.themeService.updateThemeInLocalStorage(this.themeService.findTheme(values.theme));
         this.isFormLoading = false;
         this.cdr.markForCheck();
         this.handleServiceRestart(params as SystemGeneralConfigUpdate);
       },
-      error: (error) => {
+      error: (error: unknown) => {
         this.isFormLoading = false;
         this.errorHandler.handleWsFormError(error, this.formGroup);
         this.cdr.markForCheck();
       },
     });
-
-    this.themeService.updateThemeInLocalStorage(this.themeService.findTheme(values.theme));
   }
 
   getIsServiceRestartRequired(current: SystemGeneralConfig, next: SystemGeneralConfigUpdate): boolean {
@@ -196,15 +196,15 @@ export class GuiFormComponent {
         ).subscribe({
           next: () => {
             this.wsManager.setupConnectionUrl(protocol, hostname + ':' + port);
-            this.wsManager.closeWebsocketConnection();
+            this.wsManager.closeWebSocketConnection();
             this.replaceHrefWhenWsConnected(href);
           },
-          error: (error: WebsocketError) => {
+          error: (error: WebSocketError) => {
             this.loader.close();
             this.dialog.error({
               title: helptext.dialog_error_title,
               message: error.reason,
-              backtrace: error.trace.formatted,
+              backtrace: error.trace?.formatted,
             });
           },
         });

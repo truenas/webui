@@ -9,13 +9,8 @@ import { VmDeviceType } from 'app/enums/vm.enum';
 import { VmDevice, VmDeviceDelete, VmDiskDevice } from 'app/interfaces/vm-device.interface';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
-import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
-
-export interface DeviceDeleteModalState {
-  row: VmDevice;
-}
 
 @UntilDestroy()
 @Component({
@@ -37,16 +32,15 @@ export class DeviceDeleteModalComponent implements OnInit {
 
   constructor(
     private loader: AppLoaderService,
-    @Inject(MAT_DIALOG_DATA) public data: DeviceDeleteModalState,
+    @Inject(MAT_DIALOG_DATA) public device: VmDevice,
     private fb: FormBuilder,
     private dialogRef: MatDialogRef<DeviceDeleteModalComponent>,
     private errorHandler: ErrorHandlerService,
-    private dialogService: DialogService,
     private translate: TranslateService,
     private validatorsService: IxValidatorsService,
     private ws: WebSocketService,
   ) {
-    if (this.data.row.dtype !== VmDeviceType.Disk) {
+    if (this.device.dtype !== VmDeviceType.Disk) {
       return;
     }
 
@@ -55,7 +49,7 @@ export class DeviceDeleteModalComponent implements OnInit {
       this.translate.instant('Name of the zvol is required'),
     );
 
-    const zvolName = this.getZvolName(this.data.row);
+    const zvolName = this.getZvolName(this.device);
 
     const zvolConfirmMustMatch = this.validatorsService.withMessage(
       Validators.pattern(new RegExp(`^${zvolName}$`)),
@@ -90,7 +84,7 @@ export class DeviceDeleteModalComponent implements OnInit {
   onSubmit(): void {
     const value = this.form.value as VmDeviceDelete;
     this.ws.call('vm.device.delete', [
-      this.data.row.id,
+      this.device.id,
       {
         zvol: value.zvol,
         raw_file: value.raw_file,

@@ -9,9 +9,7 @@ import { filter } from 'rxjs/operators';
 import { DefaultValidationError } from 'app/enums/default-validation-error.enum';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 
-interface SomeError {
-  [key: string]: unknown;
-}
+type SomeError = Record<string, unknown>;
 
 export const ixManualValidateError = 'ixManualValidateError';
 
@@ -75,7 +73,7 @@ export class IxErrorsComponent implements OnChanges {
       ).subscribe(() => {
         const newErrors: string[] = Object.keys(this.control.errors || []).map((error) => {
           if (error === ixManualValidateError) {
-            return;
+            return null;
           }
           const message = (this.control.errors[error] as SomeError)?.message as string;
           if (message) {
@@ -120,7 +118,7 @@ export class IxErrorsComponent implements OnChanges {
       case DefaultValidationError.Pattern:
         return this.defaultErrMessages.pattern();
       case DefaultValidationError.Forbidden:
-        return this.defaultErrMessages.forbidden(this.control.errors.value);
+        return this.defaultErrMessages.forbidden(this.control.errors.value as string);
       case DefaultValidationError.Number:
         return this.defaultErrMessages.number();
       case DefaultValidationError.Cron:

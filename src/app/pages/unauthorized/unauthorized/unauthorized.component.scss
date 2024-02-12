@@ -1,0 +1,37 @@
+.container {
+  align-items: center;
+  color: white;
+  display: flex;
+  height: 70%;
+  justify-content: center;
+}
+
+.wrapper {
+  align-items: left;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  justify-content: center;
+  width: 450px;
+
+  p {
+    font-size: 0.875rem;
+    margin-bottom: 10px;
+  }
+}
+
+.icon {
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  width: 100%;
+
+  .mat-icon {
+    color: var(--fg2);
+    font-size: 130px;
+    height: 130px;
+    margin-bottom: 20px;
+    opacity: 0.1;
+    width: auto;
+  }
+}

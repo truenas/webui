@@ -4,13 +4,13 @@ import {
 import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import filesize from 'filesize';
 import { of } from 'rxjs';
 import { MiB } from 'app/constants/bytes.constant';
 import { VmCpuMode, vmCpuModeLabels } from 'app/enums/vm.enum';
+import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { mapToOptions } from 'app/helpers/options.helper';
-import helptext from 'app/helptext/vm/vm-wizard/vm-wizard';
+import { helptextVmWizard } from 'app/helptext/vm/vm-wizard/vm-wizard';
 import { SummaryProvider, SummarySection } from 'app/modules/common/summary/summary.interface';
 import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
@@ -48,7 +48,7 @@ export class CpuAndMemoryStepComponent implements OnInit, SummaryProvider {
       Validators.required,
       this.validator.withMessage(
         Validators.min(256 * MiB),
-        this.translate.instant(helptext.memory_size_err),
+        this.translate.instant(helptextVmWizard.memory_size_err),
       ),
     ]],
     min_memory: [null as number],
@@ -57,7 +57,7 @@ export class CpuAndMemoryStepComponent implements OnInit, SummaryProvider {
 
   maxVcpus: number;
 
-  readonly helptext = helptext;
+  readonly helptext = helptextVmWizard;
 
   readonly cpuModes$ = of(mapToOptions(vmCpuModeLabels, this.translate));
   readonly cpuModels$ = this.ws.call('vm.cpu_model_choices').pipe(choicesToOptions());
@@ -110,13 +110,13 @@ export class CpuAndMemoryStepComponent implements OnInit, SummaryProvider {
 
     summary.push({
       label: this.translate.instant('Memory'),
-      value: filesize(values.memory, { standard: 'iec' }),
+      value: buildNormalizedFileSize(values.memory),
     });
 
     if (values.min_memory) {
       summary.push({
         label: this.translate.instant('Minimum Memory'),
-        value: filesize(values.min_memory, { standard: 'iec' }),
+        value: buildNormalizedFileSize(values.min_memory),
       });
     }
 

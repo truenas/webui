@@ -10,21 +10,19 @@ import { FormBuilder } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatAccordion } from '@angular/material/expansion';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import {
   filter, map, Observable, of, pairwise, startWith,
 } from 'rxjs';
 import { appImagePlaceholder } from 'app/constants/catalog.constants';
 import { BulkListItem, BulkListItemState } from 'app/core/components/bulk-list-item/bulk-list-item.interface';
+import { Role } from 'app/enums/role.enum';
 import { UpgradeSummary } from 'app/interfaces/application.interface';
 import { ChartRelease, ChartReleaseUpgradeParams } from 'app/interfaces/chart-release.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { WebSocketService } from 'app/services/ws.service';
-import { AppState } from 'app/store';
-import { jobIndicatorPressed } from 'app/store/topbar/topbar.actions';
 
 @UntilDestroy()
 @Component({
@@ -35,7 +33,7 @@ import { jobIndicatorPressed } from 'app/store/topbar/topbar.actions';
 export class AppBulkUpgradeComponent {
   @ViewChild(MatAccordion) accordion: MatAccordion;
 
-  form = this.formBuilder.group<{ [key: string]: string }>({});
+  form = this.formBuilder.group<Record<string, string>>({});
   bulkItems = new Map<string, BulkListItem<ChartRelease>>();
   loadingMap = new Map<string, boolean>();
   optionsMap = new Map<string, Observable<Option[]>>();
@@ -43,6 +41,7 @@ export class AppBulkUpgradeComponent {
 
   readonly trackByKey: TrackByFunction<KeyValue<string, BulkListItem<ChartRelease>>> = (_, entry) => entry.key;
   readonly imagePlaceholder = appImagePlaceholder;
+  protected readonly requiredRoles = [Role.AppsWrite];
 
   constructor(
     private formBuilder: FormBuilder,
@@ -51,7 +50,6 @@ export class AppBulkUpgradeComponent {
     private dialogRef: MatDialogRef<AppBulkUpgradeComponent>,
     private appService: ApplicationsService,
     private snackbar: SnackbarService,
-    private store$: Store<AppState>,
     @Inject(MAT_DIALOG_DATA) private apps: ChartRelease[],
   ) {
     this.apps = this.apps.filter((app) => app.update_available || app.container_images_update_available);
@@ -126,7 +124,6 @@ export class AppBulkUpgradeComponent {
         this.snackbar.success(
           this.translate.instant('Upgrading Apps. Please check on the progress in Task Manager.'),
         );
-        this.store$.dispatch(jobIndicatorPressed());
       });
   }
 

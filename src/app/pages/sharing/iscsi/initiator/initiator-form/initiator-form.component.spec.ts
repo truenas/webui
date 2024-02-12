@@ -5,7 +5,8 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatListHarness } from '@angular/material/list/testing';
 import { Router } from '@angular/router';
 import { createRoutingFactory, mockProvider, SpectatorRouting } from '@ngneat/spectator/jest';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { IscsiGlobalSession } from 'app/interfaces/iscsi-global-config.interface';
 import { DualListboxComponent } from 'app/modules/common/dual-list/dual-list.component';
 import { NgxDualListboxModule } from 'app/modules/common/dual-list/dual-list.module';
@@ -29,7 +30,8 @@ describe('InitiatorFormComponent', () => {
     ],
     declarations: [DualListboxComponent],
     providers: [
-      mockWebsocket([
+      mockAuth(),
+      mockWebSocket([
         mockCall('iscsi.global.sessions', [{
           initiator: 'inr1',
           initiator_addr: '10.0.0.1',

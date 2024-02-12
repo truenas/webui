@@ -1,6 +1,6 @@
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
-import { FormatDateTimePipe } from 'app/core/pipes/format-datetime.pipe';
+import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-datetime.pipe';
 import {
   CronSchedulePreview,
 } from 'app/modules/scheduler/classes/cron-schedule-preview/cron-schedule-preview';
@@ -22,7 +22,7 @@ describe('SchedulerDateExamplesComponent', () => {
       }),
     ],
     declarations: [
-      FormatDateTimePipe,
+      FakeFormatDateTimePipe,
     ],
   });
 

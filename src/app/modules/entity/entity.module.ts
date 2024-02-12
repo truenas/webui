@@ -39,22 +39,15 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule } from '@angular/router';
 import { TreeModule } from '@bugsplat/angular-tree-component';
 import { TranslateModule } from '@ngx-translate/core';
-import { NgxFilesizeModule } from 'ngx-filesize';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { CastModule } from 'app/modules/cast/cast.module';
 import { EntityEmptyComponent } from 'app/modules/entity/entity-empty/entity-empty.component';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
-import { EntityRowDetailsComponent } from 'app/modules/entity/entity-table/entity-row-details/entity-row-details.component';
 import { EntityTableActionsComponent } from 'app/modules/entity/entity-table/entity-table-actions/entity-table-actions.component';
 import { EntityTableAddActionsComponent } from 'app/modules/entity/entity-table/entity-table-add-actions/entity-table-add-actions.component';
 import { EntityTableRowDetailsComponent } from 'app/modules/entity/entity-table/entity-table-row-details/entity-table-row-details.component';
 import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-table.component';
-import { ToolbarMultimenuComponent } from 'app/modules/entity/entity-toolbar/components/toolbar-multimenu/toolbar-multimenu.component';
 import { ToolbarSliderComponent } from 'app/modules/entity/entity-toolbar/components/toolbar-slider/toolbar-slider.component';
-import { ExpandableTableComponent } from 'app/modules/entity/table/expandable-table/expandable-table.component';
-import { TableComponent } from 'app/modules/entity/table/table.component';
-import { TableService } from 'app/modules/entity/table/table.service';
-import { TaskScheduleListComponent } from 'app/modules/entity/task-schedule-list/task-schedule-list.component';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { LayoutModule } from 'app/modules/layout/layout.module';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
@@ -107,7 +100,6 @@ import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
     CdkTreeModule,
     OverlayModule,
     A11yModule,
-    NgxFilesizeModule,
     CommonDirectivesModule,
     TooltipModule,
     CastModule,
@@ -117,34 +109,24 @@ import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
     LayoutModule,
   ],
   declarations: [
-    TaskScheduleListComponent,
     EntityTableComponent,
     EntityTableRowDetailsComponent,
-    EntityRowDetailsComponent,
     EntityTableActionsComponent,
     EntityTableAddActionsComponent,
     EntityJobComponent,
-    ToolbarMultimenuComponent,
     ToolbarSliderComponent,
-    TableComponent,
-    ExpandableTableComponent,
     EntityEmptyComponent,
   ],
   exports: [
     EntityTableComponent,
-    EntityRowDetailsComponent,
     EntityTableAddActionsComponent,
     EntityTableActionsComponent,
     ToolbarSliderComponent,
-    ToolbarMultimenuComponent,
-    TableComponent,
-    ExpandableTableComponent,
     CdkTreeModule,
     EntityEmptyComponent,
   ],
   providers: [
     AppLoaderService,
-    TableService,
   ],
 })
 export class EntityModule { }

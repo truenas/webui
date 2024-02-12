@@ -1,16 +1,22 @@
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Observable, Subscriber } from 'rxjs';
-import { TerminalConfiguration } from 'app/interfaces/terminal.interface';
-import { ShellService } from 'app/services/shell.service';
+import { TerminalConfiguration, TerminalConnectionData } from 'app/interfaces/terminal.interface';
 
 @UntilDestroy()
 @Component({
   template: '<ix-terminal [conf]="this"></ix-terminal>',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class VmSerialShellComponent implements TerminalConfiguration {
   protected pk: string;
+
+  get connectionData(): TerminalConnectionData {
+    return {
+      vmId: Number(this.pk),
+    };
+  }
 
   constructor(
     private aroute: ActivatedRoute,
@@ -23,9 +29,5 @@ export class VmSerialShellComponent implements TerminalConfiguration {
         subscriber.next();
       });
     });
-  }
-
-  setShellConnectionData(shellService: ShellService): void {
-    shellService.vmId = Number(this.pk);
   }
 }

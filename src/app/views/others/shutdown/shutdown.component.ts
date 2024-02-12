@@ -1,22 +1,22 @@
 import { Location } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { WebsocketConnectionService } from 'app/services/websocket-connection.service';
+import { WebSocketConnectionService } from 'app/services/websocket-connection.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
   templateUrl: './shutdown.component.html',
   styleUrls: ['./shutdown.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ShutdownComponent implements OnInit {
   constructor(
     protected ws: WebSocketService,
-    private wsManager: WebsocketConnectionService,
+    private wsManager: WebSocketConnectionService,
     private errorHandler: ErrorHandlerService,
     protected router: Router,
     protected dialogService: DialogService,
@@ -28,8 +28,8 @@ export class ShutdownComponent implements OnInit {
     this.location.replaceState('/sessions/signin');
 
     this.ws.job('system.shutdown', {}).pipe(untilDestroyed(this)).subscribe({
-      error: (error: WebsocketError) => { // error on shutdown
-        this.dialogService.error(this.errorHandler.parseWsError(error))
+      error: (error: unknown) => { // error on shutdown
+        this.dialogService.error(this.errorHandler.parseError(error))
           .pipe(untilDestroyed(this))
           .subscribe(() => {
             this.router.navigate(['/sessions/signin']);

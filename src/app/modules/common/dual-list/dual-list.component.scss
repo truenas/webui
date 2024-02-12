@@ -4,10 +4,8 @@
 
 .container-dualListBox {
   align-items: center;
-
   box-align: center;
   display: flex;
-  flex-align: center;
 }
 
 .container-dualListBox > div {
@@ -61,19 +59,17 @@
   background: var(--primary);
   color: var(--fg2);
   display: inline-flex;
-  font-size: 14px;
-  min-height: 48px;
-  padding: 12px 0;
+  max-height: 48px;
+  padding: 0 16px;
   width: 100%;
 }
-
 
 .cdk-drag-placeholder {
   align-items: center;
   background: rgba(var(--fg1), 0.1);
   display: inline-flex;
   opacity: 0.5;
-  outline: 1px dashed var(--fg1);
+  outline: 1.5px dashed var(--fg1);
   outline-offset: -1px;
   width: 100%;
 }

@@ -2,14 +2,38 @@
   <ng-container
     *ngFor="let action of actions"
   >
-    <button
-      *ngIf="action.hidden ? !(action.hidden(row) | async) : true"
-      mat-icon-button
-      ixTest="row-edit"
-      [matTooltip]="action.tooltip || ''"
-      (click)="$event.stopPropagation(); action.onClick(row)"
-    >
-      <ix-icon [name]="action.iconName"></ix-icon>
-    </button>
+    <ng-container *ngIf="action.requiredRoles?.length">
+      <div
+        *ixRequiresRoles="action.requiredRoles"
+        [matTooltip]="action.dynamicTooltip ? (action.dynamicTooltip(row) | async) : action.tooltip || ''"
+      >
+        <button
+          *ngIf="action.hidden ? !(action.hidden(row) | async) : true"
+          mat-icon-button
+          [ixTest]="[rowTestId(row), action.iconName, 'row-action']"
+          [disabled]="action.disabled ? (action.disabled(row) | async) : false"
+          (click)="$event.stopPropagation(); action.onClick(row)"
+        >
+          <ix-icon [name]="action.iconName"></ix-icon>
+        </button>
+      </div>
+    </ng-container>
+
+    <ng-container *ngIf="!action.requiredRoles?.length">
+      <div
+        [matTooltip]="action.dynamicTooltip ? (action.dynamicTooltip(row) | async) : action.tooltip || ''"
+      >
+        <button
+          *ngIf="action.hidden ? !(action.hidden(row) | async) : true"
+          mat-icon-button
+          [ixTest]="[rowTestId(row), action.iconName, 'row-action']"
+          [disabled]="action.disabled ? (action.disabled(row) | async) : false"
+          (click)="$event.stopPropagation(); action.onClick(row)"
+        >
+          <ix-icon [name]="action.iconName"></ix-icon>
+        </button>
+      </div>
+    </ng-container>
+
   </ng-container>
 </div>

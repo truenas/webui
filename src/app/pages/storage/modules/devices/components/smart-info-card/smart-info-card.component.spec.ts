@@ -6,7 +6,7 @@ import {
   byText, createComponentFactory, mockProvider, Spectator,
 } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { SmartTestResultStatus } from 'app/enums/smart-test-result-status.enum';
 import { SmartTestResults, SmartTestTask } from 'app/interfaces/smart-test.interface';
 import { Disk, TopologyDisk } from 'app/interfaces/storage.interface';
@@ -27,7 +27,7 @@ describe('SmartInfoCardComponent', () => {
   const createComponent = createComponentFactory({
     component: SmartInfoCardComponent,
     providers: [
-      mockWebsocket([
+      mockWebSocket([
         mockCall('smart.test.results', [
           {
             disk: 'sdc',

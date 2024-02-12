@@ -2,6 +2,7 @@ import {
   AfterViewInit,
   Component, EventEmitter, Input, Output,
 } from '@angular/core';
+import { AbstractControl } from '@angular/forms';
 import { ChartSchemaNode } from 'app/interfaces/chart-release.interface';
 
 @Component({
@@ -10,6 +11,7 @@ import { ChartSchemaNode } from 'app/interfaces/chart-release.interface';
   styleUrls: ['./ix-list.component.scss'],
 })
 export class IxListComponent implements AfterViewInit {
+  @Input() formArray: AbstractControl;
   @Input() label: string;
   @Input() tooltip: string;
   @Input() empty: boolean;

@@ -33,6 +33,7 @@ import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
 import { PageTitleHeaderComponent } from 'app/modules/page-header/page-title-header/page-title-header.component';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
 import { TruecommandModule } from 'app/modules/truecommand/truecommand.module';
+import { CheckinIndicatorComponent } from './components/topbar/checkin-indicator/checkin-indicator.component';
 import { FailoverUpgradeIndicatorComponent } from './components/topbar/failover-upgrade-indicator/failover-upgrade-indicator.component';
 import { HaStatusIconComponent } from './components/topbar/ha-status-icon/ha-status-icon.component';
 import { HaStatusPopoverComponent } from './components/topbar/ha-status-icon/ha-status-popover/ha-status-popover.component';
@@ -87,6 +88,7 @@ import { PageHeaderDirective } from './directives/page-header.directive';
     HaStatusPopoverComponent,
     ResilveringIndicatorComponent,
     FailoverUpgradeIndicatorComponent,
+    CheckinIndicatorComponent,
   ],
   exports: [
     ChangePasswordDialogComponent,

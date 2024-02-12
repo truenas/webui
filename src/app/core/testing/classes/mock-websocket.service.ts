@@ -1,14 +1,27 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
+import { TranslateService } from '@ngx-translate/core';
 import { when } from 'jest-when';
 import { Observable, of, Subject } from 'rxjs';
 import { ValuesType } from 'utility-types';
-import { ApiCallDirectory, ApiCallMethod, ApiCallParams } from 'app/interfaces/api/api-call-directory.interface';
+import {
+  CallResponseOrFactory,
+  JobResponseOrFactory,
+} from 'app/core/testing/interfaces/mock-websocket-responses.interface';
+import {
+  ApiCallMethod,
+  ApiCallParams,
+  ApiCallResponse,
+} from 'app/interfaces/api/api-call-directory.interface';
 import { ApiEventDirectory } from 'app/interfaces/api/api-event-directory.interface';
-import { ApiJobDirectory, ApiJobMethod } from 'app/interfaces/api/api-job-directory.interface';
+import {
+  ApiJobMethod,
+  ApiJobParams,
+  ApiJobResponse,
+} from 'app/interfaces/api/api-job-directory.interface';
 import { ApiEvent } from 'app/interfaces/api-message.interface';
 import { Job } from 'app/interfaces/job.interface';
-import { WebsocketConnectionService } from 'app/services/websocket-connection.service';
+import { WebSocketConnectionService } from 'app/services/websocket-connection.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 /**
@@ -17,27 +30,28 @@ import { WebSocketService } from 'app/services/ws.service';
 const anyArgument = when((_: unknown) => true);
 
 /**
- * MockWebsocketService can be used to update websocket mocks on the fly.
- * For initial setup prefer mockWebsocket();
+ * MockWebSocketService can be used to update websocket mocks on the fly.
+ * For initial setup prefer mockWebSocket();
  *
  * To update on the fly:
  * @example
  * ```
  * // In test case:
- * const websocketService = spectator.inject(MockWebsocketService);
+ * const websocketService = spectator.inject(MockWebSocketService);
  * websocketService.mockCallOnce('filesystem.stat', { gid: 5 } as FileSystemStat);
  * ```
  */
 @Injectable()
-export class MockWebsocketService extends WebSocketService {
+export class MockWebSocketService extends WebSocketService {
   private subscribeStream$ = new Subject<ApiEvent>();
   private jobIdCounter = 1;
 
   constructor(
     protected router: Router,
-    protected wsManager: WebsocketConnectionService,
+    protected wsManager: WebSocketConnectionService,
+    protected translate: TranslateService,
   ) {
-    super(router, wsManager);
+    super(router, wsManager, translate);
 
     this.call = jest.fn();
     this.job = jest.fn();
@@ -52,30 +66,48 @@ export class MockWebsocketService extends WebSocketService {
     });
   }
 
-  mockCall<K extends ApiCallMethod>(method: K, response: ApiCallDirectory[K]['response']): void {
-    when(this.call).calledWith(method).mockReturnValue(of(response));
+  mockCall<K extends ApiCallMethod>(method: K, response: CallResponseOrFactory<K>): void {
+    const mockedImplementation = (_: K, params: ApiCallParams<K>): Observable<unknown> => {
+      if (response instanceof Function) {
+        return of(response(params));
+      }
+
+      return of(response);
+    };
+
+    when(this.call).calledWith(method).mockImplementation(mockedImplementation);
     when(this.call)
       .calledWith(method, anyArgument as unknown as ApiCallParams<ApiCallMethod>)
-      .mockReturnValue(of(response));
+      .mockImplementation(mockedImplementation);
   }
 
-  mockCallOnce<K extends ApiCallMethod>(method: K, response: ApiCallDirectory[K]['response']): void {
+  mockCallOnce<M extends ApiCallMethod>(method: M, response: ApiCallResponse<M>): void {
     when(this.call)
       .calledWith(method, anyArgument as unknown as ApiCallParams<ApiCallMethod>)
       .mockReturnValueOnce(of(response));
   }
-  mockJob<K extends ApiJobMethod>(method: K, response: Job<ApiJobDirectory[K]['response']>): void {
-    const responseWithJobId = {
-      ...response,
-      id: this.jobIdCounter,
+  mockJob<M extends ApiJobMethod>(method: M, response: JobResponseOrFactory<M>): void {
+    const getJobResponse = (params: ApiJobParams<M> = undefined): Job<ApiJobResponse<M>> => {
+      let job: Job;
+      if (response instanceof Function) {
+        job = response(params);
+      } else {
+        job = response;
+      }
+
+      return {
+        ...job,
+        id: this.jobIdCounter,
+      } as Job<ApiJobResponse<M>>;
     };
     when(this.startJob).calledWith(method).mockReturnValue(of(this.jobIdCounter));
     when(this.startJob).calledWith(method, anyArgument).mockReturnValue(of(this.jobIdCounter));
-    when(this.job).calledWith(method).mockReturnValue(of(responseWithJobId));
-    when(this.job).calledWith(method, anyArgument).mockReturnValue(of(responseWithJobId));
+    when(this.job).calledWith(method).mockImplementation(() => of(getJobResponse()));
+    when(this.job).calledWith(method, anyArgument)
+      .mockImplementation((_, params) => of(getJobResponse(params)));
     when(this.call)
       .calledWith('core.get_jobs', [[['id', '=', this.jobIdCounter]]])
-      .mockReturnValue(of([responseWithJobId]));
+      .mockImplementation(() => of([getJobResponse()]));
 
     this.jobIdCounter += 1;
   }

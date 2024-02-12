@@ -75,6 +75,7 @@
       <th *matHeaderCellDef mat-header-cell></th>
       <td *matCellDef="let server; dataSource: dataSource" mat-cell>
         <button
+          *ixRequiresRoles="[Role.FullAdmin]"
           mat-icon-button
           type="button"
           aria-label="Delete"

@@ -1,3 +1,11 @@
+@import 'scss-imports/splitview';
+
+:host ::ng-deep {
+  .mat-mdc-form-field-infix {
+    width: inherit;
+  }
+}
+
 .paginator {
   align-items: center;
   background: var(--bg2);
@@ -10,8 +18,13 @@
   .page-size {
     align-items: center;
     display: flex;
+    flex-wrap: wrap;
     gap: 5px;
     margin-right: 30px;
+
+    @media(max-width: $breakpoint-sm) {
+      margin-right: 8px;
+    }
 
     span {
       white-space: nowrap;
@@ -25,5 +38,9 @@
   .buttons {
     display: flex;
     margin-left: 30px;
+
+    @media(max-width: $breakpoint-sm) {
+      margin-left: 8px;
+    }
   }
 }

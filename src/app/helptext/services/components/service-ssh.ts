@@ -1,7 +1,7 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { SshSftpLogFacility, SshSftpLogLevel, SshWeakCipher } from 'app/enums/ssh.enum';
 
-export default {
+export const helptextServiceSsh = {
   ssh_bindiface_tooltip: T('Select interfaces for SSH to listen on. Leave all\
  options unselected for SSH to listen on all interfaces.'),
 

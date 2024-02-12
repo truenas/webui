@@ -2,8 +2,8 @@ import {
   ChangeDetectionStrategy, Component, Input, OnChanges, OnInit, ChangeDetectorRef,
 } from '@angular/core';
 import { Router } from '@angular/router';
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
 import { AclType } from 'app/enums/acl-type.enum';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { NfsAclTag } from 'app/enums/nfs-acl.enum';
@@ -11,7 +11,6 @@ import { Acl } from 'app/interfaces/acl.interface';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { FileSystemStat } from 'app/interfaces/filesystem-stat.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { PermissionsCardStore } from 'app/pages/datasets/modules/permissions/stores/permissions-card.store';
 import { isRootDataset } from 'app/pages/datasets/utils/dataset.utils';
 import { DialogService } from 'app/services/dialog.service';
@@ -28,12 +27,18 @@ export class PermissionsCardComponent implements OnInit, OnChanges {
   @Input() dataset: DatasetDetails;
 
   isLoading: boolean;
+  isMissingMountpoint: boolean;
   stat: FileSystemStat;
   acl: Acl;
 
   emptyConfig: EmptyConfig = {
     type: EmptyType.NoPageData,
-    title: T('No Data'),
+    title: this.translate.instant('No Data'),
+  };
+
+  missionMountpointEmptyConfig: EmptyConfig = {
+    type: EmptyType.NoPageData,
+    title: this.translate.instant('Dataset has no mountpoint'),
   };
 
   readonly AclType = AclType;
@@ -44,6 +49,7 @@ export class PermissionsCardComponent implements OnInit, OnChanges {
     private errorHandler: ErrorHandlerService,
     private dialogService: DialogService,
     private router: Router,
+    private translate: TranslateService,
   ) {}
 
   redirectToEditPermissions(): void {
@@ -59,7 +65,7 @@ export class PermissionsCardComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges(): void {
-    this.store.loadPermissions(this.dataset.mountpoint);
+    this.loadPermissions();
   }
 
   ngOnInit(): void {
@@ -85,11 +91,19 @@ export class PermissionsCardComponent implements OnInit, OnChanges {
 
           this.cdr.markForCheck();
         },
-        error: (error: WebsocketError) => {
+        error: (error: unknown) => {
           this.isLoading = false;
           this.cdr.markForCheck();
-          this.dialogService.error(this.errorHandler.parseWsError(error));
+          this.dialogService.error(this.errorHandler.parseError(error));
         },
       });
+  }
+
+  private loadPermissions(): void {
+    this.isMissingMountpoint = !this.dataset.mountpoint;
+    if (this.isMissingMountpoint) {
+      return;
+    }
+    this.store.loadPermissions(this.dataset.mountpoint);
   }
 }

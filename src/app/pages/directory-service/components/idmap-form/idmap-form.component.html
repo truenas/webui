@@ -228,6 +228,7 @@
       </ix-fieldset>
       <ix-form-actions>
         <button
+          *ixRequiresRoles="[Role.DirectoryServiceWrite]"
           type="submit"
           mat-button
           color="primary"

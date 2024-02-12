@@ -14,7 +14,7 @@ export interface RoutePart {
 
 @Injectable()
 export class RoutePartsService {
-  private fullRouteParts: RoutePart[];
+  private fullRouteParts: RoutePart[] | null;
 
   constructor(private activatedRoute: ActivatedRoute, private router: Router) {
     // only execute when routechange
@@ -26,7 +26,7 @@ export class RoutePartsService {
     });
   }
 
-  private generateRouteParts(route: ActivatedRoute, url = '', routeParts: RoutePart[] = []): RoutePart[] {
+  private generateRouteParts(route: ActivatedRoute, url = '', routeParts: RoutePart[] = []): RoutePart[] | null {
     const children: ActivatedRoute[] = route.children;
     const ngUrl: string[] = [];
 
@@ -51,13 +51,13 @@ export class RoutePartsService {
         isNew,
       });
 
-      return this.generateRouteParts(child, url, routeParts);
+      this.generateRouteParts(child, url, routeParts);
     }
 
-    return undefined;
+    return routeParts;
   }
 
-  get routeParts(): RoutePart[] {
+  get routeParts(): RoutePart[] | null {
     return this.fullRouteParts;
   }
 }

@@ -5,6 +5,20 @@
   padding: 8px 0;
 }
 
+::ng-deep {
+  .select-all-checkbox {
+    align-items: center;
+    border-bottom: 1px solid var(--alt-bg1);
+    cursor: pointer;
+    display: flex;
+    padding: 8px;
+
+    ix-icon {
+      margin-right: 16px;
+    }
+  }
+}
+
 .full-width {
   color: var(--fg1);
   width: 100%;

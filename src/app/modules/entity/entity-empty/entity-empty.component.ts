@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 
@@ -6,6 +6,7 @@ import { EmptyConfig } from 'app/interfaces/empty-config.interface';
   selector: 'ix-entity-empty',
   templateUrl: './entity-empty.component.html',
   styleUrls: ['./entity-empty.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class EntityEmptyComponent {
   @Input() conf: EmptyConfig;

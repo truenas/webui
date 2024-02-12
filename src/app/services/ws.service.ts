@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
 import { UUID } from 'angular2-uuid';
 import { environment } from 'environments/environment';
 import {
@@ -12,14 +13,23 @@ import {
 import { MockEnclosureUtils } from 'app/core/testing/utils/mock-enclosure.utils';
 import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
 import { JobState } from 'app/enums/job-state.enum';
+import { ResponseErrorType } from 'app/enums/response-error-type.enum';
+import { WebSocketErrorName } from 'app/enums/websocket-error-name.enum';
 import {
-  ApiCallDirectory, ApiCallMethod,
+  ApiCallMethod,
+  ApiCallParams,
+  ApiCallResponse,
 } from 'app/interfaces/api/api-call-directory.interface';
 import { ApiEventDirectory } from 'app/interfaces/api/api-event-directory.interface';
-import { ApiJobDirectory, ApiJobMethod } from 'app/interfaces/api/api-job-directory.interface';
-import { ApiEvent, IncomingWebsocketMessage, ResultMessage } from 'app/interfaces/api-message.interface';
+import {
+  ApiJobMethod,
+  ApiJobParams,
+  ApiJobResponse,
+} from 'app/interfaces/api/api-job-directory.interface';
+import { ApiEvent, IncomingWebSocketMessage, ResultMessage } from 'app/interfaces/api-message.interface';
 import { Job } from 'app/interfaces/job.interface';
-import { WebsocketConnectionService } from 'app/services/websocket-connection.service';
+import { WebSocketError } from 'app/interfaces/websocket-error.interface';
+import { WebSocketConnectionService } from 'app/services/websocket-connection.service';
 
 @UntilDestroy()
 @Injectable({
@@ -28,9 +38,11 @@ import { WebsocketConnectionService } from 'app/services/websocket-connection.se
 export class WebSocketService {
   private readonly eventSubscriptions = new Map<string, { obs$: Observable<unknown>; takeUntil$: Subject<void> }>();
   mockUtils: MockEnclosureUtils;
+
   constructor(
     protected router: Router,
-    protected wsManager: WebsocketConnectionService,
+    protected wsManager: WebSocketConnectionService,
+    protected translate: TranslateService,
   ) {
     if (environment.mockConfig && !environment?.production) this.mockUtils = new MockEnclosureUtils();
     this.wsManager.isConnected$?.pipe(untilDestroyed(this)).subscribe((isConnected) => {
@@ -44,14 +56,14 @@ export class WebSocketService {
     return this.wsManager.websocket$;
   }
 
-  call<M extends ApiCallMethod>(method: M, params?: ApiCallDirectory[M]['params']): Observable<ApiCallDirectory[M]['response']> {
+  call<M extends ApiCallMethod>(method: M, params?: ApiCallParams<M>): Observable<ApiCallResponse<M>> {
     return this.callMethod(method, params);
   }
 
   /**
    * Use `job` when you care about job progress or result.
    */
-  startJob<M extends ApiJobMethod>(method: M, params?: ApiJobDirectory[M]['params']): Observable<number> {
+  startJob<M extends ApiJobMethod>(method: M, params?: ApiJobParams<M>): Observable<number> {
     return this.callMethod(method, params);
   }
 
@@ -60,8 +72,8 @@ export class WebSocketService {
    */
   job<M extends ApiJobMethod>(
     method: M,
-    params?: ApiJobDirectory[M]['params'],
-  ): Observable<Job<ApiJobDirectory[M]['response']>> {
+    params?: ApiJobParams<M>,
+  ): Observable<Job<ApiJobResponse<M>>> {
     return this.callMethod(method, params).pipe(
       switchMap((jobId: number) => {
         return merge(
@@ -73,13 +85,13 @@ export class WebSocketService {
             takeWhile((job) => job.state !== JobState.Success, true),
             switchMap((job) => {
               if (job.state === JobState.Failed) {
-                return throwError(() => job.error);
+                return throwError(() => job);
               }
               return of(job);
             }),
           );
       }),
-    ) as Observable<Job<ApiJobDirectory[M]['response']>>;
+    ) as Observable<Job<ApiJobResponse<M>>>;
   }
 
   subscribe<K extends keyof ApiEventDirectory>(name: K): Observable<ApiEvent<ApiEventDirectory[K]['response']>> {
@@ -119,8 +131,8 @@ export class WebSocketService {
     this.eventSubscriptions.clear();
   }
 
-  private callMethod<M extends ApiCallMethod>(method: M, params?: ApiCallDirectory[M]['params']): Observable<ApiCallDirectory[M]['response']>;
-  private callMethod<M extends ApiJobMethod>(method: M, params?: ApiJobDirectory[M]['params']): Observable<number>;
+  private callMethod<M extends ApiCallMethod>(method: M, params?: ApiCallParams<M>): Observable<ApiCallResponse<M>>;
+  private callMethod<M extends ApiJobMethod>(method: M, params?: ApiJobParams<M>): Observable<number>;
   private callMethod<M extends ApiCallMethod | ApiJobMethod>(method: M, params?: unknown): Observable<unknown> {
     const uuid = UUID.UUID();
     return of(uuid).pipe(
@@ -130,11 +142,12 @@ export class WebSocketService {
         });
       }),
       switchMap(() => this.ws$),
-      filter((data: IncomingWebsocketMessage) => data.msg === IncomingApiMessageType.Result && data.id === uuid),
-      switchMap((data: IncomingWebsocketMessage) => {
+      filter((data: IncomingWebSocketMessage) => data.msg === IncomingApiMessageType.Result && data.id === uuid),
+      switchMap((data: IncomingWebSocketMessage) => {
         if ('error' in data && data.error) {
-          console.error('Error: ', data.error);
-          return throwError(() => data.error);
+          this.printError(data.error, { method, params });
+          const error = this.enhanceError(data.error, { method });
+          return throwError(() => error);
         }
 
         if (
@@ -160,5 +173,30 @@ export class WebSocketService {
       filter((apiEvent) => apiEvent.id === jobId),
       map((apiEvent) => apiEvent.fields),
     );
+  }
+
+  private printError(error: WebSocketError, context: { method: string; params: unknown }): void {
+    if (error.errname === WebSocketErrorName.NoAccess) {
+      console.error(`Access denied to ${context.method} with ${context.params ? JSON.stringify(context.params) : 'no params'}`);
+      return;
+    }
+
+    // Do not log validation errors.
+    if (error.type === ResponseErrorType.Validation) {
+      return;
+    }
+
+    console.error('Error: ', error);
+  }
+
+  private enhanceError(error: WebSocketError, context: { method: string }): WebSocketError {
+    if (error.errname === WebSocketErrorName.NoAccess) {
+      return {
+        ...error,
+        reason: this.translate.instant('Access denied to {method}', { method: context.method }),
+      };
+    }
+
+    return error;
   }
 }

@@ -1,16 +1,22 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+} from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { filter, from, map, switchMap } from 'rxjs';
+import {
+  filter, from, map, switchMap, tap,
+} from 'rxjs';
+import { Role } from 'app/enums/role.enum';
 import { helptextSystemAdvanced } from 'app/helptext/system/advanced';
-import { Cronjob } from 'app/interfaces/cronjob.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
-import { ArrayDataProvider } from 'app/modules/ix-table2/array-data-provider';
+import { AsyncDataProvider } from 'app/modules/ix-table2/classes/async-data-provider/async-data-provider';
+import { actionsColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
+import { relativeDateColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-relative-date/ix-cell-relative-date.component';
 import { scheduleColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-schedule/ix-cell-schedule.component';
 import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { yesNoColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-yesno/ix-cell-yesno.component';
 import { createTable } from 'app/modules/ix-table2/utils';
+import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
 import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
 import { AdvancedSettingsService } from 'app/pages/system/advanced/advanced-settings.service';
 import { CronDeleteDialogComponent } from 'app/pages/system/advanced/cron/cron-delete-dialog/cron-delete-dialog.component';
@@ -32,7 +38,7 @@ import { WebSocketService } from 'app/services/ws.service';
 export class CronCardComponent implements OnInit {
   title = helptextSystemAdvanced.fieldset_cron;
   cronjobs: CronjobRow[] = [];
-  dataProvider = new ArrayDataProvider<CronjobRow>();
+  dataProvider: AsyncDataProvider<CronjobRow>;
 
   columns = createTable<CronjobRow>([
     textColumn({
@@ -55,12 +61,35 @@ export class CronCardComponent implements OnInit {
       title: this.translate.instant('Enabled'),
       propertyName: 'enabled',
     }),
-    textColumn({
-      propertyName: 'id',
+    relativeDateColumn({
+      title: this.translate.instant('Next Run'),
+      getValue: (row) => this.taskService.getTaskNextTime(row.cron_schedule) as unknown,
     }),
-  ]);
-
-  isLoading = false;
+    actionsColumn({
+      cssClass: 'tight-actions',
+      actions: [
+        {
+          iconName: 'play_arrow',
+          tooltip: this.translate.instant('Run job'),
+          onClick: (row) => this.runNow(row),
+          requiredRoles: [Role.FullAdmin],
+        },
+        {
+          iconName: 'edit',
+          tooltip: this.translate.instant('Edit'),
+          onClick: (row) => this.doEdit(row),
+        },
+        {
+          iconName: 'delete',
+          tooltip: this.translate.instant('Delete'),
+          onClick: (row) => this.doDelete(row),
+          requiredRoles: [Role.FullAdmin],
+        },
+      ],
+    }),
+  ], {
+    rowTestId: (row) => 'card-cron-' + row.command + '-' + row.user,
+  });
 
   constructor(
     private slideInService: IxSlideInService,
@@ -72,9 +101,22 @@ export class CronCardComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private matDialog: MatDialog,
     private advancedSettings: AdvancedSettingsService,
+    protected emptyService: EmptyService,
   ) {}
 
   ngOnInit(): void {
+    const cronjobs$ = this.ws.call('cronjob.query').pipe(
+      map((cronjobs) => {
+        return cronjobs.map((job): CronjobRow => ({
+          ...job,
+          cron_schedule: scheduleToCrontab(job.schedule),
+          next_run: this.taskService.getTaskNextRun(scheduleToCrontab(job.schedule)),
+        }));
+      }),
+      tap((cronjobs) => this.cronjobs = cronjobs),
+      untilDestroyed(this),
+    );
+    this.dataProvider = new AsyncDataProvider<CronjobRow>(cronjobs$);
     this.getCronJobs();
   }
 
@@ -83,23 +125,7 @@ export class CronCardComponent implements OnInit {
   }
 
   getCronJobs(): void {
-    this.isLoading = true;
-    this.ws.call('cronjob.query').pipe(
-      map((cronjobs) => {
-        return cronjobs.map((job: Cronjob): CronjobRow => ({
-          ...job,
-          cron_schedule: scheduleToCrontab(job.schedule),
-          next_run: this.taskService.getTaskNextRun(scheduleToCrontab(job.schedule)),
-        }));
-      }),
-      this.errorHandler.catchError(),
-      untilDestroyed(this),
-    ).subscribe((cronjobs) => {
-      this.cronjobs = cronjobs;
-      this.dataProvider.setRows(cronjobs);
-      this.isLoading = false;
-      this.cdr.markForCheck();
-    });
+    this.dataProvider.load();
   }
 
   runNow(row: CronjobRow): void {
@@ -121,7 +147,7 @@ export class CronCardComponent implements OnInit {
           message,
         );
       },
-      error: (error: WebsocketError) => this.dialog.error(this.errorHandler.parseWsError(error)),
+      error: (error: unknown) => this.dialog.error(this.errorHandler.parseError(error)),
     });
   }
 

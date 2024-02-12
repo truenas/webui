@@ -5,10 +5,11 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatSlideToggleHarness } from '@angular/material/slide-toggle/testing';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
+import { provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
-import { mockWebsocket, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockWebSocket, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
 import { PeriodicSnapshotTask } from 'app/interfaces/periodic-snapshot-task.interface';
-import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTable2Harness } from 'app/modules/ix-table2/components/ix-table2/ix-table2.harness';
@@ -21,6 +22,7 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LocaleService } from 'app/services/locale.service';
 import { TaskService } from 'app/services/task.service';
 import { WebSocketService } from 'app/services/ws.service';
+import { selectSystemConfigState } from 'app/store/system-config/system-config.selectors';
 
 describe('SnapshotTaskCardComponent', () => {
   let spectator: Spectator<SnapshotTaskCardComponent>;
@@ -65,11 +67,19 @@ describe('SnapshotTaskCardComponent', () => {
     component: SnapshotTaskCardComponent,
     imports: [
       AppLoaderModule,
-      EntityModule,
       IxTable2Module,
     ],
     providers: [
-      mockWebsocket([
+      mockAuth(),
+      provideMockStore({
+        selectors: [
+          {
+            selector: selectSystemConfigState,
+            value: {},
+          },
+        ],
+      }),
+      mockWebSocket([
         mockCall('pool.snapshottask.query', snapshotTasks),
         mockCall('pool.snapshottask.delete'),
         mockCall('pool.snapshottask.update'),
@@ -91,7 +101,7 @@ describe('SnapshotTaskCardComponent', () => {
       }),
       mockProvider(LocaleService),
       mockProvider(TaskService, {
-        getTaskNextRun: jest.fn(() => 'in about 6 hours'),
+        getTaskNextTime: jest.fn(() => new Date(new Date().getTime() + (25 * 60 * 60 * 1000))),
         getTaskCronDescription: jest.fn(() => 'At 00:00, every day'),
       }),
     ],
@@ -106,7 +116,7 @@ describe('SnapshotTaskCardComponent', () => {
   it('should show table rows', async () => {
     const expectedRows = [
       ['Pool/Dataset', 'Keep for', 'Frequency', 'Next Run', 'Last Run', 'Enabled', 'State', ''],
-      ['APPS/test2', '2 WEEK(S)', 'At 00:00, every day', 'in about 6 hours', '1 minute ago', '', 'PENDING', ''],
+      ['APPS/test2', '2 week(s)', 'At 00:00, every day', 'in 1 day', '1 min. ago', '', 'PENDING', ''],
     ];
 
     const cells = await table.getCellTexts();
@@ -139,7 +149,7 @@ describe('SnapshotTaskCardComponent', () => {
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({
       title: 'Confirmation',
-      message: 'Delete Periodic Snapshot Task <b>\"APPS/test2 - auto-%Y-%m-%d_%H-%M - 2 WEEK(S)\"</b>?',
+      message: 'Delete Periodic Snapshot Task <b>"APPS/test2 - auto-%Y-%m-%d_%H-%M"</b>?',
     });
 
     expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('pool.snapshottask.delete', [1]);

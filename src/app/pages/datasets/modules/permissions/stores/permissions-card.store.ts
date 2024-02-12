@@ -4,7 +4,6 @@ import { EMPTY, forkJoin, Observable } from 'rxjs';
 import {
   catchError, switchMap, tap,
 } from 'rxjs/operators';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import {
   PermissionsCardState,
 } from 'app/pages/datasets/modules/permissions/interfaces/permissions-sidebar-state.interface';
@@ -39,7 +38,7 @@ export class PermissionsCardStore extends ComponentStore<PermissionsCardState> {
       switchMap((mountpoint) => {
         return forkJoin([
           this.ws.call('filesystem.stat', [mountpoint]),
-          this.ws.call('filesystem.getacl', [mountpoint, false, true]),
+          this.ws.call('filesystem.getacl', [mountpoint, true, true]),
         ]).pipe(
           tap(([stat, acl]) => {
             this.patchState({
@@ -48,8 +47,8 @@ export class PermissionsCardStore extends ComponentStore<PermissionsCardState> {
               isLoading: false,
             });
           }),
-          catchError((error: WebsocketError) => {
-            this.dialogService.error(this.errorHandler.parseWsError(error));
+          catchError((error: unknown) => {
+            this.dialogService.error(this.errorHandler.parseError(error));
 
             this.patchState({
               isLoading: false,

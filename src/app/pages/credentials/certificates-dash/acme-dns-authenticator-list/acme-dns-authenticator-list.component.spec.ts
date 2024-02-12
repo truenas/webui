@@ -4,9 +4,11 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
-import { mockWebsocket, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockWebSocket, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
 import { DnsAuthenticator } from 'app/interfaces/dns-authenticator.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTable2Harness } from 'app/modules/ix-table2/components/ix-table2/ix-table2.harness';
 import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
 import { AcmeDnsAuthenticatorListComponent } from 'app/pages/credentials/certificates-dash/acme-dns-authenticator-list/acme-dns-authenticator-list.component';
@@ -24,6 +26,7 @@ const authenticators = Array.from({ length: 10 }).map((_, index) => ({
 describe('AcmeDnsAuthenticatorListComponent', () => {
   let spectator: Spectator<AcmeDnsAuthenticatorListComponent>;
   let loader: HarnessLoader;
+  let table: IxTable2Harness;
 
   const createComponent = createComponentFactory({
     component: AcmeDnsAuthenticatorListComponent,
@@ -31,7 +34,7 @@ describe('AcmeDnsAuthenticatorListComponent', () => {
       IxTable2Module,
     ],
     providers: [
-      mockWebsocket([
+      mockWebSocket([
         mockCall('acme.dns.authenticator.query', authenticators),
         mockCall('acme.dns.authenticator.delete', true),
       ]),
@@ -47,12 +50,14 @@ describe('AcmeDnsAuthenticatorListComponent', () => {
       mockProvider(IxSlideInRef, {
         slideInClosed$: of(true),
       }),
+      mockAuth(),
     ],
   });
 
-  beforeEach(() => {
+  beforeEach(async () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    table = await loader.getHarness(IxTable2Harness);
   });
 
   it('checks page title', () => {
@@ -68,7 +73,7 @@ describe('AcmeDnsAuthenticatorListComponent', () => {
   });
 
   it('opens acme dns authenticator form when "Edit" button is pressed', async () => {
-    const editButton = await loader.getHarness(MatButtonHarness.with({ selector: '[aria-label="Edit"]' }));
+    const editButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'edit' }), 1, 2);
     await editButton.click();
 
     expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(AcmednsFormComponent, {
@@ -77,7 +82,7 @@ describe('AcmeDnsAuthenticatorListComponent', () => {
   });
 
   it('opens delete dialog when "Delete" button is pressed', async () => {
-    const deleteButton = await loader.getHarness(MatButtonHarness.with({ selector: '[aria-label="Delete"]' }));
+    const deleteButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'delete' }), 1, 2);
     await deleteButton.click();
 
     expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('acme.dns.authenticator.delete', [1]);
@@ -92,7 +97,6 @@ describe('AcmeDnsAuthenticatorListComponent', () => {
       ['dns-authenticator-3', 'tn-3', ''],
     ];
 
-    const table = await loader.getHarness(IxTable2Harness);
     const cells = await table.getCellTexts();
     expect(cells).toEqual(expectedRows);
   });

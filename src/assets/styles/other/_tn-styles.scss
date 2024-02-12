@@ -87,6 +87,8 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   .mat-mdc-menu-item .theme-picker-swatch .mat-icon:not([color]),
   .mat-mdc-menu-item-submenu-trigger::after {
     @include variable(color, --fg1, $fg1);
+    align-items: center;
+    display: flex;
   }
 
   .mat-toolbar,
@@ -128,7 +130,6 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     @include variable(background, --bg2, $bg2, !important);
     background-color: rgba(0, 0, 0, 0.75);
   }
-
 
   .mat-bg-accent,
   .mat-raised-button.mat-accent,
@@ -273,6 +274,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   .mat-calendar-table-header,
   .mat-calendar-table,
   .mat-calendar-body-cell-content,
+  .mat-calendar-table-header th,
   .mat-calendar-body-label {
     @include variable(color, --fg2, $fg2);
   }
@@ -281,6 +283,10 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   .mat-calendar-body-cell,
   .mat-calendar-body-cell-content {
     cursor: default;
+  }
+
+  .mat-calendar-body-today:not(.mat-calendar-body-selected):not(.mat-calendar-body-comparison-identical) {
+    border-color: var(--focus-brd);
   }
 
   .mat-raised-button.mat-primary[disabled],
@@ -337,12 +343,12 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   }
 
   .mat-mdc-select-panel .mat-mdc-option:hover,
-  .mat-mdc-option-active,
+  mat-option.mat-mdc-option-active,
   .mat-mdc-menu-content button.mat-mdc-menu-item:hover,
   .mat-mdc-menu-content button.mat-mdc-menu-item:hover .mat-icon:not(.theme-picker-swatch-icon),
   .mat-mdc-menu-content button.mat-mdc-menu-item:focus,
   .mat-mdc-menu-content button.mat-mdc-menu-item:focus .mat-icon:not(.theme-picker-swatch-icon) {
-    background-color: var(--hover-bg);
+    background-color: var(--hover-bg) !important;
   }
 
   // Treelists in storage/volumes
@@ -564,7 +570,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   // Style file trees to be highlighted with a theme color
   .node-content-wrapper:hover,
   .node-content-wrapper-focused {
-    background-color: var(--bg2);
+    background-color: var(--bg1);
     box-shadow: none;
   }
 
@@ -999,14 +1005,6 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     overflow: auto;
   }
 
-  ix-qr-dialog {
-    text-align: center;
-
-    #qr-dialog-buttons {
-      flex-direction: row-reverse;
-    }
-  }
-
   .chip-warn {
     background-color: var(--red) !important;
     color: white !important;
@@ -1189,7 +1187,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
 
   // focus state styles for mat-form-field
   .mat-mdc-form-field.mat-focused:focus-within {
-    outline: 1px solid var(--primary);
+    outline: 1.5px solid var(--primary);
   }
 
   .error-warning-icon {

@@ -46,34 +46,9 @@
 
   .cell {
     background: linear-gradient(90deg, var(--bg2) 0%, var(--bg2) calc(100% - 11px), transparent 100%);
-    margin: 0 0 0 -10px;
-    padding: 0 0 0 10px;
+    // margin: 0 0 0 -10px;
+    // padding: 0 0 0 10px;
     z-index: 1;
-  }
-
-  .cell-name {
-    align-items: stretch;
-    font-weight: bold;
-    margin: 0;
-    padding: 0;
-
-    .icon-container {
-      align-items: center;
-      background-color: var(--bg2);
-      display: flex;
-    }
-
-    .name {
-      align-items: center;
-      background: linear-gradient(90deg, var(--bg2) 0%, var(--bg2) calc(100% - 11px), transparent 100%);
-      display: inline-flex;
-      display: inline-block;
-      max-width: calc(100vw -  80vw);
-      overflow: hidden;
-      padding-right: 15px;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
   }
 
   .cell-used-content span {

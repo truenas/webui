@@ -1,4 +1,6 @@
+import { A11yModule } from '@angular/cdk/a11y';
 import {
+  ChangeDetectionStrategy,
   Component, ElementRef, Inject,
 } from '@angular/core';
 import { fakeAsync } from '@angular/core/testing';
@@ -9,6 +11,7 @@ import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-sl
 /** Simple component for testing IxSlideInComponent */
 @Component({
   template: '<h1>{{text}}</h1>',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 class TestClassComponent {
   text: string;
@@ -24,6 +27,9 @@ describe('IxSlideInComponent', () => {
 
   const createComponent = createComponentFactory({
     component: IxSlideInComponent,
+    imports: [
+      A11yModule,
+    ],
     declarations: [
       TestClassComponent,
     ],

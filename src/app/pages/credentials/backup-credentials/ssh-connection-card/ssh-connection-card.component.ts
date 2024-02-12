@@ -1,21 +1,20 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+  ChangeDetectionStrategy, Component, OnInit,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import {
-  BehaviorSubject, Observable, combineLatest, switchMap, of, filter,
-} from 'rxjs';
-import { EmptyType } from 'app/enums/empty-type.enum';
+import { switchMap, filter, tap } from 'rxjs';
+import { Role } from 'app/enums/role.enum';
 import { KeychainSshCredentials } from 'app/interfaces/keychain-credential.interface';
-import { ArrayDataProvider } from 'app/modules/ix-table2/array-data-provider';
+import { AsyncDataProvider } from 'app/modules/ix-table2/classes/async-data-provider/async-data-provider';
+import { actionsColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
 import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { SortDirection } from 'app/modules/ix-table2/enums/sort-direction.enum';
 import { createTable } from 'app/modules/ix-table2/utils';
 import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
 import { SshConnectionFormComponent } from 'app/pages/credentials/backup-credentials/ssh-connection-form/ssh-connection-form.component';
 import { DialogService } from 'app/services/dialog.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 import { KeychainCredentialService } from 'app/services/keychain-credential.service';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -27,7 +26,7 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SshConnectionCardComponent implements OnInit {
-  dataProvider = new ArrayDataProvider<KeychainSshCredentials>();
+  dataProvider: AsyncDataProvider<KeychainSshCredentials>;
   credentials: KeychainSshCredentials[] = [];
   columns = createTable<KeychainSshCredentials>([
     textColumn({
@@ -35,62 +34,46 @@ export class SshConnectionCardComponent implements OnInit {
       propertyName: 'name',
       sortable: true,
     }),
-    textColumn({
-      propertyName: 'id',
+    actionsColumn({
+      actions: [
+        {
+          iconName: 'edit',
+          tooltip: this.translate.instant('Edit'),
+          onClick: (row) => this.doEdit(row),
+        },
+        {
+          iconName: 'delete',
+          tooltip: this.translate.instant('Delete'),
+          requiredRoles: [Role.KeychainCredentialWrite],
+          onClick: (row) => this.doDelete(row),
+        },
+      ],
     }),
-  ]);
-
-  isLoading$ = new BehaviorSubject<boolean>(true);
-  isNoData$ = new BehaviorSubject<boolean>(false);
-  hasError$ = new BehaviorSubject<boolean>(false);
-  emptyType$: Observable<EmptyType> = combineLatest([this.isLoading$, this.isNoData$, this.hasError$]).pipe(
-    switchMap(([isLoading, isNoData, isError]) => {
-      if (isLoading) {
-        return of(EmptyType.Loading);
-      }
-      if (isError) {
-        return of(EmptyType.Errors);
-      }
-      if (isNoData) {
-        return of(EmptyType.NoPageData);
-      }
-      return of(EmptyType.NoSearchResults);
-    }),
-  );
+  ], {
+    rowTestId: (row) => 'ssh-con-' + row.name,
+  });
 
   constructor(
     private ws: WebSocketService,
-    private slideInService: IxSlideInService,
+    private chainedSlideInService: IxChainedSlideInService,
     private translate: TranslateService,
-    private cdr: ChangeDetectorRef,
     protected emptyService: EmptyService,
     private dialog: DialogService,
     private keychainCredentialService: KeychainCredentialService,
   ) {}
 
   ngOnInit(): void {
+    const credentials$ = this.keychainCredentialService.getSshConnections().pipe(
+      tap((credentials) => this.credentials = credentials),
+      untilDestroyed(this),
+    );
+    this.dataProvider = new AsyncDataProvider<KeychainSshCredentials>(credentials$);
+    this.setDefaultSort();
     this.getCredentials();
   }
 
   getCredentials(): void {
-    this.keychainCredentialService.getSshConnections()
-      .pipe(untilDestroyed(this))
-      .subscribe({
-        next: (credentials) => {
-          this.credentials = credentials;
-          this.dataProvider.setRows(this.credentials);
-          this.isLoading$.next(false);
-          this.isNoData$.next(!this.credentials.length);
-          this.setDefaultSort();
-          this.cdr.markForCheck();
-        },
-        error: () => {
-          this.dataProvider.setRows([]);
-          this.isLoading$.next(false);
-          this.hasError$.next(true);
-          this.cdr.markForCheck();
-        },
-      });
+    this.dataProvider.load();
   }
 
   setDefaultSort(): void {
@@ -102,20 +85,20 @@ export class SshConnectionCardComponent implements OnInit {
   }
 
   doAdd(): void {
-    const slideInRef = this.slideInService.open(SshConnectionFormComponent);
-    slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => this.getCredentials());
+    const closer$ = this.chainedSlideInService.pushComponent(SshConnectionFormComponent);
+    closer$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => this.getCredentials());
   }
 
   doEdit(credential: KeychainSshCredentials): void {
-    const slideInRef = this.slideInService.open(SshConnectionFormComponent, { data: credential });
-    slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => this.getCredentials());
+    const closer$ = this.chainedSlideInService.pushComponent(SshConnectionFormComponent, false, credential);
+    closer$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => this.getCredentials());
   }
 
   doDelete(credential: KeychainSshCredentials): void {
     this.dialog
       .confirm({
-        title: this.translate.instant('Delete Cloud Credential'),
-        message: this.translate.instant('Are you sure you want to delete the <b>{name}</b> Cloud Credential?', {
+        title: this.translate.instant('Delete SSH Connection'),
+        message: this.translate.instant('Are you sure you want to delete the <b>{name}</b> SSH Connection?', {
           name: credential.name,
         }),
         buttonText: this.translate.instant('Delete'),

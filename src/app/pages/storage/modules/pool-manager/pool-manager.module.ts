@@ -13,12 +13,12 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { DndModule } from 'ngx-drag-drop';
-import { NgxFilesizeModule } from 'ngx-filesize';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { CoreComponents } from 'app/core/core-components.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { CastModule } from 'app/modules/cast/cast.module';
 import { AppCommonModule } from 'app/modules/common/app-common.module';
+import { IxFileSizeModule } from 'app/modules/ix-file-size/ix-file-size.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { TreeModule } from 'app/modules/ix-tree/tree.module';
@@ -78,6 +78,7 @@ import { DataWizardStepComponent } from './components/pool-manager-wizard/steps/
     MatDialogModule,
     MatStepperModule,
     MatDividerModule,
+    IxFileSizeModule,
     TreeModule,
     IxIconModule,
     ReactiveFormsModule,
@@ -86,7 +87,6 @@ import { DataWizardStepComponent } from './components/pool-manager-wizard/steps/
     TranslateModule,
     CommonModule,
     TestIdModule,
-    NgxFilesizeModule,
     CastModule,
     AppLoaderModule,
     CoreComponents,

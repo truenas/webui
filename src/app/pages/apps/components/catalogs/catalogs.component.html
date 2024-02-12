@@ -2,7 +2,12 @@
   <ix-page-title-header>
     <ix-search-input (search)="onListFiltered($event)"></ix-search-input>
 
-    <button mat-button ixTest="refresh-all" (click)="onRefreshAll()">
+    <button
+      *ixRequiresRoles="requiredRoles"
+      mat-button
+      ixTest="refresh-all"
+      (click)="onRefreshAll()"
+    >
       {{ 'Refresh All' | translate }}
     </button>
 
@@ -14,8 +19,8 @@
 
 <div class="table-container">
   <ix-table2
-    [ix-table2-empty]="!dataProvider.rows.length"
-    [emptyConfig]="emptyService.defaultEmptyConfig(emptyType$ | async)"
+    [ix-table2-empty]="!(dataProvider.currentPageCount$ | async)"
+    [emptyConfig]="emptyService.defaultEmptyConfig(dataProvider.emptyType$ | async)"
   >
     <thead
       ix-table-head
@@ -26,6 +31,7 @@
       ix-table-body
       [columns]="columns"
       [dataProvider]="dataProvider"
+      [isLoading]="dataProvider.isLoading$ | async"
     >
       <ng-template let-catalog ix-table-details-row [dataProvider]="dataProvider">
         <div class="table-details-row-actions">
@@ -35,6 +41,7 @@
             (click)="showSummary(catalog)"
           >{{ 'Summary' | translate }}</button>
           <button
+            *ixRequiresRoles="requiredRoles"
             mat-button
             [ixTest]="[catalog.label, 'refresh']"
             (click)="refreshRow(catalog)"
@@ -44,12 +51,15 @@
             [ixTest]="[catalog.label, 'edit']"
             (click)="doEdit(catalog)"
           >{{ 'Edit' | translate }}</button>
-          <button
-            *ngIf="!catalog.builtin"
-            mat-button
-            [ixTest]="[catalog.label, 'delete']"
-            (click)="doDelete(catalog)"
-          >{{ 'Delete' | translate }}</button>
+          <ng-container *ngIf="!catalog.builtin">
+            <button
+              *ixRequiresRoles="requiredRoles"
+              mat-button
+              [ixTest]="[catalog.label, 'delete']"
+              (click)="doDelete(catalog)"
+            >{{ 'Delete' | translate }}
+            </button>
+          </ng-container>
         </div>
       </ng-template>
     </tbody>

@@ -1,6 +1,6 @@
 import { CdkDragDrop, CdkDragStart } from '@angular/cdk/drag-drop';
 import {
-  Component, ContentChild, EventEmitter, Input, OnChanges, OnInit, Output, TemplateRef,
+  ChangeDetectionStrategy, Component, ContentChild, EventEmitter, Input, OnChanges, OnInit, Output, TemplateRef,
 } from '@angular/core';
 import _ from 'lodash';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
@@ -19,6 +19,7 @@ const transfer = <T>(from: ListSelection<T>, to: ListSelection<T>): {
   selector: 'ix-dual-listbox',
   styleUrls: ['./dual-list.component.scss'],
   templateUrl: 'dual-list.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DualListboxComponent<T extends { id: string | number; name?: string }> implements OnInit, OnChanges {
   @Input() key: keyof T = 'id';
@@ -96,11 +97,13 @@ export class DualListboxComponent<T extends { id: string | number; name?: string
     const b = div.querySelector('.draggable:active');
     const chosenItems = div.querySelectorAll('.chosen');
     if (chosenItems.length > 0 && b) {
-      b.insertAdjacentHTML('afterbegin',
+      b.insertAdjacentHTML(
+        'afterbegin',
         `<div id="counter" style="background: red; color: white; border-radius: 50%;
         width:20px; height: 20px; text-align: center; font-weight: 700;
         position: relative; top: 5px; left: 5px;">
-        ${chosenItems.length.toString()}</div>`);
+        ${chosenItems.length.toString()}</div>`,
+      );
     }
     chosenItems.forEach((item) => {
       item.classList.add('cdk-drag-placeholder');

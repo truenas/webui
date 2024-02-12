@@ -1,6 +1,6 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
-export default {
+export const helptextInterfaces = {
   pending_changes_text: T('There are unapplied network interface changes that must be tested before being permanently saved. Test changes now?'),
 
   checkin_text: T('Test network interface changes for '),
@@ -34,6 +34,7 @@ export default {
   checkin_complete_title: T('Changes Saved'),
   checkin_complete_message: T('Network interface changes have been made permanent.'),
   checkin_button: T('Save'),
+  go_to_network: T('Go To Network Settings'),
 
   pending_changes_title: T('Pending Network Changes'),
   pending_changes_message: T('There are pending network interface changes. Review them now?'),

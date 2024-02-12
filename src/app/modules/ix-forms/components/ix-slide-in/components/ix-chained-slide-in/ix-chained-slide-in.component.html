@@ -1,0 +1,22 @@
+<div
+  id="ix-chained-slide-in-wrapper"
+  [class]="['ix-chained', 'ix-chained-slide-in-form']"
+  [class.open]="components.length"
+  [class.wide]="ixChainedSlideInService.isTopComponentWide$ | async"
+>
+  <div *ngFor="let component of components; trackBy trackByComponentId; index as i; let last = last;">
+    <ix-slide-in2
+      class="slide-in2-form"
+      [lastIndex]="components.length -1"
+      [id]="component.id"
+      [index]="i"
+      [componentInfo]="component"
+    ></ix-slide-in2>
+  </div>
+</div>
+
+<div
+  id="ix-chained-slide-in-background"
+  [class]="['ix-chained-slide-in-background', 'ix-background']"
+  [class.open]="components.length"
+></div>

@@ -6,8 +6,9 @@ import { of } from 'rxjs';
 import { DiskPowerLevel } from 'app/enums/disk-power-level.enum';
 import { DiskStandby } from 'app/enums/disk-standby.enum';
 import { JobState } from 'app/enums/job-state.enum';
+import { Role } from 'app/enums/role.enum';
 import { translateOptions } from 'app/helpers/translate.helper';
-import helptext from 'app/helptext/storage/disks/disks';
+import { helptextDisks } from 'app/helptext/storage/disks/disks';
 import { Disk, DiskUpdate } from 'app/interfaces/storage.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
@@ -30,10 +31,11 @@ export class DiskBulkEditComponent {
     togglesmart: [false],
     smartoptions: [''],
   });
-  readonly helptext = helptext;
-  readonly helptextBulkEdit = helptext.bulk_edit;
-  readonly hddstandbyOptions$ = of(helptext.disk_form_hddstandby_options);
+  readonly helptext = helptextDisks;
+  readonly helptextBulkEdit = helptextDisks.bulk_edit;
+  readonly hddstandbyOptions$ = of(helptextDisks.disk_form_hddstandby_options);
   readonly advpowermgmtOptions$ = of(translateOptions(this.translate, this.helptext.disk_form_advpowermgmt_options));
+  protected readonly requiresRoles = [Role.FullAdmin];
 
   constructor(
     private fb: FormBuilder,
@@ -109,8 +111,10 @@ export class DiskBulkEditComponent {
 
   onSubmit(): void {
     const req = this.prepareDataSubmit();
-    const successText = this.translate.instant('Successfully saved {n, plural, one {Disk} other {Disks}} settings.',
-      { n: req.length });
+    const successText = this.translate.instant(
+      'Successfully saved {n, plural, one {Disk} other {Disks}} settings.',
+      { n: req.length },
+    );
     this.isLoading = true;
     this.ws.job('core.bulk', ['disk.update', req])
       .pipe(untilDestroyed(this)).subscribe({
@@ -124,7 +128,7 @@ export class DiskBulkEditComponent {
             if (result.error !== null) {
               this.slideInRef.close(true);
               this.dialogService.error({
-                title: helptext.dialog_error,
+                title: helptextDisks.dialog_error,
                 message: result.error,
               });
               return false;
@@ -138,7 +142,7 @@ export class DiskBulkEditComponent {
             this.snackbarService.success(successText);
           }
         },
-        error: (error) => {
+        error: (error: unknown) => {
           this.isLoading = false;
           this.slideInRef.close(false);
           this.errorHandler.handleWsFormError(error, this.form);

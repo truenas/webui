@@ -1,14 +1,13 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+  ChangeDetectionStrategy, Component, OnInit,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import {
-  BehaviorSubject, Observable, combineLatest, switchMap, of, filter,
-} from 'rxjs';
-import { EmptyType } from 'app/enums/empty-type.enum';
-import { CloudsyncCredential } from 'app/interfaces/cloudsync-credential.interface';
-import { ArrayDataProvider } from 'app/modules/ix-table2/array-data-provider';
+import { switchMap, filter, tap } from 'rxjs';
+import { Role } from 'app/enums/role.enum';
+import { CloudSyncCredential } from 'app/interfaces/cloudsync-credential.interface';
+import { AsyncDataProvider } from 'app/modules/ix-table2/classes/async-data-provider/async-data-provider';
+import { actionsColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
 import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { SortDirection } from 'app/modules/ix-table2/enums/sort-direction.enum';
 import { createTable } from 'app/modules/ix-table2/utils';
@@ -16,7 +15,7 @@ import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
 import { CloudCredentialsFormComponent } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/cloud-credentials-form.component';
 import { CloudCredentialService } from 'app/services/cloud-credential.service';
 import { DialogService } from 'app/services/dialog.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
@@ -28,10 +27,10 @@ import { WebSocketService } from 'app/services/ws.service';
   providers: [CloudCredentialService],
 })
 export class CloudCredentialsCardComponent implements OnInit {
-  dataProvider = new ArrayDataProvider<CloudsyncCredential>();
+  dataProvider: AsyncDataProvider<CloudSyncCredential>;
   providers = new Map<string, string>();
-  credentials: CloudsyncCredential[] = [];
-  columns = createTable<CloudsyncCredential>([
+  credentials: CloudSyncCredential[] = [];
+  columns = createTable<CloudSyncCredential>([
     textColumn({
       title: this.translate.instant('Name'),
       propertyName: 'name',
@@ -40,66 +39,51 @@ export class CloudCredentialsCardComponent implements OnInit {
     textColumn({
       title: this.translate.instant('Provider'),
       propertyName: 'provider',
+      getValue: (row) => this.providers.get(row.provider) || row.provider,
       sortable: true,
     }),
-    textColumn({
-      propertyName: 'id',
+    actionsColumn({
+      actions: [
+        {
+          iconName: 'edit',
+          tooltip: this.translate.instant('Edit'),
+          onClick: (row) => this.doEdit(row),
+        },
+        {
+          iconName: 'delete',
+          requiredRoles: [Role.CloudSyncWrite],
+          tooltip: this.translate.instant('Delete'),
+          onClick: (row) => this.doDelete(row),
+        },
+      ],
     }),
-  ]);
-
-  isLoading$ = new BehaviorSubject<boolean>(true);
-  isNoData$ = new BehaviorSubject<boolean>(false);
-  hasError$ = new BehaviorSubject<boolean>(false);
-  emptyType$: Observable<EmptyType> = combineLatest([this.isLoading$, this.isNoData$, this.hasError$]).pipe(
-    switchMap(([isLoading, isNoData, isError]) => {
-      if (isLoading) {
-        return of(EmptyType.Loading);
-      }
-      if (isError) {
-        return of(EmptyType.Errors);
-      }
-      if (isNoData) {
-        return of(EmptyType.NoPageData);
-      }
-      return of(EmptyType.NoSearchResults);
-    }),
-  );
+  ], {
+    rowTestId: (row) => 'cloud-cred-' + row.name,
+  });
 
   constructor(
     private ws: WebSocketService,
-    private slideInService: IxSlideInService,
     private translate: TranslateService,
-    private cdr: ChangeDetectorRef,
     protected emptyService: EmptyService,
+    private chainedSlideinService: IxChainedSlideInService,
     private dialog: DialogService,
     private cloudCredentialService: CloudCredentialService,
   ) {}
 
   ngOnInit(): void {
-    this.getProviders();
+    const credentials$ = this.ws.call('cloudsync.credentials.query').pipe(
+      tap((credentials) => this.credentials = credentials),
+      untilDestroyed(this),
+    );
+    this.dataProvider = new AsyncDataProvider<CloudSyncCredential>(credentials$);
+    this.setDefaultSort();
     this.getCredentials();
+
+    this.getProviders();
   }
 
   getCredentials(): void {
-    this.ws
-      .call('cloudsync.credentials.query')
-      .pipe(untilDestroyed(this))
-      .subscribe({
-        next: (credentials) => {
-          this.credentials = credentials;
-          this.dataProvider.setRows(this.credentials);
-          this.isLoading$.next(false);
-          this.isNoData$.next(!this.credentials.length);
-          this.setDefaultSort();
-          this.cdr.markForCheck();
-        },
-        error: () => {
-          this.dataProvider.setRows([]);
-          this.isLoading$.next(false);
-          this.hasError$.next(true);
-          this.cdr.markForCheck();
-        },
-      });
+    this.dataProvider.load();
   }
 
   getProviders(): void {
@@ -117,20 +101,20 @@ export class CloudCredentialsCardComponent implements OnInit {
   }
 
   doAdd(): void {
-    const slideInRef = this.slideInService.open(CloudCredentialsFormComponent);
-    slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
+    const close$ = this.chainedSlideinService.pushComponent(CloudCredentialsFormComponent);
+    close$.pipe(filter((response) => !!response.response), untilDestroyed(this)).subscribe(() => {
       this.getCredentials();
     });
   }
 
-  doEdit(credential: CloudsyncCredential): void {
-    const slideInRef = this.slideInService.open(CloudCredentialsFormComponent, { data: credential });
-    slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
+  doEdit(credential: CloudSyncCredential): void {
+    const close$ = this.chainedSlideinService.pushComponent(CloudCredentialsFormComponent, false, credential);
+    close$.pipe(filter((response) => !!response.response), untilDestroyed(this)).subscribe(() => {
       this.getCredentials();
     });
   }
 
-  doDelete(credential: CloudsyncCredential): void {
+  doDelete(credential: CloudSyncCredential): void {
     this.dialog
       .confirm({
         title: this.translate.instant('Delete Cloud Credential'),

@@ -1,0 +1,11 @@
+<button
+  *ngIf="hasPendingNetworkChanges$ | async"
+  mat-icon-button
+  id="network"
+  class="topbar-button-right"
+  ixTest="has-pending-network-changes"
+  [matTooltip]="tooltips.pending_network_changes | translate"
+  (click)="showNetworkChangesDialog()"
+>
+  <ix-icon class="movement" name="device_hub"></ix-icon>
+</button>

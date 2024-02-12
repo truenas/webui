@@ -1,19 +1,20 @@
 import {
-  Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, Inject,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
 } from '@angular/core';
-import {
-  AbstractControl, FormBuilder, Validators,
-} from '@angular/forms';
-import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
+import { AbstractControl, FormBuilder, Validators } from '@angular/forms';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { format } from 'date-fns-tz';
 import {
-  Observable, combineLatest, of, merge,
+  combineLatest, merge, Observable, of,
 } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { map, switchMap } from 'rxjs/operators';
+import { Role } from 'app/enums/role.enum';
 import { singleArrayToOptions } from 'app/helpers/operators/options.operators';
-import helptext from 'app/helptext/storage/snapshots/snapshots';
+import { helptextSnapshots } from 'app/helptext/storage/snapshots/snapshots';
+import { Dataset } from 'app/interfaces/dataset.interface';
 import { Option } from 'app/interfaces/option.interface';
+import { QueryFilters } from 'app/interfaces/query-api.interface';
 import { CreateZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
@@ -21,8 +22,11 @@ import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-erro
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { atLeastOne } from 'app/modules/ix-forms/validators/at-least-one-validation';
 import { requiredEmpty } from 'app/modules/ix-forms/validators/required-empty-validation';
-import { snapshotExcludeBootQueryFilter } from 'app/pages/datasets/modules/snapshots/constants/snapshot-exclude-boot.constant';
+import {
+  snapshotExcludeBootQueryFilter,
+} from 'app/pages/datasets/modules/snapshots/constants/snapshot-exclude-boot.constant';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
+import { AuthService } from 'app/services/auth/auth.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
@@ -35,7 +39,7 @@ export class SnapshotAddFormComponent implements OnInit {
   form = this.fb.group({
     dataset: ['', Validators.required],
     name: [this.getDefaultSnapshotName(), [this.validatorsService.withMessage(
-      atLeastOne('naming_schema', [helptext.snapshot_add_name_placeholder, helptext.snapshot_add_naming_schema_placeholder]),
+      atLeastOne('naming_schema', [helptextSnapshots.snapshot_add_name_placeholder, helptextSnapshots.snapshot_add_naming_schema_placeholder]),
       this.translate.instant('Name or Naming Schema must be provided.'),
     ), this.validatorsService.validateOnCondition(
       (control: AbstractControl) => control.value && control.parent?.get('naming_schema').value,
@@ -53,13 +57,17 @@ export class SnapshotAddFormComponent implements OnInit {
   namingSchemaOptions$: Observable<Option[]>;
   hasVmsInDataset = false;
 
-  readonly helptext = helptext;
+  protected readonly Role = Role;
+
+  readonly helptext = helptextSnapshots;
+  readonly requiredRoles = [Role.SnapshotWrite];
 
   constructor(
     private fb: FormBuilder,
     private cdr: ChangeDetectorRef,
     private ws: WebSocketService,
     private translate: TranslateService,
+    private authService: AuthService,
     private errorHandler: FormErrorHandlerService,
     private validatorsService: IxValidatorsService,
     private datasetStore: DatasetTreeStore,
@@ -82,7 +90,7 @@ export class SnapshotAddFormComponent implements OnInit {
         this.checkForVmsInDataset();
         this.cdr.markForCheck();
       },
-      error: (error) => {
+      error: (error: unknown) => {
         this.errorHandler.handleWsFormError(error, this.form);
         this.isFormLoading = false;
         this.cdr.markForCheck();
@@ -129,7 +137,7 @@ export class SnapshotAddFormComponent implements OnInit {
         this.datasetStore.datasetUpdated();
         this.cdr.markForCheck();
       },
-      error: (error) => {
+      error: (error: unknown) => {
         this.isFormLoading = false;
         this.errorHandler.handleWsFormError(error, this.form);
         this.cdr.markForCheck();
@@ -144,7 +152,7 @@ export class SnapshotAddFormComponent implements OnInit {
 
   private getDatasetOptions(): Observable<Option[]> {
     return this.ws.call('pool.dataset.query', [
-      snapshotExcludeBootQueryFilter,
+      snapshotExcludeBootQueryFilter as QueryFilters<Dataset>,
       { extra: { flat: true } },
     ]).pipe(
       map((datasets) => datasets.map((dataset) => ({ label: dataset.name, value: dataset.name }))),
@@ -152,8 +160,16 @@ export class SnapshotAddFormComponent implements OnInit {
   }
 
   private getNamingSchemaOptions(): Observable<Option[]> {
-    return this.ws.call('replication.list_naming_schemas').pipe(
-      singleArrayToOptions(),
+    return this.authService.hasRole([Role.ReplicationTaskWrite, Role.ReplicationTaskWritePull]).pipe(
+      switchMap((hasAccess) => {
+        if (!hasAccess) {
+          return of([]);
+        }
+
+        return this.ws.call('replication.list_naming_schemas').pipe(
+          singleArrayToOptions(),
+        );
+      }),
     );
   }
 
@@ -167,7 +183,7 @@ export class SnapshotAddFormComponent implements OnInit {
           this.isFormLoading = false;
           this.cdr.markForCheck();
         },
-        error: (error) => {
+        error: (error: unknown) => {
           this.errorHandler.handleWsFormError(error, this.form);
           this.isFormLoading = false;
           this.cdr.markForCheck();

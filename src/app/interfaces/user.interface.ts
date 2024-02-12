@@ -1,3 +1,5 @@
+import { Role } from 'app/enums/role.enum';
+
 export interface User {
   id: number;
   uid: number;
@@ -22,6 +24,7 @@ export interface User {
   twofactor_auth_configured: boolean;
   local: boolean;
   id_type_both: boolean;
+  roles: Role[];
 }
 
 export interface UserGroup {
@@ -31,7 +34,7 @@ export interface UserGroup {
   bsdgrp_builtin: boolean;
   bsdgrp_sudo: boolean;
   bsdgrp_sudo_nopasswd: boolean;
-  bsdgrp_sudo_commands: { [property: string]: unknown }[];
+  bsdgrp_sudo_commands: Record<string, unknown>[];
   bsdgrp_smb: boolean;
 }
 
@@ -60,4 +63,10 @@ export interface UserUpdate {
   groups?: number[];
   group_create?: boolean;
   home_create?: boolean;
+}
+
+export interface SetPasswordParams {
+  username: string;
+  old_password: string;
+  new_password: string;
 }

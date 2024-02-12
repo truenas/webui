@@ -2,10 +2,13 @@ import { Location } from '@angular/common';
 import { Injectable, Type } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { merge, Observable, Subject } from 'rxjs';
-import { filter } from 'rxjs/operators';
+import {
+  merge, Observable, Subject, timer,
+} from 'rxjs';
+import { filter, take } from 'rxjs/operators';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { IxSlideInComponent } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.component';
+import { FocusService } from 'app/services/focus.service';
 
 @UntilDestroy()
 @Injectable({
@@ -23,6 +26,7 @@ export class IxSlideInService {
   constructor(
     private location: Location,
     private router: Router,
+    private focusService: FocusService,
   ) {
     this.closeOnNavigation();
   }
@@ -31,6 +35,7 @@ export class IxSlideInService {
     return this.slideInComponent?.isSlideInOpen;
   }
 
+  // TODO: Rework via cdk overlays or something else that would make it easier to use in tests.
   setSlideComponent(slideComponent: IxSlideInComponent): void {
     this.slideInComponent = slideComponent;
   }
@@ -47,6 +52,10 @@ export class IxSlideInService {
       }
       this.onClose$.next(null);
     });
+
+    this.focusService.captureCurrentFocus();
+    this.focusOnTheCloseButton();
+
     return slideInRef;
   }
 
@@ -69,6 +78,8 @@ export class IxSlideInService {
     if (this.isSlideInOpen) {
       this.slideInComponent.closeSlideIn();
     }
+
+    this.focusService.restoreFocus();
   }
 
   private closeOnNavigation(): void {
@@ -84,5 +95,9 @@ export class IxSlideInService {
       .subscribe(() => {
         this.closeAll();
       });
+  }
+
+  private focusOnTheCloseButton(): void {
+    timer(100).pipe(take(1)).subscribe(() => this.focusService.focusElementById('ix-close-icon'));
   }
 }

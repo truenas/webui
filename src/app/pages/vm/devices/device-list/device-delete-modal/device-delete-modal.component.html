@@ -6,10 +6,10 @@
     class="device-delete-modal-content"
   >
     <p
-      [innerHTML]="'Delete <b>{deviceType} {device}</b>' | translate: { device: data.row.id, deviceType: data.row.dtype }"
+      [innerHTML]="'Delete <b>{deviceType} {device}</b>' | translate: { device: device.id, deviceType: device.dtype }"
     ></p>
 
-    <ng-container *ngIf="data.row.dtype === VmDeviceType.Disk">
+    <ng-container *ngIf="device.dtype === VmDeviceType.Disk">
       <ix-checkbox
         formControlName="zvol"
         [label]="'Delete zvol device' | translate"
@@ -23,7 +23,7 @@
     </ng-container>
 
     <ix-checkbox
-      *ngIf="data.row.dtype === VmDeviceType.Raw"
+      *ngIf="device.dtype === VmDeviceType.Raw"
       formControlName="raw_file"
       [label]="'Delete raw file' | translate"
     ></ix-checkbox>

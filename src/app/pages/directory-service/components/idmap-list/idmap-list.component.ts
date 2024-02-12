@@ -1,14 +1,17 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnInit,
+} from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import _ from 'lodash';
-import { BehaviorSubject, Observable, combineLatest, filter, map, of, switchMap } from 'rxjs';
+import {
+  filter, map, of, switchMap, tap,
+} from 'rxjs';
 import { DirectoryServiceState } from 'app/enums/directory-service-state.enum';
-import { EmptyType } from 'app/enums/empty-type.enum';
-import { IdmapName } from 'app/enums/idmap.enum';
-import helptext from 'app/helptext/directory-service/idmap';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
-import { ArrayDataProvider } from 'app/modules/ix-table2/array-data-provider';
+import { IdmapBackend, IdmapName } from 'app/enums/idmap.enum';
+import { Role } from 'app/enums/role.enum';
+import { helptextIdmap } from 'app/helptext/directory-service/idmap';
+import { AsyncDataProvider } from 'app/modules/ix-table2/classes/async-data-provider/async-data-provider';
 import { actionsColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
 import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { SortDirection } from 'app/modules/ix-table2/enums/sort-direction.enum';
@@ -31,13 +34,11 @@ import { WebSocketService } from 'app/services/ws.service';
   styleUrls: ['./idmap-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export default class IdmapListComponent implements OnInit {
+export class IdmapListComponent implements OnInit {
   @Input() paginator = true;
   @Input() toolbar = false;
-  requiredIdmapDomains = requiredIdmapDomains as string[];
-  IdmapName = IdmapName;
   filterString = '';
-  dataProvider = new ArrayDataProvider<IdmapRow>();
+  dataProvider: AsyncDataProvider<IdmapRow>;
   idmaps: IdmapRow[] = [];
   columns = createTable<IdmapRow>([
     textColumn({
@@ -78,16 +79,16 @@ export default class IdmapListComponent implements OnInit {
           onClick: (row) => {
             const slideInRef = this.slideInService.open(IdmapFormComponent, { data: row });
             slideInRef.slideInClosed$.pipe(
+              filter(Boolean),
               untilDestroyed(this),
             ).subscribe(() => this.getIdmaps());
           },
         },
         {
           iconName: 'delete',
-          hidden: (row) => {
-            return of(requiredIdmapDomains.includes(row.name as IdmapName));
-          },
+          hidden: (row) => of(requiredIdmapDomains.includes(row.name as IdmapName)),
           tooltip: this.translateService.instant('Delete'),
+          requiredRoles: [Role.DirectoryServiceWrite],
           onClick: (row) => {
             this.dialogService.confirm({
               title: this.translateService.instant('Confirm'),
@@ -98,8 +99,8 @@ export default class IdmapListComponent implements OnInit {
               switchMap(() => this.ws.call('idmap.delete', [row.id])),
               untilDestroyed(this),
             ).subscribe({
-              error: (error: WebsocketError) => {
-                this.dialogService.error(this.errorHandler.parseWsError(error));
+              error: (error: unknown) => {
+                this.dialogService.error(this.errorHandler.parseError(error));
               },
               complete: () => {
                 this.getIdmaps();
@@ -109,26 +110,9 @@ export default class IdmapListComponent implements OnInit {
         },
       ],
     }),
-  ]);
-
-
-  isLoading$ = new BehaviorSubject<boolean>(true);
-  isNoData$ = new BehaviorSubject<boolean>(false);
-  hasError$ = new BehaviorSubject<boolean>(false);
-  emptyType$: Observable<EmptyType> = combineLatest([this.isLoading$, this.isNoData$, this.hasError$]).pipe(
-    switchMap(([isLoading, isNoData, isError]) => {
-      if (isLoading) {
-        return of(EmptyType.Loading);
-      }
-      if (isError) {
-        return of(EmptyType.Errors);
-      }
-      if (isNoData) {
-        return of(EmptyType.NoPageData);
-      }
-      return of(EmptyType.NoSearchResults);
-    }),
-  );
+  ], {
+    rowTestId: (row) => 'idmap-' + row.name,
+  });
 
   constructor(
     private translateService: TranslateService,
@@ -142,19 +126,15 @@ export default class IdmapListComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.getIdmaps();
-  }
-
-  getIdmaps(): void {
-    this.ws.call('directoryservices.get_state').pipe(
+    const idmapsRows$ = this.ws.call('directoryservices.get_state').pipe(
       switchMap((state) => {
         if (state.ldap !== DirectoryServiceState.Disabled) {
           return this.ws.call('idmap.query', [[['name', '=', IdmapName.DsTypeLdap]]]);
-        } else if (state.activedirectory !== DirectoryServiceState.Disabled) {
-          return this.ws.call('idmap.query', [[['name', '!=', IdmapName.DsTypeLdap]]]);
-        } else {
-          return this.ws.call('idmap.query');
         }
+        if (state.activedirectory !== DirectoryServiceState.Disabled) {
+          return this.ws.call('idmap.query', [[['name', '!=', IdmapName.DsTypeLdap]]]);
+        }
+        return this.ws.call('idmap.query');
       }),
       map((idmaps) => {
         const transformed = [...idmaps] as IdmapRow[];
@@ -162,29 +142,30 @@ export default class IdmapListComponent implements OnInit {
           if (row.certificate) {
             row.cert_name = row.certificate.cert_name;
           }
-          if (row.name === IdmapName.DsTypeActiveDirectory && row.idmap_backend === 'AUTORID') {
-            const obj = transformed.find((idmapRow) => idmapRow.name === IdmapName.DsTypeDefaultDomain);
+          if (row.name === IdmapName.DsTypeActiveDirectory as string && row.idmap_backend === IdmapBackend.Autorid) {
+            const obj = transformed.find((idmapRow) => {
+              return idmapRow.name === IdmapName.DsTypeDefaultDomain as string;
+            });
             obj.disableEdit = true;
           }
           row.label = row.name;
-          const index = helptext.idmap.name.options.findIndex((option) => option.value === row.name);
+          const index = helptextIdmap.idmap.name.options.findIndex((option) => option.value === row.name);
           if (index >= 0) {
-            row.label = helptext.idmap.name.options[index].label;
+            row.label = helptextIdmap.idmap.name.options[index].label;
           }
         });
         return transformed;
       }),
+      tap((idmapsRows) => this.idmaps = idmapsRows),
       untilDestroyed(this),
-    ).subscribe({
-      next: (idmapsRows) => {
-        this.idmaps = idmapsRows;
-        this.dataProvider.setRows(idmapsRows);
-        this.isLoading$.next(false);
-        this.isNoData$.next(!idmapsRows.length);
-        this.setDefaultSort();
-        this.cdr.markForCheck();
-      },
-    });
+    );
+    this.dataProvider = new AsyncDataProvider<IdmapRow>(idmapsRows$);
+    this.setDefaultSort();
+    this.getIdmaps();
+  }
+
+  getIdmaps(): void {
+    this.dataProvider.load();
   }
 
   setDefaultSort(): void {
@@ -200,16 +181,17 @@ export default class IdmapListComponent implements OnInit {
       if (adConfig.enable) {
         const slideInRef = this.slideInService.open(IdmapFormComponent);
         slideInRef.slideInClosed$.pipe(
+          filter(Boolean),
           untilDestroyed(this),
         ).subscribe(() => {
           this.getIdmaps();
         });
       } else {
         this.dialogService.confirm({
-          title: helptext.idmap.enable_ad_dialog.title,
-          message: helptext.idmap.enable_ad_dialog.message,
+          title: helptextIdmap.idmap.enable_ad_dialog.title,
+          message: helptextIdmap.idmap.enable_ad_dialog.message,
           hideCheckbox: true,
-          buttonText: helptext.idmap.enable_ad_dialog.button,
+          buttonText: helptextIdmap.idmap.enable_ad_dialog.button,
         }).pipe(
           filter(Boolean),
           untilDestroyed(this),

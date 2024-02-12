@@ -1,10 +1,13 @@
 <ng-container *ngFor="let row of dataProvider.currentPage$ | async">
   <tr
     class="row"
+    tabindex="0"
     [ixTest]="getTestAttr(row)"
-    [ngStyle]="{ cursor: detailsTemplate ? 'pointer' : 'auto' }"
-    [hidden]="isLoading"
+    [ngStyle]="{ cursor: detailsTemplate ? 'pointer' : null }"
+    [class.expanded]="isExpanded(row)"
+    [class.hidden]="isLoading"
     (click)="onToggle(row)"
+    (keydown.enter)="onToggle(row)"
   >
     <td
       *ngFor="let column of displayedColumns; index as idx"
@@ -35,14 +38,19 @@
       </button>
     </td>
   </tr>
-  <tr *ngIf="detailsTemplate && isExpanded(row)" ixTest="details" class="details" [hidden]="isLoading">
+  <tr
+    *ngIf="detailsTemplate && isExpanded(row)"
+    ixTest="details"
+    class="details"
+    [class.hidden]="isLoading"
+  >
     <td [attr.colspan]="displayedColumns.length + 1">
       <ng-container *ngTemplateOutlet="detailsTemplate; context: { $implicit: row }"></ng-container>
     </td>
   </tr>
 </ng-container>
 
-<td *ngIf="isLoading" [attr.colspan]="displayedColumns.length">
+<td *ngIf="isLoading && !dataProvider.totalRows" [attr.colspan]="displayedColumns.length">
   <div class="spinner-container">
     <mat-spinner [diameter]="40"></mat-spinner>
   </div>

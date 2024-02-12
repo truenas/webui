@@ -7,6 +7,12 @@
   width: 100%;
 }
 
+.hide-xs {
+  @media(max-width: $breakpoint-xs) {
+    display: none;
+  }
+}
+
 ::ng-deep {
   @media(max-width: $breakpoint-xs) {
     ix-page-title-header {

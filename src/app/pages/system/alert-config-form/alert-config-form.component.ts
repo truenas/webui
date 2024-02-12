@@ -4,14 +4,14 @@ import {
 import { ControlsOf, FormBuilder, FormGroup } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { of } from 'rxjs';
+import { forkJoin, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { AlertLevel } from 'app/enums/alert-level.enum';
 import { AlertPolicy } from 'app/enums/alert-policy.enum';
+import { Role } from 'app/enums/role.enum';
 import { trackById } from 'app/helpers/track-by.utils';
-import helptext from 'app/helptext/system/alert-settings';
+import { helptextAlertSettings } from 'app/helptext/system/alert-settings';
 import { AlertCategory, AlertClassesUpdate, AlertClassSettings } from 'app/interfaces/alert.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
@@ -29,7 +29,7 @@ export class AlertConfigFormComponent implements OnInit {
   selectedCategory: AlertCategory;
   form = this.formBuilder.group({});
   isFormLoading = false;
-  readonly helptext = helptext;
+  readonly helptext = helptextAlertSettings;
 
   readonly trackById = trackById;
 
@@ -49,6 +49,8 @@ export class AlertConfigFormComponent implements OnInit {
     }),
   );
 
+  protected readonly Role = Role;
+
   constructor(
     private ws: WebSocketService,
     public dialogService: DialogService,
@@ -62,49 +64,42 @@ export class AlertConfigFormComponent implements OnInit {
   ngOnInit(): void {
     this.isFormLoading = true;
 
-    this.ws.call('alert.list_categories').pipe(untilDestroyed(this)).subscribe({
-      next: (categories) => {
-        this.categories = categories;
+    forkJoin([
+      this.ws.call('alert.list_categories'),
+      this.ws.call('alertclasses.config'),
+    ])
+      .pipe(untilDestroyed(this))
+      .subscribe({
+        next: ([categories, alertConfig]) => {
+          this.categories = categories;
 
-        if (categories.length) {
-          this.selectedCategory = categories[0];
-        }
+          if (categories.length) {
+            this.selectedCategory = categories[0];
+          }
 
-        categories.forEach((category) => {
-          category.classes.forEach((cls) => {
-            this.form.addControl(cls.id, this.formBuilder.group<AlertClassSettings>({
-              level: cls.level,
-              policy: AlertPolicy.Immediately,
-            }));
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-            this.form.controls[cls.id].controls.level.defaultValue = cls.level;
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-            this.form.controls[cls.id].controls.policy.defaultValue = AlertPolicy.Immediately;
+          categories.forEach((category) => {
+            category.classes.forEach((cls) => {
+              this.form.addControl(cls.id, this.formBuilder.group<AlertClassSettings>({
+                level: cls.level,
+                policy: AlertPolicy.Immediately,
+              }));
+              // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+              this.form.controls[cls.id].controls.level.defaultValue = cls.level;
+              // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+              this.form.controls[cls.id].controls.policy.defaultValue = AlertPolicy.Immediately;
+            });
           });
-        });
-        this.cdr.markForCheck();
 
-        this.ws.call('alertclasses.config').pipe(untilDestroyed(this)).subscribe(
-          {
-            next: (alertConfig) => {
-              this.form.patchValue(alertConfig.classes);
-              this.isFormLoading = false;
-              this.cdr.markForCheck();
-            },
-            error: (error: WebsocketError) => {
-              this.isFormLoading = false;
-              this.cdr.markForCheck();
-              this.dialogService.error(this.errorHandler.parseWsError(error));
-            },
-          },
-        );
-      },
-      error: (error: WebsocketError) => {
-        this.isFormLoading = false;
-        this.cdr.markForCheck();
-        this.dialogService.error(this.errorHandler.parseWsError(error));
-      },
-    });
+          this.form.patchValue(alertConfig.classes);
+          this.isFormLoading = false;
+          this.cdr.markForCheck();
+        },
+        error: (error: unknown) => {
+          this.isFormLoading = false;
+          this.cdr.markForCheck();
+          this.dialogService.error(this.errorHandler.parseError(error));
+        },
+      });
   }
 
   onCategoryChanged(category: AlertCategory): void {

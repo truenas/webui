@@ -1,5 +1,6 @@
 import {
   AfterViewInit,
+  ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
   ElementRef,
@@ -12,7 +13,6 @@ import {
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import filesize from 'filesize';
 import { styler, tween } from 'popmotion';
 import { PoolScanFunction } from 'app/enums/pool-scan-function.enum';
 import { PoolScanState } from 'app/enums/pool-scan-state.enum';
@@ -20,6 +20,7 @@ import { PoolStatus } from 'app/enums/pool-status.enum';
 import { VdevType, TopologyItemType } from 'app/enums/v-dev-type.enum';
 import { TopologyItemStatus } from 'app/enums/vdev-status.enum';
 import { countDisksTotal } from 'app/helpers/count-disks-total.helper';
+import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
 import { Pool } from 'app/interfaces/pool.interface';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { Disk, TopologyDisk, TopologyItem } from 'app/interfaces/storage.interface';
@@ -55,6 +56,7 @@ enum PoolHealthLevel {
     '../widget/widget.component.scss',
     './widget-pool.component.scss',
   ],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class WidgetPoolComponent extends WidgetComponent implements OnInit, AfterViewInit, OnChanges {
   @Input() poolState: Pool;
@@ -68,7 +70,7 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
   @ViewChild('diskDetails', { static: false }) diskDetails: TemplateRef<void>;
   @ViewChild('empty', { static: false }) empty: TemplateRef<void>;
 
-  templates: { [template: string]: TemplateRef<void> };
+  templates: Record<string, TemplateRef<void>>;
   path: Slide[] = [];
   title: string;
   displayValue: string;
@@ -209,7 +211,7 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
     if (Number.isNaN(this.volumeData.used)) {
       usedValue = this.volumeData.used;
     } else {
-      usedValue = filesize(this.volumeData.used, { exponent: 3 });
+      usedValue = buildNormalizedFileSize(this.volumeData.used);
     }
 
     if (usedValue === 'Locked') {
@@ -218,7 +220,7 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
       return;
     }
 
-    this.displayValue = filesize(this.volumeData.avail, { standard: 'iec' });
+    this.displayValue = buildNormalizedFileSize(this.volumeData.avail);
     if (this.displayValue.endsWith(' B')) {
       this.diskSizeLabel = this.displayValue.slice(-1);
       this.diskSize = new Intl.NumberFormat().format(parseFloat(this.displayValue.slice(0, -2)));
@@ -233,7 +235,7 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
     this.checkVolumeHealth(this.poolState);
   }
 
-  getDiskDetails(key: string, value: string): void {
+  getDiskDetails(key: keyof Disk, value: string): void {
     this.ws.call('disk.query', [[[key, '=', value]]]).pipe(untilDestroyed(this)).subscribe((disks) => {
       const currentPath = this.path[this.currentSlideIndex];
       const currentName = (currentPath?.dataSource as TopologyDisk)?.disk || 'unknown';
@@ -249,6 +251,7 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
         delete disks[0].zfs_guid;
         this.currentDiskDetails = disks[0];
       }
+      this.cdr.markForCheck();
     });
   }
 

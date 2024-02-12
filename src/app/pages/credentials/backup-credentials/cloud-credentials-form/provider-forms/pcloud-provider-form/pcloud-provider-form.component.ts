@@ -49,7 +49,7 @@ export class PcloudProviderFormComponent extends BaseProviderFormComponent imple
 
   getSubmitAttributes(): OauthProviderComponent['form']['value'] & this['form']['value'] {
     return {
-      ...this.oauthComponent.form.value,
+      ...this.oauthComponent?.form?.value,
       ...this.form.value,
     };
   }

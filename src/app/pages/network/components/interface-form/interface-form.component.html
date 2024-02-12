@@ -149,6 +149,7 @@
           formArrayName="aliases"
           [empty]="form.controls.aliases.controls.length === 0"
           [label]="'Aliases' | translate"
+          [formArray]="form.get('aliases')"
           (add)="addAlias()"
         >
           <ix-list-item
@@ -189,6 +190,7 @@
 
       <ix-form-actions>
         <button
+          *ixRequiresRoles="[Role.NetworkInterfaceWrite]"
           mat-button
           type="submit"
           color="primary"

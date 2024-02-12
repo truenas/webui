@@ -1,7 +1,9 @@
 <div
+  cdkTrapFocus
   [class]="['ix-' + id, 'ix-slide-in-form']"
   [class.open]="isSlideInOpen"
   [class.wide]="wide"
+  [cdkTrapFocusAutoCapture]="true"
 >
   <div class="ix-slide-in-body">
     <ng-template #body></ng-template>

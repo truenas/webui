@@ -18,11 +18,12 @@ describe('IxCellSizeComponent', () => {
       props: {
         propertyName: 'numberField',
         row: { numberField: 5 * 1024 * 1024 * 1024 },
+        rowTestId: () => '',
       } as Partial<IxCellSizeComponent<TestTableData>>,
     });
   });
 
-  it('shows filesize in template', () => {
+  it('shows file size in template', () => {
     expect(spectator.element.textContent.trim()).toBe('5 GiB');
   });
 });

@@ -1,0 +1,25 @@
+:host {
+  display: block;
+  min-width: 330px;
+}
+
+h1 {
+  margin-bottom: 1px !important;
+}
+
+#confirm-msg {
+  padding-top: 20px;
+}
+
+div.message-content {
+  max-height: 300px;
+  overflow-x: unset;
+  overflow-y: auto;
+  word-wrap: break-word;
+}
+
+b {
+  color: var(--primary);
+  cursor: pointer;
+  text-decoration: underline;
+}

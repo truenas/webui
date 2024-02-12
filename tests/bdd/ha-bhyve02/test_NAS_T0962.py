@@ -1,6 +1,7 @@
 # coding=utf-8
 """SCALE High Availability (tn-bhyve06) feature tests."""
 
+import os
 import pytest
 import reusableSeleniumCode as rsc
 import time
@@ -9,7 +10,8 @@ from function import (
     wait_on_element,
     is_element_present,
     wait_on_element_disappear,
-    ssh_cmd
+    ssh_cmd,
+    service_Start
 )
 from pytest_bdd import (
     given,
@@ -31,6 +33,7 @@ def test_verify_active_directory_works_after_failover_with_new_system_dataset(dr
 def the_browser_is_open_navigate_to_nas_url(driver, nas_url, request):
     """the browser is open, navigate to "{nas_url}"."""
     depends(request, ["System_Dataset", 'Setup_SSH'], scope='session')
+    os.environ["nas_ip"] = nas_url
     global host
     host = nas_url
 
@@ -44,7 +47,10 @@ def if_the_login_page_appears_enter_root_and_testing(driver, user, password):
     """if the login page appears, enter "root" and "testing"."""
     global root_password
     root_password = password
+    os.environ["nas_password"] = password
     rsc.Login_If_Not_On_Dashboard(driver, user, password)
+    # TODO: remove when https://ixsystems.atlassian.net/browse/NAS-127071 is fixed.
+    service_Start(host, (user, password), 'cifs')
 
 
 @then('on the Dashboard, click Network on the left sidebar')
@@ -83,8 +89,10 @@ def on_the_network_global_configuration_page_change_the_first_nameserver_to_name
 @then('remove nameserver 2 and nameserver 3 IPs')
 def remove_nameserver_2_and_nameserver_3_ips(driver):
     """remove nameserver 2 and nameserver 3 IPs."""
-    driver.find_element_by_xpath(xpaths.global_Configuration.nameserver2_Delete).click()
-    driver.find_element_by_xpath(xpaths.global_Configuration.nameserver3_Delete).click()
+    if is_element_present(driver, xpaths.global_Configuration.nameserver2_Delete):
+        driver.find_element_by_xpath(xpaths.global_Configuration.nameserver2_Delete).click()
+    if is_element_present(driver, xpaths.global_Configuration.nameserver3_Delete):
+        driver.find_element_by_xpath(xpaths.global_Configuration.nameserver3_Delete).click()
 
 
 @then('click Save, the progress bar should appear while settings are being applied')
@@ -130,6 +138,8 @@ def on_the_active_cirectory_page_input_the_domain_name_ad_domain(driver, ad_doma
 @then(parsers.parse('input the Account name "{ad_user}", the Password "{ad_password}"'))
 def input_the_account_name_ad_user_the_password_ap_password(driver, ad_user, ad_password):
     """input the Account name "ad_user", the Password "ad_password"."""
+    os.environ["ad_user"] = ad_user
+    os.environ["ad_password"] = ad_password
     driver.find_element_by_xpath(xpaths.active_Directory.account_Input).clear()
     driver.find_element_by_xpath(xpaths.active_Directory.account_Input).send_keys(ad_user)
     driver.find_element_by_xpath(xpaths.active_Directory.password_Input).clear()
@@ -269,6 +279,7 @@ def on_the_add_dataset_slide_input_name_my_ad_dataset_and_share_type_smb(driver,
     driver.find_element_by_xpath(xpaths.add_Dataset.share_Type_Select).click()
     assert wait_on_element(driver, 5, xpaths.add_Dataset.share_Type_SMB_Option, 'clickable')
     driver.find_element_by_xpath(xpaths.add_Dataset.share_Type_SMB_Option).click()
+    rsc.Click_On_Element(driver, xpaths.add_Dataset.create_Smb_Checkbox)
 
 
 @then(parsers.parse('click Save the "{dataset_name}" data should be created'))

@@ -3,7 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { filter } from 'rxjs/operators';
-import helptext from 'app/helptext/topbar';
+import { helptextTopbar } from 'app/helptext/topbar';
 import { JobsPanelComponent } from 'app/modules/jobs/components/jobs-panel/jobs-panel.component';
 import { jobPanelClosed } from 'app/modules/jobs/store/job.actions';
 import { selectIsJobPanelOpen, selectRunningJobsCount } from 'app/modules/jobs/store/job.selectors';
@@ -18,13 +18,13 @@ import { jobIndicatorPressed } from 'app/store/topbar/topbar.actions';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class JobsIndicatorComponent implements OnInit {
-  tooltips = helptext.mat_tooltips;
+  tooltips = helptextTopbar.mat_tooltips;
 
   jobBadgeCount$ = this.store$.select(selectRunningJobsCount);
   isJobPanelOpen$ = this.store$.select(selectIsJobPanelOpen);
 
   constructor(
-    private dialog: MatDialog,
+    private matDialog: MatDialog,
     private store$: Store<AppState>,
   ) { }
 
@@ -45,7 +45,7 @@ export class JobsIndicatorComponent implements OnInit {
       filter(Boolean),
       untilDestroyed(this),
     ).subscribe(() => {
-      const jobsPanelRef = this.dialog.open(JobsPanelComponent, {
+      const jobsPanelRef = this.matDialog.open(JobsPanelComponent, {
         width: '400px',
         hasBackdrop: true,
         panelClass: 'topbar-panel',

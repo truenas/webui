@@ -1,6 +1,6 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
-export default {
+export const helptextPermissions = {
   dataset_permissions_user_tooltip: T('Select the user to control the dataset. Users\
  created manually or imported from a directory service\
  appear in the drop-down menu.'),

@@ -3,8 +3,10 @@ import { NgModule } from '@angular/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatCardModule } from '@angular/material/card';
 import { MatDialogModule } from '@angular/material/dialog';
+import { MatExpansionModule } from '@angular/material/expansion';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatListModule } from '@angular/material/list';
 import { MatMenuModule } from '@angular/material/menu';
@@ -15,13 +17,17 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
+import { CoreComponents } from 'app/core/core-components.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { CastModule } from 'app/modules/cast/cast.module';
+import { AppCommonModule } from 'app/modules/common/app-common.module';
 import { NgxDualListboxModule } from 'app/modules/common/dual-list/dual-list.module';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
+import { LayoutModule } from 'app/modules/layout/layout.module';
+import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
 import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
 import { IscsiCardComponent } from 'app/pages/sharing/components/shares-dashboard/iscsi-card/iscsi-card.component';
@@ -35,12 +41,15 @@ import { DeviceWizardStepComponent } from 'app/pages/sharing/iscsi/iscsi-wizard/
 import { InitiatorWizardStepComponent } from 'app/pages/sharing/iscsi/iscsi-wizard/steps/initiator-wizard-step/initiator-wizard-step.component';
 import { PortalWizardStepComponent } from 'app/pages/sharing/iscsi/iscsi-wizard/steps/portal-wizard-step/portal-wizard-step.component';
 import { TargetGlobalConfigurationComponent } from 'app/pages/sharing/iscsi/target-global-configuration/target-global-configuration.component';
+import { NfsListComponent } from 'app/pages/sharing/nfs/nfs-list/nfs-list.component';
+import { NfsSessionListComponent } from 'app/pages/sharing/nfs/nfs-session-list/nfs-session-list.component';
 import { RestartSmbDialogComponent } from 'app/pages/sharing/smb/smb-form/restart-smb-dialog/restart-smb-dialog.component';
-import { UserService } from 'app/services/user.service';
+import { SmbLockListComponent } from 'app/pages/sharing/smb/smb-status/components/smb-lock-list/smb-lock-list.component';
+import { SmbNotificationListComponent } from 'app/pages/sharing/smb/smb-status/components/smb-notification-list/smb-notification-list.component';
+import { SmbShareListComponent } from 'app/pages/sharing/smb/smb-status/components/smb-share-list/smb-share-list.component';
 import { ServiceExtraActionsComponent } from './components/shares-dashboard/service-extra-actions/service-extra-actions.component';
 import { ServiceStateButtonComponent } from './components/shares-dashboard/service-state-button/service-state-button.component';
 import { SharesDashboardComponent } from './components/shares-dashboard/shares-dashboard.component';
-import { StartServiceDialogComponent } from './components/start-service-dialog/start-service-dialog.component';
 import { AssociatedTargetFormComponent } from './iscsi/associated-target/associated-target-form/associated-target-form.component';
 import { AssociatedTargetListComponent } from './iscsi/associated-target/associated-target-list/associated-target-list.component';
 import { ExtentFormComponent } from './iscsi/extent/extent-form/extent-form.component';
@@ -53,14 +62,17 @@ import { PortalListComponent } from './iscsi/portal/portal-list/portal-list.comp
 import { TargetFormComponent } from './iscsi/target/target-form/target-form.component';
 import { TargetListComponent } from './iscsi/target/target-list/target-list.component';
 import { NfsFormComponent } from './nfs/nfs-form/nfs-form.component';
-import { NfsListComponent } from './nfs/nfs-list/nfs-list.component';
 import { routing } from './sharing.routing';
 import { SmbAclComponent } from './smb/smb-acl/smb-acl.component';
 import { SmbFormComponent } from './smb/smb-form/smb-form.component';
 import { SmbListComponent } from './smb/smb-list/smb-list.component';
+import { SmbOpenFilesComponent } from './smb/smb-status/components/smb-open-files/smb-open-files.component';
+import { SmbSessionListComponent } from './smb/smb-status/components/smb-session-list/smb-session-list.component';
+import { SmbStatusComponent } from './smb/smb-status/smb-status.component';
 
 @NgModule({
   imports: [
+    AppCommonModule,
     CommonModule,
     ReactiveFormsModule,
     routing,
@@ -76,6 +88,7 @@ import { SmbListComponent } from './smb/smb-list/smb-list.component';
     MatMenuModule,
     MatFormFieldModule,
     MatTooltipModule,
+    AppLoaderModule,
     MatButtonModule,
     MatProgressSpinnerModule,
     CommonDirectivesModule,
@@ -87,6 +100,10 @@ import { SmbListComponent } from './smb/smb-list/smb-list.component';
     NgxDualListboxModule,
     IxTable2Module,
     MatToolbarModule,
+    CoreComponents,
+    LayoutModule,
+    MatExpansionModule,
+    MatButtonToggleModule,
   ],
   declarations: [
     NfsListComponent,
@@ -115,15 +132,18 @@ import { SmbListComponent } from './smb/smb-list/smb-list.component';
     AssociatedTargetListComponent,
     AssociatedTargetFormComponent,
     DeleteExtentDialogComponent,
-    StartServiceDialogComponent,
     SmbCardComponent,
     NfsCardComponent,
     IscsiCardComponent,
     ServiceExtraActionsComponent,
     ServiceStateButtonComponent,
-  ],
-  providers: [
-    UserService,
+    SmbSessionListComponent,
+    SmbLockListComponent,
+    SmbOpenFilesComponent,
+    NfsSessionListComponent,
+    SmbStatusComponent,
+    SmbShareListComponent,
+    SmbNotificationListComponent,
   ],
 })
 export class SharingModule {

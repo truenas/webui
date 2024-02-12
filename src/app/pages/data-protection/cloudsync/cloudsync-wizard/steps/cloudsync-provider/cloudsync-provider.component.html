@@ -1,0 +1,34 @@
+<form>
+  <ix-fieldset [formGroup]="form">
+    <ix-cloud-credentials-select
+      formControlName="exist_credential"
+      [label]="'Credentials' | translate"
+      [tooltip]="helptext.exist_provider.tooltip | translate"
+      [required]="true"
+    ></ix-cloud-credentials-select>
+  </ix-fieldset>
+
+  <ix-form-actions>
+    <button
+      mat-button
+      matStepperNext
+      type="button"
+      color="primary"
+      ixTest="next"
+      [disabled]="areActionsDisabled"
+    >{{ 'Next' | translate }}</button>
+    <button
+      mat-button
+      type="button"
+      ixTest="verify-credential"
+      [disabled]="areActionsDisabled"
+      (click)="onVerify()"
+    >{{ 'Verify Credential' | translate }}</button>
+    <button
+      mat-button
+      type="button"
+      ixTest="advanced"
+      (click)="openAdvanced()"
+    >{{ 'Advanced Options' | translate }}</button>
+  </ix-form-actions>
+</form>

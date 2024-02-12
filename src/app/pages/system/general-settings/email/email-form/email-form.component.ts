@@ -7,6 +7,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { MailSecurity } from 'app/enums/mail-security.enum';
+import { Role } from 'app/enums/role.enum';
 import { helptextSystemEmail } from 'app/helptext/system/email';
 import { GmailOauthConfig, MailConfig, MailConfigUpdate } from 'app/interfaces/mail-config.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
@@ -14,6 +15,7 @@ import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-sli
 import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
+import { emailValidator } from 'app/modules/ix-forms/validators/email-validation/email-validation';
 import { portRangeValidator } from 'app/modules/ix-forms/validators/range-validation/range-validation';
 import { OauthButtonType } from 'app/modules/oauth-button/interfaces/oauth-button.interface';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -37,7 +39,7 @@ export class EmailFormComponent implements OnInit {
   sendMethodControl = new FormControl(SendMethod.Smtp);
 
   form = this.formBuilder.group({
-    fromemail: ['', [Validators.required, Validators.email]],
+    fromemail: ['', [Validators.required, emailValidator()]],
     fromname: [''],
     outgoingserver: [''],
     port: [null as number, [
@@ -55,6 +57,7 @@ export class EmailFormComponent implements OnInit {
 
   isLoading = false;
 
+  protected readonly Role = Role;
   readonly oauthType = OauthButtonType;
   readonly sendMethodOptions$ = of([
     {
@@ -145,10 +148,10 @@ export class EmailFormComponent implements OnInit {
         next: () => {
           this.isLoading = false;
           this.snackbar.success(this.translate.instant('Email settings updated.'));
-          this.slideInRef.close();
+          this.slideInRef.close(true);
           this.cdr.markForCheck();
         },
-        error: (error) => {
+        error: (error: unknown) => {
           this.isLoading = false;
           this.cdr.markForCheck();
           this.formErrorHandler.handleWsFormError(error, this.form);

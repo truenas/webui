@@ -9,11 +9,13 @@ import _ from 'lodash';
 import {
   EMPTY, catchError, filter, of, switchMap, tap,
 } from 'rxjs';
-import { TwoFactorConfig, TwoFactorConfigUpdate } from 'app/interfaces/two-factor-config.interface';
+import { Role } from 'app/enums/role.enum';
+import { WINDOW } from 'app/helpers/window.helper';
+import { GlobalTwoFactorConfig, GlobalTwoFactorConfigUpdate } from 'app/interfaces/two-factor-config.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TwoFactorGuardService } from 'app/services/auth/two-factor-guard.service';
+import { AuthService } from 'app/services/auth/auth.service';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -27,19 +29,12 @@ export class GlobalTwoFactorAuthFormComponent implements OnInit {
   isFormLoading = false;
   form = this.fb.group({
     enabled: [false],
-    interval: [null as number, Validators.required],
-    otp_digits: [null as number, Validators.required],
     window: [null as number, Validators.required],
     ssh: [false],
   });
 
-  readonly otpDigitOptions$ = of([
-    { label: '6', value: 6 },
-    { label: '7', value: 7 },
-    { label: '8', value: 8 },
-  ]);
-
   enableWarning: string = this.translate.instant('Once enabled, users will be required to set up two factor authentication next time they login.');
+  protected readonly Role = Role;
 
   constructor(
     private fb: FormBuilder,
@@ -50,9 +45,10 @@ export class GlobalTwoFactorAuthFormComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private translate: TranslateService,
     private snackbar: SnackbarService,
-    private twoFactorAuthGuardService: TwoFactorGuardService,
-    @Inject(SLIDE_IN_DATA) protected twoFactorConfig: TwoFactorConfig,
+    private authService: AuthService,
     private router: Router,
+    @Inject(SLIDE_IN_DATA) protected twoFactorConfig: GlobalTwoFactorConfig,
+    @Inject(WINDOW) private window: Window,
   ) {}
 
   ngOnInit(): void {
@@ -62,9 +58,7 @@ export class GlobalTwoFactorAuthFormComponent implements OnInit {
   setupForm(): void {
     this.form.patchValue({
       enabled: this.twoFactorConfig.enabled,
-      otp_digits: this.twoFactorConfig.otp_digits,
       window: this.twoFactorConfig.window,
-      interval: this.twoFactorConfig.interval,
       ssh: this.twoFactorConfig.services.ssh,
     });
     this.cdr.markForCheck();
@@ -77,11 +71,9 @@ export class GlobalTwoFactorAuthFormComponent implements OnInit {
     }
 
     const values = this.form.value;
-    const payload: TwoFactorConfigUpdate = {
+    const payload: GlobalTwoFactorConfigUpdate = {
       enabled: values.enabled,
-      otp_digits: values.otp_digits,
       services: { ssh: values.ssh },
-      interval: values.interval,
       window: values.window,
     };
     const confirmation$ = shouldWarn ? this.dialogService.confirm({
@@ -95,9 +87,10 @@ export class GlobalTwoFactorAuthFormComponent implements OnInit {
         return this.ws.call('auth.twofactor.update', [payload]);
       }),
       tap(() => {
+        this.window.localStorage.setItem('showQr2FaWarning', `${this.form.value.enabled}`);
         this.isFormLoading = false;
         this.snackbar.success(this.translate.instant('Settings saved'));
-        this.twoFactorAuthGuardService.updateGlobalConfig();
+        this.authService.globalTwoFactorConfigUpdated();
         if (!_.isEqual(this.twoFactorConfig, payload) && payload.enabled) {
           this.router.navigate(['/two-factor-auth']);
         }
@@ -106,7 +99,7 @@ export class GlobalTwoFactorAuthFormComponent implements OnInit {
       }),
       catchError((error) => {
         this.isFormLoading = false;
-        this.dialogService.error(this.errorHandler.parseWsError(error));
+        this.dialogService.error(this.errorHandler.parseError(error));
         this.cdr.markForCheck();
         return EMPTY;
       }),

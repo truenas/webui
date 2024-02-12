@@ -1,19 +1,16 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+  ChangeDetectionStrategy, Component, OnInit,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import {
-  BehaviorSubject, Observable, combineLatest, of,
-} from 'rxjs';
-import { filter, switchMap } from 'rxjs/operators';
-import { EmptyType } from 'app/enums/empty-type.enum';
+import { filter, tap } from 'rxjs/operators';
 import { JobState } from 'app/enums/job-state.enum';
-import helptext from 'app/helptext/apps/apps';
+import { Role } from 'app/enums/role.enum';
+import { helptextApps } from 'app/helptext/apps/apps';
 import { Catalog } from 'app/interfaces/catalog.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
-import { ArrayDataProvider } from 'app/modules/ix-table2/array-data-provider';
+import { AsyncDataProvider } from 'app/modules/ix-table2/classes/async-data-provider/async-data-provider';
 import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { SortDirection } from 'app/modules/ix-table2/enums/sort-direction.enum';
 import { createTable } from 'app/modules/ix-table2/utils';
@@ -26,6 +23,7 @@ import {
   ManageCatalogSummaryDialogComponent,
 } from 'app/pages/apps/components/catalogs/manage-catalog-summary/manage-catalog-summary-dialog.component';
 import { DialogService } from 'app/services/dialog.service';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { CatalogEditFormComponent } from './catalog-edit-form/catalog-edit-form.component';
@@ -37,10 +35,10 @@ import { CatalogEditFormComponent } from './catalog-edit-form/catalog-edit-form.
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CatalogsComponent implements OnInit {
-  filterString = '';
   catalogSyncJobIds = new Set<number>();
-  dataProvider = new ArrayDataProvider<Catalog>();
+  dataProvider: AsyncDataProvider<Catalog>;
   catalogs: Catalog[] = [];
+
   columns = createTable<Catalog>([
     textColumn({
       title: this.translate.instant('Name'),
@@ -62,25 +60,11 @@ export class CatalogsComponent implements OnInit {
       propertyName: 'preferred_trains',
       sortable: true,
     }),
-  ]);
+  ], {
+    rowTestId: (row) => 'catalog-' + row.label,
+  });
 
-  isLoading$ = new BehaviorSubject<boolean>(true);
-  isNoData$ = new BehaviorSubject<boolean>(false);
-  hasError$ = new BehaviorSubject<boolean>(false);
-  emptyType$: Observable<EmptyType> = combineLatest([this.isLoading$, this.isNoData$, this.hasError$]).pipe(
-    switchMap(([isLoading, isNoData, isError]) => {
-      if (isLoading) {
-        return of(EmptyType.Loading);
-      }
-      if (isError) {
-        return of(EmptyType.Errors);
-      }
-      if (isNoData) {
-        return of(EmptyType.NoPageData);
-      }
-      return of(EmptyType.NoSearchResults);
-    }),
-  );
+  protected readonly requiredRoles = [Role.CatalogWrite];
 
   constructor(
     private matDialog: MatDialog,
@@ -88,13 +72,20 @@ export class CatalogsComponent implements OnInit {
     private ws: WebSocketService,
     private slideInService: IxSlideInService,
     private translate: TranslateService,
-    private cdr: ChangeDetectorRef,
     protected emptyService: EmptyService,
+    private errorHandler: ErrorHandlerService,
   ) {}
 
   ngOnInit(): void {
+    const catalogs$ = this.ws.call('catalog.query', [[], { extra: { item_details: true } }]).pipe(
+      tap((catalogs) => this.catalogs = catalogs),
+      untilDestroyed(this),
+    );
+    this.dataProvider = new AsyncDataProvider<Catalog>(catalogs$);
+    this.setDefaultSort();
+    this.refresh();
+
     this.listenForCatalogSyncJobs();
-    this.getCatalogs();
   }
 
   listenForCatalogSyncJobs(): void {
@@ -114,33 +105,12 @@ export class CatalogsComponent implements OnInit {
     });
   }
 
-  getCatalogs(): void {
-    this.ws.call('catalog.query', [[], { extra: { item_details: true } }]).pipe(
-      untilDestroyed(this),
-    ).subscribe({
-      next: (catalogs) => {
-        this.catalogs = catalogs;
-        this.dataProvider.setRows(catalogs);
-        this.isLoading$.next(false);
-        this.isNoData$.next(!catalogs.length);
-        this.setDefaultSort();
-        this.cdr.markForCheck();
-      },
-      error: () => {
-        this.dataProvider.setRows([]);
-        this.isLoading$.next(false);
-        this.hasError$.next(true);
-        this.cdr.markForCheck();
-      },
-    });
-  }
-
   onListFiltered(query: string): void {
-    this.filterString = query.toLowerCase();
+    const filterString = query.toLowerCase();
     this.dataProvider.setRows(this.catalogs.filter((catalog) => {
-      return catalog.label.toLowerCase().includes(this.filterString)
-        || catalog.id.toLowerCase().includes(this.filterString)
-        || catalog.repository.toString().includes(this.filterString);
+      return catalog.label.toLowerCase().includes(filterString)
+        || catalog.id.toLowerCase().includes(filterString)
+        || catalog.repository.toString().includes(filterString);
     }));
   }
 
@@ -153,25 +123,25 @@ export class CatalogsComponent implements OnInit {
   }
 
   refresh(): void {
-    this.getCatalogs();
+    this.dataProvider.load();
   }
 
   doAdd(): void {
     this.dialogService.confirm({
-      title: helptext.thirdPartyRepoWarning.title,
-      message: helptext.thirdPartyRepoWarning.message,
-      buttonText: helptext.thirdPartyRepoWarning.btnMsg,
+      title: helptextApps.thirdPartyRepoWarning.title,
+      message: helptextApps.thirdPartyRepoWarning.message,
+      buttonText: helptextApps.thirdPartyRepoWarning.btnMsg,
       hideCheckbox: true,
     }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
       const slideInRef = this.slideInService.open(CatalogAddFormComponent);
-      slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => this.refresh());
+      slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => this.refresh());
     });
   }
 
   doEdit(catalog: Catalog): void {
     const slideInRef = this.slideInService.open(CatalogEditFormComponent);
     slideInRef.componentInstance.setCatalogForEdit(catalog);
-    slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => this.refresh());
+    slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => this.refresh());
   }
 
   doDelete(catalog: Catalog): void {
@@ -180,7 +150,7 @@ export class CatalogsComponent implements OnInit {
     }).afterClosed()
       .pipe(filter(Boolean), untilDestroyed(this))
       .subscribe(() => {
-        this.getCatalogs();
+        this.refresh();
       });
   }
 
@@ -198,7 +168,7 @@ export class CatalogsComponent implements OnInit {
   onRefreshAll(): void {
     const dialogRef = this.matDialog.open(EntityJobComponent, {
       data: {
-        title: helptext.refreshing,
+        title: helptextApps.refreshing,
       },
     });
     dialogRef.componentInstance.setCall('catalog.sync_all');
@@ -207,12 +177,16 @@ export class CatalogsComponent implements OnInit {
       this.dialogService.closeAllDialogs();
       this.refresh();
     });
+    dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((error) => {
+      dialogRef.close();
+      this.errorHandler.showErrorModal(error);
+    });
   }
 
   syncRow(row: Catalog): void {
     const dialogRef = this.matDialog.open(EntityJobComponent, {
       data: {
-        title: helptext.refreshing,
+        title: helptextApps.refreshing,
       },
     });
     dialogRef.componentInstance.setCall('catalog.sync', [row.label]);
@@ -220,6 +194,10 @@ export class CatalogsComponent implements OnInit {
     dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
       this.dialogService.closeAllDialogs();
       this.refresh();
+    });
+    dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((error) => {
+      dialogRef.close();
+      this.errorHandler.showErrorModal(error);
     });
   }
 }

@@ -8,7 +8,7 @@ export interface CloudCredential {
   id: number;
   name: string;
   provider: string;
-  attributes: { [key: string]: string | number | boolean };
+  attributes: Record<string, string | number | boolean>;
 }
 
 export interface BwLimit {
@@ -18,7 +18,7 @@ export interface BwLimit {
 
 export interface CloudSyncTask {
   args: string;
-  attributes: { [key: string]: string | number | boolean };
+  attributes: Record<string, string | number | boolean>;
   bwlimit: BwLimit[];
   credentials: CloudCredential;
   description: string;

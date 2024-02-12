@@ -1,24 +1,32 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, OnChanges, OnInit, Output } from '@angular/core';
+import {
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+} from '@angular/core';
 import { Router } from '@angular/router';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
-import { filter, switchMap } from 'rxjs';
-import { ServiceStatus } from 'app/enums/service-status.enum';
+import {
+  tap, map, filter, switchMap,
+} from 'rxjs';
+import { Role } from 'app/enums/role.enum';
+import { ServiceName } from 'app/enums/service-name.enum';
 import { helptextSharingSmb } from 'app/helptext/sharing/smb/smb';
-import { Service } from 'app/interfaces/service.interface';
-import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { SmbShare, SmbSharesec } from 'app/interfaces/smb-share.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
-import { ArrayDataProvider } from 'app/modules/ix-table2/array-data-provider';
+import { AsyncDataProvider } from 'app/modules/ix-table2/classes/async-data-provider/async-data-provider';
+import { actionsColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
 import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { toggleColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-toggle/ix-cell-toggle.component';
 import { createTable } from 'app/modules/ix-table2/utils';
+import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
 import { SmbAclComponent } from 'app/pages/sharing/smb/smb-acl/smb-acl.component';
 import { SmbFormComponent } from 'app/pages/sharing/smb/smb-form/smb-form.component';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
+import { ServicesState } from 'app/store/services/services.reducer';
+import { selectService } from 'app/store/services/services.selectors';
 
 @UntilDestroy()
 @Component({
@@ -27,20 +35,13 @@ import { WebSocketService } from 'app/services/ws.service';
   styleUrls: ['./smb-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SmbCardComponent implements OnInit, OnChanges {
-  @Input() service: Service;
-  @Input() isClustered: boolean;
+export class SmbCardComponent implements OnInit {
+  service$ = this.store$.select(selectService(ServiceName.Cifs));
+  requiredRoles = [Role.SharingSmbWrite, Role.SharingWrite];
 
-  @Output() statusChanged = new EventEmitter<ServiceStatus>();
-
-  isLoading = false;
   smbShares: SmbShare[] = [];
-  dataProvider = new ArrayDataProvider<SmbShare>();
-  title = 'Windows (SMB) Shares';
-
-  isAddActionDisabled = false;
-  isDeleteActionDisabled = false;
-  tableHint?: string;
+  dataProvider: AsyncDataProvider<SmbShare>;
+  title = T('Windows (SMB) Shares');
 
   columns = createTable<SmbShare>([
     textColumn({
@@ -58,14 +59,40 @@ export class SmbCardComponent implements OnInit, OnChanges {
     toggleColumn({
       title: helptextSharingSmb.column_enabled,
       propertyName: 'enabled',
-      cssClass: 'justify-end',
       onRowToggle: (row: SmbShare) => this.onChangeEnabledState(row),
+      requiredRoles: this.requiredRoles,
     }),
-    textColumn({
-      propertyName: 'id',
+    actionsColumn({
       cssClass: 'wide-actions',
+      actions: [
+        {
+          iconName: 'share',
+          tooltip: this.translate.instant('Edit Share ACL'),
+          onClick: (row) => this.doShareAclEdit(row),
+          requiredRoles: this.requiredRoles,
+        },
+        {
+          iconName: 'security',
+          tooltip: this.translate.instant('Edit Filesystem ACL'),
+          onClick: (row) => this.doFilesystemAclEdit(row),
+          requiredRoles: this.requiredRoles,
+        },
+        {
+          iconName: 'edit',
+          tooltip: this.translate.instant('Edit'),
+          onClick: (row) => this.openForm(row),
+        },
+        {
+          iconName: 'delete',
+          tooltip: this.translate.instant('Delete'),
+          onClick: (row) => this.doDelete(row),
+          requiredRoles: this.requiredRoles,
+        },
+      ],
     }),
-  ]);
+  ], {
+    rowTestId: (row) => 'card-smb-share-' + row.name,
+  });
 
   constructor(
     private slideInService: IxSlideInService,
@@ -74,42 +101,26 @@ export class SmbCardComponent implements OnInit, OnChanges {
     private ws: WebSocketService,
     private dialogService: DialogService,
     private cdr: ChangeDetectorRef,
+    protected emptyService: EmptyService,
     private router: Router,
+    private store$: Store<ServicesState>,
   ) {}
 
-  ngOnChanges(changes: IxSimpleChanges<this>): void {
-    if (!changes.isClustered?.currentValue && !!changes.isClustered?.previousValue) {
-      this.updateEnabledFieldVisibility(false);
-      this.isAddActionDisabled = false;
-      this.isDeleteActionDisabled = false;
-      this.tableHint = null;
-    }
-
-    if (!!changes.isClustered?.currentValue && !changes.isClustered?.previousValue) {
-      this.updateEnabledFieldVisibility(true);
-
-      this.isAddActionDisabled = true;
-      this.isDeleteActionDisabled = true;
-      this.tableHint = this.translate.instant('This share is configured through TrueCommand');
-    }
-  }
-
   ngOnInit(): void {
+    const smbShares$ = this.ws.call('sharing.smb.query').pipe(
+      tap((smbShares) => this.smbShares = smbShares),
+      map((smbShares) => smbShares.slice(0, 4)),
+      untilDestroyed(this),
+    );
+    this.dataProvider = new AsyncDataProvider<SmbShare>(smbShares$);
     this.getSmbShares();
   }
 
   openForm(row?: SmbShare): void {
-    if (this.isClustered) {
-      this.dialogService.info(
-        this.translate.instant(this.title),
-        this.translate.instant(this.tableHint),
-      );
-    } else {
-      const slideInRef = this.slideInService.open(SmbFormComponent, { data: row });
-      slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
-        this.getSmbShares();
-      });
-    }
+    const slideInRef = this.slideInService.open(SmbFormComponent, { data: { existingSmbShare: row } });
+    slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
+      this.getSmbShares();
+    });
   }
 
   doDelete(smb: SmbShare): void {
@@ -131,46 +142,38 @@ export class SmbCardComponent implements OnInit, OnChanges {
   }
 
   doShareAclEdit(row: SmbShare): void {
-    this.ws.call('pool.dataset.path_in_locked_datasets', [row.path]).pipe(untilDestroyed(this)).subscribe(
-      (isLocked) => {
-        if (isLocked) {
-          this.showLockedPathDialog(row.path);
-        } else {
-          // A home share has a name (homes) set; row.name works for other shares
-          const searchName = row.home ? 'homes' : row.name;
-          this.ws.call('sharing.smb.getacl', [{ share_name: searchName }])
-            .pipe(untilDestroyed(this))
-            .subscribe({
-              next: (shareAcl: SmbSharesec) => {
-                const slideInRef = this.slideInService.open(SmbAclComponent, { data: shareAcl.share_name });
+    if (row.locked) {
+      this.showLockedPathDialog(row.path);
+    } else {
+      // A home share has a name (homes) set; row.name works for other shares
+      const searchName = row.home ? 'homes' : row.name;
+      this.ws.call('sharing.smb.getacl', [{ share_name: searchName }])
+        .pipe(untilDestroyed(this))
+        .subscribe({
+          next: (shareAcl: SmbSharesec) => {
+            const slideInRef = this.slideInService.open(SmbAclComponent, { data: shareAcl.share_name });
 
-                slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
-                  this.getSmbShares();
-                });
-              },
-              error: (error: WebsocketError) => {
-                this.dialogService.error(this.errorHandler.parseWsError(error));
-              },
+            slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
+              this.getSmbShares();
             });
-        }
-      },
-    );
+          },
+          error: (error: unknown) => {
+            this.dialogService.error(this.errorHandler.parseError(error));
+          },
+        });
+    }
   }
 
   doFilesystemAclEdit(row: SmbShare): void {
-    this.ws.call('pool.dataset.path_in_locked_datasets', [row.path]).pipe(untilDestroyed(this)).subscribe(
-      (isLocked) => {
-        if (isLocked) {
-          this.showLockedPathDialog(row.path);
-        } else {
-          this.router.navigate(['/', 'datasets', 'acl', 'edit'], {
-            queryParams: {
-              path: row.path_local,
-            },
-          });
-        }
-      },
-    );
+    if (row.locked) {
+      this.showLockedPathDialog(row.path);
+    } else {
+      this.router.navigate(['/', 'datasets', 'acl', 'edit'], {
+        queryParams: {
+          path: row.path_local,
+        },
+      });
+    }
   }
 
   private showLockedPathDialog(path: string): void {
@@ -181,15 +184,7 @@ export class SmbCardComponent implements OnInit, OnChanges {
   }
 
   private getSmbShares(): void {
-    this.isLoading = true;
-    this.ws.call('sharing.smb.query').pipe(
-      untilDestroyed(this),
-    ).subscribe((smbShares: SmbShare[]) => {
-      this.smbShares = smbShares;
-      this.dataProvider.setRows(smbShares.slice(0, 4));
-      this.isLoading = false;
-      this.cdr.markForCheck();
-    });
+    this.dataProvider.load();
   }
 
   private onChangeEnabledState(row: SmbShare): void {
@@ -199,9 +194,9 @@ export class SmbCardComponent implements OnInit, OnChanges {
       next: () => {
         this.getSmbShares();
       },
-      error: (error: WebsocketError) => {
+      error: (error: unknown) => {
         this.getSmbShares();
-        this.dialogService.error(this.errorHandler.parseWsError(error));
+        this.dialogService.error(this.errorHandler.parseError(error));
       },
     });
   }

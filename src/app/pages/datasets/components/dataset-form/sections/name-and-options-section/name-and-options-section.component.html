@@ -18,33 +18,49 @@
     [tooltip]="helptext.dataset_form_name_tooltip | translate"
   ></ix-textarea>
 
-  <ix-input
-    formControlName="comments"
-    [label]="'Comments' | translate"
-    [tooltip]="helptext.dataset_form_comments_tooltip | translate"
-  ></ix-input>
-
   <ix-select
-    formControlName="sync"
+    *ngIf="!existing"
+    formControlName="share_type"
+    [label]="'Dataset Preset' | translate"
+    [options]="datasetPresetOptions$"
     [required]="true"
-    [options]="syncOptions$"
-    [label]="'Sync' | translate"
-    [tooltip]="helptext.dataset_form_sync_tooltip | translate"
+    [tooltip]="helptext.dataset_form_dataset_preset_tooltip | translate"
   ></ix-select>
+</ix-fieldset>
 
-  <ix-select
-    formControlName="compression"
-    [required]="true"
-    [options]="compressionOptions$"
-    [label]="'Compression Level' | translate"
-    [tooltip]="helptext.dataset_form_compression_tooltip | translate"
-  ></ix-select>
-
-  <ix-select
-    formControlName="atime"
-    [required]="true"
-    [options]="atimeOptions$"
-    [label]="'Enable Atime' | translate"
-    [tooltip]="helptext.dataset_form_atime_tooltip | translate"
-  ></ix-select>
+<ix-fieldset *ngIf="!existing" [formGroup]="datasetPresetForm">
+  <div class="preset-container">
+    <div *ngIf="form.value.share_type" class="comments">
+      <ng-container *ngIf="form.value.share_type === DatasetPreset.Generic">
+        {{ helptext.dataset_form_preset.generic| translate }}
+      </ng-container>
+      <div *ngIf="form.value.share_type === DatasetPreset.Smb" class="smb-comment">
+        <div>{{ helptext.dataset_form_preset.smb | translate }}</div>
+        <div>{{ helptext.dataset_form_preset.smb_description | translate }}</div>
+      </div>
+      <ng-container *ngIf="form.value.share_type === DatasetPreset.Apps">
+        {{ helptext.dataset_form_preset.apps | translate }}
+      </ng-container>
+      <ng-container *ngIf="form.value.share_type === DatasetPreset.Multiprotocol">
+        {{ helptext.dataset_form_preset.multiprotocol| translate }}
+      </ng-container>
+    </div>
+    <div *ngIf="canCreateNfs || canCreateSmb" class="controls">
+      <ix-checkbox
+        *ngIf="canCreateNfs"
+        formControlName="create_nfs"
+        [label]="'Create NFS Share' | translate"
+      ></ix-checkbox>
+      <ix-checkbox
+        *ngIf="canCreateSmb"
+        formControlName="create_smb"
+        [label]="'Create SMB Share' | translate"
+      ></ix-checkbox>
+      <ix-input
+        *ngIf="canCreateSmb && datasetPresetForm.value.create_smb"
+        formControlName="smb_name"
+        [label]="'SMB Name' | translate"
+      ></ix-input>
+    </div>
+  </div>
 </ix-fieldset>

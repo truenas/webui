@@ -5,7 +5,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Actions, ofType } from '@ngrx/effects';
 import { TranslateService } from '@ngx-translate/core';
 import ipRegex from 'ip-regex';
-import { combineLatest } from 'rxjs';
+import { combineLatest, filter } from 'rxjs';
 import { NetworkActivityType } from 'app/enums/network-activity-type.enum';
 import { NetworkConfiguration } from 'app/interfaces/network-configuration.interface';
 import { NetworkSummary } from 'app/interfaces/network-summary.interface';
@@ -113,7 +113,10 @@ export class NetworkConfigurationCardComponent implements OnInit {
 
   onSettingsClicked(): void {
     const slideInRef = this.slideInService.open(NetworkConfigurationComponent, { wide: true });
-    slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => this.loadNetworkConfigAndSummary());
+    slideInRef.slideInClosed$.pipe(
+      filter(Boolean),
+      untilDestroyed(this),
+    ).subscribe(() => this.loadNetworkConfigAndSummary());
   }
 
   private loadNetworkConfigAndSummary(): void {

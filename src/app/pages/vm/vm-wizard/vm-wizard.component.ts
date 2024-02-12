@@ -7,12 +7,12 @@ import * as _ from 'lodash';
 import {
   forkJoin, Observable, of, switchMap,
 } from 'rxjs';
-import { catchError } from 'rxjs/operators';
+import { catchError, defaultIfEmpty, map } from 'rxjs/operators';
 import { GiB, MiB } from 'app/constants/bytes.constant';
 import { VmDeviceType, VmNicType, VmOs } from 'app/enums/vm.enum';
 import { VirtualMachine, VirtualMachineUpdate } from 'app/interfaces/virtual-machine.interface';
 import { VmDevice, VmDeviceUpdate } from 'app/interfaces/vm-device.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
+import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { SummarySection } from 'app/modules/common/summary/summary.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -114,13 +114,13 @@ export class VmWizardComponent implements OnInit {
       .subscribe({
         next: () => {
           this.isLoading = false;
-          this.slideInRef.close();
+          this.slideInRef.close(true);
           this.snackbar.success(this.translate.instant('Virtual machine created'));
           this.cdr.markForCheck();
         },
-        error: (error: WebsocketError) => {
+        error: (error: unknown) => {
           this.isLoading = false;
-          this.dialogService.error(this.errorHandler.parseWsError(error));
+          this.dialogService.error(this.errorHandler.parseError(error));
           this.cdr.markForCheck();
         },
       });
@@ -189,7 +189,7 @@ export class VmWizardComponent implements OnInit {
     }
 
     if (this.gpuForm.gpus.length) {
-      requests.push(...this.getGpuRequests(vm));
+      requests.push(this.getGpuRequests(vm));
     }
 
     return forkJoin(requests);
@@ -245,13 +245,21 @@ export class VmWizardComponent implements OnInit {
     });
   }
 
-  private getGpuRequests(vm: VirtualMachine): Observable<unknown>[] {
+  private getGpuRequests(vm: VirtualMachine): Observable<unknown> {
     const gpusIds = this.gpuForm.gpus as unknown as string[];
 
-    return [
-      this.vmGpuService.updateVmGpus(vm, gpusIds),
-      this.gpuService.addIsolatedGpuPciIds(gpusIds),
-    ];
+    const pciIdsRequests$ = gpusIds.map((gpu) => {
+      return this.ws.call('vm.device.get_pci_ids_for_gpu_isolation', [gpu]);
+    });
+
+    return forkJoin(pciIdsRequests$).pipe(
+      defaultIfEmpty([]),
+      map((pciIds) => pciIds.flat()),
+      switchMap((pciIds) => forkJoin([
+        this.vmGpuService.updateVmGpus(vm, gpusIds.concat(pciIds)),
+        this.gpuService.addIsolatedGpuPciIds(gpusIds.concat(pciIds)),
+      ])),
+    );
   }
 
   private getDisplayRequest(vm: VirtualMachine): Observable<VmDevice> {
@@ -277,11 +285,11 @@ export class VmWizardComponent implements OnInit {
       ...payload,
     }])
       .pipe(
-        catchError((error: WebsocketError) => {
+        catchError((error: WebSocketError) => {
           this.dialogService.error({
             title: this.translate.instant('Error creating device'),
             message: error.reason,
-            backtrace: error.trace.formatted,
+            backtrace: error.trace?.formatted,
           });
           return of(null);
         }),

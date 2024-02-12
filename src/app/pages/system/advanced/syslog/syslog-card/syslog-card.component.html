@@ -39,9 +39,9 @@
         </span>
       </mat-list-item>
       <mat-list-item>
-        <span class="label">{{ 'Use System Dataset' | translate }}:</span>
-        <span *ixWithLoadingState="syslog$ as syslog" class="value">
-          {{ syslog ? ('Enabled' | translate) : ('Disabled' | translate)  }}
+        <span class="label">{{ 'Include Audit Logs' | translate }}:</span>
+        <span *ixWithLoadingState="advancedConfig$ as advancedConfig" class="value">
+          {{ advancedConfig.syslog_audit | yesNo }}
         </span>
       </mat-list-item>
     </mat-list>

@@ -6,9 +6,8 @@ import { TranslateService } from '@ngx-translate/core';
 import { EMPTY } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
-import helptext from 'app/helptext/network/configuration/configuration';
-import helptextIpmi from 'app/helptext/network/ipmi/ipmi';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
+import { helptextNetworkConfiguration } from 'app/helptext/network/configuration/configuration';
+import { helptextIpmi } from 'app/helptext/network/ipmi/ipmi';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { ipv4Validator } from 'app/modules/ix-forms/validators/ip-validation';
 import { DialogService } from 'app/services/dialog.service';
@@ -24,14 +23,17 @@ import { WebSocketService } from 'app/services/ws.service';
 export class DefaultGatewayDialogComponent {
   form = this.fb.group({
     defaultGateway: [
-      null as string,
-      [
-        this.validatorsService.withMessage(
-          ipv4Validator(),
-          this.translate.instant(helptextIpmi.ip_error),
-        ),
-        Validators.required,
-      ],
+      null,
+      {
+        validators: [
+          this.validatorsService.withMessage(
+            ipv4Validator(),
+            this.translate.instant(helptextIpmi.ip_error),
+          ),
+          Validators.required,
+        ],
+        updateOn: 'blur',
+      },
     ],
   });
 
@@ -39,7 +41,7 @@ export class DefaultGatewayDialogComponent {
     toLoadingState(),
   );
 
-  readonly helptext = helptext;
+  readonly helptext = helptextNetworkConfiguration;
 
   constructor(
     private ws: WebSocketService,
@@ -56,8 +58,8 @@ export class DefaultGatewayDialogComponent {
     this.dialogRef.close();
     const formValues = this.form.value;
     this.ws.call('interface.save_default_route', [formValues.defaultGateway]).pipe(
-      catchError((error: WebsocketError) => {
-        this.dialog.error(this.errorHandler.parseWsError(error));
+      catchError((error: unknown) => {
+        this.dialog.error(this.errorHandler.parseError(error));
         return EMPTY;
       }),
       untilDestroyed(this),

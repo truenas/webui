@@ -6,12 +6,14 @@ import { Router } from '@angular/router';
 import { SpectatorRouting } from '@ngneat/spectator';
 import { mockProvider, createRoutingFactory } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
+import { MockModule } from 'ng-mocks';
 import { of } from 'rxjs';
-import { mockWebsocket, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockWebSocket, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
 import { Group } from 'app/interfaces/group.interface';
 import { Preferences } from 'app/interfaces/preferences.interface';
-import { EntityModule } from 'app/modules/entity/entity.module';
-import { IxTableModule } from 'app/modules/ix-tables/ix-table.module';
+import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
+import { LayoutModule } from 'app/modules/layout/layout.module';
 import {
   DeleteGroupDialogComponent,
 } from 'app/pages/account/groups/group-details-row/delete-group-dialog/delete-group-dialog.component';
@@ -36,15 +38,15 @@ describe('GroupDetailsRowComponent', () => {
   const createComponent = createRoutingFactory({
     component: GroupDetailsRowComponent,
     imports: [
-      EntityModule,
-      IxTableModule,
+      IxTable2Module,
+      MockModule(LayoutModule),
     ],
     declarations: [
       GroupFormComponent,
     ],
     providers: [
       mockProvider(IxSlideInService),
-      mockWebsocket([
+      mockWebSocket([
         mockCall('user.query'),
         mockCall('group.delete'),
         mockCall('group.query', []),
@@ -64,6 +66,7 @@ describe('GroupDetailsRowComponent', () => {
           },
         ],
       }),
+      mockAuth(),
     ],
   });
 

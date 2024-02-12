@@ -7,8 +7,11 @@ import {
 } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { allCommands } from 'app/constants/all-commands.constant';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { Role } from 'app/enums/role.enum';
 import { Group } from 'app/interfaces/group.interface';
+import { Privilege } from 'app/interfaces/privilege.interface';
 import { IxInputHarness } from 'app/modules/ix-forms/components/ix-input/ix-input.harness';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
@@ -22,13 +25,34 @@ describe('GroupFormComponent', () => {
   let spectator: Spectator<GroupFormComponent>;
   let loader: HarnessLoader;
   let ws: WebSocketService;
+
+  const fakePrivilegeDataSource: Privilege[] = [
+    {
+      id: 1,
+      name: 'Privilege 1',
+      web_shell: true,
+      local_groups: [{ gid: 1111, group: 'Group A' }, { gid: 2222, group: 'Group B' }],
+      ds_groups: [],
+      roles: [Role.SharingAdmin],
+    },
+    {
+      id: 2,
+      name: 'Privilege 2',
+      web_shell: false,
+      local_groups: [],
+      ds_groups: [],
+      roles: [Role.FullAdmin, Role.ReadonlyAdmin],
+    },
+  ] as Privilege[];
+
   const fakeDataGroup = {
     id: 13,
     gid: 1111,
-    group: 'editing',
     sudo_commands: [],
+    name: 'Group A',
     sudo_commands_nopasswd: [allCommands],
     smb: false,
+    group: 'editing',
   } as Group;
 
   const createComponent = createComponentFactory({
@@ -38,15 +62,18 @@ describe('GroupFormComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
-      mockWebsocket([
-        mockCall('group.query', [{ group: 'existing' }] as Group[]),
-        mockCall('group.create'),
-        mockCall('group.update'),
+      mockWebSocket([
+        mockCall('group.query', [{ group: 'existing', gid: 1111 }] as Group[]),
+        mockCall('privilege.query', fakePrivilegeDataSource),
+        mockCall('group.create', 1111),
+        mockCall('group.update', 1111),
+        mockCall('privilege.update'),
         mockCall('group.get_next_gid', 1234),
       ]),
       mockProvider(IxSlideInRef),
       mockProvider(FormErrorHandlerService),
       provideMockStore(),
+      mockAuth(),
       { provide: SLIDE_IN_DATA, useValue: undefined },
     ],
   });
@@ -126,6 +153,7 @@ describe('GroupFormComponent', () => {
         'Allow all sudo commands with no password': true,
         'Allowed sudo commands with no password': [],
         'Samba Authentication': false,
+        Privileges: ['Privilege 1'],
       });
     });
 
@@ -135,6 +163,7 @@ describe('GroupFormComponent', () => {
         Name: 'updated',
         'Samba Authentication': true,
         'Allow all sudo commands with no password': false,
+        Privileges: ['Privilege 1'],
       });
 
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
@@ -150,6 +179,27 @@ describe('GroupFormComponent', () => {
           sudo_commands_nopasswd: [],
         },
       ]);
+
+      expect(ws.call).toHaveBeenCalledWith('privilege.update', [1, {
+        ds_groups: [], local_groups: [2222], name: 'Privilege 1', roles: ['SHARING_ADMIN'], web_shell: true,
+      }]);
+    });
+
+    it('updates privilege items when removed privilege from the group', async () => {
+      const form = await loader.getHarness(IxFormHarness);
+      await form.fillForm({
+        Name: 'updated',
+        'Samba Authentication': true,
+        'Allow all sudo commands with no password': false,
+        Privileges: ['Privilege 2'],
+      });
+
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      await saveButton.click();
+
+      expect(ws.call).toHaveBeenCalledWith('privilege.update', [1, {
+        ds_groups: [], local_groups: [2222], name: 'Privilege 1', roles: ['SHARING_ADMIN'], web_shell: true,
+      }]);
     });
   });
 });

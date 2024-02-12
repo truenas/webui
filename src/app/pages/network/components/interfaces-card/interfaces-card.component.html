@@ -35,49 +35,6 @@
           [update]="inOutUpdates?.[interface.name]"
         ></ix-interface-status-icon>
       </ng-template>
-      <ng-template
-        let-interface
-        ix-table-cell
-        [columnIndex]="3"
-        [dataProvider]="dataProvider"
-      >
-        <div class="buttons">
-          <button
-            mat-icon-button
-            [ixTest]="['edit', 'interface', interface.name]"
-            [matTooltip]="'Edit' | translate"
-            (click)="onEdit(interface)"
-          >
-            <ix-icon name="edit"></ix-icon>
-          </button>
-
-          <div
-            [matTooltip]="isHaEnabled ? (helptext.ha_enabled_reset_msg | translate) : ('Reset configuration' | translate)"
-          >
-            <button
-              *ngIf="isPhysical(interface)"
-              mat-icon-button
-              [ixTest]="['reset', 'interface', interface.name]"
-              [disabled]="isHaEnabled"
-              (click)="onReset(interface)"
-            >
-              <ix-icon name="refresh"></ix-icon>
-            </button>
-          </div>
-
-          <div [matTooltip]="isHaEnabled ? (helptext.ha_enabled_delete_msg | translate) : ''">
-            <button
-              *ngIf="!isPhysical(interface)"
-              mat-icon-button
-              [ixTest]="['delete', 'interface', interface.name]"
-              [disabled]="isHaEnabled"
-              (click)="onDelete(interface)"
-            >
-              <ix-icon name="delete"></ix-icon>
-            </button>
-          </div>
-        </div>
-      </ng-template>
     </tbody>
   </ix-table2>
 </mat-card>

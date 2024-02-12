@@ -10,6 +10,7 @@ import { EntityTableAction } from 'app/modules/entity/entity-table/entity-table.
 import { EntityTableService } from 'app/services/entity-table.service';
 
 @UntilDestroy()
+// eslint-disable-next-line @angular-eslint/prefer-on-push-component-change-detection
 @Component({
   selector: 'ix-entity-table-add-actions',
   templateUrl: './entity-table-add-actions.component.html',

@@ -1,21 +1,22 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+  ChangeDetectionStrategy, Component, EventEmitter, OnInit, Output,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { isObject } from 'lodash';
 import {
-  BehaviorSubject, Observable, combineLatest, switchMap, of, filter, map,
+  filter, map, of, tap,
 } from 'rxjs';
-import { EmptyType } from 'app/enums/empty-type.enum';
+import { Role } from 'app/enums/role.enum';
 import { helptextSystemCertificates } from 'app/helptext/system/certificates';
 import { Certificate } from 'app/interfaces/certificate.interface';
 import { Job } from 'app/interfaces/job.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
+import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
-import { ArrayDataProvider } from 'app/modules/ix-table2/array-data-provider';
+import { AsyncDataProvider } from 'app/modules/ix-table2/classes/async-data-provider/async-data-provider';
+import { actionsColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
 import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { SortDirection } from 'app/modules/ix-table2/enums/sort-direction.enum';
 import { createTable } from 'app/modules/ix-table2/utils';
@@ -37,8 +38,10 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CertificateListComponent implements OnInit {
+  @Output() certificateDeleted = new EventEmitter<void>();
+
   filterString = '';
-  dataProvider = new ArrayDataProvider<Certificate>();
+  dataProvider: AsyncDataProvider<Certificate>;
   certificates: Certificate[] = [];
   columns = createTable<Certificate>([
     textColumn({
@@ -56,35 +59,48 @@ export class CertificateListComponent implements OnInit {
       propertyName: 'common',
       sortable: true,
     }),
-    textColumn({
-      propertyName: 'id',
+    actionsColumn({
+      actions: [
+        {
+          iconName: 'block',
+          tooltip: this.translate.instant('Revoked'),
+          hidden: (row) => of(!row.revoked),
+          onClick: () => {},
+        },
+        {
+          iconName: 'mdi-undo',
+          requiredRoles: [Role.FullAdmin],
+          tooltip: this.translate.instant('Revoke'),
+          hidden: (row) => of(!row.can_be_revoked),
+          onClick: (row) => this.doRevoke(row),
+        },
+        {
+          iconName: 'mdi-download',
+          tooltip: this.translate.instant('Download'),
+          onClick: (row) => this.doDownload(row),
+        },
+        {
+          iconName: 'edit',
+          tooltip: this.translate.instant('Edit'),
+          onClick: (row) => this.doEdit(row),
+        },
+        {
+          iconName: 'delete',
+          requiredRoles: [Role.FullAdmin],
+          tooltip: this.translate.instant('Delete'),
+          onClick: (row) => this.doDelete(row),
+        },
+      ],
     }),
-  ]);
-
-  isLoading$ = new BehaviorSubject<boolean>(true);
-  isNoData$ = new BehaviorSubject<boolean>(false);
-  hasError$ = new BehaviorSubject<boolean>(false);
-  emptyType$: Observable<EmptyType> = combineLatest([this.isLoading$, this.isNoData$, this.hasError$]).pipe(
-    switchMap(([isLoading, isNoData, isError]) => {
-      if (isLoading) {
-        return of(EmptyType.Loading);
-      }
-      if (isError) {
-        return of(EmptyType.Errors);
-      }
-      if (isNoData) {
-        return of(EmptyType.NoPageData);
-      }
-      return of(EmptyType.NoSearchResults);
-    }),
-  );
+  ], {
+    rowTestId: (row) => 'cert-' + row.name,
+  });
 
   constructor(
     private matDialog: MatDialog,
     private ws: WebSocketService,
     private slideInService: IxSlideInService,
     private translate: TranslateService,
-    private cdr: ChangeDetectorRef,
     protected emptyService: EmptyService,
     private storageService: StorageService,
     private dialogService: DialogService,
@@ -92,48 +108,27 @@ export class CertificateListComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    const certificates$ = this.ws.call('certificate.query').pipe(
+      map((certificates) => {
+        return certificates
+          .map((certificate) => {
+            if (isObject(certificate.issuer)) {
+              certificate.issuer = certificate.issuer.name;
+            }
+            return certificate;
+          })
+          .filter((certificate) => certificate.certificate !== null);
+      }),
+      tap((certificates) => this.certificates = certificates),
+      untilDestroyed(this),
+    );
+    this.dataProvider = new AsyncDataProvider<Certificate>(certificates$);
+    this.setDefaultSort();
     this.getCertificates();
   }
 
   getCertificates(): void {
-    this.ws
-      .call('certificate.query')
-      .pipe(
-        map((certificates) => {
-          return certificates
-            .map((certificate) => {
-              if (isObject(certificate.issuer)) {
-                certificate.issuer = certificate.issuer.name;
-              }
-              return certificate;
-            })
-            .filter((certificate) => certificate.certificate !== null);
-        }),
-        untilDestroyed(this),
-      )
-      .subscribe({
-        next: (certificates) => {
-          this.certificates = certificates;
-          this.dataProvider.setRows(this.certificates);
-          this.isLoading$.next(false);
-          this.isNoData$.next(!this.certificates.length);
-          this.setDefaultSort();
-          this.cdr.markForCheck();
-        },
-        error: () => {
-          this.dataProvider.setRows([]);
-          this.isLoading$.next(false);
-          this.hasError$.next(true);
-          this.cdr.markForCheck();
-        },
-      });
-  }
-
-  onListFiltered(query: string): void {
-    this.filterString = query.toLowerCase();
-    this.dataProvider.setRows(
-      this.certificates.filter((certificate) => [certificate.name.toLowerCase()].includes(this.filterString)),
-    );
+    this.dataProvider.load();
   }
 
   setDefaultSort(): void {
@@ -178,9 +173,11 @@ export class CertificateListComponent implements OnInit {
         jobDialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
           jobDialogRef.close(true);
           this.getCertificates();
+          this.certificateDeleted.emit();
         });
         jobDialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err) => {
-          this.dialogService.error(this.errorHandler.parseJobError(err));
+          jobDialogRef.close();
+          this.dialogService.error(this.errorHandler.parseError(err));
         });
       });
   }
@@ -211,7 +208,7 @@ export class CertificateListComponent implements OnInit {
               },
             });
         },
-        error: (err: WebsocketError | Job) => {
+        error: (err: WebSocketError | Job) => {
           this.dialogService.error(this.errorHandler.parseError(err));
         },
       });
@@ -238,8 +235,8 @@ export class CertificateListComponent implements OnInit {
               },
             });
         },
-        error: (err: WebsocketError) => {
-          this.dialogService.error(this.errorHandler.parseWsError(err));
+        error: (err: unknown) => {
+          this.dialogService.error(this.errorHandler.parseError(err));
         },
       });
   }
@@ -263,11 +260,12 @@ export class CertificateListComponent implements OnInit {
         dialogRef.componentInstance.setCall('certificate.update', [certificate.id, { revoked: true }]);
         dialogRef.componentInstance.submit();
         dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
+          this.getCertificates();
           this.matDialog.closeAll();
         });
         dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((failedJob) => {
           this.matDialog.closeAll();
-          this.dialogService.error(this.errorHandler.parseJobError(failedJob));
+          this.dialogService.error(this.errorHandler.parseError(failedJob));
         });
       });
   }

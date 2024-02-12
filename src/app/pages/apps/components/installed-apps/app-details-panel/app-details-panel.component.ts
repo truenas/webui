@@ -1,8 +1,8 @@
 import {
-  ChangeDetectionStrategy, Component, Input,
+  ChangeDetectionStrategy, Component, EventEmitter, Input, Output,
 } from '@angular/core';
-import { Router } from '@angular/router';
 import { ChartRelease } from 'app/interfaces/chart-release.interface';
+import { AppStatus } from 'app/pages/apps/enum/app-status.enum';
 
 @Component({
   selector: 'ix-app-details-panel',
@@ -12,12 +12,12 @@ import { ChartRelease } from 'app/interfaces/chart-release.interface';
 })
 export class AppDetailsPanelComponent {
   @Input() app: ChartRelease;
-
-  constructor(
-    private router: Router,
-  ) { }
+  @Input() status: AppStatus;
+  @Output() startApp = new EventEmitter<void>();
+  @Output() stopApp = new EventEmitter<void>();
+  @Output() closeMobileDetails = new EventEmitter<void>();
 
   onCloseMobileDetails(): void {
-    this.router.navigate(['/apps', 'installed'], { state: { hideMobileDetails: true } });
+    this.closeMobileDetails.emit();
   }
 }

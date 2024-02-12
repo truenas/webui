@@ -21,3 +21,5 @@ export interface SelectOption<T = SelectOptionValueType> extends Option<T> {
   tooltip?: string;
   hoverTooltip?: string;
 }
+
+export const newOption = 'NEW';

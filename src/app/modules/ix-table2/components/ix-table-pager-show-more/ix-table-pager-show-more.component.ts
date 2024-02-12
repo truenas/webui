@@ -2,7 +2,7 @@ import {
   AfterContentChecked, ChangeDetectionStrategy, ChangeDetectorRef, Component, HostBinding, Input, OnInit,
 } from '@angular/core';
 import { UntilDestroy } from '@ngneat/until-destroy';
-import { ArrayDataProvider } from 'app/modules/ix-table2/array-data-provider';
+import { DataProvider } from 'app/modules/ix-table2/interfaces/data-provider.interface';
 
 @UntilDestroy()
 @Component({
@@ -12,7 +12,7 @@ import { ArrayDataProvider } from 'app/modules/ix-table2/array-data-provider';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class IxTablePagerShowMoreComponent<T> implements OnInit, AfterContentChecked {
-  @Input() dataProvider!: ArrayDataProvider<T>;
+  @Input() dataProvider!: DataProvider<T>;
   @Input() pageSize = 5;
 
   currentPage = 1;
@@ -35,7 +35,7 @@ export class IxTablePagerShowMoreComponent<T> implements OnInit, AfterContentChe
   }
 
   ngAfterContentChecked(): void {
-    this.totalItems = this.dataProvider.rows.length;
+    this.totalItems = this.dataProvider.totalRows;
     this.cdr.markForCheck();
   }
 

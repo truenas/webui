@@ -15,11 +15,14 @@ import {
   BehaviorSubject, of, Subject, Subscription, timer,
 } from 'rxjs';
 import {
+  debounceTime,
+  distinctUntilChanged,
   filter, map, take, tap,
 } from 'rxjs/operators';
 import { ixChartApp } from 'app/constants/catalog.constants';
 import { DynamicFormSchemaType } from 'app/enums/dynamic-form-schema-type.enum';
-import helptext from 'app/helptext/apps/apps';
+import { Role } from 'app/enums/role.enum';
+import { helptextApps } from 'app/helptext/apps/apps';
 import { AppDetailsRouteParams } from 'app/interfaces/app-details-route-params.interface';
 import { CatalogApp } from 'app/interfaces/catalog.interface';
 import {
@@ -36,18 +39,20 @@ import {
   DynamicWizardSchema,
 } from 'app/interfaces/dynamic-form-schema.interface';
 import { Option } from 'app/interfaces/option.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
+import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { CustomUntypedFormField } from 'app/modules/ix-dynamic-form/components/ix-dynamic-form/classes/custom-untyped-form-field';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { forbiddenAsyncValues, forbiddenValuesError } from 'app/modules/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { DockerHubRateInfoDialogComponent } from 'app/pages/apps/components/dockerhub-rate-limit-info.dialog.ts/dockerhub-rate-limit-info-dialog.component';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { KubernetesStore } from 'app/pages/apps/store/kubernetes-store.service';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { AppSchemaService } from 'app/services/schema/app-schema.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -59,12 +64,13 @@ export class ChartWizardComponent implements OnInit, OnDestroy {
   appId: string;
   catalog: string;
   train: string;
-  config: { [key: string]: ChartFormValue };
+  config: Record<string, ChartFormValue>;
   catalogApp: CatalogApp;
   isLoading = true;
   appsLoaded = false;
   isNew = true;
   dynamicSection: DynamicWizardSchema[] = [];
+  rootDynamicSection: DynamicWizardSchema[] = [];
   dialogRef: MatDialogRef<EntityJobComponent>;
   subscription = new Subscription();
   chartSchema: ChartSchema['schema'];
@@ -78,7 +84,7 @@ export class ChartWizardComponent implements OnInit, OnDestroy {
   searchControl = this.formBuilder.control('');
   searchOptions: Option[] = [];
 
-  readonly helptext = helptext;
+  readonly helptext = helptextApps;
 
   private _pageTitle$ = new BehaviorSubject<string>('...');
   pageTitle$ = this._pageTitle$.asObservable().pipe(
@@ -90,6 +96,8 @@ export class ChartWizardComponent implements OnInit, OnDestroy {
       return `${this.titlePrefix} ${name}`;
     }),
   );
+
+  protected readonly requiredRoles = [Role.AppsWrite];
 
   get titlePrefix(): string {
     return this.isNew ? this.translate.instant('Install') : this.translate.instant('Edit');
@@ -104,7 +112,7 @@ export class ChartWizardComponent implements OnInit, OnDestroy {
     private formErrorHandler: FormErrorHandlerService,
     private dialogService: DialogService,
     private appSchemaService: AppSchemaService,
-    private mdDialog: MatDialog,
+    private matDialog: MatDialog,
     private validatorsService: IxValidatorsService,
     private translate: TranslateService,
     private cdr: ChangeDetectorRef,
@@ -114,30 +122,13 @@ export class ChartWizardComponent implements OnInit, OnDestroy {
     private router: Router,
     private errorHandler: ErrorHandlerService,
     private kubernetesStore: KubernetesStore,
+    private ws: WebSocketService,
   ) {}
 
   ngOnInit(): void {
+    this.getDockerHubRateLimitInfo();
     this.listenForRouteChanges();
-
-    this.searchControl.valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {
-      const option = this.searchOptions.find((opt) => opt.value === value)
-        || this.searchOptions.find((opt) => opt.label.toLocaleLowerCase() === value.toLocaleLowerCase());
-
-      if (option) {
-        const path = option.value.toString().split('.');
-        let nextElement: HTMLElement;
-        path.forEach((id, idx) => {
-          nextElement = document.getElementById(id);
-          if (idx === path.length - 1) {
-            nextElement?.scrollIntoView({ block: 'center' });
-            nextElement.classList.add('highlighted');
-            timer(999)
-              .pipe(untilDestroyed(this))
-              .subscribe(() => nextElement.classList.remove('highlighted'));
-          }
-        });
-      }
-    });
+    this.handleSearchControl();
   }
 
   ngOnDestroy(): void {
@@ -166,7 +157,7 @@ export class ChartWizardComponent implements OnInit, OnDestroy {
           this.setChartForCreation(app);
           this.afterAppLoaded();
         },
-        error: (error: WebsocketError) => this.afterAppLoadError(error),
+        error: (error: WebSocketError) => this.afterAppLoadError(error),
       });
   }
 
@@ -176,8 +167,11 @@ export class ChartWizardComponent implements OnInit, OnDestroy {
 
   addItem(event: AddListItemEvent): void {
     this.appSchemaService.addFormListItem({
-      event,
-      isNew: this.isNew,
+      event: {
+        ...event,
+        schema: event.schema.map((item) => ({ ...item, schema: { ...item.schema, immutable: false } })),
+      },
+      isNew: true,
       isParentImmutable: false,
     });
   }
@@ -224,9 +218,9 @@ export class ChartWizardComponent implements OnInit, OnDestroy {
   }
 
   saveData(data: ChartFormValues): void {
-    this.dialogRef = this.mdDialog.open(EntityJobComponent, {
+    this.dialogRef = this.matDialog.open(EntityJobComponent, {
       data: {
-        title: this.isNew ? helptext.installing : helptext.updating,
+        title: this.isNew ? helptextApps.installing : helptextApps.updating,
       },
       disableClose: true,
     });
@@ -257,6 +251,7 @@ export class ChartWizardComponent implements OnInit, OnDestroy {
 
     this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((failedJob) => {
       this.formErrorHandler.handleWsFormError(failedJob, this.form);
+      this.dialogRef.close();
       this.cdr.markForCheck();
     });
   }
@@ -300,11 +295,12 @@ export class ChartWizardComponent implements OnInit, OnDestroy {
           this.setChartForEdit(releases[0]);
           this.afterAppLoaded();
         },
-        error: (error: WebsocketError) => this.afterAppLoadError(error),
+        error: (error: WebSocketError) => this.afterAppLoadError(error),
       });
   }
 
   private setChartForCreation(catalogApp: CatalogApp): void {
+    this.rootDynamicSection = [];
     this.catalogApp = catalogApp;
     this._pageTitle$.next(this.catalogApp.title || this.catalogApp.name);
     let hideVersion = false;
@@ -318,7 +314,7 @@ export class ChartWizardComponent implements OnInit, OnDestroy {
       }
     });
 
-    this.form.addControl('version', new FormControl(versionKeys[0], [Validators.required]));
+    this.form.addControl('version', new FormControl(catalogApp.latest_version, [Validators.required]));
     this.form.addControl('release_name', new FormControl('', [Validators.required]));
     this.form.controls.release_name.setValidators(
       this.validatorsService.withMessage(
@@ -330,8 +326,9 @@ export class ChartWizardComponent implements OnInit, OnDestroy {
     );
     this.form.controls.release_name.setAsyncValidators(forbiddenAsyncValues(this.forbiddenAppNames$));
     this.form.controls.release_name.updateValueAndValidity();
+    this.listenForVersionChanges();
 
-    this.dynamicSection.push({
+    this.rootDynamicSection.push({
       name: 'Application name',
       description: '',
       help: '',
@@ -339,13 +336,13 @@ export class ChartWizardComponent implements OnInit, OnDestroy {
         {
           controlName: 'release_name',
           type: DynamicFormSchemaType.Input,
-          title: helptext.chartForm.release_name.placeholder,
+          title: helptextApps.chartForm.release_name.placeholder,
           required: true,
         },
         {
           controlName: 'version',
           type: DynamicFormSchemaType.Select,
-          title: helptext.chartWizard.nameGroup.version,
+          title: helptextApps.chartWizard.nameGroup.version,
           required: true,
           options: of(versionKeys.map((version) => ({ value: version, label: version }))),
           hidden: hideVersion,
@@ -358,7 +355,7 @@ export class ChartWizardComponent implements OnInit, OnDestroy {
     if (catalogApp?.app_metadata) {
       const controlName = 'show_metadata';
       this.form.addControl(controlName, new FormControl(true, []));
-      this.dynamicSection.push({
+      this.rootDynamicSection.push({
         name: 'Application Metadata',
         description: '',
         help: this.translate.instant('This information is provided by the catalog maintainer.'),
@@ -391,6 +388,7 @@ export class ChartWizardComponent implements OnInit, OnDestroy {
   }
 
   private setChartForEdit(chart: ChartRelease): void {
+    this.rootDynamicSection = [];
     this.isNew = false;
     this.config = chart.config;
     this.config.release_name = chart.id;
@@ -399,7 +397,7 @@ export class ChartWizardComponent implements OnInit, OnDestroy {
 
     this.form.addControl('release_name', new FormControl(chart.name, [Validators.required]));
 
-    this.dynamicSection.push({
+    this.rootDynamicSection.push({
       name: 'Application name',
       description: '',
       help: '',
@@ -407,7 +405,7 @@ export class ChartWizardComponent implements OnInit, OnDestroy {
         {
           controlName: 'release_name',
           type: DynamicFormSchemaType.Input,
-          title: helptext.chartForm.release_name.placeholder,
+          title: helptextApps.chartForm.release_name.placeholder,
           required: true,
           editable: false,
         },
@@ -424,13 +422,15 @@ export class ChartWizardComponent implements OnInit, OnDestroy {
     this.cdr.markForCheck();
   }
 
-  private afterAppLoadError(error: WebsocketError): void {
+  private afterAppLoadError(error: unknown): void {
     this.router.navigate(['/apps', 'available']).then(() => {
-      this.dialogService.error(this.errorHandler.parseWsError(error));
+      this.errorHandler.showErrorModal(error);
     });
   }
 
   private buildDynamicForm(schema: ChartSchema['schema']): void {
+    this.dynamicSection = [];
+    this.dynamicSection.push(...this.rootDynamicSection);
     this.chartSchema = schema;
     try {
       schema.groups.forEach((group) => {
@@ -451,8 +451,8 @@ export class ChartWizardComponent implements OnInit, OnDestroy {
     } catch (error: unknown) {
       console.error(error);
       this.dialogService.error({
-        title: helptext.chartForm.parseError.title,
-        message: helptext.chartForm.parseError.message,
+        title: helptextApps.chartForm.parseError.title,
+        message: helptextApps.chartForm.parseError.message,
       });
     }
   }
@@ -481,6 +481,49 @@ export class ChartWizardComponent implements OnInit, OnDestroy {
     this.kubernetesStore.selectedPool$.pipe(untilDestroyed(this)).subscribe((pool) => {
       if (!pool) {
         this.router.navigate(['/apps/available', this.catalog, this.train, this.appId]);
+      }
+    });
+  }
+
+  private handleSearchControl(): void {
+    this.searchControl.valueChanges.pipe(
+      debounceTime(100),
+      distinctUntilChanged(),
+      untilDestroyed(this),
+    ).subscribe((value) => {
+      const option = this.searchOptions.find((opt) => opt.value === value)
+        || this.searchOptions.find((opt) => opt.label.toLocaleLowerCase() === value.toLocaleLowerCase());
+
+      if (option) {
+        const path = option.value.toString().split('.');
+        let nextElement: HTMLElement;
+        path.forEach((id, idx) => {
+          nextElement = document.getElementById(id);
+          if (idx === path.length - 1) {
+            nextElement?.scrollIntoView({ block: 'center' });
+            nextElement.classList.add('highlighted');
+            timer(999)
+              .pipe(untilDestroyed(this))
+              .subscribe(() => nextElement.classList.remove('highlighted'));
+          }
+        });
+      }
+    });
+  }
+
+  private listenForVersionChanges(): void {
+    this.form.controls.version?.valueChanges.pipe(filter(Boolean), untilDestroyed(this)).subscribe((version) => {
+      this.catalogApp.schema = this.catalogApp.versions[version].schema;
+      this.buildDynamicForm(this.catalogApp.schema);
+    });
+  }
+
+  private getDockerHubRateLimitInfo(): void {
+    this.ws.call('container.image.dockerhub_rate_limit').pipe(untilDestroyed(this)).subscribe((info) => {
+      if (info.remaining_pull_limit < 5) {
+        this.matDialog.open(DockerHubRateInfoDialogComponent, {
+          data: info,
+        });
       }
     });
   }

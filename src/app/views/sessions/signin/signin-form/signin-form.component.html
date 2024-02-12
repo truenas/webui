@@ -7,7 +7,6 @@
       autocomplete="username"
       class="username-input"
       [label]="'Username' | translate"
-      [required]="true"
     ></ix-input>
 
     <ix-input
@@ -16,7 +15,6 @@
       prefixIcon="lock"
       autocomplete="current-password"
       [label]="'Password' | translate"
-      [required]="true"
     ></ix-input>
 
     <ix-insecure-connection *ngIf="showSecurityWarning"></ix-insecure-connection>
@@ -33,7 +31,7 @@
       {{ 'Log In' | translate }}
     </button>
     <div *ngIf="isLastLoginAttemptFailed" class="error">
-      <p>{{ 'Wrong username or password. Please try again.' | translate }}</p>
+      <p>{{ lastLoginError }}</p>
     </div>
   </ng-container>
   <ng-container *ngIf="hasTwoFactor">
@@ -69,7 +67,7 @@
       >{{ 'Cancel' | translate }}</button>
     </div>
     <div *ngIf="isLastOtpAttemptFailed" class="error">
-      <p>{{ 'Invalid or expired OTP. Please try again.' | translate }}</p>
+      <p>{{ lastLoginError }}</p>
     </div>
   </ng-container>
 </form>

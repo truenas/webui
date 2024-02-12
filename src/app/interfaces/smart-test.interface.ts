@@ -61,3 +61,7 @@ export interface ManualSmartTest {
   job: number;
   error?: string;
 }
+
+export interface SmartTestResultsRow extends SmartTestResult {
+  disk: string;
+}

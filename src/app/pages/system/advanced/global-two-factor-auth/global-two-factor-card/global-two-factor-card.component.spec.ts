@@ -4,8 +4,8 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatListItemHarness } from '@angular/material/list/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
-import { TwoFactorConfig } from 'app/interfaces/two-factor-config.interface';
+import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { GlobalTwoFactorConfig } from 'app/interfaces/two-factor-config.interface';
 import { AdvancedSettingsService } from 'app/pages/system/advanced/advanced-settings.service';
 import { GlobalTwoFactorAuthCardComponent } from 'app/pages/system/advanced/global-two-factor-auth/global-two-factor-card/global-two-factor-card.component';
 import { GlobalTwoFactorAuthFormComponent } from 'app/pages/system/advanced/global-two-factor-auth/global-two-factor-form/global-two-factor-form.component';
@@ -21,14 +21,12 @@ describe('GlobalTwoFactorAuthCardComponent', () => {
       mockProvider(AdvancedSettingsService, {
         showFirstTimeWarningIfNeeded: jest.fn(() => of()),
       }),
-      mockWebsocket([
+      mockWebSocket([
         mockCall('auth.twofactor.config', {
-          interval: 30,
           window: 3,
           enabled: false,
-          otp_digits: 4,
           services: { ssh: false },
-        } as TwoFactorConfig),
+        } as GlobalTwoFactorConfig),
       ]),
     ],
   });
@@ -44,9 +42,7 @@ describe('GlobalTwoFactorAuthCardComponent', () => {
 
     expect(itemTexts).toEqual([
       'Global 2FA: Disabled',
-      'Interval: 30',
-      'OTP Digits: 4',
-      'Window: 3',
+      'Tolerance Window: 3',
       'Two Factor Authentication for SSH: Disabled',
     ]);
   });
@@ -58,12 +54,10 @@ describe('GlobalTwoFactorAuthCardComponent', () => {
     expect(spectator.inject(AdvancedSettingsService).showFirstTimeWarningIfNeeded).toHaveBeenCalled();
     expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(GlobalTwoFactorAuthFormComponent, {
       data: {
-        interval: 30,
         window: 3,
         enabled: false,
-        otp_digits: 4,
         services: { ssh: false },
-      } as TwoFactorConfig,
+      } as GlobalTwoFactorConfig,
     });
   });
 });

@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatBadgeModule } from '@angular/material/badge';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
@@ -22,7 +22,6 @@ import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { CoreComponents } from 'app/core/core-components.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
-import { AlertsModule } from 'app/modules/alerts/alerts.module';
 import { CastModule } from 'app/modules/cast/cast.module';
 import { AboutDialogComponent } from 'app/modules/common/dialog/about/about-dialog.component';
 import { ConfirmDialogComponent } from 'app/modules/common/dialog/confirm-dialog/confirm-dialog.component';
@@ -32,22 +31,26 @@ import { ErrorDialogComponent } from 'app/modules/common/dialog/error-dialog/err
 import { FullScreenDialogComponent } from 'app/modules/common/dialog/full-screen-dialog/full-screen-dialog.component';
 import { GeneralDialogComponent } from 'app/modules/common/dialog/general-dialog/general-dialog.component';
 import { InfoDialogComponent } from 'app/modules/common/dialog/info-dialog/info-dialog.component';
+import { JobProgressDialogComponent } from 'app/modules/common/dialog/job-progress/job-progress-dialog.component';
 import { ErrorTemplateComponent } from 'app/modules/common/dialog/multi-error-dialog/error-template/error-template.component';
 import { MultiErrorDialogComponent } from 'app/modules/common/dialog/multi-error-dialog/multi-error-dialog.component';
 import { RedirectDialogComponent } from 'app/modules/common/dialog/redirect-dialog/redirect-dialog.component';
 import {
   ResilverProgressDialogComponent,
 } from 'app/modules/common/dialog/resilver-progress/resilver-progress.component';
+import { SessionExpiringDialogComponent } from 'app/modules/common/dialog/session-expiring-dialog/session-expiring-dialog.component';
+import { StartServiceDialogComponent } from 'app/modules/common/dialog/start-service-dialog/start-service-dialog.component';
 import { UpdateDialogComponent } from 'app/modules/common/dialog/update-dialog/update-dialog.component';
+import { InterfaceStatusIconComponent } from 'app/modules/common/interface-status-icon/interface-status-icon.component';
 import { SearchInputComponent } from 'app/modules/common/search-input/search-input.component';
 import { SummaryComponent } from 'app/modules/common/summary/summary.component';
-import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxDynamicFormModule } from 'app/modules/ix-dynamic-form/ix-dynamic-form.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { JobsModule } from 'app/modules/jobs/jobs.module';
 import { ConsoleMessagesStore } from 'app/modules/layout/components/console-footer/console-messages.store';
 import { LayoutModule } from 'app/modules/layout/layout.module';
+import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
 import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
 import { LanguageService } from 'app/services/language.service';
@@ -63,11 +66,11 @@ import { ShowLogsDialogComponent } from './dialog/show-logs-dialog/show-logs-dia
     FlexLayoutModule,
     HttpClientModule,
     IxFormsModule,
+    ReactiveFormsModule,
     IxDynamicFormModule,
     JobsModule,
     MatBadgeModule,
     MatButtonModule,
-    EntityModule,
     MatCheckboxModule,
     MatDialogModule,
     MatDividerModule,
@@ -85,20 +88,23 @@ import { ShowLogsDialogComponent } from './dialog/show-logs-dialog/show-logs-dia
     TooltipModule,
     TranslateModule,
     MatSidenavModule,
-    AlertsModule,
     LayoutModule,
     TestIdModule,
     FormsModule,
+    AppLoaderModule,
   ],
   declarations: [
+    JobProgressDialogComponent,
     AboutDialogComponent,
     ConfirmDialogComponent,
+    SessionExpiringDialogComponent,
     ConsolePanelDialogComponent,
     DirectoryServicesMonitorComponent,
     ErrorDialogComponent,
     GeneralDialogComponent,
     InfoDialogComponent,
     ErrorTemplateComponent,
+    InterfaceStatusIconComponent,
     MultiErrorDialogComponent,
     RedirectDialogComponent,
     SearchInputComponent,
@@ -107,6 +113,7 @@ import { ShowLogsDialogComponent } from './dialog/show-logs-dialog/show-logs-dia
     ShowLogsDialogComponent,
     SummaryComponent,
     FullScreenDialogComponent,
+    StartServiceDialogComponent,
   ],
   providers: [
     LanguageService,
@@ -117,6 +124,7 @@ import { ShowLogsDialogComponent } from './dialog/show-logs-dialog/show-logs-dia
     SearchInputComponent,
     ShowLogsDialogComponent,
     SummaryComponent,
+    InterfaceStatusIconComponent,
   ],
 })
 export class AppCommonModule {}

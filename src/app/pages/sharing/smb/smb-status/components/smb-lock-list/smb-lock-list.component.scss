@@ -1,0 +1,10 @@
+@import 'scss-imports/splitview';
+
+ix-table2::ng-deep .details td {
+  padding-bottom: 16px !important;
+  padding-top: 16px !important;
+
+  h3 {
+    margin-bottom: 8px;
+  }
+}

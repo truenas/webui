@@ -10,6 +10,11 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 })
 export class CopyButtonComponent {
   @Input() text: string;
+  @Input() jsonText: unknown;
+
+  get isValidJson(): boolean {
+    return typeof this.jsonText === 'object';
+  }
 
   constructor(
     private snackbar: SnackbarService,
@@ -36,15 +41,19 @@ export class CopyButtonComponent {
     });
   }
 
-  private handleCopyToClipboard(): Promise<void> {
+  private handleCopyToClipboard(text: string): Promise<void> {
     if (navigator.clipboard) {
-      return navigator.clipboard.writeText(this.text);
+      return navigator.clipboard.writeText(text);
     }
 
     return this.copyViaDeprecatedExecCommand();
   }
 
   copyToClipboard(): void {
-    this.handleCopyToClipboard().then(() => this.showSuccessMessage());
+    this.handleCopyToClipboard(this.text).then(() => this.showSuccessMessage());
+  }
+
+  copyJsonToClipboard(): void {
+    this.handleCopyToClipboard(JSON.stringify(this.jsonText, null, 2)).then(() => this.showSuccessMessage());
   }
 }

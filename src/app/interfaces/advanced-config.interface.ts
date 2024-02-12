@@ -24,6 +24,7 @@ export interface AdvancedConfig {
   swapondrive: number;
   syslog_tls_certificate: number;
   syslog_transport: SyslogTransport;
+  syslog_audit: boolean;
   sysloglevel: SyslogLevel;
   syslogserver: string;
   traceback: boolean;

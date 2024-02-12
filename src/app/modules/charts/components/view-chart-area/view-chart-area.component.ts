@@ -1,5 +1,5 @@
 import {
-  Component, Input, OnDestroy, OnChanges, ViewChild, ElementRef,
+  Component, Input, OnDestroy, OnChanges, ViewChild, ElementRef, ChangeDetectionStrategy,
 } from '@angular/core';
 import {
   Chart, ChartData, ChartOptions, ChartConfiguration,
@@ -11,9 +11,10 @@ import 'chartjs-adapter-date-fns';
   selector: 'ix-view-chart-area',
   templateUrl: './view-chart-area.component.html',
   styleUrls: ['./view-chart-area.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ViewChartAreaComponent implements OnDestroy, OnChanges {
-  @ViewChild('canvas', { static: true }) canvas: ElementRef;
+  @ViewChild('canvas', { static: true }) canvas: ElementRef<HTMLCanvasElement>;
   @Input() data: ChartData<'line'>;
   @Input() options: ChartOptions<'line'>;
 

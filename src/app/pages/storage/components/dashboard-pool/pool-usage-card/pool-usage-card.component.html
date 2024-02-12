@@ -37,7 +37,7 @@
         <span class="capacity-caption" fxLayoutAlign="start center">
           <b>{{ 'Usable Capacity' | translate }}:</b>
           <span class="value-caption">
-            {{ capacity | filesize: { standard: 'iec' } }}
+            {{ capacity | ixFileSize }}
           </span>
         </span>
         <ul class="list-caption">
@@ -45,7 +45,7 @@
             <span class="used-caption" fxLayoutAlign="start center">
               <b>{{ 'Used' | translate }}:</b>
               <span class="value-caption">
-                {{ (rootDataset?.used.parsed | filesize: { standard: 'iec' }) || ('Unknown' | translate) }}
+                {{ (rootDataset?.used.parsed | ixFileSize) || ('Unknown' | translate) }}
               </span>
             </span>
           </li>
@@ -53,7 +53,7 @@
             <span class="available-caption" fxLayoutAlign="start center">
               <b>{{ 'Available' | translate }}:</b>
               <span class="value-caption">
-                {{ (rootDataset?.available.parsed | filesize: { standard: 'iec' }) || ('Unknown' | translate) }}
+                {{ (rootDataset?.available.parsed | ixFileSize) || ('Unknown' | translate) }}
               </span>
             </span>
           </li>

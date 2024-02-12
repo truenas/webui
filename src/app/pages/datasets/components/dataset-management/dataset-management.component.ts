@@ -15,6 +15,7 @@ import {
   ElementRef,
   Inject,
   TrackByFunction,
+  HostBinding,
 } from '@angular/core';
 import {
   ActivatedRoute, NavigationStart, Router,
@@ -26,16 +27,18 @@ import { ResizedEvent } from 'angular-resize-event';
 import { uniqBy } from 'lodash';
 import { Subject, Subscription } from 'rxjs';
 import {
+  debounceTime,
   distinctUntilChanged,
   filter,
   map,
+  switchMap,
 } from 'rxjs/operators';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { Job } from 'app/interfaces/job.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
+import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { TreeDataSource } from 'app/modules/ix-tree/tree-datasource';
 import { TreeFlattener } from 'app/modules/ix-tree/tree-flattener';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
@@ -44,7 +47,6 @@ import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
-import { selectIsSystemHaCapable } from 'app/store/system-info/system-info.selectors';
 
 @UntilDestroy()
 @Component({
@@ -56,11 +58,9 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
   @ViewChild('ixTreeHeader', { static: false }) ixTreeHeader: ElementRef<HTMLElement>;
   @ViewChild('ixTree', { static: false }) ixTree: ElementRef<HTMLElement>;
 
-  isSystemHaCapable$ = this.store$.select(selectIsSystemHaCapable);
-
   isLoading$ = this.datasetStore.isLoading$;
   selectedDataset$ = this.datasetStore.selectedDataset$;
-  showMobileDetails = false;
+  @HostBinding('class.details-overlay') showMobileDetails = false;
   isMobileView = false;
   systemDataset: string;
   isLoading = true;
@@ -86,7 +86,7 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
   private readonly scrollSubject = new Subject<number>();
 
   // Flat API
-  getLevel = (dataset: DatasetDetails): number => dataset?.name?.split('/')?.length - 1;
+  getLevel = (dataset: DatasetDetails): number => (dataset?.name?.split('/')?.length || 0) - 1;
   isExpandable = (dataset: DatasetDetails): boolean => dataset?.children?.length > 0;
   treeControl = new FlatTreeControl<DatasetDetails>(
     this.getLevel,
@@ -177,7 +177,7 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
     });
   }
 
-  handleError = (error: WebsocketError | Job): void => {
+  handleError = (error: WebSocketError | Job): void => {
     this.dialogService.error(this.errorHandler.parseError(error));
   };
 
@@ -234,7 +234,11 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
       .pipe(filter(Boolean), untilDestroyed(this))
       .subscribe({
         next: (selectedBranch: DatasetDetails[]) => {
-          selectedBranch.forEach((dataset) => this.treeControl.expand(dataset));
+          selectedBranch.forEach((datasetFromSelectedBranch) => {
+            const expandedDataset = this.treeControl.dataNodes
+              .find((dataset) => dataset.id === datasetFromSelectedBranch.id);
+            this.treeControl.expand(expandedDataset);
+          });
         },
         error: this.handleError,
       });
@@ -280,7 +284,17 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
   private listenForRouteChanges(): void {
     this.activatedRoute.params
       .pipe(
-        map((params) => params.datasetId as string),
+        switchMap((params) => {
+          return this.datasetStore.datasets$.pipe(
+            map((datasets) => {
+              const selectedDataset = datasets.find((dataset) => dataset.id === params.datasetId);
+              if (!selectedDataset && datasets.length) {
+                this.router.navigate(['/datasets', datasets[0]?.id]);
+              }
+              return selectedDataset ? params.datasetId as string : datasets[0]?.id;
+            }),
+          );
+        }),
         filter(Boolean),
         untilDestroyed(this),
       )
@@ -292,9 +306,10 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
   private listenForDatasetScrolling(): void {
     this.subscription.add(
       this.scrollSubject
-        .pipe(distinctUntilChanged(), untilDestroyed(this))
+        .pipe(debounceTime(5), untilDestroyed(this))
         .subscribe({
           next: (scrollLeft: number) => {
+            this.window.dispatchEvent(new Event('resize'));
             this.ixTreeHeader.nativeElement.scrollLeft = scrollLeft;
             this.ixTree.nativeElement.scrollLeft = scrollLeft;
           },

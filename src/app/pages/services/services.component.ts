@@ -1,21 +1,23 @@
 import {
-  Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
-import {
-  filter, map, switchMap,
-} from 'rxjs/operators';
+import { EMPTY, of } from 'rxjs';
+import { catchError, map, switchMap } from 'rxjs/operators';
+import { AuditService } from 'app/enums/audit.enum';
 import { EmptyType } from 'app/enums/empty-type.enum';
+import { Role } from 'app/enums/role.enum';
 import { ServiceName, serviceNames } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
+import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { Service, ServiceRow } from 'app/interfaces/service.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
+import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
 import { ServiceFtpComponent } from 'app/pages/services/components/service-ftp/service-ftp.component';
-import { ServiceLldpComponent } from 'app/pages/services/components/service-lldp/service-lldp.component';
 import { ServiceNfsComponent } from 'app/pages/services/components/service-nfs/service-nfs.component';
 import { ServiceSmartComponent } from 'app/pages/services/components/service-smart/service-smart.component';
 import { ServiceSmbComponent } from 'app/pages/services/components/service-smb/service-smb.component';
@@ -23,9 +25,14 @@ import { ServiceSnmpComponent } from 'app/pages/services/components/service-snmp
 import { ServiceSshComponent } from 'app/pages/services/components/service-ssh/service-ssh.component';
 import { ServiceUpsComponent } from 'app/pages/services/components/service-ups/service-ups.component';
 import { DialogService } from 'app/services/dialog.service';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IscsiService } from 'app/services/iscsi.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { UrlOptionsService } from 'app/services/url-options.service';
 import { WebSocketService } from 'app/services/ws.service';
+import { serviceChanged } from 'app/store/services/services.actions';
+import { ServicesState } from 'app/store/services/services.reducer';
+import { waitForServices } from 'app/store/services/services.selectors';
 
 @UntilDestroy()
 @Component({
@@ -40,14 +47,24 @@ export class ServicesComponent implements OnInit {
   displayedColumns = ['name', 'state', 'enable', 'actions'];
   error = false;
   loading = true;
-  readonly EmptyType = EmptyType;
   serviceLoadingMap = new Map<ServiceName, boolean>();
   readonly serviceNames = serviceNames;
+  readonly serviceName = ServiceName;
   readonly ServiceStatus = ServiceStatus;
-  private readonly hiddenServices: ServiceName[] = [ServiceName.Gluster, ServiceName.Afp];
+  protected readonly Role = Role;
 
-  get emptyConfigService(): EmptyService {
-    return this.emptyService;
+  get emptyConfig(): EmptyConfig {
+    if (this.loading) {
+      return this.emptyService.defaultEmptyConfig(EmptyType.Loading);
+    }
+    if (this.error) {
+      return this.emptyService.defaultEmptyConfig(EmptyType.Errors);
+    }
+    if (!this.dataSource.data.length) {
+      return this.emptyService.defaultEmptyConfig(EmptyType.NoPageData);
+    }
+
+    return this.emptyService.defaultEmptyConfig(EmptyType.NoSearchResults);
   }
 
   constructor(
@@ -59,11 +76,13 @@ export class ServicesComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private emptyService: EmptyService,
     private slideInService: IxSlideInService,
+    private store$: Store<ServicesState>,
+    private urlOptions: UrlOptionsService,
+    private errorHandler: ErrorHandlerService,
   ) {}
 
   ngOnInit(): void {
     this.getData();
-    this.getUpdates();
   }
 
   get shouldShowEmpty(): boolean {
@@ -71,21 +90,18 @@ export class ServicesComponent implements OnInit {
   }
 
   getData(): void {
-    this.ws.call('service.query', [[], { order_by: ['service'] }]).pipe(
+    this.loading = true;
+    this.error = false;
+
+    this.store$.pipe(
+      waitForServices,
       map((services) => {
-        const transformed = services
-          .filter((service) => serviceNames.has(service.service))
-          .filter((service) => !this.hiddenServices.includes(service.service))
-          .map((service) => {
-            return {
-              ...service,
-              name: serviceNames.has(service.service) ? serviceNames.get(service.service) : service.service,
-            } as ServiceRow;
-          });
-
-        transformed.sort((a, b) => a.name.localeCompare(b.name));
-
-        return transformed;
+        return services.map((service) => {
+          return {
+            ...service,
+            name: serviceNames.has(service.service) ? serviceNames.get(service.service) : service.service,
+          } as ServiceRow;
+        });
       }),
       untilDestroyed(this),
     ).subscribe({
@@ -93,28 +109,15 @@ export class ServicesComponent implements OnInit {
         this.dataSource = new MatTableDataSource(services);
         this.loading = false;
         this.error = false;
+        this.setLoadingServiceMapFalse();
         this.cdr.markForCheck();
       },
       error: () => {
         this.error = true;
         this.loading = false;
+        this.setLoadingServiceMapFalse();
         this.cdr.markForCheck();
       },
-      complete: () => {
-        for (const key of serviceNames.keys()) {
-          this.serviceLoadingMap.set(key, false);
-        }
-      },
-    });
-  }
-
-  getUpdates(): void {
-    this.ws.subscribe('service.query').pipe(
-      map((event) => event.fields),
-      filter((service) => !this.hiddenServices.includes(service.service)),
-      untilDestroyed(this),
-    ).subscribe(() => {
-      this.getData();
     });
   }
 
@@ -201,7 +204,7 @@ export class ServicesComponent implements OnInit {
           );
         }
       },
-      error: (error: WebsocketError) => {
+      error: (error: WebSocketError) => {
         let message = this.translate.instant('Error starting service {serviceName}.', { serviceName });
         if (rpc === 'service.stop') {
           message = this.translate.instant('Error stopping service {serviceName}.', { serviceName });
@@ -209,7 +212,7 @@ export class ServicesComponent implements OnInit {
         this.dialog.error({
           title: message,
           message: error.reason,
-          backtrace: error.trace.formatted,
+          backtrace: error.trace?.formatted,
         });
         this.serviceLoadingMap.set(service.service, false);
         this.cdr.markForCheck();
@@ -218,17 +221,18 @@ export class ServicesComponent implements OnInit {
   }
 
   enableToggle(service: Service): void {
+    this.store$.dispatch(serviceChanged({ service }));
+
     this.ws.call('service.update', [service.id, { enable: service.enable }])
-      .pipe(untilDestroyed(this))
-      .subscribe((updated) => {
-        if (!updated) {
-          // To uncheck the checkbox
-          service.enable = false;
-          // Middleware should return the service id
-          throw new Error('Method service.update failed. No response from server');
-        }
-        this.cdr.markForCheck();
-      });
+      .pipe(
+        catchError((error) => {
+          this.errorHandler.showErrorModal(error);
+          this.store$.dispatch(serviceChanged({ service: { ...service, enable: !service.enable } }));
+          return of(EMPTY);
+        }),
+        untilDestroyed(this),
+      )
+      .subscribe();
   }
 
   configureService(row: Service): void {
@@ -257,9 +261,6 @@ export class ServicesComponent implements OnInit {
       case ServiceName.Smart:
         this.slideInService.open(ServiceSmartComponent);
         break;
-      case ServiceName.Lldp:
-        this.slideInService.open(ServiceLldpComponent);
-        break;
       default:
         break;
     }
@@ -277,5 +278,39 @@ export class ServicesComponent implements OnInit {
       this.serviceLoadingMap.set(service.service, false);
       this.cdr.markForCheck();
     }, 0);
+  }
+
+  setLoadingServiceMapFalse(): void {
+    for (const key of serviceNames.keys()) {
+      this.serviceLoadingMap.set(key, false);
+    }
+  }
+
+  sessionsUrl(serviceName: ServiceName): string[] {
+    if (serviceName === ServiceName.Cifs) {
+      return ['/sharing', 'smb', 'status', 'sessions'];
+    }
+    if (serviceName === ServiceName.Nfs) {
+      return ['/sharing', 'nfs', 'sessions'];
+    }
+
+    return [];
+  }
+
+  hasSessions(serviceName: ServiceName): boolean {
+    return serviceName === ServiceName.Cifs || serviceName === ServiceName.Nfs;
+  }
+
+  auditLogsUrl(): string {
+    return this.urlOptions.buildUrl('/system/audit', {
+      searchQuery: {
+        isBasicQuery: false,
+        filters: [['service', '=', AuditService.Smb]],
+      },
+    });
+  }
+
+  hasLogs(serviceName: ServiceName): boolean {
+    return serviceName === ServiceName.Cifs;
   }
 }

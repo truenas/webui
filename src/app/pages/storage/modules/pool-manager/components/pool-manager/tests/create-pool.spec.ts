@@ -7,8 +7,9 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { of } from 'rxjs';
 import { GiB } from 'app/constants/bytes.constant';
 import { CoreComponents } from 'app/core/core-components.module';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockEntityJobComponentRef } from 'app/core/testing/utils/mock-entity-job-component-ref.utils';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { DiskType } from 'app/enums/disk-type.enum';
 import { Enclosure } from 'app/interfaces/enclosure.interface';
 import { UnusedDisk } from 'app/interfaces/storage.interface';
@@ -45,7 +46,7 @@ describe('PoolManagerComponent – create pool', () => {
       mockProvider(MatDialog, {
         open: jest.fn(() => mockEntityJobComponentRef),
       }),
-      mockWebsocket([
+      mockWebSocket([
         mockCall('pool.validate_name', true),
         mockCall('disk.get_unused', [
           {
@@ -138,6 +139,7 @@ describe('PoolManagerComponent – create pool', () => {
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
+      mockAuth(),
     ],
   });
 
@@ -148,7 +150,7 @@ describe('PoolManagerComponent – create pool', () => {
 
   it('creates a pool', async () => {
     await wizard.fillStep({
-      'Name': 'pool1',
+      Name: 'pool1',
     });
     await wizard.clickNext();
 
@@ -186,6 +188,7 @@ describe('PoolManagerComponent – create pool', () => {
     // Metadata
     await wizard.clickNext();
     await wizard.fillStep({
+      Layout: 'Stripe',
       'Disk Size': '20 GiB (HDD)',
       Width: '1',
       'Number of VDEVs': '1',
@@ -194,6 +197,7 @@ describe('PoolManagerComponent – create pool', () => {
     // Dedup
     await wizard.clickNext();
     await wizard.fillStep({
+      Layout: 'Stripe',
       'Disk Size': '20 GiB (HDD)',
       Width: '1',
       'Number of VDEVs': '1',
@@ -206,7 +210,7 @@ describe('PoolManagerComponent – create pool', () => {
       Dedup: '1 × STRIPE | 1 × 20 GiB (HDD)',
       Log: '1 × STRIPE | 1 × 20 GiB (HDD)',
       Spare: '1 × 20 GiB (HDD)',
-      Special: '1 × STRIPE | 1 × 20 GiB (HDD)',
+      Metadata: '1 × STRIPE | 1 × 20 GiB (HDD)',
     });
     expect(await reviewView.getWarnings()).toEqual([
       'A stripe log VDEV may result in data loss if it fails combined with a power outage.',
@@ -226,25 +230,25 @@ describe('PoolManagerComponent – create pool', () => {
         name: 'pool1',
         topology: {
           cache: [{
-            'disks': [ 'sda3' ],
-            'type': 'STRIPE',
+            disks: ['sda3'],
+            type: 'STRIPE',
           }],
           data: [{
-            'disks': [ 'sda0' ],
-            'type': 'STRIPE',
+            disks: ['sda0'],
+            type: 'STRIPE',
           }],
-          'dedup': [{
-            'disks': [ 'sda1' ],
-            'type': 'STRIPE',
+          dedup: [{
+            disks: ['sda1'],
+            type: 'STRIPE',
           }],
-          'log': [{
-            'disks': [ 'sda2' ],
-            'type': 'STRIPE',
+          log: [{
+            disks: ['sda2'],
+            type: 'STRIPE',
           }],
-          'spares': [ 'sda5' ],
-          'special': [{
-            'disks': [ 'sda6' ],
-            'type': 'STRIPE',
+          spares: ['sda5'],
+          special: [{
+            disks: ['sda6'],
+            type: 'STRIPE',
           }],
         },
         allow_duplicate_serials: false,

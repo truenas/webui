@@ -7,9 +7,8 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import _ from 'lodash';
 import { TrueCommandStatus } from 'app/enums/true-command-status.enum';
 import { WINDOW } from 'app/helpers/window.helper';
-import helptext from 'app/helptext/topbar';
+import { helptextTopbar } from 'app/helptext/topbar';
 import { TrueCommandConfig } from 'app/interfaces/true-command-config.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import {
   TruecommandConnectModalComponent,
@@ -33,7 +32,7 @@ import { WebSocketService } from 'app/services/ws.service';
 })
 export class TruecommandButtonComponent implements OnInit {
   readonly TrueCommandStatus = TrueCommandStatus;
-  tooltips = helptext.mat_tooltips;
+  tooltips = helptextTopbar.mat_tooltips;
 
   tcStatus: TrueCommandConfig;
 
@@ -56,7 +55,7 @@ export class TruecommandButtonComponent implements OnInit {
   constructor(
     private ws: WebSocketService,
     private dialogService: DialogService,
-    private dialog: MatDialog,
+    private matDialog: MatDialog,
     private loader: AppLoaderService,
     private errorHandler: ErrorHandlerService,
     private cdr: ChangeDetectorRef,
@@ -80,7 +79,7 @@ export class TruecommandButtonComponent implements OnInit {
   }
 
   handleUpdate(): void {
-    this.dialog
+    this.matDialog
       .open(TruecommandConnectModalComponent, {
         maxWidth: '420px',
         minWidth: '350px',
@@ -108,10 +107,10 @@ export class TruecommandButtonComponent implements OnInit {
 
   stopTrueCommandConnecting(): void {
     this.dialogService.generalDialog({
-      title: helptext.stopTCConnectingDialog.title,
-      icon: helptext.stopTCConnectingDialog.icon,
-      message: helptext.stopTCConnectingDialog.message,
-      confirmBtnMsg: helptext.stopTCConnectingDialog.confirmBtnMsg,
+      title: helptextTopbar.stopTCConnectingDialog.title,
+      icon: helptextTopbar.stopTCConnectingDialog.icon,
+      message: helptextTopbar.stopTCConnectingDialog.message,
+      confirmBtnMsg: helptextTopbar.stopTCConnectingDialog.confirmBtnMsg,
     }).pipe(untilDestroyed(this)).subscribe((confirmed) => {
       if (confirmed) {
         this.loader.open();
@@ -119,9 +118,9 @@ export class TruecommandButtonComponent implements OnInit {
           next: () => {
             this.loader.close();
           },
-          error: (err: WebsocketError) => {
+          error: (err: unknown) => {
             this.loader.close();
-            this.dialogService.error(this.errorHandler.parseWsError(err));
+            this.dialogService.error(this.errorHandler.parseError(err));
           },
         });
       }
@@ -129,7 +128,7 @@ export class TruecommandButtonComponent implements OnInit {
   }
 
   private openSignupDialog(): void {
-    this.dialog.open(TruecommandSignupModalComponent)
+    this.matDialog.open(TruecommandSignupModalComponent)
       .afterClosed()
       .pipe(untilDestroyed(this))
       .subscribe((shouldConnect) => {
@@ -150,7 +149,7 @@ export class TruecommandButtonComponent implements OnInit {
       this.tcStatusDialogRef.close(true);
     } else {
       this.isTcStatusOpened = true;
-      this.tcStatusDialogRef = this.dialog.open(TruecommandStatusModalComponent, {
+      this.tcStatusDialogRef = this.matDialog.open(TruecommandStatusModalComponent, {
         width: '400px',
         hasBackdrop: true,
         position: {

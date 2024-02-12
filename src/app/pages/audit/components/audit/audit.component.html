@@ -1,0 +1,103 @@
+<mat-card class="header-card item-search">
+  <ix-fake-progress-bar
+    class="loader-bar"
+    [loading]="dataProvider.isLoading$ | async"
+  ></ix-fake-progress-bar>
+
+  <div class="actions-bar">
+    <div class="search-container">
+      <ix-search-input2
+        #searchInput
+        class="search-input"
+        [properties]="searchProperties"
+        [query]="searchQuery"
+        (runSearch)="onSearch(searchInput.query); updateUrlOptions(); searchInput.advancedSearch?.hideDatePicker()"
+      ></ix-search-input2>
+      <div class="search-button-wrapper">
+        <button
+          mat-button
+          type="button"
+          color="primary"
+          ixTest="search"
+          (click)="onSearch(searchInput.query); updateUrlOptions(); searchInput.advancedSearch?.hideDatePicker()"
+        >
+          {{ 'Search' | translate }}
+        </button>
+        <ng-container *ngIf="isMobileView" [ngTemplateOutlet]="exportButton"></ng-container>
+      </div>
+    </div>
+    <ng-container *ngIf="!isMobileView" [ngTemplateOutlet]="exportButton"></ng-container>
+  </div>
+</mat-card>
+
+<div class="container" fxLayoutGap="16px">
+  <div class="table-container" [class.mobile-hidden]="showMobileDetails && dataProvider.expandedRow">
+    <ng-container *ngIf="!isMobileView" [ngTemplateOutlet]="thead"></ng-container>
+
+    <ix-table2
+      [ix-table2-empty]="!(dataProvider.currentPageCount$ | async)"
+      [emptyConfig]="emptyService.defaultEmptyConfig(dataProvider.emptyType$ | async)"
+    >
+      <ng-container *ngIf="isMobileView" [ngTemplateOutlet]="thead"></ng-container>
+      <tbody
+        ix-table-body
+        [columns]="columns"
+        [dataProvider]="dataProvider"
+        [isLoading]="dataProvider.isLoading$ | async"
+        (expanded)="expanded($event)"
+      >
+        <ng-template
+          let-audit
+          ix-table-cell
+          [columnIndex]="1"
+          [dataProvider]="dataProvider"
+        >
+          <div class="user-avatar" [matTooltip]="audit.username">
+            <div [innerHTML]="getUserAvatarForLog(audit)"></div>
+            <span>{{audit.username}}</span>
+          </div>
+        </ng-template>
+      </tbody>
+    </ix-table2>
+    <ix-table-pager
+      [dataProvider]="dataProvider"
+      [pageSize]="pagination.pageSize"
+      [currentPage]="pagination.pageNumber"
+    ></ix-table-pager>
+  </div>
+
+  <div
+    *ngIf="dataProvider.expandedRow"
+    ixDetailsHeight="rightside-content-hold"
+    class="details-container"
+    [class.details-container-mobile]="showMobileDetails"
+  >
+    <ix-log-details-panel
+      [log]="dataProvider.expandedRow"
+      (hide)="closeMobileDetails()"
+    ></ix-log-details-panel>
+  </div>
+</div>
+
+<ng-template #exportButton>
+  <ix-export-button
+    *ngIf="dataProvider.totalRows"
+    jobMethod="audit.export"
+    downloadMethod="audit.download_report"
+    [addReportNameArgument]="true"
+    [searchQuery]="searchQuery"
+    [sorting]="dataProvider.sorting"
+    [defaultFilters]="basicQueryFilters"
+  ></ix-export-button>
+</ng-template>
+
+<ng-template #thead>
+  <div class="sticky-header">
+    <thead
+      class="audit-header-row"
+      ix-table-head
+      [columns]="columns"
+      [dataProvider]="dataProvider"
+    ></thead>
+  </div>
+</ng-template>

@@ -11,6 +11,7 @@ import { AppsFiltersSort, AppsFiltersValues } from 'app/interfaces/apps-filters-
 import { AvailableApp } from 'app/interfaces/available-app.interface';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { AppsByCategory, AppsStore } from 'app/pages/apps/store/apps-store.service';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 
 export const filterInitialValues: AppsFiltersValues = {
   categories: [],
@@ -57,8 +58,8 @@ export class AppsFilterStore extends ComponentStore<AppsFilterState> {
       state,
     ]) => {
       const allApps: AvailableApp[] = state.filteredApps?.length ? [...state.filteredApps] : [...availableApps];
-      const filteredApps: AvailableApp[] = allApps
-        .filter((app) => this.doesAppContainString(state.searchQuery, app));
+      const filteredApps: AvailableApp[] = allApps.filter((app) => this.doesAppContainString(state.searchQuery, app));
+
       if (state.filter.sort === AppsFiltersSort.Name) {
         return this.sortAppsByName(filteredApps);
       }
@@ -70,8 +71,8 @@ export class AppsFilterStore extends ComponentStore<AppsFilterState> {
       }
       return this.sortAppsByCategory(
         filteredApps,
-        recommendedApps,
-        latestApps,
+        state.searchQuery.length ? [] : recommendedApps,
+        state.searchQuery.length ? [] : latestApps,
         appsCategories,
         state,
       );
@@ -128,6 +129,7 @@ export class AppsFilterStore extends ComponentStore<AppsFilterState> {
     private appsStore: AppsStore,
     private appsService: ApplicationsService,
     private translate: TranslateService,
+    private errorHandler: ErrorHandlerService,
   ) {
     super(initialState);
   }
@@ -175,8 +177,8 @@ export class AppsFilterStore extends ComponentStore<AppsFilterState> {
           };
         });
       },
-      error: () => {
-        this.handleError();
+      error: (error: unknown) => {
+        this.handleError(error);
         return EMPTY;
       },
     });
@@ -322,7 +324,8 @@ export class AppsFilterStore extends ComponentStore<AppsFilterState> {
     return appsByCategory;
   }
 
-  private handleError(): void {
+  private handleError(error: unknown): void {
+    this.errorHandler.showErrorModal(error);
     this.patchState((state: AppsFilterState): AppsFilterState => {
       return {
         ...state,

@@ -3,13 +3,18 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
+import { MockModule } from 'ng-mocks';
 import { CoreComponents } from 'app/core/core-components.module';
+import { Role } from 'app/enums/role.enum';
 import { Group } from 'app/interfaces/group.interface';
 import { Preferences } from 'app/interfaces/preferences.interface';
-import { EntityModule } from 'app/modules/entity/entity.module';
+import {
+  IxTable2ExpandableRowComponent,
+} from 'app/modules/ix-table2/components/ix-table2-expandable-row/ix-table2-expandable-row.component';
 import { IxEmptyRowHarness } from 'app/modules/ix-tables/components/ix-empty-row/ix-empty-row.component.harness';
 import { IxTableModule } from 'app/modules/ix-tables/ix-table.module';
 import { IxTableHarness } from 'app/modules/ix-tables/testing/ix-table.harness';
+import { LayoutModule } from 'app/modules/layout/layout.module';
 import { GroupDetailsRowComponent } from 'app/pages/account/groups/group-details-row/group-details-row.component';
 import { GroupListComponent } from 'app/pages/account/groups/group-list/group-list.component';
 import { GroupsState } from 'app/pages/account/groups/store/group.reducer';
@@ -25,6 +30,7 @@ const fakeGroupDataSource: Group[] = [{
   builtin: true,
   sudo_commands: [],
   sudo_commands_nopasswd: [],
+  roles: [],
   smb: true,
   users: [1],
 }, {
@@ -33,6 +39,7 @@ const fakeGroupDataSource: Group[] = [{
   builtin: true,
   sudo_commands: ['ls'],
   sudo_commands_nopasswd: [],
+  roles: [Role.FullAdmin],
   smb: true,
   users: [2],
 }] as Group[];
@@ -45,12 +52,13 @@ describe('GroupListComponent', () => {
   const createComponent = createComponentFactory({
     component: GroupListComponent,
     imports: [
-      EntityModule,
-      IxTableModule,
       CoreComponents,
+      IxTableModule,
+      MockModule(LayoutModule),
     ],
     declarations: [
       GroupDetailsRowComponent,
+      IxTable2ExpandableRowComponent,
     ],
     providers: [
       mockProvider(WebSocketService),
@@ -94,9 +102,9 @@ describe('GroupListComponent', () => {
     const table = await loader.getHarness(IxTableHarness);
     const cells = await table.getCells(true);
     const expectedRows = [
-      ['Group', 'GID', 'Builtin', 'Allows sudo commands', 'Samba Authentication', ''],
-      ['mock', '1000', 'Yes', 'No', 'Yes', ''],
-      ['fake', '1001', 'Yes', 'Yes', 'Yes', ''],
+      ['Group', 'GID', 'Builtin', 'Allows sudo commands', 'Samba Authentication', 'Roles', ''],
+      ['mock', '1000', 'Yes', 'No', 'Yes', 'N/A', ''],
+      ['fake', '1001', 'Yes', 'Yes', 'Yes', 'Full Admin', ''],
     ];
 
     expect(cells).toEqual(expectedRows);

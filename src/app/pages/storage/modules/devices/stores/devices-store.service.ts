@@ -8,16 +8,16 @@ import { VdevType } from 'app/enums/v-dev-type.enum';
 import { DeviceNestedDataNode, VDevGroup } from 'app/interfaces/device-nested-data-node.interface';
 import { PoolTopology } from 'app/interfaces/pool.interface';
 import { Disk } from 'app/interfaces/storage.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
+import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { getTreeBranchToNode } from 'app/pages/datasets/utils/get-tree-branch-to-node.utils';
 import { WebSocketService } from 'app/services/ws.service';
 
 export interface DevicesState {
   isLoading: boolean;
   poolId: number;
-  error: WebsocketError | null;
+  error: WebSocketError | null;
   nodes: DeviceNestedDataNode[];
-  diskDictionary: { [key: string]: Disk };
+  diskDictionary: Record<string, Disk>;
   selectedNodeGuid: string | null;
 }
 
@@ -88,7 +88,7 @@ export class DevicesStore extends ComponentStore<DevicesState> {
                   nodes: this.createDataNodes(pools[0].topology),
                 });
               }),
-              catchError((error: WebsocketError) => {
+              catchError((error: WebSocketError) => {
                 this.patchState({
                   isLoading: false,
                   error,

@@ -16,9 +16,9 @@ export const selectSystemFeatures = createSelector(
   (state) => state.systemFeatures,
 );
 
-export const selectIsSystemHaCapable = createSelector(
+export const selectSystemHostId = createSelector(
   selectSystemInfoState,
-  (state) => state.isSystemHaCapable,
+  (state) => state.systemHostId,
 );
 
 export const selectIsIxHardware = createSelector(

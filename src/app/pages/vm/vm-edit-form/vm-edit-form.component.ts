@@ -4,17 +4,18 @@ import {
 import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { forkJoin, of } from 'rxjs';
+import {
+  Observable, forkJoin, map, of, switchMap,
+} from 'rxjs';
 import { MiB } from 'app/constants/bytes.constant';
 import {
   VmBootloader, VmCpuMode, VmDeviceType, VmTime, vmTimeNames,
 } from 'app/enums/vm.enum';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { mapToOptions } from 'app/helpers/options.helper';
-import helptext from 'app/helptext/vm/vm-wizard/vm-wizard';
+import { helptextVmWizard } from 'app/helptext/vm/vm-wizard/vm-wizard';
 import { VirtualMachine, VirtualMachineUpdate } from 'app/interfaces/virtual-machine.interface';
 import { VmPciPassthroughDevice } from 'app/interfaces/vm-device.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
@@ -56,7 +57,7 @@ export class VmEditFormComponent implements OnInit {
     cpu_model: [''],
     memory: [null as number, this.validators.withMessage(
       Validators.min(256 * MiB),
-      this.translate.instant(helptext.memory_size_err),
+      this.translate.instant(helptextVmWizard.memory_size_err),
     )],
     min_memory: [null as number],
     nodeset: ['', Validators.pattern(vmNodesetPattern)],
@@ -68,11 +69,11 @@ export class VmEditFormComponent implements OnInit {
   isLoading = false;
   timeOptions$ = of(mapToOptions(vmTimeNames, this.translate));
   bootloaderOptions$ = this.ws.call('vm.bootloader_options').pipe(choicesToOptions());
-  cpuModeOptions$ = of(helptext.cpu_mode.options);
+  cpuModeOptions$ = of(helptextVmWizard.cpu_mode.options);
   cpuModelOptions$ = this.ws.call('vm.cpu_model_choices').pipe(choicesToOptions());
   gpuOptions$ = this.gpuService.getGpuOptions();
 
-  readonly helptext = helptext;
+  readonly helptext = helptextVmWizard;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -128,25 +129,39 @@ export class VmEditFormComponent implements OnInit {
     delete vmPayload.gpus;
 
     const gpusIds = this.form.value.gpus;
-    forkJoin([
-      this.ws.call('vm.update', [this.existingVm.id, vmPayload as VirtualMachineUpdate]),
-      this.vmGpuService.updateVmGpus(this.existingVm, gpusIds),
-      this.gpuService.addIsolatedGpuPciIds(gpusIds),
-    ])
-      .pipe(untilDestroyed(this))
-      .subscribe({
-        complete: () => {
-          this.isLoading = false;
-          this.cdr.markForCheck();
-          this.snackbar.success(this.translate.instant('VM updated successfully.'));
-          this.slideInRef.close();
-        },
-        error: (error: WebsocketError) => {
-          this.isLoading = false;
-          this.cdr.markForCheck();
-          this.dialogService.error(this.errorHandler.parseWsError(error));
-        },
-      });
+
+    const pciIdsRequests$ = gpusIds.map((gpu) => {
+      return this.ws.call('vm.device.get_pci_ids_for_gpu_isolation', [gpu]);
+    });
+
+    let updateVmRequest$: Observable<unknown>;
+
+    if (pciIdsRequests$.length) {
+      updateVmRequest$ = forkJoin(pciIdsRequests$).pipe(
+        map((pciIds) => pciIds.flat()),
+        switchMap((pciIds) => forkJoin([
+          this.ws.call('vm.update', [this.existingVm.id, vmPayload as VirtualMachineUpdate]),
+          this.vmGpuService.updateVmGpus(this.existingVm, gpusIds.concat(pciIds)),
+          this.gpuService.addIsolatedGpuPciIds(gpusIds.concat(pciIds)),
+        ])),
+      );
+    } else {
+      updateVmRequest$ = this.ws.call('vm.update', [this.existingVm.id, vmPayload as VirtualMachineUpdate]);
+    }
+
+    updateVmRequest$.pipe(untilDestroyed(this)).subscribe({
+      next: () => {
+        this.isLoading = false;
+        this.cdr.markForCheck();
+        this.snackbar.success(this.translate.instant('VM updated successfully.'));
+        this.slideInRef.close(true);
+      },
+      error: (error: unknown) => {
+        this.isLoading = false;
+        this.cdr.markForCheck();
+        this.dialogService.error(this.errorHandler.parseError(error));
+      },
+    });
   }
 
   private setupGpuControl(vm: VirtualMachine): void {

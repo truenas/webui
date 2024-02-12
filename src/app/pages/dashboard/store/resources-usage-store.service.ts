@@ -65,7 +65,6 @@ export class ResourcesUsageStore extends ComponentStore<ResourcesUsageState> {
           };
         });
       }),
-      switchMap(() => this.getResourceUsageUpdates()),
     );
   });
 
@@ -73,10 +72,10 @@ export class ResourcesUsageStore extends ComponentStore<ResourcesUsageState> {
     return this.ws.call('interface.query').pipe(
       tap((interfaces) => {
         const dashboardNetworkInterfaces = [...interfaces] as DashboardNetworkInterface[];
-        const removeNics: { [nic: string]: number | string } = {};
+        const removeNics: Record<string, number | string> = {};
 
         // Store keys for fast lookup
-        const nicKeys: { [nic: string]: number | string } = {};
+        const nicKeys: Record<string, number | string> = {};
         interfaces.forEach((networkInterface, index) => {
           nicKeys[networkInterface.name] = index.toString();
 
@@ -103,9 +102,12 @@ export class ResourcesUsageStore extends ComponentStore<ResourcesUsageState> {
               dashboardNetworkInterfaces[index].state.aliases.forEach((alias) => {
                 (alias as DashboardNetworkInterfaceAlias).interface = nic;
               });
-              dashboardNetworkInterfaces[index].state.aliases = dashboardNetworkInterfaces[index].state.aliases.concat(
-                dashboardNetworkInterfaces[nicKeys[nic] as number].state.aliases,
-              );
+              if (dashboardNetworkInterfaces[nicKeys[nic] as number]) {
+                const concatenatedAliases = dashboardNetworkInterfaces[index].state.aliases.concat(
+                  dashboardNetworkInterfaces[nicKeys[nic] as number].state.aliases,
+                );
+                dashboardNetworkInterfaces[index].state.aliases = concatenatedAliases;
+              }
 
               // Consolidate vlans
               dashboardNetworkInterfaces[index].state.vlans.forEach((vlan) => { vlan.interface = nic; });
@@ -148,7 +150,7 @@ export class ResourcesUsageStore extends ComponentStore<ResourcesUsageState> {
     );
   }
 
-  private getResourceUsageUpdates(): Observable<ReportingRealtimeUpdate> {
+  getResourceUsageUpdates(): Observable<ReportingRealtimeUpdate> {
     return this.ws.subscribe('reporting.realtime').pipe(
       map((apiEvent) => apiEvent.fields),
       tap((update) => {

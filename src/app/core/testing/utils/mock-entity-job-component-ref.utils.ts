@@ -25,4 +25,5 @@ export const mockEntityJobComponentRef = {
     disableProgressValue: jest.fn(),
   },
   close: jest.fn(),
+  afterClosed: jest.fn(() => of()),
 } as unknown as MatDialogRef<EntityJobComponent>;

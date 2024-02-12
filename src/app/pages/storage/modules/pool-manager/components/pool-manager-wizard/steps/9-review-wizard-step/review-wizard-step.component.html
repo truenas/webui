@@ -40,7 +40,7 @@
 
     <div class="summary-item">
       <div class="label">{{ 'Est. Usable Raw Capacity' | translate }}</div>
-      <div class="value">{{ totalCapacity$ | async | filesize: { standard: 'iec' } }}</div>
+      <div class="value">{{ totalCapacity$ | async | ixFileSize }}</div>
     </div>
 
     <div
@@ -77,7 +77,7 @@
     matStepperPrevious
     color="accent"
     type="button"
-    ixTest="back"
+    ixTest="back-review"
   >
     {{ 'Back' | translate }}
   </button>
@@ -103,6 +103,7 @@
   </button>
 
   <button
+    *ixRequiresRoles="[Role.FullAdmin]"
     mat-button
     matStepperNext
     color="primary"

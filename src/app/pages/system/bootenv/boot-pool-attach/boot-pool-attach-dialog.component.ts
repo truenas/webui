@@ -6,9 +6,10 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import filesize from 'filesize';
 import { of } from 'rxjs';
 import { JobState } from 'app/enums/job-state.enum';
+import { Role } from 'app/enums/role.enum';
+import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
 import { helptextSystemBootenv } from 'app/helptext/system/boot-env';
 import { UnusedDisk } from 'app/interfaces/storage.interface';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
@@ -44,6 +45,8 @@ export class BootPoolAttachDialogComponent implements OnInit {
     tooltip: this.translate.instant(helptextSystemBootenv.expand_tooltip),
   };
 
+  protected readonly Role = Role;
+
   constructor(
     private fb: FormBuilder,
     private dialogService: DialogService,
@@ -63,7 +66,7 @@ export class BootPoolAttachDialogComponent implements OnInit {
     this.ws.call('disk.get_unused').pipe(untilDestroyed(this)).subscribe((unusedDisks) => {
       this.unusedDisks = unusedDisks;
       const unusedDisksOptions = unusedDisks.map((disk) => {
-        const size = filesize(disk.size, { standard: 'iec' });
+        const size = buildNormalizedFileSize(disk.size);
         let label = `${disk.name} - ${size}`;
         if (disk.exported_zpool) {
           label += ` (${disk.exported_zpool})`;
@@ -119,7 +122,7 @@ export class BootPoolAttachDialogComponent implements OnInit {
             this.dialogRef.close(true);
           });
       },
-      error: (error) => {
+      error: (error: unknown) => {
         this.isFormLoading = false;
         this.errorHandler.handleWsFormError(error, this.form);
         this.cdr.markForCheck();

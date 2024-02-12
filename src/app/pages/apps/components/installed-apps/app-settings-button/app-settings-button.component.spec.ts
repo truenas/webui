@@ -1,9 +1,11 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { ViewContainerRef } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatMenuHarness } from '@angular/material/menu/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { AppSettingsButtonComponent } from 'app/pages/apps/components/installed-apps/app-settings-button/app-settings-button.component';
 import { KubernetesSettingsComponent } from 'app/pages/apps/components/installed-apps/kubernetes-settings/kubernetes-settings.component';
 import { SelectPoolDialogComponent } from 'app/pages/apps/components/select-pool-dialog/select-pool-dialog.component';
@@ -16,6 +18,7 @@ describe('AppSettingsButtonComponent', () => {
   let spectator: Spectator<AppSettingsButtonComponent>;
   let loader: HarnessLoader;
   let menu: MatMenuHarness;
+  const viewContainerRef: ViewContainerRef = null;
 
   const createComponent = createComponentFactory({
     component: AppSettingsButtonComponent,
@@ -31,11 +34,15 @@ describe('AppSettingsButtonComponent', () => {
       mockProvider(KubernetesStore, {
         selectedPool$: of('pool'),
       }),
+      mockAuth(),
     ],
   });
 
   beforeEach(async () => {
     spectator = createComponent();
+    Object.defineProperty(spectator.component, 'viewContainerRef', {
+      value: viewContainerRef,
+    });
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     menu = await loader.getHarness(MatMenuHarness);
   });
@@ -47,7 +54,7 @@ describe('AppSettingsButtonComponent', () => {
     await menu.open();
     await menu.clickItem({ text: 'Choose Pool' });
 
-    expect(matDialog.open).toHaveBeenCalledWith(SelectPoolDialogComponent);
+    expect(matDialog.open).toHaveBeenCalledWith(SelectPoolDialogComponent, { viewContainerRef });
   });
 
   it('shows Advanced Settings slide once Settings button -> Advanced Settings clicked', async () => {

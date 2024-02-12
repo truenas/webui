@@ -3,13 +3,14 @@ import { Observable } from 'rxjs';
 import {
   GiB, KiB, MiB, TiB,
 } from 'app/constants/bytes.constant';
-import { CloudsyncCredential } from 'app/interfaces/cloudsync-credential.interface';
-import { CloudsyncProvider } from 'app/interfaces/cloudsync-provider.interface';
+import { CloudSyncBucket, CloudSyncCredential } from 'app/interfaces/cloudsync-credential.interface';
+import { CloudSyncProvider } from 'app/interfaces/cloudsync-provider.interface';
 import { WebSocketService } from 'app/services/ws.service';
 
-@Injectable()
+@Injectable({
+  providedIn: 'root',
+})
 export class CloudCredentialService {
-  protected credentialProviders = 'cloudsync.providers' as const;
   protected byteMap = {
     T: TiB,
     G: GiB,
@@ -20,12 +21,16 @@ export class CloudCredentialService {
 
   constructor(protected ws: WebSocketService) {}
 
-  getProviders(): Observable<CloudsyncProvider[]> {
-    return this.ws.call(this.credentialProviders);
+  getProviders(): Observable<CloudSyncProvider[]> {
+    return this.ws.call('cloudsync.providers');
   }
 
-  getCloudsyncCredentials(): Observable<CloudsyncCredential[]> {
+  getCloudSyncCredentials(): Observable<CloudSyncCredential[]> {
     return this.ws.call('cloudsync.credentials.query');
+  }
+
+  getBuckets(credentialId: number): Observable<CloudSyncBucket[]> {
+    return this.ws.call('cloudsync.list_buckets', [credentialId]);
   }
 
   getByte(data: string): number {

@@ -7,7 +7,7 @@ import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { UUID } from 'angular2-uuid';
 import { combineLatest, map, Subscription } from 'rxjs';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
+import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { LogsDialogFormValue, PodSelectLogsDialogComponent } from 'app/pages/apps/components/pod-select-logs/pod-select-logs-dialog.component';
 import { DialogService } from 'app/services/dialog.service';
@@ -51,7 +51,7 @@ export class PodLogsComponent implements OnInit {
     protected loader: AppLoaderService,
     protected storageService: StorageService,
     private errorHandler: ErrorHandlerService,
-    private mdDialog: MatDialog,
+    private matDialog: MatDialog,
     private cdr: ChangeDetectorRef,
   ) {}
 
@@ -92,7 +92,7 @@ export class PodLogsComponent implements OnInit {
           this.scrollToBottom();
         }
       },
-      error: (error: WebsocketError) => {
+      error: (error: WebSocketError) => {
         this.isLoadingPodLogs = false;
         if (error.reason) {
           this.dialogService.error(this.errorHandler.parseError(error));
@@ -123,7 +123,7 @@ export class PodLogsComponent implements OnInit {
   }
 
   showChooseLogsDialog(isDownload: boolean): void {
-    this.mdDialog.open(PodSelectLogsDialogComponent, {
+    this.matDialog.open(PodSelectLogsDialogComponent, {
       minWidth: '650px',
       maxWidth: '850px',
       data: {

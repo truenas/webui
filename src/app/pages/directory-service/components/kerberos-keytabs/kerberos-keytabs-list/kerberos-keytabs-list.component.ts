@@ -1,12 +1,13 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnInit,
+} from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import _ from 'lodash';
-import { BehaviorSubject, Observable, combineLatest, filter, of, switchMap } from 'rxjs';
-import { EmptyType } from 'app/enums/empty-type.enum';
+import { filter, switchMap, tap } from 'rxjs';
+import { Role } from 'app/enums/role.enum';
 import { KerberosKeytab } from 'app/interfaces/kerberos-config.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
-import { ArrayDataProvider } from 'app/modules/ix-table2/array-data-provider';
+import { AsyncDataProvider } from 'app/modules/ix-table2/classes/async-data-provider/async-data-provider';
 import { actionsColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
 import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { SortDirection } from 'app/modules/ix-table2/enums/sort-direction.enum';
@@ -25,11 +26,11 @@ import { WebSocketService } from 'app/services/ws.service';
   selector: 'ix-kerberos-keytabs-list',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export default class KerberosKeytabsListComponent implements OnInit {
+export class KerberosKeytabsListComponent implements OnInit {
   @Input() paginator = true;
   @Input() toolbar = false;
   filterString = '';
-  dataProvider = new ArrayDataProvider<KerberosKeytab>();
+  dataProvider: AsyncDataProvider<KerberosKeytab>;
   kerberosRealsm: KerberosKeytab[] = [];
   columns = createTable<KerberosKeytab>([
     textColumn({
@@ -52,6 +53,7 @@ export default class KerberosKeytabsListComponent implements OnInit {
         {
           iconName: 'delete',
           tooltip: this.translateService.instant('Delete'),
+          requiredRoles: [Role.DirectoryServiceWrite],
           onClick: (row) => {
             this.dialogService.confirm({
               title: this.translateService.instant('Delete'),
@@ -61,8 +63,8 @@ export default class KerberosKeytabsListComponent implements OnInit {
               switchMap(() => this.ws.call('kerberos.keytab.delete', [row.id])),
               untilDestroyed(this),
             ).subscribe({
-              error: (error: WebsocketError) => {
-                this.dialogService.error(this.errorHandler.parseWsError(error));
+              error: (error: unknown) => {
+                this.dialogService.error(this.errorHandler.parseError(error));
               },
               complete: () => {
                 this.getKerberosKeytabs();
@@ -72,26 +74,9 @@ export default class KerberosKeytabsListComponent implements OnInit {
         },
       ],
     }),
-  ]);
-
-
-  isLoading$ = new BehaviorSubject<boolean>(true);
-  isNoData$ = new BehaviorSubject<boolean>(false);
-  hasError$ = new BehaviorSubject<boolean>(false);
-  emptyType$: Observable<EmptyType> = combineLatest([this.isLoading$, this.isNoData$, this.hasError$]).pipe(
-    switchMap(([isLoading, isNoData, isError]) => {
-      if (isLoading) {
-        return of(EmptyType.Loading);
-      }
-      if (isError) {
-        return of(EmptyType.Errors);
-      }
-      if (isNoData) {
-        return of(EmptyType.NoPageData);
-      }
-      return of(EmptyType.NoSearchResults);
-    }),
-  );
+  ], {
+    rowTestId: (row) => 'kerberos-keytab-' + row.name,
+  });
 
   constructor(
     private translateService: TranslateService,
@@ -104,22 +89,17 @@ export default class KerberosKeytabsListComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    const keytabsRows$ = this.ws.call('kerberos.keytab.query').pipe(
+      tap((keytabsRows) => this.kerberosRealsm = keytabsRows),
+      untilDestroyed(this),
+    );
+    this.dataProvider = new AsyncDataProvider<KerberosKeytab>(keytabsRows$);
+    this.setDefaultSort();
     this.getKerberosKeytabs();
   }
 
   getKerberosKeytabs(): void {
-    this.ws.call('kerberos.keytab.query').pipe(
-      untilDestroyed(this),
-    ).subscribe({
-      next: (keytabsRows) => {
-        this.kerberosRealsm = keytabsRows;
-        this.dataProvider.setRows(keytabsRows);
-        this.isLoading$.next(false);
-        this.isNoData$.next(!keytabsRows.length);
-        this.setDefaultSort();
-        this.cdr.markForCheck();
-      },
-    });
+    this.dataProvider.load();
   }
 
   setDefaultSort(): void {

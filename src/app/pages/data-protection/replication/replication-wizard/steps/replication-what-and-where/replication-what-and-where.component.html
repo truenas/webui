@@ -15,14 +15,13 @@
         [tooltip]="helptext.source_datasets_from_tooltip | translate"
         [required]="true"
       ></ix-select>
-      <ix-select
+      <ix-ssh-credentials-select
         *ngIf="form.controls.ssh_credentials_source.enabled"
         formControlName="ssh_credentials_source"
         [label]="helptext.ssh_credentials_source_placeholder | translate"
-        [options]="sshCredentialsOptions$"
         [tooltip]="helptext.ssh_credentials_source_tooltip | translate"
         [required]="true"
-      ></ix-select>
+      ></ix-ssh-credentials-select>
       <ix-explorer
         *ngIf="form.controls.source_datasets.enabled"
         formControlName="source_datasets"
@@ -31,7 +30,7 @@
         [multiple]="true"
         [required]="true"
         [root]="isRemoteSource ? '' : mntPath"
-        [nodeProvider]="isRemoteSource ? remoteSourceNodeProvider : datasetNodeProvider"
+        [nodeProvider]="sourceNodeProvider"
       ></ix-explorer>
 
       <ix-checkbox
@@ -77,14 +76,13 @@
         [options]="datasetFromOptions$"
         [required]="true"
       ></ix-select>
-      <ix-select
+      <ix-ssh-credentials-select
         *ngIf="form.controls.ssh_credentials_target.enabled"
         formControlName="ssh_credentials_target"
         [label]="helptext.ssh_credentials_target_placeholder | translate"
-        [options]="sshCredentialsOptions$"
         [tooltip]="helptext.ssh_credentials_target_tooltip | translate"
         [required]="true"
-      ></ix-select>
+      ></ix-ssh-credentials-select>
       <ix-explorer
         *ngIf="form.controls.target_dataset.enabled"
         formControlName="target_dataset"
@@ -92,7 +90,7 @@
         [tooltip]="helptext.target_dataset_tooltip | translate"
         [required]="true"
         [root]="isRemoteTarget ? '' : mntPath"
-        [nodeProvider]="isRemoteTarget ? remoteTargetNodeProvider : datasetNodeProvider"
+        [nodeProvider]="targetNodeProvider"
       ></ix-explorer>
       <ix-checkbox
         *ngIf="form.controls.encryption.enabled"
@@ -162,7 +160,7 @@
   <ix-checkbox
     *ngIf="form.controls.sudo.enabled"
     formControlName="sudo"
-    [label]="'Use Sudo For Zfs Commands' | translate"
+    [label]="'Use Sudo For ZFS Commands' | translate"
     [tooltip]="helptext.sudo_tooltip | translate"
   ></ix-checkbox>
   <ix-input

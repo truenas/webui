@@ -28,7 +28,7 @@ export const routes: Routes = [{
     {
       path: 'directory-services',
       component: DirectoryServicesComponent,
-      data: { title: T('Directory Services') },
+      data: { title: T('Directory Services'), breadcrumb: T('Directory Services') },
     },
     {
       path: 'backup-credentials',
@@ -38,11 +38,11 @@ export const routes: Routes = [{
     {
       path: 'certificates',
       component: CertificatesDashComponent,
-      data: { title: T('Certificates') },
+      data: { title: T('Certificates'), breadcrumb: T('Certificates') },
     },
     {
       path: 'two-factor',
-      loadChildren: () => import('app/pages/two-factor-auth/two-factor-auth.module').then((module) => module.default),
+      loadChildren: () => import('app/pages/two-factor-auth/two-factor-auth.module').then((module) => module.TwoFactorAuthModule),
       data: { title: T('Two Factor Auth'), breadcrumb: T('Two Factor Auth') },
     },
     {

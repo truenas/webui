@@ -1,12 +1,15 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnInit,
+} from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import _ from 'lodash';
-import { BehaviorSubject, Observable, combineLatest, filter, map, of, switchMap } from 'rxjs';
-import { EmptyType } from 'app/enums/empty-type.enum';
-import helptext from 'app/helptext/directory-service/kerberos-realms-form-list';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
-import { ArrayDataProvider } from 'app/modules/ix-table2/array-data-provider';
+import {
+  filter, map, switchMap, tap,
+} from 'rxjs';
+import { Role } from 'app/enums/role.enum';
+import { helptextKerberosRealms } from 'app/helptext/directory-service/kerberos-realms-form-list';
+import { AsyncDataProvider } from 'app/modules/ix-table2/classes/async-data-provider/async-data-provider';
 import { actionsColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
 import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { SortDirection } from 'app/modules/ix-table2/enums/sort-direction.enum';
@@ -21,16 +24,16 @@ import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
-  templateUrl: './kerberos-realms-list.component.html',
   selector: 'ix-kerberos-realms-list',
+  templateUrl: './kerberos-realms-list.component.html',
   styleUrls: ['./kerberos-realms-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export default class KerberosRealmsListComponent implements OnInit {
+export class KerberosRealmsListComponent implements OnInit {
   @Input() paginator = true;
   @Input() toolbar = false;
   filterString = '';
-  dataProvider = new ArrayDataProvider<KerberosRealmRow>();
+  dataProvider: AsyncDataProvider<KerberosRealmRow>;
   kerberosRealsm: KerberosRealmRow[] = [];
   columns = createTable<KerberosRealmRow>([
     textColumn({
@@ -68,17 +71,18 @@ export default class KerberosRealmsListComponent implements OnInit {
         {
           iconName: 'delete',
           tooltip: this.translateService.instant('Delete'),
+          requiredRoles: [Role.DirectoryServiceWrite],
           onClick: (row) => {
             this.dialogService.confirm({
-              title: this.translateService.instant(helptext.krb_realmlist_deletemessage_title),
+              title: this.translateService.instant(helptextKerberosRealms.krb_realmlist_deletemessage_title),
               message: this.translateService.instant('Are you sure you want to delete this item?'),
             }).pipe(
               filter(Boolean),
               switchMap(() => this.ws.call('kerberos.realm.delete', [row.id])),
               untilDestroyed(this),
             ).subscribe({
-              error: (error: WebsocketError) => {
-                this.dialogService.error(this.errorHandler.parseWsError(error));
+              error: (error: unknown) => {
+                this.dialogService.error(this.errorHandler.parseError(error));
               },
               complete: () => {
                 this.getKerberosRealms();
@@ -88,26 +92,9 @@ export default class KerberosRealmsListComponent implements OnInit {
         },
       ],
     }),
-  ]);
-
-
-  isLoading$ = new BehaviorSubject<boolean>(true);
-  isNoData$ = new BehaviorSubject<boolean>(false);
-  hasError$ = new BehaviorSubject<boolean>(false);
-  emptyType$: Observable<EmptyType> = combineLatest([this.isLoading$, this.isNoData$, this.hasError$]).pipe(
-    switchMap(([isLoading, isNoData, isError]) => {
-      if (isLoading) {
-        return of(EmptyType.Loading);
-      }
-      if (isError) {
-        return of(EmptyType.Errors);
-      }
-      if (isNoData) {
-        return of(EmptyType.NoPageData);
-      }
-      return of(EmptyType.NoSearchResults);
-    }),
-  );
+  ], {
+    rowTestId: (row) => 'kerberos-realm-' + row.realm,
+  });
 
   constructor(
     private translateService: TranslateService,
@@ -120,11 +107,7 @@ export default class KerberosRealmsListComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.getKerberosRealms();
-  }
-
-  getKerberosRealms(): void {
-    this.ws.call('kerberos.realm.query').pipe(
+    const kerberosRealsm$ = this.ws.call('kerberos.realm.query').pipe(
       map((realms) => {
         return realms.map((realm) => {
           return {
@@ -135,17 +118,16 @@ export default class KerberosRealmsListComponent implements OnInit {
           };
         });
       }),
+      tap((kerberosRealsm) => this.kerberosRealsm = kerberosRealsm),
       untilDestroyed(this),
-    ).subscribe({
-      next: (realmsRows) => {
-        this.kerberosRealsm = realmsRows;
-        this.dataProvider.setRows(realmsRows);
-        this.isLoading$.next(false);
-        this.isNoData$.next(!realmsRows.length);
-        this.setDefaultSort();
-        this.cdr.markForCheck();
-      },
-    });
+    );
+    this.dataProvider = new AsyncDataProvider<KerberosRealmRow>(kerberosRealsm$);
+    this.setDefaultSort();
+    this.getKerberosRealms();
+  }
+
+  getKerberosRealms(): void {
+    this.dataProvider.load();
   }
 
   setDefaultSort(): void {

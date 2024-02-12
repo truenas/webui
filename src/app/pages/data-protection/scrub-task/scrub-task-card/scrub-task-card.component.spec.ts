@@ -5,10 +5,11 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatSlideToggleHarness } from '@angular/material/slide-toggle/testing';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
+import { provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
-import { mockWebsocket, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
-import { ScrubTaskUi } from 'app/interfaces/scrub-task.interface';
-import { EntityModule } from 'app/modules/entity/entity.module';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockWebSocket, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
+import { PoolScrubTask } from 'app/interfaces/pool-scrub.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTable2Harness } from 'app/modules/ix-table2/components/ix-table2/ix-table2.harness';
@@ -21,6 +22,7 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LocaleService } from 'app/services/locale.service';
 import { TaskService } from 'app/services/task.service';
 import { WebSocketService } from 'app/services/ws.service';
+import { selectSystemConfigState } from 'app/store/system-config/system-config.selectors';
 
 describe('ScrubTaskCardComponent', () => {
   let spectator: Spectator<ScrubTaskCardComponent>;
@@ -42,21 +44,26 @@ describe('ScrubTaskCardComponent', () => {
         month: '*',
         dow: '7',
       },
-      cron_schedule: '00 00 * * 7',
-      frequency: 'At 00:00, only on Sunday',
-      next_run: 'in 3 days',
     },
-  ] as ScrubTaskUi[];
+  ] as PoolScrubTask[];
 
   const createComponent = createComponentFactory({
     component: ScrubTaskCardComponent,
     imports: [
       AppLoaderModule,
-      EntityModule,
       IxTable2Module,
     ],
     providers: [
-      mockWebsocket([
+      mockAuth(),
+      provideMockStore({
+        selectors: [
+          {
+            selector: selectSystemConfigState,
+            value: {},
+          },
+        ],
+      }),
+      mockWebSocket([
         mockCall('pool.scrub.query', scrubTasks),
         mockCall('pool.scrub.delete'),
         mockCall('pool.scrub.update'),
@@ -78,7 +85,7 @@ describe('ScrubTaskCardComponent', () => {
       }),
       mockProvider(LocaleService),
       mockProvider(TaskService, {
-        getTaskNextRun: jest.fn(() => 'in 3 days'),
+        getTaskNextTime: jest.fn(() => new Date(new Date().getTime() + (25 * 60 * 60 * 1000))),
         getTaskCronDescription: jest.fn(() => 'At 00:00, only on Sunday'),
       }),
     ],
@@ -93,7 +100,7 @@ describe('ScrubTaskCardComponent', () => {
   it('should show table rows', async () => {
     const expectedRows = [
       ['Pool', 'Description', 'Frequency', 'Next Run', 'Enabled', ''],
-      ['APPS', 'cccc', 'At 00:00, only on Sunday', 'in 3 days', '', ''],
+      ['APPS', 'cccc', 'At 00:00, only on Sunday', 'in 1 day', '', ''],
     ];
 
     const cells = await table.getCellTexts();
@@ -124,7 +131,7 @@ describe('ScrubTaskCardComponent', () => {
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({
       title: 'Confirmation',
-      message: 'Delete Scrub Task <b>\"APPS\"</b>?',
+      message: 'Delete Scrub Task <b>"APPS"</b>?',
     });
 
     expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('pool.scrub.delete', [1]);

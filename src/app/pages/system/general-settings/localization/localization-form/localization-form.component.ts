@@ -9,6 +9,7 @@ import { Store } from '@ngrx/store';
 import _ from 'lodash';
 import { Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { Role } from 'app/enums/role.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { helptextSystemGeneral as helptext } from 'app/helptext/system/general';
 import { LocalizationSettings } from 'app/interfaces/localization-settings.interface';
@@ -108,6 +109,8 @@ export class LocalizationFormComponent implements OnInit {
     tooltip: helptext.time_format.tooltip,
   };
 
+  protected readonly Role = Role;
+
   constructor(
     private sysGeneralService: SystemGeneralService,
     private fb: FormBuilder,
@@ -168,7 +171,7 @@ export class LocalizationFormComponent implements OnInit {
         this.setTimeOptions(body.timezone);
         this.langService.setLanguage(body.language);
       },
-      error: (error) => {
+      error: (error: unknown) => {
         this.isFormLoading = false;
         this.errorHandler.handleWsFormError(error, this.formGroup);
         this.cdr.markForCheck();

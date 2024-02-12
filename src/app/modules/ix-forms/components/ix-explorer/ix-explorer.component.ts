@@ -8,17 +8,20 @@ import {
   ViewChild,
 } from '@angular/core';
 import { ControlValueAccessor, NgControl } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
 import {
   IActionMapping, ITreeOptions, KEYS, TREE_ACTIONS, TreeComponent,
 } from '@bugsplat/angular-tree-component';
-import { UntilDestroy } from '@ngneat/until-destroy';
-import { lastValueFrom, Observable, of } from 'rxjs';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { firstValueFrom, Observable, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
 import { mntPath } from 'app/enums/mnt-path.enum';
+import { Dataset, DatasetCreate } from 'app/interfaces/dataset.interface';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { ExplorerNodeData, TreeNode } from 'app/interfaces/tree-node.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
+import { WebSocketError } from 'app/interfaces/websocket-error.interface';
+import { CreateDatasetDialogComponent } from 'app/modules/ix-forms/components/ix-explorer/create-dataset-dialog/create-dataset-dialog.component';
 import { TreeNodeProvider } from 'app/modules/ix-forms/components/ix-explorer/tree-node-provider.interface';
 
 @UntilDestroy()
@@ -36,6 +39,8 @@ export class IxExplorerComponent implements OnInit, OnChanges, ControlValueAcces
   @Input() required: boolean;
   @Input() root = mntPath;
   @Input() nodeProvider: TreeNodeProvider;
+  @Input() canCreateDataset = false;
+  @Input() createDatasetProps: Omit<DatasetCreate, 'name'> = {};
 
   @ViewChild('tree', { static: true }) tree: TreeComponent;
 
@@ -49,6 +54,12 @@ export class IxExplorerComponent implements OnInit, OnChanges, ControlValueAcces
   onTouch: () => void = (): void => {};
 
   readonly ExplorerNodeType = ExplorerNodeType;
+
+  get createDatasetDisabled(): boolean {
+    return !this.parentDatasetName(Array.isArray(this.value) ? this.value[0] : this.value).length
+      || !this.tree.treeModel.selectedLeafNodes.every((node: TreeNode<ExplorerNodeData>) => node.data.isMountpoint)
+      || this.isDisabled;
+  }
 
   private readonly actionMapping: IActionMapping = {
     mouse: {
@@ -69,7 +80,7 @@ export class IxExplorerComponent implements OnInit, OnChanges, ControlValueAcces
   treeOptions: ITreeOptions = {
     idField: 'path',
     displayField: 'name',
-    getChildren: (node) => lastValueFrom(this.loadChildren(node)),
+    getChildren: (node: TreeNode<ExplorerNodeData>) => firstValueFrom(this.loadChildren(node)),
     actionMapping: this.actionMapping,
     useTriState: false,
   };
@@ -77,6 +88,7 @@ export class IxExplorerComponent implements OnInit, OnChanges, ControlValueAcces
   constructor(
     public controlDirective: NgControl,
     private cdr: ChangeDetectorRef,
+    private matDialog: MatDialog,
   ) {
     this.controlDirective.valueAccessor = this;
   }
@@ -88,6 +100,7 @@ export class IxExplorerComponent implements OnInit, OnChanges, ControlValueAcces
 
     if ('nodeProvider' in changes || 'root' in changes) {
       this.setInitialNode();
+      this.cdr.markForCheck();
     }
   }
 
@@ -119,10 +132,10 @@ export class IxExplorerComponent implements OnInit, OnChanges, ControlValueAcces
     if (this.multiple) {
       this.selectTreeNodes([
         ...Object.keys(this.tree.treeModel.selectedLeafNodeIds),
-        event.node.id,
+        event.node.id as string,
       ]);
     } else {
-      this.selectTreeNodes([event.node.id]);
+      this.selectTreeNodes([event.node.id as string]);
     }
 
     this.onSelectionChanged();
@@ -159,6 +172,7 @@ export class IxExplorerComponent implements OnInit, OnChanges, ControlValueAcces
   }
 
   onInputChanged(inputValue: string): void {
+    this.inputValue = inputValue;
     this.value = this.multiple ? inputValue.split(',') : inputValue;
     this.selectTreeNodes(Array.isArray(this.value) ? this.value : [this.value]);
     this.onChange(this.value);
@@ -166,6 +180,33 @@ export class IxExplorerComponent implements OnInit, OnChanges, ControlValueAcces
 
   isPathSelected(path: string): boolean {
     return typeof this.value === 'string' ? this.value === path : this.value?.some((content: string) => content === path);
+  }
+
+  parentDatasetName(path: string): string {
+    return (!path || path === this.root) ? '' : path.replace(`${this.root}/`, '');
+  }
+
+  createDataset(): void {
+    this.matDialog.open(CreateDatasetDialogComponent, {
+      data: {
+        parentId: this.parentDatasetName(Array.isArray(this.value) ? this.value[0] : this.value),
+        dataset: this.createDatasetProps,
+      },
+    }).afterClosed()
+      .pipe(untilDestroyed(this))
+      .subscribe((dataset: Dataset) => {
+        if (!dataset) {
+          return;
+        }
+
+        const parentNode = this.tree.treeModel.selectedLeafNodes[0] as TreeNode<ExplorerNodeData>;
+        parentNode?.expand();
+
+        this.setInitialNode();
+        this.writeValue(`${this.root}/${dataset.name}`);
+        this.onChange(this.value);
+        this.tree.treeModel.update();
+      });
   }
 
   /**
@@ -182,12 +223,13 @@ export class IxExplorerComponent implements OnInit, OnChanges, ControlValueAcces
         name: this.root,
         hasChildren: true,
         type: ExplorerNodeType.Directory,
+        isMountpoint: true,
       },
     ];
   }
 
   private updateInputValue(): void {
-    this.inputValue = Array.isArray(this.value) ? this.value.join(',') : this.value || '';
+    this.inputValue = Array.isArray(this.value) ? this.value.filter((value) => value.length).join(',') : this.value || '';
   }
 
   private selectTreeNodes(nodeIds: string[]): void {
@@ -208,7 +250,7 @@ export class IxExplorerComponent implements OnInit, OnChanges, ControlValueAcces
     }
 
     return this.nodeProvider(node).pipe(
-      catchError((error: WebsocketError | Error) => {
+      catchError((error: WebSocketError | Error) => {
         this.loadingError = 'reason' in error ? error.reason : error.message;
         this.cdr.markForCheck();
         return of([]);

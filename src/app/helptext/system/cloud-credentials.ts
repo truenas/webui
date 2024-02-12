@@ -8,6 +8,9 @@ export const helptextSystemCloudcredentials = {
     tooltip: T('Third-party Cloud service providers. Choose a provider \
  to configure connection credentials.'),
   },
+  exist_provider: {
+    tooltip: T('Load an existing provider configuration.'),
+  },
   client_id: {
     placeholder: T('OAuth Client ID'),
   },
@@ -41,7 +44,7 @@ export const helptextSystemCloudcredentials = {
  field can be empty to use the default endpoint for the region, and \
  available buckets are automatically fetched. Refer to the AWS \
  Documentation for a list of \
- <a href="https://docs.aws.amazon.com/general/latest/gr/rande.html#s3_website_region_endpoints \
+ <a href="https://docs.aws.amazon.com/general/latest/gr/rande.html#s3_website_region_endpoints" \
  target="_blank">Simple Storage Service Website Endpoints</a>.'),
   },
   region_s3: {
@@ -56,16 +59,15 @@ export const helptextSystemCloudcredentials = {
   },
   skip_region_s3: {
     tooltip: T(
-      'Skip automatic detection of the Endpoint URL region. Set this \
- when configuring a custom Endpoint URL.',
+      'Skip automatic detection of the Endpoint URL region. Set this only if AWS provider does not support regions.',
     ),
   },
   signatures_v2_s3: {
     tooltip: T(
       'Force using \
  <a href="https://docs.aws.amazon.com/general/latest/gr/signature-version-2.html" \
- target="_blank">Signature Version 2</a> to sign API requests. Set this \
- when configuring a custom Endpoint URL.',
+ target="_blank">Signature Version 2</a> to sign API requests.  Set this only \
+ if your AWS provider does not support default version 4 signatures.',
     ),
   },
   account_b2: {
@@ -146,6 +148,8 @@ a new application key, log in to the Backblaze account, go to the \
  <a href="https://developers.google.com/drive/api/v3/about-auth"\
  target="_blank">Google Drive</a>.',
     ),
+    oauth_tooltip: T('Photo Library API client secret generated from the \
+ <a href="https://developers.google.com/identity/protocols/oauth2" target="_blank">Google API Console</a>'),
   },
   team_drive_google_drive: {
     tooltip: T(

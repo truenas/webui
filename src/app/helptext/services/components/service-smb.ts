@@ -1,6 +1,6 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
-export default {
+export const helptextServiceSmb = {
   cifs_srv_netbiosname_tooltip: T('Automatically populated with the original hostname\
  of the system. This name is limited to 15 characters and\
  cannot be the <b>Workgroup</b> name.'),

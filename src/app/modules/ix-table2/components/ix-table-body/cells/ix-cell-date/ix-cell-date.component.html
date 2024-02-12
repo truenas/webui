@@ -1,1 +1,6 @@
-{{ date | formatDateTime }}
+<span
+  [ixTest]="[title, rowTestId(row), 'row-date']"
+  [matTooltip]="date | formatDateTime"
+>
+  {{ date | formatDateTime }}
+</span>

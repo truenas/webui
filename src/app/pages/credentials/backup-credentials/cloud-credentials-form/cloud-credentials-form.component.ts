@@ -3,75 +3,32 @@ import {
   ChangeDetectorRef,
   Component, Inject,
   OnInit,
-  Type,
   ViewChild,
   ViewContainerRef,
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { of } from 'rxjs';
+import { combineLatest, of } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
-import { CloudsyncProviderName } from 'app/enums/cloudsync-provider.enum';
+import { CloudSyncProviderName } from 'app/enums/cloudsync-provider.enum';
+import { Role } from 'app/enums/role.enum';
 import { helptextSystemCloudcredentials as helptext } from 'app/helptext/system/cloud-credentials';
-import { CloudsyncCredential, CloudsyncCredentialUpdate } from 'app/interfaces/cloudsync-credential.interface';
-import { CloudsyncProvider } from 'app/interfaces/cloudsync-provider.interface';
+import { CloudSyncCredential, CloudSyncCredentialUpdate } from 'app/interfaces/cloudsync-credential.interface';
+import { CloudSyncProvider } from 'app/interfaces/cloudsync-provider.interface';
 import { Option } from 'app/interfaces/option.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
-import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
+import { CHAINED_SLIDE_IN_REF, SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
+import { forbiddenValues } from 'app/modules/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import {
-  AzureProviderFormComponent,
-} from 'app/pages/credentials/backup-credentials/cloud-credentials-form/provider-forms/azure-provider-form/azure-provider-form.component';
-import {
-  BackblazeB2ProviderFormComponent,
-} from 'app/pages/credentials/backup-credentials/cloud-credentials-form/provider-forms/backblaze-b2-provider-form/backblaze-b2-provider-form.component';
 import {
   BaseProviderFormComponent,
 } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/provider-forms/base-provider-form';
-import {
-  FtpProviderFormComponent,
-} from 'app/pages/credentials/backup-credentials/cloud-credentials-form/provider-forms/ftp-provider-form/ftp-provider-form.component';
-import {
-  GoogleCloudProviderFormComponent,
-} from 'app/pages/credentials/backup-credentials/cloud-credentials-form/provider-forms/google-cloud-provider-form/google-cloud-provider-form.component';
-import {
-  GoogleDriveProviderFormComponent,
-} from 'app/pages/credentials/backup-credentials/cloud-credentials-form/provider-forms/google-drive-provider-form/google-drive-provider-form.component';
-import {
-  HttpProviderFormComponent,
-} from 'app/pages/credentials/backup-credentials/cloud-credentials-form/provider-forms/http-provider-form/http-provider-form.component';
-import {
-  MegaProviderFormComponent,
-} from 'app/pages/credentials/backup-credentials/cloud-credentials-form/provider-forms/mega-provider-form/mega-provider-form.component';
-import {
-  OneDriveProviderFormComponent,
-} from 'app/pages/credentials/backup-credentials/cloud-credentials-form/provider-forms/one-drive-provider-form/one-drive-provider-form.component';
-import {
-  OpenstackSwiftProviderFormComponent,
-} from 'app/pages/credentials/backup-credentials/cloud-credentials-form/provider-forms/openstack-swift-provider-form/openstack-swift-provider-form.component';
-import {
-  PcloudProviderFormComponent,
-} from 'app/pages/credentials/backup-credentials/cloud-credentials-form/provider-forms/pcloud-provider-form/pcloud-provider-form.component';
-import {
-  S3ProviderFormComponent,
-} from 'app/pages/credentials/backup-credentials/cloud-credentials-form/provider-forms/s3-provider-form/s3-provider-form.component';
-import {
-  SftpProviderFormComponent,
-} from 'app/pages/credentials/backup-credentials/cloud-credentials-form/provider-forms/sftp-provider-form/sftp-provider-form.component';
-import {
-  StorjProviderFormComponent,
-} from 'app/pages/credentials/backup-credentials/cloud-credentials-form/provider-forms/storj-provider-form/storj-provider-form.component';
-import {
-  TokenProviderFormComponent,
-} from 'app/pages/credentials/backup-credentials/cloud-credentials-form/provider-forms/token-provider-form/token-provider-form.component';
-import {
-  WebdavProviderFormComponent,
-} from 'app/pages/credentials/backup-credentials/cloud-credentials-form/provider-forms/webdav-provider-form/webdav-provider-form.component';
+import { getName, getProviderFormClass } from 'app/pages/data-protection/cloudsync/cloudsync-wizard/steps/cloudsync-provider/cloudsync-provider.common';
+import { CloudCredentialService } from 'app/services/cloud-credential.service';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ChainedComponentRef } from 'app/services/ix-chained-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 // TODO: Form is partially backend driven and partially hardcoded on the frontend.
@@ -83,40 +40,50 @@ import { WebSocketService } from 'app/services/ws.service';
 export class CloudCredentialsFormComponent implements OnInit {
   commonForm = this.formBuilder.group({
     name: ['Storj', Validators.required],
-    provider: [CloudsyncProviderName.Storj],
+    provider: [CloudSyncProviderName.Storj],
   });
 
   isLoading = false;
-  existingCredential: CloudsyncCredential;
-  providers: CloudsyncProvider[] = [];
+  existingCredential: CloudSyncCredential;
+  providers: CloudSyncProvider[] = [];
   providerOptions = of<Option[]>([]);
   providerForm: BaseProviderFormComponent;
+  forbiddenNames: string[] = [];
+  credentials: CloudSyncCredential[] = [];
 
   @ViewChild('providerFormContainer', { static: true, read: ViewContainerRef }) providerFormContainer: ViewContainerRef;
 
   readonly helptext = helptext;
+
+  protected readonly Role = Role;
 
   constructor(
     private ws: WebSocketService,
     private formBuilder: FormBuilder,
     private cdr: ChangeDetectorRef,
     private errorHandler: ErrorHandlerService,
-    private slideInRef: IxSlideInRef<CloudCredentialsFormComponent>,
     private dialogService: DialogService,
     private formErrorHandler: FormErrorHandlerService,
     private translate: TranslateService,
     private snackbarService: SnackbarService,
-    @Inject(SLIDE_IN_DATA) private credential: CloudsyncCredential,
+    private cloudCredentialService: CloudCredentialService,
+    @Inject(SLIDE_IN_DATA) private credential: CloudSyncCredential,
+    @Inject(CHAINED_SLIDE_IN_REF) private chainedSlideInRef: ChainedComponentRef,
   ) {
     // Has to be earlier than potential `setCredentialsForEdit` call
     this.setFormEvents();
+  }
+
+  get showProviderDescription(): boolean {
+    return this.commonForm.controls.provider.enabled
+      && this.commonForm.controls.provider.value === CloudSyncProviderName.Storj;
   }
 
   get isNew(): boolean {
     return !this.existingCredential;
   }
 
-  get selectedProvider(): CloudsyncProvider {
+  get selectedProvider(): CloudSyncProvider {
     return this.providers?.find((provider) => {
       return provider.name === this.commonForm.controls.provider.value;
     });
@@ -148,9 +115,7 @@ export class CloudCredentialsFormComponent implements OnInit {
   onSubmit(): boolean {
     this.isLoading = true;
 
-    const beforeSubmit$ = this.providerForm.beforeSubmit();
-
-    beforeSubmit$
+    this.providerForm.beforeSubmit()
       .pipe(
         switchMap(() => {
           const payload = this.preparePayload();
@@ -161,18 +126,18 @@ export class CloudCredentialsFormComponent implements OnInit {
         untilDestroyed(this),
       )
       .subscribe({
-        next: () => {
+        next: (response) => {
           this.isLoading = false;
           this.snackbarService.success(
             this.isNew
               ? this.translate.instant('Cloud credential added.')
               : this.translate.instant('Cloud credential updated.'),
           );
-          this.slideInRef.close(true);
+          this.chainedSlideInRef.close({ response, error: null });
           this.cdr.markForCheck();
         },
-        error: (error) => {
-        // TODO: Errors for nested provider form will be shown in a modal. Can be improved.
+        error: (error: unknown) => {
+          // TODO: Errors for nested provider form will be shown in a modal. Can be improved.
           this.isLoading = false;
           this.formErrorHandler.handleWsFormError(error, this.commonForm);
           this.cdr.markForCheck();
@@ -185,9 +150,7 @@ export class CloudCredentialsFormComponent implements OnInit {
   onVerify(): void {
     this.isLoading = true;
 
-    const beforeSubmit$ = this.providerForm.beforeSubmit();
-
-    beforeSubmit$
+    this.providerForm.beforeSubmit()
       .pipe(
         switchMap(() => {
           const { name, ...payload } = this.preparePayload();
@@ -211,7 +174,7 @@ export class CloudCredentialsFormComponent implements OnInit {
           this.isLoading = false;
           this.cdr.markForCheck();
         },
-        error: (error) => {
+        error: (error: unknown) => {
           this.isLoading = false;
           this.formErrorHandler.handleWsFormError(error, this.commonForm);
           this.cdr.markForCheck();
@@ -219,7 +182,7 @@ export class CloudCredentialsFormComponent implements OnInit {
       });
   }
 
-  private preparePayload(): CloudsyncCredentialUpdate {
+  private preparePayload(): CloudSyncCredentialUpdate {
     const commonValues = this.commonForm.value;
     return {
       name: commonValues.name,
@@ -230,10 +193,13 @@ export class CloudCredentialsFormComponent implements OnInit {
 
   private loadProviders(): void {
     this.isLoading = true;
-    this.ws.call('cloudsync.providers')
+    combineLatest([
+      this.cloudCredentialService.getProviders(),
+      this.cloudCredentialService.getCloudSyncCredentials(),
+    ])
       .pipe(untilDestroyed(this))
       .subscribe({
-        next: (providers) => {
+        next: ([providers, credentials]) => {
           this.providers = providers;
           this.providerOptions = of(
             providers.map((provider) => ({
@@ -241,6 +207,8 @@ export class CloudCredentialsFormComponent implements OnInit {
               value: provider.name,
             })),
           );
+          this.credentials = credentials;
+          this.setNamesInUseValidator(credentials);
           this.renderProviderForm();
           if (this.existingCredential) {
             this.providerForm.getFormSetter$().next(this.existingCredential.attributes);
@@ -248,9 +216,10 @@ export class CloudCredentialsFormComponent implements OnInit {
           this.isLoading = false;
           this.cdr.markForCheck();
         },
-        error: (error: WebsocketError) => {
-          this.dialogService.error(this.errorHandler.parseWsError(error));
-          this.slideInRef.close();
+        error: (error: unknown) => {
+          this.isLoading = false;
+          this.cdr.markForCheck();
+          this.dialogService.error(this.errorHandler.parseError(error));
         },
       });
   }
@@ -265,12 +234,17 @@ export class CloudCredentialsFormComponent implements OnInit {
       });
   }
 
+  private setNamesInUseValidator(credentials: CloudSyncCredential[]): void {
+    this.forbiddenNames = credentials.map((credential) => credential.name);
+    this.commonForm.controls.name.addValidators(forbiddenValues(this.forbiddenNames));
+  }
+
   private setDefaultName(): void {
     if (!this.isNew || this.commonForm.controls.name.touched) {
       return;
     }
 
-    this.commonForm.controls.name.setValue(this.selectedProvider.title);
+    this.commonForm.controls.name.setValue(getName(this.selectedProvider.title, this.forbiddenNames));
   }
 
   private renderProviderForm(): void {
@@ -279,41 +253,9 @@ export class CloudCredentialsFormComponent implements OnInit {
       return;
     }
 
-    const formClass = this.getProviderFormClass();
+    const formClass = getProviderFormClass(this.selectedProvider.name);
     const formRef = this.providerFormContainer.createComponent(formClass);
     formRef.instance.provider = this.selectedProvider;
     this.providerForm = formRef.instance;
-  }
-
-  private getProviderFormClass(): Type<BaseProviderFormComponent> {
-    const tokenOnlyProviders = [
-      CloudsyncProviderName.Box,
-      CloudsyncProviderName.Dropbox,
-      CloudsyncProviderName.GooglePhotos,
-      CloudsyncProviderName.Hubic,
-      CloudsyncProviderName.Yandex,
-    ];
-    if (tokenOnlyProviders.includes(this.selectedProvider.name)) {
-      return TokenProviderFormComponent;
-    }
-
-    const formMapping = new Map<CloudsyncProviderName, Type<BaseProviderFormComponent>>([
-      [CloudsyncProviderName.MicrosoftAzure, AzureProviderFormComponent],
-      [CloudsyncProviderName.BackblazeB2, BackblazeB2ProviderFormComponent],
-      [CloudsyncProviderName.Ftp, FtpProviderFormComponent],
-      [CloudsyncProviderName.GoogleCloudStorage, GoogleCloudProviderFormComponent],
-      [CloudsyncProviderName.GoogleDrive, GoogleDriveProviderFormComponent],
-      [CloudsyncProviderName.Http, HttpProviderFormComponent],
-      [CloudsyncProviderName.Mega, MegaProviderFormComponent],
-      [CloudsyncProviderName.MicrosoftOnedrive, OneDriveProviderFormComponent],
-      [CloudsyncProviderName.OpenstackSwift, OpenstackSwiftProviderFormComponent],
-      [CloudsyncProviderName.Pcloud, PcloudProviderFormComponent],
-      [CloudsyncProviderName.AmazonS3, S3ProviderFormComponent],
-      [CloudsyncProviderName.Sftp, SftpProviderFormComponent],
-      [CloudsyncProviderName.Storj, StorjProviderFormComponent],
-      [CloudsyncProviderName.Webdav, WebdavProviderFormComponent],
-    ]);
-
-    return formMapping.get(this.selectedProvider.name);
   }
 }

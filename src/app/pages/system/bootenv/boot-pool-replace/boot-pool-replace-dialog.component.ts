@@ -1,20 +1,19 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef,
+  ChangeDetectionStrategy,
   Component,
   Inject,
   OnInit,
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog';
-import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import filesize from 'filesize';
 import { map } from 'rxjs/operators';
+import { Role } from 'app/enums/role.enum';
+import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
 import { helptextSystemBootenv } from 'app/helptext/system/boot-env';
 import { UnusedDisk } from 'app/interfaces/storage.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
-import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { DialogService } from 'app/services/dialog.service';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -30,7 +29,7 @@ export class BootPoolReplaceDialogComponent implements OnInit {
   form = this.fb.group({
     dev: ['', Validators.required],
   });
-
+  protected readonly Role = Role;
   dev = {
     fcName: 'dev' as const,
     label: this.translate.instant(helptextSystemBootenv.replace_name_placeholder),
@@ -38,7 +37,7 @@ export class BootPoolReplaceDialogComponent implements OnInit {
       map((unusedDisks) => {
         this.unusedDisks = unusedDisks;
         const options = unusedDisks.map((disk) => {
-          const size = filesize(disk.size, { standard: 'iec' });
+          const size = buildNormalizedFileSize(disk.size);
           let label = `${disk.name} - ${size}`;
           if (disk.exported_zpool) {
             label += ` (${disk.exported_zpool})`;
@@ -60,12 +59,9 @@ export class BootPoolReplaceDialogComponent implements OnInit {
   constructor(
     @Inject(MAT_DIALOG_DATA) public pk: string,
     private fb: FormBuilder,
-    private dialog: MatDialog,
-    private router: Router,
+    private matDialog: MatDialog,
     private translate: TranslateService,
     private ws: WebSocketService,
-    private cdr: ChangeDetectorRef,
-    private errorHandler: FormErrorHandlerService,
     private dialogRef: MatDialogRef<BootPoolReplaceDialogComponent>,
     private dialogService: DialogService,
   ) {}
@@ -98,7 +94,7 @@ export class BootPoolReplaceDialogComponent implements OnInit {
     const oldDisk = this.pk;
     const { dev: newDisk } = this.form.value;
 
-    const dialogRef = this.dialog.open(EntityJobComponent, {
+    const dialogRef = this.matDialog.open(EntityJobComponent, {
       data: {
         disableClose: true,
         title: this.translate.instant('Replacing Boot Pool Disk'),

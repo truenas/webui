@@ -3,12 +3,11 @@
 }
 
 .row {
-  background: var(--bg1);
   color: var(--fg2);
   display: flex;
   justify-content: space-between;
   min-height: 26px;
-  padding-left: 48px;
+  padding-left: 25px;
 
   .caption-container {
     font-weight: bold;
@@ -23,8 +22,7 @@
 
   .caption-name {
     align-self: center;
-    background: linear-gradient(90deg, var(--bg1) 0%, var(--bg1) calc(100% - 13px), transparent 100%);
-    padding-left: 8px;
+    padding-left: 15px;
     padding-right: 15px;
   }
 

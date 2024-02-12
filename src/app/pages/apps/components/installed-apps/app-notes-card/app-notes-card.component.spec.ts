@@ -38,6 +38,9 @@ describe('AppNotesCardComponent', () => {
   });
 
   beforeEach(() => {
+    // Expected sanitizer warnings (because of newlines).
+    jest.spyOn(console, 'warn').mockImplementation();
+
     spectator = createComponent({
       props: {
         app,

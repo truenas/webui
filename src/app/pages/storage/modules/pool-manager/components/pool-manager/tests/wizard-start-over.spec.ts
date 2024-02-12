@@ -5,7 +5,8 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { of } from 'rxjs';
 import { GiB } from 'app/constants/bytes.constant';
 import { CoreComponents } from 'app/core/core-components.module';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { DiskType } from 'app/enums/disk-type.enum';
 import { Enclosure } from 'app/interfaces/enclosure.interface';
 import { UnusedDisk } from 'app/interfaces/storage.interface';
@@ -40,7 +41,7 @@ describe('PoolManagerComponent – start over functionality', () => {
     ],
     providers: [
       ...commonProviders,
-      mockWebsocket([
+      mockWebSocket([
         mockCall('pool.validate_name', true),
         mockCall('disk.get_unused', [
           {
@@ -133,6 +134,7 @@ describe('PoolManagerComponent – start over functionality', () => {
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
+      mockAuth(),
     ],
   });
 
@@ -193,6 +195,7 @@ describe('PoolManagerComponent – start over functionality', () => {
     // METADATA step activated
     expect(await (await wizard.getActiveStep()).getLabel()).toBe('Metadata (Optional)');
     await wizard.fillStep({
+      Layout: 'Stripe',
       'Disk Size': '20 GiB (HDD)',
       Width: '1',
       'Number of VDEVs': '1',
@@ -202,6 +205,7 @@ describe('PoolManagerComponent – start over functionality', () => {
     // DEDUP step activated
     expect(await (await wizard.getActiveStep()).getLabel()).toBe('Dedup (Optional)');
     await wizard.fillStep({
+      Layout: 'Stripe',
       'Disk Size': '20 GiB (HDD)',
       Width: '1',
       'Number of VDEVs': '1',
@@ -256,7 +260,7 @@ describe('PoolManagerComponent – start over functionality', () => {
     expect(await (await wizard.getActiveStep()).getLabel()).toBe('Log (Optional)');
     expect(await wizard.getStepValues()).toStrictEqual({
       'Disk Size': '',
-      'Layout': '',
+      Layout: '',
       'Treat Disk Size as Minimum': false,
       Width: '',
     });
@@ -283,6 +287,7 @@ describe('PoolManagerComponent – start over functionality', () => {
     // METADATA step activated and reset to default
     expect(await (await wizard.getActiveStep()).getLabel()).toBe('Metadata (Optional)');
     expect(await wizard.getStepValues()).toStrictEqual({
+      Layout: '',
       'Disk Size': '',
       'Number of VDEVs': '',
       'Treat Disk Size as Minimum': false,
@@ -293,6 +298,7 @@ describe('PoolManagerComponent – start over functionality', () => {
     // DEDUP step activated and reset to default
     expect(await (await wizard.getActiveStep()).getLabel()).toBe('Dedup (Optional)');
     expect(await wizard.getStepValues()).toStrictEqual({
+      Layout: '',
       'Disk Size': '',
       'Number of VDEVs': '',
       'Treat Disk Size as Minimum': false,

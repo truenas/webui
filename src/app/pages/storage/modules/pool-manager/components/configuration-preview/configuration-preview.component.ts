@@ -25,10 +25,11 @@ export class ConfigurationPreviewComponent {
 
   protected topology$ = this.store.topology$.pipe(
     map((topology) => {
-      if (this.store.isUsingDraidLayout(topology)) {
-        delete topology.spare;
+      const newTopology = { ...topology };
+      if (this.store.isUsingDraidLayout(newTopology)) {
+        delete newTopology.spare;
       }
-      return topology;
+      return newTopology;
     }),
   );
   protected totalCapacity$ = this.store.totalUsableCapacity$;

@@ -1,6 +1,6 @@
 import { LinkState } from 'app/enums/network-interface.enum';
 import { ReportingQueryUnit } from 'app/enums/reporting.enum';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
+import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 
 export interface ReportingRealtimeUpdate {
   cpu: AllCpusUpdate;
@@ -14,7 +14,6 @@ export interface ReportingRealtimeUpdate {
 export interface AllCpusUpdate {
   [cpuNumber: number]: CpuUpdate;
   average: CpuUpdate;
-  temperature: number[];
   temperature_celsius: number[];
 }
 
@@ -40,15 +39,11 @@ export interface DisksUpdate {
   write_ops: number;
 }
 
-export interface AllNetworkInterfacesUpdate {
-  [interfaceName: string]: NetworkInterfaceUpdate;
-}
+export type AllNetworkInterfacesUpdate = Record<string, NetworkInterfaceUpdate>;
 
 export interface NetworkInterfaceUpdate {
   link_state: LinkState;
-  received_bytes: number;
   received_bytes_rate: number;
-  sent_bytes: number;
   sent_bytes_rate: number;
   speed: number;
 }
@@ -97,20 +92,11 @@ export interface ZfsUpdate {
   cache_hit_ratio: number;
 }
 
-export interface ReportingConfig {
-  confirm_rrd_destroy?: boolean;
-  graph_age: number;
-  graph_points: number;
-  id: number;
-}
-
 export interface ReportingQueryOptions {
   unit?: ReportingQueryUnit;
   start?: number;
   end?: number;
 }
-
-export type ReportingConfigUpdate = Omit<ReportingConfig, 'id'>;
 
 export type ReportingQueryParams = [
   [ReportingNameAndId],
@@ -138,7 +124,7 @@ export interface ReportingData {
   legend: string[];
   name: string;
   start: number;
-  data: number[][] | WebsocketError;
+  data: number[][] | WebSocketError;
   aggregations: ReportingAggregations;
 }
 

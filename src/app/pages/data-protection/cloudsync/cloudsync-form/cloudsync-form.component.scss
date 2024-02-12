@@ -1,9 +1,16 @@
+@import 'scss-imports/splitview';
+
 .fieldsets {
   display: flex;
   flex-wrap: wrap;
 
   .fieldset {
     width: 50%;
+
+    @media (max-width: $breakpoint-tablet) {
+      padding-bottom: 0;
+      width: 100%;
+    }
   }
 }
 

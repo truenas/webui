@@ -27,20 +27,23 @@ import { StoreModule } from '@ngrx/store';
 import {
   MissingTranslationHandler, TranslateCompiler, TranslateLoader, TranslateModule, TranslateFakeLoader,
 } from '@ngx-translate/core';
+import failOnConsole from 'jest-fail-on-console';
 import { MockProvider } from 'ng-mocks';
-import { NgxFilesizeModule } from 'ngx-filesize';
 import { TranslateMessageFormatCompiler } from 'ngx-translate-messageformat-compiler';
 import { Observable } from 'rxjs';
 import { IcuMissingTranslationHandler } from 'app/core/classes/icu-missing-translation-handler';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { WINDOW } from 'app/helpers/window.helper';
 import { CastModule } from 'app/modules/cast/cast.module';
+import { IxFileSizeModule } from 'app/modules/ix-file-size/ix-file-size.module';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarModule } from 'app/modules/snackbar/snackbar.module';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
+
+failOnConsole();
 
 jest.setTimeout(30 * 1000);
 
@@ -59,6 +62,7 @@ defineGlobalsInjections({
     MatProgressBarModule,
     MatTooltipModule,
     MatCardModule,
+    IxFileSizeModule,
     MatListModule,
     MatToolbarModule,
     MatBadgeModule,
@@ -67,7 +71,6 @@ defineGlobalsInjections({
     MatButtonModule,
     RouterModule.forRoot([]),
     CommonDirectivesModule,
-    NgxFilesizeModule,
     CastModule,
     SnackbarModule,
     TestIdModule,
@@ -140,4 +143,19 @@ beforeEach(() => {
       unobserve: jest.fn(),
     })),
   });
+});
+
+// https://github.com/jsdom/jsdom/issues/3002
+Range.prototype.getBoundingClientRect = () => ({
+  bottom: 0,
+  height: 0,
+  left: 0,
+  right: 0,
+  top: 0,
+  width: 0,
+} as DOMRect);
+Range.prototype.getClientRects = () => ({
+  item: () => null,
+  length: 0,
+  [Symbol.iterator]: jest.fn(),
 });

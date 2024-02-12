@@ -1,13 +1,15 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
-import { filter } from 'rxjs';
+import { filter, map, switchMap } from 'rxjs';
+import { Role } from 'app/enums/role.enum';
 import { SystemGeneralConfig } from 'app/interfaces/system-config.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
-import { ArrayDataProvider } from 'app/modules/ix-table2/array-data-provider';
+import { AsyncDataProvider } from 'app/modules/ix-table2/classes/async-data-provider/async-data-provider';
+import { actionsColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
 import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { createTable } from 'app/modules/ix-table2/utils';
+import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
 import { AdvancedSettingsService } from 'app/pages/system/advanced/advanced-settings.service';
 import {
   AllowedAddressesFormComponent,
@@ -31,19 +33,26 @@ interface AllowedAddressRow {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AllowedAddressesCardComponent implements OnInit {
-  dataProvider = new ArrayDataProvider<AllowedAddressRow>();
-
-  isLoading = false;
+  dataProvider: AsyncDataProvider<AllowedAddressRow>;
 
   columns = createTable<AllowedAddressRow>([
     textColumn({
       title: this.translate.instant('Address'),
       propertyName: 'address',
     }),
-    textColumn({
-      propertyName: 'address',
+    actionsColumn({
+      actions: [
+        {
+          iconName: 'delete',
+          tooltip: this.translate.instant('Delete'),
+          onClick: (row) => this.promptDeleteAllowedAddress(row),
+          requiredRoles: [Role.FullAdmin],
+        },
+      ],
     }),
-  ]);
+  ], {
+    rowTestId: (row) => 'allowed-address-' + row.address,
+  });
 
   constructor(
     private ws: WebSocketService,
@@ -53,10 +62,15 @@ export class AllowedAddressesCardComponent implements OnInit {
     private errorHandler: ErrorHandlerService,
     private translate: TranslateService,
     private advancedSettings: AdvancedSettingsService,
-    private cdr: ChangeDetectorRef,
+    protected emptyService: EmptyService,
   ) {}
 
   ngOnInit(): void {
+    const config$ = this.ws.call('system.general.config').pipe(
+      map((config) => this.getAddressesSourceFromConfig(config)),
+      untilDestroyed(this),
+    );
+    this.dataProvider = new AsyncDataProvider<AllowedAddressRow>(config$);
     this.getAllowedAddresses();
   }
 
@@ -79,33 +93,28 @@ export class AllowedAddressesCardComponent implements OnInit {
         untilDestroyed(this),
       ).subscribe({
         next: () => this.deleteAllowedAddress(row),
-        error: (err: WebsocketError) => this.dialog.error(this.errorHandler.parseWsError(err)),
+        error: (err: unknown) => this.dialog.error(this.errorHandler.parseError(err)),
       });
   }
 
   private deleteAllowedAddress(row: AllowedAddressRow): void {
-    const updatedAddresses = this.dataProvider.rows
-      .filter((ip) => ip.address !== row.address)
-      .map(ip => ip.address);
-
-    this.ws.call('system.general.update', [{ ui_allowlist: updatedAddresses }]).pipe(
+    this.dataProvider.currentPage$.pipe(
+      switchMap((currentPage) => {
+        const updatedAddresses = currentPage.filter((ip) => ip.address !== row.address).map((ip) => ip.address);
+        return this.ws.call('system.general.update', [{ ui_allowlist: updatedAddresses }]);
+      }),
       untilDestroyed(this),
     ).subscribe({
       next: () => {
         this.store$.dispatch(generalConfigUpdated());
         this.getAllowedAddresses();
       },
-      error: (err: WebsocketError) => this.dialog.error(this.errorHandler.parseWsError(err)),
+      error: (err: unknown) => this.dialog.error(this.errorHandler.parseError(err)),
     });
   }
 
   private getAllowedAddresses(): void {
-    this.isLoading = true;
-    this.ws.call('system.general.config').pipe(untilDestroyed(this)).subscribe((config) => {
-      this.dataProvider.setRows(this.getAddressesSourceFromConfig(config));
-      this.isLoading = false;
-      this.cdr.markForCheck();
-    });
+    this.dataProvider.load();
   }
 
   private getAddressesSourceFromConfig(data: SystemGeneralConfig): AllowedAddressRow[] {

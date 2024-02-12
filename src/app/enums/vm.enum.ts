@@ -30,6 +30,16 @@ export enum VmDeviceType {
   Usb = 'USB',
 }
 
+export const vmDeviceTypeLabels = new Map<VmDeviceType, string>([
+  [VmDeviceType.Nic, T('NIC')],
+  [VmDeviceType.Disk, T('Disk')],
+  [VmDeviceType.Cdrom, T('CD-ROM')],
+  [VmDeviceType.Pci, T('PCI Passthrough Device')],
+  [VmDeviceType.Display, T('Display')],
+  [VmDeviceType.Raw, T('Raw File')],
+  [VmDeviceType.Usb, T('USB Passthrough Device')],
+]);
+
 export enum VmCpuMode {
   Custom = 'CUSTOM',
   HostModel = 'HOST-MODEL',

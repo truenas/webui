@@ -2,7 +2,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import {
   VmBootloader, VmDisplayType, VmOs, VmTime,
 } from 'app/enums/vm.enum';
@@ -21,7 +21,7 @@ describe('OsStepComponent', () => {
       IxFormsModule,
     ],
     providers: [
-      mockWebsocket([
+      mockWebSocket([
         mockCall('vm.query', []),
         mockCall('vm.bootloader_options', {
           UEFI: 'UEFI',
@@ -51,7 +51,7 @@ describe('OsStepComponent', () => {
       'Shutdown Timeout': 90,
       'Start on Boot': true,
       'Enable Display': true,
-      Password: '12345678',
+      Password: '12345678910',
       Bind: '10.10.16.82',
     });
   }
@@ -70,7 +70,7 @@ describe('OsStepComponent', () => {
       enable_display: true,
       display_type: VmDisplayType.Spice,
       bind: '10.10.16.82',
-      password: '12345678',
+      password: '12345678910',
       hyperv_enlightenments: false,
     });
   });

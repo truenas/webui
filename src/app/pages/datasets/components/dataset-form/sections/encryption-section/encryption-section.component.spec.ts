@@ -3,9 +3,8 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
-import { DatasetEncryptionType } from 'app/enums/dataset.enum';
-import helptext from 'app/helptext/storage/volumes/datasets/dataset-form';
+import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { EncryptionKeyFormat } from 'app/enums/encryption-key-format.enum';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { IxCheckboxHarness } from 'app/modules/ix-forms/components/ix-checkbox/ix-checkbox.harness';
 import { IxFieldsetHarness } from 'app/modules/ix-forms/components/ix-fieldset/ix-fieldset.harness';
@@ -23,7 +22,7 @@ describe('EncryptionSectionComponent', () => {
   const keyEncryptedDataset = {
     encrypted: true,
     key_format: {
-      value: DatasetEncryptionType.Default,
+      value: EncryptionKeyFormat.Hex,
     },
     encryption_algorithm: {
       value: 'AES-128-GCM',
@@ -32,7 +31,7 @@ describe('EncryptionSectionComponent', () => {
   const passphraseEncryptedDataset = {
     encrypted: true,
     key_format: {
-      value: DatasetEncryptionType.Passphrase,
+      value: EncryptionKeyFormat.Passphrase,
     },
   } as Dataset;
 
@@ -43,7 +42,7 @@ describe('EncryptionSectionComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
-      mockWebsocket([
+      mockWebSocket([
         mockCall('pool.dataset.encryption_algorithm_choices', {
           'AES-256-GCM': 'AES-256-GCM',
           'AES-128-GCM': 'AES-128-GCM',
@@ -51,6 +50,7 @@ describe('EncryptionSectionComponent', () => {
       ]),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
+        warn: jest.fn(() => of(true)),
       }),
     ],
   });
@@ -61,6 +61,7 @@ describe('EncryptionSectionComponent', () => {
         parent: {
           encrypted: false,
         } as Dataset,
+        advancedMode: true,
       },
     });
 
@@ -125,14 +126,10 @@ describe('EncryptionSectionComponent', () => {
       await form.fillForm({
         'Inherit (encrypted)': false,
       });
-      await form.fillForm({
-        Encryption: false,
-      });
 
-      expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({
-        title: helptext.dataset_form_encryption.non_encrypted_warning_title,
-        message: helptext.dataset_form_encryption.non_encrypted_warning_warning,
-      });
+      const encryptionFc = (await form.getControl('Encryption'));
+      const isEncryptionDisabled = await encryptionFc.isDisabled();
+      expect(isEncryptionDisabled).toBe(true);
     });
   });
 

@@ -5,6 +5,7 @@ import { Validators, FormBuilder } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
+import { Role } from 'app/enums/role.enum';
 import { helptextSystemNtpservers as helptext } from 'app/helptext/system/ntp-servers';
 import { CreateNtpServer, NtpServer } from 'app/interfaces/ntp-server.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
@@ -40,6 +41,7 @@ export class NtpServerFormComponent implements OnInit {
   });
 
   readonly helptext = helptext;
+  protected readonly Role = Role;
 
   get isNew(): boolean {
     return !this.editingServer;
@@ -102,9 +104,9 @@ export class NtpServerFormComponent implements OnInit {
       next: () => {
         this.isFormLoading = false;
         this.cdr.markForCheck();
-        this.slideInRef.close();
+        this.slideInRef.close(true);
       },
-      error: (error) => {
+      error: (error: unknown) => {
         this.isFormLoading = false;
         this.cdr.markForCheck();
         this.errorHandler.handleWsFormError(error, this.formGroup);

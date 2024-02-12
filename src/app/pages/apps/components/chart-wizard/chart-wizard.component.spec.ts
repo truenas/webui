@@ -7,9 +7,10 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Spectator } from '@ngneat/spectator';
 import { mockProvider, createComponentFactory } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockEntityJobComponentRef } from 'app/core/testing/utils/mock-entity-job-component-ref.utils';
-import { mockCall, mockJob, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
-import { CatalogApp } from 'app/interfaces/catalog.interface';
+import { mockCall, mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { CatalogApp, CatalogAppVersion } from 'app/interfaces/catalog.interface';
 import { ChartFormValue, ChartRelease, ChartSchemaNodeConf } from 'app/interfaces/chart-release.interface';
 import { IxDynamicFormModule } from 'app/modules/ix-dynamic-form/ix-dynamic-form.module';
 import { IxInputHarness } from 'app/modules/ix-forms/components/ix-input/ix-input.harness';
@@ -18,10 +19,231 @@ import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-sl
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { ChartWizardComponent } from 'app/pages/apps/components/chart-wizard/chart-wizard.component';
+import { DockerHubRateInfoDialogComponent } from 'app/pages/apps/components/dockerhub-rate-limit-info.dialog.ts/dockerhub-rate-limit-info-dialog.component';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { KubernetesStore } from 'app/pages/apps/store/kubernetes-store.service';
 import { DialogService } from 'app/services/dialog.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+
+const appVersion121 = {
+  healthy: true,
+  schema: {
+    groups: [
+      {
+        description: 'Configure networking for container',
+        name: 'Networking',
+      },
+      {
+        description: 'Configure ports to forward to workload',
+        name: 'Port Forwarding',
+      },
+      {
+        description: 'Define mechanism to periodically probe the container to ensure it\'s functioning as desired',
+        name: 'Health Check',
+      },
+      {
+        description: 'Configure how workload should be deployed',
+        name: 'Workload Details',
+      },
+      {
+        description: 'Configure how pods are replaced when configuration is upgraded',
+        name: 'Scaling/Upgrade Policy',
+      },
+      {
+        description: 'Configure when pod should be restarted in case of failure',
+        name: 'Restart Policy',
+      },
+      {
+        name: 'IPFS Configuration',
+        description: 'Configure Storage for IPFS',
+      },
+    ],
+    questions: [
+      {
+        description: 'Upgrade Policy',
+        group: 'Scaling/Upgrade Policy',
+        label: 'Update Strategy',
+        schema: {
+          default: 'RollingUpdate',
+          enum: [
+            {
+              value: 'RollingUpdate',
+              description: 'Create new pods and then kill old ones',
+            },
+            {
+              value: 'Recreate',
+              description: 'Kill existing pods before creating new ones',
+            },
+          ],
+          show_if: [
+            ['workloadType', '=', 'Deployment'],
+          ],
+          type: 'string',
+        },
+        variable: 'updateStrategy',
+      },
+      {
+        description: 'Restart Policy for workload',
+        group: 'Restart Policy',
+        label: 'Restart Policy',
+        schema: {
+          default: 'OnFailure',
+          enum: [],
+          hidden: true,
+          show_if: [
+            ['workloadType', '!=', 'Deployment'],
+          ],
+          type: 'string',
+        },
+        variable: 'jobRestartPolicy',
+      },
+      {
+        description: 'Please specify type of workload to deploy',
+        group: 'Workload Details',
+        label: 'Workload Type',
+        schema: {
+          default: 'Deployment',
+          enum: [
+            {
+              description: 'Deploy a Deployment workload',
+              value: 'Deployment',
+            },
+          ],
+          hidden: true,
+          required: true,
+          type: 'string',
+        } as ChartSchemaNodeConf,
+        variable: 'workloadType',
+      },
+      {
+        description: 'Add External Interfaces',
+        group: 'Networking',
+        label: 'Add external Interfaces',
+        schema: {
+          show_if: [
+            ['updateStrategy', '!=', 'Recreate'],
+          ],
+          type: 'list',
+          items: [
+            {
+              variable: 'interfaceConfiguration',
+              label: 'Interface Configuration',
+              schema: {
+                $ref: ['normalize/interfaceConfiguration'],
+                type: 'dict',
+                attrs: [],
+              },
+            },
+          ],
+        },
+        variable: 'externalInterfaces',
+      },
+      {
+        group: 'Networking',
+        label: 'Provide access to node network namespace for the workload',
+        schema: {
+          default: false,
+          show_if: [
+            ['externalInterfaces', '=', []],
+          ],
+          type: 'boolean',
+        },
+        variable: 'hostNetwork',
+      },
+      {
+        description: 'Specify ports of node and workload to forward traffic from node port to workload port',
+        group: 'Port Forwarding',
+        label: 'Specify Node ports to forward to workload',
+        schema: {
+          items: [],
+          show_if: [
+            ['hostNetwork', '=', false],
+          ],
+          type: 'list',
+        },
+        variable: 'portForwardingList',
+      },
+      {
+        description: 'Configure Liveness Probe',
+        group: 'Health Check',
+        label: 'Liveness Probe',
+        schema: {
+          attrs: [],
+          default: null,
+          hidden: true,
+          type: 'dict',
+        },
+        variable: 'livenessProbe',
+      },
+      {
+        variable: 'service',
+        description: 'IPFS Service Configuration',
+        label: 'IPFS Service Configuration',
+        group: 'IPFS Configuration',
+        schema: {
+          type: 'dict',
+          required: true,
+          attrs: [
+            {
+              variable: 'swarmPort',
+              label: 'Swarm Port to use for IPFS (Public)',
+              schema: {
+                type: 'int',
+                min: 9000,
+                max: 65535,
+                default: 9401,
+                required: true,
+              },
+            },
+            {
+              variable: 'apiPort',
+              label: 'API Port to use for IPFS (local)',
+              schema: {
+                type: 'int',
+                min: 9000,
+                max: 65535,
+                default: 9501,
+                required: true,
+              },
+            },
+            {
+              variable: 'gatewayPort',
+              label: 'Gateway Port to use for IPFS (local)',
+              schema: {
+                type: 'int',
+                min: 9000,
+                max: 65535,
+                default: 9880,
+                required: true,
+              },
+            },
+          ],
+        },
+      },
+    ],
+  },
+} as CatalogAppVersion;
+
+const appVersion120 = {
+  healthy: true,
+  schema: {
+    groups: [
+      {
+        description: 'Configure networking for container',
+        name: 'Networking',
+      },
+    ],
+    questions: [{
+      group: 'Networking',
+      label: 'Provide access to node network namespace for the workload Another Version',
+      schema: {
+        default: true,
+        type: 'boolean',
+      },
+      variable: 'hostNetworkDifferentVersion',
+    }],
+  },
+} as CatalogAppVersion;
 
 describe('ChartWizardComponent', () => {
   let spectator: Spectator<ChartWizardComponent>;
@@ -30,204 +252,8 @@ describe('ChartWizardComponent', () => {
   const existingCatalogApp = {
     name: 'ipfs',
     versions: {
-      ['1.2.1' as string]: {
-        healthy: true,
-        schema: {
-          groups: [
-            {
-              description: 'Configure networking for container',
-              name: 'Networking',
-            },
-            {
-              description: 'Configure ports to forward to workload',
-              name: 'Port Forwarding',
-            },
-            {
-              description: 'Define mechanism to periodically probe the container to ensure it\'s functioning as desired',
-              name: 'Health Check',
-            },
-            {
-              description: 'Configure how workload should be deployed',
-              name: 'Workload Details',
-            },
-            {
-              description: 'Configure how pods are replaced when configuration is upgraded',
-              name: 'Scaling/Upgrade Policy',
-            },
-            {
-              description: 'Configure when pod should be restarted in case of failure',
-              name: 'Restart Policy',
-            },
-            {
-              name: 'IPFS Configuration',
-              description: 'Configure Storage for IPFS',
-            },
-          ],
-          questions: [
-            {
-              description: 'Please specify type of workload to deploy',
-              group: 'Workload Details',
-              label: 'Workload Type',
-              schema: {
-                default: 'Deployment',
-                enum: [
-                  {
-                    description: 'Deploy a Deployment workload',
-                    value: 'Deployment',
-                  },
-                ],
-                hidden: true,
-                required: true,
-                type: 'string',
-              } as ChartSchemaNodeConf,
-              variable: 'workloadType',
-            },
-            {
-              description: 'Upgrade Policy',
-              group: 'Scaling/Upgrade Policy',
-              label: 'Update Strategy',
-              schema: {
-                default: 'RollingUpdate',
-                enum: [
-                  {
-                    value: 'RollingUpdate',
-                    description: 'Create new pods and then kill old ones',
-                  },
-                  {
-                    value: 'Recreate',
-                    description: 'Kill existing pods before creating new ones',
-                  },
-                ],
-                show_if: [
-                  ['workloadType', '=', 'Deployment'],
-                ],
-                type: 'string',
-              },
-              variable: 'updateStrategy',
-            },
-            {
-              description: 'Restart Policy for workload',
-              group: 'Restart Policy',
-              label: 'Restart Policy',
-              schema: {
-                default: 'OnFailure',
-                enum: [],
-                hidden: true,
-                show_if: [
-                  ['workloadType', '!=', 'Deployment'],
-                ],
-                type: 'string',
-              },
-              variable: 'jobRestartPolicy',
-            },
-            {
-              description: 'Add External Interfaces',
-              group: 'Networking',
-              label: 'Add external Interfaces',
-              schema: {
-                show_if: [
-                  ['updateStrategy', '!=', 'Recreate'],
-                ],
-                type: 'list',
-                items: [
-                  {
-                    variable: 'interfaceConfiguration',
-                    label: 'Interface Configuration',
-                    schema: {
-                      $ref: ['normalize/interfaceConfiguration'],
-                      type: 'dict',
-                      attrs: [],
-                    },
-                  },
-                ],
-              },
-              variable: 'externalInterfaces',
-            },
-            {
-              group: 'Networking',
-              label: 'Provide access to node network namespace for the workload',
-              schema: {
-                default: false,
-                show_if: [
-                  ['externalInterfaces', '=', []],
-                ],
-                type: 'boolean',
-              },
-              variable: 'hostNetwork',
-            },
-            {
-              description: 'Specify ports of node and workload to forward traffic from node port to workload port',
-              group: 'Port Forwarding',
-              label: 'Specify Node ports to forward to workload',
-              schema: {
-                items: [],
-                show_if: [
-                  ['hostNetwork', '=', false],
-                ],
-                type: 'list',
-              },
-              variable: 'portForwardingList',
-            },
-            {
-              description: 'Configure Liveness Probe',
-              group: 'Health Check',
-              label: 'Liveness Probe',
-              schema: {
-                attrs: [],
-                default: null,
-                hidden: true,
-                type: 'dict',
-              },
-              variable: 'livenessProbe',
-            },
-            {
-              variable: 'service',
-              description: 'IPFS Service Configuration',
-              label: 'IPFS Service Configuration',
-              group: 'IPFS Configuration',
-              schema: {
-                type: 'dict',
-                required: true,
-                attrs: [
-                  {
-                    variable: 'swarmPort',
-                    label: 'Swarm Port to use for IPFS (Public)',
-                    schema: {
-                      type: 'int',
-                      min: 9000,
-                      max: 65535,
-                      default: 9401,
-                      required: true,
-                    },
-                  },
-                  {
-                    variable: 'apiPort',
-                    label: 'API Port to use for IPFS (local)',
-                    schema: {
-                      type: 'int',
-                      min: 9000,
-                      max: 65535,
-                      default: 9501,
-                      required: true,
-                    },
-                  },
-                  {
-                    variable: 'gatewayPort',
-                    label: 'Gateway Port to use for IPFS (local)',
-                    schema: {
-                      type: 'int',
-                      min: 9000,
-                      max: 65535,
-                      default: 9880,
-                      required: true,
-                    },
-                  },
-                ],
-              },
-            },
-          ],
-        },
-      },
+      ['1.2.1' as string]: appVersion121,
+      ['1.2.0' as string]: appVersion120,
     },
     latest_version: '1.2.1',
   } as CatalogApp;
@@ -287,7 +313,7 @@ describe('ChartWizardComponent', () => {
       memLimit: '1234',
       release_name: 'app_name',
       timezone: 'America/Los_Angeles',
-    } as { [key: string]: ChartFormValue },
+    } as Record<string, ChartFormValue>,
     chart_schema: {
       schema: {
         groups: [
@@ -338,11 +364,18 @@ describe('ChartWizardComponent', () => {
         getChartRelease: jest.fn(() => of([existingChartEdit])),
         getAllChartReleases: jest.fn(() => of([existingChartEdit])),
       }),
-      mockWebsocket([
+      mockWebSocket([
         mockJob('chart.release.create'),
         mockJob('chart.release.update'),
         mockCall('catalog.get_item_details', existingCatalogApp),
         mockCall('chart.release.query', [existingChartEdit]),
+        mockCall('container.image.dockerhub_rate_limit', {
+          total_pull_limit: 13,
+          total_time_limit_in_secs: 21600,
+          remaining_pull_limit: 3,
+          remaining_time_limit_in_secs: 21600,
+          error: null,
+        }),
       ]),
       mockProvider(KubernetesStore, {
         selectedPool$: of('pool set'),
@@ -351,6 +384,8 @@ describe('ChartWizardComponent', () => {
         open: jest.fn(() => mockEntityJobComponentRef),
       }),
       mockProvider(IxSlideInRef),
+      mockProvider(Router),
+      mockAuth(),
       { provide: SLIDE_IN_DATA, useValue: undefined },
     ],
   });
@@ -401,7 +436,8 @@ describe('ChartWizardComponent', () => {
       spectator.component.onSubmit();
 
       expect(spectator.component.dialogRef.componentInstance.setCall).toHaveBeenCalledWith(
-        'chart.release.update', ['app_name', {
+        'chart.release.update',
+        ['app_name', {
           values: {
             timezone: 'Europe/Paris',
           },
@@ -488,7 +524,8 @@ describe('ChartWizardComponent', () => {
       await saveButton.click();
 
       expect(mockEntityJobComponentRef.componentInstance.setCall).toHaveBeenCalledWith(
-        'chart.release.create', [{
+        'chart.release.create',
+        [{
           catalog: 'TRUENAS',
           item: 'ipfs',
           release_name: 'appname',
@@ -506,6 +543,34 @@ describe('ChartWizardComponent', () => {
         }],
       );
       expect(mockEntityJobComponentRef.componentInstance.submit).toHaveBeenCalled();
+    });
+
+    it('updates form when app version is changed and schema is updated', async () => {
+      const form = await loader.getHarness(IxFormHarness);
+
+      await form.fillForm({
+        Version: '1.2.0',
+      });
+
+      const values = await form.getValues();
+
+      expect(values).toEqual({
+        'Application Name': 'ipfs',
+        Version: '1.2.0',
+        'Provide access to node network namespace for the workload Another Version': true,
+      });
+    });
+
+    it('shows Docker Hub Rate Limit Info Dialog when remaining_pull_limit is less then 5', () => {
+      expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(DockerHubRateInfoDialogComponent, {
+        data: {
+          total_pull_limit: 13,
+          total_time_limit_in_secs: 21600,
+          remaining_pull_limit: 3,
+          remaining_time_limit_in_secs: 21600,
+          error: null,
+        },
+      });
     });
   });
 });

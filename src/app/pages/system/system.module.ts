@@ -17,13 +17,12 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { QrCodeModule } from 'ng-qrcode';
-import { NgxFilesizeModule } from 'ngx-filesize';
 import { CoreComponents } from 'app/core/core-components.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { CastModule } from 'app/modules/cast/cast.module';
 import { AppCommonModule } from 'app/modules/common/app-common.module';
 import { EntityModule } from 'app/modules/entity/entity.module';
+import { IxFileSizeModule } from 'app/modules/ix-file-size/ix-file-size.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
@@ -36,11 +35,15 @@ import { OauthButtonModule } from 'app/modules/oauth-button/oauth-button.module'
 import { SchedulerModule } from 'app/modules/scheduler/scheduler.module';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
 import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
+import { AccessCardComponent } from 'app/pages/system/advanced/access/access-card/access-card.component';
+import { AccessFormComponent } from 'app/pages/system/advanced/access/access-form/access-form.component';
 import { AdvancedSettingsComponent } from 'app/pages/system/advanced/advanced-settings.component';
 import {
   AllowedAddressesCardComponent,
 } from 'app/pages/system/advanced/allowed-addresses/allowed-addresses-card/allowed-addresses-card.component';
 import { AllowedAddressesFormComponent } from 'app/pages/system/advanced/allowed-addresses/allowed-addresses-form/allowed-addresses-form.component';
+import { AuditCardComponent } from 'app/pages/system/advanced/audit/audit-card/audit-card.component';
+import { AuditFormComponent } from 'app/pages/system/advanced/audit/audit-form/audit-form.component';
 import { ConsoleFormComponent } from 'app/pages/system/advanced/console/console-form/console-form.component';
 import { CronCardComponent } from 'app/pages/system/advanced/cron/cron-card/cron-card.component';
 import { CronDeleteDialogComponent } from 'app/pages/system/advanced/cron/cron-delete-dialog/cron-delete-dialog.component';
@@ -50,7 +53,7 @@ import { GlobalTwoFactorAuthCardComponent } from 'app/pages/system/advanced/glob
 import { GlobalTwoFactorAuthFormComponent } from 'app/pages/system/advanced/global-two-factor-auth/global-two-factor-form/global-two-factor-form.component';
 import { InitShutdownCardComponent } from 'app/pages/system/advanced/init-shutdown/init-shutdown-card/init-shutdown-card.component';
 import { InitShutdownFormComponent } from 'app/pages/system/advanced/init-shutdown/init-shutdown-form/init-shutdown-form.component';
-import { InitshutdownListComponent } from 'app/pages/system/advanced/init-shutdown/initshutdown-list/initshutdown-list.component';
+import { InitShutdownListComponent } from 'app/pages/system/advanced/init-shutdown/init-shutdown-list/init-shutdown-list.component';
 import {
   IsolatedGpusCardComponent,
 } from 'app/pages/system/advanced/isolated-gpus/isolated-gpus-card/isolated-gpus-card.component';
@@ -66,8 +69,6 @@ import {
   SelfEncryptingDriveCardComponent,
 } from 'app/pages/system/advanced/self-encrypting-drive/self-encrypting-drive-card/self-encrypting-drive-card.component';
 import { SelfEncryptingDriveFormComponent } from 'app/pages/system/advanced/self-encrypting-drive/self-encrypting-drive-form/self-encrypting-drive-form.component';
-import { SessionsCardComponent } from 'app/pages/system/advanced/sessions/sessions-card/sessions-card.component';
-import { TokenSettingsComponent } from 'app/pages/system/advanced/sessions/token-settings/token-settings.component';
 import { StorageCardComponent } from 'app/pages/system/advanced/storage/storage-card/storage-card.component';
 import { StorageSettingsFormComponent } from 'app/pages/system/advanced/storage/storage-settings-form/storage-settings-form.component';
 import { TunableFormComponent } from 'app/pages/system/advanced/sysctl/tunable-form/tunable-form.component';
@@ -91,6 +92,7 @@ import { SnmpTrapServiceComponent } from 'app/pages/system/alert-service/alert-s
 import { TelegramServiceComponent } from 'app/pages/system/alert-service/alert-service/alert-services/telegram-service/telegram-service.component';
 import { VictorOpsServiceComponent } from 'app/pages/system/alert-service/alert-service/alert-services/victor-ops-service/victor-ops-service.component';
 import { AlertServiceListComponent } from 'app/pages/system/alert-service/alert-service-list/alert-service-list.component';
+import { AlertSettings2Component } from 'app/pages/system/alert-settings2/alert-settings2.component';
 import { BootPoolAttachDialogComponent } from 'app/pages/system/bootenv/boot-pool-attach/boot-pool-attach-dialog.component';
 import { BootPoolDeleteDialogComponent } from 'app/pages/system/bootenv/boot-pool-delete-dialog/boot-pool-delete-dialog.component';
 import { BootPoolReplaceDialogComponent } from 'app/pages/system/bootenv/boot-pool-replace/boot-pool-replace-dialog.component';
@@ -125,12 +127,10 @@ import {
 import { ManualUpdateFormComponent } from 'app/pages/system/update/manual-update-form/manual-update-form.component';
 import { UpdateComponent } from 'app/pages/system/update/update.component';
 import { EnclosureModule } from 'app/pages/system/view-enclosure/enclosure.module';
-import { QrDialogComponent } from 'app/pages/two-factor-auth/components/two-factor/qr-dialog/qr-dialog.component';
 import { ConsoleCardComponent } from './advanced/console/console-card/console-card.component';
 import { SysctlCardComponent } from './advanced/sysctl/sysctl-card/sysctl-card.component';
 import { AlertSettingsComponent } from './alert-settings/alert-settings.component';
 import { BootenvNodeItemComponent } from './bootenv/bootenv-status/bootenv-node-item/bootenv-node-item.component';
-import { FileTicketModule } from './file-ticket/file-ticket.module';
 import { SetProductionStatusDialogComponent } from './general-settings/support/set-production-status-dialog/set-production-status-dialog.component';
 import { routing } from './system.routing';
 
@@ -149,6 +149,7 @@ import { routing } from './system.routing';
     IxTableModule,
     TreeModule,
     SchedulerModule,
+    IxFileSizeModule,
     JobsModule,
     MatCardModule,
     IxIconModule,
@@ -162,16 +163,13 @@ import { routing } from './system.routing';
     MatToolbarModule,
     MatListModule,
     MatButtonModule,
-    QrCodeModule,
     ReactiveFormsModule,
     routing,
     TooltipModule,
     TranslateModule,
-    NgxFilesizeModule,
     MatDialogModule,
     AppCommonModule,
     LayoutModule,
-    FileTicketModule,
     MatExpansionModule,
     MatSlideToggleModule,
     AppLoaderModule,
@@ -205,7 +203,6 @@ import { routing } from './system.routing';
     GlobalTwoFactorAuthCardComponent,
     LocalizationCardComponent,
     InitShutdownFormComponent,
-    InitshutdownListComponent,
     IsolatedGpusFormComponent,
     KernelFormComponent,
     LicenseComponent,
@@ -214,13 +211,14 @@ import { routing } from './system.routing';
     NtpServerFormComponent,
     NtpServerCardComponent,
     ProactiveComponent,
-    QrDialogComponent,
     ReplicationSettingsFormComponent,
-    TokenSettingsComponent,
+    AccessFormComponent,
     AllowedAddressesFormComponent,
     SysInfoComponent,
     SyslogCardComponent,
+    AuditCardComponent,
     SyslogFormComponent,
+    AuditFormComponent,
     StorageSettingsFormComponent,
     StorageCardComponent,
     SelfEncryptingDriveFormComponent,
@@ -259,15 +257,17 @@ import { routing } from './system.routing';
     BootPoolDeleteDialogComponent,
     SetProductionStatusDialogComponent,
     ConsoleCardComponent,
-    SessionsCardComponent,
+    AccessCardComponent,
     AllowedAddressesCardComponent,
     SelfEncryptingDriveCardComponent,
     IsolatedGpusCardComponent,
     KernelCardComponent,
     SupportCardComponent,
     AlertSettingsComponent,
+    AlertSettings2Component,
     InitShutdownCardComponent,
     SysctlCardComponent,
+    InitShutdownListComponent,
   ],
   providers: [
     TranslateService,

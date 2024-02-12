@@ -1,28 +1,37 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+  ChangeDetectionStrategy, Component, EventEmitter, OnInit, Output,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { isObject } from 'lodash';
 import {
-  BehaviorSubject, Observable, combineLatest, switchMap, of, filter, map, EMPTY, catchError,
+  catchError, EMPTY, filter, map, of, switchMap, tap,
 } from 'rxjs';
-import { EmptyType } from 'app/enums/empty-type.enum';
+import { Role } from 'app/enums/role.enum';
 import { helptextSystemCa } from 'app/helptext/system/ca';
 import { helptextSystemCertificates } from 'app/helptext/system/certificates';
 import { CertificateAuthority } from 'app/interfaces/certificate-authority.interface';
 import { Job } from 'app/interfaces/job.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
-import { ArrayDataProvider } from 'app/modules/ix-table2/array-data-provider';
+import { WebSocketError } from 'app/interfaces/websocket-error.interface';
+import { AsyncDataProvider } from 'app/modules/ix-table2/classes/async-data-provider/async-data-provider';
+import {
+  actionsColumn,
+} from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
 import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { SortDirection } from 'app/modules/ix-table2/enums/sort-direction.enum';
 import { createTable } from 'app/modules/ix-table2/utils';
 import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
-import { CertificateAuthorityAddComponent } from 'app/pages/credentials/certificates-dash/certificate-authority-add/certificate-authority-add.component';
-import { CertificateAuthorityEditComponent } from 'app/pages/credentials/certificates-dash/certificate-authority-edit/certificate-authority-edit.component';
-import { SignCsrDialogComponent } from 'app/pages/credentials/certificates-dash/sign-csr-dialog/sign-csr-dialog.component';
+import {
+  CertificateAuthorityAddComponent,
+} from 'app/pages/credentials/certificates-dash/certificate-authority-add/certificate-authority-add.component';
+import {
+  CertificateAuthorityEditComponent,
+} from 'app/pages/credentials/certificates-dash/certificate-authority-edit/certificate-authority-edit.component';
+import {
+  SignCsrDialogComponent,
+} from 'app/pages/credentials/certificates-dash/sign-csr-dialog/sign-csr-dialog.component';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -37,8 +46,10 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CertificateAuthorityListComponent implements OnInit {
+  @Output() certificateSigned = new EventEmitter<void>();
+
   filterString = '';
-  dataProvider = new ArrayDataProvider<CertificateAuthority>();
+  dataProvider: AsyncDataProvider<CertificateAuthority>;
   authorities: CertificateAuthority[] = [];
   columns = createTable<CertificateAuthority>([
     textColumn({
@@ -56,37 +67,47 @@ export class CertificateAuthorityListComponent implements OnInit {
       propertyName: 'common',
       sortable: true,
     }),
-    textColumn({
-      propertyName: 'id',
+    actionsColumn({
+      actions: [
+        {
+          iconName: 'beenhere',
+          tooltip: this.translate.instant('Sign CSR'),
+          onClick: (row) => this.doSignCsr(row),
+        },
+        {
+          iconName: 'mdi-undo',
+          tooltip: this.translate.instant('Revoke'),
+          requiredRoles: [Role.FullAdmin],
+          hidden: (row) => of(row.revoked),
+          onClick: (row) => this.doRevoke(row),
+        },
+        {
+          iconName: 'mdi-download',
+          tooltip: this.translate.instant('Download'),
+          onClick: (row) => this.doDownload(row),
+        },
+        {
+          iconName: 'edit',
+          tooltip: this.translate.instant('Edit'),
+          onClick: (row) => this.doEdit(row),
+        },
+        {
+          iconName: 'delete',
+          requiredRoles: [Role.FullAdmin],
+          tooltip: this.translate.instant('Delete'),
+          onClick: (row) => this.doDelete(row),
+        },
+      ],
     }),
-  ]);
-
-  isLoading$ = new BehaviorSubject<boolean>(true);
-  isNoData$ = new BehaviorSubject<boolean>(false);
-  hasError$ = new BehaviorSubject<boolean>(false);
-  emptyType$: Observable<EmptyType> = combineLatest([this.isLoading$, this.isNoData$, this.hasError$]).pipe(
-    switchMap(([isLoading, isNoData, isError]) => {
-      if (isLoading) {
-        return of(EmptyType.Loading);
-      }
-      if (isError) {
-        return of(EmptyType.Errors);
-      }
-      if (isNoData) {
-        return of(EmptyType.NoPageData);
-      }
-      return of(EmptyType.NoSearchResults);
-    }),
-  );
-
-  helptextSystemCa = helptextSystemCa;
+  ], {
+    rowTestId: (row) => 'ca-' + row.name,
+  });
 
   constructor(
     private matDialog: MatDialog,
     private ws: WebSocketService,
     private slideInService: IxSlideInService,
     private translate: TranslateService,
-    private cdr: ChangeDetectorRef,
     protected emptyService: EmptyService,
     private storageService: StorageService,
     private dialogService: DialogService,
@@ -94,46 +115,25 @@ export class CertificateAuthorityListComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    const authorities$ = this.ws.call('certificateauthority.query').pipe(
+      map((authorities) => {
+        return authorities.map((authority) => {
+          if (isObject(authority.issuer)) {
+            authority.issuer = authority.issuer.name;
+          }
+          return authority;
+        });
+      }),
+      tap((authorities) => this.authorities = authorities),
+      untilDestroyed(this),
+    );
+    this.dataProvider = new AsyncDataProvider<CertificateAuthority>(authorities$);
+    this.setDefaultSort();
     this.getCertificates();
   }
 
   getCertificates(): void {
-    this.ws
-      .call('certificateauthority.query')
-      .pipe(
-        map((authorities) => {
-          return authorities.map((authority) => {
-            if (isObject(authority.issuer)) {
-              authority.issuer = authority.issuer.name;
-            }
-            return authority;
-          });
-        }),
-        untilDestroyed(this),
-      )
-      .subscribe({
-        next: (authorities) => {
-          this.authorities = authorities;
-          this.dataProvider.setRows(this.authorities);
-          this.isLoading$.next(false);
-          this.isNoData$.next(!this.authorities.length);
-          this.setDefaultSort();
-          this.cdr.markForCheck();
-        },
-        error: () => {
-          this.dataProvider.setRows([]);
-          this.isLoading$.next(false);
-          this.hasError$.next(true);
-          this.cdr.markForCheck();
-        },
-      });
-  }
-
-  onListFiltered(query: string): void {
-    this.filterString = query.toLowerCase();
-    this.dataProvider.setRows(
-      this.authorities.filter((certificate) => [certificate.name.toLowerCase()].includes(this.filterString)),
-    );
+    this.dataProvider.load();
   }
 
   setDefaultSort(): void {
@@ -213,7 +213,7 @@ export class CertificateAuthorityListComponent implements OnInit {
               },
             });
         },
-        error: (err: WebsocketError | Job) => {
+        error: (err: WebSocketError | Job) => {
           this.dialogService.error(this.errorHandler.parseError(err));
         },
       });
@@ -240,8 +240,8 @@ export class CertificateAuthorityListComponent implements OnInit {
               },
             });
         },
-        error: (err: WebsocketError) => {
-          this.dialogService.error(this.errorHandler.parseWsError(err));
+        error: (err: unknown) => {
+          this.dialogService.error(this.errorHandler.parseError(err));
         },
       });
   }
@@ -262,14 +262,16 @@ export class CertificateAuthorityListComponent implements OnInit {
         switchMap(() => {
           return this.ws.call('certificateauthority.update', [certificate.id, { revoked: true }]).pipe(
             catchError((error) => {
-              this.dialogService.error(this.errorHandler.parseWsError(error));
+              this.dialogService.error(this.errorHandler.parseError(error));
               return EMPTY;
             }),
           );
         }),
         untilDestroyed(this),
       )
-      .subscribe();
+      .subscribe(() => {
+        this.getCertificates();
+      });
   }
 
   doSignCsr(certificate: CertificateAuthority): void {
@@ -279,6 +281,7 @@ export class CertificateAuthorityListComponent implements OnInit {
       .pipe(filter(Boolean), untilDestroyed(this))
       .subscribe(() => {
         this.getCertificates();
+        this.certificateSigned.emit();
       });
   }
 }

@@ -38,7 +38,7 @@
   <ix-tab-content
     *ngIf="currentTab.alias !== 'Disks'"
     class="other-tab"
-    [data]="selectedEnclosure.elements[currentTab.elementIndex] | cast"
+    [data]="omitDescriptor(selectedEnclosure.elements[currentTab.elementIndex]) | cast"
   ></ix-tab-content>
 
   <mat-card-content id="Disks-content" [class]="currentTab.alias">
@@ -63,7 +63,7 @@
                   "
                 ></div>
                 {{ pool }}
-                <span *ngIf="!systemState.pools[i] || !systemState.pools[i].healthy">
+                <span *ngIf="!isPoolHealthy(pool)" class="alert">
                   <ix-icon name="mdi-alert"></ix-icon>
                 </span>
               </div>
@@ -410,7 +410,6 @@
       <!-- Slot with Disk -->
       <div
         *ngIf="selectedSlot?.disk"
-        #diskdetails
         [class]="{ 'disks-details': true, 'disk-selected': selectedSlot.vdev }"
       >
         <div
@@ -428,7 +427,7 @@
             <ix-disk-ui [data]="selectedSlot.disk"></ix-disk-ui>
 
             <!-- disk icon + labels -->
-            <div class="capacity">{{ selectedSlot.disk.size | filesize: { standard: 'iec' } }}</div>
+            <div class="capacity">{{ selectedSlot.disk.size | ixFileSize }}</div>
             <div class="disk-actions">
               <button
                 *ngIf="!hideIdentifyDrive"

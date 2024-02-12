@@ -5,8 +5,9 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { GiB } from 'app/constants/bytes.constant';
+import { Role } from 'app/enums/role.enum';
 import { inherit } from 'app/enums/with-inherit.enum';
-import helptext from 'app/helptext/storage/volumes/datasets/dataset-form';
+import { helptextDatasetForm } from 'app/helptext/storage/volumes/datasets/dataset-form';
 import { DatasetDetails, DatasetUpdate } from 'app/interfaces/dataset.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
@@ -30,7 +31,7 @@ export class DatasetCapacitySettingsComponent implements OnInit {
   form = this.formBuilder.group({
     refquota: [null as number, this.validators.withMessage(
       Validators.min(GiB),
-      this.translate.instant(helptext.dataset_form_quota_too_small),
+      this.translate.instant(helptextDatasetForm.dataset_form_quota_too_small),
     )],
     refquota_warning: [this.defaultQuotaWarning, [
       Validators.min(0),
@@ -45,7 +46,7 @@ export class DatasetCapacitySettingsComponent implements OnInit {
 
     quota: [null as number, this.validators.withMessage(
       Validators.min(GiB),
-      this.translate.instant(helptext.dataset_form_quota_too_small),
+      this.translate.instant(helptextDatasetForm.dataset_form_quota_too_small),
     )],
     quota_warning: [this.defaultQuotaWarning, [
       Validators.min(0),
@@ -64,7 +65,7 @@ export class DatasetCapacitySettingsComponent implements OnInit {
 
   isLoading = false;
 
-  readonly helptext = helptext;
+  readonly helptext = helptextDatasetForm;
 
   private oldValues: DatasetCapacitySettingsComponent['form']['value'];
   private readonly inheritRelations = {
@@ -73,6 +74,8 @@ export class DatasetCapacitySettingsComponent implements OnInit {
     quota_warning_inherit: 'quota_warning',
     quota_critical_inherit: 'quota_critical',
   } as const;
+
+  protected readonly Role = Role;
 
   constructor(
     private ws: WebSocketService,
@@ -148,7 +151,7 @@ export class DatasetCapacitySettingsComponent implements OnInit {
           this.slideInRef.close();
           this.cdr.markForCheck();
         },
-        error: (error) => {
+        error: (error: unknown) => {
           this.errorHandler.handleWsFormError(error, this.form);
           this.isLoading = false;
           this.cdr.markForCheck();

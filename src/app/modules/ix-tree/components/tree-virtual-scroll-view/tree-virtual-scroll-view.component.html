@@ -1,9 +1,9 @@
 <cdk-virtual-scroll-viewport
   #scrollViewport
+  scrollWindow
   [itemSize]="ixItemSize"
   [minBufferPx]="ixMinBufferPx"
   [maxBufferPx]="ixMaxBufferPx"
-  (scroll)="scrolled(scrollViewport)"
 >
   <ng-container *cdkVirtualFor="let item of nodes$ | async; let i = index; trackBy: innerTrackBy">
     <div (resized)="resized($event)">
@@ -11,11 +11,13 @@
     </div>
   </ng-container>
 </cdk-virtual-scroll-viewport>
+
 <ng-container treeNodeOutlet></ng-container>
+
 <button
   *ngIf="isScrollTopButtonVisible"
   mat-icon-button
-  class="scrollTop"
+  class="scroll-top"
   ixTest="scroll-to-top"
   [matTooltip]="'Scroll to top' | translate"
   (click)="scrollToTop()"

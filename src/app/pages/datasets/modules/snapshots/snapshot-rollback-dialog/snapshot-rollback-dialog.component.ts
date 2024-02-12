@@ -7,8 +7,7 @@ import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
 import { of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { RollbackRecursiveType } from 'app/enums/rollback-recursive-type.enum';
-import helptext from 'app/helptext/storage/snapshots/snapshots';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
+import { helptextSnapshots } from 'app/helptext/storage/snapshots/snapshots';
 import { ZfsRollbackParams, ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
@@ -33,30 +32,30 @@ export class SnapshotRollbackDialogComponent implements OnInit {
 
   readonly recursive = {
     fcName: 'recursive',
-    tooltip: helptext.rollback_recursive_radio_tooltip,
-    label: helptext.rollback_recursive_radio_placeholder,
+    tooltip: helptextSnapshots.rollback_recursive_radio_tooltip,
+    label: helptextSnapshots.rollback_recursive_radio_placeholder,
     options: of([
       {
         value: '',
-        label: helptext.rollback_dataset_placeholder,
-        tooltip: helptext.rollback_dataset_tooltip,
+        label: helptextSnapshots.rollback_dataset_placeholder,
+        tooltip: helptextSnapshots.rollback_dataset_tooltip,
       },
       {
         value: RollbackRecursiveType.Recursive,
-        label: helptext.rollback_recursive_placeholder,
-        tooltip: helptext.rollback_recursive_tooltip,
+        label: helptextSnapshots.rollback_recursive_placeholder,
+        tooltip: helptextSnapshots.rollback_recursive_tooltip,
       },
       {
         value: RollbackRecursiveType.RecursiveClones,
-        label: helptext.rollback_recursive_clones_placeholder,
-        tooltip: helptext.rollback_recursive_clones_tooltip,
+        label: helptextSnapshots.rollback_recursive_clones_placeholder,
+        tooltip: helptextSnapshots.rollback_recursive_clones_tooltip,
       },
     ]),
   };
 
   readonly force = {
     fcName: 'force',
-    label: helptext.rollback_confirm,
+    label: helptextSnapshots.rollback_confirm,
     required: true,
   };
 
@@ -90,10 +89,10 @@ export class SnapshotRollbackDialogComponent implements OnInit {
         this.isLoading = false;
         this.cdr.markForCheck();
       },
-      error: (error: WebsocketError) => {
+      error: (error: unknown) => {
         this.isLoading = false;
         this.cdr.markForCheck();
-        this.dialogService.error(this.errorHandler.parseWsError(error));
+        this.dialogService.error(this.errorHandler.parseError(error));
       },
     });
   }
@@ -114,7 +113,7 @@ export class SnapshotRollbackDialogComponent implements OnInit {
         this.wasDatasetRolledBack = true;
         this.cdr.markForCheck();
       },
-      error: (error) => {
+      error: (error: unknown) => {
         this.formErrorHandler.handleWsFormError(error, this.form);
       },
     });

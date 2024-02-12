@@ -1,6 +1,7 @@
 # coding=utf-8
 """SCALE UI: feature tests."""
 
+import os
 import pytest
 import time
 import xpaths
@@ -29,7 +30,6 @@ def test_setup_ad_and_verify_it_is_working():
 @given('the browser is open, the TrueNAS URL and logged in')
 def the_browser_is_open_the_truenas_url_and_logged_in(driver, nas_ip, root_password, request):
     """the browser is open, the TrueNAS URL and logged in."""
-    depends(request, ['system_pool'], scope='session')
     if nas_ip not in driver.current_url:
         driver.get(f"http://{nas_ip}")
         assert wait_on_element(driver, 10, xpaths.login.user_Input)
@@ -122,6 +122,8 @@ def on_the_active_Directory_page_input_the_domain_name_ad_domain(driver, ad_doma
 @then(parsers.parse('input the Account name "{ad_user}", the Password "{ad_password}"'))
 def input_the_account_name_ad_user_the_password_ap_password(driver, ad_user, ad_password):
     """input the Account name "ad_user", the Password "ad_password"."""
+    os.environ["ad_user"] = ad_user
+    os.environ["ad_password"] = ad_password
     driver.find_element_by_xpath(xpaths.active_Directory.account_Input).clear()
     driver.find_element_by_xpath(xpaths.active_Directory.account_Input).send_keys(ad_user)
     driver.find_element_by_xpath(xpaths.active_Directory.password_Input).clear()

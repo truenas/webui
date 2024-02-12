@@ -101,5 +101,4 @@ describe('LayoutStepComponent', () => {
     expect(customLayout.type).toBe(VdevType.Data);
     expect(customLayout.vdevs).toBe(topologyCategory.vdevs);
   });
-
 });

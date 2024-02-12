@@ -10,12 +10,13 @@
       {{ 'Boot Pool Status' | translate }}
     </button>
 
-    <button mat-button ixTest="bootenv-scrub" (click)="doScrub()">
+    <button
+      *ixRequiresRoles="[Role.FullAdmin]"
+      mat-button
+      ixTest="bootenv-scrub"
+      (click)="doScrub()"
+    >
       {{ 'Scrub Boot Pool' | translate }}
-    </button>
-
-    <button mat-button color="primary" ixTest="bootenv-add" (click)="doAdd()">
-      {{ 'Add' | translate }}
     </button>
   </ix-page-title-header>
 </ng-template>
@@ -30,6 +31,7 @@
 
   <div class="actions">
     <button
+      *ixRequiresRoles="[Role.FullAdmin]"
       mat-button
       ixTest="delete"
       [disabled]="!selectionHasItems"
@@ -103,7 +105,7 @@
       {{ 'Space' | translate }}
     </th>
     <td *matCellDef="let bootenv; dataSource: dataSource" mat-cell>
-      {{ bootenv.rawspace | filesize: { standard: 'iec', round: 0 } }}
+      {{ bootenv.rawspace | ixFileSize }}
     </td>
   </ng-container>
 
@@ -129,16 +131,19 @@
         <ix-icon name="more_vert"></ix-icon>
       </button>
       <mat-menu #actionsMenu="matMenu">
+        <ng-container *ngIf="!bootenv.active.includes('R')">
+          <a
+            *ixRequiresRoles="[Role.FullAdmin]"
+            mat-menu-item
+            [ixTest]="[bootenv.name, 'activate']"
+            (click)="doActivate(bootenv)"
+          >
+            <ix-icon name="mdi-check-decagram"></ix-icon>
+            {{ 'Activate' | translate }}
+          </a>
+        </ng-container>
         <a
-          *ngIf="!bootenv.active.includes('R')"
-          mat-menu-item
-          [ixTest]="[bootenv.name, 'activate']"
-          (click)="doActivate(bootenv)"
-        >
-          <ix-icon name="mdi-check-decagram"></ix-icon>
-          {{ 'Activate' | translate }}
-        </a>
-        <a
+          *ixRequiresRoles="[Role.FullAdmin]"
           mat-menu-item
           [ixTest]="[bootenv.name, 'clone']"
           (click)="doClone(bootenv)"
@@ -147,6 +152,7 @@
           {{ 'Clone' | translate }}
         </a>
         <a
+          *ixRequiresRoles="[Role.FullAdmin]"
           mat-menu-item
           [ixTest]="[bootenv.name, 'rename']"
           (click)="doRename(bootenv)"
@@ -154,15 +160,18 @@
           <ix-icon name="mdi-rename-box"></ix-icon>
           {{ 'Rename' | translate }}
         </a>
+        <ng-container *ngIf="bootenv.active === '-' || bootenv.active === ''">
+          <a
+            *ixRequiresRoles="[Role.FullAdmin]"
+            mat-menu-item
+            [ixTest]="[bootenv.name, 'delete']"
+            (click)="doDelete([bootenv])"
+            ><ix-icon name="mdi-delete"></ix-icon>
+            {{ 'Delete' | translate }}
+          </a>
+        </ng-container>
         <a
-          *ngIf="bootenv.active === '-' || bootenv.active === ''"
-          mat-menu-item
-          [ixTest]="[bootenv.name, 'delete']"
-          (click)="doDelete([bootenv])"
-          ><ix-icon name="mdi-delete"></ix-icon>
-          {{ 'Delete' | translate }}
-        </a>
-        <a
+          *ixRequiresRoles="[Role.FullAdmin]"
           mat-menu-item
           [ixTest]="[bootenv.name, 'toggle-keep']"
           (click)="toggleKeep(bootenv)"

@@ -1,7 +1,7 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
-import globalHelptext from 'app/helptext/global-helptext';
+import { helptextGlobal } from 'app/helptext/global-helptext';
 
-export default {
+export const helptextServiceFtp = {
   port_tooltip: T('Set the port the FTP service listens on.'),
   clients_tooltip: T('The maximum number of simultaneous clients.'),
   ipconnections_tooltip: T('Set the maximum number of connections per IP address.\
@@ -41,16 +41,16 @@ export default {
  means any port above 1023.'),
   passiveportsmax_tooltip: T('Used by clients in PASV mode. A default of <i>0</i>\
  means any port above 1023.'),
-  localuserbw_placeholder: T('Local User Upload Bandwidth: ') + globalHelptext.human_readable.suggestion_label,
+  localuserbw_placeholder: T('Local User Upload Bandwidth: ') + helptextGlobal.human_readable.suggestion_label,
   userbw_tooltip: T('In KiBs or greater. A default of <i>0 KiB</i> means unlimited. ')
-    + globalHelptext.human_readable.suggestion_tooltip
+    + helptextGlobal.human_readable.suggestion_tooltip
     + ' KiB.',
   tls_tooltip: T('Allow encrypted connections. Requires a certificate \
  created or imported with the <b>System > Certificates</b> menu.'),
   tls_policy_tooltip: T('Define whether the control channel, \
  data channel, both channels, or neither channel of an FTP \
  session must occur over SSL/TLS. The policies are described \
- <a href="http://www.proftpd.org/docs/directives/linked/config_ref_TLSRequired.html"\
+ <a href="http://www.proftpd.org/docs/directives/configuration_full.html#TLSREQUIRED"\
  target="_blank">here</a>'),
 
   tls_policy_options: [

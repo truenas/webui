@@ -11,13 +11,19 @@
 
     cdk-virtual-scroll-viewport {
       height: 100%;
+
+      ix-tree-node {
+        .ix-tree-node-toggle {
+          margin-left: 10px;
+        }
+      }
     }
 
-    .scrollTop {
-      bottom: 20px;
-      left: 50%;
-      position: absolute;
-      transform: translateX(-50%);
+    .scroll-top {
+      bottom: 25px;
+      left: 25px;
+      position: fixed;
+      z-index: 2;
 
       &.mat-mdc-icon-button {
         background-color: var(--alt-bg1);

@@ -3,15 +3,14 @@ import {
 } from '@angular/core';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { filter, take } from 'rxjs';
 import { DatasetType } from 'app/enums/dataset.enum';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { DatasetFormComponent } from 'app/pages/datasets/components/dataset-form/dataset-form.component';
 import { ZvolFormComponent } from 'app/pages/datasets/components/zvol-form/zvol-form.component';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
-import {
-  isDatasetHasShares, isIocageMounted, ixApplications,
-} from 'app/pages/datasets/utils/dataset.utils';
+import { isDatasetHasShares, isIocageMounted } from 'app/pages/datasets/utils/dataset.utils';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
@@ -33,14 +32,7 @@ export class DatasetDetailsPanelComponent {
   ) { }
 
   get datasetHasRoles(): boolean {
-    return !!this.dataset.apps?.length
-    || this.datasetHasChildrenWithShares
-    || !!this.dataset.vms?.length
-    || !!this.dataset.smb_shares?.length
-    || !!this.dataset.nfs_shares?.length
-    || !!this.dataset.iscsi_shares?.length
-    || this.isSystemDataset
-    || this.dataset.name.endsWith(ixApplications);
+    return this.dataset.type === DatasetType.Filesystem && !isIocageMounted(this.dataset);
   }
 
   get datasetHasChildrenWithShares(): boolean {
@@ -80,7 +72,10 @@ export class DatasetDetailsPanelComponent {
           return;
         }
 
-        this.router.navigate(['/datasets', value.id]);
+        this.datasetStore.isLoading$.pipe(filter((isLoading) => !isLoading), take(1), untilDestroyed(this))
+          .subscribe(() => {
+            this.router.navigate(['/datasets', value.id]);
+          });
       });
   }
 

@@ -1,6 +1,7 @@
 <div class="search-filters">
   <ix-input
     prefixIcon="search"
+    [maxLength]="100"
     [formControl]="searchControl"
     [placeholder]="'Search' | translate"
   ></ix-input>
@@ -30,7 +31,7 @@
         [label]="'Sort' | translate"
         [options]="sortOptions$"
       ></ix-filter-select-list>
-      <div class="сategories">
+      <div class="categories">
         <ix-chips
           [formControl]="form.controls.categories"
           [label]="'Categories' | translate"

@@ -25,10 +25,10 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 })
 export class PoolsDashboardComponent implements OnInit {
   pools$ = this.store.pools$;
-  allDisksByPool: { [pool: string]: StorageDashboardDisk[] } = {};
+  allDisksByPool: Record<string, StorageDashboardDisk[]> = {};
   disks$ = this.store.disks$;
 
-  rootDatasets: { [key: string]: Dataset } = {};
+  rootDatasets: Record<string, Dataset> = {};
 
   entityEmptyConf: EmptyConfig = {
     type: EmptyType.NoPageData,
@@ -100,6 +100,6 @@ export class PoolsDashboardComponent implements OnInit {
   }
 
   getDisksForPool(pool: Pool): StorageDashboardDisk[] {
-    return this.allDisksByPool[pool.name];
+    return this.allDisksByPool[pool.name] || [];
   }
 }

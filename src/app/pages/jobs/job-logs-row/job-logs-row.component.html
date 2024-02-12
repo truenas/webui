@@ -27,6 +27,21 @@
   </div>
 
   <div class="list-item">
+    <h4>{{ 'Credentials' | translate }}</h4>
+    <div *ngIf="job.credentials; else noCredentialsTemplate" class="logs">
+      <div>
+        {{
+          'Created by: {creationSource} ({creationType})' | translate: {
+            creationSource: getCredentialsCreationSource(job.credentials),
+            creationType: (job.credentials.type | mapValue: credentialTypeLabels | translate)
+          }
+        }}
+      </div>
+    </div>
+    <ng-template #noCredentialsTemplate>{{ 'N/A' | translate }}</ng-template>
+  </div>
+
+  <div class="list-item">
     <h4>{{ 'Error' | translate }}</h4>
     <div *ngIf="job.error; else noErrorTemplate" class="logs">
       <pre><code>{{ job.error }}</code></pre>

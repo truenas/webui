@@ -41,9 +41,8 @@ describe('IxChipsComponent', () => {
   beforeEach(async () => {
     formControl = new FormControl([]);
     spectator = createHost(
-      '<ix-chips [formControl]="formControl"></ix-chips>', {
-        hostProps: { formControl },
-      },
+      '<ix-chips [formControl]="formControl"></ix-chips>',
+      { hostProps: { formControl } },
     );
     spectator.setInput('allowNewEntries', true);
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
@@ -199,5 +198,35 @@ describe('IxChipsComponent', () => {
 
       expect(isOpen).toBeFalsy();
     }));
+  });
+
+  describe('ix-chip with resolveValue', () => {
+    it('should resolve value and add it to values array', async () => {
+      spectator.setInput('resolveValue', true);
+      spectator.setInput('resolveOptions', of([
+        { label: 'Option 1', value: 1 },
+        { label: 'Option 2', value: 2 },
+      ]));
+
+      const input = await matChipList.getInput();
+      await input.setValue('Option 1');
+      await input.sendSeparatorKey(TestKey.ENTER);
+
+      expect(spectator.component.values).toEqual([1]);
+    });
+
+    it('should not resolve values', async () => {
+      spectator.setInput('resolveValue', false);
+      spectator.setInput('resolveOptions', of([
+        { label: 'Option 1', value: 1 },
+        { label: 'Option 2', value: 2 },
+      ]));
+
+      const input = await matChipList.getInput();
+      await input.setValue('Option 1');
+      await input.sendSeparatorKey(TestKey.ENTER);
+
+      expect(spectator.component.values).toEqual(['Option 1']);
+    });
   });
 });

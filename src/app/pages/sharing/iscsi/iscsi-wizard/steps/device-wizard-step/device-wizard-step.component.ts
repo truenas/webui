@@ -2,10 +2,12 @@ import {
   ChangeDetectionStrategy, Component, Input, OnInit,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
 import { of, switchMap } from 'rxjs';
-import { IscsiExtentType, IscsiExtentUsefor, IscsiNewOption } from 'app/enums/iscsi.enum';
+import { IscsiExtentType, IscsiExtentUsefor } from 'app/enums/iscsi.enum';
 import { choicesToOptions, idNameArrayToOptions } from 'app/helpers/operators/options.operators';
 import { helptextSharingIscsi } from 'app/helptext/sharing';
+import { newOption } from 'app/interfaces/option.interface';
 import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
 import { IscsiWizardComponent } from 'app/pages/sharing/iscsi/iscsi-wizard/iscsi-wizard.component';
 import { FilesystemService } from 'app/services/filesystem.service';
@@ -38,15 +40,19 @@ export class DeviceWizardStepComponent implements OnInit {
   readonly diskOptions$ = this.iscsiService.getExtentDevices()
     .pipe(
       choicesToOptions(),
-      switchMap((options) => of([...options, { label: 'Create New', value: IscsiNewOption.New }])),
-      untilDestroyed(this),
+      switchMap((options) => of([
+        ...options,
+        { label: this.translate.instant('Create New'), value: newOption },
+      ])),
     );
 
   readonly targetOptions$ = this.iscsiService.getTargets()
     .pipe(
       idNameArrayToOptions(),
-      switchMap((options) => of([...options, { label: 'Create New', value: IscsiNewOption.New }])),
-      untilDestroyed(this),
+      switchMap((options) => of([
+        ...options,
+        { label: this.translate.instant('Create New'), value: newOption },
+      ])),
     );
 
   get isDevice(): boolean {
@@ -54,12 +60,13 @@ export class DeviceWizardStepComponent implements OnInit {
   }
 
   get isNewZvol(): boolean {
-    return this.form.enabled && this.form.value.disk === IscsiNewOption.New;
+    return this.form.enabled && this.form.value.disk === newOption;
   }
 
   constructor(
     private iscsiService: IscsiService,
     private filesystemService: FilesystemService,
+    private translate: TranslateService,
     public formatter: IxFormatterService,
   ) {}
 
@@ -80,7 +87,7 @@ export class DeviceWizardStepComponent implements OnInit {
     });
 
     this.form.controls.disk.valueChanges.pipe(untilDestroyed(this)).subscribe((zvol) => {
-      if (zvol === IscsiNewOption.New) {
+      if (zvol === newOption) {
         this.form.controls.dataset.enable();
         this.form.controls.volsize.enable();
       } else {

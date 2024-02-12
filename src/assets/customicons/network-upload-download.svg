@@ -5,7 +5,7 @@
 }
 
 .network-svg .arrow.active {
-  fill: hsl(198, 70%, 23%);
+  fill: hsl(198, 70%, 53%);
 
   -webkit-animation-name: glow-blue;
   -webkit-animation-duration: 2s;

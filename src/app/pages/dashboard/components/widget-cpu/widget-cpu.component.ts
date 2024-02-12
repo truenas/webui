@@ -1,5 +1,6 @@
+import { DOCUMENT } from '@angular/common';
 import {
-  Component, AfterViewInit, ElementRef, ChangeDetectionStrategy, ChangeDetectorRef,
+  Component, AfterViewInit, ElementRef, ChangeDetectionStrategy, ChangeDetectorRef, Inject,
 } from '@angular/core';
 import { MediaObserver } from '@angular/flex-layout';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -11,7 +12,7 @@ import {
 import { ActiveElement } from 'chart.js/dist/types';
 import * as d3 from 'd3';
 import {
-  filter, throttleTime,
+  filter, skipWhile, throttleTime,
 } from 'rxjs/operators';
 import { ThemeUtils } from 'app/core/classes/theme-utils/theme-utils';
 import { ScreenType } from 'app/enums/screen-type.enum';
@@ -80,6 +81,7 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
     private store$: Store<AppState>,
     private resourcesUsageStore$: ResourcesUsageStore,
     private cdr: ChangeDetectorRef,
+    @Inject(DOCUMENT) private document: Document,
   ) {
     super(translate);
 
@@ -87,6 +89,7 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
 
     this.resourcesUsageStore$.cpuUsage$.pipe(
       throttleTime(500),
+      skipWhile(() => this.document.hidden),
       deepCloneState(),
       untilDestroyed(this),
     ).subscribe({
@@ -146,14 +149,12 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
     for (let i = 0; i < this.threadCount; i++) {
       usageColumn.push(parseInt(cpuData[i].usage.toFixed(1)));
 
-      const mod = threads.length % 2;
-      const temperatureIndex = this.hyperthread ? Math.floor(i / 2 - mod) : i;
-
-      if (cpuData.temperature?.[temperatureIndex] && !cpuData.temperature_celsius) {
-        const temperatureAsCelsius = (cpuData.temperature[temperatureIndex] / 10 - 273.05).toFixed(0);
-        temperatureValues.push(parseInt(temperatureAsCelsius));
-      } else if (cpuData.temperature_celsius?.[temperatureIndex]) {
-        temperatureValues.push(cpuData.temperature_celsius[temperatureIndex].toFixed(0));
+      if (cpuData.temperature_celsius) {
+        const mod = threads.length % 2;
+        const temperatureIndex = this.hyperthread ? Math.floor(i / 2 - mod) : i;
+        if (cpuData.temperature_celsius?.[temperatureIndex]) {
+          temperatureValues.push(cpuData.temperature_celsius[temperatureIndex].toFixed(0));
+        }
       }
     }
     temperatureColumn = temperatureColumn.concat(temperatureValues);
@@ -165,8 +166,10 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
   setMobileStats(usage: number[], temps: number[]): void {
     // Usage
     usage.splice(0, 1);
-    this.usageMin = Number(Math.min(...usage).toFixed(0));
-    this.usageMax = Number(Math.max(...usage).toFixed(0));
+
+    this.usageMin = usage?.length ? Number(Math.min(...usage).toFixed(0)) : 0;
+    this.usageMax = usage?.length ? Number(Math.max(...usage).toFixed(0)) : 0;
+
     this.usageMinThreads = [];
     this.usageMaxThreads = [];
     for (let i = 0; i < usage.length; i++) {
@@ -181,17 +184,23 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
 
     // Temperature
     temps.splice(0, 1);
-    this.tempMin = Number(Math.min(...temps).toFixed(0));
-    this.tempMax = Number(Math.max(...temps).toFixed(0));
-    this.tempMinThreads = [];
-    this.tempMaxThreads = [];
-    for (let i = 0; i < temps.length; i++) {
-      if (temps[i] === this.tempMin) {
-        this.tempMinThreads.push(Number(i.toFixed(0)));
-      }
+    if (!temps.length) {
+      this.tempMin = 0;
+      this.tempMax = 0;
+    } else {
+      this.tempMin = Number(Math.min(...temps).toFixed(0));
+      this.tempMax = Number(Math.max(...temps).toFixed(0));
 
-      if (temps[i] === this.tempMax) {
-        this.tempMaxThreads.push(Number(i.toFixed(0)));
+      this.tempMinThreads = [];
+      this.tempMaxThreads = [];
+      for (let i = 0; i < temps.length; i++) {
+        if (temps[i] === this.tempMin) {
+          this.tempMinThreads.push(Number(i.toFixed(0)));
+        }
+
+        if (temps[i] === this.tempMax) {
+          this.tempMaxThreads.push(Number(i.toFixed(0)));
+        }
       }
     }
   }

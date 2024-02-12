@@ -336,12 +336,14 @@ img.platform-logo {
 }
 
 div.generic.alert {
+  bottom: 4px;
+  position: absolute;
   text-align: center;
 }
 
 div.generic.alert .ix-icon {
   font-size: 48px;
-  height: auto;
+  height: 48px;
   width: auto;
 }
 
@@ -376,8 +378,8 @@ div.generic.alert .ix-icon {
 
 .xs.widget .product-image.rackmount img,
 .xs.widget .product-image.ix-logo img {
-  height: 28%;
-  margin: 21% 0 8px;
+  height: 23vw;
+  margin: 5vw 0 8px;
   width: auto;
 }
 

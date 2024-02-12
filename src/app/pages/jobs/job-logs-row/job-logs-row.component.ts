@@ -2,6 +2,8 @@ import {
   ChangeDetectionStrategy,
   Component, Input,
 } from '@angular/core';
+import { getCredentialsCreationSource } from 'app/helpers/get-credentials-creation-source.utils';
+import { credentialTypeLabels } from 'app/interfaces/credential-type.interface';
 import { Job } from 'app/interfaces/job.interface';
 
 @Component({
@@ -13,4 +15,7 @@ import { Job } from 'app/interfaces/job.interface';
 export class JobLogsRowComponent {
   @Input() job: Job;
   @Input() colspan: number;
+
+  readonly credentialTypeLabels = credentialTypeLabels;
+  readonly getCredentialsCreationSource = getCredentialsCreationSource;
 }

@@ -1,14 +1,19 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+} from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { switchMap, from, filter } from 'rxjs';
+import { Role } from 'app/enums/role.enum';
 import { InitShutdownScript } from 'app/interfaces/init-shutdown-script.interface';
-import { ArrayDataProvider } from 'app/modules/ix-table2/array-data-provider';
+import { AsyncDataProvider } from 'app/modules/ix-table2/classes/async-data-provider/async-data-provider';
+import { actionsColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
 import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import {
   yesNoColumn,
 } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-yesno/ix-cell-yesno.component';
 import { createTable } from 'app/modules/ix-table2/utils';
+import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { AdvancedSettingsService } from 'app/pages/system/advanced/advanced-settings.service';
 import {
@@ -19,8 +24,6 @@ import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 
-
-
 @UntilDestroy()
 @Component({
   selector: 'ix-init-shutdown-card',
@@ -29,12 +32,13 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class InitShutdownCardComponent implements OnInit {
-  dataProvider = new ArrayDataProvider<InitShutdownScript>();
+  dataProvider: AsyncDataProvider<InitShutdownScript>;
 
   columns = createTable<InitShutdownScript>([
     textColumn({
       title: this.translate.instant('Command / Script'),
       propertyName: 'command',
+      getValue: (row) => row.script || row.command,
     }),
     textColumn({
       title: this.translate.instant('Description'),
@@ -52,12 +56,24 @@ export class InitShutdownCardComponent implements OnInit {
       title: this.translate.instant('Timeout'),
       propertyName: 'timeout',
     }),
-    textColumn({
-      propertyName: 'id',
+    actionsColumn({
+      actions: [
+        {
+          iconName: 'edit',
+          tooltip: this.translate.instant('Edit'),
+          onClick: (row) => this.onEdit(row),
+        },
+        {
+          iconName: 'delete',
+          tooltip: this.translate.instant('Delete'),
+          onClick: (row) => this.onDelete(row),
+          requiredRoles: [Role.FullAdmin],
+        },
+      ],
     }),
-  ]);
-
-  isLoading = false;
+  ], {
+    rowTestId: (row) => 'card-init-shutdown-' + row.command + '-' + row.when,
+  });
 
   constructor(
     private slideInService: IxSlideInService,
@@ -68,9 +84,12 @@ export class InitShutdownCardComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private snackbar: SnackbarService,
     private advancedSettings: AdvancedSettingsService,
+    protected emptyService: EmptyService,
   ) {}
 
   ngOnInit(): void {
+    const scripts$ = this.ws.call('initshutdownscript.query').pipe(untilDestroyed(this));
+    this.dataProvider = new AsyncDataProvider<InitShutdownScript>(scripts$);
     this.loadScripts();
   }
 
@@ -79,14 +98,7 @@ export class InitShutdownCardComponent implements OnInit {
   }
 
   loadScripts(): void {
-    this.isLoading = true;
-    this.ws.call('initshutdownscript.query')
-      .pipe(this.errorHandler.catchError(), untilDestroyed(this))
-      .subscribe((scripts) => {
-        this.dataProvider.setRows(scripts);
-        this.isLoading = false;
-        this.cdr.markForCheck();
-      });
+    this.dataProvider.load();
   }
 
   onDelete(row: InitShutdownScript): void {
@@ -98,6 +110,7 @@ export class InitShutdownCardComponent implements OnInit {
       buttonText: this.translate.instant('Delete'),
     })
       .pipe(
+        filter(Boolean),
         switchMap(() => this.ws.call('initshutdownscript.delete', [row.id])),
         filter(Boolean),
         this.errorHandler.catchError(),

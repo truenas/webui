@@ -12,7 +12,8 @@ from function import (
     attribute_value_exist,
     wait_for_attribute_value,
     run_cmd,
-    post
+    post,
+    delete_dataset
 )
 from pytest_bdd import (
     given,
@@ -102,9 +103,7 @@ def input_my_active_Directory_smb_share_as_the_description_click_save(driver, de
 @then('if Restart SMB Service box appears, click Restart Service')
 def if_restart_smb_service_box_appears_click_restart_service(driver):
     """if Restart SMB Service box appears, click Restart Service."""
-    assert wait_on_element(driver, 7, xpaths.popup.smb_Start_Title)
-    assert wait_on_element(driver, 5, xpaths.popup.enable_Service_Button, 'clickable')
-    driver.find_element_by_xpath(xpaths.popup.enable_Service_Button).click()
+    rsc.Start_Or_Restart_SMB_Service(driver)
     assert wait_on_element_disappear(driver, 30, xpaths.progress.progressbar)
 
 
@@ -143,7 +142,7 @@ def send_a_file_to_the_share(driver, nas_ip, share_name, ad_user, ad_password):
     adpassword = ad_password
 
     run_cmd('touch testfile.txt')
-    results = run_cmd(f'smbclient //{nas_ip}/{share_name} -W AD02 -U {ad_user}%{ad_password} -c "put testfile.txt testfile.txt"')
+    results = run_cmd(f'smbclient //{nas_ip}/{share_name} -W AD03 -U {ad_user}%{ad_password} -c "put testfile.txt testfile.txt"')
     run_cmd('rm testfile.txt')
     assert results['result'], results['output']
     time.sleep(1)
@@ -194,7 +193,7 @@ def click_on_network_and_click_on_global_configuration(driver):
 
 
 @then(parsers.parse('change nameservers to "{nameserver1}" and "{nameserver2}" then save'))
-def change_nameservers_to_nameserver1_and_nameserve2_then_save(driver, nameserver1, nameserver2):
+def change_nameservers_to_nameserver1_and_nameserve2_then_save(driver, nameserver1, nameserver2, nas_ip, root_password):
     """change nameservers to "{nameserver1}" and "{nameserver2}" then save."""
     assert wait_on_element(driver, 5, xpaths.global_Configuration.nameserver1_Input, 'inputable')
     driver.find_element_by_xpath(xpaths.global_Configuration.nameserver1_Input).clear()
@@ -205,3 +204,4 @@ def change_nameservers_to_nameserver1_and_nameserve2_then_save(driver, nameserve
     assert wait_on_element(driver, 7, xpaths.button.save, 'clickable')
     driver.find_element_by_xpath(xpaths.button.save).click()
     assert wait_on_element_disappear(driver, 20, xpaths.progress.progressbar)
+    delete_dataset(nas_ip, ('root', root_password), 'system/my_ad_dataset')

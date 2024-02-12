@@ -2,10 +2,14 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
+import { MatDialog } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { Store } from '@ngrx/store';
+import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
-import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { MockWebSocketService } from 'app/core/testing/classes/mock-websocket.service';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { NfsProtocol } from 'app/enums/nfs-protocol.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { NfsConfig } from 'app/interfaces/nfs-config.interface';
@@ -27,6 +31,9 @@ import { FilesystemService } from 'app/services/filesystem.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { UserService } from 'app/services/user.service';
 import { WebSocketService } from 'app/services/ws.service';
+import { AppState } from 'app/store';
+import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
+import { selectServices } from 'app/store/services/services.selectors';
 
 describe('NfsFormComponent', () => {
   const existingShare = {
@@ -49,6 +56,8 @@ describe('NfsFormComponent', () => {
   let loader: HarnessLoader;
   let form: IxFormHarness;
   let websocket: WebSocketService;
+  let mockStore$: MockStore<AppState>;
+  let store$: Store<AppState>;
 
   const createComponent = createComponentFactory({
     component: NfsFormComponent,
@@ -57,19 +66,14 @@ describe('NfsFormComponent', () => {
       IxFormsModule,
     ],
     providers: [
-      mockWebsocket([
+      mockWebSocket([
         mockCall('sharing.nfs.create'),
         mockCall('sharing.nfs.update'),
         mockCall('nfs.config', {
           protocols: [NfsProtocol.V3],
         } as NfsConfig),
-        mockCall('service.query', [{
-          service: ServiceName.Nfs,
-          enable: true,
-        } as Service]),
-        mockCall('service.update'),
-        mockCall('service.start'),
       ]),
+      mockAuth(),
       mockProvider(IxSlideInService),
       mockProvider(FilesystemService),
       mockProvider(UserService, {
@@ -85,7 +89,20 @@ describe('NfsFormComponent', () => {
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
+      mockProvider(MatDialog, {
+        open: jest.fn(() => ({
+          afterClosed: () => of(true),
+        })),
+      }),
       mockProvider(IxSlideInRef),
+      provideMockStore({
+        selectors: [
+          {
+            selector: selectServices,
+            value: [],
+          },
+        ],
+      }),
       { provide: SLIDE_IN_DATA, useValue: undefined },
     ],
   });
@@ -96,6 +113,9 @@ describe('NfsFormComponent', () => {
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       form = await loader.getHarness(IxFormHarness);
       websocket = spectator.inject(WebSocketService);
+      mockStore$ = spectator.inject(MockStore);
+      store$ = spectator.inject(Store);
+      jest.spyOn(store$, 'dispatch');
     });
 
     it('shows Access fields when Advanced Options button is pressed', async () => {
@@ -111,7 +131,7 @@ describe('NfsFormComponent', () => {
     });
 
     it('loads NFS config and shows Security select in Access fieldset when NFS is version 4', async () => {
-      const websocketMock = spectator.inject(MockWebsocketService);
+      const websocketMock = spectator.inject(MockWebSocketService);
       websocketMock.mockCallOnce('nfs.config', {
         protocols: [NfsProtocol.V4],
       } as NfsConfig);
@@ -125,6 +145,8 @@ describe('NfsFormComponent', () => {
     });
 
     it('creates a new NFS share when form is submitted', async () => {
+      mockStore$.overrideSelector(selectServices, [{ id: 1, service: ServiceName.Nfs, enable: false } as Service]);
+
       const advancedButton = await loader.getHarness(MatButtonHarness.with({ text: 'Advanced Options' }));
       await advancedButton.click();
 
@@ -162,7 +184,7 @@ describe('NfsFormComponent', () => {
         networks: ['192.168.1.189/24'],
         hosts: ['truenas.com'],
       }]);
-      expect(websocket.call).toHaveBeenCalledWith('service.query');
+      expect(store$.dispatch).toHaveBeenCalledWith(checkIfServiceIsEnabled({ serviceName: ServiceName.Nfs }));
       expect(spectator.inject(IxSlideInRef).close).toHaveBeenCalled();
     });
   });
@@ -171,12 +193,15 @@ describe('NfsFormComponent', () => {
     beforeEach(async () => {
       spectator = createComponent({
         providers: [
-          { provide: SLIDE_IN_DATA, useValue: existingShare },
+          { provide: SLIDE_IN_DATA, useValue: { existingNfsShare: existingShare } },
         ],
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       form = await loader.getHarness(IxFormHarness);
       websocket = spectator.inject(WebSocketService);
+      mockStore$ = spectator.inject(MockStore);
+      store$ = spectator.inject(Store);
+      jest.spyOn(store$, 'dispatch');
     });
 
     it('shows values for an existing NFS share when it is open for edit', async () => {
@@ -204,6 +229,8 @@ describe('NfsFormComponent', () => {
     });
 
     it('updates an existing NFS share when an edit form is submitted', async () => {
+      mockStore$.overrideSelector(selectServices, [{ service: ServiceName.Nfs, enable: true } as Service]);
+
       await form.fillForm({
         Description: 'Updated share',
         Enabled: false,
@@ -234,15 +261,12 @@ describe('NfsFormComponent', () => {
           security: [],
         },
       ]);
-      expect(websocket.call).toHaveBeenCalledWith('service.query');
+      expect(store$.dispatch).toHaveBeenCalledWith(checkIfServiceIsEnabled({ serviceName: ServiceName.Nfs }));
       expect(spectator.inject(IxSlideInRef).close).toHaveBeenCalled();
     });
 
     it('checks if NFS service is not enabled and enables it after confirmation', async () => {
-      spectator.inject(MockWebsocketService).mockCall('service.query', [{
-        service: ServiceName.Nfs,
-        enable: false,
-      } as Service]);
+      mockStore$.overrideSelector(selectServices, [{ id: 1, service: ServiceName.Nfs, enable: false } as Service]);
 
       await form.fillForm({
         Description: 'Updated share',
@@ -251,9 +275,7 @@ describe('NfsFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(spectator.inject(DialogService).confirm).toHaveBeenCalled();
-      expect(websocket.call).toHaveBeenCalledWith('service.start', [ServiceName.Nfs, { silent: false }]);
-      expect(websocket.call).toHaveBeenCalledWith('service.update', [ServiceName.Nfs, { enable: true }]);
+      expect(store$.dispatch).toHaveBeenCalledWith(checkIfServiceIsEnabled({ serviceName: ServiceName.Nfs }));
     });
   });
 });

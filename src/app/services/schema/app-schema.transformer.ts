@@ -7,6 +7,7 @@ import {
   DynamicFormSchemaCheckbox,
   DynamicFormSchemaCron,
   DynamicFormSchemaDict,
+  DynamicFormSchemaEnum,
   DynamicFormSchemaExplorer,
   DynamicFormSchemaInput,
   DynamicFormSchemaIpaddr,
@@ -32,36 +33,33 @@ export function isCommonSchemaType(type: ChartSchemaType): boolean {
 }
 
 export function buildCommonSchemaBase(payload: Partial<CommonSchemaTransform>): CommonSchemaBase {
-  const {
-    schema, chartSchemaNode, isNew, isParentImmutable,
-  } = payload;
+  const { schema, chartSchemaNode } = payload;
 
   return {
     controlName: chartSchemaNode.variable,
     title: chartSchemaNode.label,
     required: schema.required,
-    editable: (!isNew && (!!schema.immutable || isParentImmutable)) ? false : schema.editable,
+    editable: schema.editable,
     tooltip: chartSchemaNode.description,
   };
 }
 
-export function transformEnumSchemaType(payload: CommonSchemaTransform): DynamicFormSchemaSelect {
+export function transformEnumSchemaType(payload: CommonSchemaTransform): DynamicFormSchemaEnum {
   const { schema } = payload;
 
   return {
     ...buildCommonSchemaBase(payload),
-    type: DynamicFormSchemaType.Select,
+    type: DynamicFormSchemaType.Enum,
     options: of(schema.enum.map((option) => ({
       value: option.value,
       label: option.description,
     }))),
-    hideEmpty: true,
   };
 }
 
 export function transformIntSchemaType(
   payload: CommonSchemaTransform,
-): DynamicFormSchemaInput | DynamicFormSchemaSelect {
+): DynamicFormSchemaInput | DynamicFormSchemaEnum | DynamicFormSchemaSelect {
   const { schema } = payload;
 
   if (schema.enum) { return transformEnumSchemaType(payload); }
@@ -95,7 +93,7 @@ export function transformCronSchemaType(
 
 export function transformStringSchemaType(
   payload: CommonSchemaTransform,
-): DynamicFormSchemaInput | DynamicFormSchemaSelect {
+): DynamicFormSchemaInput | DynamicFormSchemaEnum | DynamicFormSchemaSelect {
   const { schema } = payload;
 
   if (schema.enum) { return transformEnumSchemaType(payload); }

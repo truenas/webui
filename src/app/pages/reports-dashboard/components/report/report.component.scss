@@ -1,4 +1,5 @@
 @import 'mixins/loader';
+@import 'scss-imports/splitview';
 
 .mat-mdc-card-content {
   height: 100%;
@@ -301,6 +302,10 @@ span.disk-detail-subtitle {
 div.line-chart-tools-wrapper {
   margin-right: -24px;
   text-align: right;
+
+  @media (max-width: $breakpoint-tablet) {
+    max-width: 100% !important;
+  }
 }
 
 div.line-chart-tools {
@@ -381,7 +386,6 @@ div.line-chart-tools ul {
   font-style: italic;
   opacity: 0.5;
 }
-
 
 /* SUMMARY (LEFT SIDE) */
 .pool-summary {
@@ -505,6 +509,7 @@ p.value {
   h3 {
     display: inline-block;
     font-size: 1.5rem;
+    margin: 0;
     max-width: 100%;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -577,47 +582,4 @@ p.value {
   display: block;
   min-height: 277px;
   width: 100%;
-}
-
-:host ::ng-deep .mat-button-toggle-group {
-  $border-color: transparent;
-
-  &.mat-button-toggle-group-appearance-standard {
-    border-color: $border-color;
-
-    .mat-button-toggle + .mat-button-toggle {
-      border-color: $border-color;
-    }
-  }
-
-  .mat-button-toggle-appearance-standard {
-    &.mat-button-toggle-checked {
-      color: var(--fg2);
-    }
-  }
-
-  .mat-button-toggle {
-    background-color: transparent;
-    border-color: $border-color;
-    color: var(--fg2);
-
-    &:hover {
-      background-color: var(--hover-bg);
-    }
-
-    &.mat-button-toggle-disabled {
-      background-color: transparent;
-      color: var(--fg1);
-      opacity: var(--disabled-opacity);
-
-      .mat-button-toggle-button {
-        cursor: not-allowed;
-      }
-    }
-
-    .mat-button-toggle-label-content {
-      line-height: 40px;
-      padding: 0 12px;
-    }
-  }
 }

@@ -24,12 +24,10 @@ export interface ChartInfo {
 }
 
 export interface ChartResources {
-  storage_class: { [key: string]: string };
+  storage_class: Record<string, string>;
   persistent_volumes: unknown[];
   host_path_volumes: unknown[];
-  container_images: {
-    [key: string]: ChartContainerImage;
-  };
+  container_images: Record<string, ChartContainerImage>;
   truenas_certificates: number[];
   truenas_certificate_authorities: number[];
   cronjobs: unknown[];
@@ -51,7 +49,7 @@ export interface ChartRelease {
   name: string;
   title: string;
   info: ChartInfo;
-  config: { [key: string]: ChartFormValue };
+  config: Record<string, ChartFormValue>;
   hooks: unknown[];
   version: number;
   namespace: string;
@@ -69,14 +67,11 @@ export interface ChartRelease {
   human_version: string;
   human_latest_version: string;
   container_images_update_available: boolean;
-  portals: { [portal: string]: string[] };
+  portals: Record<string, string[]>;
   chart_schema: ChartSchema;
-  history: { [key: string]: ChartReleaseVersion };
+  history: Record<string, ChartReleaseVersion>;
   resources?: ChartResources;
   stats?: ChartReleaseStats;
-
-  // TODO: Frontend field, move to another interface.
-  selected?: boolean;
 }
 
 export interface ChartReleaseStats {
@@ -92,7 +87,7 @@ export interface ChartReleaseVersion {
   catalog: string;
   catalog_train: string;
   chart_metadata: ChartMetadata;
-  config: { [key: string]: ChartFormValue };
+  config: Record<string, ChartFormValue>;
   human_version: string;
   id: string;
   info: ChartInfo;
@@ -102,7 +97,7 @@ export interface ChartReleaseVersion {
 }
 
 export interface ChartReleaseCreate {
-  values: { [key: string]: ChartFormValue };
+  values: Record<string, ChartFormValue>;
   catalog: string;
   item: string;
   release_name: string;
@@ -111,12 +106,12 @@ export interface ChartReleaseCreate {
 }
 
 export interface ChartReleaseUpdate {
-  values: { [key: string]: ChartFormValue };
+  values: Record<string, ChartFormValue>;
 }
 
 export interface ChartReleaseUpgrade {
   item_version?: string;
-  values?: { [key: string]: ChartFormValue };
+  values?: Record<string, ChartFormValue>;
 }
 
 export type ChartReleaseQueryParams = QueryParams<ChartRelease, {
@@ -192,16 +187,14 @@ export interface ChartSchema {
   schema: {
     groups: ChartSchemaGroup[];
     questions: ChartSchemaNode[];
-    portals: {
-      [portal: string]: {
-        host: string[];
-        ports: string[];
-        protocols: string[];
-      };
-    };
+    portals: Record<string, {
+      host: string[];
+      ports: string[];
+      protocols: string[];
+    }>;
   };
   supported: boolean;
-  values: { [key: string]: ChartFormValue };
+  values: Record<string, ChartFormValue>;
 }
 
 export interface AppMetadata {

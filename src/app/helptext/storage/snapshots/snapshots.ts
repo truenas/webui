@@ -1,6 +1,6 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
-export default {
+export const helptextSnapshots = {
   snapshot_add_dataset_placeholder: T('Dataset'),
   snapshot_add_dataset_tooltip: T('Select a dataset or zvol.'),
 

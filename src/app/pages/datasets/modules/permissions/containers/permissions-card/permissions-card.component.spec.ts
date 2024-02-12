@@ -7,8 +7,8 @@ import {
   byTitle, createComponentFactory, mockProvider, Spectator,
 } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
-import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
-import { mockWebsocket, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
+import { MockWebSocketService } from 'app/core/testing/classes/mock-websocket.service';
+import { mockWebSocket, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
 import { AclType } from 'app/enums/acl-type.enum';
 import { Acl, NfsAcl, PosixAcl } from 'app/interfaces/acl.interface';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
@@ -56,7 +56,7 @@ describe('PermissionsCardComponent', () => {
       PermissionsCardStore,
       mockProvider(DialogService),
       mockProvider(Router),
-      mockWebsocket([
+      mockWebSocket([
         mockCall('filesystem.stat', stat),
         mockCall('filesystem.getacl', {
           trivial: true,
@@ -76,7 +76,7 @@ describe('PermissionsCardComponent', () => {
     const websocket = spectator.inject(WebSocketService);
 
     expect(websocket.call).toHaveBeenCalledWith('filesystem.stat', ['/mnt/testpool/dataset']);
-    expect(websocket.call).toHaveBeenCalledWith('filesystem.getacl', ['/mnt/testpool/dataset', false, true]);
+    expect(websocket.call).toHaveBeenCalledWith('filesystem.getacl', ['/mnt/testpool/dataset', true, true]);
   });
 
   it('shows dataset ownership information', () => {
@@ -98,7 +98,7 @@ describe('PermissionsCardComponent', () => {
       acltype: AclType.Posix1e,
     } as PosixAcl;
 
-    spectator.inject(MockWebsocketService).mockCallOnce('filesystem.getacl', acl);
+    spectator.inject(MockWebSocketService).mockCallOnce('filesystem.getacl', acl);
 
     spectator.setInput('dataset', {
       ...dataset,
@@ -116,7 +116,7 @@ describe('PermissionsCardComponent', () => {
       acltype: AclType.Nfs4,
     } as NfsAcl;
 
-    spectator.inject(MockWebsocketService).mockCallOnce('filesystem.getacl', acl);
+    spectator.inject(MockWebSocketService).mockCallOnce('filesystem.getacl', acl);
 
     spectator.setInput('dataset', {
       ...dataset,

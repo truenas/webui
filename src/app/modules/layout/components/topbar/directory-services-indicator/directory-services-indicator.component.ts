@@ -5,7 +5,7 @@ import { MatDialog, MatDialogRef, MatDialogState } from '@angular/material/dialo
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Subscription } from 'rxjs';
 import { DirectoryServiceState } from 'app/enums/directory-service-state.enum';
-import helptext from 'app/helptext/topbar';
+import { helptextTopbar } from 'app/helptext/topbar';
 import { DirectoryServicesState } from 'app/interfaces/directory-services-state.interface';
 import {
   DirectoryServicesMonitorComponent,
@@ -20,7 +20,7 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DirectoryServicesIndicatorComponent implements OnInit, OnDestroy {
-  tooltips = helptext.mat_tooltips;
+  tooltips = helptextTopbar.mat_tooltips;
 
   isIconShown = false;
 
@@ -29,7 +29,7 @@ export class DirectoryServicesIndicatorComponent implements OnInit, OnDestroy {
 
   constructor(
     private ws: WebSocketService,
-    private dialog: MatDialog,
+    private matDialog: MatDialog,
     private cdr: ChangeDetectorRef,
   ) { }
 
@@ -49,7 +49,7 @@ export class DirectoryServicesIndicatorComponent implements OnInit, OnDestroy {
     if (this.isServicesMonitorOpen) {
       this.servicesMonitorRef.close(true);
     } else {
-      this.servicesMonitorRef = this.dialog.open(DirectoryServicesMonitorComponent, {
+      this.servicesMonitorRef = this.matDialog.open(DirectoryServicesMonitorComponent, {
         hasBackdrop: true,
         panelClass: 'topbar-panel',
         position: topbarDialogPosition,

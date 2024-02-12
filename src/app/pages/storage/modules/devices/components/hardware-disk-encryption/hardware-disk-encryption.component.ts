@@ -5,6 +5,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { Role } from 'app/enums/role.enum';
 import { LoadingState, toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import { TopologyDisk } from 'app/interfaces/storage.interface';
 import {
@@ -22,8 +23,10 @@ import { WebSocketService } from 'app/services/ws.service';
 export class HardwareDiskEncryptionComponent implements OnChanges {
   @Input() topologyDisk: TopologyDisk;
 
-  hasGlobalEncryption$ = this.ws.call('system.advanced.sed_global_password').pipe(toLoadingState());
+  hasGlobalEncryption$ = this.ws.call('system.advanced.sed_global_password_is_set').pipe(toLoadingState());
   hasDiskEncryption$: Observable<LoadingState<boolean>>;
+
+  protected readonly Role = Role;
 
   constructor(
     private matDialog: MatDialog,

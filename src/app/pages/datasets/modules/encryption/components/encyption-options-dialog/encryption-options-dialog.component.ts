@@ -8,15 +8,15 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { of, Subscription } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { DatasetEncryptionType } from 'app/enums/dataset.enum';
+import { EncryptionKeyFormat } from 'app/enums/encryption-key-format.enum';
+import { Role } from 'app/enums/role.enum';
 import { combineLatestIsAny } from 'app/helpers/operators/combine-latest-is-any.helper';
-import dataset_helptext from 'app/helptext/storage/volumes/datasets/dataset-form';
+import { helptextDatasetForm } from 'app/helptext/storage/volumes/datasets/dataset-form';
 import { DatasetChangeKeyParams } from 'app/interfaces/dataset-change-key.interface';
 import { Dataset } from 'app/interfaces/dataset.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
+import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
-import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { matchOthersFgValidator } from 'app/modules/ix-forms/validators/password-validation/password-validation';
 import { findInTree } from 'app/modules/ix-tree/utils/find-in-tree.utils';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
@@ -68,14 +68,16 @@ export class EncryptionOptionsDialogComponent implements OnInit {
   isSetToGenerateKey$ = this.form.select((values) => values.generate_key);
 
   readonly tooltips = {
-    encryption_type: dataset_helptext.dataset_form_encryption.encryption_type_tooltip,
-    generate_key: dataset_helptext.dataset_form_encryption.generate_key_checkbox_tooltip,
-    key: dataset_helptext.dataset_form_encryption.key_tooltip,
-    passphrase: dataset_helptext.dataset_form_encryption.passphrase_tooltip,
-    pbkdf2iters: dataset_helptext.dataset_form_encryption.pbkdf2iters_tooltip,
+    encryption_type: helptextDatasetForm.dataset_form_encryption.encryption_type_tooltip,
+    generate_key: helptextDatasetForm.dataset_form_encryption.generate_key_checkbox_tooltip,
+    key: helptextDatasetForm.dataset_form_encryption.key_tooltip,
+    passphrase: helptextDatasetForm.dataset_form_encryption.passphrase_tooltip,
+    pbkdf2iters: helptextDatasetForm.dataset_form_encryption.pbkdf2iters_tooltip,
   };
 
-  readonly encryptionTypeOptions$ = of(dataset_helptext.dataset_form_encryption.encryption_type_options);
+  readonly encryptionTypeOptions$ = of(helptextDatasetForm.dataset_form_encryption.encryption_type_options);
+
+  protected readonly Role = Role;
 
   constructor(
     private fb: FormBuilder,
@@ -84,11 +86,10 @@ export class EncryptionOptionsDialogComponent implements OnInit {
     private loader: AppLoaderService,
     private dialog: DialogService,
     private dialogRef: MatDialogRef<EncryptionOptionsDialogComponent>,
-    private validatorsService: IxValidatorsService,
     private formErrorHandler: FormErrorHandlerService,
     private errorHandler: ErrorHandlerService,
     private snackbar: SnackbarService,
-    private mdDialog: MatDialog,
+    private matDialog: MatDialog,
     @Inject(MAT_DIALOG_DATA) public data: EncryptionOptionsDialogData,
   ) {}
 
@@ -97,7 +98,7 @@ export class EncryptionOptionsDialogComponent implements OnInit {
   }
 
   get hasPassphraseParent(): boolean {
-    return this.data.parent?.key_format?.value === DatasetEncryptionType.Passphrase;
+    return this.data.parent?.key_format?.value === EncryptionKeyFormat.Passphrase;
   }
 
   get hasKeyChild(): boolean {
@@ -137,7 +138,7 @@ export class EncryptionOptionsDialogComponent implements OnInit {
           this.showSuccessDialog();
           this.dialogRef.close(true);
         },
-        error: (error: WebsocketError) => {
+        error: (error: WebSocketError) => {
           this.formErrorHandler.handleWsFormError(error, this.form);
         },
       });
@@ -157,7 +158,7 @@ export class EncryptionOptionsDialogComponent implements OnInit {
       body.pbkdf2iters = Number(values.pbkdf2iters);
     }
 
-    const jobDialogRef = this.mdDialog.open(EntityJobComponent, {
+    const jobDialogRef = this.matDialog.open(EntityJobComponent, {
       data: {
         title: this.translate.instant('Updating key type'),
       },
@@ -169,12 +170,13 @@ export class EncryptionOptionsDialogComponent implements OnInit {
         this.showSuccessDialog();
         this.dialogRef.close(true);
       },
-      error: (error: WebsocketError) => {
+      error: (error: WebSocketError) => {
         this.formErrorHandler.handleWsFormError(error, this.form);
       },
     });
     jobDialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe({
       next: (error) => {
+        jobDialogRef.close();
         this.formErrorHandler.handleWsFormError(error, this.form);
       },
     });
@@ -200,8 +202,8 @@ export class EncryptionOptionsDialogComponent implements OnInit {
             pbkdf2iters: Number(pbkdf2iters.rawvalue),
           });
         },
-        error: (error: WebsocketError) => {
-          this.dialog.error(this.errorHandler.parseWsError(error));
+        error: (error: unknown) => {
+          this.dialog.error(this.errorHandler.parseError(error));
         },
       });
   }

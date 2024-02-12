@@ -6,7 +6,8 @@ import {
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { appImagePlaceholder } from 'app/constants/catalog.constants';
-import helptext from 'app/helptext/apps/apps';
+import { Role } from 'app/enums/role.enum';
+import { helptextApps } from 'app/helptext/apps/apps';
 import { UpgradeSummary } from 'app/interfaces/application.interface';
 import { ChartContainerImage } from 'app/interfaces/chart-release.interface';
 import { ChartUpgradeDialogConfig } from 'app/interfaces/chart-upgrade-dialog-config.interface';
@@ -26,10 +27,12 @@ type Version = Omit<UpgradeSummary, 'upgrade_version' | 'image_update_available'
 export class AppUpgradeDialogComponent {
   dialogConfig: ChartUpgradeDialogConfig;
   imagePlaceholder = appImagePlaceholder;
-  helptext = helptext;
+  helptext = helptextApps;
   versionOptions = new Map<string, Version>();
   selectedVersionKey: string;
   selectedVersion: Version;
+
+  protected readonly requiredRoles = [Role.AppsWrite];
 
   constructor(
     public dialogRef: MatDialogRef<AppUpgradeDialogComponent>,

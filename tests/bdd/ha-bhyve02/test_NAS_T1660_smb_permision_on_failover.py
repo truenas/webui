@@ -40,7 +40,7 @@ def test_verify_host_sharing_permissions_on_failover():
 @given(parsers.parse('the browser is open to {nas_hostname} login with {user} and {password}'))
 def the_browser_is_open_to_nas_hostname_login_with_user_and_password(driver, nas_hostname, user, password, request):
     """the browser is open to <nas_hostname> login with <user> and <password>."""
-    depends(request, ['Setup_HA', 'AD_SMB_SHARE'], scope='session')
+    depends(request, ['Setup_HA'], scope='session')
     global nas_Hostname, admin_User, admin_Password
     nas_Hostname = nas_hostname
     admin_User = user
@@ -84,6 +84,7 @@ def input_smb1_for_dataset_name_select_smb_for_share_type_and_click_save(driver)
     driver.find_element_by_xpath(xpaths.add_Dataset.share_Type_Select).click()
     assert wait_on_element(driver, 5, xpaths.add_Dataset.share_Type_SMB_Option, 'clickable')
     driver.find_element_by_xpath(xpaths.add_Dataset.share_Type_SMB_Option).click()
+    rsc.Click_On_Element(driver, xpaths.add_Dataset.create_Smb_Checkbox)
     assert wait_on_element(driver, 5, xpaths.button.save, 'clickable')
     driver.find_element_by_xpath(xpaths.button.save).click()
 

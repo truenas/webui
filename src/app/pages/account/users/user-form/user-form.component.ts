@@ -14,15 +14,18 @@ import {
   debounceTime, filter, map, switchMap, take,
 } from 'rxjs/operators';
 import { allCommands } from 'app/constants/all-commands.constant';
+import { Role } from 'app/enums/role.enum';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
-import helptext from 'app/helptext/account/user-form';
+import { helptextUsers } from 'app/helptext/account/user-form';
 import { Option } from 'app/interfaces/option.interface';
 import { User, UserUpdate } from 'app/interfaces/user.interface';
 import { SimpleAsyncComboboxProvider } from 'app/modules/ix-forms/classes/simple-async-combobox-provider';
+import { ChipsProvider } from 'app/modules/ix-forms/components/ix-chips/chips-provider';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
+import { emailValidator } from 'app/modules/ix-forms/validators/email-validation/email-validation';
 import { forbiddenValues } from 'app/modules/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
 import { matchOthersFgValidator } from 'app/modules/ix-forms/validators/password-validation/password-validation';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -35,7 +38,7 @@ import { UserService } from 'app/services/user.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 
-const defaultHomePath = '/nonexistent';
+const defaultHomePath = '/var/empty';
 
 @UntilDestroy({ arrayName: 'subscriptions' })
 @Component({
@@ -46,7 +49,6 @@ const defaultHomePath = '/nonexistent';
 export class UserFormComponent implements OnInit {
   isFormLoading = false;
   subscriptions: Subscription[] = [];
-
   homeModeOldValue = '';
 
   get isNewUser(): boolean {
@@ -64,7 +66,7 @@ export class UserFormComponent implements OnInit {
       Validators.pattern(UserService.namePattern),
       Validators.maxLength(32),
     ]],
-    email: ['', [Validators.email]],
+    email: ['', [emailValidator()]],
     password: ['', [
       this.validatorsService.validateOnCondition(
         () => this.isNewUser,
@@ -98,32 +100,37 @@ export class UserFormComponent implements OnInit {
   });
 
   readonly tooltips = {
-    full_name: helptext.user_form_full_name_tooltip,
-    username: helptext.user_form_username_tooltip,
-    email: helptext.user_form_email_tooltip,
-    password: helptext.user_form_password_tooltip,
-    password_edit: helptext.user_form_password_edit_tooltip,
-    password_conf_edit: helptext.user_form_password_edit_tooltip,
-    uid: helptext.user_form_uid_tooltip,
-    group: helptext.user_form_primary_group_tooltip,
-    group_create: helptext.user_form_group_create_tooltip,
-    groups: helptext.user_form_aux_groups_tooltip,
-    home: helptext.user_form_dirs_explorer_tooltip,
-    home_mode: helptext.user_form_home_dir_permissions_tooltip,
-    home_create: helptext.user_form_home_create_tooltip,
-    sshpubkey: helptext.user_form_auth_sshkey_tooltip,
-    password_disabled: helptext.user_form_auth_pw_enable_tooltip,
-    shell: helptext.user_form_shell_tooltip,
-    locked: helptext.user_form_lockuser_tooltip,
-    smb: helptext.user_form_smb_tooltip,
+    full_name: helptextUsers.user_form_full_name_tooltip,
+    username: helptextUsers.user_form_username_tooltip,
+    email: helptextUsers.user_form_email_tooltip,
+    password: helptextUsers.user_form_password_tooltip,
+    password_edit: helptextUsers.user_form_password_edit_tooltip,
+    password_conf_edit: helptextUsers.user_form_password_edit_tooltip,
+    uid: helptextUsers.user_form_uid_tooltip,
+    group: helptextUsers.user_form_primary_group_tooltip,
+    group_create: helptextUsers.user_form_group_create_tooltip,
+    groups: helptextUsers.user_form_aux_groups_tooltip,
+    home: helptextUsers.user_form_dirs_explorer_tooltip,
+    home_mode: helptextUsers.user_form_home_dir_permissions_tooltip,
+    home_create: helptextUsers.user_form_home_create_tooltip,
+    sshpubkey: helptextUsers.user_form_auth_sshkey_tooltip,
+    password_disabled: helptextUsers.user_form_auth_pw_enable_tooltip,
+    shell: helptextUsers.user_form_shell_tooltip,
+    locked: helptextUsers.user_form_lockuser_tooltip,
+    smb: helptextUsers.user_form_smb_tooltip,
   };
 
   readonly groupOptions$ = this.ws.call('group.query').pipe(
     map((groups) => groups.map((group) => ({ label: group.group, value: group.id }))),
   );
   shellOptions$: Observable<Option[]>;
-  readonly treeNodeProvider = this.filesystemService.getFilesystemNodeProvider();
+  readonly treeNodeProvider = this.filesystemService.getFilesystemNodeProvider({ directoriesOnly: true });
   readonly groupProvider = new SimpleAsyncComboboxProvider(this.groupOptions$);
+  autocompleteProvider: ChipsProvider = (query: string) => {
+    return this.userService.groupQueryDsCache(query).pipe(
+      map((groups) => groups.map((group) => group.group)),
+    );
+  };
 
   get homeCreateWarning(): string {
     const homeCreate = this.form.value.home_create;
@@ -156,6 +163,8 @@ export class UserFormComponent implements OnInit {
     return '';
   }
 
+  protected readonly Role = Role;
+
   constructor(
     private ws: WebSocketService,
     private errorHandler: FormErrorHandlerService,
@@ -169,6 +178,7 @@ export class UserFormComponent implements OnInit {
     private storageService: StorageService,
     private store$: Store<AppState>,
     private dialog: DialogService,
+    private userService: UserService,
     @Inject(SLIDE_IN_DATA) private editingUser: User,
   ) {
     this.form.controls.smb.errors$.pipe(
@@ -314,6 +324,7 @@ export class UserFormComponent implements OnInit {
 
         request$.pipe(
           switchMap((id) => nextRequest$ || of(id)),
+          filter(Boolean),
           switchMap((id) => this.ws.call('user.query', [[['id', '=', id]]])),
           map((users) => users[0]),
           untilDestroyed(this),
@@ -330,7 +341,7 @@ export class UserFormComponent implements OnInit {
             this.slideInRef.close();
             this.cdr.markForCheck();
           },
-          error: (error) => {
+          error: (error: unknown) => {
             this.isFormLoading = false;
             this.errorHandler.handleWsFormError(error, this.form);
             this.cdr.markForCheck();

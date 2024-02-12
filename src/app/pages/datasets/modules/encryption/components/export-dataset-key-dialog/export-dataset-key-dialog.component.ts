@@ -8,7 +8,7 @@ import { switchMap } from 'rxjs/operators';
 import { JobState } from 'app/enums/job-state.enum';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { Job } from 'app/interfaces/job.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
+import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
@@ -53,7 +53,7 @@ export class ExportDatasetKeyDialogComponent implements OnInit {
         next: () => {
           this.dialogRef.close();
         },
-        error: (error: WebsocketError | HttpErrorResponse) => {
+        error: (error: WebSocketError | HttpErrorResponse) => {
           this.dialogService.error(this.errorHandler.parseError(error));
         },
       });
@@ -65,14 +65,14 @@ export class ExportDatasetKeyDialogComponent implements OnInit {
       .subscribe({
         next: (job) => {
           if (job.state === JobState.Failed) {
-            this.dialogService.error(this.errorHandler.parseJobError(job));
+            this.dialogService.error(this.errorHandler.parseError(job));
           } else if (job.state !== JobState.Success) {
             return;
           }
           this.key = job.result;
           this.cdr.markForCheck();
         },
-        error: (error: Job | WebsocketError) => {
+        error: (error: Job | WebSocketError) => {
           this.dialogService.error(this.errorHandler.parseError(error));
         },
       });

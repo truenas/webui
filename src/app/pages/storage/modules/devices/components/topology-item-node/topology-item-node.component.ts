@@ -1,10 +1,10 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import filesize from 'filesize';
 import { PoolStatus } from 'app/enums/pool-status.enum';
 import { TopologyItemType } from 'app/enums/v-dev-type.enum';
 import { TopologyItemStatus } from 'app/enums/vdev-status.enum';
+import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
 import {
   Disk, TopologyDisk, TopologyItem,
 } from 'app/interfaces/storage.interface';
@@ -39,13 +39,13 @@ export class TopologyItemNodeComponent {
   }
 
   get capacity(): string {
-    return this.isDisk && this.disk?.size ? filesize(this.disk.size, { standard: 'iec' }) : '';
+    return this.isDisk && this.disk?.size ? buildNormalizedFileSize(this.disk.size) : '';
   }
 
   get errors(): string {
     if (this.topologyItem.stats) {
       const stats = this.topologyItem.stats;
-      const errors = stats?.checksum_errors + stats?.read_errors + stats?.write_errors;
+      const errors = (stats?.checksum_errors || 0) + (stats?.read_errors || 0) + (stats?.write_errors || 0);
       return this.translate.instant('{n, plural, =0 {No Errors} one {# Error} other {# Errors}}', { n: errors });
     }
     return '';

@@ -17,16 +17,19 @@
       <ix-encryption-section
         *ngIf="isNew"
         [parent]="parentDataset"
+        [advancedMode]="isAdvancedMode"
       ></ix-encryption-section>
       <ix-other-options-section
         [existing]="existingDataset"
         [parent]="parentDataset"
+        [datasetPreset]="datasetPreset"
         [advancedMode]="isAdvancedMode"
         (advancedModeChange)="onSwitchToAdvanced()"
       ></ix-other-options-section>
 
       <ix-form-actions>
         <button
+          *ixRequiresRoles="[Role.DatasetWrite]"
           mat-button
           type="submit"
           color="primary"

@@ -10,6 +10,7 @@ import {
   delay, filter, map, switchMap,
 } from 'rxjs/operators';
 import { EmptyType } from 'app/enums/empty-type.enum';
+import { Role } from 'app/enums/role.enum';
 import { ContainerImage } from 'app/interfaces/container-image.interface';
 import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
 import { IxCheckboxColumnComponent } from 'app/modules/ix-tables/components/ix-checkbox-column/ix-checkbox-column.component';
@@ -60,6 +61,8 @@ export class DockerImagesListComponent implements OnInit, AfterViewInit {
       return of(EmptyType.NoSearchResults);
     }),
   );
+
+  protected readonly requiredRoles = [Role.AppsWrite];
 
   get selectionHasUpdates(): boolean {
     return this.checkboxColumn.selection.selected.some((image) => image.update_available);

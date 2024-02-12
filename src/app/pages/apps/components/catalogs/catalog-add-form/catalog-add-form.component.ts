@@ -3,7 +3,8 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import helptext from 'app/helptext/apps/apps';
+import { Role } from 'app/enums/role.enum';
+import { helptextApps } from 'app/helptext/apps/apps';
 import { CatalogCreate } from 'app/interfaces/catalog.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
@@ -28,12 +29,14 @@ export class CatalogAddFormComponent {
   });
 
   readonly tooltips = {
-    label: helptext.catalogForm.name.tooltip,
-    force: helptext.catalogForm.forceCreate.tooltip,
-    repository: helptext.catalogForm.repository.tooltip,
-    preferred_trains: helptext.catalogForm.preferredTrains.tooltip,
-    branch: helptext.catalogForm.branch.tooltip,
+    label: helptextApps.catalogForm.name.tooltip,
+    force: helptextApps.catalogForm.forceCreate.tooltip,
+    repository: helptextApps.catalogForm.repository.tooltip,
+    preferred_trains: helptextApps.catalogForm.preferredTrains.tooltip,
+    branch: helptextApps.catalogForm.branch.tooltip,
   };
+
+  protected readonly requiredRoles = [Role.CatalogWrite];
 
   constructor(
     private slideInRef: IxSlideInRef<CatalogAddFormComponent>,
@@ -42,7 +45,7 @@ export class CatalogAddFormComponent {
     private fb: FormBuilder,
     private translate: TranslateService,
     private snackbar: SnackbarService,
-    private mdDialog: MatDialog,
+    private matDialog: MatDialog,
     private dialogService: DialogService,
   ) {}
 
@@ -51,9 +54,9 @@ export class CatalogAddFormComponent {
 
     this.isFormLoading = true;
 
-    const dialogRef = this.mdDialog.open(EntityJobComponent, {
+    const dialogRef = this.matDialog.open(EntityJobComponent, {
       data: {
-        title: helptext.catalogForm.title,
+        title: helptextApps.catalogForm.title,
       },
     });
     dialogRef.componentInstance.setCall('catalog.create', [values as CatalogCreate]);
@@ -65,11 +68,12 @@ export class CatalogAddFormComponent {
       this.snackbar.success(
         this.translate.instant('Catalog is being added. This may take some time. You can minimize this dialog and process will continue in background'),
       );
-      this.slideInRef.close();
+      this.slideInRef.close(true);
     });
     dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((error) => {
       this.isFormLoading = false;
       this.cdr.markForCheck();
+      dialogRef.close();
       this.dialogService.closeAllDialogs();
       this.errorHandler.handleWsFormError(error, this.form);
     });

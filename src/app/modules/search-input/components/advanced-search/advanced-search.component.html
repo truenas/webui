@@ -1,0 +1,34 @@
+<span class="prefix-icon" [matTooltip]="errorMessages?.[0]?.message">
+  <ix-icon *ngIf="!queryInputValue" name="mdi-text-search-variant"></ix-icon>
+  <ix-icon *ngIf="queryInputValue && hasQueryErrors" name="warning"></ix-icon>
+  <ix-icon *ngIf="queryInputValue && !hasQueryErrors" name="done"></ix-icon>
+</span>
+
+<div #inputArea class="input-area" (focusin)="startSuggestionsCompletion()" (click)="startSuggestionsCompletion()">
+  <mat-card *ngIf="showDatePicker$ | async" class="calendar">
+    <mat-calendar (selectedChange)="dateSelected($event)"></mat-calendar>
+  </mat-card>
+</div>
+
+<a
+  class="switch-link"
+  ixTest="switch-to-advanced"
+  tabindex="0"
+  (click)="switchToBasic.emit()"
+  (keydown.enter)="switchToBasic.emit()"
+>
+  {{ 'Switch To Basic' | translate }}
+</a>
+
+<span
+  class="reset-icon reset-input"
+  [class.hidden]="!editorHasValue"
+  (click)="onResetInput()"
+>
+  <ix-icon
+    name="mdi-close-circle"
+    tabindex="0"
+    (keydown.enter)="$event.preventDefault(); onResetInput()"
+  ></ix-icon>
+</span>
+

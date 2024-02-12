@@ -9,13 +9,12 @@ import { TranslateService } from '@ngx-translate/core';
 import { forkJoin, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { DirectoryServiceState } from 'app/enums/directory-service-state.enum';
+import { Role } from 'app/enums/role.enum';
 import { singleArrayToOptions } from 'app/helpers/operators/options.operators';
-import helptext from 'app/helptext/directory-service/active-directory';
+import { helptextActiveDirectory } from 'app/helptext/directory-service/active-directory';
 import { NssInfoType } from 'app/interfaces/active-directory.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
-import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import {
   LeaveDomainDialogComponent,
@@ -60,7 +59,7 @@ export class ActiveDirectoryComponent implements OnInit {
 
   hasKerberosPrincipal$ = this.form.select((values) => values.kerberos_principal);
 
-  readonly helptext = helptext;
+  readonly helptext = helptextActiveDirectory;
   readonly kerberosRealms$ = this.ws.call('kerberos.realm.query').pipe(
     map((realms) => {
       return realms.map((realm) => ({
@@ -72,11 +71,12 @@ export class ActiveDirectoryComponent implements OnInit {
   readonly kerberosPrincipals$ = this.ws.call('kerberos.keytab.kerberos_principal_choices').pipe(singleArrayToOptions());
   readonly nssOptions$ = this.ws.call('activedirectory.nss_info_choices').pipe(singleArrayToOptions());
 
+  protected readonly Role = Role;
+
   constructor(
     private ws: WebSocketService,
     private cdr: ChangeDetectorRef,
     private errorHandler: ErrorHandlerService,
-    private formErrorHandler: FormErrorHandlerService,
     private formBuilder: FormBuilder,
     private systemGeneralService: SystemGeneralService,
     private dialogService: DialogService,
@@ -100,13 +100,13 @@ export class ActiveDirectoryComponent implements OnInit {
       next: () => {
         this.isLoading = false;
         this.snackbarService.success(
-          this.translate.instant(helptext.activedirectory_custactions_clearcache_dialog_message),
+          this.translate.instant(helptextActiveDirectory.activedirectory_custactions_clearcache_dialog_message),
         );
         this.cdr.markForCheck();
       },
-      error: (error: WebsocketError) => {
+      error: (error: unknown) => {
         this.isLoading = false;
-        this.dialogService.error(this.errorHandler.parseWsError(error));
+        this.dialogService.error(this.errorHandler.parseError(error));
         this.cdr.markForCheck();
       },
     });
@@ -130,25 +130,24 @@ export class ActiveDirectoryComponent implements OnInit {
       kerberos_principal: this.form.value.kerberos_principal || '',
     };
 
-    this.ws.call('activedirectory.update', [values])
-      .pipe(untilDestroyed(this))
-      .subscribe({
-        next: (update) => {
-          this.isLoading = false;
-          this.cdr.markForCheck();
-
-          if (update.job_id) {
-            this.showStartingJob(update.job_id);
-          } else {
-            this.slideInRef.close();
-          }
-        },
-        error: (error) => {
-          this.isLoading = false;
-          this.formErrorHandler.handleWsFormError(error, this.form);
-          this.cdr.markForCheck();
-        },
-      });
+    const dialogRef = this.matDialog.open(EntityJobComponent, {
+      data: {
+        title: this.translate.instant('Active Directory'),
+      },
+      disableClose: true,
+    });
+    dialogRef.componentInstance.setCall('activedirectory.update', [values]);
+    dialogRef.componentInstance.submit();
+    dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
+      dialogRef.close(true);
+      this.slideInRef.close(true);
+    });
+    dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((error) => {
+      this.dialogService.error(this.errorHandler.parseError(error));
+      this.isLoading = false;
+      this.cdr.markForCheck();
+      dialogRef.close(true);
+    });
   }
 
   private loadFormValues(): void {
@@ -164,10 +163,10 @@ export class ActiveDirectoryComponent implements OnInit {
           this.isLoading = false;
           this.cdr.markForCheck();
         },
-        error: (error: WebsocketError) => {
+        error: (error: unknown) => {
           this.isLoading = false;
           this.cdr.markForCheck();
-          this.dialogService.error(this.errorHandler.parseWsError(error));
+          this.dialogService.error(this.errorHandler.parseError(error));
         },
       });
   }
@@ -192,24 +191,5 @@ export class ActiveDirectoryComponent implements OnInit {
         this.form.patchValue(config);
       }),
     );
-  }
-
-  private showStartingJob(jobId: number): void {
-    const dialogRef = this.matDialog.open(EntityJobComponent, {
-      data: {
-        title: this.translate.instant('Active Directory'),
-      },
-      disableClose: true,
-    });
-    dialogRef.componentInstance.jobId = jobId;
-    dialogRef.componentInstance.wsshow();
-    dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
-      dialogRef.close();
-      this.slideInRef.close();
-    });
-    dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((error) => {
-      this.dialogService.error(this.errorHandler.parseJobError(error));
-      dialogRef.close();
-    });
   }
 }

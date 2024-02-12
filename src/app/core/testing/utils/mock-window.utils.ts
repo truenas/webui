@@ -3,12 +3,13 @@ import _ from 'lodash';
 import { DeepPartial } from 'utility-types';
 import { WINDOW } from 'app/helpers/window.helper';
 
-export function mockWindow(overrides: DeepPartial<Window>): ValueProvider {
+export function mockWindow(overrides: DeepPartial<Window> = {}): ValueProvider {
   const baseWindow = {
     location: {
       protocol: 'http:',
     },
-  } as Window;
+    open: jest.fn(),
+  } as DeepPartial<Window>;
 
   return {
     provide: WINDOW,

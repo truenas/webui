@@ -9,8 +9,8 @@
 
 <div class="table-container">
   <ix-table2
-    [ix-table2-empty]="!dataProvider.rows.length"
-    [emptyConfig]="emptyConfigService.defaultEmptyConfig(emptyType)"
+    [ix-table2-empty]="!(dataProvider.currentPageCount$ | async)"
+    [emptyConfig]="emptyService.defaultEmptyConfig(dataProvider.emptyType$ | async)"
   >
     <thead
       ix-table-head
@@ -21,7 +21,19 @@
       ix-table-body
       [columns]="columns"
       [dataProvider]="dataProvider"
+      [isLoading]="dataProvider.isLoading$ | async"
     >
+
+      <ng-template
+        let-snapshot
+        ix-table-cell
+        [columnIndex]="4"
+        [dataProvider]="dataProvider"
+      >
+        <ix-vmware-status-cell
+          [state]="snapshot.state"
+        ></ix-vmware-status-cell>
+      </ng-template>
       <ng-template let-snapshot ix-table-details-row [dataProvider]="dataProvider">
         <div class="table-details-row-actions">
           <button
@@ -30,6 +42,7 @@
             (click)="doEdit(snapshot)"
           >{{ 'Edit' | translate }}</button>
           <button
+            *ixRequiresRoles="requiredRoles"
             mat-button
             [ixTest]="[snapshot.hostname, snapshot.filesystem, 'delete']"
             (click)="doDelete(snapshot)"

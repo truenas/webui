@@ -45,6 +45,7 @@
       [itemsSchema]="dynamicSchema.itemsSchema"
       [isEditMode]="isEditMode"
       [canAdd]="!isAllListControlsDisabled"
+      [formArray]="getFormArray"
       (add)="addControl($event)"
     >
       <ix-list-item
@@ -85,6 +86,15 @@
       [required]="dynamicSchema.required"
       [hideEmpty]="dynamicSchema.hideEmpty"
     ></ix-select>
+
+    <ix-input
+      *ngIf="dynamicSchema.type === DynamicFormSchemaType.Enum"
+      [formControlName]="dynamicSchema.controlName"
+      [label]="dynamicSchema.title | translate"
+      [autocompleteOptions]="(dynamicSchema.options | async) || []"
+      [tooltip]="dynamicSchema.tooltip | translate"
+      [required]="dynamicSchema.required"
+    ></ix-input>
 
     <ix-explorer
       *ngIf="dynamicSchema.type === DynamicFormSchemaType.Explorer"

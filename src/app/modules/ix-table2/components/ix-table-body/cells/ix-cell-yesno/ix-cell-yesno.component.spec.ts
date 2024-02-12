@@ -18,6 +18,7 @@ describe('IxCellYesNoComponent', () => {
       props: {
         propertyName: 'yesNoField',
         row: { yesNoField: true },
+        rowTestId: (row) => row.yesNoField.toString(),
       } as Partial<IxCellYesNoComponent<TestTableData>>,
     });
   });
@@ -28,7 +29,7 @@ describe('IxCellYesNoComponent', () => {
 
   it('shows "No" when "false"', () => {
     spectator.component.setRow({ yesNoField: false });
-    spectator.fixture.detectChanges();
+    spectator.detectComponentChanges();
     expect(spectator.element.textContent.trim()).toBe('No');
   });
 });

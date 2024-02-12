@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, OnDestroy } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { ComponentStore } from '@ngrx/component-store';
 import { isEqual } from 'lodash';
@@ -13,6 +13,7 @@ import { ChartRelease, ChartReleaseStats } from 'app/interfaces/chart-release.in
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { AppsStore } from 'app/pages/apps/store/apps-store.service';
 import { KubernetesStore } from 'app/pages/apps/store/kubernetes-store.service';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 
 export interface InstalledAppsState {
   installedApps: ChartRelease[];
@@ -26,7 +27,7 @@ const initialState: InstalledAppsState = {
 
 @UntilDestroy()
 @Injectable()
-export class InstalledAppsStore extends ComponentStore<InstalledAppsState> {
+export class InstalledAppsStore extends ComponentStore<InstalledAppsState> implements OnDestroy {
   readonly installedApps$ = this.select((state) => state.installedApps);
   readonly isLoading$ = this.select((state) => state.isLoading);
   private installedAppsSubscription: Subscription;
@@ -36,6 +37,7 @@ export class InstalledAppsStore extends ComponentStore<InstalledAppsState> {
     private appsService: ApplicationsService,
     private appsStore: AppsStore,
     private kubernetesStore: KubernetesStore,
+    private errorHandler: ErrorHandlerService,
   ) {
     super(initialState);
     this.initialize();
@@ -58,14 +60,15 @@ export class InstalledAppsStore extends ComponentStore<InstalledAppsState> {
           };
         });
       }),
-      catchError(() => {
-        this.handleError();
+      catchError((error: unknown) => {
+        this.handleError(error);
         return EMPTY;
       }),
     );
   });
 
-  private handleError(): void {
+  private handleError(error: unknown): void {
+    this.errorHandler.showErrorModal(error);
     this.patchState((state: InstalledAppsState): InstalledAppsState => {
       return {
         ...state,
@@ -169,15 +172,15 @@ export class InstalledAppsStore extends ComponentStore<InstalledAppsState> {
           this.patchState((state) => {
             return {
               ...state,
-              installedApps: state.installedApps.map(app => {
-                const appWithUpdatedStats = apiEvent.fields.find(item => item.id === app.id);
-                if (isEqual(appWithUpdatedStats.stats, app.stats)) {
+              installedApps: state.installedApps.map((app) => {
+                const appWithUpdatedStats = apiEvent.fields.find((item) => item.id === app.id);
+                if (appWithUpdatedStats && isEqual(appWithUpdatedStats.stats, app.stats)) {
                   return app;
                 }
 
                 return {
                   ...app,
-                  stats: appWithUpdatedStats.stats || app.stats,
+                  stats: appWithUpdatedStats?.stats || app.stats,
                 };
               }),
             };

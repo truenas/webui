@@ -1,10 +1,12 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+} from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
+import { TranslateService } from '@ngx-translate/core';
 import { filter } from 'rxjs/operators';
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
-import helptext from 'app/helptext/topbar';
 import {
   HaStatusPopoverComponent,
 } from 'app/modules/layout/components/topbar/ha-status-icon/ha-status-popover/ha-status-popover.component';
@@ -19,11 +21,9 @@ import { selectHaStatus, selectIsHaLicensed } from 'app/store/ha-info/ha-info.se
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HaStatusIconComponent implements OnInit {
-
   isFailoverLicensed$ = this.store$.select(selectIsHaLicensed);
 
   failoverDisabledReasons: FailoverDisabledReason[] = [];
-  statusText = '';
 
   protected readonly FailoverDisabledReason = FailoverDisabledReason;
 
@@ -33,11 +33,27 @@ export class HaStatusIconComponent implements OnInit {
   constructor(
     private store$: Store<AppState>,
     private cdr: ChangeDetectorRef,
-    private dialog: MatDialog,
+    private matDialog: MatDialog,
+    private translate: TranslateService,
   ) { }
 
   get isReconnecting(): boolean {
     return this.failoverDisabledReasons[0] === FailoverDisabledReason.NoSystemReady;
+  }
+
+  get isDisabled(): boolean {
+    return this.failoverDisabledReasons.length > 0 && !this.isReconnecting;
+  }
+
+  get statusText(): string {
+    switch (true) {
+      case this.isReconnecting:
+        return this.translate.instant('HA is reconnecting');
+      case this.isDisabled:
+        return this.translate.instant('HA is disabled');
+      default:
+        return this.translate.instant('HA is enabled');
+    }
   }
 
   ngOnInit(): void {
@@ -48,7 +64,7 @@ export class HaStatusIconComponent implements OnInit {
     if (this.isStatusPanelOpen) {
       this.statusPanelRef.close(true);
     } else {
-      this.statusPanelRef = this.dialog.open(HaStatusPopoverComponent, {
+      this.statusPanelRef = this.matDialog.open(HaStatusPopoverComponent, {
         hasBackdrop: true,
         panelClass: 'topbar-panel',
         position: topbarDialogPosition,
@@ -63,7 +79,6 @@ export class HaStatusIconComponent implements OnInit {
       untilDestroyed(this),
     ).subscribe((haStatus) => {
       this.failoverDisabledReasons = haStatus.reasons;
-      this.statusText = haStatus.hasHa ? helptext.ha_status_text_enabled : helptext.ha_status_text_disabled;
       this.cdr.markForCheck();
     });
   }

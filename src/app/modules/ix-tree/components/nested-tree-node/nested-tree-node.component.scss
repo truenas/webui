@@ -4,3 +4,9 @@
   margin-top: 0;
   min-width: fit-content;
 }
+
+:host ::ng-deep {
+  .ix-tree-node-toggle {
+    margin-left: 10px;
+  }
+}

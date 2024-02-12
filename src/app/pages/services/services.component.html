@@ -12,7 +12,7 @@
     ix-table
     ixTest="services-table"
     [ix-table-empty]="shouldShowEmpty"
-    [emptyConfig]="emptyConfigService.defaultEmptyConfig(loading ? EmptyType.Loading : EmptyType.NoSearchResults)"
+    [emptyConfig]="emptyConfig"
     [dataSource]="dataSource"
   >
     <ng-container matColumnDef="name">
@@ -39,6 +39,7 @@
 
         <ng-template #slider>
           <mat-slide-toggle
+            *ixRequiresRoles="[Role.ServiceWrite]"
             color="primary"
             matTooltipPosition="right"
             [checked]="service.state === ServiceStatus.Running"
@@ -56,6 +57,7 @@
       </th>
       <td *matCellDef="let service; dataSource: dataSource" mat-cell>
         <mat-checkbox
+          *ixRequiresRoles="[Role.ServiceWrite]"
           color="primary"
           [ixTest]="[service.service, 'service']"
           [(ngModel)]="service.enable"
@@ -66,14 +68,37 @@
 
     <ng-container matColumnDef="actions">
       <th *matHeaderCellDef mat-header-cell></th>
-      <td *matCellDef="let service; dataSource: dataSource" mat-cell>
+      <td *matCellDef="let service; dataSource: dataSource" mat-cell class="actions">
+        <a
+          *ngIf="hasLogs(service.service)"
+          mat-icon-button
+          type="button"
+          [ixTest]="[service.service, 'logs']"
+          [attr.aria-label]="'Audit Logs' | translate"
+          [matTooltip]="'Audit Logs' | translate"
+          [attr.name]="'logs-' + service.name"
+          [routerLink]="auditLogsUrl()"
+        >
+          <ix-icon name="receipt_long"></ix-icon>
+        </a>
+        <a
+          *ngIf="hasSessions(service.service)"
+          mat-icon-button
+          type="button"
+          [ixTest]="[service.service, 'sessions']"
+          [attr.aria-label]="'{name} Sessions' | translate: { name: serviceNames.get(service.service) }"
+          [matTooltip]="'{name} Sessions' | translate: { name: serviceNames.get(service.service) }"
+          [attr.name]="'sessions-' + service.name"
+          [routerLink]="sessionsUrl(service.service)"
+        >
+          <ix-icon name="list"></ix-icon>
+        </a>
         <button
           mat-icon-button
           type="button"
-          matTooltipPosition="left"
           [ixTest]="[service.service, 'edit']"
           [attr.aria-label]="'Edit' | translate"
-          [attr.name]="service.name"
+          [attr.name]="'edit-' + service.name"
           [matTooltip]="'Configure' | translate"
           (click)="configureService(service)"
         >

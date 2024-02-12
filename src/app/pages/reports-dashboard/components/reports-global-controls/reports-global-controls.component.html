@@ -5,6 +5,7 @@
       [label]="'Devices' | translate"
       [options]="diskDevices$"
       [multiple]="true"
+      [showSelectAll]="true"
     ></ix-select>
 
     <ix-select
@@ -22,6 +23,7 @@
   ></ix-slide-toggle>
 
   <button
+    *ngIf="activeTab"
     mat-button
     color="primary"
     class="menu-toggle"
@@ -43,17 +45,9 @@
       >{{ tab.label | translate }}</button>
     </div>
   </mat-menu>
-
   <button
-    mat-icon-button
-    class="config-form-button"
-    ixTest="reports-configuration"
-    (click)="showConfigForm()"
-  >
-    <ix-icon
-      name="settings"
-      matTooltipPosition="below"
-      [matTooltip]="'Reports Configuration' | translate"
-    ></ix-icon>
-  </button>
+    mat-button
+    ixTest="exporters-nav"
+    [routerLink]="['/reportsdashboard','exporters']"
+  >{{ 'Exporters' | translate }}</button>
 </form>

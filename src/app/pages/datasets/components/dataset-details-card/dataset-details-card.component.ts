@@ -8,6 +8,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { filter, first, switchMap } from 'rxjs/operators';
 import { DatasetType } from 'app/enums/dataset.enum';
 import { OnOff } from 'app/enums/on-off.enum';
+import { Role } from 'app/enums/role.enum';
 import { ZfsPropertySource } from 'app/enums/zfs-property-source.enum';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -35,7 +36,7 @@ export class DatasetDetailsCardComponent {
 
   constructor(
     private translate: TranslateService,
-    private mdDialog: MatDialog,
+    private matDialog: MatDialog,
     private datasetStore: DatasetTreeStore,
     private slideInService: IxSlideInService,
     private errorHandler: ErrorHandlerService,
@@ -47,7 +48,7 @@ export class DatasetDetailsCardComponent {
 
   get datasetCompression(): string {
     return this.dataset?.compression?.source === ZfsPropertySource.Inherited
-      ? 'Inherit (' + this.dataset.compression?.value + ')'
+      ? `Inherit (${this.dataset.compression?.value})`
       : this.dataset.compression?.value;
   }
 
@@ -74,7 +75,7 @@ export class DatasetDetailsCardComponent {
   }
 
   deleteDataset(): void {
-    this.mdDialog.open(DeleteDatasetDialogComponent, { data: this.dataset })
+    this.matDialog.open(DeleteDatasetDialogComponent, { data: this.dataset })
       .afterClosed()
       .pipe(
         filter(Boolean),
@@ -102,13 +103,21 @@ export class DatasetDetailsCardComponent {
     const slideInRef = this.slideInService.open(DatasetFormComponent, {
       wide: true, data: { datasetId: this.dataset.id, isNew: false },
     });
-    slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => this.datasetStore.datasetUpdated());
+    slideInRef.slideInClosed$.pipe(
+      filter(Boolean),
+      untilDestroyed(this),
+    ).subscribe(() => this.datasetStore.datasetUpdated());
   }
 
   editZvol(): void {
     const slideInRef = this.slideInService.open(ZvolFormComponent, {
       data: { isNew: false, parentId: this.dataset.id },
     });
-    slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => this.datasetStore.datasetUpdated());
+    slideInRef.slideInClosed$.pipe(
+      filter(Boolean),
+      untilDestroyed(this),
+    ).subscribe(() => this.datasetStore.datasetUpdated());
   }
+
+  protected readonly Role = Role;
 }

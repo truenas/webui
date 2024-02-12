@@ -1,7 +1,7 @@
 import { ApiTimestamp } from 'app/interfaces/api-date.interface';
 
 export interface PullContainerImageParams {
-  docker_authentication?: {
+  authentication?: {
     username: string;
     password: string;
   };
@@ -21,7 +21,7 @@ export interface ContainerImage {
   created: ApiTimestamp;
   dangling: boolean;
   id: string;
-  labels: { [label: string]: string };
+  labels: Record<string, string>;
   repo_digests: string[];
   repo_tags: string[];
   size: number;

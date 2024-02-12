@@ -3,13 +3,16 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
+import { MockModule } from 'ng-mocks';
 import { of } from 'rxjs';
-import { mockWebsocket, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockWebSocket, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
 import { SystemGeneralConfig } from 'app/interfaces/system-config.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTable2Harness } from 'app/modules/ix-table2/components/ix-table2/ix-table2.harness';
 import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
+import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
 import { AdvancedSettingsService } from 'app/pages/system/advanced/advanced-settings.service';
 import { AllowedAddressesCardComponent } from 'app/pages/system/advanced/allowed-addresses/allowed-addresses-card/allowed-addresses-card.component';
 import { AllowedAddressesFormComponent } from 'app/pages/system/advanced/allowed-addresses/allowed-addresses-form/allowed-addresses-form.component';
@@ -31,10 +34,11 @@ describe('AllowedAddressesCardComponent', () => {
     component: AllowedAddressesCardComponent,
     imports: [
       IxTable2Module,
+      MockModule(TooltipModule),
     ],
     providers: [
       mockProvider(AdvancedSettingsService),
-      mockWebsocket([
+      mockWebSocket([
         mockCall('system.general.config', config),
         mockCall('system.general.update'),
       ]),
@@ -47,6 +51,7 @@ describe('AllowedAddressesCardComponent', () => {
         }),
       }),
       mockProvider(IxSlideInRef),
+      mockAuth(),
     ],
   });
 

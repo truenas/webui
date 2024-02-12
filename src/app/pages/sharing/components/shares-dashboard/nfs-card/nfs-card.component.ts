@@ -1,21 +1,27 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
-import { filter, switchMap } from 'rxjs';
-import { ServiceStatus } from 'app/enums/service-status.enum';
+import {
+  tap, map, filter, switchMap,
+} from 'rxjs';
+import { Role } from 'app/enums/role.enum';
+import { ServiceName } from 'app/enums/service-name.enum';
 import { helptextSharingNfs } from 'app/helptext/sharing';
 import { NfsShare } from 'app/interfaces/nfs-share.interface';
-import { Service } from 'app/interfaces/service.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
-import { ArrayDataProvider } from 'app/modules/ix-table2/array-data-provider';
+import { AsyncDataProvider } from 'app/modules/ix-table2/classes/async-data-provider/async-data-provider';
+import { actionsColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
 import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { toggleColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-toggle/ix-cell-toggle.component';
 import { createTable } from 'app/modules/ix-table2/utils';
+import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
 import { NfsFormComponent } from 'app/pages/sharing/nfs/nfs-form/nfs-form.component';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
+import { ServicesState } from 'app/store/services/services.reducer';
+import { selectService } from 'app/store/services/services.selectors';
 
 @UntilDestroy()
 @Component({
@@ -25,13 +31,11 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class NfsCardComponent implements OnInit {
-  @Input() service: Service;
+  service$ = this.store$.select(selectService(ServiceName.Nfs));
+  requiredRoles = [Role.SharingNfsWrite, Role.SharingWrite];
 
-  @Output() statusChanged = new EventEmitter<ServiceStatus>();
-
-  isLoading = false;
   nfsShares: NfsShare[] = [];
-  dataProvider = new ArrayDataProvider<NfsShare>();
+  dataProvider: AsyncDataProvider<NfsShare>;
 
   columns = createTable<NfsShare>([
     textColumn({
@@ -45,14 +49,28 @@ export class NfsCardComponent implements OnInit {
     toggleColumn({
       title: helptextSharingNfs.column_enabled,
       propertyName: 'enabled',
-      cssClass: 'justify-end',
       onRowToggle: (row: NfsShare) => this.onChangeEnabledState(row),
+      requiredRoles: this.requiredRoles,
     }),
-    textColumn({
-      propertyName: 'id',
+    actionsColumn({
       cssClass: 'tight-actions',
+      actions: [
+        {
+          iconName: 'edit',
+          tooltip: this.translate.instant('Edit'),
+          onClick: (row) => this.openForm(row),
+        },
+        {
+          iconName: 'delete',
+          tooltip: this.translate.instant('Delete'),
+          onClick: (row) => this.doDelete(row),
+          requiredRoles: this.requiredRoles,
+        },
+      ],
     }),
-  ]);
+  ], {
+    rowTestId: (row) => 'card-nfs-share-' + row.path + '-' + row.comment,
+  });
 
   constructor(
     private slideInService: IxSlideInService,
@@ -60,17 +78,24 @@ export class NfsCardComponent implements OnInit {
     private errorHandler: ErrorHandlerService,
     private ws: WebSocketService,
     private dialogService: DialogService,
-    private cdr: ChangeDetectorRef,
+    private store$: Store<ServicesState>,
+    protected emptyService: EmptyService,
   ) {}
 
   ngOnInit(): void {
+    const nfsShares$ = this.ws.call('sharing.nfs.query').pipe(
+      tap((nfsShares) => this.nfsShares = nfsShares),
+      map((nfsShares) => nfsShares.slice(0, 4)),
+      untilDestroyed(this),
+    );
+    this.dataProvider = new AsyncDataProvider<NfsShare>(nfsShares$);
     this.getNfsShares();
   }
 
   openForm(row?: NfsShare): void {
-    const slideInRef = this.slideInService.open(NfsFormComponent, { data: row });
+    const slideInRef = this.slideInService.open(NfsFormComponent, { data: { existingNfsShare: row } });
 
-    slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
+    slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
       this.getNfsShares();
     });
   }
@@ -94,15 +119,7 @@ export class NfsCardComponent implements OnInit {
   }
 
   private getNfsShares(): void {
-    this.isLoading = true;
-    this.ws.call('sharing.nfs.query').pipe(
-      untilDestroyed(this),
-    ).subscribe((nfsShares: NfsShare[]) => {
-      this.nfsShares = nfsShares;
-      this.dataProvider.setRows(nfsShares.slice(0, 4));
-      this.isLoading = false;
-      this.cdr.markForCheck();
-    });
+    this.dataProvider.load();
   }
 
   private onChangeEnabledState(row: NfsShare): void {
@@ -112,9 +129,9 @@ export class NfsCardComponent implements OnInit {
       next: () => {
         this.getNfsShares();
       },
-      error: (error: WebsocketError) => {
+      error: (error: unknown) => {
         this.getNfsShares();
-        this.dialogService.error(this.errorHandler.parseWsError(error));
+        this.dialogService.error(this.errorHandler.parseError(error));
       },
     });
   }

@@ -18,7 +18,6 @@ import { DiskType } from 'app/enums/disk-type.enum';
 import { CreateVdevLayout, VdevType } from 'app/enums/v-dev-type.enum';
 import { Enclosure } from 'app/interfaces/enclosure.interface';
 import { UnusedDisk } from 'app/interfaces/storage.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { ManualDiskSelectionComponent, ManualDiskSelectionParams } from 'app/pages/storage/modules/pool-manager/components/manual-disk-selection/manual-disk-selection.component';
 import {
   DispersalStrategy,
@@ -224,7 +223,7 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
     private dialogService: DialogService,
     private generateVdevs: GenerateVdevsService,
     private settingsStore$: Store<AppState>,
-    private dialog: MatDialog,
+    private matDialog: MatDialog,
   ) {
     super(initialState);
   }
@@ -256,26 +255,32 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
       this.ws.call('disk.get_unused'),
       this.ws.call('enclosure.query'),
     ]).pipe(
-      tapResponse(([allDisks, enclosures]) => {
-        this.patchState({
-          isLoading: false,
-          allDisks,
-          enclosures,
-        });
-      },
-      (error: WebsocketError) => {
-        this.patchState({ isLoading: false });
-        this.dialogService.error(this.errorHandler.parseWsError(error));
-      }),
+      tapResponse(
+        ([allDisks, enclosures]) => {
+          this.patchState({
+            isLoading: false,
+            allDisks,
+            enclosures,
+          });
+        },
+        (error: unknown) => {
+          this.patchState({ isLoading: false });
+          this.dialogService.error(this.errorHandler.parseError(error));
+        },
+      ),
     );
   }
 
   readonly resetTopologyCategory = this.updater((state, category: VdevType) => {
+    const newCategory = { ...initialTopology[category] };
+    if (category === VdevType.Spare || category === VdevType.Cache) {
+      newCategory.layout = CreateVdevLayout.Stripe;
+    }
     return {
       ...state,
       topology: {
         ...state.topology,
-        [category]: initialTopology[category],
+        [category]: newCategory,
       },
     };
   });
@@ -409,7 +414,7 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
         const usedDisks = topologyCategoryToDisks(state.topology[type]);
         const inventory = _.differenceBy(inventoryForStep, usedDisks, (disk: UnusedDisk) => disk.devname);
         const isVdevsLimitedToOne = type === VdevType.Spare || type === VdevType.Cache || type === VdevType.Log;
-        return this.dialog.open(ManualDiskSelectionComponent, {
+        return this.matDialog.open(ManualDiskSelectionComponent, {
           data: {
             inventory,
             layout: state.topology[type].layout,
@@ -423,7 +428,7 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
       filter(Boolean),
       tap((customVdevs: UnusedDisk[][]) => {
         if (!customVdevs.length) {
-          this.resetTopologyCategory(type);
+          this.resetStep(type);
         } else {
           this.setManualTopologyCategory(type, customVdevs);
         }

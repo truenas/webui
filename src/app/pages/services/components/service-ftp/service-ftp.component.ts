@@ -7,10 +7,10 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { filter, switchMap } from 'rxjs/operators';
+import { Role } from 'app/enums/role.enum';
 import { invertUmask } from 'app/helpers/mode.helper';
 import { idNameArrayToOptions } from 'app/helpers/operators/options.operators';
-import helptext from 'app/helptext/services/components/service-ftp';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
+import { helptextServiceFtp } from 'app/helptext/services/components/service-ftp';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
@@ -31,6 +31,8 @@ import { WebSocketService } from 'app/services/ws.service';
 export class ServiceFtpComponent implements OnInit {
   isFormLoading = false;
   isAdvancedMode = false;
+
+  kibParser = (value: string): number => this.iecFormatter.memorySizeParsing(value, 'KiB');
 
   form = this.formBuilder.group({
     port: [null as number, [portRangeValidator(), Validators.required]],
@@ -75,14 +77,15 @@ export class ServiceFtpComponent implements OnInit {
     options: [''],
   });
 
-  readonly helptext = helptext;
+  readonly helptext = helptextServiceFtp;
 
   readonly certificates$ = this.systemGeneralService.getCertificates().pipe(idNameArrayToOptions());
-  readonly tlsPolicyOptions$ = of(helptext.tls_policy_options);
+  readonly tlsPolicyOptions$ = of(helptextServiceFtp.tls_policy_options);
   readonly treeNodeProvider = this.filesystemService.getFilesystemNodeProvider();
 
   readonly isAnonymousLoginAllowed$ = this.form.select((values) => values.onlyanonymous);
   readonly isTlsEnabled$ = this.form.select((values) => values.tls);
+  protected readonly Role = Role;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -129,7 +132,7 @@ export class ServiceFtpComponent implements OnInit {
           this.slideInRef.close();
           this.cdr.markForCheck();
         },
-        error: (error) => {
+        error: (error: unknown) => {
           this.isFormLoading = false;
           this.formErrorHandler.handleWsFormError(error, this.form);
           this.cdr.markForCheck();
@@ -160,8 +163,8 @@ export class ServiceFtpComponent implements OnInit {
           this.setRootLoginWarning();
           this.cdr.markForCheck();
         },
-        error: (error: WebsocketError) => {
-          this.dialogService.error(this.errorHandler.parseWsError(error));
+        error: (error: unknown) => {
+          this.dialogService.error(this.errorHandler.parseError(error));
           this.isFormLoading = false;
           this.cdr.markForCheck();
         },
@@ -173,8 +176,8 @@ export class ServiceFtpComponent implements OnInit {
       filter(Boolean),
       switchMap(() => {
         return this.dialogService.confirm({
-          title: helptext.rootlogin_dialog_title,
-          message: helptext.rootlogin_dialog_message,
+          title: helptextServiceFtp.rootlogin_dialog_title,
+          message: helptextServiceFtp.rootlogin_dialog_message,
           buttonText: this.translate.instant('Continue'),
           cancelText: this.translate.instant('Cancel'),
         });

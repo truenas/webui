@@ -14,6 +14,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { CoreComponents } from 'app/core/core-components.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { CastModule } from 'app/modules/cast/cast.module';
+import { AppCommonModule } from 'app/modules/common/app-common.module';
 import { NgxOrderedListboxModule } from 'app/modules/common/ordered-list/ordered-list.module';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
@@ -26,7 +27,6 @@ import {
   DefaultGatewayDialogComponent,
 } from 'app/pages/network/components/default-gateway-dialog/default-gateway-dialog.component';
 import { InterfaceFormComponent } from 'app/pages/network/components/interface-form/interface-form.component';
-import { InterfaceStatusIconComponent } from 'app/pages/network/components/interfaces-card/interface-status-icon/interface-status-icon.component';
 import { InterfacesCardComponent } from 'app/pages/network/components/interfaces-card/interfaces-card.component';
 import { IpAddressesCellComponent } from 'app/pages/network/components/interfaces-card/ip-addresses-cell/ip-addresses-cell.component';
 import { IpmiCardComponent } from 'app/pages/network/components/ipmi-card/ipmi-card.component';
@@ -48,6 +48,7 @@ import { routing } from './network.routing';
     EntityModule,
     CommonModule,
     FormsModule,
+    AppCommonModule,
     ReactiveFormsModule,
     routing,
     MatCardModule,
@@ -74,7 +75,6 @@ import { routing } from './network.routing';
     DefaultGatewayDialogComponent,
     InterfaceFormComponent,
     InterfacesCardComponent,
-    InterfaceStatusIconComponent,
     IpAddressesCellComponent,
     IpmiCardComponent,
     IpmiEventsDialogComponent,

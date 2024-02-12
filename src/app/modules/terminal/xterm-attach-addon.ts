@@ -1,4 +1,6 @@
+import { Subscription } from 'rxjs';
 import { Terminal, IDisposable, ITerminalAddon } from 'xterm';
+import { ShellService } from 'app/services/shell.service';
 
 /**
  * This is basically the same as xterm-addon-attach
@@ -7,56 +9,39 @@ import { Terminal, IDisposable, ITerminalAddon } from 'xterm';
  */
 export class XtermAttachAddon implements ITerminalAddon {
   private disposables: IDisposable[] = [];
-  private encoder = new TextEncoder();
+  private subscriptions: Subscription[] = [];
 
-  constructor(private socket: WebSocket) {
-    // always set binary type to arraybuffer, we do not handle blobs
-    this.socket.binaryType = 'arraybuffer';
-  }
+  constructor(
+    private shellService: ShellService,
+  ) {}
 
   activate(terminal: Terminal): void {
-    this.disposables.push(
-      addSocketListener(this.socket, 'message', (event) => {
-        const data = event.data as ArrayBuffer | string;
+    this.subscriptions.push(
+      this.shellService.shellOutput$.subscribe((data) => {
         terminal.write(typeof data === 'string' ? data : new Uint8Array(data));
+      }),
+      this.shellService.shellConnected$.subscribe((event) => {
+        if (!event.connected) {
+          this.dispose();
+        }
       }),
     );
 
     this.disposables.push(terminal.onData((data) => this.sendBinary(data)));
     this.disposables.push(terminal.onBinary((data) => this.sendBinary(data)));
-
-    this.disposables.push(addSocketListener(this.socket, 'close', () => this.dispose()));
-    this.disposables.push(addSocketListener(this.socket, 'error', () => this.dispose()));
   }
 
   dispose(): void {
+    for (const subscription of this.subscriptions) {
+      subscription.unsubscribe();
+    }
+
     for (const disposable of this.disposables) {
       disposable.dispose();
     }
   }
 
   private sendBinary(data: string): void {
-    if (this.socket.readyState !== 1) {
-      return;
-    }
-    const buffer = this.encoder.encode(data);
-    this.socket.send(buffer);
+    this.shellService.send(data);
   }
-}
-
-function addSocketListener<K extends keyof WebSocketEventMap>(
-  socket: WebSocket,
-  type: K,
-  handler: (this: WebSocket, ev: WebSocketEventMap[K]) => unknown,
-): IDisposable {
-  socket.addEventListener(type, handler);
-  return {
-    dispose: () => {
-      if (!handler) {
-        // Already disposed
-        return;
-      }
-      socket.removeEventListener(type, handler);
-    },
-  };
 }

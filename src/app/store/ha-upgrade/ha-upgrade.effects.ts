@@ -5,7 +5,9 @@ import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { EMPTY, merge, Observable } from 'rxjs';
-import { filter, map, mergeMap, switchMap, tap, withLatestFrom } from 'rxjs/operators';
+import {
+  filter, map, mergeMap, switchMap, tap, withLatestFrom,
+} from 'rxjs/operators';
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { DialogService } from 'app/services/dialog.service';
@@ -65,11 +67,11 @@ export class HaUpgradeEffects {
     private store$: Store<AppState>,
     private dialogService: DialogService,
     private translate: TranslateService,
-    private dialog: MatDialog,
+    private matDialog: MatDialog,
   ) { }
 
   private finishUpgrade(): Observable<unknown> {
-    const dialogRef = this.dialog.open(EntityJobComponent, { data: { title: this.translate.instant('Update') } });
+    const dialogRef = this.matDialog.open(EntityJobComponent, { data: { title: this.translate.instant('Update') } });
     dialogRef.componentInstance.setCall('failover.upgrade_finish');
     dialogRef.componentInstance.disableProgressValue(true);
     dialogRef.componentInstance.submit();

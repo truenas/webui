@@ -7,7 +7,6 @@ import {
 import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { ContainerImage } from 'app/interfaces/container-image.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -49,8 +48,8 @@ export class DockerImagesComponentStore extends ComponentStore<DockerImagesState
       switchMap(() => {
         return this.ws.call('container.image.query').pipe(
           tap((entities) => this.patchState({ entities })),
-          catchError((error: WebsocketError) => {
-            this.dialog.error(this.errorHandler.parseWsError(error));
+          catchError((error: unknown) => {
+            this.dialog.error(this.errorHandler.parseError(error));
 
             this.patchState({
               isLoading: false,

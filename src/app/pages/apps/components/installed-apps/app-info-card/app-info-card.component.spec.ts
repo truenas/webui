@@ -6,9 +6,11 @@ import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
-import { MockComponents } from 'ng-mocks';
+import { MockComponents, MockDirective } from 'ng-mocks';
+import { ImgFallbackDirective } from 'ngx-img-fallback';
 import { NgxSkeletonLoaderComponent } from 'ngx-skeleton-loader';
 import { of } from 'rxjs';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { UpgradeSummary } from 'app/interfaces/application.interface';
 import { ChartRelease } from 'app/interfaces/chart-release.interface';
 import { AppCardLogoComponent } from 'app/pages/apps/components/app-card-logo/app-card-logo.component';
@@ -33,7 +35,7 @@ describe('AppInfoCardComponent', () => {
       '1.0.11': {
         name: 'ix-test-app',
       },
-    } as { [key: string]: unknown },
+    } as Record<string, unknown>,
     update_available: true,
     chart_metadata: {
       name: 'ix-test-app',
@@ -70,6 +72,7 @@ describe('AppInfoCardComponent', () => {
         AppCardLogoComponent,
         NgxSkeletonLoaderComponent,
       ),
+      MockDirective(ImgFallbackDirective),
     ],
     providers: [
       mockProvider(ApplicationsService, {
@@ -85,6 +88,7 @@ describe('AppInfoCardComponent', () => {
         open: jest.fn(() => mockDialogRef),
       }),
       mockProvider(RedirectService),
+      mockAuth(),
     ],
   });
 

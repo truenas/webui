@@ -9,7 +9,7 @@
       <ng-container *ngIf="remoteControllerOptions">
         <ix-fieldset [title]="helptext.ipmi_remote_controller | translate">
           <ix-radio-group
-            formControlName="remoteController"
+            formControlName="apply_remote"
             [label]="helptext.ipmi_remote_controller | translate"
             [options]="remoteControllerOptions"
           >
@@ -65,6 +65,7 @@
 
       <mat-card-actions class="buttons">
         <button
+          *ixRequiresRoles="requiresRoles"
           mat-button
           type="submit"
           color="primary"
@@ -84,7 +85,13 @@
           {{ 'Manage' | translate }}
         </button>
 
-        <button mat-button type="button" ixTest="toggle-identify-light" (click)="toggleFlashing()">
+        <button
+          *ixRequiresRoles="requiresRoles"
+          mat-button
+          type="button"
+          ixTest="toggle-identify-light"
+          (click)="toggleFlashing()"
+        >
           <ng-container *ngIf="!isFlashing">
             <ix-icon name="highlight"></ix-icon>
             {{ 'Flash Identify Light' | translate }}

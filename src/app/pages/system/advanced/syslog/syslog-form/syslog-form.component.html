@@ -48,15 +48,17 @@
             [required]="true"
           ></ix-select>
         </ng-container>
+
         <ix-checkbox
-          formControlName="syslog"
-          [label]="'Use System Dataset' | translate"
-          [tooltip]="tooltips.syslog | translate"
+          formControlName="syslog_audit"
+          [label]="'Include Audit Logs' | translate"
+          [tooltip]="tooltips.syslog_audit | translate"
         ></ix-checkbox>
       </ix-fieldset>
 
       <ix-form-actions>
         <button
+          *ixRequiresRoles="[Role.FullAdmin]"
           mat-button
           type="submit"
           color="primary"

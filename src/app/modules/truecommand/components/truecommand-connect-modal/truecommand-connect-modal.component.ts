@@ -1,12 +1,11 @@
 import {
-  ChangeDetectorRef, Component, Inject, OnInit,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
 } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import helptext from 'app/helptext/topbar';
+import { helptextTopbar } from 'app/helptext/topbar';
 import { TrueCommandConfig, UpdateTrueCommand } from 'app/interfaces/true-command-config.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
@@ -23,9 +22,10 @@ export type TruecommandSignupModalResult = boolean | { deregistered: boolean };
 @Component({
   styleUrls: ['./truecommand-connect-modal.component.scss'],
   templateUrl: './truecommand-connect-modal.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TruecommandConnectModalComponent implements OnInit {
-  readonly helptext = helptext;
+  readonly helptext = helptextTopbar;
 
   title: string;
   saveButtonText: string;
@@ -49,8 +49,12 @@ export class TruecommandConnectModalComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.title = this.data.isConnected ? helptext.updateDialog.title_update : helptext.updateDialog.title_connect;
-    this.saveButtonText = this.data.isConnected ? helptext.updateDialog.save_btn : helptext.updateDialog.connect_btn;
+    this.title = this.data.isConnected
+      ? helptextTopbar.updateDialog.title_update
+      : helptextTopbar.updateDialog.title_connect;
+    this.saveButtonText = this.data.isConnected
+      ? helptextTopbar.updateDialog.save_btn
+      : helptextTopbar.updateDialog.connect_btn;
 
     if (this.data.isConnected) {
       this.form.patchValue(this.data.config);
@@ -78,22 +82,25 @@ export class TruecommandConnectModalComponent implements OnInit {
         this.dialogRef.close();
 
         if (!this.isConnected) {
-          this.dialogService.info(helptext.checkEmailInfoDialog.title, helptext.checkEmailInfoDialog.message);
+          this.dialogService.info(
+            helptextTopbar.checkEmailInfoDialog.title,
+            helptextTopbar.checkEmailInfoDialog.message,
+          );
         }
       },
-      error: (err: WebsocketError) => {
+      error: (err: unknown) => {
         this.loader.close();
-        this.dialogService.error(this.errorHandler.parseWsError(err));
+        this.dialogService.error(this.errorHandler.parseError(err));
       },
     });
   }
 
   onDeregister(): void {
     this.dialogService.generalDialog({
-      title: helptext.tcDeregisterDialog.title,
-      icon: helptext.tcDeregisterDialog.icon,
-      message: helptext.tcDeregisterDialog.message,
-      confirmBtnMsg: helptext.tcDeregisterDialog.confirmBtnMsg,
+      title: helptextTopbar.tcDeregisterDialog.title,
+      icon: helptextTopbar.tcDeregisterDialog.icon,
+      message: helptextTopbar.tcDeregisterDialog.message,
+      confirmBtnMsg: helptextTopbar.tcDeregisterDialog.confirmBtnMsg,
     }).pipe(untilDestroyed(this)).subscribe((confirmed) => {
       if (!confirmed) {
         return;
@@ -107,14 +114,14 @@ export class TruecommandConnectModalComponent implements OnInit {
             this.loader.close();
             this.dialogRef.close({ deregistered: true });
             this.dialogService.generalDialog({
-              title: helptext.deregisterInfoDialog.title,
-              message: helptext.deregisterInfoDialog.message,
+              title: helptextTopbar.deregisterInfoDialog.title,
+              message: helptextTopbar.deregisterInfoDialog.message,
               hideCancel: true,
             });
           },
-          error: (err: WebsocketError) => {
+          error: (err: unknown) => {
             this.loader.close();
-            this.dialogService.error(this.errorHandler.parseWsError(err));
+            this.dialogService.error(this.errorHandler.parseError(err));
           },
         });
     });

@@ -1,6 +1,7 @@
 import { createServiceFactory, mockProvider, SpectatorService } from '@ngneat/spectator/jest';
-import { lastValueFrom } from 'rxjs';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { firstValueFrom } from 'rxjs';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
 import { TransportMode } from 'app/enums/transport-mode.enum';
 import { ExplorerNodeData, TreeNode } from 'app/interfaces/tree-node.interface';
@@ -13,7 +14,8 @@ describe('ReplicationService', () => {
   const createService = createServiceFactory({
     service: ReplicationService,
     providers: [
-      mockWebsocket([
+      mockAuth(),
+      mockWebSocket([
         mockCall('replication.list_datasets', [
           'parent',
           'parent/child1',
@@ -37,7 +39,7 @@ describe('ReplicationService', () => {
         sshCredential: 2,
       });
 
-      const childNodes = await lastValueFrom(
+      const childNodes = await firstValueFrom(
         treeNodeProvider({
           data: {
             path: 'parent',
@@ -71,7 +73,7 @@ describe('ReplicationService', () => {
         sshCredential: 2,
       });
 
-      const nodes = await lastValueFrom(
+      const nodes = await firstValueFrom(
         treeNodeProvider({
           data: {
             path: '',
@@ -101,14 +103,14 @@ describe('ReplicationService', () => {
         sshCredential: 2,
       });
 
-      await lastValueFrom(
+      await firstValueFrom(
         treeNodeProvider({
           data: {
             path: '',
           },
         } as TreeNode<ExplorerNodeData>),
       );
-      await lastValueFrom(
+      await firstValueFrom(
         treeNodeProvider({
           data: {
             path: '',

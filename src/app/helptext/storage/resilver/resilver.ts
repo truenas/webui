@@ -1,6 +1,6 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
-export default {
+export const helptextResilver = {
   enabled_tooltip: T('Set to run resilver tasks between the configured times.'),
   begin_tooltip: T('Choose the hour and minute when resilver tasks can be\
                 started.'),

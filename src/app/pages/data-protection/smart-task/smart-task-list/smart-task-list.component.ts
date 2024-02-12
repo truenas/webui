@@ -1,118 +1,172 @@
-import { Component } from '@angular/core';
+import {
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+} from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
-import helptext from 'app/helptext/data-protection/smart/smart';
+import {
+  filter, map, switchMap, tap,
+} from 'rxjs';
+import { Role } from 'app/enums/role.enum';
+import { helptextSmart } from 'app/helptext/data-protection/smart/smart';
 import { SmartTestTaskUi } from 'app/interfaces/smart-test.interface';
 import { Disk } from 'app/interfaces/storage.interface';
-import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-table.component';
-import { EntityTableAction, EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.interface';
+import { AsyncDataProvider } from 'app/modules/ix-table2/classes/async-data-provider/async-data-provider';
+import { actionsColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
+import { relativeDateColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-relative-date/ix-cell-relative-date.component';
+import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
+import { createTable } from 'app/modules/ix-table2/utils';
+import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
 import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
 import { SmartTaskFormComponent } from 'app/pages/data-protection/smart-task/smart-task-form/smart-task-form.component';
+import { DialogService } from 'app/services/dialog.service';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { StorageService } from 'app/services/storage.service';
 import { TaskService } from 'app/services/task.service';
-import { AppState } from 'app/store';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
-  template: '<ix-entity-table [title]="title" [conf]="this"></ix-entity-table>',
-  providers: [TaskService],
+  templateUrl: './smart-task-list.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SmartTaskListComponent implements EntityTableConfig {
-  title = this.translate.instant('S.M.A.R.T. Tests');
-  queryCall = 'smart.test.query' as const;
-  routeAdd: string[] = ['tasks', 'smart', 'add'];
-  routeAddTooltip = this.translate.instant('Add S.M.A.R.T. Test');
-  routeEdit: string[] = ['tasks', 'smart', 'edit'];
-  wsDelete = 'smart.test.delete' as const;
-  entityList: EntityTableComponent;
-  parent: SmartTaskListComponent;
+export class SmartTaskListComponent implements OnInit {
+  smartTasks: SmartTestTaskUi[] = [];
+  dataProvider: AsyncDataProvider<SmartTestTaskUi>;
+  disks: Disk[] = [];
+  filterString: string;
 
-  columns = [
-    {
-      name: helptext.smartlist_column_disks,
-      prop: 'disksLabel',
-      always_display: true,
-    },
-    {
-      name: helptext.smartlist_column_type,
-      prop: 'type',
-      always_display: true,
-    },
-    { name: helptext.smartlist_column_description, prop: 'desc' },
-    { name: helptext.smartlist_column_frequency, prop: 'frequency', enableMatTooltip: true },
-    {
-      name: helptext.smartlist_column_next_run,
-      prop: 'next_run',
-    },
-  ];
-  rowIdentifier = 'type';
-  config = {
-    paging: true,
-    sorting: { columns: this.columns },
-    deleteMsg: {
-      title: this.translate.instant('S.M.A.R.T. Test'),
-      key_props: ['type', 'desc'],
-    },
-  };
-  listDisks: Disk[] = [];
+  columns = createTable<SmartTestTaskUi>([
+    textColumn({
+      title: helptextSmart.smartlist_column_disks,
+      propertyName: 'disksLabel',
+    }),
+    textColumn({
+      title: helptextSmart.smartlist_column_type,
+      propertyName: 'type',
+    }),
+    textColumn({
+      title: helptextSmart.smartlist_column_description,
+      propertyName: 'desc',
+    }),
+    textColumn({
+      title: helptextSmart.smartlist_column_frequency,
+      propertyName: 'frequency',
+      getValue: (row) => this.taskService.getTaskCronDescription(row.cron_schedule),
+    }),
+    relativeDateColumn({
+      title: helptextSmart.smartlist_column_next_run,
+      propertyName: 'next_run',
+      getValue: (row) => this.taskService.getTaskNextTime(row.cron_schedule) as unknown,
+    }),
+    actionsColumn({
+      actions: [
+        {
+          iconName: 'edit',
+          tooltip: this.translate.instant('Edit'),
+          onClick: (row) => this.openForm(row),
+        },
+        {
+          iconName: 'delete',
+          tooltip: this.translate.instant('Delete'),
+          requiredRoles: [Role.FullAdmin],
+          onClick: (row) => this.doDelete(row),
+        },
+      ],
+    }),
+  ], {
+    rowTestId: (row) => 'smart-task-' + row.type + '-' + row.disks.join(','),
+  });
 
   constructor(
-    protected storageService: StorageService,
-    protected slideInService: IxSlideInService,
-    protected taskService: TaskService,
-    protected translate: TranslateService,
-    protected store$: Store<AppState>,
+    protected emptyService: EmptyService,
+    private storageService: StorageService,
+    private slideInService: IxSlideInService,
+    private taskService: TaskService,
+    private translate: TranslateService,
+    private dialogService: DialogService,
+    private ws: WebSocketService,
+    private cdr: ChangeDetectorRef,
+    private errorHandler: ErrorHandlerService,
   ) {
-    this.storageService.listDisks().pipe(untilDestroyed(this)).subscribe((listDisks) => {
-      this.listDisks = listDisks;
+    this.storageService.listDisks().pipe(filter(Boolean), untilDestroyed(this)).subscribe((disks: Disk[]) => {
+      this.disks = disks;
     });
   }
 
-  afterInit(entityList: EntityTableComponent): void {
-    this.entityList = entityList;
+  ngOnInit(): void {
+    const smartTasks$ = this.ws.call('smart.test.query').pipe(
+      map((smartTasks: SmartTestTaskUi[]) => this.transformSmartTasks(smartTasks)),
+      tap((smartTasks) => this.smartTasks = smartTasks),
+      untilDestroyed(this),
+    );
+    this.dataProvider = new AsyncDataProvider<SmartTestTaskUi>(smartTasks$);
+    this.getSmartTasks();
   }
 
-  resourceTransformIncomingRestData(data: SmartTestTaskUi[]): SmartTestTaskUi[] {
-    return data.map((test) => {
+  getSmartTasks(): void {
+    this.dataProvider.load();
+  }
+
+  openForm(row?: SmartTestTaskUi): void {
+    const slideInRef = this.slideInService.open(SmartTaskFormComponent, { data: row });
+
+    slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
+      this.getSmartTasks();
+    });
+  }
+
+  onListFiltered(query: string): void {
+    this.filterString = query.toLowerCase();
+    this.dataProvider.setRows(this.smartTasks.filter((smartTask) => {
+      return smartTask.desc.includes(this.filterString) || smartTask.type.includes(this.filterString);
+    }));
+  }
+
+  columnsChange(columns: typeof this.columns): void {
+    this.columns = [...columns];
+    this.cdr.detectChanges();
+    this.cdr.markForCheck();
+  }
+
+  private doDelete(smartTask: SmartTestTaskUi): void {
+    this.dialogService.confirm({
+      title: this.translate.instant('Confirmation'),
+      message: this.translate.instant('Delete S.M.A.R.T. Test <b>"{name}"</b>?', {
+        name: `${smartTask.type} - ${smartTask.desc}`,
+      }),
+    }).pipe(
+      filter(Boolean),
+      switchMap(() => this.ws.call('smart.test.delete', [smartTask.id])),
+      untilDestroyed(this),
+    ).subscribe({
+      next: () => {
+        this.getSmartTasks();
+      },
+      error: (error) => this.errorHandler.showErrorModal(error),
+    });
+  }
+
+  private transformSmartTasks(smartTasks: SmartTestTaskUi[]): SmartTestTaskUi[] {
+    return smartTasks.map((test) => {
       test.cron_schedule = scheduleToCrontab(test.schedule);
-      test.frequency = this.taskService.getTaskCronDescription(test.cron_schedule);
-      test.next_run = this.taskService.getTaskNextRun(test.cron_schedule);
 
       if (test.all_disks) {
-        test.disksLabel = [this.translate.instant(helptext.smarttest_all_disks_placeholder)];
+        test.disksLabel = [this.translate.instant(helptextSmart.smarttest_all_disks_placeholder)];
       } else if (test.disks.length) {
-        const readableDisks = test.disks.map((disk) => {
-          return this.listDisks.find((item) => item.identifier === disk).devname;
-        });
-        test.disksLabel = readableDisks;
+        test.disksLabel = [
+          test.disks
+            .map((identifier: string) => {
+              const fullDisk = this.disks.find((item) => item.identifier === identifier);
+              if (fullDisk) {
+                return fullDisk.devname;
+              }
+              return identifier;
+            })
+            .join(','),
+        ];
       }
       return test;
     });
-  }
-
-  doAdd(): void {
-    const slideInRef = this.slideInService.open(SmartTaskFormComponent);
-    slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => this.entityList.getData());
-  }
-
-  getActions(): EntityTableAction<SmartTestTaskUi>[] {
-    return [{
-      id: 'edit',
-      icon: 'edit',
-      label: 'Edit',
-      onClick: (row: SmartTestTaskUi) => {
-        const slideInRef = this.slideInService.open(SmartTaskFormComponent, { data: row });
-        slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => this.entityList.getData());
-      },
-    }, {
-      id: 'delete',
-      icon: 'delete',
-      label: 'Delete',
-      onClick: (rowinner: SmartTestTaskUi) => {
-        this.entityList.doDelete(rowinner);
-      },
-    }] as EntityTableAction[];
   }
 }

@@ -6,8 +6,9 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { of } from 'rxjs';
 import { GiB } from 'app/constants/bytes.constant';
 import { CoreComponents } from 'app/core/core-components.module';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockEntityJobComponentRef } from 'app/core/testing/utils/mock-entity-job-component-ref.utils';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { DiskType } from 'app/enums/disk-type.enum';
 import { CreateVdevLayout } from 'app/enums/v-dev-type.enum';
 import { Enclosure } from 'app/interfaces/enclosure.interface';
@@ -43,7 +44,7 @@ describe('PoolManagerComponent – creating dRAID pool', () => {
     ],
     providers: [
       ...commonProviders,
-      mockWebsocket([
+      mockWebSocket([
         mockCall('pool.validate_name', true),
         mockCall('disk.get_unused', [
           {
@@ -133,6 +134,7 @@ describe('PoolManagerComponent – creating dRAID pool', () => {
           };
         }),
       }),
+      mockAuth(),
     ],
   });
 
@@ -157,14 +159,14 @@ describe('PoolManagerComponent – creating dRAID pool', () => {
 
     await wizard.fillStep({
       'Disk Size': '20 GiB (HDD)',
-      'Data Devices': '1',
+      'Data Devices': '2',
       'Distributed Hot Spares': '1',
-      Children: '3',
+      Children: '4',
       'Number of VDEVs': '1',
     });
 
     expect(await wizard.getConfigurationPreviewSummary()).toMatchObject({
-      'Data:': '1 × DRAID1 | 3 × 20 GiB (HDD)',
+      'Data:': '1 × DRAID1 | 4 × 20 GiB (HDD)',
     });
 
     const stepper = await wizard.getStepper();
@@ -190,14 +192,15 @@ describe('PoolManagerComponent – creating dRAID pool', () => {
       topology: {
         data: [
           {
-            disks: ['sda3', 'sda0', 'sda1'],
+            disks: ['sda3', 'sda0', 'sda1', 'sda2'],
             type: CreateVdevLayout.Draid1,
-            draid_data_disks: 1,
+            draid_data_disks: 2,
             draid_spare_disks: 1,
           },
         ],
         cache: [],
         dedup: [],
+        spares: [],
         log: [],
         special: [],
       },

@@ -6,6 +6,7 @@ import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { filter, switchMap } from 'rxjs/operators';
 import { EmptyType } from 'app/enums/empty-type.enum';
+import { Role } from 'app/enums/role.enum';
 import { NtpServer } from 'app/interfaces/ntp-server.interface';
 import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
 import { NtpServerFormComponent } from 'app/pages/system/general-settings/ntp-server/ntp-server-form/ntp-server-form.component';
@@ -33,6 +34,7 @@ export class NtpServerCardComponent implements OnInit {
   ];
   loading = false;
   error = false;
+  protected readonly Role = Role;
 
   get emptyType(): EmptyType {
     if (this.loading) {
@@ -84,19 +86,21 @@ export class NtpServerCardComponent implements OnInit {
 
   doAdd(): void {
     const slideInRef = this.slideInService.open(NtpServerFormComponent);
-    slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => this.getData());
+    slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => this.getData());
   }
 
   doEdit(server: NtpServer): void {
     const slideInRef = this.slideInService.open(NtpServerFormComponent, { data: server });
-    slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => this.getData());
+    slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => this.getData());
   }
 
   doDelete(server: NtpServer): void {
     this.dialog.confirm({
       title: this.translate.instant('Delete NTP Server'),
-      message: this.translate.instant('Are you sure you want to delete the <b>{address}</b> NTP Server?',
-        { address: server.address }),
+      message: this.translate.instant(
+        'Are you sure you want to delete the <b>{address}</b> NTP Server?',
+        { address: server.address },
+      ),
       buttonText: this.translate.instant('Delete'),
     }).pipe(
       filter(Boolean),

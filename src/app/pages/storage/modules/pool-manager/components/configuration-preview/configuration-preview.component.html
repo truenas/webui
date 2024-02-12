@@ -13,7 +13,7 @@
           {{ category.key | mapValue: vdevTypeLabels | translate }}:
         </div>
         <div class="value">
-          {{ category.value | ixTopologyCategoryDescription: !isLimitedToOneLayout(category.key) }}
+          {{ category.value | ixTopologyCategoryDescription: !isLimitedToOneLayout(category.key | cast) }}
         </div>
       </div>
       <div class="details-item">
@@ -22,7 +22,7 @@
       </div>
       <div class="details-item">
         <div class="label">{{ 'Total Raw Capacity' | translate }}:</div>
-        <div class="value">{{ totalCapacity$ | async | filesize: { standard: 'iec' } }}</div>
+        <div class="value">{{ totalCapacity$ | async | ixFileSize }}</div>
       </div>
     </div>
   </mat-card-content>

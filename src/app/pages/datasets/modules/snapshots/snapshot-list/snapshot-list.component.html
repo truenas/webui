@@ -45,6 +45,7 @@
 
   <div class="actions">
     <button
+      *ixRequiresRoles="[Role.SnapshotDelete]"
       mat-button
       matTooltipPosition="below"
       ixTest="delete-selected"
@@ -97,7 +98,7 @@
       <ng-container
         *ngIf="snapshot?.properties?.used?.parsed; else notAvailable"
       >
-        {{ +snapshot.properties.used.parsed | filesize: { standard: 'iec' } }}
+        {{ +snapshot.properties.used.parsed | ixFileSize }}
       </ng-container>
     </td>
   </ng-container>
@@ -126,7 +127,7 @@
       <ng-container
         *ngIf="snapshot?.properties?.referenced?.parsed; else notAvailable"
       >
-        {{ +snapshot.properties.referenced.parsed | filesize: { standard: 'iec' } }}
+        {{ +snapshot.properties.referenced.parsed | ixFileSize }}
       </ng-container>
     </td>
   </ng-container>

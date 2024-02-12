@@ -2,6 +2,7 @@ import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
 } from '@angular/core';
 import { Validators } from '@angular/forms';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
@@ -9,14 +10,18 @@ import _ from 'lodash';
 import { Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { IscsiAuthMethod, IscsiTargetMode } from 'app/enums/iscsi.enum';
+import { Role } from 'app/enums/role.enum';
 import { helptextSharingIscsi } from 'app/helptext/sharing';
 import { IscsiTarget, IscsiTargetGroup } from 'app/interfaces/iscsi.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
+import { TargetNameValidationService } from 'app/pages/sharing/iscsi/target/target-name-validation.service';
 import { IscsiService } from 'app/services/iscsi.service';
 import { WebSocketService } from 'app/services/ws.service';
+
+const allInitatorsAllowed = T('ALL Initiators Allowed');
 
 @UntilDestroy()
 @Component({
@@ -50,11 +55,13 @@ export class TargetFormComponent implements OnInit {
       return opts;
     }),
   );
-  readonly initiators$ = this.iscsiService.listInitiators().pipe(
+  readonly initiators$ = this.iscsiService.getInitiators().pipe(
     map((initiators) => {
       const opts: Option[] = [];
       initiators.forEach((initiator) => {
-        const initiatorsAllowed = initiator.initiators.length === 0 ? 'ALL Initiators Allowed' : initiator.initiators.toString();
+        const initiatorsAllowed = initiator.initiators.length === 0
+          ? allInitatorsAllowed
+          : initiator.initiators.toString();
         const optionLabel = `${initiator.id} (${initiatorsAllowed})`;
         opts.push({ label: optionLabel, value: initiator.id });
       });
@@ -73,10 +80,20 @@ export class TargetFormComponent implements OnInit {
     }),
   );
 
+  readonly requiredRoles = [
+    Role.SharingIscsiTargetWrite,
+    Role.SharingIscsiWrite,
+    Role.SharingWrite,
+  ];
+
   isLoading = false;
 
   form = this.formBuilder.group({
-    name: ['', Validators.required],
+    name: [
+      '',
+      [Validators.required],
+      [this.targetNameValidationService.validateTargetName(this.editingTarget?.name)],
+    ],
     alias: [''],
     mode: [IscsiTargetMode.Iscsi],
     groups: this.formBuilder.array<IscsiTargetGroup>([]),
@@ -91,6 +108,7 @@ export class TargetFormComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private ws: WebSocketService,
     private slideInRef: IxSlideInRef<TargetFormComponent>,
+    private targetNameValidationService: TargetNameValidationService,
     @Inject(SLIDE_IN_DATA) private editingTarget: IscsiTarget,
   ) {}
 
@@ -124,9 +142,9 @@ export class TargetFormComponent implements OnInit {
     request$.pipe(untilDestroyed(this)).subscribe({
       next: () => {
         this.isLoading = false;
-        this.slideInRef.close();
+        this.slideInRef.close(true);
       },
-      error: (error) => {
+      error: (error: unknown) => {
         this.isLoading = false;
         this.errorHandler.handleWsFormError(error, this.form);
         this.cdr.markForCheck();

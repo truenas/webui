@@ -138,6 +138,7 @@
 
       <ix-form-actions>
         <button
+          *ixRequiresRoles="[Role.DirectoryServiceWrite]"
           mat-button
           type="submit"
           color="primary"
@@ -150,18 +151,26 @@
         <button mat-button type="button" ixTest="toggle-advanced" (click)="onAdvancedModeToggled()">
           {{ isAdvancedMode ? ('Basic Options' | translate) : ('Advanced Options' | translate) }}
         </button>
-        <button mat-button type="button" ixTest="rebuild-cache" (click)="onRebuildCachePressed()">
-          {{ 'Rebuild Directory Service Cache' | translate }}
-        </button>
         <button
-          *ngIf="canLeaveDomain"
+          *ixRequiresRoles="[Role.DirectoryServiceWrite]"
           mat-button
           type="button"
-          ixTest="leave-domain"
-          (click)="onLeaveDomainPressed()"
+          ixTest="rebuild-cache"
+          (click)="onRebuildCachePressed()"
         >
-          {{ 'Leave Domain' | translate }}
+          {{ 'Rebuild Directory Service Cache' | translate }}
         </button>
+        <ng-container *ixRequiresRoles="[Role.DirectoryServiceWrite]">
+          <button
+            *ngIf="canLeaveDomain"
+            mat-button
+            type="button"
+            ixTest="leave-domain"
+            (click)="onLeaveDomainPressed()"
+          >
+            {{ 'Leave Domain' | translate }}
+          </button>
+        </ng-container>
       </ix-form-actions>
     </form>
   </mat-card-content>

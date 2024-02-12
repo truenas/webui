@@ -14,6 +14,11 @@ def Click_Clear_Input(driver, xpath, value):
     driver.find_element_by_xpath(xpath).send_keys(value)
 
 
+def Click_On_Element(driver, xpath):
+    assert wait_on_element(driver, 7, xpath, 'clickable')
+    driver.find_element_by_xpath(xpath).click()
+
+
 def Close_Common_Warning(driver):
     assert wait_on_element(driver, 5, xpaths.popup.warning)
     assert wait_on_element(driver, 5, xpaths.button.close, 'clickable')
@@ -108,8 +113,10 @@ def Leave_Domain(driver, user, password):
 
 def License_Agrement(driver):
     if wait_on_element(driver, 2, xpaths.popup.license_Agrement_Title):
-        assert wait_on_element(driver, 2, xpaths.button.Continue, 'clickable')
-        driver.find_element_by_xpath(xpaths.button.Continue).click()
+        if wait_on_element(driver, 5, f'({xpaths.button.Continue})[2]', 'clickable'):
+            driver.find_element_by_xpath(f'({xpaths.button.Continue})[2]').click()
+        if wait_on_element(driver, 5, xpaths.button.Continue, 'clickable'):
+            driver.find_element_by_xpath(xpaths.button.Continue).click()
 
 
 def Login(driver, user, password):
@@ -138,12 +145,12 @@ def Login_If_Not_On_Dashboard(driver, user, password):
 
 def Restart_SMB_Service(driver):
     assert wait_on_element(driver, 7, xpaths.popup.smb_Restart_Title)
-    assert wait_on_element(driver, 5, xpaths.popup.smb_Restart_Button, 'clickable')
-    driver.find_element_by_xpath(xpaths.popup.smb_Restart_Button).click()
+    assert wait_on_element(driver, 5, xpaths.popup.restart_Service_Button, 'clickable')
+    driver.find_element_by_xpath(xpaths.popup.restart_Service_Button).click()
 
 
 def Return_To_Pool_list(driver):
-    if wait_on_element(driver, 15, '//h1[contains(text(),"Set ACL for this dataset")]'):
+    if wait_on_element(driver, 30, '//h1[contains(text(),"Set ACL for this dataset")]'):
         assert wait_on_element(driver, 5, xpaths.button.dialog_Cancel, 'clickable')
         driver.find_element_by_xpath(xpaths.button.dialog_Cancel).click()
 
@@ -159,6 +166,18 @@ def Select_Option(driver, xpath):
     driver.find_element_by_xpath(xpath).click()
 
 
+def set_checkbox(driver: classmethod, xpath: str) -> None:
+    set_checkbox_by_state(driver, xpath, True)
+
+
+def set_checkbox_by_state(driver: classmethod, xpath: str, state: bool) -> None:
+    assert wait_on_element(driver, 5, xpath, 'clickable')
+    if driver.find_element_by_xpath(f'{xpath}//input').get_property('checked') != state:
+        driver.find_element_by_xpath(xpath).click()
+    assert driver.find_element_by_xpath(f'{xpath}//input').get_property('checked') == state
+
+
+
 def Start_Or_Restart_SMB_Service(driver):
     if wait_on_element(driver, 10, xpaths.popup.smb_Start_Title):
         Start_SMB_Service(driver)
@@ -168,9 +187,20 @@ def Start_Or_Restart_SMB_Service(driver):
 
 def Start_SMB_Service(driver):
     assert wait_on_element(driver, 7, xpaths.popup.smb_Start_Title)
-    assert wait_on_element(driver, 5, xpaths.popup.enable_Service_To_Start_Automatically_Checkbox, 'clickable')
-    driver.find_element_by_xpath(xpaths.popup.enable_Service_To_Start_Automatically_Checkbox).click()
-    driver.find_element_by_xpath(xpaths.popup.enable_Service_Button).click()
+    Click_On_Element(driver, xpaths.popup.start_Service_Button)
+    time.sleep(1)
+
+
+def Start_iSCSI_Service(driver):
+    assert wait_on_element(driver, 7, xpaths.popup.iscsi_Start_Title)
+    Click_On_Element(driver, xpaths.popup.start_Service_Button)
+    time.sleep(1)
+
+
+def start_nfs_service(driver):
+    assert wait_on_element(driver, 7, xpaths.popup.nfs_Start_Title)
+    Click_On_Element(driver, xpaths.popup.start_Service_Button)
+    time.sleep(1)
 
 
 def Trigger_Failover(driver):
@@ -178,6 +208,10 @@ def Trigger_Failover(driver):
     assert wait_on_element(driver, 10, xpaths.dashboard.system_Information_Standby_Title)
     assert wait_on_element(driver, 10, xpaths.button.initiate_Failover, 'clickable')
     driver.find_element_by_xpath(xpaths.button.initiate_Failover).click()
+
+
+def unset_checkbox(driver: classmethod, xpath: str) -> None:
+    set_checkbox_by_state(driver, xpath, False)
 
 
 def Verify_Degraded_Alert(driver):

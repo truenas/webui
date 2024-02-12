@@ -5,12 +5,16 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { of } from 'rxjs';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { Store } from '@ngrx/store';
+import { MockStore, provideMockStore } from '@ngrx/store/testing';
+import { of, throwError } from 'rxjs';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { helptextSharingSmb } from 'app/helptext/sharing';
 import { FileSystemStat } from 'app/interfaces/filesystem-stat.interface';
+import { Group } from 'app/interfaces/group.interface';
 import { Service } from 'app/interfaces/service.interface';
 import { SmbPresets, SmbPresetType, SmbShare } from 'app/interfaces/smb-share.interface';
 import { IxCheckboxHarness } from 'app/modules/ix-forms/components/ix-checkbox/ix-checkbox.harness';
@@ -28,6 +32,9 @@ import { DialogService } from 'app/services/dialog.service';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
+import { AppState } from 'app/store';
+import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
+import { selectServices } from 'app/store/services/services.selectors';
 import { SmbFormComponent } from './smb-form.component';
 
 describe('SmbFormComponent', () => {
@@ -58,9 +65,14 @@ describe('SmbFormComponent', () => {
     cluster_volname: '',
     locked: false,
     path_local: '/mnt/pool123/ds222',
+    audit: {
+      enable: true,
+      watch_list: [],
+      ignore_list: [],
+    },
   };
 
-  const formLabels: { [key: string]: string } = {
+  const formLabels: Record<string, string> = {
     path: 'Path',
     name: 'Name',
     purpose: 'Purpose',
@@ -83,6 +95,8 @@ describe('SmbFormComponent', () => {
     durablehandle: 'Enable SMB2/3 Durable Handles',
     fsrvp: 'Enable FSRVP',
     path_suffix: 'Path Suffix',
+    watch_list: 'Watch List',
+    ignore_list: 'Ignore List',
   };
 
   const presets: SmbPresets = {
@@ -117,6 +131,8 @@ describe('SmbFormComponent', () => {
   let loader: HarnessLoader;
   let form: IxFormHarness;
   let websocket: WebSocketService;
+  let mockStore$: MockStore<AppState>;
+  let store$: Store<AppState>;
 
   const createComponent = createComponentFactory({
     component: SmbFormComponent,
@@ -125,29 +141,22 @@ describe('SmbFormComponent', () => {
       IxFormsModule,
     ],
     providers: [
-      mockWebsocket([
+      mockAuth(),
+      mockWebSocket([
+        mockCall('group.query', [{ group: 'test' }] as Group[]),
         mockCall('sharing.smb.create', { ...existingShare }),
         mockCall('sharing.smb.update', { ...existingShare }),
+        mockCall('sharing.smb.share_precheck', null),
         mockCall('sharing.smb.query', [
           { ...existingShare },
         ]),
-        mockCall('service.query', [{
-          service: ServiceName.Cifs,
-          id: 4,
-          enable: false,
-          state: ServiceStatus.Running,
-        } as Service]),
         mockCall('filesystem.stat', {
           acl: false,
         } as FileSystemStat),
-        mockCall('service.update'),
-        mockCall('service.start'),
         mockCall('service.restart'),
         mockCall('sharing.smb.presets', { ...presets }),
         mockCall('filesystem.acl_is_trivial', false),
-        mockCall('pool.dataset.path_in_locked_datasets', false),
       ]),
-      mockProvider(IxSlideInService),
       mockProvider(IxSlideInService),
       mockProvider(Router),
       mockProvider(AppLoaderService),
@@ -163,6 +172,12 @@ describe('SmbFormComponent', () => {
       }),
       mockProvider(SnackbarService),
       mockProvider(IxSlideInRef),
+      provideMockStore({
+        selectors: [{
+          selector: selectServices,
+          value: [],
+        }],
+      }),
       { provide: SLIDE_IN_DATA, useValue: undefined },
     ],
   });
@@ -171,7 +186,7 @@ describe('SmbFormComponent', () => {
     beforeEach(async () => {
       spectator = createComponent({
         providers: [
-          { provide: SLIDE_IN_DATA, useValue: existingShare },
+          { provide: SLIDE_IN_DATA, useValue: { existingSmbShare: existingShare } },
         ],
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
@@ -185,7 +200,7 @@ describe('SmbFormComponent', () => {
 
       const values = await form.getValues();
 
-      const existingShareWithLabels: { [key: string]: unknown } = {};
+      const existingShareWithLabels: Record<string, unknown> = {};
       Object.keys(existingShare).forEach((key) => {
         if (!formLabels[key]) {
           return;
@@ -228,6 +243,9 @@ describe('SmbFormComponent', () => {
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       form = await loader.getHarness(IxFormHarness);
       websocket = spectator.inject(WebSocketService);
+      mockStore$ = spectator.inject(MockStore);
+      store$ = spectator.inject(Store);
+      jest.spyOn(store$, 'dispatch');
     });
 
     it('shows all the fields when Advanced Options button is pressed', async () => {
@@ -248,12 +266,6 @@ describe('SmbFormComponent', () => {
         'Multi-user time machine',
         'Private SMB Datasets and Shares',
       ]);
-    });
-
-    it('should have error for duplicate share name', async () => {
-      const nameControl = await loader.getHarness(IxInputHarness.with({ label: 'Name' }));
-      await nameControl.setValue('ds222');
-      expect(await nameControl.getErrorText()).toBe('The name "ds222" is already in use.');
     });
 
     it('when a preset is selected, the relevant fields should be impacted', async () => {
@@ -358,10 +370,18 @@ describe('SmbFormComponent', () => {
     });
 
     it('should submit the form with the correct value', async () => {
+      mockStore$.overrideSelector(selectServices, [{
+        id: 4,
+        service: ServiceName.Cifs,
+        enable: true,
+        state: ServiceStatus.Running,
+      } as Service]);
+      mockStore$.refreshState();
+
       const advancedButton = await loader.getHarness(MatButtonHarness.with({ text: 'Advanced Options' }));
       await advancedButton.click();
 
-      const attrs: { [key: string]: unknown } = {};
+      const attrs: Record<string, unknown> = {};
       Object.keys(existingShare).forEach((key) => {
         if (formLabels[key]) {
           attrs[formLabels[key]] = existingShare[key as keyof SmbShare];
@@ -409,22 +429,22 @@ describe('SmbFormComponent', () => {
         durablehandle: true,
         fsrvp: false,
         timemachine_quota: 0,
+        audit: {
+          enable: true,
+          watch_list: [],
+          ignore_list: [],
+        },
       }]);
 
-      expect(websocket.call).toHaveBeenCalledWith('service.query');
-
-      expect(spectator.inject(MatDialog).open)
-        .toHaveBeenCalledWith(RestartSmbDialogComponent, {
-          data: {
-            timemachine: true,
-            homeshare: true,
-            path: false,
-            hosts: true,
-            isNew: true,
-          },
-        });
-
-      expect(websocket.call).toHaveBeenCalledWith('service.restart', [ServiceName.Cifs]);
+      expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(RestartSmbDialogComponent, {
+        data: {
+          timemachine: true,
+          homeshare: true,
+          path: false,
+          hosts: true,
+          isNew: true,
+        },
+      });
 
       expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith(
         helptextSharingSmb.restarted_smb_dialog.message,
@@ -445,6 +465,117 @@ describe('SmbFormComponent', () => {
           ['/', 'datasets', 'acl', 'edit'],
           { queryParams: { homeShare, path: sharePath } },
         );
+    });
+
+    it('should submit the form with the correct value and check service action is dispatched', async () => {
+      mockStore$.overrideSelector(selectServices, [{
+        id: 4,
+        service: ServiceName.Cifs,
+        enable: false,
+        state: ServiceStatus.Stopped,
+      } as Service]);
+      mockStore$.refreshState();
+
+      const advancedButton = await loader.getHarness(MatButtonHarness.with({ text: 'Advanced Options' }));
+      await advancedButton.click();
+
+      const attrs: Record<string, unknown> = {};
+      Object.keys(existingShare).forEach((key) => {
+        if (formLabels[key]) {
+          attrs[formLabels[key]] = existingShare[key as keyof SmbShare];
+        }
+      });
+
+      attrs[formLabels.purpose] = presets[attrs[formLabels.purpose] as string].verbose_name;
+      attrs[formLabels.name] = 'ds223';
+      attrs[formLabels.hostsallow] = ['host11'];
+      attrs[formLabels.hostsdeny] = ['host22'];
+      await form.fillForm({
+        ...attrs,
+      });
+
+      expect(spectator.inject(DialogService).confirm).toHaveBeenLastCalledWith({
+        title: helptextSharingSmb.stripACLDialog.title,
+        message: helptextSharingSmb.stripACLDialog.message,
+        hideCheckbox: true,
+        buttonText: helptextSharingSmb.stripACLDialog.button,
+        hideCancel: true,
+      });
+
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      await saveButton.click();
+
+      expect(websocket.call).toHaveBeenCalledWith('sharing.smb.create', [{
+        path: '/mnt/pool123/ds222',
+        name: 'ds223',
+        purpose: SmbPresetType.MultiUserTimeMachine,
+        comment: '',
+        enabled: true,
+        acl: true,
+        ro: false,
+        browsable: true,
+        guestok: true,
+        abe: true,
+        hostsallow: ['host11'],
+        hostsdeny: ['host22'],
+        home: false,
+        afp: false,
+        shadowcopy: true,
+        recyclebin: true,
+        aapl_name_mangling: false,
+        streams: true,
+        durablehandle: true,
+        fsrvp: false,
+        timemachine_quota: 0,
+        audit: {
+          enable: true,
+          watch_list: [],
+          ignore_list: [],
+        },
+      }]);
+
+      const sharePath = await (await loader.getHarness(
+        IxExplorerHarness.with({ label: formLabels.path }),
+      )).getValue();
+
+      expect(websocket.call).toHaveBeenCalledWith('filesystem.stat', [sharePath]);
+
+      const homeShare = await (await loader.getHarness(
+        IxCheckboxHarness.with({ label: formLabels.home }),
+      )).getValue();
+
+      expect(spectator.inject(Router).navigate)
+        .toHaveBeenCalledWith(
+          ['/', 'datasets', 'acl', 'edit'],
+          { queryParams: { homeShare, path: sharePath } },
+        );
+
+      expect(store$.dispatch).toHaveBeenCalledWith(checkIfServiceIsEnabled({ serviceName: ServiceName.Cifs }));
+    });
+  });
+
+  describe('smb validation', () => {
+    beforeEach(async () => {
+      spectator = createComponent();
+      websocket = spectator.inject(WebSocketService);
+      jest.spyOn(websocket, 'call').mockImplementation((method) => {
+        if (method === 'sharing.smb.share_precheck') {
+          return throwError({ reason: '[EEXIST] sharing.smb.share_precheck.name: Share with this name already exists.' });
+        }
+        return null;
+      });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      form = await loader.getHarness(IxFormHarness);
+      websocket = spectator.inject(WebSocketService);
+      mockStore$ = spectator.inject(MockStore);
+      store$ = spectator.inject(Store);
+      jest.spyOn(store$, 'dispatch');
+    });
+
+    it('should have error for duplicate share name', async () => {
+      const nameControl = await loader.getHarness(IxInputHarness.with({ label: 'Name' }));
+      await nameControl.setValue('ds222');
+      expect(await nameControl.getErrorText()).toBe('Share with this name already exists');
     });
   });
 });

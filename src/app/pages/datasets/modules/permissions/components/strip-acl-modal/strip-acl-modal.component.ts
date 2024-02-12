@@ -5,7 +5,7 @@ import { FormControl } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import helptext from 'app/helptext/storage/volumes/datasets/dataset-acl';
+import { helptextAcl } from 'app/helptext/storage/volumes/datasets/dataset-acl';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 
 export interface StripAclModalData {
@@ -21,7 +21,7 @@ export interface StripAclModalData {
 export class StripAclModalComponent {
   traverseCheckbox = new FormControl(false);
 
-  readonly helptext = helptext;
+  readonly helptext = helptextAcl;
 
   constructor(
     private matDialog: MatDialog,

@@ -11,15 +11,12 @@ import { ValueReaction } from 'popmotion/lib/reactions/value';
 import { Subject } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
 import { ThemeUtils } from 'app/core/classes/theme-utils/theme-utils';
-import { EnclosureSlotStatus } from 'app/enums/enclosure-slot-status.enum';
+import { EnclosureSlotDiskStatus, EnclosureSlotStatus } from 'app/enums/enclosure-slot-status.enum';
 import { TopologyItemType } from 'app/enums/v-dev-type.enum';
 import { TopologyItemStatus } from 'app/enums/vdev-status.enum';
 import {
-  Enclosure, EnclosureElement, EnclosureSlot, EnclosureView,
+  Enclosure, EnclosureElement, EnclosureElementsGroup, EnclosureSlot, EnclosureView,
 } from 'app/interfaces/enclosure.interface';
-import { CoreEvent } from 'app/interfaces/events';
-import { CanvasExtractEvent, DriveSelectedEvent } from 'app/interfaces/events/disk-events.interface';
-import { LabelDrivesEvent } from 'app/interfaces/events/label-drives-event.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { Disk, TopologyDisk } from 'app/interfaces/storage.interface';
 import { Theme } from 'app/interfaces/theme.interface';
@@ -30,11 +27,14 @@ import { E16 } from 'app/pages/system/view-enclosure/classes/hardware/e16';
 import { E24 } from 'app/pages/system/view-enclosure/classes/hardware/e24';
 import { E60 } from 'app/pages/system/view-enclosure/classes/hardware/e60';
 import { Es102 } from 'app/pages/system/view-enclosure/classes/hardware/es102';
+import { Es102G2 } from 'app/pages/system/view-enclosure/classes/hardware/es102g2';
 import { Es12 } from 'app/pages/system/view-enclosure/classes/hardware/es12';
 import { Es24 } from 'app/pages/system/view-enclosure/classes/hardware/es24';
 import { Es24F } from 'app/pages/system/view-enclosure/classes/hardware/es24f';
 import { Es60 } from 'app/pages/system/view-enclosure/classes/hardware/es60';
+import { Es60G2 } from 'app/pages/system/view-enclosure/classes/hardware/es60g2';
 import { F60 } from 'app/pages/system/view-enclosure/classes/hardware/f60';
+import { H10 } from 'app/pages/system/view-enclosure/classes/hardware/h10';
 import { M50 } from 'app/pages/system/view-enclosure/classes/hardware/m50';
 import { MINIR } from 'app/pages/system/view-enclosure/classes/hardware/mini-r';
 import { R10 } from 'app/pages/system/view-enclosure/classes/hardware/r10';
@@ -52,6 +52,11 @@ import {
   SetEnclosureLabelDialogData,
 } from 'app/pages/system/view-enclosure/components/set-enclosure-label-dialog/set-enclosure-label-dialog.component';
 import { SystemProfile } from 'app/pages/system/view-enclosure/components/view-enclosure/view-enclosure.component';
+import {
+  ChangeDriveTrayOptions,
+  EnclosureEvent,
+  LabelDrivesEvent,
+} from 'app/pages/system/view-enclosure/interfaces/enclosure-events.interface';
 import { ViewConfig } from 'app/pages/system/view-enclosure/interfaces/view.config';
 import { EnclosureState, EnclosureStore } from 'app/pages/system/view-enclosure/stores/enclosure-store.service';
 import { DialogService } from 'app/services/dialog.service';
@@ -94,7 +99,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
   // eslint-disable-next-line @angular-eslint/no-input-rename
   @Input('current-tab') currentTab: ViewConfig;
   // eslint-disable-next-line @angular-eslint/no-input-rename
-  @Input('controller-events') controllerEvent$: Subject<CoreEvent>;
+  @Input('controller-events') controllerEvent$: Subject<EnclosureEvent>;
   // eslint-disable-next-line @angular-eslint/no-input-rename
   @Input('profile') systemProfile: SystemProfile;
   enclosureViews: EnclosureView[] = [];
@@ -150,33 +155,31 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
     return [];
   }
 
-  get selectedVdevSlotNumbers(): { [devName: string]: number } {
+  get selectedVdevSlotNumbers(): Record<string, number> {
     const result: unknown = {};
     this.selectedVdevDisks.forEach((diskName: string) => {
       const disk = this.systemState.disks.filter((drive: Disk) => drive.name === diskName);
-      if (disk.length) (result as { [devName: string]: number })[disk[0].name] = disk[0].enclosure.slot;
+      if (disk.length) (result as Record<string, number>)[disk[0].name] = disk[0].enclosure.slot;
     });
 
-    return result as { [devName: string]: number };
+    return result as Record<string, number>;
   }
 
   get selectedVdevSlots(): EnclosureSlot[] | null {
     if (!this.selectedVdevDisks) return [];
 
-    const selectedVdevSlots: unknown[] = this.selectedVdevDisks.map((diskName: string) => {
+    const selectedVdevSlots: EnclosureSlot[] = [];
+    this.selectedVdevDisks.forEach((diskName: string) => {
       const enclosure = this.systemState.disks.find((disk: Disk) => disk.name === diskName)?.enclosure;
 
       if (enclosure) {
-        return this.systemState.enclosureViews.find((view: EnclosureView) => {
-          return view.number === enclosure.number;
-        }).slots.find((eSlot: EnclosureSlot) => {
-          return eSlot.slot === enclosure.slot;
-        });
+        const view = this.systemState.enclosureViews.find((enclosureView) => enclosureView.number === enclosure.number);
+        const slot = view?.slots?.find((eSlot) => eSlot.slot === enclosure.slot);
+        if (slot) selectedVdevSlots.push(slot);
       }
-      return null;
     });
 
-    return selectedVdevSlots as EnclosureSlot[];
+    return selectedVdevSlots;
   }
 
   get selectedEnclosurePools(): string[] {
@@ -235,7 +238,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
   subenclosure: { poolKeys: Record<string, number> }; // Declare rear and internal enclosure visualizations here
 
   chassis: Chassis;
-  view: string = EnclosureLocation.Front;
+  view = EnclosureLocation.Front;
   get chassisView(): ChassisView {
     if (!this.chassis) return null;
 
@@ -287,7 +290,9 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
     this.diskTemperatureService.listenForTemperatureUpdates();
 
     this.diskTemperatureService.temperature$.pipe(untilDestroyed(this)).subscribe((data) => {
-      const chassisView: ChassisView = this.chassisView && this.view === 'rear' ? this.chassis?.rear : this.chassis?.front;
+      const chassisView: ChassisView = this.chassisView && this.view === EnclosureLocation.Rear
+        ? this.chassis?.rear
+        : this.chassis?.front;
       if (!this.chassis || !chassisView?.driveTrayObjects) { return; }
 
       const clone: Temperature = { ...data };
@@ -352,10 +357,10 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
 
   // PIXI Visualization Setup
   appSetup(): void {
-    this.controllerEvent$.pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
+    this.controllerEvent$.pipe(untilDestroyed(this)).subscribe((evt: EnclosureEvent) => {
       switch (evt.name) {
         case 'CanvasExtract':
-          this.createExtractedEnclosure((evt as CanvasExtractEvent).data);
+          this.createExtractedEnclosure((evt).data);
           break;
         case 'PoolsChanged':
           this.setDisksEnabledState();
@@ -434,12 +439,14 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
   ngOnDestroy(): void {
     this.diskTemperatureService.diskTemperaturesUnsubscribe();
     this.destroyAllEnclosures();
-    this.app.stage.destroy(true);
-    this.app.destroy(true);
+    if (this.app) {
+      this.app.stage.destroy(true);
+      this.app.destroy(true);
+    }
   }
 
   // Recreates enclosure when switching between enclosures or front/rear/internal visualizations
-  loadEnclosure(enclosureView: EnclosureView, view?: string, update?: boolean): void {
+  loadEnclosure(enclosureView: EnclosureView, view?: EnclosureLocation, update?: boolean): void {
     if (this.selectedSlotNumber > -1) {
       this.clearDisk();
     }
@@ -562,11 +569,18 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
       case 'ES60':
         this.chassis = new Es60();
         break;
+      case 'ES60G2':
+        this.chassis = new Es60G2();
+        break;
       case 'E60':
         this.chassis = new E60();
         break;
       case 'ES102':
         this.chassis = new Es102();
+        this.showCaption = false;
+        break;
+      case 'ES102G2':
+        this.chassis = new Es102G2();
         this.showCaption = false;
         break;
       case 'TRUENAS-F100-HA':
@@ -576,6 +590,10 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
       case 'TRUENAS-F60-HA':
       case 'F60':
         this.chassis = new F60();
+        break;
+      case 'H Series':
+      case 'H10':
+        this.chassis = new H10();
         break;
       default:
         this.controllerEvent$.next({
@@ -614,7 +632,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
 
           break;
         case 'DriveSelected': {
-          const slotNumber = parseInt((evt as DriveSelectedEvent).data.id);
+          const slotNumber = parseInt((evt).data.id);
 
           if (this.identifyBtnRef) {
             this.toggleSlotStatus(true);
@@ -626,7 +644,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
 
           if (isSlotEmpty) {
             this.setCurrentView(this.emptySlotView);
-          } else if ((evt as DriveSelectedEvent).data.enabled) {
+          } else if ((evt).data.enabled) {
             this.setCurrentView('details');
           }
           break;
@@ -710,11 +728,17 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
       case 'ES60':
         extractedChassis = new Es60();
         break;
+      case 'ES60G2':
+        extractedChassis = new Es60G2();
+        break;
       case 'E60':
         extractedChassis = new E60();
         break;
       case 'ES102':
         extractedChassis = new Es102();
+        break;
+      case 'ES102G2':
+        extractedChassis = new Es102G2();
         break;
       case 'TRUENAS-F100-HA':
       case 'F100':
@@ -723,6 +747,10 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
       case 'TRUENAS-F60-HA':
       case 'F60':
         extractedChassis = new F60();
+        break;
+      case 'H Series':
+      case 'H10':
+        extractedChassis = new H10();
         break;
       default:
         this.controllerEvent$.next({
@@ -765,7 +793,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
 
   // Helper for createExtractedEnclosure
   extractEnclosure(enclosure: ChassisView, enclosureView: EnclosureView): void {
-    const canvas = (this.app.renderer.plugins as { [name: string]: CanvasExtract }).extract.canvas(enclosure.container);
+    const canvas = (this.app.renderer.plugins as Record<string, CanvasExtract>).extract.canvas(enclosure.container);
     this.controllerEvent$.next({ name: 'EnclosureCanvas', data: { canvas, enclosureView }, sender: this });
     this.container.removeChild(enclosure.container);
   }
@@ -783,7 +811,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
       // Clear out assets
       this.chassisView.destroy();
     }
-    this.container.destroy(true);
+    this.container?.destroy(true);
     PIXI.loader.resources = {};
   }
 
@@ -963,7 +991,10 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
   // Visualization Colors
   setDisksDisabled(): void {
     this.chassisView.driveTrayObjects.forEach((dt) => {
-      this.chassisView.events.next({ name: 'ChangeDriveTrayColor', data: { id: dt.id, color: 'none' } });
+      this.chassisView.events.next({
+        name: 'ChangeDriveTrayColor',
+        data: { id: dt.id, color: 'none' } as ChangeDriveTrayOptions,
+      });
     });
   }
 
@@ -997,7 +1028,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
 
     // Health based on disk.status
     if (enclosureSlot.disk && enclosureSlot.topologyStatus) {
-      switch (enclosureSlot.topologyStatus) {
+      switch (enclosureSlot.topologyStatus as string) {
         case 'ONLINE':
           enclosure.events.next({
             name: 'ChangeDriveTrayColor',
@@ -1081,7 +1112,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
             color: driveColor,
             enclosure: enclosureSlot.enclosure,
             slot: enclosureSlot.slot,
-          },
+          } as ChangeDriveTrayOptions,
         });
       });
     };
@@ -1098,11 +1129,15 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
     return this.systemState.pools.find((pool: Pool) => pool.name === name);
   }
 
+  isPoolHealthy(poolName: string): boolean {
+    return this.findPoolByName(poolName)?.healthy;
+  }
+
   // PIXI/Chassis trigger
   toggleHighlightMode(mode: string): void {
     const enclosureView = this.selectedEnclosureView;
     const selectedSlot = enclosureView.slots[this.selectedSlotNumber];
-    if (selectedSlot.topologyStatus === 'AVAILABLE') { return; }
+    if (selectedSlot.topologyStatus === EnclosureSlotDiskStatus.Available) { return; }
 
     this.labels.events$.next({
       name: mode === 'on' ? 'EnableHighlightMode' : 'DisableHighlightMode',
@@ -1198,7 +1233,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
   }
 
   // Changes front/rear/internal
-  enclosureOverride(view: string): void {
+  enclosureOverride(view: EnclosureLocation): void {
     if (view !== this.view) {
       this.clearDisk();
       this.loadEnclosure(this.selectedEnclosureView, view, true);
@@ -1226,5 +1261,13 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
 
         this.enclosureStore.updateLabel(enclosure.id, newLabel);
       });
+  }
+
+  omitDescriptor(group: EnclosureElementsGroup | EnclosureElement): EnclosureElementsGroup | EnclosureElement {
+    const returnValue = { ...group as EnclosureElementsGroup };
+    if (returnValue.header) {
+      returnValue.header = returnValue.header.filter((header) => header !== 'Descriptor');
+    }
+    return returnValue;
   }
 }

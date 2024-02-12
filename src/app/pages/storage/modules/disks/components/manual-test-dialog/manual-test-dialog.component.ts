@@ -2,18 +2,18 @@ import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject,
 } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
-import { MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import {
   map, of, takeWhile,
 } from 'rxjs';
 import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
+import { Role } from 'app/enums/role.enum';
 import { SmartTestType } from 'app/enums/smart-test-type.enum';
-import { IncomingWebsocketMessage } from 'app/interfaces/api-message.interface';
+import { IncomingWebSocketMessage } from 'app/interfaces/api-message.interface';
 import { ManualSmartTest } from 'app/interfaces/smart-test.interface';
 import { Disk } from 'app/interfaces/storage.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -63,6 +63,8 @@ export class ManualTestDialogComponent {
     return Boolean(this.startedTests.length);
   }
 
+  protected readonly Role = Role;
+
   constructor(
     private ws: WebSocketService,
     private formBuilder: FormBuilder,
@@ -71,6 +73,7 @@ export class ManualTestDialogComponent {
     private errorHandler: ErrorHandlerService,
     private cdr: ChangeDetectorRef,
     @Inject(MAT_DIALOG_DATA) private params: ManualTestDialogParams,
+    public dialogRef: MatDialogRef<ManualTestDialogComponent>,
   ) {
     this.setDisksBySupport();
   }
@@ -90,7 +93,7 @@ export class ManualTestDialogComponent {
             map((event) => event.fields),
             takeWhile((result) => {
               const condition = result
-                && (result as unknown as IncomingWebsocketMessage).msg === IncomingApiMessageType.NoSub;
+                && (result as unknown as IncomingWebSocketMessage).msg === IncomingApiMessageType.NoSub;
               this.endedTests = condition;
               return !condition;
             }),
@@ -109,8 +112,9 @@ export class ManualTestDialogComponent {
 
           this.cdr.markForCheck();
         },
-        error: (error: WebsocketError) => {
-          this.dialogService.error(this.errorHandler.parseWsError(error));
+        error: (error: unknown) => {
+          this.dialogRef.close();
+          this.dialogService.error(this.errorHandler.parseError(error));
           this.cdr.markForCheck();
         },
       });

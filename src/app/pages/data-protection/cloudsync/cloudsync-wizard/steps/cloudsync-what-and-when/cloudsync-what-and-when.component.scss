@@ -1,0 +1,22 @@
+@import 'scss-imports/splitview';
+
+.cloudsync {
+  display: flex;
+  gap: 8px;
+
+  ix-explorer {
+    width: 50%;
+
+    @media(max-width: $breakpoint-sm) {
+      width: 100%;
+    }
+  }
+}
+
+.direction-mode > * {
+  width: 50%;
+
+  @media(max-width: $breakpoint-sm) {
+    width: 100%;
+  }
+}

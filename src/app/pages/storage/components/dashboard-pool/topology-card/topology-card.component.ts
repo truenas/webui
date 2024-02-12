@@ -1,14 +1,15 @@
 import {
+  ChangeDetectionStrategy,
   Component, Input, OnChanges, OnInit,
 } from '@angular/core';
 import { Router } from '@angular/router';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import filesize from 'filesize';
 import { PoolCardIconType } from 'app/enums/pool-card-icon-type.enum';
 import { PoolStatus } from 'app/enums/pool-status.enum';
-import { VdevType } from 'app/enums/v-dev-type.enum';
+import { TopologyWarning, VdevType } from 'app/enums/v-dev-type.enum';
+import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
 import { Pool, PoolTopology } from 'app/interfaces/pool.interface';
 import { SmartTestResult } from 'app/interfaces/smart-test.interface';
 import {
@@ -29,9 +30,8 @@ interface TopologyState {
   dedup: string;
 }
 
-export interface EmptyDiskObject {
-  [p: string]: string | number | boolean | string[] | SmartTestResult[] | EnclosureAndSlot;
-}
+export type EmptyDiskObject = Record<string, string | number | boolean | string[] |
+SmartTestResult[] | EnclosureAndSlot>;
 
 const notAssignedDev = T('VDEVs not assigned');
 
@@ -40,6 +40,7 @@ const notAssignedDev = T('VDEVs not assigned');
   selector: 'ix-topology-card',
   templateUrl: './topology-card.component.html',
   styleUrls: ['./topology-card.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TopologyCardComponent implements OnInit, OnChanges {
   @Input() poolState: Pool;
@@ -99,22 +100,26 @@ export class TopologyCardComponent implements OnInit, OnChanges {
       return;
     }
 
-    this.topologyState.data = this.parseDevs(topology.data, VdevType.Data);
-    this.topologyState.log = this.parseDevs(topology.log, VdevType.Log);
-    this.topologyState.cache = this.parseDevs(topology.cache, VdevType.Cache);
-    this.topologyState.spare = this.parseDevs(topology.spare, VdevType.Spare);
-    this.topologyState.metadata = this.parseDevs(topology.special, VdevType.Special);
-    this.topologyState.dedup = this.parseDevs(topology.dedup, VdevType.Dedup);
-
     this.topologyWarningsState.data = this.parseDevsWarnings(topology.data, VdevType.Data);
     this.topologyWarningsState.log = this.parseDevsWarnings(topology.log, VdevType.Log);
     this.topologyWarningsState.cache = this.parseDevsWarnings(topology.cache, VdevType.Cache);
     this.topologyWarningsState.spare = this.parseDevsWarnings(topology.spare, VdevType.Spare);
     this.topologyWarningsState.metadata = this.parseDevsWarnings(topology.special, VdevType.Special, topology.data);
     this.topologyWarningsState.dedup = this.parseDevsWarnings(topology.dedup, VdevType.Dedup, topology.data);
+
+    this.topologyState.data = this.parseDevs(topology.data, VdevType.Data, this.topologyWarningsState.data);
+    this.topologyState.log = this.parseDevs(topology.log, VdevType.Log, this.topologyWarningsState.log);
+    this.topologyState.cache = this.parseDevs(topology.cache, VdevType.Cache, this.topologyWarningsState.cache);
+    this.topologyState.spare = this.parseDevs(topology.spare, VdevType.Spare, this.topologyWarningsState.spare);
+    this.topologyState.metadata = this.parseDevs(
+      topology.special,
+      VdevType.Special,
+      this.topologyWarningsState.metadata,
+    );
+    this.topologyState.dedup = this.parseDevs(topology.dedup, VdevType.Dedup, this.topologyWarningsState.dedup);
   }
 
-  private parseDevs(vdevs: TopologyItem[], category: VdevType): string {
+  private parseDevs(vdevs: TopologyItem[], category: VdevType, warning?: string): string {
     let outputString = vdevs.length ? '' : notAssignedDev;
 
     // Check VDEV Widths
@@ -149,8 +154,13 @@ export class TopologyCardComponent implements OnInit, OnChanges {
       outputString += this.translate.instant('{type} | {vdevWidth} wide | ', { type, vdevWidth });
     }
 
-    if (size) {
-      outputString += filesize(size, { standard: 'iec' });
+    const isMixedVdevCapacity = warning.includes(TopologyWarning.MixedVdevCapacity)
+      || warning.includes(TopologyWarning.MixedDiskCapacity);
+
+    if (!isMixedVdevCapacity && size) {
+      outputString += buildNormalizedFileSize(size);
+    } else if (isMixedVdevCapacity) {
+      outputString += this.translate.instant('Mixed Capacity');
     } else {
       outputString += '?';
     }
@@ -188,6 +198,10 @@ export class TopologyCardComponent implements OnInit, OnChanges {
       PoolStatus.Offline,
       PoolStatus.Degraded,
     ].includes(poolState.status);
+  }
+
+  protected get isPoolOffline(): boolean {
+    return this.poolState?.status === PoolStatus.Offline;
   }
 
   dashboardDiskToDisk(dashDisk: StorageDashboardDisk): Disk {

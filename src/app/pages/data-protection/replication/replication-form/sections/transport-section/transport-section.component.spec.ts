@@ -5,11 +5,12 @@ import { MatDialog } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { GiB } from 'app/constants/bytes.constant';
-import { mockWebsocket, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockWebSocket, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
 import { NetcatMode } from 'app/enums/netcat-mode.enum';
 import { TransportMode } from 'app/enums/transport-mode.enum';
 import { KeychainCredential } from 'app/interfaces/keychain-credential.interface';
 import { ReplicationTask } from 'app/interfaces/replication-task.interface';
+import { SshCredentialsSelectModule } from 'app/modules/custom-selects/ssh-credentials-select/ssh-credentials-select.module';
 import { IxCheckboxHarness } from 'app/modules/ix-forms/components/ix-checkbox/ix-checkbox.harness';
 import { IxFieldsetHarness } from 'app/modules/ix-forms/components/ix-fieldset/ix-fieldset.harness';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
@@ -28,9 +29,10 @@ describe('TransportSectionComponent', () => {
     imports: [
       IxFormsModule,
       ReactiveFormsModule,
+      SshCredentialsSelectModule,
     ],
     providers: [
-      mockWebsocket([
+      mockWebSocket([
         mockCall('keychaincredential.query', [
           { id: 1, name: 'connection 1' },
           { id: 2, name: 'connection 2' },
@@ -104,13 +106,6 @@ describe('TransportSectionComponent', () => {
         netcat_active_side_port_min: null,
         netcat_passive_side_connect_address: null,
       });
-    });
-
-    it('opens an extended dialog when choosing to create a new ssh connection', async () => {
-      const matDialog = spectator.inject(MatDialog);
-      jest.spyOn(matDialog, 'open');
-      await form.fillForm({ 'SSH Connection': 'Create New' });
-      expect(matDialog.open).toHaveBeenCalled();
     });
   });
 

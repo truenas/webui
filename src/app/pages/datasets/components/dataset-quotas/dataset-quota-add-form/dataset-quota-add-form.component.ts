@@ -6,9 +6,9 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { map } from 'rxjs/operators';
 import { DatasetQuotaType } from 'app/enums/dataset.enum';
-import { assertUnreachable } from 'app/helpers/assert-unreachable.utils';
-import globalHelptext from 'app/helptext/global-helptext';
-import helptext from 'app/helptext/storage/volumes/datasets/dataset-quotas';
+import { Role } from 'app/enums/role.enum';
+import { helptextGlobal } from 'app/helptext/global-helptext';
+import { helptextQuotas } from 'app/helptext/storage/volumes/datasets/dataset-quotas';
 import { SetDatasetQuota } from 'app/interfaces/dataset-quota.interface';
 import { ChipsProvider } from 'app/modules/ix-forms/components/ix-chips/chips-provider';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
@@ -36,27 +36,27 @@ export class DatasetQuotaAddFormComponent implements OnInit {
   }
   get dataQuotaLabel(): string {
     return this.quotaType === DatasetQuotaType.User
-      ? this.translate.instant(helptext.users.data_quota.placeholder)
-        + this.translate.instant(globalHelptext.human_readable.suggestion_label)
-      : this.translate.instant(helptext.groups.data_quota.placeholder)
-        + this.translate.instant(globalHelptext.human_readable.suggestion_label);
+      ? this.translate.instant(helptextQuotas.users.data_quota.placeholder)
+        + this.translate.instant(helptextGlobal.human_readable.suggestion_label)
+      : this.translate.instant(helptextQuotas.groups.data_quota.placeholder)
+        + this.translate.instant(helptextGlobal.human_readable.suggestion_label);
   }
   get objectQuotaLabel(): string {
     return this.quotaType === DatasetQuotaType.User
-      ? helptext.users.obj_quota.placeholder
-      : helptext.groups.obj_quota.placeholder;
+      ? helptextQuotas.users.obj_quota.placeholder
+      : helptextQuotas.groups.obj_quota.placeholder;
   }
   get dataQuotaTooltip(): string {
     return this.quotaType === DatasetQuotaType.User
-      ? this.translate.instant(helptext.users.data_quota.tooltip)
-        + ' ' + this.translate.instant(helptext.field_accepts_tooltip)
-      : this.translate.instant(helptext.groups.data_quota.tooltip)
-        + ' ' + this.translate.instant(helptext.field_accepts_tooltip);
+      ? this.translate.instant(helptextQuotas.users.data_quota.tooltip)
+        + ' ' + this.translate.instant(helptextQuotas.field_accepts_tooltip)
+      : this.translate.instant(helptextQuotas.groups.data_quota.tooltip)
+        + ' ' + this.translate.instant(helptextQuotas.field_accepts_tooltip);
   }
   get objectQuotaTooltip(): string {
     return this.quotaType === DatasetQuotaType.User
-      ? helptext.users.obj_quota.tooltip
-      : helptext.groups.obj_quota.tooltip;
+      ? helptextQuotas.users.obj_quota.tooltip
+      : helptextQuotas.groups.obj_quota.tooltip;
   }
 
   form = this.formBuilder.group({
@@ -67,8 +67,8 @@ export class DatasetQuotaAddFormComponent implements OnInit {
   });
 
   readonly tooltips = {
-    users: helptext.users.usersTooltip,
-    groups: helptext.groups.groupsTooltip,
+    users: helptextQuotas.users.usersTooltip,
+    groups: helptextQuotas.groups.groupsTooltip,
   };
 
   usersProvider: ChipsProvider = (query) => {
@@ -82,6 +82,8 @@ export class DatasetQuotaAddFormComponent implements OnInit {
       map((groups) => groups.map((group) => group.group)),
     );
   };
+
+  protected readonly Role = Role;
 
   private datasetId: string;
 
@@ -118,10 +120,10 @@ export class DatasetQuotaAddFormComponent implements OnInit {
         next: () => {
           this.snackbar.success(this.translate.instant('Quotas added'));
           this.isLoading = false;
-          this.slideInRef.close();
+          this.slideInRef.close(true);
           this.cdr.markForCheck();
         },
-        error: (error) => {
+        error: (error: unknown) => {
           this.isLoading = false;
           this.cdr.markForCheck();
           this.errorHandler.handleWsFormError(error, this.form);
@@ -171,7 +173,7 @@ export class DatasetQuotaAddFormComponent implements OnInit {
         });
         break;
       default:
-        assertUnreachable(this.quotaType as never);
+        throw new Error(`Unexpected quota type: ${this.quotaType}`);
     }
 
     return quotas;

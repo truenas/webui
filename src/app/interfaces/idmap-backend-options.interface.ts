@@ -6,9 +6,7 @@ export type IdmapBackendOptions = {
 
 export interface IdmapBackendOption {
   description: string;
-  parameters: {
-    [parameter: string]: IdmapBackendParameter;
-  };
+  parameters: Record<string, IdmapBackendParameter>;
   has_secrets: boolean;
   services: string[];
 }

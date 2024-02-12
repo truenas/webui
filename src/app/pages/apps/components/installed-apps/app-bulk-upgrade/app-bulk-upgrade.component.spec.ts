@@ -4,12 +4,12 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { MockPipe } from 'ng-mocks';
 import { ImgFallbackModule } from 'ngx-img-fallback';
 import { BulkListItemComponent } from 'app/core/components/bulk-list-item/bulk-list-item.component';
-import { FormatDateTimePipe } from 'app/core/pipes/format-datetime.pipe';
+import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-datetime.pipe';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
-import { mockCall, mockJob, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockCall, mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { UpgradeSummary } from 'app/interfaces/application.interface';
 import { ChartRelease } from 'app/interfaces/chart-release.interface';
 import { CoreBulkQuery } from 'app/interfaces/core-bulk.interface';
@@ -107,10 +107,7 @@ describe('AppBulkUpgradeComponent', () => {
     imports: [AppLoaderModule, ReactiveFormsModule, IxFormsModule, ImgFallbackModule],
     declarations: [
       BulkListItemComponent,
-      MockPipe(
-        FormatDateTimePipe,
-        jest.fn(() => '2022-31-05 10:52:06'),
-      ),
+      FakeFormatDateTimePipe,
     ],
     providers: [
       {
@@ -120,11 +117,12 @@ describe('AppBulkUpgradeComponent', () => {
       mockProvider(MatDialogRef),
       mockProvider(DialogService),
       mockProvider(SnackbarService),
-      mockWebsocket([
+      mockWebSocket([
         mockJob('core.bulk'),
         mockCall('chart.release.upgrade_summary', fakeUpgradeSummary),
         mockJob('chart.release.upgrade', fakeSuccessfulJob(fakeAppOne)),
       ]),
+      mockAuth(),
     ],
   });
 

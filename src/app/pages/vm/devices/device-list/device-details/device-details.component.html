@@ -1,0 +1,23 @@
+<h1 mat-dialog-title>
+  <ix-icon class="information-icon" name="info"></ix-icon>
+  <span class="information-title">
+    {{ title }}
+  </span>
+</h1>
+<div mat-dialog-content class="attributes">
+  <div *ngFor="let attribute of attributes">
+    {{ attribute[0] }}: {{ attribute[1] }}
+  </div>
+</div>
+<div mat-dialog-actions>
+  &nbsp;
+  <span fxFlex></span>
+  <button
+    mat-button
+    class="mat-mdc-button mat-button mat-accent"
+    ixTest="dialog-close"
+    matDialogClose
+  >
+    {{ 'Close' | translate }}
+  </button>
+</div>

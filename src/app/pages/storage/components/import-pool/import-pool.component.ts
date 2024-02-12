@@ -8,14 +8,17 @@ import {
   UntilDestroy, untilDestroyed,
 } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { Observable, UnaryFunction, map, of, pipe, switchMap } from 'rxjs';
+import {
+  Observable, UnaryFunction, map, of, pipe, switchMap,
+} from 'rxjs';
 import { JobState } from 'app/enums/job-state.enum';
-import helptext from 'app/helptext/storage/volumes/volume-import-wizard';
+import { Role } from 'app/enums/role.enum';
+import { helptextImport } from 'app/helptext/storage/volumes/volume-import-wizard';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { PoolFindResult } from 'app/interfaces/pool-import.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
+import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { DialogService } from 'app/services/dialog.service';
@@ -28,7 +31,7 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ImportPoolComponent implements OnInit {
-  readonly helptext = helptext;
+  readonly helptext = helptextImport;
   isLoading = false;
   importablePools: {
     name: string;
@@ -41,16 +44,18 @@ export class ImportPoolComponent implements OnInit {
 
   pool = {
     fcName: 'guid',
-    label: helptext.guid_placeholder,
-    tooltip: helptext.guid_tooltip,
+    label: helptextImport.guid_placeholder,
+    tooltip: helptextImport.guid_tooltip,
     options: of<Option[]>([]),
   };
+
+  protected readonly Role = Role;
 
   constructor(
     private fb: FormBuilder,
     private slideInRef: IxSlideInRef<ImportPoolComponent>,
     private ws: WebSocketService,
-    private dialog: MatDialog,
+    private matDialog: MatDialog,
     private errorHandler: ErrorHandlerService,
     private dialogService: DialogService,
     private translate: TranslateService,
@@ -79,7 +84,10 @@ export class ImportPoolComponent implements OnInit {
         this.pool.options = of(opts);
         this.cdr.markForCheck();
       },
-      error: (error: WebsocketError | Job) => {
+      error: (error: WebSocketError | Job) => {
+        this.isLoading = false;
+        this.cdr.markForCheck();
+
         this.dialogService.error(this.errorHandler.parseError(error));
       },
     });
@@ -87,7 +95,7 @@ export class ImportPoolComponent implements OnInit {
 
   onSubmit(): void {
     this.isLoading = true;
-    const dialogRef = this.dialog.open(
+    const dialogRef = this.matDialog.open(
       EntityJobComponent,
       {
         data: { title: this.translate.instant('Importing Pool') },
@@ -109,7 +117,7 @@ export class ImportPoolComponent implements OnInit {
           this.router.navigate(['/datasets', datasets[0].id, 'unlock']);
         }
       },
-      error: (error: WebsocketError | Job) => {
+      error: (error: WebSocketError | Job) => {
         this.dialogService.error(this.errorHandler.parseError(error));
       },
     });
@@ -119,18 +127,18 @@ export class ImportPoolComponent implements OnInit {
         this.isLoading = false;
         this.errorReport(failureData);
       },
-      error: (error: WebsocketError | Job) => {
+      error: (error: WebSocketError | Job) => {
         this.dialogService.error(this.errorHandler.parseError(error));
       },
     });
   }
 
-  errorReport(error: Job | WebsocketError): void {
+  errorReport(error: Job | WebSocketError): void {
     if ('reason' in error && error.reason && error.trace) {
       this.dialogService.error({
         title: this.translate.instant('Error importing pool'),
         message: error.reason,
-        backtrace: error.trace.formatted,
+        backtrace: error.trace?.formatted,
       });
     } else if ('exception' in error && error.error && error.exception) {
       this.dialogService.error({
