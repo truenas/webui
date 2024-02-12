@@ -99,6 +99,10 @@ export class PrivilegeFormComponent implements OnInit {
   ngOnInit(): void {
     if (this.existingPrivilege) {
       this.setPrivilegeForEdit();
+      if (this.existingPrivilege.builtin_name) {
+        this.form.controls.name.disable();
+        this.form.controls.roles.disable();
+      }
     }
   }
 
