@@ -3,6 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { Spectator, createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { ReportingExporter, ReportingExporterKey } from 'app/interfaces/reporting-exporters.interface';
 import { AppCommonModule } from 'app/modules/common/app-common.module';
@@ -53,6 +54,7 @@ describe('ReportingExportersListComponent', () => {
       mockProvider(IxSlideInService, {
         open: jest.fn(() => ({ slideInClosed$: of(true) })),
       }),
+      mockAuth(),
     ],
   });
 
