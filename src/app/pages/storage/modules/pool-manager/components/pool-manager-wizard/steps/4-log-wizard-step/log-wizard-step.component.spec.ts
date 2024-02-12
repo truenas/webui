@@ -9,7 +9,7 @@ import { LayoutStepComponent } from 'app/pages/storage/modules/pool-manager/comp
 import { LogWizardStepComponent } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/steps/4-log-wizard-step/log-wizard-step.component';
 import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
 
-describe('DataWizardStepComponent', () => {
+describe('LogWizardStepComponent', () => {
   let spectator: Spectator<LogWizardStepComponent>;
 
   const fakeInventory = [

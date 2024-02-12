@@ -36,7 +36,11 @@ describe('AppUpgradeDialogComponent', () => {
   let spectator: Spectator<AppUpgradeDialogComponent>;
   const createComponent = createComponentFactory({
     component: AppUpgradeDialogComponent,
-    imports: [FormsModule, ImgFallbackModule, IxFormsModule],
+    imports: [
+      FormsModule,
+      ImgFallbackModule,
+      IxFormsModule,
+    ],
     providers: [
       mockProvider(MatDialogRef),
       {

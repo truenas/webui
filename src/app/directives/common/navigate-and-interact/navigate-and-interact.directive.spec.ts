@@ -1,5 +1,6 @@
 import { Router } from '@angular/router';
-import { createDirectiveFactory, SpectatorDirective, mockProvider } from '@ngneat/spectator/jest';
+import { createDirectiveFactory, SpectatorDirective } from '@ngneat/spectator/jest';
+import { MockProvider } from 'ng-mocks';
 import { NavigateAndInteractDirective } from './navigate-and-interact.directive';
 
 describe('NavigateAndInteractDirective', () => {
@@ -8,8 +9,8 @@ describe('NavigateAndInteractDirective', () => {
   const createDirective = createDirectiveFactory({
     directive: NavigateAndInteractDirective,
     providers: [
-      mockProvider(Router, {
-        navigate: jest.fn(() => new Promise((resolve) => { resolve(null); })),
+      MockProvider(Router, {
+        navigate: jest.fn(() => Promise.resolve(true)),
       }),
     ],
   });

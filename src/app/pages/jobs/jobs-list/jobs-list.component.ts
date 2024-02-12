@@ -28,7 +28,7 @@ import { IxDetailRowDirective } from 'app/modules/ix-tables/directives/ix-detail
 import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
 import { abortJobPressed } from 'app/modules/jobs/store/job.actions';
 import {
-  JobSlice, selectJobState, selectJobs, selectFailedJobs, selectRunningJobs,
+  JobSlice, selectJobState, selectFailedJobs, selectRunningJobs, selectAllNonTransientJobs,
 } from 'app/modules/jobs/store/job.selectors';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
@@ -54,7 +54,7 @@ export class JobsListComponent implements OnInit, AfterViewInit {
   expandedRow: Job;
   selectedIndex: JobTab = 0;
 
-  selector$ = new BehaviorSubject<typeof selectRunningJobs | typeof selectJobs>(selectJobs);
+  selector$ = new BehaviorSubject<typeof selectAllNonTransientJobs>(selectAllNonTransientJobs);
 
   emptyType$: Observable<EmptyType> = combineLatest([
     this.isLoading$,
@@ -156,7 +156,7 @@ export class JobsListComponent implements OnInit, AfterViewInit {
         break;
       case JobTab.All:
       default:
-        this.selector$.next(selectJobs);
+        this.selector$.next(selectAllNonTransientJobs);
         this.expandedRow = null;
         break;
     }

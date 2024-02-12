@@ -98,6 +98,8 @@ export enum Role {
   VmDeviceWrite = 'VM_DEVICE_WRITE',
   VmRead = 'VM_READ',
   VmWrite = 'VM_WRITE',
+  DirectoryServiceRead = 'DIRECTORY_SERVICE_READ',
+  DirectoryServiceWrite = 'DIRECTORY_SERVICE_WRITE',
 }
 
 export const roleNames = new Map<Role, string>([
@@ -201,4 +203,6 @@ export const roleNames = new Map<Role, string>([
   [Role.VmDeviceWrite, T('VM Device Write')],
   [Role.VmRead, T('VM Read')],
   [Role.VmWrite, T('VM Write')],
+  [Role.DirectoryServiceRead, T('Directory Service Read')],
+  [Role.DirectoryServiceWrite, T('Directory Service Write')],
 ]);

@@ -30,9 +30,7 @@ import {
   ManualTestDialogComponent,
 } from 'app/pages/storage/modules/disks/components/manual-test-dialog/manual-test-dialog.component';
 import { ReplaceDiskDialogComponent } from 'app/pages/storage/modules/disks/components/replace-disk-dialog/replace-disk-dialog.component';
-import {
-  SmartResultsComponent,
-} from 'app/pages/storage/modules/disks/components/smart-results/smart-results.component';
+import { SmartTestResultListComponent } from 'app/pages/storage/modules/disks/components/smart-test-result-list/smart-test-result-list.component';
 import { routes } from 'app/pages/storage/modules/disks/disks.routing';
 
 @NgModule({
@@ -63,8 +61,8 @@ import { routes } from 'app/pages/storage/modules/disks/disks.routing';
     DiskListComponent,
     DiskWipeDialogComponent,
     ManualTestDialogComponent,
-    SmartResultsComponent,
     ReplaceDiskDialogComponent,
+    SmartTestResultListComponent,
   ],
 })
 export class DisksModule {}

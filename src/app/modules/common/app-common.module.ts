@@ -22,7 +22,6 @@ import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { CoreComponents } from 'app/core/core-components.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
-import { AlertsModule } from 'app/modules/alerts/alerts.module';
 import { CastModule } from 'app/modules/cast/cast.module';
 import { AboutDialogComponent } from 'app/modules/common/dialog/about/about-dialog.component';
 import { ConfirmDialogComponent } from 'app/modules/common/dialog/confirm-dialog/confirm-dialog.component';
@@ -45,7 +44,6 @@ import { UpdateDialogComponent } from 'app/modules/common/dialog/update-dialog/u
 import { InterfaceStatusIconComponent } from 'app/modules/common/interface-status-icon/interface-status-icon.component';
 import { SearchInputComponent } from 'app/modules/common/search-input/search-input.component';
 import { SummaryComponent } from 'app/modules/common/summary/summary.component';
-import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxDynamicFormModule } from 'app/modules/ix-dynamic-form/ix-dynamic-form.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
@@ -73,7 +71,6 @@ import { ShowLogsDialogComponent } from './dialog/show-logs-dialog/show-logs-dia
     JobsModule,
     MatBadgeModule,
     MatButtonModule,
-    EntityModule,
     MatCheckboxModule,
     MatDialogModule,
     MatDividerModule,
@@ -91,7 +88,6 @@ import { ShowLogsDialogComponent } from './dialog/show-logs-dialog/show-logs-dia
     TooltipModule,
     TranslateModule,
     MatSidenavModule,
-    AlertsModule,
     LayoutModule,
     TestIdModule,
     FormsModule,

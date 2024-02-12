@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+  ChangeDetectionStrategy, Component, OnInit,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
@@ -44,7 +44,7 @@ export class SmartTaskCardComponent implements OnInit {
     }),
     textColumn({
       title: helptextSmart.smartlist_column_type,
-      getValue: (row) => row.type.replace(/\w\S*/g, (txt) => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase()),
+      propertyName: 'type',
     }),
     textColumn({
       title: helptextSmart.smartlist_column_description,
@@ -83,7 +83,6 @@ export class SmartTaskCardComponent implements OnInit {
     private errorHandler: ErrorHandlerService,
     private ws: WebSocketService,
     private dialogService: DialogService,
-    private cdr: ChangeDetectorRef,
     private taskService: TaskService,
     private storageService: StorageService,
     protected emptyService: EmptyService,
@@ -107,7 +106,15 @@ export class SmartTaskCardComponent implements OnInit {
     this.dataProvider.load();
   }
 
-  doDelete(smartTask: SmartTestTaskUi): void {
+  openForm(row?: SmartTestTaskUi): void {
+    const slideInRef = this.slideInService.open(SmartTaskFormComponent, { data: row });
+
+    slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
+      this.getSmartTasks();
+    });
+  }
+
+  private doDelete(smartTask: SmartTestTaskUi): void {
     this.dialogService.confirm({
       title: this.translate.instant('Confirmation'),
       message: this.translate.instant('Delete S.M.A.R.T. Test <b>"{name}"</b>?', {
@@ -121,17 +128,7 @@ export class SmartTaskCardComponent implements OnInit {
       next: () => {
         this.getSmartTasks();
       },
-      error: (err) => {
-        this.dialogService.error(this.errorHandler.parseError(err));
-      },
-    });
-  }
-
-  openForm(row?: SmartTestTaskUi): void {
-    const slideInRef = this.slideInService.open(SmartTaskFormComponent, { data: row });
-
-    slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
-      this.getSmartTasks();
+      error: (error) => this.errorHandler.showErrorModal(error),
     });
   }
 
