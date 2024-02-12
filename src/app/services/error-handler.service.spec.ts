@@ -61,10 +61,6 @@ describe('ErrorHandlerService', () => {
     ],
   });
 
-  beforeAll(() => {
-    jest.spyOn(console, 'error').mockImplementation(() => {});
-  });
-
   beforeEach(() => {
     spectator = createService();
 
@@ -85,6 +81,8 @@ describe('ErrorHandlerService', () => {
     Object.defineProperty(spectator.service, 'logToSentry', {
       value: jest.fn(),
     });
+
+    jest.spyOn(console, 'error').mockImplementation();
   });
 
   afterAll(() => {
@@ -94,7 +92,6 @@ describe('ErrorHandlerService', () => {
   describe('handleError', () => {
     it('logs normal error to console and sentry', () => {
       jest.spyOn(spectator.service, 'parseError');
-      jest.spyOn(console, 'error');
       spectator.service.handleError(error);
 
       expect(console.error).toHaveBeenCalledWith(error);

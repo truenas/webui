@@ -4,15 +4,11 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatMenuHarness } from '@angular/material/menu/testing';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory } from '@ngneat/spectator/jest';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { EntityModule } from 'app/modules/entity/entity.module';
 import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { yesNoColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-yesno/ix-cell-yesno.component';
 import { IxTableColumnsSelectorComponent } from 'app/modules/ix-table2/components/ix-table-columns-selector/ix-table-columns-selector.component';
 import { Column, ColumnComponent } from 'app/modules/ix-table2/interfaces/table-column.interface';
-import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
 import { createTable } from 'app/modules/ix-table2/utils';
-import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { CronjobRow } from 'app/pages/system/advanced/cron/cron-list/cronjob-row.interface';
 
 describe('IxTableColumnsSelectorComponent', () => {
@@ -49,15 +45,6 @@ describe('IxTableColumnsSelectorComponent', () => {
 
   const createComponent = createComponentFactory({
     component: IxTableColumnsSelectorComponent,
-    imports: [
-      AppLoaderModule,
-      EntityModule,
-      IxTable2Module,
-      TranslateModule,
-    ],
-    providers: [
-      TranslateService,
-    ],
   });
 
   beforeEach(async () => {
@@ -73,10 +60,24 @@ describe('IxTableColumnsSelectorComponent', () => {
     await menu.open();
   });
 
-  it('checks when "Unselect All" is pressed', async () => {
-    await menu.clickItem({ text: 'Unselect All' });
+  it('initializes with the correct default and hidden columns', () => {
+    const hiddenColumnsTitles = spectator.component.hiddenColumns.selected.map((col) => col.title);
+    const selectedColumnsTitles = spectator.component.columns.filter((col) => !col.hidden).map((col) => col.title);
 
-    expect(spectator.component.hiddenColumns.selected).toHaveLength(spectator.component.columns.length - 1);
+    expect(hiddenColumnsTitles).toEqual(expect.arrayContaining(['Description', 'Enabled']));
+    expect(selectedColumnsTitles).toEqual(expect.arrayContaining(['Users', 'Command', 'Schedule']));
+  });
+
+  it('checks when "Select All" / "Unselect All" is pressed', async () => {
+    const columnsChangeSpy = jest.spyOn(spectator.component.columnsChange, 'emit');
+
+    await menu.clickItem({ text: 'Select All' });
+    expect(spectator.component.hiddenColumns.selected).toHaveLength(0);
+    expect(columnsChangeSpy).toHaveBeenCalled();
+
+    await menu.clickItem({ text: 'Unselect All' });
+    expect(spectator.component.hiddenColumns.selected).toHaveLength(4);
+    expect(columnsChangeSpy).toHaveBeenCalled();
   });
 
   it('checks when "Reset to Defaults" is pressed', async () => {
@@ -85,5 +86,15 @@ describe('IxTableColumnsSelectorComponent', () => {
 
     expect(spectator.component.hiddenColumns.selected).toHaveLength(2);
     expect(spectator.component.resetToDefaults).toHaveBeenCalled();
+  });
+
+  it('toggles an individual column correctly', async () => {
+    expect(spectator.component.hiddenColumns.selected).toHaveLength(2);
+
+    await menu.clickItem({ text: 'Users' });
+    expect(spectator.component.hiddenColumns.selected).toHaveLength(3);
+
+    await menu.clickItem({ text: 'Enabled' });
+    expect(spectator.component.hiddenColumns.selected).toHaveLength(2);
   });
 });
