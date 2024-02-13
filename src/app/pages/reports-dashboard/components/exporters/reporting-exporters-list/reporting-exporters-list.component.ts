@@ -7,6 +7,7 @@ import {
   BehaviorSubject, Observable, combineLatest, filter, of, switchMap, tap,
 } from 'rxjs';
 import { EmptyType } from 'app/enums/empty-type.enum';
+import { Role } from 'app/enums/role.enum';
 import { ReportingExporter } from 'app/interfaces/reporting-exporters.interface';
 import { ArrayDataProvider } from 'app/modules/ix-table2/classes/array-data-provider/array-data-provider';
 import { actionsColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
@@ -18,6 +19,7 @@ import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { ReportingExportersFormComponent } from 'app/pages/reports-dashboard/components/exporters/reporting-exporters-form/reporting-exporters-form.component';
 import { DialogService } from 'app/services/dialog.service';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -30,6 +32,7 @@ import { WebSocketService } from 'app/services/ws.service';
 export class ReportingExporterListComponent implements OnInit {
   filterString = '';
   dataProvider = new ArrayDataProvider<ReportingExporter>();
+  protected readonly requiredRoles = [Role.ReportingWrite];
 
   exporters: ReportingExporter[] = [];
   columns = createTable<ReportingExporter>([
@@ -46,6 +49,7 @@ export class ReportingExporterListComponent implements OnInit {
     toggleColumn({
       title: this.translate.instant('Enabled'),
       propertyName: 'enabled',
+      requiredRoles: this.requiredRoles,
       onRowToggle: (row, checked) => {
         this.appLoader.open(
           this.translate.instant(
@@ -60,6 +64,7 @@ export class ReportingExporterListComponent implements OnInit {
           untilDestroyed(this),
         ).subscribe({
           complete: () => this.appLoader.close(),
+          error: (error) => this.errorCaught(error),
         });
       },
     }),
@@ -74,6 +79,7 @@ export class ReportingExporterListComponent implements OnInit {
           iconName: 'delete',
           tooltip: this.translate.instant('Delete'),
           onClick: (row) => this.doDelete(row),
+          requiredRoles: this.requiredRoles,
         },
       ],
     }),
@@ -90,16 +96,16 @@ export class ReportingExporterListComponent implements OnInit {
     this.hasError$,
   ]).pipe(
     switchMap(([isLoading, isNoData, isError]) => {
-      if (isLoading) {
-        return of(EmptyType.Loading);
+      switch (true) {
+        case isLoading:
+          return of(EmptyType.Loading);
+        case isError:
+          return of(EmptyType.Errors);
+        case isNoData:
+          return of(EmptyType.NoPageData);
+        default:
+          return of(EmptyType.NoSearchResults);
       }
-      if (isError) {
-        return of(EmptyType.Errors);
-      }
-      if (isNoData) {
-        return of(EmptyType.NoPageData);
-      }
-      return of(EmptyType.NoSearchResults);
     }),
   );
 
@@ -111,13 +117,28 @@ export class ReportingExporterListComponent implements OnInit {
     private dialogService: DialogService,
     protected emptyService: EmptyService,
     private appLoader: AppLoaderService,
+    private errorHandler: ErrorHandlerService,
   ) {}
 
   ngOnInit(): void {
     this.getExporters();
   }
 
-  getExporters(): void {
+  doAdd(): void {
+    const slideInRef = this.slideInService.open(ReportingExportersFormComponent);
+    slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe({
+      next: () => this.getExporters(),
+    });
+  }
+
+  onListFiltered(query: string): void {
+    this.filterString = query.toLowerCase();
+    const filteredExporters = this.exporters.filter((exporter) => JSON.stringify(exporter).includes(query));
+    this.dataProvider.setRows(filteredExporters);
+    this.cdr.markForCheck();
+  }
+
+  private getExporters(): void {
     this.ws.call('reporting.exporters.query').pipe(untilDestroyed(this)).subscribe({
       next: (exporters: ReportingExporter[]) => {
         this.exporters = exporters;
@@ -136,7 +157,7 @@ export class ReportingExporterListComponent implements OnInit {
     });
   }
 
-  setDefaultSort(): void {
+  private setDefaultSort(): void {
     this.dataProvider.setSorting({
       active: 1,
       direction: SortDirection.Asc,
@@ -144,27 +165,14 @@ export class ReportingExporterListComponent implements OnInit {
     });
   }
 
-  doAdd(): void {
-    const slideInRef = this.slideInService.open(ReportingExportersFormComponent);
+  private doEdit(exporter: ReportingExporter): void {
+    const slideInRef = this.slideInService.open(ReportingExportersFormComponent, { data: exporter });
     slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe({
-      next: () => {
-        this.getExporters();
-      },
+      next: () => this.getExporters(),
     });
   }
 
-  doEdit(exporter: ReportingExporter): void {
-    const slideInRef = this.slideInService.open(ReportingExportersFormComponent, {
-      data: exporter,
-    });
-    slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe({
-      next: () => {
-        this.getExporters();
-      },
-    });
-  }
-
-  doDelete(exporter: ReportingExporter): void {
+  private doDelete(exporter: ReportingExporter): void {
     this.dialogService.confirm({
       title: this.translate.instant('Delete Reporting Exporter'),
       message: this.translate.instant('Are you sure you want to delete <b>{name}</b> Reporting Exporter?', { name: exporter.name }),
@@ -180,18 +188,14 @@ export class ReportingExporterListComponent implements OnInit {
           this.getExporters();
         }
       },
-      complete: () => {
-        this.appLoader.close();
-      },
+      complete: () => this.appLoader.close(),
+      error: (error) => this.errorCaught(error),
     });
   }
 
-  onListFiltered(query: string): void {
-    this.filterString = query.toLowerCase();
-    const filteredExporters = this.exporters.filter((exporter) => {
-      return JSON.stringify(exporter).includes(query);
-    });
-    this.dataProvider.setRows(filteredExporters);
-    this.cdr.markForCheck();
+  private errorCaught(error: unknown): void {
+    this.errorHandler.showErrorModal(error);
+    this.appLoader.close();
+    this.getExporters();
   }
 }
