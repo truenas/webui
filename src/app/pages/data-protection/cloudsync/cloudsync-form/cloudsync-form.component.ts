@@ -9,8 +9,9 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import filesize from 'filesize';
 import _ from 'lodash';
-import { Observable, of } from 'rxjs';
-import { filter, map, switchMap } from 'rxjs/operators';
+import {
+  Observable, filter, forkJoin, map, of, tap,
+} from 'rxjs';
 import { CloudsyncProviderName } from 'app/enums/cloudsync-provider.enum';
 import { Direction } from 'app/enums/direction.enum';
 import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
@@ -19,6 +20,7 @@ import { TransferMode } from 'app/enums/transfer-mode.enum';
 import helptext from 'app/helptext/data-protection/cloudsync/cloudsync-form';
 import { CloudSyncDirectoryListing, CloudSyncTaskUi, CloudSyncTaskUpdate } from 'app/interfaces/cloud-sync-task.interface';
 import { CloudsyncBucket, CloudsyncCredential } from 'app/interfaces/cloudsync-credential.interface';
+import { CloudsyncProvider } from 'app/interfaces/cloudsync-provider.interface';
 import { SelectOption } from 'app/interfaces/option.interface';
 import { ExplorerNodeData, TreeNode } from 'app/interfaces/tree-node.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
@@ -76,7 +78,7 @@ export class CloudsyncFormComponent implements OnInit {
     ];
   }
 
-  googleDriveProviderId: number;
+  googleDriveProviderIds: number[] = [];
 
   form = this.formBuilder.group({
     description: ['' as string, Validators.required],
@@ -140,17 +142,9 @@ export class CloudsyncFormComponent implements OnInit {
   ]);
 
   credentialsList: CloudsyncCredential[] = [];
-  readonly credentialsOptions$ = this.cloudCredentialService.getCloudsyncCredentials().pipe(
-    map((options) => {
-      return options.map((option) => {
-        if (option.provider === CloudsyncProviderName.GoogleDrive) {
-          this.googleDriveProviderId = option.id;
-        }
-        return { label: `${option.name} (${option.provider})`, value: option.id };
-      });
-    }),
-    untilDestroyed(this),
-  );
+  providersList: CloudsyncProvider[] = [];
+
+  credentialsOptions$ = of<SelectOption[]>([]);
 
   readonly encryptionOptions$ = of([
     { label: 'AES-256', value: 'AES256' },
@@ -198,14 +192,51 @@ export class CloudsyncFormComponent implements OnInit {
     @Inject(SLIDE_IN_DATA) private editingTask: CloudSyncTaskUi,
   ) { }
 
-  ngOnInit(): void {
-    this.setFileNodeProvider();
-    this.setBucketNodeProvider();
-    this.setupForm();
+  getCredentialsList(): Observable<CloudsyncCredential[]> {
+    return this.fetchCloudsyncCredentialsList();
+  }
 
-    if (this.editingTask) {
-      this.setTaskForEdit();
-    }
+  fetchCloudsyncCredentialsList(): Observable<CloudsyncCredential[]> {
+    return this.cloudCredentialService.getCloudsyncCredentials().pipe(
+      tap((credentials) => {
+        this.credentialsList = credentials;
+        for (const credential of credentials) {
+          if (credential.provider === CloudsyncProviderName.GoogleDrive) {
+            this.googleDriveProviderIds.push(credential.id);
+          }
+        }
+        this.credentialsOptions$ = of(credentials.map((credential) => {
+          return { label: `${credential.name} (${credential.provider})`, value: credential.id };
+        }));
+      }),
+    );
+  }
+
+  getProviders(): Observable<CloudsyncProvider[]> {
+    return this.cloudCredentialService.getProviders().pipe(
+      tap((providers) => {
+        this.providersList = providers;
+      }),
+    );
+  }
+
+  ngOnInit(): void {
+    this.isLoading = true;
+    forkJoin([
+      this.getCredentialsList(),
+      this.getProviders(),
+    ]).pipe(untilDestroyed(this)).subscribe(() => {
+      this.isLoading = false;
+      this.cdr.markForCheck();
+
+      this.setFileNodeProvider();
+      this.setBucketNodeProvider();
+      this.setupForm();
+
+      if (this.editingTask) {
+        this.setTaskForEdit();
+      }
+    });
   }
 
   setupForm(): void {
@@ -217,9 +248,8 @@ export class CloudsyncFormComponent implements OnInit {
     this.credentialsDependentControls.forEach((control) => control.disable());
 
     this.form.controls.bucket.valueChanges.pipe(untilDestroyed(this)).subscribe((selectedOption) => {
-      this.form.controls.folder_source.reset([]);
-
       if (selectedOption !== newStorjBucket) {
+        this.setBucketNodeProvider();
         return;
       }
       const dialogRef = this.matDialog.open(CreateStorjBucketDialogComponent, {
@@ -283,79 +313,13 @@ export class CloudsyncFormComponent implements OnInit {
     });
 
     this.form.controls.credentials.valueChanges.pipe(untilDestroyed(this)).subscribe((credentials) => {
-      this.credentialsDependentControls.forEach((control) => control.disable());
+      this.form.controls.folder_source.reset([]);
 
-      if (credentials) {
-        this.enableRemoteExplorer();
-
-        if (this.form.controls.direction.value === Direction.Pull) {
-          this.form.controls.folder_source.enable();
-          this.form.controls.folder_destination.disable();
-        } else {
-          this.form.controls.folder_source.disable();
-          this.form.controls.folder_destination.enable();
-        }
-
-        this.cloudCredentialService.getCloudsyncCredentials()
-          .pipe(
-            switchMap((credentialsList) => {
-              this.credentialsList = credentialsList;
-              return this.cloudCredentialService.getProviders();
-            }),
-            map((providersList) => {
-              const targetCredentials = _.find(this.credentialsList, { id: credentials });
-              const targetProvider = _.find(providersList, { name: targetCredentials?.provider });
-              if (targetProvider?.buckets) {
-                this.isLoading = true;
-                if (targetCredentials.provider === CloudsyncProviderName.MicrosoftAzure
-                  || targetCredentials.provider === CloudsyncProviderName.Hubic
-                ) {
-                  this.bucketPlaceholder = this.translate.instant('Container');
-                  this.bucketTooltip = this.translate.instant('Select the pre-defined container to use.');
-                  this.bucketInputPlaceholder = this.translate.instant('Container');
-                  this.bucketInputTooltip = this.translate.instant('Input the pre-defined container to use.');
-                } else {
-                  this.bucketPlaceholder = helptext.bucket_placeholder;
-                  this.bucketTooltip = helptext.bucket_tooltip;
-                  this.bucketInputPlaceholder = helptext.bucket_input_placeholder;
-                  this.bucketInputTooltip = helptext.bucket_input_tooltip;
-                }
-
-                this.loadBucketOptions();
-
-                this.cdr.markForCheck();
-              } else {
-                this.form.controls.bucket.disable();
-                this.form.controls.bucket_input.disable();
-              }
-
-              if (targetProvider && targetProvider.name === CloudsyncProviderName.GoogleCloudStorage) {
-                this.form.controls.bucket_policy_only.enable();
-              } else {
-                this.form.controls.bucket_policy_only.disable();
-              }
-
-              const schemaFound = _.find(providersList, { name: targetCredentials?.provider });
-              const taskSchema = schemaFound ? schemaFound.task_schema : [];
-
-              const taskSchemas = ['task_encryption', 'fast_list', 'chunk_size', 'storage_class'];
-              for (const i of taskSchemas) {
-                const tobeDisable = !(_.findIndex(taskSchema, { property: i }) > -1);
-                if (i === 'task_encryption' || i === 'fast_list' || i === 'chunk_size' || i === 'storage_class') {
-                  if (tobeDisable) {
-                    this.form.controls[i].disable();
-                  } else {
-                    this.form.controls[i].enable();
-                  }
-                }
-              }
-            }),
-            untilDestroyed(this),
-          )
-          .subscribe();
-      }
-
-      this.cdr.markForCheck();
+      this.fetchCloudsyncCredentialsList().pipe(untilDestroyed(this)).subscribe({
+        next: () => {
+          this.handleCredentialsChange(credentials);
+        },
+      });
     });
 
     this.form.controls.path_source.valueChanges.pipe(untilDestroyed(this)).subscribe((values: string | string[]) => {
@@ -470,6 +434,62 @@ export class CloudsyncFormComponent implements OnInit {
         }),
       );
     };
+  }
+
+  handleCredentialsChange(credentials: number): void {
+    this.credentialsDependentControls.forEach((control) => control.disable());
+
+    if (credentials) {
+      this.enableRemoteExplorer();
+      const targetCredentials = _.find(this.credentialsList, { id: credentials });
+      const targetProvider = _.find(this.providersList, { name: targetCredentials?.provider });
+      if (targetProvider?.buckets) {
+        this.isLoading = true;
+        if (targetCredentials.provider === CloudsyncProviderName.MicrosoftAzure
+            || targetCredentials.provider === CloudsyncProviderName.Hubic
+        ) {
+          this.bucketPlaceholder = this.translate.instant('Container');
+          this.bucketTooltip = this.translate.instant('Select the pre-defined container to use.');
+          this.bucketInputPlaceholder = this.translate.instant('Container');
+          this.bucketInputTooltip = this.translate.instant('Input the pre-defined container to use.');
+        } else {
+          this.bucketPlaceholder = helptext.bucket_placeholder;
+          this.bucketTooltip = helptext.bucket_tooltip;
+          this.bucketInputPlaceholder = helptext.bucket_input_placeholder;
+          this.bucketInputTooltip = helptext.bucket_input_tooltip;
+        }
+
+        this.loadBucketOptions();
+
+        this.cdr.markForCheck();
+      } else {
+        this.form.controls.bucket.disable();
+        this.form.controls.bucket_input.disable();
+      }
+
+      if (targetProvider?.name === CloudsyncProviderName.GoogleCloudStorage) {
+        this.form.controls.bucket_policy_only.enable();
+      } else {
+        this.form.controls.bucket_policy_only.disable();
+      }
+
+      const schemaFound = _.find(this.providersList, { name: targetCredentials?.provider });
+      const taskSchema = schemaFound ? schemaFound.task_schema : [];
+
+      const taskSchemas = ['task_encryption', 'fast_list', 'chunk_size', 'storage_class'];
+      for (const i of taskSchemas) {
+        const toBeDisable = !(_.findIndex(taskSchema, { property: i }) > -1);
+        if (i === 'task_encryption' || i === 'fast_list' || i === 'chunk_size' || i === 'storage_class') {
+          if (toBeDisable) {
+            this.form.controls[i].disable();
+          } else {
+            this.form.controls[i].enable();
+          }
+        }
+      }
+
+      this.cdr.markForCheck();
+    }
   }
 
   isCustomTransfers(transfers: number): boolean {
@@ -637,7 +657,10 @@ export class CloudsyncFormComponent implements OnInit {
     }
 
     attributesToFill.forEach((name) => {
-      if (name === 'acknowledge_abuse' && this.form.controls.credentials.value !== this.googleDriveProviderId) {
+      if (
+        name === 'acknowledge_abuse'
+        && !this.googleDriveProviderIds.includes(this.form.controls.credentials.value)
+      ) {
         return;
       }
 
