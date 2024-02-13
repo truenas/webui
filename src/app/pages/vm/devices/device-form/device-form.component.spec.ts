@@ -224,15 +224,15 @@ describe('DeviceFormComponent', () => {
       });
 
       it('adds a new NIC device', async () => {
-        await form.fillForm({
-          Type: 'NIC',
-        });
-        await form.fillForm({
-          'Adapter Type': 'VirtIO',
-          'NIC To Attach': 'enp0s4',
-          'Device Order': 1006,
-          'Trust Guest Filters': true,
-        });
+        await form.fillForm(
+          {
+            Type: 'NIC',
+            'Adapter Type': 'VirtIO',
+            'NIC To Attach': 'enp0s4',
+            'Device Order': 1006,
+            'Trust Guest Filters': true,
+          },
+        );
 
         await saveButton.click();
 
@@ -343,16 +343,15 @@ describe('DeviceFormComponent', () => {
       });
 
       it('adds a new disk', async () => {
-        await form.fillForm({
-          Type: 'Disk',
-        });
-
-        await form.fillForm({
-          Zvol: 'bassein/zvol1',
-          Mode: 'VirtIO',
-          'Disk Sector Size': '512',
-          'Device Order': '1002',
-        });
+        await form.fillForm(
+          {
+            Type: 'Disk',
+            Zvol: 'bassein/zvol1',
+            Mode: 'VirtIO',
+            'Disk Sector Size': '512',
+            'Device Order': '1002',
+          },
+        );
 
         await saveButton.click();
 
@@ -457,17 +456,16 @@ describe('DeviceFormComponent', () => {
       });
 
       it('adds a new Raw File device', async () => {
-        await form.fillForm({
-          Type: 'Raw File',
-        });
-
-        await form.fillForm({
-          'Raw File': '/mnt/bassein/newraw',
-          'Disk Sector Size': '512',
-          Mode: 'AHCI',
-          'Raw Filesize': 3,
-          'Device Order': '6',
-        });
+        await form.fillForm(
+          {
+            Type: 'Raw File',
+            'Raw File': '/mnt/bassein/newraw',
+            'Disk Sector Size': '512',
+            Mode: 'AHCI',
+            'Raw Filesize': 3,
+            'Device Order': '6',
+          },
+        );
         await saveButton.click();
 
         expect(websocket.call).toHaveBeenLastCalledWith('vm.device.create', [{
@@ -568,14 +566,13 @@ describe('DeviceFormComponent', () => {
       });
 
       it('adds a new PCI Passthrough device', async () => {
-        await form.fillForm({
-          Type: 'PCI Passthrough Device',
-        });
-
-        await form.fillForm({
-          'PCI Passthrough Device': 'pci_0000_00_1c_0',
-          'Device Order': '6',
-        });
+        await form.fillForm(
+          {
+            Type: 'PCI Passthrough Device',
+            'PCI Passthrough Device': 'pci_0000_00_1c_0',
+            'Device Order': '6',
+          },
+        );
         await saveButton.click();
 
         expect(spectator.inject(DialogService).confirm).not.toHaveBeenCalled();
@@ -749,13 +746,13 @@ describe('DeviceFormComponent', () => {
       });
 
       it('adds a new USB Passthrough device', async () => {
-        await form.fillForm({
-          Type: 'USB Passthrough Device',
-        });
-        await form.fillForm({
-          'Controller Type': 'pci-ohci',
-          Device: 'usb_device_2 prod_2 (vendor_2)',
-        });
+        await form.fillForm(
+          {
+            Type: 'USB Passthrough Device',
+            'Controller Type': 'pci-ohci',
+            Device: 'usb_device_2 prod_2 (vendor_2)',
+          },
+        );
         await saveButton.click();
 
         expect(websocket.call).toHaveBeenLastCalledWith('vm.device.create', [{
@@ -817,15 +814,14 @@ describe('DeviceFormComponent', () => {
       });
 
       it('updates an existing USB Passthrough when custom is selected', async () => {
-        await form.fillForm({
-          'Controller Type': 'piix3-uhci',
-          Device: 'Specify custom',
-        });
-
-        await form.fillForm({
-          'Vendor ID': 'vendor_1',
-          'Product ID': 'product_1',
-        });
+        await form.fillForm(
+          {
+            'Controller Type': 'piix3-uhci',
+            Device: 'Specify custom',
+            'Vendor ID': 'vendor_1',
+            'Product ID': 'product_1',
+          },
+        );
 
         spectator.detectChanges();
 
