@@ -18,7 +18,7 @@ import { createTable } from 'app/modules/ix-table2/utils';
 import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
 import { SearchProperty } from 'app/modules/search-input/types/search-property.interface';
 import { AdvancedSearchQuery, SearchQuery } from 'app/modules/search-input/types/search-query.interface';
-import { searchProperties, textProperty } from 'app/modules/search-input/utils/search-properties.utils';
+import { booleanProperty, searchProperties, textProperty } from 'app/modules/search-input/utils/search-properties.utils';
 import { PrivilegeFormComponent } from 'app/pages/account/groups/privilege/privilege-form/privilege-form.component';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
@@ -170,14 +170,7 @@ export class PrivilegeListComponent implements OnInit {
   private setSearchProperties(): void {
     this.searchProperties = searchProperties<Privilege>([
       textProperty('name', this.translate.instant('Name'), of<Option[]>([])),
-      textProperty(
-        'web_shell',
-        this.translate.instant('Web Shell Access'),
-        of([
-          { label: this.translate.instant('Yes'), value: 'true' },
-          { label: this.translate.instant('No'), value: 'false' },
-        ]),
-      ),
+      booleanProperty('web_shell', this.translate.instant('Web Shell Access')),
       textProperty(
         'roles',
         this.translate.instant('Roles'),
