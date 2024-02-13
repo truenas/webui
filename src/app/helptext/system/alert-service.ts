@@ -125,8 +125,8 @@ export const helptextAlertService = {
 
   Telegram_chat_ids_tooltip: T('Enter a list of chat IDs separated by space, comma or semicolon. \
  To find your chat ID send a message to the bot, group or channel and visit \
- <a href="https://api.telegram.org/bot<BOT_TOKEN>/getUpdates" \
- target="_blank">https://api.telegram.org/bot<BOT_TOKEN>/getUpdates</a>.'),
+ <a href="https://api.telegram.org/bot(BOT_TOKEN)/getUpdates" \
+ target="_blank">https://api.telegram.org/bot(BOT_TOKEN)/getUpdates</a>.'),
 
   VictorOps_api_key_tooltip: T('Enter or paste the <a\
  href="https://help.victorops.com/knowledge-base/api/"\

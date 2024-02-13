@@ -81,16 +81,15 @@ describe('ReportingExportersFormComponent', () => {
     });
 
     it('add new exporter when form is submitted', async () => {
-      await form.fillForm({
-        Name: 'exporter1',
-        Type: ReportingExporterKey.Graphite,
-        Enable: true,
-      });
-
-      await form.fillForm({
-        'Secret Access Key ID': 'abcd',
-        'Access Key ID': 'abcde',
-      });
+      await form.fillForm(
+        {
+          Name: 'exporter1',
+          Type: ReportingExporterKey.Graphite,
+          Enable: true,
+          'Secret Access Key ID': 'abcd',
+          'Access Key ID': 'abcde',
+        },
+      );
 
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
 

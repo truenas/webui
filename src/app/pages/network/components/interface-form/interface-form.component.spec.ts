@@ -196,21 +196,19 @@ describe('InterfaceFormComponent', () => {
     it('saves a new link aggregation interface when form is submitted for LAG', async () => {
       jest.spyOn(spectator.inject(MatDialog), 'open');
 
-      await form.fillForm({
-        Type: 'Link Aggregation',
-      });
-      await form.fillForm({
-        Name: 'bond0',
-        Description: 'LAG',
-        DHCP: true,
-        'Link Aggregation Protocol': 'LACP',
-        MTU: 1600,
-      });
-      await form.fillForm({
-        'Transmit Hash Policy': 'LAYER2+3',
-        'LACPDU Rate': 'SLOW',
-        'Link Aggregation Interfaces': ['enp0s3'],
-      });
+      await form.fillForm(
+        {
+          Type: 'Link Aggregation',
+          Name: 'bond0',
+          Description: 'LAG',
+          DHCP: true,
+          'Link Aggregation Protocol': 'LACP',
+          MTU: 1600,
+          'Transmit Hash Policy': 'LAYER2+3',
+          'LACPDU Rate': 'SLOW',
+          'Link Aggregation Interfaces': ['enp0s3'],
+        },
+      );
 
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
@@ -243,18 +241,17 @@ describe('InterfaceFormComponent', () => {
 
     it('saves a new VLAN interface when form is submitted for a VLAN', async () => {
       jest.spyOn(spectator.inject(MatDialog), 'open');
-
-      await form.fillForm({
-        Type: 'VLAN',
-      });
-      await form.fillForm({
-        Name: 'vlan1',
-        Description: 'New VLAN',
-        'Autoconfigure IPv6': true,
-        'Parent Interface': 'enp0s3',
-        'VLAN Tag': 2,
-        'Priority Code Point': 'Excellent effort',
-      });
+      await form.fillForm(
+        {
+          Type: 'VLAN',
+          Name: 'vlan1',
+          Description: 'New VLAN',
+          'Autoconfigure IPv6': true,
+          'Parent Interface': 'enp0s3',
+          'VLAN Tag': 2,
+          'Priority Code Point': 'Excellent effort',
+        },
+      );
 
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();

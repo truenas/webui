@@ -12,7 +12,6 @@ import { MatSortModule } from '@angular/material/sort';
 import { MatTableModule } from '@angular/material/table';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
-import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { IxCheckboxColumnComponent } from 'app/modules/ix-tables/components/ix-checkbox-column/ix-checkbox-column.component';
 import { IxEmptyRowComponent } from 'app/modules/ix-tables/components/ix-empty-row/ix-empty-row.component';
@@ -46,7 +45,6 @@ import { TestIdModule } from 'app/modules/test-id/test-id.module';
   imports: [
     CdkTableModule,
     CommonModule,
-    EntityModule,
     FlexLayoutModule,
     IxIconModule,
     MatButtonModule,

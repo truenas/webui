@@ -129,6 +129,8 @@ describe('IxSelectComponent', () => {
     });
 
     it('shows \'Options cannot be loaded\' if options has some error', async () => {
+      jest.spyOn(console, 'error').mockImplementation();
+
       spectator.component.options = throwError(() => new Error('Some Error'));
       spectator.component.ngOnChanges();
 
@@ -137,6 +139,7 @@ describe('IxSelectComponent', () => {
       const options = await select.getOptions();
       const optionLabels = await parallel(() => options.map((option) => option.getText()));
       expect(optionLabels).toEqual(['Options cannot be loaded']);
+      expect(console.error).toHaveBeenCalled();
     });
 
     it('allows some options to be disabled', async () => {

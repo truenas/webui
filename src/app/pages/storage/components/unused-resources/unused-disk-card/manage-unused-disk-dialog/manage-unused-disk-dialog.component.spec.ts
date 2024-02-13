@@ -85,13 +85,12 @@ describe('ManageUnusedDiskDialogComponent', () => {
   });
 
   it('redirects to add disks to pool page when choosing Add Disks To Existing Pool', async () => {
-    await form.fillForm({
-      'Add Disks To:': 'Existing Pool',
-    });
-
-    await form.fillForm({
-      'Existing Pool': 'TEST',
-    });
+    await form.fillForm(
+      {
+        'Add Disks To:': 'Existing Pool',
+        'Existing Pool': 'TEST',
+      },
+    );
 
     const addDisksButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add Disks' }));
     await addDisksButton.click();

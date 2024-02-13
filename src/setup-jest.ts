@@ -27,6 +27,7 @@ import { StoreModule } from '@ngrx/store';
 import {
   MissingTranslationHandler, TranslateCompiler, TranslateLoader, TranslateModule, TranslateFakeLoader,
 } from '@ngx-translate/core';
+import failOnConsole from 'jest-fail-on-console';
 import { MockProvider } from 'ng-mocks';
 import { TranslateMessageFormatCompiler } from 'ngx-translate-messageformat-compiler';
 import { Observable } from 'rxjs';
@@ -41,6 +42,8 @@ import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarModule } from 'app/modules/snackbar/snackbar.module';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
+
+failOnConsole();
 
 jest.setTimeout(30 * 1000);
 
