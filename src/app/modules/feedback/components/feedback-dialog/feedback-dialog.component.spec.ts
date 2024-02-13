@@ -67,7 +67,7 @@ describe('FeedbackDialogComponent', () => {
     });
 
     it('shows the header', () => {
-      expect(spectator.query('h1')).toHaveText('How would you rate this page?');
+      expect(spectator.query('h1')).toHaveText('Send Feedback');
     });
 
     describe('type selector', () => {
