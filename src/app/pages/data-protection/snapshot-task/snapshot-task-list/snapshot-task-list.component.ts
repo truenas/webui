@@ -74,9 +74,14 @@ export class SnapshotTaskListComponent implements OnInit {
       hidden: true,
       title: this.translate.instant('Next Run'),
       propertyName: 'next_run',
-      getValue: (row) => (row.enabled
-        ? this.taskService.getTaskNextRun(scheduleToCrontab(row.schedule))
-        : this.translate.instant('Disabled')),
+      getValue: (task) => {
+        if (task.enabled) {
+          return task.schedule
+            ? formatDistanceToNowShortened(this.taskService.getTaskNextTime(scheduleToCrontab(task.schedule)))
+            : this.translate.instant('N/A');
+        }
+        return this.translate.instant('Disabled');
+      },
     }),
     textColumn({
       title: this.translate.instant('Last Run'),
