@@ -8,7 +8,7 @@
 
 <div class="input-container" [class.disabled]="isDisabled">
   <div>
-    <label tabindex="0" (keydown.enter)="fileInput.click()">
+    <label tabindex="0" [attr.aria-label]="'Choose File for {label}' | translate: { label }" (keydown.enter)="fileInput.click()">
       {{ 'Choose File' | translate }}
       <input
         #fileInput

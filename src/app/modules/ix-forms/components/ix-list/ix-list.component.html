@@ -20,7 +20,7 @@
   </div>
   <ix-errors *ngIf="formArray" [control]="formArray" [label]="label"></ix-errors>
 
-  <div class="input-container" [class.disabled]="isDisabled">
+  <div class="input-container" [class.disabled]="isDisabled" [attr.aria-label]="label">
     <ng-content></ng-content>
 
     <span *ngIf="empty" class="empty">

@@ -16,7 +16,6 @@
     [ixTest]="controlDirective.name"
     [required]="required"
     [disabled]="isDisabled"
-    [attr.aria-label]="'Enter a directory path value for {label}. Separate multiple values with commas.' | translate: { label }"
     (change)="onInputChanged(input.value)"
     (blur)="onTouch()"
   />
@@ -34,7 +33,7 @@
     {{ 'Create Dataset' | translate }}
   </button>
 </div>
-<div class="tree-container" [class.disabled]="isDisabled">
+<div class="tree-container" [class.disabled]="isDisabled" [attr.aria-label]="label">
   <tree-root
     #tree
     [nodes]="nodes"
@@ -44,7 +43,16 @@
   >
     <!-- Do not remove #treeNodeTemplate even though it appears to be unused -->
     <ng-template #treeNodeTemplate let-node>
-      <span *ngIf="typeNode(node) as node" class="node-container" [class.selected]="isPathSelected(node.data.path)">
+      <span
+        *ngIf="typeNode(node) as node"
+        tabindex="0"
+        class="node-container"
+        [attr.aria-label]="ariaLabel(node)"
+        [class.selected]="isPathSelected(node.data.path)"
+        (click)="node?.toggleSelected()"
+        (keyup.enter)="node?.toggleSelected()"
+        (keyup.space)="node?.toggleExpanded()"
+      >
         <ng-container *ngIf="node.data.type === ExplorerNodeType.File; else folderIcon">
           <ix-icon name="insert_drive_file"></ix-icon>
         </ng-container>
@@ -60,7 +68,7 @@
           <ix-icon *ngIf="node.data.isLock" name="mdi-folder-lock"></ix-icon>
         </ng-template>
 
-        <span class="node-name">{{ node.data.name }}</span>
+        <span class="node-name" [attr.aria-label]="node.data.name">{{ node.data.name }}</span>
       </span>
     </ng-template>
   </tree-root>
