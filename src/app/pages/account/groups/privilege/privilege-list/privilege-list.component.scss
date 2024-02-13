@@ -5,11 +5,17 @@
   column-gap: 12px;
   display: flex;
 
-  @media (max-width: $breakpoint-singlecolumn) {
+  @media (min-width: $breakpoint-tablet) {
+    margin-left: 10px;
+  }
+
+  @media (max-width: $breakpoint-tablet) {
+    margin-top: 10px;
+    min-width: 60vw;
     width: 100%;
   }
 
-  @media (max-width: $breakpoint-sm) {
+  @media (max-width: $breakpoint-tablet) {
     display: block;
   }
 
@@ -18,13 +24,13 @@
     gap: 8px;
     justify-content: flex-end;
 
-    @media (max-width: $breakpoint-sm) {
+    @media (max-width: $breakpoint-tablet) {
       margin-top: 8px;
     }
   }
 
   .search-input {
-    @media (min-width: $breakpoint-sm) {
+    @media (min-width: $breakpoint-tablet) {
       max-width: 90%;
     }
 

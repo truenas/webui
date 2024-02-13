@@ -32,6 +32,7 @@ import { WebSocketService } from 'app/services/ws.service';
 })
 export class PrivilegeListComponent implements OnInit {
   protected dataProvider: ApiDataProvider<Privilege, 'privilege.query'>;
+  protected readonly advancedSearchPlaceholder = this.translate.instant('Name ^ "Local" AND "Web Shell Access" = true');
 
   columns = createTable<Privilege>([
     textColumn({
@@ -166,8 +167,6 @@ export class PrivilegeListComponent implements OnInit {
   private setSearchProperties(): void {
     this.searchProperties = searchProperties<Privilege>([
       textProperty('name', this.translate.instant('Name'), of<Option[]>([])),
-      textProperty('local_groups', this.translate.instant('Local Groups'), of<Option[]>([])),
-      textProperty('ds_groups', this.translate.instant('DS Groups'), of<Option[]>([])),
       textProperty(
         'web_shell',
         this.translate.instant('Web Shell Access'),

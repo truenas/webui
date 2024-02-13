@@ -12,7 +12,7 @@ import { WebSocketService } from 'app/services/ws.service';
 
 // TODO: Extract to separate files
 // TODO: Replace with QueryParams?
-export type ApiCallParams = Record<string, unknown>;
+export type ApiCallParamsRecord = Record<string, unknown>;
 
 // TODO: Narrow down the type of M to only include .query methods
 // TODO: T can be inferred from M
@@ -74,13 +74,16 @@ export class ApiDataProvider<T, M extends ApiCallMethod> extends BaseDataProvide
   }
 
   private countRows(): Observable<number> {
-    // TODO: ApiDataProvider only currently works for audit.query that has non-standard parameters
-    const params = [
-      {
-        'query-filters': (this.params as unknown as QueryFilters<T>)[0] || [],
-        'query-options': { count: true },
-      },
-    ];
+    let params = [(this.params as unknown as QueryFilters<T>)[0] || [], { count: true }] as unknown;
+
+    if (this.method === 'audit.query') {
+      params = [
+        {
+          'query-filters': (this.params as unknown as QueryFilters<T>)[0] || [],
+          'query-options': { count: true },
+        },
+      ];
+    }
 
     return this.ws.call(this.method, params as ApiCallDirectory[M]['params']) as Observable<number>;
   }
@@ -88,14 +91,22 @@ export class ApiDataProvider<T, M extends ApiCallMethod> extends BaseDataProvide
   private prepareParams(params: ApiCallDirectory[M]['params']): ApiCallDirectory[M]['params'] {
     // TODO: Current merge is not entirely correct. Introduce a separate function.
     // TODO: Clarify whether we should use positional arguments or 'query-filters'
-    return [
-      {
-        'query-filters': (params as unknown as QueryFilters<T>)[0] || [],
-        'query-options': {
-          ...this.paginationStrategy.getParams(this.pagination, this.totalRows),
-          ...this.sortingStrategy.getParams(this.sorting),
+
+    const queryFilters = (params as unknown as QueryFilters<T>)[0] || [];
+    const queryOptions = {
+      ...this.paginationStrategy.getParams(this.pagination, this.totalRows),
+      ...this.sortingStrategy.getParams(this.sorting),
+    };
+
+    if (this.method === 'audit.query') {
+      return [
+        {
+          'query-filters': queryFilters,
+          'query-options': queryOptions,
         },
-      },
-    ] as unknown as ApiCallDirectory[M]['params'];
+      ] as ApiCallDirectory[M]['params'];
+    }
+
+    return [queryFilters, queryOptions] as ApiCallDirectory[M]['params'];
   }
 }

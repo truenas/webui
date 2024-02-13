@@ -427,6 +427,7 @@
   "Multiprotocol": "",
   "NEW": "",
   "NFS Sessions": "",
+  "Name ^ \"Local\" AND \"Web Shell Access\" = true": "",
   "Name not added": "",
   "NetBIOS Name of this NAS. This name must differ from the <i>Workgroup</i> name and be no greater than 15 characters.": "",
   "Network General Read": "",
