@@ -8,11 +8,9 @@ import {
   filter, map, switchMap, tap,
 } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
+import { formatDistanceToNowShortened } from 'app/helpers/format-distance-to-now-shortened';
 import { AsyncDataProvider } from 'app/modules/ix-table2/classes/async-data-provider/async-data-provider';
-import { relativeDateColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-relative-date/ix-cell-relative-date.component';
-import { scheduleColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-schedule/ix-cell-schedule.component';
 import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
-import { yesNoColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-yesno/ix-cell-yesno.component';
 import { Column, ColumnComponent } from 'app/modules/ix-table2/interfaces/table-column.interface';
 import { createTable } from 'app/modules/ix-table2/utils';
 import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
@@ -49,27 +47,38 @@ export class CronListComponent implements OnInit {
       title: this.translate.instant('Description'),
       propertyName: 'description',
     }),
-    scheduleColumn({
+    textColumn({
       title: this.translate.instant('Schedule'),
       propertyName: 'schedule',
+      getValue: (task) => (task.enabled ? scheduleToCrontab(task.schedule) : this.translate.instant('Disabled')),
     }),
-    yesNoColumn({
+    textColumn({
       title: this.translate.instant('Enabled'),
       propertyName: 'enabled',
+      getValue: (task) => (task.enabled ? this.translate.instant('Yes') : this.translate.instant('No')),
     }),
-    relativeDateColumn({
+    textColumn({
       title: this.translate.instant('Next Run'),
       hidden: true,
-      getValue: (row) => this.taskService.getTaskNextTime(scheduleToCrontab(row.schedule)),
+      getValue: (task) => {
+        if (task.enabled) {
+          return task.schedule
+            ? formatDistanceToNowShortened(this.taskService.getTaskNextTime(scheduleToCrontab(task.schedule)))
+            : this.translate.instant('N/A');
+        }
+        return this.translate.instant('Disabled');
+      },
     }),
-    yesNoColumn({
+    textColumn({
       title: this.translate.instant('Hide Stdout'),
       propertyName: 'stdout',
+      getValue: (task) => (task.stdout ? this.translate.instant('Yes') : this.translate.instant('No')),
       hidden: true,
     }),
-    yesNoColumn({
+    textColumn({
       title: this.translate.instant('Hide Stderr'),
       propertyName: 'stderr',
+      getValue: (task) => (task.stderr ? this.translate.instant('Yes') : this.translate.instant('No')),
       hidden: true,
     }),
   ], {
