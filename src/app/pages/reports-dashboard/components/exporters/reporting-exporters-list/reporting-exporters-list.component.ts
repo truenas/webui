@@ -127,17 +127,13 @@ export class ReportingExporterListComponent implements OnInit {
   doAdd(): void {
     const slideInRef = this.slideInService.open(ReportingExportersFormComponent);
     slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe({
-      next: () => {
-        this.getExporters();
-      },
+      next: () => this.getExporters(),
     });
   }
 
   onListFiltered(query: string): void {
     this.filterString = query.toLowerCase();
-    const filteredExporters = this.exporters.filter((exporter) => {
-      return JSON.stringify(exporter).includes(query);
-    });
+    const filteredExporters = this.exporters.filter((exporter) => JSON.stringify(exporter).includes(query));
     this.dataProvider.setRows(filteredExporters);
     this.cdr.markForCheck();
   }
@@ -170,13 +166,9 @@ export class ReportingExporterListComponent implements OnInit {
   }
 
   private doEdit(exporter: ReportingExporter): void {
-    const slideInRef = this.slideInService.open(ReportingExportersFormComponent, {
-      data: exporter,
-    });
+    const slideInRef = this.slideInService.open(ReportingExportersFormComponent, { data: exporter });
     slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe({
-      next: () => {
-        this.getExporters();
-      },
+      next: () => this.getExporters(),
     });
   }
 
