@@ -254,7 +254,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
 
   get hideIdentifyDrive(): boolean {
     const selectedEnclosureView = this.selectedEnclosureView;
-    return !['R10', 'R20', 'R30', 'R40', 'R50'].includes(selectedEnclosureView.model);
+    return selectedEnclosureView.model === 'R20';
   }
 
   theme: Theme;
