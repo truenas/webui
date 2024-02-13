@@ -1,4 +1,5 @@
 import {
+  ChangeDetectionStrategy, ChangeDetectorRef,
   Component,
   ElementRef,
   HostListener,
@@ -15,7 +16,10 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Subscription, timer } from 'rxjs';
 import { CHAINED_SLIDE_IN_REF, SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import {
-  ChainedComponentSerialized, ChainedComponentResponse, ChainedComponentRef, IxChainedSlideInService,
+  ChainedComponentRef,
+  ChainedComponentResponse,
+  ChainedComponentSerialized,
+  IxChainedSlideInService,
 } from 'app/services/ix-chained-slide-in.service';
 
 @UntilDestroy()
@@ -23,6 +27,7 @@ import {
   selector: 'ix-slide-in2',
   templateUrl: './ix-slide-in2.component.html',
   styleUrls: ['./ix-slide-in2.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class IxSlideIn2Component implements OnInit, OnDestroy {
   @Input() componentInfo: ChainedComponentSerialized;
@@ -48,6 +53,7 @@ export class IxSlideIn2Component implements OnInit, OnDestroy {
     private el: ElementRef,
     private renderer: Renderer2,
     private chainedSlideInService: IxChainedSlideInService,
+    private cdr: ChangeDetectorRef,
   ) {
     this.element = this.el.nativeElement as HTMLElement;
   }
@@ -96,6 +102,7 @@ export class IxSlideIn2Component implements OnInit, OnDestroy {
         // 200ms matches transition duration
         this.slideInBody.clear();
         this.wasBodyCleared = false;
+        this.cdr.markForCheck();
       });
       this.chainedSlideInService.popComponent(this.componentInfo.id);
     });

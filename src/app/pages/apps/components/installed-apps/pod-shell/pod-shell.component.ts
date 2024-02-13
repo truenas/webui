@@ -1,13 +1,10 @@
-import {
-  ChangeDetectorRef,
-  Component,
-} from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import {
-  Observable, Subject, Subscriber, combineLatest,
+  combineLatest, Observable, Subject, Subscriber,
 } from 'rxjs';
 import { PodSelectDialogType } from 'app/enums/pod-select-dialog.enum';
 import { helptextShell } from 'app/helptext/shell/shell';
@@ -20,6 +17,7 @@ import { WebSocketService } from 'app/services/ws.service';
 @UntilDestroy()
 @Component({
   template: '<ix-terminal [conf]="this"></ix-terminal>',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PodShellComponent implements TerminalConfiguration {
   reconnectShell$ = new Subject<void>();

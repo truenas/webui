@@ -1,6 +1,6 @@
-import { Component, Inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Inject } from '@angular/core';
 import { Title } from '@angular/platform-browser';
-import { Router, NavigationCancel, NavigationEnd } from '@angular/router';
+import { Router, NavigationEnd } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { WINDOW } from 'app/helpers/window.helper';
 import { AuthService } from 'app/services/auth/auth.service';
@@ -9,6 +9,7 @@ import { AuthService } from 'app/services/auth/auth.service';
 @Component({
   selector: 'ix-root',
   templateUrl: './app.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AppComponent {
   isAuthenticated = false;
@@ -39,15 +40,6 @@ export class AppComponent {
         const navigation = this.router.getCurrentNavigation();
         if (this.isAuthenticated && event.url !== '/sessions/signin' && !navigation?.extras?.skipLocationChange) {
           this.window.sessionStorage.setItem('redirectUrl', event.url);
-        }
-      }
-
-      if (event instanceof NavigationCancel) {
-        const params = new URLSearchParams(event.url.split('#')[1]);
-        const isEmbedded = params.get('embedded');
-
-        if (isEmbedded) {
-          document.body.className += ' embedding-active';
         }
       }
     });

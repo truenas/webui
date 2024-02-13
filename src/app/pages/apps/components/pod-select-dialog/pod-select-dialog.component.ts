@@ -1,8 +1,10 @@
-import { OnInit, Component, Inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
+} from '@angular/core';
 import {
   FormBuilder, FormControl, FormGroup, Validators,
 } from '@angular/forms';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Observable, of } from 'rxjs';
 import { PodSelectDialogType } from 'app/enums/pod-select-dialog.enum';
@@ -16,6 +18,7 @@ import { WebSocketService } from 'app/services/ws.service';
 @Component({
   styleUrls: ['./pod-select-dialog.component.scss'],
   templateUrl: './pod-select-dialog.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PodSelectDialogComponent implements OnInit {
   private tailLines = 500;
@@ -43,6 +46,7 @@ export class PodSelectDialogComponent implements OnInit {
     private loader: AppLoaderService,
     private ws: WebSocketService,
     private formBuilder: FormBuilder,
+    private cdr: ChangeDetectorRef,
   ) {
     this.selectedAppName = data.appName;
     this.dialogType = data.type;
@@ -94,9 +98,12 @@ export class PodSelectDialogComponent implements OnInit {
           } else {
             this.hasPool = false;
           }
+
+          this.cdr.markForCheck();
         },
         error: () => {
           this.hasPool = false;
+          this.cdr.markForCheck();
         },
       });
   }
