@@ -2543,6 +2543,8 @@
   "{ n, plural, one {# snapshot} other {# snapshots} }": "",
   "{app} Catalog Summary": "",
   "{checked} exporter: {name}": "",
+  "{comparator} (Range In)": "",
+  "{comparator} (Range Not In)": "",
   "{n, plural, one {# docker image} other {# docker images}} has been deleted.": "",
   "{n, plural, one {# docker image} other {# docker images}} has been updated.": "",
   "{n}": "",

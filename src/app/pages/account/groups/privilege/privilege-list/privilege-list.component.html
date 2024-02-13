@@ -43,5 +43,9 @@
       [isLoading]="dataProvider.isLoading$ | async"
     ></tbody>
   </ix-table2>
-  <ix-table-pager [dataProvider]="dataProvider"></ix-table-pager>
+  <ix-table-pager
+    [dataProvider]="dataProvider"
+    [pageSize]="pagination.pageSize"
+    [currentPage]="pagination.pageNumber"
+  ></ix-table-pager>
 </div>

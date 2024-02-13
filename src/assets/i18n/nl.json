@@ -451,6 +451,8 @@
   "{comparator} (Not Equals)": "",
   "{comparator} (Not In)": "",
   "{comparator} (Not Starts With)": "",
+  "{comparator} (Range In)": "",
+  "{comparator} (Range Not In)": "",
   "{comparator} (Starts With)": "",
   "{days, plural, =1 {# day} other {# days}}": "",
   "{failedCount} of {allCount, plural, =1 {# task} other {# tasks}} failed": "",

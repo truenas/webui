@@ -726,6 +726,8 @@
   "to cloud": "",
   "{catalog} Catalog": "",
   "{checked} exporter: {name}": "",
+  "{comparator} (Range In)": "",
+  "{comparator} (Range Not In)": "",
   "{count} snapshots found.": "",
   "{cpuPercentage}% Avg. Usage": "",
   "{days, plural, =1 {# day} other {# days}}": "",

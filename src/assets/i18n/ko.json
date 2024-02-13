@@ -3971,6 +3971,8 @@
   "{comparator} (Not Equals)": "",
   "{comparator} (Not In)": "",
   "{comparator} (Not Starts With)": "",
+  "{comparator} (Range In)": "",
+  "{comparator} (Range Not In)": "",
   "{comparator} (Starts With)": "",
   "{count} snapshots found.": "",
   "{cpuPercentage}% Avg. Usage": "",

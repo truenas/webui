@@ -13,6 +13,7 @@ import { SortingServerSide } from 'app/modules/ix-table2/classes/api-data-provid
 import { actionsColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
 import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { yesNoColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-yesno/ix-cell-yesno.component';
+import { TablePagination } from 'app/modules/ix-table2/interfaces/table-pagination.interface';
 import { createTable } from 'app/modules/ix-table2/utils';
 import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
 import { SearchProperty } from 'app/modules/search-input/types/search-property.interface';
@@ -33,6 +34,7 @@ import { WebSocketService } from 'app/services/ws.service';
 export class PrivilegeListComponent implements OnInit {
   protected dataProvider: ApiDataProvider<Privilege, 'privilege.query'>;
   protected readonly advancedSearchPlaceholder = this.translate.instant('Name ^ "Local" AND "Web Shell Access" = true');
+  protected searchProperties: SearchProperty<Privilege>[] = [];
 
   columns = createTable<Privilege>([
     textColumn({
@@ -80,11 +82,12 @@ export class PrivilegeListComponent implements OnInit {
     rowTestId: (row) => 'privilege-' + row.name,
   });
 
-  protected searchProperties: SearchProperty<Privilege>[] = [];
-
   searchQuery: SearchQuery<Privilege>;
-
   privileges: Privilege[] = [];
+  pagination: TablePagination = {
+    pageSize: 50,
+    pageNumber: 1,
+  };
 
   constructor(
     private slideInService: IxSlideInService,
