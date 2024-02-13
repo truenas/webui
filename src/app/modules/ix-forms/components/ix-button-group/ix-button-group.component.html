@@ -11,6 +11,7 @@
   [disabled]="isDisabled"
   [ixTest]="controlDirective.name"
   [vertical]="vertical"
+  [attr.aria-label]="label"
   (change)="onValueChanged($event)"
 >
   <mat-button-toggle
@@ -19,6 +20,7 @@
     [disabled]="isDisabled"
     [value]="option.value"
     [ixTest]="[controlDirective.name, option.label]"
+    [attr.aria-label]="option.label"
   >{{ option.label }}</mat-button-toggle>
 </mat-button-toggle-group>
 

@@ -12,15 +12,17 @@
     class="form-chip"
     [disabled]="isDisabled"
     [required]="required"
+    [attr.aria-label]="label"
   >
     <mat-chip-row
-      *ngFor="let label of labels"
+      *ngFor="let chipLabel of labels"
       class="chip"
       [disabled]="false"
       [removable]="!isDisabled"
-      (removed)="onRemove(label)"
+      [attr.aria-label]="chipLabel"
+      (removed)="onRemove(chipLabel)"
     >
-      {{ label }}
+      {{ chipLabel }}
       <ix-icon *ngIf="!isDisabled" name="cancel" matChipRemove></ix-icon>
     </mat-chip-row>
 
