@@ -215,6 +215,8 @@ def click_initiate_failover_click_the_confirm_checkbox_and_press_failover(driver
     """click INITIATE FAILOVER, click the confirm checkbox, and press FAILOVER."""
     # Make sure HA is enable before going forward
     assert wait_on_element(driver, 180, xpaths.toolbar.ha_Enabled)
+    # this sleep is to let the system catch up.
+    # In a real world scenario a system does not get on a failover after few seconds of setting AD.
     time.sleep(10)
     rsc.Trigger_Failover(driver)
 
