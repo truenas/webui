@@ -213,6 +213,11 @@ def after_go_to_the_dashboard(driver):
 @then('click INITIATE FAILOVER, click the confirm checkbox, and press FAILOVER')
 def click_initiate_failover_click_the_confirm_checkbox_and_press_failover(driver):
     """click INITIATE FAILOVER, click the confirm checkbox, and press FAILOVER."""
+    # Make sure HA is enable before going forward
+    assert wait_on_element(driver, 180, xpaths.toolbar.ha_Enabled)
+    # this sleep is to let the system catch up.
+    # In a real world scenario a system does not get on a failover after few seconds of setting AD.
+    time.sleep(10)
     rsc.Trigger_Failover(driver)
 
     rsc.Confirm_Failover(driver)
@@ -232,7 +237,7 @@ def at_the_login_page_enter_user_and_password(driver, user, password):
 
 
 @then('on the Dashboard, wait for the Active Directory service')
-def on_the_dashboard_wait_for_the_active_Directory_service(driver):
+def on_the_dashboard_wait_for_the_active_directory_service(driver):
     """on the Dashboard, wait for the Active Directory service."""
     assert wait_on_element(driver, 60, xpaths.dashboard.title)
     assert wait_on_element(driver, 120, xpaths.dashboard.system_Info_Card_Title)
