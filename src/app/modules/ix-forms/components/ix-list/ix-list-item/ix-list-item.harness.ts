@@ -1,6 +1,6 @@
 import { ComponentHarness } from '@angular/cdk/testing';
+import { IxFormControlHarness } from 'app/modules/ix-forms/interfaces/ix-form-control-harness.interface';
 import {
-  fillControlValues,
   getControlValues,
   indexControlsByLabel, IxFormBasicValueType,
   SupportedFormControlHarness,
@@ -27,7 +27,14 @@ export class IxListItemHarness extends ComponentHarness {
   }
 
   async fillForm(values: Record<string, unknown>): Promise<void> {
-    const controls = await this.getControlHarnessesDict();
-    return fillControlValues(controls, values);
+    const labels = Object.keys(values);
+    for (const label of labels) {
+      const controlsDict = await this.getControlHarnessesDict();
+      const control = controlsDict[label] as IxFormControlHarness;
+      if (!control) {
+        throw new Error(`Could not find control with label ${label}.`);
+      }
+      await control.setValue(values[label]);
+    }
   }
 }

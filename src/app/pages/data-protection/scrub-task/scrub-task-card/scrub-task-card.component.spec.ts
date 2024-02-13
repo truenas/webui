@@ -100,7 +100,7 @@ describe('ScrubTaskCardComponent', () => {
   it('should show table rows', async () => {
     const expectedRows = [
       ['Pool', 'Description', 'Frequency', 'Next Run', 'Enabled', ''],
-      ['APPS', 'cccc', 'At 00:00, only on Sunday', 'in 1 day', '', ''],
+      ['APPS', 'cccc', 'At 00:00, only on Sunday', 'Disabled', '', ''],
     ];
 
     const cells = await table.getCellTexts();

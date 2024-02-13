@@ -30,7 +30,7 @@
       <dl *ngIf="hiddenColumns.length" class="table-hidden-columns">
         <div *ngFor="let column of hiddenColumns">
           <b>{{ column.title }}:</b>
-          <span>{{ cronjob[column.propertyName] }}</span>
+          <span>{{ column?.getValue?.(cronjob) || cronjob[column.propertyName] }}</span>
         </div>
         <mat-divider></mat-divider>
       </dl>

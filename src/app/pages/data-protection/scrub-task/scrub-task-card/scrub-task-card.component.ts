@@ -44,7 +44,9 @@ export class ScrubTaskCardComponent implements OnInit {
     }),
     relativeDateColumn({
       title: this.translate.instant('Next Run'),
-      getValue: (task) => this.taskService.getTaskNextTime(scheduleToCrontab(task.schedule)) as unknown,
+      getValue: (row) => (row.enabled
+        ? this.taskService.getTaskNextTime(scheduleToCrontab(row.schedule))
+        : this.translate.instant('Disabled')),
     }),
     toggleColumn({
       title: this.translate.instant('Enabled'),

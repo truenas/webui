@@ -111,17 +111,16 @@ describe('CertificateAcmeAddComponent', () => {
   });
 
   it('allows custom ACME Server Directory URI', async () => {
-    await form.fillForm({
-      Identifier: 'new',
-      'Terms of Service': true,
-      'Custom ACME Server Directory URI': true,
-      'DNS:truenas.com': 'cloudflare',
-      'DNS:truenas.io': 'route53',
-    });
-
-    await form.fillForm({
-      'ACME Server Directory URI': 'https://acme-staging-v02.api.letsencrypt.org/directory-custom',
-    });
+    await form.fillForm(
+      {
+        Identifier: 'new',
+        'Terms of Service': true,
+        'Custom ACME Server Directory URI': true,
+        'DNS:truenas.com': 'cloudflare',
+        'DNS:truenas.io': 'route53',
+        'ACME Server Directory URI': 'https://acme-staging-v02.api.letsencrypt.org/directory-custom',
+      },
+    );
 
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
