@@ -83,6 +83,11 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     @include variable(color, --fg1, $fg1);
   }
 
+  .mat-mdc-menu-item .mat-icon {
+    align-items: center;
+    display: flex;
+  }
+
   .mat-mdc-menu-item .mat-icon:not([color]),
   .mat-mdc-menu-item .theme-picker-swatch .mat-icon:not([color]),
   .mat-mdc-menu-item-submenu-trigger::after {
