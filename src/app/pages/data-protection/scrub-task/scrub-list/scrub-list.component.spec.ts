@@ -119,7 +119,7 @@ describe('ScrubListComponent', () => {
         'Second task',
         '00 00 * * 7',
         'At 12:00 AM, only on Sunday',
-        'N/A',
+        'Disabled',
         'No',
         '',
       ],
