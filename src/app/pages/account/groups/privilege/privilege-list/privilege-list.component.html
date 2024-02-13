@@ -1,6 +1,27 @@
 <ng-template ixPageHeader>
   <ix-page-title-header>
-    <ix-search-input (search)="onListFiltered($event)"></ix-search-input>
+    <!-- <ix-search-input (search)="onListFiltered($event)"></ix-search-input> -->
+
+    <div class="search-container">
+      <ix-search-input2
+        #searchInput
+        class="search-input"
+        [properties]="searchProperties"
+        [query]="searchQuery"
+        (runSearch)="onSearch(searchInput.query);"
+      ></ix-search-input2>
+      <div class="search-button-wrapper">
+        <button
+          mat-button
+          type="button"
+          color="primary"
+          ixTest="search"
+        >
+          {{ 'Search' | translate }}
+        </button>
+      </div>
+    </div>
+
     <button mat-button ixTest="add-privilege" [color]="'primary'" (click)="openForm()">
       {{ 'Add' | translate }}
     </button>
