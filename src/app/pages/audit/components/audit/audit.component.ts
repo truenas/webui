@@ -54,6 +54,7 @@ import { WebSocketService } from 'app/services/ws.service';
 })
 export class AuditComponent implements OnInit, OnDestroy {
   protected dataProvider: ApiDataProvider<AuditEntry, 'audit.query'>;
+  protected readonly advancedSearchPlaceholder = this.translate.instant('Service = "SMB" AND Event = "CLOSE"');
   showMobileDetails = false;
   isMobileView = false;
   searchQuery: SearchQuery<AuditEntry>;
