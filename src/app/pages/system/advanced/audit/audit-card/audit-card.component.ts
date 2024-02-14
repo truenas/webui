@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import {
-  Subject, shareReplay, startWith, switchMap, tap,
+  Subject, filter, shareReplay, startWith, switchMap, tap,
 } from 'rxjs';
 import { toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import { AdvancedSettingsService } from 'app/pages/system/advanced/advanced-settings.service';
@@ -39,6 +39,7 @@ export class AuditCardComponent {
   onConfigurePressed(): void {
     this.advancedSettingsService.showFirstTimeWarningIfNeeded().pipe(
       switchMap(() => this.chainedSlideIns.pushComponent(AuditFormComponent)),
+      filter((response) => !!response.response),
       tap(() => {
         this.reloadConfig$.next();
       }),

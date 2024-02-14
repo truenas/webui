@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import {
-  Subject, shareReplay, startWith, switchMap, take, tap,
+  Subject, filter, shareReplay, startWith, switchMap, take, tap,
 } from 'rxjs';
 import { toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import { AdvancedSettingsService } from 'app/pages/system/advanced/advanced-settings.service';
@@ -41,6 +41,7 @@ export class ConsoleCardComponent {
   onConfigurePressed(): void {
     this.advancedSettings.showFirstTimeWarningIfNeeded().pipe(
       switchMap(() => this.chainedSlideIns.pushComponent(ConsoleFormComponent)),
+      filter((response) => !!response.response),
       tap(() => this.reloadConfig$.next()),
       untilDestroyed(this),
     ).subscribe();
