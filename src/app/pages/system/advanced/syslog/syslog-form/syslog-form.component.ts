@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
 } from '@angular/core';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -16,11 +16,11 @@ import { SyslogLevel, SyslogTransport } from 'app/enums/syslog.enum';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { helptextSystemAdvanced, helptextSystemAdvanced as helptext } from 'app/helptext/system/advanced';
 import { AdvancedConfigUpdate } from 'app/interfaces/advanced-config.interface';
-import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { CHAINED_COMPONENT_REF, SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { DialogService } from 'app/services/dialog.service';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { SyslogConfig } from 'app/pages/system/advanced/syslog/syslog-card/syslog-card.component';
+import { ChainedComponentRef } from 'app/services/ix-chained-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 import { advancedConfigUpdated } from 'app/store/system-config/system-config.actions';
@@ -67,14 +67,13 @@ export class SyslogFormComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private ws: WebSocketService,
-    private slideInRef: IxSlideInRef<SyslogFormComponent>,
-    private dialogService: DialogService,
     private cdr: ChangeDetectorRef,
-    private errorHandler: ErrorHandlerService,
     private store$: Store<AppState>,
     private snackbar: SnackbarService,
     private translate: TranslateService,
     private formErrorHandler: FormErrorHandlerService,
+    @Inject(SLIDE_IN_DATA) private syslogConfig: SyslogConfig,
+    @Inject(CHAINED_COMPONENT_REF) private chainedRef: ChainedComponentRef,
   ) {}
 
   ngOnInit(): void {
@@ -110,7 +109,7 @@ export class SyslogFormComponent implements OnInit {
         this.store$.dispatch(advancedConfigUpdated());
         this.isFormLoading = false;
         this.cdr.markForCheck();
-        this.slideInRef.close();
+        this.chainedRef.close({ response: true, error: null });
       }),
       catchError((error: unknown) => {
         this.isFormLoading = false;
@@ -123,23 +122,10 @@ export class SyslogFormComponent implements OnInit {
   }
 
   private loadForm(): void {
-    this.isFormLoading = true;
-
-    this.ws.call('system.advanced.config').pipe(untilDestroyed(this))
-      .subscribe({
-        next: (advancedConfig) => {
-          this.isFormLoading = false;
-          this.cdr.markForCheck();
-          this.form.patchValue({
-            ...advancedConfig,
-            syslog_tls_certificate: String(advancedConfig.syslog_tls_certificate),
-            syslog_tls_certificate_authority: String(advancedConfig.syslog_tls_certificate_authority),
-          });
-        },
-        error: (error: unknown) => {
-          this.isFormLoading = false;
-          this.dialogService.error(this.errorHandler.parseError(error));
-        },
-      });
+    this.form.patchValue({
+      ...this.syslogConfig,
+      syslog_tls_certificate: String(this.syslogConfig.syslog_tls_certificate),
+      syslog_tls_certificate_authority: String(this.syslogConfig.syslog_tls_certificate_authority),
+    });
   }
 }
