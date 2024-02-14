@@ -1,14 +1,14 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component,
+  ChangeDetectionStrategy, Component,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import {
-  Observable, filter, of, switchMap,
+  Subject, filter, shareReplay, startWith, switchMap,
 } from 'rxjs';
-import { LoadingState, toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
+import { toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import { SystemSecurityConfig } from 'app/interfaces/system-security-config.interface';
 import { SystemSecurityFormComponent } from 'app/pages/system/advanced/system-security/system-security-form/system-security-form.component';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
@@ -18,24 +18,27 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SystemSecurityCardComponent {
-  systemSecurityConfig$: Observable<LoadingState<SystemSecurityConfig>> = this.ws.call('system.security.config').pipe(toLoadingState());
+  private readonly reloadConfig$ = new Subject<void>();
+  readonly systemSecurityConfig$ = this.reloadConfig$.pipe(
+    startWith(undefined),
+    switchMap(() => this.ws.call('system.security.config').pipe(toLoadingState())),
+    shareReplay({
+      refCount: false,
+      bufferSize: 1,
+    }),
+  );
 
   constructor(
-    private slideInService: IxSlideInService,
+    private chainedSlideIns: IxChainedSlideInService,
     private ws: WebSocketService,
-    private cdr: ChangeDetectorRef,
   ) {}
 
   openSystemSecuritySettings(config: SystemSecurityConfig): void {
-    const slideInRef = this.slideInService.open(SystemSecurityFormComponent, { data: config });
-
-    slideInRef.slideInClosed$.pipe(
-      filter(Boolean),
-      switchMap(() => this.ws.call('system.security.config')),
+    this.chainedSlideIns.pushComponent(SystemSecurityFormComponent, false, { data: config }).pipe(
+      filter((response) => !!response.response),
       untilDestroyed(this),
-    ).subscribe((result) => {
-      this.systemSecurityConfig$ = of(result).pipe(toLoadingState());
-      this.cdr.markForCheck();
+    ).subscribe(() => {
+      this.reloadConfig$.next();
     });
   }
 }

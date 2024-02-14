@@ -7,11 +7,11 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { Role } from 'app/enums/role.enum';
 import { SystemSecurityConfig } from 'app/interfaces/system-security-config.interface';
-import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
+import { CHAINED_COMPONENT_REF, SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DialogService } from 'app/services/dialog.service';
+import { ChainedComponentRef } from 'app/services/ix-chained-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
@@ -38,7 +38,7 @@ export class SystemSecurityFormComponent implements OnInit {
     private dialogService: DialogService,
     private snackbar: SnackbarService,
     private router: Router,
-    private slideInRef: IxSlideInRef<SystemSecurityFormComponent>,
+    @Inject(CHAINED_COMPONENT_REF) private chainedRef: ChainedComponentRef,
     @Inject(SLIDE_IN_DATA) private systemSecurityConfig: SystemSecurityConfig,
   ) {}
 
@@ -84,7 +84,7 @@ export class SystemSecurityFormComponent implements OnInit {
       if (approved) {
         this.router.navigate(['/others/reboot'], { skipLocationChange: true });
       }
-      this.slideInRef.close(true);
+      this.chainedRef.close({ response: true, error: null });
     });
   }
 }
