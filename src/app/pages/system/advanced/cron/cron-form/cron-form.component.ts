@@ -9,13 +9,13 @@ import { Role } from 'app/enums/role.enum';
 import { helptextCron } from 'app/helptext/system/cron-form';
 import { Cronjob, CronjobUpdate } from 'app/interfaces/cronjob.interface';
 import { UserComboboxProvider } from 'app/modules/ix-forms/classes/user-combobox-provider';
-import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
+import { CHAINED_COMPONENT_REF, SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { crontabToSchedule } from 'app/modules/scheduler/utils/crontab-to-schedule.utils';
 import { CronPresetValue } from 'app/modules/scheduler/utils/get-default-crontab-presets.utils';
 import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { ChainedComponentRef } from 'app/services/ix-chained-slide-in.service';
 import { UserService } from 'app/services/user.service';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -68,8 +68,8 @@ export class CronFormComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private snackbar: SnackbarService,
     private userService: UserService,
-    private slideInRef: IxSlideInRef<CronFormComponent>,
     @Inject(SLIDE_IN_DATA) private editingCron: Cronjob,
+    @Inject(CHAINED_COMPONENT_REF) private chainedComponentRef: ChainedComponentRef,
   ) {}
 
   ngOnInit(): void {
@@ -110,7 +110,7 @@ export class CronFormComponent implements OnInit {
           this.snackbar.success(this.translate.instant('Cron job updated'));
         }
         this.isLoading = false;
-        this.slideInRef.close(true);
+        this.chainedComponentRef.close({ response: true, error: null });
       },
       error: (error: unknown) => {
         this.isLoading = false;
