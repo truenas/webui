@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+  ChangeDetectionStrategy, Component, OnInit,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
@@ -99,7 +99,6 @@ export class AccessCardComponent implements OnInit {
     private advancedSettings: AdvancedSettingsService,
     private systemGeneralService: SystemGeneralService,
     protected emptyService: EmptyService,
-    private cdr: ChangeDetectorRef,
   ) {}
 
   ngOnInit(): void {

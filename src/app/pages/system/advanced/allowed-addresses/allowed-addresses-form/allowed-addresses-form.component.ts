@@ -1,24 +1,24 @@
 import {
-  Component, ChangeDetectionStrategy, OnInit, ChangeDetectorRef,
+  Component, ChangeDetectionStrategy, OnInit, ChangeDetectorRef, Inject,
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import {
-  EMPTY, filter, switchMap, tap,
+  EMPTY, Observable, of, switchMap, tap,
 } from 'rxjs';
-import { catchError } from 'rxjs/operators';
+import { catchError, map } from 'rxjs/operators';
 import { Role } from 'app/enums/role.enum';
 import { helptextSystemGeneral } from 'app/helptext/system/general';
 import { WebSocketError } from 'app/interfaces/websocket-error.interface';
-import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { CHAINED_SLIDE_IN_REF } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { ipv4Validator } from 'app/modules/ix-forms/validators/ip-validation';
-import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ChainedComponentRef } from 'app/services/ix-chained-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 import { generalConfigUpdated } from 'app/store/system-config/system-config.actions';
@@ -38,16 +38,15 @@ export class AllowedAddressesFormComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private slideInRef: IxSlideInRef<AllowedAddressesFormComponent>,
     private dialogService: DialogService,
     private ws: WebSocketService,
     private errorHandler: ErrorHandlerService,
     private store$: Store<AppState>,
     private cdr: ChangeDetectorRef,
-    private loader: AppLoaderService,
     private snackbar: SnackbarService,
     private translate: TranslateService,
     private validatorsService: IxValidatorsService,
+    @Inject(CHAINED_SLIDE_IN_REF) private slideInRef: ChainedComponentRef,
   ) {}
 
   ngOnInit(): void {
@@ -81,14 +80,15 @@ export class AllowedAddressesFormComponent implements OnInit {
     this.form.controls.addresses.removeAt(index);
   }
 
-  handleServiceRestart(): void {
-    this.dialogService.confirm({
+  handleServiceRestart(): Observable<true> {
+    return this.dialogService.confirm({
       title: this.translate.instant(helptextSystemGeneral.dialog_confirm_title),
       message: this.translate.instant(helptextSystemGeneral.dialog_confirm_message),
     }).pipe(
-      tap(() => this.slideInRef.close(true)),
-      filter(Boolean),
-      switchMap(() => {
+      switchMap((shouldRestart): Observable<true> => {
+        if (!shouldRestart) {
+          return of(true);
+        }
         return this.ws.call('system.general.ui_restart').pipe(
           catchError((error: WebSocketError) => {
             this.dialogService.error({
@@ -98,23 +98,28 @@ export class AllowedAddressesFormComponent implements OnInit {
             });
             return EMPTY;
           }),
+          map(() => true),
         );
       }),
-      untilDestroyed(this),
-    ).subscribe();
+    );
   }
 
   onSubmit(): void {
     this.isFormLoading = true;
     const addresses = this.form.value.addresses;
-    this.ws.call('system.general.update', [{ ui_allowlist: addresses }]).pipe(untilDestroyed(this)).subscribe({
-      next: () => {
+    this.ws.call('system.general.update', [{ ui_allowlist: addresses }]).pipe(
+      tap(() => {
         this.store$.dispatch(generalConfigUpdated());
         this.isFormLoading = false;
-        this.snackbar.success(this.translate.instant('Allowed addresses have been updated'));
         this.cdr.markForCheck();
-        this.handleServiceRestart();
-      },
+        this.snackbar.success(this.translate.instant('Allowed addresses have been updated'));
+      }),
+      switchMap(() => this.handleServiceRestart()),
+      tap(() => {
+        this.slideInRef.close({ response: true, error: null });
+      }),
+      untilDestroyed(this),
+    ).subscribe({
       error: (error: unknown) => {
         this.isFormLoading = false;
         this.dialogService.error(this.errorHandler.parseError(error));

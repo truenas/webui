@@ -2,7 +2,9 @@ import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
-import { filter, map, switchMap } from 'rxjs';
+import {
+  filter, map, switchMap, tap,
+} from 'rxjs';
 import { Role } from 'app/enums/role.enum';
 import { SystemGeneralConfig } from 'app/interfaces/system-config.interface';
 import { AsyncDataProvider } from 'app/modules/ix-table2/classes/async-data-provider/async-data-provider';
@@ -16,7 +18,7 @@ import {
 } from 'app/pages/system/advanced/allowed-addresses/allowed-addresses-form/allowed-addresses-form.component';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 import { generalConfigUpdated } from 'app/store/system-config/system-config.actions';
@@ -58,7 +60,7 @@ export class AllowedAddressesCardComponent implements OnInit {
     private ws: WebSocketService,
     private store$: Store<AppState>,
     private dialog: DialogService,
-    private slideInService: IxSlideInService,
+    private chainedSlideIns: IxChainedSlideInService,
     private errorHandler: ErrorHandlerService,
     private translate: TranslateService,
     private advancedSettings: AdvancedSettingsService,
@@ -74,12 +76,14 @@ export class AllowedAddressesCardComponent implements OnInit {
     this.getAllowedAddresses();
   }
 
-  async onConfigure(): Promise<void> {
-    await this.advancedSettings.showFirstTimeWarningIfNeeded();
-    const slideInRef = this.slideInService.open(AllowedAddressesFormComponent);
-    slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.getAllowedAddresses();
-    });
+  onConfigure(): void {
+    this.advancedSettings.showFirstTimeWarningIfNeeded().pipe(
+      switchMap(() => this.chainedSlideIns.pushComponent(AllowedAddressesFormComponent)),
+      tap(() => {
+        this.getAllowedAddresses();
+      }),
+      untilDestroyed(this),
+    ).subscribe();
   }
 
   promptDeleteAllowedAddress(row: AllowedAddressRow): void {
