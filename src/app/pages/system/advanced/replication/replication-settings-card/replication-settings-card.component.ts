@@ -1,13 +1,17 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { untilDestroyed } from '@ngneat/until-destroy';
+import { Subject } from 'rxjs';
 import {
-  map, shareReplay, startWith, switchMap,
+  filter,
+  map, shareReplay, startWith, switchMap, tap,
 } from 'rxjs/operators';
 import { toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
+import { ReplicationConfig } from 'app/interfaces/replication-config.interface';
 import { AdvancedSettingsService } from 'app/pages/system/advanced/advanced-settings.service';
 import {
   ReplicationSettingsFormComponent,
 } from 'app/pages/system/advanced/replication/replication-settings-form/replication-settings-form.component';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @Component({
@@ -17,9 +21,12 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ReplicationSettingsCardComponent {
-  taskLimit$ = this.slideInService.onClose$.pipe(
+  private replicationConfig: ReplicationConfig;
+  readonly reloadConfig$ = new Subject<void>();
+  taskLimit$ = this.reloadConfig$.pipe(
     startWith(undefined),
     switchMap(() => this.ws.call('replication.config.config')),
+    tap((config) => this.replicationConfig = config),
     map((config) => config.max_parallel_replication_tasks),
     toLoadingState(),
     shareReplay({
@@ -30,12 +37,20 @@ export class ReplicationSettingsCardComponent {
 
   constructor(
     private ws: WebSocketService,
-    private slideInService: IxSlideInService,
+    private chainedSlideIns: IxChainedSlideInService,
     private advancedSettings: AdvancedSettingsService,
   ) {}
 
-  async onConfigurePressed(): Promise<void> {
-    await this.advancedSettings.showFirstTimeWarningIfNeeded();
-    this.slideInService.open(ReplicationSettingsFormComponent);
+  onConfigurePressed(): void {
+    this.advancedSettings.showFirstTimeWarningIfNeeded().pipe(
+      switchMap(() => this.chainedSlideIns.pushComponent(
+        ReplicationSettingsFormComponent,
+        false,
+        this.replicationConfig,
+      )),
+      filter((response) => !!response.response),
+      tap(() => this.reloadConfig$.next()),
+      untilDestroyed(this),
+    ).subscribe();
   }
 }
