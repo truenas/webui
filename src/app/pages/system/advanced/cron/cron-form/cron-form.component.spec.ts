@@ -9,14 +9,13 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { Cronjob } from 'app/interfaces/cronjob.interface';
 import { User } from 'app/interfaces/user.interface';
-import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
+import { CHAINED_COMPONENT_REF, SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { SchedulerModule } from 'app/modules/scheduler/scheduler.module';
 import { CronFormComponent } from 'app/pages/system/advanced/cron/cron-form/cron-form.component';
 import { DialogService } from 'app/services/dialog.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 import { UserService } from 'app/services/user.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { selectTimezone } from 'app/store/system-config/system-config.selectors';
@@ -25,6 +24,9 @@ describe('CronFormComponent', () => {
   let spectator: Spectator<CronFormComponent>;
   let loader: HarnessLoader;
   let form: IxFormHarness;
+  const componentRef = {
+    close: jest.fn(),
+  };
 
   const existingCronJob = {
     id: 234,
@@ -62,14 +64,17 @@ describe('CronFormComponent', () => {
           },
         ],
       }),
-      mockProvider(IxSlideInService),
+      mockProvider(IxChainedSlideInService, {
+        pushComponent: jest.fn(() => of({ response: true, error: null })),
+        components$: of([]),
+      }),
       mockProvider(UserService, {
         userQueryDsCache: () => of([
           { username: 'root' },
           { username: 'steven' },
         ] as User[]),
       }),
-      mockProvider(IxSlideInRef),
+      { provide: CHAINED_COMPONENT_REF, useValue: componentRef },
       { provide: SLIDE_IN_DATA, useValue: undefined },
       mockAuth(),
     ],
@@ -111,7 +116,7 @@ describe('CronFormComponent', () => {
         stdout: true,
         user: 'root',
       }]);
-      expect(spectator.inject(IxSlideInRef).close).toHaveBeenCalled();
+      expect(componentRef.close).toHaveBeenCalled();
     });
   });
 
@@ -165,7 +170,7 @@ describe('CronFormComponent', () => {
         stdout: true,
         user: 'root',
       }]);
-      expect(spectator.inject(IxSlideInRef).close).toHaveBeenCalled();
+      expect(componentRef.close).toHaveBeenCalled();
     });
   });
 });
