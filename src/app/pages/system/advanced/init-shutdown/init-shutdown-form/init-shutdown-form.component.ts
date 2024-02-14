@@ -12,11 +12,11 @@ import { Role } from 'app/enums/role.enum';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextInitShutdown } from 'app/helptext/system/init-shutdown';
 import { InitShutdownScript } from 'app/interfaces/init-shutdown-script.interface';
-import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
+import { CHAINED_COMPONENT_REF, SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { FilesystemService } from 'app/services/filesystem.service';
+import { ChainedComponentRef } from 'app/services/ix-chained-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy({ arrayName: 'subscriptions' })
@@ -74,8 +74,8 @@ export class InitShutdownFormComponent implements OnInit {
     private translate: TranslateService,
     private snackbar: SnackbarService,
     private filesystemService: FilesystemService,
-    private slideInRef: IxSlideInRef<InitShutdownFormComponent>,
     @Inject(SLIDE_IN_DATA) private editingScript: InitShutdownScript,
+    @Inject(CHAINED_COMPONENT_REF) private chainedRef: ChainedComponentRef,
   ) {}
 
   ngOnInit(): void {
@@ -115,7 +115,7 @@ export class InitShutdownFormComponent implements OnInit {
           this.snackbar.success(this.translate.instant('Init/Shutdown Script updated'));
         }
         this.isFormLoading = false;
-        this.slideInRef.close(true);
+        this.chainedRef.close({ response: true, error: null });
       },
       error: (error: unknown) => {
         this.isFormLoading = false;
