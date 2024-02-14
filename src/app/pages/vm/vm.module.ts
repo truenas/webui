@@ -1,6 +1,5 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
-import { FlexLayoutModule } from '@angular/flex-layout';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -17,10 +16,12 @@ import { CommonDirectivesModule } from 'app/directives/common/common-directives.
 import { CastModule } from 'app/modules/cast/cast.module';
 import { AppCommonModule } from 'app/modules/common/app-common.module';
 import { EntityModule } from 'app/modules/entity/entity.module';
+import { IxFileSizeModule } from 'app/modules/ix-file-size/ix-file-size.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
 import { LayoutModule } from 'app/modules/layout/layout.module';
+import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { TerminalModule } from 'app/modules/terminal/terminal.module';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
 import { DeviceFormComponent } from 'app/pages/vm/devices/device-form/device-form.component';
@@ -47,12 +48,12 @@ import { routing } from './vm.routing';
 @NgModule({
   imports: [
     AppCommonModule,
+    AppLoaderModule,
     CastModule,
     CommonDirectivesModule,
     CommonModule,
     CoreComponents,
     EntityModule,
-    FlexLayoutModule,
     IxFormsModule,
     IxIconModule,
     IxTable2Module,
@@ -71,6 +72,7 @@ import { routing } from './vm.routing';
     TerminalModule,
     TestIdModule,
     TranslateModule,
+    IxFileSizeModule,
   ],
   declarations: [
     VmSerialShellComponent,

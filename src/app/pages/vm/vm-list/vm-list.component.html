@@ -1,10 +1,13 @@
 <ng-template ixPageHeader>
-  <ix-page-title-header>
-    <div *ngIf="hasVirtualizationSupport" class="vm-summary">
-      <p *ngIf="availableMemory">
-        <strong>{{ memTitle | translate }}</strong> {{ availableMemory }} -
-        <ix-icon name="info" [matTooltip]="memWarning | translate"></ix-icon>
-      </p>
+  <ix-page-title-header *ngIf="hasVirtualizationSupport$ | async">
+    <div *ixWithLoadingState="availableMemory$ as availableMemory" class="vm-summary">
+      <strong>{{ 'Available Memory' | translate }}:</strong>
+      <span>{{ availableMemory | ixFileSize }}</span>
+      <ix-icon
+        name="info"
+        [matTooltip]="memWarning | translate"
+        [attr.aria-label]="memWarning | translate"
+      ></ix-icon>
     </div>
 
     <ix-search-input (search)="onListFiltered($event)"></ix-search-input>

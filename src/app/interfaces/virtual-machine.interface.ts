@@ -1,5 +1,6 @@
-import { ServiceStatus } from 'app/enums/service-status.enum';
-import { VmBootloader, VmCpuMode, VmTime } from 'app/enums/vm.enum';
+import {
+  VmBootloader, VmCpuMode, VmState, VmTime,
+} from 'app/enums/vm.enum';
 import { VmDevice } from 'app/interfaces/vm-device.interface';
 
 export interface VirtualMachine {
@@ -21,7 +22,7 @@ export interface VirtualMachine {
   name: string;
   shutdown_timeout: number;
   status: {
-    state: ServiceStatus;
+    state: VmState;
     pid: number;
     domain_state: string; // Enum? SHUTOFF
   };

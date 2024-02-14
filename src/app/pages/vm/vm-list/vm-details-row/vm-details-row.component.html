@@ -1,4 +1,5 @@
 <button
+  *ngIf="!isRunning"
   mat-button
   [ixTest]="['start', vm.id]"
   (click)="doStart()"
@@ -8,6 +9,7 @@
 </button>
 
 <button
+  *ngIf="isRunning"
   mat-button
   [ixTest]="['stop', vm.id]"
   (click)="doStop()"
@@ -17,6 +19,7 @@
 </button>
 
 <button
+  *ngIf="isRunning"
   mat-button
   [ixTest]="['restart', vm.id]"
   (click)="doRestart()"
@@ -26,6 +29,7 @@
 </button>
 
 <button
+  *ngIf="isRunning"
   mat-button
   [ixTest]="['power_off', vm.id]"
   (click)="doPowerOff()"
@@ -71,6 +75,7 @@
 </button>
 
 <button
+  *ngIf="showDisplayButton"
   mat-button
   [ixTest]="['open_display', vm.id]"
   (click)="openDisplay()"
@@ -80,6 +85,7 @@
 </button>
 
 <button
+  *ngIf="isRunning"
   mat-button
   [ixTest]="['open_serial_shell', vm.id]"
   (click)="openSerialShell()"

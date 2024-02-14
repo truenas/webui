@@ -4,21 +4,21 @@ import {
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { filter, tap } from 'rxjs';
-import { ProductType } from 'app/enums/product-type.enum';
-import { VmBootloader, VmDeviceType } from 'app/enums/vm.enum';
+import { VmBootloader, VmDeviceType, vmTimeNames } from 'app/enums/vm.enum';
+import { toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import { helptextVmWizard } from 'app/helptext/vm/vm-wizard/vm-wizard';
 import { VirtualMachine } from 'app/interfaces/virtual-machine.interface';
 import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
 import { AsyncDataProvider } from 'app/modules/ix-table2/classes/async-data-provider/async-data-provider';
-import { stateButtonColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-state-button/ix-cell-state-button.component';
 import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
-import { yesNoColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-yesno/ix-cell-yesno.component';
+import { toggleColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-toggle/ix-cell-toggle.component';
 import { Column, ColumnComponent } from 'app/modules/ix-table2/interfaces/table-column.interface';
 import { createTable } from 'app/modules/ix-table2/utils';
 import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
 import { VmWizardComponent } from 'app/pages/vm/vm-wizard/vm-wizard.component';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
+import { VmService } from 'app/services/vm.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
@@ -31,11 +31,9 @@ export class VmListComponent implements OnInit {
   vmMachines: VirtualMachine[] = [];
   filterString = '';
   dataProvider: AsyncDataProvider<VirtualMachine>;
-  memTitle = helptextVmWizard.vm_mem_title;
-  memWarning = helptextVmWizard.memory_warning;
-  hasVirtualizationSupport = false;
-  private productType = this.systemGeneralService.getProductType();
-  protected availableMemory: string;
+  protected memWarning = helptextVmWizard.memory_warning;
+  protected hasVirtualizationSupport$ = this.vmService.hasVirtualizationSupport$;
+  protected availableMemory$ = this.vmService.getAvailableMemory().pipe(toLoadingState());
 
   columns = createTable<VirtualMachine>([
     textColumn({
@@ -43,14 +41,13 @@ export class VmListComponent implements OnInit {
       propertyName: 'name',
       sortable: true,
     }),
-    stateButtonColumn({
+    toggleColumn({
       title: this.translate.instant('State'),
       sortable: true,
-      getValue: (row) => {
-        return row.status.state;
-      },
+      onRowToggle: (row) => this.vmService.toggleVmStatus(row),
+      getValue: (row) => row.status.state,
     }),
-    yesNoColumn({
+    toggleColumn({
       title: this.translate.instant('Autostart'),
       propertyName: 'autostart',
       sortable: true,
@@ -92,6 +89,9 @@ export class VmListComponent implements OnInit {
       propertyName: 'time',
       sortable: true,
       hidden: true,
+      getValue: (row) => {
+        return vmTimeNames.get(row.time);
+      },
     }),
     textColumn({
       title: this.translate.instant('Display Port'),
@@ -128,11 +128,11 @@ export class VmListComponent implements OnInit {
     private translate: TranslateService,
     private ws: WebSocketService,
     private cdr: ChangeDetectorRef,
+    private vmService: VmService,
     protected emptyService: EmptyService,
   ) {}
 
   ngOnInit(): void {
-    this.checkMemory();
     this.createDataProvider();
   }
 
@@ -148,7 +148,10 @@ export class VmListComponent implements OnInit {
     const slideInRef = this.slideInService.open(VmWizardComponent);
     slideInRef.slideInClosed$
       .pipe(filter(Boolean), untilDestroyed(this))
-      .subscribe(() => this.dataProvider.load());
+      .subscribe(() => {
+        this.vmService.checkMemory();
+        this.dataProvider.load();
+      });
   }
 
   getDisplayPort(vm: VirtualMachine): boolean | number | string {
@@ -159,7 +162,7 @@ export class VmListComponent implements OnInit {
     if (!devices || devices.length === 0) {
       return false;
     }
-    if (this.productType !== ProductType.Scale && ([VmBootloader.Grub, VmBootloader.UefiCsm].includes(vm.bootloader))) {
+    if (this.systemGeneralService.isEnterprise && ([VmBootloader.Grub, VmBootloader.UefiCsm].includes(vm.bootloader))) {
       return false;
     }
     for (const device of devices) {
@@ -169,14 +172,6 @@ export class VmListComponent implements OnInit {
     }
 
     return false;
-  }
-
-  private checkMemory(): void {
-    this.ws.call('vm.get_available_memory')
-      .pipe(untilDestroyed(this))
-      .subscribe((availableMemory) => {
-        this.availableMemory = this.formatter.convertBytesToHumanReadable(availableMemory);
-      });
   }
 
   protected columnsChange(columns: typeof this.columns): void {

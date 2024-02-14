@@ -88,3 +88,8 @@ export const vmOsLabels = new Map<VmOs, string>([
   [VmOs.Linux, T('Linux')],
   [VmOs.FreeBsd, T('FreeBSD')],
 ]);
+
+export enum VmState {
+  Running = 'RUNNING',
+  Stopped = 'STOPPED',
+}

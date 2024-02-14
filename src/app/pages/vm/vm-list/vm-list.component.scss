@@ -1,11 +1,8 @@
-.vm-summary,
-.vm-summary p {
+.vm-summary {
+  align-items: center;
   color: var(--fg1);
-}
-
-.vm-summary p {
-  margin: 16px 0;
-  text-align: center;
+  display: flex;
+  gap: 4px;
 }
 
 .table-hidden-columns {
@@ -13,7 +10,7 @@
 
   div {
     display: flex;
-    gap: 6px;
+    gap: 4px;
   }
 
   .mat-divider {
