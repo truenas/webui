@@ -1,32 +1,31 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import {
-  combineLatest, EMPTY, forkJoin, Observable, of,
+  combineLatest, EMPTY, Observable, of,
 } from 'rxjs';
 import {
-  catchError, filter, switchMap, take, tap,
+  catchError, filter, switchMap, tap,
 } from 'rxjs/operators';
 import { JobState } from 'app/enums/job-state.enum';
 import { Role } from 'app/enums/role.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
-import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { CHAINED_COMPONENT_REF, SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DialogService } from 'app/services/dialog.service';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ChainedComponentRef } from 'app/services/ix-chained-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 import { selectService } from 'app/store/services/services.selectors';
 import { advancedConfigUpdated } from 'app/store/system-config/system-config.actions';
-import { waitForAdvancedConfig } from 'app/store/system-config/system-config.selectors';
 
 @UntilDestroy()
 @Component({
@@ -49,16 +48,16 @@ export class StorageSettingsFormComponent implements OnInit {
 
   constructor(
     private ws: WebSocketService,
-    private slideInRef: IxSlideInRef<StorageSettingsFormComponent>,
     private formErrorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
     private fb: FormBuilder,
     private ixValidator: IxValidatorsService,
-    private errorHandler: ErrorHandlerService,
     private dialogService: DialogService,
     private translate: TranslateService,
     private store$: Store<AppState>,
     private snackbar: SnackbarService,
+    @Inject(SLIDE_IN_DATA) private storageSettings: { systemDsPool: string; swapSize: number },
+    @Inject(CHAINED_COMPONENT_REF) private chainedRef: ChainedComponentRef,
   ) {}
 
   ngOnInit(): void {
@@ -86,7 +85,7 @@ export class StorageSettingsFormComponent implements OnInit {
             this.store$.dispatch(advancedConfigUpdated());
             this.cdr.markForCheck();
             this.snackbar.success(this.translate.instant('System dataset updated.'));
-            this.slideInRef.close();
+            this.chainedRef.close({ response: true, error: null });
           }),
           catchError((error: unknown) => {
             this.isFormLoading = false;
@@ -101,29 +100,11 @@ export class StorageSettingsFormComponent implements OnInit {
   }
 
   private loadFormData(): void {
-    this.isFormLoading = true;
+    this.form.patchValue({
+      pool: this.storageSettings.systemDsPool,
+      swapondrive: this.storageSettings.swapSize,
+    });
     this.cdr.markForCheck();
-
-    forkJoin([
-      this.ws.call('systemdataset.config'),
-      this.store$.pipe(waitForAdvancedConfig, take(1)),
-    ])
-      .pipe(untilDestroyed(this))
-      .subscribe({
-        next: ([systemDatasetConfig, advancedConfig]) => {
-          this.isFormLoading = false;
-          this.form.patchValue({
-            pool: systemDatasetConfig.pool,
-            swapondrive: advancedConfig.swapondrive,
-          });
-          this.cdr.markForCheck();
-        },
-        error: (error: unknown) => {
-          this.isFormLoading = false;
-          this.dialogService.error(this.errorHandler.parseError(error));
-          this.cdr.markForCheck();
-        },
-      });
   }
 
   /**
