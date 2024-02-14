@@ -7,7 +7,7 @@
 
     <ng-container *ngIf="!wasScanInitiated; else runningScanControls">
       <button
-        *ixRequiresRoles="[Role.FullAdmin]"
+        *ixRequiresRoles="requiredRoles"
         mat-button
         ixTest="scrub"
         (click)="onStartScrub()"
@@ -18,7 +18,7 @@
 
     <ng-template #runningScanControls>
       <ng-container *ngIf="isScrub; else disabledButton">
-        <ng-container *ixRequiresRoles="[Role.FullAdmin]">
+        <ng-container *ixRequiresRoles="requiredRoles">
           <div class="controls">
             <button
               mat-button
@@ -80,7 +80,7 @@
       <div class="value">
         {{ pool.autotrim.value === 'on' ? ('On' | translate) : ('Off' | translate) }}
       </div>
-      <a class="action" ixTest="edit-auto-trim" (click)="onEditAutotrim()">
+      <a *ixRequiresRoles="requiredRoles" class="action" ixTest="edit-auto-trim" (click)="onEditAutotrim()">
         {{ 'Edit Auto TRIM' | translate }}
       </a>
     </div>

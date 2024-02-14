@@ -149,12 +149,12 @@ describe('EncryptionSectionComponent', () => {
     });
 
     it('shows Key field when Generate Key checkbox is unticked', async () => {
-      await form.fillForm({
-        'Inherit (non-encrypted)': false,
-      });
-      await form.fillForm({
-        'Generate Key': false,
-      });
+      await form.fillForm(
+        {
+          'Inherit (non-encrypted)': false,
+          'Generate Key': false,
+        },
+      );
 
       const keyControl = await form.getControl('Key');
       expect(keyControl).toExist();
@@ -164,12 +164,12 @@ describe('EncryptionSectionComponent', () => {
 
   describe('passphrase encryption', () => {
     it('shows Passphrase specific fields when Passphrase encryption is used', async () => {
-      await form.fillForm({
-        'Inherit (non-encrypted)': false,
-      });
-      await form.fillForm({
-        'Encryption Type': 'Passphrase',
-      });
+      await form.fillForm(
+        {
+          'Inherit (non-encrypted)': false,
+          'Encryption Type': 'Passphrase',
+        },
+      );
 
       expect(await form.getValues()).toEqual({
         'Inherit (non-encrypted)': false,

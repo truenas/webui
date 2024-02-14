@@ -1,5 +1,5 @@
 import {
-  AfterContentInit, ChangeDetectorRef, Component, ElementRef, Input, OnDestroy, ViewChild,
+  AfterContentInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, Input, OnDestroy, ViewChild,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -86,6 +86,7 @@ export interface DiskFailure {
   selector: 'ix-enclosure-disks',
   templateUrl: './enclosure-disks.component.html',
   styleUrls: ['./enclosure-disks.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
   showCaption = true;
@@ -320,6 +321,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
       }
 
       this.temperatures = clone;
+      this.cdr.markForCheck();
     });
     this.diskTemperatureService.diskTemperaturesSubscribe();
 
@@ -378,6 +380,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
     });
 
     this.pixiInit();
+    this.cdr.markForCheck();
 
     // Listen for DOM changes to avoid race conditions with animations
     const callback = (mutationList: MutationRecord[]): void => {
@@ -423,6 +426,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
           }
         }
       });
+      this.cdr.markForCheck();
     };
 
     const observerOptions = {
@@ -650,6 +654,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
           break;
         }
       }
+      this.cdr.markForCheck();
     });
 
     if (!this.resources[this.chassisView.model]) {
@@ -881,6 +886,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
 
     this.currentView = viewName;
     this.resizeView();
+    this.cdr.markForCheck();
   }
 
   // Updates HTML layers in tandem with Canvas

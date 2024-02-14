@@ -1,5 +1,6 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import {
+  ChangeDetectionStrategy,
   Component, ElementRef, Input, ViewChild,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -14,6 +15,7 @@ import { WebSocketService } from 'app/services/ws.service';
   selector: 'ix-error-template',
   templateUrl: './error-template.component.html',
   styleUrls: ['./error-template.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ErrorTemplateComponent {
   @ViewChild('errorMessageWrapper') errorMessageWrapper: ElementRef<HTMLElement>;

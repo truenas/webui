@@ -1,4 +1,5 @@
 import {
+  ChangeDetectionStrategy, ChangeDetectorRef,
   Component,
   ElementRef,
   HostListener,
@@ -23,6 +24,7 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
   selector: 'ix-slide-in',
   templateUrl: './ix-slide-in.component.html',
   styleUrls: ['./ix-slide-in.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class IxSlideInComponent implements OnInit, OnDestroy {
   @Input() id: string;
@@ -42,6 +44,7 @@ export class IxSlideInComponent implements OnInit, OnDestroy {
     private el: ElementRef,
     private slideInService: IxSlideInService,
     private renderer: Renderer2,
+    private cdr: ChangeDetectorRef,
   ) {
     this.element = this.el.nativeElement as HTMLElement;
   }
@@ -66,11 +69,13 @@ export class IxSlideInComponent implements OnInit, OnDestroy {
     this.isSlideInOpen = false;
     this.renderer.removeStyle(document.body, 'overflow');
     this.wasBodyCleared = true;
+    this.cdr.markForCheck();
     this.timeOutOfClear = timer(200).pipe(untilDestroyed(this)).subscribe(() => {
       // Destroying child component later improves performance a little bit.
       // 200ms matches transition duration
       this.slideInBody.clear();
       this.wasBodyCleared = false;
+      this.cdr.markForCheck();
     });
   }
 
@@ -92,6 +97,8 @@ export class IxSlideInComponent implements OnInit, OnDestroy {
     this.slideInBody.clear();
     this.wasBodyCleared = false;
     // clear body and close all slides
+
+    this.cdr.markForCheck();
 
     return this.createSlideInRef<T, D>(componentType, params?.data);
   }

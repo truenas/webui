@@ -1,4 +1,6 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
+} from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
@@ -42,6 +44,7 @@ import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
   selector: 'ix-update',
   styleUrls: ['update.component.scss'],
   templateUrl: './update.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UpdateComponent implements OnInit {
   packages: { operation: string; name: string }[] = [];
@@ -111,10 +114,12 @@ export class UpdateComponent implements OnInit {
     private fb: FormBuilder,
     private snackbar: SnackbarService,
     private authService: AuthService,
+    private cdr: ChangeDetectorRef,
     @Inject(WINDOW) private window: Window,
   ) {
     this.sysGenService.updateRunning.pipe(untilDestroyed(this)).subscribe((isUpdating: string) => {
       this.isUpdateRunning = isUpdating === 'true';
+      this.cdr.markForCheck();
     });
   }
 
@@ -149,6 +154,7 @@ export class UpdateComponent implements OnInit {
 
     this.ws.call('update.get_auto_download').pipe(untilDestroyed(this)).subscribe((isAutoDownloadOn) => {
       this.autoCheckValue = isAutoDownloadOn;
+      this.cdr.markForCheck();
 
       this.ws.call('update.get_trains').pipe(untilDestroyed(this)).subscribe({
         next: (trains) => {
@@ -185,6 +191,8 @@ export class UpdateComponent implements OnInit {
           }
           // To remember train description if user switches away and then switches back
           this.trainDescriptionOnPageLoad = this.currentTrainDescription;
+
+          this.cdr.markForCheck();
         },
         error: (error: WebSocketError) => {
           this.dialogService.warn(
@@ -203,6 +211,8 @@ export class UpdateComponent implements OnInit {
             this.isHa = true;
           }
           this.checkForUpdateRunning();
+
+          this.cdr.markForCheck();
         });
       });
     } else {
@@ -228,6 +238,7 @@ export class UpdateComponent implements OnInit {
           this.isUpdateRunning = true;
           this.showRunningUpdate(jobs[0].id);
         }
+        this.cdr.markForCheck();
       },
       error: (err) => {
         console.error(err);
@@ -275,6 +286,7 @@ export class UpdateComponent implements OnInit {
       if (this.autoCheckValue) {
         this.check();
       }
+      this.cdr.markForCheck();
     });
   }
 
@@ -283,6 +295,7 @@ export class UpdateComponent implements OnInit {
       if (pending.length !== 0) {
         this.updateDownloaded = true;
       }
+      this.cdr.markForCheck();
     });
   }
 
@@ -299,6 +312,7 @@ export class UpdateComponent implements OnInit {
       },
       complete: () => {
         this.showSpinner = false;
+        this.cdr.markForCheck();
       },
     });
   }
@@ -380,6 +394,7 @@ export class UpdateComponent implements OnInit {
       },
       complete: () => {
         this.showSpinner = false;
+        this.cdr.markForCheck();
       },
     });
   }
@@ -409,6 +424,7 @@ export class UpdateComponent implements OnInit {
         } else {
           this.startUpdate();
         }
+        this.cdr.markForCheck();
       });
   }
 
@@ -488,6 +504,7 @@ export class UpdateComponent implements OnInit {
       },
       complete: () => {
         this.loader.close();
+        this.cdr.markForCheck();
       },
     });
   }
@@ -558,6 +575,7 @@ export class UpdateComponent implements OnInit {
           this.dialogService.closeAllDialogs();
           this.isUpdateRunning = false;
           this.sysGenService.updateDone(); // Send 'finished' signal to topbar
+          this.cdr.markForCheck();
           this.router.navigate(['/']);
           this.dialogService.confirm({
             title: helptext.ha_update.complete_title,

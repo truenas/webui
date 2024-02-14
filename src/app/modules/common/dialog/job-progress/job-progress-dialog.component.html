@@ -51,39 +51,23 @@
 </mat-dialog-content>
 
 <div mat-dialog-actions>
-  <ng-container
-    *ngIf="job?.state === JobState.Failed; then buttonsFailed; else buttonsDefault"
-  ></ng-container>
+  <button
+    *ngIf="hasAbortButton"
+    mat-button
+    ixTest="abort"
+    [disabled]="isAbortingJob"
+    (click)="abortJob()"
+  >
+    {{ isAbortingJob ? ('Aborting...' | translate) : ('Abort' | translate) }}
+  </button>
 
-  <ng-template #buttonsFailed>
-    <button
-      class="mat-dialog-close"
-      mat-icon-button
-      mat-dialog-close="close"
-      ixTest="close"
-    >
-      <ix-icon name="close"></ix-icon>
-    </button>
-  </ng-template>
-
-  <ng-template #buttonsDefault>
-    <button
-      *ngIf="showAbortButton && job?.state === JobState.Running"
-      mat-button
-      ixTest="abort"
-      (click)="abortJob()"
-    >
-      {{ 'Abort' | translate }}
-    </button>
-
-    <button
-      *ngIf="showCloseButton"
-      class="mat-dialog-close"
-      mat-icon-button
-      mat-dialog-close="close"
-      ixTest="close"
-    >
-      <ix-icon name="close"></ix-icon>
-    </button>
-  </ng-template>
+  <button
+    *ngIf="showMinimizeButton"
+    class="mat-dialog-close"
+    mat-icon-button
+    mat-dialog-close="close"
+    ixTest="close"
+  >
+    <ix-icon name="remove"></ix-icon>
+  </button>
 </div>

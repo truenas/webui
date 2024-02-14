@@ -90,9 +90,14 @@ export class CloudSyncListComponent implements OnInit {
       title: this.translate.instant('Next Run'),
       propertyName: 'next_run',
       hidden: true,
-      getValue: (task) => (task.enabled
-        ? this.taskService.getTaskNextRun(scheduleToCrontab(task.schedule))
-        : this.translate.instant('Disabled')),
+      getValue: (task) => {
+        if (task.enabled) {
+          return task.schedule
+            ? formatDistanceToNowShortened(this.taskService.getTaskNextTime(scheduleToCrontab(task.schedule)))
+            : this.translate.instant('N/A');
+        }
+        return this.translate.instant('Disabled');
+      },
     }),
     textColumn({
       title: this.translate.instant('Last Run'),

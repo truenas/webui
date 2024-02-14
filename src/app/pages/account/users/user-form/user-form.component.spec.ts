@@ -252,25 +252,25 @@ describe('UserFormComponent', () => {
 
     it('sends an update payload to websocket and closes modal when save is pressed', async () => {
       const form = await loader.getHarness(IxFormHarness);
-      await form.fillForm({
-        'Auxiliary Groups': ['mock-group', 'test-group'],
-        'Full Name': 'updated',
-        'Home Directory': '/home/updated',
-        'Primary Group': 'mock-group',
-        'Create Home Directory': true,
-        'Samba Authentication': false,
-        'Lock User': true,
-        Shell: 'zsh',
-        Username: 'updated',
-        'Allow all sudo commands': false,
-        'Allowed sudo commands': ['pwd'],
-        'Allowed sudo commands with no password': [],
-        'Allow all sudo commands with no password': true,
-      });
 
-      await form.fillForm({
-        'Home Directory Permissions': '755',
-      });
+      await form.fillForm(
+        {
+          'Auxiliary Groups': ['mock-group', 'test-group'],
+          'Full Name': 'updated',
+          'Home Directory': '/home/updated',
+          'Primary Group': 'mock-group',
+          'Create Home Directory': true,
+          'Samba Authentication': false,
+          'Lock User': true,
+          Shell: 'zsh',
+          Username: 'updated',
+          'Allow all sudo commands': false,
+          'Allowed sudo commands': ['pwd'],
+          'Allowed sudo commands with no password': [],
+          'Allow all sudo commands with no password': true,
+          'Home Directory Permissions': '755',
+        },
+      );
 
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();

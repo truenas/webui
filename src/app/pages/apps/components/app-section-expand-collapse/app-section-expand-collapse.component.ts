@@ -1,5 +1,6 @@
 import {
   AfterContentChecked,
+  ChangeDetectionStrategy,
   Component,
   ElementRef,
   Input,
@@ -12,6 +13,7 @@ import { BehaviorSubject } from 'rxjs';
   selector: 'ix-app-section-expand-collapse',
   templateUrl: './app-section-expand-collapse.component.html',
   styleUrls: ['./app-section-expand-collapse.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AppSectionExpandCollapseComponent implements OnChanges, AfterContentChecked {
   @ViewChild('section', { static: true, read: ElementRef }) section: ElementRef<HTMLElement>;
