@@ -13,6 +13,7 @@ import {
   IActionMapping, ITreeOptions, KEYS, TREE_ACTIONS, TreeComponent,
 } from '@bugsplat/angular-tree-component';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
 import { firstValueFrom, Observable, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
@@ -89,6 +90,7 @@ export class IxExplorerComponent implements OnInit, OnChanges, ControlValueAcces
     public controlDirective: NgControl,
     private cdr: ChangeDetectorRef,
     private matDialog: MatDialog,
+    private translate: TranslateService,
   ) {
     this.controlDirective.valueAccessor = this;
   }
@@ -151,6 +153,17 @@ export class IxExplorerComponent implements OnInit, OnChanges, ControlValueAcces
     }
 
     this.onSelectionChanged();
+  }
+
+  ariaLabel(node: TreeNode<ExplorerNodeData>): string {
+    return this.translate.instant(
+      'Highlighted path is {node}. Press \'Space\' to {expand}. Press \'Enter\' to {select}.',
+      {
+        expand: node?.isExpanded ? 'Collapse' : 'Expand',
+        select: node?.isSelected ? 'Unselect' : 'Select',
+        node: node.data.path.replace(/.{1}/g, '$&,').replace(/\//g, 'slash'),
+      },
+    );
   }
 
   onSelectionChanged(): void {

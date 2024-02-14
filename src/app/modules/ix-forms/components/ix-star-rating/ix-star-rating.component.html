@@ -5,13 +5,14 @@
   [required]="required"
 ></ix-label>
 
-<div class="star-rating">
+<div class="star-rating" [attr.aria-label]="label">
   <div *ngFor="let rating of ratings; index as index">
     <button
       mat-icon-button
       type="button"
       [disabled]="isDisabled"
       [ixTest]="[controlDirective.name, index + 1]"
+      [attr.aria-label]="'Click to give {index} star rating.' | translate: { index: index + 1 }"
       (click)="onValueChanged(index + 1)"
       (blur)="onTouch()"
     >
