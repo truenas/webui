@@ -5,6 +5,7 @@ import {
   Subject, shareReplay, startWith, switchMap, tap,
 } from 'rxjs';
 import { toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
+import { AdvancedSettingsService } from 'app/pages/system/advanced/advanced-settings.service';
 import { AuditFormComponent } from 'app/pages/system/advanced/audit/audit-form/audit-form.component';
 import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -32,10 +33,12 @@ export class AuditCardComponent {
     private chainedSlideIns: IxChainedSlideInService,
     private ws: WebSocketService,
     private translate: TranslateService,
+    private advancedSettingsService: AdvancedSettingsService,
   ) {}
 
   onConfigurePressed(): void {
-    this.chainedSlideIns.pushComponent(AuditFormComponent).pipe(
+    this.advancedSettingsService.showFirstTimeWarningIfNeeded().pipe(
+      switchMap(() => this.chainedSlideIns.pushComponent(AuditFormComponent)),
       tap(() => {
         this.reloadConfig$.next();
       }),
