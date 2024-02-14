@@ -6,7 +6,9 @@ import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { formatDuration, intervalToDuration } from 'date-fns';
 import { of } from 'rxjs';
-import { filter, map } from 'rxjs/operators';
+import {
+  filter, map, switchMap, tap,
+} from 'rxjs/operators';
 import { Role } from 'app/enums/role.enum';
 import { toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import { AuthSession, AuthSessionCredentialsData } from 'app/interfaces/auth-session.interface';
@@ -21,7 +23,7 @@ import { AccessFormComponent } from 'app/pages/system/advanced/access/access-for
 import { AdvancedSettingsService } from 'app/pages/system/advanced/advanced-settings.service';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
@@ -88,7 +90,7 @@ export class AccessCardComponent implements OnInit {
 
   constructor(
     private store$: Store<AppState>,
-    private slideInService: IxSlideInService,
+    private chainedSlideIn: IxChainedSlideInService,
     private errorHandler: ErrorHandlerService,
     private dialogService: DialogService,
     private translate: TranslateService,
@@ -112,12 +114,14 @@ export class AccessCardComponent implements OnInit {
     this.dataProvider.load();
   }
 
-  async onConfigure(): Promise<void> {
-    await this.advancedSettings.showFirstTimeWarningIfNeeded();
-    const slideInRef = this.slideInService.open(AccessFormComponent);
-    slideInRef?.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
-      this.updateSessions();
-    });
+  onConfigure(): void {
+    this.advancedSettings.showFirstTimeWarningIfNeeded().pipe(
+      switchMap(() => this.chainedSlideIn.pushComponent(AccessFormComponent)),
+      tap(() => {
+        this.updateSessions();
+      }),
+      untilDestroyed(this),
+    ).subscribe();
   }
 
   onTerminate(id: string): void {

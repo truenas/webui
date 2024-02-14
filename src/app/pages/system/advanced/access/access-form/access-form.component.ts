@@ -1,5 +1,5 @@
 import {
-  Component, ChangeDetectionStrategy, OnInit, ChangeDetectorRef,
+  Component, ChangeDetectionStrategy, OnInit, ChangeDetectorRef, Inject,
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -7,11 +7,12 @@ import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { filter } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
-import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { CHAINED_SLIDE_IN_REF } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { AuthService } from 'app/services/auth/auth.service';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ChainedComponentRef } from 'app/services/ix-chained-slide-in.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
@@ -46,7 +47,6 @@ export class AccessFormComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private slideInRef: IxSlideInRef<AccessFormComponent>,
     private store$: Store<AppState>,
     private cdr: ChangeDetectorRef,
     private snackbar: SnackbarService,
@@ -56,6 +56,7 @@ export class AccessFormComponent implements OnInit {
     private dialogService: DialogService,
     private systemGeneralService: SystemGeneralService,
     private authService: AuthService,
+    @Inject(CHAINED_SLIDE_IN_REF) private chainedSlideInRef: ChainedComponentRef,
   ) {}
 
   ngOnInit(): void {
@@ -104,6 +105,6 @@ export class AccessFormComponent implements OnInit {
 
   private showSuccessNotificationAndClose(): void {
     this.snackbar.success(this.translate.instant('Settings saved'));
-    this.slideInRef.close(true);
+    this.chainedSlideInRef.close({ response: true, error: null });
   }
 }
