@@ -26,6 +26,7 @@ import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { ExplorerNodeData, TreeNode } from 'app/interfaces/tree-node.interface';
 import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { TreeNodeProvider } from 'app/modules/ix-forms/components/ix-explorer/tree-node-provider.interface';
+import { ChainedComponentRef } from 'app/modules/ix-forms/components/ix-slide-in/chained-component-ref';
 import { CHAINED_COMPONENT_REF } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { crontabToSchedule } from 'app/modules/scheduler/utils/crontab-to-schedule.utils';
 import { CronPresetValue } from 'app/modules/scheduler/utils/get-default-crontab-presets.utils';
@@ -34,7 +35,6 @@ import { CreateStorjBucketDialogComponent } from 'app/pages/data-protection/clou
 import { CloudCredentialService } from 'app/services/cloud-credential.service';
 import { DialogService } from 'app/services/dialog.service';
 import { FilesystemService } from 'app/services/filesystem.service';
-import { ChainedComponentRef } from 'app/services/ix-chained-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 type FormValue = CloudSyncWhatAndWhenComponent['form']['value'];

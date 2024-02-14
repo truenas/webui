@@ -14,9 +14,9 @@ import {
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Subscription, timer } from 'rxjs';
+import { ChainedComponentRef } from 'app/modules/ix-forms/components/ix-slide-in/chained-component-ref';
 import { CHAINED_COMPONENT_REF, SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import {
-  ChainedComponentRef,
   ChainedComponentResponse,
   ChainedComponentSerialized,
   IxChainedSlideInService,

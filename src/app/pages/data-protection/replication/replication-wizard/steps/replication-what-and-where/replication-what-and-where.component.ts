@@ -25,6 +25,7 @@ import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { SummaryProvider, SummarySection } from 'app/modules/common/summary/summary.interface';
 import { ixManualValidateError } from 'app/modules/ix-forms/components/ix-errors/ix-errors.component';
 import { TreeNodeProvider } from 'app/modules/ix-forms/components/ix-explorer/tree-node-provider.interface';
+import { ChainedComponentRef } from 'app/modules/ix-forms/components/ix-slide-in/chained-component-ref';
 import { CHAINED_COMPONENT_REF } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import {
   forbiddenAsyncValues,
@@ -33,7 +34,6 @@ import { ReplicationFormComponent } from 'app/pages/data-protection/replication/
 import { AuthService } from 'app/services/auth/auth.service';
 import { DatasetService } from 'app/services/dataset-service/dataset.service';
 import { DialogService } from 'app/services/dialog.service';
-import { ChainedComponentRef } from 'app/services/ix-chained-slide-in.service';
 import { KeychainCredentialService } from 'app/services/keychain-credential.service';
 import { ReplicationService } from 'app/services/replication.service';
 import { WebSocketService } from 'app/services/ws.service';

@@ -3,8 +3,9 @@ import {
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import { ChainedComponentRef } from 'app/modules/ix-forms/components/ix-slide-in/chained-component-ref';
 import { CHAINED_COMPONENT_REF } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
-import { ChainedComponentRef, IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
+import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 
 @UntilDestroy()
 @Component({

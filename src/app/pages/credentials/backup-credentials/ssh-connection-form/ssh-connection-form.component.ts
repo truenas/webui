@@ -23,6 +23,7 @@ import {
 import { SshConnectionSetup } from 'app/interfaces/ssh-connection-setup.interface';
 import { SshCredentials } from 'app/interfaces/ssh-credentials.interface';
 import { WebSocketError } from 'app/interfaces/websocket-error.interface';
+import { ChainedComponentRef } from 'app/modules/ix-forms/components/ix-slide-in/chained-component-ref';
 import { CHAINED_COMPONENT_REF, SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
@@ -31,7 +32,6 @@ import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { ChainedComponentRef } from 'app/services/ix-chained-slide-in.service';
 import { KeychainCredentialService } from 'app/services/keychain-credential.service';
 import { WebSocketService } from 'app/services/ws.service';
 

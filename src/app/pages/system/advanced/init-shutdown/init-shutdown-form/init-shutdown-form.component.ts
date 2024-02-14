@@ -12,11 +12,11 @@ import { Role } from 'app/enums/role.enum';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextInitShutdown } from 'app/helptext/system/init-shutdown';
 import { InitShutdownScript } from 'app/interfaces/init-shutdown-script.interface';
+import { ChainedComponentRef } from 'app/modules/ix-forms/components/ix-slide-in/chained-component-ref';
 import { CHAINED_COMPONENT_REF, SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { FilesystemService } from 'app/services/filesystem.service';
-import { ChainedComponentRef } from 'app/services/ix-chained-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy({ arrayName: 'subscriptions' })

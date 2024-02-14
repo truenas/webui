@@ -10,9 +10,9 @@ import { TunableType } from 'app/enums/tunable-type.enum';
 import { helptextSystemTunable as helptext } from 'app/helptext/system/tunable';
 import { Job } from 'app/interfaces/job.interface';
 import { Tunable } from 'app/interfaces/tunable.interface';
+import { ChainedComponentRef } from 'app/modules/ix-forms/components/ix-slide-in/chained-component-ref';
 import { CHAINED_COMPONENT_REF, SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
-import { ChainedComponentRef } from 'app/services/ix-chained-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
