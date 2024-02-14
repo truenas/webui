@@ -7,7 +7,7 @@ import { provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockWebSocket, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
-import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { CHAINED_COMPONENT_REF } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTable2Harness } from 'app/modules/ix-table2/components/ix-table2/ix-table2.harness';
 import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
@@ -17,7 +17,7 @@ import { CronCardComponent } from 'app/pages/system/advanced/cron/cron-card/cron
 import { CronDeleteDialogComponent } from 'app/pages/system/advanced/cron/cron-delete-dialog/cron-delete-dialog.component';
 import { CronFormComponent } from 'app/pages/system/advanced/cron/cron-form/cron-form.component';
 import { DialogService } from 'app/services/dialog.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 import { LocaleService } from 'app/services/locale.service';
 import { TaskService } from 'app/services/task.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -69,12 +69,10 @@ describe('CronCardComponent', () => {
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
-      mockProvider(IxSlideInService, {
-        open: jest.fn(() => {
-          return { slideInClosed$: of() };
-        }),
+      mockProvider(IxChainedSlideInService, {
+        pushComponent: jest.fn(() => of({ response: true, error: null })),
       }),
-      mockProvider(IxSlideInRef),
+      { provide: CHAINED_COMPONENT_REF, useValue: { close: jest.fn() } },
       mockProvider(MatDialog, {
         open: jest.fn(() => ({
           afterClosed: () => of(true),
@@ -86,7 +84,7 @@ describe('CronCardComponent', () => {
         getTaskNextRun: jest.fn(() => 'in about 10 hours'),
       }),
       mockProvider(AdvancedSettingsService, {
-        showFirstTimeWarningIfNeeded: jest.fn(() => Promise.resolve()),
+        showFirstTimeWarningIfNeeded: jest.fn(() => of(true)),
       }),
       mockAuth(),
     ],
@@ -125,9 +123,11 @@ describe('CronCardComponent', () => {
     const editButton = await table.getHarnessInRow(IxIconHarness.with({ name: 'edit' }), 'root');
     await editButton.click();
 
-    expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(CronFormComponent, {
-      data: expect.objectContaining(cronJobs[0]),
-    });
+    expect(spectator.inject(IxChainedSlideInService).pushComponent).toHaveBeenCalledWith(
+      CronFormComponent,
+      false,
+      expect.objectContaining(cronJobs[0]),
+    );
   });
 
   it('deletes a cronjob with confirmation when Delete button is pressed', async () => {
