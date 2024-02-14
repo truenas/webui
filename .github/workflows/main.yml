@@ -17,7 +17,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Install
         uses: ./.github/actions/prepare
 
@@ -27,7 +27,7 @@ jobs:
     outputs:
       translations-only: ${{ steps.determine-changes.outputs.translations-only }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 2
 
@@ -55,7 +55,7 @@ jobs:
     if: ${{ needs.check-files.outputs.translations-only == 'false' }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Install
         uses: ./.github/actions/prepare
       - name: Build
@@ -68,7 +68,7 @@ jobs:
     if: ${{ needs.check-files.outputs.translations-only == 'false' }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Install
         uses: ./.github/actions/prepare
       - name: Generate default environment file
@@ -83,7 +83,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Install
         uses: ./.github/actions/prepare
       - name: Build
@@ -98,7 +98,7 @@ jobs:
       CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Install
         uses: ./.github/actions/prepare
       - name: Run tests
@@ -118,7 +118,7 @@ jobs:
     if: ${{ needs.check-files.outputs.translations-only == 'true' }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           ref: ${{ github.event.pull_request.head.ref }}
           fetch-depth: 1
