@@ -711,7 +711,6 @@ function mockPool(command: Command, options: CommandOptions): void {
 * Remote Command
 * */
 function normalizeUrl(url = ''): string {
-  return url;
   const parts = url.match(/^(?:https?:\/\/)?(?:[^@\n]+@)?([^:\/\n?]+)(?::([0-9]+))?/);
 
   if (!parts || !parts.length) {
