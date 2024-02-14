@@ -141,7 +141,7 @@ describe('RsyncTaskListComponent', () => {
         '',
         'PUSH',
         'At 12:00 AM, on day 1 of the month',
-        'N/A',
+        'Disabled',
         'Second task',
         'peter',
         'FINISHED',

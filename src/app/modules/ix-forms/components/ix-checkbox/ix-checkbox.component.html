@@ -4,6 +4,7 @@
   [required]="required"
   [disabled]="isDisabled"
   [ixTest]="controlDirective.name"
+  [attr.aria-label]="label"
   (change)="onCheckboxChanged($event)"
   (blur)="onTouch()"
 >

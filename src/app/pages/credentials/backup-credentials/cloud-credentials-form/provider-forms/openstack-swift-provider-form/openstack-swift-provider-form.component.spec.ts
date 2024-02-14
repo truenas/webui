@@ -85,25 +85,24 @@ describe('OpenstackSwiftProviderFormComponent', () => {
   });
 
   it('shows and returns additional attributes when AuthVersion is v3', async () => {
-    await form.fillForm({
-      'User Name': 'johny',
-      'API Key or Password': 'A12345',
-      'Authentication URL': 'http://new.openstack.com/auth',
-      AuthVersion: 'v3',
+    await form.fillForm(
+      {
+        'User Name': 'johny',
+        'API Key or Password': 'A12345',
+        'Authentication URL': 'http://new.openstack.com/auth',
+        AuthVersion: 'v3',
 
-      'Tenant Name': 'john-tenant',
-      'Tenant ID': '123',
-      'Auth Token': 'T1234',
-      'Region Name': 'Europe',
-      'Storage URL': 'http://new.openstack.com/storage',
-      'Endpoint Type': 'Public',
-    });
-
-    await form.fillForm({
-      'User ID': 'johny-user',
-      'User Domain': 'accountants',
-      'Tenant Domain': 'tenant-domain',
-    });
+        'Tenant Name': 'john-tenant',
+        'Tenant ID': '123',
+        'Auth Token': 'T1234',
+        'Region Name': 'Europe',
+        'Storage URL': 'http://new.openstack.com/storage',
+        'Endpoint Type': 'Public',
+        'User ID': 'johny-user',
+        'User Domain': 'accountants',
+        'Tenant Domain': 'tenant-domain',
+      },
+    );
 
     const values = spectator.component.getSubmitAttributes();
     expect(values).toMatchObject({

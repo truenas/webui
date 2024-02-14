@@ -1,6 +1,11 @@
 import {
   AfterViewInit,
-  Component, EventEmitter, Input, Output,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  EventEmitter,
+  Input,
+  Output,
 } from '@angular/core';
 import { AbstractControl } from '@angular/forms';
 import { ChartSchemaNode } from 'app/interfaces/chart-release.interface';
@@ -9,6 +14,7 @@ import { ChartSchemaNode } from 'app/interfaces/chart-release.interface';
   selector: 'ix-list',
   templateUrl: './ix-list.component.html',
   styleUrls: ['./ix-list.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class IxListComponent implements AfterViewInit {
   @Input() formArray: AbstractControl;
@@ -18,10 +24,17 @@ export class IxListComponent implements AfterViewInit {
   @Input() required: boolean;
   @Input() canAdd = true;
   @Input() default: unknown[];
+  // TODO: Does not belong to the scope of this component.
   @Input() itemsSchema: ChartSchemaNode[];
   @Input() isEditMode: boolean;
 
   @Output() add = new EventEmitter<ChartSchemaNode[]>();
+
+  isDisabled = false;
+
+  constructor(
+    private cdr: ChangeDetectorRef,
+  ) {}
 
   ngAfterViewInit(): void {
     if (!this.isEditMode && this.default?.length > 0) {
@@ -32,8 +45,6 @@ export class IxListComponent implements AfterViewInit {
   addItem(schema?: ChartSchemaNode[]): void {
     this.add.emit(schema);
   }
-
-  isDisabled = false;
 
   setDisabledState(isDisabled: boolean): void {
     this.isDisabled = isDisabled;
@@ -54,6 +65,8 @@ export class IxListComponent implements AfterViewInit {
           }),
         );
       });
+
+      this.cdr.markForCheck();
     });
   }
 }

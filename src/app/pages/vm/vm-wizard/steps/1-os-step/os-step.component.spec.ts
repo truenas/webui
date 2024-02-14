@@ -77,12 +77,13 @@ describe('OsStepComponent', () => {
 
   it('shows Hyper-V Enlightenments checkbox when Windows is selected as OS', async () => {
     await fillForm();
-    await form.fillForm({
-      'Guest Operating System': 'Windows',
-    });
-    await form.fillForm({
-      'Enable Hyper-V Enlightenments': true,
-    });
+
+    await form.fillForm(
+      {
+        'Guest Operating System': 'Windows',
+        'Enable Hyper-V Enlightenments': true,
+      },
+    );
 
     expect(spectator.component.form.value).toMatchObject({
       os: VmOs.Windows,

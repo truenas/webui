@@ -1,4 +1,5 @@
 import {
+  ChangeDetectionStrategy,
   Component,
 } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
@@ -12,6 +13,7 @@ import { DialogService } from 'app/services/dialog.service';
 @Component({
   templateUrl: './unlock-summary-dialog.component.html',
   styleUrls: ['./unlock-summary-dialog.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UnlockSummaryDialogComponent {
   title: string = helptextUnlock.unlock_dataset_dialog.title;

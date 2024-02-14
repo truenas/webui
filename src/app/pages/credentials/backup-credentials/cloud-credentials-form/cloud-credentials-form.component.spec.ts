@@ -272,12 +272,12 @@ describe('CloudCredentialsFormComponent', () => {
           Name: 'Box',
         });
 
-        await form.fillForm({
-          Name: 'My Box',
-        });
-        await form.fillForm({
-          Provider: 'Amazon S3',
-        });
+        await form.fillForm(
+          {
+            Name: 'My Box',
+            Provider: 'Amazon S3',
+          },
+        );
 
         expect(await form.getValues()).toEqual({
           Name: 'My Box',

@@ -150,17 +150,17 @@ describe('CertificateAddComponent', () => {
     await nextButton.click();
     await updateStepHarnesses();
 
-    await form.fillForm({
-      'Basic Constraints': true,
-      'Extended Key Usage': true,
-    });
-    await form.fillForm({
-      'Path Length': 128,
-      'Basic Constraints Config': ['CA', 'Critical Extension'],
+    await form.fillForm(
+      {
+        'Basic Constraints': true,
+        'Extended Key Usage': true,
+        'Path Length': 128,
+        'Basic Constraints Config': ['CA', 'Critical Extension'],
 
-      Usages: ['CLIENT_AUTH'],
-      'Critical Extension': true,
-    });
+        Usages: ['CLIENT_AUTH'],
+        'Critical Extension': true,
+      },
+    );
     await nextButton.click();
 
     await (await loader.getHarness(MatButtonHarness.with({ text: 'Save' }))).click();

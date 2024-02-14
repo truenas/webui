@@ -82,7 +82,7 @@ export class WebSocketService {
           this.call('core.get_jobs', [[['id', '=', jobId]]]).pipe(map((jobs) => jobs[0])),
         )
           .pipe(
-            takeWhile((job) => job.state !== JobState.Success, true),
+            takeWhile((job) => !job.time_finished, true),
             switchMap((job) => {
               if (job.state === JobState.Failed) {
                 return throwError(() => job);

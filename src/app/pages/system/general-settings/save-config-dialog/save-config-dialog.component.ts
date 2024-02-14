@@ -62,8 +62,7 @@ export class SaveConfigDialogComponent {
     };
   }
 
-  onSubmit(event: SubmitEvent): void {
-    event.preventDefault();
+  onSubmit(): void {
     this.store$.pipe(
       waitForSystemInfo,
       switchMap((systemInfo) => {

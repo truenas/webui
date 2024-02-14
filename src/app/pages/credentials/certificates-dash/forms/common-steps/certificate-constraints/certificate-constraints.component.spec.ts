@@ -48,20 +48,20 @@ describe('CertificateConstraintsComponent', () => {
 
   describe('all constraints used', () => {
     beforeEach(async () => {
-      await form.fillForm({
-        'Basic Constraints': true,
-        'Authority Key Identifier': true,
-        'Extended Key Usage': true,
-        'Key Usage': true,
-      });
-      await form.fillForm({
-        'Path Length': 128,
-        'Basic Constraints Config': ['CA', 'Critical Extension'],
-        'Authority Key Config': ['Critical Extension'],
-        Usages: ['CLIENT_AUTH', 'CODE_SIGNING'],
-        'Critical Extension': true,
-        'Key Usage Config': ['CRL Sign', 'Digital Signature'],
-      });
+      await form.fillForm(
+        {
+          'Basic Constraints': true,
+          'Authority Key Identifier': true,
+          'Extended Key Usage': true,
+          'Key Usage': true,
+          'Path Length': 128,
+          'Basic Constraints Config': ['CA', 'Critical Extension'],
+          'Authority Key Config': ['Critical Extension'],
+          Usages: ['CLIENT_AUTH', 'CODE_SIGNING'],
+          'Critical Extension': true,
+          'Key Usage Config': ['CRL Sign', 'Digital Signature'],
+        },
+      );
     });
 
     it('returns cert_extensions when getPayload is called', () => {
@@ -127,18 +127,17 @@ describe('CertificateConstraintsComponent', () => {
 
   describe('some constraints used', () => {
     beforeEach(async () => {
-      await form.fillForm({
-        'Basic Constraints': true,
-        'Authority Key Identifier': true,
-        'Extended Key Usage': false,
-        'Key Usage': false,
-      });
-
-      await form.fillForm({
-        'Path Length': 256,
-        'Basic Constraints Config': ['CA', 'Critical Extension'],
-        'Authority Key Config': ['Critical Extension'],
-      });
+      await form.fillForm(
+        {
+          'Basic Constraints': true,
+          'Authority Key Identifier': true,
+          'Extended Key Usage': false,
+          'Key Usage': false,
+          'Path Length': 256,
+          'Basic Constraints Config': ['CA', 'Critical Extension'],
+          'Authority Key Config': ['Critical Extension'],
+        },
+      );
     });
 
     it('returns cert_extensions when getPayload is called', () => {
