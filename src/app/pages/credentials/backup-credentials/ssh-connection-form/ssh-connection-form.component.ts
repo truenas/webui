@@ -23,7 +23,7 @@ import {
 import { SshConnectionSetup } from 'app/interfaces/ssh-connection-setup.interface';
 import { SshCredentials } from 'app/interfaces/ssh-credentials.interface';
 import { WebSocketError } from 'app/interfaces/websocket-error.interface';
-import { CHAINED_SLIDE_IN_REF, SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
+import { CHAINED_COMPONENT_REF, SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
@@ -142,7 +142,7 @@ export class SshConnectionFormComponent implements OnInit {
     private dialogService: DialogService,
     private snackbar: SnackbarService,
     @Inject(SLIDE_IN_DATA) private existingConnection: KeychainSshCredentials,
-    @Inject(CHAINED_SLIDE_IN_REF) private chainedSlideInRef: ChainedComponentRef,
+    @Inject(CHAINED_COMPONENT_REF) private chainedSlideInRef: ChainedComponentRef,
   ) { }
 
   ngOnInit(): void {

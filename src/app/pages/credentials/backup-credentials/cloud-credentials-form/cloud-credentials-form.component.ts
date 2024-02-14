@@ -17,7 +17,7 @@ import { helptextSystemCloudcredentials as helptext } from 'app/helptext/system/
 import { CloudSyncCredential, CloudSyncCredentialUpdate } from 'app/interfaces/cloudsync-credential.interface';
 import { CloudSyncProvider } from 'app/interfaces/cloudsync-provider.interface';
 import { Option } from 'app/interfaces/option.interface';
-import { CHAINED_SLIDE_IN_REF, SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
+import { CHAINED_COMPONENT_REF, SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { forbiddenValues } from 'app/modules/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -68,7 +68,7 @@ export class CloudCredentialsFormComponent implements OnInit {
     private snackbarService: SnackbarService,
     private cloudCredentialService: CloudCredentialService,
     @Inject(SLIDE_IN_DATA) private credential: CloudSyncCredential,
-    @Inject(CHAINED_SLIDE_IN_REF) private chainedSlideInRef: ChainedComponentRef,
+    @Inject(CHAINED_COMPONENT_REF) private chainedSlideInRef: ChainedComponentRef,
   ) {
     // Has to be earlier than potential `setCredentialsForEdit` call
     this.setFormEvents();

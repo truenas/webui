@@ -14,7 +14,7 @@ import {
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Subscription, timer } from 'rxjs';
-import { CHAINED_SLIDE_IN_REF, SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
+import { CHAINED_COMPONENT_REF, SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import {
   ChainedComponentRef,
   ChainedComponentResponse,
@@ -141,7 +141,7 @@ export class IxSlideIn2Component implements OnInit, OnDestroy {
       providers: [
         { provide: SLIDE_IN_DATA, useValue: data },
         {
-          provide: CHAINED_SLIDE_IN_REF,
+          provide: CHAINED_COMPONENT_REF,
           useValue: {
             close: (response: ChainedComponentResponse) => {
               this.componentInfo.close$.next(response);
