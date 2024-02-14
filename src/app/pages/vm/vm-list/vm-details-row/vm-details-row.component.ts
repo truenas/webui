@@ -5,6 +5,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { filter } from 'rxjs';
+import { Role } from 'app/enums/role.enum';
 import { VmState } from 'app/enums/vm.enum';
 import { VirtualMachine } from 'app/interfaces/virtual-machine.interface';
 import { VmEditFormComponent } from 'app/pages/vm/vm-edit-form/vm-edit-form.component';
@@ -24,6 +25,7 @@ import { VmService } from 'app/services/vm.service';
 export class VirtualMachineDetailsRowComponent {
   @Input() vm: VirtualMachine;
   @Output() refresh = new EventEmitter<void>();
+  requiresRoles = [Role.VmWrite];
 
   get isRunning(): boolean {
     return this.vm.status.state === VmState.Running;
@@ -86,7 +88,7 @@ export class VirtualMachineDetailsRowComponent {
     this.matDialog
       .open(DeleteVmDialogComponent, { data: this.vm })
       .afterClosed()
-      .pipe(untilDestroyed(this))
+      .pipe(filter(Boolean), untilDestroyed(this))
       .subscribe(() => this.refresh.emit());
   }
 

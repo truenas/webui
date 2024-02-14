@@ -1,44 +1,53 @@
-<button
-  *ngIf="!isRunning"
-  mat-button
-  [ixTest]="['start', vm.id]"
-  (click)="doStart()"
->
-  <ix-icon name="play_arrow"></ix-icon>
-  <span>{{ 'Start' | translate }}</span>
-</button>
+<ng-container *ngIf="!isRunning">
+  <button
+    *ixRequiresRoles="requiresRoles"
+    mat-button
+    [ixTest]="['start', vm.id]"
+    (click)="doStart()"
+  >
+    <ix-icon name="play_arrow"></ix-icon>
+    <span>{{ 'Start' | translate }}</span>
+  </button>
+</ng-container>
+
+<ng-container *ngIf="isRunning">
+  <button
+    *ixRequiresRoles="requiresRoles"
+    mat-button
+    [ixTest]="['stop', vm.id]"
+    (click)="doStop()"
+  >
+    <ix-icon name="stop"></ix-icon>
+    <span>{{ 'Stop' | translate }}</span>
+  </button>
+</ng-container>
+
+<ng-container *ngIf="isRunning">
+  <button
+    *ixRequiresRoles="requiresRoles"
+    mat-button
+    [ixTest]="['restart', vm.id]"
+    (click)="doRestart()"
+  >
+    <ix-icon name="replay"></ix-icon>
+    <span>{{ 'Restart' | translate }}</span>
+  </button>
+</ng-container>
+
+<ng-container *ngIf="isRunning">
+  <button
+    *ixRequiresRoles="requiresRoles"
+    mat-button
+    [ixTest]="['power_off', vm.id]"
+    (click)="doPowerOff()"
+  >
+    <ix-icon name="power_settings_new"></ix-icon>
+    <span>{{ 'Power Off' | translate }}</span>
+  </button>
+</ng-container>
 
 <button
-  *ngIf="isRunning"
-  mat-button
-  [ixTest]="['stop', vm.id]"
-  (click)="doStop()"
->
-  <ix-icon name="stop"></ix-icon>
-  <span>{{ 'Stop' | translate }}</span>
-</button>
-
-<button
-  *ngIf="isRunning"
-  mat-button
-  [ixTest]="['restart', vm.id]"
-  (click)="doRestart()"
->
-  <ix-icon name="replay"></ix-icon>
-  <span>{{ 'Restart' | translate }}</span>
-</button>
-
-<button
-  *ngIf="isRunning"
-  mat-button
-  [ixTest]="['power_off', vm.id]"
-  (click)="doPowerOff()"
->
-  <ix-icon name="power_settings_new"></ix-icon>
-  <span>{{ 'Power Off' | translate }}</span>
-</button>
-
-<button
+  *ixRequiresRoles="requiresRoles"
   mat-button
   [ixTest]="['edit', vm.id]"
   (click)="doEdit()"
@@ -48,6 +57,7 @@
 </button>
 
 <button
+  *ixRequiresRoles="requiresRoles"
   mat-button
   [ixTest]="['delete', vm.id]"
   (click)="doDelete()"
@@ -66,6 +76,7 @@
 </button>
 
 <button
+  *ixRequiresRoles="requiresRoles"
   mat-button
   [ixTest]="['clone', vm.id]"
   (click)="doClone()"

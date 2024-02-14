@@ -1,6 +1,5 @@
 import { Injectable, Inject } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import {
   BehaviorSubject, Observable, Subject, filter, repeat, switchMap, take,
@@ -30,10 +29,7 @@ export class VmService {
   private wsMethods = {
     start: 'vm.start',
     restart: 'vm.restart',
-    stop: 'vm.stop',
     poweroff: 'vm.poweroff',
-    update: 'vm.update',
-    clone: 'vm.clone',
   } as const;
 
   constructor(
@@ -76,7 +72,7 @@ export class VmService {
   doStop(vm: VirtualMachine): void {
     this.matDialog.open<StopVmDialogComponent, unknown, StopVmDialogData>(StopVmDialogComponent, { data: vm })
       .afterClosed()
-      .pipe(filter((data) => data?.wasStopped), untilDestroyed(this))
+      .pipe(filter(Boolean), take(1))
       .subscribe((data) => {
         this.doStopJob(vm, data.forceAfterTimeout);
       });
@@ -118,6 +114,18 @@ export class VmService {
     }
   }
 
+  toggleVmAutostart(vm: VirtualMachine): void {
+    const payload = { ...vm, autostart: !vm.autostart };
+    this.ws.call('vm.update', [vm.id, payload])
+      .pipe(this.loader.withLoader(), take(1))
+      .subscribe({
+        next: () => this.checkMemory(),
+        error: (error: WebSocketError) => {
+          this.errorHandler.showErrorModal(error);
+        },
+      });
+  }
+
   private doAction<T extends 'vm.start' | 'vm.update' | 'vm.poweroff'>(
     vm: VirtualMachine,
     method: T,
@@ -133,9 +141,6 @@ export class VmService {
             this.onMemoryError(vm);
             return;
           }
-          // if (method === this.wsMethods.update) {
-          // row.autostart = !row.autostart;
-          // }
           this.errorHandler.showErrorModal(error);
         },
       });
@@ -200,7 +205,7 @@ export class VmService {
       confirmationCheckboxText: helptextVmList.memory_dialog.secondaryCheckboxMessage,
       buttonText: helptextVmList.memory_dialog.buttonMessage,
     })
-      .pipe(filter(Boolean), untilDestroyed(this))
+      .pipe(filter(Boolean), take(1))
       .subscribe(() => {
         this.doStart(vm, true);
       });

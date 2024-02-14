@@ -6,13 +6,12 @@ import { Router } from '@angular/router';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
+import { fakeFile } from 'app/core/testing/utils/fake-file.uitls';
 import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
-import {
-  VmTime, VmBootloader, VmCpuMode, VmDeviceType, VmState, VmNicType,
-} from 'app/enums/vm.enum';
+import { VmState } from 'app/enums/vm.enum';
 import { VirtualMachine } from 'app/interfaces/virtual-machine.interface';
-import { VmNicDevice, VmDisplayDevice, VmDiskDevice } from 'app/interfaces/vm-device.interface';
 import { VmEditFormComponent } from 'app/pages/vm/vm-edit-form/vm-edit-form.component';
+import { CloneVmDialogComponent } from 'app/pages/vm/vm-list/clone-vm-dialog/clone-vm-dialog.component';
 import { DeleteVmDialogComponent } from 'app/pages/vm/vm-list/delete-vm-dialog/delete-vm-dialog.component';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { VmService } from 'app/services/vm.service';
@@ -20,89 +19,19 @@ import { VirtualMachineDetailsRowComponent } from './vm-details-row.component';
 
 const virtualMachine = {
   id: 2,
-  name: 'test',
-  description: '',
-  vcpus: 2,
-  memory: 4096,
-  min_memory: null,
-  autostart: true,
-  time: VmTime.Local,
-  bootloader: VmBootloader.Uefi,
-  cores: 1,
-  threads: 1,
-  hyperv_enlightenments: false,
-  shutdown_timeout: 90,
-  cpu_mode: VmCpuMode.Custom,
-  cpu_model: null,
-  cpuset: '',
-  nodeset: '',
-  pin_vcpus: false,
-  hide_from_msr: false,
-  suspend_on_snapshot: false,
-  ensure_display_device: true,
-  arch_type: null,
-  machine_type: null,
-  uuid: '1a010e6d-c412-4e7f-a889-8a265082db83',
-  command_line_args: '',
-  bootloader_ovmf: 'OVMF_CODE.fd',
-  trusted_platform_module: false,
-  devices: [
-    {
-      id: 4,
-      dtype: VmDeviceType.Nic,
-      attributes: {
-        type: VmNicType.Virtio,
-        mac: '00:a0:98:4d:14:95',
-        nic_attach: 'eno1',
-        trust_guest_rx_filters: false,
-      },
-      order: 1002,
-      vm: 2,
-    } as VmNicDevice,
-    {
-      id: 5,
-      dtype: VmDeviceType.Cdrom,
-      attributes: {
-        path: '/mnt/pewl/encrypted-key/TrueNAS-SCALE-24.04.0-MASTER-20240125-013910.iso',
-      },
-      order: 1000,
-      vm: 2,
-    },
-    {
-      id: 6,
-      dtype: VmDeviceType.Display,
-      attributes: {
-        port: 5900,
-        bind: '0.0.0.0',
-        password: 'abcd1234',
-        web: true,
-        type: 'SPICE',
-        resolution: '1024x768',
-        web_port: 5901,
-        wait: false,
-      },
-      order: 1002,
-      vm: 2,
-    } as VmDisplayDevice,
-    {
-      id: 7,
-      dtype: VmDeviceType.Disk,
-      attributes: {
-        type: 'AHCI',
-        physical_sectorsize: null,
-        logical_sectorsize: null,
-        iotype: 'THREADS',
-        path: '/dev/zvol/pewl/new2/test-k52ib',
-      },
-      order: 1001,
-      vm: 2,
-    } as VmDiskDevice,
-  ],
   display_available: true,
   status: {
     state: VmState.Running,
     pid: 12028,
     domain_state: 'RUNNING',
+  },
+} as VirtualMachine;
+
+const stoppedVirtualMachine = {
+  ...virtualMachine,
+  status: {
+    ...virtualMachine.status,
+    state: VmState.Stopped,
   },
 } as VirtualMachine;
 
@@ -118,6 +47,10 @@ describe('VirtualMachineDetailsRowComponent', () => {
       ]),
       mockProvider(VmService, {
         hasVirtualizationSupport$: of(true),
+        downloadLogs: jest.fn(() => of(fakeFile('test.log'))),
+        doStart: jest.fn(),
+        doStop: jest.fn(),
+        doRestart: jest.fn(() => of()),
       }),
       mockProvider(IxSlideInService, {
         open: jest.fn(() => {
@@ -153,6 +86,16 @@ describe('VirtualMachineDetailsRowComponent', () => {
     );
   });
 
+  it('should open clone dialog', async () => {
+    const cloneButton = await loader.getHarness(MatButtonHarness.with({ text: /Clone/ }));
+    await cloneButton.click();
+
+    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(
+      CloneVmDialogComponent,
+      { data: virtualMachine },
+    );
+  });
+
   it('should open delete dialog', async () => {
     const deleteButton = await loader.getHarness(MatButtonHarness.with({ text: /Delete/ }));
     await deleteButton.click();
@@ -164,8 +107,8 @@ describe('VirtualMachineDetailsRowComponent', () => {
   });
 
   it('should redirect to devices page', async () => {
-    const serialButton = await loader.getHarness(MatButtonHarness.with({ text: /Devices/ }));
-    await serialButton.click();
+    const devicesButton = await loader.getHarness(MatButtonHarness.with({ text: /Devices/ }));
+    await devicesButton.click();
 
     expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/vm', '2', 'devices']);
   });
@@ -175,5 +118,49 @@ describe('VirtualMachineDetailsRowComponent', () => {
     await serialButton.click();
 
     expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/vm', '2', 'serial']);
+  });
+
+  it('should return log file when pressed the "Download Logs" button', async () => {
+    const downloadLogsButton = await loader.getHarness(MatButtonHarness.with({ text: /Download Logs/ }));
+    await downloadLogsButton.click();
+
+    expect(spectator.inject(VmService).downloadLogs).toHaveBeenCalled();
+  });
+
+  it('should call service to start the VM', async () => {
+    spectator.setInput('vm', stoppedVirtualMachine);
+
+    const startButton = await loader.getHarness(MatButtonHarness.with({ text: /Start/ }));
+    await startButton.click();
+
+    expect(spectator.inject(VmService).doStart).toHaveBeenCalledWith(stoppedVirtualMachine);
+  });
+
+  it('should call service to restart the VM', async () => {
+    const restartButton = await loader.getHarness(MatButtonHarness.with({ text: /Restart/ }));
+    await restartButton.click();
+
+    expect(spectator.inject(VmService).doRestart).toHaveBeenCalledWith(virtualMachine);
+  });
+
+  it('should call service to stop the VM', async () => {
+    const stopButton = await loader.getHarness(MatButtonHarness.with({ text: /Stop/ }));
+    await stopButton.click();
+
+    expect(spectator.inject(VmService).doStop).toHaveBeenCalledWith(virtualMachine);
+  });
+
+  it('should call service to power off the VM', async () => {
+    const powerOffButton = await loader.getHarness(MatButtonHarness.with({ text: /Power Off/ }));
+    await powerOffButton.click();
+
+    expect(spectator.inject(VmService).doPowerOff).toHaveBeenCalledWith(virtualMachine);
+  });
+
+  it('should call service to open display', async () => {
+    const openDisplayButton = await loader.getHarness(MatButtonHarness.with({ text: /Display/ }));
+    await openDisplayButton.click();
+
+    expect(spectator.inject(VmService).openDisplay).toHaveBeenCalledWith(virtualMachine);
   });
 });

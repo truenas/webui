@@ -8,7 +8,6 @@ import { helptextVmList } from 'app/helptext/vm/vm-list';
 import { VirtualMachine } from 'app/interfaces/virtual-machine.interface';
 
 export interface StopVmDialogData {
-  wasStopped: boolean;
   forceAfterTimeout: boolean;
 }
 
@@ -30,7 +29,6 @@ export class StopVmDialogComponent {
 
   onStop(): void {
     this.dialogRef.close({
-      wasStopped: true,
       forceAfterTimeout: this.forceAfterTimeoutCheckbox.value,
     });
   }

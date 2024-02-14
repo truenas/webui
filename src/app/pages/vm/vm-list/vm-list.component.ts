@@ -5,6 +5,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { filter, tap } from 'rxjs';
 import { MiB } from 'app/constants/bytes.constant';
+import { Role } from 'app/enums/role.enum';
 import {
   VmBootloader, VmDeviceType, VmState, vmTimeNames,
 } from 'app/enums/vm.enum';
@@ -36,6 +37,7 @@ export class VmListComponent implements OnInit {
   vmMachines: VirtualMachine[] = [];
   filterString = '';
   dataProvider: AsyncDataProvider<VirtualMachine>;
+  protected requiresRoles = [Role.VmWrite];
   protected memWarning = helptextVmWizard.memory_warning;
   protected hasVirtualizationSupport$ = this.vmService.hasVirtualizationSupport$;
   protected availableMemory$ = this.vmService.getAvailableMemory().pipe(toLoadingState());
@@ -50,12 +52,11 @@ export class VmListComponent implements OnInit {
       title: this.translate.instant('State'),
       sortable: true,
       onRowToggle: (row) => this.vmService.toggleVmStatus(row),
-      getValue: (row) => {
-        return row.status.state === VmState.Running;
-      },
+      getValue: (row) => row.status.state === VmState.Running,
     }),
     toggleColumn({
       title: this.translate.instant('Start on Boot'),
+      onRowToggle: (row) => this.vmService.toggleVmAutostart(row),
       propertyName: 'autostart',
       sortable: true,
     }),
@@ -79,7 +80,6 @@ export class VmListComponent implements OnInit {
     }),
     textColumn({
       title: this.translate.instant('Memory Size'),
-      sortable: true,
       hidden: true,
       getValue: (row) => {
         return this.fileSizePipe.transform(row.memory * MiB);
@@ -96,9 +96,7 @@ export class VmListComponent implements OnInit {
       propertyName: 'time',
       sortable: true,
       hidden: true,
-      getValue: (row) => {
-        return vmTimeNames.get(row.time);
-      },
+      getValue: (row) => vmTimeNames.get(row.time),
     }),
     textColumn({
       title: this.translate.instant('Display Port'),
@@ -116,9 +114,7 @@ export class VmListComponent implements OnInit {
       title: this.translate.instant('Shutdown Timeout'),
       sortable: true,
       hidden: true,
-      getValue: (row) => {
-        return `${row.shutdown_timeout} seconds`;
-      },
+      getValue: (row) => `${row.shutdown_timeout} seconds`,
     }),
   ], {
     rowTestId: (row) => 'virtual-machine-' + row.name,
@@ -190,7 +186,7 @@ export class VmListComponent implements OnInit {
   protected onListFiltered(query: string): void {
     const filterString = query.toLowerCase();
     this.dataProvider.setRows(this.vmMachines.filter((vm) => {
-      return JSON.stringify(vm).includes(filterString);
+      return Object.values(vm).includes(filterString);
     }));
   }
 }
