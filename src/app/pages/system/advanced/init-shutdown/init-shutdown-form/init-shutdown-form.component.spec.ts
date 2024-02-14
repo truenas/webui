@@ -11,14 +11,13 @@ import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.u
 import { InitShutdownScriptType } from 'app/enums/init-shutdown-script-type.enum';
 import { InitShutdownScriptWhen } from 'app/enums/init-shutdown-script-when.enum';
 import { InitShutdownScript } from 'app/interfaces/init-shutdown-script.interface';
-import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
+import { CHAINED_COMPONENT_REF, SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { InitShutdownFormComponent } from 'app/pages/system/advanced/init-shutdown/init-shutdown-form/init-shutdown-form.component';
 import { FilesystemService } from 'app/services/filesystem.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 
 describe('InitShutdownFormComponent', () => {
@@ -37,7 +36,10 @@ describe('InitShutdownFormComponent', () => {
         mockCall('initshutdownscript.create'),
         mockCall('initshutdownscript.update'),
       ]),
-      mockProvider(IxSlideInService),
+      mockProvider(IxChainedSlideInService, {
+        pushComponent: jest.fn(() => of({ response: true, error: null })),
+        components$: of([]),
+      }),
       mockProvider(FormErrorHandlerService),
       mockProvider(SystemGeneralService),
       mockProvider(FilesystemService, {
@@ -47,7 +49,7 @@ describe('InitShutdownFormComponent', () => {
           };
         }),
       }),
-      mockProvider(IxSlideInRef),
+      { provide: CHAINED_COMPONENT_REF, useValue: { close: jest.fn() } },
       { provide: SLIDE_IN_DATA, useValue: undefined },
       mockAuth(),
     ],
