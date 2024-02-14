@@ -30,7 +30,7 @@ export class VirtualMachineDetailsRowComponent {
   }
 
   get showDisplayButton(): boolean {
-    return !this.isRunning || !this.vm.display_available;
+    return this.isRunning && this.vm.display_available;
   }
 
   constructor(
@@ -72,7 +72,7 @@ export class VirtualMachineDetailsRowComponent {
   }
 
   protected openSerialShell(): void {
-    this.router.navigate(['/vm', 'serial', String(this.vm.id)]);
+    this.router.navigate(['/vm', String(this.vm.id), 'serial']);
   }
 
   protected doEdit(): void {

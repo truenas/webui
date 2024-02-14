@@ -4,11 +4,14 @@ import {
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { filter, tap } from 'rxjs';
-import { VmBootloader, VmDeviceType, vmTimeNames } from 'app/enums/vm.enum';
+import { MiB } from 'app/constants/bytes.constant';
+import {
+  VmBootloader, VmDeviceType, VmState, vmTimeNames,
+} from 'app/enums/vm.enum';
 import { toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import { helptextVmWizard } from 'app/helptext/vm/vm-wizard/vm-wizard';
 import { VirtualMachine } from 'app/interfaces/virtual-machine.interface';
-import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
+import { IxFileSizePipe } from 'app/modules/ix-file-size/ix-file-size.pipe';
 import { AsyncDataProvider } from 'app/modules/ix-table2/classes/async-data-provider/async-data-provider';
 import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { toggleColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-toggle/ix-cell-toggle.component';
@@ -26,6 +29,7 @@ import { WebSocketService } from 'app/services/ws.service';
   templateUrl: './vm-list.component.html',
   styleUrls: ['./vm-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  providers: [IxFileSizePipe],
 })
 export class VmListComponent implements OnInit {
   vmMachines: VirtualMachine[] = [];
@@ -45,10 +49,12 @@ export class VmListComponent implements OnInit {
       title: this.translate.instant('State'),
       sortable: true,
       onRowToggle: (row) => this.vmService.toggleVmStatus(row),
-      getValue: (row) => row.status.state,
+      getValue: (row) => {
+        return row.status.state === VmState.Running;
+      },
     }),
     toggleColumn({
-      title: this.translate.instant('Autostart'),
+      title: this.translate.instant('Start on Boot'),
       propertyName: 'autostart',
       sortable: true,
     }),
@@ -75,7 +81,7 @@ export class VmListComponent implements OnInit {
       sortable: true,
       hidden: true,
       getValue: (row) => {
-        return this.formatter.convertBytesToHumanReadable(row.memory * 1048576, 2);
+        return this.fileSizePipe.transform(row.memory * MiB);
       },
     }),
     textColumn({
@@ -122,13 +128,13 @@ export class VmListComponent implements OnInit {
   }
 
   constructor(
-    private formatter: IxFormatterService,
     private slideInService: IxSlideInService,
     private systemGeneralService: SystemGeneralService,
     private translate: TranslateService,
     private ws: WebSocketService,
     private cdr: ChangeDetectorRef,
     private vmService: VmService,
+    private fileSizePipe: IxFileSizePipe,
     protected emptyService: EmptyService,
   ) {}
 
