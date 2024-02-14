@@ -9,16 +9,16 @@ import { of, Subscription } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { helptextSystemAdvanced as helptext } from 'app/helptext/system/advanced';
-import { CHAINED_COMPONENT_REF } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
+import { CHAINED_COMPONENT_REF, SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { ConsoleConfig } from 'app/pages/system/advanced/console/console-card/console-card.component';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { ChainedComponentRef } from 'app/services/ix-chained-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 import { advancedConfigUpdated } from 'app/store/system-config/system-config.actions';
-import { waitForAdvancedConfig } from 'app/store/system-config/system-config.selectors';
 
 @UntilDestroy({ arrayName: 'subscriptions' })
 @Component({
@@ -68,27 +68,17 @@ export class ConsoleFormComponent implements OnInit {
     private snackbar: SnackbarService,
     private store$: Store<AppState>,
     @Inject(CHAINED_COMPONENT_REF) private chainedComponentRef: ChainedComponentRef,
+    @Inject(SLIDE_IN_DATA) private consoleConfig: ConsoleConfig,
   ) {}
 
   ngOnInit(): void {
-    this.isFormLoading = true;
-
-    this.store$.pipe(
-      waitForAdvancedConfig,
-      untilDestroyed(this),
-    )
-      .subscribe({
-        next: (config) => {
-          this.form.patchValue(config);
-          this.isFormLoading = false;
-          this.cdr.markForCheck();
-        },
-        error: (error: unknown) => {
-          this.isFormLoading = false;
-          this.dialogService.error(this.errorHandler.parseError(error));
-          this.cdr.markForCheck();
-        },
-      });
+    this.form.patchValue({
+      consolemenu: this.consoleConfig.consolemenu,
+      serialconsole: this.consoleConfig.serialconsole,
+      serialport: this.consoleConfig.serialport,
+      serialspeed: this.consoleConfig.serialspeed,
+      motd: this.consoleConfig.motd,
+    });
 
     this.subscriptions.push(
       this.form.controls.serialport.enabledWhile(this.form.controls.serialconsole.value$),

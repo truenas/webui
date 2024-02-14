@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
-import { cloneDeep, isEqual } from 'lodash';
+import { isEqual } from 'lodash';
 import {
   Subject, distinctUntilChanged, filter, map, shareReplay, startWith, switchMap, tap,
 } from 'rxjs';
@@ -49,9 +49,9 @@ export class SyslogCardComponent {
           };
           const currentConfig: SyslogConfig = {
             fqdn_syslog: current.fqdn_syslog,
-            sysloglevel: cloneDeep(current.sysloglevel),
+            sysloglevel: current.sysloglevel,
             syslogserver: current.syslogserver,
-            syslog_transport: cloneDeep(current.syslog_transport),
+            syslog_transport: current.syslog_transport,
             syslog_audit: current.syslog_audit,
             syslog_tls_certificate: current.syslog_tls_certificate,
             syslog_tls_certificate_authority: current.syslog_tls_certificate_authority,
@@ -61,9 +61,9 @@ export class SyslogCardComponent {
         map((config) => {
           return {
             fqdn_syslog: config.fqdn_syslog,
-            sysloglevel: cloneDeep(config.sysloglevel),
+            sysloglevel: config.sysloglevel,
             syslogserver: config.syslogserver,
-            syslog_transport: cloneDeep(config.syslog_transport),
+            syslog_transport: config.syslog_transport,
             syslog_audit: config.syslog_audit,
             syslog_tls_certificate: config.syslog_tls_certificate,
             syslog_tls_certificate_authority: config.syslog_tls_certificate_authority,
