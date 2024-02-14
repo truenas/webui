@@ -136,7 +136,7 @@
           [title]="helptext.fieldset_advanced_options | translate"
         >
           <ix-checkbox
-            *ngIf="form.controls.credentials.value === googleDriveProviderId"
+            *ngIf="googleDriveProviderIds.includes(form.controls.credentials.value)"
             formControlName="acknowledge_abuse"
             [label]="helptext.acknowledge_abuse_placeholder | translate"
             [tooltip]="helptext.acknowledge_abuse_tooltip | translate"
