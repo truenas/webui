@@ -118,6 +118,7 @@ export class IxSlideIn2Component implements OnInit, OnDestroy {
 
     timer(10).pipe(untilDestroyed(this)).subscribe(() => {
       this.isSlideInOpen = true;
+      this.cdr.markForCheck();
     });
     this.renderer.setStyle(document.body, 'overflow', 'hidden');
     this.wide = !!params?.wide;
