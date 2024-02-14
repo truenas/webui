@@ -10,29 +10,31 @@ import { TablePagination } from 'app/modules/ix-table2/interfaces/table-paginati
 import { TableSort } from 'app/modules/ix-table2/interfaces/table-sort.interface';
 import { WebSocketService } from 'app/services/ws.service';
 
-// TODO: Extract to separate files
-// TODO: Replace with QueryParams?
-export type ApiCallParamsRecord = Record<string, unknown>;
+export type ApiResponseType<M extends ApiCallMethod> = ApiCallDirectory[M]['response'] extends (infer U)[] ? U : never;
 
-// TODO: Narrow down the type of M to only include .query methods
-// TODO: T can be inferred from M
-export class ApiDataProvider<T, M extends ApiCallMethod> extends BaseDataProvider<T> {
+export type ApiParams<M extends keyof ApiCallDirectory> = ApiCallDirectory[M]['params'];
+
+export type QueryMethods = {
+  [K in keyof ApiCallDirectory]: K extends `${string}.query` ? K : never
+}[keyof ApiCallDirectory];
+
+export class ApiDataProvider<M extends QueryMethods> extends BaseDataProvider<ApiResponseType<M>> {
   paginationStrategy: PaginationServerSide;
   sortingStrategy: SortingServerSide;
 
-  private rows: T[] = [];
+  private rows: ApiResponseType<M>[] = [];
 
   constructor(
-    private ws: WebSocketService,
-    private method: M,
-    private params: ApiCallDirectory[M]['params'] = [],
+    protected ws: WebSocketService,
+    protected method: M,
+    protected params: ApiParams<M> = [],
   ) {
     super();
     this.paginationStrategy = new PaginationServerSide();
     this.sortingStrategy = new SortingServerSide();
   }
 
-  setParams(params: ApiCallDirectory[M]['params']): void {
+  setParams(params: ApiParams<M>): void {
     this.params = params;
   }
 
@@ -42,10 +44,10 @@ export class ApiDataProvider<T, M extends ApiCallMethod> extends BaseDataProvide
       this.countRows().pipe(
         switchMap((count: number) => {
           this.totalRows = count;
-          return this.ws.call(this.method, this.prepareParams(this.params));
+          return this.ws.call(this.method, this.prepareParams(this.params)) as Observable<ApiResponseType<M>[]>;
         }),
       ).subscribe({
-        next: (rows: T[]) => {
+        next: (rows: ApiResponseType<M>[]) => {
           this.rows = rows;
           this.currentPage$.next(this.rows);
           this.emptyType$.next(rows.length ? EmptyType.NoSearchResults : EmptyType.NoPageData);
@@ -61,7 +63,7 @@ export class ApiDataProvider<T, M extends ApiCallMethod> extends BaseDataProvide
     );
   }
 
-  setSorting(sorting: TableSort<T>): void {
+  setSorting(sorting: TableSort<ApiResponseType<M>>): void {
     this.sorting = sorting;
     this.sortingStrategy.handleCurrentPage(this.load.bind(this));
     this.controlsStateUpdated.emit();
@@ -73,40 +75,25 @@ export class ApiDataProvider<T, M extends ApiCallMethod> extends BaseDataProvide
     this.controlsStateUpdated.emit();
   }
 
-  private countRows(): Observable<number> {
-    let params = [(this.params as unknown as QueryFilters<T>)[0] || [], { count: true }] as unknown;
+  protected countRows(): Observable<number> {
+    const params = [
+      (this.params as QueryFilters<ApiResponseType<M>>)[0] || [],
+      { count: true },
+    ] as ApiParams<M>;
 
-    if (this.method === 'audit.query') {
-      params = [
-        {
-          'query-filters': (this.params as unknown as QueryFilters<T>)[0] || [],
-          'query-options': { count: true },
-        },
-      ];
-    }
-
-    return this.ws.call(this.method, params as ApiCallDirectory[M]['params']) as Observable<number>;
+    return this.ws.call(this.method, params) as unknown as Observable<number>;
   }
 
-  private prepareParams(params: ApiCallDirectory[M]['params']): ApiCallDirectory[M]['params'] {
+  protected prepareParams(params: ApiParams<M>): ApiParams<M> {
     // TODO: Current merge is not entirely correct. Introduce a separate function.
     // TODO: Clarify whether we should use positional arguments or 'query-filters'
 
-    const queryFilters = (params as unknown as QueryFilters<T>)[0] || [];
+    const queryFilters = (params as QueryFilters<ApiResponseType<M>>)[0] || [];
     const queryOptions = {
       ...this.paginationStrategy.getParams(this.pagination, this.totalRows),
       ...this.sortingStrategy.getParams(this.sorting),
     };
 
-    if (this.method === 'audit.query') {
-      return [
-        {
-          'query-filters': queryFilters,
-          'query-options': queryOptions,
-        },
-      ] as ApiCallDirectory[M]['params'];
-    }
-
-    return [queryFilters, queryOptions] as ApiCallDirectory[M]['params'];
+    return [queryFilters, queryOptions] as ApiParams<M>;
   }
 }

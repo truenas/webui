@@ -32,7 +32,7 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PrivilegeListComponent implements OnInit {
-  protected dataProvider: ApiDataProvider<Privilege, 'privilege.query'>;
+  protected dataProvider: ApiDataProvider<'privilege.query'>;
   protected readonly advancedSearchPlaceholder = this.translate.instant('Name ^ "Local" AND "Web Shell Access" = true');
   protected searchProperties: SearchProperty<Privilege>[] = [];
 
