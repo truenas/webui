@@ -104,6 +104,7 @@ import { RoutePartsService } from './services/route-parts/route-parts.service';
     StoreDevtoolsModule.instrument({
       maxAge: 25,
       logOnly: environment.production,
+      connectInZone: true,
     }),
     StoreRouterConnectingModule.forRoot({
       serializer: CustomRouterStateSerializer,
