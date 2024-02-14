@@ -59,7 +59,7 @@ export enum VmDiskMode {
 
 export const vmDiskModeLabels = new Map<VmDiskMode, string>([
   [VmDiskMode.Ahci, 'AHCI'],
-  [VmDiskMode.Virtio, 'VIRTIO'],
+  [VmDiskMode.Virtio, 'VirtIO'],
 ]);
 
 export enum VmDisplayType {

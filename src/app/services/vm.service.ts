@@ -5,7 +5,7 @@ import { TranslateService } from '@ngx-translate/core';
 import {
   BehaviorSubject, Observable, Subject, filter, repeat, switchMap, take,
 } from 'rxjs';
-import { VmState, vmNicTypeLabels } from 'app/enums/vm.enum';
+import { VmState } from 'app/enums/vm.enum';
 import { WebSocketErrorName } from 'app/enums/websocket-error-name.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { helptextVmList } from 'app/helptext/vm/vm-list';
@@ -49,10 +49,6 @@ export class VmService {
     this.getVirtualizationDetails().pipe(take(1)).subscribe((details) => {
       this.hasVirtualizationSupport$.next(details.supported);
     });
-  }
-
-  getNicTypes(): string[][] {
-    return Array.from(vmNicTypeLabels);
   }
 
   getVirtualizationDetails(): Observable<VirtualizationDetails> {

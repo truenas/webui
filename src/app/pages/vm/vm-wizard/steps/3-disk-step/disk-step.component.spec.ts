@@ -84,7 +84,7 @@ describe('DiskStepComponent', () => {
       await modeRadio.setValue('Use existing disk image');
 
       await form.fillForm({
-        'Select Disk Type': 'VIRTIO',
+        'Select Disk Type': 'VirtIO',
         'Select Existing Zvol': 'poolio/test-327brn',
       });
     });

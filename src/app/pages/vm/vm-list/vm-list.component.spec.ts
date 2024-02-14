@@ -7,7 +7,7 @@ import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import {
-  VmBootloader, VmCpuMode, VmDeviceType, VmState, VmTime,
+  VmBootloader, VmCpuMode, VmDeviceType, VmNicType, VmState, VmTime,
 } from 'app/enums/vm.enum';
 import { VirtualMachine } from 'app/interfaces/virtual-machine.interface';
 import { VmDiskDevice, VmDisplayDevice, VmNicDevice } from 'app/interfaces/vm-device.interface';
@@ -54,7 +54,7 @@ const virtualMachines: VirtualMachine[] = [
         id: 4,
         dtype: VmDeviceType.Nic,
         attributes: {
-          type: 'VIRTIO',
+          type: VmNicType.Virtio,
           mac: '00:a0:98:4d:14:95',
           nic_attach: 'eno1',
           trust_guest_rx_filters: false,
@@ -141,7 +141,7 @@ const virtualMachines: VirtualMachine[] = [
         id: 8,
         dtype: VmDeviceType.Nic,
         attributes: {
-          type: 'VIRTIO',
+          type: VmNicType.Virtio,
           mac: '00:a0:98:41:9c:95',
           nic_attach: 'eno1',
           trust_guest_rx_filters: false,
