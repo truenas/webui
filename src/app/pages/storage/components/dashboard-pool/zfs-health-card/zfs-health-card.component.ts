@@ -44,7 +44,7 @@ export class ZfsHealthCardComponent implements OnChanges {
 
   readonly poolStatusLabels = poolStatusLabels;
 
-  protected readonly Role = Role;
+  protected readonly requiredRoles = [Role.ReportingWrite];
 
   constructor(
     private ws: WebSocketService,

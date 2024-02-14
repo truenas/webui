@@ -5,16 +5,26 @@
   display: flex;
 }
 
-.card {
-  @include details-card();
-  flex: 1;
+:host ::ng-deep {
+  .card {
+    @include details-card();
+    flex: 1;
 
-  .content-container {
-    height: 100%;
-  }
+    .content-container {
+      height: 100%;
+    }
 
-  .details-item {
-    margin: 8px 0;
+    .details-item {
+      margin: 8px 0;
+
+      ix-requires-roles-wrapper {
+        margin-left: auto;
+
+        a {
+          text-decoration: line-through;
+        }
+      }
+    }
   }
 }
 
