@@ -522,6 +522,7 @@
   "Enter accounts that have administrative access. See <a href=\"https://linux.die.net/man/5/upsd.users\" target=\"_blank\">upsd.users(5)</a> for examples.": "",
   "Enter an optimal number of threads used by the kernel NFS server.": "",
   "Enter dataset name to continue.": "",
+  "Enter path for {label}.{multiple}": "",
   "Enter the IP address or hostname of the remote system that will store the copy. Use the format <i>username@remote_host</i> if the username differs on the remote host.": "",
   "Enter the device name of the interface. This cannot be changed after the interface is created.": "",
   "Enter the name of the sysctl variable to configure. <i>sysctl</i> tunables are used to configure kernel parameters while the system is running and generally take effect immediately.": "",
