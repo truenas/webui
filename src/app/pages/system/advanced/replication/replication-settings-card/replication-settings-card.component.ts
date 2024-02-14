@@ -22,7 +22,7 @@ import { WebSocketService } from 'app/services/ws.service';
 })
 export class ReplicationSettingsCardComponent {
   private replicationConfig: ReplicationConfig;
-  readonly reloadConfig$ = new Subject<void>();
+  private readonly reloadConfig$ = new Subject<void>();
   taskLimit$ = this.reloadConfig$.pipe(
     startWith(undefined),
     switchMap(() => this.ws.call('replication.config.config')),

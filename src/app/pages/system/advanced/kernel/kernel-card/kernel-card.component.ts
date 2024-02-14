@@ -20,7 +20,7 @@ import { waitForAdvancedConfig } from 'app/store/system-config/system-config.sel
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class KernelCardComponent {
-  readonly reloadConfig$ = new Subject<void>();
+  private readonly reloadConfig$ = new Subject<void>();
   readonly debugKernel$ = this.reloadConfig$.pipe(
     startWith(undefined),
     switchMap(() => this.store$.pipe(waitForAdvancedConfig)),

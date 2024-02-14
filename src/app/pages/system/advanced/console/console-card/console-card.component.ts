@@ -19,7 +19,7 @@ import { waitForAdvancedConfig } from 'app/store/system-config/system-config.sel
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ConsoleCardComponent {
-  readonly reloadConfig$ = new Subject<void>();
+  private readonly reloadConfig$ = new Subject<void>();
   readonly advancedConfig$ = this.reloadConfig$.pipe(
     startWith(undefined),
     switchMap(() => this.store$),

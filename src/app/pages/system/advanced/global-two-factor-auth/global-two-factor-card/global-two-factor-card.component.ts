@@ -22,7 +22,7 @@ import { WebSocketService } from 'app/services/ws.service';
 export class GlobalTwoFactorAuthCardComponent {
   readonly helpText = helptext2fa;
 
-  readonly reloadConfig$ = new Subject<void>();
+  private readonly reloadConfig$ = new Subject<void>();
   readonly twoFactorConfig$ = this.reloadConfig$.pipe(
     startWith(undefined),
     switchMap(() => this.ws.call('auth.twofactor.config')),

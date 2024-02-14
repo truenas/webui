@@ -18,7 +18,7 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AuditCardComponent {
-  readonly reloadConfig$ = new Subject<void>();
+  private readonly reloadConfig$ = new Subject<void>();
   auditConfig$ = this.reloadConfig$.pipe(
     startWith(undefined),
     switchMap(() => this.ws.call('audit.config')),
