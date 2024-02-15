@@ -1,9 +1,23 @@
 <ng-template ixPageHeader>
   <ix-page-title-header>
-    <ix-search-input (search)="onListFiltered($event)"></ix-search-input>
-    <button mat-button ixTest="add-privilege" [color]="'primary'" (click)="openForm()">
-      {{ 'Add' | translate }}
-    </button>
+    <div class="search-container">
+      <ix-search-input2
+        #searchInput
+        class="search-input"
+        [properties]="searchProperties"
+        [query]="searchQuery"
+        [advancedSearchPlaceholder]="advancedSearchPlaceholder"
+        (runSearch)="onSearch(searchInput.query);"
+      ></ix-search-input2>
+      <div class="search-button-wrapper">
+        <button mat-button type="button" ixTest="search" (click)="onSearch(searchInput.query)">
+          {{ 'Search' | translate }}
+        </button>
+        <button mat-button ixTest="add-privilege" [color]="'primary'" (click)="openForm()">
+          {{ 'Add' | translate }}
+        </button>
+      </div>
+    </div>
   </ix-page-title-header>
 </ng-template>
 
@@ -24,5 +38,9 @@
       [isLoading]="dataProvider.isLoading$ | async"
     ></tbody>
   </ix-table2>
-  <ix-table-pager [dataProvider]="dataProvider"></ix-table-pager>
+  <ix-table-pager
+    [dataProvider]="dataProvider"
+    [pageSize]="pagination.pageSize"
+    [currentPage]="pagination.pageNumber"
+  ></ix-table-pager>
 </div>

@@ -25,6 +25,7 @@ export class SearchInputComponent<T> implements OnChanges {
   @Input() allowAdvanced = true;
   @Input() properties: SearchProperty<T>[] = [];
   @Input() query: SearchQuery<T>;
+  @Input() advancedSearchPlaceholder?: string;
 
   @Output() queryChange = new EventEmitter<SearchQuery<T>>();
   @Output() runSearch = new EventEmitter<void>();

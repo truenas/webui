@@ -116,6 +116,8 @@ describe('AdvancedSearchComponent – autocomplete', () => {
         '!$ (Not Ends With)',
         'IN (In)',
         'NIN (Not In)',
+        'RIN (Range In)',
+        'RNIN (Range Not In)',
       ]);
     });
 

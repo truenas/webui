@@ -1,8 +1,7 @@
-import { ApiCallParams } from 'app/modules/ix-table2/classes/api-data-provider/api-data-provider';
 import { TablePagination } from 'app/modules/ix-table2/interfaces/table-pagination.interface';
 
 export class PaginationServerSide {
-  getParams(pagination: TablePagination, totalRows: number): ApiCallParams {
+  getParams(pagination: TablePagination, totalRows: number): Record<string, unknown> {
     if (pagination.pageNumber === null || pagination.pageSize === null) {
       return {};
     }

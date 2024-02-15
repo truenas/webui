@@ -8,16 +8,11 @@ export class AdvancedSearchHarness extends ComponentHarness {
 
   getResetIcon = this.locatorFor('.reset-icon');
   getInputArea = this.locatorFor('.cm-content');
-  getInputPlaceholder = this.locatorFor('.cm-placeholder');
   getSwitchLink = this.locatorFor('.switch-link');
   getAutocomplete = this.documentRootLocatorFactory().locatorFor(CodemirrorAutocompleteHarness);
 
   async getValue(): Promise<string> {
     return (await (this.getInputArea())).text();
-  }
-
-  async getPlaceholder(): Promise<string> {
-    return (await (this.getInputPlaceholder())).text();
   }
 
   async setValue(value: string): Promise<void> {
