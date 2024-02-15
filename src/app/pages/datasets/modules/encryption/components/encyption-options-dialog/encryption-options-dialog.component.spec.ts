@@ -144,13 +144,13 @@ describe('EncryptionOptionsDialogComponent', () => {
     await setupTest();
 
     const key = 'k'.repeat(64);
-    await form.fillForm({
-      'Encryption Type': 'Key',
-    });
-    await form.fillForm({
-      Key: 'k'.repeat(64),
-      Confirm: true,
-    });
+    await form.fillForm(
+      {
+        'Encryption Type': 'Key',
+        Key: 'k'.repeat(64),
+        Confirm: true,
+      },
+    );
 
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
@@ -165,13 +165,13 @@ describe('EncryptionOptionsDialogComponent', () => {
   it('allows key to be generated for when encryption type is key', async () => {
     await setupTest();
 
-    await form.fillForm({
-      'Encryption Type': 'Key',
-    });
-    await form.fillForm({
-      'Generate Key': true,
-      Confirm: true,
-    });
+    await form.fillForm(
+      {
+        'Encryption Type': 'Key',
+        'Generate Key': true,
+        Confirm: true,
+      },
+    );
 
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
@@ -186,15 +186,15 @@ describe('EncryptionOptionsDialogComponent', () => {
   it('allows to set encryption to passphrase', async () => {
     await setupTest();
 
-    await form.fillForm({
-      'Encryption Type': 'Passphrase',
-    });
-    await form.fillForm({
-      Passphrase: '12345678',
-      'Confirm Passphrase': '12345678',
-      pbkdf2iters: '350001',
-      Confirm: true,
-    });
+    await form.fillForm(
+      {
+        'Encryption Type': 'Passphrase',
+        Passphrase: '12345678',
+        'Confirm Passphrase': '12345678',
+        pbkdf2iters: '350001',
+        Confirm: true,
+      },
+    );
 
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();

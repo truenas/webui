@@ -154,6 +154,7 @@ describe('NetworkComponent', () => {
 
     const saveButton = await rootLoader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
+    spectator.detectComponentChanges();
   }
 
   it('shows prompt to test network changes when interface is edited', async () => {

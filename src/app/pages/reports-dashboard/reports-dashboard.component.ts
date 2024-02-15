@@ -1,6 +1,13 @@
 import { CdkVirtualScrollViewport } from '@angular/cdk/scrolling';
 import {
-  Component, ElementRef, OnInit, OnDestroy, ViewChild, Inject,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  ElementRef,
+  Inject,
+  OnDestroy,
+  OnInit,
+  ViewChild,
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -18,6 +25,7 @@ import { ReportsService } from './reports.service';
   selector: 'ix-reports-dashboard',
   styleUrls: ['./reports-dashboard.component.scss'],
   templateUrl: './reports-dashboard.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ReportsDashboardComponent implements OnInit, OnDestroy {
   @ViewChild(CdkVirtualScrollViewport, { static: false }) viewport: CdkVirtualScrollViewport;
@@ -36,6 +44,7 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private layoutService: LayoutService,
     private reportsService: ReportsService,
+    private cdr: ChangeDetectorRef,
     @Inject(WINDOW) private window: Window,
   ) {}
 
@@ -64,6 +73,7 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy {
         this.otherReports = this.allReports.filter((report) => !report.name.startsWith('disk'));
 
         this.activateTabFromUrl();
+        this.cdr.markForCheck();
       });
   }
 

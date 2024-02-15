@@ -4,7 +4,7 @@ import {
   Input,
   ViewChild,
   OnChanges,
-  OnInit, Inject,
+  OnInit, Inject, ChangeDetectionStrategy, ChangeDetectorRef,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
@@ -48,6 +48,7 @@ import { selectTimezone } from 'app/store/system-config/system-config.selectors'
   selector: 'ix-report',
   templateUrl: './report.component.html',
   styleUrls: ['./report.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ReportComponent extends WidgetComponent implements OnInit, OnChanges {
   @Input() localControls?: boolean = true;
@@ -136,6 +137,7 @@ export class ReportComponent extends WidgetComponent implements OnInit, OnChange
     @Inject(WINDOW) private window: Window,
     @Inject(DOCUMENT) private document: Document,
     private reportsService: ReportsService,
+    private cdr: ChangeDetectorRef,
   ) {
     super(translate);
     this.reportsService.legendEventEmitterObs$.pipe(untilDestroyed(this)).subscribe({
@@ -143,6 +145,7 @@ export class ReportComponent extends WidgetComponent implements OnInit, OnChange
         const clone = { ...data };
         clone.xHTML = this.formatTime(data.x);
         this.legendData = clone as LegendDataWithStackedTotalHtml;
+        this.cdr.markForCheck();
       },
     });
 
@@ -454,9 +457,11 @@ export class ReportComponent extends WidgetComponent implements OnInit, OnChange
     ).subscribe({
       next: (event) => {
         this.data = formatData(_.cloneDeep(event));
+        this.cdr.markForCheck();
       },
       error: (err: WebSocketError) => {
         this.handleError(err);
+        this.cdr.markForCheck();
       },
     });
   }

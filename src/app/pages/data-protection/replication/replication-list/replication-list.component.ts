@@ -10,10 +10,10 @@ import {
 } from 'rxjs';
 import { JobState } from 'app/enums/job-state.enum';
 import { Role } from 'app/enums/role.enum';
+import { formatDistanceToNowShortened } from 'app/helpers/format-distance-to-now-shortened';
 import { Job } from 'app/interfaces/job.interface';
 import { ReplicationTask } from 'app/interfaces/replication-task.interface';
 import { AsyncDataProvider } from 'app/modules/ix-table2/classes/async-data-provider/async-data-provider';
-import { relativeDateColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-relative-date/ix-cell-relative-date.component';
 import { stateButtonColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-state-button/ix-cell-state-button.component';
 import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { toggleColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-toggle/ix-cell-toggle.component';
@@ -63,6 +63,7 @@ export class ReplicationListComponent implements OnInit {
     textColumn({
       title: this.translate.instant('SSH Connection'),
       hidden: true,
+      propertyName: 'ssh_credentials',
       getValue: (task) => {
         return task.ssh_credentials
           ? task.ssh_credentials.name
@@ -89,9 +90,14 @@ export class ReplicationListComponent implements OnInit {
       propertyName: 'auto',
       hidden: true,
     }),
-    relativeDateColumn({
+    textColumn({
       title: this.translate.instant('Last Run'),
-      getValue: (row) => row.state?.datetime?.$date,
+      getValue: (row) => {
+        if (row.state?.datetime?.$date) {
+          return formatDistanceToNowShortened(row.state?.datetime?.$date);
+        }
+        return this.translate.instant('N/A');
+      },
     }),
     stateButtonColumn({
       title: this.translate.instant('State'),

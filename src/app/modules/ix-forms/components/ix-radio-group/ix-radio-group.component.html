@@ -13,6 +13,7 @@
   [disabled]="isDisabled"
   [ixTest]="controlDirective.name"
   [value]="value"
+  [attr.aria-label]="label"
   (change)="onRadiosChanged($event)"
 >
   <div
@@ -23,6 +24,7 @@
     <mat-radio-button
       [value]="option.value"
       [ixTest]="[controlDirective.name, option.label]"
+      [attr.aria-label]="option.label"
     >
       {{ option.label }}
     </mat-radio-button>

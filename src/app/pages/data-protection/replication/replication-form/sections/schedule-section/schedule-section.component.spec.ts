@@ -61,12 +61,12 @@ describe('ScheduleSectionComponent', () => {
   });
 
   it('shows Begin and End fields when Hourly frequency is selected', async () => {
-    await form.fillForm({
-      Schedule: true,
-    });
-    await form.fillForm({
-      Frequency: '0 * * * *',
-    });
+    await form.fillForm(
+      {
+        Schedule: true,
+        Frequency: '0 * * * *',
+      },
+    );
 
     expect(await form.getLabels()).toEqual([
       'Run Automatically',

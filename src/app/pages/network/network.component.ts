@@ -1,5 +1,5 @@
 import {
-  Component, Inject, OnInit,
+  Component, Inject, OnInit, ChangeDetectionStrategy, ChangeDetectorRef,
 } from '@angular/core';
 import { Navigation, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -35,6 +35,7 @@ import { networkInterfacesChanged } from 'app/store/network-interfaces/network-i
   selector: 'ix-network',
   templateUrl: './network.component.html',
   styleUrls: ['./network.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class NetworkComponent implements OnInit {
   isHaEnabled = false;
@@ -64,6 +65,7 @@ export class NetworkComponent implements OnInit {
     private interfacesStore: InterfacesStore,
     private actions$: Actions,
     private authService: AuthService,
+    private cdr: ChangeDetectorRef,
     @Inject(WINDOW) private window: Window,
   ) {
     this.navigation = this.router.getCurrentNavigation();
@@ -84,6 +86,7 @@ export class NetworkComponent implements OnInit {
           clearInterval(this.checkinInterval);
         }
         this.hasPendingChanges = false;
+        this.cdr.markForCheck();
       });
 
     if (this.systemGeneralService.getProductType() === ProductType.ScaleEnterprise) {
@@ -169,6 +172,8 @@ export class NetworkComponent implements OnInit {
             clearInterval(this.checkinInterval);
             this.window.location.reload(); // should just refresh after the timer goes off
           }
+
+          this.cdr.markForCheck();
         }, 1000);
       }
       this.checkinWaiting = true;
@@ -233,6 +238,7 @@ export class NetworkComponent implements OnInit {
                 this.store$.dispatch(networkInterfacesChanged({ commit: true, checkIn: false }));
                 this.interfacesStore.loadInterfaces();
                 this.handleWaitingCheckin(checkInSeconds);
+                this.cdr.markForCheck();
               });
           });
       });
@@ -287,6 +293,7 @@ export class NetworkComponent implements OnInit {
         this.checkinWaiting = false;
         clearInterval(this.checkinInterval);
         this.checkinRemaining = null;
+        this.cdr.markForCheck();
       });
   }
 
@@ -319,6 +326,7 @@ export class NetworkComponent implements OnInit {
             this.snackbar.success(
               this.translate.instant(helptextInterfaces.changes_rolled_back),
             );
+            this.cdr.markForCheck();
           });
       });
   }

@@ -63,7 +63,9 @@ export class CronCardComponent implements OnInit {
     }),
     relativeDateColumn({
       title: this.translate.instant('Next Run'),
-      getValue: (row) => this.taskService.getTaskNextTime(row.cron_schedule) as unknown,
+      getValue: (row) => (row.enabled
+        ? this.taskService.getTaskNextTime(row.cron_schedule)
+        : this.translate.instant('Disabled')),
     }),
     actionsColumn({
       cssClass: 'tight-actions',

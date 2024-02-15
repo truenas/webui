@@ -1,6 +1,6 @@
 import { TemplatePortal } from '@angular/cdk/portal';
 import {
-  AfterViewInit,
+  AfterViewInit, ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
   OnDestroy,
@@ -33,6 +33,7 @@ import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
   selector: 'ix-admin-layout',
   templateUrl: './admin-layout.component.html',
   styleUrls: ['./admin-layout.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AdminLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChildren(MatSidenav) private sideNavs: QueryList<MatSidenav>;

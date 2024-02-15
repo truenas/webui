@@ -1,5 +1,10 @@
 $opened-scroll-container-height: calc(80vh - 48px - 240px); // Viewport - topbar - sum of sibling elements
 
+:host {
+  display: block;
+  min-width: 300px;
+}
+
 .mat-mdc-dialog-actions {
   display: block;
   min-height: unset;

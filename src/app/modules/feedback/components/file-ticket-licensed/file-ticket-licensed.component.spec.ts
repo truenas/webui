@@ -102,12 +102,13 @@ describe('FileTicketLicensedFormComponent', () => {
     const fakeAttachments = [fakeFile('attachment1.png'), fakeFile('attachment2.png')];
 
     await fillTextFields();
-    await form.fillForm({
-      'Attach additional images': true,
-    });
-    await form.fillForm({
-      'Attach images (optional)': fakeAttachments,
-    });
+
+    await form.fillForm(
+      {
+        'Attach additional images': true,
+        'Attach images (optional)': fakeAttachments,
+      },
+    );
 
     await submitButton.click();
 
