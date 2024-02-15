@@ -13,14 +13,13 @@ import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { Service } from 'app/interfaces/service.interface';
 import { SystemDatasetConfig } from 'app/interfaces/system-dataset-config.interface';
-import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
+import { CHAINED_COMPONENT_REF, SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { StorageSettingsFormComponent } from 'app/pages/system/advanced/storage/storage-settings-form/storage-settings-form.component';
 import { DialogService } from 'app/services/dialog.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 import { selectServices } from 'app/store/services/services.selectors';
 import { selectAdvancedConfig } from 'app/store/system-config/system-config.selectors';
 
@@ -46,7 +45,10 @@ describe('StorageSettingsFormComponent', () => {
         } as SystemDatasetConfig),
         mockCall('system.advanced.update'),
       ]),
-      mockProvider(IxSlideInService),
+      mockProvider(IxChainedSlideInService, {
+        pushComponent: jest.fn(() => of({ response: true, error: null })),
+        components$: of([]),
+      }),
       mockProvider(FormErrorHandlerService),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
@@ -68,8 +70,8 @@ describe('StorageSettingsFormComponent', () => {
           },
         ],
       }),
-      mockProvider(IxSlideInRef),
-      { provide: SLIDE_IN_DATA, useValue: undefined },
+      { provide: CHAINED_COMPONENT_REF, useValue: { close: jest.fn() } },
+      { provide: SLIDE_IN_DATA, useValue: { swapSize: 5, systemDsPool: 'current-pool' } },
       mockAuth(),
     ],
   });
