@@ -2,6 +2,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
+import { MatCheckboxHarness } from '@angular/material/checkbox/testing';
 import { MatDialog } from '@angular/material/dialog';
 import { createComponentFactory, Spectator, mockProvider } from '@ngneat/spectator/jest';
 import { Store, StoreModule } from '@ngrx/store';
@@ -160,6 +161,7 @@ describe('InterfaceFormComponent', () => {
         Description: 'Bridge interface',
         'Bridge Members': ['enp0s3', 'enp0s4'],
         'IP Address': '10.0.1.2/24',
+        'Enable Learning': true,
       });
 
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
@@ -172,6 +174,7 @@ describe('InterfaceFormComponent', () => {
         bridge_members: ['enp0s3', 'enp0s4'],
         ipv4_dhcp: false,
         ipv6_auto: false,
+        enable_learning: true,
         aliases: [{
           address: '10.0.1.2',
           netmask: 24,
@@ -358,6 +361,7 @@ describe('InterfaceFormComponent', () => {
             useValue: {
               ...existingInterface,
               id: 'br7',
+              enable_learning: false,
               type: NetworkInterfaceType.Bridge,
             },
           },
@@ -371,6 +375,11 @@ describe('InterfaceFormComponent', () => {
 
     it('reloads bridge member choices when bridge interface is opened for edit', () => {
       expect(spectator.inject(NetworkService).getBridgeMembersChoices).toHaveBeenLastCalledWith('br7');
+    });
+
+    it('renders Enable Learning for edit', async () => {
+      const checkbox = await loader.getHarness(MatCheckboxHarness.with({ label: 'Enable Learning' }));
+      expect(await checkbox.isChecked()).toBe(false);
     });
   });
 
