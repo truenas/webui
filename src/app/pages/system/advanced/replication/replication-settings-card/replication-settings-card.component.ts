@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { untilDestroyed } from '@ngneat/until-destroy';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Subject } from 'rxjs';
 import {
   filter,
@@ -14,6 +14,7 @@ import {
 import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 
+@UntilDestroy()
 @Component({
   selector: 'ix-replication-settings-card',
   styleUrls: ['../../common-card.scss'],

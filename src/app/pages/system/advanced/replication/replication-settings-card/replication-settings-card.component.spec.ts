@@ -5,8 +5,7 @@ import { MatListItemHarness } from '@angular/material/list/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
-import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
+import { CHAINED_COMPONENT_REF, SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { AdvancedSettingsService } from 'app/pages/system/advanced/advanced-settings.service';
 import {
   ReplicationSettingsCardComponent,
@@ -14,7 +13,7 @@ import {
 import {
   ReplicationSettingsFormComponent,
 } from 'app/pages/system/advanced/replication/replication-settings-form/replication-settings-form.component';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 
 describe('ReplicationSettingsCardComponent', () => {
   let spectator: Spectator<ReplicationSettingsCardComponent>;
@@ -27,12 +26,14 @@ describe('ReplicationSettingsCardComponent', () => {
           max_parallel_replication_tasks: 5,
         }),
       ]),
-      mockProvider(AdvancedSettingsService),
-      mockProvider(IxSlideInService, {
-        onClose$: of(),
+      mockProvider(AdvancedSettingsService, {
+        showFirstTimeWarningIfNeeded: jest.fn(() => of(true)),
+      }),
+      mockProvider(IxChainedSlideInService, {
+        pushComponent: jest.fn(() => of({ response: true, error: null })),
       }),
       { provide: SLIDE_IN_DATA, useValue: undefined },
-      mockProvider(IxSlideInRef),
+      { provide: CHAINED_COMPONENT_REF, useValue: { close: jest.fn() } },
     ],
   });
 
@@ -55,6 +56,12 @@ describe('ReplicationSettingsCardComponent', () => {
     await configureButton.click();
 
     expect(spectator.inject(AdvancedSettingsService).showFirstTimeWarningIfNeeded).toHaveBeenCalled();
-    expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(ReplicationSettingsFormComponent);
+    expect(
+      spectator.inject(IxChainedSlideInService).pushComponent,
+    ).toHaveBeenCalledWith(
+      ReplicationSettingsFormComponent,
+      false,
+      { max_parallel_replication_tasks: 5 },
+    );
   });
 });
