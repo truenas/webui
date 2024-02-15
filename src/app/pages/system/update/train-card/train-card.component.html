@@ -1,6 +1,6 @@
 <mat-card id="train-card">
   <mat-spinner
-    *ngIf="trainService.showSpinner$ | async"
+    *ngIf="updateService.isLoading$ | async"
     #updatespinner
     id="update-spinner"
     [diameter]="40"
@@ -40,7 +40,7 @@
     <ng-template #trainName>
       <div class="train-card-row train-select-row">
         <div id="single-train-name">
-          {{ 'Current Train:' | translate }} {{ this.trainService.trainValue$ | async }}
+          {{ 'Current Train:' | translate }} {{ trainService.trainValue$ | async }}
           <span *ngIf="singleDescription">- {{ singleDescription }}</span>
         </div>
         <button
@@ -64,11 +64,11 @@
   </form>
   <div class="train-card-row">
     <div class="col-md-12">
-      <div *ngIf="(trainService.status$ | async) === SystemUpdateStatus.RebootRequired">
+      <div *ngIf="(updateService.status$ | async) === SystemUpdateStatus.RebootRequired">
         {{ 'An update is already applied. Please reboot the system.' | translate }}
       </div>
 
-      <div *ngIf="(trainService.status$ | async) === SystemUpdateStatus.Unavailable">
+      <div *ngIf="(updateService.status$ | async) === SystemUpdateStatus.Unavailable">
         {{ 'No updates available.' | translate }}
       </div>
       <div *ngIf="updated">
@@ -78,8 +78,8 @@
   </div>
   <div class="train-card-row">
     <div class="col-md-12">
-      <div *ngIf="trainService.error$ | async">
-        {{ trainService.error$ | async }}
+      <div *ngIf="updateService.error$ | async">
+        {{ updateService.error$ | async }}
       </div>
     </div>
   </div>

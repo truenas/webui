@@ -30,42 +30,10 @@
   overflow-y: auto;
 }
 
-.train-info-card {
-  padding: 2px 20px;
-}
-
-.stable-warning {
-  align-items: center;
-  display: flex;
-  margin: 10px 0 !important;
-
-  .ix-icon {
-    margin-right: 10px;
-  }
-
-  a {
-    text-decoration: underline;
-  }
-}
-
-.update-button {
-  margin-right: 3px;
-  top: 6px;
-}
-
-
 mat-card {
   margin: 0 auto 15px;
   max-width: 960px;
   padding: 20px !important;
-}
-
-#update-running-msg {
-  bottom: 3px;
-  font-size: larger;
-  font-weight: 500;
-  margin-left: 10px;
-  position: relative;
 }
 
 .upgrades-table {

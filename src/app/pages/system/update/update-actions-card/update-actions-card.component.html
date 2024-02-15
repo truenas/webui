@@ -1,0 +1,53 @@
+<mat-card *ngIf="!isUpdateRunning" id="button-card">
+  <div class="row">
+    <div class="col-md-12">
+      <ng-container *ngIf="updateService.updatesAvailable$ | async">
+        <button
+          *ixRequiresRoles="[Role.FullAdmin]"
+          mat-button
+          ixTest="download-updates"
+          [ngClass]="['btn btn-success update-button mat-basic']"
+          [disabled]="(updateService.status$ | async) === SystemUpdateStatus.RebootRequired"
+          (click)="downloadUpdate()"
+        >
+          {{ 'Download Updates' | translate }}
+        </button>
+      </ng-container>
+      <ng-container *ngIf="(updateService.updateDownloaded$ | async) && (updateService.status$ | async) !== SystemUpdateStatus.Unavailable">
+        <button
+          *ixRequiresRoles="[Role.FullAdmin]"
+          mat-button
+          ixTest="apply-pending-update"
+          [ngClass]="['btn btn-success update-button mat-basic']"
+          (click)="applyPendingUpdate()"
+        >
+          {{ 'Apply Pending update' | translate }}
+        </button>
+      </ng-container>
+      <button
+        *ixRequiresRoles="[Role.FullAdmin]"
+        mat-button
+        ixTest="install-manual-update"
+        [ngClass]="['btn btn-success update-button mat-basic']"
+        (click)="manualUpdate()"
+      >
+        {{ 'Install Manual Update File' | translate }}
+      </button>
+      <p>
+        <font color="red">{{ updateService.generalUpdateError$ | async }}</font>
+      </p>
+    </div>
+  </div>
+</mat-card>
+<mat-card *ngIf="isUpdateRunning" id="update-in-progress-card">
+  <div class="row">
+    <div class="col-md-12">
+      <p>
+        <ix-icon name="warning"></ix-icon>
+        <span id="update-running-msg">
+          {{ isHa ? sysUpdateMessage : sysUpdateMessage + sysUpdateMsgPt2 }}
+        </span>
+      </p>
+    </div>
+  </div>
+</mat-card>

@@ -1,7 +1,7 @@
 <ix-train-card></ix-train-card>
 
 <mat-card
-  *ngIf="(trainService.status$ | async) === SystemUpdateStatus.Available"
+  *ngIf="(updateService.status$ | async) === SystemUpdateStatus.Available"
   id="upgrades-card"
 >
   <mat-card-content id="upgrades-card-scrollbox">
@@ -13,140 +13,36 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let package of trainService.packages$ | async" [ixTest]="package.name">
+        <tr *ngFor="let package of updateService.packages$ | async" [ixTest]="package.name">
           <td>{{ package.operation }}</td>
           <td>{{ package.name }}</td>
         </tr>
-        <tr *ngIf="(trainService.packages$ | async).length === 0" ixTest="no-update-found">
+        <tr *ngIf="(updateService.packages$ | async).length === 0" ixTest="no-update-found">
           <td>{{ 'No update found.' | translate }}</td>
         </tr>
       </tbody>
     </table>
 
     <a
-      *ngIf="trainService.releaseNotesUrl$ | async"
+      *ngIf="updateService.releaseNotesUrl$ | async"
       class="release-notes-link"
       target="_blank"
       ixTest="check-release-notes"
-      [href]="trainService.releaseNotesUrl$ | async"
+      [href]="updateService.releaseNotesUrl$ | async"
     >
       {{ 'Check Release Notes' | translate }}
     </a>
   </mat-card-content>
 </mat-card>
 
-<mat-card *ngIf="(trainService.changeLog$ | async) && (trainService.nightlyTrain$ | async)" class="p-0" id="changelog-card">
+<mat-card *ngIf="(updateService.changeLog$ | async) && (trainService.nightlyTrain$ | async)" id="changelog-card">
   <mat-card-title id="changelog-title">
     <div>{{ 'Change log' | translate }}</div>
   </mat-card-title>
   <mat-card-content id="changelog-scrollbox">
-    <div [innerHTML]="trainService.changeLog$ | async"></div>
+    <div [innerHTML]="updateService.changeLog$ | async"></div>
   </mat-card-content>
 </mat-card>
 
-<mat-card
-  *ngIf="(trainService.updatesAvailable$ | async) && (trainService.preReleaseTrain$ | async) && productType === ProductType.ScaleEnterprise"
-  class="train-info-card"
->
-  <h4 class="stable-warning">
-    <ix-icon name="info"></ix-icon>
-    <a
-      href="https://www.truenas.com/docs/hub/intro/release-notes/"
-      target="_blank"
-      ixTest="release-notes"
-    >
-      {{ 'Before updating, please read the release notes.' | translate }}
-    </a>
-  </h4>
-</mat-card>
-
-<mat-card
-  *ngIf="(trainService.updatesAvailable$ | async) && (trainService.releaseTrain$ | async) && productType === ProductType.ScaleEnterprise"
-  class="train-info-card"
->
-  <h4 class="stable-warning">
-    <ix-icon name="info"></ix-icon>
-    <a
-      href="https://www.truenas.com/docs/hub/intro/release-notes/"
-      target="_blank"
-      ixTest="release-notes"
-    >
-      {{ 'Before updating, please read the release notes.' | translate }}
-    </a>
-  </h4>
-</mat-card>
-
-<mat-card
-  *ngIf="(trainService.updatesAvailable$ | async) && (trainService.preReleaseTrain$ | async) && productType === ProductType.Scale"
-  class="train-info-card"
->
-  <h4 class="stable-warning">
-    <ix-icon name="info"></ix-icon>
-    <strong>
-      {{ 'This is not a production release, and should only be used for testing.' | translate }}
-    </strong>
-  </h4>
-</mat-card>
-
-<mat-card *ngIf="(trainService.updatesAvailable$ | async) && (trainService.nightlyTrain$ | async)" class="train-info-card">
-  <h4 class="stable-warning">
-    <ix-icon name="info"></ix-icon>
-    <strong>
-      {{ 'This is not a production release, and should only be used for testing.' | translate }}
-    </strong>
-  </h4>
-</mat-card>
-
-<mat-card *ngIf="!isUpdateRunning" id="button-card">
-  <div class="row">
-    <div class="col-md-12">
-      <ng-container *ngIf="trainService.updatesAvailable$ | async">
-        <button
-          *ixRequiresRoles="[Role.FullAdmin]"
-          mat-button
-          ixTest="download-updates"
-          [ngClass]="['btn btn-success update-button mat-basic']"
-          [disabled]="(trainService.status$ | async) === SystemUpdateStatus.RebootRequired"
-          (click)="downloadUpdate()"
-        >
-          {{ 'Download Updates' | translate }}
-        </button>
-      </ng-container>
-      <ng-container *ngIf="(trainService.updateDownloaded$ | async) && (trainService.status$ | async) !== SystemUpdateStatus.Unavailable">
-        <button
-          *ixRequiresRoles="[Role.FullAdmin]"
-          mat-button
-          ixTest="apply-pending-update"
-          [ngClass]="['btn btn-success update-button mat-basic']"
-          (click)="applyPendingUpdate()"
-        >
-          {{ 'Apply Pending update' | translate }}
-        </button>
-      </ng-container>
-      <button
-        *ixRequiresRoles="[Role.FullAdmin]"
-        mat-button
-        ixTest="install-manual-update"
-        [ngClass]="['btn btn-success update-button mat-basic']"
-        (click)="manualUpdate()"
-      >
-        {{ 'Install Manual Update File' | translate }}
-      </button>
-      <p>
-        <font color="red">{{ trainService.generalUpdateError$ | async }}</font>
-      </p>
-    </div>
-  </div>
-</mat-card>
-<mat-card *ngIf="isUpdateRunning" id="update-in-progress-card">
-  <div class="row">
-    <div class="col-md-12">
-      <p>
-        <ix-icon name="warning"></ix-icon>
-        <span id="update-running-msg">
-          {{ isHa ? sysUpdateMessage : sysUpdateMessage + sysUpdateMsgPt2 }}
-        </span>
-      </p>
-    </div>
-  </div>
-</mat-card>
+<ix-train-info-card></ix-train-info-card>
+<ix-update-actions-card></ix-update-actions-card>

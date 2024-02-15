@@ -7,6 +7,7 @@ import {
 import { SystemUpdateOperationType, SystemUpdateStatus } from 'app/enums/system-update.enum';
 import { SystemUpdateTrain, SystemUpdateTrains } from 'app/interfaces/system-update.interface';
 import { WebSocketError } from 'app/interfaces/websocket-error.interface';
+import { UpdateService } from 'app/pages/system/update/services/update.service';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -16,16 +17,6 @@ import { WebSocketService } from 'app/services/ws.service';
   providedIn: 'root',
 })
 export class TrainService {
-  updatesAvailable$ = new BehaviorSubject<boolean>(false);
-  updateDownloaded$ = new BehaviorSubject<boolean>(false);
-  showSpinner$ = new BehaviorSubject<boolean>(false);
-  error$ = new BehaviorSubject<boolean>(false);
-  generalUpdateError$ = new BehaviorSubject<string>(undefined);
-  packages$ = new BehaviorSubject<{ operation: string; name: string }[]>([]);
-  status$ = new BehaviorSubject<SystemUpdateStatus>(undefined);
-  releaseNotesUrl$ = new BehaviorSubject<string>('');
-  changeLog$ = new BehaviorSubject<string>('');
-
   selectedTrain$ = new BehaviorSubject<string>(undefined);
   releaseTrain$ = new BehaviorSubject<boolean>(undefined);
   preReleaseTrain$ = new BehaviorSubject<boolean>(undefined);
@@ -39,9 +30,10 @@ export class TrainService {
   autoCheckValue$ = new BehaviorSubject<boolean>(false);
 
   constructor(
-    protected ws: WebSocketService,
-    public translate: TranslateService,
-    protected dialogService: DialogService,
+    private updateService: UpdateService,
+    private ws: WebSocketService,
+    private translate: TranslateService,
+    private dialogService: DialogService,
     private errorHandler: ErrorHandlerService,
   ) {}
 
@@ -94,14 +86,6 @@ export class TrainService {
       });
   }
 
-  pendingUpdates(): void {
-    this.ws.call('update.get_pending').pipe(untilDestroyed(this)).subscribe((pending) => {
-      if (pending.length !== 0) {
-        this.updateDownloaded$.next(true);
-      }
-    });
-  }
-
   toggleAutoCheck(): void {
     this.autoCheckValue$.pipe(
       tap((autoCheckValue) => this.ws.call('update.set_auto_download', [autoCheckValue])),
@@ -114,7 +98,7 @@ export class TrainService {
   }
 
   setTrainAndCheck(newTrain: string, prevTrain: string): void {
-    this.showSpinner$.next(true);
+    this.updateService.isLoading$.next(true);
     this.ws.call('update.set_train', [newTrain]).pipe(untilDestroyed(this)).subscribe({
       next: () => {
         this.check();
@@ -122,22 +106,22 @@ export class TrainService {
       error: (error: unknown) => {
         this.dialogService.error(this.errorHandler.parseError(error));
         this.trainValue$.next(prevTrain);
-        this.showSpinner$.next(false);
+        this.updateService.isLoading$.next(false);
       },
       complete: () => {
-        this.showSpinner$.next(false);
+        this.updateService.isLoading$.next(false);
       },
     });
   }
 
   check(): void {
     // Reset the template
-    this.updatesAvailable$.next(false);
-    this.releaseNotesUrl$.next('');
+    this.updateService.updatesAvailable$.next(false);
+    this.updateService.releaseNotesUrl$.next('');
 
-    this.showSpinner$.next(true);
-    this.pendingUpdates();
-    this.error$.next(null);
+    this.updateService.isLoading$.next(true);
+    this.updateService.pendingUpdates();
+    this.updateService.error$.next(null);
     sessionStorage.updateLastChecked = Date.now();
 
     combineLatest([
@@ -148,10 +132,10 @@ export class TrainService {
         if (update.version) {
           this.trainVersion$.next(update.version);
         }
-        this.status$.next(update.status);
+        this.updateService.status$.next(update.status);
         if (update.status === SystemUpdateStatus.Available) {
           sessionStorage.updateAvailable = 'true';
-          this.updatesAvailable$.next(true);
+          this.updateService.updatesAvailable$.next(true);
 
           const packages: { operation: string; name: string }[] = [];
           update.changes.forEach((change) => {
@@ -183,13 +167,13 @@ export class TrainService {
               console.error('Unknown operation:', change.operation);
             }
           });
-          this.packages$.next(packages);
+          this.updateService.packages$.next(packages);
 
           if (update.changelog) {
-            this.changeLog$.next(update.changelog.replace(/\n/g, '<br>'));
+            this.updateService.changeLog$.next(update.changelog.replace(/\n/g, '<br>'));
           }
           if (update.release_notes_url) {
-            this.releaseNotesUrl$.next(update.release_notes_url);
+            this.updateService.releaseNotesUrl$.next(update.release_notes_url);
           }
         }
         if (currentTrainDescription && currentTrainDescription.includes('[release]')) {
@@ -205,14 +189,16 @@ export class TrainService {
           this.preReleaseTrain$.next(false);
           this.nightlyTrain$.next(true);
         }
-        this.showSpinner$.next(false);
+        this.updateService.isLoading$.next(false);
       },
       error: (err: WebSocketError) => {
-        this.generalUpdateError$.next(`${err.reason.replace('>', '').replace('<', '')}: ${this.translate.instant('Automatic update check failed. Please check system network settings.')}`);
-        this.showSpinner$.next(false);
+        this.updateService.generalUpdateError$.next(
+          `${err.reason.replace('>', '').replace('<', '')}: ${this.translate.instant('Automatic update check failed. Please check system network settings.')}`,
+        );
+        this.updateService.isLoading$.next(false);
       },
       complete: () => {
-        this.showSpinner$.next(false);
+        this.updateService.isLoading$.next(false);
       },
     });
   }

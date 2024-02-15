@@ -13,6 +13,7 @@ import { helptextSystemUpdate } from 'app/helptext/system/update';
 import { Option } from 'app/interfaces/option.interface';
 import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { TrainService } from 'app/pages/system/update/services/train.service';
+import { UpdateService } from 'app/pages/system/update/services/update.service';
 import { AuthService } from 'app/services/auth/auth.service';
 import { DialogService } from 'app/services/dialog.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
@@ -47,6 +48,7 @@ export class TrainCardComponent implements OnInit {
     private fb: FormBuilder,
     private authService: AuthService,
     protected trainService: TrainService,
+    protected updateService: UpdateService,
     private cdr: ChangeDetectorRef,
   ) {
     this.sysGenService.updateRunning.pipe(untilDestroyed(this)).subscribe((isUpdating: string) => {
