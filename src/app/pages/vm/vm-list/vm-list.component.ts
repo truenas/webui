@@ -11,6 +11,7 @@ import {
 } from 'app/enums/vm.enum';
 import { toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import { helptextVmWizard } from 'app/helptext/vm/vm-wizard/vm-wizard';
+import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { VirtualMachine } from 'app/interfaces/virtual-machine.interface';
 import { IxFileSizePipe } from 'app/modules/ix-file-size/ix-file-size.pipe';
 import { AsyncDataProvider } from 'app/modules/ix-table2/classes/async-data-provider/async-data-provider';
@@ -26,7 +27,6 @@ import { VmService } from 'app/services/vm.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
-// eslint-disable-next-line @angular-eslint/prefer-on-push-component-change-detection
 @Component({
   templateUrl: './vm-list.component.html',
   styleUrls: ['./vm-list.component.scss'],
@@ -42,6 +42,13 @@ export class VmListComponent implements OnInit {
   protected hasVirtualizationSupport$ = this.vmService.hasVirtualizationSupport$;
   protected availableMemory$ = this.vmService.getAvailableMemory().pipe(toLoadingState());
 
+  vmNotSupportedConfig: EmptyConfig = {
+    large: true,
+    icon: 'laptop',
+    title: this.translate.instant('Virtualization is not supported'),
+    button: null,
+  };
+
   columns = createTable<VirtualMachine>([
     textColumn({
       title: this.translate.instant('Name'),
@@ -49,7 +56,7 @@ export class VmListComponent implements OnInit {
       sortable: true,
     }),
     toggleColumn({
-      title: this.translate.instant('State'),
+      title: this.translate.instant('Running'),
       sortable: true,
       onRowToggle: (row) => this.vmService.toggleVmStatus(row),
       getValue: (row) => row.status.state === VmState.Running,
@@ -137,14 +144,24 @@ export class VmListComponent implements OnInit {
 
   ngOnInit(): void {
     this.createDataProvider();
+    this.listenForVmUpdates();
   }
 
   createDataProvider(): void {
+    // TODO: Refactor VM data provider to use ngrx/store
     const virtualMachines$ = this.ws.call('vm.query').pipe(
       tap((vms) => this.vmMachines = vms),
     );
     this.dataProvider = new AsyncDataProvider(virtualMachines$);
     this.dataProvider.load();
+  }
+
+  listenForVmUpdates(): void {
+    this.vmService.refreshVmList$
+      .pipe(untilDestroyed(this))
+      .subscribe(() => {
+        this.dataProvider.load();
+      });
   }
 
   doAdd(): void {
@@ -186,7 +203,7 @@ export class VmListComponent implements OnInit {
   protected onListFiltered(query: string): void {
     const filterString = query.toLowerCase();
     this.dataProvider.setRows(this.vmMachines.filter((vm) => {
-      return Object.values(vm).includes(filterString);
+      return vm.name.includes(filterString);
     }));
   }
 }

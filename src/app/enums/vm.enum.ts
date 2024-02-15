@@ -92,4 +92,7 @@ export const vmOsLabels = new Map<VmOs, string>([
 export enum VmState {
   Running = 'RUNNING',
   Stopped = 'STOPPED',
+  // Below statuses been seen in ApiEvent<VirtualMachine>. Perhaps we could handle them.
+  Shutoff = 'SHUTOFF',
+  UpdatingConfiguration = 'UPDATING CONFIGURATION',
 }

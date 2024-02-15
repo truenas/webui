@@ -4,7 +4,8 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
-import { of } from 'rxjs';
+import { Subject, of } from 'rxjs';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { VmState } from 'app/enums/vm.enum';
 import { VirtualMachine } from 'app/interfaces/virtual-machine.interface';
@@ -54,6 +55,7 @@ describe('VmListComponent', () => {
     ],
     declarations: [],
     providers: [
+      mockAuth(),
       mockWebSocket([
         mockCall('vm.query', virtualMachines),
       ]),
@@ -61,7 +63,8 @@ describe('VmListComponent', () => {
         isEnterprise: () => false,
       }),
       mockProvider(VmService, {
-        getAvailableMemory: of(4096),
+        refreshVmList$: new Subject(),
+        getAvailableMemory: jest.fn(() => of(4096)),
         hasVirtualizationSupport$: of(true),
       }),
       mockProvider(IxSlideInService, {
@@ -81,7 +84,7 @@ describe('VmListComponent', () => {
 
   it('should show table rows', async () => {
     const expectedRows = [
-      ['Name', 'State', 'Start on Boot'],
+      ['Name', 'Running', 'Start on Boot'],
       ['test', '', ''],
       ['test_refactoring', '', ''],
     ];

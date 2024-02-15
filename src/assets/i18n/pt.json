@@ -2443,6 +2443,7 @@
   "View/Download Certificate": "",
   "View/Download Key": "",
   "Virtual IP Address (Failover Address)": "",
+  "Virtualization is not supported": "",
   "Volume size cannot be zero.": "",
   "WARNING: A failover will  temporarily interrupt system services.": "",
   "WARNING: Adding data VDEVs with different numbers of disks is not recommended.": "",

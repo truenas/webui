@@ -3,6 +3,10 @@
   color: var(--fg1);
   display: flex;
   gap: 4px;
+
+  ix-icon {
+    cursor: help;
+  }
 }
 
 .table-hidden-columns {

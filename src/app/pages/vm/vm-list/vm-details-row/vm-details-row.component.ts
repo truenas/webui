@@ -1,5 +1,5 @@
 import {
-  Component, ChangeDetectionStrategy, Input, EventEmitter, Output,
+  Component, ChangeDetectionStrategy, Input,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
@@ -24,8 +24,7 @@ import { VmService } from 'app/services/vm.service';
 })
 export class VirtualMachineDetailsRowComponent {
   @Input() vm: VirtualMachine;
-  @Output() refresh = new EventEmitter<void>();
-  requiresRoles = [Role.VmWrite];
+  protected readonly requiresRoles = [Role.VmWrite];
 
   get isRunning(): boolean {
     return this.vm.status.state === VmState.Running;
@@ -81,7 +80,7 @@ export class VirtualMachineDetailsRowComponent {
     this.slideInService
       .open(VmEditFormComponent, { data: this.vm })
       .slideInClosed$.pipe(filter(Boolean), untilDestroyed(this))
-      .subscribe(() => this.refresh.emit());
+      .subscribe(() => this.vmService.refreshVmList$.next());
   }
 
   protected doDelete(): void {
@@ -89,7 +88,7 @@ export class VirtualMachineDetailsRowComponent {
       .open(DeleteVmDialogComponent, { data: this.vm })
       .afterClosed()
       .pipe(filter(Boolean), untilDestroyed(this))
-      .subscribe(() => this.refresh.emit());
+      .subscribe(() => this.vmService.refreshVmList$.next());
   }
 
   protected doClone(): void {
@@ -97,7 +96,7 @@ export class VirtualMachineDetailsRowComponent {
       .open(CloneVmDialogComponent, { data: this.vm })
       .afterClosed()
       .pipe(filter(Boolean), untilDestroyed(this))
-      .subscribe(() => this.refresh.emit());
+      .subscribe(() => this.vmService.refreshVmList$.next());
   }
 
   protected downloadLogs(): void {

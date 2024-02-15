@@ -5,9 +5,9 @@ import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
-import { of } from 'rxjs';
+import { Subject, of } from 'rxjs';
 import { fakeFile } from 'app/core/testing/utils/fake-file.uitls';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { VmState } from 'app/enums/vm.enum';
 import { VirtualMachine } from 'app/interfaces/virtual-machine.interface';
 import { VmEditFormComponent } from 'app/pages/vm/vm-edit-form/vm-edit-form.component';
@@ -42,10 +42,9 @@ describe('VirtualMachineDetailsRowComponent', () => {
   const createComponent = createComponentFactory({
     component: VirtualMachineDetailsRowComponent,
     providers: [
-      mockWebSocket([
-        mockCall('vm.delete'),
-      ]),
+      mockAuth(),
       mockProvider(VmService, {
+        refreshVmList$: new Subject(),
         hasVirtualizationSupport$: of(true),
         downloadLogs: jest.fn(() => of(fakeFile('test.log'))),
         doStart: jest.fn(),

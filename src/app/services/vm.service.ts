@@ -10,7 +10,7 @@ import { WINDOW } from 'app/helpers/window.helper';
 import { helptextVmList } from 'app/helptext/vm/vm-list';
 import { ApiCallParams } from 'app/interfaces/api/api-call-directory.interface';
 import {
-  VirtualMachine, VirtualizationDetails, VmDisplayWebUriParams, VmDisplayWebUriParamsOptions,
+  VirtualMachine, VirtualMachineUpdate, VirtualizationDetails, VmDisplayWebUriParams, VmDisplayWebUriParamsOptions,
 } from 'app/interfaces/virtual-machine.interface';
 import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
@@ -24,6 +24,7 @@ import { WebSocketService } from 'app/services/ws.service';
 @Injectable({ providedIn: 'root' })
 export class VmService {
   hasVirtualizationSupport$ = new BehaviorSubject<boolean>(false);
+  refreshVmList$ = new Subject<void>();
   private checkMemory$ = new Subject<void>();
 
   private wsMethods = {
@@ -91,9 +92,7 @@ export class VmService {
     const filename = `${vm.id}_${vm.name}.log`;
     const mimetype = 'text/plain';
     return this.ws.call('core.download', ['filesystem.get', [path], filename]).pipe(
-      switchMap(([, url]) => {
-        return this.storageService.downloadUrl(url, filename, mimetype);
-      }),
+      switchMap(([, url]) => this.storageService.downloadUrl(url, filename, mimetype)),
     );
   }
 
@@ -115,12 +114,15 @@ export class VmService {
   }
 
   toggleVmAutostart(vm: VirtualMachine): void {
-    const payload = { ...vm, autostart: !vm.autostart };
-    this.ws.call('vm.update', [vm.id, payload])
+    this.ws.call('vm.update', [vm.id, { autostart: !vm.autostart } as VirtualMachineUpdate])
       .pipe(this.loader.withLoader(), take(1))
       .subscribe({
-        next: () => this.checkMemory(),
+        next: () => {
+          this.checkMemory();
+          this.refreshVmList$.next();
+        },
         error: (error: WebSocketError) => {
+          this.refreshVmList$.next();
           this.errorHandler.showErrorModal(error);
         },
       });
@@ -134,13 +136,17 @@ export class VmService {
     this.ws.call(method, params)
       .pipe(this.loader.withLoader(), take(1))
       .subscribe({
-        next: () => this.checkMemory(),
+        next: () => {
+          this.checkMemory();
+          this.refreshVmList$.next();
+        },
         error: (error: WebSocketError) => {
           if (method === this.wsMethods.start
             && error.errname === WebSocketErrorName.NoMemory) {
             this.onMemoryError(vm);
             return;
           }
+          this.refreshVmList$.next();
           this.errorHandler.showErrorModal(error);
         },
       });
@@ -190,11 +196,17 @@ export class VmService {
     jobDialogRef.componentInstance.success.pipe(take(1)).subscribe(() => {
       jobDialogRef.close(false);
       this.checkMemory();
+      this.refreshVmList$.next();
       this.dialogService.info(
         this.translate.instant('Finished'),
         this.translate.instant(helptextVmList.stop_dialog.successMessage, { vmName: vm.name }),
         true,
       );
+    });
+    jobDialogRef.componentInstance.failure.pipe(take(1)).subscribe((error) => {
+      jobDialogRef.close(false);
+      this.refreshVmList$.next();
+      this.errorHandler.showErrorModal(error);
     });
   }
 

@@ -2332,6 +2332,7 @@
   "View/Download Key": "",
   "Virtual IP Address (Failover Address)": "",
   "Virtual machine created": "",
+  "Virtualization is not supported": "",
   "WARNING: Adding data VDEVs with different numbers of disks is not recommended.": "",
   "WARNING: Based on the pool topology, {size} is the minimum recommended record size. Choosing a smaller size can reduce system performance.": "",
   "WARNING: Exporting/disconnecting pool <i>{pool}</i>. Data on the pool will not be available after export. Data on the pool disks can be destroyed by setting the <b>Destroy data</b> option. Back up critical data <b>before</b> exporting/disconnecting the pool.": "",
