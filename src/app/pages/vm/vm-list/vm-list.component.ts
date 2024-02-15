@@ -58,14 +58,16 @@ export class VmListComponent implements OnInit {
     toggleColumn({
       title: this.translate.instant('Running'),
       sortable: true,
-      onRowToggle: (row) => this.vmService.toggleVmStatus(row),
+      requiredRoles: this.requiresRoles,
       getValue: (row) => row.status.state === VmState.Running,
+      onRowToggle: (row) => this.vmService.toggleVmStatus(row),
     }),
     toggleColumn({
       title: this.translate.instant('Start on Boot'),
-      onRowToggle: (row) => this.vmService.toggleVmAutostart(row),
+      requiredRoles: this.requiresRoles,
       propertyName: 'autostart',
       sortable: true,
+      onRowToggle: (row) => this.vmService.toggleVmAutostart(row),
     }),
     textColumn({
       title: this.translate.instant('Virtual CPUs'),

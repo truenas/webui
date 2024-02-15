@@ -106,6 +106,7 @@
 </button>
 
 <button
+  *ixRequiresRoles="requiresRoles"
   mat-button
   [ixTest]="['download_logs', vm.id]"
   (click)="downloadLogs()"
