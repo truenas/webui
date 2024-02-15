@@ -9,7 +9,7 @@ import {
 } from 'rxjs';
 import { MiB } from 'app/constants/bytes.constant';
 import {
-  VmBootloader, VmCpuMode, VmDeviceType, VmTime, vmTimeNames,
+  VmBootloader, VmCpuMode, VmDeviceType, VmTime, vmCpuModeLabels, vmTimeNames,
 } from 'app/enums/vm.enum';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { mapToOptions } from 'app/helpers/options.helper';
@@ -69,7 +69,7 @@ export class VmEditFormComponent implements OnInit {
   isLoading = false;
   timeOptions$ = of(mapToOptions(vmTimeNames, this.translate));
   bootloaderOptions$ = this.ws.call('vm.bootloader_options').pipe(choicesToOptions());
-  cpuModeOptions$ = of(helptextVmWizard.cpu_mode.options);
+  cpuModeOptions$ = of(mapToOptions(vmCpuModeLabels, this.translate));
   cpuModelOptions$ = this.ws.call('vm.cpu_model_choices').pipe(choicesToOptions());
   gpuOptions$ = this.gpuService.getGpuOptions();
 

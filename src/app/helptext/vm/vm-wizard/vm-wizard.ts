@@ -1,5 +1,4 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
-import { VmCpuMode } from 'app/enums/vm.enum';
 import { helptextGlobal } from 'app/helptext/global-helptext';
 
 export const helptextVmWizard = {
@@ -61,14 +60,6 @@ This will improve CPU cache locality and can reduce possible stutter in GPU pass
  timeout has expired.'),
   },
 
-  cpu_mode: {
-    options: [
-      { label: 'Custom', value: VmCpuMode.Custom },
-      { label: 'Host Model', value: VmCpuMode.HostModel },
-      { label: 'Host Passthrough', value: VmCpuMode.HostPassthrough },
-    ],
-  },
-
   cpu_model: {
     placeholder: T('CPU Model'),
   },
@@ -82,11 +73,9 @@ This will improve CPU cache locality and can reduce possible stutter in GPU pass
   memory_tooltip: T('Allocate RAM for the VM. Minimum value is 256 MiB.'),
   global_tooltip: helptextGlobal.human_readable.suggestion_tooltip,
   memory_size_err: T('Allocate at least 256 MiB.'),
-  memory_warning: T('Caution: Allocating too much memory can slow the \
- system or prevent VMs from running.'),
+  memory_warning: T('Caution: Allocating too much memory can slow the system or prevent VMs from running.'),
   min_memory_tooltip: T('When not specified, guest system is given fixed amount of memory specified above.\n'
     + 'When minimum memory is specified, guest system is given memory within range between minimum and fixed as needed.'),
-  vm_mem_title: T('Available Memory:'),
 
   disk_radio_tooltip: T('Select <i>Create new disk image</i> to create a new\
  zvol on an existing dataset. This is used as a\

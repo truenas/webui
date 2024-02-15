@@ -59,7 +59,7 @@ export enum VmDiskMode {
 
 export const vmDiskModeLabels = new Map<VmDiskMode, string>([
   [VmDiskMode.Ahci, 'AHCI'],
-  [VmDiskMode.Virtio, 'VIRTIO'],
+  [VmDiskMode.Virtio, 'VirtIO'],
 ]);
 
 export enum VmDisplayType {
@@ -88,3 +88,11 @@ export const vmOsLabels = new Map<VmOs, string>([
   [VmOs.Linux, T('Linux')],
   [VmOs.FreeBsd, T('FreeBSD')],
 ]);
+
+export enum VmState {
+  Running = 'RUNNING',
+  Stopped = 'STOPPED',
+  // Below statuses been seen in ApiEvent<VirtualMachine>. Perhaps we could handle them.
+  Shutoff = 'SHUTOFF',
+  UpdatingConfiguration = 'UPDATING CONFIGURATION',
+}

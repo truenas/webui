@@ -9,10 +9,10 @@ import { BehaviorSubject, forkJoin, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { mntPath } from 'app/enums/mnt-path.enum';
 import {
-  VmDeviceType, vmDeviceTypeLabels, VmDiskMode, VmNicType,
+  VmDeviceType, vmDeviceTypeLabels, VmDiskMode, vmDiskModeLabels, VmNicType, vmNicTypeLabels,
 } from 'app/enums/vm.enum';
 import { assertUnreachable } from 'app/helpers/assert-unreachable.utils';
-import { arrayToOptions, choicesToOptions } from 'app/helpers/operators/options.operators';
+import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextDevice } from 'app/helptext/vm/devices/device-add-edit';
 import {
@@ -129,8 +129,8 @@ export class DeviceFormComponent implements OnInit {
   );
   readonly bindOptions$ = this.ws.call('vm.device.bind_choices').pipe(choicesToOptions());
   readonly resolutions$ = this.ws.call('vm.resolution_choices').pipe(choicesToOptions());
-  readonly nicOptions$ = this.networkService.getVmNicChoices().pipe(choicesToOptions());
-  readonly nicTypes$ = of(this.vmService.getNicTypes()).pipe(arrayToOptions());
+  readonly nicOptions$ = this.ws.call('vm.device.nic_attach_choices').pipe(choicesToOptions());
+  readonly nicTypes$ = of(mapToOptions(vmNicTypeLabels, this.translate));
   readonly passthroughProvider = new SimpleAsyncComboboxProvider(
     this.ws.call('vm.device.passthrough_device_choices').pipe(
       map((passthroughDevices) => {
@@ -152,10 +152,7 @@ export class DeviceFormComponent implements OnInit {
   readonly deviceTypeOptions = mapToOptions(vmDeviceTypeLabels, this.translate);
   readonly deviceTypes$ = new BehaviorSubject(this.deviceTypeOptions);
 
-  readonly diskModes$ = of([
-    { label: 'AHCI', value: VmDiskMode.Ahci },
-    { label: 'VirtIO', value: VmDiskMode.Virtio },
-  ]);
+  readonly diskModes$ = of(mapToOptions(vmDiskModeLabels, this.translate));
   readonly sectorSizes$ = of([
     { label: this.translate.instant('Default'), value: 0 },
     { label: '512', value: 512 },

@@ -49,6 +49,6 @@ describe('StopVmDialogComponent', () => {
     const stopButton = await loader.getHarness(MatButtonHarness.with({ text: 'Stop' }));
     await stopButton.click();
 
-    expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith({ wasStopped: true, forceAfterTimeout: true });
+    expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith({ forceAfterTimeout: true });
   });
 });

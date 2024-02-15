@@ -43,10 +43,6 @@ import { CommonDirectivesModule } from 'app/directives/common/common-directives.
 import { CastModule } from 'app/modules/cast/cast.module';
 import { EntityEmptyComponent } from 'app/modules/entity/entity-empty/entity-empty.component';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
-import { EntityTableActionsComponent } from 'app/modules/entity/entity-table/entity-table-actions/entity-table-actions.component';
-import { EntityTableAddActionsComponent } from 'app/modules/entity/entity-table/entity-table-add-actions/entity-table-add-actions.component';
-import { EntityTableRowDetailsComponent } from 'app/modules/entity/entity-table/entity-table-row-details/entity-table-row-details.component';
-import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-table.component';
 import { ToolbarSliderComponent } from 'app/modules/entity/entity-toolbar/components/toolbar-slider/toolbar-slider.component';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { LayoutModule } from 'app/modules/layout/layout.module';
@@ -109,18 +105,11 @@ import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
     LayoutModule,
   ],
   declarations: [
-    EntityTableComponent,
-    EntityTableRowDetailsComponent,
-    EntityTableActionsComponent,
-    EntityTableAddActionsComponent,
     EntityJobComponent,
     ToolbarSliderComponent,
     EntityEmptyComponent,
   ],
   exports: [
-    EntityTableComponent,
-    EntityTableAddActionsComponent,
-    EntityTableActionsComponent,
     ToolbarSliderComponent,
     CdkTreeModule,
     EntityEmptyComponent,

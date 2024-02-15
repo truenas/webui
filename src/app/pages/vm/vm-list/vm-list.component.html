@@ -1,16 +1,67 @@
-<ng-template ixPageHeader>
-  <ix-page-title-header>
-    <button *ngIf="canAdd" mat-button color="primary" ixTest="add-vm" (click)="doAdd()">
-      {{ 'Add' | translate }}
-    </button>
-  </ix-page-title-header>
+<ng-container *ngIf="hasVirtualizationSupport$ | async; else vmNotSupported">
+  <ng-template ixPageHeader>
+    <ix-page-title-header>
+      <div *ixWithLoadingState="availableMemory$ as availableMemory" class="vm-summary">
+        <strong>{{ 'Available Memory' | translate }}:</strong>
+        <span>{{ availableMemory | ixFileSize }}</span>
+        <ix-icon
+          name="info"
+          [matTooltip]="memWarning | translate"
+          [attr.aria-label]="memWarning | translate"
+        ></ix-icon>
+      </div>
+
+      <ix-search-input (search)="onListFiltered($event)"></ix-search-input>
+      <ix-table-columns-selector [columns]="columns" (columnsChange)="columnsChange($event)"></ix-table-columns-selector>
+
+      <button
+        *ixRequiresRoles="requiresRoles"
+        mat-button
+        color="primary"
+        ixTest="add-vm"
+        (click)="doAdd()"
+      >
+        {{ 'Add' | translate }}
+      </button>
+    </ix-page-title-header>
+  </ng-template>
+
+  <ix-table2
+    class="table"
+    [ix-table2-empty]="!(dataProvider.currentPageCount$ | async)"
+    [emptyConfig]="emptyService.defaultEmptyConfig(dataProvider.emptyType$ | async)"
+  >
+    <thead
+      ix-table-head
+      [columns]="columns"
+      [dataProvider]="dataProvider"
+    ></thead>
+    <tbody
+      ix-table-body
+      [columns]="columns"
+      [dataProvider]="dataProvider"
+      [isLoading]="dataProvider.isLoading$ | async"
+    >
+      <ng-template let-vm ix-table-details-row [dataProvider]="dataProvider">
+        <dl *ngIf="hiddenColumns.length" class="table-hidden-columns">
+          <div *ngFor="let column of hiddenColumns">
+            <b>{{ column.title }}:</b>
+            <span>{{ column?.getValue?.(vm) || vm[column.propertyName] }}</span>
+          </div>
+          <mat-divider></mat-divider>
+        </dl>
+
+        <ix-vm-details-row [vm]="vm"></ix-vm-details-row>
+      </ng-template>
+    </tbody>
+  </ix-table2>
+  <ix-table-pager [dataProvider]="dataProvider"></ix-table-pager>
+</ng-container>
+
+<ng-template #vmNotSupported>
+  <mat-card>
+    <mat-card-content>
+      <ix-entity-empty [conf]="vmNotSupportedConfig"></ix-entity-empty>
+    </mat-card-content>
+  </mat-card>
 </ng-template>
-
-<div *ngIf="hasVirtualizationSupport" class="vm-summary">
-  <p *ngIf="availableMemory">
-    <strong>{{ memTitle | translate }}</strong> {{ availableMemory }} -
-    {{ memWarning | translate }}
-  </p>
-</div>
-
-<ix-entity-table [title]="title" [conf]="this"></ix-entity-table>

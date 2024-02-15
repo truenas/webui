@@ -29,6 +29,7 @@ import { DeviceFormComponent } from 'app/pages/vm/devices/device-form/device-for
 import { DialogService } from 'app/services/dialog.service';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { VmService } from 'app/services/vm.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 describe('DeviceFormComponent', () => {
@@ -96,6 +97,9 @@ describe('DeviceFormComponent', () => {
       mockProvider(IxSlideInService),
       mockProvider(FilesystemService),
       mockProvider(IxSlideInRef),
+      mockProvider(VmService, {
+        hasVirtualizationSupport$: of(true),
+      }),
       { provide: SLIDE_IN_DATA, useValue: undefined },
     ],
   });
