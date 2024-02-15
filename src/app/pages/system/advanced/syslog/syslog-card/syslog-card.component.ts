@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { untilDestroyed } from '@ngneat/until-destroy';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { isEqual } from 'lodash';
 import {
@@ -23,6 +23,7 @@ export interface SyslogConfig {
   syslog_tls_certificate_authority: number;
 }
 
+@UntilDestroy()
 @Component({
   selector: 'ix-syslog-card',
   styleUrls: ['../../common-card.scss'],
