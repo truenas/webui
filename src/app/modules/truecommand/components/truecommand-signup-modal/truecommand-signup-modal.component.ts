@@ -13,7 +13,7 @@ import { helptextTopbar } from 'app/helptext/topbar';
 })
 export class TruecommandSignupModalComponent {
   readonly helptext = helptextTopbar;
-  protected readonly requiredRoles = [Role.FullAdmin];
+  protected readonly requiredRoles = [Role.TrueCommandWrite];
 
   constructor(
     private dialogRef: MatDialogRef<TruecommandSignupModalComponent>,

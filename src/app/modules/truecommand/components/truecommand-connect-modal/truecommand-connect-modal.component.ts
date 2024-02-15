@@ -27,7 +27,7 @@ export type TruecommandSignupModalResult = boolean | { deregistered: boolean };
 })
 export class TruecommandConnectModalComponent implements OnInit {
   readonly helptext = helptextTopbar;
-  protected readonly requiredRoles = [Role.FullAdmin];
+  protected readonly requiredRoles = [Role.TrueCommandWrite];
 
   title: string;
   saveButtonText: string;
