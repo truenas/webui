@@ -20,7 +20,7 @@ import { helptextSystemUpdate as helptext } from 'app/helptext/system/update';
 import { Job } from 'app/interfaces/job.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
-import { updateAgainCode } from 'app/pages/system/update/update-again-code.constant';
+import { updateAgainCode } from 'app/pages/system/update/utils/update-again-code.constant';
 import { AuthService } from 'app/services/auth/auth.service';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';

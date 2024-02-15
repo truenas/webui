@@ -27,7 +27,7 @@ import {
 } from 'app/pages/system/general-settings/save-config-dialog/save-config-dialog.component';
 import { TrainService } from 'app/pages/system/update/services/train.service';
 import { UpdateService } from 'app/pages/system/update/services/update.service';
-import { updateAgainCode } from 'app/pages/system/update/update-again-code.constant';
+import { updateAgainCode } from 'app/pages/system/update/utils/update-again-code.constant';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
