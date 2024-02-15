@@ -1,6 +1,6 @@
 import { Observable, switchMap } from 'rxjs';
 import { EmptyType } from 'app/enums/empty-type.enum';
-import { ApiCallDirectory, ApiCallMethod } from 'app/interfaces/api/api-call-directory.interface';
+import { ApiCallParams, ApiCallResponseType, QueryMethods } from 'app/interfaces/api/api-call-directory.interface';
 import { QueryFilters } from 'app/interfaces/query-api.interface';
 import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { PaginationServerSide } from 'app/modules/ix-table2/classes/api-data-provider/pagination-server-side.class';
@@ -10,31 +10,23 @@ import { TablePagination } from 'app/modules/ix-table2/interfaces/table-paginati
 import { TableSort } from 'app/modules/ix-table2/interfaces/table-sort.interface';
 import { WebSocketService } from 'app/services/ws.service';
 
-export type ApiResponseType<M extends ApiCallMethod> = ApiCallDirectory[M]['response'] extends (infer U)[] ? U : never;
-
-export type ApiParams<M extends keyof ApiCallDirectory> = ApiCallDirectory[M]['params'];
-
-export type QueryMethods = {
-  [K in keyof ApiCallDirectory]: K extends `${string}.query` ? K : never
-}[keyof ApiCallDirectory];
-
-export class ApiDataProvider<M extends QueryMethods> extends BaseDataProvider<ApiResponseType<M>> {
+export class ApiDataProvider<T extends QueryMethods> extends BaseDataProvider<ApiCallResponseType<T>> {
   paginationStrategy: PaginationServerSide;
   sortingStrategy: SortingServerSide;
 
-  private rows: ApiResponseType<M>[] = [];
+  private rows: ApiCallResponseType<T>[] = [];
 
   constructor(
     protected ws: WebSocketService,
-    protected method: M,
-    protected params: ApiParams<M> = [],
+    protected method: T,
+    protected params: ApiCallParams<T> = [],
   ) {
     super();
     this.paginationStrategy = new PaginationServerSide();
     this.sortingStrategy = new SortingServerSide();
   }
 
-  setParams(params: ApiParams<M>): void {
+  setParams(params: ApiCallParams<T>): void {
     this.params = params;
   }
 
@@ -44,10 +36,10 @@ export class ApiDataProvider<M extends QueryMethods> extends BaseDataProvider<Ap
       this.countRows().pipe(
         switchMap((count: number) => {
           this.totalRows = count;
-          return this.ws.call(this.method, this.prepareParams(this.params)) as Observable<ApiResponseType<M>[]>;
+          return this.ws.call(this.method, this.prepareParams(this.params)) as Observable<ApiCallResponseType<T>[]>;
         }),
       ).subscribe({
-        next: (rows: ApiResponseType<M>[]) => {
+        next: (rows: ApiCallResponseType<T>[]) => {
           this.rows = rows;
           this.currentPage$.next(this.rows);
           this.emptyType$.next(rows.length ? EmptyType.NoSearchResults : EmptyType.NoPageData);
@@ -63,7 +55,7 @@ export class ApiDataProvider<M extends QueryMethods> extends BaseDataProvider<Ap
     );
   }
 
-  setSorting(sorting: TableSort<ApiResponseType<M>>): void {
+  setSorting(sorting: TableSort<ApiCallResponseType<T>>): void {
     this.sorting = sorting;
     this.sortingStrategy.handleCurrentPage(this.load.bind(this));
     this.controlsStateUpdated.emit();
@@ -77,23 +69,22 @@ export class ApiDataProvider<M extends QueryMethods> extends BaseDataProvider<Ap
 
   protected countRows(): Observable<number> {
     const params = [
-      (this.params as QueryFilters<ApiResponseType<M>>)[0] || [],
+      (this.params as QueryFilters<ApiCallResponseType<T>>)[0] || [],
       { count: true },
-    ] as ApiParams<M>;
+    ] as ApiCallParams<T>;
 
     return this.ws.call(this.method, params) as unknown as Observable<number>;
   }
 
-  protected prepareParams(params: ApiParams<M>): ApiParams<M> {
+  protected prepareParams(params: ApiCallParams<T>): ApiCallParams<T> {
     // TODO: Current merge is not entirely correct. Introduce a separate function.
-    // TODO: Clarify whether we should use positional arguments or 'query-filters'
 
-    const queryFilters = (params as QueryFilters<ApiResponseType<M>>)[0] || [];
+    const queryFilters = (params as QueryFilters<ApiCallResponseType<T>>)[0] || [];
     const queryOptions = {
       ...this.paginationStrategy.getParams(this.pagination, this.totalRows),
       ...this.sortingStrategy.getParams(this.sorting),
     };
 
-    return [queryFilters, queryOptions] as ApiParams<M>;
+    return [queryFilters, queryOptions] as ApiCallParams<T>;
   }
 }

@@ -10,19 +10,14 @@
         (runSearch)="onSearch(searchInput.query);"
       ></ix-search-input2>
       <div class="search-button-wrapper">
-        <button
-          mat-button
-          type="button"
-          ixTest="search"
-          (click)="onSearch(searchInput.query)"
-        >
+        <button mat-button type="button" ixTest="search" (click)="onSearch(searchInput.query)">
           {{ 'Search' | translate }}
+        </button>
+        <button mat-button ixTest="add-privilege" [color]="'primary'" (click)="openForm()">
+          {{ 'Add' | translate }}
         </button>
       </div>
     </div>
-    <button mat-button ixTest="add-privilege" [color]="'primary'" (click)="openForm()">
-      {{ 'Add' | translate }}
-    </button>
   </ix-page-title-header>
 </ng-template>
 

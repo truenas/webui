@@ -904,3 +904,6 @@ export type ApiCallMethod = keyof ApiCallDirectory;
 
 export type ApiCallParams<T extends ApiCallMethod> = ApiCallDirectory[T]['params'];
 export type ApiCallResponse<T extends ApiCallMethod> = ApiCallDirectory[T]['response'];
+export type ApiCallResponseType<T extends ApiCallMethod> = ApiCallDirectory[T]['response'] extends (infer U)[] ? U : never;
+
+export type QueryMethods = { [T in ApiCallMethod]: T extends `${string}.query` ? T : never }[ApiCallMethod];

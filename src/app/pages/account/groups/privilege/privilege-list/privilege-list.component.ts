@@ -2,7 +2,9 @@ import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
-import { filter, switchMap } from 'rxjs/operators';
+import {
+  filter, map, shareReplay, switchMap, take,
+} from 'rxjs/operators';
 import { Role, roleNames } from 'app/enums/role.enum';
 import { ParamsBuilder } from 'app/helpers/params-builder/params-builder.class';
 import { Option } from 'app/interfaces/option.interface';
@@ -89,6 +91,20 @@ export class PrivilegeListComponent implements OnInit {
     pageNumber: 1,
   };
 
+  private groupsSuggestions$ = this.ws.call('group.query', [[['local', '=', true]]]).pipe(
+    map((groups) => groups.map((group) => ({
+      label: group.group,
+      value: `"${group.group}"`,
+    }))),
+    take(1),
+    shareReplay({ refCount: true, bufferSize: 1 }),
+  );
+
+  private rolesSuggestions$ = of(Object.values(Role).map((key) => ({
+    label: this.translate.instant(roleNames.get(key)),
+    value: `"${this.translate.instant(roleNames.get(key))}"`,
+  })));
+
   constructor(
     private slideInService: IxSlideInService,
     private ws: WebSocketService,
@@ -171,15 +187,9 @@ export class PrivilegeListComponent implements OnInit {
     this.searchProperties = searchProperties<Privilege>([
       textProperty('name', this.translate.instant('Name'), of<Option[]>([])),
       booleanProperty('web_shell', this.translate.instant('Web Shell Access')),
-      textProperty(
-        'roles',
-        this.translate.instant('Roles'),
-        of(Object.values(Role).map((key) => ({
-          label: this.translate.instant(roleNames.get(key)),
-          value: `"${this.translate.instant(roleNames.get(key))}"`,
-        }))),
-        roleNames,
-      ),
+      textProperty('local_groups.*.name', this.translate.instant('Local Groups Name'), this.groupsSuggestions$),
+      textProperty('ds_groups.*.name', this.translate.instant('DS Groups Name'), this.groupsSuggestions$),
+      textProperty('roles', this.translate.instant('Roles'), this.rolesSuggestions$, roleNames),
     ]);
   }
 }
