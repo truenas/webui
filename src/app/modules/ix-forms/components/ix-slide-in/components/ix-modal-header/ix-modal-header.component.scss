@@ -37,3 +37,19 @@ mat-progress-bar {
   width: calc(100% + 40px);
   z-index: 10005;
 }
+
+.readonly-badge {
+  display: inline-flex;
+  align-items: center;
+  font-size: 13px;
+  background-color: var(--alt-fg1);
+  border-radius: 2px;
+  padding: 1px 7px 1px 2px;
+  vertical-align: -1px;
+  margin-left: 2px;
+
+  ix-icon {
+    font-size: 16px;
+    margin-right: 2px;
+  }
+}

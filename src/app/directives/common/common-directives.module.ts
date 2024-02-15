@@ -9,12 +9,14 @@ import { RequiresRolesWrapperComponent } from 'app/directives/common/requires-ro
 import { RequiresRolesDirective } from 'app/directives/common/requires-roles/requires-roles.directive';
 import { StepActivationDirective } from 'app/directives/common/step-activation.directive';
 import { LetDirective } from './app-let.directive';
+import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 
 @NgModule({
   imports: [
     CommonModule,
     MatTooltipModule,
     TranslateModule,
+    IxIconModule,
   ],
   declarations: [
     LetDirective,
