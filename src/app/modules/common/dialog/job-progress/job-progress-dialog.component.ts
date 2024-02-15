@@ -93,11 +93,9 @@ export class JobProgressDialogComponent<T> implements OnInit, AfterViewChecked {
     this.description = this.data?.description;
     this.showRealtimeLogs = this.data?.showRealtimeLogs || false;
     this.showMinimizeButton = this.data?.canMinimize || false;
+    this.dialogRef.disableClose = !this.showMinimizeButton;
 
     let logsSubscription: Subscription = null;
-    if (this.dialogRef.disableClose) {
-      this.showMinimizeButton = false;
-    }
     this.cdr.markForCheck();
 
     this.data.job$.pipe(

@@ -194,5 +194,13 @@ describe('JobProgressDialogComponent', () => {
     expect(spectator.inject(MatDialogRef).close).toHaveBeenCalled();
   });
 
+  it('does not allow dialog to be closed by clicking on the backdrop if dialog cannot be minimized', async () => {
+    await setupTest({
+      canMinimize: true,
+    });
+
+    expect(spectator.inject(MatDialogRef).disableClose).toBe(false);
+  });
+
   // TODO: Test cases for realtime jobs.
 });

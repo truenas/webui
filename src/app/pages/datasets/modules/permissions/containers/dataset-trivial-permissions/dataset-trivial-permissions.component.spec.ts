@@ -11,7 +11,6 @@ import {
 } from 'app/core/testing/utils/mock-websocket.utils';
 import { DatasetAclType } from 'app/enums/dataset.enum';
 import { Dataset } from 'app/interfaces/dataset.interface';
-import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { DialogService } from 'app/services/dialog.service';
@@ -31,7 +30,6 @@ describe('DatasetTrivialPermissionsComponent', () => {
     imports: [
       IxFormsModule,
       ReactiveFormsModule,
-      EntityModule,
     ],
     params: {
       datasetId: 'pool/trivial',
@@ -64,6 +62,9 @@ describe('DatasetTrivialPermissionsComponent', () => {
       }),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
+        jobDialog: jest.fn(() => ({
+          afterClosed: () => of(null),
+        })),
       }),
       mockAuth(),
     ],
