@@ -30,6 +30,7 @@
           ixTest="user-read"
           [disabled]="isDisabled"
           [checked]="ownerRead"
+          [attr.aria-label]="'User Read' | translate"
           (change)="toggleOwnerRead()"
         ></mat-checkbox>
       </td>
@@ -39,6 +40,7 @@
           ixTest="user-write"
           [disabled]="isDisabled"
           [checked]="ownerWrite"
+          [attr.aria-label]="'User Write' | translate"
           (change)="toggleOwnerWrite()"
         ></mat-checkbox>
       </td>
@@ -48,6 +50,7 @@
           ixTest="user-execute"
           [disabled]="isDisabled"
           [checked]="ownerExec"
+          [attr.aria-label]="'User Execute' | translate"
           (change)="toggleOwnerExec()"
         ></mat-checkbox>
       </td>
@@ -62,6 +65,7 @@
           ixTest="group-read"
           [disabled]="isDisabled"
           [checked]="groupRead"
+          [attr.aria-label]="'Group Read' | translate"
           (change)="toggleGroupRead()"
         ></mat-checkbox>
       </td>
@@ -71,6 +75,7 @@
           ixTest="group-write"
           [disabled]="isDisabled"
           [checked]="groupWrite"
+          [attr.aria-label]="'Group Write' | translate"
           (change)="toggleGroupWrite()"
         ></mat-checkbox>
       </td>
@@ -80,6 +85,7 @@
           ixTest="group-execute"
           [disabled]="isDisabled"
           [checked]="groupExec"
+          [attr.aria-label]="'Group Execute' | translate"
           (change)="toggleGroupExec()"
         ></mat-checkbox>
       </td>
@@ -94,6 +100,7 @@
           ixTest="other-read"
           [disabled]="isDisabled"
           [checked]="otherRead"
+          [attr.aria-label]="'Other Read' | translate"
           (change)="toggleOtherRead()"
         ></mat-checkbox>
       </td>
@@ -103,6 +110,7 @@
           ixTest="other-write"
           [disabled]="isDisabled"
           [checked]="otherWrite"
+          [attr.aria-label]="'Other Write' | translate"
           (change)="toggleOtherWrite()"
         ></mat-checkbox>
       </td>
@@ -112,6 +120,7 @@
           ixTest="other-execute"
           [disabled]="isDisabled"
           [checked]="otherExec"
+          [attr.aria-label]="'Other Execute' | translate"
           (change)="toggleOtherExec()"
         ></mat-checkbox>
       </td>

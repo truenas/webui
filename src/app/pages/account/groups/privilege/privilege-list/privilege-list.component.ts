@@ -2,15 +2,25 @@ import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
-import { filter, switchMap, tap } from 'rxjs/operators';
+import {
+  filter, map, shareReplay, switchMap, take,
+} from 'rxjs/operators';
 import { Role, roleNames } from 'app/enums/role.enum';
+import { ParamsBuilder } from 'app/helpers/params-builder/params-builder.class';
+import { Option } from 'app/interfaces/option.interface';
 import { Privilege } from 'app/interfaces/privilege.interface';
-import { AsyncDataProvider } from 'app/modules/ix-table2/classes/async-data-provider/async-data-provider';
+import { ApiDataProvider } from 'app/modules/ix-table2/classes/api-data-provider/api-data-provider';
+import { PaginationServerSide } from 'app/modules/ix-table2/classes/api-data-provider/pagination-server-side.class';
+import { SortingServerSide } from 'app/modules/ix-table2/classes/api-data-provider/sorting-server-side.class';
 import { actionsColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
 import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { yesNoColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-yesno/ix-cell-yesno.component';
+import { TablePagination } from 'app/modules/ix-table2/interfaces/table-pagination.interface';
 import { createTable } from 'app/modules/ix-table2/utils';
 import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
+import { SearchProperty } from 'app/modules/search-input/types/search-property.interface';
+import { AdvancedSearchQuery, SearchQuery } from 'app/modules/search-input/types/search-query.interface';
+import { booleanProperty, searchProperties, textProperty } from 'app/modules/search-input/utils/search-properties.utils';
 import { PrivilegeFormComponent } from 'app/pages/account/groups/privilege/privilege-form/privilege-form.component';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
@@ -20,10 +30,14 @@ import { WebSocketService } from 'app/services/ws.service';
 @UntilDestroy()
 @Component({
   templateUrl: './privilege-list.component.html',
+  styleUrls: ['./privilege-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PrivilegeListComponent implements OnInit {
-  dataProvider: AsyncDataProvider<Privilege>;
+  protected dataProvider: ApiDataProvider<'privilege.query'>;
+  protected readonly advancedSearchPlaceholder = this.translate.instant('Name ^ "Local" AND "Web Shell Access" = true');
+  protected searchProperties: SearchProperty<Privilege>[] = [];
+
   columns = createTable<Privilege>([
     textColumn({
       identifier: true,
@@ -70,7 +84,26 @@ export class PrivilegeListComponent implements OnInit {
     rowTestId: (row) => 'privilege-' + row.name,
   });
 
+  searchQuery: SearchQuery<Privilege>;
   privileges: Privilege[] = [];
+  pagination: TablePagination = {
+    pageSize: 50,
+    pageNumber: 1,
+  };
+
+  private groupsSuggestions$ = this.ws.call('group.query', [[['local', '=', true]]]).pipe(
+    map((groups) => groups.map((group) => ({
+      label: group.group,
+      value: `"${group.group}"`,
+    }))),
+    take(1),
+    shareReplay({ refCount: true, bufferSize: 1 }),
+  );
+
+  private rolesSuggestions$ = of(Object.values(Role).map((key) => ({
+    label: this.translate.instant(roleNames.get(key)),
+    value: `"${this.translate.instant(roleNames.get(key))}"`,
+  })));
 
   constructor(
     private slideInService: IxSlideInService,
@@ -82,12 +115,12 @@ export class PrivilegeListComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    const privileges$ = this.ws.call('privilege.query').pipe(
-      tap((privileges) => this.privileges = privileges),
-      untilDestroyed(this),
-    );
-    this.dataProvider = new AsyncDataProvider<Privilege>(privileges$);
+    this.dataProvider = new ApiDataProvider(this.ws, 'privilege.query');
+    this.dataProvider.paginationStrategy = new PaginationServerSide();
+    this.dataProvider.sortingStrategy = new SortingServerSide();
+
     this.getPrivileges();
+    this.setSearchProperties();
   }
 
   getPrivileges(): void {
@@ -125,10 +158,38 @@ export class PrivilegeListComponent implements OnInit {
       });
   }
 
-  onListFiltered(query: string): void {
-    const filterString = query.toLowerCase();
-    this.dataProvider.setRows(this.privileges.filter((privileges) => {
-      return privileges.name.toLowerCase().includes(filterString);
-    }));
+  onSearch(query: SearchQuery<Privilege>): void {
+    if (!query) {
+      return;
+    }
+
+    this.searchQuery = query;
+
+    if (query && query.isBasicQuery) {
+      const term = `(?i)${query.query || ''}`;
+      const params = new ParamsBuilder<Privilege>()
+        .filter('name', '~', term)
+        .getParams();
+
+      this.dataProvider.setParams(params);
+    }
+
+    if (query && !query.isBasicQuery) {
+      this.dataProvider.setParams(
+        [(query as AdvancedSearchQuery<Privilege>).filters],
+      );
+    }
+
+    this.dataProvider.load();
+  }
+
+  private setSearchProperties(): void {
+    this.searchProperties = searchProperties<Privilege>([
+      textProperty('name', this.translate.instant('Name'), of<Option[]>([])),
+      booleanProperty('web_shell', this.translate.instant('Web Shell Access')),
+      textProperty('local_groups.*.name', this.translate.instant('Local Groups Name'), this.groupsSuggestions$),
+      textProperty('ds_groups.*.name', this.translate.instant('DS Groups Name'), this.groupsSuggestions$),
+      textProperty('roles', this.translate.instant('Roles'), this.rolesSuggestions$, roleNames),
+    ]);
   }
 }

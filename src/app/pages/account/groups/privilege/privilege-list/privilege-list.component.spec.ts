@@ -48,6 +48,7 @@ describe('PrivilegeListComponent', () => {
       mockWebSocket([
         mockCall('privilege.query', fakePrivilegeDataSource),
         mockCall('privilege.delete', true),
+        mockCall('group.query', []),
       ]),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),

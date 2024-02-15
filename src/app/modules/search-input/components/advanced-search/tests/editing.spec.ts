@@ -78,10 +78,9 @@ describe('AdvancedSearchComponent – editing', () => {
   describe('no default input provided', () => {
     it('resets text area when reset icon is pressed', async () => {
       await searchHarness.setValue('test');
+      expect(await searchHarness.getValue()).toBe('test');
       await (await searchHarness.getResetIcon()).click();
-      const placeholderText = await searchHarness.getPlaceholder();
-
-      expect(await searchHarness.getValue()).toBe(placeholderText);
+      expect(await searchHarness.getValue()).toBe('');
     });
 
     it('emits (switchToBasic) when Switch To Basic is pressed', async () => {

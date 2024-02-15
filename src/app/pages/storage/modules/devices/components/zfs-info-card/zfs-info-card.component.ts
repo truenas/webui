@@ -1,4 +1,6 @@
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, EventEmitter, Input, Output,
+} from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
@@ -33,6 +35,8 @@ export class ZfsInfoCardComponent {
   @Input() topologyCategory: VdevType;
   @Input() poolId: number;
   @Input() hasTopLevelRaidz: boolean;
+
+  @Output() deviceRemoved = new EventEmitter<void>();
 
   protected readonly Role = Role;
 
@@ -188,6 +192,7 @@ export class ZfsInfoCardComponent {
     ).subscribe(() => {
       this.snackbar.success(this.translate.instant('Device removed'));
       this.devicesStore.reloadList();
+      this.deviceRemoved.emit();
     });
   }
 

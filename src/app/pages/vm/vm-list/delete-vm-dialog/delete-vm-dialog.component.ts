@@ -6,9 +6,9 @@ import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { helptextVmList } from 'app/helptext/vm/vm-list';
+import { VirtualMachine } from 'app/interfaces/virtual-machine.interface';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
-import { VirtualMachineRow } from 'app/pages/vm/vm-list/virtual-machine-row.interface';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -35,7 +35,7 @@ export class DeleteVmDialogComponent implements OnInit {
     private translate: TranslateService,
     private errorHandler: ErrorHandlerService,
     private loader: AppLoaderService,
-    @Inject(MAT_DIALOG_DATA) public vm: VirtualMachineRow,
+    @Inject(MAT_DIALOG_DATA) public vm: VirtualMachine,
   ) { }
 
   ngOnInit(): void {

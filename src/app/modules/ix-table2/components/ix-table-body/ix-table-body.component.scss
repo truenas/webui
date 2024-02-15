@@ -5,7 +5,7 @@
 }
 
 .hidden {
-  display: none;
+  display: none !important;
 }
 
 .row {
@@ -61,7 +61,9 @@
 }
 
 .spinner-container {
+  align-items: center;
   display: flex;
   justify-content: center;
   margin: 20px;
+  min-height: 15vh;
 }

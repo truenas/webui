@@ -63,6 +63,10 @@ export function booleanProperty<T>(
     label,
     property,
     propertyType: PropertyType.Boolean,
+    valueSuggestions$: of([
+      { label: T('Yes'), value: 'true' },
+      { label: T('No'), value: 'false' },
+    ]),
   };
 }
 
