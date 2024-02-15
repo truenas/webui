@@ -3,6 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockWindow } from 'app/core/testing/utils/mock-window.utils';
 import { WINDOW } from 'app/helpers/window.helper';
 import {
@@ -19,6 +20,7 @@ describe('TruecommandSignupModalComponent', () => {
         open: jest.fn(),
       }),
       mockProvider(MatDialogRef),
+      mockAuth(),
     ],
   });
 

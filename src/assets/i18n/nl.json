@@ -416,6 +416,8 @@
   "Toggle off to defer interface learning until runtime, preventing premature state transitions and potential issues during system startup.": "",
   "Tolerance Window": "",
   "Total failed": "",
+  "TrueCommand Read": "",
+  "TrueCommand Write": "",
   "TrueNAS recommends that the sync setting always  be left to the default of \"Standard\" or increased to \"Always\". The \"Disabled\" setting should  not be used in production and only where data roll back by few seconds  in case of crash or power loss is not a concern.": "",
   "TrueNAS server must be joined to Active Directory or have at least one local SMB user before creating an SMB share": "",
   "Two-Factor Authentication has been enabled on this system. You are required to setup your 2FA authentication on the next page. You will not be able to proceed without setting up 2FA for your account. Make sure to scan the QR code with your authenticator app in the end before logging out of the system or navigating away. Otherwise, you will be locked out of the system and will be unable to login after logging out.": "",
