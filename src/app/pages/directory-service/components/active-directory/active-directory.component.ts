@@ -13,7 +13,6 @@ import { Role } from 'app/enums/role.enum';
 import { singleArrayToOptions } from 'app/helpers/operators/options.operators';
 import { helptextActiveDirectory } from 'app/helptext/directory-service/active-directory';
 import { NssInfoType } from 'app/interfaces/active-directory.interface';
-import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import {
@@ -130,24 +129,22 @@ export class ActiveDirectoryComponent implements OnInit {
       kerberos_principal: this.form.value.kerberos_principal || '',
     };
 
-    const dialogRef = this.matDialog.open(EntityJobComponent, {
-      data: {
-        title: this.translate.instant('Active Directory'),
-      },
-      disableClose: true,
-    });
-    dialogRef.componentInstance.setCall('activedirectory.update', [values]);
-    dialogRef.componentInstance.submit();
-    dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
-      dialogRef.close(true);
-      this.slideInRef.close(true);
-    });
-    dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((error) => {
-      this.dialogService.error(this.errorHandler.parseError(error));
-      this.isLoading = false;
-      this.cdr.markForCheck();
-      dialogRef.close(true);
-    });
+    this.dialogService.jobDialog(
+      this.ws.job('activedirectory.update', [values]),
+      { title: this.translate.instant('Active Directory') },
+    )
+      .afterClosed()
+      .pipe(
+        this.errorHandler.catchError(),
+        untilDestroyed(this),
+      )
+      .subscribe({
+        next: () => this.slideInRef.close(true),
+        complete: () => {
+          this.isLoading = false;
+          this.cdr.markForCheck();
+        },
+      });
   }
 
   private loadFormValues(): void {

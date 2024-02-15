@@ -21,6 +21,9 @@ import { WebSocketService } from 'app/services/ws.service';
   templateUrl: 'entity-job.component.html',
   styleUrls: ['./entity-job.component.scss'],
 })
+/**
+ * @deprecated Use jobDialog in DialogService. Remember to handle errors.
+ */
 export class EntityJobComponent implements OnInit, AfterViewChecked {
   job: Job = {} as Job;
   progressTotalPercent = 0;

@@ -14,13 +14,13 @@ import { singleArrayToOptions } from 'app/helpers/operators/options.operators';
 import { helptextApps } from 'app/helptext/apps/apps';
 import { AppsFiltersSort } from 'app/interfaces/apps-filters-values.interface';
 import { Option } from 'app/interfaces/option.interface';
-import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { ChipsProvider } from 'app/modules/ix-forms/components/ix-chips/chips-provider';
 import { AppsFilterStore } from 'app/pages/apps/store/apps-filter-store.service';
 import { AppsStore } from 'app/pages/apps/store/apps-store.service';
 import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.service';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -68,6 +68,7 @@ export class AvailableAppsHeaderComponent implements OnInit, AfterViewInit {
 
   constructor(
     private fb: FormBuilder,
+    private ws: WebSocketService,
     private translate: TranslateService,
     private cdr: ChangeDetectorRef,
     private matDialog: MatDialog,
@@ -129,22 +130,22 @@ export class AvailableAppsHeaderComponent implements OnInit, AfterViewInit {
   }
 
   refreshCharts(): void {
-    const dialogRef = this.matDialog.open(EntityJobComponent, {
-      data: {
-        title: helptextApps.refreshing,
+    this.dialogService.jobDialog(
+      this.ws.job('catalog.sync_all'),
+      {
+        title: this.translate.instant(helptextApps.refreshing),
+        canMinimize: true,
       },
-    });
-    dialogRef.componentInstance.setCall('catalog.sync_all');
-    dialogRef.componentInstance.submit();
-    dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
-      this.dialogService.closeAllDialogs();
-      this.applicationsStore.initialize();
-      this.cdr.markForCheck();
-    });
-    dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((error) => {
-      dialogRef.close();
-      this.errorHandler.showErrorModal(error);
-    });
+    )
+      .afterClosed()
+      .pipe(
+        this.errorHandler.catchError(),
+        untilDestroyed(this),
+      )
+      .subscribe(() => {
+        this.applicationsStore.initialize();
+        this.cdr.markForCheck();
+      });
   }
 
   changeFiltersVisible(): void {

@@ -1,6 +1,5 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { Validators } from '@angular/forms';
-import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -13,7 +12,6 @@ import { helptextPermissions } from 'app/helptext/storage/volumes/datasets/datas
 import { FilesystemSetPermParams } from 'app/interfaces/filesystem-stat.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { WebSocketError } from 'app/interfaces/websocket-error.interface';
-import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { GroupComboboxProvider } from 'app/modules/ix-forms/classes/group-combobox-provider';
 import { UserComboboxProvider } from 'app/modules/ix-forms/classes/user-combobox-provider';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
@@ -82,7 +80,6 @@ export class DatasetTrivialPermissionsComponent implements OnInit {
     private translate: TranslateService,
     private dialog: DialogService,
     private userService: UserService,
-    private matDialog: MatDialog,
     private validatorService: IxValidatorsService,
     private snackbar: SnackbarService,
   ) {}
@@ -118,30 +115,21 @@ export class DatasetTrivialPermissionsComponent implements OnInit {
   onSubmit(): void {
     const payload = this.preparePayload();
 
-    const dialogRef = this.matDialog.open(EntityJobComponent, {
-      data: {
-        title: this.translate.instant('Saving Permissions'),
-      },
-    });
-    const jobComponent = dialogRef.componentInstance;
-
-    jobComponent.setDescription(this.translate.instant('Saving Permissions...'));
-    jobComponent.setCall('filesystem.setperm', [payload]);
-    jobComponent.submit();
-    jobComponent.failure.pipe(untilDestroyed(this)).subscribe((failedJob) => {
-      this.dialog.error(this.errorHandler.parseError(failedJob));
-    });
-    jobComponent.success.pipe(untilDestroyed(this)).subscribe({
-      next: () => {
-        this.snackbar.success(this.translate.instant('Permissions saved.'));
-        dialogRef.close();
-        this.router.navigate(['/datasets', this.datasetId]);
-      },
-      error: (error: WebSocketError | Job) => {
-        dialogRef.close();
-        this.dialog.error(this.errorHandler.parseError(error));
-      },
-    });
+    this.dialog.jobDialog(
+      this.ws.job('filesystem.setperm', [payload]),
+      { title: this.translate.instant('Saving Permissions') },
+    )
+      .afterClosed()
+      .pipe(untilDestroyed(this))
+      .subscribe({
+        next: () => {
+          this.snackbar.success(this.translate.instant('Permissions saved.'));
+          this.router.navigate(['/datasets', this.datasetId]);
+        },
+        error: (error: WebSocketError | Job) => {
+          this.dialog.error(this.errorHandler.parseError(error));
+        },
+      });
   }
 
   private loadPermissionsInformation(): void {
