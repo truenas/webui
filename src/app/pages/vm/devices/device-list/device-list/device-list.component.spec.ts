@@ -5,6 +5,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatMenuHarness } from '@angular/material/menu/testing';
 import { createRoutingFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { VmDeviceType } from 'app/enums/vm.enum';
 import { VmDevice } from 'app/interfaces/vm-device.interface';
@@ -50,6 +51,7 @@ describe('DeviceListComponent', () => {
       mockWebSocket([
         mockCall('vm.device.query', devices),
       ]),
+      mockAuth(),
       mockProvider(IxSlideInService, {
         open: jest.fn(() => {
           return { slideInClosed$: of() };

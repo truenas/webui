@@ -4,6 +4,7 @@ import { AsyncValidatorFn, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import {
   VmBootloader, VmCpuMode, VmDeviceType, VmTime,
@@ -81,6 +82,7 @@ describe('VmEditFormComponent', () => {
         mockCall('vm.update'),
         mockCall('vm.device.get_pci_ids_for_gpu_isolation', ['10DE:1401']),
       ]),
+      mockAuth(),
       mockProvider(DialogService),
       mockProvider(GpuService, {
         getGpuOptions: () => of([
