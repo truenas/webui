@@ -21,7 +21,7 @@ import { WebSocketService } from 'app/services/ws.service';
 })
 export class DeviceDeleteModalComponent implements OnInit {
   readonly VmDeviceType = VmDeviceType;
-  protected readonly requiredRoles = [Role.VmWrite];
+  protected readonly requiredRoles = [Role.VmDeviceWrite];
 
   zvolConfirmLabelText: string;
 

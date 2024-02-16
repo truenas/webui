@@ -33,7 +33,7 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DeviceListComponent implements OnInit {
-  protected readonly requiredRoles = [Role.VmWrite];
+  protected readonly requiredRoles = [Role.VmDeviceWrite];
 
   dataProvider: AsyncDataProvider<VmDevice>;
   filterString = '';

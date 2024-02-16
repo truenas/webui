@@ -40,7 +40,7 @@ const specifyCustom = T('Specify custom');
 })
 export class DeviceFormComponent implements OnInit {
   isLoading = false;
-  protected readonly requiredRoles = [Role.VmWrite];
+  protected readonly requiredRoles = [Role.VmDeviceWrite];
 
   get title(): string {
     return this.isNew
