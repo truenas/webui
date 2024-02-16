@@ -8,6 +8,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { BehaviorSubject, forkJoin, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { mntPath } from 'app/enums/mnt-path.enum';
+import { Role } from 'app/enums/role.enum';
 import {
   VmDeviceType, vmDeviceTypeLabels, VmDiskMode, vmDiskModeLabels, VmNicType, vmNicTypeLabels,
 } from 'app/enums/vm.enum';
@@ -39,6 +40,7 @@ const specifyCustom = T('Specify custom');
 })
 export class DeviceFormComponent implements OnInit {
   isLoading = false;
+  protected readonly requiredRoles = [Role.VmWrite];
 
   get title(): string {
     return this.isNew

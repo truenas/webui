@@ -37,7 +37,7 @@ export class VmListComponent implements OnInit {
   vmMachines: VirtualMachine[] = [];
   filterString = '';
   dataProvider: AsyncDataProvider<VirtualMachine>;
-  protected requiresRoles = [Role.VmWrite];
+  protected requiredRoles = [Role.VmWrite];
   protected memWarning = helptextVmWizard.memory_warning;
   protected hasVirtualizationSupport$ = this.vmService.hasVirtualizationSupport$;
   protected availableMemory$ = this.vmService.getAvailableMemory().pipe(toLoadingState());
@@ -58,13 +58,13 @@ export class VmListComponent implements OnInit {
     toggleColumn({
       title: this.translate.instant('Running'),
       sortable: true,
-      requiredRoles: this.requiresRoles,
+      requiredRoles: this.requiredRoles,
       getValue: (row) => row.status.state === VmState.Running,
       onRowToggle: (row) => this.vmService.toggleVmStatus(row),
     }),
     toggleColumn({
       title: this.translate.instant('Start on Boot'),
-      requiredRoles: this.requiresRoles,
+      requiredRoles: this.requiredRoles,
       propertyName: 'autostart',
       sortable: true,
       onRowToggle: (row) => this.vmService.toggleVmAutostart(row),

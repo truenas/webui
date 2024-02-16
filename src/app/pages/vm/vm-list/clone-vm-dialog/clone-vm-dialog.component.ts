@@ -4,6 +4,7 @@ import {
 import { FormControl } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Role } from 'app/enums/role.enum';
 import { VirtualMachine, VmCloneParams } from 'app/interfaces/virtual-machine.interface';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
@@ -17,6 +18,7 @@ import { WebSocketService } from 'app/services/ws.service';
 })
 export class CloneVmDialogComponent {
   nameControl = new FormControl('');
+  protected readonly requiredRoles = [Role.VmWrite];
 
   constructor(
     private errorHandler: ErrorHandlerService,

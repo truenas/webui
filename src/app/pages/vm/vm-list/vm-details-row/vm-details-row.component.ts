@@ -24,7 +24,7 @@ import { VmService } from 'app/services/vm.service';
 })
 export class VirtualMachineDetailsRowComponent {
   @Input() vm: VirtualMachine;
-  protected readonly requiresRoles = [Role.VmWrite];
+  protected readonly requiredRoles = [Role.VmWrite];
 
   get isRunning(): boolean {
     return this.vm.status.state === VmState.Running;

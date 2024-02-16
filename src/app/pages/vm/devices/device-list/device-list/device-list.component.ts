@@ -6,6 +6,7 @@ import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { filter, tap } from 'rxjs';
+import { Role } from 'app/enums/role.enum';
 import { vmDeviceTypeLabels } from 'app/enums/vm.enum';
 import { VmDevice } from 'app/interfaces/vm-device.interface';
 import { AsyncDataProvider } from 'app/modules/ix-table2/classes/async-data-provider/async-data-provider';
@@ -32,6 +33,8 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DeviceListComponent implements OnInit {
+  protected readonly requiredRoles = [Role.VmWrite];
+
   dataProvider: AsyncDataProvider<VmDevice>;
   filterString = '';
   devices: VmDevice[] = [];
