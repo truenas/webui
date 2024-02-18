@@ -14609,7 +14609,7 @@ msgid ""
 msgstr ""
 
 msgid "Something went wrong. Please try again."
-msgstr ""
+msgstr "Quelque chose s'est mal passé. Veuillez réessayer."
 
 msgid "Sort languages by:"
 msgstr "Trier les langues par :"
@@ -15768,7 +15768,7 @@ msgid "The pasted string starts with a space"
 msgstr "La chaîne collée commence par un espace"
 
 msgid "The path"
-msgstr ""
+msgstr "Le chemin"
 
 msgid "The physical location of the host."
 msgstr "L'emplacement physique de l'hôte."
@@ -15837,7 +15837,7 @@ msgstr ""
 "fichier de la clé dans un endroit sûr !"
 
 msgid "The reporting database is broken"
-msgstr ""
+msgstr "La base de données de reporting ne fonctionne plus"
 
 msgid ""
 "The rollback will destroy any  related intermediate, child dataset, and "
@@ -16088,10 +16088,10 @@ msgstr ""
 "être sauvegardées à moins d'être modifiées."
 
 msgid "These running processes are using "
-msgstr ""
+msgstr "Ces processus en cours utilisent "
 
 msgid "These running services are using"
-msgstr ""
+msgstr "Ces services en cours d'exécution utilisent"
 
 msgid "These services depend on pool "
 msgstr "Ces services dépendent du volume "
@@ -16298,6 +16298,8 @@ msgstr ""
 
 msgid "This process continues in the background after closing this dialog."
 msgstr ""
+"Ce processus se poursuit en arrière-plan après la fermeture de cette "
+"boîte de dialogue."
 
 msgid "This system will restart when the update completes."
 msgstr "Ce système redémarrera lorsque la mise à jour sera terminée."
@@ -16839,7 +16841,7 @@ msgid "Updating "
 msgstr ""
 
 msgid "Updating Dataset ACL"
-msgstr ""
+msgstr "Mise à jour de l'ACL du dataset"
 
 msgid "Updating Plugin"
 msgstr "Mise à Jour du plugin"
@@ -17020,7 +17022,7 @@ msgstr ""
 "DNS."
 
 msgid "Use Permissions Editor"
-msgstr ""
+msgstr "Éditeur d'autorisations"
 
 msgid "Use Signature Version 2"
 msgstr "Utiliser Signature Version 2"
@@ -17546,7 +17548,7 @@ msgid "Warning: There are "
 msgstr ""
 
 msgid "Warning: You are replicating encrypted dataset(s) "
-msgstr ""
+msgstr "Avertissement : Vous répliquez des datasets chiffrés"
 
 msgid "Warning: iSCSI Target is already in use.</font><br>"
 msgstr "Attention : La cible iSCSI  est déjà utilisé.</font><br>"
@@ -17630,6 +17632,9 @@ msgid ""
 "Select the minimum priority level to send to the remote syslog server."
 "The system only sends logs matching this level or higher."
 msgstr ""
+"Sélectionnez le niveau de priorité minimum à envoyer au serveur Syslog "
+"distant. Le système envoie uniquement les journaux correspondant à ce "
+"niveau ou supérieur."
 
 msgid ""
 "When a group is selected, the <i>root</i> user is also limited to the "
@@ -17910,6 +17915,8 @@ msgid ""
 "ZFS Deduplication is an advanced option meant for experts only. Proceed "
 "carefully."
 msgstr ""
+"La déduplication ZFS est une option avancée destinée uniquement aux "
+"experts. Procédez avec précaution."
 
 msgid "ZFS Filesystem"
 msgstr "Système de fichiers ZFS"
@@ -18327,7 +18334,7 @@ msgid "pcpu"
 msgstr "pcpu"
 
 msgid "pool options for "
-msgstr ""
+msgstr "options de volume pour"
 
 msgid "priority"
 msgstr "priorité"
