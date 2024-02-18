@@ -36,6 +36,11 @@ msgid ""
 "may report disk serial incorrectly, making such disks indistinguishable "
 "from each other. Adding such disks to a pool can result in lost data."
 msgstr ""
+" disques USB disponibles comportant des numéros de série non uniques. Les "
+"contrôleurs USB peuvent signaler de manière incorrecte la série des "
+"disques, rendant ces disques impossibles à distinguer les uns des "
+"autres. L'ajout de tels disques à un pool peut entraîner une perte de "
+"données."
 
 msgid ""
 " When the <b>UPS Mode</b> is set to <i>slave</i>. Enter the open network "
@@ -95,6 +100,10 @@ msgid ""
 "numbers can be caused by a cabling issue and adding such disks to a pool "
 "can result in lost data."
 msgstr ""
+" disques disponibles qui ont des numéros de série non uniques. Des "
+"numéros de série non uniques peuvent être causés par un problème de "
+"câblage et l'ajout de tels disques à un pool peut entraîner une perte "
+"de données."
 
 msgid " disks, new vdev has "
 msgstr " disques, le nouveau vdev a "
@@ -198,7 +207,7 @@ msgid "(24 Hours)"
 msgstr "(24 heures)"
 
 msgid "(Almost) Full Filesystem Replication"
-msgstr ""
+msgstr "Réplication complète (presque) du système de fichiers"
 
 msgid "(Examples: 500 KiB, 500M, 2 TB)"
 msgstr "(Exemples : 500 KiB, 500M, 2 TB)"
@@ -4841,10 +4850,10 @@ msgid "Delete user primary group "
 msgstr "Supprimer le groupe principal de l'utilisateur "
 
 msgid "Deleted"
-msgstr ""
+msgstr "Supprimé"
 
 msgid "Deleting Snapshots"
-msgstr ""
+msgstr "Suppression des instantanés"
 
 msgid "Deleting interfaces while HA is enabled is not allowed."
 msgstr "La suppression d'interfaces lorsque HA est activé n'est pas autorisée."
@@ -5248,7 +5257,7 @@ msgid "Disk Size"
 msgstr "Taille du disque"
 
 msgid "Disk Temperatures Not Available"
-msgstr ""
+msgstr "Températures du disque non disponibles"
 
 msgid "Disk Type"
 msgstr "Type de disque"
@@ -5448,7 +5457,7 @@ msgid "Edit Alert Service"
 msgstr "Éditer le service d'alerte"
 
 msgid "Edit Disk"
-msgstr ""
+msgstr "Modifier le disque"
 
 msgid "Edit Disk(s)"
 msgstr "Modifier le(s) disque(s)"
@@ -5472,7 +5481,7 @@ msgid "Edit Permissions"
 msgstr "Modifier les autorisations"
 
 msgid "Edit Pool Options for "
-msgstr ""
+msgstr "Modifier les options du volume pour"
 
 msgid "Edit Share ACL"
 msgstr "Modifier l'ACL du partage"
@@ -5557,7 +5566,7 @@ msgid "Enable ACL"
 msgstr "Activer les ACL"
 
 msgid "Enable ACL support for the SMB share."
-msgstr ""
+msgstr "Activez la prise en charge des ACL pour le partage SMB."
 
 msgid "Enable Active Directory"
 msgstr "Activer l'Active Directory"
@@ -7698,7 +7707,7 @@ msgid "Go Back to Jails"
 msgstr "Retour aux Jails"
 
 msgid "Go to ACL Manager"
-msgstr ""
+msgstr "Accédez au gestionnaire d'ACL"
 
 msgid "Go to Active Directory Form"
 msgstr "Aller au formulaire de l'Active Directory"
@@ -12399,7 +12408,7 @@ msgid "Save Pending Snapshots"
 msgstr "Enregistrer les instantanés en attente"
 
 msgid "Save Pool Options"
-msgstr ""
+msgstr "Enregistrer les options du volume"
 
 msgid "Save Without Restarting"
 msgstr "Enregistrer sans redémarrer"
@@ -12431,10 +12440,10 @@ msgid "Saving Permissions..."
 msgstr "Enregistrement des autorisations..."
 
 msgid "Saving Pool Options..."
-msgstr ""
+msgstr "Enregistrement des options du volume..."
 
 msgid "Scan This QR Code"
-msgstr ""
+msgstr "Scanner ce QR Code"
 
 msgid "Schedule"
 msgstr "Planifier"
@@ -12599,7 +12608,7 @@ msgstr ""
 "obtenir la liste des périphériques UPS pris en charge."
 
 msgid "Select"
-msgstr ""
+msgstr "Sélectionner"
 
 msgid "Select "
 msgstr "Sélectionner "
@@ -18416,7 +18425,7 @@ msgid "users"
 msgstr "utilisateurs"
 
 msgid "vdev is highly discouraged and will result in data loss if it fails"
-msgstr ""
+msgstr "vdev est fortement déconseillé et entraînera une perte de données en cas d'échec"
 
 msgid "vmemoryuse"
 msgstr "vmemoryuse"
