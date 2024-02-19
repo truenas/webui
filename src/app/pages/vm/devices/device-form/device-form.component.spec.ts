@@ -5,6 +5,7 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { MockWebSocketService } from 'app/core/testing/classes/mock-websocket.service';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import {
   VmDeviceType, VmDiskMode, VmDisplayType, VmNicType,
@@ -91,6 +92,7 @@ describe('DeviceFormComponent', () => {
           isolated_gpu_pci_ids: ['pci_0000_00_1c_0'],
         } as AdvancedConfig),
       ]),
+      mockAuth(),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),

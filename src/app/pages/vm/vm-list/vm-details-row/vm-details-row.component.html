@@ -1,6 +1,6 @@
 <ng-container *ngIf="!isRunning">
   <button
-    *ixRequiresRoles="requiresRoles"
+    *ixRequiresRoles="requiredRoles"
     mat-button
     [ixTest]="['start', vm.id]"
     (click)="doStart()"
@@ -12,7 +12,7 @@
 
 <ng-container *ngIf="isRunning">
   <button
-    *ixRequiresRoles="requiresRoles"
+    *ixRequiresRoles="requiredRoles"
     mat-button
     [ixTest]="['stop', vm.id]"
     (click)="doStop()"
@@ -24,7 +24,7 @@
 
 <ng-container *ngIf="isRunning">
   <button
-    *ixRequiresRoles="requiresRoles"
+    *ixRequiresRoles="requiredRoles"
     mat-button
     [ixTest]="['restart', vm.id]"
     (click)="doRestart()"
@@ -36,7 +36,7 @@
 
 <ng-container *ngIf="isRunning">
   <button
-    *ixRequiresRoles="requiresRoles"
+    *ixRequiresRoles="requiredRoles"
     mat-button
     [ixTest]="['power_off', vm.id]"
     (click)="doPowerOff()"
@@ -47,7 +47,7 @@
 </ng-container>
 
 <button
-  *ixRequiresRoles="requiresRoles"
+  *ixRequiresRoles="requiredRoles"
   mat-button
   [ixTest]="['edit', vm.id]"
   (click)="doEdit()"
@@ -57,7 +57,7 @@
 </button>
 
 <button
-  *ixRequiresRoles="requiresRoles"
+  *ixRequiresRoles="requiredRoles"
   mat-button
   [ixTest]="['delete', vm.id]"
   (click)="doDelete()"
@@ -76,7 +76,7 @@
 </button>
 
 <button
-  *ixRequiresRoles="requiresRoles"
+  *ixRequiresRoles="requiredRoles"
   mat-button
   [ixTest]="['clone', vm.id]"
   (click)="doClone()"
@@ -106,7 +106,7 @@
 </button>
 
 <button
-  *ixRequiresRoles="requiresRoles"
+  *ixRequiresRoles="requiredRoles"
   mat-button
   [ixTest]="['download_logs', vm.id]"
   (click)="downloadLogs()"

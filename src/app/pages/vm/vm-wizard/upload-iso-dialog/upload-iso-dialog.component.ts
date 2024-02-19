@@ -8,6 +8,7 @@ import {
   catchError, of, tap,
 } from 'rxjs';
 import { mntPath } from 'app/enums/mnt-path.enum';
+import { Role } from 'app/enums/role.enum';
 import { helptextVmWizard } from 'app/helptext/vm/vm-wizard/vm-wizard';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { DialogService } from 'app/services/dialog.service';
@@ -29,6 +30,7 @@ export class UploadIsoDialogComponent {
 
   readonly directoryNodeProvider = this.filesystemService.getFilesystemNodeProvider({ directoriesOnly: true });
   readonly helptext = helptextVmWizard;
+  protected readonly requiredRoles = [Role.VmWrite];
 
   constructor(
     private formBuilder: FormBuilder,
