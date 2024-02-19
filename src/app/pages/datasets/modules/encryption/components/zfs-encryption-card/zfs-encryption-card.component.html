@@ -67,11 +67,15 @@
       >
         {{ 'Export All Keys' | translate }}
       </button>
+    </ng-container>
 
+    <ng-container *ixRequiresRoles="[Role.FullAdmin]">
       <button *ngIf="canExportKey" mat-button ixTest="export-key" (click)="onExportKey()">
         {{ 'Export Key' | translate }}
       </button>
+    </ng-container>
 
+    <ng-container *ixRequiresRoles="[Role.FullAdmin]">
       <button *ngIf="hasPassphrase" mat-button ixTest="lock" (click)="onLock()">
         {{ 'Lock' | translate }}
       </button>

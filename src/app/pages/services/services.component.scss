@@ -12,6 +12,10 @@
   justify-content: flex-end;
 }
 
+.start-automatically {
+  margin-right: 0;
+}
+
 :host ::ng-deep {
   .ix-table.cdk-table .cdk-column-actions {
     width: auto;

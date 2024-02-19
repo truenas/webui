@@ -1,6 +1,16 @@
+:host-context(.mat-mdc-menu-panel) {
+  :host {
+    display: block;
+
+    ::ng-deep .role-missing a {
+      opacity: 1;
+    }
+  }
+}
+
 :host {
-  position: relative;
   display: inline-block;
+  position: relative;
 }
 
 :host ::ng-deep .role-missing {
@@ -12,10 +22,6 @@
     pointer-events: none;
   }
 
-  .mdc-label {
-    //text-decoration: line-through;
-  }
-
   .mat-mdc-checkbox,
   .mat-mdc-slide-toggle,
   .mdc-button__label,
@@ -23,16 +29,26 @@
   a,
   .mat-mdc-menu-item-text {
     opacity: 0.25;
-    //text-decoration: line-through;
-    position: relative;
+
+    + .role-missing-icon {
+      bottom: 5px;
+      right: 0;
+    }
   }
 
   .role-missing-icon {
-    position: absolute;
-    bottom: 4px;
-    right: 4px;
+    bottom: 6px;
+    color: var(--fg2);
     font-size: 0.9rem;
+    height: 12px;
     opacity: 1;
+    position: absolute;
+    right: 5px;
+    width: 12px;
+
+    &:only-child {
+      display: none;
+    }
   }
 }
 
