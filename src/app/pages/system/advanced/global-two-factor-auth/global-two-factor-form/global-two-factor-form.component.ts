@@ -35,7 +35,7 @@ export class GlobalTwoFactorAuthFormComponent implements OnInit {
   enableWarning: string = this.translate.instant('Once enabled, users will be required to set up two factor authentication next time they login.');
   protected readonly Role = Role;
 
-  private twoFactorConfig: GlobalTwoFactorConfig;
+  protected twoFactorConfig: GlobalTwoFactorConfig;
 
   constructor(
     private fb: FormBuilder,

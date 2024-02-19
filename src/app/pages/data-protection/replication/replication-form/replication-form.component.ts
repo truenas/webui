@@ -70,7 +70,7 @@ export class ReplicationFormComponent implements OnInit {
 
   readonly requiredRoles = [Role.ReplicationTaskWrite, Role.ReplicationTaskWritePull];
 
-  private existingReplication: ReplicationTask;
+  protected existingReplication: ReplicationTask;
 
   constructor(
     private ws: WebSocketService,
