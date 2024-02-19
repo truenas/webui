@@ -78,7 +78,7 @@ jobs:
 
   lint-translations:
     name: Validate translation strings
-    needs: [check-files, install]
+    needs: [install]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
