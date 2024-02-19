@@ -18,6 +18,7 @@ import { IxEmptyRowComponent } from 'app/modules/ix-tables/components/ix-empty-r
 import { IxExpandToggleColumnComponent } from 'app/modules/ix-tables/components/ix-expand-toggle-column/ix-expand-toggle-column.component';
 import { IxTableComponent } from 'app/modules/ix-tables/components/ix-table/ix-table.component';
 import { IxTableExpandableRowComponent } from 'app/modules/ix-tables/components/ix-table-expandable-row/ix-table-expandable-row.component';
+import { IxTablePaginatorTestAttributesDirective } from 'app/modules/ix-tables/components/ix-table-paginator/ix-table-paginator-test-attributes.directive';
 import { IxTablePaginatorComponent } from 'app/modules/ix-tables/components/ix-table-paginator/ix-table-paginator.component';
 import { IxCellDefDirective } from 'app/modules/ix-tables/directives/ix-cell-def.directive';
 import { IxDetailRowDirective } from 'app/modules/ix-tables/directives/ix-detail-row.directive';
@@ -37,6 +38,7 @@ import { TestIdModule } from 'app/modules/test-id/test-id.module';
     IxExpandToggleColumnComponent,
     IxRowDefDirective,
     IxTableComponent,
+    IxTablePaginatorTestAttributesDirective,
     IxTableEmptyDirective,
     IxEmptyRowComponent,
     IxTableExpandableRowComponent,
