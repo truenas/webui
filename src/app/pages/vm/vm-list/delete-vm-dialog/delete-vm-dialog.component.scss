@@ -1,15 +1,4 @@
 :host {
   display: block;
   min-width: 370px;
-
-  &::ng-deep {
-    ix-requires-roles-wrapper {
-      margin-left: 8px;
-    }
-  }
 }
-
-.buttons {
-  justify-content: flex-end;
-}
-
