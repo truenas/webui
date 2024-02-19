@@ -1,8 +1,9 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { filter, take } from 'rxjs/operators';
+import { Role } from 'app/enums/role.enum';
 import { shared, helptextSharingSmb } from 'app/helptext/sharing';
 import { helptextVolumes } from 'app/helptext/storage/volumes/volume-list';
 import { SmbShare } from 'app/interfaces/smb-share.interface';
@@ -11,6 +12,7 @@ import { EntityTableAction, EntityTableConfig } from 'app/modules/entity/entity-
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SmbAclComponent } from 'app/pages/sharing/smb/smb-acl/smb-acl.component';
 import { SmbFormComponent } from 'app/pages/sharing/smb/smb-form/smb-form.component';
+import { AuthService } from 'app/services/auth/auth.service';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -33,6 +35,9 @@ export class SmbListComponent implements EntityTableConfig<SmbShare> {
   addBtnDisabled = false;
   noAdd = false;
   private entityList: EntityTableComponent<SmbShare>;
+  readonly requiredRoles = [Role.SharingSmbWrite, Role.SharingWrite];
+  hasRolesAccess = true;
+
   emptyTableConfigMessages = {
     first_use: {
       title: this.translate.instant('No SMB Shares have been configured yet'),
@@ -49,7 +54,9 @@ export class SmbListComponent implements EntityTableConfig<SmbShare> {
     { name: helptextSharingSmb.column_name, prop: 'name', always_display: true },
     { name: helptextSharingSmb.column_path, prop: 'path_local', showLockedStatus: true },
     { name: helptextSharingSmb.column_comment, prop: 'comment' },
-    { name: helptextSharingSmb.column_enabled, prop: 'enabled', checkbox: true },
+    {
+      name: helptextSharingSmb.column_enabled, prop: 'enabled', checkbox: true, disabled: false,
+    },
   ];
   rowIdentifier = 'cifs_name';
   config = {
@@ -76,10 +83,18 @@ export class SmbListComponent implements EntityTableConfig<SmbShare> {
     private dialogService: DialogService,
     private translate: TranslateService,
     private appLoader: AppLoaderService,
+    private authService: AuthService,
+    private cdr: ChangeDetectorRef,
   ) {}
 
   afterInit(entityList: EntityTableComponent<SmbShare>): void {
     this.entityList = entityList;
+
+    this.authService.hasRole(this.requiredRoles).pipe(untilDestroyed(this)).subscribe((hasAccess) => {
+      this.columns.find((column) => column.prop === 'enabled').disabled = !hasAccess;
+      this.hasRolesAccess = hasAccess;
+      this.cdr.markForCheck();
+    });
   }
 
   doAdd(): void {
@@ -118,7 +133,7 @@ export class SmbListComponent implements EntityTableConfig<SmbShare> {
         id: smbShare.name,
         icon: 'security',
         name: 'share_acl',
-        disabled: this.isClustered,
+        disabled: this.isClustered || !this.hasRolesAccess,
         label: helptextSharingSmb.action_share_acl,
         onClick: (row: SmbShare) => {
           this.appLoader.open();
@@ -145,7 +160,7 @@ export class SmbListComponent implements EntityTableConfig<SmbShare> {
         id: smbShare.name,
         icon: 'security',
         name: 'edit_acl',
-        disabled: optionDisabled,
+        disabled: optionDisabled || !this.hasRolesAccess,
         matTooltip: helptextVolumes.acl_edit_msg,
         label: helptextSharingSmb.action_edit_acl,
         onClick: (row: SmbShare) => {
@@ -164,7 +179,7 @@ export class SmbListComponent implements EntityTableConfig<SmbShare> {
         id: smbShare.name,
         icon: 'delete',
         name: 'delete',
-        disabled: this.isClustered,
+        disabled: this.isClustered || !this.hasRolesAccess,
         label: this.translate.instant('Delete'),
         onClick: (row: SmbShare) => this.entityList.doDelete(row),
       },
