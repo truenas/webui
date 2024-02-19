@@ -47,7 +47,7 @@ export class IpmiFormComponent implements OnInit {
 
   readonly helptext = helptextIpmi;
 
-  protected readonly requiresRoles = [Role.IpmiWrite];
+  protected readonly requiredRoles = [Role.IpmiWrite];
 
   form = this.fb.group({
     apply_remote: [null as boolean],

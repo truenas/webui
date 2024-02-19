@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { ChangeDetectorRef, Component } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -9,6 +9,7 @@ import {
 } from 'rxjs/operators';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { ProductType } from 'app/enums/product-type.enum';
+import { Role } from 'app/enums/role.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { VmBootloader, VmDeviceType } from 'app/enums/vm.enum';
 import { WebsocketErrorName } from 'app/enums/websocket-error-name.enum';
@@ -30,6 +31,7 @@ import { DeleteVmDialogComponent } from 'app/pages/vm/vm-list/delete-vm-dialog/d
 import { StopVmDialogComponent } from 'app/pages/vm/vm-list/stop-vm-dialog/stop-vm-dialog.component';
 import { VirtualMachineRow } from 'app/pages/vm/vm-list/virtual-machine-row.interface';
 import { VmWizardComponent } from 'app/pages/vm/vm-wizard/vm-wizard.component';
+import { AuthService } from 'app/services/auth/auth.service';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -54,6 +56,8 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow> {
   disableActionsConfig = true;
   virtualizationDetails: VirtualizationDetails = null;
   canAdd = false;
+  readonly requiredRoles = [Role.VmWrite];
+  hasRolesAccess = true;
 
   entityList: EntityTableComponent<VirtualMachineRow>;
   columns = [
@@ -109,7 +113,24 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow> {
     private translate: TranslateService,
     private systemGeneralService: SystemGeneralService,
     private slideInService: IxSlideInService,
-  ) {}
+    private authService: AuthService,
+    private cdr: ChangeDetectorRef,
+  ) {
+    this.authService.hasRole(this.requiredRoles).pipe(untilDestroyed(this)).subscribe((hasAccess) => {
+      this.columns = this.columns.map((column) => {
+        if (column.prop === 'state' || column.prop === 'autostart') {
+          return {
+            ...column,
+            disabled: true,
+          };
+        }
+        return column;
+      });
+
+      this.hasRolesAccess = hasAccess;
+      this.cdr.markForCheck();
+    });
+  }
 
   prerequisite(): Promise<boolean> {
     return lastValueFrom(
@@ -306,11 +327,13 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow> {
       onClick: (vm: VirtualMachineRow) => {
         this.onSliderChange(vm);
       },
+      disabled: !this.hasRolesAccess,
     },
     {
       id: 'RESTART',
       icon: 'replay',
       label: this.translate.instant('Restart'),
+      disabled: !this.hasRolesAccess,
       onClick: (vm: VirtualMachineRow) => {
         this.loader.open();
         this.ws.startJob(this.wsMethods.restart, [vm.id]).pipe(untilDestroyed(this)).subscribe({
@@ -331,6 +354,7 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow> {
       id: 'POWER_OFF',
       icon: 'power_settings_new',
       label: this.translate.instant('Power Off'),
+      disabled: !this.hasRolesAccess,
       onClick: (vm: VirtualMachineRow) => {
         this.doRowAction(row, this.wsMethods.poweroff, [vm.id]);
       },
@@ -339,6 +363,7 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow> {
       id: 'STOP',
       icon: 'stop',
       label: this.translate.instant('Stop'),
+      disabled: !this.hasRolesAccess,
       onClick: (vm: VirtualMachineRow) => {
         this.openStopDialog(vm);
       },
@@ -359,6 +384,7 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow> {
       id: 'DELETE',
       icon: 'delete',
       label: this.translate.instant('Delete'),
+      disabled: !this.hasRolesAccess,
       onClick: (vm: VirtualMachineRow) => {
         this.matDialog.open(DeleteVmDialogComponent, {
           data: vm,
@@ -386,6 +412,7 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow> {
       id: 'CLONE',
       icon: 'filter_none',
       label: this.translate.instant('Clone'),
+      disabled: !this.hasRolesAccess,
       onClick: (vm: VirtualMachineRow) => {
         this.matDialog.open(CloneVmDialogComponent, {
           data: vm,
@@ -405,6 +432,7 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow> {
       id: 'DISPLAY',
       icon: 'settings_ethernet',
       label: this.translate.instant('Display'),
+      disabled: !this.hasRolesAccess,
       onClick: (vm: VirtualMachineRow) => {
         this.loader.open();
         this.ws.call('vm.get_display_devices', [vm.id]).pipe(untilDestroyed(this)).subscribe({
@@ -430,6 +458,7 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow> {
       id: 'LOGS',
       icon: 'content_paste',
       label: this.translate.instant('Download Logs'),
+      disabled: !this.hasRolesAccess,
       onClick: (vm: VirtualMachineRow) => {
         const path = `/var/log/libvirt/qemu/${vm.id}_${vm.name}.log`;
         const filename = `${vm.id}_${vm.name}.log`;

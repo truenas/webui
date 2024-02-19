@@ -8,6 +8,7 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { GiB } from 'app/constants/bytes.constant';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import {
   VmBootloader, VmCpuMode, VmDeviceType, VmDiskMode, VmDisplayType, VmTime,
@@ -67,6 +68,7 @@ describe('VmWizardComponent', () => {
       mockProvider(IxSlideInService),
       mockProvider(GpuService),
       mockProvider(VmGpuService),
+      mockAuth(),
       mockWebsocket([
         mockCall('vm.create', { id: 4 } as VirtualMachine),
         mockCall('vm.query', []),

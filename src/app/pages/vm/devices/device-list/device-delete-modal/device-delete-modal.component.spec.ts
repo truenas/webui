@@ -6,6 +6,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import {
   createComponentFactory, mockProvider, Spectator, SpectatorFactory,
 } from '@ngneat/spectator/jest';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { VmDeviceType } from 'app/enums/vm.enum';
 import { VmDevice, VmDiskDevice, VmRawFileDevice } from 'app/interfaces/vm-device.interface';
@@ -33,6 +34,7 @@ describe('DeviceDeleteModalComponent', () => {
         ]),
         mockProvider(DialogService),
         mockProvider(MatDialogRef),
+        mockAuth(),
       ],
       componentProviders: [
         { provide: MAT_DIALOG_DATA, useFactory: () => device },
