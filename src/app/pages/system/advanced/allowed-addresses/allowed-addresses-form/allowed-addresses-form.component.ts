@@ -1,5 +1,5 @@
 import {
-  Component, ChangeDetectionStrategy, OnInit, ChangeDetectorRef, Inject,
+  Component, ChangeDetectionStrategy, OnInit, ChangeDetectorRef,
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -12,8 +12,7 @@ import { catchError, map } from 'rxjs/operators';
 import { Role } from 'app/enums/role.enum';
 import { helptextSystemGeneral } from 'app/helptext/system/general';
 import { WebSocketError } from 'app/interfaces/websocket-error.interface';
-import { ChainedComponentRef } from 'app/modules/ix-forms/components/ix-slide-in/chained-component-ref';
-import { CHAINED_COMPONENT_REF } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
+import { ChainedRef } from 'app/modules/ix-forms/components/ix-slide-in/chained-component-ref';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { ipv4Validator } from 'app/modules/ix-forms/validators/ip-validation';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -46,7 +45,7 @@ export class AllowedAddressesFormComponent implements OnInit {
     private snackbar: SnackbarService,
     private translate: TranslateService,
     private validatorsService: IxValidatorsService,
-    @Inject(CHAINED_COMPONENT_REF) private slideInRef: ChainedComponentRef,
+    private slideInRef: ChainedRef<unknown>,
   ) {}
 
   ngOnInit(): void {

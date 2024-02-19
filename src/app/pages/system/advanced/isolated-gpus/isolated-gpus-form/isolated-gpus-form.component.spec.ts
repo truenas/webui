@@ -8,7 +8,7 @@ import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
-import { CHAINED_COMPONENT_REF } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
+import { ChainedRef } from 'app/modules/ix-forms/components/ix-slide-in/chained-component-ref';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
@@ -62,7 +62,7 @@ describe('IsolatedGpuPcisFormComponent', () => {
       mockProvider(IsolatedGpuValidatorService, {
         validateGpu: () => of(null),
       }),
-      { provide: CHAINED_COMPONENT_REF, useValue: { close: jest.fn() } },
+      mockProvider(ChainedRef, { close: jest.fn() }),
       mockAuth(),
     ],
   });

@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { FormBuilder } from '@ngneat/reactive-forms';
@@ -15,8 +15,7 @@ import {
 import { Role } from 'app/enums/role.enum';
 import { helptextSystemAdvanced as helptext } from 'app/helptext/system/advanced';
 import { AuditConfig } from 'app/interfaces/audit/audit.interface';
-import { ChainedComponentRef } from 'app/modules/ix-forms/components/ix-slide-in/chained-component-ref';
-import { CHAINED_COMPONENT_REF } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
+import { ChainedRef } from 'app/modules/ix-forms/components/ix-slide-in/chained-component-ref';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DialogService } from 'app/services/dialog.service';
@@ -60,7 +59,7 @@ export class AuditFormComponent implements OnInit {
     private snackbar: SnackbarService,
     private translate: TranslateService,
     private formErrorHandler: FormErrorHandlerService,
-    @Inject(CHAINED_COMPONENT_REF) private chainedRef: ChainedComponentRef,
+    private chainedRef: ChainedRef<unknown>,
   ) {}
 
   ngOnInit(): void {

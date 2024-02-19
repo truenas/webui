@@ -9,7 +9,7 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { TunableType } from 'app/enums/tunable-type.enum';
 import { Tunable } from 'app/interfaces/tunable.interface';
-import { CHAINED_COMPONENT_REF, SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
+import { ChainedRef } from 'app/modules/ix-forms/components/ix-slide-in/chained-component-ref';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
@@ -37,8 +37,10 @@ describe('TunableFormComponent', () => {
         components$: of([]),
       }),
       mockProvider(FormErrorHandlerService),
-      { provide: CHAINED_COMPONENT_REF, useValue: { close: jest.fn() } },
-      { provide: SLIDE_IN_DATA, useValue: undefined },
+      mockProvider(ChainedRef, {
+        close: jest.fn(),
+        getData: jest.fn(() => undefined),
+      }),
       mockAuth(),
     ],
   });
@@ -76,16 +78,16 @@ describe('TunableFormComponent', () => {
     beforeEach(() => {
       spectator = createComponent({
         providers: [
-          {
-            provide: SLIDE_IN_DATA,
-            useValue: {
+          mockProvider(ChainedRef, {
+            close: jest.fn(),
+            getData: jest.fn(() => ({
               id: 1,
               comment: 'Existing variable',
               enabled: false,
               var: 'var.exist',
               value: 'Existing value',
-            } as Tunable,
-          },
+            } as Tunable)),
+          }),
         ],
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);

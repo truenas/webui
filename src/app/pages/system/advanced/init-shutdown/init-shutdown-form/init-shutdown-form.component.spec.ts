@@ -11,7 +11,7 @@ import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.u
 import { InitShutdownScriptType } from 'app/enums/init-shutdown-script-type.enum';
 import { InitShutdownScriptWhen } from 'app/enums/init-shutdown-script-when.enum';
 import { InitShutdownScript } from 'app/interfaces/init-shutdown-script.interface';
-import { CHAINED_COMPONENT_REF, SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
+import { ChainedRef } from 'app/modules/ix-forms/components/ix-slide-in/chained-component-ref';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
@@ -49,8 +49,7 @@ describe('InitShutdownFormComponent', () => {
           };
         }),
       }),
-      { provide: CHAINED_COMPONENT_REF, useValue: { close: jest.fn() } },
-      { provide: SLIDE_IN_DATA, useValue: undefined },
+      mockProvider(ChainedRef, { close: jest.fn(), getData: jest.fn(() => undefined) }),
       mockAuth(),
     ],
   });
@@ -117,9 +116,9 @@ describe('InitShutdownFormComponent', () => {
     beforeEach(() => {
       spectator = createComponent({
         providers: [
-          {
-            provide: SLIDE_IN_DATA,
-            useValue: {
+          mockProvider(ChainedRef, {
+            close: jest.fn(),
+            getData: jest.fn(() => ({
               id: 13,
               comment: 'Existing script',
               enabled: true,
@@ -127,8 +126,8 @@ describe('InitShutdownFormComponent', () => {
               script: '/mnt/existing.sh',
               when: InitShutdownScriptWhen.PostInit,
               timeout: 45,
-            } as InitShutdownScript,
-          },
+            } as InitShutdownScript)),
+          }),
         ],
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);

@@ -6,7 +6,7 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
-import { CHAINED_COMPONENT_REF, SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
+import { ChainedRef } from 'app/modules/ix-forms/components/ix-slide-in/chained-component-ref';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { ReplicationSettingsFormComponent } from 'app/pages/system/advanced/replication/replication-settings-form/replication-settings-form.component';
@@ -29,8 +29,7 @@ describe('ReplicationSettingsFormComponent', () => {
       mockWebSocket([
         mockCall('replication.config.update'),
       ]),
-      { provide: CHAINED_COMPONENT_REF, useValue: { close: jest.fn() } },
-      { provide: SLIDE_IN_DATA, useValue: { max_parallel_replication_tasks: 1 } },
+      mockProvider(ChainedRef, { close: jest.fn(), getData: jest.fn(() => ({ max_parallel_replication_tasks: 1 })) }),
       mockProvider(IxChainedSlideInService, {
         pushComponent: jest.fn(() => of({ response: true, error: null })),
         components$: of([]),

@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, OnInit, ChangeDetectorRef, Inject,
+  ChangeDetectionStrategy, Component, OnInit, ChangeDetectorRef,
 } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -7,8 +7,7 @@ import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { take } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
-import { ChainedComponentRef } from 'app/modules/ix-forms/components/ix-slide-in/chained-component-ref';
-import { CHAINED_COMPONENT_REF } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
+import { ChainedRef } from 'app/modules/ix-forms/components/ix-slide-in/chained-component-ref';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { GpuService } from 'app/services/gpu/gpu.service';
@@ -43,7 +42,7 @@ export class IsolatedGpusFormComponent implements OnInit {
     private gpuValidator: IsolatedGpuValidatorService,
     private gpuService: GpuService,
     private snackbar: SnackbarService,
-    @Inject(CHAINED_COMPONENT_REF) private chainedRef: ChainedComponentRef,
+    private chainedRef: ChainedRef<unknown>,
   ) { }
 
   ngOnInit(): void {

@@ -1,10 +1,9 @@
 import {
-  AfterViewInit, ChangeDetectionStrategy, Component, Inject, Input,
+  AfterViewInit, ChangeDetectionStrategy, Component, Input,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { ChainedComponentRef } from 'app/modules/ix-forms/components/ix-slide-in/chained-component-ref';
-import { CHAINED_COMPONENT_REF } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
+import { ChainedRef } from 'app/modules/ix-forms/components/ix-slide-in/chained-component-ref';
 import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 
 @UntilDestroy()
@@ -25,7 +24,7 @@ export class IxModalHeader2Component implements AfterViewInit {
   constructor(
     private translate: TranslateService,
     private chainedSlideIn: IxChainedSlideInService,
-    @Inject(CHAINED_COMPONENT_REF) private chainedSlideInRef: ChainedComponentRef,
+    private chainedSlideInRef: ChainedRef<unknown>,
   ) {}
 
   ngAfterViewInit(): void {

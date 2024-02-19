@@ -10,7 +10,7 @@ import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { SystemGeneralConfig } from 'app/interfaces/system-config.interface';
-import { CHAINED_COMPONENT_REF, SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
+import { ChainedRef } from 'app/modules/ix-forms/components/ix-slide-in/chained-component-ref';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { AllowedAddressesFormComponent } from 'app/pages/system/advanced/allowed-addresses/allowed-addresses-form/allowed-addresses-form.component';
@@ -22,7 +22,7 @@ describe('AllowedAddressesComponent', () => {
   let spectator: Spectator<AllowedAddressesFormComponent>;
   let loader: HarnessLoader;
   let ws: WebSocketService;
-  const componentRef = { close: jest.fn() };
+  const componentRef: ChainedRef<unknown> = { close: jest.fn(), getData: jest.fn() };
   const createComponent = createComponentFactory({
     component: AllowedAddressesFormComponent,
     imports: [
@@ -44,8 +44,7 @@ describe('AllowedAddressesComponent', () => {
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
-      { provide: CHAINED_COMPONENT_REF, useValue: componentRef },
-      { provide: SLIDE_IN_DATA, useValue: undefined },
+      mockProvider(ChainedRef, componentRef),
       provideMockStore(),
       mockAuth(),
     ],

@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -9,13 +9,10 @@ import { of, Subscription } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { helptextSystemAdvanced as helptext } from 'app/helptext/system/advanced';
-import { ChainedComponentRef } from 'app/modules/ix-forms/components/ix-slide-in/chained-component-ref';
-import { CHAINED_COMPONENT_REF, SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
+import { ChainedRef } from 'app/modules/ix-forms/components/ix-slide-in/chained-component-ref';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ConsoleConfig } from 'app/pages/system/advanced/console/console-card/console-card.component';
-import { DialogService } from 'app/services/dialog.service';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 import { advancedConfigUpdated } from 'app/store/system-config/system-config.actions';
@@ -57,19 +54,20 @@ export class ConsoleFormComponent implements OnInit {
 
   readonly serialPortOptions$ = this.ws.call('system.advanced.serial_port_choices').pipe(choicesToOptions());
 
+  private consoleConfig: ConsoleConfig;
+
   constructor(
     private fb: FormBuilder,
     private ws: WebSocketService,
     private cdr: ChangeDetectorRef,
     private formErrorHandler: FormErrorHandlerService,
-    private errorHandler: ErrorHandlerService,
-    private dialogService: DialogService,
     private translate: TranslateService,
     private snackbar: SnackbarService,
     private store$: Store<AppState>,
-    @Inject(CHAINED_COMPONENT_REF) private chainedComponentRef: ChainedComponentRef,
-    @Inject(SLIDE_IN_DATA) private consoleConfig: ConsoleConfig,
-  ) {}
+    private chainedRef: ChainedRef<ConsoleConfig>,
+  ) {
+    this.consoleConfig = this.chainedRef.getData();
+  }
 
   ngOnInit(): void {
     this.form.patchValue({
@@ -96,7 +94,7 @@ export class ConsoleFormComponent implements OnInit {
         this.snackbar.success(this.translate.instant('Settings saved'));
         this.store$.dispatch(advancedConfigUpdated());
         this.cdr.markForCheck();
-        this.chainedComponentRef.close({ response: true, error: null });
+        this.chainedRef.close({ response: true, error: null });
       },
       error: (error: unknown) => {
         this.isFormLoading = false;

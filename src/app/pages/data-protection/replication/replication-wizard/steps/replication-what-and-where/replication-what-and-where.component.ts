@@ -1,6 +1,6 @@
 import { DatePipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Inject, OnInit, Output,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, OnInit, Output,
 } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { FormBuilder } from '@ngneat/reactive-forms';
@@ -25,8 +25,7 @@ import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { SummaryProvider, SummarySection } from 'app/modules/common/summary/summary.interface';
 import { ixManualValidateError } from 'app/modules/ix-forms/components/ix-errors/ix-errors.component';
 import { TreeNodeProvider } from 'app/modules/ix-forms/components/ix-explorer/tree-node-provider.interface';
-import { ChainedComponentRef } from 'app/modules/ix-forms/components/ix-slide-in/chained-component-ref';
-import { CHAINED_COMPONENT_REF } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
+import { ChainedRef } from 'app/modules/ix-forms/components/ix-slide-in/chained-component-ref';
 import {
   forbiddenAsyncValues,
 } from 'app/modules/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
@@ -138,7 +137,7 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
   }
 
   constructor(
-    @Inject(CHAINED_COMPONENT_REF) protected chainedSlideInRef: ChainedComponentRef,
+    protected chainedRef: ChainedRef<unknown>,
     private formBuilder: FormBuilder,
     private replicationService: ReplicationService,
     private keychainCredentials: KeychainCredentialService,
@@ -364,7 +363,7 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
   }
 
   openAdvanced(): void {
-    this.chainedSlideInRef.swap(
+    this.chainedRef.swap(
       ReplicationFormComponent,
       true,
     );

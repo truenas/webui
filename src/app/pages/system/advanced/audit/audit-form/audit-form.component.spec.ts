@@ -8,7 +8,7 @@ import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { AuditConfig } from 'app/interfaces/audit/audit.interface';
-import { CHAINED_COMPONENT_REF, SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
+import { ChainedRef } from 'app/modules/ix-forms/components/ix-slide-in/chained-component-ref';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { AuditFormComponent } from 'app/pages/system/advanced/audit/audit-form/audit-form.component';
@@ -43,8 +43,7 @@ describe('AuditFormComponent', () => {
       }),
       mockProvider(DialogService),
       provideMockStore(),
-      { provide: CHAINED_COMPONENT_REF, useValue: { close: jest.fn() } },
-      { provide: SLIDE_IN_DATA, useValue: undefined },
+      mockProvider(ChainedRef, { close: jest.fn(), getData: jest.fn() }),
       mockAuth(),
     ],
   });

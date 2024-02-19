@@ -1,5 +1,5 @@
 import {
-  Component, ChangeDetectionStrategy, ChangeDetectorRef, OnInit, Inject,
+  Component, ChangeDetectionStrategy, ChangeDetectorRef, OnInit,
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -9,8 +9,7 @@ import { of } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
 import { SedUser } from 'app/enums/sed-user.enum';
 import { helptextSystemAdvanced } from 'app/helptext/system/advanced';
-import { ChainedComponentRef } from 'app/modules/ix-forms/components/ix-slide-in/chained-component-ref';
-import { CHAINED_COMPONENT_REF, SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
+import { ChainedRef } from 'app/modules/ix-forms/components/ix-slide-in/chained-component-ref';
 import { matchOthersFgValidator } from 'app/modules/ix-forms/validators/password-validation/password-validation';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DialogService } from 'app/services/dialog.service';
@@ -18,6 +17,11 @@ import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 import { advancedConfigUpdated } from 'app/store/system-config/system-config.actions';
+
+export interface SedConfig {
+  sedUser: SedUser;
+  sedPassword: string;
+}
 
 @UntilDestroy()
 @Component({
@@ -58,6 +62,8 @@ export class SelfEncryptingDriveFormComponent implements OnInit {
     sed_passwd: helptextSystemAdvanced.sed_passwd_tooltip,
   };
 
+  private sedConfig: SedConfig;
+
   constructor(
     private fb: FormBuilder,
     private ws: WebSocketService,
@@ -67,9 +73,10 @@ export class SelfEncryptingDriveFormComponent implements OnInit {
     private store$: Store<AppState>,
     private snackbar: SnackbarService,
     private dialogService: DialogService,
-    @Inject(SLIDE_IN_DATA) private sedConfig: { sedUser: SedUser; sedPassword: string },
-    @Inject(CHAINED_COMPONENT_REF) private chainedRef: ChainedComponentRef,
-  ) {}
+    private chainedRef: ChainedRef<SedConfig>,
+  ) {
+    this.sedConfig = this.chainedRef.getData();
+  }
 
   ngOnInit(): void {
     this.loadConfig();

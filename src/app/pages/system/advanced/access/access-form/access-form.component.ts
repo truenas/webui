@@ -1,5 +1,5 @@
 import {
-  Component, ChangeDetectionStrategy, OnInit, ChangeDetectorRef, Inject,
+  Component, ChangeDetectionStrategy, OnInit, ChangeDetectorRef,
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -7,8 +7,7 @@ import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { filter } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
-import { ChainedComponentRef } from 'app/modules/ix-forms/components/ix-slide-in/chained-component-ref';
-import { CHAINED_COMPONENT_REF } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
+import { ChainedRef } from 'app/modules/ix-forms/components/ix-slide-in/chained-component-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { AuthService } from 'app/services/auth/auth.service';
 import { DialogService } from 'app/services/dialog.service';
@@ -56,7 +55,7 @@ export class AccessFormComponent implements OnInit {
     private dialogService: DialogService,
     private systemGeneralService: SystemGeneralService,
     private authService: AuthService,
-    @Inject(CHAINED_COMPONENT_REF) private chainedSlideInRef: ChainedComponentRef,
+    private chainedSlideInRef: ChainedRef<unknown>,
   ) {}
 
   ngOnInit(): void {

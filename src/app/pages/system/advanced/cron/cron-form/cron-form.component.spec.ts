@@ -9,7 +9,7 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { Cronjob } from 'app/interfaces/cronjob.interface';
 import { User } from 'app/interfaces/user.interface';
-import { CHAINED_COMPONENT_REF, SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
+import { ChainedRef } from 'app/modules/ix-forms/components/ix-slide-in/chained-component-ref';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { SchedulerModule } from 'app/modules/scheduler/scheduler.module';
@@ -24,9 +24,6 @@ describe('CronFormComponent', () => {
   let spectator: Spectator<CronFormComponent>;
   let loader: HarnessLoader;
   let form: IxFormHarness;
-  const componentRef = {
-    close: jest.fn(),
-  };
 
   const existingCronJob = {
     id: 234,
@@ -42,6 +39,12 @@ describe('CronFormComponent', () => {
     command: 'ls -la',
     user: 'root',
   } as Cronjob;
+
+  const getData = jest.fn(() => existingCronJob);
+  const componentRef: ChainedRef<Cronjob> = {
+    close: jest.fn(),
+    getData: jest.fn(() => undefined),
+  };
 
   const createComponent = createComponentFactory({
     component: CronFormComponent,
@@ -74,8 +77,7 @@ describe('CronFormComponent', () => {
           { username: 'steven' },
         ] as User[]),
       }),
-      { provide: CHAINED_COMPONENT_REF, useValue: componentRef },
-      { provide: SLIDE_IN_DATA, useValue: undefined },
+      mockProvider(ChainedRef, componentRef),
       mockAuth(),
     ],
   });
@@ -124,7 +126,7 @@ describe('CronFormComponent', () => {
     beforeEach(async () => {
       spectator = createComponent({
         providers: [
-          { provide: SLIDE_IN_DATA, useValue: existingCronJob },
+          mockProvider(ChainedRef, { ...componentRef, getData }),
         ],
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);

@@ -9,7 +9,7 @@ import { InitShutdownScriptType } from 'app/enums/init-shutdown-script-type.enum
 import { InitShutdownScriptWhen } from 'app/enums/init-shutdown-script-when.enum';
 import { InitShutdownScript } from 'app/interfaces/init-shutdown-script.interface';
 import { EntityModule } from 'app/modules/entity/entity.module';
-import { CHAINED_COMPONENT_REF } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
+import { ChainedRef } from 'app/modules/ix-forms/components/ix-slide-in/chained-component-ref';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTable2Harness } from 'app/modules/ix-table2/components/ix-table2/ix-table2.harness';
 import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
@@ -70,7 +70,7 @@ describe('InitShutdownCardComponent', () => {
       mockProvider(IxChainedSlideInService, {
         pushComponent: jest.fn(() => of({ response: true, error: null })),
       }),
-      { provide: CHAINED_COMPONENT_REF, useValue: { close: jest.fn() } },
+      mockProvider(ChainedRef, { close: jest.fn(), getData: jest.fn(() => undefined) }),
       mockProvider(AdvancedSettingsService, {
         showFirstTimeWarningIfNeeded: jest.fn(() => of(true)),
       }),

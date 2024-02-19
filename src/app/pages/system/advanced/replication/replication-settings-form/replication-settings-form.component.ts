@@ -1,5 +1,5 @@
 import {
-  Component, ChangeDetectionStrategy, ChangeDetectorRef, OnInit, Inject,
+  Component, ChangeDetectionStrategy, ChangeDetectorRef, OnInit,
 } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -7,8 +7,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { Role } from 'app/enums/role.enum';
 import { helptextSystemAdvanced } from 'app/helptext/system/advanced';
 import { ReplicationConfig } from 'app/interfaces/replication-config.interface';
-import { ChainedComponentRef } from 'app/modules/ix-forms/components/ix-slide-in/chained-component-ref';
-import { CHAINED_COMPONENT_REF, SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
+import { ChainedRef } from 'app/modules/ix-forms/components/ix-slide-in/chained-component-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
@@ -29,6 +28,8 @@ export class ReplicationSettingsFormComponent implements OnInit {
     max_parallel_replication_tasks: helptextSystemAdvanced.max_parallel_replication_tasks_tooltip,
   };
 
+  private replicationConfig: ReplicationConfig;
+
   constructor(
     private errorHandler: ErrorHandlerService,
     private fb: FormBuilder,
@@ -37,9 +38,10 @@ export class ReplicationSettingsFormComponent implements OnInit {
     private dialogService: DialogService,
     private snackbar: SnackbarService,
     private translate: TranslateService,
-    @Inject(SLIDE_IN_DATA) private replicationConfig: ReplicationConfig,
-    @Inject(CHAINED_COMPONENT_REF) private chainedRef: ChainedComponentRef,
-  ) {}
+    private chainedRef: ChainedRef<ReplicationConfig>,
+  ) {
+    this.replicationConfig = this.chainedRef.getData();
+  }
 
   ngOnInit(): void {
     this.form.patchValue(this.replicationConfig);

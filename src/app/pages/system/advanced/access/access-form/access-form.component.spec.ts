@@ -10,7 +10,7 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { mockWindow } from 'app/core/testing/utils/mock-window.utils';
 import { Preferences } from 'app/interfaces/preferences.interface';
-import { CHAINED_COMPONENT_REF, SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
+import { ChainedRef } from 'app/modules/ix-forms/components/ix-slide-in/chained-component-ref';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { AccessFormComponent } from 'app/pages/system/advanced/access/access-form/access-form.component';
@@ -25,7 +25,7 @@ import { selectGeneralConfig } from 'app/store/system-config/system-config.selec
 describe('AccessFormComponent', () => {
   let spectator: Spectator<AccessFormComponent>;
   let loader: HarnessLoader;
-  const componentRef = { close: jest.fn(), swap: jest.fn() };
+  const chainedRef: ChainedRef<unknown> = { close: jest.fn(), getData: jest.fn(() => undefined) };
   const createComponent = createComponentFactory({
     component: AccessFormComponent,
     imports: [
@@ -57,8 +57,7 @@ describe('AccessFormComponent', () => {
           value: { ds_auth: true },
         }],
       }),
-      { provide: CHAINED_COMPONENT_REF, useValue: componentRef },
-      { provide: SLIDE_IN_DATA, useValue: undefined },
+      mockProvider(ChainedRef, chainedRef),
       mockAuth(),
     ],
   });
@@ -96,6 +95,6 @@ describe('AccessFormComponent', () => {
       ds_auth: false,
     }]);
     expect(store$.dispatch).toHaveBeenCalledWith(generalConfigUpdated());
-    expect(componentRef.close).toHaveBeenCalled();
+    expect(chainedRef.close).toHaveBeenCalled();
   });
 });

@@ -19,8 +19,8 @@ import { TransportMode } from 'app/enums/transport-mode.enum';
 import { PeriodicSnapshotTask } from 'app/interfaces/periodic-snapshot-task.interface';
 import { ReplicationTask } from 'app/interfaces/replication-task.interface';
 import { SummaryComponent } from 'app/modules/common/summary/summary.component';
+import { ChainedRef } from 'app/modules/ix-forms/components/ix-slide-in/chained-component-ref';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
-import { CHAINED_COMPONENT_REF, SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { SchedulerModule } from 'app/modules/scheduler/scheduler.module';
@@ -68,9 +68,10 @@ describe('ReplicationWizardComponent', () => {
   let loader: HarnessLoader;
   let form: IxFormHarness;
   let nextButton: MatStepperNextHarness;
-  const chainedComponentRef = {
+  const chainedRef: ChainedRef<ReplicationTask> = {
     close: jest.fn(),
     swap: jest.fn(),
+    getData: jest.fn(() => undefined),
   };
 
   const createComponent = createComponentFactory({
@@ -98,10 +99,9 @@ describe('ReplicationWizardComponent', () => {
         mockCall('zfs.snapshot.create'),
         mockCall('replication.create', existingTask),
       ]),
-      { provide: CHAINED_COMPONENT_REF, useValue: chainedComponentRef },
+      mockProvider(ChainedRef, chainedRef),
       mockProvider(SnackbarService),
       mockProvider(IxSlideInRef),
-      { provide: SLIDE_IN_DATA, useValue: undefined },
     ],
   });
 
@@ -200,6 +200,6 @@ describe('ReplicationWizardComponent', () => {
     }]);
 
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Replication task created.');
-    expect(chainedComponentRef.close).toHaveBeenCalledWith({ response: existingTask, error: null });
+    expect(chainedRef.close).toHaveBeenCalledWith({ response: existingTask, error: null });
   });
 });

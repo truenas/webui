@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -16,8 +16,7 @@ import { Role } from 'app/enums/role.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
-import { ChainedComponentRef } from 'app/modules/ix-forms/components/ix-slide-in/chained-component-ref';
-import { CHAINED_COMPONENT_REF, SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
+import { ChainedRef } from 'app/modules/ix-forms/components/ix-slide-in/chained-component-ref';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -26,6 +25,11 @@ import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 import { selectService } from 'app/store/services/services.selectors';
 import { advancedConfigUpdated } from 'app/store/system-config/system-config.actions';
+
+export interface StorageSettings {
+  systemDsPool: string;
+  swapSize: number;
+}
 
 @UntilDestroy()
 @Component({
@@ -46,6 +50,8 @@ export class StorageSettingsFormComponent implements OnInit {
   protected readonly Role = Role;
   readonly poolOptions$ = this.ws.call('systemdataset.pool_choices').pipe(choicesToOptions());
 
+  private storageSettings: StorageSettings;
+
   constructor(
     private ws: WebSocketService,
     private formErrorHandler: FormErrorHandlerService,
@@ -56,9 +62,10 @@ export class StorageSettingsFormComponent implements OnInit {
     private translate: TranslateService,
     private store$: Store<AppState>,
     private snackbar: SnackbarService,
-    @Inject(SLIDE_IN_DATA) private storageSettings: { systemDsPool: string; swapSize: number },
-    @Inject(CHAINED_COMPONENT_REF) private chainedRef: ChainedComponentRef,
-  ) {}
+    private chainedRef: ChainedRef<StorageSettings>,
+  ) {
+    this.storageSettings = this.chainedRef.getData();
+  }
 
   ngOnInit(): void {
     this.loadFormData();

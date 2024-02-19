@@ -12,8 +12,7 @@ import {
 import { Role } from 'app/enums/role.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { GlobalTwoFactorConfig, GlobalTwoFactorConfigUpdate } from 'app/interfaces/two-factor-config.interface';
-import { ChainedComponentRef } from 'app/modules/ix-forms/components/ix-slide-in/chained-component-ref';
-import { CHAINED_COMPONENT_REF, SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
+import { ChainedRef } from 'app/modules/ix-forms/components/ix-slide-in/chained-component-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { AuthService } from 'app/services/auth/auth.service';
 import { DialogService } from 'app/services/dialog.service';
@@ -36,6 +35,8 @@ export class GlobalTwoFactorAuthFormComponent implements OnInit {
   enableWarning: string = this.translate.instant('Once enabled, users will be required to set up two factor authentication next time they login.');
   protected readonly Role = Role;
 
+  private twoFactorConfig: GlobalTwoFactorConfig;
+
   constructor(
     private fb: FormBuilder,
     private ws: WebSocketService,
@@ -46,10 +47,11 @@ export class GlobalTwoFactorAuthFormComponent implements OnInit {
     private snackbar: SnackbarService,
     private authService: AuthService,
     private router: Router,
-    @Inject(CHAINED_COMPONENT_REF) private chainedRef: ChainedComponentRef,
-    @Inject(SLIDE_IN_DATA) protected twoFactorConfig: GlobalTwoFactorConfig,
+    private chainedRef: ChainedRef<GlobalTwoFactorConfig>,
     @Inject(WINDOW) private window: Window,
-  ) {}
+  ) {
+    this.twoFactorConfig = this.chainedRef.getData();
+  }
 
   ngOnInit(): void {
     this.setupForm();

@@ -8,7 +8,7 @@ import { provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockWebSocket, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
-import { CHAINED_COMPONENT_REF } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
+import { ChainedRef } from 'app/modules/ix-forms/components/ix-slide-in/chained-component-ref';
 import { IxTable2Harness } from 'app/modules/ix-table2/components/ix-table2/ix-table2.harness';
 import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
@@ -71,7 +71,7 @@ describe('CronListComponent', () => {
       mockProvider(IxChainedSlideInService, {
         pushComponent: jest.fn(() => of({ response: true, error: null })),
       }),
-      { provide: CHAINED_COMPONENT_REF, useValue: { close: jest.fn() } },
+      mockProvider(ChainedRef, { close: jest.fn(), getData: jest.fn(() => undefined) }),
       mockProvider(MatDialog, {
         open: jest.fn(() => ({
           afterClosed: () => of(true),

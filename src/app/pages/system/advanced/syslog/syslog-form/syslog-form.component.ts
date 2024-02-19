@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -16,8 +16,7 @@ import { SyslogLevel, SyslogTransport } from 'app/enums/syslog.enum';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { helptextSystemAdvanced, helptextSystemAdvanced as helptext } from 'app/helptext/system/advanced';
 import { AdvancedConfigUpdate } from 'app/interfaces/advanced-config.interface';
-import { ChainedComponentRef } from 'app/modules/ix-forms/components/ix-slide-in/chained-component-ref';
-import { CHAINED_COMPONENT_REF, SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
+import { ChainedRef } from 'app/modules/ix-forms/components/ix-slide-in/chained-component-ref';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { SyslogConfig } from 'app/pages/system/advanced/syslog/syslog-card/syslog-card.component';
@@ -64,6 +63,8 @@ export class SyslogFormComponent implements OnInit {
   readonly certificateAuthorityOptions$ = this.ws.call('system.advanced.syslog_certificate_authority_choices')
     .pipe(choicesToOptions());
 
+  private syslogConfig: SyslogConfig;
+
   constructor(
     private fb: FormBuilder,
     private ws: WebSocketService,
@@ -72,9 +73,10 @@ export class SyslogFormComponent implements OnInit {
     private snackbar: SnackbarService,
     private translate: TranslateService,
     private formErrorHandler: FormErrorHandlerService,
-    @Inject(SLIDE_IN_DATA) private syslogConfig: SyslogConfig,
-    @Inject(CHAINED_COMPONENT_REF) private chainedRef: ChainedComponentRef,
-  ) {}
+    private chainedRef: ChainedRef<SyslogConfig>,
+  ) {
+    this.syslogConfig = this.chainedRef.getData();
+  }
 
   ngOnInit(): void {
     this.subscriptions.push(

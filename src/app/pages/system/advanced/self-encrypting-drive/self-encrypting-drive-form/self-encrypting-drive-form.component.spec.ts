@@ -7,7 +7,7 @@ import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { SedUser } from 'app/enums/sed-user.enum';
-import { CHAINED_COMPONENT_REF, SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
+import { ChainedRef } from 'app/modules/ix-forms/components/ix-slide-in/chained-component-ref';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { SelfEncryptingDriveFormComponent } from 'app/pages/system/advanced/self-encrypting-drive/self-encrypting-drive-form/self-encrypting-drive-form.component';
@@ -33,8 +33,10 @@ describe('SedFormComponent', () => {
         pushComponent: jest.fn(() => of({ response: true, error: null })),
         components$: of([]),
       }),
-      { provide: CHAINED_COMPONENT_REF, useValue: { close: jest.fn() } },
-      { provide: SLIDE_IN_DATA, useValue: { sedPassword: '123', sedUser: SedUser.User } },
+      mockProvider(ChainedRef, {
+        close: jest.fn(),
+        getData: jest.fn(() => ({ sedPassword: '123', sedUser: SedUser.User })),
+      }),
       mockAuth(),
     ],
   });

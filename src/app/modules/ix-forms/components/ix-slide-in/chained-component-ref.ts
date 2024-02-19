@@ -1,8 +1,8 @@
 import { Type } from '@angular/core';
-import { ChainedComponentResponse } from 'app/services/ix-chained-slide-in.service';
+import { ChainedComponentResponse as ChainedResponse } from 'app/services/ix-chained-slide-in.service';
 
-export class ChainedComponentRef {
-  close: (response: ChainedComponentResponse) => void;
+export class ChainedRef<T> {
+  close: (response: ChainedResponse) => void;
   /**
    * This method will destroy the caller slide-in component and replace it with the
    * provided new component. The new component will also take on the same "on-close"
@@ -10,5 +10,6 @@ export class ChainedComponentRef {
    * have the same purpose and return the same response type e.g, form to wizard and
    * wizard to form.
    */
-  swap: (component: Type<unknown>, wide: boolean, data?: unknown) => void;
+  swap?: (component: Type<unknown>, wide: boolean, data?: unknown) => void;
+  getData: () => T;
 }

@@ -11,7 +11,7 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { SshConnectionsSetupMethod } from 'app/enums/ssh-connections-setup-method.enum';
 import { KeychainSshCredentials } from 'app/interfaces/keychain-credential.interface';
-import { CHAINED_COMPONENT_REF, SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
+import { ChainedRef } from 'app/modules/ix-forms/components/ix-slide-in/chained-component-ref';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
@@ -25,9 +25,6 @@ describe('SshConnectionFormComponent', () => {
   let loader: HarnessLoader;
   let form: IxFormHarness;
   let websocket: WebSocketService;
-  const chainedComponentRef = {
-    close: jest.fn(),
-  };
 
   const existingConnection = {
     id: 11,
@@ -41,6 +38,10 @@ describe('SshConnectionFormComponent', () => {
       connect_timeout: 10,
     },
   } as KeychainSshCredentials;
+
+  const closeChainedRef = jest.fn();
+  const getNoData = jest.fn(() => undefined);
+  const getData = jest.fn(() => existingConnection);
 
   const createComponent = createComponentFactory({
     component: SshConnectionFormComponent,
@@ -64,21 +65,24 @@ describe('SshConnectionFormComponent', () => {
       mockProvider(DialogService),
       mockProvider(MatDialogRef),
       mockAuth(),
-      {
-        provide: SLIDE_IN_DATA,
-        useValue: undefined,
-      },
-      {
-        provide: CHAINED_COMPONENT_REF,
-        useValue: chainedComponentRef,
-      },
+      mockProvider(ChainedRef, {
+        close: closeChainedRef,
+        getData: getNoData,
+        swap: jest.fn(),
+      } as ChainedRef<KeychainSshCredentials>),
     ],
   });
 
   describe('Edit existing SSH', () => {
     beforeEach(async () => {
       spectator = createComponent({
-        providers: [{ provide: SLIDE_IN_DATA, useValue: existingConnection }],
+        providers: [
+          mockProvider(ChainedRef, {
+            close: closeChainedRef,
+            getData,
+            swap: jest.fn(),
+          } as ChainedRef<KeychainSshCredentials>),
+        ],
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       form = await loader.getHarness(IxFormHarness);
@@ -124,7 +128,7 @@ describe('SshConnectionFormComponent', () => {
           username: 'root',
         },
       }]);
-      expect(chainedComponentRef.close).toHaveBeenCalledWith({ response: existingConnection, error: null });
+      expect(closeChainedRef).toHaveBeenCalledWith({ response: existingConnection, error: null });
     });
   });
 
@@ -168,7 +172,7 @@ describe('SshConnectionFormComponent', () => {
           username: 'john',
         },
       }]);
-      expect(chainedComponentRef.close).toHaveBeenCalledWith({ response: existingConnection, error: null });
+      expect(closeChainedRef).toHaveBeenCalledWith({ response: existingConnection, error: null });
     });
 
     it('saves new SSH connection added using semi-automatic setup', async () => {

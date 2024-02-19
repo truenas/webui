@@ -9,7 +9,7 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { SyslogLevel, SyslogTransport } from 'app/enums/syslog.enum';
 import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
-import { CHAINED_COMPONENT_REF, SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
+import { ChainedRef } from 'app/modules/ix-forms/components/ix-slide-in/chained-component-ref';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { SyslogFormComponent } from 'app/pages/system/advanced/syslog/syslog-form/syslog-form.component';
@@ -53,20 +53,16 @@ describe('SyslogFormComponent', () => {
       }),
       mockProvider(DialogService),
       provideMockStore(),
-      {
-        provide: CHAINED_COMPONENT_REF,
-        useValue: { close: jest.fn() },
-      },
-      {
-        provide: SLIDE_IN_DATA,
-        useValue: {
+      mockProvider(ChainedRef, {
+        close: jest.fn(),
+        getData: jest.fn(() => ({
           fqdn_syslog: true,
           sysloglevel: SyslogLevel.Error,
           syslogserver: 'existing.server.com',
           syslog_transport: SyslogTransport.Udp,
           syslog_tls_certificate: 2,
-        },
-      },
+        })),
+      }),
       mockAuth(),
     ],
   });

@@ -12,7 +12,7 @@ import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.u
 import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
 import { IxCheckboxHarness } from 'app/modules/ix-forms/components/ix-checkbox/ix-checkbox.harness';
 import { IxSelectHarness } from 'app/modules/ix-forms/components/ix-select/ix-select.harness';
-import { CHAINED_COMPONENT_REF, SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
+import { ChainedRef } from 'app/modules/ix-forms/components/ix-slide-in/chained-component-ref';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
@@ -61,17 +61,16 @@ describe('ConsoleFormComponent', () => {
           },
         ],
       }),
-      { provide: CHAINED_COMPONENT_REF, useValue: { close: jest.fn() } },
-      {
-        provide: SLIDE_IN_DATA,
-        useValue: {
+      mockProvider(ChainedRef, {
+        close: jest.fn(),
+        getData: jest.fn(() => ({
           consolemenu: true,
           serialconsole: true,
           serialport: 'ttyS0',
           serialspeed: '9600',
           motd: 'Welcome back, commander',
-        } as ConsoleConfig,
-      },
+        } as ConsoleConfig)),
+      }),
       mockAuth(),
     ],
   });

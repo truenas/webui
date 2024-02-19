@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Inject, Input, OnChanges, OnInit, Output,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, OnChanges, OnInit, Output,
 } from '@angular/core';
 import { Validators, FormBuilder, FormControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
@@ -26,8 +26,7 @@ import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { ExplorerNodeData, TreeNode } from 'app/interfaces/tree-node.interface';
 import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { TreeNodeProvider } from 'app/modules/ix-forms/components/ix-explorer/tree-node-provider.interface';
-import { ChainedComponentRef } from 'app/modules/ix-forms/components/ix-slide-in/chained-component-ref';
-import { CHAINED_COMPONENT_REF } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
+import { ChainedRef } from 'app/modules/ix-forms/components/ix-slide-in/chained-component-ref';
 import { crontabToSchedule } from 'app/modules/scheduler/utils/crontab-to-schedule.utils';
 import { CronPresetValue } from 'app/modules/scheduler/utils/get-default-crontab-presets.utils';
 import { CloudSyncFormComponent } from 'app/pages/data-protection/cloudsync/cloudsync-form/cloudsync-form.component';
@@ -125,7 +124,7 @@ export class CloudSyncWhatAndWhenComponent implements OnInit, OnChanges {
   constructor(
     private ws: WebSocketService,
     private cdr: ChangeDetectorRef,
-    @Inject(CHAINED_COMPONENT_REF) private chainedSlideInRef: ChainedComponentRef,
+    private chainedRef: ChainedRef<unknown>,
     private dialog: DialogService,
     private formBuilder: FormBuilder,
     private translate: TranslateService,
@@ -256,7 +255,7 @@ export class CloudSyncWhatAndWhenComponent implements OnInit, OnChanges {
       filter(Boolean),
       untilDestroyed(this),
     ).subscribe(() => {
-      this.chainedSlideInRef.swap(CloudSyncFormComponent, true);
+      this.chainedRef.swap(CloudSyncFormComponent, true);
     });
   }
 

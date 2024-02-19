@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -10,8 +10,7 @@ import { TunableType } from 'app/enums/tunable-type.enum';
 import { helptextSystemTunable as helptext } from 'app/helptext/system/tunable';
 import { Job } from 'app/interfaces/job.interface';
 import { Tunable } from 'app/interfaces/tunable.interface';
-import { ChainedComponentRef } from 'app/modules/ix-forms/components/ix-slide-in/chained-component-ref';
-import { CHAINED_COMPONENT_REF, SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
+import { ChainedRef } from 'app/modules/ix-forms/components/ix-slide-in/chained-component-ref';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -44,15 +43,18 @@ export class TunableFormComponent implements OnInit {
     enabled: helptext.enabled.tooltip,
   };
 
+  private editingTunable: Tunable;
+
   constructor(
     private ws: WebSocketService,
     private errorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
     private fb: FormBuilder,
     private translate: TranslateService,
-    @Inject(SLIDE_IN_DATA) private editingTunable: Tunable,
-    @Inject(CHAINED_COMPONENT_REF) private chainedRef: ChainedComponentRef,
-  ) {}
+    private chainedRef: ChainedRef<Tunable>,
+  ) {
+    this.editingTunable = this.chainedRef.getData();
+  }
 
   ngOnInit(): void {
     if (this.editingTunable) {

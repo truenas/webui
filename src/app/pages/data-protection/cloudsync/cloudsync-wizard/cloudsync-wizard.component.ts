@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, ViewChild, forwardRef,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, ViewChild, forwardRef,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
@@ -9,8 +9,7 @@ import {
 import { cloudSyncProviderNameMap } from 'app/enums/cloudsync-provider.enum';
 import { CloudSyncTask, CloudSyncTaskUpdate } from 'app/interfaces/cloud-sync-task.interface';
 import { CloudSyncCredential } from 'app/interfaces/cloudsync-credential.interface';
-import { ChainedComponentRef } from 'app/modules/ix-forms/components/ix-slide-in/chained-component-ref';
-import { CHAINED_COMPONENT_REF } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
+import { ChainedRef } from 'app/modules/ix-forms/components/ix-slide-in/chained-component-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { CloudSyncWhatAndWhenComponent } from 'app/pages/data-protection/cloudsync/cloudsync-wizard/steps/cloudsync-what-and-when/cloudsync-what-and-when.component';
 import { CloudCredentialService } from 'app/services/cloud-credential.service';
@@ -33,7 +32,7 @@ export class CloudSyncWizardComponent {
   existingCredential: CloudSyncCredential;
 
   constructor(
-    @Inject(CHAINED_COMPONENT_REF) private chainedSlideInRef: ChainedComponentRef,
+    private chainedRef: ChainedRef<unknown>,
     private ws: WebSocketService,
     private snackbarService: SnackbarService,
     private cdr: ChangeDetectorRef,
@@ -71,7 +70,7 @@ export class CloudSyncWizardComponent {
       next: (response) => {
         this.snackbarService.success(this.translate.instant('Task created'));
         this.isLoading$.next(false);
-        this.chainedSlideInRef.close({ response, error: null });
+        this.chainedRef.close({ response, error: null });
 
         this.cdr.markForCheck();
       },
