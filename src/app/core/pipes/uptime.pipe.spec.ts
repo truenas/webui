@@ -19,7 +19,40 @@ describe('UptimePipe', () => {
     expect(spectator.element.innerHTML).toBe('45 seconds as of 15:57');
   });
 
-  it('should return correct uptime string for uptime less than 1 day', () => {
+  it('should return minutes and seconds for uptime less than 1 hour', () => {
+    spectator = createPipe('{{ inputValue | uptime:dateTime }}', {
+      hostProps: {
+        inputValue: 3599,
+        dateTime: '15:57',
+      },
+    });
+
+    expect(spectator.element.innerHTML).toBe('59 minutes 59 seconds as of 15:57');
+  });
+
+  it('should return hour for uptime 1 hour', () => {
+    spectator = createPipe('{{ inputValue | uptime:dateTime }}', {
+      hostProps: {
+        inputValue: 3600,
+        dateTime: '15:57',
+      },
+    });
+
+    expect(spectator.element.innerHTML).toBe('1 hour as of 15:57');
+  });
+
+  it('should return hour and minutes for uptime 1 hour and 1 minute', () => {
+    spectator = createPipe('{{ inputValue | uptime:dateTime }}', {
+      hostProps: {
+        inputValue: 3661,
+        dateTime: '15:57',
+      },
+    });
+
+    expect(spectator.element.innerHTML).toBe('1 hour 1 minute as of 15:57');
+  });
+
+  it('should return hours and minutes for uptime less than 1 day', () => {
     spectator = createPipe('{{ inputValue | uptime:dateTime }}', {
       hostProps: {
         inputValue: 86000,
@@ -27,10 +60,10 @@ describe('UptimePipe', () => {
       },
     });
 
-    expect(spectator.element.innerHTML).toBe('23 hours 53 minutes 20 seconds as of 15:57');
+    expect(spectator.element.innerHTML).toBe('23 hours 53 minutes as of 15:57');
   });
 
-  it('should return correct uptime string for uptime greater than 1 day', () => {
+  it('should return days, hours and minutes for uptime greater than 1 day', () => {
     spectator = createPipe('{{ inputValue | uptime:dateTime }}', {
       hostProps: {
         inputValue: 860000,
@@ -52,7 +85,7 @@ describe('UptimePipe', () => {
     expect(spectator.element.innerHTML).toBe('12 minutes 34 seconds as of 15:57');
   });
 
-  it('should return hours, minutes, and seconds if uptime is greater than 1 hour', () => {
+  it('should return hours and minutes if uptime is greater than 1 hour', () => {
     spectator = createPipe('{{ inputValue | uptime:dateTime }}', {
       hostProps: {
         inputValue: 7530,
@@ -60,7 +93,7 @@ describe('UptimePipe', () => {
       },
     });
 
-    expect(spectator.element.innerHTML).toBe('2 hours 5 minutes 30 seconds as of 15:57');
+    expect(spectator.element.innerHTML).toBe('2 hours 5 minutes as of 15:57');
   });
 
   it('should handle missing date/time input', () => {
@@ -70,7 +103,7 @@ describe('UptimePipe', () => {
       },
     });
 
-    expect(spectator.element.innerHTML).toBe('1 hour 15 minutes 30 seconds');
+    expect(spectator.element.innerHTML).toBe('1 hour 15 minutes');
   });
 
   it('should return N/A if uptime is 0', () => {
@@ -92,5 +125,16 @@ describe('UptimePipe', () => {
     });
 
     expect(spectator.element.innerHTML).toBe('N/A');
+  });
+
+  it('should return uptime if dateTime input is invalid', () => {
+    spectator = createPipe('{{ inputValue | uptime }}', {
+      hostProps: {
+        inputValue: 10,
+        dateTime: 'invalid',
+      },
+    });
+
+    expect(spectator.element.innerHTML).toBe('10 seconds');
   });
 });
