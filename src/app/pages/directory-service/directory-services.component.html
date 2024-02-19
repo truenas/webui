@@ -1,6 +1,6 @@
 <ng-container [ngSwitch]="true">
   <div *ngSwitchCase="!isActiveDirectoryEnabled && !isLdapEnabled" fxLayout="column" fxLayoutAlign="center center" class="everything-disabled">
-    <ix-entity-empty [conf]="noDirectoryServicesConfig"></ix-entity-empty>
+    <ix-empty [conf]="noDirectoryServicesConfig"></ix-empty>
     <div class="actions">
       <button mat-button ixTest="configure-active-directory" (click)="openActiveDirectoryForm()">
         {{ 'Configure Active Directory' | translate }}

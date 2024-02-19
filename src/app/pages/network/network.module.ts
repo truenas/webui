@@ -16,6 +16,7 @@ import { CommonDirectivesModule } from 'app/directives/common/common-directives.
 import { CastModule } from 'app/modules/cast/cast.module';
 import { AppCommonModule } from 'app/modules/common/app-common.module';
 import { NgxOrderedListboxModule } from 'app/modules/common/ordered-list/ordered-list.module';
+import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
@@ -70,6 +71,7 @@ import { routing } from './network.routing';
     MatTooltipModule,
     CoreComponents,
     AppLoaderModule,
+    EmptyComponent,
   ],
   declarations: [
     DefaultGatewayDialogComponent,

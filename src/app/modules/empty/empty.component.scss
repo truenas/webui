@@ -1,13 +1,18 @@
 :host {
   height: 100%;
   padding: 15px;
-  place-content: center;;
+  place-content: center;
 }
 
 .empty-page {
+  align-items: center;
   color: var(--fg2);
+
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  justify-content: center;
   margin: auto 24px;
-  max-width: 300px;
 
   .icon-div {
     text-align: center;
@@ -37,6 +42,22 @@
   .empty-message {
     font-size: 0.875rem;
     margin-bottom: 10px;
+  }
+
+
+  &.compact {
+    margin: 0;
+  }
+
+  &.errors {
+    .icon-div {
+      margin: 16px;
+    }
+
+    .icon-div .mat-icon {
+      color: var(--red);
+      opacity: 1;
+    }
   }
 
   &.large {
@@ -70,19 +91,3 @@
     width: 100%;
   }
 }
-
-.empty-page.compact {
-  margin: 0;
-}
-
-.empty-page.errors {
-  .icon-div {
-    margin: 16px;
-  }
-
-  .icon-div .mat-icon {
-    color: var(--red);
-    opacity: 1;
-  }
-}
-

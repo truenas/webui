@@ -15,7 +15,7 @@
 
         <div fxLayout="column" class="mobile">
           <div *ngIf="!renderedWidgets.length && emptyConfig" fxFlex="65" class="bottom empty">
-            <ix-entity-empty [conf]="emptyConfig"></ix-entity-empty>
+            <ix-empty [conf]="emptyConfig"></ix-empty>
           </div>
 
           <div *ngIf="renderedWidgets.length" fxFlex="65" class="bottom">
