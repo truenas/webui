@@ -48,6 +48,7 @@
           {{ 'Edit' | translate }}
         </a>
         <a
+          *ixRequiresRoles="requiredRoles"
           mat-menu-item
           [ixTest]="[device.id, 'delete']"
           (click)="onDelete(device)"

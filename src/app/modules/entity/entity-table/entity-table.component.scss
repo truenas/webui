@@ -4,6 +4,10 @@ div.mat-mdc-card {
   overflow: hidden;
 }
 
+.disabled {
+  pointer-events: none;
+}
+
 div.table-container,
 div.mat-mdc-card {
   max-width: 100%;

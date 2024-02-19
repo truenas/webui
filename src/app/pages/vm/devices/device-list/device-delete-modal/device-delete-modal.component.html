@@ -46,6 +46,7 @@
       {{ 'Cancel' | translate }}
     </button>
     <button
+      *ixRequiresRoles="requiredRoles"
       type="submit"
       mat-button
       class="mat-mdc-button mat-button mat-primary"

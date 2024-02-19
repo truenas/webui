@@ -307,6 +307,7 @@
                   matTooltipPosition="right"
                   [id]="'overlay__' + getRowIdentifier(element) + '_Running'"
                   [matTooltip]="element.state"
+                  [class.disabled]="currentColumns?.[i]?.disabled"
                   (click)="$event.stopPropagation(); this.conf.onSliderChange(element)"
                 ></div>
 
@@ -316,6 +317,7 @@
                   [id]="'slide-toggle__' + column + '_' + getRowIdentifier(element)"
                   [ixTest]="[column, getRowIdentifier(element)]"
                   [checked]="element[column] === EntityJobState.Running"
+                  [disabled]="currentColumns?.[i]?.disabled"
                 >
                 </mat-slide-toggle>
 
@@ -373,7 +375,7 @@
                   class="checkbox"
                   [id]="'checkbox__' + getRowIdentifier(element)"
                   [ixTest]="getRowIdentifier(element)"
-                  [disabled]="getDisabled(column)"
+                  [disabled]="currentColumns?.[i]?.disabled"
                   [(ngModel)]="element[column]"
                   (change)="checkboxChanged(element)"
                   (click)="$event.stopPropagation()"

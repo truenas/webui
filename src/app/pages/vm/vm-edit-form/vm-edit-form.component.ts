@@ -8,6 +8,7 @@ import {
   Observable, forkJoin, map, of, switchMap,
 } from 'rxjs';
 import { MiB } from 'app/constants/bytes.constant';
+import { Role } from 'app/enums/role.enum';
 import {
   VmBootloader, VmCpuMode, VmDeviceType, VmTime, vmTimeNames,
 } from 'app/enums/vm.enum';
@@ -39,6 +40,7 @@ import { WebSocketService } from 'app/services/ws.service';
 })
 export class VmEditFormComponent implements OnInit {
   showCpuModelField = true;
+  protected readonly requiredRoles = [Role.VmWrite];
 
   form = this.formBuilder.group({
     name: ['', Validators.required],
