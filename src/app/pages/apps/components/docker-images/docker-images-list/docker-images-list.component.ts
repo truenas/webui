@@ -115,14 +115,16 @@ export class DockerImagesListComponent implements OnInit, AfterViewInit {
   doUpdate(images: ContainerImage[]): void {
     this.matDialog.open(DockerImageUpdateDialogComponent, {
       data: images,
-    }).afterClosed().pipe(
-      filter(Boolean),
-      delay(50),
-      untilDestroyed(this),
-    ).subscribe(() => {
-      this.checkboxColumn.clearSelection();
-      this.cdr.markForCheck();
-    });
+    })
+      .afterClosed()
+      .pipe(
+        filter(Boolean),
+        delay(50),
+        untilDestroyed(this),
+      ).subscribe(() => {
+        this.checkboxColumn.clearSelection();
+        this.cdr.markForCheck();
+      });
   }
 
   private createDataSource(images: ContainerImage[] = []): void {
