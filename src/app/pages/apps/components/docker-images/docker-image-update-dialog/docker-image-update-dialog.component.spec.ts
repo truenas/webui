@@ -124,7 +124,7 @@ describe('DockerImageUpdateDialogComponent', () => {
         [{ from_image: 'truenas/middleware', tag: '0.1.2' }],
       ],
     ];
-    spectator.inject(MockWebSocketService).mockJob('core.bulk', fakeSuccessfulJob(mockMixedBulkResponse, jobArguments));
+    spectator.inject(MockWebsocketService).mockJob('core.bulk', fakeSuccessfulJob(mockMixedBulkResponse, jobArguments));
 
     const updateButton = await loader.getHarness(MatButtonHarness.with({ text: 'Update' }));
     await updateButton.click();
