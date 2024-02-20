@@ -8,6 +8,7 @@ import { IfNightlyDirective } from 'app/directives/common/if-nightly/if-nightly.
 import { RequiresRolesWrapperComponent } from 'app/directives/common/requires-roles/requires-roles-wrapper.component';
 import { RequiresRolesDirective } from 'app/directives/common/requires-roles/requires-roles.directive';
 import { StepActivationDirective } from 'app/directives/common/step-activation.directive';
+import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { LetDirective } from './app-let.directive';
 
 @NgModule({
@@ -15,6 +16,7 @@ import { LetDirective } from './app-let.directive';
     CommonModule,
     MatTooltipModule,
     TranslateModule,
+    IxIconModule,
   ],
   declarations: [
     LetDirective,
