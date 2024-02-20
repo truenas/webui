@@ -2,11 +2,12 @@ import { Injectable } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import {
-  BehaviorSubject, Observable, combineLatest, tap,
+  BehaviorSubject, Observable, combineLatest, filter, tap,
 } from 'rxjs';
 import { SystemUpdateOperationType, SystemUpdateStatus } from 'app/enums/system-update.enum';
 import { SystemUpdateTrain, SystemUpdateTrains } from 'app/interfaces/system-update.interface';
 import { WebSocketError } from 'app/interfaces/websocket-error.interface';
+import { Package } from 'app/pages/system/update/interfaces/package.interface';
 import { UpdateService } from 'app/pages/system/update/services/update.service';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
@@ -89,11 +90,10 @@ export class TrainService {
   toggleAutoCheck(): void {
     this.autoCheckValue$.pipe(
       tap((autoCheckValue) => this.ws.call('update.set_auto_download', [autoCheckValue])),
+      filter(Boolean),
       untilDestroyed(this),
-    ).subscribe((autoCheckValue) => {
-      if (autoCheckValue) {
-        this.check();
-      }
+    ).subscribe(() => {
+      this.check();
     });
   }
 
@@ -137,7 +137,7 @@ export class TrainService {
           sessionStorage.updateAvailable = 'true';
           this.updateService.updatesAvailable$.next(true);
 
-          const packages: { operation: string; name: string }[] = [];
+          const packages: Package[] = [];
           update.changes.forEach((change) => {
             if (change.operation === SystemUpdateOperationType.Upgrade) {
               packages.push({

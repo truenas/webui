@@ -26,7 +26,6 @@ import { SystemGeneralService } from 'app/services/system-general.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TrainCardComponent implements OnInit {
-  updated = false;
   isUpdateRunning = false;
   checkable = false;
   singleDescription: string;
@@ -37,9 +36,9 @@ export class TrainCardComponent implements OnInit {
     train: ['', Validators.required],
   });
 
+  protected readonly requiresRoles = [Role.FullAdmin];
   protected readonly clickForInformationLink = helptextSystemUpdate.clickForInformationLink;
   protected readonly SystemUpdateStatus = SystemUpdateStatus;
-  protected readonly Role = Role;
 
   constructor(
     private sysGenService: SystemGeneralService,

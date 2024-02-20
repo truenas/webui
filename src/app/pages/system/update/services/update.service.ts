@@ -4,6 +4,7 @@ import {
   BehaviorSubject,
 } from 'rxjs';
 import { SystemUpdateStatus } from 'app/enums/system-update.enum';
+import { Package } from 'app/pages/system/update/interfaces/package.interface';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
@@ -16,7 +17,7 @@ export class UpdateService {
   isLoading$ = new BehaviorSubject<boolean>(false);
   error$ = new BehaviorSubject<boolean>(false);
   generalUpdateError$ = new BehaviorSubject<string>(undefined);
-  packages$ = new BehaviorSubject<{ operation: string; name: string }[]>([]);
+  packages$ = new BehaviorSubject<Package[]>([]);
   status$ = new BehaviorSubject<SystemUpdateStatus>(undefined);
   releaseNotesUrl$ = new BehaviorSubject<string>('');
   changeLog$ = new BehaviorSubject<string>('');

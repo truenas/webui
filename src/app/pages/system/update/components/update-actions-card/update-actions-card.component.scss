@@ -1,9 +1,9 @@
-.update-button {
-  margin-right: 3px;
-  top: 6px;
+.buttons-container {
+  display: flex;
+  gap: 6px;
 }
 
-#update-running-msg {
+.update-running-msg {
   bottom: 3px;
   font-size: larger;
   font-weight: 500;

@@ -1,4 +1,4 @@
-#train-card {
+.train-card {
   padding: 15px 20px 20px;
 }
 
@@ -16,7 +16,7 @@
   }
 }
 
-#update-spinner {
+.update-spinner {
   bottom: 0;
   left: 0;
   margin: 0 auto;
@@ -26,7 +26,7 @@
   z-index: 10;
 }
 
-#single-train-name {
+.single-train-name {
   display: inline-block;
 }
 
@@ -40,12 +40,12 @@
   }
 }
 
-#refresh-button,
-#single-train-refresh-button {
+.refresh-button,
+.single-train-refresh-button {
   margin-left: 20px;
 }
 
-#single-train-refresh-button {
+.single-train-refresh-button {
   float: right;
   margin-top: -12px;
   vertical-align: top;
@@ -58,13 +58,13 @@ mat-card {
 }
 
 @media screen and (max-width: 1270px) {
-  #single-train-name {
+  .single-train-name {
     max-width: 75%;
   }
 }
 
 @media screen and (max-width: 595px) {
-  #single-train-name {
+  .single-train-name {
     max-width: 65%;
   }
 }

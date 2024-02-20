@@ -7,7 +7,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import {
-  Observable, of, filter, tap,
+  Observable, of, filter, tap, combineLatest, map,
 } from 'rxjs';
 import { JobState } from 'app/enums/job-state.enum';
 import { ProductType } from 'app/enums/product-type.enum';
@@ -25,6 +25,7 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import {
   SaveConfigDialogComponent, SaveConfigDialogMessages,
 } from 'app/pages/system/general-settings/save-config-dialog/save-config-dialog.component';
+import { Package } from 'app/pages/system/update/interfaces/package.interface';
 import { TrainService } from 'app/pages/system/update/services/train.service';
 import { UpdateService } from 'app/pages/system/update/services/update.service';
 import { updateAgainCode } from 'app/pages/system/update/utils/update-again-code.constant';
@@ -54,10 +55,24 @@ export class UpdateActionsCardComponent implements OnInit {
   sysUpdateMsgPt2 = helptextGlobal.sysUpdateMessagePt2;
   updateTitle = this.translate.instant('Update');
 
-  private wasConfigurationSaved = false;
+  readonly requiresRoles = [Role.FullAdmin];
 
-  protected readonly SystemUpdateStatus = SystemUpdateStatus;
-  protected readonly Role = Role;
+  get showApplyPendingButton$(): Observable<boolean> {
+    return combineLatest([
+      this.updateService.updateDownloaded$,
+      this.updateService.status$,
+    ]).pipe(map(([updateDownloaded, status]) => updateDownloaded && status !== SystemUpdateStatus.Unavailable));
+  }
+
+  get showDownloadUpdateButton$(): Observable<boolean> {
+    return this.updateService.updatesAvailable$;
+  }
+
+  get isDownloadUpdatesButtonDisabled$(): Observable<boolean> {
+    return this.updateService.status$.pipe(map((status) => status === SystemUpdateStatus.RebootRequired));
+  }
+
+  private wasConfigurationSaved = false;
 
   constructor(
     private router: Router,
@@ -173,7 +188,7 @@ export class UpdateActionsCardComponent implements OnInit {
       next: (update) => {
         this.updateService.status$.next(update.status);
         if (update.status === SystemUpdateStatus.Available) {
-          const packages: { operation: string; name: string }[] = [];
+          const packages: Package[] = [];
           update.changes.forEach((change) => {
             if (change.operation === SystemUpdateOperationType.Upgrade) {
               packages.push({
