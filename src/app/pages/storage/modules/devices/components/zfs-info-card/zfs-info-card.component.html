@@ -25,16 +25,25 @@
   <mat-card-actions *ngIf="isDisk">
     <ng-container *ixRequiresRoles="[Role.FullAdmin]">
       <ng-container *ngIf="canExtendDisk" [ngTemplateOutlet]="extend"></ng-container>
-      <ng-container *ngIf="canRemoveDisk" [ngTemplateOutlet]="remove"></ng-container>
+    </ng-container>
 
+    <ng-container *ixRequiresRoles="[Role.FullAdmin]">
+      <ng-container *ngIf="canRemoveDisk" [ngTemplateOutlet]="remove"></ng-container>
+    </ng-container>
+
+    <ng-container *ixRequiresRoles="[Role.FullAdmin]">
       <button *ngIf="canDetachDisk" mat-button ixTest="detach" (click)="onDetach()">
         {{ 'Detach' | translate }}
       </button>
+    </ng-container>
 
+    <ng-container *ixRequiresRoles="[Role.FullAdmin]">
       <button *ngIf="canOfflineDisk" mat-button ixTest="offline" (click)="onOffline()">
         {{ 'Offline' | translate }}
       </button>
+    </ng-container>
 
+    <ng-container *ixRequiresRoles="[Role.FullAdmin]">
       <button *ngIf="canOnlineDisk" mat-button ixTest="online" (click)="onOnline()">
         {{ 'Online' | translate }}
       </button>
