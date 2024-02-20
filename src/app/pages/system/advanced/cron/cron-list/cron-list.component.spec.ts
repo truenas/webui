@@ -113,7 +113,6 @@ describe('CronListComponent', () => {
   });
 
   it('shows confirmation dialog when Run Now button is pressed', async () => {
-    jest.spyOn(spectator.inject(DialogService), 'confirm');
     await table.clickToggle(0);
 
     const runNowButton = await loader.getHarness(MatButtonHarness.with({ text: 'Run Now' }));
