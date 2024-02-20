@@ -59,7 +59,7 @@ export class SystemInfoEffects {
   loadIsIxHardware = createEffect(() => this.actions$.pipe(
     ofType(adminUiInitialized),
     mergeMap(() => {
-      return this.ws.call('system.is_ix_hardware').pipe(
+      return this.ws.call('truenas.is_ix_hardware').pipe(
         map((isIxHardware) => ixHardwareLoaded({ isIxHardware })),
         catchError((error) => {
           // TODO: Show error message to user?
