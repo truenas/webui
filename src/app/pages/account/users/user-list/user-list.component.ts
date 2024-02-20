@@ -74,16 +74,16 @@ export class UserListComponent implements OnInit {
     this.store$.select(selectUserState).pipe(map((state) => state.error)),
   ]).pipe(
     switchMap(([isLoading, isNoData, isError]) => {
-      if (isLoading) {
-        return of(EmptyType.Loading);
+      switch (true) {
+        case isLoading:
+          return of(EmptyType.Loading);
+        case !!isError:
+          return of(EmptyType.Errors);
+        case isNoData:
+          return of(EmptyType.NoPageData);
+        default:
+          return of(EmptyType.NoSearchResults);
       }
-      if (isError) {
-        return of(EmptyType.Errors);
-      }
-      if (isNoData) {
-        return of(EmptyType.NoPageData);
-      }
-      return of(EmptyType.NoSearchResults);
     }),
   );
 

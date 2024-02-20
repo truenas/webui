@@ -1,127 +1,43 @@
+
 <ng-template ixPageHeader>
   <ix-page-title-header>
-    <ix-search-input
-      [disabled]="isLoading$ | async"
-      (search)="onSearch($event)"
-    ></ix-search-input>
+    <ix-search-input (search)="onListFiltered($event)"></ix-search-input>
     <mat-slide-toggle
       color="primary"
       ixTest="show-built-in-groups"
-      [checked]="!hideBuiltinGroups"
+      [checked]="!this.hideBuiltinGroups"
       (change)="toggleBuiltins()"
     >
       <label>{{ 'Show Built-in Groups' | translate }}</label>
     </mat-slide-toggle>
-    <a
-      mat-button
-      color="accent"
-      ixTest="privileges"
-      [routerLink]="['/credentials', 'groups', 'privileges']"
-    >
-      {{ 'Privileges' | translate }}
-    </a>
-    <button mat-button color="primary" ixTest="add" (click)="doAdd()">
+    <button mat-button ixTest="add-group" [color]="'primary'" (click)="doAdd()">
       {{ 'Add' | translate }}
     </button>
   </ix-page-title-header>
 </ng-template>
 
-<mat-card>
-  <table
-    ix-table
-    matSort
-    matSortDisableClear="true"
-    ixTest="groups-table"
-    [ix-table-empty]="!dataSource.filteredData.length"
+<div class="table-container">
+  <ix-table2
+    [ix-table2-empty]="!(dataProvider.currentPageCount$ | async)"
     [emptyConfig]="emptyConfigService.defaultEmptyConfig((emptyType$ | async))"
-    [dataSource]="dataSource"
-    [matSortActive]="defaultSort.active"
-    [matSortDirection]="defaultSort.direction"
-    [multiTemplateDataRows]="true"
-    [fixedLayout]="true"
   >
-    <ng-container matColumnDef="group">
-      <th *matHeaderCellDef mat-header-cell mat-sort-header>
-        {{ 'Group' | translate }}
-      </th>
-      <td *matCellDef="let group; dataSource: dataSource" mat-cell>
-        {{ group.group }}
-      </td>
-    </ng-container>
-
-    <ng-container matColumnDef="gid">
-      <th *matHeaderCellDef mat-header-cell mat-sort-header>
-        {{ 'GID' | translate }}
-      </th>
-      <td *matCellDef="let group; dataSource: dataSource" mat-cell>
-        {{ group.gid }}
-      </td>
-    </ng-container>
-
-    <ng-container matColumnDef="builtin">
-      <th *matHeaderCellDef mat-header-cell mat-sort-header>
-        {{ 'Builtin' | translate }}
-      </th>
-      <td *matCellDef="let group; dataSource: dataSource" mat-cell>
-        {{ group.builtin | yesNo }}
-      </td>
-    </ng-container>
-
-    <ng-container matColumnDef="sudo_commands">
-      <th *matHeaderCellDef mat-header-cell mat-sort-header>
-        {{ 'Allows sudo commands' | translate }}
-      </th>
-      <td *matCellDef="let group; dataSource: dataSource" mat-cell>
-        {{ (group.sudo_commands?.length || group.sudo_commands_nopasswd?.length) | yesNo }}
-      </td>
-    </ng-container>
-
-    <ng-container matColumnDef="smb">
-      <th *matHeaderCellDef mat-header-cell mat-sort-header>
-        {{ 'Samba Authentication' | translate }}
-      </th>
-      <td *matCellDef="let group; dataSource: dataSource" mat-cell>
-        {{ group.smb | yesNo }}
-      </td>
-    </ng-container>
-
-    <ng-container matColumnDef="roles">
-      <th *matHeaderCellDef mat-header-cell mat-sort-header>
-        {{ 'Roles' | translate }}
-      </th>
-      <td *matCellDef="let group; dataSource: dataSource" mat-cell [matTooltip]="rolesListToString(group.roles || [])">
-        {{ rolesListToString(group.roles || []) }}
-      </td>
-    </ng-container>
-
-    <ix-expand-toggle-column
-      [expandedRow]="expandedRow"
-      (toggle)="onToggle($event)"
-    ></ix-expand-toggle-column>
-
-    <tr *matHeaderRowDef="displayedColumns" mat-header-row ixTest="table-header"></tr>
-    <tr
-      *matRowDef="
-        let group;
-        columns: displayedColumns;
-        dataSource: dataSource
-      "
-      mat-row
-      [ixTest]="group.group"
-      [ixDetailRow]="group"
-      [ixDetailRowOptions]="{ colspan: displayedColumns.length }"
-      [ixDetailRowTemplate]="expandedRowTemplate"
-      (toggle)="onToggle($event)"
-    ></tr>
-  </table>
-
-  <ix-table-paginator [dataSource]="dataSource"></ix-table-paginator>
-</mat-card>
-
-<ng-template #expandedRowTemplate let-group let-colspan="colspan">
-  <ix-group-details-row
-    [group]="group"
-    [colspan]="colspan"
-    (delete)="handleDeletedGroup($event)"
-  ></ix-group-details-row>
-</ng-template>
+    <thead
+      ix-table-head
+      [columns]="columns"
+      [dataProvider]="dataProvider"
+    ></thead>
+    <tbody
+      ix-table-body
+      [columns]="columns"
+      [dataProvider]="dataProvider"
+    >
+      <ng-template let-group ix-table-details-row [dataProvider]="dataProvider">
+        <ix-group-details-row
+          [group]="group"
+          (delete)="handleDeletedGroup($event)"
+        ></ix-group-details-row>
+      </ng-template>
+    </tbody>
+  </ix-table2>
+  <ix-table-pager [dataProvider]="dataProvider"></ix-table-pager>
+</div>
