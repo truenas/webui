@@ -52,7 +52,7 @@ export class GroupListComponent implements OnInit {
       sortable: true,
     }),
     yesNoColumn({
-      title: this.translate.instant('Allow sudo commands'),
+      title: this.translate.instant('Allows sudo commands'),
       propertyName: 'sudo_commands',
       sortable: true,
     }),
