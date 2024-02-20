@@ -43,7 +43,10 @@ describe('IdmapListComponent', () => {
       range_high: 1000000,
       idmap_backend: IdmapBackend.Rid,
       options: {},
-      certificate: null, // TODO:
+      certificate: {
+        id: 1,
+        cert_name: 'my certificate',
+      },
     },
   ] as Idmap[];
 
@@ -131,7 +134,7 @@ describe('IdmapListComponent', () => {
         'ad.ixsystems.net',
         '1000',
         '1000000',
-        '',
+        'my certificate',
         '',
       ],
     ]);
