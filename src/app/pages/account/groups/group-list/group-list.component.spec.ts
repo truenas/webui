@@ -10,9 +10,8 @@ import { IxTable2Harness } from 'app/modules/ix-table2/components/ix-table2/ix-t
 import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
 import { GroupDetailsRowComponent } from 'app/pages/account/groups/group-details-row/group-details-row.component';
 import { GroupListComponent } from 'app/pages/account/groups/group-list/group-list.component';
-import { groupsInitialState } from 'app/pages/account/groups/store/group.reducer';
+import { groupsInitialState, GroupsState } from 'app/pages/account/groups/store/group.reducer';
 import { selectGroups, selectGroupState, selectGroupsTotal } from 'app/pages/account/groups/store/group.selectors';
-import { UsersState } from 'app/pages/account/users/store/user.reducer';
 import { DialogService } from 'app/services/dialog.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { selectPreferences } from 'app/store/preferences/preferences.selectors';
@@ -40,7 +39,7 @@ const fakeGroupDataSource: Group[] = [{
 describe('GroupListComponent', () => {
   let spectator: Spectator<GroupListComponent>;
   let loader: HarnessLoader;
-  let store$: MockStore<UsersState>;
+  let store$: MockStore<GroupsState>;
 
   const createComponent = createComponentFactory({
     component: GroupListComponent,
