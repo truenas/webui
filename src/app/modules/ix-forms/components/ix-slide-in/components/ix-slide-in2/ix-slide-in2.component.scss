@@ -76,6 +76,7 @@
 @media #{$media-lt-sm} {
   .ix-slide-in2-form {
     min-width: 100%;
+    right: -100%;
     width: 100%;
   }
 }
