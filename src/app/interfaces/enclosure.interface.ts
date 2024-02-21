@@ -1,3 +1,5 @@
+import { DiskPowerLevel } from 'app/enums/disk-power-level.enum';
+import { DiskStandby } from 'app/enums/disk-standby.enum';
 import { EnclosureSlotTopologyStatus } from 'app/enums/enclosure-slot-status.enum';
 import { VdevType } from 'app/enums/v-dev-type.enum';
 import { Disk, TopologyItem, TopologyItemStats } from './storage.interface';
@@ -119,6 +121,17 @@ export interface EnclosureUiSlot {
   status: string;
   dev: string;
   original?: EnclosureUiSlotMetadata;
+  name: string;
+  size: number;
+  model: string;
+  serial: string;
+  advpowermgmt: DiskPowerLevel;
+  togglesmart: boolean;
+  smartoptions: string;
+  transfermode: string;
+  hddstandby: DiskStandby;
+  description: string;
+  rotationrate: number;
   pool_info: EnclosureUiPool | null;
 }
 

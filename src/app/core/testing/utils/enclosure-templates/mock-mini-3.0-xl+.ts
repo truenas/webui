@@ -1,5 +1,25 @@
-import { EnclosureUi } from 'app/interfaces/enclosure.interface';
+import { DiskPowerLevel } from 'app/enums/disk-power-level.enum';
+import { DiskStandby } from 'app/enums/disk-standby.enum';
+import { EnclosureUi, EnclosureUiSlot } from 'app/interfaces/enclosure.interface';
 import { MockEnclosure } from './mock-enclosure-template';
+
+const mockDiskDetail: EnclosureUiSlot = {
+  descriptor: 'slot00',
+  status: 'OK',
+  dev: 'sda',
+  pool_info: null,
+  name: '',
+  size: 1024,
+  model: 'model',
+  serial: 'serial',
+  advpowermgmt: DiskPowerLevel.Disabled,
+  togglesmart: false,
+  smartoptions: '',
+  transfermode: '',
+  hddstandby: DiskStandby.Minutes10,
+  description: 'description',
+  rotationrate: 10,
+};
 
 export class MockMini30Xl extends MockEnclosure {
   readonly totalSlotsFront: number = 9;
@@ -31,58 +51,76 @@ export class MockMini30Xl extends MockEnclosure {
     elements: {
       'Array Device Slot': {
         1: {
+          ...mockDiskDetail,
           descriptor: 'slot00',
           status: 'OK',
           dev: 'sda',
           pool_info: null,
+          name: 'sda',
         },
         2: {
+          ...mockDiskDetail,
           descriptor: 'slot01',
           status: 'OK',
           dev: 'sdb',
           pool_info: null,
+          name: 'sdb',
         },
         3: {
+          ...mockDiskDetail,
           descriptor: 'slot02',
           status: 'OK',
           dev: 'sdc',
           pool_info: null,
+          name: 'sdc',
         },
         4: {
+          ...mockDiskDetail,
           descriptor: 'slot03',
           status: 'OK',
           dev: 'sdd',
           pool_info: null,
+          name: 'sdd',
         },
         5: {
+          ...mockDiskDetail,
           descriptor: 'slot04',
           status: 'OK',
           dev: 'sde',
           pool_info: null,
+          name: 'sde',
         },
         6: {
+          ...mockDiskDetail,
           descriptor: 'slot05',
           status: 'OK',
           dev: 'sdf',
           pool_info: null,
+          name: 'sdf',
         },
         7: {
+          ...mockDiskDetail,
           descriptor: 'slot06',
           status: 'OK',
           dev: 'sdg',
           pool_info: null,
+          name: 'sdg',
         },
         8: {
+          ...mockDiskDetail,
           descriptor: 'slot07',
           status: 'OK',
           dev: 'sdh',
           pool_info: null,
+          name: 'sdh',
         },
         9: {
+          ...mockDiskDetail,
           descriptor: 'slot08',
           status: 'OK',
           dev: 'sdi',
           pool_info: null,
+          name: 'sdi',
         },
       },
     },

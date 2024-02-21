@@ -1,8 +1,28 @@
 import { UUID } from 'angular2-uuid';
+import { DiskPowerLevel } from 'app/enums/disk-power-level.enum';
+import { DiskStandby } from 'app/enums/disk-standby.enum';
 import {
   EnclosureUi,
   EnclosureUiSlot,
 } from 'app/interfaces/enclosure.interface';
+
+const mockDiskDetail: EnclosureUiSlot = {
+  descriptor: 'slot00',
+  status: 'OK',
+  dev: 'sda',
+  pool_info: null,
+  name: '',
+  size: 1024,
+  model: 'model',
+  serial: 'serial',
+  advpowermgmt: DiskPowerLevel.Disabled,
+  togglesmart: false,
+  smartoptions: '',
+  transfermode: '',
+  hddstandby: DiskStandby.Minutes10,
+  description: 'description',
+  rotationrate: 10,
+};
 
 export class MockEnclosure {
   readonly enclosureId = UUID.UUID();
@@ -95,17 +115,21 @@ export class MockEnclosure {
   } as EnclosureUi;
 
   readonly slotTemplate: EnclosureUiSlot = {
+    ...mockDiskDetail,
     descriptor: 'SLOT 000,3FHY4B1T',
     status: 'OK',
     dev: 'sda',
     pool_info: null,
+    name: 'sda',
   };
 
    readonly emptySlotTemplate: EnclosureUiSlot = {
+     ...mockDiskDetail,
      descriptor: 'SLOT 000,3FHY4B1T',
      status: 'OK',
      dev: 'sda',
      pool_info: null,
+     name: 'sda',
    };
 
   enclosureNumber = 0;
@@ -134,6 +158,7 @@ export class MockEnclosure {
     // NEW
     // const slotKey: string = slotNumber.toString();
     const slotValue: EnclosureUiSlot = {
+      ...mockDiskDetail,
       descriptor: 'SLOT 000,3FHY4B1T',
       status: 'OK',
       dev: diskName,

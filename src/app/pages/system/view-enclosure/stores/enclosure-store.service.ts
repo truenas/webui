@@ -192,22 +192,29 @@ export class EnclosureStore extends ComponentStore<EnclosureState> {
     }
   }
 
-  getSelectedEnclosureDisks(diskNames: string[]): Observable<Disk[]> {
-    return this.ws.call(
-      'disk.query',
-      [[['name', 'in', diskNames]]],
-    );
-  }
-
   updateSelectedEnclosureDisks(selectedEnclosure: EnclosureUi): void {
-    const diskNames: string[] = Object.entries(selectedEnclosure.elements['Array Device Slot'])
+    const disks = Object.entries(selectedEnclosure.elements['Array Device Slot'])
       .map((keyValue: [string, EnclosureUiSlot]) => {
-        return keyValue[1].dev;
+        return keyValue[1];
+      }).map((slot) => {
+        return {
+          advpowermgmt: slot.advpowermgmt,
+          description: slot.description,
+          devname: slot.dev,
+          hddstandby: slot.hddstandby,
+          model: slot.model,
+          name: slot.name,
+          pool: slot.pool_info?.pool_name || null,
+          rotationrate: slot.rotationrate,
+          serial: slot.serial,
+          size: slot.size,
+          smartoptions: slot.smartoptions,
+          togglesmart: slot.togglesmart,
+          transfermode: slot.transfermode,
+        } as Disk;
       });
 
-    this.getSelectedEnclosureDisks(diskNames).pipe(untilDestroyed(this)).subscribe((disks: Disk[]) => {
-      this.updateStateWithSelectedEnclosureDisks(disks);
-    });
+    this.updateStateWithSelectedEnclosureDisks(disks);
   }
 
   readonly updateStateWithSelectedEnclosureDisks = this.updater((state, selectedEnclosureDisks: Disk[]) => {
