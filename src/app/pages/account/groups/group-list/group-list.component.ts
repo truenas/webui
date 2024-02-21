@@ -66,7 +66,6 @@ export class GroupListComponent implements OnInit {
       getValue: (row) => row.roles
         .map((role) => (roleNames.has(role) ? this.translate.instant(roleNames.get(role)) : role))
         .join(', ') || this.translate.instant('N/A'),
-      sortable: true,
     }),
   ], {
     rowTestId: (row) => 'group-' + row.group,
@@ -101,10 +100,10 @@ export class GroupListComponent implements OnInit {
   }
 
   constructor(
+    protected emptyService: EmptyService,
     private slideInService: IxSlideInService,
     private cdr: ChangeDetectorRef,
     private store$: Store<AppState>,
-    private emptyService: EmptyService,
     private translate: TranslateService,
   ) { }
 

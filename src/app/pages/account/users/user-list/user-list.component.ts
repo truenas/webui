@@ -61,7 +61,6 @@ export class UserListComponent implements OnInit {
       getValue: (row) => row.roles
         .map((role) => (roleNames.has(role) ? this.translate.instant(roleNames.get(role)) : role))
         .join(', ') || this.translate.instant('N/A'),
-      sortable: true,
     }),
   ], {
     rowTestId: (row) => 'user-' + row.username,

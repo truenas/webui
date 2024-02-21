@@ -5,7 +5,7 @@
     <mat-slide-toggle
       color="primary"
       ixTest="show-built-in-groups"
-      [checked]="!this.hideBuiltinGroups"
+      [checked]="!hideBuiltinGroups"
       (change)="toggleBuiltins()"
     >
       <label>{{ 'Show Built-in Groups' | translate }}</label>
@@ -30,6 +30,7 @@
       ix-table-body
       [columns]="columns"
       [dataProvider]="dataProvider"
+      [isLoading]="isLoading$ | async"
     >
       <ng-template let-group ix-table-details-row [dataProvider]="dataProvider">
         <ix-group-details-row
