@@ -55,7 +55,7 @@
   </h3>
 
   <div class="advanced-settings-cards">
-    <ix-idmaps-list [paginator]="false" [toolbar]="true"></ix-idmaps-list>
+    <ix-idmap-list [paginator]="false" [toolbar]="true"></ix-idmap-list>
     <ng-container *ngTemplateOutlet="dataCard; context: { card: kerberosSettingsDataCard }"></ng-container>
     <ix-kerberos-realms-list [paginator]="false" [toolbar]="true"></ix-kerberos-realms-list>
     <ix-kerberos-keytabs-list [paginator]="false" [toolbar]="true"></ix-kerberos-keytabs-list>
