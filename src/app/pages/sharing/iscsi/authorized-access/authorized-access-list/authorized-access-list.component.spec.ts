@@ -3,16 +3,17 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialog } from '@angular/material/dialog';
 import { Spectator, createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
+import { MockModule } from 'ng-mocks';
 import { of, pipe } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { IscsiAuthAccess } from 'app/interfaces/iscsi.interface';
+import { AppCommonModule } from 'app/modules/common/app-common.module';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTable2Harness } from 'app/modules/ix-table2/components/ix-table2/ix-table2.harness';
 import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
 import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
-import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { AuthorizedAccessFormComponent } from 'app/pages/sharing/iscsi/authorized-access/authorized-access-form/authorized-access-form.component';
 import { AuthorizedAccessListComponent } from 'app/pages/sharing/iscsi/authorized-access/authorized-access-list/authorized-access-list.component';
@@ -37,7 +38,10 @@ describe('AuthorizedAccessListComponent', () => {
 
   const createComponent = createComponentFactory({
     component: AuthorizedAccessListComponent,
-    imports: [IxTable2Module, AppLoaderModule],
+    imports: [
+      IxTable2Module,
+      MockModule(AppCommonModule),
+    ],
     providers: [
       mockAuth(),
       mockProvider(AppLoaderService),
@@ -46,7 +50,7 @@ describe('AuthorizedAccessListComponent', () => {
       mockProvider(AppLoaderService, {
         withLoader: jest.fn(() => pipe()),
       }),
-      mockWebsocket([
+      mockWebSocket([
         mockCall('iscsi.auth.query', authAccess),
         mockCall('iscsi.auth.delete'),
       ]),
@@ -69,7 +73,7 @@ describe('AuthorizedAccessListComponent', () => {
     table = await loader.getHarness(IxTable2Harness);
   });
 
-  it('shows acurate page title', () => {
+  it('shows accurate page title', () => {
     const title = spectator.query('h3');
     expect(title).toHaveText('Authorized Access');
   });

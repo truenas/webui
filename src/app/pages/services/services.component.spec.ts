@@ -11,11 +11,10 @@ import {
 import { provideMockStore } from '@ngrx/store/testing';
 import { CoreComponents } from 'app/core/core-components.module';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { ServiceName, serviceNames } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { Service } from 'app/interfaces/service.interface';
-import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxTableModule } from 'app/modules/ix-tables/ix-table.module';
 import { IxTableHarness } from 'app/modules/ix-tables/testing/ix-table.harness';
 import { ServiceFtpComponent } from 'app/pages/services/components/service-ftp/service-ftp.component';
@@ -55,12 +54,11 @@ describe('ServicesComponent', () => {
     component: ServicesComponent,
     imports: [
       CoreComponents,
-      EntityModule,
       IxTableModule,
       FormsModule,
     ],
     providers: [
-      mockWebsocket([
+      mockWebSocket([
         mockCall('service.update', 1),
         mockCall('service.start'),
         mockCall('service.stop'),

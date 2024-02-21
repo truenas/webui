@@ -2,7 +2,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { InitShutdownScriptType } from 'app/enums/init-shutdown-script-type.enum';
 import { InitShutdownScriptWhen } from 'app/enums/init-shutdown-script-when.enum';
 import { InitShutdownScript } from 'app/interfaces/init-shutdown-script.interface';
@@ -16,7 +16,7 @@ import {
   InitShutdownListComponent,
 } from 'app/pages/system/advanced/init-shutdown/init-shutdown-list/init-shutdown-list.component';
 import { DialogService } from 'app/services/dialog.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 describe('InitShutdownListComponent', () => {
@@ -47,14 +47,12 @@ describe('InitShutdownListComponent', () => {
       IxTable2Module,
     ],
     providers: [
-      mockWebsocket([
+      mockWebSocket([
         mockCall('initshutdownscript.query', scripts),
         mockCall('initshutdownscript.delete'),
       ]),
-      mockProvider(IxSlideInService, {
-        open: jest.fn(() => ({
-          slideInClosed$: of(true),
-        })),
+      mockProvider(IxChainedSlideInService, {
+        pushComponent: jest.fn(() => of([])),
       }),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
@@ -81,9 +79,10 @@ describe('InitShutdownListComponent', () => {
     const editButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'edit' }), 1, 5);
     await editButton.click();
 
-    expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(
+    expect(spectator.inject(IxChainedSlideInService).pushComponent).toHaveBeenCalledWith(
       InitShutdownFormComponent,
-      { data: scripts[0] },
+      false,
+      expect.objectContaining(scripts[0]),
     );
   });
 

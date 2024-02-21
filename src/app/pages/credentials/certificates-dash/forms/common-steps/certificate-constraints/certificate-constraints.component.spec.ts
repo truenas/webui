@@ -2,7 +2,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { CertificateExtensions } from 'app/interfaces/certificate-authority.interface';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
@@ -27,7 +27,7 @@ describe('CertificateConstraintsComponent', () => {
       IxFormsModule,
     ],
     providers: [
-      mockWebsocket([
+      mockWebSocket([
         mockCall('certificate.extended_key_usage_choices', {
           CLIENT_AUTH: 'CLIENT_AUTH',
           CODE_SIGNING: 'CODE_SIGNING',
@@ -48,20 +48,20 @@ describe('CertificateConstraintsComponent', () => {
 
   describe('all constraints used', () => {
     beforeEach(async () => {
-      await form.fillForm({
-        'Basic Constraints': true,
-        'Authority Key Identifier': true,
-        'Extended Key Usage': true,
-        'Key Usage': true,
-      });
-      await form.fillForm({
-        'Path Length': 128,
-        'Basic Constraints Config': ['CA', 'Critical Extension'],
-        'Authority Key Config': ['Critical Extension'],
-        Usages: ['CLIENT_AUTH', 'CODE_SIGNING'],
-        'Critical Extension': true,
-        'Key Usage Config': ['CRL Sign', 'Digital Signature'],
-      });
+      await form.fillForm(
+        {
+          'Basic Constraints': true,
+          'Authority Key Identifier': true,
+          'Extended Key Usage': true,
+          'Key Usage': true,
+          'Path Length': 128,
+          'Basic Constraints Config': ['CA', 'Critical Extension'],
+          'Authority Key Config': ['Critical Extension'],
+          Usages: ['CLIENT_AUTH', 'CODE_SIGNING'],
+          'Critical Extension': true,
+          'Key Usage Config': ['CRL Sign', 'Digital Signature'],
+        },
+      );
     });
 
     it('returns cert_extensions when getPayload is called', () => {
@@ -127,18 +127,17 @@ describe('CertificateConstraintsComponent', () => {
 
   describe('some constraints used', () => {
     beforeEach(async () => {
-      await form.fillForm({
-        'Basic Constraints': true,
-        'Authority Key Identifier': true,
-        'Extended Key Usage': false,
-        'Key Usage': false,
-      });
-
-      await form.fillForm({
-        'Path Length': 256,
-        'Basic Constraints Config': ['CA', 'Critical Extension'],
-        'Authority Key Config': ['Critical Extension'],
-      });
+      await form.fillForm(
+        {
+          'Basic Constraints': true,
+          'Authority Key Identifier': true,
+          'Extended Key Usage': false,
+          'Key Usage': false,
+          'Path Length': 256,
+          'Basic Constraints Config': ['CA', 'Critical Extension'],
+          'Authority Key Config': ['Critical Extension'],
+        },
+      );
     });
 
     it('returns cert_extensions when getPayload is called', () => {

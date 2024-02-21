@@ -28,7 +28,7 @@ def test_verify_the_ssh_host_key_stay_the_same_after_reboot(driver):
 @given('the browser is open, navigate to the SCALE URL, and login')
 def the_browser_is_open_navigate_to_the_scale_url_and_login(driver, nas_ip, root_password, request):
     """the browser is open, navigate to the SCALE URL, and login."""
-    depends(request, ['Setup_SSH'], scope='session')
+    #depends(request, ['Setup_SSH'], scope='session')
     if nas_ip not in driver.current_url:
         driver.get(f"http://{nas_ip}")
         assert wait_on_element(driver, 10, xpaths.login.user_Input)
@@ -81,6 +81,7 @@ def wait_for_the_login_ui_to_come_back_and_login(driver, root_password):
     assert wait_on_element_disappear(driver, 15, xpaths.popup.please_Wait)
     time.sleep(10)
     assert wait_on_element(driver, 300, xpaths.login.user_Input)
+    time.sleep(5)
     rsc.Login(driver, 'root', root_password)
 
 

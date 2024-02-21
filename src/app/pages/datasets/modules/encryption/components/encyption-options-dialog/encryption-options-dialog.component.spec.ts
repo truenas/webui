@@ -6,7 +6,7 @@ import { MAT_DIALOG_DATA, MatDialogRef, MatDialog } from '@angular/material/dial
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockEntityJobComponentRef } from 'app/core/testing/utils/mock-entity-job-component-ref.utils';
-import { mockCall, mockJob, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { EncryptionKeyFormat } from 'app/enums/encryption-key-format.enum';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { IxSelectHarness } from 'app/modules/ix-forms/components/ix-select/ix-select.harness';
@@ -40,7 +40,7 @@ describe('EncryptionOptionsDialogComponent', () => {
       mockProvider(MatDialog, {
         open: jest.fn(() => mockEntityJobComponentRef),
       }),
-      mockWebsocket([
+      mockWebSocket([
         mockJob('pool.dataset.change_key'),
         mockCall('pool.dataset.inherit_parent_encryption_properties'),
         mockCall('pool.dataset.query', [{
@@ -144,13 +144,13 @@ describe('EncryptionOptionsDialogComponent', () => {
     await setupTest();
 
     const key = 'k'.repeat(64);
-    await form.fillForm({
-      'Encryption Type': 'Key',
-    });
-    await form.fillForm({
-      Key: 'k'.repeat(64),
-      Confirm: true,
-    });
+    await form.fillForm(
+      {
+        'Encryption Type': 'Key',
+        Key: 'k'.repeat(64),
+        Confirm: true,
+      },
+    );
 
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
@@ -165,13 +165,13 @@ describe('EncryptionOptionsDialogComponent', () => {
   it('allows key to be generated for when encryption type is key', async () => {
     await setupTest();
 
-    await form.fillForm({
-      'Encryption Type': 'Key',
-    });
-    await form.fillForm({
-      'Generate Key': true,
-      Confirm: true,
-    });
+    await form.fillForm(
+      {
+        'Encryption Type': 'Key',
+        'Generate Key': true,
+        Confirm: true,
+      },
+    );
 
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
@@ -186,15 +186,15 @@ describe('EncryptionOptionsDialogComponent', () => {
   it('allows to set encryption to passphrase', async () => {
     await setupTest();
 
-    await form.fillForm({
-      'Encryption Type': 'Passphrase',
-    });
-    await form.fillForm({
-      Passphrase: '12345678',
-      'Confirm Passphrase': '12345678',
-      pbkdf2iters: '350001',
-      Confirm: true,
-    });
+    await form.fillForm(
+      {
+        'Encryption Type': 'Passphrase',
+        Passphrase: '12345678',
+        'Confirm Passphrase': '12345678',
+        pbkdf2iters: '350001',
+        Confirm: true,
+      },
+    );
 
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();

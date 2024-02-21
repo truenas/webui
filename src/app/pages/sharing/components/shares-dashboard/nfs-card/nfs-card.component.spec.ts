@@ -8,17 +8,15 @@ import { provideMockStore } from '@ngrx/store/testing';
 import { MockComponents } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockWebsocket, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockWebSocket, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { NfsShare } from 'app/interfaces/nfs-share.interface';
 import { Service } from 'app/interfaces/service.interface';
-import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTable2Harness } from 'app/modules/ix-table2/components/ix-table2/ix-table2.harness';
 import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
-import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { NfsCardComponent } from 'app/pages/sharing/components/shares-dashboard/nfs-card/nfs-card.component';
 import { ServiceExtraActionsComponent } from 'app/pages/sharing/components/shares-dashboard/service-extra-actions/service-extra-actions.component';
 import { ServiceStateButtonComponent } from 'app/pages/sharing/components/shares-dashboard/service-state-button/service-state-button.component';
@@ -55,8 +53,6 @@ describe('NfsCardComponent', () => {
   const createComponent = createComponentFactory({
     component: NfsCardComponent,
     imports: [
-      AppLoaderModule,
-      EntityModule,
       IxTable2Module,
     ],
     declarations: [
@@ -67,7 +63,7 @@ describe('NfsCardComponent', () => {
     ],
     providers: [
       mockAuth(),
-      mockWebsocket([
+      mockWebSocket([
         mockCall('sharing.nfs.query', nfsShares),
         mockCall('sharing.nfs.delete'),
         mockCall('sharing.nfs.update'),

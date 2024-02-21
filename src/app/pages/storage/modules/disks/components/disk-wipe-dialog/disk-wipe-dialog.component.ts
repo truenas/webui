@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, Inject } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
-import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
@@ -8,9 +8,9 @@ import { filter } from 'rxjs/operators';
 import { DiskWipeMethod } from 'app/enums/disk-wipe-method.enum';
 import { Role } from 'app/enums/role.enum';
 import { helptextDisks } from 'app/helptext/storage/disks/disks';
-import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -47,7 +47,7 @@ export class DiskWipeDialogComponent {
     private dialogService: DialogService,
     private translate: TranslateService,
     private errorHandler: ErrorHandlerService,
-    private matDialog: MatDialog,
+    private ws: WebSocketService,
     private dialogRef: MatDialogRef<DiskWipeDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: { diskName: string; exportedPool: string },
   ) { }
@@ -69,29 +69,25 @@ export class DiskWipeDialogComponent {
   }
 
   private wipeDisk(): void {
-    const jobDialogRef = this.matDialog.open(EntityJobComponent, {
-      data: {
-        title: this.title,
+    this.dialogService.jobDialog(
+      this.ws.job('disk.wipe', [this.data.diskName, this.form.value.wipe_method]),
+      {
+        canMinimize: true,
+        description: this.translate.instant('Wiping disk...'),
       },
-    });
-    const jobComponent = jobDialogRef.componentInstance;
-    jobComponent.setDescription(helptextDisks.diskWipeDialogForm.startDescription);
-    jobComponent.setCall(
-      'disk.wipe',
-      [this.data.diskName, this.form.value.wipe_method],
-    );
-    jobComponent.success.pipe(untilDestroyed(this)).subscribe({
-      next: () => {
-        jobDialogRef.close();
-        this.dialogRef.close();
+    )
+      .afterClosed()
+      .pipe(
+        this.errorHandler.catchError(),
+        untilDestroyed(this),
+      )
+      .subscribe(() => {
         this.dialogService.generalDialog({
           title: this.title,
           message: helptextDisks.diskWipeDialogForm.infoContent,
           hideCancel: true,
         });
-      },
-    });
-
-    jobComponent.submit();
+        this.dialogRef.close();
+      });
   }
 }

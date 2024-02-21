@@ -4,7 +4,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { AclType } from 'app/enums/acl-type.enum';
 import { PosixAclTag, PosixPermission } from 'app/enums/posix-acl.enum';
 import { AclTemplateByPath } from 'app/interfaces/acl.interface';
@@ -60,7 +60,7 @@ describe('SelectPresetModalComponent', () => {
       }),
       mockProvider(MatDialogRef),
       mockProvider(DialogService),
-      mockWebsocket([
+      mockWebSocket([
         mockCall('filesystem.acltemplate.by_path', presets),
       ]),
       {

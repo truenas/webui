@@ -2,13 +2,14 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
+import { MatCheckboxHarness } from '@angular/material/checkbox/testing';
 import { MatDialog } from '@angular/material/dialog';
 import { createComponentFactory, Spectator, mockProvider } from '@ngneat/spectator/jest';
 import { Store, StoreModule } from '@ngrx/store';
 import { of } from 'rxjs';
-import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
+import { MockWebSocketService } from 'app/core/testing/classes/mock-websocket.service';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import {
   LacpduRate,
   LinkAggregationProtocol, NetworkInterfaceAliasType,
@@ -72,7 +73,7 @@ describe('InterfaceFormComponent', () => {
             },
             isHaLicensed: true,
             isUpgradePending: false,
-            hasOnlyMissmatchVersionsReason: false,
+            hasOnlyMismatchVersionsReason: false,
           },
         },
       }),
@@ -87,7 +88,7 @@ describe('InterfaceFormComponent', () => {
           dispatch: jest.fn(),
         },
       },
-      mockWebsocket([
+      mockWebSocket([
         mockCall('interface.xmit_hash_policy_choices', {
           [XmitHashPolicy.Layer2]: XmitHashPolicy.Layer2,
           [XmitHashPolicy.Layer2Plus3]: XmitHashPolicy.Layer2Plus3,
@@ -160,6 +161,7 @@ describe('InterfaceFormComponent', () => {
         Description: 'Bridge interface',
         'Bridge Members': ['enp0s3', 'enp0s4'],
         'IP Address': '10.0.1.2/24',
+        'Enable Learning': true,
       });
 
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
@@ -172,6 +174,7 @@ describe('InterfaceFormComponent', () => {
         bridge_members: ['enp0s3', 'enp0s4'],
         ipv4_dhcp: false,
         ipv6_auto: false,
+        enable_learning: true,
         aliases: [{
           address: '10.0.1.2',
           netmask: 24,
@@ -196,21 +199,19 @@ describe('InterfaceFormComponent', () => {
     it('saves a new link aggregation interface when form is submitted for LAG', async () => {
       jest.spyOn(spectator.inject(MatDialog), 'open');
 
-      await form.fillForm({
-        Type: 'Link Aggregation',
-      });
-      await form.fillForm({
-        Name: 'bond0',
-        Description: 'LAG',
-        DHCP: true,
-        'Link Aggregation Protocol': 'LACP',
-        MTU: 1600,
-      });
-      await form.fillForm({
-        'Transmit Hash Policy': 'LAYER2+3',
-        'LACPDU Rate': 'SLOW',
-        'Link Aggregation Interfaces': ['enp0s3'],
-      });
+      await form.fillForm(
+        {
+          Type: 'Link Aggregation',
+          Name: 'bond0',
+          Description: 'LAG',
+          DHCP: true,
+          'Link Aggregation Protocol': 'LACP',
+          MTU: 1600,
+          'Transmit Hash Policy': 'LAYER2+3',
+          'LACPDU Rate': 'SLOW',
+          'Link Aggregation Interfaces': ['enp0s3'],
+        },
+      );
 
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
@@ -243,18 +244,17 @@ describe('InterfaceFormComponent', () => {
 
     it('saves a new VLAN interface when form is submitted for a VLAN', async () => {
       jest.spyOn(spectator.inject(MatDialog), 'open');
-
-      await form.fillForm({
-        Type: 'VLAN',
-      });
-      await form.fillForm({
-        Name: 'vlan1',
-        Description: 'New VLAN',
-        'Autoconfigure IPv6': true,
-        'Parent Interface': 'enp0s3',
-        'VLAN Tag': 2,
-        'Priority Code Point': 'Excellent effort',
-      });
+      await form.fillForm(
+        {
+          Type: 'VLAN',
+          Name: 'vlan1',
+          Description: 'New VLAN',
+          'Autoconfigure IPv6': true,
+          'Parent Interface': 'enp0s3',
+          'VLAN Tag': 2,
+          'Priority Code Point': 'Excellent effort',
+        },
+      );
 
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
@@ -361,6 +361,7 @@ describe('InterfaceFormComponent', () => {
             useValue: {
               ...existingInterface,
               id: 'br7',
+              enable_learning: false,
               type: NetworkInterfaceType.Bridge,
             },
           },
@@ -374,6 +375,11 @@ describe('InterfaceFormComponent', () => {
 
     it('reloads bridge member choices when bridge interface is opened for edit', () => {
       expect(spectator.inject(NetworkService).getBridgeMembersChoices).toHaveBeenLastCalledWith('br7');
+    });
+
+    it('renders Enable Learning for edit', async () => {
+      const checkbox = await loader.getHarness(MatCheckboxHarness.with({ label: 'Enable Learning' }));
+      expect(await checkbox.isChecked()).toBe(false);
     });
   });
 
@@ -412,7 +418,7 @@ describe('InterfaceFormComponent', () => {
     });
 
     beforeEach(() => {
-      const websocketMock = spectator.inject(MockWebsocketService);
+      const websocketMock = spectator.inject(MockWebSocketService);
       websocketMock.mockCall('failover.licensed', true);
       spectator.component.ngOnInit();
     });

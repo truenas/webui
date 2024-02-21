@@ -1,4 +1,4 @@
-<ix-modal-header [title]="title" [loading]="isLoading"></ix-modal-header>
+<ix-modal-header2 [title]="title" [loading]="isLoading"></ix-modal-header2>
 
 <mat-card>
   <mat-card-content>
@@ -95,13 +95,12 @@
             </ng-container>
 
             <ng-template #keyChainFields>
-              <ix-select
+              <ix-ssh-credentials-select
                 formControlName="ssh_credentials"
                 [label]="'SSH Connection' | translate"
                 [tooltip]="helptext.rsync_ssh_credentials_tooltip | translate"
-                [options]="sshCredentialsOptions$"
                 [required]="true"
-              ></ix-select>
+              ></ix-ssh-credentials-select>
             </ng-template>
 
             <ix-input
@@ -197,7 +196,7 @@
 
       <div class="form-actions">
         <button
-          *ixRequiresRoles="requiresRoles"
+          *ixRequiresRoles="requiredRoles"
           mat-button
           type="submit"
           color="primary"

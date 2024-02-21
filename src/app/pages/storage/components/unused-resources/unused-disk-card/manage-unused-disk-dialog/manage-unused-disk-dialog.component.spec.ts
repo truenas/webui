@@ -5,8 +5,11 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { PoolStatus } from 'app/enums/pool-status.enum';
 import { Pool } from 'app/interfaces/pool.interface';
 import { UnusedDisk } from 'app/interfaces/storage.interface';
+import { IxRadioGroupHarness } from 'app/modules/ix-forms/components/ix-radio-group/ix-radio-group.harness';
+import { IxSelectHarness } from 'app/modules/ix-forms/components/ix-select/ix-select.harness';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { ManageUnusedDiskDialogComponent } from 'app/pages/storage/components/unused-resources/unused-disk-card/manage-unused-disk-dialog/manage-unused-disk-dialog.component';
@@ -32,6 +35,7 @@ describe('ManageUnusedDiskDialogComponent', () => {
           pools: [
             { id: 1, name: 'DEV' },
             { id: 2, name: 'TEST' },
+            { id: 3, name: 'POOL', status: PoolStatus.Offline },
           ] as Pool[],
           unusedDisks: [
             { devname: 'sdb', size: 102400000, identifier: '{serial_lunid}BBBBB1' },
@@ -48,6 +52,15 @@ describe('ManageUnusedDiskDialogComponent', () => {
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     form = await loader.getHarness(IxFormHarness);
     jest.spyOn(spectator.inject(Router), 'navigate').mockImplementation();
+  });
+
+  it('shows only pools that are not offline', async () => {
+    const radioButtonGrp = await loader.getHarness(IxRadioGroupHarness.with({ label: 'Add Disks To:' }));
+    await radioButtonGrp.setValue('Existing Pool');
+
+    const poolSelect = await loader.getHarness(IxSelectHarness.with({ label: 'Existing Pool' }));
+    const options = await poolSelect.getOptionLabels();
+    expect(options).toEqual(['DEV', 'TEST']);
   });
 
   it('shows a title', () => {
@@ -72,13 +85,12 @@ describe('ManageUnusedDiskDialogComponent', () => {
   });
 
   it('redirects to add disks to pool page when choosing Add Disks To Existing Pool', async () => {
-    await form.fillForm({
-      'Add Disks To:': 'Existing Pool',
-    });
-
-    await form.fillForm({
-      'Existing Pool': 'TEST',
-    });
+    await form.fillForm(
+      {
+        'Add Disks To:': 'Existing Pool',
+        'Existing Pool': 'TEST',
+      },
+    );
 
     const addDisksButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add Disks' }));
     await addDisksButton.click();

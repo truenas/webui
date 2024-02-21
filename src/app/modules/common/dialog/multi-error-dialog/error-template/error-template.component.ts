@@ -1,5 +1,6 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import {
+  ChangeDetectionStrategy,
   Component, ElementRef, Input, ViewChild,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -14,6 +15,7 @@ import { WebSocketService } from 'app/services/ws.service';
   selector: 'ix-error-template',
   templateUrl: './error-template.component.html',
   styleUrls: ['./error-template.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ErrorTemplateComponent {
   @ViewChild('errorMessageWrapper') errorMessageWrapper: ElementRef<HTMLElement>;
@@ -58,9 +60,9 @@ export class ErrorTemplateComponent {
   }
 
   downloadLogs(): void {
-    this.ws.call('core.download', ['filesystem.get', [this.logs.logs_path], `${this.logs.id}.log`])
+    this.ws.call('core.job_download_logs', [this.logs.id, `${this.logs.id}.log`])
       .pipe(this.errorHandler.catchError(), untilDestroyed(this))
-      .subscribe(([, url]) => {
+      .subscribe((url) => {
         const mimetype = 'text/plain';
         this.storage.streamDownloadFile(url, `${this.logs.id}.log`, mimetype).pipe(untilDestroyed(this)).subscribe({
           next: (file) => {

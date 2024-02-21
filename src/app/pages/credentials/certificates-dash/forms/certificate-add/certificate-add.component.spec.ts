@@ -11,7 +11,7 @@ import { of } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import {
-  mockCall, mockJob, mockWebsocket,
+  mockCall, mockJob, mockWebSocket,
 } from 'app/core/testing/utils/mock-websocket.utils';
 import { CertificateCreateType } from 'app/enums/certificate-create-type.enum';
 import { CertificateDigestAlgorithm } from 'app/enums/certificate-digest-algorithm.enum';
@@ -78,8 +78,8 @@ describe('CertificateAddComponent', () => {
       MockComponent(SummaryComponent),
     ],
     providers: [
-      mockWebsocket([
-        mockCall('certificate.profiles', {
+      mockWebSocket([
+        mockCall('webui.crypto.certificate_profiles', {
           'HTTPS RSA Certificate': profile,
         }),
         mockCall('certificate.ec_curve_choices', {
@@ -150,17 +150,17 @@ describe('CertificateAddComponent', () => {
     await nextButton.click();
     await updateStepHarnesses();
 
-    await form.fillForm({
-      'Basic Constraints': true,
-      'Extended Key Usage': true,
-    });
-    await form.fillForm({
-      'Path Length': 128,
-      'Basic Constraints Config': ['CA', 'Critical Extension'],
+    await form.fillForm(
+      {
+        'Basic Constraints': true,
+        'Extended Key Usage': true,
+        'Path Length': 128,
+        'Basic Constraints Config': ['CA', 'Critical Extension'],
 
-      Usages: ['CLIENT_AUTH'],
-      'Critical Extension': true,
-    });
+        Usages: ['CLIENT_AUTH'],
+        'Critical Extension': true,
+      },
+    );
     await nextButton.click();
 
     await (await loader.getHarness(MatButtonHarness.with({ text: 'Save' }))).click();

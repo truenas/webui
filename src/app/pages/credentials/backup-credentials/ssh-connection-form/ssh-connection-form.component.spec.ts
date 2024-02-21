@@ -8,11 +8,10 @@ import {
 } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { SshConnectionsSetupMethod } from 'app/enums/ssh-connections-setup-method.enum';
 import { KeychainSshCredentials } from 'app/interfaces/keychain-credential.interface';
-import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
+import { ChainedRef } from 'app/modules/ix-forms/components/ix-slide-in/chained-component-ref';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
@@ -40,6 +39,10 @@ describe('SshConnectionFormComponent', () => {
     },
   } as KeychainSshCredentials;
 
+  const closeChainedRef = jest.fn();
+  const getNoData = jest.fn(() => undefined);
+  const getData = jest.fn(() => existingConnection);
+
   const createComponent = createComponentFactory({
     component: SshConnectionFormComponent,
     imports: [
@@ -48,10 +51,10 @@ describe('SshConnectionFormComponent', () => {
       AppLoaderModule,
     ],
     providers: [
-      mockWebsocket([
+      mockWebSocket([
         mockCall('keychaincredential.remote_ssh_host_key_scan', 'ssh-rsaAREMOTE'),
-        mockCall('keychaincredential.setup_ssh_connection'),
-        mockCall('keychaincredential.update'),
+        mockCall('keychaincredential.setup_ssh_connection', existingConnection),
+        mockCall('keychaincredential.update', existingConnection),
       ]),
       mockProvider(KeychainCredentialService, {
         getSshKeys: () => of([
@@ -59,21 +62,27 @@ describe('SshConnectionFormComponent', () => {
           { id: 2, name: 'key2' },
         ]),
       }),
-      mockProvider(IxSlideInRef),
       mockProvider(DialogService),
       mockProvider(MatDialogRef),
       mockAuth(),
-      {
-        provide: SLIDE_IN_DATA,
-        useValue: undefined,
-      },
+      mockProvider(ChainedRef, {
+        close: closeChainedRef,
+        getData: getNoData,
+        swap: jest.fn(),
+      } as ChainedRef<KeychainSshCredentials>),
     ],
   });
 
   describe('Edit existing SSH', () => {
     beforeEach(async () => {
       spectator = createComponent({
-        providers: [{ provide: SLIDE_IN_DATA, useValue: existingConnection }],
+        providers: [
+          mockProvider(ChainedRef, {
+            close: closeChainedRef,
+            getData,
+            swap: jest.fn(),
+          } as ChainedRef<KeychainSshCredentials>),
+        ],
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       form = await loader.getHarness(IxFormHarness);
@@ -119,7 +128,7 @@ describe('SshConnectionFormComponent', () => {
           username: 'root',
         },
       }]);
-      expect(spectator.inject(IxSlideInRef).close).toHaveBeenCalled();
+      expect(closeChainedRef).toHaveBeenCalledWith({ response: existingConnection, error: null });
     });
   });
 
@@ -132,18 +141,18 @@ describe('SshConnectionFormComponent', () => {
     });
 
     it('saves new SSH connection added manually', async () => {
-      await form.fillForm({
-        Name: 'New',
-        'Setup Method': 'Manual',
-      });
-      await form.fillForm({
-        Host: 'truenas.com',
-        Port: 23,
-        Username: 'john',
-        'Private Key': 'key2',
-        'Remote Host Key': 'ssh-rsaNew',
-        'Connect Timeout': '20',
-      });
+      await form.fillForm(
+        {
+          Name: 'New',
+          'Setup Method': 'Manual',
+          Host: 'truenas.com',
+          Port: 23,
+          Username: 'john',
+          'Private Key': 'key2',
+          'Remote Host Key': 'ssh-rsaNew',
+          'Connect Timeout': '20',
+        },
+      );
 
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
@@ -163,24 +172,24 @@ describe('SshConnectionFormComponent', () => {
           username: 'john',
         },
       }]);
-      expect(spectator.inject(IxSlideInRef).close).toHaveBeenCalled();
+      expect(closeChainedRef).toHaveBeenCalledWith({ response: existingConnection, error: null });
     });
 
     it('saves new SSH connection added using semi-automatic setup', async () => {
-      await form.fillForm({
-        Name: 'Update',
-        'Setup Method': 'Semi-automatic (TrueNAS only)',
+      await form.fillForm(
+        {
+          Name: 'Update',
+          'Setup Method': 'Semi-automatic (TrueNAS only)',
 
-        'TrueNAS URL': '10.11.12.13',
-        Username: 'john',
-        'Admin Username': 'admin',
-        'Admin Password': '12345678',
-        'One-Time Password (if necessary)': '1234',
-        'Private Key': 'key2',
-      });
-      await form.fillForm({
-        'Enable passwordless sudo for zfs commands': true,
-      });
+          'TrueNAS URL': '10.11.12.13',
+          Username: 'john',
+          'Admin Username': 'admin',
+          'Admin Password': '12345678',
+          'One-Time Password (if necessary)': '1234',
+          'Private Key': 'key2',
+          'Enable passwordless sudo for zfs commands': true,
+        },
+      );
 
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
@@ -205,16 +214,16 @@ describe('SshConnectionFormComponent', () => {
     });
 
     it('gets remote host key and puts it in corresponding textarea when Discover Remote Host Key is pressed', async () => {
-      await form.fillForm({
-        'Setup Method': 'Manual',
-      });
-      await form.fillForm({
-        Port: '24',
-        Host: 'remote.com',
-        Username: 'john',
-        'Private Key': 'Generate New',
-        'Connect Timeout': '30',
-      });
+      await form.fillForm(
+        {
+          'Setup Method': 'Manual',
+          Port: '24',
+          Host: 'remote.com',
+          Username: 'john',
+          'Private Key': 'Generate New',
+          'Connect Timeout': '30',
+        },
+      );
 
       const discoverButton = await loader.getHarness(MatButtonHarness.with({ text: 'Discover Remote Host Key' }));
       await discoverButton.click();

@@ -90,8 +90,4 @@ export class SmbLockListComponent implements OnInit {
     this.cdr.detectChanges();
     this.cdr.markForCheck();
   }
-
-  openFiles(lock: SmbLockInfo): void {
-    this.files = Object.values(lock.opens);
-  }
 }

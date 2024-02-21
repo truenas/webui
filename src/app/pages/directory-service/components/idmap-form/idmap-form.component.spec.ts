@@ -9,7 +9,7 @@ import { of } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import {
-  mockCall, mockJob, mockWebsocket,
+  mockCall, mockJob, mockWebSocket,
 } from 'app/core/testing/utils/mock-websocket.utils';
 import { IdmapBackend, IdmapName, IdmapSslEncryptionMode } from 'app/enums/idmap.enum';
 import { helptextIdmap } from 'app/helptext/directory-service/idmap';
@@ -60,7 +60,7 @@ describe('IdmapFormComponent', () => {
       MockComponent(WithManageCertificatesLinkComponent),
     ],
     providers: [
-      mockWebsocket([
+      mockWebSocket([
         mockCall('idmap.create'),
         mockCall('idmap.update'),
         mockJob('idmap.clear_idmap_cache', fakeSuccessfulJob()),
@@ -117,17 +117,17 @@ describe('IdmapFormComponent', () => {
     });
 
     it('creates a new idmap when form is submitted for creation', async () => {
-      await form.fillForm({
-        Name: 'Custom Value',
-      });
-      await form.fillForm({
-        'Custom Name': 'Test',
-        'Idmap Backend': 'AD',
-        'Range Low': 2000000,
-        'Range High': 2000001,
-        'Schema Mode': 'SFU',
-        'Unix Primary Group': true,
-      });
+      await form.fillForm(
+        {
+          Name: 'Custom Value',
+          'Custom Name': 'Test',
+          'Idmap Backend': 'AD',
+          'Range Low': 2000000,
+          'Range High': 2000001,
+          'Schema Mode': 'SFU',
+          'Unix Primary Group': true,
+        },
+      );
 
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
@@ -146,13 +146,13 @@ describe('IdmapFormComponent', () => {
     });
 
     it('sets name to TDB and hides it when SMB - Primary Domain is selected', async () => {
-      await form.fillForm({
-        Name: 'SMB - Primary Domain',
-      });
-      await form.fillForm({
-        'Range Low': 2000000,
-        'Range High': 2000001,
-      });
+      await form.fillForm(
+        {
+          Name: 'SMB - Primary Domain',
+          'Range Low': 2000000,
+          'Range High': 2000001,
+        },
+      );
 
       const controls = await form.getLabels();
       expect(controls).not.toContain('Idmap Backend');
@@ -197,14 +197,13 @@ describe('IdmapFormComponent', () => {
     it('asks and clears idmap cache after form is saved', async () => {
       const confirm = spectator.inject(DialogService).confirm as jest.Mock;
       confirm.mockReturnValue(of(true));
-
-      await form.fillForm({
-        Name: 'SMB - Primary Domain',
-      });
-      await form.fillForm({
-        'Range Low': 2000000,
-        'Range High': 2000001,
-      });
+      await form.fillForm(
+        {
+          Name: 'SMB - Primary Domain',
+          'Range Low': 2000000,
+          'Range High': 2000001,
+        },
+      );
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 

@@ -3,18 +3,16 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { provideMockStore } from '@ngrx/store/testing';
+import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { SedUser } from 'app/enums/sed-user.enum';
-import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
+import { ChainedRef } from 'app/modules/ix-forms/components/ix-slide-in/chained-component-ref';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { SelfEncryptingDriveFormComponent } from 'app/pages/system/advanced/self-encrypting-drive/self-encrypting-drive-form/self-encrypting-drive-form.component';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
-import { selectAdvancedConfig } from 'app/store/system-config/system-config.selectors';
 
 describe('SedFormComponent', () => {
   let spectator: Spectator<SelfEncryptingDriveFormComponent>;
@@ -27,23 +25,18 @@ describe('SedFormComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
-      mockWebsocket([
+      mockWebSocket([
         mockCall('system.advanced.update'),
         mockCall('system.advanced.sed_global_password', '123'),
       ]),
-      mockProvider(IxSlideInService),
-      provideMockStore({
-        selectors: [
-          {
-            selector: selectAdvancedConfig,
-            value: {
-              sed_user: SedUser.User,
-            },
-          },
-        ],
+      mockProvider(IxChainedSlideInService, {
+        pushComponent: jest.fn(() => of({ response: true, error: null })),
+        components$: of([]),
       }),
-      mockProvider(IxSlideInRef),
-      { provide: SLIDE_IN_DATA, useValue: undefined },
+      mockProvider(ChainedRef, {
+        close: jest.fn(),
+        getData: jest.fn(() => ({ sedPassword: '123', sedUser: SedUser.User })),
+      }),
       mockAuth(),
     ],
   });

@@ -20,6 +20,8 @@ import { ThemeService } from 'app/services/theme/theme.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store/index';
 
+// TODO: Fix change detection when the opportunity to test is there.
+// eslint-disable-next-line @angular-eslint/prefer-on-push-component-change-detection
 @Component({
   selector: 'ix-enclosure-disks-mini',
   templateUrl: './enclosure-disks-mini.component.html',

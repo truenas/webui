@@ -6,7 +6,7 @@ import { of } from 'rxjs';
 import { GiB } from 'app/constants/bytes.constant';
 import { CoreComponents } from 'app/core/core-components.module';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { DiskType } from 'app/enums/disk-type.enum';
 import { EnclosureUi } from 'app/interfaces/enclosure.interface';
 import { UnusedDisk } from 'app/interfaces/storage.interface';
@@ -41,7 +41,7 @@ describe('PoolManagerComponent – start over functionality', () => {
     ],
     providers: [
       ...commonProviders,
-      mockWebsocket([
+      mockWebSocket([
         mockCall('pool.validate_name', true),
         mockCall('disk.get_unused', [
           {

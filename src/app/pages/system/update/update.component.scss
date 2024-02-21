@@ -81,7 +81,7 @@
 
 .update-button {
   margin-right: 3px;
-  top: 6px;
+  margin-top: 6px;
 }
 
 #update-spinner { bottom: 0;
@@ -161,4 +161,8 @@ mat-card {
 
 .form-control {
   border-color: var(--primary) !important;
+}
+
+.upgrades-table {
+  width: 100%;
 }

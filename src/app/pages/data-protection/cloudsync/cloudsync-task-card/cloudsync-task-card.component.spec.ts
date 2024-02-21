@@ -8,8 +8,8 @@ import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
-import { CloudsyncProviderName } from 'app/enums/cloudsync-provider.enum';
+import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { CloudSyncProviderName } from 'app/enums/cloudsync-provider.enum';
 import { Direction } from 'app/enums/direction.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { TransferMode } from 'app/enums/transfer-mode.enum';
@@ -21,15 +21,16 @@ import { IxTable2Harness } from 'app/modules/ix-table2/components/ix-table2/ix-t
 import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
 import { selectJobs } from 'app/modules/jobs/store/job.selectors';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
-import { CloudsyncFormComponent } from 'app/pages/data-protection/cloudsync/cloudsync-form/cloudsync-form.component';
+import { CloudSyncFormComponent } from 'app/pages/data-protection/cloudsync/cloudsync-form/cloudsync-form.component';
 import {
-  CloudsyncRestoreDialogComponent,
+  CloudSyncRestoreDialogComponent,
 } from 'app/pages/data-protection/cloudsync/cloudsync-restore-dialog/cloudsync-restore-dialog.component';
 import {
   CloudSyncTaskCardComponent,
 } from 'app/pages/data-protection/cloudsync/cloudsync-task-card/cloudsync-task-card.component';
-import { CloudsyncWizardComponent } from 'app/pages/data-protection/cloudsync/cloudsync-wizard/cloudsync-wizard.component';
+import { CloudSyncWizardComponent } from 'app/pages/data-protection/cloudsync/cloudsync-wizard/cloudsync-wizard.component';
 import { DialogService } from 'app/services/dialog.service';
+import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LocaleService } from 'app/services/locale.service';
 import { TaskService } from 'app/services/task.service';
@@ -58,7 +59,7 @@ describe('CloudSyncTaskCardComponent', () => {
       credentials: {
         id: 1,
         name: 'Google Drive',
-        provider: CloudsyncProviderName.GoogleDrive,
+        provider: CloudSyncProviderName.GoogleDrive,
         attributes: {
           client_id: '',
           client_secret: '',
@@ -116,7 +117,7 @@ describe('CloudSyncTaskCardComponent', () => {
           },
         ],
       }),
-      mockWebsocket([
+      mockWebSocket([
         mockCall('cloudsync.query', cloudsyncTasks),
         mockCall('cloudsync.delete'),
         mockCall('cloudsync.update'),
@@ -124,12 +125,15 @@ describe('CloudSyncTaskCardComponent', () => {
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
-      mockProvider(IxSlideInService, {
-        open: jest.fn(() => {
-          return { slideInClosed$: of() };
-        }),
+      mockProvider(IxChainedSlideInService, {
+        pushComponent: jest.fn(() => of()),
       }),
       mockProvider(IxSlideInRef),
+      mockProvider(IxSlideInService, {
+        open: jest.fn(() => ({
+          slideInClosed$: of(),
+        })),
+      }),
       mockProvider(MatDialog, {
         open: jest.fn(() => ({
           afterClosed: () => of(true),
@@ -152,7 +156,7 @@ describe('CloudSyncTaskCardComponent', () => {
   it('should show table rows', async () => {
     const expectedRows = [
       ['Description', 'Frequency', 'Next Run', 'Last Run', 'Enabled', 'State', ''],
-      ['custom-cloudsync', 'Every hour, every day', 'in 1 day', '1 min. ago', '', 'FINISHED', ''],
+      ['custom-cloudsync', 'Every hour, every day', 'Disabled', '1 min. ago', '', 'FINISHED', ''],
     ];
 
     const cells = await table.getCellTexts();
@@ -163,19 +167,21 @@ describe('CloudSyncTaskCardComponent', () => {
     const editButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'edit' }), 1, 6);
     await editButton.click();
 
-    expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(CloudsyncFormComponent, {
-      data: cloudsyncTasks[0],
-      wide: true,
-    });
+    expect(spectator.inject(IxChainedSlideInService).pushComponent).toHaveBeenCalledWith(
+      CloudSyncFormComponent,
+      true,
+      cloudsyncTasks[0],
+    );
   });
 
   it('shows form to create new CloudSync Task when Add button is pressed', async () => {
     const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
     await addButton.click();
 
-    expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(CloudsyncWizardComponent, {
-      wide: true,
-    });
+    expect(spectator.inject(IxChainedSlideInService).pushComponent).toHaveBeenCalledWith(
+      CloudSyncWizardComponent,
+      true,
+    );
   });
 
   it('shows confirmation dialog when Run Now button is pressed', async () => {
@@ -210,7 +216,7 @@ describe('CloudSyncTaskCardComponent', () => {
     const runNowButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'restore' }), 1, 6);
     await runNowButton.click();
 
-    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(CloudsyncRestoreDialogComponent, {
+    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(CloudSyncRestoreDialogComponent, {
       data: 3,
     });
   });

@@ -34,14 +34,14 @@
 </div>
 <div class="cell cell-ram" [matTooltip]="'Memory usage of app' | translate">
   <span *ngIf="app.stats && app.stats.memory !== undefined; else notAvailable">
-    {{ (app.stats.memory) * 1048576 | filesize: { standard: 'iec' } }}
+    {{ app.stats.memory | ixFileSize }}
   </span>
 </div>
 <div class="cell cell-network" [matTooltip]="'Incoming / Outgoing network traffic' | translate">
   <span *ngIf="app.stats && app.stats.network?.incoming !== undefined; else notAvailable">
-    {{ app.stats.network.incoming | filesize: { standard: 'iec' } }}
-    /
-    {{ app.stats.network.outgoing | filesize: { standard: 'iec' } }}
+    {{ app.stats.network.incoming | ixFileSize: { baseUnit: 'b', base: 10 } }}/s
+    -
+    {{ app.stats.network.outgoing | ixFileSize: { baseUnit: 'b', base: 10 } }}/s
   </span>
 </div>
 <div class="cell cell-update">
@@ -54,7 +54,7 @@
     ></ix-icon>
   </ng-container>
 </div>
-<div class="cell cell-action">
+<div *ixRequiresRoles="requiredRoles" class="cell cell-action">
   <button
     *ngIf="isAppStopped"
     mat-icon-button

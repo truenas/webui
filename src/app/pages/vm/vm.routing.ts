@@ -12,7 +12,7 @@ export const routes: Routes = [
     component: VmListComponent,
   },
   {
-    path: 'serial/:pk',
+    path: ':pk/serial',
     component: VmSerialShellComponent,
     data: { title: T('VM Serial Shell'), breadcrumb: null },
   },

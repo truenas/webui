@@ -8,6 +8,7 @@
 
   <div class="upload-button">
     <button
+      *ixRequiresRoles="requiredRoles"
       mat-button
       ixTest="upload-image-file"
       (click)="onUploadIsoClicked()"

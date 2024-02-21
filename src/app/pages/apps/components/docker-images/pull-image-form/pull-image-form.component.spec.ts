@@ -3,7 +3,8 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { mockJob, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
@@ -27,7 +28,7 @@ describe('PullImageFormComponent', () => {
       EntityModule,
     ],
     providers: [
-      mockWebsocket([
+      mockWebSocket([
         mockJob('container.image.pull'),
       ]),
       mockProvider(IxSlideInService),
@@ -35,6 +36,7 @@ describe('PullImageFormComponent', () => {
       { provide: SLIDE_IN_DATA, useValue: undefined },
       mockProvider(FormErrorHandlerService),
       mockProvider(DialogService),
+      mockAuth(),
     ],
   });
 

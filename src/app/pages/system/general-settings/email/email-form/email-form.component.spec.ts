@@ -2,13 +2,12 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatDialog } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
-import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
+import { of } from 'rxjs';
+import { MockWebSocketService } from 'app/core/testing/classes/mock-websocket.service';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockEntityJobComponentRef } from 'app/core/testing/utils/mock-entity-job-component-ref.utils';
-import { mockCall, mockJob, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { mockWindow } from 'app/core/testing/utils/mock-window.utils';
 import { MailSecurity } from 'app/enums/mail-security.enum';
 import { ProductType } from 'app/enums/product-type.enum';
@@ -60,7 +59,7 @@ describe('EmailFormComponent', () => {
           { selector: selectSystemInfo, value: { hostname: 'host.truenas.com' } },
         ],
       }),
-      mockWebsocket([
+      mockWebSocket([
         mockCall('mail.local_administrator_email', 'authuser@ixsystems.com'),
         mockCall('mail.update'),
         mockCall('user.query', [
@@ -68,11 +67,12 @@ describe('EmailFormComponent', () => {
         ] as User[]),
         mockJob('mail.send'),
       ]),
-      mockProvider(DialogService),
-      mockProvider(SnackbarService),
-      mockProvider(MatDialog, {
-        open: jest.fn(() => mockEntityJobComponentRef),
+      mockProvider(DialogService, {
+        jobDialog: () => ({
+          afterClosed: () => of(null),
+        }),
       }),
+      mockProvider(SnackbarService),
       mockProvider(SystemGeneralService, {
         getProductType: () => ProductType.Scale,
       }),
@@ -110,7 +110,7 @@ describe('EmailFormComponent', () => {
     });
 
     it('checks if root email is set when Send Test Mail is pressed and shows a warning if it\'s not', async () => {
-      spectator.inject(MockWebsocketService).mockCall('mail.local_administrator_email', null);
+      spectator.inject(MockWebSocketService).mockCall('mail.local_administrator_email', null);
 
       const button = await loader.getHarness(MatButtonHarness.with({ text: 'Send Test Mail' }));
       await button.click();
@@ -191,7 +191,7 @@ describe('EmailFormComponent', () => {
       const sendTestEmailButton = await loader.getHarness(MatButtonHarness.with({ text: 'Send Test Mail' }));
       await sendTestEmailButton.click();
 
-      expect(mockEntityJobComponentRef.componentInstance.setCall).toHaveBeenCalledWith(
+      expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith(
         'mail.send',
         [
           {
@@ -270,7 +270,7 @@ describe('EmailFormComponent', () => {
       const sendTestEmailButton = await loader.getHarness(MatButtonHarness.with({ text: 'Send Test Mail' }));
       await sendTestEmailButton.click();
 
-      expect(mockEntityJobComponentRef.componentInstance.setCall).toHaveBeenCalledWith(
+      expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith(
         'mail.send',
         [
           {

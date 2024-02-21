@@ -1,17 +1,23 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
-import { map, switchMap } from 'rxjs';
-import { shareReplay, startWith } from 'rxjs/operators';
+import {
+  Subject, combineLatest, map, switchMap,
+} from 'rxjs';
+import {
+  distinctUntilChanged, filter, shareReplay, startWith, tap,
+} from 'rxjs/operators';
 import { toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import { AdvancedSettingsService } from 'app/pages/system/advanced/advanced-settings.service';
 import {
   StorageSettingsFormComponent,
 } from 'app/pages/system/advanced/storage/storage-settings-form/storage-settings-form.component';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 import { waitForAdvancedConfig } from 'app/store/system-config/system-config.selectors';
 
+@UntilDestroy()
 @Component({
   selector: 'ix-storage-card',
   styleUrls: ['../../common-card.scss'],
@@ -19,10 +25,27 @@ import { waitForAdvancedConfig } from 'app/store/system-config/system-config.sel
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class StorageCardComponent {
-  systemDatasetPool$ = this.slideInService.onClose$.pipe(
+  private readonly reloadConfig$ = new Subject<void>();
+  private storageSettings: { systemDsPool: string; swapSize: number };
+
+  readonly storageSettings$ = this.reloadConfig$.pipe(
     startWith(undefined),
-    switchMap(() => this.ws.call('systemdataset.config')),
-    map((config) => config.pool),
+    switchMap(() => {
+      const pool$ = this.ws.call('systemdataset.config').pipe(
+        map((config) => config.pool),
+      );
+      const swapSize$ = this.store$.pipe(
+        waitForAdvancedConfig,
+        distinctUntilChanged((previous, current) => previous.swapondrive === current.swapondrive),
+        map((state) => state.swapondrive),
+      );
+      return combineLatest([
+        pool$,
+        swapSize$,
+      ]);
+    }),
+    map(([systemDsPool, swapSize]) => ({ systemDsPool, swapSize })),
+    tap((config) => this.storageSettings = config),
     toLoadingState(),
     shareReplay({
       refCount: false,
@@ -30,21 +53,19 @@ export class StorageCardComponent {
     }),
   );
 
-  readonly swapSize$ = this.store$.pipe(
-    waitForAdvancedConfig,
-    map((state) => state.swapondrive),
-    toLoadingState(),
-  );
-
   constructor(
-    private slideInService: IxSlideInService,
+    private chainedSlideIns: IxChainedSlideInService,
     private advancedSettings: AdvancedSettingsService,
     private store$: Store<AppState>,
     private ws: WebSocketService,
   ) {}
 
-  async onConfigurePressed(): Promise<void> {
-    await this.advancedSettings.showFirstTimeWarningIfNeeded();
-    this.slideInService.open(StorageSettingsFormComponent);
+  onConfigurePressed(): void {
+    this.advancedSettings.showFirstTimeWarningIfNeeded().pipe(
+      switchMap(() => this.chainedSlideIns.pushComponent(StorageSettingsFormComponent, false, this.storageSettings)),
+      filter((response) => !!response.response),
+      tap(() => this.reloadConfig$.next()),
+      untilDestroyed(this),
+    ).subscribe();
   }
 }

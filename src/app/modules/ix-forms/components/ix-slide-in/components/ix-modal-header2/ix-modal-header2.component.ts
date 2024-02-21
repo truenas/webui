@@ -1,10 +1,9 @@
 import {
-  AfterViewInit, Component, Inject, Input,
+  AfterViewInit, ChangeDetectionStrategy, Component, Input,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { Subject } from 'rxjs';
-import { SLIDE_IN_CLOSER } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
+import { ChainedRef } from 'app/modules/ix-forms/components/ix-slide-in/chained-component-ref';
 import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 
 @UntilDestroy()
@@ -12,6 +11,7 @@ import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.servic
   selector: 'ix-modal-header2',
   templateUrl: './ix-modal-header2.component.html',
   styleUrls: ['./ix-modal-header2.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class IxModalHeader2Component implements AfterViewInit {
   @Input() title: string;
@@ -24,7 +24,7 @@ export class IxModalHeader2Component implements AfterViewInit {
   constructor(
     private translate: TranslateService,
     private chainedSlideIn: IxChainedSlideInService,
-    @Inject(SLIDE_IN_CLOSER) protected slideInCloser$: Subject<unknown>,
+    private chainedSlideInRef: ChainedRef<unknown>,
   ) {}
 
   ngAfterViewInit(): void {
@@ -41,6 +41,6 @@ export class IxModalHeader2Component implements AfterViewInit {
   }
 
   close(): void {
-    this.slideInCloser$.next(null);
+    this.chainedSlideInRef.close({ response: false, error: null });
   }
 }

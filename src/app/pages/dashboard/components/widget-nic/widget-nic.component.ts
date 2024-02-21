@@ -17,8 +17,8 @@ import { ResourcesUsageStore } from 'app/pages/dashboard/store/resources-usage-s
 import { deepCloneState } from 'app/pages/dashboard/utils/deep-clone-state.helper';
 
 interface NetTraffic {
-  sent: number;
-  received: number;
+  bitsSent: number;
+  bitsReceived: number;
   linkState: LinkState;
 }
 
@@ -126,8 +126,8 @@ export class WidgetNicComponent extends WidgetComponent implements AfterViewInit
       untilDestroyed(this),
     ).subscribe((nicUpdate) => {
       this.traffic = {
-        sent: nicUpdate.sent_bytes_rate,
-        received: nicUpdate.received_bytes_rate,
+        bitsSent: nicUpdate.sent_bytes_rate * 8,
+        bitsReceived: nicUpdate.received_bytes_rate * 8,
         linkState: nicUpdate.link_state,
       };
       this.cdr.markForCheck();

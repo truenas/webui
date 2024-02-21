@@ -1,8 +1,8 @@
 import { environment } from 'environments/environment';
 import { MockEnclosureConfig } from 'app/core/testing/interfaces/mock-enclosure-utils.interface';
-import { ApiCallDirectory, ApiCallMethod } from 'app/interfaces/api/api-call-directory.interface';
+import { ApiCallMethod, ApiCallResponse } from 'app/interfaces/api/api-call-directory.interface';
 import { ApiJobMethod } from 'app/interfaces/api/api-job-directory.interface';
-import { IncomingWebsocketMessage, ResultMessage } from 'app/interfaces/api-message.interface';
+import { IncomingWebSocketMessage, ResultMessage } from 'app/interfaces/api-message.interface';
 import { Disk, UnusedDisk } from 'app/interfaces/storage.interface';
 import { SystemInfo } from 'app/interfaces/system-info.interface';
 import { MockStorageGenerator } from './mock-storage-generator.utils';
@@ -43,7 +43,7 @@ export class MockEnclosureUtils {
 
   overrideMessage<K extends ApiCallMethod | ApiJobMethod>(data: ResultMessage, method: K): ResultMessage {
     const mockData = this.enclosureOverrides(data.result, method);
-    const mockMessage: IncomingWebsocketMessage = {
+    const mockMessage: IncomingWebSocketMessage = {
       id: data.id,
       msg: data.msg,
       result: mockData,
@@ -92,7 +92,7 @@ export class MockEnclosureUtils {
     return mockPayload;
   }
 
-  private mockPoolQuery(): ApiCallDirectory['pool.query']['response'] {
+  private mockPoolQuery(): ApiCallResponse<'pool.query'> {
     if (this.mockConfig.diskOptions.mockPools) {
       return [this.mockStorage.poolState];
     }
@@ -102,7 +102,7 @@ export class MockEnclosureUtils {
     return null;
   }
 
-  private mockPoolDatasetQuery(): ApiCallDirectory['pool.dataset.query']['response'] {
+  private mockPoolDatasetQuery(): ApiCallResponse<'pool.dataset.query'> {
     if (this.mockConfig.diskOptions.mockPools) {
       return [mockRootDataset(this.mockStorage.poolState.name)];
     }
@@ -112,7 +112,7 @@ export class MockEnclosureUtils {
     return null;
   }
 
-  private mockSystemInfo(data: SystemInfo): ApiCallDirectory['system.info']['response'] {
+  private mockSystemInfo(data: SystemInfo): ApiCallResponse<'system.info'> {
     return {
       ...data,
       system_manufacturer: 'iXsystems',
@@ -122,7 +122,7 @@ export class MockEnclosureUtils {
     };
   }
 
-  private mockDiskGetUnused(): ApiCallDirectory['disk.get_unused']['response'] {
+  private mockDiskGetUnused(): ApiCallResponse<'disk.get_unused'> {
     return this.mockStorage.disks.filter((disk: Disk) => {
       return !Object.keys(disk).includes('pool') || typeof disk.pool === 'undefined' || disk.pool === null;
     }).map((disk: Disk) => {

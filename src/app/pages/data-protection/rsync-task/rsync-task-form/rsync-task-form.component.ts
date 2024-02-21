@@ -1,33 +1,27 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit, ViewContainerRef,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
 import { Validators } from '@angular/forms';
-import { MatDialog } from '@angular/material/dialog';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { BehaviorSubject, Observable, of } from 'rxjs';
-import { filter, map, switchMap } from 'rxjs/operators';
+import { Observable, of } from 'rxjs';
 import { Direction } from 'app/enums/direction.enum';
 import { mntPath } from 'app/enums/mnt-path.enum';
 import { Role } from 'app/enums/role.enum';
 import { RsyncMode, RsyncSshConnectMode } from 'app/enums/rsync-mode.enum';
 import { helptextRsyncForm } from 'app/helptext/data-protection/rsync/rsync-form';
-import { KeychainSshCredentials } from 'app/interfaces/keychain-credential.interface';
-import { newOption, Option } from 'app/interfaces/option.interface';
+import { newOption } from 'app/interfaces/option.interface';
 import { RsyncTask, RsyncTaskUpdate } from 'app/interfaces/rsync-task.interface';
 import { UserComboboxProvider } from 'app/modules/ix-forms/classes/user-combobox-provider';
-import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
+import { ChainedRef } from 'app/modules/ix-forms/components/ix-slide-in/chained-component-ref';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { portRangeValidator } from 'app/modules/ix-forms/validators/range-validation/range-validation';
 import { crontabToSchedule } from 'app/modules/scheduler/utils/crontab-to-schedule.utils';
 import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { SshConnectionFormComponent } from 'app/pages/credentials/backup-credentials/ssh-connection-form/ssh-connection-form.component';
 import { FilesystemService } from 'app/services/filesystem.service';
-import { KeychainCredentialService } from 'app/services/keychain-credential.service';
 import { UserService } from 'app/services/user.service';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -84,7 +78,7 @@ export class RsyncTaskFormComponent implements OnInit {
 
   isLoading = false;
 
-  readonly requiresRoles = [Role.FullAdmin];
+  readonly requiredRoles = [Role.FullAdmin];
 
   readonly helptext = helptextRsyncForm;
 
@@ -103,10 +97,10 @@ export class RsyncTaskFormComponent implements OnInit {
     { label: this.translate.instant('SSH connection from the keychain'), value: RsyncSshConnectMode.KeyChain },
   ]);
 
-  readonly sshCredentialsOptions$ = new BehaviorSubject<Option[]>([]);
-
   readonly userProvider = new UserComboboxProvider(this.userService);
   readonly treeNodeProvider = this.filesystemService.getFilesystemNodeProvider({ directoriesOnly: true });
+
+  private editingTask: RsyncTask;
 
   constructor(
     private translate: TranslateService,
@@ -117,13 +111,11 @@ export class RsyncTaskFormComponent implements OnInit {
     private userService: UserService,
     private filesystemService: FilesystemService,
     private snackbar: SnackbarService,
-    private keychainCredentials: KeychainCredentialService,
-    private matDialog: MatDialog,
     private validatorsService: IxValidatorsService,
-    private slideInRef: IxSlideInRef<RsyncTaskFormComponent>,
-    private viewContainerRef: ViewContainerRef,
-    @Inject(SLIDE_IN_DATA) private editingTask: RsyncTask,
-  ) {}
+    private chainedSlideInRef: ChainedRef<RsyncTask>,
+  ) {
+    this.editingTask = this.chainedSlideInRef.getData();
+  }
 
   get isModuleMode(): boolean {
     return this.form.value.mode === RsyncMode.Module;
@@ -138,9 +130,6 @@ export class RsyncTaskFormComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.loadSshConnectionsOptions();
-    this.listenForNewSshConnection();
-
     if (this.editingTask) {
       this.setTaskForEdit();
     }
@@ -191,14 +180,14 @@ export class RsyncTaskFormComponent implements OnInit {
     }
 
     request$.pipe(untilDestroyed(this)).subscribe({
-      next: () => {
+      next: (task) => {
         if (this.isNew) {
           this.snackbar.success(this.translate.instant('Task created'));
         } else {
           this.snackbar.success(this.translate.instant('Task updated'));
         }
         this.isLoading = false;
-        this.slideInRef.close(true);
+        this.chainedSlideInRef.close({ response: task, error: null });
       },
       error: (error: unknown) => {
         this.isLoading = false;
@@ -208,37 +197,5 @@ export class RsyncTaskFormComponent implements OnInit {
         this.cdr.markForCheck();
       },
     });
-  }
-
-  private loadSshConnectionsOptions(): void {
-    this.keychainCredentials.getSshCredentialsOptions()
-      .pipe(untilDestroyed(this))
-      .subscribe((options) => this.sshCredentialsOptions$.next(options));
-  }
-
-  private listenForNewSshConnection(): void {
-    this.form.controls.ssh_credentials.valueChanges.pipe(
-      filter((value) => value === newOption),
-      switchMap(() => this.openSshConnectionDialog()),
-      filter(Boolean),
-      switchMap((newCredential): Observable<[KeychainSshCredentials, Option[]]> => {
-        return this.keychainCredentials.getSshCredentialsOptions().pipe(
-          map((options) => [newCredential, options]),
-        );
-      }),
-      untilDestroyed(this),
-    ).subscribe(([newCredential, sshConnections]) => {
-      this.sshCredentialsOptions$.next(sshConnections);
-      this.form.controls.ssh_credentials.setValue(newCredential.id);
-    });
-  }
-
-  private openSshConnectionDialog(): Observable<KeychainSshCredentials> {
-    return this.matDialog.open(SshConnectionFormComponent, {
-      data: { dialog: true },
-      width: '600px',
-      panelClass: 'ix-overflow-dialog',
-      viewContainerRef: this.viewContainerRef,
-    }).afterClosed();
   }
 }

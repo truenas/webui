@@ -9,7 +9,7 @@ import { MockComponents, MockInstance } from 'ng-mocks';
 import { of } from 'rxjs';
 import { GiB } from 'app/constants/bytes.constant';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { AclMode } from 'app/enums/acl-type.enum';
 import { DatasetPreset } from 'app/enums/dataset.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
@@ -42,18 +42,20 @@ describe('DatasetFormComponent', () => {
   let spectator: Spectator<DatasetFormComponent>;
   let loader: HarnessLoader;
 
+  const datasetPresetForm = new FormGroup({
+    create_smb: new FormControl(true),
+    create_nfs: new FormControl(true),
+    smb_name: new FormControl('new_sbm_name'),
+  });
+
   MockInstance(NameAndOptionsSectionComponent, 'form', new FormGroup({
     name: new FormControl(''),
     parent: new FormControl(''),
     share_type: new FormControl(DatasetPreset.Generic),
   }));
-  MockInstance(NameAndOptionsSectionComponent, 'datasetPresetForm', new FormGroup({
-    create_smb: new FormControl(true),
-    create_nfs: new FormControl(true),
-    smb_name: new FormControl('new_sbm_name'),
-  }));
-  MockInstance(NameAndOptionsSectionComponent, 'isCreatingSmb', true);
-  MockInstance(NameAndOptionsSectionComponent, 'isCreatingNfs', true);
+  MockInstance(NameAndOptionsSectionComponent, 'datasetPresetForm', datasetPresetForm);
+  MockInstance(NameAndOptionsSectionComponent, 'canCreateSmb', true);
+  MockInstance(NameAndOptionsSectionComponent, 'canCreateNfs', true);
   MockInstance(NameAndOptionsSectionComponent, 'getPayload', () => ({
     name: 'dataset',
   }));
@@ -89,7 +91,7 @@ describe('DatasetFormComponent', () => {
       ),
     ],
     providers: [
-      mockWebsocket([
+      mockWebSocket([
         mockCall('sharing.smb.create'),
         mockCall('sharing.nfs.create'),
         mockCall('pool.dataset.create', { id: 'saved-id' } as Dataset),
@@ -197,6 +199,31 @@ describe('DatasetFormComponent', () => {
         checkIfServiceIsEnabled({ serviceName: ServiceName.Cifs }),
       );
       expect(spectator.inject(Store).dispatch).toHaveBeenCalledWith(
+        checkIfServiceIsEnabled({ serviceName: ServiceName.Nfs }),
+      );
+    });
+
+    it('skips creation new SMB and NFS when checkboxes are set to false', async () => {
+      datasetPresetForm.controls.create_smb.setValue(false);
+      datasetPresetForm.controls.create_nfs.setValue(false);
+
+      jest.spyOn(spectator.inject(Store), 'dispatch');
+      const submit = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      await submit.click();
+
+      expect(spectator.inject(WebSocketService).call).not.toHaveBeenCalledWith('sharing.smb.create', [{
+        name: 'new_sbm_name',
+        path: '/mnt/saved-id',
+      }]);
+
+      expect(spectator.inject(WebSocketService).call).not.toHaveBeenCalledWith('sharing.nfs.create', [{
+        path: '/mnt/saved-id',
+      }]);
+
+      expect(spectator.inject(Store).dispatch).not.toHaveBeenCalledWith(
+        checkIfServiceIsEnabled({ serviceName: ServiceName.Cifs }),
+      );
+      expect(spectator.inject(Store).dispatch).not.toHaveBeenCalledWith(
         checkIfServiceIsEnabled({ serviceName: ServiceName.Nfs }),
       );
     });

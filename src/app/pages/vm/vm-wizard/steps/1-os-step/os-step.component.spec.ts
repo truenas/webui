@@ -2,7 +2,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import {
   VmBootloader, VmDisplayType, VmOs, VmTime,
 } from 'app/enums/vm.enum';
@@ -21,7 +21,7 @@ describe('OsStepComponent', () => {
       IxFormsModule,
     ],
     providers: [
-      mockWebsocket([
+      mockWebSocket([
         mockCall('vm.query', []),
         mockCall('vm.bootloader_options', {
           UEFI: 'UEFI',
@@ -77,12 +77,13 @@ describe('OsStepComponent', () => {
 
   it('shows Hyper-V Enlightenments checkbox when Windows is selected as OS', async () => {
     await fillForm();
-    await form.fillForm({
-      'Guest Operating System': 'Windows',
-    });
-    await form.fillForm({
-      'Enable Hyper-V Enlightenments': true,
-    });
+
+    await form.fillForm(
+      {
+        'Guest Operating System': 'Windows',
+        'Enable Hyper-V Enlightenments': true,
+      },
+    );
 
     expect(spectator.component.form.value).toMatchObject({
       os: VmOs.Windows,

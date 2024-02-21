@@ -2,13 +2,12 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatDialog } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
-import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
-import { mockEntityJobComponentRef } from 'app/core/testing/utils/mock-entity-job-component-ref.utils';
+import { MockWebSocketService } from 'app/core/testing/classes/mock-websocket.service';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import {
-  mockCall, mockJob, mockWebsocket,
+  mockCall, mockJob, mockWebSocket,
 } from 'app/core/testing/utils/mock-websocket.utils';
 import { helptextSystemKmip } from 'app/helptext/system/kmip';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
@@ -30,7 +29,7 @@ describe('KmipComponent', () => {
       IxFormsModule,
     ],
     providers: [
-      mockWebsocket([
+      mockWebSocket([
         mockCall('kmip.config', {
           server: 'kmip.truenas.com',
           enabled: false,
@@ -46,10 +45,11 @@ describe('KmipComponent', () => {
         mockCall('kmip.sync_keys'),
         mockJob('kmip.update'),
       ]),
-      mockProvider(MatDialog, {
-        open: () => mockEntityJobComponentRef,
+      mockProvider(DialogService, {
+        jobDialog: jest.fn(() => ({
+          afterClosed: () => of(null),
+        })),
       }),
-      mockProvider(DialogService),
       mockProvider(SnackbarService),
       mockProvider(SystemGeneralService, {
         getCertificates: () => of([
@@ -61,6 +61,7 @@ describe('KmipComponent', () => {
           { id: 2, name: 'Secondary Authority' },
         ]),
       }),
+      mockAuth(),
     ],
   });
 
@@ -102,7 +103,8 @@ describe('KmipComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(mockEntityJobComponentRef.componentInstance.setCall).toHaveBeenCalledWith(
+    expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
+    expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith(
       'kmip.update',
       [{
         port: 5697,
@@ -132,7 +134,7 @@ describe('KmipComponent', () => {
 
   describe('pending sync', () => {
     beforeEach(() => {
-      spectator.inject(MockWebsocketService).mockCall('kmip.kmip_sync_pending', true);
+      spectator.inject(MockWebSocketService).mockCall('kmip.kmip_sync_pending', true);
       spectator.component.ngOnInit();
     });
 

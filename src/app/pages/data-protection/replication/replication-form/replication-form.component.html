@@ -1,7 +1,7 @@
-<ix-modal-header
+<ix-modal-header2
   [title]="isNew ? ('Add Replication Task' | translate) : ('Edit Replication Task' | translate)"
   [loading]="isLoading"
-></ix-modal-header>
+></ix-modal-header2>
 <mat-card>
   <mat-card-content>
     <form class="ix-form-container" (submit)="onSubmit()">
@@ -42,7 +42,7 @@
 
       <div class="form-actions">
         <button
-          *ixRequiresRoles="requiresRoles"
+          *ixRequiresRoles="requiredRoles"
           mat-button
           type="submit"
           color="primary"

@@ -1,7 +1,7 @@
-<ix-modal-header
+<ix-modal-header2
   [title]="'Audit' | translate"
   [loading]="isFormLoading"
-></ix-modal-header>
+></ix-modal-header2>
 
 <mat-card>
   <mat-card-content>
@@ -50,7 +50,7 @@
 
       <ix-form-actions>
         <button
-          *ixRequiresRoles="[Role.FullAdmin]"
+          *ixRequiresRoles="[Role.SystemAuditWrite]"
           mat-button
           type="submit"
           color="primary"

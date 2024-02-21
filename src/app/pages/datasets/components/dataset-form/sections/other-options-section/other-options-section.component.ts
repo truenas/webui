@@ -12,7 +12,6 @@ import { FormBuilder } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
-import filesize from 'filesize';
 import {
   combineLatest, Observable, of, take,
 } from 'rxjs';
@@ -38,6 +37,7 @@ import { OnOff, onOffLabels } from 'app/enums/on-off.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { inherit, WithInherit } from 'app/enums/with-inherit.enum';
 import { ZfsPropertySource } from 'app/enums/zfs-property-source.enum';
+import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
 import { choicesToOptions, singleArrayToOptions } from 'app/helpers/operators/options.operators';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextDatasetForm } from 'app/helptext/storage/volumes/datasets/dataset-form';
@@ -318,9 +318,10 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
     this.snapdevOptions$ = this.defaultSnapdevOptions$.pipe(
       this.datasetFormService.addInheritOption(this.parent.snapdev.value),
     );
+
     this.recordsizeOptions$ = this.defaultRecordSizeOptions$.pipe(
       this.datasetFormService.addInheritOption(
-        filesize(this.parent.recordsize.parsed, { standard: 'iec' }),
+        buildNormalizedFileSize(this.parent.recordsize.parsed),
       ),
     );
     this.specialSmallBlockSizeOptions$ = this.defaultSpecialSmallBlockSizeOptions$.pipe(

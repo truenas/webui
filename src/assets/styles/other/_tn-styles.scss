@@ -87,6 +87,8 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   .mat-mdc-menu-item .theme-picker-swatch .mat-icon:not([color]),
   .mat-mdc-menu-item-submenu-trigger::after {
     @include variable(color, --fg1, $fg1);
+    align-items: center;
+    display: flex;
   }
 
   .mat-toolbar,
@@ -128,7 +130,6 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     @include variable(background, --bg2, $bg2, !important);
     background-color: rgba(0, 0, 0, 0.75);
   }
-
 
   .mat-bg-accent,
   .mat-raised-button.mat-accent,
@@ -1186,7 +1187,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
 
   // focus state styles for mat-form-field
   .mat-mdc-form-field.mat-focused:focus-within {
-    outline: 1px solid var(--primary);
+    outline: 1.5px solid var(--primary);
   }
 
   .error-warning-icon {

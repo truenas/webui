@@ -7,8 +7,9 @@ import { SpectatorRouting } from '@ngneat/spectator';
 import { mockProvider, createRoutingFactory } from '@ngneat/spectator/jest';
 import { of, pipe } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { IscsiExtent, IscsiInitiatorGroup } from 'app/interfaces/iscsi.interface';
+import { AppCommonModule } from 'app/modules/common/app-common.module';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTable2Harness } from 'app/modules/ix-table2/components/ix-table2/ix-table2.harness';
@@ -36,7 +37,11 @@ describe('InitiatorListComponent', () => {
 
   const createComponent = createRoutingFactory({
     component: InitiatorListComponent,
-    imports: [IxTable2Module, AppLoaderModule],
+    imports: [
+      IxTable2Module,
+      AppLoaderModule,
+      AppCommonModule,
+    ],
     providers: [
       mockAuth(),
       mockProvider(AppLoaderService),
@@ -45,7 +50,7 @@ describe('InitiatorListComponent', () => {
       mockProvider(AppLoaderService, {
         withLoader: jest.fn(() => pipe()),
       }),
-      mockWebsocket([
+      mockWebSocket([
         mockCall('iscsi.initiator.query', initiators),
         mockCall('iscsi.initiator.delete'),
       ]),

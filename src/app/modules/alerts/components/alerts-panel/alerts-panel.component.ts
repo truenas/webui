@@ -61,8 +61,12 @@ export class AlertsPanelComponent implements OnInit {
   }
 
   navigateTo(route: string[], extras?: NavigationExtras): void {
-    this.store$.dispatch(alertPanelClosed());
+    this.closePanel();
     this.router.navigate(route, extras);
+  }
+
+  closePanel(): void {
+    this.store$.dispatch(alertPanelClosed());
   }
 
   private checkHaStatus(): void {

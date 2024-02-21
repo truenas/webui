@@ -8,7 +8,7 @@ import { provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
 import { allCommands } from 'app/constants/all-commands.constant';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { Choices } from 'app/interfaces/choices.interface';
 import { Group } from 'app/interfaces/group.interface';
 import { SmbShare } from 'app/interfaces/smb-share.interface';
@@ -70,7 +70,7 @@ describe('UserFormComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
-      mockWebsocket([
+      mockWebSocket([
         mockCall('user.query'),
         mockCall('user.create'),
         mockCall('user.update'),
@@ -252,25 +252,25 @@ describe('UserFormComponent', () => {
 
     it('sends an update payload to websocket and closes modal when save is pressed', async () => {
       const form = await loader.getHarness(IxFormHarness);
-      await form.fillForm({
-        'Auxiliary Groups': ['mock-group', 'test-group'],
-        'Full Name': 'updated',
-        'Home Directory': '/home/updated',
-        'Primary Group': 'mock-group',
-        'Create Home Directory': true,
-        'Samba Authentication': false,
-        'Lock User': true,
-        Shell: 'zsh',
-        Username: 'updated',
-        'Allow all sudo commands': false,
-        'Allowed sudo commands': ['pwd'],
-        'Allowed sudo commands with no password': [],
-        'Allow all sudo commands with no password': true,
-      });
 
-      await form.fillForm({
-        'Home Directory Permissions': '755',
-      });
+      await form.fillForm(
+        {
+          'Auxiliary Groups': ['mock-group', 'test-group'],
+          'Full Name': 'updated',
+          'Home Directory': '/home/updated',
+          'Primary Group': 'mock-group',
+          'Create Home Directory': true,
+          'Samba Authentication': false,
+          'Lock User': true,
+          Shell: 'zsh',
+          Username: 'updated',
+          'Allow all sudo commands': false,
+          'Allowed sudo commands': ['pwd'],
+          'Allowed sudo commands with no password': [],
+          'Allow all sudo commands with no password': true,
+          'Home Directory Permissions': '755',
+        },
+      );
 
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();

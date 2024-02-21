@@ -8,6 +8,10 @@
     height: 100%;
   }
 
+  ix-table2 {
+    height: 100%;
+  }
+
   .user-avatar,
   .user-avatar > div {
     align-items: center;
@@ -20,7 +24,12 @@
 
   .sticky-header {
     height: inherit;
+    min-height: 48px;
     top: 38px;
+
+    @media(max-width: $breakpoint-md) {
+      position: static;
+    }
 
     > thead {
       align-items: center;
@@ -38,6 +47,12 @@
     flex: 2;
     max-width: 100%;
 
+    @media(max-width: $breakpoint-xs) {
+      table {
+        width: auto;
+      }
+    }
+
     table tbody tr,
     .audit-header-row tr {
       align-items: center;
@@ -50,8 +65,12 @@
 
         th,
         td {
-          padding: 0 4px !important;
+          padding: 0 8px !important;
         }
+      }
+
+      @media(max-width: $breakpoint-xs) {
+        grid-template-columns: 90px 80px 100px 110px 110px;
       }
     }
 

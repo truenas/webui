@@ -1,11 +1,16 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { shareReplay, startWith, switchMap } from 'rxjs';
+import {
+  Subject, filter, shareReplay, startWith, switchMap, tap,
+} from 'rxjs';
 import { toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
+import { AdvancedSettingsService } from 'app/pages/system/advanced/advanced-settings.service';
 import { AuditFormComponent } from 'app/pages/system/advanced/audit/audit-form/audit-form.component';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 
+@UntilDestroy(this)
 @Component({
   selector: 'ix-audit-card',
   styleUrls: ['../../common-card.scss'],
@@ -13,7 +18,8 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AuditCardComponent {
-  auditConfig$ = this.slideInService.onClose$.pipe(
+  private readonly reloadConfig$ = new Subject<void>();
+  auditConfig$ = this.reloadConfig$.pipe(
     startWith(undefined),
     switchMap(() => this.ws.call('audit.config')),
     toLoadingState(),
@@ -24,13 +30,21 @@ export class AuditCardComponent {
   );
 
   constructor(
-    private slideInService: IxSlideInService,
+    private chainedSlideIns: IxChainedSlideInService,
     private ws: WebSocketService,
     private translate: TranslateService,
+    private advancedSettingsService: AdvancedSettingsService,
   ) {}
 
   onConfigurePressed(): void {
-    this.slideInService.open(AuditFormComponent);
+    this.advancedSettingsService.showFirstTimeWarningIfNeeded().pipe(
+      switchMap(() => this.chainedSlideIns.pushComponent(AuditFormComponent)),
+      filter((response) => !!response.response),
+      tap(() => {
+        this.reloadConfig$.next();
+      }),
+      untilDestroyed(this),
+    ).subscribe();
   }
 
   getEndValue(value: number, processedString: string): string {

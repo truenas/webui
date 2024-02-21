@@ -8,11 +8,10 @@ import { provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockEntityJobComponentRef } from 'app/core/testing/utils/mock-entity-job-component-ref.utils';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { ProductType } from 'app/enums/product-type.enum';
 import { SystemSecurityConfig } from 'app/interfaces/system-security-config.interface';
-import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
+import { ChainedRef } from 'app/modules/ix-forms/components/ix-slide-in/chained-component-ref';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -44,7 +43,7 @@ describe('SystemSecurityFormComponent', () => {
           { selector: selectSystemInfo, value: { hostname: 'host.truenas.com' } },
         ],
       }),
-      mockWebsocket([
+      mockWebSocket([
         mockCall('system.security.update'),
       ]),
       mockProvider(DialogService, {
@@ -57,8 +56,10 @@ describe('SystemSecurityFormComponent', () => {
       mockProvider(SystemGeneralService, {
         getProductType: () => ProductType.Scale,
       }),
-      mockProvider(IxSlideInRef),
-      { provide: SLIDE_IN_DATA, useValue: fakeSystemSecurityConfig },
+      mockProvider(ChainedRef, {
+        close: jest.fn(),
+        getData: jest.fn(() => fakeSystemSecurityConfig),
+      }),
       mockAuth(),
     ],
   });

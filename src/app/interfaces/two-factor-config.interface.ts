@@ -21,8 +21,3 @@ export interface UserTwoFactorConfig {
   interval: number;
   otp_digits: number;
 }
-
-export interface UserTwoFactorConfigUpdate {
-  interval: number;
-  otp_digits: number;
-}

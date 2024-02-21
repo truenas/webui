@@ -8,7 +8,7 @@ import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockEntityJobComponentRef } from 'app/core/testing/utils/mock-entity-job-component-ref.utils';
 import {
-  mockCall, mockJob, mockWebsocket,
+  mockCall, mockJob, mockWebSocket,
 } from 'app/core/testing/utils/mock-websocket.utils';
 import { CertificateCreateType } from 'app/enums/certificate-create-type.enum';
 import { DnsAuthenticator } from 'app/interfaces/dns-authenticator.interface';
@@ -33,7 +33,7 @@ describe('CertificateAcmeAddComponent', () => {
       IxFormsModule,
     ],
     providers: [
-      mockWebsocket([
+      mockWebSocket([
         mockCall('certificate.acme_server_choices', {
           'https://acme-staging-v02.api.letsencrypt.org/directory': "Let's Encrypt Staging Directory",
           'https://acme-v02.api.letsencrypt.org/directory': "Let's Encrypt Production Directory",
@@ -49,7 +49,7 @@ describe('CertificateAcmeAddComponent', () => {
           },
         ] as DnsAuthenticator[]),
         mockJob('certificate.create', fakeSuccessfulJob()),
-        mockCall('certificate.get_domain_names', ['DNS:truenas.com', 'DNS:truenas.io']),
+        mockCall('webui.crypto.get_certificate_domain_names', ['DNS:truenas.com', 'DNS:truenas.io']),
       ]),
       mockProvider(IxSlideInRef),
       mockProvider(DialogService),
@@ -75,13 +75,14 @@ describe('CertificateAcmeAddComponent', () => {
 
     expect(labels).toContain('DNS:truenas.com');
     expect(labels).toContain('DNS:truenas.io');
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('certificate.get_domain_names', [2]);
+    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('webui.crypto.get_certificate_domain_names', [2]);
   });
 
   it('creates an ACME certificate when form is submitted', async () => {
     await form.fillForm({
       Identifier: 'new',
       'Terms of Service': true,
+      'Custom ACME Server Directory URI': false,
       'ACME Server Directory URI': "Let's Encrypt Staging Directory",
       'DNS:truenas.com': 'cloudflare',
       'DNS:truenas.io': 'route53',
@@ -94,6 +95,40 @@ describe('CertificateAcmeAddComponent', () => {
       'certificate.create',
       [{
         acme_directory_uri: 'https://acme-staging-v02.api.letsencrypt.org/directory',
+        create_type: CertificateCreateType.CreateAcme,
+        csr_id: 2,
+        dns_mapping: {
+          'DNS:truenas.com': 1,
+          'DNS:truenas.io': 2,
+        },
+        name: 'new',
+        renew_days: 10,
+        tos: true,
+      }],
+    );
+    expect(mockEntityJobComponentRef.componentInstance.submit).toHaveBeenCalled();
+    expect(spectator.inject(IxSlideInRef).close).toHaveBeenCalled();
+  });
+
+  it('allows custom ACME Server Directory URI', async () => {
+    await form.fillForm(
+      {
+        Identifier: 'new',
+        'Terms of Service': true,
+        'Custom ACME Server Directory URI': true,
+        'DNS:truenas.com': 'cloudflare',
+        'DNS:truenas.io': 'route53',
+        'ACME Server Directory URI': 'https://acme-staging-v02.api.letsencrypt.org/directory-custom',
+      },
+    );
+
+    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+    await saveButton.click();
+
+    expect(mockEntityJobComponentRef.componentInstance.setCall).toHaveBeenCalledWith(
+      'certificate.create',
+      [{
+        acme_directory_uri: 'https://acme-staging-v02.api.letsencrypt.org/directory-custom',
         create_type: CertificateCreateType.CreateAcme,
         csr_id: 2,
         dns_mapping: {

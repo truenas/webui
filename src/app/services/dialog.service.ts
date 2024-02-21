@@ -1,23 +1,23 @@
 import { Injectable } from '@angular/core';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { UntilDestroy } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
 import { Observable, of } from 'rxjs';
 import { JobProgressDialogRef } from 'app/classes/job-progress-dialog-ref.class';
-import { JobProgressDialog } from 'app/classes/job-progress-dialog.class';
-import { ApiJobDirectory, ApiJobMethod } from 'app/interfaces/api/api-job-directory.interface';
+import { ApiJobMethod, ApiJobResponse } from 'app/interfaces/api/api-job-directory.interface';
 import {
   ConfirmOptions,
   ConfirmOptionsWithSecondaryCheckbox,
   DialogWithSecondaryCheckboxResult,
 } from 'app/interfaces/dialog.interface';
 import { ErrorReport } from 'app/interfaces/error-report.interface';
-import { Job, JobProgress } from 'app/interfaces/job.interface';
+import { Job } from 'app/interfaces/job.interface';
 import { ConfirmDialogComponent } from 'app/modules/common/dialog/confirm-dialog/confirm-dialog.component';
 import { ErrorDialogComponent } from 'app/modules/common/dialog/error-dialog/error-dialog.component';
 import { FullScreenDialogComponent } from 'app/modules/common/dialog/full-screen-dialog/full-screen-dialog.component';
 import { GeneralDialogComponent, GeneralDialogConfig } from 'app/modules/common/dialog/general-dialog/general-dialog.component';
 import { InfoDialogComponent } from 'app/modules/common/dialog/info-dialog/info-dialog.component';
-import { JobProgressDialogComponent, JobProgressDialogConfig } from 'app/modules/common/dialog/job-progress/job-progress-dialog.component';
+import { JobProgressDialogComponent } from 'app/modules/common/dialog/job-progress/job-progress-dialog.component';
 import { MultiErrorDialogComponent } from 'app/modules/common/dialog/multi-error-dialog/multi-error-dialog.component';
 
 @UntilDestroy()
@@ -25,7 +25,10 @@ import { MultiErrorDialogComponent } from 'app/modules/common/dialog/multi-error
   providedIn: 'root',
 })
 export class DialogService {
-  constructor(private matDialog: MatDialog) { }
+  constructor(
+    private matDialog: MatDialog,
+    private translate: TranslateService,
+  ) { }
 
   confirm(confirmOptions: ConfirmOptions): Observable<boolean>;
   confirm(confirmOptions: ConfirmOptionsWithSecondaryCheckbox): Observable<DialogWithSecondaryCheckboxResult>;
@@ -126,31 +129,48 @@ export class DialogService {
     }
   }
 
-  jobProgress<M extends ApiJobMethod>(
-    job$: Observable<Job<ApiJobDirectory[M]['response']>>,
-    { title, description, showRealtimeLogs }: {
+  /**
+   * Usage:
+   * ```
+   * this.dialogService.jobDialog(
+   *   this.ws.call('pool.create', [pool]),
+   * )
+   *  .afterClosed()
+   *  .pipe(untilDestroyed(this))
+   *  .subscribe({
+   *    next: (result) => {
+   *      // Job completed
+   *    },
+   *    complete: () => {
+   *      // Job dialog closed for any reason: job completed, errored, aborted or dialog minimized.
+   *    },
+   *    error: (error) => {
+   *      // Job errored or aborted. Handle error.
+   *    },
+   * });
+   * ```
+   *
+   * If you need more control over JobProgressDialogComponent, use it directly.
+   */
+  jobDialog<M extends ApiJobMethod, R extends ApiJobResponse<M>>(
+    job$: Observable<Job<R>>,
+    { title, description, canMinimize }: {
       title?: string;
       description?: string;
-      showRealtimeLogs?: boolean;
-    } = {},
-  ): JobProgressDialogRef {
-    const jobProgressDialog: JobProgressDialog = new JobProgressDialog();
 
-    const dialogRef = this.matDialog.open(JobProgressDialogComponent, {
+      // Use for long jobs where it's not required for user to wait for the result.
+      // Note that `complete` handler will be called immediately and `next` will never be called.
+      canMinimize?: boolean;
+    } = {},
+  ): JobProgressDialogRef<R> {
+    const matDialogRef = this.matDialog.open(JobProgressDialogComponent<R>, {
       data: {
         job$,
-        callbacks: {
-          onSuccess: (job: Job) => jobProgressDialog.success(job),
-          onProgress: (progress: JobProgress) => jobProgressDialog.progress(progress),
-          onAbort: (job: Job) => jobProgressDialog.abort(job),
-          onFailure: (job: Job) => jobProgressDialog.failure(job),
-        },
-        config: { title, description },
-        showRealtimeLogs,
-      } as JobProgressDialogConfig,
+        title,
+        description,
+        canMinimize,
+      },
     });
-    jobProgressDialog.matDialogRef = dialogRef;
-
-    return new JobProgressDialogRef(jobProgressDialog);
+    return new JobProgressDialogRef<R>(matDialogRef, this.translate);
   }
 }

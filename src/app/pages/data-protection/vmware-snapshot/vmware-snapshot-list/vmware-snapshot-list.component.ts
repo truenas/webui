@@ -48,11 +48,16 @@ export class VmwareSnapshotListComponent implements OnInit {
       propertyName: 'datastore',
       sortable: true,
     }),
+    textColumn({
+      title: this.translate.instant('State'),
+      propertyName: 'state',
+      sortable: true,
+    }),
   ], {
     rowTestId: (row) => 'vmware-snapshot-' + row.hostname,
   });
 
-  readonly requiresRoles = [Role.FullAdmin];
+  readonly requiredRoles = [Role.FullAdmin];
 
   constructor(
     protected translate: TranslateService,

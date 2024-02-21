@@ -6,6 +6,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { filter, tap } from 'rxjs/operators';
 import { JobState } from 'app/enums/job-state.enum';
+import { Role } from 'app/enums/role.enum';
 import { helptextApps } from 'app/helptext/apps/apps';
 import { Catalog } from 'app/interfaces/catalog.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
@@ -22,6 +23,7 @@ import {
   ManageCatalogSummaryDialogComponent,
 } from 'app/pages/apps/components/catalogs/manage-catalog-summary/manage-catalog-summary-dialog.component';
 import { DialogService } from 'app/services/dialog.service';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { CatalogEditFormComponent } from './catalog-edit-form/catalog-edit-form.component';
@@ -62,6 +64,8 @@ export class CatalogsComponent implements OnInit {
     rowTestId: (row) => 'catalog-' + row.label,
   });
 
+  protected readonly requiredRoles = [Role.CatalogWrite];
+
   constructor(
     private matDialog: MatDialog,
     private dialogService: DialogService,
@@ -69,6 +73,7 @@ export class CatalogsComponent implements OnInit {
     private slideInService: IxSlideInService,
     private translate: TranslateService,
     protected emptyService: EmptyService,
+    private errorHandler: ErrorHandlerService,
   ) {}
 
   ngOnInit(): void {
@@ -172,6 +177,10 @@ export class CatalogsComponent implements OnInit {
       this.dialogService.closeAllDialogs();
       this.refresh();
     });
+    dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((error) => {
+      dialogRef.close();
+      this.errorHandler.showErrorModal(error);
+    });
   }
 
   syncRow(row: Catalog): void {
@@ -185,6 +194,10 @@ export class CatalogsComponent implements OnInit {
     dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
       this.dialogService.closeAllDialogs();
       this.refresh();
+    });
+    dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((error) => {
+      dialogRef.close();
+      this.errorHandler.showErrorModal(error);
     });
   }
 }

@@ -3,7 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { Role } from 'app/enums/role.enum';
 import { Privilege } from 'app/interfaces/privilege.interface';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
@@ -22,7 +22,7 @@ const fakePrivilegeDataSource: Privilege[] = [
     web_shell: true,
     local_groups: [{}],
     ds_groups: [{}, {}],
-    roles: [Role.SharingManager],
+    roles: [Role.SharingAdmin],
   },
   {
     id: 2,
@@ -30,7 +30,7 @@ const fakePrivilegeDataSource: Privilege[] = [
     web_shell: false,
     local_groups: [],
     ds_groups: [{}],
-    roles: [Role.FullAdmin, Role.Readonly],
+    roles: [Role.FullAdmin, Role.ReadonlyAdmin],
   },
 ] as Privilege[];
 
@@ -45,9 +45,10 @@ describe('PrivilegeListComponent', () => {
       IxTable2Module,
     ],
     providers: [
-      mockWebsocket([
+      mockWebSocket([
         mockCall('privilege.query', fakePrivilegeDataSource),
         mockCall('privilege.delete', true),
+        mockCall('group.query', []),
       ]),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
@@ -71,8 +72,8 @@ describe('PrivilegeListComponent', () => {
   it('should show table rows', async () => {
     const expectedRows = [
       ['Name', 'Roles', 'Local Groups', 'DS Groups', 'Web Shell Access', ''],
-      ['privilege1', 'Sharing Manager', '1', '2', 'Yes', ''],
-      ['privilege2', 'Full Admin, Readonly', '0', '1', 'No', ''],
+      ['privilege1', 'Sharing Admin', '1', '2', 'Yes', ''],
+      ['privilege2', 'Full Admin, Readonly Admin', '0', '1', 'No', ''],
     ];
 
     const cells = await table.getCellTexts();

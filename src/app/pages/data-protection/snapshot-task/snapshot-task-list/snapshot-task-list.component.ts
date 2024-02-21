@@ -1,19 +1,21 @@
-import { Component } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import {
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+} from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { filter } from 'rxjs';
-import { YesNoPipe } from 'app/core/pipes/yes-no.pipe';
-import { JobState } from 'app/enums/job-state.enum';
+import {
+  Observable, filter, switchMap, take, tap,
+} from 'rxjs';
 import { Role } from 'app/enums/role.enum';
 import { formatDistanceToNowShortened } from 'app/helpers/format-distance-to-now-shortened';
-import {
-  PeriodicSnapshotTask,
-  PeriodicSnapshotTaskUi,
-  PeriodicSnapshotTaskUpdate,
-} from 'app/interfaces/periodic-snapshot-task.interface';
-import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-table.component';
-import { EntityTableAction, EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.interface';
+import { PeriodicSnapshotTaskUi } from 'app/interfaces/periodic-snapshot-task.interface';
+import { AsyncDataProvider } from 'app/modules/ix-table2/classes/async-data-provider/async-data-provider';
+import { stateButtonColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-state-button/ix-cell-state-button.component';
+import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
+import { Column, ColumnComponent } from 'app/modules/ix-table2/interfaces/table-column.interface';
+import { createTable } from 'app/modules/ix-table2/utils';
+import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
 import { extractActiveHoursFromCron, scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
 import { SnapshotTaskFormComponent } from 'app/pages/data-protection/snapshot-task/snapshot-task-form/snapshot-task-form.component';
 import { DialogService } from 'app/services/dialog.service';
@@ -25,55 +27,115 @@ import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
-  template: '<ix-entity-table [title]="title" [conf]="this"></ix-entity-table>',
+  styleUrls: ['./snapshot-task-list.component.scss'],
+  templateUrl: './snapshot-task-list.component.html',
   providers: [TaskService, StorageService],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SnapshotTaskListComponent implements EntityTableConfig<PeriodicSnapshotTaskUi> {
-  title = this.translate.instant('Periodic Snapshot Tasks');
-  queryCall = 'pool.snapshottask.query' as const;
-  updateCall = 'pool.snapshottask.update' as const;
-  wsDelete = 'pool.snapshottask.delete' as const;
-  routeAdd: string[] = ['tasks', 'snapshot', 'add'];
-  routeAddTooltip = this.translate.instant('Add Periodic Snapshot Task');
-  routeEdit: string[] = ['tasks', 'snapshot', 'edit'];
-  entityList: EntityTableComponent<PeriodicSnapshotTaskUi>;
+export class SnapshotTaskListComponent implements OnInit {
+  snapshotTasks: PeriodicSnapshotTaskUi[] = [];
   filterValue = '';
+  dataProvider: AsyncDataProvider<PeriodicSnapshotTaskUi>;
+  readonly requiredRoles = [Role.SnapshotTaskWrite];
 
-  columns = [
-    { name: this.translate.instant('Pool/Dataset'), prop: 'dataset', always_display: true },
-    { name: this.translate.instant('Recursive'), prop: 'recursive' },
-    { name: this.translate.instant('Naming Schema'), prop: 'naming_schema' },
-    { name: this.translate.instant('When'), prop: 'when' },
-    { name: this.translate.instant('Frequency'), prop: 'frequency', enableMatTooltip: true },
-    { name: this.translate.instant('Next Run'), prop: 'next_run', hidden: true },
-    { name: this.translate.instant('Last Run'), prop: 'last_run', hidden: true },
-    { name: this.translate.instant('Keep snapshot for'), prop: 'keepfor', hidden: true },
-    { name: this.translate.instant('Legacy'), prop: 'legacy', hidden: true },
-    { name: this.translate.instant('VMware Sync'), prop: 'vmware_sync', hidden: true },
-    { name: this.translate.instant('Enabled'), prop: 'enabled', selectable: true },
-    {
-      name: this.translate.instant('State'), prop: 'state', state: 'state', button: true,
-    },
-  ];
-  rowIdentifier = 'id';
-  config = {
-    paging: true,
-    sorting: { columns: this.columns },
-    deleteMsg: {
-      title: this.translate.instant('Periodic Snapshot Task'),
-      key_props: ['dataset', 'naming_schema', 'keepfor'],
-    },
-  };
+  protected columns = createTable<PeriodicSnapshotTaskUi>([
+    textColumn({
+      identifier: true,
+      title: this.translate.instant('Pool/Dataset'),
+      propertyName: 'dataset',
+    }),
+    textColumn({
+      title: this.translate.instant('Recursive'),
+      getValue: (row) => (row.recursive ? this.translate.instant('Yes') : this.translate.instant('No')),
+      propertyName: 'recursive',
+    }),
+    textColumn({
+      title: this.translate.instant('Naming Schema'),
+      propertyName: 'naming_schema',
+    }),
+    textColumn({
+      title: this.translate.instant('When'),
+      propertyName: 'when',
+      getValue: (row) => {
+        const cronSchedule = scheduleToCrontab(row.schedule);
+        const activeHours = extractActiveHoursFromCron(cronSchedule);
+        return this.translate.instant('From {task_begin} to {task_end}', {
+          task_begin: activeHours.start,
+          task_end: activeHours.end,
+        });
+      },
+    }),
+    textColumn({
+      title: this.translate.instant('Frequency'),
+      propertyName: 'frequency',
+      getValue: (row) => this.taskService.getTaskCronDescription(scheduleToCrontab(row.schedule)),
+    }),
+    textColumn({
+      hidden: true,
+      title: this.translate.instant('Next Run'),
+      propertyName: 'next_run',
+      getValue: (task) => {
+        if (task.enabled) {
+          return task.schedule
+            ? formatDistanceToNowShortened(this.taskService.getTaskNextTime(scheduleToCrontab(task.schedule)))
+            : this.translate.instant('N/A');
+        }
+        return this.translate.instant('Disabled');
+      },
+    }),
+    textColumn({
+      title: this.translate.instant('Last Run'),
+      propertyName: 'last_run',
+      hidden: true,
+      getValue: (row) => {
+        if (row.state?.datetime?.$date) {
+          return formatDistanceToNowShortened(row.state?.datetime?.$date);
+        }
+        return this.translate.instant('N/A');
+      },
+    }),
+    textColumn({
+      title: this.translate.instant('Keep snapshot for'),
+      getValue: (row) => `${row.lifetime_value} ${row.lifetime_unit}(S)`.toLowerCase(),
+      propertyName: 'keepfor',
+      hidden: true,
+    }),
+    textColumn({
+      title: this.translate.instant('Legacy'),
+      hidden: true,
+      getValue: (row) => (row.legacy ? this.translate.instant('Yes') : this.translate.instant('No')),
+      propertyName: 'legacy',
+    }),
+    textColumn({
+      title: this.translate.instant('VMware Sync'),
+      hidden: true,
+      getValue: (row) => (row.vmware_sync ? this.translate.instant('Yes') : this.translate.instant('No')),
+      propertyName: 'vmware_sync',
+    }),
+    textColumn({
+      title: this.translate.instant('Enabled'),
+      propertyName: 'enabled',
+      getValue: (task) => (task.enabled ? this.translate.instant('Yes') : this.translate.instant('No')),
+    }),
+    stateButtonColumn({
+      title: this.translate.instant('State'),
+      getValue: (row) => row.state.state,
+      cssClass: 'state-button',
+    }),
+  ], {
+    rowTestId: (row) => 'snapshot-task-' + row.dataset + '-' + row.naming_schema,
+  });
 
-  customActions = [{
-    id: 'snapshots',
-    name: this.translate.instant('Snapshots'),
-    function: () => {
-      this.router.navigate(['/datasets/snapshots']);
-    },
-  }];
+  get emptyConfigService(): EmptyService {
+    return this.emptyService;
+  }
+
+  get hiddenColumns(): Column<PeriodicSnapshotTaskUi, ColumnComponent<PeriodicSnapshotTaskUi>>[] {
+    return this.columns.filter((column) => column?.hidden);
+  }
 
   constructor(
+    protected emptyService: EmptyService,
     private dialogService: DialogService,
     private ws: WebSocketService,
     private taskService: TaskService,
@@ -81,97 +143,73 @@ export class SnapshotTaskListComponent implements EntityTableConfig<PeriodicSnap
     private errorHandler: ErrorHandlerService,
     private slideInService: IxSlideInService,
     private route: ActivatedRoute,
-    private router: Router,
-    private yesNoPipe: YesNoPipe,
+    private cdr: ChangeDetectorRef,
   ) {
     this.filterValue = this.route.snapshot.paramMap.get('dataset') || '';
   }
 
-  afterInit(entityList: EntityTableComponent<PeriodicSnapshotTaskUi>): void {
-    this.entityList = entityList;
+  ngOnInit(): void {
+    const tasks$ = this.ws.call('pool.snapshottask.query').pipe(
+      tap((tasks) => {
+        this.snapshotTasks = tasks as PeriodicSnapshotTaskUi[];
+      }),
+      untilDestroyed(this),
+    );
+
+    this.dataProvider = new AsyncDataProvider<PeriodicSnapshotTaskUi>(tasks$ as Observable<PeriodicSnapshotTaskUi[]>);
+
+    this.getSnapshotTasks();
+
+    tasks$.pipe(take(1), untilDestroyed(this)).subscribe(() => this.filterUpdated(this.filterValue));
   }
 
-  resourceTransformIncomingRestData(tasks: PeriodicSnapshotTask[]): PeriodicSnapshotTaskUi[] {
-    return tasks.map((task) => {
-      const cronSchedule = scheduleToCrontab(task.schedule);
-      const activeHours = extractActiveHoursFromCron(cronSchedule);
-
-      const transformedTask = {
-        ...task,
-        keepfor: `${task.lifetime_value} ${task.lifetime_unit}(S)`,
-        when: this.translate.instant('From {task_begin} to {task_end}', {
-          task_begin: activeHours.start,
-          task_end: activeHours.end,
-        }),
-        cron_schedule: cronSchedule,
-      } as PeriodicSnapshotTaskUi;
-
-      return {
-        ...transformedTask,
-        last_run:
-          transformedTask.state?.datetime?.$date
-            ? formatDistanceToNowShortened(transformedTask.state?.datetime?.$date)
-            : this.translate.instant('N/A'),
-        frequency: this.taskService.getTaskCronDescription(transformedTask.cron_schedule),
-        next_run: this.taskService.getTaskNextRun(transformedTask.cron_schedule),
-      };
-    });
+  getSnapshotTasks(): void {
+    this.dataProvider.load();
   }
 
-  getActions(): EntityTableAction<PeriodicSnapshotTaskUi>[] {
-    return [{
-      id: 'edit',
-      icon: 'edit',
-      label: 'Edit',
-      onClick: (row: PeriodicSnapshotTaskUi) => {
-        this.doEdit(row.id);
-      },
-    }, {
-      id: 'delete',
-      icon: 'delete',
-      label: 'Delete',
-      requiresRoles: [Role.FullAdmin],
-      onClick: (rowinner: PeriodicSnapshotTaskUi) => {
-        this.entityList.doDelete(rowinner);
-      },
-    }] as EntityTableAction[];
+  columnsChange(columns: typeof this.columns): void {
+    this.columns = [...columns];
+    this.cdr.detectChanges();
+    this.cdr.markForCheck();
   }
 
-  onButtonClick(row: PeriodicSnapshotTaskUi): void {
-    this.stateButton(row);
-  }
-
-  stateButton(row: PeriodicSnapshotTaskUi): void {
-    if (row.state.state === JobState.Error) {
-      this.dialogService.error({ title: row.state.state, message: row.state.error });
-    }
-  }
-
-  onCheckboxChange(row: PeriodicSnapshotTaskUi): void {
-    row.enabled = !row.enabled;
-    this.ws.call(this.updateCall, [row.id, { enabled: row.enabled } as PeriodicSnapshotTaskUpdate])
-      .pipe(untilDestroyed(this))
-      .subscribe({
-        next: (task) => {
-          if (!task) {
-            row.enabled = !row.enabled;
-          }
-        },
-        error: (error: unknown) => {
-          row.enabled = !row.enabled;
-          this.dialogService.error(this.errorHandler.parseError(error));
-        },
-      });
+  filterUpdated(query: string): void {
+    this.filterValue = query;
+    this.dataProvider.setRows(this.snapshotTasks.filter(this.filterTask));
   }
 
   doAdd(): void {
     const slideInRef = this.slideInService.open(SnapshotTaskFormComponent, { wide: true });
-    slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => this.entityList.getData());
+    slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => this.getSnapshotTasks());
   }
 
-  doEdit(id: number): void {
-    const snapshotTask = this.entityList.rows.find((row) => row.id === id);
-    const slideInRef = this.slideInService.open(SnapshotTaskFormComponent, { wide: true, data: snapshotTask });
-    slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => this.entityList.getData());
+  doEdit(row: PeriodicSnapshotTaskUi): void {
+    const slideInRef = this.slideInService.open(SnapshotTaskFormComponent, { wide: true, data: row });
+    slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => this.getSnapshotTasks());
   }
+
+  doDelete(snapshotTask: PeriodicSnapshotTaskUi): void {
+    this.dialogService.confirm({
+      title: this.translate.instant('Confirmation'),
+      message: this.translate.instant('Delete Periodic Snapshot Task <b>"{value}"</b>?', {
+        value: `${snapshotTask.dataset} - ${snapshotTask.naming_schema}`,
+      }),
+    }).pipe(
+      filter(Boolean),
+      switchMap(() => this.ws.call('pool.snapshottask.delete', [snapshotTask.id])),
+      untilDestroyed(this),
+    ).subscribe({
+      next: () => {
+        this.getSnapshotTasks();
+      },
+      error: (err) => {
+        this.dialogService.error(this.errorHandler.parseError(err));
+      },
+    });
+  }
+
+  private filterTask = (task: PeriodicSnapshotTaskUi): boolean => {
+    return task.dataset.toLowerCase().includes(this.filterValue.toLowerCase())
+      || task.naming_schema.toLowerCase().includes(this.filterValue.toLowerCase());
+  };
 }

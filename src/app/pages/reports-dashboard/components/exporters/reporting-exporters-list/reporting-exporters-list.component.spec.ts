@@ -3,8 +3,10 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { Spectator, createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { ReportingExporter, ReportingExporterKey } from 'app/interfaces/reporting-exporters.interface';
+import { AppCommonModule } from 'app/modules/common/app-common.module';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTable2Harness } from 'app/modules/ix-table2/components/ix-table2/ix-table2.harness';
@@ -37,9 +39,10 @@ describe('ReportingExportersListComponent', () => {
     component: ReportingExporterListComponent,
     imports: [
       IxTable2Module,
+      AppCommonModule,
     ],
     providers: [
-      mockWebsocket([
+      mockWebSocket([
         mockCall('reporting.exporters.query', exporters),
         mockCall('reporting.exporters.delete'),
         mockCall('reporting.exporters.update'),
@@ -51,6 +54,7 @@ describe('ReportingExportersListComponent', () => {
       mockProvider(IxSlideInService, {
         open: jest.fn(() => ({ slideInClosed$: of(true) })),
       }),
+      mockAuth(),
     ],
   });
 
@@ -60,7 +64,7 @@ describe('ReportingExportersListComponent', () => {
     table = await loader.getHarness(IxTable2Harness);
   });
 
-  it('shows acurate page title', () => {
+  it('shows accurate page title', () => {
     const title = spectator.query('h3');
     expect(title).toHaveText('Reporting Exporters');
   });

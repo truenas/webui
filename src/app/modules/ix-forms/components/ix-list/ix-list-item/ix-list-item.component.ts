@@ -1,4 +1,5 @@
 import {
+  ChangeDetectionStrategy,
   Component, EventEmitter, Input, Output,
 } from '@angular/core';
 
@@ -6,6 +7,7 @@ import {
   selector: 'ix-list-item',
   templateUrl: './ix-list-item.component.html',
   styleUrls: ['./ix-list-item.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class IxListItemComponent {
   @Input() canDelete = true;

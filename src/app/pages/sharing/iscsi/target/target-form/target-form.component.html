@@ -101,12 +101,12 @@
 
       <ix-form-actions>
         <button
-          *ixRequiresRoles="requiresRoles"
+          *ixRequiresRoles="requiredRoles"
           mat-button
           type="submit"
           color="primary"
           ixTest="save"
-          [disabled]="form.invalid || isLoading"
+          [disabled]="form.invalid || isLoading || (form.statusChanges | async) === 'PENDING'"
         >
           {{ 'Save' | translate }}
         </button>

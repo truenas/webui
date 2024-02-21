@@ -1,8 +1,18 @@
+@import 'scss-imports/splitview';
+
 .columns {
   display: flex;
+
+  @media (max-width: $breakpoint-tablet) {
+    display: block;
+  }
 
   > * {
     display: block;
     width: 50%;
+
+    @media (max-width: $breakpoint-tablet) {
+      width: 100%;
+    }
   }
 }

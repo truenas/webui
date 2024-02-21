@@ -16,6 +16,10 @@
   margin-left: 10px;
   margin-top: 5px;
 
+  @media(max-width: $breakpoint-sm) {
+    display: none;
+  }
+
   .healthy {
     color: var(--green);
   }
@@ -92,6 +96,10 @@ mat-grid-tile {
           margin-right: 6px;
           overflow: hidden;
           text-overflow: ellipsis;
+        }
+
+        .dash {
+          width: 100%;
         }
       }
 

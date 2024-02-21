@@ -9,13 +9,14 @@ import { Subscription } from 'rxjs';
 import {
   filter, map, switchMap, take,
 } from 'rxjs/operators';
+import { Role } from 'app/enums/role.enum';
 import { helptextSystemFailover } from 'app/helptext/system/failover';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { AuthService } from 'app/services/auth/auth.service';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { WebsocketConnectionService } from 'app/services/websocket-connection.service';
+import { WebSocketConnectionService } from 'app/services/websocket-connection.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 import { haSettingsUpdated } from 'app/store/ha-info/ha-info.actions';
@@ -38,6 +39,8 @@ export class FailoverSettingsComponent implements OnInit {
 
   subscriptions: Subscription[] = [];
 
+  protected requiredRoles = [Role.FailoverWrite];
+
   submitButtonText$ = this.form.select((values) => {
     if (!values.master) {
       return this.translate.instant('Save And Failover');
@@ -58,7 +61,7 @@ export class FailoverSettingsComponent implements OnInit {
     private translate: TranslateService,
     private snackbar: SnackbarService,
     private store$: Store<AppState>,
-    private wsManager: WebsocketConnectionService,
+    private wsManager: WebSocketConnectionService,
   ) {}
 
   ngOnInit(): void {
@@ -84,7 +87,7 @@ export class FailoverSettingsComponent implements OnInit {
             this.authService.logout().pipe(untilDestroyed(this)).subscribe({
               next: () => {
                 this.authService.clearAuthToken();
-                this.wsManager.closeWebsocketConnection();
+                this.wsManager.closeWebSocketConnection();
               },
             });
           }

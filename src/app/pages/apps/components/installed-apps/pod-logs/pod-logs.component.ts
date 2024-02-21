@@ -1,15 +1,18 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import {
-  ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { UUID } from 'angular2-uuid';
 import { combineLatest, map, Subscription } from 'rxjs';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
+import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
-import { LogsDialogFormValue, PodSelectLogsDialogComponent } from 'app/pages/apps/components/pod-select-logs/pod-select-logs-dialog.component';
+import {
+  LogsDialogFormValue,
+  PodSelectLogsDialogComponent,
+} from 'app/pages/apps/components/pod-select-logs/pod-select-logs-dialog.component';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { ShellService } from 'app/services/shell.service';
@@ -28,6 +31,7 @@ interface PodLogEvent {
   templateUrl: './pod-logs.component.html',
   styleUrls: ['./pod-logs.component.scss'],
   providers: [ShellService],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PodLogsComponent implements OnInit {
   @ViewChild('logContainer', { static: true }) logContainer: ElementRef<HTMLElement>;
@@ -88,11 +92,12 @@ export class PodLogsComponent implements OnInit {
 
         if (podLog && podLog.msg !== 'nosub') {
           this.podLogs.push(podLog);
-          this.cdr.markForCheck();
           this.scrollToBottom();
         }
+
+        this.cdr.markForCheck();
       },
-      error: (error: WebsocketError) => {
+      error: (error: WebSocketError) => {
         this.isLoadingPodLogs = false;
         if (error.reason) {
           this.dialogService.error(this.errorHandler.parseError(error));

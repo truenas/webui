@@ -5,29 +5,28 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
-import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
+import { MockWebSocketService } from 'app/core/testing/classes/mock-websocket.service';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockJob, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { Service } from 'app/interfaces/service.interface';
 import { SystemDatasetConfig } from 'app/interfaces/system-dataset-config.interface';
-import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
+import { ChainedRef } from 'app/modules/ix-forms/components/ix-slide-in/chained-component-ref';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { StorageSettingsFormComponent } from 'app/pages/system/advanced/storage/storage-settings-form/storage-settings-form.component';
 import { DialogService } from 'app/services/dialog.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 import { selectServices } from 'app/store/services/services.selectors';
 import { selectAdvancedConfig } from 'app/store/system-config/system-config.selectors';
 
 describe('StorageSettingsFormComponent', () => {
   let spectator: Spectator<StorageSettingsFormComponent>;
   let loader: HarnessLoader;
-  let ws: MockWebsocketService;
+  let ws: MockWebSocketService;
   const createComponent = createComponentFactory({
     component: StorageSettingsFormComponent,
     imports: [
@@ -35,7 +34,7 @@ describe('StorageSettingsFormComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
-      mockWebsocket([
+      mockWebSocket([
         mockCall('systemdataset.pool_choices', {
           'current-pool': 'current-pool',
           'new-pool': 'new-pool',
@@ -46,7 +45,10 @@ describe('StorageSettingsFormComponent', () => {
         } as SystemDatasetConfig),
         mockCall('system.advanced.update'),
       ]),
-      mockProvider(IxSlideInService),
+      mockProvider(IxChainedSlideInService, {
+        pushComponent: jest.fn(() => of({ response: true, error: null })),
+        components$: of([]),
+      }),
       mockProvider(FormErrorHandlerService),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
@@ -68,8 +70,10 @@ describe('StorageSettingsFormComponent', () => {
           },
         ],
       }),
-      mockProvider(IxSlideInRef),
-      { provide: SLIDE_IN_DATA, useValue: undefined },
+      mockProvider(ChainedRef, {
+        close: jest.fn(),
+        getData: jest.fn(() => ({ swapSize: 5, systemDsPool: 'current-pool' })),
+      }),
       mockAuth(),
     ],
   });
@@ -77,7 +81,7 @@ describe('StorageSettingsFormComponent', () => {
   beforeEach(() => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    ws = spectator.inject(MockWebsocketService);
+    ws = spectator.inject(MockWebSocketService);
   });
 
   it('loads and shows current system dataset pool', async () => {

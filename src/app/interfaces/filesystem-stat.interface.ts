@@ -39,3 +39,15 @@ export type FilesystemPutParams = [
     append?: boolean;
   },
 ];
+
+export interface FilesystemSetPermParams {
+  path: string;
+  mode: string;
+  uid?: number;
+  gid?: number;
+  options: {
+    stripacl?: boolean;
+    recursive?: boolean;
+    traverse?: boolean;
+  };
+}

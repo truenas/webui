@@ -7,7 +7,7 @@ import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockWebsocket, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockWebSocket, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
 import { DiskBus } from 'app/enums/disk-bus.enum';
 import { SmartTestTaskUi } from 'app/interfaces/smart-test.interface';
 import { Disk } from 'app/interfaces/storage.interface';
@@ -34,7 +34,6 @@ describe('SmartTaskCardComponent', () => {
     {
       id: 1,
       desc: 'test',
-      all_disks: false,
       disks: [
         '{serial_lunid}8HG7MZJH_5000cca2700de678',
         '{serial_lunid}8HG7MLTH_5000cca2700de0c8',
@@ -48,9 +47,6 @@ describe('SmartTaskCardComponent', () => {
       },
       cron_schedule: '0 0 * * 0',
       frequency: 'At 00:00, only on Sunday',
-      disksLabel: [
-        'sdm,sdb',
-      ],
     },
   ] as SmartTestTaskUi[];
 
@@ -94,7 +90,7 @@ describe('SmartTaskCardComponent', () => {
           },
         ],
       }),
-      mockWebsocket([
+      mockWebSocket([
         mockCall('smart.test.query', smartTasks),
         mockCall('disk.query', disks),
         mockCall('smart.test.delete'),
@@ -132,7 +128,7 @@ describe('SmartTaskCardComponent', () => {
       ['Disks', 'Type', 'Description', 'Frequency', 'Next Run', ''],
       [
         '{serial_lunid}8HG7MZJH_5000cca2700de678,{serial_lunid}8HG7MLTH_5000cca2700de0c8',
-        'Long',
+        'LONG',
         'test',
         'At 00:00, only on Sunday',
         'in 1 day',
@@ -151,6 +147,8 @@ describe('SmartTaskCardComponent', () => {
     expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(SmartTaskFormComponent, {
       data: expect.objectContaining(smartTasks[0]),
     });
+
+    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('smart.test.query');
   });
 
   it('shows form to create new Smart Task when Add button is pressed', async () => {
@@ -160,6 +158,8 @@ describe('SmartTaskCardComponent', () => {
     expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(SmartTaskFormComponent, {
       data: undefined,
     });
+
+    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('smart.test.query');
   });
 
   it('deletes a Smart Task with confirmation when Delete button is pressed', async () => {
@@ -172,5 +172,7 @@ describe('SmartTaskCardComponent', () => {
     });
 
     expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('smart.test.delete', [1]);
+
+    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('smart.test.query');
   });
 });

@@ -7,16 +7,20 @@ import { MatStepperHarness, MatStepperNextHarness } from '@angular/material/step
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { Direction } from 'app/enums/direction.enum';
+import { JobState } from 'app/enums/job-state.enum';
+import { KeychainCredentialType } from 'app/enums/keychain-credential-type.enum';
 import { LifetimeUnit } from 'app/enums/lifetime-unit.enum';
 import { ReadOnlyMode } from 'app/enums/readonly-mode.enum';
 import { RetentionPolicy } from 'app/enums/retention-policy.enum';
+import { ScheduleMethod } from 'app/enums/schedule-method.enum';
 import { TransportMode } from 'app/enums/transport-mode.enum';
 import { PeriodicSnapshotTask } from 'app/interfaces/periodic-snapshot-task.interface';
+import { ReplicationTask } from 'app/interfaces/replication-task.interface';
 import { SummaryComponent } from 'app/modules/common/summary/summary.component';
+import { ChainedRef } from 'app/modules/ix-forms/components/ix-slide-in/chained-component-ref';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { SchedulerModule } from 'app/modules/scheduler/scheduler.module';
@@ -24,14 +28,51 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import { ReplicationWizardComponent } from 'app/pages/data-protection/replication/replication-wizard/replication-wizard.component';
 import { ReplicationWhatAndWhereComponent } from 'app/pages/data-protection/replication/replication-wizard/steps/replication-what-and-where/replication-what-and-where.component';
 import { ReplicationWhenComponent } from 'app/pages/data-protection/replication/replication-wizard/steps/replication-when/replication-when.component';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
+
+const existingTask: ReplicationTask = {
+  name: 'dataset',
+  id: 123,
+  recursive: false,
+  retention_policy: RetentionPolicy.Source,
+  schedule_method: ScheduleMethod.Cron,
+  source_datasets_from: '',
+  target_dataset_from: '',
+  state: {
+    state: JobState.Running,
+  },
+  ssh_credentials: {
+    attributes: {
+      connect_timeout: 1,
+      host: '',
+      port: 1,
+      private_key: 1,
+      remote_host_key: '',
+      username: 'root',
+      id: '5',
+    },
+    id: 5,
+    name: 'test',
+    type: KeychainCredentialType.SshCredentials,
+  },
+  direction: Direction.Pull,
+  source_datasets: ['/tank/source'],
+  name_regex: 'test-.*',
+  target_dataset: '/tank/target',
+  transport: TransportMode.Ssh,
+  auto: true,
+};
 
 describe('ReplicationWizardComponent', () => {
   let spectator: Spectator<ReplicationWizardComponent>;
   let loader: HarnessLoader;
   let form: IxFormHarness;
   let nextButton: MatStepperNextHarness;
+  const chainedRef: ChainedRef<ReplicationTask> = {
+    close: jest.fn(),
+    swap: jest.fn(),
+    getData: jest.fn(() => undefined),
+  };
 
   const createComponent = createComponentFactory({
     component: ReplicationWizardComponent,
@@ -48,7 +89,7 @@ describe('ReplicationWizardComponent', () => {
     ],
     providers: [
       mockAuth(),
-      mockWebsocket([
+      mockWebSocket([
         mockCall('replication.query', []),
         mockCall('keychaincredential.query', []),
         mockCall('replication.count_eligible_manual_snapshots', { total: 0, eligible: 0 }),
@@ -56,12 +97,11 @@ describe('ReplicationWizardComponent', () => {
         mockCall('pool.snapshottask.query', []),
         mockCall('pool.snapshottask.create', { id: 33 } as PeriodicSnapshotTask),
         mockCall('zfs.snapshot.create'),
-        mockCall('replication.create'),
+        mockCall('replication.create', existingTask),
       ]),
-      mockProvider(IxSlideInService),
+      mockProvider(ChainedRef, chainedRef),
       mockProvider(SnackbarService),
       mockProvider(IxSlideInRef),
-      { provide: SLIDE_IN_DATA, useValue: undefined },
     ],
   });
 
@@ -85,17 +125,16 @@ describe('ReplicationWizardComponent', () => {
   }
 
   it('creates objects when wizard is submitted', async () => {
-    await form.fillForm({
-      'Source Location': 'On this System',
-      'Destination Location': 'On this System',
-    });
-
-    await form.fillForm({
-      Recursive: false,
-      'Replicate Custom Snapshots': true,
-      Source: ['pool1/', 'pool2/'],
-      Destination: 'pool3/',
-    });
+    await form.fillForm(
+      {
+        'Source Location': 'On this System',
+        'Destination Location': 'On this System',
+        Recursive: false,
+        'Replicate Custom Snapshots': true,
+        Source: ['pool1/', 'pool2/'],
+        Destination: 'pool3/',
+      },
+    );
 
     await goToNextStep();
 
@@ -161,6 +200,6 @@ describe('ReplicationWizardComponent', () => {
     }]);
 
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Replication task created.');
-    expect(spectator.inject(IxSlideInRef).close).toHaveBeenCalled();
+    expect(chainedRef.close).toHaveBeenCalledWith({ response: existingTask, error: null });
   });
 });

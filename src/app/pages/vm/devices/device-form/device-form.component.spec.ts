@@ -4,8 +4,9 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
-import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { MockWebSocketService } from 'app/core/testing/classes/mock-websocket.service';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import {
   VmDeviceType, VmDiskMode, VmDisplayType, VmNicType,
 } from 'app/enums/vm.enum';
@@ -29,6 +30,7 @@ import { DeviceFormComponent } from 'app/pages/vm/devices/device-form/device-for
 import { DialogService } from 'app/services/dialog.service';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { VmService } from 'app/services/vm.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 describe('DeviceFormComponent', () => {
@@ -44,7 +46,7 @@ describe('DeviceFormComponent', () => {
       IxFormsModule,
     ],
     providers: [
-      mockWebsocket([
+      mockWebSocket([
         mockCall('vm.device.create'),
         mockCall('vm.device.update'),
         mockCall('vm.get_display_devices', [{}, {}] as VmDisplayDevice[]),
@@ -90,12 +92,16 @@ describe('DeviceFormComponent', () => {
           isolated_gpu_pci_ids: ['pci_0000_00_1c_0'],
         } as AdvancedConfig),
       ]),
+      mockAuth(),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
       mockProvider(IxSlideInService),
       mockProvider(FilesystemService),
       mockProvider(IxSlideInRef),
+      mockProvider(VmService, {
+        hasVirtualizationSupport$: of(true),
+      }),
       { provide: SLIDE_IN_DATA, useValue: undefined },
     ],
   });
@@ -224,15 +230,15 @@ describe('DeviceFormComponent', () => {
       });
 
       it('adds a new NIC device', async () => {
-        await form.fillForm({
-          Type: 'NIC',
-        });
-        await form.fillForm({
-          'Adapter Type': 'VirtIO',
-          'NIC To Attach': 'enp0s4',
-          'Device Order': 1006,
-          'Trust Guest Filters': true,
-        });
+        await form.fillForm(
+          {
+            Type: 'NIC',
+            'Adapter Type': 'VirtIO',
+            'NIC To Attach': 'enp0s4',
+            'Device Order': 1006,
+            'Trust Guest Filters': true,
+          },
+        );
 
         await saveButton.click();
 
@@ -265,7 +271,7 @@ describe('DeviceFormComponent', () => {
         await form.fillForm({
           Type: 'NIC',
         });
-        spectator.inject(MockWebsocketService).call.mockClear();
+        spectator.inject(MockWebSocketService).call.mockClear();
 
         const generateButton = await loader.getHarness(MatButtonHarness.with({ text: 'Generate' }));
         await generateButton.click();
@@ -343,16 +349,15 @@ describe('DeviceFormComponent', () => {
       });
 
       it('adds a new disk', async () => {
-        await form.fillForm({
-          Type: 'Disk',
-        });
-
-        await form.fillForm({
-          Zvol: 'bassein/zvol1',
-          Mode: 'VirtIO',
-          'Disk Sector Size': '512',
-          'Device Order': '1002',
-        });
+        await form.fillForm(
+          {
+            Type: 'Disk',
+            Zvol: 'bassein/zvol1',
+            Mode: 'VirtIO',
+            'Disk Sector Size': '512',
+            'Device Order': '1002',
+          },
+        );
 
         await saveButton.click();
 
@@ -457,17 +462,16 @@ describe('DeviceFormComponent', () => {
       });
 
       it('adds a new Raw File device', async () => {
-        await form.fillForm({
-          Type: 'Raw File',
-        });
-
-        await form.fillForm({
-          'Raw File': '/mnt/bassein/newraw',
-          'Disk Sector Size': '512',
-          Mode: 'AHCI',
-          'Raw Filesize': 3,
-          'Device Order': '6',
-        });
+        await form.fillForm(
+          {
+            Type: 'Raw File',
+            'Raw File': '/mnt/bassein/newraw',
+            'Disk Sector Size': '512',
+            Mode: 'AHCI',
+            'Raw Filesize': 3,
+            'Device Order': '6',
+          },
+        );
         await saveButton.click();
 
         expect(websocket.call).toHaveBeenLastCalledWith('vm.device.create', [{
@@ -568,14 +572,13 @@ describe('DeviceFormComponent', () => {
       });
 
       it('adds a new PCI Passthrough device', async () => {
-        await form.fillForm({
-          Type: 'PCI Passthrough Device',
-        });
-
-        await form.fillForm({
-          'PCI Passthrough Device': 'pci_0000_00_1c_0',
-          'Device Order': '6',
-        });
+        await form.fillForm(
+          {
+            Type: 'PCI Passthrough Device',
+            'PCI Passthrough Device': 'pci_0000_00_1c_0',
+            'Device Order': '6',
+          },
+        );
         await saveButton.click();
 
         expect(spectator.inject(DialogService).confirm).not.toHaveBeenCalled();
@@ -710,7 +713,7 @@ describe('DeviceFormComponent', () => {
       });
 
       it('hides Display type option when VM already has 2 or more displays (proxy for having 1 display of each type)', async () => {
-        spectator.inject(MockWebsocketService).mockCall('vm.get_display_devices', [{}, {}] as VmDisplayDevice[]);
+        spectator.inject(MockWebSocketService).mockCall('vm.get_display_devices', [{}, {}] as VmDisplayDevice[]);
         const typeSelect = await loader.getHarness(IxSelectHarness.with({ label: 'Type' }));
         expect(websocket.call).toHaveBeenCalledWith('vm.get_display_devices', [46]);
         expect(await typeSelect.getOptionLabels()).not.toContain('Display');
@@ -749,13 +752,13 @@ describe('DeviceFormComponent', () => {
       });
 
       it('adds a new USB Passthrough device', async () => {
-        await form.fillForm({
-          Type: 'USB Passthrough Device',
-        });
-        await form.fillForm({
-          'Controller Type': 'pci-ohci',
-          Device: 'usb_device_2 prod_2 (vendor_2)',
-        });
+        await form.fillForm(
+          {
+            Type: 'USB Passthrough Device',
+            'Controller Type': 'pci-ohci',
+            Device: 'usb_device_2 prod_2 (vendor_2)',
+          },
+        );
         await saveButton.click();
 
         expect(websocket.call).toHaveBeenLastCalledWith('vm.device.create', [{
@@ -817,15 +820,14 @@ describe('DeviceFormComponent', () => {
       });
 
       it('updates an existing USB Passthrough when custom is selected', async () => {
-        await form.fillForm({
-          'Controller Type': 'piix3-uhci',
-          Device: 'Specify custom',
-        });
-
-        await form.fillForm({
-          'Vendor ID': 'vendor_1',
-          'Product ID': 'product_1',
-        });
+        await form.fillForm(
+          {
+            'Controller Type': 'piix3-uhci',
+            Device: 'Specify custom',
+            'Vendor ID': 'vendor_1',
+            'Product ID': 'product_1',
+          },
+        );
 
         spectator.detectChanges();
 

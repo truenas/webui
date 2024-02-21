@@ -1,7 +1,7 @@
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
-  Component, Inject,
+  Component,
   OnInit,
   ViewChild,
   ViewContainerRef,
@@ -11,14 +11,13 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { combineLatest, of } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
-import { CloudsyncProviderName } from 'app/enums/cloudsync-provider.enum';
+import { CloudSyncProviderName } from 'app/enums/cloudsync-provider.enum';
 import { Role } from 'app/enums/role.enum';
 import { helptextSystemCloudcredentials as helptext } from 'app/helptext/system/cloud-credentials';
-import { CloudsyncCredential, CloudsyncCredentialUpdate } from 'app/interfaces/cloudsync-credential.interface';
-import { CloudsyncProvider } from 'app/interfaces/cloudsync-provider.interface';
+import { CloudSyncCredential, CloudSyncCredentialUpdate } from 'app/interfaces/cloudsync-credential.interface';
+import { CloudSyncProvider } from 'app/interfaces/cloudsync-provider.interface';
 import { Option } from 'app/interfaces/option.interface';
-import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
+import { ChainedRef } from 'app/modules/ix-forms/components/ix-slide-in/chained-component-ref';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { forbiddenValues } from 'app/modules/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -40,16 +39,16 @@ import { WebSocketService } from 'app/services/ws.service';
 export class CloudCredentialsFormComponent implements OnInit {
   commonForm = this.formBuilder.group({
     name: ['Storj', Validators.required],
-    provider: [CloudsyncProviderName.Storj],
+    provider: [CloudSyncProviderName.Storj],
   });
 
   isLoading = false;
-  existingCredential: CloudsyncCredential;
-  providers: CloudsyncProvider[] = [];
+  existingCredential: CloudSyncCredential;
+  providers: CloudSyncProvider[] = [];
   providerOptions = of<Option[]>([]);
   providerForm: BaseProviderFormComponent;
   forbiddenNames: string[] = [];
-  credentials: CloudsyncCredential[] = [];
+  credentials: CloudSyncCredential[] = [];
 
   @ViewChild('providerFormContainer', { static: true, read: ViewContainerRef }) providerFormContainer: ViewContainerRef;
 
@@ -62,28 +61,28 @@ export class CloudCredentialsFormComponent implements OnInit {
     private formBuilder: FormBuilder,
     private cdr: ChangeDetectorRef,
     private errorHandler: ErrorHandlerService,
-    private slideInRef: IxSlideInRef<CloudCredentialsFormComponent>,
     private dialogService: DialogService,
     private formErrorHandler: FormErrorHandlerService,
     private translate: TranslateService,
     private snackbarService: SnackbarService,
     private cloudCredentialService: CloudCredentialService,
-    @Inject(SLIDE_IN_DATA) private credential: CloudsyncCredential,
+    private chainedRef: ChainedRef<CloudSyncCredential>,
   ) {
+    this.existingCredential = this.chainedRef.getData();
     // Has to be earlier than potential `setCredentialsForEdit` call
     this.setFormEvents();
   }
 
   get showProviderDescription(): boolean {
     return this.commonForm.controls.provider.enabled
-      && this.commonForm.controls.provider.value === CloudsyncProviderName.Storj;
+      && this.commonForm.controls.provider.value === CloudSyncProviderName.Storj;
   }
 
   get isNew(): boolean {
     return !this.existingCredential;
   }
 
-  get selectedProvider(): CloudsyncProvider {
+  get selectedProvider(): CloudSyncProvider {
     return this.providers?.find((provider) => {
       return provider.name === this.commonForm.controls.provider.value;
     });
@@ -98,13 +97,12 @@ export class CloudCredentialsFormComponent implements OnInit {
   ngOnInit(): void {
     this.loadProviders();
 
-    if (this.credential) {
+    if (this.existingCredential) {
       this.setCredentialsForEdit();
     }
   }
 
   setCredentialsForEdit(): void {
-    this.existingCredential = this.credential;
     this.commonForm.patchValue(this.existingCredential);
 
     if (this.providerForm) {
@@ -126,14 +124,14 @@ export class CloudCredentialsFormComponent implements OnInit {
         untilDestroyed(this),
       )
       .subscribe({
-        next: () => {
+        next: (response) => {
           this.isLoading = false;
           this.snackbarService.success(
             this.isNew
               ? this.translate.instant('Cloud credential added.')
               : this.translate.instant('Cloud credential updated.'),
           );
-          this.slideInRef.close(true);
+          this.chainedRef.close({ response, error: null });
           this.cdr.markForCheck();
         },
         error: (error: unknown) => {
@@ -182,7 +180,7 @@ export class CloudCredentialsFormComponent implements OnInit {
       });
   }
 
-  private preparePayload(): CloudsyncCredentialUpdate {
+  private preparePayload(): CloudSyncCredentialUpdate {
     const commonValues = this.commonForm.value;
     return {
       name: commonValues.name,
@@ -195,7 +193,7 @@ export class CloudCredentialsFormComponent implements OnInit {
     this.isLoading = true;
     combineLatest([
       this.cloudCredentialService.getProviders(),
-      this.cloudCredentialService.getCloudsyncCredentials(),
+      this.cloudCredentialService.getCloudSyncCredentials(),
     ])
       .pipe(untilDestroyed(this))
       .subscribe({
@@ -234,7 +232,7 @@ export class CloudCredentialsFormComponent implements OnInit {
       });
   }
 
-  private setNamesInUseValidator(credentials: CloudsyncCredential[]): void {
+  private setNamesInUseValidator(credentials: CloudSyncCredential[]): void {
     this.forbiddenNames = credentials.map((credential) => credential.name);
     this.commonForm.controls.name.addValidators(forbiddenValues(this.forbiddenNames));
   }

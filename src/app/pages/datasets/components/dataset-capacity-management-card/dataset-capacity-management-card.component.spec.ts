@@ -5,7 +5,7 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { MockComponents } from 'ng-mocks';
 import { NgxSkeletonLoaderComponent } from 'ngx-skeleton-loader';
 import { of } from 'rxjs';
-import { mockWebsocket, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockWebSocket, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
 import { DatasetType } from 'app/enums/dataset.enum';
 import { DatasetQuota } from 'app/interfaces/dataset-quota.interface';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
@@ -62,7 +62,7 @@ describe('DatasetCapacityManagementCardComponent', () => {
       ),
     ],
     providers: [
-      mockWebsocket([
+      mockWebSocket([
         mockCall('pool.dataset.get_quota', [
           { id: 1 },
           { id: 2 },
@@ -121,7 +121,7 @@ describe('DatasetCapacityManagementCardComponent', () => {
       let items = details[0].querySelectorAll('.details-item');
       expect(items).toHaveLength(3);
       expect(items[0].querySelector('.label')).toHaveText('Space Available to Dataset:');
-      expect(items[0].querySelector('.value')).toHaveText('1 GiB');
+      expect(items[0].querySelector('.value')).toHaveText('1.3 GiB');
       expect(items[1].querySelector('.label')).toHaveText('Applied Dataset Quota:');
       expect(items[1].querySelector('.value')).toHaveText('8 MiB');
       expect(items[2].querySelector('.label')).toHaveText('Inherited Quotas:');
@@ -170,7 +170,7 @@ describe('DatasetCapacityManagementCardComponent', () => {
       let items = details[0].querySelectorAll('.details-item');
       expect(items).toHaveLength(2);
       expect(items[0].querySelector('.label')).toHaveText('Space Available to Zvol:');
-      expect(items[0].querySelector('.value')).toHaveText('3 GiB');
+      expect(items[0].querySelector('.value')).toHaveText('2.6 GiB');
       expect(items[1].querySelector('.label')).toHaveText('Inherited Quotas:');
       expect(items[1].querySelector('.value')).toHaveText('16 MiB');
 

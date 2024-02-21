@@ -7,11 +7,13 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { BehaviorSubject, Observable, of } from 'rxjs';
 import { DnsAuthenticatorType } from 'app/enums/dns-authenticator-type.enum';
-import { DynamicFormSchemaType } from 'app/enums/dynamic-form-schema-type.enum';
 import { Role } from 'app/enums/role.enum';
+import { getDynamicFormSchemaNode } from 'app/helpers/get-dynamic-form-schema-node';
 import { helptextSystemAcme as helptext } from 'app/helptext/system/acme';
 import { AuthenticatorSchema, DnsAuthenticator } from 'app/interfaces/dns-authenticator.interface';
-import { DynamicFormSchema, DynamicFormSchemaNode } from 'app/interfaces/dynamic-form-schema.interface';
+import {
+  DynamicFormSchema, DynamicFormSchemaNode,
+} from 'app/interfaces/dynamic-form-schema.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { CustomUntypedFormField } from 'app/modules/ix-dynamic-form/components/ix-dynamic-form/classes/custom-untyped-form-field';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
@@ -126,12 +128,7 @@ export class AcmednsFormComponent implements OnInit {
   }
 
   parseSchemaForDynamicSchema(schema: AuthenticatorSchema): DynamicFormSchemaNode[] {
-    return schema.schema.map((input) => ({
-      controlName: input._name_,
-      type: DynamicFormSchemaType.Input,
-      title: input.title,
-      required: input._required_,
-    }));
+    return schema.schema.map((input) => getDynamicFormSchemaNode(input));
   }
 
   parseSchemaForDnsAuthList(schema: AuthenticatorSchema): DnsAuthenticatorList {
@@ -173,7 +170,7 @@ export class AcmednsFormComponent implements OnInit {
     }
 
     for (const [key, value] of Object.entries(values.attributes)) {
-      if (!value) {
+      if (value == null || value === '') {
         delete values.attributes[key];
       }
     }

@@ -4,11 +4,11 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatListItemHarness } from '@angular/material/list/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { SystemSecurityConfig } from 'app/interfaces/system-security-config.interface';
 import { SystemSecurityCardComponent } from 'app/pages/system/advanced/system-security/system-security-card/system-security-card.component';
 import { SystemSecurityFormComponent } from 'app/pages/system/advanced/system-security/system-security-form/system-security-form.component';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 
 const fakeSystemSecurityConfig: SystemSecurityConfig = {
   enable_fips: false,
@@ -20,11 +20,11 @@ describe('SystemSecurityCardComponent', () => {
   const createComponent = createComponentFactory({
     component: SystemSecurityCardComponent,
     providers: [
-      mockWebsocket([
+      mockWebSocket([
         mockCall('system.security.config', fakeSystemSecurityConfig),
       ]),
-      mockProvider(IxSlideInService, {
-        open: jest.fn(() => ({ slideInClosed$: of() })),
+      mockProvider(IxChainedSlideInService, {
+        pushComponent: jest.fn(() => of({ response: true, error: null })),
       }),
     ],
   });
@@ -47,11 +47,10 @@ describe('SystemSecurityCardComponent', () => {
     const configureButton = await loader.getHarness(MatButtonHarness.with({ text: 'Settings' }));
     await configureButton.click();
 
-    expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(
+    expect(spectator.inject(IxChainedSlideInService).pushComponent).toHaveBeenCalledWith(
       SystemSecurityFormComponent,
-      {
-        data: fakeSystemSecurityConfig,
-      },
+      false,
+      fakeSystemSecurityConfig,
     );
   });
 });

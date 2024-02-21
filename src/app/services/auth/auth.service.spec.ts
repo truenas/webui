@@ -9,8 +9,8 @@ import {
 import * as rxjs from 'rxjs';
 import { firstValueFrom, of } from 'rxjs';
 import { TestScheduler } from 'rxjs/testing';
-import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { MockWebSocketService } from 'app/core/testing/classes/mock-websocket.service';
+import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
 import { LoginResult } from 'app/enums/login-result.enum';
 import { Role } from 'app/enums/role.enum';
@@ -19,7 +19,7 @@ import { LoggedInUser } from 'app/interfaces/ds-cache.interface';
 import { Preferences } from 'app/interfaces/preferences.interface';
 import { DashConfigItem } from 'app/pages/dashboard/components/widget-controller/widget-controller.component';
 import { AuthService } from 'app/services/auth/auth.service';
-import { WebsocketConnectionService } from 'app/services/websocket-connection.service';
+import { WebSocketConnectionService } from 'app/services/websocket-connection.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 const authMeUser = {
@@ -49,10 +49,10 @@ describe('AuthService', () => {
     ],
     providers: [
       mockProvider(LocalStorageService),
-      mockWebsocket([
+      mockWebSocket([
         mockCall('auth.me', authMeUser),
       ]),
-      mockProvider(WebsocketConnectionService, {
+      mockProvider(WebSocketConnectionService, {
         send: jest.fn(),
         isConnected$: of(true),
         websocket$: of({}),
@@ -108,13 +108,13 @@ describe('AuthService', () => {
           { d: 'DUMMY_TOKEN' },
         );
       });
-      expect(spectator.inject(WebsocketConnectionService).send).toHaveBeenCalledWith(expect.objectContaining({
+      expect(spectator.inject(WebSocketConnectionService).send).toHaveBeenCalledWith(expect.objectContaining({
         msg: IncomingApiMessageType.Method,
         method: 'auth.login',
         params: ['dummy', 'dummy'],
       }));
       expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('auth.me');
-      expect(spectator.inject(WebsocketConnectionService).send).toHaveBeenCalledWith(expect.objectContaining({
+      expect(spectator.inject(WebSocketConnectionService).send).toHaveBeenCalledWith(expect.objectContaining({
         msg: IncomingApiMessageType.Method,
         method: 'auth.generate_token',
       }));
@@ -139,13 +139,13 @@ describe('AuthService', () => {
           { d: 'DUMMY_TOKEN' },
         );
       });
-      expect(spectator.inject(WebsocketConnectionService).send).toHaveBeenCalledWith(expect.objectContaining({
+      expect(spectator.inject(WebSocketConnectionService).send).toHaveBeenCalledWith(expect.objectContaining({
         msg: IncomingApiMessageType.Method,
         method: 'auth.login_with_token',
         params: ['DUMMY_TOKEN'],
       }));
       expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('auth.me');
-      expect(spectator.inject(WebsocketConnectionService).send).toHaveBeenCalledWith(expect.objectContaining({
+      expect(spectator.inject(WebSocketConnectionService).send).toHaveBeenCalledWith(expect.objectContaining({
         msg: IncomingApiMessageType.Method,
         method: 'auth.generate_token',
       }));
@@ -171,7 +171,7 @@ describe('AuthService', () => {
           {},
         );
       });
-      expect(spectator.inject(WebsocketConnectionService).send).toHaveBeenCalledWith(expect.objectContaining({
+      expect(spectator.inject(WebSocketConnectionService).send).toHaveBeenCalledWith(expect.objectContaining({
         msg: IncomingApiMessageType.Method,
         method: 'auth.logout',
       }));
@@ -180,8 +180,8 @@ describe('AuthService', () => {
 
   describe('hasRole', () => {
     async function setUserRoles(roles: Role[]): Promise<void> {
-      const mockedWebsocket = spectator.inject(MockWebsocketService);
-      mockedWebsocket.mockCall('auth.me', {
+      const mockedWebSocket = spectator.inject(MockWebSocketService);
+      mockedWebSocket.mockCall('auth.me', {
         ...authMeUser,
         privilege: {
           ...authMeUser.privilege,

@@ -209,7 +209,7 @@
               <div>
                 <ix-disk-ui [data]="selectedDisk"></ix-disk-ui
                 ><!-- disk icon + labels -->
-                <div class="capacity">{{ selectedDisk.size | filesize: { standard: 'iec' } }}</div>
+                <div class="capacity">{{ selectedSlot.size | ixFileSize }}</div>
               </div>
               <div class="disk-stats-wrapper" fxFlex>
                 <ul *ngIf="selectedSlot.pool_info?.pool_name; else nostats" class="disk-stats">

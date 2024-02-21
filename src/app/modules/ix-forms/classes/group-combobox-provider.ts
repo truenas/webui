@@ -6,7 +6,7 @@ import { IxComboboxProvider } from 'app/modules/ix-forms/components/ix-combobox/
 import { UserService } from 'app/services/user.service';
 
 export class GroupComboboxProvider implements IxComboboxProvider {
-  private page = 1;
+  protected page = 1;
   readonly pageSize = 50;
 
   fetch(filterValue: string): Observable<Option[]> {
@@ -43,7 +43,7 @@ export class GroupComboboxProvider implements IxComboboxProvider {
   }
 
   constructor(
-    private userService: UserService,
+    protected userService: UserService,
     private optionsValueField: 'group' | 'gid' | 'id' = 'group',
     private initialOptions: Option[] = [],
   ) {}

@@ -1,7 +1,7 @@
-<ix-modal-header
+<ix-modal-header2
   [title]="'Access Settings' | translate"
   [loading]="isLoading"
-></ix-modal-header>
+></ix-modal-header2>
 <mat-card>
   <mat-card-content>
     <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
@@ -21,7 +21,7 @@
 
       <ix-form-actions>
         <button
-          *ixRequiresRoles="[Role.FullAdmin]"
+          *ixRequiresRoles="requiredRoles"
           mat-button
           type="submit"
           color="primary"

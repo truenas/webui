@@ -95,16 +95,15 @@ describe('EditNfsAceComponent', () => {
   });
 
   it('updates value in store when form is updated', async () => {
-    await form.fillForm({
-      'ACL Type': 'Deny',
-      'Permissions Type': 'Basic',
-      'Flags Type': 'Basic',
-    });
-
-    await form.fillForm({
-      Permissions: 'Full Control',
-      Flags: 'Inherit',
-    });
+    await form.fillForm(
+      {
+        'ACL Type': 'Deny',
+        'Permissions Type': 'Basic',
+        'Flags Type': 'Basic',
+        Permissions: 'Full Control',
+        Flags: 'Inherit',
+      },
+    );
 
     expect(spectator.inject(DatasetAclEditorStore).updateSelectedAce).toHaveBeenLastCalledWith({
       tag: NfsAclTag.User,

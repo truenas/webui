@@ -1,6 +1,6 @@
 import { TemplatePortal } from '@angular/cdk/portal';
 import {
-  AfterViewInit,
+  AfterViewInit, ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
   OnDestroy,
@@ -19,6 +19,7 @@ import { alertPanelClosed } from 'app/modules/alerts/store/alert.actions';
 import { selectIsAlertPanelOpen } from 'app/modules/alerts/store/alert.selectors';
 import { LanguageService } from 'app/services/language.service';
 import { LayoutService } from 'app/services/layout.service';
+import { SentryService } from 'app/services/sentry.service';
 import { SidenavService } from 'app/services/sidenav.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { ThemeService } from 'app/services/theme/theme.service';
@@ -32,6 +33,7 @@ import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
   selector: 'ix-admin-layout',
   templateUrl: './admin-layout.component.html',
   styleUrls: ['./admin-layout.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AdminLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChildren(MatSidenav) private sideNavs: QueryList<MatSidenav>;
@@ -86,12 +88,13 @@ export class AdminLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
     private cdr: ChangeDetectorRef,
     private languageService: LanguageService,
     private tokenLifetimeService: TokenLifetimeService,
+    private sentryService: SentryService,
   ) {}
 
   ngOnInit(): void {
     this.tokenLifetimeService.start();
     this.themeService.loadTheme$.next('');
-    this.sysGeneralService.toggleSentryInit();
+    this.sentryService.init();
     this.store$.pipe(waitForGeneralConfig, untilDestroyed(this)).subscribe((config) => {
       this.languageService.setLanguage(config.language);
     });

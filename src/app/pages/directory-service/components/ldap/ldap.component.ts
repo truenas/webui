@@ -2,7 +2,6 @@ import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
 import { Validators } from '@angular/forms';
-import { MatDialog } from '@angular/material/dialog';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
@@ -10,9 +9,7 @@ import { map } from 'rxjs/operators';
 import { Role } from 'app/enums/role.enum';
 import { idNameArrayToOptions, singleArrayToOptions } from 'app/helpers/operators/options.operators';
 import { helptextLdap } from 'app/helptext/directory-service/ldap';
-import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
-import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DialogService } from 'app/services/dialog.service';
@@ -79,8 +76,6 @@ export class LdapComponent implements OnInit {
     private validatorsService: IxValidatorsService,
     private errorHandler: ErrorHandlerService,
     private slideInRef: IxSlideInRef<LdapComponent>,
-    private formErrorHandler: FormErrorHandlerService,
-    private matDialog: MatDialog,
     private translate: TranslateService,
     private snackbar: SnackbarService,
   ) {}
@@ -115,22 +110,21 @@ export class LdapComponent implements OnInit {
     this.isLoading = true;
     const values = this.form.value;
 
-    this.ws.call('ldap.update', [values])
-      .pipe(untilDestroyed(this))
+    this.dialogService.jobDialog(
+      this.ws.job('ldap.update', [values]),
+      {
+        title: 'LDAP',
+      },
+    )
+      .afterClosed()
+      .pipe(
+        this.errorHandler.catchError(),
+        untilDestroyed(this),
+      )
       .subscribe({
-        next: (update) => {
+        next: () => this.slideInRef.close(true),
+        complete: () => {
           this.isLoading = false;
-          this.cdr.markForCheck();
-
-          if (update.job_id) {
-            this.showStartingJob(update.job_id);
-          } else {
-            this.slideInRef.close();
-          }
-        },
-        error: (error: unknown) => {
-          this.isLoading = false;
-          this.formErrorHandler.handleWsFormError(error, this.form);
           this.cdr.markForCheck();
         },
       });
@@ -153,24 +147,5 @@ export class LdapComponent implements OnInit {
           this.cdr.markForCheck();
         },
       });
-  }
-
-  private showStartingJob(jobId: number): void {
-    const dialogRef = this.matDialog.open(EntityJobComponent, {
-      data: {
-        title: this.translate.instant('Setting up LDAP'),
-      },
-      disableClose: true,
-    });
-    dialogRef.componentInstance.jobId = jobId;
-    dialogRef.componentInstance.wsshow();
-    dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
-      dialogRef.close();
-      this.slideInRef.close();
-    });
-    dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((error) => {
-      this.dialogService.error(this.errorHandler.parseError(error));
-      dialogRef.close();
-    });
   }
 }

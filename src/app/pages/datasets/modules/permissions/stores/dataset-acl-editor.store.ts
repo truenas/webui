@@ -1,14 +1,14 @@
 import { Injectable } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { ComponentStore } from '@ngrx/component-store';
+import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import { omit } from 'lodash';
 import {
   EMPTY, forkJoin, Observable, of,
 } from 'rxjs';
 import {
-  catchError, filter, map, switchMap, takeUntil, tap, withLatestFrom,
+  catchError, filter, map, switchMap, tap, withLatestFrom,
 } from 'rxjs/operators';
 import { AclType, DefaultAclType } from 'app/enums/acl-type.enum';
 import { mntPath } from 'app/enums/mnt-path.enum';
@@ -19,8 +19,6 @@ import {
   Acl, AclTemplateByPath, NfsAclItem, PosixAclItem, SetAcl,
 } from 'app/interfaces/acl.interface';
 import { Job } from 'app/interfaces/job.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
-import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import {
   AclSaveFormParams,
   DatasetAclEditorState,
@@ -48,8 +46,8 @@ export class DatasetAclEditorStore extends ComponentStore<DatasetAclEditorState>
     private ws: WebSocketService,
     private errorHandler: ErrorHandlerService,
     private dialogService: DialogService,
-    private matDialog: MatDialog,
     private router: Router,
+    private translate: TranslateService,
     private storageService: StorageService,
     private userService: UserService,
   ) {
@@ -192,34 +190,7 @@ export class DatasetAclEditorStore extends ComponentStore<DatasetAclEditorState>
       switchMap(([, saveParams]) => this.prepareSetAcl(this.get(), saveParams)),
 
       // Save
-      tap((setAcl: SetAcl) => {
-        const dialogRef = this.matDialog.open(EntityJobComponent, { data: { title: helptextAcl.save_dialog.title } });
-        dialogRef.componentInstance.setDescription(helptextAcl.save_dialog.message);
-
-        dialogRef.componentInstance.setCall('filesystem.setacl', [setAcl]);
-        dialogRef.componentInstance.success.pipe(takeUntil(this.destroy$)).subscribe({
-          next: () => {
-            const ngUrl = ['datasets', this.get()?.mountpoint.replace(`${mntPath}/`, '')];
-            dialogRef.close();
-            this.router.navigate(ngUrl);
-          },
-          error: (error: WebsocketError | Job) => {
-            dialogRef.close();
-            this.dialogService.error(this.errorHandler.parseError(error));
-          },
-        });
-        dialogRef.componentInstance.failure.pipe(takeUntil(this.destroy$)).subscribe({
-          next: (failedJob) => {
-            dialogRef.close();
-            this.dialogService.error(this.errorHandler.parseError(failedJob));
-          },
-          error: (error: WebsocketError | Job) => {
-            dialogRef.close();
-            this.dialogService.error(this.errorHandler.parseError(error));
-          },
-        });
-        dialogRef.componentInstance.submit();
-      }),
+      switchMap((setAcl) => this.makeSaveRequest(setAcl)),
     );
   });
 
@@ -270,6 +241,24 @@ export class DatasetAclEditorStore extends ComponentStore<DatasetAclEditorState>
       }),
     );
   });
+
+  private makeSaveRequest(setAcl: SetAcl): Observable<Job> {
+    return this.dialogService.jobDialog(
+      this.ws.job('filesystem.setacl', [setAcl]),
+      {
+        title: this.translate.instant(helptextAcl.save_dialog.title),
+        description: this.translate.instant(helptextAcl.save_dialog.message),
+      },
+    )
+      .afterClosed()
+      .pipe(
+        this.errorHandler.catchError(),
+        tap(() => {
+          const url = ['datasets', this.get()?.mountpoint.replace(`${mntPath}/`, '')];
+          this.router.navigate(url);
+        }),
+      );
+  }
 
   /**
    * Validates and converts user and group names to ids

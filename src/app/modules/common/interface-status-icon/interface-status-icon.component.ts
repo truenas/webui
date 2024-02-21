@@ -4,10 +4,10 @@ import {
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { UUID } from 'angular2-uuid';
-import filesize from 'filesize';
 import { timer } from 'rxjs';
 import { KiB } from 'app/constants/bytes.constant';
 import { LinkState } from 'app/enums/network-interface.enum';
+import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
 import { NetworkInterfaceUpdate } from 'app/interfaces/reporting.interface';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 
@@ -36,7 +36,7 @@ export class InterfaceStatusIconComponent implements OnChanges {
   get tooltipText(): string {
     const handleBytesResult = (bytes: number): string => {
       if (bytes !== undefined && bytes !== null) {
-        return filesize(bytes, { standard: 'iec' });
+        return buildNormalizedFileSize(bytes * 8, 'b', 10);
       }
 
       return this.translate.instant('N/A');

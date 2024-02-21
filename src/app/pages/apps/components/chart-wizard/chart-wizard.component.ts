@@ -21,6 +21,7 @@ import {
 } from 'rxjs/operators';
 import { ixChartApp } from 'app/constants/catalog.constants';
 import { DynamicFormSchemaType } from 'app/enums/dynamic-form-schema-type.enum';
+import { Role } from 'app/enums/role.enum';
 import { helptextApps } from 'app/helptext/apps/apps';
 import { AppDetailsRouteParams } from 'app/interfaces/app-details-route-params.interface';
 import { CatalogApp } from 'app/interfaces/catalog.interface';
@@ -38,7 +39,7 @@ import {
   DynamicWizardSchema,
 } from 'app/interfaces/dynamic-form-schema.interface';
 import { Option } from 'app/interfaces/option.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
+import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { CustomUntypedFormField } from 'app/modules/ix-dynamic-form/components/ix-dynamic-form/classes/custom-untyped-form-field';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
@@ -95,6 +96,8 @@ export class ChartWizardComponent implements OnInit, OnDestroy {
       return `${this.titlePrefix} ${name}`;
     }),
   );
+
+  protected readonly requiredRoles = [Role.AppsWrite];
 
   get titlePrefix(): string {
     return this.isNew ? this.translate.instant('Install') : this.translate.instant('Edit');
@@ -154,7 +157,7 @@ export class ChartWizardComponent implements OnInit, OnDestroy {
           this.setChartForCreation(app);
           this.afterAppLoaded();
         },
-        error: (error: WebsocketError) => this.afterAppLoadError(error),
+        error: (error: WebSocketError) => this.afterAppLoadError(error),
       });
   }
 
@@ -248,6 +251,7 @@ export class ChartWizardComponent implements OnInit, OnDestroy {
 
     this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((failedJob) => {
       this.formErrorHandler.handleWsFormError(failedJob, this.form);
+      this.dialogRef.close();
       this.cdr.markForCheck();
     });
   }
@@ -291,7 +295,7 @@ export class ChartWizardComponent implements OnInit, OnDestroy {
           this.setChartForEdit(releases[0]);
           this.afterAppLoaded();
         },
-        error: (error: WebsocketError) => this.afterAppLoadError(error),
+        error: (error: WebSocketError) => this.afterAppLoadError(error),
       });
   }
 
@@ -420,7 +424,7 @@ export class ChartWizardComponent implements OnInit, OnDestroy {
 
   private afterAppLoadError(error: unknown): void {
     this.router.navigate(['/apps', 'available']).then(() => {
-      this.dialogService.error(this.errorHandler.parseError(error));
+      this.errorHandler.showErrorModal(error);
     });
   }
 

@@ -21,7 +21,7 @@ export const routes: Routes = [
       },
       {
         path: 'nfs',
-        data: { title: T('NFS'), breadcrumb: null, icon: 'share' },
+        data: { title: T('NFS'), breadcrumb: T('NFS'), icon: 'share' },
         children: [{
           path: '',
           component: NfsListComponent,
@@ -29,7 +29,11 @@ export const routes: Routes = [
         }, {
           path: 'sessions',
           component: NfsSessionListComponent,
-          data: { title: T('NFS Sessions'), breadcrumb: null },
+          data: {
+            title: T('NFS Sessions'),
+            breadcrumb: null,
+            isNew: true,
+          },
         }],
       },
       {
@@ -40,7 +44,7 @@ export const routes: Routes = [
           component: SmbListComponent,
         }, {
           path: 'status',
-          data: { title: T('Smb Status'), breadcrumb: null },
+          data: { title: T('SMB Status'), breadcrumb: null },
           children: [
             {
               path: '',
@@ -50,7 +54,11 @@ export const routes: Routes = [
             {
               path: ':activeTab',
               component: SmbStatusComponent,
-              data: { title: T('Smb Status') },
+              data: {
+                title: T('SMB Status'),
+                isNew: true,
+                breadcrumb: null,
+              },
             },
           ],
         }],

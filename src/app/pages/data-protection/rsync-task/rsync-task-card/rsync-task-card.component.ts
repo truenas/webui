@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+  ChangeDetectionStrategy, Component, OnInit,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
@@ -26,7 +26,7 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import { RsyncTaskFormComponent } from 'app/pages/data-protection/rsync-task/rsync-task-form/rsync-task-form.component';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 import { TaskService } from 'app/services/task.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
@@ -58,7 +58,9 @@ export class RsyncTaskCardComponent implements OnInit {
     }),
     relativeDateColumn({
       title: this.translate.instant('Next Run'),
-      getValue: (row) => this.taskService.getTaskNextTime(scheduleToCrontab(row.schedule)),
+      getValue: (row) => (row.enabled
+        ? this.taskService.getTaskNextTime(scheduleToCrontab(row.schedule))
+        : this.translate.instant('Disabled')),
     }),
     relativeDateColumn({
       title: this.translate.instant('Last Run'),
@@ -67,7 +69,7 @@ export class RsyncTaskCardComponent implements OnInit {
     toggleColumn({
       title: this.translate.instant('Enabled'),
       propertyName: 'enabled',
-      requiresRoles: [Role.FullAdmin],
+      requiredRoles: [Role.FullAdmin],
       onRowToggle: (row: RsyncTaskUi) => this.onChangeEnabledState(row),
     }),
     stateButtonColumn({
@@ -87,14 +89,14 @@ export class RsyncTaskCardComponent implements OnInit {
         {
           iconName: 'play_arrow',
           tooltip: this.translate.instant('Run job'),
-          requiresRoles: [Role.FullAdmin],
+          requiredRoles: [Role.FullAdmin],
           hidden: (row) => of(row.job?.state === JobState.Running),
           onClick: (row) => this.runNow(row),
         },
         {
           iconName: 'delete',
           tooltip: this.translate.instant('Delete'),
-          requiresRoles: [Role.FullAdmin],
+          requiredRoles: [Role.FullAdmin],
           onClick: (row) => this.doDelete(row),
         },
       ],
@@ -104,16 +106,15 @@ export class RsyncTaskCardComponent implements OnInit {
   });
 
   constructor(
-    private slideInService: IxSlideInService,
     private translate: TranslateService,
     private errorHandler: ErrorHandlerService,
     private ws: WebSocketService,
     private dialogService: DialogService,
-    private cdr: ChangeDetectorRef,
     private taskService: TaskService,
     private store$: Store<AppState>,
     private snackbar: SnackbarService,
     protected emptyService: EmptyService,
+    private chainedSlideInService: IxChainedSlideInService,
   ) {}
 
   ngOnInit(): void {
@@ -151,9 +152,8 @@ export class RsyncTaskCardComponent implements OnInit {
   }
 
   openForm(row?: RsyncTaskUi): void {
-    const slideInRef = this.slideInService.open(RsyncTaskFormComponent, { data: row, wide: true });
-
-    slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
+    const closer$ = this.chainedSlideInService.pushComponent(RsyncTaskFormComponent, true, row);
+    closer$.pipe(filter((response) => !!response.response), untilDestroyed(this)).subscribe(() => {
       this.getRsyncTasks();
     });
   }

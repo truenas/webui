@@ -14,7 +14,7 @@ import { helptextSystemCa } from 'app/helptext/system/ca';
 import { helptextSystemCertificates } from 'app/helptext/system/certificates';
 import { CertificateAuthority } from 'app/interfaces/certificate-authority.interface';
 import { Job } from 'app/interfaces/job.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
+import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { AsyncDataProvider } from 'app/modules/ix-table2/classes/async-data-provider/async-data-provider';
 import {
   actionsColumn,
@@ -77,7 +77,7 @@ export class CertificateAuthorityListComponent implements OnInit {
         {
           iconName: 'mdi-undo',
           tooltip: this.translate.instant('Revoke'),
-          requiresRoles: [Role.FullAdmin],
+          requiredRoles: [Role.FullAdmin],
           hidden: (row) => of(row.revoked),
           onClick: (row) => this.doRevoke(row),
         },
@@ -93,7 +93,7 @@ export class CertificateAuthorityListComponent implements OnInit {
         },
         {
           iconName: 'delete',
-          requiresRoles: [Role.FullAdmin],
+          requiredRoles: [Role.FullAdmin],
           tooltip: this.translate.instant('Delete'),
           onClick: (row) => this.doDelete(row),
         },
@@ -213,7 +213,7 @@ export class CertificateAuthorityListComponent implements OnInit {
               },
             });
         },
-        error: (err: WebsocketError | Job) => {
+        error: (err: WebSocketError | Job) => {
           this.dialogService.error(this.errorHandler.parseError(err));
         },
       });

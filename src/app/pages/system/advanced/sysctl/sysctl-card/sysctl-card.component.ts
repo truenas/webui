@@ -17,7 +17,7 @@ import { AdvancedSettingsService } from 'app/pages/system/advanced/advanced-sett
 import { TunableFormComponent } from 'app/pages/system/advanced/sysctl/tunable-form/tunable-form.component';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
@@ -58,7 +58,7 @@ export class SysctlCardComponent implements OnInit {
           iconName: 'delete',
           tooltip: this.translate.instant('Delete'),
           onClick: (row) => this.onDelete(row),
-          requiresRoles: [Role.FullAdmin],
+          requiredRoles: [Role.FullAdmin],
         },
       ],
     }),
@@ -67,7 +67,6 @@ export class SysctlCardComponent implements OnInit {
   });
 
   constructor(
-    private slideInService: IxSlideInService,
     private translate: TranslateService,
     private errorHandler: ErrorHandlerService,
     private ws: WebSocketService,
@@ -75,6 +74,7 @@ export class SysctlCardComponent implements OnInit {
     private snackbar: SnackbarService,
     private advancedSettings: AdvancedSettingsService,
     protected emptyService: EmptyService,
+    private chainedSlideIns: IxChainedSlideInService,
   ) {}
 
   ngOnInit(): void {
@@ -119,12 +119,11 @@ export class SysctlCardComponent implements OnInit {
 
   private openForm(row?: Tunable): void {
     from(this.advancedSettings.showFirstTimeWarningIfNeeded()).pipe(
-      switchMap(() => this.slideInService.open(TunableFormComponent, { data: row }).slideInClosed$),
-      filter(Boolean),
+      switchMap(() => this.chainedSlideIns.pushComponent(TunableFormComponent, false, row)),
+      filter((response) => !!response.response),
       untilDestroyed(this),
-    )
-      .subscribe(() => {
-        this.loadItems();
-      });
+    ).subscribe(() => {
+      this.loadItems();
+    });
   }
 }

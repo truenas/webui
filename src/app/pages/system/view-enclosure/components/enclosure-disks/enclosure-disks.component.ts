@@ -1,5 +1,5 @@
 import {
-  AfterContentInit, ChangeDetectorRef, Component, ElementRef, Input, OnDestroy, ViewChild,
+  AfterContentInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, Input, OnDestroy, ViewChild,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -35,6 +35,7 @@ import { Es24F } from 'app/pages/system/view-enclosure/classes/hardware/es24f';
 import { Es60 } from 'app/pages/system/view-enclosure/classes/hardware/es60';
 import { Es60G2 } from 'app/pages/system/view-enclosure/classes/hardware/es60g2';
 import { F60 } from 'app/pages/system/view-enclosure/classes/hardware/f60';
+import { H10 } from 'app/pages/system/view-enclosure/classes/hardware/h10';
 import { M50 } from 'app/pages/system/view-enclosure/classes/hardware/m50';
 import { MINIR } from 'app/pages/system/view-enclosure/classes/hardware/mini-r';
 import { R10 } from 'app/pages/system/view-enclosure/classes/hardware/r10';
@@ -86,6 +87,7 @@ export interface DiskFailure {
   selector: 'ix-enclosure-disks',
   templateUrl: './enclosure-disks.component.html',
   styleUrls: ['./enclosure-disks.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
   showCaption = true;
@@ -204,7 +206,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
   private resources = PIXI.loader.resources;
   container: Container;
   chassis: Chassis;
-  view: string = EnclosureLocation.Front;
+  view = EnclosureLocation.Front;
   get chassisView(): ChassisView {
     if (!this.chassis) return null;
 
@@ -256,7 +258,9 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
     this.diskTemperatureService.listenForTemperatureUpdates();
 
     this.diskTemperatureService.temperature$.pipe(untilDestroyed(this)).subscribe((data) => {
-      const chassisView: ChassisView = this.chassisView && this.view === 'rear' ? this.chassis?.rear : this.chassis?.front;
+      const chassisView: ChassisView = this.chassisView && this.view === EnclosureLocation.Rear
+        ? this.chassis?.rear
+        : this.chassis?.front;
       if (!this.chassis || !chassisView?.driveTrayObjects) { return; }
 
       const clone: Temperature = { ...data };
@@ -281,6 +285,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
       }
 
       this.temperatures = clone;
+      this.cdr.markForCheck();
     });
     this.diskTemperatureService.diskTemperaturesSubscribe();
 
@@ -339,6 +344,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
     });
 
     this.pixiInit();
+    this.cdr.markForCheck();
 
     // Listen for DOM changes to avoid race conditions with animations
     const callback = (mutationList: MutationRecord[]): void => {
@@ -384,6 +390,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
           }
         }
       });
+      this.cdr.markForCheck();
     };
 
     const observerOptions = {
@@ -407,7 +414,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
   }
 
   // Recreates enclosure when switching between enclosures or front/rear/internal visualizations
-  loadEnclosure(enclosureView: EnclosureUi, view?: string, update?: boolean): void {
+  loadEnclosure(enclosureView: EnclosureUi, view?: EnclosureLocation, update?: boolean): void {
     if (this.selectedSlotNumber > -1) {
       this.clearDisk();
     }
@@ -553,6 +560,10 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
       case 'F60':
         this.chassis = new F60();
         break;
+      case 'H Series':
+      case 'H10':
+        this.chassis = new H10();
+        break;
       default:
         this.controllerEvent$.next({
           name: 'Error',
@@ -610,6 +621,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
           break;
         }
       }
+      this.cdr.markForCheck();
     });
 
     if (!this.resources[this.chassisView.model]) {
@@ -711,6 +723,10 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
       case 'TRUENAS-F60-HA':
       case 'F60':
         extractedChassis = new F60();
+        break;
+      case 'H Series':
+      case 'H10':
+        extractedChassis = new H10();
         break;
       default:
         this.controllerEvent$.next({
@@ -850,6 +866,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
 
     this.currentView = viewName;
     this.resizeView();
+    this.cdr.markForCheck();
   }
 
   // Updates HTML layers in tandem with Canvas
@@ -1191,8 +1208,8 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
   }
 
   // Changes front/rear/internal
-  enclosureOverride(view: string): void {
-    if (view !== this.view && this.selectedEnclosure) {
+  enclosureOverride(view: EnclosureLocation): void {
+    if (view !== this.view) {
       this.clearDisk();
       this.loadEnclosure(this.selectedEnclosure, view, true);
     }

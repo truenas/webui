@@ -4,7 +4,7 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { PoolScrubTask } from 'app/interfaces/pool-scrub.interface';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTable2Harness } from 'app/modules/ix-table2/components/ix-table2/ix-table2.harness';
@@ -68,7 +68,7 @@ describe('ScrubListComponent', () => {
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
-      mockWebsocket([
+      mockWebSocket([
         mockCall('pool.scrub.query', scrubTasks),
       ]),
       mockProvider(TaskService, {
@@ -119,7 +119,7 @@ describe('ScrubListComponent', () => {
         'Second task',
         '00 00 * * 7',
         'At 12:00 AM, only on Sunday',
-        'N/A',
+        'Disabled',
         'No',
         '',
       ],

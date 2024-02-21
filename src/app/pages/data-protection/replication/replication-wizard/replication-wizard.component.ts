@@ -29,7 +29,7 @@ import { PeriodicSnapshotTask, PeriodicSnapshotTaskCreate } from 'app/interfaces
 import { ReplicationCreate, ReplicationTask } from 'app/interfaces/replication-task.interface';
 import { Schedule } from 'app/interfaces/schedule.interface';
 import { CreateZfsSnapshot, ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
-import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { ChainedRef } from 'app/modules/ix-forms/components/ix-slide-in/chained-component-ref';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { crontabToSchedule } from 'app/modules/scheduler/utils/crontab-to-schedule.utils';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -53,7 +53,6 @@ export class ReplicationWizardComponent {
   @ViewChild(ReplicationWhatAndWhereComponent) whatAndWhere: ReplicationWhatAndWhereComponent;
   @ViewChild(ReplicationWhenComponent) when: ReplicationWhenComponent;
 
-  rowId: number;
   isLoading = false;
   defaultNamingSchema = 'auto-%Y-%m-%d_%H-%M';
   isCustomRetentionVisible = true;
@@ -67,19 +66,15 @@ export class ReplicationWizardComponent {
   constructor(
     private ws: WebSocketService,
     private replicationService: ReplicationService,
-    private slideInRef: IxSlideInRef<ReplicationWizardComponent>,
     private errorHandler: ErrorHandlerService,
     private dialogService: DialogService,
     private cdr: ChangeDetectorRef,
     private translate: TranslateService,
     private appLoader: AppLoaderService,
     private snackbar: SnackbarService,
+    private chainedSlideInRef: ChainedRef<unknown>,
     private authService: AuthService,
   ) {}
-
-  setRowId(id: number): void {
-    this.rowId = id;
-  }
 
   getSteps(): [
     ReplicationWhatAndWhereComponent,
@@ -135,15 +130,17 @@ export class ReplicationWizardComponent {
       }),
       switchMap((createdReplication) => {
         if (values.schedule_method === ScheduleMethod.Once && createdReplication) {
-          return this.runReplicationOnce(createdReplication);
+          return this.runReplicationOnce(createdReplication).pipe(
+            catchError((err) => { this.handleError(err); return EMPTY; }),
+            switchMap(() => of(createdReplication)),
+          );
         }
         return of(createdReplication);
       }),
-      catchError((err) => { this.handleError(err); return EMPTY; }),
       untilDestroyed(this),
-    ).subscribe(() => {
+    ).subscribe((createdReplication) => {
       this.cdr.markForCheck();
-      this.slideInRef.close(true);
+      this.chainedSlideInRef.close({ response: createdReplication, error: null });
     });
   }
 
@@ -173,7 +170,6 @@ export class ReplicationWizardComponent {
 
   getSnapshotsCount(payload: CountManualSnapshotsParams): Observable<EligibleManualSnapshotsCount> {
     return this.authService.hasRole([
-      Role.ReplicationManager,
       Role.ReplicationTaskWrite,
       Role.ReplicationTaskWritePull,
     ]).pipe(

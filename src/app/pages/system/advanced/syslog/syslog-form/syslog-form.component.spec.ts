@@ -4,17 +4,17 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
+import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockJob, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { SyslogLevel, SyslogTransport } from 'app/enums/syslog.enum';
 import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
-import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
+import { ChainedRef } from 'app/modules/ix-forms/components/ix-slide-in/chained-component-ref';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { SyslogFormComponent } from 'app/pages/system/advanced/syslog/syslog-form/syslog-form.component';
 import { DialogService } from 'app/services/dialog.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 describe('SyslogFormComponent', () => {
@@ -28,7 +28,7 @@ describe('SyslogFormComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
-      mockWebsocket([
+      mockWebSocket([
         mockCall('system.advanced.config', {
           fqdn_syslog: true,
           sysloglevel: SyslogLevel.Error,
@@ -47,11 +47,22 @@ describe('SyslogFormComponent', () => {
         mockCall('system.advanced.update'),
         mockJob('systemdataset.update'),
       ]),
-      mockProvider(IxSlideInService),
+      mockProvider(IxChainedSlideInService, {
+        pushComponent: jest.fn(() => of({ response: true, error: null })),
+        components$: of([]),
+      }),
       mockProvider(DialogService),
       provideMockStore(),
-      mockProvider(IxSlideInRef),
-      { provide: SLIDE_IN_DATA, useValue: undefined },
+      mockProvider(ChainedRef, {
+        close: jest.fn(),
+        getData: jest.fn(() => ({
+          fqdn_syslog: true,
+          sysloglevel: SyslogLevel.Error,
+          syslogserver: 'existing.server.com',
+          syslog_transport: SyslogTransport.Udp,
+          syslog_tls_certificate: 2,
+        })),
+      }),
       mockAuth(),
     ],
   });
@@ -66,7 +77,6 @@ describe('SyslogFormComponent', () => {
     const form = await loader.getHarness(IxFormHarness);
     const values = await form.getValues();
 
-    expect(ws.call).toHaveBeenCalledWith('system.advanced.config');
     expect(values).toEqual({
       'Use FQDN for Logging': true,
       'Syslog Level': 'Error',
@@ -102,13 +112,14 @@ describe('SyslogFormComponent', () => {
 
   it('shows certificate fields when transport is TLS and saves it', async () => {
     const form = await loader.getHarness(IxFormHarness);
-    await form.fillForm({
-      'Syslog Transport': SyslogTransport.Tls,
-    });
-    await form.fillForm({
-      'Syslog TLS Certificate': 'Certificate 2',
-      'Syslog TLS Certificate Authority': 'Authority 2',
-    });
+
+    await form.fillForm(
+      {
+        'Syslog Transport': SyslogTransport.Tls,
+        'Syslog TLS Certificate': 'Certificate 2',
+        'Syslog TLS Certificate Authority': 'Authority 2',
+      },
+    );
 
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();

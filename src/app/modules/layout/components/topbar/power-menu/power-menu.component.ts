@@ -3,10 +3,11 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { filter } from 'rxjs/operators';
+import { Role } from 'app/enums/role.enum';
 import { helptextTopbar } from 'app/helptext/topbar';
 import { AuthService } from 'app/services/auth/auth.service';
 import { DialogService } from 'app/services/dialog.service';
-import { WebsocketConnectionService } from 'app/services/websocket-connection.service';
+import { WebSocketConnectionService } from 'app/services/websocket-connection.service';
 
 @UntilDestroy()
 @Component({
@@ -17,14 +18,14 @@ import { WebsocketConnectionService } from 'app/services/websocket-connection.se
 export class PowerMenuComponent {
   readonly tooltips = helptextTopbar.mat_tooltips;
 
-  protected isSysAdmin$ = this.authService.isSysAdmin$;
+  protected requiredRoles = [Role.FullAdmin];
 
   constructor(
     private authService: AuthService,
     private translate: TranslateService,
     private dialogService: DialogService,
     private router: Router,
-    private wsManager: WebsocketConnectionService,
+    private wsManager: WebSocketConnectionService,
   ) { }
 
   onSignOut(): void {

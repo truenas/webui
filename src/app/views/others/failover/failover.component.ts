@@ -1,5 +1,5 @@
 import { Location } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -8,7 +8,7 @@ import { AlertSlice } from 'app/modules/alerts/store/alert.selectors';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { WebsocketConnectionService } from 'app/services/websocket-connection.service';
+import { WebSocketConnectionService } from 'app/services/websocket-connection.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { passiveNodeReplaced } from 'app/store/system-info/system-info.actions';
 
@@ -16,12 +16,13 @@ import { passiveNodeReplaced } from 'app/store/system-info/system-info.actions';
 @Component({
   templateUrl: './failover.component.html',
   styleUrls: ['./failover.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FailoverComponent implements OnInit {
   constructor(
     protected ws: WebSocketService,
     private errorHandler: ErrorHandlerService,
-    private wsManager: WebsocketConnectionService,
+    private wsManager: WebSocketConnectionService,
     protected router: Router,
     protected loader: AppLoaderService,
     protected dialogService: DialogService,

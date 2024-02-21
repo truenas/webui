@@ -1,6 +1,11 @@
 import {
-  AfterViewInit, ChangeDetectorRef,
-  Component, ElementRef, OnDestroy, ViewChild,
+  AfterViewInit,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  ElementRef,
+  OnDestroy,
+  ViewChild,
 } from '@angular/core';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -13,10 +18,13 @@ import { ErrorMessage } from 'app/pages/system/view-enclosure/interfaces/error-m
 import { ViewConfig } from 'app/pages/system/view-enclosure/interfaces/view.config';
 import { EnclosureState, EnclosureStore } from 'app/pages/system/view-enclosure/stores/enclosure-store.service';
 import { DisksUpdateService } from 'app/services/disks-update.service';
-import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 import { selectTheme } from 'app/store/preferences/preferences.selectors';
-import { selectIsIxHardware, waitForSystemFeatures, waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
+import {
+  selectIsIxHardware,
+  waitForSystemFeatures,
+  waitForSystemInfo,
+} from 'app/store/system-info/system-info.selectors';
 
 export interface SystemProfile {
   enclosureStore$: Observable<EnclosureState>;
@@ -32,6 +40,7 @@ export enum EnclosureSelectorState {
 @Component({
   templateUrl: './view-enclosure.component.html',
   styleUrls: ['./view-enclosure.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ViewEnclosureComponent implements AfterViewInit, OnDestroy {
   errors: ErrorMessage[] = [];
@@ -134,11 +143,11 @@ export class ViewEnclosureComponent implements AfterViewInit, OnDestroy {
 
   changeView(view: ViewConfig): void {
     this.currentView = this.views[view.enclosureIndex];
+    this.changeDetectorRef.markForCheck();
   }
 
   constructor(
     public router: Router,
-    private ws: WebSocketService,
     private store$: Store<AppState>,
     private disksUpdateService: DisksUpdateService,
     private enclosureStore: EnclosureStore,
@@ -174,6 +183,8 @@ export class ViewEnclosureComponent implements AfterViewInit, OnDestroy {
           console.warn({ ERROR_REPORT: this.errors });
           break;
       }
+
+      this.changeDetectorRef.markForCheck();
     });
 
     this.store$.select(selectTheme).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
@@ -230,9 +241,10 @@ export class ViewEnclosureComponent implements AfterViewInit, OnDestroy {
       setTimeout(() => {
         this.delayPending = false;
         this.addViews();
+        this.changeDetectorRef.markForCheck();
       }, 1500);
 
-      this.changeDetectorRef.detectChanges();
+      this.changeDetectorRef.markForCheck();
     });
   }
 
@@ -343,5 +355,7 @@ export class ViewEnclosureComponent implements AfterViewInit, OnDestroy {
     } else {
       this.currentView = disks;
     }
+
+    this.changeDetectorRef.markForCheck();
   }
 }

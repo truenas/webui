@@ -13,6 +13,7 @@ import { ChartRelease, ChartReleaseStats } from 'app/interfaces/chart-release.in
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { AppsStore } from 'app/pages/apps/store/apps-store.service';
 import { KubernetesStore } from 'app/pages/apps/store/kubernetes-store.service';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 
 export interface InstalledAppsState {
   installedApps: ChartRelease[];
@@ -36,6 +37,7 @@ export class InstalledAppsStore extends ComponentStore<InstalledAppsState> imple
     private appsService: ApplicationsService,
     private appsStore: AppsStore,
     private kubernetesStore: KubernetesStore,
+    private errorHandler: ErrorHandlerService,
   ) {
     super(initialState);
     this.initialize();
@@ -58,14 +60,15 @@ export class InstalledAppsStore extends ComponentStore<InstalledAppsState> imple
           };
         });
       }),
-      catchError(() => {
-        this.handleError();
+      catchError((error: unknown) => {
+        this.handleError(error);
         return EMPTY;
       }),
     );
   });
 
-  private handleError(): void {
+  private handleError(error: unknown): void {
+    this.errorHandler.showErrorModal(error);
     this.patchState((state: InstalledAppsState): InstalledAppsState => {
       return {
         ...state,

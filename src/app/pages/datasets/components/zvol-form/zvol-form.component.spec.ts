@@ -5,7 +5,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockWebsocket, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockWebSocket, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
 import { DatasetRecordSize, DatasetType } from 'app/enums/dataset.enum';
 import { ZfsPropertySource } from 'app/enums/zfs-property-source.enum';
 import { Dataset } from 'app/interfaces/dataset.interface';
@@ -29,7 +29,7 @@ describe('ZvolFormComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
-      mockWebsocket([
+      mockWebSocket([
         mockCall('pool.dataset.create'),
         mockCall('pool.dataset.update'),
         mockCall('pool.dataset.recommended_zvol_blocksize', '16K' as DatasetRecordSize),
@@ -138,29 +138,25 @@ describe('ZvolFormComponent', () => {
     it('adds a new zvol when new form is saved', fakeAsync(async (): Promise<void> => {
       spectator.tick();
 
-      await form.fillForm({
-        'Zvol name': 'new zvol',
-        Comments: 'comments text',
-        'Size for this zvol': '2 GiB',
-        Sync: 'Standard',
-        'Compression level': 'lz4 (recommended)',
-        'ZFS Deduplication': 'Verify',
-        Sparse: true,
-        'Inherit (non-encrypted)': false,
-        'Read-only': 'On',
-        Snapdev: 'Visible',
-      });
-
-      await form.fillForm({
-        'Encryption Type': 'Passphrase',
-        Algorithm: 'AES-128-CCM',
-      });
-
-      await form.fillForm({
-        pbkdf2iters: 500000,
-        Passphrase: '12345678',
-        'Confirm Passphrase': '12345678',
-      });
+      await form.fillForm(
+        {
+          'Zvol name': 'new zvol',
+          Comments: 'comments text',
+          'Size for this zvol': '2 GiB',
+          Sync: 'Standard',
+          'Compression level': 'lz4 (recommended)',
+          'ZFS Deduplication': 'Verify',
+          Sparse: true,
+          'Inherit (non-encrypted)': false,
+          'Read-only': 'On',
+          Snapdev: 'Visible',
+          'Encryption Type': 'Passphrase',
+          Algorithm: 'AES-128-CCM',
+          pbkdf2iters: 500000,
+          Passphrase: '12345678',
+          'Confirm Passphrase': '12345678',
+        },
+      );
 
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();

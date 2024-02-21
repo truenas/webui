@@ -1,4 +1,6 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+} from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { chain } from 'lodash';
@@ -19,18 +21,19 @@ export class BreadcrumbComponent implements OnInit {
   constructor(
     private router: Router,
     private routePartsService: RoutePartsService,
+    private cdr: ChangeDetectorRef,
   ) { }
 
   ngOnInit(): void {
     this.breadcrumbs = this.getBreadcrumbs();
 
-    // only execute when routechange
     this.router.events
       .pipe(
         filter((event) => event instanceof NavigationEnd),
         untilDestroyed(this),
       ).subscribe(() => {
         this.breadcrumbs = this.getBreadcrumbs();
+        this.cdr.markForCheck();
       });
   }
 

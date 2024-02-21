@@ -1,4 +1,6 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
+} from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
@@ -19,7 +21,7 @@ import { ApiJobMethod } from 'app/interfaces/api/api-job-directory.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { SystemUpdateTrain } from 'app/interfaces/system-update.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
+import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -42,6 +44,7 @@ import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
   selector: 'ix-update',
   styleUrls: ['update.component.scss'],
   templateUrl: './update.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UpdateComponent implements OnInit {
   packages: { operation: string; name: string }[] = [];
@@ -111,10 +114,12 @@ export class UpdateComponent implements OnInit {
     private fb: FormBuilder,
     private snackbar: SnackbarService,
     private authService: AuthService,
+    private cdr: ChangeDetectorRef,
     @Inject(WINDOW) private window: Window,
   ) {
     this.sysGenService.updateRunning.pipe(untilDestroyed(this)).subscribe((isUpdating: string) => {
       this.isUpdateRunning = isUpdating === 'true';
+      this.cdr.markForCheck();
     });
   }
 
@@ -149,6 +154,7 @@ export class UpdateComponent implements OnInit {
 
     this.ws.call('update.get_auto_download').pipe(untilDestroyed(this)).subscribe((isAutoDownloadOn) => {
       this.autoCheckValue = isAutoDownloadOn;
+      this.cdr.markForCheck();
 
       this.ws.call('update.get_trains').pipe(untilDestroyed(this)).subscribe({
         next: (trains) => {
@@ -185,8 +191,10 @@ export class UpdateComponent implements OnInit {
           }
           // To remember train description if user switches away and then switches back
           this.trainDescriptionOnPageLoad = this.currentTrainDescription;
+
+          this.cdr.markForCheck();
         },
-        error: (error: WebsocketError) => {
+        error: (error: WebSocketError) => {
           this.dialogService.warn(
             error.trace.class,
             this.translate.instant('TrueNAS was unable to reach update servers.'),
@@ -203,6 +211,8 @@ export class UpdateComponent implements OnInit {
             this.isHa = true;
           }
           this.checkForUpdateRunning();
+
+          this.cdr.markForCheck();
         });
       });
     } else {
@@ -228,6 +238,7 @@ export class UpdateComponent implements OnInit {
           this.isUpdateRunning = true;
           this.showRunningUpdate(jobs[0].id);
         }
+        this.cdr.markForCheck();
       },
       error: (err) => {
         console.error(err);
@@ -275,6 +286,7 @@ export class UpdateComponent implements OnInit {
       if (this.autoCheckValue) {
         this.check();
       }
+      this.cdr.markForCheck();
     });
   }
 
@@ -283,6 +295,7 @@ export class UpdateComponent implements OnInit {
       if (pending.length !== 0) {
         this.updateDownloaded = true;
       }
+      this.cdr.markForCheck();
     });
   }
 
@@ -299,6 +312,7 @@ export class UpdateComponent implements OnInit {
       },
       complete: () => {
         this.showSpinner = false;
+        this.cdr.markForCheck();
       },
     });
   }
@@ -374,12 +388,13 @@ export class UpdateComponent implements OnInit {
         }
         this.showSpinner = false;
       },
-      error: (err: WebsocketError) => {
+      error: (err: WebSocketError) => {
         this.generalUpdateError = `${err.reason.replace('>', '').replace('<', '')}: ${this.translate.instant('Automatic update check failed. Please check system network settings.')}`;
         this.showSpinner = false;
       },
       complete: () => {
         this.showSpinner = false;
+        this.cdr.markForCheck();
       },
     });
   }
@@ -409,6 +424,7 @@ export class UpdateComponent implements OnInit {
         } else {
           this.startUpdate();
         }
+        this.cdr.markForCheck();
       });
   }
 
@@ -479,7 +495,7 @@ export class UpdateComponent implements OnInit {
           this.dialogService.info(this.translate.instant('Check Now'), this.translate.instant('No updates available.'));
         }
       },
-      error: (error: WebsocketError) => {
+      error: (error: WebSocketError) => {
         this.dialogService.error({
           title: this.translate.instant('Error checking for updates.'),
           message: error.reason,
@@ -488,6 +504,7 @@ export class UpdateComponent implements OnInit {
       },
       complete: () => {
         this.loader.close();
+        this.cdr.markForCheck();
       },
     });
   }
@@ -558,6 +575,7 @@ export class UpdateComponent implements OnInit {
           this.dialogService.closeAllDialogs();
           this.isUpdateRunning = false;
           this.sysGenService.updateDone(); // Send 'finished' signal to topbar
+          this.cdr.markForCheck();
           this.router.navigate(['/']);
           this.dialogService.confirm({
             title: helptext.ha_update.complete_title,

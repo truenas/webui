@@ -88,6 +88,7 @@ export class DockerImageUpdateDialogComponent {
       filter((job: Job<CoreBulkResponse<PullContainerImageResponse[]>[], PullContainerImageParams[]>) => !!job.result),
       untilDestroyed(this),
     ).subscribe((response) => {
+      let appsUpdatedSuccessfully = true;
       response.result.forEach((item, index) => {
         const image = this.images[index];
         if (item.error) {
@@ -96,17 +97,19 @@ export class DockerImageUpdateDialogComponent {
             state: BulkListItemState.Error,
             message: item.error,
           });
+          appsUpdatedSuccessfully = false;
         } else {
           this.bulkItems.set(image.id, {
             ...this.bulkItems.get(image.id),
             state: BulkListItemState.Success,
             message: item.result[item.result.length - 1].status.replace('Status:', ''),
           });
-          if (this.bulkItems.size === 1) {
-            this.dialogRef.close();
-          }
         }
       });
+      if (appsUpdatedSuccessfully) {
+        // Close the dialog if all apps were updated successfully and no errors are occured
+        this.dialogRef.close(true);
+      }
       this.isJobCompleted = true;
       this.cdr.markForCheck();
     });

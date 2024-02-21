@@ -5,16 +5,16 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { Store } from '@ngrx/store';
 import { provideMockStore } from '@ngrx/store/testing';
+import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { mockWindow } from 'app/core/testing/utils/mock-window.utils';
 import { Preferences } from 'app/interfaces/preferences.interface';
-import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
+import { ChainedRef } from 'app/modules/ix-forms/components/ix-slide-in/chained-component-ref';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { AccessFormComponent } from 'app/pages/system/advanced/access/access-form/access-form.component';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { lifetimeTokenUpdated } from 'app/store/preferences/preferences.actions';
@@ -25,6 +25,7 @@ import { selectGeneralConfig } from 'app/store/system-config/system-config.selec
 describe('AccessFormComponent', () => {
   let spectator: Spectator<AccessFormComponent>;
   let loader: HarnessLoader;
+  const chainedRef: ChainedRef<unknown> = { close: jest.fn(), getData: jest.fn(() => undefined) };
   const createComponent = createComponentFactory({
     component: AccessFormComponent,
     imports: [
@@ -37,10 +38,13 @@ describe('AccessFormComponent', () => {
           setItem: jest.fn,
         },
       }),
-      mockWebsocket([
+      mockWebSocket([
         mockCall('system.general.update'),
       ]),
-      mockProvider(IxSlideInService),
+      mockProvider(IxChainedSlideInService, {
+        pushComponent: jest.fn(() => of(true)),
+        components$: of([]),
+      }),
       mockProvider(SystemGeneralService, {
         isEnterprise: jest.fn(() => true),
       }),
@@ -53,8 +57,7 @@ describe('AccessFormComponent', () => {
           value: { ds_auth: true },
         }],
       }),
-      mockProvider(IxSlideInRef),
-      { provide: SLIDE_IN_DATA, useValue: undefined },
+      mockProvider(ChainedRef, chainedRef),
       mockAuth(),
     ],
   });
@@ -92,6 +95,6 @@ describe('AccessFormComponent', () => {
       ds_auth: false,
     }]);
     expect(store$.dispatch).toHaveBeenCalledWith(generalConfigUpdated());
-    expect(spectator.inject(IxSlideInRef).close).toHaveBeenCalled();
+    expect(chainedRef.close).toHaveBeenCalled();
   });
 });

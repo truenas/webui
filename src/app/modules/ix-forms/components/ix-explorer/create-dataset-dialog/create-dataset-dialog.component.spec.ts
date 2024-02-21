@@ -4,7 +4,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { DatasetAclType, DatasetCaseSensitivity } from 'app/enums/dataset.enum';
 import { Dataset, DatasetCreate } from 'app/interfaces/dataset.interface';
 import { CreateDatasetDialogComponent } from 'app/modules/ix-forms/components/ix-explorer/create-dataset-dialog/create-dataset-dialog.component';
@@ -23,7 +23,7 @@ describe('CreateDatasetDialogComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
-      mockWebsocket([
+      mockWebSocket([
         mockCall('pool.dataset.query', [{
           name: 'parent_name',
           casesensitivity: { value: DatasetCaseSensitivity.Sensitive },

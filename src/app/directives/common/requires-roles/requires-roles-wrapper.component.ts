@@ -1,13 +1,12 @@
-import { Component, Input, TemplateRef } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, Input, TemplateRef,
+} from '@angular/core';
 
 @Component({
   selector: 'ix-requires-roles-wrapper',
-  template: `
-<span [class]="['role-missing', class]" [matTooltip]="'Missing permissions for this action' | translate" matTooltipPosition="above">
-  <ng-container *ngTemplateOutlet="template"></ng-container>
-</span>
-`,
+  templateUrl: './requires-roles-wrapper.component.html',
   styleUrls: ['./requires-roles-wrapper.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RequiresRolesWrapperComponent {
   @Input() template: TemplateRef<unknown>;

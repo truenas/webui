@@ -8,7 +8,8 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { GiB } from 'app/constants/bytes.constant';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import {
   VmBootloader, VmCpuMode, VmDeviceType, VmDiskMode, VmDisplayType, VmTime,
 } from 'app/enums/vm.enum';
@@ -67,7 +68,8 @@ describe('VmWizardComponent', () => {
       mockProvider(IxSlideInService),
       mockProvider(GpuService),
       mockProvider(VmGpuService),
-      mockWebsocket([
+      mockAuth(),
+      mockWebSocket([
         mockCall('vm.create', { id: 4 } as VirtualMachine),
         mockCall('vm.query', []),
         mockCall('vm.port_wizard', { port: 13669 } as VmPortWizardResult),
@@ -79,7 +81,9 @@ describe('VmWizardComponent', () => {
         mockCall('vm.device.bind_choices', {
           '10.10.16.82': '10.10.16.82',
         }),
-        mockCall('vm.cpu_model_choices'),
+        mockCall('vm.cpu_model_choices', {
+          Pentium: 'Pentium',
+        }),
         mockCall('vm.maximum_supported_vcpus', 27),
         mockCall('pool.filesystem_choices', [
           'poolio',

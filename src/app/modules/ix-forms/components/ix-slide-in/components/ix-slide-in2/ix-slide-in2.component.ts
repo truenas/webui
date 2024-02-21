@@ -1,5 +1,5 @@
-import { Location } from '@angular/common';
 import {
+  ChangeDetectionStrategy, ChangeDetectorRef,
   Component,
   ElementRef,
   HostListener,
@@ -12,22 +12,25 @@ import {
   ViewChild,
   ViewContainerRef,
 } from '@angular/core';
-import { NavigationEnd, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { cloneDeep } from 'lodash';
+import { Subscription, timer } from 'rxjs';
+import { ChainedRef } from 'app/modules/ix-forms/components/ix-slide-in/chained-component-ref';
 import {
-  Observable, Subscription, filter, merge, timer,
-} from 'rxjs';
-import { SLIDE_IN_CLOSER, SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
-import { ChainedComponentSeralized, IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
+  ChainedComponentResponse,
+  ChainedComponentSerialized,
+  IxChainedSlideInService,
+} from 'app/services/ix-chained-slide-in.service';
 
 @UntilDestroy()
 @Component({
   selector: 'ix-slide-in2',
   templateUrl: './ix-slide-in2.component.html',
   styleUrls: ['./ix-slide-in2.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class IxSlideIn2Component implements OnInit, OnDestroy {
-  @Input() componentInfo: ChainedComponentSeralized;
+  @Input() componentInfo: ChainedComponentSerialized;
   @Input() index: number;
   @Input() lastIndex: number;
   @ViewChild('chainedBody', { static: true, read: ViewContainerRef }) slideInBody: ViewContainerRef;
@@ -45,16 +48,13 @@ export class IxSlideIn2Component implements OnInit, OnDestroy {
   private element: HTMLElement;
   private wasBodyCleared = false;
   private timeOutOfClear: Subscription;
-  counterId = 0;
 
   constructor(
     private el: ElementRef,
     private renderer: Renderer2,
-    private location: Location,
-    private router: Router,
     private chainedSlideInService: IxChainedSlideInService,
+    private cdr: ChangeDetectorRef,
   ) {
-    this.closeOnNavigation();
     this.element = this.el.nativeElement as HTMLElement;
   }
 
@@ -76,14 +76,18 @@ export class IxSlideIn2Component implements OnInit, OnDestroy {
     ).subscribe((wide) => {
       this.wide = wide;
     });
-    this.componentInfo.close$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.closeSlideIn();
-    });
+  }
+
+  ngOnDestroy(): void {
+    this.componentInfo.close$.complete();
+    this.chainedSlideInService.popComponent(this.componentInfo.id);
+    this.element.remove();
   }
 
   onBackdropClicked(): void {
     if (!this.element || !this.isSlideInOpen) { return; }
-    // this.close$.next(null);/
+    this.componentInfo.close$.next({ response: false, error: null });
+    this.componentInfo.close$.complete();
     this.closeSlideIn();
   }
 
@@ -98,9 +102,9 @@ export class IxSlideIn2Component implements OnInit, OnDestroy {
         // 200ms matches transition duration
         this.slideInBody.clear();
         this.wasBodyCleared = false;
+        this.cdr.markForCheck();
       });
-      this.componentInfo.close$.next(null);
-      this.chainedSlideInService.popComponent();
+      this.chainedSlideInService.popComponent(this.componentInfo.id);
     });
   }
 
@@ -114,6 +118,7 @@ export class IxSlideIn2Component implements OnInit, OnDestroy {
 
     timer(10).pipe(untilDestroyed(this)).subscribe(() => {
       this.isSlideInOpen = true;
+      this.cdr.markForCheck();
     });
     this.renderer.setStyle(document.body, 'overflow', 'hidden');
     this.wide = !!params?.wide;
@@ -134,30 +139,30 @@ export class IxSlideIn2Component implements OnInit, OnDestroy {
   ): void {
     const injector = Injector.create({
       providers: [
-        { provide: SLIDE_IN_DATA, useValue: data },
-        { provide: SLIDE_IN_CLOSER, useValue: this.componentInfo.close$ },
+        {
+          provide: ChainedRef<D>,
+          useValue: {
+            close: (response: ChainedComponentResponse) => {
+              this.componentInfo.close$.next(response);
+              this.componentInfo.close$.complete();
+              this.closeSlideIn();
+            },
+            swap: (component: Type<unknown>, wide = false, incomingComponentData?: unknown) => {
+              this.chainedSlideInService.swapComponent({
+                swapComponentId: this.componentInfo.id,
+                component,
+                wide,
+                data: incomingComponentData,
+              });
+              this.closeSlideIn();
+            },
+            getData: (): D => {
+              return cloneDeep(data);
+            },
+          } as ChainedRef<D>,
+        },
       ],
     });
     this.slideInBody.createComponent<T>(componentType, { injector });
-  }
-
-  ngOnDestroy(): void {
-    this.element.remove();
-    this.componentInfo.close$.next(null);
-  }
-
-  private closeOnNavigation(): void {
-    merge(
-      new Observable((observer) => {
-        this.location.subscribe((event) => {
-          observer.next(event);
-        });
-      }),
-      this.router.events.pipe(filter((event) => event instanceof NavigationEnd)),
-    )
-      .pipe(untilDestroyed(this))
-      .subscribe(() => {
-        this.componentInfo.close$.next(null);
-      });
   }
 }

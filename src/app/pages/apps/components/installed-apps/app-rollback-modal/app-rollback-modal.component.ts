@@ -5,11 +5,13 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Observable, of } from 'rxjs';
+import { Role } from 'app/enums/role.enum';
 import { helptextApps } from 'app/helptext/apps/apps';
 import { ChartRollbackParams } from 'app/interfaces/chart-release-event.interface';
 import { ChartRelease } from 'app/interfaces/chart-release.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 
 @UntilDestroy()
 @Component({
@@ -26,11 +28,13 @@ export class AppRollbackModalComponent {
   versionOptions$: Observable<Option[]>;
 
   readonly helptext = helptextApps.charts.rollback_dialog.version.tooltip;
+  protected readonly requiredRoles = [Role.AppsWrite];
 
   constructor(
     private dialogRef: MatDialogRef<AppRollbackModalComponent>,
     private matDialog: MatDialog,
     private formBuilder: FormBuilder,
+    private errorHandler: ErrorHandlerService,
     @Inject(MAT_DIALOG_DATA) private chartRelease: ChartRelease,
   ) {
     this.setVersionOptions();
@@ -50,6 +54,11 @@ export class AppRollbackModalComponent {
     jobDialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
       jobDialogRef.close(true);
       this.dialogRef.close(true);
+    });
+
+    jobDialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((error) => {
+      jobDialogRef.close();
+      this.errorHandler.showErrorModal(error);
     });
 
     jobDialogRef.afterClosed().pipe(untilDestroyed(this)).subscribe(() => {

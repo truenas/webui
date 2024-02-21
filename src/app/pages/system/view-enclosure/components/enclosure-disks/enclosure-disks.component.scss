@@ -187,6 +187,10 @@ nav.view-nav-bar {
   text-align: left;
   width: fit-content;
 
+  .alert {
+    display: inline-flex;
+  }
+
   ix-icon {
     font-size: 14px;
   }
@@ -220,7 +224,6 @@ nav.view-nav-bar {
   text-align: center;
   z-index: 2;
 }
-
 
 .view-card .model.dom-overlay {
   height: auto;
@@ -283,7 +286,6 @@ div.vdev-disk {
   display: block;
   padding: 0 !important;
 }
-
 
 .view-card#Disks .mat-mdc-card-content#Disks-content {
   background: var(--contrast-darkest);

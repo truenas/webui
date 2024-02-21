@@ -1,29 +1,32 @@
 import {
-  Component, ElementRef, Input, OnInit, TrackByFunction, Type, ViewChild,
+  ChangeDetectionStrategy, ChangeDetectorRef,
+  Component, ElementRef, Input, OnDestroy, OnInit, TrackByFunction, ViewChild,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { Subject } from 'rxjs';
-import { ChainedComponentSeralized as ChainedComponentInfoSeralized, IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
+import {
+  ChainedComponentSerialized,
+  IxChainedSlideInService,
+} from 'app/services/ix-chained-slide-in.service';
 
 @UntilDestroy()
 @Component({
   selector: 'ix-chained-slide-in',
   templateUrl: './ix-chained-slide-in.component.html',
   styleUrls: ['./ix-chained-slide-in.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class IxChainedSlideInComponent implements OnInit {
+export class IxChainedSlideInComponent implements OnInit, OnDestroy {
   @Input() id: string;
   @ViewChild('componentWrapper') container: HTMLElement;
-  protected components: ChainedComponentInfoSeralized[];
+  protected components: ChainedComponentSerialized[];
   private element: HTMLElement;
 
-  readonly trackByComponentId: TrackByFunction<{
-    component: Type<unknown>; id: string; close$: Subject<unknown>;
-  }> = (_, componentRef) => componentRef.id;
+  readonly trackByComponentId: TrackByFunction<ChainedComponentSerialized> = (_, componentRef) => componentRef.id;
 
   constructor(
     private el: ElementRef,
     protected ixChainedSlideInService: IxChainedSlideInService,
+    private cdr: ChangeDetectorRef,
   ) {
     this.element = this.el.nativeElement as HTMLElement;
   }
@@ -39,6 +42,11 @@ export class IxChainedSlideInComponent implements OnInit {
 
     this.ixChainedSlideInService.components$.pipe(untilDestroyed(this)).subscribe((components) => {
       this.components = components;
+      this.cdr.markForCheck();
     });
+  }
+
+  ngOnDestroy(): void {
+    this.element.remove();
   }
 }

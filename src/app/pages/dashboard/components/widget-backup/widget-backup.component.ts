@@ -3,22 +3,21 @@ import {
 } from '@angular/core';
 import { MediaObserver } from '@angular/flex-layout';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { Actions, ofType } from '@ngrx/effects';
+import { Actions } from '@ngrx/effects';
 import { TranslateService } from '@ngx-translate/core';
 import { differenceInDays } from 'date-fns';
 import { filter, forkJoin } from 'rxjs';
 import { Direction } from 'app/enums/direction.enum';
-import { FromWizardToAdvancedSubmitted } from 'app/enums/from-wizard-to-advanced.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { ScreenType } from 'app/enums/screen-type.enum';
 import { ApiTimestamp } from 'app/interfaces/api-date.interface';
 import { WidgetComponent } from 'app/pages/dashboard/components/widget/widget.component';
-import { CloudsyncWizardComponent } from 'app/pages/data-protection/cloudsync/cloudsync-wizard/cloudsync-wizard.component';
+import { CloudSyncWizardComponent } from 'app/pages/data-protection/cloudsync/cloudsync-wizard/cloudsync-wizard.component';
 import { ReplicationWizardComponent } from 'app/pages/data-protection/replication/replication-wizard/replication-wizard.component';
 import { RsyncTaskFormComponent } from 'app/pages/data-protection/rsync-task/rsync-task-form/rsync-task-form.component';
+import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
-import { fromWizardToAdvancedFormSubmitted } from 'app/store/admin-panel/admin.actions';
 
 enum BackupType {
   CloudSync = 'Cloud Sync',
@@ -110,6 +109,7 @@ export class WidgetBackupComponent extends WidgetComponent implements OnInit {
     private ws: WebSocketService,
     private slideInService: IxSlideInService,
     private actions$: Actions,
+    private chainedSlideInService: IxChainedSlideInService,
   ) {
     super(translate);
 
@@ -122,7 +122,6 @@ export class WidgetBackupComponent extends WidgetComponent implements OnInit {
 
   ngOnInit(): void {
     this.getBackups();
-    this.listenForWizardToAdvancedSwitching();
   }
 
   getBackups(): void {
@@ -158,29 +157,30 @@ export class WidgetBackupComponent extends WidgetComponent implements OnInit {
   }
 
   addCloudSyncTask(): void {
-    this.slideInService.open(CloudsyncWizardComponent, { wide: true }).slideInClosed$
-      .pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => this.getBackups());
+    this.chainedSlideInService.pushComponent(
+      CloudSyncWizardComponent,
+      true,
+    ).pipe(
+      filter((response) => !!response.response),
+      untilDestroyed(this),
+    ).subscribe({
+      next: () => {
+        this.getBackups();
+      },
+    });
   }
 
   addReplicationTask(): void {
-    this.slideInService.open(ReplicationWizardComponent, { wide: true }).slideInClosed$
-      .pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => this.getBackups());
+    const closer$ = this.chainedSlideInService.pushComponent(ReplicationWizardComponent, true);
+    closer$.pipe(
+      filter((response) => !!response.response),
+      untilDestroyed(this),
+    ).subscribe(() => this.getBackups());
   }
 
   addRsyncTask(): void {
-    this.slideInService.open(RsyncTaskFormComponent, { wide: true }).slideInClosed$
-      .pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => this.getBackups());
-  }
-
-  private listenForWizardToAdvancedSwitching(): void {
-    this.actions$.pipe(
-      ofType(fromWizardToAdvancedFormSubmitted),
-      filter(({ formType }) => [
-        FromWizardToAdvancedSubmitted.ReplicationTask,
-        FromWizardToAdvancedSubmitted.CloudSyncTask,
-      ].includes(formType)),
-      untilDestroyed(this),
-    ).subscribe(() => this.getBackups());
+    const closer$ = this.chainedSlideInService.pushComponent(RsyncTaskFormComponent, true);
+    closer$.pipe(filter((response) => !!response.response), untilDestroyed(this)).subscribe(() => this.getBackups());
   }
 
   private getTile(title: string, tasks: BackupRow[]): BackupTile {

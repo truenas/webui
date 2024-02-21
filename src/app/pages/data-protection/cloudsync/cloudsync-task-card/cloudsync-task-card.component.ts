@@ -3,17 +3,15 @@ import {
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { Actions, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import {
   EMPTY, catchError, filter, map, of, switchMap, tap,
 } from 'rxjs';
-import { FromWizardToAdvancedSubmitted } from 'app/enums/from-wizard-to-advanced.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { Role } from 'app/enums/role.enum';
 import { tapOnce } from 'app/helpers/operators/tap-once.operator';
-import { helptextCloudsync } from 'app/helptext/data-protection/cloudsync/cloudsync';
+import { helptextCloudSync } from 'app/helptext/data-protection/cloudsync/cloudsync';
 import { CloudSyncTaskUi, CloudSyncTaskUpdate } from 'app/interfaces/cloud-sync-task.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { AsyncDataProvider } from 'app/modules/ix-table2/classes/async-data-provider/async-data-provider';
@@ -27,16 +25,15 @@ import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
 import { selectJob } from 'app/modules/jobs/store/job.selectors';
 import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { CloudsyncFormComponent } from 'app/pages/data-protection/cloudsync/cloudsync-form/cloudsync-form.component';
-import { CloudsyncRestoreDialogComponent } from 'app/pages/data-protection/cloudsync/cloudsync-restore-dialog/cloudsync-restore-dialog.component';
-import { CloudsyncWizardComponent } from 'app/pages/data-protection/cloudsync/cloudsync-wizard/cloudsync-wizard.component';
+import { CloudSyncFormComponent } from 'app/pages/data-protection/cloudsync/cloudsync-form/cloudsync-form.component';
+import { CloudSyncRestoreDialogComponent } from 'app/pages/data-protection/cloudsync/cloudsync-restore-dialog/cloudsync-restore-dialog.component';
+import { CloudSyncWizardComponent } from 'app/pages/data-protection/cloudsync/cloudsync-wizard/cloudsync-wizard.component';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 import { TaskService } from 'app/services/task.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
-import { fromWizardToAdvancedFormSubmitted } from 'app/store/admin-panel/admin.actions';
 
 @UntilDestroy()
 @Component({
@@ -61,7 +58,9 @@ export class CloudSyncTaskCardComponent implements OnInit {
     }),
     relativeDateColumn({
       title: this.translate.instant('Next Run'),
-      getValue: (row) => this.taskService.getTaskNextTime(scheduleToCrontab(row.schedule)),
+      getValue: (row) => (row.enabled
+        ? this.taskService.getTaskNextTime(scheduleToCrontab(row.schedule))
+        : this.translate.instant('Disabled')),
     }),
     relativeDateColumn({
       title: this.translate.instant('Last Run'),
@@ -71,7 +70,7 @@ export class CloudSyncTaskCardComponent implements OnInit {
       title: this.translate.instant('Enabled'),
       propertyName: 'enabled',
       onRowToggle: (row: CloudSyncTaskUi) => this.onChangeEnabledState(row),
-      requiresRoles: [Role.CloudSyncWrite],
+      requiredRoles: [Role.CloudSyncWrite],
     }),
     stateButtonColumn({
       title: this.translate.instant('State'),
@@ -92,32 +91,32 @@ export class CloudSyncTaskCardComponent implements OnInit {
           tooltip: this.translate.instant('Run job'),
           hidden: (row) => of(row.job?.state === JobState.Running),
           onClick: (row) => this.runNow(row),
-          requiresRoles: [Role.CloudSyncWrite],
+          requiredRoles: [Role.CloudSyncWrite],
         },
         {
           iconName: 'stop',
           tooltip: this.translate.instant('Stop'),
           hidden: (row) => of(row.job?.state !== JobState.Running),
           onClick: (row) => this.stopCloudSyncTask(row),
-          requiresRoles: [Role.CloudSyncWrite],
+          requiredRoles: [Role.CloudSyncWrite],
         },
         {
           iconName: 'sync',
           tooltip: this.translate.instant('Dry Run'),
           onClick: (row) => this.dryRun(row),
-          requiresRoles: [Role.CloudSyncWrite],
+          requiredRoles: [Role.CloudSyncWrite],
         },
         {
           iconName: 'restore',
           tooltip: this.translate.instant('Restore'),
           onClick: (row) => this.restore(row),
-          requiresRoles: [Role.CloudSyncWrite],
+          requiredRoles: [Role.CloudSyncWrite],
         },
         {
           iconName: 'delete',
           tooltip: this.translate.instant('Delete'),
           onClick: (row) => this.doDelete(row),
-          requiresRoles: [Role.CloudSyncWrite],
+          requiredRoles: [Role.CloudSyncWrite],
         },
       ],
     }),
@@ -126,17 +125,16 @@ export class CloudSyncTaskCardComponent implements OnInit {
   });
 
   constructor(
-    private slideInService: IxSlideInService,
     private translate: TranslateService,
     private errorHandler: ErrorHandlerService,
     private ws: WebSocketService,
     private dialogService: DialogService,
+    private ixChainedSlideInService: IxChainedSlideInService,
     private cdr: ChangeDetectorRef,
     private taskService: TaskService,
     private store$: Store<AppState>,
     private snackbar: SnackbarService,
     private matDialog: MatDialog,
-    private actions$: Actions,
     protected emptyService: EmptyService,
   ) {}
 
@@ -148,7 +146,6 @@ export class CloudSyncTaskCardComponent implements OnInit {
     );
     this.dataProvider = new AsyncDataProvider<CloudSyncTaskUi>(cloudsyncTasks$);
     this.getCloudSyncTasks();
-    this.listenForWizardToAdvancedSwitching();
   }
 
   getCloudSyncTasks(): void {
@@ -176,16 +173,22 @@ export class CloudSyncTaskCardComponent implements OnInit {
   }
 
   onAdd(): void {
-    const slideInRef = this.slideInService.open(CloudsyncWizardComponent, { wide: true });
-
-    slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
-      this.getCloudSyncTasks();
+    this.ixChainedSlideInService.pushComponent(CloudSyncWizardComponent, true).pipe(
+      filter((response) => !!response.response),
+      untilDestroyed(this),
+    ).subscribe({
+      next: () => {
+        this.getCloudSyncTasks();
+      },
     });
   }
 
   onEdit(row?: CloudSyncTaskUi): void {
-    const slideInRef = this.slideInService.open(CloudsyncFormComponent, { data: row, wide: true });
-    slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
+    const closer$ = this.ixChainedSlideInService.pushComponent(CloudSyncFormComponent, true, row);
+    closer$.pipe(
+      filter((response) => !!response.response),
+      untilDestroyed(this),
+    ).subscribe(() => {
       this.getCloudSyncTasks();
     });
   }
@@ -248,8 +251,8 @@ export class CloudSyncTaskCardComponent implements OnInit {
 
   dryRun(row: CloudSyncTaskUi): void {
     this.dialogService.confirm({
-      title: helptextCloudsync.dry_run_title,
-      message: helptextCloudsync.dry_run_dialog,
+      title: helptextCloudSync.dry_run_title,
+      message: helptextCloudSync.dry_run_dialog,
       hideCheckbox: true,
     }).pipe(
       filter(Boolean),
@@ -273,7 +276,7 @@ export class CloudSyncTaskCardComponent implements OnInit {
   }
 
   restore(row: CloudSyncTaskUi): void {
-    const dialog = this.matDialog.open(CloudsyncRestoreDialogComponent, {
+    const dialog = this.matDialog.open(CloudSyncRestoreDialogComponent, {
       data: row.id,
     });
     dialog.afterClosed().pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => this.getCloudSyncTasks());
@@ -316,13 +319,5 @@ export class CloudSyncTaskCardComponent implements OnInit {
           this.dialogService.error(this.errorHandler.parseError(err));
         },
       });
-  }
-
-  private listenForWizardToAdvancedSwitching(): void {
-    this.actions$.pipe(
-      ofType(fromWizardToAdvancedFormSubmitted),
-      filter(({ formType }) => formType === FromWizardToAdvancedSubmitted.CloudSyncTask),
-      untilDestroyed(this),
-    ).subscribe(() => this.getCloudSyncTasks());
   }
 }

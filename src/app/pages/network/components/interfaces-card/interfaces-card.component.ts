@@ -11,6 +11,7 @@ import {
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
+import _ from 'lodash';
 import { BehaviorSubject, of } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
 import { NetworkInterfaceType } from 'app/enums/network-interface.enum';
@@ -75,7 +76,7 @@ export class InterfacesCardComponent implements OnInit, OnChanges {
         },
         {
           iconName: 'refresh',
-          requiresRoles: [Role.NetworkInterfaceWrite],
+          requiredRoles: [Role.NetworkInterfaceWrite],
           hidden: (row) => of(!this.isPhysical(row)),
           disabled: () => this.isHaEnabled$,
           dynamicTooltip: () => this.isHaEnabled$.pipe(map((isHaEnabled) => (isHaEnabled
@@ -85,7 +86,7 @@ export class InterfacesCardComponent implements OnInit, OnChanges {
         },
         {
           iconName: 'delete',
-          requiresRoles: [Role.NetworkInterfaceWrite],
+          requiredRoles: [Role.NetworkInterfaceWrite],
           tooltip: this.isHaEnabled ? this.translate.instant(helptextInterfaces.ha_enabled_delete_msg) : '',
           hidden: (row) => of(this.isPhysical(row)),
           onClick: (row) => this.onDelete(row),
@@ -122,10 +123,20 @@ export class InterfacesCardComponent implements OnInit, OnChanges {
 
   ngOnInit(): void {
     this.interfacesStore$.loadInterfaces();
-    this.subscribeToUpdates();
     this.interfacesStore$.state$.pipe(untilDestroyed(this)).subscribe((state) => {
       this.isLoading = state.isLoading;
       this.dataProvider.setRows(state.interfaces);
+      this.inOutUpdates = {};
+      for (const nic of state.interfaces) {
+        this.inOutUpdates[nic.name] = {
+          link_state: nic.state?.link_state,
+          received_bytes_rate: 0,
+          sent_bytes_rate: 0,
+          speed: 0,
+        };
+      }
+      this.subscribeToUpdates();
+
       this.cdr.markForCheck();
     });
   }
@@ -188,7 +199,17 @@ export class InterfacesCardComponent implements OnInit, OnChanges {
 
   private subscribeToUpdates(): void {
     this.networkService.subscribeToInOutUpdates().pipe(untilDestroyed(this)).subscribe((updates) => {
-      this.inOutUpdates = updates;
+      if (!updates) {
+        return;
+      }
+      const newInOutUpdates = _.cloneDeep(this.inOutUpdates);
+      const updatedInterfaces = Object.keys(updates);
+      for (const nic of updatedInterfaces) {
+        newInOutUpdates[nic] = {
+          ...updates[nic],
+        };
+      }
+      this.inOutUpdates = newInOutUpdates;
       this.cdr.markForCheck();
     });
   }

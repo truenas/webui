@@ -14,7 +14,6 @@ import {
 import { DialogService } from 'app/services/dialog.service';
 import { DisksUpdateService } from 'app/services/disks-update.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { StorageService } from 'app/services/storage.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 export interface EnclosureState {
@@ -45,7 +44,6 @@ export class EnclosureStore extends ComponentStore<EnclosureState> {
     private ws: WebSocketService,
     private disksUpdateService: DisksUpdateService,
     private dialogService: DialogService,
-    private sorter: StorageService,
     private errorHandler: ErrorHandlerService,
   ) {
     super(initialState);

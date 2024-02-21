@@ -1,13 +1,11 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit, ViewChild,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, ViewChild,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { merge, of } from 'rxjs';
-import { debounceTime, filter, switchMap } from 'rxjs/operators';
+import { debounceTime, switchMap } from 'rxjs/operators';
 import { Direction } from 'app/enums/direction.enum';
-import { FromWizardToAdvancedSubmitted } from 'app/enums/from-wizard-to-advanced.enum';
 import { Role } from 'app/enums/role.enum';
 import { SnapshotNamingOption } from 'app/enums/snapshot-naming-option.enum';
 import { TransportMode } from 'app/enums/transport-mode.enum';
@@ -15,10 +13,9 @@ import { helptextReplicationWizard } from 'app/helptext/data-protection/replicat
 import { CountManualSnapshotsParams } from 'app/interfaces/count-manual-snapshots.interface';
 import { KeychainSshCredentials } from 'app/interfaces/keychain-credential.interface';
 import { ReplicationCreate, ReplicationTask } from 'app/interfaces/replication-task.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
+import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { TreeNodeProvider } from 'app/modules/ix-forms/components/ix-explorer/tree-node-provider.interface';
-import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
+import { ChainedRef } from 'app/modules/ix-forms/components/ix-slide-in/chained-component-ref';
 import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import {
@@ -43,12 +40,9 @@ import { AuthService } from 'app/services/auth/auth.service';
 import { DatasetService } from 'app/services/dataset-service/dataset.service';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { KeychainCredentialService } from 'app/services/keychain-credential.service';
 import { ReplicationService } from 'app/services/replication.service';
 import { WebSocketService } from 'app/services/ws.service';
-import { AppState } from 'app/store';
-import { fromWizardToAdvancedFormSubmitted } from 'app/store/admin-panel/admin.actions';
 
 @UntilDestroy()
 @Component({
@@ -74,7 +68,9 @@ export class ReplicationFormComponent implements OnInit {
   isSudoDialogShown = false;
   sshCredentials: KeychainSshCredentials[] = [];
 
-  readonly requiresRoles = [Role.ReplicationManager, Role.ReplicationTaskWrite, Role.ReplicationTaskWritePull];
+  readonly requiredRoles = [Role.ReplicationTaskWrite, Role.ReplicationTaskWritePull];
+
+  protected existingReplication: ReplicationTask;
 
   constructor(
     private ws: WebSocketService,
@@ -86,13 +82,12 @@ export class ReplicationFormComponent implements OnInit {
     private snackbar: SnackbarService,
     private datasetService: DatasetService,
     private replicationService: ReplicationService,
-    private slideInService: IxSlideInService,
-    private slideInRef: IxSlideInRef<ReplicationFormComponent>,
     private keychainCredentials: KeychainCredentialService,
-    private store$: Store<AppState>,
     private authService: AuthService,
-    @Inject(SLIDE_IN_DATA) public existingReplication: ReplicationTask,
-  ) {}
+    private chainedRef: ChainedRef<ReplicationTask>,
+  ) {
+    this.existingReplication = this.chainedRef.getData();
+  }
 
   ngOnInit(): void {
     this.countSnapshotsOnChanges();
@@ -157,7 +152,7 @@ export class ReplicationFormComponent implements OnInit {
       .pipe(untilDestroyed(this))
       .subscribe(
         {
-          next: () => {
+          next: (response) => {
             this.snackbar.success(
               this.isNew
                 ? this.translate.instant('Replication task created.')
@@ -165,7 +160,7 @@ export class ReplicationFormComponent implements OnInit {
             );
             this.isLoading = false;
             this.cdr.markForCheck();
-            this.slideInRef.close(true);
+            this.chainedRef.close({ response, error: null });
           },
           error: (error) => {
             this.isLoading = false;
@@ -177,16 +172,10 @@ export class ReplicationFormComponent implements OnInit {
   }
 
   onSwitchToWizard(): void {
-    this.slideInRef.close();
-    const slideInRef = this.slideInService.open(ReplicationWizardComponent, { wide: true });
-    slideInRef.slideInClosed$.pipe(
-      filter(Boolean),
-      untilDestroyed(this),
-    ).subscribe(() => {
-      this.store$.dispatch(fromWizardToAdvancedFormSubmitted({
-        formType: FromWizardToAdvancedSubmitted.ReplicationTask,
-      }));
-    });
+    this.chainedRef.swap(
+      ReplicationWizardComponent,
+      true,
+    );
   }
 
   private getPayload(): ReplicationCreate {
@@ -244,7 +233,7 @@ export class ReplicationFormComponent implements OnInit {
     this.isLoading = true;
     this.cdr.markForCheck();
 
-    this.authService.hasRole(this.requiresRoles).pipe(
+    this.authService.hasRole(this.requiredRoles).pipe(
       switchMap((hasRole) => {
         if (hasRole) {
           return this.ws.call('replication.count_eligible_manual_snapshots', [payload]);
@@ -266,7 +255,7 @@ export class ReplicationFormComponent implements OnInit {
         this.isLoading = false;
         this.cdr.markForCheck();
       },
-      error: (error: WebsocketError) => {
+      error: (error: WebSocketError) => {
         this.isEligibleSnapshotsMessageRed = true;
         this.eligibleSnapshotsMessage = this.translate.instant('Error counting eligible snapshots.');
         if ('reason' in error) {
@@ -291,6 +280,10 @@ export class ReplicationFormComponent implements OnInit {
         untilDestroyed(this),
       )
       .subscribe(() => this.updateExplorers());
+
+    this.transportSection.form.controls.ssh_credentials.valueChanges.pipe(untilDestroyed(this)).subscribe(() => {
+      this.targetSection.form.controls.target_dataset.reset();
+    });
   }
 
   private updateExplorers(): void {

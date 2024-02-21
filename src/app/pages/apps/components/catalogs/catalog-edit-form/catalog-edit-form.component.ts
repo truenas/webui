@@ -4,6 +4,7 @@ import {
 import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { of } from 'rxjs';
+import { Role } from 'app/enums/role.enum';
 import { helptextApps } from 'app/helptext/apps/apps';
 import { Catalog, CatalogUpdate } from 'app/interfaces/catalog.interface';
 import { Option } from 'app/interfaces/option.interface';
@@ -31,6 +32,8 @@ export class CatalogEditFormComponent implements OnInit {
     label: helptextApps.catalogForm.name.tooltip,
     preferred_trains: helptextApps.catalogForm.preferredTrains.tooltip,
   };
+
+  protected readonly requiredRoles = [Role.CatalogWrite];
 
   constructor(
     private ws: WebSocketService,

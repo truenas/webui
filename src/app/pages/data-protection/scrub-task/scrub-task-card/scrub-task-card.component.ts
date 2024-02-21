@@ -44,12 +44,14 @@ export class ScrubTaskCardComponent implements OnInit {
     }),
     relativeDateColumn({
       title: this.translate.instant('Next Run'),
-      getValue: (task) => this.taskService.getTaskNextTime(scheduleToCrontab(task.schedule)) as unknown,
+      getValue: (row) => (row.enabled
+        ? this.taskService.getTaskNextTime(scheduleToCrontab(row.schedule))
+        : this.translate.instant('Disabled')),
     }),
     toggleColumn({
       title: this.translate.instant('Enabled'),
       propertyName: 'enabled',
-      requiresRoles: [Role.FullAdmin],
+      requiredRoles: [Role.FullAdmin],
       onRowToggle: (row: PoolScrubTask) => this.onChangeEnabledState(row),
     }),
     actionsColumn({
@@ -62,7 +64,7 @@ export class ScrubTaskCardComponent implements OnInit {
         {
           iconName: 'delete',
           tooltip: this.translate.instant('Delete'),
-          requiresRoles: [Role.FullAdmin],
+          requiredRoles: [Role.FullAdmin],
           onClick: (row) => this.doDelete(row),
         },
       ],

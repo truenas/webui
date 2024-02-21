@@ -22,7 +22,7 @@
       </div>
       <div class="details-item">
         <div class="label">{{ 'Total Raw Capacity' | translate }}:</div>
-        <div class="value">{{ totalCapacity$ | async | filesize: { standard: 'iec' } }}</div>
+        <div class="value">{{ totalCapacity$ | async | ixFileSize }}</div>
       </div>
     </div>
   </mat-card-content>

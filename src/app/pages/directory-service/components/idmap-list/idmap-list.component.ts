@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnInit,
+  ChangeDetectionStrategy, Component, Input, OnInit,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
@@ -8,7 +8,7 @@ import {
   filter, map, of, switchMap, tap,
 } from 'rxjs';
 import { DirectoryServiceState } from 'app/enums/directory-service-state.enum';
-import { IdmapBackend, IdmapName } from 'app/enums/idmap.enum';
+import { IdmapName } from 'app/enums/idmap.enum';
 import { Role } from 'app/enums/role.enum';
 import { helptextIdmap } from 'app/helptext/directory-service/idmap';
 import { AsyncDataProvider } from 'app/modules/ix-table2/classes/async-data-provider/async-data-provider';
@@ -29,7 +29,7 @@ import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
-  selector: 'ix-idmaps-list',
+  selector: 'ix-idmap-list',
   templateUrl: './idmap-list.component.html',
   styleUrls: ['./idmap-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -37,8 +37,6 @@ import { WebSocketService } from 'app/services/ws.service';
 export class IdmapListComponent implements OnInit {
   @Input() paginator = true;
   @Input() toolbar = false;
-  requiredIdmapDomains = requiredIdmapDomains as string[];
-  IdmapName = IdmapName;
   filterString = '';
   dataProvider: AsyncDataProvider<IdmapRow>;
   idmaps: IdmapRow[] = [];
@@ -81,6 +79,7 @@ export class IdmapListComponent implements OnInit {
           onClick: (row) => {
             const slideInRef = this.slideInService.open(IdmapFormComponent, { data: row });
             slideInRef.slideInClosed$.pipe(
+              filter(Boolean),
               untilDestroyed(this),
             ).subscribe(() => this.getIdmaps());
           },
@@ -89,7 +88,7 @@ export class IdmapListComponent implements OnInit {
           iconName: 'delete',
           hidden: (row) => of(requiredIdmapDomains.includes(row.name as IdmapName)),
           tooltip: this.translateService.instant('Delete'),
-          requiresRoles: [Role.FullAdmin],
+          requiredRoles: [Role.DirectoryServiceWrite],
           onClick: (row) => {
             this.dialogService.confirm({
               title: this.translateService.instant('Confirm'),
@@ -120,7 +119,6 @@ export class IdmapListComponent implements OnInit {
     private ws: WebSocketService,
     protected idmapService: IdmapService,
     protected dialogService: DialogService,
-    private cdr: ChangeDetectorRef,
     private errorHandler: ErrorHandlerService,
     protected emptyService: EmptyService,
     private slideInService: IxSlideInService,
@@ -142,12 +140,6 @@ export class IdmapListComponent implements OnInit {
         transformed.forEach((row) => {
           if (row.certificate) {
             row.cert_name = row.certificate.cert_name;
-          }
-          if (row.name === IdmapName.DsTypeActiveDirectory as string && row.idmap_backend === IdmapBackend.Autorid) {
-            const obj = transformed.find((idmapRow) => {
-              return idmapRow.name === IdmapName.DsTypeDefaultDomain as string;
-            });
-            obj.disableEdit = true;
           }
           row.label = row.name;
           const index = helptextIdmap.idmap.name.options.findIndex((option) => option.value === row.name);
@@ -182,6 +174,7 @@ export class IdmapListComponent implements OnInit {
       if (adConfig.enable) {
         const slideInRef = this.slideInService.open(IdmapFormComponent);
         slideInRef.slideInClosed$.pipe(
+          filter(Boolean),
           untilDestroyed(this),
         ).subscribe(() => {
           this.getIdmaps();

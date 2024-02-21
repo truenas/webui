@@ -7,7 +7,7 @@ import {
 } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockWebsocket, mockCall, mockJob } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockWebSocket, mockCall, mockJob } from 'app/core/testing/utils/mock-websocket.utils';
 import { DiskStandby } from 'app/enums/disk-standby.enum';
 import { DiskType } from 'app/enums/disk-type.enum';
 import { TopologyItemType } from 'app/enums/v-dev-type.enum';
@@ -21,6 +21,7 @@ import {
 import { ZfsInfoCardComponent } from 'app/pages/storage/modules/devices/components/zfs-info-card/zfs-info-card.component';
 import { DevicesStore } from 'app/pages/storage/modules/devices/stores/devices-store.service';
 import { DialogService } from 'app/services/dialog.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 describe('ZfsInfoCardComponent', () => {
   let spectator: Spectator<ZfsInfoCardComponent>;
@@ -28,21 +29,26 @@ describe('ZfsInfoCardComponent', () => {
   const createComponent = createComponentFactory({
     component: ZfsInfoCardComponent,
     providers: [
-      mockWebsocket([
+      mockWebSocket([
         mockCall('pool.detach'),
         mockCall('pool.offline'),
         mockCall('pool.online'),
         mockJob('pool.remove'),
       ]),
       mockProvider(DialogService, {
-        confirm: jest.fn(() => of()),
+        confirm: jest.fn(() => of(true)),
+        jobDialog: jest.fn(() => ({
+          afterClosed: () => of(null),
+        })),
       }),
       mockProvider(MatDialog, {
         open: jest.fn(() => ({
           afterClosed: () => of(),
         })),
       }),
-      mockProvider(DevicesStore),
+      mockProvider(DevicesStore, {
+        reloadList: jest.fn(),
+      }),
       mockAuth(),
     ],
   });
@@ -54,6 +60,7 @@ describe('ZfsInfoCardComponent', () => {
         topologyItem: {
           disk: 'ix-disk-1',
           type: TopologyItemType.Disk,
+          guid: 'disk-guid',
           children: [],
           status: TopologyItemStatus.Online,
           stats: {
@@ -99,29 +106,34 @@ describe('ZfsInfoCardComponent', () => {
     });
 
     // TODO: https://ixsystems.atlassian.net/browse/NAS-117094
-    it('shows confirmation when clicks Remove button', async () => {
+    it('removes device with confirmtion when Remove button is pressed', async () => {
       spectator.setInput('topologyParentItem', {
         name: 'mirror-0',
         type: TopologyItemType.Spare,
       } as VDev);
-      const replaceButton = await loader.getHarness(MatButtonHarness.with({ text: 'Remove' }));
-      await replaceButton.click();
+      const removeButton = await loader.getHarness(MatButtonHarness.with({ text: 'Remove' }));
+      await removeButton.click();
 
       expect(spectator.inject(DialogService).confirm).toHaveBeenCalled();
+      expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
+      expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('pool.remove', [1, { label: 'disk-guid' }]);
+      expect(spectator.inject(DevicesStore).reloadList).toHaveBeenCalled();
     });
 
-    it('shows confirmation when clicks Detach button', async () => {
+    it('detaches a device with confirmation when Detach is pressed', async () => {
       const detachButton = await loader.getHarness(MatButtonHarness.with({ text: 'Detach' }));
       await detachButton.click();
 
       expect(spectator.inject(DialogService).confirm).toHaveBeenCalled();
+      expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('pool.detach', [1, { label: 'disk-guid' }]);
     });
 
-    it('shows confirmation when clicks Offline button', async () => {
+    it('offlines a device with confirmation when Offline is pressed', async () => {
       const offlineButton = await loader.getHarness(MatButtonHarness.with({ text: 'Offline' }));
       await offlineButton.click();
 
       expect(spectator.inject(DialogService).confirm).toHaveBeenCalled();
+      expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('pool.offline', [1, { label: 'disk-guid' }]);
     });
   });
 

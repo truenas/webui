@@ -54,13 +54,15 @@ export class ReportsGlobalControlsComponent implements OnInit {
   }
 
   private setupTabs(): void {
-    this.reportsService.getReportGraphs().pipe(untilDestroyed(this)).subscribe(() => {
-      this.allTabs = this.reportsService.getReportTabs();
-      this.activeTab = this.allTabs.find((tab) => {
-        return tab.value === (this.route.routeConfig.path as ReportType);
+    this.reportsService.getReportGraphs()
+      .pipe(untilDestroyed(this))
+      .subscribe(() => {
+        this.allTabs = this.reportsService.getReportTabs();
+        this.activeTab = this.allTabs.find((tab) => {
+          return tab.value === (this.route.routeConfig.path as ReportType);
+        });
+        this.cdr.markForCheck();
       });
-      this.cdr.markForCheck();
-    });
   }
 
   private setupDisksTab(): void {

@@ -31,7 +31,6 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 export class DockerImagesListComponent implements OnInit, AfterViewInit {
   dataSource = new MatTableDataSource<ContainerImage>([]);
 
-  Role = Role;
   displayedColumns = ['select', 'id', 'repo_tags', 'size', 'update', 'actions'];
 
   @ViewChild(MatSort, { static: false }) sort: MatSort;
@@ -62,6 +61,8 @@ export class DockerImagesListComponent implements OnInit, AfterViewInit {
       return of(EmptyType.NoSearchResults);
     }),
   );
+
+  protected readonly requiredRoles = [Role.AppsWrite];
 
   get selectionHasUpdates(): boolean {
     return this.checkboxColumn.selection.selected.some((image) => image.update_available);
@@ -114,14 +115,16 @@ export class DockerImagesListComponent implements OnInit, AfterViewInit {
   doUpdate(images: ContainerImage[]): void {
     this.matDialog.open(DockerImageUpdateDialogComponent, {
       data: images,
-    }).afterClosed().pipe(
-      filter(Boolean),
-      delay(50),
-      untilDestroyed(this),
-    ).subscribe(() => {
-      this.checkboxColumn.clearSelection();
-      this.cdr.markForCheck();
-    });
+    })
+      .afterClosed()
+      .pipe(
+        filter(Boolean),
+        delay(50),
+        untilDestroyed(this),
+      ).subscribe(() => {
+        this.checkboxColumn.clearSelection();
+        this.cdr.markForCheck();
+      });
   }
 
   private createDataSource(images: ContainerImage[] = []): void {

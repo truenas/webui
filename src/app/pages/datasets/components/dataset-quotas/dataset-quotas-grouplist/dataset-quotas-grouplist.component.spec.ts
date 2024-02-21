@@ -5,7 +5,7 @@ import { ActivatedRoute } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of, Subject } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { DatasetQuotaType } from 'app/enums/dataset.enum';
 import { DatasetQuota } from 'app/interfaces/dataset-quota.interface';
 import { EntityModule } from 'app/modules/entity/entity.module';
@@ -68,7 +68,7 @@ describe('DatasetQuotasGrouplistComponent', () => {
         onClose$: new Subject<unknown>(),
         open: jest.fn(() => ({ slideInClosed$: of() })),
       }),
-      mockWebsocket([
+      mockWebSocket([
         mockCall('pool.dataset.get_quota', fakeGroupQuotas),
         mockCall('pool.dataset.set_quota'),
       ]),

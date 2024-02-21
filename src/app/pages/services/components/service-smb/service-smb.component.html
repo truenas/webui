@@ -116,9 +116,9 @@
         ></ix-select>
       </ix-fieldset>
 
-      <div class="form-actions">
+      <ix-form-actions>
         <button
-          *ixRequiresRoles="requiresRoles"
+          *ixRequiresRoles="requiredRoles"
           mat-button
           type="submit"
           color="primary"
@@ -135,7 +135,7 @@
               : ('Basic Settings' | translate)
           }}
         </button>
-      </div>
+      </ix-form-actions>
     </form>
   </mat-card-content>
 </mat-card>

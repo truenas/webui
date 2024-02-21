@@ -4,7 +4,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { GiB } from 'app/constants/bytes.constant';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { VmDiskMode } from 'app/enums/vm.enum';
 import { IxRadioGroupHarness } from 'app/modules/ix-forms/components/ix-radio-group/ix-radio-group.harness';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
@@ -24,7 +24,7 @@ describe('DiskStepComponent', () => {
       IxFormsModule,
     ],
     providers: [
-      mockWebsocket([
+      mockWebSocket([
         mockCall('pool.filesystem_choices', [
           'poolio',
           'poolio/files',
@@ -84,7 +84,7 @@ describe('DiskStepComponent', () => {
       await modeRadio.setValue('Use existing disk image');
 
       await form.fillForm({
-        'Select Disk Type': 'VIRTIO',
+        'Select Disk Type': 'VirtIO',
         'Select Existing Zvol': 'poolio/test-327brn',
       });
     });

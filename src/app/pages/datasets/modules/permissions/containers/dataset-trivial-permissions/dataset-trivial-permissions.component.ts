@@ -1,6 +1,5 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { Validators } from '@angular/forms';
-import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -10,13 +9,13 @@ import { filter, switchMap } from 'rxjs/operators';
 import { AclType } from 'app/enums/acl-type.enum';
 import { Role } from 'app/enums/role.enum';
 import { helptextPermissions } from 'app/helptext/storage/volumes/datasets/dataset-permissions';
-import { DatasetPermissionsUpdate } from 'app/interfaces/dataset-permissions.interface';
+import { FilesystemSetPermParams } from 'app/interfaces/filesystem-stat.interface';
 import { Job } from 'app/interfaces/job.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
-import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
+import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { GroupComboboxProvider } from 'app/modules/ix-forms/classes/group-combobox-provider';
 import { UserComboboxProvider } from 'app/modules/ix-forms/classes/user-combobox-provider';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { StorageService } from 'app/services/storage.service';
@@ -31,16 +30,16 @@ import { WebSocketService } from 'app/services/ws.service';
 })
 export class DatasetTrivialPermissionsComponent implements OnInit {
   form = this.formBuilder.group({
-    user: ['', [this.validatorService.validateOnCondition(
+    uid: [null as number, [this.validatorService.validateOnCondition(
       () => this.isToApplyUser,
       Validators.required,
     )]],
     applyUser: [false],
-    group: ['', [this.validatorService.validateOnCondition(
+    gid: [null as number, [this.validatorService.validateOnCondition(
       () => this.isToApplyGroup,
       Validators.required,
     )]],
-    mode: [''],
+    mode: ['000'],
     applyGroup: [false],
     permission: [''],
     recursive: [false],
@@ -52,8 +51,8 @@ export class DatasetTrivialPermissionsComponent implements OnInit {
   datasetPath: string;
   datasetId: string;
 
-  readonly userProvider = new UserComboboxProvider(this.userService);
-  readonly groupProvider = new GroupComboboxProvider(this.userService);
+  readonly userProvider = new UserComboboxProvider(this.userService, 'uid');
+  readonly groupProvider = new GroupComboboxProvider(this.userService, 'gid');
 
   readonly tooltips = {
     user: helptextPermissions.dataset_permissions_user_tooltip,
@@ -81,8 +80,8 @@ export class DatasetTrivialPermissionsComponent implements OnInit {
     private translate: TranslateService,
     private dialog: DialogService,
     private userService: UserService,
-    private matDialog: MatDialog,
     private validatorService: IxValidatorsService,
+    private snackbar: SnackbarService,
   ) {}
 
   get canSetAcl(): boolean {
@@ -108,7 +107,7 @@ export class DatasetTrivialPermissionsComponent implements OnInit {
   onSetAclPressed(): void {
     this.router.navigate(['/datasets', 'acl', 'edit'], {
       queryParams: {
-        path: '/mnt/' + this.datasetId,
+        path: this.datasetPath,
       },
     });
   }
@@ -116,29 +115,21 @@ export class DatasetTrivialPermissionsComponent implements OnInit {
   onSubmit(): void {
     const payload = this.preparePayload();
 
-    const dialogRef = this.matDialog.open(EntityJobComponent, {
-      data: {
-        title: this.translate.instant('Saving Permissions'),
-      },
-    });
-    const jobComponent = dialogRef.componentInstance;
-
-    jobComponent.setDescription(this.translate.instant('Saving Permissions...'));
-    jobComponent.setCall('pool.dataset.permission', payload);
-    jobComponent.submit();
-    jobComponent.failure.pipe(untilDestroyed(this)).subscribe((failedJob) => {
-      this.dialog.error(this.errorHandler.parseError(failedJob));
-    });
-    jobComponent.success.pipe(untilDestroyed(this)).subscribe({
-      next: () => {
-        dialogRef.close();
-        this.router.navigate(['/datasets', this.datasetId]);
-      },
-      error: (error: WebsocketError | Job) => {
-        dialogRef.close();
-        this.dialog.error(this.errorHandler.parseError(error));
-      },
-    });
+    this.dialog.jobDialog(
+      this.ws.job('filesystem.setperm', [payload]),
+      { title: this.translate.instant('Saving Permissions') },
+    )
+      .afterClosed()
+      .pipe(untilDestroyed(this))
+      .subscribe({
+        next: () => {
+          this.snackbar.success(this.translate.instant('Permissions saved.'));
+          this.router.navigate(['/datasets', this.datasetId]);
+        },
+        error: (error: WebSocketError | Job) => {
+          this.dialog.error(this.errorHandler.parseError(error));
+        },
+      });
   }
 
   private loadPermissionsInformation(): void {
@@ -156,8 +147,8 @@ export class DatasetTrivialPermissionsComponent implements OnInit {
           this.oldDatasetMode = stat.mode.toString(8).substring(2, 5);
           this.form.patchValue({
             mode: this.oldDatasetMode,
-            user: stat.user,
-            group: stat.group,
+            uid: stat.uid,
+            gid: stat.gid,
           });
         },
         error: (error: unknown) => {
@@ -167,23 +158,23 @@ export class DatasetTrivialPermissionsComponent implements OnInit {
       });
   }
 
-  private preparePayload(): DatasetPermissionsUpdate {
+  private preparePayload(): FilesystemSetPermParams {
     const values = this.form.value;
 
     const update = {
-      acl: [],
+      path: this.datasetPath,
       options: {
         stripacl: false,
         recursive: values.recursive,
         traverse: values.traverse,
       },
-    } as DatasetPermissionsUpdate[1];
+    } as FilesystemSetPermParams;
     if (values.applyUser) {
-      update.user = values.user;
+      update.uid = values.uid;
     }
 
     if (values.applyGroup) {
-      update.group = values.group;
+      update.gid = values.gid;
     }
 
     if (this.oldDatasetMode !== values.mode) {
@@ -191,7 +182,7 @@ export class DatasetTrivialPermissionsComponent implements OnInit {
       update.options.stripacl = true;
     }
 
-    return [this.datasetId, update];
+    return update;
   }
 
   private setRecursiveWarning(): void {

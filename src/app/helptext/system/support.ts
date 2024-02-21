@@ -129,4 +129,9 @@ export const helptextSystemSupport = {
    failed to attach. Please download the debug manually \
    (System → Advanced → Save Debug), upload it to a third-party storage service and provide\
     a link in the JIRA issue comment.'),
+
+  attachmentsFailed: {
+    title: T('Attachments not uploaded'),
+    message: T('Ticket was created, but we were unable to upload one or more attachments.'),
+  },
 };

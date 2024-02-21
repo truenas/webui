@@ -8,6 +8,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { startCase, isEmpty } from 'lodash';
 import { filter, map, take } from 'rxjs';
 import { appImagePlaceholder, ixChartApp } from 'app/constants/catalog.constants';
+import { Role } from 'app/enums/role.enum';
 import { helptextApps } from 'app/helptext/apps/apps';
 import { UpgradeSummary } from 'app/interfaces/application.interface';
 import { ChartRelease } from 'app/interfaces/chart-release.interface';
@@ -50,6 +51,8 @@ export class AppInfoCardComponent {
   get isStartingOrStopping(): boolean {
     return [AppStatus.Starting, AppStatus.Stopping].includes(this.status);
   }
+
+  protected readonly requiredRoles = [Role.AppsWrite];
 
   constructor(
     private loader: AppLoaderService,
@@ -112,7 +115,8 @@ export class AppInfoCardComponent {
         });
         jobDialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((error) => {
           this.dialogService.closeAllDialogs();
-          this.dialogService.error(this.errorHandler.parseError(error));
+          dialogRef.close();
+          this.errorHandler.showErrorModal(error);
         });
       });
     });
@@ -152,6 +156,10 @@ export class AppInfoCardComponent {
         }
         this.dialogService.closeAllDialogs();
       });
+    });
+    dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((error) => {
+      dialogRef.close();
+      this.errorHandler.showErrorModal(error);
     });
   }
 

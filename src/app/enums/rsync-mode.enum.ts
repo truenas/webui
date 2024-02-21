@@ -3,12 +3,6 @@ export enum RsyncMode {
   Ssh = 'SSH',
 }
 
-export enum RsyncModuleMode {
-  ReadOnly = 'RO',
-  WriteOnly = 'WO',
-  ReadAndWrite = 'RW',
-}
-
 export enum RsyncSshConnectMode {
   PrivateKey,
   KeyChain,

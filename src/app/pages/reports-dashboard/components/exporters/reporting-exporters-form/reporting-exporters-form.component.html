@@ -25,7 +25,7 @@
           [label]="'Enable' | translate"
         ></ix-checkbox>
       </ix-fieldset>
-      
+
       <ix-dynamic-form
         *ngIf="!isLoadingSchemas"
         [dynamicSection]="dynamicSection"
@@ -33,6 +33,7 @@
       ></ix-dynamic-form>
       <ix-form-actions>
         <button
+          *ixRequiresRoles="requiredRoles"
           mat-button
           type="submit"
           color="primary"

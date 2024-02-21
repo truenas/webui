@@ -3,21 +3,20 @@ import {
   OnInit,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
-  QueryList,
-  ViewChild,
-  ViewChildren,
 } from '@angular/core';
-import { MatSort, Sort } from '@angular/material/sort';
-import { MatTableDataSource } from '@angular/material/table';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { select, Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable, combineLatest, of } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { EmptyType } from 'app/enums/empty-type.enum';
-import { Role, roleNames } from 'app/enums/role.enum';
+import { roleNames } from 'app/enums/role.enum';
 import { Group } from 'app/interfaces/group.interface';
-import { IxDetailRowDirective } from 'app/modules/ix-tables/directives/ix-detail-row.directive';
+import { ArrayDataProvider } from 'app/modules/ix-table2/classes/array-data-provider/array-data-provider';
+import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
+import { yesNoColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-yesno/ix-cell-yesno.component';
+import { SortDirection } from 'app/modules/ix-table2/enums/sort-direction.enum';
+import { createTable } from 'app/modules/ix-table2/utils';
 import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
 import { GroupFormComponent } from 'app/pages/account/groups/group-form/group-form.component';
 import { groupPageEntered, groupRemoved } from 'app/pages/account/groups/store/group.actions';
@@ -34,16 +33,48 @@ import { waitForPreferences } from 'app/store/preferences/preferences.selectors'
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class GroupListComponent implements OnInit {
-  @ViewChild(MatSort, { static: false }) sort: MatSort;
+  dataProvider = new ArrayDataProvider<Group>();
+  columns = createTable<Group>([
+    textColumn({
+      identifier: true,
+      title: this.translate.instant('Group'),
+      propertyName: 'group',
+      sortable: true,
+    }),
+    textColumn({
+      title: this.translate.instant('GID'),
+      propertyName: 'gid',
+      sortable: true,
+    }),
+    yesNoColumn({
+      title: this.translate.instant('Builtin'),
+      propertyName: 'builtin',
+      sortable: true,
+    }),
+    yesNoColumn({
+      title: this.translate.instant('Allows sudo commands'),
+      propertyName: 'sudo_commands',
+      sortable: true,
+    }),
+    yesNoColumn({
+      title: this.translate.instant('Samba Authentication'),
+      propertyName: 'smb',
+      sortable: true,
+    }),
+    textColumn({
+      title: this.translate.instant('Roles'),
+      getValue: (row) => row.roles
+        .map((role) => (roleNames.has(role) ? this.translate.instant(roleNames.get(role)) : role))
+        .join(', ') || this.translate.instant('N/A'),
+    }),
+  ], {
+    rowTestId: (row) => 'group-' + row.group,
+  });
 
-  displayedColumns: string[] = ['group', 'gid', 'builtin', 'sudo_commands', 'smb', 'roles', 'actions'];
-  dataSource = new MatTableDataSource<Group>([]);
-  defaultSort: Sort = { active: 'gid', direction: 'asc' };
-  expandedRow: Group;
-  @ViewChildren(IxDetailRowDirective) private detailRows: QueryList<IxDetailRowDirective>;
   hideBuiltinGroups = true;
+  filterString = '';
+  groups: Group[] = [];
 
-  readonly EmptyType = EmptyType;
   isLoading$ = this.store$.select(selectGroupState).pipe(map((state) => state.isLoading));
   emptyType$: Observable<EmptyType> = combineLatest([
     this.isLoading$,
@@ -51,16 +82,16 @@ export class GroupListComponent implements OnInit {
     this.store$.select(selectGroupState).pipe(map((state) => state.error)),
   ]).pipe(
     switchMap(([isLoading, isNoData, isError]) => {
-      if (isLoading) {
-        return of(EmptyType.Loading);
+      switch (true) {
+        case isLoading:
+          return of(EmptyType.Loading);
+        case !!isError:
+          return of(EmptyType.Errors);
+        case isNoData:
+          return of(EmptyType.NoPageData);
+        default:
+          return of(EmptyType.NoSearchResults);
       }
-      if (isError) {
-        return of(EmptyType.Errors);
-      }
-      if (isNoData) {
-        return of(EmptyType.NoPageData);
-      }
-      return of(EmptyType.NoSearchResults);
     }),
   );
 
@@ -69,10 +100,10 @@ export class GroupListComponent implements OnInit {
   }
 
   constructor(
+    protected emptyService: EmptyService,
     private slideInService: IxSlideInService,
     private cdr: ChangeDetectorRef,
     private store$: Store<AppState>,
-    private emptyService: EmptyService,
     private translate: TranslateService,
   ) { }
 
@@ -80,42 +111,7 @@ export class GroupListComponent implements OnInit {
     this.store$.dispatch(groupPageEntered());
     this.getPreferences();
     this.getGroups();
-  }
-
-  getPreferences(): void {
-    this.store$.pipe(
-      waitForPreferences,
-      untilDestroyed(this),
-    ).subscribe((preferences) => {
-      this.hideBuiltinGroups = preferences.hideBuiltinGroups;
-      this.cdr.markForCheck();
-    });
-  }
-
-  getGroups(): void {
-    this.store$.pipe(
-      select(selectGroups),
-      untilDestroyed(this),
-    ).subscribe({
-      next: (groups) => {
-        this.createDataSource(groups);
-        this.cdr.markForCheck();
-      },
-      error: () => {
-        this.createDataSource();
-        this.cdr.markForCheck();
-      },
-    });
-  }
-
-  createDataSource(groups: Group[] = []): void {
-    this.dataSource = new MatTableDataSource(groups);
-
-    setTimeout(() => {
-      // TODO: Figure out how to avoid setTimeout to make it work on first loading
-      this.dataSource.sort = this.sort;
-      this.cdr.markForCheck();
-    }, 0);
+    this.setDefaultSort();
   }
 
   toggleBuiltins(): void {
@@ -126,33 +122,55 @@ export class GroupListComponent implements OnInit {
     this.slideInService.open(GroupFormComponent);
   }
 
-  onToggle(row: Group): void {
-    this.expandedRow = this.expandedRow === row ? null : row;
-    this.toggleDetailRows();
-    this.cdr.markForCheck();
-  }
-
-  toggleDetailRows(): void {
-    this.detailRows.forEach((row) => {
-      if (row.expanded && row.ixDetailRow !== this.expandedRow) {
-        row.close();
-      } else if (!row.expanded && row.ixDetailRow === this.expandedRow) {
-        row.open();
-      }
-    });
-  }
-
-  onSearch(query: string): void {
-    this.dataSource.filter = query;
+  onListFiltered(query: string): void {
+    this.filterString = query.toLowerCase();
+    this.createDataSource(this.groups.filter((group) => {
+      return group.group.toLowerCase().includes(this.filterString)
+        || group.gid.toString().toLowerCase().includes(this.filterString);
+    }));
   }
 
   handleDeletedGroup(id: number): void {
     this.store$.dispatch(groupRemoved({ id }));
   }
 
-  rolesListToString(roles: Role[]): string {
-    return roles.map((role) => {
-      return roleNames.has(role) ? this.translate.instant(roleNames.get(role)) : role;
-    }).join(', ') || this.translate.instant('N/A');
+  private getPreferences(): void {
+    this.store$.pipe(
+      waitForPreferences,
+      untilDestroyed(this),
+    ).subscribe((preferences) => {
+      this.hideBuiltinGroups = preferences.hideBuiltinGroups;
+      this.cdr.markForCheck();
+    });
+  }
+
+  private getGroups(): void {
+    this.store$.pipe(
+      select(selectGroups),
+      untilDestroyed(this),
+    ).subscribe({
+      next: (groups) => {
+        this.groups = groups;
+        this.createDataSource(groups);
+        this.cdr.markForCheck();
+      },
+      error: () => {
+        this.createDataSource();
+        this.cdr.markForCheck();
+      },
+    });
+  }
+
+  private createDataSource(groups: Group[] = []): void {
+    this.dataProvider.setRows(groups);
+    this.cdr.markForCheck();
+  }
+
+  private setDefaultSort(): void {
+    this.dataProvider.setSorting({
+      active: 1,
+      direction: SortDirection.Asc,
+      propertyName: 'gid',
+    });
   }
 }

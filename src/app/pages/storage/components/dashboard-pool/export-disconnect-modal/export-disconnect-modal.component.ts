@@ -16,8 +16,7 @@ import { PoolAttachment } from 'app/interfaces/pool-attachment.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { Process } from 'app/interfaces/process.interface';
 import { SystemDatasetConfig } from 'app/interfaces/system-dataset-config.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
-import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
+import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
@@ -110,60 +109,39 @@ export class ExportDisconnectModalComponent implements OnInit {
 
   startExportDisconnectJob(): void {
     const value = this.form.value;
-    const entityJobRef = this.setupDisconnectJob(value);
-    entityJobRef.componentInstance.submit();
+
+    const job$ = this.ws.job('pool.export', [
+      this.pool.id,
+      {
+        destroy: value.destroy,
+        cascade: value.cascade,
+        restart_services: this.restartServices,
+      },
+    ]);
+
+    this.dialogService.jobDialog(
+      job$,
+      {
+        title: this.translate.instant(helptextVolumes.exporting),
+        description: this.translate.instant(helptextVolumes.exporting),
+      },
+    )
+      .afterClosed()
+      .pipe(untilDestroyed(this))
+      .subscribe({
+        next: () => {
+          this.handleDisconnectJobSuccess(value);
+        },
+        error: (error: unknown) => {
+          this.handleDisconnectJobFailure(error as Job);
+        },
+        complete: () => {
+          this.isFormLoading = false;
+          this.cdr.markForCheck();
+        },
+      });
 
     this.datasetStore.resetDatasets();
-  }
-
-  setupDisconnectJob(value: Partial<{
-    destroy: boolean;
-    cascade: boolean;
-    confirm: boolean;
-    nameInput: string;
-  }>): MatDialogRef<EntityJobComponent> {
-    const entityJobRef = this.matDialog.open(EntityJobComponent, {
-      data: { title: helptextVolumes.exporting },
-      disableClose: true,
-    });
-    entityJobRef.componentInstance.setDescription(helptextVolumes.exporting);
-
-    entityJobRef.componentInstance.setCall(
-      'pool.export',
-      [
-        this.pool.id,
-        {
-          destroy: value.destroy,
-          cascade: value.cascade,
-          restart_services: this.restartServices,
-        },
-      ],
-    );
-
-    entityJobRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe({
-      next: () => {
-        this.handleDisconnectJobSuccess(value);
-        entityJobRef.close(true);
-        this.cdr.markForCheck();
-      },
-      error: (error: WebsocketError | Job) => {
-        this.dialogService.error(this.errorHandler.parseError(error));
-      },
-    });
-
-    entityJobRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe({
-      next: (failureData) => {
-        this.dialogRef.close(true);
-        this.isFormLoading = false;
-        entityJobRef.close(true);
-        this.handleDisconnectJobFailure(failureData);
-        this.cdr.markForCheck();
-      },
-      error: (error: WebsocketError | Job) => {
-        this.dialogService.error(this.errorHandler.parseError(error));
-      },
-    });
-    return entityJobRef;
   }
 
   showExportErrorDialog(failureData: Job): void {
@@ -273,7 +251,7 @@ export class ExportDisconnectModalComponent implements OnInit {
           this.prepareForm();
           this.cdr.markForCheck();
         },
-        error: (error: WebsocketError) => {
+        error: (error: WebSocketError) => {
           this.dialogService.error({
             title: helptextVolumes.exportError,
             message: error.reason,

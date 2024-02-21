@@ -138,7 +138,7 @@
 
       <ix-form-actions>
         <button
-          *ixRequiresRoles="[Role.FullAdmin]"
+          *ixRequiresRoles="[Role.DirectoryServiceWrite]"
           mat-button
           type="submit"
           color="primary"
@@ -152,7 +152,7 @@
           {{ isAdvancedMode ? ('Basic Options' | translate) : ('Advanced Options' | translate) }}
         </button>
         <button
-          *ixRequiresRoles="[Role.FullAdmin]"
+          *ixRequiresRoles="[Role.DirectoryServiceWrite]"
           mat-button
           type="button"
           ixTest="rebuild-cache"
@@ -160,7 +160,7 @@
         >
           {{ 'Rebuild Directory Service Cache' | translate }}
         </button>
-        <ng-container *ixRequiresRoles="[Role.FullAdmin]">
+        <ng-container *ixRequiresRoles="[Role.DirectoryServiceWrite]">
           <button
             *ngIf="canLeaveDomain"
             mat-button

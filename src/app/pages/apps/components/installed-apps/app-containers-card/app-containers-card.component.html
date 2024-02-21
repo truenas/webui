@@ -62,6 +62,7 @@
                   class="container-action"
                 >
                   <button
+                    *ixRequiresRoles="requiredRoles"
                     mat-icon-button
                     matTooltipPosition="above"
                     [attr.aria-label]="'Shell' | translate"

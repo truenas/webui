@@ -1,21 +1,21 @@
-.form-actions {
-  display: flex;
-  justify-content: space-between;
-  padding: 16px 11px;
-
-  button {
-    margin-right: 5px;
-  }
-}
+@import 'scss-imports/splitview';
 
 .two-columns {
   border-bottom: 1px solid var(--lines);
   border-top: 1px solid var(--lines);
   display: flex;
 
+  @media (max-width: $breakpoint-tablet) {
+    display: block;
+  }
+
   > * {
     display: block;
     width: 50%;
+
+    @media (max-width: $breakpoint-tablet) {
+      width: 100%;
+    }
   }
 }
 

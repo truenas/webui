@@ -8,10 +8,10 @@ import {
   Component,
   EventEmitter,
   HostBinding,
-  Inject,
   Input,
   IterableDiffers,
   OnChanges,
+  OnDestroy,
   OnInit,
   Output,
   TrackByFunction,
@@ -21,7 +21,6 @@ import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
 import { ResizedEvent } from 'angular-resize-event';
 import { animationFrameScheduler, asapScheduler, BehaviorSubject } from 'rxjs';
 import { auditTime, map } from 'rxjs/operators';
-import { WINDOW } from 'app/helpers/window.helper';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { Tree } from 'app/modules/ix-tree/components/tree/tree.component';
 import { TreeNodeOutletDirective } from 'app/modules/ix-tree/directives/tree-node-outlet.directive';
@@ -42,7 +41,7 @@ export const scrollFrameScheduler = typeof requestAnimationFrame !== 'undefined'
     { provide: Tree, useExisting: this },
   ],
 })
-export class TreeVirtualScrollViewComponent<T> extends Tree<T> implements OnChanges, OnInit {
+export class TreeVirtualScrollViewComponent<T> extends Tree<T> implements OnChanges, OnInit, OnDestroy {
   @ViewChild(TreeNodeOutletDirective, { static: true }) readonly nodeOutlet!: TreeNodeOutletDirective<T>;
   @ViewChild(CdkVirtualScrollViewport, { static: true }) readonly virtualScrollViewport!: CdkVirtualScrollViewport;
   @HostBinding('class.ix-tree') get ixTreeClass(): boolean { return true; }
@@ -66,7 +65,6 @@ export class TreeVirtualScrollViewComponent<T> extends Tree<T> implements OnChan
   constructor(
     protected differs: IterableDiffers,
     protected changeDetectorRef: ChangeDetectorRef,
-    @Inject(WINDOW) private window: Window,
   ) {
     super(differs, changeDetectorRef);
     this.listenForNodeChanges();
@@ -86,6 +84,12 @@ export class TreeVirtualScrollViewComponent<T> extends Tree<T> implements OnChan
     this.scrollableElement = document.querySelector('.rightside-content-hold');
     if (this.scrollableElement) {
       this.scrollableElement.addEventListener('scroll', this.scrolled.bind(this));
+    }
+  }
+
+  ngOnDestroy(): void {
+    if (this.scrollableElement) {
+      this.scrollableElement.removeEventListener('scroll', this.scrolled.bind(this));
     }
   }
 

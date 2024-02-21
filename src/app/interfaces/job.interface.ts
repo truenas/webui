@@ -25,7 +25,7 @@ export interface Job<R = unknown, A = unknown[]> {
   progress: JobProgress;
   result: R;
   state: JobState;
-  time_finished: ApiTimestamp;
+  time_finished: ApiTimestamp | null;
   time_started: ApiTimestamp;
 }
 

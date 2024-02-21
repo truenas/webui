@@ -8,7 +8,7 @@ import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockWebsocket, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockWebSocket, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
 import { PeriodicSnapshotTask } from 'app/interfaces/periodic-snapshot-task.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
@@ -79,7 +79,7 @@ describe('SnapshotTaskCardComponent', () => {
           },
         ],
       }),
-      mockWebsocket([
+      mockWebSocket([
         mockCall('pool.snapshottask.query', snapshotTasks),
         mockCall('pool.snapshottask.delete'),
         mockCall('pool.snapshottask.update'),
@@ -116,7 +116,7 @@ describe('SnapshotTaskCardComponent', () => {
   it('should show table rows', async () => {
     const expectedRows = [
       ['Pool/Dataset', 'Keep for', 'Frequency', 'Next Run', 'Last Run', 'Enabled', 'State', ''],
-      ['APPS/test2', '2 week(s)', 'At 00:00, every day', 'in 1 day', '1 min. ago', '', 'PENDING', ''],
+      ['APPS/test2', '2 week(s)', 'At 00:00, every day', 'Disabled', '1 min. ago', '', 'PENDING', ''],
     ];
 
     const cells = await table.getCellTexts();
@@ -149,7 +149,7 @@ describe('SnapshotTaskCardComponent', () => {
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({
       title: 'Confirmation',
-      message: 'Delete Periodic Snapshot Task <b>"APPS/test2 - auto-%Y-%m-%d_%H-%M - 2 WEEK(S)"</b>?',
+      message: 'Delete Periodic Snapshot Task <b>"APPS/test2 - auto-%Y-%m-%d_%H-%M"</b>?',
     });
 
     expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('pool.snapshottask.delete', [1]);

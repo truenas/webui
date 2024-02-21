@@ -7,15 +7,19 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { MockComponents, MockInstance } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { Direction } from 'app/enums/direction.enum';
+import { JobState } from 'app/enums/job-state.enum';
+import { KeychainCredentialType } from 'app/enums/keychain-credential-type.enum';
+import { RetentionPolicy } from 'app/enums/retention-policy.enum';
+import { ScheduleMethod } from 'app/enums/schedule-method.enum';
 import { SnapshotNamingOption } from 'app/enums/snapshot-naming-option.enum';
 import { TransportMode } from 'app/enums/transport-mode.enum';
 import { helptextReplicationWizard } from 'app/helptext/data-protection/replication/replication-wizard';
 import { KeychainCredential } from 'app/interfaces/keychain-credential.interface';
 import { ReplicationTask } from 'app/interfaces/replication-task.interface';
+import { ChainedRef } from 'app/modules/ix-forms/components/ix-slide-in/chained-component-ref';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import {
@@ -41,15 +45,53 @@ import {
 } from 'app/pages/data-protection/replication/replication-wizard/replication-wizard.component';
 import { DatasetService } from 'app/services/dataset-service/dataset.service';
 import { DialogService } from 'app/services/dialog.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 import { ReplicationService } from 'app/services/replication.service';
 import { WebSocketService } from 'app/services/ws.service';
+
+const existingTask: ReplicationTask = {
+  name: 'dataset',
+  id: 123,
+  recursive: false,
+  retention_policy: RetentionPolicy.Source,
+  schedule_method: ScheduleMethod.Cron,
+  source_datasets_from: '',
+  target_dataset_from: '',
+  state: {
+    state: JobState.Running,
+  },
+  ssh_credentials: {
+    attributes: {
+      connect_timeout: 1,
+      host: '',
+      port: 1,
+      private_key: 1,
+      remote_host_key: '',
+      username: 'root',
+      id: '5',
+    },
+    id: 5,
+    name: 'test',
+    type: KeychainCredentialType.SshCredentials,
+  },
+  direction: Direction.Pull,
+  source_datasets: ['/tank/source'],
+  name_regex: 'test-.*',
+  target_dataset: '/tank/target',
+  transport: TransportMode.Ssh,
+  auto: true,
+};
 
 describe('ReplicationFormComponent', () => {
   let spectator: Spectator<ReplicationFormComponent>;
   let loader: HarnessLoader;
   const remoteNodeProvider = jest.fn();
   const localNodeProvider = jest.fn();
+  const chainedRef: ChainedRef<ReplicationTask> = {
+    close: jest.fn(),
+    swap: jest.fn(),
+    getData: jest.fn(() => undefined),
+  };
 
   const generalForm = new FormGroup({
     name: new FormControl('dataset'),
@@ -119,13 +161,13 @@ describe('ReplicationFormComponent', () => {
       mockProvider(DatasetService, {
         getDatasetNodeProvider: jest.fn(() => localNodeProvider),
       }),
-      mockWebsocket([
+      mockWebSocket([
         mockCall('replication.count_eligible_manual_snapshots', {
           eligible: 3,
           total: 5,
         }),
-        mockCall('replication.create'),
-        mockCall('replication.update'),
+        mockCall('replication.create', existingTask),
+        mockCall('replication.update', existingTask),
         mockCall('keychaincredential.query', [
           {
             id: 123,
@@ -139,14 +181,13 @@ describe('ReplicationFormComponent', () => {
       mockProvider(DialogService, {
         confirm: jest.fn(() => of()),
       }),
-      mockProvider(IxSlideInService, {
-        open: jest.fn(() => ({
-          slideInClosed$: of(),
-        })),
+      mockProvider(IxChainedSlideInService, {
+        components$: of([]),
+        pushComponent: jest.fn(() => of()),
       }),
       mockProvider(SnackbarService),
       mockProvider(IxSlideInRef),
-      { provide: SLIDE_IN_DATA, useValue: undefined },
+      mockProvider(ChainedRef, chainedRef),
     ],
     componentProviders: [
       mockProvider(ReplicationService, {
@@ -174,8 +215,9 @@ describe('ReplicationFormComponent', () => {
       const switchButton = await loader.getHarness(MatButtonHarness.with({ text: 'Switch To Wizard' }));
       await switchButton.click();
 
-      expect(spectator.inject(IxSlideInRef).close).toHaveBeenCalled();
-      expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(ReplicationWizardComponent, { wide: true });
+      expect(
+        chainedRef.swap,
+      ).toHaveBeenCalledWith(ReplicationWizardComponent, true);
     });
 
     it('creates a new replication task', async () => {
@@ -199,7 +241,7 @@ describe('ReplicationFormComponent', () => {
         auto: true,
         sudo: false,
       }]);
-      expect(spectator.inject(IxSlideInRef).close).toHaveBeenCalled();
+      expect(chainedRef.close).toHaveBeenCalledWith({ response: existingTask, error: null });
     });
   });
 
@@ -207,7 +249,7 @@ describe('ReplicationFormComponent', () => {
     beforeEach(fakeAsync(() => {
       spectator = createComponent({
         providers: [
-          { provide: SLIDE_IN_DATA, useValue: { id: 1 } as ReplicationTask },
+          mockProvider(ChainedRef, { ...chainedRef, getData: jest.fn(() => ({ id: 1 } as ReplicationTask)) }),
         ],
       });
       tick();
@@ -232,7 +274,7 @@ describe('ReplicationFormComponent', () => {
           sudo: false,
         },
       ]);
-      expect(spectator.inject(IxSlideInRef).close).toHaveBeenCalled();
+      expect(chainedRef.close).toHaveBeenCalledWith({ response: existingTask, error: null });
     });
   });
 

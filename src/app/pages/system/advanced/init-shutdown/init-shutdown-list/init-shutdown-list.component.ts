@@ -23,7 +23,7 @@ import {
 } from 'app/pages/system/advanced/init-shutdown/init-shutdown-form/init-shutdown-form.component';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
@@ -81,7 +81,7 @@ export class InitShutdownListComponent implements OnInit {
           iconName: 'delete',
           tooltip: this.translate.instant('Delete'),
           onClick: (row) => this.deleteScript(row),
-          requiresRoles: [Role.FullAdmin],
+          requiredRoles: [Role.FullAdmin],
         },
       ],
     }),
@@ -91,7 +91,7 @@ export class InitShutdownListComponent implements OnInit {
 
   constructor(
     private translate: TranslateService,
-    private slideIn: IxSlideInService,
+    private chainedSlideIns: IxChainedSlideInService,
     private dialogService: DialogService,
     private ws: WebSocketService,
     private errorHandler: ErrorHandlerService,
@@ -105,16 +105,14 @@ export class InitShutdownListComponent implements OnInit {
   }
 
   addScript(): void {
-    this.slideIn.open(InitShutdownFormComponent)
-      .slideInClosed$
-      .pipe(filter(Boolean), untilDestroyed(this))
+    this.chainedSlideIns.pushComponent(InitShutdownFormComponent)
+      .pipe(filter((response) => !!response.response), untilDestroyed(this))
       .subscribe(() => this.dataProvider.load());
   }
 
   editScript(script: InitShutdownScript): void {
-    this.slideIn.open(InitShutdownFormComponent, { data: script })
-      .slideInClosed$
-      .pipe(filter(Boolean), untilDestroyed(this))
+    this.chainedSlideIns.pushComponent(InitShutdownFormComponent, false, script)
+      .pipe(filter((response) => !!response.response), untilDestroyed(this))
       .subscribe(() => this.dataProvider.load());
   }
 

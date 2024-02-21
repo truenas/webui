@@ -9,10 +9,11 @@ import {
 } from 'rxjs';
 import { catchError, defaultIfEmpty, map } from 'rxjs/operators';
 import { GiB, MiB } from 'app/constants/bytes.constant';
+import { Role } from 'app/enums/role.enum';
 import { VmDeviceType, VmNicType, VmOs } from 'app/enums/vm.enum';
 import { VirtualMachine, VirtualMachineUpdate } from 'app/interfaces/virtual-machine.interface';
 import { VmDevice, VmDeviceUpdate } from 'app/interfaces/vm-device.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
+import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { SummarySection } from 'app/modules/common/summary/summary.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -46,6 +47,8 @@ export class VmWizardComponent implements OnInit {
   @ViewChild(NetworkInterfaceStepComponent, { static: true }) networkInterfaceStep: NetworkInterfaceStepComponent;
   @ViewChild(InstallationMediaStepComponent, { static: true }) installationMediaStep: InstallationMediaStepComponent;
   @ViewChild(GpuStepComponent, { static: true }) gpuStep: GpuStepComponent;
+
+  protected readonly requiredRoles = [Role.VmWrite];
 
   get osForm(): OsStepComponent['form']['value'] {
     return this.osStep.form.value;
@@ -285,7 +288,7 @@ export class VmWizardComponent implements OnInit {
       ...payload,
     }])
       .pipe(
-        catchError((error: WebsocketError) => {
+        catchError((error: WebSocketError) => {
           this.dialogService.error({
             title: this.translate.instant('Error creating device'),
             message: error.reason,

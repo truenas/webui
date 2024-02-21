@@ -1,4 +1,5 @@
 import {
+  ChangeDetectionStrategy, ChangeDetectorRef,
   Component, OnInit,
 } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
@@ -11,7 +12,7 @@ import { Role } from 'app/enums/role.enum';
 import { helptextTopbar } from 'app/helptext/topbar';
 import { AlertSlice, selectImportantUnreadAlertsCount } from 'app/modules/alerts/store/alert.selectors';
 import { UpdateDialogComponent } from 'app/modules/common/dialog/update-dialog/update-dialog.component';
-import { FeedbackDialogComponent } from 'app/modules/ix-feedback/feedback-dialog/feedback-dialog.component';
+import { FeedbackDialogComponent } from 'app/modules/feedback/components/feedback-dialog/feedback-dialog.component';
 import { selectUpdateJob } from 'app/modules/jobs/store/job.selectors';
 import { topbarDialogPosition } from 'app/modules/layout/components/topbar/topbar-dialog-position.constant';
 import { SystemGeneralService } from 'app/services/system-general.service';
@@ -24,6 +25,7 @@ import { alertIndicatorPressed, sidenavIndicatorPressed } from 'app/store/topbar
   selector: 'ix-topbar',
   templateUrl: './topbar.component.html',
   styleUrls: ['./topbar.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TopbarComponent implements OnInit {
   updateIsDone: Subscription;
@@ -45,9 +47,11 @@ export class TopbarComponent implements OnInit {
     private systemGeneralService: SystemGeneralService,
     private matDialog: MatDialog,
     private store$: Store<AlertSlice>,
+    private cdr: ChangeDetectorRef,
   ) {
     this.systemGeneralService.updateRunningNoticeSent.pipe(untilDestroyed(this)).subscribe(() => {
       this.updateNotificationSent = true;
+      this.cdr.markForCheck();
     });
   }
 
@@ -55,6 +59,7 @@ export class TopbarComponent implements OnInit {
     if (this.systemGeneralService.isEnterprise) {
       this.store$.select(selectIsHaLicensed).pipe(untilDestroyed(this)).subscribe((isHaLicensed) => {
         this.isFailoverLicensed = isHaLicensed;
+        this.cdr.markForCheck();
       });
     }
 
@@ -92,6 +97,8 @@ export class TopbarComponent implements OnInit {
         this.updateInProgress();
         this.updateNotificationSent = true;
       }
+
+      this.cdr.markForCheck();
     });
   }
 

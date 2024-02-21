@@ -5,7 +5,7 @@ import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import {
   BehaviorSubject, firstValueFrom, of, ReplaySubject, throwError,
 } from 'rxjs';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { ApiEvent } from 'app/interfaces/api-message.interface';
@@ -42,7 +42,7 @@ describe('ServicesEffects', () => {
     service: ServicesEffects,
     providers: [
       provideMockActions(() => actions$),
-      mockWebsocket([
+      mockWebSocket([
         mockCall('service.query', [cifsService]),
       ]),
       mockProvider(MatDialog, {
@@ -80,6 +80,7 @@ describe('ServicesEffects', () => {
     });
 
     it('should handle errors when loading services', () => {
+      jest.spyOn(console, 'error').mockImplementation();
       const error = new Error('Service loading error');
       jest.spyOn(ws, 'call').mockReturnValue(throwError(() => error));
 

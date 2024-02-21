@@ -28,7 +28,7 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class NfsListComponent implements OnInit {
-  requiresRoles = [Role.SharingNfsWrite, Role.SharingManager, Role.SharingWrite];
+  requiredRoles = [Role.SharingNfsWrite, Role.SharingWrite];
   filterString = '';
   dataProvider: AsyncDataProvider<NfsShare>;
 
@@ -81,7 +81,7 @@ export class NfsListComponent implements OnInit {
           },
         });
       },
-      requiresRoles: this.requiresRoles,
+      requiredRoles: this.requiredRoles,
     }),
     actionsColumn({
       actions: [
@@ -117,7 +117,7 @@ export class NfsListComponent implements OnInit {
               },
             });
           },
-          requiresRoles: this.requiresRoles,
+          requiredRoles: this.requiredRoles,
         },
       ],
     }),
@@ -168,6 +168,12 @@ export class NfsListComponent implements OnInit {
       return JSON.stringify(share).includes(query);
     });
     this.dataProvider.setRows(filteredExporters);
+    this.cdr.markForCheck();
+  }
+
+  columnsChange(columns: typeof this.columns): void {
+    this.columns = [...columns];
+    this.cdr.detectChanges();
     this.cdr.markForCheck();
   }
 }

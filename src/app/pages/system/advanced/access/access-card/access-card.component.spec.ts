@@ -7,9 +7,9 @@ import { provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
 import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-datetime.pipe';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { CredentialType } from 'app/interfaces/credential-type.interface';
-import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { ChainedRef } from 'app/modules/ix-forms/components/ix-slide-in/chained-component-ref';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTable2Harness } from 'app/modules/ix-table2/components/ix-table2/ix-table2.harness';
 import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
@@ -18,7 +18,7 @@ import { AccessCardComponent } from 'app/pages/system/advanced/access/access-car
 import { AccessFormComponent } from 'app/pages/system/advanced/access/access-form/access-form.component';
 import { AdvancedSettingsService } from 'app/pages/system/advanced/advanced-settings.service';
 import { DialogService } from 'app/services/dialog.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { selectPreferences } from 'app/store/preferences/preferences.selectors';
@@ -50,7 +50,7 @@ describe('AccessCardComponent', () => {
     component: AccessCardComponent,
     imports: [AppLoaderModule, IxTable2Module, FakeFormatDateTimePipe],
     providers: [
-      mockWebsocket([
+      mockWebSocket([
         mockCall('auth.sessions', sessions),
         mockCall('auth.terminate_session'),
         mockCall('auth.terminate_other_sessions'),
@@ -60,7 +60,7 @@ describe('AccessCardComponent', () => {
           {
             selector: selectPreferences,
             value: {
-              lifetime: 60,
+              lifetime: 2147482,
             },
           },
           {
@@ -74,11 +74,13 @@ describe('AccessCardComponent', () => {
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
-      mockProvider(IxSlideInService, {
-        onClose$: of(),
+      mockProvider(IxChainedSlideInService, {
+        pushComponent: jest.fn(() => of({ response: true, error: null })),
       }),
-      mockProvider(AdvancedSettingsService),
-      mockProvider(IxSlideInRef),
+      mockProvider(AdvancedSettingsService, {
+        showFirstTimeWarningIfNeeded: jest.fn(() => of(true)),
+      }),
+      mockProvider(ChainedRef),
       mockProvider(SystemGeneralService, {
         isEnterprise: jest.fn(() => true),
       }),
@@ -93,7 +95,7 @@ describe('AccessCardComponent', () => {
 
   it('shows current token lifetime', async () => {
     const lifetime = (await loader.getAllHarnesses(MatListItemHarness))[0];
-    expect(await lifetime.getFullText()).toBe('Token Lifetime: 1 minute');
+    expect(await lifetime.getFullText()).toBe('Token Lifetime: 24 days 20 hours 31 minutes 22 seconds');
   });
 
   it('shows whether DS users are allowed access to WebUI', async () => {
@@ -106,7 +108,7 @@ describe('AccessCardComponent', () => {
     await configure.click();
 
     expect(spectator.inject(AdvancedSettingsService).showFirstTimeWarningIfNeeded).toHaveBeenCalled();
-    expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(AccessFormComponent);
+    expect(spectator.inject(IxChainedSlideInService).pushComponent).toHaveBeenCalledWith(AccessFormComponent);
   });
 
   it('terminates the session when corresponding Terminate is pressed', async () => {

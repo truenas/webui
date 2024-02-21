@@ -431,7 +431,7 @@
             <ix-disk-ui [data]="{ name: selectedDisk.name }"></ix-disk-ui>
 
             <!-- disk icon + labels -->
-            <div class="capacity">{{ selectedDisk.size | filesize: { standard: 'iec' } }}</div>
+            <div class="capacity">{{ selectedSlot.size | ixFileSize }}</div>
             <div class="disk-actions">
               <button
                 *ngIf="!hideIdentifyDrive"

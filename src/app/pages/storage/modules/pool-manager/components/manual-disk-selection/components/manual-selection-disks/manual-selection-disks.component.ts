@@ -5,8 +5,8 @@ import {
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { DndDropEvent } from 'ngx-drag-drop';
-import { FileSizePipe } from 'ngx-filesize';
 import { BehaviorSubject, combineLatest } from 'rxjs';
+import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
 import { EnclosureUi } from 'app/interfaces/enclosure.interface';
 import { Disk } from 'app/interfaces/storage.interface';
 import { NestedTreeDataSource } from 'app/modules/ix-tree/nested-tree-datasource';
@@ -39,7 +39,6 @@ const noEnclosureId = 'no-enclosure' as const;
   templateUrl: './manual-selection-disks.component.html',
   styleUrls: ['./manual-selection-disks.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [FileSizePipe],
 })
 export class ManualSelectionDisksComponent implements OnInit {
   @Input() enclosures: EnclosureUi[] = [];
@@ -52,7 +51,6 @@ export class ManualSelectionDisksComponent implements OnInit {
   filtersUpdated = new BehaviorSubject<ManualDiskSelectionFilters>({});
 
   constructor(
-    private filesizePipe: FileSizePipe,
     private translate: TranslateService,
     protected store$: ManualDiskSelectionStore,
     protected dragToggleStore$: ManualDiskDragToggleStore,
@@ -134,7 +132,7 @@ export class ManualSelectionDisksComponent implements OnInit {
     return disks.filter((disk) => {
       const typeMatches = filterValues.diskType ? disk.type === filterValues.diskType : true;
       const sizeMatches = filterValues.diskSize
-        ? this.filesizePipe.transform(disk.size, { standard: 'iec' }) === filterValues.diskSize
+        ? buildNormalizedFileSize(disk.size) === filterValues.diskSize
         : true;
       const diskModalStringNormalized = disk.model?.toLowerCase().trim() || '';
       const searchStringNormalized = filterValues.search?.toLowerCase().trim() || '';

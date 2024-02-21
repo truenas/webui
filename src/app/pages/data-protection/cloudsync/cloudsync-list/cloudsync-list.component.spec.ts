@@ -6,24 +6,25 @@ import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockWebsocket, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockWebSocket, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
 import { CloudSyncTaskUi } from 'app/interfaces/cloud-sync-task.interface';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { IxTable2Harness } from 'app/modules/ix-table2/components/ix-table2/ix-table2.harness';
 import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
-import { CloudsyncFormComponent } from 'app/pages/data-protection/cloudsync/cloudsync-form/cloudsync-form.component';
-import { CloudsyncListComponent } from 'app/pages/data-protection/cloudsync/cloudsync-list/cloudsync-list.component';
-import { CloudsyncRestoreDialogComponent } from 'app/pages/data-protection/cloudsync/cloudsync-restore-dialog/cloudsync-restore-dialog.component';
+import { CloudSyncFormComponent } from 'app/pages/data-protection/cloudsync/cloudsync-form/cloudsync-form.component';
+import { CloudSyncListComponent } from 'app/pages/data-protection/cloudsync/cloudsync-list/cloudsync-list.component';
+import { CloudSyncRestoreDialogComponent } from 'app/pages/data-protection/cloudsync/cloudsync-restore-dialog/cloudsync-restore-dialog.component';
 import { DialogService } from 'app/services/dialog.service';
+import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LocaleService } from 'app/services/locale.service';
 import { TaskService } from 'app/services/task.service';
 import { WebSocketService } from 'app/services/ws.service';
 
-describe('CloudsyncListComponent', () => {
-  let spectator: Spectator<CloudsyncListComponent>;
+describe('CloudSyncListComponent', () => {
+  let spectator: Spectator<CloudSyncListComponent>;
   let loader: HarnessLoader;
   let table: IxTable2Harness;
 
@@ -77,15 +78,18 @@ describe('CloudsyncListComponent', () => {
   ];
 
   const createComponent = createComponentFactory({
-    component: CloudsyncListComponent,
+    component: CloudSyncListComponent,
     imports: [
       AppLoaderModule,
       EntityModule,
       IxTable2Module,
     ],
     providers: [
+      mockProvider(IxChainedSlideInService, {
+        pushComponent: jest.fn(() => of()),
+      }),
       mockAuth(),
-      mockWebsocket([
+      mockWebSocket([
         mockCall('cloudsync.query', cloudSyncList),
       ]),
       mockProvider(DialogService, {
@@ -104,7 +108,7 @@ describe('CloudsyncListComponent', () => {
       }),
       mockProvider(LocaleService),
       mockProvider(TaskService, {
-        getTaskNextRun: jest.fn(() => 'in about 10 hours'),
+        getTaskNextTime: jest.fn(() => new Date(new Date().getTime() + (25 * 60 * 60 * 1000))),
       }),
     ],
   });
@@ -139,18 +143,23 @@ describe('CloudsyncListComponent', () => {
     });
 
     expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('cloudsync.sync', [1]);
+
+    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('cloudsync.query');
   });
 
-  it('shows form to edit an existing interface when Edit button is pressed', async () => {
+  it('shows form to edit an existing CloudSync when Edit button is pressed', async () => {
     await table.clickToggle(0);
 
     const editButton = await loader.getHarness(MatButtonHarness.with({ text: 'Edit' }));
     await editButton.click();
 
-    expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(CloudsyncFormComponent, {
-      data: expect.objectContaining(cloudSyncList[0]),
-      wide: true,
-    });
+    expect(spectator.inject(IxChainedSlideInService).pushComponent).toHaveBeenCalledWith(
+      CloudSyncFormComponent,
+      true,
+      expect.objectContaining(cloudSyncList[0]),
+    );
+
+    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('cloudsync.query');
   });
 
   it('deletes a Cloud Sync with confirmation when Delete button is pressed', async () => {
@@ -167,6 +176,8 @@ describe('CloudsyncListComponent', () => {
     });
 
     expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('cloudsync.delete', [1]);
+
+    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('cloudsync.query');
   });
 
   it('shows dialog when Restore button is pressed', async () => {
@@ -177,9 +188,11 @@ describe('CloudsyncListComponent', () => {
     const editButton = await loader.getHarness(MatButtonHarness.with({ text: 'Restore' }));
     await editButton.click();
 
-    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(CloudsyncRestoreDialogComponent, {
+    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(CloudSyncRestoreDialogComponent, {
       data: 1,
     });
+
+    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('cloudsync.query');
   });
 
   it('shows confirmation dialog when Dry Run button is pressed', async () => {
@@ -195,5 +208,7 @@ describe('CloudsyncListComponent', () => {
     });
 
     expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('cloudsync.sync', [1, { dry_run: true }]);
+
+    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('cloudsync.query');
   });
 });

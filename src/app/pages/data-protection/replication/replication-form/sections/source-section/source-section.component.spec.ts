@@ -3,7 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { Direction } from 'app/enums/direction.enum';
 import { LifetimeUnit } from 'app/enums/lifetime-unit.enum';
 import { PeriodicSnapshotTask } from 'app/interfaces/periodic-snapshot-task.interface';
@@ -33,7 +33,7 @@ describe('SourceSectionComponent', () => {
     providers: [
       mockProvider(LanguageService),
       mockProvider(LocaleService),
-      mockWebsocket([
+      mockWebSocket([
         mockCall('pool.snapshottask.query', [
           {
             id: 1,
@@ -132,17 +132,17 @@ describe('SourceSectionComponent', () => {
   });
 
   it('returns payload when getPayload is called', async () => {
-    await form.fillForm({
-      Source: ['tank/files'],
-      'Full Filesystem Replication': true,
-      'Periodic Snapshot Tasks': ['files - auto-%Y-%m - 2 WEEK (S) - Enabled'],
-      'Also include snapshots with the name': 'Matching regular expression',
-      'Properties Exclude': ['exclude1'],
-      'Save Pending Snapshots': true,
-    });
-    await form.fillForm({
-      'Matching regular expression': 'test-.*',
-    });
+    await form.fillForm(
+      {
+        Source: ['tank/files'],
+        'Full Filesystem Replication': true,
+        'Periodic Snapshot Tasks': ['files - auto-%Y-%m - 2 WEEK (S) - Enabled'],
+        'Also include snapshots with the name': 'Matching regular expression',
+        'Properties Exclude': ['exclude1'],
+        'Save Pending Snapshots': true,
+        'Matching regular expression': 'test-.*',
+      },
+    );
 
     expect(spectator.component.getPayload()).toEqual({
       also_include_naming_schema: [],
@@ -188,13 +188,12 @@ describe('SourceSectionComponent', () => {
     });
 
     it('shows Exclude Child Datasets when Recursive is ticked', async () => {
-      await form.fillForm({
-        Recursive: true,
-      });
-
-      await form.fillForm({
-        'Exclude Child Datasets': ['pool1/files', 'pool1/storage'],
-      });
+      await form.fillForm(
+        {
+          Recursive: true,
+          'Exclude Child Datasets': ['pool1/files', 'pool1/storage'],
+        },
+      );
 
       expect(spectator.component.getPayload()).toMatchObject({
         recursive: true,
@@ -277,12 +276,12 @@ describe('SourceSectionComponent', () => {
     });
 
     it('shows regex specific fields when `Matching regular expression` is selected', async () => {
-      await form.fillForm({
-        'Also include snapshots with the name': 'Matching regular expression',
-      });
-      await form.fillForm({
-        'Matching regular expression': 'test-.*',
-      });
+      await form.fillForm(
+        {
+          'Also include snapshots with the name': 'Matching regular expression',
+          'Matching regular expression': 'test-.*',
+        },
+      );
 
       const payload = spectator.component.getPayload();
       expect(payload).toMatchObject({
@@ -320,13 +319,13 @@ describe('SourceSectionComponent', () => {
     });
 
     it('shows Begin and End fields when Replicate Specific Snapshot is set and schedule is hourly', async () => {
-      await form.fillForm({
-        'By snapshot creation time': '0 * * * *',
-      });
-      await form.fillForm({
-        Begin: '10:00:00',
-        End: '23:15:00',
-      });
+      await form.fillForm(
+        {
+          'By snapshot creation time': '0 * * * *',
+          Begin: '10:00:00',
+          End: '23:15:00',
+        },
+      );
 
       expect(spectator.component.getPayload()).toMatchObject({
         restrict_schedule: {

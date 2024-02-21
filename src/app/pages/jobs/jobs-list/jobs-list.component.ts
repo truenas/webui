@@ -28,7 +28,7 @@ import { IxDetailRowDirective } from 'app/modules/ix-tables/directives/ix-detail
 import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
 import { abortJobPressed } from 'app/modules/jobs/store/job.actions';
 import {
-  JobSlice, selectJobState, selectJobs, selectFailedJobs, selectRunningJobs,
+  JobSlice, selectJobState, selectFailedJobs, selectRunningJobs, selectAllNonTransientJobs,
 } from 'app/modules/jobs/store/job.selectors';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
@@ -54,7 +54,7 @@ export class JobsListComponent implements OnInit, AfterViewInit {
   expandedRow: Job;
   selectedIndex: JobTab = 0;
 
-  selector$ = new BehaviorSubject<typeof selectRunningJobs | typeof selectJobs>(selectJobs);
+  selector$ = new BehaviorSubject<typeof selectAllNonTransientJobs>(selectAllNonTransientJobs);
 
   emptyType$: Observable<EmptyType> = combineLatest([
     this.isLoading$,
@@ -156,15 +156,15 @@ export class JobsListComponent implements OnInit, AfterViewInit {
         break;
       case JobTab.All:
       default:
-        this.selector$.next(selectJobs);
+        this.selector$.next(selectAllNonTransientJobs);
         this.expandedRow = null;
         break;
     }
   }
 
   downloadLogs(job: Job): void {
-    this.ws.call('core.download', ['filesystem.get', [job.logs_path], `${job.id}.log`]).pipe(
-      switchMap(([_, url]) => this.storage.downloadUrl(url, `${job.id}.log`, 'text/plain')),
+    this.ws.call('core.job_download_logs', [job.id, `${job.id}.log`]).pipe(
+      switchMap((url) => this.storage.downloadUrl(url, `${job.id}.log`, 'text/plain')),
       catchError((error: HttpErrorResponse) => {
         this.dialogService.error(this.errorHandler.parseHttpError(error));
         return EMPTY;

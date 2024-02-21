@@ -88,7 +88,6 @@
                   ></ix-icon>
                 </ng-template>
               </div>
-
               <div
                 class="content-left"
                 fxFlex.gt-xs="60"
@@ -96,6 +95,9 @@
                 fxLayoutAlign="center center"
                 [fxFlex.xs]="sysGenService.isEnterprise && productImage === 'X10' ? 80 : 100"
               >
+                <div *ngIf="!isHaEnabled && isPassive" class="generic alert">
+                  <ix-icon name="mdi-alert" [matTooltip]="'HA is disabled' | translate"></ix-icon>
+                </div>
                 <div
                   [class]="'product-image ' + productEnclosure"
                   [class.truenas]="sysGenService.isEnterprise"
@@ -109,7 +111,7 @@
                     [id]="productModel"
                     [class.clickable]="enclosureSupport"
                     [matTooltipDisabled]="!enclosureSupport"
-                    [src]="'assets/images' + productImage"
+                    [src]="productImageSrc"
                     [src-fallback]="'assets/images/truenas_scale_ondark_favicon.png'"
                     (click)="goToEnclosure()"
                   />
@@ -126,16 +128,13 @@
                       name="ix:logo_freenas_certified"
                     ></ix-icon>
                   </ng-template>
-                  <div *ngIf="!hasHa && isPassive" class="generic alert">
-                    <ix-icon name="mdi-alert"></ix-icon>
-                  </div>
                   <div *ngIf="productImage && isHaLicensed && !isPassive" class="ha-node-status">
                     ({{ 'Active' | translate }})
                   </div>
-                  <div *ngIf="productImage && isHaLicensed && isPassive && hasHa" class="ha-node-status">
+                  <div *ngIf="productImage && isHaLicensed && isPassive" class="ha-node-status">
                     ({{ 'Standby' | translate }})
                   </div>
-                  <div *ngIf="ready && !productImage && sysGenService.isEnterprise && hasHa" class="ha-node-status">
+                  <div *ngIf="ready && !productImage && sysGenService.isEnterprise && isHaEnabled" class="ha-node-status">
                     ({{ 'Unsupported Hardware' | translate }})
                   </div>
                 </div>
@@ -160,7 +159,7 @@
                   </button>
                   <ix-simple-failover-button
                     *ngIf="isPassive"
-                    [disabled]="!hasHa && !(hasOnlyMismatchVersionsReason$ | async)"
+                    [disabled]="!isHaEnabled && !(hasOnlyMismatchVersionsReason$ | async)"
                   ></ix-simple-failover-button>
                 </div>
               </ng-template>
@@ -169,7 +168,7 @@
             <!-- Details Section -->
             <div class="right" fxFlex.xs fxFlex.gt-xs="60" fxLayout="column">
               <div
-                *ngIf="!systemInfo && isHaLicensed && isPassive && hasHa"
+                *ngIf="!systemInfo && isHaLicensed && isPassive && isHaEnabled"
                 class="data-container ha-status"
                 fxFlex
               >
@@ -179,12 +178,12 @@
               </div>
 
               <div
-                *ngIf="!systemInfo || (isHaLicensed && isPassive && !hasHa)"
+                *ngIf="!systemInfo && isHaLicensed && isPassive && !isHaEnabled"
                 class="data-container ha-status"
                 fxFlex
               >
                 <h3>
-                  {{ hasHa ? ('HA Enabled' | translate) : ('HA Disabled' | translate) }}
+                  {{ isHaEnabled ? ('HA Enabled' | translate) : ('HA Disabled' | translate) }}
                 </h3>
               </div>
 
@@ -192,7 +191,11 @@
                 <mat-spinner class="spinner" [diameter]="40"></mat-spinner>
               </div>
 
-              <div *ngIf="(systemInfo && !isPassive) || (systemInfo && isPassive && hasHa)" class="data-container" fxFlex>
+              <div
+                *ngIf="systemInfo"
+                class="data-container"
+                fxFlex
+              >
                 <div fxHide.gt-xs class="list-subheader">
                   {{ isPassive ? ('System Information (Standby)' | translate) : ('System Information' | translate) }}
                 </div>
@@ -260,7 +263,7 @@
                   <ix-simple-failover-button
                     *ngIf="isPassive"
                     color="primary"
-                    [disabled]="!hasHa && !(hasOnlyMismatchVersionsReason$ | async)"
+                    [disabled]="!isHaEnabled && !(hasOnlyMismatchVersionsReason$ | async)"
                   ></ix-simple-failover-button>
                 </div>
               </div>

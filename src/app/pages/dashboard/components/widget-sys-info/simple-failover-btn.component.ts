@@ -5,6 +5,7 @@ import {
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { filter } from 'rxjs/operators';
+import { Role } from 'app/enums/role.enum';
 import { helptextSystemFailover } from 'app/helptext/system/failover';
 import { DialogService } from 'app/services/dialog.service';
 
@@ -18,6 +19,8 @@ import { DialogService } from 'app/services/dialog.service';
 export class SimpleFailoverBtnComponent {
   @Input() color = 'default';
   @Input() disabled?: boolean = false;
+
+  protected requiredRoles = [Role.FailoverWrite];
 
   constructor(
     private dialog: DialogService,

@@ -23,8 +23,8 @@
           [label]="'Privileges' | translate"
           [autocompleteProvider]="privilegesProvider"
           [tooltip]="tooltips.privileges"
-          [options]="privilegeOptions$"
           [resolveValue]="true"
+          [resolveOptions]="privilegeOptions$"
           [allowNewEntries]="false"
         ></ix-chips>
 

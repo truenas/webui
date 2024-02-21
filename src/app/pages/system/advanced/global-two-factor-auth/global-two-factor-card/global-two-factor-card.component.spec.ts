@@ -4,12 +4,12 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatListItemHarness } from '@angular/material/list/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { GlobalTwoFactorConfig } from 'app/interfaces/two-factor-config.interface';
 import { AdvancedSettingsService } from 'app/pages/system/advanced/advanced-settings.service';
 import { GlobalTwoFactorAuthCardComponent } from 'app/pages/system/advanced/global-two-factor-auth/global-two-factor-card/global-two-factor-card.component';
 import { GlobalTwoFactorAuthFormComponent } from 'app/pages/system/advanced/global-two-factor-auth/global-two-factor-form/global-two-factor-form.component';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 
 describe('GlobalTwoFactorAuthCardComponent', () => {
   let spectator: Spectator<GlobalTwoFactorAuthCardComponent>;
@@ -17,11 +17,13 @@ describe('GlobalTwoFactorAuthCardComponent', () => {
   const createComponent = createComponentFactory({
     component: GlobalTwoFactorAuthCardComponent,
     providers: [
-      mockProvider(IxSlideInService),
-      mockProvider(AdvancedSettingsService, {
-        showFirstTimeWarningIfNeeded: jest.fn(() => of()),
+      mockProvider(IxChainedSlideInService, {
+        pushComponent: jest.fn(() => of({ response: true, error: null })),
       }),
-      mockWebsocket([
+      mockProvider(AdvancedSettingsService, {
+        showFirstTimeWarningIfNeeded: jest.fn(() => of(true)),
+      }),
+      mockWebSocket([
         mockCall('auth.twofactor.config', {
           window: 3,
           enabled: false,
@@ -52,12 +54,14 @@ describe('GlobalTwoFactorAuthCardComponent', () => {
     await configureButton.click();
 
     expect(spectator.inject(AdvancedSettingsService).showFirstTimeWarningIfNeeded).toHaveBeenCalled();
-    expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(GlobalTwoFactorAuthFormComponent, {
-      data: {
+    expect(spectator.inject(IxChainedSlideInService).pushComponent).toHaveBeenCalledWith(
+      GlobalTwoFactorAuthFormComponent,
+      false,
+      {
         window: 3,
         enabled: false,
         services: { ssh: false },
       } as GlobalTwoFactorConfig,
-    });
+    );
   });
 });

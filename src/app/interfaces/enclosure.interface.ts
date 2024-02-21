@@ -165,3 +165,8 @@ export interface SelectedEnclosureSlot {
   slotDetails: EnclosureUiSlot;
   enclosureId: string;
 }
+
+export interface DiskEnclosureInfo {
+  enclosure: number;
+  slot: number;
+}

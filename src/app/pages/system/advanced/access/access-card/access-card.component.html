@@ -1,9 +1,9 @@
-<mat-card id="sessions-card">
+<mat-card id="access-card">
   <mat-toolbar-row>
     <h3>{{ 'Access' | translate }}</h3>
     <div class="actions action-icon">
       <button
-        *ixRequiresRoles="[Role.FullAdmin]"
+        *ixRequiresRoles="[Role.AuthSessionsWrite]"
         mat-button
         [ixTest]="['sessions', 'terminate']"
         [disabled]="dataProvider.isLoading$ | async"

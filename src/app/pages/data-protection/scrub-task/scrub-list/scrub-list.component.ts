@@ -10,9 +10,7 @@ import { AsyncDataProvider } from 'app/modules/ix-table2/classes/async-data-prov
 import {
   actionsColumn,
 } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
-import {
-  relativeDateColumn,
-} from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-relative-date/ix-cell-relative-date.component';
+import { relativeDateColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-relative-date/ix-cell-relative-date.component';
 import {
   scheduleColumn,
 } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-schedule/ix-cell-schedule.component';
@@ -67,7 +65,9 @@ export class ScrubListComponent implements OnInit {
     }),
     relativeDateColumn({
       title: this.translate.instant('Next Run'),
-      getValue: (row) => this.taskService.getTaskNextTime(scheduleToCrontab(row.schedule)),
+      getValue: (row) => (row.enabled
+        ? this.taskService.getTaskNextTime(scheduleToCrontab(row.schedule))
+        : this.translate.instant('Disabled')),
     }),
     yesNoColumn({
       title: this.translate.instant('Enabled'),
@@ -83,7 +83,7 @@ export class ScrubListComponent implements OnInit {
         {
           iconName: 'delete',
           tooltip: this.translate.instant('Delete'),
-          requiresRoles: [Role.FullAdmin],
+          requiredRoles: [Role.FullAdmin],
           onClick: (row) => this.onDelete(row),
         },
       ],

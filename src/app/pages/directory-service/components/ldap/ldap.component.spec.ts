@@ -2,17 +2,14 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
-import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
+import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { helptextLdap } from 'app/helptext/directory-service/ldap';
 import { KerberosRealm } from 'app/interfaces/kerberos-realm.interface';
-import { LdapConfig, LdapConfigUpdateResult } from 'app/interfaces/ldap-config.interface';
-import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
+import { LdapConfig } from 'app/interfaces/ldap-config.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
@@ -47,6 +44,7 @@ describe('LdapComponent', () => {
     auxiliary_parameters: 'param=25',
     schema: 'RFC2307',
   } as LdapConfig;
+
   const createComponent = createComponentFactory({
     component: LdapComponent,
     imports: [
@@ -54,9 +52,9 @@ describe('LdapComponent', () => {
       IxFormsModule,
     ],
     providers: [
-      mockWebsocket([
+      mockWebSocket([
+        mockJob('ldap.update', fakeSuccessfulJob()),
         mockCall('ldap.config', existingLdapConfig),
-        mockCall('ldap.update', {} as LdapConfigUpdateResult),
         mockCall('kerberos.keytab.kerberos_principal_choices', [
           'principal1', 'principal2',
         ]),
@@ -75,15 +73,15 @@ describe('LdapComponent', () => {
           { id: 2, name: 'certificate2' },
         ]),
       }),
-      mockProvider(DialogService),
+      mockProvider(DialogService, {
+        jobDialog: jest.fn(() => ({
+          afterClosed: () => of(null),
+        })),
+      }),
       mockProvider(SnackbarService),
-      mockProvider(MatDialog),
       mockProvider(IxSlideInRef),
       mockAuth(),
       { provide: SLIDE_IN_DATA, useValue: undefined },
-    ],
-    declarations: [
-      MockComponent(EntityJobComponent),
     ],
   });
 
@@ -157,35 +155,16 @@ describe('LdapComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('ldap.update', [{
-      ...existingLdapConfig,
-      bindpw: 'adminadmin',
-      anonbind: true,
-      kerberos_principal: 'principal2',
-    }]);
-    expect(spectator.inject(IxSlideInRef).close).toHaveBeenCalled();
-  });
-
-  it('shows job dialog when form is submitted and there is a job_id in the response', async () => {
-    const websocketMock = spectator.inject(MockWebsocketService);
-    websocketMock.mockCall('ldap.update', { job_id: 2 } as LdapConfigUpdateResult);
-    const matDialog = spectator.inject(MatDialog);
-    const jobComponent = {
-      jobId: null,
-      wsshow: jest.fn(),
-      success: of(null),
-      failure: of(),
-    } as unknown as EntityJobComponent;
-    jest.spyOn(matDialog, 'open').mockImplementation(() => ({
-      componentInstance: jobComponent,
-      close: () => {},
-    } as MatDialogRef<EntityJobComponent>));
-
-    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-    await saveButton.click();
-
-    expect(jobComponent.jobId).toBe(2);
-    expect(jobComponent.wsshow).toHaveBeenCalled();
+    expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith(
+      'ldap.update',
+      [{
+        ...existingLdapConfig,
+        bindpw: 'adminadmin',
+        anonbind: true,
+        kerberos_principal: 'principal2',
+      }],
+    );
+    expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
     expect(spectator.inject(IxSlideInRef).close).toHaveBeenCalled();
   });
 });

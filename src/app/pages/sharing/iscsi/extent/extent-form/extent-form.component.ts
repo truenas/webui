@@ -74,7 +74,7 @@ export class ExtentFormComponent implements OnInit {
 
   readonly helptext = helptextSharingIscsi;
 
-  readonly requiresRoles = [
+  readonly requiredRoles = [
     Role.SharingIscsiExtentWrite,
     Role.SharingIscsiWrite,
     Role.SharingWrite,

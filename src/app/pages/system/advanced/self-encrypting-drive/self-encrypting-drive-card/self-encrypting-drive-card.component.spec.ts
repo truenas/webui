@@ -5,7 +5,7 @@ import { MatListItemHarness } from '@angular/material/list/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { AdvancedSettingsService } from 'app/pages/system/advanced/advanced-settings.service';
 import {
   SelfEncryptingDriveCardComponent,
@@ -13,7 +13,7 @@ import {
 import {
   SelfEncryptingDriveFormComponent,
 } from 'app/pages/system/advanced/self-encrypting-drive/self-encrypting-drive-form/self-encrypting-drive-form.component';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 import { selectAdvancedConfig } from 'app/store/system-config/system-config.selectors';
 
 describe('SelfEncryptingDriveCardComponent', () => {
@@ -22,7 +22,7 @@ describe('SelfEncryptingDriveCardComponent', () => {
   const createComponent = createComponentFactory({
     component: SelfEncryptingDriveCardComponent,
     providers: [
-      mockWebsocket([
+      mockWebSocket([
         mockCall('system.advanced.sed_global_password', '12345678'),
       ]),
       provideMockStore({
@@ -35,10 +35,12 @@ describe('SelfEncryptingDriveCardComponent', () => {
           },
         ],
       }),
-      mockProvider(IxSlideInService, {
-        onClose$: of(),
+      mockProvider(IxChainedSlideInService, {
+        pushComponent: jest.fn(() => of({ response: true, error: null })),
       }),
-      mockProvider(AdvancedSettingsService),
+      mockProvider(AdvancedSettingsService, {
+        showFirstTimeWarningIfNeeded: jest.fn(() => of(true)),
+      }),
     ],
   });
 
@@ -62,6 +64,10 @@ describe('SelfEncryptingDriveCardComponent', () => {
     await configureButton.click();
 
     expect(spectator.inject(AdvancedSettingsService).showFirstTimeWarningIfNeeded).toHaveBeenCalled();
-    expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(SelfEncryptingDriveFormComponent);
+    expect(spectator.inject(IxChainedSlideInService).pushComponent).toHaveBeenCalledWith(
+      SelfEncryptingDriveFormComponent,
+      false,
+      { sedPassword: '********', sedUser: 'admin' },
+    );
   });
 });

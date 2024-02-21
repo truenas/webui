@@ -19,6 +19,7 @@ export const helptextInterfacesForm = {
  IPv4 or IPv6 configuration. Only one interface can\
  be configured for DHCP.'),
   int_ipv6auto_tooltip: T('Set to automatically configure the IPv6. Only one interface can be configured this way.'),
+  enable_learning_tooltip: T('Toggle off to defer interface learning until runtime, preventing premature state transitions and potential issues during system startup.'),
   alias_address_tooltip: T('Define an alias for the interface \
  on this TrueNAS controller. The alias can be an IPv4 or IPv6 \
  address.'),

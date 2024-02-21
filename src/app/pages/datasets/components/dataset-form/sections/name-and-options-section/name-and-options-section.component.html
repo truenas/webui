@@ -45,19 +45,19 @@
         {{ helptext.dataset_form_preset.multiprotocol| translate }}
       </ng-container>
     </div>
-    <div *ngIf="isCreatingNfs || isCreatingSmb" class="controls">
+    <div *ngIf="canCreateNfs || canCreateSmb" class="controls">
       <ix-checkbox
-        *ngIf="isCreatingNfs"
+        *ngIf="canCreateNfs"
         formControlName="create_nfs"
         [label]="'Create NFS Share' | translate"
       ></ix-checkbox>
       <ix-checkbox
-        *ngIf="isCreatingSmb"
+        *ngIf="canCreateSmb"
         formControlName="create_smb"
         [label]="'Create SMB Share' | translate"
       ></ix-checkbox>
       <ix-input
-        *ngIf="isCreatingSmb && datasetPresetForm.value.create_smb"
+        *ngIf="canCreateSmb && datasetPresetForm.value.create_smb"
         formControlName="smb_name"
         [label]="'SMB Name' | translate"
       ></ix-input>

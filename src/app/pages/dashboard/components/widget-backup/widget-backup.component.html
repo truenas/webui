@@ -75,7 +75,7 @@
                   fxLayout="row"
                   fxLayoutAlign="space-between center"
                 >
-                  <ul fxLayout="column" [fxFlex]="screenType === ScreenType.Mobile ? 50 : 25">
+                  <ul fxLayout="column" class="caption" [fxFlex]="screenType === ScreenType.Mobile ? 50 : 25">
                     <span class="title">{{ tile.title }}</span>
                     <div *ngIf="hasSendTasks && !tile.totalSend" class="backup-actions">
                       <ng-template *ngTemplateOutlet="backupActions"></ng-template>
@@ -111,13 +111,15 @@
                   <div *ngIf="screenType !== ScreenType.Mobile" class="divider"></div>
                   <ul *ngIf="screenType !== ScreenType.Mobile" fxLayout="column" [fxFlex]="50">
                     <li fxLayout="row">
-                      <span class="label">
-                        {{ '{tasks, plural, =1 {# successful task} other {# successful tasks}} this week' | translate : { tasks: tile.lastWeekSend } }}
+                      <span *ngIf="!tile.lastWeekSend" class="label dash">—</span>
+                      <span *ngIf="tile.lastWeekSend" class="label">
+                        {{ '{tasks, plural, =1 {# sent task} other {# sent tasks}} this week' | translate : { tasks: tile.lastWeekSend } }}
                       </span>
                     </li>
                     <li fxLayout="row">
-                      <span class="label">
-                        {{ '{tasks, plural, =1 {# successful task} other {# successful tasks}} this week' | translate : { tasks: tile.lastWeekReceive } }}
+                      <span *ngIf="!tile.lastWeekReceive" class="label dash">—</span>
+                      <span *ngIf="tile.lastWeekReceive" class="label">
+                        {{ '{tasks, plural, =1 {# received task} other {# received tasks}} this week' | translate : { tasks: tile.lastWeekReceive } }}
                       </span>
                     </li>
                     <li fxLayout="row">
@@ -145,17 +147,35 @@
               <div class="label">{{ 'Actions' | translate }}</div>
             </div>
             <div class="details-item">
-              <a class="action" ixTest="cloud-sync" (click)="addCloudSyncTask()">
+              <a
+                class="action"
+                tabIndex="0"
+                ixTest="cloud-sync"
+                (click)="addCloudSyncTask()"
+                (keydown.enter)="addCloudSyncTask()"
+              >
                 {{ 'Cloud Sync to Storj or similar provider' | translate }}
               </a>
             </div>
             <div class="details-item">
-              <a class="action" ixTest="replication" (click)="addReplicationTask()">
+              <a
+                class="action"
+                tabIndex="0"
+                ixTest="replication"
+                (click)="addReplicationTask()"
+                (keydown.enter)="addReplicationTask()"
+              >
                 {{ 'ZFS Replication to another TrueNAS' | translate }}
               </a>
             </div>
             <div class="details-item">
-              <a class="action" ixTest="rsync" (click)="addRsyncTask()">
+              <a
+                class="action"
+                tabIndex="0"
+                ixTest="rsync"
+                (click)="addRsyncTask()"
+                (keydown.enter)="addRsyncTask()"
+              >
                 {{ 'Rsync to another server' | translate }}
               </a>
             </div>

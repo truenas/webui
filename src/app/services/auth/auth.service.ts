@@ -21,11 +21,15 @@ import { AccountAttribute } from 'app/enums/account-attribute.enum';
 import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
 import { LoginResult } from 'app/enums/login-result.enum';
 import { Role } from 'app/enums/role.enum';
-import { ApiCallDirectory, ApiCallMethod } from 'app/interfaces/api/api-call-directory.interface';
-import { IncomingWebsocketMessage, ResultMessage } from 'app/interfaces/api-message.interface';
+import {
+  ApiCallMethod,
+  ApiCallParams,
+  ApiCallResponse,
+} from 'app/interfaces/api/api-call-directory.interface';
+import { IncomingWebSocketMessage, ResultMessage } from 'app/interfaces/api-message.interface';
 import { LoggedInUser } from 'app/interfaces/ds-cache.interface';
 import { GlobalTwoFactorConfig } from 'app/interfaces/two-factor-config.interface';
-import { WebsocketConnectionService } from 'app/services/websocket-connection.service';
+import { WebSocketConnectionService } from 'app/services/websocket-connection.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
@@ -81,7 +85,7 @@ export class AuthService {
   private cachedGlobalTwoFactorConfig: GlobalTwoFactorConfig;
 
   constructor(
-    private wsManager: WebsocketConnectionService,
+    private wsManager: WebSocketConnectionService,
     private store$: Store<AppState>,
     private ws: WebSocketService,
   ) {
@@ -138,7 +142,11 @@ export class AuthService {
   }
 
   loginWithToken(): Observable<LoginResult> {
-    return this.makeRequest('auth.login_with_token', [this.token || '']).pipe(
+    if (!this.token) {
+      return of(LoginResult.NoToken);
+    }
+
+    return this.makeRequest('auth.login_with_token', [this.token]).pipe(
       switchMap((wasLoggedIn) => {
         return this.processLoginResult(wasLoggedIn);
       }),
@@ -215,7 +223,7 @@ export class AuthService {
 
   // TODO: See if we can move this somewhere, like in wsManager.
   // TODO: Rewrite tests not to rely on mocking this private method.
-  makeRequest<M extends ApiCallMethod>(method: M, params?: ApiCallDirectory[M]['params']): Observable<ApiCallDirectory[M]['response']> {
+  makeRequest<M extends ApiCallMethod>(method: M, params?: ApiCallParams<M>): Observable<ApiCallResponse<M>> {
     const uuid = UUID.UUID();
     const payload = {
       method,
@@ -229,7 +237,7 @@ export class AuthService {
       subscriber.next();
     }).pipe(take(1));
 
-    const uuidFilteredResponse$ = this.getFilteredWebsocketResponse<boolean>(uuid);
+    const uuidFilteredResponse$ = this.getFilteredWebSocketResponse<boolean>(uuid);
 
     return combineLatest([
       requestTrigger$,
@@ -240,9 +248,9 @@ export class AuthService {
     );
   }
 
-  private getFilteredWebsocketResponse<T>(uuid: string): Observable<T> {
+  private getFilteredWebSocketResponse<T>(uuid: string): Observable<T> {
     return this.wsManager.websocket$.pipe(
-      filter((data: IncomingWebsocketMessage) => data.msg === IncomingApiMessageType.Result && data.id === uuid),
+      filter((data: IncomingWebSocketMessage) => data.msg === IncomingApiMessageType.Result && data.id === uuid),
       map((data: ResultMessage<T>) => data.result),
       take(1),
     );

@@ -8,7 +8,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import {
-  lastValueFrom, forkJoin, Observable, switchMap, tap, of, map, take,
+  lastValueFrom, forkJoin,
 } from 'rxjs';
 import { patterns } from 'app/constants/name-patterns.constant';
 import { DatasetType } from 'app/enums/dataset.enum';
@@ -20,8 +20,7 @@ import {
 } from 'app/enums/iscsi.enum';
 import { mntPath } from 'app/enums/mnt-path.enum';
 import { Role } from 'app/enums/role.enum';
-import { ServiceName, serviceNames } from 'app/enums/service-name.enum';
-import { ServiceStatus } from 'app/enums/service-status.enum';
+import { ServiceName } from 'app/enums/service-name.enum';
 import { Dataset, DatasetCreate } from 'app/interfaces/dataset.interface';
 import {
   IscsiAuthAccess,
@@ -39,7 +38,7 @@ import {
   IscsiTargetUpdate,
 } from 'app/interfaces/iscsi.interface';
 import { newOption } from 'app/interfaces/option.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
+import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { forbiddenValues } from 'app/modules/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
 import { matchOthersFgValidator } from 'app/modules/ix-forms/validators/password-validation/password-validation';
@@ -51,7 +50,6 @@ import { IscsiService } from 'app/services/iscsi.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
 import { ServicesState } from 'app/store/services/services.reducer';
-import { selectService } from 'app/store/services/services.selectors';
 
 @UntilDestroy()
 @Component({
@@ -111,7 +109,7 @@ export class IscsiWizardComponent implements OnInit {
     ],
   });
 
-  readonly requiresRoles = [
+  readonly requiredRoles = [
     Role.SharingIscsiTargetWrite,
     Role.SharingIscsiWrite,
     Role.SharingWrite,
@@ -366,7 +364,7 @@ export class IscsiWizardComponent implements OnInit {
     if (this.isNewZvol) {
       await this.createZvol(this.zvolPayload).then(
         (createdZvol) => this.createdZvol = createdZvol,
-        (err: WebsocketError) => this.handleError(err),
+        (err: WebSocketError) => this.handleError(err),
       );
     }
 
@@ -377,7 +375,7 @@ export class IscsiWizardComponent implements OnInit {
 
     await this.createExtent(this.extentPayload).then(
       (createdExtent) => this.createdExtent = createdExtent,
-      (err: WebsocketError) => this.handleError(err),
+      (err: WebSocketError) => this.handleError(err),
     );
 
     if (this.toStop) {
@@ -388,7 +386,7 @@ export class IscsiWizardComponent implements OnInit {
     if (this.isNewAuthgroup) {
       await this.createAuthgroup(this.authgroupPayload).then(
         (createdAuthgroup) => this.createdAuthgroup = createdAuthgroup,
-        (err: WebsocketError) => this.handleError(err),
+        (err: WebSocketError) => this.handleError(err),
       );
     }
 
@@ -400,7 +398,7 @@ export class IscsiWizardComponent implements OnInit {
     if (this.isNewPortal) {
       await this.createPortal(this.portalPayload).then(
         (createdPortal) => this.createdPortal = createdPortal,
-        (err: WebsocketError) => this.handleError(err),
+        (err: WebSocketError) => this.handleError(err),
       );
     }
 
@@ -412,7 +410,7 @@ export class IscsiWizardComponent implements OnInit {
     if (this.isNewInitiator) {
       await this.createInitiator(this.initiatorPayload).then(
         (createdInitiator) => this.createdInitiator = createdInitiator,
-        (err: WebsocketError) => this.handleError(err),
+        (err: WebSocketError) => this.handleError(err),
       );
     }
 
@@ -424,7 +422,7 @@ export class IscsiWizardComponent implements OnInit {
     if (this.isNewTarget) {
       await this.createTarget(this.targetPayload).then(
         (createdTarget) => this.createdTarget = createdTarget,
-        (err: WebsocketError) => this.handleError(err),
+        (err: WebSocketError) => this.handleError(err),
       );
     }
 
@@ -435,7 +433,7 @@ export class IscsiWizardComponent implements OnInit {
 
     await this.createTargetExtent(this.targetExtentPayload).then(
       (createdTargetExtent) => this.createdTargetExtent = createdTargetExtent,
-      (err: WebsocketError) => this.handleError(err),
+      (err: WebSocketError) => this.handleError(err),
     );
 
     if (this.toStop) {
@@ -444,63 +442,10 @@ export class IscsiWizardComponent implements OnInit {
     }
 
     this.store$.dispatch(checkIfServiceIsEnabled({ serviceName: ServiceName.Iscsi }));
-    this.checkIfServiceRestartIsNeeded().pipe(untilDestroyed(this)).subscribe({
-      complete: () => {
-        this.loader.close();
-        this.isLoading = false;
-        this.cdr.markForCheck();
-        this.slideInRef.close(true);
-      },
-    });
+
+    this.loader.close();
+    this.isLoading = false;
+    this.cdr.markForCheck();
+    this.slideInRef.close(true);
   }
-
-  checkIfServiceRestartIsNeeded(): Observable<boolean> {
-    return this.store$.select(selectService(ServiceName.Iscsi)).pipe(
-      map((service) => service.state === ServiceStatus.Running),
-      take(1),
-      switchMap(() => this.warnAboutActiveIscsiSessions()),
-      switchMap((confirmed) => {
-        if (confirmed) {
-          this.loader.open();
-          return this.ws.call('service.restart', [ServiceName.Iscsi]).pipe(
-            tap(() => {
-              this.loader.close();
-              this.snackbar.success(
-                this.translateService.instant(
-                  '{name} service has been restarted',
-                  { name: serviceNames.get(ServiceName.Iscsi) },
-                ),
-              );
-            }),
-          );
-        }
-        return of(false);
-      }),
-      untilDestroyed(this),
-    );
-  }
-
-  warnAboutActiveIscsiSessions = (): Observable<boolean> => {
-    return this.iscsiService.getGlobalSessions().pipe(
-      switchMap((sessions) => {
-        if (!sessions.length) {
-          return of(true);
-        }
-        let message = this.translateService.instant(
-          'Stop {serviceName}?',
-          { serviceName: serviceNames.get(ServiceName.Iscsi) },
-        );
-        if (sessions.length) {
-          message = `<font color="red">${this.translateService.instant('There are {sessions} active iSCSI connections.', { sessions: sessions.length })}</font><br>${this.translateService.instant('Restarting the service would mean to stop the {serviceName} service and close these connections?', { serviceName: serviceNames.get(ServiceName.Iscsi) })}`;
-        }
-
-        return this.dialogService.confirm({
-          title: this.translateService.instant('Alert'),
-          message,
-          hideCheckbox: true,
-          buttonText: this.translateService.instant('Restart'),
-        });
-      }),
-    );
-  };
 }

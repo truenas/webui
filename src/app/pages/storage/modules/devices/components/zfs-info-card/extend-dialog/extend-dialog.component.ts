@@ -6,9 +6,9 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import filesize from 'filesize';
 import { Observable, map } from 'rxjs';
 import { JobState } from 'app/enums/job-state.enum';
+import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
 import { helptextVolumeStatus } from 'app/helptext/storage/volumes/volume-status';
 import { Option } from 'app/interfaces/option.interface';
 import { PoolAttachParams } from 'app/interfaces/pool.interface';
@@ -115,7 +115,7 @@ export class ExtendDialogComponent implements OnInit {
           const exportedPool = disk.exported_zpool ? ` (${disk.exported_zpool})` : '';
 
           return {
-            label: `${disk.devname} (${filesize(disk.size, { standard: 'iec' })})${exportedPool}`,
+            label: `${disk.devname} (${buildNormalizedFileSize(disk.size)}) ${exportedPool}`,
             value: disk.name,
           };
         }).sort((a, b) => a.label.localeCompare(b.label));

@@ -4,7 +4,8 @@ import { AsyncValidatorFn, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import {
   VmBootloader, VmCpuMode, VmDeviceType, VmTime,
 } from 'app/enums/vm.enum';
@@ -69,7 +70,7 @@ describe('VmEditFormComponent', () => {
     providers: [
       mockProvider(IxSlideInRef),
       { provide: SLIDE_IN_DATA, useValue: undefined },
-      mockWebsocket([
+      mockWebSocket([
         mockCall('vm.bootloader_options', {
           UEFI: 'UEFI',
           UEFI_CSM: 'Legacy BIOS',
@@ -81,6 +82,7 @@ describe('VmEditFormComponent', () => {
         mockCall('vm.update'),
         mockCall('vm.device.get_pci_ids_for_gpu_isolation', ['10DE:1401']),
       ]),
+      mockAuth(),
       mockProvider(DialogService),
       mockProvider(GpuService, {
         getGpuOptions: () => of([

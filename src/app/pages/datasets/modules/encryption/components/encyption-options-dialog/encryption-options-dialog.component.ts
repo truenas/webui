@@ -14,7 +14,7 @@ import { combineLatestIsAny } from 'app/helpers/operators/combine-latest-is-any.
 import { helptextDatasetForm } from 'app/helptext/storage/volumes/datasets/dataset-form';
 import { DatasetChangeKeyParams } from 'app/interfaces/dataset-change-key.interface';
 import { Dataset } from 'app/interfaces/dataset.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
+import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { matchOthersFgValidator } from 'app/modules/ix-forms/validators/password-validation/password-validation';
@@ -138,7 +138,7 @@ export class EncryptionOptionsDialogComponent implements OnInit {
           this.showSuccessDialog();
           this.dialogRef.close(true);
         },
-        error: (error: WebsocketError) => {
+        error: (error: WebSocketError) => {
           this.formErrorHandler.handleWsFormError(error, this.form);
         },
       });
@@ -170,12 +170,13 @@ export class EncryptionOptionsDialogComponent implements OnInit {
         this.showSuccessDialog();
         this.dialogRef.close(true);
       },
-      error: (error: WebsocketError) => {
+      error: (error: WebSocketError) => {
         this.formErrorHandler.handleWsFormError(error, this.form);
       },
     });
     jobDialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe({
       next: (error) => {
+        jobDialogRef.close();
         this.formErrorHandler.handleWsFormError(error, this.form);
       },
     });

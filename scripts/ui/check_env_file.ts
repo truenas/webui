@@ -86,6 +86,3 @@ function getVersion(envStr: string): string {
   console.info('Environment version: ' + value);
   return value;
 }
-
-
-

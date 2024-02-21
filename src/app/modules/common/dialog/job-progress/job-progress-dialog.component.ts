@@ -1,28 +1,38 @@
 import {
-  AfterViewChecked, ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
+  AfterViewChecked, ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Inject, OnInit, Output,
 } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogConfig, MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateService } from '@ngx-translate/core';
-import _ from 'lodash';
 import { Observable, Subscription, map } from 'rxjs';
 import { JobState } from 'app/enums/job-state.enum';
 import { Job, JobProgress } from 'app/interfaces/job.interface';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
 
-export interface JobProgressDialogConfig {
-  job$: Observable<Job>;
-  callbacks: {
-    onSuccess?: (job: Job) => void;
-    onFailure?: (job: Job) => void;
-    onAbort?: (job: Job) => void;
-    onProgress: (progress: JobProgress) => void;
-  };
-  config: {
-    title: string;
-    description: string;
-  };
-  showRealtimeLogs: boolean;
+export interface JobProgressDialogConfig<Result> {
+  job$: Observable<Job<Result>>;
+
+  /**
+   * Defaults to job.method.
+   */
+  title?: string;
+
+  /**
+   * Defaults to job.description;
+   */
+  description?: string;
+
+  /**
+   * Defaults to false;
+   */
+  showRealtimeLogs?: boolean;
+
+  /**
+   * Whether user can minimize the job dialog
+   * Defaults to false.
+   * Minimizing the dialog will not stop the job, but will destroy the component and thus all the code in subscription.
+   */
+  canMinimize?: boolean;
 }
 
 @UntilDestroy()
@@ -31,23 +41,33 @@ export interface JobProgressDialogConfig {
   styleUrls: ['./job-progress-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class JobProgressDialogComponent implements OnInit, AfterViewChecked {
-  protected job: Job = {} as Job;
+export class JobProgressDialogComponent<T> implements OnInit, AfterViewChecked {
+  @Output() jobSuccess = new EventEmitter<Job<T>>();
+  @Output() jobFailure = new EventEmitter<unknown>();
+  @Output() jobAborted = new EventEmitter<Job<T>>();
+  @Output() jobProgress = new EventEmitter<JobProgress>();
+
+  protected job = {} as Job<T>;
 
   readonly JobState = JobState;
 
   protected title: string;
   protected description: string;
-  protected showAbortButton: boolean;
   private realtimeLogsSubscribed = false;
   protected realtimeLogs = '';
-  protected showCloseButton = true;
+  protected showMinimizeButton = true;
   protected progressTotalPercent = 0;
   protected hideProgressValue = false;
   protected showRealtimeLogs = false;
 
+  protected isAbortingJob = false;
+
   get isJobRunning(): boolean {
     return this.job?.state === JobState.Running;
+  }
+
+  get hasAbortButton(): boolean {
+    return this.job.abortable && [JobState.Running, JobState.Waiting].includes(this.job?.state);
   }
 
   get isJobStateDeterminate(): boolean {
@@ -61,21 +81,21 @@ export class JobProgressDialogComponent implements OnInit, AfterViewChecked {
   }
 
   constructor(
-    private dialogRef: MatDialogRef<JobProgressDialogComponent, MatDialogConfig>,
-    @Inject(MAT_DIALOG_DATA) public data: JobProgressDialogConfig,
+    private dialogRef: MatDialogRef<JobProgressDialogComponent<T>, MatDialogConfig>,
+    @Inject(MAT_DIALOG_DATA) public data: JobProgressDialogConfig<T>,
     private ws: WebSocketService,
-    private translate: TranslateService,
     private cdr: ChangeDetectorRef,
+    private errorHandler: ErrorHandlerService,
   ) { }
 
   ngOnInit(): void {
-    this.title = this.data.config.title;
-    this.description = this.data.config.description;
+    this.title = this.data?.title;
+    this.description = this.data?.description;
+    this.showRealtimeLogs = this.data?.showRealtimeLogs || false;
+    this.showMinimizeButton = this.data?.canMinimize || false;
+    this.dialogRef.disableClose = !this.showMinimizeButton;
+
     let logsSubscription: Subscription = null;
-    this.showRealtimeLogs = this.data.showRealtimeLogs;
-    if (this.dialogRef.disableClose) {
-      this.showCloseButton = false;
-    }
     this.cdr.markForCheck();
 
     this.data.job$.pipe(
@@ -89,7 +109,6 @@ export class JobProgressDialogComponent implements OnInit, AfterViewChecked {
         if (!this.description) {
           this.description = this.job.description;
         }
-        this.showAbortButton = job.abortable;
         if (
           this.data.showRealtimeLogs
           && this.job.logs_path
@@ -98,7 +117,7 @@ export class JobProgressDialogComponent implements OnInit, AfterViewChecked {
           logsSubscription = this.getRealtimeLogs();
         }
         if (job.progress && !this.data.showRealtimeLogs) {
-          this.data.callbacks.onProgress(job.progress);
+          this.jobProgress.emit(job.progress);
           if (job.progress.description) {
             this.description = job.progress.description;
           }
@@ -107,27 +126,29 @@ export class JobProgressDialogComponent implements OnInit, AfterViewChecked {
           }
           this.hideProgressValue = job.progress.percent === null;
         }
-        if (this.job.state === JobState.Aborted) {
-          this.data.callbacks.onAbort(this.job);
-        }
+
         this.cdr.markForCheck();
       },
-      error: (job: Job) => {
-        this.job = job;
-        this.title = this.translate.instant('Job {method} Failed', { method: '\'' + this.job.method + '\'' });
-        this.description = this.job.error;
-        this.data.callbacks.onFailure(this.job);
-        this.cdr.markForCheck();
+      error: (error: unknown) => {
+        this.jobFailure.emit(error);
+        this.dialogRef.close();
       },
       complete: () => {
-        if (this.job.state === JobState.Success) {
-          this.data.callbacks.onSuccess(this.job);
-        } else if (this.job.state === JobState.Failed) {
-          this.data.callbacks.onFailure(this.job);
-          let error = _.replace(this.job.error, '<', '< ');
-          error = _.replace(error, '>', ' >');
-          this.description = '<b>Error:</b> ' + error;
+        switch (this.job.state) {
+          case JobState.Failed:
+            this.jobFailure.emit(this.job);
+            this.dialogRef.close();
+            break;
+          case JobState.Aborted:
+            this.jobAborted.emit(this.job);
+            this.dialogRef.close();
+            break;
+          case JobState.Success:
+            this.jobSuccess.emit(this.job);
+            this.dialogRef.close();
+            break;
         }
+
         if (this.realtimeLogsSubscribed) {
           logsSubscription.unsubscribe();
         }
@@ -151,9 +172,14 @@ export class JobProgressDialogComponent implements OnInit, AfterViewChecked {
   }
 
   abortJob(): void {
-    this.ws.call('core.job_abort', [this.job.id]).pipe(untilDestroyed(this)).subscribe(() => {
-      this.dialogRef.close();
-    });
+    this.ws.call('core.job_abort', [this.job.id]).pipe(
+      this.errorHandler.catchError(),
+      untilDestroyed(this),
+    )
+      .subscribe(() => {
+        this.isAbortingJob = true;
+        this.cdr.markForCheck();
+      });
   }
 
   /**

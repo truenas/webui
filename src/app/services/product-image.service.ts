@@ -48,6 +48,7 @@ export class ProductImageService {
     },
   };
   private serverSeries = [
+    'H10',
     'M30',
     'M40',
     'M50',

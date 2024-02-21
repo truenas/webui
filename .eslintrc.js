@@ -194,9 +194,9 @@ module.exports = {
         }],
         "default-case": "off",
         "@typescript-eslint/member-ordering": "off",
+        "@typescript-eslint/no-unsafe-return": "off",
 
         // Other temporary disables
-        "@typescript-eslint/no-unsafe-return": "off",
         "rxjs/no-implicit-any-catch": ["off"],
         "rxjs/no-nested-subscribe": ["off"],
         "sonarjs/cognitive-complexity": ["error", 40],
@@ -290,6 +290,7 @@ module.exports = {
         "@shopify/prefer-early-return": ["error", { maximumStatements: 3 }],
         "import/no-default-export": "error",
         "@typescript-eslint/consistent-indexed-object-style": "error",
+        "@angular-eslint/prefer-on-push-component-change-detection": "error",
 
         // RxJS rules
         "rxjs/no-unsafe-takeuntil": ["error", {

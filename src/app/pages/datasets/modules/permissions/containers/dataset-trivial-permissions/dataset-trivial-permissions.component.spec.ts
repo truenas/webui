@@ -7,11 +7,10 @@ import { createRoutingFactory, mockProvider, Spectator } from '@ngneat/spectator
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import {
-  mockCall, mockJob, mockWebsocket,
+  mockCall, mockJob, mockWebSocket,
 } from 'app/core/testing/utils/mock-websocket.utils';
 import { DatasetAclType } from 'app/enums/dataset.enum';
 import { Dataset } from 'app/interfaces/dataset.interface';
-import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { DialogService } from 'app/services/dialog.service';
@@ -31,39 +30,41 @@ describe('DatasetTrivialPermissionsComponent', () => {
     imports: [
       IxFormsModule,
       ReactiveFormsModule,
-      EntityModule,
     ],
     params: {
       datasetId: 'pool/trivial',
     },
     providers: [
-      mockWebsocket([
+      mockWebSocket([
         mockCall('pool.dataset.query', [{
           acltype: {
             value: DatasetAclType.Posix,
           },
         } as Dataset]),
-        mockJob('pool.dataset.permission'),
+        mockJob('filesystem.setperm'),
       ]),
       mockProvider(StorageService, {
         filesystemStat: jest.fn(() => of({
           mode: 16877,
-          user: 'root',
-          group: 'kmem',
+          uid: 0,
+          gid: 1001,
         })),
       }),
       mockProvider(UserService, {
         groupQueryDsCache: () => of([
-          { group: 'kmem' },
-          { group: 'wheel' },
+          { group: 'kmem', gid: 1001 },
+          { group: 'wheel', gid: 1002 },
         ]),
         userQueryDsCache: () => of([
-          { username: 'root' },
-          { username: 'games' },
+          { username: 'root', uid: 0 },
+          { username: 'games', uid: 103 },
         ]),
       }),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
+        jobDialog: jest.fn(() => ({
+          afterClosed: () => of(null),
+        })),
       }),
       mockAuth(),
     ],
@@ -106,19 +107,16 @@ describe('DatasetTrivialPermissionsComponent', () => {
 
     await saveButton.click();
 
-    expect(websocket.job).toHaveBeenCalledWith('pool.dataset.permission', [
-      'pool/trivial',
-      {
-        user: 'games',
-        group: 'kmem',
-        acl: [],
-        options: {
-          recursive: false,
-          stripacl: false,
-          traverse: false,
-        },
+    expect(websocket.job).toHaveBeenCalledWith('filesystem.setperm', [{
+      path: '/mnt/pool/trivial',
+      uid: 103,
+      gid: 1001,
+      options: {
+        recursive: false,
+        stripacl: false,
+        traverse: false,
       },
-    ]);
+    }]);
   });
 
   it('saves permissions when they are saved', async () => {
@@ -128,18 +126,15 @@ describe('DatasetTrivialPermissionsComponent', () => {
 
     await saveButton.click();
 
-    expect(websocket.job).toHaveBeenCalledWith('pool.dataset.permission', [
-      'pool/trivial',
-      {
-        mode: '777',
-        acl: [],
-        options: {
-          recursive: false,
-          stripacl: true,
-          traverse: false,
-        },
+    expect(websocket.job).toHaveBeenCalledWith('filesystem.setperm', [{
+      path: '/mnt/pool/trivial',
+      mode: '777',
+      options: {
+        recursive: false,
+        stripacl: true,
+        traverse: false,
       },
-    ]);
+    }]);
   });
 
   it('shows a warning when Recursive checkbox is pressed', async () => {
@@ -155,28 +150,25 @@ describe('DatasetTrivialPermissionsComponent', () => {
   });
 
   it('saves permissions recursively and with traverse when advanced checkboxes are checked', async () => {
-    await form.fillForm({
-      'Access Mode': '555',
-      'Apply permissions recursively': true,
-    });
-    await form.fillForm({
-      'Apply permissions to child datasets': true,
-    });
+    await form.fillForm(
+      {
+        'Access Mode': '555',
+        'Apply permissions recursively': true,
+        'Apply permissions to child datasets': true,
+      },
+    );
 
     await saveButton.click();
 
-    expect(websocket.job).toHaveBeenCalledWith('pool.dataset.permission', [
-      'pool/trivial',
-      {
-        mode: '555',
-        acl: [],
-        options: {
-          recursive: true,
-          stripacl: true,
-          traverse: true,
-        },
+    expect(websocket.job).toHaveBeenCalledWith('filesystem.setperm', [{
+      path: '/mnt/pool/trivial',
+      mode: '555',
+      options: {
+        recursive: true,
+        stripacl: true,
+        traverse: true,
       },
-    ]);
+    }]);
   });
 
   it('goes to ACL editor when Set ACL is pressed', async () => {

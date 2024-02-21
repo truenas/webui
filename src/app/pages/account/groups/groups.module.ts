@@ -19,7 +19,6 @@ import { RouterModule } from '@angular/router';
 import { EffectsModule } from '@ngrx/effects';
 import { StoreModule } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
-import { NgxFilesizeModule } from 'ngx-filesize';
 import { CoreComponents } from 'app/core/core-components.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { AppCommonModule } from 'app/modules/common/app-common.module';
@@ -30,6 +29,7 @@ import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
 import { IxTableModule } from 'app/modules/ix-tables/ix-table.module';
 import { LayoutModule } from 'app/modules/layout/layout.module';
+import { SearchInputModule } from 'app/modules/search-input/search-input.module';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
 import { GroupDetailsRowComponent } from 'app/pages/account/groups/group-details-row/group-details-row.component';
 import { GroupFormComponent } from 'app/pages/account/groups/group-form/group-form.component';
@@ -73,13 +73,13 @@ import { DeleteGroupDialogComponent } from './group-details-row/delete-group-dia
     StoreModule.forFeature(groupStateKey, groupReducer),
     TranslateModule,
     TranslateModule,
-    NgxFilesizeModule,
     NgxDualListboxModule,
     AppCommonModule,
     MatSlideToggleModule,
     LayoutModule,
     TestIdModule,
     IxTable2Module,
+    SearchInputModule,
   ],
   declarations: [
     GroupListComponent,

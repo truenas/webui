@@ -14,9 +14,7 @@ import { AsyncDataProvider } from 'app/modules/ix-table2/classes/async-data-prov
 import {
   actionsColumn,
 } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
-import {
-  relativeDateColumn,
-} from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-relative-date/ix-cell-relative-date.component';
+import { relativeDateColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-relative-date/ix-cell-relative-date.component';
 import {
   scheduleColumn,
 } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-schedule/ix-cell-schedule.component';
@@ -36,7 +34,7 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import { RsyncTaskFormComponent } from 'app/pages/data-protection/rsync-task/rsync-task-form/rsync-task-form.component';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 import { TaskService } from 'app/services/task.service';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -91,11 +89,12 @@ export class RsyncTaskListComponent implements OnInit {
     }),
     relativeDateColumn({
       title: this.translate.instant('Next Run'),
-      getValue: (row) => this.taskService.getTaskNextTime(scheduleToCrontab(row.schedule)),
+      getValue: (row) => (row.enabled
+        ? this.taskService.getTaskNextTime(scheduleToCrontab(row.schedule))
+        : this.translate.instant('Disabled')),
     }),
     relativeDateColumn({
       title: this.translate.instant('Last Run'),
-      propertyName: 'job',
       getValue: (row) => row.job?.time_finished?.$date,
       hidden: true,
     }),
@@ -133,7 +132,7 @@ export class RsyncTaskListComponent implements OnInit {
         {
           iconName: 'play_arrow',
           tooltip: this.translate.instant('Run job'),
-          requiresRoles: [Role.FullAdmin],
+          requiredRoles: [Role.FullAdmin],
           onClick: (row) => this.runNow(row),
         },
         {
@@ -144,7 +143,7 @@ export class RsyncTaskListComponent implements OnInit {
         {
           iconName: 'delete',
           tooltip: this.translate.instant('Delete'),
-          requiresRoles: [Role.FullAdmin],
+          requiredRoles: [Role.FullAdmin],
           onClick: (row) => this.delete(row),
         },
       ],
@@ -158,7 +157,7 @@ export class RsyncTaskListComponent implements OnInit {
   constructor(
     private translate: TranslateService,
     private ws: WebSocketService,
-    private slideIn: IxSlideInService,
+    private chainedSlideInService: IxChainedSlideInService,
     private dialogService: DialogService,
     private errorHandler: ErrorHandlerService,
     private loader: AppLoaderService,
@@ -216,16 +215,14 @@ export class RsyncTaskListComponent implements OnInit {
   }
 
   protected add(): void {
-    this.slideIn.open(RsyncTaskFormComponent, { wide: true })
-      .slideInClosed$
-      .pipe(filter(Boolean), untilDestroyed(this))
+    const closer$ = this.chainedSlideInService.pushComponent(RsyncTaskFormComponent, true);
+    closer$.pipe(filter((response) => !!response.response), untilDestroyed(this))
       .subscribe(() => this.dataProvider.load());
   }
 
   private edit(row: RsyncTask): void {
-    this.slideIn.open(RsyncTaskFormComponent, { data: row, wide: true })
-      .slideInClosed$
-      .pipe(filter(Boolean), untilDestroyed(this))
+    const closer$ = this.chainedSlideInService.pushComponent(RsyncTaskFormComponent, true, row);
+    closer$.pipe(filter((response) => !!response.response), untilDestroyed(this))
       .subscribe(() => this.dataProvider.load());
   }
 
