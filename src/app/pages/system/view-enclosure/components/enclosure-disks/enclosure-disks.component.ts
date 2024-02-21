@@ -20,7 +20,6 @@ import {
   EnclosureUiSlot,
 } from 'app/interfaces/enclosure.interface';
 import { Pool } from 'app/interfaces/pool.interface';
-import { Disk } from 'app/interfaces/storage.interface';
 import { Theme } from 'app/interfaces/theme.interface';
 import { ChassisView } from 'app/pages/system/view-enclosure/classes/chassis-view';
 import { DriveTray } from 'app/pages/system/view-enclosure/classes/drivetray';
@@ -105,7 +104,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
   @Input('profile') systemProfile: SystemProfile;
   enclosureViews: EnclosureUi[] = [];
   systemState: EnclosureState;
-  selectedDisk: Disk;
+  selectedDisk: EnclosureUiSlot;
 
   // TODO: Implement Expanders
   get expanders(): EnclosureUiElement[] {
@@ -603,7 +602,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
           if (isSlotEmpty) {
             this.setCurrentView(this.emptySlotView);
           } else if ((evt).data.enabled) {
-            this.selectedDisk = this.systemState?.selectedEnclosureDisks?.find((disk: Disk) => {
+            this.selectedDisk = this.systemState?.selectedEnclosureDisks?.find((disk: EnclosureUiSlot) => {
               return disk.name === this.selectedSlot.dev;
             });
             this.setCurrentView('details');
