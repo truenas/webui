@@ -100,7 +100,7 @@ export class GroupListComponent implements OnInit {
   }
 
   constructor(
-    protected emptyService: EmptyService,
+    private emptyService: EmptyService,
     private slideInService: IxSlideInService,
     private cdr: ChangeDetectorRef,
     private store$: Store<AppState>,

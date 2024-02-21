@@ -77,6 +77,7 @@ export class ApiKeyFormDialogComponent implements OnInit {
         },
         error: (error: unknown) => {
           this.errorHandler.handleWsFormError(error, this.form);
+          this.loader.close();
         },
       });
   }
