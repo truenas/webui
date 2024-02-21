@@ -132,6 +132,9 @@ export interface EnclosureUiSlot {
   hddstandby: DiskStandby;
   description: string;
   rotationrate: number;
+  read_errors?: number;
+  write_errors?: number;
+  checksum_errors?: number;
   pool_info: EnclosureUiPool | null;
 }
 

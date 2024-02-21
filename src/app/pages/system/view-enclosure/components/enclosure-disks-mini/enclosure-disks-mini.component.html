@@ -216,19 +216,19 @@
                   <li>
                     <strong>{{ 'Read Errors' | translate }}:</strong>
                     &nbsp;&nbsp;
-                    {{ fakeTopologyStats.read_errors }}
+                    {{ selectedSlot.read_errors }}
                   </li>
 
                   <li>
                     <strong>{{ 'Write Errors' | translate }}:</strong>
                     &nbsp;&nbsp;
-                    {{ fakeTopologyStats.write_errors }}
+                    {{ selectedSlot.write_errors }}
                   </li>
 
                   <li>
                     <strong>{{ 'Checksum Errors' | translate }}:</strong>
                     &nbsp;&nbsp;
-                    {{ fakeTopologyStats.checksum_errors }}
+                    {{ selectedSlot.checksum_errors }}
                   </li>
                 </ul>
                 <ng-template #nostats>
@@ -262,11 +262,6 @@
                 <strong>{{ 'Total Disks' | translate }}:</strong>
                 &nbsp;&nbsp;&nbsp;
                 {{ totalDisks }}
-              </li>
-              <li>
-                <strong>{{ 'Estimated Raw Capacity' | translate }}:</strong>
-                &nbsp;&nbsp;&nbsp;
-                {{ fakeRawCapacity(selectedEnclosure) | filesize: { standard: 'iec' }  }}
               </li>
               <li>
                 <strong>{{ 'Failed Disks' | translate }}:</strong>

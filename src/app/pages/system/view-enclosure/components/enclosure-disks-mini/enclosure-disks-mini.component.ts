@@ -6,7 +6,6 @@ import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { Point } from 'pixi.js';
 import { EnclosureUi, EnclosureUiSlot } from 'app/interfaces/enclosure.interface';
-import { TopologyItemStats } from 'app/interfaces/storage.interface';
 import { Theme } from 'app/interfaces/theme.interface';
 import { Mini } from 'app/pages/system/view-enclosure/classes/hardware/mini';
 import { MiniX } from 'app/pages/system/view-enclosure/classes/hardware/mini-x';
@@ -80,42 +79,6 @@ export class EnclosureDisksMiniComponent extends EnclosureDisksComponent {
 
     return enclosureSlot;
   } */
-
-  fakeRawCapacity(view: EnclosureUi): number {
-    if (!view) {
-      return undefined;
-    }
-    /* let capacity = 0;
-    view.slots.forEach((slot: EnclosureSlot) => {
-      if (slot.vdev && slot.topologyCategory === VdevType.Data) {
-        capacity += slot.disk.size;
-      }
-    });
-    return capacity; */
-    // TODO: figure out where to get this number
-    return 123456789;
-  }
-
-  get fakeTopologyStats(): TopologyItemStats {
-    return {
-      timestamp: 123123123,
-      read_errors: 0,
-      write_errors: 0,
-      checksum_errors: 0,
-      /* ops: number[];
-      bytes: number[];
-      size: number;
-      allocated: number;
-      fragmentation: number;
-      self_healed: number;
-      configured_ashift: number;
-      logical_ashift: number;
-      physical_ashift: number;
-      draid_data_disks?: number;
-      draid_spare_disks?: number;
-      draid_parity?: number; */
-    } as TopologyItemStats;
-  }
 
   createExtractedEnclosure(): void {
     // MINIs have no support for expansion shelves

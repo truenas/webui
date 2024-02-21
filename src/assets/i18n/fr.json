@@ -1836,7 +1836,6 @@
   "Errors": "Erreurs",
   "Est. Usable Raw Capacity": "Est. Capacité utilisable",
   "Establishing a connection requires  that one of the connection systems has open TCP ports. Choose which  system (<i>LOCAL</i> or <i>REMOTE</i>) will open ports. Consult your IT  department to determine which systems are allowed to open ports.": "L'établissement d'une connexion nécessite qu'un des systèmes de connexion dispose de ports TCP ouverts. Choisissez le système ( <i>LOCAL</i> ou <i>REMOTE</i> ) qui ouvrira les ports. Consultez votre service informatique pour déterminer les systèmes autorisés à ouvrir des ports.",
-  "Estimated Raw Capacity": "Capacité brute estimée",
   "Estimated data capacity available after extension.": "Capacité de données estimée disponible après l'extension.",
   "Estimated total raw data capacity": "Capacité totale estimée de données brutes",
   "Event": "Événement",

@@ -2014,7 +2014,6 @@
   "Error: ": "Помилка:",
   "Errors": "Помилки",
   "Establishing a connection requires  that one of the connection systems has open TCP ports. Choose which  system (<i>LOCAL</i> or <i>REMOTE</i>) will open ports. Consult your IT  department to determine which systems are allowed to open ports.": "Для встановлення з'єднання необхідно, щоб в одній із систем були відкриті порти TCP. Виберіть, яка система (<i>LOCAL</i> або <i>REMOTE</i>) відкриватиме порти. Зверніться до ІТ-відділу, щоб визначити, яким системам дозволено відкривати порти.",
-  "Estimated Raw Capacity": "Розрахункова необроблена ємність",
   "Estimated data capacity available after extension.": "Обчислена ємність даних доступна після розширення.",
   "Estimated total raw data capacity": "Обчислена загальна ємність необроблених даних",
   "Event": "Подія",
