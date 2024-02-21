@@ -13,7 +13,7 @@ import {
   IsolatedGpusFormComponent,
 } from 'app/pages/system/advanced/isolated-gpus/isolated-gpus-form/isolated-gpus-form.component';
 import { GpuService } from 'app/services/gpu/gpu.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 
 describe('IsolatedGpusCardComponent', () => {
   let spectator: Spectator<IsolatedGpusCardComponent>;
@@ -26,9 +26,11 @@ describe('IsolatedGpusCardComponent', () => {
           { description: 'Matrox G200' } as Device,
         ])),
       }),
-      mockProvider(AdvancedSettingsService),
-      mockProvider(IxSlideInService, {
-        onClose$: of(),
+      mockProvider(AdvancedSettingsService, {
+        showFirstTimeWarningIfNeeded: jest.fn(() => of(true)),
+      }),
+      mockProvider(IxChainedSlideInService, {
+        pushComponent: jest.fn(() => of({ response: true, error: null })),
       }),
     ],
   });
@@ -48,6 +50,6 @@ describe('IsolatedGpusCardComponent', () => {
     await configureButton.click();
 
     expect(spectator.inject(AdvancedSettingsService).showFirstTimeWarningIfNeeded).toHaveBeenCalled();
-    expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(IsolatedGpusFormComponent);
+    expect(spectator.inject(IxChainedSlideInService).pushComponent).toHaveBeenCalledWith(IsolatedGpusFormComponent);
   });
 });

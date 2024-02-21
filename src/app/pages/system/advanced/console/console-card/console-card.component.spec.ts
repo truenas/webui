@@ -4,11 +4,12 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatListItemHarness } from '@angular/material/list/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
+import { of } from 'rxjs';
 import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
 import { AdvancedSettingsService } from 'app/pages/system/advanced/advanced-settings.service';
 import { ConsoleCardComponent } from 'app/pages/system/advanced/console/console-card/console-card.component';
 import { ConsoleFormComponent } from 'app/pages/system/advanced/console/console-form/console-form.component';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 import { selectAdvancedConfig } from 'app/store/system-config/system-config.selectors';
 
 describe('ConsoleCardComponent', () => {
@@ -17,8 +18,12 @@ describe('ConsoleCardComponent', () => {
   const createComponent = createComponentFactory({
     component: ConsoleCardComponent,
     providers: [
-      mockProvider(IxSlideInService),
-      mockProvider(AdvancedSettingsService),
+      mockProvider(IxChainedSlideInService, {
+        pushComponent: jest.fn(() => of({ response: true, error: null })),
+      }),
+      mockProvider(AdvancedSettingsService, {
+        showFirstTimeWarningIfNeeded: jest.fn(() => of(true)),
+      }),
       provideMockStore({
         selectors: [
           {
@@ -59,6 +64,16 @@ describe('ConsoleCardComponent', () => {
     await configureButton.click();
 
     expect(spectator.inject(AdvancedSettingsService).showFirstTimeWarningIfNeeded).toHaveBeenCalled();
-    expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(ConsoleFormComponent);
+    expect(spectator.inject(IxChainedSlideInService).pushComponent).toHaveBeenCalledWith(
+      ConsoleFormComponent,
+      false,
+      {
+        consolemenu: true,
+        motd: 'Welcome back',
+        serialconsole: true,
+        serialport: 'ttyS0',
+        serialspeed: '9600',
+      },
+    );
   });
 });

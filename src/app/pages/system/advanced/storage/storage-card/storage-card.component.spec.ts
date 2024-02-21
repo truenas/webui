@@ -12,7 +12,7 @@ import { StorageCardComponent } from 'app/pages/system/advanced/storage/storage-
 import {
   StorageSettingsFormComponent,
 } from 'app/pages/system/advanced/storage/storage-settings-form/storage-settings-form.component';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 import { selectAdvancedConfig } from 'app/store/system-config/system-config.selectors';
 
 describe('StorageCardComponent', () => {
@@ -36,9 +36,11 @@ describe('StorageCardComponent', () => {
           },
         ],
       }),
-      mockProvider(AdvancedSettingsService),
-      mockProvider(IxSlideInService, {
-        onClose$: of(),
+      mockProvider(AdvancedSettingsService, {
+        showFirstTimeWarningIfNeeded: jest.fn(() => of(true)),
+      }),
+      mockProvider(IxChainedSlideInService, {
+        pushComponent: jest.fn(() => of({ response: true, error: null })),
       }),
     ],
   });
@@ -63,6 +65,12 @@ describe('StorageCardComponent', () => {
     await configureButton.click();
 
     expect(spectator.inject(AdvancedSettingsService).showFirstTimeWarningIfNeeded).toHaveBeenCalled();
-    expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(StorageSettingsFormComponent);
+    expect(
+      spectator.inject(IxChainedSlideInService).pushComponent,
+    ).toHaveBeenCalledWith(
+      StorageSettingsFormComponent,
+      false,
+      { swapSize: 3, systemDsPool: 'tank' },
+    );
   });
 });

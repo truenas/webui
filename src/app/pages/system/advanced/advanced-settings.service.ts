@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { lastValueFrom } from 'rxjs';
-import { tap } from 'rxjs/operators';
+import { Observable, of } from 'rxjs';
+import { map, tap } from 'rxjs/operators';
 import { helptextSystemAdvanced } from 'app/helptext/system/advanced';
 import { DialogService } from 'app/services/dialog.service';
 
@@ -14,15 +14,17 @@ export class AdvancedSettingsService {
     private dialogService: DialogService,
   ) {}
 
-  async showFirstTimeWarningIfNeeded(): Promise<unknown> {
+  showFirstTimeWarningIfNeeded(): Observable<true> {
     if (!this.isFirstTime) {
-      return Promise.resolve();
+      return of(true);
     }
 
-    return lastValueFrom(
-      this.dialogService
-        .warn(helptextSystemAdvanced.first_time.title, helptextSystemAdvanced.first_time.message)
-        .pipe(tap(() => this.isFirstTime = false)),
+    return this.dialogService.warn(
+      helptextSystemAdvanced.first_time.title,
+      helptextSystemAdvanced.first_time.message,
+    ).pipe(
+      tap(() => this.isFirstTime = false),
+      map(() => true),
     );
   }
 }
