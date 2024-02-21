@@ -2,16 +2,18 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { MockModule } from 'ng-mocks';
 import { of, Subject } from 'rxjs';
 import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-datetime.pipe';
 import { MockWebSocketService } from 'app/core/testing/classes/mock-websocket.service';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
-import { EntityModule } from 'app/modules/entity/entity.module';
+import { AppCommonModule } from 'app/modules/common/app-common.module';
 import { IxEmptyRowHarness } from 'app/modules/ix-tables/components/ix-empty-row/ix-empty-row.component.harness';
 import { IxTableModule } from 'app/modules/ix-tables/ix-table.module';
 import { IxTableHarness } from 'app/modules/ix-tables/testing/ix-table.harness';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
+import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
 import { BootEnvironmentListComponent } from 'app/pages/system/bootenv/bootenv-list/bootenv-list.component';
 import { fakeBootEnvironmentsDataSource } from 'app/pages/system/bootenv/test/fake-boot-environments';
 import { DialogService } from 'app/services/dialog.service';
@@ -25,7 +27,12 @@ describe('BootEnvironmentListComponent', () => {
 
   const createComponent = createComponentFactory({
     component: BootEnvironmentListComponent,
-    imports: [EntityModule, IxTableModule, AppLoaderModule],
+    imports: [
+      IxTableModule,
+      AppLoaderModule,
+      MockModule(PageHeaderModule),
+      MockModule(AppCommonModule),
+    ],
     declarations: [
       FakeFormatDateTimePipe,
     ],

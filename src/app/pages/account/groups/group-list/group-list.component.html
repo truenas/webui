@@ -1,30 +1,28 @@
-<ng-template ixPageHeader>
-  <ix-page-title-header>
-    <ix-search-input
-      [disabled]="isLoading$ | async"
-      (search)="onSearch($event)"
-    ></ix-search-input>
-    <mat-slide-toggle
-      color="primary"
-      ixTest="show-built-in-groups"
-      [checked]="!hideBuiltinGroups"
-      (change)="toggleBuiltins()"
-    >
-      <label>{{ 'Show Built-in Groups' | translate }}</label>
-    </mat-slide-toggle>
-    <a
-      mat-button
-      color="accent"
-      ixTest="privileges"
-      [routerLink]="['/credentials', 'groups', 'privileges']"
-    >
-      {{ 'Privileges' | translate }}
-    </a>
-    <button mat-button color="primary" ixTest="add" (click)="doAdd()">
-      {{ 'Add' | translate }}
-    </button>
-  </ix-page-title-header>
-</ng-template>
+<ix-page-header>
+  <ix-search-input
+    [disabled]="isLoading$ | async"
+    (search)="onSearch($event)"
+  ></ix-search-input>
+  <mat-slide-toggle
+    color="primary"
+    ixTest="show-built-in-groups"
+    [checked]="!hideBuiltinGroups"
+    (change)="toggleBuiltins()"
+  >
+    <label>{{ 'Show Built-in Groups' | translate }}</label>
+  </mat-slide-toggle>
+  <a
+    mat-button
+    color="accent"
+    ixTest="privileges"
+    [routerLink]="['/credentials', 'groups', 'privileges']"
+  >
+    {{ 'Privileges' | translate }}
+  </a>
+  <button mat-button color="primary" ixTest="add" (click)="doAdd()">
+    {{ 'Add' | translate }}
+  </button>
+</ix-page-header>
 
 <mat-card>
   <table

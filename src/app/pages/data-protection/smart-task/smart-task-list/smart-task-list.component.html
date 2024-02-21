@@ -1,5 +1,5 @@
 <ng-template ixPageHeader>
-  <ix-page-title-header>
+  <ix-page-header>
     <ix-search-input (search)="onListFiltered($event)"></ix-search-input>
 
     <ix-table-columns-selector [columns]="columns" (columnsChange)="columnsChange($event)"></ix-table-columns-selector>
@@ -7,7 +7,7 @@
     <button mat-button color="primary" ixTest="add-smart-task" (click)="openForm()">
       {{ 'Add' | translate }}
     </button>
-  </ix-page-title-header>
+  </ix-page-header>
 </ng-template>
 
 <ix-table2

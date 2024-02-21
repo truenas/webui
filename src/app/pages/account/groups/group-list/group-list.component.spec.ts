@@ -8,6 +8,7 @@ import { CoreComponents } from 'app/core/core-components.module';
 import { Role } from 'app/enums/role.enum';
 import { Group } from 'app/interfaces/group.interface';
 import { Preferences } from 'app/interfaces/preferences.interface';
+import { AppCommonModule } from 'app/modules/common/app-common.module';
 import {
   IxTable2ExpandableRowComponent,
 } from 'app/modules/ix-table2/components/ix-table2-expandable-row/ix-table2-expandable-row.component';
@@ -55,6 +56,7 @@ describe('GroupListComponent', () => {
       CoreComponents,
       IxTableModule,
       MockModule(LayoutModule),
+      AppCommonModule,
     ],
     declarations: [
       GroupDetailsRowComponent,
