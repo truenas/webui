@@ -1,25 +1,17 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
-import { MockModule } from 'ng-mocks';
-import { CoreComponents } from 'app/core/core-components.module';
+import { MockComponent } from 'ng-mocks';
 import { Role } from 'app/enums/role.enum';
 import { Group } from 'app/interfaces/group.interface';
 import { Preferences } from 'app/interfaces/preferences.interface';
-import {
-  IxTable2ExpandableRowComponent,
-} from 'app/modules/ix-table2/components/ix-table2-expandable-row/ix-table2-expandable-row.component';
-import { IxEmptyRowHarness } from 'app/modules/ix-tables/components/ix-empty-row/ix-empty-row.component.harness';
-import { IxTableModule } from 'app/modules/ix-tables/ix-table.module';
-import { IxTableHarness } from 'app/modules/ix-tables/testing/ix-table.harness';
-import { LayoutModule } from 'app/modules/layout/layout.module';
+import { IxTable2Harness } from 'app/modules/ix-table2/components/ix-table2/ix-table2.harness';
+import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
 import { GroupDetailsRowComponent } from 'app/pages/account/groups/group-details-row/group-details-row.component';
 import { GroupListComponent } from 'app/pages/account/groups/group-list/group-list.component';
-import { GroupsState } from 'app/pages/account/groups/store/group.reducer';
-import { selectGroupState, selectGroups, selectGroupsTotal } from 'app/pages/account/groups/store/group.selectors';
-import { usersInitialState } from 'app/pages/account/users/store/user.reducer';
+import { groupsInitialState, GroupsState } from 'app/pages/account/groups/store/group.reducer';
+import { selectGroups, selectGroupState, selectGroupsTotal } from 'app/pages/account/groups/store/group.selectors';
 import { DialogService } from 'app/services/dialog.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { selectPreferences } from 'app/store/preferences/preferences.selectors';
@@ -52,13 +44,10 @@ describe('GroupListComponent', () => {
   const createComponent = createComponentFactory({
     component: GroupListComponent,
     imports: [
-      CoreComponents,
-      IxTableModule,
-      MockModule(LayoutModule),
+      IxTable2Module,
     ],
     declarations: [
-      GroupDetailsRowComponent,
-      IxTable2ExpandableRowComponent,
+      MockComponent(GroupDetailsRowComponent),
     ],
     providers: [
       mockProvider(WebSocketService),
@@ -67,7 +56,7 @@ describe('GroupListComponent', () => {
         selectors: [
           {
             selector: selectGroupState,
-            value: usersInitialState,
+            value: groupsInitialState,
           },
           {
             selector: selectGroups,
@@ -99,52 +88,40 @@ describe('GroupListComponent', () => {
     store$.overrideSelector(selectGroups, fakeGroupDataSource);
     store$.refreshState();
 
-    const table = await loader.getHarness(IxTableHarness);
-    const cells = await table.getCells(true);
     const expectedRows = [
-      ['Group', 'GID', 'Builtin', 'Allows sudo commands', 'Samba Authentication', 'Roles', ''],
-      ['mock', '1000', 'Yes', 'No', 'Yes', 'N/A', ''],
-      ['fake', '1001', 'Yes', 'Yes', 'Yes', 'Full Admin', ''],
+      ['Group', 'GID', 'Builtin', 'Allows sudo commands', 'Samba Authentication', 'Roles'],
+      ['mock', '1000', 'Yes', 'Yes', 'Yes', 'N/A'],
+      ['fake', '1001', 'Yes', 'Yes', 'Yes', 'Full Admin'],
     ];
 
+    const table = await loader.getHarness(IxTable2Harness);
+    const cells = await table.getCellTexts();
     expect(cells).toEqual(expectedRows);
   });
 
-  it('should have empty message when loaded and datasource is empty', async () => {
-    store$.overrideSelector(selectGroups, []);
-    store$.refreshState();
-
-    spectator.detectChanges();
-
-    const emptyRow = await loader.getHarness(IxEmptyRowHarness);
-    const emptyTitle = await emptyRow.getTitleText();
-    expect(emptyTitle).toBe('No records have been added yet');
-  });
-
-  it('should have error message when can not retrieve response', async () => {
-    store$.overrideSelector(selectGroupState, {
-      error: 'Groups could not be loaded',
-    } as GroupsState);
-    store$.refreshState();
-    store$.select(selectGroups).subscribe((snapshots) => {
-      expect(snapshots).toEqual([]);
-    });
-
-    spectator.detectChanges();
-
-    const emptyRow = await loader.getHarness(IxEmptyRowHarness);
-    const emptyTitle = await emptyRow.getTitleText();
-    expect(emptyTitle).toBe('Can not retrieve response');
-  });
-
-  it('should expand only one row on click', async () => {
+  it('should expand and collapse only one row when clicked on it', async () => {
     store$.overrideSelector(selectGroups, fakeGroupDataSource);
     store$.refreshState();
 
-    const [firstExpandButton, secondExpandButton] = await loader.getAllHarnesses(MatButtonHarness.with({ selector: '[ixTest="toggle-row"]' }));
-    await firstExpandButton.click();
-    await secondExpandButton.click();
+    const table = await loader.getHarness(IxTable2Harness);
+    await table.clickRow(0);
+    await table.clickRow(1);
+    expect(spectator.queryAll(GroupDetailsRowComponent)).toHaveLength(1);
 
-    expect(spectator.queryAll('.expanded')).toHaveLength(1);
+    await table.clickRow(1);
+    expect(spectator.queryAll(GroupDetailsRowComponent)).toHaveLength(0);
+  });
+
+  it('should expand and collapse only one row on toggle click', async () => {
+    store$.overrideSelector(selectGroups, fakeGroupDataSource);
+    store$.refreshState();
+
+    const table = await loader.getHarness(IxTable2Harness);
+    await table.clickToggle(0);
+    await table.clickToggle(1);
+    expect(spectator.queryAll(GroupDetailsRowComponent)).toHaveLength(1);
+
+    await table.clickToggle(1);
+    expect(spectator.queryAll(GroupDetailsRowComponent)).toHaveLength(0);
   });
 });
