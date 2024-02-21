@@ -59,6 +59,7 @@
         <mat-checkbox
           *ixRequiresRoles="getRolesForService(service.service)"
           color="primary"
+          class="start-automatically"
           [ixTest]="[service.service, 'service']"
           [(ngModel)]="service.enable"
           (change)="onCheckboxChange(service)"

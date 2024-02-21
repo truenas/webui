@@ -13,10 +13,10 @@ import {
   ViewContainerRef,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { cloneDeep } from 'lodash';
 import { Subscription, timer } from 'rxjs';
-import { CHAINED_SLIDE_IN_REF, SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
+import { ChainedRef } from 'app/modules/ix-forms/components/ix-slide-in/chained-component-ref';
 import {
-  ChainedComponentRef,
   ChainedComponentResponse,
   ChainedComponentSerialized,
   IxChainedSlideInService,
@@ -118,6 +118,7 @@ export class IxSlideIn2Component implements OnInit, OnDestroy {
 
     timer(10).pipe(untilDestroyed(this)).subscribe(() => {
       this.isSlideInOpen = true;
+      this.cdr.markForCheck();
     });
     this.renderer.setStyle(document.body, 'overflow', 'hidden');
     this.wide = !!params?.wide;
@@ -138,9 +139,8 @@ export class IxSlideIn2Component implements OnInit, OnDestroy {
   ): void {
     const injector = Injector.create({
       providers: [
-        { provide: SLIDE_IN_DATA, useValue: data },
         {
-          provide: CHAINED_SLIDE_IN_REF,
+          provide: ChainedRef<D>,
           useValue: {
             close: (response: ChainedComponentResponse) => {
               this.componentInfo.close$.next(response);
@@ -156,7 +156,10 @@ export class IxSlideIn2Component implements OnInit, OnDestroy {
               });
               this.closeSlideIn();
             },
-          } as ChainedComponentRef,
+            getData: (): D => {
+              return cloneDeep(data);
+            },
+          } as ChainedRef<D>,
         },
       ],
     });

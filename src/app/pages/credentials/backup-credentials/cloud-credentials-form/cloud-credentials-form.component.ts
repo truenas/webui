@@ -1,7 +1,7 @@
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
-  Component, Inject,
+  Component,
   OnInit,
   ViewChild,
   ViewContainerRef,
@@ -17,7 +17,7 @@ import { helptextSystemCloudcredentials as helptext } from 'app/helptext/system/
 import { CloudSyncCredential, CloudSyncCredentialUpdate } from 'app/interfaces/cloudsync-credential.interface';
 import { CloudSyncProvider } from 'app/interfaces/cloudsync-provider.interface';
 import { Option } from 'app/interfaces/option.interface';
-import { CHAINED_SLIDE_IN_REF, SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
+import { ChainedRef } from 'app/modules/ix-forms/components/ix-slide-in/chained-component-ref';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { forbiddenValues } from 'app/modules/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -28,7 +28,6 @@ import { getName, getProviderFormClass } from 'app/pages/data-protection/cloudsy
 import { CloudCredentialService } from 'app/services/cloud-credential.service';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { ChainedComponentRef } from 'app/services/ix-chained-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 // TODO: Form is partially backend driven and partially hardcoded on the frontend.
@@ -67,9 +66,9 @@ export class CloudCredentialsFormComponent implements OnInit {
     private translate: TranslateService,
     private snackbarService: SnackbarService,
     private cloudCredentialService: CloudCredentialService,
-    @Inject(SLIDE_IN_DATA) private credential: CloudSyncCredential,
-    @Inject(CHAINED_SLIDE_IN_REF) private chainedSlideInRef: ChainedComponentRef,
+    private chainedRef: ChainedRef<CloudSyncCredential>,
   ) {
+    this.existingCredential = this.chainedRef.getData();
     // Has to be earlier than potential `setCredentialsForEdit` call
     this.setFormEvents();
   }
@@ -98,13 +97,12 @@ export class CloudCredentialsFormComponent implements OnInit {
   ngOnInit(): void {
     this.loadProviders();
 
-    if (this.credential) {
+    if (this.existingCredential) {
       this.setCredentialsForEdit();
     }
   }
 
   setCredentialsForEdit(): void {
-    this.existingCredential = this.credential;
     this.commonForm.patchValue(this.existingCredential);
 
     if (this.providerForm) {
@@ -133,7 +131,7 @@ export class CloudCredentialsFormComponent implements OnInit {
               ? this.translate.instant('Cloud credential added.')
               : this.translate.instant('Cloud credential updated.'),
           );
-          this.chainedSlideInRef.close({ response, error: null });
+          this.chainedRef.close({ response, error: null });
           this.cdr.markForCheck();
         },
         error: (error: unknown) => {

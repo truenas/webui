@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
@@ -30,7 +30,7 @@ import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { TreeNodeProvider } from 'app/modules/ix-forms/components/ix-explorer/tree-node-provider.interface';
 import { addNewIxSelectValue } from 'app/modules/ix-forms/components/ix-select/ix-select-with-new-option.directive';
-import { CHAINED_SLIDE_IN_REF, SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
+import { ChainedRef } from 'app/modules/ix-forms/components/ix-slide-in/chained-component-ref';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { crontabToSchedule } from 'app/modules/scheduler/utils/crontab-to-schedule.utils';
 import { CronPresetValue } from 'app/modules/scheduler/utils/get-default-crontab-presets.utils';
@@ -42,7 +42,6 @@ import { CustomTransfersDialogComponent } from 'app/pages/data-protection/clouds
 import { CloudCredentialService } from 'app/services/cloud-credential.service';
 import { DialogService } from 'app/services/dialog.service';
 import { FilesystemService } from 'app/services/filesystem.service';
-import { ChainedComponentRef } from 'app/services/ix-chained-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 const customOptionValue = -1;
@@ -169,6 +168,8 @@ export class CloudSyncFormComponent implements OnInit {
   fileNodeProvider: TreeNodeProvider;
   bucketNodeProvider: TreeNodeProvider;
 
+  private editingTask: CloudSyncTaskUi;
+
   constructor(
     private translate: TranslateService,
     private formBuilder: FormBuilder,
@@ -181,9 +182,10 @@ export class CloudSyncFormComponent implements OnInit {
     protected matDialog: MatDialog,
     private filesystemService: FilesystemService,
     protected cloudCredentialService: CloudCredentialService,
-    @Inject(SLIDE_IN_DATA) private editingTask: CloudSyncTaskUi,
-    @Inject(CHAINED_SLIDE_IN_REF) private chainedSlideInRef: ChainedComponentRef,
-  ) { }
+    private chainedRef: ChainedRef<CloudSyncTaskUi>,
+  ) {
+    this.editingTask = this.chainedRef.getData();
+  }
 
   getCredentialsList(): Observable<CloudSyncCredential[]> {
     return this.fetchCloudSyncCredentialsList();
@@ -730,7 +732,7 @@ export class CloudSyncFormComponent implements OnInit {
           this.snackbar.success(this.translate.instant('Task updated'));
         }
         this.isLoading = false;
-        this.chainedSlideInRef.close({ response, error: null });
+        this.chainedRef.close({ response, error: null });
       },
       error: (error: unknown) => {
         this.isLoading = false;
@@ -741,7 +743,7 @@ export class CloudSyncFormComponent implements OnInit {
   }
 
   onSwitchToWizard(): void {
-    this.chainedSlideInRef.swap(
+    this.chainedRef.swap(
       CloudSyncWizardComponent,
       true,
     );
@@ -749,7 +751,7 @@ export class CloudSyncFormComponent implements OnInit {
 
   goToManageCredentials(): void {
     this.router.navigate(['/', 'credentials', 'backup-credentials']);
-    this.chainedSlideInRef.close({ response: false, error: null });
+    this.chainedRef.close({ response: false, error: null });
   }
 
   private handleFolderChange(formControl: FormControl, values: string | string[]): void {

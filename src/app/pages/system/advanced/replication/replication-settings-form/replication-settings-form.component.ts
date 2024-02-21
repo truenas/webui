@@ -7,7 +7,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { Role } from 'app/enums/role.enum';
 import { helptextSystemAdvanced } from 'app/helptext/system/advanced';
 import { ReplicationConfig } from 'app/interfaces/replication-config.interface';
-import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { ChainedRef } from 'app/modules/ix-forms/components/ix-slide-in/chained-component-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
@@ -28,33 +28,23 @@ export class ReplicationSettingsFormComponent implements OnInit {
     max_parallel_replication_tasks: helptextSystemAdvanced.max_parallel_replication_tasks_tooltip,
   };
 
+  private replicationConfig: ReplicationConfig;
+
   constructor(
     private errorHandler: ErrorHandlerService,
     private fb: FormBuilder,
     private ws: WebSocketService,
-    private slideInRef: IxSlideInRef<ReplicationSettingsFormComponent>,
     private cdr: ChangeDetectorRef,
     private dialogService: DialogService,
     private snackbar: SnackbarService,
     private translate: TranslateService,
-  ) {}
+    private chainedRef: ChainedRef<ReplicationConfig>,
+  ) {
+    this.replicationConfig = this.chainedRef.getData();
+  }
 
   ngOnInit(): void {
-    this.isFormLoading = true;
-
-    this.ws.call('replication.config.config')
-      .pipe(untilDestroyed(this))
-      .subscribe({
-        next: (config) => {
-          this.form.patchValue(config);
-          this.isFormLoading = false;
-        },
-        error: (error: unknown) => {
-          this.isFormLoading = false;
-          this.dialogService.error(this.errorHandler.parseError(error));
-          this.cdr.markForCheck();
-        },
-      });
+    this.form.patchValue(this.replicationConfig);
   }
 
   setupForm(group: ReplicationConfig): void {
@@ -75,7 +65,7 @@ export class ReplicationSettingsFormComponent implements OnInit {
         this.snackbar.success(this.translate.instant('Settings saved'));
         this.isFormLoading = false;
         this.cdr.markForCheck();
-        this.slideInRef.close();
+        this.chainedRef.close({ response: true, error: null });
       },
       error: (error: unknown) => {
         this.isFormLoading = false;

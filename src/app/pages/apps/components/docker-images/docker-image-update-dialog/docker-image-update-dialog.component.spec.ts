@@ -35,6 +35,14 @@ const mockFailedBulkResponse = [{
   error: 'Something went wrong',
 }] as CoreBulkResponse[];
 
+const mockMixedBulkResponse = [{
+  result: [{ status: 'Status: Image truenas/middleware has been updated' }] as PullContainerImageResponse[],
+  error: null,
+}, {
+  result: null,
+  error: 'Something went wrong',
+}] as CoreBulkResponse[];
+
 describe('DockerImageUpdateDialogComponent', () => {
   let spectator: Spectator<DockerImageUpdateDialogComponent>;
   let loader: HarnessLoader;
@@ -87,9 +95,7 @@ describe('DockerImageUpdateDialogComponent', () => {
 
     expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('core.bulk', jobArguments);
     expect(spectator.fixture.nativeElement).toHaveText('2 docker images has been updated.');
-
-    const closeButton = await loader.getHarness(MatButtonHarness.with({ text: 'Close' }));
-    await closeButton.click();
+    expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith(true);
   });
 
   it('checks updating failures of docker images when form is submitted', async () => {
@@ -107,8 +113,24 @@ describe('DockerImageUpdateDialogComponent', () => {
 
     expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('core.bulk', jobArguments);
     expect(spectator.fixture.nativeElement).toHaveText('Warning: 2 of 2 docker images could not be updated.');
+    expect(spectator.inject(MatDialogRef).close).not.toHaveBeenCalled();
+  });
 
-    const closeButton = await loader.getHarness(MatButtonHarness.with({ text: 'Close' }));
-    await closeButton.click();
+  it('checks one app updating failure when form is submitted', async () => {
+    const jobArguments: CoreBulkQuery = [
+      'container.image.pull',
+      [
+        [{ from_image: 'truenas/webui', tag: '3.1' }],
+        [{ from_image: 'truenas/middleware', tag: '0.1.2' }],
+      ],
+    ];
+    spectator.inject(MockWebSocketService).mockJob('core.bulk', fakeSuccessfulJob(mockMixedBulkResponse, jobArguments));
+
+    const updateButton = await loader.getHarness(MatButtonHarness.with({ text: 'Update' }));
+    await updateButton.click();
+
+    expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('core.bulk', jobArguments);
+    expect(spectator.fixture.nativeElement).toHaveText('Warning: 1 of 2 docker images could not be updated.');
+    expect(spectator.inject(MatDialogRef).close).not.toHaveBeenCalled();
   });
 });

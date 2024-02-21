@@ -16,14 +16,14 @@
     <mat-list>
       <mat-list-item>
         <span class="label">{{ 'ATA Security User' | translate }}:</span>
-        <span *ixWithLoadingState="sedUser$ as sedUser" class="value">
-          {{ sedUser || '–' }}
+        <span *ixWithLoadingState="sedConfig$ as sedConfig" class="value">
+          {{ sedConfig.sedUser || '–' }}
         </span>
       </mat-list-item>
       <mat-list-item>
         <span class="label">{{ 'Password' | translate }}:</span>
-        <span *ixWithLoadingState="sedPassword$ as sedPassword" class="value">
-          {{ sedPassword }}
+        <span *ixWithLoadingState="sedConfig$ as sedConfig" class="value">
+          {{ sedConfig.sedPassword }}
         </span>
       </mat-list-item>
     </mat-list>

@@ -9,15 +9,13 @@ import { of, Subscription } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { helptextSystemAdvanced as helptext } from 'app/helptext/system/advanced';
-import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { ChainedRef } from 'app/modules/ix-forms/components/ix-slide-in/chained-component-ref';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { DialogService } from 'app/services/dialog.service';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ConsoleConfig } from 'app/pages/system/advanced/console/console-card/console-card.component';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 import { advancedConfigUpdated } from 'app/store/system-config/system-config.actions';
-import { waitForAdvancedConfig } from 'app/store/system-config/system-config.selectors';
 
 @UntilDestroy({ arrayName: 'subscriptions' })
 @Component({
@@ -56,38 +54,29 @@ export class ConsoleFormComponent implements OnInit {
 
   readonly serialPortOptions$ = this.ws.call('system.advanced.serial_port_choices').pipe(choicesToOptions());
 
+  private consoleConfig: ConsoleConfig;
+
   constructor(
     private fb: FormBuilder,
     private ws: WebSocketService,
-    private slideInRef: IxSlideInRef<ConsoleFormComponent>,
     private cdr: ChangeDetectorRef,
     private formErrorHandler: FormErrorHandlerService,
-    private errorHandler: ErrorHandlerService,
-    private dialogService: DialogService,
     private translate: TranslateService,
     private snackbar: SnackbarService,
     private store$: Store<AppState>,
-  ) {}
+    private chainedRef: ChainedRef<ConsoleConfig>,
+  ) {
+    this.consoleConfig = this.chainedRef.getData();
+  }
 
   ngOnInit(): void {
-    this.isFormLoading = true;
-
-    this.store$.pipe(
-      waitForAdvancedConfig,
-      untilDestroyed(this),
-    )
-      .subscribe({
-        next: (config) => {
-          this.form.patchValue(config);
-          this.isFormLoading = false;
-          this.cdr.markForCheck();
-        },
-        error: (error: unknown) => {
-          this.isFormLoading = false;
-          this.dialogService.error(this.errorHandler.parseError(error));
-          this.cdr.markForCheck();
-        },
-      });
+    this.form.patchValue({
+      consolemenu: this.consoleConfig.consolemenu,
+      serialconsole: this.consoleConfig.serialconsole,
+      serialport: this.consoleConfig.serialport,
+      serialspeed: this.consoleConfig.serialspeed,
+      motd: this.consoleConfig.motd,
+    });
 
     this.subscriptions.push(
       this.form.controls.serialport.enabledWhile(this.form.controls.serialconsole.value$),
@@ -105,7 +94,7 @@ export class ConsoleFormComponent implements OnInit {
         this.snackbar.success(this.translate.instant('Settings saved'));
         this.store$.dispatch(advancedConfigUpdated());
         this.cdr.markForCheck();
-        this.slideInRef.close();
+        this.chainedRef.close({ response: true, error: null });
       },
       error: (error: unknown) => {
         this.isFormLoading = false;

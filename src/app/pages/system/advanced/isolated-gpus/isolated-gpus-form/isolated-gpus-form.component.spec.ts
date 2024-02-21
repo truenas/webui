@@ -8,8 +8,7 @@ import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
-import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
+import { ChainedRef } from 'app/modules/ix-forms/components/ix-slide-in/chained-component-ref';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
@@ -17,9 +16,10 @@ import { IsolatedGpusFormComponent } from 'app/pages/system/advanced/isolated-gp
 import { DialogService } from 'app/services/dialog.service';
 import { GpuService } from 'app/services/gpu/gpu.service';
 import { IsolatedGpuValidatorService } from 'app/services/gpu/isolated-gpu-validator.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { WebSocketService } from 'app/services/ws.service';
+import { selectAdvancedConfig } from 'app/store/system-config/system-config.selectors';
 
 describe('IsolatedGpuPcisFormComponent', () => {
   let spectator: Spectator<IsolatedGpusFormComponent>;
@@ -33,14 +33,24 @@ describe('IsolatedGpuPcisFormComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
+      provideMockStore({
+        selectors: [
+          {
+            selector: selectAdvancedConfig,
+            value: {
+              isolated_gpu_pci_ids: ['0000:00:02.0'],
+            } as AdvancedConfig,
+          },
+        ],
+      }),
       mockWebSocket([
-        mockCall('system.advanced.config', {
-          isolated_gpu_pci_ids: ['0000:00:02.0'],
-        } as AdvancedConfig),
         mockCall('system.advanced.update_gpu_pci_ids'),
       ]),
       mockProvider(SystemGeneralService),
-      mockProvider(IxSlideInService),
+      mockProvider(IxChainedSlideInService, {
+        pushComponent: jest.fn(() => of({ response: true, error: null })),
+        components$: of([]),
+      }),
       mockProvider(FormErrorHandlerService),
       mockProvider(DialogService),
       mockProvider(GpuService, {
@@ -49,12 +59,10 @@ describe('IsolatedGpuPcisFormComponent', () => {
           { label: 'Intel Corporation HD Graphics 510', value: '0000:00:02.0' },
         ]),
       }),
-      provideMockStore(),
       mockProvider(IsolatedGpuValidatorService, {
         validateGpu: () => of(null),
       }),
-      mockProvider(IxSlideInRef),
-      { provide: SLIDE_IN_DATA, useValue: undefined },
+      mockProvider(ChainedRef, { close: jest.fn() }),
       mockAuth(),
     ],
   });

@@ -1,14 +1,7 @@
-:host {
-  display: block;
-
-  ix-empty {
-    align-items: center;
-    display: flex;
-    justify-content: center;
-    margin: auto;
+.table-container {
+  ::ng-deep ix-empty-row {
+    background: var(--bg2);
+    border-left: 1px solid var(--contrast-lighter);
+    border-right: 1px solid var(--contrast-lighter);
   }
-}
-
-.mat-mdc-card {
-  overflow: auto;
 }

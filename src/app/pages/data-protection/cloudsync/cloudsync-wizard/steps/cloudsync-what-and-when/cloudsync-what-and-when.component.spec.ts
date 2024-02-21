@@ -7,8 +7,8 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { ChainedRef } from 'app/modules/ix-forms/components/ix-slide-in/chained-component-ref';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
-import { CHAINED_SLIDE_IN_REF, SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { SchedulerModule } from 'app/modules/scheduler/scheduler.module';
@@ -24,9 +24,10 @@ describe('CloudSyncWhatAndWhenComponent', () => {
   let spectator: Spectator<CloudSyncWhatAndWhenComponent>;
   let loader: HarnessLoader;
   let form: IxFormHarness;
-  const chainedComponentRef = {
+  const chainedRef: ChainedRef<unknown> = {
     close: jest.fn(),
     swap: jest.fn(),
+    getData: jest.fn(),
   };
 
   const createComponent = createComponentFactory({
@@ -40,7 +41,7 @@ describe('CloudSyncWhatAndWhenComponent', () => {
       TransferModeExplanationComponent,
     ],
     providers: [
-      { provide: CHAINED_SLIDE_IN_REF, useValue: chainedComponentRef },
+      mockProvider(ChainedRef, chainedRef),
       mockAuth(),
       mockWebSocket([
         mockCall('cloudsync.create'),
@@ -59,7 +60,6 @@ describe('CloudSyncWhatAndWhenComponent', () => {
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
-      { provide: SLIDE_IN_DATA, useValue: undefined },
     ],
   });
 
@@ -133,6 +133,6 @@ describe('CloudSyncWhatAndWhenComponent', () => {
       title: 'Switch to Advanced Options',
       hideCheckbox: true,
     });
-    expect(chainedComponentRef.swap).toHaveBeenCalledWith(CloudSyncFormComponent, true);
+    expect(chainedRef.swap).toHaveBeenCalledWith(CloudSyncFormComponent, true);
   });
 });
