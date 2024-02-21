@@ -19,7 +19,7 @@ import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
 import { TunableFormComponent } from 'app/pages/system/advanced/sysctl/tunable-form/tunable-form.component';
 import { TunableListComponent } from 'app/pages/system/advanced/sysctl/tunable-list/tunable-list.component';
 import { DialogService } from 'app/services/dialog.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 
 describe('TunableListComponent', () => {
   let spectator: Spectator<TunableListComponent>;
@@ -109,9 +109,8 @@ describe('TunableListComponent', () => {
       MockModule(AppCommonModule),
     ],
     providers: [
-      mockProvider(IxSlideInService, {
-        onClose$: of(),
-        open: jest.fn(() => ({ slideInClosed$: of(true) })),
+      mockProvider(IxChainedSlideInService, {
+        pushComponent: jest.fn(() => of({ response: true, error: null })),
       }),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
@@ -152,15 +151,17 @@ describe('TunableListComponent', () => {
     const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
     await addButton.click();
 
-    expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(TunableFormComponent, {});
+    expect(spectator.inject(IxChainedSlideInService).pushComponent).toHaveBeenCalledWith(TunableFormComponent, {});
   });
 
   it('shows edit form with an existing sysctl when Edit button is pressed', async () => {
     const editIcon = await table.getHarnessInCell(IxIconHarness.with({ name: 'edit' }), 1, 5);
     await editIcon.click();
 
-    expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(TunableFormComponent, {
-      data: {
+    expect(spectator.inject(IxChainedSlideInService).pushComponent).toHaveBeenCalledWith(
+      TunableFormComponent,
+      false,
+      {
         comment: 'Description text',
         enabled: true,
         id: 12,
@@ -169,7 +170,7 @@ describe('TunableListComponent', () => {
         value: 'truenas',
         var: 'kernel.hostname',
       },
-    });
+    );
   });
 
   it('shows confirmation when Delete button is pressed', async () => {

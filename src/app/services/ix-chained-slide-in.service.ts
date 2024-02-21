@@ -8,18 +8,6 @@ import {
 } from 'rxjs';
 import { FocusService } from 'app/services/focus.service';
 
-export interface ChainedComponentRef {
-  close: (response: ChainedComponentResponse) => void;
-  /**
-   * This method will destroy the caller slide-in component and replace it with the
-   * provided new component. The new component will also take on the same "on-close"
-   * observable that the caller had. Makes it easy to switch between components that
-   * have the same purpose and return the same response type e.g, form to wizard and
-   * wizard to form.
-   */
-  swap: (component: Type<unknown>, wide: boolean, data?: unknown) => void;
-}
-
 export interface IncomingChainedComponent {
   component: ComponentType<unknown>;
   wide: boolean;

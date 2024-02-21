@@ -9,7 +9,7 @@ import { InitShutdownScriptType } from 'app/enums/init-shutdown-script-type.enum
 import { InitShutdownScriptWhen } from 'app/enums/init-shutdown-script-when.enum';
 import { InitShutdownScript } from 'app/interfaces/init-shutdown-script.interface';
 import { EntityModule } from 'app/modules/entity/entity.module';
-import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { ChainedRef } from 'app/modules/ix-forms/components/ix-slide-in/chained-component-ref';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTable2Harness } from 'app/modules/ix-table2/components/ix-table2/ix-table2.harness';
 import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
@@ -22,7 +22,7 @@ import {
   InitShutdownFormComponent,
 } from 'app/pages/system/advanced/init-shutdown/init-shutdown-form/init-shutdown-form.component';
 import { DialogService } from 'app/services/dialog.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 describe('InitShutdownCardComponent', () => {
@@ -67,14 +67,12 @@ describe('InitShutdownCardComponent', () => {
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
-      mockProvider(IxSlideInService, {
-        open: jest.fn(() => {
-          return { slideInClosed$: of() };
-        }),
+      mockProvider(IxChainedSlideInService, {
+        pushComponent: jest.fn(() => of({ response: true, error: null })),
       }),
-      mockProvider(IxSlideInRef),
+      mockProvider(ChainedRef, { close: jest.fn(), getData: jest.fn(() => undefined) }),
       mockProvider(AdvancedSettingsService, {
-        showFirstTimeWarningIfNeeded: jest.fn(() => Promise.resolve()),
+        showFirstTimeWarningIfNeeded: jest.fn(() => of(true)),
       }),
       mockAuth(),
     ],
@@ -115,9 +113,11 @@ describe('InitShutdownCardComponent', () => {
     const editButton = await table.getHarnessInRow(IxIconHarness.with({ name: 'edit' }), 'Prepare system');
     await editButton.click();
 
-    expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(InitShutdownFormComponent, {
-      data: expect.objectContaining(scripts[0]),
-    });
+    expect(spectator.inject(IxChainedSlideInService).pushComponent).toHaveBeenCalledWith(
+      InitShutdownFormComponent,
+      false,
+      expect.objectContaining(scripts[0]),
+    );
   });
 
   it('deletes a script with confirmation when Delete button is pressed', async () => {

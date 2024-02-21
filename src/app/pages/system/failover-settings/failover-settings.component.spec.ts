@@ -5,6 +5,7 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatCheckboxHarness } from '@angular/material/checkbox/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { helptextSystemFailover } from 'app/helptext/system/failover';
 import { AppCommonModule } from 'app/modules/common/app-common.module';
@@ -29,6 +30,7 @@ describe('FailoverComponent', () => {
       AppCommonModule,
     ],
     providers: [
+      mockAuth(),
       mockWebSocket([
         mockCall('failover.update'),
         mockCall('failover.sync_to_peer'),

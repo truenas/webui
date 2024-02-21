@@ -1,16 +1,16 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+  ChangeDetectionStrategy, Component,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import {
-  Observable, filter, shareReplay,
+  Subject, filter, shareReplay, startWith, switchMap, tap,
 } from 'rxjs';
-import { toLoadingState, LoadingState } from 'app/helpers/operators/to-loading-state.helper';
+import { toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import { helptext2fa } from 'app/helptext/system/2fa';
 import { GlobalTwoFactorConfig } from 'app/interfaces/two-factor-config.interface';
 import { AdvancedSettingsService } from 'app/pages/system/advanced/advanced-settings.service';
 import { GlobalTwoFactorAuthFormComponent } from 'app/pages/system/advanced/global-two-factor-auth/global-two-factor-form/global-two-factor-form.component';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
@@ -19,41 +19,36 @@ import { WebSocketService } from 'app/services/ws.service';
   templateUrl: './global-two-factor-card.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class GlobalTwoFactorAuthCardComponent implements OnInit {
-  protected twoFactorConfig$: Observable<LoadingState<GlobalTwoFactorConfig>>;
+export class GlobalTwoFactorAuthCardComponent {
   readonly helpText = helptext2fa;
+
+  private readonly reloadConfig$ = new Subject<void>();
+  readonly twoFactorConfig$ = this.reloadConfig$.pipe(
+    startWith(undefined),
+    switchMap(() => this.ws.call('auth.twofactor.config')),
+    toLoadingState(),
+    shareReplay({
+      refCount: false,
+      bufferSize: 1,
+    }),
+  );
 
   constructor(
     private ws: WebSocketService,
     private advancedSettings: AdvancedSettingsService,
-    private slideInService: IxSlideInService,
-    private cdr: ChangeDetectorRef,
+    private chainedSlideIns: IxChainedSlideInService,
   ) { }
 
-  ngOnInit(): void {
-    this.refreshCard();
-  }
-
-  refreshCard(): void {
-    this.twoFactorConfig$ = this.ws.call('auth.twofactor.config').pipe(
-      toLoadingState(),
-      shareReplay({
-        refCount: false,
-        bufferSize: 1,
-      }),
-    );
-    this.cdr.markForCheck();
-  }
-
-  async onConfigurePressed(twoFactorAuthConfig: GlobalTwoFactorConfig): Promise<void> {
-    await this.advancedSettings.showFirstTimeWarningIfNeeded();
-    const ixSlideInRef = this.slideInService.open(GlobalTwoFactorAuthFormComponent, { data: twoFactorAuthConfig });
-    ixSlideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe({
-      next: (response: unknown) => {
-        if (response === true) {
-          this.refreshCard();
-        }
-      },
-    });
+  onConfigurePressed(twoFactorAuthConfig: GlobalTwoFactorConfig): void {
+    this.advancedSettings.showFirstTimeWarningIfNeeded().pipe(
+      switchMap(() => this.chainedSlideIns.pushComponent(
+        GlobalTwoFactorAuthFormComponent,
+        false,
+        twoFactorAuthConfig,
+      )),
+      filter((response) => !!response.response),
+      tap(() => this.reloadConfig$.next()),
+      untilDestroyed(this),
+    ).subscribe();
   }
 }

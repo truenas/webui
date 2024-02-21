@@ -12,6 +12,7 @@
 
 .tree-node-grid {
   align-items: center;
+  background-color: var(--bg2);
   display: grid;
   grid-gap: 8px;
   grid-template-columns: auto 125px 125px 125px;
@@ -61,6 +62,10 @@
 :host-context(ix-tree-node.selected),
 :host-context(.dataset-nested-tree-root-node:hover),
 :host-context(.dataset-nested-tree-root-node.selected) {
+  .tree-node-grid {
+    background-color: var(--hover-bg);
+  }
+
   .tree-node-grid .cell,
   .tree-node-grid .cell-name .name {
     background: linear-gradient(90deg, var(--hover-bg) 99%, var(--hover-bg) calc(100% - 11px), transparent 100%);

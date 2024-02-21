@@ -19,7 +19,7 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import { TunableFormComponent } from 'app/pages/system/advanced/sysctl/tunable-form/tunable-form.component';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
@@ -79,12 +79,12 @@ export class TunableListComponent implements OnInit {
     private errorHandler: ErrorHandlerService,
     private ws: WebSocketService,
     private translate: TranslateService,
-    private slideInService: IxSlideInService,
     private dialogService: DialogService,
     private cdr: ChangeDetectorRef,
     protected emptyService: EmptyService,
     private matDialog: MatDialog,
     private snackbar: SnackbarService,
+    private chainedSlideIns: IxChainedSlideInService,
   ) {}
 
   ngOnInit(): void {
@@ -102,15 +102,18 @@ export class TunableListComponent implements OnInit {
   }
 
   doAdd(): void {
-    const slideInRef = this.slideInService.open(TunableFormComponent);
-    slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
-      this.getTunables();
-    });
+    this.chainedSlideIns.pushComponent(TunableFormComponent).pipe(
+      filter((response) => !!response.response),
+      tap(() => this.getTunables()),
+      untilDestroyed(this),
+    ).subscribe();
   }
 
   doEdit(tunable: Tunable): void {
-    const slideInRef = this.slideInService.open(TunableFormComponent, { data: tunable });
-    slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
+    this.chainedSlideIns.pushComponent(TunableFormComponent, false, tunable).pipe(
+      filter((response) => !!response.response),
+      untilDestroyed(this),
+    ).subscribe(() => {
       this.getTunables();
     });
   }

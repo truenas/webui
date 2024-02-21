@@ -3,7 +3,7 @@
   <mat-slide-toggle
     color="primary"
     ixTest="show-built-in-users"
-    [checked]="!this.hideBuiltinUsers"
+    [checked]="!hideBuiltinUsers"
     (change)="toggleBuiltins()"
   >
     <label>{{ 'Show Built-in Users' | translate }}</label>
@@ -27,6 +27,7 @@
       ix-table-body
       [columns]="columns"
       [dataProvider]="dataProvider"
+      [isLoading]="isLoading$ | async"
     >
       <ng-template let-user ix-table-details-row [dataProvider]="dataProvider">
         <ix-user-details-row

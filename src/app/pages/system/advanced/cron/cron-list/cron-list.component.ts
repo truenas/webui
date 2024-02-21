@@ -20,7 +20,7 @@ import { CronFormComponent } from 'app/pages/system/advanced/cron/cron-form/cron
 import { CronjobRow } from 'app/pages/system/advanced/cron/cron-list/cronjob-row.interface';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 import { TaskService } from 'app/services/task.service';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -98,7 +98,7 @@ export class CronListComponent implements OnInit {
     private taskService: TaskService,
     private dialog: DialogService,
     private errorHandler: ErrorHandlerService,
-    private slideInService: IxSlideInService,
+    private chainedSlideIns: IxChainedSlideInService,
     private matDialog: MatDialog,
     protected emptyService: EmptyService,
   ) {}
@@ -124,18 +124,16 @@ export class CronListComponent implements OnInit {
   }
 
   doAdd(): void {
-    const slideInRef = this.slideInService.open(CronFormComponent);
-    slideInRef.slideInClosed$
-      .pipe(filter(Boolean), untilDestroyed(this))
+    this.chainedSlideIns.pushComponent(CronFormComponent)
+      .pipe(filter((response) => !!response.response), untilDestroyed(this))
       .subscribe(() => {
         this.getCronJobs();
       });
   }
 
   doEdit(row: CronjobRow): void {
-    const slideInRef = this.slideInService.open(CronFormComponent, { data: row });
-    slideInRef.slideInClosed$
-      .pipe(filter(Boolean), untilDestroyed(this))
+    this.chainedSlideIns.pushComponent(CronFormComponent, false, row)
+      .pipe(filter((response) => !!response.response), untilDestroyed(this))
       .subscribe(() => {
         this.getCronJobs();
       });

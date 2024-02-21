@@ -11,7 +11,7 @@ import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
 import { AdvancedSettingsService } from 'app/pages/system/advanced/advanced-settings.service';
 import { SyslogCardComponent } from 'app/pages/system/advanced/syslog/syslog-card/syslog-card.component';
 import { SyslogFormComponent } from 'app/pages/system/advanced/syslog/syslog-form/syslog-form.component';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 import { selectAdvancedConfig } from 'app/store/system-config/system-config.selectors';
 
 describe('SyslogCardComponent', () => {
@@ -37,9 +37,11 @@ describe('SyslogCardComponent', () => {
           },
         ],
       }),
-      mockProvider(AdvancedSettingsService),
-      mockProvider(IxSlideInService, {
-        onClose$: of(),
+      mockProvider(AdvancedSettingsService, {
+        showFirstTimeWarningIfNeeded: jest.fn(() => of(true)),
+      }),
+      mockProvider(IxChainedSlideInService, {
+        pushComponent: jest.fn(() => of({ response: true, error: null })),
       }),
     ],
   });
@@ -67,6 +69,18 @@ describe('SyslogCardComponent', () => {
     await configureButton.click();
 
     expect(spectator.inject(AdvancedSettingsService).showFirstTimeWarningIfNeeded).toHaveBeenCalled();
-    expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(SyslogFormComponent);
+    expect(spectator.inject(IxChainedSlideInService).pushComponent).toHaveBeenCalledWith(
+      SyslogFormComponent,
+      false,
+      {
+        fqdn_syslog: true,
+        syslog_audit: false,
+        syslog_tls_certificate: undefined,
+        syslog_tls_certificate_authority: undefined,
+        syslog_transport: 'TCP',
+        sysloglevel: 'F_ALERT',
+        syslogserver: '127.1.2.3',
+      },
+    );
   });
 });

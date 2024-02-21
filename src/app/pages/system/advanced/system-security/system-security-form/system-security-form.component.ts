@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -7,8 +7,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { Role } from 'app/enums/role.enum';
 import { SystemSecurityConfig } from 'app/interfaces/system-security-config.interface';
-import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
+import { ChainedRef } from 'app/modules/ix-forms/components/ix-slide-in/chained-component-ref';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DialogService } from 'app/services/dialog.service';
@@ -29,6 +28,8 @@ export class SystemSecurityFormComponent implements OnInit {
   isLoading = false;
   protected readonly Role = Role;
 
+  private systemSecurityConfig: SystemSecurityConfig;
+
   constructor(
     private ws: WebSocketService,
     private formErrorHandler: FormErrorHandlerService,
@@ -38,9 +39,10 @@ export class SystemSecurityFormComponent implements OnInit {
     private dialogService: DialogService,
     private snackbar: SnackbarService,
     private router: Router,
-    private slideInRef: IxSlideInRef<SystemSecurityFormComponent>,
-    @Inject(SLIDE_IN_DATA) private systemSecurityConfig: SystemSecurityConfig,
-  ) {}
+    private chainedRef: ChainedRef<SystemSecurityConfig>,
+  ) {
+    this.systemSecurityConfig = this.chainedRef.getData();
+  }
 
   ngOnInit(): void {
     if (this.systemSecurityConfig) {
@@ -84,7 +86,7 @@ export class SystemSecurityFormComponent implements OnInit {
       if (approved) {
         this.router.navigate(['/others/reboot'], { skipLocationChange: true });
       }
-      this.slideInRef.close(true);
+      this.chainedRef.close({ response: true, error: null });
     });
   }
 }
