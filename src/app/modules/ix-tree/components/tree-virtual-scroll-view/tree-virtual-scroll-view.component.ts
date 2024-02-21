@@ -8,7 +8,6 @@ import {
   Component,
   EventEmitter,
   HostBinding,
-  Inject,
   Input,
   IterableDiffers,
   OnChanges,
@@ -22,7 +21,6 @@ import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
 import { ResizedEvent } from 'angular-resize-event';
 import { animationFrameScheduler, asapScheduler, BehaviorSubject } from 'rxjs';
 import { auditTime, map } from 'rxjs/operators';
-import { WINDOW } from 'app/helpers/window.helper';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { Tree } from 'app/modules/ix-tree/components/tree/tree.component';
 import { TreeNodeOutletDirective } from 'app/modules/ix-tree/directives/tree-node-outlet.directive';
@@ -67,7 +65,6 @@ export class TreeVirtualScrollViewComponent<T> extends Tree<T> implements OnChan
   constructor(
     protected differs: IterableDiffers,
     protected changeDetectorRef: ChangeDetectorRef,
-    @Inject(WINDOW) private window: Window,
   ) {
     super(differs, changeDetectorRef);
     this.listenForNodeChanges();
