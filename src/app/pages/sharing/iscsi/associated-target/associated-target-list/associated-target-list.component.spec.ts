@@ -14,6 +14,7 @@ import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
 import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { SearchInput1Component } from 'app/modules/search-input1/search-input1.component';
 import { AssociatedTargetFormComponent } from 'app/pages/sharing/iscsi/associated-target/associated-target-form/associated-target-form.component';
 import { AssociatedTargetListComponent } from 'app/pages/sharing/iscsi/associated-target/associated-target-list/associated-target-list.component';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
@@ -47,7 +48,7 @@ describe('AssociatedTargetListComponent', () => {
     imports: [
       IxTable2Module,
       AppLoaderModule,
-      AppCommonModule,
+      SearchInput1Component,
     ],
     providers: [
       mockAuth(),

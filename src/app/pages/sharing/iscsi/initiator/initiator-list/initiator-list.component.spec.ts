@@ -17,6 +17,7 @@ import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
 import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { SearchInput1Component } from 'app/modules/search-input1/search-input1.component';
 import { InitiatorListComponent } from 'app/pages/sharing/iscsi/initiator/initiator-list/initiator-list.component';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -39,7 +40,7 @@ describe('InitiatorListComponent', () => {
     imports: [
       IxTable2Module,
       AppLoaderModule,
-      AppCommonModule,
+      SearchInput1Component,
     ],
     providers: [
       mockAuth(),

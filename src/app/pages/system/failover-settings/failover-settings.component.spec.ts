@@ -11,6 +11,7 @@ import { helptextSystemFailover } from 'app/helptext/system/failover';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
+import { SearchInput1Component } from 'app/modules/search-input1/search-input1.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { FailoverSettingsComponent } from 'app/pages/system/failover-settings/failover-settings.component';
 import { WebSocketConnectionService } from 'app/services/websocket-connection.service';
@@ -26,7 +27,7 @@ describe('FailoverComponent', () => {
     imports: [
       ReactiveFormsModule,
       IxFormsModule,
-      AppCommonModule,
+      SearchInput1Component,
     ],
     providers: [
       mockAuth(),

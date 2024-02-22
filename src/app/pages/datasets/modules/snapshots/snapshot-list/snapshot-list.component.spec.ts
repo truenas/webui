@@ -16,6 +16,7 @@ import { IxTableModule } from 'app/modules/ix-tables/ix-table.module';
 import { IxTableHarness } from 'app/modules/ix-tables/testing/ix-table.harness';
 import { LayoutModule } from 'app/modules/layout/layout.module';
 import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
+import { SearchInput1Component } from 'app/modules/search-input1/search-input1.component';
 import { snapshotsInitialState, SnapshotsState } from 'app/pages/datasets/modules/snapshots/store/snapshot.reducer';
 import {
   selectSnapshots, selectSnapshotState, selectSnapshotsTotal,
@@ -39,7 +40,7 @@ describe('SnapshotListComponent', () => {
       IxTableModule,
       MockModule(LayoutModule),
       MockModule(PageHeaderModule),
-      AppCommonModule,
+      SearchInput1Component,
     ],
     declarations: [
       FakeFormatDateTimePipe,

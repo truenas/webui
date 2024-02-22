@@ -9,6 +9,7 @@ import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxTable2Harness } from 'app/modules/ix-table2/components/ix-table2/ix-table2.harness';
 import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
+import { SearchInput1Component } from 'app/modules/search-input1/search-input1.component';
 import { SmbShareListComponent } from './smb-share-list.component';
 
 describe('SmbShareListComponent', () => {
@@ -36,7 +37,7 @@ describe('SmbShareListComponent', () => {
 
   const createComponent = createComponentFactory({
     component: SmbShareListComponent,
-    imports: [AppLoaderModule, EntityModule, IxTable2Module, AppCommonModule],
+    imports: [AppLoaderModule, EntityModule, IxTable2Module, SearchInput1Component],
     providers: [mockWebSocket([mockCall('smb.status', shares)])],
   });
 

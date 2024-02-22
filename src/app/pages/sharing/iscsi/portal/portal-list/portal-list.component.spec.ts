@@ -17,6 +17,7 @@ import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
 import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { SearchInput1Component } from 'app/modules/search-input1/search-input1.component';
 import { PortalFormComponent } from 'app/pages/sharing/iscsi/portal/portal-form/portal-form.component';
 import { PortalListComponent } from 'app/pages/sharing/iscsi/portal/portal-list/portal-list.component';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
@@ -44,7 +45,7 @@ describe('PortalListComponent', () => {
 
   const createComponent = createRoutingFactory({
     component: PortalListComponent,
-    imports: [IxTable2Module, AppLoaderModule, AppCommonModule],
+    imports: [IxTable2Module, AppLoaderModule, SearchInput1Component],
     providers: [
       mockProvider(AppLoaderService),
       mockProvider(ErrorHandlerService),
