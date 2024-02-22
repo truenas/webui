@@ -62,6 +62,7 @@ describe('DatasetUnlockComponent', () => {
       mockProvider(MatDialogRef),
       mockProvider(AuthService, {
         authToken$: of('token'),
+        hasRole: () => of(true),
       }),
     ],
   });

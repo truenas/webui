@@ -34,6 +34,7 @@ describe('UploadConfigDialogComponent', () => {
       }),
       mockProvider(AuthService, {
         authToken$: of('token'),
+        hasRole: () => of(true),
       }),
     ],
   });
