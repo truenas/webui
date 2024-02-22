@@ -78,8 +78,7 @@ jobs:
 
   lint-translations:
     name: Validate translation strings
-    needs: [check-files, install]
-    if: ${{ needs.check-files.outputs.translations-only == 'false' }}
+    needs: [install]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout

@@ -60,6 +60,7 @@
 @media #{$media-lt-sm} {
   .ix-chained-slide-in2-form {
     min-width: 100%;
+    right: -100%;
     width: 100%;
   }
 }

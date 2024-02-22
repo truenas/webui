@@ -77,6 +77,7 @@ export class InterfaceFormComponent implements OnInit {
     // Bridge fields
     bridge_members: [[] as string[]],
     stp: [true],
+    enable_learning: [true],
 
     // Lag fields
     lag_protocol: [LinkAggregationProtocol.None],
@@ -335,6 +336,7 @@ export class InterfaceFormComponent implements OnInit {
 
     if (this.isBridge) {
       params.bridge_members = formValues.bridge_members;
+      params.enable_learning = formValues.enable_learning;
     } else if (this.isLag) {
       params = {
         ...params,

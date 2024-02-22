@@ -42,10 +42,6 @@ export class NetworkService {
     return this.ws.call('interface.bridge_members_choices', [id]);
   }
 
-  getVmNicChoices(): Observable<Choices> {
-    return this.ws.call('vm.device.nic_attach_choices');
-  }
-
   getV4Netmasks(): Option[] {
     return Array(34).fill(0).map(
       (_, i) => {

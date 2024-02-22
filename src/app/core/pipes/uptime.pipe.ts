@@ -26,7 +26,7 @@ export class UptimePipe implements PipeTransform {
       uptimeStrings.push(this.translate.instant('{minutes, plural, =1 {# minute} other {# minutes}}', { minutes }));
     }
 
-    if (seconds > 0 && days === 0) {
+    if (seconds > 0 && hours < 1 && days === 0) {
       uptimeStrings.push(this.translate.instant('{seconds, plural, =1 {# second} other {# seconds}}', { seconds }));
     }
 

@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { FormBuilder } from '@ngneat/reactive-forms';
@@ -12,8 +12,7 @@ import { Role } from 'app/enums/role.enum';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextInitShutdown } from 'app/helptext/system/init-shutdown';
 import { InitShutdownScript } from 'app/interfaces/init-shutdown-script.interface';
-import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
+import { ChainedRef } from 'app/modules/ix-forms/components/ix-slide-in/chained-component-ref';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { FilesystemService } from 'app/services/filesystem.service';
@@ -66,6 +65,8 @@ export class InitShutdownFormComponent implements OnInit {
   readonly treeNodeProvider = this.filesystemService.getFilesystemNodeProvider();
   protected readonly Role = Role;
 
+  private editingScript: InitShutdownScript;
+
   constructor(
     private ws: WebSocketService,
     private errorHandler: FormErrorHandlerService,
@@ -74,9 +75,10 @@ export class InitShutdownFormComponent implements OnInit {
     private translate: TranslateService,
     private snackbar: SnackbarService,
     private filesystemService: FilesystemService,
-    private slideInRef: IxSlideInRef<InitShutdownFormComponent>,
-    @Inject(SLIDE_IN_DATA) private editingScript: InitShutdownScript,
-  ) {}
+    private chainedRef: ChainedRef<InitShutdownScript>,
+  ) {
+    this.editingScript = this.chainedRef.getData();
+  }
 
   ngOnInit(): void {
     this.subscriptions.push(
@@ -115,7 +117,7 @@ export class InitShutdownFormComponent implements OnInit {
           this.snackbar.success(this.translate.instant('Init/Shutdown Script updated'));
         }
         this.isFormLoading = false;
-        this.slideInRef.close(true);
+        this.chainedRef.close({ response: true, error: null });
       },
       error: (error: unknown) => {
         this.isFormLoading = false;

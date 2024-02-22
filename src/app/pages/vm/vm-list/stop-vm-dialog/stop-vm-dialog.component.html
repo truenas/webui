@@ -6,20 +6,24 @@
     [tooltip]="helptext.stop_dialog.forceTooltip | translate"
   ></ix-checkbox>
 </div>
-<div mat-dialog-actions class="buttons">
-  <button
-    mat-button
-    ixTest="cancel"
-    [matDialogClose]="{ wasStopped: false }"
-  >
-    {{ 'Cancel' | translate }}
-  </button>
-  <button
-    mat-button
-    color="primary"
-    ixTest="stop-vm"
-    (click)="onStop()"
-  >
-    {{ 'Stop' | translate }}
-  </button>
-</div>
+
+<mat-dialog-actions>
+  <ix-form-actions>
+    <button
+      mat-button
+      ixTest="cancel"
+      [matDialogClose]="false"
+    >
+      {{ 'Cancel' | translate }}
+    </button>
+    <button
+      *ixRequiresRoles="requiredRoles"
+      mat-button
+      color="primary"
+      ixTest="stop-vm"
+      (click)="onStop()"
+    >
+      {{ 'Stop' | translate }}
+    </button>
+  </ix-form-actions>
+</mat-dialog-actions>

@@ -9,6 +9,7 @@ import {
 } from 'rxjs';
 import { catchError, defaultIfEmpty, map } from 'rxjs/operators';
 import { GiB, MiB } from 'app/constants/bytes.constant';
+import { Role } from 'app/enums/role.enum';
 import { VmDeviceType, VmNicType, VmOs } from 'app/enums/vm.enum';
 import { VirtualMachine, VirtualMachineUpdate } from 'app/interfaces/virtual-machine.interface';
 import { VmDevice, VmDeviceUpdate } from 'app/interfaces/vm-device.interface';
@@ -46,6 +47,8 @@ export class VmWizardComponent implements OnInit {
   @ViewChild(NetworkInterfaceStepComponent, { static: true }) networkInterfaceStep: NetworkInterfaceStepComponent;
   @ViewChild(InstallationMediaStepComponent, { static: true }) installationMediaStep: InstallationMediaStepComponent;
   @ViewChild(GpuStepComponent, { static: true }) gpuStep: GpuStepComponent;
+
+  protected readonly requiredRoles = [Role.VmWrite];
 
   get osForm(): OsStepComponent['form']['value'] {
     return this.osStep.form.value;

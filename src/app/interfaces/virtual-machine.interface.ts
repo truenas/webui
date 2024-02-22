@@ -1,10 +1,12 @@
-import { ServiceStatus } from 'app/enums/service-status.enum';
-import { VmBootloader, VmCpuMode, VmTime } from 'app/enums/vm.enum';
+import {
+  VmBootloader, VmCpuMode, VmState, VmTime,
+} from 'app/enums/vm.enum';
 import { VmDevice } from 'app/interfaces/vm-device.interface';
 
 export interface VirtualMachine {
   autostart: boolean;
   bootloader: VmBootloader;
+  bootloader_ovmf: string;
   hyperv_enlightenments: boolean;
   cores: number;
   cpu_mode: VmCpuMode;
@@ -21,9 +23,9 @@ export interface VirtualMachine {
   name: string;
   shutdown_timeout: number;
   status: {
-    state: ServiceStatus;
+    state: VmState;
     pid: number;
-    domain_state: string; // Enum? SHUTOFF
+    domain_state: string; // Enum? SHUTOFF, RUNNING
   };
   threads: number;
   cpuset: string;
@@ -38,6 +40,7 @@ export interface VirtualMachine {
   min_memory: number;
   uuid: string;
   display_available: boolean;
+  trusted_platform_module: boolean;
 }
 
 export type VirtualMachineUpdate = Omit<VirtualMachine, 'status' | 'id' | 'devices'>;

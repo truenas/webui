@@ -4,6 +4,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { VirtualMachine } from 'app/interfaces/virtual-machine.interface';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
@@ -25,6 +26,7 @@ describe('DeleteVmDialogComponent', () => {
       mockWebSocket([
         mockCall('vm.delete'),
       ]),
+      mockAuth(),
       mockProvider(MatDialogRef),
       mockProvider(DialogService),
       {

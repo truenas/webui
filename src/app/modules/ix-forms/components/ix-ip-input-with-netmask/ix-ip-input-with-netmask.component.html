@@ -15,6 +15,7 @@
     [ixTest]="controlDirective.name"
     [disabled]="isDisabled"
     [value]="address"
+    [attr.aria-label]="label"
     (input)="onAddressInput(addressInput)"
     (blur)="onTouched()"
   />

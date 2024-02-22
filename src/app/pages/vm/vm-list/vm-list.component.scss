@@ -1,9 +1,23 @@
-.vm-summary,
-.vm-summary p {
+.vm-summary {
+  align-items: center;
   color: var(--fg1);
+  display: flex;
+  gap: 4px;
+
+  ix-icon {
+    cursor: help;
+  }
 }
-  
-.vm-summary p {
-  margin: 16px 0;
-  text-align: center;
+
+.table-hidden-columns {
+  margin: 12px 0 0;
+
+  div {
+    display: flex;
+    gap: 4px;
+  }
+
+  .mat-divider {
+    margin-top: 6px;
+  }
 }

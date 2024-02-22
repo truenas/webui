@@ -6,6 +6,7 @@ import { Spectator, createComponentFactory, mockProvider } from '@ngneat/spectat
 import { provideMockStore } from '@ngrx/store/testing';
 import { MockComponents, MockModule } from 'ng-mocks';
 import { of } from 'rxjs';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
@@ -63,6 +64,7 @@ describe('SmbListComponent', () => {
         mockCall('sharing.smb.update'),
         mockCall('sharing.smb.getacl', { share_name: 'acl_share_name' } as SmbSharesec),
       ]),
+      mockAuth(),
       mockProvider(IxSlideInRef),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),

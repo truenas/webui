@@ -18,8 +18,8 @@ import { TransportMode } from 'app/enums/transport-mode.enum';
 import { helptextReplicationWizard } from 'app/helptext/data-protection/replication/replication-wizard';
 import { KeychainCredential } from 'app/interfaces/keychain-credential.interface';
 import { ReplicationTask } from 'app/interfaces/replication-task.interface';
+import { ChainedRef } from 'app/modules/ix-forms/components/ix-slide-in/chained-component-ref';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
-import { CHAINED_SLIDE_IN_REF, SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import {
@@ -87,9 +87,10 @@ describe('ReplicationFormComponent', () => {
   let loader: HarnessLoader;
   const remoteNodeProvider = jest.fn();
   const localNodeProvider = jest.fn();
-  const chainedComponentRef = {
+  const chainedRef: ChainedRef<ReplicationTask> = {
     close: jest.fn(),
     swap: jest.fn(),
+    getData: jest.fn(() => undefined),
   };
 
   const generalForm = new FormGroup({
@@ -186,8 +187,7 @@ describe('ReplicationFormComponent', () => {
       }),
       mockProvider(SnackbarService),
       mockProvider(IxSlideInRef),
-      { provide: SLIDE_IN_DATA, useValue: undefined },
-      { provide: CHAINED_SLIDE_IN_REF, useValue: chainedComponentRef },
+      mockProvider(ChainedRef, chainedRef),
     ],
     componentProviders: [
       mockProvider(ReplicationService, {
@@ -216,7 +216,7 @@ describe('ReplicationFormComponent', () => {
       await switchButton.click();
 
       expect(
-        chainedComponentRef.swap,
+        chainedRef.swap,
       ).toHaveBeenCalledWith(ReplicationWizardComponent, true);
     });
 
@@ -241,7 +241,7 @@ describe('ReplicationFormComponent', () => {
         auto: true,
         sudo: false,
       }]);
-      expect(chainedComponentRef.close).toHaveBeenCalledWith({ response: existingTask, error: null });
+      expect(chainedRef.close).toHaveBeenCalledWith({ response: existingTask, error: null });
     });
   });
 
@@ -249,7 +249,7 @@ describe('ReplicationFormComponent', () => {
     beforeEach(fakeAsync(() => {
       spectator = createComponent({
         providers: [
-          { provide: SLIDE_IN_DATA, useValue: { id: 1 } as ReplicationTask },
+          mockProvider(ChainedRef, { ...chainedRef, getData: jest.fn(() => ({ id: 1 } as ReplicationTask)) }),
         ],
       });
       tick();
@@ -274,7 +274,7 @@ describe('ReplicationFormComponent', () => {
           sudo: false,
         },
       ]);
-      expect(chainedComponentRef.close).toHaveBeenCalledWith({ response: existingTask, error: null });
+      expect(chainedRef.close).toHaveBeenCalledWith({ response: existingTask, error: null });
     });
   });
 

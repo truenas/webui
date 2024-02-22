@@ -6,9 +6,10 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { of } from 'rxjs';
 import { CoreComponents } from 'app/core/core-components.module';
 import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { AdvancedSettingsService } from 'app/pages/system/advanced/advanced-settings.service';
 import { AuditCardComponent } from 'app/pages/system/advanced/audit/audit-card/audit-card.component';
 import { AuditFormComponent } from 'app/pages/system/advanced/audit/audit-form/audit-form.component';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 
 describe('AuditCardComponent', () => {
   let spectator: Spectator<AuditCardComponent>;
@@ -19,8 +20,11 @@ describe('AuditCardComponent', () => {
       CoreComponents,
     ],
     providers: [
-      mockProvider(IxSlideInService, {
-        onClose$: of(),
+      mockProvider(IxChainedSlideInService, {
+        pushComponent: jest.fn(() => of(true)),
+      }),
+      mockProvider(AdvancedSettingsService, {
+        showFirstTimeWarningIfNeeded: jest.fn(() => of(true)),
       }),
       mockWebSocket([
         mockCall('audit.config', {
@@ -56,6 +60,6 @@ describe('AuditCardComponent', () => {
     const configureButton = await loader.getHarness(MatButtonHarness.with({ text: 'Configure' }));
     await configureButton.click();
 
-    expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(AuditFormComponent);
+    expect(spectator.inject(IxChainedSlideInService).pushComponent).toHaveBeenCalledWith(AuditFormComponent);
   });
 });

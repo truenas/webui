@@ -6,6 +6,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import {
   createComponentFactory, mockProvider, Spectator, SpectatorFactory,
 } from '@ngneat/spectator/jest';
+import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import {
   mockCall, mockJob, mockWebSocket,
@@ -15,7 +16,6 @@ import { DatasetAttachment, PoolAttachment } from 'app/interfaces/pool-attachmen
 import { Pool } from 'app/interfaces/pool.interface';
 import { Process } from 'app/interfaces/process.interface';
 import { SystemDatasetConfig } from 'app/interfaces/system-dataset-config.interface';
-import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
@@ -68,7 +68,6 @@ describe('ExportDisconnectModalComponent', () => {
         IxFormsModule,
         ReactiveFormsModule,
         AppLoaderModule,
-        EntityModule,
       ],
       providers: [
         mockWebSocket([
@@ -77,7 +76,11 @@ describe('ExportDisconnectModalComponent', () => {
           mockCall('systemdataset.config', { pool: 'fakeSystemPool' } as SystemDatasetConfig),
           mockJob('pool.export'),
         ]),
-        mockProvider(DialogService),
+        mockProvider(DialogService, {
+          jobDialog: jest.fn(() => ({
+            afterClosed: () => of(null),
+          })),
+        }),
         mockProvider(MatDialogRef),
         mockAuth(),
       ],

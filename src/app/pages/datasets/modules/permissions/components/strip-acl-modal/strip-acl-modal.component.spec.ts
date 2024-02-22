@@ -2,15 +2,19 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { mockEntityJobComponentRef } from 'app/core/testing/utils/mock-entity-job-component-ref.utils';
+import { of } from 'rxjs';
+import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
+import { mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { helptextAcl } from 'app/helptext/storage/volumes/datasets/dataset-acl';
 import { IxCheckboxHarness } from 'app/modules/ix-forms/components/ix-checkbox/ix-checkbox.harness';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import {
   StripAclModalComponent, StripAclModalData,
 } from 'app/pages/datasets/modules/permissions/components/strip-acl-modal/strip-acl-modal.component';
+import { DialogService } from 'app/services/dialog.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 describe('StripAclModalComponent', () => {
   let spectator: Spectator<StripAclModalComponent>;
@@ -22,8 +26,13 @@ describe('StripAclModalComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
-      mockProvider(MatDialog, {
-        open: jest.fn(() => mockEntityJobComponentRef),
+      mockWebSocket([
+        mockJob('filesystem.setacl', fakeSuccessfulJob()),
+      ]),
+      mockProvider(DialogService, {
+        jobDialog: jest.fn(() => ({
+          afterClosed: () => of(null),
+        })),
       }),
       mockProvider(MatDialogRef),
       {
@@ -44,7 +53,8 @@ describe('StripAclModalComponent', () => {
     const stripButton = await loader.getHarness(MatButtonHarness.with({ text: 'Strip ACLs' }));
     await stripButton.click();
 
-    expect(mockEntityJobComponentRef.componentInstance.setCall).toHaveBeenCalledWith(
+    expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
+    expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith(
       'filesystem.setacl',
       [{
         dacl: [],
@@ -56,7 +66,6 @@ describe('StripAclModalComponent', () => {
         path: '/mnt/tank/test',
       }],
     );
-    expect(mockEntityJobComponentRef.componentInstance.submit).toHaveBeenCalled();
     expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith(true);
   });
 
@@ -69,7 +78,8 @@ describe('StripAclModalComponent', () => {
     const stripButton = await loader.getHarness(MatButtonHarness.with({ text: 'Strip ACLs' }));
     await stripButton.click();
 
-    expect(mockEntityJobComponentRef.componentInstance.setCall).toHaveBeenCalledWith(
+    expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
+    expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith(
       'filesystem.setacl',
       [{
         dacl: [],

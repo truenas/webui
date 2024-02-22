@@ -26,6 +26,7 @@
 
       <div class="form-actions">
         <button
+          *ixRequiresRoles="requiredRoles"
           mat-button
           type="submit"
           color="primary"
@@ -36,6 +37,7 @@
         </button>
 
         <button
+          *ixRequiresRoles="requiredRoles"
           mat-button
           type="button"
           ixTest="sync-to-peer"
@@ -46,6 +48,7 @@
         </button>
 
         <button
+          *ixRequiresRoles="requiredRoles"
           mat-button
           type="button"
           ixTest="sync-from-peer"

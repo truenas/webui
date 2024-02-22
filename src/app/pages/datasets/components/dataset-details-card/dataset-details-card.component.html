@@ -81,9 +81,9 @@
     </div>
   </mat-card-content>
   <mat-card-actions *ngIf="dataset.id !== dataset.pool">
-    <ng-container *ixRequiresRoles="[Role.FullAdmin]">
+    <ng-container *ngIf="canBePromoted">
       <button
-        *ngIf="canBePromoted"
+        *ixRequiresRoles="[Role.FullAdmin]"
         mat-button
         ixTest="promote-dataset"
         (click)="promoteDataset()"

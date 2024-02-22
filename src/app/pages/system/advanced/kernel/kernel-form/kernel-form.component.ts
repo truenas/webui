@@ -1,5 +1,5 @@
 import {
-  Component, ChangeDetectionStrategy, ChangeDetectorRef, OnInit, Inject,
+  Component, ChangeDetectionStrategy, ChangeDetectorRef, OnInit,
 } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -7,8 +7,7 @@ import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { Role } from 'app/enums/role.enum';
 import { helptextSystemAdvanced } from 'app/helptext/system/advanced';
-import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
+import { ChainedRef } from 'app/modules/ix-forms/components/ix-slide-in/chained-component-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
@@ -31,18 +30,23 @@ export class KernelFormComponent implements OnInit {
     debugkernel: helptextSystemAdvanced.debugkernel_tooltip,
   };
 
+  private debugkernel = false;
+
   constructor(
     private fb: FormBuilder,
     private ws: WebSocketService,
     private errorHandler: ErrorHandlerService,
     private dialogService: DialogService,
-    private slideInRef: IxSlideInRef<KernelFormComponent>,
     private cdr: ChangeDetectorRef,
     private translate: TranslateService,
     private snackbar: SnackbarService,
     private store$: Store<AppState>,
-    @Inject(SLIDE_IN_DATA) private debugkernel = false,
-  ) {}
+    private chainedRef: ChainedRef<boolean>,
+  ) {
+    if (chainedRef.getData()) {
+      this.debugkernel = true;
+    }
+  }
 
   ngOnInit(): void {
     this.setupForm();
@@ -66,7 +70,7 @@ export class KernelFormComponent implements OnInit {
         this.isFormLoading = false;
         this.snackbar.success(this.translate.instant('Settings saved'));
         this.cdr.markForCheck();
-        this.slideInRef.close();
+        this.chainedRef.close({ response: true, error: null });
         this.store$.dispatch(advancedConfigUpdated());
       },
       error: (error: unknown) => {

@@ -21,7 +21,7 @@
   <div class="buttons">
     <button
       mat-icon-button
-      ixTest="left"
+      ixTest="max-left"
       [disabled]="currentPage === 1"
       (click)="goToPage(1)"
     >
@@ -45,7 +45,7 @@
     </button>
     <button
       mat-icon-button
-      ixTest="right"
+      ixTest="max-right"
       [disabled]="currentPage === totalPages || !totalPages"
       (click)="goToPage(totalPages)"
     >

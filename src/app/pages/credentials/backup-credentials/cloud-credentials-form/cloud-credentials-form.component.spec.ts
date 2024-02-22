@@ -15,7 +15,7 @@ import { CloudSyncProviderName } from 'app/enums/cloudsync-provider.enum';
 import { CloudSyncCredential } from 'app/interfaces/cloudsync-credential.interface';
 import { CloudSyncProvider } from 'app/interfaces/cloudsync-provider.interface';
 import { IxSelectHarness } from 'app/modules/ix-forms/components/ix-select/ix-select.harness';
-import { CHAINED_SLIDE_IN_REF, SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
+import { ChainedRef } from 'app/modules/ix-forms/components/ix-slide-in/chained-component-ref';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -91,8 +91,10 @@ describe('CloudCredentialsFormComponent', () => {
     },
   } as CloudSyncCredential;
 
-  const chainedComponentRef = {
+  const getData = jest.fn(() => fakeCloudSyncCredential);
+  const chainedRef = {
     close: jest.fn(),
+    getData: jest.fn(() => undefined),
   };
 
   const createComponent = createComponentFactory({
@@ -108,11 +110,9 @@ describe('CloudCredentialsFormComponent', () => {
       StorjProviderFormComponent,
     ],
     providers: [
-
       mockProvider(SnackbarService),
       mockProvider(DialogService),
-      { provide: SLIDE_IN_DATA, useValue: undefined },
-      { provide: CHAINED_SLIDE_IN_REF, useValue: chainedComponentRef },
+      mockProvider(ChainedRef, chainedRef),
       mockWebSocket([
         mockCall('cloudsync.credentials.query', []),
         mockCall('cloudsync.credentials.create', fakeCloudSyncCredential),
@@ -253,7 +253,7 @@ describe('CloudCredentialsFormComponent', () => {
             s3attribute: 's3 value',
           },
         }]);
-        expect(chainedComponentRef.close).toHaveBeenCalledWith({ response: fakeCloudSyncCredential, error: null });
+        expect(chainedRef.close).toHaveBeenCalledWith({ response: fakeCloudSyncCredential, error: null });
         expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
       });
 
@@ -290,7 +290,12 @@ describe('CloudCredentialsFormComponent', () => {
   describe('saving with credentials', () => {
     beforeEach(async () => {
       spectator = createComponent({
-        providers: [{ provide: SLIDE_IN_DATA, useValue: fakeCloudSyncCredential }],
+        providers: [
+          mockProvider(ChainedRef, {
+            ...chainedRef,
+            getData,
+          }),
+        ],
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       form = await loader.getHarness(IxFormHarness);
@@ -331,7 +336,7 @@ describe('CloudCredentialsFormComponent', () => {
           },
         },
       ]);
-      expect(chainedComponentRef.close).toHaveBeenCalledWith({ response: fakeCloudSyncCredential, error: null });
+      expect(chainedRef.close).toHaveBeenCalledWith({ response: fakeCloudSyncCredential, error: null });
       expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
     });
   });

@@ -12,8 +12,7 @@ import {
 import { Role } from 'app/enums/role.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { GlobalTwoFactorConfig, GlobalTwoFactorConfigUpdate } from 'app/interfaces/two-factor-config.interface';
-import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
+import { ChainedRef } from 'app/modules/ix-forms/components/ix-slide-in/chained-component-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { AuthService } from 'app/services/auth/auth.service';
 import { DialogService } from 'app/services/dialog.service';
@@ -36,20 +35,23 @@ export class GlobalTwoFactorAuthFormComponent implements OnInit {
   enableWarning: string = this.translate.instant('Once enabled, users will be required to set up two factor authentication next time they login.');
   protected readonly Role = Role;
 
+  protected twoFactorConfig: GlobalTwoFactorConfig;
+
   constructor(
     private fb: FormBuilder,
     private ws: WebSocketService,
     private errorHandler: ErrorHandlerService,
     private dialogService: DialogService,
-    private slideInRef: IxSlideInRef<GlobalTwoFactorAuthFormComponent>,
     private cdr: ChangeDetectorRef,
     private translate: TranslateService,
     private snackbar: SnackbarService,
     private authService: AuthService,
     private router: Router,
-    @Inject(SLIDE_IN_DATA) protected twoFactorConfig: GlobalTwoFactorConfig,
+    private chainedRef: ChainedRef<GlobalTwoFactorConfig>,
     @Inject(WINDOW) private window: Window,
-  ) {}
+  ) {
+    this.twoFactorConfig = this.chainedRef.getData();
+  }
 
   ngOnInit(): void {
     this.setupForm();
@@ -95,7 +97,7 @@ export class GlobalTwoFactorAuthFormComponent implements OnInit {
           this.router.navigate(['/two-factor-auth']);
         }
         this.cdr.markForCheck();
-        this.slideInRef.close(true);
+        this.chainedRef.close({ response: true, error: null });
       }),
       catchError((error) => {
         this.isFormLoading = false;
