@@ -36,7 +36,7 @@ import { WebSocketService } from 'app/services/ws.service';
 })
 export class IdmapListComponent implements OnInit {
   @Input() paginator = true;
-  @Input() toolbar = false;
+  @Input() inCard = false;
   filterString = '';
   dataProvider: AsyncDataProvider<IdmapRow>;
   idmaps: IdmapRow[] = [];

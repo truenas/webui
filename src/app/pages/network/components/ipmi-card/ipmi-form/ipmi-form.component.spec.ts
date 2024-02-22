@@ -69,7 +69,6 @@ describe('IpmiFormComponent', () => {
         mockCall('failover.node', 'A'),
         mockCall('ipmi.lan.query', (params) => {
           if (params?.length ? params[0]['ipmi-options']['query-remote'] : false) {
-            // TODO: Not correct. Figure out how to solve this for query endpoints.
             return [{
               channel: 1,
               ip_address_source: IpmiIpAddressSource.Static,

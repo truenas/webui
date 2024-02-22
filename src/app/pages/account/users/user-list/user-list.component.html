@@ -1,19 +1,17 @@
-<ng-template ixPageHeader>
-  <ix-page-title-header>
-    <ix-search-input (search)="onListFiltered($event)"></ix-search-input>
-    <mat-slide-toggle
-      color="primary"
-      ixTest="show-built-in-users"
-      [checked]="!hideBuiltinUsers"
-      (change)="toggleBuiltins()"
-    >
-      <label>{{ 'Show Built-in Users' | translate }}</label>
-    </mat-slide-toggle>
-    <button mat-button ixTest="add-user" [color]="'primary'" (click)="doAdd()">
-      {{ 'Add' | translate }}
-    </button>
-  </ix-page-title-header>
-</ng-template>
+<ix-page-header>
+  <ix-search-input (search)="onListFiltered($event)"></ix-search-input>
+  <mat-slide-toggle
+    color="primary"
+    ixTest="show-built-in-users"
+    [checked]="!hideBuiltinUsers"
+    (change)="toggleBuiltins()"
+  >
+    <label>{{ 'Show Built-in Users' | translate }}</label>
+  </mat-slide-toggle>
+  <button mat-button ixTest="add-user" [color]="'primary'" (click)="doAdd()">
+    {{ 'Add' | translate }}
+  </button>
+</ix-page-header>
 
 <div class="table-container">
   <ix-table2

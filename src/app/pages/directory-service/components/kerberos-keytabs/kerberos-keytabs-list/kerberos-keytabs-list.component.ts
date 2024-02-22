@@ -21,14 +21,14 @@ import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-kerberos-keytabs-list',
   templateUrl: './kerberos-keytabs-list.component.html',
   styleUrls: ['./kerberos-keytabs-list.component.scss'],
-  selector: 'ix-kerberos-keytabs-list',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class KerberosKeytabsListComponent implements OnInit {
   @Input() paginator = true;
-  @Input() toolbar = false;
+  @Input() inCard = false;
   filterString = '';
   dataProvider: AsyncDataProvider<KerberosKeytab>;
   kerberosRealsm: KerberosKeytab[] = [];

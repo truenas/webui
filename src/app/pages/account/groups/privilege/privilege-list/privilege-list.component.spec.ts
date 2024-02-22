@@ -9,6 +9,8 @@ import { Privilege } from 'app/interfaces/privilege.interface';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTable2Harness } from 'app/modules/ix-table2/components/ix-table2/ix-table2.harness';
 import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
+import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
+import { SearchInputModule } from 'app/modules/search-input/search-input.module';
 import { PrivilegeFormComponent } from 'app/pages/account/groups/privilege/privilege-form/privilege-form.component';
 import { PrivilegeListComponent } from 'app/pages/account/groups/privilege/privilege-list/privilege-list.component';
 import { DialogService } from 'app/services/dialog.service';
@@ -43,6 +45,8 @@ describe('PrivilegeListComponent', () => {
     component: PrivilegeListComponent,
     imports: [
       IxTable2Module,
+      PageHeaderModule,
+      SearchInputModule,
     ],
     providers: [
       mockWebSocket([

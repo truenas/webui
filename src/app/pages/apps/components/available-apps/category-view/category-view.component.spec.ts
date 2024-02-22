@@ -4,10 +4,14 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { ActivatedRoute } from '@angular/router';
 import { SpectatorRouting } from '@ngneat/spectator';
 import { createRoutingFactory, mockProvider } from '@ngneat/spectator/jest';
-import { MockComponent } from 'ng-mocks';
+import { MockComponent, MockModule } from 'ng-mocks';
 import { of } from 'rxjs';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
+import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
 import { AppCardComponent } from 'app/pages/apps/components/available-apps/app-card/app-card.component';
+import {
+  CustomAppButtonComponent,
+} from 'app/pages/apps/components/available-apps/custom-app-button/custom-app-button.component';
 import { AppsFilterStore } from 'app/pages/apps/store/apps-filter-store.service';
 import { AppsStore } from 'app/pages/apps/store/apps-store.service';
 import { KubernetesStore } from 'app/pages/apps/store/kubernetes-store.service';
@@ -20,8 +24,13 @@ describe('CategoryViewComponent', () => {
 
   const createComponent = createRoutingFactory({
     component: CategoryViewComponent,
-    imports: [],
-    declarations: [MockComponent(AppCardComponent)],
+    imports: [
+      MockModule(PageHeaderModule),
+    ],
+    declarations: [
+      MockComponent(AppCardComponent),
+      MockComponent(CustomAppButtonComponent),
+    ],
     providers: [
       mockProvider(ActivatedRoute, {
         snapshot: { params: { category: 'new-and-updated' } },
