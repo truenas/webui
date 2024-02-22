@@ -587,6 +587,7 @@ describe('Redirect to install app', () => {
     imports: [
       NgxSkeletonLoaderModule,
       AppCatalogPipe,
+      MockModule(PageHeaderModule),
     ],
     declarations: [
       AppDetailsHeaderComponent,
