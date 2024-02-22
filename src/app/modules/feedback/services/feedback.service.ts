@@ -14,6 +14,7 @@ import { TicketType } from 'app/enums/file-ticket.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { helptextSystemSupport } from 'app/helptext/system/support';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FileReviewComponent } from 'app/modules/feedback/components/file-review/file-review.component';
 import { FileTicketComponent } from 'app/modules/feedback/components/file-ticket/file-ticket.component';
 import { FileTicketLicensedComponent } from 'app/modules/feedback/components/file-ticket-licensed/file-ticket-licensed.component';
@@ -26,7 +27,6 @@ import {
   SimilarIssue,
 } from 'app/modules/feedback/interfaces/file-ticket.interface';
 import { SnackbarComponent } from 'app/modules/snackbar/components/snackbar/snackbar.component';
-import { DialogService } from 'app/services/dialog.service';
 import { IxFileUploadService } from 'app/services/ix-file-upload.service';
 import { SentryService } from 'app/services/sentry.service';
 import { SystemGeneralService } from 'app/services/system-general.service';

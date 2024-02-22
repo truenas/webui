@@ -20,14 +20,14 @@ import { TranslateModule } from '@ngx-translate/core';
 import { CoreComponents } from 'app/core/core-components.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { CastModule } from 'app/modules/cast/cast.module';
-import { AppCommonModule } from 'app/modules/common/app-common.module';
-import { NgxDualListboxModule } from 'app/modules/common/dual-list/dual-list.module';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
 import { LayoutModule } from 'app/modules/layout/layout.module';
+import { DualListModule } from 'app/modules/lists/dual-list/dual-list.module';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
+import { SearchInput1Component } from 'app/modules/search-input1/search-input1.component';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
 import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
 import { IscsiCardComponent } from 'app/pages/sharing/components/shares-dashboard/iscsi-card/iscsi-card.component';
@@ -72,7 +72,6 @@ import { SmbStatusComponent } from './smb/smb-status/smb-status.component';
 
 @NgModule({
   imports: [
-    AppCommonModule,
     CommonModule,
     ReactiveFormsModule,
     routing,
@@ -97,13 +96,14 @@ import { SmbStatusComponent } from './smb/smb-status/smb-status.component';
     IxFormsModule,
     TestIdModule,
     MatStepperModule,
-    NgxDualListboxModule,
+    DualListModule,
     IxTable2Module,
     MatToolbarModule,
     CoreComponents,
     LayoutModule,
     MatExpansionModule,
     MatButtonToggleModule,
+    SearchInput1Component,
   ],
   declarations: [
     NfsListComponent,

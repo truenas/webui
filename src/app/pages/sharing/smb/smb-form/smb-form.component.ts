@@ -37,6 +37,7 @@ import {
   SmbShare,
 } from 'app/interfaces/smb-share.interface';
 import { WebSocketError } from 'app/interfaces/websocket-error.interface';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ChipsProvider } from 'app/modules/ix-forms/components/ix-chips/chips-provider';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
@@ -46,7 +47,6 @@ import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { RestartSmbDialogComponent } from 'app/pages/sharing/smb/smb-form/restart-smb-dialog/restart-smb-dialog.component';
 import { SmbValidationService } from 'app/pages/sharing/smb/smb-form/smb-validator.service';
-import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { UserService } from 'app/services/user.service';

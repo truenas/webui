@@ -3,19 +3,17 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatDialog } from '@angular/material/dialog';
 import { MatMenuHarness } from '@angular/material/menu/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { MockModule } from 'ng-mocks';
 import { of } from 'rxjs';
 import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-datetime.pipe';
 import { MockWebSocketService } from 'app/core/testing/classes/mock-websocket.service';
 import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
-import { AppCommonModule } from 'app/modules/common/app-common.module';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxEmptyRowHarness } from 'app/modules/ix-tables/components/ix-empty-row/ix-empty-row.component.harness';
 import { IxTableModule } from 'app/modules/ix-tables/ix-table.module';
 import { IxTableHarness } from 'app/modules/ix-tables/testing/ix-table.harness';
 import { ApiKeyFormDialogComponent } from 'app/pages/api-keys/components/api-key-form-dialog/api-key-form-dialog.component';
 import { ApiKeyListComponent } from 'app/pages/api-keys/components/api-key-list/api-key-list.component';
 import { ApiKeyComponentStore, ApiKeysState } from 'app/pages/api-keys/store/api-key.store';
-import { DialogService } from 'app/services/dialog.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 describe('ApiKeyListComponent', () => {
@@ -26,7 +24,6 @@ describe('ApiKeyListComponent', () => {
   const createComponent = createComponentFactory({
     component: ApiKeyListComponent,
     imports: [
-      MockModule(AppCommonModule),
       IxTableModule,
     ],
     declarations: [

@@ -5,8 +5,8 @@ import { TranslateService } from '@ngx-translate/core';
 import { filter } from 'rxjs/operators';
 import { Role } from 'app/enums/role.enum';
 import { helptextTopbar } from 'app/helptext/topbar';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { AuthService } from 'app/services/auth/auth.service';
-import { DialogService } from 'app/services/dialog.service';
 import { WebSocketConnectionService } from 'app/services/websocket-connection.service';
 
 @UntilDestroy()

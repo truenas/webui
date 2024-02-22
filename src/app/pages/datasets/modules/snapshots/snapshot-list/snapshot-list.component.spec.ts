@@ -9,7 +9,7 @@ import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-dat
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { Preferences } from 'app/interfaces/preferences.interface';
-import { AppCommonModule } from 'app/modules/common/app-common.module';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFileSizePipe } from 'app/modules/ix-file-size/ix-file-size.pipe';
 import { IxEmptyRowHarness } from 'app/modules/ix-tables/components/ix-empty-row/ix-empty-row.component.harness';
 import { IxTableModule } from 'app/modules/ix-tables/ix-table.module';
@@ -21,7 +21,6 @@ import {
   selectSnapshots, selectSnapshotState, selectSnapshotsTotal,
 } from 'app/pages/datasets/modules/snapshots/store/snapshot.selectors';
 import { fakeZfsSnapshotDataSource } from 'app/pages/datasets/modules/snapshots/testing/snapshot-fake-datasource';
-import { DialogService } from 'app/services/dialog.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { AppState } from 'app/store';
 import { selectPreferences } from 'app/store/preferences/preferences.selectors';

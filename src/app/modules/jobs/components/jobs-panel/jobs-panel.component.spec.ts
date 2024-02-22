@@ -11,13 +11,13 @@ import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-dat
 import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { JobState } from 'app/enums/job-state.enum';
 import { Job } from 'app/interfaces/job.interface';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { JobItemComponent } from 'app/modules/jobs/components/job-item/job-item.component';
 import { JobsPanelComponent } from 'app/modules/jobs/components/jobs-panel/jobs-panel.component';
 import { JobsPanelPageObject } from 'app/modules/jobs/components/jobs-panel/jobs-panel.page-object';
 import { JobEffects } from 'app/modules/jobs/store/job.effects';
 import { jobReducer, adapter, jobsInitialState } from 'app/modules/jobs/store/job.reducer';
 import { jobStateKey } from 'app/modules/jobs/store/job.selectors';
-import { DialogService } from 'app/services/dialog.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
 

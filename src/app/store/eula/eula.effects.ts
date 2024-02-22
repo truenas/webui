@@ -7,8 +7,8 @@ import {
 } from 'rxjs/operators';
 import { Role } from 'app/enums/role.enum';
 import { filterAsync } from 'app/helpers/operators/filter-async.operator';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { AuthService } from 'app/services/auth/auth.service';
-import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { WebSocketService } from 'app/services/ws.service';

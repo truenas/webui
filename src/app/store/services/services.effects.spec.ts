@@ -10,8 +10,8 @@ import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { ApiEvent } from 'app/interfaces/api-message.interface';
 import { Service } from 'app/interfaces/service.interface';
-import { StartServiceDialogComponent, StartServiceDialogResult } from 'app/modules/common/dialog/start-service-dialog/start-service-dialog.component';
-import { DialogService } from 'app/services/dialog.service';
+import { StartServiceDialogComponent, StartServiceDialogResult } from 'app/modules/dialog/components/start-service-dialog/start-service-dialog.component';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
 import {

@@ -5,12 +5,12 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { CertificateCreateType } from 'app/enums/certificate-create-type.enum';
 import { CertificateProfile } from 'app/interfaces/certificate.interface';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import {
   CertificateIdentifierAndTypeComponent,
 } from 'app/pages/credentials/certificates-dash/forms/certificate-add/steps/certificate-identifier-and-type/certificate-identifier-and-type.component';
-import { DialogService } from 'app/services/dialog.service';
 
 describe('CertificateIdentifierAndTypeComponent', () => {
   let spectator: Spectator<CertificateIdentifierAndTypeComponent>;

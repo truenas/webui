@@ -9,16 +9,16 @@ import { MockModule } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockWebSocket, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
-import { AppCommonModule } from 'app/modules/common/app-common.module';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ChainedRef } from 'app/modules/ix-forms/components/ix-slide-in/chained-component-ref';
 import { IxTable2Harness } from 'app/modules/ix-table2/components/ix-table2/ix-table2.harness';
 import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
+import { SearchInput1Component } from 'app/modules/search-input1/search-input1.component';
 import { CronDeleteDialogComponent } from 'app/pages/system/advanced/cron/cron-delete-dialog/cron-delete-dialog.component';
 import { CronFormComponent } from 'app/pages/system/advanced/cron/cron-form/cron-form.component';
 import { CronListComponent } from 'app/pages/system/advanced/cron/cron-list/cron-list.component';
-import { DialogService } from 'app/services/dialog.service';
 import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 import { LocaleService } from 'app/services/locale.service';
 import { TaskService } from 'app/services/task.service';
@@ -55,7 +55,7 @@ describe('CronListComponent', () => {
       AppLoaderModule,
       IxTable2Module,
       MockModule(PageHeaderModule),
-      MockModule(AppCommonModule),
+      SearchInput1Component,
     ],
     providers: [
       provideMockStore({

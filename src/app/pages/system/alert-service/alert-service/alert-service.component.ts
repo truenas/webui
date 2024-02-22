@@ -17,6 +17,7 @@ import { Role } from 'app/enums/role.enum';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextAlertService } from 'app/helptext/system/alert-service';
 import { AlertService, AlertServiceEdit } from 'app/interfaces/alert-service.interface';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
@@ -52,7 +53,6 @@ import {
 import {
   VictorOpsServiceComponent,
 } from 'app/pages/system/alert-service/alert-service/alert-services/victor-ops-service/victor-ops-service.component';
-import { DialogService } from 'app/services/dialog.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()

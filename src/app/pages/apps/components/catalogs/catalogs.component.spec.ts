@@ -7,12 +7,12 @@ import { CoreComponents } from 'app/core/core-components.module';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { Catalog, CatalogTrain } from 'app/interfaces/catalog.interface';
-import { AppCommonModule } from 'app/modules/common/app-common.module';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxTable2Harness } from 'app/modules/ix-table2/components/ix-table2/ix-table2.harness';
 import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
 import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
+import { SearchInput1Component } from 'app/modules/search-input1/search-input1.component';
 import { CatalogsComponent } from 'app/pages/apps/components/catalogs/catalogs.component';
-import { DialogService } from 'app/services/dialog.service';
 
 const fakeCatalogDataSource: Catalog[] = [
   {
@@ -51,7 +51,7 @@ describe('CatalogsComponent', () => {
       CoreComponents,
       IxTable2Module,
       MockModule(PageHeaderModule),
-      MockModule(AppCommonModule),
+      SearchInput1Component,
     ],
     declarations: [],
     providers: [

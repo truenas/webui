@@ -8,12 +8,12 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { UUID } from 'angular2-uuid';
 import { combineLatest, map, Subscription } from 'rxjs';
 import { WebSocketError } from 'app/interfaces/websocket-error.interface';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import {
   LogsDialogFormValue,
   PodSelectLogsDialogComponent,
 } from 'app/pages/apps/components/pod-select-logs/pod-select-logs-dialog.component';
-import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { ShellService } from 'app/services/shell.service';
 import { StorageService } from 'app/services/storage.service';

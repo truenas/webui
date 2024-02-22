@@ -6,14 +6,15 @@ import { MockComponent, MockModule } from 'ng-mocks';
 import { Role } from 'app/enums/role.enum';
 import { Group } from 'app/interfaces/group.interface';
 import { Preferences } from 'app/interfaces/preferences.interface';
-import { AppCommonModule } from 'app/modules/common/app-common.module';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxTable2Harness } from 'app/modules/ix-table2/components/ix-table2/ix-table2.harness';
 import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
+import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
+import { SearchInput1Component } from 'app/modules/search-input1/search-input1.component';
 import { GroupDetailsRowComponent } from 'app/pages/account/groups/group-details-row/group-details-row.component';
 import { GroupListComponent } from 'app/pages/account/groups/group-list/group-list.component';
 import { groupsInitialState, GroupsState } from 'app/pages/account/groups/store/group.reducer';
 import { selectGroups, selectGroupState, selectGroupsTotal } from 'app/pages/account/groups/store/group.selectors';
-import { DialogService } from 'app/services/dialog.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { selectPreferences } from 'app/store/preferences/preferences.selectors';
 
@@ -46,7 +47,8 @@ describe('GroupListComponent', () => {
     component: GroupListComponent,
     imports: [
       IxTable2Module,
-      MockModule(AppCommonModule),
+      MockModule(PageHeaderModule),
+      SearchInput1Component,
     ],
     declarations: [
       MockComponent(GroupDetailsRowComponent),

@@ -18,6 +18,7 @@ import { DiskType } from 'app/enums/disk-type.enum';
 import { CreateVdevLayout, VdevType } from 'app/enums/v-dev-type.enum';
 import { Enclosure } from 'app/interfaces/enclosure.interface';
 import { UnusedDisk } from 'app/interfaces/storage.interface';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ManualDiskSelectionComponent, ManualDiskSelectionParams } from 'app/pages/storage/modules/pool-manager/components/manual-disk-selection/manual-disk-selection.component';
 import {
   DispersalStrategy,
@@ -32,7 +33,6 @@ import {
   topologyCategoryToDisks,
   topologyToDisks,
 } from 'app/pages/storage/modules/pool-manager/utils/topology.utils';
-import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';

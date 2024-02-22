@@ -14,9 +14,10 @@ import { VmDeviceType, VmNicType, VmOs } from 'app/enums/vm.enum';
 import { VirtualMachine, VirtualMachineUpdate } from 'app/interfaces/virtual-machine.interface';
 import { VmDevice, VmDeviceUpdate } from 'app/interfaces/vm-device.interface';
 import { WebSocketError } from 'app/interfaces/websocket-error.interface';
-import { SummarySection } from 'app/modules/common/summary/summary.interface';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { SummarySection } from 'app/modules/summary/summary.interface';
 import { VmGpuService } from 'app/pages/vm/utils/vm-gpu.service';
 import { OsStepComponent } from 'app/pages/vm/vm-wizard/steps/1-os-step/os-step.component';
 import {
@@ -30,7 +31,6 @@ import {
   InstallationMediaStepComponent,
 } from 'app/pages/vm/vm-wizard/steps/5-installation-media-step/installation-media-step.component';
 import { GpuStepComponent } from 'app/pages/vm/vm-wizard/steps/6-gpu-step/gpu-step.component';
-import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { GpuService } from 'app/services/gpu/gpu.service';
 import { WebSocketService } from 'app/services/ws.service';

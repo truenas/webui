@@ -6,7 +6,7 @@ import { PoolScanState } from 'app/enums/pool-scan-state.enum';
 import { helptextTopbar } from 'app/helptext/topbar';
 import {
   ResilverProgressDialogComponent,
-} from 'app/modules/common/dialog/resilver-progress/resilver-progress.component';
+} from 'app/modules/layout/components/topbar/resilvering-indicator/resilver-progress/resilver-progress.component';
 import { WebSocketService } from 'app/services/ws.service';
 
 @Component({

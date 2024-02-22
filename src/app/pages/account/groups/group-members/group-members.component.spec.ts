@@ -9,10 +9,10 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { Group } from 'app/interfaces/group.interface';
 import { User } from 'app/interfaces/user.interface';
-import { DualListboxComponent } from 'app/modules/common/dual-list/dual-list.component';
-import { NgxDualListboxModule } from 'app/modules/common/dual-list/dual-list.module';
+import { DialogService } from 'app/modules/dialog/dialog.service';
+import { DualListboxComponent } from 'app/modules/lists/dual-list/dual-list.component';
+import { DualListModule } from 'app/modules/lists/dual-list/dual-list.module';
 import { GroupMembersComponent } from 'app/pages/account/groups/group-members/group-members.component';
-import { DialogService } from 'app/services/dialog.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 const fakeGroupDataSource = [{
@@ -32,7 +32,7 @@ describe('GroupMembersComponent', () => {
     component: GroupMembersComponent,
     imports: [
       ReactiveFormsModule,
-      NgxDualListboxModule,
+      DualListModule,
     ],
     declarations: [DualListboxComponent],
     providers: [
