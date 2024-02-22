@@ -2,12 +2,15 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { SpectatorRouting } from '@ngneat/spectator';
 import { mockProvider, createRoutingFactory } from '@ngneat/spectator/jest';
+import { MockModule } from 'ng-mocks';
 import { CoreComponents } from 'app/core/core-components.module';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { Catalog, CatalogTrain } from 'app/interfaces/catalog.interface';
+import { AppCommonModule } from 'app/modules/common/app-common.module';
 import { IxTable2Harness } from 'app/modules/ix-table2/components/ix-table2/ix-table2.harness';
 import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
+import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
 import { CatalogsComponent } from 'app/pages/apps/components/catalogs/catalogs.component';
 import { DialogService } from 'app/services/dialog.service';
 
@@ -44,7 +47,12 @@ describe('CatalogsComponent', () => {
 
   const createComponent = createRoutingFactory({
     component: CatalogsComponent,
-    imports: [CoreComponents, IxTable2Module],
+    imports: [
+      CoreComponents,
+      IxTable2Module,
+      MockModule(PageHeaderModule),
+      MockModule(AppCommonModule),
+    ],
     declarations: [],
     providers: [
       mockProvider(DialogService),

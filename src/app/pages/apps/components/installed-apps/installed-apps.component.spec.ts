@@ -653,6 +653,7 @@ describe('Install app', () => {
       IxFormsModule,
       ReactiveFormsModule,
       IxDynamicFormModule,
+      MockModule(PageHeaderModule),
     ],
     providers: [
       KubernetesStore,
