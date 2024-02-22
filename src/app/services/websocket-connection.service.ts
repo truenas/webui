@@ -86,6 +86,7 @@ export class WebSocketConnectionService {
     // At least one explicit subscription required to keep the connection open
     this.ws$.pipe(
       tap((response: IncomingWebSocketMessage) => {
+        console.info('RECEIVED', JSON.stringify(response));
         if (response.msg === IncomingApiMessageType.Connected) {
           this.isConnected$.next(true);
         }
@@ -173,6 +174,7 @@ export class WebSocketConnectionService {
   }
 
   send(payload: unknown): void {
+    console.info('SENT', JSON.stringify(payload));
     if (this.isConnectionReady) {
       this.ws$.next(payload);
     } else {
