@@ -1,4 +1,4 @@
-<ix-page-header>
+<ix-page-header *ngIf="!inCard">
   <ix-search-input (search)="onListFiltered($event)"></ix-search-input>
   <button mat-button color="primary" ixTest="add-kerberos-realms" (click)="doAdd()">
     {{ 'Add' | translate }}
@@ -6,7 +6,7 @@
 </ix-page-header>
 
 <div class="table-container">
-  <mat-toolbar *ngIf="toolbar" class="table-header">
+  <mat-toolbar *ngIf="inCard" class="table-header">
     <div class="heading" [routerLink]="['/', 'directoryservice', 'kerberosrealms']">
       <h3>{{ 'Kerberos Realms' | translate }}</h3>
       <ix-icon name="open_in_new"></ix-icon>
