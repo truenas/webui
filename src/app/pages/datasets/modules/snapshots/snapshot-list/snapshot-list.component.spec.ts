@@ -9,11 +9,13 @@ import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-dat
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { Preferences } from 'app/interfaces/preferences.interface';
+import { AppCommonModule } from 'app/modules/common/app-common.module';
 import { IxFileSizePipe } from 'app/modules/ix-file-size/ix-file-size.pipe';
 import { IxEmptyRowHarness } from 'app/modules/ix-tables/components/ix-empty-row/ix-empty-row.component.harness';
 import { IxTableModule } from 'app/modules/ix-tables/ix-table.module';
 import { IxTableHarness } from 'app/modules/ix-tables/testing/ix-table.harness';
 import { LayoutModule } from 'app/modules/layout/layout.module';
+import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
 import { snapshotsInitialState, SnapshotsState } from 'app/pages/datasets/modules/snapshots/store/snapshot.reducer';
 import {
   selectSnapshots, selectSnapshotState, selectSnapshotsTotal,
@@ -37,6 +39,8 @@ describe('SnapshotListComponent', () => {
       CoreComponents,
       IxTableModule,
       MockModule(LayoutModule),
+      MockModule(PageHeaderModule),
+      AppCommonModule,
     ],
     declarations: [
       FakeFormatDateTimePipe,

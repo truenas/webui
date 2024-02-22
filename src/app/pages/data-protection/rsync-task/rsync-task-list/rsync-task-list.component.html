@@ -1,13 +1,11 @@
-<ng-template ixPageHeader>
-  <ix-page-title-header>
-    <ix-search-input [value]="filterString" (search)="filterUpdated($event)"></ix-search-input>
-    <ix-table-columns-selector [columns]="columns" (columnsChange)="columnsChange($event)"></ix-table-columns-selector>
+<ix-page-header>
+  <ix-search-input [value]="filterString" (search)="filterUpdated($event)"></ix-search-input>
+  <ix-table-columns-selector [columns]="columns" (columnsChange)="columnsChange($event)"></ix-table-columns-selector>
 
-    <button *ixRequiresRoles="requiredRoles" mat-button color="primary" ixTest="add-task" (click)="add()">
-      {{ 'Add' | translate }}
-    </button>
-  </ix-page-title-header>
-</ng-template>
+  <button *ixRequiresRoles="requiredRoles" mat-button color="primary" ixTest="add-task" (click)="add()">
+    {{ 'Add' | translate }}
+  </button>
+</ix-page-header>
 
 <ix-table2
   class="table"

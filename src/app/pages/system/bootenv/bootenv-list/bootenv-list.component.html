@@ -1,25 +1,23 @@
-<ng-template ixPageHeader>
-  <ix-page-title-header>
-    <ix-search-input (search)="onSearch($event)"></ix-search-input>
+<ix-page-header>
+  <ix-search-input (search)="onSearch($event)"></ix-search-input>
 
-    <button *ixRequiresRoles="[Role.FullAdmin]" mat-button ixTest="bootenv-stats" (click)="openBootenvStats()">
-      {{ 'Stats/Settings' | translate }}
-    </button>
+  <button *ixRequiresRoles="[Role.FullAdmin]" mat-button ixTest="bootenv-stats" (click)="openBootenvStats()">
+    {{ 'Stats/Settings' | translate }}
+  </button>
 
-    <button mat-button ixTest="bootenv-status" [routerLink]="['/', 'system', 'boot', 'status']">
-      {{ 'Boot Pool Status' | translate }}
-    </button>
+  <button mat-button ixTest="bootenv-status" [routerLink]="['/', 'system', 'boot', 'status']">
+    {{ 'Boot Pool Status' | translate }}
+  </button>
 
-    <button
-      *ixRequiresRoles="[Role.FullAdmin]"
-      mat-button
-      ixTest="bootenv-scrub"
-      (click)="doScrub()"
-    >
-      {{ 'Scrub Boot Pool' | translate }}
-    </button>
-  </ix-page-title-header>
-</ng-template>
+  <button
+    *ixRequiresRoles="[Role.FullAdmin]"
+    mat-button
+    ixTest="bootenv-scrub"
+    (click)="doScrub()"
+  >
+    {{ 'Scrub Boot Pool' | translate }}
+  </button>
+</ix-page-header>
 
 <div
   *ngIf="checkboxColumn?.selection.selected.length"

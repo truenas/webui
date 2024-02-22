@@ -1,6 +1,5 @@
-<ng-template ixPageHeader>
-  <ix-page-title-header [pageTitle]="pageTitle$ | async"></ix-page-title-header>
-</ng-template>
+<ix-page-header [pageTitle]="pageTitle$ | async"></ix-page-header>
+
 <ng-container *ngIf="appsLoaded">
   <div class="wizard-container">
     <div class="mini-search-card">

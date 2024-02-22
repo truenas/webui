@@ -12,7 +12,9 @@ export interface RoutePart {
   isNew?: boolean;
 }
 
-@Injectable()
+@Injectable({
+  providedIn: 'root',
+})
 export class RoutePartsService {
   private fullRouteParts: RoutePart[] | null;
 

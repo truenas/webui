@@ -1,10 +1,8 @@
-<ng-template ixPageHeader>
-  <ix-page-title-header>
-    <ix-reports-global-controls
-      (diskOptionsChanged)="buildDiskReport($event)"
-    ></ix-reports-global-controls>
-  </ix-page-title-header>
-</ng-template>
+<ix-page-header class="page-header">
+  <ix-reports-global-controls
+    (diskOptionsChanged)="buildDiskReport($event)"
+  ></ix-reports-global-controls>
+</ix-page-header>
 
 <div
   *ngIf="visibleReports?.length && activeReports; else initialLoader"

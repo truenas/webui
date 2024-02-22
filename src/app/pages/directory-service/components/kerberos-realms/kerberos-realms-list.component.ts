@@ -31,7 +31,7 @@ import { WebSocketService } from 'app/services/ws.service';
 })
 export class KerberosRealmsListComponent implements OnInit {
   @Input() paginator = true;
-  @Input() toolbar = false;
+  @Input() inCard = false;
 
   readonly requiredRoles = [Role.DirectoryServiceWrite];
 

@@ -1,44 +1,42 @@
-<ng-template ixPageHeader>
-  <ix-page-title-header *ngIf="screenType === ScreenType.Desktop">
-    <ng-container *ngIf="isLoaded">
-      <button
-        mat-button
-        ixTest="configure-dashboard"
-        [color]="'primary'"
-        (click)="showConfigForm()"
-      >
-        {{ 'Configure' | translate }}
-      </button>
-      <button
-        *ngIf="reorderMode"
-        mat-button
-        ixTest="cancel-reorder"
-        (click)="onCancel()"
-      >
-        {{ 'Cancel' | translate }}
-      </button>
-      <button
-        *ngIf="reorderMode"
-        mat-button
-        color="primary"
-        ixTest="save-new-order"
-        [disabled]="isSavingState"
-        (click)="onConfirm()"
-      >
-        {{ 'Save' | translate }}
-      </button>
-      <button
-        *ngIf="!reorderMode && !isEmpty"
-        mat-button
-        color="primary"
-        ixTest="start-reorder"
-        (click)="onEnter()"
-      >
-        {{ 'Reorder' | translate }}
-      </button>
-    </ng-container>
-  </ix-page-title-header>
-</ng-template>
+<ix-page-header *ngIf="screenType === ScreenType.Desktop">
+  <ng-container *ngIf="isLoaded">
+    <button
+      mat-button
+      ixTest="configure-dashboard"
+      [color]="'primary'"
+      (click)="showConfigForm()"
+    >
+      {{ 'Configure' | translate }}
+    </button>
+    <button
+      *ngIf="reorderMode"
+      mat-button
+      ixTest="cancel-reorder"
+      (click)="onCancel()"
+    >
+      {{ 'Cancel' | translate }}
+    </button>
+    <button
+      *ngIf="reorderMode"
+      mat-button
+      color="primary"
+      ixTest="save-new-order"
+      [disabled]="isSavingState"
+      (click)="onConfirm()"
+    >
+      {{ 'Save' | translate }}
+    </button>
+    <button
+      *ngIf="!reorderMode && !isEmpty"
+      mat-button
+      color="primary"
+      ixTest="start-reorder"
+      (click)="onEnter()"
+    >
+      {{ 'Reorder' | translate }}
+    </button>
+  </ng-container>
+</ix-page-header>
 
 <div class="widgets-wrapper-container" (window:resize)="onMobileResize($event)">
   <div

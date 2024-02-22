@@ -1,16 +1,14 @@
-<ng-template ixPageHeader>
-  <ix-page-title-header>
-    <button
-      *ixRequiresRoles="requiredRoles"
-      mat-button
-      ixTest="add-init-shutdown-script"
-      color="primary"
-      (click)="addScript()"
-    >
-      {{ 'Add' | translate }}
-    </button>
-  </ix-page-title-header>
-</ng-template>
+<ix-page-header>
+  <button
+    *ixRequiresRoles="requiredRoles"
+    mat-button
+    ixTest="add-init-shutdown-script"
+    color="primary"
+    (click)="addScript()"
+  >
+    {{ 'Add' | translate }}
+  </button>
+</ix-page-header>
 
 <div class="table-container">
   <ix-table2

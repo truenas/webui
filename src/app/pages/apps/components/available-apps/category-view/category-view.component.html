@@ -1,11 +1,9 @@
-<ng-template ixPageHeader>
-  <ix-page-title-header
-    [pageTitle]="pageTitle$ | async | titlecase | translate"
-    [loading]="isLoading$ | async"
-  >
-    <ix-custom-app-button></ix-custom-app-button>
-  </ix-page-title-header>
-</ng-template>
+<ix-page-header
+  [pageTitle]="pageTitle$ | async | titlecase | translate"
+  [loading]="isLoading$ | async"
+>
+  <ix-custom-app-button></ix-custom-app-button>
+</ix-page-header>
 
 <ng-container *ngIf="isLoading$ | async; else categoryLoaded">
   <ngx-skeleton-loader

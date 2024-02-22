@@ -1,52 +1,43 @@
-<ng-template ixPageHeader>
-  <ix-page-title-header>
-    <button *ixRequiresRoles="requiredRoles" mat-button ixTest="import-pool" (click)="onImportPool()">
-      {{ 'Import Pool' | translate }}
-    </button>
+<ix-page-header>
+  <button *ixRequiresRoles="requiredRoles" mat-button ixTest="import-pool" (click)="onImportPool()">
+    {{ 'Import Pool' | translate }}
+  </button>
 
-    <a mat-button ixTest="disks" [routerLink]="['/storage', 'disks']">
-      {{ 'Disks' | translate }}
-    </a>
+  <a mat-button ixTest="disks" [routerLink]="['/storage', 'disks']">
+    {{ 'Disks' | translate }}
+  </a>
 
-    <a
-      *ixRequiresRoles="requiredRoles"
-      mat-button color="primary"
-      ixTest="create-pool"
-      [routerLink]="['/storage', 'create']"
-    >
-      {{ 'Create Pool' | translate }}
-    </a>
-  </ix-page-title-header>
-</ng-template>
-
-<ng-container *ngIf="arePoolsLoading$ | async">
-  <div fxFlex="100%" fxLayout="column">
-    <ix-dashboard-pool
-      class="pool"
-      [isLoading]="true"
-    ></ix-dashboard-pool>
-
-    <ix-dashboard-pool
-      class="pool"
-      [isLoading]="true"
-    ></ix-dashboard-pool>
-  </div>
-</ng-container>
-
-<ng-container *ngIf="isEmptyPools && !(arePoolsLoading$ | async)">
-  <div
-    class="entity-empty-wrapper"
-    fxFlex="100%"
-    fxLayout="row"
-    fxLayoutAlign="center center"
-    fxLayoutGap="32px"
+  <a
+    *ixRequiresRoles="requiredRoles"
+    mat-button
+    color="primary"
+    ixTest="create-pool"
+    [routerLink]="['/storage', 'create']"
   >
-    <ix-entity-empty [conf]="entityEmptyConf"></ix-entity-empty>
-  </div>
-</ng-container>
+    {{ 'Create Pool' | translate }}
+  </a>
+</ix-page-header>
 
-<ng-container *ngIf="!isEmptyPools && !(arePoolsLoading$ | async)">
-  <div fxFlex="100%" fxLayout="column">
+<div>
+  <ng-container *ngIf="arePoolsLoading$ | async">
+    <ix-dashboard-pool
+      class="pool"
+      [isLoading]="true"
+    ></ix-dashboard-pool>
+
+    <ix-dashboard-pool
+      class="pool"
+      [isLoading]="true"
+    ></ix-dashboard-pool>
+  </ng-container>
+
+  <ng-container *ngIf="isEmptyPools && !(arePoolsLoading$ | async)">
+    <div class="entity-empty-wrapper">
+      <ix-entity-empty [conf]="entityEmptyConf"></ix-entity-empty>
+    </div>
+  </ng-container>
+
+  <ng-container *ngIf="!isEmptyPools && !(arePoolsLoading$ | async)">
     <ix-unused-resources
       *ngIf="!isEmptyPools"
       [pools]="pools$ | async"
@@ -60,5 +51,5 @@
       [isLoading]="areDisksLoading$ | async"
       [rootDataset]="rootDatasets[pool.name]"
     ></ix-dashboard-pool>
-  </div>
-</ng-container>
+  </ng-container>
+</div>
