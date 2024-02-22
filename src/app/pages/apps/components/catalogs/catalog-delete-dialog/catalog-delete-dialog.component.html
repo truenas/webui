@@ -2,7 +2,7 @@
 <div mat-dialog-content>
   <p class="message" [innerHtml]="deleteMessage | translate: { name: catalog.label }"></p>
 </div>
-<div mat-dialog-actions class="buttons">
+<ix-form-actions mat-dialog-actions class="form-actions">
   <button mat-button ixTest="cancel" [matDialogClose]="false">{{ 'Cancel' | translate }}</button>
   <button
     *ixRequiresRoles="requiredRoles"
@@ -13,4 +13,4 @@
   >
     {{ 'Delete' | translate }}
   </button>
-</div>
+</ix-form-actions>

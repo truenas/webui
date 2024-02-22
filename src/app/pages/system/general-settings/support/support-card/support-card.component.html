@@ -46,6 +46,7 @@
           </div>
           <div *ngIf="hasLicense">
             <mat-checkbox
+              *ixRequiresRoles="requiredRoles"
               color="primary"
               ixTest="production-system"
               [(ngModel)]="isProduction"

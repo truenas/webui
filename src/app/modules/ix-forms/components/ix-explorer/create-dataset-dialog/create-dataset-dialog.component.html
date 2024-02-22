@@ -11,7 +11,7 @@
     ></ix-input>
   </form>
 </div>
-<div mat-dialog-actions class="buttons">
+<ix-form-actions mat-dialog-actions class="form-actions">
   <button mat-button matDialogClose ixTest="cancel">{{ 'Cancel' | translate }}</button>
   <button
     *ixRequiresRoles="requiredRoles"
@@ -23,4 +23,4 @@
   >
     {{ 'Create' | translate }}
   </button>
-</div>
+</ix-form-actions>

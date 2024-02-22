@@ -21,7 +21,7 @@
     </ix-fieldset>
   </div>
 
-  <div mat-dialog-actions>
+  <ix-form-actions mat-dialog-actions class="form-actions">
     <button mat-button type="button" ixTest="cancel" [matDialogClose]="false">
       {{ 'Skip' | translate }}
     </button>
@@ -36,5 +36,5 @@
     >
       {{ 'Register' | translate }}
     </button>
-  </div>
+  </ix-form-actions>
 </form>

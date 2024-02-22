@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy } from '@ngneat/until-destroy';
-import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { Role } from 'app/enums/role.enum';
 
 export interface SetProductionStatusDialogResult {
   sendInitialDebug: boolean;
@@ -15,10 +15,11 @@ export interface SetProductionStatusDialogResult {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SetProductionStatusDialogComponent {
+  readonly requiredRoles = [Role.FullAdmin];
+
   sendInitialDebugCheckbox = new FormControl(false);
 
   constructor(
-    private loader: AppLoaderService,
     private dialogRef: MatDialogRef<SetProductionStatusDialogComponent, SetProductionStatusDialogResult>,
   ) { }
 
