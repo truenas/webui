@@ -314,10 +314,10 @@ export class MockEnclosure {
     return (this.data.elements[0] as EnclosureElementsGroup).elements;
   }
 
-  getSlotByDiskName(diskName: string): number | null {
-    const enclosureElement: EnclosureElement = this.getSlots()
+  getSlotByDiskName(diskName: string): number | undefined {
+    const enclosureElement: EnclosureElement | undefined = this.getSlots()
       .find((element: EnclosureElement) => element.data.Device === diskName);
-    return enclosureElement.slot;
+    return enclosureElement?.slot;
   }
 
   getPopulatedSlots(): EnclosureElement[] {

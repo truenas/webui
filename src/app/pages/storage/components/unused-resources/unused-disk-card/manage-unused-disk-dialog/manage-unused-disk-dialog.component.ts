@@ -41,10 +41,10 @@ export class ManageUnusedDiskDialogComponent implements OnInit {
   form = this.fb.group({
     toPool: [AddToPoolType.New],
     pool: [
-      null as number,
+      null as number | null,
       [
         this.validatorsService.validateOnCondition(
-          (control: AbstractControl) => control.parent?.get('toPool').value === AddToPoolType.Existing,
+          (control: AbstractControl) => control.parent?.get('toPool')?.value === AddToPoolType.Existing,
           Validators.required,
         ),
       ],
