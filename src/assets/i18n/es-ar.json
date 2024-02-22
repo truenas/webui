@@ -1885,6 +1885,7 @@
   "When replicated snapshots are deleted  from the destination system:<ul>  <li><i>Same as Source</i>: use the <b>Snapshot Lifetime</b>  from the source periodic snapshot task.</li>  <li><i>Custom</i>: define a <b>Snapshot Lifetime</b> for the  destination system.</li>  <li><i>None</i>: never delete snapshots from the destination  system.</li>": "",
   "When this checkbox is checked, domain is inherited from DHCP.": "",
   "Widget data is not available": "",
+  "Widgets ({n} items)": "",
   "Width": "",
   "Will be automatically destroyed at {datetime} by periodic snapshot task": "",
   "Will not be destroyed automatically": "",

@@ -43,17 +43,13 @@
 <div class="widgets-wrapper-container" (window:resize)="onMobileResize($event)">
   <div
     *ngIf="screenType === ScreenType.Desktop && isLoaded && isEmpty"
-    class="widgets-wrapper"
-    fxLayout="column"
-    fxLayoutAlign="center center"
+    class="widgets-wrapper empty"
   >
     <ix-entity-empty [conf]="emptyDashConf"></ix-entity-empty>
   </div>
 
   <div
     class="widgets-wrapper"
-    fxLayout="row wrap"
-    fxLayoutGap="grid 4px"
     ixDropGrid
     [style.width]="optimalDesktopWidth"
     [ixDropGridModel]="renderedWidgets"
@@ -63,7 +59,7 @@
     <ng-container *ngIf="!isLoaded && screenType === ScreenType.Desktop">
       <div *ngFor="let _ of [1,2,3,4,5,6]">
         <div class="widget placeholder">
-          <div class="card-container front">
+          <div class="card-container">
             <mat-card [class.loading]="true"></mat-card>
           </div>
         </div>
@@ -81,9 +77,7 @@
             <ix-widget-sysinfo
               *ngSwitchCase="WidgetType.SystemInformation"
               id="active"
-              fxFlex.xs="100"
               ixDrag
-              [fxFlex]="widgetWidth + 'px'"
               [isPassive]="false"
               [showReorderHandle]="reorderMode"
             >
@@ -93,9 +87,7 @@
             <ix-widget-sysinfo
               *ngSwitchCase="WidgetType.SystemInformationStandby"
               id="passive"
-              fxFlex.xs="100"
               ixDrag
-              [fxFlex]="widgetWidth + 'px'"
               [isPassive]="true"
               [showReorderHandle]="reorderMode"
             >
@@ -112,18 +104,14 @@
 
             <ix-widget-cpu
               *ngSwitchCase="WidgetType.Cpu"
-              fxFlex.xs="100"
               ixDrag
-              [fxFlex]="widgetWidth + 'px'"
               [showReorderHandle]="reorderMode"
               ><span ixDragHandle></span
             ></ix-widget-cpu>
 
             <ix-widget-memory
               *ngSwitchCase="WidgetType.Memory"
-              fxFlex.xs="100"
               ixDrag
-              [fxFlex]="widgetWidth + 'px'"
               [showReorderHandle]="reorderMode"
             >
               <span ixDragHandle></span>
@@ -131,8 +119,6 @@
 
             <ix-widget-pool-wrapper
               *ngSwitchCase="WidgetType.Pool"
-              fxFlex.xs="100"
-              [fxFlex]="widgetWidth + 'px'"
               [pool]="(widget.identifier.split(',')[1]).split(':')[1]"
               [showReorderHandle]="reorderMode"
             >
@@ -140,9 +126,7 @@
 
             <ix-widget-storage
               *ngSwitchCase="WidgetType.Storage"
-              fxFlex.xs="100"
               ixDrag
-              [fxFlex]="widgetWidth + 'px'"
               [showReorderHandle]="reorderMode"
             >
               <span ixDragHandle></span>
@@ -150,10 +134,8 @@
 
             <ix-widget-nic
               *ngSwitchCase="WidgetType.Interface"
-              fxFlex.xs="100"
               ixDrag
               [nic]="widget.identifier.split(',')[1]"
-              [fxFlex]="widgetWidth + 'px'"
               [showReorderHandle]="reorderMode"
             >
               <span ixDragHandle></span>
@@ -161,9 +143,7 @@
 
             <ix-widget-network
               *ngSwitchCase="WidgetType.Network"
-              fxFlex.xs="100"
               ixDrag
-              [fxFlex]="widgetWidth + 'px'"
               [showReorderHandle]="reorderMode"
             >
               <span ixDragHandle></span>
@@ -171,9 +151,7 @@
 
             <ix-widget-backup
               *ngSwitchCase="WidgetType.Backup"
-              fxFlex.xs="100"
               ixDrag
-              [fxFlex]="widgetWidth + 'px'"
               [showReorderHandle]="reorderMode"
             >
               <span ixDragHandle></span>
@@ -243,8 +221,6 @@
 
             <ix-widget-storage
               *ngSwitchCase="WidgetType.Storage"
-              fxFlex.xs="100"
-              [fxFlex]="widgetWidth + 'px'"
               (back)="onMobileBack()"
             ></ix-widget-storage>
 

@@ -50,7 +50,15 @@
 }
 
 .widgets-wrapper {
+  box-sizing: border-box;
+  display: flex;
+  flex-flow: wrap;
   margin: 0 auto;
+
+  &.empty {
+    flex-direction: column;
+    place-content: center center;
+  }
 }
 
 .widgets-wrapper > * {

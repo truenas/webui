@@ -17,23 +17,32 @@
 }
 
 .line-item {
+  display: flex;
+  flex-direction: row;
   margin: 20px;
-}
 
-.line-item .ix-icon {
-  font-size: 2.5rem;
-  height: 2.5rem;
-  width: 2.5rem;
-}
+  div {
+    align-items: center;
+  }
 
-.line-item div {
-  align-items: center;
-}
+  .icon-wrapper {
+    flex: 1 1 100%;
+    max-width: 10%;
 
-.medium-font {
-  font-size: 1rem;
-  padding: 0 15px;
-  text-align: left;
+    .ix-icon {
+      font-size: 2.5rem;
+      height: 2.5rem;
+      width: 2.5rem;
+    }
+  }
+
+  .helptext {
+    flex: 1 1 100%;
+    font-size: 1rem;
+    max-width: 90%;
+    padding: 0 15px;
+    text-align: left;
+  }
 }
 
 #open-source {

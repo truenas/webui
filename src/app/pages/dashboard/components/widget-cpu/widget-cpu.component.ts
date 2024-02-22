@@ -1,8 +1,8 @@
+import { BreakpointObserver, Breakpoints, BreakpointState } from '@angular/cdk/layout';
 import { DOCUMENT } from '@angular/common';
 import {
   Component, AfterViewInit, ElementRef, ChangeDetectionStrategy, ChangeDetectorRef, Inject,
 } from '@angular/core';
-import { MediaObserver } from '@angular/flex-layout';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
@@ -73,9 +73,17 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
   protected currentTheme: Theme;
   private utils: ThemeUtils;
 
+  get isDesktop(): boolean {
+    return this.screenType === ScreenType.Desktop;
+  }
+
+  get isMobile(): boolean {
+    return this.screenType === ScreenType.Mobile;
+  }
+
   constructor(
     public translate: TranslateService,
-    public mediaObserver: MediaObserver,
+    private breakpointObserver: BreakpointObserver,
     private el: ElementRef<HTMLElement>,
     public themeService: ThemeService,
     private store$: Store<AppState>,
@@ -104,27 +112,32 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
       },
     });
 
-    mediaObserver.asObservable().pipe(untilDestroyed(this)).subscribe((changes) => {
-      const size = {
-        width: changes[0].mqAlias === 'xs' ? 320 : 536,
-        height: 140,
-      };
+    this.breakpointObserver
+      .observe([Breakpoints.XSmall])
+      .pipe(untilDestroyed(this))
+      .subscribe((state: BreakpointState) => {
+        const size = {
+          width: state.matches ? 320 : 536,
+          height: 140,
+        };
 
-      const currentScreenType = changes[0].mqAlias === 'xs' ? ScreenType.Mobile : ScreenType.Desktop;
+        const currentScreenType = state.matches ? ScreenType.Mobile : ScreenType.Desktop;
 
-      if (this.chart && this.screenType !== currentScreenType) {
-        this.chart.resize(size.width, size.height);
-      }
+        if (this.chart && this.screenType !== currentScreenType) {
+          this.chart.resize(size.width, size.height);
+        }
 
-      this.screenType = currentScreenType;
-    });
+        this.screenType = currentScreenType;
+      });
 
-    this.store$.pipe(waitForSystemInfo, untilDestroyed(this)).subscribe((sysInfo) => {
-      this.cpuModel = sysInfo.model;
-      this.threadCount = sysInfo.cores;
-      this.coreCount = sysInfo.physical_cores;
-      this.hyperthread = this.threadCount !== this.coreCount;
-    });
+    this.store$
+      .pipe(waitForSystemInfo, untilDestroyed(this))
+      .subscribe((sysInfo) => {
+        this.cpuModel = sysInfo.model;
+        this.threadCount = sysInfo.cores;
+        this.coreCount = sysInfo.physical_cores;
+        this.hyperthread = this.threadCount !== this.coreCount;
+      });
   }
 
   ngAfterViewInit(): void {

@@ -1,11 +1,6 @@
 <div class="widget stats-widget" ngClass.xs="double-height xs">
-  <div class="card-container front">
-    <mat-card
-      class="front"
-      fxLayout="row"
-      fxLayoutWrap
-      fxLayoutAlign="space-between stretch"
-    >
+  <div class="card-container">
+    <mat-card class="front">
       <mat-card-content>
         <ix-drag-handle [showReorderHandle]="showReorderHandle">
           <ng-content [select]="[cdkDragHandle]"></ng-content>
@@ -13,14 +8,13 @@
           <mat-toolbar-row>
             <!-- Mobile Only: Exit widget -->
             <button
-              *ngIf="screenType === ScreenType.Mobile"
               class="mat-card-title-text primary-nav"
               mat-icon-button
               color="default"
               ixTest="cpu-back"
               (click)="goBack()"
             >
-              <ix-icon name="chevron_left" class="back-arrow"></ix-icon>
+              <ix-icon name="chevron_left"></ix-icon>
             </button>
 
             <h3 class="mat-card-title-text">
@@ -40,8 +34,8 @@
               >
                 <ix-icon
                   name="insert_chart"
-                  aria-label="CPU Reports"
                   matTooltipPosition="above"
+                  [attr.aria-label]="'CPU Reports' | translate"
                   [matTooltip]="'CPU Reports' | translate"
                 ></ix-icon>
               </a>
@@ -49,18 +43,13 @@
           </mat-toolbar-row>
         </ix-drag-handle>
 
-        <div *ngIf="screenType === ScreenType.Desktop" class="cpu-model top">
+        <div *ngIf="isDesktop" class="cpu-model top">
           {{ cpuModel ? cpuModel : ('Unknown CPU' | translate) }}
         </div>
 
         <!-- Chart -->
-        <div
-          id="cpu-load-wrapper"
-          fxLayout="row wrap"
-          fxLayoutAlign="space-around center"
-          [class.mobile]="screenType === ScreenType.Mobile"
-        >
-          <div class="viewchartgauge" fxFlex="47" fxFlex.xs="100">
+        <div class="cpu-load-wrapper" [class.mobile]="isMobile">
+          <div class="viewchartgauge">
             <ix-view-chart-gauge
               *ngIf="isCpuAvgReady; else loader"
               [config]="cpuAvg"
@@ -71,13 +60,7 @@
             <mat-spinner class="spinner" [diameter]="40"></mat-spinner>
           </ng-template>
 
-          <div
-            *ngIf="screenType === ScreenType.Desktop"
-            fxFlex="53"
-            fxFlex.xs="100"
-            id="cpu-load-cores"
-            class="no-flicker"
-          >
+          <div *ngIf="isDesktop" class="cpu-load-cores no-flicker">
             <mat-list>
               <mat-list-item>
                 <span class="label">
@@ -93,7 +76,7 @@
               </mat-list-item>
               <mat-list-item>
                 <span class="label">
-                  <strong> {{ 'Highest Usage' | translate }}: </strong>
+                  <strong>{{ 'Highest Usage' | translate }}: </strong>
                 </span>
 
                 <ng-container *ngIf="usageMax || usageMax === 0; else noDataProvided">
@@ -118,7 +101,8 @@
                 <div
                   *ngIf="tempMax >= 70"
                   class="label-icon"
-                  [ngClass]="{ warn: tempMax < 80, danger: tempMax > 79 }"
+                  [class.warn]="tempMax < 80"
+                  [class.danger]="tempMax > 79"
                 >
                   <ix-icon name="mdi-alert"></ix-icon>
                 </div>
@@ -147,12 +131,8 @@
           </div>
         </div>
 
-        <div
-          *ngIf="screenType === ScreenType.Mobile"
-          fxLayout="column"
-          class="mobile no-flicker"
-        >
-          <div fxFlex="65" class="bottom">
+        <div *ngIf="isMobile" class="mobile no-flicker">
+          <div class="bottom">
             <div class="list-subheader">
               <span class="capitalize">{{ 'CPU Details' | translate }}</span>
             </div>
@@ -177,12 +157,8 @@
           </div>
         </div>
 
-        <div
-          *ngIf="screenType === ScreenType.Mobile"
-          fxLayout="column"
-          class="mobile no-flicker"
-        >
-          <div fxFlex="65" class="bottom">
+        <div *ngIf="isMobile" class="mobile no-flicker">
+          <div class="bottom">
             <div class="list-subheader">
               <span class="capitalize">
                 {{ 'Stats Per Thread' | translate }}
@@ -262,53 +238,29 @@
         </div>
 
         <!-- Start Cores Wrapper -->
-        <div id="cpu-cores-wrapper" class="bar-chart-wrapper" fxLayout="column">
-          <div
-            fxFlex="100"
-            id="cpu-load-cores-legend"
-            fxLayout="row wrap"
-            [ngClass]="{ mobile: screenType === ScreenType.Desktop }"
-          >
+        <div class="cpu-cores-wrapper bar-chart-wrapper">
+          <div class="cpu-load-cores-legend" [class.mobile]="isMobile">
             <div
-              *ngIf="legendData && screenType === ScreenType.Desktop; else noLegend"
-              id="cpu-load-cores-legend-values"
-              fxFlex
-              fxLayout="row wrap"
-              fxLayoutAlign="space-around center"
+              *ngIf="legendData && isDesktop; else noLegend"
+              class="cpu-load-cores-legend-values"
             >
-              <div
-                *ngIf="screenType === ScreenType.Desktop"
-                fxFlex="23"
-                fxFlex.xs="calc(100% - 16px)"
-                class="legend-item core-number"
-              >
+              <div *ngIf="isDesktop" class="legend-item core-number">
                 <span class="label">{{ 'Thread:' | translate }}</span>
                 {{ legendIndex }}
               </div>
 
-              <div
-                fxFlex="22"
-                fxFlex.xs="calc(50% - 16px)"
-                class="legend-item usage"
-              >
+              <div class="legend-item usage">
                 <div class="legend-swatch primary"></div>
                 <span class="label">{{ legendData[0].label }}:</span>
                 {{ legendData[0].data[legendIndex] }}%
               </div>
 
               <ng-container *ngIf="tempMin && tempMax">
-                <div
-                  *ngIf="legendData[1]"
-                  fxFlex="32"
-                  fxFlex.xs="calc(50% - 16px)"
-                  class="legend-item temperature"
-                >
+                <div *ngIf="legendData[1]" class="legend-item temperature">
                   <div
                     class="legend-swatch"
-                    [ngClass]="{
-                      defaultTheme: themeService.isDefaultTheme,
-                      nonDefaultTheme: !themeService.isDefaultTheme
-                    }"
+                    [class.defaultTheme]="themeService.isDefaultTheme"
+                    [class.nonDefaultTheme]="!themeService.isDefaultTheme"
                   ></div>
                   <span class="label">{{ legendData[1].label }}:</span>
                   {{ legendData[1].data[legendIndex] }}°C
@@ -318,41 +270,22 @@
           </div>
 
           <ng-template #noLegend>
-            <div
-              id="cpu-load-cores-legend-values"
-              fxFlex
-              fxLayout="row wrap"
-              fxLayoutAlign="space-around center"
-            >
-              <div
-                fxFlex="23"
-                fxFlex.xs="calc(100% - 16px)"
-                class="legend-item core-number"
-              >
+            <div class="cpu-load-cores-legend-values">
+              <div class="legend-item core-number">
                 <span class="label">{{ 'Stats Per Thread' | translate }}</span>
               </div>
 
-              <div
-                fxFlex="22"
-                fxFlex.xs="calc(50% - 16px)"
-                class="legend-item usage"
-              >
+              <div class="legend-item usage">
                 <div class="legend-swatch primary"></div>
                 <span class="label">{{ 'Usage' | translate }}</span>
               </div>
 
               <ng-container *ngIf="usageMin && usageMax">
-                <div
-                  fxFlex="32"
-                  fxFlex.xs="calc(50% - 16px)"
-                  class="legend-item temperature"
-                >
+                <div class="legend-item temperature">
                   <div
                     class="legend-swatch"
-                    [ngClass]="{
-                      defaultTheme: themeService.isDefaultTheme,
-                      nonDefaultTheme: !themeService.isDefaultTheme
-                    }"
+                    [class.defaultTheme]="themeService.isDefaultTheme"
+                    [class.nonDefaultTheme]="!themeService.isDefaultTheme"
                   ></div>
                   <span class="label">{{ 'Temperature' | translate }}</span>
                 </div>
@@ -360,7 +293,7 @@
             </div>
           </ng-template>
 
-          <div fxFlex="104px" id="cpu-cores-chart" class="bar-chart">
+          <div id="cpu-cores-chart" class="bar-chart">
             <canvas></canvas>
           </div>
         </div>
