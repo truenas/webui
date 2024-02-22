@@ -65,6 +65,7 @@ export class CertificateSigningRequestsListComponent implements OnInit {
         {
           iconName: 'build',
           tooltip: this.translate.instant('Create ACME Certificate'),
+          requiredRoles: this.requiredRoles,
           onClick: (row) => this.doCreateAcmeCert(row),
         },
         {
