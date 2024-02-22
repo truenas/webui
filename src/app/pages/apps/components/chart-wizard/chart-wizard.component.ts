@@ -46,7 +46,7 @@ import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-erro
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { forbiddenAsyncValues, forbiddenValuesError } from 'app/modules/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
-import { DockerHubRateInfoDialogComponent } from 'app/pages/apps/components/dockerhub-rate-limit-info.dialog.ts/dockerhub-rate-limit-info-dialog.component';
+import { DockerHubRateInfoDialogComponent } from 'app/pages/apps/components/dockerhub-rate-limit-info-dialog/dockerhub-rate-limit-info-dialog.component';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { KubernetesStore } from 'app/pages/apps/store/kubernetes-store.service';
 import { DialogService } from 'app/services/dialog.service';
