@@ -35,8 +35,9 @@ import { selectService } from 'app/store/services/services.selectors';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SmbListComponent implements OnInit {
-  service$ = this.store$.select(selectService(ServiceName.Cifs));
   readonly requiredRoles = [Role.SharingSmbWrite, Role.SharingWrite];
+
+  service$ = this.store$.select(selectService(ServiceName.Cifs));
 
   filterString = '';
   dataProvider: AsyncDataProvider<SmbShare>;

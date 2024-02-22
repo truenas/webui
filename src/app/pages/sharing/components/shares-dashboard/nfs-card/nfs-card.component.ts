@@ -31,8 +31,9 @@ import { selectService } from 'app/store/services/services.selectors';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class NfsCardComponent implements OnInit {
-  service$ = this.store$.select(selectService(ServiceName.Nfs));
   requiredRoles = [Role.SharingNfsWrite, Role.SharingWrite];
+
+  service$ = this.store$.select(selectService(ServiceName.Nfs));
 
   nfsShares: NfsShare[] = [];
   dataProvider: AsyncDataProvider<NfsShare>;

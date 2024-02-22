@@ -44,6 +44,8 @@ import { WebSocketService } from 'app/services/ws.service';
 export class DatasetQuotasUserlistComponent implements OnInit, OnDestroy {
   @ViewChild(MatSort, { static: false }) sort: MatSort;
 
+  readonly requiredRoles = [Role.DatasetWrite];
+
   datasetId: string;
   dataSource = new MatTableDataSource<DatasetQuota>([]);
   invalidQuotas: DatasetQuota[] = [];
@@ -60,8 +62,6 @@ export class DatasetQuotasUserlistComponent implements OnInit, OnDestroy {
   get emptyConfigService(): EmptyService {
     return this.emptyService;
   }
-
-  protected readonly Role = Role;
 
   constructor(
     protected ws: WebSocketService,

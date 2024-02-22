@@ -15,6 +15,7 @@
 <mat-dialog-actions align="end">
   <button mat-button ixTest="do-not-restart" [mat-dialog-close]="false">{{ 'No' | translate }}</button>
   <button
+    *ixRequiresRoles="requiredRoles"
     mat-button
     cdkFocusInitial
     color="primary"

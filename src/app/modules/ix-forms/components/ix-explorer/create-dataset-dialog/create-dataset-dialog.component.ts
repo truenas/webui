@@ -7,6 +7,7 @@ import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { BehaviorSubject } from 'rxjs';
 import { DatasetCaseSensitivity } from 'app/enums/dataset.enum';
+import { Role } from 'app/enums/role.enum';
 import { Dataset, DatasetCreate } from 'app/interfaces/dataset.interface';
 import { forbiddenValues } from 'app/modules/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
 import { datasetNameTooLong } from 'app/pages/datasets/components/dataset-form/utils/name-length-validation';
@@ -22,6 +23,8 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CreateDatasetDialogComponent implements OnInit {
+  readonly requiredRoles = [Role.DatasetWrite];
+
   isLoading$ = new BehaviorSubject(false);
   form = this.fb.group({
     name: ['', [

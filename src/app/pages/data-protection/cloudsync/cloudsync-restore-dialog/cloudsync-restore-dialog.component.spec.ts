@@ -4,6 +4,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { TransferMode } from 'app/enums/transfer-mode.enum';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
@@ -31,6 +32,7 @@ describe('CloudSyncRestoreDialogComponent', () => {
       TransferModeExplanationComponent,
     ],
     providers: [
+      mockAuth(),
       mockWebSocket([
         mockCall('cloudsync.restore'),
       ]),

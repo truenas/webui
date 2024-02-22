@@ -35,6 +35,8 @@ import { CatalogEditFormComponent } from './catalog-edit-form/catalog-edit-form.
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CatalogsComponent implements OnInit {
+  protected readonly requiredRoles = [Role.CatalogWrite];
+
   catalogSyncJobIds = new Set<number>();
   dataProvider: AsyncDataProvider<Catalog>;
   catalogs: Catalog[] = [];
@@ -63,8 +65,6 @@ export class CatalogsComponent implements OnInit {
   ], {
     rowTestId: (row) => 'catalog-' + row.label,
   });
-
-  protected readonly requiredRoles = [Role.CatalogWrite];
 
   constructor(
     private matDialog: MatDialog,

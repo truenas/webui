@@ -63,6 +63,7 @@
             [class.btn-fixed]="!isProductImageRack"
           >
             <button
+              *ixRequiresRoles="requiredRoles"
               id="update-license-btn"
               mat-button
               color="default"
@@ -95,6 +96,7 @@
                   <span>{{ ticketText | translate }}</span>
                 </button>
                 <button
+                  *ixRequiresRoles="requiredRoles"
                   id="proactiveSupport"
                   mat-menu-item
                   ixTest="proactive-support"
@@ -114,16 +116,18 @@
               >
                 {{ ticketText | translate }}
               </button>
-              <button
-                *ngIf="hasLicense"
-                id="proactive-btn"
-                mat-button
-                color="default"
-                ixTest="proactive-support"
-                (click)="openProactive()"
-              >
-                {{ proactiveText | translate }}
-              </button>
+              <ng-container *ixRequiresRoles="requiredRoles">
+                <button
+                  *ngIf="hasLicense"
+                  id="proactive-btn"
+                  mat-button
+                  color="default"
+                  ixTest="proactive-support"
+                  (click)="openProactive()"
+                >
+                  {{ proactiveText | translate }}
+                </button>
+              </ng-container>
             </ng-template>
           </div>
         </div>

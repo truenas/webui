@@ -12,12 +12,12 @@
         {{ 'Upgrade' | translate }}
       </button>
 
-      <button mat-button [ixTest]="['export', pool.name]" (click)="onExport()">
+      <button *ixRequiresRoles="requiredRoles" mat-button [ixTest]="['export', pool.name]" (click)="onExport()">
         {{ 'Export/Disconnect' | translate }}
       </button>
 
       <button
-        *ixRequiresRoles="[Role.FullAdmin]"
+        *ixRequiresRoles="requiredRoles"
         mat-button
         [ixTest]="['expand', pool.name]"
         (click)="onExpand()"

@@ -4,6 +4,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { IxInputHarness } from 'app/modules/ix-forms/components/ix-input/ix-input.harness';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
@@ -23,6 +24,7 @@ describe('SnapshotCloneDialogComponent', () => {
       IxFormsModule,
     ],
     providers: [
+      mockAuth(),
       {
         provide: MAT_DIALOG_DATA,
         useValue: 'my-snapshot',

@@ -67,7 +67,13 @@
                 [tooltip]="helptext.mac_tooltip | translate"
               ></ix-input>
 
-              <button type="button" mat-button ixTest="generate" (click)="generateMacAddress()">
+              <button
+                *ixRequiresRoles="requiredRoles"
+                type="button"
+                mat-button
+                ixTest="generate"
+                (click)="generateMacAddress()"
+              >
                 {{ 'Generate' | translate }}
               </button>
             </div>

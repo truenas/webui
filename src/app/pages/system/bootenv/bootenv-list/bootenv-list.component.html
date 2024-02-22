@@ -2,7 +2,7 @@
   <ix-page-title-header>
     <ix-search-input (search)="onSearch($event)"></ix-search-input>
 
-    <button mat-button ixTest="bootenv-stats" (click)="openBootenvStats()">
+    <button *ixRequiresRoles="[Role.FullAdmin]" mat-button ixTest="bootenv-stats" (click)="openBootenvStats()">
       {{ 'Stats/Settings' | translate }}
     </button>
 

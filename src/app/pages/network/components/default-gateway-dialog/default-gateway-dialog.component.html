@@ -26,7 +26,14 @@
       {{ 'Skip' | translate }}
     </button>
 
-    <button mat-button type="submit" color="primary" ixTest="register" [disabled]="form.invalid">
+    <button
+      *ixRequiresRoles="requiredRoles"
+      mat-button
+      type="submit"
+      color="primary"
+      ixTest="register"
+      [disabled]="form.invalid"
+    >
       {{ 'Register' | translate }}
     </button>
   </div>

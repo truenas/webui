@@ -21,6 +21,7 @@
   >{{ 'No' | translate }}</button>
 
   <button
+    *ixRequiresRoles="requiredRoles"
     mat-button
     color="primary"
     ixTest="enable-service"

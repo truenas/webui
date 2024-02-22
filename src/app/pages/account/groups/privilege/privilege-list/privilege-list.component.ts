@@ -34,6 +34,8 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PrivilegeListComponent implements OnInit {
+  protected requiredRoles = [Role.FullAdmin];
+
   protected dataProvider: ApiDataProvider<'privilege.query'>;
   protected readonly advancedSearchPlaceholder = this.translate.instant('Name ^ "Local" AND "Web Shell Access" = true');
   protected searchProperties: SearchProperty<Privilege>[] = [];
@@ -76,7 +78,7 @@ export class PrivilegeListComponent implements OnInit {
           tooltip: this.translate.instant('Delete'),
           onClick: (row) => this.doDelete(row),
           hidden: (row) => of(!!row.builtin_name),
-          requiredRoles: [Role.FullAdmin],
+          requiredRoles: this.requiredRoles,
         },
       ],
     }),

@@ -6,6 +6,7 @@
       <ix-search-input [value]="filterString" (search)="filterUpdated($event)"></ix-search-input>
       <ix-table-columns-selector [columns]="columns" (columnsChange)="columnsChange($event)"></ix-table-columns-selector>
       <button
+        *ixRequiresRoles="requiredRoles"
         mat-button
         [ixTest]="['alert-service', 'add']"
         [color]="'primary'"

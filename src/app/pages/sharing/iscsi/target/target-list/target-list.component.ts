@@ -26,6 +26,12 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TargetListComponent implements OnInit {
+  readonly requiredRoles = [
+    Role.SharingIscsiTargetWrite,
+    Role.SharingIscsiWrite,
+    Role.SharingWrite,
+  ];
+
   dataProvider: AsyncDataProvider<IscsiTarget>;
   filterString = '';
   targets: IscsiTarget[] = [];
@@ -84,11 +90,7 @@ export class TargetListComponent implements OnInit {
               },
             );
           },
-          requiredRoles: [
-            Role.SharingIscsiTargetWrite,
-            Role.SharingIscsiWrite,
-            Role.SharingWrite,
-          ],
+          requiredRoles: this.requiredRoles,
         },
       ],
     }),

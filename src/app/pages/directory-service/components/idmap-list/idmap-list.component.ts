@@ -37,6 +37,9 @@ import { WebSocketService } from 'app/services/ws.service';
 export class IdmapListComponent implements OnInit {
   @Input() paginator = true;
   @Input() toolbar = false;
+
+  readonly requiredRoles = [Role.DirectoryServiceWrite];
+
   filterString = '';
   dataProvider: AsyncDataProvider<IdmapRow>;
   idmaps: IdmapRow[] = [];
@@ -88,7 +91,7 @@ export class IdmapListComponent implements OnInit {
           iconName: 'delete',
           hidden: (row) => of(requiredIdmapDomains.includes(row.name as IdmapName)),
           tooltip: this.translateService.instant('Delete'),
-          requiredRoles: [Role.DirectoryServiceWrite],
+          requiredRoles: this.requiredRoles,
           onClick: (row) => {
             this.dialogService.confirm({
               title: this.translateService.instant('Confirm'),

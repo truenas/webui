@@ -9,6 +9,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { filter } from 'rxjs/operators';
 import { EmptyType } from 'app/enums/empty-type.enum';
+import { Role } from 'app/enums/role.enum';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { Pool } from 'app/interfaces/pool.interface';
@@ -24,6 +25,8 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PoolsDashboardComponent implements OnInit {
+  readonly requiredRoles = [Role.FullAdmin];
+
   pools$ = this.store.pools$;
   allDisksByPool: Record<string, StorageDashboardDisk[]> = {};
   disks$ = this.store.disks$;

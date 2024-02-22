@@ -4,6 +4,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialog } from '@angular/material/dialog';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { Pool } from 'app/interfaces/pool.interface';
 import { UnusedDisk } from 'app/interfaces/storage.interface';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
@@ -39,6 +40,9 @@ describe('UnusedDiskCardComponent', () => {
           { devname: 'sdc', identifier: '{uuid}7ad07324-f0e9-49a4-a7a4-92edd82a4929', size: 123456789 },
         ] as UnusedDisk[],
       },
+      providers: [
+        mockAuth(),
+      ],
     });
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });

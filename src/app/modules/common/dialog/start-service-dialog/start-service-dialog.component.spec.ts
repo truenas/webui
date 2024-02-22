@@ -6,6 +6,7 @@ import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dial
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { Subject } from 'rxjs';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
@@ -37,6 +38,7 @@ describe('StartServiceDialogComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
+      mockAuth(),
       mockWebSocket([
         mockCall('service.update'),
         mockCall('service.start'),

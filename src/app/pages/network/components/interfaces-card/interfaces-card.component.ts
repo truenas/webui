@@ -48,6 +48,8 @@ export class InterfacesCardComponent implements OnInit, OnChanges {
   @Input() isHaEnabled = false;
   @Output() interfacesUpdated = new EventEmitter<void>();
 
+  readonly requiredRoles = [Role.NetworkInterfaceWrite];
+
   isHaEnabled$ = new BehaviorSubject(false);
 
   isLoading = false;
@@ -76,7 +78,7 @@ export class InterfacesCardComponent implements OnInit, OnChanges {
         },
         {
           iconName: 'refresh',
-          requiredRoles: [Role.NetworkInterfaceWrite],
+          requiredRoles: this.requiredRoles,
           hidden: (row) => of(!this.isPhysical(row)),
           disabled: () => this.isHaEnabled$,
           dynamicTooltip: () => this.isHaEnabled$.pipe(map((isHaEnabled) => (isHaEnabled
@@ -86,7 +88,7 @@ export class InterfacesCardComponent implements OnInit, OnChanges {
         },
         {
           iconName: 'delete',
-          requiredRoles: [Role.NetworkInterfaceWrite],
+          requiredRoles: this.requiredRoles,
           tooltip: this.isHaEnabled ? this.translate.instant(helptextInterfaces.ha_enabled_delete_msg) : '',
           hidden: (row) => of(this.isPhysical(row)),
           onClick: (row) => this.onDelete(row),
