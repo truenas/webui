@@ -5,6 +5,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { AutofocusDirective } from 'app/directives/common/autofocus/autofocus.directive';
 import { HasAccessDirective } from 'app/directives/common/has-access/has-access.directive';
 import { MissingAccessWrapperComponent } from 'app/directives/common/has-access/missing-access-wrapper.component';
+import { HasRoleDirective } from 'app/directives/common/has-role/has-role.directive';
 import { IfNightlyDirective } from 'app/directives/common/if-nightly/if-nightly.directive';
 import { NavigateAndInteractDirective } from 'app/directives/common/navigate-and-interact/navigate-and-interact.directive';
 import { RequiresRolesDirective } from 'app/directives/common/requires-roles/requires-roles.directive';
@@ -22,6 +23,7 @@ import { LetDirective } from './app-let.directive';
   declarations: [
     LetDirective,
     IfNightlyDirective,
+    HasRoleDirective,
     HasAccessDirective,
     MissingAccessWrapperComponent,
     RequiresRolesDirective,
@@ -32,6 +34,7 @@ import { LetDirective } from './app-let.directive';
   exports: [
     LetDirective,
     IfNightlyDirective,
+    HasRoleDirective,
     HasAccessDirective,
     MissingAccessWrapperComponent,
     RequiresRolesDirective,
