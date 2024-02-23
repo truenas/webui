@@ -21,13 +21,13 @@ import { ApiEvent } from 'app/interfaces/api-message.interface';
 import { PoolScrubTask } from 'app/interfaces/pool-scrub.interface';
 import { Pool, PoolScanUpdate } from 'app/interfaces/pool.interface';
 import { PoolScan } from 'app/interfaces/resilver-job.interface';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { PoolCardIconComponent } from 'app/pages/storage/components/dashboard-pool/pool-card-icon/pool-card-icon.component';
 import {
   AutotrimDialogComponent,
 } from 'app/pages/storage/components/dashboard-pool/zfs-health-card/autotrim-dialog/autotrim-dialog.component';
 import { ZfsHealthCardComponent } from 'app/pages/storage/components/dashboard-pool/zfs-health-card/zfs-health-card.component';
 import { PoolsDashboardStore } from 'app/pages/storage/stores/pools-dashboard-store.service';
-import { DialogService } from 'app/services/dialog.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 describe('ZfsHealthCardComponent', () => {

@@ -25,6 +25,7 @@ import { helptextSnapshots } from 'app/helptext/storage/snapshots/snapshots';
 import { ConfirmOptions } from 'app/interfaces/dialog.interface';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxCheckboxColumnComponent } from 'app/modules/ix-tables/components/ix-checkbox-column/ix-checkbox-column.component';
 import { IxDetailRowDirective } from 'app/modules/ix-tables/directives/ix-detail-row.directive';
 import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
@@ -32,7 +33,6 @@ import { SnapshotAddFormComponent } from 'app/pages/datasets/modules/snapshots/s
 import { SnapshotBatchDeleteDialogComponent } from 'app/pages/datasets/modules/snapshots/snapshot-batch-delete-dialog/snapshot-batch-delete-dialog.component';
 import { snapshotPageEntered } from 'app/pages/datasets/modules/snapshots/store/snapshot.actions';
 import { selectSnapshotsTotal, selectSnapshots, selectSnapshotState } from 'app/pages/datasets/modules/snapshots/store/snapshot.selectors';
-import { DialogService } from 'app/services/dialog.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { AppState } from 'app/store';
 import { snapshotExtraColumnsToggled } from 'app/store/preferences/preferences.actions';

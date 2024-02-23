@@ -14,6 +14,7 @@ import { helptextActiveDirectory } from 'app/helptext/directory-service/active-d
 import { ActiveDirectoryConfig } from 'app/interfaces/active-directory-config.interface';
 import { DirectoryServicesState } from 'app/interfaces/directory-services-state.interface';
 import { KerberosRealm } from 'app/interfaces/kerberos-realm.interface';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
@@ -25,7 +26,6 @@ import {
 import {
   LeaveDomainDialogComponent,
 } from 'app/pages/directory-service/components/leave-domain-dialog/leave-domain-dialog.component';
-import { DialogService } from 'app/services/dialog.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { WebSocketService } from 'app/services/ws.service';

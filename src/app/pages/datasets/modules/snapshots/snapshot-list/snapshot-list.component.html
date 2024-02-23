@@ -4,12 +4,12 @@
     : ('Snapshots' | translate)
   "
 >
-  <ix-search-input
+  <ix-search-input1
     #searchInput
     [disabled]="isLoading$ | async"
     [value]="datasetFilter"
     (search)="onSearch($event)"
-  ></ix-search-input>
+  ></ix-search-input1>
 
   <mat-spinner
     *ngIf="loadingExtraColumns; else slider"

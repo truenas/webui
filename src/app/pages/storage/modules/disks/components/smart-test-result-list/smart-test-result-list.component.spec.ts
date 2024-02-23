@@ -8,11 +8,11 @@ import { mockWebSocket, mockCall } from 'app/core/testing/utils/mock-websocket.u
 import { SmartTestResultStatus } from 'app/enums/smart-test-result-status.enum';
 import { SmartTestResults } from 'app/interfaces/smart-test.interface';
 import { Disk } from 'app/interfaces/storage.interface';
-import { AppCommonModule } from 'app/modules/common/app-common.module';
 import { IxTable2Harness } from 'app/modules/ix-table2/components/ix-table2/ix-table2.harness';
 import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
+import { SearchInput1Component } from 'app/modules/search-input1/search-input1.component';
 import { SmartTestResultListComponent } from 'app/pages/storage/modules/disks/components/smart-test-result-list/smart-test-result-list.component';
 
 describe('SmartTestResultListComponent', () => {
@@ -94,7 +94,7 @@ describe('SmartTestResultListComponent', () => {
       AppLoaderModule,
       IxTable2Module,
       MockModule(PageHeaderModule),
-      MockModule(AppCommonModule),
+      SearchInput1Component,
     ],
     providers: [
       mockAuth(),

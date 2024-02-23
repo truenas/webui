@@ -15,12 +15,12 @@ import { TopologyItemStatus } from 'app/enums/vdev-status.enum';
 import {
   Disk, TopologyDisk, VDev,
 } from 'app/interfaces/storage.interface';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import {
   ExtendDialogComponent,
 } from 'app/pages/storage/modules/devices/components/zfs-info-card/extend-dialog/extend-dialog.component';
 import { ZfsInfoCardComponent } from 'app/pages/storage/modules/devices/components/zfs-info-card/zfs-info-card.component';
 import { DevicesStore } from 'app/pages/storage/modules/devices/stores/devices-store.service';
-import { DialogService } from 'app/services/dialog.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 describe('ZfsInfoCardComponent', () => {

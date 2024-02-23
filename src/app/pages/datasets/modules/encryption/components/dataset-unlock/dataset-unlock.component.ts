@@ -18,10 +18,10 @@ import { DatasetUnlockParams, DatasetUnlockResult } from 'app/interfaces/dataset
 import { Job } from 'app/interfaces/job.interface';
 import { RadioOption } from 'app/interfaces/option.interface';
 import { WebSocketError } from 'app/interfaces/websocket-error.interface';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { UnlockSummaryDialogComponent } from 'app/pages/datasets/modules/encryption/components/unlock-summary-dialog/unlock-summary-dialog.component';
 import { AuthService } from 'app/services/auth/auth.service';
-import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 
 interface DatasetFormGroup {

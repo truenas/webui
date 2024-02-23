@@ -9,6 +9,7 @@ import { Role, roleNames } from 'app/enums/role.enum';
 import { ParamsBuilder } from 'app/helpers/params-builder/params-builder.class';
 import { Option } from 'app/interfaces/option.interface';
 import { Privilege } from 'app/interfaces/privilege.interface';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ApiDataProvider } from 'app/modules/ix-table2/classes/api-data-provider/api-data-provider';
 import { PaginationServerSide } from 'app/modules/ix-table2/classes/api-data-provider/pagination-server-side.class';
 import { SortingServerSide } from 'app/modules/ix-table2/classes/api-data-provider/sorting-server-side.class';
@@ -22,7 +23,6 @@ import { SearchProperty } from 'app/modules/search-input/types/search-property.i
 import { AdvancedSearchQuery, SearchQuery } from 'app/modules/search-input/types/search-query.interface';
 import { booleanProperty, searchProperties, textProperty } from 'app/modules/search-input/utils/search-properties.utils';
 import { PrivilegeFormComponent } from 'app/pages/account/groups/privilege/privilege-form/privilege-form.component';
-import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';

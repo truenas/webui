@@ -14,10 +14,15 @@
   display: flex;
   gap: 3px;
   margin-left: 10px;
-  margin-top: 5px;
 
   @media(max-width: $breakpoint-sm) {
     display: none;
+  }
+
+  ix-icon {
+    font-size: 24px;
+    height: 24px;
+    width: 24px;
   }
 
   .healthy {
@@ -77,8 +82,25 @@ mat-grid-tile {
   }
 
   .tile {
+    align-items: stretch;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    max-width: 100%;
+    min-height: 100%;
+    min-width: 100%;
+    place-content: stretch flex-start;
+    width: 100%;
+
     .tile-content {
+      align-items: center;
+      box-sizing: border-box;
+      display: flex;
+      flex: 1 1 1e-9px;
+      flex-direction: row;
       font-size: 12px;
+      place-content: center space-between;
 
       .divider {
         background-color: var(--lines);
@@ -87,9 +109,20 @@ mat-grid-tile {
         width: 1px;
       }
 
+      ul {
+        box-sizing: border-box;
+        display: flex;
+        flex: 1 1 100%;
+        flex-direction: column;
+      }
+
       li {
+        box-sizing: border-box;
+        display: flex;
+        flex-direction: row;
         line-height: 20px;
         overflow: hidden;
+        text-align: left;
         white-space: nowrap;
 
         .label {
@@ -172,4 +205,8 @@ mat-grid-tile {
 
 .xs.widget .mat-mdc-card {
   overflow-y: scroll;
+}
+
+.widget mat-toolbar-row {
+  justify-content: flex-start;
 }

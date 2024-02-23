@@ -10,11 +10,11 @@ import {
 } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { SelectPoolDialogComponent } from 'app/pages/apps/components/select-pool-dialog/select-pool-dialog.component';
 import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.service';
 import { KubernetesStore } from 'app/pages/apps/store/kubernetes-store.service';
 import { AuthService } from 'app/services/auth/auth.service';
-import { DialogService } from 'app/services/dialog.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()

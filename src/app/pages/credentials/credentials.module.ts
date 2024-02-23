@@ -15,13 +15,13 @@ import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { CoreComponents } from 'app/core/core-components.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
-import { AppCommonModule } from 'app/modules/common/app-common.module';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxDynamicFormModule } from 'app/modules/ix-dynamic-form/ix-dynamic-form.module';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
 import { LayoutModule } from 'app/modules/layout/layout.module';
 import { OauthButtonModule } from 'app/modules/oauth-button/oauth-button.module';
+import { SummaryComponent } from 'app/modules/summary/summary.component';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
 import {
   CloudCredentialsFormComponent,
@@ -148,7 +148,6 @@ import { CertificateSubjectComponent } from './certificates-dash/forms/common-st
     CloudCredentialsCardComponent,
   ],
   imports: [
-    AppCommonModule,
     CommonDirectivesModule,
     CommonModule,
     CoreComponents,
@@ -175,6 +174,7 @@ import { CertificateSubjectComponent } from './certificates-dash/forms/common-st
     TranslateModule,
     OauthButtonModule,
     CloudSyncProviderDescriptionComponent,
+    SummaryComponent,
   ],
 })
 export class CredentialsModule { }

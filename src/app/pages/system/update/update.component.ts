@@ -22,6 +22,7 @@ import { Job } from 'app/interfaces/job.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { SystemUpdateTrain } from 'app/interfaces/system-update.interface';
 import { WebSocketError } from 'app/interfaces/websocket-error.interface';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -30,7 +31,6 @@ import {
 } from 'app/pages/system/general-settings/save-config-dialog/save-config-dialog.component';
 import { updateAgainCode } from 'app/pages/system/update/update-again-code.constant';
 import { AuthService } from 'app/services/auth/auth.service';
-import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { StorageService } from 'app/services/storage.service';
 import { SystemGeneralService } from 'app/services/system-general.service';

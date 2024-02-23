@@ -16,10 +16,11 @@ import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.u
 import { ServiceName, serviceNames } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { Service } from 'app/interfaces/service.interface';
-import { AppCommonModule } from 'app/modules/common/app-common.module';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxTableModule } from 'app/modules/ix-tables/ix-table.module';
 import { IxTableHarness } from 'app/modules/ix-tables/testing/ix-table.harness';
 import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
+import { SearchInput1Component } from 'app/modules/search-input1/search-input1.component';
 import { ServiceFtpComponent } from 'app/pages/services/components/service-ftp/service-ftp.component';
 import { ServiceNfsComponent } from 'app/pages/services/components/service-nfs/service-nfs.component';
 import { ServiceSmartComponent } from 'app/pages/services/components/service-smart/service-smart.component';
@@ -28,7 +29,6 @@ import { ServiceSnmpComponent } from 'app/pages/services/components/service-snmp
 import { ServiceSshComponent } from 'app/pages/services/components/service-ssh/service-ssh.component';
 import { ServiceUpsComponent } from 'app/pages/services/components/service-ups/service-ups.component';
 import { ServicesComponent } from 'app/pages/services/services.component';
-import { DialogService } from 'app/services/dialog.service';
 import { IscsiService } from 'app/services/iscsi.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -60,7 +60,7 @@ describe('ServicesComponent', () => {
       IxTableModule,
       FormsModule,
       MockModule(PageHeaderModule),
-      MockModule(AppCommonModule),
+      SearchInput1Component,
     ],
     providers: [
       mockWebSocket([

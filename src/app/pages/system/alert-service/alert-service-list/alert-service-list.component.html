@@ -3,7 +3,7 @@
     <h3 class="card-title">{{ 'Alert Services' | translate }}</h3>
 
     <div>
-      <ix-search-input [value]="filterString" (search)="filterUpdated($event)"></ix-search-input>
+      <ix-search-input1 [value]="filterString" (search)="filterUpdated($event)"></ix-search-input1>
       <ix-table-columns-selector [columns]="columns" (columnsChange)="columnsChange($event)"></ix-table-columns-selector>
       <button
         *ixRequiresRoles="requiredRoles"

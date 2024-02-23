@@ -18,7 +18,7 @@ import {
 } from 'app/interfaces/certificate-authority.interface';
 import { CertificateCreate, CertificateExtension } from 'app/interfaces/certificate.interface';
 import { Option } from 'app/interfaces/option.interface';
-import { SummaryItem, SummaryProvider, SummarySection } from 'app/modules/common/summary/summary.interface';
+import { SummaryItem, SummaryProvider, SummarySection } from 'app/modules/summary/summary.interface';
 import {
   extensionsToSelectValues,
 } from 'app/pages/credentials/certificates-dash/forms/common-steps/certificate-constraints/extensions-to-select-values.utils';

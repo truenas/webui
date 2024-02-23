@@ -12,9 +12,10 @@ import { CaCreateType } from 'app/enums/ca-create-type.enum';
 import { Role } from 'app/enums/role.enum';
 import { CertificateAuthorityUpdate } from 'app/interfaces/certificate-authority.interface';
 import { CertificateProfile } from 'app/interfaces/certificate.interface';
-import { SummarySection } from 'app/modules/common/summary/summary.interface';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { SummarySection } from 'app/modules/summary/summary.interface';
 import {
   CaIdentifierAndTypeComponent,
 } from 'app/pages/credentials/certificates-dash/certificate-authority-add/steps/ca-identifier-and-type/ca-identifier-and-type.component';
@@ -33,7 +34,6 @@ import {
 import {
   CertificateSubjectComponent,
 } from 'app/pages/credentials/certificates-dash/forms/common-steps/certificate-subject/certificate-subject.component';
-import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
 

@@ -15,6 +15,7 @@ import { helptextDatasetForm } from 'app/helptext/storage/volumes/datasets/datas
 import { DatasetChangeKeyParams } from 'app/interfaces/dataset-change-key.interface';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { WebSocketError } from 'app/interfaces/websocket-error.interface';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { matchOthersFgValidator } from 'app/modules/ix-forms/validators/password-validation/password-validation';
@@ -22,7 +23,6 @@ import { findInTree } from 'app/modules/ix-tree/utils/find-in-tree.utils';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { isPasswordEncrypted, isEncryptionRoot } from 'app/pages/datasets/utils/dataset.utils';
-import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { EncryptionOptionsDialogData } from './encryption-options-dialog-data.interface';

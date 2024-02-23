@@ -10,13 +10,13 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockEntityJobComponentRef } from 'app/core/testing/utils/mock-entity-job-component-ref.utils';
 import { helptextApps } from 'app/helptext/apps/apps';
 import { KubernetesConfig } from 'app/interfaces/kubernetes-config.interface';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxSelectHarness } from 'app/modules/ix-forms/components/ix-select/ix-select.harness';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { SelectPoolDialogComponent } from 'app/pages/apps/components/select-pool-dialog/select-pool-dialog.component';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { KubernetesStore } from 'app/pages/apps/store/kubernetes-store.service';
-import { DialogService } from 'app/services/dialog.service';
 
 describe('SelectPoolDialogComponent', () => {
   let spectator: Spectator<SelectPoolDialogComponent>;

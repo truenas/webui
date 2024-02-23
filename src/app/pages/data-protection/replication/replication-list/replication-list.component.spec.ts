@@ -20,17 +20,17 @@ import { TransportMode } from 'app/enums/transport-mode.enum';
 import { Job } from 'app/interfaces/job.interface';
 import { PeriodicSnapshotTask } from 'app/interfaces/periodic-snapshot-task.interface';
 import { ReplicationTask } from 'app/interfaces/replication-task.interface';
-import { AppCommonModule } from 'app/modules/common/app-common.module';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { IxTable2Harness } from 'app/modules/ix-table2/components/ix-table2/ix-table2.harness';
 import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
 import { selectJob } from 'app/modules/jobs/store/job.selectors';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
+import { SearchInput1Component } from 'app/modules/search-input1/search-input1.component';
 import { ReplicationFormComponent } from 'app/pages/data-protection/replication/replication-form/replication-form.component';
 import { ReplicationListComponent } from 'app/pages/data-protection/replication/replication-list/replication-list.component';
 import { ReplicationRestoreDialogComponent } from 'app/pages/data-protection/replication/replication-restore-dialog/replication-restore-dialog.component';
-import { DialogService } from 'app/services/dialog.service';
 import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 import { StorageService } from 'app/services/storage.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -115,7 +115,7 @@ describe('ReplicationListComponent', () => {
       AppLoaderModule,
       IxTable2Module,
       MockModule(PageHeaderModule),
-      MockModule(AppCommonModule),
+      SearchInput1Component,
     ],
     providers: [
       mockAuth(),

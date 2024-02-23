@@ -13,13 +13,13 @@ import { TopologyItemType } from 'app/enums/v-dev-type.enum';
 import { TopologyItemStatus } from 'app/enums/vdev-status.enum';
 import { PoolInstance } from 'app/interfaces/pool.interface';
 import { TopologyItem } from 'app/interfaces/storage.interface';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { TreeHarness } from 'app/modules/ix-tree/testing/tree.harness';
 import { TreeModule } from 'app/modules/ix-tree/tree.module';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { BootStatusListComponent } from 'app/pages/system/bootenv/bootenv-status/bootenv-status.component';
-import { DialogService } from 'app/services/dialog.service';
 import { BootenvNodeItemComponent } from './bootenv-node-item/bootenv-node-item.component';
 
 const oneDisk = {

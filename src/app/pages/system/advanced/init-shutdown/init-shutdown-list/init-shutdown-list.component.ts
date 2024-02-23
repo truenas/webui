@@ -7,6 +7,7 @@ import { InitShutdownScriptType, initShutdownScriptTypeLabels } from 'app/enums/
 import { initShutdownScriptWhenLabels } from 'app/enums/init-shutdown-script-when.enum';
 import { Role } from 'app/enums/role.enum';
 import { InitShutdownScript } from 'app/interfaces/init-shutdown-script.interface';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { AsyncDataProvider } from 'app/modules/ix-table2/classes/async-data-provider/async-data-provider';
 import {
   actionsColumn,
@@ -21,7 +22,6 @@ import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import {
   InitShutdownFormComponent,
 } from 'app/pages/system/advanced/init-shutdown/init-shutdown-form/init-shutdown-form.component';
-import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';

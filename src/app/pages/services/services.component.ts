@@ -16,6 +16,7 @@ import { ServiceStatus } from 'app/enums/service-status.enum';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { Service, ServiceRow } from 'app/interfaces/service.interface';
 import { WebSocketError } from 'app/interfaces/websocket-error.interface';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
 import { ServiceFtpComponent } from 'app/pages/services/components/service-ftp/service-ftp.component';
 import { ServiceNfsComponent } from 'app/pages/services/components/service-nfs/service-nfs.component';
@@ -24,7 +25,6 @@ import { ServiceSmbComponent } from 'app/pages/services/components/service-smb/s
 import { ServiceSnmpComponent } from 'app/pages/services/components/service-snmp/service-snmp.component';
 import { ServiceSshComponent } from 'app/pages/services/components/service-ssh/service-ssh.component';
 import { ServiceUpsComponent } from 'app/pages/services/components/service-ups/service-ups.component';
-import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IscsiService } from 'app/services/iscsi.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';

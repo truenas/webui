@@ -13,10 +13,10 @@ import { DiskStandby } from 'app/enums/disk-standby.enum';
 import { SmartTestResultPageType } from 'app/enums/smart-test-results-page-type.enum';
 import { Choices } from 'app/interfaces/choices.interface';
 import { Disk, UnusedDisk } from 'app/interfaces/storage.interface';
-import { AppCommonModule } from 'app/modules/common/app-common.module';
 import { IxTable2Harness } from 'app/modules/ix-table2/components/ix-table2/ix-table2.harness';
 import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
 import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
+import { SearchInput1Component } from 'app/modules/search-input1/search-input1.component';
 import { DiskFormComponent } from 'app/pages/storage/modules/disks/components/disk-form/disk-form.component';
 import { DiskListComponent } from 'app/pages/storage/modules/disks/components/disk-list/disk-list.component';
 import {
@@ -103,7 +103,7 @@ describe('DiskListComponent', () => {
     imports: [
       IxTable2Module,
       MockModule(PageHeaderModule),
-      MockModule(AppCommonModule),
+      SearchInput1Component,
     ],
     providers: [
       mockAuth(),

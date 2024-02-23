@@ -1,31 +1,18 @@
 <div
-  class="widget"
-  [ngClass]="{
-    'double-height': true,
-    'xs': screenType === ScreenType.Mobile,
-    'generic-hardware': !productImage,
-    'ix-hardware': productImage
-  }"
+  class="widget double-height"
+  [class.xs]="screenType === ScreenType.Mobile"
+  [class.generic-hardware]="!productImage"
+  [class.ix-hardware]="productImage"
 >
-  <div class="card-container front">
-    <mat-card
-      class="front"
-      fxLayout="row"
-      fxLayoutWrap
-      fxLayoutAlign="space-between stretch"
-    >
-      <mat-card-content
-        fxLayout="row wrap"
-        fxLayout.gt-xs="row wrap"
-        fxLayoutAlign="space-between start"
-        fxFlex="100"
-      >
+  <div class="card-container">
+    <mat-card class="front">
+      <mat-card-content>
         <ix-drag-handle [showReorderHandle]="showReorderHandle">
           <ng-content [select]="[cdkDragHandle]"></ng-content>
 
-          <mat-toolbar-row fxHide.xs class="view-overview">
+          <mat-toolbar-row class="view-overview">
             <span *ngIf="showReorderHandle" class="grip"></span>
-            <h3 fxHide.xs class="mat-card-title-text">
+            <h3 class="mat-card-title-text">
               <ix-drag-handle [showReorderHandle]="showReorderHandle">
                 <span class="card-title-text">
                   <span>{{ 'System Information' | translate }}</span>
@@ -39,20 +26,10 @@
         </ix-drag-handle>
 
         <div class="carousel">
-          <div
-            class="slide overview"
-            fxFlex="100"
-            fxLayout="row"
-            fxLayout.xs="column"
-            fxLayoutAlign="space-between"
-          >
+          <div class="slide overview">
             <!-- Summary Section -->
             <div
-              fxFlex.xs="250px"
-              fxFlex="40"
               class="left"
-              fxLayout="column"
-              fxLayoutAlign="space-between center"
               [class.fn-theme-primary]="themeService.activeTheme !== themeService.defaultTheme"
               [class.fn-theme-contrast-lighter]="themeService.activeTheme === themeService.defaultTheme"
               [class.passive]="isPassive"
@@ -60,20 +37,16 @@
             >
               <!-- Mobile Only: Exit Widget -->
               <button
-                *ngIf="screenType === ScreenType.Mobile"
                 class="mat-card-title-text primary-nav"
                 mat-icon-button
                 color="default"
                 [ixTest]="['sysinfo-widget', 'back']"
                 (click)="goBack()"
               >
-                <ix-icon name="chevron_left" class="back-arrow"></ix-icon>
+                <ix-icon name="chevron_left"></ix-icon>
               </button>
 
-              <div
-                fxFlex="20"
-                [ngClass]="['platform-logo-wrapper', sysGenService.getProductType()?.toLowerCase()]"
-              >
+              <div [ngClass]="['platform-logo-wrapper', sysGenService.getProductType()?.toLowerCase()]">
                 <ng-container *ngIf="productImage || isPassive; else textOnly">
                   <ix-icon
                     name="ix:logo_truenas_scale_full"
@@ -88,13 +61,7 @@
                   ></ix-icon>
                 </ng-template>
               </div>
-              <div
-                class="content-left"
-                fxFlex.gt-xs="60"
-                fxLayout="column"
-                fxLayoutAlign="center center"
-                [fxFlex.xs]="sysGenService.isEnterprise && productImage === 'X10' ? 80 : 100"
-              >
+              <div class="content-left">
                 <div *ngIf="!isHaEnabled && isPassive" class="generic alert">
                   <ix-icon name="mdi-alert" [matTooltip]="'HA is disabled' | translate"></ix-icon>
                 </div>
@@ -140,20 +107,18 @@
                 </div>
               </div>
 
-              <div *ngIf="isUpdateRunning; else noUpdateRunning">
-                <p id="update-in-progress">
-                  {{ 'UPDATE IN PROGRESS' | translate }}
-                </p>
+              <div *ngIf="isUpdateRunning; else noUpdateRunning" class="update-in-progress">
+                {{ 'UPDATE IN PROGRESS' | translate }}
               </div>
 
               <ng-template #noUpdateRunning>
-                <div fxHide.xs fxFlex="18" class="update-action">
+                <div class="update-action">
                   <button
                     *ngIf="!isPassive"
                     mat-button
                     color="default"
                     [ixTest]="['widget-sysinfo', 'update']"
-                    (click)="router.navigate(['system', 'update'])"
+                    [routerLink]="['system', 'update']"
                   >
                     {{ updateBtnLabel | translate }}
                   </button>
@@ -166,11 +131,10 @@
             </div>
 
             <!-- Details Section -->
-            <div class="right" fxFlex.xs fxFlex.gt-xs="60" fxLayout="column">
+            <div class="right">
               <div
                 *ngIf="!systemInfo && isHaLicensed && isPassive && isHaEnabled"
                 class="data-container ha-status"
-                fxFlex
               >
                 <div class="spinner-wrapper">
                   <mat-spinner class="spinner" [diameter]="40"></mat-spinner>
@@ -180,10 +144,12 @@
               <div
                 *ngIf="!systemInfo && isHaLicensed && isPassive && !isHaEnabled"
                 class="data-container ha-status"
-                fxFlex
               >
                 <h3>
-                  {{ isHaEnabled ? ('HA Enabled' | translate) : ('HA Disabled' | translate) }}
+                  {{ isHaEnabled
+                      ? ('HA Enabled' | translate)
+                      : ('HA Disabled' | translate)
+                  }}
                 </h3>
               </div>
 
@@ -191,15 +157,14 @@
                 <mat-spinner class="spinner" [diameter]="40"></mat-spinner>
               </div>
 
-              <div
-                *ngIf="systemInfo"
-                class="data-container"
-                fxFlex
-              >
-                <div fxHide.gt-xs class="list-subheader">
-                  {{ isPassive ? ('System Information (Standby)' | translate) : ('System Information' | translate) }}
+              <div *ngIf="systemInfo" class="data-container">
+                <div *ngIf="screenType === ScreenType.Mobile" class="list-subheader">
+                  {{ isPassive
+                    ? ('System Information (Standby)' | translate)
+                    : ('System Information' | translate)
+                  }}
                 </div>
-                <div fxHide.xs class="list-subheader">
+                <div *ngIf="screenType === ScreenType.Desktop" class="list-subheader">
                   {{ 'Overview' | translate }}
                 </div>
 
@@ -246,17 +211,13 @@
                   </mat-list-item>
                 </mat-list>
 
-                <div
-                  *ngIf="ready"
-                  fxHide.gt-xs
-                  class="mobile-update-action update-action"
-                >
+                <div *ngIf="ready" class="mobile-update-action update-action">
                   <button
                     *ngIf="!isPassive"
                     mat-button
                     color="primary"
                     [ixTest]="['widget-sysinfo', 'update']"
-                    (click)="router.navigate(['system', 'update'])"
+                    [routerLink]="['system', 'update']"
                   >
                     {{ updateBtnLabel | translate }}
                   </button>
@@ -267,11 +228,8 @@
                   ></ix-simple-failover-button>
                 </div>
               </div>
-              <!-- END datacontainer -->
             </div>
-            <!-- End right -->
           </div>
-          <!-- end slide -->
         </div>
       </mat-card-content>
     </mat-card>

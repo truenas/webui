@@ -15,6 +15,7 @@ import { Job } from 'app/interfaces/job.interface';
 import {
   CreatePool, Pool, UpdatePool,
 } from 'app/interfaces/pool.interface';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { AddVdevsStore } from 'app/pages/storage/modules/pool-manager/components/add-vdevs/store/add-vdevs-store.service';
@@ -25,7 +26,6 @@ import { PoolCreationWizardStep, getPoolCreationWizardStepIndex } from 'app/page
 import { PoolManagerValidationService } from 'app/pages/storage/modules/pool-manager/store/pool-manager-validation.service';
 import { PoolManagerState, PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
 import { topologyToPayload } from 'app/pages/storage/modules/pool-manager/utils/topology.utils';
-import { DialogService } from 'app/services/dialog.service';
 import { AppState } from 'app/store';
 import { waitForSystemFeatures } from 'app/store/system-info/system-info.selectors';
 
