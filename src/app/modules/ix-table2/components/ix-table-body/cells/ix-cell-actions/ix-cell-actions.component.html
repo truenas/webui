@@ -3,19 +3,18 @@
     *ngFor="let action of actions"
   >
     <ng-container *ngIf="action.requiredRoles?.length">
-      <div
-        *ixRequiresRoles="action.requiredRoles"
-        [matTooltip]="action.dynamicTooltip ? (action.dynamicTooltip(row) | async) : action.tooltip || ''"
-      >
-        <button
-          *ngIf="action.hidden ? !(action.hidden(row) | async) : true"
-          mat-icon-button
-          [ixTest]="[rowTestId(row), action.iconName, 'row-action']"
-          [disabled]="action.disabled ? (action.disabled(row) | async) : false"
-          (click)="$event.stopPropagation(); action.onClick(row)"
-        >
-          <ix-icon [name]="action.iconName"></ix-icon>
-        </button>
+      <div [matTooltip]="action.dynamicTooltip ? (action.dynamicTooltip(row) | async) : action.tooltip || ''">
+        <ng-container *ngIf="action.hidden ? !(action.hidden(row) | async) : true">
+          <button
+            *ixRequiresRoles="action.requiredRoles"
+            mat-icon-button
+            [ixTest]="[rowTestId(row), action.iconName, 'row-action']"
+            [disabled]="action.disabled ? (action.disabled(row) | async) : false"
+            (click)="$event.stopPropagation(); action.onClick(row)"
+          >
+            <ix-icon [name]="action.iconName"></ix-icon>
+          </button>
+        </ng-container>
       </div>
     </ng-container>
 

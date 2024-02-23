@@ -45,7 +45,9 @@ export class ApiKeyListComponent implements OnInit {
     }),
     dateColumn({
       title: this.translate.instant('Created Date'),
+      sortable: true,
       getValue: (row) => row.created_at.$date,
+      sortBy: (row) => row.created_at.$date,
     }),
     actionsColumn({
       actions: [
