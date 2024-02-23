@@ -1,32 +1,20 @@
 <div
-  fxLayout="column"
-  fxLayoutAlign="center center"
-  fxFlex
   [class]="'empty-page ' + conf.type"
   [class.large]="conf?.large"
   [class.compact]="conf?.compact"
 >
   <div
-    *ngIf="!isLoading()"
-    fxLayout="column"
-    fxLayoutAlign="center center"
-    fxFlex
+    *ngIf="!isLoading"
     class="icon-div"
   >
     <ix-icon [name]="'mdi-' + getIcon()"></ix-icon>
   </div>
-  <div
-    *ngIf="isLoading()"
-    fxLayout="column"
-    fxLayoutAlign="center center"
-    fxFlex
-  >
+  <div *ngIf="isLoading">
     <mat-spinner [diameter]="40"></mat-spinner>
   </div>
-  <div *ngIf="!isLoading()">
+  <div *ngIf="!isLoading">
     <h3 class="empty-title">{{ conf.title }}</h3>
 
-    <!-- Messages -->
     <p *ngIf="conf.message && !conf.compact" class="empty-message">
       {{ conf.message }}
     </p>

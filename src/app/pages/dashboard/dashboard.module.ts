@@ -18,6 +18,7 @@ import { FormatDateTimePipe } from 'app/core/pipes/format-datetime.pipe';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { CastModule } from 'app/modules/cast/cast.module';
 import { ChartsModule } from 'app/modules/charts/charts.module';
+import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { InterfaceStatusIconComponent } from 'app/modules/interface-status-icon/interface-status-icon.component';
 import { IxDropGridModule } from 'app/modules/ix-drop-grid/ix-drop-grid.module';
@@ -77,6 +78,7 @@ import { routing } from './dashboard.routing';
     NgxSkeletonLoaderModule,
     ImgFallbackModule,
     IxTable2Module,
+    EmptyComponent,
     InterfaceStatusIconComponent,
   ],
   declarations: [

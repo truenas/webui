@@ -13,6 +13,7 @@ import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { CoreComponents } from 'app/core/core-components.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { CastModule } from 'app/modules/cast/cast.module';
+import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
@@ -76,6 +77,7 @@ import { StripAclModalComponent } from './components/strip-acl-modal/strip-acl-m
     CoreComponents,
     TestIdModule,
     CommonDirectivesModule,
+    EmptyComponent,
   ],
   declarations: [
     AclEditorListComponent,

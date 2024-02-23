@@ -44,10 +44,10 @@
       </ng-template>
     </div>
 
-    <ix-entity-empty
+    <ix-empty
       *ngIf="!isLoading && !acl"
       [conf]="isMissingMountpoint ? missionMountpointEmptyConfig : emptyConfig"
-    ></ix-entity-empty>
+    ></ix-empty>
   </mat-card-content>
 </mat-card>
 

@@ -21,6 +21,7 @@ import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { CoreComponents } from 'app/core/core-components.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { CastModule } from 'app/modules/cast/cast.module';
+import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxDynamicFormModule } from 'app/modules/ix-dynamic-form/ix-dynamic-form.module';
 import { IxFileSizeModule } from 'app/modules/ix-file-size/ix-file-size.module';
@@ -183,6 +184,7 @@ import { KubernetesStatusComponent } from './components/installed-apps/kubernete
     LayoutModule,
     AppCatalogPipe,
     SearchInput1Component,
+    EmptyComponent,
   ],
   providers: [
     DockerImagesComponentStore,
