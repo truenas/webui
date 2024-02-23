@@ -3,6 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { MockComponent, MockModule } from 'ng-mocks';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { Role } from 'app/enums/role.enum';
 import { Preferences } from 'app/interfaces/preferences.interface';
 import { User } from 'app/interfaces/user.interface';
@@ -81,6 +82,7 @@ describe('UserListComponent', () => {
       MockComponent(UserDetailsRowComponent),
     ],
     providers: [
+      mockAuth(),
       mockProvider(WebSocketService),
       mockProvider(DialogService),
       provideMockStore({
