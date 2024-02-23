@@ -4,9 +4,9 @@ import { MatMenuHarness } from '@angular/material/menu/testing';
 import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { PowerMenuComponent } from 'app/modules/layout/components/topbar/power-menu/power-menu.component';
 import { AuthService } from 'app/services/auth/auth.service';
-import { DialogService } from 'app/services/dialog.service';
 import { WebSocketConnectionService } from 'app/services/websocket-connection.service';
 
 describe('PowerMenuComponent', () => {

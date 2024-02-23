@@ -9,9 +9,9 @@ import {
   Observable, of, switchMap, take, forkJoin,
 } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { AuthService } from 'app/services/auth/auth.service';
-import { DialogService } from 'app/services/dialog.service';
 import { AppState } from 'app/store';
 import { selectIsUpgradePending } from 'app/store/ha-info/ha-info.selectors';
 

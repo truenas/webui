@@ -8,6 +8,7 @@ import { Point } from 'pixi.js';
 import { VdevType } from 'app/enums/v-dev-type.enum';
 import { EnclosureSlot, EnclosureView } from 'app/interfaces/enclosure.interface';
 import { Theme } from 'app/interfaces/theme.interface';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { Mini } from 'app/pages/system/view-enclosure/classes/hardware/mini';
 import { MiniX } from 'app/pages/system/view-enclosure/classes/hardware/mini-x';
 import { MiniXlPlus } from 'app/pages/system/view-enclosure/classes/hardware/mini-xl-plus';
@@ -15,7 +16,6 @@ import {
   EnclosureDisksComponent,
 } from 'app/pages/system/view-enclosure/components/enclosure-disks/enclosure-disks.component';
 import { EnclosureStore } from 'app/pages/system/view-enclosure/stores/enclosure-store.service';
-import { DialogService } from 'app/services/dialog.service';
 import { DiskTemperatureService } from 'app/services/disk-temperature.service';
 import { ThemeService } from 'app/services/theme/theme.service';
 import { WebSocketService } from 'app/services/ws.service';

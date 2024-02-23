@@ -9,10 +9,10 @@ import { ApiCallDirectory } from 'app/interfaces/api/api-call-directory.interfac
 import { ApiJobMethod, ApiJobParams } from 'app/interfaces/api/api-job-directory.interface';
 import { PropertyPath } from 'app/interfaces/property-path.type';
 import { QueryFilters, QueryOptions } from 'app/interfaces/query-api.interface';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { SortDirection } from 'app/modules/ix-table2/enums/sort-direction.enum';
 import { TableSort } from 'app/modules/ix-table2/interfaces/table-sort.interface';
 import { AdvancedSearchQuery, SearchQuery } from 'app/modules/search-input/types/search-query.interface';
-import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { StorageService } from 'app/services/storage.service';
 import { WebSocketService } from 'app/services/ws.service';

@@ -17,11 +17,11 @@ import { filterAsync } from 'app/helpers/operators/filter-async.operator';
 import { WINDOW } from 'app/helpers/window.helper';
 import { SystemInfo } from 'app/interfaces/system-info.interface';
 import { Interval } from 'app/interfaces/timeout.interface';
-import { AppLoaderService } from 'app/modules/loader/app-loader.service';
-import { WidgetComponent } from 'app/pages/dashboard/components/widget/widget.component';
 import {
   DialogService,
-} from 'app/services/dialog.service';
+} from 'app/modules/dialog/dialog.service';
+import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { WidgetComponent } from 'app/pages/dashboard/components/widget/widget.component';
 import { ProductImageService } from 'app/services/product-image.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { ThemeService } from 'app/services/theme/theme.service';

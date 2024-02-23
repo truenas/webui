@@ -9,6 +9,7 @@ import { filter } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
 import { VdevType, vdevTypeLabels } from 'app/enums/v-dev-type.enum';
 import { isTopologyLimitedToOneLayout } from 'app/helpers/storage.helper';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import {
   InspectVdevsDialogComponent,
 } from 'app/pages/storage/modules/pool-manager/components/inspect-vdevs-dialog/inspect-vdevs-dialog.component';
@@ -20,7 +21,6 @@ import {
   PoolManagerStore,
   PoolManagerTopology, PoolManagerTopologyCategory,
 } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
-import { DialogService } from 'app/services/dialog.service';
 
 @UntilDestroy()
 @Component({
