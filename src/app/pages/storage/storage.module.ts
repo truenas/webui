@@ -25,7 +25,6 @@ import { CoreComponents } from 'app/core/core-components.module';
 import { FormatDateTimePipe } from 'app/core/pipes/format-datetime.pipe';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { CastModule } from 'app/modules/cast/cast.module';
-import { AppCommonModule } from 'app/modules/common/app-common.module';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxFileSizeModule } from 'app/modules/ix-file-size/ix-file-size.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
@@ -64,7 +63,6 @@ import { ZfsHealthCardComponent } from './components/dashboard-pool/zfs-health-c
     TranslateModule,
     MatCardModule,
     MatTooltipModule,
-    AppCommonModule,
     MatButtonModule,
     RouterModule,
     CommonModule,

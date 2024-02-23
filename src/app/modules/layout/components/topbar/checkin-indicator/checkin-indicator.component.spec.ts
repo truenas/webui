@@ -2,10 +2,10 @@ import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import {
   CheckinIndicatorComponent,
 } from 'app/modules/layout/components/topbar/checkin-indicator/checkin-indicator.component';
-import { DialogService } from 'app/services/dialog.service';
 import { checkinIndicatorPressed } from 'app/store/network-interfaces/network-interfaces.actions';
 import {
   selectHasPendingNetworkChanges,

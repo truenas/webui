@@ -12,8 +12,8 @@ import { ScheduleMethod } from 'app/enums/schedule-method.enum';
 import { helptextReplicationWizard } from 'app/helptext/data-protection/replication/replication-wizard';
 import { Option } from 'app/interfaces/option.interface';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
-import { SummaryProvider, SummarySection } from 'app/modules/common/summary/summary.interface';
 import { CronPresetValue } from 'app/modules/scheduler/utils/get-default-crontab-presets.utils';
+import { SummaryProvider, SummarySection } from 'app/modules/summary/summary.interface';
 
 @UntilDestroy()
 @Component({

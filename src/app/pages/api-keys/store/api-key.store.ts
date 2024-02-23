@@ -5,7 +5,7 @@ import {
   catchError, switchMap, tap,
 } from 'rxjs/operators';
 import { ApiKey } from 'app/interfaces/api-key.interface';
-import { DialogService } from 'app/services/dialog.service';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
 

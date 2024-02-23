@@ -8,6 +8,7 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockEntityJobComponentRef } from 'app/core/testing/utils/mock-entity-job-component-ref.utils';
 import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { UnusedDisk } from 'app/interfaces/storage.interface';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -15,7 +16,6 @@ import {
   ReplaceDiskDialogData,
   ReplaceDiskDialogComponent,
 } from 'app/pages/storage/modules/disks/components/replace-disk-dialog/replace-disk-dialog.component';
-import { DialogService } from 'app/services/dialog.service';
 
 describe('ReplaceDiskDialogComponent', () => {
   let spectator: Spectator<ReplaceDiskDialogComponent>;

@@ -1,11 +1,6 @@
 <div class="widget stats-widget" ngClass.xs="double-height xs">
-  <div class="card-container front">
-    <mat-card
-      class="front overflow-hidden"
-      fxLayout="row"
-      fxLayoutWrap
-      fxLayoutAlign="space-between stretch"
-    >
+  <div class="card-container">
+    <mat-card class="front overflow-hidden">
       <mat-card-content #carouselparent>
         <ix-drag-handle [showReorderHandle]="showReorderHandle">
           <ng-content [select]="[cdkDragHandle]"></ng-content>
@@ -14,26 +9,25 @@
             <!-- Mobile Only: Exit widget -->
             <button
               *ngIf="currentSlide === '0'"
-              fxHide.gt-xs
               class="mat-card-title-text primary-nav"
               mat-icon-button
               color="default"
               [ixTest]="[poolState.name, 'widget', 'back']"
               (click)="goBack()"
             >
-              <ix-icon name="chevron_left" class="back-arrow"></ix-icon>
+              <ix-icon name="chevron_left"></ix-icon>
             </button>
 
             <!-- Back to previous slide -->
             <button
               *ngIf="currentSlide !== '0'"
-              class="mat-card-title-text primary-nav"
+              class="mat-card-title-text primary-nav slide-back"
               mat-icon-button
               color="default"
               [ixTest]="[poolState.name, 'widget', 'back']"
               (click)="updateSlide(path[previousSlide].name, true, previousSlide)"
             >
-              <ix-icon name="chevron_left" class="back-arrow"></ix-icon>
+              <ix-icon name="chevron_left"></ix-icon>
             </button>
 
             <h3 class="mat-card-title-text">
@@ -68,7 +62,7 @@
                 <ix-icon
                   name="insert_chart"
                   matTooltipPosition="above"
-                  aria-label="Disk Reports"
+                  [attr.aria-label]="'Disk Reports' | translate"
                   [matTooltip]="'Disk Reports' | translate"
                 ></ix-icon>
               </a>
@@ -79,38 +73,22 @@
         <!-- Carousel -->
         <div *ngIf="poolState && path" #carousel class="carousel">
           <ng-template #locked>
-            <div fxFlex="40" class="locked offline">
+            <div class="locked offline">
               <ix-icon name="error"></ix-icon>
               <h4>{{ 'Data not available' | translate }}.</h4>
             </div>
           </ng-template>
 
-          <div
-            *ngFor="let slide of path"
-            fxFlex="100"
-            [class]="['slide', 'overview', slide.name]"
-          >
+          <div *ngFor="let slide of path" [class]="['slide', 'overview', slide.name.replace(' ', '_')]">
             <ng-container *ngTemplateOutlet="slide.template"></ng-container>
           </div>
 
           <!-- FRONT -->
           <ng-template #overview>
-            <div
-              fxFlex="100"
-              class="overview-inner"
-              fxLayout.xs="column"
-              fxLayout="row"
-              fxLayoutAlign="space-between"
-            >
+            <div class="overview-inner">
               <!-- FRONT LEFT -->
-              <div
-                class="left"
-                fxFlex="40"
-                fxFlex.xs="250px"
-                fxLayout="column"
-                fxLayoutAlign="space-around center"
-              >
-                <div fxFlex="66" class="left-content">
+              <div class="left">
+                <div class="left-content">
                   <div class="pool-name">
                     <span
                       textLimiter
@@ -166,9 +144,7 @@
 
                       <ng-container *ngIf="volumeData && volumeData.used_pct">
                         <div class="td label">
-                          <strong>
-                            {{ 'Used Space' | translate
-                          }}:</strong>
+                          <strong>{{ 'Used Space' | translate }}:</strong>
                         </div>
 
                         <div *ngIf="convertPercentToNumber(volumeData.used_pct) >= 80; else safeSpace" class="td">
@@ -243,29 +219,19 @@
               </div>
 
               <!-- FRONT RIGHT -->
-              <div
-                class="right"
-                fxFlex="60"
-                fxFlex.xs
-                fxLayout="column"
-                fxLayoutAlign="space-around center"
-              >
-                <div *ngIf="poolState.topology && poolState.topology.data; else locked" fxFlex="100">
+              <div class="right">
+                <div *ngIf="poolState?.topology?.data; else locked" class="right-content">
                   <div class="list-subheader">
                     <span class="capitalize">{{ 'Overview' | translate }}</span>
                   </div>
                   <mat-list>
                     <mat-list-item>
-                      <strong>
-                        {{ 'Path' | translate }}:
-                      </strong>
+                      <strong>{{ 'Path' | translate }}:</strong>
                       {{ poolState.path }}
                     </mat-list-item>
 
                     <mat-list-item>
-                      <strong>
-                        {{ 'Available Space' | translate }}:
-                      </strong>
+                      <strong>{{ 'Available Space' | translate }}:</strong>
                       <span *ngIf="volumeData && volumeData.used_pct; else unavail">
                         <span class="value">{{ diskSize }}</span>
                         <span class="value-units">{{ diskSizeLabel }}</span>
@@ -281,14 +247,10 @@
                     </mat-list-item>
 
                     <mat-list-item
-                      [ngClass]="{
-                        clickable: poolState.topology.data.length > 0
-                      }"
+                      [class.clickable]="poolState.topology.data.length"
                       (click)="updateSlide('data', poolState.topology.data.length > 0, 1, undefined, PoolTopologyCategory.Data)"
                     >
-                      <strong>
-                        {{ 'Data' | translate }}:
-                      </strong>
+                      <strong>{{ 'Data' | translate }}:</strong>
                       {{ poolState.topology.data.length }}
                       vdev
                       <span *ngIf="poolState.topology.data.length > 1">
@@ -302,14 +264,10 @@
                     </mat-list-item>
 
                     <mat-list-item
-                      [ngClass]="{
-                        clickable: poolState.topology.cache.length > 0
-                      }"
+                      [class.clickable]="poolState.topology.cache.length"
                       (click)="updateSlide('data', poolState.topology.cache.length > 0, 1, 0, PoolTopologyCategory.Cache)"
                     >
-                      <strong>
-                        {{ 'Caches' | translate }}:
-                      </strong>
+                      <strong>{{ 'Caches' | translate }}:</strong>
                       {{ poolState.topology.cache.length }}
                       <ix-icon
                         *ngIf="poolState.topology.cache.length > 0"
@@ -319,14 +277,10 @@
                     </mat-list-item>
 
                     <mat-list-item
-                      [ngClass]="{
-                        clickable: poolState.topology.spare.length > 0
-                      }"
+                      [class.clickable]="poolState.topology.spare.length"
                       (click)="updateSlide('data', poolState.topology.spare.length > 0, 1, 0, PoolTopologyCategory.Spare)"
                     >
-                      <strong>
-                        {{ 'Spares' | translate }}:
-                      </strong>
+                      <strong>{{ 'Spares' | translate }}:</strong>
                       {{ poolState.topology.spare.length }}
                       <ix-icon
                         *ngIf="poolState.topology.spare.length > 0"
@@ -336,14 +290,10 @@
                     </mat-list-item>
 
                     <mat-list-item
-                      [ngClass]="{
-                        clickable: poolState.topology.log.length > 0
-                      }"
+                      [class.clickable]="poolState.topology.log.length"
                       (click)="updateSlide('data', poolState.topology.log.length > 0, 1, 0, PoolTopologyCategory.Log)"
                     >
-                      <strong>
-                        {{ 'Logs' | translate }}:
-                      </strong>
+                      <strong>{{ 'Logs' | translate }}:</strong>
                       {{ poolState.topology.log.length }}
                       <ix-icon
                         *ngIf="poolState.topology.log.length > 0"
@@ -362,18 +312,14 @@
             <div class="list-subheader">
               <span class="capitalize">{{ currentSlideName | translate }}</span>
             </div>
-            <mat-list
-              *ngIf="poolState && poolState.topology[currentSlideTopology]"
-            >
+            <mat-list *ngIf="poolState?.topology[currentSlideTopology]">
               <mat-list-item
                 *ngFor="let vdev of poolState.topology[currentSlideTopology]; let i = index"
                 role="listitem"
-                [ngClass]="{ clickable: true }"
+                class="clickable"
                 (click)="updateSlide('disks', true, currentSlideIndex + 1, i, currentSlideTopology, vdev)"
               >
-                <strong>
-                  {{ vdev.type
-                  }}:</strong>
+                <strong>{{ vdev.type}}:</strong>
                 {{ vdev.status }}
                 <!-- STATUS ICONS -->
                 <span

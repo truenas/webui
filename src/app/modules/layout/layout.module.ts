@@ -8,7 +8,10 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatListModule } from '@angular/material/list';
 import { MatMenuModule } from '@angular/material/menu';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatTableModule } from '@angular/material/table';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule } from '@angular/router';
@@ -20,14 +23,24 @@ import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { AdminLayoutComponent } from 'app/modules/layout/components/admin-layout/admin-layout.component';
 import { AuthLayoutComponent } from 'app/modules/layout/components/auth-layout/auth-layout.component';
-import {
-  ChangePasswordDialogComponent,
-} from 'app/modules/layout/components/change-password-dialog/change-password-dialog.component';
 import { ConsoleFooterComponent } from 'app/modules/layout/components/console-footer/console-footer.component';
+import {
+  ConsolePanelDialogComponent,
+} from 'app/modules/layout/components/console-footer/console-panel/console-panel-dialog.component';
 import { CopyrightLineComponent } from 'app/modules/layout/components/copyright-line/copyright-line.component';
 import { NavigationComponent } from 'app/modules/layout/components/navigation/navigation.component';
 import { SecondaryMenuComponent } from 'app/modules/layout/components/secondary-menu/secondary-menu.component';
+import { AboutDialogComponent } from 'app/modules/layout/components/topbar/about-dialog/about-dialog.component';
+import {
+  ChangePasswordDialogComponent,
+} from 'app/modules/layout/components/topbar/change-password-dialog/change-password-dialog.component';
 import { DirectoryServicesIndicatorComponent } from 'app/modules/layout/components/topbar/directory-services-indicator/directory-services-indicator.component';
+import {
+  DirectoryServicesMonitorComponent,
+} from 'app/modules/layout/components/topbar/directory-services-indicator/directory-services-monitor/directory-services-monitor.component';
+import {
+  ResilverProgressDialogComponent,
+} from 'app/modules/layout/components/topbar/resilvering-indicator/resilver-progress/resilver-progress.component';
 import { TopbarComponent } from 'app/modules/layout/components/topbar/topbar.component';
 import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
@@ -67,6 +80,9 @@ import { UserMenuComponent } from './components/topbar/user-menu/user-menu.compo
     MatBadgeModule,
     PageHeaderModule,
     TestIdModule,
+    MatProgressBarModule,
+    MatTableModule,
+    MatProgressSpinnerModule,
   ],
   declarations: [
     ChangePasswordDialogComponent,
@@ -87,6 +103,10 @@ import { UserMenuComponent } from './components/topbar/user-menu/user-menu.compo
     ResilveringIndicatorComponent,
     FailoverUpgradeIndicatorComponent,
     CheckinIndicatorComponent,
+    AboutDialogComponent,
+    ConsolePanelDialogComponent,
+    ResilverProgressDialogComponent,
+    DirectoryServicesMonitorComponent,
   ],
   exports: [
     ChangePasswordDialogComponent,

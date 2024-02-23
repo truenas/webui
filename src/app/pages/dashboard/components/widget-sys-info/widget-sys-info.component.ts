@@ -1,10 +1,10 @@
+import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { TitleCasePipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component, Inject, Input, OnDestroy, OnInit,
 } from '@angular/core';
-import { MediaObserver } from '@angular/flex-layout';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
@@ -17,11 +17,11 @@ import { filterAsync } from 'app/helpers/operators/filter-async.operator';
 import { WINDOW } from 'app/helpers/window.helper';
 import { SystemInfo } from 'app/interfaces/system-info.interface';
 import { Interval } from 'app/interfaces/timeout.interface';
-import { AppLoaderService } from 'app/modules/loader/app-loader.service';
-import { WidgetComponent } from 'app/pages/dashboard/components/widget/widget.component';
 import {
   DialogService,
-} from 'app/services/dialog.service';
+} from 'app/modules/dialog/dialog.service';
+import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { WidgetComponent } from 'app/pages/dashboard/components/widget/widget.component';
 import { ProductImageService } from 'app/services/product-image.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { ThemeService } from 'app/services/theme/theme.service';
@@ -69,16 +69,16 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
   constructor(
     public router: Router,
     public translate: TranslateService,
-    private ws: WebSocketService,
     public sysGenService: SystemGeneralService,
-    public mediaObserver: MediaObserver,
     public themeService: ThemeService,
-    private store$: Store<AppState>,
-    private productImgServ: ProductImageService,
     public loader: AppLoaderService,
     public dialogService: DialogService,
+    private store$: Store<AppState>,
+    private productImgServ: ProductImageService,
+    private ws: WebSocketService,
     private titleCase: TitleCasePipe,
     private cdr: ChangeDetectorRef,
+    private breakpointObserver: BreakpointObserver,
     @Inject(WINDOW) private window: Window,
   ) {
     super(translate);
@@ -87,10 +87,13 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
       this.cdr.markForCheck();
     });
 
-    mediaObserver.asObservable().pipe(untilDestroyed(this)).subscribe((changes) => {
-      const currentScreenType = changes[0].mqAlias === 'xs' ? ScreenType.Mobile : ScreenType.Desktop;
-      this.screenType = currentScreenType;
-    });
+    this.breakpointObserver
+      .observe([Breakpoints.XSmall])
+      .pipe(untilDestroyed(this))
+      .subscribe((state) => {
+        this.screenType = state.matches ? ScreenType.Mobile : ScreenType.Desktop;
+        this.cdr.markForCheck();
+      });
   }
 
   get licenseString(): string {
