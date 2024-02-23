@@ -7,7 +7,7 @@ import { switchMap } from 'rxjs/operators';
 import { Role } from 'app/enums/role.enum';
 import { Group } from 'app/interfaces/group.interface';
 import { User } from 'app/interfaces/user.interface';
-import { DialogService } from 'app/services/dialog.service';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
 

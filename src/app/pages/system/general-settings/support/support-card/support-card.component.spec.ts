@@ -12,6 +12,7 @@ import { of } from 'rxjs';
 import { mockCall, mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { LicenseFeature } from 'app/enums/license-feature.enum';
 import { SystemInfo, SystemLicense } from 'app/interfaces/system-info.interface';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import {
   SetProductionStatusDialogComponent,
@@ -19,7 +20,6 @@ import {
 } from 'app/pages/system/general-settings/support/set-production-status-dialog/set-production-status-dialog.component';
 import { SupportCardComponent } from 'app/pages/system/general-settings/support/support-card/support-card.component';
 import { SysInfoComponent } from 'app/pages/system/general-settings/support/sys-info/sys-info.component';
-import { DialogService } from 'app/services/dialog.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { selectSystemInfo } from 'app/store/system-info/system-info.selectors';
 

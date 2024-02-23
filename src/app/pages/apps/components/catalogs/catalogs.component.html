@@ -1,21 +1,19 @@
-<ng-template ixPageHeader>
-  <ix-page-title-header>
-    <ix-search-input (search)="onListFiltered($event)"></ix-search-input>
+<ix-page-header>
+  <ix-search-input1 (search)="onListFiltered($event)"></ix-search-input1>
 
-    <button
-      *ixRequiresRoles="requiredRoles"
-      mat-button
-      ixTest="refresh-all"
-      (click)="onRefreshAll()"
-    >
-      {{ 'Refresh All' | translate }}
-    </button>
+  <button
+    *ixRequiresRoles="requiredRoles"
+    mat-button
+    ixTest="refresh-all"
+    (click)="onRefreshAll()"
+  >
+    {{ 'Refresh All' | translate }}
+  </button>
 
-    <button mat-button color="primary" ixTest="add-catalog" (click)="doAdd()">
-      {{ 'Add Catalog' | translate }}
-    </button>
-  </ix-page-title-header>
-</ng-template>
+  <button mat-button color="primary" ixTest="add-catalog" (click)="doAdd()">
+    {{ 'Add Catalog' | translate }}
+  </button>
+</ix-page-header>
 
 <div class="table-container">
   <ix-table2

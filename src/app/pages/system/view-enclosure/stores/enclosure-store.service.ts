@@ -20,7 +20,7 @@ import { Pool } from 'app/interfaces/pool.interface';
 import {
   Disk, TopologyDisk, TopologyItem, VDev,
 } from 'app/interfaces/storage.interface';
-import { DialogService } from 'app/services/dialog.service';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { DisksUpdateService } from 'app/services/disks-update.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -233,6 +233,9 @@ export class EnclosureStore extends ComponentStore<EnclosureState> {
         expanders: (enclosure.elements as EnclosureElementsGroup[]).find((item) => {
           return item.name === 'SAS Expander';
         })?.elements,
+        hasSlotStatus: (enclosure.elements as EnclosureElementsGroup[]).find((item) => {
+          return item.name === 'Array Device Slot';
+        })?.has_slot_status,
       } as EnclosureView;
     });
     enclosureViews.sort((a, b) => a.number - b.number);

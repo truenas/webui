@@ -7,7 +7,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { filter } from 'rxjs/operators';
 import { Role } from 'app/enums/role.enum';
 import { helptextSystemFailover } from 'app/helptext/system/failover';
-import { DialogService } from 'app/services/dialog.service';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 
 @UntilDestroy()
 @Component({

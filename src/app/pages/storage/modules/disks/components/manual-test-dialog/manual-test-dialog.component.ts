@@ -14,7 +14,7 @@ import { SmartTestType } from 'app/enums/smart-test-type.enum';
 import { IncomingWebSocketMessage } from 'app/interfaces/api-message.interface';
 import { ManualSmartTest } from 'app/interfaces/smart-test.interface';
 import { Disk } from 'app/interfaces/storage.interface';
-import { DialogService } from 'app/services/dialog.service';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
 

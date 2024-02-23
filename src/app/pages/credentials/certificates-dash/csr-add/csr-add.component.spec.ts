@@ -16,10 +16,10 @@ import { CertificateDigestAlgorithm } from 'app/enums/certificate-digest-algorit
 import { CertificateKeyType } from 'app/enums/certificate-key-type.enum';
 import { CertificateAuthority } from 'app/interfaces/certificate-authority.interface';
 import { CertificateProfile } from 'app/interfaces/certificate.interface';
-import { SummaryComponent } from 'app/modules/common/summary/summary.component';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
+import { SummaryComponent } from 'app/modules/summary/summary.component';
 import {
   CsrIdentifierAndTypeComponent,
 } from 'app/pages/credentials/certificates-dash/csr-add/steps/csr-identifier-and-type/csr-identifier-and-type.component';

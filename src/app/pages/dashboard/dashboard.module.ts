@@ -18,9 +18,9 @@ import { FormatDateTimePipe } from 'app/core/pipes/format-datetime.pipe';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { CastModule } from 'app/modules/cast/cast.module';
 import { ChartsModule } from 'app/modules/charts/charts.module';
-import { AppCommonModule } from 'app/modules/common/app-common.module';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { EntityModule } from 'app/modules/entity/entity.module';
+import { InterfaceStatusIconComponent } from 'app/modules/interface-status-icon/interface-status-icon.component';
 import { IxDropGridModule } from 'app/modules/ix-drop-grid/ix-drop-grid.module';
 import { IxFileSizeModule } from 'app/modules/ix-file-size/ix-file-size.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
@@ -68,7 +68,6 @@ import { routing } from './dashboard.routing';
     MatDialogModule,
     MatGridListModule,
     MatToolbarModule,
-    AppCommonModule,
     EntityModule,
     TranslateModule,
     CastModule,
@@ -80,6 +79,7 @@ import { routing } from './dashboard.routing';
     ImgFallbackModule,
     IxTable2Module,
     EmptyComponent,
+    InterfaceStatusIconComponent,
   ],
   declarations: [
     DashboardComponent,

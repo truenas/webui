@@ -1,39 +1,37 @@
-<ng-template ixPageHeader>
-  <ix-page-title-header>
-    <ng-container *ngIf="shellConnected; else reconnectControls">
-      <ix-toolbar-slider
-        [label]="'Set font size' | translate"
-        [min]="10"
-        [max]="20"
-        [value]="fontSize"
-        (valueChange)="onFontSizeChanged($event)"
-      ></ix-toolbar-slider>
+<ix-page-header>
+  <ng-container *ngIf="shellConnected; else reconnectControls">
+    <ix-toolbar-slider
+      [label]="'Set font size' | translate"
+      [min]="10"
+      [max]="20"
+      [value]="fontSize"
+      (valueChange)="onFontSizeChanged($event)"
+    ></ix-toolbar-slider>
 
-      <button
-        *ngIf="conf.customReconnectAction"
-        mat-button
-        ixTest="reconnect"
-        (click)="conf.customReconnectAction()"
-      >
-        {{ 'Reconnect' | translate }}
-      </button>
+    <button
+      *ngIf="conf.customReconnectAction"
+      mat-button
+      ixTest="reconnect"
+      (click)="conf.customReconnectAction()"
+    >
+      {{ 'Reconnect' | translate }}
+    </button>
 
-      <button mat-button color="primary" ixTest="restore-default" (click)="resetDefault()">
-        {{ 'Restore Default' | translate }}
-      </button>
+    <button mat-button color="primary" ixTest="restore-default" (click)="resetDefault()">
+      {{ 'Restore Default' | translate }}
+    </button>
 
-      <ix-tooltip
-        [header]="'Shell Commands' | translate"
-        [message]="toolbarTooltip | translate"
-      ></ix-tooltip>
-    </ng-container>
-    <ng-template #reconnectControls>
-      <button mat-button color="primary" ixTest="reconnect" (click)="reconnect()">
-        {{ 'Reconnect' | translate }}
-      </button>
-    </ng-template>
-  </ix-page-title-header>
-</ng-template>
+    <ix-tooltip
+      [header]="'Shell Commands' | translate"
+      [message]="toolbarTooltip | translate"
+    ></ix-tooltip>
+  </ng-container>
+  <ng-template #reconnectControls>
+    <button mat-button color="primary" ixTest="reconnect" (click)="reconnect()">
+      {{ 'Reconnect' | translate }}
+    </button>
+  </ng-template>
+</ix-page-header>
 
 <div class="terminal-wrapper">
   <div

@@ -14,7 +14,6 @@ import { TranslateModule } from '@ngx-translate/core';
 import { CoreComponents } from 'app/core/core-components.module';
 import { FormatDateTimePipe } from 'app/core/pipes/format-datetime.pipe';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
-import { AppCommonModule } from 'app/modules/common/app-common.module';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxDynamicFormModule } from 'app/modules/ix-dynamic-form/ix-dynamic-form.module';
@@ -23,6 +22,7 @@ import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
 import { LayoutModule } from 'app/modules/layout/layout.module';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
+import { SearchInput1Component } from 'app/modules/search-input1/search-input1.component';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
 import { ReportingExportersFormComponent } from 'app/pages/reports-dashboard/components/exporters/reporting-exporters-form/reporting-exporters-form.component';
 import { ReportingExporterListComponent } from 'app/pages/reports-dashboard/components/exporters/reporting-exporters-list/reporting-exporters-list.component';
@@ -41,7 +41,6 @@ import { ReportsGlobalControlsComponent } from './components/reports-global-cont
     IxDynamicFormModule,
     routing,
     ScrollingModule,
-    AppCommonModule,
     MatButtonModule,
     AppLoaderModule,
     IxTable2Module,
@@ -59,6 +58,7 @@ import { ReportsGlobalControlsComponent } from './components/reports-global-cont
     MatSlideToggleModule,
     TestIdModule,
     EmptyComponent,
+    SearchInput1Component,
   ],
   declarations: [
     LineChartComponent,

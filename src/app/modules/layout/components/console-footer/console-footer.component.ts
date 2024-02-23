@@ -3,8 +3,8 @@ import {
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { ConsolePanelDialogComponent } from 'app/modules/common/dialog/console-panel/console-panel-dialog.component';
 import { ConsoleMessagesStore } from 'app/modules/layout/components/console-footer/console-messages.store';
+import { ConsolePanelDialogComponent } from 'app/modules/layout/components/console-footer/console-panel/console-panel-dialog.component';
 
 @UntilDestroy()
 @Component({

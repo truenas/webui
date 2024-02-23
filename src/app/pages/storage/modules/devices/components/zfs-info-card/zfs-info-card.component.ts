@@ -9,13 +9,13 @@ import { Role } from 'app/enums/role.enum';
 import { VdevType, TopologyItemType } from 'app/enums/v-dev-type.enum';
 import { TopologyItemStatus } from 'app/enums/vdev-status.enum';
 import { Disk, isTopologyDisk, TopologyItem } from 'app/interfaces/storage.interface';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import {
   ExtendDialogComponent, ExtendDialogParams,
 } from 'app/pages/storage/modules/devices/components/zfs-info-card/extend-dialog/extend-dialog.component';
 import { DevicesStore } from 'app/pages/storage/modules/devices/stores/devices-store.service';
-import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
 

@@ -7,8 +7,8 @@ import {
 } from 'rxjs';
 import { AppExtraCategory } from 'app/enums/app-extra-category.enum';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
-import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 
 export interface AppsByCategory {

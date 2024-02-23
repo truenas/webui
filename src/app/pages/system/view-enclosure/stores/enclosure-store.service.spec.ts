@@ -9,7 +9,7 @@ import {
   EnclosureSlot,
   EnclosureView,
 } from 'app/interfaces/enclosure.interface';
-import { DialogService } from 'app/services/dialog.service';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { StorageService } from 'app/services/storage.service';
 import { EnclosureState, EnclosureStore } from './enclosure-store.service';
 

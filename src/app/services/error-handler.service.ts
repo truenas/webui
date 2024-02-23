@@ -9,7 +9,7 @@ import { sentryCustomExceptionExtraction } from 'app/helpers/error-parser.helper
 import { ErrorReport } from 'app/interfaces/error-report.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { WebSocketError } from 'app/interfaces/websocket-error.interface';
-import { DialogService } from 'app/services/dialog.service';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 
 @Injectable({
   providedIn: 'root',

@@ -19,12 +19,12 @@ import {
   Acl, AclTemplateByPath, NfsAclItem, PosixAclItem, SetAcl,
 } from 'app/interfaces/acl.interface';
 import { Job } from 'app/interfaces/job.interface';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import {
   AclSaveFormParams,
   DatasetAclEditorState,
 } from 'app/pages/datasets/modules/permissions/interfaces/dataset-acl-editor-state.interface';
 import { newNfsAce, newPosixAce } from 'app/pages/datasets/modules/permissions/utils/new-ace.utils';
-import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { StorageService } from 'app/services/storage.service';
 import { UserService } from 'app/services/user.service';

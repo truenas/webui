@@ -10,12 +10,12 @@ import { filter, map } from 'rxjs/operators';
 import { JobState } from 'app/enums/job-state.enum';
 import { trackById } from 'app/helpers/track-by.utils';
 import { Job } from 'app/interfaces/job.interface';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { abortJobPressed, jobPanelClosed } from 'app/modules/jobs/store/job.actions';
 import {
   JobSlice, selectJobState, selectRunningJobsCount, selectWaitingJobsCount, selectFailedJobsCount, selectJobsPanelSlice,
 } from 'app/modules/jobs/store/job.selectors';
-import { DialogService } from 'app/services/dialog.service';
 
 @UntilDestroy()
 @Component({

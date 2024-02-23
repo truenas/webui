@@ -1,15 +1,16 @@
-import { Inject, Injectable, TemplateRef } from '@angular/core';
+import {
+  Inject, Injectable,
+} from '@angular/core';
+import { UntilDestroy } from '@ngneat/until-destroy';
 import { BehaviorSubject } from 'rxjs';
 import { WINDOW } from 'app/helpers/window.helper';
 
+@UntilDestroy()
 @Injectable({
   providedIn: 'root',
 })
 export class LayoutService {
-  /**
-   * Prefer `ixPageHeader` directive.
-   */
-  readonly pageHeaderUpdater$ = new BehaviorSubject<TemplateRef<unknown>>(null);
+  readonly hasCustomPageHeader$ = new BehaviorSubject<boolean>(false);
 
   constructor(
     @Inject(WINDOW) private window: Window,

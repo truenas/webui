@@ -5,10 +5,10 @@ import { TranslateService } from '@ngx-translate/core';
 import { WINDOW } from 'app/helpers/window.helper';
 import { GmailOauthConfig } from 'app/interfaces/mail-config.interface';
 import { OauthMessage } from 'app/interfaces/oauth-message.interface';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { OauthJiraMessage } from 'app/modules/feedback/interfaces/file-ticket.interface';
 import { OauthButtonType } from 'app/modules/oauth-button/interfaces/oauth-button.interface';
 import { OauthProviderData } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/oauth-provider/oauth-provider.component';
-import { DialogService } from 'app/services/dialog.service';
 
 @Component({
   selector: 'ix-oauth-button',

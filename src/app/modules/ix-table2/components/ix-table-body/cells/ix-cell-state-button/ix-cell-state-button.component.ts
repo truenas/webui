@@ -5,10 +5,10 @@ import { TranslateService } from '@ngx-translate/core';
 import { JobState } from 'app/enums/job-state.enum';
 import { helptextGlobal } from 'app/helptext/global-helptext';
 import { Job } from 'app/interfaces/job.interface';
-import { ShowLogsDialogComponent } from 'app/modules/common/dialog/show-logs-dialog/show-logs-dialog.component';
+import { ShowLogsDialogComponent } from 'app/modules/dialog/components/show-logs-dialog/show-logs-dialog.component';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { Column, ColumnComponent } from 'app/modules/ix-table2/interfaces/table-column.interface';
-import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 
 interface RowState {

@@ -11,6 +11,7 @@ import { mockWebSocket, mockCall } from 'app/core/testing/utils/mock-websocket.u
 import { DiskBus } from 'app/enums/disk-bus.enum';
 import { SmartTestTaskUi } from 'app/interfaces/smart-test.interface';
 import { Disk } from 'app/interfaces/storage.interface';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTable2Harness } from 'app/modules/ix-table2/components/ix-table2/ix-table2.harness';
@@ -18,7 +19,6 @@ import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { SmartTaskCardComponent } from 'app/pages/data-protection/smart-task/smart-task-card/smart-task-card.component';
 import { SmartTaskFormComponent } from 'app/pages/data-protection/smart-task/smart-task-form/smart-task-form.component';
-import { DialogService } from 'app/services/dialog.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LocaleService } from 'app/services/locale.service';
 import { TaskService } from 'app/services/task.service';

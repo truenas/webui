@@ -10,8 +10,8 @@ import { PodSelectDialogType } from 'app/enums/pod-select-dialog.enum';
 import { helptextShell } from 'app/helptext/shell/shell';
 import { PodDialogFormValue } from 'app/interfaces/pod-select-dialog.interface';
 import { TerminalConfiguration, TerminalConnectionData } from 'app/interfaces/terminal.interface';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { PodSelectDialogComponent } from 'app/pages/apps/components/pod-select-dialog/pod-select-dialog.component';
-import { DialogService } from 'app/services/dialog.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()

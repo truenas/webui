@@ -29,6 +29,7 @@ import { ChartRelease } from 'app/interfaces/chart-release.interface';
 import { CoreBulkResponse } from 'app/interfaces/core-bulk.interface';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { Job } from 'app/interfaces/job.interface';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { SortDirection } from 'app/modules/ix-table2/enums/sort-direction.enum';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -38,7 +39,6 @@ import { AppStatus } from 'app/pages/apps/enum/app-status.enum';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.service';
 import { KubernetesStore } from 'app/pages/apps/store/kubernetes-store.service';
-import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 

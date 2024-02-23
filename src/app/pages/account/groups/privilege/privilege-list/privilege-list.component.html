@@ -1,25 +1,23 @@
-<ng-template ixPageHeader>
-  <ix-page-title-header>
-    <div class="search-container">
-      <ix-search-input2
-        #searchInput
-        class="search-input"
-        [properties]="searchProperties"
-        [query]="searchQuery"
-        [advancedSearchPlaceholder]="advancedSearchPlaceholder"
-        (runSearch)="onSearch(searchInput.query);"
-      ></ix-search-input2>
-      <div class="search-button-wrapper">
-        <button mat-button type="button" ixTest="search" (click)="onSearch(searchInput.query)">
-          {{ 'Search' | translate }}
-        </button>
-        <button mat-button ixTest="add-privilege" [color]="'primary'" (click)="openForm()">
-          {{ 'Add' | translate }}
-        </button>
-      </div>
+<ix-page-header>
+  <div class="search-container">
+    <ix-search-input2
+      #searchInput
+      class="search-input"
+      [properties]="searchProperties"
+      [query]="searchQuery"
+      [advancedSearchPlaceholder]="advancedSearchPlaceholder"
+      (runSearch)="onSearch(searchInput.query);"
+    ></ix-search-input2>
+    <div class="search-button-wrapper">
+      <button mat-button type="button" ixTest="search" (click)="onSearch(searchInput.query)">
+        {{ 'Search' | translate }}
+      </button>
+      <button mat-button ixTest="add-privilege" [color]="'primary'" (click)="openForm()">
+        {{ 'Add' | translate }}
+      </button>
     </div>
-  </ix-page-title-header>
-</ng-template>
+  </div>
+</ix-page-header>
 
 <div class="table-container">
   <ix-table2

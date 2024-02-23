@@ -1,11 +1,6 @@
 <div class="widget stats-widget" ngClass.xs="double-height xs">
-  <div class="card-container front">
-    <mat-card
-      class="front overflow-hidden"
-      fxLayout="row"
-      fxLayoutWrap
-      fxLayoutAlign="space-between stretch"
-    >
+  <div class="card-container">
+    <mat-card class="front overflow-hidden">
       <mat-card-content *ngIf="nicState; else notAvailable" #carouselparent>
         <ix-drag-handle [showReorderHandle]="showReorderHandle">
           <ng-content [select]="[cdkDragHandle]"></ng-content>
@@ -14,14 +9,13 @@
             <!-- Mobile Only: Exit Widget -->
             <button
               *ngIf="currentSlide === '0'"
-              fxHide.gt-xs
               mat-icon-button
               color="default"
               class="mat-card-title-text primary-nav"
               ixTest="nic-back"
               (click)="goBack(); updateSlide(path[previousSlide].name, true, previousSlide)"
             >
-              <ix-icon name="chevron_left" class="back-arrow"></ix-icon>
+              <ix-icon name="chevron_left"></ix-icon>
             </button>
 
             <!-- Back to previous slide -->
@@ -29,11 +23,11 @@
               *ngIf="currentSlide !== '0'"
               mat-icon-button
               color="default"
-              class="mat-card-title-text primary-nav"
+              class="mat-card-title-text primary-nav slide-back"
               [ixTest]="['nic-widget', 'back']"
               (click)="updateSlide(path[previousSlide].name, true, previousSlide)"
             >
-              <ix-icon name="chevron_left" class="back-arrow"></ix-icon>
+              <ix-icon name="chevron_left"></ix-icon>
             </button>
 
             <h3 class="mat-card-title-text">
@@ -62,12 +56,12 @@
               <button
                 mat-icon-button
                 [ixTest]="['nic-widget', 'network-reports', nicState.name]"
-                (click)="router.navigate(['reportsdashboard/network'])"
+                [routerLink]="['/reportsdashboard', 'network']"
               >
                 <ix-icon
                   name="insert_chart"
                   matTooltipPosition="above"
-                  aria-label="Network Reports"
+                  [attr.aria-label]="'Network Reports' | translate"
                   [matTooltip]="'Network Reports' | translate"
                 ></ix-icon>
               </button>
@@ -77,21 +71,10 @@
 
         <!-- Carousel -->
         <div #carousel class="carousel" [class.lagg]="nicState.lagg_ports">
-          <div
-            fxFlex="100"
-            class="slide overview"
-            fxLayout="row"
-            fxLayout.xs="column"
-            fxLayoutAlign="space-between"
-          >
-            <div class="left" fxFlex="40" fxFlex.xs="250px">
-              <div
-                class="overlay"
-                fxFlex="100"
-                fxLayout="column"
-                fxLayoutAlign="space-around center"
-              >
-                <div fxFlex="66" class="left-content">
+          <div class="slide overview">
+            <div class="left">
+              <div class="overlay">
+                <div class="left-content">
                   <div
                     class="nic-name"
                     [class.up]="linkState === LinkState.Up"
@@ -109,7 +92,7 @@
                     [class.up]="linkState === LinkState.Up"
                     [class.down]="linkState !== LinkState.Up"
                   >
-                    <div fxLayoutAlign="start center" fxLayoutGap="8px">
+                    <div class="link-state-label">
                       <span>{{ linkStateLabel | translate }}</span>
                       <ix-icon *ngIf="linkState === LinkState.Up" name="check_circle"></ix-icon>
                       <ix-icon *ngIf="linkState !== LinkState.Up" name="cancel"></ix-icon>
@@ -146,14 +129,8 @@
               </div>
             </div>
 
-            <div
-              class="right"
-              fxFlex="60"
-              fxFlex.xs
-              fxLayout="column"
-              fxLayoutAlign="space-around center"
-            >
-              <div fxFlex="100">
+            <div class="right">
+              <div class="right-content">
                 <div class="list-subheader">{{ 'Overview' | translate }}</div>
                 <ng-template #unknown>{{ 'Unknown' | translate }}</ng-template>
                 <mat-list>
@@ -170,7 +147,7 @@
                     </ng-container>
                   </mat-list-item>
                   <mat-list-item
-                    [ngClass]="{ clickable: ipAddresses.length > 1 }"
+                    [class.clickable]="ipAddresses.length > 1"
                     (click)="updateSlide(Path.Addresses, ipAddresses.length > 1, 1)"
                   >
                     <strong>{{ 'IP Addresses' | translate }}:</strong>
@@ -182,14 +159,14 @@
                       ({{ '{n} more' | translate: { n: ipAddresses.length - 1 } }})
                     </span>
                     <ix-icon
-                      *ngIf="ipAddresses.length > 1"
+                      *ngIf="ipAddresses.length"
                       name="chevron_right"
                       class="next-slide"
                     ></ix-icon>
                   </mat-list-item>
                   <mat-list-item
                     *ngIf="nicState.vlans"
-                    [ngClass]="{ clickable: nicState.vlans.length > 0 }"
+                    [class.clickable]="nicState.vlans.length"
                     (click)="updateSlide(Path.Vlans, nicState.vlans.length > 0, 1)"
                   >
                     <strong>{{ 'VLANs' | translate }}:</strong>
@@ -202,7 +179,7 @@
                   </mat-list-item>
                   <mat-list-item
                     *ngIf="nicState.lagg_ports"
-                    [ngClass]="{ clickable: nicState.lagg_ports.length > 0 }"
+                    [class.clickable]="nicState.lagg_ports.length"
                     (click)="updateSlide(Path.Interfaces, nicState.lagg_ports.length > 0, 1)"
                   >
                     <strong>{{ 'Interfaces' | translate }}:</strong>
@@ -218,11 +195,7 @@
             </div>
           </div>
 
-          <div
-            *ngIf="path[1].name === Path.Addresses"
-            class="slide addresses"
-            fxFlex="100"
-          >
+          <div *ngIf="path[1].name === Path.Addresses" class="slide addresses">
             <div class="list-subheader">{{ 'Addresses' | translate }}</div>
             <mat-list *ngIf="nicState && nicState.aliases?.length > 0">
               <mat-list-item
@@ -236,13 +209,9 @@
             </mat-list>
           </div>
 
-          <div
-            *ngIf="path[1].name === Path.Vlans"
-            class="slide vlans"
-            fxFlex="100"
-          >
+          <div *ngIf="path[1].name === Path.Vlans" class="slide vlans">
             <div class="list-subheader">{{ currentSlideName }}</div>
-            <mat-list *ngIf="nicState && nicState.vlans && nicState.vlans?.length > 0">
+            <mat-list *ngIf="nicState.vlans?.length > 0">
               <mat-list-item
                 *ngFor="let vlan of nicState.vlans; let i = index"
                 role="listitem"
@@ -263,7 +232,6 @@
           <div
             *ngIf="nicState.lagg_ports && path[1].name === Path.Interfaces"
             class="slide lagg-ports"
-            fxFlex="100"
           >
             <div class="list-subheader">{{ 'Interfaces' | translate }}</div>
             <mat-list>
@@ -277,17 +245,9 @@
             </mat-list>
           </div>
 
-          <div
-            *ngIf="path[1].name === Path.Empty"
-            class="slide empty"
-            fxFlex="100"
-          ></div>
+          <div *ngIf="path[1].name === Path.Empty" class="slide empty"></div>
 
-          <div
-            *ngIf="path[2].name === Path.VlanAddresses"
-            class="slide vlan-addresses"
-            fxFlex="100"
-          >
+          <div *ngIf="path[2].name === Path.VlanAddresses" class="slide vlan-addresses">
             <div class="list-subheader">{{ 'VLAN Addresses' | translate }}</div>
             <mat-list *ngIf="nicState && vlanAliases(path[2].index).length > 0">
               <mat-list-item
@@ -301,11 +261,7 @@
             </mat-list>
           </div>
 
-          <div
-            *ngIf="path[2].name === Path.Empty"
-            class="slide empty"
-            fxFlex="100"
-          ></div>
+          <div *ngIf="path[2].name === Path.Empty" class="slide empty"></div>
         </div>
       </mat-card-content>
 

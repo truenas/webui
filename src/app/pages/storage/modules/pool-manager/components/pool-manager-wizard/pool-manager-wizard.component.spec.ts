@@ -13,6 +13,7 @@ import { mockEntityJobComponentRef } from 'app/core/testing/utils/mock-entity-jo
 import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { CreateVdevLayout, VdevType } from 'app/enums/v-dev-type.enum';
 import { Pool } from 'app/interfaces/pool.interface';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { AddVdevsStore } from 'app/pages/storage/modules/pool-manager/components/add-vdevs/store/add-vdevs-store.service';
@@ -51,7 +52,6 @@ import {
 } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/steps/9-review-wizard-step/review-wizard-step.component';
 import { PoolManagerValidationService } from 'app/pages/storage/modules/pool-manager/store/pool-manager-validation.service';
 import { PoolManagerState, PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
-import { DialogService } from 'app/services/dialog.service';
 import { selectSystemFeatures } from 'app/store/system-info/system-info.selectors';
 
 describe('PoolManagerWizardComponent', () => {

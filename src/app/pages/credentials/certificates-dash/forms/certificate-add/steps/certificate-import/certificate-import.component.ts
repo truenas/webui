@@ -9,10 +9,10 @@ import { of } from 'rxjs';
 import { helptextSystemCertificates } from 'app/helptext/system/certificates';
 import { Certificate } from 'app/interfaces/certificate.interface';
 import { Option } from 'app/interfaces/option.interface';
-import { SummaryProvider, SummarySection } from 'app/modules/common/summary/summary.interface';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { matchOthersFgValidator } from 'app/modules/ix-forms/validators/password-validation/password-validation';
+import { SummaryProvider, SummarySection } from 'app/modules/summary/summary.interface';
 import { getCertificatePreview } from 'app/pages/credentials/certificates-dash/utils/get-certificate-preview.utils';
-import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
 

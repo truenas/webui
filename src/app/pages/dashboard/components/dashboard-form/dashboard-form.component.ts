@@ -10,10 +10,10 @@ import { ControlsOf } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { Subject } from 'rxjs';
+import { WidgetName } from 'app/enums/widget-name.enum';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { WidgetName } from 'app/pages/dashboard/components/dashboard/dashboard.component';
 import { DashConfigItem } from 'app/pages/dashboard/components/widget-controller/widget-controller.component';
 import { WebSocketService } from 'app/services/ws.service';
 

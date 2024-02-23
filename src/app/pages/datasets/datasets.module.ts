@@ -14,7 +14,6 @@ import { NgChartsModule } from 'ng2-charts';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { CoreComponents } from 'app/core/core-components.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
-import { AppCommonModule } from 'app/modules/common/app-common.module';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxFileSizeModule } from 'app/modules/ix-file-size/ix-file-size.module';
@@ -24,6 +23,7 @@ import { IxTableModule } from 'app/modules/ix-tables/ix-table.module';
 import { TreeModule } from 'app/modules/ix-tree/tree.module';
 import { LayoutModule } from 'app/modules/layout/layout.module';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
+import { SearchInput1Component } from 'app/modules/search-input1/search-input1.component';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
 import { DataProtectionCardComponent } from 'app/pages/datasets/components/data-protection-card/data-protection-card.component';
 import { DatasetDetailsCardComponent } from 'app/pages/datasets/components/dataset-details-card/dataset-details-card.component';
@@ -69,7 +69,6 @@ import { DatasetNodeComponent } from './components/dataset-node/dataset-node.com
     IxFileSizeModule,
     MatRippleModule,
     MatProgressSpinnerModule,
-    AppCommonModule,
     PermissionsModule,
     EncryptionModule,
     FlexLayoutModule,
@@ -87,6 +86,7 @@ import { DatasetNodeComponent } from './components/dataset-node/dataset-node.com
     SnapshotsModule,
     TestIdModule,
     EmptyComponent,
+    SearchInput1Component,
   ],
   declarations: [
     DatasetsManagementComponent,

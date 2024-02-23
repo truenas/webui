@@ -1,11 +1,6 @@
 <div class="widget stats-widget" ngClass.xs="double-height xs">
-  <div class="card-container front">
-    <mat-card
-      class="front"
-      fxLayout="row"
-      fxLayoutWrap
-      fxLayoutAlign="space-between stretch"
-    >
+  <div class="card-container">
+    <mat-card class="front">
       <mat-card-content>
         <mat-toolbar-row>
           <h3 class="mat-card-title-text">
@@ -13,15 +8,15 @@
           </h3>
         </mat-toolbar-row>
 
-        <div fxLayout="column" class="mobile">
-          <div *ngIf="!renderedWidgets.length && emptyConfig" fxFlex="65" class="bottom empty">
+        <div class="mobile">
+          <div *ngIf="!renderedWidgets.length && emptyConfig" class="bottom empty">
             <ix-empty [conf]="emptyConfig"></ix-empty>
           </div>
 
-          <div *ngIf="renderedWidgets.length" fxFlex="65" class="bottom">
+          <div *ngIf="renderedWidgets.length" class="bottom">
             <div class="list-subheader">
               <span class="capitalize">
-                Widgets ({{ renderedWidgets.length }} items)
+                {{ 'Widgets ({n, plural, =1 {# item} other {# items}})' | translate: { n: renderedWidgets.length } }}
               </span>
             </div>
             <mat-list>

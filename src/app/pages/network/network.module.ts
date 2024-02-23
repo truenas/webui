@@ -14,13 +14,13 @@ import { TranslateModule } from '@ngx-translate/core';
 import { CoreComponents } from 'app/core/core-components.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { CastModule } from 'app/modules/cast/cast.module';
-import { AppCommonModule } from 'app/modules/common/app-common.module';
-import { NgxOrderedListboxModule } from 'app/modules/common/ordered-list/ordered-list.module';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { EntityModule } from 'app/modules/entity/entity.module';
+import { InterfaceStatusIconComponent } from 'app/modules/interface-status-icon/interface-status-icon.component';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
+import { NgxOrderedListboxModule } from 'app/modules/lists/ordered-list/ordered-list.module';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
 import { NetworkConfigurationComponent } from 'app/pages/network/components/configuration/configuration.component';
@@ -49,7 +49,6 @@ import { routing } from './network.routing';
     EntityModule,
     CommonModule,
     FormsModule,
-    AppCommonModule,
     ReactiveFormsModule,
     routing,
     MatCardModule,
@@ -71,6 +70,7 @@ import { routing } from './network.routing';
     MatTooltipModule,
     CoreComponents,
     AppLoaderModule,
+    InterfaceStatusIconComponent,
     EmptyComponent,
   ],
   declarations: [

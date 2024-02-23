@@ -21,7 +21,6 @@ import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { CoreComponents } from 'app/core/core-components.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { CastModule } from 'app/modules/cast/cast.module';
-import { AppCommonModule } from 'app/modules/common/app-common.module';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxDynamicFormModule } from 'app/modules/ix-dynamic-form/ix-dynamic-form.module';
@@ -32,6 +31,7 @@ import { IxTableModule } from 'app/modules/ix-tables/ix-table.module';
 import { LayoutModule } from 'app/modules/layout/layout.module';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
+import { SearchInput1Component } from 'app/modules/search-input1/search-input1.component';
 import { TerminalModule } from 'app/modules/terminal/terminal.module';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
 import { AppsRoutingModule } from 'app/pages/apps/apps-routing.module';
@@ -169,7 +169,6 @@ import { KubernetesStatusComponent } from './components/installed-apps/kubernete
     LazyLoadImageModule,
     TestIdModule,
     AppLoaderModule,
-    AppCommonModule,
     CommonDirectivesModule,
     MatExpansionModule,
     CastModule,
@@ -184,6 +183,7 @@ import { KubernetesStatusComponent } from './components/installed-apps/kubernete
     IxTable2Module,
     LayoutModule,
     AppCatalogPipe,
+    SearchInput1Component,
     EmptyComponent,
   ],
   providers: [

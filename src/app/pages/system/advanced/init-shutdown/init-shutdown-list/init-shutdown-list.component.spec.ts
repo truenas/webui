@@ -1,21 +1,24 @@
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { MockModule } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { InitShutdownScriptType } from 'app/enums/init-shutdown-script-type.enum';
 import { InitShutdownScriptWhen } from 'app/enums/init-shutdown-script-when.enum';
 import { InitShutdownScript } from 'app/interfaces/init-shutdown-script.interface';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTable2Harness } from 'app/modules/ix-table2/components/ix-table2/ix-table2.harness';
 import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
+import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
+import { SearchInput1Component } from 'app/modules/search-input1/search-input1.component';
 import {
   InitShutdownFormComponent,
 } from 'app/pages/system/advanced/init-shutdown/init-shutdown-form/init-shutdown-form.component';
 import {
   InitShutdownListComponent,
 } from 'app/pages/system/advanced/init-shutdown/init-shutdown-list/init-shutdown-list.component';
-import { DialogService } from 'app/services/dialog.service';
 import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -45,6 +48,8 @@ describe('InitShutdownListComponent', () => {
     component: InitShutdownListComponent,
     imports: [
       IxTable2Module,
+      MockModule(PageHeaderModule),
+      SearchInput1Component,
     ],
     providers: [
       mockWebSocket([

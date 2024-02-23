@@ -1,15 +1,13 @@
-<ng-template ixPageHeader>
-  <ix-page-title-header [pageTitle]="pageTitle">
-    <a
-      mat-button
-      color="primary"
-      ixTest="add-vdev"
-      [routerLink]="['/storage', poolId, 'add-vdevs']"
-    >
-      {{ 'Add VDEV' | translate }}
-    </a>
-  </ix-page-title-header>
-</ng-template>
+<ix-page-header [pageTitle]="pageTitle">
+  <a
+    mat-button
+    color="primary"
+    ixTest="add-vdev"
+    [routerLink]="['/storage', poolId, 'add-vdevs']"
+  >
+    {{ 'Add VDEV' | translate }}
+  </a>
+</ix-page-header>
 
 <div
   *appLet="selectedNode$ | async as selectedNode"
@@ -22,10 +20,10 @@
     ></ix-fake-progress-bar>
 
     <div class="item-search">
-      <ix-search-input
+      <ix-search-input1
         [disabled]="!dataSource?.data?.length"
         (search)="onSearch($event)"
-      ></ix-search-input>
+      ></ix-search-input1>
     </div>
 
     <div class="sticky-header">

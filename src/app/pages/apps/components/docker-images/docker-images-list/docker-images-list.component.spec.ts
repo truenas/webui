@@ -1,15 +1,18 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { MockModule } from 'ng-mocks';
 import { of, Subject } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxEmptyRowHarness } from 'app/modules/ix-tables/components/ix-empty-row/ix-empty-row.component.harness';
 import { IxTableModule } from 'app/modules/ix-tables/ix-table.module';
 import { IxTableHarness } from 'app/modules/ix-tables/testing/ix-table.harness';
+import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
+import { SearchInput1Component } from 'app/modules/search-input1/search-input1.component';
 import { DockerImagesComponentStore, DockerImagesState } from 'app/pages/apps/components/docker-images/docker-images.store';
 import { fakeDockerImagesDataSource } from 'app/pages/apps/components/docker-images/test/fake-docker-images';
-import { DialogService } from 'app/services/dialog.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { DockerImagesListComponent } from './docker-images-list.component';
@@ -24,6 +27,8 @@ describe('DockerImagesListComponent', () => {
     component: DockerImagesListComponent,
     imports: [
       IxTableModule,
+      MockModule(PageHeaderModule),
+      SearchInput1Component,
     ],
     providers: [
       mockAuth(),

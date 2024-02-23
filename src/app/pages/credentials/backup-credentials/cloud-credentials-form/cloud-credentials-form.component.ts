@@ -17,6 +17,7 @@ import { helptextSystemCloudcredentials as helptext } from 'app/helptext/system/
 import { CloudSyncCredential, CloudSyncCredentialUpdate } from 'app/interfaces/cloudsync-credential.interface';
 import { CloudSyncProvider } from 'app/interfaces/cloudsync-provider.interface';
 import { Option } from 'app/interfaces/option.interface';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ChainedRef } from 'app/modules/ix-forms/components/ix-slide-in/chained-component-ref';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { forbiddenValues } from 'app/modules/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
@@ -26,7 +27,6 @@ import {
 } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/provider-forms/base-provider-form';
 import { getName, getProviderFormClass } from 'app/pages/data-protection/cloudsync/cloudsync-wizard/steps/cloudsync-provider/cloudsync-provider.common';
 import { CloudCredentialService } from 'app/services/cloud-credential.service';
-import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
 

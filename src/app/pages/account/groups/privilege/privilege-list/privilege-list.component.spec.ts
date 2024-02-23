@@ -6,12 +6,14 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { Role } from 'app/enums/role.enum';
 import { Privilege } from 'app/interfaces/privilege.interface';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTable2Harness } from 'app/modules/ix-table2/components/ix-table2/ix-table2.harness';
 import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
+import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
+import { SearchInputModule } from 'app/modules/search-input/search-input.module';
 import { PrivilegeFormComponent } from 'app/pages/account/groups/privilege/privilege-form/privilege-form.component';
 import { PrivilegeListComponent } from 'app/pages/account/groups/privilege/privilege-list/privilege-list.component';
-import { DialogService } from 'app/services/dialog.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -43,6 +45,8 @@ describe('PrivilegeListComponent', () => {
     component: PrivilegeListComponent,
     imports: [
       IxTable2Module,
+      PageHeaderModule,
+      SearchInputModule,
     ],
     providers: [
       mockWebSocket([

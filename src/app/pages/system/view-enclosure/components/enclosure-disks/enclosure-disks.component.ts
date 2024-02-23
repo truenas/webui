@@ -20,6 +20,7 @@ import {
 import { Pool } from 'app/interfaces/pool.interface';
 import { Disk, TopologyDisk } from 'app/interfaces/storage.interface';
 import { Theme } from 'app/interfaces/theme.interface';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ChassisView } from 'app/pages/system/view-enclosure/classes/chassis-view';
 import { DriveTray } from 'app/pages/system/view-enclosure/classes/drivetray';
 import { Chassis } from 'app/pages/system/view-enclosure/classes/hardware/chassis';
@@ -59,7 +60,6 @@ import {
 } from 'app/pages/system/view-enclosure/interfaces/enclosure-events.interface';
 import { ViewConfig } from 'app/pages/system/view-enclosure/interfaces/view.config';
 import { EnclosureState, EnclosureStore } from 'app/pages/system/view-enclosure/stores/enclosure-store.service';
-import { DialogService } from 'app/services/dialog.service';
 import { DiskTemperatureService, Temperature } from 'app/services/disk-temperature.service';
 import { ThemeService } from 'app/services/theme/theme.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -255,7 +255,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
 
   get hideIdentifyDrive(): boolean {
     const selectedEnclosureView = this.selectedEnclosureView;
-    return selectedEnclosureView.model === 'TRUENAS-MINI-R';
+    return selectedEnclosureView.model === 'TRUENAS-MINI-R' || !selectedEnclosureView.hasSlotStatus;
   }
 
   theme: Theme;

@@ -9,12 +9,12 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { forkJoin } from 'rxjs';
 import { helptextSystemSupport as helptext } from 'app/helptext/system/support';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { SupportConfigUpdate } from 'app/modules/feedback/interfaces/file-ticket.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { emailValidator } from 'app/modules/ix-forms/validators/email-validation/email-validation';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
 
