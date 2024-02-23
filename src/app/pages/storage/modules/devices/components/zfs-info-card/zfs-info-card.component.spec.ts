@@ -106,7 +106,7 @@ describe('ZfsInfoCardComponent', () => {
     });
 
     // TODO: https://ixsystems.atlassian.net/browse/NAS-117094
-    it('removes device with confirmtion when Remove button is pressed', async () => {
+    it('removes device with confirmation when Remove button is pressed', async () => {
       spectator.setInput('topologyParentItem', {
         name: 'mirror-0',
         type: TopologyItemType.Spare,

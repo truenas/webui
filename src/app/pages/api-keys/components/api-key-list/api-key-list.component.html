@@ -1,15 +1,15 @@
-<ng-template ixPageHeader>
-  <ix-page-title-header>
-    <ix-search-input (search)="onListFiltered($event)"></ix-search-input>
-
-    <a mat-button href="/api/docs" target="_blank" ixTest="api-docs">
-      {{ 'API Docs' | translate }}
-    </a>
-    <button mat-button color="primary" ixTest="add-api-key" (click)="openApiKeyForm()">
-      {{ 'Add' | translate }}
-    </button>
-  </ix-page-title-header>
-</ng-template>
+<ix-page-header>
+  <ix-search-input
+    [disabled]="isLoading$ | async"
+    (search)="onListFiltered($event)"
+  ></ix-search-input>
+  <a mat-button href="/api/docs" target="_blank" ixTest="api-docs">
+    {{ 'API Docs' | translate }}
+  </a>
+  <button mat-button color="primary" ixTest="add-api-key" (click)="openApiKeyForm()">
+    {{ 'Add' | translate }}
+  </button>
+</ix-page-header>
 
 <ix-table2
   class="table"

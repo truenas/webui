@@ -1,13 +1,16 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { MockModule } from 'ng-mocks';
 import { of, Subject } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { AppCommonModule } from 'app/modules/common/app-common.module';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxEmptyRowHarness } from 'app/modules/ix-tables/components/ix-empty-row/ix-empty-row.component.harness';
 import { IxTableModule } from 'app/modules/ix-tables/ix-table.module';
 import { IxTableHarness } from 'app/modules/ix-tables/testing/ix-table.harness';
+import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
 import { DockerImagesComponentStore, DockerImagesState } from 'app/pages/apps/components/docker-images/docker-images.store';
 import { fakeDockerImagesDataSource } from 'app/pages/apps/components/docker-images/test/fake-docker-images';
 import { DialogService } from 'app/services/dialog.service';
@@ -26,6 +29,8 @@ describe('DockerImagesListComponent', () => {
     imports: [
       EntityModule,
       IxTableModule,
+      MockModule(PageHeaderModule),
+      MockModule(AppCommonModule),
     ],
     providers: [
       mockAuth(),

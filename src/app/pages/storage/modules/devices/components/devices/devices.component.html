@@ -1,15 +1,13 @@
-<ng-template ixPageHeader>
-  <ix-page-title-header [pageTitle]="pageTitle">
-    <a
-      mat-button
-      color="primary"
-      ixTest="add-vdev"
-      [routerLink]="['/storage', poolId, 'add-vdevs']"
-    >
-      {{ 'Add VDEV' | translate }}
-    </a>
-  </ix-page-title-header>
-</ng-template>
+<ix-page-header [pageTitle]="pageTitle">
+  <a
+    mat-button
+    color="primary"
+    ixTest="add-vdev"
+    [routerLink]="['/storage', poolId, 'add-vdevs']"
+  >
+    {{ 'Add VDEV' | translate }}
+  </a>
+</ix-page-header>
 
 <div
   *appLet="selectedNode$ | async as selectedNode"

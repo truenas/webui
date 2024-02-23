@@ -1,13 +1,10 @@
-import { TemplatePortal } from '@angular/cdk/portal';
 import {
   AfterViewInit, ChangeDetectionStrategy,
-  ChangeDetectorRef,
   Component,
   OnDestroy,
   OnInit,
   QueryList,
   ViewChildren,
-  ViewContainerRef,
 } from '@angular/core';
 import { MatDrawerMode, MatSidenav } from '@angular/material/sidenav';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -18,7 +15,6 @@ import { SubMenuItem } from 'app/interfaces/menu-item.interface';
 import { alertPanelClosed } from 'app/modules/alerts/store/alert.actions';
 import { selectIsAlertPanelOpen } from 'app/modules/alerts/store/alert.selectors';
 import { LanguageService } from 'app/services/language.service';
-import { LayoutService } from 'app/services/layout.service';
 import { SentryService } from 'app/services/sentry.service';
 import { SidenavService } from 'app/services/sidenav.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
@@ -38,7 +34,6 @@ import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 export class AdminLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChildren(MatSidenav) private sideNavs: QueryList<MatSidenav>;
 
-  protected headerPortalOutlet: TemplatePortal = null;
   readonly hostname$ = this.store$.pipe(waitForSystemInfo, map(({ hostname }) => hostname));
   readonly isAlertPanelOpen$ = this.store$.select(selectIsAlertPanelOpen);
   readonly hasConsoleFooter$ = this.store$.select(selectHasConsoleFooter);
@@ -81,11 +76,8 @@ export class AdminLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
   constructor(
     private themeService: ThemeService,
     private sysGeneralService: SystemGeneralService,
-    private layoutService: LayoutService,
     private sidenavService: SidenavService,
     private store$: Store<AppState>,
-    private viewContainerRef: ViewContainerRef,
-    private cdr: ChangeDetectorRef,
     private languageService: LanguageService,
     private tokenLifetimeService: TokenLifetimeService,
     private sentryService: SentryService,
@@ -103,7 +95,6 @@ export class AdminLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngAfterViewInit(): void {
     this.sidenavService.setSidenav(this.sideNavs?.first);
-    this.renderPageHeader();
   }
 
   ngOnDestroy(): void {
@@ -126,24 +117,5 @@ export class AdminLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
 
   onAlertsPanelClosed(): void {
     this.store$.dispatch(alertPanelClosed());
-  }
-
-  private renderPageHeader(): void {
-    this.layoutService.pageHeaderUpdater$
-      .pipe(untilDestroyed(this))
-      .subscribe((headerContent) => {
-        try {
-          if (headerContent) {
-            this.headerPortalOutlet = new TemplatePortal(headerContent, this.viewContainerRef);
-            this.cdr.detectChanges();
-          } else {
-            this.headerPortalOutlet = null;
-          }
-        } catch (error: unknown) {
-          // Prevents an error on one header from breaking headers on all pages.
-          console.error('Error when rendering page header template', error);
-          this.headerPortalOutlet = null;
-        }
-      });
   }
 }

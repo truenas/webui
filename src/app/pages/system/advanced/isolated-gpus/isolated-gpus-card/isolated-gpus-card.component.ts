@@ -3,7 +3,7 @@ import {
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { filter } from 'rxjs';
+import { filter, switchMap, tap } from 'rxjs';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { Device } from 'app/interfaces/device.interface';
 import { AdvancedSettingsService } from 'app/pages/system/advanced/advanced-settings.service';
@@ -11,7 +11,7 @@ import {
   IsolatedGpusFormComponent,
 } from 'app/pages/system/advanced/isolated-gpus/isolated-gpus-form/isolated-gpus-form.component';
 import { GpuService } from 'app/services/gpu/gpu.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 
 @UntilDestroy()
 @Component({
@@ -31,10 +31,10 @@ export class IsolatedGpusCardComponent implements OnInit {
   };
 
   constructor(
-    private slideInService: IxSlideInService,
     private advancedSettings: AdvancedSettingsService,
     private gpuService: GpuService,
     private cdr: ChangeDetectorRef,
+    private chainedSlideIns: IxChainedSlideInService,
     private translate: TranslateService,
   ) {}
 
@@ -46,11 +46,13 @@ export class IsolatedGpusCardComponent implements OnInit {
     this.loadIsolatedGpus();
   }
 
-  async onConfigurePressed(): Promise<void> {
-    await this.advancedSettings.showFirstTimeWarningIfNeeded();
-
-    const slideInRef = this.slideInService.open(IsolatedGpusFormComponent);
-    slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => this.loadIsolatedGpus());
+  onConfigurePressed(): void {
+    this.advancedSettings.showFirstTimeWarningIfNeeded().pipe(
+      switchMap(() => this.chainedSlideIns.pushComponent(IsolatedGpusFormComponent)),
+      filter((response) => !!response.response),
+      tap(() => this.loadIsolatedGpus()),
+      untilDestroyed(this),
+    ).subscribe();
   }
 
   private loadIsolatedGpus(): void {

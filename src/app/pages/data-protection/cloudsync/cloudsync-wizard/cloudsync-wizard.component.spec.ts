@@ -8,8 +8,8 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { CloudCredentialsSelectModule } from 'app/modules/custom-selects/cloud-credentials-select/cloud-credentials-select.module';
+import { ChainedRef } from 'app/modules/ix-forms/components/ix-slide-in/chained-component-ref';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
-import { CHAINED_SLIDE_IN_REF, SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { SchedulerModule } from 'app/modules/scheduler/scheduler.module';
@@ -31,9 +31,10 @@ describe('CloudSyncWizardComponent', () => {
   let loader: HarnessLoader;
   let form: IxFormHarness;
   let nextButton: MatStepperNextHarness;
-  const chainedComponentRef = {
+  const chainedRef: ChainedRef<unknown> = {
     close: jest.fn(),
     swap: jest.fn(),
+    getData: jest.fn(),
   };
 
   const createComponent = createComponentFactory({
@@ -54,7 +55,7 @@ describe('CloudSyncWizardComponent', () => {
       StorjProviderFormComponent,
     ],
     providers: [
-      { provide: CHAINED_SLIDE_IN_REF, useValue: chainedComponentRef },
+      mockProvider(ChainedRef, chainedRef),
       mockAuth(),
       mockWebSocket([
         mockCall('cloudsync.create'),
@@ -69,7 +70,6 @@ describe('CloudSyncWizardComponent', () => {
       mockProvider(IxSlideInService),
       mockProvider(SnackbarService),
       mockProvider(IxSlideInRef),
-      { provide: SLIDE_IN_DATA, useValue: undefined },
     ],
   });
 

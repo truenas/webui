@@ -64,6 +64,7 @@ export interface EnclosureSlot {
 export interface EnclosureView {
   isController: boolean;
   isRackmount: boolean;
+  hasSlotStatus: boolean;
   slots: EnclosureSlot[];
   number: number;
   model: string;

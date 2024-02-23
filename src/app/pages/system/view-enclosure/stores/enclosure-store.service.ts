@@ -233,6 +233,9 @@ export class EnclosureStore extends ComponentStore<EnclosureState> {
         expanders: (enclosure.elements as EnclosureElementsGroup[]).find((item) => {
           return item.name === 'SAS Expander';
         })?.elements,
+        hasSlotStatus: (enclosure.elements as EnclosureElementsGroup[]).find((item) => {
+          return item.name === 'Array Device Slot';
+        })?.has_slot_status,
       } as EnclosureView;
     });
     enclosureViews.sort((a, b) => a.number - b.number);

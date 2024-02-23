@@ -1,16 +1,14 @@
-<ng-template ixPageHeader>
-  <ix-page-title-header [title]="'iSCSI' | translate">
-    <button
-      mat-button
-      color="primary"
-      id="iscsi_wizard_action_button"
-      ixTest="wizard"
-      (click)="gotoWizard()"
-    >
-      {{ 'Wizard' | translate }}
-    </button>
-  </ix-page-title-header>
-</ng-template>
+<ix-page-header [title]="'iSCSI' | translate">
+  <button
+    mat-button
+    color="primary"
+    id="iscsi_wizard_action_button"
+    ixTest="wizard"
+    (click)="gotoWizard()"
+  >
+    {{ 'Wizard' | translate }}
+  </button>
+</ix-page-header>
 
 <nav mat-tab-nav-bar [tabPanel]="tabPanel">
   <a

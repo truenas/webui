@@ -3,6 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
+import { MockModule } from 'ng-mocks';
 import { of } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -10,13 +11,15 @@ import {
   mockWebSocket, mockCall, mockJob,
 } from 'app/core/testing/utils/mock-websocket.utils';
 import { Tunable } from 'app/interfaces/tunable.interface';
+import { AppCommonModule } from 'app/modules/common/app-common.module';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTable2Harness } from 'app/modules/ix-table2/components/ix-table2/ix-table2.harness';
 import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
+import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
 import { TunableFormComponent } from 'app/pages/system/advanced/sysctl/tunable-form/tunable-form.component';
 import { TunableListComponent } from 'app/pages/system/advanced/sysctl/tunable-list/tunable-list.component';
 import { DialogService } from 'app/services/dialog.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 
 describe('TunableListComponent', () => {
   let spectator: Spectator<TunableListComponent>;
@@ -100,12 +103,14 @@ describe('TunableListComponent', () => {
 
   const createComponent = createComponentFactory({
     component: TunableListComponent,
-    imports: [IxTable2Module],
-    declarations: [],
+    imports: [
+      IxTable2Module,
+      MockModule(PageHeaderModule),
+      MockModule(AppCommonModule),
+    ],
     providers: [
-      mockProvider(IxSlideInService, {
-        onClose$: of(),
-        open: jest.fn(() => ({ slideInClosed$: of(true) })),
+      mockProvider(IxChainedSlideInService, {
+        pushComponent: jest.fn(() => of({ response: true, error: null })),
       }),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
@@ -146,15 +151,17 @@ describe('TunableListComponent', () => {
     const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
     await addButton.click();
 
-    expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(TunableFormComponent, {});
+    expect(spectator.inject(IxChainedSlideInService).pushComponent).toHaveBeenCalledWith(TunableFormComponent, {});
   });
 
   it('shows edit form with an existing sysctl when Edit button is pressed', async () => {
     const editIcon = await table.getHarnessInCell(IxIconHarness.with({ name: 'edit' }), 1, 5);
     await editIcon.click();
 
-    expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(TunableFormComponent, {
-      data: {
+    expect(spectator.inject(IxChainedSlideInService).pushComponent).toHaveBeenCalledWith(
+      TunableFormComponent,
+      false,
+      {
         comment: 'Description text',
         enabled: true,
         id: 12,
@@ -163,7 +170,7 @@ describe('TunableListComponent', () => {
         value: 'truenas',
         var: 'kernel.hostname',
       },
-    });
+    );
   });
 
   it('shows confirmation when Delete button is pressed', async () => {
