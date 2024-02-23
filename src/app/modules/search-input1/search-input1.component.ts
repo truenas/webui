@@ -19,6 +19,9 @@ import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
 
+/**
+ * @deprecated Try ix-basic-search instead.
+ */
 @UntilDestroy()
 @Component({
   selector: 'ix-search-input1',
@@ -34,9 +37,6 @@ import { TestIdModule } from 'app/modules/test-id/test-id.module';
     TestIdModule,
   ],
 })
-/**
- * @deprecated Try ix-basic-search instead.
- */
 export class SearchInput1Component implements OnInit, OnChanges {
   @HostBinding('class.disabled')
   @Input() disabled = false;

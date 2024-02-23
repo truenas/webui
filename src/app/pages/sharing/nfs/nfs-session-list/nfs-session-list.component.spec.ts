@@ -1,6 +1,6 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatButtonToggleGroup } from '@angular/material/button-toggle';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory } from '@ngneat/spectator/jest';
 import { MockModule } from 'ng-mocks';
@@ -48,7 +48,7 @@ describe('NfsSessionListComponent', () => {
     imports: [
       AppLoaderModule,
       IxTable2Module,
-      MatButtonToggleGroup,
+      MatButtonToggleModule,
       MockModule(PageHeaderModule),
       SearchInput1Component,
     ],

@@ -8,6 +8,7 @@ import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { helptextSystemFailover } from 'app/helptext/system/failover';
+import { DialogModule } from 'app/modules/dialog/dialog.module';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
@@ -28,6 +29,7 @@ describe('FailoverComponent', () => {
       ReactiveFormsModule,
       IxFormsModule,
       SearchInput1Component,
+      DialogModule,
     ],
     providers: [
       mockAuth(),
