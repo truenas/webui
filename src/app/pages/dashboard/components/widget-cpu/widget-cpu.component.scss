@@ -18,12 +18,13 @@
   display: flex;
   flex-flow: row wrap;
   height: 170px;
-  place-content: space-around center;
+  place-content: center space-around;
   position: relative;
 }
 
 .cpu-load-cores {
-  flex-basis: 53%;
+  flex: 1 1 53%;
+  max-width: 53%;
 
   .legend-item {
     .chart-label {
@@ -210,8 +211,9 @@
 }
 
 .xs-widget .mobile .viewchartgauge {
-  flex-basis: 100%;
+  flex: 1 1 100%;
   margin: 16px 0;
+  max-width: 100%;
 }
 
 .xs.widget .mobile .list-subheader {
@@ -227,7 +229,8 @@
 }
 
 .xs.widget .cpu-load-cores {
-  flex-basis: 100%;
+  flex: 1 1 100%;
+  max-width: 100%;
 }
 
 .xs.widget .cpu-load-cores-legend {
@@ -239,7 +242,8 @@
   flex-direction: column;
 
   .bottom {
-    flex-basis: 65%;
+    flex: 1 1 65%;
+    max-width: 65%;
   }
 
   .mat-mdc-list-item span.label {
@@ -248,6 +252,12 @@
 
   .mat-mdc-list-item span.subtext {
     opacity: 0.5;
+  }
+}
+
+.xs.widget .cpu-details {
+  .bottom {
+    max-width: 100%;
   }
 }
 
@@ -281,7 +291,14 @@ ngx-skeleton-loader {
 
 
 .viewchartgauge {
-  flex-basis: 47%;
+  display: flex;
+  flex: 1 1 47%;
+  max-width: 47%;
+  place-content: center;
+
+  ix-view-chart-gauge {
+    display: inline-flex;
+  }
 }
 
 .bar-chart-wrapper {

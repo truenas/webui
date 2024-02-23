@@ -390,3 +390,8 @@ span.capitalize {
 .mat-toolbar-row {
   justify-content: flex-start;
 }
+
+.xs.widget .slide.overview .left,
+.xs.widget .slide.overview .right {
+  max-width: 100%;
+}

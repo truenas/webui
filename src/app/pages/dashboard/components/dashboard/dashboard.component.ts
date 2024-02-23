@@ -71,6 +71,7 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
 
   isLoaded = true;
 
+  // For empty state
   get isEmpty(): boolean {
     if (!this.dashState) {
       return true;

@@ -3,10 +3,11 @@
 }
 
 .bar-chart-wrapper {
+  align-items: center;
   display: flex;
   flex-flow: row wrap;
   padding-top: 3%;
-  place-content: space-around center;
+  place-content: center space-around;
 }
 
 #memory-legend {
@@ -39,7 +40,7 @@
   flex: 1 0 auto;
   flex-direction: row;
   margin: 16px 0 16px 16px;
-  place-content: space-around center;
+  place-content: center space-around;
   width: 100%;
 }
 
@@ -57,8 +58,10 @@
 }
 
 #memory-usage-chart {
-  flex-basis: 55%;
+  box-sizing: border-box;
+  flex: 1 1 55%;
   height: 260px;
+  max-width: 55%;
   padding: 16px;
   position: relative;
 
@@ -69,7 +72,8 @@
 }
 
 .xs.widget #memory-usage-chart {
-  flex-basis: 100%;
+  flex: 1 1 100%;
+  max-width: 100%;
 }
 
 .title-wrapper {
@@ -147,12 +151,14 @@ h1.memory-used span.memory-used-units {
 }
 
 .primary-stat-wrapper {
-  flex-basis: 45%;
+  flex: 1 1 45%;
+  max-width: 45%;
   padding-bottom: 48px;
 }
 
 .xs .primary-stat-wrapper {
-  flex-basis: 100%;
+  flex: 1 1 100%;
+  max-width: 100%;
   padding-bottom: 0;
 }
 
@@ -185,6 +191,8 @@ h1.memory-used span.memory-used-units {
 }
 
 .xs.widget #memory-legend {
+  flex-direction: column;
+
   .legend-item {
     padding-left: 0;
 

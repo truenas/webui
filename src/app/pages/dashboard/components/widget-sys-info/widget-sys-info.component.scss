@@ -1,7 +1,7 @@
 .widget mat-card-content {
   display: flex;
   flex-flow: row wrap;
-  place-content: space-between start;
+  place-content: start space-between;
   width: 100%;
 }
 
@@ -53,7 +53,7 @@
   display: flex;
   flex-basis: 40%;
   flex-direction: column;
-  place-content: space-between center;
+  place-content: center space-between;
 
   button.mat-mdc-button {
     background-color: var(--primary) !important;
@@ -420,6 +420,7 @@ div.generic.alert .ix-icon {
 
 .xs.widget .left,
 .xs.widget .right {
+  max-width: 100%;
   width: 100%;
 }
 

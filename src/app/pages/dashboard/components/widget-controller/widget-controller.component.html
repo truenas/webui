@@ -16,7 +16,7 @@
           <div *ngIf="renderedWidgets.length" class="bottom">
             <div class="list-subheader">
               <span class="capitalize">
-                {{ 'Widgets ({n} items)' | translate: { n: renderedWidgets.length } }}
+                {{ 'Widgets ({n, plural, =1 {# item} other {# items}})' | translate: { n: renderedWidgets.length } }}
               </span>
             </div>
             <mat-list>

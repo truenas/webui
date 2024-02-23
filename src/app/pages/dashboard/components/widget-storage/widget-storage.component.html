@@ -201,9 +201,7 @@
                   </span>
                 </ng-template>
               </mat-grid-tile>
-              <mat-grid-tile
-                *ngIf="pools?.length % 2 === 1 || pools?.length === 0"
-              >
+              <mat-grid-tile *ngIf="pools?.length % 2 === 1 || pools?.length === 0">
                 <a
                   class="create-new"
                   ixTest="create-pool"

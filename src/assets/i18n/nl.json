@@ -452,7 +452,7 @@
   "Web Shell Access": "",
   "WebDAV": "",
   "What and When": "",
-  "Widgets ({n} items)": "",
+  "Widgets ({n, plural, =1 {# item} other {# items}})": "",
   "Yandex": "",
   "Yesterday": "",
   "You do not have the permissions to access the requested information. If you think this was a mistake, please contact your system administrator.": "",

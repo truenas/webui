@@ -312,7 +312,7 @@
   "Web Shell Access": "",
   "WebDAV": "",
   "What and When": "",
-  "Widgets ({n} items)": "",
+  "Widgets ({n, plural, =1 {# item} other {# items}})": "",
   "Windows": "",
   "Workloads": "",
   "Yandex": "",

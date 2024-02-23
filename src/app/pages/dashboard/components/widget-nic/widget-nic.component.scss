@@ -107,6 +107,11 @@
   position: relative;
 }
 
+.xs.widget .slide.overview .left,
+.xs.widget .slide.overview .right {
+  max-width: 100%;
+}
+
 .slide.overview .left .overlay {
   align-items: center;
   box-sizing: border-box;
@@ -228,7 +233,7 @@
 
 .nic-traffic {
   display: table;
-  margin: 4px 0 4px 8px;
+  margin: 4px 0;
 }
 
 .nic-traffic .tr {
@@ -287,10 +292,6 @@
   margin-top: 0;
 }
 
-.xs.widget .nic-traffic {
-  margin-left: 4px;
-}
-
 .more-addresses {
   margin-left: 4px;
 }
@@ -300,7 +301,7 @@
   box-sizing: border-box;
   display: flex;
   flex-direction: row;
-  gap: 8px;
+  gap: 4px;
   place-content: center flex-start;
 }
 

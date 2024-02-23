@@ -166,7 +166,7 @@ mat-grid-list {
 .info-body {
   align-items: center;
   display: flex;
-  flex: 1 1 1e-9px;
+  flex: 1 1 1e-09px;
   flex-direction: row;
   padding-bottom: 10px;
   place-content: center space-between;
@@ -182,7 +182,7 @@ mat-grid-list {
     flex: 1 1 100%;
     flex-direction: column;
     font-size: 12px;
-    max-width: 70%;
+    max-width: 65%;
     padding-bottom: 0;
     padding-left: 20px;
     place-content: flex-start space-between;
@@ -211,6 +211,11 @@ mat-grid-list {
       align-items: center;
       height: 40px;
       line-height: 40px;
+
+      ix-interface-status-icon {
+        align-items: center;
+        display: inline-flex;
+      }
 
       .ix-icon {
         font-size: 28px;
