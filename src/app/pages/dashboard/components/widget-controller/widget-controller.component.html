@@ -10,7 +10,7 @@
 
         <div class="mobile">
           <div *ngIf="!renderedWidgets.length && emptyConfig" class="bottom empty">
-            <ix-entity-empty [conf]="emptyConfig"></ix-entity-empty>
+            <ix-empty [conf]="emptyConfig"></ix-empty>
           </div>
 
           <div *ngIf="renderedWidgets.length" class="bottom">
