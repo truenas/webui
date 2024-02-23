@@ -6,11 +6,12 @@ import _ from 'lodash';
 import {
   Observable, combineLatest, filter, switchMap, takeWhile, tap,
 } from 'rxjs';
+import { WidgetName } from 'app/enums/widget-name.enum';
 import { SystemFeatures, SystemInfoWithFeatures } from 'app/interfaces/events/sys-info-event.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { SystemInfo } from 'app/interfaces/system-info.interface';
 import { VolumesData } from 'app/interfaces/volume-data.interface';
-import { DashboardNetworkInterface, WidgetName } from 'app/pages/dashboard/components/dashboard/dashboard.component';
+import { DashboardNetworkInterface } from 'app/pages/dashboard/components/dashboard/dashboard.component';
 import { DashConfigItem } from 'app/pages/dashboard/components/widget-controller/widget-controller.component';
 import { DashboardStorageStore } from 'app/pages/dashboard/store/dashboard-storage-store.service';
 import { ResourcesUsageStore } from 'app/pages/dashboard/store/resources-usage-store.service';

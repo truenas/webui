@@ -86,25 +86,8 @@
   overflow-y: scroll;
 }
 
-.xs.widget #cpu-load-label {
-  font-size: 1.25rem;
-}
-
-.xs.widget #cpu-load-cores-legend {
-  margin: 16px 0 0;
-}
-
 .xs.widget .legend-item {
   margin-left: 16px;
-}
-
-.xs.widget #cpu-cores-chart {
-  margin: 0;
-  width: calc(100vw - 16px);
-}
-
-.xs.widget .mobile #cpu-load-label {
-  margin: 16px 0;
 }
 
 .xs.widget .mobile .top {
@@ -134,12 +117,21 @@
   border-bottom: solid 1px rgba(0, 0, 0, 0.1);
 }
 
-.mobile .mat-mdc-list-item span.label {
-  font-weight: 500;
-}
+.mobile {
+  display: flex;
+  flex-direction: column;
 
-.mobile .mat-mdc-list-item span.subtext {
-  opacity: 0.5;
+  .bottom {
+    flex-basis: 65%;
+  }
+
+  .mat-mdc-list-item span.label {
+    font-weight: 500;
+  }
+
+  .mat-mdc-list-item span.subtext {
+    opacity: 0.5;
+  }
 }
 
 /* Overrides */
