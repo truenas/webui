@@ -5,11 +5,11 @@ import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory } from '@ngneat/spectator/jest';
 import { mockWebSocket, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
 import { SmbSession } from 'app/interfaces/smb-status.interface';
-import { AppCommonModule } from 'app/modules/common/app-common.module';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxTable2Harness } from 'app/modules/ix-table2/components/ix-table2/ix-table2.harness';
 import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
+import { SearchInput1Component } from 'app/modules/search-input1/search-input1.component';
 import { SmbSessionListComponent } from './smb-session-list.component';
 
 describe('SmbSessionListComponent', () => {
@@ -46,7 +46,7 @@ describe('SmbSessionListComponent', () => {
 
   const createComponent = createComponentFactory({
     component: SmbSessionListComponent,
-    imports: [AppLoaderModule, EntityModule, IxTable2Module, AppCommonModule],
+    imports: [AppLoaderModule, EntityModule, IxTable2Module, SearchInput1Component],
     providers: [mockWebSocket([mockCall('smb.status', sessions)])],
   });
 

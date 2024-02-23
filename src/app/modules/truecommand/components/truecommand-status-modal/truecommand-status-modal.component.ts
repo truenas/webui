@@ -7,8 +7,8 @@ import { TrueCommandStatus } from 'app/enums/true-command-status.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { helptextTopbar } from 'app/helptext/topbar';
 import { TrueCommandConfig } from 'app/interfaces/true-command-config.interface';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { TruecommandButtonComponent } from 'app/modules/truecommand/truecommand-button.component';
-import { DialogService } from 'app/services/dialog.service';
 
 @UntilDestroy()
 @Component({

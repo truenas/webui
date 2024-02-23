@@ -4,18 +4,27 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { MockModule } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { DiskPowerLevel } from 'app/enums/disk-power-level.enum';
+import { DiskStandby } from 'app/enums/disk-standby.enum';
 import { SmartTestResultPageType } from 'app/enums/smart-test-results-page-type.enum';
 import { Choices } from 'app/interfaces/choices.interface';
 import { Disk, UnusedDisk } from 'app/interfaces/storage.interface';
 import { IxTable2Harness } from 'app/modules/ix-table2/components/ix-table2/ix-table2.harness';
 import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
+import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
+import { SearchInput1Component } from 'app/modules/search-input1/search-input1.component';
 import { DiskFormComponent } from 'app/pages/storage/modules/disks/components/disk-form/disk-form.component';
 import { DiskListComponent } from 'app/pages/storage/modules/disks/components/disk-list/disk-list.component';
-import { DiskWipeDialogComponent } from 'app/pages/storage/modules/disks/components/disk-wipe-dialog/disk-wipe-dialog.component';
-import { ManualTestDialogComponent } from 'app/pages/storage/modules/disks/components/manual-test-dialog/manual-test-dialog.component';
+import {
+  DiskWipeDialogComponent,
+} from 'app/pages/storage/modules/disks/components/disk-wipe-dialog/disk-wipe-dialog.component';
+import {
+  ManualTestDialogComponent,
+} from 'app/pages/storage/modules/disks/components/manual-test-dialog/manual-test-dialog.component';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 describe('DiskListComponent', () => {
@@ -58,7 +67,7 @@ describe('DiskListComponent', () => {
       devname: 'sdb',
       pool: null,
     },
-  ] as unknown as Disk[];
+  ] as Disk[];
 
   const fakeUnusedDisks = [{
     identifier: 'identifier2',
@@ -67,8 +76,8 @@ describe('DiskListComponent', () => {
     size: 5368709120,
     description: 'description2',
     transfermode: 'Auto',
-    hddstandby: 'Always On',
-    advpowermgmt: 'Disabled',
+    hddstandby: DiskStandby.AlwaysOn,
+    advpowermgmt: DiskPowerLevel.Disabled,
     togglesmart: false,
     smartoptions: '',
     model: 'Virtual_Disk',
@@ -76,7 +85,7 @@ describe('DiskListComponent', () => {
     type: 'HDD',
     exported_zpool: 'test pool',
     devname: 'sdb',
-  }] as unknown as UnusedDisk[];
+  }] as UnusedDisk[];
 
   const fakeSmartDiskChoices: Choices = {
     identifier1: 'sda',
@@ -93,6 +102,8 @@ describe('DiskListComponent', () => {
     component: DiskListComponent,
     imports: [
       IxTable2Module,
+      MockModule(PageHeaderModule),
+      SearchInput1Component,
     ],
     providers: [
       mockAuth(),

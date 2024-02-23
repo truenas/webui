@@ -6,10 +6,10 @@ import { Router } from '@angular/router';
 import { filter } from 'rxjs';
 import { AccountAttribute } from 'app/enums/account-attribute.enum';
 import { helptextTopbar } from 'app/helptext/topbar';
-import { AboutDialogComponent } from 'app/modules/common/dialog/about/about-dialog.component';
+import { AboutDialogComponent } from 'app/modules/layout/components/topbar/about-dialog/about-dialog.component';
 import {
   ChangePasswordDialogComponent,
-} from 'app/modules/layout/components/change-password-dialog/change-password-dialog.component';
+} from 'app/modules/layout/components/topbar/change-password-dialog/change-password-dialog.component';
 import { AuthService } from 'app/services/auth/auth.service';
 
 @Component({

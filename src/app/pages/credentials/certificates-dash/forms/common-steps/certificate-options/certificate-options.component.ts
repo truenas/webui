@@ -15,7 +15,7 @@ import { choicesToOptions, idNameArrayToOptions } from 'app/helpers/operators/op
 import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextSystemCertificates } from 'app/helptext/system/certificates';
 import { Option } from 'app/interfaces/option.interface';
-import { SummaryProvider, SummarySection } from 'app/modules/common/summary/summary.interface';
+import { SummaryProvider, SummarySection } from 'app/modules/summary/summary.interface';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { WebSocketService } from 'app/services/ws.service';
 

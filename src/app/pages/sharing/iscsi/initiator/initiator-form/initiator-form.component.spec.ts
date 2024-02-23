@@ -8,12 +8,12 @@ import { createRoutingFactory, mockProvider, SpectatorRouting } from '@ngneat/sp
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { IscsiGlobalSession } from 'app/interfaces/iscsi-global-config.interface';
-import { DualListboxComponent } from 'app/modules/common/dual-list/dual-list.component';
-import { NgxDualListboxModule } from 'app/modules/common/dual-list/dual-list.module';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
+import { DualListboxComponent } from 'app/modules/lists/dual-list/dual-list.component';
+import { DualListModule } from 'app/modules/lists/dual-list/dual-list.module';
 import { InitiatorFormComponent } from 'app/pages/sharing/iscsi/initiator/initiator-form/initiator-form.component';
-import { DialogService } from 'app/services/dialog.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 describe('InitiatorFormComponent', () => {
@@ -26,7 +26,7 @@ describe('InitiatorFormComponent', () => {
     imports: [
       IxFormsModule,
       ReactiveFormsModule,
-      NgxDualListboxModule,
+      DualListModule,
     ],
     declarations: [DualListboxComponent],
     providers: [

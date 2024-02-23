@@ -7,6 +7,7 @@ import _ from 'lodash';
 import { filter, switchMap, tap } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
 import { KerberosKeytab } from 'app/interfaces/kerberos-config.interface';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { AsyncDataProvider } from 'app/modules/ix-table2/classes/async-data-provider/async-data-provider';
 import { actionsColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
 import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
@@ -14,21 +15,20 @@ import { SortDirection } from 'app/modules/ix-table2/enums/sort-direction.enum';
 import { createTable } from 'app/modules/ix-table2/utils';
 import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
 import { KerberosKeytabsFormComponent } from 'app/pages/directory-service/components/kerberos-keytabs/kerberos-keytabs-form/kerberos-keytabs-form.component';
-import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-kerberos-keytabs-list',
   templateUrl: './kerberos-keytabs-list.component.html',
   styleUrls: ['./kerberos-keytabs-list.component.scss'],
-  selector: 'ix-kerberos-keytabs-list',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class KerberosKeytabsListComponent implements OnInit {
   @Input() paginator = true;
-  @Input() toolbar = false;
+  @Input() inCard = false;
   filterString = '';
   dataProvider: AsyncDataProvider<KerberosKeytab>;
   kerberosRealsm: KerberosKeytab[] = [];

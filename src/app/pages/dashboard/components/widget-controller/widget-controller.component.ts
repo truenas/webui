@@ -2,8 +2,8 @@ import {
   Component, Input, Output, EventEmitter, ChangeDetectionStrategy,
 } from '@angular/core';
 import { UntilDestroy } from '@ngneat/until-destroy';
+import { WidgetName } from 'app/enums/widget-name.enum';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
-import { WidgetName } from 'app/pages/dashboard/components/dashboard/dashboard.component';
 
 export interface DashConfigItem {
   name: WidgetName;
