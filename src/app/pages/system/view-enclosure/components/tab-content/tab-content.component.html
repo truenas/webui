@@ -1,13 +1,21 @@
-<table id="tab-data" mat-table [ixTest]="['enclosures-table', data.name]" [dataSource]="data.elements">
-  <!-- Column -->
-  <ng-container
-    *ngFor="let header of data.header; let i = index"
-    [matColumnDef]="data.header[i]"
-  >
-    <th *matHeaderCellDef mat-header-cell>{{ header }}</th>
-    <td *matCellDef="let element" mat-cell>{{ element.data[header] }}</td>
+<table mat-table class="table" id="tab-data" ixTest="element-table" [dataSource]="data">
+  Column
+  <ng-container matColumnDef="descriptor">
+    <th *matHeaderCellDef mat-header-cell>Descriptor<th>
+    <td *matCellDef="let row" mat-cell>{{ row.descriptor }}</td>
   </ng-container>
 
-  <tr *matHeaderRowDef="data.header" mat-header-row ixTest="table-header"></tr>
-  <tr *matRowDef="let row; columns: data.header" mat-row [ixTest]="row.name"></tr>
+  <ng-container matColumnDef="status">
+    <th *matHeaderCellDef mat-header-cell>Status<th>
+    <td *matCellDef="let row" mat-cell>{{ row.status }}</td>
+  </ng-container>
+
+  <ng-container matColumnDef="value">
+    <th *matHeaderCellDef mat-header-cell>Value<th>
+    <td *matCellDef="let row" mat-cell>{{ row.value }}</td>
+  </ng-container>
+
+  <tr *matHeaderRowDef="displayedColumns" mat-header-row ixTest="table-header"></tr>
+  <tr *matRowDef="let row; columns: displayedColumns" mat-row [ixTest]="row.name"></tr>
 </table>
+
