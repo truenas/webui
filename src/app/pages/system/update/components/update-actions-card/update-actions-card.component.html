@@ -30,15 +30,15 @@
       {{ 'Install Manual Update File' | translate }}
     </button>
   </div>
-  <p *ngIf="updateService.generalUpdateError$ | async" class="error">
-    {{ updateService.generalUpdateError$ | async }}
+  <p *ngIf="updateService.generalUpdateError$ | async as generalUpdateError" class="error">
+    {{ generalUpdateError }}
   </p>
 </mat-card>
 <mat-card *ngIf="isUpdateRunning">
   <div>
     <ix-icon name="warning"></ix-icon>
     <span class="update-running-msg">
-      {{ isHa ? sysUpdateMessage : sysUpdateMessage + sysUpdateMsgPt2 }}
+      {{ isHaLicensed ? sysUpdateMessage : sysUpdateMessage + sysUpdateMsgPt2 }}
     </span>
   </div>
 </mat-card>

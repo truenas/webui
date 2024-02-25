@@ -24,11 +24,11 @@
     </table>
 
     <a
-      *ngIf="updateService.releaseNotesUrl$ | async"
+      *ngIf="updateService.releaseNotesUrl$ | async as releaseNotesUrl"
       class="release-notes-link"
       target="_blank"
       ixTest="check-release-notes"
-      [href]="updateService.releaseNotesUrl$ | async"
+      [href]="releaseNotesUrl"
     >
       {{ 'Check Release Notes' | translate }}
     </a>

@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { UntilDestroy } from '@ngneat/until-destroy';
-import { Observable, combineLatest, map } from 'rxjs';
+import { combineLatest, map } from 'rxjs';
 import { TrainService } from 'app/pages/system/update/services/train.service';
 import { UpdateService } from 'app/pages/system/update/services/update.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
@@ -13,31 +13,27 @@ import { SystemGeneralService } from 'app/services/system-general.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TrainInfoCardComponent {
-  get showInfoForEnterprise$(): Observable<boolean> {
-    return combineLatest([
-      this.updateService.updatesAvailable$,
-      this.trainService.releaseTrain$,
-      this.trainService.preReleaseTrain$,
-      this.sysGenService.isEnterprise$,
-    ]).pipe(
-      map(([updatesAvailable, releaseTrain, preReleaseTrain, isEnterprise]) => {
-        return updatesAvailable && isEnterprise && (releaseTrain || preReleaseTrain);
-      }),
-    );
-  }
+  showInfoForEnterprise$ = combineLatest([
+    this.updateService.updatesAvailable$,
+    this.trainService.releaseTrain$,
+    this.trainService.preReleaseTrain$,
+    this.sysGenService.isEnterprise$,
+  ]).pipe(
+    map(([updatesAvailable, releaseTrain, preReleaseTrain, isEnterprise]) => {
+      return updatesAvailable && isEnterprise && (releaseTrain || preReleaseTrain);
+    }),
+  );
 
-  get showInfoForTesting$(): Observable<boolean> {
-    return combineLatest([
-      this.updateService.updatesAvailable$,
-      this.trainService.nightlyTrain$,
-      this.trainService.preReleaseTrain$,
-      this.sysGenService.isEnterprise$,
-    ]).pipe(
-      map(([updatesAvailable, nightlyTrain, preReleaseTrain, isEnterprise]) => {
-        return updatesAvailable && (nightlyTrain || (preReleaseTrain && !isEnterprise));
-      }),
-    );
-  }
+  showInfoForTesting$ = combineLatest([
+    this.updateService.updatesAvailable$,
+    this.trainService.nightlyTrain$,
+    this.trainService.preReleaseTrain$,
+    this.sysGenService.isEnterprise$,
+  ]).pipe(
+    map(([updatesAvailable, nightlyTrain, preReleaseTrain, isEnterprise]) => {
+      return updatesAvailable && (nightlyTrain || (preReleaseTrain && !isEnterprise));
+    }),
+  );
 
   constructor(
     private sysGenService: SystemGeneralService,

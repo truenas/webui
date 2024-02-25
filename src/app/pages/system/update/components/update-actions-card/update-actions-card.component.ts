@@ -10,7 +10,6 @@ import {
   Observable, of, filter, tap, combineLatest, map,
 } from 'rxjs';
 import { JobState } from 'app/enums/job-state.enum';
-import { ProductType } from 'app/enums/product-type.enum';
 import { Role } from 'app/enums/role.enum';
 import { SystemUpdateOperationType, SystemUpdateStatus } from 'app/enums/system-update.enum';
 import { WINDOW } from 'app/helpers/window.helper';
@@ -25,6 +24,7 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import {
   SaveConfigDialogComponent, SaveConfigDialogMessages,
 } from 'app/pages/system/general-settings/save-config-dialog/save-config-dialog.component';
+import { UpdateType } from 'app/pages/system/update/enums/update-type.enum';
 import { Package } from 'app/pages/system/update/interfaces/package.interface';
 import { TrainService } from 'app/pages/system/update/services/train.service';
 import { UpdateService } from 'app/pages/system/update/services/update.service';
@@ -35,7 +35,6 @@ import { SystemGeneralService } from 'app/services/system-general.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
-import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 
 @UntilDestroy()
 @Component({
@@ -47,30 +46,24 @@ import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 export class UpdateActionsCardComponent implements OnInit {
   isUpdateRunning = false;
   updateMethod: ApiJobMethod = 'update.update';
-  isHa = false;
-  productType: ProductType;
-  updateType: string;
-  isHaLicensed: boolean;
+  isHaLicensed = false;
+  updateType: UpdateType;
   sysUpdateMessage = helptextGlobal.sysUpdateMessage;
   sysUpdateMsgPt2 = helptextGlobal.sysUpdateMessagePt2;
   updateTitle = this.translate.instant('Update');
 
+  showApplyPendingButton$ = combineLatest([
+    this.updateService.updateDownloaded$,
+    this.updateService.status$,
+  ]).pipe(map(([updateDownloaded, status]) => updateDownloaded && status !== SystemUpdateStatus.Unavailable));
+
+  showDownloadUpdateButton$ = this.updateService.updatesAvailable$;
+
+  isDownloadUpdatesButtonDisabled$ = this.updateService.status$.pipe(
+    map((status) => status === SystemUpdateStatus.RebootRequired),
+  );
+
   readonly requiresRoles = [Role.FullAdmin];
-
-  get showApplyPendingButton$(): Observable<boolean> {
-    return combineLatest([
-      this.updateService.updateDownloaded$,
-      this.updateService.status$,
-    ]).pipe(map(([updateDownloaded, status]) => updateDownloaded && status !== SystemUpdateStatus.Unavailable));
-  }
-
-  get showDownloadUpdateButton$(): Observable<boolean> {
-    return this.updateService.updatesAvailable$;
-  }
-
-  get isDownloadUpdatesButtonDisabled$(): Observable<boolean> {
-    return this.updateService.status$.pipe(map((status) => status === SystemUpdateStatus.RebootRequired));
-  }
 
   private wasConfigurationSaved = false;
 
@@ -97,50 +90,36 @@ export class UpdateActionsCardComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.productType = this.sysGenService.getProductType();
-
-    this.store$.pipe(waitForSystemInfo)
-      .pipe(untilDestroyed(this))
-      .subscribe((sysInfo) => {
-        this.isHaLicensed = !!(sysInfo.license && sysInfo.license.system_serial_ha.length > 0);
-      });
-
-    if (this.productType === ProductType.ScaleEnterprise) {
-      setTimeout(() => { // To get around too many concurrent calls???
-        this.store$.select(selectIsHaLicensed).pipe(untilDestroyed(this)).subscribe((isLicensed) => {
-          if (isLicensed) {
-            this.updateMethod = 'failover.upgrade';
-            this.isHa = true;
-          }
-          this.checkForUpdateRunning();
-
-          this.cdr.markForCheck();
-        });
-      });
-    } else {
+    this.store$.select(selectIsHaLicensed).pipe(untilDestroyed(this)).subscribe((isLicensed) => {
+      this.isHaLicensed = isLicensed;
+      if (isLicensed) {
+        this.updateMethod = 'failover.upgrade';
+      }
+      this.cdr.markForCheck();
       this.checkForUpdateRunning();
-    }
+    });
   }
 
   checkForUpdateRunning(): void {
-    this.ws.call('core.get_jobs', [[['method', '=', this.updateMethod], ['state', '=', JobState.Running]]]).pipe(untilDestroyed(this)).subscribe({
-      next: (jobs) => {
-        if (jobs && jobs.length > 0) {
-          this.isUpdateRunning = true;
-          this.showRunningUpdate(jobs[0].id);
-        }
-        this.cdr.markForCheck();
-      },
-      error: (err) => {
-        console.error(err);
-      },
-    });
+    this.ws.call('core.get_jobs', [[['method', '=', this.updateMethod], ['state', '=', JobState.Running]]])
+      .pipe(untilDestroyed(this)).subscribe({
+        next: (jobs) => {
+          if (jobs && jobs.length > 0) {
+            this.isUpdateRunning = true;
+            this.showRunningUpdate(jobs[0].id);
+          }
+          this.cdr.markForCheck();
+        },
+        error: (err) => {
+          console.error(err);
+        },
+      });
   }
 
   // Shows an update in progress as a job dialog on the update page
   showRunningUpdate(jobId: number): void {
     const dialogRef = this.matDialog.open(EntityJobComponent, { data: { title: this.updateTitle } });
-    if (this.isHa) {
+    if (this.isHaLicensed) {
       dialogRef.componentInstance.disableProgressValue(true);
     }
     dialogRef.componentInstance.jobId = jobId;
@@ -167,14 +146,14 @@ export class UpdateActionsCardComponent implements OnInit {
   }
 
   applyPendingUpdate(): void {
-    this.updateType = 'applyPending';
+    this.updateType = UpdateType.ApplyPending;
     this.saveConfigurationIfNecessary()
       .pipe(untilDestroyed(this))
       .subscribe(() => this.continueUpdate());
   }
 
   manualUpdate(): void {
-    this.updateType = 'manual';
+    this.updateType = UpdateType.Manual;
     this.saveConfigurationIfNecessary()
       .pipe(untilDestroyed(this))
       .subscribe(() => {
@@ -226,7 +205,7 @@ export class UpdateActionsCardComponent implements OnInit {
           if (update.release_notes_url) {
             this.updateService.releaseNotesUrl$.next(update.release_notes_url);
           }
-          this.updateType = 'standard';
+          this.updateType = UpdateType.Standard;
           this.saveConfigurationIfNecessary()
             .pipe(untilDestroyed(this))
             .subscribe(() => this.confirmAndUpdate());
@@ -253,7 +232,7 @@ export class UpdateActionsCardComponent implements OnInit {
     let downloadMsg;
     let confirmMsg;
 
-    if (!this.isHa) {
+    if (!this.isHaLicensed) {
       downloadMsg = helptext.non_ha_download_msg;
       confirmMsg = helptext.non_ha_confirm_msg;
     } else {
@@ -302,7 +281,7 @@ export class UpdateActionsCardComponent implements OnInit {
       dialogRef.close();
       this.handleUpdateError(error);
     });
-    if (!this.isHa) {
+    if (!this.isHaLicensed) {
       dialogRef.componentInstance.setCall('update.update', [{ resume, reboot: true }]);
       dialogRef.componentInstance.submit();
     } else {
@@ -334,7 +313,7 @@ export class UpdateActionsCardComponent implements OnInit {
   // Continues the update (based on its type) after the Save Config dialog is closed
   continueUpdate(): void {
     switch (this.updateType) {
-      case 'applyPending': {
+      case UpdateType.ApplyPending: {
         const message = this.isHaLicensed
           ? this.translate.instant('The standby controller will be automatically restarted to finalize the update. Apply updates and restart the standby controller?')
           : this.translate.instant('The system will reboot and be briefly unavailable while applying updates. Apply updates and reboot?');
@@ -346,7 +325,7 @@ export class UpdateActionsCardComponent implements OnInit {
         });
         break;
       }
-      case 'standard':
+      case UpdateType.Standard:
         this.confirmAndUpdate();
     }
   }
@@ -365,13 +344,8 @@ export class UpdateActionsCardComponent implements OnInit {
     })
       .afterClosed()
       .pipe(
-        tap((wasSaved) => {
-          if (!wasSaved) {
-            return;
-          }
-
-          this.wasConfigurationSaved = true;
-        }),
+        filter(Boolean),
+        tap(() => this.wasConfigurationSaved = true),
       );
   }
 
