@@ -1,32 +1,30 @@
-<ng-template ixPageHeader>
-  <ix-page-title-header>
-    <mat-button-toggle-group [value]="activeNfsType" (change)="nfsTypeChanged($event)">
-      <mat-button-toggle [value]="NfsType.Nfs3">NFS 3</mat-button-toggle>
-      <mat-button-toggle [value]="NfsType.Nfs4">NFS 4</mat-button-toggle>
-    </mat-button-toggle-group>
+<ix-page-header>
+  <mat-button-toggle-group [value]="activeNfsType" (change)="nfsTypeChanged($event)">
+    <mat-button-toggle [value]="NfsType.Nfs3">NFS 3</mat-button-toggle>
+    <mat-button-toggle [value]="NfsType.Nfs4">NFS 4</mat-button-toggle>
+  </mat-button-toggle-group>
 
-    <ix-search-input
-      [value]="filterString"
-      (search)="onListFiltered($event)"
-    ></ix-search-input>
+  <ix-search-input1
+    [value]="filterString"
+    (search)="onListFiltered($event)"
+  ></ix-search-input1>
 
-    <ng-container *ngIf="activeNfsType === NfsType.Nfs3">
-      <ng-container
-        *ngTemplateOutlet="nfsColumnsSelector; context: { dataProvider: nfs3DataProvider, columns: nfs3Columns }"
-      ></ng-container>
-    </ng-container>
+  <ng-container *ngIf="activeNfsType === NfsType.Nfs3">
+    <ng-container
+      *ngTemplateOutlet="nfsColumnsSelector; context: { dataProvider: nfs3DataProvider, columns: nfs3Columns }"
+    ></ng-container>
+  </ng-container>
 
-    <ng-container *ngIf="activeNfsType === NfsType.Nfs4">
-      <ng-container
-        *ngTemplateOutlet="nfsColumnsSelector; context: { dataProvider: nfs4DataProvider, columns: nfs4Columns }"
-      ></ng-container>
-    </ng-container>
+  <ng-container *ngIf="activeNfsType === NfsType.Nfs4">
+    <ng-container
+      *ngTemplateOutlet="nfsColumnsSelector; context: { dataProvider: nfs4DataProvider, columns: nfs4Columns }"
+    ></ng-container>
+  </ng-container>
 
-    <button mat-button color="primary" ixTest="refresh-data" (click)="loadData()">
-      {{ 'Refresh' | translate }}
-    </button>
-  </ix-page-title-header>
-</ng-template>
+  <button mat-button color="primary" ixTest="refresh-data" (click)="loadData()">
+    {{ 'Refresh' | translate }}
+  </button>
+</ix-page-header>
 
 <ng-container *ngIf="activeNfsType === NfsType.Nfs3">
   <ng-container

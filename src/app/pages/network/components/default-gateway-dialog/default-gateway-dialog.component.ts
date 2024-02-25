@@ -8,9 +8,9 @@ import { catchError } from 'rxjs/operators';
 import { toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import { helptextNetworkConfiguration } from 'app/helptext/network/configuration/configuration';
 import { helptextIpmi } from 'app/helptext/network/ipmi/ipmi';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { ipv4Validator } from 'app/modules/ix-forms/validators/ip-validation';
-import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
 

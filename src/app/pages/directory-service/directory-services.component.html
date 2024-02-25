@@ -1,6 +1,6 @@
 <ng-container [ngSwitch]="true">
   <div *ngSwitchCase="!isActiveDirectoryEnabled && !isLdapEnabled" fxLayout="column" fxLayoutAlign="center center" class="everything-disabled">
-    <ix-entity-empty [conf]="noDirectoryServicesConfig"></ix-entity-empty>
+    <ix-empty [conf]="noDirectoryServicesConfig"></ix-empty>
     <div class="actions">
       <button mat-button ixTest="configure-active-directory" (click)="openActiveDirectoryForm()">
         {{ 'Configure Active Directory' | translate }}
@@ -55,10 +55,10 @@
   </h3>
 
   <div class="advanced-settings-cards">
-    <ix-idmap-list [paginator]="false" [toolbar]="true"></ix-idmap-list>
+    <ix-idmap-list [paginator]="false" [inCard]="true"></ix-idmap-list>
     <ng-container *ngTemplateOutlet="dataCard; context: { card: kerberosSettingsDataCard }"></ng-container>
-    <ix-kerberos-realms-list [paginator]="false" [toolbar]="true"></ix-kerberos-realms-list>
-    <ix-kerberos-keytabs-list [paginator]="false" [toolbar]="true"></ix-kerberos-keytabs-list>
+    <ix-kerberos-realms-list [paginator]="false" [inCard]="true"></ix-kerberos-realms-list>
+    <ix-kerberos-keytabs-list [paginator]="false" [inCard]="true"></ix-kerberos-keytabs-list>
   </div>
 </cdk-accordion-item>
 

@@ -9,7 +9,7 @@ import { VmNicType, vmNicTypeLabels } from 'app/enums/vm.enum';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextVmWizard } from 'app/helptext/vm/vm-wizard/vm-wizard';
-import { SummaryProvider, SummarySection } from 'app/modules/common/summary/summary.interface';
+import { SummaryProvider, SummarySection } from 'app/modules/summary/summary.interface';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()

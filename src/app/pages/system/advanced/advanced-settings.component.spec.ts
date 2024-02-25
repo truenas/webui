@@ -1,7 +1,9 @@
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
-import { MockComponents } from 'ng-mocks';
+import { MockComponents, MockModule } from 'ng-mocks';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
+import { SearchInput1Component } from 'app/modules/search-input1/search-input1.component';
 import { AccessCardComponent } from 'app/pages/system/advanced/access/access-card/access-card.component';
 import { AdvancedSettingsComponent } from 'app/pages/system/advanced/advanced-settings.component';
 import {
@@ -18,6 +20,7 @@ import { KernelCardComponent } from 'app/pages/system/advanced/kernel/kernel-car
 import {
   ReplicationSettingsCardComponent,
 } from 'app/pages/system/advanced/replication/replication-settings-card/replication-settings-card.component';
+import { SaveDebugButtonComponent } from 'app/pages/system/advanced/save-debug-button/save-debug-button.component';
 import {
   SelfEncryptingDriveCardComponent,
 } from 'app/pages/system/advanced/self-encrypting-drive/self-encrypting-drive-card/self-encrypting-drive-card.component';
@@ -31,6 +34,10 @@ describe('AdvancedSettingsComponent', () => {
   let spectator: Spectator<AdvancedSettingsComponent>;
   const createComponent = createComponentFactory({
     component: AdvancedSettingsComponent,
+    imports: [
+      MockModule(PageHeaderModule),
+      SearchInput1Component,
+    ],
     declarations: [
       MockComponents(
         ConsoleCardComponent,
@@ -48,6 +55,7 @@ describe('AdvancedSettingsComponent', () => {
         IsolatedGpusCardComponent,
         GlobalTwoFactorAuthCardComponent,
         SystemSecurityCardComponent,
+        SaveDebugButtonComponent,
       ),
     ],
     providers: [

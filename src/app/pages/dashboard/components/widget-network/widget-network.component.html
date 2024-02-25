@@ -1,11 +1,6 @@
 <div class="widget stats-widget" ngClass.xs="double-height xs">
-  <div class="card-container front">
-    <mat-card
-      class="front overflow-hidden"
-      fxLayout="row"
-      fxLayoutWrap
-      fxLayoutAlign="space-between stretch"
-    >
+  <div class="card-container">
+    <mat-card class="front overflow-hidden">
       <mat-card-content #carouselparent>
         <ix-drag-handle [showReorderHandle]="showReorderHandle">
           <ng-content [select]="[cdkDragHandle]"></ng-content>
@@ -13,14 +8,13 @@
           <mat-toolbar-row>
             <!-- Mobile Only: Exit Widget -->
             <button
-              fxHide.gt-xs
               class="mat-card-title-text primary-nav"
               mat-icon-button
               color="default"
               ixTest="network-back"
               (click)="goBack()"
             >
-              <ix-icon name="chevron_left" class="back-arrow"></ix-icon>
+              <ix-icon name="chevron_left"></ix-icon>
             </button>
 
             <h3 class="mat-card-title-text">
@@ -36,8 +30,8 @@
               <a
                 mat-icon-button
                 matTooltipPosition="above"
-                aria-label="Network Reports"
                 ixTest="network-reports"
+                [attr.aria-label]="'Network Reports' | translate"
                 [routerLink]="['/reportsdashboard/network']"
                 [matTooltip]="'Network Reports' | translate"
               >
@@ -58,7 +52,10 @@
         <div *ngIf="availableNics.length">
           <div
             class="card-body"
-            [style.padding]="paddingTop + 'px ' + paddingX + 'px ' + paddingBottom + 'px'"
+            [style.padding-top.px]="paddingTop"
+            [style.padding-bottom.px]="paddingBottom"
+            [style.padding-left.px]="paddingX"
+            [style.padding-right.px]="paddingX"
           >
             <mat-grid-list
               cols="6"
@@ -73,23 +70,16 @@
               >
                 <div
                   class="tile"
-                  fxFlexFill
-                  fxLayoutAlign="start stretch"
-                  [fxLayout]="availableNics.length === 1 ? 'column' : 'row'"
+                  [style.flex-direction]="availableNics.length === 1 ? 'column' : 'row'"
                 >
-                  <div class="nic-info" fxLayout="column" fxLayoutAlign="start stretch">
-                    <div class="info-header" fxLayout="row" fxLayoutAlign="start start">
+                  <div class="nic-info">
+                    <div class="info-header">
                       <h4 class="info-header-title">{{ nic.state.name }}</h4>
                       <!-- TODO: NAS-117157 - Add pencil icon and open edit interface as slide-in form on click -->
                     </div>
-                    <div
-                      class="info-body"
-                      fxLayout="row"
-                      fxFlex
-                      fxLayoutAlign="space-between center"
-                    >
+                    <div class="info-body">
                       <ul>
-                        <li fxLayout="row" fxLayoutAlign="start center">
+                        <li class="info-list-item">
                           <span *ngIf="getLinkState(nic) === LinkState.Up" class="icon up">
                             <ix-icon name="check_circle" [matTooltip]="getLinkStateLabel(nic)"></ix-icon>
                           </span>
@@ -98,7 +88,7 @@
                           </span>
                           <span>{{ getLinkStateLabel(nic) }}</span>
                         </li>
-                        <li fxLayout="row" fxLayoutAlign="start center" class="line-state">
+                        <li class="info-list-item line-state">
                           <span class="icon state">
                             <ix-interface-status-icon
                               [update]="networkInterfaceUpdate.get(nic.state.name)"
@@ -118,23 +108,14 @@
                             {{ 'No Traffic' | translate }}
                           </span>
                         </li>
-                        <li *ngIf="availableNics.length > 1" fxLayout="row" fxLayoutAlign="start center">
+                        <li *ngIf="availableNics.length > 1" class="info-list-item">
                           <span class="icon address">
                             <ix-icon name="settings_ethernet" [matTooltip]="getIpAddressTooltip(nic)"></ix-icon>
                           </span>
                           <span>{{ nicInfoMap[nic.state.name]?.ip }}</span>
                         </li>
                       </ul>
-                      <ng-template #unknown>
-                        {{ 'Unknown' | translate }}
-                      </ng-template>
-                      <ul
-                        *ngIf="availableNics.length === 1"
-                        fxFlex="70"
-                        class="detail-info"
-                        fxLayout="column"
-                        fxLayoutAlign="space-between start"
-                      >
+                      <ul *ngIf="availableNics.length === 1" class="detail-info">
                         <li>
                           <span class="label">
                             {{ 'Media Type' | translate }}:
@@ -160,7 +141,7 @@
                       </ul>
                     </div>
                   </div>
-                  <div *ngIf="availableNics.length <= 3" class="nic-chart" fxFlex>
+                  <div *ngIf="availableNics.length <= 3" class="nic-chart">
                     <div class="chart-body" [ngClass]="getChartBodyClasses(nic)">
                       <ix-view-chart-area
                         *ngIf="nicInfoMap && nicInfoMap[nic.state.name].chartData; else emptychart"
@@ -169,9 +150,9 @@
                       >
                       </ix-view-chart-area>
                       <ng-template #emptychart>
-                        <ix-entity-empty
+                        <ix-empty
                           [conf]="nicInfoMap[nic.state.name]?.emptyConfig"
-                        ></ix-entity-empty>
+                        ></ix-empty>
                       </ng-template>
                     </div>
                   </div>
@@ -184,3 +165,7 @@
     </mat-card>
   </div>
 </div>
+
+<ng-template #unknown>
+  {{ 'Unknown' | translate }}
+</ng-template>

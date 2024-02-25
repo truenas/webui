@@ -14,7 +14,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { CoreComponents } from 'app/core/core-components.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { CastModule } from 'app/modules/cast/cast.module';
-import { AppCommonModule } from 'app/modules/common/app-common.module';
+import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxFileSizeModule } from 'app/modules/ix-file-size/ix-file-size.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
@@ -22,6 +22,8 @@ import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
 import { LayoutModule } from 'app/modules/layout/layout.module';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
+import { SearchInput1Component } from 'app/modules/search-input1/search-input1.component';
+import { SummaryComponent } from 'app/modules/summary/summary.component';
 import { TerminalModule } from 'app/modules/terminal/terminal.module';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
 import { DeviceFormComponent } from 'app/pages/vm/devices/device-form/device-form.component';
@@ -47,7 +49,6 @@ import { routing } from './vm.routing';
 
 @NgModule({
   imports: [
-    AppCommonModule,
     AppLoaderModule,
     CastModule,
     CommonDirectivesModule,
@@ -73,6 +74,9 @@ import { routing } from './vm.routing';
     TestIdModule,
     TranslateModule,
     IxFileSizeModule,
+    SearchInput1Component,
+    SummaryComponent,
+    EmptyComponent,
   ],
   declarations: [
     VmSerialShellComponent,

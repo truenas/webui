@@ -1,24 +1,24 @@
-<ng-template ixPageHeader>
-  <ix-page-title-header>
-    <button *ngIf="views.length > 1 && isRackmount"
-            mat-button ixTest="elements-menu"
-            [matMenuTriggerFor]="elementsMenu"
-    >
-      {{ 'Elements' | translate }}
-      <ix-icon name="mdi-menu-down" class="menu-caret"></ix-icon>
-    </button>
-    <mat-menu #elementsMenu="matMenu">
-      <ng-container *ngIf="views.length">
-        <button *ngFor="let view of views"
-                mat-menu-item
-                [ixTest]="view.alias"
-                (click)="changeView(view)">
-          <span>{{ view.alias | translate }}</span>
-        </button>
-      </ng-container>
-    </mat-menu>
-  </ix-page-title-header>
-</ng-template>
+<ix-page-header>
+  <button
+    *ngIf="views.length > 1 && isRackmount"
+    mat-button
+    ixTest="elements-menu"
+    [matMenuTriggerFor]="elementsMenu"
+  >
+    {{ 'Elements' | translate }}
+    <ix-icon name="mdi-menu-down" class="menu-caret"></ix-icon>
+  </button>
+  <mat-menu #elementsMenu="matMenu">
+    <ng-container *ngIf="views.length">
+      <button *ngFor="let view of views"
+              mat-menu-item
+              [ixTest]="view.alias"
+              (click)="changeView(view)">
+        <span>{{ view.alias | translate }}</span>
+      </button>
+    </ng-container>
+  </mat-menu>
+</ix-page-header>
 
 <ng-template #multispinner>
   <div class="loader-dialog mat-mdc-card">

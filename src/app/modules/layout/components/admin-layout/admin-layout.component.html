@@ -83,8 +83,7 @@
 
     <!-- App content -->
     <div class="rightside-content-hold" [class.has-footer]="hasConsoleFooter$ | async">
-      <ix-page-title-header *ngIf="!headerPortalOutlet"></ix-page-title-header>
-      <ng-template *ngIf="headerPortalOutlet" [cdkPortalOutlet]="headerPortalOutlet"></ng-template>
+      <ix-default-page-header></ix-default-page-header>
       <router-outlet></router-outlet>
     </div>
     <ix-console-footer *ngIf="hasConsoleFooter$ | async"></ix-console-footer>

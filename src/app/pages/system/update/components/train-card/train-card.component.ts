@@ -12,10 +12,10 @@ import { filterAsync } from 'app/helpers/operators/filter-async.operator';
 import { helptextSystemUpdate } from 'app/helptext/system/update';
 import { Option } from 'app/interfaces/option.interface';
 import { WebSocketError } from 'app/interfaces/websocket-error.interface';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { TrainService } from 'app/pages/system/update/services/train.service';
 import { UpdateService } from 'app/pages/system/update/services/update.service';
 import { AuthService } from 'app/services/auth/auth.service';
-import { DialogService } from 'app/services/dialog.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 
 @UntilDestroy()

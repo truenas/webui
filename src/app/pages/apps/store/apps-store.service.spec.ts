@@ -7,9 +7,9 @@ import { ApiEvent } from 'app/interfaces/api-message.interface';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
 import { ChartRelease } from 'app/interfaces/chart-release.interface';
 import { KubernetesConfig } from 'app/interfaces/kubernetes-config.interface';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { AppsState, AppsStore } from 'app/pages/apps/store/apps-store.service';
-import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 
 describe('AppsStore', () => {

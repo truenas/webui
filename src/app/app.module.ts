@@ -27,9 +27,9 @@ import { createTranslateLoader } from 'app/core/classes/icu-translations-loader'
 import { CoreComponents } from 'app/core/core-components.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { getWindow, WINDOW } from 'app/helpers/window.helper';
+import { DialogModule } from 'app/modules/dialog/dialog.module';
 import { FeedbackModule } from 'app/modules/feedback/feedback.module';
 import { SnackbarModule } from 'app/modules/snackbar/snackbar.module';
-import { TerminalModule } from 'app/modules/terminal/terminal.module';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
 import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
 import { AuthService } from 'app/services/auth/auth.service';
@@ -47,7 +47,6 @@ import { rootEffects, rootReducers } from 'app/store';
 import { CustomRouterStateSerializer } from 'app/store/router/custom-router-serializer';
 import { AppComponent } from './app.component';
 import { rootRouterConfig } from './app.routes';
-import { AppCommonModule } from './modules/common/app-common.module';
 import { AppLoaderModule } from './modules/loader/app-loader.module';
 import { AppLoaderService } from './modules/loader/app-loader.service';
 import { AuthGuardService } from './services/auth/auth-guard.service';
@@ -60,7 +59,6 @@ import { RoutePartsService } from './services/route-parts/route-parts.service';
     FlexLayoutModule,
     AppLoaderModule,
     HttpClientModule,
-    AppCommonModule,
     TooltipModule,
     TranslateModule.forRoot({
       defaultLanguage: 'en',
@@ -87,7 +85,6 @@ import { RoutePartsService } from './services/route-parts/route-parts.service';
     NgxPopperjsModule.forRoot({ appendTo: 'body', hideOnScroll: true }),
     CoreComponents,
     MatSnackBarModule,
-    TerminalModule,
     CommonDirectivesModule,
     NgxWebstorageModule.forRoot(),
     StoreModule.forRoot(rootReducers, {
@@ -120,6 +117,7 @@ import { RoutePartsService } from './services/route-parts/route-parts.service';
     TestIdModule,
     MarkdownModule.forRoot({ loader: HttpClient }),
     FeedbackModule,
+    DialogModule,
   ],
   declarations: [
     AppComponent,

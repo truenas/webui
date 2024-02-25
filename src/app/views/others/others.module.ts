@@ -10,7 +10,6 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { CoreComponents } from 'app/core/core-components.module';
-import { AppCommonModule } from 'app/modules/common/app-common.module';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { LayoutModule } from 'app/modules/layout/layout.module';
 import { ConfigResetComponent } from './config-reset/config-reset.component';
@@ -34,7 +33,6 @@ import { ShutdownComponent } from './shutdown/shutdown.component';
     TranslateModule,
     RouterModule.forChild(othersRoutes),
     CoreComponents,
-    AppCommonModule,
   ],
   declarations: [RebootComponent, FailoverComponent, ShutdownComponent, ConfigResetComponent],
 })
