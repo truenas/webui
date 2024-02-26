@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import _ from 'lodash';
 import { filter } from 'rxjs';
+import { Role } from 'app/enums/role.enum';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
 import { ixApplications } from 'app/pages/datasets/utils/dataset.utils';
@@ -20,6 +21,9 @@ export class RolesCardComponent {
   @Input() dataset: DatasetDetails;
   @Input() systemDataset: string;
   @Input() hasChildrenWithShares = false;
+
+  protected nfsRequiredRoles = [Role.SharingNfsWrite, Role.SharingWrite];
+  protected smbRequiredRoles = [Role.SharingSmbWrite, Role.SharingWrite];
 
   get isApplications(): boolean {
     return this.dataset.name && this.dataset.name.endsWith(ixApplications);

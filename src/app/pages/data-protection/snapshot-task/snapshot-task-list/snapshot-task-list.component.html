@@ -7,7 +7,7 @@
 
   <ix-table-columns-selector [columns]="columns" (columnsChange)="columnsChange($event)"></ix-table-columns-selector>
 
-  <button mat-button ixTest="add-user" [color]="'primary'" (click)="doAdd()">
+  <button *ixRequiresRoles="requiredRoles" mat-button ixTest="add-user" [color]="'primary'" (click)="doAdd()">
     {{ 'Add' | translate }}
   </button>
 </ix-page-header>

@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, Inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { FormBuilder } from '@ngneat/reactive-forms';
+import { Role } from 'app/enums/role.enum';
 import { Certificate } from 'app/interfaces/certificate.interface';
 
 @Component({
@@ -8,6 +9,8 @@ import { Certificate } from 'app/interfaces/certificate.interface';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ConfirmForceDeleteCertificateComponent {
+  readonly requiredRoles = [Role.FullAdmin];
+
   form = this.formBuilder.group({
     force: [false],
   });

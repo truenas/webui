@@ -1,7 +1,11 @@
+import { DiskPowerLevel } from 'app/enums/disk-power-level.enum';
+import { DiskStandby } from 'app/enums/disk-standby.enum';
 import { EnclosureSlotTopologyStatus } from 'app/enums/enclosure-slot-status.enum';
 import { VdevType } from 'app/enums/v-dev-type.enum';
 import { Disk, TopologyItem, TopologyItemStats } from './storage.interface';
 
+// DEPRECATED
+// TODO: Remove deprecated interfaces once mock templates have been updated
 export interface Enclosure {
   controller: boolean;
   elements: EnclosureElementsGroup[] | EnclosureElement[];
@@ -9,7 +13,7 @@ export interface Enclosure {
   label: string;
   model: string;
   name: string;
-  number: number;
+  number?: number; // UI adds this
 }
 
 export interface EnclosureElementsGroup {
@@ -54,8 +58,8 @@ export interface EnclosureSlot {
   slotStatus?: string;
   topologyStatus?: EnclosureSlotTopologyStatus;
   topologyStats?: TopologyItemStats;
-  fault: boolean;
-  identify: boolean;
+  fault?: boolean; // TODO: Deprecated
+  identify?: boolean; // TODO Deprecated
   pool?: string | null;
   topologyCategory?: VdevType | null;
   vdev?: TopologyItem | null;
@@ -71,10 +75,96 @@ export interface EnclosureView {
   expanders?: EnclosureElement[];
   pools?: string[];
 }
+// END OF DEPRECATED
+
+// NEW
+export interface EnclosureUi {
+  number?: number; // Provided by UI
+  rackmount: boolean;
+  top_loaded: boolean;
+  front_slots: number;
+  rear_slots: number;
+  internal_slots: number;
+  controller: boolean;
+  elements: EnclosureUiElements;
+  id: string;
+  label: string;
+  model: string;
+  name: string;
+  dmi?: string;
+  status?: string[];
+  vendor?: string;
+  product?: string;
+  revision?: string;
+  bsg?: string;
+  sg?: string;
+  pci?: string;
+}
+
+export interface EnclosureUiElements {
+  'Array Device Slot': Record<number, EnclosureUiSlot>;
+  'SAS Expander'?: Record<number, EnclosureUiElement>;
+  'Enclosure'?: Record<number, EnclosureUiElement>;
+  'Temperature'?: Record<number, EnclosureUiElement>;
+  'Voltage Sensor'?: Record<number, EnclosureUiElement>;
+  'Cooling'?: Record<number, EnclosureUiElement>;
+}
+
+export interface EnclosureUiElement {
+  descriptor: string;
+  status: string;
+  value: string;
+  value_raw: number;
+}
+
+export interface EnclosureUiSlot {
+  descriptor: string;
+  status: string;
+  dev: string;
+  original?: EnclosureUiSlotMetadata;
+  name: string;
+  size: number;
+  model: string;
+  serial: string;
+  advpowermgmt: DiskPowerLevel;
+  togglesmart: boolean;
+  smartoptions: string;
+  transfermode: string;
+  hddstandby: DiskStandby;
+  description: string;
+  rotationrate: number;
+  read_errors?: number;
+  write_errors?: number;
+  checksum_errors?: number;
+  pool_info: EnclosureUiPool | null;
+}
+
+export interface EnclosureUiPool {
+  pool_name: string;
+  disk_status: string;
+  vdev_name: string;
+  vdev_type: string;
+  vdev_disks: EnclosureUiVdev[];
+}
+
+export interface EnclosureUiVdev {
+  enclosure_id: string;
+  slot: number;
+  dev: string;
+}
+
+export interface EnclosureUiSlotMetadata {
+  enclosure_id: string;
+  enclosure_sg: string;
+  enclosure_bsg: string;
+  descriptor: string;
+  slot: number;
+}
 
 export interface SelectedEnclosureSlot {
-  selected: EnclosureSlot;
-  vdevSlots: EnclosureSlot[]; // All members including selected
+  slotNumber: number;
+  slotDetails: EnclosureUiSlot;
+  enclosureId: string;
 }
 
 export interface DiskEnclosureInfo {

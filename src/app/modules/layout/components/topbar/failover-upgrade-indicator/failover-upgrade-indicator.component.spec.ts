@@ -1,6 +1,7 @@
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { Store } from '@ngrx/store';
 import { provideMockStore } from '@ngrx/store/testing';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import {
   FailoverUpgradeIndicatorComponent,
 } from 'app/modules/layout/components/topbar/failover-upgrade-indicator/failover-upgrade-indicator.component';
@@ -12,6 +13,7 @@ describe('FailoverUpgradeIndicatorComponent', () => {
   const createComponent = createComponentFactory({
     component: FailoverUpgradeIndicatorComponent,
     providers: [
+      mockAuth(),
       provideMockStore({
         selectors: [
           {

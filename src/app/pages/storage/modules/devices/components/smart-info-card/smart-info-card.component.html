@@ -5,7 +5,7 @@
     </h3>
 
     <!-- TODO: Hide for disks with no SMART support after https://ixsystems.atlassian.net/browse/NAS-116969 -->
-    <button mat-button ixTest="run-manual-test" (click)="onManualTest()">
+    <button *ixRequiresRoles="requiredRoles" mat-button ixTest="run-manual-test" (click)="onManualTest()">
       {{ 'Run Manual Test' | translate }}
     </button>
   </mat-card-header>

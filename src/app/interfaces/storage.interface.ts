@@ -64,7 +64,15 @@ export interface TopologyItemStats {
   draid_parity?: number;
 }
 
+// Is currently part of disk.query but is soon to be deprecated
+// Anticipate enclosure number to be replaced by enclosure id (string)
 export interface EnclosureAndSlot {
+  number: number;
+  slot: number;
+}
+
+export interface EnclosureIdAndSlot {
+  id?: string;
   number: number;
   slot: number;
 }
@@ -77,7 +85,7 @@ export interface Disk {
   devname: string;
   difference: number;
   duplicate_serial: string[];
-  enclosure: EnclosureAndSlot;
+  enclosure: EnclosureIdAndSlot; // TODO: Verify if number or id is included?
   expiretime: string;
   hddstandby: DiskStandby;
   identifier: string;

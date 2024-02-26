@@ -46,6 +46,8 @@ import { WebSocketService } from 'app/services/ws.service';
   providers: [CrontabExplanationPipe],
 })
 export class RsyncTaskListComponent implements OnInit {
+  readonly requiredRoles = [Role.FullAdmin];
+
   dataProvider: AsyncDataProvider<RsyncTask>;
   filterString: string;
 
@@ -132,7 +134,7 @@ export class RsyncTaskListComponent implements OnInit {
         {
           iconName: 'play_arrow',
           tooltip: this.translate.instant('Run job'),
-          requiredRoles: [Role.FullAdmin],
+          requiredRoles: this.requiredRoles,
           onClick: (row) => this.runNow(row),
         },
         {
@@ -143,7 +145,7 @@ export class RsyncTaskListComponent implements OnInit {
         {
           iconName: 'delete',
           tooltip: this.translate.instant('Delete'),
-          requiredRoles: [Role.FullAdmin],
+          requiredRoles: this.requiredRoles,
           onClick: (row) => this.delete(row),
         },
       ],

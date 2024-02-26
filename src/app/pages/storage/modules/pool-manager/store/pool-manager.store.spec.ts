@@ -5,7 +5,7 @@ import { TiB } from 'app/constants/bytes.constant';
 import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { DiskType } from 'app/enums/disk-type.enum';
 import { CreateVdevLayout, VdevType } from 'app/enums/v-dev-type.enum';
-import { Enclosure } from 'app/interfaces/enclosure.interface';
+import { EnclosureUi } from 'app/interfaces/enclosure.interface';
 import { UnusedDisk } from 'app/interfaces/storage.interface';
 import { ManualDiskSelectionComponent, ManualDiskSelectionParams } from 'app/pages/storage/modules/pool-manager/components/manual-disk-selection/manual-disk-selection.component';
 import { DispersalStrategy } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/steps/2-enclosure-wizard-step/enclosure-wizard-step.component';
@@ -50,13 +50,13 @@ describe('PoolManagerStore', () => {
   const enclosures = [
     { name: 'Front', number: 1 },
     { name: 'Back', number: 2 },
-  ] as Enclosure[];
+  ] as EnclosureUi[];
   const createService = createServiceFactory({
     service: PoolManagerStore,
     providers: [
       mockWebSocket([
         mockCall('disk.get_unused', disks),
-        mockCall('enclosure.query', enclosures),
+        mockCall('webui.enclosure.dashboard', enclosures),
       ]),
       mockProvider(MatDialog, {
         open: jest.fn(() => ({
@@ -121,7 +121,7 @@ describe('PoolManagerStore', () => {
 
       const websocket = spectator.inject(WebSocketService);
       expect(websocket.call).toHaveBeenCalledWith('disk.get_unused');
-      expect(websocket.call).toHaveBeenCalledWith('enclosure.query');
+      expect(websocket.call).toHaveBeenCalledWith('webui.enclosure.dashboard');
 
       expect(await firstValueFrom(spectator.service.state$)).toMatchObject({
         ...initialState,

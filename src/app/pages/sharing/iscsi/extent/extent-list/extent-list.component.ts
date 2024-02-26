@@ -28,6 +28,12 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ExtentListComponent implements OnInit {
+  readonly requiredRoles = [
+    Role.SharingIscsiExtentWrite,
+    Role.SharingIscsiWrite,
+    Role.SharingWrite,
+  ];
+
   isLoading = false;
   filterString = '';
   dataProvider: AsyncDataProvider<IscsiExtent>;
@@ -78,11 +84,7 @@ export class ExtentListComponent implements OnInit {
           iconName: 'delete',
           tooltip: this.translate.instant('Delete'),
           onClick: (row) => this.showDeleteDialog(row),
-          requiredRoles: [
-            Role.SharingIscsiExtentWrite,
-            Role.SharingIscsiWrite,
-            Role.SharingWrite,
-          ],
+          requiredRoles: this.requiredRoles,
         },
       ],
     }),

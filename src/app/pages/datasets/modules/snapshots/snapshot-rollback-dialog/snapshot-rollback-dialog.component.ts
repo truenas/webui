@@ -6,6 +6,7 @@ import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
 import { of } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { Role } from 'app/enums/role.enum';
 import { RollbackRecursiveType } from 'app/enums/rollback-recursive-type.enum';
 import { helptextSnapshots } from 'app/helptext/storage/snapshots/snapshots';
 import { ZfsRollbackParams, ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
@@ -22,6 +23,8 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SnapshotRollbackDialogComponent implements OnInit {
+  readonly requiredRoles = [Role.SnapshotWrite];
+
   isLoading = true;
   wasDatasetRolledBack = false;
   form = this.fb.group({

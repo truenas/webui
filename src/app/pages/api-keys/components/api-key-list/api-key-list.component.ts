@@ -32,6 +32,8 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ApiKeyListComponent implements OnInit {
+  protected requiredRoles = [Role.FullAdmin];
+
   smartTasks: ApiKey[] = [];
   dataProvider = new ArrayDataProvider<ApiKey>();
   apiKeys: ApiKey[] = [];

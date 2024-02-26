@@ -3035,7 +3035,6 @@
   "Error updating disks": "Error al actualizar los discos",
   "Errors": "Errores",
   "Establishing a connection requires  that one of the connection systems has open TCP ports. Choose which  system (<i>LOCAL</i> or <i>REMOTE</i>) will open ports. Consult your IT  department to determine which systems are allowed to open ports.": "Establecer una conexión requiere que uno de los sistemas de conexión tenga puertos TCP abiertos. Elija qué sistema (<i>LOCAL</i> o <i>REMOTO</i>) abrirá los puertos. Consulte a su departamento de TI para determinar qué sistemas pueden abrir puertos.",
-  "Estimated Raw Capacity": "Capacidad bruta estimada",
   "Estimated data capacity available after extension.": "Capacidad de datos estimada disponible después de la extensión.",
   "Estimated total raw data capacity": "Capacidad total estimada de datos brutos",
   "Excellent effort": "Excelente esfuerzo",

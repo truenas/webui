@@ -26,6 +26,12 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AuthorizedAccessListComponent implements OnInit {
+  readonly requiredRoles = [
+    Role.SharingIscsiAuthWrite,
+    Role.SharingIscsiWrite,
+    Role.SharingWrite,
+  ];
+
   isLoading = false;
   filterString = '';
   dataProvider: AsyncDataProvider<IscsiAuthAccess>;
@@ -76,11 +82,7 @@ export class AuthorizedAccessListComponent implements OnInit {
               },
             });
           },
-          requiredRoles: [
-            Role.SharingIscsiAuthWrite,
-            Role.SharingIscsiWrite,
-            Role.SharingWrite,
-          ],
+          requiredRoles: this.requiredRoles,
         },
       ],
     }),

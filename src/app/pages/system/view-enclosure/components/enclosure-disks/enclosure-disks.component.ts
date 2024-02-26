@@ -7,18 +7,20 @@ import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { Application, Container } from 'pixi.js';
 import * as popmotion from 'popmotion';
+import { KeyframesProps } from 'popmotion';
 import { ValueReaction } from 'popmotion/lib/reactions/value';
 import { Subject } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
 import { ThemeUtils } from 'app/core/classes/theme-utils/theme-utils';
-import { EnclosureSlotDiskStatus, EnclosureSlotStatus } from 'app/enums/enclosure-slot-status.enum';
-import { TopologyItemType } from 'app/enums/v-dev-type.enum';
+import { EnclosureSlotStatus } from 'app/enums/enclosure-slot-status.enum';
+import { Role } from 'app/enums/role.enum';
 import { TopologyItemStatus } from 'app/enums/vdev-status.enum';
 import {
-  Enclosure, EnclosureElement, EnclosureElementsGroup, EnclosureSlot, EnclosureView,
+  EnclosureUi,
+  EnclosureUiElement,
+  EnclosureUiSlot,
 } from 'app/interfaces/enclosure.interface';
 import { Pool } from 'app/interfaces/pool.interface';
-import { Disk, TopologyDisk } from 'app/interfaces/storage.interface';
 import { Theme } from 'app/interfaces/theme.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ChassisView } from 'app/pages/system/view-enclosure/classes/chassis-view';
@@ -89,9 +91,6 @@ export interface DiskFailure {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
-  showCaption = true;
-  protected aborted = false;
-
   @ViewChild('visualizer', { static: true }) visualizer: ElementRef<HTMLElement>;
   @ViewChild('disksoverview', { static: true }) overview: ElementRef<HTMLElement>;
   @ViewChild('diskdetails', { static: false }) details: ElementRef<HTMLElement>;
@@ -103,141 +102,111 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
   @Input('controller-events') controllerEvent$: Subject<EnclosureEvent>;
   // eslint-disable-next-line @angular-eslint/no-input-rename
   @Input('profile') systemProfile: SystemProfile;
-  enclosureViews: EnclosureView[] = [];
+
+  protected requiredRoles = [Role.FullAdmin];
+  showCaption = true;
+  protected aborted = false;
+  enclosureViews: EnclosureUi[] = [];
   systemState: EnclosureState;
+  selectedDisk: EnclosureUiSlot;
 
   // TODO: Implement Expanders
-  get expanders(): EnclosureElement[] {
-    return this.selectedEnclosureView.expanders;
+  get expanders(): EnclosureUiElement[] {
+    const keyValueArray: [string, EnclosureUiElement][] = this.asArray(
+      this.selectedEnclosure?.elements['SAS Expander'],
+    ) as [string, EnclosureUiElement][];
+    return keyValueArray.map((keyValue: [string, EnclosureUiElement]) => keyValue[1]);
   }
   // Tracked by parent component
   get selectedEnclosureNumber(): number {
-    const selected: number = this.systemState?.selectedEnclosure !== null
-      ? Number(this.systemState?.selectedEnclosure) : -1;
-    return selected;
+    return this.systemState.enclosures.indexOf(this.selectedEnclosure);
+  }
+
+  enclosureNumberFromId(id: string): number {
+    return this.systemState.enclosures
+      .filter((enclosure: EnclosureUi) => enclosure.id === id)
+      .map((filtered) => filtered.number)[0];
   }
 
   // Tracked by this component
   selectedSlotNumber: number | null = null;
 
-  get selectedEnclosure(): Enclosure {
-    return this.systemState?.enclosures?.filter((enclosure: Enclosure) => {
-      return enclosure.number === this.selectedEnclosureNumber;
+  get selectedEnclosure(): EnclosureUi {
+    return this.systemState?.enclosures?.filter((enclosure: EnclosureUi) => {
+      return enclosure.id === this.systemState.selectedEnclosure;
     })[0];
   }
 
-  get selectedEnclosureView(): EnclosureView | null {
-    if (this.selectedEnclosureNumber > -1 && this.systemState.enclosureViews.length) {
-      return this.systemState?.enclosureViews?.filter((view: EnclosureView) => {
-        return view.number === this.selectedEnclosureNumber;
-      })[0];
-    }
-    return null;
+  get selectedEnclosurePools(): string[] {
+    return this.enclosureStore.getPools(this.selectedEnclosure);
   }
 
-  get selectedSlot(): EnclosureSlot | null {
-    if (this.selectedEnclosureView) {
-      const selected = this.selectedEnclosureView.slots
-        .find((enclosure: EnclosureSlot) => enclosure.slot === this.selectedSlotNumber);
+  get selectedSlot(): EnclosureUiSlot | null {
+    if (this.selectedEnclosure) {
+      const selected = this.selectedEnclosure.elements['Array Device Slot'][this.selectedSlotNumber];
       return selected || null;
     }
     return null;
   }
 
-  get selectedVdevDisks(): string[] {
-    const selectedSlot = this.selectedSlot;
-    const result = selectedSlot?.vdev?.type === TopologyItemType.Disk
-      ? [selectedSlot.vdev.disk]
-      : selectedSlot?.vdev?.children?.map((item: TopologyDisk) => item.disk);
-
-    if (result) {
-      return result.filter((name: string) => name !== null);
-    }
-    return [];
-  }
-
-  get selectedVdevSlotNumbers(): Record<string, number> {
-    const result: unknown = {};
-    this.selectedVdevDisks.forEach((diskName: string) => {
-      const disk = this.systemState.disks.filter((drive: Disk) => drive.name === diskName);
-      if (disk.length) (result as Record<string, number>)[disk[0].name] = disk[0].enclosure.slot;
-    });
-
-    return result as Record<string, number>;
-  }
-
-  get selectedVdevSlots(): EnclosureSlot[] | null {
-    if (!this.selectedVdevDisks) return [];
-
-    const selectedVdevSlots: EnclosureSlot[] = [];
-    this.selectedVdevDisks.forEach((diskName: string) => {
-      const enclosure = this.systemState.disks.find((disk: Disk) => disk.name === diskName)?.enclosure;
-
-      if (enclosure) {
-        const view = this.systemState.enclosureViews.find((enclosureView) => enclosureView.number === enclosure.number);
-        const slot = view?.slots?.find((eSlot) => eSlot.slot === enclosure.slot);
-        if (slot) selectedVdevSlots.push(slot);
-      }
-    });
-
-    return selectedVdevSlots;
-  }
-
-  get selectedEnclosurePools(): string[] {
-    return this.selectedEnclosureView.pools;
+  asArray(src: object): [string, unknown][] {
+    return src ? Object.entries(src) : [];
   }
 
   // Data fetching. TODO: Move to service or store
   get unhealthyPools(): Pool[] {
-    return this.systemState.pools.filter((pool: Pool) => {
+    return [];
+    /* return this.systemState.pools.filter((pool: Pool) => {
       return !pool.healthy && this.selectedEnclosurePools.includes(pool.name);
-    });
+    }); */
   }
 
   // Find bad status strings in both disk.status and slot.status.
-  // TODO: Move to service or store
   get failedDisks(): DiskFailure[] {
-    if (!this.selectedEnclosureView) return [];
+    return [];
+    if (!this.selectedEnclosure) return [];
 
-    const failedDisks: DiskFailure[] = [];
-    const failedSlots = this.selectedEnclosureView.slots.filter((slot: EnclosureSlot) => {
+    const slots: [string, EnclosureUiSlot][] = Object.entries(
+      this.selectedEnclosure.elements['Array Device Slot'],
+    ).filter((keyValue: [string, EnclosureUiSlot]) => {
+      const enclosureSlot = keyValue[1];
       const triggers: string[] = [
         TopologyItemStatus.Unavail,
         TopologyItemStatus.Faulted,
       ];
-      return triggers.includes(slot.topologyStatus);
+      return triggers.includes(enclosureSlot.status);
     });
 
-    failedSlots.forEach((slot: EnclosureSlot) => {
-      if (!slot.disk) return;
-
+    const failedDisks: DiskFailure[] = slots.map((numberAndInfo: [string, EnclosureUiSlot]) => {
+      const slotNumber = Number(numberAndInfo[0]);
+      const slotInfo = numberAndInfo[1];
       const failure: DiskFailure = {
-        disk: slot.disk.name,
-        enclosure: slot.enclosure,
-        slot: slot.slot,
+        disk: slotInfo.dev,
+        enclosure: this.selectedEnclosureNumber,
+        slot: slotNumber,
         location: this.view,
-        reasons: [slot.topologyStatus],
+        reasons: [slotInfo.status],
       };
-      failedDisks.push(failure);
+      return failure;
     });
 
     return failedDisks;
   }
 
   get isTopologyDisk(): boolean {
-    return this.selectedSlot?.vdev?.type === TopologyItemType.Disk;
+    return true;
+    // return this.selectedSlot?.vdev?.type === TopologyItemType.Disk;
   }
   // END DATA PROPERTIES
 
   temperatures: Temperature;
+  // TODO: Do we still need subenclosure now that rear bays are always merged?
+  subenclosure: { poolKeys: Record<string, number> }; // Declare rear and internal enclosure visualizations here
 
   // PIXI and View related...
   app: Application;
   private resources = PIXI.loader.resources;
   container: Container;
-
-  subenclosure: { poolKeys: Record<string, number> }; // Declare rear and internal enclosure visualizations here
-
   chassis: Chassis;
   view = EnclosureLocation.Front;
   get chassisView(): ChassisView {
@@ -254,8 +223,9 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
   }
 
   get hideIdentifyDrive(): boolean {
-    const selectedEnclosureView = this.selectedEnclosureView;
-    return selectedEnclosureView.model === 'TRUENAS-MINI-R' || !selectedEnclosureView.hasSlotStatus;
+    // TODO: Adapt the changes from https://ixsystems.atlassian.net/browse/NAS-127499
+    const selectedEnclosure = this.selectedEnclosure;
+    return selectedEnclosure.model === 'TRUENAS-MINI-R';
   }
 
   theme: Theme;
@@ -301,15 +271,12 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
       clone.keys = [];
 
       if (chassisView?.driveTrayObjects) {
-        const enclosureView: EnclosureView = this.selectedEnclosureView;
+        const enclosureView: EnclosureUi = this.selectedEnclosure;
         chassisView.driveTrayObjects.forEach((dt: DriveTray) => {
-          const disk = enclosureView.slots.find((enclosureSlot: EnclosureSlot) => {
-            return enclosureSlot.slot === parseInt(dt.id);
-          })?.disk;
-
-          if (disk) {
-            clone.keys.push(disk.name);
-            clone.values[disk.name] = data.values[disk.name];
+          const enclosureSlot: EnclosureUiSlot = enclosureView.elements['Array Device Slot'][parseInt(dt.id)];
+          if (enclosureSlot.dev) {
+            clone.keys.push(enclosureSlot.dev);
+            clone.values[enclosureSlot.dev] = data.values[enclosureSlot.dev];
           }
         });
       } else {
@@ -347,7 +314,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
   ngAfterContentInit(): void {
     this.systemProfile.enclosureStore$.pipe(untilDestroyed(this))
       .subscribe((data: EnclosureState) => {
-        if (data.enclosureViews.length) {
+        if (data.enclosures.length) {
           this.systemState = data;
 
           if (!this.app) {
@@ -371,7 +338,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
         case 'EnclosureSelected':
           // Enabled subenclosure functionality
           this.loadEnclosure(
-            this.selectedEnclosureView,
+            this.selectedEnclosure,
             EnclosureLocation.Front,
             (this.chassisView !== null), // TODO: Make sure this doesn't break on enclosure selection
           );
@@ -450,7 +417,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
   }
 
   // Recreates enclosure when switching between enclosures or front/rear/internal visualizations
-  loadEnclosure(enclosureView: EnclosureView, view?: EnclosureLocation, update?: boolean): void {
+  loadEnclosure(enclosureView: EnclosureUi, view?: EnclosureLocation, update?: boolean): void {
     if (this.selectedSlotNumber > -1) {
       this.clearDisk();
     }
@@ -497,12 +464,12 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
   }
 
   // TODO: Move switch to a service. Also need to implement rackmount detection since systemprofiler is going away
-  createEnclosure(enclosure: EnclosureView = this.selectedEnclosureView): void {
+  createEnclosure(enclosure: /* EnclosureView */ EnclosureUi = this.selectedEnclosure): void {
     if (this.currentView === 'details') {
       this.clearDisk();
     }
 
-    switch (enclosure.model) {
+    switch (enclosure?.model) {
       case 'TRUENAS-R10':
       case 'R10':
         this.chassis = new R10();
@@ -542,13 +509,14 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
         this.chassis = new R50Bm(true);
         this.showCaption = false;
         break;
+      case 'M40':
+      case 'M50':
+      case 'M60':
       case 'M Series': {
         // We need to detect rear chassis. Not all M Series will have rear slots
-        this.chassis = new M50(enclosure.slots.length > 24);
+        this.chassis = new M50(Object.entries(enclosure.elements['Array Device Slot']).length > 24);
         break;
       }
-      case 'Rear': // Ignore reported rear chassis for M50
-        break;
       case 'X Series':
       case 'ES12':
         this.chassis = new Es12();
@@ -636,19 +604,21 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
 
           break;
         case 'DriveSelected': {
-          const slotNumber = parseInt((evt).data.id);
+          const slotNumber = parseInt(evt.data.id);
 
           if (this.identifyBtnRef) {
             this.toggleSlotStatus(true);
             this.radiate(true);
           }
-
           this.selectedSlotNumber = slotNumber;
-          const isSlotEmpty = !this.selectedSlot?.disk;
+          const isSlotEmpty = !this.selectedSlot.dev;
 
           if (isSlotEmpty) {
             this.setCurrentView(this.emptySlotView);
           } else if ((evt).data.enabled) {
+            this.selectedDisk = this.systemState?.selectedEnclosureDisks?.find((disk: EnclosureUiSlot) => {
+              return disk.name === this.selectedSlot.dev;
+            });
             this.setCurrentView('details');
           }
           break;
@@ -665,8 +635,9 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
   }
 
   // Similar to createEnclosure method. This just provides parent with images for enclosure selector strip
-  createExtractedEnclosure(enclosureView: EnclosureView): void {
-    const rawEnclosure = this.systemState.enclosures[enclosureView.number];
+  createExtractedEnclosure(enclosureView: EnclosureUi): void {
+    const rawEnclosure = this.systemState.enclosures
+      .find((enclosure: EnclosureUi) => enclosure.id === enclosureView.id);
     let extractedChassis: Chassis;
 
     switch (rawEnclosure.model) {
@@ -706,6 +677,9 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
       case 'R50BM':
         extractedChassis = new R50Bm();
         break;
+      case 'M40':
+      case 'M50':
+      case 'M60':
       case 'M Series':
         extractedChassis = new M50();
         break;
@@ -787,8 +761,14 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
 
         this.optimizeChassisOpacity(chassisView);
 
-        enclosureView.slots.forEach((enclosureSlot: EnclosureSlot) => {
-          this.setDiskHealthState(enclosureSlot, chassisView);
+        const slots: [string, EnclosureUiSlot][] = this.asArray(
+          enclosureView.elements['Array Device Slot'],
+        ) as [string, EnclosureUiSlot][];
+
+        (slots).forEach((keyValue: [string, EnclosureUiSlot]) => {
+          const slotNumber = keyValue[0];
+          const slotDetails = keyValue[1];
+          this.setDiskHealthState(enclosureView.id, slotNumber, slotDetails, chassisView);
         });
         this.extractEnclosure(chassisView, enclosureView);
       });
@@ -797,7 +777,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
   }
 
   // Helper for createExtractedEnclosure
-  extractEnclosure(enclosure: ChassisView, enclosureView: EnclosureView): void {
+  extractEnclosure(enclosure: ChassisView, enclosureView: EnclosureUi): void {
     const canvas = (this.app.renderer.plugins as Record<string, CanvasExtract>).extract.canvas(enclosure.container);
     this.controllerEvent$.next({ name: 'EnclosureCanvas', data: { canvas, enclosureView }, sender: this });
     this.container.removeChild(enclosure.container);
@@ -868,17 +848,20 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
 
         this.setDisksPoolState();
 
-        const selectedSlot = !this.selectedSlot ? this.selectedEnclosureView.slots[0] : this.selectedSlot;
-        this.labels = new VDevLabelsSvg(this.chassisView, this.app, selectedSlot.disk, this.theme);
+        const selectedSlot: EnclosureUiSlot = !this.selectedSlot ? this.selectedEnclosure.elements['Array Device Slot']['1']
+          : this.selectedSlot;
+        this.labels = new VDevLabelsSvg(this.chassisView, this.app, this.selectedSlot.dev, this.theme);
 
         const evtData: unknown = {
           name: 'LabelDrives',
           data: {
-            selected: this.selectedSlot,
-            vdevSlots: this.selectedVdevSlots,
+            slotNumber: this.selectedSlotNumber,
+            slotDetails: selectedSlot,
+            enclosureId: this.selectedEnclosure.id,
           },
           sender: this,
         };
+
         this.labels.events$.next(evtData as LabelDrivesEvent);
         break;
       }
@@ -986,11 +969,10 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
   // Visualization Colors
   setDisksEnabledState(chassisView: ChassisView = this.chassisView): void {
     chassisView.driveTrayObjects.forEach((dt) => {
-      const disk = this.selectedEnclosureView.slots.filter((enclosureSlot: EnclosureSlot) => {
-        return enclosureSlot.slot === Number(dt.id);
-      });
-
-      dt.enabled = !!disk;
+      const isEnabled: boolean = (
+        typeof this.selectedEnclosure.elements['Array Device Slot'][parseInt(dt.id)].dev !== undefined
+      );
+      dt.enabled = !!isEnabled;
     });
   }
 
@@ -1006,19 +988,30 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
 
   // Visualization Colors
   setDisksHealthState(): void {
-    const selectedEnclosure = this.selectedEnclosureView;
-    selectedEnclosure.slots.forEach((enclosureSlot: EnclosureSlot) => {
-      this.setDiskHealthState(enclosureSlot);
+    const selectedEnclosure = this.selectedEnclosure;
+    const slots: [string, EnclosureUiSlot][] = this.asArray(
+      selectedEnclosure.elements['Array Device Slot'],
+    ) as [string, EnclosureUiSlot][];
+
+    (slots).forEach((keyValue: [string, EnclosureUiSlot]) => {
+      const slotNumber: string = keyValue[0];
+      const slotDetails: EnclosureUiSlot = keyValue[1];
+      this.setDiskHealthState(selectedEnclosure.id, slotNumber, slotDetails);
     });
   }
 
   // Visualization Colors
   // Some data fetching of failed disk status strings
-  setDiskHealthState(enclosureSlot: EnclosureSlot, enclosure: ChassisView = this.chassisView): void {
+  setDiskHealthState(
+    enclosureId: string,
+    slotNumber: string,
+    enclosureSlot: EnclosureUiSlot,
+    chassisView: ChassisView = this.chassisView,
+  ): void {
     let index = -1;
 
-    enclosure.driveTrayObjects.forEach((dto: DriveTray, i: number) => {
-      const result = (dto.id === enclosureSlot.slot.toString());
+    chassisView.driveTrayObjects.forEach((dto: DriveTray, i: number) => {
+      const result = (dto.id === slotNumber);
       if (result) {
         index = i;
       }
@@ -1028,96 +1021,94 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
       return;
     }
 
-    enclosure.driveTrayObjects[index].enabled = true; //! !disk.enclosure.slot;
-
-    let failed = false;
+    chassisView.driveTrayObjects[index].enabled = true; //! !disk.enclosure.slot;
 
     // Health based on disk.status
-    if (enclosureSlot.disk && enclosureSlot.topologyStatus) {
-      switch (enclosureSlot.topologyStatus as string) {
+    if (enclosureSlot.dev && enclosureSlot.pool_info?.disk_status) {
+      switch (enclosureSlot.pool_info?.disk_status) {
         case 'ONLINE':
-          enclosure.events.next({
+          chassisView.events.next({
             name: 'ChangeDriveTrayColor',
             data: {
-              id: enclosureSlot.slot,
+              id: slotNumber,
               color: this.theme.green,
-              enclosure: enclosureSlot.disk.enclosure.number,
-              slot: enclosureSlot.slot,
+              enclosure: enclosureId,
+              slot: parseInt(slotNumber),
             },
           });
           break;
         case 'FAULT':
-          failed = true;
-          break;
-        case 'AVAILABLE':
-          enclosure.events.next({
+          chassisView.events.next({
             name: 'ChangeDriveTrayColor',
             data: {
-              id: enclosureSlot.slot,
+              id: slotNumber,
+              color: this.theme.red,
+              enclosure: enclosureId,
+              slot: parseInt(slotNumber),
+            },
+          });
+          break;
+        case 'AVAILABLE':
+          chassisView.events.next({
+            name: 'ChangeDriveTrayColor',
+            data: {
+              id: slotNumber,
               color: '#999999',
-              enclosure: enclosureSlot.disk.enclosure.number,
-              slot: enclosureSlot.slot,
+              enclosure: enclosureId,
+              slot: parseInt(slotNumber),
             },
           });
           break;
         default:
-          enclosure.events.next({
+          chassisView.events.next({
             name: 'ChangeDriveTrayColor',
             data: {
-              id: enclosureSlot.slot,
+              id: slotNumber,
               color: this.theme.yellow,
-              enclosure: enclosureSlot.disk.enclosure.number,
-              slot: enclosureSlot.slot,
+              enclosure: enclosureId,
+              slot: parseInt(slotNumber),
             },
           });
           break;
       }
     }
-
-    if (!failed && enclosureSlot.fault) {
-      failed = true;
-    }
-
-    if (failed) {
-      enclosure.events.next({
-        name: 'ChangeDriveTrayColor',
-        data: {
-          id: enclosureSlot.slot,
-          color: this.theme.red,
-          enclosure: enclosureSlot.disk.enclosure.number,
-          slot: enclosureSlot.slot,
-        },
-      });
-    }
   }
 
   // Sets visualization colors
   setDisksPoolState(): void {
-    const selectedEnclosure: EnclosureView = this.selectedEnclosureView;
+    const selectedEnclosure: EnclosureUi = this.selectedEnclosure;
     this.setDisksDisabled();
 
-    const paintSlots = (targetEnclosure: EnclosureView): void => {
-      targetEnclosure.slots.forEach((enclosureSlot: EnclosureSlot): void => {
+    const paintSlots = (targetEnclosure: EnclosureUi): void => {
+      const slots: [string, EnclosureUiSlot][] = this.asArray(
+        targetEnclosure.elements['Array Device Slot'],
+      ) as [string, EnclosureUiSlot][];
+
+      (slots).forEach((keyValue: [string, EnclosureUiSlot]) => {
+        const slotNumber: number = parseInt(keyValue[0]);
+        const slotDetails: EnclosureUiSlot = keyValue[1];
+
+        // Empty slot check
         if (
-          enclosureSlot.slot < this.chassisView.slotRange.start
-          || enclosureSlot.slot > this.chassisView.slotRange.end
-          || !enclosureSlot.disk
+          slotNumber < this.chassisView.slotRange?.start
+          || slotNumber > this.chassisView.slotRange?.end
+          || !slotDetails.dev
         ) {
           return;
         }
 
-        const poolIndex = this.selectedEnclosurePools.indexOf(enclosureSlot.pool);
-        const driveColor = enclosureSlot.vdev
+        const poolIndex = this.selectedEnclosurePools.indexOf(slotDetails.pool_info?.pool_name);
+        const driveColor = slotDetails.pool_info?.vdev_name
           ? this.theme[this.theme.accentColors[poolIndex] as keyof Theme]
           : '#999999';
 
         this.chassisView.events.next({
           name: 'ChangeDriveTrayColor',
           data: {
-            id: enclosureSlot.slot,
+            id: slotNumber,
             color: driveColor,
-            enclosure: enclosureSlot.enclosure,
-            slot: enclosureSlot.slot,
+            enclosure: targetEnclosure.id,
+            slot: slotNumber,
           } as ChangeDriveTrayOptions,
         });
       });
@@ -1126,29 +1117,15 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
     paintSlots(selectedEnclosure);
   }
 
-  findDiskBySlotNumber(slot: number): Disk {
-    return this.selectedEnclosureView.slots
-      .find((enclosureSlot: EnclosureSlot) => enclosureSlot.slot === slot)?.disk;
-  }
-
-  findPoolByName(name: string): Pool {
-    return this.systemState.pools.find((pool: Pool) => pool.name === name);
-  }
-
-  isPoolHealthy(poolName: string): boolean {
-    return this.findPoolByName(poolName)?.healthy;
-  }
-
   // PIXI/Chassis trigger
   toggleHighlightMode(mode: string): void {
-    const enclosureView = this.selectedEnclosureView;
-    const selectedSlot = enclosureView.slots[this.selectedSlotNumber];
-    if (selectedSlot.topologyStatus === EnclosureSlotDiskStatus.Available) { return; }
+    const selectedSlot = this.selectedEnclosure.elements['Array Device Slot'][this.selectedSlotNumber];
+    if (selectedSlot.pool_info?.disk_status === 'AVAILABLE') { return; }
 
     this.labels.events$.next({
       name: mode === 'on' ? 'EnableHighlightMode' : 'DisableHighlightMode',
       sender: this,
-    });
+    } as EnclosureEvent);
   }
 
   // Used on stage right disk name hover
@@ -1205,7 +1182,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
       );
 
       // Convert color to rgb value
-      const cc = this.hexToRgb(this.theme.cyan);
+      const cc = this.themeUtils.hexToRgb(this.theme.cyan);
       const animation = popmotion.keyframes({
         values: [
           { borderWidth: 0, borderColor: `rgb(${cc.rgb[0]}, ${cc.rgb[1]}, ${cc.rgb[2]})` },
@@ -1213,15 +1190,10 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
         ],
         duration: 1000,
         loop: Infinity,
-      }).start(elementBorder);
+      } as KeyframesProps).start(elementBorder);
 
       this.identifyBtnRef = { animation, originalState: startShadow, styler: elementBorder };
     }
-  }
-
-  // I believe this already exists in themeUtils
-  hexToRgb(str: string): { hex: string; rgb: number[] } {
-    return this.themeUtils.hexToRgb(str);
   }
 
   // Media Query stuff
@@ -1242,22 +1214,21 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
   enclosureOverride(view: EnclosureLocation): void {
     if (view !== this.view) {
       this.clearDisk();
-      this.loadEnclosure(this.selectedEnclosureView, view, true);
+      this.loadEnclosure(this.selectedEnclosure, view, true);
     }
   }
 
   // Change enclosure name
   labelForm(): void {
-    const enclosure = this.selectedEnclosure; // this.system.enclosures[this.selectedEnclosure.enclosureKey];
+    const enclosure: EnclosureUi = this.selectedEnclosure;
     const currentLabel = enclosure.label !== enclosure.name ? enclosure.label : enclosure.model;
+    const dialogConfig: SetEnclosureLabelDialogData = {
+      currentLabel,
+      defaultLabel: enclosure.name,
+      enclosureId: enclosure.id,
+    };
 
-    this.matDialog.open(SetEnclosureLabelDialogComponent, {
-      data: {
-        currentLabel,
-        defaultLabel: enclosure.name,
-        enclosureId: enclosure.id,
-      } as SetEnclosureLabelDialogData,
-    })
+    this.matDialog.open(SetEnclosureLabelDialogComponent, { data: dialogConfig })
       .afterClosed()
       .pipe(untilDestroyed(this))
       .subscribe((newLabel: string) => {
@@ -1267,13 +1238,5 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
 
         this.enclosureStore.updateLabel(enclosure.id, newLabel);
       });
-  }
-
-  omitDescriptor(group: EnclosureElementsGroup | EnclosureElement): EnclosureElementsGroup | EnclosureElement {
-    const returnValue = { ...group as EnclosureElementsGroup };
-    if (returnValue.header) {
-      returnValue.header = returnValue.header.filter((header) => header !== 'Descriptor');
-    }
-    return returnValue;
   }
 }

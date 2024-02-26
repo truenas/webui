@@ -10,9 +10,10 @@
     [label]="'Delete user primary group `{name}`' | translate: { name: user.group.bsdgrp_group }"
   ></ix-checkbox>
 </div>
-<div mat-dialog-actions class="buttons">
+<ix-form-actions mat-dialog-actions class="form-actions">
   <button mat-button ixTest="cancel" [matDialogClose]="false">{{ 'Cancel' | translate }}</button>
   <button
+    *ixRequiresRoles="requiredRoles"
     mat-button
     color="primary"
     ixTest="delete"
@@ -20,4 +21,4 @@
   >
     {{ 'Delete' | translate }}
   </button>
-</div>
+</ix-form-actions>

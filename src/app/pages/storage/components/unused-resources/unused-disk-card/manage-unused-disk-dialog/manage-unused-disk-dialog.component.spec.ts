@@ -5,6 +5,7 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { PoolStatus } from 'app/enums/pool-status.enum';
 import { Pool } from 'app/interfaces/pool.interface';
 import { UnusedDisk } from 'app/interfaces/storage.interface';
@@ -29,6 +30,7 @@ describe('ManageUnusedDiskDialogComponent', () => {
       IxFormsModule,
     ],
     providers: [
+      mockAuth(),
       {
         provide: MAT_DIALOG_DATA,
         useValue: {

@@ -5,8 +5,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { Point } from 'pixi.js';
-import { VdevType } from 'app/enums/v-dev-type.enum';
-import { EnclosureSlot, EnclosureView } from 'app/interfaces/enclosure.interface';
+import { EnclosureUi, EnclosureUiSlot } from 'app/interfaces/enclosure.interface';
 import { Theme } from 'app/interfaces/theme.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { Mini } from 'app/pages/system/view-enclosure/classes/hardware/mini';
@@ -35,7 +34,18 @@ export class EnclosureDisksMiniComponent extends EnclosureDisksComponent {
   emptySlotView = this.defaultView;
 
   get enclosurePools(): string[] {
-    return this.selectedEnclosureView?.pools;
+    return this.enclosureStore?.getPools(this.selectedEnclosure);
+  }
+
+  get totalDisks(): number {
+    const allSlots: [string, EnclosureUiSlot][] = this.asArray(
+      this.selectedEnclosure.elements['Array Device Slot'],
+    ) as [string, EnclosureUiSlot][];
+
+    return allSlots.map((keyValue: [string, EnclosureUiSlot]) => keyValue[1])
+      .filter((slot: EnclosureUiSlot) => {
+        return slot.dev !== null;
+      }).length;
   }
 
   constructor(
@@ -64,26 +74,13 @@ export class EnclosureDisksMiniComponent extends EnclosureDisksComponent {
     this.pixiHeight = 480;
   }
 
-  findEnclosureSlotFromSlotNumber(slot: number): EnclosureSlot {
-    const enclosureSlot: EnclosureSlot = this.selectedEnclosureView.slots.find((enclosure: EnclosureSlot) => {
+  /* findEnclosureSlotFromSlotNumber(slot: number): EnclosureUiSlot {
+    const enclosureSlot: EnclosureSlot = this.selectedEnclosure.elements.find((enclosure: EnclosureSlot) => {
       return enclosure.slot === slot;
     });
 
     return enclosureSlot;
-  }
-
-  rawCapacity(view: EnclosureView): number {
-    if (!view) {
-      return undefined;
-    }
-    let capacity = 0;
-    view.slots.forEach((slot: EnclosureSlot) => {
-      if (slot.vdev && slot.topologyCategory === VdevType.Data) {
-        capacity += slot.disk.size;
-      }
-    });
-    return capacity;
-  }
+  } */
 
   createExtractedEnclosure(): void {
     // MINIs have no support for expansion shelves
@@ -93,8 +90,8 @@ export class EnclosureDisksMiniComponent extends EnclosureDisksComponent {
     console.error('Cannot create extracted enclosure for selector UI. MINI products do not support expansion shelves');
   }
 
-  createEnclosure(enclosure: EnclosureView = this.selectedEnclosureView): void {
-    if (!this.enclosureViews || !this.selectedEnclosureView) {
+  createEnclosure(enclosure: EnclosureUi = this.selectedEnclosure): void {
+    if (!this.enclosureViews || !this.selectedEnclosure) {
       console.warn('CANNOT CREATE MINI ENCLOSURE');
       return;
     }
@@ -143,9 +140,9 @@ export class EnclosureDisksMiniComponent extends EnclosureDisksComponent {
     return key as keyof Theme;
   }
 
-  count(obj: Record<string, unknown> | unknown[]): number {
+  /* count(obj: Record<string, unknown> | unknown[]): number {
     return Object.keys(obj).length;
-  }
+  } */
 
   stackPositions(log = false): Point[] {
     const result = this.chassisView.driveTrayObjects.map((dt) => dt.container.getGlobalPosition());

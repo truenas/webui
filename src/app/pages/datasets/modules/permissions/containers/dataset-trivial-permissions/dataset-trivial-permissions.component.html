@@ -88,16 +88,18 @@
           {{ 'Cancel' | translate }}
         </button>
 
-        <button
-          *ngIf="canSetAcl"
-          class="set-acl-button"
-          mat-button
-          type="button"
-          ixTest="set-acl"
-          (click)="onSetAclPressed()"
-        >
-          {{ 'Set ACL' | translate }}
-        </button>
+        <ng-container *ixRequiresRoles="[Role.DatasetWrite]">
+          <button
+            *ngIf="canSetAcl"
+            class="set-acl-button"
+            mat-button
+            type="button"
+            ixTest="set-acl"
+            (click)="onSetAclPressed()"
+          >
+            {{ 'Set ACL' | translate }}
+          </button>
+        </ng-container>
       </div>
     </form>
   </mat-card-content>

@@ -6,8 +6,9 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { UUID } from 'angular2-uuid';
 import { MockComponents } from 'ng-mocks';
 import { BehaviorSubject, of } from 'rxjs';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { CreateVdevLayout } from 'app/enums/v-dev-type.enum';
-import { Enclosure } from 'app/interfaces/enclosure.interface';
+import { EnclosureUi } from 'app/interfaces/enclosure.interface';
 import { UnusedDisk } from 'app/interfaces/storage.interface';
 import {
   ManualSelectionDisksComponent,
@@ -37,7 +38,7 @@ describe('ManualDiskSelectionComponent', () => {
     [{ devname: 'sda' }, { devname: 'sdb' }],
     [{ devname: 'sdc' }, { devname: 'sdd' }],
   ] as UnusedDisk[][];
-  const enclosures = [] as Enclosure[];
+  const enclosures = [] as EnclosureUi[];
   const storeVdevs$ = new BehaviorSubject<ManualSelectionVdev[]>(
     vdevsToManualSelectionVdevs(incomingVdevs),
   );
@@ -51,6 +52,7 @@ describe('ManualDiskSelectionComponent', () => {
       ),
     ],
     providers: [
+      mockAuth(),
       mockProvider(ManualDiskSelectionStore, {
         addVdev: jest.fn(),
         vdevs$: storeVdevs$.asObservable(),

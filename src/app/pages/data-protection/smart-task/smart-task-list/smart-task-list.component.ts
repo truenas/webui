@@ -31,6 +31,8 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SmartTaskListComponent implements OnInit {
+  readonly requiredRoles = [Role.FullAdmin];
+
   smartTasks: SmartTestTaskUi[] = [];
   dataProvider: AsyncDataProvider<SmartTestTaskUi>;
   disks: Disk[] = [];
@@ -69,7 +71,7 @@ export class SmartTaskListComponent implements OnInit {
         {
           iconName: 'delete',
           tooltip: this.translate.instant('Delete'),
-          requiredRoles: [Role.FullAdmin],
+          requiredRoles: this.requiredRoles,
           onClick: (row) => this.doDelete(row),
         },
       ],

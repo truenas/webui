@@ -12,7 +12,7 @@
   ></ix-slide-toggle>
 </div>
 
-<ix-form-actions mat-dialog-actions>
+<ix-form-actions mat-dialog-actions class="form-actions">
   <button
     mat-button
     ixTest="do-not-start"
@@ -21,6 +21,7 @@
   >{{ 'No' | translate }}</button>
 
   <button
+    *ixRequiresRoles="requiredRoles"
     mat-button
     color="primary"
     ixTest="enable-service"

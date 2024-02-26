@@ -1,13 +1,13 @@
 import { EnclosureDispersalStrategy, MockStorageScenario } from 'app/core/testing/enums/mock-storage.enum';
 import { TopologyItemType } from 'app/enums/v-dev-type.enum';
-import { Enclosure } from 'app/interfaces/enclosure.interface';
+import { EnclosureUi } from 'app/interfaces/enclosure.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { Disk, TopologyItem } from 'app/interfaces/storage.interface';
 
 export interface MockStorage {
   poolState: Pool;
   disks: Disk[];
-  enclosures?: Enclosure[] | null;
+  enclosures?: EnclosureUi[] | null;
 }
 
 export interface MockTopology {
@@ -27,7 +27,7 @@ export interface AddTopologyOptions extends AddUnAssignedOptions {
 }
 
 export interface DispersedData {
-  enclosures: Enclosure[];
+  enclosures: EnclosureUi[];
   disks: Disk[];
 }
 

@@ -6,6 +6,7 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { filter, forkJoin, map } from 'rxjs';
+import { Role } from 'app/enums/role.enum';
 import { SmartTestResultPageType } from 'app/enums/smart-test-results-page-type.enum';
 import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
 import { Choices } from 'app/interfaces/choices.interface';
@@ -36,6 +37,8 @@ interface DiskUi extends Disk {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DiskListComponent implements OnInit {
+  readonly requiredRoles = [Role.FullAdmin];
+
   dataProvider: AsyncDataProvider<DiskUi>;
   filterString = '';
 
