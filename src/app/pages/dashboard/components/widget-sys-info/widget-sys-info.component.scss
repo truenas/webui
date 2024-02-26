@@ -255,7 +255,7 @@ img.clickable,
   align-items: center;
   display: flex;
   flex: 1;
-  margin-right: -16px;
+  margin-right: -29px;
   min-width: 0;
 
   .copy-version-text {
@@ -536,16 +536,4 @@ div.generic.alert .ix-icon {
 
 .widget:not(.xs) .mobile-update-action {
   display: none;
-}
-
-.codename {
-  display: inline-flex;
-  font-family: var(--font-family-header);
-  font-size: 8px;
-  font-weight: 600;
-  letter-spacing: 0.5px;
-  line-height: 1;
-  position: absolute;
-  right: 51px;
-  top: 46px;
 }
