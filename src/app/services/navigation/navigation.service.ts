@@ -123,7 +123,7 @@ export class NavigationService {
         {
           name: T('Shell'),
           state: 'shell',
-          isVisible$: this.authService.user$.pipe(map((user) => user?.privilege?.web_shell)),
+          hasAccess$: this.authService.user$.pipe(map((user) => user?.privilege?.web_shell)),
         },
         { name: T('Alert Settings'), state: 'alert-settings' },
         { name: T('Audit'), state: 'audit' },
