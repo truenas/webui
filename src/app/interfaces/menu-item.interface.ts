@@ -21,4 +21,5 @@ export interface SubMenuItem {
   name: string;
   state: string;
   isVisible$?: Observable<boolean>;
+  hasAccess$?: Observable<boolean>;
 }
