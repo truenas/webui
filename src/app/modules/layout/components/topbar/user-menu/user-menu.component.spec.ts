@@ -7,11 +7,11 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { MockComponent } from 'ng-mocks';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
-import { AboutDialogComponent } from 'app/modules/common/dialog/about/about-dialog.component';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
+import { AboutDialogComponent } from 'app/modules/layout/components/topbar/about-dialog/about-dialog.component';
 import {
   ChangePasswordDialogComponent,
-} from 'app/modules/layout/components/change-password-dialog/change-password-dialog.component';
+} from 'app/modules/layout/components/topbar/change-password-dialog/change-password-dialog.component';
 import { UserMenuComponent } from 'app/modules/layout/components/topbar/user-menu/user-menu.component';
 
 describe('UserMenuComponent', () => {

@@ -18,7 +18,8 @@ import { NetworkInterfaceAliasType, NetworkInterfaceType } from 'app/enums/netwo
 import { ProductType } from 'app/enums/product-type.enum';
 import { helptextInterfaces } from 'app/helptext/network/interfaces/interfaces-list';
 import { PhysicalNetworkInterface } from 'app/interfaces/network-interface.interface';
-import { InterfaceStatusIconComponent } from 'app/modules/common/interface-status-icon/interface-status-icon.component';
+import { DialogService } from 'app/modules/dialog/dialog.service';
+import { InterfaceStatusIconComponent } from 'app/modules/interface-status-icon/interface-status-icon.component';
 import { IxInputHarness } from 'app/modules/ix-forms/components/ix-input/ix-input.harness';
 import { IxSlideInComponent } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.component';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
@@ -39,7 +40,6 @@ import {
 } from 'app/pages/network/components/static-routes-card/static-routes-card.component';
 import { NetworkComponent } from 'app/pages/network/network.component';
 import { InterfacesStore } from 'app/pages/network/stores/interfaces.store';
-import { DialogService } from 'app/services/dialog.service';
 import { NetworkService } from 'app/services/network.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 

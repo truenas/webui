@@ -1,9 +1,7 @@
-<ng-template ixPageHeader>
-  <ix-page-title-header>
-    <ix-search-input [value]="filterString" (search)="filterUpdated($event)"></ix-search-input>
-    <ix-table-columns-selector [columns]="columns" (columnsChange)="columnsChange($event)"></ix-table-columns-selector>
-  </ix-page-title-header>
-</ng-template>
+<ix-page-header>
+  <ix-search-input1 [value]="filterString" (search)="filterUpdated($event)"></ix-search-input1>
+  <ix-table-columns-selector [columns]="columns" (columnsChange)="columnsChange($event)"></ix-table-columns-selector>
+</ix-page-header>
 
 <div
   *ngIf="selectedDisks.length"

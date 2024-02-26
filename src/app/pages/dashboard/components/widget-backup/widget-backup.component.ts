@@ -1,7 +1,7 @@
+import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, TrackByFunction,
 } from '@angular/core';
-import { MediaObserver } from '@angular/flex-layout';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Actions } from '@ngrx/effects';
 import { TranslateService } from '@ngx-translate/core';
@@ -103,25 +103,26 @@ export class WidgetBackupComponent extends WidgetComponent implements OnInit {
   }
 
   constructor(
-    public mediaObserver: MediaObserver,
     public translate: TranslateService,
     private cdr: ChangeDetectorRef,
     private ws: WebSocketService,
     private slideInService: IxSlideInService,
     private actions$: Actions,
     private chainedSlideInService: IxChainedSlideInService,
+    private breakpointObserver: BreakpointObserver,
   ) {
     super(translate);
-
-    mediaObserver.asObservable().pipe(untilDestroyed(this)).subscribe((changes) => {
-      const currentScreenType = changes[0].mqAlias === 'xs' ? ScreenType.Mobile : ScreenType.Desktop;
-      this.screenType = currentScreenType;
-      this.cdr.markForCheck();
-    });
   }
 
   ngOnInit(): void {
     this.getBackups();
+    this.breakpointObserver
+      .observe([Breakpoints.XSmall])
+      .pipe(untilDestroyed(this))
+      .subscribe((state) => {
+        this.screenType = state.matches ? ScreenType.Mobile : ScreenType.Desktop;
+        this.cdr.markForCheck();
+      });
   }
 
   getBackups(): void {

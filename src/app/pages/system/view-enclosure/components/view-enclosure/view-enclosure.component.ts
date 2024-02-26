@@ -12,7 +12,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { Observable, ReplaySubject, Subject } from 'rxjs';
 import { filter, takeUntil } from 'rxjs/operators';
-import { Enclosure, EnclosureElement, EnclosureView } from 'app/interfaces/enclosure.interface';
+import { EnclosureUi, EnclosureUiElements } from 'app/interfaces/enclosure.interface';
 import { EnclosureEvent } from 'app/pages/system/view-enclosure/interfaces/enclosure-events.interface';
 import { ErrorMessage } from 'app/pages/system/view-enclosure/interfaces/error-message.interface';
 import { ViewConfig } from 'app/pages/system/view-enclosure/interfaces/view.config';
@@ -50,10 +50,10 @@ export class ViewEnclosureComponent implements AfterViewInit, OnDestroy {
   private destroyed$ = new ReplaySubject<boolean>(1);
 
   currentView: ViewConfig = {
-    name: 'Disks',
+    name: 'Array Device Slot',
     alias: 'Disks',
     icon: 'harddisk',
-    id: 0,
+    enclosureIndex: 0,
     showInNavbar: true,
   };
 
@@ -64,7 +64,7 @@ export class ViewEnclosureComponent implements AfterViewInit, OnDestroy {
   get minWidth(): string {
     let count = 1;
     if (this.showEnclosureSelector) {
-      count = this.systemState.enclosureViews.length;
+      count = this.systemState.enclosures.length;
     }
 
     return (count * 240).toString();
@@ -85,8 +85,6 @@ export class ViewEnclosureComponent implements AfterViewInit, OnDestroy {
     const dataPending = (
       !this.systemState
       || this.systemState.areEnclosuresLoading
-      || this.systemState.areDisksLoading
-      || this.systemState.arePoolsLoading
     );
 
     if (dataPending && !this.delayPending) {
@@ -96,46 +94,41 @@ export class ViewEnclosureComponent implements AfterViewInit, OnDestroy {
   }
 
   get isRackmount(): boolean {
-    switch (this.systemProduct) {
-      case 'FREENAS-MINI-3.0':
-      case 'TRUENAS-MINI-3.0':
-      case 'FREENAS-MINI-3.0-E':
-      case 'TRUENAS-MINI-3.0-E':
-      case 'FREENAS-MINI-3.0-E+':
-      case 'TRUENAS-MINI-3.0-E+':
-      case 'FREENAS-MINI-3.0-X':
-      case 'TRUENAS-MINI-3.0-X':
-      case 'FREENAS-MINI-3.0-X+':
-      case 'TRUENAS-MINI-3.0-X+':
-      case 'FREENAS-MINI-3.0-XL+':
-      case 'TRUENAS-MINI-3.0-XL+':
-        return false;
-      default:
-        return true;
-    }
+    return this.controller?.rackmount;
   }
 
-  get selectedEnclosure(): number | null {
-    if (!this.systemState) return null;
-    const selected = this.systemState.enclosureViews?.find((view: EnclosureView) => {
-      return view.number === this.systemState.selectedEnclosure;
+  get selectedEnclosure(): EnclosureUi {
+    return this.systemState?.enclosures.find((enclosure: EnclosureUi) => {
+      return enclosure.id === this.selectedEnclosureId;
     });
-    return selected ? selected.number : null;
   }
 
-  get controller(): EnclosureView | null {
-    return this.systemState?.enclosureViews
-      ? this.systemState?.enclosureViews.find((enclosureView: EnclosureView) => enclosureView.isController)
+  get selectedEnclosureId(): string | null {
+    if (!this.systemState) return null;
+    /* const selected: EnclosureUi = this.systemState.enclosures?.find((enclosure: EnclosureUi) => {
+      return enclosure.id === this.systemState.selectedEnclosure;
+    });
+    return selected ? selected.id : null; */
+    return this.systemState.selectedEnclosure;
+  }
+
+  get controller(): EnclosureUi | null {
+    return this.systemState?.enclosures
+      ? this.systemState?.enclosures.find((enclosure: EnclosureUi) => enclosure.controller)
       : null;
   }
 
-  get shelfCount(): number {
+  get hasPools(): boolean {
+    return this.enclosureStore.getPools(this.selectedEnclosure).length as unknown as boolean;
+  }
+
+  /* get shelfCount(): number {
     // TODO: implement actual logic into store
-    const shelves = this.systemState.enclosureViews.filter((enclosureView: EnclosureView) => {
+    const shelves = this.systemState.enclosures.filter((enclosureView: EnclosureView) => {
       return (!enclosureView.isController);
     });
     return shelves.length;
-  }
+  } */
 
   isIxHardware = false;
   private _systemProduct: string;
@@ -149,7 +142,7 @@ export class ViewEnclosureComponent implements AfterViewInit, OnDestroy {
   }
 
   changeView(view: ViewConfig): void {
-    this.currentView = this.views[view.id];
+    this.currentView = this.views[view.enclosureIndex];
     this.changeDetectorRef.markForCheck();
   }
 
@@ -172,7 +165,7 @@ export class ViewEnclosureComponent implements AfterViewInit, OnDestroy {
             return;
           }
 
-          const selector = `.enclosure-${(evt).data.enclosureView?.number}`;
+          const selector = `.enclosure-${(evt).data.enclosureView?.id}`;
           const el = this.nav.nativeElement.querySelector(selector);
 
           const oldCanvas = this.nav.nativeElement.querySelector(selector + ' canvas');
@@ -228,16 +221,19 @@ export class ViewEnclosureComponent implements AfterViewInit, OnDestroy {
       takeUntil(this.destroyed$),
       untilDestroyed(this),
     ).subscribe((state: EnclosureState) => {
+      if (!this.selectedEnclosureId && state.selectedEnclosure) {
+        this.selectEnclosure(state.selectedEnclosure);
+      }
       this.systemState = state;
 
       // Only set Hide on first load of data to avoid rendering every update
       if (this._showEnclosureSelector === EnclosureSelectorState.Uninitialized) {
-        this._showEnclosureSelector = state.enclosureViews.length > 1
+        this._showEnclosureSelector = state.enclosures.length > 1
           ? EnclosureSelectorState.Show
           : EnclosureSelectorState.Hide;
       }
 
-      if (state.enclosureViews.length > 1) {
+      if (state.enclosures.length > 1) {
         this._showEnclosureSelector = EnclosureSelectorState.Show;
         this.extractVisualizations();
       }
@@ -258,8 +254,8 @@ export class ViewEnclosureComponent implements AfterViewInit, OnDestroy {
     this.destroyed$.complete();
   }
 
-  selectEnclosure(enclosureNumber: number): void {
-    this.enclosureStore.updateSelectedEnclosure(enclosureNumber);
+  selectEnclosure(enclosureId: string): void {
+    this.enclosureStore.updateSelectedEnclosure(enclosureId);
     this.events.next({
       name: 'EnclosureSelected',
       sender: this,
@@ -269,78 +265,89 @@ export class ViewEnclosureComponent implements AfterViewInit, OnDestroy {
 
   extractVisualizations(): void {
     if (this.showEnclosureSelector) {
-      this.systemState.enclosureViews.forEach((enclosureView: EnclosureView) => {
+      this.systemState.enclosures.forEach((enclosure: EnclosureUi) => {
         if (this.systemState) {
-          this.events.next({ name: 'CanvasExtract', data: enclosureView, sender: this });
+          this.events.next({ name: 'CanvasExtract', data: enclosure, sender: this });
         }
       });
     }
   }
 
   addViews(): void {
-    if (!this.systemState?.enclosures) return;
+    if (!this.systemState?.enclosures.length) return;
 
-    const views = [];
-    const disks = {
-      name: 'Disks',
+    const views: ViewConfig[] = [];
+    const disks: ViewConfig = {
+      name: 'Array Device Slot',
       alias: 'Disks',
       icon: 'harddisk',
-      id: 0,
+      enclosureIndex: 0,
       showInNavbar: true,
     };
 
     views.unshift(disks);
     let matchIndex;
-    const selectedEnclosure = this.systemState?.enclosures.find((enclosure: Enclosure) => {
-      return enclosure.number === this.selectedEnclosure;
+    const selectedEnclosure = this.systemState?.enclosures.find((enclosure: EnclosureUi) => {
+      return enclosure.id === this.selectedEnclosureId;
     });
-    selectedEnclosure?.elements?.forEach((el: unknown, index: number) => {
-      const element = el as EnclosureElement;
-      const view = {
-        name: element.name,
-        alias: '',
-        icon: '',
-        id: views.length,
-        elementIndex: index,
-        showInNavbar: true,
-      };
+    if (!selectedEnclosure) {
+      return;
+    }
 
-      switch (element.name) {
-        case 'Cooling':
-          view.alias = element.name;
-          view.icon = 'fan';
-          views.push(view);
-          break;
-        case 'Temperature Sensor':
-          view.alias = 'Temperature';
-          view.icon = 'fan';
-          views.push(view);
-          break;
-        case 'Voltage Sensor':
-          view.alias = 'Voltage';
-          view.icon = 'flash';
-          views.push(view);
-          break;
-        case 'Power Supply':
-          view.alias = element.name;
-          view.icon = 'flash';
-          views.push(view);
-          break;
-        case 'SAS Connector':
-          view.alias = 'SAS';
-          view.icon = 'flash';
-          views.push(view);
-          break;
-        case 'Enclosure Services Controller Electronics':
-          view.alias = 'Services';
-          view.icon = 'flash';
-          views.push(view);
-          break;
-      }
+    // for (const [key, value] of Object.entries(selectedEnclosure?.elements)) {
+    Object.entries(selectedEnclosure?.elements)
+      .map((keyValue: [string, unknown]) => keyValue[0])
+      .filter((elementKey: string) => elementKey !== 'Array Device Slot')
+      .forEach((key: string, index) => {
+        const view: ViewConfig = {
+          name: key as keyof EnclosureUiElements,
+          alias: '',
+          icon: '',
+          enclosureIndex: views.length,
+          elementIndex: index,
+          showInNavbar: true,
+        };
 
-      if (view.alias === this.currentView.alias) { matchIndex = view.id; }
-    });
+        switch (key) {
+          case 'Cooling':
+            view.alias = key;
+            view.icon = 'fan';
+            views.push(view);
+            break;
+          case 'Temperature Sensor':
+            view.alias = 'Temperature';
+            view.icon = 'fan';
+            views.push(view);
+            break;
+          case 'Voltage Sensor':
+            view.alias = 'Voltage';
+            view.icon = 'flash';
+            views.push(view);
+            break;
+          case 'Power Supply':
+            view.alias = key;
+            view.icon = 'flash';
+            views.push(view);
+            break;
+          case 'SAS Connector':
+            view.alias = 'SAS';
+            view.icon = 'flash';
+            views.push(view);
+            break;
+          case 'Enclosure Services Controller Electronics':
+            view.alias = 'Services';
+            view.icon = 'flash';
+            views.push(view);
+            break;
+          default:
+            view.alias = key;
+            view.icon = 'info';
+            views.push(view);
+            break;
+        }
 
+        if (view.alias === this.currentView.alias) { matchIndex = view.enclosureIndex; }
+      });
     this.views = views;
 
     if (matchIndex && matchIndex > 0) {

@@ -13,10 +13,10 @@
   </mat-toolbar-row>
 
   <mat-card-content>
-    <ix-entity-empty
+    <ix-empty
       *ngIf="isolatedGpus.length === 0"
       [conf]="emptyConfig"
-    ></ix-entity-empty>
+    ></ix-empty>
 
     <mat-list *ngIf="isolatedGpus.length">
       <mat-list-item>

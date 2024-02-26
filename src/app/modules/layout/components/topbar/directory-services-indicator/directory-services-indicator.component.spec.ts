@@ -11,11 +11,11 @@ import { DirectoryServiceState } from 'app/enums/directory-service-state.enum';
 import { ApiEvent } from 'app/interfaces/api-message.interface';
 import { DirectoryServicesState } from 'app/interfaces/directory-services-state.interface';
 import {
-  DirectoryServicesMonitorComponent,
-} from 'app/modules/common/dialog/directory-services-monitor/directory-services-monitor.component';
-import {
   DirectoryServicesIndicatorComponent,
 } from 'app/modules/layout/components/topbar/directory-services-indicator/directory-services-indicator.component';
+import {
+  DirectoryServicesMonitorComponent,
+} from 'app/modules/layout/components/topbar/directory-services-indicator/directory-services-monitor/directory-services-monitor.component';
 import { topbarDialogPosition } from 'app/modules/layout/components/topbar/topbar-dialog-position.constant';
 import { WebSocketService } from 'app/services/ws.service';
 

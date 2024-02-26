@@ -1,9 +1,9 @@
-import { LayoutModule } from '@angular/cdk/layout';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
+import { MockModule } from 'ng-mocks';
 import { Subject, of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
@@ -12,6 +12,8 @@ import { VirtualMachine } from 'app/interfaces/virtual-machine.interface';
 import { IxTable2Harness } from 'app/modules/ix-table2/components/ix-table2/ix-table2.harness';
 import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
+import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
+import { SearchInput1Component } from 'app/modules/search-input1/search-input1.component';
 import { VmWizardComponent } from 'app/pages/vm/vm-wizard/vm-wizard.component';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
@@ -51,7 +53,8 @@ describe('VmListComponent', () => {
     imports: [
       AppLoaderModule,
       IxTable2Module,
-      LayoutModule,
+      MockModule(PageHeaderModule),
+      SearchInput1Component,
     ],
     declarations: [],
     providers: [
@@ -93,9 +96,7 @@ describe('VmListComponent', () => {
     expect(cells).toEqual(expectedRows);
   });
 
-  // The button inside <ng-template ixPageHeader> is not being found
-  // TODO: Find a way to mock PageHeaderDirective
-  it.skip('opens vm wizard when "Add" button is pressed', async () => {
+  it('opens vm wizard when "Add" button is pressed', async () => {
     const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
     await addButton.click();
 

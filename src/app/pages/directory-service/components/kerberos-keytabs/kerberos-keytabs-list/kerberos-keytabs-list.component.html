@@ -1,14 +1,12 @@
-<ng-template ixPageHeader>
-  <ix-page-title-header>
-    <ix-search-input (search)="onListFiltered($event)"></ix-search-input>
-    <button mat-button color="primary" ixTest="add-kerberos-keytabs" (click)="doAdd()">
-      {{ 'Add' | translate }}
-    </button>
-  </ix-page-title-header>
-</ng-template>
+<ix-page-header *ngIf="!inCard">
+  <ix-search-input1 (search)="onListFiltered($event)"></ix-search-input1>
+  <button mat-button color="primary" ixTest="add-kerberos-keytabs" (click)="doAdd()">
+    {{ 'Add' | translate }}
+  </button>
+</ix-page-header>
 
 <div class="table-container">
-  <mat-toolbar *ngIf="toolbar" class="table-header">
+  <mat-toolbar *ngIf="inCard" class="table-header">
     <div class="heading" [routerLink]="['/', 'directoryservice', 'kerberoskeytabs']">
       <h3>{{ 'Kerberos Keytab' | translate }}</h3>
       <ix-icon name="open_in_new"></ix-icon>

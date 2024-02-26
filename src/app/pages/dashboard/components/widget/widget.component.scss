@@ -7,6 +7,12 @@
   position: relative;
   width: calc(600px * 0.9) !important;
 
+  &:not(.xs) {
+    button.primary-nav:not(.slide-back) {
+      display: none !important;
+    }
+  }
+
   &.xs {
     left: calc(50% - 50vw);
     min-width: 320px;
@@ -59,6 +65,13 @@
     height: 100%;
     transform-style: preserve-3d;
     width: 100%;
+
+    .front {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+      place-content: stretch space-between;
+    }
 
     &.vertical .back {
       transform: rotateX(-180deg);

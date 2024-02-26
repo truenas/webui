@@ -16,8 +16,9 @@ import {
 import { GiB } from 'app/constants/bytes.constant';
 import { DiskType } from 'app/enums/disk-type.enum';
 import { CreateVdevLayout, VdevType } from 'app/enums/v-dev-type.enum';
-import { Enclosure } from 'app/interfaces/enclosure.interface';
+import { EnclosureUi } from 'app/interfaces/enclosure.interface';
 import { UnusedDisk } from 'app/interfaces/storage.interface';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ManualDiskSelectionComponent, ManualDiskSelectionParams } from 'app/pages/storage/modules/pool-manager/components/manual-disk-selection/manual-disk-selection.component';
 import {
   DispersalStrategy,
@@ -32,7 +33,6 @@ import {
   topologyCategoryToDisks,
   topologyToDisks,
 } from 'app/pages/storage/modules/pool-manager/utils/topology.utils';
-import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
@@ -70,7 +70,7 @@ export interface PoolManagerEnclosureSettings {
 
 export interface PoolManagerState {
   isLoading: boolean;
-  enclosures: Enclosure[];
+  enclosures: EnclosureUi[];
   name: string;
   nameErrors: ValidationErrors | null;
   encryption: string | null;
@@ -250,10 +250,10 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
     );
   });
 
-  loadStateInitialData(): Observable<[UnusedDisk[], Enclosure[]]> {
+  loadStateInitialData(): Observable<[UnusedDisk[], EnclosureUi[]]> {
     return forkJoin([
       this.ws.call('disk.get_unused'),
-      this.ws.call('enclosure.query'),
+      this.ws.call('webui.enclosure.dashboard'),
     ]).pipe(
       tapResponse(
         ([allDisks, enclosures]) => {

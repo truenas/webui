@@ -15,10 +15,10 @@ import {
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextVmWizard } from 'app/helptext/vm/vm-wizard/vm-wizard';
-import { SummaryProvider, SummarySection } from 'app/modules/common/summary/summary.interface';
 import {
   forbiddenAsyncValues,
 } from 'app/modules/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
+import { SummaryProvider, SummarySection } from 'app/modules/summary/summary.interface';
 import { vmNamePattern } from 'app/pages/vm/utils/vm-form-patterns.constant';
 import { WebSocketService } from 'app/services/ws.service';
 
