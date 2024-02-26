@@ -2,7 +2,7 @@
   <ix-page-title-header>
     <ix-search-input (search)="onSearch($event)"></ix-search-input>
 
-    <button mat-button ixTest="bootenv-stats" (click)="openBootenvStats()">
+    <button *ixRequiresRoles="requiredRoles" mat-button ixTest="bootenv-stats" (click)="openBootenvStats()">
       {{ 'Stats/Settings' | translate }}
     </button>
 
@@ -11,7 +11,7 @@
     </button>
 
     <button
-      *ixRequiresRoles="[Role.FullAdmin]"
+      *ixRequiresRoles="requiredRoles"
       mat-button
       ixTest="bootenv-scrub"
       (click)="doScrub()"

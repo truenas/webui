@@ -27,6 +27,8 @@ import { WebSocketService } from 'app/services/ws.service';
   providers: [CloudCredentialService],
 })
 export class CloudCredentialsCardComponent implements OnInit {
+  protected requiredRoles = [Role.CloudSyncWrite];
+
   dataProvider: AsyncDataProvider<CloudsyncCredential>;
   providers = new Map<string, string>();
   credentials: CloudsyncCredential[] = [];
@@ -51,7 +53,7 @@ export class CloudCredentialsCardComponent implements OnInit {
         },
         {
           iconName: 'delete',
-          requiredRoles: [Role.CloudSyncWrite],
+          requiredRoles: this.requiredRoles,
           tooltip: this.translate.instant('Delete'),
           onClick: (row) => this.doDelete(row),
         },

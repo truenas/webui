@@ -12,6 +12,7 @@ import { Subject } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
 import { ThemeUtils } from 'app/core/classes/theme-utils/theme-utils';
 import { EnclosureSlotDiskStatus, EnclosureSlotStatus } from 'app/enums/enclosure-slot-status.enum';
+import { Role } from 'app/enums/role.enum';
 import { TopologyItemType } from 'app/enums/v-dev-type.enum';
 import { TopologyItemStatus } from 'app/enums/vdev-status.enum';
 import {
@@ -88,9 +89,6 @@ export interface DiskFailure {
   styleUrls: ['./enclosure-disks.component.scss'],
 })
 export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
-  showCaption = true;
-  protected aborted = false;
-
   @ViewChild('visualizer', { static: true }) visualizer: ElementRef<HTMLElement>;
   @ViewChild('disksoverview', { static: true }) overview: ElementRef<HTMLElement>;
   @ViewChild('diskdetails', { static: false }) details: ElementRef<HTMLElement>;
@@ -102,6 +100,11 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
   @Input('controller-events') controllerEvent$: Subject<EnclosureEvent>;
   // eslint-disable-next-line @angular-eslint/no-input-rename
   @Input('profile') systemProfile: SystemProfile;
+
+  protected requiredRoles = [Role.FullAdmin];
+  showCaption = true;
+  protected aborted = false;
+
   enclosureViews: EnclosureView[] = [];
   systemState: EnclosureState;
 

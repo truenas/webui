@@ -36,6 +36,8 @@ import { waitForPreferences } from 'app/store/preferences/preferences.selectors'
 export class GroupListComponent implements OnInit {
   @ViewChild(MatSort, { static: false }) sort: MatSort;
 
+  protected requiredRoles = [Role.AccountWrite];
+
   displayedColumns: string[] = ['group', 'gid', 'builtin', 'sudo_commands', 'smb', 'roles', 'actions'];
   dataSource = new MatTableDataSource<Group>([]);
   defaultSort: Sort = { active: 'gid', direction: 'asc' };

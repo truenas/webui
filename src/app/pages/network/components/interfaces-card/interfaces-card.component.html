@@ -4,11 +4,14 @@
     <div class="actions">
       <div [matTooltip]="isHaEnabled ? (helptext.ha_enabled_edit_msg | translate) : ''">
         <button
+          *ixRequiresRoles="requiredRoles"
           mat-button
           [ixTest]="['add', 'interface']"
           [disabled]="isHaEnabled"
           (click)="onAddNew()"
-        >{{ 'Add' | translate }}</button>
+        >
+          {{ 'Add' | translate }}
+        </button>
       </div>
     </div>
   </mat-toolbar-row>

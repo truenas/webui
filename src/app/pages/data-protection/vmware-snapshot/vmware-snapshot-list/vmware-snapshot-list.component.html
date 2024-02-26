@@ -1,7 +1,7 @@
 <ng-template ixPageHeader>
   <ix-page-title-header>
     <ix-search-input (search)="onListFiltered($event)"></ix-search-input>
-    <button mat-button ixTest="add-vmware-snapshot" [color]="'primary'" (click)="doAdd()">
+    <button *ixRequiresRoles="requiredRoles" mat-button ixTest="add-vmware-snapshot" [color]="'primary'" (click)="doAdd()">
       {{ 'Add' | translate }}
     </button>
   </ix-page-title-header>

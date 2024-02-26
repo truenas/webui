@@ -22,6 +22,8 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class NtpServerCardComponent implements OnInit {
+  readonly requiredRoles = [Role.FullAdmin];
+
   dataSource = new MatTableDataSource<NtpServer>([]);
   displayedColumns = [
     'address',
@@ -34,7 +36,6 @@ export class NtpServerCardComponent implements OnInit {
   ];
   loading = false;
   error = false;
-  protected readonly Role = Role;
 
   get emptyType(): EmptyType {
     if (this.loading) {

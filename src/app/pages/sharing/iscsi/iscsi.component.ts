@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
+import { Role } from 'app/enums/role.enum';
 import { IscsiWizardComponent } from 'app/pages/sharing/iscsi/iscsi-wizard/iscsi-wizard.component';
 import { IscsiService } from 'app/services/iscsi.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -12,6 +13,8 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
   providers: [IscsiService],
 })
 export class IscsiComponent {
+  readonly requiredRoles = [Role.SharingIscsiWrite];
+
   @Input() activeTab = 'configuration';
   navLinks = [{
     label: this.translate.instant('Target Global Configuration'),

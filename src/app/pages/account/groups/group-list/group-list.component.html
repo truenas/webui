@@ -20,7 +20,7 @@
     >
       {{ 'Privileges' | translate }}
     </a>
-    <button mat-button color="primary" ixTest="add" (click)="doAdd()">
+    <button *ixRequiresRoles="requiredRoles" mat-button color="primary" ixTest="add" (click)="doAdd()">
       {{ 'Add' | translate }}
     </button>
   </ix-page-title-header>

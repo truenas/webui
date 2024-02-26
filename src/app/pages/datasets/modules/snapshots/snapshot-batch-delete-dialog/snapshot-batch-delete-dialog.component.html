@@ -49,6 +49,7 @@
         [matTooltipDisabled]="!hasClones"
       >
         <button
+          *ixRequiresRoles="requiredRoles"
           mat-button
           type="submit"
           color="primary"

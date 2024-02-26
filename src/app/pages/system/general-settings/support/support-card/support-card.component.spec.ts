@@ -9,6 +9,7 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockJob, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { LicenseFeature } from 'app/enums/license-feature.enum';
 import { SystemInfo, SystemLicense } from 'app/interfaces/system-info.interface';
@@ -38,6 +39,7 @@ describe('SupportCardComponent', () => {
       FormsModule,
     ],
     providers: [
+      mockAuth(),
       mockProvider(MatDialog),
       mockProvider(DialogService),
       mockProvider(MatSnackBar),

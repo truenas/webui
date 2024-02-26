@@ -11,6 +11,7 @@ import {
   catchError, debounceTime, filter, map,
 } from 'rxjs/operators';
 import { YesNoPipe } from 'app/core/pipes/yes-no.pipe';
+import { Role } from 'app/enums/role.enum';
 import { SmartTestResultPageType } from 'app/enums/smart-test-results-page-type.enum';
 import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
 import { ApiEvent } from 'app/interfaces/api-message.interface';
@@ -41,6 +42,8 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DiskListComponent implements EntityTableConfig<Disk>, OnDestroy {
+  readonly requiredRoles = [Role.FullAdmin];
+
   title = this.translate.instant('Disks');
   queryCall = 'disk.query' as const;
   queryCallOption: QueryParams<Disk, { extra: { pools: boolean; passwords: boolean } }> = [[], {

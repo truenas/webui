@@ -2,7 +2,7 @@
   <ix-page-title-header>
     <ix-search-input (search)="onListFiltered($event)"></ix-search-input>
 
-    <button mat-button ixTest="add-device" color="primary" (click)="onAdd()">
+    <button *ixRequiresRoles="requiredRoles" mat-button ixTest="add-device" color="primary" (click)="onAdd()">
       {{ 'Add' | translate }}
     </button>
   </ix-page-title-header>

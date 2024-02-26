@@ -13,7 +13,7 @@
     <button mat-button type="button" ixTest="cancel" [matDialogClose]="false">
       {{ helptext.cancelButton | translate }}
     </button>
-    <button mat-button type="submit" color="primary" ixTest="save">
+    <button *ixRequiresRoles="requiredRoles" mat-button type="submit" color="primary" ixTest="save">
       {{ helptext.saveButton | translate }}
     </button>
   </ix-form-actions>

@@ -25,6 +25,8 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AcmeDnsAuthenticatorListComponent implements OnInit {
+  protected requiredRoles = [Role.FullAdmin];
+
   filterString = '';
   dataProvider: AsyncDataProvider<DnsAuthenticator>;
   authenticators: DnsAuthenticator[] = [];
@@ -48,7 +50,7 @@ export class AcmeDnsAuthenticatorListComponent implements OnInit {
         },
         {
           iconName: 'delete',
-          requiredRoles: [Role.FullAdmin],
+          requiredRoles: this.requiredRoles,
           tooltip: this.translate.instant('Delete'),
           onClick: (row) => this.doDelete(row),
         },

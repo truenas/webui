@@ -43,6 +43,8 @@ import { WebSocketService } from 'app/services/ws.service';
   ],
 })
 export class BootEnvironmentListComponent implements OnInit, AfterViewInit {
+  readonly requiredRoles = [Role.FullAdmin];
+
   dataSource = new MatTableDataSource<Bootenv>([]);
   displayedColumns = ['select', 'name', 'active', 'created', 'rawspace', 'keep', 'actions'];
   @ViewChild(MatSort, { static: false }) sort: MatSort;

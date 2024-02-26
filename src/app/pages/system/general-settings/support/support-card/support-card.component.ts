@@ -10,6 +10,7 @@ import _ from 'lodash';
 import { Observable, of, switchMap } from 'rxjs';
 import { filter, tap } from 'rxjs/operators';
 import { GiB } from 'app/constants/bytes.constant';
+import { Role } from 'app/enums/role.enum';
 import { helptextSystemSupport as helptext } from 'app/helptext/system/support';
 import { FeedbackDialogComponent } from 'app/modules/feedback/components/feedback-dialog/feedback-dialog.component';
 import { FeedbackType } from 'app/modules/feedback/interfaces/feedback.interface';
@@ -39,6 +40,8 @@ import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SupportCardComponent implements OnInit {
+  readonly requiredRoles = [Role.FullAdmin];
+
   isProduction: boolean;
   productImage = 'ix-original-cropped.png';
   isProductImageRack = false;

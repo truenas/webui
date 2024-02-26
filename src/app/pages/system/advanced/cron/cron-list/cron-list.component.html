@@ -4,7 +4,7 @@
 
     <ix-table-columns-selector [columns]="columns" (columnsChange)="columnsChange($event)"></ix-table-columns-selector>
 
-    <button mat-button color="primary" id="lol" ixTest="add-cronjob" (click)="doAdd()">
+    <button *ixRequiresRoles="requiredRoles" mat-button color="primary" id="lol" ixTest="add-cronjob" (click)="doAdd()">
       {{ 'Add' | translate }}
     </button>
   </ix-page-title-header>
@@ -37,7 +37,7 @@
 
       <div class="table-details-row-actions">
         <button
-          *ixRequiresRoles="[Role.FullAdmin]"
+          *ixRequiresRoles="requiredRoles"
           mat-button
           [ixTest]="[cronjob.id, 'run_now']"
           (click)="runNow(cronjob)"
@@ -48,7 +48,7 @@
           (click)="doEdit(cronjob)"
         >{{ 'Edit' | translate }}</button>
         <button
-          *ixRequiresRoles="[Role.FullAdmin]"
+          *ixRequiresRoles="requiredRoles"
           mat-button
           [ixTest]="[cronjob.id, 'delete']"
           (click)="doDelete(cronjob)"

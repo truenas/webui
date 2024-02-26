@@ -28,7 +28,7 @@
 
     <!-- ENCLOSURE RENAME -->
     <div class="enclosure-label-actions">
-      <button mat-button color="default" ixTest="edit-label" (click)="labelForm()">
+      <button *ixRequiresRoles="requiredRoles" mat-button color="default" ixTest="edit-label" (click)="labelForm()">
         {{ 'EDIT LABEL' | translate }}
       </button>
     </div>

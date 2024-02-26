@@ -8,10 +8,13 @@
     </a>
     <div class="actions">
       <button
+        *ixRequiresRoles="requiredRoles"
         mat-button
         [ixTest]="['cloudsync-task', 'add']"
         (click)="onAdd()"
-      >{{ 'Add' | translate }}</button>
+      >
+        {{ 'Add' | translate }}
+      </button>
     </div>
   </mat-toolbar-row>
 

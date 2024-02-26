@@ -7,6 +7,7 @@ import {
 } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { DirectoryServiceState } from 'app/enums/directory-service-state.enum';
+import { Role } from 'app/enums/role.enum';
 import { helptextDashboard } from 'app/helptext/directory-service/dashboard';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { Option } from 'app/interfaces/option.interface';
@@ -33,6 +34,8 @@ interface DataCard {
   styleUrls: ['./directory-services.component.scss'],
 })
 export class DirectoryServicesComponent implements OnInit {
+  readonly requiredRoles = [Role.DirectoryServiceWrite];
+
   isActiveDirectoryEnabled = false;
   isLdapEnabled = false;
 

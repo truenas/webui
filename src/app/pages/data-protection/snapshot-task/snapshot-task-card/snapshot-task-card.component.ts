@@ -30,6 +30,8 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SnapshotTaskCardComponent implements OnInit {
+  readonly requiredRoles = [Role.SnapshotTaskWrite];
+
   dataProvider: AsyncDataProvider<PeriodicSnapshotTaskUi>;
 
   columns = createTable<PeriodicSnapshotTaskUi>([
@@ -59,7 +61,7 @@ export class SnapshotTaskCardComponent implements OnInit {
     toggleColumn({
       title: this.translate.instant('Enabled'),
       propertyName: 'enabled',
-      requiredRoles: [Role.FullAdmin],
+      requiredRoles: this.requiredRoles,
       onRowToggle: (row: PeriodicSnapshotTaskUi) => this.onChangeEnabledState(row),
     }),
     stateButtonColumn({
@@ -77,7 +79,7 @@ export class SnapshotTaskCardComponent implements OnInit {
         {
           iconName: 'delete',
           tooltip: this.translate.instant('Delete'),
-          requiredRoles: [Role.FullAdmin],
+          requiredRoles: this.requiredRoles,
           onClick: (row) => this.doDelete(row),
         },
       ],

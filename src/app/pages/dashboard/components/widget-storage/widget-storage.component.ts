@@ -7,6 +7,7 @@ import { filter, switchMap, tap } from 'rxjs';
 import { PoolScanFunction } from 'app/enums/pool-scan-function.enum';
 import { PoolScanState } from 'app/enums/pool-scan-state.enum';
 import { PoolStatus } from 'app/enums/pool-status.enum';
+import { Role } from 'app/enums/role.enum';
 import { countDisksTotal } from 'app/helpers/count-disks-total.helper';
 import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
 import { Pool } from 'app/interfaces/pool.interface';
@@ -56,6 +57,8 @@ type PoolInfoMap = Record<string, PoolInfo>;
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class WidgetStorageComponent extends WidgetComponent implements AfterViewInit {
+  readonly requiredRoles = [Role.FullAdmin];
+
   protected pools: Pool[];
   protected volumeData: VolumesData;
 
