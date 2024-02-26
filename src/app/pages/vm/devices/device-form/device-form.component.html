@@ -67,15 +67,16 @@
                 [tooltip]="helptext.mac_tooltip | translate"
               ></ix-input>
 
-              <button
-                *ixRequiresRoles="requiredRoles"
-                type="button"
-                mat-button
-                ixTest="generate"
-                (click)="generateMacAddress()"
-              >
-                {{ 'Generate' | translate }}
-              </button>
+              <div *ixRequiresRoles="requiredRoles">
+                <button
+                  type="button"
+                  mat-button
+                  ixTest="generate"
+                  (click)="generateMacAddress()"
+                >
+                  {{ 'Generate' | translate }}
+                </button>
+              </div>
             </div>
             <ix-select
               formControlName="nic_attach"

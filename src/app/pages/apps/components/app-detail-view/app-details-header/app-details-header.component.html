@@ -22,9 +22,9 @@
       {{ 'Setup Pool To Install' | translate }}
     </button>
   </ng-container>
-  <ng-container *ixRequiresRoles="requiredRoles">
+  <ng-container *ngIf="!!(kubernetesStore.selectedPool$ | async)">
     <button
-      *ngIf="!!(kubernetesStore.selectedPool$ | async)"
+      *ixRequiresRoles="requiredRoles"
       mat-button
       color="primary"
       [ixTest]="[app?.name, 'install']"

@@ -2,15 +2,17 @@
   <div class="pool-header">
     <h2 class="pool-name">{{ pool.name }}</h2>
     <div class="pool-actions">
-      <button
-        *ngIf="!pool.is_upgraded"
-        mat-button
-        color="primary"
-        [ixTest]="['upgrade-pool', pool.name]"
-        (click)="onUpgrade()"
-      >
-        {{ 'Upgrade' | translate }}
-      </button>
+      <ng-container *ngIf="!pool.is_upgraded">
+        <button
+          *ixRequiresRoles="requiredRoles"
+          mat-button
+          color="primary"
+          [ixTest]="['upgrade-pool', pool.name]"
+          (click)="onUpgrade()"
+        >
+          {{ 'Upgrade' | translate }}
+        </button>
+      </ng-container>
 
       <button *ixRequiresRoles="requiredRoles" mat-button [ixTest]="['export', pool.name]" (click)="onExport()">
         {{ 'Export/Disconnect' | translate }}
