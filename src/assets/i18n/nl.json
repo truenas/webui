@@ -1904,7 +1904,6 @@
   "Errors": "Fouten",
   "Est. Usable Raw Capacity": "Geschatte bruikbare ruwe capaciteit",
   "Establishing a connection requires  that one of the connection systems has open TCP ports. Choose which  system (<i>LOCAL</i> or <i>REMOTE</i>) will open ports. Consult your IT  department to determine which systems are allowed to open ports.": "Om een verbinding tot stand te brengen, moet een van de verbindingssystemen open TCP-poorten hebben. Selecteren welk systeem (<i>LOCAL</i> of <i>REMOTE</i>) poorten zal openen. Raadpleeg jouw IT-afdeling om te bepalen welke systemen poorten mogen openen.",
-  "Estimated Raw Capacity": "Geschatte ruwe capaciteit",
   "Estimated data capacity available after extension.": "Geschatte beschikbare datacapaciteit na verlenging.",
   "Estimated total raw data capacity": "Geschatte totale ruwe capaciteit",
   "Everything is fine": "Alles is in orde",

@@ -14,6 +14,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { CoreComponents } from 'app/core/core-components.module';
 import { FormatDateTimePipe } from 'app/core/pipes/format-datetime.pipe';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
+import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxDynamicFormModule } from 'app/modules/ix-dynamic-form/ix-dynamic-form.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
@@ -56,6 +57,7 @@ import { ReportsGlobalControlsComponent } from './components/reports-global-cont
     MatButtonToggleModule,
     MatSlideToggleModule,
     TestIdModule,
+    EmptyComponent,
     SearchInput1Component,
   ],
   declarations: [

@@ -1,10 +1,15 @@
 :host {
+  align-items: center;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
   height: 100%;
+  justify-content: center;
   padding: 15px;
-  place-content: center;;
 }
 
 .empty-page {
+  align-items: center;
   color: var(--fg2);
   margin: auto 24px;
   max-width: 300px;
@@ -39,6 +44,22 @@
     margin-bottom: 10px;
   }
 
+
+  &.compact {
+    margin: 0;
+  }
+
+  &.errors {
+    .icon-div {
+      margin: 16px;
+    }
+
+    .icon-div .mat-icon {
+      color: var(--red);
+      opacity: 1;
+    }
+  }
+
   &.large {
     .icon-div {
       .mat-icon {
@@ -70,19 +91,3 @@
     width: 100%;
   }
 }
-
-.empty-page.compact {
-  margin: 0;
-}
-
-.empty-page.errors {
-  .icon-div {
-    margin: 16px;
-  }
-
-  .icon-div .mat-icon {
-    color: var(--red);
-    opacity: 1;
-  }
-}
-

@@ -1,6 +1,5 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { UntilDestroy } from '@ngneat/until-destroy';
-import { Role } from 'app/enums/role.enum';
 
 @UntilDestroy()
 @Component({
@@ -9,5 +8,4 @@ import { Role } from 'app/enums/role.enum';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SharesDashboardComponent {
-  protected readonly Role = Role;
 }

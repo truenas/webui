@@ -187,7 +187,7 @@
           </ng-container>
 
           <div *ngIf="(dataSource.length && !filteredApps.length) || (!dataSource.length && !isLoading)" class="no-apps">
-            <ix-entity-empty [conf]="entityEmptyConf"></ix-entity-empty>
+            <ix-empty [conf]="entityEmptyConf"></ix-empty>
           </div>
         </div>
       </div>

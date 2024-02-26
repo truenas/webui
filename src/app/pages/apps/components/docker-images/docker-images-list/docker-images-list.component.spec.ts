@@ -6,7 +6,6 @@ import { of, Subject } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxEmptyRowHarness } from 'app/modules/ix-tables/components/ix-empty-row/ix-empty-row.component.harness';
 import { IxTableModule } from 'app/modules/ix-tables/ix-table.module';
 import { IxTableHarness } from 'app/modules/ix-tables/testing/ix-table.harness';
@@ -27,7 +26,6 @@ describe('DockerImagesListComponent', () => {
   const createComponent = createComponentFactory({
     component: DockerImagesListComponent,
     imports: [
-      EntityModule,
       IxTableModule,
       MockModule(PageHeaderModule),
       SearchInput1Component,

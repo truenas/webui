@@ -7,7 +7,7 @@ import { MockWebSocketService } from 'app/core/testing/classes/mock-websocket.se
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { IpmiEvent } from 'app/interfaces/ipmi.interface';
-import { EntityEmptyComponent } from 'app/modules/entity/entity-empty/entity-empty.component';
+import { EmptyComponent } from 'app/modules/empty/empty.component';
 import {
   IpmiEventsDialogComponent,
 } from 'app/pages/network/components/ipmi-card/ipmi-events-dialog/ipmi-events-dialog.component';
@@ -20,7 +20,7 @@ describe('IpmiEventsDialogComponent', () => {
     component: IpmiEventsDialogComponent,
     declarations: [
       FakeFormatDateTimePipe,
-      EntityEmptyComponent,
+      EmptyComponent,
     ],
     providers: [
       mockWebSocket([
