@@ -75,17 +75,11 @@
                 [ngClass]="['platform-logo-wrapper', sysGenService.getProductType()?.toLowerCase()]"
               >
                 <ng-container *ngIf="productImage || isPassive; else textOnly">
-                  <ix-icon
-                    name="ix:logo_truenas_scale_full"
-                    [id]="productModel"
-                  ></ix-icon>
+                  <ix-icon name="ix:logo_truenas_scale_full" [id]="productModel"></ix-icon>
                 </ng-container>
 
                 <ng-template #textOnly>
-                  <ix-icon
-                    name="ix:logo_truenas_scale_type"
-                    [id]="productModel"
-                  ></ix-icon>
+                  <ix-icon name="ix:logo_truenas_scale_type" [id]="productModel"></ix-icon>
                 </ng-template>
               </div>
               <div
@@ -209,12 +203,12 @@
                   <mat-list-item>
                     <strong>{{ 'Version' | translate }}:</strong>
                     <div class="copy-version">
-                      <div class="copy-version-text">
-                        <span>{{ systemInfo.version }}</span>
+                      <div class="copy-version-text" [matTooltip]="systemVersion">
+                        <span>{{ systemVersion }}</span>
                       </div>
                       <ix-copy-btn
                         class="copy-version-button"
-                        [text]="systemInfo.version"
+                        [text]="systemVersion"
                       ></ix-copy-btn>
                     </div>
                   </mat-list-item>

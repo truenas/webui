@@ -65,6 +65,14 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
 
   readonly ScreenType = ScreenType;
 
+  get systemVersion(): string {
+    if (this.systemInfo?.codename) {
+      return this.systemInfo.version.replace('TrueNAS-SCALE', this.systemInfo.codename);
+    }
+
+    return this.systemInfo.version;
+  }
+
   constructor(
     public router: Router,
     public translate: TranslateService,
