@@ -24,6 +24,8 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ServiceSnmpComponent implements OnInit {
+  protected requiredRoles = [Role.FullAdmin];
+
   isFormLoading = false;
 
   form = this.fb.group({
@@ -66,7 +68,6 @@ export class ServiceSnmpComponent implements OnInit {
   readonly authtypeOptions$ = of(helptextServiceSmart.v3_authtype_options);
   readonly privprotoOptions$ = of(helptextServiceSmart.v3_privproto_options);
   readonly logLevelOptions$ = of(helptextServiceSmart.loglevel_options);
-  protected readonly Role = Role;
 
   get isV3SupportEnabled(): boolean {
     return this.form?.value?.v3;

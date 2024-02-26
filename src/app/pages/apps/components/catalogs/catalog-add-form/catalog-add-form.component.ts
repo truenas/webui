@@ -18,6 +18,8 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CatalogAddFormComponent {
+  protected readonly requiredRoles = [Role.CatalogWrite];
+
   isFormLoading = false;
 
   form = this.fb.group({
@@ -35,8 +37,6 @@ export class CatalogAddFormComponent {
     preferred_trains: helptextApps.catalogForm.preferredTrains.tooltip,
     branch: helptextApps.catalogForm.branch.tooltip,
   };
-
-  protected readonly requiredRoles = [Role.CatalogWrite];
 
   constructor(
     private slideInRef: IxSlideInRef<CatalogAddFormComponent>,

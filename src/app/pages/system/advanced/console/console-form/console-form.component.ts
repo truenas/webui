@@ -23,6 +23,8 @@ import { advancedConfigUpdated } from 'app/store/system-config/system-config.act
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ConsoleFormComponent implements OnInit {
+  protected requiredRoles = [Role.FullAdmin];
+
   isFormLoading = false;
 
   form = this.fb.group({
@@ -35,7 +37,6 @@ export class ConsoleFormComponent implements OnInit {
 
   subscriptions: Subscription[] = [];
 
-  protected readonly Role = Role;
   readonly tooltips = {
     consolemenu: helptext.consolemenu_tooltip,
     serialconsole: helptext.serialconsole_tooltip,

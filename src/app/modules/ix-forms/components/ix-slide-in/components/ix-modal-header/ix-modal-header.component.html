@@ -5,6 +5,7 @@
 >
   <h3 class="ix-formtitle">
     {{ title | translate }}
+    <ix-readonly-badge *ngIf="!(hasRequiredRoles | async)"></ix-readonly-badge>
   </h3>
 
   <ng-container *ngIf="!disableClose">

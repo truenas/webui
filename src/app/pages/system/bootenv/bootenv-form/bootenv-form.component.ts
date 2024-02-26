@@ -30,6 +30,8 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class BootEnvironmentFormComponent implements OnInit {
+  protected requiredRoles = [Role.FullAdmin];
+
   Operations = BootEnvironmentAction;
   currentName?: string;
   operation: BootEnvironmentAction;
@@ -44,7 +46,7 @@ export class BootEnvironmentFormComponent implements OnInit {
   tooltips: BootenvTooltip = {
     name: helptextSystemBootenv.create_name_tooltip,
   };
-  protected readonly Role = Role;
+
   constructor(
     private translate: TranslateService,
     private formBuilder: FormBuilder,

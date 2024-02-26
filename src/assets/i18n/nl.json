@@ -460,6 +460,7 @@
   "dRAID is a ZFS feature that boosts resilver speed and load distribution. Due to fixed stripe width disk space efficiency may be substantially worse with small files. \nOpt for dRAID over RAID-Z when handling large-capacity drives and extensive disk environments for enhanced performance.": "",
   "iSCSI Wizard": "",
   "pCloud": "",
+  "readonly": "",
   "to another TrueNAS": "",
   "to cloud": "",
   "{checked} exporter: {name}": "",

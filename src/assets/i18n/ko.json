@@ -3948,6 +3948,7 @@
   "pbkdf2iters": "",
   "pigz (all rounder)": "",
   "plzip (best compression)": "",
+  "readonly": "",
   "rpc.lockd(8) bind port": "",
   "rpc.statd(8) bind port": "",
   "threads": "",

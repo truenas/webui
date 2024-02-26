@@ -23,6 +23,8 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ServiceSmartComponent implements OnInit {
+  protected requiredRoles = [Role.FullAdmin];
+
   isFormLoading = false;
 
   form = this.fb.group({
@@ -47,7 +49,7 @@ export class ServiceSmartComponent implements OnInit {
     { label: this.translate.instant('Standby'), value: SmartPowerMode.Standby },
     { label: this.translate.instant('Idle'), value: SmartPowerMode.Idle },
   ]);
-  protected readonly Role = Role;
+
   constructor(
     private ws: WebSocketService,
     private formErrorHandler: FormErrorHandlerService,

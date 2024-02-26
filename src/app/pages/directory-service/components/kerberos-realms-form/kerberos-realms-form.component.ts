@@ -19,6 +19,8 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class KerberosRealmsFormComponent implements OnInit {
+  protected requiredRoles = [Role.DirectoryServiceWrite];
+
   get isNew(): boolean {
     return !this.editingRealm;
   }
@@ -44,8 +46,6 @@ export class KerberosRealmsFormComponent implements OnInit {
       ? this.translate.instant('Add Kerberos Realm')
       : this.translate.instant('Edit Kerberos Realm');
   }
-
-  protected readonly Role = Role;
 
   constructor(
     private ws: WebSocketService,

@@ -49,6 +49,7 @@ import { IxSlideToggleComponent } from 'app/modules/ix-forms/components/ix-slide
 import { IxStarRatingComponent } from 'app/modules/ix-forms/components/ix-star-rating/ix-star-rating.component';
 import { IxTextareaComponent } from 'app/modules/ix-forms/components/ix-textarea/ix-textarea.component';
 import { IxWarningComponent } from 'app/modules/ix-forms/components/ix-warning/ix-warning.component';
+import { ReadOnlyComponent } from 'app/modules/ix-forms/components/readonly-badge/readonly-badge.component';
 import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
@@ -123,6 +124,7 @@ import { WithManageCertificatesLinkComponent } from './components/with-manage-ce
     IxStarRatingComponent,
     CreateDatasetDialogComponent,
     IxButtonGroupComponent,
+    ReadOnlyComponent,
   ],
   exports: [
     IxErrorsComponent,

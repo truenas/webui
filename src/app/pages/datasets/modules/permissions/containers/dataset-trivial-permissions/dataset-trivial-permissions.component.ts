@@ -29,6 +29,8 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DatasetTrivialPermissionsComponent implements OnInit {
+  protected requiredRoles = [Role.DatasetWrite];
+
   form = this.formBuilder.group({
     uid: [null as number, [this.validatorService.validateOnCondition(
       () => this.isToApplyUser,
@@ -65,8 +67,6 @@ export class DatasetTrivialPermissionsComponent implements OnInit {
   };
 
   readonly isRecursive$ = this.form.select((values) => values.recursive);
-
-  protected readonly Role = Role;
 
   private oldDatasetMode: string;
 

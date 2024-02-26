@@ -18,6 +18,8 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LicenseComponent {
+  protected requiredRoles = [Role.FullAdmin];
+
   isFormLoading = false;
 
   title = helptext.update_license.license_placeholder;
@@ -29,7 +31,6 @@ export class LicenseComponent {
     fcName: 'license',
     label: helptext.update_license.license_placeholder,
   };
-  protected readonly Role = Role;
 
   constructor(
     private fb: FormBuilder,
