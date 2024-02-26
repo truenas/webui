@@ -14,6 +14,9 @@ export const helptextServiceNfs = {
   nfs_srv_allow_nonroot_tooltip: T('Set only if required by the NFS client. Set to allow\
  serving non-root mount requests.'),
 
+  nfs_srv_v4_domain_tooltip: T('If set, the value will be used to override the default DNS domain name for NFSv4.\
+ Specifies the "Domain" idmapd.conf setting.'),
+
   nfs_srv_v4_v3owner_tooltip: T('Set when NFSv4 ACL support is needed without requiring\
  the client and the server to sync users and groups.'),
 
