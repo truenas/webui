@@ -10,6 +10,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { filter, take } from 'rxjs/operators';
+import { codenameLabels } from 'app/enums/codename.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { ScreenType } from 'app/enums/screen-type.enum';
 import { SystemUpdateStatus } from 'app/enums/system-update.enum';
@@ -65,6 +66,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
   uptimeInterval: Interval;
 
   readonly ScreenType = ScreenType;
+  readonly codenameLabels = codenameLabels;
 
   constructor(
     public router: Router,

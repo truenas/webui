@@ -395,6 +395,7 @@ div.generic.alert {
   bottom: 4px;
   position: absolute;
   text-align: center;
+  width: 100%;
 }
 
 div.generic.alert .ix-icon {
@@ -535,4 +536,16 @@ div.generic.alert .ix-icon {
 
 .widget:not(.xs) .mobile-update-action {
   display: none;
+}
+
+.codename {
+  display: inline-flex;
+  font-family: var(--font-family-header);
+  font-size: 8px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  line-height: 1;
+  position: absolute;
+  right: 51px;
+  top: 46px;
 }

@@ -48,18 +48,16 @@
 
               <div [ngClass]="['platform-logo-wrapper', sysGenService.getProductType()?.toLowerCase()]">
                 <ng-container *ngIf="productImage || isPassive; else textOnly">
-                  <ix-icon
-                    name="ix:logo_truenas_scale_full"
-                    [id]="productModel"
-                  ></ix-icon>
+                  <ix-icon name="ix:logo_truenas_scale_full" [id]="productModel"></ix-icon>
                 </ng-container>
 
                 <ng-template #textOnly>
-                  <ix-icon
-                    name="ix:logo_truenas_scale_type"
-                    [id]="productModel"
-                  ></ix-icon>
+                  <ix-icon name="ix:logo_truenas_scale_type" [id]="productModel"></ix-icon>
                 </ng-template>
+
+                <span *ngIf="systemInfo?.codename" class="codename">
+                  • {{ systemInfo.codename | mapValue: codenameLabels }}
+                </span>
               </div>
               <div class="content-left">
                 <div *ngIf="!isHaEnabled && isPassive" class="generic alert">
