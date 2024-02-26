@@ -5,7 +5,7 @@ import { SubMenuItem } from 'app/interfaces/menu-item.interface';
 
 @Component({
   selector: 'ix-secondary-menu',
-  templateUrl: 'secondary-menu.component.html',
+  templateUrl: './secondary-menu.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SecondaryMenuComponent {
