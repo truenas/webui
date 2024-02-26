@@ -25,10 +25,11 @@
 
   <div class="add-buttons">
     <ng-container *ngIf="!dataset.locked && !isZvol">
-      <button mat-button ixTest="add-zvol" (click)="onAddZvol()">
+      <button *ixRequiresRoles="requiredRoles" mat-button ixTest="add-zvol" (click)="onAddZvol()">
         {{ 'Add Zvol' | translate }}
       </button>
       <button
+        *ixRequiresRoles="requiredRoles"
         mat-button
         color="primary"
         ixTest="add-dataset"

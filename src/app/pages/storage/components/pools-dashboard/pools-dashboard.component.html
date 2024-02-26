@@ -1,5 +1,5 @@
 <ix-page-header>
-  <button mat-button ixTest="import-pool" (click)="onImportPool()">
+  <button *ixRequiresRoles="requiredRoles" mat-button ixTest="import-pool" (click)="onImportPool()">
     {{ 'Import Pool' | translate }}
   </button>
 
@@ -7,7 +7,13 @@
     {{ 'Disks' | translate }}
   </a>
 
-  <a mat-button color="primary" ixTest="create-pool" [routerLink]="['/storage', 'create']">
+  <a
+    *ixRequiresRoles="requiredRoles"
+    mat-button
+    color="primary"
+    ixTest="create-pool"
+    [routerLink]="['/storage', 'create']"
+  >
     {{ 'Create Pool' | translate }}
   </a>
 </ix-page-header>

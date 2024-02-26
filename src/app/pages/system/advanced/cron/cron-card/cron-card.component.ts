@@ -36,6 +36,8 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CronCardComponent implements OnInit {
+  readonly requiredRoles = [Role.FullAdmin];
+
   title = helptextSystemAdvanced.fieldset_cron;
   cronjobs: CronjobRow[] = [];
   dataProvider: AsyncDataProvider<CronjobRow>;
@@ -74,7 +76,7 @@ export class CronCardComponent implements OnInit {
           iconName: 'play_arrow',
           tooltip: this.translate.instant('Run job'),
           onClick: (row) => this.runNow(row),
-          requiredRoles: [Role.FullAdmin],
+          requiredRoles: this.requiredRoles,
         },
         {
           iconName: 'edit',
@@ -85,7 +87,7 @@ export class CronCardComponent implements OnInit {
           iconName: 'delete',
           tooltip: this.translate.instant('Delete'),
           onClick: (row) => this.doDelete(row),
-          requiredRoles: [Role.FullAdmin],
+          requiredRoles: this.requiredRoles,
         },
       ],
     }),

@@ -12,7 +12,7 @@
       <button mat-button type="button" ixTest="search" (click)="onSearch(searchInput.query)">
         {{ 'Search' | translate }}
       </button>
-      <button mat-button ixTest="add-privilege" [color]="'primary'" (click)="openForm()">
+      <button *ixRequiresRoles="requiredRoles" mat-button ixTest="add-privilege" [color]="'primary'" (click)="openForm()">
         {{ 'Add' | translate }}
       </button>
     </div>

@@ -107,17 +107,19 @@
             [header]="'Add SPN' | translate"
             [message]="'Save the \'Require Kerberos for NFSv4\' value before adding SMP' | translate"
           ></ix-tooltip>
-          <button
-            *ngIf="isAddSpnVisible"
-            mat-button
-            type="button"
-            color="primary"
-            ixTest="add-spn"
-            [disabled]="isAddSpnDisabled"
-            (click)="addSpn()"
-          >
-            {{ 'Add SPN' | translate }}
-          </button>
+          <ng-container *ixRequiresRoles="requiredRoles">
+            <button
+              *ngIf="isAddSpnVisible"
+              mat-button
+              type="button"
+              color="primary"
+              ixTest="add-spn"
+              [disabled]="isAddSpnDisabled"
+              (click)="addSpn()"
+            >
+              {{ 'Add SPN' | translate }}
+            </button>
+          </ng-container>
         </div>
       </ix-form-actions>
     </form>

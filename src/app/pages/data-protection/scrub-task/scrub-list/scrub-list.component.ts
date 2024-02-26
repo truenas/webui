@@ -38,6 +38,8 @@ import { WebSocketService } from 'app/services/ws.service';
   providers: [CrontabExplanationPipe],
 })
 export class ScrubListComponent implements OnInit {
+  readonly requiredRoles = [Role.FullAdmin];
+
   dataProvider: AsyncDataProvider<PoolScrubTask>;
 
   columns = createTable<PoolScrubTask>([
@@ -83,7 +85,7 @@ export class ScrubListComponent implements OnInit {
         {
           iconName: 'delete',
           tooltip: this.translate.instant('Delete'),
-          requiredRoles: [Role.FullAdmin],
+          requiredRoles: this.requiredRoles,
           onClick: (row) => this.onDelete(row),
         },
       ],

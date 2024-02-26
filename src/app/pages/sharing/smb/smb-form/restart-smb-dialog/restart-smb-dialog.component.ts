@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { TranslateService } from '@ngx-translate/core';
+import { Role } from 'app/enums/role.enum';
 import { helptextSharingSmb } from 'app/helptext/sharing';
 
 interface RestartDialogData {
@@ -16,6 +17,8 @@ interface RestartDialogData {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RestartSmbDialogComponent {
+  readonly requiredRoles = [Role.SharingSmbWrite, Role.SharingWrite];
+
   readonly helptext = helptextSharingSmb;
   constructor(
     private translate: TranslateService,

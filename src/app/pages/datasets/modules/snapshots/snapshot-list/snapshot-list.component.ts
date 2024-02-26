@@ -46,6 +46,8 @@ import { waitForPreferences } from 'app/store/preferences/preferences.selectors'
   providers: [FormatDateTimePipe],
 })
 export class SnapshotListComponent implements OnInit {
+  readonly requiredRoles = [Role.SnapshotDelete];
+
   readonly EmptyType = EmptyType;
   isLoading$ = this.store$.select(selectSnapshotState).pipe(map((state) => state.isLoading));
   emptyType$: Observable<EmptyType> = combineLatest([
@@ -98,8 +100,6 @@ export class SnapshotListComponent implements OnInit {
   get emptyConfigService(): EmptyService {
     return this.emptyService;
   }
-
-  protected readonly Role = Role;
 
   constructor(
     private dialogService: DialogService,

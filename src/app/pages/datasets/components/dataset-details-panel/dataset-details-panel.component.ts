@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { filter, take } from 'rxjs';
 import { DatasetType } from 'app/enums/dataset.enum';
+import { Role } from 'app/enums/role.enum';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { DatasetFormComponent } from 'app/pages/datasets/components/dataset-form/dataset-form.component';
@@ -23,6 +24,9 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 export class DatasetDetailsPanelComponent {
   @Input() dataset: DatasetDetails;
   @Input() systemDataset: string;
+
+  protected readonly requiredRoles = [Role.DatasetWrite];
+
   selectedParentDataset$ = this.datasetStore.selectedParentDataset$;
 
   constructor(

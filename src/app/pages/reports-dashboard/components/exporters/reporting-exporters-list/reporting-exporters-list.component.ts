@@ -30,9 +30,10 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ReportingExporterListComponent implements OnInit {
+  protected readonly requiredRoles = [Role.ReportingWrite];
+
   filterString = '';
   dataProvider = new ArrayDataProvider<ReportingExporter>();
-  protected readonly requiredRoles = [Role.ReportingWrite];
 
   exporters: ReportingExporter[] = [];
   columns = createTable<ReportingExporter>([

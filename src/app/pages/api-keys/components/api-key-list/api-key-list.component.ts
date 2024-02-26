@@ -11,6 +11,7 @@ import {
   filter, map, switchMap,
 } from 'rxjs/operators';
 import { EmptyType } from 'app/enums/empty-type.enum';
+import { Role } from 'app/enums/role.enum';
 import { ApiKey } from 'app/interfaces/api-key.interface';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -27,6 +28,8 @@ import { WebSocketService } from 'app/services/ws.service';
 })
 export class ApiKeyListComponent implements OnInit {
   @ViewChild(MatSort, { static: false }) sort: MatSort;
+
+  protected requiredRoles = [Role.FullAdmin];
 
   displayedColumns: string[] = ['name', 'created_at', 'actions'];
   dataSource = new MatTableDataSource<ApiKey>([]);

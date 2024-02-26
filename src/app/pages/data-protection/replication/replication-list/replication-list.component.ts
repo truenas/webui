@@ -109,6 +109,7 @@ export class ReplicationListComponent implements OnInit {
       title: this.translate.instant('Enabled'),
       propertyName: 'enabled',
       onRowToggle: (row) => this.onChangeEnabledState(row),
+      requiredRoles: this.requiredRoles,
     }),
     textColumn({
       title: this.translate.instant('Last Snapshot'),

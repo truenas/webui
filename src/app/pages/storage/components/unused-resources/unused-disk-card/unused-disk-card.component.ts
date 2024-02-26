@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { Role } from 'app/enums/role.enum';
 import { Pool } from 'app/interfaces/pool.interface';
 import { UnusedDisk } from 'app/interfaces/storage.interface';
 import {
@@ -15,6 +16,8 @@ import {
 export class UnusedDiskCardComponent {
   @Input() pools: Pool[];
   @Input() unusedDisks: UnusedDisk[];
+
+  readonly requiredRoles = [Role.FullAdmin];
 
   constructor(
     private matDialog: MatDialog,
