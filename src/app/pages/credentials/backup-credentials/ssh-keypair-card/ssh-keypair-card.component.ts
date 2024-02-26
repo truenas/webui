@@ -27,6 +27,8 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SshKeypairCardComponent implements OnInit {
+  protected requiredRoles = [Role.KeychainCredentialWrite];
+
   dataProvider: AsyncDataProvider<KeychainSshKeyPair>;
   credentials: KeychainSshKeyPair[] = [];
   columns = createTable<KeychainSshKeyPair>([
@@ -50,7 +52,7 @@ export class SshKeypairCardComponent implements OnInit {
         {
           iconName: 'delete',
           tooltip: this.translate.instant('Delete'),
-          requiredRoles: [Role.KeychainCredentialWrite],
+          requiredRoles: this.requiredRoles,
           onClick: (row) => this.doDelete(row),
         },
       ],

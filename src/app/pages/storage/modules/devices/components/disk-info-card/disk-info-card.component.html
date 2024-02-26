@@ -63,7 +63,7 @@
     <div>{{ 'Disk is unavailable' | translate }}</div>
   </mat-card-content>
   <mat-card-actions>
-    <button mat-button ixTest="replace" (click)="onReplace()">
+    <button *ixRequiresRoles="requiredRoles" mat-button ixTest="replace" (click)="onReplace()">
       {{ 'Replace' | translate }}
     </button>
   </mat-card-actions>

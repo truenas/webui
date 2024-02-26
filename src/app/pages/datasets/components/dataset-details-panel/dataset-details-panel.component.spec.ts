@@ -5,6 +5,7 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { provideMockStore } from '@ngrx/store/testing';
 import { MockComponents } from 'ng-mocks';
 import { of } from 'rxjs';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { DatasetType } from 'app/enums/dataset.enum';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { SystemInfo } from 'app/interfaces/system-info.interface';
@@ -58,6 +59,7 @@ describe('DatasetDetailsPanelComponent', () => {
       ),
     ],
     providers: [
+      mockAuth(),
       mockProvider(IxSlideInService, {
         open: jest.fn(() => ({
           slideInClosed$: of(),

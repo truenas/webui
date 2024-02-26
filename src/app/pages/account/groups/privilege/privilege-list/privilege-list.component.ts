@@ -23,6 +23,8 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PrivilegeListComponent implements OnInit {
+  protected requiredRoles = [Role.FullAdmin];
+
   dataProvider: AsyncDataProvider<Privilege>;
   columns = createTable<Privilege>([
     textColumn({
@@ -62,7 +64,7 @@ export class PrivilegeListComponent implements OnInit {
           tooltip: this.translate.instant('Delete'),
           onClick: (row) => this.doDelete(row),
           hidden: (row) => of(!!row.builtin_name),
-          requiredRoles: [Role.FullAdmin],
+          requiredRoles: this.requiredRoles,
         },
       ],
     }),

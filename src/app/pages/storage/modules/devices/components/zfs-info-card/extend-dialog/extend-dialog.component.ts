@@ -8,6 +8,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable, map } from 'rxjs';
 import { JobState } from 'app/enums/job-state.enum';
+import { Role } from 'app/enums/role.enum';
 import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
 import { helptextVolumeStatus } from 'app/helptext/storage/volumes/volume-status';
 import { Option } from 'app/interfaces/option.interface';
@@ -32,6 +33,8 @@ export interface ExtendDialogParams {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ExtendDialogComponent implements OnInit {
+  readonly requiredRoles = [Role.FullAdmin];
+
   form = this.formBuilder.group({
     newDisk: ['', Validators.required],
   });

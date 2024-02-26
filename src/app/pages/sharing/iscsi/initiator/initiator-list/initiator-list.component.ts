@@ -26,6 +26,12 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class InitiatorListComponent implements OnInit {
+  readonly requiredRoles = [
+    Role.SharingIscsiInitiatorWrite,
+    Role.SharingIscsiWrite,
+    Role.SharingWrite,
+  ];
+
   isLoading = false;
   filterString = '';
   dataProvider: AsyncDataProvider<IscsiInitiatorGroup>;
@@ -76,11 +82,7 @@ export class InitiatorListComponent implements OnInit {
               },
             });
           },
-          requiredRoles: [
-            Role.SharingIscsiInitiatorWrite,
-            Role.SharingIscsiWrite,
-            Role.SharingWrite,
-          ],
+          requiredRoles: this.requiredRoles,
         },
       ],
     }),

@@ -1,7 +1,7 @@
 <ng-template ixPageHeader>
   <ix-page-title-header>
     <ix-search-input (search)="onListFiltered($event)"></ix-search-input>
-    <button mat-button ixTest="add-privilege" [color]="'primary'" (click)="openForm()">
+    <button *ixRequiresRoles="requiredRoles" mat-button ixTest="add-privilege" [color]="'primary'" (click)="openForm()">
       {{ 'Add' | translate }}
     </button>
   </ix-page-title-header>

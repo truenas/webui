@@ -7,6 +7,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { mntPath } from 'app/enums/mnt-path.enum';
+import { Role } from 'app/enums/role.enum';
 import { TransferMode } from 'app/enums/transfer-mode.enum';
 import { helptextCloudsync } from 'app/helptext/data-protection/cloudsync/cloudsync';
 import { CloudsyncRestoreParams } from 'app/interfaces/cloudsync-provider.interface';
@@ -22,6 +23,8 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CloudsyncRestoreDialogComponent {
+  protected requiredRoles = [Role.CloudSyncWrite];
+
   readonly form = this.formBuilder.group({
     description: ['', Validators.required],
     transfer_mode: [TransferMode.Copy],

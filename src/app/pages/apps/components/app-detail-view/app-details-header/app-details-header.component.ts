@@ -28,7 +28,7 @@ export class AppDetailsHeaderComponent {
   @Input() app: AvailableApp;
   @Input() isLoading$: Observable<boolean>;
 
-  protected readonly setupPoolRequiredRoles = [Role.KubernetesWrite];
+  protected readonly requiredRoles = [Role.KubernetesWrite];
 
   constructor(
     public kubernetesStore: KubernetesStore,

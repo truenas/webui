@@ -29,6 +29,8 @@ import { WebSocketService } from 'app/services/ws.service';
   providers: [TaskService, StorageService],
 })
 export class SnapshotTaskListComponent implements EntityTableConfig<PeriodicSnapshotTaskUi> {
+  readonly requiredRoles = [Role.SnapshotTaskWrite];
+
   title = this.translate.instant('Periodic Snapshot Tasks');
   queryCall = 'pool.snapshottask.query' as const;
   updateCall = 'pool.snapshottask.update' as const;

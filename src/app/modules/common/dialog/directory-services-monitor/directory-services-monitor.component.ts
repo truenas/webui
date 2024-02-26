@@ -6,6 +6,7 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { take } from 'rxjs/operators';
 import { DirectoryServiceState } from 'app/enums/directory-service-state.enum';
+import { Role } from 'app/enums/role.enum';
 import { WebSocketService } from 'app/services/ws.service';
 
 interface DirectoryServicesMonitorRow {
@@ -21,6 +22,8 @@ interface DirectoryServicesMonitorRow {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DirectoryServicesMonitorComponent implements OnInit {
+  readonly requiredRoles = [Role.FullAdmin];
+
   displayedColumns: string[] = ['icon', 'name', 'state'];
   dataSource: DirectoryServicesMonitorRow[] = [];
   isLoading = false;

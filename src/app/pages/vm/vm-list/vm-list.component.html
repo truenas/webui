@@ -1,8 +1,10 @@
 <ng-template ixPageHeader>
   <ix-page-title-header>
-    <button *ngIf="canAdd" mat-button color="primary" ixTest="add-vm" (click)="doAdd()">
-      {{ 'Add' | translate }}
-    </button>
+    <ng-container *ngIf="canAdd">
+      <button *ixRequiresRoles="requiredRoles" mat-button color="primary" ixTest="add-vm" (click)="doAdd()">
+        {{ 'Add' | translate }}
+      </button>
+    </ng-container>
   </ix-page-title-header>
 </ng-template>
 

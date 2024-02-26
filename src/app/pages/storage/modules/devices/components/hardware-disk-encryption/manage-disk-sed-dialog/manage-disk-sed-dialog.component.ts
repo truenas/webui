@@ -5,6 +5,7 @@ import { FormControl, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import { Role } from 'app/enums/role.enum';
 import { helptextDisks } from 'app/helptext/storage/disks/disks';
 import { Disk } from 'app/interfaces/storage.interface';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
@@ -20,6 +21,8 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ManageDiskSedDialogComponent implements OnInit {
+  readonly requiredRoles = [Role.FullAdmin];
+
   passwordControl = new FormControl('', [Validators.required]);
 
   disk: Disk;

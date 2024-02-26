@@ -8,6 +8,7 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { of, Subject } from 'rxjs';
 import { fakeFile } from 'app/core/testing/utils/fake-file.uitls';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockJob, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { DatasetEncryptionType } from 'app/enums/dataset.enum';
 import { DatasetEncryptionSummary } from 'app/interfaces/dataset-encryption-summary.interface';
@@ -47,6 +48,7 @@ describe('DatasetUnlockComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
+      mockAuth(),
       mockProvider(DialogService),
       mockProvider(Router),
       mockProvider(ActivatedRoute, {
@@ -69,6 +71,7 @@ describe('DatasetUnlockComponent', () => {
       mockProvider(MatDialogRef),
       mockProvider(AuthService, {
         authToken$: of('token'),
+        hasRole: () => of(true),
       }),
     ],
   });

@@ -8,6 +8,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { switchMap } from 'rxjs/operators';
+import { Role } from 'app/enums/role.enum';
 import { helptextSystemGeneral as helptext } from 'app/helptext/system/general';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { DialogService } from 'app/services/dialog.service';
@@ -32,6 +33,8 @@ export interface SaveConfigDialogMessages {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SaveConfigDialogComponent {
+  readonly requiredRoles = [Role.FullAdmin];
+
   exportSeedCheckbox = new FormControl(false);
 
   helptext: SaveConfigDialogMessages;

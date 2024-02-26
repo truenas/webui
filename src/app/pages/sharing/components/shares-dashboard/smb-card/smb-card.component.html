@@ -16,10 +16,13 @@
 
     <div class="actions">
       <button
+        *ixRequiresRoles="requiredRoles"
         mat-button
         [ixTest]="['smb-share', 'add']"
         (click)="openForm()"
-      >{{ 'Add' | translate }}</button>
+      >
+        {{ 'Add' | translate }}
+      </button>
 
       <ix-service-extra-actions
         [service]="service$ | async"

@@ -5,6 +5,7 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { MockModule } from 'ng-mocks';
 import { CoreComponents } from 'app/core/core-components.module';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { Role } from 'app/enums/role.enum';
 import { Group } from 'app/interfaces/group.interface';
 import { Preferences } from 'app/interfaces/preferences.interface';
@@ -57,6 +58,7 @@ describe('GroupListComponent', () => {
       GroupDetailsRowComponent,
     ],
     providers: [
+      mockAuth(),
       mockProvider(WebSocketService),
       mockProvider(DialogService),
       provideMockStore({

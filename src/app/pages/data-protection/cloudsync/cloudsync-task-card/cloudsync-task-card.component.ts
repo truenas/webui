@@ -45,6 +45,8 @@ import { AppState } from 'app/store';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CloudSyncTaskCardComponent implements OnInit {
+  protected requiredRoles = [Role.CloudSyncWrite];
+
   cloudsyncTasks: CloudSyncTaskUi[] = [];
   dataProvider: AsyncDataProvider<CloudSyncTaskUi>;
   jobStates = new Map<number, JobState>();
@@ -72,7 +74,7 @@ export class CloudSyncTaskCardComponent implements OnInit {
       title: this.translate.instant('Enabled'),
       propertyName: 'enabled',
       onRowToggle: (row: CloudSyncTaskUi) => this.onChangeEnabledState(row),
-      requiredRoles: [Role.CloudSyncWrite],
+      requiredRoles: this.requiredRoles,
     }),
     stateButtonColumn({
       title: this.translate.instant('State'),
@@ -93,32 +95,32 @@ export class CloudSyncTaskCardComponent implements OnInit {
           tooltip: this.translate.instant('Run job'),
           hidden: (row) => of(row.job?.state === JobState.Running),
           onClick: (row) => this.runNow(row),
-          requiredRoles: [Role.CloudSyncWrite],
+          requiredRoles: this.requiredRoles,
         },
         {
           iconName: 'stop',
           tooltip: this.translate.instant('Stop'),
           hidden: (row) => of(row.job?.state !== JobState.Running),
           onClick: (row) => this.stopCloudSyncTask(row),
-          requiredRoles: [Role.CloudSyncWrite],
+          requiredRoles: this.requiredRoles,
         },
         {
           iconName: 'sync',
           tooltip: this.translate.instant('Dry Run'),
           onClick: (row) => this.dryRun(row),
-          requiredRoles: [Role.CloudSyncWrite],
+          requiredRoles: this.requiredRoles,
         },
         {
           iconName: 'restore',
           tooltip: this.translate.instant('Restore'),
           onClick: (row) => this.restore(row),
-          requiredRoles: [Role.CloudSyncWrite],
+          requiredRoles: this.requiredRoles,
         },
         {
           iconName: 'delete',
           tooltip: this.translate.instant('Delete'),
           onClick: (row) => this.doDelete(row),
-          requiredRoles: [Role.CloudSyncWrite],
+          requiredRoles: this.requiredRoles,
         },
       ],
     }),

@@ -2,6 +2,7 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { Spectator } from '@ngneat/spectator';
 import { createRoutingFactory } from '@ngneat/spectator/jest';
 import { MockComponents } from 'ng-mocks';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { TargetGlobalConfigurationComponent } from 'app/pages/sharing/iscsi/target-global-configuration/target-global-configuration.component';
 import { IscsiService } from 'app/services/iscsi.service';
 import { IscsiComponent } from './iscsi.component';
@@ -15,7 +16,7 @@ describe('IscsiComponent', () => {
       MockComponents(TargetGlobalConfigurationComponent),
     ],
     imports: [MatTabsModule],
-    providers: [IscsiService],
+    providers: [IscsiService, mockAuth()],
     params: {
       activeTab: 'configuration',
     },

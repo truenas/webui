@@ -13,7 +13,7 @@
   </div>
   <ng-container *ngIf="!(kubernetesStore.selectedPool$ | async)">
     <button
-      *ixRequiresRoles="setupPoolRequiredRoles"
+      *ixRequiresRoles="requiredRoles"
       mat-button
       color="primary"
       ixTest="setup-pool"
@@ -22,17 +22,19 @@
       {{ 'Setup Pool To Install' | translate }}
     </button>
   </ng-container>
-  <button
-    *ngIf="!!(kubernetesStore.selectedPool$ | async)"
-    mat-button
-    color="primary"
-    [ixTest]="[app?.name, 'install']"
-    [disabled]="!app"
-    (click)="navigateToInstallPage()"
-  >
-    <ng-container *ngIf="!app?.installed">{{ 'Install' | translate }}</ng-container>
-    <ng-container *ngIf="app?.installed">{{ 'Install Another Instance' | translate }}</ng-container>
-  </button>
+  <ng-container *ngIf="!!(kubernetesStore.selectedPool$ | async)">
+    <button
+      *ixRequiresRoles="requiredRoles"
+      mat-button
+      color="primary"
+      [ixTest]="[app?.name, 'install']"
+      [disabled]="!app"
+      (click)="navigateToInstallPage()"
+    >
+      <ng-container *ngIf="!app?.installed">{{ 'Install' | translate }}</ng-container>
+      <ng-container *ngIf="app?.installed">{{ 'Install Another Instance' | translate }}</ng-container>
+    </button>
+  </ng-container>
 </div>
 
 <div class="app-info" fxFlex="240px">

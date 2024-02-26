@@ -5,7 +5,7 @@
     <div class="actions action-icon">
       <ix-search-input (search)="onListFiltered($event)"></ix-search-input>
 
-      <button mat-button color="primary" ixTest="add-nfs-share" (click)="doAdd()">
+      <button *ixRequiresRoles="requiredRoles" mat-button color="primary" ixTest="add-nfs-share" (click)="doAdd()">
         {{ 'Add' | translate }}
       </button>
     </div>

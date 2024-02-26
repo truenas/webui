@@ -4,6 +4,7 @@ import {
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { combineLatest, map } from 'rxjs';
+import { Role } from 'app/enums/role.enum';
 import { CreateVdevLayout } from 'app/enums/v-dev-type.enum';
 import { Enclosure } from 'app/interfaces/enclosure.interface';
 import { UnusedDisk } from 'app/interfaces/storage.interface';
@@ -32,6 +33,8 @@ export interface ManualDiskSelectionParams {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ManualDiskSelectionComponent implements OnInit {
+  readonly requiredRoles = [Role.FullAdmin];
+
   isSaveDisabled$ = combineLatest([
     this.manualDiskSelectionStore.vdevs$,
     this.manualDiskSelectionStore.layout$,

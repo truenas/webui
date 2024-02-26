@@ -22,6 +22,8 @@ import { AppState } from 'app/store';
   providers: [TaskService],
 })
 export class SmartTaskListComponent implements EntityTableConfig {
+  readonly requiredRoles = [Role.FullAdmin];
+
   title = this.translate.instant('Periodic S.M.A.R.T. Tests');
   queryCall = 'smart.test.query' as const;
   routeAdd: string[] = ['tasks', 'smart', 'add'];

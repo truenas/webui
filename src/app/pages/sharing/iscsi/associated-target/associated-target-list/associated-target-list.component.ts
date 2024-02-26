@@ -28,6 +28,12 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AssociatedTargetListComponent implements OnInit {
+  readonly requiredRoles = [
+    Role.SharingIscsiTargetExtentWrite,
+    Role.SharingIscsiWrite,
+    Role.SharingWrite,
+  ];
+
   isLoading = false;
   filterString = '';
   dataProvider: AsyncDataProvider<IscsiTargetExtent>;
@@ -105,11 +111,7 @@ export class AssociatedTargetListComponent implements OnInit {
                 },
               );
           },
-          requiredRoles: [
-            Role.SharingIscsiTargetExtentWrite,
-            Role.SharingIscsiWrite,
-            Role.SharingWrite,
-          ],
+          requiredRoles: this.requiredRoles,
         },
       ],
     }),

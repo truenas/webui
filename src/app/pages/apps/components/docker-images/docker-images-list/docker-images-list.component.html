@@ -2,7 +2,14 @@
   <ix-page-title-header>
     <ix-search-input (search)="onSearch($event)"></ix-search-input>
 
-    <button mat-button ixTest="pull-image" (click)="doAdd()">{{ 'Pull Image' | translate }}</button>
+    <button
+      *ixRequiresRoles="requiredRoles"
+      mat-button
+      ixTest="pull-image"
+      (click)="doAdd()"
+    >
+      {{ 'Pull Image' | translate }}
+    </button>
   </ix-page-title-header>
 </ng-template>
 

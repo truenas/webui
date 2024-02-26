@@ -2,10 +2,15 @@
   <div *ngSwitchCase="!isActiveDirectoryEnabled && !isLdapEnabled" fxLayout="column" fxLayoutAlign="center center" class="everything-disabled">
     <ix-entity-empty [conf]="noDirectoryServicesConfig"></ix-entity-empty>
     <div class="actions">
-      <button mat-button ixTest="configure-active-directory" (click)="openActiveDirectoryForm()">
+      <button
+        *ixRequiresRoles="requiredRoles"
+        mat-button
+        ixTest="configure-active-directory"
+        (click)="openActiveDirectoryForm()"
+      >
         {{ 'Configure Active Directory' | translate }}
       </button>
-      <button mat-button ixTest="configure-ldap" (click)="openLdapForm()">
+      <button *ixRequiresRoles="requiredRoles" mat-button ixTest="configure-ldap" (click)="openLdapForm()">
         {{ 'Configure LDAP' | translate }}
       </button>
     </div>

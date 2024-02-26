@@ -11,6 +11,7 @@ import {
   from, of, switchMap, tap,
 } from 'rxjs';
 import { DatasetEncryptionType } from 'app/enums/dataset.enum';
+import { Role } from 'app/enums/role.enum';
 import { helptextUnlock } from 'app/helptext/storage/volumes/datasets/dataset-unlock';
 import { DatasetEncryptionSummary, DatasetEncryptionSummaryQueryParams, DatasetEncryptionSummaryQueryParamsDataset } from 'app/interfaces/dataset-encryption-summary.interface';
 import { DatasetUnlockParams, DatasetUnlockResult } from 'app/interfaces/dataset-lock.interface';
@@ -38,6 +39,8 @@ interface DatasetFormGroup {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DatasetUnlockComponent implements OnInit {
+  readonly requiredRoles = [Role.DatasetWrite];
+
   pk: string;
   dialogOpen = false;
   isFormLoading = false;

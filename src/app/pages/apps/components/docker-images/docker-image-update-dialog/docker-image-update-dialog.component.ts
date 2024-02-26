@@ -13,6 +13,7 @@ import { filter } from 'rxjs/operators';
 import { latestVersion } from 'app/constants/catalog.constants';
 import { BulkListItem, BulkListItemState } from 'app/core/components/bulk-list-item/bulk-list-item.interface';
 import { JobState } from 'app/enums/job-state.enum';
+import { Role } from 'app/enums/role.enum';
 import { helptextApps } from 'app/helptext/apps/apps';
 import {
   ContainerImage, PullContainerImageParams, PullContainerImageResponse,
@@ -29,6 +30,8 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DockerImageUpdateDialogComponent {
+  readonly requiredRoles = [Role.FullAdmin];
+
   form = this.fb.group({});
   isJobCompleted = false;
   wasSubmitted = false;

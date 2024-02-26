@@ -3,7 +3,7 @@
     <ix-search-input [value]="filterString" (search)="filterUpdated($event)"></ix-search-input>
     <ix-table-columns-selector [columns]="columns" (columnsChange)="columnsChange($event)"></ix-table-columns-selector>
 
-    <button mat-button color="primary" ixTest="add-task" (click)="add()">
+    <button *ixRequiresRoles="requiredRoles" mat-button color="primary" ixTest="add-task" (click)="add()">
       {{ 'Add' | translate }}
     </button>
   </ix-page-title-header>

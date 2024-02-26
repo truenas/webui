@@ -23,6 +23,8 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class VmwareSnapshotListComponent implements OnInit {
+  readonly requiredRoles = [Role.FullAdmin];
+
   private filterString = '';
 
   protected snapshots: VmwareSnapshot[] = [];
@@ -56,8 +58,6 @@ export class VmwareSnapshotListComponent implements OnInit {
   ], {
     rowTestId: (row) => 'vmware-snapshot-' + row.hostname,
   });
-
-  readonly requiredRoles = [Role.FullAdmin];
 
   constructor(
     protected translate: TranslateService,

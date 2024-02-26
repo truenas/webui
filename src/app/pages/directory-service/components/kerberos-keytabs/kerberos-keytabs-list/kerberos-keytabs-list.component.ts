@@ -29,6 +29,9 @@ import { WebSocketService } from 'app/services/ws.service';
 export class KerberosKeytabsListComponent implements OnInit {
   @Input() paginator = true;
   @Input() toolbar = false;
+
+  readonly requiredRoles = [Role.DirectoryServiceWrite];
+
   filterString = '';
   dataProvider: AsyncDataProvider<KerberosKeytab>;
   kerberosRealsm: KerberosKeytab[] = [];
@@ -53,7 +56,7 @@ export class KerberosKeytabsListComponent implements OnInit {
         {
           iconName: 'delete',
           tooltip: this.translateService.instant('Delete'),
-          requiredRoles: [Role.DirectoryServiceWrite],
+          requiredRoles: this.requiredRoles,
           onClick: (row) => {
             this.dialogService.confirm({
               title: this.translateService.instant('Delete'),

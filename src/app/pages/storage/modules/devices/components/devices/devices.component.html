@@ -1,6 +1,7 @@
 <ng-template ixPageHeader>
   <ix-page-title-header [pageTitle]="pageTitle">
     <a
+      *ixRequiresRoles="requiredRoles"
       mat-button
       color="primary"
       ixTest="add-vdev"
