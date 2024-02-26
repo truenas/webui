@@ -7,6 +7,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { filter } from 'rxjs/operators';
 import { BulkListItem, BulkListItemState } from 'app/core/components/bulk-list-item/bulk-list-item.interface';
+import { Role } from 'app/enums/role.enum';
 import { Bootenv } from 'app/interfaces/bootenv.interface';
 import { CoreBulkResponse } from 'app/interfaces/core-bulk.interface';
 import { Job } from 'app/interfaces/job.interface';
@@ -19,6 +20,8 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class BootPoolDeleteDialogComponent {
+  readonly requiredRoles = [Role.FullAdmin];
+
   form = this.fb.group({
     confirm: [false, [Validators.requiredTrue]],
   });

@@ -1,5 +1,11 @@
 @import 'mixins/cards';
 
+:host ::ng-deep {
+  ix-missing-access-wrapper {
+    margin-left: auto;
+  }
+}
+
 .card {
   @include details-card();
 }

@@ -5,6 +5,7 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import { Role } from 'app/enums/role.enum';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { CloudSyncRestoreDialogComponent } from 'app/pages/data-protection/cloudsync/cloudsync-restore-dialog/cloudsync-restore-dialog.component';
@@ -18,6 +19,8 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AddSpnDialogComponent {
+  readonly requiredRoles = [Role.FullAdmin];
+
   readonly form = this.formBuilder.group({
     username: ['', Validators.required],
     password: ['', Validators.required],

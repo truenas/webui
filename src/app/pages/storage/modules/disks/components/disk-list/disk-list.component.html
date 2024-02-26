@@ -21,6 +21,7 @@
       <span>{{ 'Edit Disk(s)' | translate }}</span>
     </button>
     <button
+      *ixRequiresRoles="requiredRoles"
       mat-button
       ixTest="manual-test-selected"
       (click)="manualTest(selectedDisks)"
@@ -68,6 +69,7 @@
 
         <ng-container *ngIf="isSmartSupported(disk)">
           <button
+            *ixRequiresRoles="requiredRoles"
             mat-button
             [ixTest]="[disk.name, 'manual_test']"
             (click)="manualTest([disk])"
@@ -87,6 +89,7 @@
 
         <ng-container *ngIf="isUnusedDisk(disk)">
           <button
+            *ixRequiresRoles="requiredRoles"
             mat-button
             [ixTest]="[disk.name, 'wipe']"
             (click)="wipe(disk)"

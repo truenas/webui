@@ -40,6 +40,8 @@ import { WebSocketService } from 'app/services/ws.service';
 export class CertificateListComponent implements OnInit {
   @Output() certificateDeleted = new EventEmitter<void>();
 
+  protected requiredRoles = [Role.FullAdmin];
+
   filterString = '';
   dataProvider: AsyncDataProvider<Certificate>;
   certificates: Certificate[] = [];
@@ -69,7 +71,7 @@ export class CertificateListComponent implements OnInit {
         },
         {
           iconName: 'mdi-undo',
-          requiredRoles: [Role.FullAdmin],
+          requiredRoles: this.requiredRoles,
           tooltip: this.translate.instant('Revoke'),
           hidden: (row) => of(!row.can_be_revoked),
           onClick: (row) => this.doRevoke(row),
@@ -86,7 +88,7 @@ export class CertificateListComponent implements OnInit {
         },
         {
           iconName: 'delete',
-          requiredRoles: [Role.FullAdmin],
+          requiredRoles: this.requiredRoles,
           tooltip: this.translate.instant('Delete'),
           onClick: (row) => this.doDelete(row),
         },

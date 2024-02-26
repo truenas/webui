@@ -8,7 +8,7 @@
     [label]="helptext.stripACL_dialog.traverse_checkbox | translate"
   ></ix-checkbox>
 </div>
-<div mat-dialog-actions class="buttons">
+<ix-form-actions mat-dialog-actions class="form-actions">
   <button mat-button ixTest="cancel" matDialogClose>{{ 'Cancel' | translate }}</button>
   <button
     mat-button
@@ -18,4 +18,4 @@
   >
     {{ 'Strip ACLs' | translate }}
   </button>
-</div>
+</ix-form-actions>

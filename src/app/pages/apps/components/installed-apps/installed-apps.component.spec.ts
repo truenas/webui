@@ -622,6 +622,7 @@ describe('Redirect to install app', () => {
       ]),
       mockProvider(AuthService, {
         user$: of({ attributes: { appsAgreement: true } }),
+        hasRole: () => of(true),
       }),
       mockProvider(AppsStore, {
         availableApps$: of(appsResponse),

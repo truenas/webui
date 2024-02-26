@@ -36,16 +36,18 @@
     </div>
 
     <div class="form-actions-cell">
-      <button
-        *ngIf="!isJobCompleted"
-        mat-button
-        type="submit"
-        color="primary"
-        ixTest="delete"
-        [disabled]="form.invalid"
-      >
-        {{ 'Delete' | translate }}
-      </button>
+      <ng-container *ixRequiresRoles="requiredRoles">
+        <button
+          *ngIf="!isJobCompleted"
+          mat-button
+          type="submit"
+          color="primary"
+          ixTest="delete"
+          [disabled]="form.invalid"
+        >
+          {{ 'Delete' | translate }}
+        </button>
+      </ng-container>
 
       <button
         *ngIf="!isJobCompleted"

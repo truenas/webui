@@ -3,7 +3,13 @@
     <h3>{{ 'Static Routes' | translate }}</h3>
 
     <div class="actions action-icon">
-      <button mat-button color="default" [ixTest]="['add-static-route']" (click)="doAdd()">
+      <button
+        *ixRequiresRoles="requiredRoles"
+        mat-button
+        color="default"
+        [ixTest]="['add-static-route']"
+        (click)="doAdd()"
+      >
         {{ 'Add' | translate }}
       </button>
     </div>

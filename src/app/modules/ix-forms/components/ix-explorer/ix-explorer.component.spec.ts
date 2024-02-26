@@ -10,6 +10,7 @@ import { FormControl } from '@ngneat/reactive-forms';
 import { createHostFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockComponent, MockInstance } from 'ng-mocks';
 import { of } from 'rxjs';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
 import { mntPath } from 'app/enums/mnt-path.enum';
 import { Dataset, DatasetCreate } from 'app/interfaces/dataset.interface';
@@ -63,6 +64,7 @@ describe('IxExplorerComponent', () => {
       MockComponent(TreeComponent),
     ],
     providers: [
+      mockAuth(),
       mockProvider(MatDialog, {
         open: jest.fn(() => ({
           afterClosed: () => of({ name: 'new_dataset' } as Dataset),

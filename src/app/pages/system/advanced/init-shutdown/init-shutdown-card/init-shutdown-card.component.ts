@@ -34,6 +34,8 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class InitShutdownCardComponent implements OnInit {
+  readonly requiredRoles = [Role.FullAdmin];
+
   dataProvider: AsyncDataProvider<InitShutdownScript>;
 
   columns = createTable<InitShutdownScript>([
@@ -69,7 +71,7 @@ export class InitShutdownCardComponent implements OnInit {
           iconName: 'delete',
           tooltip: this.translate.instant('Delete'),
           onClick: (row) => this.onDelete(row),
-          requiredRoles: [Role.FullAdmin],
+          requiredRoles: this.requiredRoles,
         },
       ],
     }),

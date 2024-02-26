@@ -5,6 +5,7 @@ import { FormControl } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import { Role } from 'app/enums/role.enum';
 import { helptextVolumes } from 'app/helptext/storage/volumes/volume-list';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { Job } from 'app/interfaces/job.interface';
@@ -21,6 +22,8 @@ import { ErrorHandlerService } from 'app/services/error-handler.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LockDatasetDialogComponent {
+  readonly requiredRoles = [Role.DatasetWrite];
+
   forceCheckbox = new FormControl(false);
 
   constructor(

@@ -6,6 +6,7 @@ import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { tap } from 'rxjs';
+import { Role } from 'app/enums/role.enum';
 import { helptextSystemGeneral as helptext } from 'app/helptext/system/general';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { AuthService } from 'app/services/auth/auth.service';
@@ -17,6 +18,8 @@ import { AuthService } from 'app/services/auth/auth.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UploadConfigDialogComponent {
+  readonly requiredRoles = [Role.FullAdmin];
+
   form = this.formBuilder.group({
     config: [null as File[], Validators.required],
   });

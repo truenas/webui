@@ -33,10 +33,11 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SnapshotTaskListComponent implements OnInit {
+  readonly requiredRoles = [Role.SnapshotTaskWrite];
+
   snapshotTasks: PeriodicSnapshotTaskUi[] = [];
   filterValue = '';
   dataProvider: AsyncDataProvider<PeriodicSnapshotTaskUi>;
-  readonly requiredRoles = [Role.SnapshotTaskWrite];
 
   protected columns = createTable<PeriodicSnapshotTaskUi>([
     textColumn({

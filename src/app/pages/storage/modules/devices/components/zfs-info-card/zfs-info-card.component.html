@@ -58,13 +58,13 @@
 </mat-card>
 
 <ng-template #extend>
-  <button mat-button ixTest="extend" (click)="onExtend()">
+  <button *ixRequiresRoles="[Role.FullAdmin]" mat-button ixTest="extend" (click)="onExtend()">
     {{ 'Extend' | translate }}
   </button>
 </ng-template>
 
 <ng-template #remove>
-  <button mat-button ixTest="remove" (click)="onRemove()">
+  <button *ixRequiresRoles="[Role.FullAdmin]" mat-button ixTest="remove" (click)="onRemove()">
     {{ 'Remove' | translate }}
   </button>
 </ng-template>

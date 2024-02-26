@@ -26,6 +26,12 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PortalListComponent implements OnInit {
+  readonly requiredRoles = [
+    Role.SharingIscsiPortalWrite,
+    Role.SharingIscsiWrite,
+    Role.SharingWrite,
+  ];
+
   isLoading = false;
   filterString = '';
   dataProvider: AsyncDataProvider<IscsiPortal>;
@@ -91,11 +97,7 @@ export class PortalListComponent implements OnInit {
               },
             });
           },
-          requiredRoles: [
-            Role.SharingIscsiPortalWrite,
-            Role.SharingIscsiWrite,
-            Role.SharingWrite,
-          ],
+          requiredRoles: this.requiredRoles,
         },
       ],
     }),

@@ -1,5 +1,11 @@
 <ix-page-header>
-  <button mat-button ixTest="add-init-shutdown-script" color="primary" (click)="addScript()">
+  <button
+    *ixRequiresRoles="requiredRoles"
+    mat-button
+    ixTest="add-init-shutdown-script"
+    color="primary"
+    (click)="addScript()"
+  >
     {{ 'Add' | translate }}
   </button>
 </ix-page-header>

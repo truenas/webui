@@ -27,6 +27,8 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ScrubTaskCardComponent implements OnInit {
+  readonly requiredRoles = [Role.FullAdmin];
+
   dataProvider: AsyncDataProvider<PoolScrubTask>;
 
   columns = createTable<PoolScrubTask>([
@@ -51,7 +53,7 @@ export class ScrubTaskCardComponent implements OnInit {
     toggleColumn({
       title: this.translate.instant('Enabled'),
       propertyName: 'enabled',
-      requiredRoles: [Role.FullAdmin],
+      requiredRoles: this.requiredRoles,
       onRowToggle: (row: PoolScrubTask) => this.onChangeEnabledState(row),
     }),
     actionsColumn({
@@ -64,7 +66,7 @@ export class ScrubTaskCardComponent implements OnInit {
         {
           iconName: 'delete',
           tooltip: this.translate.instant('Delete'),
-          requiredRoles: [Role.FullAdmin],
+          requiredRoles: this.requiredRoles,
           onClick: (row) => this.doDelete(row),
         },
       ],
