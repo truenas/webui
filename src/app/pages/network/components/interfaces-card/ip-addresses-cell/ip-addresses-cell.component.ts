@@ -40,7 +40,7 @@ export class IpAddressesCellComponent extends ColumnComponent<NetworkInterface> 
   private aliasesToAddress(aliases: NetworkInterfaceAlias[]): string[] {
     return aliases
       // TODO: See if checks can be removed or replace with enum.
-      .filter((alias) => alias.type.startsWith('INET'))
+      .filter((alias) => alias.type?.startsWith('INET'))
       .map((alias) => `${alias.address}/${alias.netmask}`);
   }
 }
