@@ -4,8 +4,9 @@ import {
 import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { Observable, of } from 'rxjs';
-import { pairwise } from 'rxjs/operators';
+import {
+  Observable, forkJoin, of, pairwise,
+} from 'rxjs';
 import { Role } from 'app/enums/role.enum';
 import { SystemUpdateStatus } from 'app/enums/system-update.enum';
 import { filterAsync } from 'app/helpers/operators/filter-async.operator';
@@ -61,56 +62,56 @@ export class TrainCardComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.trainService.getAutoDownload().pipe(untilDestroyed(this)).subscribe((isAutoDownloadOn) => {
-      this.trainService.autoCheckValue$.next(isAutoDownloadOn);
+    forkJoin([
+      this.trainService.getAutoDownload(),
+      this.trainService.getTrains(),
+    ]).pipe(untilDestroyed(this)).subscribe({
+      next: ([isAutoDownloadOn, trains]) => {
+        this.trainService.autoCheckValue$.next(isAutoDownloadOn);
+        this.checkable = true;
+        this.cdr.markForCheck();
+        this.trainService.fullTrainList$.next(trains.trains);
 
-      this.trainService.getTrains().pipe(untilDestroyed(this)).subscribe({
-        next: (trains) => {
-          this.checkable = true;
-          this.cdr.markForCheck();
-          this.trainService.fullTrainList$.next(trains.trains);
+        this.trainService.trainValue$.next(trains.selected || '');
+        this.trainService.selectedTrain$.next(trains.selected);
 
-          this.trainService.trainValue$.next(trains.selected || '');
-          this.trainService.selectedTrain$.next(trains.selected);
+        if (isAutoDownloadOn) {
+          this.trainService.check();
+        }
 
-          if (isAutoDownloadOn) {
-            this.trainService.check();
+        this.trains = Object.entries(trains.trains).map(([name, train]) => ({
+          label: `${name} - ${train.description}`,
+          value: name,
+        }));
+        if (this.trains.length > 0) {
+          this.singleDescription = Object.values(trains.trains)[0]?.description;
+        }
+
+        let currentTrainDescription = '';
+
+        if (trains.trains[trains.current]) {
+          if (trains.trains[trains.current].description.toLowerCase().includes('[nightly]')) {
+            currentTrainDescription = '[nightly]';
+          } else if (trains.trains[trains.current].description.toLowerCase().includes('[release]')) {
+            currentTrainDescription = '[release]';
+          } else if (trains.trains[trains.current].description.toLowerCase().includes('[prerelease]')) {
+            currentTrainDescription = '[prerelease]';
+          } else {
+            currentTrainDescription = trains.trains[trains.selected].description.toLowerCase();
           }
+        }
+        this.trainService.currentTrainDescription$.next(currentTrainDescription);
+        // To remember train description if user switches away and then switches back
+        this.trainService.trainDescriptionOnPageLoad$.next(currentTrainDescription);
 
-          this.trains = Object.entries(trains.trains).map(([name, train]) => ({
-            label: `${name} - ${train.description}`,
-            value: name,
-          }));
-          if (this.trains.length > 0) {
-            this.singleDescription = Object.values(trains.trains)[0]?.description;
-          }
-
-          let currentTrainDescription = '';
-
-          if (trains.trains[trains.current]) {
-            if (trains.trains[trains.current].description.toLowerCase().includes('[nightly]')) {
-              currentTrainDescription = '[nightly]';
-            } else if (trains.trains[trains.current].description.toLowerCase().includes('[release]')) {
-              currentTrainDescription = '[release]';
-            } else if (trains.trains[trains.current].description.toLowerCase().includes('[prerelease]')) {
-              currentTrainDescription = '[prerelease]';
-            } else {
-              currentTrainDescription = trains.trains[trains.selected].description.toLowerCase();
-            }
-          }
-          this.trainService.currentTrainDescription$.next(currentTrainDescription);
-          // To remember train description if user switches away and then switches back
-          this.trainService.trainDescriptionOnPageLoad$.next(currentTrainDescription);
-
-          this.cdr.markForCheck();
-        },
-        error: (error: WebSocketError) => {
-          this.dialogService.warn(
-            error.trace.class,
-            this.translate.instant('TrueNAS was unable to reach update servers.'),
-          );
-        },
-      });
+        this.cdr.markForCheck();
+      },
+      error: (error: WebSocketError) => {
+        this.dialogService.warn(
+          error.trace.class,
+          this.translate.instant('TrueNAS was unable to reach update servers.'),
+        );
+      },
     });
 
     this.trainService.trainValue$.pipe(untilDestroyed(this)).subscribe((trainValue) => {
