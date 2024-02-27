@@ -9,6 +9,7 @@ import { of } from 'rxjs';
 import { mockEntityJobComponentRef } from 'app/core/testing/utils/mock-entity-job-component-ref.utils';
 import { helptextApps } from 'app/helptext/apps/apps';
 import { KubernetesConfig } from 'app/interfaces/kubernetes-config.interface';
+import { Pool } from 'app/interfaces/pool.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxSelectHarness } from 'app/modules/ix-forms/components/ix-select/ix-select.harness';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
@@ -56,7 +57,7 @@ describe('SelectPoolDialogComponent', () => {
     form = await loader.getHarness(IxFormHarness);
 
     const kubernetesStore = spectator.inject(KubernetesStore);
-    jest.spyOn(kubernetesStore, 'updatePoolAndKubernetesConfig').mockReturnValue(of({}));
+    jest.spyOn(kubernetesStore, 'updatePoolAndKubernetesConfig').mockReturnValue(of({} as KubernetesConfig));
   });
 
   it('loads pools available in system and shows them in the dropdown', async () => {
@@ -118,7 +119,7 @@ describe('SelectPoolDialogComponent', () => {
 
   it('shows a warning when no pools are available and takes user to create one', () => {
     const appService = spectator.inject(ApplicationsService);
-    jest.spyOn(appService, 'getPoolList').mockReturnValue(of([]));
+    jest.spyOn(appService, 'getPoolList').mockReturnValue(of([] as Pool[]));
     spectator.component.ngOnInit();
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({
