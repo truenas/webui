@@ -16,7 +16,7 @@
   </ng-container>
   <h3 class="ix-form-title">
     {{ title | translate }}
-    <ix-readonly-badge *ngIf="!(hasRequiredRoles | async)"></ix-readonly-badge>
+    <ix-readonly-badge *ngIf="requiredRoles?.length && !(hasRequiredRoles | async)"></ix-readonly-badge>
   </h3>
   <ng-container *ngIf="componentsSize <= 1 && !disableClose">
     <button
