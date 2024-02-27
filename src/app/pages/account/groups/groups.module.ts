@@ -78,7 +78,6 @@ import { DeleteGroupDialogComponent } from './group-details-row/delete-group-dia
     IxTable2Module,
     SearchInputModule,
     SearchInput1Component,
-    IxFormsModule,
   ],
   declarations: [
     GroupListComponent,
