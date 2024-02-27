@@ -59,8 +59,6 @@ export class SnapshotAddFormComponent implements OnInit {
   namingSchemaOptions$: Observable<Option[]>;
   hasVmsInDataset = false;
 
-  protected readonly Role = Role;
-
   readonly helptext = helptextSnapshots;
 
   constructor(

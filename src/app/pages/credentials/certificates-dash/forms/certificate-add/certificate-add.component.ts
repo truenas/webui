@@ -51,8 +51,6 @@ export class CertificateAddComponent {
   isLoading = false;
   summary: SummarySection[];
 
-  protected readonly Role = Role;
-
   constructor(
     private ws: WebSocketService,
     private translate: TranslateService,
