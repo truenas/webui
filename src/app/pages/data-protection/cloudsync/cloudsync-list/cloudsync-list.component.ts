@@ -3,7 +3,6 @@ import {
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { Actions } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import {
@@ -31,7 +30,6 @@ import { CloudsyncWizardComponent } from 'app/pages/data-protection/cloudsync/cl
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { TaskService } from 'app/services/task.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
@@ -137,11 +135,9 @@ export class CloudsyncListComponent implements OnInit {
     private chainedSlideInService: IxChainedSlideInService,
     private dialogService: DialogService,
     private errorHandler: ErrorHandlerService,
-    private slideInService: IxSlideInService,
     private matDialog: MatDialog,
     private snackbar: SnackbarService,
     private store$: Store<AppState>,
-    private actions$: Actions,
     protected emptyService: EmptyService,
   ) {}
 
@@ -165,7 +161,7 @@ export class CloudsyncListComponent implements OnInit {
       hideCheckbox: true,
     }).pipe(
       filter(Boolean),
-      tap(() => row.state = { state: JobState.Running }),
+      tap(() => this.updateRowStateAndJob(row, JobState.Running, row.job)),
       switchMap(() => this.ws.job('cloudsync.sync', [row.id])),
       tapOnce(() => this.snackbar.success(
         this.translate.instant('Cloud Sync «{name}» has started.', { name: row.description }),
@@ -177,8 +173,7 @@ export class CloudsyncListComponent implements OnInit {
       }),
       untilDestroyed(this),
     ).subscribe((job: Job) => {
-      row.state = { state: job.state };
-      row.job = job;
+      this.updateRowStateAndJob(row, job.state, job);
       this.cdr.markForCheck();
     });
   }
@@ -205,8 +200,7 @@ export class CloudsyncListComponent implements OnInit {
           this.translate.instant('Cloud Sync «{name}» stopped.', { name: row.description }),
           true,
         );
-        row.state = { state: JobState.Aborted };
-        row.job = null;
+        this.updateRowStateAndJob(row, JobState.Aborted, null);
         this.cdr.markForCheck();
       });
   }
@@ -228,8 +222,7 @@ export class CloudsyncListComponent implements OnInit {
       }),
       untilDestroyed(this),
     ).subscribe((job: Job) => {
-      row.state = { state: job.state };
-      row.job = job;
+      this.updateRowStateAndJob(row, job.state, job);
       this.cdr.markForCheck();
     });
   }
@@ -314,5 +307,18 @@ export class CloudsyncListComponent implements OnInit {
 
       return transformed;
     });
+  }
+
+  private updateRowStateAndJob(row: CloudSyncTaskUi, state: JobState, job: Job): void {
+    this.dataProvider.setRows(this.cloudSyncTasks.map((task) => {
+      if (task.id === row.id) {
+        return {
+          ...task,
+          state: { state },
+          job,
+        };
+      }
+      return task;
+    }));
   }
 }
