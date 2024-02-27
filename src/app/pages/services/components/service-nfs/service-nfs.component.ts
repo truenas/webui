@@ -43,6 +43,7 @@ export class ServiceNfsComponent implements OnInit {
       Validators.required,
     )]],
     protocols: [[NfsProtocol.V3], Validators.required],
+    v4_domain: [''],
     v4_v3owner: [false],
     v4_krb: [false],
     mountd_port: [null as number, portRangeValidator()],
@@ -56,6 +57,7 @@ export class ServiceNfsComponent implements OnInit {
     bindip: helptextServiceNfs.nfs_srv_bindip_tooltip,
     servers: helptextServiceNfs.nfs_srv_servers_tooltip,
     servers_auto: helptextServiceNfs.nfs_srv_servers_auto_tooltip,
+    v4_domain: helptextServiceNfs.nfs_srv_v4_domain_tooltip,
     v4_v3owner: helptextServiceNfs.nfs_srv_v4_v3owner_tooltip,
     v4_krb: helptextServiceNfs.nfs_srv_v4_krb_tooltip,
     mountd_port: helptextServiceNfs.nfs_srv_mountd_port_tooltip,
@@ -65,8 +67,11 @@ export class ServiceNfsComponent implements OnInit {
   };
 
   readonly ipChoices$ = this.ws.call('nfs.bindip_choices').pipe(choicesToOptions());
+
   readonly protocolOptions$ = of(mapToOptions(nfsProtocolLabels, this.translate));
   readonly requiredRoles = [Role.SharingNfsWrite, Role.SharingWrite];
+
+  private readonly v4SpecificFields = ['v4_v3owner', 'v4_domain', 'v4_krb'] as const;
 
   constructor(
     private ws: WebSocketService,
@@ -90,7 +95,7 @@ export class ServiceNfsComponent implements OnInit {
   }
 
   onSubmit(): void {
-    const params = this.form.value;
+    const params = this.form.getRawValue();
 
     if (params.servers_auto) {
       params.servers = null;
@@ -140,16 +145,21 @@ export class ServiceNfsComponent implements OnInit {
 
   private setFieldDependencies(): void {
     this.form.controls.protocols.valueChanges.pipe(untilDestroyed(this)).subscribe((protocols) => {
-      const nsf4Enabled = protocols.includes(NfsProtocol.V4);
-      if (!nsf4Enabled) {
-        this.form.patchValue({ v4_v3owner: false });
+      const nfs4Enabled = protocols.includes(NfsProtocol.V4);
+      if (!nfs4Enabled) {
+        this.form.patchValue({
+          v4_v3owner: false,
+          v4_domain: '',
+        });
       }
 
-      if (nsf4Enabled) {
-        this.form.controls.v4_v3owner.enable();
-      } else {
-        this.form.controls.v4_v3owner.disable();
-      }
+      this.v4SpecificFields.forEach((field) => {
+        if (nfs4Enabled) {
+          this.form.controls[field].enable();
+        } else {
+          this.form.controls[field].disable();
+        }
+      });
     });
 
     this.form.controls.v4_v3owner.valueChanges.pipe(untilDestroyed(this)).subscribe((v3Owner) => {
