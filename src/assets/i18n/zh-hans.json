@@ -2,7 +2,7 @@
   "": "",
   "\n              It looks like your session has been inactive for more than {lifetime} seconds.<br>\n              For security reasons we will log you out at {time}.\n            ": "",
   " as of {dateTime}": "",
-  "（可选）": "",
+  "(Optional)": "",
   ", ": "",
   "...": "",
   "<a href=\"https://www.ixsystems.com/support/truenas-arrays/\" target=\"_blank\"> TrueNAS Licensing</a> - Learn more about enterprise-grade support.": "",
