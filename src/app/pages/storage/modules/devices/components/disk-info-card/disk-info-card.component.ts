@@ -6,6 +6,7 @@ import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { filter } from 'rxjs/operators';
 import { DiskType } from 'app/enums/disk-type.enum';
+import { Role } from 'app/enums/role.enum';
 import { Disk, TopologyDisk } from 'app/interfaces/storage.interface';
 import { DevicesStore } from 'app/pages/storage/modules/devices/stores/devices-store.service';
 import { DiskFormComponent } from 'app/pages/storage/modules/disks/components/disk-form/disk-form.component';
@@ -25,6 +26,8 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 export class DiskInfoCardComponent {
   @Input() topologyDisk: TopologyDisk;
   @Input() disk: Disk;
+
+  readonly requiredRoles = [Role.FullAdmin];
 
   constructor(
     private matDialog: MatDialog,

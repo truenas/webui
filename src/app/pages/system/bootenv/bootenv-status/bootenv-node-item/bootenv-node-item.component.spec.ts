@@ -1,4 +1,5 @@
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { PoolStatus } from 'app/enums/pool-status.enum';
 import { TopologyItemType } from 'app/enums/v-dev-type.enum';
 import { TopologyItemStatus } from 'app/enums/vdev-status.enum';
@@ -47,6 +48,9 @@ describe('BootenvNodeItemComponent', () => {
 
   const createComponent = createComponentFactory({
     component: BootenvNodeItemComponent,
+    providers: [
+      mockAuth(),
+    ],
     declarations: [],
   });
 

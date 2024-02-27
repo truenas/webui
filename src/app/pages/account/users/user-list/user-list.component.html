@@ -8,7 +8,7 @@
   >
     <label>{{ 'Show Built-in Users' | translate }}</label>
   </mat-slide-toggle>
-  <button mat-button ixTest="add-user" [color]="'primary'" (click)="doAdd()">
+  <button *ixRequiresRoles="requiredRoles" mat-button ixTest="add-user" [color]="'primary'" (click)="doAdd()">
     {{ 'Add' | translate }}
   </button>
 </ix-page-header>

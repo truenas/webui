@@ -12,7 +12,7 @@
   >
     {{ 'Choose Pool' | translate }}
   </button>
-  <button mat-menu-item ixTest="advanced-settings" (click)="onAdvancedSettings()">
+  <button *ixRequiresRoles="requiredRoles" mat-menu-item ixTest="advanced-settings" (click)="onAdvancedSettings()">
     {{ 'Advanced Settings' | translate }}
   </button>
   <ng-container *ngIf="!!(kubernetesStore.selectedPool$ | async)">

@@ -33,18 +33,22 @@
       <ix-icon name="more_vert"></ix-icon>
     </button>
     <mat-menu #menu="matMenu">
-      <button mat-menu-item ixTest="replace" (click)="replace()">
+      <button *ixRequiresRoles="requiredRoles" mat-menu-item ixTest="replace" (click)="replace()">
         <ix-icon name="mdi-file-replace"></ix-icon>
         <span>{{ 'Replace' | translate }}</span>
       </button>
-      <button *ngIf="isDisk && oneDisk" mat-menu-item ixTest="attach" (click)="attach()">
-        <ix-icon name="mdi-attachment-plus"></ix-icon>
-        <span>{{ 'Attach' | translate }}</span>
-      </button>
-      <button *ngIf="isMirror" mat-menu-item ixTest="detach" (click)="detach()">
-        <ix-icon name="mdi-attachment-minus"></ix-icon>
-        <span>{{ 'Detach' | translate }}</span>
-      </button>
+      <ng-container *ixRequiresRoles="requiredRoles">
+        <button *ngIf="isDisk && oneDisk" mat-menu-item ixTest="attach" (click)="attach()">
+          <ix-icon name="mdi-attachment-plus"></ix-icon>
+          <span>{{ 'Attach' | translate }}</span>
+        </button>
+      </ng-container>
+      <ng-container *ixRequiresRoles="requiredRoles">
+        <button *ngIf="isMirror" mat-menu-item ixTest="detach" (click)="detach()">
+          <ix-icon name="mdi-attachment-minus"></ix-icon>
+          <span>{{ 'Detach' | translate }}</span>
+        </button>
+      </ng-container>
     </mat-menu>
   </div>
 </div>

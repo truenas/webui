@@ -1,6 +1,6 @@
 <ix-page-header *ngIf="!inCard">
   <ix-search-input1 (search)="onListFiltered($event)"></ix-search-input1>
-  <button mat-button color="primary" ixTest="add-kerberos-keytabs" (click)="doAdd()">
+  <button *ixRequiresRoles="requiredRoles" mat-button color="primary" ixTest="add-kerberos-keytabs" (click)="doAdd()">
     {{ 'Add' | translate }}
   </button>
 </ix-page-header>
@@ -12,7 +12,7 @@
       <ix-icon name="open_in_new"></ix-icon>
     </div>
     <div class="action">
-      <button mat-button ixTest="add-kerberos-keytabs" (click)="doAdd()">
+      <button *ixRequiresRoles="requiredRoles" mat-button ixTest="add-kerberos-keytabs" (click)="doAdd()">
         {{ 'Add' | translate }}
       </button>
     </div>

@@ -6,6 +6,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { OnOff } from 'app/enums/on-off.enum';
+import { Role } from 'app/enums/role.enum';
 import { helptextVolumes } from 'app/helptext/storage/volumes/volume-list';
 import { Pool } from 'app/interfaces/pool.interface';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
@@ -20,6 +21,8 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AutotrimDialogComponent implements OnInit {
+  readonly requiredRoles = [Role.FullAdmin];
+
   autotrimControl = new FormControl(false);
 
   readonly helptext = helptextVolumes;

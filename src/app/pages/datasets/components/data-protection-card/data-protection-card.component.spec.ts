@@ -3,6 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { SnapshotAddFormComponent } from 'app/pages/datasets/modules/snapshots/snapshot-add-form/snapshot-add-form.component';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -15,6 +16,7 @@ describe('DataProtectionComponent', () => {
   const createComponent = createComponentFactory({
     component: DataProtectionCardComponent,
     providers: [
+      mockAuth(),
       mockProvider(IxSlideInService, {
         open: jest.fn(() => {
           return { slideInClosed$: of() };

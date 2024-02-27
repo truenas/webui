@@ -42,6 +42,8 @@
   </div>
 
   <div class="form-actions">
+    <ng-container *ixRequiresRoles="requiredRoles">
+    </ng-container>
     <button
       *ngIf="!wasSubmitted"
       mat-button

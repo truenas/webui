@@ -3,6 +3,7 @@ import {
 } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { PoolStatus } from 'app/enums/pool-status.enum';
+import { Role } from 'app/enums/role.enum';
 import { TopologyItemType } from 'app/enums/v-dev-type.enum';
 import { TopologyItemStatus } from 'app/enums/vdev-status.enum';
 import { DeviceNestedDataNode } from 'app/interfaces/device-nested-data-node.interface';
@@ -21,6 +22,8 @@ export class BootenvNodeItemComponent {
   @Input() poolInstance: PoolInstance;
   @Input() oneDisk: boolean;
   @Output() invokeAction = new EventEmitter<BootPoolActionEvent>();
+
+  readonly requiredRoles = [Role.FullAdmin];
 
   get ownName(): string {
     if (!this.topologyItem) {

@@ -1,6 +1,6 @@
 <p align="center">
  <a href="https://discord.gg/Q3St5fPETd"><img alt="Join Discord" src="https://badgen.net/discord/members/Q3St5fPETd/?icon=discord&label=Join%20the%20TrueNAS%20Community" /></a>
- <a href="https://www.truenas.com/community/"><img alt="Join Forums" src="https://badgen.net/badge/Forums/Post%20Now//purple" /></a> 
+ <a href="https://www.truenas.com/community/"><img alt="Join Forums" src="https://badgen.net/badge/Forums/Post%20Now//purple" /></a>
  <a href="https://ixsystems.atlassian.net/browse/NAS/"><img alt="File Issue" src="https://badgen.net/badge/Jira/File%20Issue//red?icon=jira" /></a>
 </p>
 
@@ -19,17 +19,18 @@ Images only require the environment variable TNIP to be set to the IP or Hostnam
 
 Example:
 
+```sh
+$ docker container run -it -e TNIP=192.168.0.30 -p 8080:80 ixsystems/truenas-webui:latest
 ```
-# docker container run -it -e TNIP=192.168.0.30 -p 8080:80 ixsystems/truenas-webui:latest
-```
+
 This would allow you to access the running WebUI on http://localhost:8080
 
 NOTE: Pull requests are also generated as Docker images and can be used for testing by replacing the ":latest" tag with the pull-request ID. I.E. "ixsystems/truenas-webui:5010"
 
 # Development requirements
 
-  - yarn >= 1.12
-  - Node.js >= 14
+  - yarn >= 1.22
+  - Node.js >= 16
   - Running TrueNAS CORE or TrueNAS SCALE Nightly Machine (VM is fine)
 
 
@@ -56,7 +57,7 @@ Generate an environment file
 $ yarn check-env
 ```
 
-Configure the remote TrueNAS system you'd like to connect to. 
+Configure the remote TrueNAS system you'd like to connect to.
 (if your ip address changes later you may repeat this step)
 
 ```sh
@@ -70,28 +71,37 @@ zsh example: `alias ui='yarn run --silent ui`
 ## Starting the Application
 
 To start run
-```yarn start```
+
+```sh
+yarn start
+```
 
 This runs a local webserver with the new WebUI, by default at http://localhost:4200.
 If this webserver is kept running, changes to the project will be rebuilt incrementally.
 
 To run the production build, run
 
-```yarn run build:prod:aot```
+```sh
+yarn run build:prod:aot
+```
 
 Getting errors about missing packages?
 
-```yarn install```
+```sh
+yarn install
+```
 
 Getting permission errors or Failed messages when trying to run `yarn start`?
 
 From the webui repo
-```
+
+```sh
 rm -rf node_modules (may need root)
-rm yarn.lock 
+rm yarn.lock
 yarn cache clean --force
 yarn install
 ```
+
 This should bring the yarn environment back to a usable state.
 
 # Translating Text to Other Languages
@@ -103,20 +113,21 @@ Some strings may use [ICU Message Format](https://formatjs.io/docs/core-concepts
 You can move tokens around and adjust them for your language.
 
 For example:
+
 ```
 Deleted {n, plural, one {# snapshot} other {# snapshots}}
 ```
+
 can be translated in Russian as:
+
 ```
 {n, plural, =1 {Снимок удален} few{# снимка удалено} other {# снимков удалено}}
 ```
 
 You can test your strings in an [online editor](http://format-message.github.io/icu-message-format-for-translators/editor.html).
 
-
-Stock images used on the dashboard UI are courtesy of Pixabay.com and are subject to the Simplified Pixabay License. 
+Stock images used on the dashboard UI are courtesy of Pixabay.com and are subject to the Simplified Pixabay License.
 Full license details can be found at https://pixabay.com/service/license/.
-
 
 # Contributing
 

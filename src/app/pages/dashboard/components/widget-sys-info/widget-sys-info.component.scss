@@ -255,7 +255,7 @@ img.clickable,
   align-items: center;
   display: flex;
   flex: 1;
-  margin-right: -16px;
+  margin-right: -29px;
   min-width: 0;
 
   .copy-version-text {
@@ -395,6 +395,7 @@ div.generic.alert {
   bottom: 4px;
   position: absolute;
   text-align: center;
+  width: 100%;
 }
 
 div.generic.alert .ix-icon {

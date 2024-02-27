@@ -44,6 +44,8 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CertificateSigningRequestsListComponent implements OnInit {
+  protected requiredRoles = [Role.FullAdmin];
+
   filterString = '';
   dataProvider: AsyncDataProvider<Certificate>;
   certificates: Certificate[] = [];
@@ -63,6 +65,7 @@ export class CertificateSigningRequestsListComponent implements OnInit {
         {
           iconName: 'build',
           tooltip: this.translate.instant('Create ACME Certificate'),
+          requiredRoles: this.requiredRoles,
           onClick: (row) => this.doCreateAcmeCert(row),
         },
         {
@@ -77,7 +80,7 @@ export class CertificateSigningRequestsListComponent implements OnInit {
         },
         {
           iconName: 'delete',
-          requiredRoles: [Role.FullAdmin],
+          requiredRoles: this.requiredRoles,
           tooltip: this.translate.instant('Delete'),
           onClick: (row) => this.doDelete(row),
         },

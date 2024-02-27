@@ -12,7 +12,7 @@
   >
     <label>{{ 'Show All Groups' | translate }}</label>
   </mat-slide-toggle>
-  <ng-container *ixRequiresRoles="[Role.DatasetWrite]">
+  <ng-container *ixRequiresRoles="requiredRoles">
     <button
       *ngIf="invalidQuotas.length > 0"
       color="primary"
@@ -25,6 +25,7 @@
     </button>
   </ng-container>
   <button
+    *ixRequiresRoles="requiredRoles"
     color="primary"
     class="add-button"
     mat-button
@@ -135,7 +136,7 @@
           >
             <ix-icon name="edit"></ix-icon>
           </button>
-          <ng-container *ixRequiresRoles="[Role.DatasetWrite]">
+          <ng-container *ixRequiresRoles="requiredRoles">
             <button
               *ngIf="row.quota > 0 || row.obj_quota > 0"
               mat-icon-button

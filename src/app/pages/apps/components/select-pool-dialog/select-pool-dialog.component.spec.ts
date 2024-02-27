@@ -6,6 +6,7 @@ import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockEntityJobComponentRef } from 'app/core/testing/utils/mock-entity-job-component-ref.utils';
 import { helptextApps } from 'app/helptext/apps/apps';
 import { KubernetesConfig } from 'app/interfaces/kubernetes-config.interface';
@@ -29,6 +30,7 @@ describe('SelectPoolDialogComponent', () => {
       IxFormsModule,
     ],
     providers: [
+      mockAuth(),
       mockProvider(KubernetesStore, {
         updatePoolAndKubernetesConfig: jest.fn(() => of()),
         updateSelectedPool: jest.fn(() => of()),
