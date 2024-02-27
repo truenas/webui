@@ -75,7 +75,7 @@ export class SupportCardComponent implements OnInit {
     this.store$.pipe(waitForSystemInfo, untilDestroyed(this)).subscribe((systemInfo) => {
       this.systemInfo = { ...systemInfo };
       this.systemInfo.memory = (systemInfo.physmem / GiB).toFixed(0) + ' GiB';
-      if (systemInfo.system_product.includes('MINI')) {
+      if (systemInfo.system_product?.includes('MINI')) {
         const getImage = this.productImageService.getMiniImagePath(systemInfo.system_product);
         if (this.productImageService.isRackmount(systemInfo.system_product)) {
           this.isProductImageRack = true;
