@@ -1,4 +1,5 @@
 <ix-modal-header2
+  [requiredRoles]="requiredRoles"
   [title]="'Kernel' | translate"
   [loading]="isFormLoading"
 ></ix-modal-header2>
@@ -16,7 +17,7 @@
 
       <ix-form-actions>
         <button
-          *ixRequiresRoles="[Role.FullAdmin]"
+          *ixRequiresRoles="requiredRoles"
           mat-button
           type="submit"
           color="primary"

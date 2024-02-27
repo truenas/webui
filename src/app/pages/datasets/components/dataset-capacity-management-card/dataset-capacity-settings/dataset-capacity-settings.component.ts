@@ -25,6 +25,8 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DatasetCapacitySettingsComponent implements OnInit {
+  readonly requiredRoles = [Role.DatasetWrite];
+
   readonly defaultQuotaWarning = 80;
   readonly defaultQuotaCritical = 95;
 
@@ -74,8 +76,6 @@ export class DatasetCapacitySettingsComponent implements OnInit {
     quota_warning_inherit: 'quota_warning',
     quota_critical_inherit: 'quota_critical',
   } as const;
-
-  protected readonly Role = Role;
 
   constructor(
     private ws: WebSocketService,

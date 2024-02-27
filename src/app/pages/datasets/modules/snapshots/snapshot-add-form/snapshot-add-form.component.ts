@@ -35,6 +35,8 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SnapshotAddFormComponent implements OnInit {
+  readonly requiredRoles = [Role.SnapshotWrite];
+
   isFormLoading = true;
   form = this.fb.group({
     dataset: ['', Validators.required],
@@ -57,10 +59,7 @@ export class SnapshotAddFormComponent implements OnInit {
   namingSchemaOptions$: Observable<Option[]>;
   hasVmsInDataset = false;
 
-  protected readonly Role = Role;
-
   readonly helptext = helptextSnapshots;
-  readonly requiredRoles = [Role.SnapshotWrite];
 
   constructor(
     private fb: FormBuilder,

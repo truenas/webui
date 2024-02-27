@@ -31,6 +31,8 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SshKeypairFormComponent implements OnInit {
+  protected requiredRoles = [Role.KeychainCredentialWrite];
+
   get isNew(): boolean {
     return !this.editingKeypair;
   }
@@ -53,8 +55,6 @@ export class SshKeypairFormComponent implements OnInit {
 
   readonly canDownloadPublicKey$ = this.form.value$.pipe(map((value) => value.name && value.public_key));
   readonly canDownloadPrivateKey$ = this.form.value$.pipe(map((value) => value.name && value.private_key));
-
-  protected readonly Role = Role;
 
   constructor(
     private fb: FormBuilder,

@@ -35,6 +35,8 @@ enum SendMethod {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class EmailFormComponent implements OnInit {
+  protected requiredRoles = [Role.FullAdmin];
+
   sendMethodControl = new FormControl(SendMethod.Smtp);
 
   form = this.formBuilder.group({
@@ -56,7 +58,6 @@ export class EmailFormComponent implements OnInit {
 
   isLoading = false;
 
-  protected readonly Role = Role;
   readonly oauthType = OauthButtonType;
   readonly sendMethodOptions$ = of([
     {

@@ -26,6 +26,8 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ServiceSshComponent implements OnInit {
+  protected requiredRoles = [Role.FullAdmin];
+
   isFormLoading = false;
   isBasicMode = true;
 
@@ -67,7 +69,6 @@ export class ServiceSshComponent implements OnInit {
   readonly sftpLogFacilities$ = of(helptextServiceSsh.ssh_sftp_log_facility_options);
   readonly sshWeakCiphers$ = of(helptextServiceSsh.ssh_weak_ciphers_options);
   readonly bindInterfaces$ = this.ws.call('ssh.bindiface_choices').pipe(choicesToOptions());
-  protected readonly Role = Role;
 
   constructor(
     private ws: WebSocketService,

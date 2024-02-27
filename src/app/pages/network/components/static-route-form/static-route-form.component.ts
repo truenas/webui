@@ -21,6 +21,8 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class StaticRouteFormComponent implements OnInit {
+  protected requiredRoles = [Role.FullAdmin];
+
   get isNew(): boolean {
     return !this.editingRoute;
   }
@@ -40,8 +42,6 @@ export class StaticRouteFormComponent implements OnInit {
     gateway: helptextStaticRoutes.sr_gateway_tooltip,
     description: helptextStaticRoutes.sr_description_tooltip,
   };
-
-  protected readonly Role = Role;
 
   constructor(
     private fb: FormBuilder,

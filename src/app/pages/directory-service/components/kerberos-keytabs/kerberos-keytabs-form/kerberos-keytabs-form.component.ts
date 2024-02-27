@@ -19,6 +19,8 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class KerberosKeytabsFormComponent implements OnInit {
+  protected requiredRoles = [Role.DirectoryServiceWrite];
+
   get isNew(): boolean {
     return !this.editingKerberosKeytab;
   }
@@ -37,8 +39,6 @@ export class KerberosKeytabsFormComponent implements OnInit {
   isLoading = false;
 
   readonly helptext = helptextKerberosKeytabs;
-
-  protected readonly Role = Role;
 
   constructor(
     private translate: TranslateService,

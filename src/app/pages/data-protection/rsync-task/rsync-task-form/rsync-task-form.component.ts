@@ -32,6 +32,8 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RsyncTaskFormComponent implements OnInit {
+  readonly requiredRoles = [Role.FullAdmin];
+
   get isNew(): boolean {
     return !this.editingTask;
   }
@@ -77,8 +79,6 @@ export class RsyncTaskFormComponent implements OnInit {
   });
 
   isLoading = false;
-
-  readonly requiredRoles = [Role.FullAdmin];
 
   readonly helptext = helptextRsyncForm;
 

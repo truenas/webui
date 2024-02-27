@@ -37,6 +37,8 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CloudCredentialsFormComponent implements OnInit {
+  protected requiredRoles = [Role.CloudSyncWrite];
+
   commonForm = this.formBuilder.group({
     name: ['Storj', Validators.required],
     provider: [CloudSyncProviderName.Storj],
@@ -53,8 +55,6 @@ export class CloudCredentialsFormComponent implements OnInit {
   @ViewChild('providerFormContainer', { static: true, read: ViewContainerRef }) providerFormContainer: ViewContainerRef;
 
   readonly helptext = helptext;
-
-  protected readonly Role = Role;
 
   constructor(
     private ws: WebSocketService,

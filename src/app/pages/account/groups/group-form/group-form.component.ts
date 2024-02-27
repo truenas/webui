@@ -32,6 +32,8 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class GroupFormComponent implements OnInit {
+  protected requiredRoles = [Role.AccountWrite];
+
   get isNew(): boolean {
     return !this.editingGroup;
   }
@@ -67,8 +69,6 @@ export class GroupFormComponent implements OnInit {
   readonly privilegeOptions$ = this.ws.call('privilege.query').pipe(
     map((privileges) => privileges.map((privilege) => ({ label: privilege.name, value: privilege.id }))),
   );
-
-  protected readonly Role = Role;
 
   constructor(
     private fb: FormBuilder,

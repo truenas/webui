@@ -40,6 +40,8 @@ import { waitForGeneralConfig } from 'app/store/system-config/system-config.sele
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class GuiFormComponent {
+  protected requiredRoles = [Role.FullAdmin];
+
   isFormLoading = true;
   configData: SystemGeneralConfig;
 
@@ -65,7 +67,6 @@ export class GuiFormComponent {
   };
 
   readonly helptext = helptext;
-  protected readonly Role = Role;
 
   constructor(
     private fb: FormBuilder,

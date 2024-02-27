@@ -30,6 +30,8 @@ import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class NetworkConfigurationComponent implements OnInit {
+  protected requiredRoles = [Role.FullAdmin];
+
   isFormLoading = false;
 
   form = this.fb.group({
@@ -186,8 +188,6 @@ export class NetworkConfigurationComponent implements OnInit {
     label: helptextNetworkConfiguration.hosts_placeholder,
     tooltip: helptextNetworkConfiguration.hosts_tooltip,
   };
-
-  protected readonly Role = Role;
 
   constructor(
     private ws: WebSocketService,

@@ -19,11 +19,13 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ReplicationSettingsFormComponent implements OnInit {
+  protected requiredRoles = [Role.ReplicationTaskConfigWrite];
+
   isFormLoading = false;
   form = this.fb.group({
     max_parallel_replication_tasks: [null as number],
   });
-  protected readonly Role = Role;
+
   readonly tooltips = {
     max_parallel_replication_tasks: helptextSystemAdvanced.max_parallel_replication_tasks_tooltip,
   };

@@ -28,6 +28,8 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CertificateAcmeAddComponent {
+  protected requiredRoles = [Role.FullAdmin];
+
   form = this.formBuilder.group({
     name: ['', [
       Validators.required,
@@ -50,8 +52,6 @@ export class CertificateAcmeAddComponent {
   readonly authenticators$ = this.ws.call('acme.dns.authenticator.query').pipe(idNameArrayToOptions());
 
   readonly helptext = helptextSystemCertificates;
-
-  protected readonly Role = Role;
 
   constructor(
     private formBuilder: FormBuilder,

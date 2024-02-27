@@ -47,6 +47,8 @@ import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UpdateComponent implements OnInit {
+  protected requiredRoles = [Role.FullAdmin];
+
   packages: { operation: string; name: string }[] = [];
   status: SystemUpdateStatus;
   releaseNotesUrl = '';
@@ -98,7 +100,6 @@ export class UpdateComponent implements OnInit {
 
   readonly ProductType = ProductType;
   readonly SystemUpdateStatus = SystemUpdateStatus;
-  protected readonly Role = Role;
 
   constructor(
     protected router: Router,

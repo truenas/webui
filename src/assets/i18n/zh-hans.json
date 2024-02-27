@@ -239,6 +239,7 @@
   "Widgets ({n, plural, =1 {# item} other {# items}})": "",
   "With this configuration, the existing directory {path} will be used as a home directory without creating a new directory for the user.": "",
   "of": "",
+  "readonly": "",
   "{app} Catalog Summary": "",
   "{catalog} Catalog": "",
   "{checked} exporter: {name}": "",
