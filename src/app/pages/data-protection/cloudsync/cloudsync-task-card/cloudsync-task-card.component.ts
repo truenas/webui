@@ -47,7 +47,7 @@ import { AppState } from 'app/store';
 export class CloudSyncTaskCardComponent implements OnInit {
   protected requiredRoles = [Role.CloudSyncWrite];
 
-  cloudsyncTasks: CloudSyncTaskUi[] = [];
+  cloudSyncTasks: CloudSyncTaskUi[] = [];
   dataProvider: AsyncDataProvider<CloudSyncTaskUi>;
   jobStates = new Map<number, JobState>();
 
@@ -145,12 +145,12 @@ export class CloudSyncTaskCardComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    const cloudsyncTasks$ = this.ws.call('cloudsync.query').pipe(
-      map((cloudsyncTasks: CloudSyncTaskUi[]) => this.transformCloudSyncTasks(cloudsyncTasks)),
-      tap((cloudsyncTasks) => this.cloudsyncTasks = cloudsyncTasks),
+    const cloudSyncTasks$ = this.ws.call('cloudsync.query').pipe(
+      map((cloudSyncTasks: CloudSyncTaskUi[]) => this.transformCloudSyncTasks(cloudSyncTasks)),
+      tap((cloudSyncTasks) => this.cloudSyncTasks = cloudSyncTasks),
       untilDestroyed(this),
     );
-    this.dataProvider = new AsyncDataProvider<CloudSyncTaskUi>(cloudsyncTasks$);
+    this.dataProvider = new AsyncDataProvider<CloudSyncTaskUi>(cloudSyncTasks$);
     this.getCloudSyncTasks();
   }
 
@@ -206,7 +206,7 @@ export class CloudSyncTaskCardComponent implements OnInit {
       hideCheckbox: true,
     }).pipe(
       filter(Boolean),
-      tap(() => row.state = { state: JobState.Running }),
+      tap(() => this.updateRowStateAndJob(row, JobState.Running, row.job)),
       switchMap(() => this.ws.job('cloudsync.sync', [row.id])),
       tapOnce(() => this.snackbar.success(
         this.translate.instant('Cloud Sync «{name}» has started.', { name: row.description }),
@@ -218,8 +218,7 @@ export class CloudSyncTaskCardComponent implements OnInit {
       }),
       untilDestroyed(this),
     ).subscribe((job: Job) => {
-      row.state = { state: job.state };
-      row.job = job;
+      this.updateRowStateAndJob(row, job.state, job);
       if (this.jobStates.get(job.id) !== job.state) {
         this.getCloudSyncTasks();
       }
@@ -249,8 +248,7 @@ export class CloudSyncTaskCardComponent implements OnInit {
           this.translate.instant('Cloud Sync «{name}» stopped.', { name: row.description }),
           true,
         );
-        row.state = { state: JobState.Aborted };
-        row.job = null;
+        this.updateRowStateAndJob(row, JobState.Aborted, null);
         this.cdr.markForCheck();
       });
   }
@@ -272,8 +270,7 @@ export class CloudSyncTaskCardComponent implements OnInit {
       }),
       untilDestroyed(this),
     ).subscribe((job: Job) => {
-      row.state = { state: job.state };
-      row.job = job;
+      this.updateRowStateAndJob(row, job.state, job);
       if (this.jobStates.get(job.id) !== job.state) {
         this.getCloudSyncTasks();
       }
@@ -288,8 +285,8 @@ export class CloudSyncTaskCardComponent implements OnInit {
     dialog.afterClosed().pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => this.getCloudSyncTasks());
   }
 
-  private transformCloudSyncTasks(cloudsyncTasks: CloudSyncTaskUi[]): CloudSyncTaskUi[] {
-    return cloudsyncTasks.map((task) => {
+  private transformCloudSyncTasks(cloudSyncTasks: CloudSyncTaskUi[]): CloudSyncTaskUi[] {
+    return cloudSyncTasks.map((task) => {
       const formattedCronSchedule = scheduleToCrontab(task.schedule);
       task.credential = task.credentials.name;
       task.cron_schedule = task.enabled ? formattedCronSchedule : this.translate.instant('Disabled');
@@ -325,5 +322,18 @@ export class CloudSyncTaskCardComponent implements OnInit {
           this.dialogService.error(this.errorHandler.parseError(err));
         },
       });
+  }
+
+  private updateRowStateAndJob(row: CloudSyncTaskUi, state: JobState, job: Job): void {
+    this.dataProvider.setRows(this.cloudSyncTasks.map((task) => {
+      if (task.id === row.id) {
+        return {
+          ...task,
+          state: { state },
+          job,
+        };
+      }
+      return task;
+    }));
   }
 }
