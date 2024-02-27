@@ -25,7 +25,6 @@ import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
-import { IxTableModule } from 'app/modules/ix-tables/ix-table.module';
 import { LayoutModule } from 'app/modules/layout/layout.module';
 import { DualListModule } from 'app/modules/lists/dual-list/dual-list.module';
 import { SearchInputModule } from 'app/modules/search-input/search-input.module';
@@ -52,7 +51,6 @@ import { DeleteGroupDialogComponent } from './group-details-row/delete-group-dia
     EffectsModule.forFeature([GroupEffects]),
     EntityModule,
     IxFormsModule,
-    IxTableModule,
     FlexLayoutModule,
     MatButtonModule,
     IxIconModule,

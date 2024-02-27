@@ -48,6 +48,7 @@ export class ApiKeyComponentStore extends ComponentStore<ApiKeysState> {
           tap((keys) => {
             this.patchState({
               entities: keys,
+              isLoading: false,
             });
           }),
           catchError((error: unknown) => {
