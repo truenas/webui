@@ -6,6 +6,7 @@ import { MatInputHarness } from '@angular/material/input/testing';
 import { byText } from '@ngneat/spectator';
 import { Spectator, createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { AppsFiltersSort } from 'app/interfaces/apps-filters-values.interface';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
@@ -38,6 +39,7 @@ describe('AvailableAppsHeaderComponent', () => {
       CustomFormsModule,
     ],
     providers: [
+      mockAuth(),
       mockWebSocket([
         mockCall('chart.release.query', [{}, {}, {}] as ChartRelease[]),
         mockJob('catalog.sync_all'),

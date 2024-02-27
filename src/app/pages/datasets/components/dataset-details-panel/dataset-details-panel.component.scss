@@ -189,19 +189,8 @@
     }
 
     button {
-      @media (max-width: $breakpoint-tablet) {
-        flex: 1;
-        width: 40%;
-      }
-
-      @media (max-width: $breakpoint-sm) {
-        width: 100%;
-      }
-
-      @media (min-width: $breakpoint-hidden) and (max-width: calc($breakpoint-dualcolumn-slim - 1px)) {
-        flex: 1;
-      }
-
+      flex: 1;
+      width: 100%;
     }
   }
 }

@@ -155,6 +155,7 @@ import { WithManageCertificatesLinkComponent } from './components/with-manage-ce
     WithManageCertificatesLinkComponent,
     IxStarRatingComponent,
     IxButtonGroupComponent,
+    ReadOnlyComponent,
   ],
   providers: [
     IxFormatterService,

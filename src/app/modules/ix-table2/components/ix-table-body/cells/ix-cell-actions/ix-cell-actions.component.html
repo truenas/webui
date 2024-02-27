@@ -4,11 +4,11 @@
   >
     <ng-container *ngIf="action.requiredRoles?.length">
       <div
-        *ixRequiresRoles="action.requiredRoles"
+        *ngIf="action.hidden ? !(action.hidden(row) | async) : true"
         [matTooltip]="action.dynamicTooltip ? (action.dynamicTooltip(row) | async) : action.tooltip || ''"
       >
         <button
-          *ngIf="action.hidden ? !(action.hidden(row) | async) : true"
+          *ixRequiresRoles="action.requiredRoles"
           mat-icon-button
           [ixTest]="[rowTestId(row), action.iconName, 'row-action']"
           [disabled]="action.disabled ? (action.disabled(row) | async) : false"

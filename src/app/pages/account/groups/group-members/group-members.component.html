@@ -6,6 +6,7 @@
 
   <mat-card-title *ngIf="group?.group">
     {{ 'Manage members of {name} group' | translate: { name: group.group } }}
+    <ix-readonly-badge *ngIf="requiredRoles?.length && !(hasRequiredRoles | async)"></ix-readonly-badge>
   </mat-card-title>
 
   <mat-card-content>
@@ -32,7 +33,7 @@
 
   <mat-card-actions>
     <button
-      *ixRequiresRoles="[Role.AccountWrite]"
+      *ixRequiresRoles="requiredRoles"
       mat-button
       color="primary"
       ixTest="save"
