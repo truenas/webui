@@ -26,6 +26,8 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class VmwareSnapshotFormComponent implements OnInit {
+  readonly requiredRoles = [Role.FullAdmin];
+
   get isNew(): boolean {
     return !this.editingSnapshot;
   }
@@ -45,8 +47,6 @@ export class VmwareSnapshotFormComponent implements OnInit {
   });
 
   isLoading = false;
-
-  readonly requiredRoles = [Role.FullAdmin];
 
   readonly labels = {
     hostname: helptextVmwareSnapshot.VMware_snapshot_form_hostname_placeholder,

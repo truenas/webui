@@ -69,6 +69,8 @@ interface ZvolFormData {
   providers: [CloudCredentialService],
 })
 export class ZvolFormComponent implements OnInit {
+  readonly requiredRoles = [Role.DatasetWrite];
+
   get title(): string {
     return this.isNew
       ? this.translate.instant(helptextZvol.zvol_title_add)
@@ -93,8 +95,6 @@ export class ZvolFormComponent implements OnInit {
   protected minimumRecommendedBlockSize: DatasetRecordSize;
   protected origVolSize: number;
   protected origHuman: string | number;
-
-  protected readonly Role = Role;
 
   form = this.formBuilder.group({
     name: ['', [Validators.required, forbiddenValues(this.namesInUse)]],

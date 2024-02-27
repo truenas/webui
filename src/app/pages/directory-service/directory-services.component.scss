@@ -1,9 +1,18 @@
 @import 'scss-imports/cssvars';
 
+.actions {
+  display: flex;
+  gap: 8px;
+}
+
+:host ::ng-deep {
+  ix-missing-access-wrapper button {
+    width: 100%;
+  }
+}
+
 .everything-disabled {
   button {
-    margin-right: 10px;
-
     &:last-child {
       margin-right: 0;
     }

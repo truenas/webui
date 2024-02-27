@@ -22,11 +22,13 @@ import { advancedConfigUpdated } from 'app/store/system-config/system-config.act
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class KernelFormComponent implements OnInit {
+  protected requiredRoles = [Role.FullAdmin];
+
   isFormLoading = false;
   form = this.fb.group({
     debugkernel: [false],
   });
-  protected readonly Role = Role;
+
   readonly tooltips = {
     debugkernel: helptextSystemAdvanced.debugkernel_tooltip,
   };

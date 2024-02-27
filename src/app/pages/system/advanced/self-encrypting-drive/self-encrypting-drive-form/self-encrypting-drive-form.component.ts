@@ -28,6 +28,8 @@ import { waitForAdvancedConfig } from 'app/store/system-config/system-config.sel
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SelfEncryptingDriveFormComponent implements OnInit {
+  protected requiredRoles = [Role.FullAdmin];
+
   isFormLoading = false;
   title = helptextSystemAdvanced.fieldset_sed;
   form = this.fb.group({
@@ -43,7 +45,7 @@ export class SelfEncryptingDriveFormComponent implements OnInit {
       ),
     ],
   });
-  protected readonly Role = Role;
+
   readonly sedUserOptions$ = of([
     { label: SedUser.User, value: SedUser.User },
     { label: SedUser.Master, value: SedUser.Master },

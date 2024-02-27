@@ -22,6 +22,8 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DiskBulkEditComponent {
+  protected readonly requiredRoles = [Role.FullAdmin];
+
   diskIds: string[] = [];
   isLoading = false;
   form = this.fb.group({
@@ -31,11 +33,11 @@ export class DiskBulkEditComponent {
     togglesmart: [false],
     smartoptions: [''],
   });
+
   readonly helptext = helptextDisks;
   readonly helptextBulkEdit = helptextDisks.bulk_edit;
   readonly hddstandbyOptions$ = of(helptextDisks.disk_form_hddstandby_options);
   readonly advpowermgmtOptions$ = of(translateOptions(this.translate, this.helptext.disk_form_advpowermgmt_options));
-  protected readonly requiredRoles = [Role.FullAdmin];
 
   constructor(
     private fb: FormBuilder,

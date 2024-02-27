@@ -40,6 +40,8 @@ const customIdmapName = 'custom' as const;
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class IdmapFormComponent implements OnInit {
+  protected requiredRoles = [Role.DirectoryServiceWrite];
+
   get title(): string {
     return this.isNew
       ? this.translate.instant('Add Idmap')
@@ -147,8 +149,6 @@ export class IdmapFormComponent implements OnInit {
   get currentBackend(): IdmapBackendOption {
     return this.backendChoices?.[this.form.controls.idmap_backend.value];
   }
-
-  protected readonly Role = Role;
 
   constructor(
     private formBuilder: FormBuilder,

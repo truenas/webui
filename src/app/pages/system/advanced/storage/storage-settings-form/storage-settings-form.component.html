@@ -1,4 +1,5 @@
 <ix-modal-header
+  [requiredRoles]="requiredRoles"
   [title]="'Storage Settings' | translate"
   [loading]="isFormLoading"
 ></ix-modal-header>
@@ -23,7 +24,7 @@
 
       <ix-form-actions>
         <button
-          *ixRequiresRoles="[Role.FullAdmin]"
+          *ixRequiresRoles="requiredRoles"
           mat-button
           type="submit"
           color="primary"

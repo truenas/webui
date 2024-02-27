@@ -31,6 +31,8 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class KubernetesSettingsComponent implements OnInit {
+  protected readonly requiredRoles = [Role.KubernetesWrite];
+
   isFormLoading = false;
 
   readonly form = this.fb.group({
@@ -59,8 +61,6 @@ export class KubernetesSettingsComponent implements OnInit {
       }));
     }),
   );
-
-  protected readonly requiredRoles = [Role.KubernetesWrite];
 
   private oldConfig: KubernetesConfig;
 

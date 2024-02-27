@@ -31,6 +31,8 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SnapshotTaskFormComponent implements OnInit {
+  readonly requiredRoles = [Role.FullAdmin];
+
   get isNew(): boolean {
     return !this.editingTask;
   }
@@ -56,8 +58,6 @@ export class SnapshotTaskFormComponent implements OnInit {
   });
 
   isLoading = false;
-
-  readonly requiredRoles = [Role.FullAdmin];
 
   readonly labels = {
     dataset: helptextSnapshotForm.dataset_placeholder,

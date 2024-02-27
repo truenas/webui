@@ -32,6 +32,8 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ActiveDirectoryComponent implements OnInit {
+  protected requiredRoles = [Role.DirectoryServiceWrite];
+
   isLoading = false;
   isAdvancedMode = false;
   canLeaveDomain = false;
@@ -71,8 +73,6 @@ export class ActiveDirectoryComponent implements OnInit {
   );
   readonly kerberosPrincipals$ = this.ws.call('kerberos.keytab.kerberos_principal_choices').pipe(singleArrayToOptions());
   readonly nssOptions$ = this.ws.call('activedirectory.nss_info_choices').pipe(singleArrayToOptions());
-
-  protected readonly Role = Role;
 
   constructor(
     private ws: WebSocketService,

@@ -25,9 +25,12 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class InitShutdownFormComponent implements OnInit {
+  protected requiredRoles = [Role.FullAdmin];
+
   get isNew(): boolean {
     return !this.editingScript;
   }
+
   get title(): string {
     return this.isNew
       ? this.translate.instant('Add Init/Shutdown Script')
@@ -64,7 +67,6 @@ export class InitShutdownFormComponent implements OnInit {
   };
 
   readonly treeNodeProvider = this.filesystemService.getFilesystemNodeProvider();
-  protected readonly Role = Role;
 
   constructor(
     private ws: WebSocketService,

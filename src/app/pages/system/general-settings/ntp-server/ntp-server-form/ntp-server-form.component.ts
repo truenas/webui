@@ -20,6 +20,8 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class NtpServerFormComponent implements OnInit {
+  protected requiredRoles = [Role.FullAdmin];
+
   isFormLoading = false;
 
   formGroup = this.fb.group({
@@ -41,7 +43,6 @@ export class NtpServerFormComponent implements OnInit {
   });
 
   readonly helptext = helptext;
-  protected readonly Role = Role;
 
   get isNew(): boolean {
     return !this.editingServer;

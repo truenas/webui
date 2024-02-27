@@ -27,6 +27,8 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LdapComponent implements OnInit {
+  protected requiredRoles = [Role.DirectoryServiceWrite];
+
   isLoading = false;
   isAdvancedMode = false;
 
@@ -67,8 +69,6 @@ export class LdapComponent implements OnInit {
   readonly certificates$ = this.systemGeneralService.getCertificates().pipe(idNameArrayToOptions());
   readonly schemaOptions$ = this.ws.call('ldap.schema_choices').pipe(singleArrayToOptions());
   readonly isEnabled$ = this.form.select((values) => values.enable);
-
-  protected readonly Role = Role;
 
   constructor(
     private ws: WebSocketService,

@@ -18,6 +18,8 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class KerberosSettingsComponent implements OnInit {
+  protected requiredRoles = [Role.DirectoryServiceWrite];
+
   isFormLoading = false;
 
   form = this.fb.group({
@@ -29,8 +31,6 @@ export class KerberosSettingsComponent implements OnInit {
     appdefaults_aux: helptextKerberosSettings.ks_appdefaults_tooltip,
     libdefaults_aux: helptextKerberosSettings.ks_libdefaults_tooltip,
   };
-
-  protected readonly Role = Role;
 
   constructor(
     private ws: WebSocketService,

@@ -31,6 +31,8 @@ import { advancedConfigUpdated } from 'app/store/system-config/system-config.act
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SyslogFormComponent implements OnInit {
+  protected requiredRoles = [Role.FullAdmin];
+
   isFormLoading = false;
   subscriptions: Subscription[] = [];
 
@@ -45,7 +47,7 @@ export class SyslogFormComponent implements OnInit {
   });
 
   readonly isTlsTransport$ = this.form.select((values) => values.syslog_transport === SyslogTransport.Tls);
-  protected readonly Role = Role;
+
   readonly tooltips = {
     fqdn_syslog: helptext.fqdn_tooltip,
     sysloglevel: helptext.sysloglevel.tooltip,
