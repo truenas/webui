@@ -26,6 +26,8 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class GlobalTwoFactorAuthFormComponent implements OnInit {
+  protected requiredRoles = [Role.FullAdmin];
+
   isFormLoading = false;
   form = this.fb.group({
     enabled: [false],
@@ -34,7 +36,6 @@ export class GlobalTwoFactorAuthFormComponent implements OnInit {
   });
 
   enableWarning: string = this.translate.instant('Once enabled, users will be required to set up two factor authentication next time they login.');
-  protected readonly Role = Role;
 
   constructor(
     private fb: FormBuilder,

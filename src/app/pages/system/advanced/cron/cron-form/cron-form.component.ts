@@ -25,6 +25,8 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CronFormComponent implements OnInit {
+  protected requiredRoles = [Role.FullAdmin];
+
   get isNew(): boolean {
     return !this.editingCron;
   }
@@ -58,7 +60,6 @@ export class CronFormComponent implements OnInit {
   };
 
   readonly userProvider = new UserComboboxProvider(this.userService);
-  protected readonly Role = Role;
 
   constructor(
     private fb: FormBuilder,

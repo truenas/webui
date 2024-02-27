@@ -25,6 +25,8 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AlertConfigFormComponent implements OnInit {
+  protected requiredRoles = [Role.FullAdmin];
+
   categories: AlertCategory[] = [];
   selectedCategory: AlertCategory;
   form = this.formBuilder.group({});
@@ -48,8 +50,6 @@ export class AlertConfigFormComponent implements OnInit {
       return policyList.map((policy) => ({ label: policy, value: policy }));
     }),
   );
-
-  protected readonly Role = Role;
 
   constructor(
     private ws: WebSocketService,

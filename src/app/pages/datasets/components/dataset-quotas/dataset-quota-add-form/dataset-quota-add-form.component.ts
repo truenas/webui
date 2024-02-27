@@ -25,6 +25,8 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DatasetQuotaAddFormComponent implements OnInit {
+  readonly requiredRoles = [Role.DatasetWrite];
+
   isLoading = false;
   quotaType: DatasetQuotaType;
   readonly DatasetQuotaType = DatasetQuotaType;
@@ -82,8 +84,6 @@ export class DatasetQuotaAddFormComponent implements OnInit {
       map((groups) => groups.map((group) => group.group)),
     );
   };
-
-  protected readonly Role = Role;
 
   private datasetId: string;
 

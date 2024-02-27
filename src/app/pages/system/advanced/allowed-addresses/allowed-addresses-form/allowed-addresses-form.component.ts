@@ -30,11 +30,12 @@ import { generalConfigUpdated } from 'app/store/system-config/system-config.acti
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AllowedAddressesFormComponent implements OnInit {
+  protected requiredRoles = [Role.FullAdmin];
+
   isFormLoading = false;
   form = this.fb.group({
     addresses: this.fb.array<string>([]),
   });
-  protected readonly Role = Role;
 
   constructor(
     private fb: FormBuilder,

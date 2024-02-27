@@ -7,12 +7,14 @@
       </h3>
     </a>
     <div class="actions">
-      <a
+      <button
         *ixRequiresRoles="requiredRoles"
         mat-button
         [ixTest]="['scrub-task', 'adjust-scrub']"
         [routerLink]="['/data-protection', 'scrub', 'priority']"
-      >{{ 'Adjust Scrub/Resilver Priority' | translate }}</a>
+      >
+        {{ 'Adjust Scrub/Resilver Priority' | translate }}
+      </button>
 
       <button
         *ixRequiresRoles="requiredRoles"

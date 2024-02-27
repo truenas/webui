@@ -61,6 +61,8 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AlertServiceComponent implements OnInit {
+  protected requiredRoles = [Role.FullAdmin];
+
   commonForm = this.formBuilder.group({
     name: ['', Validators.required],
     enabled: [true],
@@ -80,7 +82,6 @@ export class AlertServiceComponent implements OnInit {
   readonly helptext = helptextAlertService;
 
   private alertServiceForm: BaseAlertServiceForm;
-  protected readonly Role = Role;
 
   constructor(
     private formBuilder: FormBuilder,

@@ -40,7 +40,7 @@ export class AccessFormComponent implements OnInit {
   get isEnterprise(): boolean {
     return this.systemGeneralService.isEnterprise;
   }
-  protected readonly Role = Role;
+
   readonly requiredRoles = [Role.FullAdmin];
 
   constructor(

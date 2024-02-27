@@ -50,6 +50,8 @@ export class DatasetFormComponent implements OnInit, AfterViewInit {
   @ViewChild(QuotasSectionComponent) quotasSection: QuotasSectionComponent;
   @ViewChild(OtherOptionsSectionComponent) otherOptionsSection: OtherOptionsSectionComponent;
 
+  readonly requiredRoles = [Role.DatasetWrite];
+
   isLoading = false;
   isAdvancedMode = false;
   datasetPreset = DatasetPreset.Generic;
@@ -58,8 +60,6 @@ export class DatasetFormComponent implements OnInit, AfterViewInit {
 
   parentDataset: Dataset;
   existingDataset: Dataset;
-
-  protected readonly Role = Role;
 
   constructor(
     private ws: WebSocketService,

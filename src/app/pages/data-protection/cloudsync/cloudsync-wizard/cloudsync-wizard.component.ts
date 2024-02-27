@@ -7,6 +7,7 @@ import {
   BehaviorSubject, Observable, merge,
 } from 'rxjs';
 import { cloudsyncProviderNameMap } from 'app/enums/cloudsync-provider.enum';
+import { Role } from 'app/enums/role.enum';
 import { CloudSyncTask, CloudSyncTaskUpdate } from 'app/interfaces/cloud-sync-task.interface';
 import { CloudsyncCredential } from 'app/interfaces/cloudsync-credential.interface';
 import { CHAINED_SLIDE_IN_REF } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
@@ -27,6 +28,9 @@ import { WebSocketService } from 'app/services/ws.service';
 })
 export class CloudsyncWizardComponent {
   @ViewChild(forwardRef(() => CloudsyncWhatAndWhenComponent)) whatAndWhen: CloudsyncWhatAndWhenComponent;
+
+  protected requiredRoles = [Role.CloudSyncWrite];
+
   isLoading$ = new BehaviorSubject(false);
   isProviderLoading$ = new BehaviorSubject(false);
   mergedLoading$: Observable<boolean> = merge(this.isLoading$, this.isProviderLoading$);

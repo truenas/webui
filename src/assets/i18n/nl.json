@@ -60,6 +60,7 @@
   "The system could not retrieve any {item} from the database.": "",
   "The system returned the following error - ": "",
   "Your query didn't return any results. Please try again.": "",
+  "readonly": "",
   " Est. Usable Raw Capacity": "Geschatte bruikbare capaciteit",
   " When the <b>UPS Mode</b> is set to <i>slave</i>. Enter the open network port number of the UPS <i>Master</i> system. The default port is <i>3493</i>.": "Wanneer de <b>UPS-modus</b> is ingesteld op <i>slave</i>. Het open netwerkpoortnummer van het UPS <i>Master</i>-systeem invoeren. De standaardpoort is <i>3493</i>.",
   " bytes.": "bytes,",

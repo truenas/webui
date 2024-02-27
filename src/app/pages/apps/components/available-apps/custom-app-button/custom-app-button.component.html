@@ -3,6 +3,7 @@
   [matTooltipDisabled]="!(customAppDisabled$ | async)"
 >
   <a
+    *ixRequiresRoles="requiredRoles"
     mat-button
     color="primary"
     ixTest="custom-app"

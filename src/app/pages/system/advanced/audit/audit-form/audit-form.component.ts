@@ -30,6 +30,8 @@ import { advancedConfigUpdated } from 'app/store/system-config/system-config.act
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AuditFormComponent implements OnInit {
+  protected requiredRoles = [Role.SystemAuditWrite];
+
   isFormLoading = false;
   subscriptions: Subscription[] = [];
 
@@ -40,7 +42,7 @@ export class AuditFormComponent implements OnInit {
     quota_fill_warning: [null as number, [Validators.required, Validators.min(5), Validators.max(80)]],
     quota_fill_critical: [null as number, [Validators.required, Validators.min(50), Validators.max(95)]],
   });
-  protected readonly Role = Role;
+
   readonly tooltips = {
     retention: helptext.retention_tooltip,
     reservation: helptext.reservation_tooltip,

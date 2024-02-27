@@ -1,4 +1,8 @@
-<ix-modal-header2 [title]="'Cloudsync Task Wizard' | translate" [loading]="mergedLoading$ | async"></ix-modal-header2>
+<ix-modal-header2
+  [requiredRoles]="requiredRoles"
+  [title]="'Cloudsync Task Wizard' | translate"
+  [loading]="mergedLoading$ | async"
+></ix-modal-header2>
 
 <mat-card>
   <mat-card-content>

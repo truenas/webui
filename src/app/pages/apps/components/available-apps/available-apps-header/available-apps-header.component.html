@@ -50,9 +50,16 @@
 <div class="header-numbers">
   <div class="header-number">
     <div class="header-number-title">{{ 'Available Apps' | translate }}</div>
-    <a class="header-link" ixTest="refresh-charts" (click)="refreshCharts()">
+    <a class="header-link" ixTest="refresh-charts">
       <h2 *ngIf="areLoaded$ | async; else loader">{{ (availableApps$ | async).length }}</h2>
-      <span>{{ 'Refresh Charts' | translate }}</span>
+      <a
+        *ixRequiresRoles="requiredRoles"
+        ixTest="refresh-charts"
+        class="refresh-charts"
+        (click)="refreshCharts()"
+      >
+        {{ 'Refresh Charts' | translate }}
+      </a>
     </a>
   </div>
 

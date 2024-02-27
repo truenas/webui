@@ -22,12 +22,13 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SystemSecurityFormComponent implements OnInit {
+  protected requiredRoles = [Role.FullAdmin];
+
   form = this.formBuilder.group({
     enable_fips: [false],
   });
 
   isLoading = false;
-  protected readonly Role = Role;
 
   constructor(
     private ws: WebSocketService,

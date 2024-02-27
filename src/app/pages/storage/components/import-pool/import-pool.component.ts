@@ -31,6 +31,8 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ImportPoolComponent implements OnInit {
+  protected requiredRoles = [Role.FullAdmin];
+
   readonly helptext = helptextImport;
   isLoading = false;
   importablePools: {
@@ -48,8 +50,6 @@ export class ImportPoolComponent implements OnInit {
     tooltip: helptextImport.guid_tooltip,
     options: of<Option[]>([]),
   };
-
-  protected readonly Role = Role;
 
   constructor(
     private fb: FormBuilder,

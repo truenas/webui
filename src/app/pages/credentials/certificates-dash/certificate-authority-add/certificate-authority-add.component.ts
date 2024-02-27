@@ -54,10 +54,10 @@ export class CertificateAuthorityAddComponent implements AfterViewInit {
   // Importing
   @ViewChild(CaImportComponent) import: CaImportComponent;
 
+  protected requiredRoles = [Role.FullAdmin];
+
   isLoading = false;
   summary: SummarySection[];
-
-  protected readonly Role = Role;
 
   constructor(
     private ws: WebSocketService,

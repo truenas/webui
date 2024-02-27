@@ -35,6 +35,8 @@ import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class IpmiFormComponent implements OnInit {
+  protected readonly requiredRoles = [Role.IpmiWrite];
+
   remoteControllerData: Ipmi;
   defaultControllerData: Ipmi;
   isManageButtonDisabled = false;
@@ -46,8 +48,6 @@ export class IpmiFormComponent implements OnInit {
   queryParams: IpmiQueryParams;
 
   readonly helptext = helptextIpmi;
-
-  protected readonly requiredRoles = [Role.IpmiWrite];
 
   form = this.fb.group({
     apply_remote: [null as boolean],
