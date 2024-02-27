@@ -42,6 +42,7 @@ describe('ServiceNfsComponent', () => {
           protocols: [NfsProtocol.V3, NfsProtocol.V4],
           v4_v3owner: false,
           v4_krb: true,
+          v4_domain: 'nfs-domain.com',
           mountd_port: 123,
           rpcstatd_port: 124,
           rpclockd_port: 124,
@@ -91,6 +92,7 @@ describe('ServiceNfsComponent', () => {
       'Specify number of threads manually': '3',
       'Enabled Protocols': ['NFSv3', 'NFSv4'],
       'NFSv3 ownership model for NFSv4': false,
+      'NFSv4 DNS Domain': 'nfs-domain.com',
       'Require Kerberos for NFSv4': true,
       'mountd(8) bind port': '123',
       'rpc.lockd(8) bind port': '124',
@@ -107,6 +109,7 @@ describe('ServiceNfsComponent', () => {
       'Calculate number of threads dynamically': true,
       'Enabled Protocols': ['NFSv4'],
       'NFSv3 ownership model for NFSv4': false,
+      'NFSv4 DNS Domain': 'new-nfs-domain.com',
       'Allow non-root mount': true,
       'Support >16 groups': true,
       'mountd(8) bind port': 554,
@@ -121,6 +124,7 @@ describe('ServiceNfsComponent', () => {
       allow_nonroot: true,
       bindip: ['192.168.1.119'],
       protocols: [NfsProtocol.V4],
+      v4_domain: 'new-nfs-domain.com',
       v4_v3owner: false,
       v4_krb: true,
       mountd_port: 554,
@@ -131,15 +135,18 @@ describe('ServiceNfsComponent', () => {
     }]);
   });
 
-  it('disables NFSv3 ownership model when NFSv4 is off', async () => {
+  it('disables NFSv4 specific fields when NFSv4 is not enabled', async () => {
     const form = await loader.getHarness(IxFormHarness);
     await form.fillForm({
       'Enabled Protocols': ['NFSv3'],
     });
 
-    const controls = await form.getControlHarnessesDict();
-    const nfsV3OwnershipControl = controls['NFSv3 ownership model for NFSv4'] as IxCheckboxHarness;
-    expect(await nfsV3OwnershipControl.isDisabled()).toBe(true);
+    const disabledControls = await form.getDisabledState();
+    expect(disabledControls).toMatchObject({
+      'NFSv4 DNS Domain': true,
+      'NFSv3 ownership model for NFSv4': true,
+      'Require Kerberos for NFSv4': true,
+    });
   });
 
   it('disables Support >16 groups when NFSv3 ownership model is on', async () => {

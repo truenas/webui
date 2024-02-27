@@ -38,6 +38,12 @@
             [required]="true"
           ></ix-select>
 
+          <ix-input
+            formControlName="v4_domain"
+            [label]="'NFSv4 DNS Domain' | translate"
+            [tooltip]="tooltips.v4_domain"
+          ></ix-input>
+
           <ix-checkbox
             formControlName="v4_v3owner"
             [label]="'NFSv3 ownership model for NFSv4' | translate"
