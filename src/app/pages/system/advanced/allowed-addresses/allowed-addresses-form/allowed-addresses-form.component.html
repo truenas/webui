@@ -17,12 +17,19 @@
           *ngFor="let network of form.controls.addresses.controls; let i = index"
           (delete)="removeAddress(i)"
         >
-          <ix-input
+          <!-- <ix-input
             class="ip-address"
             [formControlName]="i"
             [label]="'IP Address' | translate"
             [required]="true"
-          ></ix-input>
+          ></ix-input> -->
+
+          <ix-ip-input-with-netmask
+            class="ip-address"
+            [required]="true"
+            [formControlName]="i"
+            [label]="'IP Address' | translate"
+          ></ix-ip-input-with-netmask>
         </ix-list-item>
       </ix-list>
 

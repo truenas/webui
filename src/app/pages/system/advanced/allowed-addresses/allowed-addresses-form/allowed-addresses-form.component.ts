@@ -14,8 +14,7 @@ import { helptextSystemGeneral } from 'app/helptext/system/general';
 import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ChainedRef } from 'app/modules/ix-forms/components/ix-slide-in/chained-component-ref';
-import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
-import { ipv4Validator } from 'app/modules/ix-forms/validators/ip-validation';
+import { ipv4or6cidrValidator } from 'app/modules/ix-forms/validators/ip-validation';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -31,7 +30,7 @@ import { generalConfigUpdated } from 'app/store/system-config/system-config.acti
 export class AllowedAddressesFormComponent implements OnInit {
   protected requiredRoles = [Role.FullAdmin];
 
-  isFormLoading = false;
+  isFormLoading = true;
   form = this.fb.group({
     addresses: this.fb.array<string>([]),
   });
@@ -45,7 +44,6 @@ export class AllowedAddressesFormComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private snackbar: SnackbarService,
     private translate: TranslateService,
-    private validatorsService: IxValidatorsService,
     private slideInRef: ChainedRef<unknown>,
   ) {}
 
@@ -69,10 +67,7 @@ export class AllowedAddressesFormComponent implements OnInit {
 
   addAddress(): void {
     this.form.controls.addresses.push(
-      this.fb.control('', [
-        this.validatorsService.withMessage(ipv4Validator(), this.translate.instant('Enter a valid IPv4 address.')),
-        Validators.required,
-      ]),
+      this.fb.control('', [Validators.required, ipv4or6cidrValidator()]),
     );
   }
 
@@ -107,6 +102,7 @@ export class AllowedAddressesFormComponent implements OnInit {
   onSubmit(): void {
     this.isFormLoading = true;
     const addresses = this.form.value.addresses;
+
     this.ws.call('system.general.update', [{ ui_allowlist: addresses }]).pipe(
       tap(() => {
         this.store$.dispatch(generalConfigUpdated());
