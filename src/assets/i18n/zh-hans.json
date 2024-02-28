@@ -238,6 +238,7 @@
   "What and When": "",
   "Widgets ({n, plural, =1 {# item} other {# items}})": "",
   "With this configuration, the existing directory {path} will be used as a home directory without creating a new directory for the user.": "",
+  "You may enter a specific IP address (e.g., 192.168.1.1) for individual access, or use an  IP address with a subnet mask (e.g., 192.168.1.0/24) to define a range of addresses.": "",
   "of": "",
   "readonly": "",
   "{app} Catalog Summary": "",

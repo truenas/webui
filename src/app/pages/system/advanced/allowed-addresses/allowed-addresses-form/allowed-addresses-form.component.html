@@ -11,25 +11,19 @@
         [formArray]="form.get('addresses')"
         [empty]="form.controls.addresses.controls.length === 0"
         [label]="'Allowed IP Addresses' | translate"
+        [tooltip]="helpText.allowed_ip_addresses.tooltip"
         (add)="addAddress()"
       >
         <ix-list-item
           *ngFor="let network of form.controls.addresses.controls; let i = index"
           (delete)="removeAddress(i)"
         >
-          <!-- <ix-input
+          <ix-input
             class="ip-address"
             [formControlName]="i"
             [label]="'IP Address' | translate"
             [required]="true"
-          ></ix-input> -->
-
-          <ix-ip-input-with-netmask
-            class="ip-address"
-            [required]="true"
-            [formControlName]="i"
-            [label]="'IP Address' | translate"
-          ></ix-ip-input-with-netmask>
+          ></ix-input>
         </ix-list-item>
       </ix-list>
 
