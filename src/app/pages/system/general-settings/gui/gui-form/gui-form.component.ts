@@ -1,14 +1,21 @@
 import {
+  AfterViewInit,
   ChangeDetectionStrategy,
-  ChangeDetectorRef, Component, Inject,
+  ChangeDetectorRef, Component, ElementRef, Inject, ViewChild,
 } from '@angular/core';
 import {
   FormBuilder,
   Validators,
 } from '@angular/forms';
+import {
+  LRLanguage, LanguageSupport, continuedIndent, foldInside, foldNodeProp, indentNodeProp,
+} from '@codemirror/language';
+import { EditorView } from '@codemirror/view';
+import { LRParser } from '@lezer/lr';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
+import { basicSetup } from 'codemirror';
 import { combineLatest, of } from 'rxjs';
 import {
   filter, switchMap, takeUntil, tap,
@@ -39,11 +46,12 @@ import { waitForGeneralConfig } from 'app/store/system-config/system-config.sele
   templateUrl: './gui-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class GuiFormComponent {
+export class GuiFormComponent implements AfterViewInit {
   protected requiredRoles = [Role.FullAdmin];
 
   isFormLoading = true;
   configData: SystemGeneralConfig;
+  @ViewChild('inputArea', { static: true }) inputArea: ElementRef<HTMLElement>;
 
   formGroup = this.fb.group({
     theme: ['', [Validators.required]],
@@ -85,6 +93,36 @@ export class GuiFormComponent {
   ) {
     this.loadCurrentValues();
     this.setupThemePreview();
+  }
+
+  ngAfterViewInit(): EditorView {
+    const parser = new LRParser();
+    return new EditorView({
+      doc: 'console.log(\'rehan\')',
+      extensions: [
+        basicSetup,
+        new LanguageSupport(LRLanguage.define({
+          name: 'json',
+          parser: parser.configure({
+            props: [
+              indentNodeProp.add({
+                Object: continuedIndent({ except: /^\s*\}/ }),
+                Array: continuedIndent({ except: /^\s*\]/ }),
+              }),
+              foldNodeProp.add({
+                'Object Array': foldInside,
+              }),
+            ],
+          }),
+          languageData: {
+            closeBrackets: { brackets: ['[', '{', '"'] },
+            // eslint-disable-next-line no-useless-escape
+            indentOnInput: /^\s*[\}\]]$/,
+          },
+        })),
+      ],
+      parent: this.inputArea.nativeElement,
+    });
   }
 
   replaceHrefWhenWsConnected(href: string): void {
