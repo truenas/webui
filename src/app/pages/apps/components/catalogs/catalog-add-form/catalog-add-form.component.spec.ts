@@ -2,7 +2,6 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatDialog } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -38,9 +37,6 @@ describe('CatalogAddFormComponent', () => {
         jobDialog: jest.fn(() => ({
           afterClosed: () => of(null),
         })),
-      }),
-      mockProvider(MatDialog, {
-        open: jest.fn(() => mockDialogRef),
       }),
       mockAuth(),
     ],
