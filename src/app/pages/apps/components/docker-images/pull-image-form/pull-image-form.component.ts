@@ -19,6 +19,8 @@ import { ErrorHandlerService } from 'app/services/error-handler.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PullImageFormComponent {
+  protected readonly requiredRoles = [Role.AppsWrite];
+
   isFormLoading = false;
 
   form = this.fb.group({
@@ -34,8 +36,6 @@ export class PullImageFormComponent {
     username: helptextApps.pullImageForm.username.tooltip,
     password: helptextApps.pullImageForm.password.tooltip,
   };
-
-  protected readonly requiredRoles = [Role.AppsWrite];
 
   constructor(
     private slideInRef: IxSlideInRef<PullImageFormComponent>,

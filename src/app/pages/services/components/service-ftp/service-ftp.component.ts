@@ -29,6 +29,8 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ServiceFtpComponent implements OnInit {
+  protected requiredRoles = [Role.FullAdmin];
+
   isFormLoading = false;
   isAdvancedMode = false;
 
@@ -85,7 +87,6 @@ export class ServiceFtpComponent implements OnInit {
 
   readonly isAnonymousLoginAllowed$ = this.form.select((values) => values.onlyanonymous);
   readonly isTlsEnabled$ = this.form.select((values) => values.tls);
-  protected readonly Role = Role;
 
   constructor(
     private formBuilder: FormBuilder,

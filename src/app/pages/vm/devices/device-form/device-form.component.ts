@@ -39,8 +39,9 @@ const specifyCustom = T('Specify custom');
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DeviceFormComponent implements OnInit {
-  isLoading = false;
   protected readonly requiredRoles = [Role.VmDeviceWrite];
+
+  isLoading = false;
 
   get title(): string {
     return this.isNew

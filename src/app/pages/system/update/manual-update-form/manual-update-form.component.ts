@@ -39,6 +39,8 @@ import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ManualUpdateFormComponent implements OnInit {
+  protected requiredRoles = [Role.FullAdmin];
+
   isFormLoading$ = new BehaviorSubject(false);
   form = this.formBuilder.group({
     filelocation: ['', Validators.required],
@@ -53,7 +55,6 @@ export class ManualUpdateFormComponent implements OnInit {
   fileLocationOptions$: Observable<Option[]>;
 
   isHaLicensed = false;
-  protected readonly Role = Role;
 
   constructor(
     private dialogService: DialogService,

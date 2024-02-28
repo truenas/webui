@@ -9,7 +9,7 @@
   <form class="ix-form-container" [formGroup]="form">
     <div class="train-card-row">
       <ix-checkbox
-        *ixRequiresRoles="[Role.FullAdmin]"
+        *ixRequiresRoles="requiredRoles"
         formControlName="auto_check"
         [label]="'Check for Updates Daily and Download if Available' | translate"
         [tooltip]="updatecheckTooltip | translate"
@@ -26,7 +26,7 @@
         [required]="true"
       ></ix-select>
       <button
-        *ixHasRole="[Role.FullAdmin]"
+        *ixHasRole="requiredRoles"
         mat-mini-fab
         color="primary"
         id="refresh-button"
@@ -187,7 +187,7 @@
     <div class="col-md-12">
       <ng-container *ngIf="updatesAvailable">
         <button
-          *ixRequiresRoles="[Role.FullAdmin]"
+          *ixRequiresRoles="requiredRoles"
           mat-button
           ixTest="download-updates"
           [ngClass]="['btn btn-success update-button mat-basic']"
@@ -199,7 +199,7 @@
       </ng-container>
       <ng-container *ngIf="updateDownloaded && status !== SystemUpdateStatus.Unavailable">
         <button
-          *ixRequiresRoles="[Role.FullAdmin]"
+          *ixRequiresRoles="requiredRoles"
           mat-button
           ixTest="apply-pending-update"
           [ngClass]="['btn btn-success update-button mat-basic']"
@@ -209,7 +209,7 @@
         </button>
       </ng-container>
       <button
-        *ixRequiresRoles="[Role.FullAdmin]"
+        *ixRequiresRoles="requiredRoles"
         mat-button
         ixTest="install-manual-update"
         [ngClass]="['btn btn-success update-button mat-basic']"

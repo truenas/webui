@@ -35,6 +35,8 @@ import { systemInfoUpdated } from 'app/store/system-info/system-info.actions';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LocalizationFormComponent implements OnInit {
+  protected requiredRoles = [Role.FullAdmin];
+
   fieldsetTitle = helptext.localeTitle;
 
   isFormLoading = false;
@@ -108,8 +110,6 @@ export class LocalizationFormComponent implements OnInit {
     label: helptext.time_format.placeholder,
     tooltip: helptext.time_format.tooltip,
   };
-
-  protected readonly Role = Role;
 
   constructor(
     private sysGeneralService: SystemGeneralService,

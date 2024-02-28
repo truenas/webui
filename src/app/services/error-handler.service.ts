@@ -39,6 +39,11 @@ export class ErrorHandlerService implements ErrorHandler {
     if (parsedError) {
       error = parsedError;
     }
+
+    if (!this.shouldLogToSentry(error)) {
+      return;
+    }
+
     this.logToSentry(error);
   }
 
@@ -235,5 +240,13 @@ export class ErrorHandlerService implements ErrorHandler {
         };
       }
     }
+  }
+
+  private shouldLogToSentry(error: unknown): boolean {
+    if (error instanceof CloseEvent) {
+      return false;
+    }
+
+    return true;
   }
 }

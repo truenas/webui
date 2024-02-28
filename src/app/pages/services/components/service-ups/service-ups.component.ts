@@ -26,6 +26,8 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ServiceUpsComponent implements OnInit {
+  protected requiredRoles = [Role.FullAdmin];
+
   isFormLoading = false;
   isMasterMode = true;
 
@@ -78,7 +80,7 @@ export class ServiceUpsComponent implements OnInit {
     driver: new SimpleAsyncComboboxProvider(this.ws.call('ups.driver_choices').pipe(choicesToOptions())),
     port: new SimpleAsyncComboboxProvider(this.ws.call('ups.port_choices').pipe(singleArrayToOptions())),
   };
-  protected readonly Role = Role;
+
   readonly tooltips = {
     identifier: helptextServiceUps.ups_identifier_tooltip,
     mode: this.translate.instant(
