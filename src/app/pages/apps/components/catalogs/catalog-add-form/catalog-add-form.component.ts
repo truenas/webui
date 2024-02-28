@@ -7,10 +7,10 @@ import { Role } from 'app/enums/role.enum';
 import { helptextApps } from 'app/helptext/apps/apps';
 import { CatalogCreate } from 'app/interfaces/catalog.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -39,6 +39,7 @@ export class CatalogAddFormComponent {
   };
 
   constructor(
+    private ws: WebSocketService,
     private slideInRef: IxSlideInRef<CatalogAddFormComponent>,
     private errorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
@@ -50,32 +51,29 @@ export class CatalogAddFormComponent {
   ) {}
 
   onSubmit(): void {
-    const values = this.form.value;
+    const values = this.form.value as CatalogCreate;
 
     this.isFormLoading = true;
-
-    const dialogRef = this.matDialog.open(EntityJobComponent, {
-      data: {
-        title: helptextApps.catalogForm.title,
-      },
-    });
-    dialogRef.componentInstance.setCall('catalog.create', [values as CatalogCreate]);
-    dialogRef.componentInstance.submit();
-    dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
-      this.isFormLoading = false;
-      this.cdr.markForCheck();
-      this.dialogService.closeAllDialogs();
-      this.snackbar.success(
-        this.translate.instant('Catalog is being added. This may take some time. You can minimize this dialog and process will continue in background'),
-      );
-      this.slideInRef.close(true);
-    });
-    dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((error) => {
-      this.isFormLoading = false;
-      this.cdr.markForCheck();
-      dialogRef.close();
-      this.dialogService.closeAllDialogs();
-      this.errorHandler.handleWsFormError(error, this.form);
-    });
+    this.dialogService.jobDialog(
+      this.ws.job('catalog.create', [values]),
+      { title: helptextApps.catalogForm.title },
+    )
+      .afterClosed()
+      .pipe(untilDestroyed(this))
+      .subscribe({
+        next: () => {
+          this.isFormLoading = false;
+          this.cdr.markForCheck();
+          this.snackbar.success(
+            this.translate.instant('Catalog is being added. This may take some time. You can minimize this dialog and process will continue in background'),
+          );
+          this.slideInRef.close(true);
+        },
+        error: (error) => {
+          this.isFormLoading = false;
+          this.cdr.markForCheck();
+          this.errorHandler.handleWsFormError(error, this.form);
+        },
+      });
   }
 }

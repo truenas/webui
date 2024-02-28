@@ -10,7 +10,6 @@ import { Role } from 'app/enums/role.enum';
 import { helptextApps } from 'app/helptext/apps/apps';
 import { Catalog } from 'app/interfaces/catalog.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { AsyncDataProvider } from 'app/modules/ix-table2/classes/async-data-provider/async-data-provider';
 import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { SortDirection } from 'app/modules/ix-table2/enums/sort-direction.enum';
@@ -149,9 +148,7 @@ export class CatalogsComponent implements OnInit {
       data: catalog,
     }).afterClosed()
       .pipe(filter(Boolean), untilDestroyed(this))
-      .subscribe(() => {
-        this.refresh();
-      });
+      .subscribe(() => this.refresh());
   }
 
   refreshRow(row: Catalog): void {
@@ -166,38 +163,28 @@ export class CatalogsComponent implements OnInit {
   }
 
   onRefreshAll(): void {
-    const dialogRef = this.matDialog.open(EntityJobComponent, {
-      data: {
-        title: helptextApps.refreshing,
+    this.dialogService.jobDialog(
+      this.ws.job('catalog.sync_all'),
+      {
+        title: this.translate.instant(helptextApps.refreshing),
+        canMinimize: true,
       },
-    });
-    dialogRef.componentInstance.setCall('catalog.sync_all');
-    dialogRef.componentInstance.submit();
-    dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
-      this.dialogService.closeAllDialogs();
-      this.refresh();
-    });
-    dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((error) => {
-      dialogRef.close();
-      this.errorHandler.showErrorModal(error);
-    });
+    )
+      .afterClosed()
+      .pipe(this.errorHandler.catchError(), untilDestroyed(this))
+      .subscribe(() => this.refresh());
   }
 
-  syncRow(row: Catalog): void {
-    const dialogRef = this.matDialog.open(EntityJobComponent, {
-      data: {
-        title: helptextApps.refreshing,
+  syncRow(catalog: Catalog): void {
+    this.dialogService.jobDialog(
+      this.ws.job('catalog.sync', [catalog.label]),
+      {
+        title: this.translate.instant(helptextApps.refreshing),
+        canMinimize: true,
       },
-    });
-    dialogRef.componentInstance.setCall('catalog.sync', [row.label]);
-    dialogRef.componentInstance.submit();
-    dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
-      this.dialogService.closeAllDialogs();
-      this.refresh();
-    });
-    dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((error) => {
-      dialogRef.close();
-      this.errorHandler.showErrorModal(error);
-    });
+    )
+      .afterClosed()
+      .pipe(this.errorHandler.catchError(), untilDestroyed(this))
+      .subscribe(() => this.refresh());
   }
 }
