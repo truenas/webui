@@ -7,11 +7,8 @@ import {
   FormBuilder,
   Validators,
 } from '@angular/forms';
-import {
-  LRLanguage, LanguageSupport, continuedIndent, foldInside, foldNodeProp, indentNodeProp,
-} from '@codemirror/language';
+import { json } from '@codemirror/lang-json';
 import { EditorView } from '@codemirror/view';
-import { LRParser } from '@lezer/lr';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
@@ -96,30 +93,31 @@ export class GuiFormComponent implements AfterViewInit {
   }
 
   ngAfterViewInit(): EditorView {
-    const parser = new LRParser();
+    // const parser = new LRParser();
     return new EditorView({
       doc: 'console.log(\'rehan\')',
       extensions: [
         basicSetup,
-        new LanguageSupport(LRLanguage.define({
-          name: 'json',
-          parser: parser.configure({
-            props: [
-              indentNodeProp.add({
-                Object: continuedIndent({ except: /^\s*\}/ }),
-                Array: continuedIndent({ except: /^\s*\]/ }),
-              }),
-              foldNodeProp.add({
-                'Object Array': foldInside,
-              }),
-            ],
-          }),
-          languageData: {
-            closeBrackets: { brackets: ['[', '{', '"'] },
-            // eslint-disable-next-line no-useless-escape
-            indentOnInput: /^\s*[\}\]]$/,
-          },
-        })),
+        json(),
+        // new LanguageSupport(LRLanguage.define({
+        //   name: 'json',
+        //   parser: parser.configure({
+        //     props: [
+        //       indentNodeProp.add({
+        //         Object: continuedIndent({ except: /^\s*\}/ }),
+        //         Array: continuedIndent({ except: /^\s*\]/ }),
+        //       }),
+        //       foldNodeProp.add({
+        //         'Object Array': foldInside,
+        //       }),
+        //     ],
+        //   }),
+        //   languageData: {
+        //     closeBrackets: { brackets: ['[', '{', '"'] },
+        //     // eslint-disable-next-line no-useless-escape
+        //     indentOnInput: /^\s*[\}\]]$/,
+        //   },
+        // })),
       ],
       parent: this.inputArea.nativeElement,
     });

@@ -59,6 +59,7 @@
     "@bugsplat/angular-tree-component": "~13.0.1",
     "@codemirror/autocomplete": "~6.11.0",
     "@codemirror/lang-javascript": "~6.2.2",
+    "@codemirror/lang-json": "~6.0.1",
     "@codemirror/language": "~6.9.2",
     "@codemirror/lint": "~6.4.2",
     "@codemirror/state": "~6.3.1",
