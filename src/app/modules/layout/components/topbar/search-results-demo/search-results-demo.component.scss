@@ -1,0 +1,45 @@
+::ng-deep {
+  .search-results-backdrop {
+    top: 48px;
+  }
+
+  .search-results-panel {
+    width: 600px;
+  }
+}
+
+:host {
+  display: block;
+  padding: 14px 0 17px;
+}
+
+.section {
+  border-bottom: 1px solid var(--lines);
+  font-size: 18px;
+  margin: 32px 16px 10px 3px;
+  padding-bottom: 10px;
+  padding-left: 17px;
+
+  &:first-child {
+    margin-top: 0;
+  }
+}
+
+.search-result {
+  cursor: pointer;
+  font-size: 13px;
+  padding: 10px 20px 11px;
+
+  &:hover {
+    background-color: var(--bg1);
+  }
+
+  .title {
+    color: var(--alt-fg1);
+    font-size: 16px;
+
+    .highlighted {
+      color: var(--fg1);
+    }
+  }
+}

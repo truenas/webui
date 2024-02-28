@@ -6,6 +6,7 @@ import { MatBadgeModule } from '@angular/material/badge';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatDividerModule } from '@angular/material/divider';
+import { MatInputModule } from '@angular/material/input';
 import { MatListModule } from '@angular/material/list';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
@@ -41,6 +42,9 @@ import {
 import {
   ResilverProgressDialogComponent,
 } from 'app/modules/layout/components/topbar/resilvering-indicator/resilver-progress/resilver-progress.component';
+import {
+  SearchResultsDemoComponent,
+} from 'app/modules/layout/components/topbar/search-results-demo/search-results-demo.component';
 import { TopbarComponent } from 'app/modules/layout/components/topbar/topbar.component';
 import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
@@ -83,6 +87,7 @@ import { UserMenuComponent } from './components/topbar/user-menu/user-menu.compo
     MatProgressBarModule,
     MatTableModule,
     MatProgressSpinnerModule,
+    MatInputModule,
   ],
   declarations: [
     ChangePasswordDialogComponent,
@@ -107,6 +112,7 @@ import { UserMenuComponent } from './components/topbar/user-menu/user-menu.compo
     ConsolePanelDialogComponent,
     ResilverProgressDialogComponent,
     DirectoryServicesMonitorComponent,
+    SearchResultsDemoComponent,
   ],
   exports: [
     ChangePasswordDialogComponent,
