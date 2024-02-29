@@ -125,10 +125,6 @@ export class PrivilegeListComponent implements OnInit {
     this.setSearchProperties();
   }
 
-  getPrivileges(): void {
-    this.dataProvider.load();
-  }
-
   openForm(privilege?: Privilege): void {
     const slideInRef = this.slideInService.open(PrivilegeFormComponent, { data: privilege });
     slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
@@ -193,5 +189,9 @@ export class PrivilegeListComponent implements OnInit {
       textProperty('ds_groups.*.name', this.translate.instant('DS Groups Name'), this.groupsSuggestions$),
       textProperty('roles', this.translate.instant('Roles'), this.rolesSuggestions$, roleNames),
     ]);
+  }
+
+  private getPrivileges(): void {
+    this.dataProvider.load();
   }
 }
