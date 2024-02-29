@@ -1,28 +1,26 @@
-import {
-  AfterViewInit,
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, ViewChild,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MAT_SLIDE_TOGGLE_DEFAULT_OPTIONS } from '@angular/material/slide-toggle';
-import { MatSort, Sort } from '@angular/material/sort';
-import { MatTableDataSource } from '@angular/material/table';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import {
-  Observable, BehaviorSubject, combineLatest, of,
+  filter, map, of, switchMap,
 } from 'rxjs';
-import {
-  filter, switchMap,
-} from 'rxjs/operators';
 import { BootEnvironmentAction } from 'app/enums/boot-environment-action.enum';
-import { EmptyType } from 'app/enums/empty-type.enum';
 import { Role } from 'app/enums/role.enum';
 import { helptextSystemBootenv } from 'app/helptext/system/boot-env';
 import { Bootenv } from 'app/interfaces/bootenv.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
-import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
-import { IxCheckboxColumnComponent } from 'app/modules/ix-tables/components/ix-checkbox-column/ix-checkbox-column.component';
+import { AsyncDataProvider } from 'app/modules/ix-table2/classes/async-data-provider/async-data-provider';
+import { actionsColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
+import { checkboxColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-checkbox/ix-cell-checkbox.component';
+import { dateColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-date/ix-cell-date.component';
+import { sizeColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-size/ix-cell-size.component';
+import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
+import { yesNoColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-yesno/ix-cell-yesno.component';
+import { SortDirection } from 'app/modules/ix-table2/enums/sort-direction.enum';
+import { createTable } from 'app/modules/ix-table2/utils';
 import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -33,6 +31,10 @@ import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 
+interface BootenvUi extends Bootenv {
+  selected: boolean;
+}
+
 @UntilDestroy()
 @Component({
   templateUrl: './bootenv-list.component.html',
@@ -42,76 +44,153 @@ import { WebSocketService } from 'app/services/ws.service';
     { provide: MAT_SLIDE_TOGGLE_DEFAULT_OPTIONS, useValue: { disableToggleValue: true } },
   ],
 })
-export class BootEnvironmentListComponent implements OnInit, AfterViewInit {
-  dataSource = new MatTableDataSource<Bootenv>([]);
-  displayedColumns = ['select', 'name', 'active', 'created', 'rawspace', 'keep', 'actions'];
-  @ViewChild(MatSort, { static: false }) sort: MatSort;
-  @ViewChild(IxCheckboxColumnComponent, { static: false }) checkboxColumn: IxCheckboxColumnComponent<Bootenv>;
-  defaultSort: Sort = { active: 'created', direction: 'desc' };
-  protected readonly Role = Role;
-  isLoading$ = new BehaviorSubject(false);
-  isError$ = new BehaviorSubject(false);
-  isNoData$ = new BehaviorSubject(false);
-  emptyType$: Observable<EmptyType> = combineLatest([
-    this.isLoading$,
-    this.isError$,
-    this.isNoData$,
-  ]).pipe(
-    switchMap(([isLoading, isError, isNoData]) => {
-      switch (true) {
-        case isLoading:
-          return of(EmptyType.Loading);
-        case !!isError:
-          return of(EmptyType.Errors);
-        case isNoData:
-          return of(EmptyType.NoPageData);
-        default:
-          return of(EmptyType.NoSearchResults);
-      }
+export class BootEnvironmentListComponent implements OnInit {
+  readonly requiredRoles = [Role.FullAdmin];
+
+  dataProvider: AsyncDataProvider<BootenvUi>;
+  filterString = '';
+
+  columns = createTable<BootenvUi>([
+    checkboxColumn({
+      propertyName: 'selected',
+      onRowCheck: (row, checked) => {
+        this.bootenvs.find((bootenv) => row.id === bootenv.id).selected = checked;
+        this.dataProvider.setRows([]);
+        this.dataProvider.setRows(this.bootenvs.filter(this.filterBootenv));
+      },
+      onColumnCheck: (checked) => {
+        this.bootenvs.forEach((bootenv) => bootenv.selected = checked);
+        this.dataProvider.setRows([]);
+        this.dataProvider.setRows(this.bootenvs.filter(this.filterBootenv));
+      },
     }),
-  );
+    textColumn({
+      title: this.translate.instant('Name'),
+      propertyName: 'name',
+      sortable: true,
+    }),
+    textColumn({
+      title: this.translate.instant('Active'),
+      propertyName: 'active',
+      sortable: true,
+      getValue: (row) => {
+        switch (row.active) {
+          case 'N':
+            return this.translate.instant('Now');
+          case 'R':
+            return this.translate.instant('Reboot');
+          case 'NR':
+            return this.translate.instant('Now/Reboot');
+          default:
+            return row.active;
+        }
+      },
+    }),
+    dateColumn({
+      title: this.translate.instant('Date Created'),
+      propertyName: 'created',
+      sortable: true,
+      sortBy: (row) => row.created.$date,
+    }),
+    sizeColumn({
+      title: this.translate.instant('Space'),
+      propertyName: 'rawspace',
+      sortable: true,
+    }),
+    yesNoColumn({
+      title: this.translate.instant('Keep'),
+      propertyName: 'keep',
+    }),
+    actionsColumn({
+      actions: [
+        {
+          iconName: 'mdi-check-decagram',
+          requiredRoles: this.requiredRoles,
+          tooltip: this.translate.instant('Activate'),
+          hidden: (row) => of(row.active.includes('R')),
+          onClick: (row) => this.doActivate(row),
+        },
+        {
+          iconName: 'mdi-content-copy',
+          requiredRoles: this.requiredRoles,
+          tooltip: this.translate.instant('Clone'),
+          onClick: (row) => this.doClone(row),
+        },
+        {
+          iconName: 'mdi-rename-box',
+          requiredRoles: this.requiredRoles,
+          tooltip: this.translate.instant('Rename'),
+          onClick: (row) => this.doRename(row),
+        },
+        {
+          iconName: 'mdi-delete',
+          requiredRoles: this.requiredRoles,
+          tooltip: this.translate.instant('Delete'),
+          hidden: (row) => of(!['', '-'].includes(row.active)),
+          onClick: (row) => this.doDelete([row]),
+        },
+        {
+          iconName: 'bookmark',
+          requiredRoles: this.requiredRoles,
+          tooltip: this.translate.instant('Keep'),
+          hidden: (row) => of(row.keep),
+          onClick: (row) => this.toggleKeep(row),
+        },
+        {
+          iconName: 'bookmark_border',
+          requiredRoles: this.requiredRoles,
+          tooltip: this.translate.instant('Unkeep'),
+          hidden: (row) => of(!row.keep),
+          onClick: (row) => this.toggleKeep(row),
+        },
+      ],
+    }),
+  ], {
+    rowTestId: (row) => `bootenv-${row.name}`,
+  });
+
+  get selectedBootenvs(): BootenvUi[] {
+    return this.bootenvs.filter(this.filterBootenv).filter((bootenv) => bootenv.selected);
+  }
 
   get selectionHasItems(): boolean {
-    return this.checkboxColumn.selection.selected.some((bootenv) => ['', '-'].includes(bootenv.active));
+    return this.selectedBootenvs.some((bootenv) => ['', '-'].includes(bootenv.active));
   }
 
-  get emptyConfigService(): EmptyService {
-    return this.emptyService;
-  }
+  private bootenvs: BootenvUi[] = [];
 
   constructor(
-    public formatter: IxFormatterService,
+    private ws: WebSocketService,
+    private matDialog: MatDialog,
+    private translate: TranslateService,
+    private slideInService: IxSlideInService,
     private loader: AppLoaderService,
     private dialogService: DialogService,
-    private ws: WebSocketService,
     private errorHandler: ErrorHandlerService,
-    private translate: TranslateService,
-    private cdr: ChangeDetectorRef,
-    private matDialog: MatDialog,
-    private slideInService: IxSlideInService,
     private snackbar: SnackbarService,
-    private emptyService: EmptyService,
-  ) { }
+    protected emptyService: EmptyService,
+  ) {}
 
   ngOnInit(): void {
-    this.getBootEnvironments();
-  }
-
-  ngAfterViewInit(): void {
-    this.dataSource.sort = this.sort;
+    const request$ = this.ws.call('bootenv.query').pipe(
+      map((bootenvs) => {
+        this.bootenvs = bootenvs.map((bootenv) => ({
+          ...bootenv,
+          selected: false,
+        }));
+        return this.bootenvs.filter(this.filterBootenv);
+      }),
+    );
+    this.dataProvider = new AsyncDataProvider(request$);
+    this.dataProvider.load();
+    this.setDefaultSort();
   }
 
   handleSlideInClosed(slideInRef: IxSlideInRef<unknown>): void {
     slideInRef.slideInClosed$.pipe(
-      filter((value) => value === true),
+      filter(Boolean),
       untilDestroyed(this),
-    ).subscribe(() => {
-      this.getBootEnvironments();
-    });
-  }
-
-  onSearch(query: string): void {
-    this.dataSource.filter = query;
+    ).subscribe(() => this.dataProvider.load());
   }
 
   openBootenvStats(): void {
@@ -151,64 +230,17 @@ export class BootEnvironmentListComponent implements OnInit, AfterViewInit {
     });
   }
 
-  doDelete(bootenvs: Bootenv[]): void {
+  doDelete(bootenvs: BootenvUi[]): void {
+    bootenvs.forEach((bootenv) => delete bootenv.selected);
     this.matDialog.open(BootPoolDeleteDialogComponent, {
       data: bootenvs.filter((bootenv) => bootenv.active === '-' || bootenv.active === ''),
     }).afterClosed().pipe(
       filter(Boolean),
       untilDestroyed(this),
-    ).subscribe(() => {
-      this.getBootEnvironments();
-      this.checkboxColumn.clearSelection();
-      this.cdr.markForCheck();
-    });
+    ).subscribe(() => this.dataProvider.load());
   }
 
-  private createDataSource(bootenvs: Bootenv[] = []): void {
-    this.dataSource = new MatTableDataSource(bootenvs);
-    this.dataSource.sort = this.sort;
-    this.dataSource.sortingDataAccessor = (item, property) => {
-      switch (property) {
-        case 'name':
-          return item.name;
-        case 'created':
-          return item.created.$date;
-        case 'rawspace':
-          return item.rawspace;
-        case 'keep':
-          return item.keep.toString();
-        case 'active':
-          return item.active;
-        default:
-          return item.id;
-      }
-    };
-  }
-
-  private getBootEnvironments(): void {
-    this.isLoading$.next(true);
-    this.isError$.next(false);
-    this.cdr.markForCheck();
-
-    this.ws.call('bootenv.query').pipe(
-      untilDestroyed(this),
-    ).subscribe({
-      next: (bootenvs) => {
-        this.isNoData$.next(!bootenvs.length);
-        this.createDataSource(bootenvs);
-        this.isLoading$.next(false);
-        this.cdr.markForCheck();
-      },
-      error: () => {
-        this.createDataSource();
-        this.isLoading$.next(false);
-        this.isError$.next(true);
-        this.cdr.markForCheck();
-      },
-    });
-  }
-
-  doActivate(bootenv: Bootenv): void {
+  doActivate(bootenv: BootenvUi): void {
     this.dialogService.confirm({
       title: this.translate.instant('Activate'),
       message: this.translate.instant('Activate this Boot Environment?'),
@@ -222,13 +254,10 @@ export class BootEnvironmentListComponent implements OnInit, AfterViewInit {
         );
       }),
       untilDestroyed(this),
-    ).subscribe(() => {
-      this.getBootEnvironments();
-      this.checkboxColumn.clearSelection();
-    });
+    ).subscribe(() => this.dataProvider.load());
   }
 
-  toggleKeep(bootenv: Bootenv): void {
+  toggleKeep(bootenv: BootenvUi): void {
     if (!bootenv.keep) {
       this.dialogService.confirm({
         title: this.translate.instant('Keep'),
@@ -243,10 +272,7 @@ export class BootEnvironmentListComponent implements OnInit, AfterViewInit {
           );
         }),
         untilDestroyed(this),
-      ).subscribe(() => {
-        this.getBootEnvironments();
-        this.checkboxColumn.clearSelection();
-      });
+      ).subscribe(() => this.dataProvider.load());
     } else {
       this.dialogService.confirm({
         title: this.translate.instant('Unkeep'),
@@ -261,10 +287,25 @@ export class BootEnvironmentListComponent implements OnInit, AfterViewInit {
           );
         }),
         untilDestroyed(this),
-      ).subscribe(() => {
-        this.getBootEnvironments();
-        this.checkboxColumn.selection.clear();
-      });
+      ).subscribe(() => this.dataProvider.load());
     }
+  }
+
+  protected filterUpdated(query: string): void {
+    this.filterString = query;
+    this.dataProvider.setRows(this.bootenvs.filter(this.filterBootenv));
+  }
+
+  private filterBootenv = (bootenv: BootenvUi): boolean => {
+    return bootenv.name.toLowerCase().includes(this.filterString.toLowerCase());
+  };
+
+  private setDefaultSort(): void {
+    this.dataProvider.setSorting({
+      active: 3,
+      direction: SortDirection.Desc,
+      propertyName: 'created',
+      sortBy: (row) => row.created.$date,
+    });
   }
 }
