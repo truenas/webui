@@ -2,15 +2,18 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockEntityJobComponentRef } from 'app/core/testing/utils/mock-entity-job-component-ref.utils';
+import { mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { ChartRelease, ChartReleaseVersion } from 'app/interfaces/chart-release.interface';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxSelectHarness } from 'app/modules/ix-forms/components/ix-select/ix-select.harness';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { AppRollbackModalComponent } from 'app/pages/apps/components/installed-apps/app-rollback-modal/app-rollback-modal.component';
+import { WebSocketService } from 'app/services/ws.service';
 
 describe('AppRollbackModalComponent', () => {
   let spectator: Spectator<AppRollbackModalComponent>;
@@ -23,9 +26,6 @@ describe('AppRollbackModalComponent', () => {
     ],
     providers: [
       mockProvider(MatDialogRef),
-      mockProvider(MatDialog, {
-        open: jest.fn(() => mockEntityJobComponentRef),
-      }),
       {
         provide: MAT_DIALOG_DATA,
         useValue: {
@@ -37,6 +37,14 @@ describe('AppRollbackModalComponent', () => {
         } as ChartRelease,
       },
       mockAuth(),
+      mockWebSocket([
+        mockJob('chart.release.rollback'),
+      ]),
+      mockProvider(DialogService, {
+        jobDialog: jest.fn(() => ({
+          afterClosed: () => of(null),
+        })),
+      }),
     ],
   });
 
@@ -62,11 +70,11 @@ describe('AppRollbackModalComponent', () => {
     const rollbackButton = await loader.getHarness(MatButtonHarness.with({ text: 'Roll Back' }));
     await rollbackButton.click();
 
-    expect(mockEntityJobComponentRef.componentInstance.setCall).toHaveBeenCalledWith(
+    expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
+    expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith(
       'chart.release.rollback',
       ['my-app', { item_version: '0.9.8', rollback_snapshot: true }],
     );
-    expect(mockEntityJobComponentRef.componentInstance.submit).toHaveBeenCalled();
     expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith(true);
   });
 });
