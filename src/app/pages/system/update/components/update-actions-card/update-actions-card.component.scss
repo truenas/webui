@@ -1,0 +1,18 @@
+.buttons-container {
+  display: flex;
+  gap: 6px;
+}
+
+.update-running-msg {
+  bottom: 3px;
+  font-size: larger;
+  font-weight: 500;
+  margin-left: 10px;
+  position: relative;
+}
+
+mat-card {
+  margin: 0 auto 15px;
+  max-width: 960px;
+  padding: 20px !important;
+}
