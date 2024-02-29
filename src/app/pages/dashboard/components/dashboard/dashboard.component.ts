@@ -292,6 +292,7 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
   }
 
   private applyState(newState: DashConfigItem[]): void {
+    // TODO: Remove this method and use the store to update the state
     // This reconciles current state with saved dashState
 
     if (!this.dashState) {
@@ -312,6 +313,7 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
   }
 
   private setDashState(dashState: DashConfigItem[]): void {
+    // TODO: Remove this method and use the store to update the state
     this.dashState = dashState;
     if (!this.reorderMode) {
       this.renderedWidgets = this.dashState.filter((widget) => widget.rendered);

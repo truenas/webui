@@ -8,6 +8,7 @@
     </a>
     <div class="actions">
       <button
+        *ixRequiresRoles="requiredRoles"
         mat-button
         [ixTest]="['cron', 'add']"
         (click)="onAdd()"

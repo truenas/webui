@@ -55,11 +55,11 @@
           <span class="td">pool data</span>
           <span class="td">
             <mat-spinner
-              *ngIf="!systemState || systemState.arePoolsLoading"
+              *ngIf="!systemState || systemState.areEnclosuresLoading"
               class="spinner indicator"
               [diameter]="22"></mat-spinner>
             <ix-icon
-              *ngIf="systemState && !systemState.arePoolsLoading"
+              *ngIf="systemState && !systemState.areEnclosuresLoading"
               name="mdi-check-circle"
               class="icon indicator"></ix-icon>
           </span>
@@ -97,10 +97,10 @@
       [fxFlex]="'calc(100% - ' + minWidth + 'px )'"
     >
 
-      <ng-container *ngIf="supportedHardware && showVisualizer">
+      <ng-container *ngIf="supportedHardware && controller && showVisualizer">
         <!-- Rackmount -->
         <div
-          *ngIf="isRackmount; else mini"
+          *ngIf="controller?.rackmount; else mini"
           class="enclosure-disks-wrapper"
         >
           <ix-enclosure-disks
@@ -116,7 +116,7 @@
         <ng-template #mini>
           <div class="mini-container">
             <ix-enclosure-disks-mini
-              *ngIf="events && systemState?.pools && systemState?.enclosureViews "
+              *ngIf="events && systemState?.enclosures"
               [controller-events]="events"
               [current-tab]="currentView"
               [profile]="systemProfile"
@@ -138,19 +138,19 @@
       <!-- Loading indicator -->
       <ng-container *ngIf="spinner; then simplespinner"></ng-container>
 
-      <ng-container *ngIf="systemState?.enclosureViews">
-        <ng-container *ngFor="let enclosure of systemState?.enclosureViews; let i = index">
+      <ng-container *ngIf="systemState?.enclosures.length">
+        <ng-container *ngFor="let enclosure of systemState?.enclosures; let i = index">
           <div
-            *ngIf="systemState.enclosureViews.length; else emptysquare"
-            [class]="['enclosure', 'enclosure-'+ i]"
-            [class.active]="enclosure.number === systemState.selectedEnclosure"
-            (click)="selectEnclosure(enclosure.number)"
+            *ngIf="systemState.enclosures.length; else emptysquare"
+            [class]="['enclosure', 'enclosure-'+ enclosure.id]"
+            [class.active]="enclosure.id === systemState.selectedEnclosure"
+            (click)="selectEnclosure(enclosure.id)"
           >
-            <div *ngIf="systemState.enclosures[enclosure.number]?.label === systemState.enclosures[enclosure.number].name">
+            <div *ngIf="systemState.enclosures[i]?.label === systemState.enclosures[i].name">
               {{ enclosure.model }} ({{ i }})
             </div>
-            <div *ngIf="systemState.enclosures[enclosure.number]?.label !== systemState.enclosures[enclosure.number].name">
-              {{ systemState.enclosures[enclosure.number].label }} ({{ i }})
+            <div *ngIf="systemState.enclosures[i]?.label !== systemState.enclosures[i].name">
+              {{ systemState.enclosures[enclosure.number]}}.label ({{ i }})
             </div>
           </div>
           <ng-template #emptysquare><div class="enclosure-selector-item empty"></div></ng-template>

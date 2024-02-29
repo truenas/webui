@@ -10,6 +10,7 @@ import _ from 'lodash';
 import { Observable, of, switchMap } from 'rxjs';
 import { filter, tap } from 'rxjs/operators';
 import { GiB } from 'app/constants/bytes.constant';
+import { Role } from 'app/enums/role.enum';
 import { helptextSystemSupport as helptext } from 'app/helptext/system/support';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FeedbackDialogComponent } from 'app/modules/feedback/components/feedback-dialog/feedback-dialog.component';
@@ -39,6 +40,8 @@ import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SupportCardComponent implements OnInit {
+  readonly requiredRoles = [Role.FullAdmin];
+
   isProduction: boolean;
   productImage = 'ix-original-cropped.png';
   isProductImageRack = false;
@@ -72,7 +75,7 @@ export class SupportCardComponent implements OnInit {
     this.store$.pipe(waitForSystemInfo, untilDestroyed(this)).subscribe((systemInfo) => {
       this.systemInfo = { ...systemInfo };
       this.systemInfo.memory = (systemInfo.physmem / GiB).toFixed(0) + ' GiB';
-      if (systemInfo.system_product.includes('MINI')) {
+      if (systemInfo.system_product?.includes('MINI')) {
         const getImage = this.productImageService.getMiniImagePath(systemInfo.system_product);
         if (this.productImageService.isRackmount(systemInfo.system_product)) {
           this.isProductImageRack = true;

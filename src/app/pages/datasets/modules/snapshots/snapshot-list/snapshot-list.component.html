@@ -28,7 +28,7 @@
     </mat-slide-toggle>
   </ng-template>
 
-  <button mat-button color="primary" ixTest="add-snapshot" (click)="doAdd()">
+  <button *ixRequiresRoles="requiredRoles" mat-button color="primary" ixTest="add-snapshot" (click)="doAdd()">
     {{ 'Add' | translate }}
   </button>
 </ix-page-header>
@@ -43,7 +43,7 @@
 
   <div class="actions">
     <button
-      *ixRequiresRoles="[Role.SnapshotDelete]"
+      *ixRequiresRoles="requiredRoles"
       mat-button
       matTooltipPosition="below"
       ixTest="delete-selected"

@@ -36,10 +36,11 @@ import { WebSocketService } from 'app/services/ws.service';
   providers: [IxFileSizePipe],
 })
 export class VmListComponent implements OnInit {
+  protected requiredRoles = [Role.VmWrite];
+
   vmMachines: VirtualMachine[] = [];
   filterString = '';
   dataProvider: AsyncDataProvider<VirtualMachine>;
-  protected requiredRoles = [Role.VmWrite];
   protected memWarning = helptextVmWizard.memory_warning;
   protected hasVirtualizationSupport$ = this.vmService.hasVirtualizationSupport$;
   protected availableMemory$ = this.vmService.getAvailableMemory().pipe(toLoadingState());

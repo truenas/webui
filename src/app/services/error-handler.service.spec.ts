@@ -62,6 +62,7 @@ describe('ErrorHandlerService', () => {
   });
 
   beforeEach(() => {
+    jest.resetAllMocks();
     spectator = createService();
 
     const dialogService = spectator.inject(DialogService);
@@ -100,6 +101,12 @@ describe('ErrorHandlerService', () => {
         message: 'Dummy Error',
         title: 'Error',
       });
+    });
+
+    it('does not log Websocket CloseEvent to Sentry', () => {
+      spectator.service.handleError(new CloseEvent('close'));
+
+      expect(spectator.service.logToSentry).not.toHaveBeenCalled();
     });
 
     it('logs websocket error', () => {

@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { forkJoin, Observable, of } from 'rxjs';
+import { Role } from 'app/enums/role.enum';
 import { helptextApps } from 'app/helptext/apps/apps';
 import { KubernetesConfigUpdate } from 'app/interfaces/kubernetes-config.interface';
 import { Option } from 'app/interfaces/option.interface';
@@ -23,6 +24,8 @@ import { ErrorHandlerService } from 'app/services/error-handler.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SelectPoolDialogComponent implements OnInit {
+  readonly requiredRoles = [Role.FullAdmin];
+
   form = this.formBuilder.group({
     pool: [''],
     migrateApplications: [false],

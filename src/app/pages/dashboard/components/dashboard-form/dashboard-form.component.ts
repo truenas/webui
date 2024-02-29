@@ -92,6 +92,10 @@ export class DashboardFormComponent implements OnInit {
 
     const clone: DashConfigItem[] = [...this.dashState].map((widget) => {
       let identifier: string = widget.name;
+      if (widget.name === WidgetName.SystemInformationStandby || widget?.identifier === 'passive,true') {
+        // TODO: This is a hack to handle the standby widget. Make it better.
+        return { ...widget, rendered: this.form.value[WidgetName.SystemInformation] as boolean };
+      }
       if (widget.identifier) {
         identifier = widget.identifier.split(',')[1];
       }

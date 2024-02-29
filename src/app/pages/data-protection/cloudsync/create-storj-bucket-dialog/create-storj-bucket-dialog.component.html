@@ -9,7 +9,7 @@
       [label]="'Bucket Name' | translate"
     ></ix-input>
   </div>
-  <div mat-dialog-actions>
+  <ix-form-actions mat-dialog-actions class="form-actions">
     <span fxFlex></span>
     <button
       mat-button
@@ -18,12 +18,13 @@
       [mat-dialog-close]="false"
     >{{ 'Cancel' | translate }}</button>
     <button
+      *ixRequiresRoles="requiredRoles"
       mat-button
       type="submit"
       color="primary"
       ixTest="save"
       [disabled]="form.invalid"
     >{{ 'Save' | translate }}</button>
-  </div>
+  </ix-form-actions>
 </form>
 

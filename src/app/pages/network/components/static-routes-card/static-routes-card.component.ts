@@ -28,6 +28,8 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class StaticRoutesCardComponent implements OnInit {
+  readonly requiredRoles = [Role.FullAdmin];
+
   filterString = '';
   dataProvider: AsyncDataProvider<StaticRoute>;
   staticRoutes: StaticRoute[] = [];
@@ -52,7 +54,7 @@ export class StaticRoutesCardComponent implements OnInit {
         {
           iconName: 'delete',
           tooltip: this.translate.instant('Delete'),
-          requiredRoles: [Role.FullAdmin],
+          requiredRoles: this.requiredRoles,
           onClick: (row) => this.doDelete(row),
         },
       ],

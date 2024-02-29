@@ -9,12 +9,13 @@
   ></ix-checkbox>
 </div>
 
-<div mat-dialog-actions class="form-actions">
+<ix-form-actions mat-dialog-actions class="form-actions">
   <button mat-button type="button" ixTest="cancel" matDialogClose>
     {{ 'Cancel' | translate }}
   </button>
 
   <button
+    *ixRequiresRoles="requiredRoles"
     mat-button
     type="submit"
     color="primary"
@@ -23,4 +24,4 @@
   >
     {{ 'Proceed' | translate }}
   </button>
-</div>
+</ix-form-actions>

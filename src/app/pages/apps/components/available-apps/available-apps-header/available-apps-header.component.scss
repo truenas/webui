@@ -130,11 +130,13 @@
     min-width: 32px;
 
     &,
+    .refresh-charts,
     span {
       height: 26px;
     }
   }
 
+  .refresh-charts,
   span {
     color: var(--primary);
     display: block;

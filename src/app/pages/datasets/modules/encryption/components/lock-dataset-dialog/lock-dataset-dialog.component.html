@@ -14,7 +14,7 @@
       {{ 'Cancel' | translate }}
     </button>
 
-    <button mat-button type="submit" color="primary" ixTest="lock">
+    <button *ixRequiresRoles="requiredRoles" mat-button type="submit" color="primary" ixTest="lock">
       {{ 'Lock' | translate }}
     </button>
   </ix-form-actions>

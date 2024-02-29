@@ -57,6 +57,8 @@ import { networkInterfacesChanged } from 'app/store/network-interfaces/network-i
   providers: [InterfaceNameValidatorService],
 })
 export class InterfaceFormComponent implements OnInit {
+  protected requiredRoles = [Role.NetworkInterfaceWrite];
+
   readonly defaultMtu = 1500;
 
   isLoading = false;
@@ -126,8 +128,6 @@ export class InterfaceFormComponent implements OnInit {
   vlanParentInterfaces$ = this.networkService.getVlanParentInterfaceChoices().pipe(choicesToOptions());
 
   failoverGroups$ = of(range(1, 32)).pipe(singleArrayToOptions());
-
-  protected readonly Role = Role;
 
   readonly helptext = helptextInterfacesForm;
 

@@ -46,10 +46,10 @@ export class CertificateAddComponent {
   // Importing existing certificate
   @ViewChild(CertificateImportComponent) import: CertificateImportComponent;
 
+  protected requiredRoles = [Role.FullAdmin];
+
   isLoading = false;
   summary: SummarySection[];
-
-  protected readonly Role = Role;
 
   constructor(
     private ws: WebSocketService,

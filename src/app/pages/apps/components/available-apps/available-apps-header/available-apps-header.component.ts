@@ -10,6 +10,7 @@ import {
   BehaviorSubject,
   debounceTime, distinctUntilChanged, filter, map, Observable, of, take, tap,
 } from 'rxjs';
+import { Role } from 'app/enums/role.enum';
 import { singleArrayToOptions } from 'app/helpers/operators/options.operators';
 import { helptextApps } from 'app/helptext/apps/apps';
 import { AppsFiltersSort } from 'app/interfaces/apps-filters-values.interface';
@@ -30,6 +31,8 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AvailableAppsHeaderComponent implements OnInit, AfterViewInit {
+  protected requiredRoles = [Role.AppsWrite];
+
   form = this.fb.group({
     catalogs: [[] as string[]],
     sort: [null as AppsFiltersSort],

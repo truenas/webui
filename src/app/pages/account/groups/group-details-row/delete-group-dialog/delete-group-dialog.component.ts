@@ -6,8 +6,8 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import { Role } from 'app/enums/role.enum';
 import { Group } from 'app/interfaces/group.interface';
-import { DialogService } from 'app/modules/dialog/dialog.service';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
@@ -20,6 +20,8 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DeleteGroupDialogComponent {
+  readonly requiredRoles = [Role.AccountWrite];
+
   deleteUsersCheckbox = new FormControl(false);
 
   readonly deleteMessage = T('Are you sure you want to delete group <b>"{name}"</b>?');
@@ -29,7 +31,6 @@ export class DeleteGroupDialogComponent {
     private ws: WebSocketService,
     private snackbar: SnackbarService,
     private translate: TranslateService,
-    private dialogService: DialogService,
     private dialogRef: MatDialogRef<DeleteGroupDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public group: Group,
     private errorHandler: ErrorHandlerService,

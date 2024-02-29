@@ -34,7 +34,7 @@ export class DashboardPoolComponent {
   @Input() isLoading: boolean;
   @Input() disks: StorageDashboardDisk[];
 
-  protected readonly Role = Role;
+  readonly requiredRoles = [Role.FullAdmin];
 
   constructor(
     private matDialog: MatDialog,

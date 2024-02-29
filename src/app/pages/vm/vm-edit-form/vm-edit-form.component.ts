@@ -39,8 +39,9 @@ import { WebSocketService } from 'app/services/ws.service';
   providers: [CpuValidatorService],
 })
 export class VmEditFormComponent implements OnInit {
-  showCpuModelField = true;
   protected readonly requiredRoles = [Role.VmWrite];
+
+  showCpuModelField = true;
 
   form = this.formBuilder.group({
     name: ['', Validators.required],

@@ -18,6 +18,8 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CatalogEditFormComponent implements OnInit {
+  protected readonly requiredRoles = [Role.CatalogWrite];
+
   private editingCatalog: Catalog;
   isFormLoading = false;
 
@@ -32,8 +34,6 @@ export class CatalogEditFormComponent implements OnInit {
     label: helptextApps.catalogForm.name.tooltip,
     preferred_trains: helptextApps.catalogForm.preferredTrains.tooltip,
   };
-
-  protected readonly requiredRoles = [Role.CatalogWrite];
 
   constructor(
     private ws: WebSocketService,

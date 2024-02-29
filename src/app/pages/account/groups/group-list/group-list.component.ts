@@ -10,7 +10,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { Observable, combineLatest, of } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { EmptyType } from 'app/enums/empty-type.enum';
-import { roleNames } from 'app/enums/role.enum';
+import { Role, roleNames } from 'app/enums/role.enum';
 import { Group } from 'app/interfaces/group.interface';
 import { ArrayDataProvider } from 'app/modules/ix-table2/classes/array-data-provider/array-data-provider';
 import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
@@ -33,6 +33,8 @@ import { waitForPreferences } from 'app/store/preferences/preferences.selectors'
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class GroupListComponent implements OnInit {
+  protected requiredRoles = [Role.AccountWrite];
+
   dataProvider = new ArrayDataProvider<Group>();
   columns = createTable<Group>([
     textColumn({
@@ -100,7 +102,7 @@ export class GroupListComponent implements OnInit {
   }
 
   constructor(
-    protected emptyService: EmptyService,
+    private emptyService: EmptyService,
     private slideInService: IxSlideInService,
     private cdr: ChangeDetectorRef,
     private store$: Store<AppState>,

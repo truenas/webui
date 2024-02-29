@@ -23,7 +23,7 @@ import { WebSocketService } from 'app/services/ws.service';
 
 @Injectable({ providedIn: 'root' })
 export class VmService {
-  hasVirtualizationSupport$ = new BehaviorSubject<boolean>(false);
+  hasVirtualizationSupport$ = new BehaviorSubject<boolean>(true);
   refreshVmList$ = new Subject<void>();
   private checkMemory$ = new Subject<void>();
 

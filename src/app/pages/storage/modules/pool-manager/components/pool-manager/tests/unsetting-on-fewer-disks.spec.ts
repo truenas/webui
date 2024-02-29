@@ -9,7 +9,7 @@ import { CoreComponents } from 'app/core/core-components.module';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { DiskType } from 'app/enums/disk-type.enum';
-import { Enclosure } from 'app/interfaces/enclosure.interface';
+import { EnclosureUi } from 'app/interfaces/enclosure.interface';
 import { UnusedDisk } from 'app/interfaces/storage.interface';
 import { IxRadioGroupHarness } from 'app/modules/ix-forms/components/ix-radio-group/ix-radio-group.harness';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
@@ -109,7 +109,7 @@ describe('PoolManagerComponent – unsetting on fewer disks', () => {
             exported_zpool: 'anotherpool',
           },
         ] as UnusedDisk[]),
-        mockCall('enclosure.query', [
+        mockCall('webui.enclosure.dashboard', [
           {
             name: 'enclosure1',
             number: 1,
@@ -120,7 +120,7 @@ describe('PoolManagerComponent – unsetting on fewer disks', () => {
             number: 2,
             label: 'Second Enclosure',
           },
-        ] as Enclosure[]),
+        ] as EnclosureUi[]),
         mockCall('pool.query', []),
         mockCall('pool.dataset.encryption_algorithm_choices', {}),
         mockCall('pool.validate_name', true),

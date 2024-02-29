@@ -255,7 +255,7 @@ img.clickable,
   align-items: center;
   display: flex;
   flex: 1;
-  margin-right: -16px;
+  margin-right: -29px;
   min-width: 0;
 
   .copy-version-text {
@@ -393,8 +393,11 @@ img.platform-logo {
 
 div.generic.alert {
   bottom: 4px;
+  left: 0;
   position: absolute;
+  right: 0;
   text-align: center;
+  width: 100%;
 }
 
 div.generic.alert .ix-icon {

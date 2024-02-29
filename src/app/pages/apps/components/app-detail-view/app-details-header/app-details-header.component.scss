@@ -4,6 +4,12 @@
   gap: 24px;
 }
 
+:host ::ng-deep {
+  ix-missing-access-wrapper button {
+    width: 100%;
+  }
+}
+
 .app {
   display: flex;
   flex-direction: column;

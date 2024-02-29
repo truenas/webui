@@ -20,6 +20,8 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TunableFormComponent implements OnInit {
+  protected requiredRoles = [Role.FullAdmin];
+
   get isNew(): boolean {
     return !this.editingTunable;
   }
@@ -35,7 +37,6 @@ export class TunableFormComponent implements OnInit {
     enabled: [true],
   });
 
-  protected readonly Role = Role;
   readonly tooltips = {
     var: helptext.var.tooltip,
     value: helptext.value.tooltip,

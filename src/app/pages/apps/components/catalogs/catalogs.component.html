@@ -10,7 +10,7 @@
     {{ 'Refresh All' | translate }}
   </button>
 
-  <button mat-button color="primary" ixTest="add-catalog" (click)="doAdd()">
+  <button *ixRequiresRoles="requiredRoles" mat-button color="primary" ixTest="add-catalog" (click)="doAdd()">
     {{ 'Add Catalog' | translate }}
   </button>
 </ix-page-header>

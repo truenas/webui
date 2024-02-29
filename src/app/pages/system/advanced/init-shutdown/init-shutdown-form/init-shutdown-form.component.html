@@ -1,4 +1,4 @@
-<ix-modal-header2 [title]="title" [loading]="isFormLoading"></ix-modal-header2>
+<ix-modal-header2 [requiredRoles]="requiredRoles" [title]="title" [loading]="isFormLoading"></ix-modal-header2>
 
 <mat-card>
   <mat-card-content>
@@ -60,7 +60,7 @@
 
       <ix-form-actions>
         <button
-          *ixRequiresRoles="[Role.FullAdmin]"
+          *ixRequiresRoles="requiredRoles"
           mat-button
           type="submit"
           color="primary"

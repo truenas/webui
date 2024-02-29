@@ -16,6 +16,7 @@
       <ix-table-columns-selector [columns]="columns" (columnsChange)="columnsChange($event)"></ix-table-columns-selector>
 
       <button
+        *ixRequiresRoles="requiredRoles"
         mat-button
         color="primary"
         ixTest="add-smb-share"

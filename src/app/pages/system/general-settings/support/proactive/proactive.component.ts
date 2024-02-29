@@ -8,6 +8,7 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { forkJoin } from 'rxjs';
+import { Role } from 'app/enums/role.enum';
 import { helptextSystemSupport as helptext } from 'app/helptext/system/support';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { SupportConfigUpdate } from 'app/modules/feedback/interfaces/file-ticket.interface';
@@ -26,6 +27,8 @@ import { WebSocketService } from 'app/services/ws.service';
 })
 
 export class ProactiveComponent implements OnInit {
+  protected requiredRoles = [Role.FullAdmin];
+
   isLoading = false;
   title = helptext.proactive.title;
   isFormDisabled = false;

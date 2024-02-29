@@ -7,17 +7,23 @@
       </h3>
     </a>
     <div class="actions">
-      <a
+      <button
+        *ixRequiresRoles="requiredRoles"
         mat-button
         [ixTest]="['scrub-task', 'adjust-scrub']"
         [routerLink]="['/data-protection', 'scrub', 'priority']"
-      >{{ 'Adjust Scrub/Resilver Priority' | translate }}</a>
+      >
+        {{ 'Adjust Scrub/Resilver Priority' | translate }}
+      </button>
 
       <button
+        *ixRequiresRoles="requiredRoles"
         mat-button
         [ixTest]="['scrub-task', 'add']"
         (click)="openForm()"
-      >{{ 'Add' | translate }}</button>
+      >
+        {{ 'Add' | translate }}
+      </button>
     </div>
   </mat-toolbar-row>
 

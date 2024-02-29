@@ -9,7 +9,7 @@ import { CoreComponents } from 'app/core/core-components.module';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { DiskType } from 'app/enums/disk-type.enum';
-import { Enclosure } from 'app/interfaces/enclosure.interface';
+import { EnclosureUi } from 'app/interfaces/enclosure.interface';
 import { UnusedDisk } from 'app/interfaces/storage.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
@@ -124,7 +124,7 @@ describe('PoolManagerComponent – wizard step reset', () => {
             type: DiskType.Hdd,
           },
         ] as UnusedDisk[]),
-        mockCall('enclosure.query', [] as Enclosure[]),
+        mockCall('webui.enclosure.dashboard', [] as EnclosureUi[]),
         mockCall('pool.query', []),
         mockCall('pool.dataset.encryption_algorithm_choices', {}),
       ]),

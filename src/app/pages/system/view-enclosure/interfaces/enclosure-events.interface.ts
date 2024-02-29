@@ -1,5 +1,5 @@
 import { ElementRef } from '@angular/core';
-import { EnclosureView, SelectedEnclosureSlot } from 'app/interfaces/enclosure.interface';
+import { EnclosureUi, SelectedEnclosureSlot } from 'app/interfaces/enclosure.interface';
 import { Theme } from 'app/interfaces/theme.interface';
 import { DriveTray } from 'app/pages/system/view-enclosure/classes/drivetray';
 import { ErrorMessage } from 'app/pages/system/view-enclosure/interfaces/error-message.interface';
@@ -22,7 +22,7 @@ export interface ChangeDriveTrayColorEvent {
 export interface ChangeDriveTrayOptions {
   id: string | number;
   color: string;
-  enclosure?: number;
+  enclosure?: string;
   slot?: number;
 }
 
@@ -31,7 +31,7 @@ export interface EnclosureCanvasEvent {
   sender: unknown;
   data: {
     canvas: HTMLCanvasElement;
-    enclosureView: EnclosureView;
+    enclosureView: EnclosureUi;
   };
 }
 
@@ -64,7 +64,7 @@ export interface LabelDrivesEvent {
 export interface CanvasExtractEvent {
   name: 'CanvasExtract';
   sender: unknown;
-  data: EnclosureView;
+  data: EnclosureUi;
 }
 
 export interface EnclosureSelectedEvent {

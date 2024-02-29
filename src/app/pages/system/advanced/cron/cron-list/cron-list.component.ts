@@ -31,6 +31,8 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CronListComponent implements OnInit {
+  readonly requiredRoles = [Role.FullAdmin];
+
   cronjobs: CronjobRow[] = [];
   filterString = '';
   dataProvider: AsyncDataProvider<CronjobRow>;
@@ -88,8 +90,6 @@ export class CronListComponent implements OnInit {
   get hiddenColumns(): Column<CronjobRow, ColumnComponent<CronjobRow>>[] {
     return this.columns.filter((column) => column?.hidden);
   }
-
-  protected readonly Role = Role;
 
   constructor(
     private cdr: ChangeDetectorRef,

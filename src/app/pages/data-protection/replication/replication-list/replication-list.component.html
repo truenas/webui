@@ -3,7 +3,13 @@
 
   <ix-table-columns-selector [columns]="columns" (columnsChange)="columnsChange($event)"></ix-table-columns-selector>
 
-  <button mat-button color="primary" [ixTest]="['replication-task', 'add']" (click)="openForm()">
+  <button
+    *ixRequiresRoles="requiredRoles"
+    mat-button
+    color="primary"
+    [ixTest]="['replication-task', 'add']"
+    (click)="openForm()"
+  >
     {{ 'Add' | translate }}
   </button>
 </ix-page-header>

@@ -2,6 +2,7 @@
   <ix-kubernetes-status></ix-kubernetes-status>
   <div *ngIf="hasUpdates" class="global-update">
     <button
+      *ixRequiresRoles="requiredRoles"
       mat-button
       ixTest="update-all"
       class="update-all-button"
@@ -51,6 +52,7 @@
 
         <mat-menu #menu="matMenu">
           <button
+            *ixRequiresRoles="requiredRoles"
             mat-menu-item
             ixTest="start-selected"
             [disabled]="isBulkStartDisabled"
@@ -59,6 +61,7 @@
             <span>{{ 'Start All Selected' | translate }}</span>
           </button>
           <button
+            *ixRequiresRoles="requiredRoles"
             mat-menu-item
             ixTest="stop-selected"
             [disabled]="isBulkStopDisabled"
@@ -67,6 +70,7 @@
             <span>{{ 'Stop All Selected' | translate }}</span>
           </button>
           <button
+            *ixRequiresRoles="requiredRoles"
             mat-menu-item
             ixTest="upgrade-selected"
             [disabled]="isBulkUpgradeDisabled"
@@ -75,6 +79,7 @@
             <span>{{ 'Upgrade All Selected' | translate }}</span>
           </button>
           <button
+            *ixRequiresRoles="requiredRoles"
             mat-menu-item
             ixTest="delete-selected"
             (click)="onBulkDelete()"

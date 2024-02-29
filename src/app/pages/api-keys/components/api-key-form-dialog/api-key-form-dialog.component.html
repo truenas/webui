@@ -20,7 +20,13 @@
     <button mat-button type="button" ixTest="cancel" matDialogClose>
       {{ 'Cancel' | translate }}
     </button>
-    <button mat-button type="submit" color="primary" ixTest="save" [disabled]="form.invalid">
+    <button
+      *ixRequiresRoles="requiredRoles"
+      mat-button type="submit"
+      color="primary"
+      ixTest="save"
+      [disabled]="form.invalid"
+    >
       {{ 'Save' | translate }}
     </button>
   </ix-form-actions>
