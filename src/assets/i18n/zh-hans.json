@@ -31,6 +31,7 @@
   "Host Mounts": "",
   "I would like to": "",
   "INTERNAL": "",
+  "IP Address/Subnet": "",
   "If downloading a file returns the error \"This file has been identified as malware or spam and cannot be downloaded\" with the error code \"cannotDownloadAbusiveFile\" then enable this flag to indicate you acknowledge the risks of downloading the file and TrueNAS will download it anyway.": "",
   "If set, the value will be used to override the default DNS domain name for NFSv4. Specifies the \"Domain\" idmapd.conf setting.": "",
   "Implementation Domain": "",

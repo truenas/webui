@@ -6,6 +6,7 @@
   "Browse to an existing file. Create a new file by browsing to a dataset and appending /<i>(filename.ext)</i> to the path.": "",
   "By clicking the share creation checkbox below, a new share will be created on form submission with the default share settings Additionally, local TrueNAS users will have access to the resulting share and some more configuration options will be available.": "",
   "Force using  <a href=\"https://docs.aws.amazon.com/general/latest/gr/signature-version-2.html\"  target=\"_blank\">Signature Version 2</a> to sign API requests.  Set this only  if your AWS provider does not support default version 4 signatures.": "",
+  "IP Address/Subnet": "",
   "IP addresses and networks that are allowed to use API and UI. If this list is empty, then all IP addresses are allowed to use API and UI.": "",
   "IPMI Read": "",
   "IPMI Write": "",

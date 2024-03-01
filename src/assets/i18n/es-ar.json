@@ -669,6 +669,7 @@
   "INFO": "",
   "INTERNAL": "",
   "IP": "",
+  "IP Address/Subnet": "",
   "IP addresses and networks that are allowed to use API and UI. If this list is empty, then all IP addresses are allowed to use API and UI.": "",
   "IPMI": "",
   "IPMI Events": "",
