@@ -2,10 +2,13 @@ import { DOCUMENT } from '@angular/common';
 import {
   Component, AfterViewInit, OnDestroy, ElementRef, Inject, HostListener, ChangeDetectionStrategy, ChangeDetectorRef,
 } from '@angular/core';
+import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
+import searchableUiElementsJson from 'app/../assets/ui-searchable-elements.json';
 import { tween, styler } from 'popmotion';
+import { timer } from 'rxjs';
 import { skipWhile, take, tap } from 'rxjs/operators';
 import { Styler } from 'stylefire';
 import { EmptyType } from 'app/enums/empty-type.enum';
@@ -19,6 +22,7 @@ import {
   NetworkInterfaceState,
 } from 'app/interfaces/network-interface.interface';
 import { Pool } from 'app/interfaces/pool.interface';
+import { UiSearchableElement } from 'app/interfaces/ui-searchable-element.interface';
 import { VolumesData } from 'app/interfaces/volume-data.interface';
 import { DashboardFormComponent } from 'app/pages/dashboard/components/dashboard-form/dashboard-form.component';
 import { DashConfigItem } from 'app/pages/dashboard/components/widget-controller/widget-controller.component';
@@ -69,6 +73,8 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
   readonly ScreenType = ScreenType;
   readonly WidgetType = WidgetName;
 
+  searchableUiElements = searchableUiElementsJson as UiSearchableElement[];
+
   isLoaded = true;
 
   // For empty state
@@ -111,14 +117,17 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
     private slideInService: IxSlideInService,
     private layoutService: LayoutService,
     private store$: Store<AppState>,
-    @Inject(WINDOW) private window: Window,
-    @Inject(DOCUMENT) private document: Document,
     private dashboardStore$: DashboardStore,
     private resourcesUsageStore$: ResourcesUsageStore,
     private cdr: ChangeDetectorRef,
+    private router: Router,
+    @Inject(WINDOW) private window: Window,
+    @Inject(DOCUMENT) private document: Document,
   ) {}
 
   ngAfterViewInit(): void {
+    this.imitateClickOnFirstSearchableUiElement();
+
     this.checkScreenSize();
     this.startListeners();
     this.dashboardStore$.isLoading$.pipe(
@@ -381,5 +390,73 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
     const startX = viewport.get('x') as number;
 
     return { carousel, vpw, startX };
+  }
+
+  private imitateClickOnFirstSearchableUiElement(): void {
+    // eslint-disable-next-line no-console
+    console.log(this.searchableUiElements);
+
+    // mapped to see that translation works
+    const mappedSearchElements = this.searchableUiElements.map((element) => {
+      return {
+        ...element,
+        hierarchy: element.hierarchy.map((key) => this.translate.instant(key)),
+        synonyms: element.synonyms.map((key) => this.translate.instant(key)),
+      };
+    });
+
+    // how it will work -> not optimized example -> just to show it's working
+
+    // // example 1: focusing the desired element (If user searches for some action)
+    // timer(1000).pipe(untilDestroyed(this)).subscribe(() => {
+    //   const firstElement = mappedSearchElements[0];
+
+    //   this.router.navigate(firstElement.anchorRouterLink).then(() => {
+    //     setTimeout(() => {
+    //       const element: HTMLElement = this.document.getElementById(firstElement.anchor);
+
+    //       element.scrollIntoView({ block: 'center' });
+    //       element.focus();
+    //       element.classList.add('search-element-highlighted');
+    //       timer(999)
+    //         .pipe(untilDestroyed(this))
+    //         .subscribe(() => element.classList.remove('search-element-highlighted'));
+    //     }, 0);
+    //   });
+    // });
+
+    // // example 2: navigating to the URL (If user searches for Pool Creation)
+    // timer(1000).pipe(untilDestroyed(this)).subscribe(() => {
+    //   const firstElement = mappedSearchElements[1];
+
+    //   this.router.navigate(firstElement.routerLink);
+    // });
+
+    // example 3: navigating to the anchor page, clicking trigger anchor and focus on anchor (used for forms)
+    timer(1000).pipe(untilDestroyed(this)).subscribe(() => {
+      const firstElement = mappedSearchElements[2];
+
+      this.router.navigate(firstElement.anchorRouterLink).then(() => {
+        setTimeout(() => {
+          const element: HTMLElement = this.document.getElementById(firstElement.triggerAnchor);
+
+          element.scrollIntoView({ block: 'center' });
+          element.focus();
+          element.classList.add('search-element-highlighted');
+
+          timer(999).pipe(untilDestroyed(this)).subscribe(() => {
+            element.classList.remove('search-element-highlighted');
+            element.click();
+            setTimeout(() => {
+              const anchor = this.document.getElementById(firstElement.anchor);
+              anchor.focus();
+              anchor.classList.add('search-element-highlighted');
+
+              timer(999).pipe(untilDestroyed(this)).subscribe(() => anchor.classList.remove('search-element-highlighted'));
+            });
+          });
+        }, 0);
+      });
+    });
   }
 }

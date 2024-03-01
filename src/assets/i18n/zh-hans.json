@@ -116,6 +116,7 @@
   "Toggle off to defer interface learning until runtime, preventing premature state transitions and potential issues during system startup.": "",
   "Tolerance Window": "",
   "Topology Summary": "",
+  "Translate App": "",
   "TrueNAS recommends that the sync setting always  be left to the default of \"Standard\" or increased to \"Always\". The \"Disabled\" setting should  not be used in production and only where data roll back by few seconds  in case of crash or power loss is not a concern.": "",
   "Value must be greater than Range Low": "",
   "Value must be greater than {label}": "",

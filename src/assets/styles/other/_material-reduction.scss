@@ -890,6 +890,10 @@ body {
       outline: 1.5px solid var(--primary);
     }
   }
+
+  .search-element-highlighted {
+    outline: 1.5px solid var(--primary);
+  }
 }
 
 body .mat-calendar-previous-button::after,

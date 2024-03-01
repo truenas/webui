@@ -1,5 +1,15 @@
 <ix-page-header>
-  <button *ixRequiresRoles="requiredRoles" mat-button ixTest="import-pool" (click)="onImportPool()">
+  <button
+    ixUiSearchableElement
+    ixTest="import-pool"
+    mat-button
+    [attr.id]="'import-pool-button'"
+    [uiSearchHierarchy]="['Storage' | translate, 'Import Pool']"
+    [uiSearchSynonyms]="['Storage']"
+    [uiSearchAnchorRouterLink]="['/storage']"
+    [uiSearchRequiredRoles]="[Role.AccountWrite, Role.AppsWrite]"
+    (click)="onImportPool()"
+  >
     {{ 'Import Pool' | translate }}
   </button>
 
@@ -9,10 +19,15 @@
 
   <a
     *ixRequiresRoles="requiredRoles"
+    ixUiSearchableElement
     mat-button
+    id="create-pool-button"
     color="primary"
     ixTest="create-pool"
     [routerLink]="['/storage', 'create']"
+    [uiSearchHierarchy]="['Storage', 'Create Pool']"
+    [uiSearchSynonyms]="['Storage', 'Pool Wizard']"
+    [uiSearchAnchorRouterLink]="['/storage']"
   >
     {{ 'Create Pool' | translate }}
   </a>
