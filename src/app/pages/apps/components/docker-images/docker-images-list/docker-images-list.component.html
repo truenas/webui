@@ -12,34 +12,6 @@
   </button>
 </ix-page-header>
 
-<!-- <div *ngIf="checkboxColumn?.selection.selected.length" class="bulk-actions-toolbar">
-  <div class="title">
-    <strong>{{ 'Bulk Operations' | translate }}</strong>
-  </div>
-
-  <div class="actions">
-    <button
-      *ixRequiresRoles="requiredRoles"
-      mat-button
-      ixTest="update-selected"
-      [disabled]="!selectionHasUpdates"
-      (click)="doUpdate(checkboxColumn?.selection.selected)"
-    >
-      <ix-icon name="update"></ix-icon>
-      {{ 'Update' | translate }}
-    </button>
-    <button
-      *ixRequiresRoles="requiredRoles"
-      mat-button
-      ixTest="delete-selected"
-      (click)="doDelete(checkboxColumn?.selection.selected)"
-    >
-      <ix-icon name="delete"></ix-icon>
-      {{ 'Delete' | translate }}
-    </button>
-  </div>
-</div> -->
-
 <ix-table2
   class="table"
   [ix-table2-empty]="!(dataProvider.currentPageCount$ | async)"
