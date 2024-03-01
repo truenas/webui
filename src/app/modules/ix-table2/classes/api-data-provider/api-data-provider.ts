@@ -1,4 +1,6 @@
-import { Observable, switchMap } from 'rxjs';
+import {
+  Observable, filter, switchMap, take,
+} from 'rxjs';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { ApiCallParams, ApiCallResponseType, QueryMethods } from 'app/interfaces/api/api-call-directory.interface';
 import { QueryFilters } from 'app/interfaces/query-api.interface';
@@ -57,13 +59,18 @@ export class ApiDataProvider<T extends QueryMethods> extends BaseDataProvider<Ap
 
   setSorting(sorting: TableSort<ApiCallResponseType<T>>): void {
     this.sorting = sorting;
-    this.sortingStrategy.handleCurrentPage(this.load.bind(this));
+    this.emptyType$.pipe(take(1), filter((value) => value !== EmptyType.Loading)).subscribe(() => {
+      this.sortingStrategy.handleCurrentPage(this.load.bind(this));
+    });
     this.controlsStateUpdated.emit();
   }
 
   setPagination(pagination: TablePagination): void {
     this.pagination = pagination;
-    this.paginationStrategy.handleCurrentPage(this.load.bind(this));
+
+    this.emptyType$.pipe(take(1), filter((value) => value !== EmptyType.Loading)).subscribe(() => {
+      this.paginationStrategy.handleCurrentPage(this.load.bind(this));
+    });
     this.controlsStateUpdated.emit();
   }
 
