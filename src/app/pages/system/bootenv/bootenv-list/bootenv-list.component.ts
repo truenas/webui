@@ -63,6 +63,7 @@ export class BootEnvironmentListComponent implements OnInit {
         this.dataProvider.setRows([]);
         this.dataProvider.setRows(this.bootenvs.filter(this.filterBootenv));
       },
+      cssClass: 'checkboxs-column',
     }),
     textColumn({
       title: this.translate.instant('Name'),
@@ -100,6 +101,7 @@ export class BootEnvironmentListComponent implements OnInit {
     yesNoColumn({
       title: this.translate.instant('Keep'),
       propertyName: 'keep',
+      cssClass: 'keep-column',
     }),
     actionsColumn({
       actions: [
@@ -144,6 +146,7 @@ export class BootEnvironmentListComponent implements OnInit {
           onClick: (row) => this.toggleKeep(row),
         },
       ],
+      cssClass: 'actions-column',
     }),
   ], {
     rowTestId: (row) => `bootenv-${row.name}`,

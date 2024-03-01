@@ -13,3 +13,18 @@
     padding: 0 28px 16px;
   }
 }
+
+:host ::ng-deep {
+  .checkboxs-column {
+    text-overflow: unset !important;
+    width: 20px;
+  }
+
+  .keep-column {
+    width: 40px;
+  }
+
+  .actions-column {
+    width: 140px;
+  }
+}
