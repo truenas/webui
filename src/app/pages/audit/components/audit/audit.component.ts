@@ -121,6 +121,8 @@ export class AuditComponent implements OnInit, OnDestroy {
     this.dataProvider.sortingStrategy = new SortingServerSide();
     this.setDefaultSort();
 
+    this.getAuditLogs();
+
     this.apiAndLocalUserSuggestions$ = combineLatest(
       this.userSuggestions$,
       this.dataProvider.currentPage$.pipe(take(1), map((users) => this.mapUsersForSuggestions(users))),
@@ -174,7 +176,7 @@ export class AuditComponent implements OnInit, OnDestroy {
       );
     }
 
-    this.dataProvider.load();
+    this.getAuditLogs();
   }
 
   updateUrlOptions(): void {
@@ -345,5 +347,9 @@ export class AuditComponent implements OnInit, OnDestroy {
       label: user.username,
       value: `"${user.username}"`,
     }));
+  }
+
+  private getAuditLogs(): void {
+    this.dataProvider.load();
   }
 }
