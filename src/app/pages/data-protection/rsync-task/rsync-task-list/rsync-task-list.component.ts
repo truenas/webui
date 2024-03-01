@@ -156,6 +156,8 @@ export class RsyncTaskListComponent implements EntityTableConfig<RsyncTaskUi> {
     return tasks.map((task) => {
       task.cron_schedule = scheduleToCrontab(task.schedule);
       task.frequency = this.taskService.getTaskCronDescription(task.cron_schedule);
+      console.info('[RsyncTaskListComponent;159] task: ', JSON.stringify(task));
+      console.info('[RsyncTaskListComponent:160] taskService.getTaskNextRun(task.cron_schedule)');
       task.next_run = this.taskService.getTaskNextRun(task.cron_schedule);
 
       if (task.job === null) {

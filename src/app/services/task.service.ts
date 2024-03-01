@@ -139,19 +139,30 @@ export class TaskService {
   }
 
   getTaskNextRun(scheduleExpression: string): string {
+    console.info('----------------------------------');
+    console.info('[TaskService.getTaskNextRun:142] scheduleExpression: ', scheduleExpression);
     const schedule = cronParser.parseExpression(scheduleExpression, {
       iterator: true,
       tz: this.localeService.timezone,
     });
 
-    const date = schedule?.next()?.value?.toDate();
+    console.info('[TaskService.getTaskNextRun:142] schedule: ', JSON.stringify(schedule));
+    const nextValue = schedule?.next();
+    console.info('[TaskService.getTaskNextRun:142] schedule.next(): ', JSON.stringify(nextValue));
+    console.info('[TaskService.getTaskNextRun:142] schedule.next()?.value: ', JSON.stringify(nextValue.value));
+    const date = nextValue?.value?.toDate();
+    console.info('[TaskService.getTaskNextRun:142] schedule.next()?.value?.toDate(): ', JSON.stringify(date));
+
     if (!date) {
       return this.translateService.instant('N/A');
     }
-    return formatDistanceToNow(
+    const formattedFromNow = formatDistanceToNow(
       date,
       { addSuffix: true },
     );
+    console.info('[TaskService.getTaskNextRun:142] formattedFromNow: ', formattedFromNow);
+    console.info('===================================');
+    return formattedFromNow;
   }
 
   getTaskNextTime(scheduleExpression: string): Date {

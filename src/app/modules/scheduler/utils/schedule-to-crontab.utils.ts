@@ -1,9 +1,12 @@
 import { Schedule } from 'app/interfaces/schedule.interface';
 
 export function scheduleToCrontab(schedule: Schedule): string {
+  console.info('----------------------------------');
+  console.info('[scheduleToCrontab] schedule: ', JSON.stringify(schedule));
   if ('minute' in schedule) {
     return `${schedule.minute} ${schedule.hour} ${schedule.dom} ${schedule.month} ${schedule.dow}`;
   }
+  console.info('===================================');
 
   return `0 ${schedule.hour} ${schedule.dom} ${schedule.month} ${schedule.dow}`;
 }

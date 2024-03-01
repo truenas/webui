@@ -115,6 +115,9 @@ export class CloudsyncListComponent implements EntityTableConfig<CloudSyncTaskUi
       transformed.credential = task.credentials.name;
       transformed.cron_schedule = task.enabled ? formattedCronSchedule : this.translate.instant('Disabled');
       transformed.frequency = this.taskService.getTaskCronDescription(formattedCronSchedule);
+      console.info('[CloudsyncListComponent:118] task: ', JSON.stringify(task));
+      console.info('[CloudsyncListComponent:119] formattedCronSchedule: ', formattedCronSchedule);
+      console.info('[CloudsyncListComponent:121] taskService.getTaskNextRun(formattedCronSchedule)');
       transformed.next_run = task.enabled ? this.taskService.getTaskNextRun(formattedCronSchedule) : this.translate.instant('Disabled');
 
       if (task.job === null) {

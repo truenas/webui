@@ -102,11 +102,15 @@ export class CronListComponent implements OnInit, AfterViewInit {
     this.isLoading = true;
     this.ws.call('cronjob.query').pipe(
       map((cronjobs) => {
-        return cronjobs.map((job: Cronjob): CronjobRow => ({
-          ...job,
-          cron_schedule: scheduleToCrontab(job.schedule),
-          next_run: this.taskService.getTaskNextRun(scheduleToCrontab(job.schedule)),
-        }));
+        return cronjobs.map((job: Cronjob): CronjobRow => {
+          console.info('[CronListComponent:106] job: ', JSON.stringify(job));
+          console.info('[CronListComponent:106] getTaskNextRun(scheduleToCrontab(job.schedule))');
+          return {
+            ...job,
+            cron_schedule: scheduleToCrontab(job.schedule),
+            next_run: this.taskService.getTaskNextRun(scheduleToCrontab(job.schedule)),
+          };
+        });
       }),
       untilDestroyed(this),
     ).subscribe((cronjobs) => {

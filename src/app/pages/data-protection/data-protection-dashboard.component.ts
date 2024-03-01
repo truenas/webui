@@ -420,6 +420,8 @@ export class DataProtectionDashboardComponent implements OnInit {
     return data.map((task) => {
       task.cron_schedule = scheduleToCrontab(task.schedule);
       task.frequency = this.taskService.getTaskCronDescription(task.cron_schedule);
+      console.info('[DataProtectionDaashboardComponent:424] task: ', JSON.stringify(task));
+      console.info('[DataProtectionDaashboardComponent:423] getTaskNextRun(task.cron_schedule)');
       task.next_run = this.taskService.getTaskNextRun(task.cron_schedule);
 
       return task;
@@ -433,6 +435,10 @@ export class DataProtectionDashboardComponent implements OnInit {
       task.cron_schedule = task.enabled ? formattedCronSchedule : this.translate.instant('Disabled');
       task.frequency = this.taskService.getTaskCronDescription(formattedCronSchedule);
       task.next_run_time = task.enabled ? this.taskService.getTaskNextTime(formattedCronSchedule) : this.translate.instant('Disabled');
+
+      console.info('[DataProtectionDaashboardComponent:439] task: ', JSON.stringify(task));
+      console.info('[DataProtectionDashboardComponent:440] formattedCronSchedule', formattedCronSchedule);
+      console.info('[DataProtectionDaashboardComponent:438] getTaskNextRun(formattedCronSchedule)');
       task.next_run = task.enabled ? this.taskService.getTaskNextRun(formattedCronSchedule) : this.translate.instant('Disabled');
 
       if (task.job === null) {
@@ -492,6 +498,8 @@ export class DataProtectionDashboardComponent implements OnInit {
     return data.map((test) => {
       test.cron_schedule = scheduleToCrontab(test.schedule);
       test.frequency = this.taskService.getTaskCronDescription(test.cron_schedule);
+      console.info('[DataProtectionDashboardComponent:502] test: ', JSON.stringify(test));
+      console.info('[DataProtectionDashboardComponent:502] getTaskNextRun(test.cron_schedule)');
       test.next_run = this.taskService.getTaskNextRun(test.cron_schedule);
 
       if (test.all_disks) {
@@ -518,6 +526,8 @@ export class DataProtectionDashboardComponent implements OnInit {
       task.keepfor = `${task.lifetime_value} ${task.lifetime_unit}(S)`;
       task.cron_schedule = scheduleToCrontab(task.schedule);
       task.frequency = this.taskService.getTaskCronDescription(task.cron_schedule);
+      console.info('[DataProtectionDashboardComponent:530] task: ', JSON.stringify(task));
+      console.info('[DataProtectionDashboardComponent:530] getTaskNextRun(task.cron_schedule)');
       task.next_run = this.taskService.getTaskNextRun(task.cron_schedule);
 
       return task;
@@ -528,6 +538,8 @@ export class DataProtectionDashboardComponent implements OnInit {
     return data.map((task) => {
       task.cron_schedule = scheduleToCrontab(task.schedule);
       task.frequency = this.taskService.getTaskCronDescription(task.cron_schedule);
+      console.info('[DataProtectionDashboardComponent:542] task: ', JSON.stringify(task));
+      console.info('[DataProtectionDashboardComponent:543] getTaskNextRun(task.cron_schedule)');
       task.next_run = this.taskService.getTaskNextRun(task.cron_schedule);
 
       if (task.job === null) {

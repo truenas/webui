@@ -78,6 +78,8 @@ export class SmartTaskListComponent implements EntityTableConfig {
     return data.map((test) => {
       test.cron_schedule = scheduleToCrontab(test.schedule);
       test.frequency = this.taskService.getTaskCronDescription(test.cron_schedule);
+      console.info('[SmartTaskListComponent:81] test: ', JSON.stringify(test));
+      console.info('[SmartTaskListComponent:81] getTaskNextRun(test.cron_schedule)');
       test.next_run = this.taskService.getTaskNextRun(test.cron_schedule);
 
       if (test.all_disks) {

@@ -70,6 +70,8 @@ export class ScrubListComponent implements EntityTableConfig {
     return data.map((task) => {
       task.cron_schedule = scheduleToCrontab(task.schedule);
       task.frequency = this.taskService.getTaskCronDescription(task.cron_schedule);
+      console.info('[ScrubListComponent:73] task: ', JSON.stringify(task));
+      console.info('[ScrubListComponent:73] getTaskNextRun(task.cron_schedule)');
       task.next_run = this.taskService.getTaskNextRun(task.cron_schedule);
 
       return task;

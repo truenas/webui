@@ -101,6 +101,9 @@ export class SnapshotListComponent implements EntityTableConfig<PeriodicSnapshot
         cron_schedule: cronSchedule,
       } as PeriodicSnapshotTaskUi;
 
+      console.info('[SnapshotListComponent:104] transformedTask: ', JSON.stringify(transformedTask));
+      console.info('[SnapshotListComponent:104] getTaskNextRun(transformedTask.cron_schedule)');
+
       return {
         ...transformedTask,
         frequency: this.taskService.getTaskCronDescription(transformedTask.cron_schedule),
