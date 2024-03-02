@@ -7,7 +7,8 @@ import {
   FormBuilder,
   Validators,
 } from '@angular/forms';
-import { json } from '@codemirror/lang-json';
+import { yaml } from '@codemirror/lang-yaml';
+import { oneDark } from '@codemirror/theme-one-dark';
 import { EditorView } from '@codemirror/view';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
@@ -93,31 +94,12 @@ export class GuiFormComponent implements AfterViewInit {
   }
 
   ngAfterViewInit(): EditorView {
-    // const parser = new LRParser();
     return new EditorView({
       doc: 'console.log(\'rehan\')',
       extensions: [
         basicSetup,
-        json(),
-        // new LanguageSupport(LRLanguage.define({
-        //   name: 'json',
-        //   parser: parser.configure({
-        //     props: [
-        //       indentNodeProp.add({
-        //         Object: continuedIndent({ except: /^\s*\}/ }),
-        //         Array: continuedIndent({ except: /^\s*\]/ }),
-        //       }),
-        //       foldNodeProp.add({
-        //         'Object Array': foldInside,
-        //       }),
-        //     ],
-        //   }),
-        //   languageData: {
-        //     closeBrackets: { brackets: ['[', '{', '"'] },
-        //     // eslint-disable-next-line no-useless-escape
-        //     indentOnInput: /^\s*[\}\]]$/,
-        //   },
-        // })),
+        yaml(),
+        oneDark,
       ],
       parent: this.inputArea.nativeElement,
     });
