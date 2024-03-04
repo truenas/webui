@@ -21,7 +21,7 @@ class add_Catalog:
 
 
 class add_Dataset:
-    title = '//h3[text()="Add Dataset"]'
+    title = '//h3[contains(text(),"Add Dataset")]'
     create_Smb_Checkbox = '//*[@data-test="checkbox-create-smb"]'
     name_Textarea = '//textarea[@data-test="textarea-name"]'
     share_Type_Select = '//mat-select[@data-test="select-share-type"]'
@@ -38,13 +38,13 @@ class add_Group:
 
 
 class add_Kerberos_Keytab:
-    title = '//h3[text()="Add Kerberos Keytab"]'
+    title = '//h3[contains(text(),"Add Kerberos Keytab")]'
     name_Input = '//ix-input[@formcontrolname="name"]//input'
     file_input = '//ix-file-input[@formcontrolname="file"]//input'
 
 
 class add_NFS:
-    title = '//h3[text()="Add NFS Share"]'
+    title = '//h3[contains(text(),"Add NFS Share")]'
     path_Input = '//ix-explorer[@formcontrolname="path"]//input'
     mapall_User_Combobox = '//ix-combobox[@formcontrolname="mapall_user"]//input'
     mapall_Group_Combobox = '//ix-combobox[@formcontrolname="mapall_group"]//input'
@@ -90,9 +90,8 @@ class add_User:
     wheel_Is_Selected = '//mat-select[contains(.,"wheel")]'
 
 
-
 class add_Zvol:
-    title = '//h3[text()="Add Zvol"]'
+    title = '//h3[contains(text(),"Add Zvol")]'
     name_Input = '//ix-input[@formcontrolname="name"]//input'
     size_Input = '//ix-input[@formcontrolname="volsize"]//input'
 
@@ -250,10 +249,10 @@ class dashboard:
 class dataset:
     title = '//h1[text()="Datasets"]'
     add_Dataset_Button = '//button[contains(*/text(),"Add Dataset")]'
-    permission_Title = '//h3[text()="Permissions"]'
+    permission_Title = '//h3[contains(text(),"Permissions")]'
     permission_Edit_Button = '//mat-card-header[contains(.,"Permissions")]//a[normalize-space(*/text())="Edit"]'
     add_Zvol_Button = '//button[normalize-space(span/text())="Add Zvol"]'
-    zfs_Encryption_Title = '//h3[text()="ZFS Encryption"]'
+    zfs_Encryption_Title = '//h3[contains(text(),"ZFS Encryption")]'
     zfs_Encryption_Edit_button = '//mat-card-header[contains(.,"ZFS Encryption")]//a[normalize-space(*/text())="Edit"]'
     lock_Button = '//button[contains(.,"Lock")]'
     unlock_Button = '//a[contains(.,"Unlock")]'
@@ -296,7 +295,7 @@ class delete_Group:
 
 class directory_Services:
     title = '//h1[text()="Directory Services"]'
-    directory_Disable_Title = '//h3[text()="Active Directory and LDAP are disabled."]'
+    directory_Disable_Title = '//h3[contains(text(),"Active Directory and LDAP are disabled.")]'
     configure_AD_Button = '//button[contains(.,"Configure Active Directory")]'
     configure_Ldap_Button = '//button[contains(.,"Configure LDAP")]'
     show_Button = '//button[contains(*/text(),"Show")]'
@@ -306,7 +305,7 @@ class directory_Services:
     delete_Confirm_Checkbox = '//mat-checkbox[@name="confirm_checkbox"]'
     delete_Confirm_Button = '//button[@id="confirm-dialog__action-button"]'
     delete_AD_Account_Button = '//tr[contains(.,"AD_MACHINE_ACCOUNT")]//button'
-    ldap_Card_Title = '//mat-card//h3[text()="LDAP"]'
+    ldap_Card_Title = '//mat-card//h3[contains(text(),"LDAP")]'
     service_Status = '//span[contains(.,"Status:") and contains(.,"HEALTHY")]'
     kerberos_Keytab_Add_Button = '//button[@data-test="button-add-kerberos-keytabs"]'
 
@@ -438,7 +437,7 @@ class iscsi:
 
 class iscsi_Wizard:
     """iscsi_Wizard contains xpaths for the iSCSI Wizard"""
-    title = '//h3[text()="iSCSI Wizard"]'
+    title = '//h3[contains(text(),"iSCSI Wizard")]'
     block_Device_Title = '//mat-step-header[contains(.,"Create or Choose Block Device") and @tabindex="0"]'
     device_Name_Input = '//input[@data-test="input-name"]'
     extent_Type_Select = '//mat-select[@data-test="select-type"]'
@@ -469,7 +468,7 @@ class iscsi_Wizard:
 
 
 class ldap():
-    title = '//h3[@class="ix-formtitle" and text()="LDAP"]'
+    title = '//h3[@class="ix-formtitle" and contains(text(),"LDAP")]'
     hostname_Input = '//ix-chips[@formcontrolname="hostname"]//input'
     basedn_Input = '//ix-input[@formcontrolname="basedn"]//input'
     binddn_Input = '//ix-input[@formcontrolname="binddn"]//input'
@@ -494,7 +493,7 @@ class login:
 
 class network:
     title = '//h1[contains(.,"Network")]'
-    global_Configuration_Title = '//h3[text()="Global Configuration"]'
+    global_Configuration_Title = '//h3[contains(text(),"Global Configuration")]'
     interface_Card_Title = '//h3[contains(.,"Interfaces")]'
     test_Changes_Button = '//*[@data-test="button-test-changes"]'
     test_Changes_Dialog_Title = '//h1[contains(text(),"Test Changes")]'
@@ -519,7 +518,7 @@ class pool_manager:
 
 
 class popup:
-    smb_Restart_Title = '//h3[text()="Restart SMB Service"]'
+    smb_Restart_Title = '//h3[contains(text(),"Restart SMB Service")]'
     restart_Service_Button = '//button[contains(*/text(),"Restart Service")]'
     smb_Start_Title = '//h1[text()="Start SMB Service"]'
     nfs_Start_Title = '//h1[text()="Start NFS Service"]'
@@ -622,7 +621,7 @@ class side_Menu:
 
 
 class smb:
-    addTitle = '//h3[text()="Add SMB"]'
+    addTitle = '//h3[contains(text(),"Add SMB")]'
     description_Input = '//ix-input[@formcontrolname="comment"]//input'
     path_Input = '//ix-explorer[@formcontrolname="path"]//input'
     name_Input = '//ix-input[@formcontrolname="name"]//input'
@@ -645,7 +644,7 @@ class storage:
 
 
 class system_Dataset:
-    title = '//h3[text()="Storage Settings" and @class="ix-formtitle"]'
+    title = '//h3[contains(text(),"Storage Settings") and @class="ix-formtitle"]'
     pool_Select = '//mat-select[@data-test="select-pool"]'
 
     def pool_Option(pool_name):
