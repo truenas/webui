@@ -83,7 +83,7 @@ class add_User:
     ssh_Password_Enabled_Checkbox = '//*[@data-test="checkbox-ssh-password-enabled"]'
     ssh_Pubkey_Textarea = '//ix-textarea[@formcontrolname="sshpubkey"]//textarea'
     sudo_Checkbox = '//mat-checkbox[contains(.,"Allow all sudo commands")]'
-    title = '//h3[conatins(text(),"Add User")]'
+    title = '//h3[contains(text(),"Add User")]'
     user_Id_And_Groups = '//legend[contains(text(),"User ID and Groups")]'
     username_Input = '//ix-input[@formcontrolname="username"]//input'
     wheel_Group_Option = '//mat-option[contains(.,"wheel")]'
