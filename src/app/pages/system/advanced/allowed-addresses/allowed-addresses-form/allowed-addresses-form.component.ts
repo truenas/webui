@@ -10,11 +10,11 @@ import {
 } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { Role } from 'app/enums/role.enum';
+import { helptextSystemAdvanced } from 'app/helptext/system/advanced';
 import { helptextSystemGeneral } from 'app/helptext/system/general';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
-import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
-import { ipv4Validator } from 'app/modules/ix-forms/validators/ip-validation';
+import { ipv4or6OptionalCidrValidator } from 'app/modules/ix-forms/validators/ip-validation';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DialogService } from 'app/services/dialog.service';
@@ -31,8 +31,9 @@ import { generalConfigUpdated } from 'app/store/system-config/system-config.acti
 })
 export class AllowedAddressesFormComponent implements OnInit {
   protected requiredRoles = [Role.FullAdmin];
+  protected readonly helpText = helptextSystemAdvanced;
 
-  isFormLoading = false;
+  isFormLoading = true;
   form = this.fb.group({
     addresses: this.fb.array<string>([]),
   });
@@ -48,7 +49,6 @@ export class AllowedAddressesFormComponent implements OnInit {
     private loader: AppLoaderService,
     private snackbar: SnackbarService,
     private translate: TranslateService,
-    private validatorsService: IxValidatorsService,
   ) {}
 
   ngOnInit(): void {
@@ -71,10 +71,7 @@ export class AllowedAddressesFormComponent implements OnInit {
 
   addAddress(): void {
     this.form.controls.addresses.push(
-      this.fb.control('', [
-        this.validatorsService.withMessage(ipv4Validator(), this.translate.instant('Enter a valid IPv4 address.')),
-        Validators.required,
-      ]),
+      this.fb.control('', [Validators.required, ipv4or6OptionalCidrValidator()]),
     );
   }
 

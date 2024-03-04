@@ -11,6 +11,7 @@
         [formArray]="form.get('addresses')"
         [empty]="form.controls.addresses.controls.length === 0"
         [label]="'Allowed IP Addresses' | translate"
+        [tooltip]="helpText.allowed_ip_addresses.tooltip"
         (add)="addAddress()"
       >
         <ix-list-item
@@ -20,7 +21,7 @@
           <ix-input
             class="ip-address"
             [formControlName]="i"
-            [label]="'IP Address' | translate"
+            [label]="'IP Address/Subnet' | translate"
             [required]="true"
           ></ix-input>
         </ix-list-item>
