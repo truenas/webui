@@ -1,8 +1,8 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { FlexLayoutModule } from '@angular/flex-layout';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
+import { FlexLayoutModule } from '@ngbracket/ngx-layout';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { KiB } from 'app/constants/bytes.constant';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';

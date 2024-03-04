@@ -1,11 +1,11 @@
 import {
   Component, ElementRef, OnInit, ChangeDetectionStrategy, ChangeDetectorRef,
 } from '@angular/core';
-import { MediaObserver } from '@angular/flex-layout';
 import {
   DomSanitizer, SafeStyle,
 } from '@angular/platform-browser';
 import { Router } from '@angular/router';
+import { MediaObserver } from '@ngbracket/ngx-layout';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';

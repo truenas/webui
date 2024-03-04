@@ -1,7 +1,7 @@
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, TrackByFunction,
 } from '@angular/core';
-import { MediaObserver } from '@angular/flex-layout';
+import { MediaObserver } from '@ngbracket/ngx-layout';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Actions } from '@ngrx/effects';
 import { TranslateService } from '@ngx-translate/core';

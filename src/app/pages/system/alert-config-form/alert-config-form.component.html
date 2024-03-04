@@ -1,7 +1,7 @@
 <mat-card class="form-card">
   <mat-progress-bar *ngIf="isFormLoading" mode="indeterminate"></mat-progress-bar>
   <div class="mat-title">
-    <div *ngIf="selectedCategory"> {{ 'Category' | translate }}: </div>
+    <h3 *ngIf="selectedCategory"> {{ 'Category' | translate }}: </h3>
     <div class="categories">
       <button mat-button ixTest="categories" [matMenuTriggerFor]="categoriesMenu">
         {{ selectedCategory?.title }}

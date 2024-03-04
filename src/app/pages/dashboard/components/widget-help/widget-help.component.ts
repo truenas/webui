@@ -1,7 +1,7 @@
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
-import { MediaObserver } from '@angular/flex-layout';
+import { MediaObserver } from '@ngbracket/ngx-layout';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { ProductType, productTypeLabels } from 'app/enums/product-type.enum';

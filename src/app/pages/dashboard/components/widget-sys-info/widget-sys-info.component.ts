@@ -4,8 +4,8 @@ import {
   ChangeDetectorRef,
   Component, Inject, Input, OnDestroy, OnInit,
 } from '@angular/core';
-import { MediaObserver } from '@angular/flex-layout';
 import { Router } from '@angular/router';
+import { MediaObserver } from '@ngbracket/ngx-layout';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
