@@ -56,7 +56,7 @@ class add_User:
     bash_Shell_Option = '//mat-option[contains(.,"bash")]'
     confirm_Password_Input = '//ix-input[@formcontrolname="password_conf"]//input'
     create_Home_Directory_Checkbox = '//ix-checkbox[@formcontrolname="home_create"]//mat-checkbox'
-    edit_Title = '//h3[text()="Edit User"]'
+    edit_Title = '//h3[contains(text(),"Edit User")]'
     email_Error_Message = '//div[contains(.,"Value must be a valid email address")]'
     email_Input = '//ix-input[@formcontrolname="email"]//input'
     ericbsd_Root_Chip = '//mat-chip-row[contains(.,"root")]'
@@ -83,7 +83,7 @@ class add_User:
     ssh_Password_Enabled_Checkbox = '//*[@data-test="checkbox-ssh-password-enabled"]'
     ssh_Pubkey_Textarea = '//ix-textarea[@formcontrolname="sshpubkey"]//textarea'
     sudo_Checkbox = '//mat-checkbox[contains(.,"Allow all sudo commands")]'
-    title = '//h3[text()="Add User"]'
+    title = '//h3[conatins(text(),"Add User")]'
     user_Id_And_Groups = '//legend[contains(text(),"User ID and Groups")]'
     username_Input = '//ix-input[@formcontrolname="username"]//input'
     wheel_Group_Option = '//mat-option[contains(.,"wheel")]'
@@ -99,7 +99,7 @@ class add_Zvol:
 
 class advanced:
     title = '//h1[contains(.,"Advanced")]'
-    system_Dataset_Pool_Card = '//h3[text()="Storage"]'
+    system_Dataset_Pool_Card = '//h3[contains(text(),"Storage")]'
     system_Dataset_Pool_Configure_Button = '//mat-card[contains(.,"System Dataset Pool")]//button[contains(.,"Configure")]'
 
     def system_Dataset_Pool_Pool(pool_name):
@@ -388,7 +388,7 @@ class export_Disconnect_Pool:
 
 
 class global_Configuration:
-    title = '//h3[text()="Edit Global Configuration"]'
+    title = '//h3[contains(text(),"Edit Global Configuration")]'
     nameserver1_Input = '//ix-input[contains(.,"Nameserver 1")]//input'
     nameserver2_Input = '//ix-input[contains(.,"Nameserver 2")]//input'
     nameserver3_Input = '//ix-input[contains(.,"Nameserver 3")]//input'
