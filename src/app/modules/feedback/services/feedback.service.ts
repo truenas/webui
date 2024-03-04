@@ -6,7 +6,6 @@ import { TranslateService } from '@ngx-translate/core';
 import { environment } from 'environments/environment';
 import html2canvas, { Options } from 'html2canvas';
 import {
-  BehaviorSubject,
   Observable, combineLatest, filter, first, map, of, switchMap, forkJoin, throwError, EMPTY,
 } from 'rxjs';
 import { catchError, take } from 'rxjs/operators';
@@ -43,9 +42,7 @@ type TicketLicensedData = FileTicketLicensedComponent['form']['value'];
   providedIn: 'root',
 })
 export class FeedbackService {
-  oauthToken$ = new BehaviorSubject<string>(null);
   private readonly hostname = 'https://feedback.ui.truenas.com';
-
   private isFeedbackAllowed: boolean;
 
   constructor(

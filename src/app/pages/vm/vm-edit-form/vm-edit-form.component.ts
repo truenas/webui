@@ -55,7 +55,7 @@ export class VmEditFormComponent implements OnInit {
     cores: [null as number, [Validators.required, Validators.min(1)], this.cpuValidator.createValidator()],
     threads: [null as number, [Validators.required, Validators.min(1)], this.cpuValidator.createValidator()],
     cpuset: ['', Validators.pattern(vmCpusetPattern)],
-    pin_vcpus: [false], // TODO: Add relationship as in wizard
+    pin_vcpus: [false],
     cpu_mode: [null as VmCpuMode],
     cpu_model: [''],
     memory: [null as number, this.validators.withMessage(
@@ -181,8 +181,23 @@ export class VmEditFormComponent implements OnInit {
   }
 
   private listenForFormValueChanges(): void {
-    this.form.controls.cpu_mode.valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {
-      this.showCpuModelField = value === VmCpuMode.Custom;
-    });
+    this.setPinVcpusRelation();
+    this.form.controls.cpu_mode.valueChanges
+      .pipe(untilDestroyed(this))
+      .subscribe((value) => {
+        this.showCpuModelField = value === VmCpuMode.Custom;
+      });
+  }
+
+  private setPinVcpusRelation(): void {
+    this.form.controls.cpuset.valueChanges
+      .pipe(untilDestroyed(this))
+      .subscribe((cpuset) => {
+        if (cpuset) {
+          this.form.controls.pin_vcpus.enable();
+        } else {
+          this.form.controls.pin_vcpus.disable();
+        }
+      });
   }
 }

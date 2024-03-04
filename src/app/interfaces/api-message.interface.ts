@@ -1,4 +1,6 @@
 import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
+import { ApiCallMethod } from 'app/interfaces/api/api-call-directory.interface';
+import { ApiJobMethod } from 'app/interfaces/api/api-job-directory.interface';
 import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 
 export interface PongMessage {
@@ -24,7 +26,7 @@ export interface ConnectedMessage {
 }
 
 export interface ApiEvent<T = unknown> {
-  collection: string; // TODO: ApiMethod?
+  collection: ApiCallMethod | ApiJobMethod;
   fields: T;
   id: number | string;
   msg: IncomingApiMessageType.Changed

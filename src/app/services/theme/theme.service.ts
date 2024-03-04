@@ -56,7 +56,7 @@ export class ThemeService {
   onThemeChanged(theme: string): void {
     this.activeTheme = theme;
     this.activeTheme$.next(theme);
-    const selectedTheme = this.findTheme(this.activeTheme, true);
+    const selectedTheme = this.findTheme(this.activeTheme);
 
     this.setCssVars(selectedTheme);
     this.updateThemeInLocalStorage(selectedTheme);
@@ -76,20 +76,13 @@ export class ThemeService {
     return this.findTheme(this.activeTheme);
   }
 
-  findTheme(name: string, reset?: boolean): Theme {
+  findTheme(name: string): Theme {
     const existingTheme = this.allThemes.find((theme) => theme.name === name);
     if (existingTheme) {
       return existingTheme;
     }
 
-    // Optionally reset if not found
     this.resetToDefaultTheme();
-
-    if (!reset) {
-      // TODO: Weird condition
-      console.warn('Theme ' + name + ' not found and reset not initiated.');
-    }
-
     return defaultTheme;
   }
 
