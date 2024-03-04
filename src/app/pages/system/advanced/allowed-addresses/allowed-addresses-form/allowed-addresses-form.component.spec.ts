@@ -60,18 +60,30 @@ describe('AllowedAddressesComponent', () => {
     const form = await loader.getHarness(IxFormHarness);
     const values = await form.getValues();
 
-    expect(values).toEqual({ 'IP Address': '1.1.1.1/32' });
+    expect(values).toEqual({ 'IP Address/Subnet': '1.1.1.1/32' });
   });
 
-  it('sends an update payload to websocket and closes modal when save is pressed', async () => {
+  it('sends an update payload with specific IP address', async () => {
     const form = await loader.getHarness(IxFormHarness);
-    await form.fillForm({ 'IP Address': '2.2.2.2' });
+    await form.fillForm({ 'IP Address/Subnet': '2.2.2.2' });
 
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
     expect(ws.call).toHaveBeenCalledWith('system.general.update', [
       { ui_allowlist: ['2.2.2.2'] },
+    ]);
+  });
+
+  it('sends an update payload with an IP address and a subnet mask', async () => {
+    const form = await loader.getHarness(IxFormHarness);
+    await form.fillForm({ 'IP Address/Subnet': '192.168.1.0/24' });
+
+    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+    await saveButton.click();
+
+    expect(ws.call).toHaveBeenCalledWith('system.general.update', [
+      { ui_allowlist: ['192.168.1.0/24'] },
     ]);
   });
 });
