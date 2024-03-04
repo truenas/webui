@@ -27,7 +27,6 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 })
 export class PoolsDashboardComponent implements OnInit {
   readonly requiredRoles = [Role.FullAdmin];
-  readonly Role = Role;
   readonly searchElements = elements;
 
   pools$ = this.store.pools$;

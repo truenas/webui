@@ -1,3 +1,39 @@
+/**
+ * This is the parser which is used to generate `ui-searchable-elements.json` file, where we collect all all UI elements
+ * which will be shown in new "Global UI Search"
+ *
+ * How to correctly set it all up:
+ * 1️⃣. Use `ixUiSearchableElement` directive - to mark an element for the parser
+ *
+ * 2️⃣. Create .elements.ts config file near the .component.html file ~ [pools-dashboard.elements.ts]
+ *
+ * File content example:
+ * export const elements: Record<string, UiSearchableElement> = {
+    importPool: {
+      hierarchy: [T('Storage'), T('Import Pool')], // use T('') to mark the text for translation
+      synonyms: [T('Add Pool')],
+      anchor: 'import-pool-button',
+      anchorRouterLink: ['/storage'],
+    },
+  }
+ *
+ * 3️⃣. Provide config to the element [ixSearchConfig]="searchElements.importPool"
+ *
+ * 4️⃣. Run the script to update `ui-searchable-elements.json`:
+ * yarn extract-ui-searchable-elements
+ *
+ * Explanations: 👇
+ *
+ * export interface UiSearchableElement {
+    hierarchy: string[]; ⬅️ Array of labels as a hierarchy title path to actual element, use T('')
+    anchorRouterLink: string[]; ⬅️ Router link to the page with the element
+    anchor: string; ⬅️ Element id where the focus will be placed eventually
+    triggerAnchor?: string; ⬅️ Trigger element which will be clicked and then focused to the anchor element
+    synonyms?: string[]; ⬅️ Synonyms for better search experience, use T(')
+    requiredRoles?: Role[] | string[]; ⬅️ Required roles to see search result, can be skipped if `*ixRequiresRoles="requiredRoles"` applied to the element
+  }
+ */
+
 import * as cheerio from 'cheerio';
 import * as ts from 'typescript';
 import * as fs from 'fs';
