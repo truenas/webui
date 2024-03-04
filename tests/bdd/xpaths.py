@@ -3,7 +3,7 @@ def mat_Option(option):
 
 
 class active_Directory:
-    title = '//h3[@class="ix-formtitle" and text()="Active Directory"]'
+    title = '//h3[@class="ix-formtitle" and contains(text(),"Active Directory")]'
     enable_Checkbox = '//ix-checkbox[@formcontrolname="enable"]//mat-checkbox'
     domain_Input = '//ix-input[@formcontrolname="domainname"]//input'
     account_Input = '//ix-input[@formcontrolname="bindname"]//input'
