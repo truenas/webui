@@ -5,7 +5,7 @@ import {
   catchError, switchMap, tap,
 } from 'rxjs/operators';
 import { ApiKey } from 'app/interfaces/api-key.interface';
-import { DialogService } from 'app/services/dialog.service';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -48,6 +48,7 @@ export class ApiKeyComponentStore extends ComponentStore<ApiKeysState> {
           tap((keys) => {
             this.patchState({
               entities: keys,
+              isLoading: false,
             });
           }),
           catchError((error: unknown) => {

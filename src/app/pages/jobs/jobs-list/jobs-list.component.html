@@ -1,30 +1,28 @@
-<ng-template ixPageHeader>
-  <ix-page-title-header>
-    <mat-button-toggle-group
-      aria-label="Tabs"
-      [value]="selectedIndex"
-      [disabled]="isLoading$ | async"
-    >
-      <mat-button-toggle
-        [value]="JobTab.All"
-        (click)="onTabChange(JobTab.All)"
-      >{{ 'All' | translate }}</mat-button-toggle>
-      <mat-button-toggle
-        [value]="JobTab.Running"
-        (click)="onTabChange(JobTab.Running)"
-      >{{ 'Active' | translate }}</mat-button-toggle>
-      <mat-button-toggle
-        [value]="JobTab.Failed"
-        (click)="onTabChange(JobTab.Failed)"
-      >{{ 'Failed' | translate }}</mat-button-toggle>
-    </mat-button-toggle-group>
+<ix-page-header>
+  <mat-button-toggle-group
+    aria-label="Tabs"
+    [value]="selectedIndex"
+    [disabled]="isLoading$ | async"
+  >
+    <mat-button-toggle
+      [value]="JobTab.All"
+      (click)="onTabChange(JobTab.All)"
+    >{{ 'All' | translate }}</mat-button-toggle>
+    <mat-button-toggle
+      [value]="JobTab.Running"
+      (click)="onTabChange(JobTab.Running)"
+    >{{ 'Active' | translate }}</mat-button-toggle>
+    <mat-button-toggle
+      [value]="JobTab.Failed"
+      (click)="onTabChange(JobTab.Failed)"
+    >{{ 'Failed' | translate }}</mat-button-toggle>
+  </mat-button-toggle-group>
 
-    <ix-search-input
-      [disabled]="isLoading$ | async"
-      (search)="onSearch($event)"
-    ></ix-search-input>
-  </ix-page-title-header>
-</ng-template>
+  <ix-search-input1
+    [disabled]="isLoading$ | async"
+    (search)="onSearch($event)"
+  ></ix-search-input1>
+</ix-page-header>
 
   <div class="jobs-container">
     <table

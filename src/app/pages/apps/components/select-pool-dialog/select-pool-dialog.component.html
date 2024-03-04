@@ -20,7 +20,14 @@
       {{ 'Cancel' | translate }}
     </button>
 
-    <button mat-button type="submit" color="primary" ixTest="choose" [disabled]="form.invalid">
+    <button
+      *ixRequiresRoles="requiredRoles"
+      mat-button
+      type="submit"
+      color="primary"
+      ixTest="choose"
+      [disabled]="form.invalid"
+    >
       {{ 'Choose' | translate }}
     </button>
   </ix-form-actions>

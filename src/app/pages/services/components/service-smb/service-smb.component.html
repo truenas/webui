@@ -1,4 +1,4 @@
-<ix-modal-header [title]="'SMB' | translate" [loading]="isFormLoading"></ix-modal-header>
+<ix-modal-header [requiredRoles]="requiredRoles" [title]="'SMB' | translate" [loading]="isFormLoading"></ix-modal-header>
 
 <mat-card class="card">
   <mat-card-content>
@@ -116,7 +116,7 @@
         ></ix-select>
       </ix-fieldset>
 
-      <div class="form-actions">
+      <ix-form-actions>
         <button
           *ixRequiresRoles="requiredRoles"
           mat-button
@@ -135,7 +135,7 @@
               : ('Basic Settings' | translate)
           }}
         </button>
-      </div>
+      </ix-form-actions>
     </form>
   </mat-card-content>
 </mat-card>

@@ -15,10 +15,10 @@ import {
 import { Role } from 'app/enums/role.enum';
 import { helptextSystemAdvanced as helptext } from 'app/helptext/system/advanced';
 import { AuditConfig } from 'app/interfaces/audit/audit.interface';
-import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { DialogService } from 'app/modules/dialog/dialog.service';
+import { ChainedRef } from 'app/modules/ix-forms/components/ix-slide-in/chained-component-ref';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
@@ -30,6 +30,8 @@ import { advancedConfigUpdated } from 'app/store/system-config/system-config.act
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AuditFormComponent implements OnInit {
+  protected requiredRoles = [Role.SystemAuditWrite];
+
   isFormLoading = false;
   subscriptions: Subscription[] = [];
 
@@ -40,7 +42,7 @@ export class AuditFormComponent implements OnInit {
     quota_fill_warning: [null as number, [Validators.required, Validators.min(5), Validators.max(80)]],
     quota_fill_critical: [null as number, [Validators.required, Validators.min(50), Validators.max(95)]],
   });
-  protected readonly Role = Role;
+
   readonly tooltips = {
     retention: helptext.retention_tooltip,
     reservation: helptext.reservation_tooltip,
@@ -52,7 +54,6 @@ export class AuditFormComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private ws: WebSocketService,
-    private slideInRef: IxSlideInRef<AuditFormComponent>,
     private dialogService: DialogService,
     private cdr: ChangeDetectorRef,
     private errorHandler: ErrorHandlerService,
@@ -60,6 +61,7 @@ export class AuditFormComponent implements OnInit {
     private snackbar: SnackbarService,
     private translate: TranslateService,
     private formErrorHandler: FormErrorHandlerService,
+    private chainedRef: ChainedRef<unknown>,
   ) {}
 
   ngOnInit(): void {
@@ -75,7 +77,7 @@ export class AuditFormComponent implements OnInit {
         this.store$.dispatch(advancedConfigUpdated());
         this.isFormLoading = false;
         this.cdr.markForCheck();
-        this.slideInRef.close();
+        this.chainedRef.close({ response: true, error: null });
       }),
       catchError((error: unknown) => {
         this.isFormLoading = false;

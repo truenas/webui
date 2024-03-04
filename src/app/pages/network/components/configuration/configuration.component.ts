@@ -13,10 +13,10 @@ import { helptextNetworkConfiguration } from 'app/helptext/network/configuration
 import {
   NetworkConfiguration, NetworkConfigurationActivity, NetworkConfigurationConfig, NetworkConfigurationUpdate,
 } from 'app/interfaces/network-configuration.interface';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { ipv4Validator, ipv6Validator } from 'app/modules/ix-forms/validators/ip-validation';
-import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -30,6 +30,8 @@ import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class NetworkConfigurationComponent implements OnInit {
+  protected requiredRoles = [Role.FullAdmin];
+
   isFormLoading = false;
 
   form = this.fb.group({
@@ -186,8 +188,6 @@ export class NetworkConfigurationComponent implements OnInit {
     label: helptextNetworkConfiguration.hosts_placeholder,
     tooltip: helptextNetworkConfiguration.hosts_tooltip,
   };
-
-  protected readonly Role = Role;
 
   constructor(
     private ws: WebSocketService,

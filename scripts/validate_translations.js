@@ -28,7 +28,7 @@ fs.readdir(translationDir, function (err, files) {
       } catch (error) {
         hadErrors = true;
         console.error("Error parsing translation string. You may need to escape { } to '{' '}'. Offending string:");
-        console.error(`${language}: "${key}"`);
+        console.error(`${language}: "${key}"`, JSON.stringify(error));
       }
     });
   });

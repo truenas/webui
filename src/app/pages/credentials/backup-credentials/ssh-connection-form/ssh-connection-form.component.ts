@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { FormBuilder } from '@ngneat/reactive-forms';
@@ -23,15 +23,14 @@ import {
 import { SshConnectionSetup } from 'app/interfaces/ssh-connection-setup.interface';
 import { SshCredentials } from 'app/interfaces/ssh-credentials.interface';
 import { WebSocketError } from 'app/interfaces/websocket-error.interface';
-import { CHAINED_SLIDE_IN_REF, SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
+import { DialogService } from 'app/modules/dialog/dialog.service';
+import { ChainedRef } from 'app/modules/ix-forms/components/ix-slide-in/chained-component-ref';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { ChainedComponentRef } from 'app/services/ix-chained-slide-in.service';
 import { KeychainCredentialService } from 'app/services/keychain-credential.service';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -45,6 +44,8 @@ const sslCertificationError = 'ESSLCERTVERIFICATIONERROR';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SshConnectionFormComponent implements OnInit {
+  protected requiredRoles = [Role.KeychainCredentialWrite];
+
   form = this.formBuilder.group({
     connection_name: ['', Validators.required],
     setup_method: [SshConnectionsSetupMethod.SemiAutomatic],
@@ -126,7 +127,7 @@ export class SshConnectionFormComponent implements OnInit {
 
   readonly helptext = helptextSshConnections;
 
-  protected readonly Role = Role;
+  private existingConnection: KeychainSshCredentials;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -141,11 +142,11 @@ export class SshConnectionFormComponent implements OnInit {
     public formatter: IxFormatterService,
     private dialogService: DialogService,
     private snackbar: SnackbarService,
-    @Inject(SLIDE_IN_DATA) private existingConnection: KeychainSshCredentials,
-    @Inject(CHAINED_SLIDE_IN_REF) private chainedSlideInRef: ChainedComponentRef,
+    private chainedRef: ChainedRef<KeychainSshCredentials>,
   ) { }
 
   ngOnInit(): void {
+    this.existingConnection = this.chainedRef.getData();
     if (this.existingConnection) {
       this.setConnectionForEdit();
     }
@@ -200,7 +201,7 @@ export class SshConnectionFormComponent implements OnInit {
       next: (newCredential) => {
         this.isLoading = false;
         this.snackbar.success(this.translate.instant('SSH Connection saved'));
-        this.chainedSlideInRef.close({ response: newCredential, error: null });
+        this.chainedRef.close({ response: newCredential, error: null });
       },
       error: (error: unknown) => {
         this.isLoading = false;

@@ -3,11 +3,13 @@ import {
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Observable } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { Role } from 'app/enums/role.enum';
 import { Group } from 'app/interfaces/group.interface';
 import { User } from 'app/interfaces/user.interface';
-import { DialogService } from 'app/services/dialog.service';
+import { DialogService } from 'app/modules/dialog/dialog.service';
+import { AuthService } from 'app/services/auth/auth.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -18,6 +20,8 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class GroupMembersComponent implements OnInit {
+  protected requiredRoles = [Role.AccountWrite];
+
   members: User[] = [];
   selectedMembers: User[] = [];
   users: User[] = [];
@@ -25,7 +29,9 @@ export class GroupMembersComponent implements OnInit {
   isFormLoading = false;
   group: Group;
 
-  protected readonly Role = Role;
+  get hasRequiredRoles(): Observable<boolean> {
+    return this.authService.hasRole(this.requiredRoles);
+  }
 
   constructor(
     private ws: WebSocketService,
@@ -34,6 +40,7 @@ export class GroupMembersComponent implements OnInit {
     private dialog: DialogService,
     private errorHandler: ErrorHandlerService,
     private cdr: ChangeDetectorRef,
+    private authService: AuthService,
   ) {}
 
   ngOnInit(): void {

@@ -8,15 +8,16 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable, map } from 'rxjs';
 import { JobState } from 'app/enums/job-state.enum';
+import { Role } from 'app/enums/role.enum';
 import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
 import { helptextVolumeStatus } from 'app/helptext/storage/volumes/volume-status';
 import { Option } from 'app/interfaces/option.interface';
 import { PoolAttachParams } from 'app/interfaces/pool.interface';
 import { UnusedDisk } from 'app/interfaces/storage.interface';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { SimpleAsyncComboboxProvider } from 'app/modules/ix-forms/classes/simple-async-combobox-provider';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -32,6 +33,8 @@ export interface ExtendDialogParams {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ExtendDialogComponent implements OnInit {
+  readonly requiredRoles = [Role.FullAdmin];
+
   form = this.formBuilder.group({
     newDisk: ['', Validators.required],
   });

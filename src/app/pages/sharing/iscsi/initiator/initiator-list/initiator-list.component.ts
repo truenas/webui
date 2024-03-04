@@ -7,13 +7,13 @@ import { TranslateService } from '@ngx-translate/core';
 import { filter, switchMap, tap } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
 import { IscsiInitiatorGroup } from 'app/interfaces/iscsi.interface';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { AsyncDataProvider } from 'app/modules/ix-table2/classes/async-data-provider/async-data-provider';
 import { actionsColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
 import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { createTable } from 'app/modules/ix-table2/utils';
 import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
-import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IscsiService } from 'app/services/iscsi.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -26,6 +26,12 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class InitiatorListComponent implements OnInit {
+  readonly requiredRoles = [
+    Role.SharingIscsiInitiatorWrite,
+    Role.SharingIscsiWrite,
+    Role.SharingWrite,
+  ];
+
   isLoading = false;
   filterString = '';
   dataProvider: AsyncDataProvider<IscsiInitiatorGroup>;
@@ -76,11 +82,7 @@ export class InitiatorListComponent implements OnInit {
               },
             });
           },
-          requiredRoles: [
-            Role.SharingIscsiInitiatorWrite,
-            Role.SharingIscsiWrite,
-            Role.SharingWrite,
-          ],
+          requiredRoles: this.requiredRoles,
         },
       ],
     }),

@@ -25,6 +25,7 @@ import { helptextSnapshots } from 'app/helptext/storage/snapshots/snapshots';
 import { ConfirmOptions } from 'app/interfaces/dialog.interface';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxCheckboxColumnComponent } from 'app/modules/ix-tables/components/ix-checkbox-column/ix-checkbox-column.component';
 import { IxDetailRowDirective } from 'app/modules/ix-tables/directives/ix-detail-row.directive';
 import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
@@ -32,7 +33,6 @@ import { SnapshotAddFormComponent } from 'app/pages/datasets/modules/snapshots/s
 import { SnapshotBatchDeleteDialogComponent } from 'app/pages/datasets/modules/snapshots/snapshot-batch-delete-dialog/snapshot-batch-delete-dialog.component';
 import { snapshotPageEntered } from 'app/pages/datasets/modules/snapshots/store/snapshot.actions';
 import { selectSnapshotsTotal, selectSnapshots, selectSnapshotState } from 'app/pages/datasets/modules/snapshots/store/snapshot.selectors';
-import { DialogService } from 'app/services/dialog.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { AppState } from 'app/store';
 import { snapshotExtraColumnsToggled } from 'app/store/preferences/preferences.actions';
@@ -46,6 +46,8 @@ import { waitForPreferences } from 'app/store/preferences/preferences.selectors'
   providers: [FormatDateTimePipe],
 })
 export class SnapshotListComponent implements OnInit {
+  readonly requiredRoles = [Role.SnapshotDelete];
+
   readonly EmptyType = EmptyType;
   isLoading$ = this.store$.select(selectSnapshotState).pipe(map((state) => state.isLoading));
   emptyType$: Observable<EmptyType> = combineLatest([
@@ -54,16 +56,16 @@ export class SnapshotListComponent implements OnInit {
     this.store$.select(selectSnapshotState).pipe(map((state) => state.error)),
   ]).pipe(
     switchMap(([isLoading, isNoData, isError]) => {
-      if (isLoading) {
-        return of(EmptyType.Loading);
+      switch (true) {
+        case isLoading:
+          return of(EmptyType.Loading);
+        case !!isError:
+          return of(EmptyType.Errors);
+        case isNoData:
+          return of(EmptyType.NoPageData);
+        default:
+          return of(EmptyType.NoSearchResults);
       }
-      if (isError) {
-        return of(EmptyType.Errors);
-      }
-      if (isNoData) {
-        return of(EmptyType.NoPageData);
-      }
-      return of(EmptyType.NoSearchResults);
     }),
   );
   showExtraColumns: boolean;
@@ -98,8 +100,6 @@ export class SnapshotListComponent implements OnInit {
   get emptyConfigService(): EmptyService {
     return this.emptyService;
   }
-
-  protected readonly Role = Role;
 
   constructor(
     private dialogService: DialogService,

@@ -13,7 +13,6 @@ import { RouterModule } from '@angular/router';
 import { FlexLayoutModule } from '@ngbracket/ngx-layout';
 import { TranslateModule } from '@ngx-translate/core';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
-import { AppCommonModule } from 'app/modules/common/app-common.module';
 import { CloudCredentialsSelectModule } from 'app/modules/custom-selects/cloud-credentials-select/cloud-credentials-select.module';
 import { SshCredentialsSelectModule } from 'app/modules/custom-selects/ssh-credentials-select/ssh-credentials-select.module';
 import { EntityModule } from 'app/modules/entity/entity.module';
@@ -23,6 +22,7 @@ import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
 import { LayoutModule } from 'app/modules/layout/layout.module';
 import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
 import { SchedulerModule } from 'app/modules/scheduler/scheduler.module';
+import { SearchInput1Component } from 'app/modules/search-input1/search-input1.component';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
 import { CloudSyncProviderDescriptionComponent } from 'app/pages/data-protection/cloudsync/cloudsync-provider-description/cloudsync-provider-description.component';
 import {
@@ -99,12 +99,12 @@ import { SmartTaskListComponent } from './smart-task/smart-task-list/smart-task-
     IxIconModule,
     TestIdModule,
     MatStepperModule,
-    AppCommonModule,
     LayoutModule,
     MatToolbarModule,
     MatTooltipModule,
     MatDividerModule,
     CloudSyncProviderDescriptionComponent,
+    SearchInput1Component,
   ],
   declarations: [
     SnapshotTaskListComponent,

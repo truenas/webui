@@ -2,7 +2,6 @@ import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
-import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { forkJoin } from 'rxjs';
@@ -10,9 +9,8 @@ import { Role } from 'app/enums/role.enum';
 import { idNameArrayToOptions } from 'app/helpers/operators/options.operators';
 import { helptextSystemKmip } from 'app/helptext/system/kmip';
 import { KmipConfigUpdate } from 'app/interfaces/kmip-config.interface';
-import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -51,7 +49,6 @@ export class KmipComponent implements OnInit {
     private ws: WebSocketService,
     private formBuilder: FormBuilder,
     private cdr: ChangeDetectorRef,
-    private matDialog: MatDialog,
     private errorHandler: ErrorHandlerService,
     private translate: TranslateService,
     private dialogService: DialogService,
@@ -102,15 +99,18 @@ export class KmipComponent implements OnInit {
   }
 
   onSubmit(): void {
-    const dialogRef = this.matDialog.open(EntityJobComponent, {
-      data: { title: helptextSystemKmip.jobDialog.title },
-    });
-    dialogRef.componentInstance.setCall('kmip.update', [this.form.value as KmipConfigUpdate]);
-    dialogRef.componentInstance.submit();
-    dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
-      this.snackbar.success(this.translate.instant('Settings saved.'));
-      dialogRef.close(true);
-    });
+    this.dialogService.jobDialog(
+      this.ws.job('kmip.update', [this.form.value as KmipConfigUpdate]),
+      { title: this.translate.instant(helptextSystemKmip.jobDialog.title) },
+    )
+      .afterClosed()
+      .pipe(
+        this.errorHandler.catchError(),
+        untilDestroyed(this),
+      )
+      .subscribe(() => {
+        this.snackbar.success(this.translate.instant('Settings saved.'));
+      });
   }
 
   private loadKmipConfig(): void {

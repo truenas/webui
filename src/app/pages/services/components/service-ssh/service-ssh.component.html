@@ -1,4 +1,4 @@
-<ix-modal-header [title]="'SSH' | translate" [loading]="isFormLoading"></ix-modal-header>
+<ix-modal-header [requiredRoles]="requiredRoles" [title]="'SSH' | translate" [loading]="isFormLoading"></ix-modal-header>
 
 <mat-card class="card">
   <mat-card-content>
@@ -82,9 +82,9 @@
         ></ix-textarea>
       </ix-fieldset>
 
-      <div class="form-actions">
+      <ix-form-actions>
         <button
-          *ixRequiresRoles="[Role.FullAdmin]"
+          *ixRequiresRoles="requiredRoles"
           mat-button
           type="submit"
           color="primary"
@@ -101,7 +101,7 @@
               : ('Basic Settings' | translate)
           }}
         </button>
-      </div>
+      </ix-form-actions>
     </form>
   </mat-card-content>
 </mat-card>

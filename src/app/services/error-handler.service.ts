@@ -9,7 +9,7 @@ import { sentryCustomExceptionExtraction } from 'app/helpers/error-parser.helper
 import { ErrorReport } from 'app/interfaces/error-report.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { WebSocketError } from 'app/interfaces/websocket-error.interface';
-import { DialogService } from 'app/services/dialog.service';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 
 @Injectable({
   providedIn: 'root',
@@ -39,6 +39,11 @@ export class ErrorHandlerService implements ErrorHandler {
     if (parsedError) {
       error = parsedError;
     }
+
+    if (!this.shouldLogToSentry(error)) {
+      return;
+    }
+
     this.logToSentry(error);
   }
 
@@ -235,5 +240,13 @@ export class ErrorHandlerService implements ErrorHandler {
         };
       }
     }
+  }
+
+  private shouldLogToSentry(error: unknown): boolean {
+    if (error instanceof CloseEvent) {
+      return false;
+    }
+
+    return true;
   }
 }

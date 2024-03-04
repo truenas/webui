@@ -17,23 +17,24 @@ import { helptextReplicationWizard } from 'app/helptext/data-protection/replicat
 import { KeychainCredential } from 'app/interfaces/keychain-credential.interface';
 import { ReplicationTask } from 'app/interfaces/replication-task.interface';
 import { SshCredentialsSelectModule } from 'app/modules/custom-selects/ssh-credentials-select/ssh-credentials-select.module';
+import { DialogService } from 'app/modules/dialog/dialog.service';
+import { ChainedRef } from 'app/modules/ix-forms/components/ix-slide-in/chained-component-ref';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
-import { CHAINED_SLIDE_IN_REF, SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { ReplicationFormComponent } from 'app/pages/data-protection/replication/replication-form/replication-form.component';
 import { ReplicationWhatAndWhereComponent } from 'app/pages/data-protection/replication/replication-wizard/steps/replication-what-and-where/replication-what-and-where.component';
 import { DatasetService } from 'app/services/dataset-service/dataset.service';
-import { DialogService } from 'app/services/dialog.service';
 import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 
 describe('ReplicationWhatAndWhereComponent', () => {
   let spectator: Spectator<ReplicationWhatAndWhereComponent>;
   let loader: HarnessLoader;
   let form: IxFormHarness;
-  const chainedComponentRef = {
+  const chainedRef: ChainedRef<unknown> = {
     close: jest.fn(),
     swap: jest.fn(),
+    getData: jest.fn(() => undefined),
   };
 
   const createComponent = createComponentFactory({
@@ -81,8 +82,7 @@ describe('ReplicationWhatAndWhereComponent', () => {
       mockProvider(DialogService, {
         confirm: jest.fn(() => of()),
       }),
-      { provide: SLIDE_IN_DATA, useValue: undefined },
-      { provide: CHAINED_SLIDE_IN_REF, useValue: chainedComponentRef },
+      mockProvider(ChainedRef, chainedRef),
     ],
   });
 
@@ -205,7 +205,7 @@ describe('ReplicationWhatAndWhereComponent', () => {
     const advancedButton = await loader.getHarness(MatButtonHarness.with({ text: 'Advanced Replication Creation' }));
     await advancedButton.click();
     expect(
-      chainedComponentRef.swap,
+      chainedRef.swap,
     ).toHaveBeenCalledWith(ReplicationFormComponent, true);
   });
 });

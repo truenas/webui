@@ -1,0 +1,66 @@
+$opened-scroll-container-height: calc(80vh - 48px - 240px); // Viewport - topbar - sum of sibling elements
+
+:host {
+  display: block;
+  min-width: 300px;
+}
+
+.mat-mdc-dialog-actions {
+  display: block;
+  min-height: unset;
+  text-align: right;
+}
+
+.backtrace-panel {
+  border: 0;
+  max-height: 0;
+  overflow: hidden;
+  padding: 0;
+  position: relative;
+  transition: max-height 0.25s linear;
+
+  &.open {
+    margin-bottom: 24px;
+    max-height: $opened-scroll-container-height;
+    padding: 2px;
+  }
+
+  .textarea {
+    background: var(--contrast-darker);
+    border: 1px solid var(--lines);
+    color: var(--fg2);
+    font-family: 'Droid Sans Mono', 'Courier New', Courier, monospace;
+    max-height: $opened-scroll-container-height;
+    min-height: 100px;
+    overflow: auto;
+    padding: 1rem;
+    white-space: pre-wrap;
+  }
+
+  ix-copy-btn {
+    bottom: 8px;
+    position: absolute;
+    right: 12px;
+  }
+}
+
+.scrolled-down {
+  display: flex;
+  flex-direction: column-reverse;
+}
+
+#err-md-content {
+  overflow-y: auto !important;
+}
+
+.title-container {
+  display: inline-block;
+}
+
+.err-title {
+  align-items: center;
+}
+
+.err-message-wrapper {
+  word-wrap: break-word;
+}

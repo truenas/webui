@@ -8,9 +8,11 @@ import { TranslateService } from '@ngx-translate/core';
 import {
   filter, of, take, tap,
 } from 'rxjs';
+import { Role } from 'app/enums/role.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { shared, helptextSharingSmb } from 'app/helptext/sharing';
 import { SmbShare } from 'app/interfaces/smb-share.interface';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { AsyncDataProvider } from 'app/modules/ix-table2/classes/async-data-provider/async-data-provider';
 import { actionsColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
 import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
@@ -21,7 +23,6 @@ import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SmbAclComponent } from 'app/pages/sharing/smb/smb-acl/smb-acl.component';
 import { SmbFormComponent } from 'app/pages/sharing/smb/smb-form/smb-form.component';
-import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -34,6 +35,8 @@ import { selectService } from 'app/store/services/services.selectors';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SmbListComponent implements OnInit {
+  readonly requiredRoles = [Role.SharingSmbWrite, Role.SharingWrite];
+
   service$ = this.store$.select(selectService(ServiceName.Cifs));
 
   filterString = '';
@@ -58,6 +61,7 @@ export class SmbListComponent implements OnInit {
     toggleColumn({
       title: this.translate.instant('Enabled'),
       propertyName: 'enabled',
+      requiredRoles: this.requiredRoles,
       onRowToggle: (row) => {
         this.ws.call('sharing.smb.update', [row.id, { enabled: row.enabled }]).pipe(
           this.appLoader.withLoader(),
@@ -67,7 +71,7 @@ export class SmbListComponent implements OnInit {
             row.enabled = share.enabled;
           },
           error: (error: unknown) => {
-            row.enabled = !row.enabled;
+            this.dataProvider.load();
             this.dialog.error(this.errorHandler.parseError(error));
           },
         });
@@ -88,6 +92,7 @@ export class SmbListComponent implements OnInit {
         {
           iconName: 'share',
           tooltip: helptextSharingSmb.action_share_acl,
+          requiredRoles: this.requiredRoles,
           onClick: (row) => {
             if (row.locked) {
               this.lockedPathDialog(row.path);
@@ -110,6 +115,7 @@ export class SmbListComponent implements OnInit {
         {
           iconName: 'security',
           tooltip: helptextSharingSmb.action_edit_acl,
+          requiredRoles: this.requiredRoles,
           disabled: (row) => of(!row.path.replace('/mnt/', '').includes('/')),
           onClick: (row) => {
             if (row.locked) {
@@ -126,6 +132,7 @@ export class SmbListComponent implements OnInit {
         {
           iconName: 'delete',
           tooltip: this.translate.instant('Unshare'),
+          requiredRoles: this.requiredRoles,
           onClick: (row) => {
             this.dialog.confirm({
               title: this.translate.instant('Unshare {name}', { name: row.name }),

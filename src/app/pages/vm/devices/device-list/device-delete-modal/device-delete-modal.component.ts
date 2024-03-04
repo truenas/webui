@@ -5,6 +5,7 @@ import { AbstractControl, FormBuilder, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import { Role } from 'app/enums/role.enum';
 import { VmDeviceType } from 'app/enums/vm.enum';
 import { VmDevice, VmDeviceDelete, VmDiskDevice } from 'app/interfaces/vm-device.interface';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
@@ -20,6 +21,7 @@ import { WebSocketService } from 'app/services/ws.service';
 })
 export class DeviceDeleteModalComponent implements OnInit {
   readonly VmDeviceType = VmDeviceType;
+  protected readonly requiredRoles = [Role.VmDeviceWrite];
 
   zvolConfirmLabelText: string;
 

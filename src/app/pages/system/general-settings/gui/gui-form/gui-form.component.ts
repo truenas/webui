@@ -19,11 +19,11 @@ import { WINDOW } from 'app/helpers/window.helper';
 import { helptextSystemGeneral as helptext } from 'app/helptext/system/general';
 import { SystemGeneralConfig, SystemGeneralConfigUpdate } from 'app/interfaces/system-config.interface';
 import { WebSocketError } from 'app/interfaces/websocket-error.interface';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { ipValidator } from 'app/modules/ix-forms/validators/ip-validation';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
-import { DialogService } from 'app/services/dialog.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { ThemeService } from 'app/services/theme/theme.service';
 import { WebSocketConnectionService } from 'app/services/websocket-connection.service';
@@ -40,6 +40,8 @@ import { waitForGeneralConfig } from 'app/store/system-config/system-config.sele
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class GuiFormComponent {
+  protected requiredRoles = [Role.FullAdmin];
+
   isFormLoading = true;
   configData: SystemGeneralConfig;
 
@@ -65,7 +67,6 @@ export class GuiFormComponent {
   };
 
   readonly helptext = helptext;
-  protected readonly Role = Role;
 
   constructor(
     private fb: FormBuilder,

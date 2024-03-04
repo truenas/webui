@@ -6,12 +6,13 @@ import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { filter, map } from 'rxjs/operators';
+import { Role } from 'app/enums/role.enum';
 import { CoreBulkQuery, CoreBulkResponse } from 'app/interfaces/core-bulk.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { SnapshotDialogData } from 'app/pages/datasets/modules/snapshots/interfaces/snapshot-dialog-data.interface';
-import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
@@ -23,6 +24,8 @@ import { AppState } from 'app/store';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SnapshotBatchDeleteDialogComponent implements OnInit {
+  readonly requiredRoles = [Role.SnapshotDelete];
+
   isJobCompleted = false;
   form = this.fb.group({
     confirm: [false, [Validators.requiredTrue]],

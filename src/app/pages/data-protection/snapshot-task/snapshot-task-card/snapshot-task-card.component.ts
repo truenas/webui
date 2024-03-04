@@ -6,6 +6,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { filter, map, switchMap } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
 import { PeriodicSnapshotTaskUi } from 'app/interfaces/periodic-snapshot-task.interface';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { AsyncDataProvider } from 'app/modules/ix-table2/classes/async-data-provider/async-data-provider';
 import { actionsColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
 import { relativeDateColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-relative-date/ix-cell-relative-date.component';
@@ -16,7 +17,6 @@ import { createTable } from 'app/modules/ix-table2/utils';
 import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
 import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
 import { SnapshotTaskFormComponent } from 'app/pages/data-protection/snapshot-task/snapshot-task-form/snapshot-task-form.component';
-import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { TaskService } from 'app/services/task.service';
@@ -30,6 +30,8 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SnapshotTaskCardComponent implements OnInit {
+  readonly requiredRoles = [Role.SnapshotTaskWrite];
+
   dataProvider: AsyncDataProvider<PeriodicSnapshotTaskUi>;
 
   columns = createTable<PeriodicSnapshotTaskUi>([
@@ -59,7 +61,7 @@ export class SnapshotTaskCardComponent implements OnInit {
     toggleColumn({
       title: this.translate.instant('Enabled'),
       propertyName: 'enabled',
-      requiredRoles: [Role.SnapshotTaskWrite],
+      requiredRoles: this.requiredRoles,
       onRowToggle: (row: PeriodicSnapshotTaskUi) => this.onChangeEnabledState(row),
     }),
     stateButtonColumn({
@@ -77,7 +79,7 @@ export class SnapshotTaskCardComponent implements OnInit {
         {
           iconName: 'delete',
           tooltip: this.translate.instant('Delete'),
-          requiredRoles: [Role.SnapshotTaskWrite],
+          requiredRoles: this.requiredRoles,
           onClick: (row) => this.doDelete(row),
         },
       ],

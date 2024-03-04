@@ -10,19 +10,19 @@ import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { SystemGeneralConfig } from 'app/interfaces/system-config.interface';
-import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
+import { DialogService } from 'app/modules/dialog/dialog.service';
+import { ChainedRef } from 'app/modules/ix-forms/components/ix-slide-in/chained-component-ref';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { AllowedAddressesFormComponent } from 'app/pages/system/advanced/allowed-addresses/allowed-addresses-form/allowed-addresses-form.component';
-import { DialogService } from 'app/services/dialog.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 describe('AllowedAddressesComponent', () => {
   let spectator: Spectator<AllowedAddressesFormComponent>;
   let loader: HarnessLoader;
   let ws: WebSocketService;
+  const componentRef: ChainedRef<unknown> = { close: jest.fn(), getData: jest.fn() };
   const createComponent = createComponentFactory({
     component: AllowedAddressesFormComponent,
     imports: [
@@ -37,12 +37,14 @@ describe('AllowedAddressesComponent', () => {
           ui_allowlist: ['1.1.1.1/32'],
         } as SystemGeneralConfig),
       ]),
-      mockProvider(IxSlideInService),
+      mockProvider(IxChainedSlideInService, {
+        pushComponent: jest.fn(() => of()),
+        components$: of([]),
+      }),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
-      mockProvider(IxSlideInRef),
-      { provide: SLIDE_IN_DATA, useValue: undefined },
+      mockProvider(ChainedRef, componentRef),
       provideMockStore(),
       mockAuth(),
     ],
@@ -58,18 +60,30 @@ describe('AllowedAddressesComponent', () => {
     const form = await loader.getHarness(IxFormHarness);
     const values = await form.getValues();
 
-    expect(values).toEqual({ 'IP Address': '1.1.1.1/32' });
+    expect(values).toEqual({ 'IP Address/Subnet': '1.1.1.1/32' });
   });
 
-  it('sends an update payload to websocket and closes modal when save is pressed', async () => {
+  it('sends an update payload with specific IP address', async () => {
     const form = await loader.getHarness(IxFormHarness);
-    await form.fillForm({ 'IP Address': '2.2.2.2' });
+    await form.fillForm({ 'IP Address/Subnet': '2.2.2.2' });
 
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
     expect(ws.call).toHaveBeenCalledWith('system.general.update', [
       { ui_allowlist: ['2.2.2.2'] },
+    ]);
+  });
+
+  it('sends an update payload with an IP address and a subnet mask', async () => {
+    const form = await loader.getHarness(IxFormHarness);
+    await form.fillForm({ 'IP Address/Subnet': '192.168.1.0/24' });
+
+    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+    await saveButton.click();
+
+    expect(ws.call).toHaveBeenCalledWith('system.general.update', [
+      { ui_allowlist: ['192.168.1.0/24'] },
     ]);
   });
 });

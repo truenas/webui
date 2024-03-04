@@ -15,6 +15,7 @@ import { helptextSystemCertificates } from 'app/helptext/system/certificates';
 import { CertificateAuthority } from 'app/interfaces/certificate-authority.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { WebSocketError } from 'app/interfaces/websocket-error.interface';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { AsyncDataProvider } from 'app/modules/ix-table2/classes/async-data-provider/async-data-provider';
 import {
   actionsColumn,
@@ -32,7 +33,6 @@ import {
 import {
   SignCsrDialogComponent,
 } from 'app/pages/credentials/certificates-dash/sign-csr-dialog/sign-csr-dialog.component';
-import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { StorageService } from 'app/services/storage.service';
@@ -47,6 +47,8 @@ import { WebSocketService } from 'app/services/ws.service';
 })
 export class CertificateAuthorityListComponent implements OnInit {
   @Output() certificateSigned = new EventEmitter<void>();
+
+  protected requiredRoles = [Role.FullAdmin];
 
   filterString = '';
   dataProvider: AsyncDataProvider<CertificateAuthority>;
@@ -72,12 +74,13 @@ export class CertificateAuthorityListComponent implements OnInit {
         {
           iconName: 'beenhere',
           tooltip: this.translate.instant('Sign CSR'),
+          requiredRoles: this.requiredRoles,
           onClick: (row) => this.doSignCsr(row),
         },
         {
           iconName: 'mdi-undo',
           tooltip: this.translate.instant('Revoke'),
-          requiredRoles: [Role.FullAdmin],
+          requiredRoles: this.requiredRoles,
           hidden: (row) => of(row.revoked),
           onClick: (row) => this.doRevoke(row),
         },
@@ -93,7 +96,7 @@ export class CertificateAuthorityListComponent implements OnInit {
         },
         {
           iconName: 'delete',
-          requiredRoles: [Role.FullAdmin],
+          requiredRoles: this.requiredRoles,
           tooltip: this.translate.instant('Delete'),
           onClick: (row) => this.doDelete(row),
         },

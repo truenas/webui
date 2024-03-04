@@ -8,9 +8,9 @@ import { filter, switchMap } from 'rxjs/operators';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { Role } from 'app/enums/role.enum';
 import { NtpServer } from 'app/interfaces/ntp-server.interface';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
 import { NtpServerFormComponent } from 'app/pages/system/general-settings/ntp-server/ntp-server-form/ntp-server-form.component';
-import { DialogService } from 'app/services/dialog.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -22,6 +22,8 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class NtpServerCardComponent implements OnInit {
+  readonly requiredRoles = [Role.FullAdmin];
+
   dataSource = new MatTableDataSource<NtpServer>([]);
   displayedColumns = [
     'address',
@@ -34,7 +36,6 @@ export class NtpServerCardComponent implements OnInit {
   ];
   loading = false;
   error = false;
-  protected readonly Role = Role;
 
   get emptyType(): EmptyType {
     if (this.loading) {

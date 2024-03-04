@@ -15,12 +15,13 @@ import { TopologyItemStatus } from 'app/enums/vdev-status.enum';
 import {
   Disk, TopologyDisk, VDev,
 } from 'app/interfaces/storage.interface';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import {
   ExtendDialogComponent,
 } from 'app/pages/storage/modules/devices/components/zfs-info-card/extend-dialog/extend-dialog.component';
 import { ZfsInfoCardComponent } from 'app/pages/storage/modules/devices/components/zfs-info-card/zfs-info-card.component';
 import { DevicesStore } from 'app/pages/storage/modules/devices/stores/devices-store.service';
-import { DialogService } from 'app/services/dialog.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 describe('ZfsInfoCardComponent', () => {
   let spectator: Spectator<ZfsInfoCardComponent>;
@@ -35,14 +36,19 @@ describe('ZfsInfoCardComponent', () => {
         mockJob('pool.remove'),
       ]),
       mockProvider(DialogService, {
-        confirm: jest.fn(() => of()),
+        confirm: jest.fn(() => of(true)),
+        jobDialog: jest.fn(() => ({
+          afterClosed: () => of(null),
+        })),
       }),
       mockProvider(MatDialog, {
         open: jest.fn(() => ({
           afterClosed: () => of(),
         })),
       }),
-      mockProvider(DevicesStore),
+      mockProvider(DevicesStore, {
+        reloadList: jest.fn(),
+      }),
       mockAuth(),
     ],
   });
@@ -54,6 +60,7 @@ describe('ZfsInfoCardComponent', () => {
         topologyItem: {
           disk: 'ix-disk-1',
           type: TopologyItemType.Disk,
+          guid: 'disk-guid',
           children: [],
           status: TopologyItemStatus.Online,
           stats: {
@@ -99,29 +106,34 @@ describe('ZfsInfoCardComponent', () => {
     });
 
     // TODO: https://ixsystems.atlassian.net/browse/NAS-117094
-    it('shows confirmation when clicks Remove button', async () => {
+    it('removes device with confirmation when Remove button is pressed', async () => {
       spectator.setInput('topologyParentItem', {
         name: 'mirror-0',
         type: TopologyItemType.Spare,
       } as VDev);
-      const replaceButton = await loader.getHarness(MatButtonHarness.with({ text: 'Remove' }));
-      await replaceButton.click();
+      const removeButton = await loader.getHarness(MatButtonHarness.with({ text: 'Remove' }));
+      await removeButton.click();
 
       expect(spectator.inject(DialogService).confirm).toHaveBeenCalled();
+      expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
+      expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('pool.remove', [1, { label: 'disk-guid' }]);
+      expect(spectator.inject(DevicesStore).reloadList).toHaveBeenCalled();
     });
 
-    it('shows confirmation when clicks Detach button', async () => {
+    it('detaches a device with confirmation when Detach is pressed', async () => {
       const detachButton = await loader.getHarness(MatButtonHarness.with({ text: 'Detach' }));
       await detachButton.click();
 
       expect(spectator.inject(DialogService).confirm).toHaveBeenCalled();
+      expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('pool.detach', [1, { label: 'disk-guid' }]);
     });
 
-    it('shows confirmation when clicks Offline button', async () => {
+    it('offlines a device with confirmation when Offline is pressed', async () => {
       const offlineButton = await loader.getHarness(MatButtonHarness.with({ text: 'Offline' }));
       await offlineButton.click();
 
       expect(spectator.inject(DialogService).confirm).toHaveBeenCalled();
+      expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('pool.offline', [1, { label: 'disk-guid' }]);
     });
   });
 

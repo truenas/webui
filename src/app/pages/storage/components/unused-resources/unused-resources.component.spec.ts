@@ -1,5 +1,6 @@
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { MockWebSocketService } from 'app/core/testing/classes/mock-websocket.service';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { Pool } from 'app/interfaces/pool.interface';
 import { UnusedDisk } from 'app/interfaces/storage.interface';
@@ -12,6 +13,7 @@ describe('UnusedResourcesComponent', () => {
   const createComponent = createComponentFactory({
     component: UnusedResourcesComponent,
     providers: [
+      mockAuth(),
       mockWebSocket([
         mockCall('disk.get_unused', [
           { devname: 'sdb', identifier: '{serial_lunid}BBBBB1' },

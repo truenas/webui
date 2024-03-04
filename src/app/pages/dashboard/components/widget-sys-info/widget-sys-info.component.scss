@@ -1,4 +1,7 @@
 .widget mat-card-content {
+  display: flex;
+  flex-flow: row wrap;
+  place-content: start space-between;
   width: 100%;
 }
 
@@ -37,17 +40,29 @@
   top: 26px;
 }
 
+.xs.widget mat-toolbar-row.view-overview {
+  display: none;
+}
+
 .widget mat-toolbar-row.view-overview .primary-nav {
   color: #efefef;
 }
 
-.widget .left button.mat-mdc-button {
-  background-color: var(--primary) !important;
-  color: var(--primary-txt) !important;
-}
 
-.widget .left button.mat-mdc-button:focus-visible {
-  outline-width: 0;
+.widget .left {
+  display: flex;
+  flex-basis: 40%;
+  flex-direction: column;
+  place-content: center space-between;
+
+  button.mat-mdc-button {
+    background-color: var(--primary) !important;
+    color: var(--primary-txt) !important;
+
+    &:focus-visible {
+      outline-width: 0;
+    }
+  }
 }
 
 .view-overview .mat-card-title-text {
@@ -74,6 +89,8 @@ span.passive {
 }
 
 .carousel {
+  display: flex;
+  flex-direction: row;
   height: 100%;
   position: absolute;
   width: 100%;
@@ -97,16 +114,41 @@ span.passive {
   width: 50%;
 }
 
+.slide.overview {
+  align-items: stretch;
+  box-sizing: border-box;
+  display: flex;
+  flex: 1 1 100%;
+  flex-direction: row;
+  max-width: 100%;
+  place-content: stretch space-between;
+}
+
+.xs.widget .slide.overview {
+  flex-direction: column;
+}
+
 .slide.overview .right > div {
   width: 100%;
 }
 
 .slide.overview .right {
+  box-sizing: border-box;
+  display: flex;
+  flex: 1 1 100%;
+  flex-direction: column;
+  max-width: 60%;
   padding: 0;
 }
 
 .slide.overview .left {
+  align-items: center;
+  display: flex;
+  flex: 1 1 100%;
+  flex-direction: column;
+  max-width: 40%;
   padding: 0;
+  place-content: center space-between;
   position: relative;
 }
 
@@ -213,7 +255,7 @@ img.clickable,
   align-items: center;
   display: flex;
   flex: 1;
-  margin-right: -16px;
+  margin-right: -29px;
   min-width: 0;
 
   .copy-version-text {
@@ -240,8 +282,14 @@ img.clickable,
   text-transform: capitalize;
 }
 
+.xs.widget .list-subheader {
+  display: none;
+}
+
 .platform-logo-wrapper {
   color: var(--primary-color-txt);
+  flex: 1 1 100%;
+  max-height: 20%;
   padding-top: 12px;
 }
 
@@ -315,6 +363,11 @@ img.platform-logo {
 }
 
 .content-left {
+  display: flex;
+  flex: 1 1 100%;
+  flex-direction: column;
+  max-height: 60%;
+  place-content: center;
   position: relative;
 }
 
@@ -323,6 +376,9 @@ img.platform-logo {
 }
 
 .right {
+  display: flex;
+  flex-basis: 60%;
+  flex-direction: column;
   position: relative;
 }
 
@@ -337,8 +393,11 @@ img.platform-logo {
 
 div.generic.alert {
   bottom: 4px;
+  left: 0;
   position: absolute;
+  right: 0;
   text-align: center;
+  width: 100%;
 }
 
 div.generic.alert .ix-icon {
@@ -364,10 +423,11 @@ div.generic.alert .ix-icon {
 
 .xs.widget .left,
 .xs.widget .right {
+  max-width: 100%;
   width: 100%;
 }
 
-#update-in-progress {
+.update-in-progress {
   font-weight: 500;
   margin-bottom: 40px;
 }
@@ -437,6 +497,7 @@ div.generic.alert .ix-icon {
 }
 
 .xs.widget .left {
+  flex-basis: 250px;
   min-height: 275px;
 }
 
@@ -464,4 +525,17 @@ div.generic.alert .ix-icon {
   .spinner {
     margin: auto;
   }
+}
+
+.xs.widget .update-action {
+  display: none;
+}
+
+.update-action {
+  flex-basis: 18%;
+}
+
+
+.widget:not(.xs) .mobile-update-action {
+  display: none;
 }

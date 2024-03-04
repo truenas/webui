@@ -9,6 +9,7 @@ import {
 } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
 import { formatDistanceToNowShortened } from 'app/helpers/format-distance-to-now-shortened';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { AsyncDataProvider } from 'app/modules/ix-table2/classes/async-data-provider/async-data-provider';
 import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { Column, ColumnComponent } from 'app/modules/ix-table2/interfaces/table-column.interface';
@@ -18,9 +19,8 @@ import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-cront
 import { CronDeleteDialogComponent } from 'app/pages/system/advanced/cron/cron-delete-dialog/cron-delete-dialog.component';
 import { CronFormComponent } from 'app/pages/system/advanced/cron/cron-form/cron-form.component';
 import { CronjobRow } from 'app/pages/system/advanced/cron/cron-list/cronjob-row.interface';
-import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 import { TaskService } from 'app/services/task.service';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -31,6 +31,8 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CronListComponent implements OnInit {
+  readonly requiredRoles = [Role.FullAdmin];
+
   cronjobs: CronjobRow[] = [];
   filterString = '';
   dataProvider: AsyncDataProvider<CronjobRow>;
@@ -89,8 +91,6 @@ export class CronListComponent implements OnInit {
     return this.columns.filter((column) => column?.hidden);
   }
 
-  protected readonly Role = Role;
-
   constructor(
     private cdr: ChangeDetectorRef,
     private ws: WebSocketService,
@@ -98,7 +98,7 @@ export class CronListComponent implements OnInit {
     private taskService: TaskService,
     private dialog: DialogService,
     private errorHandler: ErrorHandlerService,
-    private slideInService: IxSlideInService,
+    private chainedSlideIns: IxChainedSlideInService,
     private matDialog: MatDialog,
     protected emptyService: EmptyService,
   ) {}
@@ -124,18 +124,16 @@ export class CronListComponent implements OnInit {
   }
 
   doAdd(): void {
-    const slideInRef = this.slideInService.open(CronFormComponent);
-    slideInRef.slideInClosed$
-      .pipe(filter(Boolean), untilDestroyed(this))
+    this.chainedSlideIns.pushComponent(CronFormComponent)
+      .pipe(filter((response) => !!response.response), untilDestroyed(this))
       .subscribe(() => {
         this.getCronJobs();
       });
   }
 
   doEdit(row: CronjobRow): void {
-    const slideInRef = this.slideInService.open(CronFormComponent, { data: row });
-    slideInRef.slideInClosed$
-      .pipe(filter(Boolean), untilDestroyed(this))
+    this.chainedSlideIns.pushComponent(CronFormComponent, false, row)
+      .pipe(filter((response) => !!response.response), untilDestroyed(this))
       .subscribe(() => {
         this.getCronJobs();
       });

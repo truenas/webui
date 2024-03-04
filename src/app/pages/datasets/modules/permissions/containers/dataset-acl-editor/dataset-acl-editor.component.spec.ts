@@ -17,6 +17,7 @@ import { AclType } from 'app/enums/acl-type.enum';
 import { NfsAclTag, NfsAclType, NfsBasicPermission } from 'app/enums/nfs-acl.enum';
 import { NfsAcl } from 'app/interfaces/acl.interface';
 import { FileSystemStat } from 'app/interfaces/filesystem-stat.interface';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import {
@@ -42,7 +43,6 @@ import {
   DatasetAclEditorComponent,
 } from 'app/pages/datasets/modules/permissions/containers/dataset-acl-editor/dataset-acl-editor.component';
 import { DatasetAclEditorStore } from 'app/pages/datasets/modules/permissions/stores/dataset-acl-editor.store';
-import { DialogService } from 'app/services/dialog.service';
 import { StorageService } from 'app/services/storage.service';
 import { UserService } from 'app/services/user.service';
 

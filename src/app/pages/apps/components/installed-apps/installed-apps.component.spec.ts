@@ -8,7 +8,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import {
   Spectator, createComponentFactory, createRoutingFactory, mockProvider,
 } from '@ngneat/spectator/jest';
-import { MockComponents } from 'ng-mocks';
+import { MockComponents, MockDeclaration, MockModule } from 'ng-mocks';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -21,6 +21,7 @@ import { KubernetesConfig } from 'app/interfaces/kubernetes-config.interface';
 import { IxDynamicFormModule } from 'app/modules/ix-dynamic-form/ix-dynamic-form.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
+import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
 import { AppCardLogoComponent } from 'app/pages/apps/components/app-card-logo/app-card-logo.component';
 import { AppAvailableInfoCardComponent } from 'app/pages/apps/components/app-detail-view/app-available-info-card/app-available-info-card.component';
 import { AppDetailViewComponent } from 'app/pages/apps/components/app-detail-view/app-detail-view.component';
@@ -31,6 +32,9 @@ import { AppResourcesCardComponent } from 'app/pages/apps/components/app-detail-
 import { AppCardComponent } from 'app/pages/apps/components/available-apps/app-card/app-card.component';
 import { AvailableAppsHeaderComponent } from 'app/pages/apps/components/available-apps/available-apps-header/available-apps-header.component';
 import { AvailableAppsComponent } from 'app/pages/apps/components/available-apps/available-apps.component';
+import {
+  CustomAppButtonComponent,
+} from 'app/pages/apps/components/available-apps/custom-app-button/custom-app-button.component';
 import { ChartWizardComponent } from 'app/pages/apps/components/chart-wizard/chart-wizard.component';
 import { AppsFilterStore } from 'app/pages/apps/store/apps-filter-store.service';
 import { AppsStore } from 'app/pages/apps/store/apps-store.service';
@@ -526,11 +530,13 @@ describe('Finding app', () => {
       IxFormsModule,
       ReactiveFormsModule,
       AppCatalogPipe,
+      MockModule(PageHeaderModule),
     ],
     declarations: [
       AvailableAppsHeaderComponent,
       AppCardComponent,
       AppCardLogoComponent,
+      MockDeclaration(CustomAppButtonComponent),
     ],
     providers: [
       KubernetesStore,
@@ -581,6 +587,7 @@ describe('Redirect to install app', () => {
     imports: [
       NgxSkeletonLoaderModule,
       AppCatalogPipe,
+      MockModule(PageHeaderModule),
     ],
     declarations: [
       AppDetailsHeaderComponent,
@@ -615,6 +622,7 @@ describe('Redirect to install app', () => {
       ]),
       mockProvider(AuthService, {
         user$: of({ attributes: { appsAgreement: true } }),
+        hasRole: () => of(true),
       }),
       mockProvider(AppsStore, {
         availableApps$: of(appsResponse),
@@ -647,6 +655,7 @@ describe('Install app', () => {
       IxFormsModule,
       ReactiveFormsModule,
       IxDynamicFormModule,
+      MockModule(PageHeaderModule),
     ],
     providers: [
       KubernetesStore,

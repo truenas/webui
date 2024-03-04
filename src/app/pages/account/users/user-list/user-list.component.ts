@@ -10,7 +10,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { combineLatest, Observable, of } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { EmptyType } from 'app/enums/empty-type.enum';
-import { roleNames } from 'app/enums/role.enum';
+import { Role, roleNames } from 'app/enums/role.enum';
 import { User } from 'app/interfaces/user.interface';
 import { ArrayDataProvider } from 'app/modules/ix-table2/classes/array-data-provider/array-data-provider';
 import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
@@ -33,6 +33,8 @@ import { waitForPreferences } from 'app/store/preferences/preferences.selectors'
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UserListComponent implements OnInit {
+  protected requiredRoles = [Role.AccountWrite];
+
   dataProvider = new ArrayDataProvider<User>();
   columns = createTable<User>([
     textColumn({
@@ -61,7 +63,6 @@ export class UserListComponent implements OnInit {
       getValue: (row) => row.roles
         .map((role) => (roleNames.has(role) ? this.translate.instant(roleNames.get(role)) : role))
         .join(', ') || this.translate.instant('N/A'),
-      sortable: true,
     }),
   ], {
     rowTestId: (row) => 'user-' + row.username,
@@ -74,16 +75,16 @@ export class UserListComponent implements OnInit {
     this.store$.select(selectUserState).pipe(map((state) => state.error)),
   ]).pipe(
     switchMap(([isLoading, isNoData, isError]) => {
-      if (isLoading) {
-        return of(EmptyType.Loading);
+      switch (true) {
+        case isLoading:
+          return of(EmptyType.Loading);
+        case !!isError:
+          return of(EmptyType.Errors);
+        case isNoData:
+          return of(EmptyType.NoPageData);
+        default:
+          return of(EmptyType.NoSearchResults);
       }
-      if (isError) {
-        return of(EmptyType.Errors);
-      }
-      if (isNoData) {
-        return of(EmptyType.NoPageData);
-      }
-      return of(EmptyType.NoSearchResults);
     }),
   );
 

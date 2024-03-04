@@ -8,14 +8,16 @@ import {
   Observable, forkJoin, map, of, switchMap,
 } from 'rxjs';
 import { MiB } from 'app/constants/bytes.constant';
+import { Role } from 'app/enums/role.enum';
 import {
-  VmBootloader, VmCpuMode, VmDeviceType, VmTime, vmTimeNames,
+  VmBootloader, VmCpuMode, VmDeviceType, VmTime, vmCpuModeLabels, vmTimeNames,
 } from 'app/enums/vm.enum';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextVmWizard } from 'app/helptext/vm/vm-wizard/vm-wizard';
 import { VirtualMachine, VirtualMachineUpdate } from 'app/interfaces/virtual-machine.interface';
 import { VmPciPassthroughDevice } from 'app/interfaces/vm-device.interface';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
@@ -25,7 +27,6 @@ import { byVmPciSlots } from 'app/pages/vm/utils/by-vm-pci-slots';
 import { CpuValidatorService } from 'app/pages/vm/utils/cpu-validator.service';
 import { vmCpusetPattern, vmNodesetPattern } from 'app/pages/vm/utils/vm-form-patterns.constant';
 import { VmGpuService } from 'app/pages/vm/utils/vm-gpu.service';
-import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { GpuService } from 'app/services/gpu/gpu.service';
 import { IsolatedGpuValidatorService } from 'app/services/gpu/isolated-gpu-validator.service';
@@ -38,6 +39,8 @@ import { WebSocketService } from 'app/services/ws.service';
   providers: [CpuValidatorService],
 })
 export class VmEditFormComponent implements OnInit {
+  protected readonly requiredRoles = [Role.VmWrite];
+
   showCpuModelField = true;
 
   form = this.formBuilder.group({
@@ -69,7 +72,7 @@ export class VmEditFormComponent implements OnInit {
   isLoading = false;
   timeOptions$ = of(mapToOptions(vmTimeNames, this.translate));
   bootloaderOptions$ = this.ws.call('vm.bootloader_options').pipe(choicesToOptions());
-  cpuModeOptions$ = of(helptextVmWizard.cpu_mode.options);
+  cpuModeOptions$ = of(mapToOptions(vmCpuModeLabels, this.translate));
   cpuModelOptions$ = this.ws.call('vm.cpu_model_choices').pipe(choicesToOptions());
   gpuOptions$ = this.gpuService.getGpuOptions();
 

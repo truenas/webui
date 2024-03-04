@@ -7,15 +7,16 @@ import { MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { SystemInfo } from 'app/interfaces/system-info.interface';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxCheckboxHarness } from 'app/modules/ix-forms/components/ix-checkbox/ix-checkbox.harness';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import {
   SaveConfigDialogComponent,
 } from 'app/pages/system/general-settings/save-config-dialog/save-config-dialog.component';
-import { DialogService } from 'app/services/dialog.service';
 import { StorageService } from 'app/services/storage.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { selectSystemInfo } from 'app/store/system-info/system-info.selectors';
@@ -31,6 +32,7 @@ describe('SaveConfigDialogComponent', () => {
       AppLoaderModule,
     ],
     providers: [
+      mockAuth(),
       mockWebSocket([
         mockCall('core.download', [123, 'http://localhost/download/config']),
       ]),

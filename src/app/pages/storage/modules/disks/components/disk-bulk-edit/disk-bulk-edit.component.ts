@@ -10,10 +10,10 @@ import { Role } from 'app/enums/role.enum';
 import { translateOptions } from 'app/helpers/translate.helper';
 import { helptextDisks } from 'app/helptext/storage/disks/disks';
 import { Disk, DiskUpdate } from 'app/interfaces/storage.interface';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { DialogService } from 'app/services/dialog.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
@@ -22,6 +22,8 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DiskBulkEditComponent {
+  protected readonly requiredRoles = [Role.FullAdmin];
+
   diskIds: string[] = [];
   isLoading = false;
   form = this.fb.group({
@@ -31,11 +33,11 @@ export class DiskBulkEditComponent {
     togglesmart: [false],
     smartoptions: [''],
   });
+
   readonly helptext = helptextDisks;
   readonly helptextBulkEdit = helptextDisks.bulk_edit;
   readonly hddstandbyOptions$ = of(helptextDisks.disk_form_hddstandby_options);
   readonly advpowermgmtOptions$ = of(translateOptions(this.translate, this.helptext.disk_form_advpowermgmt_options));
-  protected readonly requiresRoles = [Role.FullAdmin];
 
   constructor(
     private fb: FormBuilder,

@@ -4,6 +4,7 @@ import {
 import { FormBuilder, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Role } from 'app/enums/role.enum';
 import { helptextApiKeys } from 'app/helptext/api-keys';
 import { ApiKey, UpdateApiKeyRequest } from 'app/interfaces/api-key.interface';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
@@ -21,6 +22,8 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ApiKeyFormDialogComponent implements OnInit {
+  protected requiredRoles = [Role.FullAdmin];
+
   form = this.fb.group({
     name: ['', [Validators.required]],
     reset: [false],
@@ -77,6 +80,7 @@ export class ApiKeyFormDialogComponent implements OnInit {
         },
         error: (error: unknown) => {
           this.errorHandler.handleWsFormError(error, this.form);
+          this.loader.close();
         },
       });
   }

@@ -5,6 +5,7 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { MockWebSocketService } from 'app/core/testing/classes/mock-websocket.service';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import {
   VmDeviceType, VmDiskMode, VmDisplayType, VmNicType,
@@ -20,15 +21,16 @@ import {
   VmRawFileDevice,
   VmUsbPassthroughDeviceChoice,
 } from 'app/interfaces/vm-device.interface';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxSelectHarness } from 'app/modules/ix-forms/components/ix-select/ix-select.harness';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { DeviceFormComponent } from 'app/pages/vm/devices/device-form/device-form.component';
-import { DialogService } from 'app/services/dialog.service';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { VmService } from 'app/services/vm.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 describe('DeviceFormComponent', () => {
@@ -90,12 +92,16 @@ describe('DeviceFormComponent', () => {
           isolated_gpu_pci_ids: ['pci_0000_00_1c_0'],
         } as AdvancedConfig),
       ]),
+      mockAuth(),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
       mockProvider(IxSlideInService),
       mockProvider(FilesystemService),
       mockProvider(IxSlideInRef),
+      mockProvider(VmService, {
+        hasVirtualizationSupport$: of(true),
+      }),
       { provide: SLIDE_IN_DATA, useValue: undefined },
     ],
   });

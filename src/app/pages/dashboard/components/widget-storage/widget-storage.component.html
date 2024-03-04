@@ -1,11 +1,6 @@
 <div class="widget stats-widget" ngClass.xs="double-height xs">
-  <div class="card-container front">
-    <mat-card
-      class="front overflow-hidden"
-      fxLayout="row"
-      fxLayoutWrap
-      fxLayoutAlign="space-between stretch"
-    >
+  <div class="card-container">
+    <mat-card class="front overflow-hidden">
       <mat-card-content>
         <ix-drag-handle [showReorderHandle]="showReorderHandle">
           <ng-content [select]="[cdkDragHandle]"></ng-content>
@@ -13,17 +8,14 @@
           <mat-toolbar-row>
             <!-- Mobile Only: Exit widget -->
             <button
-              fxHide.gt-xs
               class="mat-card-title-text primary-nav"
               mat-icon-button
               color="default"
               [ixTest]="['widget-storage', 'back']"
               (click)="goBack()"
             >
-              <ix-icon name="chevron_left" class="back-arrow"></ix-icon>
+              <ix-icon name="chevron_left"></ix-icon>
             </button>
-
-            <span fxHide.gt-xs>&nbsp;&nbsp;</span>
 
             <h3 class="mat-card-title-text">
               <ix-drag-handle [showReorderHandle]="showReorderHandle">
@@ -37,12 +29,12 @@
               <a
                 mat-icon-button
                 ixTest="storage-reports"
-                [routerLink]="['/reportsdashboard/disk']"
+                [routerLink]="['/reportsdashboard', 'disk']"
               >
                 <ix-icon
                   name="insert_chart"
                   matTooltipPosition="above"
-                  aria-label="Disk Reports"
+                  [attr.aria-label]="'Disk Reports' | translate"
                   [matTooltip]="'Disk Reports' | translate"
                 ></ix-icon>
               </a>
@@ -52,9 +44,10 @@
 
         <div>
           <div
-            [ngStyle]="{
-              padding: paddingTop + 'px ' + paddingRight + 'px ' + paddingBottom + 'px ' + paddingLeft + 'px'
-            }"
+            [style.padding-top.px]="paddingTop"
+            [style.padding-bottom.px]="paddingBottom"
+            [style.padding-left.px]="paddingLeft"
+            [style.padding-right.px]="paddingRight"
           >
             <mat-grid-list
               [cols]="cols"
@@ -64,18 +57,11 @@
               <mat-grid-tile *ngFor="let pool of pools">
                 <div
                   class="tile"
-                  fxFlexFill
-                  fxLayout="column"
-                  fxLayoutAlign="start stretch"
                   [class.rows-2]="rows === 2"
                   [class.rows-3]="rows === 3"
                   [class.rows-2-2]="rows === 2 && cols === 2"
                 >
-                  <div
-                    class="tile-header"
-                    fxLayout="row"
-                    fxLayoutAlign="start center"
-                  >
+                  <div class="tile-header">
                     <h4 class="tile-header-title">{{ pool.name }}</h4>
                     <div class="tile-header-button">
                       <a
@@ -86,20 +72,15 @@
                         <ix-icon
                           name="mdi-database"
                           matTooltipPosition="above"
-                          aria-label="Configure Pools"
+                          [attr.aria-label]="'Pool Status' | translate"
                           [matTooltip]="'Pool Status' | translate"
                         ></ix-icon>
                       </a>
                     </div>
                   </div>
-                  <div
-                    class="tile-content"
-                    fxFlex
-                    fxLayout="row"
-                    fxLayoutAlign="space-between center"
-                  >
-                    <ul fxLayout="column" [fxFlex]="getSubwidgetColumnWidth(pool)">
-                      <li fxLayout="row">
+                  <div class="tile-content">
+                    <ul [style.max-width.%]="getSubwidgetColumnWidth(pool)">
+                      <li>
                         <span [class]="['icon', poolInfoMap[pool.name]?.status?.level]">
                           <ix-icon [name]="poolInfoMap[pool.name]?.status?.icon"></ix-icon>
                         </span>
@@ -110,7 +91,7 @@
                           {{ poolInfoMap[pool.name]?.status?.value | titlecase | translate | uppercase }}
                         </span>
                       </li>
-                      <li fxLayout="row">
+                      <li>
                         <span [class]="['icon', poolInfoMap[pool.name]?.usedSpace?.level]">
                           <ix-icon [name]="poolInfoMap[pool.name]?.usedSpace?.icon"></ix-icon
                         ></span>
@@ -124,7 +105,7 @@
                           [content]="poolInfoMap[pool.name]?.usedSpace?.value"
                         ></span>
                       </li>
-                      <li fxLayout="row">
+                      <li>
                         <span [class]="['icon', poolInfoMap[pool.name]?.disksWithError?.level]">
                           <ix-icon [name]="poolInfoMap[pool.name]?.disksWithError?.icon"></ix-icon>
                         </span>
@@ -135,7 +116,7 @@
                           {{ poolInfoMap[pool.name]?.disksWithError?.value }}
                         </span>
                       </li>
-                      <li *ngIf="cols === 2 && rows === 2" fxLayout="row">
+                      <li *ngIf="cols === 2 && rows === 2">
                         <ng-container *ngIf="!pool?.scan?.end_time?.$date && !isScanInProgress(pool); else lastScrub">
                           <span class="icon warn">
                             <ix-icon name="error" [matTooltip]="'Never' | translate"></ix-icon>
@@ -148,8 +129,8 @@
                     </ul>
                     <ng-container *ngIf="cols === 1">
                       <div class="divider"></div>
-                      <ul fxLayout="column" [fxFlex]="getSubwidgetColumnWidth(pool)">
-                        <li fxLayout="row">
+                      <ul [style.max-width.%]="getSubwidgetColumnWidth(pool)">
+                        <li>
                           <span class="label">
                             {{ isScanResilver(pool) ? ('Last Resilver' | translate) : ('Last Scrub' | translate) }}:
                           </span>
@@ -159,15 +140,13 @@
                             </ng-container>
                           </span>
                         </li>
-                        <li fxLayout="row">
-                          <span class="label">
-                            {{ 'Free Space' | translate }}:
-                          </span>
+                        <li>
+                          <span class="label">{{ 'Free Space' | translate }}:</span>
                           <span class="storage-value">
                             {{ poolInfoMap[pool.name]?.freeSpace }}
                           </span>
                         </li>
-                        <li fxLayout="row">
+                        <li>
                           <span class="label">
                             {{ 'Total Disks' | translate }}:
                           </span>
@@ -177,8 +156,8 @@
                         </li>
                       </ul>
                       <div *ngIf="pool.topology" class="divider"></div>
-                      <ul *ngIf="pool.topology" fxLayout="column" [fxFlex]="getSubwidgetColumnWidth(pool)">
-                        <li fxLayout="row">
+                      <ul *ngIf="pool.topology" [style.max-width.%]="getSubwidgetColumnWidth(pool)">
+                        <li>
                           <span class="label">
                             {{ 'Data' | translate }}:
                           </span>
@@ -186,7 +165,7 @@
                             {{ pool.topology.data.length }} vdev
                           </span>
                         </li>
-                        <li fxLayout="row">
+                        <li>
                           <span class="label">
                             {{ 'Caches' | translate }}:
                           </span>
@@ -194,7 +173,7 @@
                             {{ pool.topology.cache.length }}
                           </span>
                         </li>
-                        <li fxLayout="row">
+                        <li>
                           <span class="label">
                             {{ 'Spares' | translate }}:
                           </span>
@@ -222,15 +201,10 @@
                   </span>
                 </ng-template>
               </mat-grid-tile>
-              <mat-grid-tile
-                *ngIf="pools?.length % 2 === 1 || pools?.length === 0"
-              >
+              <mat-grid-tile *ngIf="pools?.length % 2 === 1 || pools?.length === 0">
                 <a
+                  *ixRequiresRoles="requiredRoles"
                   class="create-new"
-                  fxFill
-                  fxFlex="100"
-                  fxLayout="column"
-                  fxLayoutAlign="center center"
                   ixTest="create-pool"
                   [routerLink]="['/storage', 'create']"
                 >

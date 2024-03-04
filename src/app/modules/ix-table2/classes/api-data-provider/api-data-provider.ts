@@ -1,6 +1,8 @@
-import { Observable, switchMap } from 'rxjs';
+import {
+  Observable, filter, switchMap, take,
+} from 'rxjs';
 import { EmptyType } from 'app/enums/empty-type.enum';
-import { ApiCallDirectory, ApiCallMethod } from 'app/interfaces/api/api-call-directory.interface';
+import { ApiCallParams, ApiCallResponseType, QueryMethods } from 'app/interfaces/api/api-call-directory.interface';
 import { QueryFilters } from 'app/interfaces/query-api.interface';
 import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { PaginationServerSide } from 'app/modules/ix-table2/classes/api-data-provider/pagination-server-side.class';
@@ -10,29 +12,23 @@ import { TablePagination } from 'app/modules/ix-table2/interfaces/table-paginati
 import { TableSort } from 'app/modules/ix-table2/interfaces/table-sort.interface';
 import { WebSocketService } from 'app/services/ws.service';
 
-// TODO: Extract to separate files
-// TODO: Replace with QueryParams?
-export type ApiCallParams = Record<string, unknown>;
-
-// TODO: Narrow down the type of M to only include .query methods
-// TODO: T can be inferred from M
-export class ApiDataProvider<T, M extends ApiCallMethod> extends BaseDataProvider<T> {
+export class ApiDataProvider<T extends QueryMethods> extends BaseDataProvider<ApiCallResponseType<T>> {
   paginationStrategy: PaginationServerSide;
   sortingStrategy: SortingServerSide;
 
-  private rows: T[] = [];
+  private rows: ApiCallResponseType<T>[] = [];
 
   constructor(
-    private ws: WebSocketService,
-    private method: M,
-    private params: ApiCallDirectory[M]['params'] = [],
+    protected ws: WebSocketService,
+    protected method: T,
+    protected params: ApiCallParams<T> = [],
   ) {
     super();
     this.paginationStrategy = new PaginationServerSide();
     this.sortingStrategy = new SortingServerSide();
   }
 
-  setParams(params: ApiCallDirectory[M]['params']): void {
+  setParams(params: ApiCallParams<T>): void {
     this.params = params;
   }
 
@@ -42,10 +38,10 @@ export class ApiDataProvider<T, M extends ApiCallMethod> extends BaseDataProvide
       this.countRows().pipe(
         switchMap((count: number) => {
           this.totalRows = count;
-          return this.ws.call(this.method, this.prepareParams(this.params));
+          return this.ws.call(this.method, this.prepareParams(this.params)) as Observable<ApiCallResponseType<T>[]>;
         }),
       ).subscribe({
-        next: (rows: T[]) => {
+        next: (rows: ApiCallResponseType<T>[]) => {
           this.rows = rows;
           this.currentPage$.next(this.rows);
           this.emptyType$.next(rows.length ? EmptyType.NoSearchResults : EmptyType.NoPageData);
@@ -61,41 +57,41 @@ export class ApiDataProvider<T, M extends ApiCallMethod> extends BaseDataProvide
     );
   }
 
-  setSorting(sorting: TableSort<T>): void {
+  setSorting(sorting: TableSort<ApiCallResponseType<T>>): void {
     this.sorting = sorting;
-    this.sortingStrategy.handleCurrentPage(this.load.bind(this));
+    this.emptyType$.pipe(take(1), filter((value) => value !== EmptyType.Loading)).subscribe(() => {
+      this.sortingStrategy.handleCurrentPage(this.load.bind(this));
+    });
     this.controlsStateUpdated.emit();
   }
 
   setPagination(pagination: TablePagination): void {
     this.pagination = pagination;
-    this.paginationStrategy.handleCurrentPage(this.load.bind(this));
+
+    this.emptyType$.pipe(take(1), filter((value) => value !== EmptyType.Loading)).subscribe(() => {
+      this.paginationStrategy.handleCurrentPage(this.load.bind(this));
+    });
     this.controlsStateUpdated.emit();
   }
 
-  private countRows(): Observable<number> {
-    // TODO: ApiDataProvider only currently works for audit.query that has non-standard parameters
+  protected countRows(): Observable<number> {
     const params = [
-      {
-        'query-filters': (this.params as unknown as QueryFilters<T>)[0] || [],
-        'query-options': { count: true },
-      },
-    ];
+      (this.params as QueryFilters<ApiCallResponseType<T>>)[0] || [],
+      { count: true },
+    ] as ApiCallParams<T>;
 
-    return this.ws.call(this.method, params as ApiCallDirectory[M]['params']) as Observable<number>;
+    return this.ws.call(this.method, params) as unknown as Observable<number>;
   }
 
-  private prepareParams(params: ApiCallDirectory[M]['params']): ApiCallDirectory[M]['params'] {
+  protected prepareParams(params: ApiCallParams<T>): ApiCallParams<T> {
     // TODO: Current merge is not entirely correct. Introduce a separate function.
-    // TODO: Clarify whether we should use positional arguments or 'query-filters'
-    return [
-      {
-        'query-filters': (params as unknown as QueryFilters<T>)[0] || [],
-        'query-options': {
-          ...this.paginationStrategy.getParams(this.pagination, this.totalRows),
-          ...this.sortingStrategy.getParams(this.sorting),
-        },
-      },
-    ] as unknown as ApiCallDirectory[M]['params'];
+
+    const queryFilters = (params as QueryFilters<ApiCallResponseType<T>>)[0] || [];
+    const queryOptions = {
+      ...this.paginationStrategy.getParams(this.pagination, this.totalRows),
+      ...this.sortingStrategy.getParams(this.sorting),
+    };
+
+    return [queryFilters, queryOptions] as ApiCallParams<T>;
   }
 }

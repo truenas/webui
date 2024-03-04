@@ -16,11 +16,10 @@ import { SyslogLevel, SyslogTransport } from 'app/enums/syslog.enum';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { helptextSystemAdvanced, helptextSystemAdvanced as helptext } from 'app/helptext/system/advanced';
 import { AdvancedConfigUpdate } from 'app/interfaces/advanced-config.interface';
-import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { ChainedRef } from 'app/modules/ix-forms/components/ix-slide-in/chained-component-ref';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { DialogService } from 'app/services/dialog.service';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { SyslogConfig } from 'app/pages/system/advanced/syslog/syslog-card/syslog-card.component';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 import { advancedConfigUpdated } from 'app/store/system-config/system-config.actions';
@@ -31,6 +30,8 @@ import { advancedConfigUpdated } from 'app/store/system-config/system-config.act
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SyslogFormComponent implements OnInit {
+  protected requiredRoles = [Role.FullAdmin];
+
   isFormLoading = false;
   subscriptions: Subscription[] = [];
 
@@ -45,7 +46,7 @@ export class SyslogFormComponent implements OnInit {
   });
 
   readonly isTlsTransport$ = this.form.select((values) => values.syslog_transport === SyslogTransport.Tls);
-  protected readonly Role = Role;
+
   readonly tooltips = {
     fqdn_syslog: helptext.fqdn_tooltip,
     sysloglevel: helptext.sysloglevel.tooltip,
@@ -64,18 +65,20 @@ export class SyslogFormComponent implements OnInit {
   readonly certificateAuthorityOptions$ = this.ws.call('system.advanced.syslog_certificate_authority_choices')
     .pipe(choicesToOptions());
 
+  private syslogConfig: SyslogConfig;
+
   constructor(
     private fb: FormBuilder,
     private ws: WebSocketService,
-    private slideInRef: IxSlideInRef<SyslogFormComponent>,
-    private dialogService: DialogService,
     private cdr: ChangeDetectorRef,
-    private errorHandler: ErrorHandlerService,
     private store$: Store<AppState>,
     private snackbar: SnackbarService,
     private translate: TranslateService,
     private formErrorHandler: FormErrorHandlerService,
-  ) {}
+    private chainedRef: ChainedRef<SyslogConfig>,
+  ) {
+    this.syslogConfig = this.chainedRef.getData();
+  }
 
   ngOnInit(): void {
     this.subscriptions.push(
@@ -110,7 +113,7 @@ export class SyslogFormComponent implements OnInit {
         this.store$.dispatch(advancedConfigUpdated());
         this.isFormLoading = false;
         this.cdr.markForCheck();
-        this.slideInRef.close();
+        this.chainedRef.close({ response: true, error: null });
       }),
       catchError((error: unknown) => {
         this.isFormLoading = false;
@@ -123,23 +126,10 @@ export class SyslogFormComponent implements OnInit {
   }
 
   private loadForm(): void {
-    this.isFormLoading = true;
-
-    this.ws.call('system.advanced.config').pipe(untilDestroyed(this))
-      .subscribe({
-        next: (advancedConfig) => {
-          this.isFormLoading = false;
-          this.cdr.markForCheck();
-          this.form.patchValue({
-            ...advancedConfig,
-            syslog_tls_certificate: String(advancedConfig.syslog_tls_certificate),
-            syslog_tls_certificate_authority: String(advancedConfig.syslog_tls_certificate_authority),
-          });
-        },
-        error: (error: unknown) => {
-          this.isFormLoading = false;
-          this.dialogService.error(this.errorHandler.parseError(error));
-        },
-      });
+    this.form.patchValue({
+      ...this.syslogConfig,
+      syslog_tls_certificate: String(this.syslogConfig.syslog_tls_certificate),
+      syslog_tls_certificate_authority: String(this.syslogConfig.syslog_tls_certificate_authority),
+    });
   }
 }

@@ -20,7 +20,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { CoreComponents } from 'app/core/core-components.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { CastModule } from 'app/modules/cast/cast.module';
-import { AppCommonModule } from 'app/modules/common/app-common.module';
+import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxFileSizeModule } from 'app/modules/ix-file-size/ix-file-size.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
@@ -33,6 +33,7 @@ import { LayoutModule } from 'app/modules/layout/layout.module';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { OauthButtonModule } from 'app/modules/oauth-button/oauth-button.module';
 import { SchedulerModule } from 'app/modules/scheduler/scheduler.module';
+import { SearchInput1Component } from 'app/modules/search-input1/search-input1.component';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
 import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
 import { AccessCardComponent } from 'app/pages/system/advanced/access/access-card/access-card.component';
@@ -124,7 +125,10 @@ import { SysInfoComponent } from 'app/pages/system/general-settings/support/sys-
 import {
   UploadConfigDialogComponent,
 } from 'app/pages/system/general-settings/upload-config-dialog/upload-config-dialog.component';
-import { ManualUpdateFormComponent } from 'app/pages/system/update/manual-update-form/manual-update-form.component';
+import { ManualUpdateFormComponent } from 'app/pages/system/update/components/manual-update-form/manual-update-form.component';
+import { TrainCardComponent } from 'app/pages/system/update/components/train-card/train-card.component';
+import { TrainInfoCardComponent } from 'app/pages/system/update/components/train-info-card/train-info-card.component';
+import { UpdateActionsCardComponent } from 'app/pages/system/update/components/update-actions-card/update-actions-card.component';
 import { UpdateComponent } from 'app/pages/system/update/update.component';
 import { EnclosureModule } from 'app/pages/system/view-enclosure/enclosure.module';
 import { ConsoleCardComponent } from './advanced/console/console-card/console-card.component';
@@ -168,7 +172,6 @@ import { routing } from './system.routing';
     TooltipModule,
     TranslateModule,
     MatDialogModule,
-    AppCommonModule,
     LayoutModule,
     MatExpansionModule,
     MatSlideToggleModule,
@@ -176,6 +179,8 @@ import { routing } from './system.routing';
     TestIdModule,
     IxTable2Module,
     OauthButtonModule,
+    SearchInput1Component,
+    EmptyComponent,
   ],
   declarations: [
     AdvancedSettingsComponent,
@@ -268,6 +273,9 @@ import { routing } from './system.routing';
     InitShutdownCardComponent,
     SysctlCardComponent,
     InitShutdownListComponent,
+    TrainCardComponent,
+    TrainInfoCardComponent,
+    UpdateActionsCardComponent,
   ],
   providers: [
     TranslateService,

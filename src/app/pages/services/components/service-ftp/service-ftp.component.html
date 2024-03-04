@@ -1,4 +1,4 @@
-<ix-modal-header [title]="'FTP' | translate" [loading]="isFormLoading"></ix-modal-header>
+<ix-modal-header [requiredRoles]="requiredRoles" [title]="'FTP' | translate" [loading]="isFormLoading"></ix-modal-header>
 
 <mat-card class="card">
   <mat-card-content>
@@ -291,9 +291,9 @@
         </div>
       </div>
 
-      <div class="form-actions">
+      <ix-form-actions>
         <button
-          *ixRequiresRoles="[Role.FullAdmin]"
+          *ixRequiresRoles="requiredRoles"
           mat-button
           type="submit"
           color="primary"
@@ -318,7 +318,7 @@
             {{ 'Advanced Options' | translate }}
           </button>
         </ng-template>
-      </div>
+      </ix-form-actions>
     </form>
   </mat-card-content>
 </mat-card>

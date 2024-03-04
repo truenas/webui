@@ -6,18 +6,17 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import {
-  EMPTY, filter, switchMap, tap,
+  EMPTY, Observable, of, switchMap, tap,
 } from 'rxjs';
-import { catchError } from 'rxjs/operators';
+import { catchError, map } from 'rxjs/operators';
 import { Role } from 'app/enums/role.enum';
+import { helptextSystemAdvanced } from 'app/helptext/system/advanced';
 import { helptextSystemGeneral } from 'app/helptext/system/general';
 import { WebSocketError } from 'app/interfaces/websocket-error.interface';
-import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
-import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
-import { ipv4Validator } from 'app/modules/ix-forms/validators/ip-validation';
-import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { DialogService } from 'app/modules/dialog/dialog.service';
+import { ChainedRef } from 'app/modules/ix-forms/components/ix-slide-in/chained-component-ref';
+import { ipv4or6OptionalCidrValidator } from 'app/modules/ix-forms/validators/ip-validation';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
@@ -30,24 +29,24 @@ import { generalConfigUpdated } from 'app/store/system-config/system-config.acti
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AllowedAddressesFormComponent implements OnInit {
-  isFormLoading = false;
+  protected requiredRoles = [Role.FullAdmin];
+  protected readonly helpText = helptextSystemAdvanced;
+
+  isFormLoading = true;
   form = this.fb.group({
     addresses: this.fb.array<string>([]),
   });
-  protected readonly Role = Role;
 
   constructor(
     private fb: FormBuilder,
-    private slideInRef: IxSlideInRef<AllowedAddressesFormComponent>,
     private dialogService: DialogService,
     private ws: WebSocketService,
     private errorHandler: ErrorHandlerService,
     private store$: Store<AppState>,
     private cdr: ChangeDetectorRef,
-    private loader: AppLoaderService,
     private snackbar: SnackbarService,
     private translate: TranslateService,
-    private validatorsService: IxValidatorsService,
+    private slideInRef: ChainedRef<unknown>,
   ) {}
 
   ngOnInit(): void {
@@ -70,10 +69,7 @@ export class AllowedAddressesFormComponent implements OnInit {
 
   addAddress(): void {
     this.form.controls.addresses.push(
-      this.fb.control('', [
-        this.validatorsService.withMessage(ipv4Validator(), this.translate.instant('Enter a valid IPv4 address.')),
-        Validators.required,
-      ]),
+      this.fb.control('', [Validators.required, ipv4or6OptionalCidrValidator()]),
     );
   }
 
@@ -81,14 +77,15 @@ export class AllowedAddressesFormComponent implements OnInit {
     this.form.controls.addresses.removeAt(index);
   }
 
-  handleServiceRestart(): void {
-    this.dialogService.confirm({
+  handleServiceRestart(): Observable<true> {
+    return this.dialogService.confirm({
       title: this.translate.instant(helptextSystemGeneral.dialog_confirm_title),
       message: this.translate.instant(helptextSystemGeneral.dialog_confirm_message),
     }).pipe(
-      tap(() => this.slideInRef.close(true)),
-      filter(Boolean),
-      switchMap(() => {
+      switchMap((shouldRestart): Observable<true> => {
+        if (!shouldRestart) {
+          return of(true);
+        }
         return this.ws.call('system.general.ui_restart').pipe(
           catchError((error: WebSocketError) => {
             this.dialogService.error({
@@ -98,23 +95,29 @@ export class AllowedAddressesFormComponent implements OnInit {
             });
             return EMPTY;
           }),
+          map(() => true),
         );
       }),
-      untilDestroyed(this),
-    ).subscribe();
+    );
   }
 
   onSubmit(): void {
     this.isFormLoading = true;
     const addresses = this.form.value.addresses;
-    this.ws.call('system.general.update', [{ ui_allowlist: addresses }]).pipe(untilDestroyed(this)).subscribe({
-      next: () => {
+
+    this.ws.call('system.general.update', [{ ui_allowlist: addresses }]).pipe(
+      tap(() => {
         this.store$.dispatch(generalConfigUpdated());
         this.isFormLoading = false;
-        this.snackbar.success(this.translate.instant('Allowed addresses have been updated'));
         this.cdr.markForCheck();
-        this.handleServiceRestart();
-      },
+        this.snackbar.success(this.translate.instant('Allowed addresses have been updated'));
+      }),
+      switchMap(() => this.handleServiceRestart()),
+      tap(() => {
+        this.slideInRef.close({ response: true, error: null });
+      }),
+      untilDestroyed(this),
+    ).subscribe({
       error: (error: unknown) => {
         this.isFormLoading = false;
         this.dialogService.error(this.errorHandler.parseError(error));

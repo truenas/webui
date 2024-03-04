@@ -2,12 +2,11 @@
 @import 'scss-imports/cssvars';
 
 :host {
-  $pagetitle: 68px;
-  $outer-padding: 16px;
-
-  display: block;
-  height: calc(100% - #{$pagetitle});
-  margin-top: -#{$outer-padding * 2};
+  align-items: stretch;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  justify-items: stretch;
   position: relative;
 
   .initial-loader {
@@ -57,18 +56,7 @@ ul.ct-legend {
 }
 
 .master-container {
-  align-items: stretch;
-  bottom: 0;
-  display: flex;
-  flex-flow: row wrap;
-  height: 100%;
-  left: 0;
-  padding-bottom: 0;
-  place-content: stretch space-evenly;
-  position: absolute;
-  right: 0;
-  top: 0;
-  width: 100%;
+  flex-grow: 1;
 }
 
 cdk-virtual-scroll-viewport {

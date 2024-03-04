@@ -2,7 +2,6 @@ import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
 } from '@angular/core';
 import { FormBuilder, FormControl, Validators } from '@angular/forms';
-import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
@@ -10,7 +9,7 @@ import { MailSecurity } from 'app/enums/mail-security.enum';
 import { Role } from 'app/enums/role.enum';
 import { helptextSystemEmail } from 'app/helptext/system/email';
 import { GmailOauthConfig, MailConfig, MailConfigUpdate } from 'app/interfaces/mail-config.interface';
-import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
@@ -19,7 +18,7 @@ import { emailValidator } from 'app/modules/ix-forms/validators/email-validation
 import { portRangeValidator } from 'app/modules/ix-forms/validators/range-validation/range-validation';
 import { OauthButtonType } from 'app/modules/oauth-button/interfaces/oauth-button.interface';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { DialogService } from 'app/services/dialog.service';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -36,6 +35,8 @@ enum SendMethod {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class EmailFormComponent implements OnInit {
+  protected requiredRoles = [Role.FullAdmin];
+
   sendMethodControl = new FormControl(SendMethod.Smtp);
 
   form = this.formBuilder.group({
@@ -57,7 +58,6 @@ export class EmailFormComponent implements OnInit {
 
   isLoading = false;
 
-  protected readonly Role = Role;
   readonly oauthType = OauthButtonType;
   readonly sendMethodOptions$ = of([
     {
@@ -87,7 +87,7 @@ export class EmailFormComponent implements OnInit {
     private formBuilder: FormBuilder,
     private cdr: ChangeDetectorRef,
     private translate: TranslateService,
-    private matDialog: MatDialog,
+    private errorHandler: ErrorHandlerService,
     private validatorService: IxValidatorsService,
     private snackbar: SnackbarService,
     private systemGeneralService: SystemGeneralService,
@@ -177,18 +177,18 @@ export class EmailFormComponent implements OnInit {
     };
     const config = this.prepareConfigUpdate();
 
-    const dialogRef = this.matDialog.open(EntityJobComponent, {
-      data: {
-        title: this.translate.instant('Email'),
-      },
-      disableClose: true,
-    });
-    dialogRef.componentInstance.setCall('mail.send', [email, config]);
-    dialogRef.componentInstance.submit();
-    dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
-      dialogRef.close(false);
-      this.snackbar.success(this.translate.instant('Test email sent.'));
-    });
+    this.dialogService.jobDialog(
+      this.ws.job('mail.send', [email, config]),
+      { title: this.translate.instant('Email') },
+    )
+      .afterClosed()
+      .pipe(
+        this.errorHandler.catchError(),
+        untilDestroyed(this),
+      )
+      .subscribe(() => {
+        this.snackbar.success(this.translate.instant('Test email sent.'));
+      });
   }
 
   private prepareConfigUpdate(): MailConfigUpdate {

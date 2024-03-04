@@ -6,19 +6,20 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { CoreComponents } from 'app/core/core-components.module';
 import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-datetime.pipe';
 import { MockWebSocketService } from 'app/core/testing/classes/mock-websocket.service';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { PoolStatus } from 'app/enums/pool-status.enum';
 import { TopologyItemType } from 'app/enums/v-dev-type.enum';
 import { TopologyItemStatus } from 'app/enums/vdev-status.enum';
 import { PoolInstance } from 'app/interfaces/pool.interface';
 import { TopologyItem } from 'app/interfaces/storage.interface';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { TreeHarness } from 'app/modules/ix-tree/testing/tree.harness';
 import { TreeModule } from 'app/modules/ix-tree/tree.module';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { BootStatusListComponent } from 'app/pages/system/bootenv/bootenv-status/bootenv-status.component';
-import { DialogService } from 'app/services/dialog.service';
 import { BootenvNodeItemComponent } from './bootenv-node-item/bootenv-node-item.component';
 
 const oneDisk = {
@@ -73,6 +74,7 @@ describe('BootStatusListComponent', () => {
       MatIconTestingModule,
     ],
     providers: [
+      mockAuth(),
       mockProvider(DialogService),
       mockProvider(SnackbarService),
       mockProvider(MatDialogRef),

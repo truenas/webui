@@ -3,12 +3,15 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatInputHarness } from '@angular/material/input/testing';
+import { byText } from '@ngneat/spectator';
 import { Spectator, createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockCall, mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { AppsFiltersSort } from 'app/interfaces/apps-filters-values.interface';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
 import { ChartRelease } from 'app/interfaces/chart-release.interface';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxChipsHarness } from 'app/modules/ix-forms/components/ix-chips/ix-chips.harness';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { AvailableAppsHeaderComponent } from 'app/pages/apps/components/available-apps/available-apps-header/available-apps-header.component';
@@ -17,6 +20,7 @@ import { CustomFormsModule } from 'app/pages/apps/modules/custom-forms/custom-fo
 import { AppsFilterStore } from 'app/pages/apps/store/apps-filter-store.service';
 import { AppsStore } from 'app/pages/apps/store/apps-store.service';
 import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 describe('AvailableAppsHeaderComponent', () => {
   let spectator: Spectator<AvailableAppsHeaderComponent>;
@@ -35,8 +39,10 @@ describe('AvailableAppsHeaderComponent', () => {
       CustomFormsModule,
     ],
     providers: [
+      mockAuth(),
       mockWebSocket([
         mockCall('chart.release.query', [{}, {}, {}] as ChartRelease[]),
+        mockJob('catalog.sync_all'),
       ]),
       mockProvider(InstalledAppsStore, {
         installedApps$: of([{}, {}, {}] as ChartRelease[]),
@@ -67,6 +73,11 @@ describe('AvailableAppsHeaderComponent', () => {
         }] as AvailableApp[]),
         appsCategories$: of(['storage', 'crypto', 'media', 'torrent']),
         catalogs$: of(['TRUENAS', 'TEST']),
+      }),
+      mockProvider(DialogService, {
+        jobDialog: jest.fn(() => ({
+          afterClosed: () => of(null),
+        })),
       }),
     ],
   });
@@ -136,5 +147,12 @@ describe('AvailableAppsHeaderComponent', () => {
       sort: null,
       categories: ['storage'],
     });
+  });
+
+  it('refreshes charts when Refresh Charts is pressed', () => {
+    spectator.click(spectator.query(byText('Refresh Charts')));
+
+    expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
+    expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('catalog.sync_all');
   });
 });

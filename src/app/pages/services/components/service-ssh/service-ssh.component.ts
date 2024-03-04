@@ -10,11 +10,11 @@ import { SshSftpLogFacility, SshSftpLogLevel, SshWeakCipher } from 'app/enums/ss
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { helptextServiceSsh } from 'app/helptext/services/components/service-ssh';
 import { SshConfigUpdate } from 'app/interfaces/ssh-config.interface';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ChipsProvider } from 'app/modules/ix-forms/components/ix-chips/chips-provider';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { UserService } from 'app/services/user.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -26,6 +26,8 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ServiceSshComponent implements OnInit {
+  protected requiredRoles = [Role.FullAdmin];
+
   isFormLoading = false;
   isBasicMode = true;
 
@@ -67,7 +69,6 @@ export class ServiceSshComponent implements OnInit {
   readonly sftpLogFacilities$ = of(helptextServiceSsh.ssh_sftp_log_facility_options);
   readonly sshWeakCiphers$ = of(helptextServiceSsh.ssh_weak_ciphers_options);
   readonly bindInterfaces$ = this.ws.call('ssh.bindiface_choices').pipe(choicesToOptions());
-  protected readonly Role = Role;
 
   constructor(
     private ws: WebSocketService,

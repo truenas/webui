@@ -17,6 +17,7 @@ import { helptextIdmap } from 'app/helptext/directory-service/idmap';
 import { IdmapBackendOption, IdmapBackendOptions } from 'app/interfaces/idmap-backend-options.interface';
 import { Idmap, IdmapUpdate } from 'app/interfaces/idmap.interface';
 import { Option } from 'app/interfaces/option.interface';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
@@ -24,7 +25,6 @@ import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-erro
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { requiredIdmapDomains } from 'app/pages/directory-service/utils/required-idmap-domains.utils';
-import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IdmapService } from 'app/services/idmap.service';
 import { greaterThanFg, rangeValidator } from 'app/services/validators';
@@ -40,6 +40,8 @@ const customIdmapName = 'custom' as const;
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class IdmapFormComponent implements OnInit {
+  protected requiredRoles = [Role.DirectoryServiceWrite];
+
   get title(): string {
     return this.isNew
       ? this.translate.instant('Add Idmap')
@@ -147,8 +149,6 @@ export class IdmapFormComponent implements OnInit {
   get currentBackend(): IdmapBackendOption {
     return this.backendChoices?.[this.form.controls.idmap_backend.value];
   }
-
-  protected readonly Role = Role;
 
   constructor(
     private formBuilder: FormBuilder,

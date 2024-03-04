@@ -102,7 +102,7 @@ import { DockerHubRateLimit } from 'app/interfaces/dockerhub-rate-limit.interfac
 import {
   DsUncachedGroup, DsUncachedUser, LoggedInUser,
 } from 'app/interfaces/ds-cache.interface';
-import { Enclosure } from 'app/interfaces/enclosure.interface';
+import { EnclosureUi } from 'app/interfaces/enclosure.interface';
 import {
   FailoverConfig,
   FailoverUpdate,
@@ -430,9 +430,10 @@ export interface ApiCallDirectory {
   'disk.update': { params: [id: string, update: DiskUpdate]; response: Disk };
 
   // Enclosure
-  'enclosure.query': { params: void; response: Enclosure[] };
+  'enclosure.query': { params: void; response: EnclosureUi[] };
+  'webui.enclosure.dashboard': { params: void; response: EnclosureUi[] };
+  'enclosure.update': { params: [enclosureId: string, update: { label: string }]; response: EnclosureUi };
   'enclosure.set_slot_status': { params: [id: string, slot: number, status: EnclosureSlotStatus ]; response: void };
-  'enclosure.update': { params: [enclosureId: string, update: { label: string }]; response: Enclosure };
 
   // Failover
   'failover.become_passive': { params: void; response: void };
@@ -904,3 +905,6 @@ export type ApiCallMethod = keyof ApiCallDirectory;
 
 export type ApiCallParams<T extends ApiCallMethod> = ApiCallDirectory[T]['params'];
 export type ApiCallResponse<T extends ApiCallMethod> = ApiCallDirectory[T]['response'];
+export type ApiCallResponseType<T extends ApiCallMethod> = ApiCallDirectory[T]['response'] extends (infer U)[] ? U : never;
+
+export type QueryMethods = { [T in ApiCallMethod]: T extends `${string}.query` ? T : never }[ApiCallMethod];

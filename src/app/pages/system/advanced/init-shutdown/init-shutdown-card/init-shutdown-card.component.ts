@@ -1,11 +1,14 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+  ChangeDetectionStrategy, Component, OnInit,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { switchMap, from, filter } from 'rxjs';
+import {
+  switchMap, filter, tap,
+} from 'rxjs';
 import { Role } from 'app/enums/role.enum';
 import { InitShutdownScript } from 'app/interfaces/init-shutdown-script.interface';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { AsyncDataProvider } from 'app/modules/ix-table2/classes/async-data-provider/async-data-provider';
 import { actionsColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
 import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
@@ -19,9 +22,8 @@ import { AdvancedSettingsService } from 'app/pages/system/advanced/advanced-sett
 import {
   InitShutdownFormComponent,
 } from 'app/pages/system/advanced/init-shutdown/init-shutdown-form/init-shutdown-form.component';
-import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
@@ -32,6 +34,8 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class InitShutdownCardComponent implements OnInit {
+  readonly requiredRoles = [Role.FullAdmin];
+
   dataProvider: AsyncDataProvider<InitShutdownScript>;
 
   columns = createTable<InitShutdownScript>([
@@ -67,7 +71,7 @@ export class InitShutdownCardComponent implements OnInit {
           iconName: 'delete',
           tooltip: this.translate.instant('Delete'),
           onClick: (row) => this.onDelete(row),
-          requiredRoles: [Role.FullAdmin],
+          requiredRoles: this.requiredRoles,
         },
       ],
     }),
@@ -76,20 +80,17 @@ export class InitShutdownCardComponent implements OnInit {
   });
 
   constructor(
-    private slideInService: IxSlideInService,
     private translate: TranslateService,
     private errorHandler: ErrorHandlerService,
     private ws: WebSocketService,
     private dialog: DialogService,
-    private cdr: ChangeDetectorRef,
     private snackbar: SnackbarService,
     private advancedSettings: AdvancedSettingsService,
     protected emptyService: EmptyService,
+    private chainedSlideIns: IxChainedSlideInService,
   ) {}
 
   ngOnInit(): void {
-    const scripts$ = this.ws.call('initshutdownscript.query').pipe(untilDestroyed(this));
-    this.dataProvider = new AsyncDataProvider<InitShutdownScript>(scripts$);
     this.loadScripts();
   }
 
@@ -98,6 +99,10 @@ export class InitShutdownCardComponent implements OnInit {
   }
 
   loadScripts(): void {
+    if (!this.dataProvider) {
+      const scripts$ = this.ws.call('initshutdownscript.query').pipe(untilDestroyed(this));
+      this.dataProvider = new AsyncDataProvider<InitShutdownScript>(scripts$);
+    }
     this.dataProvider.load();
   }
 
@@ -127,13 +132,11 @@ export class InitShutdownCardComponent implements OnInit {
   }
 
   private openForm(row?: InitShutdownScript): void {
-    from(this.advancedSettings.showFirstTimeWarningIfNeeded()).pipe(
-      switchMap(() => this.slideInService.open(InitShutdownFormComponent, { data: row }).slideInClosed$),
-      filter(Boolean),
+    this.advancedSettings.showFirstTimeWarningIfNeeded().pipe(
+      switchMap(() => this.chainedSlideIns.pushComponent(InitShutdownFormComponent, false, row)),
+      filter((response) => !!response.response),
+      tap(() => this.loadScripts()),
       untilDestroyed(this),
-    )
-      .subscribe(() => {
-        this.loadScripts();
-      });
+    ).subscribe();
   }
 }

@@ -69,7 +69,7 @@
 
       <div class="form-actions">
         <button
-          *ixRequiresRoles="[Role.DatasetWrite]"
+          *ixRequiresRoles="requiredRoles"
           mat-button
           class="save-button"
           type="submit"
@@ -88,16 +88,18 @@
           {{ 'Cancel' | translate }}
         </button>
 
-        <button
-          *ngIf="canSetAcl"
-          class="set-acl-button"
-          mat-button
-          type="button"
-          ixTest="set-acl"
-          (click)="onSetAclPressed()"
-        >
-          {{ 'Set ACL' | translate }}
-        </button>
+        <ng-container *ixRequiresRoles="requiredRoles">
+          <button
+            *ngIf="canSetAcl"
+            class="set-acl-button"
+            mat-button
+            type="button"
+            ixTest="set-acl"
+            (click)="onSetAclPressed()"
+          >
+            {{ 'Set ACL' | translate }}
+          </button>
+        </ng-container>
       </div>
     </form>
   </mat-card-content>

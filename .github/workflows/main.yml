@@ -78,16 +78,15 @@ jobs:
 
   lint-translations:
     name: Validate translation strings
-    needs: [check-files, install]
-    if: ${{ needs.check-files.outputs.translations-only == 'false' }}
+    needs: [install]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Install
         uses: ./.github/actions/prepare
-      - name: Build
-        run: yarn run extract
+      - name: Validate
+        run: yarn run validate-translations
 
   test:
     name: Run tests

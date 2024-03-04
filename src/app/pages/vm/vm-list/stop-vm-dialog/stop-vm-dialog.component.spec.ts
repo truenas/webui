@@ -6,10 +6,10 @@ import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dial
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { mockEntityJobComponentRef } from 'app/core/testing/utils/mock-entity-job-component-ref.utils';
 import { VirtualMachine } from 'app/interfaces/virtual-machine.interface';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxCheckboxHarness } from 'app/modules/ix-forms/components/ix-checkbox/ix-checkbox.harness';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { StopVmDialogComponent } from 'app/pages/vm/vm-list/stop-vm-dialog/stop-vm-dialog.component';
-import { DialogService } from 'app/services/dialog.service';
 
 describe('StopVmDialogComponent', () => {
   let spectator: Spectator<StopVmDialogComponent>;
@@ -49,6 +49,6 @@ describe('StopVmDialogComponent', () => {
     const stopButton = await loader.getHarness(MatButtonHarness.with({ text: 'Stop' }));
     await stopButton.click();
 
-    expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith({ wasStopped: true, forceAfterTimeout: true });
+    expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith({ forceAfterTimeout: true });
   });
 });

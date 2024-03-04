@@ -21,14 +21,14 @@ import { StoreModule } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
 import { CoreComponents } from 'app/core/core-components.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
-import { AppCommonModule } from 'app/modules/common/app-common.module';
-import { NgxDualListboxModule } from 'app/modules/common/dual-list/dual-list.module';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
-import { IxTableModule } from 'app/modules/ix-tables/ix-table.module';
 import { LayoutModule } from 'app/modules/layout/layout.module';
+import { DualListModule } from 'app/modules/lists/dual-list/dual-list.module';
+import { SearchInputModule } from 'app/modules/search-input/search-input.module';
+import { SearchInput1Component } from 'app/modules/search-input1/search-input1.component';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
 import { GroupDetailsRowComponent } from 'app/pages/account/groups/group-details-row/group-details-row.component';
 import { GroupFormComponent } from 'app/pages/account/groups/group-form/group-form.component';
@@ -51,7 +51,6 @@ import { DeleteGroupDialogComponent } from './group-details-row/delete-group-dia
     EffectsModule.forFeature([GroupEffects]),
     EntityModule,
     IxFormsModule,
-    IxTableModule,
     FlexLayoutModule,
     MatButtonModule,
     IxIconModule,
@@ -72,12 +71,13 @@ import { DeleteGroupDialogComponent } from './group-details-row/delete-group-dia
     StoreModule.forFeature(groupStateKey, groupReducer),
     TranslateModule,
     TranslateModule,
-    NgxDualListboxModule,
-    AppCommonModule,
+    DualListModule,
     MatSlideToggleModule,
     LayoutModule,
     TestIdModule,
     IxTable2Module,
+    SearchInputModule,
+    SearchInput1Component,
   ],
   declarations: [
     GroupListComponent,

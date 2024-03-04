@@ -2,7 +2,6 @@ import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
 import { Validators } from '@angular/forms';
-import { MatDialog } from '@angular/material/dialog';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
@@ -10,12 +9,10 @@ import { map } from 'rxjs/operators';
 import { Role } from 'app/enums/role.enum';
 import { idNameArrayToOptions, singleArrayToOptions } from 'app/helpers/operators/options.operators';
 import { helptextLdap } from 'app/helptext/directory-service/ldap';
-import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
-import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -27,6 +24,8 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LdapComponent implements OnInit {
+  protected requiredRoles = [Role.DirectoryServiceWrite];
+
   isLoading = false;
   isAdvancedMode = false;
 
@@ -68,8 +67,6 @@ export class LdapComponent implements OnInit {
   readonly schemaOptions$ = this.ws.call('ldap.schema_choices').pipe(singleArrayToOptions());
   readonly isEnabled$ = this.form.select((values) => values.enable);
 
-  protected readonly Role = Role;
-
   constructor(
     private ws: WebSocketService,
     private cdr: ChangeDetectorRef,
@@ -79,8 +76,6 @@ export class LdapComponent implements OnInit {
     private validatorsService: IxValidatorsService,
     private errorHandler: ErrorHandlerService,
     private slideInRef: IxSlideInRef<LdapComponent>,
-    private formErrorHandler: FormErrorHandlerService,
-    private matDialog: MatDialog,
     private translate: TranslateService,
     private snackbar: SnackbarService,
   ) {}
@@ -115,24 +110,24 @@ export class LdapComponent implements OnInit {
     this.isLoading = true;
     const values = this.form.value;
 
-    const dialogRef = this.matDialog.open(EntityJobComponent, {
-      data: {
-        title: this.translate.instant('Active Directory'),
+    this.dialogService.jobDialog(
+      this.ws.job('ldap.update', [values]),
+      {
+        title: 'LDAP',
       },
-      disableClose: true,
-    });
-    dialogRef.componentInstance.setCall('ldap.update', [values]);
-    dialogRef.componentInstance.submit();
-    dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
-      dialogRef.close(true);
-      this.slideInRef.close(true);
-    });
-    dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((error) => {
-      this.dialogService.error(this.errorHandler.parseError(error));
-      this.isLoading = false;
-      this.cdr.markForCheck();
-      dialogRef.close(true);
-    });
+    )
+      .afterClosed()
+      .pipe(
+        this.errorHandler.catchError(),
+        untilDestroyed(this),
+      )
+      .subscribe({
+        next: () => this.slideInRef.close(true),
+        complete: () => {
+          this.isLoading = false;
+          this.cdr.markForCheck();
+        },
+      });
   }
 
   private loadFormValues(): void {

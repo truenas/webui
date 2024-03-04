@@ -1,11 +1,6 @@
 <div class="widget stats-widget" ngClass.xs="double-height xs">
-  <div class="card-container front">
-    <mat-card
-      class="front"
-      fxLayout="row"
-      fxLayoutWrap
-      fxLayoutAlign="space-between stretch"
-    >
+  <div class="card-container">
+    <mat-card class="front">
       <mat-card-content>
         <ix-drag-handle [showReorderHandle]="showReorderHandle">
           <ng-content [select]="[cdkDragHandle]"></ng-content>
@@ -20,7 +15,7 @@
               ixTest="help-back"
               (click)="goBack()"
             >
-              <ix-icon name="chevron_left" class="back-arrow"></ix-icon>
+              <ix-icon name="chevron_left"></ix-icon>
             </button>
 
             <h3 class="mat-card-title-text">
@@ -36,38 +31,26 @@
 
         <div class="content-wrapper container">
           <div class="line-item">
-            <div fxFlex="10%">
+            <div class="icon-wrapper">
               <ix-icon class="bullet-icon" name="assignment"></ix-icon>
             </div>
-            <div
-              fxFlex="90%"
-              class="medium-font"
-              [innerHtml]="helptext.docs | translate"
-            ></div>
+            <div class="helptext" [innerHtml]="helptext.docs | translate"></div>
           </div>
           <div class="line-item">
-            <div fxFlex="10%">
+            <div class="icon-wrapper">
               <ix-icon class="bullet-icon" name="group"></ix-icon>
             </div>
-            <div
-              fxFlex="90%"
-              class="medium-font"
-              [innerHtml]="helptext.forums | translate"
-            ></div>
+            <div class="helptext" [innerHtml]="helptext.forums | translate"></div>
           </div>
           <div class="line-item">
-            <div fxFlex="10%">
+            <div class="icon-wrapper">
               <ix-icon class="bullet-icon" name="mail"></ix-icon>
             </div>
-            <div
-              fxFlex="90%"
-              class="medium-font"
-              [innerHtml]="helptext.newsLetter | translate"
-            ></div>
+            <div class="helptext" [innerHtml]="helptext.newsLetter | translate"></div>
           </div>
-          <ng-container *ngIf="systemType === ProductType.Scale">
+          <ng-container *ngIf="productType === ProductType.Scale">
             <div
-              *appLet="systemType | mapValue: productTypeLabels as product"
+              *appLet="productType | mapValue: productTypeLabels as product"
               id="open-source"
               [innerHtml]="helptext.opensource | translate: { product }"
             ></div>

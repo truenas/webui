@@ -14,6 +14,7 @@ import { tapOnce } from 'app/helpers/operators/tap-once.operator';
 import { helptextCloudSync } from 'app/helptext/data-protection/cloudsync/cloudsync';
 import { CloudSyncTaskUi, CloudSyncTaskUpdate } from 'app/interfaces/cloud-sync-task.interface';
 import { Job } from 'app/interfaces/job.interface';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { AsyncDataProvider } from 'app/modules/ix-table2/classes/async-data-provider/async-data-provider';
 import { actionsColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
 import { relativeDateColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-relative-date/ix-cell-relative-date.component';
@@ -28,7 +29,6 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import { CloudSyncFormComponent } from 'app/pages/data-protection/cloudsync/cloudsync-form/cloudsync-form.component';
 import { CloudSyncRestoreDialogComponent } from 'app/pages/data-protection/cloudsync/cloudsync-restore-dialog/cloudsync-restore-dialog.component';
 import { CloudSyncWizardComponent } from 'app/pages/data-protection/cloudsync/cloudsync-wizard/cloudsync-wizard.component';
-import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 import { TaskService } from 'app/services/task.service';
@@ -43,7 +43,9 @@ import { AppState } from 'app/store';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CloudSyncTaskCardComponent implements OnInit {
-  cloudsyncTasks: CloudSyncTaskUi[] = [];
+  protected requiredRoles = [Role.CloudSyncWrite];
+
+  cloudSyncTasks: CloudSyncTaskUi[] = [];
   dataProvider: AsyncDataProvider<CloudSyncTaskUi>;
   jobStates = new Map<number, JobState>();
 
@@ -70,7 +72,7 @@ export class CloudSyncTaskCardComponent implements OnInit {
       title: this.translate.instant('Enabled'),
       propertyName: 'enabled',
       onRowToggle: (row: CloudSyncTaskUi) => this.onChangeEnabledState(row),
-      requiredRoles: [Role.CloudSyncWrite],
+      requiredRoles: this.requiredRoles,
     }),
     stateButtonColumn({
       title: this.translate.instant('State'),
@@ -91,32 +93,32 @@ export class CloudSyncTaskCardComponent implements OnInit {
           tooltip: this.translate.instant('Run job'),
           hidden: (row) => of(row.job?.state === JobState.Running),
           onClick: (row) => this.runNow(row),
-          requiredRoles: [Role.CloudSyncWrite],
+          requiredRoles: this.requiredRoles,
         },
         {
           iconName: 'stop',
           tooltip: this.translate.instant('Stop'),
           hidden: (row) => of(row.job?.state !== JobState.Running),
           onClick: (row) => this.stopCloudSyncTask(row),
-          requiredRoles: [Role.CloudSyncWrite],
+          requiredRoles: this.requiredRoles,
         },
         {
           iconName: 'sync',
           tooltip: this.translate.instant('Dry Run'),
           onClick: (row) => this.dryRun(row),
-          requiredRoles: [Role.CloudSyncWrite],
+          requiredRoles: this.requiredRoles,
         },
         {
           iconName: 'restore',
           tooltip: this.translate.instant('Restore'),
           onClick: (row) => this.restore(row),
-          requiredRoles: [Role.CloudSyncWrite],
+          requiredRoles: this.requiredRoles,
         },
         {
           iconName: 'delete',
           tooltip: this.translate.instant('Delete'),
           onClick: (row) => this.doDelete(row),
-          requiredRoles: [Role.CloudSyncWrite],
+          requiredRoles: this.requiredRoles,
         },
       ],
     }),
@@ -139,12 +141,12 @@ export class CloudSyncTaskCardComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    const cloudsyncTasks$ = this.ws.call('cloudsync.query').pipe(
-      map((cloudsyncTasks: CloudSyncTaskUi[]) => this.transformCloudSyncTasks(cloudsyncTasks)),
-      tap((cloudsyncTasks) => this.cloudsyncTasks = cloudsyncTasks),
+    const cloudSyncTasks$ = this.ws.call('cloudsync.query').pipe(
+      map((cloudSyncTasks: CloudSyncTaskUi[]) => this.transformCloudSyncTasks(cloudSyncTasks)),
+      tap((cloudSyncTasks) => this.cloudSyncTasks = cloudSyncTasks),
       untilDestroyed(this),
     );
-    this.dataProvider = new AsyncDataProvider<CloudSyncTaskUi>(cloudsyncTasks$);
+    this.dataProvider = new AsyncDataProvider<CloudSyncTaskUi>(cloudSyncTasks$);
     this.getCloudSyncTasks();
   }
 
@@ -200,7 +202,7 @@ export class CloudSyncTaskCardComponent implements OnInit {
       hideCheckbox: true,
     }).pipe(
       filter(Boolean),
-      tap(() => row.state = { state: JobState.Running }),
+      tap(() => this.updateRowStateAndJob(row, JobState.Running, row.job)),
       switchMap(() => this.ws.job('cloudsync.sync', [row.id])),
       tapOnce(() => this.snackbar.success(
         this.translate.instant('Cloud Sync «{name}» has started.', { name: row.description }),
@@ -212,8 +214,7 @@ export class CloudSyncTaskCardComponent implements OnInit {
       }),
       untilDestroyed(this),
     ).subscribe((job: Job) => {
-      row.state = { state: job.state };
-      row.job = job;
+      this.updateRowStateAndJob(row, job.state, job);
       if (this.jobStates.get(job.id) !== job.state) {
         this.getCloudSyncTasks();
       }
@@ -243,8 +244,7 @@ export class CloudSyncTaskCardComponent implements OnInit {
           this.translate.instant('Cloud Sync «{name}» stopped.', { name: row.description }),
           true,
         );
-        row.state = { state: JobState.Aborted };
-        row.job = null;
+        this.updateRowStateAndJob(row, JobState.Aborted, null);
         this.cdr.markForCheck();
       });
   }
@@ -266,8 +266,7 @@ export class CloudSyncTaskCardComponent implements OnInit {
       }),
       untilDestroyed(this),
     ).subscribe((job: Job) => {
-      row.state = { state: job.state };
-      row.job = job;
+      this.updateRowStateAndJob(row, job.state, job);
       if (this.jobStates.get(job.id) !== job.state) {
         this.getCloudSyncTasks();
       }
@@ -282,8 +281,8 @@ export class CloudSyncTaskCardComponent implements OnInit {
     dialog.afterClosed().pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => this.getCloudSyncTasks());
   }
 
-  private transformCloudSyncTasks(cloudsyncTasks: CloudSyncTaskUi[]): CloudSyncTaskUi[] {
-    return cloudsyncTasks.map((task) => {
+  private transformCloudSyncTasks(cloudSyncTasks: CloudSyncTaskUi[]): CloudSyncTaskUi[] {
+    return cloudSyncTasks.map((task) => {
       const formattedCronSchedule = scheduleToCrontab(task.schedule);
       task.credential = task.credentials.name;
       task.cron_schedule = task.enabled ? formattedCronSchedule : this.translate.instant('Disabled');
@@ -319,5 +318,18 @@ export class CloudSyncTaskCardComponent implements OnInit {
           this.dialogService.error(this.errorHandler.parseError(err));
         },
       });
+  }
+
+  private updateRowStateAndJob(row: CloudSyncTaskUi, state: JobState, job: Job): void {
+    this.dataProvider.setRows(this.cloudSyncTasks.map((task) => {
+      if (task.id === row.id) {
+        return {
+          ...task,
+          state: { state },
+          job,
+        };
+      }
+      return task;
+    }));
   }
 }

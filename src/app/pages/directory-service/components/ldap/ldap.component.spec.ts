@@ -2,23 +2,21 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatDialog } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockEntityJobComponentRef } from 'app/core/testing/utils/mock-entity-job-component-ref.utils';
 import { mockCall, mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { helptextLdap } from 'app/helptext/directory-service/ldap';
 import { KerberosRealm } from 'app/interfaces/kerberos-realm.interface';
 import { LdapConfig } from 'app/interfaces/ldap-config.interface';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { LdapComponent } from 'app/pages/directory-service/components/ldap/ldap.component';
-import { DialogService } from 'app/services/dialog.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -46,6 +44,7 @@ describe('LdapComponent', () => {
     auxiliary_parameters: 'param=25',
     schema: 'RFC2307',
   } as LdapConfig;
+
   const createComponent = createComponentFactory({
     component: LdapComponent,
     imports: [
@@ -74,11 +73,12 @@ describe('LdapComponent', () => {
           { id: 2, name: 'certificate2' },
         ]),
       }),
-      mockProvider(DialogService),
-      mockProvider(SnackbarService),
-      mockProvider(MatDialog, {
-        open: jest.fn(() => mockEntityJobComponentRef),
+      mockProvider(DialogService, {
+        jobDialog: jest.fn(() => ({
+          afterClosed: () => of(null),
+        })),
       }),
+      mockProvider(SnackbarService),
       mockProvider(IxSlideInRef),
       mockAuth(),
       { provide: SLIDE_IN_DATA, useValue: undefined },
@@ -155,7 +155,7 @@ describe('LdapComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(mockEntityJobComponentRef.componentInstance.setCall).toHaveBeenCalledWith(
+    expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith(
       'ldap.update',
       [{
         ...existingLdapConfig,
@@ -164,7 +164,7 @@ describe('LdapComponent', () => {
         kerberos_principal: 'principal2',
       }],
     );
-    expect(mockEntityJobComponentRef.componentInstance.submit).toHaveBeenCalled();
+    expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
     expect(spectator.inject(IxSlideInRef).close).toHaveBeenCalled();
   });
 });

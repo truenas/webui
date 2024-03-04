@@ -3,9 +3,9 @@ import { SpectatorService, createServiceFactory, mockProvider } from '@ngneat/sp
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { BehaviorSubject, firstValueFrom, of } from 'rxjs';
 import { GlobalTwoFactorConfig, UserTwoFactorConfig } from 'app/interfaces/two-factor-config.interface';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { AuthService } from 'app/services/auth/auth.service';
 import { TwoFactorGuardService } from 'app/services/auth/two-factor-guard.service';
-import { DialogService } from 'app/services/dialog.service';
 import { selectIsUpgradePending } from 'app/store/ha-info/ha-info.selectors';
 
 describe('TwoFactorGuardService', () => {

@@ -25,16 +25,13 @@ export class CopyButtonComponent {
     this.snackbar.success(this.translate.instant('Copied to clipboard'));
   }
 
-  private copyViaDeprecatedExecCommand(): Promise<void> {
-    const textArea = document.createElement('textarea');
-    textArea.value = this.text;
-    textArea.style.position = 'fixed';
-    textArea.style.left = '-9999px';
-    textArea.style.top = '-9999px';
-    document.body.appendChild(textArea);
-    textArea.focus();
-    textArea.select();
+  private copyViaDeprecatedExecCommand(text: string): Promise<void> {
     return new Promise((resolve) => {
+      const textArea = document.createElement('textarea');
+      Object.assign(textArea.style, { position: 'fixed', left: '-9999px', top: '-9999px' });
+      textArea.value = text;
+      document.body.appendChild(textArea);
+      textArea.select();
       document.execCommand('copy');
       textArea.remove();
       resolve();
@@ -46,7 +43,7 @@ export class CopyButtonComponent {
       return navigator.clipboard.writeText(text);
     }
 
-    return this.copyViaDeprecatedExecCommand();
+    return this.copyViaDeprecatedExecCommand(text);
   }
 
   copyToClipboard(): void {

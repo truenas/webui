@@ -2,20 +2,22 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
-import { mockEntityJobComponentRef } from 'app/core/testing/utils/mock-entity-job-component-ref.utils';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { helptextApps } from 'app/helptext/apps/apps';
 import { KubernetesConfig } from 'app/interfaces/kubernetes-config.interface';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxSelectHarness } from 'app/modules/ix-forms/components/ix-select/ix-select.harness';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { SelectPoolDialogComponent } from 'app/pages/apps/components/select-pool-dialog/select-pool-dialog.component';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { KubernetesStore } from 'app/pages/apps/store/kubernetes-store.service';
-import { DialogService } from 'app/services/dialog.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 describe('SelectPoolDialogComponent', () => {
   let spectator: Spectator<SelectPoolDialogComponent>;
@@ -28,6 +30,7 @@ describe('SelectPoolDialogComponent', () => {
       IxFormsModule,
     ],
     providers: [
+      mockAuth(),
       mockProvider(KubernetesStore, {
         updatePoolAndKubernetesConfig: jest.fn(() => of()),
         updateSelectedPool: jest.fn(() => of()),
@@ -41,12 +44,15 @@ describe('SelectPoolDialogComponent', () => {
       }),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
-      }),
-      mockProvider(MatDialog, {
-        open: jest.fn(() => mockEntityJobComponentRef),
+        jobDialog: jest.fn(() => ({
+          afterClosed: () => of(null),
+        })),
       }),
       mockProvider(MatDialogRef),
       mockProvider(Router),
+      mockWebSocket([
+        mockJob('kubernetes.update'),
+      ]),
     ],
   });
 
@@ -74,12 +80,11 @@ describe('SelectPoolDialogComponent', () => {
     const chooseButton = await loader.getHarness(MatButtonHarness.with({ text: 'Choose' }));
     await chooseButton.click();
 
-    expect(spectator.inject(MatDialog).open).toHaveBeenCalled();
-    expect(mockEntityJobComponentRef.componentInstance.setCall).toHaveBeenCalledWith(
+    expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
+    expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith(
       'kubernetes.update',
       [{ pool: 'pool2' }],
     );
-    expect(mockEntityJobComponentRef.componentInstance.submit).toHaveBeenCalled();
     expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith(true);
   });
 
@@ -109,7 +114,7 @@ describe('SelectPoolDialogComponent', () => {
     const chooseButton = await loader.getHarness(MatButtonHarness.with({ text: 'Choose' }));
     await chooseButton.click();
 
-    expect(mockEntityJobComponentRef.componentInstance.setCall).toHaveBeenCalledWith(
+    expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith(
       'kubernetes.update',
       [{ migrate_applications: true, pool: 'pool2' }],
     );

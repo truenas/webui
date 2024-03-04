@@ -10,6 +10,7 @@ import {
   Observable,
 } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
+import { Role } from 'app/enums/role.enum';
 import { SmartTestResultStatus } from 'app/enums/smart-test-result-status.enum';
 import { SmartTestResultPageType } from 'app/enums/smart-test-results-page-type.enum';
 import { LoadingState, toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
@@ -30,6 +31,8 @@ import { WebSocketService } from 'app/services/ws.service';
 export class SmartInfoCardComponent implements OnChanges {
   @Input() topologyDisk: TopologyDisk;
   @Input() disk: Disk;
+
+  readonly requiredRoles = [Role.FullAdmin];
 
   totalResults$: Observable<LoadingState<number>>;
   lastResultsInCategory$: Observable<SmartTestResult[]>;

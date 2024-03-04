@@ -17,6 +17,7 @@ import { ZfsPropertySource } from 'app/enums/zfs-property-source.enum';
 import { helptextZvol } from 'app/helptext/storage/volumes/zvol-form';
 import { Dataset, DatasetCreate, DatasetUpdate } from 'app/interfaces/dataset.interface';
 import { Option } from 'app/interfaces/option.interface';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
@@ -26,7 +27,6 @@ import { matchOthersFgValidator } from 'app/modules/ix-forms/validators/password
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { getDatasetLabel } from 'app/pages/datasets/utils/dataset.utils';
 import { CloudCredentialService } from 'app/services/cloud-credential.service';
-import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { StorageService } from 'app/services/storage.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -69,6 +69,8 @@ interface ZvolFormData {
   providers: [CloudCredentialService],
 })
 export class ZvolFormComponent implements OnInit {
+  readonly requiredRoles = [Role.DatasetWrite];
+
   get title(): string {
     return this.isNew
       ? this.translate.instant(helptextZvol.zvol_title_add)
@@ -92,8 +94,6 @@ export class ZvolFormComponent implements OnInit {
   protected minimumRecommendedBlockSize: DatasetRecordSize;
   protected origVolSize: number;
   protected origHuman: string | number;
-
-  protected readonly Role = Role;
 
   form = this.formBuilder.group({
     name: ['', [Validators.required, forbiddenValues(this.namesInUse)]],

@@ -15,13 +15,13 @@ import { Role } from 'app/enums/role.enum';
 import { helptextIpmi } from 'app/helptext/network/ipmi/ipmi';
 import { Ipmi, IpmiQueryParams, IpmiUpdate } from 'app/interfaces/ipmi.interface';
 import { RadioOption } from 'app/interfaces/option.interface';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { ipv4Validator } from 'app/modules/ix-forms/validators/ip-validation';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { RedirectService } from 'app/services/redirect.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
@@ -35,6 +35,8 @@ import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class IpmiFormComponent implements OnInit {
+  protected readonly requiredRoles = [Role.IpmiWrite];
+
   remoteControllerData: Ipmi;
   defaultControllerData: Ipmi;
   isManageButtonDisabled = false;
@@ -46,8 +48,6 @@ export class IpmiFormComponent implements OnInit {
   queryParams: IpmiQueryParams;
 
   readonly helptext = helptextIpmi;
-
-  protected readonly requiresRoles = [Role.IpmiWrite];
 
   form = this.fb.group({
     apply_remote: [null as boolean],

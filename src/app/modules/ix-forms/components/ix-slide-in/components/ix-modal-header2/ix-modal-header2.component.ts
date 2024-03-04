@@ -1,10 +1,13 @@
 import {
-  AfterViewInit, ChangeDetectionStrategy, Component, Inject, Input,
+  AfterViewInit, ChangeDetectionStrategy, Component, Input,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { CHAINED_SLIDE_IN_REF } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
-import { ChainedComponentRef, IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
+import { Observable } from 'rxjs';
+import { Role } from 'app/enums/role.enum';
+import { ChainedRef } from 'app/modules/ix-forms/components/ix-slide-in/chained-component-ref';
+import { AuthService } from 'app/services/auth/auth.service';
+import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 
 @UntilDestroy()
 @Component({
@@ -17,14 +20,20 @@ export class IxModalHeader2Component implements AfterViewInit {
   @Input() title: string;
   @Input() loading: boolean;
   @Input() disableClose = false;
+  @Input() requiredRoles: Role[] = [];
   componentsSize = 1;
+
+  get hasRequiredRoles(): Observable<boolean> {
+    return this.authService.hasRole(this.requiredRoles);
+  }
 
   tooltip = this.translate.instant('Close the form');
 
   constructor(
     private translate: TranslateService,
     private chainedSlideIn: IxChainedSlideInService,
-    @Inject(CHAINED_SLIDE_IN_REF) private chainedSlideInRef: ChainedComponentRef,
+    private chainedSlideInRef: ChainedRef<unknown>,
+    private authService: AuthService,
   ) {}
 
   ngAfterViewInit(): void {

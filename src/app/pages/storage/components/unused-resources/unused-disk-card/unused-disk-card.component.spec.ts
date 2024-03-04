@@ -4,6 +4,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialog } from '@angular/material/dialog';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { Pool } from 'app/interfaces/pool.interface';
 import { UnusedDisk } from 'app/interfaces/storage.interface';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
@@ -22,6 +23,7 @@ describe('UnusedDiskCardComponent', () => {
       IxFormsModule,
       ReactiveFormsModule,
     ],
+    providers: [mockAuth()],
     declarations: [
       ManageUnusedDiskDialogComponent,
     ],

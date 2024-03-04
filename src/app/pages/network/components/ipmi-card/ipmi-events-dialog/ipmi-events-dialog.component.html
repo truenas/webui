@@ -20,10 +20,10 @@
     </div>
   </ng-container>
   <ng-template #empty>
-    <ix-entity-empty [conf]="emptyConfig"></ix-entity-empty>
+    <ix-empty [conf]="emptyConfig"></ix-empty>
   </ng-template>
 </div>
-<div mat-dialog-actions class="buttons">
+<ix-form-actions mat-dialog-actions class="form-actions">
   <button
     *ngIf="canClear"
     mat-button
@@ -41,4 +41,4 @@
   >
     {{ 'Close' | translate }}
   </button>
-</div>
+</ix-form-actions>

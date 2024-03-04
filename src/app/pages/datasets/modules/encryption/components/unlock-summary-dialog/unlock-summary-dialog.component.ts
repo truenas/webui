@@ -5,10 +5,10 @@ import {
 import { MatDialogRef } from '@angular/material/dialog';
 import { helptextUnlock } from 'app/helptext/storage/volumes/datasets/dataset-unlock';
 import { DatasetUnlockParams } from 'app/interfaces/dataset-lock.interface';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import {
   DatasetUnlockComponent,
 } from 'app/pages/datasets/modules/encryption/components/dataset-unlock/dataset-unlock.component';
-import { DialogService } from 'app/services/dialog.service';
 
 @Component({
   templateUrl: './unlock-summary-dialog.component.html',

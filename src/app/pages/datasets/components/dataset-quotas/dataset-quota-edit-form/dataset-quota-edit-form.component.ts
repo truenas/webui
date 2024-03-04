@@ -16,12 +16,12 @@ import { DatasetQuota, SetDatasetQuota } from 'app/interfaces/dataset-quota.inte
 import { Job } from 'app/interfaces/job.interface';
 import { QueryFilter, QueryParams } from 'app/interfaces/query-api.interface';
 import { WebSocketError } from 'app/interfaces/websocket-error.interface';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { DialogService } from 'app/services/dialog.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
@@ -30,6 +30,8 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DatasetQuotaEditFormComponent implements OnInit {
+  readonly requiredRoles = [Role.DatasetWrite];
+
   isFormLoading = false;
   private datasetQuota: DatasetQuota;
   private datasetId: string;
@@ -96,8 +98,6 @@ export class DatasetQuotaEditFormComponent implements OnInit {
     data_quota: [null as number],
     obj_quota: [null as number],
   });
-
-  protected readonly Role = Role;
 
   constructor(
     private formBuilder: FormBuilder,

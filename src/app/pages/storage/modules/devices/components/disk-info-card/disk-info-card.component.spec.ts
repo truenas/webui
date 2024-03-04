@@ -9,6 +9,7 @@ import {
 import { MockComponents } from 'ng-mocks';
 import { of } from 'rxjs';
 import { CopyButtonComponent } from 'app/core/components/copy-btn/copy-btn.component';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { DiskStandby } from 'app/enums/disk-standby.enum';
 import { DiskType } from 'app/enums/disk-type.enum';
 import { Disk, TopologyDisk } from 'app/interfaces/storage.interface';
@@ -27,6 +28,7 @@ describe('DiskInfoCardComponent', () => {
       MockComponents(CopyButtonComponent),
     ],
     providers: [
+      mockAuth(),
       mockProvider(IxSlideInService, {
         open: jest.fn(() => ({
           slideInClosed$: of(),

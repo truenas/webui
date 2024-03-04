@@ -6,6 +6,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { filter, switchMap } from 'rxjs/operators';
 import { Role } from 'app/enums/role.enum';
 import { PoolScrubTask } from 'app/interfaces/pool-scrub.interface';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { AsyncDataProvider } from 'app/modules/ix-table2/classes/async-data-provider/async-data-provider';
 import {
   actionsColumn,
@@ -24,7 +25,6 @@ import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { CrontabExplanationPipe } from 'app/modules/scheduler/pipes/crontab-explanation.pipe';
 import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
 import { ScrubTaskFormComponent } from 'app/pages/data-protection/scrub-task/scrub-task-form/scrub-task-form.component';
-import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { TaskService } from 'app/services/task.service';
@@ -38,6 +38,8 @@ import { WebSocketService } from 'app/services/ws.service';
   providers: [CrontabExplanationPipe],
 })
 export class ScrubListComponent implements OnInit {
+  readonly requiredRoles = [Role.FullAdmin];
+
   dataProvider: AsyncDataProvider<PoolScrubTask>;
 
   columns = createTable<PoolScrubTask>([
@@ -83,7 +85,7 @@ export class ScrubListComponent implements OnInit {
         {
           iconName: 'delete',
           tooltip: this.translate.instant('Delete'),
-          requiredRoles: [Role.FullAdmin],
+          requiredRoles: this.requiredRoles,
           onClick: (row) => this.onDelete(row),
         },
       ],

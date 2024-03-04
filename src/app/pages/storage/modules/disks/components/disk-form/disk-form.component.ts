@@ -26,6 +26,8 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DiskFormComponent implements OnInit {
+  protected requiredRoles = [Role.FullAdmin];
+
   form = this.fb.group({
     name: [''],
     serial: [''],
@@ -46,8 +48,6 @@ export class DiskFormComponent implements OnInit {
   readonly advpowermgmtOptions$ = of(translateOptions(this.translate, this.helptext.disk_form_advpowermgmt_options));
   isLoading = false;
   existingDisk: Disk;
-
-  protected readonly Role = Role;
 
   constructor(
     private translate: TranslateService,

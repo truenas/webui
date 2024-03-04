@@ -1,14 +1,15 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+  ChangeDetectionStrategy, Component, OnInit,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import {
-  filter, from, map, switchMap, tap,
+  filter, map, switchMap, tap,
 } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
 import { helptextSystemAdvanced } from 'app/helptext/system/advanced';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { AsyncDataProvider } from 'app/modules/ix-table2/classes/async-data-provider/async-data-provider';
 import { actionsColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
 import { relativeDateColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-relative-date/ix-cell-relative-date.component';
@@ -22,9 +23,8 @@ import { AdvancedSettingsService } from 'app/pages/system/advanced/advanced-sett
 import { CronDeleteDialogComponent } from 'app/pages/system/advanced/cron/cron-delete-dialog/cron-delete-dialog.component';
 import { CronFormComponent } from 'app/pages/system/advanced/cron/cron-form/cron-form.component';
 import { CronjobRow } from 'app/pages/system/advanced/cron/cron-list/cronjob-row.interface';
-import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 import { TaskService } from 'app/services/task.service';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -36,6 +36,8 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CronCardComponent implements OnInit {
+  readonly requiredRoles = [Role.FullAdmin];
+
   title = helptextSystemAdvanced.fieldset_cron;
   cronjobs: CronjobRow[] = [];
   dataProvider: AsyncDataProvider<CronjobRow>;
@@ -74,7 +76,7 @@ export class CronCardComponent implements OnInit {
           iconName: 'play_arrow',
           tooltip: this.translate.instant('Run job'),
           onClick: (row) => this.runNow(row),
-          requiredRoles: [Role.FullAdmin],
+          requiredRoles: this.requiredRoles,
         },
         {
           iconName: 'edit',
@@ -85,7 +87,7 @@ export class CronCardComponent implements OnInit {
           iconName: 'delete',
           tooltip: this.translate.instant('Delete'),
           onClick: (row) => this.doDelete(row),
-          requiredRoles: [Role.FullAdmin],
+          requiredRoles: this.requiredRoles,
         },
       ],
     }),
@@ -94,16 +96,15 @@ export class CronCardComponent implements OnInit {
   });
 
   constructor(
-    private slideInService: IxSlideInService,
     private translate: TranslateService,
     private errorHandler: ErrorHandlerService,
     private ws: WebSocketService,
     private dialog: DialogService,
     private taskService: TaskService,
-    private cdr: ChangeDetectorRef,
     private matDialog: MatDialog,
     private advancedSettings: AdvancedSettingsService,
     protected emptyService: EmptyService,
+    private chainedSlideIns: IxChainedSlideInService,
   ) {}
 
   ngOnInit(): void {
@@ -168,13 +169,14 @@ export class CronCardComponent implements OnInit {
   }
 
   private openForm(row?: CronjobRow): void {
-    from(this.advancedSettings.showFirstTimeWarningIfNeeded()).pipe(
-      switchMap(() => this.slideInService.open(CronFormComponent, { data: row }).slideInClosed$),
-      filter(Boolean),
+    this.advancedSettings.showFirstTimeWarningIfNeeded().pipe(
+      switchMap(() => this.chainedSlideIns.pushComponent(CronFormComponent, false, row)),
+      filter((response) => !!response.response),
       untilDestroyed(this),
-    )
-      .subscribe(() => {
+    ).subscribe({
+      next: () => {
         this.getCronJobs();
-      });
+      },
+    });
   }
 }

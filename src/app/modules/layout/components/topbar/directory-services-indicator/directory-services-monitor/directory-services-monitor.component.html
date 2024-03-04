@@ -1,0 +1,69 @@
+<mat-dialog-content class="dir-service-monitor-dialog">
+  <div class="header" fxLayout="row" fxLayoutAlign="space-between center">
+    <h3>{{ 'Directory Services' | translate }}</h3>
+
+    <div class="header-actions">
+      <button
+        *ixRequiresRoles="requiredRoles"
+        mat-icon-button
+        id="refresh-icon"
+        ixTest="refresh-directory-services"
+        (click)="getStatus()"
+      >
+        <ix-icon name="refresh"></ix-icon>
+      </button>
+
+      <button
+        class="dir-services-monitor-action-button"
+        mat-icon-button
+        mat-dialog-close
+        ixTest="close-directory-services"
+      >
+        <ix-icon name="clear"></ix-icon>
+      </button>
+    </div>
+  </div>
+  <div *ngIf="isLoading" class="spinner-wrapper">
+    <mat-spinner id="dir-service-monitor-spinner" [diameter]="40"></mat-spinner>
+  </div>
+  <mat-table
+    *ngIf="!isLoading"
+    class="mat-elevation-z8"
+    [dataSource]="dataSource"
+  >
+    <!-- Icon Column -->
+    <ng-container matColumnDef="icon">
+      <mat-header-cell *matHeaderCellDef fxFlex="74px"></mat-header-cell>
+      <mat-cell *matCellDef="let element" fxFlex="74px">
+        <ng-container [ngSwitch]="element.state">
+          <ix-icon *ngSwitchCase="DirectoryServiceState.Healthy" name="check_circle" class="state-healthy"></ix-icon>
+          <ix-icon *ngSwitchCase="DirectoryServiceState.Faulted" name="highlight_off" class="state-faulted"></ix-icon>
+          <ix-icon *ngSwitchCase="DirectoryServiceState.Leaving" name="arrow_back" class="state-leaving"></ix-icon>
+          <ix-icon *ngSwitchCase="DirectoryServiceState.Joining" name="arrow_forward" class="state-joining"></ix-icon>
+          <ix-icon *ngSwitchCase="DirectoryServiceState.Disabled" name="remove_circle" class="state-disabled"></ix-icon>
+        </ng-container>
+      </mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="name">
+      <mat-header-cell *matHeaderCellDef>
+        {{ 'Name' | translate }}
+      </mat-header-cell>
+      <mat-cell *matCellDef="let element">{{ element.name }}</mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="state">
+      <mat-header-cell *matHeaderCellDef>
+        {{ 'State' | translate }}
+      </mat-header-cell>
+      <mat-cell *matCellDef="let element">{{ element.state }}</mat-cell>
+    </ng-container>
+    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+    <mat-row
+      *matRowDef="let row; columns: displayedColumns"
+      class="table-row clickable"
+      [ixTest]="row.name"
+      (click)="goTo(row.id)"
+    ></mat-row>
+  </mat-table>
+</mat-dialog-content>

@@ -37,7 +37,7 @@ const setDiagnostics = StateEffect.define<unknown[] | null>();
 export class AdvancedSearchComponent<T> implements OnInit {
   @Input() query: QueryFilters<T> = [];
   @Input() properties: SearchProperty<T>[] = [];
-  @Input() placeholder = this.translate.instant('Service = "SMB" AND Event = "CLOSE"');
+  @Input() placeholder: string;
 
   @Output() paramsChange = new EventEmitter<QueryFilters<T>>();
   @Output() switchToBasic = new EventEmitter<void>();

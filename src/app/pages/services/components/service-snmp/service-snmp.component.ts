@@ -8,12 +8,12 @@ import { of } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
 import { helptextServiceSmart } from 'app/helptext/services/components/service-snmp';
 import { SnmpConfigUpdate } from 'app/interfaces/snmp-config.interface';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { emailValidator } from 'app/modules/ix-forms/validators/email-validation/email-validation';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -24,6 +24,8 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ServiceSnmpComponent implements OnInit {
+  protected requiredRoles = [Role.FullAdmin];
+
   isFormLoading = false;
 
   form = this.fb.group({
@@ -66,7 +68,6 @@ export class ServiceSnmpComponent implements OnInit {
   readonly authtypeOptions$ = of(helptextServiceSmart.v3_authtype_options);
   readonly privprotoOptions$ = of(helptextServiceSmart.v3_privproto_options);
   readonly logLevelOptions$ = of(helptextServiceSmart.loglevel_options);
-  protected readonly Role = Role;
 
   get isV3SupportEnabled(): boolean {
     return this.form?.value?.v3;

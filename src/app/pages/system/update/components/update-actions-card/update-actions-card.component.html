@@ -1,0 +1,44 @@
+<mat-card *ngIf="!isUpdateRunning">
+  <div class="buttons-container">
+    <ng-container *ngIf="showDownloadUpdateButton$ | async">
+      <button
+        *ixRequiresRoles="requiresRoles"
+        mat-button
+        ixTest="download-updates"
+        [disabled]="isDownloadUpdatesButtonDisabled$ | async"
+        (click)="downloadUpdate()"
+      >
+        {{ 'Download Updates' | translate }}
+      </button>
+    </ng-container>
+    <ng-container *ngIf="showApplyPendingButton$ | async">
+      <button
+        *ixRequiresRoles="requiresRoles"
+        mat-button
+        ixTest="apply-pending-update"
+        (click)="applyPendingUpdate()"
+      >
+        {{ 'Apply Pending update' | translate }}
+      </button>
+    </ng-container>
+    <button
+      *ixRequiresRoles="requiresRoles"
+      mat-button
+      ixTest="install-manual-update"
+      (click)="manualUpdate()"
+    >
+      {{ 'Install Manual Update File' | translate }}
+    </button>
+  </div>
+  <p *ngIf="updateService.generalUpdateError$ | async as generalUpdateError" class="error">
+    {{ generalUpdateError }}
+  </p>
+</mat-card>
+<mat-card *ngIf="isUpdateRunning">
+  <div>
+    <ix-icon name="warning"></ix-icon>
+    <span class="update-running-msg">
+      {{ isHaLicensed ? sysUpdateMessage : sysUpdateMessage + sysUpdateMsgPt2 }}
+    </span>
+  </div>
+</mat-card>

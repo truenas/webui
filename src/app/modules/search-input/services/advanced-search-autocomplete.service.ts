@@ -16,7 +16,7 @@ import { PropertyType, SearchProperty } from 'app/modules/search-input/types/sea
 const inComparator = 'in';
 const ninComparator = 'nin';
 const comparatorSuggestions: QueryComparator[] = [
-  '=', '!=', '>', '<', '<=', '>=', '~', '^', '$', '!^', '!$', inComparator, ninComparator,
+  '=', '!=', '>', '<', '<=', '>=', '~', '^', '$', '!^', '!$', inComparator, ninComparator, 'rin', 'rnin',
 ];
 
 const orSuggestion = 'OR';
@@ -52,6 +52,8 @@ export class AdvancedSearchAutocompleteService<T> {
     '^': this.translate.instant('{comparator} (Starts With)', { comparator: '^' }),
     '!^': this.translate.instant('{comparator} (Not Starts With)', { comparator: '!^' }),
     '!$': this.translate.instant('{comparator} (Not Ends With)', { comparator: '!$' }),
+    rin: this.translate.instant('{comparator} (Range In)', { comparator: 'RIN' }),
+    rnin: this.translate.instant('{comparator} (Range Not In)', { comparator: 'RNIN' }),
     in: this.translate.instant('{comparator} (In)', { comparator: 'IN' }),
     nin: this.translate.instant('{comparator} (Not In)', { comparator: 'NIN' }),
     $: this.translate.instant('{comparator} (Ends With)', { comparator: '$' }),

@@ -1,30 +1,29 @@
-<ng-template ixPageHeader>
-  <ix-page-title-header [pageTitle]="'Installed' | translate">
-    <ix-kubernetes-status></ix-kubernetes-status>
-    <div *ngIf="hasUpdates" class="global-update">
-      <button
-        mat-button
-        ixTest="update-all"
-        class="update-all-button"
-        (click)="onBulkUpgrade(true)"
-      >
-        <ix-icon name="mdi-alert-circle"></ix-icon>
-        <span>
-          {{ 'Update All' | translate }}
-          <ng-container *ngIf="appsUpdateAvailable">({{appsUpdateAvailable}})</ng-container>
-        </span>
-      </button>
-    </div>
-    <ix-app-settings-button></ix-app-settings-button>
-    <a
+<ix-page-header [pageTitle]="'Installed' | translate">
+  <ix-kubernetes-status></ix-kubernetes-status>
+  <div *ngIf="hasUpdates" class="global-update">
+    <button
+      *ixRequiresRoles="requiredRoles"
       mat-button
-      color="primary"
-      ixTest="discover-apps"
-      class="discover-apps-button"
-      [routerLink]="['/apps', 'available']"
-    >{{ 'Discover Apps' | translate }}</a>
-  </ix-page-title-header>
-</ng-template>
+      ixTest="update-all"
+      class="update-all-button"
+      (click)="onBulkUpgrade(true)"
+    >
+      <ix-icon name="mdi-alert-circle"></ix-icon>
+      <span>
+        {{ 'Update All' | translate }}
+        <ng-container *ngIf="appsUpdateAvailable">({{appsUpdateAvailable}})</ng-container>
+      </span>
+    </button>
+  </div>
+  <ix-app-settings-button></ix-app-settings-button>
+  <a
+    mat-button
+    color="primary"
+    ixTest="discover-apps"
+    class="discover-apps-button"
+    [routerLink]="['/apps', 'available']"
+  >{{ 'Discover Apps' | translate }}</a>
+</ix-page-header>
 
 <div class="container">
   <div class="table-container">
@@ -53,6 +52,7 @@
 
         <mat-menu #menu="matMenu">
           <button
+            *ixRequiresRoles="requiredRoles"
             mat-menu-item
             ixTest="start-selected"
             [disabled]="isBulkStartDisabled"
@@ -61,6 +61,7 @@
             <span>{{ 'Start All Selected' | translate }}</span>
           </button>
           <button
+            *ixRequiresRoles="requiredRoles"
             mat-menu-item
             ixTest="stop-selected"
             [disabled]="isBulkStopDisabled"
@@ -69,6 +70,7 @@
             <span>{{ 'Stop All Selected' | translate }}</span>
           </button>
           <button
+            *ixRequiresRoles="requiredRoles"
             mat-menu-item
             ixTest="upgrade-selected"
             [disabled]="isBulkUpgradeDisabled"
@@ -77,6 +79,7 @@
             <span>{{ 'Upgrade All Selected' | translate }}</span>
           </button>
           <button
+            *ixRequiresRoles="requiredRoles"
             mat-menu-item
             ixTest="delete-selected"
             (click)="onBulkDelete()"
@@ -94,12 +97,12 @@
         [loading]="isLoading"
       ></ix-fake-progress-bar>
 
-      <ix-search-input
+      <ix-search-input1
         [maxLength]="100"
         [disabled]="!dataSource.length"
         [value]="filterString"
         (search)="onSearch($event)"
-      ></ix-search-input>
+      ></ix-search-input1>
     </div>
 
     <div
@@ -184,7 +187,7 @@
           </ng-container>
 
           <div *ngIf="(dataSource.length && !filteredApps.length) || (!dataSource.length && !isLoading)" class="no-apps">
-            <ix-entity-empty [conf]="entityEmptyConf"></ix-entity-empty>
+            <ix-empty [conf]="entityEmptyConf"></ix-empty>
           </div>
         </div>
       </div>

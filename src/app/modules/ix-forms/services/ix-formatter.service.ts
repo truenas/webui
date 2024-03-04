@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@angular/core';
 import { WINDOW } from 'app/helpers/window.helper';
 
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class IxFormatterService {
   readonly protocol = this.window?.location?.protocol || 'http:';
   readonly iecUnits: readonly string[] = ['B', 'KiB', 'MiB', 'GiB', 'TiB', 'PiB'];

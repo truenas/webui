@@ -10,6 +10,7 @@ import { skipWhile, take, tap } from 'rxjs/operators';
 import { Styler } from 'stylefire';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { ScreenType } from 'app/enums/screen-type.enum';
+import { WidgetName } from 'app/enums/widget-name.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { SystemInfoWithFeatures } from 'app/interfaces/events/sys-info-event.interface';
@@ -29,20 +30,6 @@ import { LayoutService } from 'app/services/layout.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 import { dashboardStateLoaded, dashboardStateUpdated } from 'app/store/preferences/preferences.actions';
-
-export enum WidgetName {
-  SystemInformation = 'System Information',
-  SystemInformationStandby = 'System Information(Standby)',
-  Cpu = 'CPU',
-  Memory = 'Memory',
-  Storage = 'Storage',
-  Network = 'Network',
-  Interface = 'Interface',
-  // eslint-disable-next-line @typescript-eslint/no-shadow
-  Pool = 'Pool',
-  Help = 'Help',
-  Backup = 'Backup',
-}
 
 // TODO: This adds additional fields. Unclear if vlan is coming from backend
 export type DashboardNetworkInterface = NetworkInterface & {
@@ -83,6 +70,7 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
   readonly WidgetType = WidgetName;
 
   isLoaded = true;
+
   // For empty state
   get isEmpty(): boolean {
     if (!this.dashState) {
@@ -304,6 +292,7 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
   }
 
   private applyState(newState: DashConfigItem[]): void {
+    // TODO: Remove this method and use the store to update the state
     // This reconciles current state with saved dashState
 
     if (!this.dashState) {
@@ -324,6 +313,7 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
   }
 
   private setDashState(dashState: DashConfigItem[]): void {
+    // TODO: Remove this method and use the store to update the state
     this.dashState = dashState;
     if (!this.reorderMode) {
       this.renderedWidgets = this.dashState.filter((widget) => widget.rendered);

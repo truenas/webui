@@ -25,6 +25,8 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ScrubTaskFormComponent implements OnInit {
+  readonly requiredRoles = [Role.FullAdmin];
+
   get isNew(): boolean {
     return !this.editingTask;
   }
@@ -50,8 +52,6 @@ export class ScrubTaskFormComponent implements OnInit {
       return pools.map((pool) => ({ label: pool.name, value: pool.id }));
     }),
   );
-
-  readonly requiredRoles = [Role.FullAdmin];
 
   readonly tooltips = {
     pool: helptextScrubForm.scrub_volume_tooltip,

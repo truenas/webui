@@ -3,7 +3,6 @@ import {
   ChangeDetectorRef,
   Component,
   EventEmitter,
-  Inject,
   OnInit,
   Output,
 } from '@angular/core';
@@ -14,14 +13,13 @@ import { pairwise, startWith } from 'rxjs';
 import { helptextSystemCloudcredentials as helptext } from 'app/helptext/system/cloud-credentials';
 import { CloudSyncCredential } from 'app/interfaces/cloudsync-credential.interface';
 import { newOption } from 'app/interfaces/option.interface';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { addNewIxSelectValue } from 'app/modules/ix-forms/components/ix-select/ix-select-with-new-option.directive';
-import { CHAINED_SLIDE_IN_REF } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
+import { ChainedRef } from 'app/modules/ix-forms/components/ix-slide-in/chained-component-ref';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { CloudSyncFormComponent } from 'app/pages/data-protection/cloudsync/cloudsync-form/cloudsync-form.component';
 import { CloudCredentialService } from 'app/services/cloud-credential.service';
-import { DialogService } from 'app/services/dialog.service';
-import { ChainedComponentRef } from 'app/services/ix-chained-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
@@ -48,7 +46,7 @@ export class CloudSyncProviderComponent implements OnInit {
   constructor(
     private ws: WebSocketService,
     private formBuilder: FormBuilder,
-    @Inject(CHAINED_SLIDE_IN_REF) private chainedComponentRef: ChainedComponentRef,
+    private chainedComponentRef: ChainedRef<unknown>,
     private cdr: ChangeDetectorRef,
     private dialogService: DialogService,
     private formErrorHandler: FormErrorHandlerService,

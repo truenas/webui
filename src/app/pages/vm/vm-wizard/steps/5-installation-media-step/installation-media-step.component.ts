@@ -3,8 +3,9 @@ import { FormBuilder } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import { Role } from 'app/enums/role.enum';
 import { helptextVmWizard } from 'app/helptext/vm/vm-wizard/vm-wizard';
-import { SummaryProvider, SummarySection } from 'app/modules/common/summary/summary.interface';
+import { SummaryProvider, SummarySection } from 'app/modules/summary/summary.interface';
 import { UploadIsoDialogComponent } from 'app/pages/vm/vm-wizard/upload-iso-dialog/upload-iso-dialog.component';
 import { FilesystemService } from 'app/services/filesystem.service';
 
@@ -22,6 +23,7 @@ export class InstallationMediaStepComponent implements SummaryProvider {
 
   readonly helptext = helptextVmWizard;
   readonly fileNodeProvider = this.filesystemService.getFilesystemNodeProvider();
+  protected readonly requiredRoles = [Role.VmWrite];
 
   constructor(
     private formBuilder: FormBuilder,

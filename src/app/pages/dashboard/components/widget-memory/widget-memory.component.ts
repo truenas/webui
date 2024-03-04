@@ -1,3 +1,4 @@
+import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import {
   Component, ElementRef, OnInit, ChangeDetectionStrategy, ChangeDetectorRef,
 } from '@angular/core';
@@ -5,7 +6,6 @@ import {
   DomSanitizer, SafeStyle,
 } from '@angular/platform-browser';
 import { Router } from '@angular/router';
-import { MediaObserver } from '@ngbracket/ngx-layout';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
@@ -46,33 +46,34 @@ export class WidgetMemoryComponent extends WidgetComponent implements OnInit {
   labels: string[] = [this.translate.instant('Free'), this.translate.instant('ZFS Cache'), this.translate.instant('Services')];
   screenType = ScreenType.Desktop;
   memData: WidgetMemoryData;
-
   readonly ScreenType = ScreenType;
-
   private utils: ThemeUtils;
 
   constructor(
     public router: Router,
     public translate: TranslateService,
     private sanitizer: DomSanitizer,
-    public mediaObserver: MediaObserver,
     private el: ElementRef<HTMLElement>,
     public themeService: ThemeService,
     private store$: Store<AppState>,
     private cdr: ChangeDetectorRef,
     private resourcesUsageStore$: ResourcesUsageStore,
+    private breakpointObserver: BreakpointObserver,
   ) {
     super(translate);
 
     this.utils = new ThemeUtils();
-
-    mediaObserver.asObservable().pipe(untilDestroyed(this)).subscribe((changes) => {
-      const currentScreenType = changes[0].mqAlias === 'xs' ? ScreenType.Mobile : ScreenType.Desktop;
-      this.screenType = currentScreenType;
-    });
   }
 
   ngOnInit(): void {
+    this.breakpointObserver
+      .observe([Breakpoints.XSmall])
+      .pipe(untilDestroyed(this))
+      .subscribe((state) => {
+        this.screenType = state.matches ? ScreenType.Mobile : ScreenType.Desktop;
+        this.cdr.markForCheck();
+      });
+
     this.store$.pipe(waitForSystemInfo, untilDestroyed(this)).subscribe({
       next: (sysInfo) => {
         this.ecc = sysInfo.ecc_memory;

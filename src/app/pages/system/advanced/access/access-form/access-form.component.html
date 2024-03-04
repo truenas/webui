@@ -1,7 +1,8 @@
-<ix-modal-header
+<ix-modal-header2
+  [requiredRoles]="requiredRoles"
   [title]="'Access Settings' | translate"
   [loading]="isLoading"
-></ix-modal-header>
+></ix-modal-header2>
 <mat-card>
   <mat-card-content>
     <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">

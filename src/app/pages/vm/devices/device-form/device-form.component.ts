@@ -8,22 +8,23 @@ import { TranslateService } from '@ngx-translate/core';
 import { BehaviorSubject, forkJoin, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { mntPath } from 'app/enums/mnt-path.enum';
+import { Role } from 'app/enums/role.enum';
 import {
-  VmDeviceType, vmDeviceTypeLabels, VmDiskMode, VmNicType,
+  VmDeviceType, vmDeviceTypeLabels, VmDiskMode, vmDiskModeLabels, VmNicType, vmNicTypeLabels,
 } from 'app/enums/vm.enum';
 import { assertUnreachable } from 'app/helpers/assert-unreachable.utils';
-import { arrayToOptions, choicesToOptions } from 'app/helpers/operators/options.operators';
+import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextDevice } from 'app/helptext/vm/devices/device-add-edit';
 import {
   VmDevice, VmDeviceUpdate,
 } from 'app/interfaces/vm-device.interface';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { SimpleAsyncComboboxProvider } from 'app/modules/ix-forms/classes/simple-async-combobox-provider';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { DialogService } from 'app/services/dialog.service';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { NetworkService } from 'app/services/network.service';
 import { VmService } from 'app/services/vm.service';
@@ -38,6 +39,8 @@ const specifyCustom = T('Specify custom');
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DeviceFormComponent implements OnInit {
+  protected readonly requiredRoles = [Role.VmDeviceWrite];
+
   isLoading = false;
 
   get title(): string {
@@ -129,8 +132,8 @@ export class DeviceFormComponent implements OnInit {
   );
   readonly bindOptions$ = this.ws.call('vm.device.bind_choices').pipe(choicesToOptions());
   readonly resolutions$ = this.ws.call('vm.resolution_choices').pipe(choicesToOptions());
-  readonly nicOptions$ = this.networkService.getVmNicChoices().pipe(choicesToOptions());
-  readonly nicTypes$ = of(this.vmService.getNicTypes()).pipe(arrayToOptions());
+  readonly nicOptions$ = this.ws.call('vm.device.nic_attach_choices').pipe(choicesToOptions());
+  readonly nicTypes$ = of(mapToOptions(vmNicTypeLabels, this.translate));
   readonly passthroughProvider = new SimpleAsyncComboboxProvider(
     this.ws.call('vm.device.passthrough_device_choices').pipe(
       map((passthroughDevices) => {
@@ -152,10 +155,7 @@ export class DeviceFormComponent implements OnInit {
   readonly deviceTypeOptions = mapToOptions(vmDeviceTypeLabels, this.translate);
   readonly deviceTypes$ = new BehaviorSubject(this.deviceTypeOptions);
 
-  readonly diskModes$ = of([
-    { label: 'AHCI', value: VmDiskMode.Ahci },
-    { label: 'VirtIO', value: VmDiskMode.Virtio },
-  ]);
+  readonly diskModes$ = of(mapToOptions(vmDiskModeLabels, this.translate));
   readonly sectorSizes$ = of([
     { label: this.translate.instant('Default'), value: 0 },
     { label: '512', value: 512 },

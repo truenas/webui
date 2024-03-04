@@ -8,7 +8,8 @@ import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockWebSocket, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
 import { SystemGeneralConfig } from 'app/interfaces/system-config.interface';
-import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { DialogService } from 'app/modules/dialog/dialog.service';
+import { ChainedRef } from 'app/modules/ix-forms/components/ix-slide-in/chained-component-ref';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTable2Harness } from 'app/modules/ix-table2/components/ix-table2/ix-table2.harness';
 import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
@@ -16,13 +17,13 @@ import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
 import { AdvancedSettingsService } from 'app/pages/system/advanced/advanced-settings.service';
 import { AllowedAddressesCardComponent } from 'app/pages/system/advanced/allowed-addresses/allowed-addresses-card/allowed-addresses-card.component';
 import { AllowedAddressesFormComponent } from 'app/pages/system/advanced/allowed-addresses/allowed-addresses-form/allowed-addresses-form.component';
-import { DialogService } from 'app/services/dialog.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 
 describe('AllowedAddressesCardComponent', () => {
   let spectator: Spectator<AllowedAddressesCardComponent>;
   let loader: HarnessLoader;
   let table: IxTable2Harness;
+  const componentRef: ChainedRef<unknown> = { close: jest.fn(), getData: jest.fn(() => undefined) };
 
   const config = {
     ui_allowlist: [
@@ -37,7 +38,9 @@ describe('AllowedAddressesCardComponent', () => {
       MockModule(TooltipModule),
     ],
     providers: [
-      mockProvider(AdvancedSettingsService),
+      mockProvider(AdvancedSettingsService, {
+        showFirstTimeWarningIfNeeded: jest.fn(() => of(true)),
+      }),
       mockWebSocket([
         mockCall('system.general.config', config),
         mockCall('system.general.update'),
@@ -45,12 +48,10 @@ describe('AllowedAddressesCardComponent', () => {
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
-      mockProvider(IxSlideInService, {
-        open: jest.fn(() => {
-          return { slideInClosed$: of() };
-        }),
+      mockProvider(IxChainedSlideInService, {
+        pushComponent: jest.fn(() => of(true)),
       }),
-      mockProvider(IxSlideInRef),
+      mockProvider(ChainedRef, componentRef),
       mockAuth(),
     ],
   });
@@ -76,7 +77,7 @@ describe('AllowedAddressesCardComponent', () => {
     await configureButton.click();
 
     expect(spectator.inject(AdvancedSettingsService).showFirstTimeWarningIfNeeded).toHaveBeenCalled();
-    expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(AllowedAddressesFormComponent);
+    expect(spectator.inject(IxChainedSlideInService).pushComponent).toHaveBeenCalledWith(AllowedAddressesFormComponent);
   });
 
   it('deletes a Allowed IP Address with confirmation when Delete icon is pressed', async () => {

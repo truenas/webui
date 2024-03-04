@@ -16,6 +16,7 @@
 
     <div class="actions">
       <button
+        *ixRequiresRoles="requiredRoles"
         mat-button
         [ixTest]="['iscsi-share', 'configure']"
         [routerLink]="['/sharing', 'iscsi', 'configuration']"
@@ -24,6 +25,7 @@
       </button>
 
       <button
+        *ixRequiresRoles="requiredRoles"
         mat-button
         [ixTest]="['iscsi-share', 'wizard']"
         (click)="openForm(null, true)"

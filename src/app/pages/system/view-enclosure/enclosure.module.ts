@@ -12,6 +12,7 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { FlexLayoutModule } from '@ngbracket/ngx-layout';
 import { TranslateModule } from '@ngx-translate/core';
 import { CoreComponents } from 'app/core/core-components.module';
+import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { CastModule } from 'app/modules/cast/cast.module';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxFileSizeModule } from 'app/modules/ix-file-size/ix-file-size.module';
@@ -52,6 +53,7 @@ import { EnclosureStore } from './stores/enclosure-store.service';
     IxFormsModule,
     CoreComponents,
     TestIdModule,
+    CommonDirectivesModule,
   ],
   declarations: [
     ViewEnclosureComponent,

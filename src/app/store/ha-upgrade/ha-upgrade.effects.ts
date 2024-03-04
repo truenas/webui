@@ -9,8 +9,8 @@ import {
   filter, map, mergeMap, switchMap, tap, withLatestFrom,
 } from 'rxjs/operators';
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
-import { DialogService } from 'app/services/dialog.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { haStatusLoaded } from 'app/store/ha-info/ha-info.actions';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';

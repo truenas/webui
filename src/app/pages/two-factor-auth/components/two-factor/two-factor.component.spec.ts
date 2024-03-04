@@ -8,11 +8,11 @@ import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.u
 import { helptext2fa } from 'app/helptext/system/2fa';
 import { LoggedInUser } from 'app/interfaces/ds-cache.interface';
 import { GlobalTwoFactorConfig, UserTwoFactorConfig } from 'app/interfaces/two-factor-config.interface';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxWarningComponent } from 'app/modules/ix-forms/components/ix-warning/ix-warning.component';
 import { QrViewerComponent } from 'app/pages/two-factor-auth/components/two-factor/qr-viewer/qr-viewer.component';
 import { TwoFactorComponent } from 'app/pages/two-factor-auth/components/two-factor/two-factor.component';
 import { AuthService } from 'app/services/auth/auth.service';
-import { DialogService } from 'app/services/dialog.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 describe('TwoFactorComponent', () => {

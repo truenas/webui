@@ -10,6 +10,7 @@ import { IpmiChassisIdentifyState, IpmiIpAddressSource } from 'app/enums/ipmi.en
 import { OnOff } from 'app/enums/on-off.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { Ipmi, IpmiChassis } from 'app/interfaces/ipmi.interface';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxCheckboxHarness } from 'app/modules/ix-forms/components/ix-checkbox/ix-checkbox.harness';
 import { IxInputHarness } from 'app/modules/ix-forms/components/ix-input/ix-input.harness';
 import { IxRadioGroupHarness } from 'app/modules/ix-forms/components/ix-radio-group/ix-radio-group.harness';
@@ -19,7 +20,6 @@ import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { IpmiFormComponent } from 'app/pages/network/components/ipmi-card/ipmi-form/ipmi-form.component';
-import { DialogService } from 'app/services/dialog.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { RedirectService } from 'app/services/redirect.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
@@ -69,7 +69,6 @@ describe('IpmiFormComponent', () => {
         mockCall('failover.node', 'A'),
         mockCall('ipmi.lan.query', (params) => {
           if (params?.length ? params[0]['ipmi-options']['query-remote'] : false) {
-            // TODO: Not correct. Figure out how to solve this for query endpoints.
             return [{
               channel: 1,
               ip_address_source: IpmiIpAddressSource.Static,

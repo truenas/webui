@@ -19,12 +19,12 @@ import { WINDOW } from 'app/helpers/window.helper';
 import { helptextQuotas } from 'app/helptext/storage/volumes/datasets/dataset-quotas';
 import { DatasetQuota, SetDatasetQuota } from 'app/interfaces/dataset-quota.interface';
 import { QueryFilter, QueryParams } from 'app/interfaces/query-api.interface';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
 import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { DatasetQuotaAddFormComponent } from 'app/pages/datasets/components/dataset-quotas/dataset-quota-add-form/dataset-quota-add-form.component';
 import { DatasetQuotaEditFormComponent } from 'app/pages/datasets/components/dataset-quotas/dataset-quota-edit-form/dataset-quota-edit-form.component';
-import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { StorageService } from 'app/services/storage.service';
@@ -38,6 +38,8 @@ import { WebSocketService } from 'app/services/ws.service';
 })
 export class DatasetQuotasGrouplistComponent implements OnInit, OnDestroy {
   @ViewChild(MatSort, { static: false }) sort: MatSort;
+
+  readonly requiredRoles = [Role.DatasetWrite];
 
   datasetId: string;
   dataSource = new MatTableDataSource<DatasetQuota>([]);
@@ -56,8 +58,6 @@ export class DatasetQuotasGrouplistComponent implements OnInit, OnDestroy {
   get emptyConfigService(): EmptyService {
     return this.emptyService;
   }
-
-  protected readonly Role = Role;
 
   constructor(
     protected ws: WebSocketService,

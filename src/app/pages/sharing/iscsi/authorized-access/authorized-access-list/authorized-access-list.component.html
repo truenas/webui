@@ -3,11 +3,11 @@
   <mat-toolbar-row>
     <h3>{{ 'Authorized Access' | translate }}</h3>
     <div class="actions action-icon">
-      <ix-search-input (search)="onListFiltered($event)"></ix-search-input>
+      <ix-search-input1 (search)="onListFiltered($event)"></ix-search-input1>
 
       <ix-table-columns-selector [columns]="columns" (columnsChange)="columnsChange($event)"></ix-table-columns-selector>
 
-      <button mat-button color="primary" ixTest="add-target-extent" (click)="doAdd()">
+      <button *ixRequiresRoles="requiredRoles" mat-button color="primary" ixTest="add-target-extent" (click)="doAdd()">
         {{ 'Add' | translate }}
       </button>
     </div>

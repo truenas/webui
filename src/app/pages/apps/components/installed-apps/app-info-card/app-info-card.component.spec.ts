@@ -11,8 +11,10 @@ import { ImgFallbackDirective } from 'ngx-img-fallback';
 import { NgxSkeletonLoaderComponent } from 'ngx-skeleton-loader';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockWebSocket, mockJob } from 'app/core/testing/utils/mock-websocket.utils';
 import { UpgradeSummary } from 'app/interfaces/application.interface';
 import { ChartRelease } from 'app/interfaces/chart-release.interface';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { AppCardLogoComponent } from 'app/pages/apps/components/app-card-logo/app-card-logo.component';
 import { AppInfoCardComponent } from 'app/pages/apps/components/installed-apps/app-info-card/app-info-card.component';
 import { AppRollbackModalComponent } from 'app/pages/apps/components/installed-apps/app-rollback-modal/app-rollback-modal.component';
@@ -20,8 +22,8 @@ import { AppUpgradeDialogComponent } from 'app/pages/apps/components/installed-a
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.service';
 import { AppCatalogPipe } from 'app/pages/apps/utils/app-catalog.pipe';
-import { DialogService } from 'app/services/dialog.service';
 import { RedirectService } from 'app/services/redirect.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 describe('AppInfoCardComponent', () => {
   let spectator: Spectator<AppInfoCardComponent>;
@@ -83,12 +85,19 @@ describe('AppInfoCardComponent', () => {
       }),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
+        jobDialog: jest.fn(() => ({
+          afterClosed: () => of(null),
+        })),
       }),
       mockProvider(MatDialog, {
         open: jest.fn(() => mockDialogRef),
       }),
       mockProvider(RedirectService),
       mockAuth(),
+      mockWebSocket([
+        mockJob('chart.release.upgrade'),
+        mockJob('chart.release.delete'),
+      ]),
     ],
   });
 
@@ -180,15 +189,20 @@ describe('AppInfoCardComponent', () => {
     const deleteButton = await loader.getHarness(MatButtonHarness.with({ text: 'Delete' }));
     await deleteButton.click();
 
+    expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({
       title: 'Delete',
       message: 'Delete test-user-app-name?',
     });
+    expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith(
+      'chart.release.delete',
+      [app.name, { delete_unused_images: true }],
+    );
   });
 
   it('opens rollback app dialog when Roll Back button is pressed', async () => {
-    const deleteButton = await loader.getHarness(MatButtonHarness.with({ text: 'Roll Back' }));
-    await deleteButton.click();
+    const rollbackButton = await loader.getHarness(MatButtonHarness.with({ text: 'Roll Back' }));
+    await rollbackButton.click();
 
     expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(AppRollbackModalComponent, {
       data: app,

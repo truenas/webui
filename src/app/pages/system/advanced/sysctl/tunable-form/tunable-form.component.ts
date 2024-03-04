@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -10,8 +10,7 @@ import { TunableType } from 'app/enums/tunable-type.enum';
 import { helptextSystemTunable as helptext } from 'app/helptext/system/tunable';
 import { Job } from 'app/interfaces/job.interface';
 import { Tunable } from 'app/interfaces/tunable.interface';
-import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
+import { ChainedRef } from 'app/modules/ix-forms/components/ix-slide-in/chained-component-ref';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -21,6 +20,8 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TunableFormComponent implements OnInit {
+  protected requiredRoles = [Role.FullAdmin];
+
   get isNew(): boolean {
     return !this.editingTunable;
   }
@@ -36,7 +37,6 @@ export class TunableFormComponent implements OnInit {
     enabled: [true],
   });
 
-  protected readonly Role = Role;
   readonly tooltips = {
     var: helptext.var.tooltip,
     value: helptext.value.tooltip,
@@ -44,15 +44,18 @@ export class TunableFormComponent implements OnInit {
     enabled: helptext.enabled.tooltip,
   };
 
+  private editingTunable: Tunable;
+
   constructor(
     private ws: WebSocketService,
     private errorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
     private fb: FormBuilder,
     private translate: TranslateService,
-    private slideInRef: IxSlideInRef<TunableFormComponent>,
-    @Inject(SLIDE_IN_DATA) private editingTunable: Tunable,
-  ) {}
+    private chainedRef: ChainedRef<Tunable>,
+  ) {
+    this.editingTunable = this.chainedRef.getData();
+  }
 
   ngOnInit(): void {
     if (this.editingTunable) {
@@ -73,7 +76,7 @@ export class TunableFormComponent implements OnInit {
       complete: () => {
         this.isFormLoading = false;
         this.cdr.markForCheck();
-        this.slideInRef.close(true);
+        this.chainedRef.close({ response: true, error: null });
       },
       error: (error: unknown) => {
         this.isFormLoading = false;

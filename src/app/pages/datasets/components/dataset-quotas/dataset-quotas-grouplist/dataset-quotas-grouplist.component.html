@@ -1,42 +1,41 @@
-<ng-template ixPageHeader>
-  <ix-page-title-header>
-    <ix-search-input
-      [disabled]="isLoading"
-      (search)="filter($event)"
-    ></ix-search-input>
-    <mat-slide-toggle
-      color="primary"
-      ixTest="show-all-groups"
-      [checked]="!useFullFilter"
-      [disabled]="isLoading"
-      (change)="toggleDisplay()"
-    >
-      <label>{{ 'Show All Groups' | translate }}</label>
-    </mat-slide-toggle>
-    <ng-container *ixRequiresRoles="[Role.DatasetWrite]">
-      <button
-        *ngIf="invalidQuotas.length > 0"
-        color="primary"
-        mat-button
-        ixTest="remove-invalid-quotas"
-        [disabled]="isLoading"
-        (click)="removeInvalidQuotas()"
-      >
-        {{ 'Remove Invalid Quotas' | translate }}
-      </button>
-    </ng-container>
+<ix-page-header>
+  <ix-search-input1
+    [disabled]="isLoading"
+    (search)="filter($event)"
+  ></ix-search-input1>
+  <mat-slide-toggle
+    color="primary"
+    ixTest="show-all-groups"
+    [checked]="!useFullFilter"
+    [disabled]="isLoading"
+    (change)="toggleDisplay()"
+  >
+    <label>{{ 'Show All Groups' | translate }}</label>
+  </mat-slide-toggle>
+  <ng-container *ixRequiresRoles="requiredRoles">
     <button
+      *ngIf="invalidQuotas.length > 0"
       color="primary"
-      class="add-button"
       mat-button
-      ixTest="add-quota"
+      ixTest="remove-invalid-quotas"
       [disabled]="isLoading"
-      (click)="doAdd()"
+      (click)="removeInvalidQuotas()"
     >
-      {{ 'Add' | translate }}
+      {{ 'Remove Invalid Quotas' | translate }}
     </button>
-  </ix-page-title-header>
-</ng-template>
+  </ng-container>
+  <button
+    *ixRequiresRoles="requiredRoles"
+    color="primary"
+    class="add-button"
+    mat-button
+    ixTest="add-quota"
+    [disabled]="isLoading"
+    (click)="doAdd()"
+  >
+    {{ 'Add' | translate }}
+  </button>
+</ix-page-header>
 
   <mat-card>
     <table
@@ -137,7 +136,7 @@
           >
             <ix-icon name="edit"></ix-icon>
           </button>
-          <ng-container *ixRequiresRoles="[Role.DatasetWrite]">
+          <ng-container *ixRequiresRoles="requiredRoles">
             <button
               *ngIf="row.quota > 0 || row.obj_quota > 0"
               mat-icon-button

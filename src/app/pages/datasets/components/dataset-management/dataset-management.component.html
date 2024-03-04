@@ -6,7 +6,7 @@
   fxLayoutAlign="center center"
   fxLayoutGap="32px"
 >
-  <ix-entity-empty [conf]="entityEmptyConf"></ix-entity-empty>
+  <ix-empty [conf]="entityEmptyConf"></ix-empty>
 </div>
 
 <ng-template #datasetContainer>
@@ -19,10 +19,10 @@
       ></ix-fake-progress-bar>
 
       <div class="item-search">
-        <ix-search-input
+        <ix-search-input1
           [disabled]="!dataSource?.data.length"
           (search)="onSearch($event)"
-        ></ix-search-input>
+        ></ix-search-input1>
       </div>
 
       <div
@@ -54,9 +54,9 @@
           <ix-tree-virtual-scroll-view
             [ixDataSource]="dataSource"
             [ixTreeControl]="treeControl"
-            [ixItemSize]="48"
-            [ixMinBufferPx]="48"
-            [ixMaxBufferPx]="48"
+            [ixItemSize]="52"
+            [ixMinBufferPx]="52"
+            [ixMaxBufferPx]="52"
             [trackBy]="trackById"
             (viewportScrolled)="datasetTreeScrolled($event)"
             (viewportResized)="datasetTreeWidthChanged($event)"

@@ -11,7 +11,7 @@ import { AlertSettingsComponent } from 'app/pages/system/alert-settings/alert-se
 import { FailoverSettingsComponent } from 'app/pages/system/failover-settings/failover-settings.component';
 import { GeneralSettingsComponent } from 'app/pages/system/general-settings/general-settings.component';
 import { SupportCardComponent } from 'app/pages/system/general-settings/support/support-card/support-card.component';
-import { ManualUpdateFormComponent } from 'app/pages/system/update/manual-update-form/manual-update-form.component';
+import { ManualUpdateFormComponent } from 'app/pages/system/update/components/manual-update-form/manual-update-form.component';
 import { ViewEnclosureComponent } from 'app/pages/system/view-enclosure/components/view-enclosure/view-enclosure.component';
 import { AdvancedSettingsComponent } from './advanced/advanced-settings.component';
 import { CronListComponent } from './advanced/cron/cron-list/cron-list.component';

@@ -7,10 +7,10 @@ import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { filter } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
-import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { DialogService } from 'app/modules/dialog/dialog.service';
+import { ChainedRef } from 'app/modules/ix-forms/components/ix-slide-in/chained-component-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { AuthService } from 'app/services/auth/auth.service';
-import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -41,12 +41,10 @@ export class AccessFormComponent implements OnInit {
     return this.systemGeneralService.isEnterprise;
   }
 
-  protected readonly Role = Role;
   readonly requiredRoles = [Role.FullAdmin];
 
   constructor(
     private fb: FormBuilder,
-    private slideInRef: IxSlideInRef<AccessFormComponent>,
     private store$: Store<AppState>,
     private cdr: ChangeDetectorRef,
     private snackbar: SnackbarService,
@@ -56,6 +54,7 @@ export class AccessFormComponent implements OnInit {
     private dialogService: DialogService,
     private systemGeneralService: SystemGeneralService,
     private authService: AuthService,
+    private chainedSlideInRef: ChainedRef<unknown>,
   ) {}
 
   ngOnInit(): void {
@@ -104,6 +103,6 @@ export class AccessFormComponent implements OnInit {
 
   private showSuccessNotificationAndClose(): void {
     this.snackbar.success(this.translate.instant('Settings saved'));
-    this.slideInRef.close(true);
+    this.chainedSlideInRef.close({ response: true, error: null });
   }
 }

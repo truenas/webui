@@ -7,7 +7,7 @@ import { ResponseErrorType } from 'app/enums/response-error-type.enum';
 import { WebSocketErrorName } from 'app/enums/websocket-error-name.enum';
 import { Job } from 'app/interfaces/job.interface';
 import { WebSocketError } from 'app/interfaces/websocket-error.interface';
-import { DialogService } from 'app/services/dialog.service';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 
 const error = new Error('Dummy Error');
@@ -62,6 +62,7 @@ describe('ErrorHandlerService', () => {
   });
 
   beforeEach(() => {
+    jest.resetAllMocks();
     spectator = createService();
 
     const dialogService = spectator.inject(DialogService);
@@ -100,6 +101,12 @@ describe('ErrorHandlerService', () => {
         message: 'Dummy Error',
         title: 'Error',
       });
+    });
+
+    it('does not log Websocket CloseEvent to Sentry', () => {
+      spectator.service.handleError(new CloseEvent('close'));
+
+      expect(spectator.service.logToSentry).not.toHaveBeenCalled();
     });
 
     it('logs websocket error', () => {

@@ -2,8 +2,11 @@ import { Selection } from 'd3';
 import * as d3 from 'd3';
 import { Application, Container, DefaultRendererPlugins } from 'pixi.js';
 import { Subject } from 'rxjs';
-import { EnclosureSlot, SelectedEnclosureSlot } from 'app/interfaces/enclosure.interface';
-import { Disk } from 'app/interfaces/storage.interface';
+import {
+  EnclosureUiVdev,
+  SelectedEnclosureSlot,
+} from 'app/interfaces/enclosure.interface';
+// import { Disk } from 'app/interfaces/storage.interface';
 import { Theme } from 'app/interfaces/theme.interface';
 import { ChassisView } from 'app/pages/system/view-enclosure/classes/chassis-view';
 import {
@@ -34,7 +37,7 @@ export class VDevLabelsSvg {
   constructor(
     private chassis: ChassisView,
     private app: Application,
-    private selectedDisk: Disk,
+    private selectedDiskName: string,
     theme: Theme,
   ) {
     this.color = 'var(--cyan)';
@@ -121,7 +124,7 @@ export class VDevLabelsSvg {
     className: string,
     diskName: string,
   ): void {
-    const color = diskName === this.selectedDisk?.devname ? this.selectedDiskColor : this.color;
+    const color = diskName === this.selectedDiskName ? this.selectedDiskColor : this.color;
 
     const style = 'fill-opacity:0.25; stroke-width:1';
 
@@ -138,29 +141,36 @@ export class VDevLabelsSvg {
   }
 
   createVdevLabels(data: SelectedEnclosureSlot): void {
-    const vdevSlots = data.vdevSlots.length ? data.vdevSlots : [data.selected];
-    vdevSlots.forEach((enclosureSlot: EnclosureSlot) => {
+    const poolInfo = data.slotDetails.pool_info;
+    const vdevSlots: EnclosureUiVdev[] = poolInfo?.vdev_disks.length
+      ? poolInfo?.vdev_disks
+      : [{
+        enclosure_id: data.enclosureId,
+        slot: data.slotNumber,
+        dev: data.slotDetails.dev,
+      }];
+    vdevSlots.forEach((vdevSlot: EnclosureUiVdev) => {
       // Ignore slots on non-selected enclosure
-      if (enclosureSlot.enclosure !== data.selected.enclosure) return;
+      if (vdevSlot.enclosure_id !== data.enclosureId) return;
 
       // The Actual creating of labels
       // Requirements: diskNames, isOnController
       const isInRange = (
-        enclosureSlot?.slot
-        && enclosureSlot.slot >= this.chassis.slotRange.start
-        && enclosureSlot.slot <= this.chassis.slotRange.end
+        vdevSlot?.slot
+        && vdevSlot.slot >= this.chassis.slotRange.start
+        && vdevSlot.slot <= this.chassis.slotRange.end
       );
       if (isInRange) {
         // Create tile if the disk is in the current enclosure
-        const dt = this.chassis.driveTrayObjects.find((dto) => parseInt(dto.id) === enclosureSlot.slot);
+        const dt = this.chassis.driveTrayObjects.find((dto) => parseInt(dto.id) === vdevSlot.slot);
         const src = dt.container;
         const tray = src.getGlobalPosition();
 
-        const tileClass = enclosureSlot.disk
-          ? 'tile tile_' + enclosureSlot.disk.name
+        const tileClass = vdevSlot.dev
+          ? 'tile tile_' + vdevSlot.dev
           : 'tile tile_empty';
 
-        const tileName = enclosureSlot.disk ? enclosureSlot.disk.name : 'empty';
+        const tileName = vdevSlot.dev ? vdevSlot.dev : 'empty';
 
         const tileWidth = src.width * this.chassis.driveTrays.scale.x * this.chassis.container.scale.x;
         const tileHeight = src.height * this.chassis.driveTrays.scale.y * this.chassis.container.scale.y;

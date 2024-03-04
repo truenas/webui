@@ -127,6 +127,7 @@ export interface NetworkInterfaceCreate {
   vlan_tag?: number;
   vlan_pcp?: number;
   mtu?: number;
+  enable_learning?: boolean;
 }
 
 export type NetworkInterfaceUpdate = Omit<NetworkInterfaceCreate, 'type'>;

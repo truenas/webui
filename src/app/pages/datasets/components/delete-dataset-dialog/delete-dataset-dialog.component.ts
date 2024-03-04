@@ -11,13 +11,14 @@ import {
 } from 'rxjs';
 import { catchError, switchMap, tap } from 'rxjs/operators';
 import { DatasetType } from 'app/enums/dataset.enum';
+import { Role } from 'app/enums/role.enum';
 import { DatasetAttachment } from 'app/interfaces/pool-attachment.interface';
 import { Process } from 'app/interfaces/process.interface';
 import { VolumesListDataset } from 'app/interfaces/volumes-list-pool.interface';
 import { WebSocketError } from 'app/interfaces/websocket-error.interface';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
-import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -28,6 +29,8 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DeleteDatasetDialogComponent implements OnInit {
+  readonly requiredRoles = [Role.DatasetDelete];
+
   attachments: DatasetAttachment[] = [];
   knownProcesses: Process[] = [];
   unknownProcesses: Process[] = [];

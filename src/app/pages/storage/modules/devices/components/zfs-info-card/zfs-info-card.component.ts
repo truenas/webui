@@ -1,4 +1,6 @@
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, EventEmitter, Input, Output,
+} from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
@@ -7,13 +9,13 @@ import { Role } from 'app/enums/role.enum';
 import { VdevType, TopologyItemType } from 'app/enums/v-dev-type.enum';
 import { TopologyItemStatus } from 'app/enums/vdev-status.enum';
 import { Disk, isTopologyDisk, TopologyItem } from 'app/interfaces/storage.interface';
-import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import {
   ExtendDialogComponent, ExtendDialogParams,
 } from 'app/pages/storage/modules/devices/components/zfs-info-card/extend-dialog/extend-dialog.component';
 import { DevicesStore } from 'app/pages/storage/modules/devices/stores/devices-store.service';
-import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -33,6 +35,8 @@ export class ZfsInfoCardComponent {
   @Input() topologyCategory: VdevType;
   @Input() poolId: number;
   @Input() hasTopLevelRaidz: boolean;
+
+  @Output() deviceRemoved = new EventEmitter<void>();
 
   protected readonly Role = Role;
 
@@ -108,6 +112,7 @@ export class ZfsInfoCardComponent {
     private matDialog: MatDialog,
     private translate: TranslateService,
     private devicesStore: DevicesStore,
+    private snackbar: SnackbarService,
   ) {}
 
   onOffline(): void {
@@ -175,20 +180,19 @@ export class ZfsInfoCardComponent {
       buttonText: this.translate.instant('Remove'),
     }).pipe(
       filter(Boolean),
+      switchMap(() => {
+        return this.dialogService.jobDialog(
+          this.ws.job('pool.remove', [this.poolId, { label: this.topologyItem.guid }]),
+          { title: this.translate.instant('Remove device') },
+        )
+          .afterClosed()
+          .pipe(this.errorHandler.catchError());
+      }),
       untilDestroyed(this),
     ).subscribe(() => {
-      const dialogRef = this.matDialog.open(EntityJobComponent, {
-        data: { title: this.translate.instant('Remove device') },
-        disableClose: true,
-      });
-      dialogRef.componentInstance.setCall('pool.remove', [this.poolId, { label: this.topologyItem.guid }]);
-      dialogRef.componentInstance.submit();
-      dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe({
-        next: () => {
-          this.devicesStore.reloadList();
-          this.dialogService.closeAllDialogs();
-        },
-      });
+      this.snackbar.success(this.translate.instant('Device removed'));
+      this.devicesStore.reloadList();
+      this.deviceRemoved.emit();
     });
   }
 

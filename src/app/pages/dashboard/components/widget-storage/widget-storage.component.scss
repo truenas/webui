@@ -15,7 +15,17 @@ mat-grid-tile {
   }
 
   .tile {
+    align-items: stretch;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    max-width: 100%;
+    min-height: 100%;
+    min-width: 100%;
     padding-left: 16px;
+    place-content: stretch flex-start;
+    width: 100%;
 
     &:hover,
     &:focus,
@@ -52,7 +62,12 @@ mat-grid-tile {
     }
 
     .tile-header {
+      align-items: center;
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: row;
       min-width: 0;
+      place-content: center flex-start;
     }
 
     .tile-header-button {
@@ -73,8 +88,14 @@ mat-grid-tile {
     }
 
     .tile-content {
+      align-items: center;
+      box-sizing: border-box;
+      display: flex;
+      flex: 1 1 1e-9px;
+      flex-direction: row;
       font-size: 12px;
       padding-bottom: 10px;
+      place-content: center space-between;
 
       .divider {
         background-color: var(--lines);
@@ -83,7 +104,18 @@ mat-grid-tile {
         width: 1px;
       }
 
+      ul {
+        box-sizing: border-box;
+        display: flex;
+        flex: 1 1 100%;
+        flex-direction: column;
+        max-width: 100%;
+      }
+
       li {
+        box-sizing: border-box;
+        display: flex;
+        flex-direction: row;
         line-height: 20px;
         overflow: hidden;
         white-space: nowrap;
@@ -126,8 +158,17 @@ mat-grid-tile {
   }
 
   .create-new {
+    align-items: center;
+    box-sizing: border-box;
+    display: flex;
+    flex: 1 1 100%;
+    flex-direction: column;
     font-size: 24px;
+    height: 100%;
+    max-width: 100%;
     opacity: 0.7;
+    place-content: center;
+    width: 100%;
 
     &:focus-visible {
       box-shadow: 0 0 0 1.5px var(--accent) inset;

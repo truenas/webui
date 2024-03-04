@@ -8,6 +8,7 @@ import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.u
 import { AclType } from 'app/enums/acl-type.enum';
 import { PosixAclTag, PosixPermission } from 'app/enums/posix-acl.enum';
 import { AclTemplateByPath } from 'app/interfaces/acl.interface';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxRadioGroupHarness } from 'app/modules/ix-forms/components/ix-radio-group/ix-radio-group.harness';
 import { IxSelectHarness } from 'app/modules/ix-forms/components/ix-select/ix-select.harness';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
@@ -16,7 +17,6 @@ import {
   SelectPresetModalConfig,
 } from 'app/pages/datasets/modules/permissions/interfaces/select-preset-modal-config.interface';
 import { DatasetAclEditorStore } from 'app/pages/datasets/modules/permissions/stores/dataset-acl-editor.store';
-import { DialogService } from 'app/services/dialog.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { SelectPresetModalComponent } from './select-preset-modal.component';
 

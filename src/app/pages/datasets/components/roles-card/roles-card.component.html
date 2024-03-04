@@ -78,6 +78,7 @@
         <ix-icon class="icon" name="share"></ix-icon>
         <div class="label">{{ 'Not Shared' | translate }}</div>
         <a
+          *ixRequiresRoles="smbRequiredRoles"
           class="action"
           tabindex="0"
           ixTest="create-smb-share"
@@ -89,6 +90,7 @@
       </div>
       <div class="details-item">
         <a
+          *ixRequiresRoles="nfsRequiredRoles"
           class="action"
           tabindex="0"
           ixTest="create-nfs-share"

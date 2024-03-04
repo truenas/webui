@@ -7,6 +7,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { filter, tap } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
 import { Tunable } from 'app/interfaces/tunable.interface';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { AsyncDataProvider } from 'app/modules/ix-table2/classes/async-data-provider/async-data-provider';
 import { actionsColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
@@ -17,9 +18,8 @@ import { createTable } from 'app/modules/ix-table2/utils';
 import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TunableFormComponent } from 'app/pages/system/advanced/sysctl/tunable-form/tunable-form.component';
-import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
@@ -29,6 +29,8 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TunableListComponent implements OnInit {
+  readonly requiredRoles = [Role.FullAdmin];
+
   dataProvider: AsyncDataProvider<Tunable>;
   filterString = '';
   tunables: Tunable[] = [];
@@ -67,7 +69,7 @@ export class TunableListComponent implements OnInit {
           iconName: 'delete',
           tooltip: this.translate.instant('Delete'),
           onClick: (row) => this.doDelete(row),
-          requiredRoles: [Role.FullAdmin],
+          requiredRoles: this.requiredRoles,
         },
       ],
     }),
@@ -79,12 +81,12 @@ export class TunableListComponent implements OnInit {
     private errorHandler: ErrorHandlerService,
     private ws: WebSocketService,
     private translate: TranslateService,
-    private slideInService: IxSlideInService,
     private dialogService: DialogService,
     private cdr: ChangeDetectorRef,
     protected emptyService: EmptyService,
     private matDialog: MatDialog,
     private snackbar: SnackbarService,
+    private chainedSlideIns: IxChainedSlideInService,
   ) {}
 
   ngOnInit(): void {
@@ -102,15 +104,18 @@ export class TunableListComponent implements OnInit {
   }
 
   doAdd(): void {
-    const slideInRef = this.slideInService.open(TunableFormComponent);
-    slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
-      this.getTunables();
-    });
+    this.chainedSlideIns.pushComponent(TunableFormComponent).pipe(
+      filter((response) => !!response.response),
+      tap(() => this.getTunables()),
+      untilDestroyed(this),
+    ).subscribe();
   }
 
   doEdit(tunable: Tunable): void {
-    const slideInRef = this.slideInService.open(TunableFormComponent, { data: tunable });
-    slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
+    this.chainedSlideIns.pushComponent(TunableFormComponent, false, tunable).pipe(
+      filter((response) => !!response.response),
+      untilDestroyed(this),
+    ).subscribe(() => {
       this.getTunables();
     });
   }

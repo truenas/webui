@@ -3,7 +3,10 @@
   fxLayout="row"
   fxLayoutAlign="space-between center"
 >
-  <h3 class="ix-formtitle">{{ title | translate }}</h3>
+  <h3 class="ix-formtitle">
+    {{ title | translate }}
+    <ix-readonly-badge *ngIf="requiredRoles?.length && !(hasRequiredRoles | async)"></ix-readonly-badge>
+  </h3>
 
   <ng-container *ngIf="!disableClose">
     <ix-icon

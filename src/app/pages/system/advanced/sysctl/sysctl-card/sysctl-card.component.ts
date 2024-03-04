@@ -4,6 +4,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { filter, from, switchMap } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
 import { Tunable } from 'app/interfaces/tunable.interface';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { AsyncDataProvider } from 'app/modules/ix-table2/classes/async-data-provider/async-data-provider';
 import { actionsColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
 import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
@@ -15,9 +16,8 @@ import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { AdvancedSettingsService } from 'app/pages/system/advanced/advanced-settings.service';
 import { TunableFormComponent } from 'app/pages/system/advanced/sysctl/tunable-form/tunable-form.component';
-import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
@@ -28,6 +28,8 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SysctlCardComponent implements OnInit {
+  readonly requiredRoles = [Role.FullAdmin];
+
   dataProvider: AsyncDataProvider<Tunable>;
 
   columns = createTable<Tunable>([
@@ -58,7 +60,7 @@ export class SysctlCardComponent implements OnInit {
           iconName: 'delete',
           tooltip: this.translate.instant('Delete'),
           onClick: (row) => this.onDelete(row),
-          requiredRoles: [Role.FullAdmin],
+          requiredRoles: this.requiredRoles,
         },
       ],
     }),
@@ -67,7 +69,6 @@ export class SysctlCardComponent implements OnInit {
   });
 
   constructor(
-    private slideInService: IxSlideInService,
     private translate: TranslateService,
     private errorHandler: ErrorHandlerService,
     private ws: WebSocketService,
@@ -75,6 +76,7 @@ export class SysctlCardComponent implements OnInit {
     private snackbar: SnackbarService,
     private advancedSettings: AdvancedSettingsService,
     protected emptyService: EmptyService,
+    private chainedSlideIns: IxChainedSlideInService,
   ) {}
 
   ngOnInit(): void {
@@ -119,12 +121,11 @@ export class SysctlCardComponent implements OnInit {
 
   private openForm(row?: Tunable): void {
     from(this.advancedSettings.showFirstTimeWarningIfNeeded()).pipe(
-      switchMap(() => this.slideInService.open(TunableFormComponent, { data: row }).slideInClosed$),
-      filter(Boolean),
+      switchMap(() => this.chainedSlideIns.pushComponent(TunableFormComponent, false, row)),
+      filter((response) => !!response.response),
       untilDestroyed(this),
-    )
-      .subscribe(() => {
-        this.loadItems();
-      });
+    ).subscribe(() => {
+      this.loadItems();
+    });
   }
 }

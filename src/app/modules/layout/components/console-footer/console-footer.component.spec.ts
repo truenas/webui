@@ -1,9 +1,9 @@
 import { MatDialog } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
-import { ConsolePanelDialogComponent } from 'app/modules/common/dialog/console-panel/console-panel-dialog.component';
 import { ConsoleFooterComponent } from 'app/modules/layout/components/console-footer/console-footer.component';
 import { ConsoleMessagesStore } from 'app/modules/layout/components/console-footer/console-messages.store';
+import { ConsolePanelDialogComponent } from 'app/modules/layout/components/console-footer/console-panel/console-panel-dialog.component';
 
 describe('ConsoleFooterComponent', () => {
   let spectator: Spectator<ConsoleFooterComponent>;

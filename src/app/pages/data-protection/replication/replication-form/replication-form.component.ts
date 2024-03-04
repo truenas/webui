@@ -1,8 +1,7 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit, ViewChild,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, ViewChild,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { merge, of } from 'rxjs';
 import { debounceTime, switchMap } from 'rxjs/operators';
@@ -15,8 +14,9 @@ import { CountManualSnapshotsParams } from 'app/interfaces/count-manual-snapshot
 import { KeychainSshCredentials } from 'app/interfaces/keychain-credential.interface';
 import { ReplicationCreate, ReplicationTask } from 'app/interfaces/replication-task.interface';
 import { WebSocketError } from 'app/interfaces/websocket-error.interface';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { TreeNodeProvider } from 'app/modules/ix-forms/components/ix-explorer/tree-node-provider.interface';
-import { CHAINED_SLIDE_IN_REF, SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
+import { ChainedRef } from 'app/modules/ix-forms/components/ix-slide-in/chained-component-ref';
 import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import {
@@ -39,13 +39,10 @@ import {
 } from 'app/pages/data-protection/replication/replication-wizard/replication-wizard.component';
 import { AuthService } from 'app/services/auth/auth.service';
 import { DatasetService } from 'app/services/dataset-service/dataset.service';
-import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { ChainedComponentRef, IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 import { KeychainCredentialService } from 'app/services/keychain-credential.service';
 import { ReplicationService } from 'app/services/replication.service';
 import { WebSocketService } from 'app/services/ws.service';
-import { AppState } from 'app/store';
 
 @UntilDestroy()
 @Component({
@@ -73,6 +70,8 @@ export class ReplicationFormComponent implements OnInit {
 
   readonly requiredRoles = [Role.ReplicationTaskWrite, Role.ReplicationTaskWritePull];
 
+  protected existingReplication: ReplicationTask;
+
   constructor(
     private ws: WebSocketService,
     private errorHandler: ErrorHandlerService,
@@ -83,13 +82,12 @@ export class ReplicationFormComponent implements OnInit {
     private snackbar: SnackbarService,
     private datasetService: DatasetService,
     private replicationService: ReplicationService,
-    private chainedSlideInService: IxChainedSlideInService,
     private keychainCredentials: KeychainCredentialService,
-    private store$: Store<AppState>,
     private authService: AuthService,
-    @Inject(SLIDE_IN_DATA) public existingReplication: ReplicationTask,
-    @Inject(CHAINED_SLIDE_IN_REF) private chainedSlideInRef: ChainedComponentRef,
-  ) {}
+    private chainedRef: ChainedRef<ReplicationTask>,
+  ) {
+    this.existingReplication = this.chainedRef.getData();
+  }
 
   ngOnInit(): void {
     this.countSnapshotsOnChanges();
@@ -162,7 +160,7 @@ export class ReplicationFormComponent implements OnInit {
             );
             this.isLoading = false;
             this.cdr.markForCheck();
-            this.chainedSlideInRef.close({ response, error: null });
+            this.chainedRef.close({ response, error: null });
           },
           error: (error) => {
             this.isLoading = false;
@@ -174,7 +172,7 @@ export class ReplicationFormComponent implements OnInit {
   }
 
   onSwitchToWizard(): void {
-    this.chainedSlideInRef.swap(
+    this.chainedRef.swap(
       ReplicationWizardComponent,
       true,
     );

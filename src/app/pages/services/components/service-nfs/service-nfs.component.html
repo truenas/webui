@@ -1,4 +1,4 @@
-<ix-modal-header [title]="'NFS' | translate" [loading]="isFormLoading"></ix-modal-header>
+<ix-modal-header [requiredRoles]="requiredRoles" [title]="'NFS' | translate" [loading]="isFormLoading"></ix-modal-header>
 
 <mat-card class="card">
   <mat-card-content>
@@ -37,6 +37,12 @@
             [multiple]="true"
             [required]="true"
           ></ix-select>
+
+          <ix-input
+            formControlName="v4_domain"
+            [label]="'NFSv4 DNS Domain' | translate"
+            [tooltip]="tooltips.v4_domain"
+          ></ix-input>
 
           <ix-checkbox
             formControlName="v4_v3owner"
@@ -88,7 +94,7 @@
         ></ix-checkbox>
       </ix-fieldset>
 
-      <div class="form-actions">
+      <ix-form-actions>
         <div>
           <button
             *ixRequiresRoles="requiredRoles"
@@ -107,19 +113,21 @@
             [header]="'Add SPN' | translate"
             [message]="'Save the \'Require Kerberos for NFSv4\' value before adding SMP' | translate"
           ></ix-tooltip>
-          <button
-            *ngIf="isAddSpnVisible"
-            mat-button
-            type="button"
-            color="primary"
-            ixTest="add-spn"
-            [disabled]="isAddSpnDisabled"
-            (click)="addSpn()"
-          >
-            {{ 'Add SPN' | translate }}
-          </button>
+          <ng-container *ixRequiresRoles="requiredRoles">
+            <button
+              *ngIf="isAddSpnVisible"
+              mat-button
+              type="button"
+              color="primary"
+              ixTest="add-spn"
+              [disabled]="isAddSpnDisabled"
+              (click)="addSpn()"
+            >
+              {{ 'Add SPN' | translate }}
+            </button>
+          </ng-container>
         </div>
-      </div>
+      </ix-form-actions>
     </form>
   </mat-card-content>
 </mat-card>

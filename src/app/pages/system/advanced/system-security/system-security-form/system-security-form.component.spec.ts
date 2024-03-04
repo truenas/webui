@@ -11,13 +11,12 @@ import { mockEntityJobComponentRef } from 'app/core/testing/utils/mock-entity-jo
 import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { ProductType } from 'app/enums/product-type.enum';
 import { SystemSecurityConfig } from 'app/interfaces/system-security-config.interface';
-import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
+import { DialogService } from 'app/modules/dialog/dialog.service';
+import { ChainedRef } from 'app/modules/ix-forms/components/ix-slide-in/chained-component-ref';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { SystemSecurityFormComponent } from 'app/pages/system/advanced/system-security/system-security-form/system-security-form.component';
-import { DialogService } from 'app/services/dialog.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { selectSystemInfo } from 'app/store/system-info/system-info.selectors';
@@ -57,8 +56,10 @@ describe('SystemSecurityFormComponent', () => {
       mockProvider(SystemGeneralService, {
         getProductType: () => ProductType.Scale,
       }),
-      mockProvider(IxSlideInRef),
-      { provide: SLIDE_IN_DATA, useValue: fakeSystemSecurityConfig },
+      mockProvider(ChainedRef, {
+        close: jest.fn(),
+        getData: jest.fn(() => fakeSystemSecurityConfig),
+      }),
       mockAuth(),
     ],
   });

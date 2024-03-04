@@ -14,6 +14,7 @@ import { helptextSystemCertificates } from 'app/helptext/system/certificates';
 import { Certificate } from 'app/interfaces/certificate.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { WebSocketError } from 'app/interfaces/websocket-error.interface';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { AsyncDataProvider } from 'app/modules/ix-table2/classes/async-data-provider/async-data-provider';
 import { actionsColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
@@ -24,7 +25,6 @@ import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
 import { CertificateEditComponent } from 'app/pages/credentials/certificates-dash/certificate-edit/certificate-edit.component';
 import { ConfirmForceDeleteCertificateComponent } from 'app/pages/credentials/certificates-dash/confirm-force-delete-dialog/confirm-force-delete-dialog.component';
 import { CertificateAddComponent } from 'app/pages/credentials/certificates-dash/forms/certificate-add/certificate-add.component';
-import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { StorageService } from 'app/services/storage.service';
@@ -39,6 +39,8 @@ import { WebSocketService } from 'app/services/ws.service';
 })
 export class CertificateListComponent implements OnInit {
   @Output() certificateDeleted = new EventEmitter<void>();
+
+  protected requiredRoles = [Role.FullAdmin];
 
   filterString = '';
   dataProvider: AsyncDataProvider<Certificate>;
@@ -69,7 +71,7 @@ export class CertificateListComponent implements OnInit {
         },
         {
           iconName: 'mdi-undo',
-          requiredRoles: [Role.FullAdmin],
+          requiredRoles: this.requiredRoles,
           tooltip: this.translate.instant('Revoke'),
           hidden: (row) => of(!row.can_be_revoked),
           onClick: (row) => this.doRevoke(row),
@@ -86,7 +88,7 @@ export class CertificateListComponent implements OnInit {
         },
         {
           iconName: 'delete',
-          requiredRoles: [Role.FullAdmin],
+          requiredRoles: this.requiredRoles,
           tooltip: this.translate.instant('Delete'),
           onClick: (row) => this.doDelete(row),
         },

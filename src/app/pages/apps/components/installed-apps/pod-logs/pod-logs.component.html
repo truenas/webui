@@ -1,22 +1,20 @@
-<ng-template ixPageHeader>
-  <ix-page-title-header>
-    <ix-toolbar-slider
-      [label]="'Set font size' | translate"
-      [min]="10"
-      [max]="20"
-      [value]="fontSize"
-      (valueChange)="onFontSizeChanged($event)"
-    ></ix-toolbar-slider>
+<ix-page-header>
+  <ix-toolbar-slider
+    [label]="'Set font size' | translate"
+    [min]="10"
+    [max]="20"
+    [value]="fontSize"
+    (valueChange)="onFontSizeChanged($event)"
+  ></ix-toolbar-slider>
 
-    <button mat-button ixTest="reconnect" (click)="onReconnect()">
-      {{ 'Reconnect' | translate }}
-    </button>
+  <button mat-button ixTest="reconnect" (click)="onReconnect()">
+    {{ 'Reconnect' | translate }}
+  </button>
 
-    <button mat-button color="primary" ixTest="download-logs" (click)="onDownloadLogs()">
-      {{ 'Download Logs' | translate }}
-    </button>
-  </ix-page-title-header>
-</ng-template>
+  <button mat-button color="primary" ixTest="download-logs" (click)="onDownloadLogs()">
+    {{ 'Download Logs' | translate }}
+  </button>
+</ix-page-header>
 
 <div class="pod-logs-wrapper">
   <div class="meta-data">

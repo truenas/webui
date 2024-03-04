@@ -11,14 +11,16 @@
       <div class="right-pane">
         <div class="header vdevs-header">
           <h3>{{ 'VDEVs' | translate }}</h3>
-          <div class="header-actions">
+          <div *ngIf="!(hideAddVdevButton$ | async)" class="header-actions">
             <button
-              *ngIf="!(hideAddVdevButton$ | async)"
+              *ixRequiresRoles="requiredRoles"
               mat-button
               class="mat-button"
               ixTest="add"
               (click)="addVdev()"
-            >{{ 'Add' | translate }}</button>
+            >
+              {{ 'Add' | translate }}
+            </button>
           </div>
         </div>
 
@@ -40,6 +42,7 @@
         <mat-divider class="divider actions-divider"></mat-divider>
         <div class="actions">
           <button
+            *ixRequiresRoles="requiredRoles"
             mat-button
             color="primary"
             ixTest="save-selection"

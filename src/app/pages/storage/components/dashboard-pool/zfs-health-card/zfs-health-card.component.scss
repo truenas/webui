@@ -17,12 +17,8 @@
     .details-item {
       margin: 8px 0;
 
-      ix-requires-roles-wrapper {
+      ix-missing-access-wrapper {
         margin-left: auto;
-
-        a {
-          text-decoration: line-through;
-        }
       }
     }
   }

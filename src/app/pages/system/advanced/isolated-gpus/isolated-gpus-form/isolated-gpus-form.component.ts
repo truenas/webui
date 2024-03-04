@@ -5,8 +5,9 @@ import { FormControl, FormGroup } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
+import { take } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
-import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { ChainedRef } from 'app/modules/ix-forms/components/ix-slide-in/chained-component-ref';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { GpuService } from 'app/services/gpu/gpu.service';
@@ -14,6 +15,7 @@ import { IsolatedGpuValidatorService } from 'app/services/gpu/isolated-gpu-valid
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 import { advancedConfigUpdated } from 'app/store/system-config/system-config.actions';
+import { waitForAdvancedConfig } from 'app/store/system-config/system-config.selectors';
 
 @UntilDestroy()
 @Component({
@@ -21,6 +23,8 @@ import { advancedConfigUpdated } from 'app/store/system-config/system-config.act
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class IsolatedGpusFormComponent implements OnInit {
+  protected requiredRoles = [Role.FullAdmin];
+
   isFormLoading = false;
 
   formGroup = new FormGroup({
@@ -29,11 +33,9 @@ export class IsolatedGpusFormComponent implements OnInit {
     }),
   });
   readonly options$ = this.gpuService.getGpuOptions();
-  protected readonly Role = Role;
 
   constructor(
     protected ws: WebSocketService,
-    private slideInRef: IxSlideInRef<IsolatedGpuValidatorService>,
     private errorHandler: FormErrorHandlerService,
     private translate: TranslateService,
     private cdr: ChangeDetectorRef,
@@ -41,10 +43,13 @@ export class IsolatedGpusFormComponent implements OnInit {
     private gpuValidator: IsolatedGpuValidatorService,
     private gpuService: GpuService,
     private snackbar: SnackbarService,
+    private chainedRef: ChainedRef<unknown>,
   ) { }
 
   ngOnInit(): void {
-    this.ws.call('system.advanced.config').pipe(
+    this.store$.pipe(
+      waitForAdvancedConfig,
+      take(1),
       untilDestroyed(this),
     ).subscribe((config) => {
       this.formGroup.setValue({ isolated_gpu_pci_ids: config.isolated_gpu_pci_ids });
@@ -64,7 +69,7 @@ export class IsolatedGpusFormComponent implements OnInit {
         this.cdr.markForCheck();
         this.snackbar.success(this.translate.instant('Settings saved'));
         this.store$.dispatch(advancedConfigUpdated());
-        this.slideInRef.close(true);
+        this.chainedRef.close({ response: true, error: null });
       },
       error: (error: unknown) => {
         this.isFormLoading = false;

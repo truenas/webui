@@ -15,10 +15,6 @@
   }
 }
 
-.tree-wrapper {
-  overflow: hidden;
-}
-
 ix-dataset-details-panel {
   display: flex;
   flex-direction: column;
@@ -34,7 +30,7 @@ ix-dataset-details-panel {
 .entity-empty-wrapper {
   padding: 16px;
 
-  ix-entity-empty {
+  ix-empty {
     margin: 32px 0;
   }
 }

@@ -1,0 +1,59 @@
+:host-context(.mat-mdc-menu-panel) {
+  :host {
+    display: block;
+
+    ::ng-deep .role-missing a {
+      opacity: 1;
+    }
+  }
+}
+
+:host-context(mat-list) :host {
+  display: block;
+}
+
+:host {
+  cursor: not-allowed;
+  display: inline-block;
+  position: relative;
+}
+
+:host ::ng-deep .role-missing {
+  .mat-mdc-checkbox,
+  .mdc-switch__handle,
+  a,
+  button {
+    cursor: none;
+    pointer-events: none;
+  }
+
+  .mat-mdc-checkbox,
+  .mat-mdc-slide-toggle,
+  .mdc-button__label,
+  .mat-icon,
+  a,
+  .mat-mdc-menu-item-text {
+    opacity: 0.25;
+
+    + .role-missing-icon {
+      bottom: 5px;
+      right: 0;
+    }
+  }
+
+  .role-missing-icon {
+    bottom: 6px;
+    color: var(--fg2);
+    font-size: 0.9rem;
+    height: 12px;
+    opacity: 1;
+    position: absolute;
+    right: 5px;
+    width: 12px;
+
+    &:only-child {
+      display: none;
+    }
+  }
+}
+

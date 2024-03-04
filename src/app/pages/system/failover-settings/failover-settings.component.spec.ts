@@ -5,14 +5,16 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatCheckboxHarness } from '@angular/material/checkbox/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { helptextSystemFailover } from 'app/helptext/system/failover';
-import { AppCommonModule } from 'app/modules/common/app-common.module';
+import { DialogModule } from 'app/modules/dialog/dialog.module';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
+import { SearchInput1Component } from 'app/modules/search-input1/search-input1.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { FailoverSettingsComponent } from 'app/pages/system/failover-settings/failover-settings.component';
-import { DialogService } from 'app/services/dialog.service';
 import { WebSocketConnectionService } from 'app/services/websocket-connection.service';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -26,9 +28,11 @@ describe('FailoverComponent', () => {
     imports: [
       ReactiveFormsModule,
       IxFormsModule,
-      AppCommonModule,
+      SearchInput1Component,
+      DialogModule,
     ],
     providers: [
+      mockAuth(),
       mockWebSocket([
         mockCall('failover.update'),
         mockCall('failover.sync_to_peer'),

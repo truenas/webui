@@ -22,7 +22,7 @@ import { CredentialType, credentialTypeLabels } from 'app/interfaces/credential-
 import { Option } from 'app/interfaces/option.interface';
 import { QueryFilters } from 'app/interfaces/query-api.interface';
 import { User } from 'app/interfaces/user.interface';
-import { ApiDataProvider } from 'app/modules/ix-table2/classes/api-data-provider/api-data-provider';
+import { AuditApiDataProvider } from 'app/modules/ix-table2/classes/api-data-provider/audit-api-data-provider';
 import { PaginationServerSide } from 'app/modules/ix-table2/classes/api-data-provider/pagination-server-side.class';
 import { SortingServerSide } from 'app/modules/ix-table2/classes/api-data-provider/sorting-server-side.class';
 import { dateColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-date/ix-cell-date.component';
@@ -53,7 +53,8 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AuditComponent implements OnInit, OnDestroy {
-  protected dataProvider: ApiDataProvider<AuditEntry, 'audit.query'>;
+  protected dataProvider: AuditApiDataProvider;
+  protected readonly advancedSearchPlaceholder = this.translate.instant('Service = "SMB" AND Event = "CLOSE"');
   showMobileDetails = false;
   isMobileView = false;
   searchQuery: SearchQuery<AuditEntry>;
@@ -116,10 +117,12 @@ export class AuditComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    this.dataProvider = new ApiDataProvider(this.ws, 'audit.query');
+    this.dataProvider = new AuditApiDataProvider(this.ws);
     this.dataProvider.paginationStrategy = new PaginationServerSide();
     this.dataProvider.sortingStrategy = new SortingServerSide();
     this.setDefaultSort();
+
+    this.getAuditLogs();
 
     this.apiAndLocalUserSuggestions$ = combineLatest(
       this.userSuggestions$,
@@ -174,7 +177,7 @@ export class AuditComponent implements OnInit, OnDestroy {
       );
     }
 
-    this.dataProvider.load();
+    this.getAuditLogs();
   }
 
   updateUrlOptions(): void {
@@ -345,5 +348,9 @@ export class AuditComponent implements OnInit, OnDestroy {
       label: user.username,
       value: `"${user.username}"`,
     }));
+  }
+
+  private getAuditLogs(): void {
+    this.dataProvider.load();
   }
 }

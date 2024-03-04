@@ -47,5 +47,4 @@ import { SearchInputComponent } from './components/search-input/search-input.com
     AdvancedSearchAutocompleteService,
   ],
 })
-export class SearchInputModule {
-}
+export class SearchInputModule {}

@@ -7,10 +7,10 @@ import { latestVersion } from 'app/constants/catalog.constants';
 import { Role } from 'app/enums/role.enum';
 import { helptextApps } from 'app/helptext/apps/apps';
 import { PullContainerImageParams } from 'app/interfaces/container-image.interface';
-import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
-import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -19,6 +19,8 @@ import { ErrorHandlerService } from 'app/services/error-handler.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PullImageFormComponent {
+  protected readonly requiredRoles = [Role.AppsWrite];
+
   isFormLoading = false;
 
   form = this.fb.group({
@@ -35,9 +37,8 @@ export class PullImageFormComponent {
     password: helptextApps.pullImageForm.password.tooltip,
   };
 
-  protected readonly requiredRoles = [Role.AppsWrite];
-
   constructor(
+    private ws: WebSocketService,
     private slideInRef: IxSlideInRef<PullImageFormComponent>,
     private cdr: ChangeDetectorRef,
     private errorHandler: ErrorHandlerService,
@@ -65,25 +66,23 @@ export class PullImageFormComponent {
     }
 
     this.isFormLoading = true;
-    const dialogRef = this.matDialog.open(EntityJobComponent, {
-      data: {
-        title: this.translate.instant('Pulling...'),
-      },
-      disableClose: true,
-    });
-    dialogRef.componentInstance.setCall('container.image.pull', [params]);
-    dialogRef.componentInstance.submit();
-    dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
-      this.isFormLoading = false;
-      this.cdr.markForCheck();
-      dialogRef.close();
-      this.slideInRef.close();
-    });
-    dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((error) => {
-      this.isFormLoading = false;
-      dialogRef.close();
-      this.dialogService.error(this.errorHandler.parseError(error));
-      this.cdr.markForCheck();
-    });
+    this.dialogService.jobDialog(
+      this.ws.job('container.image.pull', [params]),
+      { title: this.translate.instant('Pulling...') },
+    )
+      .afterClosed()
+      .pipe(untilDestroyed(this))
+      .subscribe({
+        next: () => {
+          this.isFormLoading = false;
+          this.cdr.markForCheck();
+          this.slideInRef.close(true);
+        },
+        error: (error) => {
+          this.isFormLoading = false;
+          this.cdr.markForCheck();
+          this.errorHandler.showErrorModal(error);
+        },
+      });
   }
 }

@@ -1,9 +1,9 @@
 import {
-  ComponentRef, Directive, HostBinding, Input, TemplateRef, ViewContainerRef,
+  Directive, HostBinding, Input, TemplateRef, ViewContainerRef,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { isEqual } from 'lodash';
-import { RequiresRolesWrapperComponent } from 'app/directives/common/requires-roles/requires-roles-wrapper.component';
+import { HasAccessDirective } from 'app/directives/common/has-access/has-access.directive';
 import { Role } from 'app/enums/role.enum';
 import { AuthService } from 'app/services/auth/auth.service';
 
@@ -11,8 +11,7 @@ import { AuthService } from 'app/services/auth/auth.service';
 @Directive({
   selector: '[ixRequiresRoles]',
 })
-export class RequiresRolesDirective {
-  private wrapperContainer: ComponentRef<RequiresRolesWrapperComponent>;
+export class RequiresRolesDirective extends HasAccessDirective {
   private previousRoles: Role[] = [];
 
   @Input()
@@ -29,13 +28,7 @@ export class RequiresRolesDirective {
     }
     this.authService.hasRole(roles).pipe(untilDestroyed(this)).subscribe({
       next: (hasRole) => {
-        if (!hasRole) {
-          this.wrapperContainer = this.viewContainerRef.createComponent(RequiresRolesWrapperComponent);
-          this.wrapperContainer.instance.template = this.templateRef;
-          this.wrapperContainer.instance.class = this.elementClass;
-        } else {
-          this.viewContainerRef.createEmbeddedView(this.templateRef);
-        }
+        this.ixHasAccess = hasRole;
       },
     });
   }
@@ -52,8 +45,10 @@ export class RequiresRolesDirective {
   }
 
   constructor(
-    private templateRef: TemplateRef<unknown>,
-    private viewContainerRef: ViewContainerRef,
+    protected templateRef: TemplateRef<unknown>,
+    protected viewContainerRef: ViewContainerRef,
     private authService: AuthService,
-  ) { }
+  ) {
+    super(templateRef, viewContainerRef);
+  }
 }

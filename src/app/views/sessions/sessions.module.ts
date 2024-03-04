@@ -13,7 +13,6 @@ import { TranslateModule } from '@ngx-translate/core';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { CoreComponents } from 'app/core/core-components.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
-import { AppCommonModule } from 'app/modules/common/app-common.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { LayoutModule } from 'app/modules/layout/layout.module';
@@ -46,7 +45,6 @@ import { SigninComponent } from './signin/signin.component';
     CoreComponents,
     IxFormsModule,
     MatInputModule,
-    AppCommonModule,
     CommonDirectivesModule,
     TestIdModule,
     NgxSkeletonLoaderModule,

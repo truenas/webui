@@ -59,7 +59,7 @@ describe('SearchInputComponent', () => {
   it('retains old values in each mode when user is switching between them', async () => {
     await searchHarness.setValue('basic');
     await searchHarness.toggleMode();
-    expect(await searchHarness.getValue()).toBe('Service = "SMB" AND Event = "CLOSE"');
+    expect(await searchHarness.getValue()).toBe('');
 
     await searchHarness.setValue('Username = "Bob"');
 

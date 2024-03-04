@@ -2,11 +2,13 @@ import {
   ChangeDetectionStrategy, Component, Inject,
 } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { helptextAcl } from 'app/helptext/storage/volumes/datasets/dataset-acl';
-import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
+import { DialogService } from 'app/modules/dialog/dialog.service';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 export interface StripAclModalData {
   path: string;
@@ -24,21 +26,16 @@ export class StripAclModalComponent {
   readonly helptext = helptextAcl;
 
   constructor(
-    private matDialog: MatDialog,
+    private ws: WebSocketService,
+    private dialog: DialogService,
+    private errorHandler: ErrorHandlerService,
     private dialogRef: MatDialogRef<StripAclModalComponent>,
     private translate: TranslateService,
     @Inject(MAT_DIALOG_DATA) public data: StripAclModalData,
   ) { }
 
   onStrip(): void {
-    const jobDialogRef = this.matDialog.open(EntityJobComponent, {
-      data: {
-        title: this.translate.instant('Stripping ACLs'),
-      },
-    });
-    jobDialogRef.componentInstance.setDescription(this.translate.instant('Stripping ACLs...'));
-
-    jobDialogRef.componentInstance.setCall('filesystem.setacl', [{
+    const job$ = this.ws.job('filesystem.setacl', [{
       path: this.data.path,
       dacl: [],
       options: {
@@ -47,10 +44,20 @@ export class StripAclModalComponent {
         stripacl: true,
       },
     }]);
-    jobDialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
-      jobDialogRef.close(true);
-      this.dialogRef.close(true);
-    });
-    jobDialogRef.componentInstance.submit();
+
+    this.dialog.jobDialog(
+      job$,
+      {
+        title: this.translate.instant('Stripping ACLs'),
+      },
+    )
+      .afterClosed()
+      .pipe(
+        this.errorHandler.catchError(),
+        untilDestroyed(this),
+      )
+      .subscribe(() => {
+        this.dialogRef.close(true);
+      });
   }
 }
