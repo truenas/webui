@@ -409,11 +409,11 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
 
     // // example 1: focusing the desired element (If user searches for some action)
     // timer(1000).pipe(untilDestroyed(this)).subscribe(() => {
-    //   const firstElement = mappedSearchElements[0];
+    //   const configElement = mappedSearchElements[0];
 
-    //   this.router.navigate(firstElement.anchorRouterLink).then(() => {
+    //   this.router.navigate(configElement.anchorRouterLink).then(() => {
     //     setTimeout(() => {
-    //       const element: HTMLElement = this.document.getElementById(firstElement.anchor);
+    //       const element: HTMLElement = this.document.getElementById(configElement.anchor);
 
     //       element.scrollIntoView({ block: 'center' });
     //       element.focus();
@@ -427,18 +427,18 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
 
     // // example 2: navigating to the URL (If user searches for Pool Creation)
     // timer(1000).pipe(untilDestroyed(this)).subscribe(() => {
-    //   const firstElement = mappedSearchElements[1];
+    //   const configElement = mappedSearchElements[1];
 
-    //   this.router.navigate(firstElement.routerLink);
+    //   this.router.navigate(configElement.routerLink);
     // });
 
     // example 3: navigating to the anchor page, clicking trigger anchor and focus on anchor (used for forms)
     timer(1000).pipe(untilDestroyed(this)).subscribe(() => {
-      const firstElement = mappedSearchElements[2];
+      const configElement = mappedSearchElements[2];
 
-      this.router.navigate(firstElement.anchorRouterLink).then(() => {
+      this.router.navigate(configElement.anchorRouterLink).then(() => {
         setTimeout(() => {
-          const element: HTMLElement = this.document.getElementById(firstElement.triggerAnchor);
+          const element: HTMLElement = this.document.getElementById(configElement.triggerAnchor);
 
           element.scrollIntoView({ block: 'center' });
           element.focus();
@@ -448,7 +448,7 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
             element.classList.remove('search-element-highlighted');
             element.click();
             setTimeout(() => {
-              const anchor = this.document.getElementById(firstElement.anchor);
+              const anchor = this.document.getElementById(configElement.anchor);
               anchor.focus();
               anchor.classList.add('search-element-highlighted');
 

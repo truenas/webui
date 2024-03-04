@@ -3,27 +3,47 @@ import * as ts from 'typescript';
 import * as fs from 'fs';
 import { Role } from '../src/app/enums/role.enum';
 import { UiSearchableElement } from 'app/interfaces/ui-searchable-element.interface';
-
 const glob = require('glob');
 
 interface ComponentProperties {
   [propertyName: string]: string;
 }
 
+enum TsExtraction {
+  ElementsConfig = 'elements',
+  ClassProperties = 'properties'
+}
+
 let uiElements: UiSearchableElement[] = [];
 
-function extractComponentProperties(filePath: string): ComponentProperties {
-  const sourceFile = ts.createSourceFile(
-    filePath,
-    fs.readFileSync(filePath, 'utf8'),
-    ts.ScriptTarget.ES2015,
-    true
-  );
+function formatArrayItems(inputText: string): string[] {
+  let trimmed = inputText?.trim()?.slice(1, -1);
+  return trimmed?.split(',')
+    ?.map((keyword) => extractTextFromTFunction(keyword)
+    ?.trim()
+    ?.replace(/^'(.*)'$/, '$1'))
+    ?.filter(Boolean);
+}
 
+function extractTsFileContent(filePath: string, extractionType: TsExtraction): string | {} {
+  const fileContents = fs.readFileSync(filePath, 'utf8');
+  const sourceFile = ts.createSourceFile(filePath, fileContents, ts.ScriptTarget.ES2015, true);
+
+  let extractedElements: string;
   let properties: ComponentProperties = {};
 
   function visit(node: ts.Node) {
-    if (ts.isClassDeclaration(node)) {
+    if (extractionType === TsExtraction.ElementsConfig && ts.isVariableStatement(node)) {
+      node.declarationList.declarations.forEach((declaration) => {
+        if (ts.isVariableDeclaration(declaration) && declaration.name.getText(sourceFile) === 'elements') {
+          const initializer = declaration.initializer;
+          if (initializer) {
+            extractedElements = initializer.getText(sourceFile);
+          }
+        }
+      });
+    }
+    if (extractionType === TsExtraction.ClassProperties && ts.isClassDeclaration(node)) {
       node.members.forEach(member => {
         if (ts.isPropertyDeclaration(member) && member.initializer) {
           const propertyName = member.name.getText(sourceFile);
@@ -35,33 +55,68 @@ function extractComponentProperties(filePath: string): ComponentProperties {
   }
 
   ts.forEachChild(sourceFile, visit);
-  return properties;
+
+  return extractionType === TsExtraction.ClassProperties ? properties : extractedElements;
 }
 
-function extractItems(inputText: string): string[] {
-  let trimmed = inputText?.trim()?.slice(1, -1);
+function extractDynamicValue(dataString: string, key: string, property: string): string {
+  const escapedKey = key.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const escapedProperty = property.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const pattern = new RegExp(`${escapedKey}:\\s*{[^}]*${escapedProperty}:\\s*(\\[[^\\]]*\\]|'[^']*'|\\{[^}]*\\})`);
+  const match = dataString.match(pattern);
 
-  return trimmed
-    ?.split(',')
-    ?.map((keyWord) => extractTextBeforeTranslate(keyWord)
-    ?.trim()
-    ?.replace(/^'(.*)'$/, '$1'));
+  if (match && match[1]) {
+    return match[1]?.replace(/^['"]+|['"]+$/g, '');
+  } else {
+    return null;
+  }
 }
 
-function parseHtmlFile(filePath: string, componentProperties: ComponentProperties): UiSearchableElement[] {
+function extractTextFromTFunction(inputText: string): string {
+  const regex = /T\('([^']+)'\)/;
+  const match = inputText.match(regex);
+  if (match && match[1]) {
+    return match[1].trim();
+  }
+  return inputText;
+}
+
+function findComponentFiles(pattern: string): Promise<string[]> {
+  return new Promise((resolve, reject) => {
+    glob(pattern, (error: Error, files: string[] | PromiseLike<string[]>) => {
+      error ? reject(error) : resolve(files)
+    });
+  });
+}
+
+function parseRoles(rolesValue: string): Role[] {
+  const roleNames = rolesValue.replace(/^\[|\]$/g, '')
+    ?.split(', ')
+    ?.map(role => role.trim());
+
+  return roleNames.map(roleName => Role[roleName.split('.')[1] as keyof typeof Role]).filter(Boolean);
+}
+
+function parseHtmlFile(
+  filePath: string,
+  elementConfig: string,
+  componentProperties: ComponentProperties
+): UiSearchableElement[] {
   const htmlContent = fs.readFileSync(filePath, 'utf8');
   const $ = cheerio.load(htmlContent);
   const elements: UiSearchableElement[] = [];
 
   $('[ixUiSearchableElement]').each((_, element) => {
-    const hierarchy = extractItems($(element).attr('[uisearchhierarchy]')) ?? []
-    const synonyms = extractItems($(element).attr('[uisearchsynonyms]')) ?? []
-    const routerLink = extractItems($(element).attr('[routerlink]')) ?? []
-    const anchorRouterLink = extractItems($(element).attr('[uisearchanchorrouterlink]')) ?? [];
-    const anchor = ($(element).attr('id') || $(element).attr('[attr.id]') || '')?.replace(/^['"]+|['"]+$/g, '');
-    const triggerAnchor = ($(element).attr('uisearchtriggeranchor') || $(element).attr('[uisearchtriggeranchor]') || '')
-      ?.replace(/^['"]+|['"]+$/g, '');
-    const rolesAttrName = $(element).attr('*ixrequiresroles') || $(element).attr('[uisearchrequiredroles]');
+    const key = $(element).attr('[ixsearchconfig]').split('.')[1];
+
+    const routerLink = formatArrayItems($(element).attr('[routerlink]')) ?? null;
+    const hierarchy = formatArrayItems(extractDynamicValue(elementConfig, key, 'hierarchy')) ?? null;
+    const synonyms = formatArrayItems(extractDynamicValue(elementConfig, key, 'synonyms')) ?? null;
+    const anchorRouterLink = formatArrayItems(extractDynamicValue(elementConfig, key, 'anchorRouterLink')) ?? null;
+    const anchor = extractDynamicValue(elementConfig, key, 'anchor');
+    const triggerAnchor = extractDynamicValue(elementConfig, key, 'triggerAnchor');
+
+    const rolesAttrName = $(element).attr('*ixrequiresroles') || extractDynamicValue(elementConfig, key, 'requiredRoles') || '';
 
     let requiredRoles = parseRoles(rolesAttrName);
 
@@ -83,53 +138,23 @@ function parseHtmlFile(filePath: string, componentProperties: ComponentPropertie
   return elements;
 }
 
-function extractTextBeforeTranslate(inputText: string): string {
-  const regex = /\(?\s*(.*?)\s*\|\s*translate\s*\)?/;
-  const match = inputText.match(regex);
-  if (match && match[1]) {
-      return match[1].trim();
-  }
-  return inputText;
-}
-
-function findComponentFiles(pattern: string): Promise<string[]> {
-  return new Promise((resolve, reject) => {
-    glob(pattern, (error: Error, files: string[] | PromiseLike<string[]>) => {
-      if (error) {
-        reject(error);
-      } else {
-        resolve(files);
-      }
-    });
-  });
-}
-
-function parseRoles(roleString: string): Role[] {
-  const roleNames = roleString.replace(/^\[|\]$/g, '').split(', ').map(role => role.trim());
-
-  const roleValues = roleNames.map(roleName => {
-    const key = roleName.split('.')[1];
-    return Role[key as keyof typeof Role];
-  }).filter(Boolean);
-
-  return roleValues;
-}
-
 async function extractUiSearchableElements(): Promise<void> {
   try {
-    const tsFiles = await findComponentFiles("src/**/*.component.ts");
-    tsFiles.forEach(tsFile => {
-      const htmlFilePath = tsFile.replace('.ts', '.html');
-      if (fs.existsSync(htmlFilePath)) {
-        const componentProperties = extractComponentProperties(tsFile);
-        const elements = parseHtmlFile(htmlFilePath, componentProperties);
+    const tsFiles = await findComponentFiles("src/**/*.elements.ts");
+    tsFiles.forEach((elementsTsFilePath) => {
+      const htmlComponentFilePath = elementsTsFilePath.replace('.elements.ts', '.component.html');
+      const tsComponentFilePath = elementsTsFilePath.replace('.elements.ts', '.component.ts');
+
+      if (fs.existsSync(htmlComponentFilePath)) {
+        const elementConfig = extractTsFileContent(elementsTsFilePath, TsExtraction.ElementsConfig) as string;
+        const componentProperties = extractTsFileContent(tsComponentFilePath, TsExtraction.ClassProperties) as {};
+        const elements = parseHtmlFile(htmlComponentFilePath, elementConfig, componentProperties);
         uiElements = uiElements.concat(elements);
       }
     });
 
     fs.writeFileSync('src/assets/ui-searchable-elements.json', JSON.stringify(uiElements, null, 2));
-    console.log("Extraction complete.");
-  } catch(err) {
+  } catch (err) {
     console.error("An error occurred:", err);
   }
 }

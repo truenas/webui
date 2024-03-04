@@ -5,18 +5,17 @@
       "Import Pool"
     ],
     "synonyms": [
-      "Storage"
+      "Add Pool"
     ],
     "requiredRoles": [
-      "ACCOUNT_WRITE",
-      "APPS_WRITE"
+      "FULL_ADMIN"
     ],
-    "routerLink": [],
+    "routerLink": null,
     "anchorRouterLink": [
       "/storage"
     ],
     "anchor": "import-pool-button",
-    "triggerAnchor": ""
+    "triggerAnchor": null
   },
   {
     "hierarchy": [
@@ -24,7 +23,6 @@
       "Create Pool"
     ],
     "synonyms": [
-      "Storage",
       "Pool Wizard"
     ],
     "requiredRoles": [
@@ -38,7 +36,7 @@
       "/storage"
     ],
     "anchor": "create-pool-button",
-    "triggerAnchor": ""
+    "triggerAnchor": null
   },
   {
     "hierarchy": [
@@ -53,9 +51,10 @@
     "requiredRoles": [
       "FULL_ADMIN"
     ],
-    "routerLink": [],
+    "routerLink": null,
     "anchorRouterLink": [
-      "/system/general"
+      "/system",
+      "general"
     ],
     "anchor": "language-input",
     "triggerAnchor": "localization-settings"

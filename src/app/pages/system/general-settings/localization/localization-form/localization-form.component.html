@@ -9,17 +9,12 @@
       <ix-fieldset [title]="fieldsetTitle">
         <ix-combobox
           ixUiSearchableElement
-          uiSearchTriggerAnchor="localization-settings"
           [formControlName]="language.fcName"
           [label]="language.label | translate"
           [tooltip]="language.tooltip | translate"
           [provider]="language.provider"
           [required]="true"
-          [uiSearchHierarchy]="['System Settings' | translate, 'General' | translate, 'Localization' | translate, 'Language' | translate]"
-          [uiSearchSynonyms]="['Translate App' | translate]"
-          [uiSearchAnchorRouterLink]="['/system/general']"
-          [uiSearchRequiredRoles]="requiredRoles"
-          [attr.id]="'language-input'"
+          [ixSearchConfig]="searchElements.language"
         ></ix-combobox>
         <ix-select
           [label]="kbdMap.label | translate"

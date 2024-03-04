@@ -10,3 +10,5 @@ export interface UiSearchableElement {
   focusNavigationPath?: string;
   triggerAnchor?: string;
 }
+
+export type UiSearchElements = Record<string, UiSearchableElement>;

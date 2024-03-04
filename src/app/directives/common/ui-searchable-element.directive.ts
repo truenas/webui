@@ -1,13 +1,19 @@
-import { Directive, Input } from '@angular/core';
-import { Role } from 'app/enums/role.enum';
+import {
+  Directive, Input, ElementRef, Renderer2, OnInit,
+} from '@angular/core';
+import { UiSearchableElement } from 'app/interfaces/ui-searchable-element.interface';
 
 @Directive({
   selector: '[ixUiSearchableElement]',
 })
-export class UiSearchableElementDirective {
-  @Input() uiSearchHierarchy!: string[];
-  @Input() uiSearchSynonyms?: string[];
-  @Input() uiSearchRequiredRoles?: Role[];
-  @Input() uiSearchAnchorRouterLink?: string[];
-  @Input() uiSearchTriggerAnchor?: string;
+export class UiSearchableElementDirective implements OnInit {
+  @Input() ixSearchConfig!: UiSearchableElement;
+
+  constructor(private renderer: Renderer2, private el: ElementRef) {}
+
+  ngOnInit(): void {
+    if (this.ixSearchConfig?.anchor) {
+      this.renderer.setAttribute(this.el.nativeElement, 'id', this.ixSearchConfig.anchor);
+    }
+  }
 }
