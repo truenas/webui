@@ -1,7 +1,7 @@
 boto3
 pexpect
-pytest
-pytest-bdd
+pytest==8.0.2
+pytest-bdd==7.0.1
 pytest-dependency
 pytest-timeout
 pytest-timestamper
