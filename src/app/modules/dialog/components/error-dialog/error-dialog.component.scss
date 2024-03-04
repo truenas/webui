@@ -16,6 +16,7 @@ $opened-scroll-container-height: calc(80vh - 48px - 240px); // Viewport - topbar
   max-height: 0;
   overflow: hidden;
   padding: 0;
+  position: relative;
   transition: max-height 0.25s linear;
 
   &.open {
@@ -34,6 +35,12 @@ $opened-scroll-container-height: calc(80vh - 48px - 240px); // Viewport - topbar
     overflow: auto;
     padding: 1rem;
     white-space: pre-wrap;
+  }
+
+  ix-copy-btn {
+    bottom: 8px;
+    position: absolute;
+    right: 12px;
   }
 }
 
