@@ -574,6 +574,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
       case 'ES24':
         this.chassis = new Es24();
         break;
+      case 'ES24N':
       case 'ES24F':
         this.chassis = new Es24F();
         break;
@@ -736,6 +737,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
       case 'ES24':
         extractedChassis = new Es24();
         break;
+      case 'ES24N':
       case 'ES24F':
         extractedChassis = new Es24F();
         break;
