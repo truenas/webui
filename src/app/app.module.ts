@@ -5,7 +5,7 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { NoPreloading, RouterModule } from '@angular/router';
+import { PreloadAllModules, RouterModule } from '@angular/router';
 import { FlexLayoutModule } from '@ngbracket/ngx-layout';
 import { EffectsModule } from '@ngrx/effects';
 import { StoreRouterConnectingModule } from '@ngrx/router-store';
@@ -79,7 +79,7 @@ import { RoutePartsService } from './services/route-parts/route-parts.service';
     }),
     RouterModule.forRoot(rootRouterConfig, {
       useHash: false,
-      preloadingStrategy: NoPreloading,
+      preloadingStrategy: PreloadAllModules,
       bindToComponentInputs: true,
     }),
     NgxPopperjsModule.forRoot({ appendTo: 'body', hideOnScroll: true }),
