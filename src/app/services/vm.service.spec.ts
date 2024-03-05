@@ -68,4 +68,9 @@ describe('VmService', () => {
     spectator.service.doPowerOff({ id: 1 } as VirtualMachine);
     expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('vm.poweroff', [1]);
   });
+
+  it('should call websocket to download vm logs', () => {
+    spectator.service.downloadLogs({ id: 1, name: 'test' } as VirtualMachine);
+    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('core.download', ['vm.log_file_download', [1], '1_test.log']);
+  });
 });
