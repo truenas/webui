@@ -96,7 +96,7 @@
             <h4 *ngIf="currentStartDate" class="legend-timestamp">
               <strong>{{ 'Start' | translate }}:</strong>
               <span class="font-normal">
-                <ng-container *ngIf="customZoom">{{ currentStartDate | formatDateTime:null }}</ng-container>
+                <ng-container *ngIf="customZoom">{{ currentStartDate | formatDateTime }}</ng-container>
                 <ng-container *ngIf="!customZoom">{{ currentStartDate | formatDateTime }}</ng-container>
               </span>
               <small>({{ timezone }})</small>
@@ -104,7 +104,7 @@
             <h4 *ngIf="currentEndDate" class="legend-timestamp">
               <strong>{{ 'End' | translate }}:</strong>
               <span class="font-normal">
-                <ng-container *ngIf="customZoom">{{ currentEndDate | formatDateTime:null }}</ng-container>
+                <ng-container *ngIf="customZoom">{{ currentEndDate | formatDateTime }}</ng-container>
                 <ng-container *ngIf="!customZoom">{{ currentEndDate | formatDateTime }}</ng-container>
               </span>
             </h4>

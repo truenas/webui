@@ -19,6 +19,7 @@ import {
   delay, distinctUntilChanged, filter, skipWhile, switchMap, throttleTime,
 } from 'rxjs/operators';
 import { toggleMenuDuration } from 'app/constants/toggle-menu-duration';
+import { FormatDateTimePipe } from 'app/core/pipes/format-datetime.pipe';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { ReportingGraphName } from 'app/enums/reporting.enum';
 import { WINDOW } from 'app/helpers/window.helper';
@@ -36,7 +37,6 @@ import {
 import { refreshInterval } from 'app/pages/reports-dashboard/reports.constants';
 import { ReportsService } from 'app/pages/reports-dashboard/reports.service';
 import { formatData } from 'app/pages/reports-dashboard/utils/report.utils';
-import { LocaleService } from 'app/services/locale.service';
 import { ThemeService } from 'app/services/theme/theme.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
@@ -130,9 +130,9 @@ export class ReportComponent extends WidgetComponent implements OnInit, OnChange
   constructor(
     public translate: TranslateService,
     private ws: WebSocketService,
-    protected localeService: LocaleService,
     private dialog: DialogService,
     private store$: Store<AppState>,
+    private formatDateTimePipe: FormatDateTimePipe,
     private themeService: ThemeService,
     @Inject(WINDOW) private window: Window,
     @Inject(DOCUMENT) private document: Document,
@@ -238,7 +238,7 @@ export class ReportComponent extends WidgetComponent implements OnInit, OnChange
   }
 
   formatTime(stamp: number): string {
-    const result = this.localeService.formatDateTimeWithNoTz(new Date(stamp));
+    const result = this.formatDateTimePipe.transform(new Date(stamp));
     return result.toLowerCase() !== 'invalid date' ? result : null;
   }
 

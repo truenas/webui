@@ -3,13 +3,10 @@ import {
 } from '@angular/core';
 import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
 import { Actions, ofType } from '@ngrx/effects';
-import { Store } from '@ngrx/store';
-import { format, utcToZonedTime } from 'date-fns-tz';
+import { format } from 'date-fns-tz';
 import { distinctUntilChanged } from 'rxjs';
 import { WINDOW } from 'app/helpers/window.helper';
-import { AppState } from 'app/store';
 import { localizationFormSubmitted } from 'app/store/preferences/preferences.actions';
-import { selectTimezone } from 'app/store/system-config/system-config.selectors';
 
 @UntilDestroy()
 @Pipe({
@@ -17,22 +14,15 @@ import { selectTimezone } from 'app/store/system-config/system-config.selectors'
   pure: false,
 })
 export class FormatDateTimePipe implements PipeTransform {
-  timezone: string;
   dateFormat = 'yyyy-MM-dd';
   timeFormat = 'HH:mm:ss';
 
   constructor(
-    private store$: Store<AppState>,
     private actions$: Actions,
     private cdr: ChangeDetectorRef,
     @Inject(WINDOW) private window: Window,
   ) {
-    this.store$.select(selectTimezone).pipe(untilDestroyed(this)).subscribe((timezone) => {
-      this.timezone = timezone;
-      this.cdr.markForCheck();
-      this.checkFormatsFromLocalStorage();
-    });
-
+    this.checkFormatsFromLocalStorage();
     this.actions$
       .pipe(
         ofType(localizationFormSubmitted),
@@ -63,33 +53,23 @@ export class FormatDateTimePipe implements PipeTransform {
     });
   }
 
-  transform(value: Date | number | string, timezone?: string, dateFormat?: string, timeFormat?: string): string {
+  transform(value: Date | number | string, dateFormat?: string, timeFormat?: string): string {
     if (dateFormat) {
       this.dateFormat = dateFormat;
     }
     if (timeFormat) {
       this.timeFormat = timeFormat;
     }
-    if (timezone) {
-      this.timezone = timezone;
-    }
     if (typeof value === 'string') {
-      return this.formatDateTime(Date.parse(value), this.timezone);
+      return this.formatDateTime(Date.parse(value));
     }
 
-    return this.formatDateTime(value, this.timezone);
+    return this.formatDateTime(value);
   }
 
-  formatDateTime(date: Date | number, tz?: string): string {
+  formatDateTime(date: Date | number): string {
     try {
-      let localDate = date;
-      if (tz !== null) {
-        if (tz) {
-          localDate = utcToZonedTime(date.valueOf(), tz);
-        } else if (this.timezone) {
-          localDate = utcToZonedTime(date.valueOf(), this.timezone);
-        }
-      }
+      const localDate = date;
 
       // Reason for below replacements: https://github.com/date-fns/date-fns/blob/master/docs/unicodeTokens.md
       if (this.dateFormat) {
