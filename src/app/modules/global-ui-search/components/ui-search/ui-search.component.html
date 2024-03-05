@@ -1,0 +1,25 @@
+<div class="search-box">
+  <ix-icon name="search" class="search-icon"></ix-icon>
+
+  <input
+    #searchInput
+    matInput
+    ixTest="ui-search"
+    class="search-input"
+    [placeholder]="'Search' | translate"
+    [formControl]="searchControl"
+    (keydown.enter)="onSearch()"
+  />
+
+  <span
+    *ngIf="searchControl.value"
+    class="reset-icon reset-input"
+    (click)="resetInput()"
+  >
+    <ix-icon
+      name="mdi-close-circle"
+      tabindex="0"
+      (keydown.enter)="$event.preventDefault(); resetInput()"
+    ></ix-icon>
+  </span>
+</div>

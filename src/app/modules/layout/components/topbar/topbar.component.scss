@@ -114,35 +114,3 @@
     margin-left: 0.5rem !important;
   }
 }
-
-.search-box {
-  margin-left: 21px;
-  position: relative;
-  width: 600px;
-
-  &:focus-within {
-    .search-input {
-      opacity: 1;
-    }
-
-    .icon {
-      opacity: 1;
-    }
-  }
-
-  .icon {
-    left: 6px;
-    opacity: 0.2;
-    position: absolute;
-    top: 25px;
-    z-index: 100;
-  }
-
-  .search-input {
-    opacity: 0.7;
-  }
-
-  ::ng-deep input {
-    padding-left: 30px;
-  }
-}

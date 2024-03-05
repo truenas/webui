@@ -2,22 +2,17 @@ import {
   ChangeDetectionStrategy, ChangeDetectorRef,
   Component, OnInit,
 } from '@angular/core';
-import { FormControl } from '@angular/forms';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { Subscription } from 'rxjs';
 import { JobState } from 'app/enums/job-state.enum';
-import { Role } from 'app/enums/role.enum';
 import { helptextTopbar } from 'app/helptext/topbar';
 import { AlertSlice, selectImportantUnreadAlertsCount } from 'app/modules/alerts/store/alert.selectors';
 import { UpdateDialogComponent } from 'app/modules/dialog/components/update-dialog/update-dialog.component';
 import { FeedbackDialogComponent } from 'app/modules/feedback/components/feedback-dialog/feedback-dialog.component';
 import { selectUpdateJob } from 'app/modules/jobs/store/job.selectors';
-import {
-  SearchResultsDemoComponent,
-} from 'app/modules/layout/components/topbar/search-results-demo/search-results-demo.component';
 import { topbarDialogPosition } from 'app/modules/layout/components/topbar/topbar-dialog-position.constant';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { ThemeService } from 'app/services/theme/theme.service';
@@ -34,8 +29,6 @@ import { alertIndicatorPressed, sidenavIndicatorPressed } from 'app/store/topbar
 export class TopbarComponent implements OnInit {
   updateIsDone: Subscription;
 
-  searchControl = new FormControl('');
-
   updateDialog: MatDialogRef<UpdateDialogComponent>;
   isFailoverLicensed = false;
   updateIsRunning = false;
@@ -44,8 +37,6 @@ export class TopbarComponent implements OnInit {
   tooltips = helptextTopbar.mat_tooltips;
 
   alertBadgeCount$ = this.store$.select(selectImportantUnreadAlertsCount);
-
-  protected readonly Role = Role;
 
   constructor(
     public themeService: ThemeService,
@@ -58,12 +49,6 @@ export class TopbarComponent implements OnInit {
     this.systemGeneralService.updateRunningNoticeSent.pipe(untilDestroyed(this)).subscribe(() => {
       this.updateNotificationSent = true;
       this.cdr.markForCheck();
-    });
-
-    this.searchControl.valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {
-      if (value === 'cloud') {
-        this.onSearch();
-      }
     });
   }
 
@@ -147,18 +132,5 @@ export class TopbarComponent implements OnInit {
 
   onFeedbackIndicatorPressed(): void {
     this.matDialog.open(FeedbackDialogComponent);
-  }
-
-  onSearch(): void {
-    // TODO: May be better to replace with cdk overlay.
-    this.matDialog.open(SearchResultsDemoComponent, {
-      hasBackdrop: true,
-      panelClass: ['topbar-panel', 'search-results-panel'],
-      position: {
-        top: '48px',
-        left: '307px',
-      },
-      backdropClass: ['search-results-backdrop', 'cdk-overlay-backdrop', 'cdk-overlay-dark-backdrop'],
-    });
   }
 }

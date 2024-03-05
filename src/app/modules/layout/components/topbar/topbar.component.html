@@ -12,15 +12,17 @@
       <ix-icon name="menu"></ix-icon>
     </button>
 
-    <div class="search-box">
+    <!-- <div class="search-box">
       <ix-icon name="search" class="icon"></ix-icon>
-      <!-- TODO: Likely better to use matInput in actual implementation -->
       <ix-input
         class="search-input"
         placeholder="Search"
         [formControl]="searchControl"
+        (change)="onSearch()"
       ></ix-input>
-    </div>
+    </div> -->
+
+    <ix-ui-search></ix-ui-search>
 
     <span fxFlex></span>
 

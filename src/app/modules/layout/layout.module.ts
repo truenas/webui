@@ -20,6 +20,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { CoreComponents } from 'app/core/core-components.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { AlertsModule } from 'app/modules/alerts/alerts.module';
+import { GlobalUiSearchModule } from 'app/modules/global-ui-search/global-ui-search.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { AdminLayoutComponent } from 'app/modules/layout/components/admin-layout/admin-layout.component';
@@ -42,9 +43,6 @@ import {
 import {
   ResilverProgressDialogComponent,
 } from 'app/modules/layout/components/topbar/resilvering-indicator/resilver-progress/resilver-progress.component';
-import {
-  SearchResultsDemoComponent,
-} from 'app/modules/layout/components/topbar/search-results-demo/search-results-demo.component';
 import { TopbarComponent } from 'app/modules/layout/components/topbar/topbar.component';
 import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
@@ -88,6 +86,7 @@ import { UserMenuComponent } from './components/topbar/user-menu/user-menu.compo
     MatTableModule,
     MatProgressSpinnerModule,
     MatInputModule,
+    GlobalUiSearchModule,
   ],
   declarations: [
     ChangePasswordDialogComponent,
@@ -112,7 +111,6 @@ import { UserMenuComponent } from './components/topbar/user-menu/user-menu.compo
     ConsolePanelDialogComponent,
     ResilverProgressDialogComponent,
     DirectoryServicesMonitorComponent,
-    SearchResultsDemoComponent,
   ],
   exports: [
     ChangePasswordDialogComponent,

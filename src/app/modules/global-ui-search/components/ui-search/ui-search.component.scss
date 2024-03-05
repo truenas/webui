@@ -1,0 +1,64 @@
+@import 'scss-imports/cssvars';
+
+.search-box {
+  background: var(--bg1);
+  border: solid 1.5px var(--lines);
+  border-radius: 2px;
+  display: flex;
+  flex-direction: row;
+  font-size: 12px;
+  margin-left: 21px;
+  position: relative;
+  width: 600px;
+
+  @media(max-width: $breakpoint-sm) {
+    width: 100%;
+  }
+
+  &:focus-within {
+    border-color: var(--primary);
+  }
+
+  &:focus-within {
+    .search-input {
+      opacity: 1;
+    }
+
+    .search-icon {
+      opacity: 1;
+    }
+  }
+
+  .search-icon {
+    left: 4px;
+    opacity: 0.2;
+    position: absolute;
+    top: 3px;
+    z-index: 100;
+  }
+
+  .search-input {
+    opacity: 0.7;
+  }
+
+  ::ng-deep input {
+    padding-left: 30px;
+  }
+
+  .reset-input {
+    align-items: center;
+    bottom: 0;
+    cursor: pointer;
+    display: flex;
+    opacity: 0.5;
+    padding: 5px;
+    position: absolute;
+    right: 0.3rem;
+    top: 0;
+    user-select: none;
+
+    ix-icon {
+      font-size: 18px;
+    }
+  }
+}

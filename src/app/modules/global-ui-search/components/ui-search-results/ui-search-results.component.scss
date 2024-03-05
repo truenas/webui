@@ -10,19 +10,9 @@
 
 :host {
   display: block;
+  max-height: 300px;
+  overflow: auto;
   padding: 14px 0 17px;
-}
-
-.section {
-  border-bottom: 1px solid var(--lines);
-  font-size: 18px;
-  margin: 32px 16px 10px 3px;
-  padding-bottom: 10px;
-  padding-left: 17px;
-
-  &:first-child {
-    margin-top: 0;
-  }
 }
 
 .search-result {
@@ -32,6 +22,11 @@
 
   &:hover {
     background-color: var(--bg1);
+  }
+
+  &:focus {
+    box-shadow: 0 0 0 1.5px var(--focus-brd) inset;
+    outline: none;
   }
 
   .title {
