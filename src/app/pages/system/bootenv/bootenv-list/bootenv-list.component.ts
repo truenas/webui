@@ -7,6 +7,7 @@ import {
   filter, map, of, switchMap,
 } from 'rxjs';
 import { BootEnvironmentAction } from 'app/enums/boot-environment-action.enum';
+import { BootEnvironmentActive } from 'app/enums/boot-environment-active.enum';
 import { Role } from 'app/enums/role.enum';
 import { helptextSystemBootenv } from 'app/helptext/system/boot-env';
 import { Bootenv } from 'app/interfaces/bootenv.interface';
@@ -31,6 +32,7 @@ import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 
+// TODO: Exclude AnythingUi when using ix-table2
 interface BootenvUi extends Bootenv {
   selected: boolean;
 }
@@ -76,11 +78,11 @@ export class BootEnvironmentListComponent implements OnInit {
       sortable: true,
       getValue: (row) => {
         switch (row.active) {
-          case 'N':
+          case BootEnvironmentActive.Now:
             return this.translate.instant('Now');
-          case 'R':
+          case BootEnvironmentActive.Reboot:
             return this.translate.instant('Reboot');
-          case 'NR':
+          case BootEnvironmentActive.NowReboot:
             return this.translate.instant('Now/Reboot');
           default:
             return row.active;
@@ -125,13 +127,6 @@ export class BootEnvironmentListComponent implements OnInit {
           onClick: (row) => this.doRename(row),
         },
         {
-          iconName: 'mdi-delete',
-          requiredRoles: this.requiredRoles,
-          tooltip: this.translate.instant('Delete'),
-          hidden: (row) => of(!['', '-'].includes(row.active)),
-          onClick: (row) => this.doDelete([row]),
-        },
-        {
           iconName: 'bookmark',
           requiredRoles: this.requiredRoles,
           tooltip: this.translate.instant('Keep'),
@@ -145,6 +140,13 @@ export class BootEnvironmentListComponent implements OnInit {
           hidden: (row) => of(!row.keep),
           onClick: (row) => this.toggleKeep(row),
         },
+        {
+          iconName: 'mdi-delete',
+          requiredRoles: this.requiredRoles,
+          tooltip: this.translate.instant('Delete'),
+          hidden: (row) => of(![BootEnvironmentActive.Dash, BootEnvironmentActive.Empty].includes(row.active)),
+          onClick: (row) => this.doDelete([row]),
+        },
       ],
       cssClass: 'actions-column',
     }),
@@ -157,7 +159,9 @@ export class BootEnvironmentListComponent implements OnInit {
   }
 
   get selectionHasItems(): boolean {
-    return this.selectedBootenvs.some((bootenv) => ['', '-'].includes(bootenv.active));
+    return this.selectedBootenvs.some(
+      (bootenv) => [BootEnvironmentActive.Dash, BootEnvironmentActive.Empty].includes(bootenv.active),
+    );
   }
 
   private bootenvs: BootenvUi[] = [];
@@ -236,7 +240,9 @@ export class BootEnvironmentListComponent implements OnInit {
   doDelete(bootenvs: BootenvUi[]): void {
     bootenvs.forEach((bootenv) => delete bootenv.selected);
     this.matDialog.open(BootPoolDeleteDialogComponent, {
-      data: bootenvs.filter((bootenv) => bootenv.active === '-' || bootenv.active === ''),
+      data: bootenvs.filter(
+        (bootenv) => [BootEnvironmentActive.Dash, BootEnvironmentActive.Empty].includes(bootenv.active),
+      ),
     }).afterClosed().pipe(
       filter(Boolean),
       untilDestroyed(this),
