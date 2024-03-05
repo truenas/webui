@@ -4,17 +4,18 @@ import {
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import { filter } from 'rxjs';
 import { officialCatalog } from 'app/constants/catalog.constants';
 import { Role } from 'app/enums/role.enum';
 import { helptextApps } from 'app/helptext/apps/apps';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { KubernetesSettingsComponent } from 'app/pages/apps/components/installed-apps/kubernetes-settings/kubernetes-settings.component';
 import { SelectPoolDialogComponent } from 'app/pages/apps/components/select-pool-dialog/select-pool-dialog.component';
 import { KubernetesStore } from 'app/pages/apps/store/kubernetes-store.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -29,6 +30,7 @@ export class AppSettingsButtonComponent {
   protected readonly requiredRoles = [Role.KubernetesWrite];
 
   constructor(
+    private ws: WebSocketService,
     private slideInService: IxSlideInService,
     private dialogService: DialogService,
     private matDialog: MatDialog,
@@ -53,30 +55,17 @@ export class AppSettingsButtonComponent {
       message: helptextApps.choosePool.unsetPool.confirm.message,
       hideCheckbox: true,
       buttonText: helptextApps.choosePool.unsetPool.confirm.button,
-    }).pipe(untilDestroyed(this)).subscribe((confirmed) => {
-      if (!confirmed) {
-        return;
-      }
-
-      const dialogRef = this.matDialog.open(EntityJobComponent, {
-        data: {
-          title: helptextApps.choosePool.jobTitle,
-        },
-        disableClose: true,
-      });
-      dialogRef.componentInstance.setCall('kubernetes.update', [{ pool: null }]);
-      dialogRef.componentInstance.submit();
-      dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
-        dialogRef.close();
-        this.kubernetesStore.updateSelectedPool(null);
-        this.snackbar.success(
-          this.translate.instant('Pool has been unset.'),
-        );
-      });
-      dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((error) => {
-        dialogRef.close();
-        this.errorHandler.showErrorModal(error);
-      });
+    }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
+      this.dialogService.jobDialog(
+        this.ws.job('kubernetes.update', [{ pool: null }]),
+        { title: helptextApps.choosePool.jobTitle },
+      )
+        .afterClosed()
+        .pipe(this.errorHandler.catchError(), untilDestroyed(this))
+        .subscribe(() => {
+          this.kubernetesStore.updateSelectedPool(null);
+          this.snackbar.success(this.translate.instant('Pool has been unset.'));
+        });
     });
   }
 }

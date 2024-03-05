@@ -1,4 +1,4 @@
-<ix-modal-header [title]="title" [loading]="isFormLoading"></ix-modal-header>
+<ix-modal-header [requiredRoles]="requiredRoles" [title]="title" [loading]="isFormLoading"></ix-modal-header>
 
 <mat-card>
   <mat-card-content>
@@ -64,7 +64,7 @@
 
       <ix-form-actions>
         <button
-          *ixRequiresRoles="[Role.AccountWrite]"
+          *ixRequiresRoles="requiredRoles"
           mat-button
           type="submit"
           color="primary"

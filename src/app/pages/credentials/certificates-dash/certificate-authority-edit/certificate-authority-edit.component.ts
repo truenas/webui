@@ -25,6 +25,8 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CertificateAuthorityEditComponent implements OnInit {
+  protected requiredRoles = [Role.FullAdmin];
+
   isLoading = false;
 
   form = this.formBuilder.group({
@@ -34,8 +36,6 @@ export class CertificateAuthorityEditComponent implements OnInit {
   certificateAuthority: CertificateAuthority;
 
   readonly helptext = helptextSystemCertificates;
-
-  protected readonly Role = Role;
 
   constructor(
     private ws: WebSocketService,

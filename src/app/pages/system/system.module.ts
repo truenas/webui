@@ -125,7 +125,10 @@ import { SysInfoComponent } from 'app/pages/system/general-settings/support/sys-
 import {
   UploadConfigDialogComponent,
 } from 'app/pages/system/general-settings/upload-config-dialog/upload-config-dialog.component';
-import { ManualUpdateFormComponent } from 'app/pages/system/update/manual-update-form/manual-update-form.component';
+import { ManualUpdateFormComponent } from 'app/pages/system/update/components/manual-update-form/manual-update-form.component';
+import { TrainCardComponent } from 'app/pages/system/update/components/train-card/train-card.component';
+import { TrainInfoCardComponent } from 'app/pages/system/update/components/train-info-card/train-info-card.component';
+import { UpdateActionsCardComponent } from 'app/pages/system/update/components/update-actions-card/update-actions-card.component';
 import { UpdateComponent } from 'app/pages/system/update/update.component';
 import { EnclosureModule } from 'app/pages/system/view-enclosure/enclosure.module';
 import { ConsoleCardComponent } from './advanced/console/console-card/console-card.component';
@@ -270,6 +273,9 @@ import { routing } from './system.routing';
     InitShutdownCardComponent,
     SysctlCardComponent,
     InitShutdownListComponent,
+    TrainCardComponent,
+    TrainInfoCardComponent,
+    UpdateActionsCardComponent,
   ],
   providers: [
     TranslateService,

@@ -37,6 +37,8 @@ export interface StorageSettings {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class StorageSettingsFormComponent implements OnInit {
+  protected requiredRoles = [Role.FullAdmin];
+
   isFormLoading = false;
 
   form = this.fb.group({
@@ -47,7 +49,7 @@ export class StorageSettingsFormComponent implements OnInit {
       this.ixValidator.withMessage(Validators.pattern('^[0-9]*$'), this.translate.instant('Only integers allowed')),
     ]],
   });
-  protected readonly Role = Role;
+
   readonly poolOptions$ = this.ws.call('systemdataset.pool_choices').pipe(choicesToOptions());
 
   private storageSettings: StorageSettings;

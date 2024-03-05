@@ -46,10 +46,10 @@ export class CsrAddComponent {
   // Importing
   @ViewChild(CsrImportComponent) import: CsrImportComponent;
 
+  protected requiredRoles = [Role.FullAdmin];
+
   isLoading = false;
   summary: SummarySection[];
-
-  protected readonly Role = Role;
 
   constructor(
     private ws: WebSocketService,

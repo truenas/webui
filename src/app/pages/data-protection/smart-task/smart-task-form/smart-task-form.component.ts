@@ -28,6 +28,8 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SmartTaskFormComponent implements OnInit {
+  readonly requiredRoles = [Role.FullAdmin];
+
   get isNew(): boolean {
     return !this.editingTest;
   }
@@ -49,8 +51,6 @@ export class SmartTaskFormComponent implements OnInit {
   isLoading = false;
 
   isAllDisksSelected$ = this.form.select((values) => values.all_disks);
-
-  readonly requiredRoles = [Role.FullAdmin];
 
   readonly tooltips = {
     disks: helptextSmart.smarttest_disks_tooltip,

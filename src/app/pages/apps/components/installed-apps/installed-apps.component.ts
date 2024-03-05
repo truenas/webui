@@ -14,8 +14,10 @@ import {
   ActivatedRoute, NavigationEnd, NavigationStart, Router,
 } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import {
+  Observable,
   combineLatest, filter,
 } from 'rxjs';
 import { ChartReleaseStatus } from 'app/enums/chart-release-status.enum';
@@ -30,8 +32,8 @@ import { CoreBulkResponse } from 'app/interfaces/core-bulk.interface';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { SortDirection } from 'app/modules/ix-table2/enums/sort-direction.enum';
+import { selectJob } from 'app/modules/jobs/store/job.selectors';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { AppBulkUpgradeComponent } from 'app/pages/apps/components/installed-apps/app-bulk-upgrade/app-bulk-upgrade.component';
 import { KubernetesSettingsComponent } from 'app/pages/apps/components/installed-apps/kubernetes-settings/kubernetes-settings.component';
@@ -41,6 +43,8 @@ import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.se
 import { KubernetesStore } from 'app/pages/apps/store/kubernetes-store.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { WebSocketService } from 'app/services/ws.service';
+import { AppState } from 'app/store';
 
 enum SortableField {
   Application = 'application',
@@ -137,6 +141,7 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
   protected readonly requiredRoles = [Role.AppsWrite];
 
   constructor(
+    private ws: WebSocketService,
     private appService: ApplicationsService,
     private cdr: ChangeDetectorRef,
     private activatedRoute: ActivatedRoute,
@@ -150,6 +155,7 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
     private slideInService: IxSlideInService,
     private breakpointObserver: BreakpointObserver,
     private errorHandler: ErrorHandlerService,
+    private store$: Store<AppState>,
     @Inject(WINDOW) private window: Window,
   ) {
     this.router.events
@@ -331,10 +337,12 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
     if (!this.appJobs.has(name)) {
       return;
     }
-
-    const dialogRef = this.matDialog.open(EntityJobComponent, { data: { title: name } });
-    dialogRef.componentInstance.jobId = this.appJobs.get(name).id;
-    dialogRef.componentInstance.wsshow();
+    // TODO: Improve type inheritance
+    const job$ = this.store$.select(selectJob(this.appJobs.get(name).id)) as Observable<Job<string>>;
+    this.dialogService.jobDialog(job$, { title: name, canMinimize: true })
+      .afterClosed()
+      .pipe(this.errorHandler.catchError(), untilDestroyed(this))
+      .subscribe();
   }
 
   onBulkStart(): void {
@@ -354,7 +362,9 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
       updateAll ? app.update_available || app.container_images_update_available : this.selection.isSelected(app.id)
     ));
     this.matDialog.open(AppBulkUpgradeComponent, { data: apps })
-      .afterClosed().pipe(untilDestroyed(this)).subscribe(() => {
+      .afterClosed()
+      .pipe(untilDestroyed(this))
+      .subscribe(() => {
         this.toggleAppsChecked(false);
       });
   }
@@ -365,39 +375,34 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
     this.dialogService.confirm({
       title: helptextApps.charts.delete_dialog.title,
       message: this.translate.instant('Delete {name}?', { name }),
-    }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
-      const dialogRef = this.matDialog.open(EntityJobComponent, {
-        data: {
-          title: helptextApps.charts.delete_dialog.job,
-        },
-      });
-      this.toggleAppsChecked(false);
-      dialogRef.componentInstance.setCall('core.bulk', ['chart.release.delete', checkedNames.map((item) => [item])]);
-      dialogRef.componentInstance.submit();
-      dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(
-        (job: Job<CoreBulkResponse[]>) => {
-          if (!this.dataSource.length) {
-            this.router.navigate(['/apps', 'installed'], { state: { hideMobileDetails: true } });
-          }
-          this.dialogService.closeAllDialogs();
-          let message = '';
-          job.result.forEach((item) => {
-            if (item.error !== null) {
-              message = message + '<li>' + item.error + '</li>';
+    })
+      .pipe(filter(Boolean), untilDestroyed(this))
+      .subscribe(() => {
+        this.dialogService.jobDialog(
+          this.ws.job('core.bulk', ['chart.release.delete', checkedNames.map((item) => [item])]),
+          { title: helptextApps.charts.delete_dialog.job },
+        )
+          .afterClosed()
+          .pipe(this.errorHandler.catchError(), untilDestroyed(this))
+          .subscribe((job: Job<CoreBulkResponse[]>) => {
+            if (!this.dataSource.length) {
+              this.router.navigate(['/apps', 'installed'], { state: { hideMobileDetails: true } });
+            }
+            this.dialogService.closeAllDialogs();
+            let message = '';
+            job.result.forEach((item) => {
+              if (item.error !== null) {
+                message = message + '<li>' + item.error + '</li>';
+              }
+            });
+
+            if (message !== '') {
+              message = '<ul>' + message + '</ul>';
+              this.dialogService.error({ title: helptextApps.bulkActions.title, message });
             }
           });
-
-          if (message !== '') {
-            message = '<ul>' + message + '</ul>';
-            this.dialogService.error({ title: helptextApps.bulkActions.title, message });
-          }
-        },
-      );
-      dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((error) => {
-        dialogRef.close();
-        this.errorHandler.showErrorModal(error);
+        this.toggleAppsChecked(false);
       });
-    });
   }
 
   getAppStatus(name: string): AppStatus {

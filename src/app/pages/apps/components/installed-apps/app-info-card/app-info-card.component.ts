@@ -14,7 +14,6 @@ import { UpgradeSummary } from 'app/interfaces/application.interface';
 import { ChartRelease } from 'app/interfaces/chart-release.interface';
 import { ChartUpgradeDialogConfig } from 'app/interfaces/chart-upgrade-dialog-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { AppRollbackModalComponent } from 'app/pages/apps/components/installed-apps/app-rollback-modal/app-rollback-modal.component';
 import { AppUpgradeDialogComponent } from 'app/pages/apps/components/installed-apps/app-upgrade-dialog/app-upgrade-dialog.component';
@@ -23,6 +22,7 @@ import { ApplicationsService } from 'app/pages/apps/services/applications.servic
 import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { RedirectService } from 'app/services/redirect.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -55,6 +55,7 @@ export class AppInfoCardComponent {
   protected readonly requiredRoles = [Role.AppsWrite];
 
   constructor(
+    private ws: WebSocketService,
     private loader: AppLoaderService,
     private redirect: RedirectService,
     private errorHandler: ErrorHandlerService,
@@ -90,7 +91,7 @@ export class AppInfoCardComponent {
       this.errorHandler.catchError(),
       untilDestroyed(this),
     ).subscribe((summary: UpgradeSummary) => {
-      const dialogRef = this.matDialog.open(AppUpgradeDialogComponent, {
+      this.matDialog.open(AppUpgradeDialogComponent, {
         width: '50vw',
         minWidth: '500px',
         maxWidth: '750px',
@@ -98,27 +99,18 @@ export class AppInfoCardComponent {
           appInfo: this.app,
           upgradeSummary: summary,
         } as ChartUpgradeDialogConfig,
-      });
-      dialogRef.afterClosed().pipe(
-        filter(Boolean),
-        untilDestroyed(this),
-      ).subscribe((version: string) => {
-        const jobDialogRef = this.matDialog.open(EntityJobComponent, {
-          data: {
-            title: helptextApps.charts.upgrade_dialog.job,
-          },
+      })
+        .afterClosed()
+        .pipe(filter(Boolean), untilDestroyed(this))
+        .subscribe((version: string) => {
+          this.dialogService.jobDialog(
+            this.ws.job('chart.release.upgrade', [name, { item_version: version }]),
+            { title: helptextApps.charts.upgrade_dialog.job },
+          )
+            .afterClosed()
+            .pipe(this.errorHandler.catchError(), untilDestroyed(this))
+            .subscribe();
         });
-        jobDialogRef.componentInstance.setCall('chart.release.upgrade', [name, { item_version: version }]);
-        jobDialogRef.componentInstance.submit();
-        jobDialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
-          this.dialogService.closeAllDialogs();
-        });
-        jobDialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((error) => {
-          this.dialogService.closeAllDialogs();
-          dialogRef.close();
-          this.errorHandler.showErrorModal(error);
-        });
-      });
     });
   }
 
@@ -138,29 +130,26 @@ export class AppInfoCardComponent {
   }
 
   executeDelete(name: string): void {
-    const dialogRef = this.matDialog.open(EntityJobComponent, {
-      data: {
-        title: helptextApps.charts.delete_dialog.job,
-      },
-    });
-    dialogRef.componentInstance.setCall('chart.release.delete', [name, { delete_unused_images: true }]);
-    dialogRef.componentInstance.submit();
-    dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
-      this.installedAppsStore.installedApps$.pipe(
-        map((apps) => !apps.length),
-        take(1),
+    this.dialogService.jobDialog(
+      this.ws.job('chart.release.delete', [name, { delete_unused_images: true }]),
+      { title: helptextApps.charts.delete_dialog.job },
+    )
+      .afterClosed()
+      .pipe(
+        filter(Boolean),
+        this.errorHandler.catchError(),
         untilDestroyed(this),
-      ).subscribe((noApps) => {
-        if (noApps) {
+      )
+      .subscribe(() => {
+        this.installedAppsStore.installedApps$.pipe(
+          map((apps) => !apps.length),
+          filter(Boolean),
+          take(1),
+          untilDestroyed(this),
+        ).subscribe(() => {
           this.router.navigate(['/apps', 'installed'], { state: { hideMobileDetails: true } });
-        }
-        this.dialogService.closeAllDialogs();
+        });
       });
-    });
-    dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((error) => {
-      dialogRef.close();
-      this.errorHandler.showErrorModal(error);
-    });
   }
 
   rollbackApp(): void {

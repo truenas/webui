@@ -50,6 +50,7 @@ export class UserFormComponent implements OnInit {
   isFormLoading = false;
   subscriptions: Subscription[] = [];
   homeModeOldValue = '';
+  protected requiredRoles = [Role.AccountWrite];
 
   get isNewUser(): boolean {
     return !this.editingUser;
@@ -162,8 +163,6 @@ export class UserFormComponent implements OnInit {
     }
     return '';
   }
-
-  protected readonly Role = Role;
 
   constructor(
     private ws: WebSocketService,

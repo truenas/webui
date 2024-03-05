@@ -22,6 +22,8 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PrivilegeFormComponent implements OnInit {
+  protected requiredRoles = [Role.FullAdmin];
+
   protected isLoading = false;
   protected localGroups: Group[] = [];
   protected dsGroups: Group[] = [];
@@ -83,8 +85,6 @@ export class PrivilegeFormComponent implements OnInit {
       }),
     );
   };
-
-  protected readonly Role = Role;
 
   constructor(
     private formBuilder: FormBuilder,

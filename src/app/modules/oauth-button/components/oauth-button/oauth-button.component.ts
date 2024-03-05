@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Inject, Input, Output,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Inject, Input, OnDestroy, Output,
 } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { WINDOW } from 'app/helpers/window.helper';
@@ -16,7 +16,7 @@ import { OauthProviderData } from 'app/pages/credentials/backup-credentials/clou
   styleUrls: ['./oauth-button.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class OauthButtonComponent {
+export class OauthButtonComponent implements OnDestroy {
   @Input() oauthType: OauthButtonType;
   @Input() isLoggedIn = false;
   @Input() disabled = false;
@@ -24,6 +24,11 @@ export class OauthButtonComponent {
   @Input() testId: string;
 
   @Output() loggedIn = new EventEmitter();
+
+  private readonly jiraAuthFn = (message: OauthJiraMessage): void => this.onLogInWithJiraSuccess(message);
+  private readonly gmailAuthFn = (message: OauthMessage<GmailOauthConfig>): void => {
+    this.onLogInWithGmailSuccess(message);
+  };
 
   get buttonText(): string {
     switch (this.oauthType) {
@@ -56,6 +61,11 @@ export class OauthButtonComponent {
     @Inject(WINDOW) private window: Window,
   ) {}
 
+  ngOnDestroy(): void {
+    this.window.removeEventListener('message', this.jiraAuthFn, false);
+    this.window.removeEventListener('message', this.gmailAuthFn, false);
+  }
+
   onOauthClicked(): void {
     switch (this.oauthType) {
       case OauthButtonType.Jira:
@@ -70,8 +80,7 @@ export class OauthButtonComponent {
   }
 
   onLoginWithJira(): void {
-    const authFn = (message: OauthJiraMessage): void => this.onLogInWithJiraSuccess(message);
-    this.doCommonOauthLoginLogic(authFn);
+    this.doCommonOauthLoginLogic(this.jiraAuthFn);
   }
 
   onLogInWithJiraSuccess(message: OauthJiraMessage): void {
@@ -84,8 +93,7 @@ export class OauthButtonComponent {
   }
 
   onLoginWithGmail(): void {
-    const authFn = (message: OauthMessage<GmailOauthConfig>): void => this.onLogInWithGmailSuccess(message);
-    this.doCommonOauthLoginLogic(authFn);
+    this.doCommonOauthLoginLogic(this.gmailAuthFn);
   }
 
   onLogInWithGmailSuccess(message: OauthMessage<GmailOauthConfig>): void {

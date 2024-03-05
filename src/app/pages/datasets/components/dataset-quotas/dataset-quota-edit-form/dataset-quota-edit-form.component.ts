@@ -30,6 +30,8 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DatasetQuotaEditFormComponent implements OnInit {
+  readonly requiredRoles = [Role.DatasetWrite];
+
   isFormLoading = false;
   private datasetQuota: DatasetQuota;
   private datasetId: string;
@@ -96,8 +98,6 @@ export class DatasetQuotaEditFormComponent implements OnInit {
     data_quota: [null as number],
     obj_quota: [null as number],
   });
-
-  protected readonly Role = Role;
 
   constructor(
     private formBuilder: FormBuilder,

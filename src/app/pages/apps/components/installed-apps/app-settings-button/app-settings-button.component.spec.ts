@@ -6,6 +6,7 @@ import { MatMenuHarness } from '@angular/material/menu/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { AppSettingsButtonComponent } from 'app/pages/apps/components/installed-apps/app-settings-button/app-settings-button.component';
 import { KubernetesSettingsComponent } from 'app/pages/apps/components/installed-apps/kubernetes-settings/kubernetes-settings.component';
@@ -13,6 +14,7 @@ import { SelectPoolDialogComponent } from 'app/pages/apps/components/select-pool
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { KubernetesStore } from 'app/pages/apps/store/kubernetes-store.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 describe('AppSettingsButtonComponent', () => {
   let spectator: Spectator<AppSettingsButtonComponent>;
@@ -27,6 +29,9 @@ describe('AppSettingsButtonComponent', () => {
       mockProvider(IxSlideInService),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
+        jobDialog: jest.fn(() => ({
+          afterClosed: () => of(null),
+        })),
       }),
       mockProvider(ApplicationsService, {
         getKubernetesConfig: jest.fn(() => of({})),
@@ -35,6 +40,9 @@ describe('AppSettingsButtonComponent', () => {
         selectedPool$: of('pool'),
       }),
       mockAuth(),
+      mockWebSocket([
+        mockJob('kubernetes.update'),
+      ]),
     ],
   });
 
@@ -71,5 +79,7 @@ describe('AppSettingsButtonComponent', () => {
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith(expect.objectContaining({
       message: 'Confirm to unset pool?',
     }));
+    expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
+    expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('kubernetes.update', [{ pool: null }]);
   });
 });

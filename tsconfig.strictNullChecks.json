@@ -742,7 +742,6 @@
     "./src/app/pages/system/general-settings/support/license-info-in-support.interface.ts",
     "./src/app/pages/system/general-settings/support/sys-info/sys-info.component.ts",
     "./src/app/pages/system/general-settings/support/system-info-in-support.interface.ts",
-    "./src/app/pages/system/update/update-again-code.constant.ts",
     "./src/app/pages/system/view-enclosure/classes/drivetray.ts",
     "./src/app/pages/system/view-enclosure/components/disk-component/disk.component.ts",
     "./src/app/pages/system/view-enclosure/components/tab-content/tab-content.component.ts",

@@ -1,25 +1,27 @@
+import { SelectionModel } from '@angular/cdk/collections';
 import {
-  Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, ViewChild, AfterViewInit,
+  Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { MatSort, Sort } from '@angular/material/sort';
-import { MatTableDataSource } from '@angular/material/table';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { combineLatest, Observable, of } from 'rxjs';
-import {
-  delay, filter, map, switchMap,
-} from 'rxjs/operators';
-import { EmptyType } from 'app/enums/empty-type.enum';
+import { TranslateService } from '@ngx-translate/core';
+import { of } from 'rxjs';
+import { filter, tap } from 'rxjs/operators';
 import { Role } from 'app/enums/role.enum';
 import { ContainerImage } from 'app/interfaces/container-image.interface';
+import { IxFileSizePipe } from 'app/modules/ix-file-size/ix-file-size.pipe';
 import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
-import { IxCheckboxColumnComponent } from 'app/modules/ix-tables/components/ix-checkbox-column/ix-checkbox-column.component';
+import { AsyncDataProvider } from 'app/modules/ix-table2/classes/async-data-provider/async-data-provider';
+import { actionsColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
+import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
+import { yesNoColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-yesno/ix-cell-yesno.component';
+import { createTable } from 'app/modules/ix-table2/utils';
 import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
 import { DockerImageDeleteDialogComponent } from 'app/pages/apps/components/docker-images/docker-image-delete-dialog/docker-image-delete-dialog.component';
 import { DockerImageUpdateDialogComponent } from 'app/pages/apps/components/docker-images/docker-image-update-dialog/docker-image-update-dialog.component';
-import { DockerImagesComponentStore } from 'app/pages/apps/components/docker-images/docker-images.store';
 import { PullImageFormComponent } from 'app/pages/apps/components/docker-images/pull-image-form/pull-image-form.component';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -27,141 +29,109 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
   templateUrl: './docker-images-list.component.html',
   styleUrls: ['./docker-images-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  providers: [IxFileSizePipe],
 })
-export class DockerImagesListComponent implements OnInit, AfterViewInit {
-  dataSource = new MatTableDataSource<ContainerImage>([]);
-
-  displayedColumns = ['select', 'id', 'repo_tags', 'size', 'update', 'actions'];
-
-  @ViewChild(MatSort, { static: false }) sort: MatSort;
-  @ViewChild(IxCheckboxColumnComponent, { static: false }) checkboxColumn: IxCheckboxColumnComponent<ContainerImage>;
-
-  defaultSort: Sort = { active: 'repo_tags', direction: 'desc' };
-  filterString = '';
-
-  readonly EmptyType = EmptyType;
-  isLoading$ = this.store.isLoading$;
-  emptyType$: Observable<EmptyType> = combineLatest([
-    this.isLoading$,
-    this.store.isError$,
-    this.store.entities$.pipe(
-      map((images) => images.length === 0),
-    ),
-  ]).pipe(
-    switchMap(([isLoading, isError, isNoData]) => {
-      if (isLoading) {
-        return of(EmptyType.Loading);
-      }
-      if (isError) {
-        return of(EmptyType.Errors);
-      }
-      if (isNoData) {
-        return of(EmptyType.NoPageData);
-      }
-      return of(EmptyType.NoSearchResults);
-    }),
-  );
-
+export class DockerImagesListComponent implements OnInit {
   protected readonly requiredRoles = [Role.AppsWrite];
+  dataProvider: AsyncDataProvider<ContainerImage>;
+  containerImages: ContainerImage[] = [];
+  selection = new SelectionModel<ContainerImage>(true, []);
+  filterString = '';
+  columns = createTable<ContainerImage>([
+    textColumn({
+      title: this.translate.instant('Image ID'),
+      propertyName: 'id',
+      sortable: true,
+    }),
+    textColumn({
+      title: this.translate.instant('Tags'),
+      propertyName: 'repo_tags',
+      sortable: true,
+      getValue: (row) => row.repo_tags.join(', '),
+    }),
+    textColumn({
+      title: this.translate.instant('Image Size'),
+      propertyName: 'size',
+      sortable: true,
+      getValue: (row) => {
+        return row.size
+          ? this.fileSizePipe.transform(row.size)
+          : this.translate.instant('Unknown');
+      },
+    }),
+    yesNoColumn({
+      title: this.translate.instant('Update available'),
+      propertyName: 'update_available',
+      sortBy: (row) => (row.update_available ? 1 : 0),
+      sortable: true,
+    }),
+    actionsColumn({
+      actions: [
+        {
+          iconName: 'update',
+          tooltip: this.translate.instant('Update'),
+          requiredRoles: this.requiredRoles,
+          onClick: (row) => this.doUpdate([row]),
+          hidden: (row) => of(!row.update_available),
+        },
+        {
+          iconName: 'delete',
+          tooltip: this.translate.instant('Delete'),
+          requiredRoles: this.requiredRoles,
+          onClick: (row) => this.doDelete([row]),
+        },
+      ],
 
-  get selectionHasUpdates(): boolean {
-    return this.checkboxColumn.selection.selected.some((image) => image.update_available);
-  }
-
-  get emptyConfigService(): EmptyService {
-    return this.emptyService;
-  }
+    }),
+  ], {
+    rowTestId: (row) => 'container-image-' + row.id,
+  });
 
   constructor(
+    public emptyService: EmptyService,
     public formatter: IxFormatterService,
+    private ws: WebSocketService,
     private cdr: ChangeDetectorRef,
     private matDialog: MatDialog,
     private slideInService: IxSlideInService,
-    private store: DockerImagesComponentStore,
-    private emptyService: EmptyService,
+    private translate: TranslateService,
+    private fileSizePipe: IxFileSizePipe,
   ) {
   }
 
   ngOnInit(): void {
-    this.store.loadEntities();
-    this.getDockerImages();
-  }
-
-  ngAfterViewInit(): void {
-    this.dataSource.sort = this.sort;
-  }
-
-  onSearch(query: string): void {
-    this.dataSource.filter = query;
+    const containerImages$ = this.ws.call('container.image.query').pipe(
+      tap((images) => this.containerImages = images),
+    );
+    this.dataProvider = new AsyncDataProvider(containerImages$);
+    this.dataProvider.load();
   }
 
   doAdd(): void {
-    this.slideInService.open(PullImageFormComponent);
+    const slideInRef = this.slideInService.open(PullImageFormComponent);
+    slideInRef.slideInClosed$
+      .pipe(filter(Boolean), untilDestroyed(this))
+      .subscribe(() => this.dataProvider.load());
   }
 
   doDelete(images: ContainerImage[]): void {
-    this.matDialog.open(DockerImageDeleteDialogComponent, {
-      data: images,
-    }).afterClosed().pipe(
-      filter(Boolean),
-      delay(50),
-      untilDestroyed(this),
-    ).subscribe(() => {
-      this.checkboxColumn.clearSelection();
-      this.cdr.markForCheck();
-    });
+    this.matDialog.open(DockerImageDeleteDialogComponent, { data: images })
+      .afterClosed()
+      .pipe(filter(Boolean), untilDestroyed(this))
+      .subscribe(() => this.dataProvider.load());
   }
 
   doUpdate(images: ContainerImage[]): void {
-    this.matDialog.open(DockerImageUpdateDialogComponent, {
-      data: images,
-    })
+    this.matDialog.open(DockerImageUpdateDialogComponent, { data: images })
       .afterClosed()
-      .pipe(
-        filter(Boolean),
-        delay(50),
-        untilDestroyed(this),
-      ).subscribe(() => {
-        this.checkboxColumn.clearSelection();
-        this.cdr.markForCheck();
-      });
+      .pipe(filter(Boolean), untilDestroyed(this))
+      .subscribe(() => this.dataProvider.load());
   }
 
-  private createDataSource(images: ContainerImage[] = []): void {
-    this.dataSource = new MatTableDataSource(images);
-    this.dataSource.sort = this.sort;
-    this.dataSource.filter = this.filterString;
-    this.dataSource.sortingDataAccessor = (item, property) => {
-      switch (property) {
-        case 'id':
-          return item.id;
-        case 'repo_tags':
-          return item.repo_tags.join();
-        case 'size':
-          return item.size;
-        case 'update':
-          return item.update_available ? 1 : 0;
-        case 'created':
-          return item.created?.$date ? item.created.$date.toString() : '';
-        default:
-          return undefined;
-      }
-    };
-    this.store.patchState({ isLoading: false });
-    this.cdr.markForCheck();
-  }
-
-  private getDockerImages(): void {
-    this.store.patchState({ isLoading: true });
-    this.store.entities$.pipe(
-      untilDestroyed(this),
-    ).subscribe({
-      next: (images) => {
-        this.createDataSource(images);
-      },
-      error: () => {
-        this.createDataSource();
-      },
-    });
+  protected onListFiltered(query: string): void {
+    const filterString = query.toLowerCase();
+    this.dataProvider.setRows(this.containerImages.filter((image) => {
+      return image.repo_tags.join(', ').includes(filterString);
+    }));
   }
 }

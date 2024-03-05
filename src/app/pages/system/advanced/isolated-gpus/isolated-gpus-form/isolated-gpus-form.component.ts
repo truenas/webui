@@ -23,6 +23,8 @@ import { waitForAdvancedConfig } from 'app/store/system-config/system-config.sel
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class IsolatedGpusFormComponent implements OnInit {
+  protected requiredRoles = [Role.FullAdmin];
+
   isFormLoading = false;
 
   formGroup = new FormGroup({
@@ -31,7 +33,6 @@ export class IsolatedGpusFormComponent implements OnInit {
     }),
   });
   readonly options$ = this.gpuService.getGpuOptions();
-  protected readonly Role = Role;
 
   constructor(
     protected ws: WebSocketService,

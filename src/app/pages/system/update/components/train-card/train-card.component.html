@@ -1,0 +1,78 @@
+<mat-card class="train-card">
+  <mat-spinner
+    *ngIf="updateService.isLoading$ | async"
+    class="update-spinner"
+    [diameter]="40"
+  >
+  </mat-spinner>
+  <form class="ix-form-container" [formGroup]="form">
+    <div class="train-card-row">
+      <ix-checkbox
+        *ixRequiresRoles="requiresRoles"
+        formControlName="auto_check"
+        [label]="'Check for Updates Daily and Download if Available' | translate"
+        [tooltip]="'Check the update server daily for any updates on the chosen train. Automatically download an update if one is available. Click <i>APPLY PENDING UPDATE</i> to install the downloaded update.' | translate"
+      ></ix-checkbox>
+    </div>
+    <div
+      *ngIf="trains.length > 1; else trainName"
+      class="train-card-row train-select-row"
+    >
+      <ix-select
+        formControlName="train"
+        [label]="'Train' | translate"
+        [options]="trains$"
+        [required]="true"
+      ></ix-select>
+      <button
+        *ixRequiresRoles="requiresRoles"
+        mat-mini-fab
+        color="primary"
+        class="refresh-button"
+        matTooltip="Refresh"
+        ixTest="refresh"
+        (click)="trainService.check()"
+      >
+        <ix-icon name="refresh"></ix-icon>
+      </button>
+    </div>
+    <ng-template #trainName>
+      <div class="train-card-row train-select-row">
+        <div class="single-train-name">
+          {{ 'Current Train:' | translate }} {{ trainService.trainValue$ | async }}
+          <span *ngIf="singleDescription">- {{ singleDescription }}</span>
+        </div>
+        <button
+          mat-mini-fab
+          color="primary"
+          class="single-train-refresh-button"
+          ixTest="refresh"
+          [matTooltip]="'Refresh' | translate"
+          [disabled]="!checkable || isUpdateRunning"
+          (click)="trainService.check()"
+        >
+          <ix-icon name="refresh"></ix-icon>
+        </button>
+      </div>
+    </ng-template>
+
+    <p
+      class="click-for-information"
+      [innerHtml]="clickForInformationLink | translate"
+    ></p>
+  </form>
+  <div class="train-card-row">
+    <div *ngIf="(updateService.status$ | async) === SystemUpdateStatus.RebootRequired">
+      {{ 'An update is already applied. Please reboot the system.' | translate }}
+    </div>
+
+    <div *ngIf="(updateService.status$ | async) === SystemUpdateStatus.Unavailable">
+      {{ 'No updates available.' | translate }}
+    </div>
+  </div>
+  <div class="train-card-row">
+    <div *ngIf="updateService.error$ | async">
+      {{ updateService.error$ | async }}
+    </div>
+  </div>
+</mat-card>
