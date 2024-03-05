@@ -1,7 +1,7 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
-import { UiSearchElements } from 'app/interfaces/ui-searchable-element.interface';
+import { UiSearchableElement } from 'app/interfaces/ui-searchable-element.interface';
 
-export const elements: UiSearchElements = {
+export const elements: Record<string, UiSearchableElement> = {
   importPool: {
     hierarchy: [T('Storage'), T('Import Pool')],
     synonyms: [T('Add Pool')],

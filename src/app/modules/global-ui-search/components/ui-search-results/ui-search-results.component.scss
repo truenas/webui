@@ -1,40 +1,49 @@
-::ng-deep {
-  .search-results-backdrop {
-    top: 48px;
-  }
-
-  .search-results-panel {
-    width: 600px;
-  }
-}
-
 :host {
   display: block;
   max-height: 300px;
   overflow: auto;
   padding: 14px 0 17px;
+
+  &::ng-deep {
+    .last {
+      color: var(--fg1);
+    }
+
+    .highlight {
+      color: var(--primary);
+    }
+  }
 }
 
-.search-result {
-  cursor: pointer;
-  font-size: 13px;
-  padding: 10px 20px 11px;
+.search-results-card {
+  border-radius: 2px;
+  margin: 0;
+  overflow: auto;
 
-  &:hover {
-    background-color: var(--bg1);
-  }
+  .search-result {
+    border-radius: 2px;
+    cursor: pointer;
+    font-size: 13px;
+    padding: 10px 10px 0;
 
-  &:focus {
-    box-shadow: 0 0 0 1.5px var(--focus-brd) inset;
-    outline: none;
-  }
+    &:hover {
+      background-color: var(--bg1);
+    }
 
-  .title {
-    color: var(--alt-fg1);
-    font-size: 16px;
+    &:focus {
+      box-shadow: 0 0 0 1.5px var(--focus-brd) inset;
+      outline: none;
+    }
 
-    .highlighted {
-      color: var(--fg1);
+    .title {
+      -webkit-box-orient: vertical;
+      color: var(--alt-fg1);
+      display: inline-box;
+      font-size: 16px;
+      -webkit-line-clamp: 2;
+      overflow: hidden;
+      white-space: normal;
+      word-break: break-word;
     }
   }
 }

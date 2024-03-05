@@ -8,7 +8,6 @@
     class="search-input"
     [placeholder]="'Search' | translate"
     [formControl]="searchControl"
-    (keydown.enter)="onSearch()"
   />
 
   <span
@@ -23,3 +22,18 @@
     ></ix-icon>
   </span>
 </div>
+
+<div
+  *ngIf="searchResults?.length && searchControl.value"
+  class="backdrop"
+  @fadeIn
+  (click)="resetInput()"
+></div>
+
+<ix-ui-search-results
+  *ngIf="searchResults?.length && searchControl.value"
+  @fadeIn
+  [searchTerm]="searchControl.value"
+  [results]="searchResults"
+  (selected)="resetInput()"
+></ix-ui-search-results>

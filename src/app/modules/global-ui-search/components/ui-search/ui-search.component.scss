@@ -1,5 +1,28 @@
 @import 'scss-imports/cssvars';
 
+:host {
+  margin-left: 21px;
+  position: relative;
+  width: 100%;
+
+  @media(max-width: $breakpoint-sm) {
+    margin-left: 6px;
+    width: 115vw;
+  }
+}
+
+ix-ui-search-results {
+  max-width: 600px;
+  position: absolute;
+  top: 33px;
+  width: 100%;
+
+  @media(max-width: $breakpoint-sm) {
+    left: 0;
+    position: fixed;
+  }
+}
+
 .search-box {
   background: var(--bg1);
   border: solid 1.5px var(--lines);
@@ -7,13 +30,9 @@
   display: flex;
   flex-direction: row;
   font-size: 12px;
-  margin-left: 21px;
+  max-width: 600px;
   position: relative;
-  width: 600px;
-
-  @media(max-width: $breakpoint-sm) {
-    width: 100%;
-  }
+  width: 100%;
 
   &:focus-within {
     border-color: var(--primary);
@@ -39,6 +58,7 @@
 
   .search-input {
     opacity: 0.7;
+    padding-right: 30px;
   }
 
   ::ng-deep input {
@@ -50,6 +70,7 @@
     bottom: 0;
     cursor: pointer;
     display: flex;
+    line-height: initial;
     opacity: 0.5;
     padding: 5px;
     position: absolute;
@@ -59,6 +80,22 @@
 
     ix-icon {
       font-size: 18px;
+
+      &:focus-visible {
+        border-radius: 50%;
+        outline: 1.5px solid var(--primary);
+      }
     }
   }
+}
+
+.backdrop {
+  background-color: rgba(0, 0, 0, 0.32);
+  bottom: 0;
+  left: -50%;
+  position: fixed;
+  right: 0;
+  top: 0;
+  transition: 0.3s ease all;
+  z-index: -1;
 }

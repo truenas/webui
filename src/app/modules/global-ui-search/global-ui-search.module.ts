@@ -1,6 +1,8 @@
+import { OverlayModule } from '@angular/cdk/overlay';
 import { CommonModule, NgIf } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
+import { MatCardModule } from '@angular/material/card';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatInputModule } from '@angular/material/input';
 import { TranslateModule } from '@ngx-translate/core';
@@ -25,7 +27,9 @@ import { UiSearchResultsComponent } from './components/ui-search-results/ui-sear
     MatDialogModule,
     ReactiveFormsModule,
     IxFormsModule,
+    MatCardModule,
+    OverlayModule,
   ],
-  exports: [UiSearchComponent, UiSearchResultsComponent],
+  exports: [UiSearchComponent],
 })
 export class GlobalUiSearchModule { }

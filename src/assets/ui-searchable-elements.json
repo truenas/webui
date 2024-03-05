@@ -48,9 +48,7 @@
     "synonyms": [
       "Translate App"
     ],
-    "requiredRoles": [
-      "FULL_ADMIN"
-    ],
+    "requiredRoles": [],
     "routerLink": null,
     "anchorRouterLink": [
       "/system",

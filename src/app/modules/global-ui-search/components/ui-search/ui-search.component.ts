@@ -1,10 +1,19 @@
 import {
-  AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, OnInit, ViewChild,
+  animate, style, transition, trigger,
+} from '@angular/animations';
+import {
+  AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild,
 } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialogRef } from '@angular/material/dialog';
+import { NavigationStart, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import {
+  debounceTime, filter, startWith, switchMap,
+} from 'rxjs';
+import { UiSearchableElement } from 'app/interfaces/ui-searchable-element.interface';
 import { UiSearchResultsComponent } from 'app/modules/global-ui-search/components/ui-search-results/ui-search-results.component';
+import { UiSearchProviderService } from 'app/modules/global-ui-search/services/ui-search.service';
 
 @UntilDestroy()
 @Component({
@@ -12,47 +21,61 @@ import { UiSearchResultsComponent } from 'app/modules/global-ui-search/component
   templateUrl: './ui-search.component.html',
   styleUrls: ['./ui-search.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  animations: [
+    trigger('fadeIn', [
+      transition(':enter', [
+        style({ opacity: 0 }),
+        animate('250ms ease-out', style({ opacity: 1 })),
+      ]),
+    ]),
+  ],
 })
 export class UiSearchComponent implements OnInit, AfterViewInit {
   @ViewChild('searchInput') searchInput: ElementRef<HTMLInputElement>;
 
   searchControl = new FormControl('');
+  dialogRef: MatDialogRef<UiSearchResultsComponent>;
+  searchResults: UiSearchableElement[];
 
-  constructor(private matDialog: MatDialog) {}
+  constructor(
+    private searchProvider: UiSearchProviderService,
+    private cdr: ChangeDetectorRef,
+    private router: Router,
+  ) {}
 
   ngOnInit(): void {
-    this.searchControl.valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {
-      if (value === 'cloud') {
-        this.onSearch();
-      }
-    });
+    this.listenForSearchChanges();
+    this.listenForRouteChanges();
   }
 
   ngAfterViewInit(): void {
     this.focusInput();
   }
 
-  onSearch(): void {
-    // TODO: May be better to replace with cdk overlay.
-    this.matDialog.open(UiSearchResultsComponent, {
-      hasBackdrop: true,
-      panelClass: ['topbar-panel', 'search-results-panel'],
-      position: {
-        top: '48px',
-        left: '307px',
-      },
-      backdropClass: ['search-results-backdrop', 'cdk-overlay-backdrop', 'cdk-overlay-dark-backdrop'],
-    });
-  }
-
-  protected resetInput(): void {
+  resetInput(): void {
     this.searchControl.reset();
-    this.focusInput();
   }
 
   private focusInput(): void {
     this.searchInput.nativeElement.focus();
+  }
 
-    // this.searchInput.nativeElement.inputElementRef.nativeElement.focus();
+  private listenForSearchChanges(): void {
+    this.searchControl.valueChanges.pipe(
+      startWith(''),
+      debounceTime(150),
+      switchMap((term) => this.searchProvider.search(term)),
+      untilDestroyed(this),
+    ).subscribe((searchResults) => {
+      this.searchResults = searchResults;
+      this.cdr.markForCheck();
+    });
+  }
+
+  private listenForRouteChanges(): void {
+    this.router.events
+      .pipe(filter((event) => event instanceof NavigationStart), untilDestroyed(this)).subscribe(() => {
+        this.resetInput();
+      });
   }
 }

@@ -6,8 +6,6 @@ export interface UiSearchableElement {
   anchor: string;
   triggerAnchor?: string;
   synonyms?: string[];
-  requiredRoles?: Role[] | string[];
+  requiredRoles?: Role[];
   routerLink?: string[];
 }
-
-export type UiSearchElements = Record<string, UiSearchableElement>;

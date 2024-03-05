@@ -1,3 +1,15 @@
-<div class="search-result" tabindex="0">
-  <h3 class="title">Data Protection → <span class="highlighted">Cloud Sync Tasks</span></h3>
-</div>
+<mat-card class="search-results-card">
+  <ng-container *ngFor="let result of mappedResults">
+    <div
+      class="search-result"
+      tabindex="0"
+      (click)="navigateToResult(result)"
+      (keydown.enter)="navigateToResult(result)"
+    >
+      <h3
+        class="title"
+        [innerHTML]="processHierarchy(result.hierarchy, searchTerm)"
+      ></h3>
+    </div>
+  </ng-container>
+</mat-card>
