@@ -1,3 +1,4 @@
+import { CdkTreeNodePadding } from '@angular/cdk/tree';
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -87,6 +88,7 @@ import { DatasetNodeComponent } from './components/dataset-node/dataset-node.com
     TestIdModule,
     EmptyComponent,
     SearchInput1Component,
+    CdkTreeNodePadding,
   ],
   declarations: [
     DatasetsManagementComponent,

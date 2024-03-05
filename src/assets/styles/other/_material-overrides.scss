@@ -115,12 +115,18 @@ html .ix-dark {
   --mat-toolbar-title-text-tracking: normal;
   --mdc-outlined-button-label-text-color: var(--fg2);
 
+  --mat-autocomplete-background-color: transparent;
+
   .mat-mdc-slide-toggle,
   .mat-mdc-checkbox {
     --mdc-form-field-label-text-color: var(--fg1);
     --mdc-form-field-label-text-tracking: normal;
     --mdc-form-field-label-text-size: inherit;
     --mdc-form-field-label-text-font: var(--font-family-body2);
+  }
+
+  .mat-mdc-slide-toggle {
+    --mdc-form-field-label-text-color: var(--fg2);
   }
 
   .mat-mdc-checkbox {
@@ -143,6 +149,7 @@ html .ix-dark {
       --mdc-checkbox-unselected-hover-state-layer-color: var(--primary);
       --mdc-checkbox-disabled-selected-icon-color: #9c9c9c;
       --mdc-checkbox-disabled-unselected-icon-color: #9c9c9c;
+      --mdc-checkbox-unselected-focus-icon-color: var(--fg2);
     }
   }
 
@@ -168,7 +175,7 @@ html .ix-dark {
   }
 
   .mat-mdc-chip-input {
-    padding: 6px 0;
+    padding: 0;
   }
 
   .mat-mdc-chip.mat-mdc-standard-chip {
@@ -191,5 +198,9 @@ html .ix-dark {
 
   .mat-mdc-tab-link {
     --mat-tab-header-label-text-tracking: normal;
+  }
+
+  .mat-mdc-standard-chip {
+    --mdc-chip-label-text-weight: 600;
   }
 }
