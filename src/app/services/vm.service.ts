@@ -88,11 +88,9 @@ export class VmService {
   }
 
   downloadLogs(vm: VirtualMachine): Observable<Blob> {
-    const path = `/var/log/libvirt/qemu/${vm.id}_${vm.name}.log`;
     const filename = `${vm.id}_${vm.name}.log`;
-    const mimetype = 'text/plain';
-    return this.ws.call('core.download', ['filesystem.get', [path], filename]).pipe(
-      switchMap(([, url]) => this.storageService.downloadUrl(url, filename, mimetype)),
+    return this.ws.call('core.download', ['vm.log_file_download', [vm.id], filename]).pipe(
+      switchMap(([, url]) => this.storageService.downloadUrl(url, filename, 'text/plain')),
     );
   }
 
