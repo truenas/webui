@@ -743,7 +743,6 @@
   "Builtin": "内置",
   "Bulk Actions": "批量操作",
   "Bulk Edit Disks": "批量编辑磁盘",
-  "Bulk Operations": "批量操作",
   "Bulk actions": "批量操作",
   "Burst": "突发",
   "By clicking the share creation checkbox below, a new share will be created on form submission with the default share settings Additionally, local TrueNAS users will have access to the resulting share and some more configuration options will be available.": "通过单击下面的共享创建复选框，将在提交表单时使用默认共享设置创建一个新共享。此外，本地 TrueNAS 用户将有权访问生成的共享，并且将提供更多配置选项。",

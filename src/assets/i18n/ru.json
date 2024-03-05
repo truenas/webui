@@ -288,7 +288,6 @@
   "Builtin": "",
   "Bulk Actions": "",
   "Bulk Edit Disks": "",
-  "Bulk Operations": "",
   "Burst": "",
   "By clicking the share creation checkbox below, a new share will be created on form submission with the default share settings Additionally, local TrueNAS users will have access to the resulting share and some more configuration options will be available.": "",
   "By default, all data disks are created with the amount of swap specified. Changing the value does not affect the amount of swap on existing disks, only disks added after the change. Does not affect log or cache devices as they are created without swap.": "",

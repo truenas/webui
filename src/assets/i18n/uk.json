@@ -1262,7 +1262,6 @@
   "Builtin": "Побудований",
   "Bulk Actions": "Масові дії",
   "Bulk Edit Disks": "Масове редагування дисків",
-  "Bulk Operations": "Масові операції",
   "Bulk actions": "Масові дії",
   "Burst": "Вибух",
   "By default, Samba uses a hashing algorithm for NTFS illegal  characters. Enabling this option translates NTFS illegal characters to the Unicode private range.": "Samba використовує алгоритм хешування неприпустимих символів NTFS. Увімкнення цієї опції переводить неприпустимі символи NTFS у закритий діапазон Unicode.",
