@@ -1,0 +1,70 @@
+.train-card {
+  padding: 15px 20px 20px;
+}
+
+.train-card-row {
+  margin-bottom: 10px;
+}
+
+.click-for-information {
+  font-size: 0.75rem;
+  margin-bottom: 12px;
+  margin-top: 5px;
+
+  &::ng-deep a {
+    text-decoration: underline;
+  }
+}
+
+.update-spinner {
+  bottom: 0;
+  left: 0;
+  margin: 0 auto;
+  position: absolute;
+  right: 0;
+  top: 30px;
+  z-index: 10;
+}
+
+.single-train-name {
+  display: inline-block;
+}
+
+.train-select-row {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+
+  ix-select {
+    width: 100%;
+  }
+}
+
+.refresh-button,
+.single-train-refresh-button {
+  margin-left: 20px;
+}
+
+.single-train-refresh-button {
+  float: right;
+  margin-top: -12px;
+  vertical-align: top;
+}
+
+mat-card {
+  margin: 0 auto 15px;
+  max-width: 960px;
+  padding: 20px !important;
+}
+
+@media screen and (max-width: 1270px) {
+  .single-train-name {
+    max-width: 75%;
+  }
+}
+
+@media screen and (max-width: 595px) {
+  .single-train-name {
+    max-width: 65%;
+  }
+}

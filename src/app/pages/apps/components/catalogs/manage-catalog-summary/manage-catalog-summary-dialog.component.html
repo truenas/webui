@@ -97,7 +97,7 @@
     mat-button
     class="mat-mdc-button mat-button mat-secondary"
     ixTest="close"
-    (click)="dialogRef.close(false)"
+    [matDialogClose]="false"
   >
     {{ helptext.actionBtnText.close | translate }}
   </button>

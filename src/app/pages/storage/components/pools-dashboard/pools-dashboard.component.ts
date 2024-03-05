@@ -15,6 +15,7 @@ import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { StorageDashboardDisk } from 'app/interfaces/storage.interface';
 import { ImportPoolComponent } from 'app/pages/storage/components/import-pool/import-pool.component';
+import { elements } from 'app/pages/storage/components/pools-dashboard/pools-dashboard.elements';
 import { PoolsDashboardStore } from 'app/pages/storage/stores/pools-dashboard-store.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
@@ -26,6 +27,7 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 })
 export class PoolsDashboardComponent implements OnInit {
   readonly requiredRoles = [Role.FullAdmin];
+  readonly searchElements = elements;
 
   pools$ = this.store.pools$;
   allDisksByPool: Record<string, StorageDashboardDisk[]> = {};

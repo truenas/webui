@@ -8,11 +8,13 @@
     <form class="ix-form-container" [formGroup]="formGroup" (submit)="submit()">
       <ix-fieldset [title]="fieldsetTitle">
         <ix-combobox
+          ixUiSearchableElement
           [formControlName]="language.fcName"
           [label]="language.label | translate"
           [tooltip]="language.tooltip | translate"
           [provider]="language.provider"
           [required]="true"
+          [ixSearchConfig]="searchElements.language"
         ></ix-combobox>
         <ix-select
           [label]="kbdMap.label | translate"

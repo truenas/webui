@@ -3,10 +3,10 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
@@ -25,7 +25,6 @@ describe('PullImageFormComponent', () => {
     imports: [
       IxFormsModule,
       ReactiveFormsModule,
-      EntityModule,
     ],
     providers: [
       mockWebSocket([
@@ -35,7 +34,11 @@ describe('PullImageFormComponent', () => {
       mockProvider(IxSlideInRef),
       { provide: SLIDE_IN_DATA, useValue: undefined },
       mockProvider(FormErrorHandlerService),
-      mockProvider(DialogService),
+      mockProvider(DialogService, {
+        jobDialog: jest.fn(() => ({
+          afterClosed: () => of(null),
+        })),
+      }),
       mockAuth(),
     ],
   });
@@ -58,6 +61,7 @@ describe('PullImageFormComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
+    expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
     expect(ws.job).toHaveBeenCalledWith('container.image.pull', [{
       authentication: {
         username: 'john',

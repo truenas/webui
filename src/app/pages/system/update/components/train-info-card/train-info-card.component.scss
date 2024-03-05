@@ -1,0 +1,23 @@
+.train-info-card {
+  padding: 2px 20px;
+}
+
+.stable-warning {
+  align-items: center;
+  display: flex;
+  margin: 10px 0 !important;
+
+  .ix-icon {
+    margin-right: 10px;
+  }
+
+  a {
+    text-decoration: underline;
+  }
+}
+
+mat-card {
+  margin: 0 auto 15px;
+  max-width: 960px;
+  padding: 20px !important;
+}

@@ -6,12 +6,12 @@ import { JobsListComponent } from './jobs-list/jobs-list.component';
 export const routes: Routes = [
   {
     path: '',
-    data: { title: T('Tasks') },
+    data: { title: T('Jobs') },
     children: [
       {
         path: '',
         component: JobsListComponent,
-        data: { title: T('Tasks'), breadcrumb: T('Tasks') },
+        data: { title: T('Jobs'), breadcrumb: T('Jobs') },
       },
     ],
   },

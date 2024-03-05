@@ -112,4 +112,9 @@ simultaneously.'),
     title: T('Warning'),
     message: T('Changing Advanced settings can be dangerous when done incorrectly. Please use caution before saving.'),
   },
+
+  allowed_ip_addresses: {
+    tooltip: T('You may enter a specific IP address (e.g., 192.168.1.1) for individual access, or use an \
+ IP address with a subnet mask (e.g., 192.168.1.0/24) to define a range of addresses.'),
+  },
 };

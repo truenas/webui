@@ -10,6 +10,7 @@ import { IfNightlyDirective } from 'app/directives/common/if-nightly/if-nightly.
 import { NavigateAndInteractDirective } from 'app/directives/common/navigate-and-interact/navigate-and-interact.directive';
 import { RequiresRolesDirective } from 'app/directives/common/requires-roles/requires-roles.directive';
 import { StepActivationDirective } from 'app/directives/common/step-activation.directive';
+import { UiSearchableElementDirective } from 'app/directives/common/ui-searchable-element.directive';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { LetDirective } from './app-let.directive';
 
@@ -30,6 +31,7 @@ import { LetDirective } from './app-let.directive';
     AutofocusDirective,
     NavigateAndInteractDirective,
     StepActivationDirective,
+    UiSearchableElementDirective,
   ],
   exports: [
     LetDirective,
@@ -41,6 +43,7 @@ import { LetDirective } from './app-let.directive';
     AutofocusDirective,
     NavigateAndInteractDirective,
     StepActivationDirective,
+    UiSearchableElementDirective,
   ],
 })
 export class CommonDirectivesModule { }
