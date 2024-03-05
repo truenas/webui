@@ -33,7 +33,7 @@ export class FormatDateTimePipe implements PipeTransform {
       });
   }
 
-  checkFormatsFromLocalStorage(): void {
+  private checkFormatsFromLocalStorage(): void {
     ['dateFormat', 'timeFormat'].forEach((value) => {
       if (this.window.localStorage[value]) {
         const storedFormat = this.window.localStorage.getItem(value);
@@ -67,7 +67,7 @@ export class FormatDateTimePipe implements PipeTransform {
     return this.formatDateTime(value);
   }
 
-  formatDateTime(date: Date | number): string {
+  private formatDateTime(date: Date | number): string {
     try {
       const localDate = date;
 
