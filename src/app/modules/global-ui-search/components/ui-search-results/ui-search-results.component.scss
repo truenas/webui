@@ -8,6 +8,10 @@
     .highlight {
       color: var(--fg1);
     }
+
+    .dimmed-text {
+      opacity: 0.5;
+    }
   }
 }
 
@@ -33,7 +37,7 @@
 
     .title {
       -webkit-box-orient: vertical;
-      color: var(--alt-fg1);
+      color: rgba(var(--fg1), 0.5);
       display: inline-box;
       font-size: 16px;
       -webkit-line-clamp: 2;

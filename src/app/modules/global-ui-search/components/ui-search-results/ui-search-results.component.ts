@@ -52,16 +52,25 @@ export class UiSearchResultsComponent {
   }
 
   processHierarchy(hierarchy: string[], searchTerm: string): string {
-    if (hierarchy.length === 0 || !searchTerm) {
+    if (hierarchy.length === 0 || !searchTerm.trim()) {
       return '';
     }
 
     const escapeRegExp = (term: string): string => term.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&');
-    const searchWords = searchTerm.split(' ').map(escapeRegExp);
-    const regex = new RegExp(searchWords.join('|'), 'gi');
+    const searchWords = searchTerm.split(' ').map(escapeRegExp).filter((word) => word);
+    if (searchWords.length === 0) {
+      return hierarchy.join(' → ');
+    }
+
+    const regex = new RegExp(`(${searchWords.join('|')})`, 'gi');
 
     const processedItems = hierarchy.map((item) => {
-      return item.replace(regex, '<span class="highlight">$&</span>');
+      return item.split(regex).map((segment) => {
+        if (segment.match(regex)) {
+          return `<span class="highlight">${segment}</span>`;
+        }
+        return `<span class="dimmed-text">${segment}</span>`;
+      }).join('');
     });
 
     return processedItems.join(' → ');
