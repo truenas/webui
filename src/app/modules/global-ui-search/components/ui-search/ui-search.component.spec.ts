@@ -8,6 +8,7 @@ import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { TranslateModule } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { UiSearchResultsComponent } from 'app/modules/global-ui-search/components/ui-search-results/ui-search-results.component';
 import { UiSearchProviderService } from 'app/modules/global-ui-search/services/ui-search.service';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { UiSearchComponent } from './ui-search.component';
@@ -21,6 +22,7 @@ describe('UiSearchComponent', () => {
 
   const createComponent = createComponentFactory({
     component: UiSearchComponent,
+    declarations: [UiSearchResultsComponent],
     imports: [
       FormsModule,
       ReactiveFormsModule,
@@ -45,6 +47,8 @@ describe('UiSearchComponent', () => {
 
   it('should update search results when typing in the input', fakeAsync(() => {
     const inputElement = spectator.query('.search-input');
+
+    expect(spectator.component.searchResults).toBeUndefined();
 
     spectator.typeInElement('Filtered', inputElement);
     tick(150);

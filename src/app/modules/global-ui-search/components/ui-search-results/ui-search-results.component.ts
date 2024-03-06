@@ -57,18 +57,12 @@ export class UiSearchResultsComponent {
     }
 
     const escapeRegExp = (term: string): string => term.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&');
-    const searchEscaped = escapeRegExp(searchTerm);
-    const regex = new RegExp(searchEscaped, 'gi');
+    const searchWords = searchTerm.split(' ').map(escapeRegExp);
+    const regex = new RegExp(searchWords.join('|'), 'gi');
 
-    const processedItems = hierarchy.slice(0, -1).map((item) => {
+    const processedItems = hierarchy.map((item) => {
       return item.replace(regex, '<span class="highlight">$&</span>');
     });
-
-    const lastWord = hierarchy[hierarchy.length - 1];
-    const lastWordHighlighted = lastWord?.replace(regex, '<span class="highlight">$&</span>');
-    const lastWordProcessed = `<span class="last">${lastWordHighlighted}</span>`;
-
-    processedItems.push(lastWordProcessed);
 
     return processedItems.join(' → ');
   }
