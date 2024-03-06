@@ -1,19 +1,14 @@
 import {
-  AfterViewInit,
   ChangeDetectionStrategy,
-  ChangeDetectorRef, Component, ElementRef, Inject, ViewChild,
+  ChangeDetectorRef, Component, Inject,
 } from '@angular/core';
 import {
   FormBuilder,
   Validators,
 } from '@angular/forms';
-import { yaml } from '@codemirror/lang-yaml';
-import { oneDark } from '@codemirror/theme-one-dark';
-import { EditorView } from '@codemirror/view';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
-import { basicSetup } from 'codemirror';
 import { combineLatest, of } from 'rxjs';
 import {
   filter, switchMap, takeUntil, tap,
@@ -44,12 +39,11 @@ import { waitForGeneralConfig } from 'app/store/system-config/system-config.sele
   templateUrl: './gui-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class GuiFormComponent implements AfterViewInit {
+export class GuiFormComponent {
   protected requiredRoles = [Role.FullAdmin];
 
   isFormLoading = true;
   configData: SystemGeneralConfig;
-  @ViewChild('inputArea', { static: true }) inputArea: ElementRef<HTMLElement>;
 
   formGroup = this.fb.group({
     theme: ['', [Validators.required]],
@@ -91,18 +85,6 @@ export class GuiFormComponent implements AfterViewInit {
   ) {
     this.loadCurrentValues();
     this.setupThemePreview();
-  }
-
-  ngAfterViewInit(): EditorView {
-    return new EditorView({
-      doc: 'console.log(\'rehan\')',
-      extensions: [
-        basicSetup,
-        yaml(),
-        oneDark,
-      ],
-      parent: this.inputArea.nativeElement,
-    });
   }
 
   replaceHrefWhenWsConnected(href: string): void {
