@@ -15,7 +15,7 @@ from pytest_bdd import (
 )
 
 
-@scenario('features/NAS-T922.feature', 'Verify vlan1043 with lagg0 parrent interface MTU can be change to 9000')
+@scenario('features/NAS-T922.feature', 'Verify vlan1043 with lagg0 parent interface MTU can be change to 9000')
 def test_verify_vlan1043_with_lagg0_parrent_interface_mtu_can_be_change_to_9000(driver):
     """Verify vlan1043 with lagg0 parrent interface MTU can be change to 9000."""
 
