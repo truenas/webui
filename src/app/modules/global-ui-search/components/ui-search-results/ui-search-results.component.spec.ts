@@ -1,4 +1,3 @@
-// ui-search-results.component.spec.ts
 import { fakeAsync, flush, tick } from '@angular/core/testing';
 import { Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
