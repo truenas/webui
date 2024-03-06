@@ -8,6 +8,7 @@
     class="search-input"
     [placeholder]="'Search' | translate"
     [formControl]="searchControl"
+    (keydown.escape)="$event.preventDefault(); resetInput()"
   />
 
   <span
@@ -24,15 +25,15 @@
 </div>
 
 <div
-  *ngIf="searchResults?.length && searchControl.value"
-  class="backdrop"
-  @fadeIn
+  *ngIf="hasValueAndResults"
+  class="ui-search-backdrop"
+  @fade
   (click)="resetInput()"
 ></div>
 
 <ix-ui-search-results
-  *ngIf="searchResults?.length && searchControl.value"
-  @fadeIn
+  *ngIf="hasValueAndResults"
+  @fade
   [searchTerm]="searchControl.value"
   [results]="searchResults"
   (selected)="resetInput()"

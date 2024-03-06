@@ -6,8 +6,9 @@
   width: 100%;
 
   @media(max-width: $breakpoint-sm) {
-    margin-left: 6px;
-    width: 115vw;
+    position: absolute;
+    right: 4px;
+    width: 44vw;
   }
 }
 
@@ -49,11 +50,11 @@ ix-ui-search-results {
   }
 
   .search-icon {
+    color: var(--fg1);
     left: 4px;
     opacity: 0.2;
     position: absolute;
     top: 3px;
-    z-index: 100;
   }
 
   .search-input {
@@ -68,6 +69,7 @@ ix-ui-search-results {
   .reset-input {
     align-items: center;
     bottom: 0;
+    color: var(--fg1);
     cursor: pointer;
     display: flex;
     line-height: initial;
@@ -89,13 +91,12 @@ ix-ui-search-results {
   }
 }
 
-.backdrop {
-  background-color: rgba(0, 0, 0, 0.32);
+.ui-search-backdrop {
+  background-color: rgba(0, 0, 0, 0.4);
   bottom: 0;
   left: -50%;
   position: fixed;
   right: 0;
   top: 0;
-  transition: 0.3s ease all;
   z-index: -1;
 }

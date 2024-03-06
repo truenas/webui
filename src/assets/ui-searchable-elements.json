@@ -1,6 +1,21 @@
 [
   {
     "hierarchy": [
+      "Reporting"
+    ],
+    "synonyms": [
+      "Stats"
+    ],
+    "requiredRoles": [],
+    "routerLink": null,
+    "anchorRouterLink": [
+      "/reportsdashboard"
+    ],
+    "anchor": null,
+    "triggerAnchor": null
+  },
+  {
+    "hierarchy": [
       "Storage",
       "Import Pool"
     ],
@@ -40,6 +55,21 @@
   },
   {
     "hierarchy": [
+      "Storage Dashboard"
+    ],
+    "synonyms": [
+      "Pools Dashboard"
+    ],
+    "requiredRoles": [],
+    "routerLink": null,
+    "anchorRouterLink": [
+      "/storage"
+    ],
+    "anchor": "",
+    "triggerAnchor": null
+  },
+  {
+    "hierarchy": [
       "System Settings",
       "General",
       "Localization",
@@ -55,6 +85,74 @@
       "general"
     ],
     "anchor": "language-input",
+    "triggerAnchor": "localization-settings"
+  },
+  {
+    "hierarchy": [
+      "System Settings",
+      "General",
+      "Localization",
+      "Console Keyboard Map"
+    ],
+    "synonyms": [],
+    "requiredRoles": [],
+    "routerLink": null,
+    "anchorRouterLink": [
+      "/system",
+      "general"
+    ],
+    "anchor": "console-keyboard-map-input",
+    "triggerAnchor": "localization-settings"
+  },
+  {
+    "hierarchy": [
+      "System Settings",
+      "General",
+      "Localization",
+      "Timezone"
+    ],
+    "synonyms": [],
+    "requiredRoles": [],
+    "routerLink": null,
+    "anchorRouterLink": [
+      "/system",
+      "general"
+    ],
+    "anchor": "timezone-input",
+    "triggerAnchor": "localization-settings"
+  },
+  {
+    "hierarchy": [
+      "System Settings",
+      "General",
+      "Localization",
+      "Date Format"
+    ],
+    "synonyms": [],
+    "requiredRoles": [],
+    "routerLink": null,
+    "anchorRouterLink": [
+      "/system",
+      "general"
+    ],
+    "anchor": "date-format-input",
+    "triggerAnchor": "localization-settings"
+  },
+  {
+    "hierarchy": [
+      "System Settings",
+      "General",
+      "Localization",
+      "Time Format"
+    ],
+    "synonyms": [],
+    "requiredRoles": [],
+    "routerLink": null,
+    "anchorRouterLink": [
+      "/system",
+      "general"
+    ],
+    "anchor": "time-format-input",
     "triggerAnchor": "localization-settings"
   }
 ]

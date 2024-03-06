@@ -23,8 +23,8 @@ export class UiSearchProviderService implements UiSearchProvider {
     const lowercaseTerm = term.toLowerCase();
 
     const results = this.uiElements.filter((item) => {
-      return item.hierarchy.join(' ').toLowerCase().includes(lowercaseTerm)
-        || item.synonyms.join(' ').toLowerCase().includes(lowercaseTerm);
+      return item.hierarchy?.join(' ')?.toLowerCase()?.includes(lowercaseTerm)
+        || item.synonyms?.join(' ')?.toLowerCase()?.includes(lowercaseTerm);
     });
 
     return from(results).pipe(

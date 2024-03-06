@@ -8,9 +8,7 @@ import { FormControl } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
 import { NavigationStart, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import {
-  debounceTime, filter, startWith, switchMap,
-} from 'rxjs';
+import { debounceTime, filter, switchMap } from 'rxjs';
 import { UiSearchableElement } from 'app/interfaces/ui-searchable-element.interface';
 import { UiSearchResultsComponent } from 'app/modules/global-ui-search/components/ui-search-results/ui-search-results.component';
 import { UiSearchProviderService } from 'app/modules/global-ui-search/services/ui-search.service';
@@ -22,10 +20,13 @@ import { UiSearchProviderService } from 'app/modules/global-ui-search/services/u
   styleUrls: ['./ui-search.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   animations: [
-    trigger('fadeIn', [
+    trigger('fade', [
       transition(':enter', [
         style({ opacity: 0 }),
-        animate('250ms ease-out', style({ opacity: 1 })),
+        animate('0.25s ease-out', style({ opacity: 1 })),
+      ]),
+      transition(':leave', [
+        animate('0.25s ease-in', style({ opacity: 0 })),
       ]),
     ]),
   ],
@@ -33,9 +34,15 @@ import { UiSearchProviderService } from 'app/modules/global-ui-search/services/u
 export class UiSearchComponent implements OnInit, AfterViewInit {
   @ViewChild('searchInput') searchInput: ElementRef<HTMLInputElement>;
 
+  private sidenavBackdropElement: HTMLElement | null = null;
+
   searchControl = new FormControl('');
   dialogRef: MatDialogRef<UiSearchResultsComponent>;
   searchResults: UiSearchableElement[];
+
+  get hasValueAndResults(): boolean {
+    return Boolean(this.searchResults?.length && this.searchControl?.value);
+  }
 
   constructor(
     private searchProvider: UiSearchProviderService,
@@ -62,7 +69,6 @@ export class UiSearchComponent implements OnInit, AfterViewInit {
 
   private listenForSearchChanges(): void {
     this.searchControl.valueChanges.pipe(
-      startWith(''),
       debounceTime(150),
       switchMap((term) => this.searchProvider.search(term)),
       untilDestroyed(this),
