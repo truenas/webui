@@ -2,16 +2,15 @@ import {
   animate, style, transition, trigger,
 } from '@angular/animations';
 import {
-  AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, OnInit, Output, ViewChild,
 } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { MatDialogRef } from '@angular/material/dialog';
-import { NavigationStart, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { debounceTime, filter, switchMap } from 'rxjs';
+import { debounceTime, switchMap } from 'rxjs';
 import { GlobalSearchResultsComponent } from 'app/modules/global-search/components/global-search-results/global-search-results.component';
 import { UiSearchableElement } from 'app/modules/global-search/interfaces/ui-searchable-element.interface';
 import { UiSearchProvider } from 'app/modules/global-search/services/ui-search.service';
+import { SidenavService } from 'app/services/sidenav.service';
 
 @UntilDestroy()
 @Component({
@@ -31,38 +30,49 @@ import { UiSearchProvider } from 'app/modules/global-search/services/ui-search.s
     ]),
   ],
 })
-export class GlobalSearchComponent implements OnInit, AfterViewInit {
-  @ViewChild('searchInput') searchInput: ElementRef<HTMLInputElement>;
+export class GlobalSearchComponent implements OnInit {
+  @ViewChild('autocompleteList', { static: false }) autocompleteList: GlobalSearchResultsComponent;
+
+  @Output() resetSearch = new EventEmitter<void>();
+
+  selectedIndex = 0;
 
   searchControl = new FormControl('');
-  dialogRef: MatDialogRef<GlobalSearchResultsComponent>;
   searchResults: UiSearchableElement[];
-
-  get hasValueAndResults(): boolean {
-    return Boolean(this.searchResults?.length && this.searchControl?.value);
-  }
 
   constructor(
     private searchProvider: UiSearchProvider,
     private cdr: ChangeDetectorRef,
-    private router: Router,
+    protected sidenavService: SidenavService,
   ) {}
 
   ngOnInit(): void {
     this.listenForSearchChanges();
-    this.listenForRouteChanges();
+    this.getInitialSearchResults();
   }
 
-  ngAfterViewInit(): void {
-    this.focusInput();
+  handleKeyDown(event: KeyboardEvent): void {
+    if (event.key === 'ArrowDown') {
+      event.preventDefault();
+      this.selectedIndex = (this.selectedIndex + 1) % this.searchResults.length;
+      this.autocompleteList.scrollIntoFocusedSelectedIndexView();
+    } else if (event.key === 'ArrowUp') {
+      event.preventDefault();
+      this.selectedIndex = (this.selectedIndex - 1 + this.searchResults.length) % this.searchResults.length;
+      this.autocompleteList.scrollIntoFocusedSelectedIndexView();
+    } else if (event.key === 'Escape') {
+      event.preventDefault();
+      this.resetInput();
+      this.autocompleteList.scrollIntoFocusedSelectedIndexView();
+    } else if (event.key === 'Enter' && this.selectedIndex !== -1) {
+      event.preventDefault();
+      this.autocompleteList.navigateToResultByFocusedSelectedIndex();
+    }
   }
 
   resetInput(): void {
     this.searchControl.reset();
-  }
-
-  private focusInput(): void {
-    this.searchInput.nativeElement.focus();
+    this.resetSearch.emit();
   }
 
   private listenForSearchChanges(): void {
@@ -71,15 +81,16 @@ export class GlobalSearchComponent implements OnInit, AfterViewInit {
       switchMap((term) => this.searchProvider.search(term)),
       untilDestroyed(this),
     ).subscribe((searchResults) => {
+      this.selectedIndex = 0;
       this.searchResults = searchResults;
       this.cdr.markForCheck();
     });
   }
 
-  private listenForRouteChanges(): void {
-    this.router.events
-      .pipe(filter((event) => event instanceof NavigationStart), untilDestroyed(this)).subscribe(() => {
-        this.resetInput();
-      });
+  private getInitialSearchResults(): void {
+    this.searchProvider.search(' ').pipe(untilDestroyed(this)).subscribe((searchResults) => {
+      this.searchResults = searchResults;
+      this.cdr.markForCheck();
+    });
   }
 }

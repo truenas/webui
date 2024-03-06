@@ -1,17 +1,21 @@
 @import 'scss-imports/cssvars';
 
-.search-box-wrapper {
-  margin-left: 307px;
-  margin-top: 7.5px;
-  position: absolute;
+:host {
+  margin-left: 21px;
+  position: relative;
+  width: 100%;
 
-  &.sidenav-collapsed {
-    margin-left: 115px;
+  @media(max-width: $breakpoint-xs) {
+    position: absolute;
+    right: 7px;
+    top: 7px;
+    width: 150px;
   }
+}
 
-  &.sidenav-mobile {
-    margin-left: 67px;
-  }
+.hidden {
+  opacity: 0;
+  visibility: hidden;
 }
 
 .search-box {
@@ -25,7 +29,7 @@
   width: 450px;
 
   @media(max-width: $breakpoint-md) {
-    width: 250px;
+    width: 150px;
   }
 
   &:focus-within {
@@ -57,29 +61,5 @@
 
   ::ng-deep input {
     padding-left: 30px;
-  }
-
-  .reset-input {
-    align-items: center;
-    bottom: 0;
-    color: var(--fg1);
-    cursor: pointer;
-    display: flex;
-    line-height: initial;
-    opacity: 0.5;
-    padding: 5px;
-    position: absolute;
-    right: 0.3rem;
-    top: 0;
-    user-select: none;
-
-    ix-icon {
-      font-size: 18px;
-
-      &:focus-visible {
-        border-radius: 50%;
-        outline: 1.5px solid var(--primary);
-      }
-    }
   }
 }

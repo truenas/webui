@@ -20,10 +20,6 @@ export class UiSearchProvider implements GlobalSearchProvider {
   ) {}
 
   search(term: string): Observable<UiSearchableElement[]> {
-    if (!term?.trim()) {
-      return of([]);
-    }
-
     const lowercaseTerm = term.toLowerCase();
 
     const translatedTerms = this.uiElements?.map((element) => {
@@ -35,9 +31,12 @@ export class UiSearchProvider implements GlobalSearchProvider {
     });
 
     const results = translatedTerms.filter((item) => {
-      return item.hierarchy?.join(' ')?.toLowerCase()?.includes(lowercaseTerm)
-        || item.synonyms?.join(' ')?.toLowerCase()?.includes(lowercaseTerm);
-    });
+      if (!term?.trim()) {
+        return true;
+      }
+
+      return item.hierarchy[item.hierarchy.length - 1]?.toLowerCase()?.startsWith(lowercaseTerm);
+    }).splice(0, 50);
 
     return from(results).pipe(
       mergeMap((item) => {

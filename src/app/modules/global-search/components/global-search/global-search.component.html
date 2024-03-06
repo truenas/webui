@@ -1,40 +1,42 @@
-<div class="search-box">
-  <ix-icon name="search" class="search-icon"></ix-icon>
-
-  <input
-    #searchInput
-    matInput
-    ixTest="global-search"
-    class="search-input"
-    [placeholder]="'Search' | translate"
-    [formControl]="searchControl"
-    (keydown.escape)="$event.preventDefault(); resetInput()"
-  />
-
-  <span
-    *ngIf="searchControl.value"
-    class="reset-icon reset-input"
-    (click)="resetInput()"
-  >
-    <ix-icon
-      name="mdi-close-circle"
-      tabindex="0"
-      (keydown.enter)="$event.preventDefault(); resetInput()"
-    ></ix-icon>
-  </span>
-</div>
-
 <div
-  *ngIf="hasValueAndResults"
-  class="global-search-backdrop"
-  @fade
-  (click)="resetInput()"
-></div>
+  cdkTrapFocus
+  class="search-box-wrapper"
+  [class.sidenav-collapsed]="sidenavService.isMenuCollapsed"
+  [class.sidenav-mobile]="sidenavService.isMobile"
+  [cdkTrapFocusAutoCapture]="true"
+>
+  <div class="search-box">
+    <ix-icon name="search" class="search-icon"></ix-icon>
 
-<ix-global-search-results
-  *ngIf="hasValueAndResults"
-  @fade
-  [searchTerm]="searchControl.value"
-  [results]="searchResults"
-  (selected)="resetInput()"
-></ix-global-search-results>
+    <input
+      matInput
+      ixTest="global-search"
+      class="search-input"
+      [placeholder]="'Search' | translate"
+      [formControl]="searchControl"
+      (keydown)="handleKeyDown($event)"
+    />
+
+    <span
+      *ngIf="searchControl.value"
+      class="reset-icon reset-input"
+      (click)="resetInput()"
+    >
+      <ix-icon
+        name="mdi-close-circle"
+        tabindex="0"
+        (keydown.enter)="$event.preventDefault(); resetInput()"
+      ></ix-icon>
+    </span>
+  </div>
+
+  <ix-global-search-results
+    #autocompleteList
+    @fade
+    [searchTerm]="searchControl.value"
+    [results]="searchResults"
+    [focusedSelectedIndex]="selectedIndex"
+    (selected)="resetInput()"
+    (keydown)="handleKeyDown($event)"
+  ></ix-global-search-results>
+</div>

@@ -18,6 +18,7 @@ import { AuthService } from 'app/services/auth/auth.service';
 export class GlobalSearchResultsComponent {
   @Input() searchTerm: string;
   @Input() results: UiSearchableElement[];
+  @Input() focusedSelectedIndex: number;
 
   @Output() selected = new EventEmitter<void>();
 
@@ -51,22 +52,27 @@ export class GlobalSearchResultsComponent {
     });
   }
 
-  processHierarchy(hierarchy: string[], searchTerm: string): string {
-    if (hierarchy.length === 0 || !searchTerm.trim()) {
-      return '';
-    }
+  navigateToResultByFocusedSelectedIndex(): void {
+    this.navigateToResult(this.results[this.focusedSelectedIndex]);
+  }
 
+  scrollIntoFocusedSelectedIndexView(): void {
+    const selectedItem = this.document.querySelector(`.focused-index-${this.focusedSelectedIndex}`);
+
+    if (selectedItem) {
+      selectedItem.scrollIntoView({ behavior: 'instant', block: 'center' });
+    }
+  }
+
+  processHierarchy(hierarchy: string[], searchTerm: string): string {
     const escapeRegExp = (term: string): string => term.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&');
     const searchWords = searchTerm.split(' ').map(escapeRegExp).filter((word) => word);
-    if (searchWords.length === 0) {
-      return hierarchy.join(' → ');
-    }
 
     const regex = new RegExp(`(${searchWords.join('|')})`, 'gi');
 
     const processedItems = hierarchy.map((item) => {
       return item.split(regex).map((segment) => {
-        if (segment.match(regex)) {
+        if (segment.match(regex) && item === hierarchy[hierarchy.length - 1]) {
           return `<span class="highlight">${segment}</span>`;
         }
         return `<span class="dimmed-text">${segment}</span>`;

@@ -1,8 +1,27 @@
+@import 'scss-imports/cssvars';
+
+.arrow-focused {
+  background-color: var(--focus-bg);
+}
+
 :host {
+  background-color: var(--bg2);
+  border-radius: 2px;
   display: block;
-  max-height: 300px;
+  max-height: 400px;
+  max-width: 70vw;
+  min-width: 100%;
   overflow: auto;
-  padding: 14px 0 17px;
+  padding: 10px 0;
+  position: absolute;
+  top: 41px;
+  width: max-content;
+
+  @media(max-width: $breakpoint-sm) {
+    left: 0;
+    max-width: 100%;
+    position: fixed;
+  }
 
   &::ng-deep {
     .highlight {
@@ -16,6 +35,7 @@
 }
 
 .search-results-card {
+  border: 0;
   border-radius: 2px;
   margin: 0;
   overflow: auto;
@@ -23,8 +43,7 @@
   .search-result {
     border-radius: 2px;
     cursor: pointer;
-    font-size: 13px;
-    padding: 3px 10px;
+    padding: 13px 20px;
 
     &:hover {
       background-color: var(--bg1);
