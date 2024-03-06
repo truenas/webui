@@ -34,8 +34,6 @@ import { UiSearchProviderService } from 'app/modules/global-ui-search/services/u
 export class UiSearchComponent implements OnInit, AfterViewInit {
   @ViewChild('searchInput') searchInput: ElementRef<HTMLInputElement>;
 
-  private sidenavBackdropElement: HTMLElement | null = null;
-
   searchControl = new FormControl('');
   dialogRef: MatDialogRef<UiSearchResultsComponent>;
   searchResults: UiSearchableElement[];

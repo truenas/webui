@@ -4,7 +4,6 @@ import {
 } from '@angular/core';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateService } from '@ngx-translate/core';
 import { timer } from 'rxjs';
 import { UiSearchableElement } from 'app/interfaces/ui-searchable-element.interface';
 import { AuthService } from 'app/services/auth/auth.service';
@@ -22,19 +21,8 @@ export class UiSearchResultsComponent {
 
   @Output() selected = new EventEmitter<void>();
 
-  get mappedResults(): UiSearchableElement[] {
-    return this.results?.map((element) => {
-      return {
-        ...element,
-        hierarchy: element.hierarchy.map((key) => this.translate.instant(key)),
-        synonyms: element.synonyms.map((key) => this.translate.instant(key)),
-      };
-    });
-  }
-
   constructor(
     protected authService: AuthService,
-    private translate: TranslateService,
     private router: Router,
     @Inject(DOCUMENT) private document: Document,
   ) {}
