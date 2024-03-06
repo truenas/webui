@@ -111,11 +111,11 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
     private slideInService: IxSlideInService,
     private layoutService: LayoutService,
     private store$: Store<AppState>,
-    @Inject(WINDOW) private window: Window,
-    @Inject(DOCUMENT) private document: Document,
     private dashboardStore$: DashboardStore,
     private resourcesUsageStore$: ResourcesUsageStore,
     private cdr: ChangeDetectorRef,
+    @Inject(WINDOW) private window: Window,
+    @Inject(DOCUMENT) private document: Document,
   ) {}
 
   ngAfterViewInit(): void {

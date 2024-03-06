@@ -6,7 +6,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
-import * as FontFaceObserver from 'fontfaceobserver';
+import FontFaceObserver from 'fontfaceobserver';
 import { filter, take, tap } from 'rxjs/operators';
 import { Terminal } from 'xterm';
 import { FitAddon } from 'xterm-addon-fit';

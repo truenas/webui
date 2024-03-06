@@ -138,7 +138,14 @@ export class ChartWizardComponent implements OnInit, OnDestroy {
   }
 
   onSectionClick(sectionName: string): void {
-    document.getElementById(sectionName)?.scrollIntoView();
+    const nextElement = document.getElementById(sectionName);
+
+    nextElement?.scrollIntoView({ block: 'center' });
+    nextElement.classList.add('highlighted');
+
+    timer(999)
+      .pipe(untilDestroyed(this))
+      .subscribe(() => nextElement.classList.remove('highlighted'));
   }
 
   checkSectionInvalid(section: DynamicWizardSchema): boolean {
@@ -496,15 +503,9 @@ export class ChartWizardComponent implements OnInit, OnDestroy {
 
       if (option) {
         const path = option.value.toString().split('.');
-        let nextElement: HTMLElement;
         path.forEach((id, idx) => {
-          nextElement = document.getElementById(id);
           if (idx === path.length - 1) {
-            nextElement?.scrollIntoView({ block: 'center' });
-            nextElement.classList.add('highlighted');
-            timer(999)
-              .pipe(untilDestroyed(this))
-              .subscribe(() => nextElement.classList.remove('highlighted'));
+            this.onSectionClick(id);
           }
         });
       }

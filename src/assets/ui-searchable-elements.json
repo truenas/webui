@@ -1,0 +1,62 @@
+[
+  {
+    "hierarchy": [
+      "Storage",
+      "Import Pool"
+    ],
+    "synonyms": [
+      "Add Pool"
+    ],
+    "requiredRoles": [
+      "FULL_ADMIN"
+    ],
+    "routerLink": null,
+    "anchorRouterLink": [
+      "/storage"
+    ],
+    "anchor": "import-pool-button",
+    "triggerAnchor": null
+  },
+  {
+    "hierarchy": [
+      "Storage",
+      "Create Pool"
+    ],
+    "synonyms": [
+      "Pool Wizard"
+    ],
+    "requiredRoles": [
+      "FULL_ADMIN"
+    ],
+    "routerLink": [
+      "/storage",
+      "create"
+    ],
+    "anchorRouterLink": [
+      "/storage"
+    ],
+    "anchor": "create-pool-button",
+    "triggerAnchor": null
+  },
+  {
+    "hierarchy": [
+      "System Settings",
+      "General",
+      "Localization",
+      "Language"
+    ],
+    "synonyms": [
+      "Translate App"
+    ],
+    "requiredRoles": [
+      "FULL_ADMIN"
+    ],
+    "routerLink": null,
+    "anchorRouterLink": [
+      "/system",
+      "general"
+    ],
+    "anchor": "language-input",
+    "triggerAnchor": "localization-settings"
+  }
+]

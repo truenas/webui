@@ -19,6 +19,7 @@ import { IxComboboxProvider } from 'app/modules/ix-forms/components/ix-combobox/
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
+import { elements } from 'app/pages/system/general-settings/localization/localization-form/localization-form.elements';
 import { LanguageService } from 'app/services/language.service';
 import { LocaleService } from 'app/services/locale.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
@@ -36,6 +37,7 @@ import { systemInfoUpdated } from 'app/store/system-info/system-info.actions';
 })
 export class LocalizationFormComponent implements OnInit {
   protected requiredRoles = [Role.FullAdmin];
+  readonly searchElements = elements;
 
   fieldsetTitle = helptext.localeTitle;
 
