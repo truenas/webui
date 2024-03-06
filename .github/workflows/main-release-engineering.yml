@@ -39,7 +39,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - run: 'echo "Not required for Release Engineering PRs"'
-  codecov/patch:
+  codecov-patch:
     name: codecov/patch
     runs-on: ubuntu-latest
     steps:
