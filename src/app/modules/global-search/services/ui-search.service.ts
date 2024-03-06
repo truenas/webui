@@ -4,14 +4,14 @@ import UiElementsJson from 'app/../assets/ui-searchable-elements.json';
 import {
   Observable, filter, from, map, mergeMap, of, take, toArray,
 } from 'rxjs';
-import { UiSearchableElement } from 'app/interfaces/ui-searchable-element.interface';
-import { UiSearchProvider } from 'app/modules/global-ui-search/interfaces/ui-search-provider.interface';
+import { GlobalSearchProvider } from 'app/modules/global-search/interfaces/global-search-provider.interface';
+import { UiSearchableElement } from 'app/modules/global-search/interfaces/ui-searchable-element.interface';
 import { AuthService } from 'app/services/auth/auth.service';
 
 @Injectable({
   providedIn: 'root',
 })
-export class UiSearchProviderService implements UiSearchProvider {
+export class UiSearchProvider implements GlobalSearchProvider {
   private readonly uiElements = UiElementsJson as UiSearchableElement[];
 
   constructor(

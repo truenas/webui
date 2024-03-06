@@ -19,7 +19,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { CoreComponents } from 'app/core/core-components.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { AlertsModule } from 'app/modules/alerts/alerts.module';
-import { GlobalUiSearchModule } from 'app/modules/global-ui-search/global-ui-search.module';
+import { GlobalSearchModule } from 'app/modules/global-search/global-search.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { AdminLayoutComponent } from 'app/modules/layout/components/admin-layout/admin-layout.component';
@@ -84,7 +84,7 @@ import { UserMenuComponent } from './components/topbar/user-menu/user-menu.compo
     MatProgressBarModule,
     MatTableModule,
     MatProgressSpinnerModule,
-    GlobalUiSearchModule,
+    GlobalSearchModule,
   ],
   declarations: [
     ChangePasswordDialogComponent,

@@ -11,7 +11,7 @@
     "anchorRouterLink": [
       "/reportsdashboard"
     ],
-    "anchor": null,
+    "anchor": "reporting",
     "triggerAnchor": null
   },
   {
@@ -29,7 +29,7 @@
     "anchorRouterLink": [
       "/storage"
     ],
-    "anchor": "import-pool-button",
+    "anchor": "storage-import_pool",
     "triggerAnchor": null
   },
   {
@@ -50,7 +50,7 @@
     "anchorRouterLink": [
       "/storage"
     ],
-    "anchor": "create-pool-button",
+    "anchor": "storage-create_pool",
     "triggerAnchor": null
   },
   {
@@ -65,7 +65,7 @@
     "anchorRouterLink": [
       "/storage"
     ],
-    "anchor": "",
+    "anchor": "storage_dashboard",
     "triggerAnchor": null
   },
   {
@@ -84,7 +84,7 @@
       "/system",
       "general"
     ],
-    "anchor": "language-input",
+    "anchor": "system_settings-general-localization-language",
     "triggerAnchor": "localization-settings"
   },
   {
@@ -101,7 +101,7 @@
       "/system",
       "general"
     ],
-    "anchor": "console-keyboard-map-input",
+    "anchor": "system_settings-general-localization-console_keyboard_map",
     "triggerAnchor": "localization-settings"
   },
   {
@@ -118,7 +118,7 @@
       "/system",
       "general"
     ],
-    "anchor": "timezone-input",
+    "anchor": "system_settings-general-localization-timezone",
     "triggerAnchor": "localization-settings"
   },
   {
@@ -135,7 +135,7 @@
       "/system",
       "general"
     ],
-    "anchor": "date-format-input",
+    "anchor": "system_settings-general-localization-date_format",
     "triggerAnchor": "localization-settings"
   },
   {
@@ -152,7 +152,7 @@
       "/system",
       "general"
     ],
-    "anchor": "time-format-input",
+    "anchor": "system_settings-general-localization-time_format",
     "triggerAnchor": "localization-settings"
   }
 ]

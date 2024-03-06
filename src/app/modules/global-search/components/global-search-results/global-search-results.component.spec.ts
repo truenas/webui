@@ -4,15 +4,15 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { TranslateService } from '@ngx-translate/core';
 import { Role } from 'app/enums/role.enum';
-import { UiSearchableElement } from 'app/interfaces/ui-searchable-element.interface';
-import { UiSearchResultsComponent } from './ui-search-results.component';
+import { UiSearchableElement } from 'app/modules/global-search/interfaces/ui-searchable-element.interface';
+import { GlobalSearchResultsComponent } from './global-search-results.component';
 
-describe('UiSearchResultsComponent', () => {
-  let spectator: Spectator<UiSearchResultsComponent>;
+describe('GlobalSearchResultsComponent', () => {
+  let spectator: Spectator<GlobalSearchResultsComponent>;
   let router: Router;
 
   const createComponent = createComponentFactory({
-    component: UiSearchResultsComponent,
+    component: GlobalSearchResultsComponent,
     imports: [
       RouterTestingModule.withRoutes([]),
     ],
@@ -28,10 +28,9 @@ describe('UiSearchResultsComponent', () => {
     const mockResults: UiSearchableElement[] = [{
       hierarchy: ['Storage'],
       synonyms: [],
-      requiredRoles: ['FULL_ADMIN' as Role],
+      requiredRoles: [Role.FullAdmin],
       routerLink: [],
       anchorRouterLink: ['/storage', 'create'],
-      anchor: 'create-pool-button',
       triggerAnchor: null,
     }];
 

@@ -8,21 +8,22 @@ import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { TranslateModule } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { UiSearchResultsComponent } from 'app/modules/global-ui-search/components/ui-search-results/ui-search-results.component';
-import { UiSearchProviderService } from 'app/modules/global-ui-search/services/ui-search.service';
+import { Role } from 'app/enums/role.enum';
+import { GlobalSearchComponent } from 'app/modules/global-search/components/global-search/global-search.component';
+import { GlobalSearchResultsComponent } from 'app/modules/global-search/components/global-search-results/global-search-results.component';
+import { UiSearchProvider } from 'app/modules/global-search/services/ui-search.service';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
-import { UiSearchComponent } from './ui-search.component';
 
 const mockedSearchResults = [
-  { hierarchy: ['Filtered Result 1'], requiredRoles: ['FULL_ADMIN'] },
+  { hierarchy: ['Filtered Result 1'], requiredRoles: [Role.FullAdmin] },
 ];
 
-describe('UiSearchComponent', () => {
-  let spectator: Spectator<UiSearchComponent>;
+describe('GlobalSearchComponent', () => {
+  let spectator: Spectator<GlobalSearchComponent>;
 
   const createComponent = createComponentFactory({
-    component: UiSearchComponent,
-    declarations: [UiSearchResultsComponent],
+    component: GlobalSearchComponent,
+    declarations: [GlobalSearchResultsComponent],
     imports: [
       FormsModule,
       ReactiveFormsModule,
@@ -35,7 +36,7 @@ describe('UiSearchComponent', () => {
     providers: [
       mockAuth(),
       { provide: MatDialogRef, useValue: {} },
-      mockProvider(UiSearchProviderService, {
+      mockProvider(UiSearchProvider, {
         search: () => of(mockedSearchResults),
       }),
     ],

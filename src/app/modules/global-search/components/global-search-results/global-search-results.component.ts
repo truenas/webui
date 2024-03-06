@@ -5,17 +5,17 @@ import {
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { timer } from 'rxjs';
-import { UiSearchableElement } from 'app/interfaces/ui-searchable-element.interface';
+import { UiSearchableElement } from 'app/modules/global-search/interfaces/ui-searchable-element.interface';
 import { AuthService } from 'app/services/auth/auth.service';
 
 @UntilDestroy()
 @Component({
-  selector: 'ix-ui-search-results',
-  templateUrl: './ui-search-results.component.html',
-  styleUrls: ['./ui-search-results.component.scss'],
+  selector: 'ix-global-search-results',
+  templateUrl: './global-search-results.component.html',
+  styleUrls: ['./global-search-results.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class UiSearchResultsComponent {
+export class GlobalSearchResultsComponent {
   @Input() searchTerm: string;
   @Input() results: UiSearchableElement[];
 

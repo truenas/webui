@@ -4,7 +4,7 @@
   <input
     #searchInput
     matInput
-    ixTest="ui-search"
+    ixTest="global-search"
     class="search-input"
     [placeholder]="'Search' | translate"
     [formControl]="searchControl"
@@ -26,15 +26,15 @@
 
 <div
   *ngIf="hasValueAndResults"
-  class="ui-search-backdrop"
+  class="global-search-backdrop"
   @fade
   (click)="resetInput()"
 ></div>
 
-<ix-ui-search-results
+<ix-global-search-results
   *ngIf="hasValueAndResults"
   @fade
   [searchTerm]="searchControl.value"
   [results]="searchResults"
   (selected)="resetInput()"
-></ix-ui-search-results>
+></ix-global-search-results>

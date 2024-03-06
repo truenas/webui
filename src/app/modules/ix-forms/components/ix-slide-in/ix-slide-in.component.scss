@@ -11,7 +11,7 @@
   overflow: auto;
   position: fixed;
   right: -480px;
-  top: 0;
+  top: 48px;
   transition: 200ms;
   width: 480px;
 
@@ -58,7 +58,7 @@
   /* modal background fixed across whole screen */
   position: fixed;
   right: 0;
-  top: 0;
+  top: 48px;
   transition: 100ms;
 
   /* z-index must be below .ix-slide-in and above everything else  */
