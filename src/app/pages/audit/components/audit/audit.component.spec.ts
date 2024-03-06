@@ -1,7 +1,6 @@
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
-import { utcToZonedTime } from 'date-fns-tz';
 import { MockComponents } from 'ng-mocks';
 import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { AuditEvent, AuditService } from 'app/enums/audit.enum';
@@ -27,11 +26,9 @@ describe('AuditComponent', () => {
     {
       audit_id: '1',
       timestamp: {
-        $date: utcToZonedTime(1709605801758, 'Europe/London').getTime(),
+        $date: 1709605801758,
       },
-      message_timestamp: Number(
-        (utcToZonedTime(1709605801000, 'Europe/London').getTime() / 1000).toString().split('.')[0],
-      ),
+      message_timestamp: 1709605801,
       address: '10.220.2.21',
       username: 'Administrator',
       service: AuditService.Smb,
@@ -43,11 +40,9 @@ describe('AuditComponent', () => {
     {
       audit_id: '2',
       timestamp: {
-        $date: utcToZonedTime(1709605801758, 'Europe/London').getTime(),
+        $date: 1709605801758,
       },
-      message_timestamp: Number(
-        (utcToZonedTime(1709606101000, 'Europe/London').getTime() / 1000).toString().split('.')[0],
-      ),
+      message_timestamp: 1709606101,
       address: '10.220.2.21',
       username: 'bob',
       service: AuditService.Smb,
@@ -120,8 +115,8 @@ describe('AuditComponent', () => {
     await spectator.fixture.whenRenderingDone();
     expect(await table.getCellTexts()).toEqual([
       ['Service', 'User', 'Timestamp', 'Event', 'Event Data'],
-      ['SMB', 'Administrator', '2024-03-05 02:30:01', 'Authentication', 'Account: Administrator'],
-      ['SMB', 'bob', '2024-03-05 02:35:01', 'Create', 'File: test.txt'],
+      ['SMB', 'Administrator', '2024-03-05 04:30:01', 'Authentication', 'Account: Administrator'],
+      ['SMB', 'bob', '2024-03-05 04:35:01', 'Create', 'File: test.txt'],
     ]);
   });
 
