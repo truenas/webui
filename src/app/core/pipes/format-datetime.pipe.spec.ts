@@ -4,7 +4,7 @@ import { FormatDateTimePipe } from 'app/core/pipes/format-datetime.pipe';
 
 describe('FormatDateTimePipe', () => {
   let spectator: SpectatorPipe<FormatDateTimePipe>;
-  const inputValue = utcToZonedTime(1709604204732 + (11 * 1 * 60 * 60 * 1000), 'Europe/London').getTime();
+  const inputValue = utcToZonedTime(1709643804732, 'Europe/London').getTime();
   const createPipe = createPipeFactory({
     pipe: FormatDateTimePipe,
   });
