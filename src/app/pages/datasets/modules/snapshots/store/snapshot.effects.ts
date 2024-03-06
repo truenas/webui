@@ -25,10 +25,11 @@ export class SnapshotEffects {
     ofType(snapshotPageEntered),
     switchMap(() => this.store$.pipe(waitForPreferences)),
     switchMap((preferences) => {
+      const extraColumns = preferences.showSnapshotExtraColumns ? ['properties' as keyof ZfsSnapshot] : [];
       return this.ws.call('zfs.snapshot.query', [
         snapshotExcludeBootQueryFilter as QueryFilters<ZfsSnapshot>,
         {
-          select: ['snapshot_name', 'dataset', 'name', ...(preferences.showSnapshotExtraColumns ? ['properties' as keyof ZfsSnapshot] : [])],
+          select: ['snapshot_name', 'dataset', 'name', ...(extraColumns)],
           order_by: ['name'],
         },
       ]).pipe(

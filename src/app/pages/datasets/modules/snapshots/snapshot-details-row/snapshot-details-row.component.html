@@ -1,102 +1,99 @@
-<td [attr.colspan]="colspan">
-  <dl class="details">
-    <div class="details-row">
-      <dt>{{ 'Used' | translate }}:</dt>
-      <ngx-skeleton-loader *ngIf="isLoading"></ngx-skeleton-loader>
-      <dd *ngIf="!isLoading">
-        <ng-container *ngIf="snapshotInfo?.properties?.used?.parsed; else notAvailable">
-          {{ +snapshotInfo.properties.used.parsed | ixFileSize }}
+<dl class="details">
+  <div class="details-row">
+    <dt>{{ 'Used' | translate }}:</dt>
+    <ngx-skeleton-loader *ngIf="isLoading"></ngx-skeleton-loader>
+    <dd *ngIf="!isLoading">
+      <ng-container *ngIf="snapshotInfo?.properties?.used?.parsed; else notAvailable">
+        {{ +snapshotInfo.properties.used.parsed | ixFileSize }}
+      </ng-container>
+    </dd>
+  </div>
+  <div class="details-row">
+    <dt>{{ 'Date created' | translate }}:</dt>
+    <ngx-skeleton-loader *ngIf="isLoading"></ngx-skeleton-loader>
+    <dd *ngIf="!isLoading">
+      <ng-container *ngIf="snapshotInfo?.properties?.creation?.parsed?.$date; else notAvailable">
+        {{ snapshotInfo.properties.creation.parsed.$date | formatDateTime }}
+      </ng-container>
+    </dd>
+  </div>
+  <div class="details-row">
+    <dt>{{ 'Referenced' | translate }}:</dt>
+    <ngx-skeleton-loader *ngIf="isLoading"></ngx-skeleton-loader>
+    <dd *ngIf="!isLoading">
+      <ng-container *ngIf="snapshotInfo?.properties?.referenced?.parsed; else notAvailable">
+        {{ +snapshotInfo.properties.referenced.parsed | ixFileSize }}
+      </ng-container>
+    </dd>
+  </div>
+  <div class="details-row">
+    <dt>{{ 'Retention' | translate }}:</dt>
+    <ngx-skeleton-loader *ngIf="isLoading"></ngx-skeleton-loader>
+    <dd *ngIf="!isLoading">
+      <ng-container *ngIf="snapshotInfo?.retention?.datetime?.$date">
+        <ng-container *ngIf="snapshotInfo?.retention?.periodic_snapshot_task_id">
+          {{ 'Will be automatically destroyed at {datetime} by periodic snapshot task' | translate:
+            { datetime: snapshotInfo.retention.datetime.$date | formatDateTime } }}
         </ng-container>
-      </dd>
-    </div>
-    <div class="details-row">
-      <dt>{{ 'Date created' | translate }}:</dt>
-      <ngx-skeleton-loader *ngIf="isLoading"></ngx-skeleton-loader>
-      <dd *ngIf="!isLoading">
-        <ng-container *ngIf="snapshotInfo?.properties?.creation?.parsed?.$date; else notAvailable">
-          {{ snapshotInfo.properties.creation.parsed.$date | formatDateTime }}
+        <ng-container *ngIf="!snapshotInfo?.retention?.periodic_snapshot_task_id">
+          {{ 'Is planned to be automatically destroyed at {datetime}' | translate:
+            { datetime: snapshotInfo.retention.datetime.$date | formatDateTime } }}
         </ng-container>
-      </dd>
-    </div>
-    <div class="details-row">
-      <dt>{{ 'Referenced' | translate }}:</dt>
-      <ngx-skeleton-loader *ngIf="isLoading"></ngx-skeleton-loader>
-      <dd *ngIf="!isLoading">
-        <ng-container *ngIf="snapshotInfo?.properties?.referenced?.parsed; else notAvailable">
-          {{ +snapshotInfo.properties.referenced.parsed | ixFileSize }}
-        </ng-container>
-      </dd>
-    </div>
-    <div class="details-row">
-      <dt>{{ 'Retention' | translate }}:</dt>
-      <ngx-skeleton-loader *ngIf="isLoading"></ngx-skeleton-loader>
-      <dd *ngIf="!isLoading">
-        <ng-container *ngIf="snapshotInfo?.retention?.datetime?.$date">
-          <ng-container *ngIf="snapshotInfo?.retention?.periodic_snapshot_task_id">
-            {{ 'Will be automatically destroyed at {datetime} by periodic snapshot task' | translate:
-              { datetime: snapshotInfo.retention.datetime.$date | formatDateTime } }}
-          </ng-container>
-          <ng-container *ngIf="!snapshotInfo?.retention?.periodic_snapshot_task_id">
-            {{ 'Is planned to be automatically destroyed at {datetime}' | translate:
-              { datetime: snapshotInfo.retention.datetime.$date | formatDateTime } }}
-          </ng-container>
-        </ng-container>
-        <ng-container *ngIf="!snapshotInfo?.retention?.datetime?.$date">
-          {{ 'Will not be destroyed automatically' | translate }}
-        </ng-container>
-      </dd>
-    </div>
-    <ng-container *ixRequiresRoles="[Role.FullAdmin]">
-      <mat-checkbox
-        *ngIf="!isLoading"
-        color="primary"
-        [checked]="isHold"
-        [ixTest]="['hold', snapshot.snapshot_name]"
-        (change)="doHold()"
-      >
-        {{ 'Hold' | translate }}
-      </mat-checkbox>
-    </ng-container>
-  </dl>
-
-  <mat-divider></mat-divider>
-
-  <ix-table-expandable-row>
-    <div
-      [matTooltip]="'Snapshots must not have dependent clones' | translate"
-      [matTooltipDisabled]="!hasClones"
+      </ng-container>
+      <ng-container *ngIf="!snapshotInfo?.retention?.datetime?.$date">
+        {{ 'Will not be destroyed automatically' | translate }}
+      </ng-container>
+    </dd>
+  </div>
+  <ng-container *ixRequiresRoles="requiredRoles">
+    <mat-checkbox
+      *ngIf="!isLoading"
+      color="primary"
+      [checked]="isHold"
+      [ixTest]="['hold', snapshot.snapshot_name]"
+      (change)="doHold()"
     >
-      <button
-        *ixRequiresRoles="[Role.SnapshotDelete]"
-        mat-button
-        [ixTest]="['delete', snapshot.snapshot_name]"
-        [disabled]="hasClones"
-        (click)="doDelete(snapshot)"
-      >
-        <ix-icon name="delete"></ix-icon>
-        <span>{{ 'Delete' | translate }}</span>
-      </button>
-    </div>
+      {{ 'Hold' | translate }}
+    </mat-checkbox>
+  </ng-container>
+</dl>
 
+<mat-divider></mat-divider>
+
+<div class="actions">
+  <button
+    *ixRequiresRoles="requiredRoles"
+    mat-button
+    [ixTest]="['clone', snapshot.snapshot_name]"
+    (click)="doClone(snapshot)"
+  >
+    {{ 'Clone To New Dataset' | translate }}
+  </button>
+
+  <button
+    *ixRequiresRoles="requiredRoles"
+    mat-button
+    [ixTest]="['rollback', snapshot.snapshot_name]"
+    (click)="doRollback(snapshot)"
+  >
+    {{ 'Rollback' | translate }}
+  </button>
+
+  <span
+    [matTooltip]="'Snapshots must not have dependent clones' | translate"
+    [matTooltipDisabled]="!hasClones"
+  >
     <button
-      *ixRequiresRoles="[Role.FullAdmin]"
+      *ixRequiresRoles="requiredRoles"
       mat-button
-      [ixTest]="['clone', snapshot.snapshot_name]"
-      (click)="doClone(snapshot)"
+      [ixTest]="['delete', snapshot.snapshot_name]"
+      [disabled]="hasClones"
+      (click)="doDelete(snapshot)"
     >
-      <span>{{ 'Clone To New Dataset' | translate }}</span>
+      {{ 'Delete' | translate }}
     </button>
-
-    <button
-      *ixRequiresRoles="[Role.FullAdmin]"
-      mat-button
-      [ixTest]="['rollback', snapshot.snapshot_name]"
-      (click)="doRollback(snapshot)"
-    >
-      <span>{{ 'Rollback' | translate }}</span>
-    </button>
-  </ix-table-expandable-row>
-</td>
+  </span>
+</div>
 
 <ng-template #notAvailable>
   {{ 'N/A' | translate }}

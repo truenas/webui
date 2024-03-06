@@ -1,6 +1,7 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
+import { MatCheckboxHarness } from '@angular/material/checkbox/testing';
 import { MatDialog } from '@angular/material/dialog';
 import { SpectatorRouting } from '@ngneat/spectator';
 import { mockProvider, createRoutingFactory } from '@ngneat/spectator/jest';
@@ -10,7 +11,7 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockWebSocket, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
-import { IxTableModule } from 'app/modules/ix-tables/ix-table.module';
+import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnapshotCloneDialogComponent } from 'app/pages/datasets/modules/snapshots/snapshot-clone-dialog/snapshot-clone-dialog.component';
@@ -29,7 +30,7 @@ describe('SnapshotDetailsRowComponent', () => {
     imports: [
       AppLoaderModule,
       IxFormsModule,
-      IxTableModule,
+      IxTable2Module,
     ],
     declarations: [
       FakeFormatDateTimePipe,
@@ -42,25 +43,21 @@ describe('SnapshotDetailsRowComponent', () => {
       }),
       mockWebSocket([
         mockCall('zfs.snapshot.query', [fakeZfsSnapshot]),
+        mockCall('zfs.snapshot.hold'),
+        mockCall('zfs.snapshot.release'),
         mockCall('zfs.snapshot.delete'),
       ]),
-      mockAuth(),
     ],
   });
 
   beforeEach(() => {
     spectator = createComponent({
       props: {
-        snapshot: fakeZfsSnapshot,
-        colspan: 5,
+        snapshot: { ...fakeZfsSnapshot, selected: false },
       },
     });
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     ws = spectator.inject(WebSocketService);
-  });
-
-  it('checks colspan attribute', () => {
-    expect(spectator.query('td').getAttribute('colspan')).toBe('5');
   });
 
   it('renders details rows', () => {
@@ -93,6 +90,16 @@ describe('SnapshotDetailsRowComponent', () => {
     expect(matDialog.open).toHaveBeenCalledWith(SnapshotRollbackDialogComponent, { data: fakeZfsSnapshot.name });
   });
 
+  it('should make websocket query when Hold is changed', async () => {
+    const holdCheckbox = await loader.getHarness(MatCheckboxHarness.with({ label: 'Hold' }));
+    await holdCheckbox.toggle();
+
+    expect(ws.call).toHaveBeenCalledWith('zfs.snapshot.release', [fakeZfsSnapshot.name]);
+
+    await holdCheckbox.toggle();
+    expect(ws.call).toHaveBeenCalledWith('zfs.snapshot.hold', [fakeZfsSnapshot.name]);
+  });
+
   it('should delete snapshot when `Delete` button click', async () => {
     const deleteButton = await loader.getHarness(MatButtonHarness.with({ text: 'Delete' }));
     await deleteButton.click();
@@ -103,8 +110,6 @@ describe('SnapshotDetailsRowComponent', () => {
         message: `Delete snapshot ${fakeZfsSnapshot.name}?`,
       }),
     );
-    expect(ws.call).toHaveBeenNthCalledWith(2, 'zfs.snapshot.delete', [fakeZfsSnapshot.name]);
+    expect(ws.call).toHaveBeenCalledWith('zfs.snapshot.delete', [fakeZfsSnapshot.name]);
   });
-
-  // TODO: Tests for Hold checkbox
 });

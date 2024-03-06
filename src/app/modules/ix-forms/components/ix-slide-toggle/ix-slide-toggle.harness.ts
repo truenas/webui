@@ -39,4 +39,8 @@ export class IxSlideToggleHarness extends ComponentHarness implements IxFormCont
   async isDisabled(): Promise<boolean> {
     return (await this.getMatSlideToggleHarness()).isDisabled();
   }
+
+  async toggle(): Promise<void> {
+    return (await this.getMatSlideToggleHarness()).toggle();
+  }
 }

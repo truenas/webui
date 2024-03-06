@@ -14,6 +14,7 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { SnapshotCloneDialogComponent } from 'app/pages/datasets/modules/snapshots/snapshot-clone-dialog/snapshot-clone-dialog.component';
+import { ZfsSnapshotUi } from 'app/pages/datasets/modules/snapshots/snapshot-list/snapshot-list.component';
 import { SnapshotRollbackDialogComponent } from 'app/pages/datasets/modules/snapshots/snapshot-rollback-dialog/snapshot-rollback-dialog.component';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -26,18 +27,17 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SnapshotDetailsRowComponent implements OnInit, OnDestroy {
-  @Input() snapshot: ZfsSnapshot;
-  @Input() colspan: number;
+  @Input() snapshot: ZfsSnapshotUi;
 
   isLoading = true;
   isHold: boolean;
-  snapshotInfo: ZfsSnapshot;
+  snapshotInfo: ZfsSnapshotUi;
+
+  protected readonly requiredRoles = [Role.FullAdmin];
 
   get hasClones(): boolean {
     return !!this.snapshotInfo?.properties?.clones?.value;
   }
-
-  protected readonly Role = Role;
 
   constructor(
     private dialogService: DialogService,
@@ -59,38 +59,45 @@ export class SnapshotDetailsRowComponent implements OnInit, OnDestroy {
   }
 
   getSnapshotInfo(): void {
-    this.ws.call('zfs.snapshot.query', [[['id', '=', this.snapshot.name]], { extra: { retention: true, holds: true } }]).pipe(
-      map((snapshots) => snapshots[0]),
-      untilDestroyed(this),
-    ).subscribe({
-      next: (snapshot) => {
-        this.snapshotInfo = snapshot;
-        this.isHold = !_.isEmpty(snapshot.holds);
-        this.isLoading = false;
-        this.cdr.markForCheck();
-      },
-      error: (error: unknown) => {
-        this.isLoading = false;
-        this.cdr.markForCheck();
-        this.dialogService.error(this.errorHandler.parseError(error));
-      },
-    });
+    this.ws.call(
+      'zfs.snapshot.query',
+      [
+        [['id', '=', this.snapshot.name]], {
+          extra: {
+            retention: true,
+            holds: true,
+          },
+        },
+      ],
+    )
+      .pipe(
+        map((snapshots) => ({ ...snapshots[0], selected: this.snapshot.selected })),
+        untilDestroyed(this),
+      )
+      .subscribe({
+        next: (snapshot) => {
+          this.snapshotInfo = snapshot;
+          this.isHold = !_.isEmpty(snapshot.holds);
+          this.isLoading = false;
+          this.cdr.markForCheck();
+        },
+        error: (error: unknown) => {
+          this.isLoading = false;
+          this.cdr.markForCheck();
+          this.dialogService.error(this.errorHandler.parseError(error));
+        },
+      });
   }
 
   doHold(): void {
     if (!this.isHold) {
       this.ws.call('zfs.snapshot.hold', [this.snapshotInfo.name])
-        .pipe(
-          this.errorHandler.catchError(),
-          untilDestroyed(this),
-        )
+        .pipe(this.errorHandler.catchError(), untilDestroyed(this))
         .subscribe(() => this.isHold = true);
     } else {
       this.ws.call('zfs.snapshot.release', [this.snapshotInfo.name])
-        .pipe(
-          this.errorHandler.catchError(),
-          untilDestroyed(this),
-        ).subscribe(() => this.isHold = false);
+        .pipe(this.errorHandler.catchError(), untilDestroyed(this))
+        .subscribe(() => this.isHold = false);
     }
   }
 
