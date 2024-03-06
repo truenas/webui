@@ -1,3 +1,5 @@
+# We require some status check before a PR can be merged.
+# This "disables" those checks for the Release Engineering PRs.
 name: WebUI
 on:
   push:
@@ -34,6 +36,11 @@ jobs:
       - run: 'echo "Not required for Release Engineering PRs"'
   test:
     name: Run tests
+    runs-on: ubuntu-latest
+    steps:
+      - run: 'echo "Not required for Release Engineering PRs"'
+  codecov/patch:
+    name: codecov/patch
     runs-on: ubuntu-latest
     steps:
       - run: 'echo "Not required for Release Engineering PRs"'

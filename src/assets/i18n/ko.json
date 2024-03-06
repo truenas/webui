@@ -4529,7 +4529,6 @@
   "Builtin": "내장",
   "Bulk Actions": "대량 작업",
   "Bulk Edit Disks": "디스크 대량 편집",
-  "Bulk Operations": "대량 작업",
   "Bulk actions": "대량 작업",
   "Burst": "Burst",
   "By default, Samba uses a hashing algorithm for NTFS illegal  characters. Enabling this option translates NTFS illegal characters to the Unicode private range.": "기본적으로 Samba는 NTFS 불법 문자에 대해 해싱 알고리즘을 사용합니다. 이 옵션을 활성화하면 NTFS 불법 문자가 유니코드 개인 범위로 번역됩니다.",
