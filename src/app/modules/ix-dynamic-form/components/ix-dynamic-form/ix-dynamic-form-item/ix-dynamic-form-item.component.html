@@ -36,6 +36,15 @@
       ></ix-dynamic-form-item>
     </ng-container>
 
+    <ix-code-editor
+      *ngIf="dynamicSchema.type === DynamicFormSchemaType.Text"
+      [label]="dynamicSchema.title | translate"
+      [formControlName]="dynamicSchema.controlName"
+      [tooltip]="dynamicSchema.tooltip | translate"
+      [placeholder]="dynamicSchema.placeholder | translate"
+      [required]="dynamicSchema.required"
+    ></ix-code-editor>
+
     <ix-list
       *ngIf="dynamicSchema.type === DynamicFormSchemaType.List"
       [label]="dynamicSchema.title | translate"

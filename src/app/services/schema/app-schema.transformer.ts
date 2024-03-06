@@ -26,6 +26,7 @@ const commonSchemaTypes = [
   ChartSchemaType.Hostpath,
   ChartSchemaType.Ipaddr,
   ChartSchemaType.Uri,
+  ChartSchemaType.Text,
 ];
 
 export function isCommonSchemaType(type: ChartSchemaType): boolean {

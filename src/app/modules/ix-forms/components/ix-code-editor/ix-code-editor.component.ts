@@ -4,7 +4,7 @@ import {
 import { ControlValueAccessor, NgControl } from '@angular/forms';
 import { json } from '@codemirror/lang-json';
 import { oneDark } from '@codemirror/theme-one-dark';
-import { EditorViewConfig } from '@codemirror/view';
+import { EditorViewConfig, placeholder } from '@codemirror/view';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { EditorView, basicSetup } from 'codemirror';
 import { IxSelectValue } from 'app/modules/ix-forms/components/ix-select/ix-select.component';
@@ -28,6 +28,7 @@ export class IxCodeEditorComponent implements ControlValueAccessor, AfterViewIni
   @Input() required: boolean;
   @Input() tooltip: string;
   @Input() language: CodeEditorSupportedLanguage;
+  @Input() placeholder: string;
 
   @ViewChild('inputArea', { static: true }) inputArea: ElementRef<HTMLElement>;
   private editorView: EditorView;
@@ -62,6 +63,7 @@ export class IxCodeEditorComponent implements ControlValueAccessor, AfterViewIni
         updateListener,
         json(),
         oneDark,
+        placeholder(this.placeholder),
       ],
       parent: this.inputArea.nativeElement,
     };
