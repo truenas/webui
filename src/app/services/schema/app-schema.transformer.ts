@@ -14,6 +14,7 @@ import {
   DynamicFormSchemaList,
   DynamicFormSchemaNode,
   DynamicFormSchemaSelect,
+  DynamicFormSchemaText,
   DynamicFormSchemaUri,
 } from 'app/interfaces/dynamic-form-schema.interface';
 import { FilesystemService } from 'app/services/filesystem.service';
@@ -90,6 +91,16 @@ export function transformCronSchemaType(
     ...buildCommonSchemaBase(payload),
     type: DynamicFormSchemaType.Cron,
   };
+}
+
+export function transformTextSchemaType(
+  payload: CommonSchemaTransform,
+): DynamicFormSchemaText {
+  const inputSchema: DynamicFormSchemaText = {
+    ...buildCommonSchemaBase(payload),
+    type: DynamicFormSchemaType.Text,
+  };
+  return inputSchema;
 }
 
 export function transformStringSchemaType(

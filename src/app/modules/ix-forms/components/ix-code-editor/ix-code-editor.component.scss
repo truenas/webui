@@ -21,6 +21,9 @@
   border: solid 1.5px var(--lines);
   border-radius: 2px;
   font-size: 12px;
+
+  max-height: 300px;
+  overflow: scroll;
   position: relative;
 
   &:focus-within {

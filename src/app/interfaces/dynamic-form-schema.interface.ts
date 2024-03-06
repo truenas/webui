@@ -25,7 +25,8 @@ export type DynamicFormSchemaNode =
 | DynamicFormSchemaCheckbox
 | DynamicFormSchemaIpaddr
 | DynamicFormSchemaDict
-| DynamicFormSchemaList;
+| DynamicFormSchemaList
+| DynamicFormSchemaText;
 
 export interface DynamicFormSchemaBase {
   controlName: string;
@@ -43,6 +44,12 @@ export interface DynamicFormSchemaInput extends DynamicFormSchemaBase {
   type: DynamicFormSchemaType.Input;
   tooltip?: string;
   inputType?: 'password' | 'number';
+  placeholder?: string;
+}
+
+export interface DynamicFormSchemaText extends DynamicFormSchemaBase {
+  type: DynamicFormSchemaType.Text;
+  tooltip?: string;
   placeholder?: string;
 }
 
