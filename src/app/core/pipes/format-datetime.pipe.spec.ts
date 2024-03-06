@@ -1,10 +1,9 @@
 import { createPipeFactory, SpectatorPipe } from '@ngneat/spectator/jest';
-import { utcToZonedTime } from 'date-fns-tz';
 import { FormatDateTimePipe } from 'app/core/pipes/format-datetime.pipe';
 
 describe('FormatDateTimePipe', () => {
   let spectator: SpectatorPipe<FormatDateTimePipe>;
-  const inputValue = utcToZonedTime(1709643804732, 'Europe/London').getTime();
+  const inputValue = 1709643804732;
   const createPipe = createPipeFactory({
     pipe: FormatDateTimePipe,
   });
@@ -15,7 +14,7 @@ describe('FormatDateTimePipe', () => {
         inputValue,
       },
     });
-    expect(spectator.element).toHaveExactText('2024-03-05 13:03:24');
+    expect(spectator.element).toHaveExactText('2024-03-05 15:03:24');
   });
 
   it('converts date using custom date format', () => {
@@ -24,7 +23,7 @@ describe('FormatDateTimePipe', () => {
         inputDateValue: new Date(inputValue),
       },
     });
-    expect(spectator.element).toHaveExactText('05/03/2024 13:03:24');
+    expect(spectator.element).toHaveExactText('05/03/2024 15:03:24');
   });
 
   it('converts date using custom time format', () => {
@@ -33,7 +32,7 @@ describe('FormatDateTimePipe', () => {
         inputDateValue: new Date(inputValue),
       },
     });
-    expect(spectator.element).toHaveExactText('2024-03-05 13:03');
+    expect(spectator.element).toHaveExactText('2024-03-05 15:03');
   });
 
   it('converts date using custom time format with old style " A" format', () => {
@@ -42,7 +41,7 @@ describe('FormatDateTimePipe', () => {
         inputDateValue: new Date(inputValue),
       },
     });
-    expect(spectator.element).toHaveExactText('2024-03-05 01:03 PM');
+    expect(spectator.element).toHaveExactText('2024-03-05 03:03 PM');
   });
 
   it('converts date string using user time format', () => {
