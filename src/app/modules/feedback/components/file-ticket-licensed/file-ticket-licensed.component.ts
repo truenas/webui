@@ -101,8 +101,9 @@ export class FileTicketLicensedComponent {
   }
 
   onEulaPressed(): void {
-    // TODO: Does not close dialog
-    this.router.navigate(['system', 'support', 'eula']);
+    this.router.navigate(['system', 'support', 'eula']).then(() => {
+      this.dialogRef.close();
+    });
   }
 
   onSubmit(): void {

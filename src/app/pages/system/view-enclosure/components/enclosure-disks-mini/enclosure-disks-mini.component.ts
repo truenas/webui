@@ -6,7 +6,6 @@ import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { Point } from 'pixi.js';
 import { EnclosureUi, EnclosureUiSlot } from 'app/interfaces/enclosure.interface';
-import { Theme } from 'app/interfaces/theme.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { Mini } from 'app/pages/system/view-enclosure/classes/hardware/mini';
 import { MiniX } from 'app/pages/system/view-enclosure/classes/hardware/mini-x';
@@ -133,11 +132,6 @@ export class EnclosureDisksMiniComponent extends EnclosureDisksComponent {
 
     // Slight adjustment to align with external html elements
     this.container.setTransform(0);
-  }
-
-  // TODO: Helps with template type checking. To be removed when 'strict' checks are enabled.
-  themeKey(key: string): keyof Theme {
-    return key as keyof Theme;
   }
 
   /* count(obj: Record<string, unknown> | unknown[]): number {

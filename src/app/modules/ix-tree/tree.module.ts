@@ -14,7 +14,6 @@ import { TreeViewComponent } from 'app/modules/ix-tree/components/tree-view/tree
 import { TreeVirtualScrollViewComponent } from 'app/modules/ix-tree/components/tree-virtual-scroll-view/tree-virtual-scroll-view.component';
 import { TreeNodeDefDirective } from 'app/modules/ix-tree/directives/tree-node-def.directive';
 import { TreeNodeOutletDirective } from 'app/modules/ix-tree/directives/tree-node-outlet.directive';
-import { TreeNodePaddingDirective } from 'app/modules/ix-tree/directives/tree-node-padding-def.directive';
 import { TreeNodeToggleDirective } from 'app/modules/ix-tree/directives/tree-node-toggle.directive';
 import { TreeVirtualScrollNodeOutletDirective } from 'app/modules/ix-tree/directives/tree-virtual-scroll-node-outlet.directive';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
@@ -37,7 +36,6 @@ import { TestIdModule } from 'app/modules/test-id/test-id.module';
     TreeNodeComponent,
     TreeNodeDefDirective,
     TreeNodeOutletDirective,
-    TreeNodePaddingDirective,
     TreeNodeToggleDirective,
     TreeViewComponent,
     TreeVirtualScrollNodeOutletDirective,
@@ -48,7 +46,6 @@ import { TestIdModule } from 'app/modules/test-id/test-id.module';
     TreeNodeComponent,
     TreeNodeDefDirective,
     TreeNodeOutletDirective,
-    TreeNodePaddingDirective,
     TreeNodeToggleDirective,
     TreeViewComponent,
     TreeVirtualScrollNodeOutletDirective,

@@ -1,3 +1,5 @@
+# We require some status check before a PR can be merged.
+# This "disables" those checks for the Release Engineering PRs.
 name: WebUI
 on:
   push:

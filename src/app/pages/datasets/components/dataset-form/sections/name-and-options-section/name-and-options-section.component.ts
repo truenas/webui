@@ -5,7 +5,10 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
-import { DatasetCaseSensitivity, DatasetPreset, datasetPresetLabels } from 'app/enums/dataset.enum';
+import { nameValidatorRegex } from 'app/constants/name-validator.constant';
+import {
+  DatasetCaseSensitivity, DatasetPreset, datasetPresetLabels,
+} from 'app/enums/dataset.enum';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextDatasetForm } from 'app/helptext/storage/volumes/datasets/dataset-form';
 import { Dataset, DatasetCreate, DatasetUpdate } from 'app/interfaces/dataset.interface';
@@ -13,7 +16,6 @@ import {
   forbiddenValues,
 } from 'app/modules/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
 import { datasetNameTooLong } from 'app/pages/datasets/components/dataset-form/utils/name-length-validation';
-import { NameValidationService } from 'app/services/name-validation.service';
 
 @UntilDestroy()
 @Component({
@@ -32,7 +34,7 @@ export class NameAndOptionsSectionComponent implements OnInit, OnChanges {
     parent: [''],
     name: ['', [
       Validators.required,
-      Validators.pattern(this.nameValidationService.nameRegex),
+      Validators.pattern(nameValidatorRegex),
     ]],
     share_type: [DatasetPreset.Generic],
   });
@@ -58,7 +60,6 @@ export class NameAndOptionsSectionComponent implements OnInit, OnChanges {
   constructor(
     private formBuilder: FormBuilder,
     private translate: TranslateService,
-    private nameValidationService: NameValidationService,
   ) {}
 
   ngOnChanges(): void {

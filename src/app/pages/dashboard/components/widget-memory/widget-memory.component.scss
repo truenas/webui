@@ -127,6 +127,11 @@ h1.memory-used span.memory-used-units {
   }
 }
 
+.xs.widget .spinner-wrapper {
+  height: auto;
+  width: auto;
+}
+
 .chart-wrapper {
   position: relative;
   width: 100%;

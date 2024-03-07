@@ -64,7 +64,6 @@ export class FileTicketComponent {
   }
 
   onSubmit(token: string): void {
-    // TODO: Cache token with setOauthToken inside the button
     this.isLoadingChange.emit(true);
 
     this.feedbackService.createTicket(token, this.ticketType, this.form.value).pipe(

@@ -93,7 +93,6 @@ export class GuiFormComponent {
     this.wsManager.isConnected$.pipe(untilDestroyed(this)).subscribe((isConnected) => {
       if (isConnected) {
         this.loader.close();
-        // ws is connected
         this.window.location.replace(href);
       }
     });
