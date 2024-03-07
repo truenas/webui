@@ -9,7 +9,7 @@
       "projectType": "application",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:browser",
+          "builder": "@angular-devkit/build-angular:browser-esbuild",
           "options": {
             "allowedCommonJsDependencies": [
               "is-cidr",
@@ -39,7 +39,6 @@
               "node_modules/pixi.js/dist/pixi.min.js",
               "node_modules/pixi-filters/dist/pixi-filters.js"
             ],
-            "vendorChunk": true,
             "extractLicenses": false,
             "buildOptimizer": false,
             "sourceMap": true,
