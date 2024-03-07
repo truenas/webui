@@ -72,6 +72,23 @@
     "hierarchy": [
       "System Settings",
       "General",
+      "GUI",
+      "Theme"
+    ],
+    "synonyms": [],
+    "requiredRoles": [],
+    "routerLink": null,
+    "anchorRouterLink": [
+      "/system",
+      "general"
+    ],
+    "anchor": "system_settings-general-gui-theme",
+    "triggerAnchor": "gui-settings"
+  },
+  {
+    "hierarchy": [
+      "System Settings",
+      "General",
       "Localization",
       "Language"
     ],

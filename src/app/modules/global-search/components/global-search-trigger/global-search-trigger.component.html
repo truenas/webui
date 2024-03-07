@@ -1,5 +1,5 @@
 <div class="search-box" [class.hidden]="this.overlayRef?.hasAttached()">
-  <ix-icon name="search" class="search-icon"></ix-icon>
+  <ix-icon name="search" class="search-icon" (click)="showOverlay()"></ix-icon>
 
   <input
     #searchInput

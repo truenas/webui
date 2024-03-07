@@ -9,6 +9,7 @@
     <ix-icon name="search" class="search-icon"></ix-icon>
 
     <input
+      #searchInput
       matInput
       ixTest="global-search"
       class="search-input"
@@ -31,11 +32,11 @@
   </div>
 
   <ix-global-search-results
-    #autocompleteList
+    #searchResultsList
     @fade
     [searchTerm]="searchControl.value"
     [results]="searchResults"
-    [focusedSelectedIndex]="selectedIndex"
+    [focusedIndex]="selectedIndex"
     (selected)="resetInput()"
     (keydown)="handleKeyDown($event)"
   ></ix-global-search-results>

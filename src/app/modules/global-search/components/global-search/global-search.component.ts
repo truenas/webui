@@ -2,7 +2,7 @@ import {
   animate, style, transition, trigger,
 } from '@angular/animations';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, OnInit, Output, ViewChild,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, EventEmitter, OnInit, Output, ViewChild,
 } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -31,7 +31,8 @@ import { SidenavService } from 'app/services/sidenav.service';
   ],
 })
 export class GlobalSearchComponent implements OnInit {
-  @ViewChild('autocompleteList', { static: false }) autocompleteList: GlobalSearchResultsComponent;
+  @ViewChild('searchInput') searchInput: ElementRef<HTMLInputElement>;
+  @ViewChild('searchResultsList', { static: false }) searchResultsList: GlobalSearchResultsComponent;
 
   @Output() resetSearch = new EventEmitter<void>();
 
@@ -52,21 +53,43 @@ export class GlobalSearchComponent implements OnInit {
   }
 
   handleKeyDown(event: KeyboardEvent): void {
-    if (event.key === 'ArrowDown') {
-      event.preventDefault();
-      this.selectedIndex = (this.selectedIndex + 1) % this.searchResults.length;
-      this.autocompleteList.scrollIntoFocusedSelectedIndexView();
-    } else if (event.key === 'ArrowUp') {
-      event.preventDefault();
-      this.selectedIndex = (this.selectedIndex - 1 + this.searchResults.length) % this.searchResults.length;
-      this.autocompleteList.scrollIntoFocusedSelectedIndexView();
-    } else if (event.key === 'Escape') {
-      event.preventDefault();
-      this.resetInput();
-      this.autocompleteList.scrollIntoFocusedSelectedIndexView();
-    } else if (event.key === 'Enter' && this.selectedIndex !== -1) {
-      event.preventDefault();
-      this.autocompleteList.navigateToResultByFocusedSelectedIndex();
+    switch (event.key) {
+      case 'ArrowDown':
+        event.preventDefault();
+        this.selectedIndex = (this.selectedIndex + 1) % this.searchResults.length;
+        this.searchResultsList.focusOnResultIndex(this.selectedIndex);
+        break;
+      case 'ArrowUp':
+        event.preventDefault();
+        this.selectedIndex = (this.selectedIndex - 1 + this.searchResults.length) % this.searchResults.length;
+        this.searchResultsList.focusOnResultIndex(this.selectedIndex);
+        break;
+      case 'Escape':
+        event.preventDefault();
+        this.resetInput();
+        break;
+      case 'Tab':
+        event.preventDefault();
+        if (event.shiftKey) {
+          this.selectedIndex = (this.selectedIndex - 1 + this.searchResults.length) % this.searchResults.length;
+        } else {
+          this.selectedIndex = (this.selectedIndex + 1) % this.searchResults.length;
+        }
+        this.searchResultsList.focusOnResultIndex(this.selectedIndex);
+        break;
+      case 'Enter':
+        if (this.selectedIndex !== -1) {
+          event.preventDefault();
+          this.searchResultsList.navigateToResultByFocusedIndex(this.selectedIndex);
+        }
+        break;
+      default:
+        if (event.key.length === 1) {
+          event.preventDefault();
+          this.searchControl.setValue(this.searchControl.value + event.key);
+          this.focusInputElement();
+        }
+        break;
     }
   }
 
@@ -88,9 +111,13 @@ export class GlobalSearchComponent implements OnInit {
   }
 
   private getInitialSearchResults(): void {
-    this.searchProvider.search(' ').pipe(untilDestroyed(this)).subscribe((searchResults) => {
+    this.searchProvider.search('').pipe(untilDestroyed(this)).subscribe((searchResults) => {
       this.searchResults = searchResults;
       this.cdr.markForCheck();
     });
+  }
+
+  private focusInputElement(): void {
+    this.searchInput.nativeElement?.focus();
   }
 }

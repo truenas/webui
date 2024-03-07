@@ -7,6 +7,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatInputModule } from '@angular/material/input';
 import { TranslateModule } from '@ngx-translate/core';
+import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { GlobalSearchComponent } from 'app/modules/global-search/components/global-search/global-search.component';
 import { GlobalSearchResultsComponent } from 'app/modules/global-search/components/global-search-results/global-search-results.component';
 import { GlobalTriggerSearchComponent } from 'app/modules/global-search/components/global-search-trigger/global-search-trigger.component';
@@ -33,6 +34,7 @@ import { TestIdModule } from 'app/modules/test-id/test-id.module';
     MatCardModule,
     OverlayModule,
     A11yModule,
+    EmptyComponent,
   ],
   exports: [GlobalSearchComponent, GlobalTriggerSearchComponent],
 })

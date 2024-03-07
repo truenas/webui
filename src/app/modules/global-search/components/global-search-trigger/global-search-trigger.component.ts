@@ -2,7 +2,7 @@ import { Overlay, OverlayConfig, OverlayRef } from '@angular/cdk/overlay';
 import { ComponentPortal } from '@angular/cdk/portal';
 import { DOCUMENT } from '@angular/common';
 import {
-  AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, Inject, ViewChild, ViewContainerRef,
+  AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, ViewContainerRef,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { GlobalSearchComponent } from 'app/modules/global-search/components/global-search/global-search.component';
@@ -15,8 +15,6 @@ import { GlobalSearchComponent } from 'app/modules/global-search/components/glob
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class GlobalTriggerSearchComponent implements AfterViewInit {
-  @ViewChild('searchInput') searchInput: ElementRef<HTMLInputElement>;
-
   overlayRef: OverlayRef;
 
   constructor(
@@ -40,7 +38,6 @@ export class GlobalTriggerSearchComponent implements AfterViewInit {
 
     this.overlayRef = this.overlay.create(overlayConfig);
 
-    // Close overlay on backdrop click
     this.overlayRef.backdropClick().pipe(untilDestroyed(this)).subscribe(() => this.detachOverlay());
   }
 
@@ -51,14 +48,20 @@ export class GlobalTriggerSearchComponent implements AfterViewInit {
 
     const searchResultsPortal = new ComponentPortal(GlobalSearchComponent, this.viewContainerRef);
     const componentRef = this.overlayRef.attach(searchResultsPortal);
-    componentRef.instance.resetSearch.pipe(untilDestroyed(this)).subscribe(() => this.detachOverlay());
     this.cdr.markForCheck();
+
+    componentRef.instance.resetSearch.pipe(untilDestroyed(this)).subscribe(() => this.detachOverlay());
   }
 
   detachOverlay(): void {
     this.overlayRef.detach();
-    this.searchInput.nativeElement.blur();
-    (this.document.querySelector('ix-logo a') as unknown as HTMLLinkElement).focus();
+
+    const element = this.document.querySelector('ix-logo a');
+
+    if (element instanceof HTMLAnchorElement) {
+      element.focus();
+    }
+
     this.cdr.markForCheck();
   }
 }

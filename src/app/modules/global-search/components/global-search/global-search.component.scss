@@ -11,6 +11,16 @@
 
   &.sidenav-mobile {
     margin-left: 67px;
+
+    @media(max-width: $breakpoint-xs) {
+      margin-left: 10px;
+      margin-top: 4px;
+      width: 100vw;
+
+      .search-box {
+        width: 95%;
+      }
+    }
   }
 }
 

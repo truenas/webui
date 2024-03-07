@@ -1,17 +1,15 @@
 @import 'scss-imports/cssvars';
 
 .arrow-focused {
-  background-color: var(--focus-bg);
+  background-color: var(--bg1);
 }
 
 :host {
   background-color: var(--bg2);
   border-radius: 2px;
   display: block;
-  max-height: 400px;
   max-width: 70vw;
   min-width: 100%;
-  overflow: auto;
   padding: 10px 0;
   position: absolute;
   top: 41px;
@@ -31,6 +29,12 @@
     .dimmed-text {
       opacity: 0.5;
     }
+
+    ix-empty {
+      ix-icon {
+        font-size: 100px !important;
+      }
+    }
   }
 }
 
@@ -38,6 +42,7 @@
   border: 0;
   border-radius: 2px;
   margin: 0;
+  max-height: 400px;
   overflow: auto;
 
   .search-result {
@@ -50,7 +55,6 @@
     }
 
     &:focus {
-      box-shadow: 0 0 0 1.5px var(--focus-brd) inset;
       outline: none;
     }
 

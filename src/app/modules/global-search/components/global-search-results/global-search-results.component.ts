@@ -5,7 +5,9 @@ import {
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { timer } from 'rxjs';
+import { EmptyType } from 'app/enums/empty-type.enum';
 import { UiSearchableElement } from 'app/modules/global-search/interfaces/ui-searchable-element.interface';
+import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
 import { AuthService } from 'app/services/auth/auth.service';
 
 @UntilDestroy()
@@ -18,13 +20,16 @@ import { AuthService } from 'app/services/auth/auth.service';
 export class GlobalSearchResultsComponent {
   @Input() searchTerm: string;
   @Input() results: UiSearchableElement[];
-  @Input() focusedSelectedIndex: number;
+  @Input() focusedIndex: number;
 
   @Output() selected = new EventEmitter<void>();
+
+  protected readonly entityEmptyConf = this.emptyService.defaultEmptyConfig(EmptyType.NoSearchResults);
 
   constructor(
     protected authService: AuthService,
     private router: Router,
+    private emptyService: EmptyService,
     @Inject(DOCUMENT) private document: Document,
   ) {}
 
@@ -52,15 +57,15 @@ export class GlobalSearchResultsComponent {
     });
   }
 
-  navigateToResultByFocusedSelectedIndex(): void {
-    this.navigateToResult(this.results[this.focusedSelectedIndex]);
+  navigateToResultByFocusedIndex(index: number): void {
+    this.navigateToResult(this.results[index]);
   }
 
-  scrollIntoFocusedSelectedIndexView(): void {
-    const selectedItem = this.document.querySelector(`.focused-index-${this.focusedSelectedIndex}`);
+  focusOnResultIndex(index: number): void {
+    const selectedItem = this.document.querySelector(`.focused-index-${index}`);
 
-    if (selectedItem) {
-      selectedItem.scrollIntoView({ behavior: 'instant', block: 'center' });
+    if (selectedItem instanceof HTMLElement) {
+      selectedItem.focus();
     }
   }
 

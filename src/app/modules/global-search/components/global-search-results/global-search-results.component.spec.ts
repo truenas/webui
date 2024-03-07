@@ -4,6 +4,7 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { TranslateService } from '@ngx-translate/core';
 import { Role } from 'app/enums/role.enum';
+import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { UiSearchableElement } from 'app/modules/global-search/interfaces/ui-searchable-element.interface';
 import { GlobalSearchResultsComponent } from './global-search-results.component';
 
@@ -15,6 +16,7 @@ describe('GlobalSearchResultsComponent', () => {
     component: GlobalSearchResultsComponent,
     imports: [
       RouterTestingModule.withRoutes([]),
+      EmptyComponent,
     ],
     mocks: [TranslateService],
   });

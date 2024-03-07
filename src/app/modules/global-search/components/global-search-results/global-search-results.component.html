@@ -1,12 +1,13 @@
 <mat-card class="search-results-card">
-  <ng-container *ngFor="let result of results; let i = index">
+  <ng-container *ngIf="results?.length > 0; else noResults">
     <div
+      *ngFor="let result of results; let i = index"
       class="search-result"
       tabindex="0"
-      [class.arrow-focused]="i === focusedSelectedIndex"
+      [class.arrow-focused]="i === focusedIndex"
       [ngClass]="'focused-index-' + i"
       (click)="navigateToResult(result)"
-      (keydown.enter)="focusedSelectedIndex = i"
+      (keydown.enter)="focusedIndex = i"
     >
       <h3
         class="title"
@@ -15,3 +16,7 @@
     </div>
   </ng-container>
 </mat-card>
+
+<ng-template #noResults>
+  <ix-empty [conf]="entityEmptyConf"></ix-empty>
+</ng-template>
