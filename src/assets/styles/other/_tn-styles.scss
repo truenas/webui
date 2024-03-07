@@ -1,25 +1,35 @@
 @use '@angular/material' as mat;
 @import 'scss-imports/cssvars';
 $standard-height: 40px;
-@import '@angular/material/theming';
-@include mat.all-legacy-component-typographies();
-@include mat.legacy-core();
+@include mat.all-component-typographies();
+@include mat.core();
 @include mat.slide-toggle-density(-1);
 @include mat.radio-density(-1);
 @include mat.checkbox-density(-1);
 @import 'angular15';
+@import 'material-overrides';
 
-// mandatory stuff for theming
 $ix-primary: mat.define-palette($md-primary);
 $ix-accent: mat.define-palette($md-accent);
-// include the custom theme components into a theme object
-$ix-theme: mat.define-light-theme($ix-primary, $ix-accent);
+
+$ix-typography: mat.define-typography-config($body-1: mat.define-typography-level($font-size: 0.875rem,
+$font-family: var(--font-family-body),),
+$body-2: mat.define-typography-level($font-size: 0.875rem,
+$font-family: var(--font-family-body),),);
+
+$ix-theme: mat.define-light-theme((
+  color: (
+    primary: $ix-primary,
+    accent: $ix-accent,
+  ),
+  typography: $ix-typography,
+));
 
 $primary-dark: darken(map-get($md-primary, 500), 8%);
 
 // include the custom theme object into the angular material theme
 .ix-dark {
-  @include mat.all-legacy-component-themes($ix-theme);
+  @include mat.all-component-themes($ix-theme);
 
   .mat-bg-primary,
   .sidebar-panel.mat-sidenav .sidebar-list-item.open md-icon:not(.menu-caret),
