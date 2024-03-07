@@ -28,7 +28,6 @@ import { dateColumn } from 'app/modules/ix-table2/components/ix-table-body/cells
 import { sizeColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-size/ix-cell-size.component';
 import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { SortDirection } from 'app/modules/ix-table2/enums/sort-direction.enum';
-import { Column, ColumnComponent } from 'app/modules/ix-table2/interfaces/table-column.interface';
 import { createTable } from 'app/modules/ix-table2/utils';
 import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
 import { SnapshotAddFormComponent } from 'app/pages/datasets/modules/snapshots/snapshot-add-form/snapshot-add-form.component';
@@ -62,7 +61,6 @@ export class SnapshotListComponent implements OnInit {
     this.store$.select(selectSnapshotState).pipe(map((state) => state.isLoading)),
     this.loadingExtraColumns$,
   ]).pipe(map(([isLoading, loadingExtraColumns]) => isLoading || loadingExtraColumns));
-  columns: Column<ZfsSnapshotUi, ColumnComponent<ZfsSnapshotUi>>[];
   emptyType$: Observable<EmptyType> = combineLatest([
     this.isLoading$,
     this.store$.select(selectSnapshotsTotal).pipe(map((total) => total === 0)),
@@ -81,6 +79,55 @@ export class SnapshotListComponent implements OnInit {
       }
     }),
   );
+  columns = createTable<ZfsSnapshotUi>([
+    checkboxColumn({
+      propertyName: 'selected',
+      onRowCheck: (row, checked) => {
+        this.snapshots.find((snapshot) => row.id === snapshot.id).selected = checked;
+        this.dataProvider.setRows([]);
+        this.dataProvider.setRows(this.snapshots.filter(this.filterSnapshot));
+      },
+      onColumnCheck: (checked) => {
+        this.snapshots.forEach((bootenv) => bootenv.selected = checked);
+        this.dataProvider.setRows([]);
+        this.dataProvider.setRows(this.snapshots.filter(this.filterSnapshot));
+      },
+      cssClass: 'checkboxs-column',
+    }),
+    textColumn({
+      title: this.translate.instant('Dataset'),
+      propertyName: 'dataset',
+      sortable: true,
+    }),
+    textColumn({
+      title: this.translate.instant('Snapshot'),
+      propertyName: 'snapshot_name',
+      sortable: true,
+    }),
+    sizeColumn({
+      title: this.translate.instant('Used'),
+      sortable: true,
+      hidden: !this.showExtraColumnsControl.value,
+      getValue: (row) => row?.properties?.used?.parsed,
+      sortBy: (row) => row?.properties?.used?.parsed as string,
+    }),
+    dateColumn({
+      title: this.translate.instant('Date created'),
+      sortable: true,
+      hidden: !this.showExtraColumnsControl.value,
+      getValue: (row) => row?.properties?.creation?.parsed.$date,
+      sortBy: (row) => row?.properties?.creation?.parsed.$date,
+    }),
+    sizeColumn({
+      title: this.translate.instant('Referenced'),
+      sortable: true,
+      hidden: !this.showExtraColumnsControl.value,
+      getValue: (row) => row?.properties?.referenced?.parsed,
+      sortBy: (row) => row?.properties?.referenced?.parsed as string,
+    }),
+  ], {
+    rowTestId: (row) => 'snapshot-' + row.id,
+  });
 
   get pageTitle(): string {
     if (this.datasetFilter.length) {
@@ -126,56 +173,12 @@ export class SnapshotListComponent implements OnInit {
       .subscribe(() => this.toggleExtraColumns());
   }
 
-  createTable(): void {
-    // Needed to make `hidden` columns works when showExtraColumns changed
-    this.columns = createTable<ZfsSnapshotUi>([
-      checkboxColumn({
-        propertyName: 'selected',
-        onRowCheck: (row, checked) => {
-          this.snapshots.find((snapshot) => row.id === snapshot.id).selected = checked;
-          this.dataProvider.setRows([]);
-          this.dataProvider.setRows(this.snapshots.filter(this.filterSnapshot));
-        },
-        onColumnCheck: (checked) => {
-          this.snapshots.forEach((bootenv) => bootenv.selected = checked);
-          this.dataProvider.setRows([]);
-          this.dataProvider.setRows(this.snapshots.filter(this.filterSnapshot));
-        },
-        cssClass: 'checkboxs-column',
-      }),
-      textColumn({
-        title: this.translate.instant('Dataset'),
-        propertyName: 'dataset',
-        sortable: true,
-      }),
-      textColumn({
-        title: this.translate.instant('Snapshot'),
-        propertyName: 'snapshot_name',
-        sortable: true,
-      }),
-      sizeColumn({
-        title: this.translate.instant('Used'),
-        sortable: true,
-        hidden: !this.showExtraColumnsControl.value,
-        getValue: (row) => row?.properties?.used?.parsed,
-        sortBy: (row) => row?.properties?.used?.parsed as string,
-      }),
-      dateColumn({
-        title: this.translate.instant('Date created'),
-        sortable: true,
-        hidden: !this.showExtraColumnsControl.value,
-        getValue: (row) => row?.properties?.creation?.parsed.$date,
-        sortBy: (row) => row?.properties?.creation?.parsed.$date,
-      }),
-      sizeColumn({
-        title: this.translate.instant('Referenced'),
-        sortable: true,
-        hidden: !this.showExtraColumnsControl.value,
-        getValue: (row) => row?.properties?.referenced?.parsed,
-        sortBy: (row) => row?.properties?.referenced?.parsed as string,
-      }),
-    ], {
-      rowTestId: (row) => 'snapshot-' + row.id,
+  updateColumnVisibility(): void {
+    this.columns = this.columns.map((column) => {
+      if (column.hasOwnProperty('hidden')) {
+        column.hidden = !this.showExtraColumnsControl.value;
+      }
+      return column;
     });
     this.cdr.markForCheck();
   }
@@ -203,8 +206,8 @@ export class SnapshotListComponent implements OnInit {
       untilDestroyed(this),
     ).subscribe((showExtraColumns) => {
       this.showExtraColumnsControl.setValue(showExtraColumns, { emitEvent: false });
+      this.updateColumnVisibility();
       this.store$.dispatch(snapshotPageEntered());
-      this.createTable();
       this.loadingExtraColumns$.next(false);
     });
   }
@@ -232,6 +235,8 @@ export class SnapshotListComponent implements OnInit {
       .pipe(take(1), untilDestroyed(this))
       .subscribe((confirmed) => {
         if (confirmed) {
+          this.loadingExtraColumns$.next(true);
+          this.updateColumnVisibility();
           this.store$.dispatch(snapshotExtraColumnsToggled());
         } else {
           this.showExtraColumnsControl.setValue(!this.showExtraColumnsControl.value, { emitEvent: false });
