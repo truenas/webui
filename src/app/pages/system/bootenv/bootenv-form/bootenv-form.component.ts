@@ -9,6 +9,7 @@ import { Validators } from '@angular/forms';
 import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import { nameValidatorRegex } from 'app/constants/name-validator.constant';
 import { BootEnvironmentAction } from 'app/enums/boot-environment-action.enum';
 import { Role } from 'app/enums/role.enum';
 import { helptextSystemBootenv } from 'app/helptext/system/boot-env';
@@ -20,7 +21,6 @@ import {
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
-import { NameValidationService } from 'app/services/name-validation.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
@@ -38,7 +38,7 @@ export class BootEnvironmentFormComponent implements OnInit {
   title: string;
 
   formGroup = this.formBuilder.group({
-    name: ['', [Validators.required, Validators.pattern(this.nameValidationService.nameRegex)]],
+    name: ['', [Validators.required, Validators.pattern(nameValidatorRegex)]],
   });
 
   isFormLoading = false;
@@ -51,7 +51,6 @@ export class BootEnvironmentFormComponent implements OnInit {
     private translate: TranslateService,
     private formBuilder: FormBuilder,
     private ws: WebSocketService,
-    private nameValidationService: NameValidationService,
     private errorHandler: FormErrorHandlerService,
     private changeDetectorRef: ChangeDetectorRef,
     private slideInRef: IxSlideInRef<BootEnvironmentFormComponent>,

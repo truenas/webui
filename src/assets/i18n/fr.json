@@ -935,7 +935,6 @@
   "Builtin": "Intégré",
   "Bulk Actions": "Actions groupées",
   "Bulk Edit Disks": "Modifier en masse les disques",
-  "Bulk Operations": "Opérations groupées",
   "Bulk actions": "Actions en masse",
   "Burst": "Poussée",
   "By clicking the share creation checkbox below, a new share will be created on form submission with the default share settings Additionally, local TrueNAS users will have access to the resulting share and some more configuration options will be available.": "En cochant la case de création de partage ci-dessous, un nouveau partage sera créé lors de la soumission du formulaire avec les paramètres de partage par défaut. De plus, les utilisateurs TrueNAS locaux auront accès au partage résultant et d'autres options de configuration seront disponibles.",
