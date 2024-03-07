@@ -35,7 +35,7 @@ export class UiSearchProvider implements GlobalSearchProvider {
         return true;
       }
 
-      return item.hierarchy[item.hierarchy.length - 1]?.toLowerCase()?.includes(lowercaseTerm);
+      return item.hierarchy[item.hierarchy.length - 1]?.toLowerCase()?.startsWith(lowercaseTerm);
     }).splice(0, 50);
 
     return from(results).pipe(
