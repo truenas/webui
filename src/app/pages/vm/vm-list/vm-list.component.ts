@@ -121,7 +121,7 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow> {
         if (column.prop === 'state' || column.prop === 'autostart') {
           return {
             ...column,
-            disabled: true,
+            disabled: !hasAccess,
           };
         }
         return column;
