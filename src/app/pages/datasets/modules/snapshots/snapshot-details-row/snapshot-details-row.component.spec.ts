@@ -1,15 +1,16 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatCheckboxHarness } from '@angular/material/checkbox/testing';
 import { MatDialog } from '@angular/material/dialog';
 import { SpectatorRouting } from '@ngneat/spectator';
 import { mockProvider, createRoutingFactory } from '@ngneat/spectator/jest';
-import { of } from 'rxjs';
+import { of, pipe } from 'rxjs';
 import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-datetime.pipe';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockWebSocket, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { IxCheckboxHarness } from 'app/modules/ix-forms/components/ix-checkbox/ix-checkbox.harness';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
@@ -30,6 +31,7 @@ describe('SnapshotDetailsRowComponent', () => {
     imports: [
       AppLoaderModule,
       IxFormsModule,
+      ReactiveFormsModule,
       IxTable2Module,
     ],
     declarations: [
@@ -37,7 +39,9 @@ describe('SnapshotDetailsRowComponent', () => {
     ],
     providers: [
       mockAuth(),
-      mockProvider(AppLoaderService),
+      mockProvider(AppLoaderService, {
+        withLoader: jest.fn(() => pipe()),
+      }),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
@@ -91,10 +95,12 @@ describe('SnapshotDetailsRowComponent', () => {
   });
 
   it('should make websocket query when Hold is changed', async () => {
-    const holdCheckbox = await loader.getHarness(MatCheckboxHarness.with({ label: 'Hold' }));
-    await holdCheckbox.toggle();
+    const holdCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'Hold' }));
+    expect(await holdCheckbox.getValue()).toBeTruthy();
 
+    await holdCheckbox.toggle();
     expect(ws.call).toHaveBeenCalledWith('zfs.snapshot.release', [fakeZfsSnapshot.name]);
+    expect(await holdCheckbox.getValue()).toBeFalsy();
 
     await holdCheckbox.toggle();
     expect(ws.call).toHaveBeenCalledWith('zfs.snapshot.hold', [fakeZfsSnapshot.name]);

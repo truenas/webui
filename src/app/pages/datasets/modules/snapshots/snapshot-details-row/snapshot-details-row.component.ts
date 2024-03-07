@@ -1,6 +1,7 @@
 import {
   Component, ChangeDetectionStrategy, Input, ChangeDetectorRef, OnInit, OnDestroy,
 } from '@angular/core';
+import { FormControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
@@ -30,8 +31,8 @@ export class SnapshotDetailsRowComponent implements OnInit, OnDestroy {
   @Input() snapshot: ZfsSnapshotUi;
 
   isLoading = true;
-  isHold: boolean;
   snapshotInfo: ZfsSnapshotUi;
+  holdControl = new FormControl(false);
 
   protected readonly requiredRoles = [Role.FullAdmin];
 
@@ -52,6 +53,9 @@ export class SnapshotDetailsRowComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.getSnapshotInfo();
+    this.holdControl.valueChanges
+      .pipe(untilDestroyed(this))
+      .subscribe(() => this.doHoldOrRelease());
   }
 
   ngOnDestroy(): void {
@@ -77,28 +81,28 @@ export class SnapshotDetailsRowComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (snapshot) => {
           this.snapshotInfo = snapshot;
-          this.isHold = !_.isEmpty(snapshot.holds);
+          this.holdControl.setValue(!_.isEmpty(snapshot.holds), { emitEvent: false });
           this.isLoading = false;
           this.cdr.markForCheck();
         },
         error: (error: unknown) => {
           this.isLoading = false;
           this.cdr.markForCheck();
-          this.dialogService.error(this.errorHandler.parseError(error));
+          this.errorHandler.showErrorModal(error);
         },
       });
   }
 
-  doHold(): void {
-    if (!this.isHold) {
-      this.ws.call('zfs.snapshot.hold', [this.snapshotInfo.name])
-        .pipe(this.errorHandler.catchError(), untilDestroyed(this))
-        .subscribe(() => this.isHold = true);
-    } else {
-      this.ws.call('zfs.snapshot.release', [this.snapshotInfo.name])
-        .pipe(this.errorHandler.catchError(), untilDestroyed(this))
-        .subscribe(() => this.isHold = false);
-    }
+  doHoldOrRelease(): void {
+    const holdOrRelease = this.holdControl.value ? 'zfs.snapshot.hold' : 'zfs.snapshot.release';
+    this.ws.call(holdOrRelease, [this.snapshotInfo.name])
+      .pipe(this.loader.withLoader(), untilDestroyed(this))
+      .subscribe({
+        error: (error: unknown) => {
+          this.holdControl.setValue(!this.holdControl.value, { emitEvent: false });
+          this.errorHandler.showErrorModal(error);
+        },
+      });
   }
 
   doClone(snapshot: ZfsSnapshot): void {

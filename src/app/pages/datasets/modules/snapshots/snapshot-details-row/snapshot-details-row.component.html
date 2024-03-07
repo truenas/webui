@@ -46,15 +46,10 @@
     </dd>
   </div>
   <ng-container *ixRequiresRoles="requiredRoles">
-    <mat-checkbox
-      *ngIf="!isLoading"
-      color="primary"
-      [checked]="isHold"
-      [ixTest]="['hold', snapshot.snapshot_name]"
-      (change)="doHold()"
-    >
-      {{ 'Hold' | translate }}
-    </mat-checkbox>
+    <ix-checkbox
+      [formControl]="holdControl"
+      [label]="'Hold' | translate"
+    ></ix-checkbox>
   </ng-container>
 </dl>
 
