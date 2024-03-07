@@ -10,7 +10,6 @@ import { ServiceRSYNCComponent } from './components/service-rsync';
 import { CconfigureRYSNCComponent } from './components/service-rsync/rsyncconfiguration/configure_rsync';
 import { RSYNCconfigurationListComponent } from './components/service-rsync/rsyncconfiguration/rsyncconfiguration-list';
 import { RYSNCConfigurationFormComponent } from './components/service-rsync/rsyncconfiguration/rsyncmodule';
-import { ServiceS3Component } from './components/service-s3';
 import { ServiceSMARTComponent } from './components/service-smart';
 import { ServiceSMBComponent } from './components/service-smb';
 import { ServiceSNMPComponent } from './components/service-snmp';
@@ -121,11 +120,6 @@ export const routes: Routes = [
     data: { title: 'WebDAV', breadcrumb: 'WebDAV' },
     path: 'webdav',
     component: ServiceWebdavComponent,
-  },
-  {
-    data: { title: 'S3', breadcrumb: 'S3' },
-    path: 's3',
-    component: ServiceS3Component,
   },
   {
     data: { title: 'OpenVPN', breadcrumb: 'OpenVPN Client' },
