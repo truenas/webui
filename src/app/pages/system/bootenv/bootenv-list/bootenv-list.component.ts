@@ -32,7 +32,7 @@ import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 
-// TODO: Exclude AnythingUi when using ix-table2
+// TODO: Exclude AnythingUi when NAS-127632 is done
 interface BootenvUi extends Bootenv {
   selected: boolean;
 }

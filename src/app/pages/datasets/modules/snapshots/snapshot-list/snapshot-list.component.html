@@ -1,40 +1,34 @@
-<ix-page-header
-  [pageTitle]="searchInput.value.length
-    ? ('Snapshots' | translate) + ': ' + searchInput.value
-    : ('Snapshots' | translate)
-  "
->
-  <ix-search-input1
-    #searchInput
-    [disabled]="isLoading$ | async"
-    [value]="datasetFilter"
-    (search)="onSearch($event)"
-  ></ix-search-input1>
-
+<ix-page-header [pageTitle]="pageTitle">
   <mat-spinner
-    *ngIf="loadingExtraColumns; else slider"
+    *ngIf="loadingExtraColumns$ | async; else slider"
     [diameter]="30"
   ></mat-spinner>
 
   <ng-template #slider>
-    <mat-slide-toggle
-      ixTest="show-extra-columns"
-      color="primary"
-      [checked]="showExtraColumns"
-      [disabled]="isLoading$ | async"
-      (click)="toggleExtraColumns($event)"
-    >
-      <label>{{ 'Show extra columns' | translate }}</label>
-    </mat-slide-toggle>
+    <ix-slide-toggle
+      [formControl]="showExtraColumnsControl"
+      [label]="'Show extra columns' | translate"
+    ></ix-slide-toggle>
   </ng-template>
 
-  <button *ixRequiresRoles="requiredRoles" mat-button color="primary" ixTest="add-snapshot" (click)="doAdd()">
+  <ix-search-input1
+    [value]="datasetFilter"
+    (search)="onListFiltered($event)"
+  ></ix-search-input1>
+
+  <button
+    *ixRequiresRoles="requiredRoles"
+    mat-button
+    color="primary"
+    ixTest="add-snapshot"
+    (click)="doAdd()"
+  >
     {{ 'Add' | translate }}
   </button>
 </ix-page-header>
 
 <div
-  *ngIf="checkboxColumn?.selection.selected.length"
+  *ngIf="selectedSnapshots.length"
   class="batch-actions-toolbar"
 >
   <div class="title">
@@ -48,7 +42,8 @@
       matTooltipPosition="below"
       ixTest="delete-selected"
       [matTooltip]="'Delete selections' | translate"
-      (click)="doBatchDelete(checkboxColumn?.selection.selected)"
+      [disabled]="!selectionHasItems"
+      (click)="doBatchDelete(selectedSnapshots)"
     >
       <ix-icon name="delete"></ix-icon>
       {{ 'Delete' | translate }}
@@ -56,113 +51,25 @@
   </div>
 </div>
 
-<table
-  ix-table
-  matSort
-  matSortDisableClear="true"
-  ixTest="snapshots-table"
-  [ix-table-empty]="!dataSource.filteredData.length"
-  [emptyConfig]="emptyConfigService.defaultEmptyConfig((emptyType$ | async))"
-  [dataSource]="dataSource"
-  [matSortActive]="defaultSort.active"
-  [matSortDirection]="defaultSort.direction"
-  [fixedLayout]="true"
+<ix-table2
+  class="table"
+  [ix-table2-empty]="!(dataProvider.currentPageCount$ | async)"
+  [emptyConfig]="emptyService.defaultEmptyConfig(emptyType$ | async)"
 >
-  <ix-checkbox-column></ix-checkbox-column>
-
-  <ng-container matColumnDef="dataset">
-    <th *matHeaderCellDef mat-header-cell mat-sort-header>
-      {{ 'Dataset' | translate }}
-    </th>
-    <td *matCellDef="let snapshot; dataSource: dataSource" mat-cell>
-      {{ snapshot.dataset }}
-    </td>
-  </ng-container>
-
-  <ng-container matColumnDef="snapshot_name">
-    <th *matHeaderCellDef mat-header-cell mat-sort-header>
-      {{ 'Snapshot' | translate }}
-    </th>
-    <td *matCellDef="let snapshot; dataSource: dataSource" mat-cell>
-      {{ snapshot.snapshot_name }}
-    </td>
-  </ng-container>
-
-  <ng-container matColumnDef="used">
-    <th *matHeaderCellDef mat-header-cell mat-sort-header>
-      {{ 'Used' | translate }}
-    </th>
-    <td *matCellDef="let snapshot; dataSource: dataSource" mat-cell>
-      <ng-container
-        *ngIf="snapshot?.properties?.used?.parsed; else notAvailable"
-      >
-        {{ +snapshot.properties.used.parsed | ixFileSize }}
-      </ng-container>
-    </td>
-  </ng-container>
-
-  <ng-container matColumnDef="created">
-    <th *matHeaderCellDef mat-header-cell mat-sort-header>
-      {{ 'Date created' | translate }}
-    </th>
-    <td *matCellDef="let snapshot; dataSource: dataSource" mat-cell>
-      <ng-container
-        *ngIf="
-          snapshot?.properties?.creation?.parsed?.$date;
-          else notAvailable
-        "
-      >
-        {{ snapshot.properties.creation.parsed.$date | formatDateTime }}
-      </ng-container>
-    </td>
-  </ng-container>
-
-  <ng-container matColumnDef="referenced">
-    <th *matHeaderCellDef mat-header-cell mat-sort-header>
-      {{ 'Referenced' | translate }}
-    </th>
-    <td *matCellDef="let snapshot; dataSource: dataSource" mat-cell>
-      <ng-container
-        *ngIf="snapshot?.properties?.referenced?.parsed; else notAvailable"
-      >
-        {{ +snapshot.properties.referenced.parsed | ixFileSize }}
-      </ng-container>
-    </td>
-  </ng-container>
-
-  <ix-expand-toggle-column
-    [expandedRow]="expandedRow"
-    (toggle)="onToggle($event)"
-  ></ix-expand-toggle-column>
-
-  <tr *matHeaderRowDef="displayedColumns" mat-header-row ixTest="table-header"></tr>
-  <tr
-    *matRowDef="
-      let snapshot;
-      columns: displayedColumns;
-      dataSource: dataSource
-    "
-    mat-row
-    [ixTest]="snapshot.snapshot_name"
-    [ixDetailRow]="snapshot"
-    [ixDetailRowOptions]="{ colspan: displayedColumns.length }"
-    [ixDetailRowTemplate]="expandedRowTemplate"
-    (toggle)="onToggle($event)"
-  ></tr>
-</table>
-
-<ix-table-paginator
-  [dataSource]="dataSource"
-  [pageSize]="10"
-></ix-table-paginator>
-
-<ng-template #notAvailable>
-  {{ 'N/A' | translate }}
-</ng-template>
-
-<ng-template #expandedRowTemplate let-snapshot let-colspan="colspan">
-  <ix-snapshot-details-row
-    [snapshot]="snapshot"
-    [colspan]="colspan"
-  ></ix-snapshot-details-row>
-</ng-template>
+  <thead
+    ix-table-head
+    [columns]="columns"
+    [dataProvider]="dataProvider"
+  ></thead>
+  <tbody
+    ix-table-body
+    [columns]="columns"
+    [dataProvider]="dataProvider"
+    [isLoading]="isLoading$ | async"
+  >
+    <ng-template let-snapshot ix-table-details-row [dataProvider]="dataProvider">
+      <ix-snapshot-details-row [snapshot]="snapshot"></ix-snapshot-details-row>
+    </ng-template>
+  </tbody>
+</ix-table2>
+<ix-table-pager [dataProvider]="dataProvider"></ix-table-pager>
