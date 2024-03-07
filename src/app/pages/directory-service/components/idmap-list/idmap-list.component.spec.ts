@@ -1,5 +1,6 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockModule } from 'ng-mocks';
 import { of } from 'rxjs';
@@ -7,6 +8,7 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { DirectoryServiceState } from 'app/enums/directory-service-state.enum';
 import { IdmapBackend, IdmapName } from 'app/enums/idmap.enum';
+import { ActiveDirectoryConfig } from 'app/interfaces/active-directory-config.interface';
 import { DirectoryServicesState } from 'app/interfaces/directory-services-state.interface';
 import { Idmap } from 'app/interfaces/idmap.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -65,13 +67,16 @@ describe('IdmapListComponent', () => {
         mockCall('idmap.query', idmapRecords),
         mockCall('idmap.delete'),
         mockCall('directoryservices.get_state', () => servicesState),
+        mockCall('activedirectory.config', {
+          enable: true,
+        } as ActiveDirectoryConfig),
       ]),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
       mockProvider(IxSlideInService, {
         open: jest.fn(() => {
-          return { slideInClosed$: of() };
+          return { slideInClosed$: of(true) };
         }),
       }),
       mockAuth(),
@@ -167,5 +172,12 @@ describe('IdmapListComponent', () => {
     expect(webSocket.call).toHaveBeenCalledWith('idmap.delete', [5]);
   });
 
-  // TODO: Test for Add button.
+  it('opens form when "Add" button is pressed', async () => {
+    spectator.setInput('inCard', false);
+
+    const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
+    await addButton.click();
+
+    expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(IdmapFormComponent);
+  });
 });

@@ -12,7 +12,6 @@
     importPool: {
       hierarchy: [T('Storage'), T('Import Pool')], // use T('') to mark the text for translation
       synonyms: [T('Add Pool')],
-      anchor: 'import-pool-button',
       anchorRouterLink: ['/storage'],
     },
   }
@@ -38,7 +37,8 @@ import * as cheerio from 'cheerio';
 import * as ts from 'typescript';
 import * as fs from 'fs';
 import { Role } from '../src/app/enums/role.enum';
-import { UiSearchableElement } from 'app/interfaces/ui-searchable-element.interface';
+import { generateIdFromHierarchy } from '../src/app/modules/global-search/helpers/generate-id-from-hierarchy';
+import { UiSearchableElement } from 'app/modules/global-search/interfaces/ui-searchable-element.interface';
 const glob = require('glob');
 
 interface ComponentProperties {
@@ -149,7 +149,7 @@ function parseHtmlFile(
     const hierarchy = formatArrayItems(extractDynamicValue(elementConfig, key, 'hierarchy')) ?? null;
     const synonyms = formatArrayItems(extractDynamicValue(elementConfig, key, 'synonyms')) ?? null;
     const anchorRouterLink = formatArrayItems(extractDynamicValue(elementConfig, key, 'anchorRouterLink')) ?? null;
-    const anchor = extractDynamicValue(elementConfig, key, 'anchor');
+    const anchor = generateIdFromHierarchy(hierarchy);
     const triggerAnchor = extractDynamicValue(elementConfig, key, 'triggerAnchor');
 
     const rolesAttrName = $(element).attr('*ixrequiresroles') || extractDynamicValue(elementConfig, key, 'requiredRoles') || '';

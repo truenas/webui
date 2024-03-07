@@ -64,8 +64,8 @@
             <ix-tree-node
               *treeNodeDef="let dataset; dataSource: dataSource"
               routerLinkActive="selected"
-              treeNodePadding
-              [treeNodePaddingIndent]="40"
+              cdkTreeNodePadding
+              [cdkTreeNodePaddingIndent]="40"
               [treeNodeDefDataSource]="dataSource"
               [routerLink]="['/datasets', dataset.id]"
               (click)="viewDetails(dataset)"
@@ -82,8 +82,8 @@
             <ix-tree-node
               *treeNodeDef="let dataset; dataSource: dataSource; when: hasChild"
               routerLinkActive="selected"
-              treeNodePadding
-              [treeNodePaddingIndent]="40"
+              cdkTreeNodePadding
+              [cdkTreeNodePaddingIndent]="40"
               [treeNodeDefDataSource]="dataSource"
               [routerLink]="['/datasets', dataset.id]"
               (click)="viewDetails(dataset)"
