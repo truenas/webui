@@ -4,7 +4,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { ActivatedRoute } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { MockStore, provideMockStore } from '@ngrx/store/testing';
+import { provideMockStore } from '@ngrx/store/testing';
 import { MockModule } from 'ng-mocks';
 import { of } from 'rxjs';
 import { CoreComponents } from 'app/core/core-components.module';
@@ -104,7 +104,6 @@ describe('SnapshotListComponent', () => {
       ],
     });
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    store$ = spectator.inject(MockStore);
     table = await loader.getHarness(IxTable2Harness);
   });
 

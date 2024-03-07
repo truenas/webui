@@ -147,7 +147,7 @@ describe('TunableListComponent', () => {
     expect(cells).toEqual(expectedRows);
   });
 
-  it.skip('shows add form when Add button is pressed', async () => {
+  it('shows add form when Add button is pressed', async () => {
     const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
     await addButton.click();
 
