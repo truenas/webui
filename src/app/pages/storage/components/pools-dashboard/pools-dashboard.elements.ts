@@ -4,7 +4,7 @@ import { UiSearchableElement } from 'app/modules/global-search/interfaces/ui-sea
 export const elements: Record<string, UiSearchableElement> = {
   storageDashboard: {
     hierarchy: [T('Storage Dashboard')],
-    synonyms: [T('Pools Dashboard')],
+    synonyms: [],
     anchorRouterLink: ['/storage'],
   },
   importPool: {
