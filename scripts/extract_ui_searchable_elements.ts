@@ -37,6 +37,7 @@ import * as cheerio from 'cheerio';
 import * as ts from 'typescript';
 import * as fs from 'fs';
 import { Role } from '../src/app/enums/role.enum';
+import { generateIdFromHierarchy } from '../src/app/modules/global-search/helpers/generate-id-from-hierarchy';
 import { UiSearchableElement } from 'app/modules/global-search/interfaces/ui-searchable-element.interface';
 const glob = require('glob');
 
@@ -124,11 +125,6 @@ function findComponentFiles(pattern: string): Promise<string[]> {
   });
 }
 
-function generateDynamicId(hierarchy: string[]): string {
-  const id = hierarchy.join('-').toLowerCase();
-  return id.replace(/\s+/g, '_');
-}
-
 function parseRoles(rolesValue: string): Role[] {
   const roleNames = rolesValue.replace(/^\[|\]$/g, '')
     ?.split(', ')
@@ -153,7 +149,7 @@ function parseHtmlFile(
     const hierarchy = formatArrayItems(extractDynamicValue(elementConfig, key, 'hierarchy')) ?? null;
     const synonyms = formatArrayItems(extractDynamicValue(elementConfig, key, 'synonyms')) ?? null;
     const anchorRouterLink = formatArrayItems(extractDynamicValue(elementConfig, key, 'anchorRouterLink')) ?? null;
-    const anchor = generateDynamicId(hierarchy);
+    const anchor = generateIdFromHierarchy(hierarchy);
     const triggerAnchor = extractDynamicValue(elementConfig, key, 'triggerAnchor');
 
     const rolesAttrName = $(element).attr('*ixrequiresroles') || extractDynamicValue(elementConfig, key, 'requiredRoles') || '';
