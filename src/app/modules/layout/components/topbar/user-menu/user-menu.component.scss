@@ -22,7 +22,7 @@
     white-space: normal;
     word-break: break-all;
 
-    @media(max-width: $breakpoint-xs) {
+    @media(max-width: $breakpoint-md) {
       display: none;
     }
   }

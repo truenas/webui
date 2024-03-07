@@ -1,0 +1,73 @@
+@import 'scss-imports/cssvars';
+
+.arrow-focused {
+  background-color: var(--bg1);
+}
+
+:host {
+  background-color: var(--bg2);
+  border-radius: 2px;
+  display: block;
+  max-width: 70vw;
+  min-width: 100%;
+  padding: 10px 0;
+  position: absolute;
+  top: 41px;
+  width: max-content;
+
+  @media(max-width: $breakpoint-sm) {
+    left: 0;
+    max-width: 100%;
+    position: fixed;
+  }
+
+  &::ng-deep {
+    .highlight {
+      color: var(--fg1);
+    }
+
+    .dimmed-text {
+      opacity: 0.5;
+    }
+
+    ix-empty {
+      ix-icon {
+        font-size: 100px !important;
+      }
+    }
+  }
+}
+
+.search-results-card {
+  border: 0;
+  border-radius: 2px;
+  box-shadow: none;
+  margin: 0;
+  max-height: 400px;
+  overflow: auto;
+
+  .search-result {
+    border-radius: 2px;
+    cursor: pointer;
+    padding: 13px 20px;
+
+    &:hover {
+      background-color: var(--bg1);
+    }
+
+    &:focus {
+      outline: none;
+    }
+
+    .title {
+      -webkit-box-orient: vertical;
+      color: var(--fg1);
+      display: inline-box;
+      font-size: 16px;
+      -webkit-line-clamp: 2;
+      overflow: hidden;
+      white-space: normal;
+      word-break: break-word;
+    }
+  }
+}

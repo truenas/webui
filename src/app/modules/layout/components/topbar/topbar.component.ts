@@ -8,7 +8,6 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { Subscription } from 'rxjs';
 import { JobState } from 'app/enums/job-state.enum';
-import { Role } from 'app/enums/role.enum';
 import { helptextTopbar } from 'app/helptext/topbar';
 import { AlertSlice, selectImportantUnreadAlertsCount } from 'app/modules/alerts/store/alert.selectors';
 import { UpdateDialogComponent } from 'app/modules/dialog/components/update-dialog/update-dialog.component';
@@ -38,8 +37,6 @@ export class TopbarComponent implements OnInit {
   tooltips = helptextTopbar.mat_tooltips;
 
   alertBadgeCount$ = this.store$.select(selectImportantUnreadAlertsCount);
-
-  protected readonly Role = Role;
 
   constructor(
     public themeService: ThemeService,

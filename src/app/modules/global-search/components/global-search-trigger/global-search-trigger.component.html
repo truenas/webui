@@ -1,0 +1,14 @@
+<div class="search-box" [class.hidden]="this.overlayRef?.hasAttached()">
+  <ix-icon name="search" class="search-icon" (click)="showOverlay()"></ix-icon>
+
+  <input
+    #searchInput
+    matInput
+    ixTest="global-search"
+    class="search-input"
+    [placeholder]="'Search' | translate"
+    (click)="showOverlay()"
+    (focus)="overlayRef.detach(); searchInput.blur(); showOverlay()"
+    (blur)="overlayRef.detach()"
+  />
+</div>
