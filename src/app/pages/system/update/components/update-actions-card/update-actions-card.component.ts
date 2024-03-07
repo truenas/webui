@@ -344,8 +344,11 @@ export class UpdateActionsCardComponent implements OnInit {
     })
       .afterClosed()
       .pipe(
-        filter(Boolean),
-        tap(() => this.wasConfigurationSaved = true),
+        tap((wasSaved) => {
+          if (wasSaved) {
+            this.wasConfigurationSaved = true;
+          }
+        }),
       );
   }
 
