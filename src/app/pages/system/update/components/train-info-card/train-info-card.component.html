@@ -1,0 +1,21 @@
+<mat-card *ngIf="showInfoForEnterprise$ | async" class="train-info-card">
+  <h4 class="stable-warning">
+    <ix-icon name="info"></ix-icon>
+    <a
+      href="https://www.truenas.com/docs/hub/intro/release-notes/"
+      target="_blank"
+      ixTest="release-notes"
+    >
+      {{ 'Before updating, please read the release notes.' | translate }}
+    </a>
+  </h4>
+</mat-card>
+
+<mat-card *ngIf="showInfoForTesting$ | async" class="train-info-card">
+  <h4 class="stable-warning">
+    <ix-icon name="info"></ix-icon>
+    <strong>
+      {{ 'This is not a production release, and should only be used for testing.' | translate }}
+    </strong>
+  </h4>
+</mat-card>

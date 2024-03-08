@@ -59,11 +59,9 @@ describe('SnapshotRollbackDialogComponent', () => {
   });
 
   it('rollback dataset to selected snapshot when form is submitted and shows a success message', async () => {
-    // TODO: Check when NAS-114799 is done
-    // Add test for different recursive values
-
     const form = await loader.getHarness(IxFormHarness);
     await form.fillForm({
+      'Stop Rollback if Snapshots Exist:': 'Newer Intermediate, Child, and Clone',
       Confirm: true,
     });
 
@@ -73,6 +71,40 @@ describe('SnapshotRollbackDialogComponent', () => {
     expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('zfs.snapshot.rollback', [
       'test-dataset@first-snapshot',
       { force: true },
+    ]);
+    expect(spectator.fixture.nativeElement).toHaveText('Dataset rolled back to snapshot first-snapshot.');
+  });
+
+  it('checks payload when RollbackRecursiveType.Recursive', async () => {
+    const form = await loader.getHarness(IxFormHarness);
+    await form.fillForm({
+      Confirm: true,
+      'Stop Rollback if Snapshots Exist:': 'Newer Clone',
+    });
+
+    const rollbackButton = await loader.getHarness(MatButtonHarness.with({ text: 'Rollback' }));
+    await rollbackButton.click();
+
+    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('zfs.snapshot.rollback', [
+      'test-dataset@first-snapshot',
+      { force: true, recursive: true },
+    ]);
+    expect(spectator.fixture.nativeElement).toHaveText('Dataset rolled back to snapshot first-snapshot.');
+  });
+
+  it('checks payload when RollbackRecursiveType.RecursiveClones', async () => {
+    const form = await loader.getHarness(IxFormHarness);
+    await form.fillForm({
+      Confirm: true,
+      'Stop Rollback if Snapshots Exist:': 'No Safety Check (CAUTION)',
+    });
+
+    const rollbackButton = await loader.getHarness(MatButtonHarness.with({ text: 'Rollback' }));
+    await rollbackButton.click();
+
+    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('zfs.snapshot.rollback', [
+      'test-dataset@first-snapshot',
+      { force: true, recursive_clones: true },
     ]);
     expect(spectator.fixture.nativeElement).toHaveText('Dataset rolled back to snapshot first-snapshot.');
   });

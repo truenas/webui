@@ -49,10 +49,7 @@ export class DeviceListComponent implements OnInit {
       title: this.translate.instant('Device'),
       propertyName: 'dtype',
       sortable: true,
-      getValue: (device) => {
-        // TODO: getValue is incorrectly typed
-        return this.getDeviceTypeLabel(device) as unknown as VmDevice[keyof VmDevice];
-      },
+      getValue: (device) => this.getDeviceTypeLabel(device),
     }),
     textColumn({
       title: this.translate.instant('Order'),

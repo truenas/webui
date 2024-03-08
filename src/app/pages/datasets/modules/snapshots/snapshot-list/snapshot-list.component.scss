@@ -2,16 +2,10 @@
   display: block;
 
   ::ng-deep {
-    .mat-column-actions {
-      width: 40px;
+    .checkboxs-column {
+      text-overflow: unset !important;
+      width: 20px;
     }
-  }
-
-  ix-empty {
-    align-items: center;
-    display: flex;
-    justify-content: center;
-    margin: auto;
   }
 
   .batch-actions-toolbar {

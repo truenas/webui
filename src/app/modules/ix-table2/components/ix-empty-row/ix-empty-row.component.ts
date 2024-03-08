@@ -31,7 +31,7 @@ export class IxTable2EmptyRowComponent implements AfterViewInit {
 
   ngAfterViewInit(): void {
     this.templatePortal = new TemplatePortal(this.templatePortalContent, this.viewContainerRef);
-    this.cdr.markForCheck();
+    this.cdr.detectChanges();
   }
 
   doAction(): void {

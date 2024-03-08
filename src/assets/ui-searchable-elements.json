@@ -1,0 +1,173 @@
+[
+  {
+    "hierarchy": [
+      "Reporting"
+    ],
+    "synonyms": [
+      "Stats"
+    ],
+    "requiredRoles": [],
+    "routerLink": null,
+    "anchorRouterLink": [
+      "/reportsdashboard"
+    ],
+    "anchor": "reporting",
+    "triggerAnchor": null
+  },
+  {
+    "hierarchy": [
+      "Storage",
+      "Import Pool"
+    ],
+    "synonyms": [
+      "Add Pool"
+    ],
+    "requiredRoles": [
+      "FULL_ADMIN"
+    ],
+    "routerLink": null,
+    "anchorRouterLink": [
+      "/storage"
+    ],
+    "anchor": "storage-import_pool",
+    "triggerAnchor": null
+  },
+  {
+    "hierarchy": [
+      "Storage",
+      "Create Pool"
+    ],
+    "synonyms": [
+      "Pool Wizard"
+    ],
+    "requiredRoles": [
+      "FULL_ADMIN"
+    ],
+    "routerLink": [
+      "/storage",
+      "create"
+    ],
+    "anchorRouterLink": [
+      "/storage"
+    ],
+    "anchor": "storage-create_pool",
+    "triggerAnchor": null
+  },
+  {
+    "hierarchy": [
+      "Storage Dashboard"
+    ],
+    "synonyms": [],
+    "requiredRoles": [],
+    "routerLink": null,
+    "anchorRouterLink": [
+      "/storage"
+    ],
+    "anchor": "storage_dashboard",
+    "triggerAnchor": null
+  },
+  {
+    "hierarchy": [
+      "System Settings",
+      "General",
+      "GUI",
+      "Theme"
+    ],
+    "synonyms": [],
+    "requiredRoles": [],
+    "routerLink": null,
+    "anchorRouterLink": [
+      "/system",
+      "general"
+    ],
+    "anchor": "system_settings-general-gui-theme",
+    "triggerAnchor": "gui-settings"
+  },
+  {
+    "hierarchy": [
+      "System Settings",
+      "General",
+      "Localization",
+      "Language"
+    ],
+    "synonyms": [
+      "Translate App"
+    ],
+    "requiredRoles": [],
+    "routerLink": null,
+    "anchorRouterLink": [
+      "/system",
+      "general"
+    ],
+    "anchor": "system_settings-general-localization-language",
+    "triggerAnchor": "localization-settings"
+  },
+  {
+    "hierarchy": [
+      "System Settings",
+      "General",
+      "Localization",
+      "Console Keyboard Map"
+    ],
+    "synonyms": [],
+    "requiredRoles": [],
+    "routerLink": null,
+    "anchorRouterLink": [
+      "/system",
+      "general"
+    ],
+    "anchor": "system_settings-general-localization-console_keyboard_map",
+    "triggerAnchor": "localization-settings"
+  },
+  {
+    "hierarchy": [
+      "System Settings",
+      "General",
+      "Localization",
+      "Timezone"
+    ],
+    "synonyms": [],
+    "requiredRoles": [],
+    "routerLink": null,
+    "anchorRouterLink": [
+      "/system",
+      "general"
+    ],
+    "anchor": "system_settings-general-localization-timezone",
+    "triggerAnchor": "localization-settings"
+  },
+  {
+    "hierarchy": [
+      "System Settings",
+      "General",
+      "Localization",
+      "Date Format"
+    ],
+    "synonyms": [],
+    "requiredRoles": [],
+    "routerLink": null,
+    "anchorRouterLink": [
+      "/system",
+      "general"
+    ],
+    "anchor": "system_settings-general-localization-date_format",
+    "triggerAnchor": "localization-settings"
+  },
+  {
+    "hierarchy": [
+      "System Settings",
+      "General",
+      "Localization",
+      "Time Format"
+    ],
+    "synonyms": [],
+    "requiredRoles": [],
+    "routerLink": null,
+    "anchorRouterLink": [
+      "/system",
+      "general"
+    ],
+    "anchor": "system_settings-general-localization-time_format",
+    "triggerAnchor": "localization-settings"
+  }
+]

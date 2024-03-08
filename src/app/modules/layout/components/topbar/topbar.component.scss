@@ -54,6 +54,8 @@
 ::ng-deep .topbar-button-right {
   &.mat-badge.mat-badge-small.mat-badge-overlap.mat-badge-after {
     .mat-badge-content {
+      left: unset;
+      margin: 0;
       right: 0;
       top: 0;
     }

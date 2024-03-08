@@ -846,6 +846,7 @@ body {
 
   .mat-mdc-checkbox label {
     display: flex;
+    flex: 1 0 auto;
     padding-left: 0;
   }
 
@@ -885,10 +886,16 @@ body {
     transform: scale(0.9);
   }
 
-  ix-dynamic-form-item.highlighted {
-    > div:first-child {
-      outline: 1.5px solid var(--primary);
-    }
+  ix-dynamic-form-item.highlighted > div:first-child {
+    outline: 1.5px solid var(--primary);
+  }
+
+  ix-fieldset.highlighted fieldset {
+    outline: 1.5px solid var(--primary);
+  }
+
+  .search-element-highlighted {
+    outline: 1.5px solid var(--primary);
   }
 }
 

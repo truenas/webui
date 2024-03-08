@@ -25,6 +25,7 @@ import { ManualTestDialogComponent, ManualTestDialogParams } from 'app/pages/sto
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 
+// TODO: Exclude AnythingUi when NAS-127632 is done
 interface DiskUi extends Disk {
   selected: boolean;
 }

@@ -32,7 +32,7 @@ body.safari-platform {
 body {
   background: var(--bg1);
   color: rgba(0, 0, 0, 0.87);
-  font-family: 'IBM Plex Sans', 'Roboto', 'Helvetica Neue', sans-serif;
+  font-family: var(--font-family-body);
   font-size: 0.875rem;
   font-weight: 400;
   line-height: 1.65;

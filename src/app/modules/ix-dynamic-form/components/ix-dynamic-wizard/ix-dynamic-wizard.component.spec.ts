@@ -1,7 +1,7 @@
-import { FlexLayoutModule } from '@angular/flex-layout';
 import {
   FormGroup, ReactiveFormsModule,
 } from '@angular/forms';
+import { FlexLayoutModule } from '@ngbracket/ngx-layout';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
 import { DynamicWizardSchema } from 'app/interfaces/dynamic-form-schema.interface';

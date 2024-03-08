@@ -46,7 +46,9 @@ describe('FileTicketLicensedFormComponent', () => {
       mockProvider(ImageValidatorService, {
         getImagesValidator: () => () => of(null as ValidationErrors),
       }),
-      mockProvider(Router),
+      mockProvider(Router, {
+        navigate: jest.fn(() => Promise.resolve(true)),
+      }),
       mockWindow(),
       mockWebSocket([
         mockCall('support.attach_ticket_max_size', 5),
@@ -88,14 +90,11 @@ describe('FileTicketLicensedFormComponent', () => {
   });
 
   it('redirects to eula page when EULA is pressed', async () => {
-    const router = spectator.inject(Router);
-    jest.spyOn(router, 'navigate').mockImplementation();
-
     const button = await loader.getHarness(MatButtonHarness.with({ text: 'EULA' }));
     await button.click();
 
-    expect(router.navigate).toHaveBeenCalledWith(['system', 'support', 'eula']);
-    // TODO: Does not close modal. Should it?
+    expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['system', 'support', 'eula']);
+    expect(dialogRef.close).toHaveBeenCalled();
   });
 
   it('submits a new ticket for an enterprise system when Submit is pressed', async () => {
