@@ -9,7 +9,6 @@ import { EMPTY } from 'rxjs';
 import {
   catchError, filter, switchMap, take, tap,
 } from 'rxjs/operators';
-import { Role } from 'app/enums/role.enum';
 import { helptextSystemAdvanced } from 'app/helptext/system/advanced';
 import { Job } from 'app/interfaces/job.interface';
 import { WebSocketError } from 'app/interfaces/websocket-error.interface';
@@ -28,8 +27,6 @@ import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SaveDebugButtonComponent {
-  protected readonly Role = Role;
-
   constructor(
     private ws: WebSocketService,
     private store$: Store<AppState>,
