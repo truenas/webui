@@ -101,6 +101,7 @@ export function transformTextSchemaType(
     type: DynamicFormSchemaType.Text,
     language: payload.schema.language,
   };
+  // inputSchema.language = CodeEditorLanguage.Json;
   return inputSchema;
 }
 
