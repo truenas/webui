@@ -7,7 +7,7 @@
     [ixTestOverride]="controlDirective.name"
   ></ix-label>
 
-  <div class="input-container" [class.disabled]="disabledState">
+  <div class="input-container" [class.disabled]="disabledState$ | async">
     <div #inputArea></div>
   </div>
 

@@ -28,12 +28,8 @@ export class IxCodeEditorHarness extends ComponentHarness implements IxFormContr
   }
 
   async getValue(): Promise<string> {
-    const harnesses = await this.getEditorLines();
-    let code = '';
-    for (const harness of harnesses) {
-      code += (await harness.text()) + '\n';
-    }
-    return code;
+    const editor = EditorView.findFromDOM(document.querySelector('.input-container'));
+    return Promise.resolve(editor.state.doc.toString());
   }
 
   setValue(value: string): Promise<void> {

@@ -1,12 +1,15 @@
 import {
-  AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, Input, ViewChild,
+  AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, Input, OnInit, ViewChild,
 } from '@angular/core';
 import { ControlValueAccessor, NgControl } from '@angular/forms';
-import { Compartment, EditorState } from '@codemirror/state';
+import { Compartment } from '@codemirror/state';
 import { oneDark } from '@codemirror/theme-one-dark';
 import { EditorViewConfig, placeholder } from '@codemirror/view';
-import { UntilDestroy } from '@ngneat/until-destroy';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { EditorView, basicSetup } from 'codemirror';
+import {
+  BehaviorSubject, Observable, combineLatest, filter,
+} from 'rxjs';
 import { languageFunctionsMap } from 'app/constants/language-functions-map.constant';
 import { CodeEditorLanguage } from 'app/enums/code-editor-language.enum';
 import { IxSelectValue } from 'app/modules/ix-forms/components/ix-select/ix-select.component';
@@ -18,7 +21,7 @@ import { IxSelectValue } from 'app/modules/ix-forms/components/ix-select/ix-sele
   styleUrls: ['./ix-code-editor.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class IxCodeEditorComponent implements ControlValueAccessor, AfterViewInit {
+export class IxCodeEditorComponent implements ControlValueAccessor, AfterViewInit, OnInit {
   @Input() label: string;
   @Input() hint: string;
   @Input() required: boolean;
@@ -28,14 +31,17 @@ export class IxCodeEditorComponent implements ControlValueAccessor, AfterViewIni
 
   editableCompartment = new Compartment();
 
+  protected isDisabled$ = new BehaviorSubject<boolean>(false);
+  protected editorReady$ = new BehaviorSubject<boolean>(false);
+
   @ViewChild('inputArea', { static: true }) inputArea: ElementRef<HTMLElement>;
   private editorView: EditorView;
 
-  protected value: string;
-  protected isDisabled = false;
+  // protected value: string;
+  protected value$ = new BehaviorSubject<string>('');
 
-  get disabledState(): boolean {
-    return this.isDisabled;
+  get disabledState$(): Observable<boolean> {
+    return this.isDisabled$.asObservable();
   }
 
   constructor(
@@ -45,7 +51,41 @@ export class IxCodeEditorComponent implements ControlValueAccessor, AfterViewIni
     this.controlDirective.valueAccessor = this;
   }
 
+  ngOnInit(): void {
+    this.handleDisableState();
+    this.handleValueUpdate();
+  }
+
+  handleDisableState(): void {
+    combineLatest([
+      this.editorReady$.pipe(filter(Boolean)),
+      this.isDisabled$,
+    ]).pipe(untilDestroyed(this)).subscribe({
+      next: ([, isDisabled]) => {
+        this.editorView.dispatch({
+          effects: this.editableCompartment.reconfigure(EditorView.editable.of(!isDisabled)),
+        });
+      },
+    });
+  }
+
+  handleValueUpdate(): void {
+    combineLatest([
+      this.editorReady$.pipe(filter(Boolean)),
+      this.value$,
+    ]).pipe(untilDestroyed(this)).subscribe({
+      next: ([, value]) => {
+        this.updateValue(value);
+      },
+    });
+  }
+
   ngAfterViewInit(): void {
+    this.initEditor();
+    this.editorReady$.next(true);
+  }
+
+  initEditor(): void {
     const updateListener = EditorView.updateListener.of((update) => {
       if (!update.docChanged) {
         return;
@@ -61,8 +101,7 @@ export class IxCodeEditorComponent implements ControlValueAccessor, AfterViewIni
         updateListener,
         languageFunctionsMap[this.language](),
         oneDark,
-        this.editableCompartment.of(EditorView.editable.of(this.isDisabled)),
-        this.editableCompartment.of(EditorState.readOnly.of(this.isDisabled)),
+        this.editableCompartment.of(EditorView.editable.of(true)),
         placeholder(this.placeholder),
       ],
       parent: this.inputArea.nativeElement,
@@ -70,11 +109,25 @@ export class IxCodeEditorComponent implements ControlValueAccessor, AfterViewIni
     this.editorView = new EditorView(config);
   }
 
-  onChange: (value: IxSelectValue) => void = (): void => {};
+  onChange: (value: string) => void = (): void => {};
   onTouch: () => void = (): void => {};
 
   writeValue(val: string): void {
-    this.value = val;
+    this.value$.next(val);
+  }
+
+  updateValue(val: string): void {
+    const transaction = this.editorView.state.update({
+      changes: {
+        from: 0,
+        to: this.editorView.state.doc.length,
+        insert: val,
+      },
+    });
+
+    if (transaction) {
+      this.editorView.dispatch(transaction);
+    }
     this.cdr.markForCheck();
   }
 
@@ -87,13 +140,7 @@ export class IxCodeEditorComponent implements ControlValueAccessor, AfterViewIni
   }
 
   setDisabledState?(isDisabled: boolean): void {
-    this.isDisabled = isDisabled;
-    this.editorView.dispatch({
-      effects: [
-        this.editableCompartment.reconfigure(EditorView.editable.of(isDisabled)),
-        this.editableCompartment.reconfigure(EditorState.readOnly.of(isDisabled)),
-      ],
-    });
+    this.isDisabled$.next(isDisabled);
     this.cdr.markForCheck();
   }
 }
