@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { UUID } from 'angular2-uuid';
 import { environment } from 'environments/environment';
@@ -31,12 +30,14 @@ import { Job } from 'app/interfaces/job.interface';
 import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { WebSocketConnectionService } from 'app/services/websocket-connection.service';
 
-@UntilDestroy()
+export type ApiEventSubscription = Observable<ApiEvent<ApiEventDirectory[keyof ApiEventDirectory]['response']>>;
+
 @Injectable({
   providedIn: 'root',
 })
 export class WebSocketService {
-  private readonly eventSubscriptions = new Map<string, { obs$: Observable<unknown>; takeUntil$: Subject<void> }>();
+  private readonly eventSubscriptions = new Map<string, ApiEventSubscription>();
+  clearSubscriptions$ = new Subject<void>();
   mockUtils: MockEnclosureUtils;
 
   constructor(
@@ -45,7 +46,7 @@ export class WebSocketService {
     protected translate: TranslateService,
   ) {
     if (environment.mockConfig && !environment?.production) this.mockUtils = new MockEnclosureUtils();
-    this.wsManager.isConnected$?.pipe(untilDestroyed(this)).subscribe((isConnected) => {
+    this.wsManager.isConnected$?.subscribe((isConnected) => {
       if (!isConnected) {
         this.clearSubscriptions();
       }
@@ -91,17 +92,16 @@ export class WebSocketService {
             }),
           );
       }),
+      takeUntil(this.clearSubscriptions$),
     ) as Observable<Job<ApiJobResponse<M>>>;
   }
 
   subscribe<K extends keyof ApiEventDirectory>(name: K): Observable<ApiEvent<ApiEventDirectory[K]['response']>> {
-    const oldObservable$ = this.eventSubscriptions.get(name)?.obs$;
-    if (oldObservable$) {
-      return oldObservable$ as Observable<ApiEvent<ApiEventDirectory[K]['response']>>;
+    if (this.eventSubscriptions.has(name)) {
+      return this.eventSubscriptions.get(name);
     }
 
-    const takeUntil$ = new Subject<void>();
-    const subObs$ = this.wsManager.buildSubscriber(name).pipe(
+    const eventSubscription$ = this.wsManager.buildSubscriber(name).pipe(
       switchMap((apiEvent: unknown) => {
         const erroredEvent = apiEvent as { error: unknown };
         if (erroredEvent.error) {
@@ -111,23 +111,18 @@ export class WebSocketService {
         return of(apiEvent);
       }),
       share(),
-      takeUntil(takeUntil$),
-    );
-    this.eventSubscriptions.set(name, { obs$: subObs$, takeUntil$ });
-    return subObs$ as Observable<ApiEvent<ApiEventDirectory[K]['response']>>;
+      takeUntil(this.clearSubscriptions$),
+    ) as Observable<ApiEvent<ApiEventDirectory[K]['response']>>;
+    this.eventSubscriptions.set(name, eventSubscription$);
+    return eventSubscription$;
   }
 
   subscribeToLogs(name: string): Observable<ApiEvent<{ data: string }>> {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    return this.subscribe(name as any) as unknown as Observable<ApiEvent<{ data: string }>>;
+    return this.subscribe(name as keyof ApiEventDirectory) as unknown as Observable<ApiEvent<{ data: string }>>;
   }
 
   clearSubscriptions(): void {
-    this.eventSubscriptions.forEach(
-      ({ takeUntil$ }: { takeUntil$: Subject<void> }) => {
-        takeUntil$.next();
-      },
-    );
+    this.clearSubscriptions$.next();
     this.eventSubscriptions.clear();
   }
 
@@ -172,6 +167,7 @@ export class WebSocketService {
     return this.subscribe('core.get_jobs').pipe(
       filter((apiEvent) => apiEvent.id === jobId),
       map((apiEvent) => apiEvent.fields),
+      takeUntil(this.clearSubscriptions$),
     );
   }
 
