@@ -1,4 +1,4 @@
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { ApiCallParams } from 'app/interfaces/api/api-call-directory.interface';
 import { AuditEntry } from 'app/interfaces/audit/audit.interface';
 import { QueryFilters } from 'app/interfaces/query-api.interface';
@@ -11,6 +11,10 @@ export class AuditApiDataProvider extends ApiDataProvider<'audit.query'> {
   }
 
   protected override countRows(): Observable<number> {
+    if (this.avoidCountRowsRequest) {
+      return of(this.totalRows);
+    }
+
     const params = [
       {
         'query-filters': this.params[0] || [],

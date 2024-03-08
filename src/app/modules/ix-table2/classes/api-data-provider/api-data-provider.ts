@@ -1,5 +1,5 @@
 import {
-  Observable, filter, switchMap, take,
+  Observable, filter, of, switchMap, take,
 } from 'rxjs';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { ApiCallParams, ApiCallResponseType, QueryMethods } from 'app/interfaces/api/api-call-directory.interface';
@@ -15,6 +15,10 @@ import { WebSocketService } from 'app/services/ws.service';
 export class ApiDataProvider<T extends QueryMethods> extends BaseDataProvider<ApiCallResponseType<T>> {
   paginationStrategy: PaginationServerSide;
   sortingStrategy: SortingServerSide;
+
+  get avoidCountRowsRequest(): boolean {
+    return Boolean(this.totalRows && (this.totalRows / this.pagination.pageNumber) > this.pagination.pageSize);
+  }
 
   private rows: ApiCallResponseType<T>[] = [];
 
@@ -75,6 +79,10 @@ export class ApiDataProvider<T extends QueryMethods> extends BaseDataProvider<Ap
   }
 
   protected countRows(): Observable<number> {
+    if (this.avoidCountRowsRequest) {
+      return of(this.totalRows);
+    }
+
     const params = [
       (this.params as QueryFilters<ApiCallResponseType<T>>)[0] || [],
       { count: true },
