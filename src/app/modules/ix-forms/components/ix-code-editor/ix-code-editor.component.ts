@@ -2,6 +2,7 @@ import {
   AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, Input, ViewChild,
 } from '@angular/core';
 import { ControlValueAccessor, NgControl } from '@angular/forms';
+import { Compartment, EditorState } from '@codemirror/state';
 import { oneDark } from '@codemirror/theme-one-dark';
 import { EditorViewConfig, placeholder } from '@codemirror/view';
 import { UntilDestroy } from '@ngneat/until-destroy';
@@ -24,6 +25,8 @@ export class IxCodeEditorComponent implements ControlValueAccessor, AfterViewIni
   @Input() tooltip: string;
   @Input() language: CodeEditorLanguage;
   @Input() placeholder: string;
+
+  editableCompartment = new Compartment();
 
   @ViewChild('inputArea', { static: true }) inputArea: ElementRef<HTMLElement>;
   private editorView: EditorView;
@@ -58,6 +61,8 @@ export class IxCodeEditorComponent implements ControlValueAccessor, AfterViewIni
         updateListener,
         languageFunctionsMap[this.language](),
         oneDark,
+        this.editableCompartment.of(EditorView.editable.of(this.isDisabled)),
+        this.editableCompartment.of(EditorState.readOnly.of(this.isDisabled)),
         placeholder(this.placeholder),
       ],
       parent: this.inputArea.nativeElement,
@@ -83,6 +88,12 @@ export class IxCodeEditorComponent implements ControlValueAccessor, AfterViewIni
 
   setDisabledState?(isDisabled: boolean): void {
     this.isDisabled = isDisabled;
+    this.editorView.dispatch({
+      effects: [
+        this.editableCompartment.reconfigure(EditorView.editable.of(isDisabled)),
+        this.editableCompartment.reconfigure(EditorState.readOnly.of(isDisabled)),
+      ],
+    });
     this.cdr.markForCheck();
   }
 }
