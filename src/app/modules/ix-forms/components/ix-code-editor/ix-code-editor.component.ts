@@ -2,18 +2,13 @@ import {
   AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, Input, ViewChild,
 } from '@angular/core';
 import { ControlValueAccessor, NgControl } from '@angular/forms';
-import { json } from '@codemirror/lang-json';
 import { oneDark } from '@codemirror/theme-one-dark';
 import { EditorViewConfig, placeholder } from '@codemirror/view';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { EditorView, basicSetup } from 'codemirror';
+import { languageFunctionsMap } from 'app/constants/language-functions-map.constant';
+import { CodeEditorLanguage } from 'app/enums/code-editor-language.enum';
 import { IxSelectValue } from 'app/modules/ix-forms/components/ix-select/ix-select.component';
-
-export enum CodeEditorSupportedLanguage {
-  Json = 'json',
-  Yaml = 'yaml',
-  Toml = 'toml',
-}
 
 @UntilDestroy()
 @Component({
@@ -27,7 +22,7 @@ export class IxCodeEditorComponent implements ControlValueAccessor, AfterViewIni
   @Input() hint: string;
   @Input() required: boolean;
   @Input() tooltip: string;
-  @Input() language: CodeEditorSupportedLanguage;
+  @Input() language: CodeEditorLanguage;
   @Input() placeholder: string;
 
   @ViewChild('inputArea', { static: true }) inputArea: ElementRef<HTMLElement>;
@@ -61,7 +56,7 @@ export class IxCodeEditorComponent implements ControlValueAccessor, AfterViewIni
       extensions: [
         basicSetup,
         updateListener,
-        json(),
+        languageFunctionsMap[this.language](),
         oneDark,
         placeholder(this.placeholder),
       ],

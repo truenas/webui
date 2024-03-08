@@ -1,5 +1,6 @@
 import { UntypedFormArray } from '@angular/forms';
 import { Observable } from 'rxjs';
+import { CodeEditorLanguage } from 'app/enums/code-editor-language.enum';
 import { DynamicFormSchemaType } from 'app/enums/dynamic-form-schema-type.enum';
 import { ChartSchemaNode } from 'app/interfaces/chart-release.interface';
 import { Option } from 'app/interfaces/option.interface';
@@ -51,6 +52,7 @@ export interface DynamicFormSchemaText extends DynamicFormSchemaBase {
   type: DynamicFormSchemaType.Text;
   tooltip?: string;
   placeholder?: string;
+  language: CodeEditorLanguage;
 }
 
 export interface DynamicFormSchemaUri extends DynamicFormSchemaBase {

@@ -99,6 +99,7 @@ export function transformTextSchemaType(
   const inputSchema: DynamicFormSchemaText = {
     ...buildCommonSchemaBase(payload),
     type: DynamicFormSchemaType.Text,
+    language: payload.schema.language,
   };
   return inputSchema;
 }

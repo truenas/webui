@@ -38,6 +38,7 @@
 
     <ix-code-editor
       *ngIf="dynamicSchema.type === DynamicFormSchemaType.Text"
+      [language]="dynamicSchema.language"
       [label]="dynamicSchema.title | translate"
       [formControlName]="dynamicSchema.controlName"
       [tooltip]="dynamicSchema.tooltip | translate"
