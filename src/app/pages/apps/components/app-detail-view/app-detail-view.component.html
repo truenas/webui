@@ -12,7 +12,6 @@
       ></ix-app-details-header>
     </section>
 
-    <!-- TODO: https://ixsystems.atlassian.net/browse/NAS-121706 -->
     <section *ngIf="(isLoading$ | async) || app?.screenshots?.length">
       <h2>{{ 'Screenshots' | translate }}</h2>
       <div fxLayout="row nowrap" fxLayoutGap="16px">

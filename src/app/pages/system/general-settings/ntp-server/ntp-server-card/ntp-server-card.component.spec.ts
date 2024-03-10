@@ -116,8 +116,8 @@ describe('NtpServerCardComponent', () => {
     spectator.fixture.componentInstance.error = false;
     spectator.fixture.componentInstance.createDataSource();
     spectator.detectComponentChanges();
+    spectator.detectComponentChanges();
 
-    spectator.detectChanges();
     const emptyRow = await loader.getHarness(IxEmptyRowHarness);
     const emptyTitle = await emptyRow.getTitleText();
     expect(emptyTitle).toBe('No records have been added yet');
@@ -128,8 +128,8 @@ describe('NtpServerCardComponent', () => {
     spectator.fixture.componentInstance.error = true;
     spectator.fixture.componentInstance.createDataSource();
     spectator.detectComponentChanges();
+    spectator.detectComponentChanges();
 
-    spectator.detectChanges();
     const emptyRow = await loader.getHarness(IxEmptyRowHarness);
     const emptyTitle = await emptyRow.getTitleText();
     expect(emptyTitle).toBe('Can not retrieve response');

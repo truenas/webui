@@ -458,11 +458,6 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
     this.controllerEvent$.next({ name: 'VisualizerReady', sender: this });
   }
 
-  // TODO: Helps with template type checking. To be removed when 'strict' checks are enabled.
-  themeKey(key: string): keyof Theme {
-    return key as keyof Theme;
-  }
-
   // TODO: Move switch to a service. Also need to implement rackmount detection since systemprofiler is going away
   createEnclosure(enclosure: /* EnclosureView */ EnclosureUi = this.selectedEnclosure): void {
     if (this.currentView === 'details') {

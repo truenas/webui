@@ -106,7 +106,7 @@ describe('CronListComponent', () => {
     expect(cells).toEqual(expectedRows);
   });
 
-  it.skip('shows form to add new cronjob when Add button is pressed', async () => {
+  it('shows form to add new cronjob when Add button is pressed', async () => {
     const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
     await addButton.click();
 

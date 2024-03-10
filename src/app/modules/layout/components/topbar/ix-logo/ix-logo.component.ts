@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { MediaObserver } from '@angular/flex-layout';
+import { MediaObserver } from '@ngbracket/ngx-layout';
 import { combineLatest } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { ThemeService } from 'app/services/theme/theme.service';

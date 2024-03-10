@@ -2,6 +2,7 @@ import {
   ChangeDetectionStrategy, Component,
 } from '@angular/core';
 import _ from 'lodash';
+import { NetworkInterfaceAliasType } from 'app/enums/network-interface.enum';
 import { NetworkInterface, NetworkInterfaceAlias } from 'app/interfaces/network-interface.interface';
 import { ColumnComponent } from 'app/modules/ix-table2/interfaces/table-column.interface';
 
@@ -39,8 +40,7 @@ export class IpAddressesCellComponent extends ColumnComponent<NetworkInterface> 
 
   private aliasesToAddress(aliases: NetworkInterfaceAlias[]): string[] {
     return aliases
-      // TODO: See if checks can be removed or replace with enum.
-      .filter((alias) => alias.type?.startsWith('INET'))
+      .filter((alias) => alias.type?.startsWith(NetworkInterfaceAliasType.Inet))
       .map((alias) => `${alias.address}/${alias.netmask}`);
   }
 }

@@ -760,7 +760,7 @@
     "./src/app/pages/vm/utils/vm-form-patterns.constant.ts",
     "./src/app/pages/vm/vm-serial-shell/vm-serial-shell.component.ts",
     "./src/app/services/calendar.service.ts",
-    "./src/app/services/name-validation.service.ts",
+    "./src/app/constants/name-validator.constant.ts",
     "./src/app/services/route-parts/route-parts.service.ts",
     "./src/app/services/shell.service.ts",
     "./src/app/services/theme/theme.constants.ts",

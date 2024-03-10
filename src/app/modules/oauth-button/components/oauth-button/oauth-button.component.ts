@@ -76,6 +76,7 @@ export class OauthButtonComponent implements OnDestroy {
         break;
       case OauthButtonType.Gmail:
         this.onLoginWithGmail();
+        break;
     }
   }
 

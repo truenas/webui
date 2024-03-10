@@ -1,3 +1,4 @@
+import { AdvancedBloomFilter } from '@pixi/filter-advanced-bloom';
 import { Container, Sprite } from 'pixi.js';
 import {
   tween,
@@ -12,9 +13,6 @@ import {
   ChangeDriveTrayOptions,
   EnclosureEvent,
 } from 'app/pages/system/view-enclosure/interfaces/enclosure-events.interface';
-// TODO: See if can be removed.
-// eslint-disable-next-line
-import { AdvancedBloomFilter } from '@pixi/filter-advanced-bloom';
 
 export interface Range {
   start: number;

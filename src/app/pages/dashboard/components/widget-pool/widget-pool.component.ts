@@ -196,11 +196,6 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
     this.checkVolumeHealth(this.poolState);
   }
 
-  // TODO: Helps with template type checking. To be removed when 'strict' checks are enabled.
-  diskKey(key: keyof Disk): keyof Disk {
-    return key;
-  }
-
   getAvailableSpace(): void {
     if (!this.volumeData || typeof this.volumeData.avail === undefined) {
       this.displayValue = 'Unknown';
