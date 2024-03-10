@@ -9,8 +9,8 @@ export function mapToOptions(optionMap: Map<string, string>, translate: Translat
  * @usage
  * valueToLabel(options)(value)
  */
-export function findLabelsByValue(options: Option[]): (value: string) => string {
-  return (value: string): string => {
+export function findLabelsByValue(options: Option[]): (value: string) => string | undefined {
+  return (value: string): string | undefined => {
     const selectedOption = options.find((option) => option.value === value);
     return selectedOption?.label;
   };

@@ -44,7 +44,7 @@ export class IxIconComponent extends MatIcon implements OnInit, OnChanges, After
 
   _elementRef: ElementRef<HTMLElement>;
 
-  private get iconName(): string {
+  private get iconName(): string | undefined {
     if (this.name) {
       return this.name;
     }
@@ -96,7 +96,7 @@ export class IxIconComponent extends MatIcon implements OnInit, OnChanges, After
     this.updateIcon(this.iconName);
   }
 
-  private updateIcon(iconName: string): void {
+  private updateIcon(iconName: string | undefined): void {
     switch (true) {
       case ((!iconName)):
         this.svgIcon = '';
@@ -104,12 +104,12 @@ export class IxIconComponent extends MatIcon implements OnInit, OnChanges, After
         this.fontIcon = '';
         this.iconLigature = '';
         break;
-      case (iconName.startsWith('ix:')):
+      case (iconName?.startsWith('ix:')):
         this.fontIcon = '';
         this.fontSet = '';
         this.svgIcon = iconName;
         break;
-      case (iconName.startsWith('mdi')):
+      case (iconName?.startsWith('mdi')):
         this.svgIcon = '';
         this.iconLigature = '';
         this.fontSet = 'mdi-set';

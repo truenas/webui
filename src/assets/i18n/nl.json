@@ -1,6 +1,7 @@
 {
   "": "",
   "Add Pool": "",
+  "Docker Hub Rate Limit Warning": "",
   "Pool Wizard": "",
   "Translate App": "",
   "\n              It looks like your session has been inactive for more than {lifetime} seconds.<br>\n              For security reasons we will log you out at {time}.\n            ": "\n              Het lijkt erop dat uw sessie langer dan {lifetime} seconden inactief is geweest.<br>\n              Om veiligheidsredenen loggen we u om {time} uit.\n            ",
