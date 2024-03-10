@@ -2,6 +2,7 @@ import { HttpClientModule, HttpClient } from '@angular/common/http';
 import { NgModule, ErrorHandler } from '@angular/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { MatButtonModule } from '@angular/material/button';
+import { MatNativeDateModule } from '@angular/material/core';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { BrowserModule } from '@angular/platform-browser';
@@ -58,6 +59,7 @@ import { RoutePartsService } from './services/route-parts/route-parts.service';
     BrowserAnimationsModule,
     FlexLayoutModule,
     AppLoaderModule,
+    MatNativeDateModule,
     HttpClientModule,
     TooltipModule,
     TranslateModule.forRoot({
