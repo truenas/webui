@@ -70,6 +70,276 @@
     "hierarchy": [
       "System Settings",
       "General",
+      "Audit",
+      "Retention"
+    ],
+    "synonyms": [],
+    "requiredRoles": [],
+    "routerLink": null,
+    "anchorRouterLink": [
+      "/system",
+      "advanced"
+    ],
+    "anchor": "system_settings-general-audit-retention",
+    "triggerAnchor": "audit-settings"
+  },
+  {
+    "hierarchy": [
+      "System Settings",
+      "General",
+      "Audit",
+      "Reservation"
+    ],
+    "synonyms": [],
+    "requiredRoles": [],
+    "routerLink": null,
+    "anchorRouterLink": [
+      "/system",
+      "advanced"
+    ],
+    "anchor": "system_settings-general-audit-reservation",
+    "triggerAnchor": "audit-settings"
+  },
+  {
+    "hierarchy": [
+      "System Settings",
+      "General",
+      "Audit",
+      "Quota"
+    ],
+    "synonyms": [],
+    "requiredRoles": [],
+    "routerLink": null,
+    "anchorRouterLink": [
+      "/system",
+      "advanced"
+    ],
+    "anchor": "system_settings-general-audit-quota",
+    "triggerAnchor": "audit-settings"
+  },
+  {
+    "hierarchy": [
+      "System Settings",
+      "General",
+      "Audit",
+      "Quota Fill Warning"
+    ],
+    "synonyms": [],
+    "requiredRoles": [],
+    "routerLink": null,
+    "anchorRouterLink": [
+      "/system",
+      "advanced"
+    ],
+    "anchor": "system_settings-general-audit-quota_fill_warning",
+    "triggerAnchor": "audit-settings"
+  },
+  {
+    "hierarchy": [
+      "System Settings",
+      "General",
+      "Audit",
+      "Quota Fill Critical"
+    ],
+    "synonyms": [],
+    "requiredRoles": [],
+    "routerLink": null,
+    "anchorRouterLink": [
+      "/system",
+      "advanced"
+    ],
+    "anchor": "system_settings-general-audit-quota_fill_critical",
+    "triggerAnchor": "audit-settings"
+  },
+  {
+    "hierarchy": [
+      "System Settings",
+      "Advanced",
+      "Console",
+      "Console Menu"
+    ],
+    "synonyms": [
+      "Show Text Console without Password Prompt"
+    ],
+    "requiredRoles": [],
+    "routerLink": null,
+    "anchorRouterLink": [
+      "/system",
+      "advanced"
+    ],
+    "anchor": "system_settings-advanced-console-console_menu",
+    "triggerAnchor": "console-settings"
+  },
+  {
+    "hierarchy": [
+      "System Settings",
+      "Advanced",
+      "Console",
+      "Enable Serial Console"
+    ],
+    "synonyms": null,
+    "requiredRoles": [],
+    "routerLink": null,
+    "anchorRouterLink": [
+      "/system",
+      "advanced"
+    ],
+    "anchor": "system_settings-advanced-console-enable_serial_console",
+    "triggerAnchor": "console-settings"
+  },
+  {
+    "hierarchy": [
+      "System Settings",
+      "Advanced",
+      "Console",
+      "Serial Port"
+    ],
+    "synonyms": null,
+    "requiredRoles": [],
+    "routerLink": null,
+    "anchorRouterLink": [
+      "/system",
+      "advanced"
+    ],
+    "anchor": "system_settings-advanced-console-serial_port",
+    "triggerAnchor": "console-settings"
+  },
+  {
+    "hierarchy": [
+      "System Settings",
+      "Advanced",
+      "Console",
+      "Serial Speed"
+    ],
+    "synonyms": null,
+    "requiredRoles": [],
+    "routerLink": null,
+    "anchorRouterLink": [
+      "/system",
+      "advanced"
+    ],
+    "anchor": "system_settings-advanced-console-serial_speed",
+    "triggerAnchor": "console-settings"
+  },
+  {
+    "hierarchy": [
+      "System Settings",
+      "Advanced",
+      "Console",
+      "MOTD Banner"
+    ],
+    "synonyms": null,
+    "requiredRoles": [],
+    "routerLink": null,
+    "anchorRouterLink": [
+      "/system",
+      "advanced"
+    ],
+    "anchor": "system_settings-advanced-console-motd_banner",
+    "triggerAnchor": "console-settings"
+  },
+  {
+    "hierarchy": [
+      "System Settings",
+      "Advanced",
+      "Global Two Factor Auth",
+      "Enable"
+    ],
+    "synonyms": [
+      "Enable Two Factor Authentication Globally",
+      "Two Factor Auth",
+      "2FA"
+    ],
+    "requiredRoles": [],
+    "routerLink": null,
+    "anchorRouterLink": [
+      "/system",
+      "advanced"
+    ],
+    "anchor": "system_settings-advanced-global_two_factor_auth-enable",
+    "triggerAnchor": "global-two-factor-auth"
+  },
+  {
+    "hierarchy": [
+      "System Settings",
+      "Advanced",
+      "Global Two Factor Auth",
+      "Window"
+    ],
+    "synonyms": [
+      "Torelance Window"
+    ],
+    "requiredRoles": [],
+    "routerLink": null,
+    "anchorRouterLink": [
+      "/system",
+      "advanced"
+    ],
+    "anchor": "system_settings-advanced-global_two_factor_auth-window",
+    "triggerAnchor": "global-two-factor-auth"
+  },
+  {
+    "hierarchy": [
+      "System Settings",
+      "Advanced",
+      "Global Two Factor Auth",
+      "SSH"
+    ],
+    "synonyms": [
+      "Enable Two Factor Authentication for SSH"
+    ],
+    "requiredRoles": [],
+    "routerLink": null,
+    "anchorRouterLink": [
+      "/system",
+      "advanced"
+    ],
+    "anchor": "system_settings-advanced-global_two_factor_auth-ssh",
+    "triggerAnchor": "global-two-factor-auth"
+  },
+  {
+    "hierarchy": [
+      "System",
+      "General",
+      "Email Options",
+      "Send Method"
+    ],
+    "synonyms": [
+      "SMTP",
+      "Gmail"
+    ],
+    "requiredRoles": [],
+    "routerLink": null,
+    "anchorRouterLink": [
+      "/system",
+      "general"
+    ],
+    "anchor": "system-general-email_options-send_method",
+    "triggerAnchor": "email-settings"
+  },
+  {
+    "hierarchy": [
+      "System",
+      "General",
+      "Email Options",
+      "Outgoing Server"
+    ],
+    "synonyms": [
+      "SMTP Server"
+    ],
+    "requiredRoles": [],
+    "routerLink": null,
+    "anchorRouterLink": [
+      "/system",
+      "general"
+    ],
+    "anchor": "system-general-email_options-outgoing_server",
+    "triggerAnchor": "email-settings"
+  },
+  {
+    "hierarchy": [
+      "System Settings",
+      "General",
       "GUI",
       "Theme"
     ],
@@ -169,5 +439,24 @@
     ],
     "anchor": "system_settings-general-localization-time_format",
     "triggerAnchor": "localization-settings"
+  },
+  {
+    "hierarchy": [
+      "System Settings",
+      "General",
+      "NTP Server",
+      "Address"
+    ],
+    "synonyms": [
+      "NTP Server Address"
+    ],
+    "requiredRoles": [],
+    "routerLink": null,
+    "anchorRouterLink": [
+      "/system",
+      "general"
+    ],
+    "anchor": "system_settings-general-ntp_server-address",
+    "triggerAnchor": "add-ntp-server"
   }
 ]

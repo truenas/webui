@@ -9,18 +9,24 @@
     <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
       <ix-fieldset>
         <ix-checkbox
+          ixUiSearchableElement
           formControlName="enabled"
           [label]="'Enable Two Factor Authentication Globally' | translate"
           [warning]="twoFactorConfig.enabled ? '' : enableWarning"
+          [ixSearchConfig]="searchElements.globallyEnabled"
         ></ix-checkbox>
         <ix-input
+          ixUiSearchableElement
           formControlName="window"
           [label]="'Window' | translate"
           [type]="'number'"
+          [ixSearchConfig]="searchElements.torelanceWindow"
         ></ix-input>
         <ix-checkbox
+          ixUiSearchableElement
           formControlName="ssh"
           [label]="'Enable Two Factor Authentication for SSH' | translate"
+          [ixSearchConfig]="searchElements.enableForSsh"
         ></ix-checkbox>
       </ix-fieldset>
 

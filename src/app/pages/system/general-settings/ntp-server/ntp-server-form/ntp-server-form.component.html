@@ -9,10 +9,12 @@
     >
       <ix-fieldset [title]="helptext.fieldset | translate">
         <ix-input
+          ixUiSearchableElement
           formControlName="address"
           [label]="helptext.address.label | translate"
           [tooltip]="helptext.address.tooltip | translate"
           [required]="true"
+          [ixSearchConfig]="searchElements.address"
         ></ix-input>
 
         <ix-checkbox
