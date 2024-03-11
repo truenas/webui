@@ -41,7 +41,6 @@ export class Services implements OnInit {
     openvpn_client: 'OpenVPN Client',
     openvpn_server: 'OpenVPN Server',
     rsync: 'Rsync',
-    s3: 'S3',
     smartd: 'S.M.A.R.T.',
     snmp: 'SNMP',
     ssh: 'SSH',

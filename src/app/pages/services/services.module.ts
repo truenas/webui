@@ -17,7 +17,6 @@ import { ServiceRSYNCComponent } from './components/service-rsync';
 import { RSYNCconfigurationListComponent } from './components/service-rsync/rsyncconfiguration/rsyncconfiguration-list';
 import { CconfigureRYSNCComponent } from './components/service-rsync/rsyncconfiguration/configure_rsync';
 import { RYSNCConfigurationFormComponent } from './components/service-rsync/rsyncconfiguration/rsyncmodule';
-import { ServiceS3Component } from './components/service-s3';
 import { ServiceSMARTComponent } from './components/service-smart';
 import { ServiceSMBComponent } from './components/service-smb';
 import { ServiceSNMPComponent } from './components/service-snmp';
@@ -42,7 +41,7 @@ import { UserService } from '../../services/user.service';
     ServiceRSYNCComponent, CconfigureRYSNCComponent, RSYNCconfigurationListComponent, RYSNCConfigurationFormComponent,
     ServiceSMARTComponent, ServiceNFSComponent, ServiceTFTPComponent, ServiceUPSComponent,
     ServiceDDNSComponent, ServiceSMBComponent, ServiceSNMPComponent,
-    ServiceWebdavComponent, ServiceS3Component, ServicesTableComponent, ServiceOpenvpnClientComponent, ServiceOpenvpnServerComponent,
+    ServiceWebdavComponent, ServicesTableComponent, ServiceOpenvpnClientComponent, ServiceOpenvpnServerComponent,
   ],
   providers: [UserService],
 })
