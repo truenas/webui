@@ -7,14 +7,14 @@ import { ApiDataProvider } from 'app/modules/ix-table2/classes/api-data-provider
 import { WebSocketService } from 'app/services/ws.service';
 
 export class AuditApiDataProvider extends ApiDataProvider<'audit.query'> {
-  lastQueryParams: AuditQueryParams;
+  lastParams: AuditQueryParams;
 
   get isLastOffset(): boolean {
-    return Boolean(this.totalRows && (this.totalRows / this.pagination.pageNumber) > this.pagination.pageSize);
+    return Boolean((this.totalRows / this.pagination.pageNumber) < this.pagination.pageSize);
   }
 
   get avoidCountRowsRequest(): boolean {
-    return this.isLastOffset && _.isEqual(this.lastQueryParams, this.params[0]);
+    return this.totalRows && !this.isLastOffset && _.isEqual(this.lastParams, this.params[0]);
   }
 
   constructor(ws: WebSocketService) {
@@ -26,7 +26,7 @@ export class AuditApiDataProvider extends ApiDataProvider<'audit.query'> {
       return of(this.totalRows);
     }
 
-    this.lastQueryParams = this.params[0];
+    this.lastParams = this.params[0];
 
     const params = [
       {
