@@ -33,12 +33,12 @@ export class TwoFactorComponent implements OnInit, OnDestroy {
 
   get global2FaMsg(): string {
     if (!this.globalTwoFactorEnabled) {
-      return this.translateService.instant(helptext2fa.two_factor.global_disabled);
+      return this.translate.instant(helptext2fa.two_factor.global_disabled);
     }
     if (this.userTwoFactorAuthConfigured) {
-      return this.translateService.instant(helptext2fa.two_factor.global_enabled_user_enabled);
+      return this.translate.instant(helptext2fa.two_factor.global_enabled_user_enabled);
     }
-    return this.translateService.instant(helptext2fa.two_factor.global_enabled_user_disabled);
+    return this.translate.instant(helptext2fa.two_factor.global_enabled_user_disabled);
   }
 
   readonly helptext = helptext2fa;
@@ -57,7 +57,7 @@ export class TwoFactorComponent implements OnInit, OnDestroy {
     public authService: AuthService,
     private cdr: ChangeDetectorRef,
     private dialogService: DialogService,
-    private translateService: TranslateService,
+    private translate: TranslateService,
     protected matDialog: MatDialog,
     private ws: WebSocketService,
     @Inject(WINDOW) private window: Window,

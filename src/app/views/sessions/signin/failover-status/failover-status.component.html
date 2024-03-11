@@ -1,8 +1,8 @@
-<p class="failover-status-message">{{ statusMessage }}</p>
+<p class="failover-status-message">{{ statusMessage | translate }}</p>
 <ngx-skeleton-loader *ngIf="!disabledReasons"></ngx-skeleton-loader>
 <div *ngIf="areReasonsShown" class="failover-reasons">
   <p *ngFor="let reason of disabledReasons">
-    {{ reasonText[reason] | translate}}
+    {{ reasonText[reason] | translate }}
   </p>
 </div>
 

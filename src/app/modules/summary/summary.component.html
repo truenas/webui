@@ -6,8 +6,8 @@
       [ixTest]="['summary', item.label]"
       [class.section-start]="i === 0"
     >
-      <td class="summary-line-label">{{ item.label }}:</td>
-      <td class="summary-line-value">{{ item.value }}</td>
+      <td class="summary-line-label">{{ item.label | translate }}:</td>
+      <td class="summary-line-value">{{ item.value | translate }}</td>
     </tr>
   </ng-container>
 </table>

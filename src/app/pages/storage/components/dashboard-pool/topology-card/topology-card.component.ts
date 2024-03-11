@@ -3,7 +3,6 @@ import {
   Component, Input, OnChanges, OnInit,
 } from '@angular/core';
 import { Router } from '@angular/router';
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { PoolCardIconType } from 'app/enums/pool-card-icon-type.enum';
@@ -33,8 +32,6 @@ interface TopologyState {
 export type EmptyDiskObject = Record<string, string | number | boolean | string[] |
 SmartTestResult[] | EnclosureAndSlot>;
 
-const notAssignedDev = T('VDEVs not assigned');
-
 @UntilDestroy()
 @Component({
   selector: 'ix-topology-card',
@@ -46,13 +43,15 @@ export class TopologyCardComponent implements OnInit, OnChanges {
   @Input() poolState: Pool;
   @Input() disks: StorageDashboardDisk[];
 
+  notAssignedDev = this.translate.instant('VDEVs not assigned');
+
   topologyState: TopologyState = {
-    data: notAssignedDev,
-    metadata: notAssignedDev,
-    log: notAssignedDev,
-    cache: notAssignedDev,
-    spare: notAssignedDev,
-    dedup: notAssignedDev,
+    data: this.notAssignedDev,
+    metadata: this.notAssignedDev,
+    log: this.notAssignedDev,
+    cache: this.notAssignedDev,
+    spare: this.notAssignedDev,
+    dedup: this.notAssignedDev,
   };
 
   topologyWarningsState: TopologyState = { ...this.topologyState };
@@ -120,7 +119,7 @@ export class TopologyCardComponent implements OnInit, OnChanges {
   }
 
   private parseDevs(vdevs: TopologyItem[], category: VdevType, warning?: string): string {
-    let outputString = vdevs.length ? '' : notAssignedDev;
+    let outputString = vdevs.length ? '' : this.notAssignedDev;
 
     // Check VDEV Widths
     let vdevWidth = 0;
@@ -140,7 +139,7 @@ export class TopologyCardComponent implements OnInit, OnChanges {
       vdevWidth = Array.from(allVdevWidths.values())[0];
     }
 
-    if (outputString && outputString === notAssignedDev) {
+    if (outputString && outputString === this.notAssignedDev) {
       return outputString;
     }
 

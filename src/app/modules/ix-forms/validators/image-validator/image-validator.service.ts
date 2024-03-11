@@ -16,7 +16,7 @@ import { ixManualValidateError } from 'app/modules/ix-forms/components/ix-errors
 })
 export class ImageValidatorService {
   constructor(
-    private translateService: TranslateService,
+    private translate: TranslateService,
   ) { }
 
   getImagesValidator(fileSizeLimitBytes: number): AsyncValidatorFn {
@@ -62,7 +62,7 @@ export class ImageValidatorService {
         observer.error({
           error: {
             name,
-            errorMessage: this.translateService.instant('File size is limited to {n} MiB.', { n: sizeLimitBytes / MiB }),
+            errorMessage: this.translate.instant('File size is limited to {n} MiB.', { n: sizeLimitBytes / MiB }),
           },
         });
       }
@@ -76,7 +76,7 @@ export class ImageValidatorService {
             observer.complete();
           };
           image.onerror = () => {
-            observer.error({ error: { name, errorMessage: this.translateService.instant('Invalid image') } });
+            observer.error({ error: { name, errorMessage: this.translate.instant('Invalid image') } });
           };
           image.src = fileReader.result as string;
         } else {
@@ -85,7 +85,7 @@ export class ImageValidatorService {
         }
       };
       fileReader.onerror = () => {
-        observer.error({ error: { name, errorMessage: this.translateService.instant('Invalid file') } });
+        observer.error({ error: { name, errorMessage: this.translate.instant('Invalid file') } });
       };
     });
   }

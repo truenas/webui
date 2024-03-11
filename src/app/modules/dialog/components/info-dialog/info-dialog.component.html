@@ -7,7 +7,7 @@
     <div class="textarea" readonly matInput>{{ info | translate }}</div>
   </div>
   <div *ngIf="isHtml" class="info-panel ip-overflow-auto">
-    <span [innerHtml]="info"></span>
+    <span [innerHtml]="info | translate"></span>
   </div>
 </div>
 <div mat-dialog-actions>

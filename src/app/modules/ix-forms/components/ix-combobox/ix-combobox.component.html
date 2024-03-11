@@ -52,7 +52,7 @@
           [class.ix-unselected]="option.value !== selectedOption?.value"
           [ixTest]="[controlDirective.name, option.label]"
         >
-          {{ option.label }}
+          {{ option.label | translate }}
         </mat-option>
       </ng-container>
 
