@@ -9,15 +9,20 @@ import { WebSocketService } from 'app/services/ws.service';
 export class AuditApiDataProvider extends ApiDataProvider<'audit.query'> {
   lastQueryParams: AuditQueryParams;
 
-  get avoidCountRowsRequest(): boolean {
+  get isLastOffset(): boolean {
     return Boolean(this.totalRows && (this.totalRows / this.pagination.pageNumber) > this.pagination.pageSize);
   }
+
+  get avoidCountRowsRequest(): boolean {
+    return this.isLastOffset && _.isEqual(this.lastQueryParams, this.params[0]);
+  }
+
   constructor(ws: WebSocketService) {
     super(ws, 'audit.query');
   }
 
   protected override countRows(): Observable<number> {
-    if (this.avoidCountRowsRequest && _.isEqual(this.lastQueryParams, this.params[0])) {
+    if (this.avoidCountRowsRequest) {
       return of(this.totalRows);
     }
 
