@@ -103,6 +103,11 @@ export class SupportCardComponent implements OnInit {
       });
   }
 
+  get productImageSrc(): string {
+    // TODO: Duplicating code in widget-sys-info. Figure out some universal way of doing this.
+    return 'assets/images' + (this.productImage.startsWith('/') ? this.productImage : ('/' + this.productImage));
+  }
+
   parseLicenseInfo(): void {
     if (this.licenseInfo.features.length === 0) {
       this.licenseInfo.featuresString = 'NONE';
