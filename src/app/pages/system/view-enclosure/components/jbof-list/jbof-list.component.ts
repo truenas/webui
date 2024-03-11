@@ -11,6 +11,7 @@ import { actionsColumn } from 'app/modules/ix-table2/components/ix-table-body/ce
 import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { createTable } from 'app/modules/ix-table2/utils';
 import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
+import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { JbosFormComponent } from 'app/pages/system/view-enclosure/components/jbof-form/jbof-form.component';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
@@ -75,6 +76,7 @@ export class JbofListComponent implements OnInit {
     private errorHandler: ErrorHandlerService,
     private translate: TranslateService,
     private emptyService: EmptyService,
+    private loader: AppLoaderService,
     private cdr: ChangeDetectorRef,
   ) { }
 
@@ -96,16 +98,15 @@ export class JbofListComponent implements OnInit {
     this.dialogService.confirm({
       title: this.translate.instant('Delete'),
       message: this.translate.instant('Are you sure you want to delete this item?'),
+      buttonText: this.translate.instant('Delete'),
     }).pipe(
       filter(Boolean),
-      switchMap(() => this.ws.call('jbof.delete', [jbof.id])),
+      switchMap(() => this.ws.call('jbof.delete', [jbof.id]).pipe(this.loader.withLoader())),
       untilDestroyed(this),
     ).subscribe({
+      next: () => this.getJbofs(),
       error: (error: unknown) => {
         this.dialogService.error(this.errorHandler.parseError(error));
-      },
-      complete: () => {
-        this.getJbofs();
       },
     });
   }
