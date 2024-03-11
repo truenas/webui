@@ -32,7 +32,6 @@ export const routes: Routes = [
           data: {
             title: T('NFS Sessions'),
             breadcrumb: null,
-            isNew: true,
           },
         }],
       },
@@ -56,7 +55,6 @@ export const routes: Routes = [
               component: SmbStatusComponent,
               data: {
                 title: T('SMB Status'),
-                isNew: true,
                 breadcrumb: null,
               },
             },
