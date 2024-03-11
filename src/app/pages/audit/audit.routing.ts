@@ -13,7 +13,6 @@ export const routes: Routes = [
   {
     path: ':options',
     data: {
-      isNew: true,
       title: T('Audit'),
     },
     component: AuditComponent,
