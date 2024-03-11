@@ -5,11 +5,14 @@ import {
 /**
  * Similar to filter(), but accepts an observable.
  */
-export function filterAsync<T>(asyncPredicate$: Observable<boolean>): OperatorFunction<T, T> {
+export function filterAsync<T>(predicateFactory: (value: T) => Observable<boolean>): OperatorFunction<T, T> {
   return (source$: Observable<T>) => source$.pipe(
-    switchMap((item) => asyncPredicate$.pipe(
-      filter((result) => result),
-      map(() => item),
-    )),
+    switchMap((value) => {
+      const predicate$ = predicateFactory(value);
+      return predicate$.pipe(
+        filter((result) => result),
+        map(() => value),
+      );
+    }),
   );
 }
