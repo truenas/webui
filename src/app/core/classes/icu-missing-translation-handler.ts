@@ -12,6 +12,9 @@ export class IcuMissingTranslationHandler implements MissingTranslationHandler {
   handle(params: MissingTranslationHandlerParams): string {
     try {
       const compiled = this.messageFormat.compile(params.key, 'en');
+      if (!compiled || !params.interpolateParams) {
+        return params.key;
+      }
       return compiled(params.interpolateParams);
     } catch (error: unknown) {
       console.error(error);
