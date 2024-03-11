@@ -211,9 +211,14 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
   }
 
   setUptimeUpdates(): void {
+    if (!this.systemInfo?.uptime_seconds) {
+      return;
+    }
+
     if (this.uptimeInterval) {
       clearInterval(this.uptimeInterval);
     }
+
     this.uptimeInterval = setInterval(() => {
       this.systemInfo.uptime_seconds += 1;
       this.systemInfo.datetime.$date += 1000;
