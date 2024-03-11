@@ -43,7 +43,7 @@
         ></ix-select>
 
         <ng-container *ngIf="hasErrors(bulkItem.key)">
-          <span>{{ bulkItem.value.message }}</span>
+          <span>{{ bulkItem.value.message | translate }}</span>
         </ng-container>
 
         <mat-accordion class="details-list" displayMode="flat">

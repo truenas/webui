@@ -61,7 +61,7 @@
               <div class="tile">
                 <div class="tile-content">
                   <ul class="caption" [style.max-width.%]="screenType === ScreenType.Mobile ? 50 : 25">
-                    <span class="title">{{ tile.title }}</span>
+                    <span class="title">{{ tile.title | translate }}</span>
                     <div *ngIf="hasSendTasks && !tile.totalSend" class="backup-actions">
                       <ng-template *ngTemplateOutlet="backupActions"></ng-template>
                     </div>

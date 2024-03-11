@@ -22,7 +22,7 @@ export class TwoFactorGuardService implements CanActivateChild {
     private router: Router,
     private authService: AuthService,
     private dialogService: DialogService,
-    private translateService: TranslateService,
+    private translate: TranslateService,
     private store$: Store<AppState>,
     private appLoader: AppLoaderService,
   ) { }
@@ -70,8 +70,8 @@ export class TwoFactorGuardService implements CanActivateChild {
           return of(true);
         }
         return this.dialogService.fullScreenDialog(
-          this.translateService.instant('Two-Factor Authentication Setup Warning!'),
-          this.translateService.instant('Two-Factor Authentication has been enabled on this system. You are required to setup your 2FA authentication on the next page. You will not be able to proceed without setting up 2FA for your account. Make sure to scan the QR code with your authenticator app in the end before logging out of the system or navigating away. Otherwise, you will be locked out of the system and will be unable to login after logging out.'),
+          this.translate.instant('Two-Factor Authentication Setup Warning!'),
+          this.translate.instant('Two-Factor Authentication has been enabled on this system. You are required to setup your 2FA authentication on the next page. You will not be able to proceed without setting up 2FA for your account. Make sure to scan the QR code with your authenticator app in the end before logging out of the system or navigating away. Otherwise, you will be locked out of the system and will be unable to login after logging out.'),
           true,
         ).pipe(
           switchMap(() => {

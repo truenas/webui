@@ -357,6 +357,7 @@
   "{email} via {server}": "",
   "{failedCount} of {allCount, plural, =1 {# task} other {# tasks}} failed": "",
   "{minutes, plural, =1 {# minute} other {# minutes}}": "",
+  "{n, plural, =0 {No errors} one {# Error} other {# Errors}}": "",
   "{n, plural, =0 {No open files} one {# open file} other {# open files}}": "",
   "{n, plural, one {# CPU} other {# CPUs}}": "",
   "{n, plural, one {# core} other {# cores}}": "",

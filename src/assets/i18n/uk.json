@@ -767,6 +767,7 @@
   "{hours, plural, =1 {# hour} other {# hours}}": "",
   "{license} contract, expires {date}": "",
   "{minutes, plural, =1 {# minute} other {# minutes}}": "",
+  "{n, plural, =0 {No errors} one {# Error} other {# Errors}}": "",
   "{n, plural, =0 {No open files} one {# open file} other {# open files}}": "",
   "{n, plural, one {# docker image} other {# docker images}} has been deleted.": "",
   "{n, plural, one {# docker image} other {# docker images}} has been updated.": "",

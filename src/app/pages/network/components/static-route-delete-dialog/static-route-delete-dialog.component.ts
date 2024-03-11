@@ -7,7 +7,6 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { Role } from 'app/enums/role.enum';
 import { StaticRoute } from 'app/interfaces/static-route.interface';
-import { DialogService } from 'app/modules/dialog/dialog.service';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
@@ -28,7 +27,6 @@ export class StaticRouteDeleteDialogComponent {
     private ws: WebSocketService,
     private snackbar: SnackbarService,
     private translate: TranslateService,
-    private dialogService: DialogService,
     private dialogRef: MatDialogRef<StaticRouteDeleteDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public route: StaticRoute,
     private errorHandler: ErrorHandlerService,

@@ -8,7 +8,6 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { Role } from 'app/enums/role.enum';
 import { User } from 'app/interfaces/user.interface';
-import { DialogService } from 'app/modules/dialog/dialog.service';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
@@ -32,7 +31,6 @@ export class DeleteUserDialogComponent implements OnInit {
     private errorHandler: ErrorHandlerService,
     private ws: WebSocketService,
     private loader: AppLoaderService,
-    private dialogService: DialogService,
     @Inject(MAT_DIALOG_DATA) public user: User,
     private dialogRef: MatDialogRef<DeleteUserDialogComponent>,
     private snackbar: SnackbarService,

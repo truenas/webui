@@ -1,14 +1,14 @@
 <fieldset>
   <div *ngIf="title" class="title-container">
     <legend class="title">
-      {{ title }}
+      {{ title | translate }}
     </legend>
 
     <ix-tooltip
       *ngIf="tooltip"
       class="tooltip"
-      [header]="title"
-      [message]="tooltip"
+      [header]="title | translate"
+      [message]="tooltip | translate"
     ></ix-tooltip>
   </div>
 

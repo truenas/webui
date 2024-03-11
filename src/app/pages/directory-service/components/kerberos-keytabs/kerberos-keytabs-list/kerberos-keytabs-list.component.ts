@@ -37,7 +37,7 @@ export class KerberosKeytabsListComponent implements OnInit {
   kerberosRealsm: KerberosKeytab[] = [];
   columns = createTable<KerberosKeytab>([
     textColumn({
-      title: this.translateService.instant('Name'),
+      title: this.translate.instant('Name'),
       propertyName: 'name',
       sortable: true,
     }),
@@ -45,7 +45,7 @@ export class KerberosKeytabsListComponent implements OnInit {
       actions: [
         {
           iconName: 'edit',
-          tooltip: this.translateService.instant('Edit'),
+          tooltip: this.translate.instant('Edit'),
           onClick: (row) => {
             const slideInRef = this.slideInService.open(KerberosKeytabsFormComponent, { data: row });
             slideInRef.slideInClosed$.pipe(
@@ -55,12 +55,12 @@ export class KerberosKeytabsListComponent implements OnInit {
         },
         {
           iconName: 'delete',
-          tooltip: this.translateService.instant('Delete'),
+          tooltip: this.translate.instant('Delete'),
           requiredRoles: this.requiredRoles,
           onClick: (row) => {
             this.dialogService.confirm({
-              title: this.translateService.instant('Delete'),
-              message: this.translateService.instant('Are you sure you want to delete this item?'),
+              title: this.translate.instant('Delete'),
+              message: this.translate.instant('Are you sure you want to delete this item?'),
             }).pipe(
               filter(Boolean),
               switchMap(() => this.ws.call('kerberos.keytab.delete', [row.id])),
@@ -82,7 +82,7 @@ export class KerberosKeytabsListComponent implements OnInit {
   });
 
   constructor(
-    private translateService: TranslateService,
+    private translate: TranslateService,
     private ws: WebSocketService,
     protected dialogService: DialogService,
     private cdr: ChangeDetectorRef,

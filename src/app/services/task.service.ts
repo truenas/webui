@@ -117,7 +117,7 @@ export class TaskService {
   constructor(
     protected language: LanguageService,
     protected localeService: LocaleService,
-    private translateService: TranslateService,
+    private translate: TranslateService,
   ) {}
 
   getTimeOptions(): Option[] {
@@ -132,7 +132,7 @@ export class TaskService {
 
     const date = schedule?.next()?.value?.toDate();
     if (!date) {
-      return this.translateService.instant('N/A');
+      return this.translate.instant('N/A');
     }
 
     return formatDistanceToNowShortened(date);

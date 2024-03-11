@@ -1,12 +1,12 @@
 <mat-dialog-content>
   <h3>{{ 'Restart SMB Service' | translate }}</h3>
   <div>
-    <p>{{ helptext.restartPt1 }}</p>
+    <p>{{ helptext.restartPt1 | translate }}</p>
     <ul>
-      <li *ngIf="data.homeshare">{{ homeShareMessage }}</li>
-      <li *ngIf="data.timemachine">{{ timemachineMessage }}</li>
-      <li *ngIf="data.hosts">{{ hostsMessage }}</li>
-      <li *ngIf="data.path">{{ pathMessage }}</li>
+      <li *ngIf="data.homeshare">{{ homeShareMessage | translate }}</li>
+      <li *ngIf="data.timemachine">{{ timemachineMessage | translate }}</li>
+      <li *ngIf="data.hosts">{{ hostsMessage | translate }}</li>
+      <li *ngIf="data.path">{{ pathMessage | translate }}</li>
     </ul>
 
     <p><strong>{{ helptext.restartPt2 }}</strong></p>

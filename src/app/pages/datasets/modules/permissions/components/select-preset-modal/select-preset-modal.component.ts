@@ -8,7 +8,6 @@ import { of } from 'rxjs';
 import { helptextAcl } from 'app/helptext/storage/volumes/datasets/dataset-acl';
 import { AclTemplateByPath } from 'app/interfaces/acl.interface';
 import { Option } from 'app/interfaces/option.interface';
-import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import {
@@ -55,7 +54,6 @@ export class SelectPresetModalComponent implements OnInit {
     private errorHandler: ErrorHandlerService,
     private loader: AppLoaderService,
     private aclEditorStore: DatasetAclEditorStore,
-    private dialogService: DialogService,
     private validatorsService: IxValidatorsService,
     @Inject(MAT_DIALOG_DATA) public data: SelectPresetModalConfig,
   ) {}
