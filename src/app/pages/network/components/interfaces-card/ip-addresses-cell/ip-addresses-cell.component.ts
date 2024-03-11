@@ -40,7 +40,7 @@ export class IpAddressesCellComponent extends ColumnComponent<NetworkInterface> 
 
   private aliasesToAddress(aliases: NetworkInterfaceAlias[]): string[] {
     return aliases
-      .filter((alias) => alias.type.startsWith(NetworkInterfaceAliasType.Inet))
+      .filter((alias) => alias.type?.startsWith(NetworkInterfaceAliasType.Inet))
       .map((alias) => `${alias.address}/${alias.netmask}`);
   }
 }

@@ -19,9 +19,11 @@ export function getTreeBranchToNode<T extends { children?: T[] }>(
       return [item];
     }
 
-    const children = getTreeBranchToNode(item.children, predicate);
-    if (children) {
-      return [item, ...children];
+    if (item.children) {
+      const children = getTreeBranchToNode(item.children, predicate);
+      if (children) {
+        return [item, ...children];
+      }
     }
   }
 

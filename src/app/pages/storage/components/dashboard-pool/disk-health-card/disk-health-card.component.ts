@@ -11,9 +11,9 @@ import { StorageDashboardDisk } from 'app/interfaces/storage.interface';
 import { getPoolDisks } from 'app/pages/storage/modules/disks/utils/get-pool-disks.utils';
 
 interface DiskState {
-  highestTemperature: number;
-  lowestTemperature: number;
-  averageTemperature: number;
+  highestTemperature: number | null;
+  lowestTemperature: number | null;
+  averageTemperature: number | null;
   alerts: number;
   smartTests: number;
   unit: string;

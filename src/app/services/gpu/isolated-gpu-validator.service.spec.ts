@@ -66,8 +66,8 @@ describe('IsolatedGpuValidatorService', () => {
   describe('validateGpu - validation fails', () => {
     it(`returns an error when too many new GPUs are selected
     leaving no GPU for host system`, async () => {
-      jest.spyOn(spectator.inject(GpuService), 'getIsolatedGpuPciIds').mockReturnValue(of([]));
-      jest.spyOn(spectator.inject(GpuService), 'getIsolatedGpus').mockReturnValue(of([]));
+      jest.spyOn(spectator.inject(GpuService), 'getIsolatedGpuPciIds').mockReturnValue(of([] as string[]));
+      jest.spyOn(spectator.inject(GpuService), 'getIsolatedGpus').mockReturnValue(of([] as Device[]));
 
       const control = new FormControl(['0000:01:00.0', '0000:02:00.0', '0000:03:00.0']);
       const result = await firstValueFrom(spectator.service.validateGpu(control));
