@@ -4,10 +4,12 @@
     <div class="actions action-icon">
       <button
         *ixRequiresRoles="requiredRoles"
+        ixUiSearchableElement
         id="add-ntp-server"
         mat-button
         color="primary"
         ixTest="add-ntp"
+        [ixSearchConfig]="searchElements.addNtpServer"
         (click)="doAdd()"
       >
         {{ 'Add' | translate }}

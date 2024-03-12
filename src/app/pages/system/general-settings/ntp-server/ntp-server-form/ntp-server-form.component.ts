@@ -11,7 +11,6 @@ import { CreateNtpServer, NtpServer } from 'app/interfaces/ntp-server.interface'
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
-import { elements } from 'app/pages/system/general-settings/ntp-server/ntp-server-form/ntp-server-form.elements';
 import { greaterThanFg } from 'app/services/validators';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -22,7 +21,6 @@ import { WebSocketService } from 'app/services/ws.service';
 })
 export class NtpServerFormComponent implements OnInit {
   protected readonly requiredRoles = [Role.FullAdmin];
-  protected readonly searchElements = elements;
 
   isFormLoading = false;
 

@@ -69,7 +69,64 @@
   {
     "hierarchy": [
       "System Settings",
-      "General",
+      "Advanced",
+      "Access",
+      "Terminate Other Sessions"
+    ],
+    "synonyms": [
+      "Terminate Other User Sessions"
+    ],
+    "requiredRoles": [
+      "AUTH_SESSIONS_WRITE"
+    ],
+    "routerLink": null,
+    "anchorRouterLink": [
+      "/system",
+      "advanced"
+    ],
+    "anchor": "system_settings-advanced-access-terminate_other_sessions",
+    "triggerAnchor": "terminate-other-sessions"
+  },
+  {
+    "hierarchy": [
+      "System Settings",
+      "Advanced",
+      "Access",
+      "Token Lifetime"
+    ],
+    "synonyms": [
+      "Session Token Lifetime"
+    ],
+    "requiredRoles": [],
+    "routerLink": null,
+    "anchorRouterLink": [
+      "/system",
+      "advanced"
+    ],
+    "anchor": "system_settings-advanced-access-token_lifetime",
+    "triggerAnchor": "access-settings"
+  },
+  {
+    "hierarchy": [
+      "System Settings",
+      "Advanced",
+      "Allowed IP Addressed",
+      "Configure"
+    ],
+    "synonyms": [],
+    "requiredRoles": [],
+    "routerLink": null,
+    "anchorRouterLink": [
+      "/system",
+      "advanced"
+    ],
+    "anchor": "system_settings-advanced-allowed_ip_addressed-configure",
+    "triggerAnchor": "allowed-addresses-settings"
+  },
+  {
+    "hierarchy": [
+      "System Settings",
+      "Advanced",
       "Audit",
       "Retention"
     ],
@@ -80,13 +137,13 @@
       "/system",
       "advanced"
     ],
-    "anchor": "system_settings-general-audit-retention",
+    "anchor": "system_settings-advanced-audit-retention",
     "triggerAnchor": "audit-settings"
   },
   {
     "hierarchy": [
       "System Settings",
-      "General",
+      "Advanced",
       "Audit",
       "Reservation"
     ],
@@ -97,13 +154,13 @@
       "/system",
       "advanced"
     ],
-    "anchor": "system_settings-general-audit-reservation",
+    "anchor": "system_settings-advanced-audit-reservation",
     "triggerAnchor": "audit-settings"
   },
   {
     "hierarchy": [
       "System Settings",
-      "General",
+      "Advanced",
       "Audit",
       "Quota"
     ],
@@ -114,13 +171,13 @@
       "/system",
       "advanced"
     ],
-    "anchor": "system_settings-general-audit-quota",
+    "anchor": "system_settings-advanced-audit-quota",
     "triggerAnchor": "audit-settings"
   },
   {
     "hierarchy": [
       "System Settings",
-      "General",
+      "Advanced",
       "Audit",
       "Quota Fill Warning"
     ],
@@ -131,13 +188,13 @@
       "/system",
       "advanced"
     ],
-    "anchor": "system_settings-general-audit-quota_fill_warning",
+    "anchor": "system_settings-advanced-audit-quota_fill_warning",
     "triggerAnchor": "audit-settings"
   },
   {
     "hierarchy": [
       "System Settings",
-      "General",
+      "Advanced",
       "Audit",
       "Quota Fill Critical"
     ],
@@ -148,7 +205,7 @@
       "/system",
       "advanced"
     ],
-    "anchor": "system_settings-general-audit-quota_fill_critical",
+    "anchor": "system_settings-advanced-audit-quota_fill_critical",
     "triggerAnchor": "audit-settings"
   },
   {
@@ -177,7 +234,7 @@
       "Console",
       "Enable Serial Console"
     ],
-    "synonyms": null,
+    "synonyms": [],
     "requiredRoles": [],
     "routerLink": null,
     "anchorRouterLink": [
@@ -194,7 +251,7 @@
       "Console",
       "Serial Port"
     ],
-    "synonyms": null,
+    "synonyms": [],
     "requiredRoles": [],
     "routerLink": null,
     "anchorRouterLink": [
@@ -211,7 +268,7 @@
       "Console",
       "Serial Speed"
     ],
-    "synonyms": null,
+    "synonyms": [],
     "requiredRoles": [],
     "routerLink": null,
     "anchorRouterLink": [
@@ -228,7 +285,7 @@
       "Console",
       "MOTD Banner"
     ],
-    "synonyms": null,
+    "synonyms": [],
     "requiredRoles": [],
     "routerLink": null,
     "anchorRouterLink": [
@@ -242,8 +299,29 @@
     "hierarchy": [
       "System Settings",
       "Advanced",
+      "Cron Jobs",
+      "Add"
+    ],
+    "synonyms": [
+      "Add Cron Job"
+    ],
+    "requiredRoles": [
+      "FULL_ADMIN"
+    ],
+    "routerLink": null,
+    "anchorRouterLink": [
+      "/system",
+      "advanced"
+    ],
+    "anchor": "system_settings-advanced-cron_jobs-add",
+    "triggerAnchor": "add-cron"
+  },
+  {
+    "hierarchy": [
+      "System Settings",
+      "Advanced",
       "Global Two Factor Auth",
-      "Enable"
+      "Global 2FA Enable"
     ],
     "synonyms": [
       "Enable Two Factor Authentication Globally",
@@ -256,7 +334,7 @@
       "/system",
       "advanced"
     ],
-    "anchor": "system_settings-advanced-global_two_factor_auth-enable",
+    "anchor": "system_settings-advanced-global_two_factor_auth-global_2fa_enable",
     "triggerAnchor": "global-two-factor-auth"
   },
   {
@@ -299,7 +377,241 @@
   },
   {
     "hierarchy": [
-      "System",
+      "System Settings",
+      "Advanced",
+      "Init/Shutdown Scripts",
+      "Add"
+    ],
+    "synonyms": [
+      "Add Init/Shutdown Script"
+    ],
+    "requiredRoles": [
+      "FULL_ADMIN"
+    ],
+    "routerLink": null,
+    "anchorRouterLink": [
+      "/system",
+      "advanced"
+    ],
+    "anchor": "system_settings-advanced-init/shutdown_scripts-add",
+    "triggerAnchor": "add-init-shutdown-script"
+  },
+  {
+    "hierarchy": [
+      "System Settings",
+      "Advanced",
+      "Isolated GPU Devices",
+      "GPUs"
+    ],
+    "synonyms": [
+      "Isolated GPU PCI Ids"
+    ],
+    "requiredRoles": [],
+    "routerLink": null,
+    "anchorRouterLink": [
+      "/system",
+      "advanced"
+    ],
+    "anchor": "system_settings-advanced-isolated_gpu_devices-gpus",
+    "triggerAnchor": "isolated-gpus-settings"
+  },
+  {
+    "hierarchy": [
+      "System Settings",
+      "Advanced",
+      "Kernel",
+      "Enable Kernel Debug"
+    ],
+    "synonyms": [],
+    "requiredRoles": [],
+    "routerLink": null,
+    "anchorRouterLink": [
+      "/system",
+      "advanced"
+    ],
+    "anchor": "system_settings-advanced-kernel-enable_kernel_debug",
+    "triggerAnchor": "kernel-settings"
+  },
+  {
+    "hierarchy": [
+      "System Settings",
+      "Advanced",
+      "Replication",
+      "Replication Tasks Limit"
+    ],
+    "synonyms": [],
+    "requiredRoles": [],
+    "routerLink": null,
+    "anchorRouterLink": [
+      "/system",
+      "advanced"
+    ],
+    "anchor": "system_settings-advanced-replication-replication_tasks_limit",
+    "triggerAnchor": "replication-settings"
+  },
+  {
+    "hierarchy": [
+      "System Settings",
+      "Advanced",
+      "Self-Encrypting Drive",
+      "ATA Security User"
+    ],
+    "synonyms": [
+      "SED User"
+    ],
+    "requiredRoles": [],
+    "routerLink": null,
+    "anchorRouterLink": [
+      "/system",
+      "advanced"
+    ],
+    "anchor": "system_settings-advanced-self-encrypting_drive-ata_security_user",
+    "triggerAnchor": "sed-settings"
+  },
+  {
+    "hierarchy": [
+      "System Settings",
+      "Advanced",
+      "Self-Encrypting Drive",
+      "SED Password"
+    ],
+    "synonyms": [],
+    "requiredRoles": [],
+    "routerLink": null,
+    "anchorRouterLink": [
+      "/system",
+      "advanced"
+    ],
+    "anchor": "system_settings-advanced-self-encrypting_drive-sed_password",
+    "triggerAnchor": "sed-settings"
+  },
+  {
+    "hierarchy": [
+      "System Settings",
+      "Advanced",
+      "Storage",
+      "System Data Pool"
+    ],
+    "synonyms": [],
+    "requiredRoles": [],
+    "routerLink": null,
+    "anchorRouterLink": [
+      "/system",
+      "advanced"
+    ],
+    "anchor": "system_settings-advanced-storage-system_data_pool",
+    "triggerAnchor": "storage-settings"
+  },
+  {
+    "hierarchy": [
+      "System Settings",
+      "Advanced",
+      "Storage",
+      "Swap Size"
+    ],
+    "synonyms": [],
+    "requiredRoles": [],
+    "routerLink": null,
+    "anchorRouterLink": [
+      "/system",
+      "advanced"
+    ],
+    "anchor": "system_settings-advanced-storage-swap_size",
+    "triggerAnchor": "storage-settings"
+  },
+  {
+    "hierarchy": [
+      "System Settings",
+      "Advanced",
+      "Sysctl",
+      "Add"
+    ],
+    "synonyms": [
+      "Add Tunable",
+      "Add Sysctl"
+    ],
+    "requiredRoles": [
+      "FULL_ADMIN"
+    ],
+    "routerLink": null,
+    "anchorRouterLink": [
+      "/system",
+      "advanced"
+    ],
+    "anchor": "system_settings-advanced-sysctl-add",
+    "triggerAnchor": "add-sysctl"
+  },
+  {
+    "hierarchy": [
+      "System Settings",
+      "Advanced",
+      "Syslog",
+      "Syslog Level"
+    ],
+    "synonyms": [],
+    "requiredRoles": [],
+    "routerLink": null,
+    "anchorRouterLink": [
+      "/system",
+      "advanced"
+    ],
+    "anchor": "system_settings-advanced-syslog-syslog_level",
+    "triggerAnchor": "syslog-settings"
+  },
+  {
+    "hierarchy": [
+      "System Settings",
+      "Advanced",
+      "Syslog",
+      "Syslog Server"
+    ],
+    "synonyms": [],
+    "requiredRoles": [],
+    "routerLink": null,
+    "anchorRouterLink": [
+      "/system",
+      "advanced"
+    ],
+    "anchor": "system_settings-advanced-syslog-syslog_server",
+    "triggerAnchor": "syslog-settings"
+  },
+  {
+    "hierarchy": [
+      "System Settings",
+      "Advanced",
+      "Syslog",
+      "Syslog Transport"
+    ],
+    "synonyms": [],
+    "requiredRoles": [],
+    "routerLink": null,
+    "anchorRouterLink": [
+      "/system",
+      "advanced"
+    ],
+    "anchor": "system_settings-advanced-syslog-syslog_transport",
+    "triggerAnchor": "syslog-settings"
+  },
+  {
+    "hierarchy": [
+      "System Settings",
+      "Advanced",
+      "Syslog",
+      "Include Audit Logs"
+    ],
+    "synonyms": [],
+    "requiredRoles": [],
+    "routerLink": null,
+    "anchorRouterLink": [
+      "/system",
+      "advanced"
+    ],
+    "anchor": "system_settings-advanced-syslog-include_audit_logs",
+    "triggerAnchor": "syslog-settings"
+  },
+  {
+    "hierarchy": [
+      "System Settings",
       "General",
       "Email Options",
       "Send Method"
@@ -314,12 +626,12 @@
       "/system",
       "general"
     ],
-    "anchor": "system-general-email_options-send_method",
+    "anchor": "system_settings-general-email_options-send_method",
     "triggerAnchor": "email-settings"
   },
   {
     "hierarchy": [
-      "System",
+      "System Settings",
       "General",
       "Email Options",
       "Outgoing Server"
@@ -333,7 +645,7 @@
       "/system",
       "general"
     ],
-    "anchor": "system-general-email_options-outgoing_server",
+    "anchor": "system_settings-general-email_options-outgoing_server",
     "triggerAnchor": "email-settings"
   },
   {
@@ -445,10 +757,53 @@
       "System Settings",
       "General",
       "NTP Server",
-      "Address"
+      "Add"
     ],
     "synonyms": [
-      "NTP Server Address"
+      "Add NTP Server"
+    ],
+    "requiredRoles": [
+      "FULL_ADMIN"
+    ],
+    "routerLink": null,
+    "anchorRouterLink": [
+      "/system",
+      "general"
+    ],
+    "anchor": "system_settings-general-ntp_server-add",
+    "triggerAnchor": "add-ntp"
+  },
+  {
+    "hierarchy": [
+      "System Settings",
+      "General",
+      "Support",
+      "License"
+    ],
+    "synonyms": [],
+    "requiredRoles": [
+      "FULL_ADMIN"
+    ],
+    "routerLink": null,
+    "anchorRouterLink": [
+      "/system",
+      "general"
+    ],
+    "anchor": "system_settings-general-support-license",
+    "triggerAnchor": "update-license-btn"
+  },
+  {
+    "hierarchy": [
+      "System Settings",
+      "General",
+      "Support",
+      "File Ticket"
+    ],
+    "synonyms": [
+      "Report bug",
+      "Create ticket",
+      "Leave feedback",
+      "Rate this page"
     ],
     "requiredRoles": [],
     "routerLink": null,
@@ -456,7 +811,7 @@
       "/system",
       "general"
     ],
-    "anchor": "system_settings-general-ntp_server-address",
-    "triggerAnchor": "add-ntp-server"
+    "anchor": "system_settings-general-support-file_ticket",
+    "triggerAnchor": "file-ticket-btn"
   }
 ]

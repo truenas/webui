@@ -3,7 +3,7 @@ import { UiSearchableElement } from 'app/modules/global-search/interfaces/ui-sea
 
 export const elements: Record<string, UiSearchableElement> = {
   globallyEnabled: {
-    hierarchy: [T('System Settings'), T('Advanced'), T('Global Two Factor Auth'), T('Enable')],
+    hierarchy: [T('System Settings'), T('Advanced'), T('Global Two Factor Auth'), T('Global 2FA Enable')],
     synonyms: [T('Enable Two Factor Authentication Globally'), T('Two Factor Auth'), T('2FA')],
     triggerAnchor: 'global-two-factor-auth',
     anchorRouterLink: ['/system', 'advanced'],

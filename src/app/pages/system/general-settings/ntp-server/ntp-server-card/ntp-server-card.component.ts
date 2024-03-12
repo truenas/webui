@@ -10,6 +10,7 @@ import { Role } from 'app/enums/role.enum';
 import { NtpServer } from 'app/interfaces/ntp-server.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
+import { elements } from 'app/pages/system/general-settings/ntp-server/ntp-server-card/ntp-server-card.elements';
 import { NtpServerFormComponent } from 'app/pages/system/general-settings/ntp-server/ntp-server-form/ntp-server-form.component';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -23,6 +24,7 @@ import { WebSocketService } from 'app/services/ws.service';
 })
 export class NtpServerCardComponent implements OnInit {
   readonly requiredRoles = [Role.FullAdmin];
+  protected readonly searchElements = elements;
 
   dataSource = new MatTableDataSource<NtpServer>([]);
   displayedColumns = [
