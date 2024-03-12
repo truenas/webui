@@ -79,7 +79,7 @@ export class IxTableBodyComponent<T> implements AfterViewInit {
   }
 
   isExpanded(row: T): boolean {
-    const possibleIdProperties = ['id', 'audit_id', 'gid'] as (keyof T)[];
+    const possibleIdProperties = ['id', 'audit_id', 'gid', 'identifier'] as (keyof T)[];
     const idProperty = possibleIdProperties.find((prop) => row?.[prop] && this.dataProvider.expandedRow?.[prop]);
     return idProperty && (this.dataProvider.expandedRow[idProperty] === row[idProperty]);
   }
