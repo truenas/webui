@@ -18,7 +18,6 @@ import { NfsAclTag, NfsAclType, NfsBasicPermission } from 'app/enums/nfs-acl.enu
 import { NfsAcl } from 'app/interfaces/acl.interface';
 import { FileSystemStat } from 'app/interfaces/filesystem-stat.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import {
   AclEditorListComponent,
@@ -83,7 +82,6 @@ describe('DatasetAclEditorComponent', () => {
   const createComponent = createRoutingFactory({
     component: DatasetAclEditorComponent,
     imports: [
-      EntityModule,
       IxFormsModule,
       CoreComponents,
       ReactiveFormsModule,

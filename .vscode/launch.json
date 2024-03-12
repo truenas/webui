@@ -31,7 +31,8 @@
       "args": ["${relativeFile}"],
       "console": "integratedTerminal",
       "internalConsoleOptions": "neverOpen",
-      "disableOptimisticBPs": true
+      "disableOptimisticBPs": true,
+      "runtimeExecutable": "${env:HOME}/.nvm/versions/node/v20.11.0/bin/node",
     }
   ]
 }

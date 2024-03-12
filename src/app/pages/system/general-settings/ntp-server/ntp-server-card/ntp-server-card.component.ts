@@ -1,16 +1,20 @@
-import {
-  Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef,
-} from '@angular/core';
-import { MatTableDataSource } from '@angular/material/table';
-import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { filter, switchMap } from 'rxjs/operators';
-import { EmptyType } from 'app/enums/empty-type.enum';
+import { filter, switchMap } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
 import { NtpServer } from 'app/interfaces/ntp-server.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { AsyncDataProvider } from 'app/modules/ix-table2/classes/async-data-provider/async-data-provider';
+import { actionsColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
+import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
+import {
+  yesNoColumn,
+} from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-yesno/ix-cell-yesno.component';
+import { createTable } from 'app/modules/ix-table2/utils';
 import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
 import { NtpServerFormComponent } from 'app/pages/system/general-settings/ntp-server/ntp-server-form/ntp-server-form.component';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -18,81 +22,74 @@ import { WebSocketService } from 'app/services/ws.service';
 @Component({
   selector: 'ix-ntp-server-card',
   templateUrl: './ntp-server-card.component.html',
-  styleUrls: ['./ntp-server-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class NtpServerCardComponent implements OnInit {
   readonly requiredRoles = [Role.FullAdmin];
 
-  dataSource = new MatTableDataSource<NtpServer>([]);
-  displayedColumns = [
-    'address',
-    'burst',
-    'iburst',
-    'prefer',
-    'minpoll',
-    'maxpoll',
-    'actions',
-  ];
-  loading = false;
-  error = false;
+  dataProvider: AsyncDataProvider<NtpServer>;
 
-  get emptyType(): EmptyType {
-    if (this.loading) {
-      return EmptyType.Loading;
-    }
-    if (this.error) {
-      return EmptyType.Errors;
-    }
-    return EmptyType.NoPageData;
-  }
+  columns = createTable<NtpServer>([
+    textColumn({
+      title: this.translate.instant('Address'),
+      propertyName: 'address',
+    }),
+    yesNoColumn({
+      title: this.translate.instant('Burst'),
+      propertyName: 'burst',
+    }),
+    yesNoColumn({
+      title: this.translate.instant('IBurst'),
+      propertyName: 'iburst',
+    }),
+    yesNoColumn({
+      title: this.translate.instant('Prefer'),
+      propertyName: 'prefer',
+    }),
+    textColumn({
+      title: this.translate.instant('Min Poll'),
+      propertyName: 'minpoll',
+    }),
+    textColumn({
+      title: this.translate.instant('Max Poll'),
+      propertyName: 'maxpoll',
+    }),
+    actionsColumn({
+      actions: [
+        {
+          iconName: 'edit',
+          tooltip: this.translate.instant('Edit'),
+          onClick: (row) => this.doEdit(row),
+        },
+        {
+          iconName: 'delete',
+          tooltip: this.translate.instant('Delete'),
+          onClick: (row) => this.doDelete(row),
+          requiredRoles: this.requiredRoles,
+        },
+      ],
+    }),
+  ], {
+    rowTestId: (row) => 'ntp-server-' + row.address + '-' + row.minpoll + '-' + row.maxpoll,
+  });
 
   constructor(
-    private ws: WebSocketService,
-    private cdr: ChangeDetectorRef,
-    private slideInService: IxSlideInService,
-    private dialog: DialogService,
-    public emptyService: EmptyService,
     private translate: TranslateService,
-  ) { }
+    private errorHandler: ErrorHandlerService,
+    private ws: WebSocketService,
+    private dialog: DialogService,
+    protected emptyService: EmptyService,
+    private slideInService: IxSlideInService,
+  ) {}
 
   ngOnInit(): void {
-    this.getData();
+    const ntpServers$ = this.ws.call('system.ntpserver.query').pipe(untilDestroyed(this));
+    this.dataProvider = new AsyncDataProvider<NtpServer>(ntpServers$);
+    this.loadItems();
   }
 
-  createDataSource(servers: NtpServer[] = []): void {
-    this.dataSource = new MatTableDataSource(servers);
-  }
-
-  getData(): void {
-    this.loading = true;
-
-    this.ws.call('system.ntpserver.query').pipe(
-      untilDestroyed(this),
-    ).subscribe({
-      next: (servers) => {
-        this.loading = false;
-        this.error = false;
-        this.createDataSource(servers);
-        this.cdr.markForCheck();
-      },
-      error: () => {
-        this.loading = false;
-        this.error = true;
-        this.createDataSource();
-        this.cdr.markForCheck();
-      },
-    });
-  }
-
-  doAdd(): void {
-    const slideInRef = this.slideInService.open(NtpServerFormComponent);
-    slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => this.getData());
-  }
-
-  doEdit(server: NtpServer): void {
-    const slideInRef = this.slideInService.open(NtpServerFormComponent, { data: server });
-    slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => this.getData());
+  loadItems(): void {
+    this.dataProvider.load();
   }
 
   doDelete(server: NtpServer): void {
@@ -106,9 +103,20 @@ export class NtpServerCardComponent implements OnInit {
     }).pipe(
       filter(Boolean),
       switchMap(() => this.ws.call('system.ntpserver.delete', [server.id])),
+      this.errorHandler.catchError(),
       untilDestroyed(this),
     ).subscribe(() => {
-      this.getData();
+      this.loadItems();
     });
+  }
+
+  doAdd(): void {
+    const slideInRef = this.slideInService.open(NtpServerFormComponent);
+    slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => this.loadItems());
+  }
+
+  doEdit(server: NtpServer): void {
+    const slideInRef = this.slideInService.open(NtpServerFormComponent, { data: server });
+    slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => this.loadItems());
   }
 }

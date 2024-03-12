@@ -7,10 +7,9 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { NtpServer } from 'app/interfaces/ntp-server.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { EntityModule } from 'app/modules/entity/entity.module';
-import { IxEmptyRowHarness } from 'app/modules/ix-tables/components/ix-empty-row/ix-empty-row.component.harness';
-import { IxTableModule } from 'app/modules/ix-tables/ix-table.module';
-import { IxTableHarness } from 'app/modules/ix-tables/testing/ix-table.harness';
+import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
+import { IxTable2Harness } from 'app/modules/ix-table2/components/ix-table2/ix-table2.harness';
+import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
 import { NtpServerCardComponent } from 'app/pages/system/general-settings/ntp-server/ntp-server-card/ntp-server-card.component';
 import { NtpServerFormComponent } from 'app/pages/system/general-settings/ntp-server/ntp-server-form/ntp-server-form.component';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -51,14 +50,15 @@ describe('NtpServerCardComponent', () => {
   let loader: HarnessLoader;
   let ws: WebSocketService;
   let slideInRef: IxSlideInService;
+  let table: IxTable2Harness;
 
   const createComponent = createComponentFactory({
     component: NtpServerCardComponent,
     imports: [
-      EntityModule,
-      IxTableModule,
+      IxTable2Module,
     ],
     providers: [
+      mockAuth(),
       mockWebSocket([
         mockCall('system.ntpserver.query', fakeDataSource),
         mockCall('system.ntpserver.delete', true),
@@ -70,69 +70,27 @@ describe('NtpServerCardComponent', () => {
         onClose$: new Subject<unknown>(),
         open: jest.fn(() => ({ slideInClosed$: of() })),
       }),
-      mockAuth(),
     ],
   });
 
-  beforeEach(() => {
+  beforeEach(async () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     ws = spectator.inject(WebSocketService);
     slideInRef = spectator.inject(IxSlideInService);
-  });
-
-  it('should show table headers', async () => {
-    const table = await loader.getHarness(IxTableHarness);
-    const headerRow = await table.getHeaderRow();
-
-    expect(headerRow).toMatchObject({
-      address: 'Address',
-      burst: 'Burst',
-      iburst: 'IBurst',
-      prefer: 'Prefer',
-      minpoll: 'Min Poll',
-      maxpoll: 'Max Poll',
-      actions: '',
-    });
+    table = await loader.getHarness(IxTable2Harness);
   });
 
   it('should show table rows', async () => {
-    const table = await loader.getHarness(IxTableHarness);
-    const cells = await table.getCells(true);
-
     const expectedRows = [
       ['Address', 'Burst', 'IBurst', 'Prefer', 'Min Poll', 'Max Poll', ''],
-      ['2.debian.pool.ntp.org', 'false', 'true', 'false', '6', '10', ''],
-      ['1.debian.pool.ntp.org', 'false', 'true', 'false', '6', '10', ''],
-      ['0.debian.pool.ntp.org', 'false', 'true', 'false', '6', '10', ''],
+      ['2.debian.pool.ntp.org', 'No', 'Yes', 'No', '6', '10', ''],
+      ['1.debian.pool.ntp.org', 'No', 'Yes', 'No', '6', '10', ''],
+      ['0.debian.pool.ntp.org', 'No', 'Yes', 'No', '6', '10', ''],
     ];
 
-    expect(ws.call).toHaveBeenCalledWith('system.ntpserver.query');
+    const cells = await table.getCellTexts();
     expect(cells).toEqual(expectedRows);
-  });
-
-  it('should show empty message when loaded and datasource is empty', async () => {
-    spectator.fixture.componentInstance.loading = false;
-    spectator.fixture.componentInstance.error = false;
-    spectator.fixture.componentInstance.createDataSource();
-    spectator.detectComponentChanges();
-    spectator.detectComponentChanges();
-
-    const emptyRow = await loader.getHarness(IxEmptyRowHarness);
-    const emptyTitle = await emptyRow.getTitleText();
-    expect(emptyTitle).toBe('No records have been added yet');
-  });
-
-  it('should show error message when can not retrieve response', async () => {
-    spectator.fixture.componentInstance.loading = false;
-    spectator.fixture.componentInstance.error = true;
-    spectator.fixture.componentInstance.createDataSource();
-    spectator.detectComponentChanges();
-    spectator.detectComponentChanges();
-
-    const emptyRow = await loader.getHarness(IxEmptyRowHarness);
-    const emptyTitle = await emptyRow.getTitleText();
-    expect(emptyTitle).toBe('Can not retrieve response');
   });
 
   it('should open add ntp server form', async () => {
@@ -142,15 +100,16 @@ describe('NtpServerCardComponent', () => {
     expect(slideInRef.open).toHaveBeenCalledWith(NtpServerFormComponent);
   });
 
-  it('should open edit ntp server form', () => {
-    spectator.click(spectator.queryAll('.mat-column-address', { root: true })[1]);
+  it('should open edit ntp server form', async () => {
+    const editButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'edit' }), 1, 6);
+    await editButton.click();
 
     expect(slideInRef.open).toHaveBeenCalledWith(NtpServerFormComponent, { data: fakeDataSource[0] });
   });
 
   it('should display confirm dialog of deleting ntp server', async () => {
-    const deleteButton = await loader.getHarness(MatButtonHarness.with({ selector: '[aria-label="Delete"]' }));
-    await deleteButton.click();
+    const deleteIcon = await table.getHarnessInCell(IxIconHarness.with({ name: 'delete' }), 1, 6);
+    await deleteIcon.click();
 
     expect(ws.call).toHaveBeenCalledWith('system.ntpserver.delete', [2]);
   });
