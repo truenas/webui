@@ -7,7 +7,6 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable, forkJoin } from 'rxjs';
-import { Role } from 'app/enums/role.enum';
 import { ServiceName, serviceNames } from 'app/enums/service-name.enum';
 import { Service } from 'app/interfaces/service.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -28,8 +27,6 @@ export interface StartServiceDialogResult {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class StartServiceDialogComponent implements OnInit {
-  readonly requiredRoles = [Role.ServiceWrite];
-
   startAutomaticallyControl = new FormControl(true);
   protected isLoading = false;
   private service: Service;
