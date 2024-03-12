@@ -1,5 +1,5 @@
 import {
-  filter, map, Observable, OperatorFunction, switchMap,
+  filter, map, Observable, OperatorFunction, switchMap, take,
 } from 'rxjs';
 
 /**
@@ -10,6 +10,7 @@ export function filterAsync<T>(predicateFactory: (value: T) => Observable<boolea
     switchMap((value) => {
       const predicate$ = predicateFactory(value);
       return predicate$.pipe(
+        take(1),
         filter((result) => result),
         map(() => value),
       );
