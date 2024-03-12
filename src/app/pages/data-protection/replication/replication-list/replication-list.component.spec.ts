@@ -31,8 +31,8 @@ import { SearchInput1Component } from 'app/modules/search-input1/search-input1.c
 import { ReplicationFormComponent } from 'app/pages/data-protection/replication/replication-form/replication-form.component';
 import { ReplicationListComponent } from 'app/pages/data-protection/replication/replication-list/replication-list.component';
 import { ReplicationRestoreDialogComponent } from 'app/pages/data-protection/replication/replication-restore-dialog/replication-restore-dialog.component';
+import { DownloadService } from 'app/services/download.service';
 import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
-import { StorageService } from 'app/services/storage.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { selectSystemConfigState } from 'app/store/system-config/system-config.selectors';
 
@@ -150,7 +150,7 @@ describe('ReplicationListComponent', () => {
           afterClosed: () => of(true),
         })),
       }),
-      mockProvider(StorageService, {
+      mockProvider(DownloadService, {
         streamDownloadFile: jest.fn(() => of()),
         downloadBlob: jest.fn(),
       }),
@@ -257,7 +257,7 @@ describe('ReplicationListComponent', () => {
       [1],
       'pewl - pewl_encryption_keys.json',
     ]);
-    expect(spectator.inject(StorageService).streamDownloadFile).toHaveBeenCalledWith(
+    expect(spectator.inject(DownloadService).streamDownloadFile).toHaveBeenCalledWith(
       'http://someurl/file.json',
       'pewl - pewl_encryption_keys.json',
       'application/json',

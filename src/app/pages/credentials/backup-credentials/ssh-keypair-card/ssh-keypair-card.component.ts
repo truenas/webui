@@ -1,22 +1,24 @@
-import {
-  ChangeDetectionStrategy, Component, OnInit,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { switchMap, filter, tap } from 'rxjs';
+import { filter, switchMap, tap } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
 import { KeychainCredential, KeychainSshKeyPair } from 'app/interfaces/keychain-credential.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { AsyncDataProvider } from 'app/modules/ix-table2/classes/async-data-provider/async-data-provider';
-import { actionsColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
+import {
+  actionsColumn,
+} from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
 import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { SortDirection } from 'app/modules/ix-table2/enums/sort-direction.enum';
 import { createTable } from 'app/modules/ix-table2/utils';
 import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
-import { SshKeypairFormComponent } from 'app/pages/credentials/backup-credentials/ssh-keypair-form/ssh-keypair-form.component';
+import {
+  SshKeypairFormComponent,
+} from 'app/pages/credentials/backup-credentials/ssh-keypair-form/ssh-keypair-form.component';
+import { DownloadService } from 'app/services/download.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { KeychainCredentialService } from 'app/services/keychain-credential.service';
-import { StorageService } from 'app/services/storage.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
@@ -68,7 +70,7 @@ export class SshKeypairCardComponent implements OnInit {
     protected emptyService: EmptyService,
     private dialog: DialogService,
     private keychainCredentialService: KeychainCredentialService,
-    private storage: StorageService,
+    private download: DownloadService,
   ) {}
 
   ngOnInit(): void {
@@ -131,7 +133,7 @@ export class SshKeypairCardComponent implements OnInit {
     Object.keys(credential.attributes).forEach((keyType) => {
       const key = credential.attributes[keyType as keyof KeychainCredential['attributes']];
       const blob = new Blob([key as BlobPart], { type: 'text/plain' });
-      this.storage.downloadBlob(blob, `${name}_${keyType}_rsa`);
+      this.download.downloadBlob(blob, `${name}_${keyType}_rsa`);
     });
   }
 }

@@ -10,18 +10,15 @@ import { map } from 'rxjs/operators';
 import { KeychainCredentialType } from 'app/enums/keychain-credential-type.enum';
 import { Role } from 'app/enums/role.enum';
 import { helptextSshKeypairs } from 'app/helptext/system/ssh-keypairs';
-import {
-  KeychainCredentialUpdate,
-  KeychainSshKeyPair,
-} from 'app/interfaces/keychain-credential.interface';
+import { KeychainCredentialUpdate, KeychainSshKeyPair } from 'app/interfaces/keychain-credential.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { atLeastOne } from 'app/modules/ix-forms/validators/at-least-one-validation';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { DownloadService } from 'app/services/download.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { StorageService } from 'app/services/storage.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
@@ -66,7 +63,7 @@ export class SshKeypairFormComponent implements OnInit {
     private errorHandler: ErrorHandlerService,
     private formErrorHandler: FormErrorHandlerService,
     private loader: AppLoaderService,
-    private storage: StorageService,
+    private download: DownloadService,
     @Inject(SLIDE_IN_DATA) private editingKeypair: KeychainSshKeyPair,
   ) { }
 
@@ -104,7 +101,7 @@ export class SshKeypairFormComponent implements OnInit {
     const key = this.form.controls[keyType].value;
     const filename = `${name}_${keyType}_rsa`;
     const blob = new Blob([key], { type: 'text/plain' });
-    this.storage.downloadBlob(blob, filename);
+    this.download.downloadBlob(blob, filename);
   }
 
   onSubmit(): void {

@@ -12,8 +12,8 @@ import { Role } from 'app/enums/role.enum';
 import { helptextSystemGeneral as helptext } from 'app/helptext/system/general';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { DownloadService } from 'app/services/download.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { StorageService } from 'app/services/storage.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
@@ -50,7 +50,7 @@ export class SaveConfigDialogComponent {
   constructor(
     private ws: WebSocketService,
     private store$: Store<AppState>,
-    private storage: StorageService,
+    private download: DownloadService,
     private loader: AppLoaderService,
     private datePipe: DatePipe,
     private dialogRef: MatDialogRef<SaveConfigDialogComponent>,
@@ -84,7 +84,7 @@ export class SaveConfigDialogComponent {
 
         return this.ws.call('core.download', ['config.save', [{ secretseed: this.exportSeedCheckbox.value }], fileName]).pipe(
           this.loader.withLoader(),
-          switchMap(([, url]) => this.storage.downloadUrl(url, fileName, mimeType)),
+          switchMap(([, url]) => this.download.downloadUrl(url, fileName, mimeType)),
         );
       }),
       untilDestroyed(this),

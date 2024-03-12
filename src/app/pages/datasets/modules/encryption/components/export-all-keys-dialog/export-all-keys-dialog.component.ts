@@ -1,14 +1,11 @@
-import {
-  ChangeDetectionStrategy, Component, Inject,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { switchMap } from 'rxjs/operators';
 import { Dataset } from 'app/interfaces/dataset.interface';
-import { DialogService } from 'app/modules/dialog/dialog.service';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { DownloadService } from 'app/services/download.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { StorageService } from 'app/services/storage.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
@@ -23,8 +20,7 @@ export class ExportAllKeysDialogComponent {
     private ws: WebSocketService,
     private loader: AppLoaderService,
     private dialogRef: MatDialogRef<ExportAllKeysDialogComponent>,
-    private dialogService: DialogService,
-    private storageService: StorageService,
+    private download: DownloadService,
     @Inject(MAT_DIALOG_DATA) public dataset: Dataset,
   ) { }
 
@@ -35,7 +31,7 @@ export class ExportAllKeysDialogComponent {
       .pipe(
         this.loader.withLoader(),
         this.errorHandler.catchError(),
-        switchMap(([, url]) => this.storageService.downloadUrl(url, fileName, mimetype)),
+        switchMap(([, url]) => this.download.downloadUrl(url, fileName, mimetype)),
         untilDestroyed(this),
       )
       .subscribe(() => {

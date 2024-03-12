@@ -13,8 +13,8 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { SortDirection } from 'app/modules/ix-table2/enums/sort-direction.enum';
 import { TableSort } from 'app/modules/ix-table2/interfaces/table-sort.interface';
 import { AdvancedSearchQuery, SearchQuery } from 'app/modules/search-input/types/search-query.interface';
+import { DownloadService } from 'app/services/download.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { StorageService } from 'app/services/storage.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
@@ -42,7 +42,7 @@ export class ExportButtonComponent<T, M extends ApiJobMethod> {
     private cdr: ChangeDetectorRef,
     private errorHandler: ErrorHandlerService,
     private dialogService: DialogService,
-    private storage: StorageService,
+    private download: DownloadService,
   ) {}
 
   onExport(): void {
@@ -71,7 +71,7 @@ export class ExportButtonComponent<T, M extends ApiJobMethod> {
 
         return this.ws.call('core.download', [downloadMethod, [customArguments], url]);
       }),
-      switchMap(([, url]) => this.storage.downloadUrl(url, `${this.filename}.${this.fileType}`, this.fileMimeType)),
+      switchMap(([, url]) => this.download.downloadUrl(url, `${this.filename}.${this.fileType}`, this.fileMimeType)),
       catchError((error) => {
         this.isLoading = false;
         this.cdr.markForCheck();
