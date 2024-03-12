@@ -7,7 +7,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import {
-  EMPTY, Subscription,
+  EMPTY,
 } from 'rxjs';
 import {
   catchError, tap,
@@ -19,6 +19,7 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ChainedRef } from 'app/modules/ix-forms/components/ix-slide-in/chained-component-ref';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { elements } from 'app/pages/system/advanced/audit/audit-form/audit-form.elements';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
@@ -31,9 +32,9 @@ import { advancedConfigUpdated } from 'app/store/system-config/system-config.act
 })
 export class AuditFormComponent implements OnInit {
   protected requiredRoles = [Role.SystemAuditWrite];
+  protected searchElements = elements;
 
   isFormLoading = false;
-  subscriptions: Subscription[] = [];
 
   readonly form = this.fb.group({
     retention: [null as number, [Validators.required, Validators.min(1), Validators.max(30)]],

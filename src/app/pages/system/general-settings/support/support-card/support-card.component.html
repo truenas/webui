@@ -65,17 +65,17 @@
           >
             <button
               *ixRequiresRoles="requiredRoles"
+              ixUiSearchableElement
               id="update-license-btn"
               mat-button
               color="default"
               ixTest="set-license"
+              [ixSearchConfig]="searchElements.updateLicense"
               (click)="updateLicense()"
             >
               {{ licenseButtonText | translate }}
             </button>
-            <ng-container
-              *ngIf="hasLicense && !isProductImageRack; else elseBlock"
-            >
+            <ng-container *ngIf="hasLicense && !isProductImageRack; else elseBlock">
               <button
                 mat-button
                 color="default"
@@ -110,9 +110,11 @@
             <ng-template #elseBlock>
               <button
                 id="file-ticket-btn"
+                ixUiSearchableElement
                 mat-button
                 color="default"
                 ixTest="file-ticket"
+                [ixSearchConfig]="searchElements.fileTicket"
                 (click)="feedbackDialog()"
               >
                 {{ ticketText | translate }}

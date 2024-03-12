@@ -8,10 +8,12 @@
     <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
       <ix-fieldset>
         <ix-input
+          ixUiSearchableElement
           formControlName="token_lifetime"
           type="number"
           [label]="'Token Lifetime' | translate"
           [tooltip]="'Time in seconds after which current user session will be disconnected. Interacting with UI extends the session.' | translate"
+          [ixSearchConfig]="searchElements.tokenLifetime"
         ></ix-input>
         <ix-checkbox
           *ngIf="isEnterprise"

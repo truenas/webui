@@ -2,7 +2,16 @@
   <mat-toolbar-row>
     <h3>{{ 'NTP Servers' | translate }}</h3>
     <div class="actions action-icon">
-      <button *ixRequiresRoles="requiredRoles" mat-button color="default" ixTest="add-ntp" (click)="doAdd()">
+      <button
+        *ixRequiresRoles="requiredRoles"
+        ixUiSearchableElement
+        id="add-ntp-server"
+        mat-button
+        color="primary"
+        ixTest="add-ntp"
+        [ixSearchConfig]="searchElements.addNtpServer"
+        (click)="doAdd()"
+      >
         {{ 'Add' | translate }}
       </button>
     </div>

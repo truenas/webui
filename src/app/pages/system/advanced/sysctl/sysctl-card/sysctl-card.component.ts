@@ -15,6 +15,7 @@ import { createTable } from 'app/modules/ix-table2/utils';
 import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { AdvancedSettingsService } from 'app/pages/system/advanced/advanced-settings.service';
+import { elements } from 'app/pages/system/advanced/sysctl/sysctl-card/sysctl-card.elements';
 import { TunableFormComponent } from 'app/pages/system/advanced/sysctl/tunable-form/tunable-form.component';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
@@ -29,6 +30,7 @@ import { WebSocketService } from 'app/services/ws.service';
 })
 export class SysctlCardComponent implements OnInit {
   readonly requiredRoles = [Role.FullAdmin];
+  protected readonly searchElements = elements;
 
   dataProvider: AsyncDataProvider<Tunable>;
 

@@ -10,6 +10,7 @@ import { Role } from 'app/enums/role.enum';
 import { ChainedRef } from 'app/modules/ix-forms/components/ix-slide-in/chained-component-ref';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { elements } from 'app/pages/system/advanced/isolated-gpus/isolated-gpus-form/isolated-gpus-form.elements';
 import { GpuService } from 'app/services/gpu/gpu.service';
 import { IsolatedGpuValidatorService } from 'app/services/gpu/isolated-gpu-validator.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -24,6 +25,7 @@ import { waitForAdvancedConfig } from 'app/store/system-config/system-config.sel
 })
 export class IsolatedGpusFormComponent implements OnInit {
   protected requiredRoles = [Role.FullAdmin];
+  protected readonly searchElements = elements;
 
   isFormLoading = false;
 
