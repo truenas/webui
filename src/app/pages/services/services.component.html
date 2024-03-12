@@ -39,7 +39,7 @@
 
         <ng-template #slider>
           <mat-slide-toggle
-            *ixRequiresRoles="getRolesForService(service.service)"
+            *ixRequiresRoles="servicesService.getRolesRequiredToManage(service.service)"
             color="primary"
             matTooltipPosition="right"
             [checked]="service.state === ServiceStatus.Running"
@@ -57,7 +57,7 @@
       </th>
       <td *matCellDef="let service; dataSource: dataSource" mat-cell>
         <mat-checkbox
-          *ixRequiresRoles="getRolesForService(service.service)"
+          *ixRequiresRoles="servicesService.getRolesRequiredToManage(service.service)"
           color="primary"
           class="start-automatically"
           [ixTest]="[service.service, 'service']"
