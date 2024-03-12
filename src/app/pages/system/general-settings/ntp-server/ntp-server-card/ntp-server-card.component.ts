@@ -74,11 +74,11 @@ export class NtpServerCardComponent implements OnInit {
   });
 
   constructor(
+    protected emptyService: EmptyService,
     private translate: TranslateService,
     private errorHandler: ErrorHandlerService,
     private ws: WebSocketService,
     private dialog: DialogService,
-    protected emptyService: EmptyService,
     private slideInService: IxSlideInService,
   ) {}
 

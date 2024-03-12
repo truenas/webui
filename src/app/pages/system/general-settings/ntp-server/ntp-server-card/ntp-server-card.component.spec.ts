@@ -89,6 +89,7 @@ describe('NtpServerCardComponent', () => {
       ['0.debian.pool.ntp.org', 'No', 'Yes', 'No', '6', '10', ''],
     ];
 
+    expect(ws.call).toHaveBeenCalledWith('system.ntpserver.query');
     const cells = await table.getCellTexts();
     expect(cells).toEqual(expectedRows);
   });
