@@ -3,7 +3,6 @@ import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, TrackByFunction,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { Actions } from '@ngrx/effects';
 import { TranslateService } from '@ngx-translate/core';
 import { differenceInDays } from 'date-fns';
 import { filter, forkJoin } from 'rxjs';
@@ -16,7 +15,6 @@ import { CloudSyncWizardComponent } from 'app/pages/data-protection/cloudsync/cl
 import { ReplicationWizardComponent } from 'app/pages/data-protection/replication/replication-wizard/replication-wizard.component';
 import { RsyncTaskFormComponent } from 'app/pages/data-protection/rsync-task/rsync-task-form/rsync-task-form.component';
 import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 enum BackupType {
@@ -106,8 +104,6 @@ export class WidgetBackupComponent extends WidgetComponent implements OnInit {
     public translate: TranslateService,
     private cdr: ChangeDetectorRef,
     private ws: WebSocketService,
-    private slideInService: IxSlideInService,
-    private actions$: Actions,
     private chainedSlideInService: IxChainedSlideInService,
     private breakpointObserver: BreakpointObserver,
   ) {

@@ -5,6 +5,10 @@
   width: 100%;
 }
 
+.widget mat-toolbar-row {
+  justify-content: flex-start;
+}
+
 .widget .mat-mdc-card .mat-mdc-card-content > div {
   padding: 8px 16px !important;
 }
