@@ -170,7 +170,7 @@ export class ReplicationListComponent implements OnInit {
       hideCheckbox: true,
     }).pipe(
       filter(Boolean),
-      tap(() => row.state = { state: JobState.Running }),
+      tap(() => this.updateRowStateAndJob(row, JobState.Running, row.job)),
       switchMap(() => this.ws.job('replication.run', [row.id])),
       untilDestroyed(this),
     ).subscribe({
@@ -178,10 +178,12 @@ export class ReplicationListComponent implements OnInit {
         row.state = { state: job.state };
         row.job = { ...job };
         this.snackbar.success(this.translate.instant('Replication «{name}» has started.', { name: row.name }));
+        this.updateRowStateAndJob(row, job.state, job);
         this.cdr.markForCheck();
       },
       error: (error: unknown) => {
         this.dialogService.error(this.errorHandler.parseError(error));
+        this.getReplicationTasks();
       },
     });
   }
@@ -283,5 +285,18 @@ export class ReplicationListComponent implements OnInit {
           this.dialogService.error(this.errorHandler.parseError(err));
         },
       });
+  }
+
+  private updateRowStateAndJob(row: ReplicationTask, state: JobState, job: Job): void {
+    this.dataProvider.setRows(this.replicationTasks.map((task) => {
+      if (task.id === row.id) {
+        return {
+          ...task,
+          state: { state },
+          job,
+        };
+      }
+      return task;
+    }));
   }
 }
