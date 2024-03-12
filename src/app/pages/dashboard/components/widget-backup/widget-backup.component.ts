@@ -5,11 +5,16 @@ import { MediaObserver } from '@angular/flex-layout';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { differenceInDays } from 'date-fns';
-import { filter, forkJoin } from 'rxjs';
+import {
+  catchError, filter, forkJoin, of,
+} from 'rxjs';
 import { Direction } from 'app/enums/direction.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { ScreenType } from 'app/enums/screen-type.enum';
 import { ApiTimestamp } from 'app/interfaces/api-date.interface';
+import { CloudSyncTask } from 'app/interfaces/cloud-sync-task.interface';
+import { ReplicationTask } from 'app/interfaces/replication-task.interface';
+import { RsyncTask } from 'app/interfaces/rsync-task.interface';
 import { WidgetComponent } from 'app/pages/dashboard/components/widget/widget.component';
 import { CloudsyncWizardComponent } from 'app/pages/data-protection/cloudsync/cloudsync-wizard/cloudsync-wizard.component';
 import { ReplicationWizardComponent } from 'app/pages/data-protection/replication/replication-wizard/replication-wizard.component';
@@ -123,9 +128,9 @@ export class WidgetBackupComponent extends WidgetComponent implements OnInit {
   getBackups(): void {
     this.isLoading = true;
     forkJoin([
-      this.ws.call('replication.query'),
-      this.ws.call('rsynctask.query'),
-      this.ws.call('cloudsync.query'),
+      this.ws.call('replication.query').pipe(catchError(() => of([] as ReplicationTask[]))),
+      this.ws.call('rsynctask.query').pipe(catchError(() => of([] as RsyncTask[]))),
+      this.ws.call('cloudsync.query').pipe(catchError(() => of([] as CloudSyncTask[]))),
     ]).pipe(untilDestroyed(this)).subscribe(([replicationTasks, rsyncTasks, cloudSyncTasks]) => {
       this.isLoading = false;
       this.backups = [
