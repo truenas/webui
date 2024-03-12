@@ -79,6 +79,7 @@ export class IxTableBodyComponent<T> implements AfterViewInit {
   }
 
   isExpanded(row: T): boolean {
-    return (this.dataProvider.expandedRow as { id: string })?.id === (row as { id: string })?.id;
+    return this.dataProvider.expandedRow
+      && (this.dataProvider.expandedRow as { id: string })?.id === (row as { id: string })?.id;
   }
 }
