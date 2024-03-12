@@ -3,11 +3,14 @@ import { MatDialog } from '@angular/material/dialog';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import {
-  mergeMap, map, switchMap, filter, EMPTY, catchError, of, take,
+  mergeMap, map, switchMap, filter, EMPTY, catchError, of, take, Observable,
 } from 'rxjs';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
+import { filterAsync } from 'app/helpers/operators/filter-async.operator';
 import { StartServiceDialogComponent, StartServiceDialogResult } from 'app/modules/common/dialog/start-service-dialog/start-service-dialog.component';
+import { AuthService } from 'app/services/auth/auth.service';
+import { ServicesService } from 'app/services/services.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
@@ -50,6 +53,7 @@ export class ServicesEffects {
   checkIfServiceIsEnabled$ = createEffect(() => this.actions$.pipe(
     ofType(checkIfServiceIsEnabled),
     filter(({ serviceName }) => Boolean(serviceName)),
+    filterAsync(({ serviceName }) => this.canUserManageService(serviceName)),
     switchMap(({ serviceName }) => this.store$.select(selectService(serviceName)).pipe(take(1))),
     switchMap((service) => {
       if (service.state === ServiceStatus.Stopped) {
@@ -88,5 +92,12 @@ export class ServicesEffects {
     private actions$: Actions,
     private ws: WebSocketService,
     private matDialog: MatDialog,
+    private authService: AuthService,
+    private servicesService: ServicesService,
   ) {}
+
+  private canUserManageService(serviceName: ServiceName): Observable<boolean> {
+    const requiredRoles = this.servicesService.getRolesRequiredToManage(serviceName);
+    return this.authService.hasRole(requiredRoles);
+  }
 }
