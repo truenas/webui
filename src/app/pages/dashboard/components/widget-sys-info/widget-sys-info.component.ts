@@ -178,7 +178,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
   getIsHaLicensed(): void {
     this.store$
       .select(selectIsHaLicensed)
-      .pipe(filterAsync(this.sysGenService.isEnterprise$), untilDestroyed(this))
+      .pipe(filterAsync(() => this.sysGenService.isEnterprise$), untilDestroyed(this))
       .subscribe((isHaLicensed) => {
         this.isHaLicensed = isHaLicensed;
         if (isHaLicensed) {
