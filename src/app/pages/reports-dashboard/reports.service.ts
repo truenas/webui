@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@angular/core';
 import {
-  map, Observable, shareReplay, BehaviorSubject, Subject,
+  filter, map, Observable, shareReplay, BehaviorSubject, Subject,
 } from 'rxjs';
 import { ReportingGraphName } from 'app/enums/reporting.enum';
 import { WINDOW } from 'app/helpers/window.helper';
@@ -10,6 +10,7 @@ import { ReportingData } from 'app/interfaces/reporting.interface';
 import { ReportTab, reportTypeLabels, ReportType } from 'app/pages/reports-dashboard/interfaces/report-tab.interface';
 import { LegendDataWithStackedTotalHtml, Report } from 'app/pages/reports-dashboard/interfaces/report.interface';
 import { convertAggregations, optimizeLegend } from 'app/pages/reports-dashboard/utils/report.utils';
+import { AuthService } from 'app/services/auth/auth.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @Injectable({
@@ -26,8 +27,10 @@ export class ReportsService {
 
   private legendEventEmitter$ = new Subject<LegendDataWithStackedTotalHtml>();
   readonly legendEventEmitterObs$ = this.legendEventEmitter$.asObservable();
+  private loggedInUser$ = this.authService.user$.pipe(filter(Boolean));
 
   constructor(
+    private authService: AuthService,
     private ws: WebSocketService,
     @Inject(WINDOW) private window: Window,
   ) {
@@ -170,10 +173,12 @@ export class ReportsService {
     // to re-use when the new tab is opened.
     // HttpClient seems to do it through HttpHeaders which won't cache in browser.
     const xhr = new XMLHttpRequest();
-    xhr.open('GET', '/netdata/', true, 'root', password);
-    xhr.addEventListener('load', () => {
-      this.window.open('/netdata/');
+    this.loggedInUser$.subscribe((user) => {
+      xhr.open('GET', '/netdata/', true, user.pw_name, password);
+      xhr.addEventListener('load', () => {
+        this.window.open('/netdata/');
+      });
+      xhr.send();
     });
-    xhr.send();
   }
 }
