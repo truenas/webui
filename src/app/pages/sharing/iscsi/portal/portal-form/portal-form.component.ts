@@ -130,6 +130,7 @@ export class PortalFormComponent implements OnInit {
   }
 
   onDelete(index: number): void {
+    this.form.controls.ip.removeAt(index);
     this.listen.splice(index, 1);
   }
 
