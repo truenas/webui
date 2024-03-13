@@ -181,6 +181,7 @@ export class AuthService {
     return this.makeRequest('auth.logout').pipe(
       tap(() => {
         this.clearAuthToken();
+        this.ws.clearSubscriptions();
         this.isLoggedIn$.next(false);
       }),
     );
