@@ -92,7 +92,7 @@ export class NameAndOptionsSectionComponent implements OnInit, OnChanges {
 
     return {
       ...payload,
-      name: `${this.parent.name}/${payload.name}`,
+      name: payload.name && this.form.controls.name.valid ? `${this.parent.name}/${payload.name}` : null,
     };
   }
 

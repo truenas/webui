@@ -91,6 +91,14 @@ export class DatasetFormComponent implements OnInit, AfterViewInit {
       });
   }
 
+  get noNameProvided(): boolean {
+    if (!this.isNew || !this.nameAndOptionsSection) {
+      return false;
+    }
+
+    return !(this.nameAndOptionsSection.getPayload() as { name: string }).name;
+  }
+
   get isNew(): boolean {
     return !this.existingDataset;
   }
