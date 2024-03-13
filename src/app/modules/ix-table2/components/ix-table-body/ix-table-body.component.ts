@@ -28,6 +28,7 @@ export class IxTableBodyComponent<T> implements AfterViewInit {
   @Input() columns: Column<T, ColumnComponent<T>>[];
   @Input() dataProvider: DataProvider<T>;
   @Input() isLoading = false;
+  @Input() identifier: keyof T = 'id' as keyof T;
 
   @Output() expanded = new EventEmitter<T>();
 
@@ -79,8 +80,6 @@ export class IxTableBodyComponent<T> implements AfterViewInit {
   }
 
   isExpanded(row: T): boolean {
-    const possibleIdProperties = ['id', 'audit_id', 'gid', 'identifier'] as (keyof T)[];
-    const idProperty = possibleIdProperties.find((prop) => row?.[prop] && this.dataProvider.expandedRow?.[prop]);
-    return idProperty && (this.dataProvider.expandedRow[idProperty] === row[idProperty]);
+    return this.identifier && (this.dataProvider?.expandedRow?.[this.identifier] === row?.[this.identifier]);
   }
 }
