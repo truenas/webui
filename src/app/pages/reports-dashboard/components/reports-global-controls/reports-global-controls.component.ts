@@ -10,6 +10,7 @@ import { Store } from '@ngrx/store';
 import { take } from 'rxjs';
 import { ReportTab, ReportType } from 'app/pages/reports-dashboard/interfaces/report-tab.interface';
 import { ReportsService } from 'app/pages/reports-dashboard/reports.service';
+import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 import { autoRefreshReportsToggled } from 'app/store/preferences/preferences.actions';
 import { waitForPreferences } from 'app/store/preferences/preferences.selectors';
@@ -41,6 +42,7 @@ export class ReportsGlobalControlsComponent implements OnInit {
     private store$: Store<AppState>,
     private reportsService: ReportsService,
     private cdr: ChangeDetectorRef,
+    private ws: WebSocketService,
   ) {}
 
   ngOnInit(): void {
@@ -101,5 +103,14 @@ export class ReportsGlobalControlsComponent implements OnInit {
         this.store$.dispatch(autoRefreshReportsToggled());
       });
     });
+  }
+
+  openNetdata(): void {
+    // TODO: error handling
+    this.ws.call('reporting.netdataweb_generate_password', [])
+      .pipe(untilDestroyed(this))
+      .subscribe((password) => {
+        this.reportsService.openNetdata(password);
+      });
   }
 }
