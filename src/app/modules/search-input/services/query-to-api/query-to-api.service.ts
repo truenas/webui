@@ -69,7 +69,9 @@ export class QueryToApiService<T> {
   }
 
   private buildCondition(condition: Condition): QueryFilter<T> {
-    const currentProperty = this.searchProperties.find((value) => value.label === condition.property);
+    const currentProperty = this.searchProperties.find((value) => {
+      return value.label?.toLowerCase() === condition.property?.toLowerCase();
+    });
     const mappedConditionProperty = (currentProperty?.property || condition.property);
     const mappedConditionValue = this.mapValueByPropertyType(currentProperty, condition.value);
 
