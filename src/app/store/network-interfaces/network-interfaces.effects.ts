@@ -26,7 +26,7 @@ import {
 export class NetworkInterfacesEffects {
   loadCheckinStatus$ = createEffect(() => this.actions$.pipe(
     ofType(adminUiInitialized, networkInterfacesChanged),
-    filterAsync(this.authService.hasRole([Role.NetworkInterfaceWrite])),
+    filterAsync(() => this.authService.hasRole([Role.NetworkInterfaceWrite])),
     mergeMap(() => {
       return forkJoin([
         this.ws.call('interface.has_pending_changes'),
