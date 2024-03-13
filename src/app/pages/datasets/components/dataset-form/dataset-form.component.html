@@ -10,15 +10,18 @@
       <ix-name-and-options
         [existing]="existingDataset"
         [parent]="parentDataset"
+        (formValidityChange)="isNameAndOptionsValid = $event"
       ></ix-name-and-options>
       <ix-quotas-section
         *ngIf="isAdvancedMode && isNew"
         [parent]="parentDataset"
+        (formValidityChange)="isQuotaValid = $event"
       ></ix-quotas-section>
       <ix-encryption-section
         *ngIf="isNew"
         [parent]="parentDataset"
         [advancedMode]="isAdvancedMode"
+        (formValidityChange)="isEncryptionValid = $event"
       ></ix-encryption-section>
       <ix-other-options-section
         [existing]="existingDataset"
@@ -26,6 +29,7 @@
         [datasetPreset]="datasetPreset"
         [advancedMode]="isAdvancedMode"
         (advancedModeChange)="onSwitchToAdvanced()"
+        (formValidityChange)="isOtherOptionsValid = $event"
       ></ix-other-options-section>
 
       <ix-form-actions>
@@ -35,7 +39,7 @@
           type="submit"
           color="primary"
           ixTest="save"
-          [disabled]="form.invalid || isLoading || noNameProvided"
+          [disabled]="form.invalid || isLoading || !areSubFormsValid"
         >
           {{ 'Save' | translate }}
         </button>

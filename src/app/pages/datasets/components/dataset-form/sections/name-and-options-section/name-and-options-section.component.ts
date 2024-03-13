@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, Input, OnChanges, OnInit,
+  ChangeDetectionStrategy, Component, EventEmitter, Input, OnChanges, OnInit, Output,
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -27,6 +27,8 @@ import { datasetNameTooLong } from 'app/pages/datasets/components/dataset-form/u
 export class NameAndOptionsSectionComponent implements OnInit, OnChanges {
   @Input() existing: Dataset;
   @Input() parent: Dataset;
+
+  @Output() formValidityChange = new EventEmitter<boolean>();
 
   datasetPresetOptions$ = of(mapToOptions(datasetPresetLabels, this.translate));
 
@@ -79,6 +81,10 @@ export class NameAndOptionsSectionComponent implements OnInit, OnChanges {
       this.datasetPresetForm.patchValue({
         smb_name: name,
       });
+    });
+
+    this.form.statusChanges.pipe(untilDestroyed(this)).subscribe((status) => {
+      this.formValidityChange.emit(status === 'VALID');
     });
   }
 

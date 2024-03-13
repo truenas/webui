@@ -68,7 +68,9 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
   @Input() existing: Dataset;
   @Input() datasetPreset: DatasetPreset;
   @Input() advancedMode: boolean;
+
   @Output() advancedModeChange = new EventEmitter<void>();
+  @Output() formValidityChange = new EventEmitter<boolean>();
 
   hasDeduplication = false;
   hasDedupWarning = false;
@@ -172,6 +174,10 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
 
     this.form.controls.acltype.valueChanges.pipe(untilDestroyed(this)).subscribe(() => {
       this.updateAclMode();
+    });
+
+    this.form.statusChanges.pipe(untilDestroyed(this)).subscribe((status) => {
+      this.formValidityChange.emit(status === 'VALID');
     });
   }
 
