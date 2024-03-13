@@ -417,6 +417,7 @@
   "Name ^ \"Local\" AND \"Web Shell Access\" = true": "",
   "Name not added": "",
   "NetBIOS Name of this NAS. This name must differ from the <i>Workgroup</i> name and be no greater than 15 characters.": "",
+  "Netdata": "",
   "Network General Read": "",
   "Network Interface Read": "",
   "Network Interface Write": "",

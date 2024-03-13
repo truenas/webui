@@ -1,8 +1,9 @@
-import { Injectable } from '@angular/core';
+import { Inject, Injectable } from '@angular/core';
 import {
   map, Observable, shareReplay, BehaviorSubject, Subject,
 } from 'rxjs';
 import { ReportingGraphName } from 'app/enums/reporting.enum';
+import { WINDOW } from 'app/helpers/window.helper';
 import { Option } from 'app/interfaces/option.interface';
 import { ReportingGraph } from 'app/interfaces/reporting-graph.interface';
 import { ReportingData } from 'app/interfaces/reporting.interface';
@@ -28,6 +29,7 @@ export class ReportsService {
 
   constructor(
     private ws: WebSocketService,
+    @Inject(WINDOW) private window: Window,
   ) {
     this.ws.call('reporting.netdata_graphs').subscribe((reportingGraphs) => {
       this.hasUps = reportingGraphs.some((graph) => graph.name.startsWith(ReportingGraphName.Ups));
@@ -161,5 +163,17 @@ export class ReportsService {
         return options;
       }),
     );
+  }
+
+  openNetdata(password: string): void {
+    // Thats the only way I could manage to have the browser save the password
+    // to re-use when the new tab is opened.
+    // HttpClient seems to do it through HttpHeaders which won't cache in browser.
+    const xhr = new XMLHttpRequest();
+    xhr.open('GET', '/netdata/', true, 'root', password);
+    xhr.addEventListener('load', () => {
+      this.window.open('/netdata/');
+    });
+    xhr.send();
   }
 }
