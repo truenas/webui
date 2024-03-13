@@ -1,9 +1,9 @@
 import { ChangeDetectionStrategy, Component, Inject } from '@angular/core';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import {
   ViewCertificateDialogData,
 } from 'app/pages/credentials/certificates-dash/view-certificate-dialog/view-certificate-dialog-data.interface';
-import { StorageService } from 'app/services/storage.service';
+import { DownloadService } from 'app/services/download.service';
 
 @Component({
   templateUrl: './view-certificate-dialog.component.html',
@@ -12,7 +12,7 @@ import { StorageService } from 'app/services/storage.service';
 })
 export class ViewCertificateDialogComponent {
   constructor(
-    private storage: StorageService,
+    private download: DownloadService,
     public dialogRef: MatDialogRef<ViewCertificateDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: ViewCertificateDialogData,
   ) {}
@@ -20,6 +20,6 @@ export class ViewCertificateDialogComponent {
   onDownloadPressed(): void {
     const fileName = `${this.data.name}.${this.data.extension}`;
 
-    this.storage.downloadText(this.data.certificate, fileName);
+    this.download.downloadText(this.data.certificate, fileName);
   }
 }

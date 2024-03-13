@@ -22,7 +22,7 @@ import { LayoutModule } from 'app/modules/layout/layout.module';
 import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
 import { SearchInput1Component } from 'app/modules/search-input1/search-input1.component';
 import { JobLogsRowComponent } from 'app/pages/jobs/job-logs-row/job-logs-row.component';
-import { StorageService } from 'app/services/storage.service';
+import { DownloadService } from 'app/services/download.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { JobsListComponent } from './jobs-list.component';
 
@@ -86,7 +86,7 @@ describe('JobsListComponent', () => {
       mockWebSocket([
         mockCall('core.job_download_logs', 'http://localhost/download/log'),
       ]),
-      mockProvider(StorageService, {
+      mockProvider(DownloadService, {
         downloadUrl: jest.fn(() => of(undefined)),
       }),
       provideMockStore({
@@ -154,6 +154,6 @@ describe('JobsListComponent', () => {
     await downloadLogsButton.click();
 
     expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('core.job_download_logs', [446, '446.log']);
-    expect(spectator.inject(StorageService).downloadUrl).toHaveBeenCalledWith('http://localhost/download/log', '446.log', 'text/plain');
+    expect(spectator.inject(DownloadService).downloadUrl).toHaveBeenCalledWith('http://localhost/download/log', '446.log', 'text/plain');
   });
 });

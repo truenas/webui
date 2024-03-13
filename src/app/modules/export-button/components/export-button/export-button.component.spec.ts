@@ -9,7 +9,7 @@ import { AuditEntry } from 'app/interfaces/audit/audit.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { ExportButtonComponent } from 'app/modules/export-button/components/export-button/export-button.component';
 import { SortDirection } from 'app/modules/ix-table2/enums/sort-direction.enum';
-import { StorageService } from 'app/services/storage.service';
+import { DownloadService } from 'app/services/download.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 describe('ExportButtonComponent', () => {
@@ -26,7 +26,7 @@ describe('ExportButtonComponent', () => {
         mockJob(jobMethod, { result: '/path/data.csv', state: JobState.Success } as Job<string>),
         mockCall('core.download', [33456, '/_download/33456?auth_token=1234567890']),
       ]),
-      mockProvider(StorageService, {
+      mockProvider(DownloadService, {
         downloadUrl: jest.fn(),
       }),
     ],
@@ -52,7 +52,7 @@ describe('ExportButtonComponent', () => {
       'query-options': {},
     }]);
     expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('core.download', [jobMethod, [{}], '/path/data.csv']);
-    expect(spectator.inject(StorageService).downloadUrl).toHaveBeenLastCalledWith(
+    expect(spectator.inject(DownloadService).downloadUrl).toHaveBeenLastCalledWith(
       '/_download/33456?auth_token=1234567890',
       'data.csv',
       'text/csv',
@@ -80,7 +80,7 @@ describe('ExportButtonComponent', () => {
       'query-options': { order_by: ['-service'] },
     }]);
     expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('core.download', [jobMethod, [{}], '/path/data.csv']);
-    expect(spectator.inject(StorageService).downloadUrl).toHaveBeenLastCalledWith(
+    expect(spectator.inject(DownloadService).downloadUrl).toHaveBeenLastCalledWith(
       '/_download/33456?auth_token=1234567890',
       'data.csv',
       'text/csv',

@@ -6,8 +6,8 @@ import { MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Job } from 'app/interfaces/job.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { DownloadService } from 'app/services/download.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { StorageService } from 'app/services/storage.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
@@ -33,7 +33,7 @@ export class ErrorDialogComponent {
   constructor(
     public dialogRef: MatDialogRef<ErrorDialogComponent>,
     private ws: WebSocketService,
-    public storage: StorageService,
+    private download: DownloadService,
     private errorHandler: ErrorHandlerService,
     private dialogService: DialogService,
   ) {}
@@ -46,9 +46,9 @@ export class ErrorDialogComponent {
     this.ws.call('core.job_download_logs', [this.logs.id, `${this.logs.id}.log`]).pipe(untilDestroyed(this)).subscribe({
       next: (url) => {
         const mimetype = 'text/plain';
-        this.storage.streamDownloadFile(url, `${this.logs.id}.log`, mimetype).pipe(untilDestroyed(this)).subscribe({
+        this.download.streamDownloadFile(url, `${this.logs.id}.log`, mimetype).pipe(untilDestroyed(this)).subscribe({
           next: (file) => {
-            this.storage.downloadBlob(file, `${this.logs.id}.log`);
+            this.download.downloadBlob(file, `${this.logs.id}.log`);
             if (this.dialogRef) {
               this.dialogRef.close();
             }

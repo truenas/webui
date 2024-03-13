@@ -1,7 +1,7 @@
 import {
-  Component, ChangeDetectionStrategy, ChangeDetectorRef, OnInit, Inject,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
 } from '@angular/core';
-import { Validators, FormBuilder } from '@angular/forms';
+import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { map, of } from 'rxjs';
@@ -22,13 +22,14 @@ import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-sli
 import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
-import { forbiddenValues } from 'app/modules/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
+import {
+  forbiddenValues,
+} from 'app/modules/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
 import { matchOthersFgValidator } from 'app/modules/ix-forms/validators/password-validation/password-validation';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { getDatasetLabel } from 'app/pages/datasets/utils/dataset.utils';
 import { CloudCredentialService } from 'app/services/cloud-credential.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { StorageService } from 'app/services/storage.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 interface ZvolFormData {
@@ -197,7 +198,6 @@ export class ZvolFormComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private formErrorHandler: FormErrorHandlerService,
     private errorHandler: ErrorHandlerService,
-    protected storageService: StorageService,
     protected snackbar: SnackbarService,
     private slideInRef: IxSlideInRef<ZvolFormComponent>,
     @Inject(SLIDE_IN_DATA) private slideInData: { isNew: boolean; parentId: string },
