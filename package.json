@@ -96,7 +96,7 @@
     "chart.js": "~4.3.0",
     "chartjs-adapter-date-fns": "~3.0.0",
     "core-js": "~3.6.4",
-    "cron-parser": "~4.2.1",
+    "cron-parser": "~4.9.0",
     "croner": "~4.2.3",
     "cronstrue": "~2.27.0",
     "d3": "~5.16.0",
