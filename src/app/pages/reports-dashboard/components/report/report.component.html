@@ -17,7 +17,7 @@
         class="mat-card-toolbar"
       >
         <mat-card-title fxFlex="65%" fxLayoutAlign="start center">
-          <h3 class="mat-card-title-text">{{ reportTitle }}</h3>
+          <h3 class="mat-card-title-text">{{ reportTitle | translate }}</h3>
         </mat-card-title>
         <!-- Controls/Tools -->
         <div fxFlex="35%" class="line-chart-tools-wrapper">
@@ -146,11 +146,11 @@
                   ></div>
 
                   <span class="legend-item">
-                    <strong>{{ legendItem }}</strong>
+                    <strong>{{ legendItem | translate }}</strong>
                   </span>
 
                   <span *ngIf="legendData?.series?.[i]?.yHTML" class="font-normal">:
-                    {{ legendData.series[i].yHTML }}
+                    {{ legendData.series[i].yHTML | translate }}
                   </span>
                 </td>
 
@@ -166,7 +166,7 @@
           <ng-container *ngIf="legendData?.stackedTotalHTML && shouldShowTotal">
             <h4 class="legend-timestamp" fxFlex="32px" fxLayoutGap="8px">
               <strong>{{ 'Total' | translate }}:</strong>
-              <span>{{ legendData.stackedTotalHTML }}</span>
+              <span>{{ legendData.stackedTotalHTML | translate }}</span>
             </h4>
           </ng-container>
         </section>

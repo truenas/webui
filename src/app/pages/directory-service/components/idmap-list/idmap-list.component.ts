@@ -45,32 +45,32 @@ export class IdmapListComponent implements OnInit {
   idmaps: IdmapRow[] = [];
   columns = createTable<IdmapRow>([
     textColumn({
-      title: this.translateService.instant('Name'),
+      title: this.translate.instant('Name'),
       propertyName: 'label',
       sortable: true,
     }),
     textColumn({
-      title: this.translateService.instant('Backend'),
+      title: this.translate.instant('Backend'),
       propertyName: 'idmap_backend',
       sortable: true,
     }),
     textColumn({
-      title: this.translateService.instant('DNS Domain Name'),
+      title: this.translate.instant('DNS Domain Name'),
       propertyName: 'dns_domain_name',
       sortable: true,
     }),
     textColumn({
-      title: this.translateService.instant('Range Low'),
+      title: this.translate.instant('Range Low'),
       propertyName: 'range_low',
       sortable: true,
     }),
     textColumn({
-      title: this.translateService.instant('Range High'),
+      title: this.translate.instant('Range High'),
       propertyName: 'range_high',
       sortable: true,
     }),
     textColumn({
-      title: this.translateService.instant('Certificate'),
+      title: this.translate.instant('Certificate'),
       propertyName: 'cert_name',
       sortable: true,
     }),
@@ -78,7 +78,7 @@ export class IdmapListComponent implements OnInit {
       actions: [
         {
           iconName: 'edit',
-          tooltip: this.translateService.instant('Edit'),
+          tooltip: this.translate.instant('Edit'),
           onClick: (row) => {
             const slideInRef = this.slideInService.open(IdmapFormComponent, { data: row });
             slideInRef.slideInClosed$.pipe(
@@ -90,12 +90,12 @@ export class IdmapListComponent implements OnInit {
         {
           iconName: 'delete',
           hidden: (row) => of(requiredIdmapDomains.includes(row.name as IdmapName)),
-          tooltip: this.translateService.instant('Delete'),
+          tooltip: this.translate.instant('Delete'),
           requiredRoles: this.requiredRoles,
           onClick: (row) => {
             this.dialogService.confirm({
-              title: this.translateService.instant('Confirm'),
-              message: this.translateService.instant('Are you sure you want to delete this record?'),
+              title: this.translate.instant('Confirm'),
+              message: this.translate.instant('Are you sure you want to delete this record?'),
               hideCheckbox: true,
             }).pipe(
               filter(Boolean),
@@ -118,7 +118,7 @@ export class IdmapListComponent implements OnInit {
   });
 
   constructor(
-    private translateService: TranslateService,
+    private translate: TranslateService,
     private ws: WebSocketService,
     protected idmapService: IdmapService,
     protected dialogService: DialogService,

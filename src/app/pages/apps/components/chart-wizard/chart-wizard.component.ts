@@ -47,7 +47,7 @@ import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-erro
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { forbiddenAsyncValues, forbiddenValuesError } from 'app/modules/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
-import { DockerHubRateInfoDialogComponent } from 'app/pages/apps/components/dockerhub-rate-limit-info.dialog.ts/dockerhub-rate-limit-info-dialog.component';
+import { DockerHubRateInfoDialogComponent } from 'app/pages/apps/components/dockerhub-rate-limit-info-dialog/dockerhub-rate-limit-info-dialog.component';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { KubernetesStore } from 'app/pages/apps/store/kubernetes-store.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
@@ -138,7 +138,14 @@ export class ChartWizardComponent implements OnInit, OnDestroy {
   }
 
   onSectionClick(sectionName: string): void {
-    document.getElementById(sectionName)?.scrollIntoView();
+    const nextElement = document.getElementById(sectionName);
+
+    nextElement?.scrollIntoView({ block: 'center' });
+    nextElement.classList.add('highlighted');
+
+    timer(999)
+      .pipe(untilDestroyed(this))
+      .subscribe(() => nextElement.classList.remove('highlighted'));
   }
 
   checkSectionInvalid(section: DynamicWizardSchema): boolean {
@@ -496,15 +503,9 @@ export class ChartWizardComponent implements OnInit, OnDestroy {
 
       if (option) {
         const path = option.value.toString().split('.');
-        let nextElement: HTMLElement;
         path.forEach((id, idx) => {
-          nextElement = document.getElementById(id);
           if (idx === path.length - 1) {
-            nextElement?.scrollIntoView({ block: 'center' });
-            nextElement.classList.add('highlighted');
-            timer(999)
-              .pipe(untilDestroyed(this))
-              .subscribe(() => nextElement.classList.remove('highlighted'));
+            this.onSectionClick(id);
           }
         });
       }

@@ -15,8 +15,11 @@
     <div class="actions action-icon">
       <button
         mat-button
+        ixUiSearchableElement
+        id="allowed-addresses-settings"
         [ixTest]="['configure', 'ip-address']"
         [disabled]="dataProvider.isLoading$ | async"
+        [ixSearchConfig]="searchElements.configureAllowedAddresses"
         (click)="onConfigure()"
       >
         {{ 'Configure' | translate }}

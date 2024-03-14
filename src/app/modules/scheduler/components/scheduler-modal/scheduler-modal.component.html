@@ -69,7 +69,7 @@
           [ixTest]="['scheduler', weekday.label]"
           [formControlName]="weekday.value"
         >
-          {{ weekday.label }}
+          {{ weekday.label | translate }}
         </mat-checkbox>
       </div>
     </section>
@@ -85,7 +85,7 @@
           [ixTest]="['scheduler', month.label]"
           [formControlName]="month.value"
         >
-          {{ month.label }}
+          {{ month.label | translate }}
         </mat-checkbox>
       </div>
     </section>

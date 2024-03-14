@@ -8,36 +8,46 @@
     <form class="ix-form-container" [formGroup]="formGroup" (submit)="submit()">
       <ix-fieldset [title]="fieldsetTitle">
         <ix-combobox
+          ixUiSearchableElement
           [formControlName]="language.fcName"
           [label]="language.label | translate"
           [tooltip]="language.tooltip | translate"
           [provider]="language.provider"
           [required]="true"
+          [ixSearchConfig]="searchElements.language"
         ></ix-combobox>
         <ix-select
+          ixUiSearchableElement
           [label]="kbdMap.label | translate"
           [tooltip]="kbdMap.tooltip | translate"
           [options]="kbdMap.options"
           [formControlName]="kbdMap.fcName"
+          [ixSearchConfig]="searchElements.consoleKeyboardMap"
         ></ix-select>
         <ix-combobox
+          ixUiSearchableElement
           [formControlName]="timezone.fcName"
           [label]="timezone.label | translate"
           [tooltip]="timezone.tooltip | translate"
           [provider]="timezone.provider"
           [required]="true"
+          [ixSearchConfig]="searchElements.timezone"
         ></ix-combobox>
         <ix-select
+          ixUiSearchableElement
           [label]="dateFormat.label | translate"
           [tooltip]="dateFormat.tooltip | translate"
           [options]="dateFormat.options"
           [formControlName]="dateFormat.fcName"
+          [ixSearchConfig]="searchElements.dateFormat"
         ></ix-select>
         <ix-select
+          ixUiSearchableElement
           [label]="timeFormat.label | translate"
           [tooltip]="timeFormat.tooltip | translate"
           [options]="timeFormat.options"
           [formControlName]="timeFormat.fcName"
+          [ixSearchConfig]="searchElements.timeFormat"
         ></ix-select>
       </ix-fieldset>
 

@@ -21,7 +21,9 @@ export const fakeZfsSnapshot: ZfsSnapshot = {
     datetime: { $date: 1654575914000 },
     source: 'periodic_snapshot_task',
     periodic_snapshot_task_id: 1,
-
+  },
+  holds: {
+    truenas: 1,
   },
 } as unknown as ZfsSnapshot;
 

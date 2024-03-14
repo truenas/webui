@@ -3,7 +3,7 @@
 <div class="options">
   <div *ngFor="let option of options | async">
     <div class="item" (click)="onItemChanged(option.value)">
-      {{ option.label }}
+      {{ option.label | translate }}
       <ix-icon [name]="isChecked(option.value) ? 'check_circle' : ''"></ix-icon>
     </div>
   </div>

@@ -30,7 +30,7 @@
       <strong *ngIf="event?.metadata?.creation_timestamp?.$date" class="event-timestamp">
         {{ event.metadata.creation_timestamp.$date | formatDateTime }}
       </strong>
-      <span>{{ event.message }}</span>
+      <span>{{ event.message | translate }}</span>
     </div>
   </ng-container>
 </ng-template>

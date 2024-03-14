@@ -9,8 +9,11 @@
     <div class="actions">
       <button
         *ixRequiresRoles="requiredRoles"
+        ixUiSearchableElement
+        id="add-init-shutdown-script"
         mat-button
         [ixTest]="['init-shutdown', 'add']"
+        [ixSearchConfig]="searchElements.addInitShutdownScript"
         (click)="onAdd()"
       >{{ 'Add' | translate }}</button>
     </div>

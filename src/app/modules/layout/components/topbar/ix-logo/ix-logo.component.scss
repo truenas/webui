@@ -1,3 +1,7 @@
+a {
+  display: inline-block;
+}
+
 .ix-logo {
   cursor: pointer;
   fill: none !important;
@@ -5,7 +9,7 @@
   position: relative;
   right: -10px;
   top: 4px;
-  width: 175px;
+  width: 150px;
 
   &.xs {
     height: 50px;

@@ -2,7 +2,7 @@
   <ix-icon class="icon" [name]="config.icon" [style.color]="iconColor"></ix-icon>
 </ng-container>
 
-<div class="message">{{ config.message }}</div>
+<div class="message">{{ config.message | translate }}</div>
 
 <div *ngIf="config.button" class="action">
   <button
@@ -11,6 +11,6 @@
     ixTest="snackbar-button"
     (click)="config.button.action()"
   >
-    {{ config.button.title }}
+    {{ config.button.title | translate }}
   </button>
 </div>

@@ -7,7 +7,7 @@ import { CopyButtonComponent } from 'app/core/components/copy-btn/copy-btn.compo
 import {
   ViewCertificateDialogData,
 } from 'app/pages/credentials/certificates-dash/view-certificate-dialog/view-certificate-dialog-data.interface';
-import { StorageService } from 'app/services/storage.service';
+import { DownloadService } from 'app/services/download.service';
 import { ViewCertificateDialogComponent } from './view-certificate-dialog.component';
 
 describe('ViewCertificateDialogComponent', () => {
@@ -26,7 +26,7 @@ describe('ViewCertificateDialogComponent', () => {
           extension: 'crt',
         } as ViewCertificateDialogData,
       },
-      mockProvider(StorageService),
+      mockProvider(DownloadService),
       mockProvider(MatDialogRef),
     ],
   });
@@ -53,6 +53,6 @@ describe('ViewCertificateDialogComponent', () => {
     const button = await loader.getHarness(MatButtonHarness.with({ text: 'Download' }));
     await button.click();
 
-    expect(spectator.inject(StorageService).downloadText).toHaveBeenCalledWith('---BEGIN CERTIFICATE---', 'truenas.crt');
+    expect(spectator.inject(DownloadService).downloadText).toHaveBeenCalledWith('---BEGIN CERTIFICATE---', 'truenas.crt');
   });
 });

@@ -28,14 +28,6 @@
   font-family: var(--font-family-body);
 }
 
-.primary-nav .card-title-text {
-  display: inline-block;
-  font-weight: 500;
-  position: relative;
-  top: 2px; // TODO: Remove magic number
-  vertical-align: middle;
-}
-
 .carousel {
   box-sizing: border-box;
   display: flex;
@@ -90,7 +82,7 @@
 
 .slide.overview .left {
   align-items: center;
-  background-image: url('~assets/images/backgrounds/hard_drive_1.jpg');
+  background-image: url('assets/images/backgrounds/hard_drive_1.jpg');
   background-size: cover;
   box-sizing: border-box;
   color: #efefef;
@@ -171,18 +163,6 @@
 .td .ix-icon {
   height: auto;
   width: 12px;
-}
-
-.pool-status .icon-wrapper {
-  display: inline-block;
-  font-size: 175%;
-  position: relative;
-  top: 3px; // TODO: Remove magic number
-}
-
-.pool-name .icon-wrapper {
-  display: inline;
-  font-size: 75%;
 }
 
 .pool-space .value {
@@ -266,9 +246,9 @@ span.safe {
 }
 
 .slide .locked.offline .ix-icon {
-  font-size: 444%; /* TODO: Check it. Looks weird */
-  height: auto;
-  width: auto;
+  font-size: 64px;
+  height: 64px;
+  width: 64px;
 }
 
 .slide div.clickable,

@@ -32,7 +32,7 @@
       <ng-template let-task ix-table-details-row [dataProvider]="dataProvider">
         <dl *ngIf="hiddenColumns.length" class="table-hidden-columns">
           <div *ngFor="let column of hiddenColumns">
-            <b>{{ column.title }}:</b>
+            <b>{{ column.title | translate }}:</b>
             <span>{{ column?.getValue?.(task) || task[column.propertyName] }}</span>
           </div>
           <mat-divider></mat-divider>

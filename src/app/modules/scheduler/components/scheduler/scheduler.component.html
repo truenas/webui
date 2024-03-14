@@ -21,7 +21,7 @@
         [ixTest]="[controlDirective.name, 'presets', preset.label]"
         [value]="preset.value"
       >
-        {{ preset.label }}
+        {{ preset.label | translate }}
         <span class="crontab">({{ preset.value }})</span>&nbsp;
         <span class="preset-description">{{ preset.description }}</span>
       </mat-option>

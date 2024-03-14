@@ -1,0 +1,78 @@
+@import 'scss-imports/cssvars';
+
+:host {
+  margin-left: 21px;
+  position: relative;
+  width: 100%;
+
+  @media(max-width: $breakpoint-xs) {
+    position: absolute;
+    right: 0;
+    top: 8px;
+    width: 10vw;
+  }
+}
+
+.hidden {
+  opacity: 0;
+  visibility: hidden;
+}
+
+.search-box {
+  background: var(--bg1);
+  border: solid 1.5px var(--lines);
+  border-radius: 2px;
+  display: flex;
+  flex-direction: row;
+  font-size: 12px;
+  position: relative;
+  width: 450px;
+
+  @media(max-width: $breakpoint-md) {
+    width: 250px;
+  }
+
+  @media(max-width: $breakpoint-xs) {
+    background-color: transparent;
+    border: 0;
+  }
+
+  &:focus-within {
+    border-color: var(--primary);
+  }
+
+  &:focus-within {
+    .search-input {
+      opacity: 1;
+    }
+
+    .search-icon {
+      opacity: 1;
+    }
+  }
+
+  .search-icon {
+    color: var(--fg1);
+    left: 4px;
+    opacity: 0.2;
+    position: absolute;
+    top: 3px;
+
+    @media(max-width: $breakpoint-xs) {
+      font-size: 28px;
+    }
+  }
+
+  .search-input {
+    opacity: 0.7;
+    padding-right: 30px;
+
+    @media(max-width: $breakpoint-xs) {
+      display: none;
+    }
+  }
+
+  ::ng-deep input {
+    padding-left: 30px;
+  }
+}

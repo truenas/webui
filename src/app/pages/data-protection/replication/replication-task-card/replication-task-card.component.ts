@@ -2,7 +2,6 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import {
   catchError, EMPTY, filter, of, switchMap, tap,
@@ -13,22 +12,35 @@ import { tapOnce } from 'app/helpers/operators/tap-once.operator';
 import { ReplicationTask } from 'app/interfaces/replication-task.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { AsyncDataProvider } from 'app/modules/ix-table2/classes/async-data-provider/async-data-provider';
-import { actionsColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
-import { relativeDateColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-relative-date/ix-cell-relative-date.component';
-import { stateButtonColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-state-button/ix-cell-state-button.component';
+import {
+  actionsColumn,
+} from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
+import {
+  relativeDateColumn,
+} from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-relative-date/ix-cell-relative-date.component';
+import {
+  stateButtonColumn,
+} from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-state-button/ix-cell-state-button.component';
 import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
-import { toggleColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-toggle/ix-cell-toggle.component';
+import {
+  toggleColumn,
+} from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-toggle/ix-cell-toggle.component';
 import { createTable } from 'app/modules/ix-table2/utils';
 import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { ReplicationFormComponent } from 'app/pages/data-protection/replication/replication-form/replication-form.component';
-import { ReplicationRestoreDialogComponent } from 'app/pages/data-protection/replication/replication-restore-dialog/replication-restore-dialog.component';
-import { ReplicationWizardComponent } from 'app/pages/data-protection/replication/replication-wizard/replication-wizard.component';
+import {
+  ReplicationFormComponent,
+} from 'app/pages/data-protection/replication/replication-form/replication-form.component';
+import {
+  ReplicationRestoreDialogComponent,
+} from 'app/pages/data-protection/replication/replication-restore-dialog/replication-restore-dialog.component';
+import {
+  ReplicationWizardComponent,
+} from 'app/pages/data-protection/replication/replication-wizard/replication-wizard.component';
+import { DownloadService } from 'app/services/download.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
-import { StorageService } from 'app/services/storage.service';
 import { WebSocketService } from 'app/services/ws.service';
-import { AppState } from 'app/store';
 
 @UntilDestroy()
 @Component({
@@ -117,10 +129,9 @@ export class ReplicationTaskCardComponent implements OnInit {
     private errorHandler: ErrorHandlerService,
     private ws: WebSocketService,
     private dialogService: DialogService,
-    private store$: Store<AppState>,
     private snackbar: SnackbarService,
     private matDialog: MatDialog,
-    private storage: StorageService,
+    private download: DownloadService,
     protected emptyService: EmptyService,
   ) {}
 
@@ -218,13 +229,13 @@ export class ReplicationTaskCardComponent implements OnInit {
     ]).pipe(untilDestroyed(this)).subscribe({
       next: ([, url]) => {
         const mimetype = 'application/json';
-        this.storage.streamDownloadFile(
+        this.download.streamDownloadFile(
           url,
           `${row.name}_encryption_keys.json`,
           mimetype,
         ).pipe(untilDestroyed(this)).subscribe({
           next: (file) => {
-            this.storage.downloadBlob(file, `${row.name}_encryption_keys.json`);
+            this.download.downloadBlob(file, `${row.name}_encryption_keys.json`);
           },
           error: (err: HttpErrorResponse) => {
             this.dialogService.error(this.errorHandler.parseHttpError(err));

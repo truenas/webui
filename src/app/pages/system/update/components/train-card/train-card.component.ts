@@ -127,7 +127,7 @@ export class TrainCardComponent implements OnInit {
     });
 
     this.form.controls.auto_check.valueChanges.pipe(
-      filterAsync(this.authService.hasRole(Role.FullAdmin)),
+      filterAsync(() => this.authService.hasRole(Role.FullAdmin)),
       untilDestroyed(this),
     ).subscribe(() => {
       this.trainService.toggleAutoCheck();

@@ -1,7 +1,5 @@
 import {
-  MatFooterRowHarness,
   MatHeaderRowHarness,
-  MatRowHarness,
   MatRowHarnessColumnsText,
   MatTableHarness,
 } from '@angular/material/table/testing';
@@ -11,9 +9,6 @@ import {
  */
 export class IxTableHarness extends MatTableHarness {
   static override hostSelector = '.ix-table';
-  protected override _headerRowHarness = MatHeaderRowHarness;
-  protected override _rowHarness = MatRowHarness;
-  protected override _footerRowHarness = MatFooterRowHarness;
 
   async getHeaderRow(): Promise<MatRowHarnessColumnsText> {
     const headers: MatHeaderRowHarness[] = await this.getHeaderRows();

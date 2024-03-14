@@ -20,6 +20,7 @@ import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells
 import { createTable } from 'app/modules/ix-table2/utils';
 import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { elements } from 'app/pages/system/advanced/access/access-card/access-card.elements';
 import { AccessFormComponent } from 'app/pages/system/advanced/access/access-form/access-form.component';
 import { AdvancedSettingsService } from 'app/pages/system/advanced/advanced-settings.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
@@ -39,6 +40,7 @@ import { waitForGeneralConfig } from 'app/store/system-config/system-config.sele
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AccessCardComponent implements OnInit {
+  protected readonly searchElements = elements;
   readonly tokenLifetime$ = this.store$.pipe(
     waitForPreferences,
     map((preferences) => {

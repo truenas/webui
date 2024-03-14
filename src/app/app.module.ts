@@ -1,6 +1,5 @@
 import { HttpClientModule, HttpClient } from '@angular/common/http';
 import { NgModule, ErrorHandler } from '@angular/core';
-import { FlexLayoutModule } from '@angular/flex-layout';
 import { MatButtonModule } from '@angular/material/button';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatDialogModule } from '@angular/material/dialog';
@@ -8,6 +7,7 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { PreloadAllModules, RouterModule } from '@angular/router';
+import { FlexLayoutModule } from '@ngbracket/ngx-layout';
 import { EffectsModule } from '@ngrx/effects';
 import { StoreRouterConnectingModule } from '@ngrx/router-store';
 import { StoreModule } from '@ngrx/store';
@@ -102,6 +102,7 @@ import { RoutePartsService } from './services/route-parts/route-parts.service';
     StoreDevtoolsModule.instrument({
       maxAge: 25,
       logOnly: environment.production,
+      connectInZone: true,
     }),
     StoreRouterConnectingModule.forRoot({
       serializer: CustomRouterStateSerializer,

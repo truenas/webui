@@ -1,6 +1,6 @@
 <h1 mat-dialog-title>
   <ix-icon *ngIf="conf.icon" class="general-dialog-icon" [name]="conf.icon"></ix-icon>
-  <span *ngIf="conf.title">{{ conf.title }}</span>
+  <span *ngIf="conf.title">{{ conf.title | translate }}</span>
 </h1>
 <div mat-dialog-content class="general-dialog-content-container">
   <div class="generial-dialog-content">
@@ -9,7 +9,7 @@
       [innerHTML]="conf.message | translate"
     ></span>
     <ng-template #normalContent>
-      <span>{{ conf.message }}</span>
+      <span>{{ conf.message | translate }}</span>
     </ng-template>
   </div>
 </div>
@@ -22,7 +22,7 @@
     ixTest="cancel"
     (click)="dialogRef.close(false)"
   >
-    {{ conf.cancelBtnMsg || 'Cancel' | translate }}
+    {{ (conf.cancelBtnMsg | translate) || ('Cancel' | translate) }}
   </button>
   <button
     mat-button
@@ -30,6 +30,6 @@
     ixTest="close"
     (click)="dialogRef.close(true)"
   >
-    {{ conf.confirmBtnMsg || 'Close' | translate }}
+    {{ (conf.confirmBtnMsg | translate) || ('Close' | translate) }}
   </button>
 </div>

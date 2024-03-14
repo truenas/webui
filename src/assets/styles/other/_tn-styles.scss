@@ -1,25 +1,35 @@
 @use '@angular/material' as mat;
 @import 'scss-imports/cssvars';
 $standard-height: 40px;
-@import '@angular/material/theming';
-@include mat.all-legacy-component-typographies();
-@include mat.legacy-core();
+@include mat.all-component-typographies();
+@include mat.core();
 @include mat.slide-toggle-density(-1);
 @include mat.radio-density(-1);
 @include mat.checkbox-density(-1);
 @import 'angular15';
+@import 'material-overrides';
 
-// mandatory stuff for theming
 $ix-primary: mat.define-palette($md-primary);
 $ix-accent: mat.define-palette($md-accent);
-// include the custom theme components into a theme object
-$ix-theme: mat.define-light-theme($ix-primary, $ix-accent);
+
+$ix-typography: mat.define-typography-config($body-1: mat.define-typography-level($font-size: 0.875rem,
+$font-family: var(--font-family-body),),
+$body-2: mat.define-typography-level($font-size: 0.875rem,
+$font-family: var(--font-family-body),),);
+
+$ix-theme: mat.define-light-theme((
+  color: (
+    primary: $ix-primary,
+    accent: $ix-accent,
+  ),
+  typography: $ix-typography,
+));
 
 $primary-dark: darken(map-get($md-primary, 500), 8%);
 
 // include the custom theme object into the angular material theme
 .ix-dark {
-  @include mat.all-legacy-component-themes($ix-theme);
+  @include mat.all-component-themes($ix-theme);
 
   .mat-bg-primary,
   .sidebar-panel.mat-sidenav .sidebar-list-item.open md-icon:not(.menu-caret),
@@ -116,19 +126,6 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   .mat-step-header .mat-step-icon:not(.mat-step-icon-state-error):not(.mat-step-icon-state-number):not(.mat-step-icon-state-edit) {
     @include variable(background, --primary, $primary, !important);
     @include variable(color, --primary-txt, $primary-txt, !important);
-  }
-
-  .datatable-header,
-  .datatable-footer {
-    @include variable(border-top-color, --bg1, $bg1, !important);
-    border-top-style: solid;
-    border-top-width: 1px;
-  }
-
-  .datatable-header,
-  .datatable-footer {
-    @include variable(background, --bg2, $bg2, !important);
-    background-color: rgba(0, 0, 0, 0.75);
   }
 
   .mat-bg-accent,
@@ -529,19 +526,6 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     margin-bottom: 15px;
   }
 
-  // Vertically align header-footer items on datatables
-  .datatable-header-cell {
-    position: relative;
-  }
-
-  // Put header labels directly over cells
-  .datatable-header-cell-label {
-    margin-left: 7px;
-    position: relative;
-    text-align: center;
-    top: 7px;
-  }
-
   // Style the ix logo with the primary theme color
   .ix-logo {
     @include variable(fill, --primary, $primary);
@@ -840,12 +824,6 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     @include variable(color, --accent, $accent !important);
   }
 
-  // Make room for checkbox ripple effect in datatables
-  .datatable-header-cell .mat-mdc-checkbox,
-  .datatable-body-cell .mat-mdc-checkbox {
-    margin-left: 5px;
-  }
-
   .mat-mdc-progress-bar-fill::after {
     @include variable(background-color, --primary, $primary);
   }
@@ -862,10 +840,6 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   .mat-mdc-tab-nav-bar,
   .mat-mdc-tab-header {
     border-bottom: 1px solid var(--lines);
-  }
-
-  datatable-selection > .empty-row {
-    color: var(--alt-fg1);
   }
 
   .mat-simple-snackbar-action {
@@ -903,10 +877,6 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     text-overflow: ellipsis;
     vertical-align: middle;
     white-space: nowrap;
-  }
-
-  .datatable-header-inner {
-    height: 52px;
   }
 
   .rightside-content-hold {

@@ -147,11 +147,11 @@ describe('TunableListComponent', () => {
     expect(cells).toEqual(expectedRows);
   });
 
-  it.skip('shows add form when Add button is pressed', async () => {
+  it('shows add form when Add button is pressed', async () => {
     const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
     await addButton.click();
 
-    expect(spectator.inject(IxChainedSlideInService).pushComponent).toHaveBeenCalledWith(TunableFormComponent, {});
+    expect(spectator.inject(IxChainedSlideInService).pushComponent).toHaveBeenCalledWith(TunableFormComponent);
   });
 
   it('shows edit form with an existing sysctl when Edit button is pressed', async () => {

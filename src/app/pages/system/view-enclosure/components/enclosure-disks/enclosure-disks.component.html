@@ -57,10 +57,7 @@
               <div *ngFor="let pool of enclosureStore.getPools(selectedEnclosure); let i = index">
                 <div
                   class="swatch"
-                  [style.background]="subenclosure
-                      ? theme[themeKey(theme.accentColors[i])]
-                      : theme[themeKey(theme.accentColors[i])]
-                  "
+                  [style.background]="theme[theme.accentColors[i]]"
                 ></div>
                 {{ pool }}
                 <span *ngIf="!enclosureStore.getPools(selectedEnclosure).length"> <!-- This used to check for pool health -->

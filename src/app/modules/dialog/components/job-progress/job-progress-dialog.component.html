@@ -2,7 +2,7 @@
 <mat-dialog-content class="job-dialog">
   <div *ngIf="showRealtimeLogs && realtimeLogs" class="logs-container">
     <h5>{{ 'Logs' | translate }}</h5>
-    <pre #logs class="message logs">{{ realtimeLogs }}</pre>
+    <pre #logs class="message logs">{{ realtimeLogs | translate }}</pre>
   </div>
 
   <div *ngIf="isJobRunning">

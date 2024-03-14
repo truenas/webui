@@ -208,7 +208,7 @@
                             </span>
                           </ng-container>
                           <ng-container *ngIf="isScanInProgress">
-                            {{ 'In Progress' | translate}}
+                            {{ 'In Progress' | translate }}
                             {{ poolState.scan.percentage / 100 | percent: '1.2-2' }}
                           </ng-container>
                         </ng-template>
@@ -319,7 +319,7 @@
                 class="clickable"
                 (click)="updateSlide('disks', true, currentSlideIndex + 1, i, currentSlideTopology, vdev)"
               >
-                <strong>{{ vdev.type}}:</strong>
+                <strong>{{ vdev.type | translate }}:</strong>
                 {{ vdev.status }}
                 <!-- STATUS ICONS -->
                 <span
@@ -479,9 +479,9 @@
               </div>
               <mat-list>
                 <ng-container *ngFor="let key of currentDiskDetailsKeys">
-                  <mat-list-item *ngIf="key !== 'identifier' && currentDiskDetails[diskKey(key)]" role="listitem">
+                  <mat-list-item *ngIf="key !== 'identifier' && currentDiskDetails[key]" role="listitem">
                     <strong class="detail-key"> {{ key }}:</strong>
-                    {{ currentDiskDetails[diskKey(key)] }}
+                    {{ currentDiskDetails[key] }}
                   </mat-list-item>
                 </ng-container>
               </mat-list>

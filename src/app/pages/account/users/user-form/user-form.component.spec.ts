@@ -22,6 +22,7 @@ import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { selectUsers } from 'app/pages/account/users/store/user.selectors';
+import { DownloadService } from 'app/services/download.service';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { StorageService } from 'app/services/storage.service';
 import { UserService } from 'app/services/user.service';
@@ -88,6 +89,8 @@ describe('UserFormComponent', () => {
       mockProvider(IxSlideInRef),
       mockProvider(StorageService, {
         filesystemStat: jest.fn(() => of({ mode: 16832 })),
+      }),
+      mockProvider(DownloadService, {
         downloadBlob: jest.fn(),
       }),
       mockProvider(FormErrorHandlerService),
@@ -216,7 +219,7 @@ describe('UserFormComponent', () => {
       const downloadButton = await loader.getHarness(MatButtonHarness.with({ text: 'Download Authorized Keys' }));
       await downloadButton.click();
 
-      expect(spectator.inject(StorageService).downloadBlob).toHaveBeenCalledWith(new Blob(), 'test-user_public_key_rsa');
+      expect(spectator.inject(DownloadService).downloadBlob).toHaveBeenCalledWith(new Blob(), 'test-user_public_key_rsa');
     });
 
     it('shows current group values when form is being edited', async () => {

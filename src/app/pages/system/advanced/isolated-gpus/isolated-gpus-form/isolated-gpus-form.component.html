@@ -12,10 +12,12 @@
     >
       <ix-fieldset>
         <ix-select
+          ixUiSearchableElement
           formControlName="isolated_gpu_pci_ids"
           [label]="'GPUs' | translate"
           [multiple]="true"
           [options]="options$"
+          [ixSearchConfig]="searchElements.isolatedGpuPciIds"
         ></ix-select>
       </ix-fieldset>
 

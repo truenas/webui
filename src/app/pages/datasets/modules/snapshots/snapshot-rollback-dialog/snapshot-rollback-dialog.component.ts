@@ -104,8 +104,13 @@ export class SnapshotRollbackDialogComponent implements OnInit {
     const body: ZfsRollbackParams[1] = {
       force: true,
     };
-    if (this.form.value.recursive) {
+
+    if (this.form.value.recursive === RollbackRecursiveType.Recursive) {
       body.recursive = true;
+    }
+
+    if (this.form.value.recursive === RollbackRecursiveType.RecursiveClones) {
+      body.recursive_clones = true;
     }
 
     this.websocket.call('zfs.snapshot.rollback', [this.snapshotName, body]).pipe(

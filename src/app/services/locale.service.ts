@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
+import { TranslateService } from '@ngx-translate/core';
 import { format, utcToZonedTime } from 'date-fns-tz';
 import { combineLatest } from 'rxjs';
 import { Option } from 'app/interfaces/option.interface';
@@ -19,6 +20,7 @@ export class LocaleService {
 
   constructor(
     private store$: Store<AppState>,
+    private translate: TranslateService,
   ) {
     combineLatest([
       this.store$.select(selectTimezone),
@@ -60,7 +62,7 @@ export class LocaleService {
       date = utcToZonedTime(new Date().valueOf(), tz);
     }
     return [
-      { label: `${format(date, 'HH:mm:ss')} ${this.t24}`, value: 'HH:mm:ss' },
+      { label: `${format(date, 'HH:mm:ss')} ${this.translate.instant(this.t24)}`, value: 'HH:mm:ss' },
       { label: format(date, 'hh:mm:ss aaaaa\'m\''), value: 'hh:mm:ss aaaaa\'m\'' },
       { label: format(date, 'hh:mm:ss aa'), value: 'hh:mm:ss aa' },
     ];

@@ -2,7 +2,6 @@ import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
 import { Router } from '@angular/router';
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
@@ -42,23 +41,22 @@ export class SmbCardComponent implements OnInit {
 
   smbShares: SmbShare[] = [];
   dataProvider: AsyncDataProvider<SmbShare>;
-  title = T('Windows (SMB) Shares');
 
   columns = createTable<SmbShare>([
     textColumn({
-      title: helptextSharingSmb.column_name,
+      title: this.translate.instant(helptextSharingSmb.column_name),
       propertyName: 'name',
     }),
     textColumn({
-      title: helptextSharingSmb.column_path,
+      title: this.translate.instant(helptextSharingSmb.column_path),
       propertyName: 'path_local',
     }),
     textColumn({
-      title: helptextSharingSmb.column_comment,
+      title: this.translate.instant(helptextSharingSmb.column_comment),
       propertyName: 'comment',
     }),
     toggleColumn({
-      title: helptextSharingSmb.column_enabled,
+      title: this.translate.instant(helptextSharingSmb.column_enabled),
       propertyName: 'enabled',
       onRowToggle: (row: SmbShare) => this.onChangeEnabledState(row),
       requiredRoles: this.requiredRoles,

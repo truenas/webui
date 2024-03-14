@@ -26,11 +26,11 @@
       <mat-spinner [diameter]="40"></mat-spinner>
     </div>
     <div *ngIf="!isLoading()">
-      <h3 class="empty-title">{{ conf.title }}</h3>
+      <h3 class="empty-title">{{ conf.title | translate }}</h3>
 
       <!-- Messages -->
       <p *ngIf="conf.message && !conf.compact" class="empty-message">
-        {{ conf.message }}
+        {{ conf.message | translate }}
       </p>
 
       <button

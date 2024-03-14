@@ -24,6 +24,7 @@ import {
   SetProductionStatusDialogComponent,
   SetProductionStatusDialogResult,
 } from 'app/pages/system/general-settings/support/set-production-status-dialog/set-production-status-dialog.component';
+import { elements } from 'app/pages/system/general-settings/support/support-card/support-card.elements';
 import { SystemInfoInSupport } from 'app/pages/system/general-settings/support/system-info-in-support.interface';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -41,6 +42,7 @@ import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 })
 export class SupportCardComponent implements OnInit {
   readonly requiredRoles = [Role.FullAdmin];
+  protected readonly searchElements = elements;
 
   isProduction: boolean;
   productImage = 'ix-original-cropped.png';
@@ -101,6 +103,11 @@ export class SupportCardComponent implements OnInit {
         this.isProduction = isProduction;
         this.cdr.markForCheck();
       });
+  }
+
+  get productImageSrc(): string {
+    // TODO: Duplicating code in widget-sys-info. Figure out some universal way of doing this.
+    return 'assets/images' + (this.productImage.startsWith('/') ? this.productImage : ('/' + this.productImage));
   }
 
   parseLicenseInfo(): void {

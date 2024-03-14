@@ -4,7 +4,6 @@ import { fakeAsync, tick } from '@angular/core/testing';
 import {
   FormControl, FormsModule, NgControl, ReactiveFormsModule,
 } from '@angular/forms';
-import { MatSelectHarness } from '@angular/material/select/testing';
 import {
   createHostFactory,
   Spectator,
@@ -16,6 +15,7 @@ import { delay } from 'rxjs/operators';
 import { Option, SelectOption } from 'app/interfaces/option.interface';
 import { IxErrorsComponent } from 'app/modules/ix-forms/components/ix-errors/ix-errors.component';
 import { IxLabelComponent } from 'app/modules/ix-forms/components/ix-label/ix-label.component';
+import { IxSelectHarness } from 'app/modules/ix-forms/components/ix-select/ix-select.harness';
 import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
 import { IxSelectComponent } from './ix-select.component';
 
@@ -60,7 +60,7 @@ describe('IxSelectComponent', () => {
       control.disable();
       spectator.component.setDisabledState(true);
 
-      const select = await loader.getHarness(MatSelectHarness);
+      const select = await (await loader.getHarness(IxSelectHarness)).getSelectHarness();
       const state = await select.isDisabled();
 
       expect(state).toBe(true);
@@ -92,7 +92,7 @@ describe('IxSelectComponent', () => {
     it('shows a list of options', async () => {
       spectator.setInput({ options: options$ });
 
-      const select = await loader.getHarness(MatSelectHarness);
+      const select = await (await loader.getHarness(IxSelectHarness)).getSelectHarness();
       await select.open();
       const options = await select.getOptions();
       const optionLabels = await parallel(() => options.map((option) => option.getText()));
@@ -103,7 +103,7 @@ describe('IxSelectComponent', () => {
       spectator.setInput({ options: options$ });
       control.setValue('France');
 
-      const select = await loader.getHarness(MatSelectHarness);
+      const select = await (await loader.getHarness(IxSelectHarness)).getSelectHarness();
       const currentValue = await select.getValueText();
       expect(currentValue).toBe('FRA');
     });
@@ -111,7 +111,7 @@ describe('IxSelectComponent', () => {
     it('writes values when option is selected from the dropdown', async () => {
       spectator.setInput({ options: options$ });
 
-      const select = await loader.getHarness(MatSelectHarness);
+      const select = await (await loader.getHarness(IxSelectHarness)).getSelectHarness();
       await select.open();
       await select.clickOptions({ text: 'GBR' });
       expect(control.value).toBe('Great Britain');
@@ -121,7 +121,7 @@ describe('IxSelectComponent', () => {
       spectator.component.options = of<SelectOption[]>([]);
       spectator.component.ngOnChanges();
 
-      const select = await loader.getHarness(MatSelectHarness);
+      const select = await (await loader.getHarness(IxSelectHarness)).getSelectHarness();
       await select.open();
       const options = await select.getOptions();
       const optionLabels = await parallel(() => options.map((option) => option.getText()));
@@ -134,7 +134,7 @@ describe('IxSelectComponent', () => {
       spectator.component.options = throwError(() => new Error('Some Error'));
       spectator.component.ngOnChanges();
 
-      const select = await loader.getHarness(MatSelectHarness);
+      const select = await (await loader.getHarness(IxSelectHarness)).getSelectHarness();
       await select.open();
       const options = await select.getOptions();
       const optionLabels = await parallel(() => options.map((option) => option.getText()));
@@ -149,7 +149,7 @@ describe('IxSelectComponent', () => {
       ]);
       spectator.component.ngOnChanges();
 
-      const select = await loader.getHarness(MatSelectHarness);
+      const select = await (await loader.getHarness(IxSelectHarness)).getSelectHarness();
       await select.open();
       const options = await select.getOptions();
       expect(await options[1].isDisabled()).toBe(false);
@@ -164,7 +164,7 @@ describe('IxSelectComponent', () => {
       ]);
       spectator.component.ngOnChanges();
 
-      const select = await loader.getHarness(MatSelectHarness);
+      const select = await (await loader.getHarness(IxSelectHarness)).getSelectHarness();
       await select.open();
 
       const tooltips = spectator.queryAll(TooltipComponent);
@@ -190,28 +190,34 @@ describe('IxSelectComponent', () => {
     });
 
     it('multiple values must be selected if \'multiple\' is true', async () => {
-      const select = await loader.getHarness(MatSelectHarness);
+      const select = await loader.getHarness(IxSelectHarness);
+      const matSelect = await select.getSelectHarness();
 
-      await select.open();
-      await select.clickOptions({ text: 'GBR' });
-      await select.clickOptions({ text: 'GRL' });
-      const currentValue = await select.getValueText();
+      await matSelect.open();
+      await matSelect.clickOptions({ text: 'GBR' });
+      await matSelect.clickOptions({ text: 'GRL' });
 
-      expect(currentValue).toBe('GBR, GRL');
+      expect(await select.getValue()).toEqual(['GBR', 'GRL']);
       expect(control.value).toEqual(['Great Britain', 'Greenland']);
     });
 
-    // TODO: Refactor tests not to call methods directly.
-    it('should select all options when "Select All" is checked', () => {
+    it('should select all options when "Select All" is checked', async () => {
       spectator.setInput('showSelectAll', true);
-      spectator.component.toggleSelectAll(true);
+      const select = await loader.getHarness(IxSelectHarness);
+      await select.selectAll();
+
       expect(control.value).toEqual(['Great Britain', 'Greenland', 'France']);
+      expect(await select.getValue()).toEqual(['GBR', 'GRL', 'FRA']);
     });
 
-    it('should unselect all options when "Select All" is unchecked', () => {
+    it('should unselect all options when "Select All" is unchecked', async () => {
       spectator.setInput('showSelectAll', true);
-      spectator.component.toggleSelectAll(false);
-      expect(control.value).toEqual([]);
+
+      const select = await loader.getHarness(IxSelectHarness);
+      await select.unselectAll();
+
+      expect(control.value).toBe('');
+      expect(await select.getValue()).toEqual([]);
     });
   });
 });

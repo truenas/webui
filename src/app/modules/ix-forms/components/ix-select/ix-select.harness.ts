@@ -39,14 +39,14 @@ export class IxSelectHarness extends ComponentHarness implements IxFormControlHa
       return Promise.all(optionTexts);
     }
 
-    return (await this.getSelectHarness()).getValueText();
+    return select.getValueText();
   }
 
   /**
    * @param newLabels option label or labels to be selected
    */
   async setValue(newLabels: string | string[]): Promise<void> {
-    const select = (await this.getSelectHarness());
+    const select = await this.getSelectHarness();
     await select.open();
 
     if (!await this.hasOptions(newLabels)) {
@@ -86,5 +86,14 @@ export class IxSelectHarness extends ComponentHarness implements IxFormControlHa
     const optionLabels = await this.getOptionLabels();
     const labelsToCheck = Array.isArray(labels) ? labels : [labels];
     return labelsToCheck.every((label) => optionLabels.includes(label));
+  }
+
+  async selectAll(): Promise<void> {
+    const labels = await this.getOptionLabels();
+    return this.setValue(labels);
+  }
+
+  async unselectAll(): Promise<void> {
+    return this.setValue([]);
   }
 }

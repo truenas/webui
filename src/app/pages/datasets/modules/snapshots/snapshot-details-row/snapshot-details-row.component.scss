@@ -1,10 +1,21 @@
 :host {
-  display: table-row;
+  display: block;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 8px 0;
 }
 
 .details {
   margin: 0;
   padding: 16px 0;
+
+  .details-row {
+    display: flex;
+  }
 
   dt {
     display: inline-block;

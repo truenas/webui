@@ -32,6 +32,7 @@ import { matchOthersFgValidator } from 'app/modules/ix-forms/validators/password
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { userAdded, userChanged } from 'app/pages/account/users/store/user.actions';
 import { selectUsers } from 'app/pages/account/users/store/user.selectors';
+import { DownloadService } from 'app/services/download.service';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { StorageService } from 'app/services/storage.service';
 import { UserService } from 'app/services/user.service';
@@ -175,6 +176,7 @@ export class UserFormComponent implements OnInit {
     private slideInRef: IxSlideInRef<UserFormComponent>,
     private snackbar: SnackbarService,
     private storageService: StorageService,
+    private downloadService: DownloadService,
     private store$: Store<AppState>,
     private dialog: DialogService,
     private userService: UserService,
@@ -356,7 +358,7 @@ export class UserFormComponent implements OnInit {
     const name = this.form.controls.username.value;
     const key = this.form.controls.sshpubkey.value;
     const blob = new Blob([key], { type: 'text/plain' });
-    this.storageService.downloadBlob(blob, `${name}_public_key_rsa`);
+    this.downloadService.downloadBlob(blob, `${name}_public_key_rsa`);
   }
 
   private setupNewUserForm(): void {
