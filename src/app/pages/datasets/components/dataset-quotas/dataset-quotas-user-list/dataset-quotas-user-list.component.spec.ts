@@ -26,25 +26,23 @@ import { DatasetQuotasUserListComponent } from 'app/pages/datasets/components/da
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 
-const fakeUserQuotas: DatasetQuota[] = [{
+const fakeUserQuotas = [{
   id: 1,
   name: 'daemon',
-  obj_quota: 1,
+  obj_quota: 5,
   obj_used: 55,
   quota: 512000,
   quota_type: DatasetQuotaType.User,
-  used_bytes: 1,
   used_percent: 25,
 }, {
   id: 2,
   name: 'bin',
   obj_quota: 0,
-  obj_used: 0,
+  obj_used: 33,
   quota: 512000,
   quota_type: DatasetQuotaType.User,
-  used_bytes: 5,
   used_percent: 0,
-}];
+}] as DatasetQuota[];
 
 describe('DatasetQuotasUserListComponent', () => {
   let spectator: Spectator<DatasetQuotasUserListComponent>;
@@ -110,8 +108,8 @@ describe('DatasetQuotasUserListComponent', () => {
 
     const expectedRows = [
       ['Name', 'ID', 'Data Quota', 'DQ Used', 'DQ % Used', 'Object Quota', 'OQ Used', 'OQ % Used', ''],
-      ['daemon', '1', '500 KiB', '500 KiB', '25%', '1', '55', '55%', ''],
-      ['bin', '2', '500 KiB', '500 KiB', '0%', '—', '—', '—', ''],
+      ['daemon', '1', '500 KiB', '—', '25%', '5', '55', '11%', ''],
+      ['bin', '2', '500 KiB', '—', '0%', '—', '33', '—', ''],
     ];
 
     expect(cells).toEqual(expectedRows);
