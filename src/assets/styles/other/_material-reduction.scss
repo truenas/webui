@@ -430,6 +430,7 @@ body .mdc-card__actions,
 .mat-mdc-card .mat-toolbar-row .actions {
   align-items: center;
   display: flex;
+  flex-wrap: wrap;
   gap: 8px;
   justify-content: flex-end;
   margin-left: auto;
