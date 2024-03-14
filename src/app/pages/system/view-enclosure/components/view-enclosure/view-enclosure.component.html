@@ -1,12 +1,12 @@
 <ng-template ixPageHeader>
   <ix-page-title-header>
     <a
-      *ngIf="isJbofLicensed"
+      *ngIf="hasJbofLicensed"
       mat-button
       ixTest="manage-expansion"
       [routerLink]="['/', 'system', 'viewenclosure', 'jbof']"
     >
-      {{ 'Manage NVMe-oF Expansion' | translate }}
+      {{ 'NVMe-oF Expansion Shelves' | translate }}
     </a>
     <button *ngIf="views.length > 1 && isRackmount"
             mat-button ixTest="elements-menu"

@@ -3,7 +3,9 @@ import {
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { filter, switchMap, tap } from 'rxjs';
+import {
+  filter, forkJoin, map, switchMap, tap,
+} from 'rxjs';
 import { Role } from 'app/enums/role.enum';
 import { Jbof } from 'app/interfaces/jbof.interface';
 import { AsyncDataProvider } from 'app/modules/ix-table2/classes/async-data-provider/async-data-provider';
@@ -28,7 +30,7 @@ export class JbofListComponent implements OnInit {
 
   filterString = '';
   jbofs: Jbof[] = [];
-  isJbofLicensed = false;
+  canAddJbof = false;
 
   dataProvider: AsyncDataProvider<Jbof>;
   columns = createTable<Jbof>([
@@ -113,12 +115,15 @@ export class JbofListComponent implements OnInit {
 
   getJbofs(): void {
     this.dataProvider.load();
-    this.updateJbofLicensed();
+    this.updateAvailableJbof();
   }
 
-  updateJbofLicensed(): void {
-    this.ws.call('jbof.licensed').pipe(untilDestroyed(this)).subscribe((licensed) => {
-      this.isJbofLicensed = licensed > 0;
+  updateAvailableJbof(): void {
+    forkJoin([
+      this.ws.call('jbof.query').pipe(map((jbofs) => jbofs.length)),
+      this.ws.call('jbof.licensed'),
+    ]).pipe(untilDestroyed(this)).subscribe(([jbofsLength, licensedLength]) => {
+      this.canAddJbof = licensedLength > jbofsLength;
       this.cdr.markForCheck();
     });
   }

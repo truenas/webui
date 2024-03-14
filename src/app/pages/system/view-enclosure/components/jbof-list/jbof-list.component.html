@@ -6,7 +6,9 @@
       mat-button
       ixTest="add-jbof"
       color="primary"
-      [disabled]="!isJbofLicensed"
+      [disabled]="!canAddJbof"
+      [matTooltip]="'No available licensed Expansion Shelves ' | translate"
+      [matTooltipDisabled]="canAddJbof"
       (click)="openForm()"
     >
       {{ 'Add' | translate }}

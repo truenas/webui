@@ -24,7 +24,7 @@ export class JbosFormComponent implements OnInit {
   isFormLoading = false;
 
   form = this.fb.group({
-    description: [''],
+    description: ['', [Validators.required]],
     mgmt_ip1: ['', [Validators.required, ipv4Validator()]],
     mgmt_ip2: ['', [ipv4Validator()]],
     mgmt_username: ['', [Validators.required]],
@@ -37,8 +37,8 @@ export class JbosFormComponent implements OnInit {
 
   get title(): string {
     return this.isNew
-      ? this.translate.instant('Add Jbof')
-      : this.translate.instant('Edit Jbof');
+      ? this.translate.instant('Add Expansion Shelve')
+      : this.translate.instant('Edit Expansion Shelve');
   }
 
   constructor(
