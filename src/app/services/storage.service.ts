@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { GiB } from 'app/constants/bytes.constant';
 import { TopologyItemType, TopologyWarning, VdevType } from 'app/enums/v-dev-type.enum';
 import { FileSystemStat } from 'app/interfaces/filesystem-stat.interface';
 import { Option } from 'app/interfaces/option.interface';
@@ -105,8 +104,11 @@ export class StorageService {
 
   // Check to see if every VDEV has the same capacity. Best practices dictate every vdev should be uniform
   isMixedVdevCapacity(allVdevCapacities: Set<number>): boolean {
-    const diff = Math.max(...allVdevCapacities) - Math.min(...allVdevCapacities);
-    return allVdevCapacities.size > 1 && diff >= GiB * 2;
+    const max = Math.max(...allVdevCapacities);
+    const min = Math.min(...allVdevCapacities);
+    const diffPercentage = 100 - ((min / max) * 100);
+
+    return allVdevCapacities.size > 1 && diffPercentage >= 5;
   }
 
   getVdevDiskCapacities(vdevs: TopologyItem[], disks: Disk[]): Set<number>[] {
