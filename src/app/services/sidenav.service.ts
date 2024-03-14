@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@angular/core';
-import { MediaObserver } from '@angular/flex-layout';
 import { MatDrawerMode, MatSidenav } from '@angular/material/sidenav';
 import { Router, NavigationEnd } from '@angular/router';
+import { MediaObserver } from '@ngbracket/ngx-layout';
 import { Actions, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { take, filter, distinctUntilChanged } from 'rxjs';

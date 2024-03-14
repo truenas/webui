@@ -14,9 +14,9 @@ import {
   LogsDialogFormValue,
   PodSelectLogsDialogComponent,
 } from 'app/pages/apps/components/pod-select-logs/pod-select-logs-dialog.component';
+import { DownloadService } from 'app/services/download.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { ShellService } from 'app/services/shell.service';
-import { StorageService } from 'app/services/storage.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 interface PodLogEvent {
@@ -53,7 +53,7 @@ export class PodLogsComponent implements OnInit {
     private dialogService: DialogService,
     protected aroute: ActivatedRoute,
     protected loader: AppLoaderService,
-    protected storageService: StorageService,
+    protected download: DownloadService,
     private errorHandler: ErrorHandlerService,
     private matDialog: MatDialog,
     private cdr: ChangeDetectorRef,
@@ -136,7 +136,7 @@ export class PodLogsComponent implements OnInit {
         title: 'Choose log',
         customSubmit: (logsFormValueDialog: LogsDialogFormValue) => {
           if (isDownload) {
-            this.download(logsFormValueDialog);
+            this.downloadLogs(logsFormValueDialog);
             return;
           }
           this.onChooseLogs(logsFormValueDialog);
@@ -145,7 +145,7 @@ export class PodLogsComponent implements OnInit {
     });
   }
 
-  download(formValue: LogsDialogFormValue): void {
+  downloadLogs(formValue: LogsDialogFormValue): void {
     const chartReleaseName = formValue.apps;
     const podName = formValue.pods;
     const containerName = formValue.containers;
@@ -168,12 +168,12 @@ export class PodLogsComponent implements OnInit {
       untilDestroyed(this),
     ).subscribe((download) => {
       const [, url] = download;
-      this.storageService.streamDownloadFile(url, fileName, mimetype)
+      this.download.streamDownloadFile(url, fileName, mimetype)
         .pipe(untilDestroyed(this))
         .subscribe({
           next: (file: Blob) => {
             if (download !== null) {
-              this.storageService.downloadBlob(file, fileName);
+              this.download.downloadBlob(file, fileName);
             }
           },
           error: (error: HttpErrorResponse) => {

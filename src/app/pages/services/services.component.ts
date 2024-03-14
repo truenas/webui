@@ -28,6 +28,7 @@ import { ServiceUpsComponent } from 'app/pages/services/components/service-ups/s
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IscsiService } from 'app/services/iscsi.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { ServicesService } from 'app/services/services.service';
 import { UrlOptionsService } from 'app/services/url-options.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { serviceChanged } from 'app/store/services/services.actions';
@@ -79,6 +80,7 @@ export class ServicesComponent implements OnInit {
     private store$: Store<ServicesState>,
     private urlOptions: UrlOptionsService,
     private errorHandler: ErrorHandlerService,
+    protected servicesService: ServicesService,
   ) {}
 
   ngOnInit(): void {
@@ -87,19 +89,6 @@ export class ServicesComponent implements OnInit {
 
   get shouldShowEmpty(): boolean {
     return !this.dataSource.filteredData.length;
-  }
-
-  getRolesForService(serviceName: ServiceName): Role[] {
-    switch (serviceName) {
-      case ServiceName.Cifs:
-        return [Role.SharingSmbWrite, Role.ServiceWrite];
-      case ServiceName.Iscsi:
-        return [Role.SharingIscsiWrite, Role.ServiceWrite];
-      case ServiceName.Nfs:
-        return [Role.SharingNfsWrite, Role.ServiceWrite];
-      default:
-        return [Role.ServiceWrite];
-    }
   }
 
   getData(): void {

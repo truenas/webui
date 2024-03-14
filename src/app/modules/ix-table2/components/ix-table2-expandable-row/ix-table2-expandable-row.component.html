@@ -2,7 +2,7 @@
   <ng-container *ngIf="data">
     <dl class="details">
       <div *ngFor="let option of data">
-        <dt>{{ option.label }}:</dt>
+        <dt>{{ option.label | translate }}:</dt>
         <dd>{{ option.value?.toString() || '–' }}</dd>
       </div>
     </dl>

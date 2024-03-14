@@ -11,8 +11,8 @@ import { Job } from 'app/interfaces/job.interface';
 import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { DownloadService } from 'app/services/download.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { StorageService } from 'app/services/storage.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
@@ -30,7 +30,7 @@ export class ExportDatasetKeyDialogComponent implements OnInit {
     private errorHandler: ErrorHandlerService,
     private dialogRef: MatDialogRef<ExportDatasetKeyDialogComponent>,
     private dialogService: DialogService,
-    private storageService: StorageService,
+    private storageService: DownloadService,
     private cdr: ChangeDetectorRef,
     @Inject(MAT_DIALOG_DATA) public dataset: Dataset,
   ) { }

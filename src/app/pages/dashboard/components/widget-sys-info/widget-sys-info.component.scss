@@ -79,15 +79,6 @@ span.passive {
   text-transform: lowercase;
 }
 
-.primary-nav .card-title-text {
-  display: inline-block;
-  font-size: 1.5rem;
-  font-weight: 500;
-  position: relative;
-  top: 2px;
-  vertical-align: middle;
-}
-
 .carousel {
   display: flex;
   flex-direction: row;
@@ -175,32 +166,6 @@ span.passive {
   font-size: 115%;
   margin-left: 8px;
   padding: 6px;
-}
-
-.nic-name {
-  font-size: 300%;
-}
-
-.link-state .icon-wrapper {
-  display: inline-block;
-  font-size: 175%;
-  position: relative;
-  top: 3px;
-}
-
-.nic-name .icon-wrapper {
-  display: inline;
-  font-size: 75%;
-}
-
-.nic-name.up .icon-wrapper,
-.link-state.up .icon-wrapper {
-  color: var(--green);
-}
-
-.nic-name.down .icon-wrapper,
-.link-state.down .icon-wrapper {
-  color: var(--red);
 }
 
 .carousel-nav {
@@ -371,6 +336,10 @@ img.platform-logo {
   position: relative;
 }
 
+.xs.widget .content-left {
+  max-height: unset;
+}
+
 .ha-node-status {
   font-weight: 500;
 }
@@ -406,6 +375,11 @@ div.generic.alert .ix-icon {
   width: auto;
 }
 
+.xs.widget div.generic.alert .ix-icon {
+  font-size: 32px;
+  height: 32px;
+}
+
 .left.passive .product-image img {
   opacity: 0.5;
 }
@@ -439,7 +413,7 @@ div.generic.alert .ix-icon {
 .xs.widget .product-image.rackmount img,
 .xs.widget .product-image.ix-logo img {
   height: 23vw;
-  margin: 5vw 0 8px;
+  margin: 8px 0;
   width: auto;
 }
 
@@ -502,9 +476,9 @@ div.generic.alert .ix-icon {
 }
 
 .primary-nav.mat-card-title-text {
-  left: 16px;
+  left: 0;
   position: absolute;
-  top: 4px;
+  top: 0;
   z-index: 2;
 }
 

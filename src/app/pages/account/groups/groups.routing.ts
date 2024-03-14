@@ -31,7 +31,6 @@ export const routes: Routes = [
         data: {
           title: T('Privileges'),
           breadcrumb: T('Privileges'),
-          isNew: true,
         },
       },
     ],

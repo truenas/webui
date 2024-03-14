@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnInit,
+  ChangeDetectionStrategy, Component, Input, OnInit,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
@@ -40,22 +40,22 @@ export class KerberosRealmsListComponent implements OnInit {
   kerberosRealsm: KerberosRealmRow[] = [];
   columns = createTable<KerberosRealmRow>([
     textColumn({
-      title: this.translateService.instant('Realm'),
+      title: this.translate.instant('Realm'),
       propertyName: 'realm',
       sortable: true,
     }),
     textColumn({
-      title: this.translateService.instant('KDC'),
+      title: this.translate.instant('KDC'),
       propertyName: 'kdc_string',
       sortable: true,
     }),
     textColumn({
-      title: this.translateService.instant('Admin Server'),
+      title: this.translate.instant('Admin Server'),
       propertyName: 'admin_server_string',
       sortable: true,
     }),
     textColumn({
-      title: this.translateService.instant('Password Server'),
+      title: this.translate.instant('Password Server'),
       propertyName: 'kpasswd_server_string',
       sortable: true,
     }),
@@ -63,7 +63,7 @@ export class KerberosRealmsListComponent implements OnInit {
       actions: [
         {
           iconName: 'edit',
-          tooltip: this.translateService.instant('Edit'),
+          tooltip: this.translate.instant('Edit'),
           onClick: (row) => {
             const slideInRef = this.slideInService.open(KerberosRealmsFormComponent, { data: row });
             slideInRef.slideInClosed$.pipe(
@@ -73,12 +73,12 @@ export class KerberosRealmsListComponent implements OnInit {
         },
         {
           iconName: 'delete',
-          tooltip: this.translateService.instant('Delete'),
+          tooltip: this.translate.instant('Delete'),
           requiredRoles: this.requiredRoles,
           onClick: (row) => {
             this.dialogService.confirm({
-              title: this.translateService.instant(helptextKerberosRealms.krb_realmlist_deletemessage_title),
-              message: this.translateService.instant('Are you sure you want to delete this item?'),
+              title: this.translate.instant(helptextKerberosRealms.krb_realmlist_deletemessage_title),
+              message: this.translate.instant('Are you sure you want to delete this item?'),
             }).pipe(
               filter(Boolean),
               switchMap(() => this.ws.call('kerberos.realm.delete', [row.id])),
@@ -100,10 +100,9 @@ export class KerberosRealmsListComponent implements OnInit {
   });
 
   constructor(
-    private translateService: TranslateService,
+    private translate: TranslateService,
     private ws: WebSocketService,
     protected dialogService: DialogService,
-    private cdr: ChangeDetectorRef,
     private errorHandler: ErrorHandlerService,
     protected emptyService: EmptyService,
     private slideInService: IxSlideInService,

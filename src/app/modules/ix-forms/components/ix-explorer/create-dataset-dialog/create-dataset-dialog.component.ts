@@ -6,6 +6,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { BehaviorSubject } from 'rxjs';
+import { nameValidatorRegex } from 'app/constants/name-validator.constant';
 import { DatasetCaseSensitivity } from 'app/enums/dataset.enum';
 import { Role } from 'app/enums/role.enum';
 import { Dataset, DatasetCreate } from 'app/interfaces/dataset.interface';
@@ -13,7 +14,6 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { forbiddenValues } from 'app/modules/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
 import { datasetNameTooLong } from 'app/pages/datasets/components/dataset-form/utils/name-length-validation';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { NameValidationService } from 'app/services/name-validation.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
@@ -29,7 +29,7 @@ export class CreateDatasetDialogComponent implements OnInit {
   form = this.fb.group({
     name: ['', [
       Validators.required,
-      Validators.pattern(this.nameValidationService.nameRegex),
+      Validators.pattern(nameValidatorRegex),
     ]],
   });
   parent: Dataset;
@@ -40,7 +40,6 @@ export class CreateDatasetDialogComponent implements OnInit {
     private ws: WebSocketService,
     private dialog: DialogService,
     private errorHandler: ErrorHandlerService,
-    private nameValidationService: NameValidationService,
     private dialogRef: MatDialogRef<CreateDatasetDialogComponent>,
     @Inject(MAT_DIALOG_DATA) private data: { parentId: string; dataset: DatasetCreate },
   ) {}

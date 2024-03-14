@@ -1,13 +1,12 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import {
-  ChangeDetectionStrategy,
-  Component, ElementRef, Input, ViewChild,
+  ChangeDetectionStrategy, Component, ElementRef, Input, ViewChild,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Job } from 'app/interfaces/job.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { DownloadService } from 'app/services/download.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { StorageService } from 'app/services/storage.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
@@ -32,7 +31,7 @@ export class ErrorTemplateComponent {
 
   constructor(
     private ws: WebSocketService,
-    public storage: StorageService,
+    private download: DownloadService,
     private errorHandler: ErrorHandlerService,
     private dialogService: DialogService,
   ) {}
@@ -64,9 +63,9 @@ export class ErrorTemplateComponent {
       .pipe(this.errorHandler.catchError(), untilDestroyed(this))
       .subscribe((url) => {
         const mimetype = 'text/plain';
-        this.storage.streamDownloadFile(url, `${this.logs.id}.log`, mimetype).pipe(untilDestroyed(this)).subscribe({
+        this.download.streamDownloadFile(url, `${this.logs.id}.log`, mimetype).pipe(untilDestroyed(this)).subscribe({
           next: (file) => {
-            this.storage.downloadBlob(file, `${this.logs.id}.log`);
+            this.download.downloadBlob(file, `${this.logs.id}.log`);
           },
           error: (error: HttpErrorResponse) => {
             this.dialogService.error(this.errorHandler.parseHttpError(error));

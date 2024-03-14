@@ -51,7 +51,7 @@
     <ng-template let-disk ix-table-details-row [dataProvider]="dataProvider">
       <dl *ngIf="hiddenColumns.length" class="table-hidden-columns">
         <div *ngFor="let column of hiddenColumns">
-          <b>{{ column.title }}:</b>
+          <b>{{ column.title | translate }}:</b>
           <span>{{ column?.getValue?.(disk) || disk[column.propertyName] || ('N/A' | translate) }}</span>
         </div>
         <mat-divider></mat-divider>

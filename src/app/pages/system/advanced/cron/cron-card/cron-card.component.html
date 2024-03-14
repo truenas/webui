@@ -9,8 +9,11 @@
     <div class="actions">
       <button
         *ixRequiresRoles="requiredRoles"
+        ixUiSearchableElement
+        id="add-cron"
         mat-button
         [ixTest]="['cron', 'add']"
+        [ixSearchConfig]="searchElements.addCronJob"
         (click)="onAdd()"
       >{{ 'Add' | translate }}</button>
     </div>

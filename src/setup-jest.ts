@@ -159,3 +159,6 @@ Range.prototype.getClientRects = () => ({
   length: 0,
   [Symbol.iterator]: jest.fn(),
 });
+
+// eslint-disable-next-line no-restricted-globals
+Object.defineProperty(window.URL, 'createObjectURL', { value: () => '' });

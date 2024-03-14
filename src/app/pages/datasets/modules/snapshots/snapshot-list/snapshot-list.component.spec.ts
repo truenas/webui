@@ -1,29 +1,29 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { ReactiveFormsModule } from '@angular/forms';
+import { MatButtonHarness } from '@angular/material/button/testing';
 import { ActivatedRoute } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { MockStore, provideMockStore } from '@ngrx/store/testing';
-import { MockModule, MockPipe } from 'ng-mocks';
+import { provideMockStore } from '@ngrx/store/testing';
+import { MockModule } from 'ng-mocks';
+import { of } from 'rxjs';
 import { CoreComponents } from 'app/core/core-components.module';
 import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-datetime.pipe';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
-import { Preferences } from 'app/interfaces/preferences.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxFileSizePipe } from 'app/modules/ix-file-size/ix-file-size.pipe';
-import { IxEmptyRowHarness } from 'app/modules/ix-tables/components/ix-empty-row/ix-empty-row.component.harness';
-import { IxTableModule } from 'app/modules/ix-tables/ix-table.module';
-import { IxTableHarness } from 'app/modules/ix-tables/testing/ix-table.harness';
+import { IxSlideToggleHarness } from 'app/modules/ix-forms/components/ix-slide-toggle/ix-slide-toggle.harness';
+import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
+import { IxTable2Harness } from 'app/modules/ix-table2/components/ix-table2/ix-table2.harness';
+import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
 import { LayoutModule } from 'app/modules/layout/layout.module';
 import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
 import { SearchInput1Component } from 'app/modules/search-input1/search-input1.component';
-import { snapshotsInitialState, SnapshotsState } from 'app/pages/datasets/modules/snapshots/store/snapshot.reducer';
-import {
-  selectSnapshots, selectSnapshotState, selectSnapshotsTotal,
-} from 'app/pages/datasets/modules/snapshots/store/snapshot.selectors';
+import { SnapshotAddFormComponent } from 'app/pages/datasets/modules/snapshots/snapshot-add-form/snapshot-add-form.component';
+import { snapshotsInitialState } from 'app/pages/datasets/modules/snapshots/store/snapshot.reducer';
+import { selectSnapshotState, selectSnapshots, selectSnapshotsTotal } from 'app/pages/datasets/modules/snapshots/store/snapshot.selectors';
 import { fakeZfsSnapshotDataSource } from 'app/pages/datasets/modules/snapshots/testing/snapshot-fake-datasource';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { AppState } from 'app/store';
 import { selectPreferences } from 'app/store/preferences/preferences.selectors';
 import { selectGeneralConfig } from 'app/store/system-config/system-config.selectors';
 import { SnapshotListComponent } from './snapshot-list.component';
@@ -31,27 +31,31 @@ import { SnapshotListComponent } from './snapshot-list.component';
 describe('SnapshotListComponent', () => {
   let spectator: Spectator<SnapshotListComponent>;
   let loader: HarnessLoader;
-  let store$: MockStore<AppState>;
+  let table: IxTable2Harness;
 
   const createComponent = createComponentFactory({
     component: SnapshotListComponent,
     imports: [
       CoreComponents,
-      IxTableModule,
+      IxTable2Module,
       MockModule(LayoutModule),
       MockModule(PageHeaderModule),
       SearchInput1Component,
+      IxFormsModule,
+      ReactiveFormsModule,
     ],
     declarations: [
       FakeFormatDateTimePipe,
-      MockPipe(IxFileSizePipe, jest.fn(() => '1.49 TiB')),
     ],
     providers: [
+      mockAuth(),
       mockWebSocket([
-        mockCall('zfs.snapshot.query', []),
+        mockCall('zfs.snapshot.query', fakeZfsSnapshotDataSource),
         mockCall('zfs.snapshot.delete'),
       ]),
-      mockProvider(DialogService),
+      mockProvider(DialogService, {
+        confirm: jest.fn(() => of(true)),
+      }),
       mockProvider(IxSlideInService),
       provideMockStore({
         selectors: [
@@ -61,11 +65,11 @@ describe('SnapshotListComponent', () => {
           },
           {
             selector: selectSnapshots,
-            value: [],
+            value: fakeZfsSnapshotDataSource,
           },
           {
             selector: selectSnapshotsTotal,
-            value: 0,
+            value: fakeZfsSnapshotDataSource.length,
           },
           {
             selector: selectPreferences,
@@ -81,11 +85,10 @@ describe('SnapshotListComponent', () => {
           },
         ],
       }),
-      mockAuth(),
     ],
   });
 
-  beforeEach(() => {
+  beforeEach(async () => {
     spectator = createComponent({
       providers: [
         {
@@ -101,66 +104,37 @@ describe('SnapshotListComponent', () => {
       ],
     });
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    store$ = spectator.inject(MockStore);
-  });
-
-  it('should have error message when can not retrieve response', async () => {
-    store$.overrideSelector(selectSnapshotState, {
-      error: 'Snapshots could not be loaded',
-    } as SnapshotsState);
-    store$.refreshState();
-    store$.select(selectSnapshots).subscribe((snapshots) => {
-      expect(snapshots).toEqual([]);
-    });
-
-    spectator.detectChanges();
-    const emptyRow = await loader.getHarness(IxEmptyRowHarness);
-    const emptyTitle = await emptyRow.getTitleText();
-    expect(emptyTitle).toBe('Can not retrieve response');
-  });
-
-  it('should have empty message when loaded and datasource is empty', async () => {
-    spectator.detectChanges();
-    const emptyRow = await loader.getHarness(IxEmptyRowHarness);
-    const emptyTitle = await emptyRow.getTitleText();
-    expect(emptyTitle).toBe('No records have been added yet');
+    table = await loader.getHarness(IxTable2Harness);
   });
 
   it('should show table rows', async () => {
-    store$.overrideSelector(selectPreferences, { showSnapshotExtraColumns: false } as Preferences);
-    store$.overrideSelector(selectSnapshots, fakeZfsSnapshotDataSource);
-    store$.refreshState();
-
-    store$.select(selectSnapshots).subscribe((snapshots) => {
-      expect(snapshots).toEqual(fakeZfsSnapshotDataSource);
-    });
-
-    const table = await loader.getHarness(IxTableHarness);
     const expectedRows = [
-      ['', 'Dataset', 'Snapshot', ''],
-      ['', 'test-dataset', 'second-snapshot', ''],
-      ['', 'test-dataset', 'first-snapshot', ''],
+      ['', 'Dataset', 'Snapshot'],
+      ['', 'test-dataset', 'second-snapshot'],
+      ['', 'test-dataset', 'first-snapshot'],
     ];
-    const tableData = await table.getCells(true);
+    const tableData = await table.getCellTexts();
     expect(tableData).toEqual(expectedRows);
   });
 
-  it('should show table with extra rows', async () => {
-    store$.overrideSelector(selectPreferences, { showSnapshotExtraColumns: true } as Preferences);
-    store$.overrideSelector(selectSnapshots, fakeZfsSnapshotDataSource);
-    store$.refreshState();
+  it('should show table with extra columns', async () => {
+    const slideToggle = await loader.getHarness(IxSlideToggleHarness.with({ label: 'Show extra columns' }));
+    await slideToggle.toggle();
 
-    store$.select(selectSnapshots).subscribe((snapshots) => {
-      expect(snapshots).toEqual(fakeZfsSnapshotDataSource);
-    });
-
-    const table = await loader.getHarness(IxTableHarness);
-    const tableData = await table.getCells(true);
+    // TODO: Add column names when better mechanism to hide/show columns is available
+    // TODO: Add column values when sizeColumn and dateColumn will return values.
     const expectedRows = [
-      ['', 'Dataset', 'Snapshot', 'Used', 'Date created', 'Referenced', ''],
-      ['', 'test-dataset', 'second-snapshot', '1.49 TiB', '2021-10-18 19:51:43', '1.49 TiB', ''],
-      ['', 'test-dataset', 'first-snapshot', '1.49 TiB', '2021-10-18 19:51:54', '1.49 TiB', ''],
+      ['', 'Dataset', 'Snapshot', '', '', ''],
+      ['', 'test-dataset', 'second-snapshot', '', '', ''],
+      ['', 'test-dataset', 'first-snapshot', '', '', ''],
     ];
-    expect(tableData).toEqual(expectedRows);
+    expect(await table.getCellTexts()).toEqual(expectedRows);
+  });
+
+  it('should show form when Add button is pressed', async () => {
+    const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
+    await addButton.click();
+
+    expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(SnapshotAddFormComponent);
   });
 });

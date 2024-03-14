@@ -1,7 +1,7 @@
 <div class="wrapper">
   <div class="container">
-    <div class="title">{{ title }}</div>
-    <p class="message">{{ message }}</p>
+    <div class="title">{{ title | translate }}</div>
+    <p class="message">{{ message | translate }}</p>
   </div>
   <button
     *ngIf="data.showClose"

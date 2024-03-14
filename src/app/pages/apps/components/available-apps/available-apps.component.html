@@ -44,7 +44,7 @@
 <ng-template #apps let-appSection>
   <section *ngIf="appSection.apps as apps">
     <ng-container *ngIf="apps.length">
-      <h3 class="section-title">{{ appSection.title }}</h3>
+      <h3 class="section-title">{{ appSection.title | translate }}</h3>
       <div class="apps">
         <ix-app-card
           *ngFor="let app of apps; trackBy: trackByAppId"

@@ -33,9 +33,9 @@ import {
 import {
   SignCsrDialogComponent,
 } from 'app/pages/credentials/certificates-dash/sign-csr-dialog/sign-csr-dialog.component';
+import { DownloadService } from 'app/services/download.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { StorageService } from 'app/services/storage.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
@@ -112,7 +112,7 @@ export class CertificateAuthorityListComponent implements OnInit {
     private slideInService: IxSlideInService,
     private translate: TranslateService,
     protected emptyService: EmptyService,
-    private storageService: StorageService,
+    private download: DownloadService,
     private dialogService: DialogService,
     private errorHandler: ErrorHandlerService,
   ) {}
@@ -200,12 +200,12 @@ export class CertificateAuthorityListComponent implements OnInit {
       .subscribe({
         next: ([, url]) => {
           const mimetype = 'application/x-x509-user-cert';
-          this.storageService
+          this.download
             .streamDownloadFile(url, fileName, mimetype)
             .pipe(untilDestroyed(this))
             .subscribe({
               next: (file) => {
-                this.storageService.downloadBlob(file, fileName);
+                this.download.downloadBlob(file, fileName);
               },
               error: (error: HttpErrorResponse) => {
                 this.dialogService.error({
@@ -227,12 +227,12 @@ export class CertificateAuthorityListComponent implements OnInit {
       .subscribe({
         next: ([, url]) => {
           const mimetype = 'text/plain';
-          this.storageService
+          this.download
             .streamDownloadFile(url, keyName, mimetype)
             .pipe(untilDestroyed(this))
             .subscribe({
               next: (file) => {
-                this.storageService.downloadBlob(file, keyName);
+                this.download.downloadBlob(file, keyName);
               },
               error: (error: HttpErrorResponse) => {
                 this.dialogService.error({

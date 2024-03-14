@@ -32,7 +32,7 @@ body.safari-platform {
 body {
   background: var(--bg1);
   color: rgba(0, 0, 0, 0.87);
-  font-family: 'IBM Plex Sans', 'Roboto', 'Helvetica Neue', sans-serif;
+  font-family: var(--font-family-body);
   font-size: 0.875rem;
   font-weight: 400;
   line-height: 1.65;
@@ -350,15 +350,6 @@ body .mat-mdc-select-trigger {
   word-break: break-all;
 }
 
-.datatable-header-cell-wrapper {
-  padding: 0.5rem;
-}
-
-.datatable-body-cell-label {
-  overflow: hidden;
-  padding: 0.5rem;
-}
-
 .empty-row {
   padding: 1rem;
 }
@@ -548,43 +539,35 @@ body * {
         margin: 0;
       }
     }
+
+    .sidebar-list-item.open .sub-menu {
+      background: #fff;
+      box-shadow: 0 2px 1px -1px rgba(0, 0, 0, 0.2), 0 1px 1px 0 rgba(0, 0, 0, 0.14), 0 1px 3px 0 rgba(0, 0, 0, 0.12);
+      display: block;
+      left: 47px;
+      max-height: 600px !important;
+      overflow-y: auto;
+      position: absolute;
+      top: 0;
+      width: 200px;
+      z-index: 9999;
+    }
+
+    .sidebar-list-item.open .sub-menu .mat-mdc-list-item a {
+      padding-left: 1rem;
+    }
+
+    .mat-nav-list > div > .sidebar-list-item a .ix-icon {
+      margin: 0;
+    }
+
+    .mat-nav-list > div > .sidebar-list-item a .menu-caret {
+      font-size: medium;
+      left: 33px;
+      position: absolute;
+      top: 16px;
+    }
   }
-}
-
-.collapsed-menu .sidebar-panel .sidebar-list-item.open .sub-menu {
-  background: #fff;
-  box-shadow: 0 2px 1px -1px rgba(0, 0, 0, 0.2), 0 1px 1px 0 rgba(0, 0, 0, 0.14), 0 1px 3px 0 rgba(0, 0, 0, 0.12);
-  display: block;
-  left: 47px;
-  max-height: 600px !important;
-  overflow-y: auto;
-  position: absolute;
-  top: 0;
-  width: 200px;
-  z-index: 9999;
-}
-
-.collapsed-menu .sidebar-panel .sidebar-list-item.open .sub-menu .mat-mdc-list-item a {
-  padding-left: 1rem;
-}
-
-.collapsed-menu .sidebar-panel .mat-nav-list > div > .sidebar-list-item a .ix-icon {
-  margin: 0;
-}
-
-.collapsed-menu .sidebar-panel .mat-nav-list > div > .sidebar-list-item a .menu-caret {
-  font-size: medium;
-  left: 33px;
-  position: absolute;
-  top: 16px;
-}
-
-/*---- Pages (Sign in, sign up, forgot, lockscreen) -----*/
-.page-wrap {
-  align-items: center;
-  display: flex;
-  height: 100%;
-  padding: 40px 1rem;
 }
 
 .session-progress {

@@ -4,6 +4,7 @@
     <div class="actions action-icon">
       <button
         *ixWithLoadingState="twoFactorConfig$ as twoFactorAuthConfig"
+        id="global-two-factor-auth"
         mat-button
         [ixTest]="['two-factor-auth', 'configure']"
         (click)="onConfigurePressed(twoFactorAuthConfig)"

@@ -9,6 +9,7 @@ import { filter, forkJoin, map } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
 import { SmartTestResultPageType } from 'app/enums/smart-test-results-page-type.enum';
 import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
+import { stringToTitleCase } from 'app/helpers/string-to-title-case';
 import { Choices } from 'app/interfaces/choices.interface';
 import { Disk, UnusedDisk } from 'app/interfaces/storage.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
@@ -25,6 +26,7 @@ import { ManualTestDialogComponent, ManualTestDialogParams } from 'app/pages/sto
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 
+// TODO: Exclude AnythingUi when NAS-127632 is done
 interface DiskUi extends Disk {
   selected: boolean;
 }
@@ -101,11 +103,13 @@ export class DiskListComponent implements OnInit {
     textColumn({
       title: this.translate.instant('HDD Standby'),
       propertyName: 'hddstandby',
+      getValue: (row) => this.translate.instant(stringToTitleCase(row.hddstandby)),
       hidden: true,
     }),
     textColumn({
       title: this.translate.instant('Adv. Power Management'),
       propertyName: 'advpowermgmt',
+      getValue: (row) => this.translate.instant(stringToTitleCase(row.advpowermgmt)),
       hidden: true,
     }),
     textColumn({

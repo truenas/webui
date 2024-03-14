@@ -52,7 +52,7 @@ export class MockEnclosure {
         26: {
           descriptor: 'SAS3 Expander',
           status: 'OK',
-          value: null,
+          value: null as unknown as string,
           value_raw: 16777216,
         },
       },
@@ -60,13 +60,13 @@ export class MockEnclosure {
         28: {
           descriptor: 'Encl-BpP',
           status: 'OK, Swapped',
-          value: null,
+          value: null as unknown as string,
           value_raw: 285212672,
         },
         29: {
           descriptor: 'Encl-PeerS',
           status: 'OK',
-          value: null,
+          value: null as unknown as string,
           value_raw: 16777216,
         },
       },
@@ -230,9 +230,9 @@ export class MockEnclosure {
   }
 
   getSlotByDiskName(diskName: string): number | null {
-    const slot: [string, EnclosureUiSlot] = this.getSlots()
+    const slot: [string, EnclosureUiSlot] | undefined = this.getSlots()
       .find((keyValue: [string, EnclosureUiSlot]) => keyValue[1].dev === diskName);
-    return parseInt(slot[0]);
+    return slot ? parseInt(slot[0]) : null;
   }
 
   getPopulatedSlots(): [string, EnclosureUiSlot][] {
