@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { GiB } from 'app/constants/bytes.constant';
 import { TopologyItemType, TopologyWarning, VdevType } from 'app/enums/v-dev-type.enum';
 import { FileSystemStat } from 'app/interfaces/filesystem-stat.interface';
 import { Option } from 'app/interfaces/option.interface';
@@ -107,8 +108,11 @@ export class StorageService {
     const max = Math.max(...allVdevCapacities);
     const min = Math.min(...allVdevCapacities);
     const diffPercentage = 100 - ((min / max) * 100);
+    const diff = Math.max(...allVdevCapacities) - Math.min(...allVdevCapacities);
 
-    return allVdevCapacities.size > 1 && diffPercentage >= 5;
+    const isDiffNoticable = diffPercentage >= 5 && diff >= GiB * 2;
+
+    return allVdevCapacities.size > 1 && isDiffNoticable;
   }
 
   getVdevDiskCapacities(vdevs: TopologyItem[], disks: Disk[]): Set<number>[] {
