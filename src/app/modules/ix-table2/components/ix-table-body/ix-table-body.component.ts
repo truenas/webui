@@ -66,8 +66,7 @@ export class IxTableBodyComponent<T> implements AfterViewInit {
   }
 
   getTestAttr(row: T): string {
-    const idColumn = this.columns.find((column) => column.identifier);
-    return idColumn ? row[idColumn.propertyName].toString() : '';
+    return row[this.identifier]?.toString()?.toLowerCase();
   }
 
   getTemplateByColumnIndex(idx: number): TemplateRef<{ $implicit: T }> | undefined {
