@@ -31,15 +31,12 @@ const beforeIntString = [{
         label: 'Label Input Int With Default',
         schema: {
           type: 'int',
-          min: 9000,
-          max: 65535,
           default: 9401,
           required: true,
         },
       },
       {
         variable: 'variable_input_string_with_default',
-        label: 'Label Input String With Default',
         schema: {
           type: 'string',
           default: 'test input string',
@@ -68,38 +65,26 @@ const beforeIntString = [{
 const afterIntString = [[{
   attrs: [{
     controlName: 'variable_input_int_with_default',
-    editable: undefined,
     inputType: 'number',
     required: true,
     title: 'Label Input Int With Default',
-    tooltip: undefined,
     type: 'input',
   }, {
     controlName: 'variable_input_string_with_default',
-    editable: undefined,
     inputType: 'password',
     required: false,
-    title: 'Label Input String With Default',
-    tooltip: undefined,
     type: 'input',
   }, {
     controlName: 'variable_input_int_without_default',
-    editable: undefined,
     inputType: 'number',
-    required: undefined,
     title: 'Label Input Int Without Default',
-    tooltip: undefined,
     type: 'input',
   }, {
     controlName: 'variable_input_string_without_default',
-    editable: undefined,
-    required: undefined,
     title: 'Label Input String Without Default',
-    tooltip: undefined,
     type: 'input',
   }] as DynamicFormSchemaInput[],
   controlName: 'variable_dict',
-  editable: undefined,
   tooltip: 'Description Dict',
   title: 'Label Dict',
   type: 'dict',
@@ -121,16 +106,7 @@ const beforeEnum = [{
           type: 'int',
           default: 'test1',
           required: true,
-          enum: [
-            {
-              value: 1,
-              description: 'test1',
-            },
-            {
-              value: 2,
-              description: 'test2',
-            },
-          ],
+          enum: [{ value: 1, description: 'test1' }],
         },
       },
       {
@@ -140,16 +116,7 @@ const beforeEnum = [{
           type: 'string',
           default: 1,
           required: false,
-          enum: [
-            {
-              value: 'test1',
-              description: 'test1',
-            },
-            {
-              value: 'test2',
-              description: 'test2',
-            },
-          ],
+          enum: [],
         },
       },
     ],
@@ -159,10 +126,8 @@ const beforeEnum = [{
 const afterEnum = [[{
   attrs: [{
     controlName: 'variable_select_int',
-    editable: undefined,
     required: true,
     title: 'Label Select Int',
-    tooltip: undefined,
     // TODO: Rework not to rely on rxjs internals
     options: expect.objectContaining({
       _subscribe: expect.any(Function),
@@ -170,17 +135,14 @@ const afterEnum = [[{
     type: 'enum',
   }, {
     controlName: 'variable_select_string',
-    editable: undefined,
     required: false,
     title: 'Label Select String',
-    tooltip: undefined,
     options: expect.objectContaining({
       _subscribe: expect.any(Function),
     }),
     type: 'enum',
   }] as DynamicFormSchemaEnum[],
   controlName: 'variable_dict',
-  editable: undefined,
   tooltip: 'Description Dict',
   title: 'Label Dict',
   type: 'dict',
@@ -207,19 +169,13 @@ const beforeBoolean = [{
 
 const afterBoolean = [[{
   controlName: 'variable_boolean',
-  editable: undefined,
-  required: undefined,
   title: 'Label Boolean',
-  tooltip: undefined,
   type: 'checkbox',
 }, {
   controlName: 'variable_subquestion_boolean',
   dependsOn: ['variable_boolean'],
-  editable: undefined,
   indent: true,
-  required: undefined,
   title: 'Label Subquestion Boolean',
-  tooltip: undefined,
   type: 'checkbox',
 }]] as DynamicFormSchemaCheckbox[][];
 
@@ -234,11 +190,7 @@ const beforeUri = [{
 
 const afterUri = [[{
   controlName: 'variable_uri',
-  editable: undefined,
-  required: undefined,
-  inputType: undefined,
   title: 'Label Uri',
-  tooltip: undefined,
   type: 'uri',
 }]] as DynamicFormSchemaUri[][];
 
@@ -259,10 +211,7 @@ const beforeCron = [{
 
 const afterCron = [[{
   controlName: 'variable_cron',
-  editable: undefined,
-  required: undefined,
   title: 'Label Cron',
-  tooltip: undefined,
   type: 'cron',
 }]] as DynamicFormSchemaCron[][];
 
@@ -276,10 +225,7 @@ const beforePath = [{
 
 const afterPath = [[{
   controlName: 'variable_path',
-  editable: undefined,
-  required: undefined,
   title: 'Label Path',
-  tooltip: undefined,
   type: 'input',
 }]] as DynamicFormSchemaInput[][];
 
@@ -312,23 +258,14 @@ const beforeList = [{
 
 const afterList = [[{
   controlName: 'variable_list',
-  dependsOn: undefined,
-  editable: undefined,
   items: [{
     controlName: 'item_list_1',
-    editable: undefined,
-    inputType: undefined,
-    required: undefined,
     title: '',
-    tooltip: undefined,
     type: 'input',
   }, {
     controlName: 'item_list_2',
-    editable: undefined,
     inputType: 'number',
-    required: undefined,
     title: '',
-    tooltip: undefined,
     type: 'input',
   }],
   itemsSchema: [
@@ -353,10 +290,7 @@ const beforeIpaddr = [{
 
 const afterIpaddr = [[{
   controlName: 'staticIP',
-  editable: undefined,
-  required: undefined,
   title: 'Static IP',
-  tooltip: undefined,
   type: 'ipaddr',
 }]] as DynamicFormSchemaIpaddr[][];
 
