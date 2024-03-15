@@ -12,6 +12,7 @@ import { CronSchedulePreview } from 'app/modules/scheduler/classes/cron-schedule
 export class SchedulerDateExamplesComponent implements OnChanges {
   @Input() cronPreview: CronSchedulePreview;
   @Input() startDate: Date;
+  @Input() machineTimezone: string = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
   scheduleExamples: Date[] = [];
 

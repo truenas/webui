@@ -1,5 +1,5 @@
 <div *ngFor="let date of scheduleExamples | slice: 0:maxExamples" class="schedule-example">
-  <ix-date [date]="date"></ix-date>
+  <ix-date [date]="date" [machineTimezone]="machineTimezone"></ix-date>
 </div>
 
 <div

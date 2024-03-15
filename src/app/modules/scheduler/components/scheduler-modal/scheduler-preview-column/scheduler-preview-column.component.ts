@@ -28,6 +28,7 @@ export class SchedulerPreviewColumnComponent implements OnChanges, OnInit {
 
   @Input() startTime: string;
   @Input() endTime: string;
+  @Input() machineTimezone: string = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
   /**
    * 1 for 1st day of the month, etc.
