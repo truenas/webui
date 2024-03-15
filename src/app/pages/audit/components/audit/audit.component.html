@@ -42,7 +42,7 @@
       <ng-container *ngIf="isMobileView" [ngTemplateOutlet]="thead"></ng-container>
       <tbody
         ix-table-body
-        identifier="audit_id"
+        detailsRowIdentifier="audit_id"
         [columns]="columns"
         [dataProvider]="dataProvider"
         [isLoading]="dataProvider.isLoading$ | async"

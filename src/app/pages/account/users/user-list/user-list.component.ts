@@ -38,6 +38,7 @@ export class UserListComponent implements OnInit {
   dataProvider = new ArrayDataProvider<User>();
   columns = createTable<User>([
     textColumn({
+      useAsRowTestId: true,
       title: this.translate.instant('Username'),
       propertyName: 'username',
       sortable: true,

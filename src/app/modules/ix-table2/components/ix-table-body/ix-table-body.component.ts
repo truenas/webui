@@ -28,7 +28,7 @@ export class IxTableBodyComponent<T> implements AfterViewInit {
   @Input() columns: Column<T, ColumnComponent<T>>[];
   @Input() dataProvider: DataProvider<T>;
   @Input() isLoading = false;
-  @Input() identifier: keyof T = 'id' as keyof T;
+  @Input() detailsRowIdentifier: keyof T = 'id' as keyof T;
 
   @Output() expanded = new EventEmitter<T>();
 
@@ -66,7 +66,8 @@ export class IxTableBodyComponent<T> implements AfterViewInit {
   }
 
   getTestAttr(row: T): string {
-    return row[this.identifier]?.toString();
+    const idColumn = this.columns.find((column) => column.useAsRowTestId);
+    return idColumn ? row[idColumn.propertyName].toString() : '';
   }
 
   getTemplateByColumnIndex(idx: number): TemplateRef<{ $implicit: T }> | undefined {
@@ -79,6 +80,7 @@ export class IxTableBodyComponent<T> implements AfterViewInit {
   }
 
   isExpanded(row: T): boolean {
-    return this.identifier && (this.dataProvider?.expandedRow?.[this.identifier] === row?.[this.identifier]);
+    return this.detailsRowIdentifier
+      && (this.dataProvider?.expandedRow?.[this.detailsRowIdentifier] === row?.[this.detailsRowIdentifier]);
   }
 }

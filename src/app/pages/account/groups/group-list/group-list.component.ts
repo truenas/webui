@@ -38,6 +38,7 @@ export class GroupListComponent implements OnInit {
   dataProvider = new ArrayDataProvider<Group>();
   columns = createTable<Group>([
     textColumn({
+      useAsRowTestId: true,
       title: this.translate.instant('Group'),
       propertyName: 'group',
       sortable: true,

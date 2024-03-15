@@ -42,6 +42,7 @@ export class PrivilegeListComponent implements OnInit {
 
   columns = createTable<Privilege>([
     textColumn({
+      useAsRowTestId: true,
       title: this.translate.instant('Name'),
       propertyName: 'name',
       sortable: true,

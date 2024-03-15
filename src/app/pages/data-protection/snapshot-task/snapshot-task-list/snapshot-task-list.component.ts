@@ -41,6 +41,7 @@ export class SnapshotTaskListComponent implements OnInit {
 
   protected columns = createTable<PeriodicSnapshotTaskUi>([
     textColumn({
+      useAsRowTestId: true,
       title: this.translate.instant('Pool/Dataset'),
       propertyName: 'dataset',
     }),
