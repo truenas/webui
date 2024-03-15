@@ -303,6 +303,9 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
         const yConverted = this.formatLabelValue(item.y, this.inferUnits(this.labelY), 1, true);
         const ySuffix = this.getSuffix(yConverted);
         clone.series[index].yHTML = `${this.limitDecimals(yConverted.value)} ${ySuffix}`;
+        if (this.labelY.endsWith('/s')) {
+          clone.series[index].yHTML += '/s';
+        }
         if (!clone.stackedTotal) {
           clone.stackedTotal = 0;
         }
