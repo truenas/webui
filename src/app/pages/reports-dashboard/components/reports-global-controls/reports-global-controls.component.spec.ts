@@ -2,6 +2,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
+import { ActivatedRoute } from '@angular/router';
 import { mockProvider, Spectator, createComponentFactory } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
@@ -36,6 +37,11 @@ describe('ReportsGlobalControlsComponent', () => {
         mockCall('reporting.netdata_graphs', []),
       ]),
       mockAuth(),
+      mockProvider(ActivatedRoute, {
+        routeConfig: {
+          path: 'system',
+        },
+      }),
       mockProvider(FormErrorHandlerService),
       mockProvider(ReportsService, {
         getReportTabs: () => ([({ value: ReportType.System, label: 'system' } as ReportTab)] as ReportTab[]),
