@@ -957,6 +957,7 @@
   "NetBIOS Name of this NAS. This name must differ from the <i>Workgroup</i> name and be no greater than 15 characters.": "",
   "Netcat Active Side Max Port": "",
   "Netcat Active Side Min Port": "",
+  "Netdata": "",
   "Network General Read": "",
   "Network Interface Read": "",
   "Network Interface Write": "",
