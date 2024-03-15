@@ -38,6 +38,7 @@
   "Maximum time a graph is stored in months (allowed values are 1-60).  Changing this value causes the <i>Confirm RRD Destroy</i>  dialog to appear. Changes do not take effect until the existing  reporting database is destroyed.": "",
   "Missing group - {gid}": "",
   "NFSv4 DNS Domain": "",
+  "Netdata": "",
   "No S.M.A.R.T. test results": "",
   "No S.M.A.R.T. tests have been performed on this disk yet.": "",
   "No SMB Shares have been configured yet": "",
