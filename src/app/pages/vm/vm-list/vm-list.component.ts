@@ -460,9 +460,8 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow> {
       label: this.translate.instant('Download Logs'),
       disabled: !this.hasRolesAccess,
       onClick: (vm: VirtualMachineRow) => {
-        const path = `/var/log/libvirt/qemu/${vm.id}_${vm.name}.log`;
         const filename = `${vm.id}_${vm.name}.log`;
-        this.ws.call('core.download', ['filesystem.get', [path], filename]).pipe(
+        this.ws.call('core.download', ['vm.log_file_download', [vm.id], filename]).pipe(
           switchMap(([, url]) => {
             const mimetype = 'text/plain';
             return this.storageService.downloadUrl(url, filename, mimetype);
