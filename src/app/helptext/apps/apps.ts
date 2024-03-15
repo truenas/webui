@@ -125,9 +125,9 @@ export const helptextApps = {
       label: 'Application Name',
       version: 'Version',
       nameValidationRules: T(`Application name must have the following:
-      1) Lowercase alphanumeric characters can be specified
-      2) Name must start with an alphabetic character and can end with alphanumeric character
-      3) Hyphen '-' is allowed but not as the first or last character e.g abc123, abc, abcd-1232`),
+ 1) Lowercase alphanumeric characters can be specified
+ 2) Name must start with an alphabetic character and can end with alphanumeric character
+ 3) Hyphen '-' is allowed but not as the first or last character e.g abc123, abc, abcd-1232`),
     },
   },
 
