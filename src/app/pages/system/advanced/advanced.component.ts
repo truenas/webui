@@ -355,6 +355,21 @@ export class AdvancedComponent implements OnDestroy {
             },
           ],
         },
+        {
+          type: 'select',
+          name: 'syslog_tls_certificate_authority',
+          placeholder: helptext_system_advanced.syslog_tls_certificate_authority.placeholder,
+          options: [],
+          relation: [
+            {
+              action: 'SHOW',
+              when: [{
+                name: 'syslog_transport',
+                value: 'TLS',
+              }],
+            },
+          ],
+        },
       ],
     },
     { name: 'divider', divider: true },
@@ -411,6 +426,12 @@ export class AdvancedComponent implements OnDestroy {
     this.ws.call('certificate.query').subscribe((certs) => {
       for (const cert of certs) {
         syslog_tls_certificate_field.options.push({ label: cert.name, value: cert.id });
+      }
+    });
+    const syslog_tls_certificate_authority_field = this.fieldSets.config('syslog_tls_certificate_authority');
+    this.ws.call('certificateauthority.query').subscribe((certs) => {
+      for (const cert of certs) {
+        syslog_tls_certificate_authority_field.options.push({ label: cert.name, value: cert.id });
       }
     });
   }
