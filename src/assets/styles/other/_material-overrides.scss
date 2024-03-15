@@ -115,7 +115,7 @@ html .ix-dark {
   --mat-toolbar-title-text-tracking: normal;
   --mdc-outlined-button-label-text-color: var(--fg2);
 
-  --mat-autocomplete-background-color: transparent;
+  --mat-autocomplete-background-color: var(--bg2);
 
   .mat-mdc-slide-toggle,
   .mat-mdc-checkbox {
