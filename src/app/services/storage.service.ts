@@ -107,12 +107,9 @@ export class StorageService {
   isMixedVdevCapacity(allVdevCapacities: Set<number>): boolean {
     const max = Math.max(...allVdevCapacities);
     const min = Math.min(...allVdevCapacities);
-    const diffPercentage = 100 - ((min / max) * 100);
-    const diff = Math.max(...allVdevCapacities) - Math.min(...allVdevCapacities);
+    const fivePercentOfMax = max * (5 / 100);
 
-    const isDiffNoticable = diffPercentage >= 5 && diff >= GiB * 2;
-
-    return allVdevCapacities.size > 1 && isDiffNoticable;
+    return min + fivePercentOfMax + GiB * 2 < max;
   }
 
   getVdevDiskCapacities(vdevs: TopologyItem[], disks: Disk[]): Set<number>[] {
