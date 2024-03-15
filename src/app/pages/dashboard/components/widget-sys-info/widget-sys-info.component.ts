@@ -64,11 +64,6 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
   screenType = ScreenType.Desktop;
   uptimeInterval: Interval;
 
-  isHaEnabled$ = this.store$.select(selectHaStatus).pipe(filter(Boolean), map(({ hasHa }) => hasHa));
-  isUnsupportedHardware$ = this.sysGenService.isEnterprise$.pipe(
-    map((isEnterprise) => isEnterprise && !this.productImage && !this.isIxHardware),
-  );
-
   readonly ScreenType = ScreenType;
 
   get systemVersion(): string {
@@ -179,8 +174,8 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
   }
 
   private listenForHaStatus(): void {
-    this.isHaEnabled$
-      .pipe(untilDestroyed(this))
+    this.store$.select(selectHaStatus)
+      .pipe(filter(Boolean), map(({ hasHa }) => hasHa), untilDestroyed(this))
       .subscribe((isHaEnabled) => {
         this.isHaEnabled = isHaEnabled;
         if (isHaEnabled) {

@@ -95,7 +95,7 @@
                   <div *ngIf="productImage && isHaLicensed && isPassive" class="ha-node-status">
                     ({{ 'Standby' | translate }})
                   </div>
-                  <div *ngIf="isUnsupportedHardware$ | async" class="ha-node-status">
+                  <div *ngIf="ready && !productImage && !isIxHardware && sysGenService.isEnterprise" class="ha-node-status">
                     ({{ 'Unsupported Hardware' | translate }})
                   </div>
                 </div>
