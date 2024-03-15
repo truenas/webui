@@ -106,7 +106,7 @@ export class WidgetNetworkComponent extends WidgetComponent implements OnInit, A
             } else {
               label = buildNormalizedFileSize(Math.abs(Number(tooltipItem.parsed.y)), 'b', 10);
             }
-            return label;
+            return label + '/s';
           },
         },
       },
@@ -134,7 +134,7 @@ export class WidgetNetworkComponent extends WidgetComponent implements OnInit, A
             if (value === 0) {
               return 0;
             }
-            return buildNormalizedFileSize(Math.abs(Number(value)), 'b', 10);
+            return buildNormalizedFileSize(Math.abs(Number(value)), 'b', 10) + '/s';
           },
         },
       },
