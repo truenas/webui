@@ -1,8 +1,10 @@
 import { Inject, Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
+import { Store } from '@ngrx/store';
 import { map, mergeMap } from 'rxjs/operators';
 import { WINDOW } from 'app/helpers/window.helper';
 import { WebSocketService } from 'app/services/ws.service';
+import { AppState } from 'app/store';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
 import { passiveNodeReplaced } from 'app/store/system-info/system-info.actions';
 import {
@@ -57,6 +59,7 @@ export class HaInfoEffects {
   constructor(
     private actions$: Actions,
     private ws: WebSocketService,
+    private store$: Store<AppState>,
     @Inject(WINDOW) private window: Window,
   ) { }
 }

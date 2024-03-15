@@ -7,7 +7,9 @@ import {
   Observable, combineLatest, filter, switchMap, takeWhile, tap,
 } from 'rxjs';
 import { WidgetName } from 'app/enums/widget-name.enum';
+import { SystemFeatures, SystemInfoWithFeatures } from 'app/interfaces/events/sys-info-event.interface';
 import { Pool } from 'app/interfaces/pool.interface';
+import { SystemInfo } from 'app/interfaces/system-info.interface';
 import { VolumesData } from 'app/interfaces/volume-data.interface';
 import { DashboardNetworkInterface } from 'app/pages/dashboard/components/dashboard/dashboard.component';
 import { DashConfigItem } from 'app/pages/dashboard/components/widget-controller/widget-controller.component';
@@ -18,9 +20,11 @@ import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import { PreferencesState } from 'app/store/preferences/preferences.reducer';
 import { selectPreferencesState } from 'app/store/preferences/preferences.selectors';
+import { waitForSystemFeatures, waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 
 export interface DashboardState {
   isLoading: boolean;
+  sysInfoWithFeatures: SystemInfoWithFeatures;
   dashboardState: DashConfigItem[];
   pools: Pool[];
   volumesData: VolumesData;
@@ -31,6 +35,7 @@ export interface DashboardState {
 
 const initialState: DashboardState = {
   isLoading: false,
+  sysInfoWithFeatures: null,
   dashboardState: null,
   pools: null,
   volumesData: null,
@@ -62,6 +67,7 @@ export class DashboardStore extends ComponentStore<DashboardState> {
         };
       })),
       switchMap(() => combineLatest([
+        this.getSystemInfoWithFeatures(),
         this.getStorageData(),
         this.getHaLicenseInfo(),
         this.getNicsInfo(),
@@ -77,6 +83,35 @@ export class DashboardStore extends ComponentStore<DashboardState> {
       }),
     );
   });
+
+  private getSystemInfoWithFeatures(): Observable<unknown> {
+    return this.store$.pipe(
+      waitForSystemInfo,
+      tap((sysInfo: SystemInfo) => {
+        this.setState((state) => {
+          return {
+            ...state,
+            sysInfoWithFeatures: sysInfo as SystemInfoWithFeatures,
+          };
+        });
+      }),
+      switchMap(() => this.store$.pipe(
+        waitForSystemFeatures,
+      )),
+      deepCloneState(),
+      tap((systemFeatures: SystemFeatures) => {
+        this.setState((state) => {
+          return {
+            ...state,
+            sysInfoWithFeatures: {
+              ...state.sysInfoWithFeatures,
+              features: systemFeatures,
+            },
+          };
+        });
+      }),
+    );
+  }
 
   private loadDashboardState(): Observable<unknown> {
     this.generateDefaultConfig();
@@ -123,9 +158,12 @@ export class DashboardStore extends ComponentStore<DashboardState> {
 
   private getHaLicenseInfo(): Observable<unknown> {
     return this.store$.select(selectIsHaLicensed).pipe(
-      tap((isHaLicensed: boolean) => {
+      tap((isHaLiecnsed: boolean) => {
         this.setState((state: DashboardState): DashboardState => {
-          return { ...state, isHaLicensed };
+          return {
+            ...state,
+            isHaLicensed: isHaLiecnsed,
+          };
         });
       }),
     );
