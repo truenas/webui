@@ -178,7 +178,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
   getIsHaLicensed(): void {
     this.store$
       .select(selectIsHaLicensed)
-      .pipe(filterAsync(this.sysGenService.isEnterprise$), untilDestroyed(this))
+      .pipe(filterAsync(() => this.sysGenService.isEnterprise$), untilDestroyed(this))
       .subscribe((isHaLicensed) => {
         this.isHaLicensed = isHaLicensed;
         if (isHaLicensed) {
@@ -211,9 +211,14 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
   }
 
   setUptimeUpdates(): void {
+    if (!this.systemInfo?.uptime_seconds) {
+      return;
+    }
+
     if (this.uptimeInterval) {
       clearInterval(this.uptimeInterval);
     }
+
     this.uptimeInterval = setInterval(() => {
       this.systemInfo.uptime_seconds += 1;
       this.systemInfo.datetime.$date += 1000;

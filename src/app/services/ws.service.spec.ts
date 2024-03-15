@@ -3,12 +3,12 @@ import { mockProvider } from '@ngneat/spectator/jest';
 import { TranslateService } from '@ngx-translate/core';
 import { UUID } from 'angular2-uuid';
 import {
-  BehaviorSubject, Observable, Subject,
+  BehaviorSubject, Subject,
 } from 'rxjs';
 import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { WebSocketConnectionService } from 'app/services/websocket-connection.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { ApiEventSubscription, WebSocketService } from 'app/services/ws.service';
 
 const mockWebSocketConnectionService = {
   send: jest.fn(),
@@ -16,11 +16,12 @@ const mockWebSocketConnectionService = {
   websocket$: new BehaviorSubject<unknown>(null),
 };
 
-const mockTakeUntil1$ = new Subject<void>();
-const mockTakeUntil2$ = new Subject<void>();
-const mockEventSubscriptions = new Map<string, { obs$: Observable<unknown>; takeUntil$: Subject<void> }>([
-  ['event1', { obs$: new BehaviorSubject(null), takeUntil$: mockTakeUntil1$ }],
-  ['event2', { obs$: new BehaviorSubject(null), takeUntil$: mockTakeUntil2$ }],
+const apiEventSubscription1$ = new BehaviorSubject(null);
+const apiEventSubscription2$ = new BehaviorSubject(null);
+
+const mockEventSubscriptions = new Map<string, ApiEventSubscription>([
+  ['event1', apiEventSubscription1$],
+  ['event2', apiEventSubscription2$],
 ]);
 
 describe('WebSocketService', () => {
@@ -37,11 +38,10 @@ describe('WebSocketService', () => {
 
     service = TestBed.inject(WebSocketService);
 
+    jest.spyOn(service.clearSubscriptions$, 'next');
+
     (service as unknown as {
-      eventSubscriptions: Map<string, {
-        obs$: Observable<unknown>;
-        takeUntil$: Subject<void>;
-      }>;
+      eventSubscriptions: Map<string, ApiEventSubscription>;
     }).eventSubscriptions = mockEventSubscriptions;
 
     jest.clearAllMocks();
@@ -134,14 +134,9 @@ describe('WebSocketService', () => {
 
   describe('clearSubscriptions', () => {
     it('should clear all event subscriptions', () => {
-      const spy1 = jest.spyOn(mockTakeUntil1$, 'next');
-      const spy2 = jest.spyOn(mockTakeUntil2$, 'next');
-
       service.clearSubscriptions();
 
-      expect(spy1).toHaveBeenCalled();
-      expect(spy2).toHaveBeenCalled();
-
+      expect(service.clearSubscriptions$.next).toHaveBeenCalled();
       expect(mockEventSubscriptions.size).toBe(0);
     });
   });

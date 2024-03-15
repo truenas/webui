@@ -5,9 +5,7 @@ import {
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import {
-  filter, switchMap, tap,
-} from 'rxjs';
+import { filter, switchMap, tap } from 'rxjs';
 import { JobState } from 'app/enums/job-state.enum';
 import { Role } from 'app/enums/role.enum';
 import { formatDistanceToNowShortened } from 'app/helpers/format-distance-to-now-shortened';
@@ -15,21 +13,31 @@ import { Job } from 'app/interfaces/job.interface';
 import { ReplicationTask } from 'app/interfaces/replication-task.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { AsyncDataProvider } from 'app/modules/ix-table2/classes/async-data-provider/async-data-provider';
-import { stateButtonColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-state-button/ix-cell-state-button.component';
+import {
+  stateButtonColumn,
+} from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-state-button/ix-cell-state-button.component';
 import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
-import { toggleColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-toggle/ix-cell-toggle.component';
+import {
+  toggleColumn,
+} from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-toggle/ix-cell-toggle.component';
 import { SortDirection } from 'app/modules/ix-table2/enums/sort-direction.enum';
 import { Column, ColumnComponent } from 'app/modules/ix-table2/interfaces/table-column.interface';
 import { createTable } from 'app/modules/ix-table2/utils';
 import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { ReplicationFormComponent } from 'app/pages/data-protection/replication/replication-form/replication-form.component';
-import { ReplicationRestoreDialogComponent } from 'app/pages/data-protection/replication/replication-restore-dialog/replication-restore-dialog.component';
-import { ReplicationWizardComponent } from 'app/pages/data-protection/replication/replication-wizard/replication-wizard.component';
+import {
+  ReplicationFormComponent,
+} from 'app/pages/data-protection/replication/replication-form/replication-form.component';
+import {
+  ReplicationRestoreDialogComponent,
+} from 'app/pages/data-protection/replication/replication-restore-dialog/replication-restore-dialog.component';
+import {
+  ReplicationWizardComponent,
+} from 'app/pages/data-protection/replication/replication-wizard/replication-wizard.component';
+import { DownloadService } from 'app/services/download.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
-import { StorageService } from 'app/services/storage.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
@@ -136,7 +144,7 @@ export class ReplicationListComponent implements OnInit {
     private errorHandler: ErrorHandlerService,
     private matDialog: MatDialog,
     private snackbar: SnackbarService,
-    private storage: StorageService,
+    private download: DownloadService,
     private appLoader: AppLoaderService,
     protected emptyService: EmptyService,
   ) {}
@@ -257,9 +265,9 @@ export class ReplicationListComponent implements OnInit {
       .subscribe({
         next: ([, url]) => {
           const mimetype = 'application/json';
-          this.storage.streamDownloadFile(url, fileName, mimetype).pipe(untilDestroyed(this)).subscribe({
+          this.download.streamDownloadFile(url, fileName, mimetype).pipe(untilDestroyed(this)).subscribe({
             next: (file) => {
-              this.storage.downloadBlob(file, fileName);
+              this.download.downloadBlob(file, fileName);
             },
             error: (err: HttpErrorResponse) => {
               this.dialogService.error(this.errorHandler.parseHttpError(err));

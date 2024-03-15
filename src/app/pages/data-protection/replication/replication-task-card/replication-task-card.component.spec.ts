@@ -20,8 +20,8 @@ import { ReplicationFormComponent } from 'app/pages/data-protection/replication/
 import { ReplicationRestoreDialogComponent } from 'app/pages/data-protection/replication/replication-restore-dialog/replication-restore-dialog.component';
 import { ReplicationTaskCardComponent } from 'app/pages/data-protection/replication/replication-task-card/replication-task-card.component';
 import { ReplicationWizardComponent } from 'app/pages/data-protection/replication/replication-wizard/replication-wizard.component';
+import { DownloadService } from 'app/services/download.service';
 import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
-import { StorageService } from 'app/services/storage.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { selectSystemConfigState } from 'app/store/system-config/system-config.selectors';
 
@@ -92,7 +92,7 @@ describe('ReplicationTaskCardComponent', () => {
           afterClosed: () => of(true),
         })),
       }),
-      mockProvider(StorageService, {
+      mockProvider(DownloadService, {
         streamDownloadFile: jest.fn(() => of()),
       }),
     ],
@@ -169,7 +169,7 @@ describe('ReplicationTaskCardComponent', () => {
       [1],
       'APPS/test2 - APPS/test3_encryption_keys.json',
     ]);
-    expect(spectator.inject(StorageService).streamDownloadFile).toHaveBeenCalledWith(
+    expect(spectator.inject(DownloadService).streamDownloadFile).toHaveBeenCalledWith(
       'http://someurl/file.json',
       'APPS/test2 - APPS/test3_encryption_keys.json',
       'application/json',

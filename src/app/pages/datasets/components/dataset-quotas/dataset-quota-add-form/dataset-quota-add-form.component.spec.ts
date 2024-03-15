@@ -77,9 +77,9 @@ describe('DatasetQuotaAddFormComponent', () => {
         'my-dataset',
         [
           { id: 'jill', quota_type: DatasetQuotaType.User, quota_value: 524288000 },
-          { id: 'jill', quota_type: DatasetQuotaType.UserObj, quota_value: '2000' },
+          { id: 'jill', quota_type: DatasetQuotaType.UserObj, quota_value: 2000 },
           { id: 'john', quota_type: DatasetQuotaType.User, quota_value: 524288000 },
-          { id: 'john', quota_type: DatasetQuotaType.UserObj, quota_value: '2000' },
+          { id: 'john', quota_type: DatasetQuotaType.UserObj, quota_value: 2000 },
         ],
       ]);
       expect(spectator.inject(IxSlideInRef).close).toHaveBeenCalled();
@@ -118,9 +118,9 @@ describe('DatasetQuotaAddFormComponent', () => {
         'my-dataset',
         [
           { id: 'sys', quota_type: DatasetQuotaType.Group, quota_value: 524288000 },
-          { id: 'sys', quota_type: DatasetQuotaType.GroupObj, quota_value: '2000' },
+          { id: 'sys', quota_type: DatasetQuotaType.GroupObj, quota_value: 2000 },
           { id: 'bin', quota_type: DatasetQuotaType.Group, quota_value: 524288000 },
-          { id: 'bin', quota_type: DatasetQuotaType.GroupObj, quota_value: '2000' },
+          { id: 'bin', quota_type: DatasetQuotaType.GroupObj, quota_value: 2000 },
         ],
       ]);
       expect(spectator.inject(IxSlideInRef).close).toHaveBeenCalled();

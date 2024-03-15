@@ -17,17 +17,25 @@ import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { AsyncDataProvider } from 'app/modules/ix-table2/classes/async-data-provider/async-data-provider';
-import { actionsColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
+import {
+  actionsColumn,
+} from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
 import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { SortDirection } from 'app/modules/ix-table2/enums/sort-direction.enum';
 import { createTable } from 'app/modules/ix-table2/utils';
 import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
-import { CertificateEditComponent } from 'app/pages/credentials/certificates-dash/certificate-edit/certificate-edit.component';
-import { ConfirmForceDeleteCertificateComponent } from 'app/pages/credentials/certificates-dash/confirm-force-delete-dialog/confirm-force-delete-dialog.component';
-import { CertificateAddComponent } from 'app/pages/credentials/certificates-dash/forms/certificate-add/certificate-add.component';
+import {
+  CertificateEditComponent,
+} from 'app/pages/credentials/certificates-dash/certificate-edit/certificate-edit.component';
+import {
+  ConfirmForceDeleteCertificateComponent,
+} from 'app/pages/credentials/certificates-dash/confirm-force-delete-dialog/confirm-force-delete-dialog.component';
+import {
+  CertificateAddComponent,
+} from 'app/pages/credentials/certificates-dash/forms/certificate-add/certificate-add.component';
+import { DownloadService } from 'app/services/download.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { StorageService } from 'app/services/storage.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
@@ -104,7 +112,7 @@ export class CertificateListComponent implements OnInit {
     private slideInService: IxSlideInService,
     private translate: TranslateService,
     protected emptyService: EmptyService,
-    private storageService: StorageService,
+    private download: DownloadService,
     private dialogService: DialogService,
     private errorHandler: ErrorHandlerService,
   ) {}
@@ -194,12 +202,12 @@ export class CertificateListComponent implements OnInit {
       .subscribe({
         next: ([, url]) => {
           const mimetype = 'application/x-x509-user-cert';
-          this.storageService
+          this.download
             .streamDownloadFile(url, fileName, mimetype)
             .pipe(untilDestroyed(this))
             .subscribe({
               next: (file) => {
-                this.storageService.downloadBlob(file, fileName);
+                this.download.downloadBlob(file, fileName);
               },
               error: (error: HttpErrorResponse) => {
                 this.dialogService.error({
@@ -221,12 +229,12 @@ export class CertificateListComponent implements OnInit {
       .subscribe({
         next: ([, url]) => {
           const mimetype = 'text/plain';
-          this.storageService
+          this.download
             .streamDownloadFile(url, keyName, mimetype)
             .pipe(untilDestroyed(this))
             .subscribe({
               next: (file) => {
-                this.storageService.downloadBlob(file, keyName);
+                this.download.downloadBlob(file, keyName);
               },
               error: (error: HttpErrorResponse) => {
                 this.dialogService.error({

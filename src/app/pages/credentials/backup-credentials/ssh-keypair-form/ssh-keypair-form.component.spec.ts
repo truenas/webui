@@ -19,7 +19,7 @@ import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { SshKeypairFormComponent } from 'app/pages/credentials/backup-credentials/ssh-keypair-form/ssh-keypair-form.component';
-import { StorageService } from 'app/services/storage.service';
+import { DownloadService } from 'app/services/download.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 describe('SshKeypairFormComponent', () => {
@@ -51,7 +51,7 @@ describe('SshKeypairFormComponent', () => {
         mockCall('keychaincredential.update'),
       ]),
       mockProvider(IxSlideInRef),
-      mockProvider(StorageService),
+      mockProvider(DownloadService),
       mockProvider(FormErrorHandlerService),
       mockProvider(DialogService),
       mockAuth(),
@@ -113,7 +113,7 @@ describe('SshKeypairFormComponent', () => {
         await actionsMenu.open();
         await actionsMenu.clickItem({ text: 'Download Public Key' });
 
-        expect(spectator.inject(StorageService).downloadBlob).toHaveBeenCalledWith(
+        expect(spectator.inject(DownloadService).downloadBlob).toHaveBeenCalledWith(
           new Blob(['Downloaded public key'], { type: 'text/plain' }),
           'downloadname_public_key_rsa',
         );
@@ -130,7 +130,7 @@ describe('SshKeypairFormComponent', () => {
         await actionsMenu.open();
         await actionsMenu.clickItem({ text: 'Download Private Key' });
 
-        expect(spectator.inject(StorageService).downloadBlob).toHaveBeenCalledWith(
+        expect(spectator.inject(DownloadService).downloadBlob).toHaveBeenCalledWith(
           new Blob(['Downloaded private key'], { type: 'text/plain' }),
           'downloadname_private_key_rsa',
         );
