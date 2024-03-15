@@ -8,7 +8,7 @@ import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockCall, mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
-import { StorageService } from 'app/services/storage.service';
+import { DownloadService } from 'app/services/download.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { ExportDatasetKeyDialogComponent } from './export-dataset-key-dialog.component';
 
@@ -25,7 +25,7 @@ describe('ExportDatasetKeyDialogComponent', () => {
         mockCall('core.download', [1, 'http://localhost/download']),
         mockJob('pool.dataset.export_key', fakeSuccessfulJob('12345678')),
       ]),
-      mockProvider(StorageService, {
+      mockProvider(DownloadService, {
         downloadUrl: jest.fn(() => of(undefined)),
       }),
       mockProvider(MatDialogRef),
@@ -59,7 +59,7 @@ describe('ExportDatasetKeyDialogComponent', () => {
       ['pool/my-dataset', true],
       'dataset_my-dataset_key.json',
     ]);
-    expect(spectator.inject(StorageService).downloadUrl).toHaveBeenCalledWith(
+    expect(spectator.inject(DownloadService).downloadUrl).toHaveBeenCalledWith(
       'http://localhost/download',
       'dataset_my-dataset_key.json',
       'application/json',

@@ -9,8 +9,8 @@ import { catchError, tap } from 'rxjs/operators';
 import { helptextDownloadKey } from 'app/helptext/storage/volumes/download-key';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { DownloadService } from 'app/services/download.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { StorageService } from 'app/services/storage.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 export interface DownloadKeyDialogParams {
@@ -35,7 +35,7 @@ export class DownloadKeyDialogComponent {
     private cdr: ChangeDetectorRef,
     private errorHandler: ErrorHandlerService,
     private loader: AppLoaderService,
-    private storage: StorageService,
+    private download: DownloadService,
     private dialog: DialogService,
     @Inject(MAT_DIALOG_DATA) private data: DownloadKeyDialogParams,
   ) {
@@ -46,9 +46,9 @@ export class DownloadKeyDialogComponent {
     this.ws.call('core.download', ['pool.dataset.export_keys', [this.data.name], this.filename]).pipe(
       this.loader.withLoader(),
       switchMap(([, url]) => {
-        return this.storage.streamDownloadFile(url, this.filename, 'application/json').pipe(
+        return this.download.streamDownloadFile(url, this.filename, 'application/json').pipe(
           tap((file) => {
-            this.storage.downloadBlob(file, this.filename);
+            this.download.downloadBlob(file, this.filename);
             this.wasDownloaded = true;
             this.cdr.markForCheck();
           }),

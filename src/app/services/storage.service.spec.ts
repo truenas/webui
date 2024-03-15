@@ -1,4 +1,3 @@
-import { HttpClient } from '@angular/common/http';
 import { GiB } from 'app/constants/bytes.constant';
 import { MockStorageScenario } from 'app/core/testing/enums/mock-storage.enum';
 import { AddTopologyOptions } from 'app/core/testing/interfaces/mock-storage-generator.interface';
@@ -11,7 +10,6 @@ import { WebSocketService } from 'app/services/ws.service';
 describe('StorageService', () => {
   const storageService = new StorageService(
     {} as WebSocketService,
-    {} as HttpClient,
   );
 
   describe('getRedundancyLevel', () => {

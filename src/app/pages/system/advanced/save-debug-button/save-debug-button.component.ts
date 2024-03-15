@@ -14,8 +14,8 @@ import { Job } from 'app/interfaces/job.interface';
 import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
+import { DownloadService } from 'app/services/download.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { StorageService } from 'app/services/storage.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
@@ -33,7 +33,7 @@ export class SaveDebugButtonComponent {
     private datePipe: DatePipe,
     private errorHandler: ErrorHandlerService,
     private matDialog: MatDialog,
-    private storage: StorageService,
+    private download: DownloadService,
     private translate: TranslateService,
     private dialogService: DialogService,
   ) {}
@@ -67,12 +67,12 @@ export class SaveDebugButtonComponent {
               dialogRef.componentInstance.success
                 .pipe(
                   take(1), // TODO: Only needed because of https://ixsystems.atlassian.net/browse/NAS-117633
-                  switchMap(() => this.storage.streamDownloadFile(url, fileName, mimeType)),
+                  switchMap(() => this.download.streamDownloadFile(url, fileName, mimeType)),
                   untilDestroyed(this),
                 )
                 .subscribe({
                   next: (blob) => {
-                    this.storage.downloadBlob(blob, fileName);
+                    this.download.downloadBlob(blob, fileName);
                     dialogRef.close();
                   },
                   error: (error: WebSocketError | HttpErrorResponse | Job) => {

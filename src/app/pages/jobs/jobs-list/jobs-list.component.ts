@@ -4,7 +4,8 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
-  OnInit, QueryList,
+  OnInit,
+  QueryList,
   ViewChild,
   ViewChildren,
 } from '@angular/core';
@@ -17,8 +18,7 @@ import {
   BehaviorSubject, combineLatest, EMPTY, Observable, of,
 } from 'rxjs';
 import {
-  catchError,
-  filter, map, switchMap,
+  catchError, filter, map, switchMap,
 } from 'rxjs/operators';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { JobState } from 'app/enums/job-state.enum';
@@ -29,10 +29,14 @@ import { IxDetailRowDirective } from 'app/modules/ix-tables/directives/ix-detail
 import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
 import { abortJobPressed } from 'app/modules/jobs/store/job.actions';
 import {
-  JobSlice, selectJobState, selectFailedJobs, selectRunningJobs, selectAllNonTransientJobs,
+  JobSlice,
+  selectAllNonTransientJobs,
+  selectFailedJobs,
+  selectJobState,
+  selectRunningJobs,
 } from 'app/modules/jobs/store/job.selectors';
+import { DownloadService } from 'app/services/download.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { StorageService } from 'app/services/storage.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { JobTab } from './job-tab.enum';
 
@@ -87,7 +91,7 @@ export class JobsListComponent implements OnInit, AfterViewInit {
 
   constructor(
     private ws: WebSocketService,
-    private storage: StorageService,
+    private download: DownloadService,
     private translate: TranslateService,
     private dialogService: DialogService,
     private store$: Store<JobSlice>,
@@ -164,7 +168,7 @@ export class JobsListComponent implements OnInit, AfterViewInit {
 
   downloadLogs(job: Job): void {
     this.ws.call('core.job_download_logs', [job.id, `${job.id}.log`]).pipe(
-      switchMap((url) => this.storage.downloadUrl(url, `${job.id}.log`, 'text/plain')),
+      switchMap((url) => this.download.downloadUrl(url, `${job.id}.log`, 'text/plain')),
       catchError((error: HttpErrorResponse) => {
         this.dialogService.error(this.errorHandler.parseHttpError(error));
         return EMPTY;

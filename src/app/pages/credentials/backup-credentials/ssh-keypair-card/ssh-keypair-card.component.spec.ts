@@ -14,9 +14,9 @@ import { IxTable2Harness } from 'app/modules/ix-table2/components/ix-table2/ix-t
 import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
 import { SshKeypairCardComponent } from 'app/pages/credentials/backup-credentials/ssh-keypair-card/ssh-keypair-card.component';
 import { SshKeypairFormComponent } from 'app/pages/credentials/backup-credentials/ssh-keypair-form/ssh-keypair-form.component';
+import { DownloadService } from 'app/services/download.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { KeychainCredentialService } from 'app/services/keychain-credential.service';
-import { StorageService } from 'app/services/storage.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 describe('SshKeypairCardComponent', () => {
@@ -70,6 +70,7 @@ describe('SshKeypairCardComponent', () => {
           afterClosed: () => of(true),
         })),
       }),
+      mockProvider(DownloadService),
       mockProvider(KeychainCredentialService, {
         getSshKeys: jest.fn(() => of(credentials)),
       }),
@@ -112,8 +113,7 @@ describe('SshKeypairCardComponent', () => {
   });
 
   it('checks when "Download" button is pressed', async () => {
-    const storage = spectator.inject(StorageService);
-    jest.spyOn(storage, 'downloadBlob').mockImplementation();
+    const storage = spectator.inject(DownloadService);
     const downloadButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'save_alt' }), 1, 1);
     await downloadButton.click();
 

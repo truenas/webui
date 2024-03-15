@@ -1,7 +1,7 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
+import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { DatasetCaseSensitivity, DatasetPreset } from 'app/enums/dataset.enum';
 import { ZfsPropertySource } from 'app/enums/zfs-property-source.enum';
 import { Dataset } from 'app/interfaces/dataset.interface';
@@ -12,6 +12,7 @@ import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import {
   NameAndOptionsSectionComponent,
 } from 'app/pages/datasets/components/dataset-form/sections/name-and-options-section/name-and-options-section.component';
+import { SmbValidationService } from 'app/pages/sharing/smb/smb-form/smb-validator.service';
 
 describe('NameAndOptionsSectionComponent', () => {
   let spectator: Spectator<NameAndOptionsSectionComponent>;
@@ -34,6 +35,9 @@ describe('NameAndOptionsSectionComponent', () => {
     imports: [
       ReactiveFormsModule,
       IxFormsModule,
+    ],
+    providers: [
+      mockProvider(SmbValidationService),
     ],
   });
 
