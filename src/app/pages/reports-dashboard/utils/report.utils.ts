@@ -179,10 +179,16 @@ export function convertAggregations(input: ReportingData, labelY?: string): Repo
 
     if (Array.isArray(values)) {
       values.forEach((value, index) => {
-        (output.aggregations[key] as (string | number)[])[index] = formatValue(value as number, units);
+        const formattedValue = formatValue(value as number, units);
+        const suffix = labelY.endsWith('/s') ? '/s' : '';
+        (output.aggregations[key] as (string | number)[])[index] = formattedValue + suffix;
       });
     } else {
-      output.aggregations[key] = Object.values(values).map((value) => formatValue(value as number, units));
+      output.aggregations[key] = Object.values(values).map((value) => {
+        const formattedValue = formatValue(value as number, units);
+        const suffix = labelY.endsWith('/s') ? '/s' : '';
+        return formattedValue + suffix;
+      });
     }
   });
   return output;
