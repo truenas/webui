@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import {
   TiB, GiB, MiB, KiB,
 } from 'app/constants/bytes.constant';
@@ -21,11 +20,6 @@ export function formatInterfaceUnit(value: string): string {
 export function formatData(data: ReportingData): ReportingData {
   if (data.name === (ReportingGraphName.NetworkInterface as string) && data.aggregations) {
     delete data.aggregations.min; // Will always be showing bogus small values
-    Object.keys(data.aggregations).forEach((key) => {
-      _.set(data.aggregations, key, (data.aggregations[key as ReportingAggregationKeys] as string[]).map(
-        (value) => formatInterfaceUnit(value.includes('k') ? value : value.toUpperCase()),
-      ));
-    });
   }
 
   const shouldBeReversed = data.name === (ReportingGraphName.Cpu as string);
@@ -105,6 +99,9 @@ export function convertKmgt(input: number, units: string): { value: number; pref
     prefix = 'Kibi';
     shortName = ' KiB';
     output = input / KiB;
+  } else {
+    prefix = '';
+    shortName = ' B';
   }
 
   if (units === 'bits') {
@@ -115,7 +112,23 @@ export function convertKmgt(input: number, units: string): { value: number; pref
   return { value: output, prefix, shortName };
 }
 
-export function convertByKilo(input: number): { value: number; suffix: string; shortName: string } {
+export function convertByKilobits(input: number): { value: number; suffix: string; shortName: string } {
+  if (typeof input !== 'number') { return input; }
+  let output = input;
+  let suffix = '';
+
+  if (input >= 1000000) {
+    output = input / 1000000;
+    suffix = ' mb';
+  } else if (input < 1000000 && input >= 1000) {
+    output = input / 1000;
+    suffix = ' kb';
+  }
+
+  return { value: output, suffix, shortName: '' };
+}
+
+export function convertByThousands(input: number): { value: number; suffix: string; shortName: string } {
   if (typeof input !== 'number') { return input; }
   let output = input;
   let suffix = '';
@@ -151,7 +164,7 @@ export function formatValue(value: number, units: string): string | number {
       output = maxDecimals(converted.value).toString() + converted.shortName;
       break;
     case 'kilobits':
-      converted = convertByKilo(output * 1000);
+      converted = convertByKilobits(output * 1000);
       output = typeof output === 'number' ? maxDecimals(converted.value).toString() + converted.suffix : value;
       break;
     case 'bits':
@@ -162,7 +175,7 @@ export function formatValue(value: number, units: string): string | number {
     case '%':
     case '°':
     default:
-      converted = convertByKilo(output);
+      converted = convertByThousands(output);
       return typeof output === 'number' ? maxDecimals(converted.value).toString() + converted.suffix : value;
   }
 
@@ -180,13 +193,13 @@ export function convertAggregations(input: ReportingData, labelY?: string): Repo
     if (Array.isArray(values)) {
       values.forEach((value, index) => {
         const formattedValue = formatValue(value as number, units);
-        const suffix = labelY.endsWith('/s') ? '/s' : '';
+        const suffix = labelY.endsWith('/s') && formattedValue !== '0' ? '/s' : '';
         (output.aggregations[key] as (string | number)[])[index] = formattedValue + suffix;
       });
     } else {
       output.aggregations[key] = Object.values(values).map((value) => {
         const formattedValue = formatValue(value as number, units);
-        const suffix = labelY.endsWith('/s') ? '/s' : '';
+        const suffix = labelY.endsWith('/s') && formattedValue !== '0' ? '/s' : '';
         return formattedValue + suffix;
       });
     }
