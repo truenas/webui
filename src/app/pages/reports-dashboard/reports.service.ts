@@ -1,3 +1,5 @@
+import { Location } from '@angular/common';
+import { HttpClient } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
 import {
   filter, map, Observable, shareReplay, BehaviorSubject, Subject,
@@ -11,6 +13,7 @@ import { ReportTab, reportTypeLabels, ReportType } from 'app/pages/reports-dashb
 import { LegendDataWithStackedTotalHtml, Report } from 'app/pages/reports-dashboard/interfaces/report.interface';
 import { convertAggregations, optimizeLegend } from 'app/pages/reports-dashboard/utils/report.utils';
 import { AuthService } from 'app/services/auth/auth.service';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @Injectable({
@@ -31,7 +34,10 @@ export class ReportsService {
 
   constructor(
     private authService: AuthService,
+    private errorHandler: ErrorHandlerService,
     private ws: WebSocketService,
+    private http: HttpClient,
+    private location: Location,
     @Inject(WINDOW) private window: Window,
   ) {
     this.ws.call('reporting.netdata_graphs').subscribe((reportingGraphs) => {
@@ -168,16 +174,16 @@ export class ReportsService {
   }
 
   openNetdata(password: string): void {
-    // Thats the only way I could manage to have the browser save the password
-    // to re-use when the new tab is opened.
-    // HttpClient seems to do it through HttpHeaders which won't cache in browser.
-    const xhr = new XMLHttpRequest();
     this.loggedInUser$.subscribe((user) => {
-      xhr.open('GET', '/netdata/', true, user.pw_name, password);
-      xhr.addEventListener('load', () => {
-        this.window.open('/netdata/');
-      });
-      xhr.send();
+      const url = new URL(this.window.location.href);
+      url.username = user.pw_name;
+      url.password = password;
+      url.pathname = '/netdata/';
+      this.http.get(url.toString(), { responseType: 'text' })
+        .pipe(this.errorHandler.catchError())
+        .subscribe((_) => {
+          this.window.open(url.pathname);
+        });
     });
   }
 }
