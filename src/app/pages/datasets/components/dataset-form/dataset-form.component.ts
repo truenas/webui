@@ -52,6 +52,11 @@ export class DatasetFormComponent implements OnInit, AfterViewInit {
 
   readonly requiredRoles = [Role.DatasetWrite];
 
+  isNameAndOptionsValid = true;
+  isQuotaValid = true;
+  isEncryptionValid = true;
+  isOtherOptionsValid = true;
+
   isLoading = false;
   isAdvancedMode = false;
   datasetPreset = DatasetPreset.Generic;
@@ -61,34 +66,8 @@ export class DatasetFormComponent implements OnInit, AfterViewInit {
   parentDataset: Dataset;
   existingDataset: Dataset;
 
-  constructor(
-    private ws: WebSocketService,
-    private cdr: ChangeDetectorRef,
-    private dialog: DialogService,
-    private datasetFormService: DatasetFormService,
-    private router: Router,
-    private errorHandler: ErrorHandlerService,
-    private snackbar: SnackbarService,
-    private translate: TranslateService,
-    private slideInRef: IxSlideInRef<DatasetFormComponent>,
-    private store$: Store<AppState>,
-    @Inject(SLIDE_IN_DATA) private slideInData: { datasetId: string; isNew?: boolean },
-  ) {}
-
-  ngOnInit(): void {
-    if (this.slideInData?.datasetId && !this.slideInData?.isNew) {
-      this.setForEdit();
-    }
-    if (this.slideInData?.datasetId && this.slideInData?.isNew) {
-      this.setForNew();
-    }
-  }
-
-  ngAfterViewInit(): void {
-    this.nameAndOptionsSection.form.controls.share_type.valueChanges
-      .pipe(untilDestroyed(this)).subscribe((datasetPreset) => {
-        this.datasetPreset = datasetPreset;
-      });
+  get areSubFormsValid(): boolean {
+    return this.isNameAndOptionsValid && this.isQuotaValid && this.isEncryptionValid && this.isNameAndOptionsValid;
   }
 
   get isNew(): boolean {
@@ -124,6 +103,36 @@ export class DatasetFormComponent implements OnInit, AfterViewInit {
       this.nameAndOptionsSection,
       this.otherOptionsSection,
     ];
+  }
+
+  constructor(
+    private ws: WebSocketService,
+    private cdr: ChangeDetectorRef,
+    private dialog: DialogService,
+    private datasetFormService: DatasetFormService,
+    private router: Router,
+    private errorHandler: ErrorHandlerService,
+    private snackbar: SnackbarService,
+    private translate: TranslateService,
+    private slideInRef: IxSlideInRef<DatasetFormComponent>,
+    private store$: Store<AppState>,
+    @Inject(SLIDE_IN_DATA) private slideInData: { datasetId: string; isNew?: boolean },
+  ) {}
+
+  ngOnInit(): void {
+    if (this.slideInData?.datasetId && !this.slideInData?.isNew) {
+      this.setForEdit();
+    }
+    if (this.slideInData?.datasetId && this.slideInData?.isNew) {
+      this.setForNew();
+    }
+  }
+
+  ngAfterViewInit(): void {
+    this.nameAndOptionsSection.form.controls.share_type.valueChanges
+      .pipe(untilDestroyed(this)).subscribe((datasetPreset) => {
+        this.datasetPreset = datasetPreset;
+      });
   }
 
   setForNew(): void {
