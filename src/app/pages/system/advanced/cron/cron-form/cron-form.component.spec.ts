@@ -96,7 +96,7 @@ describe('CronFormComponent', () => {
         'Run As User': 'root',
         'Hide Standard Output': true,
         'Hide Standard Error': true,
-        Schedule: '0-30 */2 2 * 2-3',
+        Schedule: '0 0 * * *',
         Enabled: true,
       });
 
@@ -108,10 +108,10 @@ describe('CronFormComponent', () => {
         description: 'Final cron job',
         enabled: true,
         schedule: {
-          minute: '0-30',
-          hour: '*/2',
-          dom: '2',
-          dow: 'tue,wed',
+          minute: '0',
+          hour: '0',
+          dom: '*',
+          dow: '*',
           month: '*',
         },
         stderr: true,
