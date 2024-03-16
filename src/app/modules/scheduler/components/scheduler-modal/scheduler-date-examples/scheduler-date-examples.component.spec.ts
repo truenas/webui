@@ -61,7 +61,7 @@ describe('SchedulerDateExamplesComponent', () => {
       },
     });
 
-    const examples = spectator.queryAll('.schedule-example').map((element) => element.textContent);
+    const examples = spectator.queryAll('.date-spanner').map((element) => element.textContent);
     expect(examples).toHaveLength(spectator.component.maxExamples);
     expect(spectator.query('.only-first-results-message')).toExist();
   });

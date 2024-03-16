@@ -1,5 +1,5 @@
 <span
-  class="schedule-example"
+  class="date-spanner"
   [matTooltip]="'Machine Time: {time}, {tz}' | translate: { time: (serverTime | formatDateTime: dateFormat: timeFormat), tz: machineTimezone }"
 >
   {{ date | formatDateTime: dateFormat: timeFormat }}
