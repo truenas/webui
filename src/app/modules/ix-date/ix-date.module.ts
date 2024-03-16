@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { TranslateModule } from '@ngx-translate/core';
 import { CoreComponents } from 'app/core/core-components.module';
 import { IxDateComponent } from 'app/modules/ix-date/ix-date.component';
 import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
@@ -11,6 +12,7 @@ import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
     MatTooltipModule,
     CoreComponents,
     TooltipModule,
+    TranslateModule,
   ],
   declarations: [
     IxDateComponent,

@@ -2165,6 +2165,7 @@
   "MTU": "",
   "Mac Address": "",
   "Machine": "",
+  "Machine Time: {time}, {tz}": "",
   "Mail Server Port": "",
   "Maintainer": "",
   "Major": "",

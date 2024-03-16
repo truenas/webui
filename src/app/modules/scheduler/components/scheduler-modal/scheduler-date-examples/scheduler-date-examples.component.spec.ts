@@ -1,6 +1,7 @@
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-datetime.pipe';
+import { IxDateModule } from 'app/modules/ix-date/ix-date.module';
 import {
   CronSchedulePreview,
 } from 'app/modules/scheduler/classes/cron-schedule-preview/cron-schedule-preview';
@@ -11,6 +12,9 @@ describe('SchedulerDateExamplesComponent', () => {
   let spectator: Spectator<SchedulerDateExamplesComponent>;
   const createComponent = createComponentFactory({
     component: SchedulerDateExamplesComponent,
+    imports: [
+      IxDateModule,
+    ],
     providers: [
       provideMockStore({
         selectors: [

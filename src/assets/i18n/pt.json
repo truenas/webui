@@ -1124,6 +1124,7 @@
   "MAC Address": "",
   "MOTD Banner": "",
   "MTU": "",
+  "Machine Time: {time}, {tz}": "",
   "Maintainer": "",
   "Major": "",
   "Make Destination Dataset Read-only?": "",

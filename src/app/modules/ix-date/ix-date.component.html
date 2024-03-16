@@ -1,3 +1,6 @@
-<span [matTooltip]="'Machine Time: ' + (serverTime | formatDateTime: dateFormat: timeFormat) + ', ' + machineTimezone">
+<span
+  class="schedule-example"
+  [matTooltip]="'Machine Time: {time}, {tz}' | translate: { time: (serverTime | formatDateTime: dateFormat: timeFormat), tz: machineTimezone }"
+>
   {{ date | formatDateTime: dateFormat: timeFormat }}
 </span>

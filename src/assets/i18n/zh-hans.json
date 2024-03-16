@@ -51,6 +51,7 @@
   "Limit Pool To A Single Enclosure": "",
   "Limit To {name} Enclosure": "",
   "Machine": "",
+  "Machine Time: {time}, {tz}": "",
   "Maximize Dispersal": "",
   "Maximize Enclosure Dispersal": "",
   "Mixed Capacity": "",
