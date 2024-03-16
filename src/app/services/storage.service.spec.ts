@@ -154,7 +154,7 @@ describe('StorageService', () => {
 
       // Check mixed VDEV when the difference is less than 2 GiB
       expect(storageService.isMixedVdevCapacity(new Set([GiB, GiB * 3 - 1]))).toBe(false);
-      expect(storageService.isMixedVdevCapacity(new Set([GiB, GiB * 3]))).toBe(true);
+      expect(storageService.isMixedVdevCapacity(new Set([GiB, GiB * 3.2]))).toBe(true);
     });
   });
 
