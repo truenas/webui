@@ -56,6 +56,9 @@ export class WidgetBackupComponent extends WidgetComponent implements OnInit {
   backups: BackupRow[] = [];
   isLoading = false;
 
+  successStates = [JobState.Success, JobState.Finished];
+  failedStates = [JobState.Failed, JobState.Error, JobState.Aborted];
+
   readonly ScreenType = ScreenType;
 
   trackByTile: TrackByFunction<BackupTile> = (_, tile) => tile.title;
@@ -65,7 +68,7 @@ export class WidgetBackupComponent extends WidgetComponent implements OnInit {
   }
 
   get failedCount(): number {
-    return this.backups.filter((backup) => backup.state === JobState.Failed).length;
+    return this.backups.filter((backup) => this.failedStates.includes(backup.state)).length;
   }
 
   get replicationTasks(): BackupRow[] {
@@ -180,7 +183,7 @@ export class WidgetBackupComponent extends WidgetComponent implements OnInit {
   }
 
   private getTile(title: string, tasks: BackupRow[]): BackupTile {
-    const successfulTasks = tasks.filter((backup) => backup.state === JobState.Success);
+    const successfulTasks = tasks.filter((backup) => this.successStates.includes(backup.state));
     const lastSuccessfulTask = successfulTasks
       .sort((a, b) => b.timestamp.$date - a.timestamp.$date)[0]?.timestamp;
 
@@ -188,8 +191,10 @@ export class WidgetBackupComponent extends WidgetComponent implements OnInit {
       title,
       totalSend: tasks.filter((backup) => this.isSendTask(backup)).length,
       totalReceive: tasks.filter((backup) => !this.isSendTask(backup)).length,
-      failedSend: tasks.filter((backup) => backup.state === JobState.Failed && this.isSendTask(backup)).length,
-      failedReceive: tasks.filter((backup) => backup.state === JobState.Failed && !this.isSendTask(backup)).length,
+      failedSend: tasks
+        .filter((backup) => this.failedStates.includes(backup.state) && this.isSendTask(backup)).length,
+      failedReceive: tasks
+        .filter((backup) => this.failedStates.includes(backup.state) && !this.isSendTask(backup)).length,
       lastWeekSend: successfulTasks
         .filter((backup) => this.isSendTask(backup) && this.isThisWeek(backup.timestamp)).length,
       lastWeekReceive: successfulTasks
