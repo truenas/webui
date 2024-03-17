@@ -139,4 +139,37 @@ describe('PortalFormComponent', () => {
       }]);
     });
   });
+
+  describe('checking the addition and removal of IP addresses', () => {
+    beforeEach(() => {
+      spectator = createComponent();
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      ws = spectator.inject(WebSocketService);
+    });
+
+    it('adds and removes blocks when Add or Delete button is pressed', async () => {
+      const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
+      let deleteButton: MatButtonHarness;
+      expect(spectator.queryAll('.list-item')).toHaveLength(0);
+      expect(spectator.component.form.value.ip).toHaveLength(0);
+
+      await addButton.click();
+      expect(spectator.queryAll('.list-item')).toHaveLength(1);
+      expect(spectator.component.form.value.ip).toHaveLength(1);
+
+      await addButton.click();
+      expect(spectator.queryAll('.list-item')).toHaveLength(2);
+      expect(spectator.component.form.value.ip).toHaveLength(2);
+
+      deleteButton = await loader.getHarness(MatButtonHarness.with({ selector: '.delete-btn' }));
+      await deleteButton.click();
+      expect(spectator.queryAll('.list-item')).toHaveLength(1);
+      expect(spectator.component.form.value.ip).toHaveLength(1);
+
+      deleteButton = await loader.getHarness(MatButtonHarness.with({ selector: '.delete-btn' }));
+      await deleteButton.click();
+      expect(spectator.queryAll('.list-item')).toHaveLength(0);
+      expect(spectator.component.form.value.ip).toHaveLength(0);
+    });
+  });
 });
