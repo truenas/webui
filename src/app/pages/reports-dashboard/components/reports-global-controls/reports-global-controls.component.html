@@ -49,4 +49,9 @@
     ixTest="exporters-nav"
     [routerLink]="['/reportsdashboard','exporters']"
   >{{ 'Exporters' | translate }}</button>
+  <button
+    mat-button
+    ixTest="netdata-nav"
+    (click)="openNetdata()"
+  >{{ 'Netdata' | translate }}</button>
 </form>

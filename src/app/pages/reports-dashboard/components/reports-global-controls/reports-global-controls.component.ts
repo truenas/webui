@@ -8,8 +8,11 @@ import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { take } from 'rxjs';
+import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { ReportTab, ReportType } from 'app/pages/reports-dashboard/interfaces/report-tab.interface';
 import { ReportsService } from 'app/pages/reports-dashboard/reports.service';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 import { autoRefreshReportsToggled } from 'app/store/preferences/preferences.actions';
 import { waitForPreferences } from 'app/store/preferences/preferences.selectors';
@@ -39,8 +42,11 @@ export class ReportsGlobalControlsComponent implements OnInit {
     private fb: FormBuilder,
     private route: ActivatedRoute,
     private store$: Store<AppState>,
+    private loader: AppLoaderService,
+    private errorHandler: ErrorHandlerService,
     private reportsService: ReportsService,
     private cdr: ChangeDetectorRef,
+    private ws: WebSocketService,
   ) {}
 
   ngOnInit(): void {
@@ -101,5 +107,17 @@ export class ReportsGlobalControlsComponent implements OnInit {
         this.store$.dispatch(autoRefreshReportsToggled());
       });
     });
+  }
+
+  openNetdata(): void {
+    this.ws.call('reporting.netdataweb_generate_password', [])
+      .pipe(
+        this.loader.withLoader(),
+        this.errorHandler.catchError(),
+        untilDestroyed(this),
+      )
+      .subscribe((password) => {
+        this.reportsService.openNetdata(password);
+      });
   }
 }
