@@ -1,10 +1,10 @@
 import {
-  ChangeDetectionStrategy, Component, Input, OnChanges, OnInit,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, OnChanges, OnInit, Output,
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { of } from 'rxjs';
+import { delay, merge, of } from 'rxjs';
 import { DatasetCaseSensitivity, DatasetPreset, datasetPresetLabels } from 'app/enums/dataset.enum';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextDatasetForm } from 'app/helptext/storage/volumes/datasets/dataset-form';
@@ -13,6 +13,7 @@ import {
   forbiddenValues,
 } from 'app/modules/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
 import { datasetNameTooLong } from 'app/pages/datasets/components/dataset-form/utils/name-length-validation';
+import { SmbValidationService } from 'app/pages/sharing/smb/smb-form/smb-validator.service';
 import { NameValidationService } from 'app/services/name-validation.service';
 
 @UntilDestroy()
@@ -25,6 +26,8 @@ import { NameValidationService } from 'app/services/name-validation.service';
 export class NameAndOptionsSectionComponent implements OnInit, OnChanges {
   @Input() existing: Dataset;
   @Input() parent: Dataset;
+
+  @Output() formValidityChange = new EventEmitter<boolean>();
 
   datasetPresetOptions$ = of(mapToOptions(datasetPresetLabels, this.translate));
 
@@ -58,7 +61,9 @@ export class NameAndOptionsSectionComponent implements OnInit, OnChanges {
   constructor(
     private formBuilder: FormBuilder,
     private translate: TranslateService,
+    private smbValidationService: SmbValidationService,
     private nameValidationService: NameValidationService,
+    private cdr: ChangeDetectorRef,
   ) {}
 
   ngOnChanges(): void {
@@ -74,11 +79,11 @@ export class NameAndOptionsSectionComponent implements OnInit, OnChanges {
   ngOnInit(): void {
     this.form.controls.parent.disable();
 
-    this.form.controls.name.valueChanges.pipe(untilDestroyed(this)).subscribe((name) => {
-      this.datasetPresetForm.patchValue({
-        smb_name: name,
-      });
-    });
+    this.listenForSmbNameValidation();
+
+    merge(this.form.statusChanges, this.datasetPresetForm.statusChanges)
+      .pipe(untilDestroyed(this))
+      .subscribe((status) => this.formValidityChange.emit(status === 'VALID'));
   }
 
   getPayload(): Partial<DatasetCreate> | Partial<DatasetUpdate> {
@@ -91,7 +96,7 @@ export class NameAndOptionsSectionComponent implements OnInit, OnChanges {
 
     return {
       ...payload,
-      name: `${this.parent.name}/${payload.name}`,
+      name: payload.name && this.form.controls.name.valid ? `${this.parent.name}/${payload.name}` : null,
     };
   }
 
@@ -128,5 +133,29 @@ export class NameAndOptionsSectionComponent implements OnInit, OnChanges {
       datasetNameTooLong(this.parent.name),
       forbiddenValues(namesInUse, isNameCaseSensitive),
     ]);
+  }
+
+  private listenForSmbNameValidation(): void {
+    merge(
+      this.form.controls.share_type.valueChanges,
+      this.datasetPresetForm.controls.create_smb.valueChanges,
+    )
+      .pipe(delay(0), untilDestroyed(this))
+      .subscribe(() => {
+        const smbNameControl = this.datasetPresetForm.controls.smb_name;
+
+        if (this.canCreateSmb && !!this.datasetPresetForm.controls.create_smb.value) {
+          smbNameControl.addValidators(Validators.required);
+          smbNameControl.addAsyncValidators(this.smbValidationService.validate());
+          smbNameControl.patchValue(this.form.controls.name.value);
+          smbNameControl.markAsTouched();
+        } else {
+          smbNameControl.clearAsyncValidators();
+          smbNameControl.clearValidators();
+          smbNameControl.patchValue(null);
+        }
+
+        this.cdr.markForCheck();
+      });
   }
 }
