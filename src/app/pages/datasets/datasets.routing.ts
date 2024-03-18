@@ -1,14 +1,26 @@
 import { ModuleWithProviders } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
+import { DatasetQuotaType } from 'app/enums/dataset.enum';
 import { DatasetsManagementComponent } from 'app/pages/datasets/components/dataset-management/dataset-management.component';
-import { DatasetQuotasGrouplistComponent } from 'app/pages/datasets/components/dataset-quotas/dataset-quotas-grouplist/dataset-quotas-grouplist.component';
-import { DatasetQuotasUserListComponent } from 'app/pages/datasets/components/dataset-quotas/dataset-quotas-user-list/dataset-quotas-user-list.component';
+import { DatasetQuotasListComponent } from 'app/pages/datasets/components/dataset-quotas/dataset-quotas-list/dataset-quotas-list.component';
 import { DatasetUnlockComponent } from 'app/pages/datasets/modules/encryption/components/dataset-unlock/dataset-unlock.component';
 import {
   DatasetAclEditorComponent,
 } from 'app/pages/datasets/modules/permissions/containers/dataset-acl-editor/dataset-acl-editor.component';
 import { DatasetTrivialPermissionsComponent } from './modules/permissions/containers/dataset-trivial-permissions/dataset-trivial-permissions.component';
+
+const userQuotasData = {
+  quotaType: DatasetQuotaType.User,
+  quotaObjType: DatasetQuotaType.UserObj,
+  helpTextKey: 'users',
+};
+
+const groupQuotasData = {
+  quotaType: DatasetQuotaType.Group,
+  quotaObjType: DatasetQuotaType.GroupObj,
+  helpTextKey: 'groups',
+};
 
 export const routes: Routes = [
   {
@@ -48,25 +60,25 @@ export const routes: Routes = [
           },
           {
             path: 'user-quotas',
-            component: DatasetQuotasUserListComponent,
-            data: { title: T('User Quotas'), breadcrumb: null },
+            component: DatasetQuotasListComponent,
+            data: { title: T('User Quotas'), breadcrumb: null, ...userQuotasData },
           },
           {
             path: 'group-quotas',
-            component: DatasetQuotasGrouplistComponent,
-            data: { title: T('Group Quotas'), breadcrumb: null },
+            component: DatasetQuotasListComponent,
+            data: { title: T('Group Quotas'), breadcrumb: null, ...groupQuotasData },
           },
         ],
       },
       {
         path: 'user-quotas/:pk',
-        component: DatasetQuotasUserListComponent,
-        data: { title: T('User Quotas'), breadcrumb: null },
+        component: DatasetQuotasListComponent,
+        data: { title: T('User Quotas'), breadcrumb: null, ...userQuotasData },
       },
       {
         path: 'group-quotas/:pk',
-        component: DatasetQuotasGrouplistComponent,
-        data: { title: T('Group Quotas'), breadcrumb: null },
+        component: DatasetQuotasListComponent,
+        data: { title: T('Group Quotas'), breadcrumb: null, ...groupQuotasData },
       },
       {
         path: '**',
