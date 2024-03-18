@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, Input, OnChanges,
+  ChangeDetectionStrategy, Component, Input, OnChanges, TrackByFunction,
 } from '@angular/core';
 import { CronSchedulePreview } from 'app/modules/scheduler/classes/cron-schedule-preview/cron-schedule-preview';
 
@@ -14,6 +14,7 @@ export class SchedulerDateExamplesComponent implements OnChanges {
   @Input() startDate: Date;
   @Input() machineTimezone: string = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
+  trackByIndex: TrackByFunction<number> = (index: number): number => index;
   scheduleExamples: Date[] = [];
 
   readonly maxExamples = 25;
