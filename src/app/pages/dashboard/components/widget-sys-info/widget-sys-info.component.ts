@@ -154,10 +154,17 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
   }
 
   getSystemInfo(): void {
+    this.ready = false;
+    this.cdr.markForCheck();
+
     this.ws.call('webui.main.dashboard.sys_info')
       .pipe(untilDestroyed(this))
       .subscribe((systemInfo) => {
-        this.processSysInfo(this.isPassive ? systemInfo.remote_info : systemInfo);
+        this.systemInfo = this.isPassive ? systemInfo.remote_info : systemInfo;
+        this.setUptimeUpdates();
+        this.setProductImage();
+
+        this.ready = true;
         this.cdr.markForCheck();
       });
   }
@@ -167,6 +174,9 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
       .pipe(filter(Boolean), untilDestroyed(this))
       .subscribe(({ hasHa }) => {
         this.hasHa = hasHa;
+        if (hasHa) {
+          this.getSystemInfo();
+        }
         this.cdr.markForCheck();
       });
   }
@@ -186,24 +196,19 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
   }
 
   checkForRunningUpdate(): void {
-    this.ws.call('core.get_jobs', [[['method', '=', this.updateMethod], ['state', '=', JobState.Running]]]).pipe(untilDestroyed(this)).subscribe({
-      next: (jobs) => {
-        if (jobs && jobs.length > 0) {
-          this.isUpdateRunning = true;
-          this.cdr.markForCheck();
-        }
-      },
-      error: (err) => {
-        console.error(err);
-      },
-    });
-  }
-
-  processSysInfo(systemInfo: SystemInfo): void {
-    this.systemInfo = systemInfo;
-    this.setUptimeUpdates();
-    this.setProductImage();
-    this.ready = true;
+    this.ws.call('core.get_jobs', [[['method', '=', this.updateMethod], ['state', '=', JobState.Running]]])
+      .pipe(untilDestroyed(this))
+      .subscribe({
+        next: (jobs) => {
+          if (jobs && jobs.length > 0) {
+            this.isUpdateRunning = true;
+            this.cdr.markForCheck();
+          }
+        },
+        error: (err) => {
+          console.error(err);
+        },
+      });
   }
 
   setUptimeUpdates(): void {
@@ -230,6 +235,8 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
       this.productModel = product || '';
       this.productEnclosure = 'rackmount';
     }
+
+    this.cdr.markForCheck();
   }
 
   setMiniImage(sysProduct: string): void {

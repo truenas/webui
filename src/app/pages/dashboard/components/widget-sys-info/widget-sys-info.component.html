@@ -128,7 +128,7 @@
                   <div *ngIf="productImage && isHaLicensed && isPassive && hasHa" class="ha-node-status">
                     ({{ 'Standby' | translate }})
                   </div>
-                  <div *ngIf="ready && !productImage && sysGenService.isEnterprise && hasHa" class="ha-node-status">
+                  <div *ngIf="ready && !productImage && sysGenService.isEnterprise && !isIxHardware" class="ha-node-status">
                     ({{ 'Unsupported Hardware' | translate }})
                   </div>
                 </div>
@@ -162,7 +162,7 @@
             <!-- Details Section -->
             <div class="right" fxFlex.xs fxFlex.gt-xs="60" fxLayout="column">
               <div
-                *ngIf="!systemInfo && isHaLicensed && isPassive && hasHa"
+                *ngIf="ready && !systemInfo && isHaLicensed && isPassive && hasHa"
                 class="data-container ha-status"
                 fxFlex
               >
@@ -172,7 +172,7 @@
               </div>
 
               <div
-                *ngIf="!systemInfo && isHaLicensed && isPassive && !hasHa"
+                *ngIf="ready && !systemInfo && isHaLicensed && isPassive && !hasHa"
                 class="data-container ha-status"
                 fxFlex
               >
@@ -181,7 +181,7 @@
                 </h3>
               </div>
 
-              <div *ngIf="!systemInfo && !isHaLicensed" class="loader">
+              <div *ngIf="!ready && !systemInfo" class="loader">
                 <mat-spinner class="spinner" [diameter]="40"></mat-spinner>
               </div>
 
