@@ -13,6 +13,7 @@
               color="default"
               class="mat-card-title-text primary-nav"
               ixTest="nic-back"
+              [attr.aria-label]="'Go back' | translate"
               (click)="goBack(); updateSlide(path[previousSlide].name, true, previousSlide)"
             >
               <ix-icon name="chevron_left"></ix-icon>

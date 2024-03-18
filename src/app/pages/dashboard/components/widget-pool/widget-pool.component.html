@@ -13,6 +13,7 @@
               mat-icon-button
               color="default"
               [ixTest]="[poolState.name, 'widget', 'back']"
+              [attr.aria-label]="'Go back' | translate"
               (click)="goBack()"
             >
               <ix-icon name="chevron_left"></ix-icon>

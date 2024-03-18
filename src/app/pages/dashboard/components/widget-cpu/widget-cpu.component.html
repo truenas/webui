@@ -6,12 +6,12 @@
           <ng-content [select]="[cdkDragHandle]"></ng-content>
 
           <mat-toolbar-row>
-            <!-- Mobile Only: Exit widget -->
             <button
               class="mat-card-title-text primary-nav"
               mat-icon-button
               color="default"
               ixTest="cpu-back"
+              [attr.aria-label]="'Go back' | translate"
               (click)="goBack()"
             >
               <ix-icon name="chevron_left"></ix-icon>
@@ -291,7 +291,7 @@
             </div>
           </ng-template>
 
-          <div id="cpu-cores-chart" class="bar-chart">
+          <div class="cpu-cores-chart bar-chart">
             <canvas></canvas>
           </div>
         </div>

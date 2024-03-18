@@ -56,11 +56,6 @@
   }
 }
 
-.view-overview .mat-card-title-text {
-  margin-left: 40% !important;
-  padding-left: 14px;
-}
-
 span.passive {
   align-items: baseline;
   display: inline-flex;
@@ -406,11 +401,6 @@ div.generic.alert .ix-icon {
 .xs.widget img.platform-logo {
   height: 48px;
   width: auto;
-}
-
-.xs.widget .view-overview .mat-card-title-text {
-  color: var(--primary-txt);
-  margin-left: unset !important;
 }
 
 .xs.widget .ha-node-status {

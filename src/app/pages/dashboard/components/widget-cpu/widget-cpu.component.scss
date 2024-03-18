@@ -6,7 +6,7 @@
   margin-bottom: 32px;
 }
 
-#cpu-cores-chart {
+.cpu-cores-chart {
   flex: 1 1 104px;
   margin: 0 16px;
   max-height: 104px;
@@ -196,7 +196,7 @@
   margin-left: 16px;
 }
 
-.xs.widget #cpu-cores-chart {
+.xs.widget .cpu-cores-chart {
   margin: 0;
   width: calc(100vw - 16px);
 }

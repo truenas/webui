@@ -11,10 +11,21 @@
           <ng-content [select]="[cdkDragHandle]"></ng-content>
 
           <mat-toolbar-row class="view-overview">
-            <span *ngIf="showReorderHandle" class="grip"></span>
+            <button
+              class="mat-card-title-text primary-nav"
+              mat-icon-button
+              color="default"
+              [ixTest]="['sysinfo-widget', 'back']"
+              [attr.aria-label]="'Go back' | translate"
+              (click)="goBack()"
+            >
+              <ix-icon name="chevron_left"></ix-icon>
+            </button>
+
             <h3 class="mat-card-title-text">
               <ix-drag-handle [showReorderHandle]="showReorderHandle">
                 <span class="card-title-text">
+                  <span *ngIf="showReorderHandle" class="grip"></span>
                   <span>{{ 'System Information' | translate }}</span>
                   <span *ngIf="isPassive" class="passive">{{ 'Standby' | translate }}</span>
                 </span>
@@ -32,17 +43,6 @@
               [class.passive]="isPassive"
               [class.active]="!isPassive"
             >
-              <!-- Mobile Only: Exit Widget -->
-              <button
-                class="mat-card-title-text primary-nav"
-                mat-icon-button
-                color="default"
-                [ixTest]="['sysinfo-widget', 'back']"
-                (click)="goBack()"
-              >
-                <ix-icon name="chevron_left"></ix-icon>
-              </button>
-
               <div class="platform-logo-wrapper">
                 <ng-container *ngIf="productImage || isPassive; else textOnly">
                   <ix-icon name="ix:logo_truenas_scale_full" [id]="productModel"></ix-icon>
