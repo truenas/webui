@@ -27,11 +27,13 @@ import {
   tap,
 } from 'rxjs/operators';
 import { DatasetPreset } from 'app/enums/dataset.enum';
+import { ResponseErrorType } from 'app/enums/response-error-type.enum';
 import { Role } from 'app/enums/role.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { helptextSharingSmb } from 'app/helptext/sharing';
 import { DatasetCreate } from 'app/interfaces/dataset.interface';
+import { Job } from 'app/interfaces/job.interface';
 import { Option } from 'app/interfaces/option.interface';
 import {
   SmbPresets,
@@ -505,7 +507,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
         this.isLoading = false;
         this.cdr.markForCheck();
 
-        if (this.formErrorHandler.isErrorFieldFromAdvancedOptions(error, {}, this.advancedFields)) {
+        if (this.isErrorFieldFromAdvancedOptions(error, {}, this.advancedFields)) {
           this.isAdvancedMode = true;
           this.cdr.markForCheck();
         }
@@ -574,5 +576,53 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
         );
       }),
     );
+  }
+
+  isErrorFieldFromAdvancedOptions(
+    error: unknown,
+    fieldsMap: Record<string, string> = {},
+    advancedFields: string[] = [],
+  ): boolean {
+    if (
+      this.errorHandler.isWebsocketError(error)
+      && error.type === ResponseErrorType.Validation
+      && error.extra
+    ) {
+      const errorFields = this.getFieldsNamesFromError(error, fieldsMap);
+      return advancedFields.some((advancedField) => {
+        return errorFields.some((field) => {
+          return field.toLowerCase().includes(advancedField.toLowerCase());
+        });
+      });
+    }
+
+    if (
+      this.errorHandler.isJobError(error)
+      && error.exc_info.type === ResponseErrorType.Validation
+      && error.exc_info.extra
+    ) {
+      const errorFields = this.getFieldsNamesFromError({ ...error, extra: error.exc_info.extra as Job['extra'] }, fieldsMap);
+      return advancedFields.some((advancedField) => {
+        return errorFields.some((field) => {
+          return field.toLowerCase().includes(advancedField.toLowerCase());
+        });
+      });
+    }
+    return false;
+  }
+
+  private getFieldsNamesFromError(
+    error: WebsocketError | Job,
+    fieldsMap: Record<string, string>,
+  ): string[] {
+    const extra = (error as WebsocketError).extra as string[][];
+    const fieldNames: string[] = [];
+    for (const extraItem of extra) {
+      const field = extraItem[0].split('.').pop();
+
+      const fieldName = fieldsMap[field] ?? field;
+      fieldNames.push(fieldName);
+    }
+    return fieldNames;
   }
 }

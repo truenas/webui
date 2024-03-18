@@ -81,54 +81,6 @@ export class FormErrorHandlerService {
     }
   }
 
-  isErrorFieldFromAdvancedOptions(
-    error: unknown,
-    fieldsMap: Record<string, string> = {},
-    advancedFields: string[] = [],
-  ): boolean {
-    if (
-      this.errorHandler.isWebsocketError(error)
-      && error.type === ResponseErrorType.Validation
-      && error.extra
-    ) {
-      const errorFields = this.getFieldsNamesFromError(error, fieldsMap);
-      return advancedFields.some((advancedField) => {
-        return errorFields.some((field) => {
-          return field.toLowerCase().includes(advancedField.toLowerCase());
-        });
-      });
-    }
-
-    if (
-      this.errorHandler.isJobError(error)
-      && error.exc_info.type === ResponseErrorType.Validation
-      && error.exc_info.extra
-    ) {
-      const errorFields = this.getFieldsNamesFromError({ ...error, extra: error.exc_info.extra as Job['extra'] }, fieldsMap);
-      return advancedFields.some((advancedField) => {
-        return errorFields.some((field) => {
-          return field.toLowerCase().includes(advancedField.toLowerCase());
-        });
-      });
-    }
-    return false;
-  }
-
-  private getFieldsNamesFromError(
-    error: WebsocketError | Job,
-    fieldsMap: Record<string, string>,
-  ): string[] {
-    const extra = (error as WebsocketError).extra as string[][];
-    const fieldNames: string[] = [];
-    for (const extraItem of extra) {
-      const field = extraItem[0].split('.').pop();
-
-      const fieldName = fieldsMap[field] ?? field;
-      fieldNames.push(fieldName);
-    }
-    return fieldNames;
-  }
-
   private getFormField(formGroup: UntypedFormGroup, field: string, fieldsMap: Record<string, string>): AbstractControl {
     const fieldName = fieldsMap[field] ?? field;
     return formGroup.get(fieldName);
