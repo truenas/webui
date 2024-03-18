@@ -691,6 +691,7 @@
   "Configure Active Directory": "",
   "Configure Dashboard": "",
   "Configure LDAP": "",
+  "Configure Pools": "",
   "Configure Sessions": "",
   "Configure {name}": "",
   "Configured for simultaneous use with SMB and NFS on the same dataset.": "",

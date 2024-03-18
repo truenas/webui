@@ -30,14 +30,12 @@
               <a
                 mat-icon-button
                 ixTest="cpu-reports"
+                matTooltipPosition="above"
+                [attr.aria-label]="'CPU Reports' | translate"
+                [matTooltip]="'CPU Reports' | translate"
                 [routerLink]="['/reportsdashboard/cpu']"
               >
-                <ix-icon
-                  name="insert_chart"
-                  matTooltipPosition="above"
-                  [attr.aria-label]="'CPU Reports' | translate"
-                  [matTooltip]="'CPU Reports' | translate"
-                ></ix-icon>
+                <ix-icon name="insert_chart"></ix-icon>
               </a>
             </div>
           </mat-toolbar-row>

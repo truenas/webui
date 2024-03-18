@@ -132,6 +132,19 @@
     }
   }
 
+  mat-toolbar-row.view-overview .controls,
+  mat-toolbar-row.view-overview .primary-nav {
+    color: #efefef; /* Don't use CSS var as text is over a dark image */
+    font-family: var(--font-family-body);
+  }
+
+  button.mat-card-title-text.primary-nav {
+    left: 0;
+    position: absolute;
+    top: 0;
+    z-index: 2;
+  }
+
   .c3 {
     .tick text,
     text.c3-axis-y-label {

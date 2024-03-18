@@ -40,15 +40,6 @@
   top: 26px;
 }
 
-.xs.widget mat-toolbar-row.view-overview {
-  display: none;
-}
-
-.widget mat-toolbar-row.view-overview .primary-nav {
-  color: #efefef;
-}
-
-
 .widget .left {
   display: flex;
   flex-basis: 40%;
@@ -256,21 +247,12 @@ img.clickable,
   flex: 1 1 100%;
   max-height: 20%;
   padding-top: 12px;
-}
-
-.platform-logo-wrapper.scale,
-.platform-logo-wrapper.scale_enterprise,
-.platform-logo-wrapper.core {
   padding-top: 18px;
-}
 
-.platform-logo-wrapper .ix-icon {
-  height: 2.5rem;
-  width: auto;
-}
-
-.platform-logo-wrapper.core .ix-icon {
-  height: 2.25rem;
+  .ix-icon {
+    height: 2.5rem;
+    width: auto;
+  }
 }
 
 .product-image {
@@ -473,13 +455,6 @@ div.generic.alert .ix-icon {
 .xs.widget .left {
   flex-basis: 250px;
   min-height: 275px;
-}
-
-.primary-nav.mat-card-title-text {
-  left: 0;
-  position: absolute;
-  top: 0;
-  z-index: 2;
 }
 
 .xs .freenas.product-image img {

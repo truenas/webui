@@ -1,6 +1,6 @@
 <div
   class="widget double-height"
-  [class.xs]="screenType === ScreenType.Mobile"
+  [class.xs]="isMobile$ | async"
   [class.generic-hardware]="!productImage"
   [class.ix-hardware]="productImage"
 >
@@ -16,9 +16,7 @@
               <ix-drag-handle [showReorderHandle]="showReorderHandle">
                 <span class="card-title-text">
                   <span>{{ 'System Information' | translate }}</span>
-                  <span *ngIf="isPassive" class="passive">
-                    {{ 'Standby' | translate }}
-                  </span>
+                  <span *ngIf="isPassive" class="passive">{{ 'Standby' | translate }}</span>
                 </span>
               </ix-drag-handle>
             </h3>
@@ -27,7 +25,6 @@
 
         <div class="carousel">
           <div class="slide overview">
-            <!-- Summary Section -->
             <div
               class="left"
               [class.fn-theme-primary]="themeService.activeTheme !== themeService.defaultTheme"
@@ -46,7 +43,7 @@
                 <ix-icon name="chevron_left"></ix-icon>
               </button>
 
-              <div [ngClass]="['platform-logo-wrapper', sysGenService.getProductType()?.toLowerCase()]">
+              <div class="platform-logo-wrapper">
                 <ng-container *ngIf="productImage || isPassive; else textOnly">
                   <ix-icon name="ix:logo_truenas_scale_full" [id]="productModel"></ix-icon>
                 </ng-container>
@@ -60,7 +57,8 @@
                   <ix-icon name="mdi-alert" [matTooltip]="'HA is disabled' | translate"></ix-icon>
                 </div>
                 <div
-                  [class]="'product-image ' + productEnclosure"
+                  class="product-image"
+                  [ngClass]="productEnclosure"
                   [class.truenas]="sysGenService.isEnterprise"
                   [class.freenas]="!sysGenService.isEnterprise"
                   [class.ix-logo]="productImage === 'ix-original.svg'"
@@ -95,7 +93,7 @@
                   <div *ngIf="productImage && isHaLicensed && isPassive" class="ha-node-status">
                     ({{ 'Standby' | translate }})
                   </div>
-                  <div *ngIf="ready && !productImage && !isIxHardware && sysGenService.isEnterprise" class="ha-node-status">
+                  <div *ngIf="isUnsupportedHardware$ | async" class="ha-node-status">
                     ({{ 'Unsupported Hardware' | translate }})
                   </div>
                 </div>
@@ -112,13 +110,13 @@
                     mat-button
                     color="default"
                     [ixTest]="['widget-sysinfo', 'update']"
-                    [routerLink]="['system', 'update']"
+                    [routerLink]="['/system', 'update']"
                   >
                     {{ updateBtnLabel | translate }}
                   </button>
                   <ix-simple-failover-button
                     *ngIf="isPassive"
-                    [disabled]="!isHaEnabled && !(hasOnlyMismatchVersionsReason$ | async)"
+                    [disabled]="isFailoverButtonDisabled$ | async"
                   ></ix-simple-failover-button>
                 </div>
               </ng-template>
@@ -127,30 +125,25 @@
             <!-- Details Section -->
             <div class="right">
               <div
-                *ngIf="ready && !systemInfo && isHaLicensed && isPassive && !isHaEnabled"
+                *ngIf="!isLoading && !systemInfo && isHaLicensed && isPassive && !isHaEnabled"
                 class="data-container ha-status"
               >
-                <h3>
-                  {{ isHaEnabled
-                      ? ('HA Enabled' | translate)
-                      : ('HA Disabled' | translate)
-                  }}
-                </h3>
+                <h3>{{ isHaEnabled ? ('HA Enabled' | translate) : ('HA Disabled' | translate) }}</h3>
               </div>
 
-              <div *ngIf="!ready && !systemInfo" class="loader">
+              <div *ngIf="isLoading && !systemInfo" class="loader">
                 <mat-spinner class="spinner" [diameter]="40"></mat-spinner>
               </div>
 
-              <div *ngIf="systemInfo" class="data-container">
-                <div *ngIf="screenType === ScreenType.Mobile" class="list-subheader">
-                  {{ isPassive
-                    ? ('System Information (Standby)' | translate)
-                    : ('System Information' | translate)
-                  }}
-                </div>
-                <div *ngIf="screenType === ScreenType.Desktop" class="list-subheader">
-                  {{ 'Overview' | translate }}
+              <div *ngIf="!isLoading && systemInfo" class="data-container">
+                <div *appLet="isMobile$ | async as isMobile" class="list-subheader">
+                  <ng-container *ngIf="isMobile">
+                    {{ isPassive
+                      ? ('System Information (Standby)' | translate)
+                      : ('System Information' | translate)
+                    }}
+                  </ng-container>
+                  <ng-container *ngIf="!isMobile">{{ 'Overview' | translate }}</ng-container>
                 </div>
 
                 <mat-list>
@@ -175,9 +168,12 @@
 
                   <mat-list-item *ngIf="systemInfo.license">
                     <strong>{{ 'License' | translate }}:</strong>
-                    <span>
-                      {{ licenseString }}
-                    </span>
+                    <span>{{
+                      '{license} contract, expires {date}' | translate: {
+                        license: systemInfo.license.contract_type | titlecase,
+                        date: systemInfo.license.contract_end.$value,
+                      }
+                    }}</span>
                   </mat-list-item>
 
                   <mat-list-item *ngIf="systemInfo.system_serial && isIxHardware">
@@ -196,20 +192,20 @@
                   </mat-list-item>
                 </mat-list>
 
-                <div *ngIf="ready" class="mobile-update-action update-action">
+                <div class="mobile-update-action update-action">
                   <button
                     *ngIf="!isPassive"
                     mat-button
                     color="primary"
                     [ixTest]="['widget-sysinfo', 'update']"
-                    [routerLink]="['system', 'update']"
+                    [routerLink]="['/system', 'update']"
                   >
                     {{ updateBtnLabel | translate }}
                   </button>
                   <ix-simple-failover-button
                     *ngIf="isPassive"
                     color="primary"
-                    [disabled]="!isHaEnabled && !(hasOnlyMismatchVersionsReason$ | async)"
+                    [disabled]="isFailoverButtonDisabled$ | async"
                   ></ix-simple-failover-button>
                 </div>
               </div>
