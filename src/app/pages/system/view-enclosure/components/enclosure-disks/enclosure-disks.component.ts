@@ -257,18 +257,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
 
   get hideIdentifyDrive(): boolean {
     const selectedEnclosureView = this.selectedEnclosureView;
-    return [
-      'TRUENAS-MINI-R',
-      'TRUENAS-R10', 'R10',
-      'TRUENAS-R20', 'R20',
-      'TRUENAS-R20A', 'R20A',
-      'TRUENAS-R20B', 'R20B',
-      'TRUENAS-R30', 'R30',
-      'TRUENAS-R40', 'R40',
-      'TRUENAS-R50', 'R50',
-      'TRUENAS-R50B', 'R50B',
-      'TRUENAS-R50BM', 'R50BM',
-    ].includes(selectedEnclosureView.model);
+    return selectedEnclosureView.model === 'TRUENAS-MINI-R';
   }
 
   theme: Theme;
