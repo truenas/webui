@@ -294,7 +294,7 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
   };
 
   legendFormatter = (legend: dygraphs.LegendData): string => {
-    const clone = { ...legend } as LegendDataWithStackedTotalHtml;
+    const clone = { ...legend, chartId: this.chartId } as LegendDataWithStackedTotalHtml;
     clone.series.forEach((item: dygraphs.SeriesLegendData, index: number): void => {
       if (!item.y) { return; }
       if (this.report.name === ReportingGraphName.NetworkInterface) {
