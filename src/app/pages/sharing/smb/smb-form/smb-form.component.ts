@@ -15,7 +15,9 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import _ from 'lodash';
-import { noop, Observable, of } from 'rxjs';
+import {
+  noop, Observable, of, timer,
+} from 'rxjs';
 import {
   debounceTime,
   filter,
@@ -63,6 +65,27 @@ import { selectService } from 'app/store/services/services.selectors';
 export class SmbFormComponent implements OnInit, AfterViewInit {
   existingSmbShare: SmbShare;
   defaultSmbShare: SmbShare;
+
+  advancedFields: string[] = [
+    'afp',
+    'acl',
+    'ro',
+    'hostsdeny',
+    'hostsallow',
+    'abe',
+    'guestok',
+    'browsable',
+    'ignore_list',
+    'watch_list',
+    'enable',
+    'path_suffix',
+    'fsrvp',
+    'durablehandle',
+    'streams',
+    'aapl_name_mangling',
+    'recyclebin',
+    'shadowcopy',
+  ];
 
   isLoading = false;
   isAdvancedMode = false;
@@ -481,7 +504,16 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
         }
         this.isLoading = false;
         this.cdr.markForCheck();
-        this.formErrorHandler.handleWsFormError(error, this.form);
+
+        if (this.formErrorHandler.isErrorFieldFromAdvancedOptions(error, {}, this.advancedFields)) {
+          this.isAdvancedMode = true;
+          this.cdr.markForCheck();
+        }
+        timer(1).pipe(untilDestroyed(this)).subscribe({
+          next: () => {
+            this.formErrorHandler.handleWsFormError(error, this.form);
+          },
+        });
       },
     });
   }
