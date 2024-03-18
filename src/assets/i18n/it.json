@@ -2011,7 +2011,7 @@
   "MTU": "",
   "Mac Address": "",
   "Machine": "",
-  "Machine Time: {time}, {tz}": "",
+  "Machine Time\n {time}, {tz}": "",
   "Mail Server Port": "",
   "Maintainer": "",
   "Major": "",

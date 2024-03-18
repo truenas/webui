@@ -859,7 +859,7 @@
   "MOVE": "",
   "MTU": "",
   "Machine": "",
-  "Machine Time: {time}, {tz}": "",
+  "Machine Time\n {time}, {tz}": "",
   "Maintainer": "",
   "Major": "",
   "Make the currently active TrueNAS controller the default when both TrueNAS controllers are online and HA is enabled. To change the default TrueNAS controller, unset this option on the default TrueNAS controller and allow the system to fail over. This briefly interrupts system services.": "",

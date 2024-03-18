@@ -387,7 +387,7 @@
   "Login To Jira To Submit": "",
   "Long time ago": "",
   "Machine": "",
-  "Machine Time: {time}, {tz}": "",
+  "Machine Time\n {time}, {tz}": "",
   "Major": "",
   "Manage Container Images": "",
   "Manual disk selection allows you to create VDEVs and add disks to those VDEVs individually.": "",

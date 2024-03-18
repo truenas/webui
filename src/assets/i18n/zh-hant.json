@@ -1726,7 +1726,7 @@
   "MOVE": "",
   "MTU": "",
   "Machine": "",
-  "Machine Time: {time}, {tz}": "",
+  "Machine Time\n {time}, {tz}": "",
   "Maintainer": "",
   "Major": "",
   "Make Destination Dataset Read-only?": "",
