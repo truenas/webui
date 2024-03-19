@@ -63,7 +63,6 @@ export class DatasetQuotasUserListComponent implements OnInit {
       sortable: true,
     }),
     textColumn({
-      useAsRowTestId: true,
       title: this.translate.instant('ID'),
       propertyName: 'id',
       sortable: true,

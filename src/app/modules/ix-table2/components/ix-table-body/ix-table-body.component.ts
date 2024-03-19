@@ -44,9 +44,7 @@ export class IxTableBodyComponent<T> implements AfterViewInit {
     return this.detailsRow?.templateRef;
   }
 
-  constructor(
-    private cdr: ChangeDetectorRef,
-  ) {}
+  constructor(private cdr: ChangeDetectorRef) {}
 
   ngAfterViewInit(): void {
     const templatedCellIndexes = this.customCells.toArray().map((cell) => cell.columnIndex);
@@ -66,8 +64,7 @@ export class IxTableBodyComponent<T> implements AfterViewInit {
   }
 
   getTestAttr(row: T): string {
-    const idColumn = this.columns.find((column) => column.useAsRowTestId);
-    return idColumn ? row[idColumn.propertyName].toString() : '';
+    return this.columns[0]?.rowTestId(row) ?? '';
   }
 
   getTemplateByColumnIndex(idx: number): TemplateRef<{ $implicit: T }> | undefined {

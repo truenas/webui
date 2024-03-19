@@ -1,7 +1,6 @@
 import { DataProvider } from 'app/modules/ix-table2/interfaces/data-provider.interface';
 
 export abstract class ColumnComponent<T> {
-  useAsRowTestId?: boolean;
   propertyName: keyof T;
   title: string;
   cssClass?: string;
