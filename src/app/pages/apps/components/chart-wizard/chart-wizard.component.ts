@@ -343,6 +343,7 @@ export class ChartWizardComponent implements OnInit, OnDestroy {
           type: DynamicFormSchemaType.Input,
           title: helptextApps.chartForm.release_name.placeholder,
           required: true,
+          tooltip: helptextApps.chartForm.release_name.tooltip,
         },
         {
           controlName: 'version',
