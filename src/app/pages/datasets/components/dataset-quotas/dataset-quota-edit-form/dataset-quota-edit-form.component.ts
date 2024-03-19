@@ -11,7 +11,7 @@ import { catchError, filter, tap } from 'rxjs/operators';
 import { DatasetQuotaType } from 'app/enums/dataset.enum';
 import { Role } from 'app/enums/role.enum';
 import { helptextGlobal } from 'app/helptext/global-helptext';
-import { helptextQuotas } from 'app/helptext/storage/volumes/datasets/dataset-quotas';
+import { helpTextQuotas } from 'app/helptext/storage/volumes/datasets/dataset-quotas';
 import { DatasetQuota, SetDatasetQuota } from 'app/interfaces/dataset-quota.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { QueryFilter, QueryParams } from 'app/interfaces/query-api.interface';
@@ -45,8 +45,8 @@ export class DatasetQuotaEditFormComponent implements OnInit {
   }
   get nameLabel(): string {
     return this.quotaType === DatasetQuotaType.User
-      ? helptextQuotas.users.dialog.user.placeholder
-      : helptextQuotas.groups.dialog.group.placeholder;
+      ? helpTextQuotas.users.dialog.placeholder
+      : helpTextQuotas.groups.dialog.placeholder;
   }
   get dataQuotaLabel(): string {
     return this.quotaType === DatasetQuotaType.User
@@ -55,19 +55,19 @@ export class DatasetQuotaEditFormComponent implements OnInit {
   }
 
   private getUserDataQuotaLabel(): string {
-    return this.translate.instant(helptextQuotas.users.data_quota.placeholder)
+    return this.translate.instant(helpTextQuotas.users.data_quota.placeholder)
       + this.translate.instant(helptextGlobal.human_readable.suggestion_label);
   }
 
   private getGroupDataQuotaLabel(): string {
-    return this.translate.instant(helptextQuotas.groups.data_quota.placeholder)
+    return this.translate.instant(helpTextQuotas.groups.data_quota.placeholder)
       + this.translate.instant(helptextGlobal.human_readable.suggestion_label);
   }
 
   get objectQuotaLabel(): string {
     return this.quotaType === DatasetQuotaType.User
-      ? helptextQuotas.users.obj_quota.placeholder
-      : helptextQuotas.groups.obj_quota.placeholder;
+      ? helpTextQuotas.users.obj_quota.placeholder
+      : helpTextQuotas.groups.obj_quota.placeholder;
   }
   get dataQuotaTooltip(): string {
     return this.quotaType === DatasetQuotaType.User
@@ -76,21 +76,21 @@ export class DatasetQuotaEditFormComponent implements OnInit {
   }
 
   private getUserDataQuotaTooltip(): string {
-    return this.translate.instant(helptextQuotas.users.data_quota.tooltip)
+    return this.translate.instant(helpTextQuotas.users.data_quota.tooltip)
       + this.translate.instant(helptextGlobal.human_readable.suggestion_tooltip)
       + this.translate.instant(' bytes.');
   }
 
   private getGroupDataQuotaTooltip(): string {
-    return this.translate.instant(helptextQuotas.groups.data_quota.tooltip)
+    return this.translate.instant(helpTextQuotas.groups.data_quota.tooltip)
       + this.translate.instant(helptextGlobal.human_readable.suggestion_tooltip)
       + this.translate.instant(' bytes.');
   }
 
   get objectQuotaTooltip(): string {
     return this.quotaType === DatasetQuotaType.User
-      ? helptextQuotas.users.obj_quota.tooltip
-      : helptextQuotas.groups.obj_quota.tooltip;
+      ? helpTextQuotas.users.obj_quota.tooltip
+      : helpTextQuotas.groups.obj_quota.tooltip;
   }
 
   form = this.formBuilder.group({

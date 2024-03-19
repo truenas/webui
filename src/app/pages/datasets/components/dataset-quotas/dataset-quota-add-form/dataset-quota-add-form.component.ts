@@ -8,7 +8,7 @@ import { map } from 'rxjs/operators';
 import { DatasetQuotaType } from 'app/enums/dataset.enum';
 import { Role } from 'app/enums/role.enum';
 import { helptextGlobal } from 'app/helptext/global-helptext';
-import { helptextQuotas } from 'app/helptext/storage/volumes/datasets/dataset-quotas';
+import { helpTextQuotas } from 'app/helptext/storage/volumes/datasets/dataset-quotas';
 import { SetDatasetQuota } from 'app/interfaces/dataset-quota.interface';
 import { ChipsProvider } from 'app/modules/ix-forms/components/ix-chips/chips-provider';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
@@ -38,27 +38,27 @@ export class DatasetQuotaAddFormComponent implements OnInit {
   }
   get dataQuotaLabel(): string {
     return this.quotaType === DatasetQuotaType.User
-      ? this.translate.instant(helptextQuotas.users.data_quota.placeholder)
+      ? this.translate.instant(helpTextQuotas.users.data_quota.placeholder)
         + this.translate.instant(helptextGlobal.human_readable.suggestion_label)
-      : this.translate.instant(helptextQuotas.groups.data_quota.placeholder)
+      : this.translate.instant(helpTextQuotas.groups.data_quota.placeholder)
         + this.translate.instant(helptextGlobal.human_readable.suggestion_label);
   }
   get objectQuotaLabel(): string {
     return this.quotaType === DatasetQuotaType.User
-      ? helptextQuotas.users.obj_quota.placeholder
-      : helptextQuotas.groups.obj_quota.placeholder;
+      ? helpTextQuotas.users.obj_quota.placeholder
+      : helpTextQuotas.groups.obj_quota.placeholder;
   }
   get dataQuotaTooltip(): string {
     return this.quotaType === DatasetQuotaType.User
-      ? this.translate.instant(helptextQuotas.users.data_quota.tooltip)
-        + ' ' + this.translate.instant(helptextQuotas.field_accepts_tooltip)
-      : this.translate.instant(helptextQuotas.groups.data_quota.tooltip)
-        + ' ' + this.translate.instant(helptextQuotas.field_accepts_tooltip);
+      ? this.translate.instant(helpTextQuotas.users.data_quota.tooltip)
+        + ' ' + this.translate.instant(helpTextQuotas.field_accepts_tooltip)
+      : this.translate.instant(helpTextQuotas.groups.data_quota.tooltip)
+        + ' ' + this.translate.instant(helpTextQuotas.field_accepts_tooltip);
   }
   get objectQuotaTooltip(): string {
     return this.quotaType === DatasetQuotaType.User
-      ? helptextQuotas.users.obj_quota.tooltip
-      : helptextQuotas.groups.obj_quota.tooltip;
+      ? helpTextQuotas.users.obj_quota.tooltip
+      : helpTextQuotas.groups.obj_quota.tooltip;
   }
 
   form = this.formBuilder.group({
@@ -69,8 +69,8 @@ export class DatasetQuotaAddFormComponent implements OnInit {
   });
 
   readonly tooltips = {
-    users: helptextQuotas.users.usersTooltip,
-    groups: helptextQuotas.groups.groupsTooltip,
+    users: helpTextQuotas.users.tooltip,
+    groups: helpTextQuotas.groups.tooltip,
   };
 
   usersProvider: ChipsProvider = (query) => {
