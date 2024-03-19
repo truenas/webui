@@ -19,9 +19,9 @@ export class FocusService {
       if (this.lastFocusedElement) {
         setTimeout(() => {
           const dataTestValue = this.lastFocusedElement.getAttribute('data-test');
-          const hasOverlayWithChildren = this.document.querySelector('.cdk-overlay-container')?.hasChildNodes();
+          const overlayBackdrop = this.document.querySelector('.cdk-overlay-backdrop');
 
-          if (dataTestValue && !hasOverlayWithChildren) {
+          if (dataTestValue && !overlayBackdrop) {
             const dataTestElement = this.document.querySelector(`[data-test="${dataTestValue}"]`);
             (dataTestElement as HTMLElement)?.focus();
           } else {

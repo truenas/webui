@@ -16,7 +16,7 @@ import { mockEntityJobComponentRef } from 'app/core/testing/utils/mock-entity-jo
 import { mockCall, mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
 import { CatalogApp } from 'app/interfaces/catalog.interface';
-import { ChartFormValue, ChartRelease } from 'app/interfaces/chart-release.interface';
+import { ChartRelease } from 'app/interfaces/chart-release.interface';
 import { KubernetesConfig } from 'app/interfaces/kubernetes-config.interface';
 import { IxDynamicFormModule } from 'app/modules/ix-dynamic-form/ix-dynamic-form.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
@@ -43,7 +43,6 @@ import { KubernetesStore } from 'app/pages/apps/store/kubernetes-store.service';
 import { AppCatalogPipe } from 'app/pages/apps/utils/app-catalog.pipe';
 import { AuthService } from 'app/services/auth/auth.service';
 
-// TODO: Clean up
 const existingCatalogApp = {
   name: 'webdav',
   versions: {
@@ -51,31 +50,15 @@ const existingCatalogApp = {
       healthy: true,
       schema: {
         groups: [
-          {
-            name: 'WebDAV Configuration',
-            description: 'Configure WebDAV',
-          },
-          {
-            name: 'User and Group Configuration',
-            description: 'Configure User and Group for WebDAV',
-          },
-          {
-            name: 'Network Configuration',
-            description: 'Configure Network for WebDAV',
-          },
-          {
-            name: 'Storage Configuration',
-            description: 'Configure Storage for WebDAV',
-          },
-          {
-            name: 'Resources Configuration',
-            description: 'Configure Resources for WebDAV',
-          },
+          { name: 'WebDAV Configuration' },
+          { name: 'User and Group Configuration' },
+          { name: 'Network Configuration' },
+          { name: 'Storage Configuration' },
+          { name: 'Resources Configuration' },
         ],
         questions: [
           {
             variable: 'webdavConfig',
-            label: '',
             group: 'WebDAV Configuration',
             schema: {
               type: 'dict',
@@ -83,89 +66,18 @@ const existingCatalogApp = {
                 {
                   variable: 'authType',
                   label: 'Authentication Type',
-                  description: 'Select the authentication type for WebDAV.',
                   schema: {
                     type: 'string',
                     default: 'none',
-                    enum: [
-                      {
-                        value: 'none',
-                        description: 'No Authentication',
-                      },
-                      {
-                        value: 'basic',
-                        description: 'Basic Authentication',
-                      },
-                    ],
+                    enum: [{ value: 'none', description: 'No Authentication' }],
                   },
                 },
                 {
                   variable: 'username',
-                  label: 'Username',
-                  description: 'The username for basic authentication.',
                   schema: {
                     type: 'string',
-                    show_if: [
-                      [
-                        'authType',
-                        '=',
-                        'basic',
-                      ],
-                    ],
+                    show_if: [['authType', '=', 'basic']],
                     required: true,
-                  },
-                },
-                {
-                  variable: 'password',
-                  label: 'Password',
-                  description: 'The password for basic authentication.',
-                  schema: {
-                    type: 'string',
-                    show_if: [
-                      [
-                        'authType',
-                        '=',
-                        'basic',
-                      ],
-                    ],
-                    private: true,
-                    required: true,
-                  },
-                },
-                {
-                  variable: 'additionalEnvs',
-                  label: 'Additional Environment Variables',
-                  description: 'Configure additional environment variables for WebDAV.',
-                  schema: {
-                    type: 'list',
-                    default: [],
-                    items: [
-                      {
-                        variable: 'env',
-                        label: 'Environment Variable',
-                        schema: {
-                          type: 'dict',
-                          attrs: [
-                            {
-                              variable: 'name',
-                              label: 'Name',
-                              schema: {
-                                type: 'string',
-                                required: true,
-                              },
-                            },
-                            {
-                              variable: 'value',
-                              label: 'Value',
-                              schema: {
-                                type: 'string',
-                                required: true,
-                              },
-                            },
-                          ],
-                        },
-                      },
-                    ],
                   },
                 },
               ],
@@ -173,7 +85,6 @@ const existingCatalogApp = {
           },
           {
             variable: 'webdavRunAs',
-            label: '',
             group: 'User and Group Configuration',
             schema: {
               type: 'dict',
@@ -181,10 +92,8 @@ const existingCatalogApp = {
                 {
                   variable: 'user',
                   label: 'User ID',
-                  description: 'The user id that WebDAV will run as.',
                   schema: {
                     type: 'int',
-                    min: 2,
                     default: 666,
                     required: true,
                   },
@@ -192,10 +101,8 @@ const existingCatalogApp = {
                 {
                   variable: 'group',
                   label: 'Group ID',
-                  description: 'The group id that WebDAV will run as.',
                   schema: {
                     type: 'int',
-                    min: 2,
                     default: 666,
                     required: true,
                   },
@@ -205,7 +112,6 @@ const existingCatalogApp = {
           },
           {
             variable: 'webdavNetwork',
-            label: '',
             group: 'Network Configuration',
             schema: {
               type: 'dict',
@@ -213,7 +119,6 @@ const existingCatalogApp = {
                 {
                   variable: 'http',
                   label: 'Enable HTTP',
-                  description: 'Enable HTTP for WebDAV.',
                   schema: {
                     type: 'boolean',
                     default: true,
@@ -222,12 +127,9 @@ const existingCatalogApp = {
                       {
                         variable: 'httpPort',
                         label: 'HTTP Port',
-                        description: 'The port for HTTP WebDAV.',
                         schema: {
                           type: 'int',
                           default: 30034,
-                          min: 9000,
-                          max: 65535,
                           required: true,
                         },
                       },
@@ -237,54 +139,16 @@ const existingCatalogApp = {
                 {
                   variable: 'https',
                   label: 'Enable HTTPS',
-                  description: 'Enable HTTPS for WebDAV.',
                   schema: {
                     type: 'boolean',
                     default: false,
                     show_subquestions_if: true,
-                    subquestions: [
-                      {
-                        variable: 'httpsPort',
-                        label: 'HTTPS Port',
-                        description: 'The port for HTTPS WebDAV.',
-                        schema: {
-                          type: 'int',
-                          default: 30035,
-                          min: 9000,
-                          max: 65535,
-                          required: true,
-                        },
-                      },
-                      {
-                        variable: 'certificateID',
-                        label: 'Certificate',
-                        description: 'The certificate to use for HTTPS WebDAV.',
-                        schema: {
-                          type: 'int',
-                          null: true,
-                          $ref: [
-                            'definitions/certificate',
-                          ],
-                          enum: [
-                            {
-                              value: null,
-                              description: 'No Certificate',
-                            },
-                            {
-                              value: 1,
-                              description: "'truenas_default' Certificate",
-                            },
-                          ],
-                          default: null,
-                        },
-                      },
-                    ],
+                    subquestions: [],
                   },
                 },
                 {
                   variable: 'hostNetwork',
                   label: 'Host Network',
-                  description: "Bind to the host network. It's recommended to keep this disabled.</br>\n",
                   schema: {
                     type: 'boolean',
                     default: false,
@@ -295,7 +159,6 @@ const existingCatalogApp = {
           },
           {
             variable: 'webdavStorage',
-            label: '',
             group: 'Storage Configuration',
             schema: {
               type: 'dict',
@@ -303,78 +166,11 @@ const existingCatalogApp = {
                 {
                   variable: 'shares',
                   label: 'Shares',
-                  description: 'Shares for WebDAV.',
                   schema: {
                     type: 'list',
-                    empty: false,
                     required: true,
                     default: [],
-                    items: [
-                      {
-                        variable: 'shareEntry',
-                        label: 'Share Entry',
-                        schema: {
-                          type: 'dict',
-                          attrs: [
-                            {
-                              variable: 'enabled',
-                              label: 'Enable the share',
-                              description: 'Enable the share.',
-                              schema: {
-                                type: 'boolean',
-                                default: true,
-                              },
-                            },
-                            {
-                              variable: 'name',
-                              label: 'Share Name',
-                              description: 'The name of the share.</br>\nAlso serves as the endpoint for the share.</br>\nExample: [share1] will be available at [http://<webdav-ip>:<webdav-port>/share1]\n',
-                              schema: {
-                                type: 'string',
-                                valid_chars: '^[a-zA-Z0-9_-]+$',
-                                valid_chars_error: 'Share name can only consist of [Letters(a-z, A-Z), Numbers(0-9), Underscores(_), Dashes(-)]',
-                                required: true,
-                              },
-                            },
-                            {
-                              variable: 'description',
-                              label: 'Description',
-                              description: 'Share description. Only used for documentation.',
-                              schema: {
-                                type: 'string',
-                              },
-                            },
-                            {
-                              variable: 'hostPath',
-                              label: 'Host Path',
-                              description: 'The host path to use for the share.',
-                              schema: {
-                                type: 'hostpath',
-                                required: true,
-                              },
-                            },
-                            {
-                              variable: 'readOnly',
-                              label: 'Read Only',
-                              description: 'Enable read only access to the share.</br>\nThis will disable write access to the share.</br>\nData will be mounted as read only.\n',
-                              schema: {
-                                type: 'boolean',
-                                default: false,
-                              },
-                            },
-                            {
-                              variable: 'fixPermissions',
-                              label: 'Fix Permissions',
-                              description: 'Enable permission fix for the share.</br>\nThis will fix the permissions of the share on startup.</br>\nThis will change the owner of the share to the user and group specified in [User and Group Configuration].</br>\nNote: This will still change permissions even if [Read Only] for the share is enabled.\n',
-                              schema: {
-                                type: 'boolean',
-                                default: false,
-                              },
-                            },
-                          ],
-                        },
-                      },
-                    ],
+                    items: [],
                   },
                 },
               ],
@@ -383,7 +179,6 @@ const existingCatalogApp = {
           {
             variable: 'resources',
             group: 'Resources Configuration',
-            label: '',
             schema: {
               type: 'dict',
               attrs: [
@@ -396,12 +191,8 @@ const existingCatalogApp = {
                       {
                         variable: 'cpu',
                         label: 'CPU',
-                        description: 'CPU limit for WebDAV.',
                         schema: {
                           type: 'string',
-                          max_length: 6,
-                          valid_chars: '^(0\\.[1-9]|[1-9][0-9]*)(\\.[0-9]|m?)$',
-                          valid_chars_error: 'Valid CPU limit formats are</br>\n- Plain Integer - eg. 1</br>\n- Float - eg. 0.5</br>\n- Milicpu - eg. 500m\n',
                           default: '4000m',
                           required: true,
                         },
@@ -409,12 +200,8 @@ const existingCatalogApp = {
                       {
                         variable: 'memory',
                         label: 'Memory',
-                        description: 'Memory limit for WebDAV.',
                         schema: {
                           type: 'string',
-                          max_length: 12,
-                          valid_chars: '^[1-9][0-9]*([EPTGMK]i?|e[0-9]+)?$',
-                          valid_chars_error: 'Valid Memory limit formats are</br>\n- Suffixed with E/P/T/G/M/K - eg. 1G</br>\n- Suffixed with Ei/Pi/Ti/Gi/Mi/Ki - eg. 1Gi</br>\n- Plain Integer in bytes - eg. 1024</br>\n- Exponent - eg. 134e6\n',
                           default: '8Gi',
                           required: true,
                         },
@@ -427,88 +214,10 @@ const existingCatalogApp = {
           },
         ],
       },
-      app_readme: '<h1>WebDAV</h1>\n<p> When application is installed and is selected on at least 1 share\na container will be launched with <strong>root</strong> privileges. This is required in order to apply\nthe correct permissions to the <code>WebDAV</code> shares/directories.\nAfterward, the <code>WebDAV</code> container will run as a <strong>non</strong>-root user (Default: <code>666</code>).\n<code>Chown</code> will only apply if the parent directory does not match the configured user and group.</p>\n</blockquote>',
-      detailed_readme: '<h1>WebDAV</h1>\n<p><a href="http://webdav.org/">WebDAV</a> is a set of extensions to the HTTP protocol which allows users to collaboratively edit and manage files on remote web servers.</p>\n<blockquote>\n<p>When application is installed and <code>Fix Permissions</code> is selected on at least 1 share\na container will be launched with <strong>root</strong> privileges. This is required in order to apply\nthe correct permissions to the selected <code>WebDAV</code> shares/directories.\nAfterward, the <code>WebDAV</code> container will run as a <strong>non</strong>-root user (Default: <code>666</code>).\nNote that <code>chown</code> will only apply if the parent directory does not match the configured user and group.</p>\n</blockquote>',
-      changelog: null,
     },
   },
   latest_version: '1.0.9',
 } as CatalogApp;
-
-const existingChartEdit = {
-  name: 'tftpd-hpa',
-  id: 'tftpd-hpa',
-  config: {
-    TZ: 'America/Los_Angeles',
-    global: {
-      ixChartContext: {
-        addNvidiaRuntimeClass: false,
-        isInstall: true,
-        isUpdate: false,
-        isUpgrade: false,
-        kubernetes_config: {
-          cluster_cidr: '172.16.0.0/16',
-          cluster_dns_ip: '172.17.0.10',
-          service_cidr: '172.17.0.0/16',
-        },
-        nvidiaRuntimeClassName: 'nvidia',
-        operation: 'INSTALL',
-        storageClassName: 'ix-storage-class-tftpd-hpa',
-        upgradeMetadata: {},
-      },
-    },
-    image: {
-      pullPolicy: 'IfNotPresent',
-      repository: 'ixsystems/tftpd-hpa',
-      tag: '1.0.0',
-    },
-    ixCertificateAuthorities: {},
-    ixCertificates: {},
-    ixChartContext: {
-      addNvidiaRuntimeClass: false,
-      isInstall: true,
-      isUpdate: false,
-      isUpgrade: false,
-      kubernetes_config: {
-        cluster_cidr: '172.16.0.0/16',
-        cluster_dns_ip: '172.17.0.10',
-        service_cidr: '172.17.0.0/16',
-      },
-      nvidiaRuntimeClassName: 'nvidia',
-      operation: 'INSTALL',
-      storageClassName: 'ix-storage-class-tftpd-hpa',
-      upgradeMetadata: {},
-    },
-    ixExternalInterfacesConfiguration: [],
-    ixExternalInterfacesConfigurationNames: [],
-    ixVolumes: [
-      {
-        hostPath: '/mnt/my pool/ix-applications/releases/tftpd-hpa/volumes/ix_volumes/tftpboot',
-      },
-    ],
-    release_name: 'tftpd-hpa',
-    resources: {
-      limits: {
-        cpu: '4000m',
-        memory: '8Gi',
-      },
-    },
-    tftpConfig: {
-      additionalEnvs: [],
-      allowCreate: false,
-    },
-    tftpNetwork: {
-      hostNetwork: true,
-      tftpPort: 30031,
-    },
-    tftpStorage: {
-      tftpboot: {
-        datasetName: 'tftpboot',
-        type: 'ixVolume',
-      },
-    },
-  } as Record<string, ChartFormValue>,
-} as ChartRelease;
 
 const appsResponse = [{
   name: 'webdav',
@@ -606,7 +315,7 @@ describe('Redirect to install app', () => {
         mockJob('chart.release.create'),
         mockJob('chart.release.update'),
         mockCall('catalog.get_item_details', existingCatalogApp),
-        mockCall('chart.release.query', [existingChartEdit]),
+        mockCall('chart.release.query', [{} as ChartRelease]),
         mockCall('service.started', true),
         mockCall('kubernetes.config', {
           pool: 'my pool',
@@ -663,7 +372,7 @@ describe('Install app', () => {
         mockJob('chart.release.create'),
         mockJob('chart.release.update'),
         mockCall('catalog.get_item_details', existingCatalogApp),
-        mockCall('chart.release.query', [existingChartEdit]),
+        mockCall('chart.release.query', [{} as ChartRelease]),
         mockCall('service.started', true),
         mockCall('kubernetes.config', {
           pool: 'my pool',
@@ -763,7 +472,6 @@ describe('Install app', () => {
             },
           },
           webdavConfig: {
-            additionalEnvs: [],
             authType: 'none',
           },
           webdavNetwork: {

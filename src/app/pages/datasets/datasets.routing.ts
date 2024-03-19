@@ -3,7 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { DatasetsManagementComponent } from 'app/pages/datasets/components/dataset-management/dataset-management.component';
 import { DatasetQuotasGrouplistComponent } from 'app/pages/datasets/components/dataset-quotas/dataset-quotas-grouplist/dataset-quotas-grouplist.component';
-import { DatasetQuotasUserlistComponent } from 'app/pages/datasets/components/dataset-quotas/dataset-quotas-userlist/dataset-quotas-userlist.component';
+import { DatasetQuotasUserListComponent } from 'app/pages/datasets/components/dataset-quotas/dataset-quotas-user-list/dataset-quotas-user-list.component';
 import { DatasetUnlockComponent } from 'app/pages/datasets/modules/encryption/components/dataset-unlock/dataset-unlock.component';
 import {
   DatasetAclEditorComponent,
@@ -48,7 +48,7 @@ export const routes: Routes = [
           },
           {
             path: 'user-quotas',
-            component: DatasetQuotasUserlistComponent,
+            component: DatasetQuotasUserListComponent,
             data: { title: T('User Quotas'), breadcrumb: null },
           },
           {
@@ -60,7 +60,7 @@ export const routes: Routes = [
       },
       {
         path: 'user-quotas/:pk',
-        component: DatasetQuotasUserlistComponent,
+        component: DatasetQuotasUserListComponent,
         data: { title: T('User Quotas'), breadcrumb: null },
       },
       {

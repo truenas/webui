@@ -95,7 +95,7 @@
                   <div *ngIf="productImage && isHaLicensed && isPassive" class="ha-node-status">
                     ({{ 'Standby' | translate }})
                   </div>
-                  <div *ngIf="ready && !productImage && sysGenService.isEnterprise && isHaEnabled" class="ha-node-status">
+                  <div *ngIf="ready && !productImage && !isIxHardware && sysGenService.isEnterprise" class="ha-node-status">
                     ({{ 'Unsupported Hardware' | translate }})
                   </div>
                 </div>
@@ -127,16 +127,7 @@
             <!-- Details Section -->
             <div class="right">
               <div
-                *ngIf="!systemInfo && isHaLicensed && isPassive && isHaEnabled"
-                class="data-container ha-status"
-              >
-                <div class="spinner-wrapper">
-                  <mat-spinner class="spinner" [diameter]="40"></mat-spinner>
-                </div>
-              </div>
-
-              <div
-                *ngIf="!systemInfo && isHaLicensed && isPassive && !isHaEnabled"
+                *ngIf="ready && !systemInfo && isHaLicensed && isPassive && !isHaEnabled"
                 class="data-container ha-status"
               >
                 <h3>
@@ -147,7 +138,7 @@
                 </h3>
               </div>
 
-              <div *ngIf="!systemInfo && !isHaLicensed" class="loader">
+              <div *ngIf="!ready && !systemInfo" class="loader">
                 <mat-spinner class="spinner" [diameter]="40"></mat-spinner>
               </div>
 

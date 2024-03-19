@@ -21,7 +21,7 @@ export class SmbValidationService {
     private translate: TranslateService,
   ) { }
 
-  validate = (originalName: string) => {
+  validate = (originalName?: string) => {
     return (control: AbstractControl<string>): Observable<ValidationErrors | null> => {
       return control.valueChanges.pipe(
         debounceTime(300),

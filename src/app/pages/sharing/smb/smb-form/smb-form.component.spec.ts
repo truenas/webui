@@ -38,7 +38,7 @@ import { selectServices } from 'app/store/services/services.selectors';
 import { SmbFormComponent } from './smb-form.component';
 
 describe('SmbFormComponent', () => {
-  const existingShare: SmbShare = {
+  const existingShare = {
     id: 1,
     purpose: SmbPresetType.MultiUserTimeMachine,
     path: '/mnt/pool123/ds222',
@@ -58,7 +58,6 @@ describe('SmbFormComponent', () => {
     durablehandle: true,
     streams: true,
     timemachine: true,
-    vuid: 'a7bcb6cb-b2f3-4144-a5bb-e79dc7e282c4',
     shadowcopy: true,
     fsrvp: false,
     enabled: true,
@@ -70,7 +69,7 @@ describe('SmbFormComponent', () => {
       watch_list: [],
       ignore_list: [],
     },
-  };
+  } as SmbShare;
 
   const formLabels: Record<string, string> = {
     path: 'Path',
