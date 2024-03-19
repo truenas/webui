@@ -225,7 +225,10 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
   get hideIdentifyDrive(): boolean {
     // TODO: Adapt the changes from https://ixsystems.atlassian.net/browse/NAS-127499
     const selectedEnclosure = this.selectedEnclosure;
-    return selectedEnclosure.model === 'TRUENAS-MINI-R';
+    return [
+      'ES24N',
+      'TRUENAS-MINI-R',
+    ].includes(selectedEnclosure.model);
   }
 
   theme: Theme;
@@ -527,6 +530,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
       case 'ES24':
         this.chassis = new Es24();
         break;
+      case 'ES24N':
       case 'ES24F':
         this.chassis = new Es24F();
         break;
@@ -696,6 +700,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
       case 'ES24':
         extractedChassis = new Es24();
         break;
+      case 'ES24N':
       case 'ES24F':
         extractedChassis = new Es24F();
         break;

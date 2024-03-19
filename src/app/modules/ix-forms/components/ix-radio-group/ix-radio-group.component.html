@@ -26,14 +26,14 @@
       [ixTest]="[controlDirective.name, option.label]"
       [attr.aria-label]="option.label"
     >
-      {{ option.label }}
+      {{ option.label | translate }}
     </mat-radio-button>
 
     <ix-tooltip
       *ngIf="option.tooltip"
       class="tooltip"
-      [header]="option.label"
-      [message]="option.tooltip"
+      [header]="option.label | translate"
+      [message]="option.tooltip | translate"
     ></ix-tooltip>
   </div>
 </mat-radio-group>

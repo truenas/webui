@@ -68,13 +68,13 @@
             [name]="ixOption.selected ? 'check_circle' : 'remove'"
           ></ix-icon>
 
-          {{ option.label }}
+          {{ option.label | translate }}
 
           <ix-tooltip
             *ngIf="option.tooltip"
             class="option-tooltip"
-            [header]="option.label"
-            [message]="option.tooltip"
+            [header]="option.label | translate"
+            [message]="option.tooltip | translate"
             (click)="onOptionTooltipClicked($event)"
           ></ix-tooltip>
         </mat-option>
@@ -96,7 +96,7 @@
     ></mat-progress-spinner>
   </div>
 
-  <ix-errors [control]="controlDirective.control" [label]="label"></ix-errors>
+  <ix-errors [control]="controlDirective.control" [label]="label | translate"></ix-errors>
 
   <mat-hint *ngIf="hint">{{ hint }}</mat-hint>
 </div>

@@ -10,7 +10,7 @@ import { Dataset } from 'app/interfaces/dataset.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { ExportAllKeysDialogComponent } from 'app/pages/datasets/modules/encryption/components/export-all-keys-dialog/export-all-keys-dialog.component';
-import { StorageService } from 'app/services/storage.service';
+import { DownloadService } from 'app/services/download.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 describe('ExportAllKeysDialogComponent', () => {
@@ -26,7 +26,7 @@ describe('ExportAllKeysDialogComponent', () => {
         mockCall('core.download', [1, 'http://localhost/download']),
         mockJob('pool.dataset.export_key', fakeSuccessfulJob('12345678')),
       ]),
-      mockProvider(StorageService, {
+      mockProvider(DownloadService, {
         downloadUrl: jest.fn(() => of(undefined)),
       }),
       mockProvider(MatDialogRef),
@@ -55,7 +55,7 @@ describe('ExportAllKeysDialogComponent', () => {
       ['my-dataset'],
       'dataset_my-dataset_keys.json',
     ]);
-    expect(spectator.inject(StorageService).downloadUrl).toHaveBeenCalledWith(
+    expect(spectator.inject(DownloadService).downloadUrl).toHaveBeenCalledWith(
       'http://localhost/download',
       'dataset_my-dataset_keys.json',
       'application/json',

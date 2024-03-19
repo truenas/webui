@@ -3,7 +3,6 @@ import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, TrackByFunction,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { Actions } from '@ngrx/effects';
 import { TranslateService } from '@ngx-translate/core';
 import { differenceInDays } from 'date-fns';
 import { filter, forkJoin } from 'rxjs';
@@ -16,7 +15,6 @@ import { CloudSyncWizardComponent } from 'app/pages/data-protection/cloudsync/cl
 import { ReplicationWizardComponent } from 'app/pages/data-protection/replication/replication-wizard/replication-wizard.component';
 import { RsyncTaskFormComponent } from 'app/pages/data-protection/rsync-task/rsync-task-form/rsync-task-form.component';
 import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 enum BackupType {
@@ -58,6 +56,9 @@ export class WidgetBackupComponent extends WidgetComponent implements OnInit {
   backups: BackupRow[] = [];
   isLoading = false;
 
+  successStates = [JobState.Success, JobState.Finished];
+  failedStates = [JobState.Failed, JobState.Error, JobState.Aborted];
+
   readonly ScreenType = ScreenType;
 
   trackByTile: TrackByFunction<BackupTile> = (_, tile) => tile.title;
@@ -67,7 +68,7 @@ export class WidgetBackupComponent extends WidgetComponent implements OnInit {
   }
 
   get failedCount(): number {
-    return this.backups.filter((backup) => backup.state === JobState.Failed).length;
+    return this.backups.filter((backup) => this.failedStates.includes(backup.state)).length;
   }
 
   get replicationTasks(): BackupRow[] {
@@ -106,8 +107,6 @@ export class WidgetBackupComponent extends WidgetComponent implements OnInit {
     public translate: TranslateService,
     private cdr: ChangeDetectorRef,
     private ws: WebSocketService,
-    private slideInService: IxSlideInService,
-    private actions$: Actions,
     private chainedSlideInService: IxChainedSlideInService,
     private breakpointObserver: BreakpointObserver,
   ) {
@@ -185,7 +184,7 @@ export class WidgetBackupComponent extends WidgetComponent implements OnInit {
   }
 
   private getTile(title: string, tasks: BackupRow[]): BackupTile {
-    const successfulTasks = tasks.filter((backup) => backup.state === JobState.Success);
+    const successfulTasks = tasks.filter((backup) => this.successStates.includes(backup.state));
     const lastSuccessfulTask = successfulTasks
       .sort((a, b) => b.timestamp.$date - a.timestamp.$date)[0]?.timestamp;
 
@@ -193,8 +192,10 @@ export class WidgetBackupComponent extends WidgetComponent implements OnInit {
       title,
       totalSend: tasks.filter((backup) => this.isSendTask(backup)).length,
       totalReceive: tasks.filter((backup) => !this.isSendTask(backup)).length,
-      failedSend: tasks.filter((backup) => backup.state === JobState.Failed && this.isSendTask(backup)).length,
-      failedReceive: tasks.filter((backup) => backup.state === JobState.Failed && !this.isSendTask(backup)).length,
+      failedSend: tasks
+        .filter((backup) => this.failedStates.includes(backup.state) && this.isSendTask(backup)).length,
+      failedReceive: tasks
+        .filter((backup) => this.failedStates.includes(backup.state) && !this.isSendTask(backup)).length,
       lastWeekSend: successfulTasks
         .filter((backup) => this.isSendTask(backup) && this.isThisWeek(backup.timestamp)).length,
       lastWeekReceive: successfulTasks

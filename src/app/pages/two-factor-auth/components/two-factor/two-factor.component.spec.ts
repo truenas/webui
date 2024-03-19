@@ -60,7 +60,7 @@ describe('TwoFactorComponent', () => {
   it('shows warning when global setting is disabled', () => {
     jest.spyOn(spectator.inject(AuthService), 'getGlobalTwoFactorConfig').mockImplementation(() => of({
       enabled: true,
-    }));
+    } as GlobalTwoFactorConfig));
     const warning = spectator.query(IxWarningComponent);
     expect(warning).toBeTruthy();
     expect(warning).toHaveAttribute('message', helptext2fa.two_factor.global_disabled);

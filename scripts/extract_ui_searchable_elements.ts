@@ -146,9 +146,9 @@ function parseHtmlFile(
     const key = $(element).attr('[ixsearchconfig]').split('.')[1];
 
     const routerLink = formatArrayItems($(element).attr('[routerlink]')) ?? null;
-    const hierarchy = formatArrayItems(extractDynamicValue(elementConfig, key, 'hierarchy')) ?? null;
-    const synonyms = formatArrayItems(extractDynamicValue(elementConfig, key, 'synonyms')) ?? null;
-    const anchorRouterLink = formatArrayItems(extractDynamicValue(elementConfig, key, 'anchorRouterLink')) ?? null;
+    const hierarchy = formatArrayItems(extractDynamicValue(elementConfig, key, 'hierarchy')) ?? [];
+    const synonyms = formatArrayItems(extractDynamicValue(elementConfig, key, 'synonyms')) ?? [];
+    const anchorRouterLink = formatArrayItems(extractDynamicValue(elementConfig, key, 'anchorRouterLink')) ?? [];
     const anchor = generateIdFromHierarchy(hierarchy);
     const triggerAnchor = extractDynamicValue(elementConfig, key, 'triggerAnchor');
 

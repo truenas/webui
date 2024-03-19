@@ -251,7 +251,7 @@
 
               <div class="legend-item usage">
                 <div class="legend-swatch primary"></div>
-                <span class="label">{{ legendData[0].label }}:</span>
+                <span class="label">{{ legendData[0].label | translate }}:</span>
                 {{ legendData[0].data[legendIndex] }}%
               </div>
 
@@ -262,7 +262,7 @@
                     [class.defaultTheme]="themeService.isDefaultTheme"
                     [class.nonDefaultTheme]="!themeService.isDefaultTheme"
                   ></div>
-                  <span class="label">{{ legendData[1].label }}:</span>
+                  <span class="label">{{ legendData[1].label | translate }}:</span>
                   {{ legendData[1].data[legendIndex] }}°C
                 </div>
               </ng-container>

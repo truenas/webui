@@ -1,9 +1,9 @@
 import {
-  ChangeDetectionStrategy, Component, Input, OnChanges,
+  ChangeDetectionStrategy, Component, EventEmitter, Input, OnChanges, OnInit, Output,
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
-import { UntilDestroy } from '@ngneat/until-destroy';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { DatasetEncryptionType } from 'app/enums/dataset.enum';
@@ -20,9 +20,11 @@ import { WebSocketService } from 'app/services/ws.service';
   templateUrl: './encryption-section.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class EncryptionSectionComponent implements OnChanges {
+export class EncryptionSectionComponent implements OnChanges, OnInit {
   @Input() parent: Dataset;
   @Input() advancedMode: boolean;
+
+  @Output() formValidityChange = new EventEmitter<boolean>();
 
   get inheritEncryptionLabel(): string {
     return this.parent.encrypted
@@ -88,6 +90,12 @@ export class EncryptionSectionComponent implements OnChanges {
       this.setInheritValues();
       this.disableEncryptionIfParentEncrypted();
     }
+  }
+
+  ngOnInit(): void {
+    this.form.statusChanges.pipe(untilDestroyed(this)).subscribe((status) => {
+      this.formValidityChange.emit(status === 'VALID');
+    });
   }
 
   getPayload(): Partial<DatasetCreate> {

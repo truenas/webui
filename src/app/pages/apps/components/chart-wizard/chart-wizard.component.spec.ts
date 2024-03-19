@@ -22,7 +22,7 @@ import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
 import { ChartWizardComponent } from 'app/pages/apps/components/chart-wizard/chart-wizard.component';
-import { DockerHubRateInfoDialogComponent } from 'app/pages/apps/components/dockerhub-rate-limit-info.dialog.ts/dockerhub-rate-limit-info-dialog.component';
+import { DockerHubRateInfoDialogComponent } from 'app/pages/apps/components/dockerhub-rate-limit-info-dialog/dockerhub-rate-limit-info-dialog.component';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { KubernetesStore } from 'app/pages/apps/store/kubernetes-store.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -31,38 +31,16 @@ const appVersion121 = {
   healthy: true,
   schema: {
     groups: [
-      {
-        description: 'Configure networking for container',
-        name: 'Networking',
-      },
-      {
-        description: 'Configure ports to forward to workload',
-        name: 'Port Forwarding',
-      },
-      {
-        description: 'Define mechanism to periodically probe the container to ensure it\'s functioning as desired',
-        name: 'Health Check',
-      },
-      {
-        description: 'Configure how workload should be deployed',
-        name: 'Workload Details',
-      },
-      {
-        description: 'Configure how pods are replaced when configuration is upgraded',
-        name: 'Scaling/Upgrade Policy',
-      },
-      {
-        description: 'Configure when pod should be restarted in case of failure',
-        name: 'Restart Policy',
-      },
-      {
-        name: 'IPFS Configuration',
-        description: 'Configure Storage for IPFS',
-      },
+      { name: 'Networking' },
+      { name: 'Port Forwarding' },
+      { name: 'Health Check' },
+      { name: 'Workload Details' },
+      { name: 'Scaling/Upgrade Policy' },
+      { name: 'Restart Policy' },
+      { name: 'IPFS Configuration' },
     ],
     questions: [
       {
-        description: 'Upgrade Policy',
         group: 'Scaling/Upgrade Policy',
         label: 'Update Strategy',
         schema: {
@@ -191,8 +169,6 @@ const appVersion121 = {
               label: 'Swarm Port to use for IPFS (Public)',
               schema: {
                 type: 'int',
-                min: 9000,
-                max: 65535,
                 default: 9401,
                 required: true,
               },
@@ -202,8 +178,6 @@ const appVersion121 = {
               label: 'API Port to use for IPFS (local)',
               schema: {
                 type: 'int',
-                min: 9000,
-                max: 65535,
                 default: 9501,
                 required: true,
               },
@@ -213,8 +187,6 @@ const appVersion121 = {
               label: 'Gateway Port to use for IPFS (local)',
               schema: {
                 type: 'int',
-                min: 9000,
-                max: 65535,
                 default: 9880,
                 required: true,
               },
@@ -264,85 +236,22 @@ describe('ChartWizardComponent', () => {
     name: 'app-name',
     id: 'app_name',
     config: {
-      apiPort: 8927,
-      maize: {
-        apiPort: 8933,
-        environmentVariables: [
-          {
-            name: 'name1',
-            value: 'value2',
-          },
-          {
-            name: 'name1',
-            value: 'value2',
-          },
-        ],
-        farmerPort: 8647,
-        ports: [
-          {
-            containerPort: 8933,
-            name: 'api',
-            protocol: 'TCP',
-          },
-          {
-            containerPort: 8644,
-            name: 'blockchain',
-            protocol: 'TCP',
-          },
-          {
-            containerPort: 8647,
-            name: 'farming',
-            protocol: 'TCP',
-          },
-        ],
-        volumeMounts: {
-          config: {
-            datasetName: 'maize-config',
-            hostPath: '/mnt/my pool',
-            hostPathEnabled: true,
-            mountPath: '/root/.chia',
-          },
-          mnemonic: {
-            datasetName: 'config',
-            hostPathEnabled: false,
-            mountPath: '/root/.chia/mnemonic.txt',
-            readOnly: true,
-            subPath: 'mnemonic.txt',
-          },
-        },
-      },
       maizeEnabled: true,
-      memLimit: '1234',
       release_name: 'app_name',
       timezone: 'America/Los_Angeles',
     } as Record<string, ChartFormValue>,
     chart_schema: {
       schema: {
         groups: [
-          {
-            name: 'Machinaris Configuration',
-            description: 'Machinaris Configuration description',
-          },
+          { name: 'Machinaris Configuration' },
         ],
-        portals: {},
         questions: [
           {
             variable: 'timezone',
-            label: 'Configure timezone',
             group: 'Machinaris Configuration',
-            description: 'Configure timezone for machinaris',
             schema: {
               type: 'string',
-              enum: [
-                {
-                  value: 'America/Los_Angeles',
-                  description: "'America/Los_Angeles' timezone",
-                },
-                {
-                  value: 'Europe/Paris',
-                  description: "'Europe/Paris' timezone",
-                },
-              ],
+              enum: [{ value: 'America/Los_Angeles', description: "'America/Los_Angeles' timezone" }],
               default: 'America/Los_Angeles',
             },
           },

@@ -76,18 +76,9 @@ span.code {
   padding: 16px 32px !important;
 }
 
-ix-entity-table .mat-mdc-card {
-  padding: 0 !important;
-}
-
 .form-card.mat-mdc-card {
   margin: 0 auto;
   max-width: 960px;
-}
-
-ix-entity-table .mat-mdc-card > * {
-  margin: 0 !important;
-  padding: 16px !important;
 }
 
 .mat-mdc-card > .no-padding {
@@ -101,36 +92,6 @@ ix-entity-table .mat-mdc-card > * {
 .mat-toolbar .mat-mdc-button {
   height: 36px !important;
   margin: 0 4px;
-}
-
-/* Special Override Classes */
-
-/* FreeNAS Specific */
-
-/* This element is part of entity-table.
- * It currently uses css to do artificially
- * put itselt inside the title bar.
- * This needs to be changed in the markup
- * instead of using this type of hack */
-#filter {
-  margin-top: -10px; /* The form field reserves too much space in mat-toolbar. This wins some of the screen back */
-  max-height: 38px;
-  position: static !important;
-  text-align: right;
-}
-
-ix-entity-table .multiactions-title {
-  margin-bottom: 16px;
-}
-
-ix-entity-table .mat-toolbar.mat-mdc-card-toolbar {
-  position: relative;
-  z-index: 2;
-}
-/* Elements with shadows */
-.datatable-header,
-ix-entity-table .mat-toolbar.mat-mdc-card-toolbar {
-  box-shadow: var(--fn-dropshadow);
 }
 
 /*********************************************************************/
@@ -469,6 +430,7 @@ body .mdc-card__actions,
 .mat-mdc-card .mat-toolbar-row .actions {
   align-items: center;
   display: flex;
+  flex-wrap: wrap;
   gap: 8px;
   justify-content: flex-end;
   margin-left: auto;
@@ -621,16 +583,6 @@ mat-card.mat-mdc-card .mat-mdc-list-base {
   padding-top: 0;
 }
 
-.entity-table-controls > div {
-  margin-left: 8px;
-}
-
-@media #{$media-lt-sm} {
-  .entity-table-controls > div {
-    margin-top: 8px;
-  }
-}
-
 /* Expansion Panel Fixes */
 .mat-expansion-panel-header span.mat-content {
   padding-top: 4px;
@@ -654,15 +606,6 @@ mat-card.mat-mdc-card .mat-mdc-list-base {
 input::-ms-reveal,
 input::-ms-clear {
   display: none;
-}
-
-/* Generic styling for nested lists*/
-ul.nested-list {
-  list-style: circle;
-}
-
-ul.nested-list li {
-  margin-left: 24px;
 }
 
 ix-tooltip {

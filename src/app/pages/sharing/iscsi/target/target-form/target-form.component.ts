@@ -2,7 +2,6 @@ import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
 } from '@angular/core';
 import { Validators } from '@angular/forms';
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
@@ -20,8 +19,6 @@ import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-erro
 import { TargetNameValidationService } from 'app/pages/sharing/iscsi/target/target-name-validation.service';
 import { IscsiService } from 'app/services/iscsi.service';
 import { WebSocketService } from 'app/services/ws.service';
-
-const allInitatorsAllowed = T('ALL Initiators Allowed');
 
 @UntilDestroy()
 @Component({
@@ -60,7 +57,7 @@ export class TargetFormComponent implements OnInit {
       const opts: Option[] = [];
       initiators.forEach((initiator) => {
         const initiatorsAllowed = initiator.initiators.length === 0
-          ? allInitatorsAllowed
+          ? this.translate.instant('ALL Initiators Allowed')
           : initiator.initiators.toString();
         const optionLabel = `${initiator.id} (${initiatorsAllowed})`;
         opts.push({ label: optionLabel, value: initiator.id });

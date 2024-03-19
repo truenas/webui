@@ -10,7 +10,7 @@ import { mockEntityJobComponentRef } from 'app/core/testing/utils/mock-entity-jo
 import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { SystemInfo } from 'app/interfaces/system-info.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { StorageService } from 'app/services/storage.service';
+import { DownloadService } from 'app/services/download.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { selectSystemInfo } from 'app/store/system-info/system-info.selectors';
 import { SaveDebugButtonComponent } from './save-debug-button.component';
@@ -33,7 +33,7 @@ describe('SaveDebugButtonComponent', () => {
         open: () => mockEntityJobComponentRef,
       }),
       mockProvider(MatDialogRef),
-      mockProvider(StorageService, {
+      mockProvider(DownloadService, {
         streamDownloadFile: jest.fn(() => of('')),
         downloadBlob: jest.fn(),
       }),
@@ -63,11 +63,11 @@ describe('SaveDebugButtonComponent', () => {
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalled();
     expect(spectator.inject(WebSocketService).call)
       .toHaveBeenCalledWith('core.download', ['system.debug', [], 'debug-truenas-20220524160228.tgz', true]);
-    expect(spectator.inject(StorageService).streamDownloadFile).toHaveBeenCalledWith(
+    expect(spectator.inject(DownloadService).streamDownloadFile).toHaveBeenCalledWith(
       'http://localhost/download/url',
       'debug-truenas-20220524160228.tgz',
       'application/gzip',
     );
-    expect(spectator.inject(StorageService).downloadBlob).toHaveBeenCalled();
+    expect(spectator.inject(DownloadService).downloadBlob).toHaveBeenCalled();
   });
 });

@@ -32,10 +32,10 @@
           [options]="options.get(bulkItem.key)"
         ></ix-select>
         <span *ngIf="(wasSubmitted || !options.has(bulkItem.key)) && !isJobCompleted">
-          {{ form.get(bulkItem.key).value }}
+          {{ form.get(bulkItem.key).value | translate }}
         </span>
         <span *ngIf="isJobCompleted && bulkItem?.value?.message">
-          {{ bulkItem.value.message }}
+          {{ bulkItem.value.message | translate }}
         </span>
       </div>
     </ix-bulk-list-item>

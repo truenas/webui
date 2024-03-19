@@ -40,24 +40,24 @@ export class SmartTaskListComponent implements OnInit {
 
   columns = createTable<SmartTestTaskUi>([
     textColumn({
-      title: helptextSmart.smartlist_column_disks,
+      title: this.translate.instant(helptextSmart.smartlist_column_disks),
       propertyName: 'disksLabel',
     }),
     textColumn({
-      title: helptextSmart.smartlist_column_type,
+      title: this.translate.instant(helptextSmart.smartlist_column_type),
       propertyName: 'type',
     }),
     textColumn({
-      title: helptextSmart.smartlist_column_description,
+      title: this.translate.instant(helptextSmart.smartlist_column_description),
       propertyName: 'desc',
     }),
     textColumn({
-      title: helptextSmart.smartlist_column_frequency,
+      title: this.translate.instant(helptextSmart.smartlist_column_frequency),
       propertyName: 'frequency',
       getValue: (row) => this.taskService.getTaskCronDescription(row.cron_schedule),
     }),
     relativeDateColumn({
-      title: helptextSmart.smartlist_column_next_run,
+      title: this.translate.instant(helptextSmart.smartlist_column_next_run),
       propertyName: 'next_run',
       getValue: (row) => this.taskService.getTaskNextTime(row.cron_schedule) as unknown,
     }),

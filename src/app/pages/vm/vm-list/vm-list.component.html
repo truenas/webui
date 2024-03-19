@@ -43,7 +43,7 @@
       <ng-template let-vm ix-table-details-row [dataProvider]="dataProvider">
         <dl *ngIf="hiddenColumns.length" class="table-hidden-columns">
           <div *ngFor="let column of hiddenColumns">
-            <b>{{ column.title }}:</b>
+            <b>{{ column.title | translate }}:</b>
             <span>{{ column?.getValue?.(vm) || vm[column.propertyName] }}</span>
           </div>
           <mat-divider></mat-divider>

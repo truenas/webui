@@ -17,7 +17,7 @@ import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import {
   SaveConfigDialogComponent,
 } from 'app/pages/system/general-settings/save-config-dialog/save-config-dialog.component';
-import { StorageService } from 'app/services/storage.service';
+import { DownloadService } from 'app/services/download.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { selectSystemInfo } from 'app/store/system-info/system-info.selectors';
 
@@ -50,7 +50,7 @@ describe('SaveConfigDialogComponent', () => {
       mockProvider(DatePipe, {
         transform: () => '20220524160228',
       }),
-      mockProvider(StorageService, {
+      mockProvider(DownloadService, {
         downloadUrl: jest.fn(() => of(undefined)),
       }),
       mockProvider(MatDialogRef),
@@ -72,7 +72,7 @@ describe('SaveConfigDialogComponent', () => {
       [{ secretseed: false }],
       'truenas-TrueNAS-SCALE-22.12-20220524160228.db',
     ]);
-    expect(spectator.inject(StorageService).downloadUrl).toHaveBeenCalledWith(
+    expect(spectator.inject(DownloadService).downloadUrl).toHaveBeenCalledWith(
       'http://localhost/download/config',
       'truenas-TrueNAS-SCALE-22.12-20220524160228.db',
       'application/x-sqlite3',
@@ -92,7 +92,7 @@ describe('SaveConfigDialogComponent', () => {
       [{ secretseed: true }],
       'truenas-TrueNAS-SCALE-22.12-20220524160228.tar',
     ]);
-    expect(spectator.inject(StorageService).downloadUrl).toHaveBeenCalledWith(
+    expect(spectator.inject(DownloadService).downloadUrl).toHaveBeenCalledWith(
       'http://localhost/download/config',
       'truenas-TrueNAS-SCALE-22.12-20220524160228.tar',
       'application/x-tar',

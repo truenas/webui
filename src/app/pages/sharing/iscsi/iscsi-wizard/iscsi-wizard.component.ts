@@ -2,7 +2,6 @@ import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
 import { Validators } from '@angular/forms';
-import { MatDialog } from '@angular/material/dialog';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
@@ -44,7 +43,6 @@ import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-sli
 import { forbiddenValues } from 'app/modules/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
 import { matchOthersFgValidator } from 'app/modules/ix-forms/validators/password-validation/password-validation';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
-import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IscsiService } from 'app/services/iscsi.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -104,7 +102,7 @@ export class IscsiWizardComponent implements OnInit {
       matchOthersFgValidator(
         'portal.secret_confirm',
         ['portal.secret'],
-        this.translateService.instant('Secret Confirm must match Secret'),
+        this.translate.instant('Secret Confirm must match Secret'),
       ),
     ],
   });
@@ -231,9 +229,7 @@ export class IscsiWizardComponent implements OnInit {
     private errorHandler: ErrorHandlerService,
     private dialogService: DialogService,
     private cdr: ChangeDetectorRef,
-    private matDialog: MatDialog,
-    private snackbar: SnackbarService,
-    private translateService: TranslateService,
+    private translate: TranslateService,
     private loader: AppLoaderService,
     private store$: Store<ServicesState>,
   ) {

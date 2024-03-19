@@ -1,4 +1,4 @@
 <span
-  [matTooltip]="value?.toString()"
+  [matTooltip]="value?.toString() | translate"
   [ixTest]="[title, rowTestId(row), 'row-text']"
 >{{ value }}</span>

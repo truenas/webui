@@ -1,19 +1,12 @@
-import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { SortDirection } from '@angular/material/sort';
-import { format } from 'date-fns-tz';
 import { Observable } from 'rxjs';
-import { map, tap } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 import { GiB } from 'app/constants/bytes.constant';
-import { VdevType, TopologyItemType, TopologyWarning } from 'app/enums/v-dev-type.enum';
+import { TopologyItemType, TopologyWarning, VdevType } from 'app/enums/v-dev-type.enum';
 import { FileSystemStat } from 'app/interfaces/filesystem-stat.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { Disk, TopologyItem } from 'app/interfaces/storage.interface';
 import { WebSocketService } from 'app/services/ws.service';
-
-function isStringArray(items: unknown[]): items is string[] {
-  return typeof items[0] === 'string';
-}
 
 const specialRedundancyCategories = [VdevType.Dedup, VdevType.Special];
 const redundancyCategories = [...specialRedundancyCategories, VdevType.Data];
@@ -24,9 +17,7 @@ export class StorageService {
 
   constructor(
     protected ws: WebSocketService,
-    private http: HttpClient,
-  ) {
-  }
+  ) {}
 
   filesystemStat(path: string): Observable<FileSystemStat> {
     return this.ws.call('filesystem.stat', [path]);
@@ -34,200 +25,6 @@ export class StorageService {
 
   listDisks(): Observable<Disk[]> {
     return this.ws.call(this.diskResource, []);
-  }
-
-  downloadFile(filename: string, contents: string, mimeType = 'text/plain'): void {
-    const byteCharacters = atob(contents);
-
-    const byteNumbers = new Array(byteCharacters.length);
-    for (let i = 0; i < byteCharacters.length; i++) {
-      byteNumbers[i] = byteCharacters.charCodeAt(i);
-    }
-
-    const byteArray = new Uint8Array(byteNumbers);
-
-    const blob = new Blob([byteArray], { type: mimeType });
-
-    this.downloadBlob(blob, filename);
-  }
-
-  downloadText(contents: string, filename: string): void {
-    const blob = new Blob([contents], { type: 'text/plain' });
-    this.downloadBlob(blob, filename);
-  }
-
-  downloadBlob(blob: Blob, filename: string): void {
-    const dlink = document.createElement('a');
-    document.body.appendChild(dlink);
-    dlink.download = filename;
-    dlink.href = URL.createObjectURL(blob);
-    dlink.onclick = () => {
-      // revokeObjectURL needs a delay to work properly
-      setTimeout(() => {
-        URL.revokeObjectURL(dlink.href);
-      }, 1500);
-    };
-
-    dlink.click();
-    dlink.remove();
-  }
-
-  streamDownloadFile(url: string, filename: string, mimeType: string): Observable<Blob> {
-    return this.http.post(url, '', { responseType: 'blob' }).pipe(
-      map(
-        (blob) => {
-          return new Blob([blob], { type: mimeType });
-        },
-      ),
-    );
-  }
-
-  downloadUrl(url: string, filename: string, mimeType: string): Observable<Blob> {
-    return this.streamDownloadFile(url, filename, mimeType).pipe(
-      tap((blob) => this.downloadBlob(blob, filename)),
-    );
-  }
-
-  /**
-   * @deprecated Handles sorting for entity tables and some other ngx datatables
-   */
-  // eslint-disable-next-line sonarjs/cognitive-complexity
-  tableSorter<T>(arr: T[], key: keyof T, asc: SortDirection): T[] {
-    const tempArr: unknown[] = [];
-    let sorter: unknown[];
-    const myCollator = new Intl.Collator(undefined, { numeric: true, sensitivity: 'base' });
-
-    // Breaks out the key to sort by
-    arr.forEach((item) => {
-      tempArr.push(item[key]);
-    });
-
-    // If all values are the same, just return the array without sorting or flipping it
-    if (!tempArr.some((val, _) => val !== tempArr[0])) {
-      return arr;
-    }
-
-    // Handle an empty data field or empty column
-    let n = 0;
-    while (!tempArr[n] && n < tempArr.length) {
-      n++;
-    }
-    // Select table columns labled with GiB, Mib, etc
-    // Regex checks for ' XiB' with a leading space and X === K, M, G or T
-    // also include bytes unit, which will get from convertBytesToHumanReadable (IxFormatterService) function
-    if (isStringArray(tempArr)
-      && (tempArr[n].endsWith(' B') || /\s[KMGT]iB$/.test(tempArr[n].slice(-4)) || tempArr[n].endsWith(' bytes'))) {
-      let bytes = [];
-      let kbytes = [];
-      let mbytes = [];
-      let gbytes = [];
-      let tbytes = [];
-      for (const i of tempArr) {
-        if (i) {
-          if (i.endsWith(' B')) {
-            bytes.push(i);
-          } else {
-            switch (i.slice(-3)) {
-              case 'KiB':
-                kbytes.push(i);
-                break;
-              case 'MiB':
-                mbytes.push(i);
-                break;
-              case 'GiB':
-                gbytes.push(i);
-                break;
-              case 'TiB':
-                tbytes.push(i);
-            }
-          }
-        }
-      }
-
-      // Sort each array independently, then put them back together
-      bytes = bytes.sort(myCollator.compare);
-      kbytes = kbytes.sort(myCollator.compare);
-      mbytes = mbytes.sort(myCollator.compare);
-      gbytes = gbytes.sort(myCollator.compare);
-      tbytes = tbytes.sort(myCollator.compare);
-
-      sorter = bytes.concat(kbytes, mbytes, gbytes, tbytes);
-
-      // Select disks where last two chars = a digit and the one letter space abbrev
-    } else if (isStringArray(tempArr)
-      && tempArr[n][tempArr[n].length - 1].match(/[KMGTB]/)
-      && tempArr[n][tempArr[n].length - 2].match(/[0-9]/)) {
-      let bytes = [];
-      let kiloBytes = [];
-      let megaBytes = [];
-      let gigaBytes = [];
-      let teraBytes = [];
-      for (const i of tempArr) {
-        switch (i.slice(-1)) {
-          case 'B':
-            bytes.push(i);
-            break;
-          case 'K':
-            kiloBytes.push(i);
-            break;
-          case 'M':
-            megaBytes.push(i);
-            break;
-          case 'G':
-            gigaBytes.push(i);
-            break;
-          case 'T':
-            teraBytes.push(i);
-        }
-      }
-
-      // Sort each array independently, then put them back together
-      bytes = bytes.sort(myCollator.compare);
-      kiloBytes = kiloBytes.sort(myCollator.compare);
-      megaBytes = megaBytes.sort(myCollator.compare);
-      gigaBytes = gigaBytes.sort(myCollator.compare);
-      teraBytes = teraBytes.sort(myCollator.compare);
-
-      sorter = bytes.concat(kiloBytes, megaBytes, gigaBytes, teraBytes);
-
-      // Select strings that Date.parse can turn into a number (ie, that are a legit date)
-    } else if (isStringArray(tempArr)
-      && !Number.isNaN(Date.parse(tempArr[n]))) {
-      let timeArr = [];
-      for (const i of tempArr) {
-        timeArr.push(Date.parse(i));
-      }
-      timeArr = timeArr.sort();
-
-      sorter = [];
-      for (const elem of timeArr) {
-        try {
-          sorter.push(format(elem, 'yyyy-MM-dd HH:mm:ss')); // format should match locale service
-        } catch (error: unknown) {
-          console.error(error);
-        }
-      }
-    } else {
-      sorter = tempArr.sort(myCollator.compare);
-    }
-    // Rejoins the sorted keys with the rest of the row data
-    let sort: number;
-    // ascending or descending
-    if (asc === 'asc') {
-      sort = 1;
-    } else {
-      sort = -1;
-    }
-    arr.sort((a, b) => {
-      const aValue = a[key];
-      const bValue = b[key];
-      if (sorter.indexOf(aValue) > sorter.indexOf(bValue)) {
-        return sort;
-      }
-      return -1 * sort;
-    });
-
-    return arr;
   }
 
   getDatasetNameOptions(): Observable<Option[]> {
@@ -308,8 +105,11 @@ export class StorageService {
 
   // Check to see if every VDEV has the same capacity. Best practices dictate every vdev should be uniform
   isMixedVdevCapacity(allVdevCapacities: Set<number>): boolean {
-    const diff = Math.max(...allVdevCapacities) - Math.min(...allVdevCapacities);
-    return allVdevCapacities.size > 1 && diff >= GiB * 2;
+    const max = Math.max(...allVdevCapacities);
+    const min = Math.min(...allVdevCapacities);
+    const fivePercentOfMax = max * (5 / 100);
+
+    return min + fivePercentOfMax + GiB * 2 < max;
   }
 
   getVdevDiskCapacities(vdevs: TopologyItem[], disks: Disk[]): Set<number>[] {

@@ -9,17 +9,21 @@
     <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
       <ix-fieldset>
         <ix-select
+          ixUiSearchableElement
           formControlName="sed_user"
           [label]="labels.sed_user | translate"
           [tooltip]="tooltips.sed_user | translate"
           [options]="sedUserOptions$"
+          [ixSearchConfig]="searchElements.sedUser"
         ></ix-select>
 
         <ix-input
+          ixUiSearchableElement
           formControlName="sed_passwd"
           type="password"
           [label]="labels.sed_passwd | translate"
           [tooltip]="tooltips.sed_passwd | translate"
+          [ixSearchConfig]="searchElements.sedPassword"
         ></ix-input>
 
         <ix-input

@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, Input, OnInit,
+  ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output,
 } from '@angular/core';
 import { AbstractControl, FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -23,6 +23,8 @@ const critical = 95;
 })
 export class QuotasSectionComponent implements OnInit {
   @Input() parent: Dataset;
+
+  @Output() formValidityChange = new EventEmitter<boolean>();
 
   readonly form = this.formBuilder.group({
     refquota: [null as number, this.validators.withMessage(
@@ -56,6 +58,10 @@ export class QuotasSectionComponent implements OnInit {
 
   ngOnInit(): void {
     this.setFormRelations();
+
+    this.form.statusChanges.pipe(untilDestroyed(this)).subscribe((status) => {
+      this.formValidityChange.emit(status === 'VALID');
+    });
   }
 
   getPayload(): Partial<DatasetCreate> {

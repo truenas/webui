@@ -84,7 +84,7 @@
 .slide.overview .left {
   background-blend-mode: overlay;
   background-color: #666;
-  background-image: url('~assets/images/backgrounds/rj45.jpg');
+  background-image: url('assets/images/backgrounds/rj45.jpg');
   background-position-x: 65%;
   background-position-y: center;
   background-size: cover;
@@ -109,7 +109,6 @@
   display: flex;
   flex: 1 1 100%;
   height: 100%;
-  lex-direction: column;
   max-width: 100%;
   padding: 48px 0;
   place-content: center space-around;

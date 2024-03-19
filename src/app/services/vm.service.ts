@@ -1,8 +1,8 @@
-import { Injectable, Inject } from '@angular/core';
+import { Inject, Injectable } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { TranslateService } from '@ngx-translate/core';
 import {
-  BehaviorSubject, Observable, Subject, filter, repeat, switchMap, take,
+  BehaviorSubject, filter, Observable, repeat, Subject, switchMap, take,
 } from 'rxjs';
 import { VmState } from 'app/enums/vm.enum';
 import { WebSocketErrorName } from 'app/enums/websocket-error-name.enum';
@@ -10,15 +10,19 @@ import { WINDOW } from 'app/helpers/window.helper';
 import { helptextVmList } from 'app/helptext/vm/vm-list';
 import { ApiCallParams } from 'app/interfaces/api/api-call-directory.interface';
 import {
-  VirtualMachine, VirtualMachineUpdate, VirtualizationDetails, VmDisplayWebUriParams, VmDisplayWebUriParamsOptions,
+  VirtualizationDetails,
+  VirtualMachine,
+  VirtualMachineUpdate,
+  VmDisplayWebUriParams,
+  VmDisplayWebUriParamsOptions,
 } from 'app/interfaces/virtual-machine.interface';
 import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { StopVmDialogComponent, StopVmDialogData } from 'app/pages/vm/vm-list/stop-vm-dialog/stop-vm-dialog.component';
+import { DownloadService } from 'app/services/download.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { StorageService } from 'app/services/storage.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @Injectable({ providedIn: 'root' })
@@ -39,7 +43,7 @@ export class VmService {
     private dialogService: DialogService,
     private translate: TranslateService,
     private errorHandler: ErrorHandlerService,
-    private storageService: StorageService,
+    private download: DownloadService,
     private matDialog: MatDialog,
     @Inject(WINDOW) private window: Window,
   ) {
@@ -88,11 +92,9 @@ export class VmService {
   }
 
   downloadLogs(vm: VirtualMachine): Observable<Blob> {
-    const path = `/var/log/libvirt/qemu/${vm.id}_${vm.name}.log`;
     const filename = `${vm.id}_${vm.name}.log`;
-    const mimetype = 'text/plain';
-    return this.ws.call('core.download', ['filesystem.get', [path], filename]).pipe(
-      switchMap(([, url]) => this.storageService.downloadUrl(url, filename, mimetype)),
+    return this.ws.call('core.download', ['vm.log_file_download', [vm.id], filename]).pipe(
+      switchMap(([, url]) => this.download.downloadUrl(url, filename, 'text/plain')),
     );
   }
 

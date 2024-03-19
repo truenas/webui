@@ -20,6 +20,7 @@ import { ChainedRef } from 'app/modules/ix-forms/components/ix-slide-in/chained-
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { SyslogConfig } from 'app/pages/system/advanced/syslog/syslog-card/syslog-card.component';
+import { elements } from 'app/pages/system/advanced/syslog/syslog-form/syslog-form.elements';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 import { advancedConfigUpdated } from 'app/store/system-config/system-config.actions';
@@ -31,6 +32,7 @@ import { advancedConfigUpdated } from 'app/store/system-config/system-config.act
 })
 export class SyslogFormComponent implements OnInit {
   protected requiredRoles = [Role.FullAdmin];
+  protected readonly searchElements = elements;
 
   isFormLoading = false;
   subscriptions: Subscription[] = [];

@@ -14,7 +14,7 @@ import { WebSocketService } from 'app/services/ws.service';
 
 export interface DevicesState {
   isLoading: boolean;
-  poolId: number;
+  poolId: number | null;
   error: WebSocketError | null;
   nodes: DeviceNestedDataNode[];
   diskDictionary: Record<string, Disk>;
@@ -107,7 +107,9 @@ export class DevicesStore extends ComponentStore<DevicesState> {
     return triggers$.pipe(
       tap(() => {
         const poolId = this.get((state) => state.poolId);
-        this.loadNodes(poolId);
+        if (poolId) {
+          this.loadNodes(poolId);
+        }
       }),
     );
   });

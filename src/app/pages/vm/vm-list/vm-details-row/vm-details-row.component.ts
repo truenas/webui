@@ -8,6 +8,7 @@ import { filter } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
 import { VmState } from 'app/enums/vm.enum';
 import { VirtualMachine } from 'app/interfaces/virtual-machine.interface';
+import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { VmEditFormComponent } from 'app/pages/vm/vm-edit-form/vm-edit-form.component';
 import { CloneVmDialogComponent } from 'app/pages/vm/vm-list/clone-vm-dialog/clone-vm-dialog.component';
 import { DeleteVmDialogComponent } from 'app/pages/vm/vm-list/delete-vm-dialog/delete-vm-dialog.component';
@@ -24,6 +25,7 @@ import { VmService } from 'app/services/vm.service';
 })
 export class VirtualMachineDetailsRowComponent {
   @Input() vm: VirtualMachine;
+  protected readonly requiredReadRoles = [Role.VmRead];
   protected readonly requiredRoles = [Role.VmWrite];
 
   get isRunning(): boolean {
@@ -35,6 +37,7 @@ export class VirtualMachineDetailsRowComponent {
   }
 
   constructor(
+    private loader: AppLoaderService,
     private slideInService: IxSlideInService,
     private matDialog: MatDialog,
     private router: Router,
@@ -102,7 +105,7 @@ export class VirtualMachineDetailsRowComponent {
   protected downloadLogs(): void {
     this.vmService
       .downloadLogs(this.vm)
-      .pipe(untilDestroyed(this))
+      .pipe(this.loader.withLoader(), untilDestroyed(this))
       .subscribe({
         error: (error: unknown) => this.errorHandler.showErrorModal(error),
       });

@@ -4,6 +4,7 @@
     <div class="actions action-icon">
       <button
         *ixWithLoadingState="debugKernel$ as debugKernel"
+        id="kernel-settings"
         mat-button
         [ixTest]="['kernel', 'configure']"
         (click)="onConfigurePressed(debugKernel)"

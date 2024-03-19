@@ -21,7 +21,7 @@
     [value]="option.value"
     [ixTest]="[controlDirective.name, option.label]"
     [attr.aria-label]="option.label"
-  >{{ option.label }}</mat-button-toggle>
+  >{{ option.label | translate }}</mat-button-toggle>
 </mat-button-toggle-group>
 
 <ix-errors [control]="controlDirective.control" [label]="label"></ix-errors>

@@ -1,5 +1,6 @@
 import { NgForOf } from '@angular/common';
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import { TranslateModule } from '@ngx-translate/core';
 import { SummarySection } from 'app/modules/summary/summary.interface';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
 
@@ -12,6 +13,7 @@ import { TestIdModule } from 'app/modules/test-id/test-id.module';
   imports: [
     NgForOf,
     TestIdModule,
+    TranslateModule,
   ],
 })
 export class SummaryComponent {

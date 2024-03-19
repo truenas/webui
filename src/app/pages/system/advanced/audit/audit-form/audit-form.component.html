@@ -9,43 +9,53 @@
     <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
       <ix-fieldset>
         <ix-input
+          ixUiSearchableElement
           formControlName="retention"
           type="number"
           [label]="'Retention (in days)' | translate"
           [tooltip]="tooltips.retention | translate"
           [required]="true"
+          [ixSearchConfig]="searchElements.retention"
         ></ix-input>
 
         <ix-input
+          ixUiSearchableElement
           formControlName="reservation"
           type="number"
           [label]="'Reservation (in GiB)' | translate"
           [tooltip]="tooltips.reservation | translate"
           [required]="true"
+          [ixSearchConfig]="searchElements.reservation"
         ></ix-input>
 
         <ix-input
+          ixUiSearchableElement
           formControlName="quota"
           type="number"
           [label]="'Quota (in GiB)' | translate"
           [tooltip]="tooltips.quota | translate"
           [required]="true"
+          [ixSearchConfig]="searchElements.quota"
         ></ix-input>
 
         <ix-input
+          ixUiSearchableElement
           formControlName="quota_fill_warning"
           type="number"
           [label]="'Quota Fill Warning (in %)' | translate"
           [tooltip]="tooltips.quota_fill_warning | translate"
           [required]="true"
+          [ixSearchConfig]="searchElements.quotaFillWarning"
         ></ix-input>
 
         <ix-input
+          ixUiSearchableElement
           formControlName="quota_fill_critical"
           type="number"
           [label]="'Quota Fill Critical (in %)' | translate"
           [tooltip]="tooltips.quota_fill_critical | translate"
           [required]="true"
+          [ixSearchConfig]="searchElements.quotaFillCritical"
         ></ix-input>
       </ix-fieldset>
 

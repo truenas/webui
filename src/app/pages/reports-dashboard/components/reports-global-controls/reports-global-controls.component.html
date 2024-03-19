@@ -30,7 +30,7 @@
     ixTest="category-menu"
     [matMenuTriggerFor]="categoryMenu"
   >
-    {{ activeTab.label }}
+    {{ activeTab.label | translate }}
     <ix-icon name="mdi-menu-down" class="menu-caret"></ix-icon>
   </button>
 
@@ -50,4 +50,9 @@
     ixTest="exporters-nav"
     [routerLink]="['/reportsdashboard','exporters']"
   >{{ 'Exporters' | translate }}</button>
+  <button
+    mat-button
+    ixTest="netdata-nav"
+    (click)="openNetdata()"
+  >{{ 'Netdata' | translate }}</button>
 </form>
