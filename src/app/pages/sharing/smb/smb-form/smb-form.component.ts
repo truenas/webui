@@ -15,7 +15,9 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import _ from 'lodash';
-import { noop, Observable, of } from 'rxjs';
+import {
+  noop, Observable, of, timer,
+} from 'rxjs';
 import {
   debounceTime,
   filter,
@@ -25,11 +27,13 @@ import {
   tap,
 } from 'rxjs/operators';
 import { DatasetPreset } from 'app/enums/dataset.enum';
+import { ResponseErrorType } from 'app/enums/response-error-type.enum';
 import { Role } from 'app/enums/role.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { helptextSharingSmb } from 'app/helptext/sharing';
 import { DatasetCreate } from 'app/interfaces/dataset.interface';
+import { Job } from 'app/interfaces/job.interface';
 import { Option } from 'app/interfaces/option.interface';
 import {
   SmbPresets,
@@ -63,6 +67,27 @@ import { selectService } from 'app/store/services/services.selectors';
 export class SmbFormComponent implements OnInit, AfterViewInit {
   existingSmbShare: SmbShare;
   defaultSmbShare: SmbShare;
+
+  advancedFields: string[] = [
+    'afp',
+    'acl',
+    'ro',
+    'hostsdeny',
+    'hostsallow',
+    'abe',
+    'guestok',
+    'browsable',
+    'ignore_list',
+    'watch_list',
+    'enable',
+    'path_suffix',
+    'fsrvp',
+    'durablehandle',
+    'streams',
+    'aapl_name_mangling',
+    'recyclebin',
+    'shadowcopy',
+  ];
 
   isLoading = false;
   isAdvancedMode = false;
@@ -481,7 +506,16 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
         }
         this.isLoading = false;
         this.cdr.markForCheck();
-        this.formErrorHandler.handleWsFormError(error, this.form);
+
+        if (this.isErrorFieldFromAdvancedOptions(error, {}, this.advancedFields)) {
+          this.isAdvancedMode = true;
+          this.cdr.markForCheck();
+        }
+        timer(1).pipe(untilDestroyed(this)).subscribe({
+          next: () => {
+            this.formErrorHandler.handleWsFormError(error, this.form);
+          },
+        });
       },
     });
   }
@@ -542,5 +576,53 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
         );
       }),
     );
+  }
+
+  isErrorFieldFromAdvancedOptions(
+    error: unknown,
+    fieldsMap: Record<string, string> = {},
+    advancedFields: string[] = [],
+  ): boolean {
+    if (
+      this.errorHandler.isWebsocketError(error)
+      && error.type === ResponseErrorType.Validation
+      && error.extra
+    ) {
+      const errorFields = this.getFieldsNamesFromError(error, fieldsMap);
+      return advancedFields.some((advancedField) => {
+        return errorFields.some((field) => {
+          return field.toLowerCase().includes(advancedField.toLowerCase());
+        });
+      });
+    }
+
+    if (
+      this.errorHandler.isJobError(error)
+      && error.exc_info.type === ResponseErrorType.Validation
+      && error.exc_info.extra
+    ) {
+      const errorFields = this.getFieldsNamesFromError({ ...error, extra: error.exc_info.extra as Job['extra'] }, fieldsMap);
+      return advancedFields.some((advancedField) => {
+        return errorFields.some((field) => {
+          return field.toLowerCase().includes(advancedField.toLowerCase());
+        });
+      });
+    }
+    return false;
+  }
+
+  private getFieldsNamesFromError(
+    error: WebsocketError | Job,
+    fieldsMap: Record<string, string>,
+  ): string[] {
+    const extra = (error as WebsocketError).extra as string[][];
+    const fieldNames: string[] = [];
+    for (const extraItem of extra) {
+      const field = extraItem[0].split('.').pop();
+
+      const fieldName = fieldsMap[field] ?? field;
+      fieldNames.push(fieldName);
+    }
+    return fieldNames;
   }
 }
