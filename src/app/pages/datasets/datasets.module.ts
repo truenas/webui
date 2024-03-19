@@ -20,6 +20,7 @@ import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxFileSizeModule } from 'app/modules/ix-file-size/ix-file-size.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
+import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
 import { IxTableModule } from 'app/modules/ix-tables/ix-table.module';
 import { TreeModule } from 'app/modules/ix-tree/tree.module';
 import { LayoutModule } from 'app/modules/layout/layout.module';
@@ -36,7 +37,7 @@ import { DatasetRolesCellComponent } from 'app/pages/datasets/components/dataset
 import { DatasetQuotaAddFormComponent } from 'app/pages/datasets/components/dataset-quotas/dataset-quota-add-form/dataset-quota-add-form.component';
 import { DatasetQuotaEditFormComponent } from 'app/pages/datasets/components/dataset-quotas/dataset-quota-edit-form/dataset-quota-edit-form.component';
 import { DatasetQuotasGrouplistComponent } from 'app/pages/datasets/components/dataset-quotas/dataset-quotas-grouplist/dataset-quotas-grouplist.component';
-import { DatasetQuotasUserlistComponent } from 'app/pages/datasets/components/dataset-quotas/dataset-quotas-userlist/dataset-quotas-userlist.component';
+import { DatasetQuotasUserListComponent } from 'app/pages/datasets/components/dataset-quotas/dataset-quotas-user-list/dataset-quotas-user-list.component';
 import { DeleteDatasetDialogComponent } from 'app/pages/datasets/components/delete-dataset-dialog/delete-dataset-dialog.component';
 import { RolesCardComponent } from 'app/pages/datasets/components/roles-card/roles-card.component';
 import { ZvolFormComponent } from 'app/pages/datasets/components/zvol-form/zvol-form.component';
@@ -89,6 +90,7 @@ import { DatasetNodeComponent } from './components/dataset-node/dataset-node.com
     EmptyComponent,
     SearchInput1Component,
     CdkTreeNodePadding,
+    IxTable2Module,
   ],
   declarations: [
     DatasetsManagementComponent,
@@ -102,7 +104,7 @@ import { DatasetNodeComponent } from './components/dataset-node/dataset-node.com
     RolesCardComponent,
     DatasetQuotaAddFormComponent,
     DatasetQuotaEditFormComponent,
-    DatasetQuotasUserlistComponent,
+    DatasetQuotasUserListComponent,
     DatasetQuotasGrouplistComponent,
     DatasetIconComponent,
     DatasetRolesCellComponent,

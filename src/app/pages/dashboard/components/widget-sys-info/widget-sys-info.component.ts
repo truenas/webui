@@ -9,7 +9,7 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
-import { filter, take } from 'rxjs/operators';
+import { filter, map, take } from 'rxjs/operators';
 import { JobState } from 'app/enums/job-state.enum';
 import { ScreenType } from 'app/enums/screen-type.enum';
 import { SystemUpdateStatus } from 'app/enums/system-update.enum';
@@ -158,19 +158,29 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
   }
 
   getSystemInfo(): void {
+    this.ready = false;
+    this.cdr.markForCheck();
+
     this.ws.call('webui.main.dashboard.sys_info')
       .pipe(untilDestroyed(this))
       .subscribe((systemInfo) => {
-        this.processSysInfo(this.isPassive ? systemInfo.remote_info : systemInfo);
+        this.systemInfo = this.isPassive ? systemInfo.remote_info : systemInfo;
+        this.setUptimeUpdates();
+        this.setProductImage();
+
+        this.ready = true;
         this.cdr.markForCheck();
       });
   }
 
   private listenForHaStatus(): void {
     this.store$.select(selectHaStatus)
-      .pipe(filter(Boolean), untilDestroyed(this))
-      .subscribe(({ hasHa }) => {
-        this.isHaEnabled = hasHa;
+      .pipe(filter(Boolean), map(({ hasHa }) => hasHa), untilDestroyed(this))
+      .subscribe((isHaEnabled) => {
+        this.isHaEnabled = isHaEnabled;
+        if (isHaEnabled) {
+          this.getSystemInfo();
+        }
         this.cdr.markForCheck();
       });
   }
@@ -190,24 +200,19 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
   }
 
   checkForRunningUpdate(): void {
-    this.ws.call('core.get_jobs', [[['method', '=', this.updateMethod], ['state', '=', JobState.Running]]]).pipe(untilDestroyed(this)).subscribe({
-      next: (jobs) => {
-        if (jobs && jobs.length > 0) {
-          this.isUpdateRunning = true;
-          this.cdr.markForCheck();
-        }
-      },
-      error: (err) => {
-        console.error(err);
-      },
-    });
-  }
-
-  processSysInfo(systemInfo: SystemInfo): void {
-    this.systemInfo = systemInfo;
-    this.setUptimeUpdates();
-    this.setProductImage();
-    this.ready = true;
+    this.ws.call('core.get_jobs', [[['method', '=', this.updateMethod], ['state', '=', JobState.Running]]])
+      .pipe(untilDestroyed(this))
+      .subscribe({
+        next: (jobs) => {
+          if (jobs && jobs.length > 0) {
+            this.isUpdateRunning = true;
+            this.cdr.markForCheck();
+          }
+        },
+        error: (err) => {
+          console.error(err);
+        },
+      });
   }
 
   setUptimeUpdates(): void {
@@ -239,6 +244,8 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
       this.productModel = product || '';
       this.productEnclosure = 'rackmount';
     }
+
+    this.cdr.markForCheck();
   }
 
   setMiniImage(sysProduct: string): void {

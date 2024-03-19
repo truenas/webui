@@ -105,8 +105,11 @@ export class StorageService {
 
   // Check to see if every VDEV has the same capacity. Best practices dictate every vdev should be uniform
   isMixedVdevCapacity(allVdevCapacities: Set<number>): boolean {
-    const diff = Math.max(...allVdevCapacities) - Math.min(...allVdevCapacities);
-    return allVdevCapacities.size > 1 && diff >= GiB * 2;
+    const max = Math.max(...allVdevCapacities);
+    const min = Math.min(...allVdevCapacities);
+    const fivePercentOfMax = max * (5 / 100);
+
+    return min + fivePercentOfMax + GiB * 2 < max;
   }
 
   getVdevDiskCapacities(vdevs: TopologyItem[], disks: Disk[]): Set<number>[] {

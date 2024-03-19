@@ -85,11 +85,6 @@ tests/bdd/screenshot/ha-bhyve02/*.png
 tests/bdd/screenshot/ha-tn09/*.png
 tests/screenshot/*.png
 
-# generated license text
-/src/assets/disclaimer.txt
-/src/assets/licenses.json
-licenses.txt
-
 .vs/slnx.sqlite
 
 # generated polyfills
