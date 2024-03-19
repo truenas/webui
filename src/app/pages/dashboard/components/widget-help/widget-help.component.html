@@ -51,7 +51,7 @@
           <ng-container *ngIf="productType === ProductType.Scale">
             <div
               *appLet="productType | mapValue: productTypeLabels as product"
-              id="open-source"
+              class="open-source"
               [innerHtml]="helptext.opensource | translate: { product }"
             ></div>
           </ng-container>

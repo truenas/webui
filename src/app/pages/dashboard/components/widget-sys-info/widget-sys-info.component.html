@@ -1,6 +1,7 @@
 <div
+  *appLet="isMobile$ | async as isMobile"
   class="widget double-height"
-  [class.xs]="isMobile$ | async"
+  [class.xs]="isMobile"
   [class.generic-hardware]="!productImage"
   [class.ix-hardware]="productImage"
 >
@@ -192,7 +193,7 @@
                   </mat-list-item>
                 </mat-list>
 
-                <div class="mobile-update-action update-action">
+                <div *ngIf="isMobile" class="mobile-update-action update-action">
                   <button
                     *ngIf="!isPassive"
                     mat-button

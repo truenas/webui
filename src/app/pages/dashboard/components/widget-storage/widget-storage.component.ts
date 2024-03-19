@@ -1,5 +1,5 @@
 import {
-  AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
@@ -53,7 +53,7 @@ interface PoolInfo {
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class WidgetStorageComponent extends WidgetComponent implements AfterViewInit {
+export class WidgetStorageComponent extends WidgetComponent implements OnInit {
   readonly requiredRoles = [Role.FullAdmin];
 
   protected pools: Pool[] = [];
@@ -108,7 +108,7 @@ export class WidgetStorageComponent extends WidgetComponent implements AfterView
     super(translate);
   }
 
-  ngAfterViewInit(): void {
+  ngOnInit(): void {
     this.dashboardStorageStore$.isLoading$.pipe(
       filter((isLoading) => !isLoading),
       switchMap(() => {
@@ -161,6 +161,7 @@ export class WidgetStorageComponent extends WidgetComponent implements AfterView
   }
 
   updatePoolInfoMap(): void {
+    this.poolInfoMap.clear();
     this.pools.forEach((pool) => {
       this.poolInfoMap.set(pool.name, {
         totalDisks: this.getTotalDisks(pool),

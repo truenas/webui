@@ -44,7 +44,7 @@
           </mat-toolbar-row>
         </ix-drag-handle>
 
-        <div class="bar-chart-wrapper">
+        <div *appLet="isMobile$ | async as isMobile" class="bar-chart-wrapper">
           <div *ngIf="!memData" class="spinner-wrapper">
             <mat-spinner class="spinner" [diameter]="40"></mat-spinner>
           </div>
@@ -62,9 +62,10 @@
                 <span *ngIf="ecc">(ECC)</span>
               </span>
             </div>
+
             <!-- Desktop Legend -->
-            <div *ngIf="screenType === ScreenType.Desktop" id="memory-legend">
-              <div *ngIf="memData; else noLegend" id="memory-legend-values">
+            <div *ngIf="!isMobile" class="memory-legend">
+              <div *ngIf="memData; else noLegend" class="memory-legend-values">
                 <div
                   *ngFor="let legendItem of memData.data; let i = index"
                   class="legend-item"
@@ -81,12 +82,12 @@
           </div>
 
           <!-- Chart -->
-          <div id="memory-usage-chart" class="bar-chart">
+          <div class="memory-usage-chart bar-chart">
             <canvas></canvas>
           </div>
 
           <!-- Mobile Legend -->
-          <div *ngIf="screenType === ScreenType.Mobile" id="memory-legend">
+          <div *ngIf="isMobile" class="memory-legend">
             <div class="list-subheader">
               <span>{{ 'Legend' | translate }}</span>
             </div>
@@ -104,16 +105,16 @@
               </mat-list-item>
             </mat-list>
           </div>
-
-          <ng-template #noLegend>
-            <div class="no-memory-legend-values">
-              <div class="legend-item chart-label">
-                <span class="label"></span>
-              </div>
-            </div>
-          </ng-template>
         </div>
       </mat-card-content>
     </mat-card>
   </div>
 </div>
+
+<ng-template #noLegend>
+  <div class="no-memory-legend-values">
+    <div class="legend-item chart-label">
+      <span class="label"></span>
+    </div>
+  </div>
+</ng-template>
