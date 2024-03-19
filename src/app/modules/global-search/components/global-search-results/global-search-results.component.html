@@ -1,18 +1,36 @@
 <mat-card class="search-results-card">
-  <ng-container *ngIf="results?.length > 0; else noResults">
+  <ng-container *ngFor="let result of results ; let i = index">
+    <h2 *ngIf="i === 0 || results[i]?.section !== results[i - 1]?.section" class="section">
+      {{ getSectionTitle(result.section) | translate }}
+    </h2>
     <div
-      *ngFor="let result of results; let i = index"
       class="search-result"
       tabindex="0"
+      [ixTest]="['search-result', result.hierarchy.join('-')]"
       [class.arrow-focused]="i === focusedIndex"
       [ngClass]="'focused-index-' + i"
       (click)="navigateToResult(result)"
       (keydown.enter)="focusedIndex = i"
     >
-      <h3
-        class="title"
-        [innerHTML]="processHierarchy(result.hierarchy, searchTerm)"
-      ></h3>
+      <ng-container *ngIf="result.targetHref; else localLink">
+        <a
+          *ngIf="result.targetHref"
+          ixTest="external-link"
+          target="_blank"
+          [href]="result.targetHref"
+        >
+          <h3
+            class="title"
+            [innerHTML]="processHierarchy(result.hierarchy, searchTerm)"
+          ></h3>
+        </a>
+      </ng-container>
+      <ng-template #localLink>
+        <h3
+          class="title"
+          [innerHTML]="processHierarchy(result.hierarchy, searchTerm)"
+        ></h3>
+      </ng-template>
     </div>
   </ng-container>
 </mat-card>

@@ -53,42 +53,41 @@ export class GlobalSearchComponent implements OnInit {
   }
 
   handleKeyDown(event: KeyboardEvent): void {
+    if ((event.key === 'a') && event.metaKey) {
+      return;
+    }
+
     switch (event.key) {
       case 'ArrowDown':
-        event.preventDefault();
         this.selectedIndex = (this.selectedIndex + 1) % this.searchResults.length;
-        this.searchResultsList.focusOnResultIndex(this.selectedIndex);
+        this.focusElementByIndex();
+        event.preventDefault();
         break;
       case 'ArrowUp':
-        event.preventDefault();
         this.selectedIndex = (this.selectedIndex - 1 + this.searchResults.length) % this.searchResults.length;
-        this.searchResultsList.focusOnResultIndex(this.selectedIndex);
+        this.focusElementByIndex();
+        event.preventDefault();
         break;
       case 'Escape':
-        event.preventDefault();
         this.resetInput();
+        event.preventDefault();
         break;
       case 'Tab':
-        event.preventDefault();
         if (event.shiftKey) {
           this.selectedIndex = (this.selectedIndex - 1 + this.searchResults.length) % this.searchResults.length;
         } else {
           this.selectedIndex = (this.selectedIndex + 1) % this.searchResults.length;
         }
-        this.searchResultsList.focusOnResultIndex(this.selectedIndex);
+        this.focusElementByIndex();
+        event.preventDefault();
         break;
       case 'Enter':
         if (this.selectedIndex !== -1) {
-          event.preventDefault();
           this.searchResultsList.navigateToResultByFocusedIndex(this.selectedIndex);
         }
+        event.preventDefault();
         break;
       default:
-        if (event.key.length === 1) {
-          event.preventDefault();
-          this.searchControl.setValue(this.searchControl.value + event.key);
-          this.focusInputElement();
-        }
         break;
     }
   }
@@ -98,6 +97,11 @@ export class GlobalSearchComponent implements OnInit {
     this.resetSearch.emit();
   }
 
+  private focusElementByIndex(): void {
+    this.searchResultsList.focusOnResultIndex(this.selectedIndex);
+    this.focusInputElement();
+  }
+
   private listenForSearchChanges(): void {
     this.searchControl.valueChanges.pipe(
       debounceTime(150),
@@ -105,7 +109,11 @@ export class GlobalSearchComponent implements OnInit {
       untilDestroyed(this),
     ).subscribe((searchResults) => {
       this.selectedIndex = 0;
-      this.searchResults = searchResults;
+      this.searchResults = [...searchResults, {
+        hierarchy: [`Search Documentation for "${this.searchControl.value}"`],
+        targetHref: `https://www.truenas.com/docs/search/?query=${this.searchControl.value}`,
+        section: 'help',
+      }];
       this.cdr.markForCheck();
     });
   }

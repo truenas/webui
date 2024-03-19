@@ -4,8 +4,10 @@ import {
 } from '@angular/core';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
 import { timer } from 'rxjs';
 import { EmptyType } from 'app/enums/empty-type.enum';
+import { WINDOW } from 'app/helpers/window.helper';
 import { UiSearchableElement } from 'app/modules/global-search/interfaces/ui-searchable-element.interface';
 import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
 import { AuthService } from 'app/services/auth/auth.service';
@@ -24,37 +26,50 @@ export class GlobalSearchResultsComponent {
 
   @Output() selected = new EventEmitter<void>();
 
+  readonly availableSections = [
+    this.translate.instant('UI'),
+    this.translate.instant('Help'),
+  ];
+
   protected readonly entityEmptyConf = this.emptyService.defaultEmptyConfig(EmptyType.NoSearchResults);
 
   constructor(
     protected authService: AuthService,
     private router: Router,
     private emptyService: EmptyService,
+    private translate: TranslateService,
     @Inject(DOCUMENT) private document: Document,
+    @Inject(WINDOW) private window: Window,
   ) {}
 
   navigateToResult(element: UiSearchableElement): void {
     this.selected.emit();
 
-    this.router.navigate(element.anchorRouterLink || element.routerLink).then(() => {
-      setTimeout(() => {
-        const triggerAnchorRef: HTMLElement = this.document.getElementById(element.triggerAnchor);
-
-        if (triggerAnchorRef) {
-          this.highlightElement(triggerAnchorRef);
-          triggerAnchorRef.click();
-        }
-
+    if (element.anchorRouterLink || element.routerLink) {
+      this.router.navigate(element.anchorRouterLink || element.routerLink).then(() => {
         setTimeout(() => {
-          const anchorRef: HTMLElement = this.document.getElementById(element.anchor);
+          const triggerAnchorRef: HTMLElement = this.document.getElementById(element.triggerAnchor);
 
-          if (anchorRef) {
-            anchorRef.click();
-            this.highlightElement(anchorRef);
+          if (triggerAnchorRef) {
+            this.highlightElement(triggerAnchorRef);
+            triggerAnchorRef.click();
           }
-        }, 300);
+
+          setTimeout(() => {
+            const anchorRef: HTMLElement = this.document.getElementById(element.anchor);
+
+            if (anchorRef) {
+              anchorRef.click();
+              this.highlightElement(anchorRef);
+            }
+          }, 300);
+        });
       });
-    });
+    }
+
+    if (element.targetHref) {
+      this.window.open(element.targetHref, '_blank');
+    }
   }
 
   navigateToResultByFocusedIndex(index: number): void {
@@ -85,6 +100,10 @@ export class GlobalSearchResultsComponent {
     });
 
     return processedItems.join(' → ');
+  }
+
+  getSectionTitle(section: string): string {
+    return this.availableSections.find((name) => name.toLowerCase() === section.toLowerCase());
   }
 
   private highlightElement(anchorRef: HTMLElement): void {

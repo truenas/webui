@@ -2336,6 +2336,7 @@
   "Two-Factor authentication is required on this system, but it's not yet configured for your user. Please configure it now.": "",
   "Type of Microsoft acount. Logging in to a Microsoft account  automatically chooses the correct account type.": "",
   "UDP port number on the system receiving  SNMP trap notifications. The default is <i>162</i>.": "",
+  "UI": "",
   "UID": "",
   "UNIX Charset": "",
   "UPS": "",

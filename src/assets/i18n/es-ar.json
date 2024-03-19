@@ -1755,6 +1755,7 @@
   "Two-Factor authentication has been configured.": "",
   "Two-Factor authentication is not enabled on this this system. You can configure your personal settings, but they will have no effect until two-factor authentication is enabled globally by system administrator.": "",
   "Two-Factor authentication is required on this system, but it's not yet configured for your user. Please configure it now.": "",
+  "UI": "",
   "UID": "",
   "UNASSIGNED": "",
   "UNIX (NFS) Shares": "",

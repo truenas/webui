@@ -32,7 +32,9 @@
 
     ix-empty {
       ix-icon {
-        font-size: 100px !important;
+        font-size: 85px !important;
+        height: 50px !important;
+        margin: 10px 0 30px;
       }
     }
   }
@@ -45,6 +47,20 @@
   margin: 0;
   max-height: 400px;
   overflow: auto;
+
+  .section {
+    background-color: var(--bg2);
+    border-bottom: 1px solid var(--lines);
+    font-size: 18px;
+    margin: 32px 16px 10px 3px;
+    padding-bottom: 10px;
+    padding-left: 17px;
+    z-index: 1;
+
+    &:first-child {
+      margin-top: 0;
+    }
+  }
 
   .search-result {
     border-radius: 2px;

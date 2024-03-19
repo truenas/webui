@@ -167,7 +167,8 @@ function parseHtmlFile(
       routerLink,
       anchorRouterLink,
       anchor,
-      triggerAnchor
+      triggerAnchor,
+      section: 'ui'
     });
   });
 
