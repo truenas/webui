@@ -1,3 +1,5 @@
+@import 'scss-imports/cssvars';
+
 .widget mat-card-content {
   width: 100%;
 }
@@ -5,7 +7,6 @@
 .widget mat-toolbar-row {
   background: unset;
   border: none;
-
   font-size: 1.5rem;
   height: 48px;
   line-height: 180%;
@@ -13,12 +14,15 @@
   text-align: left;
   width: 100%;
 
-  * {
-    z-index: 99;
-  }
-
   &.view-overview {
     padding: 0 16px;
+  }
+
+  @media($media-sm) {
+    .mat-card-title-text {
+      margin: 0;
+      max-width: 100%;
+    }
   }
 }
 

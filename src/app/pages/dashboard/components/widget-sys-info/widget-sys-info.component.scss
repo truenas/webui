@@ -24,7 +24,6 @@
 
 .widget mat-toolbar-row {
   background: unset;
-
   font-size: 1.5rem;
   height: 48px;
   left: 0;
@@ -33,6 +32,10 @@
   text-align: left;
   width: 100%;
   z-index: 2;
+}
+
+.xs.widget mat-toolbar-row {
+  display: none;
 }
 
 .grip {
@@ -487,4 +490,8 @@ div.generic.alert .ix-icon {
 
 .widget:not(.xs) .mobile-update-action {
   display: none;
+}
+
+.primary-nav {
+  left: 0;
 }
