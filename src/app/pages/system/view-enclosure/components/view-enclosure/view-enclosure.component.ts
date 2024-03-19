@@ -48,6 +48,7 @@ export class ViewEnclosureComponent implements AfterViewInit, OnDestroy {
     showInNavbar: true,
   };
 
+  hasJbofLicensed = false;
   systemProfile: SystemProfile;
   systemState: EnclosureState;
   views: ViewConfig[] = [];
@@ -204,6 +205,10 @@ export class ViewEnclosureComponent implements AfterViewInit, OnDestroy {
 
     this.store$.pipe(waitForSystemFeatures, untilDestroyed(this)).subscribe((systemFeatures) => {
       this.supportedHardware = systemFeatures.enclosure;
+    });
+
+    this.ws.call('jbof.licensed').pipe(untilDestroyed(this)).subscribe((licensed) => {
+      this.hasJbofLicensed = licensed > 0;
     });
   }
 

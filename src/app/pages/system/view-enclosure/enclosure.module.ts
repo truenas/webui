@@ -10,20 +10,26 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTableModule } from '@angular/material/table';
 import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
 import { CoreComponents } from 'app/core/core-components.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { CastModule } from 'app/modules/cast/cast.module';
+import { AppCommonModule } from 'app/modules/common/app-common.module';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxFileSizeModule } from 'app/modules/ix-file-size/ix-file-size.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
+import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
 import { LayoutModule } from 'app/modules/layout/layout.module';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
 import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
+import { routing } from 'app/pages/system/system.routing';
 import { DiskComponent } from 'app/pages/system/view-enclosure/components/disk-component/disk.component';
 import { EnclosureDisksComponent } from 'app/pages/system/view-enclosure/components/enclosure-disks/enclosure-disks.component';
 import { EnclosureDisksMiniComponent } from 'app/pages/system/view-enclosure/components/enclosure-disks-mini/enclosure-disks-mini.component';
+import { JbosFormComponent } from 'app/pages/system/view-enclosure/components/jbof-form/jbof-form.component';
+import { JbofListComponent } from 'app/pages/system/view-enclosure/components/jbof-list/jbof-list.component';
 import { ViewEnclosureComponent } from 'app/pages/system/view-enclosure/components/view-enclosure/view-enclosure.component';
 import { SetEnclosureLabelDialogComponent } from './components/set-enclosure-label-dialog/set-enclosure-label-dialog.component';
 import { TabContentComponent } from './components/tab-content/tab-content.component';
@@ -32,7 +38,9 @@ import { EnclosureStore } from './stores/enclosure-store.service';
 
 @NgModule({
   imports: [
+    routing,
     CommonModule,
+    AppCommonModule,
     TranslateModule,
     FlexLayoutModule,
     EntityModule,
@@ -49,11 +57,13 @@ import { EnclosureStore } from './stores/enclosure-store.service';
     MatButtonModule,
     MatMenuModule,
     MatDialogModule,
+    MatTooltipModule,
     ReactiveFormsModule,
     IxFormsModule,
     CoreComponents,
     TestIdModule,
     CommonDirectivesModule,
+    IxTable2Module,
   ],
   declarations: [
     ViewEnclosureComponent,
@@ -63,6 +73,8 @@ import { EnclosureStore } from './stores/enclosure-store.service';
     TabContentComponent,
     TemperatureMeterComponent,
     SetEnclosureLabelDialogComponent,
+    JbofListComponent,
+    JbosFormComponent,
   ],
   providers: [EnclosureStore],
 })
