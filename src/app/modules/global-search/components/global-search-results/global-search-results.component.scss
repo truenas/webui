@@ -1,15 +1,12 @@
 @import 'scss-imports/cssvars';
 
-.arrow-focused {
-  background-color: var(--bg1);
-}
-
 :host {
   background-color: var(--bg2);
   border-radius: 2px;
   display: block;
   max-width: 70vw;
   min-width: 100%;
+  overflow: visible;
   padding: 10px 0;
   position: absolute;
   top: 41px;
@@ -32,8 +29,8 @@
 
     ix-empty {
       ix-icon {
-        font-size: 85px !important;
-        height: 50px !important;
+        font-size: 100px !important;
+        height: 60px !important;
         margin: 10px 0 30px;
       }
     }
@@ -45,7 +42,7 @@
   border-radius: 2px;
   box-shadow: none;
   margin: 0;
-  max-height: 400px;
+  max-height: 60vh;
   overflow: auto;
 
   .section {
@@ -55,10 +52,25 @@
     margin: 32px 16px 10px 3px;
     padding-bottom: 10px;
     padding-left: 17px;
+    position: sticky;
+    top: 0;
     z-index: 1;
 
     &:first-child {
       margin-top: 0;
+    }
+  }
+
+  .toggle-show-more {
+    background-color: var(--bg2);
+    bottom: 0;
+    padding: 22px 20px;
+    position: sticky;
+    z-index: 1;
+
+    &:focus-visible {
+      background-color: var(--bg1);
+      outline: none !important;
     }
   }
 
@@ -71,7 +83,8 @@
       background-color: var(--bg1);
     }
 
-    &:focus {
+    &:focus-visible {
+      background-color: var(--bg1);
       outline: none;
     }
 
@@ -86,4 +99,8 @@
       word-break: break-word;
     }
   }
+}
+
+ix-empty {
+  padding-bottom: 0;
 }

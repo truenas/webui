@@ -36,7 +36,6 @@
     @fade
     [searchTerm]="searchControl.value"
     [results]="searchResults"
-    [focusedIndex]="selectedIndex"
     (selected)="resetInput()"
     (keydown)="handleKeyDown($event)"
   ></ix-global-search-results>

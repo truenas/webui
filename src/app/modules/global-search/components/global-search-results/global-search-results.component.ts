@@ -8,8 +8,8 @@ import { TranslateService } from '@ngx-translate/core';
 import { timer } from 'rxjs';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { WINDOW } from 'app/helpers/window.helper';
+import { GlobalSearchSection } from 'app/modules/feedback/enums/global-search-section';
 import { UiSearchableElement } from 'app/modules/global-search/interfaces/ui-searchable-element.interface';
-import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
 import { AuthService } from 'app/services/auth/auth.service';
 
 @UntilDestroy()
@@ -22,21 +22,37 @@ import { AuthService } from 'app/services/auth/auth.service';
 export class GlobalSearchResultsComponent {
   @Input() searchTerm: string;
   @Input() results: UiSearchableElement[];
-  @Input() focusedIndex: number;
 
   @Output() selected = new EventEmitter<void>();
 
-  readonly availableSections = [
-    this.translate.instant('UI'),
-    this.translate.instant('Help'),
-  ];
+  readonly resultLimit = 6;
 
-  protected readonly entityEmptyConf = this.emptyService.defaultEmptyConfig(EmptyType.NoSearchResults);
+  showAll: Record<GlobalSearchSection, boolean> = {
+    [GlobalSearchSection.Ui]: false,
+    [GlobalSearchSection.Help]: false,
+  };
+
+  get availableSections(): GlobalSearchSection[] {
+    const uiSection = this.translate.instant(GlobalSearchSection.Ui);
+    const helpSection = this.translate.instant(GlobalSearchSection.Help);
+    const sections = [uiSection, helpSection];
+
+    if (!this.searchTerm?.trim()?.length) {
+      return [uiSection as GlobalSearchSection];
+    }
+
+    return sections as GlobalSearchSection[];
+  }
+
+  protected readonly entityEmptyConf = {
+    title: this.translate.instant('No results found'),
+    type: EmptyType.NoSearchResults,
+    large: true,
+  };
 
   constructor(
     protected authService: AuthService,
     private router: Router,
-    private emptyService: EmptyService,
     private translate: TranslateService,
     @Inject(DOCUMENT) private document: Document,
     @Inject(WINDOW) private window: Window,
@@ -72,16 +88,22 @@ export class GlobalSearchResultsComponent {
     }
   }
 
-  navigateToResultByFocusedIndex(index: number): void {
-    this.navigateToResult(this.results[index]);
+  toggleShowAll(section: GlobalSearchSection): void {
+    this.showAll[section] = !this.showAll[section];
   }
 
-  focusOnResultIndex(index: number): void {
-    const selectedItem = this.document.querySelector(`.focused-index-${index}`);
+  getLimitedSectionResults(section: GlobalSearchSection): UiSearchableElement[] {
+    const sectionResults = this.results.filter((element) => element.section === section);
 
-    if (selectedItem instanceof HTMLElement) {
-      selectedItem.focus();
+    if (this.showAll[section] || sectionResults.length <= this.resultLimit) {
+      return sectionResults;
     }
+
+    return sectionResults.slice(0, this.resultLimit);
+  }
+
+  getElementsBySection(section: GlobalSearchSection): UiSearchableElement[] {
+    return this.results.filter((element) => element?.section === section);
   }
 
   processHierarchy(hierarchy: string[], searchTerm: string): string {
@@ -92,9 +114,14 @@ export class GlobalSearchResultsComponent {
 
     const processedItems = hierarchy.map((item) => {
       return item.split(regex).map((segment) => {
+        if (!segment) {
+          return '';
+        }
+
         if (segment.match(regex) && item === hierarchy[hierarchy.length - 1]) {
           return `<span class="highlight">${segment}</span>`;
         }
+
         return `<span class="dimmed-text">${segment}</span>`;
       }).join('');
     });
@@ -102,8 +129,8 @@ export class GlobalSearchResultsComponent {
     return processedItems.join(' → ');
   }
 
-  getSectionTitle(section: string): string {
-    return this.availableSections.find((name) => name.toLowerCase() === section.toLowerCase());
+  getSectionTitle(section: GlobalSearchSection): string {
+    return this.availableSections.find((sectionName) => sectionName === section);
   }
 
   private highlightElement(anchorRef: HTMLElement): void {

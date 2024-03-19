@@ -6,8 +6,13 @@ import {
 } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { debounceTime, switchMap } from 'rxjs';
+import { TranslateService } from '@ngx-translate/core';
+import {
+  debounceTime, distinctUntilChanged, switchMap, tap,
+} from 'rxjs';
+import { GlobalSearchSection } from 'app/modules/feedback/enums/global-search-section';
 import { GlobalSearchResultsComponent } from 'app/modules/global-search/components/global-search-results/global-search-results.component';
+import { moveToNextFocusableElement, moveToPreviousFocusableElement } from 'app/modules/global-search/helpers/focus-helper';
 import { UiSearchableElement } from 'app/modules/global-search/interfaces/ui-searchable-element.interface';
 import { UiSearchProvider } from 'app/modules/global-search/services/ui-search.service';
 import { SidenavService } from 'app/services/sidenav.service';
@@ -36,16 +41,23 @@ export class GlobalSearchComponent implements OnInit {
 
   @Output() resetSearch = new EventEmitter<void>();
 
-  selectedIndex = 0;
-
   searchControl = new FormControl('');
   searchResults: UiSearchableElement[];
 
   constructor(
+    protected sidenavService: SidenavService,
     private searchProvider: UiSearchProvider,
     private cdr: ChangeDetectorRef,
-    protected sidenavService: SidenavService,
+    private translate: TranslateService,
   ) {}
+
+  get helpSectionElement(): UiSearchableElement {
+    return {
+      hierarchy: [this.translate.instant('Search Documentation for "{value}"', { value: this.searchControl.value })],
+      targetHref: `https://www.truenas.com/docs/search/?query=${this.searchControl.value}`,
+      section: GlobalSearchSection.Help,
+    };
+  }
 
   ngOnInit(): void {
     this.listenForSearchChanges();
@@ -53,41 +65,28 @@ export class GlobalSearchComponent implements OnInit {
   }
 
   handleKeyDown(event: KeyboardEvent): void {
-    if ((event.key === 'a') && event.metaKey) {
-      return;
-    }
-
     switch (event.key) {
       case 'ArrowDown':
-        this.selectedIndex = (this.selectedIndex + 1) % this.searchResults.length;
-        this.focusElementByIndex();
         event.preventDefault();
+        moveToNextFocusableElement();
         break;
       case 'ArrowUp':
-        this.selectedIndex = (this.selectedIndex - 1 + this.searchResults.length) % this.searchResults.length;
-        this.focusElementByIndex();
         event.preventDefault();
+        moveToPreviousFocusableElement();
         break;
       case 'Escape':
         this.resetInput();
         event.preventDefault();
         break;
-      case 'Tab':
-        if (event.shiftKey) {
-          this.selectedIndex = (this.selectedIndex - 1 + this.searchResults.length) % this.searchResults.length;
-        } else {
-          this.selectedIndex = (this.selectedIndex + 1) % this.searchResults.length;
-        }
-        this.focusElementByIndex();
-        event.preventDefault();
-        break;
       case 'Enter':
-        if (this.selectedIndex !== -1) {
-          this.searchResultsList.navigateToResultByFocusedIndex(this.selectedIndex);
-        }
         event.preventDefault();
         break;
       default:
+        if (event.key.length === 1 && !event.metaKey) {
+          event.preventDefault();
+          this.searchControl.setValue(this.searchControl.value + event.key);
+          this.focusInputElement();
+        }
         break;
     }
   }
@@ -97,30 +96,29 @@ export class GlobalSearchComponent implements OnInit {
     this.resetSearch.emit();
   }
 
-  private focusElementByIndex(): void {
-    this.searchResultsList.focusOnResultIndex(this.selectedIndex);
-    this.focusInputElement();
-  }
-
   private listenForSearchChanges(): void {
     this.searchControl.valueChanges.pipe(
+      tap((value) => {
+        if (
+          value?.trim()?.length
+          && !this.searchResults.some((result) => result.section === GlobalSearchSection.Help)
+        ) {
+          this.searchResults = [...this.searchResults, this.helpSectionElement];
+        }
+      }),
       debounceTime(150),
+      distinctUntilChanged(),
       switchMap((term) => this.searchProvider.search(term)),
       untilDestroyed(this),
     ).subscribe((searchResults) => {
-      this.selectedIndex = 0;
-      this.searchResults = [...searchResults, {
-        hierarchy: [`Search Documentation for "${this.searchControl.value}"`],
-        targetHref: `https://www.truenas.com/docs/search/?query=${this.searchControl.value}`,
-        section: 'help',
-      }];
+      this.searchResults = [...searchResults, this.helpSectionElement];
       this.cdr.markForCheck();
     });
   }
 
   private getInitialSearchResults(): void {
     this.searchProvider.search('').pipe(untilDestroyed(this)).subscribe((searchResults) => {
-      this.searchResults = searchResults;
+      this.searchResults = [...searchResults.filter((result) => result.section === GlobalSearchSection.Ui)];
       this.cdr.markForCheck();
     });
   }

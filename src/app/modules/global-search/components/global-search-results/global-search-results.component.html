@@ -1,40 +1,42 @@
 <mat-card class="search-results-card">
-  <ng-container *ngFor="let result of results ; let i = index">
-    <h2 *ngIf="i === 0 || results[i]?.section !== results[i - 1]?.section" class="section">
-      {{ getSectionTitle(result.section) | translate }}
+  <ng-container *ngFor="let section of availableSections">
+    <h2 class="section">
+      {{ getSectionTitle(section) | translate }}
     </h2>
-    <div
-      class="search-result"
-      tabindex="0"
-      [ixTest]="['search-result', result.hierarchy.join('-')]"
-      [class.arrow-focused]="i === focusedIndex"
-      [ngClass]="'focused-index-' + i"
-      (click)="navigateToResult(result)"
-      (keydown.enter)="focusedIndex = i"
-    >
-      <ng-container *ngIf="result.targetHref; else localLink">
-        <a
-          *ngIf="result.targetHref"
-          ixTest="external-link"
-          target="_blank"
-          [href]="result.targetHref"
-        >
-          <h3
-            class="title"
-            [innerHTML]="processHierarchy(result.hierarchy, searchTerm)"
-          ></h3>
-        </a>
-      </ng-container>
-      <ng-template #localLink>
-        <h3
-          class="title"
-          [innerHTML]="processHierarchy(result.hierarchy, searchTerm)"
-        ></h3>
-      </ng-template>
-    </div>
+
+    <ng-container *ngIf="getElementsBySection(section)?.length">
+      <div
+        *ngFor="let result of getLimitedSectionResults(section);"
+        class="search-result"
+        tabindex="0"
+        [ixTest]="['search-result', result.hierarchy.join('-')]"
+        (click)="navigateToResult(result)"
+        (keydown.enter)="navigateToResult(result)"
+      >
+        <ng-container *ngIf="result.targetHref; else localLink">
+          <span *ngIf="result.targetHref" ixTest="external-link">
+            <ng-container [ngTemplateOutlet]="localLink"></ng-container>
+          </span>
+        </ng-container>
+        <ng-template #localLink>
+          <h3 class="title" [innerHTML]="processHierarchy(result.hierarchy, searchTerm)"></h3>
+        </ng-template>
+      </div>
+
+      <button
+        *ngIf="getElementsBySection(section)?.length > resultLimit"
+        class="toggle-show-more"
+        mat-button
+        ixTest="toggle-show-all-results'"
+        (click)="toggleShowAll(section)"
+        (keydown.enter)="toggleShowAll(section)"
+      >
+        {{ showAll[section] ? ('Show Less' | translate) : ('Show All' | translate) }}
+      </button>
+    </ng-container>
+
+    <ng-container *ngIf="!getElementsBySection(section)?.length">
+      <ix-empty [conf]="entityEmptyConf"></ix-empty>
+    </ng-container>
   </ng-container>
 </mat-card>
-
-<ng-template #noResults>
-  <ix-empty [conf]="entityEmptyConf"></ix-empty>
-</ng-template>

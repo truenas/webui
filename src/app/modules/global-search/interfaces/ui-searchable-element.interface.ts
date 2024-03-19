@@ -1,8 +1,9 @@
 import { Role } from 'app/enums/role.enum';
+import { GlobalSearchSection } from 'app/modules/feedback/enums/global-search-section';
 
 export interface UiSearchableElement {
   hierarchy: string[];
-  section?: string;
+  section?: GlobalSearchSection;
   anchorRouterLink?: string[];
   anchor?: string;
   triggerAnchor?: string;
