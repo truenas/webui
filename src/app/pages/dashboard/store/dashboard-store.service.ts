@@ -83,6 +83,41 @@ export class DashboardStore extends ComponentStore<DashboardState> {
     );
   });
 
+  applyState(newState: DashConfigItem[]): void {
+    // This reconciles current state with saved dashState
+    this.setState((state) => {
+      if (!state.dashboardState) {
+        return {
+          ...state,
+        };
+      }
+
+      let hiddenItems: DashConfigItem[] = [];
+      for (const widget of state.dashboardState) {
+        let widgetExistsInNewState = false;
+        for (const newWidget of newState) {
+          if (widget.identifier) {
+            if (widget.identifier === newWidget.identifier) {
+              widgetExistsInNewState = true;
+            }
+          } else if (widget.name === newWidget.name) {
+            widgetExistsInNewState = true;
+          }
+        }
+        if (!widgetExistsInNewState) {
+          hiddenItems.push(_.cloneDeep(widget));
+        }
+      }
+
+      hiddenItems = hiddenItems.map((widget) => ({ ...widget, rendered: false }));
+
+      return {
+        ...state,
+        dashboardState: this.sanitizeState(_.cloneDeep([...newState, ...hiddenItems]), state.pools, state.nics),
+      };
+    });
+  }
+
   private getSystemInfoWithFeatures(): Observable<unknown> {
     return this.store$.pipe(
       waitForSystemInfo,
@@ -264,41 +299,6 @@ export class DashboardStore extends ComponentStore<DashboardState> {
         return !!nicsCopy?.length;
       }
       return true;
-    });
-  }
-
-  private applyState(newState: DashConfigItem[]): void {
-    // This reconciles current state with saved dashState
-    this.setState((state) => {
-      if (!state.dashboardState) {
-        return {
-          ...state,
-        };
-      }
-
-      let hiddenItems: DashConfigItem[] = [];
-      for (const widget of state.dashboardState) {
-        let widgetExistsInNewState = false;
-        for (const newWidget of newState) {
-          if (widget.identifier) {
-            if (widget.identifier === newWidget.identifier) {
-              widgetExistsInNewState = true;
-            }
-          } else if (widget.name === newWidget.name) {
-            widgetExistsInNewState = true;
-          }
-        }
-        if (!widgetExistsInNewState) {
-          hiddenItems.push(_.cloneDeep(widget));
-        }
-      }
-
-      hiddenItems = hiddenItems.map((widget) => ({ ...widget, rendered: false }));
-
-      return {
-        ...state,
-        dashboardState: this.sanitizeState(_.cloneDeep([...newState, ...hiddenItems]), state.pools, state.nics),
-      };
     });
   }
 }

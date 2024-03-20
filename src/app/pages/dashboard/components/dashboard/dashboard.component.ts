@@ -123,11 +123,11 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
     private slideInService: IxSlideInService,
     private layoutService: LayoutService,
     private store$: Store<AppState>,
-    @Inject(WINDOW) private window: Window,
-    @Inject(DOCUMENT) private document: Document,
     private dashboardStore$: DashboardStore,
     private resourcesUsageStore$: ResourcesUsageStore,
     private cdr: ChangeDetectorRef,
+    @Inject(WINDOW) private window: Window,
+    @Inject(DOCUMENT) private document: Document,
   ) {}
 
   ngAfterViewInit(): void {
@@ -168,6 +168,9 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
     // Restore top level scrolling
     const wrapper = document.querySelector<HTMLElement>('.fn-maincontent');
     wrapper.style.overflow = 'auto';
+
+    // update dashboard store with latest data
+    this.dashboardStore$.applyState(this.dashState);
   }
 
   onWidgetReorder(newState: DashConfigItem[]): void {
@@ -325,6 +328,7 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
 
   private setDashState(dashState: DashConfigItem[]): void {
     this.dashState = dashState;
+
     if (!this.reorderMode) {
       this.renderedWidgets = this.dashState.filter((widget) => widget.rendered);
     }
