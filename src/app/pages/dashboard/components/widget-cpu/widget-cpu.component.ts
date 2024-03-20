@@ -247,7 +247,7 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
   // chart.js renderer
   renderChart(): void {
     if (!this.ctx) {
-      const el: HTMLCanvasElement = this.el.nativeElement.querySelector('canvas');
+      const el: HTMLCanvasElement = this.el.nativeElement.querySelector('.cpu-cores-chart canvas');
       if (!el) { return; }
 
       const ds = this.makeDatasets(this.cpuData.data);
