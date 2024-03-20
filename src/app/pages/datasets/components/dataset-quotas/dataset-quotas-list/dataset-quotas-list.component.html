@@ -2,12 +2,12 @@
   <ix-search-input1 [disabled]="isLoading" (search)="onListFiltered($event)"></ix-search-input1>
   <mat-slide-toggle
     color="primary"
-    ixTest="show-all-users"
-    [checked]="showAllUsers"
+    [ixTest]="'show-all-' + helpTextKey"
+    [checked]="showAllQuotas"
     [disabled]="isLoading"
     (change)="toggleDisplay()"
   >
-    <label>{{ 'Show All Users' | translate }}</label>
+    <label>{{ helpText[helpTextKey].title | translate }}</label>
   </mat-slide-toggle>
   <ng-container *ixRequiresRoles="requiredRoles">
     <button
