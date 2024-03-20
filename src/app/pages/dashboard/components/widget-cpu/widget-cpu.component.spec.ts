@@ -80,4 +80,6 @@ describe('WidgetCpuComponent', () => {
 
     expect(spectator.component.goBack).toHaveBeenCalled();
   });
+
+  // TODO: Add more tests
 });

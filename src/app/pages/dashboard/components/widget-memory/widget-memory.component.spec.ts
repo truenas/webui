@@ -91,4 +91,6 @@ describe('WidgetMemoryComponent', () => {
 
     expect(spectator.component.goBack).toHaveBeenCalled();
   });
+
+  // TODO: Add more tests
 });

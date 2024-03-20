@@ -114,10 +114,7 @@ export class DashboardStorageStore extends ComponentStore<DashboardStorageState>
             }
             return pool;
           });
-          return {
-            ...state,
-            pools,
-          };
+          return { ...state, pools };
         });
       }),
     );

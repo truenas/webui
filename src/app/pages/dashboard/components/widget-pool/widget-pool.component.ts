@@ -72,7 +72,8 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
 
   templates: Record<string, TemplateRef<void>>;
   path: Slide[] = [];
-  title: string;
+  defaultTitle = this.translate.instant('Pool');
+  title = this.defaultTitle;
   displayValue: string;
   diskSize: string;
   diskSizeLabel: string;
@@ -172,7 +173,8 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
   }
 
   ngOnInit(): void {
-    this.title = this.path.length > 0 && this.poolState && this.currentSlide !== '0' ? this.poolState.name : 'Pool';
+    const notFirstSlide = this.path.length > 0 && this.poolState && this.currentSlide !== '0';
+    this.title = notFirstSlide ? this.poolState.name : this.defaultTitle;
   }
 
   ngAfterViewInit(): void {

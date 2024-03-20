@@ -3,33 +3,25 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { Spectator } from '@ngneat/spectator';
 import { createHostFactory, mockProvider } from '@ngneat/spectator/jest';
-import { provideMockStore } from '@ngrx/store/testing';
 import { MockComponent } from 'ng-mocks';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { of } from 'rxjs';
 import { DragHandleComponent } from 'app/core/components/drag-handle/drag-handle.component';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { LinkState, NetworkInterfaceType } from 'app/enums/network-interface.enum';
-import { ProductType } from 'app/enums/product-type.enum';
 import { ViewChartAreaComponent } from 'app/modules/charts/components/view-chart-area/view-chart-area.component';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { InterfaceStatusIconComponent } from 'app/modules/interface-status-icon/interface-status-icon.component';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
-import { WidgetNetworkComponent } from 'app/pages/dashboard/components/widget-network/widget-network.component';
+import { WidgetNicComponent } from 'app/pages/dashboard/components/widget-nic/widget-nic.component';
 import { ResourcesUsageStore } from 'app/pages/dashboard/store/resources-usage-store.service';
-import { LocaleService } from 'app/services/locale.service';
-import { SystemGeneralService } from 'app/services/system-general.service';
-import { selectPreferences, selectTheme } from 'app/store/preferences/preferences.selectors';
-import { selectTimezone } from 'app/store/system-config/system-config.selectors';
-import { selectSystemInfo } from 'app/store/system-info/system-info.selectors';
 
-describe('WidgetNetworkComponent', () => {
-  let spectator: Spectator<WidgetNetworkComponent>;
+describe('WidgetNicComponent', () => {
+  let spectator: Spectator<WidgetNicComponent>;
   let loader: HarnessLoader;
 
   const createHost = createHostFactory({
-    component: WidgetNetworkComponent,
+    component: WidgetNicComponent,
     imports: [
       NgxSkeletonLoaderModule,
       MatGridListModule,
@@ -42,14 +34,6 @@ describe('WidgetNetworkComponent', () => {
     ],
     providers: [
       mockAuth(),
-      mockWebSocket([
-        mockCall('reporting.netdata_get_data'),
-        mockCall('reporting.clear'),
-      ]),
-      mockProvider(SystemGeneralService, {
-        isEnterprise: () => true,
-        getProductType$: of(ProductType.Scale),
-      }),
       mockProvider(ResourcesUsageStore, {
         nics$: of([{
           name: 'eth0',
@@ -83,41 +67,19 @@ describe('WidgetNetworkComponent', () => {
           },
         }),
       }),
-      mockProvider(LocaleService),
-      provideMockStore({
-        selectors: [{
-          selector: selectPreferences,
-          value: {
-            timezone: 'Europe/London',
-          },
-        }, {
-          selector: selectSystemInfo,
-          value: {
-            datetime: {
-              $date: 1234567,
-            },
-          },
-        }, {
-          selector: selectTheme,
-          value: 'ix-dark',
-        }, {
-          selector: selectTimezone,
-          value: 'Europe/London',
-        }],
-      }),
     ],
   });
 
   beforeEach(() => {
-    spectator = createHost('<ix-widget-network></ix-widget-network>');
+    spectator = createHost('<ix-widget-nic nic="eth0"></ix-widget-nic>');
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
   it('checks widget title', () => {
-    expect(spectator.query('.card-title-text')).toHaveText('Network');
+    expect(spectator.query('.card-title-text')).toHaveText('Interface');
   });
 
-  it.skip('checks back button', async () => {
+  it('checks back button', async () => {
     jest.spyOn(spectator.component, 'goBack');
 
     const backButton = await loader.getHarness(IxIconHarness.with({ name: 'chevron_left' }));

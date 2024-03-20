@@ -25,7 +25,7 @@ export class WidgetPoolWrapperComponent {
   protected volumeData$ = this.dashboardStorageStore$.volumesData$.pipe(
     filter((volumesData) => volumesData?.size > 0),
     deepCloneState(),
-    map((vd) => vd.get(this.pool)),
+    map((volumesData) => volumesData.get(this.pool)),
   );
 
   protected isLoading$ = this.dashboardStorageStore$.isLoading$;
