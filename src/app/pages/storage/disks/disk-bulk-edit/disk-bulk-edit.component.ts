@@ -85,6 +85,7 @@ export class DiskBulkEditComponent {
           placeholder: helptext.disk_form_smartoptions_placeholder,
           value: this.diskBucket.SMARToptions,
           tooltip: helptext.disk_form_smartoptions_tooltip,
+          autocomplete: false,
         },
       ],
     },

@@ -281,6 +281,7 @@ export class AdvancedComponent implements OnDestroy {
           name: 'sed_user',
           placeholder: helptext_system_advanced.sed_user_placeholder,
           tooltip: helptext_system_advanced.sed_user_tooltip,
+          autocomplete: false,
           options: [
             { label: 'user', value: 'USER' },
             { label: 'master', value: 'MASTER' },
@@ -294,6 +295,7 @@ export class AdvancedComponent implements OnDestroy {
           tooltip: helptext_system_advanced.sed_passwd_tooltip,
           inputType: 'password',
           togglePw: true,
+          autocomplete: false,
         },
         {
           type: 'input',
@@ -302,6 +304,7 @@ export class AdvancedComponent implements OnDestroy {
           tooltip: helptext_system_advanced.sed_passwd2_tooltip,
           inputType: 'password',
           togglePw: true,
+          autocomplete: false,
           validation: this.validationService.matchOtherValidator('sed_passwd'),
         },
       ],

@@ -112,6 +112,7 @@ export class DiskFormComponent {
           tooltip: helptext.disk_form_smartoptions_tooltip,
           class: 'inline',
           width: '50%',
+          autocomplete: false,
         },
         {
           type: 'input',
@@ -153,6 +154,7 @@ export class DiskFormComponent {
           tooltip: helptext.disk_form_passwd_tooltip,
           inputType: 'password',
           value: '',
+          autocomplete: false,
           togglePw: true,
           relation: [
             {
