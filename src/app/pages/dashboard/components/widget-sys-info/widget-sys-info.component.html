@@ -17,7 +17,9 @@
               <ix-drag-handle [showReorderHandle]="showReorderHandle">
                 <span class="card-title-text">
                   <span>{{ 'System Information' | translate }}</span>
-                  <span *ngIf="isPassive" class="passive">{{ 'Standby' | translate }}</span>
+                  <span *ngIf="isPassive" class="passive">
+                    {{ 'Standby' | translate }}
+                  </span>
                 </span>
               </ix-drag-handle>
             </h3>
