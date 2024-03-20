@@ -99,13 +99,10 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
       throttleTime(500),
       skipWhile(() => this.document.hidden),
       deepCloneState(),
+      filter((cpuData) => Boolean(cpuData?.average)),
       untilDestroyed(this),
     ).subscribe({
       next: (cpuData) => {
-        if (!cpuData?.average) {
-          return;
-        }
-
         this.setCpuLoadData(['Load', parseInt(cpuData.average.usage.toFixed(1))]);
         this.setCpuData(cpuData);
         this.cdr.markForCheck();
@@ -137,6 +134,7 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
         this.threadCount = sysInfo.cores;
         this.coreCount = sysInfo.physical_cores;
         this.hyperthread = this.threadCount !== this.coreCount;
+        this.cdr.markForCheck();
       });
   }
 

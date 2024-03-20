@@ -1,4 +1,4 @@
-<div class="widget stats-widget" ngClass.xs="double-height xs">
+<div *appLet="isMobile$ | async as isMobile" class="widget stats-widget" ngClass.xs="double-height xs">
   <div class="card-container">
     <mat-card class="front">
       <mat-card-content class="card">
@@ -6,7 +6,6 @@
           <ng-content [select]="[cdkDragHandle]"></ng-content>
 
           <mat-toolbar-row>
-            <!-- Mobile Only: Exit widget -->
             <button
               class="mat-card-title-text primary-nav"
               mat-icon-button
@@ -47,6 +46,9 @@
               <a
                 mat-icon-button
                 ixTest="go-to-backups"
+                matTooltipPosition="above"
+                [attr.aria-label]="'Data Protection' | translate"
+                [matTooltip]="'Data Protection' | translate"
                 [routerLink]="['/data-protection']"
               >
                 <ix-icon name="open_in_new"></ix-icon>
@@ -60,14 +62,14 @@
             <mat-grid-tile *ngFor="let tile of backupsTiles; trackBy: trackByTile">
               <div class="tile">
                 <div class="tile-content">
-                  <ul class="caption" [style.max-width.%]="screenType === ScreenType.Mobile ? 50 : 25">
+                  <ul class="caption" [style.max-width.%]="isMobile ? 50 : 25">
                     <span class="title">{{ tile.title | translate }}</span>
                     <div *ngIf="hasSendTasks && !tile.totalSend" class="backup-actions">
                       <ng-template *ngTemplateOutlet="backupActions"></ng-template>
                     </div>
                   </ul>
                   <div class="divider"></div>
-                  <ul [style.max-width.%]="screenType === ScreenType.Mobile ? 50 : 25">
+                  <ul [style.max-width.%]="isMobile ? 50 : 25">
                     <li>
                       <span [class]="['icon', tile.failedSend ? 'warn' : 'safe']">
                         <ix-icon [name]="tile.failedSend ? 'mdi-alert' : 'mdi-check-circle'"></ix-icon>
@@ -93,8 +95,8 @@
                       </span>
                     </li>
                   </ul>
-                  <div *ngIf="screenType !== ScreenType.Mobile" class="divider"></div>
-                  <ul *ngIf="screenType !== ScreenType.Mobile" [style.max-width.%]="50">
+                  <div *ngIf="!isMobile" class="divider"></div>
+                  <ul *ngIf="!isMobile" [style.max-width.%]="50">
                     <li>
                       <span *ngIf="!tile.lastWeekSend" class="label dash">—</span>
                       <span *ngIf="tile.lastWeekSend" class="label">

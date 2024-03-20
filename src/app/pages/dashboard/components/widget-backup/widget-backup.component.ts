@@ -5,10 +5,9 @@ import {
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { differenceInDays } from 'date-fns';
-import { filter, forkJoin } from 'rxjs';
+import { filter, forkJoin, map } from 'rxjs';
 import { Direction } from 'app/enums/direction.enum';
 import { JobState } from 'app/enums/job-state.enum';
-import { ScreenType } from 'app/enums/screen-type.enum';
 import { ApiTimestamp } from 'app/interfaces/api-date.interface';
 import { WidgetComponent } from 'app/pages/dashboard/components/widget/widget.component';
 import { CloudSyncWizardComponent } from 'app/pages/data-protection/cloudsync/cloudsync-wizard/cloudsync-wizard.component';
@@ -52,11 +51,9 @@ interface BackupTile {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class WidgetBackupComponent extends WidgetComponent implements OnInit {
-  screenType = ScreenType.Desktop;
+  isMobile$ = this.breakpointObserver.observe([Breakpoints.XSmall]).pipe(map((state) => state.matches));
   backups: BackupRow[] = [];
   isLoading = false;
-
-  readonly ScreenType = ScreenType;
 
   trackByTile: TrackByFunction<BackupTile> = (_, tile) => tile.title;
 
@@ -112,13 +109,6 @@ export class WidgetBackupComponent extends WidgetComponent implements OnInit {
 
   ngOnInit(): void {
     this.getBackups();
-    this.breakpointObserver
-      .observe([Breakpoints.XSmall])
-      .pipe(untilDestroyed(this))
-      .subscribe((state) => {
-        this.screenType = state.matches ? ScreenType.Mobile : ScreenType.Desktop;
-        this.cdr.markForCheck();
-      });
   }
 
   getBackups(): void {

@@ -31,14 +31,12 @@
               <button
                 mat-icon-button
                 ixTest="memory-go-to-reports"
+                matTooltipPosition="above"
+                [attr.aria-label]="'Memory Reports' | translate"
+                [matTooltip]="'Memory Reports' | translate"
                 [routerLink]="['/reportsdashboard', 'memory']"
               >
-                <ix-icon
-                  name="insert_chart"
-                  matTooltipPosition="above"
-                  [attr.aria-label]="'Memory Reports' | translate"
-                  [matTooltip]="'Memory Reports' | translate"
-                ></ix-icon>
+                <ix-icon name="insert_chart"></ix-icon>
               </button>
             </div>
           </mat-toolbar-row>

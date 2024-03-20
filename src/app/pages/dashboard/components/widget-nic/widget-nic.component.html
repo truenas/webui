@@ -6,7 +6,6 @@
           <ng-content [select]="[cdkDragHandle]"></ng-content>
 
           <mat-toolbar-row [class]="'view-' + currentSlideName">
-            <!-- Mobile Only: Exit Widget -->
             <button
               *ngIf="currentSlide === '0'"
               mat-icon-button
@@ -19,7 +18,6 @@
               <ix-icon name="chevron_left"></ix-icon>
             </button>
 
-            <!-- Back to previous slide -->
             <button
               *ngIf="currentSlide !== '0'"
               mat-icon-button
@@ -43,28 +41,24 @@
             <div class="controls">
               <button
                 mat-icon-button
+                matTooltipPosition="above"
                 [ixTest]="['nic-widget', 'configure-interface', nicState.name]"
+                [attr.aria-label]="'Configure {name}' | translate: { name: nicState.name }"
+                [matTooltip]="'Configure {name}' | translate: { name: nicState.name }"
                 (click)="manageInterface(nicState)"
               >
-                <ix-icon
-                  name="edit"
-                  matTooltipPosition="above"
-                  aria-label="Configure Interface"
-                  [matTooltip]="'Configure {name}' | translate: { name: nicState.name }"
-                ></ix-icon>
+                <ix-icon name="edit"></ix-icon>
               </button>
 
               <button
                 mat-icon-button
+                matTooltipPosition="above"
+                [attr.aria-label]="'Network Reports' | translate"
+                [matTooltip]="'Network Reports' | translate"
                 [ixTest]="['nic-widget', 'network-reports', nicState.name]"
                 [routerLink]="['/reportsdashboard', 'network']"
               >
-                <ix-icon
-                  name="insert_chart"
-                  matTooltipPosition="above"
-                  [attr.aria-label]="'Network Reports' | translate"
-                  [matTooltip]="'Network Reports' | translate"
-                ></ix-icon>
+                <ix-icon name="insert_chart"></ix-icon>
               </button>
             </div>
           </mat-toolbar-row>

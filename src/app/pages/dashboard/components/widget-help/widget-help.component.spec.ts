@@ -5,8 +5,6 @@ import { createHostFactory, mockProvider } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { DragHandleComponent } from 'app/core/components/drag-handle/drag-handle.component';
-import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { ProductType } from 'app/enums/product-type.enum';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { CopyrightLineComponent } from 'app/modules/layout/components/copyright-line/copyright-line.component';
@@ -19,14 +17,11 @@ describe('WidgetHelpComponent', () => {
 
   const createHost = createHostFactory({
     component: WidgetHelpComponent,
-    imports: [],
     declarations: [
       MockComponent(DragHandleComponent),
       MockComponent(CopyrightLineComponent),
     ],
     providers: [
-      mockAuth(),
-      mockWebSocket([]),
       mockProvider(SystemGeneralService, {
         isEnterprise: () => true,
         getProductType$: of(ProductType.Scale),
@@ -57,5 +52,14 @@ describe('WidgetHelpComponent', () => {
     expect(firstLine).toHaveText('The TrueNAS Documentation Site is a collaborative website with helpful guides and information about your new storage system.');
     expect(secondLine).toHaveText('The TrueNAS Community Forums are the best place to ask questions and interact with fellow TrueNAS users.');
     expect(thirdLine).toHaveText('You can join the TrueNAS Newsletter for monthly updates and latest developments.');
+  });
+
+  it('checks back button', async () => {
+    jest.spyOn(spectator.component, 'goBack');
+
+    const backButton = await loader.getHarness(IxIconHarness.with({ name: 'chevron_left' }));
+    await backButton.click();
+
+    expect(spectator.component.goBack).toHaveBeenCalled();
   });
 });
