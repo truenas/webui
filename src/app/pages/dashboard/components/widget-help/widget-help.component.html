@@ -6,7 +6,6 @@
           <ng-content [select]="[cdkDragHandle]"></ng-content>
 
           <mat-toolbar-row>
-            <!-- Mobile Only: Exit widget -->
             <button
               class="mat-card-title-text primary-nav"
               mat-icon-button
@@ -48,12 +47,8 @@
             </div>
             <div class="helptext" [innerHtml]="helptext.newsLetter | translate"></div>
           </div>
-          <ng-container *ngIf="productType === ProductType.Scale">
-            <div
-              *appLet="productType | mapValue: productTypeLabels as product"
-              class="open-source"
-              [innerHtml]="helptext.opensource | translate: { product }"
-            ></div>
+          <ng-container *ngIf="productType$ | async as product">
+            <div class="open-source" [innerHtml]="helptext.opensource | translate: { product }"></div>
           </ng-container>
         </div>
         <div id="footer">
