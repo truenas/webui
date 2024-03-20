@@ -93,7 +93,7 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
 
   // For widgetpool
   pools: Pool[];
-  volumeData: VolumesData;
+  volumesData: VolumesData;
 
   nics: DashboardNetworkInterface[];
 
@@ -136,7 +136,7 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
         }
         this.nics = state.nics;
         this.pools = state.pools;
-        this.volumeData = state.volumesData;
+        this.volumesData = state.volumesData;
         this.setDashState(state.dashboardState);
       }),
       untilDestroyed(this),

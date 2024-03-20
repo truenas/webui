@@ -261,7 +261,7 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
       const options: ChartOptions<'bar'> = {
         events: ['mousemove', 'mouseout'],
         onHover: (event: ChartEvent, elements: ActiveElement[], chart: Chart) => {
-          if (event.type === 'mouseout' || this.screenType === ScreenType.Mobile) {
+          if (event.type === 'mouseout' || this.isMobile) {
             this.legendData = null;
             this.legendIndex = null;
             return;

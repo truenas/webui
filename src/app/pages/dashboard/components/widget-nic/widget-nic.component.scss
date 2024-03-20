@@ -12,19 +12,23 @@
   text-align: left;
   width: 100%;
 
-  * {
-    z-index: 99;
-  }
-
   &.view-overview {
     padding: 0 16px;
+
+    .mat-card-title-text {
+      z-index: 99;
+    }
   }
 
-  @media($media-sm) {
-    .mat-card-title-text {
+  @media #{$media-sm} {
+    h3.mat-card-title-text {
       margin: 0;
       max-width: 100%;
     }
+  }
+
+  .controls {
+    z-index: 99;
   }
 }
 

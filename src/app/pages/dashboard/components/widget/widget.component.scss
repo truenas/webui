@@ -118,10 +118,6 @@
   .mat-toolbar-row {
     border-bottom: none !important;
     height: 56px !important;
-
-    * {
-      z-index: 99;
-    }
   }
 
   .controls {
@@ -145,6 +141,12 @@
   button.mat-card-title-text.primary-nav {
     position: absolute;
     z-index: 99;
+  }
+
+  h3.mat-card-title-text {
+    &.button-offset {
+      padding-left: 40px;
+    }
   }
 
   .c3 {

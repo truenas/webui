@@ -6,7 +6,6 @@ import {
   ElementRef,
   Input,
   OnChanges,
-  OnInit,
   TemplateRef,
   ViewChild,
 } from '@angular/core';
@@ -58,7 +57,7 @@ enum PoolHealthLevel {
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class WidgetPoolComponent extends WidgetComponent implements OnInit, AfterViewInit, OnChanges {
+export class WidgetPoolComponent extends WidgetComponent implements AfterViewInit, OnChanges {
   @Input() poolState: Pool;
   @Input() volumeData: VolumeData;
 
@@ -73,7 +72,6 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
   templates: Record<string, TemplateRef<void>>;
   path: Slide[] = [];
   defaultTitle = this.translate.instant('Pool');
-  title = this.defaultTitle;
   displayValue: string;
   diskSize: string;
   diskSizeLabel: string;
@@ -157,6 +155,14 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
     return this.poolState.scan?.state === PoolScanState.Finished;
   }
 
+  get title(): string {
+    if (this.path.length > 0 && this.poolState?.name && this.currentSlide !== '0') {
+      return this.poolState.name;
+    }
+
+    return this.defaultTitle;
+  }
+
   constructor(
     public router: Router,
     public translate: TranslateService,
@@ -170,11 +176,6 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
     if (changes.volumeData) {
       this.getAvailableSpace();
     }
-  }
-
-  ngOnInit(): void {
-    const notFirstSlide = this.path.length > 0 && this.poolState && this.currentSlide !== '0';
-    this.title = notFirstSlide ? this.poolState.name : this.defaultTitle;
   }
 
   ngAfterViewInit(): void {
@@ -321,7 +322,6 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
     }).start(el.set);
 
     this.currentSlide = value.toString();
-    this.title = this.currentSlide === '0' ? 'Pool' : this.poolState.name;
   }
 
   private isStatusError(poolState: Pool): boolean {

@@ -29,7 +29,7 @@
               <ix-icon name="chevron_left"></ix-icon>
             </button>
 
-            <h3 class="mat-card-title-text">
+            <h3 class="mat-card-title-text" [class.button-offset]="currentSlide !== '0'">
               <ix-drag-handle [showReorderHandle]="showReorderHandle">
                 <div class="card-title-text">
                   <span *ngIf="showReorderHandle" class="grip"></span>
@@ -127,7 +127,6 @@
             <div class="right">
               <div class="right-content">
                 <div class="list-subheader">{{ 'Overview' | translate }}</div>
-                <ng-template #unknown>{{ 'Unknown' | translate }}</ng-template>
                 <mat-list>
                   <mat-list-item>
                     <strong>{{ 'Media Type' | translate }}:</strong>
@@ -268,3 +267,5 @@
     </mat-card>
   </div>
 </div>
+
+<ng-template #unknown>{{ 'Unknown' | translate }}</ng-template>

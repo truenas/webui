@@ -31,7 +31,7 @@
               <ix-icon name="chevron_left"></ix-icon>
             </button>
 
-            <h3 class="mat-card-title-text">
+            <h3 class="mat-card-title-text" [class.button-offset]="currentSlide !== '0'">
               <ix-drag-handle [showReorderHandle]="showReorderHandle">
                 <div class="card-title-text">
                   <span *ngIf="showReorderHandle" class="grip"></span>
@@ -47,7 +47,7 @@
                 [ixTest]="poolState.name"
                 [routerLink]="['/storage']"
                 [attr.aria-label]="'Configure Pools' | translate"
-                [matTooltip]="'Pool Status' | translate"
+                [matTooltip]="'Configure Pools' | translate"
               >
                 <ix-icon name="mdi-database"></ix-icon>
               </a>
