@@ -1,12 +1,12 @@
 <mat-card class="search-results-card">
-  <ng-container *ngFor="let section of availableSections">
+  <ng-container *ngFor="let section of availableSections; trackBy: trackBySection">
     <h2 class="section">
-      {{ getSectionTitle(section) | translate }}
+      {{ section.label | translate }}
     </h2>
 
-    <ng-container *ngIf="getElementsBySection(section)?.length">
+    <div *ngIf="getElementsBySection(section.value)?.length" class="section-content">
       <div
-        *ngFor="let result of getLimitedSectionResults(section);"
+        *ngFor="let result of getLimitedSectionResults(section.value); trackBy: trackById"
         class="search-result"
         tabindex="0"
         [ixTest]="['search-result', result.hierarchy.join('-')]"
@@ -24,18 +24,18 @@
       </div>
 
       <button
-        *ngIf="getElementsBySection(section)?.length > resultLimit"
+        *ngIf="getElementsBySection(section.value)?.length > resultLimit"
         class="toggle-show-more"
         mat-button
         ixTest="toggle-show-all-results'"
-        (click)="toggleShowAll(section)"
-        (keydown.enter)="toggleShowAll(section)"
+        (click)="toggleShowAll(section.value)"
+        (keydown.enter)="toggleShowAll(section.value)"
       >
-        {{ showAll[section] ? ('Show Less' | translate) : ('Show All' | translate) }}
+        {{ showAll[section.value] ? ('Show Less' | translate) : ('Show All' | translate) }}
       </button>
-    </ng-container>
+    </div>
 
-    <ng-container *ngIf="!getElementsBySection(section)?.length">
+    <ng-container *ngIf="!getElementsBySection(section.value)?.length">
       <ix-empty [conf]="entityEmptyConf"></ix-empty>
     </ng-container>
   </ng-container>

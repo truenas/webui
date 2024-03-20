@@ -8,10 +8,9 @@ import { FormControl } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import {
-  debounceTime, distinctUntilChanged, switchMap, tap,
+  debounceTime, distinctUntilChanged, switchMap,
 } from 'rxjs';
-import { GlobalSearchSection } from 'app/modules/feedback/enums/global-search-section';
-import { GlobalSearchResultsComponent } from 'app/modules/global-search/components/global-search-results/global-search-results.component';
+import { GlobalSearchSection } from 'app/modules/global-search/enums/global-search-section';
 import { moveToNextFocusableElement, moveToPreviousFocusableElement } from 'app/modules/global-search/helpers/focus-helper';
 import { UiSearchableElement } from 'app/modules/global-search/interfaces/ui-searchable-element.interface';
 import { UiSearchProvider } from 'app/modules/global-search/services/ui-search.service';
@@ -37,10 +36,10 @@ import { SidenavService } from 'app/services/sidenav.service';
 })
 export class GlobalSearchComponent implements OnInit {
   @ViewChild('searchInput') searchInput: ElementRef<HTMLInputElement>;
-  @ViewChild('searchResultsList', { static: false }) searchResultsList: GlobalSearchResultsComponent;
 
   @Output() resetSearch = new EventEmitter<void>();
 
+  searchTerm: string;
   searchControl = new FormControl('');
   searchResults: UiSearchableElement[];
 
@@ -98,19 +97,12 @@ export class GlobalSearchComponent implements OnInit {
 
   private listenForSearchChanges(): void {
     this.searchControl.valueChanges.pipe(
-      tap((value) => {
-        if (
-          value?.trim()?.length
-          && !this.searchResults.some((result) => result.section === GlobalSearchSection.Help)
-        ) {
-          this.searchResults = [...this.searchResults, this.helpSectionElement];
-        }
-      }),
       debounceTime(150),
       distinctUntilChanged(),
       switchMap((term) => this.searchProvider.search(term)),
       untilDestroyed(this),
     ).subscribe((searchResults) => {
+      this.searchTerm = this.searchControl.value;
       this.searchResults = [...searchResults, this.helpSectionElement];
       this.cdr.markForCheck();
     });

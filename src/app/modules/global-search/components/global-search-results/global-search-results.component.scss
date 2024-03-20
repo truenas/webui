@@ -44,6 +44,7 @@
   margin: 0;
   max-height: 60vh;
   overflow: auto;
+  padding: 10px 0;
 
   .section {
     background-color: var(--bg2);
@@ -54,7 +55,7 @@
     padding-left: 17px;
     position: sticky;
     top: 0;
-    z-index: 1;
+    z-index: 2;
 
     &:first-child {
       margin-top: 0;
@@ -64,8 +65,8 @@
   .toggle-show-more {
     background-color: var(--bg2);
     bottom: 0;
-    padding: 22px 20px;
     position: sticky;
+    width: 100%;
     z-index: 1;
 
     &:focus-visible {
