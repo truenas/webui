@@ -20,6 +20,7 @@ import { WebSocketService } from 'app/services/ws.service';
 import { selectPreferences } from 'app/store/preferences/preferences.selectors';
 
 const fakeGroupDataSource: Group[] = [{
+  id: 1,
   group: 'mock',
   gid: 1000,
   builtin: true,
@@ -29,6 +30,7 @@ const fakeGroupDataSource: Group[] = [{
   smb: true,
   users: [1],
 }, {
+  id: 2,
   group: 'fake',
   gid: 1001,
   builtin: true,
