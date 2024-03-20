@@ -28,6 +28,7 @@ export class IxTableBodyComponent<T> implements AfterViewInit {
   @Input() columns: Column<T, ColumnComponent<T>>[];
   @Input() dataProvider: DataProvider<T>;
   @Input() isLoading = false;
+  @Input() detailsRowIdentifier: keyof T = 'id' as keyof T;
 
   @Output() expanded = new EventEmitter<T>();
 
@@ -43,9 +44,7 @@ export class IxTableBodyComponent<T> implements AfterViewInit {
     return this.detailsRow?.templateRef;
   }
 
-  constructor(
-    private cdr: ChangeDetectorRef,
-  ) {}
+  constructor(private cdr: ChangeDetectorRef) {}
 
   ngAfterViewInit(): void {
     const templatedCellIndexes = this.customCells.toArray().map((cell) => cell.columnIndex);
@@ -65,8 +64,7 @@ export class IxTableBodyComponent<T> implements AfterViewInit {
   }
 
   getTestAttr(row: T): string {
-    const idColumn = this.columns.find((column) => column.identifier);
-    return idColumn ? row[idColumn.propertyName].toString() : '';
+    return this.columns[0]?.rowTestId(row) ?? '';
   }
 
   getTemplateByColumnIndex(idx: number): TemplateRef<{ $implicit: T }> | undefined {
@@ -79,6 +77,7 @@ export class IxTableBodyComponent<T> implements AfterViewInit {
   }
 
   isExpanded(row: T): boolean {
-    return this.dataProvider.expandedRow === row;
+    return this.detailsRowIdentifier
+      && (this.dataProvider?.expandedRow?.[this.detailsRowIdentifier] === row?.[this.detailsRowIdentifier]);
   }
 }

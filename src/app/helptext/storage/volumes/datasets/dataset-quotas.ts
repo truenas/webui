@@ -1,9 +1,10 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
-export const helptextQuotas = {
+export const helpTextQuotas = {
   field_accepts_tooltip: T('This field accepts human-readable input (Ex. 50 GiB, 500M, 2 TB).'),
   users: {
-    usersTooltip: T('You can search both for local users as well as users from Active Directory.\
+    title: 'Show All Users',
+    tooltip: T('You can search both for local users as well as users from Active Directory.\
 Press ENTER to separate entries.'),
     data_quota: {
       placeholder: T('User Data Quota '),
@@ -25,15 +26,22 @@ Press ENTER to separate entries.'),
       button_filter: T('Filter'),
     },
     dialog: {
-      user: {
-        placeholder: T('User'),
-      },
+      placeholder: T('User'),
+    },
+    remove_invalid_quotas: {
+      message: T('This action will set all dataset quotas for the removed or invalid users to 0,\
+ virtually removing any dataset quota entires for such users. Are you sure you want to proceed?'),
+    },
+    delete_dialog: {
+      title: T('Delete User Quota'),
+      message: T('Are you sure you want to delete the user quota <b>{name}</b>?'),
     },
   },
 
   groups: {
-    groupsTooltip: T('You can search both for local groups as well as groups from Active Directory.\
-Press ENTER to separate entries.'),
+    title: 'Show All Groups',
+    tooltip: T('You can search both for local groups as well as groups from Active Directory.\
+ Press ENTER to separate entries.'),
     data_quota: {
       placeholder: T('Group Data Quota '),
       tooltip: T('Amount of disk space that can be used by the selected groups. \
@@ -54,9 +62,15 @@ Press ENTER to separate entries.'),
       button_filter: T('Filter'),
     },
     dialog: {
-      group: {
-        placeholder: T('Group'),
-      },
+      placeholder: T('Group'),
+    },
+    remove_invalid_quotas: {
+      message: T('This action will set all dataset quotas for the removed or invalid groups to 0,\
+ virtually removing any dataset quota entires for such groups. Are you sure you want to proceed?'),
+    },
+    delete_dialog: {
+      title: T('Delete Group Quota'),
+      message: T('Are you sure you want to delete the group quota <b>{name}</b>?'),
     },
   },
 
