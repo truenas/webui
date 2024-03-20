@@ -6,7 +6,6 @@
           <ng-content [select]="[cdkDragHandle]"></ng-content>
 
           <mat-toolbar-row>
-            <!-- Mobile Only: Exit Widget -->
             <button
               class="mat-card-title-text primary-nav"
               mat-icon-button
@@ -33,8 +32,8 @@
                 matTooltipPosition="above"
                 ixTest="network-reports"
                 [attr.aria-label]="'Network Reports' | translate"
-                [routerLink]="['/reportsdashboard/network']"
                 [matTooltip]="'Network Reports' | translate"
+                [routerLink]="['/reportsdashboard', 'network']"
               >
                 <ix-icon name="insert_chart"></ix-icon>
               </a>
@@ -98,11 +97,11 @@
                           <ul *ngIf="getLinkState(nic) === LinkState.Up">
                             <li>
                               <span class="label">{{ 'In' | translate }}:</span>
-                              {{ nicInfoMap[nic.state.name]?.bitsIn | ixFileSize: { baseUnit: 'b', base: 10 } }}/s
+                              {{ nicInfoMap.get(nic.state.name)?.bitsIn | ixFileSize: { baseUnit: 'b', base: 10 } }}/s
                             </li>
                             <li>
                               <span class="label">{{ 'Out' | translate }}:</span
-                              >{{ nicInfoMap[nic.state.name]?.bitsOut | ixFileSize: { baseUnit: 'b', base: 10 } }}/s
+                              >{{ nicInfoMap.get(nic.state.name)?.bitsOut | ixFileSize: { baseUnit: 'b', base: 10 } }}/s
                             </li>
                           </ul>
                           <span *ngIf="getLinkState(nic) !== LinkState.Up">
@@ -113,7 +112,7 @@
                           <span class="icon address">
                             <ix-icon name="settings_ethernet" [matTooltip]="getIpAddressTooltip(nic)"></ix-icon>
                           </span>
-                          <span>{{ nicInfoMap[nic.state.name]?.ip }}</span>
+                          <span>{{ nicInfoMap.get(nic.state.name)?.ip }}</span>
                         </li>
                       </ul>
                       <ul *ngIf="availableNics.length === 1" class="detail-info">
@@ -137,7 +136,7 @@
                           <span class="label">
                             {{ 'IP Address' | translate }}:
                           </span>
-                          {{ nicInfoMap[nic.state.name]?.ip }}
+                          {{ nicInfoMap.get(nic.state.name)?.ip }}
                         </li>
                       </ul>
                     </div>
@@ -145,15 +144,13 @@
                   <div *ngIf="availableNics.length <= 3" class="nic-chart">
                     <div class="chart-body" [ngClass]="getChartBodyClasses(nic)">
                       <ix-view-chart-area
-                        *ngIf="nicInfoMap && nicInfoMap[nic.state.name].chartData; else emptychart"
-                        [data]="nicInfoMap[nic.state.name]?.chartData"
+                        *ngIf="nicInfoMap && nicInfoMap.get(nic.state.name).chartData; else emptychart"
+                        [data]="nicInfoMap.get(nic.state.name)?.chartData"
                         [options]="chartOptions"
                       >
                       </ix-view-chart-area>
                       <ng-template #emptychart>
-                        <ix-empty
-                          [conf]="nicInfoMap[nic.state.name]?.emptyConfig"
-                        ></ix-empty>
+                        <ix-empty [conf]="nicInfoMap.get(nic.state.name)?.emptyConfig"></ix-empty>
                       </ng-template>
                     </div>
                   </div>
