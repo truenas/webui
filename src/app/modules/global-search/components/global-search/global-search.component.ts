@@ -52,7 +52,7 @@ export class GlobalSearchComponent implements OnInit {
 
   get helpSectionElement(): UiSearchableElement {
     return {
-      hierarchy: [this.translate.instant('Search Documentation for "{value}"', { value: this.searchControl.value })],
+      hierarchy: [this.translate.instant('Search Documentation for «{value}»', { value: this.searchControl.value })],
       targetHref: `https://www.truenas.com/docs/search/?query=${this.searchControl.value}`,
       section: GlobalSearchSection.Help,
     };

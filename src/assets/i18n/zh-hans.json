@@ -49,7 +49,7 @@
   "SMTP": "",
   "SMTP Server": "",
   "Save the 'Require Kerberos for NFSv4' value before adding SMP": "",
-  "Search Documentation for \"{value}\"": "",
+  "Search Documentation for «{value}»": "",
   "Send Method": "",
   "Sent: {sent} Received: {received}": "",
   "Service = \"SMB\" AND Event = \"CLOSE\"": "",

@@ -1,4 +1,4 @@
 export enum GlobalSearchSection {
-  Ui = 'UI',
-  Help = 'Help',
+  Ui = 'ui',
+  Help = 'help',
 }

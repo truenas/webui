@@ -13,14 +13,7 @@
         (click)="navigateToResult(result)"
         (keydown.enter)="navigateToResult(result)"
       >
-        <ng-container *ngIf="result.targetHref; else localLink">
-          <span *ngIf="result.targetHref" ixTest="external-link">
-            <ng-container [ngTemplateOutlet]="localLink"></ng-container>
-          </span>
-        </ng-container>
-        <ng-template #localLink>
-          <h3 class="title" [innerHTML]="processHierarchy(result.hierarchy, searchTerm)"></h3>
-        </ng-template>
+        <h3 class="title" [innerHTML]="processHierarchy(result.hierarchy, searchTerm)"></h3>
       </div>
 
       <button

@@ -74,7 +74,7 @@ describe('GlobalSearchComponent', () => {
     expect(spectator.component.searchResults).toEqual([
       { hierarchy: ['Filtered Result 1'], requiredRoles: [Role.FullAdmin] },
       {
-        hierarchy: ['Search Documentation for "{value}"'],
+        hierarchy: ['Search Documentation for «{value}»'],
         section: GlobalSearchSection.Help,
         targetHref: 'https://www.truenas.com/docs/search/?query=Filtered',
       },
@@ -83,31 +83,34 @@ describe('GlobalSearchComponent', () => {
     expect(spectator.component.searchResults).toHaveLength(2);
   }));
 
-  it('should handle empty search results for "Unknown" input and show only "Documentation Search" section', fakeAsync(() => {
-    const inputElement = spectator.query('.search-input');
+  it(
+    'should handle empty UI search results for "Unknown" input and show only "Documentation Search" section result',
+    fakeAsync(() => {
+      const inputElement = spectator.query('.search-input');
 
-    const mockSearchMethod = spectator.inject(UiSearchProvider).search as unknown as jest.Mock;
+      const mockSearchMethod = spectator.inject(UiSearchProvider).search as unknown as jest.Mock;
 
-    mockSearchMethod.mockImplementation((term) => {
-      if (term === 'Unknown') {
-        return of([]);
-      }
-      return of(mockedSearchResults);
-    });
+      mockSearchMethod.mockImplementation((term) => {
+        if (term === 'Unknown') {
+          return of([]);
+        }
+        return of(mockedSearchResults);
+      });
 
-    spectator.typeInElement('Unknown', inputElement);
-    tick(150);
-    spectator.detectChanges();
+      spectator.typeInElement('Unknown', inputElement);
+      tick(150);
+      spectator.detectChanges();
 
-    expect(spectator.component.searchResults).toEqual([
-      {
-        hierarchy: ['Search Documentation for "{value}"'],
-        section: GlobalSearchSection.Help,
-        targetHref: 'https://www.truenas.com/docs/search/?query=Unknown',
-      },
-    ]);
-    expect(spectator.component.searchResults).toHaveLength(1);
-  }));
+      expect(spectator.component.searchResults).toEqual([
+        {
+          hierarchy: ['Search Documentation for «{value}»'],
+          section: GlobalSearchSection.Help,
+          targetHref: 'https://www.truenas.com/docs/search/?query=Unknown',
+        },
+      ]);
+      expect(spectator.component.searchResults).toHaveLength(1);
+    }),
+  );
 
   it('should reset search input and results', () => {
     const inputElement = spectator.query('.search-input');

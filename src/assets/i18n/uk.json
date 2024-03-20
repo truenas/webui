@@ -557,7 +557,7 @@
   "Scrub In Progress:": "",
   "Scrub Paused": "",
   "Search Alert Categories": "",
-  "Search Documentation for \"{value}\"": "",
+  "Search Documentation for «{value}»": "",
   "Seconds From Last Renew": "",
   "Secret Confirm must match Secret": "",
   "Secure data within this dataset. Data is unusable until      unlocked with an encryption key or passphrase. If parent dataset has encryption enabled,     it is not possible to disable this option.": "",
