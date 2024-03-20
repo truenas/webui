@@ -36,8 +36,7 @@ import { DatasetsManagementComponent } from 'app/pages/datasets/components/datas
 import { DatasetRolesCellComponent } from 'app/pages/datasets/components/dataset-node/dataset-roles-cell/dataset-roles-cell.component';
 import { DatasetQuotaAddFormComponent } from 'app/pages/datasets/components/dataset-quotas/dataset-quota-add-form/dataset-quota-add-form.component';
 import { DatasetQuotaEditFormComponent } from 'app/pages/datasets/components/dataset-quotas/dataset-quota-edit-form/dataset-quota-edit-form.component';
-import { DatasetQuotasGrouplistComponent } from 'app/pages/datasets/components/dataset-quotas/dataset-quotas-grouplist/dataset-quotas-grouplist.component';
-import { DatasetQuotasUserListComponent } from 'app/pages/datasets/components/dataset-quotas/dataset-quotas-user-list/dataset-quotas-user-list.component';
+import { DatasetQuotasListComponent } from 'app/pages/datasets/components/dataset-quotas/dataset-quotas-list/dataset-quotas-list.component';
 import { DeleteDatasetDialogComponent } from 'app/pages/datasets/components/delete-dataset-dialog/delete-dataset-dialog.component';
 import { RolesCardComponent } from 'app/pages/datasets/components/roles-card/roles-card.component';
 import { ZvolFormComponent } from 'app/pages/datasets/components/zvol-form/zvol-form.component';
@@ -104,8 +103,7 @@ import { DatasetNodeComponent } from './components/dataset-node/dataset-node.com
     RolesCardComponent,
     DatasetQuotaAddFormComponent,
     DatasetQuotaEditFormComponent,
-    DatasetQuotasUserListComponent,
-    DatasetQuotasGrouplistComponent,
+    DatasetQuotasListComponent,
     DatasetIconComponent,
     DatasetRolesCellComponent,
     DatasetEncryptionCellComponent,
