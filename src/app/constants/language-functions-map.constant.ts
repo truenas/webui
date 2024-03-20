@@ -7,4 +7,5 @@ export const languageFunctionsMap: Record<CodeEditorLanguage, () => Extension> =
   [CodeEditorLanguage.Json]: json,
   [CodeEditorLanguage.Yaml]: yaml,
   [CodeEditorLanguage.Text]: () => ([]),
+  [CodeEditorLanguage.Toml]: () => ([]),
 };
