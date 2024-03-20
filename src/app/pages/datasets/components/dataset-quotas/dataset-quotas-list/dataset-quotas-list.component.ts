@@ -70,7 +70,6 @@ export class DatasetQuotasListComponent implements OnInit {
       sortable: true,
     }),
     textColumn({
-      identifier: true,
       title: this.translate.instant('ID'),
       propertyName: 'id',
       sortable: true,
