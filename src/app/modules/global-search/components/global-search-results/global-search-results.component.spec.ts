@@ -1,6 +1,7 @@
 import { Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
+import { TranslateService } from '@ngx-translate/core';
 import { WINDOW } from 'app/helpers/window.helper';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { GlobalSearchSection } from 'app/modules/global-search/enums/global-search-section';
@@ -29,6 +30,7 @@ describe('GlobalSearchResultsComponent', () => {
       RouterTestingModule.withRoutes([]),
       EmptyComponent,
     ],
+    providers: [TranslateService],
   });
 
   beforeEach(() => {
