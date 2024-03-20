@@ -39,7 +39,7 @@
               ></ix-failover-status>
             </ng-container>
 
-            <ix-true-command-status></ix-true-command-status>
+            <ix-true-command-status *ngIf="managedByTrueCommand$ | async"></ix-true-command-status>
             <ix-copyright-line class="copyright" [withIxLogo]="true"></ix-copyright-line>
           </div>
         </div>

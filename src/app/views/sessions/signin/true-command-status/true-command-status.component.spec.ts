@@ -1,5 +1,6 @@
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { mockWindow } from 'app/core/testing/utils/mock-window.utils';
 import { WINDOW } from 'app/helpers/window.helper';
@@ -15,8 +16,9 @@ describe('TrueCommandStatusComponent', () => {
   const createComponent = createComponentFactory({
     component: TrueCommandStatusComponent,
     providers: [
+      mockAuth(),
       mockWebSocket([
-        mockCall('truecommand.connected', {
+        mockCall('truecommand.info', {
           connected: true,
           truecommand_url: 'https://truecommand.example.com',
           truecommand_ip: '76.23.122.9',
@@ -36,7 +38,7 @@ describe('TrueCommandStatusComponent', () => {
   });
 
   it('loads TrueCommand status and shows TrueCommand IP if it is connected', () => {
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('truecommand.connected');
+    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('truecommand.info');
 
     expect(spectator.query('.truecommand')).toExist();
     expect(spectator.query('.truecommand')).toHaveExactText('TrueCommand IP: 76.23.122.9');
