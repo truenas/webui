@@ -156,6 +156,9 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
     // Restore top level scrolling
     const wrapper = document.querySelector<HTMLElement>('.fn-maincontent');
     wrapper.style.overflow = 'auto';
+
+    // update dashboard store with latest data
+    this.dashboardStore$.applyState(this.dashState);
   }
 
   onWidgetReorder(newState: DashConfigItem[]): void {
@@ -315,6 +318,7 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
   private setDashState(dashState: DashConfigItem[]): void {
     // TODO: Remove this method and use the store to update the state
     this.dashState = dashState;
+
     if (!this.reorderMode) {
       this.renderedWidgets = this.dashState.filter((widget) => widget.rendered);
     }
