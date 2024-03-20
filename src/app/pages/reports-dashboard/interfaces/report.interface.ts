@@ -35,6 +35,7 @@ export interface Report extends ReportingGraph {
 export type LegendDataWithStackedTotalHtml = dygraphs.LegendData & {
   stackedTotalHTML: string;
   stackedTotal?: number;
+  chartId: string;
 };
 
 export interface FetchReportParams {
