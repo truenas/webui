@@ -266,7 +266,7 @@
   "Activates a tuning script which attempts to optimize  the system depending on the installed hardware. <b>Warning:</b> Autotuning  is only used as a temporary measure and is not a permanent fix for system  hardware issues.": "激活一个调整脚本，该脚本尝试根据已安装的硬件优化系统。<b>警告</b>：自动调整仅用作临时措施，不是解决系统硬件问题的永久解决方法。",
   "Activates the configuration. Unset to disable the configuration without deleting it.": "激活配置。取消设置以禁用配置而不删除它。",
   "Activates the replication schedule.": "激活复制计划。",
-  "Active": "活动的",
+  "Active": "激活",
   "Active Directory": "活动目录",
   "Active Directory - Primary Domain": "活动目录 - 主域名",
   "Active Directory and LDAP are disabled.": "活动目录和 LDAP 被禁用。",
