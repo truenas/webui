@@ -9,7 +9,7 @@ import { ApiEvent } from 'app/interfaces/api-message.interface';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { PoolScan } from 'app/interfaces/resilver-job.interface';
-import { VolumesData } from 'app/interfaces/volume-data.interface';
+import { VolumeData, VolumesData } from 'app/interfaces/volume-data.interface';
 import { WebSocketService } from 'app/services/ws.service';
 
 export interface DashboardStorageState {
@@ -21,7 +21,7 @@ export interface DashboardStorageState {
 const initialState: DashboardStorageState = {
   pools: [],
   isLoading: false,
-  volumesData: {},
+  volumesData: null,
 };
 
 @UntilDestroy()
@@ -57,12 +57,7 @@ export class DashboardStorageStore extends ComponentStore<DashboardStorageState>
   private loadPoolData(): Observable<unknown> {
     return this.ws.call('pool.query').pipe(
       tap((pools) => {
-        this.setState((state) => {
-          return {
-            ...state,
-            pools,
-          };
-        });
+        this.setState((state) => ({ ...state, pools }));
       }),
       switchMap((pools) => {
         if (pools?.length) {
@@ -74,28 +69,21 @@ export class DashboardStorageStore extends ComponentStore<DashboardStorageState>
   }
 
   private setVolumeData(data: Dataset[]): void {
-    const vd: VolumesData = {};
+    const volumesData = new Map<string, VolumeData>();
 
     data.forEach((dataset) => {
       if (typeof dataset === undefined || !dataset) { return; }
-      const usedPercent = dataset.used.parsed / (dataset.used.parsed + dataset.available.parsed);
-      const zvol = {
-        avail: dataset.available.parsed,
+
+      volumesData.set(dataset.id, {
         id: dataset.id,
+        avail: dataset.available.parsed,
         name: dataset.name,
         used: dataset.used.parsed,
-        used_pct: (usedPercent * 100).toFixed(0) + '%',
-      };
-
-      vd[zvol.id] = zvol;
+        used_pct: (dataset.used.parsed / (dataset.used.parsed + dataset.available.parsed) * 100).toFixed(0) + '%',
+      });
     });
 
-    this.setState((state) => {
-      return {
-        ...state,
-        volumesData: vd,
-      };
-    });
+    this.setState((state) => ({ ...state, volumesData }));
   }
 
   private listenToPoolUpdates(): Observable<unknown> {
@@ -126,10 +114,7 @@ export class DashboardStorageStore extends ComponentStore<DashboardStorageState>
             }
             return pool;
           });
-          return {
-            ...state,
-            pools,
-          };
+          return { ...state, pools };
         });
       }),
     );

@@ -1,9 +1,9 @@
 import {
-  AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { filter, switchMap, tap } from 'rxjs';
+import { combineLatest, filter, switchMap } from 'rxjs';
 import { PoolScanFunction } from 'app/enums/pool-scan-function.enum';
 import { PoolScanState } from 'app/enums/pool-scan-state.enum';
 import { PoolStatus } from 'app/enums/pool-status.enum';
@@ -12,10 +12,9 @@ import { countDisksTotal } from 'app/helpers/count-disks-total.helper';
 import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
 import { Pool } from 'app/interfaces/pool.interface';
 import { isTopologyDisk, TopologyItem } from 'app/interfaces/storage.interface';
-import { VolumesData } from 'app/interfaces/volume-data.interface';
+import { VolumeData } from 'app/interfaces/volume-data.interface';
 import { WidgetComponent } from 'app/pages/dashboard/components/widget/widget.component';
 import { DashboardStorageStore } from 'app/pages/dashboard/store/dashboard-storage-store.service';
-import { deepCloneState } from 'app/pages/dashboard/utils/deep-clone-state.helper';
 
 interface ItemInfo {
   icon: StatusIcon;
@@ -44,8 +43,6 @@ interface PoolInfo {
   disksWithError: ItemInfo;
 }
 
-type PoolInfoMap = Record<string, PoolInfo>;
-
 @UntilDestroy()
 @Component({
   selector: 'ix-widget-storage',
@@ -56,13 +53,12 @@ type PoolInfoMap = Record<string, PoolInfo>;
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class WidgetStorageComponent extends WidgetComponent implements AfterViewInit {
+export class WidgetStorageComponent extends WidgetComponent implements OnInit {
   readonly requiredRoles = [Role.FullAdmin];
 
-  protected pools: Pool[];
-  protected volumeData: VolumesData;
-
-  poolInfoMap: PoolInfoMap = {};
+  protected pools: Pool[] = [];
+  protected volumes = new Map<string, VolumeData>();
+  poolInfoMap = new Map<string, PoolInfo>();
   paddingTop = 7;
   paddingLeft = 7;
   paddingRight = 7;
@@ -112,24 +108,20 @@ export class WidgetStorageComponent extends WidgetComponent implements AfterView
     super(translate);
   }
 
-  ngAfterViewInit(): void {
+  ngOnInit(): void {
     this.dashboardStorageStore$.isLoading$.pipe(
       filter((isLoading) => !isLoading),
-      switchMap(() => this.dashboardStorageStore$.pools$.pipe(
-        deepCloneState(),
-        tap((pools: Pool[]) => {
-          this.pools = pools;
-        }),
-      )),
-      switchMap(() => this.dashboardStorageStore$.volumesData$.pipe(
-        deepCloneState(),
-        tap((volumesData) => {
-          this.volumeData = volumesData;
-        }),
-      )),
+      switchMap(() => {
+        return combineLatest([
+          this.dashboardStorageStore$.pools$,
+          this.dashboardStorageStore$.volumesData$,
+        ]);
+      }),
       untilDestroyed(this),
     ).subscribe({
-      next: () => {
+      next: ([pools, volumes]) => {
+        this.pools = pools;
+        this.volumes = volumes;
         this.updateGridInfo();
         this.updatePoolInfoMap();
         this.cdr.markForCheck();
@@ -165,17 +157,19 @@ export class WidgetStorageComponent extends WidgetComponent implements AfterView
 
     const space = (this.rows - 1) * this.gap + this.paddingTop + this.paddingBottom;
     this.rowHeight = (this.contentHeight - space) / this.rows;
+    this.cdr.markForCheck();
   }
 
   updatePoolInfoMap(): void {
+    this.poolInfoMap.clear();
     this.pools.forEach((pool) => {
-      this.poolInfoMap[pool.name] = {
+      this.poolInfoMap.set(pool.name, {
         totalDisks: this.getTotalDisks(pool),
         status: this.getStatusItemInfo(pool),
         freeSpace: this.getFreeSpace(pool),
         usedSpace: this.getUsedSpaceItemInfo(pool),
         disksWithError: this.getDiskWithErrorsItemInfo(pool),
-      };
+      });
     });
   }
 
@@ -229,7 +223,7 @@ export class WidgetStorageComponent extends WidgetComponent implements AfterView
     let icon = StatusIcon.CheckCircle;
     let value;
 
-    if (this.volumeData[pool.name]?.used == null) {
+    if (this.volumes.get(pool.name)?.used == null) {
       return {
         value: this.translate.instant('Unknown'),
         level: StatusLevel.Warn,
@@ -238,19 +232,19 @@ export class WidgetStorageComponent extends WidgetComponent implements AfterView
     }
 
     if (this.cols === 1) {
-      value = this.volumeData[pool.name].used_pct;
+      value = this.volumes.get(pool.name).used_pct;
     } else {
       value = this.translate.instant('{used} of {total} ({used_pct})', {
-        used: buildNormalizedFileSize(this.volumeData[pool.name].used),
-        total: buildNormalizedFileSize(this.volumeData[pool.name].used + this.volumeData[pool.name].avail),
-        used_pct: this.volumeData[pool.name].used_pct,
+        used: buildNormalizedFileSize(this.volumes.get(pool.name).used),
+        total: buildNormalizedFileSize(this.volumes.get(pool.name).used + this.volumes.get(pool.name).avail),
+        used_pct: this.volumes.get(pool.name).used_pct,
       });
     }
 
-    if (this.convertPercentToNumber(this.volumeData[pool.name].used_pct) >= 90) {
+    if (this.convertPercentToNumber(this.volumes.get(pool.name).used_pct) >= 90) {
       level = StatusLevel.Error;
       icon = StatusIcon.Error;
-    } else if (this.convertPercentToNumber(this.volumeData[pool.name].used_pct) >= 80) {
+    } else if (this.convertPercentToNumber(this.volumes.get(pool.name).used_pct) >= 80) {
       level = StatusLevel.Warn;
       icon = StatusIcon.Error;
     }
@@ -317,10 +311,10 @@ export class WidgetStorageComponent extends WidgetComponent implements AfterView
   }
 
   getFreeSpace(pool: Pool): string {
-    if (this.volumeData[pool.name]?.avail == null) {
+    if (this.volumes.get(pool.name)?.avail == null) {
       return this.translate.instant('Unknown');
     }
 
-    return buildNormalizedFileSize(this.volumeData[pool.name].avail);
+    return buildNormalizedFileSize(this.volumes.get(pool.name).avail);
   }
 }

@@ -25,7 +25,7 @@ import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { SimpleFailoverBtnComponent } from 'app/pages/dashboard/components/widget-sys-info/simple-failover-btn.component';
 import { WidgetSysInfoComponent } from 'app/pages/dashboard/components/widget-sys-info/widget-sys-info.component';
 import { SystemGeneralService } from 'app/services/system-general.service';
-import { selectHaStatus, selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
+import { selectHaInfoState } from 'app/store/ha-info/ha-info.selectors';
 import { PreferencesState } from 'app/store/preferences/preferences.reducer';
 import { selectPreferencesState } from 'app/store/preferences/preferences.selectors';
 import { selectSystemInfo, selectSystemFeatures, selectIsIxHardware } from 'app/store/system-info/system-info.selectors';
@@ -88,7 +88,7 @@ describe('WidgetSysInfoComponent', () => {
       mockWebSocket([
         mockCall('webui.main.dashboard.sys_info', systemInfo),
         mockCall('update.check_available', { status: SystemUpdateStatus.Unavailable } as SystemUpdate),
-        mockCall('core.get_jobs'),
+        mockCall('core.get_jobs', []),
       ]),
       mockProvider(SystemGeneralService, {
         isEnterprise: () => true,
@@ -121,16 +121,17 @@ describe('WidgetSysInfoComponent', () => {
             },
           },
           {
-            selector: selectIsHaLicensed,
-            value: false,
-          },
-          {
             selector: selectIsIxHardware,
             value: true,
           },
           {
-            selector: selectHaStatus,
-            value: { hasHa: true },
+            selector: selectHaInfoState,
+            value: {
+              haStatus: { hasHa: true },
+              isHaLicensed: false,
+              hasOnlyMismatchVersionsReason: false,
+              isUpgradePending: false,
+            },
           },
         ],
       }),
@@ -161,7 +162,7 @@ describe('WidgetSysInfoComponent', () => {
       expect(items).toEqual([
         'Platform: TRUENAS-TEST-HA',
         'Version:ElectricEel-24.10.0-MASTER-20240301-233006',
-        'License: Best contract, expires 2025-01-01',
+        'License:Best contract, expires 2025-01-01',
         'System Serial:AA-00001',
         'Hostname:test-hostname-a',
         'Uptime:23 hours 12 minutes as of 2024-03-15 10:34:11',
@@ -200,7 +201,7 @@ describe('WidgetSysInfoComponent', () => {
       expect(items).toEqual([
         'Platform: TRUENAS-TEST-HA',
         'Version:ElectricEel-24.10.0-MASTER-20240301-233006',
-        'License: Best contract, expires 2025-01-01',
+        'License:Best contract, expires 2025-01-01',
         'System Serial:AA-00002',
         'Hostname:test-hostname-b',
         'Uptime:1 minute 17 seconds',

@@ -1,5 +1,4 @@
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
-import { TitleCasePipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -9,9 +8,11 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
-import { filter, map, take } from 'rxjs/operators';
+import {
+  combineLatestWith, filter, map, take,
+} from 'rxjs/operators';
 import { JobState } from 'app/enums/job-state.enum';
-import { ScreenType } from 'app/enums/screen-type.enum';
+import { ProductEnclosure } from 'app/enums/product-enclosure.enum';
 import { SystemUpdateStatus } from 'app/enums/system-update.enum';
 import { filterAsync } from 'app/helpers/operators/filter-async.operator';
 import { WINDOW } from 'app/helpers/window.helper';
@@ -39,7 +40,6 @@ import { selectIsIxHardware, waitForSystemFeatures } from 'app/store/system-info
     './widget-sys-info.component.scss',
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [TitleCasePipe],
 })
 export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, OnDestroy {
   @Input() isPassive = false;
@@ -49,22 +49,28 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
   protected isHaEnabled = false;
   protected enclosureSupport = false;
 
-  hasOnlyMismatchVersionsReason$ = this.store$.select(selectHasOnlyMismatchVersionsReason);
-
   systemInfo: SystemInfo;
-  ready = false;
+  isLoading = false;
   productImage = '';
   productModel = '';
-  productEnclosure = ''; // rackmount || tower
+  productEnclosure: ProductEnclosure;
   certified = false;
   updateAvailable = false;
   isIxHardware = false;
   isUpdateRunning = false;
-  updateMethod = 'update.update';
-  screenType = ScreenType.Desktop;
+  updateMethod: 'update.update' | 'failover.upgrade' = 'update.update';
   uptimeInterval: Interval;
 
-  readonly ScreenType = ScreenType;
+  hasOnlyMismatchVersionsReason$ = this.store$.select(selectHasOnlyMismatchVersionsReason);
+  isMobile$ = this.breakpointObserver.observe([Breakpoints.XSmall]).pipe(map((state) => state.matches));
+  isHaEnabled$ = this.store$.select(selectHaStatus).pipe(filter(Boolean), map(({ hasHa }) => hasHa));
+  isUnsupportedHardware$ = this.sysGenService.isEnterprise$.pipe(
+    map((isEnterprise) => isEnterprise && !this.productImage && !this.isIxHardware),
+  );
+  isFailoverButtonDisabled$ = this.isHaEnabled$.pipe(
+    combineLatestWith(this.hasOnlyMismatchVersionsReason$),
+    map(([isHaEnabled, hasOnlyMismatchVersionsReason]) => !isHaEnabled && !hasOnlyMismatchVersionsReason),
+  );
 
   get systemVersion(): string {
     if (this.systemInfo?.codename) {
@@ -72,6 +78,17 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
     }
 
     return this.systemInfo.version;
+  }
+
+  get updateBtnLabel(): string {
+    if (this.updateAvailable) {
+      return this.translate.instant('Updates Available');
+    }
+    return this.translate.instant('Check for Updates');
+  }
+
+  get productImageSrc(): string {
+    return 'assets/images' + (this.productImage.startsWith('/') ? this.productImage : ('/' + this.productImage));
   }
 
   constructor(
@@ -84,7 +101,6 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
     private store$: Store<AppState>,
     private productImgServ: ProductImageService,
     private ws: WebSocketService,
-    private titleCase: TitleCasePipe,
     private cdr: ChangeDetectorRef,
     private breakpointObserver: BreakpointObserver,
     @Inject(WINDOW) private window: Window,
@@ -94,32 +110,6 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
       this.isUpdateRunning = isUpdateRunning === 'true';
       this.cdr.markForCheck();
     });
-
-    this.breakpointObserver
-      .observe([Breakpoints.XSmall])
-      .pipe(untilDestroyed(this))
-      .subscribe((state) => {
-        this.screenType = state.matches ? ScreenType.Mobile : ScreenType.Desktop;
-        this.cdr.markForCheck();
-      });
-  }
-
-  get licenseString(): string {
-    return this.translate.instant('{license} contract, expires {date}', {
-      license: this.titleCase.transform(this.systemInfo.license.contract_type.toLowerCase()),
-      date: this.systemInfo.license.contract_end.$value,
-    });
-  }
-
-  get updateBtnLabel(): string {
-    if (this.updateAvailable) {
-      return this.translate.instant('Updates Available');
-    }
-    return this.translate.instant('Check for Updates');
-  }
-
-  get productImageSrc(): string {
-    return 'assets/images' + (this.productImage.startsWith('/') ? this.productImage : ('/' + this.productImage));
   }
 
   ngOnInit(): void {
@@ -158,7 +148,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
   }
 
   getSystemInfo(): void {
-    this.ready = false;
+    this.isLoading = true;
     this.cdr.markForCheck();
 
     this.ws.call('webui.main.dashboard.sys_info')
@@ -167,8 +157,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
         this.systemInfo = this.isPassive ? systemInfo.remote_info : systemInfo;
         this.setUptimeUpdates();
         this.setProductImage();
-
-        this.ready = true;
+        this.isLoading = false;
         this.cdr.markForCheck();
       });
   }
@@ -201,13 +190,11 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
 
   checkForRunningUpdate(): void {
     this.ws.call('core.get_jobs', [[['method', '=', this.updateMethod], ['state', '=', JobState.Running]]])
-      .pipe(untilDestroyed(this))
+      .pipe(filter((jobs) => jobs.length > 0), untilDestroyed(this))
       .subscribe({
-        next: (jobs) => {
-          if (jobs && jobs.length > 0) {
-            this.isUpdateRunning = true;
-            this.cdr.markForCheck();
-          }
+        next: () => {
+          this.isUpdateRunning = true;
+          this.cdr.markForCheck();
         },
         error: (err) => {
           console.error(err);
@@ -242,16 +229,16 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
       const product = this.productImgServ.getServerProduct(this.systemInfo.platform);
       this.productImage = product ? `/servers/${product}.png` : 'ix-original.svg';
       this.productModel = product || '';
-      this.productEnclosure = 'rackmount';
+      this.productEnclosure = ProductEnclosure.Rackmount;
     }
 
     this.cdr.markForCheck();
   }
 
   setMiniImage(sysProduct: string): void {
-    this.productEnclosure = 'tower';
+    this.productEnclosure = ProductEnclosure.Tower;
 
-    if (sysProduct && sysProduct.includes('CERTIFIED')) {
+    if (sysProduct?.includes('CERTIFIED')) {
       this.productImage = '';
       this.certified = true;
       return;
