@@ -47,10 +47,9 @@
     >
       <ix-tree-node
         *treeNodeDef="let topologyItem; dataSource: dataSource"
-        treeNodeToggle
         [treeNodeDefDataSource]="dataSource"
       >
-        <span class="spacer"></span>
+        <span class="spacer" treeNodeToggle></span>
         <ix-bootenv-node-item
           [node]="topologyItem"
           [poolInstance]="poolInstance"

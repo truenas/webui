@@ -49,7 +49,6 @@
         >
           <ix-tree-node
             *treeNodeDef="let topologyItem; dataSource: dataSource"
-            treeNodeToggle
             routerLinkActive="selected"
             [treeNodeDefDataSource]="dataSource"
             [class.selected]="topologyItem.guid === selectedNode?.guid"
@@ -57,7 +56,7 @@
             (click)="viewDetails(poolId, topologyItem.guid)"
             (keydown.enter)="viewDetails(poolId, topologyItem.guid)"
           >
-            <span class="spacer"></span>
+            <span class="spacer" treeNodeToggle></span>
             <ix-topology-item-node
               [topologyItem]="topologyItem | cast"
               [disk]="getDisk(topologyItem)"
