@@ -33,6 +33,7 @@ interface AllowedAddressRow {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AllowedAddressesCardComponent implements OnInit {
+  protected requiredRoles = [Role.FullAdmin];
   dataProvider: AsyncDataProvider<AllowedAddressRow>;
 
   columns = createTable<AllowedAddressRow>([

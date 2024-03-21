@@ -1,7 +1,7 @@
 <mat-card>
   <mat-toolbar-row>
     <h3>{{ 'Kernel' | translate }}</h3>
-    <div class="actions action-icon">
+    <div *ixRequiresRoles="requiredRoles" class="actions action-icon">
       <button
         *ixWithLoadingState="debugKernel$ as debugKernel"
         mat-button

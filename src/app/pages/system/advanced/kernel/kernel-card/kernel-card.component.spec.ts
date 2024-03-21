@@ -4,6 +4,7 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatListItemHarness } from '@angular/material/list/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { AdvancedSettingsService } from 'app/pages/system/advanced/advanced-settings.service';
 import { KernelCardComponent } from 'app/pages/system/advanced/kernel/kernel-card/kernel-card.component';
 import { KernelFormComponent } from 'app/pages/system/advanced/kernel/kernel-form/kernel-form.component';
@@ -16,6 +17,7 @@ describe('KernelCardComponent', () => {
   const createComponent = createComponentFactory({
     component: KernelCardComponent,
     providers: [
+      mockAuth(),
       mockProvider(IxSlideInService),
       mockProvider(AdvancedSettingsService),
       provideMockStore({

@@ -4,6 +4,7 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatListItemHarness } from '@angular/material/list/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
 import { AdvancedSettingsService } from 'app/pages/system/advanced/advanced-settings.service';
 import { ConsoleCardComponent } from 'app/pages/system/advanced/console/console-card/console-card.component';
@@ -17,6 +18,7 @@ describe('ConsoleCardComponent', () => {
   const createComponent = createComponentFactory({
     component: ConsoleCardComponent,
     providers: [
+      mockAuth(),
       mockProvider(IxSlideInService),
       mockProvider(AdvancedSettingsService),
       provideMockStore({

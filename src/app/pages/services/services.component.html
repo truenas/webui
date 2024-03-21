@@ -95,6 +95,7 @@
           <ix-icon name="list"></ix-icon>
         </a>
         <button
+          *ixRequiresRoles="servicesService.getRolesRequiredToManage(service.service)"
           mat-icon-button
           type="button"
           [ixTest]="[service.service, 'edit']"

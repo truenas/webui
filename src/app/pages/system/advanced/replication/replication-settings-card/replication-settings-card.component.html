@@ -3,6 +3,7 @@
     <h3>{{ 'Replication' | translate }}</h3>
     <div class="actions action-icon">
       <button
+        *ixRequiresRoles="requiredRoles"
         mat-button
         [ixTest]="['replication', 'configure']"
         (click)="onConfigurePressed()"

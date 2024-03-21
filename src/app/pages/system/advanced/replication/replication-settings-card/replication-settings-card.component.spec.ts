@@ -4,6 +4,7 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatListItemHarness } from '@angular/material/list/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
@@ -22,6 +23,7 @@ describe('ReplicationSettingsCardComponent', () => {
   const createComponent = createComponentFactory({
     component: ReplicationSettingsCardComponent,
     providers: [
+      mockAuth(),
       mockWebsocket([
         mockCall('replication.config.config', {
           max_parallel_replication_tasks: 5,

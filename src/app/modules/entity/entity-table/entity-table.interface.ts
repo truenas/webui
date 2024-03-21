@@ -59,6 +59,7 @@ export interface EntityTableConfig<Row extends SomeRow = SomeRow> {
   addBtnDisabled?: boolean;
   routeAddTooltip?: string;
   filterValue?: string;
+  requiredRoles?: Role[];
 
   /**
    * Returns EmptyConfig for EmptyType or returns null if default behavior is acceptable for that EmptyType

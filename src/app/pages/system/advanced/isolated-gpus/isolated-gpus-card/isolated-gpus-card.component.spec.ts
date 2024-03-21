@@ -4,6 +4,7 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatListItemHarness } from '@angular/material/list/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { Device } from 'app/interfaces/device.interface';
 import { AdvancedSettingsService } from 'app/pages/system/advanced/advanced-settings.service';
 import {
@@ -21,6 +22,7 @@ describe('IsolatedGpusCardComponent', () => {
   const createComponent = createComponentFactory({
     component: IsolatedGpusCardComponent,
     providers: [
+      mockAuth(),
       mockProvider(GpuService, {
         getIsolatedGpus: jest.fn(() => of([
           { description: 'Matrox G200' } as Device,

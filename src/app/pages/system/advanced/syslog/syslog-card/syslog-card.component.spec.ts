@@ -6,6 +6,7 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
 import { CoreComponents } from 'app/core/core-components.module';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { SyslogLevel, SyslogTransport } from 'app/enums/syslog.enum';
 import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
 import { AdvancedSettingsService } from 'app/pages/system/advanced/advanced-settings.service';
@@ -23,6 +24,7 @@ describe('SyslogCardComponent', () => {
       CoreComponents,
     ],
     providers: [
+      mockAuth(),
       provideMockStore({
         selectors: [
           {

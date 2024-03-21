@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { map, switchMap } from 'rxjs';
 import { shareReplay, startWith } from 'rxjs/operators';
+import { Role } from 'app/enums/role.enum';
 import { toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import { AdvancedSettingsService } from 'app/pages/system/advanced/advanced-settings.service';
 import {
@@ -19,6 +20,8 @@ import { waitForAdvancedConfig } from 'app/store/system-config/system-config.sel
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class StorageCardComponent {
+  protected requiredRoles = [Role.FullAdmin];
+
   systemDatasetPool$ = this.slideInService.onClose$.pipe(
     startWith(undefined),
     switchMap(() => this.ws.call('systemdataset.config')),

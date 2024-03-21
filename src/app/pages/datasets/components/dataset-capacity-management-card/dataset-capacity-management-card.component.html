@@ -9,6 +9,7 @@
       </ng-container>
     </h3>
     <button
+      *ixRequiresRoles="requiredRoles"
       mat-button
       ixTest="edit-quotas"
       (click)="editDataset()"

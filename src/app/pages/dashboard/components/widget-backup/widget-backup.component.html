@@ -148,6 +148,7 @@
             </div>
             <div class="details-item">
               <a
+                *ixRequiresRoles="[Role.CloudSyncWrite]"
                 class="action"
                 tabIndex="0"
                 ixTest="cloud-sync"
@@ -159,6 +160,7 @@
             </div>
             <div class="details-item">
               <a
+                *ixRequiresRoles="[Role.ReplicationTaskWrite, Role.ReplicationTaskWritePull]"
                 class="action"
                 tabIndex="0"
                 ixTest="replication"
@@ -170,6 +172,7 @@
             </div>
             <div class="details-item">
               <a
+                *ixRequiresRoles="[Role.FullAdmin]"
                 class="action"
                 tabIndex="0"
                 ixTest="rsync"
@@ -192,15 +195,21 @@
 <ng-template #backupActions>
   <ng-container *ngIf="!!allCount">
     {{ 'Backup' | translate }}
-    <a class="backup-action" ixTest="cloud" (click)="addCloudSyncTask()">
+    <a *ixRequiresRoles="[Role.CloudSyncWrite]" class="backup-action" ixTest="cloud" (click)="addCloudSyncTask()">
       {{ 'to cloud' | translate }}
     </a>
     {{ 'or' | translate }}
-    <a class="backup-action" ixTest="another-TrueNAS" (click)="addReplicationTask()">
+    <a
+      *ixRequiresRoles="[Role.ReplicationTaskWrite, Role.ReplicationTaskWritePull]"
+      class="backup-action"
+      ixTest="another-TrueNAS"
+      (click)="addReplicationTask()"
+    >
       {{ 'to another TrueNAS' | translate }}
     </a>
   </ng-container>
   <ng-container *ngIf="!allCount">
+    <ng-container *ixRequiresRoles="[Role.FullAdmin]"></ng-container>
     {{ 'Backup to Cloud or another TrueNAS via links below' | translate }}
   </ng-container>
 </ng-template>

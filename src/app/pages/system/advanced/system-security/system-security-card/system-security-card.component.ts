@@ -5,6 +5,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import {
   Observable, filter, of, switchMap,
 } from 'rxjs';
+import { Role } from 'app/enums/role.enum';
 import { LoadingState, toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import { SystemSecurityConfig } from 'app/interfaces/system-security-config.interface';
 import { SystemSecurityFormComponent } from 'app/pages/system/advanced/system-security/system-security-form/system-security-form.component';
@@ -18,6 +19,7 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SystemSecurityCardComponent {
+  protected requiredRoles = [Role.FullAdmin];
   systemSecurityConfig$: Observable<LoadingState<SystemSecurityConfig>> = this.ws.call('system.security.config').pipe(toLoadingState());
 
   constructor(

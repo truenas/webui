@@ -8,6 +8,7 @@ import { differenceInDays } from 'date-fns';
 import { filter, forkJoin } from 'rxjs';
 import { Direction } from 'app/enums/direction.enum';
 import { JobState } from 'app/enums/job-state.enum';
+import { Role } from 'app/enums/role.enum';
 import { ScreenType } from 'app/enums/screen-type.enum';
 import { ApiTimestamp } from 'app/interfaces/api-date.interface';
 import { WidgetComponent } from 'app/pages/dashboard/components/widget/widget.component';
@@ -55,6 +56,7 @@ export class WidgetBackupComponent extends WidgetComponent implements OnInit {
   screenType = ScreenType.Desktop;
   backups: BackupRow[] = [];
   isLoading = false;
+  readonly Role = Role;
 
   successStates = [JobState.Success, JobState.Finished];
   failedStates = [JobState.Failed, JobState.Error, JobState.Aborted];

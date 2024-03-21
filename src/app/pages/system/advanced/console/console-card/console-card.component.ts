@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { Store } from '@ngrx/store';
+import { Role } from 'app/enums/role.enum';
 import { toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import { AdvancedSettingsService } from 'app/pages/system/advanced/advanced-settings.service';
 import { ConsoleFormComponent } from 'app/pages/system/advanced/console/console-form/console-form.component';
@@ -14,6 +15,8 @@ import { waitForAdvancedConfig } from 'app/store/system-config/system-config.sel
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ConsoleCardComponent {
+  protected requiredRoles = [Role.FullAdmin];
+
   readonly advancedConfig$ = this.store$.pipe(
     waitForAdvancedConfig,
     toLoadingState(),
