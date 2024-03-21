@@ -75,7 +75,8 @@ export class ZfsInfoCardComponent {
     && !this.isRaidzParent
     && (!this.hasTopLevelRaidz
     || this.topologyCategory === VdevType.Cache
-    || this.topologyCategory === VdevType.Log);
+    || this.topologyCategory === VdevType.Log
+    || this.topologyCategory === VdevType.Spare);
   }
 
   get canRemoveVDEV(): boolean {
