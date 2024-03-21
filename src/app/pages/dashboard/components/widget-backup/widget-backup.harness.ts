@@ -6,7 +6,7 @@ export class WidgetBackupHarness extends ComponentHarness {
 
   async getHeader(): Promise<{ title: string; icon: string; message: string }> {
     const title = await this.locatorForOptional('.card-title-text')();
-    const icon = await this.locatorForOptional(IxIconHarness)();
+    const icon = await this.locatorForOptional(IxIconHarness.with({ selector: '.icon' }))();
     const message = await this.locatorForOptional('.status-container')();
     return {
       title: await title?.text(),

@@ -13,6 +13,7 @@
               mat-icon-button
               color="default"
               [ixTest]="[poolState.name, 'widget', 'back']"
+              [attr.aria-label]="'Go back' | translate"
               (click)="goBack()"
             >
               <ix-icon name="chevron_left"></ix-icon>
@@ -30,7 +31,7 @@
               <ix-icon name="chevron_left"></ix-icon>
             </button>
 
-            <h3 class="mat-card-title-text">
+            <h3 class="mat-card-title-text" [class.button-offset]="currentSlide !== '0'">
               <ix-drag-handle [showReorderHandle]="showReorderHandle">
                 <div class="card-title-text">
                   <span *ngIf="showReorderHandle" class="grip"></span>
@@ -42,29 +43,25 @@
             <div class="controls">
               <a
                 mat-icon-button
+                matTooltipPosition="above"
                 [ixTest]="poolState.name"
                 [routerLink]="['/storage']"
+                [attr.aria-label]="'Configure Pools' | translate"
+                [matTooltip]="'Configure Pools' | translate"
               >
-                <ix-icon
-                  name="mdi-database"
-                  matTooltipPosition="above"
-                  aria-label="Configure Pools"
-                  [matTooltip]="'Pool Status' | translate"
-                ></ix-icon>
+                <ix-icon name="mdi-database"></ix-icon>
               </a>
 
               <a
                 mat-icon-button
+                matTooltipPosition="above"
                 [ixTest]="[poolState.name, 'disk-reports']"
                 [routerLink]="['/reportsdashboard', 'disk']"
                 [queryParams]="{ disks: poolDisks }"
+                [attr.aria-label]="'Disk Reports' | translate"
+                [matTooltip]="'Disk Reports' | translate"
               >
-                <ix-icon
-                  name="insert_chart"
-                  matTooltipPosition="above"
-                  [attr.aria-label]="'Disk Reports' | translate"
-                  [matTooltip]="'Disk Reports' | translate"
-                ></ix-icon>
+                <ix-icon name="insert_chart"></ix-icon>
               </a>
             </div>
           </mat-toolbar-row>
@@ -102,9 +99,7 @@
                       <div class="td label">
                         <strong> {{ 'Total Disks' | translate }}: </strong>
                       </div>
-                      <div class="td">
-                        {{ totalDisks }}
-                      </div>
+                      <div class="td">{{ totalDisks }}</div>
                     </div>
 
                     <div class="pool-status tr">
