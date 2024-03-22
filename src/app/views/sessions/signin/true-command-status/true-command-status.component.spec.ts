@@ -1,12 +1,4 @@
-import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { of } from 'rxjs';
-import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
-import { mockWindow } from 'app/core/testing/utils/mock-window.utils';
-import { WINDOW } from 'app/helpers/window.helper';
-import { TrueCommandConnectionState } from 'app/interfaces/true-command-config.interface';
-import { DialogService } from 'app/modules/dialog/dialog.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import {
   TrueCommandStatusComponent,
 } from 'app/views/sessions/signin/true-command-status/true-command-status.component';
@@ -15,39 +7,15 @@ describe('TrueCommandStatusComponent', () => {
   let spectator: Spectator<TrueCommandStatusComponent>;
   const createComponent = createComponentFactory({
     component: TrueCommandStatusComponent,
-    providers: [
-      mockAuth(),
-      mockWebSocket([
-        mockCall('truecommand.info', {
-          connected: true,
-          truecommand_url: 'https://truecommand.example.com',
-          truecommand_ip: '76.23.122.9',
-        } as TrueCommandConnectionState),
-      ]),
-      mockProvider(DialogService, {
-        generalDialog: jest.fn(() => of(true)),
-      }),
-      mockWindow({
-        open: jest.fn(),
-      }),
-    ],
   });
 
   beforeEach(() => {
     spectator = createComponent();
   });
 
-  it('loads TrueCommand status and shows TrueCommand IP if it is connected', () => {
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('truecommand.info');
-
-    expect(spectator.query('.truecommand')).toExist();
-    expect(spectator.query('.truecommand')).toHaveExactText('TrueCommand IP: 76.23.122.9');
-  });
-
-  it('opens TrueCommand URL when status string is clicked', () => {
-    spectator.click('.truecommand');
-
-    expect(spectator.inject(DialogService).generalDialog).toHaveBeenCalled();
-    expect(spectator.inject<Window>(WINDOW).open).toHaveBeenCalledWith('https://truecommand.example.com');
+  it('checks TrueCommand image and text', () => {
+    expect(spectator.query('img')).toHaveAttribute('src', 'assets/images/truecommand/truecommand-logo-mark-full-color-rgb.svg');
+    expect(spectator.query('img')).toHaveAttribute('alt', 'TrueCommand');
+    expect(spectator.query('.truecommand-text')).toHaveExactText('Managed by TrueCommand');
   });
 });
