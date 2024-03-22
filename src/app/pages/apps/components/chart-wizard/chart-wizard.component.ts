@@ -325,10 +325,8 @@ export class ChartWizardComponent implements OnInit, OnDestroy {
     this.form.addControl('release_name', new FormControl('', [Validators.required]));
     this.form.controls.release_name.setValidators(
       this.validatorsService.withMessage(
-        Validators.pattern('^[a-z](?:[a-z0-9-]*[a-z0-9])?$'),
-        this.translate.instant(
-          'Name must start with an alphabetic character and end with an alphanumeric character. Hyphen is allowed in the middle.',
-        ),
+        Validators.pattern('^[a-z]([a-z0-9-]*[a-z0-9])?$'),
+        this.translate.instant(this.helptext.chartWizard.nameGroup.nameValidationRules),
       ),
     );
     this.form.controls.release_name.setAsyncValidators(forbiddenAsyncValues(this.forbiddenAppNames$));
@@ -345,6 +343,7 @@ export class ChartWizardComponent implements OnInit, OnDestroy {
           type: DynamicFormSchemaType.Input,
           title: helptextApps.chartForm.release_name.placeholder,
           required: true,
+          tooltip: helptextApps.chartForm.release_name.tooltip,
         },
         {
           controlName: 'version',
