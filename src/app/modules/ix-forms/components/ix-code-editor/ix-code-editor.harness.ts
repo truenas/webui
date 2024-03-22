@@ -26,26 +26,25 @@ export class IxCodeEditorHarness extends ComponentHarness implements IxFormContr
     }
     return label.getLabel();
   }
+  getInputArea = this.locatorFor('.cm-content');
 
   async getValue(): Promise<string> {
     const editor = EditorView.findFromDOM(document.querySelector('.input-container'));
     return Promise.resolve(editor.state.doc.toString());
   }
 
-  setValue(value: string): Promise<void> {
-    const editor = EditorView.findFromDOM(document.querySelector('.input-container'));
-    const transaction = editor.state.update({
-      changes: {
-        from: 0,
-        to: editor.state.doc.length,
-        insert: value,
-      },
+  async setValue(value: string): Promise<void> {
+    const inputArea = await this.getInputArea();
+    await inputArea.setContenteditableValue(value);
+
+    await inputArea.dispatchEvent('input');
+
+    // Using fakeAsync doesn't work for some reason.
+    await new Promise((resolve) => {
+      setTimeout(resolve);
     });
 
-    if (transaction) {
-      editor.dispatch(transaction);
-    }
-    return Promise.resolve();
+    await this.forceStabilize();
   }
 
   isDisabled(): Promise<boolean> {
