@@ -88,8 +88,12 @@ export class SchedulerComponent implements ControlValueAccessor {
       .pipe(filter(Boolean), untilDestroyed(this))
       .subscribe((newCrontab: string) => {
         this.crontab = newCrontab;
+        if (Object.values(CronPresetValue).includes(newCrontab as CronPresetValue)) {
+          this.customCrontab = undefined;
+        } else {
+          this.customCrontab = newCrontab;
+        }
         this.onChange(newCrontab);
-        this.customCrontab = newCrontab;
         this.cdr.markForCheck();
       });
   }
@@ -107,8 +111,10 @@ export class SchedulerComponent implements ControlValueAccessor {
     } else if (!Object.values(CronPresetValue).includes(selection)) {
       this.onCustomOptionSelected(selection);
     } else {
-      this.crontab = value.source.value;
-      this.onChange(value.source.value);
+      this.crontab = selection;
+      this.customCrontab = undefined;
+      this.onChange(selection);
+      this.cdr.markForCheck();
     }
   }
 }
