@@ -2,6 +2,7 @@ import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, Input,
 } from '@angular/core';
 import { ControlValueAccessor, NgControl } from '@angular/forms';
+import { MatOptionSelectionChange } from '@angular/material/core';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
@@ -12,7 +13,7 @@ import {
 import {
   SchedulerModalComponent,
 } from 'app/modules/scheduler/components/scheduler-modal/scheduler-modal.component';
-import { getDefaultCrontabPresets } from 'app/modules/scheduler/utils/get-default-crontab-presets.utils';
+import { CronPresetValue, getDefaultCrontabPresets } from 'app/modules/scheduler/utils/get-default-crontab-presets.utils';
 
 @UntilDestroy()
 @Component({
@@ -27,6 +28,7 @@ export class SchedulerComponent implements ControlValueAccessor {
   @Input() required = false;
   @Input() hideMinutes = false;
 
+  protected readonly customValue = 'custom';
   /**
    * Optional extra time boundaries for every day, i.e. "15:30" - "23:30"
    */
@@ -73,13 +75,13 @@ export class SchedulerComponent implements ControlValueAccessor {
     this.cdr.markForCheck();
   }
 
-  onCustomOptionSelected(): void {
+  onCustomOptionSelected(previousValue: string): void {
     this.matDialog.open(SchedulerModalComponent, {
       data: {
         startTime: this.startTime,
         endTime: this.endTime,
         hideMinutes: this.hideMinutes,
-        crontab: this.customCrontab,
+        crontab: previousValue,
       } as SchedulerModalConfig,
     })
       .afterClosed()
@@ -88,6 +90,25 @@ export class SchedulerComponent implements ControlValueAccessor {
         this.crontab = newCrontab;
         this.onChange(newCrontab);
         this.customCrontab = newCrontab;
+        this.cdr.markForCheck();
       });
+  }
+
+  onOptionSelectionChange(value: MatOptionSelectionChange<string>): void {
+    if (!value.source.selected) {
+      return;
+    }
+    if (!value.isUserInput) {
+      return;
+    }
+    const selection = value.source.value as CronPresetValue;
+    if (selection.toString() === this.customValue) {
+      this.onCustomOptionSelected(undefined);
+    } else if (!Object.values(CronPresetValue).includes(selection)) {
+      this.onCustomOptionSelected(selection);
+    } else {
+      this.crontab = value.source.value;
+      this.onChange(value.source.value);
+    }
   }
 }
