@@ -227,15 +227,6 @@ export class DiskListComponent implements EntityTableConfig<Disk>, OnDestroy {
     });
     this.diskUpdateSubscriptionId = this.disksUpdate.addSubscriber(disksUpdateTrigger$);
     this.entityList = entityList;
-
-    this.entityList.dataSource$.pipe(untilDestroyed(this)).subscribe((data) => {
-      this.entityList.dataSource.data = data.map((item) => {
-        return {
-          ...item,
-          togglesmart: this.yesNoPipe.transform(item.togglesmart) as unknown as boolean,
-        };
-      });
-    });
   }
 
   resourceTransformIncomingRestData(disks: Disk[]): Disk[] {
@@ -243,7 +234,6 @@ export class DiskListComponent implements EntityTableConfig<Disk>, OnDestroy {
       ...disk,
       pool: this.getPoolColumn(disk),
       readable_size: buildNormalizedFileSize(disk.size),
-      togglesmart: this.yesNoPipe.transform(disk.togglesmart) as unknown as boolean,
     }));
   }
 
