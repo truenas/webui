@@ -114,7 +114,10 @@ export const helptextApps = {
     release_name: {
       name: T('Name'),
       placeholder: T('Application Name'),
-      tooltip: T(''),
+      tooltip: T('Application name must have the following: \
+ 1) Lowercase alphanumeric characters can be specified \
+ 2) Name must start with an alphabetic character and can end with alphanumeric character \
+ 3) Hyphen \'-\' is allowed but not as the first or last character e.g abc123, abc, abcd-1232'),
     },
     networking: T('Networking'),
     externalLabel: T('Add External Interfaces'),
@@ -124,6 +127,8 @@ export const helptextApps = {
     nameGroup: {
       label: 'Application Name',
       version: 'Version',
+      nameValidationRules: T('Name must start and end with a lowercase alphanumeric character. \
+ Hyphen is allowed in the middle e.g abc123, abc, abcd-1232'),
     },
   },
 
