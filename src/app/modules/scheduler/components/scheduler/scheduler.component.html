@@ -13,7 +13,6 @@
       [ixTest]="[controlDirective.name, 'presets']"
       [(ngModel)]="crontab"
       (blur)="onTouched()"
-      (ngModelChange)="onChange($event)"
     >
       <mat-option
         *ngFor="let preset of defaultPresets"
