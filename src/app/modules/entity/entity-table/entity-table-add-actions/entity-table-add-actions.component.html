@@ -132,7 +132,7 @@
       <ix-icon name="mdi-menu-down" class="menu-caret"></ix-icon>
     </button>
     <mat-menu #menu="matMenu" overlapTrigger="false">
-      <ng-container *ixRequiresRoles="this.entity.conf.requiredRoles || [Role.FullAdmin]">
+      <ng-container *ixRequiresRoles="this.entity.conf.requiredRoles">
         <button
           *ngIf="this.entity.conf.routeAdd || this.entity.conf.doAdd"
           mat-menu-item
@@ -156,7 +156,7 @@
 
     <ng-template #elseBlock>
       <!--When there is no routeAdd -->
-      <ng-container *ixRequiresRoles="this.entity.conf.requiredRoles || [Role.FullAdmin]">
+      <ng-container *ixRequiresRoles="this.entity.conf.requiredRoles">
         <button
           *ngIf="this.entity.conf.routeAdd || this.entity.conf.doAdd"
           mat-button
