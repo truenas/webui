@@ -4,6 +4,7 @@ import {
 import { ControlValueAccessor, NgControl } from '@angular/forms';
 import { MatOptionSelectionChange } from '@angular/material/core';
 import { MatDialog } from '@angular/material/dialog';
+import { MatSelectChange } from '@angular/material/select';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { filter } from 'rxjs/operators';
@@ -87,15 +88,30 @@ export class SchedulerComponent implements ControlValueAccessor {
       .afterClosed()
       .pipe(filter(Boolean), untilDestroyed(this))
       .subscribe((newCrontab: string) => {
-        this.crontab = newCrontab;
         if (Object.values(CronPresetValue).includes(newCrontab as CronPresetValue)) {
           this.customCrontab = undefined;
         } else {
           this.customCrontab = newCrontab;
         }
+        this.cdr.markForCheck();
+        this.crontab = newCrontab;
         this.onChange(newCrontab);
         this.cdr.markForCheck();
       });
+  }
+
+  onSelectionChange(value: MatSelectChange): void {
+    const selection = value.source.value as CronPresetValue;
+    if (selection.toString() === this.customValue) {
+      this.onCustomOptionSelected(undefined);
+    } else if (!Object.values(CronPresetValue).includes(selection)) {
+      this.onCustomOptionSelected(selection);
+    } else {
+      this.crontab = selection;
+      this.customCrontab = undefined;
+      this.onChange(selection);
+      this.cdr.markForCheck();
+    }
   }
 
   onOptionSelectionChange(value: MatOptionSelectionChange<string>): void {
