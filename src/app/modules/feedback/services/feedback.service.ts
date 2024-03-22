@@ -200,6 +200,7 @@ export class FeedbackService {
           action: () => this.window.open(ticketUrl, '_blank'),
         },
       },
+      duration: 10000,
     });
   }
 
