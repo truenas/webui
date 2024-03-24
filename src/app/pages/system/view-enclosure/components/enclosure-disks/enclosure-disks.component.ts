@@ -541,7 +541,10 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
         this.chassis = new R50Bm(true);
         this.showCaption = false;
         break;
-      case 'M Series': {
+      case 'M Series':
+      case 'M40 Series':
+      case 'M50 Series':
+      case 'M60 Series': {
         // We need to detect rear chassis. Not all M Series will have rear slots
         this.chassis = new M50(enclosure.slots.length > 24);
         break;
@@ -705,6 +708,9 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
       case 'R50BM':
         extractedChassis = new R50Bm();
         break;
+      case 'M40 Series':
+      case 'M50 Series':
+      case 'M60 Series':
       case 'M Series':
         extractedChassis = new M50();
         break;
