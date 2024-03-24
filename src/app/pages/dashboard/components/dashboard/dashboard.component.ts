@@ -13,7 +13,6 @@ import { ScreenType } from 'app/enums/screen-type.enum';
 import { WidgetName } from 'app/enums/widget-name.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
-import { SystemInfoWithFeatures } from 'app/interfaces/events/sys-info-event.interface';
 import {
   NetworkInterface, NetworkInterfaceAlias,
   NetworkInterfaceState,
@@ -92,15 +91,9 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
     },
   };
 
-  // For widgetsysinfo
-  isHaLicensed: boolean;
-
-  // For CPU widget
-  systemInformation: SystemInfoWithFeatures;
-
   // For widgetpool
   pools: Pool[];
-  volumeData: VolumesData;
+  volumesData: VolumesData;
 
   nics: DashboardNetworkInterface[];
 
@@ -143,9 +136,7 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
         }
         this.nics = state.nics;
         this.pools = state.pools;
-        this.volumeData = state.volumesData;
-        this.systemInformation = state.sysInfoWithFeatures;
-        this.isHaLicensed = state.isHaLicensed;
+        this.volumesData = state.volumesData;
         this.setDashState(state.dashboardState);
       }),
       untilDestroyed(this),
@@ -156,6 +147,9 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
     // Restore top level scrolling
     const wrapper = document.querySelector<HTMLElement>('.fn-maincontent');
     wrapper.style.overflow = 'auto';
+
+    // update dashboard store with latest data
+    this.dashboardStore$.applyState(this.dashState);
   }
 
   onWidgetReorder(newState: DashConfigItem[]): void {
@@ -315,6 +309,7 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
   private setDashState(dashState: DashConfigItem[]): void {
     // TODO: Remove this method and use the store to update the state
     this.dashState = dashState;
+
     if (!this.reorderMode) {
       this.renderedWidgets = this.dashState.filter((widget) => widget.rendered);
     }

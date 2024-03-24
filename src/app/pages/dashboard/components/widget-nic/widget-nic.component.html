@@ -6,19 +6,18 @@
           <ng-content [select]="[cdkDragHandle]"></ng-content>
 
           <mat-toolbar-row [class]="'view-' + currentSlideName">
-            <!-- Mobile Only: Exit Widget -->
             <button
               *ngIf="currentSlide === '0'"
               mat-icon-button
               color="default"
               class="mat-card-title-text primary-nav"
               ixTest="nic-back"
+              [attr.aria-label]="'Go back' | translate"
               (click)="goBack(); updateSlide(path[previousSlide].name, true, previousSlide)"
             >
               <ix-icon name="chevron_left"></ix-icon>
             </button>
 
-            <!-- Back to previous slide -->
             <button
               *ngIf="currentSlide !== '0'"
               mat-icon-button
@@ -30,7 +29,7 @@
               <ix-icon name="chevron_left"></ix-icon>
             </button>
 
-            <h3 class="mat-card-title-text">
+            <h3 class="mat-card-title-text" [class.button-offset]="currentSlide !== '0'">
               <ix-drag-handle [showReorderHandle]="showReorderHandle">
                 <div class="card-title-text">
                   <span *ngIf="showReorderHandle" class="grip"></span>
@@ -42,28 +41,24 @@
             <div class="controls">
               <button
                 mat-icon-button
+                matTooltipPosition="above"
                 [ixTest]="['nic-widget', 'configure-interface', nicState.name]"
+                [attr.aria-label]="'Configure {name}' | translate: { name: nicState.name }"
+                [matTooltip]="'Configure {name}' | translate: { name: nicState.name }"
                 (click)="manageInterface(nicState)"
               >
-                <ix-icon
-                  name="edit"
-                  matTooltipPosition="above"
-                  aria-label="Configure Interface"
-                  [matTooltip]="'Configure {name}' | translate: { name: nicState.name }"
-                ></ix-icon>
+                <ix-icon name="edit"></ix-icon>
               </button>
 
               <button
                 mat-icon-button
+                matTooltipPosition="above"
+                [attr.aria-label]="'Network Reports' | translate"
+                [matTooltip]="'Network Reports' | translate"
                 [ixTest]="['nic-widget', 'network-reports', nicState.name]"
                 [routerLink]="['/reportsdashboard', 'network']"
               >
-                <ix-icon
-                  name="insert_chart"
-                  matTooltipPosition="above"
-                  [attr.aria-label]="'Network Reports' | translate"
-                  [matTooltip]="'Network Reports' | translate"
-                ></ix-icon>
+                <ix-icon name="insert_chart"></ix-icon>
               </button>
             </div>
           </mat-toolbar-row>
@@ -132,7 +127,6 @@
             <div class="right">
               <div class="right-content">
                 <div class="list-subheader">{{ 'Overview' | translate }}</div>
-                <ng-template #unknown>{{ 'Unknown' | translate }}</ng-template>
                 <mat-list>
                   <mat-list-item>
                     <strong>{{ 'Media Type' | translate }}:</strong>
@@ -273,3 +267,5 @@
     </mat-card>
   </div>
 </div>
+
+<ng-template #unknown>{{ 'Unknown' | translate }}</ng-template>

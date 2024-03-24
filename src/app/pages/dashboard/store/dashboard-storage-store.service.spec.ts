@@ -53,22 +53,22 @@ describe('DashboardStorageStoreService', () => {
             { name: 'pool2' },
           ],
           isLoading: false,
-          volumesData: {
-            dataset_id1: {
+          volumesData: new Map([
+            ['dataset_id1', {
               avail: 1024,
               id: 'dataset_id1',
               name: 'APPS',
               used: 1024,
               used_pct: '50%',
-            },
-            dataset_id2: {
+            }],
+            ['dataset_id2', {
               avail: 1024,
               id: 'dataset_id2',
               name: 'POOL',
               used: 512,
               used_pct: '33%',
-            },
-          },
+            }],
+          ]),
         },
       });
     });

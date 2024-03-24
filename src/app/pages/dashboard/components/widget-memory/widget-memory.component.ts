@@ -13,10 +13,9 @@ import {
   Chart, Color, ChartDataset, ChartOptions,
 } from 'chart.js';
 import { ChartConfiguration } from 'chart.js/dist/types';
-import { throttleTime } from 'rxjs/operators';
+import { filter, map, throttleTime } from 'rxjs/operators';
 import { GiB } from 'app/constants/bytes.constant';
 import { ThemeUtils } from 'app/core/classes/theme-utils/theme-utils';
-import { ScreenType } from 'app/enums/screen-type.enum';
 import { MemoryStatsEventData } from 'app/interfaces/events/memory-stats-event.interface';
 import { WidgetComponent } from 'app/pages/dashboard/components/widget/widget.component';
 import { WidgetMemoryData } from 'app/pages/dashboard/interfaces/widget-data.interface';
@@ -37,16 +36,15 @@ import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class WidgetMemoryComponent extends WidgetComponent implements OnInit {
-  protected ecc = false;
+  protected ecc$ = this.store$.pipe(waitForSystemInfo, map((sysInfo) => sysInfo.ecc_memory));
+  protected isMobile$ = this.breakpointObserver.observe([Breakpoints.XSmall]).pipe(map((state) => state.matches));
 
   chart: Chart<'doughnut'>;
   isReady = false;
   subtitle: string = this.translate.instant('% of all cores');
   colorPattern: string[];
   labels: string[] = [this.translate.instant('Free'), this.translate.instant('ZFS Cache'), this.translate.instant('Services')];
-  screenType = ScreenType.Desktop;
   memData: WidgetMemoryData;
-  readonly ScreenType = ScreenType;
   private utils: ThemeUtils;
 
   constructor(
@@ -66,30 +64,13 @@ export class WidgetMemoryComponent extends WidgetComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.breakpointObserver
-      .observe([Breakpoints.XSmall])
-      .pipe(untilDestroyed(this))
-      .subscribe((state) => {
-        this.screenType = state.matches ? ScreenType.Mobile : ScreenType.Desktop;
-        this.cdr.markForCheck();
-      });
-
-    this.store$.pipe(waitForSystemInfo, untilDestroyed(this)).subscribe({
-      next: (sysInfo) => {
-        this.ecc = sysInfo.ecc_memory;
-        this.cdr.markForCheck();
-      },
-    });
-
     this.resourcesUsageStore$.virtualMemoryUsage$.pipe(
       throttleTime(500),
       deepCloneState(),
+      filter((update) => Boolean(update?.used)),
       untilDestroyed(this),
     ).subscribe({
       next: (update) => {
-        if (!update?.used) {
-          return;
-        }
         this.setMemData(update);
         this.renderChart();
         this.cdr.markForCheck();
@@ -137,8 +118,9 @@ export class WidgetMemoryComponent extends WidgetComponent implements OnInit {
       this.updateChart(this.chart);
     }
   }
+
   initChart(): Chart<'doughnut'> {
-    const el: HTMLCanvasElement = this.el.nativeElement.querySelector('#memory-usage-chart canvas');
+    const el: HTMLCanvasElement = this.el.nativeElement.querySelector('.memory-usage-chart canvas');
     if (!el) {
       return undefined;
     }
