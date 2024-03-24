@@ -419,12 +419,6 @@ body .mdc-card__actions,
       z-index: 0;
     }
   }
-
-  button.mat-card-title-text.primary-nav {
-    @media(max-width: $breakpoint-sm) {
-      position: absolute;
-    }
-  }
 }
 
 .mat-mdc-card .mat-toolbar-row .actions {

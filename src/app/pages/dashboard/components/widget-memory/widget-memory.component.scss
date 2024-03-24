@@ -10,7 +10,7 @@
   place-content: center space-around;
 }
 
-#memory-legend {
+.memory-legend {
   display: flex;
   flex-basis: 100%;
   flex-flow: row wrap;
@@ -44,20 +44,12 @@
   width: 100%;
 }
 
-#memory-legend-values {
+.memory-legend-values {
   margin: 16px 0 16px 16px;
   width: 100%;
 }
 
-#memory-values {
-  width: 100%;
-
-  .temperature {
-    text-align: right;
-  }
-}
-
-#memory-usage-chart {
+.memory-usage-chart {
   box-sizing: border-box;
   flex: 1 1 55%;
   height: 260px;
@@ -71,7 +63,7 @@
   }
 }
 
-.xs.widget #memory-usage-chart {
+.xs.widget .memory-usage-chart {
   flex: 1 1 100%;
   max-width: 100%;
 }
@@ -195,7 +187,7 @@ h1.memory-used span.memory-used-units {
   border-bottom: solid 1px rgba(0, 0, 0, 0.1);
 }
 
-.xs.widget #memory-legend {
+.xs.widget .memory-legend {
   flex-direction: column;
 
   .legend-item {

@@ -42,8 +42,6 @@ interface NicInfo {
   emptyConfig?: EmptyConfig;
 }
 
-type NicInfoMap = Record<string, NicInfo>;
-
 @UntilDestroy()
 @Component({
   selector: 'ix-widget-network',
@@ -58,7 +56,7 @@ export class WidgetNetworkComponent extends WidgetComponent implements OnInit, A
   readonly emptyTypes = EmptyType;
   protected readonly LinkState = LinkState;
 
-  nicInfoMap: NicInfoMap = {};
+  nicInfoMap = new Map<string, NicInfo>();
   paddingX = 16;
   paddingTop = 16;
   paddingBottom = 16;
@@ -214,10 +212,9 @@ export class WidgetNetworkComponent extends WidgetComponent implements OnInit, A
         throttleTime(500),
         untilDestroyed(this),
       ).subscribe((usageUpdate: NetworkInterfaceUpdate) => {
-        const nicName = nic.name;
         this.networkInterfaceUpdate.set(nic.name, usageUpdate);
-        if (nicName in this.nicInfoMap) {
-          const nicInfo = this.nicInfoMap[nicName];
+        if (this.nicInfoMap.has(nic.name)) {
+          const nicInfo = this.nicInfoMap.get(nic.name);
           if (usageUpdate.link_state) {
             nicInfo.state = usageUpdate.link_state;
           }
@@ -262,8 +259,9 @@ export class WidgetNetworkComponent extends WidgetComponent implements OnInit, A
   }
 
   updateMapInfo(): void {
+    this.nicInfoMap.clear();
     this.availableNics.forEach((nic: BaseNetworkInterface) => {
-      this.nicInfoMap[nic.state.name] = {
+      this.nicInfoMap.set(nic.state.name, {
         ip: this.getIpAddress(nic),
         state: this.getLinkState(nic),
         bitsIn: 0,
@@ -272,7 +270,7 @@ export class WidgetNetworkComponent extends WidgetComponent implements OnInit, A
         bitsLastReceived: 0,
         chartData: null,
         emptyConfig: this.loadingEmptyConfig,
-      };
+      });
     });
   }
 
@@ -343,8 +341,8 @@ export class WidgetNetworkComponent extends WidgetComponent implements OnInit, A
   }
 
   getLinkState(nic: BaseNetworkInterface): LinkState {
-    if (nic.state.name in this.nicInfoMap) {
-      return this.nicInfoMap[nic.state.name].state || LinkState.Down;
+    if (this.nicInfoMap.has(nic.state.name)) {
+      return this.nicInfoMap.get(nic.state.name).state || LinkState.Down;
     }
 
     return nic.state.link_state;
@@ -416,11 +414,14 @@ export class WidgetNetworkComponent extends WidgetComponent implements OnInit, A
             ],
           };
 
-          this.nicInfoMap[networkInterfaceName].chartData = chartData;
+          this.nicInfoMap.set(networkInterfaceName, { ...this.nicInfoMap.get(networkInterfaceName), chartData });
           this.cdr.markForCheck();
         },
         error: (err: WebSocketError) => {
-          this.nicInfoMap[networkInterfaceName].emptyConfig = this.chartDataError(err, nic);
+          this.nicInfoMap.set(networkInterfaceName, {
+            ...this.nicInfoMap.get(networkInterfaceName),
+            emptyConfig: this.chartDataError(err, nic),
+          });
           this.cdr.markForCheck();
         },
       });
@@ -444,7 +445,10 @@ export class WidgetNetworkComponent extends WidgetComponent implements OnInit, A
               message: `${errorMessage}<br/>${helpMessage}`,
               buttonText: this.translate.instant('Clear'),
             }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
-              this.nicInfoMap[nic.state.name].emptyConfig = this.loadingEmptyConfig;
+              this.nicInfoMap.set(nic.state.name, {
+                ...this.nicInfoMap.get(nic.state.name),
+                emptyConfig: this.loadingEmptyConfig,
+              });
               this.cdr.markForCheck();
               this.ws.call('reporting.clear').pipe(take(1), untilDestroyed(this)).subscribe();
             });
@@ -463,15 +467,13 @@ export class WidgetNetworkComponent extends WidgetComponent implements OnInit, A
 
   getChartBodyClasses(nic: BaseNetworkInterface): string[] {
     const classes = [];
+    const nicConfig = this.nicInfoMap.get(nic.state.name);
 
-    if (this.nicInfoMap[nic.state.name].emptyConfig.type === this.emptyTypes.Errors) {
+    if (nicConfig.emptyConfig.type === this.emptyTypes.Errors) {
       classes.push('chart-body-errors');
     }
 
-    if (
-      this.nicInfoMap[nic.state.name].emptyConfig.type === this.emptyTypes.Loading
-      && !this.nicInfoMap[nic.state.name].chartData
-    ) {
+    if (nicConfig.emptyConfig.type === this.emptyTypes.Loading && !nicConfig.chartData) {
       classes.push('chart-body-loading');
     }
 
