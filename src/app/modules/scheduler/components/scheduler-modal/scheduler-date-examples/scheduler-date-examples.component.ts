@@ -23,6 +23,7 @@ export class SchedulerDateExamplesComponent implements OnChanges {
     this.scheduleExamples = this.cronPreview.listNextRunsInMonth(
       this.startDate,
       this.maxExamples + 1,
+      this.machineTimezone,
     );
   }
 }
