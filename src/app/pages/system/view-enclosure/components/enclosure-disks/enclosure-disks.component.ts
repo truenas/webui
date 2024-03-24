@@ -708,10 +708,10 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
       case 'R50BM':
         extractedChassis = new R50Bm();
         break;
+      case 'M Series':
       case 'M40 Series':
       case 'M50 Series':
       case 'M60 Series':
-      case 'M Series':
         extractedChassis = new M50();
         break;
       case 'X Series':
