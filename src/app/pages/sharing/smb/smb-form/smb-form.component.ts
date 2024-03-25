@@ -3,16 +3,10 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
-  ElementRef,
   Inject,
   OnInit,
-  QueryList,
-  ViewChild,
-  ViewChildren,
 } from '@angular/core';
-import {
-  Validators, FormBuilder, FormGroup, FormGroupDirective,
-} from '@angular/forms';
+import { Validators, FormBuilder } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -58,7 +52,6 @@ import { WebSocketService } from 'app/services/ws.service';
 import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
 import { ServicesState } from 'app/store/services/services.reducer';
 import { selectService } from 'app/store/services/services.selectors';
-import { IxFormDirective } from '../../../../modules/ix-forms/components/ix-form/ix-form.directive';
 
 @UntilDestroy()
 @Component({
@@ -428,11 +421,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
       });
   }
 
-  @ViewChild(FormGroupDirective) formGroup: ElementRef<FormGroupDirective>;
-  @ViewChild(IxFormDirective) ixForm: ElementRef<IxFormDirective>;
-
   submit(): void {
-    console.log('!!!', { e: this.formGroup, f: this.ixForm })
     this.isLoading = true;
     this.cdr.markForCheck();
     const smbShare = this.form.value;

@@ -1,12 +1,13 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, Input, ViewContainerRef,
+  AfterViewInit,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnDestroy,
 } from '@angular/core';
 import {
   ControlValueAccessor, NgControl,
 } from '@angular/forms';
 import { MatCheckboxChange } from '@angular/material/checkbox';
 import { UntilDestroy } from '@ngneat/until-destroy';
-import { IxFormControl, IxFormDirective } from '../ix-form/ix-form.directive';
+import { IxFormService } from 'app/modules/ix-forms/services/ix-form.service';
 
 @UntilDestroy()
 @Component({
@@ -15,7 +16,7 @@ import { IxFormControl, IxFormDirective } from '../ix-form/ix-form.directive';
   templateUrl: './ix-checkbox.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class IxCheckboxComponent extends IxFormControl implements ControlValueAccessor {
+export class IxCheckboxComponent implements ControlValueAccessor, AfterViewInit, OnDestroy {
   @Input() label: string;
   @Input() hint: string;
   @Input() tooltip: string;
@@ -28,12 +29,17 @@ export class IxCheckboxComponent extends IxFormControl implements ControlValueAc
   constructor(
     public controlDirective: NgControl,
     private cdr: ChangeDetectorRef,
-    elementRef: ElementRef<HTMLElement>,
-    viewContainerRef: ViewContainerRef,
-    ixFormDirective: IxFormDirective,
+    private ixFormService: IxFormService,
   ) {
-    super(elementRef, viewContainerRef, ixFormDirective);
     this.controlDirective.valueAccessor = this;
+  }
+
+  ngAfterViewInit(): void {
+    this.ixFormService.registerControl(this.controlDirective);
+  }
+
+  ngOnDestroy(): void {
+    this.ixFormService.unregisterControl(this.controlDirective);
   }
 
   onChange: (value: boolean) => void = (): void => {};

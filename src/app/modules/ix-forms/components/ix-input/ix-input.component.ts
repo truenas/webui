@@ -1,4 +1,5 @@
 import {
+  AfterViewInit,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
@@ -6,10 +7,10 @@ import {
   EventEmitter,
   Input,
   OnChanges,
+  OnDestroy,
   OnInit,
   Output,
   ViewChild,
-  ViewContainerRef,
 } from '@angular/core';
 import {
   ControlValueAccessor,
@@ -20,7 +21,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { debounceTime, distinctUntilChanged } from 'rxjs';
 import { Option } from 'app/interfaces/option.interface';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
-import { IxFormControl, IxFormDirective } from '../ix-form/ix-form.directive';
+import { IxFormService } from 'app/modules/ix-forms/services/ix-form.service';
 
 @UntilDestroy()
 @Component({
@@ -29,7 +30,7 @@ import { IxFormControl, IxFormDirective } from '../ix-form/ix-form.directive';
   styleUrls: ['./ix-input.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class IxInputComponent extends IxFormControl implements ControlValueAccessor, OnInit, OnChanges {
+export class IxInputComponent implements ControlValueAccessor, OnInit, OnChanges, AfterViewInit, OnDestroy {
   @Input() label: string;
   @Input() placeholder: string;
   @Input() prefixIcon: string;
@@ -70,11 +71,8 @@ export class IxInputComponent extends IxFormControl implements ControlValueAcces
     public controlDirective: NgControl,
     private translate: TranslateService,
     private cdr: ChangeDetectorRef,
-    elementRef: ElementRef<HTMLElement>,
-    viewContainerRef: ViewContainerRef,
-    ixFormDirective: IxFormDirective,
+    private ixFormService: IxFormService,
   ) {
-    super(elementRef, viewContainerRef, ixFormDirective);
     this.controlDirective.valueAccessor = this;
   }
 
@@ -88,6 +86,14 @@ export class IxInputComponent extends IxFormControl implements ControlValueAcces
     if (this.autocompleteOptions) {
       this.handleAutocompleteOptionsOnInit();
     }
+  }
+
+  ngAfterViewInit(): void {
+    this.ixFormService.registerControl(this.controlDirective);
+  }
+
+  ngOnDestroy(): void {
+    this.ixFormService.unregisterControl(this.controlDirective);
   }
 
   get value(): string | number {

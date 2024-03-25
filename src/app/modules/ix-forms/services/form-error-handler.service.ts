@@ -4,6 +4,7 @@ import { ResponseErrorType } from 'app/enums/response-error-type.enum';
 import { Job } from 'app/interfaces/job.interface';
 import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { IxFormService } from 'app/modules/ix-forms/services/ix-form.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 
 @Injectable({ providedIn: 'root' })
@@ -11,6 +12,7 @@ export class FormErrorHandlerService {
   constructor(
     private dialog: DialogService,
     private errorHandler: ErrorHandlerService,
+    private ixFormService: IxFormService,
   ) {}
 
   /**
@@ -53,8 +55,9 @@ export class FormErrorHandlerService {
       const errorMessage = extraItem[1];
 
       let control = this.getFormField(formGroup, field, fieldsMap);
+      const controlNames = this.ixFormService.getControls().map((ctrl) => ctrl.name);
 
-      if (!control) {
+      if (!control || !controlNames.includes(field)) {
         console.error(`Could not find control ${field}.`);
         // Fallback to default modal error message.
         this.dialog.error(this.errorHandler.parseError(error));
