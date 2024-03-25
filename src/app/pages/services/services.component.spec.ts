@@ -1,7 +1,6 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { FormsModule } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatSlideToggleHarness } from '@angular/material/slide-toggle/testing';
 import { Router } from '@angular/router';
 import {
@@ -109,7 +108,7 @@ describe('ServicesComponent', () => {
       jest.spyOn(router, 'navigate').mockResolvedValue(true);
 
       const serviceIndex = fakeDataSource.findIndex((item) => item.service === ServiceName.Iscsi) + 1;
-      const editButton = await table.getHarnessInCell(MatButtonHarness, serviceIndex, 3);
+      const editButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'edit' }), serviceIndex, 3);
       await editButton.click();
 
       expect(router.navigate).toHaveBeenCalledWith(['/sharing', 'iscsi']);
@@ -117,7 +116,7 @@ describe('ServicesComponent', () => {
 
     it('should open FTP configuration when edit button is pressed', async () => {
       const serviceIndex = fakeDataSource.findIndex((item) => item.service === ServiceName.Ftp) + 1;
-      const editButton = await table.getHarnessInCell(MatButtonHarness, serviceIndex, 3);
+      const editButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'edit' }), serviceIndex, 3);
       await editButton.click();
 
       expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(ServiceFtpComponent, { wide: true });
@@ -125,7 +124,7 @@ describe('ServicesComponent', () => {
 
     it('should open NFS configuration when edit button is pressed', async () => {
       const serviceIndex = fakeDataSource.findIndex((item) => item.service === ServiceName.Nfs) + 1;
-      const editButton = await table.getHarnessInCell(MatButtonHarness, serviceIndex, 3);
+      const editButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'edit' }), serviceIndex, 3);
       await editButton.click();
 
       expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(ServiceNfsComponent, { wide: true });
@@ -133,7 +132,7 @@ describe('ServicesComponent', () => {
 
     it('should open SNMP configuration when edit button is pressed', async () => {
       const serviceIndex = fakeDataSource.findIndex((item) => item.service === ServiceName.Snmp) + 1;
-      const editButton = await table.getHarnessInCell(MatButtonHarness, serviceIndex, 3);
+      const editButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'edit' }), serviceIndex, 3);
       await editButton.click();
 
       expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(ServiceSnmpComponent, { wide: true });
@@ -141,7 +140,7 @@ describe('ServicesComponent', () => {
 
     it('should open UPS configuration when edit button is pressed', async () => {
       const serviceIndex = fakeDataSource.findIndex((item) => item.service === ServiceName.Ups) + 1;
-      const editButton = await table.getHarnessInCell(MatButtonHarness, serviceIndex, 3);
+      const editButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'edit' }), serviceIndex, 3);
       await editButton.click();
 
       expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(ServiceUpsComponent, { wide: true });
@@ -149,7 +148,7 @@ describe('ServicesComponent', () => {
 
     it('should open SSH configuration when edit button is pressed', async () => {
       const serviceIndex = fakeDataSource.findIndex((item) => item.service === ServiceName.Ssh) + 1;
-      const editButton = await table.getHarnessInCell(MatButtonHarness, serviceIndex, 3);
+      const editButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'edit' }), serviceIndex, 3);
       await editButton.click();
 
       expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(ServiceSshComponent);
@@ -157,7 +156,7 @@ describe('ServicesComponent', () => {
 
     it('should open SMB configuration when edit button is pressed', async () => {
       const serviceIndex = fakeDataSource.findIndex((item) => item.service === ServiceName.Cifs) + 1;
-      const editButton = await table.getHarnessInCell(MatButtonHarness, serviceIndex, 3);
+      const editButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'edit' }), serviceIndex, 3);
       await editButton.click();
 
       expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(ServiceSmbComponent);
@@ -165,7 +164,7 @@ describe('ServicesComponent', () => {
 
     it('should open S.M.A.R.T. configuration when edit button is pressed', async () => {
       const serviceIndex = fakeDataSource.findIndex((item) => item.service === ServiceName.Smart) + 1;
-      const editButton = await table.getHarnessInCell(MatButtonHarness, serviceIndex, 3);
+      const editButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'edit' }), serviceIndex, 3);
       await editButton.click();
 
       expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(ServiceSmartComponent);
