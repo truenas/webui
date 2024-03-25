@@ -38,6 +38,7 @@ import * as ts from 'typescript';
 import * as fs from 'fs';
 import { Role } from '../src/app/enums/role.enum';
 import { generateIdFromHierarchy } from '../src/app/modules/global-search/helpers/generate-id-from-hierarchy';
+import { GlobalSearchSection } from '../src/app/modules/global-search/enums/global-search-section';
 import { UiSearchableElement } from 'app/modules/global-search/interfaces/ui-searchable-element.interface';
 const glob = require('glob');
 
@@ -167,7 +168,8 @@ function parseHtmlFile(
       routerLink,
       anchorRouterLink,
       anchor,
-      triggerAnchor
+      triggerAnchor,
+      section: GlobalSearchSection.Ui
     });
   });
 
