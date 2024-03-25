@@ -10,7 +10,7 @@ import { ReplicationConfig } from 'app/interfaces/replication-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ChainedRef } from 'app/modules/ix-forms/components/ix-slide-in/chained-component-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { elements } from 'app/pages/system/advanced/replication/replication-settings-form/replication-settings-form.elements';
+import { replicationSettingsFormElements } from 'app/pages/system/advanced/replication/replication-settings-form/replication-settings-form.elements';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -21,7 +21,7 @@ import { WebSocketService } from 'app/services/ws.service';
 })
 export class ReplicationSettingsFormComponent implements OnInit {
   protected requiredRoles = [Role.ReplicationTaskConfigWrite];
-  protected readonly searchElements = elements;
+  protected readonly searchElements = replicationSettingsFormElements;
 
   isFormLoading = false;
   form = this.fb.group({

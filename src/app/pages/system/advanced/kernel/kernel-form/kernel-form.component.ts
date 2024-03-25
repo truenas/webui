@@ -10,7 +10,7 @@ import { helptextSystemAdvanced } from 'app/helptext/system/advanced';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ChainedRef } from 'app/modules/ix-forms/components/ix-slide-in/chained-component-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { elements } from 'app/pages/system/advanced/kernel/kernel-form/kernel-form.elements';
+import { kernelFormElements } from 'app/pages/system/advanced/kernel/kernel-form/kernel-form.elements';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
@@ -23,7 +23,7 @@ import { advancedConfigUpdated } from 'app/store/system-config/system-config.act
 })
 export class KernelFormComponent implements OnInit {
   protected requiredRoles = [Role.FullAdmin];
-  protected readonly searchElements = elements;
+  protected readonly searchElements = kernelFormElements;
 
   isFormLoading = false;
   form = this.fb.group({

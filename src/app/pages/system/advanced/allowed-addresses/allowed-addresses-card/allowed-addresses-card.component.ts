@@ -14,7 +14,7 @@ import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells
 import { createTable } from 'app/modules/ix-table2/utils';
 import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
 import { AdvancedSettingsService } from 'app/pages/system/advanced/advanced-settings.service';
-import { elements } from 'app/pages/system/advanced/allowed-addresses/allowed-addresses-card/allowed-addresses-card.elements';
+import { allowedAddressesCardElements } from 'app/pages/system/advanced/allowed-addresses/allowed-addresses-card/allowed-addresses-card.elements';
 import {
   AllowedAddressesFormComponent,
 } from 'app/pages/system/advanced/allowed-addresses/allowed-addresses-form/allowed-addresses-form.component';
@@ -36,7 +36,7 @@ interface AllowedAddressRow {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AllowedAddressesCardComponent implements OnInit {
-  protected readonly searchElements = elements;
+  protected readonly searchElements = allowedAddressesCardElements;
 
   dataProvider: AsyncDataProvider<AllowedAddressRow>;
 

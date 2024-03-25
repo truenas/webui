@@ -13,7 +13,7 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ChainedRef } from 'app/modules/ix-forms/components/ix-slide-in/chained-component-ref';
 import { matchOthersFgValidator } from 'app/modules/ix-forms/validators/password-validation/password-validation';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { elements } from 'app/pages/system/advanced/self-encrypting-drive/self-encrypting-drive-form/self-encrypting-drive-form.elements';
+import { selfEncryptingDriveFormElements } from 'app/pages/system/advanced/self-encrypting-drive/self-encrypting-drive-form/self-encrypting-drive-form.elements';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
@@ -32,7 +32,7 @@ export interface SedConfig {
 })
 export class SelfEncryptingDriveFormComponent implements OnInit {
   protected requiredRoles = [Role.FullAdmin];
-  protected readonly searchElements = elements;
+  protected readonly searchElements = selfEncryptingDriveFormElements;
 
   isFormLoading = false;
   title = helptextSystemAdvanced.fieldset_sed;

@@ -11,4 +11,5 @@ export interface UiSearchableElement {
   requiredRoles?: Role[];
   routerLink?: string[];
   targetHref?: string;
+  elements?: Record<string, UiSearchableElement>;
 }

@@ -7,14 +7,32 @@
  *
  * 2️⃣. Create .elements.ts config file near the .component.html file ~ [pools-dashboard.elements.ts]
  *
- * File content example:
- * export const elements: Record<string, UiSearchableElement> = {
-    importPool: {
-      hierarchy: [T('Storage'), T('Import Pool')], // use T('') to mark the text for translation
-      synonyms: [T('Add Pool')],
-      anchorRouterLink: ['/storage'],
+ * File content example with parent element & data which will be shared/merged to all child elements:
+  export const nestedElementsWithParentPropertiesSharedToChild = {
+    hierarchy: [T('System Settings'), T('Advanced'), T('Access')],
+    anchorRouterLink: ['/system', 'advanced'],
+    elements: {
+      configureAccess: {
+        hierarchy: [T('Configure')],
+        synonyms: [T('Configure Sessions')],
+      },
+      terminateOtherSessions: {
+        hierarchy: [T('Terminate Other Sessions')],
+        synonyms: [T('Terminate Other User Sessions')],
+      },
     },
   }
+
+  As well we can define single element data
+
+  export const singleSettingsExampleElements = {
+    theme: {
+      hierarchy: [T('System Settings'), T('General'), T('GUI'), T('Theme')],
+      synonyms: [],
+      triggerAnchor: 'gui-settings',
+      anchorRouterLink: ['/system', 'general'],
+    },
+  };
  *
  * 3️⃣. Provide config to the element [ixSearchConfig]="searchElements.importPool"
  *
@@ -41,6 +59,10 @@ import { generateIdFromHierarchy } from '../src/app/modules/global-search/helper
 import { GlobalSearchSection } from '../src/app/modules/global-search/enums/global-search-section';
 import { UiSearchableElement } from 'app/modules/global-search/interfaces/ui-searchable-element.interface';
 const glob = require('glob');
+const path = require('path');
+
+(global as any).T = (input: string) => input;
+(global as any).Role = Role;
 
 interface ComponentProperties {
   [propertyName: string]: string;
@@ -53,12 +75,10 @@ enum TsExtraction {
 
 let uiElements: UiSearchableElement[] = [];
 
-function formatArrayItems(inputText: string): string[] {
+function parseRouterLink(inputText: string): string[] {
   let trimmed = inputText?.trim()?.slice(1, -1);
   return trimmed?.split(',')
-    ?.map((keyword) => extractTextFromTFunction(keyword)
-    ?.trim()
-    ?.replace(/^'(.*)'$/, '$1'))
+    ?.map((keyword) => keyword?.trim()?.replace(/^'(.*)'$/, '$1'))
     ?.filter(Boolean);
 }
 
@@ -72,7 +92,7 @@ function extractTsFileContent(filePath: string, extractionType: TsExtraction): s
   function visit(node: ts.Node) {
     if (extractionType === TsExtraction.ElementsConfig && ts.isVariableStatement(node)) {
       node.declarationList.declarations.forEach((declaration) => {
-        if (ts.isVariableDeclaration(declaration) && declaration.name.getText(sourceFile) === 'elements') {
+        if (ts.isVariableDeclaration(declaration) && declaration.name.getText(sourceFile)) {
           const initializer = declaration.initializer;
           if (initializer) {
             extractedElements = initializer.getText(sourceFile);
@@ -96,28 +116,6 @@ function extractTsFileContent(filePath: string, extractionType: TsExtraction): s
   return extractionType === TsExtraction.ClassProperties ? properties : extractedElements;
 }
 
-function extractDynamicValue(dataString: string, key: string, property: string): string {
-  const escapedKey = key.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-  const escapedProperty = property.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-  const pattern = new RegExp(`${escapedKey}:\\s*{[^}]*${escapedProperty}:\\s*(\\[[^\\]]*\\]|'[^']*'|\\{[^}]*\\})`);
-  const match = dataString.match(pattern);
-
-  if (match && match[1]) {
-    return match[1]?.replace(/^['"]+|['"]+$/g, '');
-  } else {
-    return null;
-  }
-}
-
-function extractTextFromTFunction(inputText: string): string {
-  const regex = /T\('([^']+)'\)/;
-  const match = inputText.match(regex);
-  if (match && match[1]) {
-    return match[1].trim();
-  }
-  return inputText;
-}
-
 function findComponentFiles(pattern: string): Promise<string[]> {
   return new Promise((resolve, reject) => {
     glob(pattern, (error: Error, files: string[] | PromiseLike<string[]>) => {
@@ -134,6 +132,11 @@ function parseRoles(rolesValue: string): Role[] {
   return roleNames.map(roleName => Role[roleName.split('.')[1] as keyof typeof Role]).filter(Boolean);
 }
 
+// convert string config to an actual object
+function convertDataStringToDataObject(dataString: string): any {
+  return eval(`(${dataString})`);
+}
+
 function parseHtmlFile(
   filePath: string,
   elementConfig: string,
@@ -144,36 +147,69 @@ function parseHtmlFile(
   const elements: UiSearchableElement[] = [];
 
   $('[ixUiSearchableElement]').each((_, element) => {
-    const key = $(element).attr('[ixsearchconfig]').split('.')[1];
+    const configKeysSplitted = $(element).attr('[ixsearchconfig]').split('.');
+    const childKey = configKeysSplitted[configKeysSplitted.length - 1] as string;
+    const parentKey = configKeysSplitted[configKeysSplitted.length - 3];
+    const configObject = convertDataStringToDataObject(elementConfig);
 
-    const routerLink = formatArrayItems($(element).attr('[routerlink]')) ?? null;
-    const hierarchy = formatArrayItems(extractDynamicValue(elementConfig, key, 'hierarchy')) ?? [];
-    const synonyms = formatArrayItems(extractDynamicValue(elementConfig, key, 'synonyms')) ?? [];
-    const anchorRouterLink = formatArrayItems(extractDynamicValue(elementConfig, key, 'anchorRouterLink')) ?? [];
-    const anchor = generateIdFromHierarchy(hierarchy);
-    const triggerAnchor = extractDynamicValue(elementConfig, key, 'triggerAnchor');
+    let mergedElement;
 
-    const rolesAttrName = $(element).attr('*ixrequiresroles') || extractDynamicValue(elementConfig, key, 'requiredRoles') || '';
-
-    let requiredRoles = parseRoles(rolesAttrName);
-
-    if (rolesAttrName && componentProperties[rolesAttrName]) {
-      requiredRoles = parseRoles(componentProperties[rolesAttrName])
+    if (configKeysSplitted?.[configKeysSplitted.length - 2] === TsExtraction.ElementsConfig) {
+      mergedElement = mergeElementsData($, element, configObject, parentKey, childKey, componentProperties);
+    } else {
+      mergedElement = mergeElementsData($, element, configObject, childKey, null, componentProperties);
     }
 
-    elements.push({
-      hierarchy,
-      synonyms,
-      requiredRoles,
-      routerLink,
-      anchorRouterLink,
-      anchor,
-      triggerAnchor,
-      section: GlobalSearchSection.Ui
-    });
+    if (mergedElement) {
+      elements.push(mergedElement);
+    }
   });
 
   return elements;
+}
+
+function mergeElementsData(
+  $: cheerio.Root,
+  element: cheerio.Element,
+  elementConfig: any,
+  parentKey: string,
+  childKey: string,
+  componentProperties: ComponentProperties
+): UiSearchableElement {
+  try {
+    const parent = elementConfig?.[parentKey] || elementConfig;
+    const child = parent?.elements?.[childKey] || {};
+
+    const hierarchy = [...(parent?.hierarchy || []), ...(child?.hierarchy || [])];
+    const synonyms = [...(parent?.synonyms || []), ...(child?.synonyms || [])];
+    const anchorRouterLink = parent?.anchorRouterLink || child?.anchorRouterLink;
+    const triggerAnchor = parent?.triggerAnchor || child?.triggerAnchor || null;
+    const routerLink = parseRouterLink($(element).attr('[routerlink]')) ?? null;
+    let requiredRoles = parent.requiredRoles || child.requiredRoles || [];
+
+    const rolesAttrName = $(element).attr('*ixrequiresroles') || '';
+
+    if (rolesAttrName) {
+      requiredRoles = parseRoles(rolesAttrName);
+
+      if (componentProperties[rolesAttrName]) {
+        requiredRoles = parseRoles(componentProperties[rolesAttrName])
+      }
+    }
+
+    return {
+      hierarchy,
+      synonyms,
+      requiredRoles,
+      anchorRouterLink,
+      routerLink,
+      anchor: generateIdFromHierarchy(child.hierarchy || parent.hierarchy),
+      triggerAnchor,
+      section: GlobalSearchSection.Ui,
+    };
+  } catch (err) {
+    console.log(`Error extracting ${childKey}/${parentKey}`);
+  }
 }
 
 async function extractUiSearchableElements(): Promise<void> {
