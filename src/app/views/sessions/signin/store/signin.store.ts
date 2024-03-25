@@ -25,6 +25,7 @@ import { WebSocketService } from 'app/services/ws.service';
 interface SigninState {
   isLoading: boolean;
   wasAdminSet: boolean;
+  managedByTrueCommand: boolean;
   failover: {
     status: FailoverStatus;
     ips?: string[];
@@ -34,6 +35,7 @@ interface SigninState {
 
 const initialState: SigninState = {
   isLoading: false,
+  managedByTrueCommand: false,
   wasAdminSet: true,
   failover: null,
 };
@@ -41,6 +43,7 @@ const initialState: SigninState = {
 @UntilDestroy()
 @Injectable()
 export class SigninStore extends ComponentStore<SigninState> {
+  managedByTrueCommand$ = this.select((state) => state.managedByTrueCommand);
   wasAdminSet$ = this.select((state) => state.wasAdminSet);
   failover$ = this.select((state) => state.failover);
   isLoading$ = this.select((state) => state.isLoading);
@@ -81,6 +84,7 @@ export class SigninStore extends ComponentStore<SigninState> {
     switchMap(() => {
       return forkJoin([
         this.checkIfAdminPasswordSet(),
+        this.checkIfManagedByTrueCommand(),
         this.loadFailoverStatus(),
         this.updateService.hardRefreshIfNeeded(),
         // TODO: This is a hack to keep existing code working. Ideally it shouldn't be here.
@@ -168,6 +172,12 @@ export class SigninStore extends ComponentStore<SigninState> {
     }
 
     return '/dashboard';
+  }
+
+  private checkIfManagedByTrueCommand(): Observable<boolean> {
+    return this.ws.call('truenas.managed_by_truecommand').pipe(
+      tap((managedByTrueCommand) => this.patchState({ managedByTrueCommand })),
+    );
   }
 
   private checkIfAdminPasswordSet(): Observable<boolean> {

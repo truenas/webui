@@ -13,7 +13,6 @@ import { ScreenType } from 'app/enums/screen-type.enum';
 import { WidgetName } from 'app/enums/widget-name.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
-import { SystemInfoWithFeatures } from 'app/interfaces/events/sys-info-event.interface';
 import {
   NetworkInterface, NetworkInterfaceAlias,
   NetworkInterfaceState,
@@ -92,15 +91,9 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
     },
   };
 
-  // For widgetsysinfo
-  isHaLicensed: boolean;
-
-  // For CPU widget
-  systemInformation: SystemInfoWithFeatures;
-
   // For widgetpool
   pools: Pool[];
-  volumeData: VolumesData;
+  volumesData: VolumesData;
 
   nics: DashboardNetworkInterface[];
 
@@ -143,9 +136,7 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
         }
         this.nics = state.nics;
         this.pools = state.pools;
-        this.volumeData = state.volumesData;
-        this.systemInformation = state.sysInfoWithFeatures;
-        this.isHaLicensed = state.isHaLicensed;
+        this.volumesData = state.volumesData;
         this.setDashState(state.dashboardState);
       }),
       untilDestroyed(this),

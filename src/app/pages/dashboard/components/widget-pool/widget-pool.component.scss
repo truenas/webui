@@ -1,3 +1,5 @@
+@import 'scss-imports/cssvars';
+
 .widget mat-card-content {
   width: 100%;
 }
@@ -5,7 +7,6 @@
 .widget mat-toolbar-row {
   background: unset;
   border: none;
-
   font-size: 1.5rem;
   height: 48px;
   line-height: 180%;
@@ -13,19 +14,24 @@
   text-align: left;
   width: 100%;
 
-  * {
-    z-index: 99;
-  }
-
   &.view-overview {
     padding: 0 16px;
-  }
-}
 
-.xs.widget mat-toolbar-row.view-overview .controls,
-.widget mat-toolbar-row.view-overview .primary-nav {
-  color: #efefef; /* Dont use CSS var here as it is over a dark image*/
-  font-family: var(--font-family-body);
+    .mat-card-title-text {
+      z-index: 99;
+    }
+  }
+
+  @media #{$media-sm} {
+    h3.mat-card-title-text {
+      margin: 0;
+      max-width: 100%;
+    }
+  }
+
+  .controls {
+    z-index: 99;
+  }
 }
 
 .carousel {
