@@ -14,4 +14,4 @@ export interface VolumeData {
   vol_name?: string;
 }
 
-export type VolumesData = Record<string, VolumeData>;
+export type VolumesData = Map<string, VolumeData>;

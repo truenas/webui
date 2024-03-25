@@ -195,12 +195,6 @@ describe('DashboardStoreService', () => {
               name: 'pool2',
             },
           ],
-          sysInfoWithFeatures: {
-            cores: 6,
-            features: {
-              enclosure: true,
-            },
-          },
           volumesData: [
             {
               available: {
