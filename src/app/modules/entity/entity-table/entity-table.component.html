@@ -475,7 +475,10 @@
       fxLayoutAlign="center center"
       fxLayoutGap="32px"
     >
-      <ix-entity-empty [conf]="emptyTableConf"></ix-entity-empty>
+      <ix-entity-empty
+        [requiredRoles]="conf.requiredRoles"
+        [conf]="emptyTableConf"
+      ></ix-entity-empty>
     </div>
   </ng-container>
 </div>
