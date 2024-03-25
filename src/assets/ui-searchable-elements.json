@@ -680,24 +680,6 @@
   {
     "hierarchy": [
       "System Settings",
-      "Advanced",
-      "System Security",
-      "Enable FIPS"
-    ],
-    "synonyms": [],
-    "requiredRoles": [],
-    "anchorRouterLink": [
-      "/system",
-      "advanced"
-    ],
-    "routerLink": null,
-    "anchor": "system_settings-advanced-system_security-enable_fips",
-    "triggerAnchor": "system-security-settings",
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "System Settings",
       "General",
       "Email Options",
       "Send Method"

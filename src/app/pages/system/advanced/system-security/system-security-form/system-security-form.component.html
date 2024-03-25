@@ -8,12 +8,10 @@
   <mat-card-content>
     <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
       <ix-slide-toggle
-        ixUiSearchableElement
         formControlName="enable_fips"
         color="primary"
         [label]="'Enable FIPS' | translate"
         [tooltip]="'Enforce the use of FIPS 140-2 compliant algorithms' | translate"
-        [ixSearchConfig]="searchElements.enableFips"
       ></ix-slide-toggle>
 
       <p>

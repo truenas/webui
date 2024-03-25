@@ -11,7 +11,6 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ChainedRef } from 'app/modules/ix-forms/components/ix-slide-in/chained-component-ref';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { systemSecurityFormElements } from 'app/pages/system/advanced/system-security/system-security-form/system-security-form.elements';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
@@ -23,7 +22,6 @@ import { WebSocketService } from 'app/services/ws.service';
 })
 export class SystemSecurityFormComponent implements OnInit {
   protected requiredRoles = [Role.FullAdmin];
-  protected readonly searchElements = systemSecurityFormElements;
 
   form = this.formBuilder.group({
     enable_fips: [false],
