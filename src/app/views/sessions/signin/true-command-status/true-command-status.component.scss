@@ -1,8 +1,9 @@
-.truecommand {
-  cursor: pointer;
+:host {
+  align-items: center;
+  display: flex;
   text-align: center;
 
-  .truecommand-logo {
+  img {
     cursor: pointer;
     height: 24px;
     position: relative;

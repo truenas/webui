@@ -797,7 +797,7 @@ export interface ApiCallDirectory {
 
   // Truecommand
   'truecommand.config': { params: void; response: TrueCommandConfig };
-  'truecommand.connected': { params: void; response: TrueCommandConnectionState };
+  'truecommand.info': { params: void; response: TrueCommandConnectionState };
   'truecommand.update': { params: [UpdateTrueCommand]; response: TrueCommandUpdateResponse };
 
   // TrueNAS
@@ -806,6 +806,7 @@ export interface ApiCallDirectory {
   'truenas.is_eula_accepted': { params: void; response: boolean };
   'truenas.is_production': { params: void; response: boolean };
   'truenas.is_ix_hardware': { params: void; response: boolean };
+  'truenas.managed_by_truecommand': { params: void; response: boolean };
 
   // Tunable
   'tunable.query': { params: QueryParams<Tunable>; response: Tunable[] };
