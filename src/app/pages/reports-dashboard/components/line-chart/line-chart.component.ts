@@ -13,8 +13,6 @@ import {
 import { UUID } from 'angular2-uuid';
 import { utcToZonedTime } from 'date-fns-tz';
 import Dygraph, { dygraphs } from 'dygraphs';
-// eslint-disable-next-line
-import smoothPlotter from 'dygraphs/src/extras/smooth-plotter.js';
 import {
   GiB, KiB, MiB, TiB,
 } from 'app/constants/bytes.constant';
@@ -26,6 +24,7 @@ import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { Theme } from 'app/interfaces/theme.interface';
 import { Report, LegendDataWithStackedTotalHtml } from 'app/pages/reports-dashboard/interfaces/report.interface';
 import { ReportsService } from 'app/pages/reports-dashboard/reports.service';
+import { PlotterService } from 'app/pages/reports-dashboard/services/plotter.service';
 import { ThemeService } from 'app/services/theme/theme.service';
 
 interface Conversion {
@@ -76,6 +75,7 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
   constructor(
     public themeService: ThemeService,
     private reportsService: ReportsService,
+    private plotterService: PlotterService,
   ) {}
 
   render(update?: boolean): void {
@@ -286,10 +286,10 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
     return `${this.limitDecimals(converted.value)} ${suffix}`;
   };
 
-  series = (): Record<string, { plotter: typeof smoothPlotter }> => {
-    const series: Record<string, { plotter: typeof smoothPlotter }> = {};
+  series = (): Record<string, { plotter: unknown }> => {
+    const series: Record<string, { plotter: unknown }> = {};
     this.data.legend.forEach((item) => {
-      series[item] = { plotter: smoothPlotter };
+      series[item] = { plotter: this.plotterService.getSmoothPlotter() };
     });
 
     return series;

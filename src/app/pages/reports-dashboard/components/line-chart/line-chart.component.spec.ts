@@ -5,6 +5,7 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { LineChartComponent } from 'app/pages/reports-dashboard/components/line-chart/line-chart.component';
 import { ReportsService } from 'app/pages/reports-dashboard/reports.service';
+import { PlotterService } from 'app/pages/reports-dashboard/services/plotter.service';
 
 const fakeLegend = {
   series: [],
@@ -19,6 +20,9 @@ describe('LineChartComponent', () => {
       mockWebSocket(),
       mockProvider(ReportsService, {
         emitLegendEvent: jest.fn(),
+      }),
+      mockProvider(PlotterService, {
+        getSmoothPlotter: () => {},
       }),
       provideMockStore(),
       mockAuth(),
