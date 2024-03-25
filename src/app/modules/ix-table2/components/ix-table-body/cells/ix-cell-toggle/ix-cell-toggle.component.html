@@ -1,4 +1,4 @@
-<ng-container *ngIf="!requiredRoles?.length">
+<ng-container *ngIf="!requiredRoles?.length && !dynamicRequiredRoles">
   <mat-slide-toggle
     color="primary"
     [ixTest]="[title, rowTestId(row), 'row-toggle']"
@@ -7,9 +7,9 @@
     (click)="$event.stopPropagation()"
   ></mat-slide-toggle>
 </ng-container>
-<ng-container *ngIf="requiredRoles?.length">
+<ng-container *ngIf="requiredRoles?.length || dynamicRequiredRoles">
   <mat-slide-toggle
-    *ixRequiresRoles="requiredRoles"
+    *ixRequiresRoles="dynamicRequiredRoles ? (dynamicRequiredRoles(row) | async) : requiredRoles"
     color="primary"
     [ixTest]="[title, rowTestId(row), 'row-toggle']"
     [checked]="checked"
