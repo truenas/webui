@@ -74,16 +74,16 @@ export class ServicesComponent implements OnInit {
     actionsColumn({
       actions: [
         {
-          iconName: 'list',
-          dynamicTooltip: (row) => of(this.translate.instant('{name} Sessions', { name: serviceNames.get(row.service) })),
-          hidden: (row) => of(!this.hasSessions(row.service)),
-          onClick: (row) => this.router.navigate(this.sessionsUrl(row.service)),
-        },
-        {
           iconName: 'receipt_long',
           tooltip: this.translate.instant('Audit Logs'),
           hidden: (row) => of(!this.hasLogs(row.service)),
           onClick: () => this.router.navigate([this.auditLogsUrl()]),
+        },
+        {
+          iconName: 'list',
+          dynamicTooltip: (row) => of(this.translate.instant('{name} Sessions', { name: serviceNames.get(row.service) })),
+          hidden: (row) => of(!this.hasSessions(row.service)),
+          onClick: (row) => this.router.navigate(this.sessionsUrl(row.service)),
         },
         {
           iconName: 'edit',
