@@ -1,11 +1,12 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Input,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, Input, ViewContainerRef,
 } from '@angular/core';
 import {
   ControlValueAccessor, NgControl,
 } from '@angular/forms';
 import { MatCheckboxChange } from '@angular/material/checkbox';
 import { UntilDestroy } from '@ngneat/until-destroy';
+import { IxFormControl, IxFormDirective } from '../ix-form/ix-form.directive';
 
 @UntilDestroy()
 @Component({
@@ -14,7 +15,7 @@ import { UntilDestroy } from '@ngneat/until-destroy';
   templateUrl: './ix-checkbox.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class IxCheckboxComponent implements ControlValueAccessor {
+export class IxCheckboxComponent extends IxFormControl implements ControlValueAccessor {
   @Input() label: string;
   @Input() hint: string;
   @Input() tooltip: string;
@@ -27,7 +28,11 @@ export class IxCheckboxComponent implements ControlValueAccessor {
   constructor(
     public controlDirective: NgControl,
     private cdr: ChangeDetectorRef,
+    elementRef: ElementRef<HTMLElement>,
+    viewContainerRef: ViewContainerRef,
+    ixFormDirective: IxFormDirective,
   ) {
+    super(elementRef, viewContainerRef, ixFormDirective);
     this.controlDirective.valueAccessor = this;
   }
 

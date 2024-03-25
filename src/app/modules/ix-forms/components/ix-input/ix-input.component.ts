@@ -9,6 +9,7 @@ import {
   OnInit,
   Output,
   ViewChild,
+  ViewContainerRef,
 } from '@angular/core';
 import {
   ControlValueAccessor,
@@ -19,6 +20,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { debounceTime, distinctUntilChanged } from 'rxjs';
 import { Option } from 'app/interfaces/option.interface';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
+import { IxFormControl, IxFormDirective } from '../ix-form/ix-form.directive';
 
 @UntilDestroy()
 @Component({
@@ -27,7 +29,7 @@ import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
   styleUrls: ['./ix-input.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class IxInputComponent implements ControlValueAccessor, OnInit, OnChanges {
+export class IxInputComponent extends IxFormControl implements ControlValueAccessor, OnInit, OnChanges {
   @Input() label: string;
   @Input() placeholder: string;
   @Input() prefixIcon: string;
@@ -68,7 +70,11 @@ export class IxInputComponent implements ControlValueAccessor, OnInit, OnChanges
     public controlDirective: NgControl,
     private translate: TranslateService,
     private cdr: ChangeDetectorRef,
+    elementRef: ElementRef<HTMLElement>,
+    viewContainerRef: ViewContainerRef,
+    ixFormDirective: IxFormDirective,
   ) {
+    super(elementRef, viewContainerRef, ixFormDirective);
     this.controlDirective.valueAccessor = this;
   }
 

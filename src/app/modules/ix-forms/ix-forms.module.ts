@@ -60,6 +60,7 @@ import { FormActionsComponent } from './components/form-actions/form-actions.com
 import { IxLabelComponent } from './components/ix-label/ix-label.component';
 import { IxSlideInComponent } from './components/ix-slide-in/ix-slide-in.component';
 import { WithManageCertificatesLinkComponent } from './components/with-manage-certificates-link/with-manage-certificates-link.component';
+import { IxFormDirective } from './components/ix-form/ix-form.directive';
 
 @NgModule({
   imports: [
@@ -125,6 +126,7 @@ import { WithManageCertificatesLinkComponent } from './components/with-manage-ce
     CreateDatasetDialogComponent,
     IxButtonGroupComponent,
     ReadOnlyComponent,
+    IxFormDirective,
   ],
   exports: [
     IxErrorsComponent,
@@ -156,6 +158,7 @@ import { WithManageCertificatesLinkComponent } from './components/with-manage-ce
     IxStarRatingComponent,
     IxButtonGroupComponent,
     ReadOnlyComponent,
+    IxFormDirective,
   ],
   providers: [
     IxFormatterService,
