@@ -134,6 +134,7 @@ import {
   IscsiPortal, IscsiPortalUpdate,
   IscsiTarget, IscsiTargetExtent, IscsiTargetExtentUpdate, IscsiTargetUpdate,
 } from 'app/interfaces/iscsi.interface';
+import { Jbof, JbofUpdate } from 'app/interfaces/jbof.interface';
 import { Job } from 'app/interfaces/job.interface';
 import {
   KerberosConfig,
@@ -549,6 +550,13 @@ export interface ApiCallDirectory {
   'iscsi.targetextent.query': { params: QueryParams<IscsiTargetExtent>; response: IscsiTargetExtent[] };
   'iscsi.targetextent.update': { params: [id: number, extent: IscsiTargetExtentUpdate]; response: IscsiTargetExtent };
   'iscsi.target.validate_name': { params: string[]; response: null | string };
+
+  // Jbof
+  'jbof.licensed': { params: void; response: number };
+  'jbof.query': { params: [QueryParams<Jbof>]; response: Jbof[] };
+  'jbof.create': { params: [JbofUpdate]; response: Jbof };
+  'jbof.update': { params: [id: number, update: JbofUpdate]; response: Jbof };
+  'jbof.delete': { params: [id: number]; response: boolean };
 
   // Kerberos
   'kerberos.config': { params: void; response: KerberosConfig };
