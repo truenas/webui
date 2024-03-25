@@ -129,7 +129,7 @@
     ],
     "routerLink": null,
     "anchor": "system_settings-advanced-access-token_lifetime",
-    "triggerAnchor": "access-settings",
+    "triggerAnchor": "configure",
     "section": "ui"
   },
   {

@@ -4,7 +4,7 @@ export const accessFormElements = {
   tokenLifetime: {
     hierarchy: [T('System Settings'), T('Advanced'), T('Access'), T('Token Lifetime')],
     synonyms: [T('Session Token Lifetime')],
-    triggerAnchor: 'access-settings',
+    triggerAnchor: 'configure',
     anchorRouterLink: ['/system', 'advanced'],
   },
 };

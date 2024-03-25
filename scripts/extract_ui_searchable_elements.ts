@@ -48,6 +48,11 @@
     synonyms?: string[]; ⬅️ Synonyms for better search experience, use T(')
     requiredRoles?: Role[] | string[]; ⬅️ Required roles to see search result, can be skipped if `*ixRequiresRoles="requiredRoles"` applied to the element
   }
+
+  Note: If you add `ixUiSearchableElement` to the trigger button -
+  then in the form which will be opened by this trigger button you need to rely on the auto-generated ID to add searchable elements
+  Example: check access card -> [ixSearchConfig]="searchElements.elements.configureAccess"
+  In this case id will be generated as `#configure`, so in the access-form.elements.ts -> we need to provide `triggerAnchor: 'configure',`
  */
 
 import * as cheerio from 'cheerio';
