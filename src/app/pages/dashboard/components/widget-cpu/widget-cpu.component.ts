@@ -99,13 +99,10 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
       throttleTime(500),
       skipWhile(() => this.document.hidden),
       deepCloneState(),
+      filter((cpuData) => Boolean(cpuData?.average)),
       untilDestroyed(this),
     ).subscribe({
       next: (cpuData) => {
-        if (!cpuData?.average) {
-          return;
-        }
-
         this.setCpuLoadData(['Load', parseInt(cpuData.average.usage.toFixed(1))]);
         this.setCpuData(cpuData);
         this.cdr.markForCheck();
@@ -137,6 +134,7 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
         this.threadCount = sysInfo.cores;
         this.coreCount = sysInfo.physical_cores;
         this.hyperthread = this.threadCount !== this.coreCount;
+        this.cdr.markForCheck();
       });
   }
 
@@ -249,7 +247,7 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
   // chart.js renderer
   renderChart(): void {
     if (!this.ctx) {
-      const el: HTMLCanvasElement = this.el.nativeElement.querySelector('#cpu-cores-chart canvas');
+      const el: HTMLCanvasElement = this.el.nativeElement.querySelector('.cpu-cores-chart canvas');
       if (!el) { return; }
 
       const ds = this.makeDatasets(this.cpuData.data);
@@ -263,7 +261,7 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
       const options: ChartOptions<'bar'> = {
         events: ['mousemove', 'mouseout'],
         onHover: (event: ChartEvent, elements: ActiveElement[], chart: Chart) => {
-          if (event.type === 'mouseout' || this.screenType === ScreenType.Mobile) {
+          if (event.type === 'mouseout' || this.isMobile) {
             this.legendData = null;
             this.legendIndex = null;
             return;

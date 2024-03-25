@@ -134,6 +134,7 @@ import {
   IscsiPortal, IscsiPortalUpdate,
   IscsiTarget, IscsiTargetExtent, IscsiTargetExtentUpdate, IscsiTargetUpdate,
 } from 'app/interfaces/iscsi.interface';
+import { Jbof, JbofUpdate } from 'app/interfaces/jbof.interface';
 import { Job } from 'app/interfaces/job.interface';
 import {
   KerberosConfig,
@@ -550,6 +551,13 @@ export interface ApiCallDirectory {
   'iscsi.targetextent.update': { params: [id: number, extent: IscsiTargetExtentUpdate]; response: IscsiTargetExtent };
   'iscsi.target.validate_name': { params: string[]; response: null | string };
 
+  // Jbof
+  'jbof.licensed': { params: void; response: number };
+  'jbof.query': { params: [QueryParams<Jbof>]; response: Jbof[] };
+  'jbof.create': { params: [JbofUpdate]; response: Jbof };
+  'jbof.update': { params: [id: number, update: JbofUpdate]; response: Jbof };
+  'jbof.delete': { params: [id: number]; response: boolean };
+
   // Kerberos
   'kerberos.config': { params: void; response: KerberosConfig };
   'kerberos.keytab.create': { params: [KerberosKeytabUpdate]; response: KerberosKeytab };
@@ -797,7 +805,7 @@ export interface ApiCallDirectory {
 
   // Truecommand
   'truecommand.config': { params: void; response: TrueCommandConfig };
-  'truecommand.connected': { params: void; response: TrueCommandConnectionState };
+  'truecommand.info': { params: void; response: TrueCommandConnectionState };
   'truecommand.update': { params: [UpdateTrueCommand]; response: TrueCommandUpdateResponse };
 
   // TrueNAS
@@ -806,6 +814,7 @@ export interface ApiCallDirectory {
   'truenas.is_eula_accepted': { params: void; response: boolean };
   'truenas.is_production': { params: void; response: boolean };
   'truenas.is_ix_hardware': { params: void; response: boolean };
+  'truenas.managed_by_truecommand': { params: void; response: boolean };
 
   // Tunable
   'tunable.query': { params: QueryParams<Tunable>; response: Tunable[] };

@@ -29,7 +29,7 @@
     </div>
 
     <ng-container *ngIf="!getElementsBySection(section.value)?.length">
-      <ix-empty [conf]="entityEmptyConf"></ix-empty>
+      <h4 class="no-results">{{ 'No results found in {section}' | translate:{ section: section.label } }}</h4>
     </ng-container>
   </ng-container>
 </mat-card>

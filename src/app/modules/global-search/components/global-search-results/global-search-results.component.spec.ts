@@ -4,7 +4,6 @@ import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { TranslateModule } from '@ngx-translate/core';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { WINDOW } from 'app/helpers/window.helper';
-import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { GlobalSearchSection } from 'app/modules/global-search/enums/global-search-section';
 import { UiSearchableElement } from 'app/modules/global-search/interfaces/ui-searchable-element.interface';
 import { GlobalSearchResultsComponent } from './global-search-results.component';
@@ -29,7 +28,6 @@ describe('GlobalSearchResultsComponent', () => {
     component: GlobalSearchResultsComponent,
     imports: [
       RouterTestingModule.withRoutes([]),
-      EmptyComponent,
       TranslateModule.forRoot(),
     ],
     providers: [
@@ -101,8 +99,8 @@ describe('GlobalSearchResultsComponent', () => {
     expect(sectionHeaders[0].textContent).toBe(' UI ');
     expect(sectionHeaders[1].textContent).toBe(' Help ');
 
-    const emptyComponents = spectator.queryAll('ix-empty');
-    expect(emptyComponents).toHaveLength(1);
+    const emptyContent = spectator.query('h4.no-results');
+    expect(emptyContent.textContent).toBe('No results found in {section}');
 
     const sectionContent = spectator.queryAll('.section-content');
     expect(sectionContent).toHaveLength(1);

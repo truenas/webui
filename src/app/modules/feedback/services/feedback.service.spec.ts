@@ -388,6 +388,7 @@ describe('FeedbackService', () => {
             action: expect.any(Function),
           },
         },
+        duration: 10000,
       });
     });
   });

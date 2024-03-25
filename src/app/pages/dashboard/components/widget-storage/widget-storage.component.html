@@ -6,12 +6,12 @@
           <ng-content [select]="[cdkDragHandle]"></ng-content>
 
           <mat-toolbar-row>
-            <!-- Mobile Only: Exit widget -->
             <button
               class="mat-card-title-text primary-nav"
               mat-icon-button
               color="default"
               [ixTest]="['widget-storage', 'back']"
+              [attr.aria-label]="'Go back' | translate"
               (click)="goBack()"
             >
               <ix-icon name="chevron_left"></ix-icon>
@@ -29,14 +29,12 @@
               <a
                 mat-icon-button
                 ixTest="storage-reports"
+                matTooltipPosition="above"
+                [attr.aria-label]="'Disk Reports' | translate"
+                [matTooltip]="'Disk Reports' | translate"
                 [routerLink]="['/reportsdashboard', 'disk']"
               >
-                <ix-icon
-                  name="insert_chart"
-                  matTooltipPosition="above"
-                  [attr.aria-label]="'Disk Reports' | translate"
-                  [matTooltip]="'Disk Reports' | translate"
-                ></ix-icon>
+                <ix-icon name="insert_chart"></ix-icon>
               </a>
             </div>
           </mat-toolbar-row>
@@ -67,53 +65,47 @@
                       <a
                         mat-icon-button
                         ixTest="pool-status"
+                        matTooltipPosition="above"
                         [routerLink]="['/storage']"
+                        [attr.aria-label]="'Pool Status' | translate"
+                        [matTooltip]="'Pool Status' | translate"
                       >
-                        <ix-icon
-                          name="mdi-database"
-                          matTooltipPosition="above"
-                          [attr.aria-label]="'Pool Status' | translate"
-                          [matTooltip]="'Pool Status' | translate"
-                        ></ix-icon>
+                        <ix-icon name="mdi-database"></ix-icon>
                       </a>
                     </div>
                   </div>
                   <div class="tile-content">
                     <ul [style.max-width.%]="getSubwidgetColumnWidth(pool)">
                       <li>
-                        <span [class]="['icon', poolInfoMap[pool.name]?.status?.level]">
-                          <ix-icon [name]="poolInfoMap[pool.name]?.status?.icon"></ix-icon>
+                        <span [class]="['icon', poolInfoMap.get(pool.name)?.status?.level]">
+                          <ix-icon [name]="poolInfoMap.get(pool.name)?.status?.icon"></ix-icon>
                         </span>
                         <span class="label">
                           {{ 'Pool Status' | translate }}:
                         </span>
                         <span class="storage-value">
-                          {{ poolInfoMap[pool.name]?.status?.value | titlecase | translate | uppercase }}
+                          {{ poolInfoMap.get(pool.name)?.status?.value | titlecase | translate | uppercase }}
                         </span>
                       </li>
                       <li>
-                        <span [class]="['icon', poolInfoMap[pool.name]?.usedSpace?.level]">
-                          <ix-icon [name]="poolInfoMap[pool.name]?.usedSpace?.icon"></ix-icon
+                        <span [class]="['icon', poolInfoMap.get(pool.name)?.usedSpace?.level]">
+                          <ix-icon [name]="poolInfoMap.get(pool.name)?.usedSpace?.icon"></ix-icon
                         ></span>
-                        <span class="label">
-                          {{ 'Used Space' | translate }}:
-                        </span>
+                        <span class="label">{{ 'Used Space' | translate }}:</span>
                         <span
                           class="storage-value"
                           textLimiter
                           [threshold]="25"
-                          [content]="poolInfoMap[pool.name]?.usedSpace?.value"
+                          [content]="poolInfoMap.get(pool.name)?.usedSpace?.value"
                         ></span>
                       </li>
                       <li>
-                        <span [class]="['icon', poolInfoMap[pool.name]?.disksWithError?.level]">
-                          <ix-icon [name]="poolInfoMap[pool.name]?.disksWithError?.icon"></ix-icon>
+                        <span [class]="['icon', poolInfoMap.get(pool.name)?.disksWithError?.level]">
+                          <ix-icon [name]="poolInfoMap.get(pool.name)?.disksWithError?.icon"></ix-icon>
                         </span>
-                        <span class="label">
-                          {{ 'Disks with Errors' | translate }}:
-                        </span>
+                        <span class="label">{{ 'Disks with Errors' | translate }}:</span>
                         <span class="storage-value">
-                          {{ poolInfoMap[pool.name]?.disksWithError?.value }}
+                          {{ poolInfoMap.get(pool.name)?.disksWithError?.value }}
                         </span>
                       </li>
                       <li *ngIf="cols === 2 && rows === 2">
@@ -143,24 +135,20 @@
                         <li>
                           <span class="label">{{ 'Free Space' | translate }}:</span>
                           <span class="storage-value">
-                            {{ poolInfoMap[pool.name]?.freeSpace }}
+                            {{ poolInfoMap.get(pool.name)?.freeSpace }}
                           </span>
                         </li>
                         <li>
-                          <span class="label">
-                            {{ 'Total Disks' | translate }}:
-                          </span>
+                          <span class="label">{{ 'Total Disks' | translate }}:</span>
                           <span class="storage-value">
-                            {{ poolInfoMap[pool.name]?.totalDisks }}
+                            {{ poolInfoMap.get(pool.name)?.totalDisks }}
                           </span>
                         </li>
                       </ul>
                       <div *ngIf="pool.topology" class="divider"></div>
                       <ul *ngIf="pool.topology" [style.max-width.%]="getSubwidgetColumnWidth(pool)">
                         <li>
-                          <span class="label">
-                            {{ 'Data' | translate }}:
-                          </span>
+                          <span class="label">{{ 'Data' | translate }}:</span>
                           <span class="storage-value">
                             {{ pool.topology.data.length }} vdev
                           </span>
