@@ -351,7 +351,7 @@
     ],
     "routerLink": null,
     "anchor": "system_settings-advanced-cron_jobs-add",
-    "triggerAnchor": "add-cron",
+    "triggerAnchor": null,
     "section": "ui"
   },
   {
@@ -435,7 +435,7 @@
     ],
     "routerLink": null,
     "anchor": "system_settings-advanced-init/shutdown_scripts-add",
-    "triggerAnchor": "add-init-shutdown-script",
+    "triggerAnchor": null,
     "section": "ui"
   },
   {
@@ -602,7 +602,7 @@
     ],
     "routerLink": null,
     "anchor": "system_settings-advanced-sysctl-add",
-    "triggerAnchor": "add-sysctl",
+    "triggerAnchor": null,
     "section": "ui"
   },
   {
@@ -865,7 +865,7 @@
     ],
     "routerLink": null,
     "anchor": "system_settings-general-ntp_server-add",
-    "triggerAnchor": "add-ntp",
+    "triggerAnchor": null,
     "section": "ui"
   },
   {
@@ -885,7 +885,7 @@
     ],
     "routerLink": null,
     "anchor": "license",
-    "triggerAnchor": "update-license-btn",
+    "triggerAnchor": null,
     "section": "ui"
   },
   {

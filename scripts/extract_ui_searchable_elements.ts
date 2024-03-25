@@ -34,7 +34,7 @@
     },
   };
  *
- * 3️⃣. Provide config to the element [ixSearchConfig]="searchElements.importPool"
+ * 3️⃣. Provide config to the element [ixSearchConfig]="singleSettingsExampleElements.theme"
  *
  * 4️⃣. Run the script to update `ui-searchable-elements.json`:
  * yarn extract-ui-searchable-elements
@@ -44,8 +44,7 @@
  * export interface UiSearchableElement {
     hierarchy: string[]; ⬅️ Array of labels as a hierarchy title path to actual element, use T('')
     anchorRouterLink: string[]; ⬅️ Router link to the page with the element
-    anchor: string; ⬅️ Element id where the focus will be placed eventually
-    triggerAnchor?: string; ⬅️ Trigger element which will be clicked and then focused to the anchor element
+    triggerAnchor?: string; ⬅️ Trigger element which will be clicked first and then focused to the anchor element -> used for forms mostly - we click Add button on the Card and open the form
     synonyms?: string[]; ⬅️ Synonyms for better search experience, use T(')
     requiredRoles?: Role[] | string[]; ⬅️ Required roles to see search result, can be skipped if `*ixRequiresRoles="requiredRoles"` applied to the element
   }

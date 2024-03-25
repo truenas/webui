@@ -4,7 +4,6 @@ export const cronCardElements = {
   addCronJob: {
     hierarchy: [T('System Settings'), T('Advanced'), T('Cron Jobs'), T('Add')],
     synonyms: [T('Add Cron Job')],
-    triggerAnchor: 'add-cron',
     anchorRouterLink: ['/system', 'advanced'],
   },
 };

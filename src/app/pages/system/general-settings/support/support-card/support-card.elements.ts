@@ -6,7 +6,6 @@ export const supportCardElements = {
   elements: {
     updateLicense: {
       hierarchy: [T('License')],
-      triggerAnchor: 'update-license-btn',
     },
     fileTicket: {
       hierarchy: [T('File Ticket')],
