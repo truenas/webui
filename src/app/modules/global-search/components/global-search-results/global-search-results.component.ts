@@ -70,6 +70,7 @@ export class GlobalSearchResultsComponent {
     if (element.anchorRouterLink || element.routerLink) {
       this.router.navigate(element.anchorRouterLink || element.routerLink).then(() => {
         setTimeout(() => {
+          (this.document.querySelector('.ix-slide-in2-background.open') as unknown as HTMLElement)?.click();
           this.tryHighlightTriggerAnchorAndAnchor(element, 0);
         }, this.delayTime);
       });
@@ -117,7 +118,7 @@ export class GlobalSearchResultsComponent {
       if (anchorRef) {
         this.highlightAndClickElement(anchorRef);
       }
-    }, this.delayTime);
+    }, this.delayTime * 1.5);
   }
 
   private highlightAndClickElement(anchorRef: HTMLElement): void {
@@ -130,6 +131,9 @@ export class GlobalSearchResultsComponent {
     anchorRef.classList.add('search-element-highlighted');
 
     setTimeout(() => anchorRef.click(), this.delayTime);
-    setTimeout(() => anchorRef.classList.remove('search-element-highlighted'), this.delayTime * 3);
+
+    setTimeout(() => {
+      anchorRef.classList.remove('search-element-highlighted');
+    }, this.delayTime * 6);
   }
 }
