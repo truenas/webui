@@ -159,4 +159,8 @@ The system only sends logs matching this level or higher.',
     tooltip: T('The preconfigured system <i>Certificate</i> to use for authenticating\
  the TLS protocol connection to the remote system log server.'),
   },
+
+  syslog_tls_certificate_authority: {
+    placeholder: T('Syslog TLS Certificate Authority'),
+  },
 };
