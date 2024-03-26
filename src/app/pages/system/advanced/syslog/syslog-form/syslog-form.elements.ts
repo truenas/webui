@@ -2,7 +2,7 @@ import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
 export const syslogFormElements = {
   hierarchy: [T('System Settings'), T('Advanced'), T('Syslog')],
-  triggerAnchor: 'syslog-settings',
+  triggerAnchor: 'configure-syslog',
   anchorRouterLink: ['/system', 'advanced'],
   elements: {
     level: {

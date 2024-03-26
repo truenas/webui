@@ -11,6 +11,7 @@ import {
 import { SedUser } from 'app/enums/sed-user.enum';
 import { toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import { AdvancedSettingsService } from 'app/pages/system/advanced/advanced-settings.service';
+import { sedCardElements } from 'app/pages/system/advanced/self-encrypting-drive/self-encrypting-drive-card/self-encrypting-drive-card.elements';
 import { SelfEncryptingDriveFormComponent } from 'app/pages/system/advanced/self-encrypting-drive/self-encrypting-drive-form/self-encrypting-drive-form.component';
 import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -26,6 +27,7 @@ import { waitForAdvancedConfig } from 'app/store/system-config/system-config.sel
 })
 export class SelfEncryptingDriveCardComponent {
   private readonly reloadConfig$ = new Subject<void>();
+  protected readonly searchableElements = sedCardElements;
 
   private sedConfig: { sedUser: SedUser; sedPassword: string };
   readonly sedConfig$ = this.reloadConfig$.pipe(

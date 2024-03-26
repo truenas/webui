@@ -4,9 +4,11 @@
     <div class="actions action-icon">
       <button
         *ixWithLoadingState="twoFactorConfig$ as twoFactorAuthConfig"
+        ixUiSearchableElement
         id="global-two-factor-auth"
         mat-button
         [ixTest]="['two-factor-auth', 'configure']"
+        [ixSearchConfig]="searchableElements.elements.configure"
         (click)="onConfigurePressed(twoFactorAuthConfig)"
       >
         {{ 'Configure' | translate }}

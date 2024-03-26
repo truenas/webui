@@ -9,6 +9,7 @@ import {
 } from 'rxjs/operators';
 import { toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import { AdvancedSettingsService } from 'app/pages/system/advanced/advanced-settings.service';
+import { storageCardElements } from 'app/pages/system/advanced/storage/storage-card/storage-card.elements';
 import {
   StorageSettingsFormComponent,
 } from 'app/pages/system/advanced/storage/storage-settings-form/storage-settings-form.component';
@@ -27,6 +28,7 @@ import { waitForAdvancedConfig } from 'app/store/system-config/system-config.sel
 export class StorageCardComponent {
   private readonly reloadConfig$ = new Subject<void>();
   private storageSettings: { systemDsPool: string; swapSize: number };
+  protected readonly searchableElements = storageCardElements;
 
   readonly storageSettings$ = this.reloadConfig$.pipe(
     startWith(undefined),

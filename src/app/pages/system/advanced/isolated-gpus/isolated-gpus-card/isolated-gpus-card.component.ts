@@ -7,6 +7,7 @@ import { filter, switchMap, tap } from 'rxjs';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { Device } from 'app/interfaces/device.interface';
 import { AdvancedSettingsService } from 'app/pages/system/advanced/advanced-settings.service';
+import { isolatedGpusCardElements } from 'app/pages/system/advanced/isolated-gpus/isolated-gpus-card/isolated-gpus-card.elements';
 import {
   IsolatedGpusFormComponent,
 } from 'app/pages/system/advanced/isolated-gpus/isolated-gpus-form/isolated-gpus-form.component';
@@ -22,6 +23,7 @@ import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.servic
 })
 export class IsolatedGpusCardComponent implements OnInit {
   isolatedGpus: Device[] = [];
+  protected readonly searchableElements = isolatedGpusCardElements;
 
   readonly emptyConfig = {
     type: EmptyType.NoPageData,

@@ -30,7 +30,7 @@
       "/storage"
     ],
     "routerLink": null,
-    "anchor": "import_pool",
+    "anchor": "import-pool",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -52,7 +52,7 @@
       "/storage",
       "create"
     ],
-    "anchor": "create_pool",
+    "anchor": "create-pool",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -66,7 +66,7 @@
       "/storage"
     ],
     "routerLink": null,
-    "anchor": "storage_dashboard",
+    "anchor": "storage-dashboard",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -88,7 +88,7 @@
       "advanced"
     ],
     "routerLink": null,
-    "anchor": "terminate_other_sessions",
+    "anchor": "terminate-other-sessions",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -108,7 +108,7 @@
       "advanced"
     ],
     "routerLink": null,
-    "anchor": "configure",
+    "anchor": "configure-access",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -128,8 +128,8 @@
       "advanced"
     ],
     "routerLink": null,
-    "anchor": "system_settings-advanced-access-token_lifetime",
-    "triggerAnchor": "configure",
+    "anchor": "token-lifetime",
+    "triggerAnchor": "configure-access",
     "section": "ui"
   },
   {
@@ -146,7 +146,25 @@
       "advanced"
     ],
     "routerLink": null,
-    "anchor": "system_settings-advanced-allowed_ip_addressed-configure",
+    "anchor": "system-settings-advanced-allowed-ip-addressed-configure",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "System Settings",
+      "Advanced",
+      "Audit",
+      "Configure"
+    ],
+    "synonyms": [],
+    "requiredRoles": [],
+    "anchorRouterLink": [
+      "/system",
+      "advanced"
+    ],
+    "routerLink": null,
+    "anchor": "configure-audit",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -165,7 +183,7 @@
     ],
     "routerLink": null,
     "anchor": "retention",
-    "triggerAnchor": "audit-settings",
+    "triggerAnchor": "configure-audit",
     "section": "ui"
   },
   {
@@ -183,7 +201,7 @@
     ],
     "routerLink": null,
     "anchor": "reservation",
-    "triggerAnchor": "audit-settings",
+    "triggerAnchor": "configure-audit",
     "section": "ui"
   },
   {
@@ -201,7 +219,7 @@
     ],
     "routerLink": null,
     "anchor": "quota",
-    "triggerAnchor": "audit-settings",
+    "triggerAnchor": "configure-audit",
     "section": "ui"
   },
   {
@@ -218,8 +236,8 @@
       "advanced"
     ],
     "routerLink": null,
-    "anchor": "quota_fill_warning",
-    "triggerAnchor": "audit-settings",
+    "anchor": "quota-fill-warning",
+    "triggerAnchor": "configure-audit",
     "section": "ui"
   },
   {
@@ -236,8 +254,26 @@
       "advanced"
     ],
     "routerLink": null,
-    "anchor": "quota_fill_critical",
-    "triggerAnchor": "audit-settings",
+    "anchor": "quota-fill-critical",
+    "triggerAnchor": "configure-audit",
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "System Settings",
+      "Advanced",
+      "Console",
+      "Configure"
+    ],
+    "synonyms": [],
+    "requiredRoles": [],
+    "anchorRouterLink": [
+      "/system",
+      "advanced"
+    ],
+    "routerLink": null,
+    "anchor": "configure-console",
+    "triggerAnchor": null,
     "section": "ui"
   },
   {
@@ -256,8 +292,8 @@
       "advanced"
     ],
     "routerLink": null,
-    "anchor": "console_menu",
-    "triggerAnchor": "console-settings",
+    "anchor": "console-menu",
+    "triggerAnchor": "configure-console",
     "section": "ui"
   },
   {
@@ -274,8 +310,8 @@
       "advanced"
     ],
     "routerLink": null,
-    "anchor": "enable_serial_console",
-    "triggerAnchor": "console-settings",
+    "anchor": "enable-serial-console",
+    "triggerAnchor": "configure-console",
     "section": "ui"
   },
   {
@@ -292,8 +328,8 @@
       "advanced"
     ],
     "routerLink": null,
-    "anchor": "serial_port",
-    "triggerAnchor": "console-settings",
+    "anchor": "serial-port",
+    "triggerAnchor": "configure-console",
     "section": "ui"
   },
   {
@@ -310,8 +346,8 @@
       "advanced"
     ],
     "routerLink": null,
-    "anchor": "serial_speed",
-    "triggerAnchor": "console-settings",
+    "anchor": "serial-speed",
+    "triggerAnchor": "configure-console",
     "section": "ui"
   },
   {
@@ -328,8 +364,8 @@
       "advanced"
     ],
     "routerLink": null,
-    "anchor": "motd_banner",
-    "triggerAnchor": "console-settings",
+    "anchor": "motd-banner",
+    "triggerAnchor": "configure-console",
     "section": "ui"
   },
   {
@@ -350,7 +386,25 @@
       "advanced"
     ],
     "routerLink": null,
-    "anchor": "system_settings-advanced-cron_jobs-add",
+    "anchor": "system-settings-advanced-cron-jobs-add",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "System Settings",
+      "Advanced",
+      "Global Two Factor Authentication",
+      "Configure"
+    ],
+    "synonyms": [],
+    "requiredRoles": [],
+    "anchorRouterLink": [
+      "/system",
+      "advanced"
+    ],
+    "routerLink": null,
+    "anchor": "configure-global-two-factor",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -372,8 +426,8 @@
       "advanced"
     ],
     "routerLink": null,
-    "anchor": "global_2fa_enable",
-    "triggerAnchor": "global-two-factor-auth",
+    "anchor": "global-2fa-enable",
+    "triggerAnchor": "configure-global-two-factor",
     "section": "ui"
   },
   {
@@ -393,7 +447,7 @@
     ],
     "routerLink": null,
     "anchor": "window",
-    "triggerAnchor": "global-two-factor-auth",
+    "triggerAnchor": "configure-global-two-factor",
     "section": "ui"
   },
   {
@@ -413,7 +467,7 @@
     ],
     "routerLink": null,
     "anchor": "ssh",
-    "triggerAnchor": "global-two-factor-auth",
+    "triggerAnchor": "configure-global-two-factor",
     "section": "ui"
   },
   {
@@ -434,7 +488,25 @@
       "advanced"
     ],
     "routerLink": null,
-    "anchor": "system_settings-advanced-init/shutdown_scripts-add",
+    "anchor": "system-settings-advanced-init/shutdown-scripts-add",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "System Settings",
+      "Advanced",
+      "Isolated GPU Device(s)",
+      "Configure"
+    ],
+    "synonyms": [],
+    "requiredRoles": [],
+    "anchorRouterLink": [
+      "/system",
+      "advanced"
+    ],
+    "routerLink": null,
+    "anchor": "configure-isolated-gpus",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -452,8 +524,26 @@
       "advanced"
     ],
     "routerLink": null,
-    "anchor": "system_settings-advanced-isolated_gpu_devices-gpus",
-    "triggerAnchor": "isolated-gpus-settings",
+    "anchor": "system-settings-advanced-isolated-gpu-devices-gpus",
+    "triggerAnchor": "configure-isolated-gpus",
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "System Settings",
+      "Advanced",
+      "Kernel",
+      "Configure"
+    ],
+    "synonyms": [],
+    "requiredRoles": [],
+    "anchorRouterLink": [
+      "/system",
+      "advanced"
+    ],
+    "routerLink": null,
+    "anchor": "configure-kernel",
+    "triggerAnchor": null,
     "section": "ui"
   },
   {
@@ -470,8 +560,26 @@
       "advanced"
     ],
     "routerLink": null,
-    "anchor": "system_settings-advanced-kernel-enable_kernel_debug",
-    "triggerAnchor": "kernel-settings",
+    "anchor": "system-settings-advanced-kernel-enable-kernel-debug",
+    "triggerAnchor": "configure-kernel",
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "System Settings",
+      "Advanced",
+      "Replication",
+      "Configure"
+    ],
+    "synonyms": [],
+    "requiredRoles": [],
+    "anchorRouterLink": [
+      "/system",
+      "advanced"
+    ],
+    "routerLink": null,
+    "anchor": "configure-replication",
+    "triggerAnchor": null,
     "section": "ui"
   },
   {
@@ -488,8 +596,8 @@
       "advanced"
     ],
     "routerLink": null,
-    "anchor": "system_settings-advanced-replication-replication_tasks_limit",
-    "triggerAnchor": "replication-settings",
+    "anchor": "system-settings-advanced-replication-replication-tasks-limit",
+    "triggerAnchor": "configure-replication",
     "section": "ui"
   },
   {
@@ -504,7 +612,25 @@
       "/system/advanced"
     ],
     "routerLink": null,
-    "anchor": "system_settings-advanced-save_debug",
+    "anchor": "system-settings-advanced-save-debug",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "System Settings",
+      "Advanced",
+      "Self-Encrypting Drive",
+      "Configure"
+    ],
+    "synonyms": [],
+    "requiredRoles": [],
+    "anchorRouterLink": [
+      "/system",
+      "advanced"
+    ],
+    "routerLink": null,
+    "anchor": "configure-sed",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -524,8 +650,8 @@
       "advanced"
     ],
     "routerLink": null,
-    "anchor": "ata_security_user",
-    "triggerAnchor": "sed-settings",
+    "anchor": "ata-security-user",
+    "triggerAnchor": "configure-sed",
     "section": "ui"
   },
   {
@@ -542,8 +668,26 @@
       "advanced"
     ],
     "routerLink": null,
-    "anchor": "sed_password",
-    "triggerAnchor": "sed-settings",
+    "anchor": "sed-password",
+    "triggerAnchor": "configure-sed",
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "System Settings",
+      "Advanced",
+      "Storage",
+      "Configure"
+    ],
+    "synonyms": [],
+    "requiredRoles": [],
+    "anchorRouterLink": [
+      "/system",
+      "advanced"
+    ],
+    "routerLink": null,
+    "anchor": "configure-storage",
+    "triggerAnchor": null,
     "section": "ui"
   },
   {
@@ -560,8 +704,8 @@
       "advanced"
     ],
     "routerLink": null,
-    "anchor": "system_data_pool",
-    "triggerAnchor": "storage-settings",
+    "anchor": "system-data-pool",
+    "triggerAnchor": "configure-storage",
     "section": "ui"
   },
   {
@@ -578,8 +722,8 @@
       "advanced"
     ],
     "routerLink": null,
-    "anchor": "swap_size",
-    "triggerAnchor": "storage-settings",
+    "anchor": "swap-size",
+    "triggerAnchor": "configure-storage",
     "section": "ui"
   },
   {
@@ -601,7 +745,25 @@
       "advanced"
     ],
     "routerLink": null,
-    "anchor": "system_settings-advanced-sysctl-add",
+    "anchor": "system-settings-advanced-sysctl-add",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "System Settings",
+      "Advanced",
+      "Syslog",
+      "Configure"
+    ],
+    "synonyms": [],
+    "requiredRoles": [],
+    "anchorRouterLink": [
+      "/system",
+      "advanced"
+    ],
+    "routerLink": null,
+    "anchor": "configure-syslog",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -619,8 +781,8 @@
       "advanced"
     ],
     "routerLink": null,
-    "anchor": "syslog_level",
-    "triggerAnchor": "syslog-settings",
+    "anchor": "syslog-level",
+    "triggerAnchor": "configure-syslog",
     "section": "ui"
   },
   {
@@ -637,8 +799,8 @@
       "advanced"
     ],
     "routerLink": null,
-    "anchor": "syslog_server",
-    "triggerAnchor": "syslog-settings",
+    "anchor": "syslog-server",
+    "triggerAnchor": "configure-syslog",
     "section": "ui"
   },
   {
@@ -655,8 +817,8 @@
       "advanced"
     ],
     "routerLink": null,
-    "anchor": "syslog_transport",
-    "triggerAnchor": "syslog-settings",
+    "anchor": "syslog-transport",
+    "triggerAnchor": "configure-syslog",
     "section": "ui"
   },
   {
@@ -673,33 +835,33 @@
       "advanced"
     ],
     "routerLink": null,
-    "anchor": "include_audit_logs",
-    "triggerAnchor": "syslog-settings",
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "System Settings",
-      "Advanced",
-      "System Security",
-      "Enable FIPS"
-    ],
-    "synonyms": [],
-    "requiredRoles": [],
-    "anchorRouterLink": [
-      "/system",
-      "advanced"
-    ],
-    "routerLink": null,
-    "anchor": "system_settings-advanced-system_security-enable_fips",
-    "triggerAnchor": "system-security-settings",
+    "anchor": "include-audit-logs",
+    "triggerAnchor": "configure-syslog",
     "section": "ui"
   },
   {
     "hierarchy": [
       "System Settings",
       "General",
-      "Email Options",
+      "Email",
+      "Settings"
+    ],
+    "synonyms": [],
+    "requiredRoles": [],
+    "anchorRouterLink": [
+      "/system",
+      "general"
+    ],
+    "routerLink": null,
+    "anchor": "configure-email",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "System Settings",
+      "General",
+      "Email",
       "Send Method"
     ],
     "synonyms": [
@@ -712,15 +874,15 @@
       "general"
     ],
     "routerLink": null,
-    "anchor": "send_method",
-    "triggerAnchor": "email-settings",
+    "anchor": "send-method",
+    "triggerAnchor": "configure-email",
     "section": "ui"
   },
   {
     "hierarchy": [
       "System Settings",
       "General",
-      "Email Options",
+      "Email",
       "Outgoing Server"
     ],
     "synonyms": [
@@ -732,8 +894,26 @@
       "general"
     ],
     "routerLink": null,
-    "anchor": "outgoing_server",
-    "triggerAnchor": "email-settings",
+    "anchor": "outgoing-server",
+    "triggerAnchor": "configure-email",
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "System Settings",
+      "General",
+      "GUI",
+      "Settings"
+    ],
+    "synonyms": [],
+    "requiredRoles": [],
+    "anchorRouterLink": [
+      "/system",
+      "general"
+    ],
+    "routerLink": null,
+    "anchor": "configure-gui",
+    "triggerAnchor": null,
     "section": "ui"
   },
   {
@@ -750,8 +930,26 @@
       "general"
     ],
     "routerLink": null,
-    "anchor": "system_settings-general-gui-theme",
-    "triggerAnchor": "gui-settings",
+    "anchor": "system-settings-general-gui-theme",
+    "triggerAnchor": "configure-gui",
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "System Settings",
+      "General",
+      "Localization",
+      "Settings"
+    ],
+    "synonyms": [],
+    "requiredRoles": [],
+    "anchorRouterLink": [
+      "/system",
+      "general"
+    ],
+    "routerLink": null,
+    "anchor": "configure-localization",
+    "triggerAnchor": null,
     "section": "ui"
   },
   {
@@ -771,7 +969,7 @@
     ],
     "routerLink": null,
     "anchor": "language",
-    "triggerAnchor": "localization-settings",
+    "triggerAnchor": "configure-localization",
     "section": "ui"
   },
   {
@@ -788,8 +986,8 @@
       "general"
     ],
     "routerLink": null,
-    "anchor": "console_keyboard_map",
-    "triggerAnchor": "localization-settings",
+    "anchor": "console-keyboard-map",
+    "triggerAnchor": "configure-localization",
     "section": "ui"
   },
   {
@@ -807,7 +1005,7 @@
     ],
     "routerLink": null,
     "anchor": "timezone",
-    "triggerAnchor": "localization-settings",
+    "triggerAnchor": "configure-localization",
     "section": "ui"
   },
   {
@@ -824,8 +1022,8 @@
       "general"
     ],
     "routerLink": null,
-    "anchor": "date_format",
-    "triggerAnchor": "localization-settings",
+    "anchor": "date-format",
+    "triggerAnchor": "configure-localization",
     "section": "ui"
   },
   {
@@ -842,8 +1040,85 @@
       "general"
     ],
     "routerLink": null,
-    "anchor": "time_format",
-    "triggerAnchor": "localization-settings",
+    "anchor": "time-format",
+    "triggerAnchor": "configure-localization",
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "System Settings",
+      "General",
+      "Manage Configuration"
+    ],
+    "synonyms": [],
+    "requiredRoles": [],
+    "anchorRouterLink": [
+      "/system",
+      "general"
+    ],
+    "routerLink": null,
+    "anchor": "manage-configuration",
+    "triggerAnchor": "manage-configuration",
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "System Settings",
+      "General",
+      "Manage Configuration",
+      "Download File"
+    ],
+    "synonyms": [],
+    "requiredRoles": [
+      "FULL_ADMIN"
+    ],
+    "anchorRouterLink": [
+      "/system",
+      "general"
+    ],
+    "routerLink": null,
+    "anchor": "download-file",
+    "triggerAnchor": "manage-configuration",
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "System Settings",
+      "General",
+      "Manage Configuration",
+      "Upload File"
+    ],
+    "synonyms": [],
+    "requiredRoles": [
+      "FULL_ADMIN"
+    ],
+    "anchorRouterLink": [
+      "/system",
+      "general"
+    ],
+    "routerLink": null,
+    "anchor": "upload-file",
+    "triggerAnchor": "manage-configuration",
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "System Settings",
+      "General",
+      "Manage Configuration",
+      "Reset to Defaults"
+    ],
+    "synonyms": [],
+    "requiredRoles": [
+      "FULL_ADMIN"
+    ],
+    "anchorRouterLink": [
+      "/system",
+      "general"
+    ],
+    "routerLink": null,
+    "anchor": "reset-to-defaults",
+    "triggerAnchor": "manage-configuration",
     "section": "ui"
   },
   {
@@ -864,7 +1139,7 @@
       "general"
     ],
     "routerLink": null,
-    "anchor": "system_settings-general-ntp_server-add",
+    "anchor": "system-settings-general-ntp-server-add",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -904,7 +1179,7 @@
       "general"
     ],
     "routerLink": null,
-    "anchor": "file_ticket",
+    "anchor": "file-ticket",
     "triggerAnchor": null,
     "section": "ui"
   }

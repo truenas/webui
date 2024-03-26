@@ -6,6 +6,7 @@ import { Store } from '@ngrx/store';
 import { filter } from 'rxjs/operators';
 import { toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import { helptextSystemGeneral as helptext } from 'app/helptext/system/general';
+import { guiCardElements } from 'app/pages/system/general-settings/gui/gui-card/gui-card.elements';
 import { GuiFormComponent } from 'app/pages/system/general-settings/gui/gui-form/gui-form.component';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { AppState } from 'app/store';
@@ -20,6 +21,8 @@ import { waitForGeneralConfig } from 'app/store/system-config/system-config.sele
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class GuiCardComponent {
+  protected readonly searchableElements = guiCardElements;
+
   readonly generalConfig$ = this.store$.pipe(
     waitForGeneralConfig,
     toLoadingState(),
@@ -37,7 +40,7 @@ export class GuiCardComponent {
     private slideInService: IxSlideInService,
   ) {}
 
-  doAdd(): void {
+  openSettings(): void {
     const slideInRef = this.slideInService.open(GuiFormComponent);
     slideInRef.slideInClosed$.pipe(
       filter((response) => !response),

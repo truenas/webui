@@ -2,7 +2,7 @@ import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
 export const localizationFormElements = {
   hierarchy: [T('System Settings'), T('General'), T('Localization')],
-  triggerAnchor: 'localization-settings',
+  triggerAnchor: 'configure-localization',
   anchorRouterLink: ['/system', 'general'],
   elements: {
     language: {

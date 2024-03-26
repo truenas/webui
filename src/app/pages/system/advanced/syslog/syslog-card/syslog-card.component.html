@@ -4,8 +4,9 @@
     <div class="actions action-icon">
       <button
         mat-button
-        id="syslog-settings"
+        ixUiSearchableElement
         [ixTest]="['syslog', 'configure']"
+        [ixSearchConfig]="searchableElements.elements.configure"
         (click)="onConfigurePressed()"
       >
         {{ 'Configure' | translate }}

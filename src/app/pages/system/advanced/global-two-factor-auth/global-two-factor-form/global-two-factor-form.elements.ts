@@ -2,7 +2,7 @@ import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
 export const globalTwoFactorFormElements = {
   hierarchy: [T('System Settings'), T('Advanced'), T('Global Two Factor Auth')],
-  triggerAnchor: 'global-two-factor-auth',
+  triggerAnchor: 'configure-global-two-factor',
   anchorRouterLink: ['/system', 'advanced'],
   elements: {
     globallyEnabled: {

@@ -6,6 +6,7 @@ import {
 } from 'rxjs';
 import { toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import { AdvancedSettingsService } from 'app/pages/system/advanced/advanced-settings.service';
+import { auditCardElements } from 'app/pages/system/advanced/audit/audit-card/audit-card.elements';
 import { AuditFormComponent } from 'app/pages/system/advanced/audit/audit-form/audit-form.component';
 import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -19,6 +20,7 @@ import { WebSocketService } from 'app/services/ws.service';
 })
 export class AuditCardComponent {
   private readonly reloadConfig$ = new Subject<void>();
+  protected readonly searchableElements = auditCardElements;
   auditConfig$ = this.reloadConfig$.pipe(
     startWith(undefined),
     switchMap(() => this.ws.call('audit.config')),

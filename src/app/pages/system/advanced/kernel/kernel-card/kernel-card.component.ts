@@ -7,6 +7,7 @@ import {
 } from 'rxjs/operators';
 import { toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import { AdvancedSettingsService } from 'app/pages/system/advanced/advanced-settings.service';
+import { kernelCardElements } from 'app/pages/system/advanced/kernel/kernel-card/kernel-card.elements';
 import { KernelFormComponent } from 'app/pages/system/advanced/kernel/kernel-form/kernel-form.component';
 import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 import { AppState } from 'app/store';
@@ -21,6 +22,7 @@ import { waitForAdvancedConfig } from 'app/store/system-config/system-config.sel
 })
 export class KernelCardComponent {
   private readonly reloadConfig$ = new Subject<void>();
+  protected readonly searchableElements = kernelCardElements;
   readonly debugKernel$ = this.reloadConfig$.pipe(
     startWith(undefined),
     switchMap(() => this.store$.pipe(waitForAdvancedConfig)),

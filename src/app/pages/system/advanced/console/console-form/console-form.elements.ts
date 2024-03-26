@@ -2,7 +2,7 @@ import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
 export const consoleFormElements = {
   hierarchy: [T('System Settings'), T('Advanced'), T('Console')],
-  triggerAnchor: 'console-settings',
+  triggerAnchor: 'configure-console',
   anchorRouterLink: ['/system', 'advanced'],
   elements: {
     consoleMenu: {

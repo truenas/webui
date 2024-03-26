@@ -1,15 +1,12 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
-export const storageSettingsFormElements = {
+export const storageCardElements = {
   hierarchy: [T('System Settings'), T('Advanced'), T('Storage')],
-  triggerAnchor: 'configure-storage',
   anchorRouterLink: ['/system', 'advanced'],
   elements: {
-    systemPool: {
-      hierarchy: [T('System Data Pool')],
-    },
-    swapSize: {
-      hierarchy: [T('Swap Size')],
+    configure: {
+      hierarchy: [T('Configure')],
+      anchor: 'configure-storage',
     },
   },
 };

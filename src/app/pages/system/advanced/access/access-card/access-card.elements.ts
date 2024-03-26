@@ -7,6 +7,7 @@ export const accessCardElements = {
     configureAccess: {
       hierarchy: [T('Configure')],
       synonyms: [T('Configure Sessions')],
+      anchor: 'configure-access',
     },
     terminateOtherSessions: {
       hierarchy: [T('Terminate Other Sessions')],

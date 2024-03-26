@@ -49,10 +49,10 @@
     requiredRoles?: Role[] | string[]; ⬅️ Required roles to see search result, can be skipped if `*ixRequiresRoles="requiredRoles"` applied to the element
   }
 
-  Note: If you add `ixUiSearchableElement` to the trigger button -
-  then in the form which will be opened by this trigger button you need to rely on the auto-generated ID to add searchable elements
+  Note: If you add `ixUiSearchableElement` to the trigger button - then in the form which will be opened by this trigger button
+  you can rely on the auto-generated ID on the trigger button or add `anchor: 'my-custom-id'` prop on the trigger button
   Example: check access card -> [ixSearchConfig]="searchElements.elements.configureAccess"
-  In this case id will be generated as `#configure`, so in the access-form.elements.ts -> we need to provide `triggerAnchor: 'configure',`
+  In this case I set custom anchor `#configure-access`, so in the access-form.elements.ts -> we need to provide `triggerAnchor: 'configure-access',`
  */
 
 import * as cheerio from 'cheerio';
@@ -207,7 +207,7 @@ function mergeElementsData(
       requiredRoles,
       anchorRouterLink,
       routerLink,
-      anchor: generateIdFromHierarchy(child.hierarchy || parent.hierarchy),
+      anchor: child.anchor || parent.anchor || generateIdFromHierarchy(child.hierarchy || parent.hierarchy || []),
       triggerAnchor,
       section: GlobalSearchSection.Ui,
     };

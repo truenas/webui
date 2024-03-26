@@ -2,7 +2,7 @@ import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
 export const auditFormElements = {
   hierarchy: [T('System Settings'), T('Advanced'), T('Audit')],
-  triggerAnchor: 'audit-settings',
+  triggerAnchor: 'configure-audit',
   anchorRouterLink: ['/system', 'advanced'],
   elements: {
     retention: {

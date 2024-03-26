@@ -8,6 +8,7 @@ import {
 import { toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import { ReplicationConfig } from 'app/interfaces/replication-config.interface';
 import { AdvancedSettingsService } from 'app/pages/system/advanced/advanced-settings.service';
+import { replicationSettingsCardElements } from 'app/pages/system/advanced/replication/replication-settings-card/replication-settings-card.elements';
 import {
   ReplicationSettingsFormComponent,
 } from 'app/pages/system/advanced/replication/replication-settings-form/replication-settings-form.component';
@@ -24,6 +25,7 @@ import { WebSocketService } from 'app/services/ws.service';
 export class ReplicationSettingsCardComponent {
   private replicationConfig: ReplicationConfig;
   private readonly reloadConfig$ = new Subject<void>();
+  protected readonly searchableElements = replicationSettingsCardElements;
   taskLimit$ = this.reloadConfig$.pipe(
     startWith(undefined),
     switchMap(() => this.ws.call('replication.config.config')),
