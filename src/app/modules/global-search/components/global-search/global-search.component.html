@@ -18,25 +18,15 @@
       (keydown)="handleKeyDown($event)"
     />
 
-    <span
-      *ngIf="searchControl.value"
-      class="reset-icon reset-input"
-      (click)="resetInput()"
-    >
-      <ix-icon
-        name="mdi-close-circle"
-        tabindex="0"
-        (keydown.enter)="$event.preventDefault(); resetInput()"
-      ></ix-icon>
+    <span *ngIf="searchControl.value" class="reset-icon reset-input" (click)="resetInput()">
+      <ix-icon name="mdi-close-circle"></ix-icon>
     </span>
   </div>
 
   <ix-global-search-results
-    #searchResultsList
     @fade
-    [searchTerm]="searchControl.value"
+    [searchTerm]="searchTerm"
     [results]="searchResults"
-    [focusedIndex]="selectedIndex"
     (selected)="resetInput()"
     (keydown)="handleKeyDown($event)"
   ></ix-global-search-results>
