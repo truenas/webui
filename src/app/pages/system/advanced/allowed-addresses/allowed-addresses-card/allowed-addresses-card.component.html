@@ -14,6 +14,7 @@
 
     <div class="actions action-icon">
       <button
+        *ixRequiresRoles="requiredRoles"
         mat-button
         [ixTest]="['configure', 'ip-address']"
         [disabled]="dataProvider.isLoading$ | async"

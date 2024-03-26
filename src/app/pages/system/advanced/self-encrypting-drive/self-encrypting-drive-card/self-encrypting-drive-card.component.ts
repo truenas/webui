@@ -3,6 +3,7 @@ import { Store } from '@ngrx/store';
 import {
   map, shareReplay, startWith, switchMap,
 } from 'rxjs/operators';
+import { Role } from 'app/enums/role.enum';
 import { toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import { AdvancedSettingsService } from 'app/pages/system/advanced/advanced-settings.service';
 import { SelfEncryptingDriveFormComponent } from 'app/pages/system/advanced/self-encrypting-drive/self-encrypting-drive-form/self-encrypting-drive-form.component';
@@ -18,6 +19,8 @@ import { waitForAdvancedConfig } from 'app/store/system-config/system-config.sel
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SelfEncryptingDriveCardComponent {
+  protected requiredRoles = [Role.FullAdmin];
+
   readonly sedUser$ = this.store$.pipe(
     waitForAdvancedConfig,
     map((config) => config.sed_user),

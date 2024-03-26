@@ -1,5 +1,11 @@
 @import '../../../../assets/styles/other/tn-styles';
 
+:host ::ng-deep {
+  ix-missing-access-wrapper {
+    width: 100%;
+  }
+}
+
 div.mat-mdc-card {
   overflow: hidden;
 }

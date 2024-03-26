@@ -8,6 +8,7 @@ import {
   map, take, switchMap, tap,
 } from 'rxjs/operators';
 import { DatasetType, DatasetQuotaType } from 'app/enums/dataset.enum';
+import { Role } from 'app/enums/role.enum';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { DatasetCapacitySettingsComponent } from 'app/pages/datasets/components/dataset-capacity-management-card/dataset-capacity-settings/dataset-capacity-settings.component';
@@ -26,6 +27,8 @@ import { WebSocketService } from 'app/services/ws.service';
 })
 export class DatasetCapacityManagementCardComponent implements OnChanges, OnInit {
   @Input() dataset: DatasetDetails;
+
+  readonly requiredRoles = [Role.DatasetWrite];
 
   refreshQuotas$ = new Subject<void>();
   inheritedQuotasDataset: DatasetDetails;

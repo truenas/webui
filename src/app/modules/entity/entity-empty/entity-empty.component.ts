@@ -1,5 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { EmptyType } from 'app/enums/empty-type.enum';
+import { Role } from 'app/enums/role.enum';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 
 @Component({
@@ -9,6 +10,7 @@ import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 })
 export class EntityEmptyComponent {
   @Input() conf: EmptyConfig;
+  @Input() requiredRoles: Role[];
 
   doAction(): void {
     if (this.conf.button.action) {

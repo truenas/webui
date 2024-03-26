@@ -5,6 +5,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import {
   Observable, filter, shareReplay,
 } from 'rxjs';
+import { Role } from 'app/enums/role.enum';
 import { toLoadingState, LoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import { helptext2fa } from 'app/helptext/system/2fa';
 import { GlobalTwoFactorConfig } from 'app/interfaces/two-factor-config.interface';
@@ -20,6 +21,8 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class GlobalTwoFactorAuthCardComponent implements OnInit {
+  protected requiredRoles = [Role.FullAdmin];
+
   protected twoFactorConfig$: Observable<LoadingState<GlobalTwoFactorConfig>>;
   readonly helpText = helptext2fa;
 

@@ -132,7 +132,7 @@ export class SnapshotTaskListComponent implements EntityTableConfig<PeriodicSnap
       id: 'delete',
       icon: 'delete',
       label: 'Delete',
-      requiredRoles: [Role.FullAdmin],
+      requiredRoles: this.requiredRoles,
       onClick: (rowinner: PeriodicSnapshotTaskUi) => {
         this.entityList.doDelete(rowinner);
       },

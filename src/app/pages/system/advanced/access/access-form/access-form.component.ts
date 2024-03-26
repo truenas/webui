@@ -41,7 +41,7 @@ export class AccessFormComponent implements OnInit {
     return this.systemGeneralService.isEnterprise;
   }
 
-  readonly requiredRoles = [Role.FullAdmin];
+  readonly requiredRoles = [Role.AuthSessionsWrite];
 
   constructor(
     private fb: FormBuilder,

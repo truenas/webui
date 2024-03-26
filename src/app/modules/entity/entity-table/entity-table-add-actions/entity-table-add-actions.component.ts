@@ -4,6 +4,7 @@ import {
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { fromEvent as observableFromEvent } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { Role } from 'app/enums/role.enum';
 import { EntityTableAddActionsConfig } from 'app/modules/entity/entity-table/entity-table-add-actions/entity-table-add-actions-config.interface';
 import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-table.component';
 import { EntityTableAction } from 'app/modules/entity/entity-table/entity-table.interface';
@@ -23,6 +24,7 @@ export class EntityTableAddActionsComponent implements OnInit, AfterViewInit {
   actions: EntityTableAction[];
   menuTriggerMessage = 'Click for options';
   direction = 'left';
+  protected readonly Role = Role;
 
   get totalActions(): number {
     const addAction = this.entity.conf.routeAdd || this.entity.conf.doAdd ? 1 : 0;

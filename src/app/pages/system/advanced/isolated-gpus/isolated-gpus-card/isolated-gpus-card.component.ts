@@ -5,6 +5,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { filter } from 'rxjs';
 import { EmptyType } from 'app/enums/empty-type.enum';
+import { Role } from 'app/enums/role.enum';
 import { Device } from 'app/interfaces/device.interface';
 import { AdvancedSettingsService } from 'app/pages/system/advanced/advanced-settings.service';
 import {
@@ -21,6 +22,8 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class IsolatedGpusCardComponent implements OnInit {
+  protected requiredRoles = [Role.FullAdmin];
+
   isolatedGpus: Device[] = [];
 
   readonly emptyConfig = {

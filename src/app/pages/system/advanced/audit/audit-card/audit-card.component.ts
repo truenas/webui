@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { shareReplay, startWith, switchMap } from 'rxjs';
+import { Role } from 'app/enums/role.enum';
 import { toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import { AuditFormComponent } from 'app/pages/system/advanced/audit/audit-form/audit-form.component';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -13,6 +14,8 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AuditCardComponent {
+  protected requiredRoles = [Role.SystemAuditWrite];
+
   auditConfig$ = this.slideInService.onClose$.pipe(
     startWith(undefined),
     switchMap(() => this.ws.call('audit.config')),

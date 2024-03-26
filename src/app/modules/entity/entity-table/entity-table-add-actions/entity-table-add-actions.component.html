@@ -132,15 +132,17 @@
       <ix-icon name="mdi-menu-down" class="menu-caret"></ix-icon>
     </button>
     <mat-menu #menu="matMenu" overlapTrigger="false">
-      <button
-        *ngIf="this.entity.conf.routeAdd || this.entity.conf.doAdd"
-        mat-menu-item
-        id="add_action_button"
-        [ixTest]="[conf.title, 'add']"
-        (click)="this.entity.doAdd()"
-      >
-        <span>{{ 'Add' | translate }}</span>
-      </button>
+      <ng-container *ixRequiresRoles="this.entity.conf.requiredRoles">
+        <button
+          *ngIf="this.entity.conf.routeAdd || this.entity.conf.doAdd"
+          mat-menu-item
+          id="add_action_button"
+          [ixTest]="[conf.title, 'add']"
+          (click)="this.entity.doAdd()"
+        >
+          <span>{{ 'Add' | translate }}</span>
+        </button>
+      </ng-container>
       <button
         *ngFor="let action of actions"
         mat-menu-item
@@ -154,18 +156,20 @@
 
     <ng-template #elseBlock>
       <!--When there is no routeAdd -->
-      <button
-        *ngIf="this.entity.conf.routeAdd || this.entity.conf.doAdd"
-        mat-button
-        color="primary"
-        id="add_action_button"
-        [ixTest]="[conf.title, 'add']"
-        [matTooltip]="entity.conf.routeAddTooltip | translate"
-        [disabled]="entity.conf.addBtnDisabled"
-        (click)="this.entity.doAdd()"
-      >
-        {{ 'Add' | translate }}
-      </button>
+      <ng-container *ixRequiresRoles="this.entity.conf.requiredRoles">
+        <button
+          *ngIf="this.entity.conf.routeAdd || this.entity.conf.doAdd"
+          mat-button
+          color="primary"
+          id="add_action_button"
+          [ixTest]="[conf.title, 'add']"
+          [matTooltip]="entity.conf.routeAddTooltip | translate"
+          [disabled]="entity.conf.addBtnDisabled"
+          (click)="this.entity.doAdd()"
+        >
+          {{ 'Add' | translate }}
+        </button>
+      </ng-container>
       <button
         *ngIf="!(this.entity.conf.routeAdd || this.entity.conf.doAdd) && this.totalActions === 1"
         mat-button

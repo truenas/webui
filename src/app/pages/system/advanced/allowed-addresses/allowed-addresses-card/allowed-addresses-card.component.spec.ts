@@ -34,6 +34,7 @@ describe('AllowedAddressesCardComponent', () => {
       IxTable2Module,
     ],
     providers: [
+      mockAuth(),
       mockProvider(AdvancedSettingsService),
       mockWebsocket([
         mockCall('system.general.config', config),
@@ -48,7 +49,6 @@ describe('AllowedAddressesCardComponent', () => {
         }),
       }),
       mockProvider(IxSlideInRef),
-      mockAuth(),
     ],
   });
 

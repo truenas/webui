@@ -37,6 +37,8 @@ import { waitForGeneralConfig } from 'app/store/system-config/system-config.sele
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AccessCardComponent implements OnInit {
+  readonly requiredRoles = [Role.AuthSessionsWrite];
+
   readonly tokenLifetime$ = this.store$.pipe(
     waitForPreferences,
     map((preferences) => {
@@ -72,7 +74,7 @@ export class AccessCardComponent implements OnInit {
             : this.translate.instant('Terminate session')),
           onClick: (row) => this.onTerminate(row.id),
           disabled: (row) => of(row.current),
-          requiredRoles: [Role.AuthSessionsWrite],
+          requiredRoles: this.requiredRoles,
         },
       ],
     }),
@@ -83,8 +85,6 @@ export class AccessCardComponent implements OnInit {
   get isEnterprise(): boolean {
     return this.systemGeneralService.isEnterprise;
   }
-
-  protected readonly Role = Role;
 
   constructor(
     private store$: Store<AppState>,

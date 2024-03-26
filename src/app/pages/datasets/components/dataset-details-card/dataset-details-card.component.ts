@@ -16,7 +16,6 @@ import { DatasetFormComponent } from 'app/pages/datasets/components/dataset-form
 import { DeleteDatasetDialogComponent } from 'app/pages/datasets/components/delete-dataset-dialog/delete-dataset-dialog.component';
 import { ZvolFormComponent } from 'app/pages/datasets/components/zvol-form/zvol-form.component';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
-import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -32,6 +31,7 @@ export class DatasetDetailsCardComponent {
   @Input() dataset: DatasetDetails;
   @Input() isLoading: boolean;
 
+  protected readonly Role = Role;
   readonly OnOff = OnOff;
 
   constructor(
@@ -42,7 +42,6 @@ export class DatasetDetailsCardComponent {
     private errorHandler: ErrorHandlerService,
     private router: Router,
     private ws: WebSocketService,
-    private dialogService: DialogService,
     private snackbar: SnackbarService,
   ) { }
 
@@ -118,6 +117,4 @@ export class DatasetDetailsCardComponent {
       untilDestroyed(this),
     ).subscribe(() => this.datasetStore.datasetUpdated());
   }
-
-  protected readonly Role = Role;
 }

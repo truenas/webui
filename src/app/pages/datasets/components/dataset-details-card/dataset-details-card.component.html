@@ -3,19 +3,28 @@
     <h3 *ngIf="isFilesystem" mat-card-title>
       {{ 'Dataset Details' | translate }}
     </h3>
-    <button
-      *ngIf="isFilesystem"
-      mat-button
-      ixTest="edit-dataset"
-      (click)="editDataset()"
-    >
-      {{ 'Edit' | translate }}
-    </button>
+    <ng-container *ngIf="isFilesystem">
+      <button
+        *ixRequiresRoles="[Role.DatasetWrite]"
+        mat-button
+        ixTest="edit-dataset"
+        (click)="editDataset()"
+      >
+        {{ 'Edit' | translate }}
+      </button>
+    </ng-container>
 
     <h3 *ngIf="isZvol" mat-card-title>{{ 'Zvol Details' | translate }}</h3>
-    <button *ngIf="isZvol" mat-button ixTest="edit-zvol" (click)="editZvol()">
-      {{ 'Edit Zvol' | translate }}
-    </button>
+    <ng-container *ngIf="isZvol">
+      <button
+        *ixRequiresRoles="[Role.DatasetWrite]"
+        mat-button
+        ixTest="edit-zvol"
+        (click)="editZvol()"
+      >
+        {{ 'Edit Zvol' | translate }}
+      </button>
+    </ng-container>
   </mat-card-header>
   <mat-card-content>
     <div class="details-item">
