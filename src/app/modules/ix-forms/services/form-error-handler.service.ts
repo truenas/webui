@@ -1,4 +1,5 @@
-import { Injectable } from '@angular/core';
+import { DOCUMENT } from '@angular/common';
+import { Inject, Injectable } from '@angular/core';
 import { AbstractControl, UntypedFormArray, UntypedFormGroup } from '@angular/forms';
 import { ResponseErrorType } from 'app/enums/response-error-type.enum';
 import { Job } from 'app/interfaces/job.interface';
@@ -13,6 +14,7 @@ export class FormErrorHandlerService {
     private dialog: DialogService,
     private errorHandler: ErrorHandlerService,
     private formService: IxFormService,
+    @Inject(DOCUMENT) private document: Document,
   ) {}
 
   /**
@@ -25,9 +27,10 @@ export class FormErrorHandlerService {
     error: unknown,
     formGroup: UntypedFormGroup,
     fieldsMap: Record<string, string> = {},
+    triggerAnchor: string = undefined,
   ): void {
     if (this.errorHandler.isWebSocketError(error) && error.type === ResponseErrorType.Validation && error.extra) {
-      this.handleValidationError(error, formGroup, fieldsMap);
+      this.handleValidationError(error, formGroup, fieldsMap, triggerAnchor);
       return;
     }
 
@@ -36,7 +39,12 @@ export class FormErrorHandlerService {
       && error.exc_info.type === ResponseErrorType.Validation
       && error.exc_info.extra
     ) {
-      this.handleValidationError({ ...error, extra: error.exc_info.extra as Job['extra'] }, formGroup, fieldsMap);
+      this.handleValidationError(
+        { ...error, extra: error.exc_info.extra as Job['extra'] },
+        formGroup,
+        fieldsMap,
+        triggerAnchor,
+      );
       return;
     }
 
@@ -48,39 +56,64 @@ export class FormErrorHandlerService {
     error: WebSocketError | Job,
     formGroup: UntypedFormGroup,
     fieldsMap: Record<string, string>,
+    triggerAnchor: string,
   ): void {
+    let isOnErrorFocused = false;
     const extra = (error as WebSocketError).extra as string[][];
     for (const extraItem of extra) {
       const field = extraItem[0].split('.').pop();
       const errorMessage = extraItem[1];
 
       let control = this.getFormField(formGroup, field, fieldsMap);
-      const controlsNames = this.formService.getControlsNames();
+      let controlsNames = this.formService.getControlsNames();
 
-      if (!control || !controlsNames.includes(field)) {
-        console.error(`Could not find control ${field}.`);
-        // Fallback to default modal error message.
-        this.dialog.error(this.errorHandler.parseError(error));
-        return;
+      const showValidationError: () => void = (): void => {
+        if (!control || !controlsNames.includes(field)) {
+          console.error(`Could not find control ${field}.`);
+          // Fallback to default modal error message.
+          this.dialog.error(this.errorHandler.parseError(error));
+          return;
+        }
+
+        if ((control as UntypedFormArray).controls?.length) {
+          const isExactMatch = (text: string, match: string): boolean => new RegExp(`\\b${match}\\b`).test(text);
+
+          control = (control as UntypedFormArray).controls
+            .find((controlOfArray) => isExactMatch(errorMessage, controlOfArray.value as string));
+        }
+
+        if (!control) {
+          this.dialog.error(this.errorHandler.parseError(error));
+        } else {
+          control.setErrors({
+            manualValidateError: true,
+            manualValidateErrorMsg: errorMessage,
+            ixManualValidateError: { message: errorMessage },
+          });
+          control.markAsTouched();
+
+          const element = this.formService.getElementByControlName(field);
+          if (element && !isOnErrorFocused) {
+            element.scrollIntoView();
+            element.focus();
+            isOnErrorFocused = true;
+          }
+        }
+      };
+
+      if (triggerAnchor && control && !controlsNames.includes(field)) {
+        const triggerAnchorRef: HTMLElement = this.document.getElementById(triggerAnchor);
+        if (triggerAnchorRef) {
+          triggerAnchorRef.click();
+          setTimeout(() => {
+            control = this.getFormField(formGroup, field, fieldsMap);
+            controlsNames = this.formService.getControlsNames();
+            showValidationError();
+          });
+          return;
+        }
       }
-
-      if ((control as UntypedFormArray).controls?.length) {
-        const isExactMatch = (text: string, match: string): boolean => new RegExp(`\\b${match}\\b`).test(text);
-
-        control = (control as UntypedFormArray).controls
-          .find((controlOfArray) => isExactMatch(errorMessage, controlOfArray.value as string));
-      }
-
-      if (!control) {
-        this.dialog.error(this.errorHandler.parseError(error));
-      } else {
-        control.setErrors({
-          manualValidateError: true,
-          manualValidateErrorMsg: errorMessage,
-          ixManualValidateError: { message: errorMessage },
-        });
-        control.markAsTouched();
-      }
+      showValidationError();
     }
   }
 

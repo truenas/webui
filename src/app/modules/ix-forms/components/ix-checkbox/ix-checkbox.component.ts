@@ -1,6 +1,6 @@
 import {
   AfterViewInit,
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnDestroy,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, Input, OnDestroy,
 } from '@angular/core';
 import {
   ControlValueAccessor, NgControl,
@@ -30,12 +30,13 @@ export class IxCheckboxComponent implements ControlValueAccessor, AfterViewInit,
     public controlDirective: NgControl,
     private cdr: ChangeDetectorRef,
     private formService: IxFormService,
+    private elementRef: ElementRef<HTMLElement>,
   ) {
     this.controlDirective.valueAccessor = this;
   }
 
   ngAfterViewInit(): void {
-    this.formService.registerControl(this.controlDirective);
+    this.formService.registerControl(this.controlDirective, this.elementRef);
   }
 
   ngOnDestroy(): void {
