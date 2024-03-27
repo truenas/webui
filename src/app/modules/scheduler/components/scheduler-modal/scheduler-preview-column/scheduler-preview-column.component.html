@@ -1,15 +1,16 @@
 <section class="preview-header">
   <h4 class="crontab-header">
     {{ 'Schedule Preview' | translate }}
-    <button
-      class="close-btn"
-      mat-icon-button
-      aria-label="Close scheduler"
-      ixTest="close-scheduler"
-      [matDialogClose]
-    >
-      <ix-icon name="cancel"></ix-icon>
-    </button>
+    <div class="close-wrapper" [attr.aria-label]="'Close scheduler' | translate">
+      <button
+        class="close-btn"
+        mat-icon-button
+        ixTest="close-scheduler"
+        [matDialogClose]
+      >
+        <ix-icon name="cancel"></ix-icon>
+      </button>
+    </div>
   </h4>
   <div class="crontab">{{ crontab }}</div>
   <div class="crontab-explanation">{{ crontab | crontabExplanation }}</div>
