@@ -10,9 +10,9 @@ export class IxDateComponent {
   @Input() date: number | Date;
   @Input() dateFormat: string = null;
   @Input() timeFormat: string = null;
-  @Input() machineTimezone: string = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  @Input() machineTimezone: string;
 
   get serverTime(): Date {
-    return utcToZonedTime(this.date, this.machineTimezone);
+    return this.machineTimezone ? utcToZonedTime(this.date, this.machineTimezone) : null;
   }
 }
