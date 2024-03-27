@@ -71,7 +71,7 @@ export class IxInputComponent implements ControlValueAccessor, OnInit, OnChanges
     public controlDirective: NgControl,
     private translate: TranslateService,
     private cdr: ChangeDetectorRef,
-    private ixFormService: IxFormService,
+    private formService: IxFormService,
   ) {
     this.controlDirective.valueAccessor = this;
   }
@@ -89,11 +89,11 @@ export class IxInputComponent implements ControlValueAccessor, OnInit, OnChanges
   }
 
   ngAfterViewInit(): void {
-    this.ixFormService.registerControl(this.controlDirective);
+    this.formService.registerControl(this.controlDirective);
   }
 
   ngOnDestroy(): void {
-    this.ixFormService.unregisterControl(this.controlDirective);
+    this.formService.unregisterControl(this.controlDirective);
   }
 
   get value(): string | number {

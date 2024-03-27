@@ -9,6 +9,10 @@ export class IxFormService {
     return [...this.controls];
   }
 
+  getControlsNames(): (string | number | null)[] {
+    return this.getControls().map((ctrl) => ctrl.name);
+  }
+
   registerControl(control: NgControl): void {
     this.controls.add(control);
   }

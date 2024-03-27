@@ -12,7 +12,7 @@ export class FormErrorHandlerService {
   constructor(
     private dialog: DialogService,
     private errorHandler: ErrorHandlerService,
-    private ixFormService: IxFormService,
+    private formService: IxFormService,
   ) {}
 
   /**
@@ -55,9 +55,9 @@ export class FormErrorHandlerService {
       const errorMessage = extraItem[1];
 
       let control = this.getFormField(formGroup, field, fieldsMap);
-      const controlNames = this.ixFormService.getControls().map((ctrl) => ctrl.name);
+      const controlsNames = this.formService.getControlsNames();
 
-      if (!control || !controlNames.includes(field)) {
+      if (!control || !controlsNames.includes(field)) {
         console.error(`Could not find control ${field}.`);
         // Fallback to default modal error message.
         this.dialog.error(this.errorHandler.parseError(error));

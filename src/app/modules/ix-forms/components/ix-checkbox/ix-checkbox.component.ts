@@ -29,17 +29,17 @@ export class IxCheckboxComponent implements ControlValueAccessor, AfterViewInit,
   constructor(
     public controlDirective: NgControl,
     private cdr: ChangeDetectorRef,
-    private ixFormService: IxFormService,
+    private formService: IxFormService,
   ) {
     this.controlDirective.valueAccessor = this;
   }
 
   ngAfterViewInit(): void {
-    this.ixFormService.registerControl(this.controlDirective);
+    this.formService.registerControl(this.controlDirective);
   }
 
   ngOnDestroy(): void {
-    this.ixFormService.unregisterControl(this.controlDirective);
+    this.formService.unregisterControl(this.controlDirective);
   }
 
   onChange: (value: boolean) => void = (): void => {};
