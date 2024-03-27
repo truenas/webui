@@ -5,6 +5,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import {
   Subject, filter, shareReplay, startWith, switchMap,
 } from 'rxjs';
+import { Role } from 'app/enums/role.enum';
 import { toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import { SystemSecurityConfig } from 'app/interfaces/system-security-config.interface';
 import { SystemSecurityFormComponent } from 'app/pages/system/advanced/system-security/system-security-form/system-security-form.component';
@@ -19,6 +20,7 @@ import { WebSocketService } from 'app/services/ws.service';
 })
 export class SystemSecurityCardComponent {
   private readonly reloadConfig$ = new Subject<void>();
+  protected requiredRoles = [Role.FullAdmin];
   readonly systemSecurityConfig$ = this.reloadConfig$.pipe(
     startWith(undefined),
     switchMap(() => this.ws.call('system.security.config').pipe(toLoadingState())),

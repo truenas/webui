@@ -8,6 +8,7 @@ import { differenceInDays } from 'date-fns';
 import { filter, forkJoin, map } from 'rxjs';
 import { Direction } from 'app/enums/direction.enum';
 import { JobState } from 'app/enums/job-state.enum';
+import { Role } from 'app/enums/role.enum';
 import { ApiTimestamp } from 'app/interfaces/api-date.interface';
 import { WidgetComponent } from 'app/pages/dashboard/components/widget/widget.component';
 import { CloudSyncWizardComponent } from 'app/pages/data-protection/cloudsync/cloudsync-wizard/cloudsync-wizard.component';
@@ -54,6 +55,7 @@ export class WidgetBackupComponent extends WidgetComponent implements OnInit {
   isMobile$ = this.breakpointObserver.observe([Breakpoints.XSmall]).pipe(map((state) => state.matches));
   backups: BackupRow[] = [];
   isLoading = false;
+  readonly Role = Role;
 
   successStates = [JobState.Success, JobState.Finished];
   failedStates = [JobState.Failed, JobState.Error, JobState.Aborted];

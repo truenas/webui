@@ -28,7 +28,7 @@ import { selectGeneralConfig } from 'app/store/system-config/system-config.selec
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AccessFormComponent implements OnInit {
-  readonly requiredRoles = [Role.FullAdmin];
+  readonly requiredRoles = [Role.AuthSessionsWrite];
   protected readonly searchElements = elements;
 
   isLoading = false;

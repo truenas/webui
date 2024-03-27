@@ -3,7 +3,7 @@
     <h3>{{ 'Access' | translate }}</h3>
     <div class="actions action-icon">
       <button
-        *ixRequiresRoles="[Role.AuthSessionsWrite]"
+        *ixRequiresRoles="requiredRoles"
         id="terminate-other-sessions"
         ixUiSearchableElement
         mat-button
@@ -15,6 +15,7 @@
         {{ 'Terminate Other Sessions' | translate }}
       </button>
       <button
+        *ixRequiresRoles="requiredRoles"
         id="access-settings"
         mat-button
         [ixTest]="['sessions', 'configure']"

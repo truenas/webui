@@ -4,6 +4,7 @@ import { TranslateService } from '@ngx-translate/core';
 import {
   Subject, filter, shareReplay, startWith, switchMap, tap,
 } from 'rxjs';
+import { Role } from 'app/enums/role.enum';
 import { toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import { AdvancedSettingsService } from 'app/pages/system/advanced/advanced-settings.service';
 import { AuditFormComponent } from 'app/pages/system/advanced/audit/audit-form/audit-form.component';
@@ -19,6 +20,8 @@ import { WebSocketService } from 'app/services/ws.service';
 })
 export class AuditCardComponent {
   private readonly reloadConfig$ = new Subject<void>();
+  protected requiredRoles = [Role.SystemAuditWrite];
+
   auditConfig$ = this.reloadConfig$.pipe(
     startWith(undefined),
     switchMap(() => this.ws.call('audit.config')),
