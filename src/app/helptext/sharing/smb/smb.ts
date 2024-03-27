@@ -66,14 +66,14 @@ export const helptext_sharing_smb = {
  regardless of this setting.'),
 
   placeholder_recyclebin: T('Export Recycle Bin'),
-  tooltip_recyclebin: T('Files that are deleted from the same \
- dataset are moved to the Recycle Bin and do not take any additional \
- space. <b>Deleting files over NFS will remove the files permanently \
- </b>. When the files are in a different dataset or a child dataset, \
- they are copied to the dataset where the Recycle Bin is located. To \
- prevent excessive space usage, files larger than 20 MiB are deleted \
- rather than moved. <b>This is not a replacement \
- for ZFS snapshots.</b>'),
+  tooltip_recyclebin: T('Select to enable. Deleted files from the same \
+   dataset move to a <b>Recycle Bin</b> in that dataset and do not take any \
+   additional space. Recycle bin is for access over SMB protocol only.\
+   The files are renamed to a per-user subdirectory within \
+   <b><i>.recycle</i></b> directory at either (1) root of SMB share \
+   (if path is same dataset as SMB share) or (2) at root of current \
+   dataset if we have nested datasets. Because of (2) there is no \
+   automatic deletion based on file size.'),
 
   placeholder_guestok: T('Allow Guest Access'),
   tooltip_guestok: T('Privileges are the same as the guest account. \
