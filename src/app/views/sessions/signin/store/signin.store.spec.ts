@@ -179,7 +179,7 @@ describe('SigninStore', () => {
           return of();
         }
 
-        return of({ fields: FailoverStatus.Importing } as ApiEvent<FailoverStatus>);
+        return of({ fields: { status: FailoverStatus.Importing } } as ApiEvent<{ status: FailoverStatus }>);
       });
 
       spectator.service.init();
