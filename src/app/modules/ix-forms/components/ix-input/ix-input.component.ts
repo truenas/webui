@@ -1,4 +1,5 @@
 import {
+  AfterViewInit,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
@@ -6,6 +7,7 @@ import {
   EventEmitter,
   Input,
   OnChanges,
+  OnDestroy,
   OnInit,
   Output,
   ViewChild,
@@ -19,6 +21,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { debounceTime, distinctUntilChanged } from 'rxjs';
 import { Option } from 'app/interfaces/option.interface';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
+import { IxFormService } from 'app/modules/ix-forms/services/ix-form.service';
 
 @UntilDestroy()
 @Component({
@@ -27,7 +30,7 @@ import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
   styleUrls: ['./ix-input.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class IxInputComponent implements ControlValueAccessor, OnInit, OnChanges {
+export class IxInputComponent implements ControlValueAccessor, OnInit, OnChanges, AfterViewInit, OnDestroy {
   @Input() label: string;
   @Input() placeholder: string;
   @Input() prefixIcon: string;
@@ -68,6 +71,8 @@ export class IxInputComponent implements ControlValueAccessor, OnInit, OnChanges
     public controlDirective: NgControl,
     private translate: TranslateService,
     private cdr: ChangeDetectorRef,
+    private formService: IxFormService,
+    private elementRef: ElementRef<HTMLElement>,
   ) {
     this.controlDirective.valueAccessor = this;
   }
@@ -82,6 +87,14 @@ export class IxInputComponent implements ControlValueAccessor, OnInit, OnChanges
     if (this.autocompleteOptions) {
       this.handleAutocompleteOptionsOnInit();
     }
+  }
+
+  ngAfterViewInit(): void {
+    this.formService.registerControl(this.controlDirective, this.elementRef);
+  }
+
+  ngOnDestroy(): void {
+    this.formService.unregisterControl(this.controlDirective);
   }
 
   get value(): string | number {

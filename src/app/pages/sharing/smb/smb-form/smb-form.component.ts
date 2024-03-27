@@ -6,9 +6,7 @@ import {
   Inject,
   OnInit,
 } from '@angular/core';
-import {
-  Validators, FormBuilder,
-} from '@angular/forms';
+import { Validators, FormBuilder } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -481,7 +479,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
         }
         this.isLoading = false;
         this.cdr.markForCheck();
-        this.formErrorHandler.handleWsFormError(error, this.form);
+        this.formErrorHandler.handleWsFormError(error, this.form, {}, 'smb-form-toggle-advanced-options');
       },
     });
   }
