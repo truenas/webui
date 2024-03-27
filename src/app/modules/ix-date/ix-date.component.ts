@@ -15,4 +15,8 @@ export class IxDateComponent {
   get serverTime(): Date {
     return this.machineTimezone ? utcToZonedTime(this.date, this.machineTimezone) : null;
   }
+
+  get isTimezoneDifference(): boolean {
+    return this.serverTime < this.date || this.serverTime > this.date;
+  }
 }
