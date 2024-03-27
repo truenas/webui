@@ -278,6 +278,7 @@
   "Click an item to view NFSv4 permissions": "",
   "Click to give {index} star rating.": "",
   "Clicking Continue allows TrueNAS to finish the update in the background while  Abort stops the process and reverts the dataset ACL to the previously active ACL.": "",
+  "Close scheduler": "",
   "Cloud Sync": "",
   "Cloud Sync Read": "",
   "Cloud Sync Write": "",
