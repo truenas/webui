@@ -5,6 +5,7 @@ import { FlexLayoutModule } from '@ngbracket/ngx-layout';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
 import { BehaviorSubject, of } from 'rxjs';
+import { CodeEditorLanguage } from 'app/enums/code-editor-language.enum';
 import {
   DynamicFormSchemaInput,
   DynamicFormSchemaList,
@@ -13,11 +14,13 @@ import {
   DynamicFormSchemaIpaddr,
   DynamicFormSchemaExplorer,
   DynamicFormSchemaDict,
+  DynamicFormSchemaText,
 } from 'app/interfaces/dynamic-form-schema.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { CustomUntypedFormField } from 'app/modules/ix-dynamic-form/components/ix-dynamic-form/classes/custom-untyped-form-field';
 import { IxDynamicFormItemComponent } from 'app/modules/ix-dynamic-form/components/ix-dynamic-form/ix-dynamic-form-item/ix-dynamic-form-item.component';
 import { IxCheckboxComponent } from 'app/modules/ix-forms/components/ix-checkbox/ix-checkbox.component';
+import { IxCodeEditorComponent } from 'app/modules/ix-forms/components/ix-code-editor/ix-code-editor.component';
 import { IxErrorsComponent } from 'app/modules/ix-forms/components/ix-errors/ix-errors.component';
 import { IxExplorerComponent } from 'app/modules/ix-forms/components/ix-explorer/ix-explorer.component';
 import { IxInputComponent } from 'app/modules/ix-forms/components/ix-input/ix-input.component';
@@ -44,6 +47,7 @@ const dynamicForm = new FormGroup({
       select: new FormControl(''),
     }),
   ]),
+  text: new FormControl(''),
 });
 
 const inputSchema = {
@@ -116,6 +120,17 @@ const dictSchema = {
   type: 'dict',
 } as DynamicFormSchemaDict;
 
+const textSchema = {
+  controlName: 'text',
+  editable: true,
+  required: true,
+  title: 'Label Text',
+  placeholder: 'Text placeholder',
+  tooltip: 'Tooltip Text',
+  language: CodeEditorLanguage.Json,
+  type: 'text',
+} as DynamicFormSchemaText;
+
 describe('IxDynamicFormItemComponent', () => {
   let spectator: Spectator<IxDynamicFormItemComponent>;
   const createComponent = createComponentFactory({
@@ -129,6 +144,7 @@ describe('IxDynamicFormItemComponent', () => {
       MockComponent(IxLabelComponent),
       MockComponent(IxInputComponent),
       MockComponent(IxListComponent),
+      MockComponent(IxCodeEditorComponent),
       MockComponent(IxListItemComponent),
       MockComponent(IxSelectComponent),
       MockComponent(IxCheckboxComponent),
@@ -162,6 +178,26 @@ describe('IxDynamicFormItemComponent', () => {
       field.hidden$.next(true);
       spectator.detectComponentChanges();
       expect(spectator.query('ix-input')).toBeHidden();
+    });
+
+    it('renders an "ix-dynamic-form-item" when schema with "text" type is supplied', () => {
+      spectator = createComponent({
+        props: {
+          dynamicForm,
+          dynamicSchema: textSchema,
+        },
+      });
+      expect(spectator.query('ix-code-editor')).toBeVisible();
+      expect(spectator.query(IxCodeEditorComponent).required).toBe(textSchema.required);
+      expect(spectator.query(IxCodeEditorComponent).tooltip).toBe(textSchema.tooltip);
+      expect(spectator.query('ix-code-editor')).not.toBeHidden();
+      const field = (spectator.component.dynamicForm.controls.text as CustomUntypedFormField);
+      if (!field.hidden$) {
+        field.hidden$ = new BehaviorSubject<boolean>(false);
+      }
+      field.hidden$.next(true);
+      spectator.detectComponentChanges();
+      expect(spectator.query('ix-code-editor')).toBeHidden();
     });
 
     it('renders an "ix-select" when schema with "select" type is supplied', () => {

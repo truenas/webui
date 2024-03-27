@@ -51,6 +51,7 @@ import {
   transformListSchemaType,
   transformPathSchemaType,
   transformStringSchemaType,
+  transformTextSchemaType,
   transformUriSchemaType,
 } from 'app/services/schema/app-schema.transformer';
 import { UrlValidationService } from 'app/services/url-validation.service';
@@ -106,6 +107,9 @@ export class AppSchemaService {
           break;
         case ChartSchemaType.Boolean:
           newSchema.push(transformBooleanSchemaType(transformPayload));
+          break;
+        case ChartSchemaType.Text:
+          newSchema.push(transformTextSchemaType(transformPayload));
           break;
       }
 

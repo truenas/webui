@@ -28,6 +28,7 @@ import { IxButtonGroupComponent } from 'app/modules/ix-forms/components/ix-butto
 import { IxCheckboxComponent } from 'app/modules/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxCheckboxListComponent } from 'app/modules/ix-forms/components/ix-checkbox-list/ix-checkbox-list.component';
 import { IxChipsComponent } from 'app/modules/ix-forms/components/ix-chips/ix-chips.component';
+import { IxCodeEditorComponent } from 'app/modules/ix-forms/components/ix-code-editor/ix-code-editor.component';
 import { IxComboboxComponent } from 'app/modules/ix-forms/components/ix-combobox/ix-combobox.component';
 import { IxErrorsComponent } from 'app/modules/ix-forms/components/ix-errors/ix-errors.component';
 import { CreateDatasetDialogComponent } from 'app/modules/ix-forms/components/ix-explorer/create-dataset-dialog/create-dataset-dialog.component';
@@ -103,6 +104,7 @@ import { WithManageCertificatesLinkComponent } from './components/with-manage-ce
     IxSlideInComponent,
     IxSlideIn2Component,
     IxChainedSlideInComponent,
+    IxCodeEditorComponent,
     IxModalHeaderComponent,
     IxModalHeader2Component,
     IxCheckboxComponent,
@@ -142,6 +144,7 @@ import { WithManageCertificatesLinkComponent } from './components/with-manage-ce
     IxTextareaComponent,
     IxListComponent,
     IxListItemComponent,
+    IxCodeEditorComponent,
     IxChipsComponent,
     IxComboboxComponent,
     IxExplorerComponent,

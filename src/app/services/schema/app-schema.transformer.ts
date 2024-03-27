@@ -14,6 +14,7 @@ import {
   DynamicFormSchemaList,
   DynamicFormSchemaNode,
   DynamicFormSchemaSelect,
+  DynamicFormSchemaText,
   DynamicFormSchemaUri,
 } from 'app/interfaces/dynamic-form-schema.interface';
 import { FilesystemService } from 'app/services/filesystem.service';
@@ -26,6 +27,7 @@ const commonSchemaTypes = [
   ChartSchemaType.Hostpath,
   ChartSchemaType.Ipaddr,
   ChartSchemaType.Uri,
+  ChartSchemaType.Text,
 ];
 
 export function isCommonSchemaType(type: ChartSchemaType): boolean {
@@ -89,6 +91,17 @@ export function transformCronSchemaType(
     ...buildCommonSchemaBase(payload),
     type: DynamicFormSchemaType.Cron,
   };
+}
+
+export function transformTextSchemaType(
+  payload: CommonSchemaTransform,
+): DynamicFormSchemaText {
+  const inputSchema: DynamicFormSchemaText = {
+    ...buildCommonSchemaBase(payload),
+    type: DynamicFormSchemaType.Text,
+    language: payload.schema.language,
+  };
+  return inputSchema;
 }
 
 export function transformStringSchemaType(

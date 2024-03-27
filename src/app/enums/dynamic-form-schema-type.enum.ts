@@ -9,4 +9,5 @@ export enum DynamicFormSchemaType {
   Cron = 'cron',
   Uri = 'uri',
   Enum = 'enum',
+  Text = 'text',
 }
