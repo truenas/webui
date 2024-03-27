@@ -1,3 +1,9 @@
+:host ::ng-deep {
+  ix-missing-access-wrapper {
+    width: 100%;
+  }
+}
+
 :host {
   align-items: center;
   display: flex;
