@@ -96,16 +96,21 @@
             <h4 *ngIf="currentStartDate" class="legend-timestamp">
               <strong>{{ 'Start' | translate }}:</strong>
               <span class="font-normal">
-                <ng-container *ngIf="customZoom">{{ currentStartDate | formatDateTime }}</ng-container>
-                <ng-container *ngIf="!customZoom">{{ currentStartDate | formatDateTime }}</ng-container>
+                <ix-date
+                  [date]="convertTimezone(currentStartDate, timezone)"
+                  [defaultTimezone]="timezone"
+                  [tooltipTimezone]="localTimezone"
+                ></ix-date>
               </span>
-              <small>({{ timezone }})</small>
             </h4>
             <h4 *ngIf="currentEndDate" class="legend-timestamp">
               <strong>{{ 'End' | translate }}:</strong>
               <span class="font-normal">
-                <ng-container *ngIf="customZoom">{{ currentEndDate | formatDateTime }}</ng-container>
-                <ng-container *ngIf="!customZoom">{{ currentEndDate | formatDateTime }}</ng-container>
+                <ix-date
+                  [date]="convertTimezone(currentEndDate, timezone)"
+                  [defaultTimezone]="timezone"
+                  [tooltipTimezone]="localTimezone"
+                ></ix-date>
               </span>
             </h4>
           </div>
@@ -116,7 +121,11 @@
             <h4 *ngIf="data && legendData?.xHTML" fxLayoutGap="8px" fxLayoutAlign="start center">
               <strong>{{ 'Time' | translate }}:</strong>
               <span *ngIf="legendData?.xHTML" class="font-normal">
-                {{ legendData.xHTML }}
+                <ix-date
+                  [date]="getDateFromString(legendData.xHTML)"
+                  [tooltipTimezone]="timezone"
+                  [defaultTimezone]="localTimezone"
+                ></ix-date>
               </span>
             </h4>
           </div>
