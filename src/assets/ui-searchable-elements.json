@@ -60,7 +60,9 @@
     "hierarchy": [
       "Storage Dashboard"
     ],
-    "synonyms": [],
+    "synonyms": [
+      "Pools"
+    ],
     "requiredRoles": [],
     "anchorRouterLink": [
       "/storage"

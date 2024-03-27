@@ -4,6 +4,9 @@ export const storageElements = {
   anchorRouterLink: ['/storage'],
   hierarchy: [T('Storage Dashboard')],
   elements: {
+    storageDashboard: {
+      synonyms: [T('Pools')],
+    },
     importPool: {
       hierarchy: [T('Import Pool')],
       synonyms: [T('Add Pool')],

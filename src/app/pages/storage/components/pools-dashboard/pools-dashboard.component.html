@@ -27,7 +27,7 @@
   </a>
 </ix-page-header>
 
-<div ixUiSearchableElement [ixSearchConfig]="searchElements">
+<div ixUiSearchableElement [ixSearchConfig]="searchElements.elements.storageDashboard">
   <ng-container *ngIf="arePoolsLoading$ | async">
     <ix-dashboard-pool
       class="pool"
