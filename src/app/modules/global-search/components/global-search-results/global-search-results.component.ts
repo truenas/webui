@@ -71,7 +71,7 @@ export class GlobalSearchResultsComponent {
       this.router.navigate(element.anchorRouterLink || element.routerLink).then(() => {
         setTimeout(() => {
           (this.document.querySelector('.ix-slide-in2-background.open') as unknown as HTMLElement)?.click();
-          this.tryHighlightTriggerAnchorAndAnchor(element, 0);
+          this.tryHighlightAnchors(element, 0);
         }, this.delayTime);
       });
     }
@@ -99,15 +99,14 @@ export class GlobalSearchResultsComponent {
     return this.results.filter((element) => element?.section === section);
   }
 
-  private tryHighlightTriggerAnchorAndAnchor(element: UiSearchableElement, attemptCount: number): void {
+  private tryHighlightAnchors(element: UiSearchableElement, attemptCount: number): void {
     const triggerAnchorRef = this.document.getElementById(element.triggerAnchor);
-    const anchorRef = this.document.getElementById(element.anchor);
 
-    if (triggerAnchorRef || anchorRef) {
+    if (triggerAnchorRef || this.document.getElementById(element.anchor)) {
       this.highlightAndClickElement(triggerAnchorRef);
       this.highlightElementAnchor(element.anchor);
     } else if (attemptCount < 2) {
-      setTimeout(() => this.tryHighlightTriggerAnchorAndAnchor(element, attemptCount + 1), this.delayTime * 3);
+      setTimeout(() => this.tryHighlightAnchors(element, attemptCount + 1), this.delayTime * 3);
     }
   }
 
@@ -131,9 +130,6 @@ export class GlobalSearchResultsComponent {
     anchorRef.classList.add('search-element-highlighted');
 
     setTimeout(() => anchorRef.click(), this.delayTime);
-
-    setTimeout(() => {
-      anchorRef.classList.remove('search-element-highlighted');
-    }, this.delayTime * 6);
+    setTimeout(() => anchorRef.classList.remove('search-element-highlighted'), this.delayTime * 6);
   }
 }

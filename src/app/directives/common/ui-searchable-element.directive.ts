@@ -13,7 +13,7 @@ export class UiSearchableElementDirective implements OnInit {
   constructor(private renderer: Renderer2, private el: ElementRef) {}
 
   ngOnInit(): void {
-    if (this.ixSearchConfig?.hierarchy || this.ixSearchConfig.anchor) {
+    if (this.ixSearchConfig?.hierarchy || this.ixSearchConfig?.anchor) {
       this.renderer.setAttribute(
         this.el.nativeElement,
         'id',
