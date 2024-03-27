@@ -2538,6 +2538,7 @@
   "{n} RPM": "",
   "{tasks, plural, =1 {# received task} other {# received tasks}} this week": "",
   "{tasks, plural, =1 {# sent task} other {# sent tasks}} this week": "",
+  "{time}, {tz}": "",
   "{type} VDEVs": "",
   " as of {dateTime}": " a partir de {dateTime}",
   " cores at ": " núcleos em ",

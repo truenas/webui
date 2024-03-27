@@ -15,7 +15,7 @@ import { SearchInputModule } from 'app/modules/search-input/search-input.module'
 import { AuditComponent } from 'app/pages/audit/components/audit/audit.component';
 import { LogDetailsPanelComponent } from 'app/pages/audit/components/log-details-panel/log-details-panel.component';
 import { WebSocketService } from 'app/services/ws.service';
-import { selectAdvancedConfig, selectTimezone } from 'app/store/system-config/system-config.selectors';
+import { selectAdvancedConfig } from 'app/store/system-config/system-config.selectors';
 
 describe('AuditComponent', () => {
   let spectator: Spectator<AuditComponent>;
@@ -26,9 +26,9 @@ describe('AuditComponent', () => {
     {
       audit_id: '1',
       timestamp: {
-        $date: 1702890820000,
+        $date: 1709605801758,
       },
-      message_timestamp: 1702890820,
+      message_timestamp: 1709605801,
       address: '10.220.2.21',
       username: 'Administrator',
       service: AuditService.Smb,
@@ -40,9 +40,9 @@ describe('AuditComponent', () => {
     {
       audit_id: '2',
       timestamp: {
-        $date: 1702894523000,
+        $date: 1709605801758,
       },
-      message_timestamp: 1702894523,
+      message_timestamp: 1709606101,
       address: '10.220.2.21',
       username: 'bob',
       service: AuditService.Smb,
@@ -84,10 +84,6 @@ describe('AuditComponent', () => {
       provideMockStore({
         selectors: [
           {
-            selector: selectTimezone,
-            value: 'UTC',
-          },
-          {
             selector: selectAdvancedConfig,
             value: {
               consolemenu: true,
@@ -119,8 +115,8 @@ describe('AuditComponent', () => {
     await spectator.fixture.whenRenderingDone();
     expect(await table.getCellTexts()).toEqual([
       ['Service', 'User', 'Timestamp', 'Event', 'Event Data'],
-      ['SMB', 'Administrator', '2023-12-18 09:13:40', 'Authentication', 'Account: Administrator'],
-      ['SMB', 'bob', '2023-12-18 10:15:23', 'Create', 'File: test.txt'],
+      ['SMB', 'Administrator', '2024-03-05 04:30:01', 'Authentication', 'Account: Administrator'],
+      ['SMB', 'bob', '2024-03-05 04:35:01', 'Create', 'File: test.txt'],
     ]);
   });
 

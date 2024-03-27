@@ -1,0 +1,7 @@
+<span
+  class="date-spanner"
+  [matTooltip]="'{time}, {tz}' | translate: { time: (tooltipTime | formatDateTime: dateFormat: timeFormat), tz: tooltipTimezone }"
+  [matTooltipDisabled]="!(tooltipTimezone && isTimezoneDifference)"
+>
+  {{ date | formatDateTime: dateFormat: timeFormat }}, {{ defaultTimezone }}
+</span>
