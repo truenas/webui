@@ -8,7 +8,7 @@ import {
   combineLatest, EMPTY, forkJoin, Observable, of, Subscription, from,
 } from 'rxjs';
 import {
-  catchError, filter, map, switchMap, tap,
+  catchError, distinctUntilChanged, filter, map, switchMap, tap,
 } from 'rxjs/operators';
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
 import { FailoverStatus } from 'app/enums/failover-status.enum';
@@ -44,11 +44,12 @@ export class SigninStore extends ComponentStore<SigninState> {
   wasAdminSet$ = this.select((state) => state.wasAdminSet);
   failover$ = this.select((state) => state.failover);
   isLoading$ = this.select((state) => state.isLoading);
-  canLogin$ = combineLatest([
-    this.wsManager.isConnected$,
-    this.select((state) => [FailoverStatus.Single, FailoverStatus.Master].includes(state.failover?.status)),
-  ]).pipe(
+  failoverAllowsLogin$ = this.select((state) => {
+    return [FailoverStatus.Single, FailoverStatus.Master].includes(state.failover?.status);
+  });
+  canLogin$ = combineLatest([this.wsManager.isConnected$, this.failoverAllowsLogin$]).pipe(
     map(([isConnected, failoverAllowsLogin]) => isConnected && failoverAllowsLogin),
+    distinctUntilChanged(),
   );
   hasFailover$ = this.select((state) => {
     // Do not simplify to optional chaining.
@@ -210,7 +211,7 @@ export class SigninStore extends ComponentStore<SigninState> {
   private subscribeToFailoverUpdates(): void {
     this.failoverStatusSubscription = this.ws.subscribe('failover.status')
       .pipe(map((apiEvent) => apiEvent.fields), untilDestroyed(this))
-      .subscribe((status) => this.setFailoverStatus(status));
+      .subscribe(({ status }) => this.setFailoverStatus(status));
 
     this.disabledReasonsSubscription = this.ws.subscribe('failover.disabled.reasons')
       .pipe(map((apiEvent) => apiEvent.fields), untilDestroyed(this))
