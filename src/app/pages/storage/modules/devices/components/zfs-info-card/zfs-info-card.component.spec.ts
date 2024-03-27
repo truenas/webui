@@ -10,7 +10,7 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockWebSocket, mockCall, mockJob } from 'app/core/testing/utils/mock-websocket.utils';
 import { DiskStandby } from 'app/enums/disk-standby.enum';
 import { DiskType } from 'app/enums/disk-type.enum';
-import { TopologyItemType } from 'app/enums/v-dev-type.enum';
+import { TopologyItemType, VdevType } from 'app/enums/v-dev-type.enum';
 import { TopologyItemStatus } from 'app/enums/vdev-status.enum';
 import {
   Disk, TopologyDisk, VDev,
@@ -118,6 +118,32 @@ describe('ZfsInfoCardComponent', () => {
       expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
       expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('pool.remove', [1, { label: 'disk-guid' }]);
       expect(spectator.inject(DevicesStore).reloadList).toHaveBeenCalled();
+    });
+
+    it('shows remove button for Spare, Cache, and Log topology with RAIDZ parent', async () => {
+      spectator.setInput('topologyParentItem', {
+        name: 'mirror-0',
+        type: TopologyItemType.Spare,
+      } as VDev);
+      spectator.setInput('hasTopLevelRaidz', true);
+      spectator.setInput('topologyCategory', VdevType.Log);
+
+      spectator.detectChanges();
+      expect(
+        await loader.getHarness(MatButtonHarness.with({ text: 'Remove' })),
+      ).toBeTruthy();
+
+      spectator.setInput('topologyCategory', VdevType.Spare);
+      spectator.detectChanges();
+      expect(
+        await loader.getHarness(MatButtonHarness.with({ text: 'Remove' })),
+      ).toBeTruthy();
+
+      spectator.setInput('topologyCategory', VdevType.Cache);
+      spectator.detectChanges();
+      expect(
+        await loader.getHarness(MatButtonHarness.with({ text: 'Remove' })),
+      ).toBeTruthy();
     });
 
     it('detaches a device with confirmation when Detach is pressed', async () => {

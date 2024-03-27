@@ -35,6 +35,7 @@ describe('SigninStore', () => {
         mockCall('failover.get_ips', ['123.23.44.54']),
         mockCall('auth.twofactor.config', { enabled: false } as GlobalTwoFactorConfig),
         mockCall('failover.disabled.reasons', [FailoverDisabledReason.NoLicense]),
+        mockCall('truenas.managed_by_truecommand', false),
       ]),
       mockProvider(WebSocketConnectionService, {
         isConnected$: of(true),
@@ -85,6 +86,7 @@ describe('SigninStore', () => {
     const initialState = {
       failover: initialFailover,
       wasAdminSet: true,
+      managedByTrueCommand: false,
       isLoading: false,
     };
     beforeEach(() => {
@@ -108,12 +110,10 @@ describe('SigninStore', () => {
     });
   });
 
-  // TODO: fix test
   describe('handleSuccessfulLogin', () => {
-    it.skip('redirects user', () => {
+    it('redirects user', () => {
       jest.spyOn(spectator.inject(WebSocketService), 'call').mockReturnValueOnce(of({ enabled: false }));
-      // jest.spyOn(spectator.inject(AuthService), 'user$', 'get')
-      //   .mockReturnValueOnce(of({ twofactor_auth_configured: false }));
+      jest.spyOn(spectator.inject(Router), 'navigateByUrl');
       spectator.service.handleSuccessfulLogin();
       expect(spectator.inject(Router).navigateByUrl).toHaveBeenCalledWith('/dashboard');
     });
@@ -128,6 +128,7 @@ describe('SigninStore', () => {
 
       expect(await firstValueFrom(spectator.service.state$)).toEqual({
         wasAdminSet: true,
+        managedByTrueCommand: false,
         isLoading: false,
         failover: {
           status: FailoverStatus.Single,
@@ -145,6 +146,7 @@ describe('SigninStore', () => {
       expect(await firstValueFrom(spectator.service.state$)).toEqual({
         wasAdminSet: true,
         isLoading: false,
+        managedByTrueCommand: false,
         failover: {
           disabledReasons: [FailoverDisabledReason.NoLicense],
           ips: ['123.23.44.54'],
@@ -179,7 +181,7 @@ describe('SigninStore', () => {
           return of();
         }
 
-        return of({ fields: FailoverStatus.Importing } as ApiEvent<FailoverStatus>);
+        return of({ fields: { status: FailoverStatus.Importing } } as ApiEvent<{ status: FailoverStatus }>);
       });
 
       spectator.service.init();
@@ -187,6 +189,7 @@ describe('SigninStore', () => {
       expect(await firstValueFrom(spectator.service.state$)).toEqual({
         wasAdminSet: true,
         isLoading: false,
+        managedByTrueCommand: false,
         failover: {
           disabledReasons: [FailoverDisabledReason.NoLicense],
           ips: ['123.23.44.54'],
@@ -216,6 +219,7 @@ describe('SigninStore', () => {
         expectObservable(spectator.service.state$).toBe('a', {
           a: {
             wasAdminSet: true,
+            managedByTrueCommand: false,
             isLoading: false,
             failover: {
               disabledReasons: [FailoverDisabledReason.DisagreeVip],

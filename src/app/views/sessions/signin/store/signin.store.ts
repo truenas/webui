@@ -8,7 +8,7 @@ import {
   combineLatest, EMPTY, forkJoin, Observable, of, Subscription, from,
 } from 'rxjs';
 import {
-  catchError, filter, map, switchMap, tap,
+  catchError, distinctUntilChanged, filter, map, switchMap, tap,
 } from 'rxjs/operators';
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
 import { FailoverStatus } from 'app/enums/failover-status.enum';
@@ -25,6 +25,7 @@ import { WebSocketService } from 'app/services/ws.service';
 interface SigninState {
   isLoading: boolean;
   wasAdminSet: boolean;
+  managedByTrueCommand: boolean;
   failover: {
     status: FailoverStatus;
     ips?: string[];
@@ -34,6 +35,7 @@ interface SigninState {
 
 const initialState: SigninState = {
   isLoading: false,
+  managedByTrueCommand: false,
   wasAdminSet: true,
   failover: null,
 };
@@ -41,14 +43,16 @@ const initialState: SigninState = {
 @UntilDestroy()
 @Injectable()
 export class SigninStore extends ComponentStore<SigninState> {
+  managedByTrueCommand$ = this.select((state) => state.managedByTrueCommand);
   wasAdminSet$ = this.select((state) => state.wasAdminSet);
   failover$ = this.select((state) => state.failover);
   isLoading$ = this.select((state) => state.isLoading);
-  canLogin$ = combineLatest([
-    this.wsManager.isConnected$,
-    this.select((state) => [FailoverStatus.Single, FailoverStatus.Master].includes(state.failover?.status)),
-  ]).pipe(
+  failoverAllowsLogin$ = this.select((state) => {
+    return [FailoverStatus.Single, FailoverStatus.Master].includes(state.failover?.status);
+  });
+  canLogin$ = combineLatest([this.wsManager.isConnected$, this.failoverAllowsLogin$]).pipe(
     map(([isConnected, failoverAllowsLogin]) => isConnected && failoverAllowsLogin),
+    distinctUntilChanged(),
   );
   hasFailover$ = this.select((state) => {
     // Do not simplify to optional chaining.
@@ -81,6 +85,7 @@ export class SigninStore extends ComponentStore<SigninState> {
     switchMap(() => {
       return forkJoin([
         this.checkIfAdminPasswordSet(),
+        this.checkIfManagedByTrueCommand(),
         this.loadFailoverStatus(),
         this.updateService.hardRefreshIfNeeded(),
         // TODO: This is a hack to keep existing code working. Ideally it shouldn't be here.
@@ -170,6 +175,12 @@ export class SigninStore extends ComponentStore<SigninState> {
     return '/dashboard';
   }
 
+  private checkIfManagedByTrueCommand(): Observable<boolean> {
+    return this.ws.call('truenas.managed_by_truecommand').pipe(
+      tap((managedByTrueCommand) => this.patchState({ managedByTrueCommand })),
+    );
+  }
+
   private checkIfAdminPasswordSet(): Observable<boolean> {
     return this.ws.call('user.has_local_administrator_set_up').pipe(
       tap((wasAdminSet) => this.patchState({ wasAdminSet })),
@@ -210,7 +221,7 @@ export class SigninStore extends ComponentStore<SigninState> {
   private subscribeToFailoverUpdates(): void {
     this.failoverStatusSubscription = this.ws.subscribe('failover.status')
       .pipe(map((apiEvent) => apiEvent.fields), untilDestroyed(this))
-      .subscribe((status) => this.setFailoverStatus(status));
+      .subscribe(({ status }) => this.setFailoverStatus(status));
 
     this.disabledReasonsSubscription = this.ws.subscribe('failover.disabled.reasons')
       .pipe(map((apiEvent) => apiEvent.fields), untilDestroyed(this))
