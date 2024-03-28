@@ -39,7 +39,7 @@ import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ManualUpdateFormComponent implements OnInit {
-  protected requiredRoles = [Role.FullAdmin];
+  protected readonly requiredRoles = [Role.FullAdmin];
 
   isFormLoading$ = new BehaviorSubject(false);
   form = this.formBuilder.group({

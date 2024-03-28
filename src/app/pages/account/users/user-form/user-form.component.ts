@@ -51,7 +51,7 @@ export class UserFormComponent implements OnInit {
   isFormLoading = false;
   subscriptions: Subscription[] = [];
   homeModeOldValue = '';
-  protected requiredRoles = [Role.AccountWrite];
+  protected readonly requiredRoles = [Role.AccountWrite];
 
   get isNewUser(): boolean {
     return !this.editingUser;

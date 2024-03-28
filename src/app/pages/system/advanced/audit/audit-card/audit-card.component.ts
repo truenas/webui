@@ -22,7 +22,7 @@ import { WebSocketService } from 'app/services/ws.service';
 export class AuditCardComponent {
   private readonly reloadConfig$ = new Subject<void>();
   protected readonly searchableElements = auditCardElements;
-  protected requiredRoles = [Role.SystemAuditWrite];
+  protected readonly requiredRoles = [Role.SystemAuditWrite];
   auditConfig$ = this.reloadConfig$.pipe(
     startWith(undefined),
     switchMap(() => this.ws.call('audit.config')),

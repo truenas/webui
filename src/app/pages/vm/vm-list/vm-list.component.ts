@@ -36,7 +36,7 @@ import { WebSocketService } from 'app/services/ws.service';
   providers: [IxFileSizePipe],
 })
 export class VmListComponent implements OnInit {
-  protected requiredRoles = [Role.VmWrite];
+  protected readonly requiredRoles = [Role.VmWrite];
 
   vmMachines: VirtualMachine[] = [];
   filterString = '';

@@ -48,7 +48,7 @@ import { WebSocketService } from 'app/services/ws.service';
 export class CertificateListComponent implements OnInit {
   @Output() certificateDeleted = new EventEmitter<void>();
 
-  protected requiredRoles = [Role.FullAdmin];
+  protected readonly requiredRoles = [Role.FullAdmin];
 
   filterString = '';
   dataProvider: AsyncDataProvider<Certificate>;

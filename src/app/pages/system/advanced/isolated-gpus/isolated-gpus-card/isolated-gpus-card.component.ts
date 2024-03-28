@@ -23,7 +23,7 @@ import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.servic
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class IsolatedGpusCardComponent implements OnInit {
-  protected requiredRoles = [Role.FullAdmin];
+  protected readonly requiredRoles = [Role.FullAdmin];
 
   isolatedGpus: Device[] = [];
   protected readonly searchableElements = isolatedGpusCardElements;

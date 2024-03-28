@@ -36,7 +36,7 @@ import { systemInfoUpdated } from 'app/store/system-info/system-info.actions';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LocalizationFormComponent implements OnInit {
-  protected requiredRoles = [Role.FullAdmin];
+  protected readonly requiredRoles = [Role.FullAdmin];
   readonly searchElements = localizationFormElements;
 
   fieldsetTitle = helptext.localeTitle;

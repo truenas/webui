@@ -28,7 +28,7 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SshKeypairFormComponent implements OnInit {
-  protected requiredRoles = [Role.KeychainCredentialWrite];
+  protected readonly requiredRoles = [Role.KeychainCredentialWrite];
 
   get isNew(): boolean {
     return !this.editingKeypair;

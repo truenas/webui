@@ -38,7 +38,7 @@ export interface StorageSettings {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class StorageSettingsFormComponent implements OnInit {
-  protected requiredRoles = [Role.FullAdmin];
+  protected readonly requiredRoles = [Role.FullAdmin];
   protected readonly searchElements = storageSettingsFormElements;
 
   isFormLoading = false;

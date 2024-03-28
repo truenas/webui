@@ -20,7 +20,7 @@ export class SimpleFailoverBtnComponent {
   @Input() color = 'default';
   @Input() disabled?: boolean = false;
 
-  protected requiredRoles = [Role.FailoverWrite];
+  protected readonly requiredRoles = [Role.FailoverWrite];
 
   constructor(
     private dialog: DialogService,

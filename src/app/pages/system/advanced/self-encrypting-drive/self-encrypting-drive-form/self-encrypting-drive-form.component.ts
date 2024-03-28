@@ -31,7 +31,7 @@ export interface SedConfig {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SelfEncryptingDriveFormComponent implements OnInit {
-  protected requiredRoles = [Role.FullAdmin];
+  protected readonly requiredRoles = [Role.FullAdmin];
   protected readonly searchElements = sedFormElements;
 
   isFormLoading = false;

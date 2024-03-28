@@ -32,7 +32,7 @@ interface DnsAuthenticatorList {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AcmednsFormComponent implements OnInit {
-  protected requiredRoles = [Role.FullAdmin];
+  protected readonly requiredRoles = [Role.FullAdmin];
 
   get isNew(): boolean {
     return !this.editingAcmedns;

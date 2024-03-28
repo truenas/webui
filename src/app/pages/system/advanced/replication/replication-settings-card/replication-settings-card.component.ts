@@ -24,7 +24,7 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ReplicationSettingsCardComponent {
-  protected requiredRoles = [Role.ReplicationTaskConfigWrite];
+  protected readonly requiredRoles = [Role.ReplicationTaskConfigWrite];
   private replicationConfig: ReplicationConfig;
   private readonly reloadConfig$ = new Subject<void>();
   protected readonly searchableElements = replicationSettingsCardElements;

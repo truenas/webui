@@ -36,7 +36,7 @@ enum SendMethod {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class EmailFormComponent implements OnInit {
-  protected requiredRoles = [Role.FullAdmin];
+  protected readonly requiredRoles = [Role.FullAdmin];
   protected searchElements = emailFormElements;
 
   sendMethodControl = new FormControl(SendMethod.Smtp);

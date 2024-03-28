@@ -30,7 +30,7 @@ export class StorageCardComponent {
   private readonly reloadConfig$ = new Subject<void>();
   private storageSettings: { systemDsPool: string; swapSize: number };
   protected readonly searchableElements = storageCardElements;
-  protected requiredRoles = [Role.FullAdmin];
+  protected readonly requiredRoles = [Role.FullAdmin];
 
   readonly storageSettings$ = this.reloadConfig$.pipe(
     startWith(undefined),

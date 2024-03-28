@@ -20,7 +20,7 @@ import { WebSocketService } from 'app/services/ws.service';
 })
 export class SystemSecurityCardComponent {
   private readonly reloadConfig$ = new Subject<void>();
-  protected requiredRoles = [Role.FullAdmin];
+  protected readonly requiredRoles = [Role.FullAdmin];
   readonly systemSecurityConfig$ = this.reloadConfig$.pipe(
     startWith(undefined),
     switchMap(() => this.ws.call('system.security.config').pipe(toLoadingState())),

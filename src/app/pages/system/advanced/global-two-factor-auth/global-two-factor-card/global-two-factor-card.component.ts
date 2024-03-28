@@ -24,8 +24,7 @@ import { WebSocketService } from 'app/services/ws.service';
 export class GlobalTwoFactorAuthCardComponent {
   readonly helpText = helptext2fa;
   protected readonly searchableElements = globalTwoFactorCardElements;
-
-  protected requiredRoles = [Role.FullAdmin];
+  protected readonly requiredRoles = [Role.FullAdmin];
 
   private readonly reloadConfig$ = new Subject<void>();
   readonly twoFactorConfig$ = this.reloadConfig$.pipe(

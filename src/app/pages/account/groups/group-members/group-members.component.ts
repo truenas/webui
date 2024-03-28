@@ -20,7 +20,7 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class GroupMembersComponent implements OnInit {
-  protected requiredRoles = [Role.AccountWrite];
+  protected readonly requiredRoles = [Role.AccountWrite];
 
   members: User[] = [];
   selectedMembers: User[] = [];

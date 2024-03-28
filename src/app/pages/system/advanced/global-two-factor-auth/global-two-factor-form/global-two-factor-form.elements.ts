@@ -1,9 +1,11 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
+import { Role } from 'app/enums/role.enum';
 
 export const globalTwoFactorFormElements = {
   hierarchy: [T('System Settings'), T('Advanced'), T('Global Two Factor Auth')],
   triggerAnchor: 'configure-global-two-factor',
   anchorRouterLink: ['/system', 'advanced'],
+  requiredRoles: [Role.FullAdmin],
   elements: {
     globallyEnabled: {
       hierarchy: [T('Global 2FA Enable')],

@@ -31,7 +31,7 @@ import { advancedConfigUpdated } from 'app/store/system-config/system-config.act
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AuditFormComponent implements OnInit {
-  protected requiredRoles = [Role.SystemAuditWrite];
+  protected readonly requiredRoles = [Role.SystemAuditWrite];
   protected searchElements = auditFormElements;
 
   isFormLoading = false;

@@ -1,9 +1,9 @@
 <mat-card>
   <mat-toolbar-row>
     <h3>{{ 'Kernel' | translate }}</h3>
-    <div *ixRequiresRoles="requiredRoles" class="actions action-icon">
+    <div *ixWithLoadingState="debugKernel$ as debugKernel" class="actions action-icon">
       <button
-        *ixWithLoadingState="debugKernel$ as debugKernel"
+        *ixRequiresRoles="requiredRoles"
         ixUiSearchableElement
         mat-button
         [ixTest]="['kernel', 'configure']"

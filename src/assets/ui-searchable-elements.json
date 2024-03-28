@@ -126,7 +126,9 @@
     "synonyms": [
       "Session Token Lifetime"
     ],
-    "requiredRoles": [],
+    "requiredRoles": [
+      "AUTH_SESSIONS_WRITE"
+    ],
     "anchorRouterLink": [
       "/system",
       "advanced"
@@ -184,7 +186,9 @@
       "Retention"
     ],
     "synonyms": [],
-    "requiredRoles": [],
+    "requiredRoles": [
+      "SYSTEM_AUDIT_WRITE"
+    ],
     "anchorRouterLink": [
       "/system",
       "advanced"
@@ -202,7 +206,9 @@
       "Reservation"
     ],
     "synonyms": [],
-    "requiredRoles": [],
+    "requiredRoles": [
+      "SYSTEM_AUDIT_WRITE"
+    ],
     "anchorRouterLink": [
       "/system",
       "advanced"
@@ -220,7 +226,9 @@
       "Quota"
     ],
     "synonyms": [],
-    "requiredRoles": [],
+    "requiredRoles": [
+      "SYSTEM_AUDIT_WRITE"
+    ],
     "anchorRouterLink": [
       "/system",
       "advanced"
@@ -238,7 +246,9 @@
       "Quota Fill Warning"
     ],
     "synonyms": [],
-    "requiredRoles": [],
+    "requiredRoles": [
+      "SYSTEM_AUDIT_WRITE"
+    ],
     "anchorRouterLink": [
       "/system",
       "advanced"
@@ -256,7 +266,9 @@
       "Quota Fill Critical"
     ],
     "synonyms": [],
-    "requiredRoles": [],
+    "requiredRoles": [
+      "SYSTEM_AUDIT_WRITE"
+    ],
     "anchorRouterLink": [
       "/system",
       "advanced"
@@ -296,7 +308,9 @@
     "synonyms": [
       "Show Text Console without Password Prompt"
     ],
-    "requiredRoles": [],
+    "requiredRoles": [
+      "FULL_ADMIN"
+    ],
     "anchorRouterLink": [
       "/system",
       "advanced"
@@ -314,7 +328,9 @@
       "Enable Serial Console"
     ],
     "synonyms": [],
-    "requiredRoles": [],
+    "requiredRoles": [
+      "FULL_ADMIN"
+    ],
     "anchorRouterLink": [
       "/system",
       "advanced"
@@ -332,7 +348,9 @@
       "Serial Port"
     ],
     "synonyms": [],
-    "requiredRoles": [],
+    "requiredRoles": [
+      "FULL_ADMIN"
+    ],
     "anchorRouterLink": [
       "/system",
       "advanced"
@@ -350,7 +368,9 @@
       "Serial Speed"
     ],
     "synonyms": [],
-    "requiredRoles": [],
+    "requiredRoles": [
+      "FULL_ADMIN"
+    ],
     "anchorRouterLink": [
       "/system",
       "advanced"
@@ -368,7 +388,9 @@
       "MOTD Banner"
     ],
     "synonyms": [],
-    "requiredRoles": [],
+    "requiredRoles": [
+      "FULL_ADMIN"
+    ],
     "anchorRouterLink": [
       "/system",
       "advanced"
@@ -408,7 +430,9 @@
       "Configure"
     ],
     "synonyms": [],
-    "requiredRoles": [],
+    "requiredRoles": [
+      "FULL_ADMIN"
+    ],
     "anchorRouterLink": [
       "/system",
       "advanced"
@@ -430,7 +454,9 @@
       "Two Factor Auth",
       "2FA"
     ],
-    "requiredRoles": [],
+    "requiredRoles": [
+      "FULL_ADMIN"
+    ],
     "anchorRouterLink": [
       "/system",
       "advanced"
@@ -450,7 +476,9 @@
     "synonyms": [
       "Tolerance Window"
     ],
-    "requiredRoles": [],
+    "requiredRoles": [
+      "FULL_ADMIN"
+    ],
     "anchorRouterLink": [
       "/system",
       "advanced"
@@ -470,7 +498,9 @@
     "synonyms": [
       "Enable Two Factor Authentication for SSH"
     ],
-    "requiredRoles": [],
+    "requiredRoles": [
+      "FULL_ADMIN"
+    ],
     "anchorRouterLink": [
       "/system",
       "advanced"
@@ -530,7 +560,9 @@
       "GPUs"
     ],
     "synonyms": [],
-    "requiredRoles": [],
+    "requiredRoles": [
+      "FULL_ADMIN"
+    ],
     "anchorRouterLink": [
       "/system",
       "advanced"
@@ -548,7 +580,9 @@
       "Configure"
     ],
     "synonyms": [],
-    "requiredRoles": [],
+    "requiredRoles": [
+      "FULL_ADMIN"
+    ],
     "anchorRouterLink": [
       "/system",
       "advanced"
@@ -566,7 +600,9 @@
       "Enable Kernel Debug"
     ],
     "synonyms": [],
-    "requiredRoles": [],
+    "requiredRoles": [
+      "FULL_ADMIN"
+    ],
     "anchorRouterLink": [
       "/system",
       "advanced"
@@ -604,7 +640,9 @@
       "Replication Tasks Limit"
     ],
     "synonyms": [],
-    "requiredRoles": [],
+    "requiredRoles": [
+      "REPLICATION_TASK_CONFIG_WRITE"
+    ],
     "anchorRouterLink": [
       "/system",
       "advanced"
@@ -660,7 +698,9 @@
     "synonyms": [
       "SED User"
     ],
-    "requiredRoles": [],
+    "requiredRoles": [
+      "FULL_ADMIN"
+    ],
     "anchorRouterLink": [
       "/system",
       "advanced"
@@ -678,7 +718,9 @@
       "SED Password"
     ],
     "synonyms": [],
-    "requiredRoles": [],
+    "requiredRoles": [
+      "FULL_ADMIN"
+    ],
     "anchorRouterLink": [
       "/system",
       "advanced"
@@ -716,7 +758,9 @@
       "System Data Pool"
     ],
     "synonyms": [],
-    "requiredRoles": [],
+    "requiredRoles": [
+      "FULL_ADMIN"
+    ],
     "anchorRouterLink": [
       "/system",
       "advanced"
@@ -734,7 +778,9 @@
       "Swap Size"
     ],
     "synonyms": [],
-    "requiredRoles": [],
+    "requiredRoles": [
+      "FULL_ADMIN"
+    ],
     "anchorRouterLink": [
       "/system",
       "advanced"
@@ -795,7 +841,9 @@
       "Syslog Level"
     ],
     "synonyms": [],
-    "requiredRoles": [],
+    "requiredRoles": [
+      "FULL_ADMIN"
+    ],
     "anchorRouterLink": [
       "/system",
       "advanced"
@@ -813,7 +861,9 @@
       "Syslog Server"
     ],
     "synonyms": [],
-    "requiredRoles": [],
+    "requiredRoles": [
+      "FULL_ADMIN"
+    ],
     "anchorRouterLink": [
       "/system",
       "advanced"
@@ -831,7 +881,9 @@
       "Syslog Transport"
     ],
     "synonyms": [],
-    "requiredRoles": [],
+    "requiredRoles": [
+      "FULL_ADMIN"
+    ],
     "anchorRouterLink": [
       "/system",
       "advanced"
@@ -849,7 +901,9 @@
       "Include Audit Logs"
     ],
     "synonyms": [],
-    "requiredRoles": [],
+    "requiredRoles": [
+      "FULL_ADMIN"
+    ],
     "anchorRouterLink": [
       "/system",
       "advanced"

@@ -20,7 +20,7 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ReplicationSettingsFormComponent implements OnInit {
-  protected requiredRoles = [Role.ReplicationTaskConfigWrite];
+  protected readonly requiredRoles = [Role.ReplicationTaskConfigWrite];
   protected readonly searchElements = replicationSettingsFormElements;
 
   isFormLoading = false;

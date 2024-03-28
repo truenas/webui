@@ -37,7 +37,7 @@ interface AllowedAddressRow {
 })
 export class AllowedAddressesCardComponent implements OnInit {
   protected readonly searchElements = allowedAddressesCardElements;
-  protected requiredRoles = [Role.FullAdmin];
+  protected readonly requiredRoles = [Role.FullAdmin];
   dataProvider: AsyncDataProvider<AllowedAddressRow>;
 
   columns = createTable<AllowedAddressRow>([
