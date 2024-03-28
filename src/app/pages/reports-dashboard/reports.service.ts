@@ -1,9 +1,9 @@
-import { Location } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
 import {
-  filter, map, Observable, shareReplay, BehaviorSubject, Subject,
+  filter, map, Observable, shareReplay, BehaviorSubject, Subject, switchMap, tap,
 } from 'rxjs';
+import { take } from 'rxjs/operators';
 import { ReportingGraphName } from 'app/enums/reporting.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { Option } from 'app/interfaces/option.interface';
@@ -30,14 +30,12 @@ export class ReportsService {
 
   private legendEventEmitter$ = new Subject<LegendDataWithStackedTotalHtml>();
   readonly legendEventEmitterObs$ = this.legendEventEmitter$.asObservable();
-  private loggedInUser$ = this.authService.user$.pipe(filter(Boolean));
 
   constructor(
     private authService: AuthService,
     private errorHandler: ErrorHandlerService,
     private ws: WebSocketService,
     private http: HttpClient,
-    private location: Location,
     @Inject(WINDOW) private window: Window,
   ) {
     this.ws.call('reporting.netdata_graphs').subscribe((reportingGraphs) => {
@@ -175,16 +173,20 @@ export class ReportsService {
   }
 
   openNetdata(password: string): void {
-    this.loggedInUser$.subscribe((user) => {
-      const url = new URL(this.window.location.href);
-      url.username = user.pw_name;
-      url.password = password;
-      url.pathname = '/netdata/';
-      this.http.get(url.toString(), { responseType: 'text' })
-        .pipe(this.errorHandler.catchError())
-        .subscribe((_) => {
-          this.window.open(url.pathname);
-        });
-    });
+    this.authService.user$.pipe(
+      filter(Boolean),
+      take(1),
+      switchMap((user) => {
+        const url = new URL(this.window.location.href);
+        url.username = user.pw_name;
+        url.password = password;
+        url.pathname = '/netdata/';
+
+        return this.http.get(url.toString(), { responseType: 'text' }).pipe(
+          tap(() => this.window.open(url.pathname)),
+        );
+      }),
+      this.errorHandler.catchError(),
+    ).subscribe();
   }
 }
