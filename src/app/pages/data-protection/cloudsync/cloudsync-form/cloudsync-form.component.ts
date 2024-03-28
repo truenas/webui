@@ -610,7 +610,7 @@ export class CloudSyncFormComponent implements OnInit {
     const value: CloudSyncTaskUpdate = {
       ...formValue,
       attributes,
-      include: undefined,
+      include: [],
       path: undefined,
       bwlimit: formValue.bwlimit ? this.prepareBwlimit(formValue.bwlimit) : undefined,
       schedule: formValue.cloudsync_picker ? crontabToSchedule(formValue.cloudsync_picker) : {},
