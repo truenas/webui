@@ -8,7 +8,8 @@ import {
 } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
 import { MockWebSocketService } from 'app/core/testing/classes/mock-websocket.service';
-import { mockWebSocket, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { AclType } from 'app/enums/acl-type.enum';
 import { Acl, NfsAcl, PosixAcl } from 'app/interfaces/acl.interface';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
@@ -53,6 +54,7 @@ describe('PermissionsCardComponent', () => {
       MockComponent(ViewTrivialPermissionsComponent),
     ],
     providers: [
+      mockAuth(),
       PermissionsCardStore,
       mockProvider(DialogService),
       mockProvider(Router),

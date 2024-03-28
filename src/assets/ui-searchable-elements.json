@@ -120,7 +120,9 @@
       "Configure"
     ],
     "synonyms": [],
-    "requiredRoles": [],
+    "requiredRoles": [
+      "FULL_ADMIN"
+    ],
     "routerLink": null,
     "anchorRouterLink": [
       "/system",

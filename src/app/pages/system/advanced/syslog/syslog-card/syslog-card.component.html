@@ -3,6 +3,7 @@
     <h3>{{ 'Syslog' | translate }}</h3>
     <div class="actions action-icon">
       <button
+        *ixRequiresRoles="requiredRoles"
         mat-button
         id="syslog-settings"
         [ixTest]="['syslog', 'configure']"

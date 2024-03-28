@@ -3,6 +3,7 @@
     <h3>{{ 'Self-Encrypting Drive' | translate }}</h3>
     <div class="actions action-icon">
       <button
+        *ixRequiresRoles="requiredRoles"
         mat-button
         id="sed-settings"
         [ixTest]="['self-encrypted-drive', 'configure']"

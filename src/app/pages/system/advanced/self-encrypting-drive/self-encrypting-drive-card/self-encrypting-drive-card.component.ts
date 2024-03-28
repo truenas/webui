@@ -8,6 +8,7 @@ import {
   filter,
   map, shareReplay, startWith, switchMap, tap,
 } from 'rxjs/operators';
+import { Role } from 'app/enums/role.enum';
 import { SedUser } from 'app/enums/sed-user.enum';
 import { toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import { AdvancedSettingsService } from 'app/pages/system/advanced/advanced-settings.service';
@@ -26,6 +27,7 @@ import { waitForAdvancedConfig } from 'app/store/system-config/system-config.sel
 })
 export class SelfEncryptingDriveCardComponent {
   private readonly reloadConfig$ = new Subject<void>();
+  protected requiredRoles = [Role.FullAdmin];
 
   private sedConfig: { sedUser: SedUser; sedPassword: string };
   readonly sedConfig$ = this.reloadConfig$.pipe(
