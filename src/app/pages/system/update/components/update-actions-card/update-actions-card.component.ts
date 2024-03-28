@@ -63,7 +63,7 @@ export class UpdateActionsCardComponent implements OnInit {
     map((status) => status === SystemUpdateStatus.RebootRequired),
   );
 
-  readonly requiresRoles = [Role.FullAdmin];
+  protected readonly requiredRoles = [Role.FullAdmin];
 
   private wasConfigurationSaved = false;
 
