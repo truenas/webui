@@ -435,9 +435,14 @@ export class ChartWizardComponent implements OnInit, OnDestroy {
   }
 
   private buildDynamicForm(schema: ChartSchema['schema']): void {
+    if (this.chartSchema?.questions) {
+      this.chartSchema.questions.forEach((question) => this.form.removeControl(question.variable));
+    }
+
     this.dynamicSection = [];
     this.dynamicSection.push(...this.rootDynamicSection);
     this.chartSchema = schema;
+
     try {
       schema.groups.forEach((group) => {
         this.dynamicSection.push({ ...group, help: group.description, schema: [] });
