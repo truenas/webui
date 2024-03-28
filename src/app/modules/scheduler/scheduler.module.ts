@@ -3,6 +3,7 @@ import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatNativeDateModule } from '@angular/material/core';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatSelectModule } from '@angular/material/select';
@@ -34,6 +35,7 @@ import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
     FormsModule,
     MatSelectModule,
     MatDatepickerModule,
+    MatNativeDateModule,
     IxIconModule,
     MatDialogModule,
     MatButtonModule,
@@ -51,6 +53,9 @@ import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
     SchedulerPreviewColumnComponent,
     SchedulerDateExamplesComponent,
     CrontabExplanationPipe,
+  ],
+  providers: [
+    MatDatepickerModule,
   ],
 })
 export class SchedulerModule {

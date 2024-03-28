@@ -32,7 +32,7 @@ export class SchedulerHarness extends ComponentHarness implements IxFormControlH
   async openCustomModal(): Promise<void> {
     const select = await this.getSelectHarness();
     await select.open();
-    await select.clickOptions({ text: /Custom/ });
+    await select.clickOptions({ text: /Create/ });
   }
 
   async getValue(): Promise<string> {
