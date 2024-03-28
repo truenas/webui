@@ -1,11 +1,11 @@
 function processSearchDocsHierarchyItem(hierarchyItem: string): string {
   const regex = /(.*«)(.*?)(».*)/;
-  const match = hierarchyItem.match(regex);
+  const match: RegExpMatchArray | null = hierarchyItem.match(regex);
 
   if (match) {
-    const beforeQuote = match[1];
-    const quotedText = match[2];
-    const afterQuote = match[3];
+    const beforeQuote: string = match[1];
+    const quotedText: string = match[2];
+    const afterQuote: string = match[3];
 
     return `<span class="dimmed-text">${beforeQuote}</span><span class="highlight">${quotedText}</span><span class="dimmed-text">${afterQuote}</span>`;
   }
@@ -19,22 +19,28 @@ export function processHierarchy(hierarchy: string[] = [], searchTerm = ''): str
   }
 
   const escapeRegExp = (term: string): string => term.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&');
-  const searchWords = searchTerm.split(' ').map(escapeRegExp).filter((word) => word);
+  const searchWords: string[] = searchTerm.split(' ').map(escapeRegExp).filter((word) => word !== '');
 
   const regex = new RegExp(`(${searchWords.join('|')})`, 'gi');
 
-  const processedItems = hierarchy.map((item) => {
-    return item.split(regex).map((segment) => {
-      if (!segment) {
-        return '';
+  const processedItems: string[] = hierarchy.map((item: string, index: number) => {
+    // Highlight only the last item if no search term is provided
+    if (searchTerm === '') {
+      if (index === hierarchy.length - 1) {
+        return `<span class="highlight">${item}</span>`;
       }
+      return `<span class="dimmed-text">${item}</span>`;
+    }
 
-      if (segment.match(regex) && item === hierarchy[hierarchy.length - 1]) {
-        return `<span class="highlight">${segment}</span>`;
-      }
-
-      return `<span class="dimmed-text">${segment}</span>`;
-    }).join('');
+    // When a search term is provided, match and highlight within the last item only
+    if (index === hierarchy.length - 1) {
+      const lastItemSegments = item.split(regex).map((segment) => {
+        return segment.match(regex) ? `<span class="highlight">${segment}</span>` : `<span class="dimmed-text">${segment}</span>`;
+      });
+      return lastItemSegments.join('');
+    }
+    // Dim other items without highlighting matches
+    return `<span class="dimmed-text">${item}</span>`;
   });
 
   return processedItems.join(' → ');
