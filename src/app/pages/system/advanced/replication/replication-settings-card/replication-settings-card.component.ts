@@ -5,6 +5,7 @@ import {
   filter,
   map, shareReplay, startWith, switchMap, tap,
 } from 'rxjs/operators';
+import { Role } from 'app/enums/role.enum';
 import { toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import { ReplicationConfig } from 'app/interfaces/replication-config.interface';
 import { AdvancedSettingsService } from 'app/pages/system/advanced/advanced-settings.service';
@@ -23,6 +24,7 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ReplicationSettingsCardComponent {
+  protected requiredRoles = [Role.ReplicationTaskConfigWrite];
   private replicationConfig: ReplicationConfig;
   private readonly reloadConfig$ = new Subject<void>();
   protected readonly searchableElements = replicationSettingsCardElements;

@@ -104,7 +104,9 @@
     "synonyms": [
       "Configure Sessions"
     ],
-    "requiredRoles": [],
+    "requiredRoles": [
+      "AUTH_SESSIONS_WRITE"
+    ],
     "anchorRouterLink": [
       "/system",
       "advanced"
@@ -142,7 +144,9 @@
       "Configure"
     ],
     "synonyms": [],
-    "requiredRoles": [],
+    "requiredRoles": [
+      "FULL_ADMIN"
+    ],
     "anchorRouterLink": [
       "/system",
       "advanced"
@@ -160,7 +164,9 @@
       "Configure"
     ],
     "synonyms": [],
-    "requiredRoles": [],
+    "requiredRoles": [
+      "SYSTEM_AUDIT_WRITE"
+    ],
     "anchorRouterLink": [
       "/system",
       "advanced"
@@ -268,7 +274,9 @@
       "Configure"
     ],
     "synonyms": [],
-    "requiredRoles": [],
+    "requiredRoles": [
+      "FULL_ADMIN"
+    ],
     "anchorRouterLink": [
       "/system",
       "advanced"
@@ -502,7 +510,9 @@
       "Configure"
     ],
     "synonyms": [],
-    "requiredRoles": [],
+    "requiredRoles": [
+      "FULL_ADMIN"
+    ],
     "anchorRouterLink": [
       "/system",
       "advanced"
@@ -574,7 +584,9 @@
       "Configure"
     ],
     "synonyms": [],
-    "requiredRoles": [],
+    "requiredRoles": [
+      "REPLICATION_TASK_CONFIG_WRITE"
+    ],
     "anchorRouterLink": [
       "/system",
       "advanced"
@@ -626,7 +638,9 @@
       "Configure"
     ],
     "synonyms": [],
-    "requiredRoles": [],
+    "requiredRoles": [
+      "FULL_ADMIN"
+    ],
     "anchorRouterLink": [
       "/system",
       "advanced"
@@ -682,7 +696,9 @@
       "Configure"
     ],
     "synonyms": [],
-    "requiredRoles": [],
+    "requiredRoles": [
+      "FULL_ADMIN"
+    ],
     "anchorRouterLink": [
       "/system",
       "advanced"
@@ -759,7 +775,9 @@
       "Configure"
     ],
     "synonyms": [],
-    "requiredRoles": [],
+    "requiredRoles": [
+      "FULL_ADMIN"
+    ],
     "anchorRouterLink": [
       "/system",
       "advanced"
@@ -1053,7 +1071,9 @@
       "Manage Configuration"
     ],
     "synonyms": [],
-    "requiredRoles": [],
+    "requiredRoles": [
+      "FULL_ADMIN"
+    ],
     "anchorRouterLink": [
       "/system",
       "general"

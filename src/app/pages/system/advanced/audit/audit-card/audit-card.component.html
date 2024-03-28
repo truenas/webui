@@ -3,6 +3,7 @@
     <h3>{{ 'Audit' | translate }}</h3>
     <div class="actions action-icon">
       <button
+        *ixRequiresRoles="requiredRoles"
         ixUiSearchableElement
         mat-button
         [ixTest]="['audit', 'configure']"

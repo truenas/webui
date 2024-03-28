@@ -42,7 +42,7 @@
 
   <ng-container *ngIf="isEmptyPools && !(arePoolsLoading$ | async)">
     <div class="entity-empty-wrapper">
-      <ix-empty [conf]="entityEmptyConf"></ix-empty>
+      <ix-empty [conf]="entityEmptyConf" [requiredRoles]="requiredRoles"></ix-empty>
     </div>
   </ng-container>
 

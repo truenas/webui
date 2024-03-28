@@ -74,7 +74,7 @@ export class EnclosureStore extends ComponentStore<EnclosureState> {
   }
 
   getEnclosures(): Observable<EnclosureUi[]> {
-    return this.ws.call('webui.enclosure.dashboard');
+    return this.ws.call('enclosure2.query');
   }
 
   patchStateWithEnclosureData(): (source: Observable<EnclosureUi[]>) => Observable<EnclosureUi[]> {

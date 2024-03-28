@@ -7,6 +7,7 @@ import {
 import {
   distinctUntilChanged, filter, shareReplay, startWith, tap,
 } from 'rxjs/operators';
+import { Role } from 'app/enums/role.enum';
 import { toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import { AdvancedSettingsService } from 'app/pages/system/advanced/advanced-settings.service';
 import { storageCardElements } from 'app/pages/system/advanced/storage/storage-card/storage-card.elements';
@@ -29,6 +30,7 @@ export class StorageCardComponent {
   private readonly reloadConfig$ = new Subject<void>();
   private storageSettings: { systemDsPool: string; swapSize: number };
   protected readonly searchableElements = storageCardElements;
+  protected requiredRoles = [Role.FullAdmin];
 
   readonly storageSettings$ = this.reloadConfig$.pipe(
     startWith(undefined),

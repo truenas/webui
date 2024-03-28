@@ -55,7 +55,7 @@ export class MockEnclosureUtils {
     let mockPayload: unknown;
 
     switch (method) {
-      case 'enclosure.query':
+      case 'enclosure2.query':
       case 'webui.enclosure.dashboard':
         return this.mockStorage.enclosures ?? [];
       case 'pool.query':

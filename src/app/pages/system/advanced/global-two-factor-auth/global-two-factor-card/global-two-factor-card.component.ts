@@ -5,6 +5,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import {
   Subject, filter, shareReplay, startWith, switchMap, tap,
 } from 'rxjs';
+import { Role } from 'app/enums/role.enum';
 import { toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import { helptext2fa } from 'app/helptext/system/2fa';
 import { GlobalTwoFactorConfig } from 'app/interfaces/two-factor-config.interface';
@@ -23,6 +24,8 @@ import { WebSocketService } from 'app/services/ws.service';
 export class GlobalTwoFactorAuthCardComponent {
   readonly helpText = helptext2fa;
   protected readonly searchableElements = globalTwoFactorCardElements;
+
+  protected requiredRoles = [Role.FullAdmin];
 
   private readonly reloadConfig$ = new Subject<void>();
   readonly twoFactorConfig$ = this.reloadConfig$.pipe(

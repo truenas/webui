@@ -5,6 +5,7 @@ import { Subject } from 'rxjs';
 import {
   distinctUntilChanged, filter, map, shareReplay, startWith, switchMap, tap,
 } from 'rxjs/operators';
+import { Role } from 'app/enums/role.enum';
 import { toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import { AdvancedSettingsService } from 'app/pages/system/advanced/advanced-settings.service';
 import { kernelCardElements } from 'app/pages/system/advanced/kernel/kernel-card/kernel-card.elements';
@@ -23,6 +24,7 @@ import { waitForAdvancedConfig } from 'app/store/system-config/system-config.sel
 export class KernelCardComponent {
   private readonly reloadConfig$ = new Subject<void>();
   protected readonly searchableElements = kernelCardElements;
+  protected requiredRoles = [Role.FullAdmin];
   readonly debugKernel$ = this.reloadConfig$.pipe(
     startWith(undefined),
     switchMap(() => this.store$.pipe(waitForAdvancedConfig)),

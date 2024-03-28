@@ -35,6 +35,12 @@
   width: 35%;
 }
 
-::ng-deep :host .dataset-path-tooltip {
-  word-break: break-all;
+:host ::ng-deep {
+  .dataset-path-tooltip {
+    word-break: break-all;
+  }
+
+  .mat-mdc-card-header-text {
+    width: 100%;
+  }
 }

@@ -3,6 +3,7 @@
     <h3>{{ 'Isolated GPU Device(s)' | translate }}</h3>
     <div class="actions action-icon">
       <button
+        *ixRequiresRoles="requiredRoles"
         ixUiSearchableElement
         mat-button
         [ixTest]="['isolated-gpus-devices', 'configure']"

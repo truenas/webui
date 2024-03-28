@@ -5,6 +5,7 @@ import { isEqual } from 'lodash';
 import {
   Subject, distinctUntilChanged, filter, map, shareReplay, startWith, switchMap, tap,
 } from 'rxjs';
+import { Role } from 'app/enums/role.enum';
 import { SyslogLevel, SyslogTransport, syslogLevelLabels } from 'app/enums/syslog.enum';
 import { toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import { AdvancedSettingsService } from 'app/pages/system/advanced/advanced-settings.service';
@@ -34,6 +35,8 @@ export interface SyslogConfig {
 export class SyslogCardComponent {
   private readonly reloadConfig$ = new Subject<void>();
   protected readonly searchableElements = syslogCardElements;
+  protected requiredRoles = [Role.FullAdmin];
+
   private syslogConfig: SyslogConfig;
   readonly advancedConfig$ = this.reloadConfig$.pipe(
     startWith(undefined),

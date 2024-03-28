@@ -34,6 +34,7 @@ import {
   switchMap,
 } from 'rxjs/operators';
 import { EmptyType } from 'app/enums/empty-type.enum';
+import { Role } from 'app/enums/role.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
@@ -58,6 +59,7 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
   @ViewChild('ixTreeHeader', { static: false }) ixTreeHeader: ElementRef<HTMLElement>;
   @ViewChild('ixTree', { static: false }) ixTree: ElementRef<HTMLElement>;
 
+  readonly requiredRoles = [Role.FullAdmin];
   isLoading$ = this.datasetStore.isLoading$;
   selectedDataset$ = this.datasetStore.selectedDataset$;
   @HostBinding('class.details-overlay') showMobileDetails = false;
