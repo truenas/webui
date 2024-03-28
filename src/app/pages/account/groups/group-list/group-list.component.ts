@@ -33,7 +33,7 @@ import { waitForPreferences } from 'app/store/preferences/preferences.selectors'
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class GroupListComponent implements OnInit {
-  protected requiredRoles = [Role.AccountWrite];
+  protected readonly requiredRoles = [Role.AccountWrite];
 
   dataProvider = new ArrayDataProvider<Group>();
   columns = createTable<Group>([

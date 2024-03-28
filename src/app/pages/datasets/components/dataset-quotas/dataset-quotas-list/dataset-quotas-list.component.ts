@@ -52,7 +52,7 @@ interface QuotaData {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DatasetQuotasListComponent implements OnInit {
-  protected requiredRoles = [Role.DatasetWrite];
+  protected readonly requiredRoles = [Role.DatasetWrite];
   readonly emptyValue = '—';
   readonly helpText = helpTextQuotas;
 

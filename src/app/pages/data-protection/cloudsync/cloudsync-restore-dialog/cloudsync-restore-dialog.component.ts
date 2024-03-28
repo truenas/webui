@@ -23,7 +23,7 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CloudSyncRestoreDialogComponent {
-  protected requiredRoles = [Role.CloudSyncWrite];
+  protected readonly requiredRoles = [Role.CloudSyncWrite];
 
   readonly form = this.formBuilder.group({
     description: ['', Validators.required],

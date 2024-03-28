@@ -6,6 +6,7 @@ import { filter } from 'rxjs/operators';
 import { Role } from 'app/enums/role.enum';
 import { helptextSystemGeneral as helptext } from 'app/helptext/system/general';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { manageConfigurationElements } from 'app/pages/system/general-settings/manage-configuration-menu/manage-configuration-menu.elements';
 import {
   SaveConfigDialogComponent,
 } from 'app/pages/system/general-settings/save-config-dialog/save-config-dialog.component';
@@ -23,6 +24,7 @@ import { AuthService } from 'app/services/auth/auth.service';
 export class ManageConfigurationMenuComponent {
   protected readonly Role = Role;
   protected isSysAdmin$ = this.authService.isSysAdmin$;
+  protected readonly searchableElements = manageConfigurationElements;
 
   constructor(
     private dialogService: DialogService,

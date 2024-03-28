@@ -37,7 +37,7 @@ export class TrainCardComponent implements OnInit {
     train: ['', Validators.required],
   });
 
-  protected readonly requiresRoles = [Role.FullAdmin];
+  protected readonly requiredRoles = [Role.FullAdmin];
   protected readonly clickForInformationLink = helptextSystemUpdate.clickForInformationLink;
   protected readonly SystemUpdateStatus = SystemUpdateStatus;
 

@@ -19,7 +19,7 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AlertSettings2Component implements OnInit {
-  protected requiredRoles = [Role.FullAdmin];
+  protected readonly requiredRoles = [Role.FullAdmin];
 
   categories: AlertCategory[] = [];
   alertClasses: AlertClasses;

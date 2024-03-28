@@ -31,7 +31,7 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AvailableAppsHeaderComponent implements OnInit, AfterViewInit {
-  protected requiredRoles = [Role.AppsWrite];
+  protected readonly requiredRoles = [Role.AppsWrite];
 
   form = this.fb.group({
     catalogs: [[] as string[]],

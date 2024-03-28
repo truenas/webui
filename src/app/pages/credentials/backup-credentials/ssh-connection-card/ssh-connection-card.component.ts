@@ -26,7 +26,7 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SshConnectionCardComponent implements OnInit {
-  protected requiredRoles = [Role.KeychainCredentialWrite];
+  protected readonly requiredRoles = [Role.KeychainCredentialWrite];
 
   dataProvider: AsyncDataProvider<KeychainSshCredentials>;
   credentials: KeychainSshCredentials[] = [];

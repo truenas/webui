@@ -1,12 +1,14 @@
 <mat-card>
   <mat-toolbar-row>
     <h3>{{ 'Global Two Factor Authentication' | translate }}</h3>
-    <div *ixRequiresRoles="requiredRoles" class="actions action-icon">
+    <div *ixWithLoadingState="twoFactorConfig$ as twoFactorAuthConfig" class="actions action-icon">
       <button
-        *ixWithLoadingState="twoFactorConfig$ as twoFactorAuthConfig"
+        *ixRequiresRoles="requiredRoles"
+        ixUiSearchableElement
         id="global-two-factor-auth"
         mat-button
         [ixTest]="['two-factor-auth', 'configure']"
+        [ixSearchConfig]="searchableElements.elements.configure"
         (click)="onConfigurePressed(twoFactorAuthConfig)"
       >
         {{ 'Configure' | translate }}

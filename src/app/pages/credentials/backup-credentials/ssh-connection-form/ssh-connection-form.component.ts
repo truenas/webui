@@ -44,7 +44,7 @@ const sslCertificationError = 'ESSLCERTVERIFICATIONERROR';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SshConnectionFormComponent implements OnInit {
-  protected requiredRoles = [Role.KeychainCredentialWrite];
+  protected readonly requiredRoles = [Role.KeychainCredentialWrite];
 
   form = this.formBuilder.group({
     connection_name: ['', Validators.required],

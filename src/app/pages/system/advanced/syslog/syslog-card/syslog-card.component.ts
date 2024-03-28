@@ -9,6 +9,7 @@ import { Role } from 'app/enums/role.enum';
 import { SyslogLevel, SyslogTransport, syslogLevelLabels } from 'app/enums/syslog.enum';
 import { toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import { AdvancedSettingsService } from 'app/pages/system/advanced/advanced-settings.service';
+import { syslogCardElements } from 'app/pages/system/advanced/syslog/syslog-card/syslog-card.elements';
 import { SyslogFormComponent } from 'app/pages/system/advanced/syslog/syslog-form/syslog-form.component';
 import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 import { AppState } from 'app/store';
@@ -33,7 +34,9 @@ export interface SyslogConfig {
 })
 export class SyslogCardComponent {
   private readonly reloadConfig$ = new Subject<void>();
-  protected requiredRoles = [Role.FullAdmin];
+  protected readonly searchableElements = syslogCardElements;
+  protected readonly requiredRoles = [Role.FullAdmin];
+
   private syslogConfig: SyslogConfig;
   readonly advancedConfig$ = this.reloadConfig$.pipe(
     startWith(undefined),

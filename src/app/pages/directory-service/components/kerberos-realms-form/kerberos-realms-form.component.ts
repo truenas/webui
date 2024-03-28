@@ -19,7 +19,7 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class KerberosRealmsFormComponent implements OnInit {
-  protected requiredRoles = [Role.DirectoryServiceWrite];
+  protected readonly requiredRoles = [Role.DirectoryServiceWrite];
 
   get isNew(): boolean {
     return !this.editingRealm;

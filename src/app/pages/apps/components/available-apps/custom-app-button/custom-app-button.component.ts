@@ -12,7 +12,7 @@ import { KubernetesStore } from 'app/pages/apps/store/kubernetes-store.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CustomAppButtonComponent {
-  protected requiredRoles = [Role.AppsWrite];
+  protected readonly requiredRoles = [Role.AppsWrite];
 
   customAppDisabled$ = this.kubernetesStore.selectedPool$.pipe(
     map((pool) => !pool),

@@ -1,31 +1,27 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
-import { UiSearchableElement } from 'app/modules/global-search/interfaces/ui-searchable-element.interface';
+import { Role } from 'app/enums/role.enum';
 
-export const elements: Record<string, UiSearchableElement> = {
-  consolemenu: {
-    hierarchy: [T('System Settings'), T('Advanced'), T('Console'), T('Console Menu')],
-    synonyms: [T('Show Text Console without Password Prompt')],
-    triggerAnchor: 'console-settings',
-    anchorRouterLink: ['/system', 'advanced'],
-  },
-  serialconsole: {
-    hierarchy: [T('System Settings'), T('Advanced'), T('Console'), T('Enable Serial Console')],
-    triggerAnchor: 'console-settings',
-    anchorRouterLink: ['/system', 'advanced'],
-  },
-  serialport: {
-    hierarchy: [T('System Settings'), T('Advanced'), T('Console'), T('Serial Port')],
-    triggerAnchor: 'console-settings',
-    anchorRouterLink: ['/system', 'advanced'],
-  },
-  serialspeed: {
-    hierarchy: [T('System Settings'), T('Advanced'), T('Console'), T('Serial Speed')],
-    triggerAnchor: 'console-settings',
-    anchorRouterLink: ['/system', 'advanced'],
-  },
-  motd: {
-    hierarchy: [T('System Settings'), T('Advanced'), T('Console'), T('MOTD Banner')],
-    triggerAnchor: 'console-settings',
-    anchorRouterLink: ['/system', 'advanced'],
+export const consoleFormElements = {
+  hierarchy: [T('System Settings'), T('Advanced'), T('Console')],
+  triggerAnchor: 'configure-console',
+  anchorRouterLink: ['/system', 'advanced'],
+  requiredRoles: [Role.FullAdmin],
+  elements: {
+    consoleMenu: {
+      hierarchy: [T('Console Menu')],
+      synonyms: [T('Show Text Console without Password Prompt')],
+    },
+    serialConsole: {
+      hierarchy: [T('Enable Serial Console')],
+    },
+    serialPort: {
+      hierarchy: [T('Serial Port')],
+    },
+    serialSpeed: {
+      hierarchy: [T('Serial Speed')],
+    },
+    motd: {
+      hierarchy: [T('MOTD Banner')],
+    },
   },
 };
