@@ -20,6 +20,12 @@ const mockedUiElement = {
   anchorRouterLink: ['/ui-section', 'item'],
 };
 
+const mockedRecentSearchesElement = {
+  hierarchy: ['UI Section Item'],
+  section: GlobalSearchSection.RecentSearches,
+  anchorRouterLink: ['/ui-section', 'item'],
+};
+
 describe('GlobalSearchResultsComponent', () => {
   let spectator: Spectator<GlobalSearchResultsComponent>;
   let router: Router;
@@ -121,7 +127,7 @@ describe('GlobalSearchResultsComponent', () => {
     spectator.detectChanges();
 
     let shownResults = spectator.queryAll('.search-result');
-    expect(shownResults).toHaveLength(spectator.component.resultLimit);
+    expect(shownResults).toHaveLength(spectator.component.initialResultsLimit);
 
     const showAllButton = spectator.query('.toggle-show-more');
     spectator.click(showAllButton);
@@ -134,6 +140,18 @@ describe('GlobalSearchResultsComponent', () => {
     spectator.detectChanges();
 
     shownResults = spectator.queryAll('.search-result');
-    expect(shownResults).toHaveLength(spectator.component.resultLimit);
+    expect(shownResults).toHaveLength(spectator.component.initialResultsLimit);
+  });
+
+  it('should display Recent Searches sections', () => {
+    const mockResults: UiSearchableElement[] = [mockedRecentSearchesElement];
+
+    spectator.setInput('results', mockResults);
+    spectator.setInput('searchTerm', '');
+    spectator.detectChanges();
+
+    const sectionHeaders = spectator.queryAll('.section');
+    expect(sectionHeaders).toHaveLength(1);
+    expect(sectionHeaders[0].textContent).toBe(' Recent Searches ');
   });
 });
