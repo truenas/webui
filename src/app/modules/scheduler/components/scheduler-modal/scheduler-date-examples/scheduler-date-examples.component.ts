@@ -1,7 +1,6 @@
 import {
   ChangeDetectionStrategy, Component, Input, OnChanges, TrackByFunction,
 } from '@angular/core';
-import { utcToZonedTime, zonedTimeToUtc } from 'date-fns-tz';
 import { CronSchedulePreview } from 'app/modules/scheduler/classes/cron-schedule-preview/cron-schedule-preview';
 
 @Component({
@@ -28,9 +27,5 @@ export class SchedulerDateExamplesComponent implements OnChanges {
       this.maxExamples + 1,
       this.machineTimezone,
     );
-  }
-
-  convertTimezone(date: Date, tz: string): Date {
-    return utcToZonedTime(zonedTimeToUtc(date, Intl.DateTimeFormat().resolvedOptions().timeZone), tz);
   }
 }

@@ -97,9 +97,8 @@
               <strong>{{ 'Start' | translate }}:</strong>
               <span class="font-normal">
                 <ix-date
-                  [date]="convertTimezone(currentStartDate, timezone)"
-                  [defaultTimezone]="timezone"
-                  [tooltipTimezone]="localTimezone"
+                  [date]="currentStartDate"
+                  [machineTimezone]="timezone"
                 ></ix-date>
               </span>
             </h4>
@@ -107,9 +106,8 @@
               <strong>{{ 'End' | translate }}:</strong>
               <span class="font-normal">
                 <ix-date
-                  [date]="convertTimezone(currentEndDate, timezone)"
-                  [defaultTimezone]="timezone"
-                  [tooltipTimezone]="localTimezone"
+                  [date]="currentEndDate"
+                  [machineTimezone]="timezone"
                 ></ix-date>
               </span>
             </h4>
@@ -123,8 +121,8 @@
               <span *ngIf="legendData?.xHTML" class="font-normal">
                 <ix-date
                   [date]="getDateFromString(legendData.xHTML)"
-                  [tooltipTimezone]="timezone"
-                  [defaultTimezone]="localTimezone"
+                  [machineTimezone]="timezone"
+                  [appliedTimezone]="timezone"
                 ></ix-date>
               </span>
             </h4>

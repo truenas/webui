@@ -5,6 +5,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { CoreComponents } from 'app/core/core-components.module';
 import { IxDateComponent } from 'app/modules/ix-date/ix-date.component';
 import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
+import { LocaleService } from 'app/services/locale.service';
 
 @NgModule({
   imports: [
@@ -19,6 +20,9 @@ import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
   ],
   exports: [
     IxDateComponent,
+  ],
+  providers: [
+    LocaleService,
   ],
 })
 export class IxDateModule { }
