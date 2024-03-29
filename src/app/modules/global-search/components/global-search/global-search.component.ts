@@ -4,7 +4,7 @@ import {
 import { FormControl } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import {
-  debounceTime, distinctUntilChanged, switchMap,
+  debounceTime, distinctUntilChanged, filter, switchMap, tap,
 } from 'rxjs';
 import { moveToNextFocusableElement, moveToPreviousFocusableElement } from 'app/modules/global-search/helpers/focus-helper';
 import { UiSearchableElement } from 'app/modules/global-search/interfaces/ui-searchable-element.interface';
@@ -71,19 +71,21 @@ export class GlobalSearchComponent implements OnInit {
 
   private listenForSearchChanges(): void {
     this.searchControl.valueChanges.pipe(
+      tap((value) => {
+        if (!value) {
+          this.setInitialSearchResults();
+        }
+      }),
       debounceTime(150),
       distinctUntilChanged(),
+      filter(Boolean),
       switchMap((term) => this.globalSearchSectionsProvider.getUiSectionResults(term)),
       untilDestroyed(this),
     ).subscribe((searchResults) => {
-      if (!this.searchControl.value) {
-        this.setInitialSearchResults();
-      } else {
-        this.searchResults = [
-          ...searchResults,
-          ...this.globalSearchSectionsProvider.getHelpSectionResults(this.searchControl.value),
-        ];
-      }
+      this.searchResults = [
+        ...searchResults,
+        ...this.globalSearchSectionsProvider.getHelpSectionResults(this.searchControl.value),
+      ];
 
       this.cdr.markForCheck();
     });
