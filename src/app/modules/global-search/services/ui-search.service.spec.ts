@@ -1,14 +1,12 @@
 import { createServiceFactory, SpectatorService, mockProvider } from '@ngneat/spectator/jest';
 import { of, lastValueFrom } from 'rxjs';
-import { Role } from 'app/enums/role.enum';
-import { UiSearchableElement } from 'app/modules/global-search/interfaces/ui-searchable-element.interface';
 import { UiSearchProvider } from 'app/modules/global-search/services/ui-search.service';
 import { AuthService } from 'app/services/auth/auth.service';
 
-const mockedUiElements = [
-  { hierarchy: ['Technology', 'Internet'], synonyms: ['Web'], requiredRoles: [Role.FullAdmin] },
+jest.mock('app/../assets/ui-searchable-elements.json', () => [
+  { hierarchy: ['Technology', 'Internet'], synonyms: ['Web'], requiredRoles: ['FullAdmin'] },
   { hierarchy: ['Technology', 'Programming'], synonyms: ['Coding'], requiredRoles: [] },
-] as UiSearchableElement[];
+]);
 
 describe('UiSearchProvider with mocked uiElements', () => {
   let spectator: SpectatorService<UiSearchProvider>;
@@ -24,11 +22,18 @@ describe('UiSearchProvider with mocked uiElements', () => {
           mockProvider(AuthService, { hasRole: () => of(true) }),
         ],
       });
-      spectator.service.uiElements = mockedUiElements;
     });
 
     it('should return expected search results on specific search', async () => {
       const searchTerm = 'Internet';
+      const results = await lastValueFrom(spectator.service.search(searchTerm));
+
+      expect(results).toHaveLength(1);
+      expect(results[0].hierarchy).toContain('Internet');
+    });
+
+    it('should search by synonyms', async () => {
+      const searchTerm = 'web';
       const results = await lastValueFrom(spectator.service.search(searchTerm));
 
       expect(results).toHaveLength(1);
@@ -52,7 +57,6 @@ describe('UiSearchProvider with mocked uiElements', () => {
           mockProvider(AuthService, { hasRole: () => of(false) }),
         ],
       });
-      spectator.service.uiElements = mockedUiElements;
     });
 
     it('should not show search result where user has no required role', async () => {
@@ -86,7 +90,6 @@ describe('UiSearchProvider with mocked uiElements', () => {
           mockProvider(AuthService, { hasRole: () => of(true) }),
         ],
       });
-      spectator.service.uiElements = mockedUiElements;
     });
 
     it('should limit results to first 50 items & show results for empty string request', async () => {
