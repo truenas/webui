@@ -43,7 +43,11 @@ export class GlobalSearchResultsComponent {
   get availableSections(): Option<GlobalSearchSection>[] {
     const uniqueSectionValues = new Set(this.results.map((result) => result.section));
 
-    if (this.searchTerm && !uniqueSectionValues.has(GlobalSearchSection.Ui)) {
+    if (
+      this.searchTerm
+      && !uniqueSectionValues.has(GlobalSearchSection.Ui)
+      && !uniqueSectionValues.has(GlobalSearchSection.RecentSearches)
+    ) {
       uniqueSectionValues.add(GlobalSearchSection.Ui);
     }
 
