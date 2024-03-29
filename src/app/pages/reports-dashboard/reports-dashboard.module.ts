@@ -30,6 +30,8 @@ import { ReportingExporterListComponent } from 'app/pages/reports-dashboard/comp
 import { LineChartComponent } from 'app/pages/reports-dashboard/components/line-chart/line-chart.component';
 import { ReportsDashboardComponent } from 'app/pages/reports-dashboard/reports-dashboard.component';
 import { routing } from 'app/pages/reports-dashboard/reports-dashboard.routing';
+import { PlotterService } from 'app/pages/reports-dashboard/services/plotter.service';
+import { SmoothPlotterService } from 'app/pages/reports-dashboard/services/smooth-plotter.service';
 import { ReportComponent } from './components/report/report.component';
 import { ReportsGlobalControlsComponent } from './components/reports-global-controls/reports-global-controls.component';
 
@@ -70,6 +72,12 @@ import { ReportsGlobalControlsComponent } from './components/reports-global-cont
     ReportsDashboardComponent,
     ReportsGlobalControlsComponent,
   ],
-  providers: [FormatDateTimePipe],
+  providers: [
+    FormatDateTimePipe,
+    {
+      provide: PlotterService,
+      useClass: SmoothPlotterService,
+    },
+  ],
 })
 export class ReportsDashboardModule {}

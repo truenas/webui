@@ -20,7 +20,7 @@ import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells
 import { createTable } from 'app/modules/ix-table2/utils';
 import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
-import { elements } from 'app/pages/system/advanced/access/access-card/access-card.elements';
+import { accessCardElements } from 'app/pages/system/advanced/access/access-card/access-card.elements';
 import { AccessFormComponent } from 'app/pages/system/advanced/access/access-form/access-form.component';
 import { AdvancedSettingsService } from 'app/pages/system/advanced/advanced-settings.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
@@ -40,7 +40,8 @@ import { waitForGeneralConfig } from 'app/store/system-config/system-config.sele
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AccessCardComponent implements OnInit {
-  protected readonly searchElements = elements;
+  protected readonly searchElements = accessCardElements;
+  readonly requiredRoles = [Role.AuthSessionsWrite];
   readonly tokenLifetime$ = this.store$.pipe(
     waitForPreferences,
     map((preferences) => {
@@ -76,7 +77,7 @@ export class AccessCardComponent implements OnInit {
             : this.translate.instant('Terminate session')),
           onClick: (row) => this.onTerminate(row.id),
           disabled: (row) => of(row.current),
-          requiredRoles: [Role.AuthSessionsWrite],
+          requiredRoles: this.requiredRoles,
         },
       ],
     }),
@@ -87,8 +88,6 @@ export class AccessCardComponent implements OnInit {
   get isEnterprise(): boolean {
     return this.systemGeneralService.isEnterprise;
   }
-
-  protected readonly Role = Role;
 
   constructor(
     private store$: Store<AppState>,

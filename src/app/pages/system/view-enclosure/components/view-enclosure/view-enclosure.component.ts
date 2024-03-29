@@ -18,6 +18,7 @@ import { ErrorMessage } from 'app/pages/system/view-enclosure/interfaces/error-m
 import { ViewConfig } from 'app/pages/system/view-enclosure/interfaces/view.config';
 import { EnclosureState, EnclosureStore } from 'app/pages/system/view-enclosure/stores/enclosure-store.service';
 import { DisksUpdateService } from 'app/services/disks-update.service';
+import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 import { selectTheme } from 'app/store/preferences/preferences.selectors';
 import {
@@ -57,6 +58,7 @@ export class ViewEnclosureComponent implements AfterViewInit, OnDestroy {
     showInNavbar: true,
   };
 
+  hasJbofLicensed = false;
   systemProfile: SystemProfile;
   systemState: EnclosureState;
   views: ViewConfig[] = [];
@@ -148,6 +150,7 @@ export class ViewEnclosureComponent implements AfterViewInit, OnDestroy {
 
   constructor(
     public router: Router,
+    private ws: WebSocketService,
     private store$: Store<AppState>,
     private disksUpdateService: DisksUpdateService,
     private enclosureStore: EnclosureStore,
@@ -208,6 +211,10 @@ export class ViewEnclosureComponent implements AfterViewInit, OnDestroy {
 
     this.store$.pipe(waitForSystemFeatures, untilDestroyed(this)).subscribe((systemFeatures) => {
       this.supportedHardware = systemFeatures.enclosure;
+    });
+
+    this.ws.call('jbof.licensed').pipe(untilDestroyed(this)).subscribe((licensed) => {
+      this.hasJbofLicensed = licensed > 0;
     });
   }
 

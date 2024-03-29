@@ -3,9 +3,11 @@
     <h3>{{ 'Console' | translate }}</h3>
     <div class="actions action-icon">
       <button
-        id="console-settings"
+        *ixRequiresRoles="requiredRoles"
+        ixUiSearchableElement
         mat-button
         [ixTest]="['console', 'configure']"
+        [ixSearchConfig]="searchableElements.elements.configure"
         (click)="onConfigurePressed()"
       >
         {{ 'Configure' | translate }}

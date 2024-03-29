@@ -61,6 +61,7 @@ import { RoutePartsService } from './services/route-parts/route-parts.service';
     AppLoaderModule,
     MatNativeDateModule,
     HttpClientModule,
+    MatNativeDateModule,
     TooltipModule,
     TranslateModule.forRoot({
       defaultLanguage: 'en',

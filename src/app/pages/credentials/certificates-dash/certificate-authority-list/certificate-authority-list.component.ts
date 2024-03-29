@@ -48,7 +48,7 @@ import { WebSocketService } from 'app/services/ws.service';
 export class CertificateAuthorityListComponent implements OnInit {
   @Output() certificateSigned = new EventEmitter<void>();
 
-  protected requiredRoles = [Role.FullAdmin];
+  protected readonly requiredRoles = [Role.FullAdmin];
 
   filterString = '';
   dataProvider: AsyncDataProvider<CertificateAuthority>;

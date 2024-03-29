@@ -124,7 +124,7 @@ describe('PoolManagerComponent – start over functionality', () => {
             type: DiskType.Hdd,
           },
         ] as UnusedDisk[]),
-        mockCall('webui.enclosure.dashboard', [] as EnclosureUi[]),
+        mockCall('enclosure2.query', [] as EnclosureUi[]),
         mockCall('pool.query', []),
         mockCall('pool.dataset.encryption_algorithm_choices', {}),
       ]),

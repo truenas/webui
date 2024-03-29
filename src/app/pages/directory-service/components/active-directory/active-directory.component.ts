@@ -30,7 +30,7 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ActiveDirectoryComponent implements OnInit {
-  protected requiredRoles = [Role.DirectoryServiceWrite];
+  protected readonly requiredRoles = [Role.DirectoryServiceWrite];
 
   isLoading = false;
   isAdvancedMode = false;

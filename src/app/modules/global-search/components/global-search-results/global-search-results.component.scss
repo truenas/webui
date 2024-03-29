@@ -1,16 +1,11 @@
 @import 'scss-imports/cssvars';
 
-.arrow-focused {
-  background-color: var(--bg1);
-}
-
 :host {
   background-color: var(--bg2);
   border-radius: 2px;
   display: block;
   max-width: 70vw;
   min-width: 100%;
-  padding: 10px 0;
   position: absolute;
   top: 41px;
   width: max-content;
@@ -33,6 +28,8 @@
     ix-empty {
       ix-icon {
         font-size: 100px !important;
+        height: 60px !important;
+        margin: 10px 0 30px;
       }
     }
   }
@@ -43,8 +40,41 @@
   border-radius: 2px;
   box-shadow: none;
   margin: 0;
-  max-height: 400px;
+  max-height: 60vh;
   overflow: auto;
+
+  .section {
+    background-color: var(--bg2);
+    border-bottom: 1px solid var(--lines);
+    font-size: 18px;
+    margin: 16px 16px 0 3px;
+    padding: 15px 17px;
+    padding-left: 17px;
+    position: sticky;
+    top: 0;
+    z-index: 2;
+
+    &:first-child {
+      margin-top: 0;
+    }
+  }
+
+  .section-content {
+    padding: 6px 0;
+  }
+
+  .toggle-show-more {
+    background-color: var(--bg2);
+    bottom: 0;
+    position: sticky;
+    width: 100%;
+    z-index: 1;
+
+    &:focus-visible {
+      background-color: var(--bg1);
+      outline: none !important;
+    }
+  }
 
   .search-result {
     border-radius: 2px;
@@ -55,7 +85,8 @@
       background-color: var(--bg1);
     }
 
-    &:focus {
+    &:focus-visible {
+      background-color: var(--bg1);
       outline: none;
     }
 
@@ -70,4 +101,8 @@
       word-break: break-word;
     }
   }
+}
+
+.no-results {
+  padding: 20px 20px 5px;
 }

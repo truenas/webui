@@ -118,7 +118,7 @@
 
         <section #legendElement class="legend" fxFlex="420px" fxLayout="column" fxLayoutAlign="start">
           <div *ngIf="report && data?.legend" class="legend-timestamp" fxFlex="32px" fxLayoutAlign="start center">
-            <h4 *ngIf="data && legendData?.xHTML" fxLayoutGap="8px" fxLayoutAlign="start center">
+            <h4 *ngIf="data && legendData?.xHTML && shouldShowLegendValue" fxLayoutGap="8px" fxLayoutAlign="start center">
               <strong>{{ 'Time' | translate }}:</strong>
               <span *ngIf="legendData?.xHTML" class="font-normal">
                 <ix-date
@@ -158,7 +158,7 @@
                     <strong>{{ legendItem | translate }}</strong>
                   </span>
 
-                  <span *ngIf="legendData?.series?.[i]?.yHTML" class="font-normal">:
+                  <span *ngIf="legendData?.series?.[i]?.yHTML && shouldShowLegendValue" class="font-normal">:
                     {{ legendData.series[i].yHTML | translate }}
                   </span>
                 </td>
@@ -172,7 +172,7 @@
               </tr>
             </table>
           </div>
-          <ng-container *ngIf="legendData?.stackedTotalHTML && shouldShowTotal">
+          <ng-container *ngIf="legendData?.stackedTotalHTML && shouldShowTotal && shouldShowLegendValue">
             <h4 class="legend-timestamp" fxFlex="32px" fxLayoutGap="8px">
               <strong>{{ 'Total' | translate }}:</strong>
               <span>{{ legendData.stackedTotalHTML | translate }}</span>

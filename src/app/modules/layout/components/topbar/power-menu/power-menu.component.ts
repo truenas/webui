@@ -18,7 +18,7 @@ import { WebSocketConnectionService } from 'app/services/websocket-connection.se
 export class PowerMenuComponent {
   readonly tooltips = helptextTopbar.mat_tooltips;
 
-  protected requiredRoles = [Role.FullAdmin];
+  protected readonly requiredRoles = [Role.FullAdmin];
 
   constructor(
     private authService: AuthService,

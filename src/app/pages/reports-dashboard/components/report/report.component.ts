@@ -130,6 +130,10 @@ export class ReportComponent extends WidgetComponent implements OnInit, OnChange
     ].includes(this.data?.name as ReportingGraphName);
   }
 
+  get shouldShowLegendValue(): boolean {
+    return this.chartId === this.legendData?.chartId;
+  }
+
   constructor(
     public translate: TranslateService,
     private ws: WebSocketService,

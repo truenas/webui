@@ -1,22 +1,35 @@
 <mat-card class="search-results-card">
-  <ng-container *ngIf="results?.length > 0; else noResults">
-    <div
-      *ngFor="let result of results; let i = index"
-      class="search-result"
-      tabindex="0"
-      [class.arrow-focused]="i === focusedIndex"
-      [ngClass]="'focused-index-' + i"
-      (click)="navigateToResult(result)"
-      (keydown.enter)="focusedIndex = i"
-    >
-      <h3
-        class="title"
-        [innerHTML]="processHierarchy(result.hierarchy, searchTerm)"
-      ></h3>
+  <ng-container *ngFor="let section of availableSections; trackBy: trackBySection">
+    <h2 class="section">
+      {{ section.label | translate }}
+    </h2>
+
+    <div *ngIf="getElementsBySection(section.value)?.length" class="section-content">
+      <div
+        *ngFor="let result of getLimitedSectionResults(section.value); trackBy: trackById"
+        class="search-result"
+        tabindex="0"
+        [ixTest]="['search-result', result.hierarchy.join('-')]"
+        (click)="navigateToResult(result)"
+        (keydown.enter)="navigateToResult(result)"
+      >
+        <h3 class="title" [innerHTML]="processHierarchy(result.hierarchy, searchTerm)"></h3>
+      </div>
+
+      <button
+        *ngIf="getElementsBySection(section.value)?.length > resultLimit"
+        class="toggle-show-more"
+        mat-button
+        ixTest="toggle-show-all-results'"
+        (click)="toggleShowAll(section.value)"
+        (keydown.enter)="toggleShowAll(section.value)"
+      >
+        {{ showAll[section.value] ? ('Show Less' | translate) : ('Show All' | translate) }}
+      </button>
     </div>
+
+    <ng-container *ngIf="!getElementsBySection(section.value)?.length">
+      <h4 class="no-results">{{ 'No results found in {section}' | translate:{ section: section.label } }}</h4>
+    </ng-container>
   </ng-container>
 </mat-card>
-
-<ng-template #noResults>
-  <ix-empty [conf]="entityEmptyConf"></ix-empty>
-</ng-template>
