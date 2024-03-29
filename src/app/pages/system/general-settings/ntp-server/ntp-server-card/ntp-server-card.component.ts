@@ -13,7 +13,7 @@ import {
 } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-yesno/ix-cell-yesno.component';
 import { createTable } from 'app/modules/ix-table2/utils';
 import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
-import { elements } from 'app/pages/system/general-settings/ntp-server/ntp-server-card/ntp-server-card.elements';
+import { ntpServerElements } from 'app/pages/system/general-settings/ntp-server/ntp-server-card/ntp-server-card.elements';
 import { NtpServerFormComponent } from 'app/pages/system/general-settings/ntp-server/ntp-server-form/ntp-server-form.component';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -27,7 +27,7 @@ import { WebSocketService } from 'app/services/ws.service';
 })
 export class NtpServerCardComponent implements OnInit {
   readonly requiredRoles = [Role.FullAdmin];
-  protected readonly searchElements = elements;
+  protected readonly searchElements = ntpServerElements;
 
   dataProvider: AsyncDataProvider<NtpServer>;
 

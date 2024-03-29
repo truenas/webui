@@ -109,7 +109,7 @@ describe('PoolManagerComponent – unsetting on fewer disks', () => {
             exported_zpool: 'anotherpool',
           },
         ] as UnusedDisk[]),
-        mockCall('webui.enclosure.dashboard', [
+        mockCall('enclosure2.query', [
           {
             name: 'enclosure1',
             number: 1,

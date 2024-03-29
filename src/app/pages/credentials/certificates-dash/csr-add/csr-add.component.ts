@@ -46,7 +46,7 @@ export class CsrAddComponent {
   // Importing
   @ViewChild(CsrImportComponent) import: CsrImportComponent;
 
-  protected requiredRoles = [Role.FullAdmin];
+  protected readonly requiredRoles = [Role.FullAdmin];
 
   isLoading = false;
   summary: SummarySection[];

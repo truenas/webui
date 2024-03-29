@@ -24,7 +24,7 @@ export interface ApiEventDirectory {
   'chart.release.statistics': { response: { id: string; stats: ChartReleaseStats } };
   'core.get_jobs': { response: Job };
   'directoryservices.status': { response: DirectoryServicesState };
-  'failover.status': { response: FailoverStatus };
+  'failover.status': { response: { status: FailoverStatus } };
   'failover.disabled.reasons': { response: FailoverDisabledReasonEvent };
   'service.query': { response: Service };
   'truecommand.config': { response: TrueCommandConfig };

@@ -29,7 +29,7 @@ import { generalConfigUpdated } from 'app/store/system-config/system-config.acti
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AllowedAddressesFormComponent implements OnInit {
-  protected requiredRoles = [Role.FullAdmin];
+  protected readonly requiredRoles = [Role.FullAdmin];
   protected readonly helpText = helptextSystemAdvanced;
 
   isFormLoading = true;

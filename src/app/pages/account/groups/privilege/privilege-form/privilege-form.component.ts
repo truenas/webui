@@ -22,7 +22,7 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PrivilegeFormComponent implements OnInit {
-  protected requiredRoles = [Role.FullAdmin];
+  protected readonly requiredRoles = [Role.FullAdmin];
 
   protected isLoading = false;
   protected localGroups: Group[] = [];

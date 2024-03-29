@@ -8,7 +8,7 @@
   <form class="ix-form-container" [formGroup]="form">
     <div class="train-card-row">
       <ix-checkbox
-        *ixRequiresRoles="requiresRoles"
+        *ixRequiresRoles="requiredRoles"
         formControlName="auto_check"
         [label]="'Check for Updates Daily and Download if Available' | translate"
         [tooltip]="'Check the update server daily for any updates on the chosen train. Automatically download an update if one is available. Click <i>APPLY PENDING UPDATE</i> to install the downloaded update.' | translate"
@@ -25,7 +25,7 @@
         [required]="true"
       ></ix-select>
       <button
-        *ixRequiresRoles="requiresRoles"
+        *ixRequiresRoles="requiredRoles"
         mat-mini-fab
         color="primary"
         class="refresh-button"

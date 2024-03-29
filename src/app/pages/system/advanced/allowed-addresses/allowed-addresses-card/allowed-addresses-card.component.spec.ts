@@ -6,7 +6,7 @@ import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { MockModule } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockWebSocket, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { SystemGeneralConfig } from 'app/interfaces/system-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ChainedRef } from 'app/modules/ix-forms/components/ix-slide-in/chained-component-ref';
@@ -38,6 +38,7 @@ describe('AllowedAddressesCardComponent', () => {
       MockModule(TooltipModule),
     ],
     providers: [
+      mockAuth(),
       mockProvider(AdvancedSettingsService, {
         showFirstTimeWarningIfNeeded: jest.fn(() => of(true)),
       }),
@@ -52,7 +53,6 @@ describe('AllowedAddressesCardComponent', () => {
         pushComponent: jest.fn(() => of(true)),
       }),
       mockProvider(ChainedRef, componentRef),
-      mockAuth(),
     ],
   });
 

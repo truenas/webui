@@ -3,9 +3,11 @@
     <h3>{{ 'Replication' | translate }}</h3>
     <div class="actions action-icon">
       <button
+        *ixRequiresRoles="requiredRoles"
         mat-button
-        id="replication-settings"
+        ixUiSearchableElement
         [ixTest]="['replication', 'configure']"
+        [ixSearchConfig]="searchableElements.elements.configure"
         (click)="onConfigurePressed()"
       >
         {{ 'Configure' | translate }}

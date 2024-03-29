@@ -39,7 +39,7 @@ export class FailoverSettingsComponent implements OnInit {
 
   subscriptions: Subscription[] = [];
 
-  protected requiredRoles = [Role.FailoverWrite];
+  protected readonly requiredRoles = [Role.FailoverWrite];
 
   submitButtonText$ = this.form.select((values) => {
     if (!values.master) {

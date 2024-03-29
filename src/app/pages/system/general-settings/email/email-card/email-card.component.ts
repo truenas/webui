@@ -6,6 +6,7 @@ import { Observable, filter, of } from 'rxjs';
 import { LoadingState, toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import { helptextSystemEmail } from 'app/helptext/system/email';
 import { MailConfig } from 'app/interfaces/mail-config.interface';
+import { emailCardElements } from 'app/pages/system/general-settings/email/email-card/email-card.elements';
 import { EmailFormComponent } from 'app/pages/system/general-settings/email/email-form/email-form.component';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -18,6 +19,7 @@ import { WebSocketService } from 'app/services/ws.service';
 })
 export class EmailCardComponent {
   readonly helptext = helptextSystemEmail;
+  protected readonly searchableElements = emailCardElements;
 
   emailConfig$: Observable<LoadingState<MailConfig>> = this.ws.call('mail.config').pipe(toLoadingState());
 

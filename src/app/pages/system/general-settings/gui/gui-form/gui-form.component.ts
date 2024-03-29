@@ -24,7 +24,7 @@ import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-sli
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { ipValidator } from 'app/modules/ix-forms/validators/ip-validation';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
-import { elements } from 'app/pages/system/general-settings/gui/gui-form/gui-form.elements';
+import { guiFormElements } from 'app/pages/system/general-settings/gui/gui-form/gui-form.elements';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { ThemeService } from 'app/services/theme/theme.service';
 import { WebSocketConnectionService } from 'app/services/websocket-connection.service';
@@ -41,8 +41,8 @@ import { waitForGeneralConfig } from 'app/store/system-config/system-config.sele
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class GuiFormComponent {
-  protected requiredRoles = [Role.FullAdmin];
-  readonly searchElements = elements;
+  protected readonly requiredRoles = [Role.FullAdmin];
+  readonly searchElements = guiFormElements;
 
   isFormLoading = true;
   configData: SystemGeneralConfig;

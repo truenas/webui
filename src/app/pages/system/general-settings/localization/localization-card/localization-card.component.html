@@ -4,11 +4,12 @@
     <div class="actions action-icon">
       <button
         *ixWithLoadingState="generalConfig$ as generalConfig"
+        ixUiSearchableElement
         mat-button
         color="default"
-        id="localization-settings"
         [ixTest]="['localization', 'settings']"
-        (click)="doAdd(generalConfig)"
+        [ixSearchConfig]="searchableElements.elements.configure"
+        (click)="openSettings(generalConfig)"
       >
         {{ 'Settings' | translate }}
       </button>

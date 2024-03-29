@@ -24,7 +24,7 @@ import {
   SetProductionStatusDialogComponent,
   SetProductionStatusDialogResult,
 } from 'app/pages/system/general-settings/support/set-production-status-dialog/set-production-status-dialog.component';
-import { elements } from 'app/pages/system/general-settings/support/support-card/support-card.elements';
+import { supportCardElements } from 'app/pages/system/general-settings/support/support-card/support-card.elements';
 import { SystemInfoInSupport } from 'app/pages/system/general-settings/support/system-info-in-support.interface';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -42,7 +42,7 @@ import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 })
 export class SupportCardComponent implements OnInit {
   readonly requiredRoles = [Role.FullAdmin];
-  protected readonly searchElements = elements;
+  protected readonly searchElements = supportCardElements;
 
   isProduction: boolean;
   productImage = 'ix-original-cropped.png';

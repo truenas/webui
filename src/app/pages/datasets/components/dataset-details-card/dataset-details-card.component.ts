@@ -11,7 +11,6 @@ import { OnOff } from 'app/enums/on-off.enum';
 import { Role } from 'app/enums/role.enum';
 import { ZfsPropertySource } from 'app/enums/zfs-property-source.enum';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
-import { DialogService } from 'app/modules/dialog/dialog.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DatasetFormComponent } from 'app/pages/datasets/components/dataset-form/dataset-form.component';
 import { DeleteDatasetDialogComponent } from 'app/pages/datasets/components/delete-dataset-dialog/delete-dataset-dialog.component';
@@ -32,6 +31,7 @@ export class DatasetDetailsCardComponent {
   @Input() dataset: DatasetDetails;
   @Input() isLoading: boolean;
 
+  protected readonly Role = Role;
   readonly OnOff = OnOff;
 
   constructor(
@@ -42,7 +42,6 @@ export class DatasetDetailsCardComponent {
     private errorHandler: ErrorHandlerService,
     private router: Router,
     private ws: WebSocketService,
-    private dialogService: DialogService,
     private snackbar: SnackbarService,
   ) { }
 
@@ -118,6 +117,4 @@ export class DatasetDetailsCardComponent {
       untilDestroyed(this),
     ).subscribe(() => this.datasetStore.datasetUpdated());
   }
-
-  protected readonly Role = Role;
 }

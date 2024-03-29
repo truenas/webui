@@ -7,6 +7,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { AclType } from 'app/enums/acl-type.enum';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { NfsAclTag } from 'app/enums/nfs-acl.enum';
+import { Role } from 'app/enums/role.enum';
 import { Acl } from 'app/interfaces/acl.interface';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
@@ -25,6 +26,8 @@ import { ErrorHandlerService } from 'app/services/error-handler.service';
 })
 export class PermissionsCardComponent implements OnInit, OnChanges {
   @Input() dataset: DatasetDetails;
+
+  readonly requiredRoles = [Role.DatasetWrite];
 
   isLoading: boolean;
   isMissingMountpoint: boolean;

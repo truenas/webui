@@ -13,7 +13,7 @@
           type="number"
           [label]="'Token Lifetime' | translate"
           [tooltip]="'Time in seconds after which current user session will be disconnected. Interacting with UI extends the session.' | translate"
-          [ixSearchConfig]="searchElements.tokenLifetime"
+          [ixSearchConfig]="searchElements.elements.tokenLifetime"
         ></ix-input>
         <ix-checkbox
           *ngIf="isEnterprise"
