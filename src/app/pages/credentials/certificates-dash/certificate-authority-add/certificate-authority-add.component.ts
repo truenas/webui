@@ -54,7 +54,7 @@ export class CertificateAuthorityAddComponent implements AfterViewInit {
   // Importing
   @ViewChild(CaImportComponent) import: CaImportComponent;
 
-  protected requiredRoles = [Role.FullAdmin];
+  protected readonly requiredRoles = [Role.FullAdmin];
 
   isLoading = false;
   summary: SummarySection[];

@@ -10,7 +10,7 @@ import { Role } from 'app/enums/role.enum';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ChainedRef } from 'app/modules/ix-forms/components/ix-slide-in/chained-component-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { elements } from 'app/pages/system/advanced/access/access-form/access-form.elements';
+import { accessFormElements } from 'app/pages/system/advanced/access/access-form/access-form.elements';
 import { AuthService } from 'app/services/auth/auth.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
@@ -28,8 +28,8 @@ import { selectGeneralConfig } from 'app/store/system-config/system-config.selec
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AccessFormComponent implements OnInit {
-  readonly requiredRoles = [Role.FullAdmin];
-  protected readonly searchElements = elements;
+  readonly requiredRoles = [Role.AuthSessionsWrite];
+  protected readonly searchElements = accessFormElements;
 
   isLoading = false;
   form = this.fb.group({

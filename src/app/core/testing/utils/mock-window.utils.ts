@@ -7,6 +7,7 @@ export function mockWindow(overrides: DeepPartial<Window> = {}): ValueProvider {
   const baseWindow = {
     location: {
       protocol: 'http:',
+      href: 'http://truenas.com',
     },
     open: jest.fn(),
   } as DeepPartial<Window>;

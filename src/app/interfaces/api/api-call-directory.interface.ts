@@ -431,7 +431,7 @@ export interface ApiCallDirectory {
   'disk.update': { params: [id: string, update: DiskUpdate]; response: Disk };
 
   // Enclosure
-  'enclosure.query': { params: void; response: EnclosureUi[] };
+  'enclosure2.query': { params: void; response: EnclosureUi[] };
   'webui.enclosure.dashboard': { params: void; response: EnclosureUi[] };
   'enclosure.update': { params: [enclosureId: string, update: { label: string }]; response: EnclosureUi };
   'enclosure.set_slot_status': { params: [id: string, slot: number, status: EnclosureSlotStatus ]; response: void };

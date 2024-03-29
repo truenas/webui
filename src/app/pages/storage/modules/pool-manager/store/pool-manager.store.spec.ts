@@ -56,7 +56,7 @@ describe('PoolManagerStore', () => {
     providers: [
       mockWebSocket([
         mockCall('disk.get_unused', disks),
-        mockCall('webui.enclosure.dashboard', enclosures),
+        mockCall('enclosure2.query', enclosures),
       ]),
       mockProvider(MatDialog, {
         open: jest.fn(() => ({
@@ -121,7 +121,7 @@ describe('PoolManagerStore', () => {
 
       const websocket = spectator.inject(WebSocketService);
       expect(websocket.call).toHaveBeenCalledWith('disk.get_unused');
-      expect(websocket.call).toHaveBeenCalledWith('webui.enclosure.dashboard');
+      expect(websocket.call).toHaveBeenCalledWith('enclosure2.query');
 
       expect(await firstValueFrom(spectator.service.state$)).toMatchObject({
         ...initialState,

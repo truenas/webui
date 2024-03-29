@@ -29,7 +29,7 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SshKeypairCardComponent implements OnInit {
-  protected requiredRoles = [Role.KeychainCredentialWrite];
+  protected readonly requiredRoles = [Role.KeychainCredentialWrite];
 
   dataProvider: AsyncDataProvider<KeychainSshKeyPair>;
   credentials: KeychainSshKeyPair[] = [];

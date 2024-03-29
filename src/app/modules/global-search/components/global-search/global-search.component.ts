@@ -10,7 +10,7 @@ import { TranslateService } from '@ngx-translate/core';
 import {
   debounceTime, distinctUntilChanged, switchMap,
 } from 'rxjs';
-import { GlobalSearchSection } from 'app/modules/global-search/enums/global-search-section';
+import { GlobalSearchSection } from 'app/modules/global-search/enums/global-search-section.enum';
 import { moveToNextFocusableElement, moveToPreviousFocusableElement } from 'app/modules/global-search/helpers/focus-helper';
 import { UiSearchableElement } from 'app/modules/global-search/interfaces/ui-searchable-element.interface';
 import { UiSearchProvider } from 'app/modules/global-search/services/ui-search.service';

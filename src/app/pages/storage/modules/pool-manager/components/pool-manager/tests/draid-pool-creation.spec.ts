@@ -112,7 +112,7 @@ describe('PoolManagerComponent – creating dRAID pool', () => {
             exported_zpool: 'anotherpool',
           },
         ] as UnusedDisk[]),
-        mockCall('webui.enclosure.dashboard', [] as EnclosureUi[]),
+        mockCall('enclosure2.query', [] as EnclosureUi[]),
         mockCall('pool.query', []),
         mockCall('pool.dataset.encryption_algorithm_choices', {}),
       ]),

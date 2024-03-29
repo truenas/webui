@@ -4,7 +4,7 @@ import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { TranslateModule } from '@ngx-translate/core';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { WINDOW } from 'app/helpers/window.helper';
-import { GlobalSearchSection } from 'app/modules/global-search/enums/global-search-section';
+import { GlobalSearchSection } from 'app/modules/global-search/enums/global-search-section.enum';
 import { UiSearchableElement } from 'app/modules/global-search/interfaces/ui-searchable-element.interface';
 import { GlobalSearchResultsComponent } from './global-search-results.component';
 
