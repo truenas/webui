@@ -17,7 +17,7 @@
       </div>
 
       <button
-        *ngIf="getElementsBySection(section.value)?.length > resultLimit"
+        *ngIf="getElementsBySection(section.value)?.length > initialResultsLimit"
         class="toggle-show-more"
         mat-button
         ixTest="toggle-show-all-results'"

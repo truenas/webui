@@ -19,7 +19,7 @@ export class UiSearchProvider implements GlobalSearchProvider {
     private translate: TranslateService,
   ) {}
 
-  search(term: string): Observable<UiSearchableElement[]> {
+  search(term: string, limit: number): Observable<UiSearchableElement[]> {
     const lowercaseTerm = term.toLowerCase();
 
     const translatedTerms = this.uiElements?.map((element) => {
@@ -36,7 +36,7 @@ export class UiSearchProvider implements GlobalSearchProvider {
       }
 
       return item.hierarchy[item.hierarchy.length - 1]?.toLowerCase()?.startsWith(lowercaseTerm);
-    }).splice(0, 50);
+    }).splice(0, limit);
 
     return from(results).pipe(
       mergeMap((item) => {
