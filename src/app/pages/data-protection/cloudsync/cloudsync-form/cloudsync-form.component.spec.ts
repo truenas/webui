@@ -168,6 +168,7 @@ describe('CloudsyncFormComponent', () => {
         enabled: true,
         encryption: false,
         exclude: [],
+        include: [],
         follow_symlinks: false,
         path: mntPath,
         post_script: '',
