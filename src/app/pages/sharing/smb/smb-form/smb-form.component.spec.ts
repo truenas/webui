@@ -25,6 +25,7 @@ import { IxSelectHarness } from 'app/modules/ix-forms/components/ix-select/ix-se
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
+import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -176,6 +177,9 @@ describe('SmbFormComponent', () => {
           selector: selectServices,
           value: [],
         }],
+      }),
+      mockProvider(FormErrorHandlerService, {
+        handleWsFormError: jest.fn(),
       }),
       { provide: SLIDE_IN_DATA, useValue: undefined },
     ],
@@ -575,6 +579,64 @@ describe('SmbFormComponent', () => {
       const nameControl = await loader.getHarness(IxInputHarness.with({ label: 'Name' }));
       await nameControl.setValue('ds222');
       expect(await nameControl.getErrorText()).toBe('Share with this name already exists');
+    });
+  });
+
+  describe('handle error', () => {
+    beforeEach(async () => {
+      spectator = createComponent();
+      websocket = spectator.inject(WebSocketService);
+      jest.spyOn(websocket, 'call').mockImplementation((method) => {
+        switch (method) {
+          case 'group.query':
+            return of([{ group: 'test' }] as Group[]);
+          case 'sharing.smb.update':
+          case 'sharing.smb.query':
+            return of({ ...existingShare });
+          case 'filesystem.stat':
+            return of({ acl: false } as FileSystemStat);
+          case 'sharing.smb.presets':
+            return of({ ...presets });
+          case 'filesystem.acl_is_trivial':
+            return of(false);
+          case 'sharing.smb.create':
+            return throwError({ reason: '[EINVAL] sharingsmb_create.afp: Apple SMB2/3 protocol extension support is required by this parameter.' });
+          default:
+            return of(null);
+        }
+      });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      form = await loader.getHarness(IxFormHarness);
+    });
+
+    it('calls handleWsFormError when an error occurs during save', async () => {
+      const advancedButton = await loader.getHarness(MatButtonHarness.with({ text: 'Advanced Options' }));
+      await advancedButton.click();
+
+      const attrs: Record<string, unknown> = {};
+      Object.keys(existingShare).forEach((key) => {
+        if (formLabels[key]) {
+          attrs[formLabels[key]] = existingShare[key as keyof SmbShare];
+        }
+      });
+
+      attrs[formLabels.purpose] = presets[attrs[formLabels.purpose] as string].verbose_name;
+      attrs[formLabels.name] = 'ds223';
+      attrs[formLabels.hostsallow] = ['host11'];
+      attrs[formLabels.hostsdeny] = ['host22'];
+      await form.fillForm({
+        ...attrs,
+      });
+
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      await saveButton.click();
+
+      expect(spectator.inject(FormErrorHandlerService).handleWsFormError).toHaveBeenCalledWith(
+        { reason: '[EINVAL] sharingsmb_create.afp: Apple SMB2/3 protocol extension support is required by this parameter.' },
+        spectator.component.form,
+        {},
+        'smb-form-toggle-advanced-options',
+      );
     });
   });
 });
