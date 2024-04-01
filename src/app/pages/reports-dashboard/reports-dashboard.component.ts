@@ -17,7 +17,7 @@ import { WINDOW } from 'app/helpers/window.helper';
 import { Option } from 'app/interfaces/option.interface';
 import { ReportTab, ReportType } from 'app/pages/reports-dashboard/interfaces/report-tab.interface';
 import { Report } from 'app/pages/reports-dashboard/interfaces/report.interface';
-import { elements } from 'app/pages/reports-dashboard/reports-dashboard.elements';
+import { reportingElements } from 'app/pages/reports-dashboard/reports-dashboard.elements';
 import { LayoutService } from 'app/services/layout.service';
 import { ReportsService } from './reports.service';
 
@@ -32,7 +32,7 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy {
   @ViewChild(CdkVirtualScrollViewport, { static: false }) viewport: CdkVirtualScrollViewport;
   @ViewChild('container', { static: true }) container: ElementRef;
 
-  readonly searchElements = elements;
+  readonly searchElements = reportingElements;
 
   scrollContainer: HTMLElement;
 

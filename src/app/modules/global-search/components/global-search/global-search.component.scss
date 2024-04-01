@@ -26,7 +26,7 @@
 
 .search-box {
   background: var(--bg1);
-  border: solid 1.5px var(--lines);
+  border: solid 1px var(--lines);
   border-radius: 2px;
   display: flex;
   flex-direction: row;
@@ -88,7 +88,7 @@
 
       &:focus-visible {
         border-radius: 50%;
-        outline: 1.5px solid var(--primary);
+        outline: 1px solid var(--primary);
       }
     }
   }

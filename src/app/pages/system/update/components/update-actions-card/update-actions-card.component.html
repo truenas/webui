@@ -2,7 +2,7 @@
   <div class="buttons-container">
     <ng-container *ngIf="showDownloadUpdateButton$ | async">
       <button
-        *ixRequiresRoles="requiresRoles"
+        *ixRequiresRoles="requiredRoles"
         mat-button
         ixTest="download-updates"
         [disabled]="isDownloadUpdatesButtonDisabled$ | async"
@@ -13,7 +13,7 @@
     </ng-container>
     <ng-container *ngIf="showApplyPendingButton$ | async">
       <button
-        *ixRequiresRoles="requiresRoles"
+        *ixRequiresRoles="requiredRoles"
         mat-button
         ixTest="apply-pending-update"
         (click)="applyPendingUpdate()"
@@ -22,7 +22,7 @@
       </button>
     </ng-container>
     <button
-      *ixRequiresRoles="requiresRoles"
+      *ixRequiresRoles="requiredRoles"
       mat-button
       ixTest="install-manual-update"
       (click)="manualUpdate()"

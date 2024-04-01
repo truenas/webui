@@ -21,7 +21,7 @@ import { ChainedRef } from 'app/modules/ix-forms/components/ix-slide-in/chained-
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { elements } from 'app/pages/system/advanced/storage/storage-settings-form/storage-settings-form.elements';
+import { storageSettingsFormElements } from 'app/pages/system/advanced/storage/storage-settings-form/storage-settings-form.elements';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 import { selectService } from 'app/store/services/services.selectors';
@@ -38,8 +38,8 @@ export interface StorageSettings {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class StorageSettingsFormComponent implements OnInit {
-  protected requiredRoles = [Role.FullAdmin];
-  protected readonly searchElements = elements;
+  protected readonly requiredRoles = [Role.FullAdmin];
+  protected readonly searchElements = storageSettingsFormElements;
 
   isFormLoading = false;
 

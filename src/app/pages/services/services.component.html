@@ -1,120 +1,26 @@
 <ix-page-header>
   <ix-search-input1
     [disabled]="loading"
-    (search)="onSearch($event)"
+    (search)="onListFiltered($event)"
   ></ix-search-input1>
 </ix-page-header>
 
 <mat-card>
-  <table
-    ix-table
-    ixTest="services-table"
-    [ix-table-empty]="shouldShowEmpty"
-    [emptyConfig]="emptyConfig"
-    [dataSource]="dataSource"
+  <ix-table2
+    class="table"
+    [ix-table2-empty]="!(dataProvider.currentPageCount$ | async)"
+    [emptyConfig]="emptyService.defaultEmptyConfig(emptyConfig)"
   >
-    <ng-container matColumnDef="name">
-      <th *matHeaderCellDef mat-header-cell>{{ 'Name' | translate }}</th>
-      <td *matCellDef="let service; dataSource: dataSource" mat-cell>
-        {{ service.name }}
-      </td>
-    </ng-container>
-
-    <ng-container matColumnDef="state">
-      <th *matHeaderCellDef mat-header-cell>{{ 'Running' | translate }}</th>
-      <td *matCellDef="let service; dataSource: dataSource" mat-cell>
-        <mat-spinner
-          *ngIf="serviceLoadingMap.get(service.service); else slider"
-          matTooltipPosition="right"
-          [diameter]="30"
-          [matTooltip]="
-            (service.state === ServiceStatus.Running
-              ? ('Stopping' | uppercase | translate)
-              : ('Starting' | uppercase | translate)
-            )
-          "
-        ></mat-spinner>
-
-        <ng-template #slider>
-          <mat-slide-toggle
-            *ixRequiresRoles="servicesService.getRolesRequiredToManage(service.service)"
-            color="primary"
-            matTooltipPosition="right"
-            [checked]="service.state === ServiceStatus.Running"
-            [matTooltip]="service.state"
-            [ixTest]="[service.service, 'service']"
-            (change)="onSliderChange(service)"
-          ></mat-slide-toggle>
-        </ng-template>
-      </td>
-    </ng-container>
-
-    <ng-container matColumnDef="enable">
-      <th *matHeaderCellDef mat-header-cell>
-        {{ 'Start Automatically' | translate }}
-      </th>
-      <td *matCellDef="let service; dataSource: dataSource" mat-cell>
-        <mat-checkbox
-          *ixRequiresRoles="servicesService.getRolesRequiredToManage(service.service)"
-          color="primary"
-          class="start-automatically"
-          [ixTest]="[service.service, 'service']"
-          [(ngModel)]="service.enable"
-          (change)="onCheckboxChange(service)"
-        ></mat-checkbox>
-      </td>
-    </ng-container>
-
-    <ng-container matColumnDef="actions">
-      <th *matHeaderCellDef mat-header-cell></th>
-      <td *matCellDef="let service; dataSource: dataSource" mat-cell class="actions">
-        <a
-          *ngIf="hasLogs(service.service)"
-          mat-icon-button
-          type="button"
-          [ixTest]="[service.service, 'logs']"
-          [attr.aria-label]="'Audit Logs' | translate"
-          [matTooltip]="'Audit Logs' | translate"
-          [attr.name]="'logs-' + service.name"
-          [routerLink]="auditLogsUrl()"
-        >
-          <ix-icon name="receipt_long"></ix-icon>
-        </a>
-        <a
-          *ngIf="hasSessions(service.service)"
-          mat-icon-button
-          type="button"
-          [ixTest]="[service.service, 'sessions']"
-          [attr.aria-label]="'{name} Sessions' | translate: { name: serviceNames.get(service.service) }"
-          [matTooltip]="'{name} Sessions' | translate: { name: serviceNames.get(service.service) }"
-          [attr.name]="'sessions-' + service.name"
-          [routerLink]="sessionsUrl(service.service)"
-        >
-          <ix-icon name="list"></ix-icon>
-        </a>
-        <button
-          mat-icon-button
-          type="button"
-          [ixTest]="[service.service, 'edit']"
-          [attr.aria-label]="'Edit' | translate"
-          [attr.name]="'edit-' + service.name"
-          [matTooltip]="'Configure' | translate"
-          (click)="configureService(service)"
-        >
-          <ix-icon name="edit"></ix-icon>
-        </button>
-      </td>
-    </ng-container>
-
-    <tr *matHeaderRowDef="displayedColumns" mat-header-row ixTest="table-header"></tr>
-    <tr
-      *matRowDef="
-        let service;
-        columns: displayedColumns;
-        dataSource: dataSource
-      "
-      mat-row
-      [ixTest]="service.service"
-    ></tr>
-  </table>
+    <thead
+      ix-table-head
+      [columns]="columns"
+      [dataProvider]="dataProvider"
+    ></thead>
+    <tbody
+      ix-table-body
+      [columns]="columns"
+      [dataProvider]="dataProvider"
+      [isLoading]="loading"
+    ></tbody>
+  </ix-table2>
 </mat-card>

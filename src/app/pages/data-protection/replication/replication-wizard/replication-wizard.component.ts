@@ -53,7 +53,7 @@ export class ReplicationWizardComponent {
   @ViewChild(ReplicationWhatAndWhereComponent) whatAndWhere: ReplicationWhatAndWhereComponent;
   @ViewChild(ReplicationWhenComponent) when: ReplicationWhenComponent;
 
-  protected requiredRoles = [Role.ReplicationTaskWrite, Role.ReplicationTaskWritePull];
+  protected readonly requiredRoles = [Role.ReplicationTaskWrite, Role.ReplicationTaskWritePull];
 
   isLoading = false;
   defaultNamingSchema = 'auto-%Y-%m-%d_%H-%M';

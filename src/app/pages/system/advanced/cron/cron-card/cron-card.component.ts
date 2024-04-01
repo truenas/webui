@@ -20,7 +20,7 @@ import { createTable } from 'app/modules/ix-table2/utils';
 import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
 import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
 import { AdvancedSettingsService } from 'app/pages/system/advanced/advanced-settings.service';
-import { elements } from 'app/pages/system/advanced/cron/cron-card/cron-card.elements';
+import { cronCardElements } from 'app/pages/system/advanced/cron/cron-card/cron-card.elements';
 import { CronDeleteDialogComponent } from 'app/pages/system/advanced/cron/cron-delete-dialog/cron-delete-dialog.component';
 import { CronFormComponent } from 'app/pages/system/advanced/cron/cron-form/cron-form.component';
 import { CronjobRow } from 'app/pages/system/advanced/cron/cron-list/cronjob-row.interface';
@@ -38,7 +38,7 @@ import { WebSocketService } from 'app/services/ws.service';
 })
 export class CronCardComponent implements OnInit {
   readonly requiredRoles = [Role.FullAdmin];
-  protected readonly searchElements = elements;
+  protected readonly searchElements = cronCardElements;
 
   title = helptextSystemAdvanced.fieldset_cron;
   cronjobs: CronjobRow[] = [];

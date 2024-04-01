@@ -3,8 +3,7 @@
   overflow: auto !important;
 }
 
-.mat-icon.general-dialog-icon {
-  margin-right: 5px;
-  position: relative;
-  top: 5px;
+.mat-mdc-dialog-title {
+  align-items: center;
+  gap: 4px;
 }

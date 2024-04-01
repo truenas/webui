@@ -27,7 +27,7 @@ import { WebSocketService } from 'app/services/ws.service';
 })
 
 export class ProactiveComponent implements OnInit {
-  protected requiredRoles = [Role.FullAdmin];
+  protected readonly requiredRoles = [Role.FullAdmin];
 
   isLoading = false;
   title = helptext.proactive.title;

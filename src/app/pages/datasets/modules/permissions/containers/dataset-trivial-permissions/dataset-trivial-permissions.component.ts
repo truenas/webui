@@ -29,7 +29,7 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DatasetTrivialPermissionsComponent implements OnInit {
-  protected requiredRoles = [Role.DatasetWrite];
+  protected readonly requiredRoles = [Role.DatasetWrite];
 
   form = this.formBuilder.group({
     uid: [null as number, [this.validatorService.validateOnCondition(

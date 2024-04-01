@@ -3,6 +3,7 @@ import { OverlayModule } from '@angular/cdk/overlay';
 import { CommonModule, NgIf } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatInputModule } from '@angular/material/input';
@@ -35,6 +36,7 @@ import { TestIdModule } from 'app/modules/test-id/test-id.module';
     OverlayModule,
     A11yModule,
     EmptyComponent,
+    MatButtonModule,
   ],
   exports: [GlobalSearchComponent, GlobalTriggerSearchComponent],
 })

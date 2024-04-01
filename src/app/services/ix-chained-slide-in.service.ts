@@ -1,6 +1,5 @@
 import { ComponentType } from '@angular/cdk/portal';
-import { DOCUMENT } from '@angular/common';
-import { Inject, Injectable, Type } from '@angular/core';
+import { Injectable, Type } from '@angular/core';
 import { ComponentStore } from '@ngrx/component-store';
 import { UUID } from 'angular2-uuid';
 import {
@@ -51,10 +50,7 @@ export class IxChainedSlideInService extends ComponentStore<ChainedSlideInState>
     return !!(this.mapToSerializedArray(state.components).pop()?.wide);
   });
 
-  constructor(
-    @Inject(DOCUMENT) private document: Document,
-    private focusService: FocusService,
-  ) {
+  constructor(private focusService: FocusService) {
     super({ components: new Map() });
     this.initialize();
   }

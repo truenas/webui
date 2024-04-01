@@ -1,13 +1,16 @@
 import { DOCUMENT } from '@angular/common';
 import {
-  ChangeDetectionStrategy, Component, EventEmitter, Inject, Input, Output,
+  ChangeDetectionStrategy, Component, EventEmitter, Inject, Input, Output, TrackByFunction,
 } from '@angular/core';
 import { Router } from '@angular/router';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { timer } from 'rxjs';
-import { EmptyType } from 'app/enums/empty-type.enum';
+import { UntilDestroy } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
+import { WINDOW } from 'app/helpers/window.helper';
+import { Option } from 'app/interfaces/option.interface';
+import { GlobalSearchSection } from 'app/modules/global-search/enums/global-search-section.enum';
+import { generateIdFromHierarchy } from 'app/modules/global-search/helpers/generate-id-from-hierarchy';
+import { processHierarchy } from 'app/modules/global-search/helpers/process-hierarchy';
 import { UiSearchableElement } from 'app/modules/global-search/interfaces/ui-searchable-element.interface';
-import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
 import { AuthService } from 'app/services/auth/auth.service';
 
 @UntilDestroy()
@@ -18,79 +21,115 @@ import { AuthService } from 'app/services/auth/auth.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class GlobalSearchResultsComponent {
-  @Input() searchTerm: string;
-  @Input() results: UiSearchableElement[];
-  @Input() focusedIndex: number;
+  @Input() searchTerm = '';
+  @Input() results: UiSearchableElement[] = [];
 
   @Output() selected = new EventEmitter<void>();
 
-  protected readonly entityEmptyConf = this.emptyService.defaultEmptyConfig(EmptyType.NoSearchResults);
+  readonly resultLimit = 6;
+  readonly delayTime = 150;
+  readonly trackBySection: TrackByFunction<Option<GlobalSearchSection>> = (_, section) => section.value;
+  readonly trackById: TrackByFunction<UiSearchableElement> = (_, item) => generateIdFromHierarchy(item.hierarchy);
+
+  processHierarchy = processHierarchy;
+
+  showAll: Record<GlobalSearchSection, boolean> = {
+    [GlobalSearchSection.Ui]: false,
+    [GlobalSearchSection.Help]: false,
+  };
+
+  get availableSections(): Option<GlobalSearchSection>[] {
+    const uiSection = {
+      label: this.translate.instant('UI'),
+      value: GlobalSearchSection.Ui,
+    };
+
+    const helpSection = {
+      label: this.translate.instant('Help'),
+      value: GlobalSearchSection.Help,
+    };
+
+    if (!this.searchTerm?.trim()?.length) {
+      return [uiSection];
+    }
+
+    return [uiSection, helpSection];
+  }
 
   constructor(
     protected authService: AuthService,
     private router: Router,
-    private emptyService: EmptyService,
+    private translate: TranslateService,
     @Inject(DOCUMENT) private document: Document,
+    @Inject(WINDOW) private window: Window,
   ) {}
 
   navigateToResult(element: UiSearchableElement): void {
     this.selected.emit();
 
-    this.router.navigate(element.anchorRouterLink || element.routerLink).then(() => {
-      setTimeout(() => {
-        const triggerAnchorRef: HTMLElement = this.document.getElementById(element.triggerAnchor);
-
-        if (triggerAnchorRef) {
-          this.highlightElement(triggerAnchorRef);
-          triggerAnchorRef.click();
-        }
-
+    if (element.anchorRouterLink || element.routerLink) {
+      this.router.navigate(element.anchorRouterLink || element.routerLink).then(() => {
         setTimeout(() => {
-          const anchorRef: HTMLElement = this.document.getElementById(element.anchor);
-
-          if (anchorRef) {
-            anchorRef.click();
-            this.highlightElement(anchorRef);
-          }
-        }, 300);
+          (this.document.querySelector('.ix-slide-in2-background.open') as unknown as HTMLElement)?.click();
+          this.tryHighlightAnchors(element, 0);
+        }, this.delayTime);
       });
-    });
-  }
+    }
 
-  navigateToResultByFocusedIndex(index: number): void {
-    this.navigateToResult(this.results[index]);
-  }
-
-  focusOnResultIndex(index: number): void {
-    const selectedItem = this.document.querySelector(`.focused-index-${index}`);
-
-    if (selectedItem instanceof HTMLElement) {
-      selectedItem.focus();
+    if (element.targetHref) {
+      this.window.open(element.targetHref, '_blank');
     }
   }
 
-  processHierarchy(hierarchy: string[], searchTerm: string): string {
-    const escapeRegExp = (term: string): string => term.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&');
-    const searchWords = searchTerm.split(' ').map(escapeRegExp).filter((word) => word);
-
-    const regex = new RegExp(`(${searchWords.join('|')})`, 'gi');
-
-    const processedItems = hierarchy.map((item) => {
-      return item.split(regex).map((segment) => {
-        if (segment.match(regex) && item === hierarchy[hierarchy.length - 1]) {
-          return `<span class="highlight">${segment}</span>`;
-        }
-        return `<span class="dimmed-text">${segment}</span>`;
-      }).join('');
-    });
-
-    return processedItems.join(' → ');
+  toggleShowAll(section: GlobalSearchSection): void {
+    this.showAll[section] = !this.showAll[section];
   }
 
-  private highlightElement(anchorRef: HTMLElement): void {
+  getLimitedSectionResults(section: GlobalSearchSection): UiSearchableElement[] {
+    const sectionResults = this.results.filter((element) => element.section === section);
+
+    if (this.showAll[section] || sectionResults.length <= this.resultLimit) {
+      return sectionResults;
+    }
+
+    return sectionResults.slice(0, this.resultLimit);
+  }
+
+  getElementsBySection(section: GlobalSearchSection): UiSearchableElement[] {
+    return this.results.filter((element) => element?.section === section);
+  }
+
+  private tryHighlightAnchors(element: UiSearchableElement, attemptCount: number): void {
+    const triggerAnchorRef = this.document.getElementById(element.triggerAnchor);
+
+    if (triggerAnchorRef || this.document.getElementById(element.anchor)) {
+      this.highlightAndClickElement(triggerAnchorRef);
+      this.highlightElementAnchor(element.anchor);
+    } else if (attemptCount < 2) {
+      setTimeout(() => this.tryHighlightAnchors(element, attemptCount + 1), this.delayTime * 3);
+    }
+  }
+
+  private highlightElementAnchor(elementAnchor: string): void {
+    setTimeout(() => {
+      const anchorRef: HTMLElement = this.document.getElementById(elementAnchor);
+
+      if (anchorRef) {
+        this.highlightAndClickElement(anchorRef);
+      }
+    }, this.delayTime * 1.5);
+  }
+
+  private highlightAndClickElement(anchorRef: HTMLElement): void {
+    if (!anchorRef) {
+      return;
+    }
+
+    anchorRef.scrollIntoView();
     anchorRef.focus();
     anchorRef.classList.add('search-element-highlighted');
 
-    timer(999).pipe(untilDestroyed(this)).subscribe(() => anchorRef.classList.remove('search-element-highlighted'));
+    setTimeout(() => anchorRef.click(), this.delayTime);
+    setTimeout(() => anchorRef.classList.remove('search-element-highlighted'), this.delayTime * 6);
   }
 }

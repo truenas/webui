@@ -27,7 +27,7 @@ import { WebSocketService } from 'app/services/ws.service';
   providers: [CloudCredentialService],
 })
 export class CloudCredentialsCardComponent implements OnInit {
-  protected requiredRoles = [Role.CloudSyncWrite];
+  protected readonly requiredRoles = [Role.CloudSyncWrite];
 
   dataProvider: AsyncDataProvider<CloudSyncCredential>;
   providers = new Map<string, string>();

@@ -32,6 +32,7 @@ describe('SigninComponent', () => {
   const hasFailover$ = new BehaviorSubject<boolean>(undefined);
   const canLogin$ = new BehaviorSubject<boolean>(undefined);
   const isConnected$ = new BehaviorSubject<boolean>(undefined);
+  const managedByTrueCommand$ = new BehaviorSubject<boolean>(undefined);
 
   const createComponent = createComponentFactory({
     component: SigninComponent,
@@ -53,6 +54,7 @@ describe('SigninComponent', () => {
         isConnected$,
       }),
       mockProvider(SigninStore, {
+        managedByTrueCommand$,
         wasAdminSet$,
         failover$,
         hasFailover$,
@@ -70,6 +72,7 @@ describe('SigninComponent', () => {
     hasFailover$.next(false);
     canLogin$.next(true);
     isConnected$.next(true);
+    managedByTrueCommand$.next(false);
   });
 
   it('initializes SigninStore on component init', () => {
@@ -102,6 +105,11 @@ describe('SigninComponent', () => {
     });
 
     it('shows TrueCommandStatusComponent', () => {
+      expect(spectator.query(TrueCommandStatusComponent)).not.toExist();
+
+      managedByTrueCommand$.next(true);
+      spectator.detectChanges();
+
       expect(spectator.query(TrueCommandStatusComponent)).toExist();
     });
 

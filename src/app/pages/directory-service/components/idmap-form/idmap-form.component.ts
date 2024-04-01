@@ -40,7 +40,7 @@ const customIdmapName = 'custom' as const;
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class IdmapFormComponent implements OnInit {
-  protected requiredRoles = [Role.DirectoryServiceWrite];
+  protected readonly requiredRoles = [Role.DirectoryServiceWrite];
 
   get title(): string {
     return this.isNew

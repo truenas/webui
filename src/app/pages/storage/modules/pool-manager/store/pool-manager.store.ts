@@ -253,7 +253,7 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
   loadStateInitialData(): Observable<[UnusedDisk[], EnclosureUi[]]> {
     return forkJoin([
       this.ws.call('disk.get_unused'),
-      this.ws.call('webui.enclosure.dashboard'),
+      this.ws.call('enclosure2.query'),
     ]).pipe(
       tapResponse(
         ([allDisks, enclosures]) => {

@@ -15,6 +15,7 @@
           <h3>{{ category.title | translate }}</h3>
           <div class="actions action-icon">
             <button
+              *ixRequiresRoles="requiredRoles"
               mat-button
               [ixTest]="[category.id, '-class-', 'configure']"
             >

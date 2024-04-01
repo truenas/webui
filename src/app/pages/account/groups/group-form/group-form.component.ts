@@ -32,7 +32,7 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class GroupFormComponent implements OnInit {
-  protected requiredRoles = [Role.AccountWrite];
+  protected readonly requiredRoles = [Role.AccountWrite];
 
   get isNew(): boolean {
     return !this.editingGroup;
