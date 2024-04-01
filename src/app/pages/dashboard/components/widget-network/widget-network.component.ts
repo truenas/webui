@@ -57,6 +57,7 @@ type NicInfoMap = Record<string, NicInfo>;
 export class WidgetNetworkComponent extends WidgetComponent implements OnInit, AfterViewInit {
   readonly emptyTypes = EmptyType;
   protected readonly LinkState = LinkState;
+  protected readonly fetchInterval = 10000;
 
   nicInfoMap: NicInfoMap = {};
   paddingX = 16;
@@ -198,7 +199,7 @@ export class WidgetNetworkComponent extends WidgetComponent implements OnInit, A
 
   ngAfterViewInit(): void {
     if (!this.fetchDataIntervalSubscription || this.fetchDataIntervalSubscription.closed) {
-      this.fetchDataIntervalSubscription = timer(0, 10000).pipe(
+      this.fetchDataIntervalSubscription = timer(0, this.fetchInterval).pipe(
         skipWhile(() => this.document.hidden),
         untilDestroyed(this),
       ).subscribe(() => {
@@ -355,6 +356,7 @@ export class WidgetNetworkComponent extends WidgetComponent implements OnInit, A
   }
 
   fetchReportData(): void {
+    this.serverTime.setSeconds(this.serverTime.getSeconds() + this.fetchInterval / 1000);
     const endDate = this.serverTime;
     const subOptions: Duration = {};
     subOptions.hours = 1;
