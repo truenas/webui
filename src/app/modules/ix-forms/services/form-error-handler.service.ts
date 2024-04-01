@@ -10,6 +10,8 @@ import { ErrorHandlerService } from 'app/services/error-handler.service';
 
 @Injectable({ providedIn: 'root' })
 export class FormErrorHandlerService {
+  private isOnErrorFocused = false;
+
   constructor(
     private dialog: DialogService,
     private errorHandler: ErrorHandlerService,
@@ -58,62 +60,77 @@ export class FormErrorHandlerService {
     fieldsMap: Record<string, string>,
     triggerAnchor: string,
   ): void {
-    let isOnErrorFocused = false;
+    this.isOnErrorFocused = false;
     const extra = (error as WebSocketError).extra as string[][];
     for (const extraItem of extra) {
       const field = extraItem[0].split('.').pop();
       const errorMessage = extraItem[1];
 
-      let control = this.getFormField(formGroup, field, fieldsMap);
-      let controlsNames = this.formService.getControlsNames();
-
-      const showValidationError: () => void = (): void => {
-        if (!control || !controlsNames.includes(field)) {
-          console.error(`Could not find control ${field}.`);
-          // Fallback to default modal error message.
-          this.dialog.error(this.errorHandler.parseError(error));
-          return;
-        }
-
-        if ((control as UntypedFormArray).controls?.length) {
-          const isExactMatch = (text: string, match: string): boolean => new RegExp(`\\b${match}\\b`).test(text);
-
-          control = (control as UntypedFormArray).controls
-            .find((controlOfArray) => isExactMatch(errorMessage, controlOfArray.value as string));
-        }
-
-        if (!control) {
-          this.dialog.error(this.errorHandler.parseError(error));
-        } else {
-          control.setErrors({
-            manualValidateError: true,
-            manualValidateErrorMsg: errorMessage,
-            ixManualValidateError: { message: errorMessage },
-          });
-          control.markAsTouched();
-
-          const element = this.formService.getElementByControlName(field);
-          if (element && !isOnErrorFocused) {
-            element.scrollIntoView();
-            element.focus();
-            isOnErrorFocused = true;
-          }
-        }
-      };
+      const control = this.getFormField(formGroup, field, fieldsMap);
+      const controlsNames = this.formService.getControlsNames();
 
       if (triggerAnchor && control && !controlsNames.includes(field)) {
         const triggerAnchorRef: HTMLElement = this.document.getElementById(triggerAnchor);
         if (triggerAnchorRef) {
           triggerAnchorRef.click();
           setTimeout(() => {
-            control = this.getFormField(formGroup, field, fieldsMap);
-            controlsNames = this.formService.getControlsNames();
-            showValidationError();
+            this.showValidationError({
+              control: this.getFormField(formGroup, field, fieldsMap),
+              field,
+              errorMessage,
+              error,
+            });
           });
           return;
         }
       }
-      showValidationError();
+
+      this.showValidationError({
+        control, field, errorMessage, error,
+      });
+    }
+  }
+
+  private showValidationError({
+    control, field, error, errorMessage,
+  }: {
+    control: AbstractControl;
+    field: string;
+    errorMessage: string;
+    error: WebSocketError | Job;
+  }): void {
+    const controlsNames = this.formService.getControlsNames();
+
+    if (!control || !controlsNames.includes(field)) {
+      console.error(`Could not find control ${field}.`);
+      // Fallback to default modal error message.
+      this.dialog.error(this.errorHandler.parseError(error));
+      return;
+    }
+
+    if ((control as UntypedFormArray).controls?.length) {
+      const isExactMatch = (text: string, match: string): boolean => new RegExp(`\\b${match}\\b`).test(text);
+
+      control = (control as UntypedFormArray).controls
+        .find((controlOfArray) => isExactMatch(errorMessage, controlOfArray.value as string));
+    }
+
+    if (!control) {
+      this.dialog.error(this.errorHandler.parseError(error));
+    } else {
+      control.setErrors({
+        manualValidateError: true,
+        manualValidateErrorMsg: errorMessage,
+        ixManualValidateError: { message: errorMessage },
+      });
+      control.markAsTouched();
+
+      const element = this.formService.getElementByControlName(field);
+      if (element && !this.isOnErrorFocused) {
+        element.scrollIntoView({ behavior: 'smooth' });
+        element.focus();
+        this.isOnErrorFocused = true;
+      }
     }
   }
 
