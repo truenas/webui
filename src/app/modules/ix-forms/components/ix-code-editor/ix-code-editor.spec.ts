@@ -69,10 +69,10 @@ describe('IxCodeEditor', () => {
 
   describe('form control', () => {
     it('shows value when type it in', () => {
-      spectator.typeInElement('new value', 'input');
+      formControl.setValue('new value');
       spectator.detectComponentChanges();
 
-      expect(spectator.query('.cm-content')).toHaveValue('new value');
+      expect((spectator.component.editorView).state.doc.toString()).toBe('new value');
     });
   });
 });

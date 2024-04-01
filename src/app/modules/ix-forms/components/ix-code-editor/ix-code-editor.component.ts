@@ -40,7 +40,7 @@ export class IxCodeEditorComponent implements OnChanges, OnInit, AfterViewInit, 
   protected editorReady$ = new BehaviorSubject<boolean>(false);
 
   @ViewChild('inputArea', { static: true }) inputArea: ElementRef<HTMLElement>;
-  private editorView: EditorView;
+  editorView: EditorView;
 
   protected value$ = new BehaviorSubject<string>('');
 
@@ -56,7 +56,7 @@ export class IxCodeEditorComponent implements OnChanges, OnInit, AfterViewInit, 
   }
 
   ngOnChanges(changes: IxSimpleChanges<this>): void {
-    if (changes.language.currentValue) {
+    if (changes.language?.currentValue) {
       this.afterViewInit$.pipe(
         filter(Boolean),
         take(1),
