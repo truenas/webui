@@ -37,17 +37,18 @@ describe('SchedulerDateExamplesComponent', () => {
           crontab: '0 0 * * *',
         }),
         startDate: new Date('2022-02-22 11:39:00'),
+        machineTimezone: 'Europe/Kiev',
       },
     });
 
-    const examples = spectator.queryAll('.schedule-example').map((element) => element.textContent.trim());
+    const examples = spectator.queryAll('.date-spanner').map((element) => element.textContent.trim());
     expect(examples).toEqual([
-      '2022-02-23 00:00:00',
-      '2022-02-24 00:00:00',
-      '2022-02-25 00:00:00',
-      '2022-02-26 00:00:00',
-      '2022-02-27 00:00:00',
-      '2022-02-28 00:00:00',
+      '2022-02-23 00:00:00, Europe/Kiev',
+      '2022-02-24 00:00:00, Europe/Kiev',
+      '2022-02-25 00:00:00, Europe/Kiev',
+      '2022-02-26 00:00:00, Europe/Kiev',
+      '2022-02-27 00:00:00, Europe/Kiev',
+      '2022-02-28 00:00:00, Europe/Kiev',
     ]);
   });
 
