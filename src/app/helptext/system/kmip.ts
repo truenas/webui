@@ -31,11 +31,11 @@ export const helptext_system_kmip = {
   },
 
   manage_sed_disks: {
-    placeholder: T('Manage SED Passwords'),
+    placeholder: T('Manage SED Keys'),
     tooltip: T('Self-Encrypting Drive (SED) passwords can be managed with KMIP. Enabling this\
- option allows the key server to manage creating or updating the global SED password, creating or\
- updating individual SED passwords, and retrieving SED passwords when SEDs are unlocked. Disabling\
- this option leaves SED password management with the local system.'),
+ option allows the key server to manage creating or updating the global SED key, creating or\
+ updating individual SED keys, and retrieving SED keys when SEDs are unlocked. Disabling\
+ this option leaves SED key management with the local system.'),
   },
 
   manage_zfs_keys: {
