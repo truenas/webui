@@ -61,7 +61,6 @@ export class IxCodeEditorComponent implements OnChanges, OnInit, AfterViewInit, 
         filter(Boolean),
         take(1),
         tap(() => {
-          this.editorReady$.next(false);
           this.initEditor();
           this.editorReady$.next(true);
         }),
@@ -79,6 +78,7 @@ export class IxCodeEditorComponent implements OnChanges, OnInit, AfterViewInit, 
     combineLatest([
       this.editorReady$.pipe(filter(Boolean)),
       this.isDisabled$,
+      this.afterViewInit$.pipe(filter(Boolean)),
     ]).pipe(untilDestroyed(this)).subscribe({
       next: ([, isDisabled]) => {
         this.editorView.dispatch({
@@ -92,6 +92,7 @@ export class IxCodeEditorComponent implements OnChanges, OnInit, AfterViewInit, 
     combineLatest([
       this.editorReady$.pipe(filter(Boolean)),
       this.value$,
+      this.afterViewInit$.pipe(filter(Boolean)),
     ]).pipe(untilDestroyed(this)).subscribe({
       next: ([, value]) => {
         this.updateValue(value);

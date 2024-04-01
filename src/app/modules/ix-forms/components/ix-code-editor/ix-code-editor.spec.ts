@@ -56,12 +56,14 @@ describe('IxCodeEditor', () => {
     it('when called with false, input is not disabled', () => {
       spectator.component.setDisabledState(false);
       spectator.detectChanges();
-      expect(spectator.query('input')).not.toBeDisabled();
+      const element = spectator.query('.cm-content');
+      expect(element.getAttribute('contenteditable')).toBe('true');
     });
     it('when called with true, input is disabled', () => {
       spectator.component.setDisabledState(true);
       spectator.detectChanges();
-      expect(spectator.query('input')).toBeDisabled();
+      const element = spectator.query('.cm-content');
+      expect(element.getAttribute('contenteditable')).toBe('false');
     });
   });
 
