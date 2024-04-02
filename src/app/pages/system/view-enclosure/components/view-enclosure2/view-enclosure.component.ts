@@ -15,4 +15,62 @@ export class ViewEnclosure2Component {
   twelveTransformation = 'translate(-150.699 -78.5)';
 
   twentyFourTransformations = 'translate(-150.7 -78.5)';
+
+  driveTrays = [
+    {
+      slot: 1,
+      empty: true,
+    },
+    {
+      slot: 2,
+      empty: true,
+    },
+    {
+      slot: 3,
+      empty: true,
+    },
+    {
+      slot: 4,
+      empty: true,
+    },
+    {
+      slot: 5,
+      empty: true,
+    },
+    {
+      slot: 6,
+      empty: true,
+    },
+    {
+      slot: 7,
+      empty: true,
+    },
+    {
+      slot: 8,
+      empty: true,
+    },
+    {
+      slot: 9,
+      empty: true,
+    },
+    {
+      slot: 10,
+      empty: true,
+    },
+    {
+      slot: 11,
+      empty: true,
+    },
+    {
+      slot: 12,
+      empty: true,
+    },
+
+  ];
+
+  getDriveTrayTransformation(tray: { slot: number; empty: boolean }, index: number): string {
+    const xOffset = -0.001 + ((index % 4) * 125);
+    const yOffset = 0 + (Math.floor(index / 4) * 33);
+    return `translate(${xOffset} ${yOffset})`;
+  }
 }
