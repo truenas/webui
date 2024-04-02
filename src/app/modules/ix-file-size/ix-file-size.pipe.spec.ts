@@ -15,7 +15,7 @@ describe('It converts 1024 bits to 1.02 kb with base 10', () => {
   });
 
   it('converts bits to kb', () => {
-    expect(spectator.element.innerHTML).toBe('1.02 kb');
+    expect(spectator.element.innerHTML).toBe('1.02 Kb');
   });
 });
 
@@ -57,7 +57,7 @@ describe('It converts 1000 bits to 1 kB with base 10', () => {
   });
 
   it('converts bits to kb', () => {
-    expect(spectator.element.innerHTML).toBe('1 kB');
+    expect(spectator.element.innerHTML).toBe('1 KB');
   });
 });
 
@@ -71,7 +71,7 @@ describe('It converts 1000 bits to 1 kb with base 10', () => {
   });
 
   it('converts bits to kb', () => {
-    expect(spectator.element.innerHTML).toBe('1 kb');
+    expect(spectator.element.innerHTML).toBe('1 Kb');
   });
 });
 

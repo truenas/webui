@@ -269,7 +269,7 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
 
   axisLabelFormatter = (numero: number): string => {
     if (this.report?.name === ReportingGraphName.NetworkInterface) {
-      if (numero < 1000) {
+      if (numero < Kb) {
         if (this.yLabelPrefix === 'Mb') {
           numero /= Mb;
         }
