@@ -25,7 +25,7 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AlertConfigFormComponent implements OnInit {
-  protected requiredRoles = [Role.FullAdmin];
+  protected readonly requiredRoles = [Role.FullAdmin];
 
   categories: AlertCategory[] = [];
   selectedCategory: AlertCategory;

@@ -4,21 +4,21 @@
     <div class="actions action-icon">
       <button
         *ixRequiresRoles="requiredRoles"
-        id="terminate-other-sessions"
         ixUiSearchableElement
         mat-button
         [ixTest]="['sessions', 'terminate']"
         [disabled]="dataProvider.isLoading$ | async"
-        [ixSearchConfig]="searchElements.terminateOtherSessions"
+        [ixSearchConfig]="searchElements.elements.terminateOtherSessions"
         (click)="onTerminateOther()"
       >
         {{ 'Terminate Other Sessions' | translate }}
       </button>
       <button
         *ixRequiresRoles="requiredRoles"
-        id="access-settings"
+        ixUiSearchableElement
         mat-button
         [ixTest]="['sessions', 'configure']"
+        [ixSearchConfig]="searchElements.elements.configureAccess"
         (click)="onConfigure()"
       >
         {{ 'Configure' | translate }}

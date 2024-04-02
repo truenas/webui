@@ -103,7 +103,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
   // eslint-disable-next-line @angular-eslint/no-input-rename
   @Input('profile') systemProfile: SystemProfile;
 
-  protected requiredRoles = [Role.FullAdmin];
+  protected readonly requiredRoles = [Role.FullAdmin];
   showCaption = true;
   protected aborted = false;
   enclosureViews: EnclosureUi[] = [];

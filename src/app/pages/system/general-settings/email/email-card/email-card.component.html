@@ -3,10 +3,11 @@
     <h3>{{ 'Email' | translate }}</h3>
     <div class="actions action-icon">
       <button
-        id="email-settings"
+        ixUiSearchableElement
         mat-button
         color="default"
         [ixTest]="['email', 'settings']"
+        [ixSearchConfig]="searchableElements.elements.configure"
         (click)="openEmailSettings()"
       >
         {{ 'Settings' | translate }}

@@ -21,7 +21,6 @@ import {
   ActivatedRoute, NavigationStart, Router,
 } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { ResizedEvent } from 'angular-resize-event';
 import { uniqBy } from 'lodash';
@@ -47,7 +46,6 @@ import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service
 import { datasetNameSortComparer } from 'app/pages/datasets/utils/dataset.utils';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
-import { AppState } from 'app/store';
 
 @UntilDestroy()
 @Component({
@@ -93,6 +91,7 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
   treeControl = new FlatTreeControl<DatasetDetails>(
     this.getLevel,
     this.isExpandable,
+    { trackBy: (dataset: DatasetDetails) => dataset.id as unknown as DatasetDetails },
   );
   treeFlattener = new TreeFlattener<DatasetDetails, DatasetDetails>(
     (dataset) => dataset,
@@ -114,7 +113,6 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
     private errorHandler: ErrorHandlerService,
     private dialogService: DialogService,
     private breakpointObserver: BreakpointObserver,
-    private store$: Store<AppState>,
     @Inject(WINDOW) private window: Window,
   ) {
     this.router.events

@@ -10,6 +10,7 @@ import { toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import { helptext2fa } from 'app/helptext/system/2fa';
 import { GlobalTwoFactorConfig } from 'app/interfaces/two-factor-config.interface';
 import { AdvancedSettingsService } from 'app/pages/system/advanced/advanced-settings.service';
+import { globalTwoFactorCardElements } from 'app/pages/system/advanced/global-two-factor-auth/global-two-factor-card/global-two-factor-card.elements';
 import { GlobalTwoFactorAuthFormComponent } from 'app/pages/system/advanced/global-two-factor-auth/global-two-factor-form/global-two-factor-form.component';
 import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -22,8 +23,8 @@ import { WebSocketService } from 'app/services/ws.service';
 })
 export class GlobalTwoFactorAuthCardComponent {
   readonly helpText = helptext2fa;
-
-  protected requiredRoles = [Role.FullAdmin];
+  protected readonly searchableElements = globalTwoFactorCardElements;
+  protected readonly requiredRoles = [Role.FullAdmin];
 
   private readonly reloadConfig$ = new Subject<void>();
   readonly twoFactorConfig$ = this.reloadConfig$.pipe(

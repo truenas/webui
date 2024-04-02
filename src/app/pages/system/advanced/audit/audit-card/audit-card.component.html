@@ -4,9 +4,10 @@
     <div class="actions action-icon">
       <button
         *ixRequiresRoles="requiredRoles"
-        id="audit-settings"
+        ixUiSearchableElement
         mat-button
         [ixTest]="['audit', 'configure']"
+        [ixSearchConfig]="searchableElements.elements.configure"
         (click)="onConfigurePressed()"
       >
         {{ 'Configure' | translate }}

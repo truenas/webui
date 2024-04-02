@@ -22,7 +22,7 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ApiKeyFormDialogComponent implements OnInit {
-  protected requiredRoles = [Role.FullAdmin];
+  protected readonly requiredRoles = [Role.FullAdmin];
 
   form = this.fb.group({
     name: ['', [Validators.required]],

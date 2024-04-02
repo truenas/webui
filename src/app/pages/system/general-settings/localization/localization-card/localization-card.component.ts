@@ -7,6 +7,7 @@ import { toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import { helptextSystemGeneral as helptext } from 'app/helptext/system/general';
 import { Option } from 'app/interfaces/option.interface';
 import { SystemGeneralConfig } from 'app/interfaces/system-config.interface';
+import { localizationCardElements } from 'app/pages/system/general-settings/localization/localization-card/localization-card.elements';
 import { LocalizationFormComponent } from 'app/pages/system/general-settings/localization/localization-form/localization-form.component';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LocaleService } from 'app/services/locale.service';
@@ -21,6 +22,8 @@ import { waitForGeneralConfig } from 'app/store/system-config/system-config.sele
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LocalizationCardComponent {
+  protected readonly searchableElements = localizationCardElements;
+
   readonly generalConfig$ = this.store$.pipe(
     waitForGeneralConfig,
     toLoadingState(),
@@ -48,7 +51,7 @@ export class LocalizationCardComponent {
     return config.kbdmap && keyboardMap?.label ? keyboardMap.label : helptext.default;
   }
 
-  doAdd(config: SystemGeneralConfig): void {
+  openSettings(config: SystemGeneralConfig): void {
     this.slideInService.open(LocalizationFormComponent, {
       data: {
         language: config.language,

@@ -57,7 +57,7 @@ import { networkInterfacesChanged } from 'app/store/network-interfaces/network-i
   providers: [InterfaceNameValidatorService],
 })
 export class InterfaceFormComponent implements OnInit {
-  protected requiredRoles = [Role.NetworkInterfaceWrite];
+  protected readonly requiredRoles = [Role.NetworkInterfaceWrite];
 
   readonly defaultMtu = 1500;
 

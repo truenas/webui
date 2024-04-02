@@ -4,7 +4,7 @@
     ixUiSearchableElement
     ixTest="import-pool"
     mat-button
-    [ixSearchConfig]="searchElements.importPool"
+    [ixSearchConfig]="searchElements.elements.importPool"
     (click)="onImportPool()"
   >
     {{ 'Import Pool' | translate }}
@@ -20,14 +20,14 @@
     mat-button
     color="primary"
     ixTest="create-pool"
-    [ixSearchConfig]="searchElements.createPool"
+    [ixSearchConfig]="searchElements.elements.createPool"
     [routerLink]="['/storage', 'create']"
   >
     {{ 'Create Pool' | translate }}
   </a>
 </ix-page-header>
 
-<div ixUiSearchableElement [ixSearchConfig]="searchElements.storageDashboard">
+<div ixUiSearchableElement [ixSearchConfig]="searchElements.elements.storageDashboard">
   <ng-container *ngIf="arePoolsLoading$ | async">
     <ix-dashboard-pool
       class="pool"

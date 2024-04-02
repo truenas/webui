@@ -7,7 +7,7 @@ module.exports = {
     "debian/**/*",
     "docker/**/*",
     "ports/**/*",
-    "scripts/**/*",
+    "scripts/**/*.js",
     "tests/**/*",
     "node_modules/**/*",
   ],

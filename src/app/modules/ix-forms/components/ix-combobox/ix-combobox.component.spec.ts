@@ -69,7 +69,6 @@ describe('IxComboboxComponent', () => {
     it('shows value when type it in', () => {
       spectator.typeInElement('new value', 'input');
       spectator.detectComponentChanges();
-      spectator.detectComponentChanges();
 
       expect(spectator.query('input')).toHaveValue('new value');
     });

@@ -13,33 +13,40 @@
       [ixTest]="[controlDirective.name, 'presets']"
       [(ngModel)]="crontab"
       (blur)="onTouched()"
-      (ngModelChange)="onChange($event)"
     >
       <mat-option
         *ngFor="let preset of defaultPresets"
         class="schedule-option"
         [ixTest]="[controlDirective.name, 'presets', preset.label]"
         [value]="preset.value"
+        (onSelectionChange)="onOptionSelectionChange($event)"
       >
         {{ preset.label | translate }}
         <span class="crontab">({{ preset.value }})</span>&nbsp;
         <span class="preset-description">{{ preset.description }}</span>
       </mat-option>
       <mat-option
+        *ngIf="customCrontab"
         class="schedule-option"
         [value]="customCrontab"
-        [ixTest]="[controlDirective.name, 'presets', 'custom']"
-        (click)="onCustomOptionSelected()"
+        [ixTest]="[controlDirective.name, 'presets', customCrontab]"
+        (onSelectionChange)="onOptionSelectionChange($event)"
       >
         {{ 'Custom' | translate }}
-        <span *ngIf="customCrontab" class="crontab">({{ customCrontab }})</span>
+        <span class="crontab">({{ customCrontab }})</span>
         <span class="preset-description">
-          <ng-container *ngIf="customCrontab; else customPrompt">
-            {{ customCrontab | crontabExplanation }}
-          </ng-container>
-          <ng-template #customPrompt>
-            {{ 'Create custom schedule' | translate }}
-          </ng-template>
+          {{ customCrontab | crontabExplanation }}
+        </span>
+      </mat-option>
+      <mat-option
+        class="schedule-option"
+        [value]="customValue"
+        [ixTest]="[controlDirective.name, 'presets', customValue]"
+        (onSelectionChange)="onOptionSelectionChange($event)"
+      >
+        {{ 'Create' | translate }}
+        <span class="preset-description">
+          {{ 'Custom schedule' | translate }}
         </span>
       </mat-option>
     </mat-select>
