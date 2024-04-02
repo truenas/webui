@@ -37,7 +37,7 @@ describe('IxCellStateButtonComponent', () => {
         propertyName: 'state',
         row: {
           state: JobState.Success,
-          job: { id: 123456 },
+          job: { id: 123456, logs_excerpt: 'completed' },
           warnings: [{}, {}],
         } as TestTableData,
         getJob: (row) => row.job,
