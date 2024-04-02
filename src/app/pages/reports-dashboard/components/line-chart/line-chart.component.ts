@@ -6,6 +6,7 @@ import { utcToZonedTime } from 'date-fns-tz';
 import Dygraph, { dygraphs } from 'dygraphs';
 // eslint-disable-next-line
 import smoothPlotter from 'dygraphs/src/extras/smooth-plotter.js';
+import { Kb, Mb } from 'app/constants/bits.constant';
 import {
   GiB, KiB, MiB, TiB,
 } from 'app/constants/bytes.constant';
@@ -268,6 +269,14 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
 
   axisLabelFormatter = (numero: number): string => {
     if (this.report?.name === ReportingGraphName.NetworkInterface) {
+      if (numero < 1000) {
+        if (this.yLabelPrefix === 'Mb') {
+          numero /= Mb;
+        }
+        if (this.yLabelPrefix === 'Kb') {
+          numero /= Kb;
+        }
+      }
       const [formatted] = normalizeFileSize(numero * 1000, 'b', 10);
       return formatted.toString();
     }
