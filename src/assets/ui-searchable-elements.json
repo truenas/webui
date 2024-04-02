@@ -46,7 +46,7 @@
       "FULL_ADMIN"
     ],
     "anchorRouterLink": [
-      "/storage"
+      "/storage/create"
     ],
     "routerLink": [
       "/storage",

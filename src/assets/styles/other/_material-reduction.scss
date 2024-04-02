@@ -832,7 +832,9 @@ body {
   }
 
   .search-element-highlighted {
-    outline: 1.5px solid var(--primary);
+    animation: blinker 0.5s infinite !important;
+    background-color: var(--contrast-darkest) !important;
+    outline: 4px dotted var(--primary) !important;
   }
 }
 

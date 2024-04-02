@@ -1,12 +1,13 @@
 import { DOCUMENT } from '@angular/common';
 import {
-  ChangeDetectionStrategy, Component, EventEmitter, Inject, Input, Output, TrackByFunction,
+  ChangeDetectionStrategy, Component, EventEmitter, Inject, Input, OnChanges, Output, TrackByFunction,
 } from '@angular/core';
 import { Router } from '@angular/router';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { findIndex, isEqual } from 'lodash';
 import { WINDOW } from 'app/helpers/window.helper';
 import { Option } from 'app/interfaces/option.interface';
+import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import {
   GlobalSearchSection,
 } from 'app/modules/global-search/enums/global-search-section.enum';
@@ -23,7 +24,7 @@ import { AuthService } from 'app/services/auth/auth.service';
   styleUrls: ['./global-search-results.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class GlobalSearchResultsComponent {
+export class GlobalSearchResultsComponent implements OnChanges {
   @Input() searchTerm = '';
   @Input() results: UiSearchableElement[] = [];
 
@@ -36,9 +37,11 @@ export class GlobalSearchResultsComponent {
 
   processHierarchy = processHierarchy;
 
-  showAll: Record<GlobalSearchSection, boolean> = Object.fromEntries(
+  initialShowAll: Record<GlobalSearchSection, boolean> = Object.fromEntries(
     Object.values(GlobalSearchSection).map((section) => [section, false]),
   ) as Record<GlobalSearchSection, boolean>;
+
+  showAll = { ...this.initialShowAll };
 
   get availableSections(): Option<GlobalSearchSection>[] {
     const uniqueSectionValues = new Set(this.results.map((result) => result.section));
@@ -63,6 +66,12 @@ export class GlobalSearchResultsComponent {
     @Inject(DOCUMENT) private document: Document,
     @Inject(WINDOW) private window: Window,
   ) {}
+
+  ngOnChanges(changes: IxSimpleChanges<this>): void {
+    if (changes.searchTerm) {
+      this.showAll = { ...this.initialShowAll };
+    }
+  }
 
   navigateToResult(element: UiSearchableElement): void {
     this.saveSearchResult(element);
@@ -131,7 +140,7 @@ export class GlobalSearchResultsComponent {
     anchorRef.classList.add('search-element-highlighted');
 
     setTimeout(() => anchorRef.click(), this.delayTime);
-    setTimeout(() => anchorRef.classList.remove('search-element-highlighted'), this.delayTime * 6);
+    setTimeout(() => anchorRef.classList.remove('search-element-highlighted'), this.delayTime * 10);
   }
 
   private saveSearchResult(result: UiSearchableElement): void {
