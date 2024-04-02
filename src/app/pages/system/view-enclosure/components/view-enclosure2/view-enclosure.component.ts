@@ -68,9 +68,9 @@ export class ViewEnclosure2Component {
 
   ];
 
-  getDriveTrayTransformation(tray: { slot: number; empty: boolean }, index: number): string {
-    const xOffset = -0.001 + ((index % 4) * 125);
-    const yOffset = 0 + (Math.floor(index / 4) * 33);
+  getDriveTrayTransformation(tray: { slot: number; empty: boolean }): string {
+    const xOffset = -0.001 + ((tray.slot % 4) * 125);
+    const yOffset = 0 + (Math.floor(tray.slot / 4) * 33);
     return `translate(${xOffset} ${yOffset})`;
   }
 }

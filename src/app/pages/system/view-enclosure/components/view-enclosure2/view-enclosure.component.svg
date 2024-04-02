@@ -498,7 +498,7 @@
         >
           <g 
             *ngFor="let tray of driveTrays; index as i"
-            [attr.transform]="getDriveTrayTransformation(tray, i)"
+            [attr.transform]="getDriveTrayTransformation(tray)"
           >
             <g 
               [attr.id]="'slot'+i" 
