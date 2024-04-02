@@ -37,12 +37,11 @@
     {{ app.stats.memory | ixFileSize }}
   </span>
 </div>
-<div class="cell cell-network" [matTooltip]="'Incoming / Outgoing network traffic' | translate">
-  <span *ngIf="app.stats && app.stats.network?.incoming !== undefined; else notAvailable">
-    {{ app.stats.network.incoming | ixFileSize: { baseUnit: 'b', base: 10 } }}/s
-    -
-    {{ app.stats.network.outgoing | ixFileSize: { baseUnit: 'b', base: 10 } }}/s
-  </span>
+<div class="cell cell-network" [matTooltip]="'All Incoming/Outgoing network traffic' | translate">
+  <ng-container *ngIf="app.stats && app.stats.network?.incoming !== undefined; else notAvailable">
+    <div>{{ app.stats.network.incoming | ixFileSize: { baseUnit: 'b', base: 10 } }}</div>
+    <div>{{ app.stats.network.outgoing | ixFileSize: { baseUnit: 'b', base: 10 } }}</div>
+  </ng-container>
 </div>
 <div class="cell cell-update">
   <ng-container *ngIf="hasUpdates; else upToDate">

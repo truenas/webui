@@ -63,8 +63,10 @@ describe('AppRowComponent', () => {
   });
 
   it('checks usage columns', () => {
+    const [incomingTraffic, outgoingTraffic] = spectator.queryAll('.cell-network div');
     expect(spectator.query('.cell-cpu')).toHaveText('50%');
     expect(spectator.query('.cell-ram')).toHaveText('19.07 MiB');
-    expect(spectator.query('.cell-network')).toHaveText('50 Mb/s - 55.5 Mb/s');
+    expect(incomingTraffic).toHaveText('50 Mb');
+    expect(outgoingTraffic).toHaveText('55.5 Mb');
   });
 });

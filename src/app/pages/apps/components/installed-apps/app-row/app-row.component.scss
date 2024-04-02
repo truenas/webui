@@ -112,6 +112,12 @@
     }
   }
 
+  .cell-network {
+    align-items: flex-start;
+    flex-direction: column;
+    justify-content: center;
+  }
+
   .cell-update {
     gap: 4px;
 
