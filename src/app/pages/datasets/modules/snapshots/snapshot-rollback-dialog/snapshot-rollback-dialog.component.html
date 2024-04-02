@@ -61,12 +61,13 @@
     </div>
   </form>
 </ng-template>
+
 <ng-template #successMessage>
-  <p>
+  <p mat-dialog-content>
     {{ 'Dataset rolled back to snapshot {name}.' | translate: { name: publicSnapshot.snapshot_name } }}
   </p>
 
-  <div class="form-actions">
+  <ix-form-actions mat-dialog-actions class="form-actions">
     <div class="form-buttons">
       <a
         mat-button
@@ -74,7 +75,7 @@
         color="primary"
         ixTest="go-to-storage"
         matDialogClose
-        [routerLink]="['/storage/snapshots']"
+        [routerLink]="['/storage']"
       >
         {{ 'Go to Storage' | translate }}
       </a>
@@ -83,5 +84,5 @@
         {{ 'Close' | translate }}
       </button>
     </div>
-  </div>
+  </ix-form-actions>
 </ng-template>
