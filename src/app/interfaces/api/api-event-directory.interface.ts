@@ -34,6 +34,7 @@ export interface ApiEventDirectory {
   'user.query': { response: User };
   'container.image.pull': { response: Job<PullContainerImageResponse, PullContainerImageParams> };
   'disk.query': { response: Disk };
+  'interface.query': { response: unknown };
   'pool.query': { response: Pool };
   'group.query': { response: Group };
   'container.image.query': { response: ContainerImage };
