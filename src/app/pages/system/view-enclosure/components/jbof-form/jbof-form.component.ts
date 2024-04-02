@@ -19,7 +19,7 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class JbosFormComponent implements OnInit {
-  protected requiredRoles = [Role.JbofWrite];
+  protected readonly requiredRoles = [Role.JbofWrite];
 
   isFormLoading = false;
 

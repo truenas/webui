@@ -5,6 +5,7 @@ import { MatListItemHarness } from '@angular/material/list/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { CoreComponents } from 'app/core/core-components.module';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { AdvancedSettingsService } from 'app/pages/system/advanced/advanced-settings.service';
 import { AuditCardComponent } from 'app/pages/system/advanced/audit/audit-card/audit-card.component';
@@ -20,6 +21,7 @@ describe('AuditCardComponent', () => {
       CoreComponents,
     ],
     providers: [
+      mockAuth(),
       mockProvider(IxChainedSlideInService, {
         pushComponent: jest.fn(() => of(true)),
       }),

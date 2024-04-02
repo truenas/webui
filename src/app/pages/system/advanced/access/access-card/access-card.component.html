@@ -3,21 +3,22 @@
     <h3>{{ 'Access' | translate }}</h3>
     <div class="actions action-icon">
       <button
-        *ixRequiresRoles="[Role.AuthSessionsWrite]"
-        id="terminate-other-sessions"
+        *ixRequiresRoles="requiredRoles"
         ixUiSearchableElement
         mat-button
         [ixTest]="['sessions', 'terminate']"
         [disabled]="dataProvider.isLoading$ | async"
-        [ixSearchConfig]="searchElements.terminateOtherSessions"
+        [ixSearchConfig]="searchElements.elements.terminateOtherSessions"
         (click)="onTerminateOther()"
       >
         {{ 'Terminate Other Sessions' | translate }}
       </button>
       <button
-        id="access-settings"
+        *ixRequiresRoles="requiredRoles"
+        ixUiSearchableElement
         mat-button
         [ixTest]="['sessions', 'configure']"
+        [ixSearchConfig]="searchElements.elements.configureAccess"
         (click)="onConfigure()"
       >
         {{ 'Configure' | translate }}

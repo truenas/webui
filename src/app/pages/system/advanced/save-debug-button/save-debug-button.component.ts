@@ -14,6 +14,7 @@ import { Job } from 'app/interfaces/job.interface';
 import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
+import { saveDebugElement } from 'app/pages/system/advanced/save-debug-button/save-debug-button.elements';
 import { DownloadService } from 'app/services/download.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -27,6 +28,8 @@ import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SaveDebugButtonComponent {
+  protected readonly searchableElement = saveDebugElement;
+
   constructor(
     private ws: WebSocketService,
     private store$: Store<AppState>,

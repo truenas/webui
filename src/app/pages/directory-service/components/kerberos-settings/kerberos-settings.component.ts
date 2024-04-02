@@ -18,7 +18,7 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class KerberosSettingsComponent implements OnInit {
-  protected requiredRoles = [Role.DirectoryServiceWrite];
+  protected readonly requiredRoles = [Role.DirectoryServiceWrite];
 
   isFormLoading = false;
 

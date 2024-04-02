@@ -136,7 +136,7 @@ export interface EnclosureUiSlot {
   read_errors?: number;
   write_errors?: number;
   checksum_errors?: number;
-  pool_info: EnclosureUiPool | null;
+  pool_info?: EnclosureUiPool | null;
 }
 
 export interface EnclosureUiPool {

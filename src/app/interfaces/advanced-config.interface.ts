@@ -35,4 +35,4 @@ export interface AdvancedConfig {
   legacy_ui?: boolean;
 }
 
-export type AdvancedConfigUpdate = Omit<AdvancedConfig, 'id'>;
+export type AdvancedConfigUpdate = Omit<AdvancedConfig, 'id' | 'isolated_gpu_pci_ids'>;

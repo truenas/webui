@@ -6,6 +6,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { debounceTime, distinctUntilChanged } from 'rxjs';
 import { AlertLevel } from 'app/enums/alert-level.enum';
 import { AlertPolicy } from 'app/enums/alert-policy.enum';
+import { Role } from 'app/enums/role.enum';
 import { AlertCategory, AlertClass, AlertClasses } from 'app/interfaces/alert.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { ThemeService } from 'app/services/theme/theme.service';
@@ -18,6 +19,8 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AlertSettings2Component implements OnInit {
+  protected readonly requiredRoles = [Role.FullAdmin];
+
   categories: AlertCategory[] = [];
   alertClasses: AlertClasses;
 

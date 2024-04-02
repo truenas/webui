@@ -13,7 +13,7 @@
           formControlName="consolemenu"
           [label]="'Show Text Console without Password Prompt' | translate"
           [tooltip]="tooltips.consolemenu"
-          [ixSearchConfig]="searchElements.consolemenu"
+          [ixSearchConfig]="searchElements.elements.consoleMenu"
         ></ix-checkbox>
 
         <ix-checkbox
@@ -21,7 +21,7 @@
           formControlName="serialconsole"
           [label]="'Enable Serial Console' | translate"
           [tooltip]="tooltips.serialconsole"
-          [ixSearchConfig]="searchElements.serialconsole"
+          [ixSearchConfig]="searchElements.elements.serialConsole"
         ></ix-checkbox>
 
         <ix-select
@@ -30,7 +30,7 @@
           [label]="'Serial Port' | translate"
           [tooltip]="tooltips.serialport"
           [options]="serialPortOptions$"
-          [ixSearchConfig]="searchElements.serialport"
+          [ixSearchConfig]="searchElements.elements.serialPort"
         ></ix-select>
 
         <ix-select
@@ -39,7 +39,7 @@
           [label]="'Serial Speed' | translate"
           [tooltip]="tooltips.serialport"
           [options]="serialSpeedOptions$"
-          [ixSearchConfig]="searchElements.serialspeed"
+          [ixSearchConfig]="searchElements.elements.serialSpeed"
         ></ix-select>
 
         <ix-textarea
@@ -47,7 +47,7 @@
           formControlName="motd"
           [label]="'MOTD Banner' | translate"
           [tooltip]="tooltips.motd"
-          [ixSearchConfig]="searchElements.motd"
+          [ixSearchConfig]="searchElements.elements.motd"
         ></ix-textarea>
       </ix-fieldset>
 

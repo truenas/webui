@@ -19,14 +19,16 @@
       {{ conf.message | translate }}
     </p>
 
-    <button
-      *ngIf="conf.button && !conf.compact"
-      class="empty-action"
-      mat-button
-      [ixTest]="[conf.button.label]"
-      (click)="doAction()"
-    >
-      {{ conf.button.label | translate }}
-    </button>
+    <ng-container *ngIf="conf.button && !conf.compact">
+      <button
+        *ixRequiresRoles="requiredRoles"
+        class="empty-action"
+        mat-button
+        [ixTest]="[conf.button.label]"
+        (click)="doAction()"
+      >
+        {{ conf.button.label | translate }}
+      </button>
+    </ng-container>
   </div>
 </div>

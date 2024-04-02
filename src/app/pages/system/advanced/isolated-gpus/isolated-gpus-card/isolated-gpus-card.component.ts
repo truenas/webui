@@ -5,8 +5,10 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { filter, switchMap, tap } from 'rxjs';
 import { EmptyType } from 'app/enums/empty-type.enum';
+import { Role } from 'app/enums/role.enum';
 import { Device } from 'app/interfaces/device.interface';
 import { AdvancedSettingsService } from 'app/pages/system/advanced/advanced-settings.service';
+import { isolatedGpusCardElements } from 'app/pages/system/advanced/isolated-gpus/isolated-gpus-card/isolated-gpus-card.elements';
 import {
   IsolatedGpusFormComponent,
 } from 'app/pages/system/advanced/isolated-gpus/isolated-gpus-form/isolated-gpus-form.component';
@@ -21,7 +23,10 @@ import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.servic
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class IsolatedGpusCardComponent implements OnInit {
+  protected readonly requiredRoles = [Role.FullAdmin];
+
   isolatedGpus: Device[] = [];
+  protected readonly searchableElements = isolatedGpusCardElements;
 
   readonly emptyConfig = {
     type: EmptyType.NoPageData,

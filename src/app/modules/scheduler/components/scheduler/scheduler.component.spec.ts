@@ -66,7 +66,7 @@ describe('SchedulerComponent', () => {
       'Daily (0 0 * * *)  At 00:00 (12:00 AM)',
       'Weekly (0 0 * * 0)  On Sundays at 00:00 (12:00 AM)',
       'Monthly (0 0 1 * *)  On the first day of the month at 00:00 (12:00 AM)',
-      'Custom  Create custom schedule',
+      'Create  Custom schedule',
     ]);
   });
 
@@ -89,7 +89,7 @@ describe('SchedulerComponent', () => {
   it('shows Scheduler modal when custom option is selected', async () => {
     const select = await loader.getHarness(MatSelectHarness);
     await select.open();
-    await select.clickOptions({ text: 'Custom  Create custom schedule' });
+    await select.clickOptions({ text: 'Create  Custom schedule' });
     expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(
       SchedulerModalComponent,
       {
@@ -104,7 +104,7 @@ describe('SchedulerComponent', () => {
   it('writes crontab provided in Scheduler modal when it is closed', async () => {
     const select = await loader.getHarness(MatSelectHarness);
     await select.open();
-    await select.clickOptions({ text: 'Custom  Create custom schedule' });
+    await select.clickOptions({ text: 'Create  Custom schedule' });
 
     expect(control.value).toBe('0 2 */4 * 0');
   });
