@@ -465,6 +465,7 @@ describe('ChartWizardComponent', () => {
       });
 
       const values = await form.getValues();
+      expect(spectator.component.chartSchema.groups).toEqual(appVersion120.schema.groups);
 
       expect(values).toEqual({
         'Application Name': 'ipfs',
