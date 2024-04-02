@@ -482,161 +482,692 @@
         </g>
       </g>
     </g>
-    <g id="drivetrays" transform="translate(47.522 10.799)">
-      <g id="Half_empty" data-name="Half empty">
-        <g id="_1-12" data-name="1-12" transform="translate(0.002 0)" clip-path="url(#clip-path)">
-          <g transform="translate(-0.001 0)">
-            <g id="slot" [attr.transform]="driveTrayTransformation">
-              <path [attr.id]="idPrefix"  [attr.d]="drawInstructions"  [attr.transform]="twentyFourTransformations" fill="#111"/>
-              <g id="empty2" opacity="0.5">
-                <path [attr.id]="idPrefix + '2'" [attr.data-name]="idPrefix"  [attr.d]="drawInstructions"  [attr.transform]="twelveTransformation" fill="#111"/>
-                <path id="outer" d="M150.7,79.8v29.711H268.138v-6.847l-13.2.092V105.2H162.682V83.682h92.251v3.24h13.388V79.8Z" transform="translate(-150.699 -79.403)" fill="#2d2d2d"/>
-                <g id="inner" transform="translate(13.42 8.528)">
-                  <path id="end" d="M496.3,119.819h13.816V106.4H496.3Z" transform="translate(-404.08 -106.4)" fill="#d1d1d1"/>
-                  <path id="Main" d="M194.6,119.819h91.395V106.4H194.6Z" transform="translate(-194.6 -106.4)" fill="#d1d1d1"/>
+    <g
+      id="drivetrays"
+      transform="translate(47.522 10.799)"
+    >
+      <g
+        id="Half_empty"
+        data-name="Half empty"
+      >
+        <g
+          id="_1-12" 
+          data-name="1-12" 
+          transform="translate(0.002 0)" 
+          clip-path="url(#clip-path)"
+        >
+          <g 
+            transform="translate(-0.001 0)"
+          >
+            <g 
+              id="slot" 
+              [attr.transform]="driveTrayTransformation"
+            >
+              <path
+                [attr.id]="idPrefix"
+                [attr.d]="drawInstructions"
+                [attr.transform]="twentyFourTransformations"
+                fill="#111"
+              ></path>
+              <g
+                id="empty2"
+                opacity="0.5"
+              >
+                <path
+                  [attr.id]="idPrefix + '2'"
+                  [attr.data-name]="idPrefix"
+                  [attr.d]="drawInstructions"
+                  [attr.transform]="twelveTransformation"
+                  fill="#111"
+                ></path>
+                <path
+                  id="outer"
+                  d="M150.7,79.8v29.711H268.138v-6.847l-13.2.092V105.2H162.682V83.682h92.251v3.24h13.388V79.8Z"
+                  transform="translate(-150.699 -79.403)"
+                  fill="#2d2d2d"
+                ></path>
+                <g
+                  id="inner"
+                  transform="translate(13.42 8.528)"
+                >
+                  <path
+                    id="end"
+                    d="M496.3,119.819h13.816V106.4H496.3Z"
+                    transform="translate(-404.08 -106.4)"
+                    fill="#d1d1d1"
+                  ></path>
+                  <path
+                    id="Main"
+                    d="M194.6,119.819h91.395V106.4H194.6Z"
+                    transform="translate(-194.6 -106.4)"
+                    fill="#d1d1d1"
+                  ></path>
                 </g>
               </g>
             </g>
           </g>
-          <g transform="translate(124.999 0)">
-            <g id="slot-2" data-name="slot" [attr.transform]="driveTrayTransformation">
-              <path [attr.id]="idPrefix + '3'" [attr.data-name]="idPrefix"  [attr.d]="drawInstructions"  [attr.transform]="twentyFourTransformations" fill="#111"/>
-              <g id="empty2-2" data-name="empty2" opacity="0.5">
-                <path [attr.id]="idPrefix + '4'" [attr.data-name]="idPrefix"  [attr.d]="drawInstructions"  [attr.transform]="twelveTransformation" fill="#111"/>
-                <path id="outer-2" data-name="outer" d="M150.7,79.8v29.711H268.138v-6.847l-13.2.092V105.2H162.682V83.682h92.251v3.24h13.388V79.8Z" transform="translate(-150.699 -79.403)" fill="#2d2d2d"/>
-                <g id="inner-2" data-name="inner" transform="translate(13.42 8.528)">
-                  <path id="end-2" data-name="end" d="M496.3,119.819h13.816V106.4H496.3Z" transform="translate(-404.08 -106.4)" fill="#d1d1d1"/>
-                  <path id="Main-2" data-name="Main" d="M194.6,119.819h91.395V106.4H194.6Z" transform="translate(-194.6 -106.4)" fill="#d1d1d1"/>
+          <g
+            transform="translate(124.999 0)"
+          >
+            <g
+              id="slot-2"
+              data-name="slot"
+              [attr.transform]="driveTrayTransformation"
+            >
+              <path
+                [attr.id]="idPrefix + '3'"
+                [attr.data-name]="idPrefix"  
+                [attr.d]="drawInstructions"  
+                [attr.transform]="twentyFourTransformations" 
+                fill="#111"
+              ></path>
+              <g
+                id="empty2-2"
+                data-name="empty2"
+                opacity="0.5"
+              >
+                <path
+                  [attr.id]="idPrefix + '4'"
+                  [attr.data-name]="idPrefix"
+                  [attr.d]="drawInstructions"
+                  [attr.transform]="twelveTransformation"
+                  fill="#111"
+                ></path>
+                <path
+                  id="outer-2"
+                  data-name="outer"
+                  d="M150.7,79.8v29.711H268.138v-6.847l-13.2.092V105.2H162.682V83.682h92.251v3.24h13.388V79.8Z"
+                  transform="translate(-150.699 -79.403)"
+                  fill="#2d2d2d"
+                ></path>
+                <g
+                  id="inner-2"
+                  data-name="inner"
+                  transform="translate(13.42 8.528)"
+                >
+                  <path
+                    id="end-2"
+                    data-name="end"
+                    d="M496.3,119.819h13.816V106.4H496.3Z"
+                    transform="translate(-404.08 -106.4)"
+                    fill="#d1d1d1"
+                  ></path>
+                  <path
+                    id="Main-2"
+                    data-name="Main"
+                    d="M194.6,119.819h91.395V106.4H194.6Z"
+                    transform="translate(-194.6 -106.4)"
+                    fill="#d1d1d1"
+                  ></path>
                 </g>
               </g>
             </g>
           </g>
-          <g transform="translate(249.999 0)">
-            <g id="slot-3" data-name="slot" [attr.transform]="driveTrayTransformation">
-              <path [attr.id]="idPrefix + '5'" [attr.data-name]="idPrefix"  [attr.d]="drawInstructions"  [attr.transform]="twentyFourTransformations" fill="#111"/>
-              <g id="empty2-3" data-name="empty2" opacity="0.5">
-                <path [attr.id]="idPrefix + '6'" [attr.data-name]="idPrefix"  [attr.d]="drawInstructions"  [attr.transform]="twelveTransformation" fill="#111"/>
-                <path id="outer-3" data-name="outer" d="M150.7,79.8v29.711H268.138v-6.847l-13.2.092V105.2H162.682V83.682h92.251v3.24h13.388V79.8Z" transform="translate(-150.699 -79.403)" fill="#2d2d2d"/>
-                <g id="inner-3" data-name="inner" transform="translate(13.42 8.528)">
-                  <path id="end-3" data-name="end" d="M496.3,119.819h13.816V106.4H496.3Z" transform="translate(-404.08 -106.4)" fill="#d1d1d1"/>
-                  <path id="Main-3" data-name="Main" d="M194.6,119.819h91.395V106.4H194.6Z" transform="translate(-194.6 -106.4)" fill="#d1d1d1"/>
+          <g
+            transform="translate(249.999 0)"
+          >
+            <g
+              id="slot-3"
+              data-name="slot"
+              [attr.transform]="driveTrayTransformation"
+            >
+              <path
+                [attr.id]="idPrefix + '5'"
+                [attr.data-name]="idPrefix"
+                [attr.d]="drawInstructions"
+                [attr.transform]="twentyFourTransformations"
+                fill="#111"
+              ></path>
+              <g
+                id="empty2-3"
+                data-name="empty2"
+                opacity="0.5"
+              >
+                <path
+                  [attr.id]="idPrefix + '6'"
+                  [attr.data-name]="idPrefix"
+                  [attr.d]="drawInstructions"
+                  [attr.transform]="twelveTransformation"
+                  fill="#111"
+                ></path>
+                <path
+                  id="outer-3"
+                  data-name="outer"
+                  d="M150.7,79.8v29.711H268.138v-6.847l-13.2.092V105.2H162.682V83.682h92.251v3.24h13.388V79.8Z"
+                  transform="translate(-150.699 -79.403)"
+                  fill="#2d2d2d"
+                ></path>
+                <g
+                  id="inner-3"
+                  data-name="inner"
+                  transform="translate(13.42 8.528)"
+                >
+                  <path
+                    id="end-3"
+                    data-name="end"
+                    d="M496.3,119.819h13.816V106.4H496.3Z"
+                    transform="translate(-404.08 -106.4)"
+                    fill="#d1d1d1"
+                  ></path>
+                  <path
+                    id="Main-3"
+                    data-name="Main"
+                    d="M194.6,119.819h91.395V106.4H194.6Z"
+                    transform="translate(-194.6 -106.4)"
+                    fill="#d1d1d1"
+                  ></path>
                 </g>
               </g>
             </g>
           </g>
-          <g transform="translate(374.999 0)">
-            <g id="slot-4" data-name="slot" [attr.transform]="driveTrayTransformation">
-              <path [attr.id]="idPrefix + '7'" [attr.data-name]="idPrefix"  [attr.d]="drawInstructions"  [attr.transform]="twentyFourTransformations" fill="#111"/>
-              <g id="empty2-4" data-name="empty2" opacity="0.5">
-                <path [attr.id]="idPrefix + '8'" [attr.data-name]="idPrefix"  [attr.d]="drawInstructions"  [attr.transform]="twelveTransformation" fill="#111"/>
-                <path id="outer-4" data-name="outer" d="M150.7,79.8v29.711H268.138v-6.847l-13.2.092V105.2H162.682V83.682h92.251v3.24h13.388V79.8Z" transform="translate(-150.699 -79.403)" fill="#2d2d2d"/>
-                <g id="inner-4" data-name="inner" transform="translate(13.42 8.528)">
-                  <path id="end-4" data-name="end" d="M496.3,119.819h13.816V106.4H496.3Z" transform="translate(-404.08 -106.4)" fill="#d1d1d1"/>
-                  <path id="Main-4" data-name="Main" d="M194.6,119.819h91.395V106.4H194.6Z" transform="translate(-194.6 -106.4)" fill="#d1d1d1"/>
+          <g
+            transform="translate(374.999 0)"
+          >
+            <g
+              id="slot-4"
+              data-name="slot"
+              [attr.transform]="driveTrayTransformation"
+            >
+              <path
+                [attr.id]="idPrefix + '7'"
+                [attr.data-name]="idPrefix"
+                [attr.d]="drawInstructions"
+                [attr.transform]="twentyFourTransformations"
+                fill="#111"
+              ></path>
+              <g
+                id="empty2-4"
+                data-name="empty2"
+                opacity="0.5"
+              >
+                <path
+                  [attr.id]="idPrefix + '8'"
+                  [attr.data-name]="idPrefix"
+                  [attr.d]="drawInstructions"
+                  [attr.transform]="twelveTransformation"
+                  fill="#111"
+                ></path>
+                <path
+                  id="outer-4"
+                  data-name="outer"
+                  d="M150.7,79.8v29.711H268.138v-6.847l-13.2.092V105.2H162.682V83.682h92.251v3.24h13.388V79.8Z"
+                  transform="translate(-150.699 -79.403)"
+                  fill="#2d2d2d"
+                ></path>
+                <g
+                  id="inner-4"
+                  data-name="inner"
+                  transform="translate(13.42 8.528)"
+                >
+                  <path
+                    id="end-4"
+                    data-name="end"
+                    d="M496.3,119.819h13.816V106.4H496.3Z"
+                    transform="translate(-404.08 -106.4)"
+                    fill="#d1d1d1"
+                  ></path>
+                  <path
+                    id="Main-4"
+                    data-name="Main"
+                    d="M194.6,119.819h91.395V106.4H194.6Z"
+                    transform="translate(-194.6 -106.4)"
+                    fill="#d1d1d1"
+                  ></path>
                 </g>
               </g>
             </g>
           </g>
-          <g transform="translate(-0.001 33)">
-            <g id="slot-5" data-name="slot" [attr.transform]="driveTrayTransformation">
-              <path [attr.id]="idPrefix + '9'" [attr.data-name]="idPrefix"  [attr.d]="drawInstructions"  [attr.transform]="twentyFourTransformations" fill="#111"/>
-              <g id="empty2-5" data-name="empty2" opacity="0.5">
-                <path [attr.id]="idPrefix + '10'" [attr.data-name]="idPrefix"  [attr.d]="drawInstructions"  [attr.transform]="twelveTransformation" fill="#111"/>
-                <path id="outer-5" data-name="outer" d="M150.7,79.8v29.711H268.138v-6.847l-13.2.092V105.2H162.682V83.682h92.251v3.24h13.388V79.8Z" transform="translate(-150.699 -79.403)" fill="#2d2d2d"/>
-                <g id="inner-5" data-name="inner" transform="translate(13.42 8.528)">
-                  <path id="end-5" data-name="end" d="M496.3,119.819h13.816V106.4H496.3Z" transform="translate(-404.08 -106.4)" fill="#d1d1d1"/>
-                  <path id="Main-5" data-name="Main" d="M194.6,119.819h91.395V106.4H194.6Z" transform="translate(-194.6 -106.4)" fill="#d1d1d1"/>
+          <g
+            transform="translate(-0.001 33)"
+          >
+            <g
+              id="slot-5" 
+              data-name="slot" 
+              [attr.transform]="driveTrayTransformation"
+            >
+              <path 
+                [attr.id]="idPrefix + '9'" 
+                [attr.data-name]="idPrefix"  
+                [attr.d]="drawInstructions"  
+                [attr.transform]="twentyFourTransformations" 
+                fill="#111"
+              ></path>
+              <g 
+                id="empty2-5" 
+                data-name="empty2" 
+                opacity="0.5"
+              >
+                <path 
+                  [attr.id]="idPrefix + '10'" 
+                  [attr.data-name]="idPrefix"  
+                  [attr.d]="drawInstructions"  
+                  [attr.transform]="twelveTransformation" 
+                  fill="#111"
+                ></path>
+                <path
+                  id="outer-5" 
+                  data-name="outer" 
+                  d="M150.7,79.8v29.711H268.138v-6.847l-13.2.092V105.2H162.682V83.682h92.251v3.24h13.388V79.8Z"
+                  transform="translate(-150.699 -79.403)"
+                  fill="#2d2d2d"
+                ></path>
+                <g
+                  id="inner-5" 
+                  data-name="inner" 
+                  transform="translate(13.42 8.528)"
+                >
+                  <path 
+                    id="end-5" 
+                    data-name="end" 
+                    d="M496.3,119.819h13.816V106.4H496.3Z"
+                    transform="translate(-404.08 -106.4)"
+                    fill="#d1d1d1"
+                  ></path>
+                  <path
+                    id="Main-5"
+                    data-name="Main" 
+                    d="M194.6,119.819h91.395V106.4H194.6Z"
+                    transform="translate(-194.6 -106.4)"
+                    fill="#d1d1d1"
+                  ></path>
                 </g>
               </g>
             </g>
           </g>
-          <g transform="translate(124.999 33)">
-            <g id="slot-6" data-name="slot" [attr.transform]="driveTrayTransformation">
-              <path [attr.id]="idPrefix + '11'" [attr.data-name]="idPrefix"  [attr.d]="drawInstructions"  [attr.transform]="twentyFourTransformations" fill="#111"/>
-              <g id="empty2-6" data-name="empty2" opacity="0.5">
-                <path [attr.id]="idPrefix + '12'" [attr.data-name]="idPrefix"  [attr.d]="drawInstructions"  [attr.transform]="twelveTransformation" fill="#111"/>
-                <path id="outer-6" data-name="outer" d="M150.7,79.8v29.711H268.138v-6.847l-13.2.092V105.2H162.682V83.682h92.251v3.24h13.388V79.8Z" transform="translate(-150.699 -79.403)" fill="#2d2d2d"/>
-                <g id="inner-6" data-name="inner" transform="translate(13.42 8.528)">
-                  <path id="end-6" data-name="end" d="M496.3,119.819h13.816V106.4H496.3Z" transform="translate(-404.08 -106.4)" fill="#d1d1d1"/>
-                  <path id="Main-6" data-name="Main" d="M194.6,119.819h91.395V106.4H194.6Z" transform="translate(-194.6 -106.4)" fill="#d1d1d1"/>
+          <g 
+            transform="translate(124.999 33)"
+          >
+            <g 
+              id="slot-6"
+              data-name="slot" 
+              [attr.transform]="driveTrayTransformation"
+            >
+              <path 
+                [attr.id]="idPrefix + '11'" 
+                [attr.data-name]="idPrefix"  
+                [attr.d]="drawInstructions"  
+                [attr.transform]="twentyFourTransformations" 
+                fill="#111"
+              ></path>
+              <g 
+                id="empty2-6" 
+                data-name="empty2" 
+                opacity="0.5"
+              >
+                <path 
+                  [attr.id]="idPrefix + '12'" 
+                  [attr.data-name]="idPrefix"  
+                  [attr.d]="drawInstructions"  
+                  [attr.transform]="twelveTransformation" 
+                  fill="#111"
+                ></path>
+                <path 
+                  id="outer-6" 
+                  data-name="outer" 
+                  d="M150.7,79.8v29.711H268.138v-6.847l-13.2.092V105.2H162.682V83.682h92.251v3.24h13.388V79.8Z"
+                  transform="translate(-150.699 -79.403)"
+                  fill="#2d2d2d"
+                ></path>
+                <g 
+                  id="inner-6" 
+                  data-name="inner" 
+                  transform="translate(13.42 8.528)"
+                >
+                  <path 
+                    id="end-6" 
+                    data-name="end" 
+                    d="M496.3,119.819h13.816V106.4H496.3Z"
+                    transform="translate(-404.08 -106.4)"
+                    fill="#d1d1d1"
+                  ></path>
+                  <path 
+                    id="Main-6" 
+                    data-name="Main" 
+                    d="M194.6,119.819h91.395V106.4H194.6Z"
+                    transform="translate(-194.6 -106.4)" 
+                    fill="#d1d1d1"
+                  ></path>
                 </g>
               </g>
             </g>
           </g>
-          <g transform="translate(249.999 33)">
-            <g id="slot-7" data-name="slot" [attr.transform]="driveTrayTransformation">
-              <path [attr.id]="idPrefix + '13'" [attr.data-name]="idPrefix"  [attr.d]="drawInstructions"  [attr.transform]="twentyFourTransformations" fill="#111"/>
-              <g id="empty2-7" data-name="empty2" opacity="0.5">
-                <path [attr.id]="idPrefix + '14'" [attr.data-name]="idPrefix"  [attr.d]="drawInstructions"  [attr.transform]="twelveTransformation" fill="#111"/>
-                <path id="outer-7" data-name="outer" d="M150.7,79.8v29.711H268.138v-6.847l-13.2.092V105.2H162.682V83.682h92.251v3.24h13.388V79.8Z" transform="translate(-150.699 -79.403)" fill="#2d2d2d"/>
-                <g id="inner-7" data-name="inner" transform="translate(13.42 8.528)">
-                  <path id="end-7" data-name="end" d="M496.3,119.819h13.816V106.4H496.3Z" transform="translate(-404.08 -106.4)" fill="#d1d1d1"/>
-                  <path id="Main-7" data-name="Main" d="M194.6,119.819h91.395V106.4H194.6Z" transform="translate(-194.6 -106.4)" fill="#d1d1d1"/>
+          <g 
+            transform="translate(249.999 33)"
+          >
+            <g 
+              id="slot-7" 
+              data-name="slot" 
+              [attr.transform]="driveTrayTransformation"
+            >
+              <path 
+                [attr.id]="idPrefix + '13'" 
+                [attr.data-name]="idPrefix"  
+                [attr.d]="drawInstructions"  
+                [attr.transform]="twentyFourTransformations" 
+                fill="#111"
+              ></path>
+              <g 
+                id="empty2-7"
+                data-name="empty2" 
+                opacity="0.5"
+              >
+                <path 
+                  [attr.id]="idPrefix + '14'" 
+                  [attr.data-name]="idPrefix"  
+                  [attr.d]="drawInstructions"  
+                  [attr.transform]="twelveTransformation" 
+                  fill="#111"
+                ></path>
+                <path 
+                  id="outer-7" 
+                  data-name="outer" 
+                  d="M150.7,79.8v29.711H268.138v-6.847l-13.2.092V105.2H162.682V83.682h92.251v3.24h13.388V79.8Z" 
+                  transform="translate(-150.699 -79.403)"
+                  fill="#2d2d2d"
+                ></path>
+                <g 
+                  id="inner-7" 
+                  data-name="inner" 
+                  transform="translate(13.42 8.528)"
+                >
+                  <path 
+                    id="end-7" 
+                    data-name="end" 
+                    d="M496.3,119.819h13.816V106.4H496.3Z" 
+                    transform="translate(-404.08 -106.4)" 
+                    fill="#d1d1d1"
+                  ></path>
+                  <path
+                    id="Main-7" 
+                    data-name="Main" 
+                    d="M194.6,119.819h91.395V106.4H194.6Z" 
+                    transform="translate(-194.6 -106.4)" 
+                    fill="#d1d1d1"
+                  ></path>
                 </g>
               </g>
             </g>
           </g>
-          <g transform="translate(374.999 33)">
-            <g id="slot-8" data-name="slot" [attr.transform]="driveTrayTransformation">
-              <path [attr.id]="idPrefix + '15'" [attr.data-name]="idPrefix"  [attr.d]="drawInstructions"  [attr.transform]="twentyFourTransformations" fill="#111"/>
-              <g id="empty2-8" data-name="empty2" opacity="0.5">
-                <path [attr.id]="idPrefix + '16'" [attr.data-name]="idPrefix"  [attr.d]="drawInstructions"  [attr.transform]="twelveTransformation" fill="#111"/>
-                <path id="outer-8" data-name="outer" d="M150.7,79.8v29.711H268.138v-6.847l-13.2.092V105.2H162.682V83.682h92.251v3.24h13.388V79.8Z" transform="translate(-150.699 -79.403)" fill="#2d2d2d"/>
-                <g id="inner-8" data-name="inner" transform="translate(13.42 8.528)">
-                  <path id="end-8" data-name="end" d="M496.3,119.819h13.816V106.4H496.3Z" transform="translate(-404.08 -106.4)" fill="#d1d1d1"/>
-                  <path id="Main-8" data-name="Main" d="M194.6,119.819h91.395V106.4H194.6Z" transform="translate(-194.6 -106.4)" fill="#d1d1d1"/>
+          <g
+            transform="translate(374.999 33)"
+          >
+            <g 
+              id="slot-8" 
+              data-name="slot" 
+              [attr.transform]="driveTrayTransformation"
+            >
+              <path 
+                [attr.id]="idPrefix + '15'" 
+                [attr.data-name]="idPrefix"  
+                [attr.d]="drawInstructions"  
+                [attr.transform]="twentyFourTransformations" 
+                fill="#111"
+              ></path>
+              <g 
+                id="empty2-8" 
+                data-name="empty2" 
+                opacity="0.5"
+              >
+                <path 
+                  [attr.id]="idPrefix + '16'" 
+                  [attr.data-name]="idPrefix"  
+                  [attr.d]="drawInstructions"  
+                  [attr.transform]="twelveTransformation" 
+                  fill="#111"
+                ></path>
+                <path 
+                  id="outer-8" 
+                  data-name="outer" 
+                  d="M150.7,79.8v29.711H268.138v-6.847l-13.2.092V105.2H162.682V83.682h92.251v3.24h13.388V79.8Z" 
+                  transform="translate(-150.699 -79.403)" 
+                  fill="#2d2d2d"
+                ></path>
+                <g 
+                  id="inner-8" 
+                  data-name="inner" 
+                  transform="translate(13.42 8.528)"
+                >
+                  <path 
+                    id="end-8" 
+                    data-name="end" 
+                    d="M496.3,119.819h13.816V106.4H496.3Z" 
+                    transform="translate(-404.08 -106.4)" 
+                    fill="#d1d1d1"
+                  ></path>
+                  <path 
+                    id="Main-8" 
+                    data-name="Main" 
+                    d="M194.6,119.819h91.395V106.4H194.6Z" 
+                    transform="translate(-194.6 -106.4)" 
+                    fill="#d1d1d1"
+                  ></path>
                 </g>
               </g>
             </g>
           </g>
-          <g transform="translate(-0.001 66)">
-            <g id="slot-9" data-name="slot" [attr.transform]="driveTrayTransformation">
-              <path [attr.id]="idPrefix + '17'" [attr.data-name]="idPrefix"  [attr.d]="drawInstructions"  [attr.transform]="twentyFourTransformations" fill="#111"/>
-              <g id="empty2-9" data-name="empty2" opacity="0.5">
-                <path [attr.id]="idPrefix + '18'" [attr.data-name]="idPrefix"  [attr.d]="drawInstructions"  [attr.transform]="twelveTransformation" fill="#111"/>
-                <path id="outer-9" data-name="outer" d="M150.7,79.8v29.711H268.138v-6.847l-13.2.092V105.2H162.682V83.682h92.251v3.24h13.388V79.8Z" transform="translate(-150.699 -79.403)" fill="#2d2d2d"/>
-                <g id="inner-9" data-name="inner" transform="translate(13.42 8.528)">
-                  <path id="end-9" data-name="end" d="M496.3,119.819h13.816V106.4H496.3Z" transform="translate(-404.08 -106.4)" fill="#d1d1d1"/>
-                  <path id="Main-9" data-name="Main" d="M194.6,119.819h91.395V106.4H194.6Z" transform="translate(-194.6 -106.4)" fill="#d1d1d1"/>
+          <g 
+            transform="translate(-0.001 66)"
+          >
+            <g 
+              id="slot-9" 
+              data-name="slot" 
+              [attr.transform]="driveTrayTransformation"
+            >
+              <path 
+                [attr.id]="idPrefix + '17'" 
+                [attr.data-name]="idPrefix"  
+                [attr.d]="drawInstructions"  
+                [attr.transform]="twentyFourTransformations" 
+                fill="#111"
+              ></path>
+              <g 
+                id="empty2-9" 
+                data-name="empty2" 
+                opacity="0.5"
+              >
+                <path 
+                  [attr.id]="idPrefix + '18'" 
+                  [attr.data-name]="idPrefix"  
+                  [attr.d]="drawInstructions"  
+                  [attr.transform]="twelveTransformation" 
+                  fill="#111"
+                ></path>
+                <path 
+                  id="outer-9"
+                  data-name="outer" 
+                  d="M150.7,79.8v29.711H268.138v-6.847l-13.2.092V105.2H162.682V83.682h92.251v3.24h13.388V79.8Z" 
+                  transform="translate(-150.699 -79.403)" 
+                  fill="#2d2d2d"
+                ></path>
+                <g 
+                  id="inner-9" 
+                  data-name="inner" 
+                  transform="translate(13.42 8.528)"
+                >
+                  <path
+                    id="end-9" 
+                    data-name="end" 
+                    d="M496.3,119.819h13.816V106.4H496.3Z" 
+                    transform="translate(-404.08 -106.4)" 
+                    fill="#d1d1d1"
+                  ></path>
+                  <path 
+                    id="Main-9" 
+                    data-name="Main" 
+                    d="M194.6,119.819h91.395V106.4H194.6Z" 
+                    transform="translate(-194.6 -106.4)" 
+                    fill="#d1d1d1"
+                  ></path>
                 </g>
               </g>
             </g>
           </g>
-          <g transform="translate(124.999 66)">
-            <g id="slot-10" data-name="slot" [attr.transform]="driveTrayTransformation">
-              <path [attr.id]="idPrefix + '19'" [attr.data-name]="idPrefix"  [attr.d]="drawInstructions"  [attr.transform]="twentyFourTransformations" fill="#111"/>
-              <g id="empty2-10" data-name="empty2" opacity="0.5">
-                <path [attr.id]="idPrefix + '20'" [attr.data-name]="idPrefix"  [attr.d]="drawInstructions"  [attr.transform]="twelveTransformation" fill="#111"/>
-                <path id="outer-10" data-name="outer" d="M150.7,79.8v29.711H268.138v-6.847l-13.2.092V105.2H162.682V83.682h92.251v3.24h13.388V79.8Z" transform="translate(-150.699 -79.403)" fill="#2d2d2d"/>
-                <g id="inner-10" data-name="inner" transform="translate(13.42 8.528)">
-                  <path id="end-10" data-name="end" d="M496.3,119.819h13.816V106.4H496.3Z" transform="translate(-404.08 -106.4)" fill="#d1d1d1"/>
-                  <path id="Main-10" data-name="Main" d="M194.6,119.819h91.395V106.4H194.6Z" transform="translate(-194.6 -106.4)" fill="#d1d1d1"/>
+          <g 
+            transform="translate(124.999 66)"
+          >
+            <g 
+              id="slot-10" 
+              data-name="slot" 
+              [attr.transform]="driveTrayTransformation"
+            >
+              <path 
+                [attr.id]="idPrefix + '19'" 
+                [attr.data-name]="idPrefix"  
+                [attr.d]="drawInstructions"  
+                [attr.transform]="twentyFourTransformations" 
+                fill="#111"
+              ></path>
+              <g 
+                id="empty2-10" 
+                data-name="empty2" 
+                opacity="0.5"
+              >
+                <path 
+                  [attr.id]="idPrefix + '20'" 
+                  [attr.data-name]="idPrefix"  
+                  [attr.d]="drawInstructions"  
+                  [attr.transform]="twelveTransformation" 
+                  fill="#111"
+                ></path>
+                <path 
+                  id="outer-10" 
+                  data-name="outer" 
+                  d="M150.7,79.8v29.711H268.138v-6.847l-13.2.092V105.2H162.682V83.682h92.251v3.24h13.388V79.8Z" 
+                  transform="translate(-150.699 -79.403)" 
+                  fill="#2d2d2d"
+                ></path>
+                <g 
+                  id="inner-10" 
+                  data-name="inner" 
+                  transform="translate(13.42 8.528)"
+                >
+                  <path 
+                    id="end-10" 
+                    data-name="end" 
+                    d="M496.3,119.819h13.816V106.4H496.3Z" 
+                    transform="translate(-404.08 -106.4)" 
+                    fill="#d1d1d1"
+                  ></path>
+                  <path 
+                    id="Main-10" 
+                    data-name="Main" 
+                    d="M194.6,119.819h91.395V106.4H194.6Z" 
+                    transform="translate(-194.6 -106.4)" 
+                    fill="#d1d1d1"
+                  ></path>
                 </g>
               </g>
             </g>
           </g>
-          <g transform="translate(249.999 66)">
-            <g id="slot-11" data-name="slot" [attr.transform]="driveTrayTransformation">
-              <path [attr.id]="idPrefix + '21'" [attr.data-name]="idPrefix"  [attr.d]="drawInstructions"  [attr.transform]="twentyFourTransformations" fill="#111"/>
-              <g id="empty2-11" data-name="empty2" opacity="0.5">
-                <path [attr.id]="idPrefix + '22'" [attr.data-name]="idPrefix"  [attr.d]="drawInstructions"  [attr.transform]="twelveTransformation" fill="#111"/>
-                <path id="outer-11" data-name="outer" d="M150.7,79.8v29.711H268.138v-6.847l-13.2.092V105.2H162.682V83.682h92.251v3.24h13.388V79.8Z" transform="translate(-150.699 -79.403)" fill="#2d2d2d"/>
-                <g id="inner-11" data-name="inner" transform="translate(13.42 8.528)">
-                  <path id="end-11" data-name="end" d="M496.3,119.819h13.816V106.4H496.3Z" transform="translate(-404.08 -106.4)" fill="#d1d1d1"/>
-                  <path id="Main-11" data-name="Main" d="M194.6,119.819h91.395V106.4H194.6Z" transform="translate(-194.6 -106.4)" fill="#d1d1d1"/>
+          <g 
+            transform="translate(249.999 66)"
+          >
+            <g 
+              id="slot-11" 
+              data-name="slot" 
+              [attr.transform]="driveTrayTransformation"
+            >
+              <path 
+                [attr.id]="idPrefix + '21'" 
+                [attr.data-name]="idPrefix"  
+                [attr.d]="drawInstructions"  
+                [attr.transform]="twentyFourTransformations" 
+                fill="#111"
+              ></path>
+              <g 
+                id="empty2-11" 
+                data-name="empty2" 
+                opacity="0.5"
+              >
+                <path 
+                  [attr.id]="idPrefix + '22'" 
+                  [attr.data-name]="idPrefix"  
+                  [attr.d]="drawInstructions"  
+                  [attr.transform]="twelveTransformation" 
+                  fill="#111"
+                ></path>
+                <path 
+                  id="outer-11" 
+                  data-name="outer" 
+                  d="M150.7,79.8v29.711H268.138v-6.847l-13.2.092V105.2H162.682V83.682h92.251v3.24h13.388V79.8Z" 
+                  transform="translate(-150.699 -79.403)" 
+                  fill="#2d2d2d"
+                ></path>
+                <g 
+                  id="inner-11" 
+                  data-name="inner" 
+                  transform="translate(13.42 8.528)"
+                >
+                  <path 
+                    id="end-11" 
+                    data-name="end" 
+                    d="M496.3,119.819h13.816V106.4H496.3Z" 
+                    transform="translate(-404.08 -106.4)" 
+                    fill="#d1d1d1"
+                  ></path>
+                  <path
+                    id="Main-11" 
+                    data-name="Main" 
+                    d="M194.6,119.819h91.395V106.4H194.6Z" 
+                    transform="translate(-194.6 -106.4)" 
+                    fill="#d1d1d1"
+                  ></path>
                 </g>
               </g>
             </g>
           </g>
-          <g transform="translate(374.999 66)">
-            <g id="slot-12" data-name="slot" [attr.transform]="driveTrayTransformation">
-              <path [attr.id]="idPrefix + '23'" [attr.data-name]="idPrefix"  [attr.d]="drawInstructions"  [attr.transform]="twentyFourTransformations" fill="#111"/>
-              <g id="empty2-12" data-name="empty2" opacity="0.5">
-                <path [attr.id]="idPrefix + '24'" [attr.data-name]="idPrefix"  [attr.d]="drawInstructions"  [attr.transform]="twelveTransformation" fill="#111"/>
-                <path id="outer-12" data-name="outer" d="M150.7,79.8v29.711H268.138v-6.847l-13.2.092V105.2H162.682V83.682h92.251v3.24h13.388V79.8Z" transform="translate(-150.699 -79.403)" fill="#2d2d2d"/>
-                <g id="inner-12" data-name="inner" transform="translate(13.42 8.528)">
-                  <path id="end-12" data-name="end" d="M496.3,119.819h13.816V106.4H496.3Z" transform="translate(-404.08 -106.4)" fill="#d1d1d1"/>
-                  <path id="Main-12" data-name="Main" d="M194.6,119.819h91.395V106.4H194.6Z" transform="translate(-194.6 -106.4)" fill="#d1d1d1"/>
+          <g
+            transform="translate(374.999 66)"
+          >
+            <g 
+              id="slot-12" 
+              data-name="slot" 
+              [attr.transform]="driveTrayTransformation"
+            >
+              <path 
+                [attr.id]="idPrefix + '23'" 
+                [attr.data-name]="idPrefix"  
+                [attr.d]="drawInstructions"  
+                [attr.transform]="twentyFourTransformations" 
+                fill="#111"
+              ></path>
+              <g 
+                id="empty2-12" 
+                data-name="empty2" 
+                opacity="0.5"
+              >
+                <path 
+                  [attr.id]="idPrefix + '24'" 
+                  [attr.data-name]="idPrefix"  
+                  [attr.d]="drawInstructions"  
+                  [attr.transform]="twelveTransformation" 
+                  fill="#111"
+                ></path>
+                <path 
+                  id="outer-12" 
+                  data-name="outer" 
+                  d="M150.7,79.8v29.711H268.138v-6.847l-13.2.092V105.2H162.682V83.682h92.251v3.24h13.388V79.8Z" 
+                  transform="translate(-150.699 -79.403)" 
+                  fill="#2d2d2d"
+                ></path>
+                <g 
+                  id="inner-12" 
+                  data-name="inner" 
+                  transform="translate(13.42 8.528)"
+                >
+                  <path
+                    id="end-12" 
+                    data-name="end" 
+                    d="M496.3,119.819h13.816V106.4H496.3Z" 
+                    transform="translate(-404.08 -106.4)" 
+                    fill="#d1d1d1"
+                  ></path>
+                  <path
+                    id="Main-12" 
+                    data-name="Main" 
+                    d="M194.6,119.819h91.395V106.4H194.6Z" transform="translate(-194.6 -106.4)"
+                    fill="#d1d1d1"
+                  ></path>
                 </g>
               </g>
             </g>
