@@ -4,7 +4,7 @@ import {
 import { UUID } from 'angular2-uuid';
 import { utcToZonedTime } from 'date-fns-tz';
 import Dygraph, { dygraphs } from 'dygraphs';
-import { Kb, Mb } from 'app/constants/bits.constant';
+import { kb, Mb } from 'app/constants/bits.constant';
 import {
   GiB, KiB, MiB, TiB,
 } from 'app/constants/bytes.constant';
@@ -269,12 +269,12 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
 
   axisLabelFormatter = (numero: number): string => {
     if (this.report?.name === ReportingGraphName.NetworkInterface) {
-      if (numero < Kb) {
+      if (numero < kb) {
         if (this.yLabelPrefix === 'Mb') {
           numero /= Mb;
         }
-        if (this.yLabelPrefix === 'Kb') {
-          numero /= Kb;
+        if (this.yLabelPrefix === 'kb') {
+          numero /= kb;
         }
       }
       const [formatted] = normalizeFileSize(numero * 1000, 'b', 10);
@@ -282,7 +282,7 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
     }
     const converted = this.formatLabelValue(numero, this.inferUnits(this.labelY), 1, true, true);
     const suffix = converted.suffix ? converted.suffix : '';
-    return `${this.limitDecimals(converted.value)} ${suffix}`;
+    return `${this.limitDecimals(converted.value)}${suffix}`;
   };
 
   series = (): Record<string, { plotter: unknown }> => {

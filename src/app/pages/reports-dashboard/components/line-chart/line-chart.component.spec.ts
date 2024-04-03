@@ -51,24 +51,24 @@ describe('LineChartComponent', () => {
 
   describe('axisLabelFormatter', () => {
     it('returns default formatted value', () => {
-      expect(spectator.component.axisLabelFormatter(500000).trim()).toBe('500 k');
+      expect(spectator.component.axisLabelFormatter(500000)).toBe('500k');
     });
 
     it('returns formatted value when labelY is set', () => {
       spectator.component.labelY = 'Mebibytes';
-      expect(spectator.component.axisLabelFormatter(500).trim()).toBe('500');
+      expect(spectator.component.axisLabelFormatter(500)).toBe('500');
     });
 
     it('returns formatted value when report name is NetworkInterface and less than 1000', () => {
       spectator.component.report = { name: ReportingGraphName.NetworkInterface } as Report;
       spectator.component.yLabelPrefix = 'Mb';
-      expect(spectator.component.axisLabelFormatter(500).trim()).toBe('0.5');
+      expect(spectator.component.axisLabelFormatter(500)).toBe('0.5');
     });
 
     it('returns formatted value when report name is NetworkInterface and greater than 100', () => {
       spectator.component.report = { name: ReportingGraphName.NetworkInterface } as Report;
-      spectator.component.yLabelPrefix = 'Kb';
-      expect(spectator.component.axisLabelFormatter(1500).trim()).toBe('1.5');
+      spectator.component.yLabelPrefix = 'kb';
+      expect(spectator.component.axisLabelFormatter(1500)).toBe('1.5');
     });
   });
 });

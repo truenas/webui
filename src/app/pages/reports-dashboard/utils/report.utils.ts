@@ -122,7 +122,7 @@ export function convertByKilobits(input: number): { value: number; suffix: strin
     suffix = ' Mb';
   } else if (input < 1000000 && input >= 1000) {
     output = input / 1000;
-    suffix = ' Kb';
+    suffix = ' kb';
   } else {
     suffix = ' b';
   }

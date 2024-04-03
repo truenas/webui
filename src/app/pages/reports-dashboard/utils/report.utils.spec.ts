@@ -18,7 +18,7 @@ describe('formatValue', () => {
   });
 
   it('returns value for Kilobits', () => {
-    expect(formatValue(500, 'Kilobits')).toBe('500 Kb');
+    expect(formatValue(500, 'Kilobits')).toBe('500 kb');
   });
 
   it('returns value for bits', () => {

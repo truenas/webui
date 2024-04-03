@@ -1,5 +1,5 @@
 import {
-  Gb, Kb, Mb, Tb,
+  Gb, kb, Mb, Tb,
 } from 'app/constants/bits.constant';
 import {
   GiB, KiB, MiB, TiB,
@@ -53,8 +53,8 @@ function normalizeFileSizeBase10(value: number, baseUnit: 'b' | 'B'): [formatted
   }
   formatted = Math.round((formatted + Number.EPSILON) * 100) / 100;
   switch (increment) {
-    case Kb:
-      return [formatted, 'K' + baseUnit];
+    case kb:
+      return [formatted, 'k' + baseUnit];
     case Mb:
       return [formatted, 'M' + baseUnit];
     case Gb:

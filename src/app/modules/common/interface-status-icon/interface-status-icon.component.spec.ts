@@ -1,7 +1,7 @@
 import { MatTooltip } from '@angular/material/tooltip';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { MockComponent, MockDirective } from 'ng-mocks';
-import { Kb, Mb } from 'app/constants/bits.constant';
+import { kb, Mb } from 'app/constants/bits.constant';
 import { LinkState } from 'app/enums/network-interface.enum';
 import { NetworkInterfaceUpdate } from 'app/interfaces/reporting.interface';
 import {
@@ -44,7 +44,7 @@ describe('InterfaceStatusIconComponent', () => {
       jest.spyOn(spectator.component, 'updateStateInfoIcon');
       spectator.setInput('update', {
         link_state: LinkState.Up,
-        sent_bytes_rate: 100 * Kb,
+        sent_bytes_rate: 100 * kb,
         received_bytes_rate: 30 * Mb,
       } as NetworkInterfaceUpdate);
     });
@@ -57,7 +57,7 @@ describe('InterfaceStatusIconComponent', () => {
     it('shows sent and received rate in icon tooltip', () => {
       const tooltip = spectator.query(MatTooltip);
 
-      expect(tooltip.message).toBe('Received: 240 Mb/s Sent: 800 Kb/s');
+      expect(tooltip.message).toBe('Received: 240 Mb/s Sent: 800 kb/s');
     });
 
     it('updates state icon to mark arrow or arrows as active on network traffic', () => {
