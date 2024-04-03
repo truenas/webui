@@ -473,7 +473,7 @@
     </g>
     <g
       id="drivetrays"
-      *ngFor="let tray of driveTrays; index as i"
+      *ngFor="let tray of driveTrays; trackBy: trackTraysBy"
       transform="translate(47.522 10.799)"
     >
       <g
@@ -481,23 +481,23 @@
         [attr.transform]="getDriveTrayTransformation(tray)"
       >
         <g 
-          [attr.id]="'slot' + '-' + i" 
-          [attr.data-name]="'slot' + '-' + i" 
+          [attr.id]="'slot' + '-' + tray.slot" 
+          [attr.data-name]="'slot' + '-' + tray.slot" 
           [attr.transform]="driveTrayTransformation"
         >
           <path
-            [attr.id]="idPrefix + '-' + i"
-            [attr.data-name]="idPrefix + '-' + i"  
+            [attr.id]="idPrefix + '-' + tray.slot"
+            [attr.data-name]="idPrefix + '-' + tray.slot"  
             [attr.d]="emptyTrayDrawInstructions"
             transform="translate(-150.7 -78.5)"
             fill="#111"
           ></path>
           <g
-            [attr.id]="idPrefix + '-' + i + '-empty'"
+            [attr.id]="idPrefix + '-' + tray.slot + '-empty'"
           >
             <path
-              [attr.id]="idPrefix + '-' + i + '-outer'"
-              [attr.data-name]="idPrefix + '-' + i + '-outer'"
+              [attr.id]="idPrefix + '-' + tray.slot + '-outer'"
+              [attr.data-name]="idPrefix + '-' + tray.slot + '-outer'"
               [attr.d]="nonEmptyTrayDrawInstructions"
               transform="translate(-150.699 -79.403)"
               fill="#2d2d2d"
@@ -505,20 +505,20 @@
             <g
               *ngIf="tray.empty"
               opacity="0.5"
-              [attr.id]="idPrefix + '-' + i + '-inner'"
-              [attr.data-name]="idPrefix + '-' + i + '-inner'"
+              [attr.id]="idPrefix + '-' + tray.slot + '-inner'"
+              [attr.data-name]="idPrefix + '-' + tray.slot + '-inner'"
               transform="translate(13.42 8.528)"
             >
               <path
-                [attr.id]="idPrefix + '-' + i + '-end'"
-                [attr.data-name]="idPrefix + '-' + i + '-end'"
+                [attr.id]="idPrefix + '-' + tray.slot + '-end'"
+                [attr.data-name]="idPrefix + '-' + tray.slot + '-end'"
                 d="M496.3,119.819h13.816V106.4H496.3Z"
                 transform="translate(-404.08 -106.4)"
                 fill="#d1d1d1"
               ></path>
               <path
-                [attr.id]="idPrefix + '-' + i + '-main'"
-                [attr.data-name]="idPrefix + '-' + i + '-main'" 
+                [attr.id]="idPrefix + '-' + tray.slot + '-main'"
+                [attr.data-name]="idPrefix + '-' + tray.slot + '-main'" 
                 d="M194.6,119.819h91.395V106.4H194.6Z"
                 transform="translate(-194.6 -106.4)"
                 fill="#d1d1d1"
@@ -526,20 +526,20 @@
             </g>
             <g 
               *ngIf="!tray.empty"
-              [attr.id]="idPrefix + '-' + i + '-inner'"
-              [attr.data-name]="idPrefix + '-' + i + '-inner'"
+              [attr.id]="idPrefix + '-' + tray.slot + '-inner'"
+              [attr.data-name]="idPrefix + '-' + tray.slot + '-inner'"
               transform="translate(13.42 8.528)"
             >
               <path 
-                [attr.id]="idPrefix + '-' + i + '-end'"
-                [attr.data-name]="idPrefix + '-' + i + '-end'"
+                [attr.id]="idPrefix + '-' + tray.slot + '-end'"
+                [attr.data-name]="idPrefix + '-' + tray.slot + '-end'"
                 d="M496.3,119.819h13.816V106.4H496.3Z" 
                 transform="translate(-404.08 -106.4)" 
                 fill="#71bcfc"
               ></path>
               <path 
-                [attr.id]="idPrefix + '-' + i + '-main'"
-                [attr.data-name]="idPrefix + '-' + i + '-main'" 
+                [attr.id]="idPrefix + '-' + tray.slot + '-main'"
+                [attr.data-name]="idPrefix + '-' + tray.slot + '-main'" 
                 d="M194.6,119.819h91.395V106.4H194.6Z" 
                 transform="translate(-194.6 -106.4)" 
                 fill="#71bcfc"
