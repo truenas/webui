@@ -1,5 +1,6 @@
 :host {
-  display: table-row;
+  display: block;
+  width: 100%;
 
   .list-item {
     display: flex;

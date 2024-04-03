@@ -14,28 +14,23 @@ import { AuthService } from 'app/services/auth/auth.service';
 export class UiSearchProvider implements GlobalSearchProvider {
   uiElements = UiElementsJson as UiSearchableElement[];
 
+  private translatedTerms = this.uiElements?.map((element) => {
+    return {
+      ...element,
+      hierarchy: element.hierarchy.map((key) => this.translate.instant(key)),
+      synonyms: element.synonyms.map((key) => this.translate.instant(key)),
+    };
+  });
+
   constructor(
     private authService: AuthService,
     private translate: TranslateService,
   ) {}
 
   search(term: string): Observable<UiSearchableElement[]> {
-    const lowercaseTerm = term.toLowerCase();
-
-    const translatedTerms = this.uiElements?.map((element) => {
-      return {
-        ...element,
-        hierarchy: element.hierarchy.map((key) => this.translate.instant(key)),
-        synonyms: element.synonyms.map((key) => this.translate.instant(key)),
-      };
-    });
-
-    const results = translatedTerms.filter((item) => {
-      if (!term?.trim()) {
-        return true;
-      }
-
-      return item.hierarchy[item.hierarchy.length - 1]?.toLowerCase()?.startsWith(lowercaseTerm);
+    const results = this.translatedTerms.filter((item) => {
+      return item.synonyms[item.synonyms.length - 1]?.toLowerCase().startsWith(term.toLowerCase())
+        || item.hierarchy[item.hierarchy.length - 1]?.toLowerCase().startsWith(term.toLowerCase());
     }).splice(0, 50);
 
     return from(results).pipe(

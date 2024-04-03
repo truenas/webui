@@ -116,7 +116,7 @@ export const helptextSystemSupport = {
   docHub: T('<a href="https://www.truenas.com/docs/hub/" target="_blank">\
  TrueNAS Documentation Hub</a> - Read and contribute to the open-source documentation.'),
 
-  forums: T('<a href="https://www.ixsystems.com/community/" target="_blank">\
+  forums: T('<a href="https://forums.truenas.com/" target="_blank">\
  TrueNAS Forums</a> - Find answers from other users in the forums.'),
 
   licensing: T('<a href="https://www.ixsystems.com/support/truenas-arrays/" target="_blank">\
