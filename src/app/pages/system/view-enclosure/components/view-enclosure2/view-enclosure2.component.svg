@@ -5,6 +5,11 @@
   height="197.444" 
   viewBox="0 0 585.843 197.444"
 >
+  <style>
+    .tray-container:hover {
+      fill: #ff3;
+    }
+  </style>
   <g
     id="M50_plain" 
     data-name="M50 plain" 
@@ -472,76 +477,89 @@
       </g>
     </g>
     <g
-      id="drivetrays"
+      [attr.id]="'drivetrays'"
+      class="drive-tray"
       *ngFor="let tray of driveTrays; trackBy: trackTraysBy"
       transform="translate(47.522 10.799)"
+      (click)="selectTray(tray)"
     >
       <g
-        [attr.id]="idPrefix+'-container'"
+        [attr.id]="'tray-container'"
+        (mouseover)="tray.highlight = true"
+        (mouseleave)="tray.highlight = false"
         [attr.transform]="getDriveTrayTransformation(tray)"
       >
         <g 
-          [attr.id]="'slot' + '-' + tray.slot" 
-          [attr.data-name]="'slot' + '-' + tray.slot" 
-          [attr.transform]="driveTrayTransformation"
+          [attr.id]="'slot-' + tray.slot" 
+          [attr.data-name]="'slot-' + tray.slot" 
+          transform="translate(119.457 30.476) rotate(180)"
         >
           <path
-            [attr.id]="idPrefix + '-' + tray.slot"
-            [attr.data-name]="idPrefix + '-' + tray.slot"  
+            [attr.id]="'tray-' + tray.slot"
+            [attr.data-name]="'tray-' + tray.slot"  
             [attr.d]="emptyTrayDrawInstructions"
             transform="translate(-150.7 -78.5)"
             fill="#111"
           ></path>
           <g
-            [attr.id]="idPrefix + '-' + tray.slot + '-empty'"
+            [attr.id]="'tray-' + tray.slot + '-empty'"
+            class="tray-wrapper"
           >
             <path
-              [attr.id]="idPrefix + '-' + tray.slot + '-outer'"
-              [attr.data-name]="idPrefix + '-' + tray.slot + '-outer'"
+              [attr.id]="'tray-' + tray.slot + '-outer'"
+              [attr.data-name]="'tray-' + tray.slot + '-outer'"
               [attr.d]="nonEmptyTrayDrawInstructions"
               transform="translate(-150.699 -79.403)"
-              fill="#2d2d2d"
+              [attr.fill]="tray.highlight ? '#ff3' : '#2d2d2d'"
             ></path>
+            <rect
+              x="0"
+              y="0"
+              height="32"
+              width="120"
+              *ngIf="tray.selected"
+              style="stroke:#71bcfc;fill:none;"
+            ></rect>
             <g
               *ngIf="tray.empty"
               opacity="0.5"
-              [attr.id]="idPrefix + '-' + tray.slot + '-inner'"
-              [attr.data-name]="idPrefix + '-' + tray.slot + '-inner'"
+              [attr.id]="'tray-' + tray.slot + '-inner'"
+              [attr.data-name]="'tray-' + tray.slot + '-inner'"
               transform="translate(13.42 8.528)"
             >
               <path
-                [attr.id]="idPrefix + '-' + tray.slot + '-end'"
-                [attr.data-name]="idPrefix + '-' + tray.slot + '-end'"
+                [attr.id]="'tray-' + tray.slot + '-end'"
+                [attr.data-name]="'tray-' + tray.slot + '-end'"
                 d="M496.3,119.819h13.816V106.4H496.3Z"
                 transform="translate(-404.08 -106.4)"
                 fill="#d1d1d1"
               ></path>
               <path
-                [attr.id]="idPrefix + '-' + tray.slot + '-main'"
-                [attr.data-name]="idPrefix + '-' + tray.slot + '-main'" 
+                [attr.id]="'tray-' + tray.slot + '-main'"
+                [attr.data-name]="'tray-' + tray.slot + '-main'" 
                 d="M194.6,119.819h91.395V106.4H194.6Z"
                 transform="translate(-194.6 -106.4)"
                 fill="#d1d1d1"
               ></path>
             </g>
-            <g 
+            <g
               *ngIf="!tray.empty"
-              [attr.id]="idPrefix + '-' + tray.slot + '-inner'"
-              [attr.data-name]="idPrefix + '-' + tray.slot + '-inner'"
+              [attr.id]="'tray-' + tray.slot + '-inner'"
+              [attr.data-name]="'tray-' + tray.slot + '-inner'"
               transform="translate(13.42 8.528)"
             >
-              <path 
-                [attr.id]="idPrefix + '-' + tray.slot + '-end'"
-                [attr.data-name]="idPrefix + '-' + tray.slot + '-end'"
-                d="M496.3,119.819h13.816V106.4H496.3Z" 
-                transform="translate(-404.08 -106.4)" 
+              <path
+                [attr.id]="'tray-' + tray.slot + '-end'"
+                [attr.data-name]="'tray-' + tray.slot + '-end'"
+                d="M496.3,119.819h13.816V106.4H496.3Z"
+                transform="translate(-404.08 -106.4)"
                 fill="#71bcfc"
               ></path>
-              <path 
-                [attr.id]="idPrefix + '-' + tray.slot + '-main'"
-                [attr.data-name]="idPrefix + '-' + tray.slot + '-main'" 
-                d="M194.6,119.819h91.395V106.4H194.6Z" 
-                transform="translate(-194.6 -106.4)" 
+              <path
+                [attr.id]="'tray-' + tray.slot + '-main'"
+                [attr.data-name]="'tray-' + tray.slot + '-main'" 
+                d="M194.6,119.819h91.395V106.4H194.6Z"
+                transform="translate(-194.6 -106.4)"
                 fill="#71bcfc"
               ></path>
             </g>
