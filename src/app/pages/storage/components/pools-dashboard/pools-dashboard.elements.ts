@@ -13,8 +13,6 @@ export const storageElements = {
     },
     createPool: {
       hierarchy: [T('Create Pool')],
-      synonyms: [T('Pool Wizard')],
-      anchorRouterLink: ['/storage/create'],
     },
   },
 };

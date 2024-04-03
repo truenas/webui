@@ -9,6 +9,7 @@ import { Role } from 'app/enums/role.enum';
 import { helptextSharingIscsi } from 'app/helptext/sharing';
 import { IscsiGlobalSession } from 'app/interfaces/iscsi-global-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { initiatorFormElements } from 'app/pages/sharing/iscsi/initiator/initiator-form/initiator-form.elements';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { NetworkService } from 'app/services/network.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -26,6 +27,8 @@ interface InitiatorItem {
   providers: [NetworkService],
 })
 export class InitiatorFormComponent implements OnInit {
+  protected readonly searchableElements = initiatorFormElements;
+
   isFormLoading = false;
   pk: number;
 

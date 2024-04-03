@@ -1,8 +1,10 @@
 <button
   mat-stroked-button
   class="state-button"
+  matTooltipPosition="above"
   [ixTest]="[title, rowTestId(row), 'row-state']"
   [ngClass]="getButtonClass()"
+  [matTooltip]="tooltip"
   (click)="$event.stopPropagation(); onButtonClick()"
 >
   {{ state }}

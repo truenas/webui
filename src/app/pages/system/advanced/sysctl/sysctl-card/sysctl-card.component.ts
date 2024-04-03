@@ -30,7 +30,7 @@ import { WebSocketService } from 'app/services/ws.service';
 })
 export class SysctlCardComponent implements OnInit {
   readonly requiredRoles = [Role.FullAdmin];
-  protected readonly searchElements = sysctlCardElements;
+  protected readonly searchableElements = sysctlCardElements;
 
   dataProvider: AsyncDataProvider<Tunable>;
 

@@ -1,9 +1,10 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
 export const supportCardElements = {
-  hierarchy: [T('System Settings'), T('General'), T('Support')],
-  anchorRouterLink: ['/system', 'general'],
+  hierarchy: [T('System'), T('Support')],
+  anchorRouterLink: ['/system', 'support'],
   elements: {
+    support: {},
     updateLicense: {
       hierarchy: [T('License')],
     },

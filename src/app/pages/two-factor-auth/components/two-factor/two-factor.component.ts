@@ -15,6 +15,7 @@ import { helptext2fa } from 'app/helptext/system/2fa';
 import { ErrorReport } from 'app/interfaces/error-report.interface';
 import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { twoFactorElements } from 'app/pages/two-factor-auth/components/two-factor/two-factor.elements';
 import { AuthService } from 'app/services/auth/auth.service';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -25,6 +26,8 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TwoFactorComponent implements OnInit, OnDestroy {
+  protected readonly searchableElements = twoFactorElements;
+
   userTwoFactorAuthConfigured = false;
   isDataLoading = false;
   isFormLoading = false;

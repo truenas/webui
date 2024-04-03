@@ -23,7 +23,7 @@ import { advancedConfigUpdated } from 'app/store/system-config/system-config.act
 })
 export class KernelFormComponent implements OnInit {
   protected readonly requiredRoles = [Role.FullAdmin];
-  protected readonly searchElements = kernelFormElements;
+  protected readonly searchableElements = kernelFormElements;
 
   isFormLoading = false;
   form = this.fb.group({

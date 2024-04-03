@@ -1,9 +1,11 @@
 <ix-page-header *ngIf="screenType === ScreenType.Desktop">
   <ng-container *ngIf="isLoaded">
     <button
+      ixUiSearchableElement
       mat-button
       ixTest="configure-dashboard"
       [color]="'primary'"
+      [ixSearchConfig]="searchableElements.elements.configure"
       (click)="showConfigForm()"
     >
       {{ 'Configure' | translate }}
@@ -47,9 +49,11 @@
   </div>
 
   <div
+    ixUiSearchableElement
     class="widgets-wrapper"
     ixDropGrid
     [style.width]="optimalDesktopWidth"
+    [ixSearchConfig]="searchableElements.elements.dashboard"
     [ixDropGridModel]="renderedWidgets"
     (ixDropGridModelChange)="onWidgetReorder($event)"
   >

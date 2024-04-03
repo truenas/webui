@@ -14,7 +14,7 @@
           [tooltip]="language.tooltip | translate"
           [provider]="language.provider"
           [required]="true"
-          [ixSearchConfig]="searchElements.elements.language"
+          [ixSearchConfig]="searchableElements.elements.language"
         ></ix-combobox>
         <ix-select
           ixUiSearchableElement
@@ -22,7 +22,7 @@
           [tooltip]="kbdMap.tooltip | translate"
           [options]="kbdMap.options"
           [formControlName]="kbdMap.fcName"
-          [ixSearchConfig]="searchElements.elements.consoleKeyboardMap"
+          [ixSearchConfig]="searchableElements.elements.consoleKeyboardMap"
         ></ix-select>
         <ix-combobox
           ixUiSearchableElement
@@ -31,7 +31,7 @@
           [tooltip]="timezone.tooltip | translate"
           [provider]="timezone.provider"
           [required]="true"
-          [ixSearchConfig]="searchElements.elements.timezone"
+          [ixSearchConfig]="searchableElements.elements.timezone"
         ></ix-combobox>
         <ix-select
           ixUiSearchableElement
@@ -39,7 +39,7 @@
           [tooltip]="dateFormat.tooltip | translate"
           [options]="dateFormat.options"
           [formControlName]="dateFormat.fcName"
-          [ixSearchConfig]="searchElements.elements.dateFormat"
+          [ixSearchConfig]="searchableElements.elements.dateFormat"
         ></ix-select>
         <ix-select
           ixUiSearchableElement
@@ -47,7 +47,7 @@
           [tooltip]="timeFormat.tooltip | translate"
           [options]="timeFormat.options"
           [formControlName]="timeFormat.fcName"
-          [ixSearchConfig]="searchElements.elements.timeFormat"
+          [ixSearchConfig]="searchableElements.elements.timeFormat"
         ></ix-select>
       </ix-fieldset>
 

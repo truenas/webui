@@ -1,4 +1,4 @@
-<mat-card class="card">
+<mat-card class="card" ixUiSearchableElement [ixSearchConfig]="searchableElements.elements.twoFactor">
   <mat-toolbar-row>
     <h3>{{ 'User Two-Factor Authentication Actions' | translate }}</h3>
   </mat-toolbar-row>
@@ -14,11 +14,13 @@
         [color]="!globalTwoFactorEnabled || !userTwoFactorAuthConfigured ? 'orange' : 'green'"
       ></ix-warning>
       <button
+        ixUiSearchableElement
         mat-button
         color="primary"
         type="button"
         ixTest="renew-secret"
         [disabled]="isFormLoading"
+        [ixSearchConfig]="searchableElements.elements.configure2FaSecret"
         (click)="renewSecretOrEnable2Fa()"
       >
         {{ userTwoFactorAuthConfigured ? ('Renew 2FA Secret' | translate) : ('Configure 2FA Secret' | translate) }}

@@ -9,4 +9,5 @@ export enum ChartSchemaType {
   Ipaddr = 'ipaddr',
   Cron = 'cron',
   Uri = 'uri',
+  Text = 'text',
 }

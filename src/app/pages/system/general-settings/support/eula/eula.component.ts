@@ -2,6 +2,7 @@ import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { eulaElements } from 'app/pages/system/general-settings/support/eula/eula.elements';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
@@ -12,6 +13,7 @@ import { WebSocketService } from 'app/services/ws.service';
 })
 export class EulaComponent implements OnInit {
   eula: string;
+  protected readonly searchableElements = eulaElements;
 
   constructor(
     private ws: WebSocketService,

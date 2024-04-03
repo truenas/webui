@@ -1,0 +1,79 @@
+:host {
+  align-items: center;
+  box-sizing: border-box;
+  display: flex;
+  flex: 1 1 100%;
+  flex-direction: row;
+  max-width: 100%;
+  place-content: center space-between;
+
+  .job-item {
+    align-items: center;
+    box-sizing: border-box;
+    display: flex;
+    display: flex;
+    flex: 1 1 0%;
+    flex-direction: row;
+    gap: 8px;
+    place-content: center flex-start;
+  }
+
+  .job-name {
+    align-items: baseline;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: row;
+    place-content: stretch space-between;
+  }
+
+  .job-name-wrapper {
+    box-sizing: border-box;
+    display: flex;
+    flex: 1 1 100%;
+    flex-direction: column;
+    max-width: 100%;
+  }
+
+  .job-progress {
+    margin: 3px 0;
+  }
+
+  ix-icon {
+    &.success {
+      color: var(--green);
+    }
+
+    &.failed {
+      color: var(--red);
+    }
+
+    &.running {
+      color: var(--primary);
+    }
+
+    &.waiting {
+      color: var(--accent);
+    }
+
+    &.aborted {
+      color: var(--orange);
+    }
+  }
+
+  .job-icon {
+    align-items: center;
+    cursor: default;
+    display: inline-flex;
+    flex-grow: 0;
+    justify-content: center;
+    max-height: 24px;
+    max-width: 24px;
+    min-height: 24px;
+    min-width: 24px;
+    overflow: hidden;
+
+    mat-spinner {
+      margin: 0;
+    }
+  }
+}

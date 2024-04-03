@@ -41,6 +41,7 @@ import {
   searchProperties,
   textProperty,
 } from 'app/modules/search-input/utils/search-properties.utils';
+import { auditElements } from 'app/pages/audit/components/audit/audit.elements';
 import { getLogImportantData } from 'app/pages/audit/utils/get-log-important-data.utils';
 import { UrlOptionsService } from 'app/services/url-options.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -53,6 +54,8 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AuditComponent implements OnInit, OnDestroy {
+  protected readonly searchableElements = auditElements;
+
   protected dataProvider: AuditApiDataProvider;
   protected readonly advancedSearchPlaceholder = this.translate.instant('Service = "SMB" AND Event = "CLOSE"');
   showMobileDetails = false;

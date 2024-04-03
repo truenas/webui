@@ -18,6 +18,7 @@ import { createTable } from 'app/modules/ix-table2/utils';
 import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TunableFormComponent } from 'app/pages/system/advanced/sysctl/tunable-form/tunable-form.component';
+import { tunableListElements } from 'app/pages/system/advanced/sysctl/tunable-list/tunable-list.elements';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -30,6 +31,7 @@ import { WebSocketService } from 'app/services/ws.service';
 })
 export class TunableListComponent implements OnInit {
   readonly requiredRoles = [Role.FullAdmin];
+  protected readonly searchableElements = tunableListElements;
 
   dataProvider: AsyncDataProvider<Tunable>;
   filterString = '';

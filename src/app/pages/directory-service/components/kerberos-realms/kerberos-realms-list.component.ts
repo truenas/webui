@@ -17,6 +17,7 @@ import { SortDirection } from 'app/modules/ix-table2/enums/sort-direction.enum';
 import { createTable } from 'app/modules/ix-table2/utils';
 import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
 import { KerberosRealmRow } from 'app/pages/directory-service/components/kerberos-realms/kerberos-realm-row.interface';
+import { kerberosRealmsListElements } from 'app/pages/directory-service/components/kerberos-realms/kerberos-realms-list.elements';
 import { KerberosRealmsFormComponent } from 'app/pages/directory-service/components/kerberos-realms-form/kerberos-realms-form.component';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -34,6 +35,7 @@ export class KerberosRealmsListComponent implements OnInit {
   @Input() inCard = false;
 
   readonly requiredRoles = [Role.DirectoryServiceWrite];
+  protected readonly searchableElements = kerberosRealmsListElements;
 
   filterString = '';
   dataProvider: AsyncDataProvider<KerberosRealmRow>;

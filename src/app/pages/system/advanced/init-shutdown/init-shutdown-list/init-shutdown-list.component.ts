@@ -22,6 +22,7 @@ import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import {
   InitShutdownFormComponent,
 } from 'app/pages/system/advanced/init-shutdown/init-shutdown-form/init-shutdown-form.component';
+import { initShudownListElements } from 'app/pages/system/advanced/init-shutdown/init-shutdown-list/init-shutdown-list.elements';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -34,6 +35,7 @@ import { WebSocketService } from 'app/services/ws.service';
 })
 export class InitShutdownListComponent implements OnInit {
   readonly requiredRoles = [Role.FullAdmin];
+  protected readonly searchableElements = initShudownListElements;
 
   dataProvider: AsyncDataProvider<InitShutdownScript>;
 

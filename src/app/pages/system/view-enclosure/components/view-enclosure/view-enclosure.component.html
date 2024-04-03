@@ -88,8 +88,11 @@
   </div>
 </ng-template>
 
-<ng-container *ngIf="errors.length === 0">
-
+<ng-container
+  *ngIf="errors.length === 0"
+  ixUiSearchableElement
+  [ixSearchConfig]="searchableElements.elements.viewEnclosure"
+>
   <!-- Loading indicator -->
   <ng-container *ngIf="spinner; then multispinner;"></ng-container>
 

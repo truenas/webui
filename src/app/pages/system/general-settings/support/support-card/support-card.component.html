@@ -1,4 +1,9 @@
-<mat-card class="system-card" gdArea="system-card">
+<mat-card
+  class="system-card"
+  gdArea="system-card"
+  ixUiSearchableElement
+  [ixSearchConfig]="searchableElements.elements.support"
+>
   <mat-toolbar-row class="title-bar">
     <h3>{{ 'Support' | translate }}</h3>
   </mat-toolbar-row>
@@ -69,7 +74,7 @@
               mat-button
               color="default"
               ixTest="set-license"
-              [ixSearchConfig]="searchElements.elements.updateLicense"
+              [ixSearchConfig]="searchableElements.elements.updateLicense"
               (click)="updateLicense()"
             >
               {{ licenseButtonText | translate }}
@@ -112,7 +117,7 @@
                 mat-button
                 color="default"
                 ixTest="file-ticket"
-                [ixSearchConfig]="searchElements.elements.fileTicket"
+                [ixSearchConfig]="searchableElements.elements.fileTicket"
                 (click)="feedbackDialog()"
               >
                 {{ ticketText | translate }}
