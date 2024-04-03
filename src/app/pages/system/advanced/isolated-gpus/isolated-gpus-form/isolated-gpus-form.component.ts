@@ -25,7 +25,7 @@ import { waitForAdvancedConfig } from 'app/store/system-config/system-config.sel
 })
 export class IsolatedGpusFormComponent implements OnInit {
   protected readonly requiredRoles = [Role.FullAdmin];
-  protected readonly searchElements = isolatedGpusElements;
+  protected readonly searchableElements = isolatedGpusElements;
 
   isFormLoading = false;
 

@@ -14,6 +14,7 @@ import { helptextSystemFailover } from 'app/helptext/system/failover';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { failoverElements } from 'app/pages/system/failover-settings/failover-settings.elements';
 import { AuthService } from 'app/services/auth/auth.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketConnectionService } from 'app/services/websocket-connection.service';
@@ -30,6 +31,8 @@ import { haSettingsUpdated } from 'app/store/ha-info/ha-info.actions';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FailoverSettingsComponent implements OnInit {
+  protected readonly searchableElements = failoverElements;
+
   isLoading = false;
   form = this.formBuilder.group({
     disabled: [false],

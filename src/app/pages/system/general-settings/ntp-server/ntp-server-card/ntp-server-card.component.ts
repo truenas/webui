@@ -27,7 +27,7 @@ import { WebSocketService } from 'app/services/ws.service';
 })
 export class NtpServerCardComponent implements OnInit {
   readonly requiredRoles = [Role.FullAdmin];
-  protected readonly searchElements = ntpServerElements;
+  protected readonly searchableElements = ntpServerElements;
 
   dataProvider: AsyncDataProvider<NtpServer>;
 

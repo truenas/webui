@@ -37,7 +37,7 @@ enum SendMethod {
 })
 export class EmailFormComponent implements OnInit {
   protected readonly requiredRoles = [Role.FullAdmin];
-  protected searchElements = emailFormElements;
+  protected searchableElements = emailFormElements;
 
   sendMethodControl = new FormControl(SendMethod.Smtp);
 

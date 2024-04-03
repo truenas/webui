@@ -32,7 +32,7 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy {
   @ViewChild(CdkVirtualScrollViewport, { static: false }) viewport: CdkVirtualScrollViewport;
   @ViewChild('container', { static: true }) container: ElementRef;
 
-  readonly searchElements = reportingElements;
+  readonly searchableElements = reportingElements;
 
   scrollContainer: HTMLElement;
 

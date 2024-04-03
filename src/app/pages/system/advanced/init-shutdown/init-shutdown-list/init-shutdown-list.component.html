@@ -10,7 +10,7 @@
   </button>
 </ix-page-header>
 
-<div class="table-container">
+<div class="table-container" ixUiSearchableElement [ixSearchConfig]="searchableElements.elements.initShutDown">
   <ix-table2
     [ix-table2-empty]="!(dataProvider.currentPageCount$ | async)"
     [emptyConfig]="emptyService.defaultEmptyConfig(dataProvider.emptyType$ | async)"

@@ -14,6 +14,8 @@
 
 <ix-table2
   class="table"
+  ixUiSearchableElement
+  [ixSearchConfig]="searchableElements.elements.dockerImagesList"
   [ix-table2-empty]="!(dataProvider.currentPageCount$ | async)"
   [emptyConfig]="emptyService.defaultEmptyConfig(dataProvider.emptyType$ | async)"
 >

@@ -1,7 +1,7 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
 export const isolatedGpusCardElements = {
-  hierarchy: [T('System Settings'), T('Advanced'), T('Isolated GPU Device(s)')],
+  hierarchy: [T('System'), T('Advanced'), T('Isolated GPU Device(s)')],
   anchorRouterLink: ['/system', 'advanced'],
   elements: {
     configure: {

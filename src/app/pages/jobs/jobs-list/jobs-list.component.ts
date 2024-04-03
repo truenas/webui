@@ -28,6 +28,7 @@ import {
   selectRunningJobs,
 } from 'app/modules/jobs/store/job.selectors';
 import { JobTab } from 'app/pages/jobs/job-tab.enum';
+import { jobsListElements } from 'app/pages/jobs/jobs-list/jobs-list.elements';
 
 @UntilDestroy()
 @Component({
@@ -36,6 +37,8 @@ import { JobTab } from 'app/pages/jobs/job-tab.enum';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class JobsListComponent implements OnInit {
+  protected readonly searchableElements = jobsListElements;
+
   protected readonly isLoading$ = this.store$.select(selectJobState).pipe(map((state) => state.isLoading));
   protected readonly error$ = this.store$.select(selectJobState).pipe(map((state) => state.error));
   protected jobs: Job[] = [];

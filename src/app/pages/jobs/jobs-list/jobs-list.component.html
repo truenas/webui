@@ -25,6 +25,8 @@
 </ix-page-header>
 
 <ix-table2
+  ixUiSearchableElement
+  [ixSearchConfig]="searchableElements.elements.jobs"
   [ix-table2-empty]="!(dataProvider.currentPageCount$ | async)"
   [emptyConfig]="emptyService.defaultEmptyConfig(emptyType$ | async)"
 >

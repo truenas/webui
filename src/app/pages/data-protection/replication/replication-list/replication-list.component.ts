@@ -29,6 +29,7 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import {
   ReplicationFormComponent,
 } from 'app/pages/data-protection/replication/replication-form/replication-form.component';
+import { replicationListElements } from 'app/pages/data-protection/replication/replication-list/replication-list.elements';
 import {
   ReplicationRestoreDialogComponent,
 } from 'app/pages/data-protection/replication/replication-restore-dialog/replication-restore-dialog.component';
@@ -52,6 +53,7 @@ export class ReplicationListComponent implements OnInit {
   dataProvider: AsyncDataProvider<ReplicationTask>;
   readonly jobState = JobState;
   readonly requiredRoles = [Role.ReplicationTaskWrite, Role.ReplicationTaskWritePull];
+  protected readonly searchableElements = replicationListElements;
 
   columns = createTable<ReplicationTask>([
     textColumn({

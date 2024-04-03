@@ -15,6 +15,7 @@ import { SortDirection } from 'app/modules/ix-table2/enums/sort-direction.enum';
 import { createTable } from 'app/modules/ix-table2/utils';
 import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
 import { KerberosKeytabsFormComponent } from 'app/pages/directory-service/components/kerberos-keytabs/kerberos-keytabs-form/kerberos-keytabs-form.component';
+import { kerberosKeytabsListElements } from 'app/pages/directory-service/components/kerberos-keytabs/kerberos-keytabs-list/kerberos-keytabs-list.elements';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -31,6 +32,7 @@ export class KerberosKeytabsListComponent implements OnInit {
   @Input() inCard = false;
 
   readonly requiredRoles = [Role.DirectoryServiceWrite];
+  protected readonly searchableElements = kerberosKeytabsListElements;
 
   filterString = '';
   dataProvider: AsyncDataProvider<KerberosKeytab>;

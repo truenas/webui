@@ -36,6 +36,8 @@
     <ng-container *ngIf="!isMobileView" [ngTemplateOutlet]="thead"></ng-container>
 
     <ix-table2
+      ixUiSearchableElement
+      [ixSearchConfig]="searchableElements.elements.audit"
       [ix-table2-empty]="!(dataProvider.currentPageCount$ | async)"
       [emptyConfig]="emptyService.defaultEmptyConfig(dataProvider.emptyType$ | async)"
     >

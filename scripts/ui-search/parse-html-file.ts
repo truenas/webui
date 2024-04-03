@@ -61,11 +61,15 @@ function mergeElementsData(
     const child = parent?.elements?.[childKey] || {};
 
     const hierarchy = [...(parent?.hierarchy || []), ...(child?.hierarchy || [])];
-    const synonyms = [...(parent?.synonyms || []), ...(child?.synonyms || [])];
-    const anchorRouterLink = parent?.anchorRouterLink || child?.anchorRouterLink;
-    const triggerAnchor = parent?.triggerAnchor || child?.triggerAnchor || null;
+    const synonyms = [
+      ...(parent?.synonyms || []),
+      ...(child?.synonyms || []),
+      ...(parent?.hierarchy.slice(-1) || []),
+    ];
+    const anchorRouterLink = child?.anchorRouterLink || parent?.anchorRouterLink;
+    const triggerAnchor = child?.triggerAnchor || parent?.triggerAnchor || null;
     const routerLink = parseRouterLink(cheerioRoot$(element).attr('[routerlink]')) ?? null;
-    let requiredRoles = parent.requiredRoles || child.requiredRoles || [];
+    let requiredRoles = child.requiredRoles || parent.requiredRoles || [];
 
     const rolesAttrName = cheerioRoot$(element).attr('*ixrequiresroles') || '';
 
