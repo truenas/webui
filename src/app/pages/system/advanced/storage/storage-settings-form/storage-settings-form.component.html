@@ -13,7 +13,7 @@
           [label]="'Select Pool' | translate"
           [required]="true"
           [options]="poolOptions$"
-          [ixSearchConfig]="searchElements.elements.systemPool"
+          [ixSearchConfig]="searchableElements.elements.systemPool"
         ></ix-select>
         <ix-input
           ixUiSearchableElement
@@ -22,7 +22,7 @@
           [required]="true"
           [hint]="'Value in GiB' | translate"
           [tooltip]="'By default, all data disks are created with the amount of swap specified. Changing the value does not affect the amount of swap on existing disks, only disks added after the change. Does not affect log or cache devices as they are created without swap.' | translate"
-          [ixSearchConfig]="searchElements.elements.swapSize"
+          [ixSearchConfig]="searchableElements.elements.swapSize"
         ></ix-input>
       </ix-fieldset>
 

@@ -19,6 +19,7 @@ import {
 } from 'app/interfaces/network-interface.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { VolumesData } from 'app/interfaces/volume-data.interface';
+import { dashboardElements } from 'app/pages/dashboard/components/dashboard/dashboard.elements';
 import { DashboardFormComponent } from 'app/pages/dashboard/components/dashboard-form/dashboard-form.component';
 import { DashConfigItem } from 'app/pages/dashboard/components/widget-controller/widget-controller.component';
 import { DashboardStore } from 'app/pages/dashboard/store/dashboard-store.service';
@@ -55,6 +56,7 @@ export interface DashboardNetworkInterfaceAlias extends NetworkInterfaceAlias {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DashboardComponent implements AfterViewInit, OnDestroy {
+  protected readonly searchableElements = dashboardElements;
   reorderMode = false;
   isSavingState = false;
   screenType = ScreenType.Desktop;

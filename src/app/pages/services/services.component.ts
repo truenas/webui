@@ -30,6 +30,7 @@ import { ServiceSmbComponent } from 'app/pages/services/components/service-smb/s
 import { ServiceSnmpComponent } from 'app/pages/services/components/service-snmp/service-snmp.component';
 import { ServiceSshComponent } from 'app/pages/services/components/service-ssh/service-ssh.component';
 import { ServiceUpsComponent } from 'app/pages/services/components/service-ups/service-ups.component';
+import { servicesElements } from 'app/pages/services/services.elements';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IscsiService } from 'app/services/iscsi.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -50,6 +51,8 @@ type ServiceStartStop = 'service.stop' | 'service.start';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ServicesComponent implements OnInit {
+  protected readonly searchableElements = servicesElements;
+
   columns = createTable<ServiceRow>([
     textColumn({
       title: this.translate.instant('Name'),

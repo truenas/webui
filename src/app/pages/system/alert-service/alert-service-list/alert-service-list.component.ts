@@ -17,6 +17,7 @@ import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells
 import { createTable } from 'app/modules/ix-table2/utils';
 import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
 import { AlertServiceComponent } from 'app/pages/system/alert-service/alert-service/alert-service.component';
+import { alertServiceListElements } from 'app/pages/system/alert-service/alert-service-list/alert-service-list.elements';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -30,6 +31,7 @@ import { WebSocketService } from 'app/services/ws.service';
 })
 export class AlertServiceListComponent implements OnInit {
   readonly requiredRoles = [Role.AlertListWrite];
+  protected readonly searchableElements = alertServiceListElements;
 
   dataProvider: AsyncDataProvider<AlertService>;
   filterString = '';

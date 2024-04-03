@@ -1,7 +1,7 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
 export const accessCardElements = {
-  hierarchy: [T('System Settings'), T('Advanced'), T('Access')],
+  hierarchy: [T('System'), T('Advanced'), T('Access')],
   anchorRouterLink: ['/system', 'advanced'],
   elements: {
     configureAccess: {

@@ -47,6 +47,14 @@ export class IxCellStateButtonComponent<T> extends ColumnComponent<T> {
     return this.value as JobState;
   }
 
+  protected get tooltip(): string {
+    if (this.job?.logs_path && this.job?.logs_excerpt) {
+      return this.translate.instant('Show Logs');
+    }
+
+    return this.translate.instant('No logs available');
+  }
+
   protected onButtonClick(): void {
     if (this.job) {
       const state = (this.row as RowState).state;
@@ -85,6 +93,8 @@ export class IxCellStateButtonComponent<T> extends ColumnComponent<T> {
         this.dialogService.error({ title: state.state, message: `<pre>${list}</pre>` });
       } else if (state.error) {
         this.dialogService.error({ title: state.state, message: `<pre>${state.error}</pre>` });
+      } else if (!this.job.logs_excerpt) {
+        this.dialogService.warn(helptextGlobal.noLogDialog.title, helptextGlobal.noLogDialog.message);
       } else {
         this.matDialog.open(ShowLogsDialogComponent, { data: this.job });
       }

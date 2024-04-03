@@ -44,7 +44,7 @@ describe('JobLogsRowComponent', () => {
 
   beforeEach(() => {
     spectator = createHost(
-      '<ix-job-logs-row [job]="job" [colspan]="6"></ix-job-logs-row>',
+      '<ix-job-logs-row [job]="job"></ix-job-logs-row>',
       { hostProps: { job: fakeJob } },
     );
   });

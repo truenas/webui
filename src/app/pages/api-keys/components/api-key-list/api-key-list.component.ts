@@ -21,6 +21,7 @@ import { createTable } from 'app/modules/ix-table2/utils';
 import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { ApiKeyFormDialogComponent } from 'app/pages/api-keys/components/api-key-form-dialog/api-key-form-dialog.component';
+import { apiKeysElements } from 'app/pages/api-keys/components/api-key-list/api-key-list.elements';
 import { ApiKeyComponentStore } from 'app/pages/api-keys/store/api-key.store';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -33,6 +34,7 @@ import { WebSocketService } from 'app/services/ws.service';
 })
 export class ApiKeyListComponent implements OnInit {
   protected readonly requiredRoles = [Role.FullAdmin];
+  protected readonly searchableElements = apiKeysElements;
 
   smartTasks: ApiKey[] = [];
   dataProvider = new ArrayDataProvider<ApiKey>();

@@ -38,7 +38,7 @@ import { WebSocketService } from 'app/services/ws.service';
 })
 export class CronCardComponent implements OnInit {
   readonly requiredRoles = [Role.FullAdmin];
-  protected readonly searchElements = cronCardElements;
+  protected readonly searchableElements = cronCardElements;
 
   title = helptextSystemAdvanced.fieldset_cron;
   cronjobs: CronjobRow[] = [];

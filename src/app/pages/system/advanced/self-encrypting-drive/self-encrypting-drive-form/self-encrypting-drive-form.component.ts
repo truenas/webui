@@ -32,7 +32,7 @@ export interface SedConfig {
 })
 export class SelfEncryptingDriveFormComponent implements OnInit {
   protected readonly requiredRoles = [Role.FullAdmin];
-  protected readonly searchElements = sedFormElements;
+  protected readonly searchableElements = sedFormElements;
 
   isFormLoading = false;
   title = helptextSystemAdvanced.fieldset_sed;

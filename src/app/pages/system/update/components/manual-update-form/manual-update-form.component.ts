@@ -21,6 +21,7 @@ import { Job } from 'app/interfaces/job.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
+import { systemManualUpdateFormElements } from 'app/pages/system/update/components/manual-update-form/manual-update-form.elements';
 import { updateAgainCode } from 'app/pages/system/update/utils/update-again-code.constant';
 import { AuthService } from 'app/services/auth/auth.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
@@ -40,6 +41,7 @@ import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 })
 export class ManualUpdateFormComponent implements OnInit {
   protected readonly requiredRoles = [Role.FullAdmin];
+  protected readonly searchableElements = systemManualUpdateFormElements;
 
   isFormLoading$ = new BehaviorSubject(false);
   form = this.formBuilder.group({

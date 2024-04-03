@@ -6,7 +6,7 @@ export const helptextAbout = {
   docs: T('The <a href="https://www.truenas.com/docs/" target="_blank">TrueNAS Documentation Site</a> \
 is a collaborative website with helpful guides and information about your new storage system.'),
 
-  forums: T('The <a href="https://www.ixsystems.com/community/" target="_blank" class="external-link">TrueNAS Community Forums</a> \
+  forums: T('The <a href="https://forums.truenas.com/" target="_blank" class="external-link">TrueNAS Community Forums</a> \
 are the best place to ask questions and interact with fellow TrueNAS users.'),
 
   newsLetter: T('You can join the <a href="https://www.truenas.com/newsletter/" target="_blank" class="external-link">TrueNAS Newsletter</a> \

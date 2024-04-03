@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
+import { smbStatusElements } from 'app/pages/sharing/smb/smb-status/smb-status.elements';
 
 @Component({
   selector: 'ix-smb-status',
@@ -9,6 +10,7 @@ import { TranslateService } from '@ngx-translate/core';
 })
 export class SmbStatusComponent {
   @Input() activeTab = 'sessions';
+
   navLinks = [{
     label: this.translate.instant('Sessions'),
     path: '/sharing/smb/status/sessions',
@@ -22,6 +24,8 @@ export class SmbStatusComponent {
     label: this.translate.instant('Notifications'),
     path: '/sharing/smb/status/notifications',
   }];
+
+  protected readonly searchableElements = smbStatusElements;
 
   constructor(
     protected translate: TranslateService,

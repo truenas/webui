@@ -1,7 +1,7 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
 export const manageConfigurationElements = {
-  hierarchy: [T('System Settings'), T('General'), T('Manage Configuration')],
+  hierarchy: [T('System'), T('General'), T('Manage Configuration')],
   anchorRouterLink: ['/system', 'general'],
   triggerAnchor: 'manage-configuration',
   elements: {

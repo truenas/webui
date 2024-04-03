@@ -17,6 +17,7 @@ import { NestedTreeDataSource } from 'app/modules/ix-tree/nested-tree-datasource
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { BootPoolAttachDialogComponent } from 'app/pages/system/bootenv/boot-pool-attach/boot-pool-attach-dialog.component';
 import { BootPoolReplaceDialogComponent } from 'app/pages/system/bootenv/boot-pool-replace/boot-pool-replace-dialog.component';
+import { bootEnvStatusElements } from 'app/pages/system/bootenv/bootenv-status/bootenv-status.elements';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -37,6 +38,8 @@ export interface BootPoolActionEvent {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class BootStatusListComponent implements OnInit {
+  protected readonly searchableElements = bootEnvStatusElements;
+
   isLoading$ = new BehaviorSubject(false);
   dataSource: NestedTreeDataSource<DeviceNestedDataNode>;
   treeControl = new NestedTreeControl<DeviceNestedDataNode, string>((vdev) => vdev.children, {

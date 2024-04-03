@@ -21,7 +21,7 @@ import { WebSocketService } from 'app/services/ws.service';
 })
 export class ReplicationSettingsFormComponent implements OnInit {
   protected readonly requiredRoles = [Role.ReplicationTaskConfigWrite];
-  protected readonly searchElements = replicationSettingsFormElements;
+  protected readonly searchableElements = replicationSettingsFormElements;
 
   isFormLoading = false;
   form = this.fb.group({

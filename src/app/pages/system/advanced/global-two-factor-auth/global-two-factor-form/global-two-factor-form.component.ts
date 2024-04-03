@@ -27,7 +27,7 @@ import { WebSocketService } from 'app/services/ws.service';
 })
 export class GlobalTwoFactorAuthFormComponent implements OnInit {
   protected readonly requiredRoles = [Role.FullAdmin];
-  protected searchElements = globalTwoFactorFormElements;
+  protected searchableElements = globalTwoFactorFormElements;
 
   isFormLoading = false;
   form = this.fb.group({
