@@ -32,7 +32,7 @@ import { EnclosureDisksMiniComponent } from 'app/pages/system/view-enclosure/com
 import { JbosFormComponent } from 'app/pages/system/view-enclosure/components/jbof-form/jbof-form.component';
 import { JbofListComponent } from 'app/pages/system/view-enclosure/components/jbof-list/jbof-list.component';
 import { ViewEnclosure1Component } from 'app/pages/system/view-enclosure/components/view-enclosure/view-enclosure.component';
-import { ViewEnclosure2Component } from 'app/pages/system/view-enclosure/components/view-enclosure2/view-enclosure.component';
+import { ViewEnclosure2Component } from 'app/pages/system/view-enclosure/components/view-enclosure2/view-enclosure2.component';
 import { SetEnclosureLabelDialogComponent } from './components/set-enclosure-label-dialog/set-enclosure-label-dialog.component';
 import { TabContentComponent } from './components/tab-content/tab-content.component';
 import { TemperatureMeterComponent } from './components/temperature-meter/temperature-meter.component';
