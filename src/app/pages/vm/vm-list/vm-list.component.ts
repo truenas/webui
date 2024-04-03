@@ -22,6 +22,7 @@ import {
 import { Column, ColumnComponent } from 'app/modules/ix-table2/interfaces/table-column.interface';
 import { createTable } from 'app/modules/ix-table2/utils';
 import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
+import { vmListElements } from 'app/pages/vm/vm-list/vm-list.elements';
 import { VmWizardComponent } from 'app/pages/vm/vm-wizard/vm-wizard.component';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
@@ -37,6 +38,7 @@ import { WebSocketService } from 'app/services/ws.service';
 })
 export class VmListComponent implements OnInit {
   protected readonly requiredRoles = [Role.VmWrite];
+  protected readonly searchableElements = vmListElements;
 
   vmMachines: VirtualMachine[] = [];
   filterString = '';

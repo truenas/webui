@@ -26,6 +26,7 @@ import { selectJob } from 'app/modules/jobs/store/job.selectors';
 import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { CloudSyncFormComponent } from 'app/pages/data-protection/cloudsync/cloudsync-form/cloudsync-form.component';
+import { cloudSyncListElements } from 'app/pages/data-protection/cloudsync/cloudsync-list/cloudsync-list.elements';
 import { CloudSyncRestoreDialogComponent } from 'app/pages/data-protection/cloudsync/cloudsync-restore-dialog/cloudsync-restore-dialog.component';
 import { CloudSyncWizardComponent } from 'app/pages/data-protection/cloudsync/cloudsync-wizard/cloudsync-wizard.component';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
@@ -41,6 +42,8 @@ import { AppState } from 'app/store';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CloudSyncListComponent implements OnInit {
+  protected readonly searchableElements = cloudSyncListElements;
+
   cloudSyncTasks: CloudSyncTaskUi[] = [];
   filterString = '';
   dataProvider: AsyncDataProvider<CloudSyncTaskUi>;

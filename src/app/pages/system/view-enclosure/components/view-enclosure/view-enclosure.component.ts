@@ -13,6 +13,7 @@ import { Store } from '@ngrx/store';
 import { Observable, ReplaySubject, Subject } from 'rxjs';
 import { filter, takeUntil } from 'rxjs/operators';
 import { EnclosureUi, EnclosureUiElements } from 'app/interfaces/enclosure.interface';
+import { viewEnclosureElements } from 'app/pages/system/view-enclosure/components/view-enclosure/view-enclosure.elements';
 import { EnclosureEvent } from 'app/pages/system/view-enclosure/interfaces/enclosure-events.interface';
 import { ErrorMessage } from 'app/pages/system/view-enclosure/interfaces/error-message.interface';
 import { ViewConfig } from 'app/pages/system/view-enclosure/interfaces/view.config';
@@ -49,6 +50,7 @@ export class ViewEnclosureComponent implements AfterViewInit, OnDestroy {
   @ViewChild('navigation', { static: false }) nav: ElementRef<HTMLElement>;
   private disksUpdateSubscriptionId: string;
   private destroyed$ = new ReplaySubject<boolean>(1);
+  protected readonly searchableElements = viewEnclosureElements;
 
   currentView: ViewConfig = {
     name: 'Array Device Slot',

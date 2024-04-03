@@ -2,7 +2,7 @@ import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { Role } from 'app/enums/role.enum';
 
 export const sedFormElements = {
-  hierarchy: [T('System Settings'), T('Advanced'), T('Self-Encrypting Drive')],
+  hierarchy: [T('System'), T('Advanced'), T('Self-Encrypting Drive')],
   triggerAnchor: 'configure-sed',
   anchorRouterLink: ['/system', 'advanced'],
   requiredRoles: [Role.FullAdmin],

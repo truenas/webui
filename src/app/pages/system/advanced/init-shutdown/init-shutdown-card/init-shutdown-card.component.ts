@@ -36,7 +36,7 @@ import { WebSocketService } from 'app/services/ws.service';
 })
 export class InitShutdownCardComponent implements OnInit {
   readonly requiredRoles = [Role.FullAdmin];
-  protected readonly searchElements = initShutdownCardElements;
+  protected readonly searchableElements = initShutdownCardElements;
 
   dataProvider: AsyncDataProvider<InitShutdownScript>;
 

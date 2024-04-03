@@ -28,12 +28,21 @@ export class UiSearchProvider implements GlobalSearchProvider {
   ) {}
 
   search(term: string): Observable<UiSearchableElement[]> {
-    const results = this.translatedTerms.filter((item) => {
-      return item.synonyms[item.synonyms.length - 1]?.toLowerCase().startsWith(term.toLowerCase())
+    // sort results by showing hierarchy match first, then synonyms match
+    const sortedResults = this.translatedTerms.filter((item) => {
+      return item.synonyms.find((synonym) => synonym?.toLowerCase().startsWith(term.toLowerCase()))
         || item.hierarchy[item.hierarchy.length - 1]?.toLowerCase().startsWith(term.toLowerCase());
-    }).splice(0, 50);
+    }).sort((a, b) => {
+      const aHierarchyMatch = a.hierarchy[a.hierarchy.length - 1]?.toLowerCase().startsWith(term.toLowerCase()) ? 1 : 0;
+      const bHierarchyMatch = b.hierarchy[b.hierarchy.length - 1]?.toLowerCase().startsWith(term.toLowerCase()) ? 1 : 0;
 
-    return from(results).pipe(
+      const aSynonymMatch = a.synonyms.find((synonym) => synonym?.toLowerCase().startsWith(term.toLowerCase())) ? 1 : 0;
+      const bSynonymMatch = b.synonyms.find((synonym) => synonym?.toLowerCase().startsWith(term.toLowerCase())) ? 1 : 0;
+
+      return bHierarchyMatch - aHierarchyMatch || aSynonymMatch - bSynonymMatch;
+    }).slice(0, 50);
+
+    return from(sortedResults).pipe(
       mergeMap((item) => {
         if (!item.requiredRoles.length) {
           return of(item);

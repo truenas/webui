@@ -19,6 +19,7 @@ import { SortDirection } from 'app/modules/ix-table2/enums/sort-direction.enum';
 import { createTable } from 'app/modules/ix-table2/utils';
 import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
 import { GroupFormComponent } from 'app/pages/account/groups/group-form/group-form.component';
+import { groupListElements } from 'app/pages/account/groups/group-list/group-list.elements';
 import { groupPageEntered, groupRemoved } from 'app/pages/account/groups/store/group.actions';
 import { selectGroupState, selectGroupsTotal, selectGroups } from 'app/pages/account/groups/store/group.selectors';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -34,6 +35,7 @@ import { waitForPreferences } from 'app/store/preferences/preferences.selectors'
 })
 export class GroupListComponent implements OnInit {
   protected readonly requiredRoles = [Role.AccountWrite];
+  protected readonly searchableElements = groupListElements;
 
   dataProvider = new ArrayDataProvider<Group>();
   columns = createTable<Group>([

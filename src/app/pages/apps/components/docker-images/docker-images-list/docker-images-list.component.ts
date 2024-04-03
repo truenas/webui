@@ -19,6 +19,7 @@ import { createTable } from 'app/modules/ix-table2/utils';
 import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
 import { DockerImageDeleteDialogComponent } from 'app/pages/apps/components/docker-images/docker-image-delete-dialog/docker-image-delete-dialog.component';
 import { DockerImageUpdateDialogComponent } from 'app/pages/apps/components/docker-images/docker-image-update-dialog/docker-image-update-dialog.component';
+import { dockerImagesListElements } from 'app/pages/apps/components/docker-images/docker-images-list/docker-images-list.elements';
 import { PullImageFormComponent } from 'app/pages/apps/components/docker-images/pull-image-form/pull-image-form.component';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -33,6 +34,8 @@ import { WebSocketService } from 'app/services/ws.service';
 })
 export class DockerImagesListComponent implements OnInit {
   protected readonly requiredRoles = [Role.AppsWrite];
+  protected readonly searchableElements = dockerImagesListElements;
+
   dataProvider: AsyncDataProvider<ContainerImage>;
   containerImages: ContainerImage[] = [];
   selection = new SelectionModel<ContainerImage>(true, []);

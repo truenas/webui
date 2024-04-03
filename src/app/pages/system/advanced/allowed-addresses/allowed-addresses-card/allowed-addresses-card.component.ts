@@ -36,7 +36,7 @@ interface AllowedAddressRow {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AllowedAddressesCardComponent implements OnInit {
-  protected readonly searchElements = allowedAddressesCardElements;
+  protected readonly searchableElements = allowedAddressesCardElements;
   protected readonly requiredRoles = [Role.FullAdmin];
   dataProvider: AsyncDataProvider<AllowedAddressRow>;
 

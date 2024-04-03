@@ -19,6 +19,7 @@ import {
   CatalogAddFormComponent,
 } from 'app/pages/apps/components/catalogs/catalog-add-form/catalog-add-form.component';
 import { CatalogDeleteDialogComponent } from 'app/pages/apps/components/catalogs/catalog-delete-dialog/catalog-delete-dialog.component';
+import { catalogsElements } from 'app/pages/apps/components/catalogs/catalogs.elements';
 import {
   ManageCatalogSummaryDialogComponent,
 } from 'app/pages/apps/components/catalogs/manage-catalog-summary/manage-catalog-summary-dialog.component';
@@ -35,6 +36,7 @@ import { CatalogEditFormComponent } from './catalog-edit-form/catalog-edit-form.
 })
 export class CatalogsComponent implements OnInit {
   protected readonly requiredRoles = [Role.CatalogWrite];
+  protected readonly searchableElements = catalogsElements;
 
   catalogSyncJobIds = new Set<number>();
   dataProvider: AsyncDataProvider<Catalog>;

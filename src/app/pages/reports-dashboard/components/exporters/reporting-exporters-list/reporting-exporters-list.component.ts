@@ -19,6 +19,7 @@ import { createTable } from 'app/modules/ix-table2/utils';
 import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { ReportingExportersFormComponent } from 'app/pages/reports-dashboard/components/exporters/reporting-exporters-form/reporting-exporters-form.component';
+import { reportingExportersElements } from 'app/pages/reports-dashboard/components/exporters/reporting-exporters-list/reporting-exporters-list.elements';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -31,6 +32,7 @@ import { WebSocketService } from 'app/services/ws.service';
 })
 export class ReportingExporterListComponent implements OnInit {
   protected readonly requiredRoles = [Role.ReportingWrite];
+  protected readonly searchableElements = reportingExportersElements;
 
   filterString = '';
   dataProvider = new ArrayDataProvider<ReportingExporter>();

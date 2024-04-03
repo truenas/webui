@@ -20,6 +20,7 @@ import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-sli
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { InterfaceFormComponent } from 'app/pages/network/components/interface-form/interface-form.component';
+import { networkElements } from 'app/pages/network/network.elements';
 import { InterfacesStore } from 'app/pages/network/stores/interfaces.store';
 import { AuthService } from 'app/services/auth/auth.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
@@ -38,6 +39,8 @@ import { networkInterfacesChanged } from 'app/store/network-interfaces/network-i
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class NetworkComponent implements OnInit {
+  protected readonly searchableElements = networkElements;
+
   isHaEnabled = false;
   hasPendingChanges = false;
   checkinWaiting = false;

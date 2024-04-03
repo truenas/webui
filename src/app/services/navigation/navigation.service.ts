@@ -108,9 +108,9 @@ export class NavigationService {
       state: 'reportsdashboard/cpu',
     },
     {
-      name: T('System Settings'),
+      name: T('System'),
       type: MenuItemType.SlideOut,
-      tooltip: T('System Settings'),
+      tooltip: T('System'),
       icon: 'settings',
       state: 'system',
       sub: [

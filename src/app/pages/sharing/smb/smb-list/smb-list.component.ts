@@ -23,6 +23,7 @@ import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SmbAclComponent } from 'app/pages/sharing/smb/smb-acl/smb-acl.component';
 import { SmbFormComponent } from 'app/pages/sharing/smb/smb-form/smb-form.component';
+import { smbListElements } from 'app/pages/sharing/smb/smb-list/smb-list.elements';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -36,6 +37,7 @@ import { selectService } from 'app/store/services/services.selectors';
 })
 export class SmbListComponent implements OnInit {
   readonly requiredRoles = [Role.SharingSmbWrite, Role.SharingWrite];
+  protected readonly searchableElements = smbListElements;
 
   service$ = this.store$.select(selectService(ServiceName.Cifs));
 

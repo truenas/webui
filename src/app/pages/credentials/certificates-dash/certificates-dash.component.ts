@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { UntilDestroy } from '@ngneat/until-destroy';
+import { certificatesDashElements } from 'app/pages/credentials/certificates-dash/certificates-dash.elements';
 
 @UntilDestroy()
 @Component({
@@ -7,4 +8,6 @@ import { UntilDestroy } from '@ngneat/until-destroy';
   styleUrls: ['./certificates-dash.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class CertificatesDashComponent {}
+export class CertificatesDashComponent {
+  protected readonly searchableElements = certificatesDashElements;
+}

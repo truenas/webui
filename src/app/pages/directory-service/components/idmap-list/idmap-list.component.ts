@@ -20,6 +20,7 @@ import { createTable } from 'app/modules/ix-table2/utils';
 import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
 import { ActiveDirectoryComponent } from 'app/pages/directory-service/components/active-directory/active-directory.component';
 import { IdmapFormComponent } from 'app/pages/directory-service/components/idmap-form/idmap-form.component';
+import { idMapElements } from 'app/pages/directory-service/components/idmap-list/idmap-list.elements';
 import { IdmapRow } from 'app/pages/directory-service/components/idmap-list/idmap-row.interface';
 import { requiredIdmapDomains } from 'app/pages/directory-service/utils/required-idmap-domains.utils';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
@@ -39,6 +40,7 @@ export class IdmapListComponent implements OnInit {
   @Input() inCard = false;
 
   readonly requiredRoles = [Role.DirectoryServiceWrite];
+  protected readonly searchableElements = idMapElements;
 
   filterString = '';
   dataProvider: AsyncDataProvider<IdmapRow>;

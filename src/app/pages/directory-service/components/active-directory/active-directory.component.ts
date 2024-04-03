@@ -16,6 +16,7 @@ import { NssInfoType } from 'app/interfaces/active-directory.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { activeDirectoryElements } from 'app/pages/directory-service/components/active-directory/active-directory.elements';
 import {
   LeaveDomainDialogComponent,
 } from 'app/pages/directory-service/components/leave-domain-dialog/leave-domain-dialog.component';
@@ -31,6 +32,7 @@ import { WebSocketService } from 'app/services/ws.service';
 })
 export class ActiveDirectoryComponent implements OnInit {
   protected readonly requiredRoles = [Role.DirectoryServiceWrite];
+  protected readonly searchableElements = activeDirectoryElements;
 
   isLoading = false;
   isAdvancedMode = false;

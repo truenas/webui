@@ -33,6 +33,7 @@ import { CrontabExplanationPipe } from 'app/modules/scheduler/pipes/crontab-expl
 import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { RsyncTaskFormComponent } from 'app/pages/data-protection/rsync-task/rsync-task-form/rsync-task-form.component';
+import { rsyncTaskListElements } from 'app/pages/data-protection/rsync-task/rsync-task-list/rsync-task-list.elements';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 import { TaskService } from 'app/services/task.service';
@@ -47,6 +48,7 @@ import { WebSocketService } from 'app/services/ws.service';
 })
 export class RsyncTaskListComponent implements OnInit {
   readonly requiredRoles = [Role.FullAdmin];
+  protected readonly searchableElements = rsyncTaskListElements;
 
   dataProvider: AsyncDataProvider<RsyncTask>;
   filterString: string;

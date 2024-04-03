@@ -1,7 +1,7 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
 export const consoleCardElements = {
-  hierarchy: [T('System Settings'), T('Advanced'), T('Console')],
+  hierarchy: [T('System'), T('Advanced'), T('Console')],
   anchorRouterLink: ['/system', 'advanced'],
   elements: {
     configure: {

@@ -40,7 +40,7 @@ import { waitForGeneralConfig } from 'app/store/system-config/system-config.sele
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AccessCardComponent implements OnInit {
-  protected readonly searchElements = accessCardElements;
+  protected readonly searchableElements = accessCardElements;
   readonly requiredRoles = [Role.AuthSessionsWrite];
   readonly tokenLifetime$ = this.store$.pipe(
     waitForPreferences,

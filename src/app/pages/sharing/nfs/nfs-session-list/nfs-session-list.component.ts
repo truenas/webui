@@ -12,6 +12,7 @@ import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells
 import { Column, ColumnComponent } from 'app/modules/ix-table2/interfaces/table-column.interface';
 import { createTable } from 'app/modules/ix-table2/utils';
 import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
+import { nfsSessionListElements } from 'app/pages/sharing/nfs/nfs-session-list/nfs-session-list.elements';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
@@ -21,6 +22,7 @@ import { WebSocketService } from 'app/services/ws.service';
 })
 export class NfsSessionListComponent implements OnInit {
   activeNfsType: NfsType = NfsType.Nfs3;
+  protected readonly searchableElements = nfsSessionListElements;
 
   filterString = '';
   sessions: Nfs3Session[] | Nfs4Session['info'][] = [];
