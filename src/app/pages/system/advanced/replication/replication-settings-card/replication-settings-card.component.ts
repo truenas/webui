@@ -48,7 +48,7 @@ export class ReplicationSettingsCardComponent {
 
   onConfigurePressed(): void {
     this.advancedSettings.showFirstTimeWarningIfNeeded().pipe(
-      switchMap(() => this.chainedSlideIns.pushComponent(
+      switchMap(() => this.chainedSlideIns.open(
         ReplicationSettingsFormComponent,
         false,
         this.replicationConfig,

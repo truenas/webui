@@ -32,7 +32,7 @@ describe('ReplicationSettingsCardComponent', () => {
         showFirstTimeWarningIfNeeded: jest.fn(() => of(true)),
       }),
       mockProvider(IxChainedSlideInService, {
-        pushComponent: jest.fn(() => of({ response: true, error: null })),
+        open: jest.fn(() => of({ response: true, error: null })),
       }),
       mockProvider(ChainedRef, { close: jest.fn(), getData: jest.fn(() => undefined) }),
     ],
@@ -58,7 +58,7 @@ describe('ReplicationSettingsCardComponent', () => {
 
     expect(spectator.inject(AdvancedSettingsService).showFirstTimeWarningIfNeeded).toHaveBeenCalled();
     expect(
-      spectator.inject(IxChainedSlideInService).pushComponent,
+      spectator.inject(IxChainedSlideInService).open,
     ).toHaveBeenCalledWith(
       ReplicationSettingsFormComponent,
       false,

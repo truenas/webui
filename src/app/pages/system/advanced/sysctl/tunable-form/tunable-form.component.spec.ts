@@ -33,7 +33,7 @@ describe('TunableFormComponent', () => {
         mockJob('tunable.update', fakeSuccessfulJob()),
       ]),
       mockProvider(IxChainedSlideInService, {
-        pushComponent: jest.fn(() => of({ response: true, error: null })),
+        open: jest.fn(() => of({ response: true, error: null })),
         components$: of([]),
       }),
       mockProvider(FormErrorHandlerService),

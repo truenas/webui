@@ -57,7 +57,7 @@ describe('InitShutdownListComponent', () => {
         mockCall('initshutdownscript.delete'),
       ]),
       mockProvider(IxChainedSlideInService, {
-        pushComponent: jest.fn(() => of([])),
+        open: jest.fn(() => of([])),
       }),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
@@ -84,7 +84,7 @@ describe('InitShutdownListComponent', () => {
     const editButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'edit' }), 1, 5);
     await editButton.click();
 
-    expect(spectator.inject(IxChainedSlideInService).pushComponent).toHaveBeenCalledWith(
+    expect(spectator.inject(IxChainedSlideInService).open).toHaveBeenCalledWith(
       InitShutdownFormComponent,
       false,
       expect.objectContaining(scripts[0]),

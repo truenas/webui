@@ -219,13 +219,13 @@ export class RsyncTaskListComponent implements OnInit {
   }
 
   protected add(): void {
-    const closer$ = this.chainedSlideInService.pushComponent(RsyncTaskFormComponent, true);
+    const closer$ = this.chainedSlideInService.open(RsyncTaskFormComponent, true);
     closer$.pipe(filter((response) => !!response.response), untilDestroyed(this))
       .subscribe(() => this.dataProvider.load());
   }
 
   private edit(row: RsyncTask): void {
-    const closer$ = this.chainedSlideInService.pushComponent(RsyncTaskFormComponent, true, row);
+    const closer$ = this.chainedSlideInService.open(RsyncTaskFormComponent, true, row);
     closer$.pipe(filter((response) => !!response.response), untilDestroyed(this))
       .subscribe(() => this.dataProvider.load());
   }

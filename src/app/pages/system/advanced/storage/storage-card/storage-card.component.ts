@@ -66,7 +66,7 @@ export class StorageCardComponent {
 
   onConfigurePressed(): void {
     this.advancedSettings.showFirstTimeWarningIfNeeded().pipe(
-      switchMap(() => this.chainedSlideIns.pushComponent(StorageSettingsFormComponent, false, this.storageSettings)),
+      switchMap(() => this.chainedSlideIns.open(StorageSettingsFormComponent, false, this.storageSettings)),
       filter((response) => !!response.response),
       tap(() => this.reloadConfig$.next()),
       untilDestroyed(this),

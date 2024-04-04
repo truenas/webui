@@ -42,7 +42,7 @@ describe('AccessFormComponent', () => {
         mockCall('system.general.update'),
       ]),
       mockProvider(IxChainedSlideInService, {
-        pushComponent: jest.fn(() => of(true)),
+        open: jest.fn(() => of(true)),
         components$: of([]),
       }),
       mockProvider(SystemGeneralService, {

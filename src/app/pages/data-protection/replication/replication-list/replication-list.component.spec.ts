@@ -139,7 +139,7 @@ describe('ReplicationListComponent', () => {
         mockCall('core.download', [undefined, 'http://someurl/file.json']),
       ]),
       mockProvider(IxChainedSlideInService, {
-        pushComponent: jest.fn(() => of()),
+        open: jest.fn(() => of()),
       }),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
@@ -195,7 +195,7 @@ describe('ReplicationListComponent', () => {
     const editButton = await loader.getHarness(MatButtonHarness.with({ text: 'Edit' }));
     await editButton.click();
 
-    expect(spectator.inject(IxChainedSlideInService).pushComponent).toHaveBeenCalledWith(
+    expect(spectator.inject(IxChainedSlideInService).open).toHaveBeenCalledWith(
       ReplicationFormComponent,
       true,
       expect.objectContaining(tasks[0]),
