@@ -44,6 +44,7 @@ describe('GlobalSearchComponent', () => {
       { provide: MatDialogRef, useValue: {} },
       mockProvider(UiSearchProvider, {
         search: jest.fn().mockReturnValue(of(mockedSearchResults)),
+        selectionChanged$: of(),
       }),
     ],
   });

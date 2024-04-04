@@ -4,7 +4,7 @@ import { TranslateService } from '@ngx-translate/core';
 import UiElementsJson from 'app/../assets/ui-searchable-elements.json';
 import {
   BehaviorSubject,
-  Observable, combineLatestWith, delay, distinctUntilChanged, filter, first, from, map, mergeMap, of, tap, toArray,
+  Observable, combineLatestWith, delay, filter, first, from, map, mergeMap, of, tap, toArray,
 } from 'rxjs';
 import { UiSearchableElementDirective } from 'app/directives/common/ui-searchable-element.directive';
 import { searchDelayConst } from 'app/modules/global-search/constants/delay.const';
@@ -32,7 +32,6 @@ export class UiSearchProvider implements GlobalSearchProvider {
 
   selectionChanged$ = this.selectedElement$.asObservable().pipe(
     filter(Boolean),
-    distinctUntilChanged(),
     tap(() => this.selectedElement$.next(null)),
   );
 
