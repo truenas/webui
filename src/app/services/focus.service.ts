@@ -18,7 +18,7 @@ export class FocusService {
     restoreFocus(): void {
       if (this.lastFocusedElement) {
         setTimeout(() => {
-          const dataTestValue = this.lastFocusedElement.getAttribute('data-test');
+          const dataTestValue = this.lastFocusedElement?.getAttribute('data-test');
           const overlayBackdrop = this.document.querySelector('.cdk-overlay-backdrop');
 
           if (dataTestValue && !overlayBackdrop) {

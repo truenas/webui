@@ -4,6 +4,8 @@ export const apiKeysElements = {
   hierarchy: [T('API Keys')],
   anchorRouterLink: ['/apikeys'],
   elements: {
-    apiKeys: {},
+    apiKeys: {
+      anchor: 'api-keys',
+    },
   },
 };

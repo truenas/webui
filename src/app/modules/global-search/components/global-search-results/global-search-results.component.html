@@ -10,8 +10,8 @@
         class="search-result"
         tabindex="0"
         [ixTest]="['search-result', result.hierarchy.join('-')]"
-        (click)="navigateToResult(result)"
-        (keydown.enter)="navigateToResult(result)"
+        (click)="selectElement(result)"
+        (keydown.enter)="selectElement(result)"
       >
         <h3 class="title" [innerHTML]="processHierarchy(result.hierarchy, searchTerm)"></h3>
       </div>
@@ -20,7 +20,7 @@
         *ngIf="getElementsBySection(section.value)?.length > resultLimit"
         class="toggle-show-more"
         mat-button
-        ixTest="toggle-show-all-results'"
+        ixTest="toggle-show-all-results"
         (click)="toggleShowAll(section.value)"
         (keydown.enter)="toggleShowAll(section.value)"
       >

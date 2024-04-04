@@ -2,14 +2,15 @@ import {
   animate, style, transition, trigger,
 } from '@angular/animations';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, EventEmitter, OnInit, Output, ViewChild,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild,
 } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import {
-  debounceTime, distinctUntilChanged, switchMap,
+  debounceTime, delay, distinctUntilChanged, filter, switchMap,
 } from 'rxjs';
+import { searchDelayConst } from 'app/modules/global-search/constants/delay.const';
 import { GlobalSearchSection } from 'app/modules/global-search/enums/global-search-section.enum';
 import { moveToNextFocusableElement, moveToPreviousFocusableElement } from 'app/modules/global-search/helpers/focus-helper';
 import { UiSearchableElement } from 'app/modules/global-search/interfaces/ui-searchable-element.interface';
@@ -37,8 +38,6 @@ import { SidenavService } from 'app/services/sidenav.service';
 export class GlobalSearchComponent implements OnInit {
   @ViewChild('searchInput') searchInput: ElementRef<HTMLInputElement>;
 
-  @Output() resetSearch = new EventEmitter<void>();
-
   searchTerm: string;
   searchControl = new FormControl('');
   searchResults: UiSearchableElement[];
@@ -59,6 +58,7 @@ export class GlobalSearchComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.listenForSelectionChanges();
     this.listenForSearchChanges();
     this.getInitialSearchResults();
   }
@@ -92,12 +92,20 @@ export class GlobalSearchComponent implements OnInit {
 
   resetInput(): void {
     this.searchControl.reset();
-    this.resetSearch.emit();
+  }
+
+  private listenForSelectionChanges(): void {
+    this.searchProvider.selectionChanged$
+      .pipe(delay(searchDelayConst), untilDestroyed(this))
+      .subscribe(() => {
+        this.resetInput();
+      });
   }
 
   private listenForSearchChanges(): void {
     this.searchControl.valueChanges.pipe(
-      debounceTime(150),
+      filter(Boolean),
+      debounceTime(searchDelayConst),
       distinctUntilChanged(),
       switchMap((term) => this.searchProvider.search(term)),
       untilDestroyed(this),

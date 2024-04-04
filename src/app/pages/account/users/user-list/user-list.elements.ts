@@ -4,7 +4,9 @@ export const userListElements = {
   hierarchy: [T('Credentials'), T('Users')],
   anchorRouterLink: ['/credentials', 'users'],
   elements: {
-    list: {},
+    list: {
+      anchor: 'credentials-users',
+    },
     add: {
       hierarchy: [T('Add')],
       anchor: 'add-user',
