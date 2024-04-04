@@ -1,0 +1,37 @@
+<ng-container *ngTemplateOutlet="template"></ng-container>
+<div class="tooltip">
+  <popper-content #popperTooltip class="fn-theme-tooltip">
+    <div class="tooltip-header">
+      <div class="title-wrapper">
+        <div>
+          <h5 class="tooltip-title">
+            {{ 'Help' | translate }}
+          </h5>
+        </div>
+      </div>
+      <div>
+        <ix-icon
+          class="close-icon"
+          name="mdi-close"
+          ixTest="tooltip-close"
+          (click)="popperTooltip.hide()"
+        ></ix-icon>
+      </div>
+    </div>
+    <div
+      class="tooltip-message"
+      ixTest="tooltip-message"
+      [innerHTML]="indicator.message"
+    ></div>
+  </popper-content>
+
+  <ix-icon
+    class="tooltip-icon"
+    name="circle"
+    popperAppendTo="body"
+    [popperTrigger]="'click' | cast"
+    [popper]="popperTooltip"
+    [popperShowOnStart]="false"
+    (popperOnHidden)="onHidden()"
+  ></ix-icon>
+</div>
