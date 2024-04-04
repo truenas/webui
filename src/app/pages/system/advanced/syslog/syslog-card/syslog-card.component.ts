@@ -95,7 +95,7 @@ export class SyslogCardComponent {
 
   onConfigurePressed(): void {
     this.advancedSettings.showFirstTimeWarningIfNeeded().pipe(
-      switchMap(() => this.chainedSlideIns.pushComponent(SyslogFormComponent, false, this.syslogConfig)),
+      switchMap(() => this.chainedSlideIns.open(SyslogFormComponent, false, this.syslogConfig)),
       filter((response) => !!response.response),
       untilDestroyed(this),
     ).subscribe({

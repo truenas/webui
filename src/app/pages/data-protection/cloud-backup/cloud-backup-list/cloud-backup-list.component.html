@@ -1,0 +1,16 @@
+<div class="container">
+  <div class="table-container">
+    table
+  </div>
+  <div
+    *ngIf="selectedBackup"
+    ixDetailsHeight="rightside-content-hold"
+    class="details-container"
+    [class.details-container-mobile]="showMobileDetails"
+  >
+    <ix-cloud-backup-details
+      [backup]="selectedBackup"
+      (closeMobileDetails)="closeMobileDetails()"
+    ></ix-cloud-backup-details>
+  </div>
+</div>

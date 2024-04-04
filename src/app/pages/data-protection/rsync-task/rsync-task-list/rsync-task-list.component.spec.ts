@@ -81,7 +81,7 @@ describe('RsyncTaskListComponent', () => {
     ],
     providers: [
       mockProvider(IxChainedSlideInService, {
-        pushComponent: jest.fn(() => of()),
+        open: jest.fn(() => of()),
       }),
       mockAuth(),
       mockProvider(DialogService, {
@@ -163,7 +163,7 @@ describe('RsyncTaskListComponent', () => {
     const editIcon = await table.getHarnessInRow(IxIconHarness.with({ name: 'edit' }), '/mnt/Pool1');
     await editIcon.click();
 
-    expect(spectator.inject(IxChainedSlideInService).pushComponent).toHaveBeenCalledWith(
+    expect(spectator.inject(IxChainedSlideInService).open).toHaveBeenCalledWith(
       RsyncTaskFormComponent,
       true,
       tasks[0],

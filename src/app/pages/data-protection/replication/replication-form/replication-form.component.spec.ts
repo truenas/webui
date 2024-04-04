@@ -183,7 +183,7 @@ describe('ReplicationFormComponent', () => {
       }),
       mockProvider(IxChainedSlideInService, {
         components$: of([]),
-        pushComponent: jest.fn(() => of()),
+        open: jest.fn(() => of()),
       }),
       mockProvider(SnackbarService),
       mockProvider(IxSlideInRef),

@@ -1,0 +1,31 @@
+<div class="header">
+  <h2 class="title">
+    <div class="mobile-prefix">
+      <a
+        tabindex="0"
+        class="mobile-back-button"
+        ixTest="disk-details-back"
+        (click)="onCloseMobileDetails()"
+        (keydown.enter)="onCloseMobileDetails()"
+      >
+        <ix-icon name="mdi-chevron-left"></ix-icon>
+      </a>
+      {{ 'Task Details for {task}' | translate: { task: backup.description } }}
+    </div>
+
+    <span class="prefix">
+      {{ 'Task Details for {task}' | translate: { task: backup.description } }}
+    </span>
+  </h2>
+</div>
+
+<ix-cloud-backup-schedule [backup]="backup"></ix-cloud-backup-schedule>
+
+<ix-cloud-backup-stats [backup]="backup"></ix-cloud-backup-stats>
+
+<ix-cloud-backup-excluded-paths
+  *ngIf="backup.exclude?.length"
+  [backup]="backup"
+></ix-cloud-backup-excluded-paths>
+
+<ix-cloud-backup-snapshots [backup]="backup"></ix-cloud-backup-snapshots>

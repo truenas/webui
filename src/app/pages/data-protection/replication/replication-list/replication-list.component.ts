@@ -209,7 +209,7 @@ export class ReplicationListComponent implements OnInit {
 
   openForm(row?: ReplicationTask): void {
     if (row) {
-      this.chainedSlideInService.pushComponent(ReplicationFormComponent, true, row)
+      this.chainedSlideInService.open(ReplicationFormComponent, true, row)
         .pipe(
           filter((response) => !!response.response),
           untilDestroyed(this),
@@ -219,7 +219,7 @@ export class ReplicationListComponent implements OnInit {
           },
         });
     } else {
-      this.chainedSlideInService.pushComponent(ReplicationWizardComponent, true)
+      this.chainedSlideInService.open(ReplicationWizardComponent, true)
         .pipe(
           filter((response) => !!response.response),
           untilDestroyed(this),

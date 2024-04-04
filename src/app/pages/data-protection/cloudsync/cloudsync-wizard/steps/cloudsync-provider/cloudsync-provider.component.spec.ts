@@ -65,7 +65,7 @@ describe('CloudSyncProviderComponent', () => {
         getProviders: jest.fn(() => of([storjProvider, googlePhotosProvider])),
       }),
       mockProvider(IxChainedSlideInService, {
-        pushComponent: jest.fn(() => of()),
+        open: jest.fn(() => of()),
       }),
       mockProvider(DatasetService),
       mockProvider(MatDialog, {

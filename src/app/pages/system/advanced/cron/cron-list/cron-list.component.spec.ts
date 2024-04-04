@@ -74,7 +74,7 @@ describe('CronListComponent', () => {
         confirm: jest.fn(() => of(true)),
       }),
       mockProvider(IxChainedSlideInService, {
-        pushComponent: jest.fn(() => of({ response: true, error: null })),
+        open: jest.fn(() => of({ response: true, error: null })),
       }),
       mockProvider(ChainedRef, { close: jest.fn(), getData: jest.fn(() => undefined) }),
       mockProvider(MatDialog, {
@@ -110,7 +110,7 @@ describe('CronListComponent', () => {
     const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
     await addButton.click();
 
-    expect(spectator.inject(IxChainedSlideInService).pushComponent).toHaveBeenCalledWith(CronFormComponent);
+    expect(spectator.inject(IxChainedSlideInService).open).toHaveBeenCalledWith(CronFormComponent);
   });
 
   it('shows confirmation dialog when Run Now button is pressed', async () => {
@@ -134,7 +134,7 @@ describe('CronListComponent', () => {
     const editButton = await loader.getHarness(MatButtonHarness.with({ text: 'Edit' }));
     await editButton.click();
 
-    expect(spectator.inject(IxChainedSlideInService).pushComponent).toHaveBeenCalledWith(
+    expect(spectator.inject(IxChainedSlideInService).open).toHaveBeenCalledWith(
       CronFormComponent,
       false,
       expect.objectContaining(cronJobs[0]),
