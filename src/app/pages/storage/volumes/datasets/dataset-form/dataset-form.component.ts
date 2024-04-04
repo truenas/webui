@@ -1137,6 +1137,8 @@ export class DatasetFormComponent implements Formconfiguration {
                           this.entityForm.setDisabled(all_encryption_fields[i], true, true);
                         }
                       }
+                    } else {
+                      encryption_fg.setValue(!encryption);
                     }
                   });
                 } else {
