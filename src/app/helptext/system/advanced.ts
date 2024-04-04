@@ -99,10 +99,10 @@ simultaneously.'),
   sed_user_tooltip: T('User passed to <i>camcontrol security -u</i> to unlock\
  SEDs'),
 
-  sed_passwd_placeholder: T('SED Password'),
-  sed_passwd_tooltip: T('Global password to unlock SEDs.'),
+  sed_passwd_placeholder: T('SED Key'),
+  sed_passwd_tooltip: T('Global key to unlock SEDs.'),
 
-  sed_passwd2_placeholder: T('Confirm SED Password'),
+  sed_passwd2_placeholder: T('Confirm SED Key'),
   sed_passwd2_tooltip: T(''),
 
   swapondrive_warning: T('A swap size of 0 is STRONGLY DISCOURAGED.'),
