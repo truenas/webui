@@ -53,7 +53,7 @@ export class IsolatedGpusCardComponent implements OnInit {
 
   onConfigurePressed(): void {
     this.advancedSettings.showFirstTimeWarningIfNeeded().pipe(
-      switchMap(() => this.chainedSlideIns.pushComponent(IsolatedGpusFormComponent)),
+      switchMap(() => this.chainedSlideIns.open(IsolatedGpusFormComponent)),
       filter((response) => !!response.response),
       tap(() => this.loadIsolatedGpus()),
       untilDestroyed(this),

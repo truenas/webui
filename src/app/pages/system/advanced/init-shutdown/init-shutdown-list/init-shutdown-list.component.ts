@@ -109,13 +109,13 @@ export class InitShutdownListComponent implements OnInit {
   }
 
   addScript(): void {
-    this.chainedSlideIns.pushComponent(InitShutdownFormComponent)
+    this.chainedSlideIns.open(InitShutdownFormComponent)
       .pipe(filter((response) => !!response.response), untilDestroyed(this))
       .subscribe(() => this.dataProvider.load());
   }
 
   editScript(script: InitShutdownScript): void {
-    this.chainedSlideIns.pushComponent(InitShutdownFormComponent, false, script)
+    this.chainedSlideIns.open(InitShutdownFormComponent, false, script)
       .pipe(filter((response) => !!response.response), untilDestroyed(this))
       .subscribe(() => this.dataProvider.load());
   }

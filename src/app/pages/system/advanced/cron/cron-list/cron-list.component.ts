@@ -126,7 +126,7 @@ export class CronListComponent implements OnInit {
   }
 
   doAdd(): void {
-    this.chainedSlideIns.pushComponent(CronFormComponent)
+    this.chainedSlideIns.open(CronFormComponent)
       .pipe(filter((response) => !!response.response), untilDestroyed(this))
       .subscribe(() => {
         this.getCronJobs();
@@ -134,7 +134,7 @@ export class CronListComponent implements OnInit {
   }
 
   doEdit(row: CronjobRow): void {
-    this.chainedSlideIns.pushComponent(CronFormComponent, false, row)
+    this.chainedSlideIns.open(CronFormComponent, false, row)
       .pipe(filter((response) => !!response.response), untilDestroyed(this))
       .subscribe(() => {
         this.getCronJobs();

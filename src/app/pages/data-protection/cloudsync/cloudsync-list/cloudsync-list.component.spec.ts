@@ -89,7 +89,7 @@ describe('CloudSyncListComponent', () => {
     ],
     providers: [
       mockProvider(IxChainedSlideInService, {
-        pushComponent: jest.fn(() => of()),
+        open: jest.fn(() => of()),
       }),
       mockAuth(),
       mockWebSocket([
@@ -156,7 +156,7 @@ describe('CloudSyncListComponent', () => {
     const editButton = await loader.getHarness(MatButtonHarness.with({ text: 'Edit' }));
     await editButton.click();
 
-    expect(spectator.inject(IxChainedSlideInService).pushComponent).toHaveBeenCalledWith(
+    expect(spectator.inject(IxChainedSlideInService).open).toHaveBeenCalledWith(
       CloudSyncFormComponent,
       true,
       expect.objectContaining(cloudSyncList[0]),

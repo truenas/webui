@@ -36,7 +36,7 @@ export class SystemSecurityCardComponent {
   ) {}
 
   openSystemSecuritySettings(config: SystemSecurityConfig): void {
-    this.chainedSlideIns.pushComponent(SystemSecurityFormComponent, false, config).pipe(
+    this.chainedSlideIns.open(SystemSecurityFormComponent, false, config).pipe(
       filter((response) => !!response.response),
       untilDestroyed(this),
     ).subscribe(() => {
