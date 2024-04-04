@@ -1,9 +1,7 @@
-/* eslint-disable no-console */
 import {
-  Directive, Input, ElementRef, Renderer2, OnInit, Inject, OnDestroy,
+  Directive, Input, ElementRef, Renderer2, OnInit, OnDestroy,
 } from '@angular/core';
 import { UntilDestroy } from '@ngneat/until-destroy';
-import { WINDOW } from 'app/helpers/window.helper';
 import { searchDelayConst } from 'app/modules/global-search/constants/delay.const';
 import { generateIdFromHierarchy } from 'app/modules/global-search/helpers/generate-id-from-hierarchy';
 import { UiSearchableElement } from 'app/modules/global-search/interfaces/ui-searchable-element.interface';
@@ -24,7 +22,6 @@ export class UiSearchableElementDirective implements OnInit, OnDestroy {
     private renderer: Renderer2,
     private elementRef: ElementRef<HTMLElement>,
     private searchProvider: UiSearchProvider,
-    @Inject(WINDOW) private window: Window,
   ) {}
 
   ngOnInit(): void {
@@ -39,19 +36,14 @@ export class UiSearchableElementDirective implements OnInit, OnDestroy {
   }
 
   highlight(): void {
-    const element = this.ixSearchConfig;
-    this.tryHighlightAnchors(element, 0);
-
-    if (element.targetHref) {
-      this.window.open(element.targetHref, '_blank');
-    }
+    this.tryHighlightAnchors(0);
   }
 
-  private tryHighlightAnchors(element: UiSearchableElement, attemptCount: number): void {
+  private tryHighlightAnchors(attemptCount: number): void {
     if (this.elementRef.nativeElement) {
       this.highlightAndClickElement();
     } else if (attemptCount < 2) {
-      setTimeout(() => this.tryHighlightAnchors(element, attemptCount + 1), searchDelayConst * 3);
+      setTimeout(() => this.tryHighlightAnchors(attemptCount + 1), searchDelayConst * 3);
     }
   }
 

@@ -1,9 +1,10 @@
 import {
-  ChangeDetectionStrategy, Component, Input, TrackByFunction,
+  ChangeDetectionStrategy, Component, Inject, Input, TrackByFunction,
 } from '@angular/core';
 import { Router } from '@angular/router';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import { WINDOW } from 'app/helpers/window.helper';
 import { Option } from 'app/interfaces/option.interface';
 import { GlobalSearchSection } from 'app/modules/global-search/enums/global-search-section.enum';
 import { generateIdFromHierarchy } from 'app/modules/global-search/helpers/generate-id-from-hierarchy';
@@ -57,11 +58,15 @@ export class GlobalSearchResultsComponent {
     private translate: TranslateService,
     private searchProvider: UiSearchProvider,
     private router: Router,
+    @Inject(WINDOW) private window: Window,
   ) {}
 
   selectElement(element: UiSearchableElement): void {
     this.searchProvider.select(element);
     const route = element.anchorRouterLink || element.routerLink;
+    if (element.targetHref) {
+      this.window.open(element.targetHref, '_blank');
+    }
     if (route?.length) {
       this.router.navigate(route);
     }
