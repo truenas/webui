@@ -29,6 +29,7 @@ import { LayoutService } from 'app/services/layout.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 import { dashboardStateLoaded, dashboardStateUpdated } from 'app/store/preferences/preferences.actions';
+import { dashboardElements } from './dashboard.elements';
 
 // TODO: This adds additional fields. Unclear if vlan is coming from backend
 export type DashboardNetworkInterface = NetworkInterface & {
@@ -55,6 +56,7 @@ export interface DashboardNetworkInterfaceAlias extends NetworkInterfaceAlias {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DashboardComponent implements AfterViewInit, OnDestroy {
+  protected readonly searchableElements = dashboardElements;
   reorderMode = false;
   isSavingState = false;
   screenType = ScreenType.Desktop;
