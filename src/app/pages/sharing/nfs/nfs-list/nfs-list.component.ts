@@ -17,6 +17,7 @@ import { createTable } from 'app/modules/ix-table2/utils';
 import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { NfsFormComponent } from 'app/pages/sharing/nfs/nfs-form/nfs-form.component';
+import { nfsListElements } from 'app/pages/sharing/nfs/nfs-list/nfs-list.elements';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -29,6 +30,7 @@ import { WebSocketService } from 'app/services/ws.service';
 })
 export class NfsListComponent implements OnInit {
   requiredRoles = [Role.SharingNfsWrite, Role.SharingWrite];
+  protected readonly searchableElements = nfsListElements;
 
   filterString = '';
   dataProvider: AsyncDataProvider<NfsShare>;

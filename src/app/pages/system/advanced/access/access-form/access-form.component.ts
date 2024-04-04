@@ -29,7 +29,7 @@ import { selectGeneralConfig } from 'app/store/system-config/system-config.selec
 })
 export class AccessFormComponent implements OnInit {
   readonly requiredRoles = [Role.AuthSessionsWrite];
-  protected readonly searchElements = accessFormElements;
+  protected readonly searchableElements = accessFormElements;
 
   isLoading = false;
   form = this.fb.group({

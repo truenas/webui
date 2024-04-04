@@ -36,6 +36,7 @@ import { SortDirection } from 'app/modules/ix-table2/enums/sort-direction.enum';
 import { selectJob } from 'app/modules/jobs/store/job.selectors';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { AppBulkUpgradeComponent } from 'app/pages/apps/components/installed-apps/app-bulk-upgrade/app-bulk-upgrade.component';
+import { installedAppsElements } from 'app/pages/apps/components/installed-apps/installed-apps.elements';
 import { KubernetesSettingsComponent } from 'app/pages/apps/components/installed-apps/kubernetes-settings/kubernetes-settings.component';
 import { AppStatus } from 'app/pages/apps/enum/app-status.enum';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
@@ -63,6 +64,8 @@ function doSortCompare(a: number | string, b: number | string, isAsc: boolean): 
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class InstalledAppsComponent implements OnInit, AfterViewInit {
+  protected readonly searchableElements = installedAppsElements;
+
   dataSource: ChartRelease[] = [];
   selectedApp: ChartRelease;
   isLoading = false;

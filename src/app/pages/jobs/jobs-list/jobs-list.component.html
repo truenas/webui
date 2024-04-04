@@ -20,188 +20,39 @@
 
   <ix-search-input1
     [disabled]="isLoading$ | async"
-    (search)="onSearch($event)"
+    (search)="onListFiltered($event)"
   ></ix-search-input1>
 </ix-page-header>
 
-  <div class="jobs-container">
-    <table
-      ix-table
-      matSort
-      matSortActive="id"
-      matSortDirection="desc"
-      ixTest="jobs-table"
-      [ix-table-empty]="!dataSource.filteredData.length"
-      [emptyConfig]="emptyConfigService.defaultEmptyConfig((emptyType$ | async))"
-      [dataSource]="dataSource"
-      [multiTemplateDataRows]="true"
-      [trackBy]="trackByJobId"
+<ix-table2
+  ixUiSearchableElement
+  [ixSearchConfig]="searchableElements.elements.jobs"
+  [ix-table2-empty]="!(dataProvider.currentPageCount$ | async)"
+  [emptyConfig]="emptyService.defaultEmptyConfig(emptyType$ | async)"
+>
+  <thead
+    ix-table-head
+    [columns]="columns"
+    [dataProvider]="dataProvider"
+  ></thead>
+  <tbody
+    ix-table-body
+    [columns]="columns"
+    [dataProvider]="dataProvider"
+    [isLoading]="isLoading$ | async"
+  >
+    <ng-template
+      let-job
+      ix-table-cell
+      [columnIndex]="0"
+      [dataProvider]="dataProvider"
     >
-      <ng-container matColumnDef="name">
-        <th
-          *matHeaderCellDef
-          mat-header-cell
-        >
-          {{ 'Name' | translate }}
-        </th>
-        <td *matCellDef="let job; dataSource: dataSource" mat-cell>
-          <div
-            class="jobs-item"
-            fxFlex="1 1 100%"
-            fxLayout="row"
-            fxLayoutAlign="space-between center"
-            fxLayoutGap="8px"
-          >
-            <div
-              fxFlex
-              fxLayout="row"
-              fxLayoutGap="8px"
-              fxLayoutAlign="start center"
-            >
-              <div class="jobs-item-icon" [ngSwitch]="job.state">
-                <ix-icon
-                  *ngSwitchCase="JobState.Success"
-                  name="check_circle_outline"
-                  class="success"
-                ></ix-icon>
-                <ix-icon
-                  *ngSwitchCase="JobState.Failed"
-                  name="highlight_off"
-                  class="failed"
-                  [matTooltip]="job.error"
-                ></ix-icon>
-                <mat-spinner
-                  *ngSwitchCase="JobState.Running"
-                  class="running"
-                  [diameter]="22"
-                  [matTooltip]="job.progress.description"
-                ></mat-spinner>
-                <ix-icon *ngSwitchCase="JobState.Waiting" class="waiting" name="schedule"></ix-icon>
-                <ix-icon *ngSwitchCase="JobState.Aborted" class="aborted" name="report"></ix-icon>
-              </div>
+      <ix-job-name [job]="job"></ix-job-name>
+    </ng-template>
 
-              <div fxFlex="100" fxLayout="column">
-                <div
-                  fxLayout="row"
-                  fxLayoutAlign="space-between baseline"
-                  fxLayoutGap="8px"
-                >
-                  <span>
-                    {{ job.description ? job.description : job.method }}
-                  </span>
-                  <small *ngIf="job.state === JobState.Running">
-                    {{ job.progress.percent || 0 | number: '1.2-2' }}%
-                  </small>
-                </div>
-
-                <mat-progress-bar
-                  *ngIf="job.state === JobState.Running"
-                  class="jobs-progress"
-                  [value]="job.progress.percent"
-                  [mode]="job.progress.percent ? 'determinate' : 'indeterminate'"
-                  [matTooltip]="job.progress.description"
-                ></mat-progress-bar>
-              </div>
-            </div>
-
-            <button
-              *ngIf="job.state === JobState.Running && job.abortable"
-              mat-icon-button
-              type="button"
-              [ixTest]="['abort-job', job.description]"
-              [matTooltip]="'Abort' | translate"
-              (click)="onAborted(job)"
-            ><ix-icon name="mdi-close-circle"></ix-icon></button>
-          </div>
-        </td>
-      </ng-container>
-
-      <ng-container matColumnDef="state">
-        <th
-          *matHeaderCellDef
-          mat-header-cell
-          mat-sort-header
-        >
-          {{ 'State' | translate }}
-        </th>
-        <td *matCellDef="let job; dataSource: dataSource" mat-cell>{{ job.state | titlecase }}</td>
-      </ng-container>
-
-      <ng-container matColumnDef="id">
-        <th
-          *matHeaderCellDef
-          mat-header-cell
-          mat-sort-header
-        >
-          {{ 'ID' | translate }}
-        </th>
-        <td *matCellDef="let job; dataSource: dataSource" mat-cell>
-          {{ job.id }}
-        </td>
-      </ng-container>
-
-      <ng-container matColumnDef="time_started">
-        <th
-          *matHeaderCellDef
-          mat-header-cell
-        >
-          {{ 'Started' | translate }}
-        </th>
-        <td *matCellDef="let job; dataSource: dataSource" mat-cell>
-          {{ job.time_started?.$date ? (job.time_started.$date | formatDateTime) : '–' }}
-        </td>
-      </ng-container>
-
-      <ng-container matColumnDef="time_finished">
-        <th
-          *matHeaderCellDef
-          mat-header-cell
-        >
-          {{ 'Finished' | translate }}
-        </th>
-        <td *matCellDef="let job; dataSource: dataSource" mat-cell>
-          {{ job.time_finished?.$date ? (job.time_finished.$date | formatDateTime) : '–' }}
-        </td>
-      </ng-container>
-
-      <ng-container matColumnDef="logs">
-        <th
-          *matHeaderCellDef
-          mat-header-cell
-        >{{ 'Logs' | translate }}</th>
-        <td *matCellDef="let job; dataSource: dataSource" mat-cell>
-          <button
-            *ngIf="job.logs_path && job.logs_excerpt"
-            mat-button
-            type="button"
-            [ixTest]="['download-logs', job.description]"
-            (click)="$event.stopPropagation(); downloadLogs(job)"
-          >{{ 'Download Logs' | translate }}</button>
-        </td>
-      </ng-container>
-
-      <ix-expand-toggle-column
-        [expandedRow]="expandedRow"
-        (toggle)="onToggle($event)"
-      ></ix-expand-toggle-column>
-
-      <tr *matHeaderRowDef="displayedColumns" mat-header-row ixTest="table-header"></tr>
-
-      <tr
-        *matRowDef="let job; columns: displayedColumns"
-        mat-row
-        [ixTest]="job.description || job.method"
-        [ixDetailRow]="job"
-        [ixDetailRowOptions]="{ colspan: displayedColumns.length }"
-        [ixDetailRowTemplate]="expandedRowTemplate"
-        (toggle)="onToggle($event)"
-      ></tr>
-
-    </table>
-  </div>
-
-  <ix-table-paginator [dataSource]="dataSource"></ix-table-paginator>
-
-<ng-template #expandedRowTemplate let-job let-colspan="colspan">
-  <ix-job-logs-row [colspan]="colspan" [job]="job"></ix-job-logs-row>
-</ng-template>
+    <ng-template let-job ix-table-details-row [dataProvider]="dataProvider">
+      <ix-job-logs-row [job]="job"></ix-job-logs-row>
+    </ng-template>
+  </tbody>
+</ix-table2>
+<ix-table-pager [dataProvider]="dataProvider"></ix-table-pager>

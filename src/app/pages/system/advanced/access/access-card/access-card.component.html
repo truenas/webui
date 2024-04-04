@@ -8,7 +8,7 @@
         mat-button
         [ixTest]="['sessions', 'terminate']"
         [disabled]="dataProvider.isLoading$ | async"
-        [ixSearchConfig]="searchElements.elements.terminateOtherSessions"
+        [ixSearchConfig]="searchableElements.elements.terminateOtherSessions"
         (click)="onTerminateOther()"
       >
         {{ 'Terminate Other Sessions' | translate }}
@@ -18,7 +18,7 @@
         ixUiSearchableElement
         mat-button
         [ixTest]="['sessions', 'configure']"
-        [ixSearchConfig]="searchElements.elements.configureAccess"
+        [ixSearchConfig]="searchableElements.elements.configureAccess"
         (click)="onConfigure()"
       >
         {{ 'Configure' | translate }}

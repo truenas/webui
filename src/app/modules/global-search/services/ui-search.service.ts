@@ -14,31 +14,35 @@ import { AuthService } from 'app/services/auth/auth.service';
 export class UiSearchProvider implements GlobalSearchProvider {
   uiElements = UiElementsJson as UiSearchableElement[];
 
+  private translatedTerms = this.uiElements?.map((element) => {
+    return {
+      ...element,
+      hierarchy: element.hierarchy.map((key) => this.translate.instant(key)),
+      synonyms: element.synonyms.map((key) => this.translate.instant(key)),
+    };
+  });
+
   constructor(
     private authService: AuthService,
     private translate: TranslateService,
   ) {}
 
   search(term: string): Observable<UiSearchableElement[]> {
-    const lowercaseTerm = term.toLowerCase();
+    // sort results by showing hierarchy match first, then synonyms match
+    const sortedResults = this.translatedTerms.filter((item) => {
+      return item.synonyms.find((synonym) => synonym?.toLowerCase().startsWith(term.toLowerCase()))
+        || item.hierarchy[item.hierarchy.length - 1]?.toLowerCase().startsWith(term.toLowerCase());
+    }).sort((a, b) => {
+      const aHierarchyMatch = a.hierarchy[a.hierarchy.length - 1]?.toLowerCase().startsWith(term.toLowerCase()) ? 1 : 0;
+      const bHierarchyMatch = b.hierarchy[b.hierarchy.length - 1]?.toLowerCase().startsWith(term.toLowerCase()) ? 1 : 0;
 
-    const translatedTerms = this.uiElements?.map((element) => {
-      return {
-        ...element,
-        hierarchy: element.hierarchy.map((key) => this.translate.instant(key)),
-        synonyms: element.synonyms.map((key) => this.translate.instant(key)),
-      };
-    });
+      const aSynonymMatch = a.synonyms.find((synonym) => synonym?.toLowerCase().startsWith(term.toLowerCase())) ? 1 : 0;
+      const bSynonymMatch = b.synonyms.find((synonym) => synonym?.toLowerCase().startsWith(term.toLowerCase())) ? 1 : 0;
 
-    const results = translatedTerms.filter((item) => {
-      if (!term?.trim()) {
-        return true;
-      }
+      return bHierarchyMatch - aHierarchyMatch || aSynonymMatch - bSynonymMatch;
+    }).slice(0, 50);
 
-      return item.hierarchy[item.hierarchy.length - 1]?.toLowerCase()?.startsWith(lowercaseTerm);
-    }).splice(0, 50);
-
-    return from(results).pipe(
+    return from(sortedResults).pipe(
       mergeMap((item) => {
         if (!item.requiredRoles.length) {
           return of(item);

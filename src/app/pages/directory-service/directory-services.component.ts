@@ -20,6 +20,7 @@ import { IdmapListComponent } from 'app/pages/directory-service/components/idmap
 import { KerberosKeytabsListComponent } from 'app/pages/directory-service/components/kerberos-keytabs/kerberos-keytabs-list/kerberos-keytabs-list.component';
 import { KerberosRealmsListComponent } from 'app/pages/directory-service/components/kerberos-realms/kerberos-realms-list.component';
 import { KerberosSettingsComponent } from 'app/pages/directory-service/components/kerberos-settings/kerberos-settings.component';
+import { directoryServicesElements } from 'app/pages/directory-service/directory-services.elements';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { LdapComponent } from './components/ldap/ldap.component';
@@ -38,6 +39,7 @@ interface DataCard {
 })
 export class DirectoryServicesComponent implements OnInit {
   readonly requiredRoles = [Role.DirectoryServiceWrite];
+  protected readonly searchableElements = directoryServicesElements;
 
   isActiveDirectoryEnabled = false;
   isLdapEnabled = false;

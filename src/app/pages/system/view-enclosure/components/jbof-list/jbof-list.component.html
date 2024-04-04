@@ -16,7 +16,7 @@
   </ix-page-header>
 </ng-template>
 
-<div class="table-container">
+<div class="table-container" ixUiSearchableElement [ixSearchConfig]="searchableElements.elements.jbof">
   <ix-table2
     [ix-table2-empty]="!(dataProvider.currentPageCount$ | async)"
     [emptyConfig]="emptyConfigService.defaultEmptyConfig(dataProvider.emptyType$ | async)"

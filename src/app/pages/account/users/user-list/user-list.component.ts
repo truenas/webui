@@ -21,6 +21,7 @@ import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
 import { userPageEntered, userRemoved } from 'app/pages/account/users/store/user.actions';
 import { selectUsers, selectUserState, selectUsersTotal } from 'app/pages/account/users/store/user.selectors';
 import { UserFormComponent } from 'app/pages/account/users/user-form/user-form.component';
+import { userListElements } from 'app/pages/account/users/user-list/user-list.elements';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { AppState } from 'app/store';
 import { builtinUsersToggled } from 'app/store/preferences/preferences.actions';
@@ -34,6 +35,7 @@ import { waitForPreferences } from 'app/store/preferences/preferences.selectors'
 })
 export class UserListComponent implements OnInit {
   protected readonly requiredRoles = [Role.AccountWrite];
+  protected readonly searchableElements = userListElements;
 
   dataProvider = new ArrayDataProvider<User>();
   columns = createTable<User>([

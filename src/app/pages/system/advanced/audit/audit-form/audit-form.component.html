@@ -15,7 +15,7 @@
           [label]="'Retention (in days)' | translate"
           [tooltip]="tooltips.retention | translate"
           [required]="true"
-          [ixSearchConfig]="searchElements.elements.retention"
+          [ixSearchConfig]="searchableElements.elements.retention"
         ></ix-input>
 
         <ix-input
@@ -25,7 +25,7 @@
           [label]="'Reservation (in GiB)' | translate"
           [tooltip]="tooltips.reservation | translate"
           [required]="true"
-          [ixSearchConfig]="searchElements.elements.reservation"
+          [ixSearchConfig]="searchableElements.elements.reservation"
         ></ix-input>
 
         <ix-input
@@ -35,7 +35,7 @@
           [label]="'Quota (in GiB)' | translate"
           [tooltip]="tooltips.quota | translate"
           [required]="true"
-          [ixSearchConfig]="searchElements.elements.quota"
+          [ixSearchConfig]="searchableElements.elements.quota"
         ></ix-input>
 
         <ix-input
@@ -45,7 +45,7 @@
           [label]="'Quota Fill Warning (in %)' | translate"
           [tooltip]="tooltips.quota_fill_warning | translate"
           [required]="true"
-          [ixSearchConfig]="searchElements.elements.quotaFillWarning"
+          [ixSearchConfig]="searchableElements.elements.quotaFillWarning"
         ></ix-input>
 
         <ix-input
@@ -55,7 +55,7 @@
           [label]="'Quota Fill Critical (in %)' | translate"
           [tooltip]="tooltips.quota_fill_critical | translate"
           [required]="true"
-          [ixSearchConfig]="searchElements.elements.quotaFillCritical"
+          [ixSearchConfig]="searchableElements.elements.quotaFillCritical"
         ></ix-input>
       </ix-fieldset>
 

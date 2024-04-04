@@ -42,7 +42,7 @@ import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 })
 export class SupportCardComponent implements OnInit {
   readonly requiredRoles = [Role.FullAdmin];
-  protected readonly searchElements = supportCardElements;
+  protected readonly searchableElements = supportCardElements;
 
   isProduction: boolean;
   productImage = 'ix-original-cropped.png';

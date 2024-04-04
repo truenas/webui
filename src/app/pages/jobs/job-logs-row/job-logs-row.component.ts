@@ -14,7 +14,6 @@ import { Job } from 'app/interfaces/job.interface';
 })
 export class JobLogsRowComponent {
   @Input() job: Job;
-  @Input() colspan: number;
 
   readonly credentialTypeLabels = credentialTypeLabels;
   readonly getCredentialsCreationSource = getCredentialsCreationSource;
