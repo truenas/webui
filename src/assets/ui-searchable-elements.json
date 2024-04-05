@@ -2651,6 +2651,45 @@
   {
     "hierarchy": [
       "System",
+      "View Enclosure",
+      "NVMe-oF Expansion Shelves"
+    ],
+    "synonyms": [
+      "NVMe-oF Expansion Shelves"
+    ],
+    "requiredRoles": [],
+    "anchorRouterLink": [
+      "/system",
+      "oldviewenclosure",
+      "jbof"
+    ],
+    "routerLink": null,
+    "anchor": "system-view-enclosure-nvme-of-expansion-shelves",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "System",
+      "View Enclosure"
+    ],
+    "synonyms": [
+      "Enclosure",
+      "View Enclosure"
+    ],
+    "requiredRoles": [],
+    "anchorRouterLink": [
+      "/system",
+      "oldviewenclosure"
+    ],
+    "routerLink": null,
+    "anchor": "system-view-enclosure",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "System",
       "Update",
       "Manual Update"
     ],
@@ -2683,45 +2722,6 @@
     ],
     "routerLink": null,
     "anchor": "system-update",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "System",
-      "View Enclosure",
-      "NVMe-oF Expansion Shelves"
-    ],
-    "synonyms": [
-      "NVMe-oF Expansion Shelves"
-    ],
-    "requiredRoles": [],
-    "anchorRouterLink": [
-      "/system",
-      "viewenclosureold",
-      "jbof"
-    ],
-    "routerLink": null,
-    "anchor": "system-view-enclosure-nvme-of-expansion-shelves",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "System",
-      "View Enclosure"
-    ],
-    "synonyms": [
-      "Enclosure",
-      "View Enclosure"
-    ],
-    "requiredRoles": [],
-    "anchorRouterLink": [
-      "/system",
-      "viewenclosureold"
-    ],
-    "routerLink": null,
-    "anchor": "system-view-enclosure",
     "triggerAnchor": null,
     "section": "ui"
   },

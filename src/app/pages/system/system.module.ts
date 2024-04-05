@@ -101,6 +101,7 @@ import { BootEnvironmentFormComponent } from 'app/pages/system/bootenv/bootenv-f
 import { BootEnvironmentListComponent } from 'app/pages/system/bootenv/bootenv-list/bootenv-list.component';
 import { BootenvStatsDialogComponent } from 'app/pages/system/bootenv/bootenv-stats-dialog/bootenv-stats-dialog.component';
 import { BootStatusListComponent } from 'app/pages/system/bootenv/bootenv-status/bootenv-status.component';
+import { EnclosureModule } from 'app/pages/system/enclosure/enclosure.module';
 import { FailoverSettingsComponent } from 'app/pages/system/failover-settings/failover-settings.component';
 import { EmailCardComponent } from 'app/pages/system/general-settings/email/email-card/email-card.component';
 import { EmailFormComponent } from 'app/pages/system/general-settings/email/email-form/email-form.component';
@@ -125,13 +126,12 @@ import { SysInfoComponent } from 'app/pages/system/general-settings/support/sys-
 import {
   UploadConfigDialogComponent,
 } from 'app/pages/system/general-settings/upload-config-dialog/upload-config-dialog.component';
+import { OldEnclosureModule } from 'app/pages/system/old-view-enclosure/old-enclosure.module';
 import { ManualUpdateFormComponent } from 'app/pages/system/update/components/manual-update-form/manual-update-form.component';
 import { TrainCardComponent } from 'app/pages/system/update/components/train-card/train-card.component';
 import { TrainInfoCardComponent } from 'app/pages/system/update/components/train-info-card/train-info-card.component';
 import { UpdateActionsCardComponent } from 'app/pages/system/update/components/update-actions-card/update-actions-card.component';
 import { UpdateComponent } from 'app/pages/system/update/update.component';
-import { EnclosureModule } from 'app/pages/system/view-enclosure/view-enclosure.module';
-import { EnclosureModuleOld } from 'app/pages/system/view-enclosure-old/enclosure.module';
 import { ConsoleCardComponent } from './advanced/console/console-card/console-card.component';
 import { SysctlCardComponent } from './advanced/sysctl/sysctl-card/sysctl-card.component';
 import { AlertSettingsComponent } from './alert-settings/alert-settings.component';
@@ -147,7 +147,7 @@ import { routing } from './system.routing';
     CommonModule,
     CoreComponents,
     EnclosureModule,
-    EnclosureModuleOld,
+    OldEnclosureModule,
     EntityModule,
     FlexLayoutModule,
     FormsModule,
