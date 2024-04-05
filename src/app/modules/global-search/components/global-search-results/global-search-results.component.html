@@ -1,37 +1,35 @@
-<mat-card class="search-results-card">
-  <ng-container *ngIf="!isLoading || results?.length">
-    <ng-container *ngFor="let section of availableSections; trackBy: trackBySection">
-      <h2 class="section">
-        {{ section.label | translate }}
-      </h2>
+<mat-card *ngIf="!isLoading || results?.length" class="search-results-card">
+  <ng-container *ngFor="let section of availableSections; trackBy: trackBySection">
+    <h2 class="section">
+      {{ section.label | translate }}
+    </h2>
 
-      <div *ngIf="getElementsBySection(section.value)?.length" class="section-content">
-        <div
-          *ngFor="let result of getLimitedSectionResults(section.value); trackBy: trackById"
-          class="search-result"
-          tabindex="0"
-          [ixTest]="['search-result', result.hierarchy.join('-')]"
-          (click)="navigateToResult(result)"
-          (keydown.enter)="navigateToResult(result)"
-        >
-          <h3 class="title" [innerHTML]="processHierarchy(result.hierarchy, searchTerm)"></h3>
-        </div>
-
-        <button
-          *ngIf="getElementsBySection(section.value)?.length > initialResultsLimit"
-          class="toggle-show-more"
-          mat-button
-          ixTest="toggle-show-all-results'"
-          (click)="toggleShowAll(section.value)"
-          (keydown.enter)="toggleShowAll(section.value)"
-        >
-          {{ showAll[section.value] ? ('Show Less' | translate) : ('Show All' | translate) }}
-        </button>
+    <div *ngIf="getElementsBySection(section.value)?.length" class="section-content">
+      <div
+        *ngFor="let result of getLimitedSectionResults(section.value); trackBy: trackById"
+        class="search-result"
+        tabindex="0"
+        [ixTest]="['search-result', result.hierarchy.join('-')]"
+        (click)="navigateToResult(result)"
+        (keydown.enter)="navigateToResult(result)"
+      >
+        <h3 class="title" [innerHTML]="processHierarchy(result.hierarchy, searchTerm)"></h3>
       </div>
 
-      <ng-container *ngIf="!getElementsBySection(section.value)?.length">
-        <h4 class="no-results">{{ 'No results found in {section}' | translate:{ section: section.label } }}</h4>
-      </ng-container>
+      <button
+        *ngIf="getElementsBySection(section.value)?.length > initialResultsLimit"
+        class="toggle-show-more"
+        mat-button
+        ixTest="toggle-show-all-results'"
+        (click)="toggleShowAll(section.value)"
+        (keydown.enter)="toggleShowAll(section.value)"
+      >
+        {{ showAll[section.value] ? ('Show Less' | translate) : ('Show All' | translate) }}
+      </button>
+    </div>
+
+    <ng-container *ngIf="!getElementsBySection(section.value)?.length">
+      <h4 class="no-results">{{ 'No results found in {section}' | translate:{ section: section.label } }}</h4>
     </ng-container>
   </ng-container>
 </mat-card>
