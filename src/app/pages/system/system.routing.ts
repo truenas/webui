@@ -12,8 +12,8 @@ import { FailoverSettingsComponent } from 'app/pages/system/failover-settings/fa
 import { GeneralSettingsComponent } from 'app/pages/system/general-settings/general-settings.component';
 import { SupportCardComponent } from 'app/pages/system/general-settings/support/support-card/support-card.component';
 import { ManualUpdateFormComponent } from 'app/pages/system/update/components/manual-update-form/manual-update-form.component';
-import { JbofListComponent } from 'app/pages/system/view-enclosure/components/jbof-list/jbof-list.component';
-import { ViewEnclosureComponent } from 'app/pages/system/view-enclosure/components/view-enclosure/view-enclosure.component';
+import { JbofListComponent } from 'app/pages/system/view-enclosure-old/components/jbof-list/jbof-list.component';
+import { ViewEnclosureComponent } from 'app/pages/system/view-enclosure-old/components/view-enclosure/view-enclosure.component';
 import { AdvancedSettingsComponent } from './advanced/advanced-settings.component';
 import { CronListComponent } from './advanced/cron/cron-list/cron-list.component';
 import { TunableListComponent } from './advanced/sysctl/tunable-list/tunable-list.component';
