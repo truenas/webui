@@ -25,6 +25,7 @@ import { AuthService } from 'app/services/auth/auth.service';
 })
 export class GlobalSearchResultsComponent {
   @Input() searchTerm = '';
+  @Input() isLoading = false;
   @Input() results: UiSearchableElement[] = [];
 
   @Output() selected = new EventEmitter<void>();
