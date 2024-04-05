@@ -20,6 +20,7 @@ import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { SchedulerModule } from 'app/modules/scheduler/scheduler.module';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
+import { LocaleService } from 'app/services/locale.service';
 import { UserService } from 'app/services/user.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { selectTimezone } from 'app/store/system-config/system-config.selectors';
@@ -70,6 +71,9 @@ describe('RsyncTaskFormComponent', () => {
       SshCredentialsSelectModule,
     ],
     providers: [
+      mockProvider(LocaleService, {
+        timezone: 'America/New_York',
+      }),
       mockAuth(),
       mockWebSocket([
         mockCall('rsynctask.create', existingTask),

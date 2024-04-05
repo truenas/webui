@@ -96,19 +96,13 @@
             <h4 *ngIf="currentStartDate" class="legend-timestamp">
               <strong>{{ 'Start' | translate }}:</strong>
               <span class="font-normal">
-                <ix-date
-                  [date]="currentStartDate"
-                  [machineTimezone]="timezone"
-                ></ix-date>
+                <ix-date [date]="currentStartDate"></ix-date>
               </span>
             </h4>
             <h4 *ngIf="currentEndDate" class="legend-timestamp">
               <strong>{{ 'End' | translate }}:</strong>
               <span class="font-normal">
-                <ix-date
-                  [date]="currentEndDate"
-                  [machineTimezone]="timezone"
-                ></ix-date>
+                <ix-date [date]="currentEndDate"></ix-date>
               </span>
             </h4>
           </div>
@@ -119,11 +113,7 @@
             <h4 *ngIf="data && legendData?.xHTML && shouldShowLegendValue" fxLayoutGap="8px" fxLayoutAlign="start center">
               <strong>{{ 'Time' | translate }}:</strong>
               <span *ngIf="legendData?.xHTML" class="font-normal">
-                <ix-date
-                  [date]="getDateFromString(legendData.xHTML)"
-                  [machineTimezone]="timezone"
-                  [appliedTimezone]="timezone"
-                ></ix-date>
+                <ix-date [date]="getDateFromString(legendData.xHTML)" [appliedTimezone]="timezone"></ix-date>
               </span>
             </h4>
           </div>

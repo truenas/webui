@@ -1,10 +1,11 @@
-import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
+import { createComponentFactory, Spectator, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-datetime.pipe';
 import { IxDateModule } from 'app/modules/ix-date/ix-date.module';
 import {
   CronSchedulePreview,
 } from 'app/modules/scheduler/classes/cron-schedule-preview/cron-schedule-preview';
+import { LocaleService } from 'app/services/locale.service';
 import { selectTimezone } from 'app/store/system-config/system-config.selectors';
 import { SchedulerDateExamplesComponent } from './scheduler-date-examples.component';
 
@@ -16,6 +17,9 @@ describe('SchedulerDateExamplesComponent', () => {
       IxDateModule,
     ],
     providers: [
+      mockProvider(LocaleService, {
+        timezone: 'America/New_York',
+      }),
       provideMockStore({
         selectors: [
           {
@@ -37,18 +41,17 @@ describe('SchedulerDateExamplesComponent', () => {
           crontab: '0 0 * * *',
         }),
         startDate: new Date('2022-02-22 11:39:00'),
-        machineTimezone: 'Europe/Kiev',
       },
     });
 
     const examples = spectator.queryAll('.date-spanner').map((element) => element.textContent.trim());
     expect(examples).toEqual([
-      '2022-02-23 00:00:00, Europe/Kiev',
-      '2022-02-24 00:00:00, Europe/Kiev',
-      '2022-02-25 00:00:00, Europe/Kiev',
-      '2022-02-26 00:00:00, Europe/Kiev',
-      '2022-02-27 00:00:00, Europe/Kiev',
-      '2022-02-28 00:00:00, Europe/Kiev',
+      '2022-02-23 00:00:00',
+      '2022-02-24 00:00:00',
+      '2022-02-25 00:00:00',
+      '2022-02-26 00:00:00',
+      '2022-02-27 00:00:00',
+      '2022-02-28 00:00:00',
     ]);
   });
 

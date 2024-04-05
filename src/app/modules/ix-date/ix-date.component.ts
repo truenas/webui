@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { utcToZonedTime, zonedTimeToUtc } from 'date-fns-tz';
+import { LocaleService } from 'app/services/locale.service';
 
 @Component({
   selector: 'ix-date',
@@ -8,8 +9,10 @@ import { utcToZonedTime, zonedTimeToUtc } from 'date-fns-tz';
 })
 export class IxDateComponent {
   @Input() date: number | Date;
+  /** Defaults to the browser timezone */
   @Input() appliedTimezone: string = Intl.DateTimeFormat().resolvedOptions().timeZone;
-  @Input() machineTimezone: string;
+  @Input() showTimezones = false;
+  machineTimezone: string;
   defaultTz: string = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
   get machineTime(): Date {
@@ -22,5 +25,11 @@ export class IxDateComponent {
 
   get isTimezoneDifference(): boolean {
     return this.machineTime < this.date || this.machineTime > this.date;
+  }
+
+  constructor(
+    private localeService: LocaleService,
+  ) {
+    this.machineTimezone = this.localeService.timezone;
   }
 }
