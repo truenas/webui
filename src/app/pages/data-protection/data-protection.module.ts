@@ -12,6 +12,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule } from '@angular/router';
 import { FlexLayoutModule } from '@ngbracket/ngx-layout';
 import { TranslateModule } from '@ngx-translate/core';
+import { CoreComponents } from 'app/core/core-components.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { CloudCredentialsSelectModule } from 'app/modules/custom-selects/cloud-credentials-select/cloud-credentials-select.module';
 import { SshCredentialsSelectModule } from 'app/modules/custom-selects/ssh-credentials-select/ssh-credentials-select.module';
@@ -24,6 +25,9 @@ import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
 import { SchedulerModule } from 'app/modules/scheduler/scheduler.module';
 import { SearchInput1Component } from 'app/modules/search-input1/search-input1.component';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
+import {
+  CloudBackupFormComponent,
+} from 'app/pages/data-protection/cloud-backup/cloud-backup-form/cloud-backup-form.component';
 import { CloudSyncProviderDescriptionComponent } from 'app/pages/data-protection/cloudsync/cloudsync-provider-description/cloudsync-provider-description.component';
 import {
   CloudSyncRestoreDialogComponent,
@@ -59,6 +63,21 @@ import { SnapshotTaskListComponent } from 'app/pages/data-protection/snapshot-ta
 import { VmwareSnapshotFormComponent } from 'app/pages/data-protection/vmware-snapshot/vmware-snapshot-form/vmware-snapshot-form.component';
 import { VmwareSnapshotListComponent } from 'app/pages/data-protection/vmware-snapshot/vmware-snapshot-list/vmware-snapshot-list.component';
 import { VmwareStatusCellComponent } from 'app/pages/data-protection/vmware-snapshot/vmware-snapshot-list/vmware-status-cell/vmware-status-cell.component';
+import { CloudBackupCardComponent } from './cloud-backup/cloud-backup-card/cloud-backup-card.component';
+import { CloudBackupDetailsComponent } from './cloud-backup/cloud-backup-details/cloud-backup-details.component';
+import {
+  CloudBackupExcludedPathsComponent,
+} from './cloud-backup/cloud-backup-details/cloud-backup-excluded-paths/cloud-backup-excluded-paths.component';
+import {
+  CloudBackupScheduleComponent,
+} from './cloud-backup/cloud-backup-details/cloud-backup-schedule/cloud-backup-schedule.component';
+import {
+  CloudBackupSnapshotsComponent,
+} from './cloud-backup/cloud-backup-details/cloud-backup-snapshots/cloud-backup-snapshots.component';
+import {
+  CloudBackupStatsComponent,
+} from './cloud-backup/cloud-backup-details/cloud-backup-stats/cloud-backup-stats.component';
+import { CloudBackupListComponent } from './cloud-backup/cloud-backup-list/cloud-backup-list.component';
 import { CloudSyncFormComponent } from './cloudsync/cloudsync-form/cloudsync-form.component';
 import { CloudSyncListComponent } from './cloudsync/cloudsync-list/cloudsync-list.component';
 import { CloudSyncWizardComponent } from './cloudsync/cloudsync-wizard/cloudsync-wizard.component';
@@ -105,6 +124,7 @@ import { SmartTaskListComponent } from './smart-task/smart-task-list/smart-task-
     MatDividerModule,
     CloudSyncProviderDescriptionComponent,
     SearchInput1Component,
+    CoreComponents,
   ],
   declarations: [
     SnapshotTaskListComponent,
@@ -147,6 +167,14 @@ import { SmartTaskListComponent } from './smart-task/smart-task-list/smart-task-
     CloudSyncWhatAndWhenComponent,
     ScrubListComponent,
     RsyncTaskListComponent,
+    CloudBackupListComponent,
+    CloudBackupCardComponent,
+    CloudBackupDetailsComponent,
+    CloudBackupExcludedPathsComponent,
+    CloudBackupScheduleComponent,
+    CloudBackupStatsComponent,
+    CloudBackupSnapshotsComponent,
+    CloudBackupFormComponent,
   ],
 })
 export class DataProtectionModule {}

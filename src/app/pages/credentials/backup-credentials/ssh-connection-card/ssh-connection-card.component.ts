@@ -87,12 +87,12 @@ export class SshConnectionCardComponent implements OnInit {
   }
 
   doAdd(): void {
-    const closer$ = this.chainedSlideInService.pushComponent(SshConnectionFormComponent);
+    const closer$ = this.chainedSlideInService.open(SshConnectionFormComponent);
     closer$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => this.getCredentials());
   }
 
   doEdit(credential: KeychainSshCredentials): void {
-    const closer$ = this.chainedSlideInService.pushComponent(SshConnectionFormComponent, false, credential);
+    const closer$ = this.chainedSlideInService.open(SshConnectionFormComponent, false, credential);
     closer$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => this.getCredentials());
   }
 

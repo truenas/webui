@@ -168,7 +168,7 @@ export class ReplicationTaskCardComponent implements OnInit {
   }
 
   addReplicationTask(): void {
-    const closer$ = this.chainedSlideInService.pushComponent(ReplicationWizardComponent, true);
+    const closer$ = this.chainedSlideInService.open(ReplicationWizardComponent, true);
     closer$.pipe(
       filter((response) => !!response.response),
       untilDestroyed(this),
@@ -176,7 +176,7 @@ export class ReplicationTaskCardComponent implements OnInit {
   }
 
   editReplicationTask(row: ReplicationTask): void {
-    const closer$ = this.chainedSlideInService.pushComponent(ReplicationFormComponent, true, row);
+    const closer$ = this.chainedSlideInService.open(ReplicationFormComponent, true, row);
 
     closer$.pipe(filter(Boolean), untilDestroyed(this))
       .subscribe(() => this.getReplicationTasks());

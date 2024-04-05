@@ -80,7 +80,7 @@ describe('RsyncTaskFormComponent', () => {
         ] as KeychainCredential[]),
       ]),
       mockProvider(IxChainedSlideInService, {
-        pushComponent: jest.fn(() => of()),
+        open: jest.fn(() => of()),
         components$: of([]),
       }),
       mockProvider(FilesystemService),
