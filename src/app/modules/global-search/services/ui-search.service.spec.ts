@@ -34,7 +34,7 @@ describe('UiSearchProvider with mocked uiElements', () => {
 
     it('should search by synonyms', async () => {
       const searchTerm = 'web';
-      const results = await lastValueFrom(spectator.service.search(searchTerm));
+      const results = await lastValueFrom(spectator.service.search(searchTerm, 10));
 
       expect(results).toHaveLength(1);
       expect(results[0].hierarchy).toContain('Internet');
