@@ -505,16 +505,16 @@
               [attr.data-name]="'tray-' + tray.slot + '-outer'"
               [attr.d]="nonEmptyTrayDrawInstructions"
               transform="translate(-150.699 -79.403)"
-              [attr.fill]="tray.highlight ? '#ff3' : '#2d2d2d'"
+              [attr.fill]="tray.highlight || tray.selected ? '#ff3' : '#2d2d2d'"
+              opacity="0.5"
             ></path>
             <rect
               x="0"
               y="0"
               height="32"
               width="120"
-              opacity="0.3"
               *ngIf="tray.selected"
-              style="stroke:#ff3;fill:#ff3;"
+              style="stroke:#ff3;fill:none;"
             ></rect>
             <g
               *ngIf="tray.empty"
