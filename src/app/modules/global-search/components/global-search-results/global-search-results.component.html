@@ -1,4 +1,4 @@
-<mat-card class="search-results-card">
+<mat-card *ngIf="!isLoading || results?.length" class="search-results-card">
   <ng-container *ngFor="let section of availableSections; trackBy: trackBySection">
     <h2 class="section">
       {{ section.label | translate }}
