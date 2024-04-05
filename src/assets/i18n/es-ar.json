@@ -1210,6 +1210,7 @@
   "Reboot": "",
   "Reboot standby TrueNAS controller": "",
   "Received: {received}/s Sent: {sent}/s": "",
+  "Recent Searches": "",
   "Recommended Apps": "",
   "Recommended number of data disks for optimal space allocation should be power of 2 (2, 4, 8, 16...).": "",
   "Redfish administrative password.": "",
