@@ -27,7 +27,11 @@ import { SystemGeneralService } from 'app/services/system-general.service';
 import { ThemeService } from 'app/services/theme/theme.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
-import { selectHaStatus, selectHasOnlyMismatchVersionsReason, selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
+import {
+  selectHaStatus,
+  selectIsHaLicensed,
+  selectCanFailover,
+} from 'app/store/ha-info/ha-info.selectors';
 import { selectIsIxHardware, waitForSystemFeatures } from 'app/store/system-info/system-info.selectors';
 
 @UntilDestroy()
@@ -47,7 +51,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
   protected enclosureSupport = false;
   @Input() showReorderHandle = false;
 
-  hasOnlyMismatchVersionsReason$ = this.store$.select(selectHasOnlyMismatchVersionsReason);
+  canFailover$ = this.store$.select(selectCanFailover);
 
   systemInfo: SystemInfo;
   ready = false;

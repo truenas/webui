@@ -24,7 +24,7 @@ import { AppState } from 'app/store/index';
 @UntilDestroy()
 @Injectable()
 export class HaUpgradeEffects {
-  loadUpgradePendingState$ = createEffect(() => this.actions$.pipe(
+  checkIfRemoteUpgradeIsRequired$ = createEffect(() => this.actions$.pipe(
     ofType(haStatusLoaded),
     withLatestFrom(this.store$.select(selectIsHaLicensed)),
     mergeMap(([{ haStatus }, isHa]) => {

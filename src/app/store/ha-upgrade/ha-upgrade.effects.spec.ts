@@ -59,7 +59,7 @@ describe('HaUpgradeEffects', () => {
         },
       }));
 
-      expect(await firstValueFrom(spectator.service.loadUpgradePendingState$))
+      expect(await firstValueFrom(spectator.service.checkIfRemoteUpgradeIsRequired$))
         .toEqual(upgradePendingStateLoaded({ isUpgradePending: true }));
 
       expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('failover.upgrade_pending');
@@ -73,7 +73,7 @@ describe('HaUpgradeEffects', () => {
         },
       }));
 
-      spectator.service.loadUpgradePendingState$.subscribe();
+      spectator.service.checkIfRemoteUpgradeIsRequired$.subscribe();
 
       expect(spectator.inject(WebSocketService).call).not.toHaveBeenCalledWith('failover.upgrade_pending');
     });
@@ -86,7 +86,7 @@ describe('HaUpgradeEffects', () => {
         },
       }));
 
-      expect(await firstValueFrom(spectator.service.loadUpgradePendingState$))
+      expect(await firstValueFrom(spectator.service.checkIfRemoteUpgradeIsRequired$))
         .toEqual(upgradePendingStateLoaded({ isUpgradePending: true }));
 
       expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('failover.upgrade_pending');
