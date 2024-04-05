@@ -2698,7 +2698,7 @@
     "requiredRoles": [],
     "anchorRouterLink": [
       "/system",
-      "viewenclosure",
+      "viewenclosureold",
       "jbof"
     ],
     "routerLink": null,
@@ -2718,7 +2718,7 @@
     "requiredRoles": [],
     "anchorRouterLink": [
       "/system",
-      "viewenclosure"
+      "viewenclosureold"
     ],
     "routerLink": null,
     "anchor": "system-view-enclosure",

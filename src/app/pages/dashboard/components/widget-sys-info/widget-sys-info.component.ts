@@ -250,7 +250,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
     if (!this.enclosureSupport) {
       return;
     }
-    this.router.navigate(['/system/oldviewenclosure']);
+    this.router.navigate(['/system/viewenclosureold']);
   }
 
   /**

@@ -3,7 +3,7 @@
     *ngIf="hasJbofLicensed"
     mat-button
     ixTest="manage-expansion"
-    [routerLink]="['/', 'system', 'viewenclosure', 'jbof']"
+    [routerLink]="['/', 'system', 'viewenclosureold', 'jbof']"
   >
     {{ 'NVMe-oF Expansion Shelves' | translate }}
   </a>
@@ -91,7 +91,7 @@
 <ng-container
   *ngIf="errors.length === 0"
   ixUiSearchableElement
-  [ixSearchConfig]="searchableElements.elements.viewEnclosure"
+  [ixSearchConfig]="searchableElements.elements.viewEnclosureold"
 >
   <!-- Loading indicator -->
   <ng-container *ngIf="spinner; then multispinner;"></ng-container>
