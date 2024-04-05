@@ -12,6 +12,9 @@
 }
 
 .tooltip-icon {
+  background: var(--fg2);
+  border-radius: 50%;
+  color: var(--primary);
   cursor: pointer;
   font-size: 20px !important;
   height: 20px;

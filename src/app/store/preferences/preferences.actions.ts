@@ -11,6 +11,10 @@ export const preferredColumnsUpdated = createAction(
   '[Preferences] Preferred Columns Updated',
   props<{ columns: TableDisplayedColumns[] }>(),
 );
+export const shownNewIndicatorKeysUpdated = createAction(
+  '[Preferences] Shown New Indicator Keys Updated',
+  props<{ keys: string[] }>(),
+);
 export const localizationFormSubmitted = createAction('[Preferences] Localization Form Submitted', props<{
   dateFormat: string;
   timeFormat: string;

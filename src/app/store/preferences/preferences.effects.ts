@@ -14,6 +14,7 @@ import {
   builtinGroupsToggled,
   builtinUsersToggled, guiFormSubmitted, lifetimeTokenUpdated, localizationFormSubmitted,
   preferencesLoaded, preferredColumnsUpdated,
+  shownNewIndicatorKeysUpdated,
   themeNotFound,
   updateRebootAfterManualUpdate,
 } from 'app/store/preferences/preferences.actions';
@@ -61,6 +62,7 @@ export class PreferencesEffects {
       preferredColumnsUpdated,
       builtinUsersToggled,
       snapshotExtraColumnsToggled,
+      shownNewIndicatorKeysUpdated,
       builtinGroupsToggled,
       localizationFormSubmitted,
       lifetimeTokenUpdated,
