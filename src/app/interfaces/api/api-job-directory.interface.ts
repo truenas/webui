@@ -87,6 +87,9 @@ export interface ApiJobDirectory {
   'chart.release.update': { params: [name: string, update: ChartReleaseUpdate]; response: ChartRelease };
   'chart.release.upgrade': { params: [name: string, upgrade: ChartReleaseUpgrade]; response: ChartRelease };
 
+  // CloudBackup
+  'cloud_backup.sync': { params: [id: number, params?: { dry_run: boolean }]; response: void };
+
   // CloudSync
   'cloudsync.sync': { params: [id: number, params?: { dry_run: boolean }]; response: number };
   'cloudsync.sync_onetime': { params: [task: CloudSyncTaskUpdate, params: { dry_run?: boolean }]; response: void };

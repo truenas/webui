@@ -57,7 +57,7 @@ describe('InterfaceStatusIconComponent', () => {
     it('shows sent and received rate in icon tooltip', () => {
       const tooltip = spectator.query(MatTooltip);
 
-      expect(tooltip.message).toBe('Sent: 800 kb Received: 240 Mb');
+      expect(tooltip.message).toBe('Received: 240 Mb/s Sent: 800 kb/s');
     });
 
     it('updates state icon to mark arrow or arrows as active on network traffic', () => {

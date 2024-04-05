@@ -149,7 +149,7 @@ export class WidgetBackupComponent extends WidgetComponent implements OnInit {
   }
 
   addCloudSyncTask(): void {
-    this.chainedSlideInService.pushComponent(
+    this.chainedSlideInService.open(
       CloudSyncWizardComponent,
       true,
     ).pipe(
@@ -163,7 +163,7 @@ export class WidgetBackupComponent extends WidgetComponent implements OnInit {
   }
 
   addReplicationTask(): void {
-    const closer$ = this.chainedSlideInService.pushComponent(ReplicationWizardComponent, true);
+    const closer$ = this.chainedSlideInService.open(ReplicationWizardComponent, true);
     closer$.pipe(
       filter((response) => !!response.response),
       untilDestroyed(this),
@@ -171,7 +171,7 @@ export class WidgetBackupComponent extends WidgetComponent implements OnInit {
   }
 
   addRsyncTask(): void {
-    const closer$ = this.chainedSlideInService.pushComponent(RsyncTaskFormComponent, true);
+    const closer$ = this.chainedSlideInService.open(RsyncTaskFormComponent, true);
     closer$.pipe(filter((response) => !!response.response), untilDestroyed(this)).subscribe(() => this.getBackups());
   }
 

@@ -66,7 +66,7 @@ export class SelfEncryptingDriveCardComponent {
 
   onConfigure(): void {
     this.advancedSettings.showFirstTimeWarningIfNeeded().pipe(
-      switchMap(() => this.chainedSlideIns.pushComponent(SelfEncryptingDriveFormComponent, false, this.sedConfig)),
+      switchMap(() => this.chainedSlideIns.open(SelfEncryptingDriveFormComponent, false, this.sedConfig)),
       filter((response) => !!response.response),
       tap(() => this.reloadConfig$.next()),
       untilDestroyed(this),
