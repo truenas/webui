@@ -130,7 +130,8 @@ import { TrainCardComponent } from 'app/pages/system/update/components/train-car
 import { TrainInfoCardComponent } from 'app/pages/system/update/components/train-info-card/train-info-card.component';
 import { UpdateActionsCardComponent } from 'app/pages/system/update/components/update-actions-card/update-actions-card.component';
 import { UpdateComponent } from 'app/pages/system/update/update.component';
-import { EnclosureModule } from 'app/pages/system/view-enclosure-old/enclosure.module';
+import { EnclosureModule } from 'app/pages/system/view-enclosure/view-enclosure.module';
+import { OldEnclosureModule } from 'app/pages/system/view-enclosure-old/enclosure.module';
 import { ConsoleCardComponent } from './advanced/console/console-card/console-card.component';
 import { SysctlCardComponent } from './advanced/sysctl/sysctl-card/sysctl-card.component';
 import { AlertSettingsComponent } from './alert-settings/alert-settings.component';
@@ -145,6 +146,7 @@ import { routing } from './system.routing';
     CommonDirectivesModule,
     CommonModule,
     CoreComponents,
+    OldEnclosureModule,
     EnclosureModule,
     EntityModule,
     FlexLayoutModule,

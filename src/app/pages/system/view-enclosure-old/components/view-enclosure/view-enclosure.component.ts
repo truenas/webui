@@ -43,7 +43,7 @@ export enum EnclosureSelectorState {
   styleUrls: ['./view-enclosure.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ViewEnclosure1Component implements AfterViewInit, OnDestroy {
+export class ViewEnclosureComponent implements AfterViewInit, OnDestroy {
   errors: ErrorMessage[] = [];
   events: Subject<EnclosureEvent>;
   @ViewChild('navigation', { static: false }) nav: ElementRef<HTMLElement>;

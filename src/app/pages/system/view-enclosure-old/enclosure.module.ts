@@ -31,8 +31,7 @@ import { EnclosureDisksComponent } from 'app/pages/system/view-enclosure-old/com
 import { EnclosureDisksMiniComponent } from 'app/pages/system/view-enclosure-old/components/enclosure-disks-mini/enclosure-disks-mini.component';
 import { JbosFormComponent } from 'app/pages/system/view-enclosure-old/components/jbof-form/jbof-form.component';
 import { JbofListComponent } from 'app/pages/system/view-enclosure-old/components/jbof-list/jbof-list.component';
-import { ViewEnclosure1Component } from 'app/pages/system/view-enclosure-old/components/view-enclosure/view-enclosure.component';
-import { ViewEnclosure2Component } from 'app/pages/system/view-enclosure-old/components/view-enclosure2/view-enclosure2.component';
+import { ViewEnclosureComponent } from 'app/pages/system/view-enclosure-old/components/view-enclosure/view-enclosure.component';
 import { SetEnclosureLabelDialogComponent } from './components/set-enclosure-label-dialog/set-enclosure-label-dialog.component';
 import { TabContentComponent } from './components/tab-content/tab-content.component';
 import { TemperatureMeterComponent } from './components/temperature-meter/temperature-meter.component';
@@ -69,8 +68,7 @@ import { EnclosureStore } from './stores/enclosure-store.service';
     SearchInput1Component,
   ],
   declarations: [
-    ViewEnclosure1Component,
-    ViewEnclosure2Component,
+    ViewEnclosureComponent,
     EnclosureDisksComponent,
     EnclosureDisksMiniComponent,
     DiskComponent,
@@ -82,4 +80,4 @@ import { EnclosureStore } from './stores/enclosure-store.service';
   ],
   providers: [EnclosureStore],
 })
-export class EnclosureModule {}
+export class OldEnclosureModule {}
