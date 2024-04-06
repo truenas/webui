@@ -14,6 +14,7 @@ import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { GlobalSearchComponent } from 'app/modules/global-search/components/global-search/global-search.component';
 import { GlobalSearchResultsComponent } from 'app/modules/global-search/components/global-search-results/global-search-results.component';
 import { GlobalSearchSection } from 'app/modules/global-search/enums/global-search-section.enum';
+import { GlobalSearchSectionsProvider } from 'app/modules/global-search/services/global-search-sections.service';
 import { UiSearchProvider } from 'app/modules/global-search/services/ui-search.service';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 
@@ -41,6 +42,7 @@ describe('GlobalSearchComponent', () => {
     ],
     providers: [
       mockAuth(),
+      GlobalSearchSectionsProvider,
       { provide: MatDialogRef, useValue: {} },
       mockProvider(UiSearchProvider, {
         search: jest.fn().mockReturnValue(of(mockedSearchResults)),

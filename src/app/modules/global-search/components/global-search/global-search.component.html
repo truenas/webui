@@ -24,9 +24,9 @@
   </div>
 
   <ix-global-search-results
-    @fade
-    [searchTerm]="searchTerm"
+    [searchTerm]="searchControl.value"
     [results]="searchResults"
+    [isLoading]="isLoading"
     (keydown)="handleKeyDown($event)"
   ></ix-global-search-results>
 </div>

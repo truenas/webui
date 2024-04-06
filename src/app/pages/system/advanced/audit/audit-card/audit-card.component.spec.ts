@@ -23,7 +23,7 @@ describe('AuditCardComponent', () => {
     providers: [
       mockAuth(),
       mockProvider(IxChainedSlideInService, {
-        pushComponent: jest.fn(() => of(true)),
+        open: jest.fn(() => of(true)),
       }),
       mockProvider(AdvancedSettingsService, {
         showFirstTimeWarningIfNeeded: jest.fn(() => of(true)),
@@ -62,6 +62,6 @@ describe('AuditCardComponent', () => {
     const configureButton = await loader.getHarness(MatButtonHarness.with({ text: 'Configure' }));
     await configureButton.click();
 
-    expect(spectator.inject(IxChainedSlideInService).pushComponent).toHaveBeenCalledWith(AuditFormComponent);
+    expect(spectator.inject(IxChainedSlideInService).open).toHaveBeenCalledWith(AuditFormComponent);
   });
 });

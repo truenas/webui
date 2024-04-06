@@ -77,7 +77,7 @@ export class IxChainedSlideInService extends ComponentStore<ChainedSlideInState>
     };
   });
 
-  pushComponent(
+  open(
     component: Type<unknown>,
     wide = false,
     data?: unknown,

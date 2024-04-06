@@ -106,7 +106,7 @@ export class TunableListComponent implements OnInit {
   }
 
   doAdd(): void {
-    this.chainedSlideIns.pushComponent(TunableFormComponent).pipe(
+    this.chainedSlideIns.open(TunableFormComponent).pipe(
       filter((response) => !!response.response),
       tap(() => this.getTunables()),
       untilDestroyed(this),
@@ -114,7 +114,7 @@ export class TunableListComponent implements OnInit {
   }
 
   doEdit(tunable: Tunable): void {
-    this.chainedSlideIns.pushComponent(TunableFormComponent, false, tunable).pipe(
+    this.chainedSlideIns.open(TunableFormComponent, false, tunable).pipe(
       filter((response) => !!response.response),
       untilDestroyed(this),
     ).subscribe(() => {

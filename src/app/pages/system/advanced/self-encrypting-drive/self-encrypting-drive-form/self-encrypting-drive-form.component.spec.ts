@@ -30,7 +30,7 @@ describe('SedFormComponent', () => {
         mockCall('system.advanced.sed_global_password', '123'),
       ]),
       mockProvider(IxChainedSlideInService, {
-        pushComponent: jest.fn(() => of({ response: true, error: null })),
+        open: jest.fn(() => of({ response: true, error: null })),
         components$: of([]),
       }),
       mockProvider(ChainedRef, {

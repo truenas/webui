@@ -45,7 +45,7 @@ export class GlobalTwoFactorAuthCardComponent {
 
   onConfigurePressed(twoFactorAuthConfig: GlobalTwoFactorConfig): void {
     this.advancedSettings.showFirstTimeWarningIfNeeded().pipe(
-      switchMap(() => this.chainedSlideIns.pushComponent(
+      switchMap(() => this.chainedSlideIns.open(
         GlobalTwoFactorAuthFormComponent,
         false,
         twoFactorAuthConfig,

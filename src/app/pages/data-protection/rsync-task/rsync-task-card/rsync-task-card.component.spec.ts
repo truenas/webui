@@ -104,7 +104,7 @@ describe('RsyncTaskCardComponent', () => {
         confirm: jest.fn(() => of(true)),
       }),
       mockProvider(IxChainedSlideInService, {
-        pushComponent: jest.fn(() => of()),
+        open: jest.fn(() => of()),
       }),
       mockProvider(IxSlideInRef),
       mockProvider(MatDialog, {
@@ -140,7 +140,7 @@ describe('RsyncTaskCardComponent', () => {
     const editButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'edit' }), 1, 7);
     await editButton.click();
 
-    expect(spectator.inject(IxChainedSlideInService).pushComponent).toHaveBeenCalledWith(
+    expect(spectator.inject(IxChainedSlideInService).open).toHaveBeenCalledWith(
       RsyncTaskFormComponent,
       true,
       rsyncTasks[0],
@@ -151,7 +151,7 @@ describe('RsyncTaskCardComponent', () => {
     const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
     await addButton.click();
 
-    expect(spectator.inject(IxChainedSlideInService).pushComponent).toHaveBeenCalledWith(
+    expect(spectator.inject(IxChainedSlideInService).open).toHaveBeenCalledWith(
       RsyncTaskFormComponent,
       true,
       undefined,

@@ -60,7 +60,7 @@ export abstract class IxSelectWithNewOption implements OnInit, AfterViewInit {
       distinctUntilChanged(),
       filter(Boolean),
       filter((newValue: number | string) => newValue === addNewIxSelectValue),
-      switchMap(() => this.chainedSlideIn.pushComponent(this.getFormComponentType(), this.formComponentIsWide)),
+      switchMap(() => this.chainedSlideIn.open(this.getFormComponentType(), this.formComponentIsWide)),
       filter((response: ChainedComponentResponse) => !response.error),
       tap(
         (response) => this.ixSelect.controlDirective.control.setValue(

@@ -5,8 +5,9 @@ import {
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import { findIndex, isEqual } from 'lodash';
 import {
-  combineLatestWith, delay, filter,
+  combineLatestWith, filter, delay,
 } from 'rxjs';
 import { WINDOW } from 'app/helpers/window.helper';
 import { Option } from 'app/interfaces/option.interface';
@@ -15,6 +16,7 @@ import { GlobalSearchSection } from 'app/modules/global-search/enums/global-sear
 import { generateIdFromHierarchy } from 'app/modules/global-search/helpers/generate-id-from-hierarchy';
 import { processHierarchy } from 'app/modules/global-search/helpers/process-hierarchy';
 import { UiSearchableElement } from 'app/modules/global-search/interfaces/ui-searchable-element.interface';
+import { GlobalSearchSectionsProvider } from 'app/modules/global-search/services/global-search-sections.service';
 import { UiSearchProvider } from 'app/modules/global-search/services/ui-search.service';
 import { UiSearchableDirectiveService } from 'app/modules/global-search/services/ui-searchable-directive.service';
 import { AuthService } from 'app/services/auth/auth.service';
@@ -28,35 +30,34 @@ import { AuthService } from 'app/services/auth/auth.service';
 })
 export class GlobalSearchResultsComponent {
   @Input() searchTerm = '';
+  @Input() isLoading = false;
   @Input() results: UiSearchableElement[] = [];
 
   readonly resultLimit = 6;
+  readonly initialResultsLimit = this.globalSearchSectionsProvider.globalSearchInitialLimit;
   readonly trackBySection: TrackByFunction<Option<GlobalSearchSection>> = (_, section) => section.value;
   readonly trackById: TrackByFunction<UiSearchableElement> = (_, item) => generateIdFromHierarchy(item.hierarchy);
 
   processHierarchy = processHierarchy;
 
-  showAll: Record<GlobalSearchSection, boolean> = {
-    [GlobalSearchSection.Ui]: false,
-    [GlobalSearchSection.Help]: false,
-  };
+  showAll: Record<GlobalSearchSection, boolean> = Object.fromEntries(
+    Object.values(GlobalSearchSection).map((section) => [section, false]),
+  ) as Record<GlobalSearchSection, boolean>;
 
   get availableSections(): Option<GlobalSearchSection>[] {
-    const uiSection = {
-      label: this.translate.instant('UI'),
-      value: GlobalSearchSection.Ui,
-    };
+    const uniqueSectionValues = new Set(this.results.map((result) => result.section));
 
-    const helpSection = {
-      label: this.translate.instant('Help'),
-      value: GlobalSearchSection.Help,
-    };
-
-    if (!this.searchTerm?.trim()?.length) {
-      return [uiSection];
+    if (
+      this.searchTerm
+      && !uniqueSectionValues.has(GlobalSearchSection.Ui)
+      && !uniqueSectionValues.has(GlobalSearchSection.RecentSearches)
+    ) {
+      uniqueSectionValues.add(GlobalSearchSection.Ui);
     }
 
-    return [uiSection, helpSection];
+    return this.globalSearchSectionsProvider.searchSections.filter(
+      (sectionOption) => uniqueSectionValues.has(sectionOption.value),
+    );
   }
 
   constructor(
@@ -64,6 +65,7 @@ export class GlobalSearchResultsComponent {
     private translate: TranslateService,
     private searchProvider: UiSearchProvider,
     private searchDirectives: UiSearchableDirectiveService,
+    private globalSearchSectionsProvider: GlobalSearchSectionsProvider,
     private router: Router,
     @Inject(WINDOW) private window: Window,
     @Inject(DOCUMENT) private document: Document,
@@ -73,6 +75,7 @@ export class GlobalSearchResultsComponent {
 
   selectElement(element: UiSearchableElement): void {
     this.searchProvider.select(element);
+    this.saveSearchResult(element);
     const route = element.anchorRouterLink || element.routerLink;
     if (element.targetHref) {
       this.window.open(element.targetHref, '_blank');
@@ -89,11 +92,11 @@ export class GlobalSearchResultsComponent {
   getLimitedSectionResults(section: GlobalSearchSection): UiSearchableElement[] {
     const sectionResults = this.results.filter((element) => element.section === section);
 
-    if (this.showAll[section] || sectionResults.length <= this.resultLimit) {
+    if (this.showAll[section] || sectionResults.length <= this.initialResultsLimit) {
       return sectionResults;
     }
 
-    return sectionResults.slice(0, this.resultLimit);
+    return sectionResults.slice(0, this.initialResultsLimit);
   }
 
   getElementsBySection(section: GlobalSearchSection): UiSearchableElement[] {
@@ -111,5 +114,25 @@ export class GlobalSearchResultsComponent {
       this.document.querySelector<HTMLElement>('.ix-slide-in2-background.open')?.click();
       this.searchDirectives.registeredDirectives.get(element.anchor).highlight();
     });
+  }
+
+  private saveSearchResult(result: UiSearchableElement): void {
+    const existingResults = JSON.parse(
+      this.window.localStorage.getItem('recentSearches') || '[]',
+    ) as UiSearchableElement[];
+
+    const existingIndex = findIndex(existingResults, (item) => isEqual(item.hierarchy, result.hierarchy));
+
+    if (existingIndex !== -1) {
+      existingResults.splice(existingIndex, 1);
+    }
+
+    existingResults.unshift(result);
+
+    localStorage.setItem('recentSearches', JSON.stringify(
+      existingResults
+        .slice(0, this.globalSearchSectionsProvider.recentSearchesMaximumToSave)
+        .map((item) => ({ ...item, section: GlobalSearchSection.RecentSearches })),
+    ));
   }
 }

@@ -1,0 +1,4 @@
+@import 'scss-imports/splitview';
+@import 'mixins/layout';
+
+@include tree-node-with-details-container;
