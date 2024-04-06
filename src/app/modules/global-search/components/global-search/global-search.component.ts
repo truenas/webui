@@ -8,7 +8,7 @@ import { FormControl } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import {
-  debounceTime, delay, distinctUntilChanged, filter, switchMap,
+  debounceTime, distinctUntilChanged, filter, switchMap,
 } from 'rxjs';
 import { searchDelayConst } from 'app/modules/global-search/constants/delay.const';
 import { GlobalSearchSection } from 'app/modules/global-search/enums/global-search-section.enum';
@@ -96,7 +96,7 @@ export class GlobalSearchComponent implements OnInit {
 
   private listenForSelectionChanges(): void {
     this.searchProvider.selectionChanged$
-      .pipe(delay(searchDelayConst), untilDestroyed(this))
+      .pipe(untilDestroyed(this))
       .subscribe(() => {
         this.resetInput();
       });

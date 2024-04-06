@@ -1,16 +1,22 @@
+import { DOCUMENT } from '@angular/common';
 import {
   ChangeDetectionStrategy, Component, Inject, Input, TrackByFunction,
 } from '@angular/core';
 import { Router } from '@angular/router';
-import { UntilDestroy } from '@ngneat/until-destroy';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import {
+  combineLatestWith, delay, filter,
+} from 'rxjs';
 import { WINDOW } from 'app/helpers/window.helper';
 import { Option } from 'app/interfaces/option.interface';
+import { searchDelayConst } from 'app/modules/global-search/constants/delay.const';
 import { GlobalSearchSection } from 'app/modules/global-search/enums/global-search-section.enum';
 import { generateIdFromHierarchy } from 'app/modules/global-search/helpers/generate-id-from-hierarchy';
 import { processHierarchy } from 'app/modules/global-search/helpers/process-hierarchy';
 import { UiSearchableElement } from 'app/modules/global-search/interfaces/ui-searchable-element.interface';
 import { UiSearchProvider } from 'app/modules/global-search/services/ui-search.service';
+import { UiSearchableDirectiveService } from 'app/modules/global-search/services/ui-searchable-directive.service';
 import { AuthService } from 'app/services/auth/auth.service';
 
 @UntilDestroy()
@@ -57,9 +63,13 @@ export class GlobalSearchResultsComponent {
     protected authService: AuthService,
     private translate: TranslateService,
     private searchProvider: UiSearchProvider,
+    private searchDirectives: UiSearchableDirectiveService,
     private router: Router,
     @Inject(WINDOW) private window: Window,
-  ) {}
+    @Inject(DOCUMENT) private document: Document,
+  ) {
+    this.listenForSelectionChanges();
+  }
 
   selectElement(element: UiSearchableElement): void {
     this.searchProvider.select(element);
@@ -88,5 +98,18 @@ export class GlobalSearchResultsComponent {
 
   getElementsBySection(section: GlobalSearchSection): UiSearchableElement[] {
     return this.results.filter((element) => element?.section === section);
+  }
+
+  listenForSelectionChanges(): void {
+    this.searchProvider.selectionChanged$.pipe(
+      combineLatestWith(this.searchDirectives.highlightOnDirectiveAdded$),
+      filter(([selectedElement]) => this.searchDirectives.registeredDirectives.has(selectedElement.anchor)),
+      delay(searchDelayConst),
+      untilDestroyed(this),
+    ).subscribe(([element]) => {
+      this.document.querySelector<HTMLElement>('.ix-slide-in-background.open')?.click();
+      this.document.querySelector<HTMLElement>('.ix-slide-in2-background.open')?.click();
+      this.searchDirectives.registeredDirectives.get(element.anchor).highlight();
+    });
   }
 }

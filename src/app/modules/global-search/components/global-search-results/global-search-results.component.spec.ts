@@ -1,12 +1,13 @@
 import { Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
-import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
+import { mockProvider, createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { TranslateModule } from '@ngx-translate/core';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { WINDOW } from 'app/helpers/window.helper';
 import { GlobalSearchSection } from 'app/modules/global-search/enums/global-search-section.enum';
 import { UiSearchableElement } from 'app/modules/global-search/interfaces/ui-searchable-element.interface';
 import { UiSearchProvider } from 'app/modules/global-search/services/ui-search.service';
+import { UiSearchableDirectiveService } from 'app/modules/global-search/services/ui-searchable-directive.service';
 import { GlobalSearchResultsComponent } from './global-search-results.component';
 
 const mockedHelpElement = {
@@ -33,6 +34,7 @@ describe('GlobalSearchResultsComponent', () => {
     ],
     providers: [
       mockAuth(),
+      mockProvider(UiSearchableDirectiveService),
     ],
   });
 

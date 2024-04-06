@@ -5,7 +5,7 @@ import { UntilDestroy } from '@ngneat/until-destroy';
 import { searchDelayConst } from 'app/modules/global-search/constants/delay.const';
 import { generateIdFromHierarchy } from 'app/modules/global-search/helpers/generate-id-from-hierarchy';
 import { UiSearchableElement } from 'app/modules/global-search/interfaces/ui-searchable-element.interface';
-import { UiSearchProvider } from 'app/modules/global-search/services/ui-search.service';
+import { UiSearchableDirectiveService } from 'app/modules/global-search/services/ui-searchable-directive.service';
 
 @UntilDestroy()
 @Directive({
@@ -21,18 +21,18 @@ export class UiSearchableElementDirective implements OnInit, OnDestroy {
   constructor(
     private renderer: Renderer2,
     private elementRef: ElementRef<HTMLElement>,
-    private searchProvider: UiSearchProvider,
+    private searchableDirectives: UiSearchableDirectiveService,
   ) {}
 
   ngOnInit(): void {
     if (this.id) {
       this.renderer.setAttribute(this.elementRef.nativeElement, 'id', this.id);
     }
-    this.searchProvider.register(this.ixSearchConfig, this);
+    this.searchableDirectives.register(this);
   }
 
   ngOnDestroy(): void {
-    this.searchProvider.unregister(this.ixSearchConfig);
+    this.searchableDirectives.unregister(this);
   }
 
   highlight(): void {
