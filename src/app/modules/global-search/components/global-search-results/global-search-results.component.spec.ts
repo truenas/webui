@@ -2,6 +2,7 @@ import { Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { mockProvider, createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { TranslateModule } from '@ngx-translate/core';
+import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { WINDOW } from 'app/helpers/window.helper';
 import { GlobalSearchSection } from 'app/modules/global-search/enums/global-search-section.enum';
@@ -40,7 +41,12 @@ describe('GlobalSearchResultsComponent', () => {
     ],
     providers: [
       mockAuth(),
-      mockProvider(UiSearchableDirectiveService),
+      mockProvider(UiSearchableDirectiveService, {
+        highlightOnDirectiveAdded$: of(),
+      }),
+      mockProvider(UiSearchProvider, {
+        selectionChanged$: of(),
+      }),
     ],
   });
 
