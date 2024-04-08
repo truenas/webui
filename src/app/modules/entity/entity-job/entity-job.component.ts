@@ -206,20 +206,10 @@ export class EntityJobComponent implements OnInit, AfterViewChecked {
   }
 
   wsshow(): void {
-    this.ws.call('core.get_jobs', [[['id', '=', this.jobId]]])
-      .pipe(untilDestroyed(this)).subscribe((jobs) => {
-        if (jobs.length > 0) {
-          this.wsjobUpdate(jobs[0]);
-        }
-      });
-    this.ws.subscribe('core.get_jobs')
-      .pipe(
-        filter((event) => event.id === this.jobId),
-        map((event) => event.fields),
-        untilDestroyed(this),
-      )
-      .subscribe((job) => {
-        this.wsjobUpdate(job);
+    this.ws.callAndSubscribe('core.get_jobs', [[['id', '=', this.jobId]]])
+      .pipe(filter((jobs) => jobs.length > 0 && jobs[0].id === this.jobId), untilDestroyed(this))
+      .subscribe((jobs) => {
+        this.wsjobUpdate(jobs[0]);
       });
   }
 

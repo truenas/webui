@@ -1,27 +1,31 @@
 import { TestBed } from '@angular/core/testing';
 import { mockProvider } from '@ngneat/spectator/jest';
+import { provideMockStore } from '@ngrx/store/testing';
 import { TranslateService } from '@ngx-translate/core';
 import { UUID } from 'angular2-uuid';
 import {
-  BehaviorSubject, Subject,
+  BehaviorSubject, Observable,
+  of,
 } from 'rxjs';
 import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
 import { JobState } from 'app/enums/job-state.enum';
+import { ApiEventMethod, ApiEventResponse } from 'app/interfaces/api-message.interface';
+import { Pool } from 'app/interfaces/pool.interface';
 import { WebSocketConnectionService } from 'app/services/websocket-connection.service';
-import { ApiEventSubscription, WebSocketService } from 'app/services/ws.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 const mockWebSocketConnectionService = {
   send: jest.fn(),
-  buildSubscriber: jest.fn().mockReturnValue(new Subject<unknown>()),
+  buildSubscriber: jest.fn(() => new BehaviorSubject<unknown>(null)),
   websocket$: new BehaviorSubject<unknown>(null),
 };
 
 const apiEventSubscription1$ = new BehaviorSubject(null);
 const apiEventSubscription2$ = new BehaviorSubject(null);
 
-const mockEventSubscriptions = new Map<string, ApiEventSubscription>([
-  ['event1', apiEventSubscription1$],
-  ['event2', apiEventSubscription2$],
+const mockEventSubscriptions = new Map<ApiEventMethod, Observable<ApiEventResponse<ApiEventMethod>>>([
+  ['core.get_jobs', apiEventSubscription1$],
+  ['pool.query', apiEventSubscription2$],
 ]);
 
 describe('WebSocketService', () => {
@@ -32,6 +36,7 @@ describe('WebSocketService', () => {
       providers: [
         WebSocketService,
         mockProvider(TranslateService),
+        provideMockStore(),
         { provide: WebSocketConnectionService, useValue: mockWebSocketConnectionService },
       ],
     });
@@ -41,8 +46,8 @@ describe('WebSocketService', () => {
     jest.spyOn(service.clearSubscriptions$, 'next');
 
     (service as unknown as {
-      eventSubscriptions: Map<string, ApiEventSubscription>;
-    }).eventSubscriptions = mockEventSubscriptions;
+      subscriptions: Map<ApiEventMethod, Observable<ApiEventResponse<ApiEventMethod>>>;
+    }).subscriptions = mockEventSubscriptions;
 
     jest.clearAllMocks();
   });
@@ -85,6 +90,17 @@ describe('WebSocketService', () => {
     });
   });
 
+  describe('callAndSubscribe', () => {
+    it('should call and subscribe to updates', () => {
+      const observablePools$ = of([{ name: 'pool1' }, { name: 'pool2' }]) as Observable<Pool[]>;
+      jest.spyOn(service, 'callAndSubscribe').mockReturnValue(observablePools$);
+      service.callAndSubscribe('pool.query').subscribe((result) => {
+        expect(result).toEqual([]);
+      });
+      expect(service.callAndSubscribe).toHaveBeenCalledWith('pool.query');
+    });
+  });
+
   describe('job', () => {
     it('should start a job successfully', () => {
       const uuid = 'fakeUUID';
@@ -111,7 +127,7 @@ describe('WebSocketService', () => {
   describe('subscribe', () => {
     it('should successfully subscribe', () => {
       const eventData = { data: 'test' };
-      (mockWebSocketConnectionService.buildSubscriber() as Subject<unknown>).next(eventData);
+      mockWebSocketConnectionService.buildSubscriber().next(eventData);
 
       service.subscribe('alert.list').subscribe((data) => {
         expect(data).toEqual(eventData);
@@ -124,7 +140,7 @@ describe('WebSocketService', () => {
   describe('subscribeToLogs', () => {
     it('should successfully subscribe to logs', () => {
       const logData = { data: 'log test' };
-      (mockWebSocketConnectionService.buildSubscriber() as Subject<unknown>).next(logData);
+      mockWebSocketConnectionService.buildSubscriber().next(logData);
 
       service.subscribeToLogs('logName').subscribe((data) => {
         expect(data).toEqual(logData);

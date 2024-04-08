@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
+import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { UUID } from 'angular2-uuid';
 import { environment } from 'environments/environment';
@@ -19,24 +20,27 @@ import {
   ApiCallParams,
   ApiCallResponse,
 } from 'app/interfaces/api/api-call-directory.interface';
-import { ApiEventDirectory } from 'app/interfaces/api/api-event-directory.interface';
 import {
   ApiJobMethod,
   ApiJobParams,
   ApiJobResponse,
 } from 'app/interfaces/api/api-job-directory.interface';
-import { ApiEvent, IncomingWebSocketMessage, ResultMessage } from 'app/interfaces/api-message.interface';
+import {
+  ApiCallAndSubscribeMethod,
+  ApiCallAndSubscribeResponse,
+  ApiEvent, ApiEventMethod, ApiEventResponse, IncomingWebSocketMessage, ResultMessage,
+} from 'app/interfaces/api-message.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { WebSocketError } from 'app/interfaces/websocket-error.interface';
+import { selectJob } from 'app/modules/jobs/store/job.selectors';
 import { WebSocketConnectionService } from 'app/services/websocket-connection.service';
-
-export type ApiEventSubscription = Observable<ApiEvent<ApiEventDirectory[keyof ApiEventDirectory]['response']>>;
+import { AppState } from 'app/store';
 
 @Injectable({
   providedIn: 'root',
 })
 export class WebSocketService {
-  private readonly eventSubscriptions = new Map<string, ApiEventSubscription>();
+  private readonly subscriptions = new Map<ApiEventMethod, Observable<ApiEventResponse<ApiEventMethod>>>();
   clearSubscriptions$ = new Subject<void>();
   mockUtils: MockEnclosureUtils;
 
@@ -44,6 +48,7 @@ export class WebSocketService {
     protected router: Router,
     protected wsManager: WebSocketConnectionService,
     protected translate: TranslateService,
+    protected store$: Store<AppState>,
   ) {
     if (environment.mockConfig && !environment?.production) this.mockUtils = new MockEnclosureUtils();
     this.wsManager.isConnected$?.subscribe((isConnected) => {
@@ -59,6 +64,22 @@ export class WebSocketService {
 
   call<M extends ApiCallMethod>(method: M, params?: ApiCallParams<M>): Observable<ApiCallResponse<M>> {
     return this.callMethod(method, params);
+  }
+
+  /**
+   * For jobs better to use the `selectJob` store selector.
+   */
+  callAndSubscribe<M extends ApiCallAndSubscribeMethod, R extends ApiCallAndSubscribeResponse<M>>(
+    method: M,
+    params?: ApiCallParams<M>,
+  ): Observable<R[]> {
+    return merge(
+      this.callMethod<M, R[]>(method, params),
+      this.subscribe<M, ApiEvent<R>>(method).pipe(
+        filter((event) => event.collection === method),
+        map((event) => [event.fields]),
+      ),
+    ).pipe(takeUntil(this.clearSubscriptions$));
   }
 
   /**
@@ -96,14 +117,14 @@ export class WebSocketService {
     ) as Observable<Job<ApiJobResponse<M>>>;
   }
 
-  subscribe<K extends keyof ApiEventDirectory>(name: K): Observable<ApiEvent<ApiEventDirectory[K]['response']>> {
-    if (this.eventSubscriptions.has(name)) {
-      return this.eventSubscriptions.get(name);
+  subscribe<K extends ApiEventMethod, R extends ApiEventResponse<K>>(name: K): Observable<R> {
+    if (this.subscriptions.has(name)) {
+      return this.subscriptions.get(name) as Observable<R>;
     }
 
-    const eventSubscription$ = this.wsManager.buildSubscriber(name).pipe(
-      switchMap((apiEvent: unknown) => {
-        const erroredEvent = apiEvent as { error: unknown };
+    const eventSubscription$ = this.wsManager.buildSubscriber<K, R>(name).pipe(
+      switchMap((apiEvent) => {
+        const erroredEvent = apiEvent as unknown as ResultMessage;
         if (erroredEvent.error) {
           console.error('Error: ', erroredEvent.error);
           return throwError(() => erroredEvent.error);
@@ -112,21 +133,22 @@ export class WebSocketService {
       }),
       share(),
       takeUntil(this.clearSubscriptions$),
-    ) as Observable<ApiEvent<ApiEventDirectory[K]['response']>>;
-    this.eventSubscriptions.set(name, eventSubscription$);
+    );
+    this.subscriptions.set(name, eventSubscription$);
     return eventSubscription$;
   }
 
   subscribeToLogs(name: string): Observable<ApiEvent<{ data: string }>> {
-    return this.subscribe(name as keyof ApiEventDirectory) as unknown as Observable<ApiEvent<{ data: string }>>;
+    return this.subscribe(name as ApiEventMethod) as unknown as Observable<ApiEvent<{ data: string }>>;
   }
 
   clearSubscriptions(): void {
     this.clearSubscriptions$.next();
-    this.eventSubscriptions.clear();
+    this.subscriptions.clear();
   }
 
-  private callMethod<M extends ApiCallMethod>(method: M, params?: ApiCallParams<M>): Observable<ApiCallResponse<M>>;
+  // eslint-disable-next-line max-len
+  private callMethod<M extends ApiCallMethod, R = ApiCallResponse<M>>(method: M, params?: ApiCallParams<M>): Observable<R>;
   private callMethod<M extends ApiJobMethod>(method: M, params?: ApiJobParams<M>): Observable<number>;
   private callMethod<M extends ApiCallMethod | ApiJobMethod>(method: M, params?: unknown): Observable<unknown> {
     const uuid = UUID.UUID();
@@ -164,11 +186,7 @@ export class WebSocketService {
   }
 
   private subscribeToJobUpdates(jobId: number): Observable<Job> {
-    return this.subscribe('core.get_jobs').pipe(
-      filter((apiEvent) => apiEvent.id === jobId),
-      map((apiEvent) => apiEvent.fields),
-      takeUntil(this.clearSubscriptions$),
-    );
+    return this.store$.select(selectJob(jobId)).pipe(takeUntil(this.clearSubscriptions$));
   }
 
   private printError(error: WebSocketError, context: { method: string; params: unknown }): void {
