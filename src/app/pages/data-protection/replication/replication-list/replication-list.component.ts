@@ -171,6 +171,7 @@ export class ReplicationListComponent implements OnInit {
 
   getReplicationTasks(): void {
     this.dataProvider.load();
+    this.filterString = '';
   }
 
   runNow(row: ReplicationTask): void {
@@ -250,7 +251,7 @@ export class ReplicationListComponent implements OnInit {
   onListFiltered(query: string): void {
     this.filterString = query.toLowerCase();
     this.dataProvider.setRows(this.replicationTasks.filter((task) => {
-      return task.name.includes(this.filterString);
+      return task.name.toLowerCase().includes(this.filterString);
     }));
   }
 

@@ -27,7 +27,7 @@ export class VmwareSnapshotListComponent implements OnInit {
   protected readonly searchableElements = vmwareSnapshotListElements;
   readonly requiredRoles = [Role.FullAdmin];
 
-  private filterString = '';
+  filterString = '';
 
   protected snapshots: VmwareSnapshot[] = [];
   dataProvider: AsyncDataProvider<VmwareSnapshot>;
@@ -92,6 +92,7 @@ export class VmwareSnapshotListComponent implements OnInit {
 
   getSnapshotsData(): void {
     this.dataProvider.load();
+    this.filterString = '';
   }
 
   doAdd(): void {

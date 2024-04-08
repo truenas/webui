@@ -160,14 +160,14 @@ export class VmListComponent implements OnInit {
       tap((vms) => this.vmMachines = vms),
     );
     this.dataProvider = new AsyncDataProvider(virtualMachines$);
-    this.dataProvider.load();
+    this.refresh();
   }
 
   listenForVmUpdates(): void {
     this.vmService.refreshVmList$
       .pipe(untilDestroyed(this))
       .subscribe(() => {
-        this.dataProvider.load();
+        this.refresh();
       });
   }
 
@@ -177,7 +177,7 @@ export class VmListComponent implements OnInit {
       .pipe(filter(Boolean), untilDestroyed(this))
       .subscribe(() => {
         this.vmService.checkMemory();
-        this.dataProvider.load();
+        this.refresh();
       });
   }
 
@@ -208,9 +208,14 @@ export class VmListComponent implements OnInit {
   }
 
   protected onListFiltered(query: string): void {
-    const filterString = query.toLowerCase();
+    this.filterString = query.toLowerCase();
     this.dataProvider.setRows(this.vmMachines.filter((vm) => {
-      return vm.name.includes(filterString);
+      return vm.name.toLowerCase().includes(this.filterString);
     }));
+  }
+
+  private refresh(): void {
+    this.dataProvider.load();
+    this.filterString = '';
   }
 }

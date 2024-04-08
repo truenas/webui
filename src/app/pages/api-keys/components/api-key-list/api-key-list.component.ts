@@ -135,6 +135,7 @@ export class ApiKeyListComponent implements OnInit {
     ).subscribe({
       next: (apiKeys) => {
         this.apiKeys = apiKeys;
+        this.filterString = '';
         this.createDataSource(apiKeys);
         this.cdr.markForCheck();
       },

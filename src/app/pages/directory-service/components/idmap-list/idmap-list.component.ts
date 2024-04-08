@@ -164,6 +164,7 @@ export class IdmapListComponent implements OnInit {
 
   getIdmaps(): void {
     this.dataProvider.load();
+    this.filterString = '';
   }
 
   setDefaultSort(): void {

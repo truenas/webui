@@ -16,7 +16,6 @@ import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IscsiService } from 'app/services/iscsi.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
@@ -76,7 +75,7 @@ export class InitiatorListComponent implements OnInit {
               switchMap(() => this.ws.call('iscsi.initiator.delete', [row.id]).pipe(this.loader.withLoader())),
               untilDestroyed(this),
             ).subscribe({
-              next: () => this.dataProvider.load(),
+              next: () => this.refresh(),
               error: (error: unknown) => {
                 this.dialogService.error(this.errorHandler.parseError(error));
               },
@@ -96,7 +95,6 @@ export class InitiatorListComponent implements OnInit {
     private dialogService: DialogService,
     private ws: WebSocketService,
     private translate: TranslateService,
-    private slideInService: IxSlideInService,
     private errorHandler: ErrorHandlerService,
     private cdr: ChangeDetectorRef,
     private iscsiService: IscsiService,
@@ -109,7 +107,7 @@ export class InitiatorListComponent implements OnInit {
     );
 
     this.dataProvider = new AsyncDataProvider(initiators$);
-    this.dataProvider.load();
+    this.refresh();
   }
 
   doAdd(): void {
@@ -119,7 +117,7 @@ export class InitiatorListComponent implements OnInit {
   onListFiltered(query: string): void {
     this.filterString = query.toLowerCase();
     this.dataProvider.setRows(this.initiators.filter((entry) => {
-      return [entry.comment, entry.initiators.join(' ')].includes(this.filterString);
+      return [entry.comment.toLowerCase(), entry.initiators.join(' ')].includes(this.filterString);
     }));
   }
 
@@ -127,5 +125,10 @@ export class InitiatorListComponent implements OnInit {
     this.columns = [...columns];
     this.cdr.detectChanges();
     this.cdr.markForCheck();
+  }
+
+  private refresh(): void {
+    this.dataProvider.load();
+    this.filterString = '';
   }
 }

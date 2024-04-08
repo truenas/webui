@@ -112,6 +112,7 @@ export class CertificateSigningRequestsListComponent implements OnInit {
 
   getCertificates(): void {
     this.dataProvider.load();
+    this.filterString = '';
   }
 
   setDefaultSort(): void {

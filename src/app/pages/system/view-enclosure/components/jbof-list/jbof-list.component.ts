@@ -117,6 +117,7 @@ export class JbofListComponent implements OnInit {
 
   getJbofs(): void {
     this.dataProvider.load();
+    this.filterString = '';
     this.updateAvailableJbof();
   }
 

@@ -132,6 +132,7 @@ export class KerberosRealmsListComponent implements OnInit {
 
   getKerberosRealms(): void {
     this.dataProvider.load();
+    this.filterString = '';
   }
 
   setDefaultSort(): void {

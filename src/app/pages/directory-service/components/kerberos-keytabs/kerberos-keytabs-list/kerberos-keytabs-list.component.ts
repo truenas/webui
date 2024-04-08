@@ -105,6 +105,7 @@ export class KerberosKeytabsListComponent implements OnInit {
 
   getKerberosKeytabs(): void {
     this.dataProvider.load();
+    this.filterString = '';
   }
 
   setDefaultSort(): void {

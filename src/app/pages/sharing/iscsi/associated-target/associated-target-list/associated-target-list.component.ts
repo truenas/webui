@@ -150,6 +150,7 @@ export class AssociatedTargetListComponent implements OnInit {
     ).subscribe(([targets, extents]) => {
       this.targets = targets;
       this.extents = extents;
+      this.filterString = '';
       this.dataProvider.load();
       this.isLoading = false;
       this.cdr.markForCheck();
@@ -165,8 +166,8 @@ export class AssociatedTargetListComponent implements OnInit {
 
   onListFiltered(query: string): void {
     this.filterString = query.toLowerCase();
-    const extentNames = this.extents.map((extent) => extent.name);
-    const targetNames = this.targets.map((target) => target.name);
+    const extentNames = this.extents.map((extent) => extent.name.toLowerCase());
+    const targetNames = this.targets.map((target) => target.name.toLowerCase());
     this.dataProvider.setRows(this.targetExtents.filter(() => {
       return [...targetNames, ...extentNames].includes(this.filterString);
     }));

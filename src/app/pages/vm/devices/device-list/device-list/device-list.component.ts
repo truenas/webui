@@ -87,6 +87,7 @@ export class DeviceListComponent implements OnInit {
 
   loadDevices(): void {
     this.dataProvider.load();
+    this.filterString = '';
   }
 
   onAdd(): void {

@@ -103,6 +103,7 @@ export class TunableListComponent implements OnInit {
 
   getTunables(): void {
     this.dataProvider.load();
+    this.filterString = '';
   }
 
   doAdd(): void {

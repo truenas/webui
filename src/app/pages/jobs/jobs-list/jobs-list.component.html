@@ -19,6 +19,7 @@
   </mat-button-toggle-group>
 
   <ix-search-input1
+    [value]="datasetFilter"
     [disabled]="isLoading$ | async"
     (search)="onListFiltered($event)"
   ></ix-search-input1>

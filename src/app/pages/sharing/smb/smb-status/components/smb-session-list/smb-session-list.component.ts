@@ -70,6 +70,7 @@ export class SmbSessionListComponent implements OnInit {
 
   loadData(): void {
     this.dataProvider.load();
+    this.filterString = '';
   }
 
   onListFiltered(query: string): void {

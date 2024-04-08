@@ -190,6 +190,7 @@ export class SnapshotListComponent implements OnInit {
           ...snapshot,
           selected: false,
         }));
+        this.datasetFilter = '';
         return this.snapshots.filter(this.filterSnapshot);
       }),
       untilDestroyed(this),
@@ -264,7 +265,7 @@ export class SnapshotListComponent implements OnInit {
   }
 
   private filterSnapshot = (snapshot: ZfsSnapshotUi): boolean => {
-    return snapshot.name.includes(this.datasetFilter);
+    return snapshot.name.toLowerCase().includes(this.datasetFilter);
   };
 
   private setDefaultSort(): void {

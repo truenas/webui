@@ -73,7 +73,7 @@ export class SmbListComponent implements OnInit {
             row.enabled = share.enabled;
           },
           error: (error: unknown) => {
-            this.dataProvider.load();
+            this.refresh();
             this.dialog.error(this.errorHandler.parseError(error));
           },
         });
@@ -88,7 +88,7 @@ export class SmbListComponent implements OnInit {
             const slideInRef = this.slideInService.open(SmbFormComponent, { data: { existingSmbShare: smbShare } });
             slideInRef.slideInClosed$
               .pipe(take(1), filter(Boolean), untilDestroyed(this))
-              .subscribe(() => this.dataProvider.load());
+              .subscribe(() => this.refresh());
           },
         },
         {
@@ -108,7 +108,7 @@ export class SmbListComponent implements OnInit {
                   this.appLoader.close();
                   const slideInRef = this.slideInService.open(SmbAclComponent, { data: shareAcl.share_name });
                   slideInRef.slideInClosed$.pipe(take(1), untilDestroyed(this)).subscribe(() => {
-                    this.dataProvider.load();
+                    this.refresh();
                   });
                 });
             }
@@ -149,7 +149,7 @@ export class SmbListComponent implements OnInit {
                   this.appLoader.withLoader(),
                   untilDestroyed(this),
                 ).subscribe({
-                  next: () => this.dataProvider.load(),
+                  next: () => this.refresh(),
                 });
               },
             });
@@ -180,7 +180,7 @@ export class SmbListComponent implements OnInit {
       untilDestroyed(this),
     );
     this.dataProvider = new AsyncDataProvider<SmbShare>(shares$);
-    this.dataProvider.load();
+    this.refresh();
   }
 
   setDefaultSort(): void {
@@ -195,7 +195,7 @@ export class SmbListComponent implements OnInit {
     const slideInRef = this.slideInService.open(SmbFormComponent);
     slideInRef.slideInClosed$.pipe(take(1), filter(Boolean), untilDestroyed(this)).subscribe({
       next: () => {
-        this.dataProvider.load();
+        this.refresh();
       },
     });
   }
@@ -203,7 +203,7 @@ export class SmbListComponent implements OnInit {
   onListFiltered(query: string): void {
     this.filterString = query.toLowerCase();
     const filteredExporters = this.smbShares.filter((share) => {
-      return JSON.stringify(share).includes(query);
+      return JSON.stringify(share).toLowerCase().includes(query);
     });
     this.dataProvider.setRows(filteredExporters);
     this.cdr.markForCheck();
@@ -220,5 +220,10 @@ export class SmbListComponent implements OnInit {
       title: helptextSharingSmb.action_edit_acl_dialog.title,
       message: this.translate.instant('The path <i>{path}</i> is in a locked dataset.', { path }),
     });
+  }
+
+  private refresh(): void {
+    this.dataProvider.load();
+    this.filterString = '';
   }
 }

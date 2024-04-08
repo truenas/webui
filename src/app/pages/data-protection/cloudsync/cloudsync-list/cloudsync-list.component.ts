@@ -155,6 +155,7 @@ export class CloudSyncListComponent implements OnInit {
 
   getCloudSyncTasks(): void {
     this.dataProvider.load();
+    this.filterString = '';
   }
 
   runNow(row: CloudSyncTaskUi): void {
@@ -283,7 +284,7 @@ export class CloudSyncListComponent implements OnInit {
   onListFiltered(query: string): void {
     this.filterString = query.toLowerCase();
     this.dataProvider.setRows(this.cloudSyncTasks.filter((cloudSync) => {
-      return cloudSync.description.includes(this.filterString);
+      return cloudSync.description.toLowerCase().includes(this.filterString);
     }));
   }
 

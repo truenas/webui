@@ -110,6 +110,7 @@ export class JobsListComponent implements OnInit {
   ngOnInit(): void {
     this.selectedJobs$.pipe(untilDestroyed(this)).subscribe((jobs) => {
       this.dataProvider.setRows(jobs);
+      this.datasetFilter = '';
       this.setDefaultSort();
       this.cdr.markForCheck();
     });
@@ -137,7 +138,7 @@ export class JobsListComponent implements OnInit {
   }
 
   private filterSnapshot = (job: Job): boolean => {
-    return [job.method, job.description].includes(this.datasetFilter);
+    return [job.method.toLowerCase(), job.description.toLowerCase()].includes(this.datasetFilter);
   };
 
   private setDefaultSort(): void {

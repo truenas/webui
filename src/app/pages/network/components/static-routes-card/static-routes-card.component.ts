@@ -83,6 +83,7 @@ export class StaticRoutesCardComponent implements OnInit {
 
   getStaticRoutes(): void {
     this.dataProvider.load();
+    this.filterString = '';
   }
 
   setDefaultSort(): void {

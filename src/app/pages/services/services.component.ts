@@ -167,6 +167,7 @@ export class ServicesComponent implements OnInit {
     ).subscribe({
       next: (services) => {
         this.createDataSource(services);
+        this.filterString = '';
         this.loading = false;
         this.error = false;
         this.cdr.markForCheck();

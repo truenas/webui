@@ -56,6 +56,7 @@ export class SmbNotificationListComponent implements OnInit {
 
   loadData(): void {
     this.dataProvider.load();
+    this.filterString = '';
   }
 
   onListFiltered(query: string): void {

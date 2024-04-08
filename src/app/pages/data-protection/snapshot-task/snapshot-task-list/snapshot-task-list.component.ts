@@ -167,6 +167,7 @@ export class SnapshotTaskListComponent implements OnInit {
 
   getSnapshotTasks(): void {
     this.dataProvider.load();
+    this.filterValue = '';
   }
 
   columnsChange(columns: typeof this.columns): void {

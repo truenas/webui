@@ -118,7 +118,7 @@ export class SmartTestResultListComponent implements OnInit {
       tap((smartTestResults) => this.smartTestResults = smartTestResults),
     );
     this.dataProvider = new AsyncDataProvider<SmartTestResultsRow>(smartTestResults$);
-    this.dataProvider.load();
+    this.refresh();
     this.setDefaultSort();
   }
 
@@ -133,7 +133,7 @@ export class SmartTestResultListComponent implements OnInit {
   onListFiltered(query: string): void {
     this.filterString = query.toLowerCase();
     this.dataProvider.setRows(this.smartTestResults.filter((smartTestResult) => {
-      return JSON.stringify(smartTestResult).includes(this.filterString);
+      return JSON.stringify(smartTestResult).toLowerCase().includes(this.filterString);
     }));
   }
 
@@ -141,5 +141,10 @@ export class SmartTestResultListComponent implements OnInit {
     this.columns = [...columns];
     this.cdr.detectChanges();
     this.cdr.markForCheck();
+  }
+
+  private refresh(): void {
+    this.dataProvider.load();
+    this.filterString = '';
   }
 }

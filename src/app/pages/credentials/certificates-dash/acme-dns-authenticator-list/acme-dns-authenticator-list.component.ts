@@ -81,6 +81,7 @@ export class AcmeDnsAuthenticatorListComponent implements OnInit {
 
   getAuthenticators(): void {
     this.dataProvider.load();
+    this.filterString = '';
   }
 
   setDefaultSort(): void {

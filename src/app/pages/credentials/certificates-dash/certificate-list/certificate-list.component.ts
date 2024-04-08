@@ -139,6 +139,7 @@ export class CertificateListComponent implements OnInit {
 
   getCertificates(): void {
     this.dataProvider.load();
+    this.filterString = '';
   }
 
   setDefaultSort(): void {

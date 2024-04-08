@@ -220,6 +220,7 @@ export class DatasetQuotasListComponent implements OnInit {
           }
 
           this.createDataSource(this.quotas);
+          this.filterString = '';
           this.checkInvalidQuotas();
         },
         error: (error: unknown) => {

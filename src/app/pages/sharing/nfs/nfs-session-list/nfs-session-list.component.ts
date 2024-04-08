@@ -148,6 +148,8 @@ export class NfsSessionListComponent implements OnInit {
     } else {
       this.nfs4DataProvider.load();
     }
+
+    this.filterString = '';
   }
 
   onListFiltered(query: string): void {

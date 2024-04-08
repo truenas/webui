@@ -38,6 +38,8 @@ export class CatalogsComponent implements OnInit {
   protected readonly requiredRoles = [Role.CatalogWrite];
   protected readonly searchableElements = catalogsElements;
 
+  filterString = '';
+
   catalogSyncJobIds = new Set<number>();
   dataProvider: AsyncDataProvider<Catalog>;
   catalogs: Catalog[] = [];
@@ -85,7 +87,6 @@ export class CatalogsComponent implements OnInit {
     this.dataProvider = new AsyncDataProvider<Catalog>(catalogs$);
     this.setDefaultSort();
     this.refresh();
-
     this.listenForCatalogSyncJobs();
   }
 
@@ -107,11 +108,11 @@ export class CatalogsComponent implements OnInit {
   }
 
   onListFiltered(query: string): void {
-    const filterString = query.toLowerCase();
+    this.filterString = query.toLowerCase();
     this.dataProvider.setRows(this.catalogs.filter((catalog) => {
-      return catalog.label.toLowerCase().includes(filterString)
-        || catalog.id.toLowerCase().includes(filterString)
-        || catalog.repository.toString().includes(filterString);
+      return catalog.label.toLowerCase().includes(this.filterString)
+        || catalog.id.toLowerCase().includes(this.filterString)
+        || catalog.repository.toString().toLowerCase().includes(this.filterString);
     }));
   }
 
@@ -125,6 +126,7 @@ export class CatalogsComponent implements OnInit {
 
   refresh(): void {
     this.dataProvider.load();
+    this.filterString = '';
   }
 
   doAdd(): void {

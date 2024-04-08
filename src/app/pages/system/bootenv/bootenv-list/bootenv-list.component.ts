@@ -191,7 +191,7 @@ export class BootEnvironmentListComponent implements OnInit {
       }),
     );
     this.dataProvider = new AsyncDataProvider(request$);
-    this.dataProvider.load();
+    this.refresh();
     this.setDefaultSort();
   }
 
@@ -199,7 +199,7 @@ export class BootEnvironmentListComponent implements OnInit {
     slideInRef.slideInClosed$.pipe(
       filter(Boolean),
       untilDestroyed(this),
-    ).subscribe(() => this.dataProvider.load());
+    ).subscribe(() => this.refresh());
   }
 
   openBootenvStats(): void {
@@ -248,7 +248,7 @@ export class BootEnvironmentListComponent implements OnInit {
     }).afterClosed().pipe(
       filter(Boolean),
       untilDestroyed(this),
-    ).subscribe(() => this.dataProvider.load());
+    ).subscribe(() => this.refresh());
   }
 
   doActivate(bootenv: BootenvUi): void {
@@ -265,7 +265,7 @@ export class BootEnvironmentListComponent implements OnInit {
         );
       }),
       untilDestroyed(this),
-    ).subscribe(() => this.dataProvider.load());
+    ).subscribe(() => this.refresh());
   }
 
   toggleKeep(bootenv: BootenvUi): void {
@@ -283,7 +283,7 @@ export class BootEnvironmentListComponent implements OnInit {
           );
         }),
         untilDestroyed(this),
-      ).subscribe(() => this.dataProvider.load());
+      ).subscribe(() => this.refresh());
     } else {
       this.dialogService.confirm({
         title: this.translate.instant('Unkeep'),
@@ -298,7 +298,7 @@ export class BootEnvironmentListComponent implements OnInit {
           );
         }),
         untilDestroyed(this),
-      ).subscribe(() => this.dataProvider.load());
+      ).subscribe(() => this.refresh());
     }
   }
 
@@ -318,5 +318,10 @@ export class BootEnvironmentListComponent implements OnInit {
       propertyName: 'created',
       sortBy: (row) => row.created.$date,
     });
+  }
+
+  private refresh(): void {
+    this.dataProvider.load();
+    this.filterString = '';
   }
 }

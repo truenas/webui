@@ -142,5 +142,6 @@ export class AlertServiceListComponent implements OnInit {
 
   private getAlertServices(): void {
     this.dataProvider.load();
+    this.filterString = '';
   }
 }
