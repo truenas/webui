@@ -32,7 +32,7 @@ export class FipsService {
   promptForRestart(): Observable<unknown> {
     return this.dialog.confirm({
       title: this.translate.instant('FIPS Settings'),
-      message: this.translate.instant('Restart is recommended for new FIPS setting to take effect. Would you like to restart now?“'),
+      message: this.translate.instant('Restart is recommended for new FIPS setting to take effect. Would you like to restart now?'),
       buttonText: this.translate.instant('Restart Now'),
     })
       .pipe(

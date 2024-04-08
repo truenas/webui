@@ -7,6 +7,9 @@ import {
   filter, switchMap, withLatestFrom,
 } from 'rxjs/operators';
 import { failoverAllowedReasons, FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
+import { Role } from 'app/enums/role.enum';
+import { filterAsync } from 'app/helpers/operators/filter-async.operator';
+import { AuthService } from 'app/services/auth/auth.service';
 import { FipsService } from 'app/services/fips.service';
 import { haStatusLoaded } from 'app/store/ha-info/ha-info.actions';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
@@ -18,6 +21,7 @@ export class HaFipsEffects {
     ofType(haStatusLoaded),
     withLatestFrom(this.store$.select(selectIsHaLicensed)),
     filter(([, isHa]) => isHa),
+    filterAsync(() => this.authService.hasRole([Role.FullAdmin])),
     switchMap(([{ haStatus }]) => {
       // Indicative of a machine that hasn't finished booting.
       const hasOtherReasons = haStatus.reasons.some((reason) => !failoverAllowedReasons.includes(reason));
@@ -45,5 +49,6 @@ export class HaFipsEffects {
     private fips: FipsService,
     private actions$: Actions,
     private store$: Store,
+    private authService: AuthService,
   ) {}
 }

@@ -9,7 +9,10 @@ import {
   filter, map, mergeMap, switchMap, tap, withLatestFrom,
 } from 'rxjs/operators';
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
+import { Role } from 'app/enums/role.enum';
+import { filterAsync } from 'app/helpers/operators/filter-async.operator';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
+import { AuthService } from 'app/services/auth/auth.service';
 import { DialogService } from 'app/services/dialog.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { haStatusLoaded } from 'app/store/ha-info/ha-info.actions';
@@ -45,6 +48,7 @@ export class HaUpgradeEffects {
     this.actions$.pipe(
       ofType(upgradePendingStateLoaded),
       filter(({ isUpgradePending }) => isUpgradePending),
+      filterAsync(() => this.authService.hasRole([Role.FailoverWrite])),
     ),
     this.actions$.pipe(ofType(updatePendingIndicatorPressed)),
   ).pipe(
@@ -68,6 +72,7 @@ export class HaUpgradeEffects {
     private dialogService: DialogService,
     private translate: TranslateService,
     private matDialog: MatDialog,
+    private authService: AuthService,
   ) { }
 
   private finishUpgrade(): Observable<unknown> {
