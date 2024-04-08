@@ -81,7 +81,9 @@ describe('VmWizardComponent', () => {
         mockCall('vm.device.bind_choices', {
           '10.10.16.82': '10.10.16.82',
         }),
-        mockCall('vm.cpu_model_choices'),
+        mockCall('vm.cpu_model_choices', {
+          Pentium: 'Pentium',
+        }),
         mockCall('vm.maximum_supported_vcpus', 27),
         mockCall('pool.filesystem_choices', [
           'poolio',
