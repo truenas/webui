@@ -80,6 +80,14 @@
 }
 
 .input-container {
+  &.auto-complete {
+    cursor: pointer;
+
+    input {
+      cursor: pointer;
+    }
+  }
+
   .toggle_pw {
     @include variable(display, --toggle_pw_display_prop, $toggle-pw-display-prop);
     opacity: var(--disabled-opacity);
@@ -120,4 +128,8 @@
 ::ng-deep .mat-option-text {
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.mat-mdc-select-arrow {
+  padding: 15px;
 }
