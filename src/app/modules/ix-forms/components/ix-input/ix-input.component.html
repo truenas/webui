@@ -40,11 +40,11 @@
   <span *ngIf="shouldShowResetInput() && !autocompleteOptions?.length" class="reset-input">
     <ix-icon name="mdi-close-circle" (click)="resetInput(ixInput)"></ix-icon>
   </span>
-  <div *ngIf="autocompleteOptions?.length" class="mat-mdc-select-arrow" (click)="ixInput.focus()">
+  <span *ngIf="autocompleteOptions?.length" class="reset-input mat-mdc-select-arrow" (click)="ixInput.focus()">
     <svg viewBox="0 0 24 24" width="24px" height="24px" aria-hidden="true">
       <path d="M7 10l5 5 5-5z"></path>
     </svg>
-  </div>
+  </span>
   <button
     *ngIf="type === 'password'"
     mat-icon-button

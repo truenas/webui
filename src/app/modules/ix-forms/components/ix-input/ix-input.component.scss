@@ -60,6 +60,11 @@
   user-select: none;
 }
 
+.reset-input.mat-mdc-select-arrow {
+  opacity: 1;
+  padding: 12px 7px;
+}
+
 .prefix-icon {
   cursor: default;
   left: 2px;
@@ -128,8 +133,4 @@
 ::ng-deep .mat-option-text {
   text-overflow: ellipsis;
   white-space: nowrap;
-}
-
-.mat-mdc-select-arrow {
-  padding: 15px;
 }
