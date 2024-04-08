@@ -16,4 +16,12 @@ export enum FailoverDisabledReason {
   LocFailoverOngoing = 'LOC_FAILOVER_ONGOING',
   NoHeartbeatIface = 'NO_HEARTBEAT_IFACE',
   NoCarrierOnHeartbeat = 'NO_CARRIER_ON_HEARTBEAT',
+  LocalFipsRebootRequired = 'LOC_FIPS_REBOOT_REQ',
+  RemoteFipsRebootRequired = 'REM_FIPS_REBOOT_REQ',
 }
+
+export const failoverAllowedReasons = [
+  FailoverDisabledReason.MismatchVersions,
+  FailoverDisabledReason.LocalFipsRebootRequired,
+  FailoverDisabledReason.RemoteFipsRebootRequired,
+];
