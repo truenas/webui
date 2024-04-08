@@ -30,6 +30,6 @@ export class WidgetHelpComponent extends WidgetComponent {
     private sysGenService: SystemGeneralService,
     public translate: TranslateService,
   ) {
-    super(translate);
+    super();
   }
 }

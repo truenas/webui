@@ -143,7 +143,7 @@ export class ReportComponent extends WidgetComponent implements OnInit, OnChange
     private reportsService: ReportsService,
     private cdr: ChangeDetectorRef,
   ) {
-    super(translate);
+    super();
     this.reportsService.legendEventEmitterObs$.pipe(untilDestroyed(this)).subscribe({
       next: (data: LegendDataWithStackedTotalHtml) => {
         const clone = { ...data };

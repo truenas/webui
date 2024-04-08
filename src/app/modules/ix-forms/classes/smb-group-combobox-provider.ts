@@ -16,7 +16,7 @@ export class SmbGroupComboboxProvider extends GroupComboboxProvider {
     );
   }
 
-  fetch(filterValue: string): Observable<Option[]> {
+  override fetch(filterValue: string): Observable<Option[]> {
     this.page = 0;
     const offset = this.page * this.pageSize;
 
@@ -26,7 +26,7 @@ export class SmbGroupComboboxProvider extends GroupComboboxProvider {
       );
   }
 
-  nextPage(filterValue: string): Observable<Option[]> {
+  override nextPage(filterValue: string): Observable<Option[]> {
     this.page++;
     const offset = this.page * this.pageSize;
     return this.userService.smbGroupQueryDsCache(filterValue, false, offset)

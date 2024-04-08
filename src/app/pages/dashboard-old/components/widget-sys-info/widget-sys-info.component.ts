@@ -43,7 +43,7 @@ import { selectIsIxHardware, waitForSystemFeatures } from 'app/store/system-info
 })
 export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, OnDestroy {
   @Input() isPassive = false;
-  @Input() showReorderHandle = false;
+  @Input() override showReorderHandle = false;
 
   protected isHaLicensed = false;
   protected isHaEnabled = false;
@@ -105,7 +105,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
     private breakpointObserver: BreakpointObserver,
     @Inject(WINDOW) private window: Window,
   ) {
-    super(translate);
+    super();
     this.sysGenService.updateRunning.pipe(untilDestroyed(this)).subscribe((isUpdateRunning: string) => {
       this.isUpdateRunning = isUpdateRunning === 'true';
       this.cdr.markForCheck();

@@ -44,7 +44,7 @@ export class GooglePhotosProviderFormComponent extends BaseProviderFormComponent
     return this.formPatcher$;
   };
 
-  getSubmitAttributes(): this['form']['value'] {
+  override getSubmitAttributes(): this['form']['value'] {
     return {
       ...this.form.value,
     };

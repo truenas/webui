@@ -42,7 +42,7 @@ import {
 export class IxIconComponent extends MatIcon implements OnInit, OnChanges, AfterContentInit {
   @Input() name: string;
 
-  _elementRef: ElementRef<HTMLElement>;
+  override _elementRef: ElementRef<HTMLElement>;
 
   private get iconName(): string | undefined {
     if (this.name) {
@@ -87,7 +87,7 @@ export class IxIconComponent extends MatIcon implements OnInit, OnChanges, After
     this.updateIcon(this.name);
   }
 
-  ngOnInit(): void {
+  override ngOnInit(): void {
     this.updateIcon(this.iconName);
     super.ngOnInit();
   }

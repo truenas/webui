@@ -84,7 +84,7 @@ export class OpenstackSwiftProviderFormComponent extends BaseProviderFormCompone
     return this.form.value.auth_version === 3;
   }
 
-  getSubmitAttributes(): CloudCredential['attributes'] {
+  override getSubmitAttributes(): CloudCredential['attributes'] {
     const values = super.getSubmitAttributes();
 
     if (!this.isVersion3) {

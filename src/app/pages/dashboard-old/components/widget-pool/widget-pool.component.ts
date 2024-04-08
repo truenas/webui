@@ -169,7 +169,7 @@ export class WidgetPoolComponent extends WidgetComponent implements AfterViewIni
     private cdr: ChangeDetectorRef,
     private ws: WebSocketService,
   ) {
-    super(translate);
+    super();
   }
 
   ngOnChanges(changes: IxSimpleChanges<this>): void {

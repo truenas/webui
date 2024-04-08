@@ -44,7 +44,7 @@ export class GoogleDriveProviderFormComponent extends BaseProviderFormComponent 
     return this.formPatcher$;
   };
 
-  getSubmitAttributes(): OauthProviderComponent['form']['value'] & this['form']['value'] {
+  override getSubmitAttributes(): OauthProviderComponent['form']['value'] & this['form']['value'] {
     return {
       ...this.oauthComponent?.form?.value,
       ...this.form.value,

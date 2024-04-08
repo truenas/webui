@@ -109,7 +109,7 @@ export class WidgetBackupComponent extends WidgetComponent implements OnInit {
     private chainedSlideInService: IxChainedSlideInService,
     private breakpointObserver: BreakpointObserver,
   ) {
-    super(translate);
+    super();
   }
 
   ngOnInit(): void {

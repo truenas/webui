@@ -30,7 +30,7 @@ export class EnclosureDisksMiniComponent extends EnclosureDisksComponent {
   @ViewChild('cardcontent', { static: true }) cardContent: ElementRef;
 
   temperatureScales = false;
-  emptySlotView = this.defaultView;
+  override emptySlotView = this.defaultView;
 
   get enclosurePools(): string[] {
     return this.enclosureStore?.getPools(this.selectedEnclosure);
@@ -48,15 +48,15 @@ export class EnclosureDisksMiniComponent extends EnclosureDisksComponent {
   }
 
   constructor(
-    public cdr: ChangeDetectorRef,
-    public dialogService: DialogService,
-    protected translate: TranslateService,
-    protected ws: WebSocketService,
-    protected store$: Store<AppState>,
-    protected themeService: ThemeService,
-    protected diskTemperatureService: DiskTemperatureService,
-    protected matDialog: MatDialog,
-    protected enclosureStore: EnclosureStore,
+    public override cdr: ChangeDetectorRef,
+    public override dialogService: DialogService,
+    protected override translate: TranslateService,
+    protected override ws: WebSocketService,
+    protected override store$: Store<AppState>,
+    protected override themeService: ThemeService,
+    protected override diskTemperatureService: DiskTemperatureService,
+    protected override matDialog: MatDialog,
+    protected override enclosureStore: EnclosureStore,
   ) {
     super(
       cdr,
@@ -81,7 +81,7 @@ export class EnclosureDisksMiniComponent extends EnclosureDisksComponent {
     return enclosureSlot;
   } */
 
-  createExtractedEnclosure(): void {
+  override createExtractedEnclosure(): void {
     // MINIs have no support for expansion shelves
     // therefore we will never need to create
     // any enclosure selection UI. Leave this
@@ -89,7 +89,7 @@ export class EnclosureDisksMiniComponent extends EnclosureDisksComponent {
     console.error('Cannot create extracted enclosure for selector UI. MINI products do not support expansion shelves');
   }
 
-  createEnclosure(enclosure: EnclosureUi = this.selectedEnclosure): void {
+  override createEnclosure(enclosure: EnclosureUi = this.selectedEnclosure): void {
     if (!this.enclosureViews || !this.selectedEnclosure) {
       console.warn('CANNOT CREATE MINI ENCLOSURE');
       return;

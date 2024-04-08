@@ -16,8 +16,7 @@ import {
   SkipSelf,
   ViewContainerRef,
 } from '@angular/core';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { take } from 'rxjs/operators';
+import { UntilDestroy } from '@ngneat/until-destroy';
 import { IxDragHandleDirective } from 'app/modules/ix-drop-grid/ix-drag-handle.directive';
 import { IxDropGridItemDirective } from 'app/modules/ix-drop-grid/ix-drop-grid-item.directive';
 import {
@@ -38,7 +37,7 @@ export class IxDragDirective extends CdkDrag {
   @ContentChildren(ixDragHandleDirectiveToken, { descendants: true }) _ixHandles: QueryList<IxDragHandleDirective>;
 
   constructor(
-    private ngZone: NgZone,
+    ngZone: NgZone,
     element: ElementRef<HTMLElement>,
     @Inject(DOCUMENT) document: Document,
     viewContainerRef: ViewContainerRef,
@@ -65,17 +64,5 @@ export class IxDragDirective extends CdkDrag {
       selfHandle,
       parentDrag,
     );
-
-    this.injectIxHandles();
-  }
-
-  private injectIxHandles(): void {
-    // We need to wait for the zone to stabilize, in order for the reference
-    // element to be in the proper place in the DOM. This is mostly relevant
-    // for draggable elements inside portals since they get stamped out in
-    // their original DOM position and then they get transferred to the portal.
-    this.ngZone.onStable.pipe(take(1), untilDestroyed(this)).subscribe(() => {
-      this._handles = this._ixHandles;
-    });
   }
 }

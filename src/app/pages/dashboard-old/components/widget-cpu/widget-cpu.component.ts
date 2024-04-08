@@ -91,7 +91,7 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
     private cdr: ChangeDetectorRef,
     @Inject(DOCUMENT) private document: Document,
   ) {
-    super(translate);
+    super();
 
     this.utils = new ThemeUtils();
 

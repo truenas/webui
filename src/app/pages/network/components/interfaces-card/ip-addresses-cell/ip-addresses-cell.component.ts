@@ -15,7 +15,7 @@ import { ColumnComponent } from 'app/modules/ix-table2/interfaces/table-column.i
 export class IpAddressesCellComponent extends ColumnComponent<NetworkInterface> {
   protected addresses: string[] = [];
 
-  setRow(row: NetworkInterface): void {
+  override setRow(row: NetworkInterface): void {
     this.addresses = this.extractAddresses(row);
   }
 

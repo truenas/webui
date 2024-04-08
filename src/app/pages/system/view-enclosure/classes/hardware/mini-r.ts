@@ -3,8 +3,6 @@ import { ChassisView, Position } from 'app/pages/system/view-enclosure/classes/c
 import { Chassis } from './chassis';
 
 export class MINIR extends Chassis {
-  front: ChassisView;
-
   constructor() {
     super();
     this.model = 'mini-r';

@@ -22,11 +22,11 @@ const mockDiskDetail: EnclosureUiSlot = {
 };
 
 export class MockEs102 extends MockEnclosure {
-  readonly totalSlotsFront: number = 102;
-  readonly totalSlotsRear: number = 0;
-  readonly totalSlotsInternal: number = 0;
+  override readonly totalSlotsFront: number = 102;
+  override readonly totalSlotsRear: number = 0;
+  override readonly totalSlotsInternal: number = 0;
 
-  data = {
+  override data = {
     name: 'HGST H4102-J 3010',
     model: 'ES102',
     controller: false,

@@ -34,7 +34,7 @@ export class SftpProviderFormComponent extends BaseProviderFormComponent impleme
 
   privateKeys$: Observable<Option[]>;
 
-  beforeSubmit(): Observable<unknown> {
+  override beforeSubmit(): Observable<unknown> {
     if (this.form.value.private_key !== newOption) {
       return of(true);
     }
@@ -42,7 +42,7 @@ export class SftpProviderFormComponent extends BaseProviderFormComponent impleme
     return this.makeNewKeypair();
   }
 
-  readonly helptext = helptext;
+  override readonly helptext = helptext;
   private formPatcher$ = new BehaviorSubject<CloudCredential['attributes']>({});
 
   getFormSetter$ = (): BehaviorSubject<CloudCredential['attributes']> => {
