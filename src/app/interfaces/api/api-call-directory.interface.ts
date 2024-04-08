@@ -798,7 +798,6 @@ export interface ApiCallDirectory {
   'system.product_type': { params: void; response: ProductType };
   'system.security.config': { params: void; response: SystemSecurityConfig };
   'system.security.info.fips_available': { params: void; response: boolean };
-  'system.security.update': { params: [SystemSecurityConfig]; response: void };
   'system.set_time': { params: [number]; response: void };
 
   // Systemdataset
