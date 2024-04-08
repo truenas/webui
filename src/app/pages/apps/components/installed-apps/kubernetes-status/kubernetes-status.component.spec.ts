@@ -1,5 +1,5 @@
 import { Spectator } from '@ngneat/spectator';
-import { createHostFactory, mockProvider } from '@ngneat/spectator/jest';
+import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { CoreComponents } from 'app/core/core-components.module';
 import { KubernetesStatusComponent } from 'app/pages/apps/components/installed-apps/kubernetes-status/kubernetes-status.component';
@@ -9,13 +9,13 @@ import { KubernetesStore } from 'app/pages/apps/store/kubernetes-store.service';
 describe('KubernetesStatusComponent', () => {
   let spectator: Spectator<KubernetesStatusComponent>;
 
-  const createHost = createHostFactory({
+  const createComponent = createComponentFactory({
     component: KubernetesStatusComponent,
     imports: [CoreComponents],
   });
 
   function setupTest(status: KubernetesStatus): void {
-    spectator = createHost('<ix-kubernetes-status></ix-kubernetes-status>', {
+    spectator = createComponent({
       providers: [
         mockProvider(KubernetesStore, {
           kubernetesStatus$: of(status),

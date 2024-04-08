@@ -1,7 +1,7 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { Spectator } from '@ngneat/spectator';
-import { createHostFactory } from '@ngneat/spectator/jest';
+import { createComponentFactory } from '@ngneat/spectator/jest';
 import { CopyButtonComponent } from 'app/core/components/copy-btn/copy-btn.component';
 import { JobState } from 'app/enums/job-state.enum';
 import { Job } from 'app/interfaces/job.interface';
@@ -26,7 +26,7 @@ describe('JobNameComponent', () => {
   let spectator: Spectator<JobNameComponent>;
   let loader: HarnessLoader;
 
-  const createHost = createHostFactory({
+  const createComponent = createComponentFactory({
     component: JobNameComponent,
     declarations: [
       CopyButtonComponent,
@@ -34,10 +34,9 @@ describe('JobNameComponent', () => {
   });
 
   beforeEach(() => {
-    spectator = createHost(
-      '<ix-job-name [job]="job"></ix-job-name>',
-      { hostProps: { job: failedJob } },
-    );
+    spectator = createComponent({
+      props: { job: failedJob },
+    });
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
