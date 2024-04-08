@@ -1,7 +1,7 @@
 import { HarnessLoader, parallel } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { Spectator } from '@ngneat/spectator';
-import { createHostFactory, mockProvider } from '@ngneat/spectator/jest';
+import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { DragHandleComponent } from 'app/core/components/drag-handle/drag-handle.component';
@@ -15,7 +15,7 @@ describe('WidgetHelpComponent', () => {
   let spectator: Spectator<WidgetHelpComponent>;
   let loader: HarnessLoader;
 
-  const createHost = createHostFactory({
+  const createComponent = createComponentFactory({
     component: WidgetHelpComponent,
     declarations: [
       MockComponent(DragHandleComponent),
@@ -30,7 +30,7 @@ describe('WidgetHelpComponent', () => {
   });
 
   beforeEach(() => {
-    spectator = createHost('<ix-widget-help></ix-widget-help>');
+    spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 

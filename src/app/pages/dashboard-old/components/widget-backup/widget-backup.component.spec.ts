@@ -1,8 +1,7 @@
-import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { Spectator } from '@ngneat/spectator';
-import { createHostFactory } from '@ngneat/spectator/jest';
+import { createComponentFactory } from '@ngneat/spectator/jest';
 import { format } from 'date-fns-tz';
 import { MockComponent } from 'ng-mocks';
 import { DragHandleComponent } from 'app/core/components/drag-handle/drag-handle.component';
@@ -116,10 +115,9 @@ const cloudSyncTasks = [
 
 describe('WidgetBackupComponent', () => {
   let spectator: Spectator<WidgetBackupComponent>;
-  let loader: HarnessLoader;
   let widgetBackup: WidgetBackupHarness;
 
-  const createHost = createHostFactory({
+  const createComponent = createComponentFactory({
     component: WidgetBackupComponent,
     imports: [
       MatGridListModule,
@@ -151,9 +149,8 @@ describe('WidgetBackupComponent', () => {
   }
 
   beforeEach(async () => {
-    spectator = createHost('<ix-widget-backup></ix-widget-backup>');
-    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    widgetBackup = await loader.getHarness(WidgetBackupHarness);
+    spectator = createComponent();
+    widgetBackup = await TestbedHarnessEnvironment.harnessForFixture(spectator.fixture, WidgetBackupHarness);
   });
 
   it('shows title', async () => {

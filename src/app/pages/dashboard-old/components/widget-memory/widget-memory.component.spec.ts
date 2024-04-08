@@ -1,7 +1,7 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { Spectator } from '@ngneat/spectator';
-import { createHostFactory, mockProvider } from '@ngneat/spectator/jest';
+import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import {
   ArcElement, CategoryScale, Chart, DoughnutController,
@@ -25,7 +25,7 @@ describe('WidgetMemoryComponent', () => {
   let spectator: Spectator<WidgetMemoryComponent>;
   let loader: HarnessLoader;
 
-  const createHost = createHostFactory({
+  const createComponent = createComponentFactory({
     component: WidgetMemoryComponent,
     imports: [
       NgxSkeletonLoaderModule,
@@ -75,7 +75,7 @@ describe('WidgetMemoryComponent', () => {
   });
 
   beforeEach(() => {
-    spectator = createHost('<ix-widget-memory></ix-widget-memory>');
+    spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 

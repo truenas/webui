@@ -1,12 +1,10 @@
 import { HarnessLoader, parallel } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { fakeAsync } from '@angular/core/testing';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { MatListItemHarness } from '@angular/material/list/testing';
-import { Router } from '@angular/router';
 import { Spectator } from '@ngneat/spectator';
-import { createHostFactory, mockProvider } from '@ngneat/spectator/jest';
+import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { MockComponent } from 'ng-mocks';
 import { ImgFallbackModule } from 'ngx-img-fallback';
@@ -20,7 +18,6 @@ import { ProductType } from 'app/enums/product-type.enum';
 import { SystemUpdateStatus } from 'app/enums/system-update.enum';
 import { SystemInfo, SystemLicense } from 'app/interfaces/system-info.interface';
 import { SystemUpdate } from 'app/interfaces/system-update.interface';
-import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { SimpleFailoverBtnComponent } from 'app/pages/dashboard-old/components/widget-sys-info/simple-failover-btn.component';
 import { WidgetSysInfoComponent } from 'app/pages/dashboard-old/components/widget-sys-info/widget-sys-info.component';
@@ -71,7 +68,7 @@ describe('WidgetSysInfoComponent', () => {
     } as SystemInfo,
   } as SystemInfo;
 
-  const createHost = createHostFactory({
+  const createComponent = createComponentFactory({
     component: WidgetSysInfoComponent,
     imports: [
       MatGridListModule,
@@ -138,18 +135,12 @@ describe('WidgetSysInfoComponent', () => {
     ],
   });
 
-  function setupTest(isPassive = false): void {
-    spectator = createHost('<ix-widget-sysinfo></ix-widget-sysinfo>', {
-      props: { isPassive },
-    });
+  beforeEach(() => {
+    spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-  }
+  });
 
   describe('check active mode', () => {
-    beforeEach(() => {
-      setupTest(false);
-    });
-
     it('checks title', () => {
       expect(spectator.query('.card-title-text')).toHaveText('System Information');
     });
@@ -169,23 +160,13 @@ describe('WidgetSysInfoComponent', () => {
       ]);
     }));
 
-    it.skip('checks update button label', fakeAsync(async () => {
-      const router = spectator.inject(Router);
-      jest.spyOn(router, 'navigate').mockResolvedValue(true);
-      spectator.tick(1000);
-
-      const updateButton = await loader.getHarness(MatButtonHarness.with({ text: 'Check for Updates' }));
-      await updateButton.click();
-
-      expect(router.navigate).toHaveBeenCalledWith(['/system', 'update']);
-    }));
-
     // TODO: Add more tests for active mode
   });
 
   describe('check standby mode', () => {
     beforeEach(() => {
-      setupTest(true);
+      spectator.setInput('isPassive', true);
+      spectator.component.ngOnInit();
     });
 
     it('checks title', () => {
@@ -207,13 +188,6 @@ describe('WidgetSysInfoComponent', () => {
         'Uptime:1 minute 17 seconds',
       ]);
     }));
-
-    it.skip('checks initiate failover button', async () => {
-      const failoverButton = await loader.getHarness(MatButtonHarness.with({ text: 'Initiate Failover' }));
-      await failoverButton.click();
-
-      expect(spectator.inject(DialogService).confirm).toHaveBeenCalled();
-    });
 
     // TODO: Add more tests standby mode
   });

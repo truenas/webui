@@ -1,7 +1,7 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { Spectator } from '@ngneat/spectator';
-import { createHostFactory, mockProvider } from '@ngneat/spectator/jest';
+import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { DragHandleComponent } from 'app/core/components/drag-handle/drag-handle.component';
@@ -17,7 +17,7 @@ describe('WidgetPoolComponent', () => {
   let spectator: Spectator<WidgetPoolComponent>;
   let loader: HarnessLoader;
 
-  const createHost = createHostFactory({
+  const createComponent = createComponentFactory({
     component: WidgetPoolComponent,
     imports: [
       NgxSkeletonLoaderModule,
@@ -35,7 +35,7 @@ describe('WidgetPoolComponent', () => {
   });
 
   beforeEach(() => {
-    spectator = createHost('<ix-widget-pool></ix-widget-pool>', {
+    spectator = createComponent({
       props: {
         poolState: {} as Pool,
         volumeData: {} as VolumeData,

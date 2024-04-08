@@ -2,7 +2,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { Spectator } from '@ngneat/spectator';
-import { createHostFactory, mockProvider } from '@ngneat/spectator/jest';
+import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { of } from 'rxjs';
@@ -20,7 +20,7 @@ describe('WidgetNicComponent', () => {
   let spectator: Spectator<WidgetNicComponent>;
   let loader: HarnessLoader;
 
-  const createHost = createHostFactory({
+  const createComponent = createComponentFactory({
     component: WidgetNicComponent,
     imports: [
       NgxSkeletonLoaderModule,
@@ -71,7 +71,11 @@ describe('WidgetNicComponent', () => {
   });
 
   beforeEach(() => {
-    spectator = createHost('<ix-widget-nic nic="eth0"></ix-widget-nic>');
+    spectator = createComponent({
+      props: {
+        nic: 'eth0',
+      },
+    });
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 

@@ -1,7 +1,7 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { Spectator } from '@ngneat/spectator';
-import { createHostFactory, mockProvider } from '@ngneat/spectator/jest';
+import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { MockComponent } from 'ng-mocks';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
@@ -21,7 +21,7 @@ describe('WidgetCpuComponent', () => {
   let spectator: Spectator<WidgetCpuComponent>;
   let loader: HarnessLoader;
 
-  const createHost = createHostFactory({
+  const createComponent = createComponentFactory({
     component: WidgetCpuComponent,
     imports: [
       NgxSkeletonLoaderModule,
@@ -60,7 +60,7 @@ describe('WidgetCpuComponent', () => {
   });
 
   beforeEach(() => {
-    spectator = createHost('<ix-widget-cpu></ix-widget-cpu>');
+    spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 

@@ -2,7 +2,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { Spectator } from '@ngneat/spectator';
-import { createHostFactory, mockProvider } from '@ngneat/spectator/jest';
+import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { of } from 'rxjs';
@@ -17,7 +17,7 @@ describe('WidgetStorageComponent', () => {
   let spectator: Spectator<WidgetStorageComponent>;
   let loader: HarnessLoader;
 
-  const createHost = createHostFactory({
+  const createComponent = createComponentFactory({
     component: WidgetStorageComponent,
     imports: [
       NgxSkeletonLoaderModule,
@@ -38,7 +38,7 @@ describe('WidgetStorageComponent', () => {
   });
 
   beforeEach(() => {
-    spectator = createHost('<ix-widget-storage></ix-widget-storage>');
+    spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 

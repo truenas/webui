@@ -1,8 +1,6 @@
-import { HarnessLoader } from '@angular/cdk/testing';
-import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { Spectator } from '@ngneat/spectator';
-import { createHostFactory, mockProvider } from '@ngneat/spectator/jest';
+import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { MockComponent } from 'ng-mocks';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
@@ -15,7 +13,6 @@ import { ProductType } from 'app/enums/product-type.enum';
 import { ViewChartAreaComponent } from 'app/modules/charts/components/view-chart-area/view-chart-area.component';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { InterfaceStatusIconComponent } from 'app/modules/interface-status-icon/interface-status-icon.component';
-import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { WidgetNetworkComponent } from 'app/pages/dashboard-old/components/widget-network/widget-network.component';
 import { ResourcesUsageStore } from 'app/pages/dashboard-old/store/resources-usage-store.service';
 import { LocaleService } from 'app/services/locale.service';
@@ -26,9 +23,8 @@ import { selectSystemInfo } from 'app/store/system-info/system-info.selectors';
 
 describe('WidgetNetworkComponent', () => {
   let spectator: Spectator<WidgetNetworkComponent>;
-  let loader: HarnessLoader;
 
-  const createHost = createHostFactory({
+  const createComponent = createComponentFactory({
     component: WidgetNetworkComponent,
     imports: [
       NgxSkeletonLoaderModule,
@@ -109,21 +105,11 @@ describe('WidgetNetworkComponent', () => {
   });
 
   beforeEach(() => {
-    spectator = createHost('<ix-widget-network></ix-widget-network>');
-    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    spectator = createComponent();
   });
 
   it('checks widget title', () => {
     expect(spectator.query('.card-title-text')).toHaveText('Network');
-  });
-
-  it.skip('checks back button', async () => {
-    jest.spyOn(spectator.component, 'goBack');
-
-    const backButton = await loader.getHarness(IxIconHarness.with({ name: 'chevron_left' }));
-    await backButton.click();
-
-    expect(spectator.component.goBack).toHaveBeenCalled();
   });
 
   // TODO: Add more tests
