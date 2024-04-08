@@ -86,6 +86,17 @@ describe('IxInputComponent', () => {
         expect(formControl.value).toBe('');
       });
 
+      it('shows arrow when there are autocomplete items instead of reset icon', () => {
+        spectator.setInput('autocompleteOptions', [{
+          label: 'autocomplete test',
+          value: 1,
+        }]);
+        spectator.detectComponentChanges();
+
+        expect(spectator.query('.reset-input ix-icon')).toBeNull();
+        expect(spectator.query('.mat-mdc-select-arrow')).toExist();
+      });
+
       it('shows button that resets input when input type is number and value is 0', () => {
         formControl.setValue('0');
         spectator.detectComponentChanges();
