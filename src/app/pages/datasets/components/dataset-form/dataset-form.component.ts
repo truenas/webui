@@ -71,7 +71,7 @@ export class DatasetFormComponent implements OnInit, AfterViewInit {
 
   form = new FormGroup({});
 
-  test: { test: unknown } = { test: undefined };
+  test: { test: { test: unknown } } = { test: undefined };
 
   parentDataset: Dataset;
   existingDataset: Dataset;
