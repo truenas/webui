@@ -10,12 +10,17 @@
         </div>
       </div>
       <div>
-        <ix-icon
-          class="close-icon"
-          name="mdi-close"
+        <button
+          mat-icon-button
           ixTest="tooltip-close"
+          class="close-button"
           (click)="popperTooltip.hide()"
-        ></ix-icon>
+        >
+          <ix-icon
+            class="close-icon"
+            name="mdi-close"
+          ></ix-icon>
+        </button>
       </div>
     </div>
     <div

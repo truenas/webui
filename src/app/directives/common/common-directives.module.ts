@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
 import { NgxPopperjsModule } from 'ngx-popperjs';
@@ -25,6 +26,7 @@ import { LetDirective } from './app-let.directive';
     MatTooltipModule,
     TranslateModule,
     IxIconModule,
+    MatButtonModule,
     NgxPopperjsModule,
     CastModule,
   ],

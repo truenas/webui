@@ -26,16 +26,14 @@
   justify-content: space-between;
 }
 
-.close-icon {
-  cursor: pointer;
-  font-size: 16px;
-  height: auto;
-  left: 6px;
-  margin: 0;
+.close-button {
+  left: 10px;
   margin-left: 16px;
-  position: relative;
   top: -10px;
-  width: auto;
+
+  .close-icon {
+    font-size: 16px !important;
+  }
 }
 
 .title-wrapper {

@@ -6,6 +6,16 @@ import { NewFeatureIndicatorWrapperComponent } from 'app/directives/common/new-f
 import { NewFeatureIndicator } from 'app/directives/common/new-feature-indicator/new-feature-indicator.interface';
 import { NewFeatureIndicatorService } from 'app/directives/common/new-feature-indicator/new-feature-indicator.service';
 
+/**
+ * Usage: adding an indicator with a hint about a new feature.
+ *
+ * @example
+ * ```
+ * <button
+ *   *ixNewFeatureIndicator="{ key: 'test_key', message: 'test_message' }"
+ * ></button>
+ * ```
+ */
 @UntilDestroy()
 @Directive({
   selector: '[ixNewFeatureIndicator]',
