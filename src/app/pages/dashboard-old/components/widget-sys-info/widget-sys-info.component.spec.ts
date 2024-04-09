@@ -22,7 +22,9 @@ import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { SimpleFailoverBtnComponent } from 'app/pages/dashboard-old/components/widget-sys-info/simple-failover-btn.component';
 import { WidgetSysInfoComponent } from 'app/pages/dashboard-old/components/widget-sys-info/widget-sys-info.component';
 import { SystemGeneralService } from 'app/services/system-general.service';
-import { selectHaInfoState } from 'app/store/ha-info/ha-info.selectors';
+import {
+  selectCanFailover, selectHaInfoState,
+} from 'app/store/ha-info/ha-info.selectors';
 import { PreferencesState } from 'app/store/preferences/preferences.reducer';
 import { selectPreferencesState } from 'app/store/preferences/preferences.selectors';
 import { selectSystemInfo, selectSystemFeatures, selectIsIxHardware } from 'app/store/system-info/system-info.selectors';
@@ -119,6 +121,10 @@ describe('WidgetSysInfoComponent', () => {
           },
           {
             selector: selectIsIxHardware,
+            value: true,
+          },
+          {
+            selector: selectCanFailover,
             value: true,
           },
           {
