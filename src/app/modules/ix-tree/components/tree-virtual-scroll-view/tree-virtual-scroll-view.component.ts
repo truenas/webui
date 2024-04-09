@@ -63,8 +63,8 @@ export class TreeVirtualScrollViewComponent<T> extends Tree<T> implements OnChan
   }
 
   constructor(
-    protected differs: IterableDiffers,
-    protected changeDetectorRef: ChangeDetectorRef,
+    protected override differs: IterableDiffers,
+    protected override changeDetectorRef: ChangeDetectorRef,
   ) {
     super(differs, changeDetectorRef);
     this.listenForNodeChanges();
@@ -80,14 +80,14 @@ export class TreeVirtualScrollViewComponent<T> extends Tree<T> implements OnChan
     }
   }
 
-  ngOnInit(): void {
+  override ngOnInit(): void {
     this.scrollableElement = document.querySelector('.rightside-content-hold');
     if (this.scrollableElement) {
       this.scrollableElement.addEventListener('scroll', this.scrolled.bind(this));
     }
   }
 
-  ngOnDestroy(): void {
+  override ngOnDestroy(): void {
     if (this.scrollableElement) {
       this.scrollableElement.removeEventListener('scroll', this.scrolled.bind(this));
     }

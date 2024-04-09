@@ -101,7 +101,7 @@ export class WidgetNicComponent extends WidgetComponent implements AfterViewInit
     private resourcesUsageStore$: ResourcesUsageStore,
     private cdr: ChangeDetectorRef,
   ) {
-    super(translate);
+    super();
   }
 
   ngOnInit(): void {

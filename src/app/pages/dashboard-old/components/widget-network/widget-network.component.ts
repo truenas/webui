@@ -159,7 +159,7 @@ export class WidgetNetworkComponent extends WidgetComponent implements OnInit, A
     private cdr: ChangeDetectorRef,
     @Inject(DOCUMENT) private document: Document,
   ) {
-    super(translate);
+    super();
 
     this.store$.select(selectTimezone)
       .pipe(untilDestroyed(this))

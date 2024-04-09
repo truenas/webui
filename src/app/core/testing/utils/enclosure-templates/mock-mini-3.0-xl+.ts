@@ -22,13 +22,13 @@ const mockDiskDetail: EnclosureUiSlot = {
 };
 
 export class MockMini30Xl extends MockEnclosure {
-  readonly totalSlotsFront: number = 9;
-  readonly totalSlotsRear: number = 0;
-  readonly totalSlotsInternal: number = 0;
+  override readonly totalSlotsFront: number = 9;
+  override readonly totalSlotsRear: number = 0;
+  override readonly totalSlotsInternal: number = 0;
   readonly model: string = 'TRUENAS-MINI-3.0-XL+';
 
   // TODO: Replace with actual output from a real machine
-  data: EnclosureUi = {
+  override data: EnclosureUi = {
     name: 'iX 4024Sp e001',
     model: this.model,
     controller: true,

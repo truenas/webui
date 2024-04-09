@@ -58,7 +58,7 @@ export class WidgetMemoryComponent extends WidgetComponent implements OnInit {
     private resourcesUsageStore$: ResourcesUsageStore,
     private breakpointObserver: BreakpointObserver,
   ) {
-    super(translate);
+    super();
 
     this.utils = new ThemeUtils();
   }

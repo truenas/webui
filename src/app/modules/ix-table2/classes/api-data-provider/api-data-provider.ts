@@ -57,7 +57,7 @@ export class ApiDataProvider<T extends QueryMethods> extends BaseDataProvider<Ap
     );
   }
 
-  setSorting(sorting: TableSort<ApiCallResponseType<T>>): void {
+  override setSorting(sorting: TableSort<ApiCallResponseType<T>>): void {
     this.sorting = sorting;
     this.emptyType$.pipe(take(1), filter((value) => value !== EmptyType.Loading)).subscribe(() => {
       this.sortingStrategy.handleCurrentPage(this.load.bind(this));
@@ -65,7 +65,7 @@ export class ApiDataProvider<T extends QueryMethods> extends BaseDataProvider<Ap
     this.controlsStateUpdated.emit();
   }
 
-  setPagination(pagination: TablePagination): void {
+  override setPagination(pagination: TablePagination): void {
     this.pagination = pagination;
 
     this.emptyType$.pipe(take(1), filter((value) => value !== EmptyType.Loading)).subscribe(() => {

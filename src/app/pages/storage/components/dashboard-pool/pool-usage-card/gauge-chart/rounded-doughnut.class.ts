@@ -3,8 +3,8 @@ import {
 } from 'chart.js';
 
 class RoundedDoughnutController extends DoughnutController {
-  static readonly id = 'roundedDoughnut';
-  draw(): void {
+  static override readonly id = 'roundedDoughnut';
+  override draw(): void {
     const ctx = this.chart.ctx;
     const meta = this.getMeta();
 
