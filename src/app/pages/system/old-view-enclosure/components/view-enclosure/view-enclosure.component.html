@@ -90,8 +90,7 @@
 
 <ng-container
   *ngIf="errors.length === 0"
-  ixUiSearchableElement
-  [ixSearchConfig]="searchableElements.elements.oldViewEnclosure"
+  [ixUiSearch]="searchableElements.elements.oldViewEnclosure"
 >
   <!-- Loading indicator -->
   <ng-container *ngIf="spinner; then multispinner;"></ng-container>

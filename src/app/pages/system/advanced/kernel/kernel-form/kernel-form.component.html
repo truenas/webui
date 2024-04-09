@@ -9,11 +9,10 @@
     <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
       <ix-fieldset>
         <ix-checkbox
-          ixUiSearchableElement
           formControlName="debugkernel"
           [label]="'Enable Debug Kernel' | translate"
           [tooltip]="tooltips.debugkernel"
-          [ixSearchConfig]="searchableElements.kernel"
+          [ixUiSearch]="searchableElements.kernel"
         ></ix-checkbox>
       </ix-fieldset>
 

@@ -1,11 +1,10 @@
 <ix-page-header *ngIf="screenType === ScreenType.Desktop">
   <ng-container *ngIf="isLoaded">
     <button
-      ixUiSearchableElement
       mat-button
       ixTest="configure-dashboard"
-      [color]="'primary'"
-      [ixSearchConfig]="searchableElements.elements.configure"
+      color="primary"
+      [ixUiSearch]="searchableElements.elements.configure"
       (click)="showConfigForm()"
     >
       {{ 'Configure' | translate }}
