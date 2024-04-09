@@ -8,12 +8,13 @@ import {
 } from 'app/pages/system/advanced/init-shutdown/init-shutdown-list/init-shutdown-list.component';
 import { AlertServiceListComponent } from 'app/pages/system/alert-service/alert-service-list/alert-service-list.component';
 import { AlertSettingsComponent } from 'app/pages/system/alert-settings/alert-settings.component';
+import { M50EnclosureComponent } from 'app/pages/system/enclosure/components/m50-enclosure/m50-enclosure.component';
 import { FailoverSettingsComponent } from 'app/pages/system/failover-settings/failover-settings.component';
 import { GeneralSettingsComponent } from 'app/pages/system/general-settings/general-settings.component';
 import { SupportCardComponent } from 'app/pages/system/general-settings/support/support-card/support-card.component';
+import { JbofListComponent } from 'app/pages/system/old-view-enclosure/components/jbof-list/jbof-list.component';
+import { ViewEnclosureComponent } from 'app/pages/system/old-view-enclosure/components/view-enclosure/view-enclosure.component';
 import { ManualUpdateFormComponent } from 'app/pages/system/update/components/manual-update-form/manual-update-form.component';
-import { JbofListComponent } from 'app/pages/system/view-enclosure/components/jbof-list/jbof-list.component';
-import { ViewEnclosureComponent } from 'app/pages/system/view-enclosure/components/view-enclosure/view-enclosure.component';
 import { AdvancedSettingsComponent } from './advanced/advanced-settings.component';
 import { CronListComponent } from './advanced/cron/cron-list/cron-list.component';
 import { TunableListComponent } from './advanced/sysctl/tunable-list/tunable-list.component';
@@ -44,6 +45,20 @@ export const routes: Routes = [
       data: { title: T('Advanced'), breadcrumb: null, icon: 'settings' },
     }, {
       path: 'viewenclosure',
+      data: {
+        title: T('New View Enclosure'),
+        breadcrumb: T('New View Enclosure'),
+        icon: 'settings',
+      },
+      children: [
+        {
+          path: '',
+          component: M50EnclosureComponent,
+          data: { title: T('M50 View Enclosure'), breadcrumb: null },
+        },
+      ],
+    }, {
+      path: 'oldviewenclosure',
       data: { title: T('View Enclosure'), breadcrumb: T('View Enclosure'), icon: 'settings' },
       children: [
         {
