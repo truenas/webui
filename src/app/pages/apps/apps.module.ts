@@ -9,6 +9,8 @@ import { MatExpansionModule } from '@angular/material/expansion';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
+import { MatSort, MatSortHeader } from '@angular/material/sort';
+import { MatColumnDef } from '@angular/material/table';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { FlexLayoutModule } from '@ngbracket/ngx-layout';
 import { TranslateModule } from '@ngx-translate/core';
@@ -27,7 +29,6 @@ import { IxDynamicFormModule } from 'app/modules/ix-dynamic-form/ix-dynamic-form
 import { IxFileSizeModule } from 'app/modules/ix-file-size/ix-file-size.module';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
-import { IxTableModule } from 'app/modules/ix-tables/ix-table.module';
 import { LayoutModule } from 'app/modules/layout/layout.module';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
@@ -178,12 +179,14 @@ import { KubernetesStatusComponent } from './components/installed-apps/kubernete
     GalleryModule,
     LightboxModule,
     MarkdownModule,
-    IxTableModule,
     IxTable2Module,
     LayoutModule,
     AppCatalogPipe,
     SearchInput1Component,
     EmptyComponent,
+    MatSort,
+    MatColumnDef,
+    MatSortHeader,
   ],
 })
 export class AppsModule { }
