@@ -11,6 +11,7 @@
     "resolveJsonModule": true,
     "noImplicitAny": true,
     "noImplicitThis": true,
+    "noImplicitOverride": true,
     "strictBindCallApply": true,
     "useUnknownInCatchVariables": true,
     "module": "es2020",

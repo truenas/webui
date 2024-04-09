@@ -615,6 +615,26 @@
   },
   {
     "hierarchy": [
+      "Network",
+      "Nameservers"
+    ],
+    "synonyms": [
+      "NS",
+      "DNS",
+      "Domain Name System",
+      "Network"
+    ],
+    "requiredRoles": [],
+    "anchorRouterLink": [
+      "/network"
+    ],
+    "routerLink": null,
+    "anchor": "nameservers",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
       "Network"
     ],
     "synonyms": [

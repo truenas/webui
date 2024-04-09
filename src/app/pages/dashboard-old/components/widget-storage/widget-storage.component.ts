@@ -105,7 +105,7 @@ export class WidgetStorageComponent extends WidgetComponent implements OnInit {
     private dashboardStorageStore$: DashboardStorageStore,
     private cdr: ChangeDetectorRef,
   ) {
-    super(translate);
+    super();
   }
 
   ngOnInit(): void {

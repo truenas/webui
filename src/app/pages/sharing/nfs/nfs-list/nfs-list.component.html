@@ -16,7 +16,7 @@
       </button>
     </div>
   </mat-toolbar-row>
-  <mat-card-content ixUiSearchableElement [ixSearchConfig]="searchableElements.elements.nfs">
+  <mat-card-content [ixUiSearch]="searchableElements.elements.nfs">
     <ix-table2
       [ix-table2-empty]="!(dataProvider.currentPageCount$ | async)"
       [emptyConfig]="emptyService.defaultEmptyConfig(dataProvider.emptyType$ | async)"

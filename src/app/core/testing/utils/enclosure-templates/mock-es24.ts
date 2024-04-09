@@ -22,12 +22,12 @@ const mockDiskDetail: EnclosureUiSlot = {
 };
 
 export class MockEs24 extends MockEnclosure {
-  readonly totalSlotsFront: number = 24;
-  readonly totalSlotsRear: number = 0;
-  readonly totalSlotsInternal: number = 0;
+  override readonly totalSlotsFront: number = 24;
+  override readonly totalSlotsRear: number = 0;
+  override readonly totalSlotsInternal: number = 0;
 
   // Taken from an M60
-  data: EnclosureUi = {
+  override data: EnclosureUi = {
     name: 'iX 4024Sp e001',
     model: 'ES24',
     controller: true,
