@@ -9,7 +9,6 @@ import {
   failoverLicensedStatusLoaded,
   haSettingsUpdated,
   haStatusLoaded,
-
 } from './ha-info.actions';
 
 @Injectable()

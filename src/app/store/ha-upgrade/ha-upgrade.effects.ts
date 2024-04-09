@@ -9,8 +9,11 @@ import {
   filter, map, mergeMap, switchMap, tap, withLatestFrom,
 } from 'rxjs/operators';
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
+import { Role } from 'app/enums/role.enum';
+import { filterAsync } from 'app/helpers/operators/filter-async.operator';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
+import { AuthService } from 'app/services/auth/auth.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { haStatusLoaded } from 'app/store/ha-info/ha-info.actions';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
@@ -24,7 +27,7 @@ import { AppState } from 'app/store/index';
 @UntilDestroy()
 @Injectable()
 export class HaUpgradeEffects {
-  loadUpgradePendingState$ = createEffect(() => this.actions$.pipe(
+  checkIfRemoteUpgradeIsRequired$ = createEffect(() => this.actions$.pipe(
     ofType(haStatusLoaded),
     withLatestFrom(this.store$.select(selectIsHaLicensed)),
     mergeMap(([{ haStatus }, isHa]) => {
@@ -45,6 +48,7 @@ export class HaUpgradeEffects {
     this.actions$.pipe(
       ofType(upgradePendingStateLoaded),
       filter(({ isUpgradePending }) => isUpgradePending),
+      filterAsync(() => this.authService.hasRole([Role.FailoverWrite])),
     ),
     this.actions$.pipe(ofType(updatePendingIndicatorPressed)),
   ).pipe(
@@ -68,6 +72,7 @@ export class HaUpgradeEffects {
     private dialogService: DialogService,
     private translate: TranslateService,
     private matDialog: MatDialog,
+    private authService: AuthService,
   ) { }
 
   private finishUpgrade(): Observable<unknown> {

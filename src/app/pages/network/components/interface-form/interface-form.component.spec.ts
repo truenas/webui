@@ -73,7 +73,6 @@ describe('InterfaceFormComponent', () => {
             },
             isHaLicensed: true,
             isUpgradePending: false,
-            hasOnlyMismatchVersionsReason: false,
           },
         },
       }),

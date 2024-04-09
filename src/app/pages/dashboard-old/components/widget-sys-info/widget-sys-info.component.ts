@@ -8,9 +8,7 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
-import {
-  combineLatestWith, filter, map, take,
-} from 'rxjs/operators';
+import { filter, map, take } from 'rxjs/operators';
 import { JobState } from 'app/enums/job-state.enum';
 import { ProductEnclosure } from 'app/enums/product-enclosure.enum';
 import { SystemUpdateStatus } from 'app/enums/system-update.enum';
@@ -28,7 +26,11 @@ import { SystemGeneralService } from 'app/services/system-general.service';
 import { ThemeService } from 'app/services/theme/theme.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
-import { selectHaStatus, selectHasOnlyMismatchVersionsReason, selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
+import {
+  selectHaStatus,
+  selectIsHaLicensed,
+  selectCanFailover,
+} from 'app/store/ha-info/ha-info.selectors';
 import { selectIsIxHardware, waitForSystemFeatures } from 'app/store/system-info/system-info.selectors';
 
 @UntilDestroy()
@@ -45,6 +47,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
   @Input() isPassive = false;
   @Input() override showReorderHandle = false;
 
+  canFailover$ = this.store$.select(selectCanFailover);
   protected isHaLicensed = false;
   protected isHaEnabled = false;
   protected enclosureSupport = false;
@@ -61,15 +64,10 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
   updateMethod: 'update.update' | 'failover.upgrade' = 'update.update';
   uptimeInterval: Interval;
 
-  hasOnlyMismatchVersionsReason$ = this.store$.select(selectHasOnlyMismatchVersionsReason);
   isMobile$ = this.breakpointObserver.observe([Breakpoints.XSmall]).pipe(map((state) => state.matches));
   isHaEnabled$ = this.store$.select(selectHaStatus).pipe(filter(Boolean), map(({ hasHa }) => hasHa));
   isUnsupportedHardware$ = this.sysGenService.isEnterprise$.pipe(
     map((isEnterprise) => isEnterprise && !this.productImage && !this.isIxHardware),
-  );
-  isFailoverButtonDisabled$ = this.isHaEnabled$.pipe(
-    combineLatestWith(this.hasOnlyMismatchVersionsReason$),
-    map(([isHaEnabled, hasOnlyMismatchVersionsReason]) => !isHaEnabled && !hasOnlyMismatchVersionsReason),
   );
 
   get systemVersion(): string {
@@ -250,7 +248,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
     if (!this.enclosureSupport) {
       return;
     }
-    this.router.navigate(['/system/viewenclosure']);
+    this.router.navigate(['/system/oldviewenclosure']);
   }
 
   /**

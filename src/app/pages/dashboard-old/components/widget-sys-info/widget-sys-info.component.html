@@ -119,7 +119,7 @@
                   </button>
                   <ix-simple-failover-button
                     *ngIf="isPassive"
-                    [disabled]="isFailoverButtonDisabled$ | async"
+                    [disabled]="!(canFailover$ | async)"
                   ></ix-simple-failover-button>
                 </div>
               </ng-template>
@@ -208,7 +208,7 @@
                   <ix-simple-failover-button
                     *ngIf="isPassive"
                     color="primary"
-                    [disabled]="isFailoverButtonDisabled$ | async"
+                    [disabled]="!(canFailover$ | async)"
                   ></ix-simple-failover-button>
                 </div>
               </div>

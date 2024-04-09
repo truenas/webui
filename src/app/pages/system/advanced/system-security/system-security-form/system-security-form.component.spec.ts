@@ -4,11 +4,10 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialog } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { provideMockStore } from '@ngrx/store/testing';
+import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockEntityJobComponentRef } from 'app/core/testing/utils/mock-entity-job-component-ref.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { ProductType } from 'app/enums/product-type.enum';
 import { SystemSecurityConfig } from 'app/interfaces/system-security-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -17,8 +16,9 @@ import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { SystemSecurityFormComponent } from 'app/pages/system/advanced/system-security/system-security-form/system-security-form.component';
+import { FipsService } from 'app/services/fips.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import { selectSystemInfo } from 'app/store/system-info/system-info.selectors';
 
 const fakeSystemSecurityConfig: SystemSecurityConfig = {
@@ -29,7 +29,6 @@ describe('SystemSecurityFormComponent', () => {
   let spectator: Spectator<SystemSecurityFormComponent>;
   let loader: HarnessLoader;
   let form: IxFormHarness;
-  let ws: WebSocketService;
 
   const createComponent = createComponentFactory({
     component: SystemSecurityFormComponent,
@@ -41,11 +40,9 @@ describe('SystemSecurityFormComponent', () => {
       provideMockStore({
         selectors: [
           { selector: selectSystemInfo, value: { hostname: 'host.truenas.com' } },
+          { selector: selectIsHaLicensed, value: false },
         ],
       }),
-      mockWebSocket([
-        mockCall('system.security.update'),
-      ]),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of()),
       }),
@@ -60,6 +57,9 @@ describe('SystemSecurityFormComponent', () => {
         close: jest.fn(),
         getData: jest.fn(() => fakeSystemSecurityConfig),
       }),
+      mockProvider(FipsService, {
+        promptForRestart: jest.fn(() => of(undefined)),
+      }),
       mockAuth(),
     ],
   });
@@ -69,10 +69,9 @@ describe('SystemSecurityFormComponent', () => {
       spectator = createComponent();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       form = await loader.getHarness(IxFormHarness);
-      ws = spectator.inject(WebSocketService);
     });
 
-    it('saves SMTP config when form is filled and Save is pressed', async () => {
+    it('saves FIPS config when form is filled and Save is pressed', async () => {
       await form.fillForm({
         'Enable FIPS': true,
       });
@@ -80,12 +79,36 @@ describe('SystemSecurityFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(ws.call).toHaveBeenCalledWith('system.security.update', [{
+      expect(mockEntityJobComponentRef.componentInstance.setCall).toHaveBeenCalledWith('system.security.update', [{
         enable_fips: true,
       }]);
       expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith(
         'System Security Settings Updated.',
       );
+    });
+
+    it('prompts to reload when settings are saved and HA is not licensed', async () => {
+      await form.fillForm({
+        'Enable FIPS': true,
+      });
+
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      await saveButton.click();
+
+      expect(spectator.inject(FipsService).promptForRestart).toHaveBeenCalled();
+    });
+
+    it('does not prompt to restart when settings are saved and HA is licensed, because this is handled in HaFipsEffects', async () => {
+      spectator.inject(MockStore).overrideSelector(selectIsHaLicensed, true);
+
+      await form.fillForm({
+        'Enable FIPS': true,
+      });
+
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      await saveButton.click();
+
+      expect(spectator.inject(FipsService).promptForRestart).not.toHaveBeenCalled();
     });
 
     it('loads and shows current System Security config', async () => {
