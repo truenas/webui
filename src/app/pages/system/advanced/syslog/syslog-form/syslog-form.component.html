@@ -15,29 +15,26 @@
         ></ix-checkbox>
 
         <ix-select
-          ixUiSearchableElement
           formControlName="sysloglevel"
           [label]="'Syslog Level' | translate"
           [tooltip]="tooltips.sysloglevel | translate"
           [options]="levelOptions$"
-          [ixSearchConfig]="searchableElements.elements.level"
+          [ixUiSearch]="searchableElements.elements.level"
         ></ix-select>
 
         <ix-input
-          ixUiSearchableElement
           formControlName="syslogserver"
           [label]="'Syslog Server' | translate"
           [tooltip]="tooltips.syslogserver | translate"
-          [ixSearchConfig]="searchableElements.elements.server"
+          [ixUiSearch]="searchableElements.elements.server"
         ></ix-input>
 
         <ix-select
-          ixUiSearchableElement
           formControlName="syslog_transport"
           [label]="'Syslog Transport' | translate"
           [tooltip]="tooltips.syslog_transport | translate"
           [options]="transportOptions$"
-          [ixSearchConfig]="searchableElements.elements.transport"
+          [ixUiSearch]="searchableElements.elements.transport"
         ></ix-select>
 
         <ng-container *ngIf="isTlsTransport$ | async">
@@ -57,11 +54,10 @@
         </ng-container>
 
         <ix-checkbox
-          ixUiSearchableElement
           formControlName="syslog_audit"
           [label]="'Include Audit Logs' | translate"
           [tooltip]="tooltips.syslog_audit | translate"
-          [ixSearchConfig]="searchableElements.elements.includeAuditLogs"
+          [ixUiSearch]="searchableElements.elements.includeAuditLogs"
         ></ix-checkbox>
       </ix-fieldset>
 

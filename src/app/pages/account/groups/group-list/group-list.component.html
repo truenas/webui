@@ -20,10 +20,9 @@
   </a>
   <button
     *ixRequiresRoles="requiredRoles"
-    ixUiSearchableElement
     mat-button
     ixTest="add-group"
-    [ixSearchConfig]="searchableElements.elements.add"
+    [ixUiSearch]="searchableElements.elements.add"
     [color]="'primary'"
     (click)="doAdd()"
   >
@@ -31,7 +30,7 @@
   </button>
 </ix-page-header>
 
-<div class="table-container" ixUiSearchableElement [ixSearchConfig]="searchableElements.elements.list">
+<div class="table-container" [ixUiSearch]="searchableElements.elements.list">
   <ix-table2
     [ix-table2-empty]="!(dataProvider.currentPageCount$ | async)"
     [emptyConfig]="emptyConfigService.defaultEmptyConfig((emptyType$ | async))"
