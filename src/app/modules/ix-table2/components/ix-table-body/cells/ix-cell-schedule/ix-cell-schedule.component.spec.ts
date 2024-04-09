@@ -18,17 +18,16 @@ describe('IxCellScheduleComponent', () => {
 
   const createComponent = createComponentFactory({
     component: IxCellScheduleComponent<TestTableData>,
+    detectChanges: false,
     imports: [IxTable2Module],
   });
 
   beforeEach(() => {
-    spectator = createComponent({
-      props: {
-        propertyName: 'scheduleField',
-        row: { scheduleField: schedule },
-        rowTestId: () => '',
-      } as Partial<IxCellScheduleComponent<TestTableData>>,
-    });
+    spectator = createComponent();
+    spectator.component.propertyName = 'scheduleField';
+    spectator.component.setRow({ scheduleField: schedule });
+    spectator.component.rowTestId = () => '';
+    spectator.detectChanges();
   });
 
   it('shows crontab string when schedule is passed', () => {

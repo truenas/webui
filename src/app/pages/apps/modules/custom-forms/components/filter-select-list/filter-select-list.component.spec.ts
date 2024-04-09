@@ -1,6 +1,6 @@
 import { ReactiveFormsModule } from '@angular/forms';
 import { FormControl } from '@ngneat/reactive-forms';
-import { createHostFactory, Spectator } from '@ngneat/spectator/jest';
+import { createHostFactory, SpectatorHost } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
 import { Observable, of } from 'rxjs';
 import { Option } from 'app/interfaces/option.interface';
@@ -9,7 +9,7 @@ import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { FilterSelectListComponent } from 'app/pages/apps/modules/custom-forms/components/filter-select-list/filter-select-list.component';
 
 describe('FilterSelectListComponent', () => {
-  let spectator: Spectator<FilterSelectListComponent>;
+  let spectator: SpectatorHost<FilterSelectListComponent>;
   let control: FormControl<string | string[]>;
   const options$: Observable<Option[]> = of([
     { label: 'label1', value: 'value1' },
@@ -30,14 +30,24 @@ describe('FilterSelectListComponent', () => {
     beforeEach(() => {
       control = new FormControl();
       spectator = createHost(
-        '<ix-filter-select-list [formControl]="control" [options]="options$"></ix-filter-select-list>',
-        { hostProps: { control, options$ } },
+        `<ix-filter-select-list
+          [formControl]="control"
+          [options]="options$"
+          [label]="label"
+        ></ix-filter-select-list>`,
+        {
+          hostProps: {
+            control,
+            options$,
+            label: undefined,
+          },
+        },
       );
       spectator.fixture.detectChanges();
     });
 
     it('renders a label', () => {
-      spectator.setInput('label', 'Filter Label');
+      spectator.setHostInput('label', 'Filter Label');
 
       const label = spectator.query('.label');
       expect(label).toExist();

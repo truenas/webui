@@ -33,20 +33,20 @@ export class RequiresRolesDirective extends HasAccessDirective {
     });
   }
 
-  protected cssClassList: string[] = [];
+  protected override cssClassList: string[] = [];
 
   @Input('class')
   @HostBinding('class')
-  get elementClass(): string {
+  override get elementClass(): string {
     return this.cssClassList.join(' ');
   }
-  set elementClass(val: string) {
+  override set elementClass(val: string) {
     this.cssClassList = val.split(' ');
   }
 
   constructor(
-    protected templateRef: TemplateRef<unknown>,
-    protected viewContainerRef: ViewContainerRef,
+    protected override templateRef: TemplateRef<unknown>,
+    protected override viewContainerRef: ViewContainerRef,
     private authService: AuthService,
   ) {
     super(templateRef, viewContainerRef);

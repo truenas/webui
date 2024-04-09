@@ -1,7 +1,7 @@
 import {
   ChangeDetectorRef, Directive, Input, OnDestroy, TemplateRef, ViewContainerRef,
 } from '@angular/core';
-import { Observable, Subscription } from 'rxjs';
+import { isObservable, Observable, Subscription } from 'rxjs';
 import { LoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import {
   WithLoadingStateErrorComponent,
@@ -31,9 +31,14 @@ export class WithLoadingStateDirective<V = unknown> implements OnDestroy {
     private cdr: ChangeDetectorRef,
   ) {}
 
-  @Input('ixWithLoadingState') set state(state$: Observable<LoadingState<V>>) {
+  @Input('ixWithLoadingState') set state(state$: LoadingState<V> | Observable<LoadingState<V>>) {
     this.renderSubscription?.unsubscribe();
-    this.renderSubscription = state$?.subscribe((state) => this.renderState(state));
+
+    if (isObservable(state$)) {
+      this.renderSubscription = state$?.subscribe((state) => this.renderState(state));
+    } else {
+      this.renderState(state$);
+    }
   }
 
   ngOnDestroy(): void {

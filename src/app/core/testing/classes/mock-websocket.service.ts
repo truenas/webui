@@ -47,10 +47,10 @@ export class MockWebSocketService extends WebSocketService {
   private jobIdCounter = 1;
 
   constructor(
-    protected router: Router,
-    protected wsManager: WebSocketConnectionService,
-    protected translate: TranslateService,
-    protected store$: Store<AppState>,
+    protected override store$: Store<AppState>,
+    protected override router: Router,
+    protected override wsManager: WebSocketConnectionService,
+    protected override translate: TranslateService,
   ) {
     super(router, wsManager, translate, store$);
 

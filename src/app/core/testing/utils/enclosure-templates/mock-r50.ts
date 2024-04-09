@@ -1,9 +1,9 @@
 import { MockEnclosure } from './mock-enclosure-template';
 
 export class MockR50 extends MockEnclosure {
-  readonly totalSlotsFront: number = 48;
-  readonly totalSlotsRear: number = 4;
-  readonly totalSlotsInternal: number = 0;
+  override readonly totalSlotsFront: number = 48;
+  override readonly totalSlotsRear: number = 4;
+  override readonly totalSlotsInternal: number = 0;
 
   // data = {
   //   id: 'mapped_enclosure_0',

@@ -6,8 +6,7 @@ import {
 } from '@angular/forms';
 import {
   createHostFactory,
-  Spectator,
-  mockProvider,
+  mockProvider, SpectatorHost,
 } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
 import { Observable, of, throwError } from 'rxjs';
@@ -20,7 +19,7 @@ import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
 import { IxSelectComponent } from './ix-select.component';
 
 describe('IxSelectComponent', () => {
-  let spectator: Spectator<IxSelectComponent>;
+  let spectator: SpectatorHost<IxSelectComponent>;
   let loader: HarnessLoader;
   let control: FormControl<string>;
   let options$: Observable<Option[]>;
@@ -49,8 +48,24 @@ describe('IxSelectComponent', () => {
         { label: 'FRA', value: 'France' },
       ]);
       spectator = createHost(
-        '<ix-select [formControl]="control"></ix-select>',
-        { hostProps: { control } },
+        `<ix-select
+          [formControl]="control"
+          [label]="label"
+          [required]="required"
+          [tooltip]="tooltip"
+          [options]="options"
+          [showSelectAll]="showSelectAll"
+        ></ix-select>`,
+        {
+          hostProps: {
+            control,
+            label: undefined,
+            required: false,
+            tooltip: undefined,
+            options: undefined,
+            showSelectAll: undefined,
+          },
+        },
       );
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       spectator.fixture.detectChanges();
@@ -67,9 +82,9 @@ describe('IxSelectComponent', () => {
     });
 
     it('renders a label and passes properties to it', () => {
-      spectator.setInput('label', 'Select Group');
-      spectator.setInput('required', true);
-      spectator.setInput('tooltip', 'Select group to use.');
+      spectator.setHostInput('label', 'Select Group');
+      spectator.setHostInput('required', true);
+      spectator.setHostInput('tooltip', 'Select group to use.');
 
       const label = spectator.query(IxLabelComponent);
       expect(label).toExist();
@@ -80,7 +95,7 @@ describe('IxSelectComponent', () => {
 
     it('shows loader while options are loading', fakeAsync(() => {
       const opt$ = options$.pipe(delay(100));
-      spectator.setInput({ options: opt$ });
+      spectator.setHostInput({ options: opt$ });
 
       expect(spectator.query('mat-progress-spinner')).toBeVisible();
       tick(100);
@@ -90,7 +105,7 @@ describe('IxSelectComponent', () => {
     }));
 
     it('shows a list of options', async () => {
-      spectator.setInput({ options: options$ });
+      spectator.setHostInput({ options: options$ });
 
       const select = await (await loader.getHarness(IxSelectHarness)).getSelectHarness();
       await select.open();
@@ -100,7 +115,7 @@ describe('IxSelectComponent', () => {
     });
 
     it('shows the current value in the select', async () => {
-      spectator.setInput({ options: options$ });
+      spectator.setHostInput({ options: options$ });
       control.setValue('France');
 
       const select = await (await loader.getHarness(IxSelectHarness)).getSelectHarness();
@@ -109,7 +124,7 @@ describe('IxSelectComponent', () => {
     });
 
     it('writes values when option is selected from the dropdown', async () => {
-      spectator.setInput({ options: options$ });
+      spectator.setHostInput({ options: options$ });
 
       const select = await (await loader.getHarness(IxSelectHarness)).getSelectHarness();
       await select.open();
@@ -202,7 +217,7 @@ describe('IxSelectComponent', () => {
     });
 
     it('should select all options when "Select All" is checked', async () => {
-      spectator.setInput('showSelectAll', true);
+      spectator.setHostInput('showSelectAll', true);
       const select = await loader.getHarness(IxSelectHarness);
       await select.selectAll();
 
@@ -211,7 +226,7 @@ describe('IxSelectComponent', () => {
     });
 
     it('should unselect all options when "Select All" is unchecked', async () => {
-      spectator.setInput('showSelectAll', true);
+      spectator.setHostInput('showSelectAll', true);
 
       const select = await loader.getHarness(IxSelectHarness);
       await select.unselectAll();

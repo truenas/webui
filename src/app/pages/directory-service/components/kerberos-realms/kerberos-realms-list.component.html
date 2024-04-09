@@ -5,7 +5,7 @@
   </button>
 </ix-page-header>
 
-<div class="table-container" ixUiSearchableElement [ixSearchConfig]="searchableElements.elements.kerberosRealms">
+<div class="table-container" [ixUiSearch]="searchableElements.elements.kerberosRealms">
   <mat-toolbar *ngIf="inCard" class="table-header">
     <div class="heading" [routerLink]="['/', 'directoryservice', 'kerberosrealms']">
       <h3>{{ 'Kerberos Realms' | translate }}</h3>

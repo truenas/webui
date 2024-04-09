@@ -5,9 +5,9 @@ export class MockR30 extends MockEnclosure {
   * While 4 of the 16 slots are internal, they are not reported as a separate enclosure element.
   * For this reason we count all slots towards the "front"
   * */
-  readonly totalSlotsFront: number = 16;
-  readonly totalSlotsRear: number = 0;
-  readonly totalSlotsInternal: number = 0;
+  override readonly totalSlotsFront: number = 16;
+  override readonly totalSlotsRear: number = 0;
+  override readonly totalSlotsInternal: number = 0;
 
   // data = {
   //   id: 'r30_nvme_enclosure',

@@ -7,8 +7,7 @@
 
 <div class="table-container">
   <ix-table2
-    ixUiSearchableElement
-    [ixSearchConfig]="searchableElements.elements.vmwareSnapshots"
+    [ixUiSearch]="searchableElements.elements.vmwareSnapshots"
     [ix-table2-empty]="!(dataProvider.currentPageCount$ | async)"
     [emptyConfig]="emptyService.defaultEmptyConfig(dataProvider.emptyType$ | async)"
   >

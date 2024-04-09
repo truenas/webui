@@ -28,44 +28,37 @@
   <mat-tab-nav-panel #tabPanel>
     <ix-target-global-configuration
       *ngSwitchCase="'configuration'"
-      ixUiSearchableElement
-      [ixSearchConfig]="searchableElements.elements.configuration"
+      [ixUiSearch]="searchableElements.elements.configuration"
     ></ix-target-global-configuration>
 
     <ix-iscsi-portal-list
       *ngSwitchCase="'portals'"
-      ixUiSearchableElement
-      [ixSearchConfig]="searchableElements.elements.portals"
+      [ixUiSearch]="searchableElements.elements.portals"
     ></ix-iscsi-portal-list>
 
     <ix-iscsi-initiator-list
       *ngSwitchCase="'initiator'"
-      ixUiSearchableElement
-      [ixSearchConfig]="searchableElements.elements.initiator"
+      [ixUiSearch]="searchableElements.elements.initiator"
     ></ix-iscsi-initiator-list>
 
     <ix-iscsi-authorizedaccess-list
       *ngSwitchCase="'auth'"
-      ixUiSearchableElement
-      [ixSearchConfig]="searchableElements.elements.auth"
+      [ixUiSearch]="searchableElements.elements.auth"
     ></ix-iscsi-authorizedaccess-list>
 
     <ix-iscsi-target-list
       *ngSwitchCase="'target'"
-      ixUiSearchableElement
-      [ixSearchConfig]="searchableElements.elements.target"
+      [ixUiSearch]="searchableElements.elements.target"
     ></ix-iscsi-target-list>
 
     <ix-iscsi-extent-list
       *ngSwitchCase="'extent'"
-      ixUiSearchableElement
-      [ixSearchConfig]="searchableElements.elements.extent"
+      [ixUiSearch]="searchableElements.elements.extent"
     ></ix-iscsi-extent-list>
 
     <ix-iscsi-associated-target-list
       *ngSwitchCase="'associatedtarget'"
-      ixUiSearchableElement
-      [ixSearchConfig]="searchableElements.elements.associatedTarget"
+      [ixUiSearch]="searchableElements.elements.associatedTarget"
     ></ix-iscsi-associated-target-list>
   </mat-tab-nav-panel>
 </router-outlet>
