@@ -10,17 +10,16 @@ describe('IxCellTextComponent', () => {
 
   const createComponent = createComponentFactory({
     component: IxCellTextComponent<TestTableData>,
+    detectChanges: false,
     imports: [IxTable2Module],
   });
 
   beforeEach(() => {
-    spectator = createComponent({
-      props: {
-        propertyName: 'stringField',
-        row: { stringField: 'text in cell' },
-        rowTestId: (row) => 'text-' + row.stringField.toString(),
-      } as Partial<IxCellTextComponent<TestTableData>>,
-    });
+    spectator = createComponent();
+    spectator.component.propertyName = 'stringField';
+    spectator.component.setRow({ stringField: 'text in cell' });
+    spectator.component.rowTestId = (row) => 'text-' + row.stringField.toString();
+    spectator.detectChanges();
   });
 
   it('shows text in template', () => {

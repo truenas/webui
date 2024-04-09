@@ -1,4 +1,5 @@
 import { createFeatureSelector, createSelector } from '@ngrx/store';
+import { failoverAllowedReasons } from 'app/enums/failover-disabled-reason.enum';
 import { HaInfoState } from 'app/store/ha-info/ha-info.reducer';
 
 export const haInfoStateKey = 'haInfo';
@@ -20,7 +21,13 @@ export const selectIsUpgradePending = createSelector(
   (state) => state.isUpgradePending,
 );
 
-export const selectHasOnlyMismatchVersionsReason = createSelector(
+export const selectCanFailover = createSelector(
   selectHaInfoState,
-  (state) => state.hasOnlyMismatchVersionsReason,
+  ({ haStatus }) => {
+    if (haStatus.hasHa) {
+      return true;
+    }
+
+    return haStatus.reasons.every((reason) => failoverAllowedReasons.includes(reason));
+  },
 );

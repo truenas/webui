@@ -31,6 +31,13 @@ export class NavigationService {
       state: 'dashboard',
     },
     {
+      name: T('Dashboard (old)'),
+      type: MenuItemType.Link,
+      tooltip: T('Dashboard'),
+      icon: 'dashboard',
+      state: 'dashboard-old',
+    },
+    {
       name: T('Storage'),
       type: MenuItemType.Link,
       tooltip: T('Storage'),

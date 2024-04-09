@@ -18,6 +18,7 @@ describe('GoogleDriveProviderFormComponent', () => {
   let form: IxFormHarness;
   const createComponent = createComponentFactory({
     component: GoogleDriveProviderFormComponent,
+    detectChanges: false,
     imports: [
       ReactiveFormsModule,
       IxFormsModule,
@@ -32,13 +33,11 @@ describe('GoogleDriveProviderFormComponent', () => {
   });
 
   beforeEach(async () => {
-    spectator = createComponent({
-      props: {
-        provider: {
-          credentials_oauth: 'http://truenas.com/oauth',
-        } as CloudSyncProvider,
-      },
-    });
+    spectator = createComponent();
+    spectator.component.provider = {
+      credentials_oauth: 'http://truenas.com/oauth',
+    } as CloudSyncProvider;
+    spectator.detectChanges();
     form = await TestbedHarnessEnvironment.harnessForFixture(spectator.fixture, IxFormHarness);
   });
 

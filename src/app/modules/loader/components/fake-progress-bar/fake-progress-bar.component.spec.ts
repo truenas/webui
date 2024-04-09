@@ -19,12 +19,14 @@ describe('FakeProgressBarComponent', () => {
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
-  it('shows a progress bar when loading is true', async () => {
+  it('shows a progress bar when loading is true', fakeAsync(async () => {
     spectator.setInput('loading', true);
 
     const progressBar = await loader.getHarness(MatProgressBarHarness);
     expect(progressBar).toBeTruthy();
-  });
+
+    discardPeriodicTasks();
+  }));
 
   it('imitates progress by increasing % as time passes, but does so in a way that will never reach 100%', fakeAsync(async () => {
     spectator.setInput({
