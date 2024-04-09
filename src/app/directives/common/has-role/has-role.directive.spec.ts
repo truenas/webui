@@ -1,11 +1,13 @@
-import { createHostFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import {
+  createHostFactory, mockProvider, SpectatorHost,
+} from '@ngneat/spectator/jest';
 import { BehaviorSubject } from 'rxjs';
 import { HasRoleDirective } from 'app/directives/common/has-role/has-role.directive';
 import { Role } from 'app/enums/role.enum';
 import { AuthService } from 'app/services/auth/auth.service';
 
 describe('HasRolesDirective', () => {
-  let spectator: Spectator<HasRoleDirective>;
+  let spectator: SpectatorHost<HasRoleDirective>;
   const hasRole$ = new BehaviorSubject(false);
 
   const createHost = createHostFactory({

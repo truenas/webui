@@ -264,23 +264,6 @@
   },
   {
     "hierarchy": [
-      "Dashboard"
-    ],
-    "synonyms": [
-      "Widgets",
-      "Dashboard"
-    ],
-    "requiredRoles": [],
-    "anchorRouterLink": [
-      "/dashboard"
-    ],
-    "routerLink": null,
-    "anchor": "dashboard",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
       "Data Protection",
       "Cloud Sync Tasks"
     ],

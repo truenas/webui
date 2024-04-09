@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnInit,
 } from '@angular/core';
 import { MatButtonToggleChange } from '@angular/material/button-toggle';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -21,7 +21,7 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class NfsSessionListComponent implements OnInit {
-  activeNfsType: NfsType = NfsType.Nfs3;
+  @Input() activeNfsType: NfsType = NfsType.Nfs3;
   protected readonly searchableElements = nfsSessionListElements;
 
   filterString = '';
