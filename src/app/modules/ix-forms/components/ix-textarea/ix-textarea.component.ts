@@ -30,6 +30,7 @@ export class IxTextareaComponent implements ControlValueAccessor {
     public controlDirective: NgControl,
     private cdr: ChangeDetectorRef,
   ) {
+    throw new Error('Crashing ix-textarea');
     this.controlDirective.valueAccessor = this;
   }
 

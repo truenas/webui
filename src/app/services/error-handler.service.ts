@@ -1,5 +1,7 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { ErrorHandler, Injectable, Injector } from '@angular/core';
+import {
+  ErrorHandler, Injectable, Injector, Provider,
+} from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import * as Sentry from '@sentry/angular';
 import {
@@ -10,6 +12,7 @@ import { ErrorReport } from 'app/interfaces/error-report.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { IxGracefulUpdaterService } from 'app/services/ix-graceful-updater.service';
 
 @Injectable({
   providedIn: 'root',
@@ -31,10 +34,11 @@ export class ErrorHandlerService implements ErrorHandler {
     return this.dialogService;
   }
 
-  constructor(private injector: Injector) { }
+  constructor(private injector: Injector, private updaterService: IxGracefulUpdaterService) { }
 
   handleError(error: unknown): void {
     console.error(error);
+    this.updaterService.hasError = true;
     const parsedError = this.parseError(error);
     if (parsedError) {
       error = parsedError;
@@ -249,4 +253,11 @@ export class ErrorHandlerService implements ErrorHandler {
 
     return true;
   }
+}
+
+export function getErrorHandlerProvider(): Provider {
+  return {
+    provide: ErrorHandler,
+    useClass: ErrorHandlerService,
+  };
 }

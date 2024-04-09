@@ -1,6 +1,6 @@
 import {
   ChangeDetectionStrategy,
-  ChangeDetectorRef, Component, ErrorHandler, Inject,
+  ChangeDetectorRef, Component, Inject,
 } from '@angular/core';
 import {
   FormBuilder,
@@ -25,7 +25,7 @@ import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-erro
 import { ipValidator } from 'app/modules/ix-forms/validators/ip-validation';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { guiFormElements } from 'app/pages/system/general-settings/gui/gui-form/gui-form.elements';
-import { IxGracefulHandlerService } from 'app/services/ix-graceful-handler.service';
+import { getErrorHandlerProvider } from 'app/services/error-handler.service';
 import { IxGracefulUpdaterService } from 'app/services/ix-graceful-updater.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { ThemeService } from 'app/services/theme/theme.service';
@@ -42,10 +42,7 @@ import { waitForGeneralConfig } from 'app/store/system-config/system-config.sele
   templateUrl: './gui-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [
-    {
-      provide: ErrorHandler,
-      useClass: IxGracefulHandlerService,
-    },
+    getErrorHandlerProvider(),
   ],
 })
 export class GuiFormComponent {
@@ -67,8 +64,7 @@ export class GuiFormComponent {
     usage_collection: [false, [Validators.required]],
     ui_consolemsg: [false, [Validators.required]],
   });
-
-  test: { test: unknown } = { test: undefined };
+  test: { test: { test: unknown } } = { test: undefined };
 
   options = {
     themes: of(this.themeService.allThemes.map((theme) => ({ label: theme.label, value: theme.name }))),
