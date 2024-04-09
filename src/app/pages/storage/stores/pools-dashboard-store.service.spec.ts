@@ -119,7 +119,7 @@ describe('PoolsDashboardStore', () => {
         if (method === 'pool.query') {
           return cold('-a|', { a: pools });
         }
-        return cold('-a|', { a: [] });
+        throw new Error(`Unexpected method: ${method}`);
       });
 
       spectator.service.loadDashboard();

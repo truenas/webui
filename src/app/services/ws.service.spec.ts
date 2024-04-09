@@ -5,15 +5,17 @@ import { TranslateService } from '@ngx-translate/core';
 import { UUID } from 'angular2-uuid';
 import {
   BehaviorSubject, Observable,
+  firstValueFrom,
   of,
 } from 'rxjs';
 import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
 import { JobState } from 'app/enums/job-state.enum';
-import { ApiEventMethod, ApiEventResponse } from 'app/interfaces/api-message.interface';
+import { ApiEvent } from 'app/interfaces/api-message.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { WebSocketConnectionService } from 'app/services/websocket-connection.service';
 import { WebSocketService } from 'app/services/ws.service';
 
+const pools = [{ name: 'pool1' }, { name: 'pool2' }] as Pool[];
 const mockWebSocketConnectionService = {
   send: jest.fn(),
   buildSubscriber: jest.fn(() => new BehaviorSubject<unknown>(null)),
@@ -21,10 +23,10 @@ const mockWebSocketConnectionService = {
 };
 
 const apiEventSubscription1$ = new BehaviorSubject(null);
-const apiEventSubscription2$ = new BehaviorSubject(null);
+const apiEventSubscription2$ = new BehaviorSubject<ApiEvent<Pool>>(null);
 
-const mockEventSubscriptions = new Map<ApiEventMethod, Observable<ApiEventResponse<ApiEventMethod>>>([
-  ['core.get_jobs', apiEventSubscription1$],
+const mockEventSubscriptions = new Map<string, Observable<unknown>>([
+  ['event1', apiEventSubscription1$],
   ['pool.query', apiEventSubscription2$],
 ]);
 
@@ -46,7 +48,7 @@ describe('WebSocketService', () => {
     jest.spyOn(service.clearSubscriptions$, 'next');
 
     (service as unknown as {
-      subscriptions: Map<ApiEventMethod, Observable<ApiEventResponse<ApiEventMethod>>>;
+      subscriptions: Map<string, Observable<unknown>>;
     }).subscriptions = mockEventSubscriptions;
 
     jest.clearAllMocks();
@@ -91,12 +93,17 @@ describe('WebSocketService', () => {
   });
 
   describe('callAndSubscribe', () => {
-    it('should call and subscribe to updates', () => {
-      const observablePools$ = of([{ name: 'pool1' }, { name: 'pool2' }]) as Observable<Pool[]>;
-      jest.spyOn(service, 'callAndSubscribe').mockReturnValue(observablePools$);
-      service.callAndSubscribe('pool.query').subscribe((result) => {
-        expect(result).toEqual([]);
+    it('should call and subscribe to updates', async () => {
+      const observablePools$ = of(pools);
+      jest.spyOn(service, 'callAndSubscribe').mockImplementationOnce((method: string) => {
+        if (method === 'pool.query') {
+          return observablePools$;
+        }
+        throw new Error(`Unexpected method: ${method}`);
       });
+      const callAndSubscribeToPools = await firstValueFrom(service.callAndSubscribe('pool.query'));
+
+      expect(callAndSubscribeToPools).toEqual([{ name: 'pool1' }, { name: 'pool2' }]);
       expect(service.callAndSubscribe).toHaveBeenCalledWith('pool.query');
     });
   });

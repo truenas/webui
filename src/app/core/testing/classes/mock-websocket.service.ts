@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
+import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { when } from 'jest-when';
 import { Observable, of, Subject } from 'rxjs';
-import { ValuesType } from 'utility-types';
 import {
   CallResponseOrFactory,
   JobResponseOrFactory,
@@ -13,16 +13,16 @@ import {
   ApiCallParams,
   ApiCallResponse,
 } from 'app/interfaces/api/api-call-directory.interface';
-import { ApiEventDirectory } from 'app/interfaces/api/api-event-directory.interface';
 import {
   ApiJobMethod,
   ApiJobParams,
   ApiJobResponse,
 } from 'app/interfaces/api/api-job-directory.interface';
-import { ApiEvent } from 'app/interfaces/api-message.interface';
+import { ApiEvent, ApiEventMethod, ApiEventResponse } from 'app/interfaces/api-message.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { WebSocketConnectionService } from 'app/services/websocket-connection.service';
 import { WebSocketService } from 'app/services/ws.service';
+import { AppState } from 'app/store';
 
 /**
  * Better than just expect.anything() because it allows null and undefined.
@@ -43,26 +43,30 @@ const anyArgument = when((_: unknown) => true);
  */
 @Injectable()
 export class MockWebSocketService extends WebSocketService {
-  private subscribeStream$ = new Subject<ApiEvent>();
+  private subscribeStream$ = new Subject<ApiEventResponse<ApiEventMethod>>();
   private jobIdCounter = 1;
 
   constructor(
     protected router: Router,
     protected wsManager: WebSocketConnectionService,
     protected translate: TranslateService,
+    protected store$: Store<AppState>,
   ) {
-    super(router, wsManager, translate);
+    super(router, wsManager, translate, store$);
 
     this.call = jest.fn();
     this.job = jest.fn();
     this.startJob = jest.fn();
-    this.subscribe = jest.fn(() => this.subscribeStream$.asObservable() as Observable<ApiEvent<ValuesType<ApiEventDirectory>['response']>>);
+    this.subscribe = jest.fn(() => this.subscribeStream$.asObservable());
 
     when(this.call).mockImplementation((method: ApiCallMethod, args: unknown) => {
       throw Error(`Unmocked websocket call ${method} with ${JSON.stringify(args)}`);
     });
     when(this.job).mockImplementation((method: ApiJobMethod, args: unknown) => {
       throw Error(`Unmocked websocket job call ${method} with ${JSON.stringify(args)}`);
+    });
+    when(this.callAndSubscribe).mockImplementation((method: ApiEventMethod, args: unknown) => {
+      throw Error(`Unmocked websocket callAndSubscribe ${method} with ${JSON.stringify(args)}`);
     });
   }
 
