@@ -1,6 +1,6 @@
 import {
   ChangeDetectionStrategy,
-  ChangeDetectorRef, Component, Inject,
+  ChangeDetectorRef, Component, ErrorHandler, Inject,
 } from '@angular/core';
 import {
   FormBuilder,
@@ -25,6 +25,8 @@ import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-erro
 import { ipValidator } from 'app/modules/ix-forms/validators/ip-validation';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { guiFormElements } from 'app/pages/system/general-settings/gui/gui-form/gui-form.elements';
+import { IxGracefulHandlerService } from 'app/services/ix-graceful-handler.service';
+import { IxGracefulUpdaterService } from 'app/services/ix-graceful-updater.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { ThemeService } from 'app/services/theme/theme.service';
 import { WebSocketConnectionService } from 'app/services/websocket-connection.service';
@@ -39,6 +41,12 @@ import { waitForGeneralConfig } from 'app/store/system-config/system-config.sele
 @Component({
   templateUrl: './gui-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  providers: [
+    {
+      provide: ErrorHandler,
+      useClass: IxGracefulHandlerService,
+    },
+  ],
 })
 export class GuiFormComponent {
   protected readonly requiredRoles = [Role.FullAdmin];
@@ -60,6 +68,8 @@ export class GuiFormComponent {
     ui_consolemsg: [false, [Validators.required]],
   });
 
+  test: { test: unknown } = { test: undefined };
+
   options = {
     themes: of(this.themeService.allThemes.map((theme) => ({ label: theme.label, value: theme.name }))),
     ui_certificate: this.sysGeneralService.uiCertificateOptions().pipe(choicesToOptions()),
@@ -71,6 +81,7 @@ export class GuiFormComponent {
   readonly helptext = helptext;
 
   constructor(
+    protected guiService: IxGracefulUpdaterService,
     private fb: FormBuilder,
     private sysGeneralService: SystemGeneralService,
     private slideInRef: IxSlideInRef<GuiFormComponent, boolean>,

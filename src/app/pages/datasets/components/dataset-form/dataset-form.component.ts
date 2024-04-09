@@ -1,6 +1,6 @@
 import {
   AfterViewInit,
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit, ViewChild,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, ErrorHandler, Inject, OnInit, ViewChild,
 } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -35,6 +35,8 @@ import {
 import { DatasetFormService } from 'app/pages/datasets/components/dataset-form/utils/dataset-form.service';
 import { getDatasetLabel } from 'app/pages/datasets/utils/dataset.utils';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { IxGracefulHandlerService } from 'app/services/ix-graceful-handler.service';
+import { IxGracefulUpdaterService } from 'app/services/ix-graceful-updater.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
@@ -43,6 +45,12 @@ import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
 @Component({
   templateUrl: './dataset-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  providers: [
+    {
+      provide: ErrorHandler,
+      useClass: IxGracefulHandlerService,
+    },
+  ],
 })
 export class DatasetFormComponent implements OnInit, AfterViewInit {
   @ViewChild(NameAndOptionsSectionComponent) nameAndOptionsSection: NameAndOptionsSectionComponent;
@@ -62,6 +70,8 @@ export class DatasetFormComponent implements OnInit, AfterViewInit {
   datasetPreset = DatasetPreset.Generic;
 
   form = new FormGroup({});
+
+  test: { test: unknown } = { test: undefined };
 
   parentDataset: Dataset;
   existingDataset: Dataset;
@@ -106,6 +116,7 @@ export class DatasetFormComponent implements OnInit, AfterViewInit {
   }
 
   constructor(
+    protected guiService: IxGracefulUpdaterService,
     private ws: WebSocketService,
     private cdr: ChangeDetectorRef,
     private dialog: DialogService,
@@ -129,7 +140,7 @@ export class DatasetFormComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    this.nameAndOptionsSection.form.controls.share_type.valueChanges
+    this.nameAndOptionsSection?.form.controls.share_type.valueChanges
       .pipe(untilDestroyed(this)).subscribe((datasetPreset) => {
         this.datasetPreset = datasetPreset;
       });

@@ -4,7 +4,7 @@
   [loading]="isLoading"
 ></ix-modal-header>
 
-<mat-card>
+<mat-card *ngIf="!guiService.hasError">
   <mat-card-content>
     <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
       <ix-name-and-options
@@ -23,6 +23,7 @@
         [advancedMode]="isAdvancedMode"
         (formValidityChange)="isEncryptionValid = $event"
       ></ix-encryption-section>
+      {{ test.test }}
       <ix-other-options-section
         [existing]="existingDataset"
         [parent]="parentDataset"
@@ -55,3 +56,4 @@
     </form>
   </mat-card-content>
 </mat-card>
+<mat-card *ngIf="guiService.hasError"> I got this error because of ix-select </mat-card>

@@ -3,7 +3,8 @@
   [title]="'GUI Settings' | translate"
   [loading]="isFormLoading"
 ></ix-modal-header>
-<mat-card>
+
+<mat-card *ngIf="!guiService.hasError">
   <mat-card-content>
     <form
       class="ix-form-container"
@@ -105,4 +106,7 @@
       </ix-form-actions>
     </form>
   </mat-card-content>
+</mat-card>
+<mat-card *ngIf="guiService.hasError">
+  Something went wrong. I am here.
 </mat-card>
