@@ -24,8 +24,8 @@ import { IxLabelComponent } from 'app/modules/ix-forms/components/ix-label/ix-la
  * Provides better typing.
  */
 class TreeComponent extends BaseTreeComponent {
-  select: EventEmitter<unknown>;
-  deselect: EventEmitter<unknown>;
+  override select: EventEmitter<unknown>;
+  override deselect: EventEmitter<unknown>;
 }
 
 describe('IxExplorerComponent', () => {
