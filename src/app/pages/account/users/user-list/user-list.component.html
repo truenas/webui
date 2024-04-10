@@ -10,18 +10,17 @@
   </mat-slide-toggle>
   <button
     *ixRequiresRoles="requiredRoles"
-    ixUiSearchableElement
     mat-button
     ixTest="add-user"
     [color]="'primary'"
-    [ixSearchConfig]="searchableElements.elements.add"
+    [ixUiSearch]="searchableElements.elements.add"
     (click)="doAdd()"
   >
     {{ 'Add' | translate }}
   </button>
 </ix-page-header>
 
-<div class="table-container" ixUiSearchableElement [ixSearchConfig]="searchableElements.elements.list">
+<div class="table-container" [ixUiSearch]="searchableElements.elements.list">
   <ix-table2
     [ix-table2-empty]="!(dataProvider.currentPageCount$ | async)"
     [emptyConfig]="emptyConfigService.defaultEmptyConfig((emptyType$ | async))"

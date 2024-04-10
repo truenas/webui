@@ -22,6 +22,7 @@ import { helptextSnapshots } from 'app/helptext/storage/snapshots/snapshots';
 import { ConfirmOptions } from 'app/interfaces/dialog.interface';
 import { ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { EmptyService } from 'app/modules/empty/empty.service';
 import { ArrayDataProvider } from 'app/modules/ix-table2/classes/array-data-provider/array-data-provider';
 import { checkboxColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-checkbox/ix-cell-checkbox.component';
 import { dateColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-date/ix-cell-date.component';
@@ -29,7 +30,6 @@ import { sizeColumn } from 'app/modules/ix-table2/components/ix-table-body/cells
 import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { SortDirection } from 'app/modules/ix-table2/enums/sort-direction.enum';
 import { createTable } from 'app/modules/ix-table2/utils';
-import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
 import { SnapshotAddFormComponent } from 'app/pages/datasets/modules/snapshots/snapshot-add-form/snapshot-add-form.component';
 import { SnapshotBatchDeleteDialogComponent } from 'app/pages/datasets/modules/snapshots/snapshot-batch-delete-dialog/snapshot-batch-delete-dialog.component';
 import { snapshotPageEntered } from 'app/pages/datasets/modules/snapshots/store/snapshot.actions';

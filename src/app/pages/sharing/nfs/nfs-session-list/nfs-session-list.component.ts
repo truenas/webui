@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnInit,
 } from '@angular/core';
 import { MatButtonToggleChange } from '@angular/material/button-toggle';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -7,11 +7,11 @@ import { TranslateService } from '@ngx-translate/core';
 import { combineLatest, map, tap } from 'rxjs';
 import { stringToTitleCase } from 'app/helpers/string-to-title-case';
 import { Nfs3Session, Nfs4Session, NfsType } from 'app/interfaces/nfs-share.interface';
+import { EmptyService } from 'app/modules/empty/empty.service';
 import { AsyncDataProvider } from 'app/modules/ix-table2/classes/async-data-provider/async-data-provider';
 import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { Column, ColumnComponent } from 'app/modules/ix-table2/interfaces/table-column.interface';
 import { createTable } from 'app/modules/ix-table2/utils';
-import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
 import { nfsSessionListElements } from 'app/pages/sharing/nfs/nfs-session-list/nfs-session-list.elements';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -21,7 +21,7 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class NfsSessionListComponent implements OnInit {
-  activeNfsType: NfsType = NfsType.Nfs3;
+  @Input() activeNfsType: NfsType = NfsType.Nfs3;
   protected readonly searchableElements = nfsSessionListElements;
 
   filterString = '';

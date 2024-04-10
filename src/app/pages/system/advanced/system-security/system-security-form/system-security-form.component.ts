@@ -2,16 +2,20 @@ import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
-import { Router } from '@angular/router';
+import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
+import { EMPTY } from 'rxjs';
+import { switchMap, take } from 'rxjs/operators';
 import { Role } from 'app/enums/role.enum';
 import { SystemSecurityConfig } from 'app/interfaces/system-security-config.interface';
-import { DialogService } from 'app/modules/dialog/dialog.service';
+import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { ChainedRef } from 'app/modules/ix-forms/components/ix-slide-in/chained-component-ref';
-import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { FipsService } from 'app/services/fips.service';
+import { AppState } from 'app/store';
+import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 
 @UntilDestroy()
 @Component({
@@ -27,20 +31,19 @@ export class SystemSecurityFormComponent implements OnInit {
     enable_fips: [false],
   });
 
-  isLoading = false;
+  private isHaLicensed$ = this.store$.select(selectIsHaLicensed);
 
   private systemSecurityConfig: SystemSecurityConfig;
 
   constructor(
-    private ws: WebSocketService,
-    private formErrorHandler: FormErrorHandlerService,
     private formBuilder: FormBuilder,
     private cdr: ChangeDetectorRef,
     private translate: TranslateService,
-    private dialogService: DialogService,
     private snackbar: SnackbarService,
-    private router: Router,
     private chainedRef: ChainedRef<SystemSecurityConfig>,
+    private matDialog: MatDialog,
+    private fips: FipsService,
+    private store$: Store<AppState>,
   ) {
     this.systemSecurityConfig = this.chainedRef.getData();
   }
@@ -52,23 +55,18 @@ export class SystemSecurityFormComponent implements OnInit {
   }
 
   onSubmit(): void {
-    this.isLoading = true;
-
-    this.ws.call('system.security.update', [this.form.value as SystemSecurityConfig])
-      .pipe(untilDestroyed(this))
-      .subscribe({
-        next: () => {
-          this.isLoading = false;
-          this.promptReboot();
-          this.snackbar.success(this.translate.instant('System Security Settings Updated.'));
-          this.cdr.markForCheck();
-        },
-        error: (error: unknown) => {
-          this.isLoading = false;
-          this.cdr.markForCheck();
-          this.formErrorHandler.handleWsFormError(error, this.form);
-        },
-      });
+    const dialogRef = this.matDialog.open(EntityJobComponent, {
+      data: { title: this.translate.instant('Saving settings') },
+      disableClose: true,
+    });
+    dialogRef.componentInstance.setCall('system.security.update', [this.form.value as SystemSecurityConfig]);
+    dialogRef.componentInstance.submit();
+    dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
+      this.promptForRestart();
+      this.chainedRef.close({ response: true, error: null });
+      dialogRef.close();
+      this.snackbar.success(this.translate.instant('System Security Settings Updated.'));
+    });
   }
 
   private initSystemSecurityForm(): void {
@@ -76,18 +74,20 @@ export class SystemSecurityFormComponent implements OnInit {
     this.cdr.markForCheck();
   }
 
-  private promptReboot(): void {
-    this.dialogService.confirm({
-      title: this.translate.instant('Restart'),
-      message: this.translate.instant('Restart is recommended for new FIPS setting to take effect. Would you like to restart now?“'),
-      buttonText: this.translate.instant('Restart'),
-    }).pipe(
-      untilDestroyed(this),
-    ).subscribe((approved) => {
-      if (approved) {
-        this.router.navigate(['/others/reboot'], { skipLocationChange: true });
-      }
-      this.chainedRef.close({ response: true, error: null });
-    });
+  private promptForRestart(): void {
+    this.isHaLicensed$
+      .pipe(
+        take(1),
+        switchMap((isHaLicensed) => {
+          if (isHaLicensed) {
+            // Reboot will be handled in response to failover.disabled.reasons event in HaFipsEffects.
+            return EMPTY;
+          }
+
+          return this.fips.promptForRestart();
+        }),
+        untilDestroyed(this),
+      )
+      .subscribe();
   }
 }

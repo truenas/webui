@@ -26,7 +26,7 @@ import { ReportingData, ReportingDatabaseError } from 'app/interfaces/reporting.
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { WidgetComponent } from 'app/pages/dashboard/components/widget/widget.component';
+import { WidgetComponent } from 'app/pages/dashboard-old/components/widget/widget.component';
 import { LineChartComponent } from 'app/pages/reports-dashboard/components/line-chart/line-chart.component';
 import { ReportStepDirection } from 'app/pages/reports-dashboard/enums/report-step-direction.enum';
 import { ReportZoomLevel, zoomLevelLabels } from 'app/pages/reports-dashboard/enums/report-zoom-level.enum';
@@ -143,7 +143,7 @@ export class ReportComponent extends WidgetComponent implements OnInit, OnChange
     private reportsService: ReportsService,
     private cdr: ChangeDetectorRef,
   ) {
-    super(translate);
+    super();
     this.reportsService.legendEventEmitterObs$.pipe(untilDestroyed(this)).subscribe({
       next: (data: LegendDataWithStackedTotalHtml) => {
         const clone = { ...data };

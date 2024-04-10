@@ -12,6 +12,7 @@ import { formatDistanceToNowShortened } from 'app/helpers/format-distance-to-now
 import { Job } from 'app/interfaces/job.interface';
 import { ReplicationTask } from 'app/interfaces/replication-task.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { EmptyService } from 'app/modules/empty/empty.service';
 import { AsyncDataProvider } from 'app/modules/ix-table2/classes/async-data-provider/async-data-provider';
 import {
   stateButtonColumn,
@@ -23,7 +24,6 @@ import {
 import { SortDirection } from 'app/modules/ix-table2/enums/sort-direction.enum';
 import { Column, ColumnComponent } from 'app/modules/ix-table2/interfaces/table-column.interface';
 import { createTable } from 'app/modules/ix-table2/utils';
-import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import {

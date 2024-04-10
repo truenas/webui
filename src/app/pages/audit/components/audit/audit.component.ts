@@ -22,6 +22,7 @@ import { CredentialType, credentialTypeLabels } from 'app/interfaces/credential-
 import { Option } from 'app/interfaces/option.interface';
 import { QueryFilters } from 'app/interfaces/query-api.interface';
 import { User } from 'app/interfaces/user.interface';
+import { EmptyService } from 'app/modules/empty/empty.service';
 import { AuditApiDataProvider } from 'app/modules/ix-table2/classes/api-data-provider/audit-api-data-provider';
 import { PaginationServerSide } from 'app/modules/ix-table2/classes/api-data-provider/pagination-server-side.class';
 import { SortingServerSide } from 'app/modules/ix-table2/classes/api-data-provider/sorting-server-side.class';
@@ -30,7 +31,6 @@ import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells
 import { SortDirection } from 'app/modules/ix-table2/enums/sort-direction.enum';
 import { TablePagination } from 'app/modules/ix-table2/interfaces/table-pagination.interface';
 import { createTable } from 'app/modules/ix-table2/utils';
-import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
 import { SearchProperty } from 'app/modules/search-input/types/search-property.interface';
 import {
   AdvancedSearchQuery,

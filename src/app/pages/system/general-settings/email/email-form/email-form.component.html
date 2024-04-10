@@ -9,11 +9,10 @@
     <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
       <ix-fieldset>
         <ix-radio-group
-          ixUiSearchableElement
           [label]="'Send Mail Method' | translate"
           [formControl]="sendMethodControl"
           [options]="sendMethodOptions$"
-          [ixSearchConfig]="searchableElements.elements.sendMethod"
+          [ixUiSearch]="searchableElements.elements.sendMethod"
         ></ix-radio-group>
 
         <ng-container *ngIf="isSmtp; else gmailOauth">
@@ -31,11 +30,10 @@
           ></ix-input>
 
           <ix-input
-            ixUiSearchableElement
             formControlName="outgoingserver"
             [label]="'Outgoing Mail Server' | translate"
             [tooltip]="helptext.outgoingserver.tooltip | translate"
-            [ixSearchConfig]="searchableElements.elements.outgoingServer"
+            [ixUiSearch]="searchableElements.elements.outgoingServer"
           ></ix-input>
 
           <ix-input

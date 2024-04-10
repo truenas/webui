@@ -10,7 +10,6 @@ import { TranslateModule } from '@ngx-translate/core';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
-import { IxTableModule } from 'app/modules/ix-tables/ix-table.module';
 import { StorageService } from 'app/services/storage.service';
 import { GroupsModule } from './groups/groups.module';
 import { UsersModule } from './users/users.module';
@@ -27,7 +26,6 @@ import { UsersModule } from './users/users.module';
     MatListModule,
     MatProgressSpinnerModule,
     IxFormsModule,
-    IxTableModule,
     FlexLayoutModule,
     UsersModule,
     GroupsModule,

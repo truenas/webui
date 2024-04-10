@@ -14,8 +14,7 @@
 
 <ix-table2
   class="table"
-  ixUiSearchableElement
-  [ixSearchConfig]="searchableElements.elements.apiKeys"
+  [ixUiSearch]="searchableElements.elements.apiKeys"
   [ix-table2-empty]="!(dataProvider.currentPageCount$ | async)"
   [emptyConfig]="emptyConfigService.defaultEmptyConfig((emptyType$ | async))"
 >

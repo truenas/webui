@@ -15,6 +15,7 @@ describe('IxHeaderCellCheckboxComponent', () => {
 
   const createComponent = createComponentFactory({
     component: IxHeaderCellCheckboxComponent<TestTableData>,
+    detectChanges: false,
     imports: [IxTable2Module],
   });
 
@@ -25,13 +26,13 @@ describe('IxHeaderCellCheckboxComponent', () => {
       { booleanField: false },
       { booleanField: true },
     ]);
-    spectator = createComponent({
-      props: {
-        dataProvider,
-        propertyName: 'booleanField',
-        title: 'Select All',
-      },
-    });
+
+    spectator = createComponent();
+    spectator.component.dataProvider = dataProvider;
+    spectator.component.propertyName = 'booleanField';
+    spectator.component.title = 'Select All';
+    spectator.detectChanges();
+
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 

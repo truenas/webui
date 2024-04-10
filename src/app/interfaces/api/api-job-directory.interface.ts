@@ -48,6 +48,7 @@ import {
 } from 'app/interfaces/pool.interface';
 import { DiskWipeParams } from 'app/interfaces/storage.interface';
 import { SystemDatasetConfig, SystemDatasetUpdate } from 'app/interfaces/system-dataset-config.interface';
+import { SystemSecurityConfig } from 'app/interfaces/system-security-config.interface';
 import { UpdateParams } from 'app/interfaces/system-update.interface';
 import { Tunable, TunableCreate, TunableUpdate } from 'app/interfaces/tunable.interface';
 import { VmStopParams } from 'app/interfaces/virtual-machine.interface';
@@ -111,6 +112,7 @@ export interface ApiJobDirectory {
   'disk.wipe': { params: DiskWipeParams; response: void };
 
   // Failover
+  'failover.reboot.other_node': { params: void; response: void };
   'failover.upgrade': { params: [FailoverUpgradeParams]; response: boolean };
   'failover.upgrade_finish': { params: void; response: boolean };
 
@@ -171,6 +173,7 @@ export interface ApiJobDirectory {
   // System
   'system.reboot': { params: { delay?: number }; response: void };
   'system.shutdown': { params: { delay?: number }; response: void };
+  'system.security.update': { params: [SystemSecurityConfig]; response: void };
 
   // SystemDataset
   'systemdataset.update': { params: [SystemDatasetUpdate]; response: SystemDatasetConfig };
