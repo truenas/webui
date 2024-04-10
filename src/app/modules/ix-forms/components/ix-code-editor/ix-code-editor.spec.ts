@@ -1,7 +1,7 @@
 import { ReactiveFormsModule } from '@angular/forms';
 import { TooltipComponent } from '@angular/material/tooltip';
 import { FormControl } from '@ngneat/reactive-forms';
-import { Spectator, createHostFactory } from '@ngneat/spectator/jest';
+import { createHostFactory, SpectatorHost } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
 import { CodeEditorLanguage } from 'app/enums/code-editor-language.enum';
 import { IxCodeEditorComponent } from 'app/modules/ix-forms/components/ix-code-editor/ix-code-editor.component';
@@ -9,7 +9,7 @@ import { IxErrorsComponent } from 'app/modules/ix-forms/components/ix-errors/ix-
 import { IxLabelComponent } from 'app/modules/ix-forms/components/ix-label/ix-label.component';
 
 describe('IxCodeEditor', () => {
-  let spectator: Spectator<IxCodeEditorComponent>;
+  let spectator: SpectatorHost<IxCodeEditorComponent>;
   const formControl = new FormControl<unknown>();
   const createHost = createHostFactory({
     component: IxCodeEditorComponent,
@@ -24,17 +24,26 @@ describe('IxCodeEditor', () => {
   });
 
   beforeEach(() => {
-    spectator = createHost('<ix-code-editor [language]=\'' + CodeEditorLanguage.Json + '\' [formControl]="formControl"></ix-code-editor>', {
-      hostProps: { formControl, language: CodeEditorLanguage.Json },
+    spectator = createHost(`<ix-code-editor
+        [language]="language"
+        [formControl]="formControl"
+        [label]="label"
+        [required]="required"
+        [tooltip]="tooltip"
+      ></ix-code-editor>`, {
+      hostProps: {
+        formControl,
+        language: CodeEditorLanguage.Json,
+      },
     });
-    spectator.setInput('language', CodeEditorLanguage.Json);
+    spectator.setHostInput('language', CodeEditorLanguage.Json);
   });
 
   describe('rendering', () => {
     it('renders a label and passes properties to it', () => {
-      spectator.setInput('label', 'Code Editor');
-      spectator.setInput('required', true);
-      spectator.setInput('tooltip', 'Enter json code');
+      spectator.setHostInput('label', 'Code Editor');
+      spectator.setHostInput('required', true);
+      spectator.setHostInput('tooltip', 'Enter json code');
 
       const label = spectator.query(IxLabelComponent);
       expect(label).toExist();

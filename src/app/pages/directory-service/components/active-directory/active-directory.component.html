@@ -3,7 +3,7 @@
   [title]="'Active Directory' | translate"
   [loading]="isLoading"
 ></ix-modal-header>
-<mat-card ixUiSearchableElement [ixSearchConfig]="searchableElements.elements.activeDirectory">
+<mat-card [ixUiSearch]="searchableElements.elements.activeDirectory">
   <mat-card-content>
     <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
       <div class="columns">

@@ -103,7 +103,7 @@ export class SnmpTrapServiceComponent extends BaseAlertServiceForm {
     super();
   }
 
-  setValues(values: AlertServiceEdit['attributes']): void {
+  override setValues(values: AlertServiceEdit['attributes']): void {
     super.setValues({
       ...values,
       v3_authprotocol: values.v3_authprotocol || disabledValue,
@@ -111,7 +111,7 @@ export class SnmpTrapServiceComponent extends BaseAlertServiceForm {
     });
   }
 
-  getSubmitAttributes(): AlertServiceEdit['attributes'] {
+  override getSubmitAttributes(): AlertServiceEdit['attributes'] {
     const values = this.form.value;
     let attributes: AlertServiceEdit['attributes'] = {
       host: values.host,

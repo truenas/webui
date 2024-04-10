@@ -24,6 +24,7 @@ describe('IxCellStateButtonComponent', () => {
   const createComponent = createComponentFactory({
     component: IxCellStateButtonComponent<TestTableData>,
     imports: [IxTable2Module],
+    detectChanges: false,
     providers: [
       mockProvider(MatDialog, {
         open: jest.fn(),
@@ -32,18 +33,17 @@ describe('IxCellStateButtonComponent', () => {
   });
 
   beforeEach(() => {
-    spectator = createComponent({
-      props: {
-        propertyName: 'state',
-        row: {
-          state: JobState.Success,
-          job: { id: 123456, logs_excerpt: 'completed' },
-          warnings: [{}, {}],
-        } as TestTableData,
-        getJob: (row) => row.job,
-        rowTestId: () => '',
-      } as Partial<IxCellStateButtonComponent<TestTableData>>,
-    });
+    spectator = createComponent();
+    spectator.component.propertyName = 'state';
+    spectator.component.setRow({
+      state: JobState.Success,
+      job: { id: 123456, logs_excerpt: 'completed' },
+      warnings: [{}, {}],
+    } as TestTableData);
+    spectator.component.getJob = (row) => row.job;
+    spectator.component.rowTestId = () => '';
+    spectator.detectChanges();
+
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
@@ -72,13 +72,17 @@ describe('IxCellStateButtonComponent', () => {
   });
 
   it('sets class when there are warnings', async () => {
-    spectator.setInput('getWarnings', (row) => row.warnings);
+    spectator.component.getWarnings = (row) => row.warnings;
+    spectator.detectComponentChanges();
+
     const button = await loader.getHarness(MatButtonHarness);
     expect(await (await button.host()).hasClass('fn-theme-orange')).toBeTruthy();
   });
 
   it('sets icon when there are warnings', async () => {
-    spectator.setInput('getWarnings', (row) => row.warnings);
+    spectator.component.getWarnings = (row) => row.warnings;
+    spectator.detectComponentChanges();
+
     const button = await loader.getHarness(MatButtonHarness);
     expect(await button.hasHarness(IxIconHarness.with({ name: 'mdi-alert' }))).toBeTruthy();
   });

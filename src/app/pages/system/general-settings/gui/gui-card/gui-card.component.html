@@ -4,10 +4,9 @@
     <div class="actions action-icon">
       <button
         mat-button
-        ixUiSearchableElement
         color="default"
         [ixTest]="['gui', 'settings']"
-        [ixSearchConfig]="searchableElements.elements.configure"
+        [ixUiSearch]="searchableElements.elements.configure"
         (click)="openSettings()"
       >
         {{ 'Settings' | translate }}

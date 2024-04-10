@@ -4,7 +4,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatAutocompleteHarness } from '@angular/material/autocomplete/testing';
 import { FormControl } from '@ngneat/reactive-forms';
-import { createHostFactory, Spectator } from '@ngneat/spectator/jest';
+import { createHostFactory, SpectatorHost } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
 import { IxErrorsComponent } from 'app/modules/ix-forms/components/ix-errors/ix-errors.component';
 import { IxLabelComponent } from 'app/modules/ix-forms/components/ix-label/ix-label.component';
@@ -13,7 +13,7 @@ import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
 import { IxInputComponent } from './ix-input.component';
 
 describe('IxInputComponent', () => {
-  let spectator: Spectator<IxInputComponent>;
+  let spectator: SpectatorHost<IxInputComponent>;
   const formControl = new FormControl<unknown>();
   const blurFormControl = new FormControl('', { updateOn: 'blur' });
   let loader: HarnessLoader;
@@ -33,17 +33,46 @@ describe('IxInputComponent', () => {
 
   describe('default `updateOn: change` strategy', () => {
     beforeEach(() => {
-      spectator = createHost('<ix-input [formControl]="formControl"></ix-input>', {
-        hostProps: { formControl },
-      });
+      spectator = createHost(
+        `<ix-input
+          [formControl]="formControl"
+          [label]="label"
+          [required]="required"
+          [tooltip]="tooltip"
+          [hint]="hint"
+          [prefixIcon]="prefixIcon"
+          [readonly]="readonly"
+          [autocomplete]="autocomplete"
+          [autocompleteOptions]="autocompleteOptions"
+          [type]="type"
+          [parse]="parse"
+          [format]="format"
+        ></ix-input>`,
+        {
+          hostProps: {
+            formControl,
+            label: undefined,
+            required: false,
+            tooltip: undefined,
+            hint: undefined,
+            prefixIcon: undefined,
+            readonly: false,
+            autocomplete: 'off',
+            autocompleteOptions: undefined,
+            type: undefined,
+            parse: undefined,
+            format: undefined,
+          },
+        },
+      );
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     });
 
     describe('rendering', () => {
       it('renders a label and passes properties to it', () => {
-        spectator.setInput('label', 'New Password');
-        spectator.setInput('required', true);
-        spectator.setInput('tooltip', 'Minimum length is 8 characters.');
+        spectator.setHostInput('label', 'New Password');
+        spectator.setHostInput('required', true);
+        spectator.setHostInput('tooltip', 'Minimum length is 8 characters.');
 
         const label = spectator.query(IxLabelComponent);
         expect(label).toExist();
@@ -53,26 +82,26 @@ describe('IxInputComponent', () => {
       });
 
       it('renders a hint when it is provided', () => {
-        spectator.setInput('hint', 'Capital letters only');
+        spectator.setHostInput('hint', 'Capital letters only');
 
         expect(spectator.query('mat-hint')).toHaveText('Capital letters only');
       });
 
       it('renders a prefix icon when it is provided', () => {
-        spectator.setInput('prefixIcon', 'person');
+        spectator.setHostInput('prefixIcon', 'person');
 
         expect(spectator.query('.prefix-icon ix-icon')).toHaveLength(1);
         expect(spectator.query('input')).toHaveClass('prefix-padding');
       });
 
       it('marks input element as readonly when readonly input is true', () => {
-        spectator.setInput('readonly', true);
+        spectator.setHostInput('readonly', true);
 
         expect(spectator.query('input')).toHaveAttribute('readonly');
       });
 
       it('passes autocomplete attribute to the input element', () => {
-        spectator.setInput('autocomplete', 'on');
+        spectator.setHostInput('autocomplete', 'on');
 
         expect(spectator.query('input')).toHaveAttribute('autocomplete', 'on');
       });
@@ -111,7 +140,7 @@ describe('IxInputComponent', () => {
       });
 
       it('shows autocomplete values when value typed', async () => {
-        spectator.setInput('autocompleteOptions', [{
+        spectator.setHostInput('autocompleteOptions', [{
           label: 'autocomplete test',
           value: 1,
         }]);
@@ -126,7 +155,7 @@ describe('IxInputComponent', () => {
       });
 
       it('resets form control value when autocomplete values provided and custom value typed', () => {
-        spectator.setInput('autocompleteOptions', [{
+        spectator.setHostInput('autocompleteOptions', [{
           label: 'bingo',
           value: 1,
         }]);
@@ -146,13 +175,13 @@ describe('IxInputComponent', () => {
 
     describe('types', () => {
       it('passes type to input when it is not password', () => {
-        spectator.setInput('type', 'email');
+        spectator.setHostInput('type', 'email');
 
         expect(spectator.query('input')).toHaveAttribute('type', 'email');
       });
 
       it('converts user input to a number when type is number', () => {
-        spectator.setInput('type', 'number');
+        spectator.setHostInput('type', 'number');
 
         spectator.typeInElement('123', 'input');
 
@@ -160,7 +189,7 @@ describe('IxInputComponent', () => {
       });
 
       it('counts 0 as valid when type is number', () => {
-        spectator.setInput('type', 'number');
+        spectator.setHostInput('type', 'number');
 
         spectator.typeInElement('0', 'input');
 
@@ -170,14 +199,14 @@ describe('IxInputComponent', () => {
 
       it('renders input element as pseudo-password field (via search input type) to disable password managers', () => {
         formControl.setValue('test');
-        spectator.setInput('type', 'password');
+        spectator.setHostInput('type', 'password');
 
         expect(spectator.query('input')).toHaveAttribute('type', 'text');
       });
 
       it('shows button that toggles password visibility when type is password', () => {
         formControl.setValue('test');
-        spectator.setInput('type', 'password');
+        spectator.setHostInput('type', 'password');
 
         expect(spectator.query('input')).toHaveClass('password-field');
         expect(spectator.query(IxIconComponent).name).toBe('visibility_off');
@@ -191,7 +220,7 @@ describe('IxInputComponent', () => {
 
     describe('validation', () => {
       it('shows a validation message when native input type validation does not pass', () => {
-        spectator.setInput('type', 'email');
+        spectator.setHostInput('type', 'email');
 
         // jest doesn't support native validators
         spectator.component.input({
@@ -208,7 +237,7 @@ describe('IxInputComponent', () => {
 
     describe('parsing and formatting', () => {
       it('uses parse function to transform user input when parse function is provided', () => {
-        spectator.setInput('parse', (value: string) => value.toUpperCase());
+        spectator.setHostInput('parse', (value: string) => value.toUpperCase());
 
         spectator.typeInElement('test', 'input');
 
@@ -216,7 +245,7 @@ describe('IxInputComponent', () => {
       });
 
       it('uses format function to transform form control value when format function is provided', () => {
-        spectator.setInput('format', (value: string) => value.toUpperCase());
+        spectator.setHostInput('format', (value: string) => value.toUpperCase());
         formControl.setValue('test');
 
         expect(spectator.query('input')).toHaveValue('TEST');

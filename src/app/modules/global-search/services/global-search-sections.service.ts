@@ -10,9 +10,9 @@ import { UiSearchProvider } from 'app/modules/global-search/services/ui-search.s
   providedIn: 'root',
 })
 export class GlobalSearchSectionsProvider {
-  readonly recentSearchesMaximumToSave = 10;
+  readonly recentSearchesMaximumToSave = 15;
   readonly globalSearchInitialLimit = 6;
-  readonly globalSearchMaximumLimit = 24;
+  readonly globalSearchMaximumLimit = 25;
 
   searchSections = [
     { label: this.translate.instant('UI'), value: GlobalSearchSection.Ui },
