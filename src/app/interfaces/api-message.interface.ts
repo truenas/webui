@@ -37,10 +37,14 @@ export interface ApiEvent<T = unknown> {
 }
 
 export type ApiEventMethod = keyof ApiEventDirectory;
-export type ApiEventResponse<K extends ApiEventMethod> = ApiEvent<ApiEventDirectory[K]['response']>;
+export type ApiEventResponseType<K extends ApiEventMethod = ApiEventMethod> = ApiEventDirectory[K]['response'];
+export type ApiEventTyped<
+  M extends ApiEventMethod = ApiEventMethod,
+  T extends ApiEventResponseType<M> = ApiEventResponseType<M>,
+> = ApiEvent<T>;
 
 export type ApiCallAndSubscribeMethod = { [K in ApiEventMethod]: K extends ApiCallMethod ? K : never; }[ApiEventMethod];
-export type ApiCallAndSubscribeResponse<T extends ApiCallAndSubscribeMethod> = ApiEventDirectory[T]['response'];
+export type ApiCallAndSubscribeResponseType<T extends ApiCallAndSubscribeMethod = ApiCallAndSubscribeMethod> = ApiEventDirectory[T]['response'];
 
 export type IncomingWebSocketMessage =
   | PongMessage

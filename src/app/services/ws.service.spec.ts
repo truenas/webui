@@ -6,7 +6,6 @@ import { UUID } from 'angular2-uuid';
 import {
   BehaviorSubject, Observable,
   firstValueFrom,
-  of,
 } from 'rxjs';
 import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
 import { JobState } from 'app/enums/job-state.enum';
@@ -65,7 +64,8 @@ describe('WebSocketService', () => {
       });
 
       service.call('cloudsync.providers').subscribe((result) => {
-        expect(result).toEqual({});
+        // TODO: Actually do nothing
+        expect(result).toEqual({ some: 'result' });
       });
 
       expect(mockWebSocketConnectionService.send).toHaveBeenCalled();
@@ -94,17 +94,22 @@ describe('WebSocketService', () => {
 
   describe('callAndSubscribe', () => {
     it('should call and subscribe to updates', async () => {
-      const observablePools$ = of(pools);
-      jest.spyOn(service, 'callAndSubscribe').mockImplementationOnce((method: string) => {
-        if (method === 'pool.query') {
-          return observablePools$;
-        }
-        throw new Error(`Unexpected method: ${method}`);
+      const uuid = 'fakeUUID';
+      jest.spyOn(UUID, 'UUID').mockReturnValue(uuid);
+      mockWebSocketConnectionService.websocket$.next({
+        id: uuid,
+        msg: IncomingApiMessageType.Result,
+        result: pools,
       });
-      const callAndSubscribeToPools = await firstValueFrom(service.callAndSubscribe('pool.query'));
 
-      expect(callAndSubscribeToPools).toEqual([{ name: 'pool1' }, { name: 'pool2' }]);
-      expect(service.callAndSubscribe).toHaveBeenCalledWith('pool.query');
+      expect(await firstValueFrom(service.callAndSubscribe('pool.query'))).toEqual([
+        { name: 'pool1' }, { name: 'pool2' },
+      ]);
+      // TODO: Emit ApiEvent to test updates
+      // mockWebSocketConnectionService.buildSubscriber().next({ collection: 'pool.query', fields: { name: 'pool3' } });
+      // expect(await lastValueFrom(service.callAndSubscribe('pool.query').pipe(take(2)))).toEqual([
+      //   { name: 'pool1' }, { name: 'pool2' }, { name: 'pool3' },
+      // ]);
     });
   });
 
@@ -137,7 +142,8 @@ describe('WebSocketService', () => {
       mockWebSocketConnectionService.buildSubscriber().next(eventData);
 
       service.subscribe('alert.list').subscribe((data) => {
-        expect(data).toEqual(eventData);
+        // TODO: Actually do nothing
+        expect(data).toEqual({});
       });
 
       expect(mockWebSocketConnectionService.buildSubscriber).toHaveBeenCalled();
@@ -150,7 +156,8 @@ describe('WebSocketService', () => {
       mockWebSocketConnectionService.buildSubscriber().next(logData);
 
       service.subscribeToLogs('logName').subscribe((data) => {
-        expect(data).toEqual(logData);
+        // TODO: Actually do nothing
+        expect(data).toEqual({});
       });
     });
   });

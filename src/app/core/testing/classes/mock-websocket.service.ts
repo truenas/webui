@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { when } from 'jest-when';
 import { Observable, of, Subject } from 'rxjs';
@@ -22,7 +21,6 @@ import { ApiEvent } from 'app/interfaces/api-message.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { WebSocketConnectionService } from 'app/services/websocket-connection.service';
 import { WebSocketService } from 'app/services/ws.service';
-import { AppState } from 'app/store';
 
 /**
  * Better than just expect.anything() because it allows null and undefined.
@@ -50,9 +48,8 @@ export class MockWebSocketService extends WebSocketService {
     protected override router: Router,
     protected override wsManager: WebSocketConnectionService,
     protected override translate: TranslateService,
-    protected override store$: Store<AppState>,
   ) {
-    super(router, wsManager, translate, store$);
+    super(router, wsManager, translate);
 
     this.call = jest.fn();
     this.job = jest.fn();

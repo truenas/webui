@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { UUID } from 'angular2-uuid';
 import { environment } from 'environments/environment';
@@ -8,7 +7,7 @@ import {
   merge, Observable, of, Subject, throwError,
 } from 'rxjs';
 import {
-  filter, map, share, switchMap, take, takeUntil, takeWhile, tap,
+  filter, map, share, startWith, switchMap, take, takeUntil, takeWhile, tap,
 } from 'rxjs/operators';
 import { MockEnclosureUtils } from 'app/core/testing/utils/mock-enclosure.utils';
 import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
@@ -27,20 +26,18 @@ import {
 } from 'app/interfaces/api/api-job-directory.interface';
 import {
   ApiCallAndSubscribeMethod,
-  ApiCallAndSubscribeResponse,
-  ApiEvent, ApiEventMethod, ApiEventResponse, IncomingWebSocketMessage, ResultMessage,
+  ApiCallAndSubscribeResponseType,
+  ApiEvent, ApiEventMethod, ApiEventTyped, IncomingWebSocketMessage, ResultMessage,
 } from 'app/interfaces/api-message.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { WebSocketError } from 'app/interfaces/websocket-error.interface';
-import { selectJob } from 'app/modules/jobs/store/job.selectors';
 import { WebSocketConnectionService } from 'app/services/websocket-connection.service';
-import { AppState } from 'app/store';
 
 @Injectable({
   providedIn: 'root',
 })
 export class WebSocketService {
-  private readonly subscriptions = new Map<ApiEventMethod, Observable<ApiEventResponse<ApiEventMethod>>>();
+  private readonly subscriptions = new Map<ApiEventMethod, Observable<ApiEventTyped>>();
   clearSubscriptions$ = new Subject<void>();
   mockUtils: MockEnclosureUtils;
 
@@ -48,7 +45,6 @@ export class WebSocketService {
     protected router: Router,
     protected wsManager: WebSocketConnectionService,
     protected translate: TranslateService,
-    protected store$: Store<AppState>,
   ) {
     if (environment.mockConfig && !environment?.production) this.mockUtils = new MockEnclosureUtils();
     this.wsManager.isConnected$?.subscribe((isConnected) => {
@@ -69,17 +65,39 @@ export class WebSocketService {
   /**
    * For jobs better to use the `selectJob` store selector.
    */
-  callAndSubscribe<M extends ApiCallAndSubscribeMethod, R extends ApiCallAndSubscribeResponse<M>>(
+  callAndSubscribe<M extends ApiCallAndSubscribeMethod, R extends ApiCallAndSubscribeResponseType<M> & { id: number }>(
     method: M,
     params?: ApiCallParams<M>,
   ): Observable<R[]> {
-    return merge(
-      this.callMethod<M, R[]>(method, params),
-      this.subscribe<M, ApiEvent<R>>(method).pipe(
-        filter((event) => event.collection === method),
-        map((event) => [event.fields]),
-      ),
-    ).pipe(takeUntil(this.clearSubscriptions$));
+    // TODO: Better type checking
+    return this.callMethod<M, R[]>(method, params)
+      .pipe(
+        switchMap((items) => this.subscribe<M>(method).pipe(
+          startWith(null),
+          map((event): [R[], ApiEventTyped<M>] => ([items, event])),
+        )),
+        map(([items, event]) => {
+          // TODO: Consider extracting to a pipe operator
+          if (event?.msg === IncomingApiMessageType.Added) {
+            console.info('entry added', event, items);
+            return [...items, event.fields] as R[];
+          }
+
+          if (event?.msg === IncomingApiMessageType.Changed) {
+            console.info('entry changed', event, items);
+            return items.map((item) => (item.id === event.id ? event.fields : item)) as R[];
+          }
+
+          if (event?.msg === IncomingApiMessageType.Removed) {
+            console.info('entry removed', event, items);
+            return items.filter((item) => item.id !== event.id);
+          }
+
+          console.info('event is null return items', items);
+          return items;
+        }),
+        takeUntil(this.clearSubscriptions$),
+      );
   }
 
   /**
@@ -117,12 +135,14 @@ export class WebSocketService {
     ) as Observable<Job<ApiJobResponse<M>>>;
   }
 
-  subscribe<K extends ApiEventMethod, R extends ApiEventResponse<K>>(name: K): Observable<R> {
-    if (this.subscriptions.has(name)) {
-      return this.subscriptions.get(name) as Observable<R>;
+  subscribe<K extends ApiEventMethod = ApiEventMethod>(
+    method: K,
+  ): Observable<ApiEventTyped<K>> {
+    if (this.subscriptions.has(method)) {
+      return this.subscriptions.get(method);
     }
 
-    const eventSubscription$ = this.wsManager.buildSubscriber<K, R>(name).pipe(
+    const subscription$ = this.wsManager.buildSubscriber<K, ApiEventTyped<K>>(method).pipe(
       switchMap((apiEvent) => {
         const erroredEvent = apiEvent as unknown as ResultMessage;
         if (erroredEvent.error) {
@@ -134,8 +154,8 @@ export class WebSocketService {
       share(),
       takeUntil(this.clearSubscriptions$),
     );
-    this.subscriptions.set(name, eventSubscription$);
-    return eventSubscription$;
+    this.subscriptions.set(method, subscription$);
+    return subscription$;
   }
 
   subscribeToLogs(name: string): Observable<ApiEvent<{ data: string }>> {
@@ -147,8 +167,10 @@ export class WebSocketService {
     this.subscriptions.clear();
   }
 
-  // eslint-disable-next-line max-len
-  private callMethod<M extends ApiCallMethod, R = ApiCallResponse<M>>(method: M, params?: ApiCallParams<M>): Observable<R>;
+  private callMethod<M extends ApiCallMethod, R = ApiCallResponse<M>>(
+    method: M,
+    params?: ApiCallParams<M>,
+  ): Observable<R>;
   private callMethod<M extends ApiJobMethod>(method: M, params?: ApiJobParams<M>): Observable<number>;
   private callMethod<M extends ApiCallMethod | ApiJobMethod>(method: M, params?: unknown): Observable<unknown> {
     const uuid = UUID.UUID();
@@ -186,7 +208,11 @@ export class WebSocketService {
   }
 
   private subscribeToJobUpdates(jobId: number): Observable<Job> {
-    return this.store$.select(selectJob(jobId)).pipe(takeUntil(this.clearSubscriptions$));
+    return this.subscribe('core.get_jobs').pipe(
+      filter((apiEvent) => apiEvent.id === jobId),
+      map((apiEvent) => apiEvent.fields),
+      takeUntil(this.clearSubscriptions$),
+    );
   }
 
   private printError(error: WebSocketError, context: { method: string; params: unknown }): void {

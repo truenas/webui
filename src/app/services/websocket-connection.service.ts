@@ -8,7 +8,7 @@ import { webSocket as rxjsWebSocket, WebSocketSubject } from 'rxjs/webSocket';
 import { IncomingApiMessageType, OutgoingApiMessageType } from 'app/enums/api-message-type.enum';
 import { WEBSOCKET } from 'app/helpers/websocket.helper';
 import { WINDOW } from 'app/helpers/window.helper';
-import { ApiEventMethod, ApiEventResponse, IncomingWebSocketMessage } from 'app/interfaces/api-message.interface';
+import { ApiEventMethod, ApiEventTyped, IncomingWebSocketMessage } from 'app/interfaces/api-message.interface';
 
 @Injectable({
   providedIn: 'root',
@@ -152,7 +152,7 @@ export class WebSocketConnectionService {
     });
   }
 
-  buildSubscriber<K extends ApiEventMethod, R extends ApiEventResponse<K>>(name: string): Observable<R> {
+  buildSubscriber<K extends ApiEventMethod, R extends ApiEventTyped<K>>(name: K): Observable<R> {
     const id = UUID.UUID();
     return this.ws$.multiplex(
       () => ({ id, name, msg: OutgoingApiMessageType.Sub }),

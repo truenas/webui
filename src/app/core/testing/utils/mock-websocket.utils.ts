@@ -2,7 +2,6 @@ import {
   ExistingProvider, FactoryProvider, forwardRef, ValueProvider,
 } from '@angular/core';
 import { Router } from '@angular/router';
-import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { MockWebSocketService } from 'app/core/testing/classes/mock-websocket.service';
 import {
@@ -15,7 +14,6 @@ import { ApiJobDirectory, ApiJobMethod } from 'app/interfaces/api/api-job-direct
 import { Job } from 'app/interfaces/job.interface';
 import { WebSocketConnectionService } from 'app/services/websocket-connection.service';
 import { WebSocketService } from 'app/services/ws.service';
-import { AppState } from 'app/store';
 
 /**
  * This is a sugar syntax for creating simple websocket mocks.
@@ -50,13 +48,8 @@ export function mockWebSocket(
   return [
     {
       provide: WebSocketService,
-      useFactory: (
-        router: Router,
-        wsManager: WebSocketConnectionService,
-        translate: TranslateService,
-        store$: Store<AppState>,
-      ) => {
-        const mockWebSocketService = new MockWebSocketService(router, wsManager, translate, store$);
+      useFactory: (router: Router, wsManager: WebSocketConnectionService, translate: TranslateService) => {
+        const mockWebSocketService = new MockWebSocketService(router, wsManager, translate);
         (mockResponses || []).forEach((mockResponse) => {
           if (mockResponse.type === MockWebSocketResponseType.Call) {
             mockWebSocketService.mockCall(mockResponse.method, mockResponse.response);
@@ -69,7 +62,7 @@ export function mockWebSocket(
         });
         return mockWebSocketService;
       },
-      deps: [Router, WebSocketConnectionService, TranslateService, Store],
+      deps: [Router, WebSocketConnectionService, TranslateService],
     },
     {
       provide: MockWebSocketService,
