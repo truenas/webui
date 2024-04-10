@@ -19,13 +19,15 @@
   </h2>
 </div>
 
-<ix-cloud-backup-schedule [backup]="backup"></ix-cloud-backup-schedule>
+<div class="cards">
+  <ix-cloud-backup-schedule [backup]="backup"></ix-cloud-backup-schedule>
 
-<ix-cloud-backup-stats [backup]="backup"></ix-cloud-backup-stats>
+  <ix-cloud-backup-stats [backup]="backup"></ix-cloud-backup-stats>
 
-<ix-cloud-backup-excluded-paths
-  *ngIf="backup.exclude?.length"
-  [backup]="backup"
-></ix-cloud-backup-excluded-paths>
+  <ix-cloud-backup-excluded-paths
+    *ngIf="backup.exclude?.length"
+    [backup]="backup"
+  ></ix-cloud-backup-excluded-paths>
 
-<ix-cloud-backup-snapshots [backup]="backup"></ix-cloud-backup-snapshots>
+  <ix-cloud-backup-snapshots [backup]="backup"></ix-cloud-backup-snapshots>
+</div>

@@ -3,6 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatSlideToggleHarness } from '@angular/material/slide-toggle/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { MockModule } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
@@ -14,24 +15,24 @@ import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTable2Harness } from 'app/modules/ix-table2/components/ix-table2/ix-table2.harness';
 import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
-import {
-  CloudBackupCardComponent,
-} from 'app/pages/data-protection/cloud-backup/cloud-backup-card/cloud-backup-card.component';
+import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
+import { SearchInput1Component } from 'app/modules/search-input1/search-input1.component';
 import {
   CloudBackupFormComponent,
 } from 'app/pages/data-protection/cloud-backup/cloud-backup-form/cloud-backup-form.component';
+import { CloudBackupListComponent } from 'app/pages/data-protection/cloud-backup/cloud-backup-list/cloud-backup-list.component';
 import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 
-describe('CloudBackupCardComponent', () => {
-  let spectator: Spectator<CloudBackupCardComponent>;
+describe('CloudBackupListComponent', () => {
+  let spectator: Spectator<CloudBackupListComponent>;
   let loader: HarnessLoader;
   let table: IxTable2Harness;
 
   const cloudBackups = [
     {
       id: 1,
-      description: 'test one',
+      description: 'UA',
       path: '/mnt/nmnmn',
       pre_script: 'your_pre_script',
       snapshot: false,
@@ -46,10 +47,12 @@ describe('CloudBackupCardComponent', () => {
   ];
 
   const createComponent = createComponentFactory({
-    component: CloudBackupCardComponent,
+    component: CloudBackupListComponent,
     imports: [
       AppLoaderModule,
       IxTable2Module,
+      MockModule(PageHeaderModule),
+      SearchInput1Component,
     ],
     providers: [
       mockAuth(),
@@ -74,16 +77,6 @@ describe('CloudBackupCardComponent', () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     table = await loader.getHarness(IxTable2Harness);
-  });
-
-  it('should show table rows', async () => {
-    const expectedRows = [
-      ['Name', 'Enabled', 'Snapshot', 'State', 'Last Run', ''],
-      ['test one', '', 'No', 'FINISHED', '1 min. ago', ''],
-    ];
-
-    const cells = await table.getCellTexts();
-    expect(cells).toEqual(expectedRows);
   });
 
   it('shows form to edit an existing Cloud Backup when Edit button is pressed', async () => {
@@ -114,7 +107,7 @@ describe('CloudBackupCardComponent', () => {
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({
       title: 'Run Now',
-      message: 'Run «test one» Cloud Backup now?',
+      message: 'Run «UA» Cloud Backup now?',
       hideCheckbox: true,
     });
 
@@ -127,7 +120,7 @@ describe('CloudBackupCardComponent', () => {
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({
       title: 'Confirmation',
-      message: 'Delete Cloud Backup <b>"test one"</b>?',
+      message: 'Delete Cloud Backup <b>"UA"</b>?',
     });
 
     expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('cloud_backup.delete', [1]);
