@@ -4,20 +4,18 @@
     <div class="actions">
       <button
         *ixRequiresRoles="requiredRoles"
-        ixUiSearchableElement
         mat-button
         ixTest="configure-active-directory"
-        [ixSearchConfig]="searchableElements.elements.configureActiveDirectory"
+        [ixUiSearch]="searchableElements.elements.configureActiveDirectory"
         (click)="openActiveDirectoryForm()"
       >
         {{ 'Configure Active Directory' | translate }}
       </button>
       <button
         *ixRequiresRoles="requiredRoles"
-        ixUiSearchableElement
         mat-button
         ixTest="configure-ldap"
-        [ixSearchConfig]="searchableElements.elements.configureLdap"
+        [ixUiSearch]="searchableElements.elements.configureLdap"
         (click)="openLdapForm()"
       >
         {{ 'Configure LDAP' | translate }}
@@ -27,8 +25,8 @@
 
   <div
     *ngSwitchCase="isActiveDirectoryEnabled"
-    class="services" ixUiSearchableElement
-    [ixSearchConfig]="searchableElements.elements.directoryServices"
+    class="services"
+    [ixUiSearch]="searchableElements.elements.directoryServices"
   >
     <ng-container *ngTemplateOutlet="dataCard; context: { card: activeDirectoryDataCard }"></ng-container>
     <mat-card>

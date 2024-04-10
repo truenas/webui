@@ -18,6 +18,7 @@ describe('TokenProviderFormComponent', () => {
   let form: IxFormHarness;
   const createComponent = createComponentFactory({
     component: TokenProviderFormComponent,
+    detectChanges: false,
     imports: [
       ReactiveFormsModule,
       IxFormsModule,
@@ -32,11 +33,9 @@ describe('TokenProviderFormComponent', () => {
   });
 
   beforeEach(async () => {
-    spectator = createComponent({
-      props: {
-        provider: {} as CloudSyncProvider,
-      },
-    });
+    spectator = createComponent();
+    spectator.component.provider = {} as CloudSyncProvider;
+    spectator.detectChanges();
     form = await TestbedHarnessEnvironment.harnessForFixture(spectator.fixture, IxFormHarness);
   });
 

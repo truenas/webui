@@ -9,10 +9,9 @@
 </ix-page-header>
 
 <ix-table2
-  ixUiSearchableElement
   class="table"
   [ix-table2-empty]="!(dataProvider.currentPageCount$ | async)"
-  [ixSearchConfig]="searchableElements.elements.cron"
+  [ixUiSearch]="searchableElements.elements.cron"
   [emptyConfig]="emptyService.defaultEmptyConfig(dataProvider.emptyType$ | async)"
 >
   <thead

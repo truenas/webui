@@ -9,7 +9,7 @@ import { TranslatedMessages } from 'app/interfaces/translated-messages.interface
  * This filters them out.
  */
 export class IcuTranslationsLoader extends TranslateHttpLoader {
-  getTranslation(lang: string): Observable<TranslatedMessages> {
+  override getTranslation(lang: string): Observable<TranslatedMessages> {
     return super.getTranslation(lang).pipe(
       map((translations: TranslatedMessages) => {
         return Object.keys(translations).reduce((filteredMessages, key) => {

@@ -14,18 +14,18 @@ describe('IxCellToggleComponent', () => {
 
   const createComponent = createComponentFactory({
     component: IxCellToggleComponent<TestTableData>,
+    detectChanges: false,
     imports: [IxTable2Module],
   });
 
   beforeEach(() => {
-    spectator = createComponent({
-      props: {
-        propertyName: 'booleanField',
-        row: { booleanField: true },
-        onRowToggle: () => jest.fn(),
-        rowTestId: (row) => row.booleanField.toString(),
-      } as Partial<IxCellToggleComponent<TestTableData>>,
-    });
+    spectator = createComponent();
+    spectator.component.propertyName = 'booleanField';
+    spectator.component.setRow({ booleanField: true });
+    spectator.component.onRowToggle = jest.fn();
+    spectator.component.rowTestId = (row) => row.booleanField.toString();
+    spectator.detectChanges();
+
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 

@@ -13,9 +13,9 @@ import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.u
 import { JobState } from 'app/enums/job-state.enum';
 import { Job } from 'app/interfaces/job.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { IxEmptyRowHarness } from 'app/modules/ix-table2/components/ix-empty-row/ix-empty-row.component.harness';
 import { IxTable2Harness } from 'app/modules/ix-table2/components/ix-table2/ix-table2.harness';
 import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
-import { IxEmptyRowHarness } from 'app/modules/ix-tables/components/ix-empty-row/ix-empty-row.component.harness';
 import { jobsInitialState, JobsState } from 'app/modules/jobs/store/job.reducer';
 import { selectJobs, selectJobState } from 'app/modules/jobs/store/job.selectors';
 import { LayoutModule } from 'app/modules/layout/layout.module';

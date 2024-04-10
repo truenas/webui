@@ -16,26 +16,22 @@
   <mat-tab-nav-panel #tabPanel>
     <ix-smb-session-list
       *ngSwitchCase="'sessions'"
-      ixUiSearchableElement
-      [ixSearchConfig]="searchableElements.elements.sessions"
+      [ixUiSearch]="searchableElements.elements.sessions"
     ></ix-smb-session-list>
 
     <ix-smb-lock-list
       *ngSwitchCase="'locks'"
-      ixUiSearchableElement
-      [ixSearchConfig]="searchableElements.elements.locks"
+      [ixUiSearch]="searchableElements.elements.locks"
     ></ix-smb-lock-list>
 
     <ix-smb-share-list
       *ngSwitchCase="'shares'"
-      ixUiSearchableElement
-      [ixSearchConfig]="searchableElements.elements.shares"
+      [ixUiSearch]="searchableElements.elements.shares"
     ></ix-smb-share-list>
 
     <ix-smb-notification-list
       *ngSwitchCase="'notifications'"
-      ixUiSearchableElement
-      [ixSearchConfig]="searchableElements.elements.notifications"
+      [ixUiSearch]="searchableElements.elements.notifications"
     ></ix-smb-notification-list>
   </mat-tab-nav-panel>
 </router-outlet>

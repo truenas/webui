@@ -7,7 +7,8 @@ import { MatDialog } from '@angular/material/dialog';
 import { TreeComponent as BaseTreeComponent, TreeModel } from '@bugsplat/angular-tree-component';
 import { IDTypeDictionary } from '@bugsplat/angular-tree-component/lib/defs/api';
 import { FormControl } from '@ngneat/reactive-forms';
-import { createHostFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { SpectatorHost } from '@ngneat/spectator';
+import { createHostFactory, mockProvider } from '@ngneat/spectator/jest';
 import { MockComponent, MockInstance } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -23,8 +24,8 @@ import { IxLabelComponent } from 'app/modules/ix-forms/components/ix-label/ix-la
  * Provides better typing.
  */
 class TreeComponent extends BaseTreeComponent {
-  select: EventEmitter<unknown>;
-  deselect: EventEmitter<unknown>;
+  override select: EventEmitter<unknown>;
+  override deselect: EventEmitter<unknown>;
 }
 
 describe('IxExplorerComponent', () => {
@@ -49,7 +50,7 @@ describe('IxExplorerComponent', () => {
 
   const fakeNodeProvider = jest.fn(() => of([]));
 
-  let spectator: Spectator<IxExplorerComponent>;
+  let spectator: SpectatorHost<IxExplorerComponent>;
   let loader: HarnessLoader;
   const formControl = new FormControl<string | string[]>();
   const createHost = createHostFactory({
@@ -74,12 +75,15 @@ describe('IxExplorerComponent', () => {
   });
 
   beforeEach(() => {
-    spectator = createHost('<ix-explorer [formControl]="formControl"></ix-explorer>', {
-      hostProps: { formControl },
-      props: {
-        nodeProvider: fakeNodeProvider,
+    spectator = createHost(
+      '<ix-explorer [formControl]="formControl" [nodeProvider]="nodeProvider"></ix-explorer>',
+      {
+        hostProps: {
+          formControl,
+          nodeProvider: fakeNodeProvider,
+        },
       },
-    });
+    );
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     (mockTreeMock.setState as unknown as jest.SpiedFunction<TreeModel['setState']>).mockClear();
     (mockTreeMock.getState as unknown as jest.SpiedFunction<TreeModel['getState']>).mockClear();
@@ -118,16 +122,18 @@ describe('IxExplorerComponent', () => {
 
   describe('rendering – other elements', () => {
     it('renders a hint when it is provided', () => {
-      spectator.setInput('hint', 'Please select a directory starting with an A');
+      spectator.component.hint = 'Please select a directory starting with an A';
+      spectator.detectComponentChanges();
 
       expect(spectator.query('mat-hint'))
         .toHaveExactText('Please select a directory starting with an A');
     });
 
     it('renders a label and passes properties to it', () => {
-      spectator.setInput('label', 'Select dataset');
-      spectator.setInput('required', true);
-      spectator.setInput('tooltip', 'Enter the location of the system.');
+      spectator.component.label = 'Select dataset';
+      spectator.component.required = true;
+      spectator.component.tooltip = 'Enter the location of the system.';
+      spectator.detectComponentChanges();
 
       const label = spectator.query(IxLabelComponent);
       expect(label).toExist();
@@ -178,7 +184,10 @@ describe('IxExplorerComponent', () => {
   });
 
   describe('form control - multiple=true', () => {
-    beforeEach(() => spectator.setInput('multiple', true));
+    beforeEach(() => {
+      spectator.component.multiple = true;
+      spectator.detectComponentChanges();
+    });
 
     it('shows values provided in form control', () => {
       formControl.setValue(['/mnt/place1', '/mnt/place2']);
@@ -237,15 +246,18 @@ describe('IxExplorerComponent', () => {
   });
 
   describe('creating new dataset', () => {
-    it('hides Create Dataset buttton when canCreateDataset is false', async () => {
-      spectator.setInput('canCreateDataset', false);
+    it('hides Create Dataset button when canCreateDataset is false', async () => {
+      spectator.component.canCreateDataset = false;
+      spectator.detectComponentChanges();
 
       const createDatasetButton = await loader.getHarnessOrNull(MatButtonHarness.with({ text: 'Create Dataset' }));
       expect(createDatasetButton).toBeNull();
     });
 
     it('disables Create Dataset button when node is unselected', async () => {
-      spectator.setInput('canCreateDataset', true);
+      spectator.component.canCreateDataset = true;
+      spectator.detectComponentChanges();
+
       formControl.setValue([]);
 
       spectator.component.tree.treeModel = {
@@ -258,7 +270,9 @@ describe('IxExplorerComponent', () => {
     });
 
     it('disables Create Dataset button when node is not mountpoint', async () => {
-      spectator.setInput('canCreateDataset', true);
+      spectator.component.canCreateDataset = true;
+      spectator.detectComponentChanges();
+
       formControl.setValue('/mnt/place');
 
       spectator.component.tree.treeModel = {
@@ -271,8 +285,10 @@ describe('IxExplorerComponent', () => {
     });
 
     it('disables Create Dataset button when form control is disabled', async () => {
-      spectator.setInput('canCreateDataset', true);
-      spectator.setInput('createDatasetProps', {});
+      spectator.component.canCreateDataset = true;
+      spectator.component.createDatasetProps = {};
+      spectator.detectComponentChanges();
+
       formControl.setValue('/mnt/place');
 
       spectator.component.tree.treeModel = {
@@ -289,9 +305,10 @@ describe('IxExplorerComponent', () => {
 
     it('opens a creating dataset dialog when Create Dataset button is pressed', async () => {
       const createDatasetProps: Omit<DatasetCreate, 'name'> = { encryption: true };
+      spectator.component.canCreateDataset = true;
+      spectator.component.createDatasetProps = createDatasetProps;
+      spectator.detectComponentChanges();
 
-      spectator.setInput('canCreateDataset', true);
-      spectator.setInput('createDatasetProps', createDatasetProps);
       formControl.setValue('/mnt/place');
       formControl.enable();
 

@@ -14,17 +14,17 @@ describe('IxCellCheckboxComponent', () => {
 
   const createComponent = createComponentFactory({
     component: IxCellCheckboxComponent<TestTableData>,
+    detectChanges: false,
     imports: [IxTable2Module],
   });
 
   beforeEach(() => {
-    spectator = createComponent({
-      props: {
-        propertyName: 'booleanField',
-        row: { booleanField: true },
-        rowTestId: (row) => 'checkbox-' + row.booleanField.toString(),
-      } as Partial<IxCellCheckboxComponent<TestTableData>>,
-    });
+    spectator = createComponent();
+    spectator.component.propertyName = 'booleanField';
+    spectator.component.setRow({ booleanField: true });
+    spectator.component.rowTestId = (row) => 'checkbox-' + row.booleanField.toString();
+    spectator.detectChanges();
+
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 

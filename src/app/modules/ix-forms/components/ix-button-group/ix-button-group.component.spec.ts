@@ -2,7 +2,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonToggleChange, MatButtonToggleModule } from '@angular/material/button-toggle';
 import { TooltipComponent } from '@angular/material/tooltip';
 import { FormControl } from '@ngneat/reactive-forms';
-import { Spectator, createHostFactory } from '@ngneat/spectator/jest';
+import { createHostFactory, SpectatorHost } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { IxErrorsComponent } from 'app/modules/ix-forms/components/ix-errors/ix-errors.component';
@@ -10,7 +10,7 @@ import { IxLabelComponent } from 'app/modules/ix-forms/components/ix-label/ix-la
 import { IxButtonGroupComponent } from './ix-button-group.component';
 
 describe('IxButtonGroupComponent', () => {
-  let spectator: Spectator<IxButtonGroupComponent>;
+  let spectator: SpectatorHost<IxButtonGroupComponent>;
   const formControl = new FormControl<unknown>();
 
   const createHost = createHostFactory({
@@ -27,16 +27,32 @@ describe('IxButtonGroupComponent', () => {
   });
 
   beforeEach(() => {
-    spectator = createHost('<ix-button-group [formControl]="formControl"></ix-button-group>', {
-      hostProps: { formControl },
-    });
+    spectator = createHost(
+      `
+        <ix-button-group
+          [formControl]="formControl"
+          [label]="label"
+          [required]="required"
+          [tooltip]="tooltip"
+          [hint]="hint"
+          [options]="options"
+        ></ix-button-group>`,
+      {
+        hostProps: {
+          formControl,
+          label: undefined,
+          required: false,
+          tooltip: undefined,
+        },
+      },
+    );
   });
 
   describe('rendering', () => {
     it('renders a label and passes properties to it', () => {
-      spectator.setInput('label', 'I would like to');
-      spectator.setInput('required', true);
-      spectator.setInput('tooltip', 'Value is required.');
+      spectator.setHostInput('label', 'I would like to');
+      spectator.setHostInput('required', true);
+      spectator.setHostInput('tooltip', 'Value is required.');
 
       const label = spectator.query(IxLabelComponent);
       expect(label).toExist();
@@ -46,7 +62,7 @@ describe('IxButtonGroupComponent', () => {
     });
 
     it('renders a hint when it is provided', () => {
-      spectator.setInput('hint', 'Capital letters only');
+      spectator.setHostInput('hint', 'Capital letters only');
 
       expect(spectator.query('mat-hint')).toHaveText('Capital letters only');
     });
@@ -54,7 +70,7 @@ describe('IxButtonGroupComponent', () => {
 
   describe('form control', () => {
     it('checks values when options are provided in form control', () => {
-      spectator.setInput('options', of([{
+      spectator.setHostInput('options', of([{
         label: 'A',
         value: 'a',
       }, {
