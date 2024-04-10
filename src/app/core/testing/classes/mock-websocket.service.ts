@@ -18,7 +18,7 @@ import {
   ApiJobParams,
   ApiJobResponse,
 } from 'app/interfaces/api/api-job-directory.interface';
-import { ApiEvent, ApiEventMethod, ApiEventResponse } from 'app/interfaces/api-message.interface';
+import { ApiEvent } from 'app/interfaces/api-message.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { WebSocketConnectionService } from 'app/services/websocket-connection.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -43,30 +43,27 @@ const anyArgument = when((_: unknown) => true);
  */
 @Injectable()
 export class MockWebSocketService extends WebSocketService {
-  private subscribeStream$ = new Subject<ApiEventResponse<ApiEventMethod>>();
+  private subscribeStream$ = new Subject<ApiEvent>();
   private jobIdCounter = 1;
 
   constructor(
-    protected override store$: Store<AppState>,
     protected override router: Router,
     protected override wsManager: WebSocketConnectionService,
     protected override translate: TranslateService,
+    protected override store$: Store<AppState>,
   ) {
     super(router, wsManager, translate, store$);
 
     this.call = jest.fn();
     this.job = jest.fn();
     this.startJob = jest.fn();
-    this.subscribe = jest.fn(() => this.subscribeStream$.asObservable());
+    this.subscribe = jest.fn(() => this.subscribeStream$.asObservable()) as jest.Mock;
 
     when(this.call).mockImplementation((method: ApiCallMethod, args: unknown) => {
       throw Error(`Unmocked websocket call ${method} with ${JSON.stringify(args)}`);
     });
     when(this.job).mockImplementation((method: ApiJobMethod, args: unknown) => {
       throw Error(`Unmocked websocket job call ${method} with ${JSON.stringify(args)}`);
-    });
-    when(this.callAndSubscribe).mockImplementation((method: ApiEventMethod, args: unknown) => {
-      throw Error(`Unmocked websocket callAndSubscribe ${method} with ${JSON.stringify(args)}`);
     });
   }
 
