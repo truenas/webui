@@ -3,7 +3,6 @@ import {
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import _ from 'lodash';
 import { filter, switchMap, tap } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
 import { KerberosKeytab } from 'app/interfaces/kerberos-config.interface';
@@ -128,7 +127,7 @@ export class KerberosKeytabsListComponent implements OnInit {
   onListFiltered(query: string): void {
     this.filterString = query.toLowerCase();
     this.dataProvider.setRows(this.kerberosRealsm.filter((idmap) => {
-      return _.find(idmap, query);
+      return idmap.name.toLowerCase().includes(this.filterString);
     }));
   }
 }

@@ -38,7 +38,7 @@ export class SmartTaskListComponent implements OnInit {
   smartTasks: SmartTestTaskUi[] = [];
   dataProvider: AsyncDataProvider<SmartTestTaskUi>;
   disks: Disk[] = [];
-  filterString: string;
+  filterString = '';
 
   columns = createTable<SmartTestTaskUi>([
     textColumn({
@@ -127,7 +127,8 @@ export class SmartTaskListComponent implements OnInit {
     this.filterString = query.toLowerCase();
     this.dataProvider.setRows(this.smartTasks.filter((smartTask) => {
       return smartTask.desc.toLowerCase().includes(this.filterString)
-        || smartTask.type.toLowerCase().includes(this.filterString);
+        || smartTask.type.toLowerCase().includes(this.filterString)
+        || smartTask.disksLabel.find((item) => item.includes(this.filterString));
     }));
   }
 

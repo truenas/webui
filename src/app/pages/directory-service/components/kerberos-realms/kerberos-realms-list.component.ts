@@ -3,7 +3,6 @@ import {
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import _ from 'lodash';
 import {
   filter, map, switchMap, tap,
 } from 'rxjs';
@@ -155,7 +154,10 @@ export class KerberosRealmsListComponent implements OnInit {
   onListFiltered(query: string): void {
     this.filterString = query.toLowerCase();
     this.dataProvider.setRows(this.kerberosRealsm.filter((idmap) => {
-      return _.find(idmap, query);
+      return idmap.realm.toLowerCase().includes(this.filterString)
+        || idmap.kdc_string.toLowerCase().includes(this.filterString)
+        || idmap.admin_server_string.toLowerCase().includes(this.filterString)
+        || idmap.kpasswd_server_string.toLowerCase().includes(this.filterString);
     }));
   }
 }

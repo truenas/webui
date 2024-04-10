@@ -3,7 +3,6 @@ import {
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import _ from 'lodash';
 import {
   filter, map, of, switchMap, tap,
 } from 'rxjs';
@@ -211,7 +210,8 @@ export class IdmapListComponent implements OnInit {
   onListFiltered(query: string): void {
     this.filterString = query.toLowerCase();
     this.dataProvider.setRows(this.idmaps.filter((idmap) => {
-      return _.find(idmap, query);
+      return idmap.label.toLowerCase().includes(this.filterString)
+        || idmap.idmap_backend.toLowerCase().includes(this.filterString);
     }));
   }
 }

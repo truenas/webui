@@ -51,7 +51,7 @@ export class RsyncTaskListComponent implements OnInit {
   protected readonly searchableElements = rsyncTaskListElements;
 
   dataProvider: AsyncDataProvider<RsyncTask>;
-  filterString: string;
+  filterString = '';
 
   columns = createTable<RsyncTask>([
     textColumn({

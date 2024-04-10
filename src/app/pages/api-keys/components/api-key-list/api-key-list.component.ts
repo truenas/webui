@@ -39,7 +39,7 @@ export class ApiKeyListComponent implements OnInit {
   smartTasks: ApiKey[] = [];
   dataProvider = new ArrayDataProvider<ApiKey>();
   apiKeys: ApiKey[] = [];
-  filterString: string;
+  filterString = '';
 
   columns = createTable<ApiKey>([
     textColumn({
