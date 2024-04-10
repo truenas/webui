@@ -36,7 +36,6 @@ export class DashboardStorageStore extends ComponentStore<DashboardStorageState>
   ) {
     super(initialState);
     this.initialize();
-    this.listenToPoolUpdates().subscribe();
     this.listenForScanUpdates().subscribe();
   }
 
@@ -55,7 +54,7 @@ export class DashboardStorageStore extends ComponentStore<DashboardStorageState>
   });
 
   private loadPoolData(): Observable<unknown> {
-    return this.ws.call('pool.query').pipe(
+    return this.ws.callAndSubscribe('pool.query').pipe(
       tap((pools) => {
         this.setState((state) => ({ ...state, pools }));
       }),
@@ -84,12 +83,6 @@ export class DashboardStorageStore extends ComponentStore<DashboardStorageState>
     });
 
     this.setState((state) => ({ ...state, volumesData }));
-  }
-
-  private listenToPoolUpdates(): Observable<unknown> {
-    return this.ws.subscribe('pool.query').pipe(
-      switchMap(() => this.loadPoolData()),
-    );
   }
 
   private loadVolumeData(): Observable<Dataset[]> {
