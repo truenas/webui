@@ -14,6 +14,7 @@ describe('IxCellRelativeDateComponent', () => {
   const createComponent = createComponentFactory({
     component: IxCellRelativeDateComponent<TestTableData>,
     imports: [IxTable2Module],
+    detectChanges: false,
     declarations: [FakeFormatDateTimePipe],
     providers: [
       mockProvider(Store, {
@@ -23,13 +24,11 @@ describe('IxCellRelativeDateComponent', () => {
   });
 
   beforeEach(() => {
-    spectator = createComponent({
-      props: {
-        propertyName: 'dateField',
-        rowTestId: () => '',
-        row: { dateField: new Date(new Date().getTime() - (24 * 60 * 60 * 10000)) },
-      } as Partial<IxCellRelativeDateComponent<TestTableData>>,
-    });
+    spectator = createComponent();
+    spectator.component.propertyName = 'dateField';
+    spectator.component.setRow({ dateField: new Date(new Date().getTime() - (24 * 60 * 60 * 10000)) });
+    spectator.component.rowTestId = () => '';
+    spectator.detectChanges();
   });
 
   it('shows custom relative format datetime in template', () => {

@@ -1,9 +1,9 @@
 import { createServiceFactory, SpectatorService, mockProvider } from '@ngneat/spectator/jest';
 import { MockDirective } from 'ng-mocks';
 import { of, lastValueFrom } from 'rxjs';
-import { UiSearchableElementDirective } from 'app/directives/common/ui-searchable-element.directive';
+import { UiSearchDirective } from 'app/directives/common/ui-search.directive';
+import { UiSearchDirectivesService } from 'app/modules/global-search/services/ui-search-directives.service';
 import { UiSearchProvider } from 'app/modules/global-search/services/ui-search.service';
-import { UiSearchableDirectiveService } from 'app/modules/global-search/services/ui-searchable-directive.service';
 import { AuthService } from 'app/services/auth/auth.service';
 
 jest.mock('app/../assets/ui-searchable-elements.json', () => [
@@ -16,7 +16,7 @@ describe('UiSearchProvider with mocked uiElements', () => {
 
   const createService = createServiceFactory({
     service: UiSearchProvider,
-    declarations: [MockDirective(UiSearchableElementDirective)],
+    declarations: [MockDirective(UiSearchDirective)],
   });
 
   describe('Full admin user checks', () => {
@@ -24,7 +24,7 @@ describe('UiSearchProvider with mocked uiElements', () => {
       spectator = createService({
         providers: [
           mockProvider(AuthService, { hasRole: () => of(true) }),
-          mockProvider(UiSearchableDirectiveService),
+          mockProvider(UiSearchDirectivesService),
         ],
       });
     });
@@ -60,7 +60,7 @@ describe('UiSearchProvider with mocked uiElements', () => {
       spectator = createService({
         providers: [
           mockProvider(AuthService, { hasRole: () => of(false) }),
-          mockProvider(UiSearchableDirectiveService),
+          mockProvider(UiSearchDirectivesService),
         ],
       });
     });
@@ -94,7 +94,7 @@ describe('UiSearchProvider with mocked uiElements', () => {
       spectator = createService({
         providers: [
           mockProvider(AuthService, { hasRole: () => of(true) }),
-          mockProvider(UiSearchableDirectiveService),
+          mockProvider(UiSearchDirectivesService),
         ],
       });
     });

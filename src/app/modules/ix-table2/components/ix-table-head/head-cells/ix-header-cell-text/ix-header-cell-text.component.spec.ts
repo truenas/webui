@@ -11,14 +11,13 @@ describe('IxHeaderCellTextComponent', () => {
   const createComponent = createComponentFactory({
     component: IxHeaderCellTextComponent<TestTableData>,
     imports: [IxTable2Module],
+    detectChanges: false,
   });
 
   beforeEach(() => {
-    spectator = createComponent({
-      props: {
-        title: 'Test Column',
-      },
-    });
+    spectator = createComponent();
+    spectator.component.title = 'Test Column';
+    spectator.detectChanges();
   });
 
   it('shows title', () => {

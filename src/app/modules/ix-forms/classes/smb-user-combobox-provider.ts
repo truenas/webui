@@ -5,7 +5,7 @@ import { UserComboboxProvider } from 'app/modules/ix-forms/classes/user-combobox
 import { UserService } from 'app/services/user.service';
 
 export class SmbUserComboboxProvider extends UserComboboxProvider {
-  fetch(filterValue: string): Observable<Option[]> {
+  override fetch(filterValue: string): Observable<Option[]> {
     this.page = 0;
     const offset = this.page * this.pageSize;
 
@@ -15,7 +15,7 @@ export class SmbUserComboboxProvider extends UserComboboxProvider {
       );
   }
 
-  nextPage(filterValue: string): Observable<Option[]> {
+  override nextPage(filterValue: string): Observable<Option[]> {
     this.page++;
     const offset = this.page * this.pageSize;
     return this.userService.smbUserQueryDsCache(filterValue, offset)

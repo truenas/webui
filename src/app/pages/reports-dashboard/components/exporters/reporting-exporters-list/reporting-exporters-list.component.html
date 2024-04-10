@@ -17,8 +17,7 @@
   </mat-toolbar-row>
   <mat-card-content>
     <ix-table2
-      ixUiSearchableElement
-      [ixSearchConfig]="searchableElements.elements.exporters"
+      [ixUiSearch]="searchableElements.elements.exporters"
       [ix-table2-empty]="!(dataProvider.currentPageCount$ | async)"
       [emptyConfig]="emptyService.defaultEmptyConfig(emptyType$ | async)"
     >

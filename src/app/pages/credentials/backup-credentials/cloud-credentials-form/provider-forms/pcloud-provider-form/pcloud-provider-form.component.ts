@@ -47,7 +47,7 @@ export class PcloudProviderFormComponent extends BaseProviderFormComponent imple
     this.form.patchValue(attributes);
   }
 
-  getSubmitAttributes(): OauthProviderComponent['form']['value'] & this['form']['value'] {
+  override getSubmitAttributes(): OauthProviderComponent['form']['value'] & this['form']['value'] {
     return {
       ...this.oauthComponent?.form?.value,
       ...this.form.value,

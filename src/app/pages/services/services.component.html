@@ -5,7 +5,7 @@
   ></ix-search-input1>
 </ix-page-header>
 
-<mat-card ixUiSearchableElement [ixSearchConfig]="searchableElements.elements.services">
+<mat-card [ixUiSearch]="searchableElements.elements.services">
   <ix-table2
     class="table"
     [ix-table2-empty]="!(dataProvider.currentPageCount$ | async)"

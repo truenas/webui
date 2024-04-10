@@ -24,16 +24,16 @@ export function parseHtmlFile(
   const cheerioRoot$ = cheerio.load(htmlContent);
   const elements: UiSearchableElement[] = [];
 
-  cheerioRoot$('[ixUiSearchableElement]').each((_, element) => {
-    const configKeysSplitted = cheerioRoot$(element).attr('[ixsearchconfig]').split('.');
-    const childKey = configKeysSplitted[configKeysSplitted.length - 1] as keyof UiSearchableElement;
-    const parentKey = configKeysSplitted[configKeysSplitted.length - 3] as keyof UiSearchableElement;
+  cheerioRoot$('[\\[ixUiSearch\\]]').each((_, element) => {
+    const configKeysSplit = cheerioRoot$(element).attr('[ixuisearch]').split('.');
+    const childKey = configKeysSplit[configKeysSplit.length - 1] as keyof UiSearchableElement;
+    const parentKey = configKeysSplit[configKeysSplit.length - 3] as keyof UiSearchableElement;
     const configObject = convertDataStringToDataObject(elementConfig);
 
     let mergedElement;
 
     if (
-      configKeysSplitted?.[configKeysSplitted.length - 2] as keyof UiSearchableElement === TsExtraction.ElementsConfig
+      configKeysSplit?.[configKeysSplit.length - 2] as keyof UiSearchableElement === TsExtraction.ElementsConfig
     ) {
       mergedElement = mergeElementsData(cheerioRoot$, element, configObject, parentKey, childKey, componentProperties);
     } else {

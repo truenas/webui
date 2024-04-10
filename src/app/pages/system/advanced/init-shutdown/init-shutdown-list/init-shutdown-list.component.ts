@@ -8,6 +8,7 @@ import { initShutdownScriptWhenLabels } from 'app/enums/init-shutdown-script-whe
 import { Role } from 'app/enums/role.enum';
 import { InitShutdownScript } from 'app/interfaces/init-shutdown-script.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { EmptyService } from 'app/modules/empty/empty.service';
 import { AsyncDataProvider } from 'app/modules/ix-table2/classes/async-data-provider/async-data-provider';
 import {
   actionsColumn,
@@ -17,7 +18,6 @@ import {
   yesNoColumn,
 } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-yesno/ix-cell-yesno.component';
 import { createTable } from 'app/modules/ix-table2/utils';
-import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import {
   InitShutdownFormComponent,

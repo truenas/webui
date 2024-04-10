@@ -1,24 +1,24 @@
 import { DOCUMENT } from '@angular/common';
 import {
-  ChangeDetectionStrategy, Component, Inject, Input, TrackByFunction,
+  ChangeDetectionStrategy, Component, Inject, Input, OnChanges, TrackByFunction,
 } from '@angular/core';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateService } from '@ngx-translate/core';
 import { findIndex, isEqual } from 'lodash';
 import {
   combineLatestWith, filter, delay,
 } from 'rxjs';
 import { WINDOW } from 'app/helpers/window.helper';
 import { Option } from 'app/interfaces/option.interface';
+import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { searchDelayConst } from 'app/modules/global-search/constants/delay.const';
 import { GlobalSearchSection } from 'app/modules/global-search/enums/global-search-section.enum';
 import { generateIdFromHierarchy } from 'app/modules/global-search/helpers/generate-id-from-hierarchy';
 import { processHierarchy } from 'app/modules/global-search/helpers/process-hierarchy';
 import { UiSearchableElement } from 'app/modules/global-search/interfaces/ui-searchable-element.interface';
 import { GlobalSearchSectionsProvider } from 'app/modules/global-search/services/global-search-sections.service';
+import { UiSearchDirectivesService } from 'app/modules/global-search/services/ui-search-directives.service';
 import { UiSearchProvider } from 'app/modules/global-search/services/ui-search.service';
-import { UiSearchableDirectiveService } from 'app/modules/global-search/services/ui-searchable-directive.service';
 import { AuthService } from 'app/services/auth/auth.service';
 
 @UntilDestroy()
@@ -28,7 +28,7 @@ import { AuthService } from 'app/services/auth/auth.service';
   styleUrls: ['./global-search-results.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class GlobalSearchResultsComponent {
+export class GlobalSearchResultsComponent implements OnChanges {
   @Input() searchTerm = '';
   @Input() isLoading = false;
   @Input() results: UiSearchableElement[] = [];
@@ -40,9 +40,11 @@ export class GlobalSearchResultsComponent {
 
   processHierarchy = processHierarchy;
 
-  showAll: Record<GlobalSearchSection, boolean> = Object.fromEntries(
+  initialShowAll: Record<GlobalSearchSection, boolean> = Object.fromEntries(
     Object.values(GlobalSearchSection).map((section) => [section, false]),
   ) as Record<GlobalSearchSection, boolean>;
+
+  showAll = { ...this.initialShowAll };
 
   get availableSections(): Option<GlobalSearchSection>[] {
     const uniqueSectionValues = new Set(this.results.map((result) => result.section));
@@ -62,15 +64,20 @@ export class GlobalSearchResultsComponent {
 
   constructor(
     protected authService: AuthService,
-    private translate: TranslateService,
     private searchProvider: UiSearchProvider,
-    private searchDirectives: UiSearchableDirectiveService,
+    private searchDirectives: UiSearchDirectivesService,
     private globalSearchSectionsProvider: GlobalSearchSectionsProvider,
     private router: Router,
     @Inject(WINDOW) private window: Window,
     @Inject(DOCUMENT) private document: Document,
   ) {
     this.listenForSelectionChanges();
+  }
+
+  ngOnChanges(changes: IxSimpleChanges<this>): void {
+    if (changes.searchTerm) {
+      this.showAll = { ...this.initialShowAll };
+    }
   }
 
   selectElement(element: UiSearchableElement): void {
@@ -106,13 +113,13 @@ export class GlobalSearchResultsComponent {
   listenForSelectionChanges(): void {
     this.searchProvider.selectionChanged$.pipe(
       combineLatestWith(this.searchDirectives.highlightOnDirectiveAdded$),
-      filter(([selectedElement]) => this.searchDirectives.registeredDirectives.has(selectedElement.anchor)),
+      filter(([selectedElement]) => this.searchDirectives.has(selectedElement.anchor)),
       delay(searchDelayConst),
       untilDestroyed(this),
     ).subscribe(([element]) => {
       this.document.querySelector<HTMLElement>('.ix-slide-in-background.open')?.click();
       this.document.querySelector<HTMLElement>('.ix-slide-in2-background.open')?.click();
-      this.searchDirectives.registeredDirectives.get(element.anchor).highlight();
+      this.searchDirectives.get(element.anchor).highlight();
     });
   }
 

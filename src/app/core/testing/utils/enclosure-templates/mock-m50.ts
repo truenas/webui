@@ -2,13 +2,13 @@ import { EnclosureUi } from 'app/interfaces/enclosure.interface';
 import { MockEnclosure } from './mock-enclosure-template';
 
 export class MockM50 extends MockEnclosure {
-  readonly totalSlotsFront: number = this.data.front_slots;
-  readonly totalSlotsRear: number = this.data.rear_slots;
-  readonly totalSlotsInternal: number = this.data.internal_slots;
+  override readonly totalSlotsFront: number = this.data.front_slots;
+  override readonly totalSlotsRear: number = this.data.rear_slots;
+  override readonly totalSlotsInternal: number = this.data.internal_slots;
   readonly model: string = 'M50';
 
   // Taken from an M60
-  data: EnclosureUi = {
+  override data: EnclosureUi = {
     name: 'iX 4024Sp e001',
     model: this.model,
     controller: true,

@@ -5,9 +5,8 @@
       <button
         *ixRequiresRoles="requiredRoles"
         mat-button
-        ixUiSearchableElement
         [ixTest]="['storage', 'configure']"
-        [ixSearchConfig]="searchableElements.elements.configure"
+        [ixUiSearch]="searchableElements.elements.configure"
         (click)="onConfigurePressed()"
       >
         {{ 'Configure' | translate }}
