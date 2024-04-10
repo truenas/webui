@@ -1,10 +1,12 @@
-import { NgComponentOutlet } from '@angular/common';
+import { AsyncPipe, NgComponentOutlet, NgIf } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
+import { MatCard } from '@angular/material/card';
 import { TranslateModule } from '@ngx-translate/core';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
+import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { LayoutModule } from 'app/modules/layout/layout.module';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
@@ -35,6 +37,10 @@ import { widgetComponents } from 'app/pages/dashboard/widgets/all-widgets.consta
     TranslateModule,
     PageHeaderModule,
     routing,
+    MatCard,
+    IxIconModule,
+    NgIf,
+    AsyncPipe,
   ],
   declarations: [
     DashboardComponent,
