@@ -38,7 +38,7 @@ describe('SelfEncryptingDriveCardComponent', () => {
         ],
       }),
       mockProvider(IxChainedSlideInService, {
-        pushComponent: jest.fn(() => of({ response: true, error: null })),
+        open: jest.fn(() => of({ response: true, error: null })),
       }),
       mockProvider(AdvancedSettingsService, {
         showFirstTimeWarningIfNeeded: jest.fn(() => of(true)),
@@ -66,7 +66,7 @@ describe('SelfEncryptingDriveCardComponent', () => {
     await configureButton.click();
 
     expect(spectator.inject(AdvancedSettingsService).showFirstTimeWarningIfNeeded).toHaveBeenCalled();
-    expect(spectator.inject(IxChainedSlideInService).pushComponent).toHaveBeenCalledWith(
+    expect(spectator.inject(IxChainedSlideInService).open).toHaveBeenCalledWith(
       SelfEncryptingDriveFormComponent,
       false,
       { sedPassword: '********', sedUser: 'admin' },

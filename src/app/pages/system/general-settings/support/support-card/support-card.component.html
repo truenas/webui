@@ -1,8 +1,7 @@
 <mat-card
   class="system-card"
   gdArea="system-card"
-  ixUiSearchableElement
-  [ixSearchConfig]="searchableElements.elements.support"
+  [ixUiSearch]="searchableElements.elements.support"
 >
   <mat-toolbar-row class="title-bar">
     <h3>{{ 'Support' | translate }}</h3>
@@ -70,11 +69,10 @@
           >
             <button
               *ixRequiresRoles="requiredRoles"
-              ixUiSearchableElement
               mat-button
               color="default"
               ixTest="set-license"
-              [ixSearchConfig]="searchableElements.elements.updateLicense"
+              [ixUiSearch]="searchableElements.elements.updateLicense"
               (click)="updateLicense()"
             >
               {{ licenseButtonText | translate }}
@@ -113,11 +111,10 @@
             </ng-container>
             <ng-template #elseBlock>
               <button
-                ixUiSearchableElement
                 mat-button
                 color="default"
                 ixTest="file-ticket"
-                [ixSearchConfig]="searchableElements.elements.fileTicket"
+                [ixUiSearch]="searchableElements.elements.fileTicket"
                 (click)="feedbackDialog()"
               >
                 {{ ticketText | translate }}

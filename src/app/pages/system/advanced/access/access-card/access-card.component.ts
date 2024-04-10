@@ -13,12 +13,12 @@ import { Role } from 'app/enums/role.enum';
 import { toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import { AuthSession, AuthSessionCredentialsData } from 'app/interfaces/auth-session.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { EmptyService } from 'app/modules/empty/empty.service';
 import { AsyncDataProvider } from 'app/modules/ix-table2/classes/async-data-provider/async-data-provider';
 import { actionsColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
 import { dateColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-date/ix-cell-date.component';
 import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { createTable } from 'app/modules/ix-table2/utils';
-import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { accessCardElements } from 'app/pages/system/advanced/access/access-card/access-card.elements';
 import { AccessFormComponent } from 'app/pages/system/advanced/access/access-form/access-form.component';
@@ -116,7 +116,7 @@ export class AccessCardComponent implements OnInit {
 
   onConfigure(): void {
     this.advancedSettings.showFirstTimeWarningIfNeeded().pipe(
-      switchMap(() => this.chainedSlideIn.pushComponent(AccessFormComponent)),
+      switchMap(() => this.chainedSlideIn.open(AccessFormComponent)),
       filter((response) => !!response.response),
       tap(() => {
         this.updateSessions();

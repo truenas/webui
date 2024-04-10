@@ -10,7 +10,10 @@
     <div class="columns">
       <ng-container *ngIf="!isLoading">
         <div class="first-column">
-          <mat-list class="list">
+          <mat-list
+            class="list"
+            [ixUiSearch]="networkConfigurationCardElements.elements.nameservers"
+          >
             <div class="section-title">{{ 'Nameservers' | translate }}</div>
             <mat-list-item *ngFor="let nameserver of nameservers">
               <span class="label">{{ nameserver.label | translate }}:</span>

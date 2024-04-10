@@ -12,11 +12,11 @@ export class TreeHarness extends MatTreeHarness {
    * @param options Options for narrowing the search
    * @return a `HarnessPredicate` configured with the given options.
    */
-  static with(options: TreeHarnessFilters = {}): HarnessPredicate<TreeHarness> {
+  static override with(options: TreeHarnessFilters = {}): HarnessPredicate<TreeHarness> {
     return new HarnessPredicate(TreeHarness, options);
   }
 
-  async getNodes(filter: TreeNodeHarnessFilters = {}): Promise<TreeNodeHarness[]> {
+  override async getNodes(filter: TreeNodeHarnessFilters = {}): Promise<TreeNodeHarness[]> {
     return this.locatorForAll(TreeNodeHarness.with(filter))();
   }
 }

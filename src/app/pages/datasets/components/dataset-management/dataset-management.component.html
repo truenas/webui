@@ -9,7 +9,7 @@
   <ix-empty [conf]="entityEmptyConf" [requiredRoles]="requiredRoles"></ix-empty>
 </div>
 
-<ng-template #datasetContainer ixUiSearchableElement [ixSearchConfig]="searchableElements.elements.datasets">
+<ng-template #datasetContainer [ixUiSearch]="searchableElements.elements.datasets">
   <div class="container" fxLayoutGap="16px">
     <div class="table-container">
       <ix-fake-progress-bar

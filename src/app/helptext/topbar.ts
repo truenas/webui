@@ -25,6 +25,8 @@ export const helptextTopbar = {
     [FailoverDisabledReason.LocFailoverOngoing]: T('This node is currently processing a failover event.'),
     [FailoverDisabledReason.NoHeartbeatIface]: T('Local heartbeat interface does not exist.'),
     [FailoverDisabledReason.NoCarrierOnHeartbeat]: T('Local heartbeat interface is down.'),
+    [FailoverDisabledReason.LocalFipsRebootRequired]: T('Reboot of this node is required for FIPS changes.'),
+    [FailoverDisabledReason.RemoteFipsRebootRequired]: T('Reboot of the other node is required for FIPS changes.'),
   },
   updateRunning_dialog: {
     title: T('Update in Progress'),

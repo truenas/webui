@@ -26,7 +26,7 @@ describe('SystemSecurityCardComponent', () => {
         mockCall('system.security.config', fakeSystemSecurityConfig),
       ]),
       mockProvider(IxChainedSlideInService, {
-        pushComponent: jest.fn(() => of({ response: true, error: null })),
+        open: jest.fn(() => of({ response: true, error: null })),
       }),
     ],
   });
@@ -49,7 +49,7 @@ describe('SystemSecurityCardComponent', () => {
     const configureButton = await loader.getHarness(MatButtonHarness.with({ text: 'Settings' }));
     await configureButton.click();
 
-    expect(spectator.inject(IxChainedSlideInService).pushComponent).toHaveBeenCalledWith(
+    expect(spectator.inject(IxChainedSlideInService).open).toHaveBeenCalledWith(
       SystemSecurityFormComponent,
       false,
       fakeSystemSecurityConfig,

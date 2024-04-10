@@ -10,11 +10,11 @@ import {
 import { Role } from 'app/enums/role.enum';
 import { formatDistanceToNowShortened } from 'app/helpers/format-distance-to-now-shortened';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { EmptyService } from 'app/modules/empty/empty.service';
 import { AsyncDataProvider } from 'app/modules/ix-table2/classes/async-data-provider/async-data-provider';
 import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { Column, ColumnComponent } from 'app/modules/ix-table2/interfaces/table-column.interface';
 import { createTable } from 'app/modules/ix-table2/utils';
-import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
 import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
 import { CronDeleteDialogComponent } from 'app/pages/system/advanced/cron/cron-delete-dialog/cron-delete-dialog.component';
 import { CronFormComponent } from 'app/pages/system/advanced/cron/cron-form/cron-form.component';
@@ -126,7 +126,7 @@ export class CronListComponent implements OnInit {
   }
 
   doAdd(): void {
-    this.chainedSlideIns.pushComponent(CronFormComponent)
+    this.chainedSlideIns.open(CronFormComponent)
       .pipe(filter((response) => !!response.response), untilDestroyed(this))
       .subscribe(() => {
         this.getCronJobs();
@@ -134,7 +134,7 @@ export class CronListComponent implements OnInit {
   }
 
   doEdit(row: CronjobRow): void {
-    this.chainedSlideIns.pushComponent(CronFormComponent, false, row)
+    this.chainedSlideIns.open(CronFormComponent, false, row)
       .pipe(filter((response) => !!response.response), untilDestroyed(this))
       .subscribe(() => {
         this.getCronJobs();

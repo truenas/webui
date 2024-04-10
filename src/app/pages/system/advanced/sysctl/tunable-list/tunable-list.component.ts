@@ -8,6 +8,7 @@ import { filter, tap } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
 import { Tunable } from 'app/interfaces/tunable.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { EmptyService } from 'app/modules/empty/empty.service';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { AsyncDataProvider } from 'app/modules/ix-table2/classes/async-data-provider/async-data-provider';
 import { actionsColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
@@ -15,7 +16,6 @@ import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells
 import { yesNoColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-yesno/ix-cell-yesno.component';
 import { SortDirection } from 'app/modules/ix-table2/enums/sort-direction.enum';
 import { createTable } from 'app/modules/ix-table2/utils';
-import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TunableFormComponent } from 'app/pages/system/advanced/sysctl/tunable-form/tunable-form.component';
 import { tunableListElements } from 'app/pages/system/advanced/sysctl/tunable-list/tunable-list.elements';
@@ -106,7 +106,7 @@ export class TunableListComponent implements OnInit {
   }
 
   doAdd(): void {
-    this.chainedSlideIns.pushComponent(TunableFormComponent).pipe(
+    this.chainedSlideIns.open(TunableFormComponent).pipe(
       filter((response) => !!response.response),
       tap(() => this.getTunables()),
       untilDestroyed(this),
@@ -114,7 +114,7 @@ export class TunableListComponent implements OnInit {
   }
 
   doEdit(tunable: Tunable): void {
-    this.chainedSlideIns.pushComponent(TunableFormComponent, false, tunable).pipe(
+    this.chainedSlideIns.open(TunableFormComponent, false, tunable).pipe(
       filter((response) => !!response.response),
       untilDestroyed(this),
     ).subscribe(() => {

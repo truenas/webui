@@ -42,7 +42,7 @@ export class AuditCardComponent {
 
   onConfigurePressed(): void {
     this.advancedSettingsService.showFirstTimeWarningIfNeeded().pipe(
-      switchMap(() => this.chainedSlideIns.pushComponent(AuditFormComponent)),
+      switchMap(() => this.chainedSlideIns.open(AuditFormComponent)),
       filter((response) => !!response.response),
       tap(() => {
         this.reloadConfig$.next();

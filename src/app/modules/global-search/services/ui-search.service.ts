@@ -27,7 +27,7 @@ export class UiSearchProvider implements GlobalSearchProvider {
     private translate: TranslateService,
   ) {}
 
-  search(term: string): Observable<UiSearchableElement[]> {
+  search(term: string, limit: number): Observable<UiSearchableElement[]> {
     // sort results by showing hierarchy match first, then synonyms match
     const sortedResults = this.translatedTerms.filter((item) => {
       return item.synonyms.find((synonym) => synonym?.toLowerCase().startsWith(term.toLowerCase()))
@@ -40,7 +40,7 @@ export class UiSearchProvider implements GlobalSearchProvider {
       const bSynonymMatch = b.synonyms.find((synonym) => synonym?.toLowerCase().startsWith(term.toLowerCase())) ? 1 : 0;
 
       return bHierarchyMatch - aHierarchyMatch || aSynonymMatch - bSynonymMatch;
-    }).slice(0, 50);
+    }).slice(0, limit);
 
     return from(sortedResults).pipe(
       mergeMap((item) => {

@@ -10,7 +10,7 @@ export class SelectHarness extends MatSelectHarness {
   protected optionClass = OptionHarness;
 
   /** Gets the options inside the select panel. */
-  async getOptions(filter?: Omit<OptionHarnessFilters, 'ancestor'>): Promise<OptionHarness[]> {
+  override async getOptions(filter?: Omit<OptionHarnessFilters, 'ancestor'>): Promise<OptionHarness[]> {
     return this.documentRootLocatorFactory().locatorForAll(
       this.optionClass.with({
         ...(filter || {}),

@@ -15,6 +15,7 @@ import { helptextCloudSync } from 'app/helptext/data-protection/cloudsync/clouds
 import { CloudSyncTaskUi, CloudSyncTaskUpdate } from 'app/interfaces/cloud-sync-task.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { EmptyService } from 'app/modules/empty/empty.service';
 import { AsyncDataProvider } from 'app/modules/ix-table2/classes/async-data-provider/async-data-provider';
 import { actionsColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
 import { relativeDateColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-relative-date/ix-cell-relative-date.component';
@@ -22,7 +23,6 @@ import { stateButtonColumn } from 'app/modules/ix-table2/components/ix-table-bod
 import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { toggleColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-toggle/ix-cell-toggle.component';
 import { createTable } from 'app/modules/ix-table2/utils';
-import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
 import { selectJob } from 'app/modules/jobs/store/job.selectors';
 import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -131,7 +131,7 @@ export class CloudSyncTaskCardComponent implements OnInit {
     private errorHandler: ErrorHandlerService,
     private ws: WebSocketService,
     private dialogService: DialogService,
-    private ixChainedSlideInService: IxChainedSlideInService,
+    private slideIn: IxChainedSlideInService,
     private cdr: ChangeDetectorRef,
     private taskService: TaskService,
     private store$: Store<AppState>,
@@ -175,7 +175,7 @@ export class CloudSyncTaskCardComponent implements OnInit {
   }
 
   onAdd(): void {
-    this.ixChainedSlideInService.pushComponent(CloudSyncWizardComponent, true).pipe(
+    this.slideIn.open(CloudSyncWizardComponent, true).pipe(
       filter((response) => !!response.response),
       untilDestroyed(this),
     ).subscribe({
@@ -186,7 +186,7 @@ export class CloudSyncTaskCardComponent implements OnInit {
   }
 
   onEdit(row?: CloudSyncTaskUi): void {
-    const closer$ = this.ixChainedSlideInService.pushComponent(CloudSyncFormComponent, true, row);
+    const closer$ = this.slideIn.open(CloudSyncFormComponent, true, row);
     closer$.pipe(
       filter((response) => !!response.response),
       untilDestroyed(this),

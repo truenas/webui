@@ -38,7 +38,12 @@ export const rootRouterConfig: Routes = [
     children: [
       {
         path: 'dashboard',
-        loadChildren: () => import('./pages/dashboard/dashboard.module').then((module) => module.DashboardModule),
+        loadChildren: () => import('app/pages/dashboard/dashboard.module').then((module) => module.DashboardModule),
+        data: { title: T('Dashboard'), breadcrumb: T('Dashboard') },
+      },
+      {
+        path: 'dashboard-old',
+        loadChildren: () => import('app/pages/dashboard-old/dashboard-old.module').then((module) => module.DashboardOldModule),
         data: { title: T('Dashboard'), breadcrumb: T('Dashboard') },
       },
       {

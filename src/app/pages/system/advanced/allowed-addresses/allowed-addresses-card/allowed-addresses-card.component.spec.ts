@@ -50,7 +50,7 @@ describe('AllowedAddressesCardComponent', () => {
         confirm: jest.fn(() => of(true)),
       }),
       mockProvider(IxChainedSlideInService, {
-        pushComponent: jest.fn(() => of(true)),
+        open: jest.fn(() => of(true)),
       }),
       mockProvider(ChainedRef, componentRef),
     ],
@@ -77,7 +77,7 @@ describe('AllowedAddressesCardComponent', () => {
     await configureButton.click();
 
     expect(spectator.inject(AdvancedSettingsService).showFirstTimeWarningIfNeeded).toHaveBeenCalled();
-    expect(spectator.inject(IxChainedSlideInService).pushComponent).toHaveBeenCalledWith(AllowedAddressesFormComponent);
+    expect(spectator.inject(IxChainedSlideInService).open).toHaveBeenCalledWith(AllowedAddressesFormComponent);
   });
 
   it('deletes a Allowed IP Address with confirmation when Delete icon is pressed', async () => {

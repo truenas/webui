@@ -15,7 +15,7 @@ import { NewFeatureIndicatorDirective } from 'app/directives/common/new-feature-
 import { NewFeatureIndicatorService } from 'app/directives/common/new-feature-indicator/new-feature-indicator.service';
 import { RequiresRolesDirective } from 'app/directives/common/requires-roles/requires-roles.directive';
 import { StepActivationDirective } from 'app/directives/common/step-activation.directive';
-import { UiSearchableElementDirective } from 'app/directives/common/ui-searchable-element.directive';
+import { UiSearchDirective } from 'app/directives/common/ui-search.directive';
 import { CastModule } from 'app/modules/cast/cast.module';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { LetDirective } from './app-let.directive';
@@ -40,9 +40,9 @@ import { LetDirective } from './app-let.directive';
     AutofocusDirective,
     NavigateAndInteractDirective,
     StepActivationDirective,
-    UiSearchableElementDirective,
     NewFeatureIndicatorWrapperComponent,
     NewFeatureIndicatorDirective,
+    UiSearchDirective,
   ],
   exports: [
     LetDirective,
@@ -54,9 +54,9 @@ import { LetDirective } from './app-let.directive';
     AutofocusDirective,
     NavigateAndInteractDirective,
     StepActivationDirective,
-    UiSearchableElementDirective,
     NewFeatureIndicatorWrapperComponent,
     NewFeatureIndicatorDirective,
+    UiSearchDirective,
   ],
   providers: [
     NewFeatureIndicatorService,

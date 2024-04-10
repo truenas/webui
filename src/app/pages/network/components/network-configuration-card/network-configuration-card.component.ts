@@ -11,6 +11,9 @@ import { NetworkConfiguration } from 'app/interfaces/network-configuration.inter
 import { NetworkSummary } from 'app/interfaces/network-summary.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { NetworkConfigurationComponent } from 'app/pages/network/components/configuration/configuration.component';
+import {
+  networkConfigurationCardElements,
+} from 'app/pages/network/components/network-configuration-card/network-configuration-card.elements';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { networkInterfacesChanged } from 'app/store/network-interfaces/network-interfaces.actions';
@@ -23,6 +26,8 @@ import { networkInterfacesChanged } from 'app/store/network-interfaces/network-i
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class NetworkConfigurationCardComponent implements OnInit {
+  protected readonly networkConfigurationCardElements = networkConfigurationCardElements;
+
   summary: NetworkSummary;
   config: NetworkConfiguration;
   isLoading = false;

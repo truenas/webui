@@ -6,8 +6,7 @@
 <div
   *ngIf="selectedDisks.length"
   class="batch-actions-toolbar"
-  ixUiSearchableElement
-  [ixSearchConfig]="searchableElements.elements.disks"
+  [ixUiSearch]="searchableElements.elements.disks"
 >
   <div class="title">
     <strong>{{ 'Batch Operations' | translate }}</strong>

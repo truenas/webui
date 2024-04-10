@@ -54,7 +54,7 @@ export class GoogleCloudProviderFormComponent extends BaseProviderFormComponent 
     });
   }
 
-  getSubmitAttributes(): CloudCredential['attributes'] {
+  override getSubmitAttributes(): CloudCredential['attributes'] {
     return {
       service_account_credentials: this.form.value.service_account_credentials,
     };

@@ -8,11 +8,11 @@ import {
 import { Role } from 'app/enums/role.enum';
 import { SystemGeneralConfig } from 'app/interfaces/system-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { EmptyService } from 'app/modules/empty/empty.service';
 import { AsyncDataProvider } from 'app/modules/ix-table2/classes/async-data-provider/async-data-provider';
 import { actionsColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
 import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { createTable } from 'app/modules/ix-table2/utils';
-import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
 import { AdvancedSettingsService } from 'app/pages/system/advanced/advanced-settings.service';
 import { allowedAddressesCardElements } from 'app/pages/system/advanced/allowed-addresses/allowed-addresses-card/allowed-addresses-card.elements';
 import {
@@ -81,7 +81,7 @@ export class AllowedAddressesCardComponent implements OnInit {
 
   onConfigure(): void {
     this.advancedSettings.showFirstTimeWarningIfNeeded().pipe(
-      switchMap(() => this.chainedSlideIns.pushComponent(AllowedAddressesFormComponent)),
+      switchMap(() => this.chainedSlideIns.open(AllowedAddressesFormComponent)),
       filter((response) => !!response.response),
       tap(() => {
         this.getAllowedAddresses();

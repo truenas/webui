@@ -29,7 +29,7 @@ describe('KernelFormComponent', () => {
         mockCall('system.advanced.update'),
       ]),
       mockProvider(IxChainedSlideInService, {
-        pushComponent: jest.fn(() => of({ response: true, error: null })),
+        open: jest.fn(() => of({ response: true, error: null })),
         components$: of([]),
       }),
       mockProvider(ChainedRef, { close: jest.fn(), getData: jest.fn(() => undefined) }),

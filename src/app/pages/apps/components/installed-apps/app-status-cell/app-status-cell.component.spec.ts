@@ -1,5 +1,4 @@
-import { Spectator } from '@ngneat/spectator';
-import { createHostFactory } from '@ngneat/spectator/jest';
+import { createHostFactory, SpectatorHost } from '@ngneat/spectator/jest';
 import { CoreComponents } from 'app/core/core-components.module';
 import { JobState } from 'app/enums/job-state.enum';
 import { ChartScaleQueryParams, ChartScaleResult } from 'app/interfaces/chart-release-event.interface';
@@ -8,7 +7,7 @@ import { AppStatusCellComponent } from 'app/pages/apps/components/installed-apps
 import { AppStatus } from 'app/pages/apps/enum/app-status.enum';
 
 describe('AppStatusCellComponent', () => {
-  let spectator: Spectator<AppStatusCellComponent>;
+  let spectator: SpectatorHost<AppStatusCellComponent>;
 
   const createHost = createHostFactory({
     component: AppStatusCellComponent,

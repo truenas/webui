@@ -10,6 +10,7 @@ import {
 import { Role } from 'app/enums/role.enum';
 import { helptextSystemAdvanced } from 'app/helptext/system/advanced';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { EmptyService } from 'app/modules/empty/empty.service';
 import { AsyncDataProvider } from 'app/modules/ix-table2/classes/async-data-provider/async-data-provider';
 import { actionsColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
 import { relativeDateColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-relative-date/ix-cell-relative-date.component';
@@ -17,7 +18,6 @@ import { scheduleColumn } from 'app/modules/ix-table2/components/ix-table-body/c
 import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { yesNoColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-yesno/ix-cell-yesno.component';
 import { createTable } from 'app/modules/ix-table2/utils';
-import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
 import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
 import { AdvancedSettingsService } from 'app/pages/system/advanced/advanced-settings.service';
 import { cronCardElements } from 'app/pages/system/advanced/cron/cron-card/cron-card.elements';
@@ -172,7 +172,7 @@ export class CronCardComponent implements OnInit {
 
   private openForm(row?: CronjobRow): void {
     this.advancedSettings.showFirstTimeWarningIfNeeded().pipe(
-      switchMap(() => this.chainedSlideIns.pushComponent(CronFormComponent, false, row)),
+      switchMap(() => this.chainedSlideIns.open(CronFormComponent, false, row)),
       filter((response) => !!response.response),
       untilDestroyed(this),
     ).subscribe({

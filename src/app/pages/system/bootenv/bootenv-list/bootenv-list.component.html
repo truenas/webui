@@ -43,10 +43,9 @@
 
 <ix-table2
   class="table"
-  ixUiSearchableElement
   [ix-table2-empty]="!(dataProvider.currentPageCount$ | async)"
   [emptyConfig]="emptyService.defaultEmptyConfig(dataProvider.emptyType$ | async)"
-  [ixSearchConfig]="searchableElements.elements.boot"
+  [ixUiSearch]="searchableElements.elements.boot"
 >
   <thead
     ix-table-head

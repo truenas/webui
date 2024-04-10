@@ -1,9 +1,9 @@
 import { MockEnclosure } from './mock-enclosure-template';
 
 export class MockMiniR extends MockEnclosure {
-  readonly totalSlotsFront: number = 12;
-  readonly totalSlotsRear: number = 0;
-  readonly totalSlotsInternal: number = 0;
+  override readonly totalSlotsFront: number = 12;
+  override readonly totalSlotsRear: number = 0;
+  override readonly totalSlotsInternal: number = 0;
 
   // readonly slotTemplate: EnclosureElement = {
   //   slot: 1,

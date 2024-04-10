@@ -11,6 +11,7 @@ import { JobState } from 'app/enums/job-state.enum';
 import { Role } from 'app/enums/role.enum';
 import { RsyncTask } from 'app/interfaces/rsync-task.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { EmptyService } from 'app/modules/empty/empty.service';
 import { AsyncDataProvider } from 'app/modules/ix-table2/classes/async-data-provider/async-data-provider';
 import {
   actionsColumn,
@@ -27,7 +28,6 @@ import {
   yesNoColumn,
 } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-yesno/ix-cell-yesno.component';
 import { createTable } from 'app/modules/ix-table2/utils';
-import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { CrontabExplanationPipe } from 'app/modules/scheduler/pipes/crontab-explanation.pipe';
 import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
@@ -219,13 +219,13 @@ export class RsyncTaskListComponent implements OnInit {
   }
 
   protected add(): void {
-    const closer$ = this.chainedSlideInService.pushComponent(RsyncTaskFormComponent, true);
+    const closer$ = this.chainedSlideInService.open(RsyncTaskFormComponent, true);
     closer$.pipe(filter((response) => !!response.response), untilDestroyed(this))
       .subscribe(() => this.dataProvider.load());
   }
 
   private edit(row: RsyncTask): void {
-    const closer$ = this.chainedSlideInService.pushComponent(RsyncTaskFormComponent, true, row);
+    const closer$ = this.chainedSlideInService.open(RsyncTaskFormComponent, true, row);
     closer$.pipe(filter((response) => !!response.response), untilDestroyed(this))
       .subscribe(() => this.dataProvider.load());
   }
