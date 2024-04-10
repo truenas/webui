@@ -88,6 +88,9 @@ export class CatalogsComponent implements OnInit {
     this.setDefaultSort();
     this.refresh();
     this.listenForCatalogSyncJobs();
+    this.dataProvider.emptyType$.pipe(untilDestroyed(this)).subscribe(() => {
+      this.onListFiltered(this.filterString);
+    });
   }
 
   listenForCatalogSyncJobs(): void {
@@ -126,7 +129,6 @@ export class CatalogsComponent implements OnInit {
 
   refresh(): void {
     this.dataProvider.load();
-    this.filterString = '';
   }
 
   doAdd(): void {

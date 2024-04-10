@@ -116,6 +116,9 @@ export class TargetListComponent implements OnInit {
     );
     this.dataProvider = new AsyncDataProvider(targets$);
     this.refresh();
+    this.dataProvider.emptyType$.pipe(untilDestroyed(this)).subscribe(() => {
+      this.onListFiltered(this.filterString);
+    });
   }
 
   doAdd(): void {
@@ -140,6 +143,5 @@ export class TargetListComponent implements OnInit {
 
   private refresh(): void {
     this.dataProvider.load();
-    this.filterString = '';
   }
 }

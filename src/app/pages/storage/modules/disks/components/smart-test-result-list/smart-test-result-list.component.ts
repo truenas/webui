@@ -1,7 +1,7 @@
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnInit,
 } from '@angular/core';
-import { UntilDestroy } from '@ngneat/until-destroy';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import {
   map, switchMap, tap,
@@ -95,6 +95,9 @@ export class SmartTestResultListComponent implements OnInit {
 
   ngOnInit(): void {
     this.createDataProvider();
+    this.dataProvider.emptyType$.pipe(untilDestroyed(this)).subscribe(() => {
+      this.onListFiltered(this.filterString);
+    });
   }
 
   createDataProvider(): void {
@@ -145,6 +148,5 @@ export class SmartTestResultListComponent implements OnInit {
 
   private refresh(): void {
     this.dataProvider.load();
-    this.filterString = '';
   }
 }

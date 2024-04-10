@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+  ChangeDetectionStrategy, Component, OnInit,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
@@ -66,7 +66,6 @@ export class VmwareSnapshotListComponent implements OnInit {
     private slideInService: IxSlideInService,
     protected emptyService: EmptyService,
     private ws: WebSocketService,
-    private cdr: ChangeDetectorRef,
     private dialogService: DialogService,
     private errorHandler: ErrorHandlerService,
   ) {}
@@ -78,6 +77,9 @@ export class VmwareSnapshotListComponent implements OnInit {
     );
     this.dataProvider = new AsyncDataProvider<VmwareSnapshot>(snapshots$);
     this.getSnapshotsData();
+    this.dataProvider.emptyType$.pipe(untilDestroyed(this)).subscribe(() => {
+      this.onListFiltered(this.filterString);
+    });
   }
 
   onListFiltered(query: string): void {
@@ -92,7 +94,6 @@ export class VmwareSnapshotListComponent implements OnInit {
 
   getSnapshotsData(): void {
     this.dataProvider.load();
-    this.filterString = '';
   }
 
   doAdd(): void {

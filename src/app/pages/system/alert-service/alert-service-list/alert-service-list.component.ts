@@ -97,6 +97,9 @@ export class AlertServiceListComponent implements OnInit {
     );
     this.dataProvider = new AsyncDataProvider<AlertService>(alertServices$);
     this.getAlertServices();
+    this.dataProvider.emptyType$.pipe(untilDestroyed(this)).subscribe(() => {
+      this.filterUpdated(this.filterString);
+    });
   }
 
   addAlertService(): void {
@@ -142,6 +145,5 @@ export class AlertServiceListComponent implements OnInit {
 
   private getAlertServices(): void {
     this.dataProvider.load();
-    this.filterString = '';
   }
 }

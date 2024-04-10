@@ -83,11 +83,13 @@ export class DeviceListComponent implements OnInit {
     this.dataProvider = new AsyncDataProvider<VmDevice>(devices$);
     this.setDefaultSort();
     this.loadDevices();
+    this.dataProvider.emptyType$.pipe(untilDestroyed(this)).subscribe(() => {
+      this.onListFiltered(this.filterString);
+    });
   }
 
   loadDevices(): void {
     this.dataProvider.load();
-    this.filterString = '';
   }
 
   onAdd(): void {

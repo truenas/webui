@@ -139,6 +139,9 @@ export class AssociatedTargetListComponent implements OnInit {
     );
     this.dataProvider = new AsyncDataProvider(targetExtent$);
     this.loadData();
+    this.dataProvider.emptyType$.pipe(untilDestroyed(this)).subscribe(() => {
+      this.onListFiltered(this.filterString);
+    });
   }
 
   loadData(): void {
@@ -150,7 +153,6 @@ export class AssociatedTargetListComponent implements OnInit {
     ).subscribe(([targets, extents]) => {
       this.targets = targets;
       this.extents = extents;
-      this.filterString = '';
       this.dataProvider.load();
       this.isLoading = false;
       this.cdr.markForCheck();

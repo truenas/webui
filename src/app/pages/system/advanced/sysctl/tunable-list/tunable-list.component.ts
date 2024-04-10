@@ -99,11 +99,13 @@ export class TunableListComponent implements OnInit {
     this.dataProvider = new AsyncDataProvider<Tunable>(tunables$);
     this.setDefaultSort();
     this.getTunables();
+    this.dataProvider.emptyType$.pipe(untilDestroyed(this)).subscribe(() => {
+      this.onListFiltered(this.filterString);
+    });
   }
 
   getTunables(): void {
     this.dataProvider.load();
-    this.filterString = '';
   }
 
   doAdd(): void {

@@ -108,6 +108,9 @@ export class DockerImagesListComponent implements OnInit {
     );
     this.dataProvider = new AsyncDataProvider(containerImages$);
     this.refresh();
+    this.dataProvider.emptyType$.pipe(untilDestroyed(this)).subscribe(() => {
+      this.onListFiltered(this.filterString);
+    });
   }
 
   doAdd(): void {
@@ -140,6 +143,5 @@ export class DockerImagesListComponent implements OnInit {
 
   private refresh(): void {
     this.dataProvider.load();
-    this.filterString = '';
   }
 }

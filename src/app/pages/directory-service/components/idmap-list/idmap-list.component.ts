@@ -160,11 +160,13 @@ export class IdmapListComponent implements OnInit {
     this.dataProvider = new AsyncDataProvider<IdmapRow>(idmapsRows$);
     this.setDefaultSort();
     this.getIdmaps();
+    this.dataProvider.emptyType$.pipe(untilDestroyed(this)).subscribe(() => {
+      this.onListFiltered(this.filterString);
+    });
   }
 
   getIdmaps(): void {
     this.dataProvider.load();
-    this.filterString = '';
   }
 
   setDefaultSort(): void {

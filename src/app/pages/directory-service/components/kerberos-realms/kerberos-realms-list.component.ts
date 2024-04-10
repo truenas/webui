@@ -128,11 +128,13 @@ export class KerberosRealmsListComponent implements OnInit {
     this.dataProvider = new AsyncDataProvider<KerberosRealmRow>(kerberosRealsm$);
     this.setDefaultSort();
     this.getKerberosRealms();
+    this.dataProvider.emptyType$.pipe(untilDestroyed(this)).subscribe(() => {
+      this.onListFiltered(this.filterString);
+    });
   }
 
   getKerberosRealms(): void {
     this.dataProvider.load();
-    this.filterString = '';
   }
 
   setDefaultSort(): void {

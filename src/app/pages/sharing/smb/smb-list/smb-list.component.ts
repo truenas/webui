@@ -181,6 +181,9 @@ export class SmbListComponent implements OnInit {
     );
     this.dataProvider = new AsyncDataProvider<SmbShare>(shares$);
     this.refresh();
+    this.dataProvider.emptyType$.pipe(untilDestroyed(this)).subscribe(() => {
+      this.onListFiltered(this.filterString);
+    });
   }
 
   setDefaultSort(): void {
@@ -224,6 +227,5 @@ export class SmbListComponent implements OnInit {
 
   private refresh(): void {
     this.dataProvider.load();
-    this.filterString = '';
   }
 }

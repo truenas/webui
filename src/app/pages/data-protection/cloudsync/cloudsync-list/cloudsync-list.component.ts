@@ -151,11 +151,13 @@ export class CloudSyncListComponent implements OnInit {
     );
     this.dataProvider = new AsyncDataProvider<CloudSyncTaskUi>(cloudSyncTasks$);
     this.getCloudSyncTasks();
+    this.dataProvider.emptyType$.pipe(untilDestroyed(this)).subscribe(() => {
+      this.onListFiltered(this.filterString);
+    });
   }
 
   getCloudSyncTasks(): void {
     this.dataProvider.load();
-    this.filterString = '';
   }
 
   runNow(row: CloudSyncTaskUi): void {

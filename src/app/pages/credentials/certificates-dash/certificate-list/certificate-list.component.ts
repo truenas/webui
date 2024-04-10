@@ -50,7 +50,6 @@ export class CertificateListComponent implements OnInit {
 
   protected readonly requiredRoles = [Role.FullAdmin];
 
-  filterString = '';
   dataProvider: AsyncDataProvider<Certificate>;
   certificates: Certificate[] = [];
   columns = createTable<Certificate>([
@@ -139,7 +138,6 @@ export class CertificateListComponent implements OnInit {
 
   getCertificates(): void {
     this.dataProvider.load();
-    this.filterString = '';
   }
 
   setDefaultSort(): void {

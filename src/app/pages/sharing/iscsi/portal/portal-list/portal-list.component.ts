@@ -127,6 +127,9 @@ export class PortalListComponent implements OnInit {
 
     this.dataProvider = new AsyncDataProvider(portals$);
     this.refresh();
+    this.dataProvider.emptyType$.pipe(untilDestroyed(this)).subscribe(() => {
+      this.onListFiltered(this.filterString);
+    });
   }
 
   doAdd(): void {
@@ -149,6 +152,5 @@ export class PortalListComponent implements OnInit {
 
   private refresh(): void {
     this.dataProvider.load();
-    this.filterString = '';
   }
 }

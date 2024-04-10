@@ -152,6 +152,9 @@ export class VmListComponent implements OnInit {
   ngOnInit(): void {
     this.createDataProvider();
     this.listenForVmUpdates();
+    this.dataProvider.emptyType$.pipe(untilDestroyed(this)).subscribe(() => {
+      this.onListFiltered(this.filterString);
+    });
   }
 
   createDataProvider(): void {
@@ -216,6 +219,5 @@ export class VmListComponent implements OnInit {
 
   private refresh(): void {
     this.dataProvider.load();
-    this.filterString = '';
   }
 }

@@ -44,7 +44,6 @@ import { WebSocketService } from 'app/services/ws.service';
 export class CertificateSigningRequestsListComponent implements OnInit {
   protected readonly requiredRoles = [Role.FullAdmin];
 
-  filterString = '';
   dataProvider: AsyncDataProvider<Certificate>;
   certificates: Certificate[] = [];
   columns = createTable<Certificate>([
@@ -112,7 +111,6 @@ export class CertificateSigningRequestsListComponent implements OnInit {
 
   getCertificates(): void {
     this.dataProvider.load();
-    this.filterString = '';
   }
 
   setDefaultSort(): void {

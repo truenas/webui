@@ -147,11 +147,10 @@ export class ReportingExporterListComponent implements OnInit {
     this.ws.call('reporting.exporters.query').pipe(untilDestroyed(this)).subscribe({
       next: (exporters: ReportingExporter[]) => {
         this.exporters = exporters;
-        this.dataProvider.setRows(this.exporters);
+        this.onListFiltered(this.filterString);
         this.isLoading$.next(false);
         this.isNoData$.next(!this.exporters?.length);
         this.setDefaultSort();
-        this.filterString = '';
         this.cdr.markForCheck();
       },
       error: () => {

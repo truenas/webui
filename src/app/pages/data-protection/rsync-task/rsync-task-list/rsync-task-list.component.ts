@@ -184,6 +184,9 @@ export class RsyncTaskListComponent implements OnInit {
     );
     this.dataProvider = new AsyncDataProvider(request$);
     this.refresh();
+    this.dataProvider.emptyType$.pipe(untilDestroyed(this)).subscribe(() => {
+      this.filterUpdated(this.filterString);
+    });
   }
 
   protected filterUpdated(query: string): void {
@@ -257,6 +260,5 @@ export class RsyncTaskListComponent implements OnInit {
 
   private refresh(): void {
     this.dataProvider.load();
-    this.filterString = '';
   }
 }

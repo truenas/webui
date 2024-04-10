@@ -110,6 +110,9 @@ export class AuthorizedAccessListComponent implements OnInit {
 
     this.dataProvider = new AsyncDataProvider(authorizedAccess$);
     this.refresh();
+    this.dataProvider.emptyType$.pipe(untilDestroyed(this)).subscribe(() => {
+      this.onListFiltered(this.filterString);
+    });
   }
 
   doAdd(): void {
@@ -132,6 +135,5 @@ export class AuthorizedAccessListComponent implements OnInit {
 
   private refresh(): void {
     this.dataProvider.load();
-    this.filterString = '';
   }
 }

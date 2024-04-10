@@ -106,11 +106,13 @@ export class SmartTaskListComponent implements OnInit {
     );
     this.dataProvider = new AsyncDataProvider<SmartTestTaskUi>(smartTasks$);
     this.getSmartTasks();
+    this.dataProvider.emptyType$.pipe(untilDestroyed(this)).subscribe(() => {
+      this.onListFiltered(this.filterString);
+    });
   }
 
   getSmartTasks(): void {
     this.dataProvider.load();
-    this.filterString = '';
   }
 
   openForm(row?: SmartTestTaskUi): void {

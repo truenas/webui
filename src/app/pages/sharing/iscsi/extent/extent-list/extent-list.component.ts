@@ -108,6 +108,9 @@ export class ExtentListComponent implements OnInit {
     );
     this.dataProvider = new AsyncDataProvider(extents$);
     this.refresh();
+    this.dataProvider.emptyType$.pipe(untilDestroyed(this)).subscribe(() => {
+      this.onListFiltered(this.filterString);
+    });
   }
 
   doAdd(): void {
@@ -139,6 +142,5 @@ export class ExtentListComponent implements OnInit {
 
   private refresh(): void {
     this.dataProvider.load();
-    this.filterString = '';
   }
 }

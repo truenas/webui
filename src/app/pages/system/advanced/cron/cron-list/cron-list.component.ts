@@ -119,11 +119,13 @@ export class CronListComponent implements OnInit {
     );
     this.dataProvider = new AsyncDataProvider<CronjobRow>(cronjobs$);
     this.getCronJobs();
+    this.dataProvider.emptyType$.pipe(untilDestroyed(this)).subscribe(() => {
+      this.onListFiltered(this.filterString);
+    });
   }
 
   getCronJobs(): void {
     this.dataProvider.load();
-    this.filterString = '';
   }
 
   doAdd(): void {

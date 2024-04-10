@@ -129,8 +129,7 @@ export class UserListComponent implements OnInit {
     ).subscribe({
       next: (users) => {
         this.users = users;
-        this.filterString = '';
-        this.createDataSource(users);
+        this.onListFiltered(this.filterString);
       },
       error: () => {
         this.users = [];

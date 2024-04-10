@@ -4,7 +4,7 @@ import {
 import { MatButtonToggleChange } from '@angular/material/button-toggle';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { map, tap } from 'rxjs';
+import { combineLatest, map, tap } from 'rxjs';
 import { stringToTitleCase } from 'app/helpers/string-to-title-case';
 import { Nfs3Session, Nfs4Session, NfsType } from 'app/interfaces/nfs-share.interface';
 import { AsyncDataProvider } from 'app/modules/ix-table2/classes/async-data-provider/async-data-provider';
@@ -126,6 +126,11 @@ export class NfsSessionListComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadData();
+
+    combineLatest([this.nfs3DataProvider.emptyType$, this.nfs4DataProvider.emptyType$])
+      .pipe(untilDestroyed(this)).subscribe(() => {
+        this.onListFiltered(this.filterString);
+      });
   }
 
   nfsTypeChanged(changedValue: MatButtonToggleChange): void {
@@ -148,8 +153,6 @@ export class NfsSessionListComponent implements OnInit {
     } else {
       this.nfs4DataProvider.load();
     }
-
-    this.filterString = '';
   }
 
   onListFiltered(query: string): void {

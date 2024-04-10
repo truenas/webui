@@ -69,11 +69,13 @@ export class SmbLockListComponent implements OnInit {
 
     this.dataProvider = new AsyncDataProvider(smbStatus$);
     this.loadData();
+    this.dataProvider.emptyType$.pipe(untilDestroyed(this)).subscribe(() => {
+      this.onListFiltered(this.filterString);
+    });
   }
 
   loadData(): void {
     this.dataProvider.load();
-    this.filterString = '';
   }
 
   onListFiltered(query: string): void {

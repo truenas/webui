@@ -159,6 +159,9 @@ export class ReplicationListComponent implements OnInit {
     }]).pipe(tap((replicationTasks) => this.replicationTasks = replicationTasks));
     this.dataProvider = new AsyncDataProvider<ReplicationTask>(replicationTasks$);
     this.getReplicationTasks();
+    this.dataProvider.emptyType$.pipe(untilDestroyed(this)).subscribe(() => {
+      this.onListFiltered(this.filterString);
+    });
   }
 
   setDefaultSort(): void {
@@ -171,7 +174,6 @@ export class ReplicationListComponent implements OnInit {
 
   getReplicationTasks(): void {
     this.dataProvider.load();
-    this.filterString = '';
   }
 
   runNow(row: ReplicationTask): void {

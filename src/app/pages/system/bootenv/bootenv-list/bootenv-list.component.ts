@@ -193,6 +193,9 @@ export class BootEnvironmentListComponent implements OnInit {
     this.dataProvider = new AsyncDataProvider(request$);
     this.refresh();
     this.setDefaultSort();
+    this.dataProvider.emptyType$.pipe(untilDestroyed(this)).subscribe(() => {
+      this.filterUpdated(this.filterString);
+    });
   }
 
   handleSlideInClosed(slideInRef: IxSlideInRef<unknown>): void {
@@ -322,6 +325,5 @@ export class BootEnvironmentListComponent implements OnInit {
 
   private refresh(): void {
     this.dataProvider.load();
-    this.filterString = '';
   }
 }

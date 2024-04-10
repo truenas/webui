@@ -101,11 +101,13 @@ export class KerberosKeytabsListComponent implements OnInit {
     this.dataProvider = new AsyncDataProvider<KerberosKeytab>(keytabsRows$);
     this.setDefaultSort();
     this.getKerberosKeytabs();
+    this.dataProvider.emptyType$.pipe(untilDestroyed(this)).subscribe(() => {
+      this.onListFiltered(this.filterString);
+    });
   }
 
   getKerberosKeytabs(): void {
     this.dataProvider.load();
-    this.filterString = '';
   }
 
   setDefaultSort(): void {
