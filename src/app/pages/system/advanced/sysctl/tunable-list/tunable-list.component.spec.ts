@@ -20,6 +20,7 @@ import { SearchInput1Component } from 'app/modules/search-input1/search-input1.c
 import { TunableFormComponent } from 'app/pages/system/advanced/sysctl/tunable-form/tunable-form.component';
 import { TunableListComponent } from 'app/pages/system/advanced/sysctl/tunable-list/tunable-list.component';
 import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 describe('TunableListComponent', () => {
   let spectator: Spectator<TunableListComponent>;
@@ -114,6 +115,9 @@ describe('TunableListComponent', () => {
       }),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
+        jobDialog: jest.fn(() => of({
+          afterClosed: of(null),
+        })),
       }),
       mockWebSocket([
         mockCall('core.get_jobs'),
@@ -177,10 +181,14 @@ describe('TunableListComponent', () => {
     const deleteIcon = await table.getHarnessInCell(IxIconHarness.with({ name: 'delete' }), 1, 5);
     await deleteIcon.click();
 
-    expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({
+    const dialogService = spectator.inject(DialogService);
+    expect(dialogService.confirm).toHaveBeenCalledWith({
       buttonText: 'Delete',
       message: 'Are you sure you want to delete "kernel.hostname"?',
       title: 'Delete Sysctl',
     });
+
+    expect(dialogService.jobDialog).toHaveBeenCalled();
+    expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('tunable.delete', [12]);
   });
 });

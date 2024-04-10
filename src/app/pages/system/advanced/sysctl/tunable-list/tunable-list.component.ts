@@ -4,11 +4,12 @@ import {
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { filter, tap } from 'rxjs';
+import {
+  filter, switchMap, tap,
+} from 'rxjs';
 import { Role } from 'app/enums/role.enum';
 import { Tunable } from 'app/interfaces/tunable.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { AsyncDataProvider } from 'app/modules/ix-table2/classes/async-data-provider/async-data-provider';
 import { actionsColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
 import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
@@ -129,26 +130,27 @@ export class TunableListComponent implements OnInit {
         message: this.translate.instant('Are you sure you want to delete "{name}"?', { name: tunable.var }),
         buttonText: this.translate.instant('Delete'),
       })
-      .pipe(filter(Boolean), untilDestroyed(this))
-      .subscribe(() => {
-        const jobDialogRef = this.matDialog.open(EntityJobComponent, {
-          data: {
-            title: this.translate.instant('Deleting...'),
-          },
-        });
-        jobDialogRef.componentInstance.setCall('tunable.delete', [tunable.id]);
-        jobDialogRef.componentInstance.submit();
-        jobDialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
-          this.getTunables();
-          this.dialogService.closeAllDialogs();
-          this.snackbar.success(this.translate.instant('Sysctl "{name}" deleted', { name: tunable.var }));
-        });
-        jobDialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((error) => {
-          jobDialogRef.close();
-          this.dialogService.closeAllDialogs();
-          this.dialogService.error(this.errorHandler.parseError(error));
-        });
-      });
+      .pipe(
+        filter(Boolean),
+        switchMap(() => {
+          return this.dialogService.jobDialog(
+            this.ws.job('tunable.delete', [tunable.id]),
+            {
+              title: this.translate.instant('Deleting...'),
+            },
+          )
+            .afterClosed()
+            .pipe(
+              tap(() => {
+                this.getTunables();
+                this.snackbar.success(this.translate.instant('Sysctl "{name}" deleted', { name: tunable.var }));
+              }),
+              this.errorHandler.catchError(),
+            );
+        }),
+        untilDestroyed(this),
+      )
+      .subscribe();
   }
 
   onListFiltered(query: string): void {

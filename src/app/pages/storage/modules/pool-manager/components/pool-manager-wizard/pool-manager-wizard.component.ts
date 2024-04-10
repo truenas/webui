@@ -3,7 +3,7 @@ import {
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatStepper } from '@angular/material/stepper';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
@@ -11,7 +11,6 @@ import { combineLatest, of } from 'rxjs';
 import {
   filter, map, switchMap, tap,
 } from 'rxjs/operators';
-import { Job } from 'app/interfaces/job.interface';
 import {
   CreatePool, Pool, UpdatePool,
 } from 'app/interfaces/pool.interface';
@@ -26,6 +25,8 @@ import { PoolCreationWizardStep, getPoolCreationWizardStepIndex } from 'app/page
 import { PoolManagerValidationService } from 'app/pages/storage/modules/pool-manager/store/pool-manager-validation.service';
 import { PoolManagerState, PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
 import { topologyToPayload } from 'app/pages/storage/modules/pool-manager/utils/topology.utils';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 import { waitForSystemFeatures } from 'app/store/system-info/system-info.selectors';
 
@@ -73,9 +74,10 @@ export class PoolManagerWizardComponent implements OnInit, OnDestroy {
     private router: Router,
     private snackbar: SnackbarService,
     private poolManagerValidation: PoolManagerValidationService,
-    private route: ActivatedRoute,
     private addVdevsStore: AddVdevsStore,
     private dialogService: DialogService,
+    private ws: WebSocketService,
+    private errorHandler: ErrorHandlerService,
   ) {}
 
   ngOnInit(): void {
@@ -116,33 +118,29 @@ export class PoolManagerWizardComponent implements OnInit, OnDestroy {
   createPool(): void {
     const payload = this.prepareCreatePayload();
 
-    const dialogRef = this.matDialog.open(EntityJobComponent, {
-      disableClose: true,
-      data: {
-        title: this.translate.instant('Create Pool'),
-      },
-    });
-    dialogRef.componentInstance.setCall('pool.create', [payload]);
-    dialogRef.componentInstance.success.pipe(
-      switchMap((job: Job<Pool>) => {
-        if (!this.hasEncryption) {
-          return of(null);
-        }
-
-        return this.matDialog.open<DownloadKeyDialogComponent, DownloadKeyDialogParams>(DownloadKeyDialogComponent, {
-          disableClose: true,
-          data: job.result,
-        }).afterClosed();
-      }),
-      untilDestroyed(this),
+    this.dialogService.jobDialog(
+      this.ws.job('pool.create', [payload]),
+      { title: this.translate.instant('Create Pool') },
     )
+      .afterClosed()
+      .pipe(
+        switchMap((job) => {
+          if (!this.hasEncryption) {
+            return of(null);
+          }
+
+          return this.matDialog.open<DownloadKeyDialogComponent, DownloadKeyDialogParams>(DownloadKeyDialogComponent, {
+            disableClose: true,
+            data: job.result,
+          }).afterClosed();
+        }),
+        this.errorHandler.catchError(),
+        untilDestroyed(this),
+      )
       .subscribe(() => {
-        dialogRef.close(false);
         this.snackbar.success(this.translate.instant('Pool created successfully'));
         this.router.navigate(['/storage']);
       });
-
-    dialogRef.componentInstance.submit();
   }
 
   onStepActivated(step: PoolCreationWizardStep): void {

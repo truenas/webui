@@ -1,6 +1,6 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { MatStepperModule } from '@angular/material/stepper';
 import { MatStepperHarness } from '@angular/material/stepper/testing';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -9,12 +9,10 @@ import { provideMockStore } from '@ngrx/store/testing';
 import { MockComponents } from 'ng-mocks';
 import { BehaviorSubject, Subject, of } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
-import { mockEntityJobComponentRef } from 'app/core/testing/utils/mock-entity-job-component-ref.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { CreateVdevLayout, VdevType } from 'app/enums/v-dev-type.enum';
 import { Pool } from 'app/interfaces/pool.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { AddVdevsStore } from 'app/pages/storage/modules/pool-manager/components/add-vdevs/store/add-vdevs-store.service';
 import {
@@ -52,6 +50,7 @@ import {
 } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/steps/9-review-wizard-step/review-wizard-step.component';
 import { PoolManagerValidationService } from 'app/pages/storage/modules/pool-manager/store/pool-manager-validation.service';
 import { PoolManagerState, PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
+import { WebSocketService } from 'app/services/ws.service';
 import { selectSystemFeatures } from 'app/store/system-info/system-info.selectors';
 
 describe('PoolManagerWizardComponent', () => {
@@ -93,6 +92,7 @@ describe('PoolManagerWizardComponent', () => {
     },
   } as PoolManagerState;
   const state$ = new BehaviorSubject(state);
+  const createdPool = {} as Pool;
 
   const createComponent = createComponentFactory({
     component: PoolManagerWizardComponent,
@@ -122,29 +122,11 @@ describe('PoolManagerWizardComponent', () => {
       }),
       mockWebSocket([
         mockCall('pool.query', []),
+        mockJob('pool.create', fakeSuccessfulJob()),
       ]),
       mockProvider(ActivatedRoute, {
         params: of({}),
         snapshot: { url: '' },
-      }),
-      mockProvider(DialogService, {
-        confirm: jest.fn(() => of(true)),
-      }),
-      mockProvider(MatDialog, {
-        open: jest.fn((component) => {
-          if (component === DownloadKeyDialogComponent) {
-            return { afterClosed: () => of(undefined) } as MatDialogRef<DownloadKeyDialogComponent>;
-          }
-
-          return {
-            ...mockEntityJobComponentRef,
-            componentInstance: {
-              ...mockEntityJobComponentRef.componentInstance,
-              success: of(fakeSuccessfulJob({ id: 2, name: 'pewl' } as Pool)),
-            },
-            afterClosed: () => of(undefined),
-          };
-        }),
       }),
       provideMockStore({
         selectors: [
@@ -225,19 +207,12 @@ describe('PoolManagerWizardComponent', () => {
 
   describe('creating a pool', () => {
     it('creates a pool using store topology last step emits createPool event', async () => {
-      const dialog = spectator.inject(MatDialog);
       await wizard.selectStep({ label: 'Review' });
 
       spectator.query(ReviewWizardStepComponent).createPool.emit();
 
-      expect(dialog.open).toHaveBeenCalledWith(EntityJobComponent, {
-        disableClose: true,
-        data: {
-          title: 'Create Pool',
-        },
-      });
-
-      expect(mockEntityJobComponentRef.componentInstance.setCall).toHaveBeenCalledWith('pool.create', [{
+      expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
+      expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('pool.create', [{
         name: 'pewl',
         allow_duplicate_serials: true,
         encryption: false,
@@ -274,10 +249,7 @@ describe('PoolManagerWizardComponent', () => {
 
       expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(DownloadKeyDialogComponent, {
         disableClose: true,
-        data: {
-          id: 2,
-          name: 'pewl',
-        },
+        data: createdPool,
       });
     });
   });
