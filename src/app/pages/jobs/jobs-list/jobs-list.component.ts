@@ -43,7 +43,7 @@ export class JobsListComponent implements OnInit {
   protected readonly error$ = this.store$.select(selectJobState).pipe(map((state) => state.error));
   protected jobs: Job[] = [];
   protected dataProvider = new ArrayDataProvider<Job>();
-  protected datasetFilter = '';
+  protected filterString = '';
   protected selectedIndex: JobTab = 0;
   private selector$ = new BehaviorSubject<typeof selectAllNonTransientJobs>(selectAllNonTransientJobs);
   protected selectedJobs$ = this.selector$.pipe(switchMap((selector) => this.store$.select(selector)));
@@ -109,8 +109,8 @@ export class JobsListComponent implements OnInit {
 
   ngOnInit(): void {
     this.selectedJobs$.pipe(untilDestroyed(this)).subscribe((jobs) => {
-      this.dataProvider.setRows(jobs);
-      this.datasetFilter = '';
+      this.jobs = jobs;
+      this.onListFiltered(this.filterString);
       this.setDefaultSort();
       this.cdr.markForCheck();
     });
@@ -133,12 +133,12 @@ export class JobsListComponent implements OnInit {
   }
 
   protected onListFiltered(query: string): void {
-    this.datasetFilter = query;
+    this.filterString = query;
     this.dataProvider.setRows(this.jobs.filter(this.filterSnapshot));
   }
 
   private filterSnapshot = (job: Job): boolean => {
-    return [job.method.toLowerCase(), job.description.toLowerCase()].includes(this.datasetFilter);
+    return [job.method.toLowerCase(), job.description.toLowerCase()].includes(this.filterString);
   };
 
   private setDefaultSort(): void {
