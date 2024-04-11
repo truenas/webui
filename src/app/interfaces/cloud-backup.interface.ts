@@ -1,5 +1,3 @@
-import { JobState } from 'app/enums/job-state.enum';
-import { ApiTimestamp } from 'app/interfaces/api-date.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { BwLimit, CloudCredential } from './cloud-sync-task.interface';
 import { Schedule } from './schedule.interface';
@@ -27,15 +25,6 @@ export interface CloudBackup {
 }
 
 export type CloudBackupUpdate = Omit<CloudBackup, 'id' | 'job' | 'locked'>;
-
-export interface CloudBackupState {
-  state: JobState;
-  datetime?: ApiTimestamp;
-  error?: string;
-  reason?: string;
-  warnings?: string[];
-  last_snapshot?: string;
-}
 
 export interface CloudBackupSnapshot {
   id: string;
