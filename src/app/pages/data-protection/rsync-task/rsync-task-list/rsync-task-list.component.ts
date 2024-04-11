@@ -51,7 +51,7 @@ export class RsyncTaskListComponent implements OnInit {
   protected readonly searchableElements = rsyncTaskListElements;
 
   dataProvider: AsyncDataProvider<RsyncTask>;
-  filterString: string;
+  filterString = '';
 
   columns = createTable<RsyncTask>([
     textColumn({
@@ -183,7 +183,10 @@ export class RsyncTaskListComponent implements OnInit {
       }),
     );
     this.dataProvider = new AsyncDataProvider(request$);
-    this.dataProvider.load();
+    this.refresh();
+    this.dataProvider.emptyType$.pipe(untilDestroyed(this)).subscribe(() => {
+      this.filterUpdated(this.filterString);
+    });
   }
 
   protected filterUpdated(query: string): void {
@@ -215,19 +218,19 @@ export class RsyncTaskListComponent implements OnInit {
         switchMap(() => this.ws.job('rsynctask.run', [row.id])),
         untilDestroyed(this),
       )
-      .subscribe(() => this.dataProvider.load());
+      .subscribe(() => this.refresh());
   }
 
   protected add(): void {
     const closer$ = this.chainedSlideInService.open(RsyncTaskFormComponent, true);
     closer$.pipe(filter((response) => !!response.response), untilDestroyed(this))
-      .subscribe(() => this.dataProvider.load());
+      .subscribe(() => this.refresh());
   }
 
   private edit(row: RsyncTask): void {
     const closer$ = this.chainedSlideInService.open(RsyncTaskFormComponent, true, row);
     closer$.pipe(filter((response) => !!response.response), untilDestroyed(this))
-      .subscribe(() => this.dataProvider.load());
+      .subscribe(() => this.refresh());
   }
 
   private delete(row: RsyncTask): void {
@@ -246,12 +249,16 @@ export class RsyncTaskListComponent implements OnInit {
         }),
         untilDestroyed(this),
       )
-      .subscribe(() => this.dataProvider.load());
+      .subscribe(() => this.refresh());
   }
 
   private filterTask = (task: RsyncTask): boolean => {
     return task.remotehost?.includes(this.filterString)
-      || task.path.includes(this.filterString)
-      || task.desc.includes(this.filterString);
+      || task.path.toLowerCase().includes(this.filterString)
+      || task.desc.toLowerCase().includes(this.filterString);
   };
+
+  private refresh(): void {
+    this.dataProvider.load();
+  }
 }

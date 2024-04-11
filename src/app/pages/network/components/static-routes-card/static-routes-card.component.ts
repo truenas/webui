@@ -30,7 +30,6 @@ import { WebSocketService } from 'app/services/ws.service';
 export class StaticRoutesCardComponent implements OnInit {
   readonly requiredRoles = [Role.FullAdmin];
 
-  filterString = '';
   dataProvider: AsyncDataProvider<StaticRoute>;
   staticRoutes: StaticRoute[] = [];
   columns = createTable<StaticRoute>([

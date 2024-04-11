@@ -10,7 +10,7 @@ import {
   builtinUsersToggled, dashboardStateUpdated, guiFormClosedWithoutSaving, guiFormSubmitted,
   lifetimeTokenUpdated,
   localizationFormSubmitted, noPreferencesFound,
-  preferencesLoaded, preferredColumnsUpdated, themeChangedInGuiForm,
+  preferencesLoaded, preferredColumnsUpdated, shownNewIndicatorKeysUpdated, themeChangedInGuiForm,
   themeNotFound,
   updateRebootAfterManualUpdate,
 } from 'app/store/preferences/preferences.actions';
@@ -42,6 +42,9 @@ export const preferencesReducer = createReducer(
   on(sidenavUpdated, (state, sidenavStatus) => updatePreferences(state, { sidenavStatus })),
   on(preferredColumnsUpdated, (state, { columns }) => updatePreferences(state, {
     tableDisplayedColumns: columns,
+  })),
+  on(shownNewIndicatorKeysUpdated, (state, { keys }) => updatePreferences(state, {
+    shownNewFeatureIndicatorKeys: keys,
   })),
   on(localizationFormSubmitted, (state, { dateFormat, timeFormat }) => updatePreferences(state, {
     dateFormat,

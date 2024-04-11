@@ -4,7 +4,7 @@ import {
 import { MatButtonToggleChange } from '@angular/material/button-toggle';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { map, tap } from 'rxjs';
+import { combineLatest, map, tap } from 'rxjs';
 import { stringToTitleCase } from 'app/helpers/string-to-title-case';
 import { Nfs3Session, Nfs4Session, NfsType } from 'app/interfaces/nfs-share.interface';
 import { EmptyService } from 'app/modules/empty/empty.service';
@@ -126,6 +126,11 @@ export class NfsSessionListComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadData();
+
+    combineLatest([this.nfs3DataProvider.emptyType$, this.nfs4DataProvider.emptyType$])
+      .pipe(untilDestroyed(this)).subscribe(() => {
+        this.onListFiltered(this.filterString);
+      });
   }
 
   nfsTypeChanged(changedValue: MatButtonToggleChange): void {

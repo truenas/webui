@@ -39,7 +39,7 @@ export class ApiKeyListComponent implements OnInit {
   smartTasks: ApiKey[] = [];
   dataProvider = new ArrayDataProvider<ApiKey>();
   apiKeys: ApiKey[] = [];
-  filterString: string;
+  filterString = '';
 
   columns = createTable<ApiKey>([
     textColumn({
@@ -135,7 +135,7 @@ export class ApiKeyListComponent implements OnInit {
     ).subscribe({
       next: (apiKeys) => {
         this.apiKeys = apiKeys;
-        this.createDataSource(apiKeys);
+        this.onListFiltered(this.filterString);
         this.cdr.markForCheck();
       },
       error: () => {

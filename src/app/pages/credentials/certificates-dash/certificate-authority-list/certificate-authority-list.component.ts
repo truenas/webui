@@ -50,7 +50,6 @@ export class CertificateAuthorityListComponent implements OnInit {
 
   protected readonly requiredRoles = [Role.FullAdmin];
 
-  filterString = '';
   dataProvider: AsyncDataProvider<CertificateAuthority>;
   authorities: CertificateAuthority[] = [];
   columns = createTable<CertificateAuthority>([

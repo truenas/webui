@@ -107,34 +107,41 @@ export class DockerImagesListComponent implements OnInit {
       tap((images) => this.containerImages = images),
     );
     this.dataProvider = new AsyncDataProvider(containerImages$);
-    this.dataProvider.load();
+    this.refresh();
+    this.dataProvider.emptyType$.pipe(untilDestroyed(this)).subscribe(() => {
+      this.onListFiltered(this.filterString);
+    });
   }
 
   doAdd(): void {
     const slideInRef = this.slideInService.open(PullImageFormComponent);
     slideInRef.slideInClosed$
       .pipe(filter(Boolean), untilDestroyed(this))
-      .subscribe(() => this.dataProvider.load());
+      .subscribe(() => this.refresh());
   }
 
   doDelete(images: ContainerImage[]): void {
     this.matDialog.open(DockerImageDeleteDialogComponent, { data: images })
       .afterClosed()
       .pipe(filter(Boolean), untilDestroyed(this))
-      .subscribe(() => this.dataProvider.load());
+      .subscribe(() => this.refresh());
   }
 
   doUpdate(images: ContainerImage[]): void {
     this.matDialog.open(DockerImageUpdateDialogComponent, { data: images })
       .afterClosed()
       .pipe(filter(Boolean), untilDestroyed(this))
-      .subscribe(() => this.dataProvider.load());
+      .subscribe(() => this.refresh());
   }
 
   protected onListFiltered(query: string): void {
-    const filterString = query.toLowerCase();
+    this.filterString = query.toLowerCase();
     this.dataProvider.setRows(this.containerImages.filter((image) => {
-      return image.repo_tags.join(', ').includes(filterString);
+      return image.repo_tags.join(', ').includes(this.filterString);
     }));
+  }
+
+  private refresh(): void {
+    this.dataProvider.load();
   }
 }

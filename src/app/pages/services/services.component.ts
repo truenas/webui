@@ -147,12 +147,6 @@ export class ServicesComponent implements OnInit {
     }));
   }
 
-  private createDataSource(services: ServiceRow[] = []): void {
-    this.services = services;
-    this.dataProvider.setRows(services);
-    this.cdr.markForCheck();
-  }
-
   private getData(): void {
     this.loading = true;
     this.error = false;
@@ -166,7 +160,8 @@ export class ServicesComponent implements OnInit {
       untilDestroyed(this),
     ).subscribe({
       next: (services) => {
-        this.createDataSource(services);
+        this.services = services;
+        this.onListFiltered(this.filterString);
         this.loading = false;
         this.error = false;
         this.cdr.markForCheck();

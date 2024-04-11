@@ -119,6 +119,9 @@ export class CronListComponent implements OnInit {
     );
     this.dataProvider = new AsyncDataProvider<CronjobRow>(cronjobs$);
     this.getCronJobs();
+    this.dataProvider.emptyType$.pipe(untilDestroyed(this)).subscribe(() => {
+      this.onListFiltered(this.filterString);
+    });
   }
 
   getCronJobs(): void {
@@ -177,7 +180,7 @@ export class CronListComponent implements OnInit {
   onListFiltered(query: string): void {
     this.filterString = query.toLowerCase();
     this.dataProvider.setRows(this.cronjobs.filter((cronjob) => {
-      return [cronjob.user.toString()].includes(this.filterString);
+      return cronjob.user.toString().toLowerCase().includes(this.filterString);
     }));
   }
 
