@@ -18,8 +18,8 @@ import { Job } from 'app/interfaces/job.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
-import { IxTable2Harness } from 'app/modules/ix-table2/components/ix-table2/ix-table2.harness';
-import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
+import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
+import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
 import { selectJobs } from 'app/modules/jobs/store/job.selectors';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { CloudSyncFormComponent } from 'app/pages/data-protection/cloudsync/cloudsync-form/cloudsync-form.component';
@@ -40,7 +40,7 @@ import { selectSystemConfigState } from 'app/store/system-config/system-config.s
 describe('CloudSyncTaskCardComponent', () => {
   let spectator: Spectator<CloudSyncTaskCardComponent>;
   let loader: HarnessLoader;
-  let table: IxTable2Harness;
+  let table: IxTableHarness;
 
   const cloudsyncTasks = [
     {
@@ -97,7 +97,7 @@ describe('CloudSyncTaskCardComponent', () => {
     component: CloudSyncTaskCardComponent,
     imports: [
       AppLoaderModule,
-      IxTable2Module,
+      IxTableModule,
     ],
     providers: [
       mockAuth(),
@@ -150,7 +150,7 @@ describe('CloudSyncTaskCardComponent', () => {
   beforeEach(async () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    table = await loader.getHarness(IxTable2Harness);
+    table = await loader.getHarness(IxTableHarness);
   });
 
   it('should show table rows', async () => {

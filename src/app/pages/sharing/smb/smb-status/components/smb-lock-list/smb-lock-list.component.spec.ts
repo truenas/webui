@@ -5,8 +5,8 @@ import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory } from '@ngneat/spectator/jest';
 import { mockWebSocket, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
 import { SmbLockInfo, SmbOpenInfo } from 'app/interfaces/smb-status.interface';
-import { IxTable2Harness } from 'app/modules/ix-table2/components/ix-table2/ix-table2.harness';
-import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
+import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
+import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { SearchInput1Component } from 'app/modules/search-input1/search-input1.component';
 import { SmbLockListComponent } from 'app/pages/sharing/smb/smb-status/components/smb-lock-list/smb-lock-list.component';
@@ -14,7 +14,7 @@ import { SmbLockListComponent } from 'app/pages/sharing/smb/smb-status/component
 describe('SmbLockListComponent', () => {
   let spectator: Spectator<SmbLockListComponent>;
   let loader: HarnessLoader;
-  let table: IxTable2Harness;
+  let table: IxTableHarness;
 
   const locks = [
     {
@@ -63,7 +63,7 @@ describe('SmbLockListComponent', () => {
     component: SmbLockListComponent,
     imports: [
       AppLoaderModule,
-      IxTable2Module,
+      IxTableModule,
       SearchInput1Component,
     ],
     providers: [
@@ -76,7 +76,7 @@ describe('SmbLockListComponent', () => {
   beforeEach(async () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    table = await loader.getHarness(IxTable2Harness);
+    table = await loader.getHarness(IxTableHarness);
   });
 
   it('should show table rows', async () => {
