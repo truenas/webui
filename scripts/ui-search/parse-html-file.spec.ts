@@ -4,7 +4,7 @@ import { parseHtmlFile } from './parse-html-file';
 
 jest.mock('fs');
 
-describe('Data Merging in parseHtmlFile', () => {
+describe('Create UI Searchable Element Item', () => {
   it('correctly merges parent and child configurations', () => {
     (fs.readFileSync as jest.Mock).mockReturnValue(`
       <div
