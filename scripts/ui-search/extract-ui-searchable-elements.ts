@@ -11,11 +11,12 @@
  *
  * 2️⃣. Create .elements.ts config file near the .component.html file ~ [pools-dashboard.elements.ts]
  *
- * File content example with parent element & data which will be shared/merged to all child elements:
-  export const nestedElementsWithParentPropertiesSharedToChild = {
+ * Example of creating a new searchable element:
+
+  export const customSearchableElements = {
     hierarchy: [T('System'), T('Advanced'), T('Access')],
     anchorRouterLink: ['/system', 'advanced'],
-    elements = {
+    elements: {
       configureAccess: {
         hierarchy: [T('Configure')],
         synonyms: [T('Configure Sessions')],
@@ -27,16 +28,6 @@
     } satisfies UiSearchableElement,
   }
 
-  As well, we can define single element data
-
-  export const singleSettingsExampleElements = {
-    theme: {
-      hierarchy: [T('System'), T('General'), T('GUI'), T('Theme')],
-      synonyms: [],
-      triggerAnchor: 'gui-settings',
-      anchorRouterLink: ['/system', 'general'],
-    },
-  };
  *
  * 3️⃣. Provide config to the element [ixUiSearch]="singleSettingsExampleElements.theme"
  *
@@ -68,7 +59,7 @@
 import * as fs from 'fs';
 import { join } from 'path';
 import { UiSearchableElement } from 'app/modules/global-search/interfaces/ui-searchable-element.interface';
-import { extractTsFileContent } from './extract-ts-file-content';
+import { extractComponentFileContent } from './extract-component-file-content';
 import { findComponentFiles } from './find-component-files';
 import { parseHtmlFile } from './parse-html-file';
 
@@ -84,7 +75,7 @@ export async function extractUiSearchableElements(): Promise<void> {
 
       if (fs.existsSync(htmlComponentFilePath)) {
         const elementConfig = require(join(__dirname, '../../', elementsTsFilePath)) as UiSearchableElement;
-        const componentProperties = extractTsFileContent(tsComponentFilePath) as Record<string, string>;
+        const componentProperties = extractComponentFileContent(tsComponentFilePath);
         const elements = parseHtmlFile(htmlComponentFilePath, elementConfig, componentProperties);
         uiElements = uiElements.concat(elements);
       }

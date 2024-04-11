@@ -20,15 +20,14 @@ export function parseHtmlFile(
     const childKey = configKeysSplit[configKeysSplit.length - 1] as keyof UiSearchableElement;
     const parentKey = Object.keys(elementConfig)[0] as keyof UiSearchableElement;
 
-    let mergedElement;
-
-    if (
-      configKeysSplit?.[configKeysSplit.length - 2] === 'elements'
-    ) {
-      mergedElement = mergeElementsData(cheerioRoot$, element, elementConfig, parentKey, childKey, componentProperties);
-    } else {
-      mergedElement = mergeElementsData(cheerioRoot$, element, elementConfig, childKey, null, componentProperties);
-    }
+    const mergedElement = createUiSearchableElement(
+      cheerioRoot$,
+      element,
+      elementConfig,
+      parentKey,
+      childKey,
+      componentProperties,
+    );
 
     if (mergedElement) {
       elements.push(mergedElement);
@@ -38,7 +37,7 @@ export function parseHtmlFile(
   return elements;
 }
 
-function mergeElementsData(
+function createUiSearchableElement(
   cheerioRoot$: (selector: string) => { attr: (attr: string) => string },
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   element: AcceptedElems<any>,

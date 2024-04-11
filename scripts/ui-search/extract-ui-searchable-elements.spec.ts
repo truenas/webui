@@ -1,13 +1,13 @@
 import * as fs from 'fs';
 import { Role } from 'app/enums/role.enum';
-import { extractTsFileContent } from './extract-ts-file-content';
+import { extractComponentFileContent } from './extract-component-file-content';
 import { extractUiSearchableElements } from './extract-ui-searchable-elements';
 import { findComponentFiles } from './find-component-files';
 import { parseHtmlFile } from './parse-html-file';
 
 jest.mock('fs');
 jest.mock('path');
-jest.mock('./extract-ts-file-content', () => ({ extractTsFileContent: jest.fn() }));
+jest.mock('./extract-component-file-content', () => ({ extractComponentFileContent: jest.fn() }));
 jest.mock('./find-component-files', () => ({ findComponentFiles: jest.fn() }));
 jest.mock('./parse-html-file', () => ({ parseHtmlFile: jest.fn() }));
 
@@ -58,7 +58,7 @@ const mockUiElements = [
 describe('extract [ixUiSearch] elements', () => {
   it('should extract UI searchable elements and write to a file', async () => {
     (findComponentFiles as jest.Mock).mockResolvedValue(['audit-form.elements.ts', 'group-list.elements.ts']);
-    (extractTsFileContent as jest.Mock).mockReturnValue({});
+    (extractComponentFileContent as jest.Mock).mockReturnValue({});
     (parseHtmlFile as jest.Mock)
       .mockReturnValueOnce([mockUiElements[0]])
       .mockReturnValueOnce([mockUiElements[1]]);
@@ -78,7 +78,7 @@ describe('extract [ixUiSearch] elements', () => {
 describe('Parsing and Role Extraction', () => {
   it('should correctly extract required roles for elements', async () => {
     (findComponentFiles as jest.Mock).mockResolvedValue(['ipmi.elements.ts']);
-    (extractTsFileContent as jest.Mock).mockReturnValue({
+    (extractComponentFileContent as jest.Mock).mockReturnValue({
       requiredRoles: [Role.IpmiWrite],
     });
     (parseHtmlFile as jest.Mock).mockImplementation((_1, _2, componentProperties) => {

@@ -2,7 +2,7 @@
 import * as fs from 'fs';
 import * as ts from 'typescript';
 
-export function extractTsFileContent(filePath: string): Record<string, string> | string {
+export function extractComponentFileContent(filePath: string): Record<string, string> {
   const fileContents = fs.readFileSync(filePath, 'utf8');
   const sourceFile = ts.createSourceFile(filePath, fileContents, ts.ScriptTarget.ES2015, true);
 

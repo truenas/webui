@@ -1823,11 +1823,20 @@
     "section": "ui"
   },
   {
-    "hierarchy": [],
-    "synonyms": [],
+    "hierarchy": [
+      "System",
+      "Advanced",
+      "Save Debug"
+    ],
+    "synonyms": [
+      "Advanced"
+    ],
     "requiredRoles": [],
+    "anchorRouterLink": [
+      "/system/advanced"
+    ],
     "routerLink": null,
-    "anchor": "",
+    "anchor": "save-debug",
     "triggerAnchor": null,
     "section": "ui"
   },
