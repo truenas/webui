@@ -14,6 +14,8 @@ import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { ResponseErrorType } from 'app/enums/response-error-type.enum';
 import { WebSocketErrorName } from 'app/enums/websocket-error-name.enum';
+import { handleApiEvent } from 'app/helpers/operators/handle-api-event.operator';
+import { ApiCallAndSubscribeMethod, ApiCallAndSubscribeResponse } from 'app/interfaces/api/api-call-and-subscribe-directory.interface';
 import {
   ApiCallMethod,
   ApiCallParams,
@@ -25,8 +27,6 @@ import {
   ApiJobResponse,
 } from 'app/interfaces/api/api-job-directory.interface';
 import {
-  ApiCallAndSubscribeMethod,
-  ApiCallAndSubscribeResponseType,
   ApiEvent, ApiEventMethod, ApiEventTyped, IncomingWebSocketMessage, ResultMessage,
 } from 'app/interfaces/api-message.interface';
 import { Job } from 'app/interfaces/job.interface';
@@ -65,37 +65,17 @@ export class WebSocketService {
   /**
    * For jobs better to use the `selectJob` store selector.
    */
-  callAndSubscribe<M extends ApiCallAndSubscribeMethod, R extends ApiCallAndSubscribeResponseType<M> & { id: number }>(
+  callAndSubscribe<M extends ApiCallAndSubscribeMethod>(
     method: M,
     params?: ApiCallParams<M>,
-  ): Observable<R[]> {
-    // TODO: Better type checking
-    return this.callMethod<M, R[]>(method, params)
+  ): Observable<ApiCallAndSubscribeResponse<M>[]> {
+    return this.callMethod<M, ApiCallResponse<M>>(method, params)
       .pipe(
-        switchMap((items) => this.subscribe<M>(method).pipe(
+        switchMap((items) => this.subscribe(method).pipe(
           startWith(null),
-          map((event): [R[], ApiEventTyped<M>] => ([items, event])),
+          map((event) => ([items, event])),
         )),
-        map(([items, event]) => {
-          // TODO: Consider extracting to a pipe operator
-          if (event?.msg === IncomingApiMessageType.Added) {
-            console.info('entry added', event, items);
-            return [...items, event.fields] as R[];
-          }
-
-          if (event?.msg === IncomingApiMessageType.Changed) {
-            console.info('entry changed', event, items);
-            return items.map((item) => (item.id === event.id ? event.fields : item)) as R[];
-          }
-
-          if (event?.msg === IncomingApiMessageType.Removed) {
-            console.info('entry removed', event, items);
-            return items.filter((item) => item.id !== event.id);
-          }
-
-          console.info('event is null return items', items);
-          return items;
-        }),
+        handleApiEvent(),
         takeUntil(this.clearSubscriptions$),
       );
   }
@@ -135,9 +115,7 @@ export class WebSocketService {
     ) as Observable<Job<ApiJobResponse<M>>>;
   }
 
-  subscribe<K extends ApiEventMethod = ApiEventMethod>(
-    method: K,
-  ): Observable<ApiEventTyped<K>> {
+  subscribe<K extends ApiEventMethod = ApiEventMethod>(method: K): Observable<ApiEventTyped<K>> {
     if (this.subscriptions.has(method)) {
       return this.subscriptions.get(method);
     }
