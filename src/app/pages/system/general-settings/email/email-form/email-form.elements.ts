@@ -1,4 +1,5 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
+import { UiSearchableElement } from 'app/modules/global-search/interfaces/ui-searchable-element.interface';
 
 export const emailFormElements = {
   hierarchy: [T('System'), T('General'), T('Email')],
@@ -14,4 +15,4 @@ export const emailFormElements = {
       synonyms: [T('SMTP Server')],
     },
   },
-};
+} satisfies UiSearchableElement;

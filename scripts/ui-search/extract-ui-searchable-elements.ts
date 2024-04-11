@@ -7,7 +7,7 @@
  * which will be shown in new "Global UI Search"
  *
  * How to correctly set it all up:
- * 1️⃣. Use `ixUiSearchableElement` directive - to mark an element for the parser
+ * 1️⃣. Use `ixUiSearch` directive - to mark an element for the parser
  *
  * 2️⃣. Create .elements.ts config file near the .component.html file ~ [pools-dashboard.elements.ts]
  *
@@ -15,7 +15,7 @@
   export const nestedElementsWithParentPropertiesSharedToChild = {
     hierarchy: [T('System'), T('Advanced'), T('Access')],
     anchorRouterLink: ['/system', 'advanced'],
-    elements: {
+    elements = {
       configureAccess: {
         hierarchy: [T('Configure')],
         synonyms: [T('Configure Sessions')],
@@ -24,7 +24,7 @@
         hierarchy: [T('Terminate Other Sessions')],
         synonyms: [T('Terminate Other User Sessions')],
       },
-    },
+    } satisfies UiSearchableElement,
   }
 
   As well, we can define single element data
@@ -57,7 +57,7 @@
     if `*ixRequiresRoles="requiredRoles"` applied to the element
   }
 
-  Note: If you add `ixUiSearchableElement` to the trigger button - then in the
+  Note: If you add `ixUiSearch` to the trigger button - then in the
   form which will be opened by this trigger button
   you can rely on the auto-generated ID on the trigger button or add `anchor: 'my-custom-id'` prop on the trigger button
   Example: check access card -> [ixUiSearch]="searchableElements.elements.configureAccess"
@@ -68,43 +68,26 @@
 import * as fs from 'fs';
 import { join } from 'path';
 import { UiSearchableElement } from 'app/modules/global-search/interfaces/ui-searchable-element.interface';
+import { extractTsFileContent } from './extract-ts-file-content';
 import { findComponentFiles } from './find-component-files';
+import { parseHtmlFile } from './parse-html-file';
 
-const uiElements: UiSearchableElement[] = [];
+let uiElements: UiSearchableElement[] = [];
 
-async function extractUiSearchableElements(): Promise<void> {
+export async function extractUiSearchableElements(): Promise<void> {
   try {
-    const tsFiles = await findComponentFiles('src/**/*.elements.ts');
+    const tsFiles = await findComponentFiles('src/**/*.elements.ts') || [];
+
     tsFiles.forEach((elementsTsFilePath) => {
-      // const htmlComponentFilePath = elementsTsFilePath.replace('.elements.ts', '.component.html');
-      // const tsComponentFilePath = elementsTsFilePath.replace('.elements.ts', '.component.ts');
+      const htmlComponentFilePath = elementsTsFilePath.replace('.elements.ts', '.component.html');
+      const tsComponentFilePath = elementsTsFilePath.replace('.elements.ts', '.component.ts');
 
-      // this one has requiredRoles: [Role.FullAdmin], AND results in error
-      // An error occurred: Error: Cannot find module 'app/enums/role.enum'
-      if (
-        elementsTsFilePath.endsWith('storage-settings-form.elements.ts')
-          || elementsTsFilePath.endsWith('group-list.elements.ts')
-      ) {
-        const file = require(join(__dirname, '../../', elementsTsFilePath));
-        // eslint-disable-next-line no-console
-        console.log(file);
+      if (fs.existsSync(htmlComponentFilePath)) {
+        const elementConfig = require(join(__dirname, '../../', elementsTsFilePath)) as UiSearchableElement;
+        const componentProperties = extractTsFileContent(tsComponentFilePath) as Record<string, string>;
+        const elements = parseHtmlFile(htmlComponentFilePath, elementConfig, componentProperties);
+        uiElements = uiElements.concat(elements);
       }
-
-      // if (fs.existsSync(htmlComponentFilePath)) {
-      //   const elementConfig = extractTsFileContent(
-      //     elementsTsFilePath,
-      //     TsExtraction.ElementsConfig,
-      //   ) as string;
-
-      //   const componentProperties = extractTsFileContent(
-      //     tsComponentFilePath,
-      //     TsExtraction.ClassProperties,
-      //   ) as Record<string, string>;
-
-      //   const elements = parseHtmlFile(htmlComponentFilePath, elementConfig, componentProperties);
-
-      //   uiElements = uiElements.concat(elements);
-      // }
     });
 
     fs.writeFileSync('src/assets/ui-searchable-elements.json', JSON.stringify(uiElements, null, 2));
