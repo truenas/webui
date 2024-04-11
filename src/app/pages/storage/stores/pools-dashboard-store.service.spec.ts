@@ -124,7 +124,6 @@ describe('PoolsDashboardStore', () => {
 
       spectator.service.loadDashboard();
 
-      websocketSubscription$.next({ collection: 'pool.query', fields: { name: 'pool3' } } as ApiEvent<Pool>);
       expectObservable(spectator.service.state$).toBe('abc', {
         a: {
           arePoolsLoading: true,

@@ -69,7 +69,7 @@ export class WebSocketService {
     method: M,
     params?: ApiCallParams<M>,
   ): Observable<ApiCallAndSubscribeResponse<M>[]> {
-    return this.callMethod<M, ApiCallResponse<M>>(method, params)
+    return this.callMethod<M>(method, params)
       .pipe(
         switchMap((items) => this.subscribe(method).pipe(
           startWith(null),
@@ -123,7 +123,7 @@ export class WebSocketService {
     const subscription$ = this.wsManager.buildSubscriber<K, ApiEventTyped<K>>(method).pipe(
       switchMap((apiEvent) => {
         const erroredEvent = apiEvent as unknown as ResultMessage;
-        if (erroredEvent.error) {
+        if (erroredEvent?.error) {
           console.error('Error: ', erroredEvent.error);
           return throwError(() => erroredEvent.error);
         }
@@ -145,10 +145,7 @@ export class WebSocketService {
     this.subscriptions.clear();
   }
 
-  private callMethod<M extends ApiCallMethod, R = ApiCallResponse<M>>(
-    method: M,
-    params?: ApiCallParams<M>,
-  ): Observable<R>;
+  private callMethod<M extends ApiCallMethod>(method: M, params?: ApiCallParams<M>): Observable<ApiCallResponse<M>>;
   private callMethod<M extends ApiJobMethod>(method: M, params?: ApiJobParams<M>): Observable<number>;
   private callMethod<M extends ApiCallMethod | ApiJobMethod>(method: M, params?: unknown): Observable<unknown> {
     const uuid = UUID.UUID();

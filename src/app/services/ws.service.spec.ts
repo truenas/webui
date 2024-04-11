@@ -1,6 +1,5 @@
 import { TestBed } from '@angular/core/testing';
 import { mockProvider } from '@ngneat/spectator/jest';
-import { provideMockStore } from '@ngrx/store/testing';
 import { TranslateService } from '@ngx-translate/core';
 import { UUID } from 'angular2-uuid';
 import {
@@ -9,12 +8,11 @@ import {
 } from 'rxjs';
 import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
 import { JobState } from 'app/enums/job-state.enum';
-import { ApiEvent } from 'app/interfaces/api-message.interface';
+import { ApiEvent, ApiEventTyped } from 'app/interfaces/api-message.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { WebSocketConnectionService } from 'app/services/websocket-connection.service';
 import { WebSocketService } from 'app/services/ws.service';
 
-const pools = [{ name: 'pool1' }, { name: 'pool2' }] as Pool[];
 const mockWebSocketConnectionService = {
   send: jest.fn(),
   buildSubscriber: jest.fn(() => new BehaviorSubject<unknown>(null)),
@@ -24,9 +22,9 @@ const mockWebSocketConnectionService = {
 const apiEventSubscription1$ = new BehaviorSubject(null);
 const apiEventSubscription2$ = new BehaviorSubject<ApiEvent<Pool>>(null);
 
-const mockEventSubscriptions = new Map<string, Observable<unknown>>([
+const mockEventSubscriptions = new Map<string, Observable<ApiEventTyped>>([
   ['event1', apiEventSubscription1$],
-  ['pool.query', apiEventSubscription2$],
+  ['event2', apiEventSubscription2$],
 ]);
 
 describe('WebSocketService', () => {
@@ -37,7 +35,6 @@ describe('WebSocketService', () => {
       providers: [
         WebSocketService,
         mockProvider(TranslateService),
-        provideMockStore(),
         { provide: WebSocketConnectionService, useValue: mockWebSocketConnectionService },
       ],
     });
@@ -65,7 +62,7 @@ describe('WebSocketService', () => {
 
       service.call('cloudsync.providers').subscribe((result) => {
         // TODO: Actually do nothing
-        expect(result).toEqual({ some: 'result' });
+        expect(result).toEqual({});
       });
 
       expect(mockWebSocketConnectionService.send).toHaveBeenCalled();
@@ -94,6 +91,7 @@ describe('WebSocketService', () => {
 
   describe('callAndSubscribe', () => {
     it('should call and subscribe to updates', async () => {
+      const pools = [{ name: 'pool1' }, { name: 'pool2' }] as Pool[];
       const uuid = 'fakeUUID';
       jest.spyOn(UUID, 'UUID').mockReturnValue(uuid);
       mockWebSocketConnectionService.websocket$.next({
@@ -105,11 +103,6 @@ describe('WebSocketService', () => {
       expect(await firstValueFrom(service.callAndSubscribe('pool.query'))).toEqual([
         { name: 'pool1' }, { name: 'pool2' },
       ]);
-      // TODO: Emit ApiEvent to test updates
-      // mockWebSocketConnectionService.buildSubscriber().next({ collection: 'pool.query', fields: { name: 'pool3' } });
-      // expect(await lastValueFrom(service.callAndSubscribe('pool.query').pipe(take(2)))).toEqual([
-      //   { name: 'pool1' }, { name: 'pool2' }, { name: 'pool3' },
-      // ]);
     });
   });
 
