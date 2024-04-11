@@ -76,7 +76,7 @@ def browser():
     profile.set_preference("browser.helperApps.neverAsk.saveToDisk", "application/x-tar,application/gzip")
     profile.set_preference("browser.download.manager.showWhenStarting", False)
     profile.set_preference("browser.link.open_newwindow", 3)
-    binary = '/usr/bin/firefox' if system() == "Linux" else '/usr/local/bin/firefox'
+    binary = '/snap/bin/firefox' if system() == "Linux" else '/usr/local/bin/firefox'
     firefox_capabilities = DesiredCapabilities.FIREFOX
     firefox_capabilities['marionette'] = True
     firefox_capabilities['firefox_profile'] = profile.encoded
