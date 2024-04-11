@@ -1,6 +1,7 @@
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatStepperModule } from '@angular/material/stepper';
+import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { GiB } from 'app/constants/bytes.constant';
@@ -130,7 +131,7 @@ describe('AddVdevsComponent – Add Vdev to existing pool', () => {
         mockCall('enclosure2.query', [] as EnclosureUi[]),
         mockCall('pool.query', []),
         mockCall('pool.dataset.encryption_algorithm_choices', {}),
-        mockJob('pool.create', fakeSuccessfulJob()),
+        mockJob('pool.update', fakeSuccessfulJob()),
       ]),
       mockProvider(PoolWizardNameValidationService, {
         validatePoolName: () => of(null),
@@ -149,6 +150,7 @@ describe('AddVdevsComponent – Add Vdev to existing pool', () => {
   beforeEach(async () => {
     spectator = createComponent();
     wizard = await TestbedHarnessEnvironment.harnessForFixture(spectator.fixture, PoolManagerHarness);
+    jest.spyOn(spectator.inject(Router), 'navigate').mockImplementation();
   });
 
   it('adds Vdevs to existing Pool', async () => {

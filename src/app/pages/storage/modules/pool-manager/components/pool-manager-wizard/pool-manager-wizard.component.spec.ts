@@ -122,11 +122,22 @@ describe('PoolManagerWizardComponent', () => {
       }),
       mockWebSocket([
         mockCall('pool.query', []),
-        mockJob('pool.create', fakeSuccessfulJob()),
+        mockJob('pool.create', fakeSuccessfulJob(createdPool)),
       ]),
       mockProvider(ActivatedRoute, {
         params: of({}),
         snapshot: { url: '' },
+      }),
+      mockProvider(DialogService, {
+        confirm: jest.fn(() => of(true)),
+        jobDialog: jest.fn(() => ({
+          afterClosed: () => of(fakeSuccessfulJob(createdPool)),
+        })),
+      }),
+      mockProvider(MatDialog, {
+        open: jest.fn(() => ({
+          afterClosed: () => of(undefined),
+        })),
       }),
       provideMockStore({
         selectors: [
@@ -186,7 +197,7 @@ describe('PoolManagerWizardComponent', () => {
     expect(spectator.query(DedupWizardStepComponent)).toExist();
   });
 
-  it('shows an extra Enclosure Options step for enteprise systems with multiple enclosures', async () => {
+  it('shows an extra Enclosure Options step for enterprise systems with multiple enclosures', async () => {
     hasMultipleEnclosuresInAllowedDisks$.next(true);
 
     const steps = await wizard.getSteps();

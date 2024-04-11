@@ -15,7 +15,6 @@ import {
   CreatePool, Pool, UpdatePool,
 } from 'app/interfaces/pool.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { AddVdevsStore } from 'app/pages/storage/modules/pool-manager/components/add-vdevs/store/add-vdevs-store.service';
 import {
@@ -224,22 +223,19 @@ export class PoolManagerWizardComponent implements OnInit, OnDestroy {
       allow_duplicate_serials: this.state.diskSettings.allowNonUniqueSerialDisks,
     };
 
-    const dialogRef = this.matDialog.open(EntityJobComponent, {
-      disableClose: true,
-      data: {
-        title: this.translate.instant('Update Pool'),
-      },
-    });
-    dialogRef.componentInstance.setCall('pool.update', [this.existingPool.id, payload]);
-    dialogRef.componentInstance.success.pipe(
-      untilDestroyed(this),
-    ).subscribe(() => {
-      dialogRef.close(false);
-      this.snackbar.success(this.translate.instant('Pool updated successfully'));
-      this.router.navigate(['/storage']);
-    });
-
-    dialogRef.componentInstance.submit();
+    this.dialogService.jobDialog(
+      this.ws.job('pool.update', [this.existingPool.id, payload]),
+      { title: this.translate.instant('Update Pool') },
+    )
+      .afterClosed()
+      .pipe(
+        this.errorHandler.catchError(),
+        untilDestroyed(this),
+      )
+      .subscribe(() => {
+        this.snackbar.success(this.translate.instant('Pool updated successfully'));
+        this.router.navigate(['/storage']);
+      });
   }
 
   protected submit(): void {
