@@ -77,6 +77,7 @@
   "A unique name to identify this keypair. Automatically generated keypairs are named after the object that generated the keypair with \" Key\" appended to the name.": "",
   "ACL Editor": "",
   "ACL Types & ACL Modes": "",
+  "ACME Certificate Created": "",
   "ACME DNS-Authenticators": "",
   "ALERT": "",
   "ALL Initiators Allowed": "",
