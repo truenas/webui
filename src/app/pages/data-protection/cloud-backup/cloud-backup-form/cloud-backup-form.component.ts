@@ -6,13 +6,13 @@ import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import _ from 'lodash';
-import { Observable, of } from 'rxjs';
-import { LifetimeUnit, lifetimeUnitNames } from 'app/enums/lifetime-unit.enum';
+import { Observable, map, of } from 'rxjs';
+import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
 import { mntPath } from 'app/enums/mnt-path.enum';
 import { Role } from 'app/enums/role.enum';
-import { mapToOptions } from 'app/helpers/options.helper';
 import { CloudBackup, CloudBackupUpdate } from 'app/interfaces/cloud-backup.interface';
 import { SelectOption, newOption } from 'app/interfaces/option.interface';
+import { ExplorerNodeData, TreeNode } from 'app/interfaces/tree-node.interface';
 import { TreeNodeProvider } from 'app/modules/ix-forms/components/ix-explorer/tree-node-provider.interface';
 import { ChainedRef } from 'app/modules/ix-forms/components/ix-slide-in/chained-component-ref';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
@@ -20,6 +20,7 @@ import { crontabToSchedule } from 'app/modules/scheduler/utils/crontab-to-schedu
 import { CronPresetValue } from 'app/modules/scheduler/utils/get-default-crontab-presets.utils';
 import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { CloudCredentialService } from 'app/services/cloud-credential.service';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -56,14 +57,11 @@ export class CloudBackupFormComponent implements OnInit {
     args: [''],
     enabled: [true],
     password: ['', [Validators.required]],
-
-    name: ['', [Validators.required]],
-    lifetime_value: [null as number, [Validators.required]],
-    lifetime_unit: [LifetimeUnit.Week, [Validators.required]],
+    keep_last: [null as number, [Validators.required]],
 
     folder: ['', [Validators.required]],
     bucket: ['', [Validators.required]],
-    bucket_input: ['', [Validators.required]],
+    bucket_input: [''],
   });
 
   isLoading = false;
@@ -76,7 +74,6 @@ export class CloudBackupFormComponent implements OnInit {
 
   readonly newOption = newOption;
   readonly requiredRoles = [Role.CloudBackupWrite];
-  readonly lifetimeUnits$ = of(mapToOptions(lifetimeUnitNames, this.translate));
 
   constructor(
     private translate: TranslateService,
@@ -86,6 +83,7 @@ export class CloudBackupFormComponent implements OnInit {
     private errorHandler: FormErrorHandlerService,
     private snackbar: SnackbarService,
     private filesystemService: FilesystemService,
+    private cloudCredentialService: CloudCredentialService,
     private chainedRef: ChainedRef<CloudBackup>,
   ) {
     this.editingTask = chainedRef.getData();
@@ -97,6 +95,7 @@ export class CloudBackupFormComponent implements OnInit {
 
     this.form.controls.credentials.valueChanges.pipe(untilDestroyed(this)).subscribe((credentials) => {
       if (credentials) {
+        this.form.controls.folder.enable();
         this.loadBucketOptions(credentials);
       } else {
         this.form.controls.folder.disable();
@@ -114,35 +113,97 @@ export class CloudBackupFormComponent implements OnInit {
       this.setBucketNodeProvider();
     });
 
+    this.form.controls.bucket_input.valueChanges.pipe(untilDestroyed(this)).subscribe(() => {
+      this.setBucketNodeProvider();
+    });
+
     if (this.editingTask) {
       this.setTaskForEdit();
     }
   }
 
-  loadBucketOptions(credentials: number): void {
-    // eslint-disable-next-line no-console
-    console.log(credentials);
-    // TODO: Implement loadBucketOptions logic
+  loadBucketOptions(credentialId: number): void {
+    this.isLoading = true;
+    this.cloudCredentialService.getBuckets(credentialId)
+      .pipe(untilDestroyed(this))
+      .subscribe({
+        next: (buckets) => {
+          const bucketOptions = buckets.map((bucket) => ({
+            label: bucket.Name,
+            value: bucket.Path,
+            disabled: !bucket.Enabled,
+          }));
+          bucketOptions.unshift({
+            label: this.translate.instant('Add new'),
+            value: newOption,
+            disabled: false,
+          });
+          this.bucketOptions$ = of(bucketOptions);
+          this.isLoading = false;
+          this.form.controls.bucket.enable();
+          this.form.controls.bucket_input.disable();
+          this.cdr.markForCheck();
+        },
+        error: () => {
+          this.isLoading = false;
+          this.form.controls.bucket.disable();
+          this.form.controls.bucket_input.enable();
+          this.cdr.markForCheck();
+        },
+      });
   }
 
   getBucketsNodeProvider(): TreeNodeProvider {
-    return () => {
-      // TODO: Implement getBucketsNodeProvider logic
-      return of([]);
+    return (node: TreeNode<ExplorerNodeData>) => {
+      let bucket = '';
+      if (this.form.controls.bucket.enabled && this.form.value.bucket !== newOption) {
+        bucket = this.form.controls.bucket.value;
+      } else if (this.form.controls.bucket_input.enabled) {
+        bucket = this.form.controls.bucket_input.value;
+      }
+
+      const data = {
+        credentials: this.form.controls.credentials.value,
+        attributes: {
+          bucket,
+          folder: node.data.path,
+        },
+        args: '',
+      };
+
+      if (bucket === '') {
+        delete data.attributes.bucket;
+      }
+
+      return this.ws.call('cloudsync.list_directory', [data]).pipe(
+        map((listing) => {
+          const nodes: ExplorerNodeData[] = [];
+
+          listing.forEach((file) => {
+            if (file.IsDir) {
+              nodes.push({
+                path: `${data.attributes.folder}/${file.Name}`.replace(/\/+/g, '/'),
+                name: file.Name,
+                type: ExplorerNodeType.Directory,
+                hasChildren: true,
+              });
+            }
+          });
+
+          return nodes;
+        }),
+      );
     };
   }
 
   setTaskForEdit(): void {
-    // TODO: Implement setTaskForEdit logic
-
     this.form.patchValue({
       ...this.editingTask,
       schedule: scheduleToCrontab(this.editingTask.schedule) as CronPresetValue,
       path: [],
-      credentials: null,
+      credentials: this.editingTask.credentials.id,
+      folder: this.editingTask.attributes.folder,
     });
-
-    // this.form.controls.folder.setValue([this.editingTask.attributes.folder]);
 
     if (this.editingTask.include?.length) {
       this.form.controls.path.setValue(
@@ -195,7 +256,6 @@ export class CloudBackupFormComponent implements OnInit {
       include: [],
       path: undefined,
       bwlimit: undefined,
-      keep_last: undefined,
       schedule: crontabToSchedule(formValue.schedule),
     };
 
@@ -216,10 +276,6 @@ export class CloudBackupFormComponent implements OnInit {
     delete (value as unknown as FormValue).folder;
     delete (value as unknown as FormValue).bucket;
     delete (value as unknown as FormValue).bucket_input;
-
-    delete (value as unknown as FormValue).name;
-    delete (value as unknown as FormValue).lifetime_value;
-    delete (value as unknown as FormValue).lifetime_unit;
 
     return value;
   }

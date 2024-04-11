@@ -1003,6 +1003,7 @@
   "KMIP Server": "",
   "KMIP Write": "",
   "KVM implements Hyper-V Enlightenments   for Windows guests. These features make Windows think they're   running on top of a Hyper-V compatible hypervisor and use Hyper-V specific features.   In some cases enabling these Enlightenments might improve usability and performance on the guest.": "",
+  "Keep Last": "",
   "Keep snapshot for": "",
   "Keep the name short and only lowercase. Using a name longer than 63 characters can prevent accessing the block device. Allowed characters: letters, numbers, period (.), dash (-), and colon (:).": "",
   "Keep the zvol name short. Using a zvol name longer than 63 characters can prevent accessing the zvol as a device.": "",

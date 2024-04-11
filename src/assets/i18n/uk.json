@@ -369,6 +369,7 @@
   "KMIP": "",
   "KMIP Read": "",
   "KMIP Write": "",
+  "Keep Last": "",
   "Keep the name short and only lowercase. Using a name longer than 63 characters can prevent accessing the block device. Allowed characters: letters, numbers, period (.), dash (-), and colon (:).": "",
   "Kerberos Keytabs": "",
   "Key not set": "",

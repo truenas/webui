@@ -5,7 +5,7 @@ export interface CloudBackup {
   id: number;
   description: string;
   path: string;
-  attributes: unknown; // TODO:
+  attributes: { folder: string }; // TODO:
   schedule: Schedule;
   pre_script: string;
   post_script: string;
@@ -18,12 +18,14 @@ export interface CloudBackup {
   enabled: boolean;
   password: string;
   keep_last: number;
-  credentials: unknown; // TODO:
+  credentials: { id: number }; // TODO:
   job: unknown; // TODO:
   locked: boolean;
 }
 
-export type CloudBackupUpdate = Omit<CloudBackup, 'id' | 'job' | 'locked'>;
+export interface CloudBackupUpdate extends Omit<CloudBackup, 'id' | 'job' | 'locked' | 'credentials'> {
+  credentials: number;
+}
 
 export interface CloudBackupSnapshot {
   id: string;

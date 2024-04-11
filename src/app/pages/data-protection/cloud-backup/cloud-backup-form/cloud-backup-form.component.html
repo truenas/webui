@@ -35,7 +35,6 @@
             *ngIf="form.controls.bucket_input.enabled"
             formControlName="bucket_input"
             [label]="'New Backet Name' | translate"
-            [required]="true"
           ></ix-input>
           <ix-explorer
             *ngIf="form.controls.folder.enabled"
@@ -43,6 +42,7 @@
             root="/"
             [label]="'Folder' | translate"
             [nodeProvider]="bucketNodeProvider"
+            [required]="true"
           ></ix-explorer>
         </ix-fieldset>
         <ix-fieldset
@@ -50,8 +50,13 @@
           [title]="'Task Settings' | translate"
         >
           <ix-input
-            formControlName="name"
-            [label]="'Task Name' | translate"
+            formControlName="description"
+            [label]="'Description' | translate"
+          ></ix-input>
+          <ix-input
+            formControlName="keep_last"
+            type="number"
+            [label]="'Keep Last' | translate"
             [required]="true"
           ></ix-input>
           <ix-input
@@ -65,20 +70,6 @@
             [required]="true"
             [label]="'Schedule' | translate"
           ></ix-scheduler>
-          <div class="lifetime-container">
-            <ix-input
-              formControlName="lifetime_value"
-              type="number"
-              [label]="'Snapshot Lifetime' | translate"
-              [required]="true"
-            ></ix-input>
-            <ix-select
-              formControlName="lifetime_unit"
-              [label]="'Unit' | translate"
-              [options]="lifetimeUnits$"
-              [required]="true"
-            ></ix-select>
-          </div>
         </ix-fieldset>
       </div>
 
