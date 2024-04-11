@@ -38,7 +38,7 @@ export class SnapshotTaskListComponent implements OnInit {
   protected readonly searchableElements = snapshotTaskListElements;
 
   snapshotTasks: PeriodicSnapshotTaskUi[] = [];
-  filterValue = '';
+  filterString = '';
   dataProvider: AsyncDataProvider<PeriodicSnapshotTaskUi>;
 
   protected columns = createTable<PeriodicSnapshotTaskUi>([
@@ -147,7 +147,7 @@ export class SnapshotTaskListComponent implements OnInit {
     private route: ActivatedRoute,
     private cdr: ChangeDetectorRef,
   ) {
-    this.filterValue = this.route.snapshot.paramMap.get('dataset') || '';
+    this.filterString = this.route.snapshot.paramMap.get('dataset') || '';
   }
 
   ngOnInit(): void {
@@ -162,7 +162,11 @@ export class SnapshotTaskListComponent implements OnInit {
 
     this.getSnapshotTasks();
 
-    tasks$.pipe(take(1), untilDestroyed(this)).subscribe(() => this.filterUpdated(this.filterValue));
+    tasks$.pipe(take(1), untilDestroyed(this)).subscribe(() => this.filterUpdated(this.filterString));
+
+    this.dataProvider.emptyType$.pipe(untilDestroyed(this)).subscribe(() => {
+      this.filterUpdated(this.filterString);
+    });
   }
 
   getSnapshotTasks(): void {
@@ -176,7 +180,7 @@ export class SnapshotTaskListComponent implements OnInit {
   }
 
   filterUpdated(query: string): void {
-    this.filterValue = query;
+    this.filterString = query;
     this.dataProvider.setRows(this.snapshotTasks.filter(this.filterTask));
   }
 
@@ -211,7 +215,7 @@ export class SnapshotTaskListComponent implements OnInit {
   }
 
   private filterTask = (task: PeriodicSnapshotTaskUi): boolean => {
-    return task.dataset.toLowerCase().includes(this.filterValue.toLowerCase())
-      || task.naming_schema.toLowerCase().includes(this.filterValue.toLowerCase());
+    return task.dataset.toLowerCase().includes(this.filterString.toLowerCase())
+      || task.naming_schema.toLowerCase().includes(this.filterString.toLowerCase());
   };
 }

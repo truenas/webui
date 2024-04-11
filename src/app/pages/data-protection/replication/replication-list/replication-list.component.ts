@@ -159,6 +159,9 @@ export class ReplicationListComponent implements OnInit {
     }]).pipe(tap((replicationTasks) => this.replicationTasks = replicationTasks));
     this.dataProvider = new AsyncDataProvider<ReplicationTask>(replicationTasks$);
     this.getReplicationTasks();
+    this.dataProvider.emptyType$.pipe(untilDestroyed(this)).subscribe(() => {
+      this.onListFiltered(this.filterString);
+    });
   }
 
   setDefaultSort(): void {
@@ -250,7 +253,7 @@ export class ReplicationListComponent implements OnInit {
   onListFiltered(query: string): void {
     this.filterString = query.toLowerCase();
     this.dataProvider.setRows(this.replicationTasks.filter((task) => {
-      return task.name.includes(this.filterString);
+      return task.name.toLowerCase().includes(this.filterString);
     }));
   }
 

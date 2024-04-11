@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+  ChangeDetectionStrategy, Component, OnInit,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
@@ -64,7 +64,6 @@ export class AcmeDnsAuthenticatorListComponent implements OnInit {
     private ws: WebSocketService,
     private slideInService: IxSlideInService,
     private translate: TranslateService,
-    private cdr: ChangeDetectorRef,
     protected emptyService: EmptyService,
     private dialog: DialogService,
   ) {}

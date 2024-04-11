@@ -62,6 +62,9 @@ export class SmbShareListComponent implements OnInit {
 
     this.dataProvider = new AsyncDataProvider<SmbShareInfo>(smbStatus$);
     this.loadData();
+    this.dataProvider.emptyType$.pipe(untilDestroyed(this)).subscribe(() => {
+      this.onListFiltered(this.filterString);
+    });
   }
 
   loadData(): void {

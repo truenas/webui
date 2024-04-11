@@ -129,7 +129,7 @@ export class UserListComponent implements OnInit {
     ).subscribe({
       next: (users) => {
         this.users = users;
-        this.createDataSource(users);
+        this.onListFiltered(this.filterString);
       },
       error: () => {
         this.users = [];
@@ -156,7 +156,7 @@ export class UserListComponent implements OnInit {
     this.createDataSource(this.users.filter((user) => {
       return user.username.toLowerCase().includes(this.filterString)
         || user.full_name.toLowerCase().includes(this.filterString)
-        || user.uid.toString().includes(this.filterString);
+        || user.uid.toString().toLowerCase().includes(this.filterString);
     }));
   }
 

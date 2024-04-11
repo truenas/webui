@@ -139,6 +139,9 @@ export class AssociatedTargetListComponent implements OnInit {
     );
     this.dataProvider = new AsyncDataProvider(targetExtent$);
     this.loadData();
+    this.dataProvider.emptyType$.pipe(untilDestroyed(this)).subscribe(() => {
+      this.onListFiltered(this.filterString);
+    });
   }
 
   loadData(): void {
@@ -165,10 +168,13 @@ export class AssociatedTargetListComponent implements OnInit {
 
   onListFiltered(query: string): void {
     this.filterString = query.toLowerCase();
-    const extentNames = this.extents.map((extent) => extent.name);
-    const targetNames = this.targets.map((target) => target.name);
-    this.dataProvider.setRows(this.targetExtents.filter(() => {
-      return [...targetNames, ...extentNames].includes(this.filterString);
+    const extentNames = this.extents.map((extent) => ({ name: extent.name.toLowerCase(), id: extent.id }));
+    const targetNames = this.targets.map((target) => ({ name: target.name.toLowerCase(), id: target.id }));
+
+    this.dataProvider.setRows(this.targetExtents.filter((element) => {
+      return [...targetNames, ...extentNames].some((item) => {
+        return (element.extent === item.id || element.target === item.id) && item.name.includes(this.filterString);
+      });
     }));
   }
 

@@ -136,7 +136,9 @@ export class ReportingExporterListComponent implements OnInit {
 
   onListFiltered(query: string): void {
     this.filterString = query.toLowerCase();
-    const filteredExporters = this.exporters.filter((exporter) => JSON.stringify(exporter).includes(query));
+    const filteredExporters = this.exporters.filter(
+      (exporter) => JSON.stringify(exporter).toLowerCase().includes(query),
+    );
     this.dataProvider.setRows(filteredExporters);
     this.cdr.markForCheck();
   }
@@ -145,7 +147,7 @@ export class ReportingExporterListComponent implements OnInit {
     this.ws.call('reporting.exporters.query').pipe(untilDestroyed(this)).subscribe({
       next: (exporters: ReportingExporter[]) => {
         this.exporters = exporters;
-        this.dataProvider.setRows(this.exporters);
+        this.onListFiltered(this.filterString);
         this.isLoading$.next(false);
         this.isNoData$.next(!this.exporters?.length);
         this.setDefaultSort();
