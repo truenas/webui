@@ -1,3 +1,7 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
+/* eslint-disable global-require */
+/* eslint-disable import/no-dynamic-require */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /**
  * This is the parser which is used to generate `ui-searchable-elements.json` file, where we collect all all UI elements
  * which will be shown in new "Global UI Search"
@@ -62,36 +66,45 @@
  */
 
 import * as fs from 'fs';
+import { join } from 'path';
 import { UiSearchableElement } from 'app/modules/global-search/interfaces/ui-searchable-element.interface';
-import { extractTsFileContent } from './extract-ts-file-content';
 import { findComponentFiles } from './find-component-files';
-import { parseHtmlFile } from './parse-html-file';
-import { TsExtraction } from './ts-extraction.enum';
 
-let uiElements: UiSearchableElement[] = [];
+const uiElements: UiSearchableElement[] = [];
 
 async function extractUiSearchableElements(): Promise<void> {
   try {
     const tsFiles = await findComponentFiles('src/**/*.elements.ts');
     tsFiles.forEach((elementsTsFilePath) => {
-      const htmlComponentFilePath = elementsTsFilePath.replace('.elements.ts', '.component.html');
-      const tsComponentFilePath = elementsTsFilePath.replace('.elements.ts', '.component.ts');
+      // const htmlComponentFilePath = elementsTsFilePath.replace('.elements.ts', '.component.html');
+      // const tsComponentFilePath = elementsTsFilePath.replace('.elements.ts', '.component.ts');
 
-      if (fs.existsSync(htmlComponentFilePath)) {
-        const elementConfig = extractTsFileContent(
-          elementsTsFilePath,
-          TsExtraction.ElementsConfig,
-        ) as string;
-
-        const componentProperties = extractTsFileContent(
-          tsComponentFilePath,
-          TsExtraction.ClassProperties,
-        ) as Record<string, string>;
-
-        const elements = parseHtmlFile(htmlComponentFilePath, elementConfig, componentProperties);
-
-        uiElements = uiElements.concat(elements);
+      // this one has requiredRoles: [Role.FullAdmin], AND results in error
+      // An error occurred: Error: Cannot find module 'app/enums/role.enum'
+      if (
+        elementsTsFilePath.endsWith('storage-settings-form.elements.ts')
+          || elementsTsFilePath.endsWith('group-list.elements.ts')
+      ) {
+        const file = require(join(__dirname, '../../', elementsTsFilePath));
+        // eslint-disable-next-line no-console
+        console.log(file);
       }
+
+      // if (fs.existsSync(htmlComponentFilePath)) {
+      //   const elementConfig = extractTsFileContent(
+      //     elementsTsFilePath,
+      //     TsExtraction.ElementsConfig,
+      //   ) as string;
+
+      //   const componentProperties = extractTsFileContent(
+      //     tsComponentFilePath,
+      //     TsExtraction.ClassProperties,
+      //   ) as Record<string, string>;
+
+      //   const elements = parseHtmlFile(htmlComponentFilePath, elementConfig, componentProperties);
+
+      //   uiElements = uiElements.concat(elements);
+      // }
     });
 
     fs.writeFileSync('src/assets/ui-searchable-elements.json', JSON.stringify(uiElements, null, 2));
