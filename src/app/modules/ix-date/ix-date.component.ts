@@ -8,20 +8,14 @@ import { LocaleService } from 'app/services/locale.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class IxDateComponent {
+  /** Must be in browser timezone */
   @Input() date: number | Date;
-  /** Defaults to the browser timezone */
-  @Input() appliedTimezone: string = Intl.DateTimeFormat().resolvedOptions().timeZone;
   machineTimezone: string;
   defaultTz: string = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
   get machineTime(): Date {
-    const utc = zonedTimeToUtc(this.date, this.appliedTimezone);
+    const utc = zonedTimeToUtc(this.date, this.defaultTz);
     return utcToZonedTime(utc, this.machineTimezone);
-  }
-
-  get browserTime(): Date {
-    const utc = zonedTimeToUtc(this.date, this.appliedTimezone);
-    return utcToZonedTime(utc, this.defaultTz);
   }
 
   get isTimezoneDifference(): boolean {
