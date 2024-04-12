@@ -4,25 +4,26 @@ import { TranslateService } from '@ngx-translate/core';
 import { UUID } from 'angular2-uuid';
 import {
   BehaviorSubject, Observable,
+  Subject,
   firstValueFrom,
 } from 'rxjs';
 import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
 import { JobState } from 'app/enums/job-state.enum';
-import { ApiEvent, ApiEventTyped } from 'app/interfaces/api-message.interface';
+import { ApiEvent } from 'app/interfaces/api-message.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { WebSocketConnectionService } from 'app/services/websocket-connection.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 const mockWebSocketConnectionService = {
   send: jest.fn(),
-  buildSubscriber: jest.fn(() => new BehaviorSubject<unknown>(null)),
+  buildSubscriber: jest.fn().mockReturnValue(new Subject<unknown>()),
   websocket$: new BehaviorSubject<unknown>(null),
 };
 
 const apiEventSubscription1$ = new BehaviorSubject(null);
-const apiEventSubscription2$ = new BehaviorSubject<ApiEvent<Pool>>(null);
+const apiEventSubscription2$ = new BehaviorSubject(null);
 
-const mockEventSubscriptions = new Map<string, Observable<ApiEventTyped>>([
+const mockEventSubscriptions = new Map<string, Observable<ApiEvent>>([
   ['event1', apiEventSubscription1$],
   ['event2', apiEventSubscription2$],
 ]);
@@ -44,7 +45,7 @@ describe('WebSocketService', () => {
     jest.spyOn(service.clearSubscriptions$, 'next');
 
     (service as unknown as {
-      subscriptions: Map<string, Observable<unknown>>;
+      subscriptions: Map<string, Observable<ApiEvent>>;
     }).subscriptions = mockEventSubscriptions;
 
     jest.clearAllMocks();
@@ -132,7 +133,7 @@ describe('WebSocketService', () => {
   describe('subscribe', () => {
     it('should successfully subscribe', () => {
       const eventData = { data: 'test' };
-      mockWebSocketConnectionService.buildSubscriber().next(eventData);
+      (mockWebSocketConnectionService.buildSubscriber() as Subject<unknown>).next(eventData);
 
       service.subscribe('alert.list').subscribe((data) => {
         // TODO: Actually do nothing
@@ -146,7 +147,7 @@ describe('WebSocketService', () => {
   describe('subscribeToLogs', () => {
     it('should successfully subscribe to logs', () => {
       const logData = { data: 'log test' };
-      mockWebSocketConnectionService.buildSubscriber().next(logData);
+      (mockWebSocketConnectionService.buildSubscriber() as Subject<unknown>).next(logData);
 
       service.subscribeToLogs('logName').subscribe((data) => {
         // TODO: Actually do nothing

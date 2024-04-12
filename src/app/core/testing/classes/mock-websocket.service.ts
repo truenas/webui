@@ -2,9 +2,8 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { when } from 'jest-when';
-import {
-  BehaviorSubject, Observable, of,
-} from 'rxjs';
+import { Observable, Subject, of } from 'rxjs';
+import { ValuesType } from 'utility-types';
 import {
   CallResponseOrFactory,
   JobResponseOrFactory,
@@ -15,6 +14,7 @@ import {
   ApiCallParams,
   ApiCallResponse,
 } from 'app/interfaces/api/api-call-directory.interface';
+import { ApiEventDirectory } from 'app/interfaces/api/api-event-directory.interface';
 import {
   ApiJobMethod,
   ApiJobParams,
@@ -44,7 +44,7 @@ const anyArgument = when((_: unknown) => true);
  */
 @Injectable()
 export class MockWebSocketService extends WebSocketService {
-  private subscribeStream$ = new BehaviorSubject<ApiEvent>(null);
+  private subscribeStream$ = new Subject<ApiEvent>();
   private jobIdCounter = 1;
 
   constructor(
@@ -57,7 +57,7 @@ export class MockWebSocketService extends WebSocketService {
     this.call = jest.fn();
     this.job = jest.fn();
     this.startJob = jest.fn();
-    this.subscribe = jest.fn(() => this.subscribeStream$.asObservable()) as jest.Mock;
+    this.subscribe = jest.fn(() => this.subscribeStream$.asObservable() as Observable<ApiEvent<ValuesType<ApiEventDirectory>['response']>>);
     this.callAndSubscribe = jest.fn();
 
     when(this.call).mockImplementation((method: ApiCallMethod, args: unknown) => {
