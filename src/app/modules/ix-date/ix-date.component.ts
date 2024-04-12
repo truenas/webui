@@ -11,7 +11,6 @@ export class IxDateComponent {
   @Input() date: number | Date;
   /** Defaults to the browser timezone */
   @Input() appliedTimezone: string = Intl.DateTimeFormat().resolvedOptions().timeZone;
-  @Input() showTimezones = false;
   machineTimezone: string;
   defaultTz: string = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
