@@ -12,15 +12,16 @@ import { EmptyType } from 'app/enums/empty-type.enum';
 import { Role } from 'app/enums/role.enum';
 import { ApiKey } from 'app/interfaces/api-key.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { EmptyService } from 'app/modules/empty/empty.service';
 import { ArrayDataProvider } from 'app/modules/ix-table2/classes/array-data-provider/array-data-provider';
 import { actionsColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
 import { dateColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-date/ix-cell-date.component';
 import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { SortDirection } from 'app/modules/ix-table2/enums/sort-direction.enum';
 import { createTable } from 'app/modules/ix-table2/utils';
-import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { ApiKeyFormDialogComponent } from 'app/pages/api-keys/components/api-key-form-dialog/api-key-form-dialog.component';
+import { apiKeysElements } from 'app/pages/api-keys/components/api-key-list/api-key-list.elements';
 import { ApiKeyComponentStore } from 'app/pages/api-keys/store/api-key.store';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -33,11 +34,12 @@ import { WebSocketService } from 'app/services/ws.service';
 })
 export class ApiKeyListComponent implements OnInit {
   protected readonly requiredRoles = [Role.FullAdmin];
+  protected readonly searchableElements = apiKeysElements;
 
   smartTasks: ApiKey[] = [];
   dataProvider = new ArrayDataProvider<ApiKey>();
   apiKeys: ApiKey[] = [];
-  filterString: string;
+  filterString = '';
 
   columns = createTable<ApiKey>([
     textColumn({
@@ -133,7 +135,7 @@ export class ApiKeyListComponent implements OnInit {
     ).subscribe({
       next: (apiKeys) => {
         this.apiKeys = apiKeys;
-        this.createDataSource(apiKeys);
+        this.onListFiltered(this.filterString);
         this.cdr.markForCheck();
       },
       error: () => {

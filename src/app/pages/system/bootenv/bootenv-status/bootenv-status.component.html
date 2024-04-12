@@ -3,7 +3,7 @@
   [loading]="isLoading$ | async"
 ></ix-fake-progress-bar>
 
-<div class="tree-wrapper">
+<div class="tree-wrapper" [ixUiSearch]="searchableElements.elements.bootStatus">
   <div class="tree-inner">
     <mat-accordion *ngIf="poolInstance">
       <mat-expansion-panel class="mat-elevation-z0">

@@ -2,11 +2,10 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatDialog } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { of } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockEntityJobComponentRef } from 'app/core/testing/utils/mock-entity-job-component-ref.utils';
 import {
   mockCall, mockJob, mockWebSocket,
 } from 'app/core/testing/utils/mock-websocket.utils';
@@ -52,11 +51,12 @@ describe('CertificateAcmeAddComponent', () => {
         mockCall('webui.crypto.get_certificate_domain_names', ['DNS:truenas.com', 'DNS:truenas.io']),
       ]),
       mockProvider(IxSlideInRef),
-      mockProvider(DialogService),
-      mockAuth(),
-      mockProvider(MatDialog, {
-        open: () => mockEntityJobComponentRef,
+      mockProvider(DialogService, {
+        jobDialog: jest.fn(() => ({
+          afterClosed: () => of(null),
+        })),
       }),
+      mockAuth(),
       {
         provide: SLIDE_IN_DATA,
         useValue: { id: 2 },
@@ -91,7 +91,8 @@ describe('CertificateAcmeAddComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(mockEntityJobComponentRef.componentInstance.setCall).toHaveBeenCalledWith(
+    expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
+    expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith(
       'certificate.create',
       [{
         acme_directory_uri: 'https://acme-staging-v02.api.letsencrypt.org/directory',
@@ -106,7 +107,6 @@ describe('CertificateAcmeAddComponent', () => {
         tos: true,
       }],
     );
-    expect(mockEntityJobComponentRef.componentInstance.submit).toHaveBeenCalled();
     expect(spectator.inject(IxSlideInRef).close).toHaveBeenCalled();
   });
 
@@ -125,7 +125,8 @@ describe('CertificateAcmeAddComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(mockEntityJobComponentRef.componentInstance.setCall).toHaveBeenCalledWith(
+    expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
+    expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith(
       'certificate.create',
       [{
         acme_directory_uri: 'https://acme-staging-v02.api.letsencrypt.org/directory-custom',
@@ -140,7 +141,6 @@ describe('CertificateAcmeAddComponent', () => {
         tos: true,
       }],
     );
-    expect(mockEntityJobComponentRef.componentInstance.submit).toHaveBeenCalled();
     expect(spectator.inject(IxSlideInRef).close).toHaveBeenCalled();
   });
 });

@@ -9,10 +9,9 @@
     <div class="actions">
       <button
         *ixRequiresRoles="requiredRoles"
-        ixUiSearchableElement
         mat-button
         [ixTest]="['sysctl', 'add']"
-        [ixSearchConfig]="searchElements.addSysctl"
+        [ixUiSearch]="searchableElements.addSysctl"
         (click)="onAdd()"
       >
         {{ 'Add' | translate }}

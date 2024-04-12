@@ -1,0 +1,52 @@
+<div class="job-item">
+  <div class="job-icon" [ngSwitch]="job.state">
+    <ix-icon
+      *ngSwitchCase="JobState.Success"
+      name="check_circle_outline"
+      class="success"
+    ></ix-icon>
+    <ix-icon
+      *ngSwitchCase="JobState.Failed"
+      name="highlight_off"
+      class="failed"
+      [matTooltip]="job.error"
+    ></ix-icon>
+    <mat-spinner
+      *ngSwitchCase="JobState.Running"
+      class="running"
+      [diameter]="22"
+      [matTooltip]="job.progress.description"
+    ></mat-spinner>
+    <ix-icon *ngSwitchCase="JobState.Waiting" class="waiting" name="schedule"></ix-icon>
+    <ix-icon *ngSwitchCase="JobState.Aborted" class="aborted" name="report"></ix-icon>
+  </div>
+
+  <div class="job-name-wrapper">
+    <div class="job-name">
+      <span>{{ job.description ? job.description : job.method }}</span>
+      <small *ngIf="isRunning">
+        {{ job.progress.percent || 0 | number: '1.2-2' }}%
+      </small>
+    </div>
+
+    <mat-progress-bar
+      *ngIf="isRunning"
+      class="job-progress"
+      [value]="job.progress.percent"
+      [mode]="job.progress.percent ? 'determinate' : 'indeterminate'"
+      [matTooltip]="job.progress.description"
+    ></mat-progress-bar>
+  </div>
+</div>
+
+<button
+  *ngIf="isRunning && job.abortable"
+  mat-icon-button
+  type="button"
+  [ixTest]="['abort-job', job.description]"
+  [matTooltip]="'Abort' | translate"
+  [attr.aria-label]="'Abort' | translate"
+  (click)="onAborted(job)"
+>
+  <ix-icon name="mdi-close-circle"></ix-icon>
+</button>

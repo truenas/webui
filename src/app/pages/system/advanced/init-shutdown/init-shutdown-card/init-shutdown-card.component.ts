@@ -9,6 +9,7 @@ import {
 import { Role } from 'app/enums/role.enum';
 import { InitShutdownScript } from 'app/interfaces/init-shutdown-script.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { EmptyService } from 'app/modules/empty/empty.service';
 import { AsyncDataProvider } from 'app/modules/ix-table2/classes/async-data-provider/async-data-provider';
 import { actionsColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
 import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
@@ -16,7 +17,6 @@ import {
   yesNoColumn,
 } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-yesno/ix-cell-yesno.component';
 import { createTable } from 'app/modules/ix-table2/utils';
-import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { AdvancedSettingsService } from 'app/pages/system/advanced/advanced-settings.service';
 import { initShutdownCardElements } from 'app/pages/system/advanced/init-shutdown/init-shutdown-card/init-shutdown-card.elements';
@@ -36,7 +36,7 @@ import { WebSocketService } from 'app/services/ws.service';
 })
 export class InitShutdownCardComponent implements OnInit {
   readonly requiredRoles = [Role.FullAdmin];
-  protected readonly searchElements = initShutdownCardElements;
+  protected readonly searchableElements = initShutdownCardElements;
 
   dataProvider: AsyncDataProvider<InitShutdownScript>;
 
@@ -135,7 +135,7 @@ export class InitShutdownCardComponent implements OnInit {
 
   private openForm(row?: InitShutdownScript): void {
     this.advancedSettings.showFirstTimeWarningIfNeeded().pipe(
-      switchMap(() => this.chainedSlideIns.pushComponent(InitShutdownFormComponent, false, row)),
+      switchMap(() => this.chainedSlideIns.open(InitShutdownFormComponent, false, row)),
       filter((response) => !!response.response),
       tap(() => this.loadScripts()),
       untilDestroyed(this),

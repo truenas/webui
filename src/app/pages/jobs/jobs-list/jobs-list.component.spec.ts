@@ -13,17 +13,17 @@ import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.u
 import { JobState } from 'app/enums/job-state.enum';
 import { Job } from 'app/interfaces/job.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxEmptyRowHarness } from 'app/modules/ix-tables/components/ix-empty-row/ix-empty-row.component.harness';
-import { IxTableModule } from 'app/modules/ix-tables/ix-table.module';
-import { IxTableHarness } from 'app/modules/ix-tables/testing/ix-table.harness';
+import { IxEmptyRowHarness } from 'app/modules/ix-table2/components/ix-empty-row/ix-empty-row.component.harness';
+import { IxTable2Harness } from 'app/modules/ix-table2/components/ix-table2/ix-table2.harness';
+import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
 import { jobsInitialState, JobsState } from 'app/modules/jobs/store/job.reducer';
 import { selectJobs, selectJobState } from 'app/modules/jobs/store/job.selectors';
 import { LayoutModule } from 'app/modules/layout/layout.module';
 import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
 import { SearchInput1Component } from 'app/modules/search-input1/search-input1.component';
 import { JobLogsRowComponent } from 'app/pages/jobs/job-logs-row/job-logs-row.component';
+import { JobNameComponent } from 'app/pages/jobs/job-name/job-name.component';
 import { DownloadService } from 'app/services/download.service';
-import { WebSocketService } from 'app/services/ws.service';
 import { JobsListComponent } from './jobs-list.component';
 
 const fakeJobDataSource: Job[] = [{
@@ -69,7 +69,7 @@ describe('JobsListComponent', () => {
   const createComponent = createComponentFactory({
     component: JobsListComponent,
     imports: [
-      IxTableModule,
+      IxTable2Module,
       MatTabsModule,
       MockModule(LayoutModule),
       MockModule(PageHeaderModule),
@@ -77,6 +77,7 @@ describe('JobsListComponent', () => {
       MatButtonToggleGroup,
     ],
     declarations: [
+      JobNameComponent,
       JobLogsRowComponent,
       FakeFormatDateTimePipe,
     ],
@@ -114,12 +115,12 @@ describe('JobsListComponent', () => {
     store$.overrideSelector(selectJobs, fakeJobDataSource);
     store$.refreshState();
 
-    const table = await loader.getHarness(IxTableHarness);
-    const cells = await table.getCells(true);
+    const table = await loader.getHarness(IxTable2Harness);
+    const cells = await table.getCellTexts();
     const expectedRows = [
-      ['Name', 'State', 'ID', 'Started', 'Finished', 'Logs', ''],
-      ['cloudsync.sync', 'Failed', '446', '2022-05-28 10:00:01', '2022-05-28 10:00:01', 'Download Logs', ''],
-      ['cloudsync.sync', 'Success', '445', '2022-05-28 10:00:01', '2022-05-28 10:00:01', '', ''],
+      ['Name', 'State', 'ID', 'Started', 'Finished'],
+      ['cloudsync.sync', 'FAILED', '446', '2022-05-28 10:00:01', '2022-05-28 10:00:01'],
+      ['cloudsync.sync', 'SUCCESS', '445', '2022-05-28 10:00:01', '2022-05-28 10:00:01'],
     ];
 
     expect(cells).toEqual(expectedRows);
@@ -144,16 +145,5 @@ describe('JobsListComponent', () => {
     await secondExpandButton.click();
 
     expect(spectator.queryAll('.expanded')).toHaveLength(1);
-  });
-
-  it('should download logs text file when click Download Logs button', async () => {
-    store$.overrideSelector(selectJobs, fakeJobDataSource);
-    store$.refreshState();
-
-    const [downloadLogsButton] = await loader.getAllHarnesses(MatButtonHarness.with({ text: 'Download Logs' }));
-    await downloadLogsButton.click();
-
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('core.job_download_logs', [446, '446.log']);
-    expect(spectator.inject(DownloadService).downloadUrl).toHaveBeenCalledWith('http://localhost/download/log', '446.log', 'text/plain');
   });
 });

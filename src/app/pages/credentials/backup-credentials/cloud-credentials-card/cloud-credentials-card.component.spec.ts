@@ -70,7 +70,7 @@ describe('CloudCredentialsCardComponent', () => {
         confirm: () => of(true),
       }),
       mockProvider(IxChainedSlideInService, {
-        pushComponent: jest.fn(() => of()),
+        open: jest.fn(() => of()),
       }),
       mockProvider(IxSlideInRef),
       mockProvider(MatDialog, {
@@ -101,7 +101,7 @@ describe('CloudCredentialsCardComponent', () => {
     await addButton.click();
 
     expect(
-      spectator.inject(IxChainedSlideInService).pushComponent,
+      spectator.inject(IxChainedSlideInService).open,
     ).toHaveBeenCalledWith(CloudCredentialsFormComponent);
   });
 
@@ -109,7 +109,7 @@ describe('CloudCredentialsCardComponent', () => {
     const editButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'edit' }), 1, 2);
     await editButton.click();
     expect(
-      spectator.inject(IxChainedSlideInService).pushComponent,
+      spectator.inject(IxChainedSlideInService).open,
     ).toHaveBeenCalledWith(CloudCredentialsFormComponent, false, credentials[0]);
   });
 

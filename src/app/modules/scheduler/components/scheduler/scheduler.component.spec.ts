@@ -3,7 +3,9 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSelectHarness } from '@angular/material/select/testing';
-import { createHostFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import {
+  createHostFactory, mockProvider, SpectatorHost,
+} from '@ngneat/spectator/jest';
 import { MockPipe } from 'ng-mocks';
 import { of } from 'rxjs';
 import { IxLabelComponent } from 'app/modules/ix-forms/components/ix-label/ix-label.component';
@@ -13,7 +15,7 @@ import { SchedulerModalComponent } from 'app/modules/scheduler/components/schedu
 import { CrontabExplanationPipe } from 'app/modules/scheduler/pipes/crontab-explanation.pipe';
 
 describe('SchedulerComponent', () => {
-  let spectator: Spectator<SchedulerComponent>;
+  let spectator: SpectatorHost<SchedulerComponent>;
   let loader: HarnessLoader;
   let control: FormControl<string>;
   const createHost = createHostFactory({
@@ -38,16 +40,28 @@ describe('SchedulerComponent', () => {
   beforeEach(() => {
     control = new FormControl<string>('0 0 * * *');
     spectator = createHost(
-      '<ix-scheduler [formControl]="control" label="Run at"></ix-scheduler>',
-      { hostProps: { control } },
+      `<ix-scheduler
+        [formControl]="control"
+        [label]="label"
+        [required]="required"
+        [tooltip]="tooltip"
+      ></ix-scheduler>`,
+      {
+        hostProps: {
+          control,
+          label: 'Run at',
+          required: false,
+          tooltip: undefined,
+        },
+      },
     );
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
   it('renders a label and passes properties to it', () => {
-    spectator.setInput('label', 'Apply To Groups');
-    spectator.setInput('required', true);
-    spectator.setInput('tooltip', 'Enter the location of the system.');
+    spectator.setHostInput('label', 'Apply To Groups');
+    spectator.setHostInput('required', true);
+    spectator.setHostInput('tooltip', 'Enter the location of the system.');
 
     const label = spectator.query(IxLabelComponent);
     expect(label).toExist();

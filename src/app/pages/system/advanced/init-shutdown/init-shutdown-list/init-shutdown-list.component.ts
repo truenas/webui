@@ -8,6 +8,7 @@ import { initShutdownScriptWhenLabels } from 'app/enums/init-shutdown-script-whe
 import { Role } from 'app/enums/role.enum';
 import { InitShutdownScript } from 'app/interfaces/init-shutdown-script.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { EmptyService } from 'app/modules/empty/empty.service';
 import { AsyncDataProvider } from 'app/modules/ix-table2/classes/async-data-provider/async-data-provider';
 import {
   actionsColumn,
@@ -17,11 +18,11 @@ import {
   yesNoColumn,
 } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-yesno/ix-cell-yesno.component';
 import { createTable } from 'app/modules/ix-table2/utils';
-import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import {
   InitShutdownFormComponent,
 } from 'app/pages/system/advanced/init-shutdown/init-shutdown-form/init-shutdown-form.component';
+import { initShudownListElements } from 'app/pages/system/advanced/init-shutdown/init-shutdown-list/init-shutdown-list.elements';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -34,6 +35,7 @@ import { WebSocketService } from 'app/services/ws.service';
 })
 export class InitShutdownListComponent implements OnInit {
   readonly requiredRoles = [Role.FullAdmin];
+  protected readonly searchableElements = initShudownListElements;
 
   dataProvider: AsyncDataProvider<InitShutdownScript>;
 
@@ -107,13 +109,13 @@ export class InitShutdownListComponent implements OnInit {
   }
 
   addScript(): void {
-    this.chainedSlideIns.pushComponent(InitShutdownFormComponent)
+    this.chainedSlideIns.open(InitShutdownFormComponent)
       .pipe(filter((response) => !!response.response), untilDestroyed(this))
       .subscribe(() => this.dataProvider.load());
   }
 
   editScript(script: InitShutdownScript): void {
-    this.chainedSlideIns.pushComponent(InitShutdownFormComponent, false, script)
+    this.chainedSlideIns.open(InitShutdownFormComponent, false, script)
       .pipe(filter((response) => !!response.response), untilDestroyed(this))
       .subscribe(() => this.dataProvider.load());
   }

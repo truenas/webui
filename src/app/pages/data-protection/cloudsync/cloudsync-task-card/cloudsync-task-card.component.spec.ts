@@ -126,7 +126,7 @@ describe('CloudSyncTaskCardComponent', () => {
         confirm: jest.fn(() => of(true)),
       }),
       mockProvider(IxChainedSlideInService, {
-        pushComponent: jest.fn(() => of()),
+        open: jest.fn(() => of()),
       }),
       mockProvider(IxSlideInRef),
       mockProvider(IxSlideInService, {
@@ -167,7 +167,7 @@ describe('CloudSyncTaskCardComponent', () => {
     const editButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'edit' }), 1, 6);
     await editButton.click();
 
-    expect(spectator.inject(IxChainedSlideInService).pushComponent).toHaveBeenCalledWith(
+    expect(spectator.inject(IxChainedSlideInService).open).toHaveBeenCalledWith(
       CloudSyncFormComponent,
       true,
       cloudsyncTasks[0],
@@ -178,7 +178,7 @@ describe('CloudSyncTaskCardComponent', () => {
     const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
     await addButton.click();
 
-    expect(spectator.inject(IxChainedSlideInService).pushComponent).toHaveBeenCalledWith(
+    expect(spectator.inject(IxChainedSlideInService).open).toHaveBeenCalledWith(
       CloudSyncWizardComponent,
       true,
     );

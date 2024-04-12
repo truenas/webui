@@ -1,6 +1,6 @@
 import { createReducer, on } from '@ngrx/store';
 import { Preferences } from 'app/interfaces/preferences.interface';
-import { DashConfigItem } from 'app/pages/dashboard/components/widget-controller/widget-controller.component';
+import { DashConfigItem } from 'app/pages/dashboard-old/components/widget-controller/widget-controller.component';
 import { defaultTheme } from 'app/services/theme/theme.constants';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
 import { defaultPreferences } from 'app/store/preferences/default-preferences.constant';
@@ -10,7 +10,7 @@ import {
   builtinUsersToggled, dashboardStateUpdated, guiFormClosedWithoutSaving, guiFormSubmitted,
   lifetimeTokenUpdated,
   localizationFormSubmitted, noPreferencesFound,
-  preferencesLoaded, preferredColumnsUpdated, themeChangedInGuiForm,
+  preferencesLoaded, preferredColumnsUpdated, shownNewIndicatorKeysUpdated, themeChangedInGuiForm,
   themeNotFound,
   updateRebootAfterManualUpdate,
 } from 'app/store/preferences/preferences.actions';
@@ -42,6 +42,9 @@ export const preferencesReducer = createReducer(
   on(sidenavUpdated, (state, sidenavStatus) => updatePreferences(state, { sidenavStatus })),
   on(preferredColumnsUpdated, (state, { columns }) => updatePreferences(state, {
     tableDisplayedColumns: columns,
+  })),
+  on(shownNewIndicatorKeysUpdated, (state, { keys }) => updatePreferences(state, {
+    shownNewFeatureIndicatorKeys: keys,
   })),
   on(localizationFormSubmitted, (state, { dateFormat, timeFormat }) => updatePreferences(state, {
     dateFormat,

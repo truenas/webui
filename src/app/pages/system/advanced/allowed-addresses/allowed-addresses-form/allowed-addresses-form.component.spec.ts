@@ -38,7 +38,7 @@ describe('AllowedAddressesComponent', () => {
         } as SystemGeneralConfig),
       ]),
       mockProvider(IxChainedSlideInService, {
-        pushComponent: jest.fn(() => of()),
+        open: jest.fn(() => of()),
         components$: of([]),
       }),
       mockProvider(DialogService, {

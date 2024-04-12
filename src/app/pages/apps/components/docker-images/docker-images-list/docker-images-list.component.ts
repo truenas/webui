@@ -9,6 +9,7 @@ import { of } from 'rxjs';
 import { filter, tap } from 'rxjs/operators';
 import { Role } from 'app/enums/role.enum';
 import { ContainerImage } from 'app/interfaces/container-image.interface';
+import { EmptyService } from 'app/modules/empty/empty.service';
 import { IxFileSizePipe } from 'app/modules/ix-file-size/ix-file-size.pipe';
 import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
 import { AsyncDataProvider } from 'app/modules/ix-table2/classes/async-data-provider/async-data-provider';
@@ -16,9 +17,9 @@ import { actionsColumn } from 'app/modules/ix-table2/components/ix-table-body/ce
 import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { yesNoColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-yesno/ix-cell-yesno.component';
 import { createTable } from 'app/modules/ix-table2/utils';
-import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
 import { DockerImageDeleteDialogComponent } from 'app/pages/apps/components/docker-images/docker-image-delete-dialog/docker-image-delete-dialog.component';
 import { DockerImageUpdateDialogComponent } from 'app/pages/apps/components/docker-images/docker-image-update-dialog/docker-image-update-dialog.component';
+import { dockerImagesListElements } from 'app/pages/apps/components/docker-images/docker-images-list/docker-images-list.elements';
 import { PullImageFormComponent } from 'app/pages/apps/components/docker-images/pull-image-form/pull-image-form.component';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -33,6 +34,8 @@ import { WebSocketService } from 'app/services/ws.service';
 })
 export class DockerImagesListComponent implements OnInit {
   protected readonly requiredRoles = [Role.AppsWrite];
+  protected readonly searchableElements = dockerImagesListElements;
+
   dataProvider: AsyncDataProvider<ContainerImage>;
   containerImages: ContainerImage[] = [];
   selection = new SelectionModel<ContainerImage>(true, []);
@@ -104,34 +107,41 @@ export class DockerImagesListComponent implements OnInit {
       tap((images) => this.containerImages = images),
     );
     this.dataProvider = new AsyncDataProvider(containerImages$);
-    this.dataProvider.load();
+    this.refresh();
+    this.dataProvider.emptyType$.pipe(untilDestroyed(this)).subscribe(() => {
+      this.onListFiltered(this.filterString);
+    });
   }
 
   doAdd(): void {
     const slideInRef = this.slideInService.open(PullImageFormComponent);
     slideInRef.slideInClosed$
       .pipe(filter(Boolean), untilDestroyed(this))
-      .subscribe(() => this.dataProvider.load());
+      .subscribe(() => this.refresh());
   }
 
   doDelete(images: ContainerImage[]): void {
     this.matDialog.open(DockerImageDeleteDialogComponent, { data: images })
       .afterClosed()
       .pipe(filter(Boolean), untilDestroyed(this))
-      .subscribe(() => this.dataProvider.load());
+      .subscribe(() => this.refresh());
   }
 
   doUpdate(images: ContainerImage[]): void {
     this.matDialog.open(DockerImageUpdateDialogComponent, { data: images })
       .afterClosed()
       .pipe(filter(Boolean), untilDestroyed(this))
-      .subscribe(() => this.dataProvider.load());
+      .subscribe(() => this.refresh());
   }
 
   protected onListFiltered(query: string): void {
-    const filterString = query.toLowerCase();
+    this.filterString = query.toLowerCase();
     this.dataProvider.setRows(this.containerImages.filter((image) => {
-      return image.repo_tags.join(', ').includes(filterString);
+      return image.repo_tags.join(', ').includes(this.filterString);
     }));
+  }
+
+  private refresh(): void {
+    this.dataProvider.load();
   }
 }

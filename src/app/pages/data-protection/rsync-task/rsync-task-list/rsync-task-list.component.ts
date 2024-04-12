@@ -11,6 +11,7 @@ import { JobState } from 'app/enums/job-state.enum';
 import { Role } from 'app/enums/role.enum';
 import { RsyncTask } from 'app/interfaces/rsync-task.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { EmptyService } from 'app/modules/empty/empty.service';
 import { AsyncDataProvider } from 'app/modules/ix-table2/classes/async-data-provider/async-data-provider';
 import {
   actionsColumn,
@@ -27,12 +28,12 @@ import {
   yesNoColumn,
 } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-yesno/ix-cell-yesno.component';
 import { createTable } from 'app/modules/ix-table2/utils';
-import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { CrontabExplanationPipe } from 'app/modules/scheduler/pipes/crontab-explanation.pipe';
 import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { RsyncTaskFormComponent } from 'app/pages/data-protection/rsync-task/rsync-task-form/rsync-task-form.component';
+import { rsyncTaskListElements } from 'app/pages/data-protection/rsync-task/rsync-task-list/rsync-task-list.elements';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 import { TaskService } from 'app/services/task.service';
@@ -47,9 +48,10 @@ import { WebSocketService } from 'app/services/ws.service';
 })
 export class RsyncTaskListComponent implements OnInit {
   readonly requiredRoles = [Role.FullAdmin];
+  protected readonly searchableElements = rsyncTaskListElements;
 
   dataProvider: AsyncDataProvider<RsyncTask>;
-  filterString: string;
+  filterString = '';
 
   columns = createTable<RsyncTask>([
     textColumn({
@@ -181,7 +183,10 @@ export class RsyncTaskListComponent implements OnInit {
       }),
     );
     this.dataProvider = new AsyncDataProvider(request$);
-    this.dataProvider.load();
+    this.refresh();
+    this.dataProvider.emptyType$.pipe(untilDestroyed(this)).subscribe(() => {
+      this.filterUpdated(this.filterString);
+    });
   }
 
   protected filterUpdated(query: string): void {
@@ -213,19 +218,19 @@ export class RsyncTaskListComponent implements OnInit {
         switchMap(() => this.ws.job('rsynctask.run', [row.id])),
         untilDestroyed(this),
       )
-      .subscribe(() => this.dataProvider.load());
+      .subscribe(() => this.refresh());
   }
 
   protected add(): void {
-    const closer$ = this.chainedSlideInService.pushComponent(RsyncTaskFormComponent, true);
+    const closer$ = this.chainedSlideInService.open(RsyncTaskFormComponent, true);
     closer$.pipe(filter((response) => !!response.response), untilDestroyed(this))
-      .subscribe(() => this.dataProvider.load());
+      .subscribe(() => this.refresh());
   }
 
   private edit(row: RsyncTask): void {
-    const closer$ = this.chainedSlideInService.pushComponent(RsyncTaskFormComponent, true, row);
+    const closer$ = this.chainedSlideInService.open(RsyncTaskFormComponent, true, row);
     closer$.pipe(filter((response) => !!response.response), untilDestroyed(this))
-      .subscribe(() => this.dataProvider.load());
+      .subscribe(() => this.refresh());
   }
 
   private delete(row: RsyncTask): void {
@@ -244,12 +249,16 @@ export class RsyncTaskListComponent implements OnInit {
         }),
         untilDestroyed(this),
       )
-      .subscribe(() => this.dataProvider.load());
+      .subscribe(() => this.refresh());
   }
 
   private filterTask = (task: RsyncTask): boolean => {
     return task.remotehost?.includes(this.filterString)
-      || task.path.includes(this.filterString)
-      || task.desc.includes(this.filterString);
+      || task.path.toLowerCase().includes(this.filterString)
+      || task.desc.toLowerCase().includes(this.filterString);
   };
+
+  private refresh(): void {
+    this.dataProvider.load();
+  }
 }

@@ -32,7 +32,7 @@ import { advancedConfigUpdated } from 'app/store/system-config/system-config.act
 })
 export class AuditFormComponent implements OnInit {
   protected readonly requiredRoles = [Role.SystemAuditWrite];
-  protected searchElements = auditFormElements;
+  protected searchableElements = auditFormElements;
 
   isFormLoading = false;
 

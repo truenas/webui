@@ -42,7 +42,7 @@ import { waitForGeneralConfig } from 'app/store/system-config/system-config.sele
 })
 export class GuiFormComponent {
   protected readonly requiredRoles = [Role.FullAdmin];
-  readonly searchElements = guiFormElements;
+  readonly searchableElements = guiFormElements;
 
   isFormLoading = true;
   configData: SystemGeneralConfig;

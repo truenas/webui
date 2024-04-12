@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { Role } from 'app/enums/role.enum';
 import { IscsiWizardComponent } from 'app/pages/sharing/iscsi/iscsi-wizard/iscsi-wizard.component';
+import { iscsiElements } from 'app/pages/sharing/iscsi/iscsi.elements';
 import { IscsiService } from 'app/services/iscsi.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
@@ -44,6 +45,8 @@ export class IscsiComponent {
     label: this.translate.instant('Associated Targets'),
     path: '/sharing/iscsi/associatedtarget',
   }];
+
+  protected readonly searchableElements = iscsiElements;
 
   constructor(
     protected translate: TranslateService,

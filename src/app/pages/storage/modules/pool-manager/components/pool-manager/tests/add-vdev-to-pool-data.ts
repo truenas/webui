@@ -26,6 +26,9 @@ export const existingPool = {
             children: [],
             device: 'sdc1',
             disk: 'sdc',
+            stats: {
+              size: 12000138625024,
+            },
             unavail_disk: null,
           },
           {
@@ -37,6 +40,9 @@ export const existingPool = {
             children: [],
             device: 'sda1',
             disk: 'sda',
+            stats: {
+              size: 12000138625024,
+            },
             unavail_disk: null,
           },
         ],
@@ -58,6 +64,9 @@ export const existingPool = {
             children: [],
             device: 'sdh1',
             disk: 'sdh',
+            stats: {
+              size: 12000138625024,
+            },
             unavail_disk: null,
           },
           {
@@ -69,6 +78,9 @@ export const existingPool = {
             children: [],
             device: 'sdk1',
             disk: 'sdk',
+            stats: {
+              size: 12000138625024,
+            },
             unavail_disk: null,
           },
         ],
@@ -90,6 +102,9 @@ export const existingPool = {
             children: [],
             device: 'sdi1',
             disk: 'sdi',
+            stats: {
+              size: 12000138625024,
+            },
             unavail_disk: null,
           },
           {
@@ -101,6 +116,9 @@ export const existingPool = {
             children: [],
             device: 'sdj1',
             disk: 'sdj',
+            stats: {
+              size: 12000138625024,
+            },
             unavail_disk: null,
           },
         ],

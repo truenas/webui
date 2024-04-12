@@ -24,16 +24,16 @@ export function parseHtmlFile(
   const cheerioRoot$ = cheerio.load(htmlContent);
   const elements: UiSearchableElement[] = [];
 
-  cheerioRoot$('[ixUiSearchableElement]').each((_, element) => {
-    const configKeysSplitted = cheerioRoot$(element).attr('[ixsearchconfig]').split('.');
-    const childKey = configKeysSplitted[configKeysSplitted.length - 1] as keyof UiSearchableElement;
-    const parentKey = configKeysSplitted[configKeysSplitted.length - 3] as keyof UiSearchableElement;
+  cheerioRoot$('[\\[ixUiSearch\\]]').each((_, element) => {
+    const configKeysSplit = cheerioRoot$(element).attr('[ixuisearch]').split('.');
+    const childKey = configKeysSplit[configKeysSplit.length - 1] as keyof UiSearchableElement;
+    const parentKey = configKeysSplit[configKeysSplit.length - 3] as keyof UiSearchableElement;
     const configObject = convertDataStringToDataObject(elementConfig);
 
     let mergedElement;
 
     if (
-      configKeysSplitted?.[configKeysSplitted.length - 2] as keyof UiSearchableElement === TsExtraction.ElementsConfig
+      configKeysSplit?.[configKeysSplit.length - 2] as keyof UiSearchableElement === TsExtraction.ElementsConfig
     ) {
       mergedElement = mergeElementsData(cheerioRoot$, element, configObject, parentKey, childKey, componentProperties);
     } else {
@@ -61,11 +61,15 @@ function mergeElementsData(
     const child = parent?.elements?.[childKey] || {};
 
     const hierarchy = [...(parent?.hierarchy || []), ...(child?.hierarchy || [])];
-    const synonyms = [...(parent?.synonyms || []), ...(child?.synonyms || [])];
-    const anchorRouterLink = parent?.anchorRouterLink || child?.anchorRouterLink;
-    const triggerAnchor = parent?.triggerAnchor || child?.triggerAnchor || null;
+    const synonyms = [
+      ...(parent?.synonyms || []),
+      ...(child?.synonyms || []),
+      ...(parent?.hierarchy.slice(-1) || []),
+    ];
+    const anchorRouterLink = child?.anchorRouterLink || parent?.anchorRouterLink;
+    const triggerAnchor = child?.triggerAnchor || parent?.triggerAnchor || null;
     const routerLink = parseRouterLink(cheerioRoot$(element).attr('[routerlink]')) ?? null;
-    let requiredRoles = parent.requiredRoles || child.requiredRoles || [];
+    let requiredRoles = child.requiredRoles || parent.requiredRoles || [];
 
     const rolesAttrName = cheerioRoot$(element).attr('*ixrequiresroles') || '';
 

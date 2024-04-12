@@ -13,6 +13,7 @@ import { toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import { helptextVmWizard } from 'app/helptext/vm/vm-wizard/vm-wizard';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { VirtualMachine } from 'app/interfaces/virtual-machine.interface';
+import { EmptyService } from 'app/modules/empty/empty.service';
 import { IxFileSizePipe } from 'app/modules/ix-file-size/ix-file-size.pipe';
 import { AsyncDataProvider } from 'app/modules/ix-table2/classes/async-data-provider/async-data-provider';
 import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
@@ -21,7 +22,7 @@ import {
 } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-toggle/ix-cell-toggle.component';
 import { Column, ColumnComponent } from 'app/modules/ix-table2/interfaces/table-column.interface';
 import { createTable } from 'app/modules/ix-table2/utils';
-import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
+import { vmListElements } from 'app/pages/vm/vm-list/vm-list.elements';
 import { VmWizardComponent } from 'app/pages/vm/vm-wizard/vm-wizard.component';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
@@ -37,6 +38,7 @@ import { WebSocketService } from 'app/services/ws.service';
 })
 export class VmListComponent implements OnInit {
   protected readonly requiredRoles = [Role.VmWrite];
+  protected readonly searchableElements = vmListElements;
 
   vmMachines: VirtualMachine[] = [];
   filterString = '';
@@ -150,6 +152,9 @@ export class VmListComponent implements OnInit {
   ngOnInit(): void {
     this.createDataProvider();
     this.listenForVmUpdates();
+    this.dataProvider.emptyType$.pipe(untilDestroyed(this)).subscribe(() => {
+      this.onListFiltered(this.filterString);
+    });
   }
 
   createDataProvider(): void {
@@ -158,14 +163,14 @@ export class VmListComponent implements OnInit {
       tap((vms) => this.vmMachines = vms),
     );
     this.dataProvider = new AsyncDataProvider(virtualMachines$);
-    this.dataProvider.load();
+    this.refresh();
   }
 
   listenForVmUpdates(): void {
     this.vmService.refreshVmList$
       .pipe(untilDestroyed(this))
       .subscribe(() => {
-        this.dataProvider.load();
+        this.refresh();
       });
   }
 
@@ -175,7 +180,7 @@ export class VmListComponent implements OnInit {
       .pipe(filter(Boolean), untilDestroyed(this))
       .subscribe(() => {
         this.vmService.checkMemory();
-        this.dataProvider.load();
+        this.refresh();
       });
   }
 
@@ -206,9 +211,13 @@ export class VmListComponent implements OnInit {
   }
 
   protected onListFiltered(query: string): void {
-    const filterString = query.toLowerCase();
+    this.filterString = query.toLowerCase();
     this.dataProvider.setRows(this.vmMachines.filter((vm) => {
-      return vm.name.includes(filterString);
+      return vm.name.toLowerCase().includes(this.filterString);
     }));
+  }
+
+  private refresh(): void {
+    this.dataProvider.load();
   }
 }

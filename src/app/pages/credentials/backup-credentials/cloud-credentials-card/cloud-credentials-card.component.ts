@@ -7,12 +7,12 @@ import { switchMap, filter, tap } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
 import { CloudSyncCredential } from 'app/interfaces/cloudsync-credential.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { EmptyService } from 'app/modules/empty/empty.service';
 import { AsyncDataProvider } from 'app/modules/ix-table2/classes/async-data-provider/async-data-provider';
 import { actionsColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
 import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { SortDirection } from 'app/modules/ix-table2/enums/sort-direction.enum';
 import { createTable } from 'app/modules/ix-table2/utils';
-import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
 import { CloudCredentialsFormComponent } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/cloud-credentials-form.component';
 import { CloudCredentialService } from 'app/services/cloud-credential.service';
 import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
@@ -103,14 +103,14 @@ export class CloudCredentialsCardComponent implements OnInit {
   }
 
   doAdd(): void {
-    const close$ = this.chainedSlideinService.pushComponent(CloudCredentialsFormComponent);
+    const close$ = this.chainedSlideinService.open(CloudCredentialsFormComponent);
     close$.pipe(filter((response) => !!response.response), untilDestroyed(this)).subscribe(() => {
       this.getCredentials();
     });
   }
 
   doEdit(credential: CloudSyncCredential): void {
-    const close$ = this.chainedSlideinService.pushComponent(CloudCredentialsFormComponent, false, credential);
+    const close$ = this.chainedSlideinService.open(CloudCredentialsFormComponent, false, credential);
     close$.pipe(filter((response) => !!response.response), untilDestroyed(this)).subscribe(() => {
       this.getCredentials();
     });

@@ -16,12 +16,12 @@ import { ServiceStatus } from 'app/enums/service-status.enum';
 import { Service, ServiceRow } from 'app/interfaces/service.interface';
 import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { EmptyService } from 'app/modules/empty/empty.service';
 import { ArrayDataProvider } from 'app/modules/ix-table2/classes/array-data-provider/array-data-provider';
 import { actionsColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
 import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { toggleColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-toggle/ix-cell-toggle.component';
 import { createTable } from 'app/modules/ix-table2/utils';
-import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { ServiceFtpComponent } from 'app/pages/services/components/service-ftp/service-ftp.component';
 import { ServiceNfsComponent } from 'app/pages/services/components/service-nfs/service-nfs.component';
@@ -30,6 +30,7 @@ import { ServiceSmbComponent } from 'app/pages/services/components/service-smb/s
 import { ServiceSnmpComponent } from 'app/pages/services/components/service-snmp/service-snmp.component';
 import { ServiceSshComponent } from 'app/pages/services/components/service-ssh/service-ssh.component';
 import { ServiceUpsComponent } from 'app/pages/services/components/service-ups/service-ups.component';
+import { servicesElements } from 'app/pages/services/services.elements';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IscsiService } from 'app/services/iscsi.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -50,6 +51,8 @@ type ServiceStartStop = 'service.stop' | 'service.start';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ServicesComponent implements OnInit {
+  protected readonly searchableElements = servicesElements;
+
   columns = createTable<ServiceRow>([
     textColumn({
       title: this.translate.instant('Name'),
@@ -144,12 +147,6 @@ export class ServicesComponent implements OnInit {
     }));
   }
 
-  private createDataSource(services: ServiceRow[] = []): void {
-    this.services = services;
-    this.dataProvider.setRows(services);
-    this.cdr.markForCheck();
-  }
-
   private getData(): void {
     this.loading = true;
     this.error = false;
@@ -163,7 +160,8 @@ export class ServicesComponent implements OnInit {
       untilDestroyed(this),
     ).subscribe({
       next: (services) => {
-        this.createDataSource(services);
+        this.services = services;
+        this.onListFiltered(this.filterString);
         this.loading = false;
         this.error = false;
         this.cdr.markForCheck();

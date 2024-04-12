@@ -45,6 +45,7 @@
   class="table"
   [ix-table2-empty]="!(dataProvider.currentPageCount$ | async)"
   [emptyConfig]="emptyService.defaultEmptyConfig(dataProvider.emptyType$ | async)"
+  [ixUiSearch]="searchableElements.elements.boot"
 >
   <thead
     ix-table-head

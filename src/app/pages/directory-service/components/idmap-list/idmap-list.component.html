@@ -1,11 +1,11 @@
 <ix-page-header *ngIf="!inCard">
-  <ix-search-input1 (search)="onListFiltered($event)"></ix-search-input1>
+  <ix-search-input1 [value]="filterString" (search)="onListFiltered($event)"></ix-search-input1>
   <button *ixRequiresRoles="requiredRoles" mat-button color="primary" ixTest="add-idmap" (click)="doAdd()">
     {{ 'Add' | translate }}
   </button>
 </ix-page-header>
 
-<div class="table-container">
+<div class="table-container" [ixUiSearch]="searchableElements.elements.idMap">
   <mat-toolbar *ngIf="inCard" class="table-header">
     <div class="heading" [routerLink]="['/', 'directoryservice', 'idmap']">
       <h3>{{ 'Idmap' | translate }}</h3>

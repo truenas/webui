@@ -12,15 +12,16 @@ import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
 import { stringToTitleCase } from 'app/helpers/string-to-title-case';
 import { Choices } from 'app/interfaces/choices.interface';
 import { Disk, UnusedDisk } from 'app/interfaces/storage.interface';
+import { EmptyService } from 'app/modules/empty/empty.service';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { AsyncDataProvider } from 'app/modules/ix-table2/classes/async-data-provider/async-data-provider';
 import { checkboxColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-checkbox/ix-cell-checkbox.component';
 import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { Column, ColumnComponent } from 'app/modules/ix-table2/interfaces/table-column.interface';
 import { createTable } from 'app/modules/ix-table2/utils';
-import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
 import { DiskBulkEditComponent } from 'app/pages/storage/modules/disks/components/disk-bulk-edit/disk-bulk-edit.component';
 import { DiskFormComponent } from 'app/pages/storage/modules/disks/components/disk-form/disk-form.component';
+import { diskListElements } from 'app/pages/storage/modules/disks/components/disk-list/disk-list.elements';
 import { DiskWipeDialogComponent } from 'app/pages/storage/modules/disks/components/disk-wipe-dialog/disk-wipe-dialog.component';
 import { ManualTestDialogComponent, ManualTestDialogParams } from 'app/pages/storage/modules/disks/components/manual-test-dialog/manual-test-dialog.component';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -40,6 +41,7 @@ interface DiskUi extends Disk {
 })
 export class DiskListComponent implements OnInit {
   readonly requiredRoles = [Role.FullAdmin];
+  protected readonly searchableElements = diskListElements;
 
   dataProvider: AsyncDataProvider<DiskUi>;
   filterString = '';

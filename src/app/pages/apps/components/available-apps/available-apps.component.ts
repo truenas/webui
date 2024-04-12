@@ -9,6 +9,7 @@ import {
   Observable, combineLatest, filter, map,
 } from 'rxjs';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
+import { availableAppsElements } from 'app/pages/apps/components/available-apps/available-apps.elements';
 import { AppsFilterStore } from 'app/pages/apps/store/apps-filter-store.service';
 import { AppsByCategory, AppsStore } from 'app/pages/apps/store/apps-store.service';
 
@@ -19,6 +20,8 @@ import { AppsByCategory, AppsStore } from 'app/pages/apps/store/apps-store.servi
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AvailableAppsComponent implements OnInit {
+  protected readonly searchableElements = availableAppsElements;
+
   showViewMoreButton$: Observable<boolean> = this.appsFilterStore.filterValues$.pipe(
     map((appsFilter) => {
       return !appsFilter.sort && !appsFilter.categories.length;

@@ -6,8 +6,7 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatInputModule } from '@angular/material/input';
 import {
   createHostFactory,
-  mockProvider,
-  Spectator,
+  mockProvider, SpectatorHost,
 } from '@ngneat/spectator/jest';
 import { MockComponents } from 'ng-mocks';
 import { of } from 'rxjs';
@@ -44,7 +43,7 @@ import { NetworkService } from 'app/services/network.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 
 describe('NetworkComponent', () => {
-  let spectator: Spectator<NetworkComponent>;
+  let spectator: SpectatorHost<NetworkComponent>;
   let loader: HarnessLoader;
   let rootLoader: HarnessLoader;
   let websocket: MockWebSocketService;

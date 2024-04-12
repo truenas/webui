@@ -1,4 +1,4 @@
-<mat-card class="card">
+<mat-card class="card" [ixUiSearch]="searchableElements.elements.manualUpdate">
   <mat-card-content>
     <mat-progress-bar
       *ngIf="isFormLoading$ | async"

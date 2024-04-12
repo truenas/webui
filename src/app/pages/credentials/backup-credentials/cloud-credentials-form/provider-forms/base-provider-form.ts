@@ -26,5 +26,5 @@ export abstract class BaseProviderFormComponent<T = CloudCredential['attributes'
     return nonNullAttributes as T;
   }
 
-  getFormSetter$: () => BehaviorSubject<T>;
+  abstract getFormSetter$: () => BehaviorSubject<T>;
 }

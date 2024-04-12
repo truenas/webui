@@ -1,5 +1,6 @@
 import { ChartReleaseStatus } from 'app/enums/chart-release-status.enum';
 import { ChartSchemaType } from 'app/enums/chart-schema-type.enum';
+import { CodeEditorLanguage } from 'app/enums/code-editor-language.enum';
 import { ChartMetadata } from 'app/interfaces/catalog.interface';
 import { HierarchicalObjectMap } from 'app/interfaces/hierarhical-object-map.interface';
 import { QueryParams } from 'app/interfaces/query-api.interface';
@@ -142,6 +143,7 @@ export interface ChartSchemaEnum {
 
 export interface ChartSchemaNodeConf {
   type: ChartSchemaType;
+  language?: CodeEditorLanguage;
   attrs?: ChartSchemaNode[];
   null?: boolean;
   items?: ChartSchemaNode[];

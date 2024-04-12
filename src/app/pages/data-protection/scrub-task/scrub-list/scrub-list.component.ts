@@ -7,6 +7,7 @@ import { filter, switchMap } from 'rxjs/operators';
 import { Role } from 'app/enums/role.enum';
 import { PoolScrubTask } from 'app/interfaces/pool-scrub.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { EmptyService } from 'app/modules/empty/empty.service';
 import { AsyncDataProvider } from 'app/modules/ix-table2/classes/async-data-provider/async-data-provider';
 import {
   actionsColumn,
@@ -20,10 +21,10 @@ import {
   yesNoColumn,
 } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-yesno/ix-cell-yesno.component';
 import { createTable } from 'app/modules/ix-table2/utils';
-import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { CrontabExplanationPipe } from 'app/modules/scheduler/pipes/crontab-explanation.pipe';
 import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
+import { scrubListElements } from 'app/pages/data-protection/scrub-task/scrub-list/scrub-list.elements';
 import { ScrubTaskFormComponent } from 'app/pages/data-protection/scrub-task/scrub-task-form/scrub-task-form.component';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -39,6 +40,7 @@ import { WebSocketService } from 'app/services/ws.service';
 })
 export class ScrubListComponent implements OnInit {
   readonly requiredRoles = [Role.FullAdmin];
+  protected readonly searchableElements = scrubListElements;
 
   dataProvider: AsyncDataProvider<PoolScrubTask>;
 

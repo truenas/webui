@@ -1,5 +1,8 @@
 import { Spectator, createComponentFactory } from '@ngneat/spectator/jest';
 import { MockComponents } from 'ng-mocks';
+import {
+  CloudBackupCardComponent,
+} from 'app/pages/data-protection/cloud-backup/cloud-backup-card/cloud-backup-card.component';
 import { CloudSyncTaskCardComponent } from 'app/pages/data-protection/cloudsync/cloudsync-task-card/cloudsync-task-card.component';
 import { DataProtectionDashboardComponent } from 'app/pages/data-protection/data-protection-dashboard.component';
 import { ReplicationTaskCardComponent } from 'app/pages/data-protection/replication/replication-task-card/replication-task-card.component';
@@ -14,6 +17,7 @@ describe('DataProtectionDashboardComponent', () => {
     component: DataProtectionDashboardComponent,
     declarations: [
       MockComponents(
+        CloudBackupCardComponent,
         ScrubTaskCardComponent,
         CloudSyncTaskCardComponent,
         SnapshotTaskCardComponent,
@@ -30,7 +34,8 @@ describe('DataProtectionDashboardComponent', () => {
     spectator = createComponent();
   });
 
-  it('renders Backup Credentials Cards', () => {
+  it('renders data protection cards', () => {
+    expect(spectator.query(CloudBackupCardComponent)).toExist();
     expect(spectator.query(ScrubTaskCardComponent)).toExist();
     expect(spectator.query(CloudSyncTaskCardComponent)).toExist();
     expect(spectator.query(SnapshotTaskCardComponent)).toExist();

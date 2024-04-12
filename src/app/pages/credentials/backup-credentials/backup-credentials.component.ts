@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { UntilDestroy } from '@ngneat/until-destroy';
+import { backupCredentialsElements } from 'app/pages/credentials/backup-credentials/backup-credentials.elements';
 
 @UntilDestroy()
 @Component({
@@ -7,4 +8,6 @@ import { UntilDestroy } from '@ngneat/until-destroy';
   styleUrls: ['./backup-credentials.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class BackupCredentialsComponent {}
+export class BackupCredentialsComponent {
+  protected readonly searchableElements = backupCredentialsElements;
+}

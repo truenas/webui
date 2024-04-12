@@ -51,7 +51,7 @@ export class InterfaceStatusIconComponent implements OnChanges {
       return this.translate.instant('N/A');
     };
 
-    return this.translate.instant('Sent: {sent} Received: {received}', {
+    return this.translate.instant('Received: {received}/s Sent: {sent}/s', {
       sent: handleBytesResult(this.update.sent_bytes_rate),
       received: handleBytesResult(this.update.received_bytes_rate),
     });

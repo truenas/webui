@@ -142,7 +142,7 @@ export class DialogService {
    *      // Job completed
    *    },
    *    complete: () => {
-   *      // Job dialog closed for any reason: job completed, errored, aborted or dialog minimized.
+   *      // Job dialog closed for any reason: job completed or dialog minimized.
    *    },
    *    error: (error) => {
    *      // Job errored or aborted. Handle error.

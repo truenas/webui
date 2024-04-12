@@ -39,7 +39,7 @@ export interface StorageSettings {
 })
 export class StorageSettingsFormComponent implements OnInit {
   protected readonly requiredRoles = [Role.FullAdmin];
-  protected readonly searchElements = storageSettingsFormElements;
+  protected readonly searchableElements = storageSettingsFormElements;
 
   isFormLoading = false;
 

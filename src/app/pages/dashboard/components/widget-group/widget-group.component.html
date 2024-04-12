@@ -1,0 +1,19 @@
+<ng-container *ngIf="demo === 0">
+  <div class="slot">
+    <ix-widget-hostname [size]="SlotSize.Quarter"></ix-widget-hostname>
+  </div>
+  <div class="slot">
+    <ix-widget-hostname [size]="SlotSize.Quarter"></ix-widget-hostname>
+  </div>
+  <div class="slot">
+    <ix-widget-interface-ip [size]="SlotSize.Quarter" [settings]="{ interface: 'eno1' }"></ix-widget-interface-ip>
+  </div>
+  <div class="slot">
+    <ix-widget-interface-ip [size]="SlotSize.Quarter" [settings]="{ interface: 'notExistent1' }"></ix-widget-interface-ip>
+  </div>
+</ng-container>
+<ng-container *ngIf="demo !== 0">
+  <div class="slot">
+    <ix-widget-help [size]="SlotSize.Full"></ix-widget-help>
+  </div>
+</ng-container>

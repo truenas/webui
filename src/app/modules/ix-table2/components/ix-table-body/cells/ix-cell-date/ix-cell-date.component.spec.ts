@@ -14,6 +14,7 @@ describe('IxCellDateComponent', () => {
   const createComponent = createComponentFactory({
     component: IxCellDateComponent<TestTableData>,
     imports: [IxTable2Module],
+    detectChanges: false,
     providers: [
       mockProvider(LocaleService, {
         timezone: 'America/Los_Angeles',
@@ -25,13 +26,11 @@ describe('IxCellDateComponent', () => {
   });
 
   beforeEach(() => {
-    spectator = createComponent({
-      props: {
-        propertyName: 'dateField',
-        row: { dateField: new Date('2023-07-12 09:10:00') },
-        rowTestId: () => '',
-      } as Partial<IxCellDateComponent<TestTableData>>,
-    });
+    spectator = createComponent();
+    spectator.component.propertyName = 'dateField';
+    spectator.component.setRow({ dateField: new Date('2023-07-12 09:10:00') });
+    spectator.component.rowTestId = () => '';
+    spectator.detectChanges();
   });
 
   it('shows default format datetime in template', () => {

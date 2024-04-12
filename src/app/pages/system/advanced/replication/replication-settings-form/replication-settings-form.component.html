@@ -9,11 +9,10 @@
       <ix-fieldset>
         <ix-input
           formControlName="max_parallel_replication_tasks"
-          ixUiSearchableElement
           type="number"
           [label]="'Replication Tasks Limit' | translate"
           [tooltip]="tooltips.max_parallel_replication_tasks | translate"
-          [ixSearchConfig]="searchElements.replicationTasksLimit"
+          [ixUiSearch]="searchableElements.replicationTasksLimit"
         ></ix-input>
       </ix-fieldset>
 

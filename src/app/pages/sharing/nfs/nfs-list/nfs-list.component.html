@@ -3,7 +3,7 @@
   <mat-toolbar-row>
     <h3>{{ 'NFS' | translate }}</h3>
     <div class="actions action-icon">
-      <ix-search-input1 (search)="onListFiltered($event)"></ix-search-input1>
+      <ix-search-input1 [value]="filterString" (search)="onListFiltered($event)"></ix-search-input1>
 
       <a mat-button ixTest="nfs-sessions" routerLink="/sharing/nfs/sessions">
         {{ 'NFS Sessions' | translate }}
@@ -16,7 +16,7 @@
       </button>
     </div>
   </mat-toolbar-row>
-  <mat-card-content>
+  <mat-card-content [ixUiSearch]="searchableElements.elements.nfs">
     <ix-table2
       [ix-table2-empty]="!(dataProvider.currentPageCount$ | async)"
       [emptyConfig]="emptyService.defaultEmptyConfig(dataProvider.emptyType$ | async)"

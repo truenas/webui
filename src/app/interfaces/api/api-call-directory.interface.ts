@@ -62,6 +62,7 @@ import {
   ChartReleaseUpgradeParams,
 } from 'app/interfaces/chart-release.interface';
 import { Choices } from 'app/interfaces/choices.interface';
+import { CloudBackup, CloudBackupSnapshot, CloudBackupUpdate } from 'app/interfaces/cloud-backup.interface';
 import {
   CloudSyncDirectoryListing,
   CloudSyncListDirectoryParams,
@@ -377,6 +378,14 @@ export interface ApiCallDirectory {
   'chart.release.pod_logs_choices': { params: [string]; response: Record<string, string[]> };
   'chart.release.query': { params: ChartReleaseQueryParams; response: ChartRelease[] };
   'chart.release.upgrade_summary': { params: ChartReleaseUpgradeParams; response: UpgradeSummary };
+
+  // CloudBackup
+  'cloud_backup.abort': { params: [id: number]; response: void };
+  'cloud_backup.create': { params: [CloudBackupUpdate]; response: CloudBackup };
+  'cloud_backup.delete': { params: [id: number]; response: boolean };
+  'cloud_backup.list_snapshots': { params: [id: number]; response: CloudBackupSnapshot[] };
+  'cloud_backup.query': { params: [id?: QueryParams<CloudBackup>]; response: CloudBackup[] };
+  'cloud_backup.update': { params: [id: number, update: CloudBackupUpdate]; response: CloudBackup };
 
   // CloudSync
   'cloudsync.abort': { params: [id: number]; response: boolean };
@@ -796,7 +805,6 @@ export interface ApiCallDirectory {
   'system.product_type': { params: void; response: ProductType };
   'system.security.config': { params: void; response: SystemSecurityConfig };
   'system.security.info.fips_available': { params: void; response: boolean };
-  'system.security.update': { params: [SystemSecurityConfig]; response: void };
   'system.set_time': { params: [number]; response: void };
 
   // Systemdataset

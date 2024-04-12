@@ -4,7 +4,7 @@
 
 <ix-available-apps-header></ix-available-apps-header>
 
-<div class="available-apps-list">
+<div class="available-apps-list" [ixUiSearch]="searchableElements.elements.available">
   <ix-fake-progress-bar
     *ngIf="(isLoading$ | async) || (isFiltering$ | async)"
     class="loader-bar"

@@ -1,5 +1,5 @@
 <ix-page-header>
-  <ix-search-input1 [value]="filterValue" (search)="filterUpdated($event)"></ix-search-input1>
+  <ix-search-input1 [value]="filterString" (search)="filterUpdated($event)"></ix-search-input1>
 
   <button mat-button ixTest="snapshots" [routerLink]="['/datasets', 'snapshots']">
     {{ 'Snapshots' | translate }}
@@ -15,6 +15,7 @@
 <div class="table-container">
   <ix-table2
     class="table"
+    [ixUiSearch]="searchableElements.elements.tasks"
     [ix-table2-empty]="!(dataProvider.currentPageCount$ | async)"
     [emptyConfig]="emptyService.defaultEmptyConfig(dataProvider.emptyType$ | async)"
   >

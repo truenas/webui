@@ -1,5 +1,5 @@
 import {
-  Gb, Mb, Tb, kb,
+  Gb, kb, Mb, Tb,
 } from 'app/constants/bits.constant';
 import {
   GiB, KiB, MiB, TiB,

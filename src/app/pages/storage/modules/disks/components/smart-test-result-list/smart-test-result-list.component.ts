@@ -1,7 +1,7 @@
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnInit,
 } from '@angular/core';
-import { UntilDestroy } from '@ngneat/until-destroy';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import {
   map, switchMap, tap,
@@ -11,13 +11,13 @@ import { SmartTestResultPageType } from 'app/enums/smart-test-results-page-type.
 import { QueryParams } from 'app/interfaces/query-api.interface';
 import { SmartTestResults, SmartTestResultsRow } from 'app/interfaces/smart-test.interface';
 import { Disk } from 'app/interfaces/storage.interface';
+import { EmptyService } from 'app/modules/empty/empty.service';
 import { AsyncDataProvider } from 'app/modules/ix-table2/classes/async-data-provider/async-data-provider';
 import { stateButtonColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-state-button/ix-cell-state-button.component';
 import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { SortDirection } from 'app/modules/ix-table2/enums/sort-direction.enum';
 import { Column, ColumnComponent } from 'app/modules/ix-table2/interfaces/table-column.interface';
 import { createTable } from 'app/modules/ix-table2/utils';
-import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
@@ -95,6 +95,9 @@ export class SmartTestResultListComponent implements OnInit {
 
   ngOnInit(): void {
     this.createDataProvider();
+    this.dataProvider.emptyType$.pipe(untilDestroyed(this)).subscribe(() => {
+      this.onListFiltered(this.filterString);
+    });
   }
 
   createDataProvider(): void {
@@ -118,7 +121,7 @@ export class SmartTestResultListComponent implements OnInit {
       tap((smartTestResults) => this.smartTestResults = smartTestResults),
     );
     this.dataProvider = new AsyncDataProvider<SmartTestResultsRow>(smartTestResults$);
-    this.dataProvider.load();
+    this.refresh();
     this.setDefaultSort();
   }
 
@@ -133,7 +136,7 @@ export class SmartTestResultListComponent implements OnInit {
   onListFiltered(query: string): void {
     this.filterString = query.toLowerCase();
     this.dataProvider.setRows(this.smartTestResults.filter((smartTestResult) => {
-      return JSON.stringify(smartTestResult).includes(this.filterString);
+      return JSON.stringify(smartTestResult).toLowerCase().includes(this.filterString);
     }));
   }
 
@@ -141,5 +144,9 @@ export class SmartTestResultListComponent implements OnInit {
     this.columns = [...columns];
     this.cdr.detectChanges();
     this.cdr.markForCheck();
+  }
+
+  private refresh(): void {
+    this.dataProvider.load();
   }
 }

@@ -31,6 +31,13 @@ export class NavigationService {
       state: 'dashboard',
     },
     {
+      name: T('Dashboard (old)'),
+      type: MenuItemType.Link,
+      tooltip: T('Dashboard'),
+      icon: 'dashboard',
+      state: 'dashboard-old',
+    },
+    {
       name: T('Storage'),
       type: MenuItemType.Link,
       tooltip: T('Storage'),
@@ -108,9 +115,9 @@ export class NavigationService {
       state: 'reportsdashboard/cpu',
     },
     {
-      name: T('System Settings'),
+      name: T('System'),
       type: MenuItemType.SlideOut,
-      tooltip: T('System Settings'),
+      tooltip: T('System'),
       icon: 'settings',
       state: 'system',
       sub: [
@@ -127,7 +134,8 @@ export class NavigationService {
         },
         { name: T('Alert Settings'), state: 'alert-settings' },
         { name: T('Audit'), state: 'audit' },
-        { name: T('Enclosure'), state: 'viewenclosure', isVisible$: this.hasEnclosure$ },
+        { name: T('Enclosure'), state: 'oldviewenclosure', isVisible$: this.hasEnclosure$ },
+        { name: T('New Enclosure'), state: 'viewenclosure', isVisible$: this.hasEnclosure$ },
       ],
     },
   ];

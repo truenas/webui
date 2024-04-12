@@ -10,15 +10,16 @@ import { Role } from 'app/enums/role.enum';
 import { helptextApps } from 'app/helptext/apps/apps';
 import { Catalog } from 'app/interfaces/catalog.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { EmptyService } from 'app/modules/empty/empty.service';
 import { AsyncDataProvider } from 'app/modules/ix-table2/classes/async-data-provider/async-data-provider';
 import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { SortDirection } from 'app/modules/ix-table2/enums/sort-direction.enum';
 import { createTable } from 'app/modules/ix-table2/utils';
-import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
 import {
   CatalogAddFormComponent,
 } from 'app/pages/apps/components/catalogs/catalog-add-form/catalog-add-form.component';
 import { CatalogDeleteDialogComponent } from 'app/pages/apps/components/catalogs/catalog-delete-dialog/catalog-delete-dialog.component';
+import { catalogsElements } from 'app/pages/apps/components/catalogs/catalogs.elements';
 import {
   ManageCatalogSummaryDialogComponent,
 } from 'app/pages/apps/components/catalogs/manage-catalog-summary/manage-catalog-summary-dialog.component';
@@ -35,6 +36,9 @@ import { CatalogEditFormComponent } from './catalog-edit-form/catalog-edit-form.
 })
 export class CatalogsComponent implements OnInit {
   protected readonly requiredRoles = [Role.CatalogWrite];
+  protected readonly searchableElements = catalogsElements;
+
+  filterString = '';
 
   catalogSyncJobIds = new Set<number>();
   dataProvider: AsyncDataProvider<Catalog>;
@@ -83,8 +87,10 @@ export class CatalogsComponent implements OnInit {
     this.dataProvider = new AsyncDataProvider<Catalog>(catalogs$);
     this.setDefaultSort();
     this.refresh();
-
     this.listenForCatalogSyncJobs();
+    this.dataProvider.emptyType$.pipe(untilDestroyed(this)).subscribe(() => {
+      this.onListFiltered(this.filterString);
+    });
   }
 
   listenForCatalogSyncJobs(): void {
@@ -105,11 +111,11 @@ export class CatalogsComponent implements OnInit {
   }
 
   onListFiltered(query: string): void {
-    const filterString = query.toLowerCase();
+    this.filterString = query.toLowerCase();
     this.dataProvider.setRows(this.catalogs.filter((catalog) => {
-      return catalog.label.toLowerCase().includes(filterString)
-        || catalog.id.toLowerCase().includes(filterString)
-        || catalog.repository.toString().includes(filterString);
+      return catalog.label.toLowerCase().includes(this.filterString)
+        || catalog.id.toLowerCase().includes(this.filterString)
+        || catalog.repository.toString().toLowerCase().includes(this.filterString);
     }));
   }
 

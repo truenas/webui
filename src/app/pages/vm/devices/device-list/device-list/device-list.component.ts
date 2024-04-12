@@ -9,6 +9,7 @@ import { filter, tap } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
 import { vmDeviceTypeLabels } from 'app/enums/vm.enum';
 import { VmDevice } from 'app/interfaces/vm-device.interface';
+import { EmptyService } from 'app/modules/empty/empty.service';
 import { AsyncDataProvider } from 'app/modules/ix-table2/classes/async-data-provider/async-data-provider';
 import {
   actionsColumn,
@@ -16,7 +17,6 @@ import {
 import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { SortDirection } from 'app/modules/ix-table2/enums/sort-direction.enum';
 import { createTable } from 'app/modules/ix-table2/utils';
-import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
 import { DeviceFormComponent } from 'app/pages/vm/devices/device-form/device-form.component';
 import {
   DeviceDeleteModalComponent,
@@ -83,6 +83,9 @@ export class DeviceListComponent implements OnInit {
     this.dataProvider = new AsyncDataProvider<VmDevice>(devices$);
     this.setDefaultSort();
     this.loadDevices();
+    this.dataProvider.emptyType$.pipe(untilDestroyed(this)).subscribe(() => {
+      this.onListFiltered(this.filterString);
+    });
   }
 
   loadDevices(): void {

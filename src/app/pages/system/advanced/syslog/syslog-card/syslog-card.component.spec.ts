@@ -43,7 +43,7 @@ describe('SyslogCardComponent', () => {
         showFirstTimeWarningIfNeeded: jest.fn(() => of(true)),
       }),
       mockProvider(IxChainedSlideInService, {
-        pushComponent: jest.fn(() => of({ response: true, error: null })),
+        open: jest.fn(() => of({ response: true, error: null })),
       }),
     ],
   });
@@ -71,7 +71,7 @@ describe('SyslogCardComponent', () => {
     await configureButton.click();
 
     expect(spectator.inject(AdvancedSettingsService).showFirstTimeWarningIfNeeded).toHaveBeenCalled();
-    expect(spectator.inject(IxChainedSlideInService).pushComponent).toHaveBeenCalledWith(
+    expect(spectator.inject(IxChainedSlideInService).open).toHaveBeenCalledWith(
       SyslogFormComponent,
       false,
       {

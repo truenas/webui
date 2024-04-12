@@ -11,14 +11,15 @@ import { Role } from 'app/enums/role.enum';
 import { formatDistanceToNowShortened } from 'app/helpers/format-distance-to-now-shortened';
 import { PeriodicSnapshotTaskUi } from 'app/interfaces/periodic-snapshot-task.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { EmptyService } from 'app/modules/empty/empty.service';
 import { AsyncDataProvider } from 'app/modules/ix-table2/classes/async-data-provider/async-data-provider';
 import { stateButtonColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-state-button/ix-cell-state-button.component';
 import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { Column, ColumnComponent } from 'app/modules/ix-table2/interfaces/table-column.interface';
 import { createTable } from 'app/modules/ix-table2/utils';
-import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
 import { extractActiveHoursFromCron, scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
 import { SnapshotTaskFormComponent } from 'app/pages/data-protection/snapshot-task/snapshot-task-form/snapshot-task-form.component';
+import { snapshotTaskListElements } from 'app/pages/data-protection/snapshot-task/snapshot-task-list/snapshot-task-list.elements';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { StorageService } from 'app/services/storage.service';
@@ -34,9 +35,10 @@ import { WebSocketService } from 'app/services/ws.service';
 })
 export class SnapshotTaskListComponent implements OnInit {
   readonly requiredRoles = [Role.SnapshotTaskWrite];
+  protected readonly searchableElements = snapshotTaskListElements;
 
   snapshotTasks: PeriodicSnapshotTaskUi[] = [];
-  filterValue = '';
+  filterString = '';
   dataProvider: AsyncDataProvider<PeriodicSnapshotTaskUi>;
 
   protected columns = createTable<PeriodicSnapshotTaskUi>([
@@ -145,7 +147,7 @@ export class SnapshotTaskListComponent implements OnInit {
     private route: ActivatedRoute,
     private cdr: ChangeDetectorRef,
   ) {
-    this.filterValue = this.route.snapshot.paramMap.get('dataset') || '';
+    this.filterString = this.route.snapshot.paramMap.get('dataset') || '';
   }
 
   ngOnInit(): void {
@@ -160,7 +162,11 @@ export class SnapshotTaskListComponent implements OnInit {
 
     this.getSnapshotTasks();
 
-    tasks$.pipe(take(1), untilDestroyed(this)).subscribe(() => this.filterUpdated(this.filterValue));
+    tasks$.pipe(take(1), untilDestroyed(this)).subscribe(() => this.filterUpdated(this.filterString));
+
+    this.dataProvider.emptyType$.pipe(untilDestroyed(this)).subscribe(() => {
+      this.filterUpdated(this.filterString);
+    });
   }
 
   getSnapshotTasks(): void {
@@ -174,7 +180,7 @@ export class SnapshotTaskListComponent implements OnInit {
   }
 
   filterUpdated(query: string): void {
-    this.filterValue = query;
+    this.filterString = query;
     this.dataProvider.setRows(this.snapshotTasks.filter(this.filterTask));
   }
 
@@ -209,7 +215,7 @@ export class SnapshotTaskListComponent implements OnInit {
   }
 
   private filterTask = (task: PeriodicSnapshotTaskUi): boolean => {
-    return task.dataset.toLowerCase().includes(this.filterValue.toLowerCase())
-      || task.naming_schema.toLowerCase().includes(this.filterValue.toLowerCase());
+    return task.dataset.toLowerCase().includes(this.filterString.toLowerCase())
+      || task.naming_schema.toLowerCase().includes(this.filterString.toLowerCase());
   };
 }

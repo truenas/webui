@@ -7,12 +7,12 @@ import { switchMap, filter, tap } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
 import { KeychainSshCredentials } from 'app/interfaces/keychain-credential.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { EmptyService } from 'app/modules/empty/empty.service';
 import { AsyncDataProvider } from 'app/modules/ix-table2/classes/async-data-provider/async-data-provider';
 import { actionsColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
 import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { SortDirection } from 'app/modules/ix-table2/enums/sort-direction.enum';
 import { createTable } from 'app/modules/ix-table2/utils';
-import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
 import { SshConnectionFormComponent } from 'app/pages/credentials/backup-credentials/ssh-connection-form/ssh-connection-form.component';
 import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 import { KeychainCredentialService } from 'app/services/keychain-credential.service';
@@ -87,12 +87,12 @@ export class SshConnectionCardComponent implements OnInit {
   }
 
   doAdd(): void {
-    const closer$ = this.chainedSlideInService.pushComponent(SshConnectionFormComponent);
+    const closer$ = this.chainedSlideInService.open(SshConnectionFormComponent);
     closer$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => this.getCredentials());
   }
 
   doEdit(credential: KeychainSshCredentials): void {
-    const closer$ = this.chainedSlideInService.pushComponent(SshConnectionFormComponent, false, credential);
+    const closer$ = this.chainedSlideInService.open(SshConnectionFormComponent, false, credential);
     closer$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => this.getCredentials());
   }
 

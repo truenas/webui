@@ -11,6 +11,7 @@ import { helptextSystemKmip } from 'app/helptext/system/kmip';
 import { KmipConfigUpdate } from 'app/interfaces/kmip-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { kmipElements } from 'app/pages/credentials/kmip/kmip.elements';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -25,6 +26,7 @@ export class KmipComponent implements OnInit {
   isKmipEnabled = false;
   isSyncPending = false;
   isLoading = false;
+  protected readonly searchableElements = kmipElements;
 
   form = this.formBuilder.group({
     server: [''],

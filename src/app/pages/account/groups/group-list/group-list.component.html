@@ -1,5 +1,6 @@
 <ix-page-header>
   <ix-search-input1
+    [value]="filterString"
     (search)="onListFiltered($event)"
   ></ix-search-input1>
   <mat-slide-toggle
@@ -18,12 +19,19 @@
   >
     {{ 'Privileges' | translate }}
   </a>
-  <button *ixRequiresRoles="requiredRoles" mat-button ixTest="add-group" [color]="'primary'" (click)="doAdd()">
+  <button
+    *ixRequiresRoles="requiredRoles"
+    mat-button
+    ixTest="add-group"
+    [ixUiSearch]="searchableElements.elements.add"
+    [color]="'primary'"
+    (click)="doAdd()"
+  >
     {{ 'Add' | translate }}
   </button>
 </ix-page-header>
 
-<div class="table-container">
+<div class="table-container" [ixUiSearch]="searchableElements.elements.list">
   <ix-table2
     [ix-table2-empty]="!(dataProvider.currentPageCount$ | async)"
     [emptyConfig]="emptyConfigService.defaultEmptyConfig((emptyType$ | async))"

@@ -56,7 +56,7 @@ describe('SysctlCardComponent', () => {
         confirm: jest.fn(() => of(true)),
       }),
       mockProvider(IxChainedSlideInService, {
-        pushComponent: jest.fn(() => of({ response: true, error: null })),
+        open: jest.fn(() => of({ response: true, error: null })),
       }),
       mockProvider(ChainedRef, { close: jest.fn() }),
       mockProvider(AdvancedSettingsService, {
@@ -99,7 +99,7 @@ describe('SysctlCardComponent', () => {
     const editButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'edit' }), 1, 4);
     await editButton.click();
 
-    expect(spectator.inject(IxChainedSlideInService).pushComponent).toHaveBeenCalledWith(
+    expect(spectator.inject(IxChainedSlideInService).open).toHaveBeenCalledWith(
       TunableFormComponent,
       false,
       expect.objectContaining(items[0]),

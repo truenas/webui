@@ -3,7 +3,6 @@ import {
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import _ from 'lodash';
 import {
   filter, map, of, switchMap, tap,
 } from 'rxjs';
@@ -12,14 +11,15 @@ import { IdmapName } from 'app/enums/idmap.enum';
 import { Role } from 'app/enums/role.enum';
 import { helptextIdmap } from 'app/helptext/directory-service/idmap';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { EmptyService } from 'app/modules/empty/empty.service';
 import { AsyncDataProvider } from 'app/modules/ix-table2/classes/async-data-provider/async-data-provider';
 import { actionsColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
 import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { SortDirection } from 'app/modules/ix-table2/enums/sort-direction.enum';
 import { createTable } from 'app/modules/ix-table2/utils';
-import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
 import { ActiveDirectoryComponent } from 'app/pages/directory-service/components/active-directory/active-directory.component';
 import { IdmapFormComponent } from 'app/pages/directory-service/components/idmap-form/idmap-form.component';
+import { idMapElements } from 'app/pages/directory-service/components/idmap-list/idmap-list.elements';
 import { IdmapRow } from 'app/pages/directory-service/components/idmap-list/idmap-row.interface';
 import { requiredIdmapDomains } from 'app/pages/directory-service/utils/required-idmap-domains.utils';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
@@ -39,6 +39,7 @@ export class IdmapListComponent implements OnInit {
   @Input() inCard = false;
 
   readonly requiredRoles = [Role.DirectoryServiceWrite];
+  protected readonly searchableElements = idMapElements;
 
   filterString = '';
   dataProvider: AsyncDataProvider<IdmapRow>;
@@ -158,6 +159,9 @@ export class IdmapListComponent implements OnInit {
     this.dataProvider = new AsyncDataProvider<IdmapRow>(idmapsRows$);
     this.setDefaultSort();
     this.getIdmaps();
+    this.dataProvider.emptyType$.pipe(untilDestroyed(this)).subscribe(() => {
+      this.onListFiltered(this.filterString);
+    });
   }
 
   getIdmaps(): void {
@@ -206,7 +210,8 @@ export class IdmapListComponent implements OnInit {
   onListFiltered(query: string): void {
     this.filterString = query.toLowerCase();
     this.dataProvider.setRows(this.idmaps.filter((idmap) => {
-      return _.find(idmap, query);
+      return idmap.label.toLowerCase().includes(this.filterString)
+        || idmap.idmap_backend.toLowerCase().includes(this.filterString);
     }));
   }
 }

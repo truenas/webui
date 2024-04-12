@@ -12,8 +12,8 @@ export class TreeNodeToggleDirective<T> extends CdkTreeNodeToggle<T> {
   @HostBinding('class.ix-tree-node-toggle') get hostClass(): boolean { return true; }
 
   constructor(
-    protected _tree: Tree<T>,
-    protected _treeNode: CdkTreeNode<T>,
+    protected override _tree: Tree<T>,
+    protected override _treeNode: CdkTreeNode<T>,
   ) {
     super(_tree, _treeNode);
   }

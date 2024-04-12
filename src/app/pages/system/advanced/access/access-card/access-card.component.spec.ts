@@ -79,7 +79,7 @@ describe('AccessCardComponent', () => {
         confirm: jest.fn(() => of(true)),
       }),
       mockProvider(IxChainedSlideInService, {
-        pushComponent: jest.fn(() => of({ response: true, error: null })),
+        open: jest.fn(() => of({ response: true, error: null })),
       }),
       mockProvider(AdvancedSettingsService, {
         showFirstTimeWarningIfNeeded: jest.fn(() => of(true)),
@@ -112,7 +112,7 @@ describe('AccessCardComponent', () => {
     await configure.click();
 
     expect(spectator.inject(AdvancedSettingsService).showFirstTimeWarningIfNeeded).toHaveBeenCalled();
-    expect(spectator.inject(IxChainedSlideInService).pushComponent).toHaveBeenCalledWith(AccessFormComponent);
+    expect(spectator.inject(IxChainedSlideInService).open).toHaveBeenCalledWith(AccessFormComponent);
   });
 
   it('terminates the session when corresponding Terminate is pressed', async () => {

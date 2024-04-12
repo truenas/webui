@@ -10,17 +10,16 @@ describe('IxCellSizeComponent', () => {
 
   const createComponent = createComponentFactory({
     component: IxCellSizeComponent<TestTableData>,
+    detectChanges: false,
     imports: [IxTable2Module],
   });
 
   beforeEach(() => {
-    spectator = createComponent({
-      props: {
-        propertyName: 'numberField',
-        row: { numberField: 5 * 1024 * 1024 * 1024 },
-        rowTestId: () => '',
-      } as Partial<IxCellSizeComponent<TestTableData>>,
-    });
+    spectator = createComponent();
+    spectator.component.propertyName = 'numberField';
+    spectator.component.setRow({ numberField: 5 * 1024 * 1024 * 1024 });
+    spectator.component.rowTestId = () => '';
+    spectator.detectChanges();
   });
 
   it('shows file size in template', () => {

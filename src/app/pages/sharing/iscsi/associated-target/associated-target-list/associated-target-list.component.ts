@@ -9,11 +9,11 @@ import { filter, switchMap, tap } from 'rxjs/operators';
 import { Role } from 'app/enums/role.enum';
 import { IscsiExtent, IscsiTarget, IscsiTargetExtent } from 'app/interfaces/iscsi.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { EmptyService } from 'app/modules/empty/empty.service';
 import { AsyncDataProvider } from 'app/modules/ix-table2/classes/async-data-provider/async-data-provider';
 import { actionsColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
 import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { createTable } from 'app/modules/ix-table2/utils';
-import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { AssociatedTargetFormComponent } from 'app/pages/sharing/iscsi/associated-target/associated-target-form/associated-target-form.component';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
@@ -139,6 +139,9 @@ export class AssociatedTargetListComponent implements OnInit {
     );
     this.dataProvider = new AsyncDataProvider(targetExtent$);
     this.loadData();
+    this.dataProvider.emptyType$.pipe(untilDestroyed(this)).subscribe(() => {
+      this.onListFiltered(this.filterString);
+    });
   }
 
   loadData(): void {
@@ -165,10 +168,13 @@ export class AssociatedTargetListComponent implements OnInit {
 
   onListFiltered(query: string): void {
     this.filterString = query.toLowerCase();
-    const extentNames = this.extents.map((extent) => extent.name);
-    const targetNames = this.targets.map((target) => target.name);
-    this.dataProvider.setRows(this.targetExtents.filter(() => {
-      return [...targetNames, ...extentNames].includes(this.filterString);
+    const extentNames = this.extents.map((extent) => ({ name: extent.name.toLowerCase(), id: extent.id }));
+    const targetNames = this.targets.map((target) => ({ name: target.name.toLowerCase(), id: target.id }));
+
+    this.dataProvider.setRows(this.targetExtents.filter((element) => {
+      return [...targetNames, ...extentNames].some((item) => {
+        return (element.extent === item.id || element.target === item.id) && item.name.includes(this.filterString);
+      });
     }));
   }
 

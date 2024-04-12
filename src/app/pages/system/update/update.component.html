@@ -3,6 +3,7 @@
 <mat-card
   *ngIf="(updateService.status$ | async) === SystemUpdateStatus.Available"
   id="upgrades-card"
+  [ixUiSearch]="searchableElements.elements.update"
 >
   <mat-card-content id="upgrades-card-scrollbox">
     <table class="table table-striped table-sm upgrades-table" ixTest="upgrades-table">

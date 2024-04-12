@@ -1,12 +1,20 @@
-<button
-  mat-stroked-button
-  class="state-button"
-  [ixTest]="[title, rowTestId(row), 'row-state']"
-  [ngClass]="getButtonClass()"
-  (click)="$event.stopPropagation(); onButtonClick()"
->
-  {{ state }}
-  <div *ngIf="warnings?.length > 0" class="label-warning-icon">
-    <ix-icon name="mdi-alert"></ix-icon>
-  </div>
-</button>
+<ng-container *ngIf="state; else empty">
+  <button
+    mat-stroked-button
+    class="state-button"
+    matTooltipPosition="above"
+    [ixTest]="[title, rowTestId(row), 'row-state']"
+    [ngClass]="getButtonClass()"
+    [matTooltip]="tooltip"
+    (click)="$event.stopPropagation(); onButtonClick()"
+  >
+    {{ state }}
+    <div *ngIf="warnings?.length > 0" class="label-warning-icon">
+      <ix-icon name="mdi-alert"></ix-icon>
+    </div>
+  </button>
+</ng-container>
+
+<ng-template #empty>
+  {{ 'N/A' | translate }}
+</ng-template>

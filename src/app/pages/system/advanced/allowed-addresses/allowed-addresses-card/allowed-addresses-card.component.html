@@ -16,10 +16,9 @@
       <button
         *ixRequiresRoles="requiredRoles"
         mat-button
-        ixUiSearchableElement
         [ixTest]="['configure', 'ip-address']"
         [disabled]="dataProvider.isLoading$ | async"
-        [ixSearchConfig]="searchElements.configureAllowedAddresses"
+        [ixUiSearch]="searchableElements.configureAllowedAddresses"
         (click)="onConfigure()"
       >
         {{ 'Configure' | translate }}

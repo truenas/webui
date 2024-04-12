@@ -70,7 +70,7 @@ describe('ReplicationWhatAndWhereComponent', () => {
         mockCall('replication.count_eligible_manual_snapshots', { total: 0, eligible: 0 }),
       ]),
       mockProvider(IxChainedSlideInService, {
-        pushComponent: jest.fn(() => of()),
+        open: jest.fn(() => of()),
       }),
       mockProvider(DatasetService),
       mockProvider(MatDialog, {

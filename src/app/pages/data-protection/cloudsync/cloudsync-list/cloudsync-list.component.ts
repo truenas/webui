@@ -16,16 +16,17 @@ import { helptextCloudSync } from 'app/helptext/data-protection/cloudsync/clouds
 import { CloudSyncTask, CloudSyncTaskUi } from 'app/interfaces/cloud-sync-task.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { EmptyService } from 'app/modules/empty/empty.service';
 import { AsyncDataProvider } from 'app/modules/ix-table2/classes/async-data-provider/async-data-provider';
 import { stateButtonColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-state-button/ix-cell-state-button.component';
 import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { Column, ColumnComponent } from 'app/modules/ix-table2/interfaces/table-column.interface';
 import { createTable } from 'app/modules/ix-table2/utils';
-import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
 import { selectJob } from 'app/modules/jobs/store/job.selectors';
 import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { CloudSyncFormComponent } from 'app/pages/data-protection/cloudsync/cloudsync-form/cloudsync-form.component';
+import { cloudSyncListElements } from 'app/pages/data-protection/cloudsync/cloudsync-list/cloudsync-list.elements';
 import { CloudSyncRestoreDialogComponent } from 'app/pages/data-protection/cloudsync/cloudsync-restore-dialog/cloudsync-restore-dialog.component';
 import { CloudSyncWizardComponent } from 'app/pages/data-protection/cloudsync/cloudsync-wizard/cloudsync-wizard.component';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
@@ -41,6 +42,8 @@ import { AppState } from 'app/store';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CloudSyncListComponent implements OnInit {
+  protected readonly searchableElements = cloudSyncListElements;
+
   cloudSyncTasks: CloudSyncTaskUi[] = [];
   filterString = '';
   dataProvider: AsyncDataProvider<CloudSyncTaskUi>;
@@ -148,6 +151,9 @@ export class CloudSyncListComponent implements OnInit {
     );
     this.dataProvider = new AsyncDataProvider<CloudSyncTaskUi>(cloudSyncTasks$);
     this.getCloudSyncTasks();
+    this.dataProvider.emptyType$.pipe(untilDestroyed(this)).subscribe(() => {
+      this.onListFiltered(this.filterString);
+    });
   }
 
   getCloudSyncTasks(): void {
@@ -237,7 +243,7 @@ export class CloudSyncListComponent implements OnInit {
 
   openForm(row?: CloudSyncTaskUi): void {
     if (row) {
-      this.chainedSlideInService.pushComponent(CloudSyncFormComponent, true, row).pipe(
+      this.chainedSlideInService.open(CloudSyncFormComponent, true, row).pipe(
         filter((response) => !!response.response),
         untilDestroyed(this),
       ).subscribe({
@@ -246,7 +252,7 @@ export class CloudSyncListComponent implements OnInit {
         },
       });
     } else {
-      this.chainedSlideInService.pushComponent(CloudSyncWizardComponent, true).pipe(
+      this.chainedSlideInService.open(CloudSyncWizardComponent, true).pipe(
         filter((response) => !!response.response),
         untilDestroyed(this),
       ).subscribe({
@@ -280,7 +286,7 @@ export class CloudSyncListComponent implements OnInit {
   onListFiltered(query: string): void {
     this.filterString = query.toLowerCase();
     this.dataProvider.setRows(this.cloudSyncTasks.filter((cloudSync) => {
-      return cloudSync.description.includes(this.filterString);
+      return cloudSync.description.toLowerCase().includes(this.filterString);
     }));
   }
 

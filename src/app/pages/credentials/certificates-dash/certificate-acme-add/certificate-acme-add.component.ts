@@ -4,7 +4,6 @@ import {
 import {
   FormBuilder, Validators,
 } from '@angular/forms';
-import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { CertificateCreateType } from 'app/enums/certificate-create-type.enum';
@@ -13,11 +12,11 @@ import { choicesToOptions, idNameArrayToOptions } from 'app/helpers/operators/op
 import { helptextSystemCertificates } from 'app/helptext/system/certificates';
 import { Certificate } from 'app/interfaces/certificate.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -63,7 +62,7 @@ export class CertificateAcmeAddComponent {
     private dialogService: DialogService,
     private slideInRef: IxSlideInRef<CertificateAcmeAddComponent>,
     private formErrorHandler: FormErrorHandlerService,
-    private matDialog: MatDialog,
+    private snackbar: SnackbarService,
     @Inject(SLIDE_IN_DATA) private csr: Certificate,
   ) {
     this.loadDomains();
@@ -92,24 +91,29 @@ export class CertificateAcmeAddComponent {
     this.isLoading = true;
     this.cdr.markForCheck();
 
-    const dialogRef = this.matDialog.open(
-      EntityJobComponent,
-      { data: { title: this.translate.instant('Creating ACME Certificate') }, disableClose: true },
-    );
-    dialogRef.componentInstance.setCall('certificate.create', [payload]);
-    dialogRef.componentInstance.submit();
-    dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
-      this.isLoading = false;
-      this.matDialog.closeAll();
-      this.cdr.markForCheck();
-      this.slideInRef.close(true);
-    });
-    dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((error) => {
-      this.isLoading = false;
-      this.matDialog.closeAll();
-      this.cdr.markForCheck();
-      this.formErrorHandler.handleWsFormError(error, this.form);
-    });
+    this.dialogService.jobDialog(
+      this.ws.job('certificate.create', [payload]),
+      {
+        title: this.translate.instant('Creating ACME Certificate'),
+      },
+    )
+      .afterClosed()
+      .pipe(untilDestroyed(this))
+      .subscribe({
+        next: () => {
+          this.slideInRef.close(true);
+          this.snackbar.success(this.translate.instant('ACME Certificate Created'));
+        },
+        complete: () => {
+          this.isLoading = false;
+          this.cdr.markForCheck();
+        },
+        error: (error) => {
+          this.formErrorHandler.handleWsFormError(error, this.form);
+          this.isLoading = false;
+          this.cdr.markForCheck();
+        },
+      });
   }
 
   private loadDomains(): void {

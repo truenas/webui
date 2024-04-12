@@ -47,10 +47,18 @@ export class IxCellStateButtonComponent<T> extends ColumnComponent<T> {
     return this.value as JobState;
   }
 
-  protected onButtonClick(): void {
-    if (this.job) {
-      const state = (this.row as RowState).state;
+  protected get tooltip(): string {
+    if (this.job?.logs_path && this.job?.logs_excerpt) {
+      return this.translate.instant('Show Logs');
+    }
 
+    return this.translate.instant('No logs available');
+  }
+
+  protected onButtonClick(): void {
+    const state = (this.row as RowState).state;
+
+    if (this.job && state) {
       if (this.job.state === JobState.Running) {
         const dialogRef = this.matDialog.open(EntityJobComponent, {
           data: {
@@ -77,7 +85,7 @@ export class IxCellStateButtonComponent<T> extends ColumnComponent<T> {
         });
       } else if (state.state === JobState.Hold) {
         this.dialogService.info(this.translate.instant('Task is on hold'), state.reason);
-      } else if (state.warnings && state.warnings.length > 0) {
+      } else if (state.warnings?.length > 0) {
         let list = '';
         state.warnings.forEach((warning: string) => {
           list += warning + '\n';
@@ -85,6 +93,8 @@ export class IxCellStateButtonComponent<T> extends ColumnComponent<T> {
         this.dialogService.error({ title: state.state, message: `<pre>${list}</pre>` });
       } else if (state.error) {
         this.dialogService.error({ title: state.state, message: `<pre>${state.error}</pre>` });
+      } else if (!this.job.logs_excerpt) {
+        this.dialogService.warn(helptextGlobal.noLogDialog.title, helptextGlobal.noLogDialog.message);
       } else {
         this.matDialog.open(ShowLogsDialogComponent, { data: this.job });
       }
@@ -95,7 +105,7 @@ export class IxCellStateButtonComponent<T> extends ColumnComponent<T> {
 
   protected getButtonClass(): string {
     // Bring warnings to user's attention even if state is finished or successful.
-    if (this.warnings && this.warnings.length > 0) {
+    if (this.warnings?.length > 0) {
       return 'fn-theme-orange';
     }
 

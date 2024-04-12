@@ -137,7 +137,7 @@ describe('CloudSyncFormComponent', () => {
         }]),
       ]),
       mockProvider(IxChainedSlideInService, {
-        pushComponent: jest.fn(() => of()),
+        open: jest.fn(() => of()),
         components$: of([]),
       }),
       mockProvider(FilesystemService),
@@ -170,6 +170,7 @@ describe('CloudSyncFormComponent', () => {
         enabled: true,
         encryption: false,
         exclude: [],
+        include: [],
         follow_symlinks: false,
         path: mntPath,
         post_script: '',

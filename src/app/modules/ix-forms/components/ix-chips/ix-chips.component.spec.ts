@@ -7,7 +7,9 @@ import { MatAutocompleteHarness } from '@angular/material/autocomplete/testing';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatChipGridHarness } from '@angular/material/chips/testing';
 import { FormControl } from '@ngneat/reactive-forms';
-import { createHostFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import {
+  createHostFactory, mockProvider, SpectatorHost,
+} from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { IxChipsComponent } from 'app/modules/ix-forms/components/ix-chips/ix-chips.component';
@@ -17,7 +19,7 @@ import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
 
 describe('IxChipsComponent', () => {
   let formControl: FormControl<unknown>;
-  let spectator: Spectator<IxChipsComponent>;
+  let spectator: SpectatorHost<IxChipsComponent>;
   let loader: HarnessLoader;
   let matChipList: MatChipGridHarness;
   let matAutocomplete: MatAutocompleteHarness;
@@ -41,10 +43,28 @@ describe('IxChipsComponent', () => {
   beforeEach(async () => {
     formControl = new FormControl([]);
     spectator = createHost(
-      '<ix-chips [formControl]="formControl"></ix-chips>',
-      { hostProps: { formControl } },
+      `<ix-chips
+        [formControl]="formControl"
+        [allowNewEntries]="allowNewEntries"
+        [label]="label"
+        [required]="required"
+        [autocompleteProvider]="autocompleteProvider"
+        [tooltip]="tooltip"
+        [resolveValue]="resolveValue"
+        [resolveOptions]="resolveOptions"
+      ></ix-chips>`,
+      {
+        hostProps: {
+          formControl,
+          autocompleteProvider: undefined,
+          label: '',
+          required: false,
+          resolveValue: false,
+          resolveOptions: undefined,
+        },
+      },
     );
-    spectator.setInput('allowNewEntries', true);
+    spectator.setHostInput('allowNewEntries', true);
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     matChipList = await loader.getHarness(MatChipGridHarness);
     matAutocomplete = await loader.getHarness(MatAutocompleteHarness);
@@ -52,9 +72,9 @@ describe('IxChipsComponent', () => {
   });
 
   it('renders a label and passes properties to it', () => {
-    spectator.setInput('label', 'Apply To Groups');
-    spectator.setInput('required', true);
-    spectator.setInput('tooltip', 'Select local groups.');
+    spectator.setHostInput('label', 'Apply To Groups');
+    spectator.setHostInput('required', true);
+    spectator.setHostInput('tooltip', 'Select local groups.');
 
     const label = spectator.query(IxLabelComponent);
     expect(label).toExist();
@@ -93,7 +113,7 @@ describe('IxChipsComponent', () => {
   });
 
   it('does not create chip after leaving the focus of the input if there is [allowNewEntries]=false', async () => {
-    spectator.setInput('allowNewEntries', false);
+    spectator.setHostInput('allowNewEntries', false);
     const input = await matChipList.getInput();
     await input.setValue('www-date');
     await input.blur();
@@ -102,7 +122,7 @@ describe('IxChipsComponent', () => {
   });
 
   it('does not create chip in any way if there is [allowNewEntries]=false', async () => {
-    spectator.setInput('allowNewEntries', false);
+    spectator.setHostInput('allowNewEntries', false);
     const input = await matChipList.getInput();
     await input.setValue('www-date');
     await input.sendSeparatorKey(TestKey.ENTER);
@@ -126,7 +146,7 @@ describe('IxChipsComponent', () => {
   it('shows a validation message when validation fails', async () => {
     formControl.setValue(['root']);
     formControl.setValidators([Validators.required]);
-    spectator.setInput('label', 'Apply To Users');
+    spectator.setHostInput('label', 'Apply To Users');
     const chips = await matChipList.getRows();
     const rootRemoveBtn = await chips[0].getRemoveButton();
     rootRemoveBtn.click();
@@ -146,7 +166,7 @@ describe('IxChipsComponent', () => {
 
   describe('ix-chip with autocomplete panel', () => {
     it('the autocomplete list should be open after focused on the input', fakeAsync(async () => {
-      spectator.setInput('autocompleteProvider', jest.fn(() => of(['sys', 'staff'])));
+      spectator.setHostInput('autocompleteProvider', jest.fn(() => of(['sys', 'staff'])));
       spectator.tick(100);
       const input = await matChipList.getInput();
       await input.focus();
@@ -160,7 +180,7 @@ describe('IxChipsComponent', () => {
 
     it('it sets value when user selects it from autocomplete,'
       + ' after autocomplete should be closed', fakeAsync(async () => {
-      spectator.setInput('autocompleteProvider', jest.fn(() => of(['ssl-cert', 'staff'])));
+      spectator.setHostInput('autocompleteProvider', jest.fn(() => of(['ssl-cert', 'staff'])));
       spectator.tick(100);
       const input = await matChipList.getInput();
       await input.setValue('s');
@@ -176,7 +196,7 @@ describe('IxChipsComponent', () => {
     }));
 
     it('the autocomplete list should be open after creating the chip', fakeAsync(async () => {
-      spectator.setInput('autocompleteProvider', jest.fn(() => of(['ssl-cert', 'staff'])));
+      spectator.setHostInput('autocompleteProvider', jest.fn(() => of(['ssl-cert', 'staff'])));
       spectator.tick(100);
       const input = await matChipList.getInput();
       await input.setValue('ssl-cert');
@@ -190,7 +210,7 @@ describe('IxChipsComponent', () => {
     }));
 
     it('the autocomplete panel should be hidden if list is empty', fakeAsync(async () => {
-      spectator.setInput('autocompleteProvider', jest.fn(() => of([])));
+      spectator.setHostInput('autocompleteProvider', jest.fn(() => of([])));
       spectator.tick(100);
       const input = await matChipList.getInput();
       await input.focus();
@@ -202,8 +222,8 @@ describe('IxChipsComponent', () => {
 
   describe('ix-chip with resolveValue', () => {
     it('should resolve value and add it to values array', async () => {
-      spectator.setInput('resolveValue', true);
-      spectator.setInput('resolveOptions', of([
+      spectator.setHostInput('resolveValue', true);
+      spectator.setHostInput('resolveOptions', of([
         { label: 'Option 1', value: 1 },
         { label: 'Option 2', value: 2 },
       ]));
@@ -216,8 +236,8 @@ describe('IxChipsComponent', () => {
     });
 
     it('should not resolve values', async () => {
-      spectator.setInput('resolveValue', false);
-      spectator.setInput('resolveOptions', of([
+      spectator.setHostInput('resolveValue', false);
+      spectator.setHostInput('resolveOptions', of([
         { label: 'Option 1', value: 1 },
         { label: 'Option 2', value: 2 },
       ]));

@@ -1,5 +1,6 @@
 <ix-page-header>
   <ix-search-input1
+    [value]="filterString"
     [disabled]="isLoading$ | async"
     (search)="onListFiltered($event)"
   ></ix-search-input1>
@@ -13,6 +14,7 @@
 
 <ix-table2
   class="table"
+  [ixUiSearch]="searchableElements.elements.apiKeys"
   [ix-table2-empty]="!(dataProvider.currentPageCount$ | async)"
   [emptyConfig]="emptyConfigService.defaultEmptyConfig((emptyType$ | async))"
 >

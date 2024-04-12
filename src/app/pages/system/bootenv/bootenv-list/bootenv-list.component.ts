@@ -12,6 +12,7 @@ import { Role } from 'app/enums/role.enum';
 import { helptextSystemBootenv } from 'app/helptext/system/boot-env';
 import { Bootenv } from 'app/interfaces/bootenv.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { EmptyService } from 'app/modules/empty/empty.service';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { AsyncDataProvider } from 'app/modules/ix-table2/classes/async-data-provider/async-data-provider';
 import { actionsColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
@@ -22,11 +23,11 @@ import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells
 import { yesNoColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-yesno/ix-cell-yesno.component';
 import { SortDirection } from 'app/modules/ix-table2/enums/sort-direction.enum';
 import { createTable } from 'app/modules/ix-table2/utils';
-import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { BootPoolDeleteDialogComponent } from 'app/pages/system/bootenv/boot-pool-delete-dialog/boot-pool-delete-dialog.component';
 import { BootEnvironmentFormComponent } from 'app/pages/system/bootenv/bootenv-form/bootenv-form.component';
+import { bootListElements } from 'app/pages/system/bootenv/bootenv-list/bootenv-list.elements';
 import { BootenvStatsDialogComponent } from 'app/pages/system/bootenv/bootenv-stats-dialog/bootenv-stats-dialog.component';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -48,6 +49,7 @@ interface BootenvUi extends Bootenv {
 })
 export class BootEnvironmentListComponent implements OnInit {
   readonly requiredRoles = [Role.FullAdmin];
+  protected readonly searchableElements = bootListElements;
 
   dataProvider: AsyncDataProvider<BootenvUi>;
   filterString = '';
@@ -189,15 +191,18 @@ export class BootEnvironmentListComponent implements OnInit {
       }),
     );
     this.dataProvider = new AsyncDataProvider(request$);
-    this.dataProvider.load();
+    this.refresh();
     this.setDefaultSort();
+    this.dataProvider.emptyType$.pipe(untilDestroyed(this)).subscribe(() => {
+      this.filterUpdated(this.filterString);
+    });
   }
 
   handleSlideInClosed(slideInRef: IxSlideInRef<unknown>): void {
     slideInRef.slideInClosed$.pipe(
       filter(Boolean),
       untilDestroyed(this),
-    ).subscribe(() => this.dataProvider.load());
+    ).subscribe(() => this.refresh());
   }
 
   openBootenvStats(): void {
@@ -246,7 +251,7 @@ export class BootEnvironmentListComponent implements OnInit {
     }).afterClosed().pipe(
       filter(Boolean),
       untilDestroyed(this),
-    ).subscribe(() => this.dataProvider.load());
+    ).subscribe(() => this.refresh());
   }
 
   doActivate(bootenv: BootenvUi): void {
@@ -263,7 +268,7 @@ export class BootEnvironmentListComponent implements OnInit {
         );
       }),
       untilDestroyed(this),
-    ).subscribe(() => this.dataProvider.load());
+    ).subscribe(() => this.refresh());
   }
 
   toggleKeep(bootenv: BootenvUi): void {
@@ -281,7 +286,7 @@ export class BootEnvironmentListComponent implements OnInit {
           );
         }),
         untilDestroyed(this),
-      ).subscribe(() => this.dataProvider.load());
+      ).subscribe(() => this.refresh());
     } else {
       this.dialogService.confirm({
         title: this.translate.instant('Unkeep'),
@@ -296,7 +301,7 @@ export class BootEnvironmentListComponent implements OnInit {
           );
         }),
         untilDestroyed(this),
-      ).subscribe(() => this.dataProvider.load());
+      ).subscribe(() => this.refresh());
     }
   }
 
@@ -316,5 +321,9 @@ export class BootEnvironmentListComponent implements OnInit {
       propertyName: 'created',
       sortBy: (row) => row.created.$date,
     });
+  }
+
+  private refresh(): void {
+    this.dataProvider.load();
   }
 }

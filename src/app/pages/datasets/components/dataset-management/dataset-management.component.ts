@@ -42,6 +42,7 @@ import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { TreeDataSource } from 'app/modules/ix-tree/tree-datasource';
 import { TreeFlattener } from 'app/modules/ix-tree/tree-flattener';
+import { datasetManagementElements } from 'app/pages/datasets/components/dataset-management/dataset-management.elements';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
 import { datasetNameSortComparer } from 'app/pages/datasets/utils/dataset.utils';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
@@ -58,6 +59,8 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
   @ViewChild('ixTree', { static: false }) ixTree: ElementRef<HTMLElement>;
 
   readonly requiredRoles = [Role.FullAdmin];
+  protected readonly searchableElements = datasetManagementElements;
+
   isLoading$ = this.datasetStore.isLoading$;
   selectedDataset$ = this.datasetStore.selectedDataset$;
   @HostBinding('class.details-overlay') showMobileDetails = false;

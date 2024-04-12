@@ -1,0 +1,38 @@
+<mat-card>
+  <mat-toolbar-row>
+    <a [ixTest]="['cloud-backup-task', 'open']" [routerLink]="['/data-protection', 'cloud-backup']">
+      <h3 class="card-title">
+        {{ 'TrueCloud Backup Tasks' | translate }}
+        <ix-icon name="open_in_new" class="title-icon"></ix-icon>
+      </h3>
+    </a>
+    <div class="actions">
+      <button
+        *ixRequiresRoles="requiredRoles"
+        mat-button
+        [ixTest]="['cloud-backup', 'add']"
+        (click)="openForm()"
+      >
+        {{ 'Add' | translate }}
+      </button>
+    </div>
+  </mat-toolbar-row>
+
+  <ix-table2
+    class="table"
+    [ix-table2-empty]="!(dataProvider.currentPageCount$ | async)"
+    [emptyConfig]="emptyService.defaultEmptyConfig(dataProvider.emptyType$ | async)"
+  >
+    <thead
+      ix-table-head
+      [columns]="columns"
+      [dataProvider]="dataProvider"
+    ></thead>
+    <tbody
+      ix-table-body
+      [columns]="columns"
+      [dataProvider]="dataProvider"
+      [isLoading]="dataProvider.isLoading$ | async"
+    ></tbody>
+  </ix-table2>
+</mat-card>

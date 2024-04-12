@@ -1,6 +1,6 @@
 import { createAction, props } from '@ngrx/store';
 import { Preferences, TableDisplayedColumns } from 'app/interfaces/preferences.interface';
-import { DashConfigItem } from 'app/pages/dashboard/components/widget-controller/widget-controller.component';
+import { DashConfigItem } from 'app/pages/dashboard-old/components/widget-controller/widget-controller.component';
 
 export const preferencesLoaded = createAction('[Preferences API] Loaded', props<{ preferences: Preferences }>());
 export const noPreferencesFound = createAction('[Preferences API] No Preferences Found');
@@ -10,6 +10,10 @@ export const themeNotFound = createAction('[Preferences] Theme Not Found');
 export const preferredColumnsUpdated = createAction(
   '[Preferences] Preferred Columns Updated',
   props<{ columns: TableDisplayedColumns[] }>(),
+);
+export const shownNewIndicatorKeysUpdated = createAction(
+  '[Preferences] Shown New Indicator Keys Updated',
+  props<{ keys: string[] }>(),
 );
 export const localizationFormSubmitted = createAction('[Preferences] Localization Form Submitted', props<{
   dateFormat: string;

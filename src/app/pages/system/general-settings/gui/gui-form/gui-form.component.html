@@ -12,12 +12,11 @@
     >
       <ix-fieldset [title]="helptext.fieldset_gui | translate">
         <ix-select
-          ixUiSearchableElement
           formControlName="theme"
           [label]="'Theme' | translate"
           [options]="options.themes"
           [required]="true"
-          [ixSearchConfig]="searchElements.theme"
+          [ixUiSearch]="searchableElements.theme"
         ></ix-select>
         <ix-with-manage-certificates-link>
           <ix-select

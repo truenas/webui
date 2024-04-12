@@ -3,20 +3,20 @@ import {
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import _ from 'lodash';
 import {
   filter, map, switchMap, tap,
 } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
 import { helptextKerberosRealms } from 'app/helptext/directory-service/kerberos-realms-form-list';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { EmptyService } from 'app/modules/empty/empty.service';
 import { AsyncDataProvider } from 'app/modules/ix-table2/classes/async-data-provider/async-data-provider';
 import { actionsColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
 import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { SortDirection } from 'app/modules/ix-table2/enums/sort-direction.enum';
 import { createTable } from 'app/modules/ix-table2/utils';
-import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
 import { KerberosRealmRow } from 'app/pages/directory-service/components/kerberos-realms/kerberos-realm-row.interface';
+import { kerberosRealmsListElements } from 'app/pages/directory-service/components/kerberos-realms/kerberos-realms-list.elements';
 import { KerberosRealmsFormComponent } from 'app/pages/directory-service/components/kerberos-realms-form/kerberos-realms-form.component';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -34,6 +34,7 @@ export class KerberosRealmsListComponent implements OnInit {
   @Input() inCard = false;
 
   readonly requiredRoles = [Role.DirectoryServiceWrite];
+  protected readonly searchableElements = kerberosRealmsListElements;
 
   filterString = '';
   dataProvider: AsyncDataProvider<KerberosRealmRow>;
@@ -126,6 +127,9 @@ export class KerberosRealmsListComponent implements OnInit {
     this.dataProvider = new AsyncDataProvider<KerberosRealmRow>(kerberosRealsm$);
     this.setDefaultSort();
     this.getKerberosRealms();
+    this.dataProvider.emptyType$.pipe(untilDestroyed(this)).subscribe(() => {
+      this.onListFiltered(this.filterString);
+    });
   }
 
   getKerberosRealms(): void {
@@ -150,7 +154,10 @@ export class KerberosRealmsListComponent implements OnInit {
   onListFiltered(query: string): void {
     this.filterString = query.toLowerCase();
     this.dataProvider.setRows(this.kerberosRealsm.filter((idmap) => {
-      return _.find(idmap, query);
+      return idmap.realm.toLowerCase().includes(this.filterString)
+        || idmap.kdc_string.toLowerCase().includes(this.filterString)
+        || idmap.admin_server_string.toLowerCase().includes(this.filterString)
+        || idmap.kpasswd_server_string.toLowerCase().includes(this.filterString);
     }));
   }
 }

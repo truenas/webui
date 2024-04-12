@@ -48,6 +48,7 @@ import {
 } from 'app/interfaces/pool.interface';
 import { DiskWipeParams } from 'app/interfaces/storage.interface';
 import { SystemDatasetConfig, SystemDatasetUpdate } from 'app/interfaces/system-dataset-config.interface';
+import { SystemSecurityConfig } from 'app/interfaces/system-security-config.interface';
 import { UpdateParams } from 'app/interfaces/system-update.interface';
 import { Tunable, TunableCreate, TunableUpdate } from 'app/interfaces/tunable.interface';
 import { VmStopParams } from 'app/interfaces/virtual-machine.interface';
@@ -87,6 +88,9 @@ export interface ApiJobDirectory {
   'chart.release.update': { params: [name: string, update: ChartReleaseUpdate]; response: ChartRelease };
   'chart.release.upgrade': { params: [name: string, upgrade: ChartReleaseUpgrade]; response: ChartRelease };
 
+  // CloudBackup
+  'cloud_backup.sync': { params: [id: number, params?: { dry_run: boolean }]; response: void };
+
   // CloudSync
   'cloudsync.sync': { params: [id: number, params?: { dry_run: boolean }]; response: number };
   'cloudsync.sync_onetime': { params: [task: CloudSyncTaskUpdate, params: { dry_run?: boolean }]; response: void };
@@ -108,6 +112,7 @@ export interface ApiJobDirectory {
   'disk.wipe': { params: DiskWipeParams; response: void };
 
   // Failover
+  'failover.reboot.other_node': { params: void; response: void };
   'failover.upgrade': { params: [FailoverUpgradeParams]; response: boolean };
   'failover.upgrade_finish': { params: void; response: boolean };
 
@@ -168,6 +173,7 @@ export interface ApiJobDirectory {
   // System
   'system.reboot': { params: { delay?: number }; response: void };
   'system.shutdown': { params: { delay?: number }; response: void };
+  'system.security.update': { params: [SystemSecurityConfig]; response: void };
 
   // SystemDataset
   'systemdataset.update': { params: [SystemDatasetUpdate]; response: SystemDatasetConfig };

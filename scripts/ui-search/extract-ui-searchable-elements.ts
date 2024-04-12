@@ -9,7 +9,7 @@
  *
  * File content example with parent element & data which will be shared/merged to all child elements:
   export const nestedElementsWithParentPropertiesSharedToChild = {
-    hierarchy: [T('System Settings'), T('Advanced'), T('Access')],
+    hierarchy: [T('System'), T('Advanced'), T('Access')],
     anchorRouterLink: ['/system', 'advanced'],
     elements: {
       configureAccess: {
@@ -23,18 +23,18 @@
     },
   }
 
-  As well we can define single element data
+  As well, we can define single element data
 
   export const singleSettingsExampleElements = {
     theme: {
-      hierarchy: [T('System Settings'), T('General'), T('GUI'), T('Theme')],
+      hierarchy: [T('System'), T('General'), T('GUI'), T('Theme')],
       synonyms: [],
       triggerAnchor: 'gui-settings',
       anchorRouterLink: ['/system', 'general'],
     },
   };
  *
- * 3️⃣. Provide config to the element [ixSearchConfig]="singleSettingsExampleElements.theme"
+ * 3️⃣. Provide config to the element [ixUiSearch]="singleSettingsExampleElements.theme"
  *
  * 4️⃣. Run the script to update `ui-searchable-elements.json`:
  * yarn extract-ui-searchable-elements
@@ -56,7 +56,7 @@
   Note: If you add `ixUiSearchableElement` to the trigger button - then in the
   form which will be opened by this trigger button
   you can rely on the auto-generated ID on the trigger button or add `anchor: 'my-custom-id'` prop on the trigger button
-  Example: check access card -> [ixSearchConfig]="searchElements.elements.configureAccess"
+  Example: check access card -> [ixUiSearch]="searchableElements.elements.configureAccess"
   In this case I set custom anchor `#configure-access`, so in the access-form.elements.ts -> we need to
   provide `triggerAnchor: 'configure-access',`
  */

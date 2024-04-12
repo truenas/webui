@@ -8,12 +8,12 @@ import { filter, tap } from 'rxjs';
 import { IscsiExtentType } from 'app/enums/iscsi.enum';
 import { Role } from 'app/enums/role.enum';
 import { IscsiExtent } from 'app/interfaces/iscsi.interface';
+import { EmptyService } from 'app/modules/empty/empty.service';
 import { AsyncDataProvider } from 'app/modules/ix-table2/classes/async-data-provider/async-data-provider';
 import { actionsColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
 import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { yesNoColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-yesno/ix-cell-yesno.component';
 import { createTable } from 'app/modules/ix-table2/utils';
-import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
 import { ExtentFormComponent } from 'app/pages/sharing/iscsi/extent/extent-form/extent-form.component';
 import {
   DeleteExtentDialogComponent,
@@ -77,7 +77,7 @@ export class ExtentListComponent implements OnInit {
             const slideInRef = this.slideInService.open(ExtentFormComponent, { wide: true, data: extent });
             slideInRef.slideInClosed$
               .pipe(filter(Boolean), untilDestroyed(this))
-              .subscribe(() => this.dataProvider.load());
+              .subscribe(() => this.refresh());
           },
         },
         {
@@ -107,27 +107,30 @@ export class ExtentListComponent implements OnInit {
       untilDestroyed(this),
     );
     this.dataProvider = new AsyncDataProvider(extents$);
-    this.dataProvider.load();
+    this.refresh();
+    this.dataProvider.emptyType$.pipe(untilDestroyed(this)).subscribe(() => {
+      this.onListFiltered(this.filterString);
+    });
   }
 
   doAdd(): void {
     const slideInRef = this.slideInService.open(ExtentFormComponent, { wide: true });
     slideInRef.slideInClosed$
       .pipe(filter(Boolean), untilDestroyed(this))
-      .subscribe(() => this.dataProvider.load());
+      .subscribe(() => this.refresh());
   }
 
   showDeleteDialog(extent: IscsiExtent): void {
     this.matDialog.open(DeleteExtentDialogComponent, { data: extent })
       .afterClosed()
       .pipe(filter(Boolean), untilDestroyed(this))
-      .subscribe(() => this.dataProvider.load());
+      .subscribe(() => this.refresh());
   }
 
   onListFiltered(query: string): void {
     this.filterString = query.toLowerCase();
     this.dataProvider.setRows(this.extents.filter((extent) => {
-      return [extent.name].includes(this.filterString);
+      return extent.name.toLowerCase().includes(this.filterString);
     }));
   }
 
@@ -135,5 +138,9 @@ export class ExtentListComponent implements OnInit {
     this.columns = [...columns];
     this.cdr.detectChanges();
     this.cdr.markForCheck();
+  }
+
+  private refresh(): void {
+    this.dataProvider.load();
   }
 }

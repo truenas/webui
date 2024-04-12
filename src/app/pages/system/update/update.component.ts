@@ -3,6 +3,7 @@ import { UntilDestroy } from '@ngneat/until-destroy';
 import { SystemUpdateStatus } from 'app/enums/system-update.enum';
 import { TrainService } from 'app/pages/system/update/services/train.service';
 import { UpdateService } from 'app/pages/system/update/services/update.service';
+import { systemUpdateElements } from 'app/pages/system/update/update.elements';
 
 @UntilDestroy()
 @Component({
@@ -13,6 +14,7 @@ import { UpdateService } from 'app/pages/system/update/services/update.service';
 })
 export class UpdateComponent {
   readonly SystemUpdateStatus = SystemUpdateStatus;
+  protected readonly searchableElements = systemUpdateElements;
 
   constructor(
     protected trainService: TrainService,

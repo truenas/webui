@@ -3,7 +3,7 @@
   <mat-toolbar-row>
     <h3>{{ 'Reporting Exporters' | translate }}</h3>
     <div class="actions action-icon">
-      <ix-search-input1 (search)="onListFiltered($event)"></ix-search-input1>
+      <ix-search-input1 [value]="filterString" (search)="onListFiltered($event)"></ix-search-input1>
       <button
         *ixRequiresRoles="requiredRoles"
         mat-button
@@ -17,6 +17,7 @@
   </mat-toolbar-row>
   <mat-card-content>
     <ix-table2
+      [ixUiSearch]="searchableElements.elements.exporters"
       [ix-table2-empty]="!(dataProvider.currentPageCount$ | async)"
       [emptyConfig]="emptyService.defaultEmptyConfig(emptyType$ | async)"
     >
