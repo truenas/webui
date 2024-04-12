@@ -15,8 +15,8 @@ from platform import system
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.action_chains import ActionChains
-from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 from selenium.common.exceptions import ElementClickInterceptedException
+from selenium.webdriver.firefox.options import Options
 
 # To avoid hostname need to be unique so using the PID should avoid this
 pid = str(os.getpid())
@@ -67,22 +67,13 @@ def iso_version():
 
 
 def browser():
-    profile = webdriver.FirefoxProfile()
-    profile.set_preference("browser.download.folderList", 2)
-    profile.set_preference("browser.download.dir", "/tmp")
-    # this is the place to add file type to autosave
-    # application/x-tar is use for .tar
-    # application/gzip is use for .tgz
-    profile.set_preference("browser.helperApps.neverAsk.saveToDisk", "application/x-tar,application/gzip")
-    profile.set_preference("browser.download.manager.showWhenStarting", False)
-    profile.set_preference("browser.link.open_newwindow", 3)
-    binary = '/snap/bin/firefox' if system() == "Linux" else '/usr/local/bin/firefox'
-    geckodriver = '/snap/bin/geckodriver' if system() == "Linux" else '/usr/local/bin/geckodriver'
-    firefox_capabilities = DesiredCapabilities.FIREFOX
-    firefox_capabilities['marionette'] = True
-    firefox_capabilities['firefox_profile'] = profile.encoded
-    firefox_capabilities['binary'] = binary
-    driver = webdriver.Firefox(capabilities=firefox_capabilities, executable_path=geckodriver)
+    options = Options()
+    options.set_preference("browser.download.folderList", 2)
+    options.set_preference("browser.download.dir", "/tmp")
+    options.set_preference("browser.helperApps.neverAsk.saveToDisk", "application/x-tar,application/gzip")
+    options.set_preference("browser.download.manager.showWhenStarting", False)
+    options.set_preference("browser.link.open_newwindow", 3)
+    driver = webdriver.Firefox(options=options)
     driver.set_window_size(1920, 1080)
     driver.implicitly_wait(2)
     return driver
