@@ -100,7 +100,7 @@ describe('CronFormComponent', () => {
         'Run As User': 'root',
         'Hide Standard Output': true,
         'Hide Standard Error': true,
-        Schedule: '0 0 * * *',
+        Schedule: '0-30 */2 2 * 2-3',
         Enabled: true,
       });
 
