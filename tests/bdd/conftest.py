@@ -16,6 +16,7 @@ from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.common.exceptions import ElementClickInterceptedException
+from selenium.webdriver.firefox.firefox_binary import FirefoxBinary
 from selenium.webdriver.firefox.options import Options
 
 # To avoid hostname need to be unique so using the PID should avoid this
@@ -73,6 +74,8 @@ def browser():
     options.set_preference("browser.helperApps.neverAsk.saveToDisk", "application/x-tar,application/gzip")
     options.set_preference("browser.download.manager.showWhenStarting", False)
     options.set_preference("browser.link.open_newwindow", 3)
+    binary = FirefoxBinary('/snap/firefox/current/usr/lib/firefox/firefox') if system() == "Linux" else FirefoxBinary('/usr/local/bin/firefox')
+    options.binary_location = binary
     driver = webdriver.Firefox(options=options)
     driver.set_window_size(1920, 1080)
     driver.implicitly_wait(2)
