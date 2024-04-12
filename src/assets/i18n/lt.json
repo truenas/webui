@@ -568,7 +568,7 @@
   "Browse to the keytab file to upload.": "",
   "Browse to the operating system installer image file.": "",
   "Browse to the path to be copied. Linux file path limits apply. Other operating systems can have different limits which might affect how they can be used as sources or destinations.": "",
-  "Browser time: {time}{tz}": "",
+  "Browser time: {time}": "",
   "Bucket": "",
   "Bucket Name": "",
   "Bucket Policy Only": "",

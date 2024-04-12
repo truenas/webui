@@ -90,7 +90,7 @@
   "Backup to Cloud or another TrueNAS via links below": "",
   "Box": "",
   "Browse to an existing file. Create a new file by browsing to a dataset and appending /<i>(filename.ext)</i> to the path.": "",
-  "Browser time: {time}{tz}": "",
+  "Browser time: {time}": "",
   "Bucket Name": "",
   "By clicking the share creation checkbox below, a new share will be created on form submission with the default share settings Additionally, local TrueNAS users will have access to the resulting share and some more configuration options will be available.": "",
   "By snapshot creation time": "",
