@@ -2,9 +2,9 @@ import { of } from 'rxjs';
 import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
 import { ApiEventTyped } from 'app/interfaces/api-message.interface';
 import { Pool } from 'app/interfaces/pool.interface';
-import { handleApiEvent } from './handle-api-event.operator';
+import { applyApiEvent } from './apply-api-event.operator';
 
-describe('handleApiEvent', () => {
+describe('applyApiEvent', () => {
   it('adds an item when an Added event is received', () => {
     const items = [{ id: 1 } as Pool];
     const event = {
@@ -12,7 +12,7 @@ describe('handleApiEvent', () => {
       fields: { id: 2 } as Pool,
     } as ApiEventTyped<'pool.query'>;
 
-    handleApiEvent()(of([items, event])).subscribe((result) => {
+    applyApiEvent()(of([items, event])).subscribe((result) => {
       expect(result).toEqual([{ id: '1' }, { id: '2' }]);
     });
   });
@@ -24,7 +24,7 @@ describe('handleApiEvent', () => {
       fields: { id: 1, name: 'pool2' } as Pool,
     } as ApiEventTyped<'pool.query'>;
 
-    handleApiEvent()(of([items, event])).subscribe((result) => {
+    applyApiEvent()(of([items, event])).subscribe((result) => {
       expect(result).toEqual([{ id: 1, name: 'pool2' }]);
     });
   });
@@ -36,7 +36,7 @@ describe('handleApiEvent', () => {
       id: 1,
     } as ApiEventTyped<'pool.query'>;
 
-    handleApiEvent()(of([items, event])).subscribe((result) => {
+    applyApiEvent()(of([items, event])).subscribe((result) => {
       expect(result).toEqual([{ id: 2, name: 'pool2' }]);
     });
   });

@@ -14,7 +14,7 @@ import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { ResponseErrorType } from 'app/enums/response-error-type.enum';
 import { WebSocketErrorName } from 'app/enums/websocket-error-name.enum';
-import { handleApiEvent } from 'app/helpers/operators/handle-api-event.operator';
+import { applyApiEvent } from 'app/helpers/operators/apply-api-event.operator';
 import { ApiCallAndSubscribeMethod, ApiCallAndSubscribeResponse } from 'app/interfaces/api/api-call-and-subscribe-directory.interface';
 import {
   ApiCallMethod,
@@ -75,7 +75,7 @@ export class WebSocketService {
           startWith(null),
           map((event) => ([items, event])),
         )),
-        handleApiEvent(),
+        applyApiEvent(),
         takeUntil(this.clearSubscriptions$),
       );
   }

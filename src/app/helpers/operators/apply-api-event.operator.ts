@@ -4,7 +4,7 @@ import { ApiCallAndSubscribeMethod, ApiCallAndSubscribeResponse } from 'app/inte
 import { ApiCallResponse } from 'app/interfaces/api/api-call-directory.interface';
 import { ApiEventTyped } from 'app/interfaces/api-message.interface';
 
-export function handleApiEvent<
+export function applyApiEvent<
   M extends ApiCallAndSubscribeMethod,
 >(): OperatorFunction<[ApiCallResponse<M>, ApiEventTyped<M>], ApiCallAndSubscribeResponse<M>[]> {
   return map(([items, event]) => {
