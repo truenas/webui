@@ -16,6 +16,7 @@ import { SearchInput1Component } from 'app/modules/search-input1/search-input1.c
 import { BootEnvironmentListComponent } from 'app/pages/system/bootenv/bootenv-list/bootenv-list.component';
 import { fakeBootEnvironmentsDataSource } from 'app/pages/system/bootenv/test/fake-boot-environments';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { LocaleService } from 'app/services/locale.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 describe('BootEnvironmentListComponent', () => {
@@ -36,6 +37,9 @@ describe('BootEnvironmentListComponent', () => {
       FakeFormatDateTimePipe,
     ],
     providers: [
+      mockProvider(LocaleService, {
+        timezone: 'America/Los_Angeles',
+      }),
       mockWebSocket([
         mockCall('bootenv.query', fakeBootEnvironmentsDataSource),
       ]),
@@ -63,12 +67,12 @@ describe('BootEnvironmentListComponent', () => {
 
     const expectedRows = [
       ['', 'Name', 'Active', 'Date Created', 'Space', 'Keep', ''],
-      ['', 'CLONE', '', '2022-08-22 19:27:00', '384 KiB', 'No', ''],
+      ['', 'CLONE', '', '2022-08-22 09:27:00', '384 KiB', 'No', ''],
       [
         '',
         '22.12-MASTER-20220808-020013',
         'Now/Reboot',
-        '2022-08-09 16:52:00',
+        '2022-08-09 06:52:00',
         '2.61 GiB',
         'No',
         '',

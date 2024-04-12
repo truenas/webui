@@ -15,11 +15,13 @@ export class IxDateComponent {
   defaultTz: string = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
   get machineTime(): Date {
-    return utcToZonedTime(zonedTimeToUtc(this.date, this.appliedTimezone), this.machineTimezone);
+    const utc = zonedTimeToUtc(this.date, this.appliedTimezone);
+    return utcToZonedTime(utc, this.machineTimezone);
   }
 
   get browserTime(): Date {
-    return utcToZonedTime(zonedTimeToUtc(this.date, this.appliedTimezone), this.defaultTz);
+    const utc = zonedTimeToUtc(this.date, this.appliedTimezone);
+    return utcToZonedTime(utc, this.defaultTz);
   }
 
   get isTimezoneDifference(): boolean {

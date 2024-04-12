@@ -18,6 +18,7 @@ import { SearchInput1Component } from 'app/modules/search-input1/search-input1.c
 import { ApiKeyFormDialogComponent } from 'app/pages/api-keys/components/api-key-form-dialog/api-key-form-dialog.component';
 import { ApiKeyListComponent } from 'app/pages/api-keys/components/api-key-list/api-key-list.component';
 import { ApiKeyComponentStore } from 'app/pages/api-keys/store/api-key.store';
+import { LocaleService } from 'app/services/locale.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 describe('ApiKeyListComponent', () => {
@@ -57,6 +58,9 @@ describe('ApiKeyListComponent', () => {
     ],
     providers: [
       mockAuth(),
+      mockProvider(LocaleService, {
+        timezone: 'America/Los_Angeles',
+      }),
       ApiKeyComponentStore,
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
@@ -82,8 +86,8 @@ describe('ApiKeyListComponent', () => {
   it('should show table rows', async () => {
     const expectedRows = [
       ['Name', 'Created Date', ''],
-      ['first-api-key', '2002-01-04 01:36:50', ''],
-      ['second-api-key', '2002-01-15 15:23:30', ''],
+      ['first-api-key', '2002-01-03 15:36:50', ''],
+      ['second-api-key', '2002-01-15 05:23:30', ''],
     ];
 
     const cells = await table.getCellTexts();
