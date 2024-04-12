@@ -74,9 +74,10 @@ def browser():
     options.set_preference("browser.helperApps.neverAsk.saveToDisk", "application/x-tar,application/gzip")
     options.set_preference("browser.download.manager.showWhenStarting", False)
     options.set_preference("browser.link.open_newwindow", 3)
-    binary = FirefoxBinary('/snap/firefox/current/usr/lib/firefox/firefox') if system() == "Linux" else FirefoxBinary('/usr/local/bin/firefox')
+    binary = '/snap/firefox/current/usr/lib/firefox/firefox' if system() == "Linux" else '/usr/local/bin/firefox'
+    geckodriver = '/snap/firefox/current/usr/lib/firefox/geckodriver' if system() == "Linux" else '/usr/local/bin/geckodriver'
     options.binary_location = binary
-    driver = webdriver.Firefox(options=options)
+    driver = webdriver.Firefox(options=options, executable_path=geckodriver)
     driver.set_window_size(1920, 1080)
     driver.implicitly_wait(2)
     return driver
@@ -90,9 +91,9 @@ def driver():
     return web_driver
 
 
-# Close Firefox after all tests are completed
-# def pytest_sessionfinish(session, exitstatus):
-#     web_driver.quit()
+#Close Firefox after all tests are completed
+def pytest_sessionfinish(session, exitstatus):
+    web_driver.quit()
 
 
 @pytest.hookimpl(hookwrapper=True)
