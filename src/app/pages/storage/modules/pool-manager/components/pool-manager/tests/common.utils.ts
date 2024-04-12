@@ -1,9 +1,13 @@
+import { MatDialog } from '@angular/material/dialog';
 import { MatIconRegistry } from '@angular/material/icon';
-import { createSpyObject } from '@ngneat/spectator/jest';
+import { createSpyObject, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
-import { EMPTY } from 'rxjs';
+import { EMPTY, of } from 'rxjs';
 import { GiB } from 'app/constants/bytes.constant';
 import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
+import { Job } from 'app/interfaces/job.interface';
+import { Pool } from 'app/interfaces/pool.interface';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxIconRegistry } from 'app/modules/ix-icon/ix-icon.service';
 import {
   AddVdevsStore,
@@ -122,6 +126,19 @@ export const commonProviders = [
       getNamedSvgIcon: jest.fn(() => EMPTY),
     }),
   },
+  mockProvider(MatDialog, {
+    open: jest.fn(() => ({
+      afterClosed: () => of(undefined),
+    })),
+  }),
+  mockProvider(DialogService, {
+    confirm: jest.fn(() => of(true)),
+    jobDialog: jest.fn(() => ({
+      afterClosed: () => of({
+        result: {},
+      } as Job<Pool>),
+    })),
+  }),
   provideMockStore({
     selectors: [
       {

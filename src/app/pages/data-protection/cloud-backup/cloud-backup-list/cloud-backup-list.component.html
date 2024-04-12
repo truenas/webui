@@ -1,16 +1,59 @@
-<div class="container">
-  <div class="table-container">
-    table
+<ix-page-header>
+  <ix-search-input1 (search)="onListFiltered($event)"></ix-search-input1>
+
+  <button
+    *ixRequiresRoles="requiredRoles"
+    mat-button
+    color="primary"
+    [ixTest]="['replication-task', 'add']"
+    (click)="openForm()"
+  >
+    {{ 'Add' | translate }}
+  </button>
+</ix-page-header>
+
+<div class="container" fxLayoutGap="16px">
+  <div class="table-container" [class.mobile-hidden]="showMobileDetails && dataProvider.expandedRow">
+    <ng-container *ngIf="!isMobileView" [ngTemplateOutlet]="thead"></ng-container>
+
+    <ix-table
+      class="table"
+      [ixUiSearch]="searchableElements.elements.tasks"
+      [ix-table-empty]="!(dataProvider.currentPageCount$ | async)"
+      [emptyConfig]="emptyService.defaultEmptyConfig(dataProvider.emptyType$ | async)"
+    >
+      <ng-container *ngIf="isMobileView" [ngTemplateOutlet]="thead"></ng-container>
+      <tbody
+        ix-table-body
+        [columns]="columns"
+        [dataProvider]="dataProvider"
+        [isLoading]="dataProvider.isLoading$ | async"
+        (expanded)="expanded($event)"
+      ></tbody>
+    </ix-table>
+    <ix-table-pager [dataProvider]="dataProvider"></ix-table-pager>
   </div>
+
   <div
-    *ngIf="selectedBackup"
+    *ngIf="dataProvider.expandedRow"
     ixDetailsHeight="rightside-content-hold"
     class="details-container"
     [class.details-container-mobile]="showMobileDetails"
   >
     <ix-cloud-backup-details
-      [backup]="selectedBackup"
+      [backup]="dataProvider.expandedRow"
       (closeMobileDetails)="closeMobileDetails()"
     ></ix-cloud-backup-details>
   </div>
 </div>
+
+<ng-template #thead>
+  <div class="sticky-header">
+    <thead
+      class="header-row"
+      ix-table-head
+      [columns]="columns"
+      [dataProvider]="dataProvider"
+    ></thead>
+  </div>
+</ng-template>

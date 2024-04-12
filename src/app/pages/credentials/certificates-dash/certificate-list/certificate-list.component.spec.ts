@@ -11,7 +11,6 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockWebSocket, mockCall, mockJob } from 'app/core/testing/utils/mock-websocket.utils';
 import { Certificate } from 'app/interfaces/certificate.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
@@ -19,9 +18,9 @@ import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
 import { CertificateEditComponent } from 'app/pages/credentials/certificates-dash/certificate-edit/certificate-edit.component';
 import { ConfirmForceDeleteCertificateComponent } from 'app/pages/credentials/certificates-dash/confirm-force-delete-dialog/confirm-force-delete-dialog.component';
 import { CertificateAddComponent } from 'app/pages/credentials/certificates-dash/forms/certificate-add/certificate-add.component';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { StorageService } from 'app/services/storage.service';
+import { WebSocketService } from 'app/services/ws.service';
 import { CertificateListComponent } from './certificate-list.component';
 
 const certificates = Array.from({ length: 10 }).map((_, index) => ({
@@ -34,7 +33,7 @@ const certificates = Array.from({ length: 10 }).map((_, index) => ({
   revoked_date: null,
   cert_type: 'CERTIFICATE',
   revoked: false,
-  can_be_revoked: false,
+  can_be_revoked: true,
   issuer: 'external',
   key_length: 2048,
   key_type: 'RSA',
@@ -56,19 +55,6 @@ describe('CertificateListComponent', () => {
   let loader: HarnessLoader;
   let table: IxTableHarness;
 
-  const mockDialogRef = {
-    componentInstance: {
-      setDescription: jest.fn(),
-      setCall: jest.fn(),
-      submit: jest.fn(),
-      success: of(fakeSuccessfulJob(true)),
-      failure: of(),
-      wspost: jest.fn(),
-    },
-    close: jest.fn(),
-    afterClosed: () => of(true),
-  } as unknown as MatDialogRef<EntityJobComponent>;
-
   const createComponent = createComponentFactory({
     component: CertificateListComponent,
     imports: [
@@ -81,9 +67,15 @@ describe('CertificateListComponent', () => {
       mockWebSocket([
         mockCall('certificate.query', certificates),
         mockJob('certificate.delete', fakeSuccessfulJob(true)),
+        mockJob('certificate.update', fakeSuccessfulJob()),
       ]),
       mockProvider(DialogService, {
-        confirm: () => of(true),
+        confirm: jest.fn(() => {
+          return of(true);
+        }),
+        jobDialog: jest.fn(() => ({
+          afterClosed: jest.fn(() => of(undefined)),
+        })),
       }),
       mockProvider(IxSlideInService, {
         open: jest.fn(() => {
@@ -95,10 +87,11 @@ describe('CertificateListComponent', () => {
         slideInClosed$: of(true),
       }),
       mockProvider(MatDialog, {
-        open: jest.fn(() => mockDialogRef),
+        open: jest.fn(() => ({
+          afterClosed: jest.fn(() => of(undefined)),
+        })),
       }),
       mockProvider(StorageService),
-      mockProvider(ErrorHandlerService),
       mockAuth(),
     ],
   });
@@ -132,12 +125,31 @@ describe('CertificateListComponent', () => {
   });
 
   it('opens delete dialog when "Delete" button is pressed', async () => {
+    jest.spyOn(spectator.inject(MatDialog), 'open').mockReturnValue({
+      afterClosed: () => of({ force: true }),
+    } as MatDialogRef<unknown>);
+
     const deleteButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'delete' }), 1, 3);
     await deleteButton.click();
 
     expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(ConfirmForceDeleteCertificateComponent, {
       data: certificates[0],
     });
+    expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
+    expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('certificate.delete', [certificates[0].id, true]);
+  });
+
+  it('revokes a certificate when Revoke button is pressed', async () => {
+    jest.spyOn(spectator.inject(MatDialog), 'open').mockReturnValue({
+      afterClosed: () => of({ force: true }),
+    } as MatDialogRef<unknown>);
+
+    const revokeButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'mdi-undo' }), 1, 3);
+    await revokeButton.click();
+
+    expect(spectator.inject(DialogService).confirm).toHaveBeenCalled();
+    expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
+    expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('certificate.update', [certificates[0].id, { revoked: true }]);
   });
 
   it('should show table rows', async () => {
