@@ -11,6 +11,7 @@ import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { UUID } from 'angular2-uuid';
 import { add, isToday, sub } from 'date-fns';
+import { zonedTimeToUtc } from 'date-fns-tz';
 import _ from 'lodash';
 import {
   BehaviorSubject, Subscription, timer,
@@ -363,7 +364,7 @@ export class ReportComponent extends WidgetComponent implements OnInit, OnChange
   }
 
   getDateFromString(timestamp: string): Date {
-    return new Date(timestamp);
+    return zonedTimeToUtc(new Date(timestamp), this.timezone);
   }
 
   // Convert timespan to start/end options
