@@ -77,11 +77,12 @@ def browser():
     profile.set_preference("browser.download.manager.showWhenStarting", False)
     profile.set_preference("browser.link.open_newwindow", 3)
     binary = '/snap/bin/firefox' if system() == "Linux" else '/usr/local/bin/firefox'
+    geckodriver = '/snap/bin/geckodriver' if system() == "Linux" else '/usr/local/bin/geckodriver'
     firefox_capabilities = DesiredCapabilities.FIREFOX
     firefox_capabilities['marionette'] = True
     firefox_capabilities['firefox_profile'] = profile.encoded
     firefox_capabilities['binary'] = binary
-    driver = webdriver.Firefox(capabilities=firefox_capabilities)
+    driver = webdriver.Firefox(capabilities=firefox_capabilities, executable_path=geckodriver)
     driver.set_window_size(1920, 1080)
     driver.implicitly_wait(2)
     return driver
