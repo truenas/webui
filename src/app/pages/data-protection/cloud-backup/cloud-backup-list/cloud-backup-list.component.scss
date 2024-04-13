@@ -4,14 +4,6 @@
 @include tree-node-with-details-container;
 
 :host ::ng-deep {
-  ix-empty-row {
-    height: 100%;
-  }
-
-  ix-table2 {
-    height: 100%;
-  }
-
   .sticky-header {
     height: inherit;
     min-height: 48px;
