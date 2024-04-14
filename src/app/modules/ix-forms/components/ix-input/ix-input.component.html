@@ -39,13 +39,8 @@
     (focus)="focus(ixInput)"
     (blur)="blurred()"
   />
-  <span *ngIf="shouldShowResetInput() && !autocompleteOptions?.length" class="reset-input">
+  <span *ngIf="shouldShowResetInput()" class="reset-input">
     <ix-icon name="mdi-close-circle" (click)="resetInput(ixInput)"></ix-icon>
-  </span>
-  <span *ngIf="autocompleteOptions?.length" class="reset-input mat-mdc-select-arrow" (click)="ixInput.focus()">
-    <svg viewBox="0 0 24 24" width="24px" height="24px" aria-hidden="true">
-      <path d="M7 10l5 5 5-5z"></path>
-    </svg>
   </span>
   <button
     *ngIf="type === 'password'"
