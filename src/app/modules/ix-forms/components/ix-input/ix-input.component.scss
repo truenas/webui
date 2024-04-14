@@ -60,11 +60,6 @@
   user-select: none;
 }
 
-.reset-input.mat-mdc-select-arrow {
-  opacity: 1;
-  padding: 12px 7px;
-}
-
 .prefix-icon {
   cursor: default;
   left: 2px;
@@ -85,14 +80,6 @@
 }
 
 .input-container {
-  &.auto-complete {
-    cursor: pointer;
-
-    input {
-      cursor: pointer;
-    }
-  }
-
   .toggle_pw {
     @include variable(display, --toggle_pw_display_prop, $toggle-pw-display-prop);
     opacity: var(--disabled-opacity);
@@ -128,10 +115,6 @@
 
 .has-reset-input-icon {
   padding-right: 20px;
-}
-
-.has-autocomplete {
-  padding-right: 30px;
 }
 
 ::ng-deep .mat-option-text {
