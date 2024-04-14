@@ -8,7 +8,6 @@
 
 <div
   class="input-container"
-  [class.auto-complete]="autocompleteOptions?.length"
   [class.disabled]="isDisabled"
   [class.readonly]="readonly"
 >
@@ -22,7 +21,6 @@
     [class.prefix-padding]="prefixIcon"
     [class.password-field]="isPasswordField()"
     [class.has-reset-input-icon]="shouldShowResetInput()"
-    [class.has-autocomplete]="autocompleteOptions?.length"
     [required]="required"
     [readonly]="readonly"
     [disabled]="isDisabled"
@@ -33,7 +31,6 @@
     [matAutocomplete]="auto"
     [placeholder]="placeholder"
     [ixTest]="controlDirective.name"
-    [attr.title]="ixInput.value"
     [attr.aria-label]="label"
     (input)="input(ixInput)"
     (focus)="focus(ixInput)"
