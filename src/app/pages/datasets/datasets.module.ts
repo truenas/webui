@@ -11,7 +11,7 @@ import { MatSortModule } from '@angular/material/sort';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { FlexLayoutModule } from '@ngbracket/ngx-layout';
 import { TranslateModule } from '@ngx-translate/core';
-import { NgChartsModule } from 'ng2-charts';
+import { BaseChartDirective } from 'ng2-charts';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { CoreComponents } from 'app/core/core-components.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
@@ -57,7 +57,7 @@ import { DatasetNodeComponent } from './components/dataset-node/dataset-node.com
   imports: [
     CommonModule,
     CommonDirectivesModule,
-    NgChartsModule,
+    BaseChartDirective,
     LayoutModule,
     routing,
     TranslateModule,

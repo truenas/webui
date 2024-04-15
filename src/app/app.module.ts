@@ -16,6 +16,7 @@ import {
   TranslateModule, TranslateLoader, TranslateCompiler, MissingTranslationHandler,
 } from '@ngx-translate/core';
 import { environment } from 'environments/environment';
+import { provideCharts, withDefaultRegisterables } from 'ng2-charts';
 import { MarkdownModule } from 'ngx-markdown';
 import { NgxPopperjsModule } from 'ngx-popperjs';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
@@ -147,6 +148,7 @@ import { RoutePartsService } from './services/route-parts/route-parts.service';
       provide: WINDOW,
       useFactory: getWindow,
     },
+    provideCharts(withDefaultRegisterables()),
   ],
   bootstrap: [
     AppComponent,
