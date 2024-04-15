@@ -1,23 +1,17 @@
-import { DOCUMENT } from '@angular/common';
 import {
   ChangeDetectionStrategy, Component, Inject, Input, OnChanges, TrackByFunction,
 } from '@angular/core';
 import { Router } from '@angular/router';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { UntilDestroy } from '@ngneat/until-destroy';
 import { findIndex, isEqual } from 'lodash';
-import {
-  combineLatestWith, filter, delay,
-} from 'rxjs';
 import { WINDOW } from 'app/helpers/window.helper';
 import { Option } from 'app/interfaces/option.interface';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
-import { searchDelayConst } from 'app/modules/global-search/constants/delay.const';
 import { GlobalSearchSection } from 'app/modules/global-search/enums/global-search-section.enum';
 import { generateIdFromHierarchy } from 'app/modules/global-search/helpers/generate-id-from-hierarchy';
 import { processHierarchy } from 'app/modules/global-search/helpers/process-hierarchy';
 import { UiSearchableElement } from 'app/modules/global-search/interfaces/ui-searchable-element.interface';
 import { GlobalSearchSectionsProvider } from 'app/modules/global-search/services/global-search-sections.service';
-import { UiSearchDirectivesService } from 'app/modules/global-search/services/ui-search-directives.service';
 import { UiSearchProvider } from 'app/modules/global-search/services/ui-search.service';
 import { AuthService } from 'app/services/auth/auth.service';
 
@@ -65,14 +59,10 @@ export class GlobalSearchResultsComponent implements OnChanges {
   constructor(
     protected authService: AuthService,
     private searchProvider: UiSearchProvider,
-    private searchDirectives: UiSearchDirectivesService,
     private globalSearchSectionsProvider: GlobalSearchSectionsProvider,
     private router: Router,
     @Inject(WINDOW) private window: Window,
-    @Inject(DOCUMENT) private document: Document,
-  ) {
-    this.listenForSelectionChanges();
-  }
+  ) {}
 
   ngOnChanges(changes: IxSimpleChanges<this>): void {
     if (changes.searchTerm) {
@@ -81,8 +71,8 @@ export class GlobalSearchResultsComponent implements OnChanges {
   }
 
   selectElement(element: UiSearchableElement): void {
-    this.searchProvider.select(element);
     this.saveSearchResult(element);
+    this.searchProvider.select(element);
     const route = element.anchorRouterLink || element.routerLink;
     if (element.targetHref) {
       this.window.open(element.targetHref, '_blank');
@@ -108,19 +98,6 @@ export class GlobalSearchResultsComponent implements OnChanges {
 
   getElementsBySection(section: GlobalSearchSection): UiSearchableElement[] {
     return this.results.filter((element) => element?.section === section);
-  }
-
-  listenForSelectionChanges(): void {
-    this.searchProvider.selectionChanged$.pipe(
-      combineLatestWith(this.searchDirectives.highlightOnDirectiveAdded$),
-      filter(([selectedElement]) => this.searchDirectives.has(selectedElement.anchor)),
-      delay(searchDelayConst),
-      untilDestroyed(this),
-    ).subscribe(([element]) => {
-      this.document.querySelector<HTMLElement>('.ix-slide-in-background.open')?.click();
-      this.document.querySelector<HTMLElement>('.ix-slide-in2-background.open')?.click();
-      this.searchDirectives.get(element.anchor).highlight();
-    });
   }
 
   private saveSearchResult(result: UiSearchableElement): void {

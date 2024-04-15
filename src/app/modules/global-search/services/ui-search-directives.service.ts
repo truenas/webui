@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { UiSearchDirective } from 'app/directives/common/ui-search.directive';
+import { getSearchableElementId } from 'app/modules/global-search/helpers/get-searchable-element-id';
+import { UiSearchableElement } from 'app/modules/global-search/interfaces/ui-searchable-element.interface';
 
 @Injectable({
   providedIn: 'root',
@@ -13,12 +15,14 @@ export class UiSearchDirectivesService {
     return this.directives.size;
   }
 
-  has(anchor: string): boolean {
-    return [...this.directives].some((directive) => directive.id === anchor);
+  has(element: UiSearchableElement): boolean {
+    return [...this.directives].some((directive) => directive.id === getSearchableElementId(element));
   }
 
-  get(anchor: string): UiSearchDirective {
-    return [...this.directives].find((directive) => directive.id === anchor);
+  get(element: UiSearchableElement): UiSearchDirective {
+    return [...this.directives.values()].find((directive) => {
+      return directive.id === getSearchableElementId(element);
+    });
   }
 
   register(directive: UiSearchDirective): void {

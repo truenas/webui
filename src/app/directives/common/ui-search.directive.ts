@@ -3,7 +3,7 @@ import {
   OnDestroy,
 } from '@angular/core';
 import { searchDelayConst } from 'app/modules/global-search/constants/delay.const';
-import { generateIdFromHierarchy } from 'app/modules/global-search/helpers/generate-id-from-hierarchy';
+import { getSearchableElementId } from 'app/modules/global-search/helpers/get-searchable-element-id';
 import { UiSearchableElement } from 'app/modules/global-search/interfaces/ui-searchable-element.interface';
 import { UiSearchDirectivesService } from 'app/modules/global-search/services/ui-search-directives.service';
 
@@ -14,7 +14,7 @@ export class UiSearchDirective implements OnInit, OnDestroy {
   @Input({ required: true, alias: 'ixUiSearch' }) config: UiSearchableElement;
 
   get id(): string {
-    return this.config.anchor || generateIdFromHierarchy(this.config?.hierarchy || []);
+    return getSearchableElementId(this.config);
   }
 
   constructor(
