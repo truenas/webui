@@ -78,6 +78,10 @@ describe('PoolManagerComponent – unsetting on fewer disks', () => {
             devname: 'sda0',
             size: 20 * GiB,
             type: DiskType.Hdd,
+            enclosure: {
+              number: 4,
+              slot: 0,
+            },
           },
           {
             devname: 'sda1',
