@@ -12,8 +12,13 @@
     <ix-widget-interface-ip [size]="SlotSize.Quarter" [settings]="{ interface: 'notExistent1' }"></ix-widget-interface-ip>
   </div>
 </ng-container>
-<ng-container *ngIf="demo !== 0">
+<ng-container *ngIf="demo === 1">
   <div class="slot">
     <ix-widget-help [size]="SlotSize.Full"></ix-widget-help>
+  </div>
+</ng-container>
+<ng-container *ngIf="demo === 2">
+  <div class="slot full-height-demo">
+    <ix-widget-memory [size]="SlotSize.Full"></ix-widget-memory>
   </div>
 </ng-container>
