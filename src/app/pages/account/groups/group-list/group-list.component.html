@@ -32,8 +32,8 @@
 </ix-page-header>
 
 <div class="table-container" [ixUiSearch]="searchableElements.elements.list">
-  <ix-table2
-    [ix-table2-empty]="!(dataProvider.currentPageCount$ | async)"
+  <ix-table
+    [ix-table-empty]="!(dataProvider.currentPageCount$ | async)"
     [emptyConfig]="emptyConfigService.defaultEmptyConfig((emptyType$ | async))"
   >
     <thead
@@ -54,6 +54,6 @@
         ></ix-group-details-row>
       </ng-template>
     </tbody>
-  </ix-table2>
+  </ix-table>
   <ix-table-pager [dataProvider]="dataProvider"></ix-table-pager>
 </div>

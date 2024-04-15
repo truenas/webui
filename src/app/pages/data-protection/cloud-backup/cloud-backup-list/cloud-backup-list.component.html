@@ -16,10 +16,10 @@
   <div class="table-container" [class.mobile-hidden]="showMobileDetails && dataProvider.expandedRow">
     <ng-container *ngIf="!isMobileView" [ngTemplateOutlet]="thead"></ng-container>
 
-    <ix-table2
+    <ix-table
       class="table"
       [ixUiSearch]="searchableElements.elements.tasks"
-      [ix-table2-empty]="!(dataProvider.currentPageCount$ | async)"
+      [ix-table-empty]="!(dataProvider.currentPageCount$ | async)"
       [emptyConfig]="emptyService.defaultEmptyConfig(dataProvider.emptyType$ | async)"
     >
       <ng-container *ngIf="isMobileView" [ngTemplateOutlet]="thead"></ng-container>
@@ -30,7 +30,7 @@
         [isLoading]="dataProvider.isLoading$ | async"
         (expanded)="expanded($event)"
       ></tbody>
-    </ix-table2>
+    </ix-table>
     <ix-table-pager [dataProvider]="dataProvider"></ix-table-pager>
   </div>
 

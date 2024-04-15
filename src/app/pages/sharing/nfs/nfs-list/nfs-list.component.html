@@ -17,8 +17,8 @@
     </div>
   </mat-toolbar-row>
   <mat-card-content [ixUiSearch]="searchableElements.elements.nfs">
-    <ix-table2
-      [ix-table2-empty]="!(dataProvider.currentPageCount$ | async)"
+    <ix-table
+      [ix-table-empty]="!(dataProvider.currentPageCount$ | async)"
       [emptyConfig]="emptyService.defaultEmptyConfig(dataProvider.emptyType$ | async)"
     >
       <thead
@@ -32,7 +32,7 @@
         [dataProvider]="dataProvider"
         [isLoading]="dataProvider.isLoading$ | async"
       ></tbody>
-    </ix-table2>
+    </ix-table>
     <ix-table-pager [dataProvider]="dataProvider"></ix-table-pager>
   </mat-card-content>
 </mat-card>

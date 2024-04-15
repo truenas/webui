@@ -19,7 +19,7 @@ import { SshCredentialsSelectModule } from 'app/modules/custom-selects/ssh-crede
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
-import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
+import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
 import { LayoutModule } from 'app/modules/layout/layout.module';
 import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
 import { SchedulerModule } from 'app/modules/scheduler/scheduler.module';
@@ -107,7 +107,7 @@ import { SmartTaskListComponent } from './smart-task/smart-task-list/smart-task-
     MatTooltipModule,
     MatCardModule,
     TranslateModule,
-    IxTable2Module,
+    IxTableModule,
     IxFormsModule,
     CloudCredentialsSelectModule,
     SshCredentialsSelectModule,

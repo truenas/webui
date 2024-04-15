@@ -9,8 +9,8 @@ import { mockWebSocket, mockCall } from 'app/core/testing/utils/mock-websocket.u
 import { AlertService } from 'app/interfaces/alert-service.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
-import { IxTable2Harness } from 'app/modules/ix-table2/components/ix-table2/ix-table2.harness';
-import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
+import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
+import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
 import { SearchInput1Component } from 'app/modules/search-input1/search-input1.component';
 import { AlertServiceComponent } from 'app/pages/system/alert-service/alert-service/alert-service.component';
 import { AlertServiceListComponent } from 'app/pages/system/alert-service/alert-service-list/alert-service-list.component';
@@ -20,7 +20,7 @@ import { WebSocketService } from 'app/services/ws.service';
 describe('AlertServiceListComponent', () => {
   let spectator: Spectator<AlertServiceListComponent>;
   let loader: HarnessLoader;
-  let table: IxTable2Harness;
+  let table: IxTableHarness;
 
   const alertServices = [
     {
@@ -39,7 +39,7 @@ describe('AlertServiceListComponent', () => {
   const createComponent = createComponentFactory({
     component: AlertServiceListComponent,
     imports: [
-      IxTable2Module,
+      IxTableModule,
       SearchInput1Component,
     ],
     providers: [
@@ -62,7 +62,7 @@ describe('AlertServiceListComponent', () => {
   beforeEach(async () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    table = await loader.getHarness(IxTable2Harness);
+    table = await loader.getHarness(IxTableHarness);
   });
 
   it('should show table rows', async () => {
