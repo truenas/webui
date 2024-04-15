@@ -18,7 +18,7 @@ import { CommonDirectivesModule } from 'app/directives/common/common-directives.
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxDynamicFormModule } from 'app/modules/ix-dynamic-form/ix-dynamic-form.module';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
-import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
+import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
 import { LayoutModule } from 'app/modules/layout/layout.module';
 import { OauthButtonModule } from 'app/modules/oauth-button/oauth-button.module';
 import { SummaryComponent } from 'app/modules/summary/summary.component';
@@ -156,7 +156,7 @@ import { CertificateSubjectComponent } from './certificates-dash/forms/common-st
     FlexLayoutModule,
     IxDynamicFormModule,
     IxIconModule,
-    IxTable2Module,
+    IxTableModule,
     MatButtonModule,
     MatButtonModule,
     MatCardModule,

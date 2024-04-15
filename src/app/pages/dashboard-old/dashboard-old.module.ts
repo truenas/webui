@@ -25,7 +25,7 @@ import { IxDropGridModule } from 'app/modules/ix-drop-grid/ix-drop-grid.module';
 import { IxFileSizeModule } from 'app/modules/ix-file-size/ix-file-size.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
-import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
+import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
 import { LayoutModule } from 'app/modules/layout/layout.module';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
 import { DashboardComponent } from 'app/pages/dashboard-old/components/dashboard/dashboard.component';
@@ -77,7 +77,7 @@ import { ResourcesUsageStore } from 'app/pages/dashboard-old/store/resources-usa
     TestIdModule,
     NgxSkeletonLoaderModule,
     ImgFallbackModule,
-    IxTable2Module,
+    IxTableModule,
     EmptyComponent,
     InterfaceStatusIconComponent,
   ],

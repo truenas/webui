@@ -6,9 +6,9 @@
 </ix-page-header>
 
 <div class="table-container">
-  <ix-table2
+  <ix-table
     [ixUiSearch]="searchableElements.elements.vmwareSnapshots"
-    [ix-table2-empty]="!(dataProvider.currentPageCount$ | async)"
+    [ix-table-empty]="!(dataProvider.currentPageCount$ | async)"
     [emptyConfig]="emptyService.defaultEmptyConfig(dataProvider.emptyType$ | async)"
   >
     <thead
@@ -49,6 +49,6 @@
         </div>
       </ng-template>
     </tbody>
-  </ix-table2>
+  </ix-table>
   <ix-table-pager [dataProvider]="dataProvider"></ix-table-pager>
 </div>
