@@ -1,0 +1,65 @@
+<ix-modal-header [requiredRoles]="requiredRoles" [title]="title" [loading]="isLoading"></ix-modal-header>
+
+<mat-card>
+  <mat-card-content>
+    <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
+      <ix-fieldset
+        [title]="'Snapshot Time {time}' | translate: { time: snapshot?.time | date: 'medium' }"
+      ></ix-fieldset>
+
+      <ix-fieldset [title]="'Remote' | translate">
+        <ix-radio-group
+          formControlName="includeExclude"
+          [label]="'Include/Exclude' | translate"
+          [tooltip]="tooltips.includeExclude | translate"
+          [options]="includeExcludeOptions"
+        ></ix-radio-group>
+
+        <ix-explorer
+          *ngIf="isExcludePathsSelected"
+          formControlName="excludedPaths"
+          [required]="true"
+          [label]="'Excluded Paths' | translate"
+          [tooltip]="tooltips.target| translate"
+          [nodeProvider]="treeNodeProvider"
+          [canCreateDataset]="false"
+          [multiple]="true"
+          [createDatasetProps]="createDatasetProps"
+        ></ix-explorer>
+
+        <ix-input
+          *ngIf="isExcludeByPatternSelected"
+          formControlName="excludePattern"
+          [label]="'Pattern' | translate"
+          [tooltip]="tooltips.pattern | translate"
+          [required]="true"
+        ></ix-input>
+      </ix-fieldset>
+
+      <ix-fieldset [title]="'Local' | translate">
+        <ix-explorer
+          formControlName="target"
+          [required]="true"
+          [label]="'Target' | translate"
+          [tooltip]="tooltips.target| translate"
+          [nodeProvider]="treeNodeProvider"
+          [canCreateDataset]="true"
+          [createDatasetProps]="createDatasetProps"
+        ></ix-explorer>
+      </ix-fieldset>
+
+      <ix-form-actions>
+        <button
+          *ixRequiresRoles="requiredRoles"
+          mat-button
+          type="submit"
+          color="primary"
+          ixTest="save"
+          [disabled]="form.invalid || isLoading"
+        >
+          {{ 'Save' | translate }}
+        </button>
+      </ix-form-actions>
+    </form>
+  </mat-card-content>
+</mat-card>
