@@ -1,31 +1,30 @@
-import { BwLimit } from './cloud-sync-task.interface';
+import { Job } from 'app/interfaces/job.interface';
+import { BwLimit, CloudCredential } from './cloud-sync-task.interface';
 import { Schedule } from './schedule.interface';
 
 export interface CloudBackup {
   id: number;
   description: string;
   path: string;
-  attributes: { folder: string }; // TODO:
+  attributes: Record<string, string | number | boolean>;
   schedule: Schedule;
   pre_script: string;
   post_script: string;
   snapshot: boolean;
-  bwlimit: BwLimit;
   include: string[];
   exclude: string[];
   transfers: number | null;
   args: string;
   enabled: boolean;
   password: string;
-  keep_last: number;
-  credentials: { id: number }; // TODO:
-  job: unknown; // TODO:
+  credentials: CloudCredential | number;
+  job: Job | null;
   locked: boolean;
+  bwlimit?: BwLimit;
+  keep_last?: number;
 }
 
-export interface CloudBackupUpdate extends Omit<CloudBackup, 'id' | 'job' | 'locked' | 'credentials'> {
-  credentials: number;
-}
+export type CloudBackupUpdate = Omit<CloudBackup, 'id' | 'job' | 'locked'>;
 
 export interface CloudBackupSnapshot {
   id: string;

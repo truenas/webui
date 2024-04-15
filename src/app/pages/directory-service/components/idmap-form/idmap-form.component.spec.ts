@@ -97,11 +97,13 @@ describe('IdmapFormComponent', () => {
         } as IdmapBackendOptions),
       }),
       mockProvider(IxSlideInService),
-      mockProvider(IxSlideInService),
       mockProvider(Router),
       mockProvider(SnackbarService),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(false)),
+        jobDialog: jest.fn(() => ({
+          afterClosed: () => of(null),
+        })),
       }),
       mockProvider(IxSlideInRef),
       mockAuth(),
@@ -212,7 +214,8 @@ describe('IdmapFormComponent', () => {
         message: helptextIdmap.idmap.clear_cache_dialog.message,
         hideCheckbox: true,
       });
-      expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('idmap.clear_idmap_cache', []);
+      expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
+      expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('idmap.clear_idmap_cache');
     });
   });
 

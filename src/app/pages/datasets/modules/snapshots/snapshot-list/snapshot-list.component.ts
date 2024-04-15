@@ -52,7 +52,7 @@ export interface ZfsSnapshotUi extends ZfsSnapshot {
 })
 export class SnapshotListComponent implements OnInit {
   protected readonly requiredRoles = [Role.SnapshotDelete];
-  datasetFilter = '';
+  filterString = '';
   dataProvider = new ArrayDataProvider<ZfsSnapshotUi>();
   snapshots: ZfsSnapshotUi[] = [];
   showExtraColumnsControl = new FormControl<boolean>(false);
@@ -130,8 +130,8 @@ export class SnapshotListComponent implements OnInit {
   });
 
   get pageTitle(): string {
-    if (this.datasetFilter.length) {
-      return this.translate.instant('Snapshots') + ': ' + this.datasetFilter;
+    if (this.filterString.length) {
+      return this.translate.instant('Snapshots') + ': ' + this.filterString;
     }
     return this.translate.instant('Snapshots');
   }
@@ -156,7 +156,7 @@ export class SnapshotListComponent implements OnInit {
     private slideInService: IxSlideInService,
     private route: ActivatedRoute,
   ) {
-    this.datasetFilter = this.route.snapshot.paramMap.get('dataset') || '';
+    this.filterString = this.route.snapshot.paramMap.get('dataset') || '';
   }
 
   ngOnInit(): void {
@@ -259,12 +259,12 @@ export class SnapshotListComponent implements OnInit {
   }
 
   protected onListFiltered(query: string): void {
-    this.datasetFilter = query;
+    this.filterString = query;
     this.dataProvider.setRows(this.snapshots.filter(this.filterSnapshot));
   }
 
   private filterSnapshot = (snapshot: ZfsSnapshotUi): boolean => {
-    return snapshot.name.includes(this.datasetFilter);
+    return snapshot.name.toLowerCase().includes(this.filterString);
   };
 
   private setDefaultSort(): void {

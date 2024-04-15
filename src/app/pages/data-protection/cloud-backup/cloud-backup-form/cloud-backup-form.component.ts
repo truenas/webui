@@ -11,6 +11,7 @@ import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
 import { mntPath } from 'app/enums/mnt-path.enum';
 import { Role } from 'app/enums/role.enum';
 import { CloudBackup, CloudBackupUpdate } from 'app/interfaces/cloud-backup.interface';
+import { CloudCredential } from 'app/interfaces/cloud-sync-task.interface';
 import { SelectOption, newOption } from 'app/interfaces/option.interface';
 import { ExplorerNodeData, TreeNode } from 'app/interfaces/tree-node.interface';
 import { TreeNodeProvider } from 'app/modules/ix-forms/components/ix-explorer/tree-node-provider.interface';
@@ -201,8 +202,8 @@ export class CloudBackupFormComponent implements OnInit {
       ...this.editingTask,
       schedule: scheduleToCrontab(this.editingTask.schedule) as CronPresetValue,
       path: [],
-      credentials: this.editingTask.credentials.id,
-      folder: this.editingTask.attributes.folder,
+      credentials: (this.editingTask.credentials as CloudCredential).id,
+      folder: this.editingTask.attributes.folder as string,
     });
 
     if (this.editingTask.include?.length) {

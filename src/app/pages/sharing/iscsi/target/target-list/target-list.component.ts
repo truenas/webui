@@ -56,7 +56,7 @@ export class TargetListComponent implements OnInit {
             const slideInRef = this.slideInService.open(TargetFormComponent, { data: target, wide: true });
             slideInRef.slideInClosed$
               .pipe(filter(Boolean), untilDestroyed(this))
-              .subscribe(() => this.dataProvider.load());
+              .subscribe(() => this.refresh());
           },
         },
         {
@@ -82,7 +82,7 @@ export class TargetListComponent implements OnInit {
                   switchMap(() => this.ws.call('iscsi.target.delete', [row.id, true]).pipe(this.loader.withLoader())),
                   untilDestroyed(this),
                 ).subscribe({
-                  next: () => this.dataProvider.load(),
+                  next: () => this.refresh(),
                   error: (error: unknown) => {
                     this.dialogService.error(this.errorHandler.parseError(error));
                   },
@@ -115,20 +115,23 @@ export class TargetListComponent implements OnInit {
       tap((targets) => this.targets = targets),
     );
     this.dataProvider = new AsyncDataProvider(targets$);
-    this.dataProvider.load();
+    this.refresh();
+    this.dataProvider.emptyType$.pipe(untilDestroyed(this)).subscribe(() => {
+      this.onListFiltered(this.filterString);
+    });
   }
 
   doAdd(): void {
     const slideInRef = this.slideInService.open(TargetFormComponent, { wide: true });
     slideInRef.slideInClosed$
       .pipe(filter(Boolean), untilDestroyed(this))
-      .subscribe(() => this.dataProvider.load());
+      .subscribe(() => this.refresh());
   }
 
   onListFiltered(query: string): void {
     this.filterString = query.toLowerCase();
     this.dataProvider.setRows(this.targets.filter((target) => {
-      return [target.name].includes(this.filterString);
+      return target.name.toLowerCase().includes(this.filterString);
     }));
   }
 
@@ -136,5 +139,9 @@ export class TargetListComponent implements OnInit {
     this.columns = [...columns];
     this.cdr.detectChanges();
     this.cdr.markForCheck();
+  }
+
+  private refresh(): void {
+    this.dataProvider.load();
   }
 }

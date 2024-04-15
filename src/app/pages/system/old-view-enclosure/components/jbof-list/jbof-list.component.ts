@@ -91,6 +91,9 @@ export class JbofListComponent implements OnInit {
     );
     this.dataProvider = new AsyncDataProvider(request$);
     this.getJbofs();
+    this.dataProvider.emptyType$.pipe(untilDestroyed(this)).subscribe(() => {
+      this.onListFiltered(this.filterString);
+    });
   }
 
   openForm(jbof?: Jbof): void {

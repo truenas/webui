@@ -77,7 +77,7 @@ export class ExtentListComponent implements OnInit {
             const slideInRef = this.slideInService.open(ExtentFormComponent, { wide: true, data: extent });
             slideInRef.slideInClosed$
               .pipe(filter(Boolean), untilDestroyed(this))
-              .subscribe(() => this.dataProvider.load());
+              .subscribe(() => this.refresh());
           },
         },
         {
@@ -107,27 +107,30 @@ export class ExtentListComponent implements OnInit {
       untilDestroyed(this),
     );
     this.dataProvider = new AsyncDataProvider(extents$);
-    this.dataProvider.load();
+    this.refresh();
+    this.dataProvider.emptyType$.pipe(untilDestroyed(this)).subscribe(() => {
+      this.onListFiltered(this.filterString);
+    });
   }
 
   doAdd(): void {
     const slideInRef = this.slideInService.open(ExtentFormComponent, { wide: true });
     slideInRef.slideInClosed$
       .pipe(filter(Boolean), untilDestroyed(this))
-      .subscribe(() => this.dataProvider.load());
+      .subscribe(() => this.refresh());
   }
 
   showDeleteDialog(extent: IscsiExtent): void {
     this.matDialog.open(DeleteExtentDialogComponent, { data: extent })
       .afterClosed()
       .pipe(filter(Boolean), untilDestroyed(this))
-      .subscribe(() => this.dataProvider.load());
+      .subscribe(() => this.refresh());
   }
 
   onListFiltered(query: string): void {
     this.filterString = query.toLowerCase();
     this.dataProvider.setRows(this.extents.filter((extent) => {
-      return [extent.name].includes(this.filterString);
+      return extent.name.toLowerCase().includes(this.filterString);
     }));
   }
 
@@ -135,5 +138,9 @@ export class ExtentListComponent implements OnInit {
     this.columns = [...columns];
     this.cdr.detectChanges();
     this.cdr.markForCheck();
+  }
+
+  private refresh(): void {
+    this.dataProvider.load();
   }
 }
