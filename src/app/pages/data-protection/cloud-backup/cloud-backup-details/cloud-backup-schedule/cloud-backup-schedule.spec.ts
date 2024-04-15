@@ -1,7 +1,7 @@
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { CloudBackup } from 'app/interfaces/cloud-backup.interface';
-import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
+import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
 import { CloudBackupScheduleComponent } from 'app/pages/data-protection/cloud-backup/cloud-backup-details/cloud-backup-schedule/cloud-backup-schedule.component';
 import { selectPreferences } from 'app/store/preferences/preferences.selectors';
 import { selectTimezone } from 'app/store/system-config/system-config.selectors';
@@ -24,7 +24,7 @@ describe('CloudBackupScheduleComponent', () => {
   const createComponent = createComponentFactory({
     component: CloudBackupScheduleComponent,
     imports: [
-      IxTable2Module,
+      IxTableModule,
     ],
     providers: [
       provideMockStore({

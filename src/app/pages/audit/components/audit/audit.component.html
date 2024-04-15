@@ -35,9 +35,9 @@
   <div class="table-container" [class.mobile-hidden]="showMobileDetails && dataProvider.expandedRow">
     <ng-container *ngIf="!isMobileView" [ngTemplateOutlet]="thead"></ng-container>
 
-    <ix-table2
+    <ix-table
       [ixUiSearch]="searchableElements.elements.audit"
-      [ix-table2-empty]="!(dataProvider.currentPageCount$ | async)"
+      [ix-table-empty]="!(dataProvider.currentPageCount$ | async)"
       [emptyConfig]="emptyService.defaultEmptyConfig(dataProvider.emptyType$ | async)"
     >
       <ng-container *ngIf="isMobileView" [ngTemplateOutlet]="thead"></ng-container>
@@ -61,7 +61,7 @@
           </div>
         </ng-template>
       </tbody>
-    </ix-table2>
+    </ix-table>
     <ix-table-pager
       [dataProvider]="dataProvider"
       [pageSize]="pagination.pageSize"

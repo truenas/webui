@@ -51,9 +51,9 @@
   </div>
 </div>
 
-<ix-table2
+<ix-table
   class="table"
-  [ix-table2-empty]="!(dataProvider.currentPageCount$ | async)"
+  [ix-table-empty]="!(dataProvider.currentPageCount$ | async)"
   [emptyConfig]="emptyService.defaultEmptyConfig(emptyType$ | async)"
 >
   <thead
@@ -72,5 +72,5 @@
       <ix-snapshot-details-row [snapshot]="snapshot"></ix-snapshot-details-row>
     </ng-template>
   </tbody>
-</ix-table2>
+</ix-table>
 <ix-table-pager [dataProvider]="dataProvider"></ix-table-pager>

@@ -8,8 +8,8 @@ import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.u
 import { Jbof } from 'app/interfaces/jbof.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
-import { IxTable2Harness } from 'app/modules/ix-table2/components/ix-table2/ix-table2.harness';
-import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
+import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
+import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
 import { JbosFormComponent } from 'app/pages/system/old-view-enclosure/components/jbof-form/jbof-form.component';
 import { JbofListComponent } from 'app/pages/system/old-view-enclosure/components/jbof-list/jbof-list.component';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -37,12 +37,12 @@ const fakeJbofDataSource: Jbof[] = [
 describe('JbofListComponent', () => {
   let spectator: Spectator<JbofListComponent>;
   let loader: HarnessLoader;
-  let table: IxTable2Harness;
+  let table: IxTableHarness;
 
   const createComponent = createComponentFactory({
     component: JbofListComponent,
     imports: [
-      IxTable2Module,
+      IxTableModule,
     ],
     providers: [
       mockWebSocket([
@@ -66,7 +66,7 @@ describe('JbofListComponent', () => {
   beforeEach(async () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    table = await loader.getHarness(IxTable2Harness);
+    table = await loader.getHarness(IxTableHarness);
   });
 
   it('should show table rows', async () => {

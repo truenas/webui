@@ -10,8 +10,8 @@ import { CloudBackup, CloudBackupSnapshot } from 'app/interfaces/cloud-backup.in
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
-import { IxTable2Harness } from 'app/modules/ix-table2/components/ix-table2/ix-table2.harness';
-import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
+import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
+import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
 import { CloudBackupRestoreFromSnapshotFormComponent } from 'app/pages/data-protection/cloud-backup/cloud-backup-details/cloud-backup-restore-form-snapshot-form/cloud-backup-restore-from-snapshot-form.component';
 import { CloudBackupSnapshotsComponent } from 'app/pages/data-protection/cloud-backup/cloud-backup-details/cloud-backup-snapshots/cloud-backup-snapshots.component';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
@@ -31,12 +31,12 @@ const cloudBackupSnapshots = [
 describe('CloudBackupSnapshotsComponent', () => {
   let spectator: Spectator<CloudBackupSnapshotsComponent>;
   let loader: HarnessLoader;
-  let table: IxTable2Harness;
+  let table: IxTableHarness;
 
   const createComponent = createComponentFactory({
     component: CloudBackupSnapshotsComponent,
     imports: [
-      IxTable2Module,
+      IxTableModule,
     ],
     providers: [
       mockWebSocket([
@@ -75,7 +75,7 @@ describe('CloudBackupSnapshotsComponent', () => {
       },
     });
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    table = await loader.getHarness(IxTable2Harness);
+    table = await loader.getHarness(IxTableHarness);
   });
 
   it('checks page title', () => {

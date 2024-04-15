@@ -1,0 +1,108 @@
+@import 'scss-imports/cssvars';
+
+:host {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 14px 8px 14px 16px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+
+  h3 {
+    font-size: 24px;
+  }
+}
+
+.container {
+  display: flex;
+  flex-grow: 1;
+  overflow: hidden;
+
+  .stats {
+    align-items: center;
+    display: flex;
+    flex: 0 0 45%;
+    flex-direction: column;
+    justify-content: center;
+
+    .total-memory {
+      font-family: var(--font-family-body);
+      font-size: 49px;
+      font-weight: 400;
+      line-height: 1;
+      text-align: center;
+
+      @media(max-width: $breakpoint-xs) {
+        font-size: 38px;
+      }
+
+      .units {
+        font-size: 50%;
+      }
+
+      .skeleton {
+        display: block;
+        width: 170px;
+      }
+    }
+
+    .memory-used-caption {
+      font-size: 14px;
+      margin-bottom: 24px;
+      text-align: center;
+    }
+
+    .legend {
+      display: flex;
+      flex-direction: column;
+      margin-bottom: 10px;
+      row-gap: 14px;
+
+      .skeleton {
+        display: inline-flex;
+        width: 45px;
+      }
+    }
+  }
+
+  .chart {
+    align-items: center;
+    display: flex;
+    flex: 0 0 55%;
+    margin: 0;
+    overflow: hidden;
+    padding-left: 21px;
+    padding-right: 32px;
+    position: relative;
+
+    .skeleton {
+      display: block;
+      flex-grow: 1;
+    }
+  }
+}
+
+.stats-item {
+  align-items: center;
+  display: flex;
+  font-size: 14px;
+  margin-right: 7px;
+
+  .label {
+    font-weight: 500;
+  }
+
+  .legend-swatch {
+    border: solid #000 0;
+    border-radius: 50%;
+    display: inline-block;
+    height: 12px;
+    margin-bottom: 1px;
+    margin-right: 5px;
+    width: 12px;
+  }
+}

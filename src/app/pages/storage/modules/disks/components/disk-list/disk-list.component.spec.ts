@@ -13,8 +13,8 @@ import { DiskStandby } from 'app/enums/disk-standby.enum';
 import { SmartTestResultPageType } from 'app/enums/smart-test-results-page-type.enum';
 import { Choices } from 'app/interfaces/choices.interface';
 import { Disk, UnusedDisk } from 'app/interfaces/storage.interface';
-import { IxTable2Harness } from 'app/modules/ix-table2/components/ix-table2/ix-table2.harness';
-import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
+import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
+import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
 import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
 import { SearchInput1Component } from 'app/modules/search-input1/search-input1.component';
 import { DiskFormComponent } from 'app/pages/storage/modules/disks/components/disk-form/disk-form.component';
@@ -30,7 +30,7 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 describe('DiskListComponent', () => {
   let spectator: Spectator<DiskListComponent>;
   let loader: HarnessLoader;
-  let table: IxTable2Harness;
+  let table: IxTableHarness;
 
   const fakeDisks = [
     {
@@ -101,7 +101,7 @@ describe('DiskListComponent', () => {
   const createComponent = createComponentFactory({
     component: DiskListComponent,
     imports: [
-      IxTable2Module,
+      IxTableModule,
       MockModule(PageHeaderModule),
       SearchInput1Component,
     ],
@@ -125,7 +125,7 @@ describe('DiskListComponent', () => {
   beforeEach(async () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    table = await loader.getHarness(IxTable2Harness);
+    table = await loader.getHarness(IxTableHarness);
   });
 
   it('shows table rows', async () => {

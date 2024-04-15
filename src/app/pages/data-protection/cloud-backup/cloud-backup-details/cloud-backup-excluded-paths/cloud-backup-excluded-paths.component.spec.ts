@@ -1,6 +1,6 @@
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { CloudBackup } from 'app/interfaces/cloud-backup.interface';
-import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
+import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
 import { CloudBackupExcludedPathsComponent } from 'app/pages/data-protection/cloud-backup/cloud-backup-details/cloud-backup-excluded-paths/cloud-backup-excluded-paths.component';
 
 const testBackup = {
@@ -13,7 +13,7 @@ describe('CloudBackupExcludedPathsComponent', () => {
   const createComponent = createComponentFactory({
     component: CloudBackupExcludedPathsComponent,
     imports: [
-      IxTable2Module,
+      IxTableModule,
     ],
     providers: [],
   });

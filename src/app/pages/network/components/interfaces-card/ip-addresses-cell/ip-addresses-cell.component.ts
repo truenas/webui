@@ -4,7 +4,7 @@ import {
 import _ from 'lodash';
 import { NetworkInterfaceAliasType } from 'app/enums/network-interface.enum';
 import { NetworkInterface, NetworkInterfaceAlias } from 'app/interfaces/network-interface.interface';
-import { ColumnComponent } from 'app/modules/ix-table2/interfaces/table-column.interface';
+import { ColumnComponent } from 'app/modules/ix-table/interfaces/table-column.interface';
 
 @Component({
   selector: 'ix-ip-addresses-cell',

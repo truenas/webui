@@ -5990,10 +5990,10 @@ chardet@^0.7.0:
   resolved "https://registry.yarnpkg.com/chardet/-/chardet-0.7.0.tgz#90094849f0937f2eedc2425d0d28a9e5f0cbad9e"
   integrity sha512-mT8iDcrh03qDGRRmoA2hmBJnxpllMR+0/0qlzjqZES6NdiWDcZkCNAk4rPFZ9Q85r27unkiNNg8ZOiwZXBHwcA==
 
-chart.js@~4.3.0:
-  version "4.3.3"
-  resolved "https://registry.yarnpkg.com/chart.js/-/chart.js-4.3.3.tgz#dcd98afadf9fcfa5219e72ace5912092ea48fd36"
-  integrity sha512-aTk7pBw+x6sQYhon/NR3ikfUJuym/LdgpTlgZRe2PaEhjUMKBKyNaFCMVRAyTEWYFNO7qRu7iQVqOw/OqzxZxQ==
+chart.js@~4.4.2:
+  version "4.4.2"
+  resolved "https://registry.yarnpkg.com/chart.js/-/chart.js-4.4.2.tgz#95962fa6430828ed325a480cc2d5f2b4e385ac31"
+  integrity sha512-6GD7iKwFpP5kbSD4MeRRRlTnQvxfQREy36uEtm1hzHzcOqwWx0YEHuspuoNlslu+nciLIB7fjjsHkUv/FzFcOg==
   dependencies:
     "@kurkle/color" "^0.3.0"
 
@@ -11482,10 +11482,10 @@ ng-qrcode@~8.0.1:
     qrcode "^1.5.1"
     tslib "^2.4.0"
 
-ng2-charts@~4.1.1:
-  version "4.1.1"
-  resolved "https://registry.yarnpkg.com/ng2-charts/-/ng2-charts-4.1.1.tgz#699bee539030b093caf54ab6111c6dea9e8e7ed3"
-  integrity sha512-iHwXDbmX86lfeH8VRcsaW2tJATsuAZo4kvvC/Yk2l35zOHjevja1qBvO6BAibiDazi9r9aS6ZRJOqWPsz1pP2w==
+ng2-charts@~6.0.0:
+  version "6.0.0"
+  resolved "https://registry.yarnpkg.com/ng2-charts/-/ng2-charts-6.0.0.tgz#7ec47548ee4d3d0b2fe1316dff9fa2823dcc3a3a"
+  integrity sha512-Hg45RDOoFoXSDya4U8t2IW2teKnXjy10zJVij65G/62Si+A5+uu8hKQKkBahxg67iTdpOwtyPGnQJ/chHVfFVA==
   dependencies:
     lodash-es "^4.17.15"
     tslib "^2.3.0"

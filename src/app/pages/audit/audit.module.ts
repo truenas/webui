@@ -11,7 +11,7 @@ import { CommonDirectivesModule } from 'app/directives/common/common-directives.
 import { ExportButtonModule } from 'app/modules/export-button/export-button.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
-import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
+import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
 import { LayoutModule } from 'app/modules/layout/layout.module';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { SearchInputModule } from 'app/modules/search-input/search-input.module';
@@ -34,7 +34,7 @@ import { MetadataDetailsCardComponent } from './components/metadata-details-card
     IxIconModule,
     ReactiveFormsModule,
     MatSelectModule,
-    IxTable2Module,
+    IxTableModule,
     AppLoaderModule,
     SearchInputModule,
     CoreComponents,

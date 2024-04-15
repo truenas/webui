@@ -12,7 +12,7 @@ import { mockWebSocket, mockCall } from 'app/core/testing/utils/mock-websocket.u
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxCheckboxHarness } from 'app/modules/ix-forms/components/ix-checkbox/ix-checkbox.harness';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
-import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
+import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnapshotCloneDialogComponent } from 'app/pages/datasets/modules/snapshots/snapshot-clone-dialog/snapshot-clone-dialog.component';
@@ -32,7 +32,7 @@ describe('SnapshotDetailsRowComponent', () => {
       AppLoaderModule,
       IxFormsModule,
       ReactiveFormsModule,
-      IxTable2Module,
+      IxTableModule,
     ],
     declarations: [
       FakeFormatDateTimePipe,

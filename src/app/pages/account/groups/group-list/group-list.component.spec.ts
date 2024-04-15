@@ -8,8 +8,8 @@ import { Role } from 'app/enums/role.enum';
 import { Group } from 'app/interfaces/group.interface';
 import { Preferences } from 'app/interfaces/preferences.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxTable2Harness } from 'app/modules/ix-table2/components/ix-table2/ix-table2.harness';
-import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
+import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
+import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
 import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
 import { SearchInput1Component } from 'app/modules/search-input1/search-input1.component';
 import { GroupDetailsRowComponent } from 'app/pages/account/groups/group-details-row/group-details-row.component';
@@ -49,7 +49,7 @@ describe('GroupListComponent', () => {
   const createComponent = createComponentFactory({
     component: GroupListComponent,
     imports: [
-      IxTable2Module,
+      IxTableModule,
       MockModule(PageHeaderModule),
       SearchInput1Component,
     ],
@@ -102,7 +102,7 @@ describe('GroupListComponent', () => {
       ['fake', '1001', 'Yes', 'Yes', 'Yes', 'Full Admin'],
     ];
 
-    const table = await loader.getHarness(IxTable2Harness);
+    const table = await loader.getHarness(IxTableHarness);
     const cells = await table.getCellTexts();
     expect(cells).toEqual(expectedRows);
   });
@@ -111,7 +111,7 @@ describe('GroupListComponent', () => {
     store$.overrideSelector(selectGroups, fakeGroupDataSource);
     store$.refreshState();
 
-    const table = await loader.getHarness(IxTable2Harness);
+    const table = await loader.getHarness(IxTableHarness);
     await table.clickRow(0);
     await table.clickRow(1);
     expect(spectator.queryAll(GroupDetailsRowComponent)).toHaveLength(1);
@@ -124,7 +124,7 @@ describe('GroupListComponent', () => {
     store$.overrideSelector(selectGroups, fakeGroupDataSource);
     store$.refreshState();
 
-    const table = await loader.getHarness(IxTable2Harness);
+    const table = await loader.getHarness(IxTableHarness);
     await table.clickToggle(0);
     await table.clickToggle(1);
     expect(spectator.queryAll(GroupDetailsRowComponent)).toHaveLength(1);
