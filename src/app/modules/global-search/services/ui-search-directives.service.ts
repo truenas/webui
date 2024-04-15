@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Subject } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 import { UiSearchDirective } from 'app/directives/common/ui-search.directive';
 import { getSearchableElementId } from 'app/modules/global-search/helpers/get-searchable-element-id';
 import { UiSearchableElement } from 'app/modules/global-search/interfaces/ui-searchable-element.interface';
@@ -9,20 +9,10 @@ import { UiSearchableElement } from 'app/modules/global-search/interfaces/ui-sea
 })
 export class UiSearchDirectivesService {
   private directives = new Set<UiSearchDirective>();
-  highlightOnDirectiveAdded$ = new Subject<void>();
+  directiveAdded$ = new BehaviorSubject<UiSearchDirective>(null);
 
   size(): number {
     return this.directives.size;
-  }
-
-  has(element: UiSearchableElement): boolean {
-    const elementId = getSearchableElementId(element);
-    for (const directive of this.directives.values()) {
-      if (directive.id === elementId) {
-        return true;
-      }
-    }
-    return false;
   }
 
   get(element: UiSearchableElement): UiSearchDirective {
@@ -37,7 +27,7 @@ export class UiSearchDirectivesService {
 
   register(directive: UiSearchDirective): void {
     this.directives.add(directive);
-    this.highlightOnDirectiveAdded$.next();
+    this.directiveAdded$.next(directive);
   }
 
   unregister(directive: UiSearchDirective): void {

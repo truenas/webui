@@ -34,27 +34,43 @@ export class UiSearchDirective implements OnInit, OnDestroy {
     this.searchDirectives.unregister(this);
   }
 
-  highlight(): void {
-    this.tryHighlightAnchors(0);
+  highlight(parentElement: UiSearchableElement): void {
+    this.tryHighlightAnchors(parentElement, 0);
   }
 
-  private tryHighlightAnchors(attemptCount: number): void {
+  private tryHighlightAnchors(element: UiSearchableElement, attemptCount: number): void {
     if (this.elementRef.nativeElement) {
-      this.highlightAndClickElement();
+      this.highlightAndClickElement(this.elementRef.nativeElement);
+      if (this.elementRef.nativeElement.id !== element.anchor) {
+        this.highlightElementAnchor(element.anchor);
+      }
     } else if (attemptCount < 2) {
-      setTimeout(() => this.tryHighlightAnchors(attemptCount + 1), searchDelayConst * 3);
+      setTimeout(() => this.tryHighlightAnchors(element, attemptCount + 1), searchDelayConst * 3);
     }
   }
 
-  private highlightAndClickElement(): void {
-    this.elementRef.nativeElement.scrollIntoView({ behavior: 'smooth' });
-    this.elementRef.nativeElement.focus();
+  private highlightElementAnchor(elementAnchor: string): void {
+    setTimeout(() => {
+      const rootNode = this.elementRef.nativeElement.getRootNode() as HTMLElement;
+      const anchorRef: HTMLElement = rootNode?.querySelector(`#${elementAnchor}`);
 
-    this.renderer.addClass(this.elementRef.nativeElement, 'search-element-highlighted');
+      if (anchorRef) {
+        this.highlightAndClickElement(anchorRef);
+      }
+    }, searchDelayConst * 1.5);
+  }
 
-    setTimeout(() => this.elementRef.nativeElement.click(), searchDelayConst);
+  private highlightAndClickElement(anchorRef: HTMLElement): void {
+    if (!anchorRef) return;
+
+    anchorRef.scrollIntoView({ behavior: 'smooth' });
+    anchorRef.focus();
+
+    this.renderer.addClass(anchorRef, 'search-element-highlighted');
+
+    setTimeout(() => anchorRef.click(), searchDelayConst);
     setTimeout(
-      () => this.renderer.removeClass(this.elementRef.nativeElement, 'search-element-highlighted'),
+      () => this.renderer.removeClass(anchorRef, 'search-element-highlighted'),
       searchDelayConst * 10,
     );
   }

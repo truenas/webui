@@ -42,7 +42,7 @@ describe('GlobalSearchResultsComponent', () => {
     providers: [
       mockAuth(),
       mockProvider(UiSearchDirectivesService, {
-        highlightOnDirectiveAdded$: of(),
+        directiveAdded$: of(),
       }),
       mockProvider(UiSearchProvider, {
         selectionChanged$: of(),
