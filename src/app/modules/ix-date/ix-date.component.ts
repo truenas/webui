@@ -8,7 +8,7 @@ import { LocaleService } from 'app/services/locale.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class IxDateComponent {
-  /** Must be in browser timezone */
+  /** Date must be in browser timezone */
   @Input() date: number | Date;
   machineTimezone: string;
   defaultTz: string = Intl.DateTimeFormat().resolvedOptions().timeZone;
