@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
-import { UntilDestroy } from '@ngneat/until-destroy';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { ComponentStore } from '@ngrx/component-store';
 import _ from 'lodash';
 import {
-  Observable, map, of, switchMap, tap,
+  Observable, filter, map, switchMap, tap,
 } from 'rxjs';
 import { ApiEvent } from 'app/interfaces/api-message.interface';
 import { Dataset } from 'app/interfaces/dataset.interface';
@@ -36,8 +36,8 @@ export class DashboardStorageStore extends ComponentStore<DashboardStorageState>
   ) {
     super(initialState);
     this.initialize();
-    this.listenToPoolUpdates().subscribe();
-    this.listenForScanUpdates().subscribe();
+    this.listenToLoadVolumeData().pipe(untilDestroyed(this)).subscribe();
+    this.listenForScanUpdates().pipe(untilDestroyed(this)).subscribe();
   }
 
   initialize = this.effect((trigger$) => {
@@ -54,17 +54,9 @@ export class DashboardStorageStore extends ComponentStore<DashboardStorageState>
     );
   });
 
-  private loadPoolData(): Observable<unknown> {
-    return this.ws.call('pool.query').pipe(
-      tap((pools) => {
-        this.setState((state) => ({ ...state, pools }));
-      }),
-      switchMap((pools) => {
-        if (pools?.length) {
-          return this.loadVolumeData();
-        }
-        return of(pools);
-      }),
+  private loadPoolData(): Observable<Pool[]> {
+    return this.ws.callAndSubscribe('pool.query').pipe(
+      tap((pools) => this.setState((state) => ({ ...state, pools }))),
     );
   }
 
@@ -86,17 +78,10 @@ export class DashboardStorageStore extends ComponentStore<DashboardStorageState>
     this.setState((state) => ({ ...state, volumesData }));
   }
 
-  private listenToPoolUpdates(): Observable<unknown> {
-    return this.ws.subscribe('pool.query').pipe(
-      switchMap(() => this.loadPoolData()),
-    );
-  }
-
-  private loadVolumeData(): Observable<Dataset[]> {
-    return this.ws.call(
-      'pool.dataset.query',
-      [[], { extra: { retrieve_children: false } }],
-    ).pipe(
+  private listenToLoadVolumeData(): Observable<Dataset[]> {
+    return this.pools$.pipe(
+      filter((pools) => pools.length > 0),
+      switchMap(() => this.ws.call('pool.dataset.query', [[], { extra: { retrieve_children: false } }])),
       tap((datasets) => {
         this.setVolumeData(datasets);
       }),

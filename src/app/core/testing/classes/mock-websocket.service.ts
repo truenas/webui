@@ -2,12 +2,13 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { when } from 'jest-when';
-import { Observable, of, Subject } from 'rxjs';
+import { Observable, Subject, of } from 'rxjs';
 import { ValuesType } from 'utility-types';
 import {
   CallResponseOrFactory,
   JobResponseOrFactory,
 } from 'app/core/testing/interfaces/mock-websocket-responses.interface';
+import { ApiCallAndSubscribeMethod } from 'app/interfaces/api/api-call-and-subscribe-directory.interface';
 import {
   ApiCallMethod,
   ApiCallParams,
@@ -57,9 +58,13 @@ export class MockWebSocketService extends WebSocketService {
     this.job = jest.fn();
     this.startJob = jest.fn();
     this.subscribe = jest.fn(() => this.subscribeStream$.asObservable() as Observable<ApiEvent<ValuesType<ApiEventDirectory>['response']>>);
+    this.callAndSubscribe = jest.fn();
 
     when(this.call).mockImplementation((method: ApiCallMethod, args: unknown) => {
       throw Error(`Unmocked websocket call ${method} with ${JSON.stringify(args)}`);
+    });
+    when(this.callAndSubscribe).mockImplementation((method: ApiCallAndSubscribeMethod, args: unknown) => {
+      throw Error(`Unmocked websocket callAndSubscribe ${method} with ${JSON.stringify(args)}`);
     });
     when(this.job).mockImplementation((method: ApiJobMethod, args: unknown) => {
       throw Error(`Unmocked websocket job call ${method} with ${JSON.stringify(args)}`);
@@ -79,6 +84,13 @@ export class MockWebSocketService extends WebSocketService {
     when(this.call)
       .calledWith(method, anyArgument as unknown as ApiCallParams<ApiCallMethod>)
       .mockImplementation(mockedImplementation);
+
+    when(this.callAndSubscribe)
+      .calledWith(method as ApiCallAndSubscribeMethod)
+      .mockImplementation(mockedImplementation as jest.Mock);
+    when(this.callAndSubscribe)
+      .calledWith(method as ApiCallAndSubscribeMethod)
+      .mockImplementation(mockedImplementation as jest.Mock);
   }
 
   mockCallOnce<M extends ApiCallMethod>(method: M, response: ApiCallResponse<M>): void {
