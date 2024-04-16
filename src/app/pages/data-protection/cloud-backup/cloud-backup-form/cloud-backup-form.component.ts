@@ -6,7 +6,9 @@ import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import _ from 'lodash';
-import { Observable, map, of } from 'rxjs';
+import {
+  Observable, combineLatest, map, of,
+} from 'rxjs';
 import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
 import { mntPath } from 'app/enums/mnt-path.enum';
 import { Role } from 'app/enums/role.enum';
@@ -62,7 +64,7 @@ export class CloudBackupFormComponent implements OnInit {
 
     folder: ['', [Validators.required]],
     bucket: ['', [Validators.required]],
-    bucket_input: [''],
+    bucket_input: ['', [Validators.required]],
   });
 
   isLoading = false;
@@ -94,10 +96,21 @@ export class CloudBackupFormComponent implements OnInit {
     this.setFileNodeProvider();
     this.setBucketNodeProvider();
 
-    this.form.controls.credentials.valueChanges.pipe(untilDestroyed(this)).subscribe((credentials) => {
-      if (credentials) {
+    combineLatest([
+      this.cloudCredentialService.getCloudSyncCredentials(),
+      this.cloudCredentialService.getProviders(),
+      this.form.controls.credentials.valueChanges,
+    ]).pipe(untilDestroyed(this)).subscribe(([credentialsList, providersList, credentialId]) => {
+      const targetCredentials = _.find(credentialsList, { id: credentialId });
+      const targetProvider = _.find(providersList, { name: targetCredentials?.provider });
+
+      if (credentialId && targetProvider.buckets) {
         this.form.controls.folder.enable();
-        this.loadBucketOptions(credentials);
+        this.loadBucketOptions(credentialId);
+      } else if (credentialId) {
+        this.form.controls.folder.enable();
+        this.form.controls.bucket.disable();
+        this.form.controls.bucket_input.disable();
       } else {
         this.form.controls.folder.disable();
         this.form.controls.bucket.disable();

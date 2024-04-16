@@ -10,6 +10,7 @@
           <ix-explorer
             formControlName="path"
             [label]="'Source Path' | translate"
+            [tooltip]="'Select the directories or files to be sent to the cloud for backup.' | translate"
             [required]="true"
             [multiple]="true"
             [nodeProvider]="fileNodeProvider"
@@ -22,19 +23,23 @@
           <ix-cloud-credentials-select
             formControlName="credentials"
             [label]="'Credentials' | translate"
+            [tooltip]="'Select the cloud storage provider credentials from the list of available Cloud Credentials.' | translate"
             [required]="true"
           ></ix-cloud-credentials-select>
           <ix-select
             *ngIf="form.controls.bucket.enabled"
             formControlName="bucket"
             [label]="'Bucket' | translate"
+            [tooltip]="'Select the name of container to use.' | translate"
             [options]="bucketOptions$"
             [required]="true"
           ></ix-select>
           <ix-input
             *ngIf="form.controls.bucket_input.enabled"
             formControlName="bucket_input"
-            [label]="'New Backet Name' | translate"
+            [label]="'New Bucket Name' | translate"
+            [tooltip]="'Input the name of container to use.' | translate"
+            [required]="true"
           ></ix-input>
           <ix-explorer
             *ngIf="form.controls.folder.enabled"
@@ -52,32 +57,32 @@
           <ix-input
             formControlName="description"
             [label]="'Description' | translate"
+            [tooltip]="'Enter a description of the Cloud Backup Task.' | translate"
           ></ix-input>
           <ix-input
             formControlName="keep_last"
             type="number"
             [label]="'Keep Last' | translate"
+            [tooltip]="'Enter the number of last kept backups.' | translate"
             [required]="true"
           ></ix-input>
           <ix-input
             formControlName="password"
             type="password"
             [label]="'Password' | translate"
+            [tooltip]="'Enter password.' | translate"
             [required]="true"
           ></ix-input>
           <ix-scheduler
             formControlName="schedule"
-            [required]="true"
             [label]="'Schedule' | translate"
+            [tooltip]="'Select a schedule preset or choose <i>Custom</i> to setup custom schedule.' | translate"
+            [required]="true"
           ></ix-scheduler>
         </ix-fieldset>
       </div>
 
       <ix-form-actions>
-        <button mat-button type="button" matDialogClose ixTest="cancel">
-          {{ 'Cancel' | translate }}
-        </button>
-    
         <button
           *ixRequiresRoles="requiredRoles"
           mat-button

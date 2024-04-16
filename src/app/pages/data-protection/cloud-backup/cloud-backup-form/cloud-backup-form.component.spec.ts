@@ -6,6 +6,7 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { CloudSyncProviderName } from 'app/enums/cloudsync-provider.enum';
 import { CloudBackup } from 'app/interfaces/cloud-backup.interface';
 import { CloudCredentialsSelectModule } from 'app/modules/custom-selects/cloud-credentials-select/cloud-credentials-select.module';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -24,6 +25,17 @@ import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.servic
 import { WebSocketService } from 'app/services/ws.service';
 
 describe('CloudBackupFormComponent', () => {
+  const storjCreds = {
+    id: 2,
+    name: 'Storj iX',
+    provider: CloudSyncProviderName.Storj,
+    attributes: {
+      client_id: 'test-client-id',
+      client_secret: 'test-client-secret',
+      token: 'test-token',
+    },
+  };
+
   const existingTask = {
     id: 1,
     description: 'sdf',
@@ -44,16 +56,7 @@ describe('CloudBackupFormComponent', () => {
     job: null,
     password: '1234',
     keep_last: 2,
-    credentials: {
-      id: 3,
-      name: 'Dropbox',
-      provider: 'DROPBOX',
-      attributes: {
-        client_id: '6cnx5tsf9ll6wib',
-        client_secret: '3ypjw57mtarox7y',
-        token: '{"access_token": "test_token", "token_type": "bearer", "refresh_token": "test_refresh_token", "expiry": "2024-02-12T22:39:53Z"}',
-      },
-    },
+    credentials: storjCreds,
     schedule: {
       minute: '0',
       hour: '0',
@@ -89,15 +92,13 @@ describe('CloudBackupFormComponent', () => {
       mockWebSocket([
         mockCall('cloud_backup.create', existingTask),
         mockCall('cloud_backup.update', existingTask),
-        mockCall('cloudsync.providers', [storjProvider, googlePhotosProvider]),
-        mockCall('cloudsync.credentials.query', [googlePhotosCreds]),
       ]),
       mockProvider(IxChainedSlideInService, {
         open: jest.fn(() => of()),
         components$: of([]),
       }),
       mockProvider(CloudCredentialService, {
-        getCloudSyncCredentials: jest.fn(() => of([googlePhotosCreds])),
+        getCloudSyncCredentials: jest.fn(() => of([googlePhotosCreds, storjCreds])),
         getProviders: jest.fn(() => of([storjProvider, googlePhotosProvider])),
         getBuckets: jest.fn(() => of([{ Name: 'bucket1', Path: 'path_to_bucket1', Enabled: true }])),
       }),
@@ -117,7 +118,7 @@ describe('CloudBackupFormComponent', () => {
       await form.fillForm({
         Description: 'New Cloud Backup Task',
         Password: 'qwerty',
-        Credentials: 'Google Photos (Google Photos)',
+        Credentials: 'Storj iX (Storj)',
         'Keep Last': 3,
         Folder: '/',
         Bucket: 'bucket1',
@@ -129,7 +130,7 @@ describe('CloudBackupFormComponent', () => {
       expect(spectator.inject(WebSocketService).call).toHaveBeenLastCalledWith('cloud_backup.create', [{
         args: '',
         attributes: { folder: '/' },
-        credentials: 1,
+        credentials: 2,
         description: 'New Cloud Backup Task',
         enabled: true,
         exclude: [],
@@ -170,7 +171,7 @@ describe('CloudBackupFormComponent', () => {
       const form = await loader.getHarness(IxFormHarness);
       expect(await form.getValues()).toEqual({
         Bucket: '',
-        Credentials: '',
+        Credentials: 'Storj iX (Storj)',
         Description: 'sdf',
         Folder: '/My Folder',
         'Keep Last': '2',
@@ -182,7 +183,7 @@ describe('CloudBackupFormComponent', () => {
       expect(spectator.component.form.value).toEqual({
         args: '',
         bucket: '',
-        credentials: 3,
+        credentials: 2,
         description: 'sdf',
         enabled: true,
         exclude: [],
@@ -218,7 +219,7 @@ describe('CloudBackupFormComponent', () => {
           folder: '/My Folder',
         },
         bwlimit: undefined,
-        credentials: 3,
+        credentials: 2,
         description: 'Edited description',
         enabled: true,
         exclude: [],
