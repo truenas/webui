@@ -111,7 +111,7 @@
         <section #legendElement class="legend" fxFlex="420px" fxLayout="column" fxLayoutAlign="start">
           <div *ngIf="report && data?.legend" class="legend-timestamp" fxFlex="32px" fxLayoutAlign="start center">
             <h4 *ngIf="data && legendData?.xHTML && shouldShowLegendValue" fxLayoutGap="8px" fxLayoutAlign="start center">
-              <strong>{{ 'Time22' | translate }}:</strong>
+              <strong>{{ 'Time' | translate }}:</strong>
               <span *ngIf="legendData?.xHTML" class="font-normal">
                 <ix-date [date]="getDateFromString(legendData.xHTML)"></ix-date>
               </span>
