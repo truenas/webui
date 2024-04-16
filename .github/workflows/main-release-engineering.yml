@@ -39,3 +39,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - run: 'echo "Not required for Release Engineering PRs"'
+      - if: ${{ env.CODECOV_TOKEN }}
+        name: Upload coverage to codecov
+        uses: codecov/codecov-action@v3
+        with:
+          name: webui
+          token: ${{ env.CODECOV_TOKEN }}
+          fail_ci_if_error: true
