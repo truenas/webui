@@ -1,6 +1,6 @@
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { CloudBackup } from 'app/interfaces/cloud-backup.interface';
-import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
+import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
 import { CloudBackupStatsComponent } from 'app/pages/data-protection/cloud-backup/cloud-backup-details/cloud-backup-stats/cloud-backup-stats.component';
 
 const testBackup = {
@@ -16,7 +16,7 @@ describe('CloudBackupStatsComponent', () => {
   const createComponent = createComponentFactory({
     component: CloudBackupStatsComponent,
     imports: [
-      IxTable2Module,
+      IxTableModule,
     ],
     providers: [],
   });
