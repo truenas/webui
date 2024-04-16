@@ -37,6 +37,8 @@ jobs:
   test:
     name: Run tests
     runs-on: ubuntu-latest
+    env:
+      CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
     steps:
       - run: 'echo "Not required for Release Engineering PRs"'
       - if: ${{ env.CODECOV_TOKEN }}
