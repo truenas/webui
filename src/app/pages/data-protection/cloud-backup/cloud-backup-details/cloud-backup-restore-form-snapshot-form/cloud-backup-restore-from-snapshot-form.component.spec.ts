@@ -5,8 +5,8 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
-import { CloudBackupSnapshot, SnapshotIncludeExclude } from 'app/interfaces/cloud-backup.interface';
+import { mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { SnapshotIncludeExclude } from 'app/interfaces/cloud-backup.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
@@ -30,7 +30,7 @@ describe('CloudBackupRestoreFromSnapshotFormComponent', () => {
       mockAuth(),
       mockProvider(DialogService),
       mockWebSocket([
-        mockCall('cloud_backup.restore'),
+        mockJob('cloud_backup.restore'),
       ]),
       mockProvider(IxSlideInService, {
         open: jest.fn(() => {
@@ -40,7 +40,13 @@ describe('CloudBackupRestoreFromSnapshotFormComponent', () => {
       }),
       mockProvider(IxSlideInRef),
       mockProvider(FilesystemService),
-      { provide: SLIDE_IN_DATA, useValue: { id: 1 } as unknown as CloudBackupSnapshot },
+      {
+        provide: SLIDE_IN_DATA,
+        useValue: {
+          snapshot: { id: 1 },
+          backup: { id: 1 },
+        },
+      },
     ],
   });
 
@@ -58,11 +64,15 @@ describe('CloudBackupRestoreFromSnapshotFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('cloud_backup.restore', [{
-        exclude: null,
-        snapshot_id: 1,
-        target: '/mnt/my pool',
-      }]);
+      expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('cloud_backup.restore', [
+        1,
+        1,
+        null,
+        '/mnt/my pool',
+        {
+          exclude: null,
+        },
+      ]);
     });
 
     it('submits backup restore from snapshot with `Select paths to exclude`', async () => {
@@ -78,11 +88,17 @@ describe('CloudBackupRestoreFromSnapshotFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('cloud_backup.restore', [{
-        exclude: ['/mnt/another'],
-        snapshot_id: 1,
-        target: '/mnt/my pool',
-      }]);
+      expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('cloud_backup.restore', [
+        1,
+        1,
+        null,
+        '/mnt/my pool',
+        {
+          exclude: [
+            '/mnt/another',
+          ],
+        },
+      ]);
     });
 
     it('submits backup restore from snapshot with `Exclude by pattern`', async () => {
@@ -98,11 +114,17 @@ describe('CloudBackupRestoreFromSnapshotFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('cloud_backup.restore', [{
-        exclude: 'pattern',
-        snapshot_id: 1,
-        target: '/mnt/my pool',
-      }]);
+      expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('cloud_backup.restore', [
+        1,
+        1,
+        null,
+        '/mnt/my pool',
+        {
+          exclude: [
+            'pattern',
+          ],
+        },
+      ]);
     });
   });
 });

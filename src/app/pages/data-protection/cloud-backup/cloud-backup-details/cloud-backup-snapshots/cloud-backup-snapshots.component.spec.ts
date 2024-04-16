@@ -17,7 +17,6 @@ import { CloudBackupSnapshotsComponent } from 'app/pages/data-protection/cloud-b
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { StorageService } from 'app/services/storage.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 const cloudBackupSnapshots = [
   {
@@ -41,7 +40,6 @@ describe('CloudBackupSnapshotsComponent', () => {
     providers: [
       mockWebSocket([
         mockCall('cloud_backup.list_snapshots', cloudBackupSnapshots),
-        mockCall('cloud_backup.delete_snapshot'),
       ]),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
@@ -89,17 +87,12 @@ describe('CloudBackupSnapshotsComponent', () => {
     const runNowButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'restore' }), 1, 1);
     await runNowButton.click();
 
-    expect(slideInService.open).toHaveBeenCalledWith(
-      CloudBackupRestoreFromSnapshotFormComponent,
-      { data: cloudBackupSnapshots[0] },
-    );
-  });
-
-  it('opens delete dialog when "Delete" button is pressed', async () => {
-    const deleteButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'delete' }), 1, 1);
-    await deleteButton.click();
-
-    expect(spectator.inject(WebSocketService).call).toHaveBeenLastCalledWith('cloud_backup.delete_snapshot', ['first']);
+    expect(slideInService.open).toHaveBeenCalledWith(CloudBackupRestoreFromSnapshotFormComponent, {
+      data: {
+        backup: { id: 1 } as CloudBackup,
+        snapshot: cloudBackupSnapshots[0],
+      },
+    });
   });
 
   it('should show table rows', async () => {

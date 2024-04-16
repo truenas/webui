@@ -1054,7 +1054,6 @@
   "Delete Certificate Authority": "",
   "Delete Children": "",
   "Delete Cloud Backup <b>\"{name}\"</b>?": "",
-  "Delete Cloud Backup Snapshot <b>\"{value}\"</b>?": "",
   "Delete Cloud Credential": "",
   "Delete Cloud Sync Task <b>\"{name}\"</b>?": "",
   "Delete DNS Authenticator": "",

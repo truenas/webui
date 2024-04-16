@@ -4,34 +4,30 @@
   <mat-card-content>
     <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
       <ix-fieldset
-        [title]="'Snapshot Time {time}' | translate: { time: snapshot?.time | date: 'medium' }"
+        [title]="'Snapshot Time {time}' | translate: { time: data?.snapshot?.time | date: 'medium' }"
       ></ix-fieldset>
 
       <ix-fieldset [title]="'Remote' | translate">
         <ix-radio-group
           formControlName="includeExclude"
           [label]="'Include/Exclude' | translate"
-          [tooltip]="tooltips.includeExclude | translate"
           [options]="includeExcludeOptions"
         ></ix-radio-group>
 
         <ix-explorer
           *ngIf="isExcludePathsSelected"
           formControlName="excludedPaths"
+          root="/"
           [required]="true"
           [label]="'Excluded Paths' | translate"
-          [tooltip]="tooltips.target| translate"
-          [nodeProvider]="treeNodeProvider"
-          [canCreateDataset]="false"
+          [nodeProvider]="bucketNodeProvider"
           [multiple]="true"
-          [createDatasetProps]="createDatasetProps"
         ></ix-explorer>
 
         <ix-input
           *ngIf="isExcludeByPatternSelected"
           formControlName="excludePattern"
           [label]="'Pattern' | translate"
-          [tooltip]="tooltips.pattern | translate"
           [required]="true"
         ></ix-input>
       </ix-fieldset>
@@ -41,8 +37,7 @@
           formControlName="target"
           [required]="true"
           [label]="'Target' | translate"
-          [tooltip]="tooltips.target| translate"
-          [nodeProvider]="treeNodeProvider"
+          [nodeProvider]="fileNodeProvider"
           [canCreateDataset]="true"
           [createDatasetProps]="createDatasetProps"
         ></ix-explorer>
