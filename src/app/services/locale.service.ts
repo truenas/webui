@@ -68,14 +68,6 @@ export class LocaleService {
     ];
   }
 
-  formatDateTimeWithNoTz(date: Date): string {
-    try {
-      return format(date.valueOf(), `${this.dateFormat} ${this.timeFormat}`);
-    } catch {
-      return 'Invalid date';
-    }
-  }
-
   getPreferredDateFormat(): string {
     return this.dateFormat;
   }
