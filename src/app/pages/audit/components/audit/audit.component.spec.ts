@@ -7,8 +7,8 @@ import { AuditEvent, AuditService } from 'app/enums/audit.enum';
 import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
 import { AuditEntry } from 'app/interfaces/audit/audit.interface';
 import { ExportButtonComponent } from 'app/modules/export-button/components/export-button/export-button.component';
-import { IxTable2Harness } from 'app/modules/ix-table2/components/ix-table2/ix-table2.harness';
-import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
+import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
+import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { SearchInputComponent } from 'app/modules/search-input/components/search-input/search-input.component';
 import { SearchInputModule } from 'app/modules/search-input/search-input.module';
@@ -21,7 +21,7 @@ import { selectAdvancedConfig } from 'app/store/system-config/system-config.sele
 describe('AuditComponent', () => {
   let spectator: Spectator<AuditComponent>;
   let websocket: WebSocketService;
-  let table: IxTable2Harness;
+  let table: IxTableHarness;
 
   const auditEntries = [
     {
@@ -61,7 +61,7 @@ describe('AuditComponent', () => {
     component: AuditComponent,
     imports: [
       SearchInputModule,
-      IxTable2Module,
+      IxTableModule,
     ],
     declarations: [
       MockComponents(
@@ -106,7 +106,7 @@ describe('AuditComponent', () => {
     spectator = createComponent();
     websocket = spectator.inject(WebSocketService);
     // Do it in this weird way because table header is outside the table element.
-    table = await TestbedHarnessEnvironment.harnessForFixture(spectator.fixture, IxTable2Harness);
+    table = await TestbedHarnessEnvironment.harnessForFixture(spectator.fixture, IxTableHarness);
   });
 
   it('loads and shows a table with audit entries', async () => {

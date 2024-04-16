@@ -12,7 +12,7 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockWebSocket, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
 import { Group } from 'app/interfaces/group.interface';
 import { Preferences } from 'app/interfaces/preferences.interface';
-import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
+import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
 import { LayoutModule } from 'app/modules/layout/layout.module';
 import {
   DeleteGroupDialogComponent,
@@ -38,7 +38,7 @@ describe('GroupDetailsRowComponent', () => {
   const createComponent = createRoutingFactory({
     component: GroupDetailsRowComponent,
     imports: [
-      IxTable2Module,
+      IxTableModule,
       MockModule(LayoutModule),
     ],
     declarations: [

@@ -1,7 +1,7 @@
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { AuditEvent, AuditService } from 'app/enums/audit.enum';
 import { AuditEntry } from 'app/interfaces/audit/audit.interface';
-import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
+import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
 import {
   MetadataDetailsCardComponent,
 } from 'app/pages/audit/components/metadata-details-card/metadata-details-card.component';
@@ -33,7 +33,7 @@ describe('MetadataDetailsCardComponent', () => {
   const createComponent = createComponentFactory({
     component: MetadataDetailsCardComponent,
     imports: [
-      IxTable2Module,
+      IxTableModule,
     ],
     providers: [],
   });

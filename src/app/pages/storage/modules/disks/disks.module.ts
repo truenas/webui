@@ -13,7 +13,7 @@ import { CommonDirectivesModule } from 'app/directives/common/common-directives.
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
-import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
+import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
 import { LayoutModule } from 'app/modules/layout/layout.module';
 import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
 import { SearchInput1Component } from 'app/modules/search-input1/search-input1.component';
@@ -49,7 +49,7 @@ import { routes } from 'app/pages/storage/modules/disks/disks.routing';
     MatProgressBarModule,
     TestIdModule,
     CommonDirectivesModule,
-    IxTable2Module,
+    IxTableModule,
     IxIconModule,
     PageHeaderModule,
     LayoutModule,

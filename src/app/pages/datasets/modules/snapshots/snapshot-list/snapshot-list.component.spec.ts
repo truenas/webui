@@ -14,8 +14,8 @@ import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.u
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxSlideToggleHarness } from 'app/modules/ix-forms/components/ix-slide-toggle/ix-slide-toggle.harness';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
-import { IxTable2Harness } from 'app/modules/ix-table2/components/ix-table2/ix-table2.harness';
-import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
+import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
+import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
 import { LayoutModule } from 'app/modules/layout/layout.module';
 import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
 import { SearchInput1Component } from 'app/modules/search-input1/search-input1.component';
@@ -31,13 +31,13 @@ import { SnapshotListComponent } from './snapshot-list.component';
 describe('SnapshotListComponent', () => {
   let spectator: Spectator<SnapshotListComponent>;
   let loader: HarnessLoader;
-  let table: IxTable2Harness;
+  let table: IxTableHarness;
 
   const createComponent = createComponentFactory({
     component: SnapshotListComponent,
     imports: [
       CoreComponents,
-      IxTable2Module,
+      IxTableModule,
       MockModule(LayoutModule),
       MockModule(PageHeaderModule),
       SearchInput1Component,
@@ -104,7 +104,7 @@ describe('SnapshotListComponent', () => {
       ],
     });
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    table = await loader.getHarness(IxTable2Harness);
+    table = await loader.getHarness(IxTableHarness);
   });
 
   it('should show table rows', async () => {

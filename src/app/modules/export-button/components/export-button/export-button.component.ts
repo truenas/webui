@@ -10,8 +10,8 @@ import { ApiJobMethod, ApiJobParams } from 'app/interfaces/api/api-job-directory
 import { PropertyPath } from 'app/interfaces/property-path.type';
 import { QueryFilters, QueryOptions } from 'app/interfaces/query-api.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { SortDirection } from 'app/modules/ix-table2/enums/sort-direction.enum';
-import { TableSort } from 'app/modules/ix-table2/interfaces/table-sort.interface';
+import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
+import { TableSort } from 'app/modules/ix-table/interfaces/table-sort.interface';
 import { AdvancedSearchQuery, SearchQuery } from 'app/modules/search-input/types/search-query.interface';
 import { DownloadService } from 'app/services/download.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';

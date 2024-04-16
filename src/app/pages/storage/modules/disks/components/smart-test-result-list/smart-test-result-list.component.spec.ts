@@ -8,8 +8,8 @@ import { mockWebSocket, mockCall } from 'app/core/testing/utils/mock-websocket.u
 import { SmartTestResultStatus } from 'app/enums/smart-test-result-status.enum';
 import { SmartTestResults } from 'app/interfaces/smart-test.interface';
 import { Disk } from 'app/interfaces/storage.interface';
-import { IxTable2Harness } from 'app/modules/ix-table2/components/ix-table2/ix-table2.harness';
-import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
+import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
+import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
 import { SearchInput1Component } from 'app/modules/search-input1/search-input1.component';
@@ -17,7 +17,7 @@ import { SmartTestResultListComponent } from 'app/pages/storage/modules/disks/co
 
 describe('SmartTestResultListComponent', () => {
   let spectator: Spectator<SmartTestResultListComponent>;
-  let table: IxTable2Harness;
+  let table: IxTableHarness;
   let loader: HarnessLoader;
 
   const smartTestResults: SmartTestResults[] = [{
@@ -92,7 +92,7 @@ describe('SmartTestResultListComponent', () => {
     component: SmartTestResultListComponent,
     imports: [
       AppLoaderModule,
-      IxTable2Module,
+      IxTableModule,
       MockModule(PageHeaderModule),
       SearchInput1Component,
     ],
@@ -109,7 +109,7 @@ describe('SmartTestResultListComponent', () => {
   beforeEach(async () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    table = await loader.getHarness(IxTable2Harness);
+    table = await loader.getHarness(IxTableHarness);
   });
 
   it('should show table rows', async () => {

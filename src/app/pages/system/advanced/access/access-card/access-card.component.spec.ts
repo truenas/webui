@@ -12,8 +12,8 @@ import { CredentialType } from 'app/interfaces/credential-type.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ChainedRef } from 'app/modules/ix-forms/components/ix-slide-in/chained-component-ref';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
-import { IxTable2Harness } from 'app/modules/ix-table2/components/ix-table2/ix-table2.harness';
-import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
+import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
+import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { AccessCardComponent } from 'app/pages/system/advanced/access/access-card/access-card.component';
 import { AccessFormComponent } from 'app/pages/system/advanced/access/access-form/access-form.component';
@@ -49,7 +49,7 @@ describe('AccessCardComponent', () => {
     }));
   const createComponent = createComponentFactory({
     component: AccessCardComponent,
-    imports: [AppLoaderModule, IxTable2Module, FakeFormatDateTimePipe],
+    imports: [AppLoaderModule, IxTableModule, FakeFormatDateTimePipe],
     providers: [
       mockProvider(LocaleService, {
         timezone: 'America/Los_Angeles',
@@ -143,7 +143,7 @@ describe('AccessCardComponent', () => {
       ['user-4', '2023-08-24 03:00:27', ''],
     ];
 
-    const table = await loader.getHarness(IxTable2Harness);
+    const table = await loader.getHarness(IxTableHarness);
     const cells = await table.getCellTexts();
     expect(cells).toEqual(expectedRows);
   });

@@ -16,8 +16,8 @@ import { ServiceStatus } from 'app/enums/service-status.enum';
 import { Service } from 'app/interfaces/service.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
-import { IxTable2Harness } from 'app/modules/ix-table2/components/ix-table2/ix-table2.harness';
-import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
+import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
+import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
 import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
 import { SearchInput1Component } from 'app/modules/search-input1/search-input1.component';
 import { ServiceFtpComponent } from 'app/pages/services/components/service-ftp/service-ftp.component';
@@ -50,7 +50,7 @@ describe('ServicesComponent', () => {
   let spectator: Spectator<ServicesComponent>;
   let loader: HarnessLoader;
   let ws: WebSocketService;
-  let table: IxTable2Harness;
+  let table: IxTableHarness;
 
   const createComponent = createComponentFactory({
     component: ServicesComponent,
@@ -59,7 +59,7 @@ describe('ServicesComponent', () => {
       FormsModule,
       MockModule(PageHeaderModule),
       SearchInput1Component,
-      IxTable2Module,
+      IxTableModule,
     ],
     providers: [
       mockAuth(),
@@ -85,7 +85,7 @@ describe('ServicesComponent', () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     ws = spectator.inject(WebSocketService);
-    table = await loader.getHarness(IxTable2Harness);
+    table = await loader.getHarness(IxTableHarness);
   });
 
   it('should show table rows', async () => {

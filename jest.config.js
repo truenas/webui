@@ -13,6 +13,9 @@ module.exports = {
   coverageReporters: ['html', 'json'],
   coverageDirectory: 'coverage/webui',
   moduleDirectories: ['node_modules', 'src'],
-  moduleNameMapper: pathsToModuleNameMapper(compilerOptions.paths || {}),
+  moduleNameMapper: {
+    ...pathsToModuleNameMapper(compilerOptions.paths || {}),
+    '^lodash-es$': 'lodash',
+  },
   clearMocks: true,
 };

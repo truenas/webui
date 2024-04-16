@@ -3,7 +3,7 @@ import { MockComponent } from 'ng-mocks';
 import { CopyButtonComponent } from 'app/core/components/copy-btn/copy-btn.component';
 import { AuditEvent, AuditService } from 'app/enums/audit.enum';
 import { AuditEntry } from 'app/interfaces/audit/audit.interface';
-import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
+import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
 import {
   EventDataDetailsCardComponent,
 } from 'app/pages/audit/components/event-data-details-card/event-data-details-card.component';
@@ -98,7 +98,7 @@ describe('EventDataDetailsCardComponent', () => {
   const createComponent = createComponentFactory({
     component: EventDataDetailsCardComponent,
     imports: [
-      IxTable2Module,
+      IxTableModule,
     ],
     declarations: [
       MockComponent(CopyButtonComponent),

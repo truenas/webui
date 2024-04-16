@@ -6,9 +6,9 @@
   </button>
 </ix-page-header>
 
-<ix-table2
+<ix-table
   class="table"
-  [ix-table2-empty]="!(dataProvider.currentPageCount$ | async)"
+  [ix-table-empty]="!(dataProvider.currentPageCount$ | async)"
   [emptyConfig]="emptyService.defaultEmptyConfig(dataProvider.emptyType$ | async)"
 >
   <thead
@@ -63,5 +63,5 @@
       </mat-menu>
     </ng-template>
   </tbody>
-</ix-table2>
+</ix-table>
 <ix-table-pager [dataProvider]="dataProvider"></ix-table-pager>
