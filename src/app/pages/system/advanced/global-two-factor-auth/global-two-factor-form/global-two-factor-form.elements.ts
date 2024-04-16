@@ -1,5 +1,6 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { Role } from 'app/enums/role.enum';
+import { UiSearchableElement } from 'app/modules/global-search/interfaces/ui-searchable-element.interface';
 
 export const globalTwoFactorFormElements = {
   hierarchy: [T('System'), T('Advanced'), T('Global Two Factor Auth')],
@@ -20,4 +21,4 @@ export const globalTwoFactorFormElements = {
       synonyms: [T('Enable Two Factor Authentication for SSH')],
     },
   },
-};
+} satisfies UiSearchableElement;
