@@ -79,11 +79,6 @@ export class PoolsDashboardComponent implements OnInit {
       });
 
     this.store.loadDashboard();
-    this.store.listenForPoolUpdates()
-      .pipe(untilDestroyed(this))
-      .subscribe(() => {
-        this.store.loadDashboard();
-      });
 
     this.disks$.pipe(untilDestroyed(this)).subscribe((disks) => {
       for (const disk of disks) {
