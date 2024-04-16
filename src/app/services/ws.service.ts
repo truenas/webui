@@ -7,36 +7,37 @@ import {
   merge, Observable, of, Subject, throwError,
 } from 'rxjs';
 import {
-  filter, map, share, switchMap, take, takeUntil, takeWhile, tap,
+  filter, map, share, startWith, switchMap, take, takeUntil, takeWhile, tap,
 } from 'rxjs/operators';
 import { MockEnclosureUtils } from 'app/core/testing/utils/mock-enclosure.utils';
 import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { ResponseErrorType } from 'app/enums/response-error-type.enum';
 import { WebSocketErrorName } from 'app/enums/websocket-error-name.enum';
+import { applyApiEvent } from 'app/helpers/operators/apply-api-event.operator';
+import { ApiCallAndSubscribeMethod, ApiCallAndSubscribeResponse } from 'app/interfaces/api/api-call-and-subscribe-directory.interface';
 import {
   ApiCallMethod,
   ApiCallParams,
   ApiCallResponse,
 } from 'app/interfaces/api/api-call-directory.interface';
-import { ApiEventDirectory } from 'app/interfaces/api/api-event-directory.interface';
 import {
   ApiJobMethod,
   ApiJobParams,
   ApiJobResponse,
 } from 'app/interfaces/api/api-job-directory.interface';
-import { ApiEvent, IncomingWebSocketMessage, ResultMessage } from 'app/interfaces/api-message.interface';
+import {
+  ApiEvent, ApiEventMethod, ApiEventTyped, IncomingWebSocketMessage, ResultMessage,
+} from 'app/interfaces/api-message.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { WebSocketConnectionService } from 'app/services/websocket-connection.service';
-
-export type ApiEventSubscription = Observable<ApiEvent<ApiEventDirectory[keyof ApiEventDirectory]['response']>>;
 
 @Injectable({
   providedIn: 'root',
 })
 export class WebSocketService {
-  private readonly eventSubscriptions = new Map<string, ApiEventSubscription>();
+  private readonly subscriptions = new Map<ApiEventMethod, Observable<ApiEventTyped>>();
   clearSubscriptions$ = new Subject<void>();
   mockUtils: MockEnclosureUtils;
 
@@ -59,6 +60,24 @@ export class WebSocketService {
 
   call<M extends ApiCallMethod>(method: M, params?: ApiCallParams<M>): Observable<ApiCallResponse<M>> {
     return this.callMethod(method, params);
+  }
+
+  /**
+   * For jobs better to use the `selectJob` store selector.
+   */
+  callAndSubscribe<M extends ApiCallAndSubscribeMethod>(
+    method: M,
+    params?: ApiCallParams<M>,
+  ): Observable<ApiCallAndSubscribeResponse<M>[]> {
+    return this.callMethod<M>(method, params)
+      .pipe(
+        switchMap((items) => this.subscribe(method).pipe(
+          startWith(null),
+          map((event) => ([items, event])),
+        )),
+        applyApiEvent(),
+        takeUntil(this.clearSubscriptions$),
+      );
   }
 
   /**
@@ -96,15 +115,15 @@ export class WebSocketService {
     ) as Observable<Job<ApiJobResponse<M>>>;
   }
 
-  subscribe<K extends keyof ApiEventDirectory>(name: K): Observable<ApiEvent<ApiEventDirectory[K]['response']>> {
-    if (this.eventSubscriptions.has(name)) {
-      return this.eventSubscriptions.get(name);
+  subscribe<K extends ApiEventMethod = ApiEventMethod>(method: K): Observable<ApiEventTyped<K>> {
+    if (this.subscriptions.has(method)) {
+      return this.subscriptions.get(method);
     }
 
-    const eventSubscription$ = this.wsManager.buildSubscriber(name).pipe(
-      switchMap((apiEvent: unknown) => {
-        const erroredEvent = apiEvent as { error: unknown };
-        if (erroredEvent.error) {
+    const subscription$ = this.wsManager.buildSubscriber<K, ApiEventTyped<K>>(method).pipe(
+      switchMap((apiEvent) => {
+        const erroredEvent = apiEvent as unknown as ResultMessage;
+        if (erroredEvent?.error) {
           console.error('Error: ', erroredEvent.error);
           return throwError(() => erroredEvent.error);
         }
@@ -112,18 +131,18 @@ export class WebSocketService {
       }),
       share(),
       takeUntil(this.clearSubscriptions$),
-    ) as Observable<ApiEvent<ApiEventDirectory[K]['response']>>;
-    this.eventSubscriptions.set(name, eventSubscription$);
-    return eventSubscription$;
+    );
+    this.subscriptions.set(method, subscription$);
+    return subscription$;
   }
 
   subscribeToLogs(name: string): Observable<ApiEvent<{ data: string }>> {
-    return this.subscribe(name as keyof ApiEventDirectory) as unknown as Observable<ApiEvent<{ data: string }>>;
+    return this.subscribe(name as ApiEventMethod) as unknown as Observable<ApiEvent<{ data: string }>>;
   }
 
   clearSubscriptions(): void {
     this.clearSubscriptions$.next();
-    this.eventSubscriptions.clear();
+    this.subscriptions.clear();
   }
 
   private callMethod<M extends ApiCallMethod>(method: M, params?: ApiCallParams<M>): Observable<ApiCallResponse<M>>;

@@ -8,7 +8,7 @@ import { webSocket as rxjsWebSocket, WebSocketSubject } from 'rxjs/webSocket';
 import { IncomingApiMessageType, OutgoingApiMessageType } from 'app/enums/api-message-type.enum';
 import { WEBSOCKET } from 'app/helpers/websocket.helper';
 import { WINDOW } from 'app/helpers/window.helper';
-import { ApiEvent, IncomingWebSocketMessage } from 'app/interfaces/api-message.interface';
+import { ApiEventMethod, ApiEventTyped, IncomingWebSocketMessage } from 'app/interfaces/api-message.interface';
 
 @Injectable({
   providedIn: 'root',
@@ -152,24 +152,13 @@ export class WebSocketConnectionService {
     });
   }
 
-  buildSubscriber(name: string): Observable<unknown> {
-    const uuid = UUID.UUID();
+  buildSubscriber<K extends ApiEventMethod, R extends ApiEventTyped<K>>(name: K): Observable<R> {
+    const id = UUID.UUID();
     return this.ws$.multiplex(
-      () => {
-        return {
-          id: uuid,
-          name,
-          msg: OutgoingApiMessageType.Sub,
-        };
-      },
-      () => {
-        return {
-          id: uuid,
-          msg: OutgoingApiMessageType.UnSub,
-        };
-      },
-      (message) => ((message as ApiEvent).collection === name),
-    );
+      () => ({ id, name, msg: OutgoingApiMessageType.Sub }),
+      () => ({ id, msg: OutgoingApiMessageType.UnSub }),
+      (message: R) => (message.collection === name),
+    ) as Observable<R>;
   }
 
   send(payload: unknown): void {
