@@ -48,3 +48,4 @@ jobs:
           name: webui
           token: ${{ env.CODECOV_TOKEN }}
           fail_ci_if_error: true
+          handle_no_reports_found: true
