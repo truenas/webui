@@ -313,17 +313,19 @@ export class EnclosureStore extends ComponentStore<EnclosureState> {
       return updatedDisk || disk;
     });
 
-    const rearChassisElements: EnclosureElement | EnclosureElementsGroup = data.enclosures[rearNumber].elements[0];
+    const rearEnclosure = data.enclosures.find((enclosure) => enclosure.number === rearNumber);
+    const rearChassisElements: EnclosureElement | EnclosureElementsGroup = rearEnclosure.elements[0];
     const rearSlotElements: EnclosureElement[] = (rearChassisElements as EnclosureElementsGroup).elements
       .map((element: EnclosureElement) => {
         element.slot += 24;
         return element;
       });
 
-    const frontChassisElements: EnclosureElement | EnclosureElementsGroup = data.enclosures[frontNumber].elements[0];
+    const frontEnclosure = data.enclosures.find((enclosure) => enclosure.number === frontNumber);
+    const frontChassisElements: EnclosureElement | EnclosureElementsGroup = frontEnclosure.elements[0];
     const frontSlotElements = (frontChassisElements as EnclosureElementsGroup).elements;
     const mergedSlotElements = frontSlotElements.concat(rearSlotElements);
-    (data.enclosures[frontNumber].elements as EnclosureElementsGroup[])[0].elements = mergedSlotElements;
+    (frontEnclosure.elements as EnclosureElementsGroup[])[0].elements = mergedSlotElements;
     const updatedEnclosures = data.enclosures.filter((enclosure: Enclosure) => enclosure.number !== rearNumber);
 
     const updatedData: ProcessParameters = {
