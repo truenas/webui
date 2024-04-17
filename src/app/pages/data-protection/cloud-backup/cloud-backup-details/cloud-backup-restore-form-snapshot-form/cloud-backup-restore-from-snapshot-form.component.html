@@ -11,6 +11,7 @@
         <ix-radio-group
           formControlName="includeExclude"
           [label]="'Include/Exclude' | translate"
+          [tooltip]="helptext.tooltips.include_exclude"
           [options]="includeExcludeOptions"
         ></ix-radio-group>
 
@@ -19,6 +20,7 @@
           formControlName="excludedPaths"
           root="/"
           [required]="true"
+          [tooltip]="helptext.tooltips.excluded_paths"
           [label]="'Excluded Paths' | translate"
           [nodeProvider]="bucketNodeProvider"
           [multiple]="true"
@@ -27,9 +29,30 @@
         <ix-input
           *ngIf="isExcludeByPatternSelected"
           formControlName="excludePattern"
+          [tooltip]="helptext.tooltips.pattern"
           [label]="'Pattern' | translate"
           [required]="true"
         ></ix-input>
+
+        <ix-explorer
+          *ngIf="isIncludeFromSubfolderSelected"
+          formControlName="subFolder"
+          root="/"
+          [required]="true"
+          [label]="'Subfolder' | translate"
+          [nodeProvider]="bucketNodeProvider"
+          [tooltip]="helptext.tooltips.sub_folder"
+          ></ix-explorer>
+
+        <ix-explorer
+          *ngIf="isIncludeFromSubfolderSelected"
+          formControlName="includedPaths"
+          [root]="form.controls.subFolder.value || '/'"
+          [label]="'Included Paths' | translate"
+          [nodeProvider]="bucketNodeProvider"
+          [tooltip]="helptext.tooltips.included_paths"
+          [multiple]="true"
+          ></ix-explorer>
       </ix-fieldset>
 
       <ix-fieldset [title]="'Local' | translate">
@@ -38,6 +61,7 @@
           [required]="true"
           [label]="'Target' | translate"
           [nodeProvider]="fileNodeProvider"
+          [tooltip]="helptext.tooltips.target"
           [canCreateDataset]="true"
           [createDatasetProps]="createDatasetProps"
         ></ix-explorer>

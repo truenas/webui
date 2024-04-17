@@ -10,6 +10,7 @@ import { Observable, map, of } from 'rxjs';
 import { DatasetPreset } from 'app/enums/dataset.enum';
 import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
 import { Role } from 'app/enums/role.enum';
+import { helptextTruecloudBackup } from 'app/helptext/data-protection/truecloud-backup/cloudsync';
 import { CloudBackup, CloudBackupSnapshot, SnapshotIncludeExclude } from 'app/interfaces/cloud-backup.interface';
 import { CloudCredential } from 'app/interfaces/cloud-sync-task.interface';
 import { DatasetCreate } from 'app/interfaces/dataset.interface';
@@ -31,13 +32,19 @@ import { WebSocketService } from 'app/services/ws.service';
 export class CloudBackupRestoreFromSnapshotFormComponent implements OnInit {
   readonly requiredRoles = [Role.CloudBackupWrite];
 
+  readonly helptext = helptextTruecloudBackup;
+
   fileNodeProvider: TreeNodeProvider;
   bucketNodeProvider: TreeNodeProvider;
 
   includeExcludeOptions: Observable<RadioOption[]> = of([
     {
       label: this.translate.instant('Include everything'),
-      value: SnapshotIncludeExclude.Include,
+      value: SnapshotIncludeExclude.IncludeEverything,
+    },
+    {
+      label: this.translate.instant('Include from subfolder'),
+      value: SnapshotIncludeExclude.IncludeFromSubFolder,
     },
     {
       label: this.translate.instant('Select paths to exclude'),
@@ -55,15 +62,17 @@ export class CloudBackupRestoreFromSnapshotFormComponent implements OnInit {
 
   form = this.fb.group({
     target: [null as string, Validators.required],
-    includeExclude: [SnapshotIncludeExclude.Include, Validators.required],
+    includeExclude: [SnapshotIncludeExclude.IncludeEverything, Validators.required],
     excludedPaths: [[] as string[], Validators.required],
     excludePattern: [null as string | null, Validators.required],
+    subFolder: ['/'],
+    includedPaths: [[] as string[]],
   });
 
   isLoading = false;
 
   createDatasetProps: Omit<DatasetCreate, 'name'> = {
-    share_type: DatasetPreset.Smb,
+    share_type: DatasetPreset.Generic,
   };
 
   get isExcludePathsSelected(): boolean {
@@ -72,6 +81,10 @@ export class CloudBackupRestoreFromSnapshotFormComponent implements OnInit {
 
   get isExcludeByPatternSelected(): boolean {
     return this.form.controls.includeExclude.value === SnapshotIncludeExclude.ExcludeByPattern;
+  }
+
+  get isIncludeFromSubfolderSelected(): boolean {
+    return this.form.controls.includeExclude.value === SnapshotIncludeExclude.IncludeFromSubFolder;
   }
 
   constructor(
@@ -89,38 +102,29 @@ export class CloudBackupRestoreFromSnapshotFormComponent implements OnInit {
   ngOnInit(): void {
     this.setFileNodeProvider();
     this.setBucketNodeProvider();
-
-    this.form.controls.excludedPaths.disable();
-    this.form.controls.excludePattern.disable();
-
-    this.form.controls.includeExclude.valueChanges.pipe(untilDestroyed(this)).subscribe({
-      next: () => {
-        if (this.isExcludePathsSelected) {
-          this.form.controls.excludedPaths.enable();
-          this.form.controls.excludePattern.disable();
-        } else if (this.isExcludeByPatternSelected) {
-          this.form.controls.excludePattern.enable();
-          this.form.controls.excludedPaths.disable();
-        }
-        this.cdr.markForCheck();
-        this.form.updateValueAndValidity();
-      },
-    });
+    this.disableHiddenFields();
+    this.listenForFormChanges();
   }
 
   onSubmit(): void {
     this.isLoading = true;
 
+    const options = {
+      exclude: this.isExcludeByPatternSelected
+        ? [this.form.controls.excludePattern.value]
+        : this.form.controls.excludedPaths.value,
+      include: this.isIncludeFromSubfolderSelected ? this.form.value.includedPaths : null,
+    };
+
+    if (!options.exclude?.length) delete options.exclude;
+    if (!options.include?.length) delete options.include;
+
     this.ws.job('cloud_backup.restore', [
       this.data.backup.id,
       this.data.snapshot.id,
-      null,
+      this.isIncludeFromSubfolderSelected ? this.form.controls.subFolder.value : '/',
       this.form.controls.target.value,
-      {
-        exclude: (this.isExcludeByPatternSelected
-          ? [this.form.value.excludePattern]
-          : this.form.value.excludedPaths) || null,
-      },
+      options,
     ]).pipe(untilDestroyed(this)).subscribe({
       next: () => {
         this.snackbar.success(this.translate.instant('Cloud Backup Restored Successfully'));
@@ -166,11 +170,44 @@ export class CloudBackupRestoreFromSnapshotFormComponent implements OnInit {
     };
   }
 
+  private listenForFormChanges(): void {
+    this.form.controls.includeExclude.valueChanges.pipe(untilDestroyed(this)).subscribe({
+      next: () => {
+        this.disableHiddenFields();
+
+        if (this.isExcludePathsSelected) {
+          this.form.controls.excludedPaths.enable();
+        } else if (this.isExcludeByPatternSelected) {
+          this.form.controls.excludePattern.enable();
+        } else if (this.isIncludeFromSubfolderSelected) {
+          this.form.controls.subFolder.enable();
+          this.form.controls.includedPaths.enable();
+        }
+
+        this.cdr.markForCheck();
+        this.form.updateValueAndValidity();
+      },
+    });
+
+    this.form.controls.subFolder.valueChanges.pipe(untilDestroyed(this)).subscribe({
+      next: () => {
+        this.form.controls.includedPaths.reset();
+      },
+    });
+  }
+
   private setFileNodeProvider(): void {
     this.fileNodeProvider = this.filesystemService.getFilesystemNodeProvider({ directoriesOnly: true });
   }
 
   private setBucketNodeProvider(): void {
     this.bucketNodeProvider = this.getBucketsNodeProvider();
+  }
+
+  private disableHiddenFields(): void {
+    this.form.controls.excludePattern.disable();
+    this.form.controls.excludedPaths.disable();
+    this.form.controls.includedPaths.disable();
+    this.form.controls.subFolder.disable();
   }
 }

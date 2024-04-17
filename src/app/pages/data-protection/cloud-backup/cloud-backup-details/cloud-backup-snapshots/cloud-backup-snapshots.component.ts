@@ -66,6 +66,7 @@ export class CloudBackupSnapshotsComponent implements OnChanges {
 
     this.dataProvider = new AsyncDataProvider<CloudBackupSnapshot>(cloudBackupSnapshots$);
     this.getCloudBackupSnapshots();
+    this.restore({} as CloudBackupSnapshot);
   }
 
   getCloudBackupSnapshots(): void {

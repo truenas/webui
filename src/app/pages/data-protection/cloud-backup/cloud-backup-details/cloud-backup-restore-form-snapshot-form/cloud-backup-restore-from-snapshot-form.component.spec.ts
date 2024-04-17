@@ -56,7 +56,7 @@ describe('CloudBackupRestoreFromSnapshotFormComponent', () => {
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     });
 
-    it('submits backup restore from snapshot without exclude options', async () => {
+    it('submits backup restore from snapshot with `Include Everything`', async () => {
       spectator.component.form.patchValue({
         target: '/mnt/my pool',
       });
@@ -67,11 +67,9 @@ describe('CloudBackupRestoreFromSnapshotFormComponent', () => {
       expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('cloud_backup.restore', [
         1,
         1,
-        null,
+        '/',
         '/mnt/my pool',
-        {
-          exclude: null,
-        },
+        {},
       ]);
     });
 
@@ -91,11 +89,38 @@ describe('CloudBackupRestoreFromSnapshotFormComponent', () => {
       expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('cloud_backup.restore', [
         1,
         1,
-        null,
+        '/',
         '/mnt/my pool',
         {
           exclude: [
             '/mnt/another',
+          ],
+        },
+      ]);
+    });
+
+    it('submits backup restore from snapshot with `Include from subfolder`', async () => {
+      spectator.component.form.patchValue({
+        target: '/mnt/my pool',
+        includeExclude: SnapshotIncludeExclude.IncludeFromSubFolder,
+      });
+
+      spectator.component.form.patchValue({
+        subFolder: '/test',
+        includedPaths: ['/test/first'],
+      });
+
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      await saveButton.click();
+
+      expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('cloud_backup.restore', [
+        1,
+        1,
+        '/test',
+        '/mnt/my pool',
+        {
+          include: [
+            '/test/first',
           ],
         },
       ]);
@@ -117,7 +142,7 @@ describe('CloudBackupRestoreFromSnapshotFormComponent', () => {
       expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('cloud_backup.restore', [
         1,
         1,
-        null,
+        '/',
         '/mnt/my pool',
         {
           exclude: [

@@ -34,7 +34,8 @@ export interface CloudBackupSnapshot {
 }
 
 export enum SnapshotIncludeExclude {
-  Include = 'include',
+  IncludeEverything = 'includeEverything',
+  IncludeFromSubFolder = 'includeFromSubFolder',
   ExcludePaths = 'excludePaths',
   ExcludeByPattern = 'excludeByPattern',
 }
