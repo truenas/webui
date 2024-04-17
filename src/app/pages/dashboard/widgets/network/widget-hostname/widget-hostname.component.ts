@@ -6,6 +6,7 @@ import { WidgetComponent } from 'app/pages/dashboard/types/widget-component.inte
 import {
   SlotSize,
 } from 'app/pages/dashboard/types/widget.interface';
+import { hostnameWidget } from 'app/pages/dashboard/widgets/network/widget-hostname/widget-hostname.definition';
 
 @Component({
   selector: 'ix-widget-hostname',
@@ -15,6 +16,7 @@ import {
 })
 export class WidgetHostnameComponent implements WidgetComponent {
   size = input.required<SlotSize>();
+  readonly name = hostnameWidget.name;
 
   systemInfo$ = this.resources.systemInfo$;
 

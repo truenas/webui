@@ -27,6 +27,7 @@ import { routing } from 'app/pages/dashboard/dashboard.routing';
 import { DashboardStore } from 'app/pages/dashboard/services/dashboard.store';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
 import { widgetComponents } from 'app/pages/dashboard/widgets/all-widgets.constant';
+import { WidgetDatapointComponent } from 'app/pages/dashboard/widgets/common/widget-datapoint/widget-datapoint.component';
 
 @NgModule({
   imports: [
@@ -66,6 +67,7 @@ import { widgetComponents } from 'app/pages/dashboard/widgets/all-widgets.consta
     WidgetErrorComponent,
     WidgetGroupFormComponent,
     WidgetEditorGroupComponent,
+    WidgetDatapointComponent,
     ...widgetComponents,
   ],
   providers: [

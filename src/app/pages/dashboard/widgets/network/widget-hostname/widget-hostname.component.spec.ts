@@ -1,14 +1,19 @@
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { LoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import { SystemInfo } from 'app/interfaces/system-info.interface';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
+import { WidgetDatapointComponent } from 'app/pages/dashboard/widgets/common/widget-datapoint/widget-datapoint.component';
 import { WidgetHostnameComponent } from 'app/pages/dashboard/widgets/network/widget-hostname/widget-hostname.component';
 
 describe('WidgetHostnameComponent', () => {
   let spectator: Spectator<WidgetHostnameComponent>;
   const createComponent = createComponentFactory({
     component: WidgetHostnameComponent,
+    declarations: [
+      MockComponent(WidgetDatapointComponent),
+    ],
   });
 
   it('renders hostname for the current system', () => {
@@ -26,7 +31,9 @@ describe('WidgetHostnameComponent', () => {
       ],
     });
 
-    expect(spectator.fixture.nativeElement).toHaveExactTrimmedText('truenas.com');
+    const widget = spectator.query(MockComponent(WidgetDatapointComponent));
+    expect(widget).toBeTruthy();
+    expect(widget.text).toBe('truenas.com');
   });
 
   it('shows an error when hostname cannot be determined', () => {

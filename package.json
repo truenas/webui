@@ -140,6 +140,7 @@
     "ng-mocks": "~14.12.1",
     "ng-qrcode": "~8.0.1",
     "ng2-charts": "~6.0.0",
+    "ng2-fittext": "~1.4.3",
     "ngx-drag-drop": "~16.0.0",
     "ngx-img-fallback": "^2.0.0",
     "ngx-markdown": "~16.0.0",

@@ -1,0 +1,24 @@
+.header h3 {
+  font-size: 24px;
+  margin: 14px 16px 0;
+}
+
+.container {
+  align-items: center;
+  display: flex;
+  height: 80px;
+  justify-content: center;
+  line-height: normal;
+  margin: 16px 0;
+  overflow: overlay;
+  padding: 0 16px;
+  width: 100%;
+
+  .sub-text {
+    display: inline-block;
+    font-size: smaller;
+    transform: scale(0.6);
+    transform-origin: left 15px;
+    vertical-align: sub;
+  }
+}

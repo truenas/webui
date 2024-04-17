@@ -1,3 +1,6 @@
 <ng-container *ixWithLoadingState="ips() as ips">
-  {{ ips }}
+  <ix-widget-datapoint
+    [label]="name | translate"
+    [text]="ips"
+  ></ix-widget-datapoint>
 </ng-container>
