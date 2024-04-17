@@ -2,7 +2,7 @@ import {
   ChangeDetectionStrategy, Component, Input, Type,
 } from '@angular/core';
 import { EnclosureUi } from 'app/interfaces/enclosure.interface';
-import { M50EnclosureComponent } from 'app/pages/system/enclosure/components/enclosures/m50-enclosure/m50-enclosure.component';
+import { enclosureComponentMap } from 'app/pages/system/enclosure/utils/enclosure-mappings';
 
 @Component({
   selector: 'ix-enclosure-overview',
@@ -17,7 +17,7 @@ export class EnclosureOverviewComponent {
    * which model applies using 'enclosure' input property. https://angular.io/guide/dynamic-component-loader
    */
   machine: { component: Type<unknown>; inputs: { enclosure: EnclosureUi } } = {
-    component: M50EnclosureComponent,
+    component: enclosureComponentMap['M50'],
     inputs: {
       enclosure: {
         rackmount: true,
