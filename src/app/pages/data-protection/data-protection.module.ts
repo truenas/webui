@@ -6,6 +6,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatStepperModule } from '@angular/material/stepper';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -126,6 +127,7 @@ import { SmartTaskListComponent } from './smart-task/smart-task-list/smart-task-
     CloudSyncProviderDescriptionComponent,
     SearchInput1Component,
     CoreComponents,
+    MatProgressSpinnerModule,
   ],
   declarations: [
     SnapshotTaskListComponent,

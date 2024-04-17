@@ -21,6 +21,7 @@ import { WebSocketService } from 'app/services/ws.service';
 @Component({
   selector: 'ix-cloud-backup-snapshots',
   templateUrl: './cloud-backup-snapshots.component.html',
+  styleUrls: ['./cloud-backup-snapshots.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CloudBackupSnapshotsComponent implements OnChanges {
@@ -46,27 +47,25 @@ export class CloudBackupSnapshotsComponent implements OnChanges {
       ],
     }),
   ], {
-    rowTestId: (row) => 'cloud-backup-snapshot-' + row.hostname + '-' + row.paths.join('-'),
+    rowTestId: (row) => 'cloud-backup-snapshot-' + row.hostname,
   });
 
   constructor(
+    protected emptyService: EmptyService,
     private slideIn: IxSlideInService,
     private translate: TranslateService,
     private ws: WebSocketService,
-    protected emptyService: EmptyService,
   ) {}
 
   ngOnChanges(changes: IxSimpleChanges<this>): void {
-    if (!changes.backup.currentValue) {
+    if (!changes.backup.currentValue?.id) {
       return;
     }
 
     const cloudBackupSnapshots$ = this.ws.call('cloud_backup.list_snapshots', [this.backup.id])
       .pipe(untilDestroyed(this));
-
     this.dataProvider = new AsyncDataProvider<CloudBackupSnapshot>(cloudBackupSnapshots$);
     this.getCloudBackupSnapshots();
-    this.restore({} as CloudBackupSnapshot);
   }
 
   getCloudBackupSnapshots(): void {
@@ -74,20 +73,20 @@ export class CloudBackupSnapshotsComponent implements OnChanges {
   }
 
   private restore(row: CloudBackupSnapshot): void {
-    this.slideIn.open(CloudBackupRestoreFromSnapshotFormComponent, {
+    const slideInRef = this.slideIn.open(CloudBackupRestoreFromSnapshotFormComponent, {
       data: {
         snapshot: row,
         backup: this.backup,
       },
-    })
-      .slideInClosed$
-      .pipe(
-        filter((response) => !!response),
-        untilDestroyed(this),
-      ).subscribe({
-        next: () => {
-          this.getCloudBackupSnapshots();
-        },
-      });
+    });
+
+    slideInRef.slideInClosed$.pipe(
+      filter((response) => !!response),
+      untilDestroyed(this),
+    ).subscribe({
+      next: () => {
+        this.getCloudBackupSnapshots();
+      },
+    });
   }
 }

@@ -6,6 +6,7 @@
   </mat-card-header>
 
   <ix-table
+    *ngIf="!(dataProvider.isLoading$ | async); else loading"
     class="table"
     [ix-table-empty]="!(dataProvider.currentPageCount$ | async)"
     [emptyConfig]="emptyService.defaultEmptyConfig(dataProvider.emptyType$ | async)"
@@ -19,8 +20,13 @@
       ix-table-body
       [columns]="columns"
       [dataProvider]="dataProvider"
-      [isLoading]="dataProvider.isLoading$ | async"
     ></tbody>
   </ix-table>
   <ix-table-pager [dataProvider]="dataProvider"></ix-table-pager>
 </mat-card>
+
+<ng-template #loading>
+  <div class="spinner-container">
+    <mat-spinner [diameter]="40"></mat-spinner>
+  </div>
+</ng-template>

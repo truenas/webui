@@ -191,7 +191,7 @@ export class CloudBackupRestoreFromSnapshotFormComponent implements OnInit {
 
     this.form.controls.subFolder.valueChanges.pipe(untilDestroyed(this)).subscribe({
       next: () => {
-        this.form.controls.includedPaths.reset();
+        this.form.controls.includedPaths.setValue([]);
       },
     });
   }

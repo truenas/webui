@@ -42,7 +42,7 @@
           [label]="'Subfolder' | translate"
           [nodeProvider]="bucketNodeProvider"
           [tooltip]="helptext.tooltips.sub_folder"
-          ></ix-explorer>
+        ></ix-explorer>
 
         <ix-explorer
           *ngIf="isIncludeFromSubfolderSelected"
@@ -52,7 +52,7 @@
           [nodeProvider]="bucketNodeProvider"
           [tooltip]="helptext.tooltips.included_paths"
           [multiple]="true"
-          ></ix-explorer>
+        ></ix-explorer>
       </ix-fieldset>
 
       <ix-fieldset [title]="'Local' | translate">
