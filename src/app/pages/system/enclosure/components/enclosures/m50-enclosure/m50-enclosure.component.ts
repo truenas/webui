@@ -22,6 +22,9 @@ export class M50EnclosureComponent {
 
   idPrefix = 'tray';
 
+  /** TODO: Replace 'driveTrays' with real data from webui.enclosure.dashboard response from disks
+   * and enclosure drive trays data
+   */
   driveTrays: TrayConfig[] = [
     {
       slot: 1,
