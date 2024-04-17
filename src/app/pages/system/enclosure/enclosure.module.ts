@@ -7,6 +7,7 @@ import { DiskOverviewComponent } from 'app/pages/system/enclosure/components/dis
 import { EnclosureDashboardComponent } from 'app/pages/system/enclosure/components/enclosure-dashboard/enclosure-dashboard.component';
 import { EnclosureOverviewComponent } from 'app/pages/system/enclosure/components/enclosure-overview/enclosure-overview.component';
 import { M50EnclosureComponent } from 'app/pages/system/enclosure/components/enclosures/m50-enclosure/m50-enclosure.component';
+import { EnclosureStore } from 'app/pages/system/enclosure/services/enclosure.store';
 import { routing } from 'app/pages/system/system.routing';
 
 @NgModule({
@@ -23,6 +24,8 @@ import { routing } from 'app/pages/system/system.routing';
     EnclosureOverviewComponent,
     M50EnclosureComponent,
   ],
-
+  providers: [
+    EnclosureStore,
+  ],
 })
 export class EnclosureModule {}
