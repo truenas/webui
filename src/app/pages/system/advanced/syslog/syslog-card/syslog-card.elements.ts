@@ -1,4 +1,5 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
+import { UiSearchableElement } from 'app/modules/global-search/interfaces/ui-searchable-element.interface';
 
 export const syslogCardElements = {
   hierarchy: [T('System'), T('Advanced'), T('Syslog')],
@@ -9,4 +10,4 @@ export const syslogCardElements = {
       anchor: 'configure-syslog',
     },
   },
-};
+} satisfies UiSearchableElement;

@@ -97,7 +97,7 @@ export interface ApiJobDirectory {
       snapshot_id: string,
       subfolder: string,
       destination_path: string,
-      { exclude: string[]; include?: string[] },
+      { exclude: string[]; include: string[] },
     ];
     response: CloudBackupSnapshot[];
   };

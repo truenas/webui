@@ -1,14 +1,19 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
+/* eslint-disable global-require */
+/* eslint-disable import/no-dynamic-require */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /**
  * This is the parser which is used to generate `ui-searchable-elements.json` file, where we collect all all UI elements
  * which will be shown in new "Global UI Search"
  *
  * How to correctly set it all up:
- * 1️⃣. Use `ixUiSearchableElement` directive - to mark an element for the parser
+ * 1️⃣. Use `ixUiSearch` directive - to mark an element for the parser
  *
  * 2️⃣. Create .elements.ts config file near the .component.html file ~ [pools-dashboard.elements.ts]
  *
- * File content example with parent element & data which will be shared/merged to all child elements:
-  export const nestedElementsWithParentPropertiesSharedToChild = {
+ * Example of creating a new searchable element:
+
+  export const customSearchableElements = {
     hierarchy: [T('System'), T('Advanced'), T('Access')],
     anchorRouterLink: ['/system', 'advanced'],
     elements: {
@@ -20,19 +25,9 @@
         hierarchy: [T('Terminate Other Sessions')],
         synonyms: [T('Terminate Other User Sessions')],
       },
-    },
+    } satisfies UiSearchableElement,
   }
 
-  As well, we can define single element data
-
-  export const singleSettingsExampleElements = {
-    theme: {
-      hierarchy: [T('System'), T('General'), T('GUI'), T('Theme')],
-      synonyms: [],
-      triggerAnchor: 'gui-settings',
-      anchorRouterLink: ['/system', 'general'],
-    },
-  };
  *
  * 3️⃣. Provide config to the element [ixUiSearch]="singleSettingsExampleElements.theme"
  *
@@ -53,7 +48,7 @@
     if `*ixRequiresRoles="requiredRoles"` applied to the element
   }
 
-  Note: If you add `ixUiSearchableElement` to the trigger button - then in the
+  Note: If you add `ixUiSearch` to the trigger button - then in the
   form which will be opened by this trigger button
   you can rely on the auto-generated ID on the trigger button or add `anchor: 'my-custom-id'` prop on the trigger button
   Example: check access card -> [ixUiSearch]="searchableElements.elements.configureAccess"
@@ -62,34 +57,26 @@
  */
 
 import * as fs from 'fs';
+import { join } from 'path';
 import { UiSearchableElement } from 'app/modules/global-search/interfaces/ui-searchable-element.interface';
-import { extractTsFileContent } from './extract-ts-file-content';
+import { extractComponentFileContent } from './extract-component-file-content';
 import { findComponentFiles } from './find-component-files';
 import { parseHtmlFile } from './parse-html-file';
-import { TsExtraction } from './ts-extraction.enum';
 
 let uiElements: UiSearchableElement[] = [];
 
-async function extractUiSearchableElements(): Promise<void> {
+export async function extractUiSearchableElements(): Promise<void> {
   try {
-    const tsFiles = await findComponentFiles('src/**/*.elements.ts');
+    const tsFiles = await findComponentFiles('src/**/*.elements.ts') || [];
+
     tsFiles.forEach((elementsTsFilePath) => {
       const htmlComponentFilePath = elementsTsFilePath.replace('.elements.ts', '.component.html');
       const tsComponentFilePath = elementsTsFilePath.replace('.elements.ts', '.component.ts');
 
       if (fs.existsSync(htmlComponentFilePath)) {
-        const elementConfig = extractTsFileContent(
-          elementsTsFilePath,
-          TsExtraction.ElementsConfig,
-        ) as string;
-
-        const componentProperties = extractTsFileContent(
-          tsComponentFilePath,
-          TsExtraction.ClassProperties,
-        ) as Record<string, string>;
-
+        const elementConfig = require(join(__dirname, '../../', elementsTsFilePath)) as UiSearchableElement;
+        const componentProperties = extractComponentFileContent(tsComponentFilePath);
         const elements = parseHtmlFile(htmlComponentFilePath, elementConfig, componentProperties);
-
         uiElements = uiElements.concat(elements);
       }
     });

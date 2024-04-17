@@ -17,6 +17,7 @@ import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { SchedulerModule } from 'app/modules/scheduler/scheduler.module';
 import { SnapshotTaskFormComponent } from 'app/pages/data-protection/snapshot-task/snapshot-task-form/snapshot-task-form.component';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { LocaleService } from 'app/services/locale.service';
 import { StorageService } from 'app/services/storage.service';
 import { TaskService } from 'app/services/task.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -60,6 +61,9 @@ describe('SnapshotTaskComponent', () => {
     ],
     providers: [
       mockAuth(),
+      mockProvider(LocaleService, {
+        timezone: 'America/New_York',
+      }),
       mockWebSocket([
         mockCall('pool.snapshottask.create'),
         mockCall('pool.snapshottask.update'),

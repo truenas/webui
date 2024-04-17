@@ -1,4 +1,5 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
+import { UiSearchableElement } from 'app/modules/global-search/interfaces/ui-searchable-element.interface';
 
 export const failoverElements = {
   hierarchy: [T('System'), T('Failover')],
@@ -6,4 +7,4 @@ export const failoverElements = {
   elements: {
     failover: {},
   },
-};
+} satisfies UiSearchableElement;

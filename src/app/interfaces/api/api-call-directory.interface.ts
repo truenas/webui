@@ -384,7 +384,6 @@ export interface ApiCallDirectory {
   'cloud_backup.create': { params: [CloudBackupUpdate]; response: CloudBackup };
   'cloud_backup.delete': { params: [id: number]; response: boolean };
   'cloud_backup.list_snapshots': { params: [id: number]; response: CloudBackupSnapshot[] };
-  'cloud_backup.delete_snapshot': { params: [id: string]; response: CloudBackupSnapshot[] };
   'cloud_backup.query': { params: [id?: QueryParams<CloudBackup>]; response: CloudBackup[] };
   'cloud_backup.update': { params: [id: number, update: CloudBackupUpdate]; response: CloudBackup };
 
