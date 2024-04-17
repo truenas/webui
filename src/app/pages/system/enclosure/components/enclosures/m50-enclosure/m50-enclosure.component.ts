@@ -10,6 +10,7 @@ interface TrayConfig {
   selected: boolean;
 }
 
+/** Example of an enclosure view implemented using an svg template */
 @Component({
   templateUrl: './m50-enclosure.component.svg',
   changeDetection: ChangeDetectionStrategy.OnPush,
