@@ -1,4 +1,5 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
+import { UiSearchableElement } from 'app/modules/global-search/interfaces/ui-searchable-element.interface';
 
 export const auditElements = {
   hierarchy: [T('System'), T('Audit')],
@@ -8,4 +9,4 @@ export const auditElements = {
       synonyms: [T('Logs')],
     },
   },
-};
+} satisfies UiSearchableElement;

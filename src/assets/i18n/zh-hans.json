@@ -17,6 +17,7 @@
   "Asymmetric Logical Unit Access (ALUA)": "",
   "Available Memory": "",
   "Browse to an existing file. Create a new file by browsing to a dataset and appending /<i>(filename.ext)</i> to the path.": "",
+  "Browser time: {time}": "",
   "Bug": "",
   "Caution: Allocating too much memory can slow the system or prevent VMs from running.": "",
   "Check the update server daily for any updates on the chosen train. Automatically download an update if one is available. Click <i>APPLY PENDING UPDATE</i> to install the downloaded update.": "",

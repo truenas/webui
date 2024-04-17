@@ -1,4 +1,5 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
+import { UiSearchableElement } from 'app/modules/global-search/interfaces/ui-searchable-element.interface';
 
 export const directoryServicesElements = {
   hierarchy: [T('Credentials'), T('Directory Services')],
@@ -14,4 +15,4 @@ export const directoryServicesElements = {
       anchor: 'configure-ldap',
     },
   },
-};
+} satisfies UiSearchableElement;
