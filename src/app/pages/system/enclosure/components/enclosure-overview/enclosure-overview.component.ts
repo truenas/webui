@@ -11,7 +11,7 @@ import { M50EnclosureComponent } from 'app/pages/system/enclosure/components/enc
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class EnclosureOverviewComponent {
-  @Input() enclosure: EnclosureUi; // Enclosure Instance from webui.enclosure.dashboard
+  @Input() enclosure: EnclosureUi; // Enclosure Instance from enclosure-dashboard component
 
   /** TODO: Change the 'component' type here from one of the enclosures svg components based on
    * which model applies using 'enclosure' input property. https://angular.io/guide/dynamic-component-loader

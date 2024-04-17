@@ -13,7 +13,7 @@
     </div>
   </mat-card-header>
   <mat-card-content>
-    <ix-enclosure-overview></ix-enclosure-overview>
-    <ix-disks-overview></ix-disks-overview>
+    <ix-enclosure-overview [enclosure]="enclosure"></ix-enclosure-overview>
+    <ix-disk-overview [disk]="selectedDisk"></ix-disk-overview>
   </mat-card-content>
 </mat-card>
