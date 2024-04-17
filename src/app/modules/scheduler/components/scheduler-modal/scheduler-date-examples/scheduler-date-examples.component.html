@@ -1,5 +1,5 @@
-<div *ngFor="let date of scheduleExamples | slice: 0:maxExamples" class="schedule-example">
-  {{ date | formatDateTime: null }}
+<div *ngFor="let date of scheduleExamples | slice: 0:maxExamples; trackBy: trackByIndex" class="schedule-example">
+  <ix-date [date]="date"></ix-date>
 </div>
 
 <div
