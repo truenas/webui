@@ -2,6 +2,7 @@ import {
   ChangeDetectionStrategy, Component, Input, TrackByFunction,
 } from '@angular/core';
 import { EnclosureUi } from 'app/interfaces/enclosure.interface';
+import { EnclosureStore } from 'app/pages/system/enclosure/services/enclosure.store';
 
 interface TrayConfig {
   highlight: boolean;
@@ -190,5 +191,13 @@ export class M50EnclosureComponent {
       }
     }
     tray.selected = true;
+  }
+
+  constructor(
+    private enclosureStore: EnclosureStore,
+  ) {}
+
+  selectDisk(diskName: string): void {
+    this.enclosureStore.selectDisk(diskName);
   }
 }
