@@ -49,12 +49,15 @@
   bottom: 0;
   cursor: pointer;
   display: flex;
-  opacity: 0.5;
   padding: 5px;
   position: absolute;
   right: 0.3rem;
   top: 0;
   user-select: none;
+
+  &.with-opacity {
+    opacity: 0.5;
+  }
 }
 
 .input-container .ix-icon {
@@ -82,3 +85,7 @@ mat-option.combobox-mat-options {
   padding-top: 3px !important;
 }
 
+.mat-mdc-select-arrow {
+  opacity: 1;
+  padding: 13px 2px;
+}
