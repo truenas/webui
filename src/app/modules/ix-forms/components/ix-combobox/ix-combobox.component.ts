@@ -247,7 +247,7 @@ export class IxComboboxComponent implements ControlValueAccessor, OnInit {
     return this.inputElementRef?.nativeElement?.value && this.inputElementRef.nativeElement.value.length > 0;
   }
 
-  hasExactValueSelected(value: string): boolean {
+  isValueFromOptions(value: string): boolean {
     return this.options.some((option: Option) => option.label === value);
   }
 

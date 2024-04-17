@@ -21,7 +21,7 @@
       (input)="onChanged(ixInput.value)"
       (blur)="onTouch()"
     />
-    <span class="reset-input" [class.with-opacity]="shouldShowResetInput() && !hasExactValueSelected(ixInput.value)">
+    <span class="reset-input" [class.with-opacity]="shouldShowResetInput() && !isValueFromOptions(ixInput.value)">
       <mat-progress-spinner
         *ngIf="loading"
         class="loader"
@@ -30,7 +30,7 @@
       ></mat-progress-spinner>
 
       <ix-icon
-        *ngIf="shouldShowResetInput() && !hasExactValueSelected(ixInput.value); else arrowIcon"
+        *ngIf="shouldShowResetInput() && !isValueFromOptions(ixInput.value); else arrowIcon"
         name="mdi-close-circle"
         (click)="resetInput()"
       ></ix-icon>
