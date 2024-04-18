@@ -6,15 +6,17 @@ import {
 import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { Observable, map, of } from 'rxjs';
+import { map, of } from 'rxjs';
 import { DatasetPreset } from 'app/enums/dataset.enum';
 import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
 import { Role } from 'app/enums/role.enum';
+import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextTruecloudBackup } from 'app/helptext/data-protection/truecloud-backup/cloudsync';
-import { CloudBackup, CloudBackupSnapshot, SnapshotIncludeExclude } from 'app/interfaces/cloud-backup.interface';
+import {
+  CloudBackup, CloudBackupRestoreParams, CloudBackupSnapshot, SnapshotIncludeExclude,
+} from 'app/interfaces/cloud-backup.interface';
 import { CloudCredential } from 'app/interfaces/cloud-sync-task.interface';
 import { DatasetCreate } from 'app/interfaces/dataset.interface';
-import { RadioOption } from 'app/interfaces/option.interface';
 import { ExplorerNodeData, TreeNode } from 'app/interfaces/tree-node.interface';
 import { TreeNodeProvider } from 'app/modules/ix-forms/components/ix-explorer/tree-node-provider.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
@@ -37,24 +39,13 @@ export class CloudBackupRestoreFromSnapshotFormComponent implements OnInit {
   fileNodeProvider: TreeNodeProvider;
   bucketNodeProvider: TreeNodeProvider;
 
-  includeExcludeOptions: Observable<RadioOption[]> = of([
-    {
-      label: this.translate.instant('Include everything'),
-      value: SnapshotIncludeExclude.IncludeEverything,
-    },
-    {
-      label: this.translate.instant('Include from subfolder'),
-      value: SnapshotIncludeExclude.IncludeFromSubFolder,
-    },
-    {
-      label: this.translate.instant('Select paths to exclude'),
-      value: SnapshotIncludeExclude.ExcludePaths,
-    },
-    {
-      label: this.translate.instant('Exclude by pattern'),
-      value: SnapshotIncludeExclude.ExcludeByPattern,
-    },
+  readonly includeExcludeOptions = new Map<SnapshotIncludeExclude, string>([
+    [SnapshotIncludeExclude.IncludeEverything, this.translate.instant('Include everything')],
+    [SnapshotIncludeExclude.IncludeFromSubFolder, this.translate.instant('Include from subfolder')],
+    [SnapshotIncludeExclude.ExcludePaths, this.translate.instant('Select paths to exclude')],
+    [SnapshotIncludeExclude.ExcludeByPattern, this.translate.instant('Exclude by pattern')],
   ]);
+  readonly includeExcludeOptions$ = of(mapToOptions(this.includeExcludeOptions, this.translate));
 
   get title(): string {
     return this.translate.instant('Restore from Snapshot');
@@ -119,24 +110,28 @@ export class CloudBackupRestoreFromSnapshotFormComponent implements OnInit {
     if (!options.exclude?.length) delete options.exclude;
     if (!options.include?.length) delete options.include;
 
-    this.ws.job('cloud_backup.restore', [
+    const params = [
       this.data.backup.id,
       this.data.snapshot.id,
       this.isIncludeFromSubfolderSelected ? this.form.controls.subFolder.value : '/',
       this.form.controls.target.value,
       options,
-    ]).pipe(untilDestroyed(this)).subscribe({
-      next: () => {
-        this.snackbar.success(this.translate.instant('Cloud Backup Restored Successfully'));
-        this.isLoading = false;
-        this.slideInRef.close(true);
-      },
-      error: (error: unknown) => {
-        this.isLoading = false;
-        this.errorHandler.handleWsFormError(error, this.form);
-        this.cdr.markForCheck();
-      },
-    });
+    ] as CloudBackupRestoreParams;
+
+    this.ws.job('cloud_backup.restore', params)
+      .pipe(untilDestroyed(this))
+      .subscribe({
+        next: () => {
+          this.snackbar.success(this.translate.instant('Cloud Backup Restored Successfully'));
+          this.isLoading = false;
+          this.slideInRef.close(true);
+        },
+        error: (error: unknown) => {
+          this.isLoading = false;
+          this.errorHandler.handleWsFormError(error, this.form);
+          this.cdr.markForCheck();
+        },
+      });
   }
 
   getBucketsNodeProvider(): TreeNodeProvider {

@@ -15,7 +15,7 @@ import {
   ChartReleaseUpdate,
   ChartReleaseUpgrade,
 } from 'app/interfaces/chart-release.interface';
-import { CloudBackupSnapshot } from 'app/interfaces/cloud-backup.interface';
+import { CloudBackupRestoreParams, CloudBackupSnapshot } from 'app/interfaces/cloud-backup.interface';
 import { CloudSyncTaskUpdate } from 'app/interfaces/cloud-sync-task.interface';
 import { ConfigResetParams } from 'app/interfaces/config-reset-params.interface';
 import { PullContainerImageParams, PullContainerImageResponse } from 'app/interfaces/container-image.interface';
@@ -91,16 +91,7 @@ export interface ApiJobDirectory {
 
   // CloudBackup
   'cloud_backup.sync': { params: [id: number, params?: { dry_run: boolean }]; response: void };
-  'cloud_backup.restore': {
-    params: [
-      id: number,
-      snapshot_id: string,
-      subfolder: string,
-      destination_path: string,
-      { exclude: string[]; include: string[] },
-    ];
-    response: CloudBackupSnapshot[];
-  };
+  'cloud_backup.restore': { params: CloudBackupRestoreParams; response: CloudBackupSnapshot[] };
 
   // CloudSync
   'cloudsync.sync': { params: [id: number, params?: { dry_run: boolean }]; response: number };

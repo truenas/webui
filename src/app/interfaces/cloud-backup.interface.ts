@@ -39,3 +39,14 @@ export enum SnapshotIncludeExclude {
   ExcludePaths = 'excludePaths',
   ExcludeByPattern = 'excludeByPattern',
 }
+
+export type CloudBackupRestoreParams = [
+  id: number,
+  snapshot_id: string,
+  subfolder: string,
+  destination_path: string,
+  {
+    exclude: string[];
+    include?: string[];
+  },
+];

@@ -1,8 +1,9 @@
-import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
+import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { CloudBackup } from 'app/interfaces/cloud-backup.interface';
 import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
 import { CloudBackupScheduleComponent } from 'app/pages/data-protection/cloud-backup/cloud-backup-details/cloud-backup-schedule/cloud-backup-schedule.component';
+import { TaskService } from 'app/services/task.service';
 import { selectPreferences } from 'app/store/preferences/preferences.selectors';
 import { selectTimezone } from 'app/store/system-config/system-config.selectors';
 
@@ -27,6 +28,9 @@ describe('CloudBackupScheduleComponent', () => {
       IxTableModule,
     ],
     providers: [
+      mockProvider(TaskService, {
+        getTaskCronDescription: jest.fn(() => 'At 00:00, only on Sunday'),
+      }),
       provideMockStore({
         selectors: [
           {
