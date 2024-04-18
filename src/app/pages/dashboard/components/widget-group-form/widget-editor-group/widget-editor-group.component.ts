@@ -1,7 +1,9 @@
 import {
   ChangeDetectionStrategy, Component, EventEmitter, Input, Output,
 } from '@angular/core';
-import { WidgetGroup } from 'app/pages/dashboard/types/widget-group.interface';
+import { FormBuilder } from '@ngneat/reactive-forms';
+import { of } from 'rxjs';
+import { WidgetGroup, WidgetGroupLayout, widgetGroupIcons } from 'app/pages/dashboard/types/widget-group.interface';
 
 /**
  * Similar to WidgetGroupComponent, but with slightly different behaviour:
@@ -19,4 +21,12 @@ export class WidgetEditorGroupComponent {
   @Input() group: WidgetGroup;
   @Input() selection = 0;
   @Output() selectionChange = new EventEmitter<number>();
+  protected form = this.formBuilder.group({
+    template: [''],
+    layout: [WidgetGroupLayout.Full],
+  });
+  readonly layoutsMap = widgetGroupIcons;
+  templateOptions$ = of([]);
+
+  constructor(private formBuilder: FormBuilder) {}
 }

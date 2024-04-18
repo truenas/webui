@@ -1,0 +1,27 @@
+<ix-label
+  *ngIf="label || tooltip"
+  [label]="label"
+  [tooltip]="tooltip"
+  [required]="required"
+></ix-label>
+
+<div class="icon-group" [attr.aria-label]="label">
+  @for (item of valueMap; track item) {
+  <button
+    mat-icon-button
+    type="button"
+    [disabled]="isDisabled"
+    [ixTest]="[controlDirective.name, item[0]]"
+    [class.selected]="value === item[0]"
+    (click)="onValueChanged(item[0])"
+    (blur)="onTouch()"
+  >
+    <ix-icon [name]="item[1]"></ix-icon>
+  </button>
+  }
+  @empty {
+  <span>{{ 'No valueMap is passed' | translate }}</span>
+  }
+</div>
+
+<ix-errors [control]="controlDirective.control" [label]="label"></ix-errors>

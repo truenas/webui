@@ -1,6 +1,9 @@
 import { Widget } from 'app/pages/dashboard/types/widget.interface';
 
 export enum WidgetGroupLayout {
+  /**
+   * [  1  ]
+   */
   Full = 'full',
 
   /**
@@ -37,3 +40,11 @@ export interface WidgetGroup {
     Widget | null,
   ];
 }
+
+export const widgetGroupIcons = new Map<WidgetGroupLayout, string>([
+  [WidgetGroupLayout.Full, 'ix:layout_full'],
+  [WidgetGroupLayout.Quarters, 'ix:layout_quarters'],
+  [WidgetGroupLayout.Halves, 'ix:layout_halves'],
+  [WidgetGroupLayout.HalfAndQuarters, 'ix:layout_half_and_quarters'],
+  [WidgetGroupLayout.QuartersAndHalf, 'ix:layout_quarters_and_half'],
+]);
