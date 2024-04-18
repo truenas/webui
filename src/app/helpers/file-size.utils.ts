@@ -2,7 +2,7 @@ import {
   Gb, kb, Mb, Tb,
 } from 'app/constants/bits.constant';
 import {
-  GiB, KiB, MiB, TiB,
+  GiB, KiB, MiB, PiB, TiB,
 } from 'app/constants/bytes.constant';
 
 export function normalizeFileSize(
@@ -39,6 +39,8 @@ function normalizeFileSizeBase2(value: number, baseUnit: 'b' | 'B'): [formatted:
       return [formatted, 'Gi' + baseUnit];
     case TiB:
       return [formatted, 'Ti' + baseUnit];
+    case PiB:
+      return [formatted, 'Pi' + baseUnit];
     default:
       return [formatted, baseUnit];
   }
