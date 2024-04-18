@@ -72,12 +72,14 @@ export class GlobalSearchResultsComponent implements OnChanges {
   selectElement(element: UiSearchableElement): void {
     this.saveSearchResult(element);
     this.searchProvider.select(element);
+
     const route = element.anchorRouterLink || element.routerLink;
-    if (element.targetHref) {
-      this.window.open(element.targetHref, '_blank');
-    }
     if (route?.length) {
       this.router.navigate(route);
+    }
+
+    if (element.targetHref) {
+      this.window.open(element.targetHref, '_blank');
     }
   }
 
