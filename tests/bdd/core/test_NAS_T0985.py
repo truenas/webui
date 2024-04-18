@@ -21,7 +21,7 @@ pytestmark = [pytest.mark.debug_test]
 
 
 @scenario('features/NAS-T985.feature', 'Create a pool call tank')
-def test_create_a_pool_call_tank_with_2_disk(driver):
+def test_create_a_pool_call_tank_with(driver):
     """Create a pool call tank with 2 disk."""
 
 
@@ -96,9 +96,9 @@ def when_the_pool_manager_appears_enter_the_tank_for_pool_name(driver):
 @then('click ada1 checkbox, press the right arrow under Data VDevs')
 def click_ada1_checkbox_press_the_right_arrow_under_data_vdevs(driver):
     """click ada1 checkbox, press the right arrow under Data VDevs."""
-    assert wait_on_element(driver, 7, '//mat-checkbox[@id="pool-manager__disks-ada1"]', 'clickable')
-    assert wait_on_element(driver, 7, '//mat-checkbox[@id="pool-manager__disks-ada2"]', 'clickable')
-    driver.find_element_by_xpath('//mat-checkbox[@id="pool-manager__disks-ada1"]').click()
+    assert wait_on_element(driver, 7, '//mat-checkbox[@id="pool-manager__disks-da1"]', 'clickable')
+    assert wait_on_element(driver, 7, '//mat-checkbox[@id="pool-manager__disks-da2"]', 'clickable')
+    driver.find_element_by_xpath('//mat-checkbox[@id="pool-manager__disks-da1"]').click()
     assert wait_on_element(driver, 7, '//button[@id="vdev__add-button"]', 'clickable')
     driver.find_element_by_xpath('//button[@id="vdev__add-button"]').click()
     assert wait_on_element(driver, 7, '//mat-checkbox[@id="pool-manager__force-submit-checkbox"]', 'clickable')
