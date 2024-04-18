@@ -98,7 +98,7 @@ def input_my_active_directory_smb_share_as_the_description_click_save(driver, de
 @then('if Restart SMB Service box appears, click Restart Service')
 def if_restart_smb_service_box_appears_click_restart_service(driver):
     """if Restart SMB Service box appears, click Restart Service."""
-    rsc.Restart_SMB_Service(driver)
+    rsc.Start_Or_Restart_SMB_Service(driver)
 
     assert wait_on_element_disappear(driver, 30, xpaths.progress.progressbar)
 
