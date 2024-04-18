@@ -16,6 +16,7 @@ export interface StripAclModalData {
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-strip-acl-modal',
   templateUrl: './strip-acl-modal.component.html',
   styleUrls: ['./strip-acl-modal.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

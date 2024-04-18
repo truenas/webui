@@ -57,6 +57,7 @@ import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-alert-service',
   templateUrl: './alert-service.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

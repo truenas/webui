@@ -24,6 +24,7 @@ import { generalConfigUpdated } from 'app/store/system-config/system-config.acti
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-allowed-addresses-form',
   templateUrl: 'allowed-addresses-form.component.html',
   styleUrls: ['./allowed-addresses-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -18,6 +18,7 @@ import { advancedConfigUpdated } from 'app/store/system-config/system-config.act
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-kernel-form',
   templateUrl: 'kernel-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

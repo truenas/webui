@@ -4,6 +4,7 @@ import { sharesDashboardElements } from 'app/pages/sharing/components/shares-das
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-shares-dashboard',
   templateUrl: './shares-dashboard.component.html',
   styleUrls: ['./shares-dashboard.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

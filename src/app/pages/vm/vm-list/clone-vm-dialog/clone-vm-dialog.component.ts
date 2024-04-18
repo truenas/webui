@@ -12,6 +12,7 @@ import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-clone-vm-dialog',
   templateUrl: './clone-vm-dialog.component.html',
   styleUrls: ['./clone-vm-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

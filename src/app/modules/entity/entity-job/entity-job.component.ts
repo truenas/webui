@@ -18,6 +18,7 @@ import { WebSocketService } from 'app/services/ws.service';
 @UntilDestroy()
 // eslint-disable-next-line @angular-eslint/prefer-on-push-component-change-detection
 @Component({
+  selector: 'ix-encryption-options-dialog',
   templateUrl: 'entity-job.component.html',
   styleUrls: ['./entity-job.component.scss'],
 })

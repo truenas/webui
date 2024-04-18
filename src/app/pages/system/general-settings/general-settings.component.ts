@@ -6,6 +6,7 @@ import { generalSettingsElements } from 'app/pages/system/general-settings/gener
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-general-settings',
   templateUrl: './general-settings.component.html',
   styleUrls: ['./general-settings.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

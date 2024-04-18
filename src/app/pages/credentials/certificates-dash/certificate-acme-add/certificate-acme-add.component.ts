@@ -22,6 +22,7 @@ import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-certificate-acme-add',
   templateUrl: './certificate-acme-add.component.html',
   styleUrls: ['./certificate-acme-add.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

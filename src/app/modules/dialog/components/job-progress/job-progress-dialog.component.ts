@@ -37,6 +37,7 @@ export interface JobProgressDialogConfig<Result> {
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-job-progress-dialog',
   templateUrl: './job-progress-dialog.component.html',
   styleUrls: ['./job-progress-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

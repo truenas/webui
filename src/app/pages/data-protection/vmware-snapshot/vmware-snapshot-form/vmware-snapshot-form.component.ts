@@ -21,6 +21,7 @@ import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-vmware-snapshot-form',
   templateUrl: './vmware-snapshot-form.component.html',
   styleUrls: ['./vmware-snapshot-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

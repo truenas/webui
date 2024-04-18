@@ -18,6 +18,7 @@ import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-cloudsync-restore-dialog',
   templateUrl: './cloudsync-restore-dialog.component.html',
   styleUrls: ['./cloudsync-restore-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

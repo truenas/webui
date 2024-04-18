@@ -9,6 +9,7 @@ import { SigninStore } from 'app/views/sessions/signin/store/signin.store';
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-signin',
   templateUrl: './signin.component.html',
   styleUrls: ['./signin.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

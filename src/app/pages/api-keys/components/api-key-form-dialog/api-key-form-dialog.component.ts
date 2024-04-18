@@ -17,6 +17,7 @@ import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-api-key-form-dialog',
   templateUrl: './api-key-form-dialog.component.html',
   styleUrls: ['./api-key-form-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

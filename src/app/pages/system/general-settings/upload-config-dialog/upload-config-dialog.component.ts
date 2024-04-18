@@ -13,6 +13,7 @@ import { AuthService } from 'app/services/auth/auth.service';
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-upload-config-dialog',
   templateUrl: './upload-config-dialog.component.html',
   styleUrls: ['./upload-config-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

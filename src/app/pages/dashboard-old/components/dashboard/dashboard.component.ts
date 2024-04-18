@@ -48,6 +48,7 @@ export interface DashboardNetworkInterfaceAlias extends NetworkInterfaceAlias {
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-dashboard',
   templateUrl: './dashboard.component.html',
   styleUrls: [
     '../widget/widget.component.scss',

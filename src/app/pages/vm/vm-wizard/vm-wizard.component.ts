@@ -37,6 +37,7 @@ import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-vm-wizard',
   templateUrl: './vm-wizard.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
