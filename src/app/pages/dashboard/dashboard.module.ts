@@ -4,7 +4,7 @@ import {
 import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButton, MatButtonModule } from '@angular/material/button';
-import { MatCard } from '@angular/material/card';
+import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
 import { BaseChartDirective } from 'ng2-charts';
@@ -50,6 +50,7 @@ import { widgetComponents } from 'app/pages/dashboard/widgets/all-widgets.consta
     MatTooltipModule,
     BaseChartDirective,
     MatButtonModule,
+    MatCardContent,
     NgxSkeletonLoaderModule.forRoot({
       animation: false,
       theme: {

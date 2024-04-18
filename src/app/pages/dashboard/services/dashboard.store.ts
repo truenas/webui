@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { ComponentStore } from '@ngrx/component-store';
+import { tap } from 'rxjs';
+import { demoWidgets } from 'app/pages/dashboard/services/demo-widgets.constant';
 import { WidgetGroup } from 'app/pages/dashboard/types/widget-group.interface';
 
 export interface DashboardState {
@@ -28,11 +30,22 @@ export class DashboardStore extends ComponentStore<DashboardState> {
     // TODO: Set isLoading flag, but do not clear previous state.
     // TODO: If it's in old format, migrate to new format.
     // TODO: Handle global errors like something network errors or something completely unexpected in user attributes.
-    return trigger$;
+    return trigger$.pipe(
+      tap(() => this.setDemoData()),
+    );
   });
 
   readonly save = this.effect<WidgetGroup[]>((groups$) => {
     // TODO: Save to user settings.
     return groups$;
   });
+
+  // TODO: Demo code.
+  private setDemoData(): void {
+    this.setState({
+      isLoading: false,
+      globalError: '',
+      groups: demoWidgets,
+    });
+  }
 }

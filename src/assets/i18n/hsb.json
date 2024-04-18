@@ -4594,6 +4594,8 @@
   "{tasks, plural, =1 {# sent task} other {# sent tasks}} this week": "",
   "{type} VDEVs": "",
   "{type} at {location}": "",
+  "{type} widget does not support {size} size.": "",
+  "{type} widget is not supported.": "",
   "{type} | {vdevWidth} wide | ": "",
   "{used} of {total} ({used_pct})": "",
   "{version} is available!": "",

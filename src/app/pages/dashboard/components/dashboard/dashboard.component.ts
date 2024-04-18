@@ -12,6 +12,7 @@ export class DashboardComponent implements OnInit {
   // TODO: Use similar approach to loading as we have on Datasets
   // TODO: If old data is available, show it while loading new data.
   // TODO: Prevent user from entering configuration mode while loading.
+  readonly state$ = this.dashboardStore.state$;
 
   constructor(
     private dashboardStore: DashboardStore,

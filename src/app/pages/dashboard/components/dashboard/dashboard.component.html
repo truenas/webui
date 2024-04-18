@@ -11,13 +11,17 @@
 
 <div class="widgets">
   <!-- TODO: When in edit mode, scale down widget group and show edit and delete buttons -->
-  <mat-card class="widget-group">
-    <ix-widget-group></ix-widget-group>
-  </mat-card>
-  <mat-card class="widget-group">
-    <ix-widget-group></ix-widget-group>
-  </mat-card>
-  <mat-card class="widget-group">
-    <ix-widget-group></ix-widget-group>
-  </mat-card>
+  <ng-container *ngIf="state$ | async as state">
+    <ng-container *ngIf="state.groups.length > 0; else noWidgets">
+      <ix-widget-group
+        *ngFor="let group of state.groups"
+        class="widget-group"
+        [group]="group"
+      ></ix-widget-group>
+    </ng-container>
+  </ng-container>
+
+  <ng-template #noWidgets>
+
+  </ng-template>
 </div>
