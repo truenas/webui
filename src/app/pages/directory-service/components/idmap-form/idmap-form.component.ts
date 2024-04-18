@@ -2,11 +2,10 @@ import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
 } from '@angular/core';
 import { Validators } from '@angular/forms';
-import { MatDialog } from '@angular/material/dialog';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { Observable, of } from 'rxjs';
+import { Observable, of, tap } from 'rxjs';
 import { filter, switchMap } from 'rxjs/operators';
 import {
   IdmapBackend, IdmapLinkedService, IdmapName, IdmapSchemaMode, IdmapSslEncryptionMode,
@@ -18,7 +17,6 @@ import { IdmapBackendOption, IdmapBackendOptions } from 'app/interfaces/idmap-ba
 import { Idmap, IdmapUpdate } from 'app/interfaces/idmap.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
@@ -158,7 +156,6 @@ export class IdmapFormComponent implements OnInit {
     private idmapService: IdmapService,
     private dialogService: DialogService,
     private errorHandler: ErrorHandlerService,
-    private matDialog: MatDialog,
     private cdr: ChangeDetectorRef,
     private formErrorHandler: FormErrorHandlerService,
     private snackbar: SnackbarService,
@@ -314,20 +311,20 @@ export class IdmapFormComponent implements OnInit {
           return of(null);
         }
 
-        const dialog = this.matDialog.open(EntityJobComponent, {
-          data: { title: helptextIdmap.idmap.clear_cache_dialog.job_title },
-          disableClose: true,
-        });
-        dialog.componentInstance.setCall('idmap.clear_idmap_cache');
-        dialog.componentInstance.submit();
-        dialog.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
-          this.snackbar.success(
-            this.translate.instant(helptextIdmap.idmap.clear_cache_dialog.success_msg),
+        return this.dialogService.jobDialog(
+          this.ws.job('idmap.clear_idmap_cache'),
+          {
+            title: this.translate.instant(helptextIdmap.idmap.clear_cache_dialog.job_title),
+          },
+        )
+          .afterClosed()
+          .pipe(
+            tap(() => {
+              this.snackbar.success(
+                this.translate.instant(helptextIdmap.idmap.clear_cache_dialog.success_msg),
+              );
+            }),
           );
-          dialog.close();
-        });
-
-        return dialog.afterClosed();
       }),
     );
   }

@@ -8,10 +8,10 @@ import { Role } from 'app/enums/role.enum';
 import { IscsiAuthAccess } from 'app/interfaces/iscsi.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
-import { AsyncDataProvider } from 'app/modules/ix-table2/classes/async-data-provider/async-data-provider';
-import { actionsColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
-import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
-import { createTable } from 'app/modules/ix-table2/utils';
+import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
+import { actionsColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
+import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
+import { createTable } from 'app/modules/ix-table/utils';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { AuthorizedAccessFormComponent } from 'app/pages/sharing/iscsi/authorized-access/authorized-access-form/authorized-access-form.component';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
@@ -60,7 +60,7 @@ export class AuthorizedAccessListComponent implements OnInit {
             const slideInRef = this.slideInService.open(AuthorizedAccessFormComponent, { data: row });
             slideInRef.slideInClosed$
               .pipe(filter(Boolean), untilDestroyed(this))
-              .subscribe(() => this.dataProvider.load());
+              .subscribe(() => this.refresh());
           },
         },
         {
@@ -76,7 +76,7 @@ export class AuthorizedAccessListComponent implements OnInit {
               switchMap(() => this.ws.call('iscsi.auth.delete', [row.id]).pipe(this.loader.withLoader())),
               untilDestroyed(this),
             ).subscribe({
-              next: () => this.dataProvider.load(),
+              next: () => this.refresh(),
               error: (error: unknown) => {
                 this.dialogService.error(this.errorHandler.parseError(error));
               },
@@ -109,18 +109,22 @@ export class AuthorizedAccessListComponent implements OnInit {
     );
 
     this.dataProvider = new AsyncDataProvider(authorizedAccess$);
-    this.dataProvider.load();
+    this.refresh();
+    this.dataProvider.emptyType$.pipe(untilDestroyed(this)).subscribe(() => {
+      this.onListFiltered(this.filterString);
+    });
   }
 
   doAdd(): void {
     const slideInRef = this.slideInService.open(AuthorizedAccessFormComponent);
-    slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => this.dataProvider.load());
+    slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => this.refresh());
   }
 
   onListFiltered(query: string): void {
     this.filterString = query.toLowerCase();
     this.dataProvider.setRows(this.authAccess.filter((entry) => {
-      return [entry.peeruser, entry.tag, entry.user].includes(this.filterString);
+      return entry.peeruser.toLowerCase().includes(this.filterString)
+        || entry.user.toLowerCase().includes(this.filterString);
     }));
   }
 
@@ -128,5 +132,9 @@ export class AuthorizedAccessListComponent implements OnInit {
     this.columns = [...columns];
     this.cdr.detectChanges();
     this.cdr.markForCheck();
+  }
+
+  private refresh(): void {
+    this.dataProvider.load();
   }
 }

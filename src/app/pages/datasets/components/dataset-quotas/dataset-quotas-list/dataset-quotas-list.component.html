@@ -1,5 +1,5 @@
 <ix-page-header>
-  <ix-search-input1 [disabled]="isLoading" (search)="onListFiltered($event)"></ix-search-input1>
+  <ix-search-input1 [value]="filterString" [disabled]="isLoading" (search)="onListFiltered($event)"></ix-search-input1>
   <mat-slide-toggle
     color="primary"
     [ixTest]="'show-all-' + helpTextKey"
@@ -35,8 +35,8 @@
 </ix-page-header>
 
 <div class="table-container">
-  <ix-table2
-    [ix-table2-empty]="!isLoading && !(dataProvider.currentPageCount$ | async)"
+  <ix-table
+    [ix-table-empty]="!isLoading && !(dataProvider.currentPageCount$ | async)"
     [emptyConfig]="emptyConfigService.defaultEmptyConfig(emptyType)"
   >
     <thead
@@ -50,6 +50,6 @@
       [dataProvider]="dataProvider"
       [isLoading]="isLoading"
     ></tbody>
-  </ix-table2>
+  </ix-table>
   <ix-table-pager [dataProvider]="dataProvider"></ix-table-pager>
 </div>

@@ -11,8 +11,8 @@ import { SystemGeneralConfig } from 'app/interfaces/system-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ChainedRef } from 'app/modules/ix-forms/components/ix-slide-in/chained-component-ref';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
-import { IxTable2Harness } from 'app/modules/ix-table2/components/ix-table2/ix-table2.harness';
-import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
+import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
+import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
 import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
 import { AdvancedSettingsService } from 'app/pages/system/advanced/advanced-settings.service';
 import { AllowedAddressesCardComponent } from 'app/pages/system/advanced/allowed-addresses/allowed-addresses-card/allowed-addresses-card.component';
@@ -22,7 +22,7 @@ import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.servic
 describe('AllowedAddressesCardComponent', () => {
   let spectator: Spectator<AllowedAddressesCardComponent>;
   let loader: HarnessLoader;
-  let table: IxTable2Harness;
+  let table: IxTableHarness;
   const componentRef: ChainedRef<unknown> = { close: jest.fn(), getData: jest.fn(() => undefined) };
 
   const config = {
@@ -34,7 +34,7 @@ describe('AllowedAddressesCardComponent', () => {
   const createComponent = createComponentFactory({
     component: AllowedAddressesCardComponent,
     imports: [
-      IxTable2Module,
+      IxTableModule,
       MockModule(TooltipModule),
     ],
     providers: [
@@ -59,7 +59,7 @@ describe('AllowedAddressesCardComponent', () => {
   beforeEach(async () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    table = await loader.getHarness(IxTable2Harness);
+    table = await loader.getHarness(IxTableHarness);
   });
 
   it('should show table rows', async () => {

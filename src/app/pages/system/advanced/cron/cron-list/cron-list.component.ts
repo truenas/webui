@@ -11,10 +11,10 @@ import { Role } from 'app/enums/role.enum';
 import { formatDistanceToNowShortened } from 'app/helpers/format-distance-to-now-shortened';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
-import { AsyncDataProvider } from 'app/modules/ix-table2/classes/async-data-provider/async-data-provider';
-import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
-import { Column, ColumnComponent } from 'app/modules/ix-table2/interfaces/table-column.interface';
-import { createTable } from 'app/modules/ix-table2/utils';
+import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
+import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
+import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/table-column.interface';
+import { createTable } from 'app/modules/ix-table/utils';
 import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
 import { CronDeleteDialogComponent } from 'app/pages/system/advanced/cron/cron-delete-dialog/cron-delete-dialog.component';
 import { CronFormComponent } from 'app/pages/system/advanced/cron/cron-form/cron-form.component';
@@ -119,6 +119,9 @@ export class CronListComponent implements OnInit {
     );
     this.dataProvider = new AsyncDataProvider<CronjobRow>(cronjobs$);
     this.getCronJobs();
+    this.dataProvider.emptyType$.pipe(untilDestroyed(this)).subscribe(() => {
+      this.onListFiltered(this.filterString);
+    });
   }
 
   getCronJobs(): void {
@@ -177,7 +180,7 @@ export class CronListComponent implements OnInit {
   onListFiltered(query: string): void {
     this.filterString = query.toLowerCase();
     this.dataProvider.setRows(this.cronjobs.filter((cronjob) => {
-      return [cronjob.user.toString()].includes(this.filterString);
+      return cronjob.user.toString().toLowerCase().includes(this.filterString);
     }));
   }
 

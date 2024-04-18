@@ -3,17 +3,16 @@ import {
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import _ from 'lodash';
 import { filter, switchMap, tap } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
 import { KerberosKeytab } from 'app/interfaces/kerberos-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
-import { AsyncDataProvider } from 'app/modules/ix-table2/classes/async-data-provider/async-data-provider';
-import { actionsColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
-import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
-import { SortDirection } from 'app/modules/ix-table2/enums/sort-direction.enum';
-import { createTable } from 'app/modules/ix-table2/utils';
+import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
+import { actionsColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
+import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
+import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
+import { createTable } from 'app/modules/ix-table/utils';
 import { KerberosKeytabsFormComponent } from 'app/pages/directory-service/components/kerberos-keytabs/kerberos-keytabs-form/kerberos-keytabs-form.component';
 import { kerberosKeytabsListElements } from 'app/pages/directory-service/components/kerberos-keytabs/kerberos-keytabs-list/kerberos-keytabs-list.elements';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
@@ -101,6 +100,9 @@ export class KerberosKeytabsListComponent implements OnInit {
     this.dataProvider = new AsyncDataProvider<KerberosKeytab>(keytabsRows$);
     this.setDefaultSort();
     this.getKerberosKeytabs();
+    this.dataProvider.emptyType$.pipe(untilDestroyed(this)).subscribe(() => {
+      this.onListFiltered(this.filterString);
+    });
   }
 
   getKerberosKeytabs(): void {
@@ -125,7 +127,7 @@ export class KerberosKeytabsListComponent implements OnInit {
   onListFiltered(query: string): void {
     this.filterString = query.toLowerCase();
     this.dataProvider.setRows(this.kerberosRealsm.filter((idmap) => {
-      return _.find(idmap, query);
+      return idmap.name.toLowerCase().includes(this.filterString);
     }));
   }
 }

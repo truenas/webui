@@ -32,7 +32,7 @@ import { CoreBulkResponse } from 'app/interfaces/core-bulk.interface';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { SortDirection } from 'app/modules/ix-table2/enums/sort-direction.enum';
+import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { selectJob } from 'app/modules/jobs/store/job.selectors';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { AppBulkUpgradeComponent } from 'app/pages/apps/components/installed-apps/app-bulk-upgrade/app-bulk-upgrade.component';

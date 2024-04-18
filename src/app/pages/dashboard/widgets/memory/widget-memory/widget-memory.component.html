@@ -1,0 +1,73 @@
+<div class="header">
+  <h3>{{ 'Memory' | translate }}</h3>
+
+  <button
+    mat-icon-button
+    ixTest="memory-go-to-reports"
+    matTooltipPosition="above"
+    [attr.aria-label]="'Memory Reports' | translate"
+    [matTooltip]="'Memory Reports' | translate"
+    [routerLink]="['/reportsdashboard', 'memory']"
+  >
+    <ix-icon name="insert_chart"></ix-icon>
+  </button>
+</div>
+
+<div class="container">
+  <div class="stats">
+    <h2 class="total-memory">
+      <ng-container *ngIf="isLoading(); else totalMemory">
+        <ngx-skeleton-loader
+          class="skeleton"
+          [theme]="{ height: 42, background: 'var(--alt-bg2)', opacity: 0.25 }"
+        ></ngx-skeleton-loader>
+      </ng-container>
+      <ng-template #totalMemory>
+        {{ formatUnit(memory().total) }}
+        <span class="units">GiB</span>
+      </ng-template>
+    </h2>
+    <div class="memory-used-caption">
+      {{ 'total available' | translate }}
+      <span *ngIf="ecc$ | async">(ECC)</span>
+    </div>
+
+    <div class="legend">
+      <div
+        *ngFor="let legendItem of stats()"
+        class="stats-item"
+      >
+        <div
+          class="legend-swatch"
+          [style.background-color]="toRgb(legendItem.color)"
+        ></div>
+        <span class="label">{{ legendItem.name }}:</span>
+
+        <ng-container *ngIf="isLoading(); else stat">
+          <ngx-skeleton-loader class="skeleton"></ngx-skeleton-loader>
+        </ng-container>
+        <ng-template #stat>
+          {{ formatUnit(legendItem.value) }} GiB
+        </ng-template>
+      </div>
+    </div>
+  </div>
+
+  <div class="chart">
+    <ngx-skeleton-loader
+      *ngIf="isLoading(); else chart"
+      class="skeleton"
+      appearance="circle"
+      [theme]="{ width: '100%', height: 'auto', 'aspect-ratio': '1', background: 'var(--alt-bg2)', opacity: 0.25 }"
+    ></ngx-skeleton-loader>
+    <ng-template #chart>
+      <canvas
+        baseChart
+        type="doughnut"
+        [data]="chartData()"
+        [options]="chartOptions()"
+      ></canvas>
+    </ng-template>
+  </div>
+</div>
+

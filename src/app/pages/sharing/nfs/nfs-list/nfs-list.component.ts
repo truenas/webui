@@ -9,12 +9,12 @@ import { shared } from 'app/helptext/sharing';
 import { NfsShare } from 'app/interfaces/nfs-share.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
-import { AsyncDataProvider } from 'app/modules/ix-table2/classes/async-data-provider/async-data-provider';
-import { actionsColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
-import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
-import { toggleColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-toggle/ix-cell-toggle.component';
-import { SortDirection } from 'app/modules/ix-table2/enums/sort-direction.enum';
-import { createTable } from 'app/modules/ix-table2/utils';
+import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
+import { actionsColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
+import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
+import { toggleColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-toggle/ix-cell-toggle.component';
+import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
+import { createTable } from 'app/modules/ix-table/utils';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { NfsFormComponent } from 'app/pages/sharing/nfs/nfs-form/nfs-form.component';
 import { nfsListElements } from 'app/pages/sharing/nfs/nfs-list/nfs-list.elements';
@@ -95,7 +95,7 @@ export class NfsListComponent implements OnInit {
             const slideInRef = this.slideInService.open(NfsFormComponent, { data: { existingNfsShare: nfsShare } });
             slideInRef.slideInClosed$
               .pipe(filter(Boolean), untilDestroyed(this))
-              .subscribe(() => this.dataProvider.load());
+              .subscribe(() => this.refresh());
           },
         },
         {
@@ -115,7 +115,7 @@ export class NfsListComponent implements OnInit {
                   this.appLoader.withLoader(),
                   untilDestroyed(this),
                 ).subscribe({
-                  next: () => this.dataProvider.load(),
+                  next: () => this.refresh(),
                 });
               },
             });
@@ -145,7 +145,10 @@ export class NfsListComponent implements OnInit {
       untilDestroyed(this),
     );
     this.dataProvider = new AsyncDataProvider<NfsShare>(shares$);
-    this.dataProvider.load();
+    this.refresh();
+    this.dataProvider.emptyType$.pipe(untilDestroyed(this)).subscribe(() => {
+      this.onListFiltered(this.filterString);
+    });
   }
 
   setDefaultSort(): void {
@@ -160,7 +163,7 @@ export class NfsListComponent implements OnInit {
     const slideInRef = this.slideInService.open(NfsFormComponent);
     slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe({
       next: () => {
-        this.dataProvider.load();
+        this.refresh();
       },
     });
   }
@@ -168,7 +171,7 @@ export class NfsListComponent implements OnInit {
   onListFiltered(query: string): void {
     this.filterString = query.toLowerCase();
     const filteredExporters = this.nfsShares.filter((share) => {
-      return JSON.stringify(share).includes(query);
+      return JSON.stringify(share).toLowerCase().includes(query);
     });
     this.dataProvider.setRows(filteredExporters);
     this.cdr.markForCheck();
@@ -178,5 +181,9 @@ export class NfsListComponent implements OnInit {
     this.columns = [...columns];
     this.cdr.detectChanges();
     this.cdr.markForCheck();
+  }
+
+  private refresh(): void {
+    this.dataProvider.load();
   }
 }

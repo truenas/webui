@@ -14,12 +14,12 @@ import { map, switchMap } from 'rxjs/operators';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { Job } from 'app/interfaces/job.interface';
 import { EmptyService } from 'app/modules/empty/empty.service';
-import { ArrayDataProvider } from 'app/modules/ix-table2/classes/array-data-provider/array-data-provider';
-import { dateColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-date/ix-cell-date.component';
-import { stateButtonColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-state-button/ix-cell-state-button.component';
-import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
-import { SortDirection } from 'app/modules/ix-table2/enums/sort-direction.enum';
-import { createTable } from 'app/modules/ix-table2/utils';
+import { ArrayDataProvider } from 'app/modules/ix-table/classes/array-data-provider/array-data-provider';
+import { dateColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-date/ix-cell-date.component';
+import { stateButtonColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-state-button/ix-cell-state-button.component';
+import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
+import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
+import { createTable } from 'app/modules/ix-table/utils';
 import {
   JobSlice,
   selectAllNonTransientJobs,
@@ -43,7 +43,7 @@ export class JobsListComponent implements OnInit {
   protected readonly error$ = this.store$.select(selectJobState).pipe(map((state) => state.error));
   protected jobs: Job[] = [];
   protected dataProvider = new ArrayDataProvider<Job>();
-  protected datasetFilter = '';
+  protected filterString = '';
   protected selectedIndex: JobTab = 0;
   private selector$ = new BehaviorSubject<typeof selectAllNonTransientJobs>(selectAllNonTransientJobs);
   protected selectedJobs$ = this.selector$.pipe(switchMap((selector) => this.store$.select(selector)));
@@ -109,7 +109,8 @@ export class JobsListComponent implements OnInit {
 
   ngOnInit(): void {
     this.selectedJobs$.pipe(untilDestroyed(this)).subscribe((jobs) => {
-      this.dataProvider.setRows(jobs);
+      this.jobs = jobs;
+      this.onListFiltered(this.filterString);
       this.setDefaultSort();
       this.cdr.markForCheck();
     });
@@ -132,12 +133,13 @@ export class JobsListComponent implements OnInit {
   }
 
   protected onListFiltered(query: string): void {
-    this.datasetFilter = query;
+    this.filterString = query;
     this.dataProvider.setRows(this.jobs.filter(this.filterSnapshot));
   }
 
   private filterSnapshot = (job: Job): boolean => {
-    return [job.method, job.description].includes(this.datasetFilter);
+    return job.method?.toLowerCase().includes(this.filterString)
+      || job.description?.toLowerCase().includes(this.filterString);
   };
 
   private setDefaultSort(): void {

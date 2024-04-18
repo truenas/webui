@@ -9,8 +9,8 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
-import { IxTable2Harness } from 'app/modules/ix-table2/components/ix-table2/ix-table2.harness';
-import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
+import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
+import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
 import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
 import { SearchInput1Component } from 'app/modules/search-input1/search-input1.component';
 import { DockerImageDeleteDialogComponent } from 'app/pages/apps/components/docker-images/docker-image-delete-dialog/docker-image-delete-dialog.component';
@@ -24,12 +24,12 @@ import { DockerImagesListComponent } from './docker-images-list.component';
 describe('DockerImagesListComponent', () => {
   let spectator: Spectator<DockerImagesListComponent>;
   let loader: HarnessLoader;
-  let table: IxTable2Harness;
+  let table: IxTableHarness;
 
   const createComponent = createComponentFactory({
     component: DockerImagesListComponent,
     imports: [
-      IxTable2Module,
+      IxTableModule,
       MockModule(PageHeaderModule),
       SearchInput1Component,
     ],
@@ -61,7 +61,7 @@ describe('DockerImagesListComponent', () => {
   beforeEach(async () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    table = await loader.getHarness(IxTable2Harness);
+    table = await loader.getHarness(IxTableHarness);
   });
 
   it('should show table rows', async () => {

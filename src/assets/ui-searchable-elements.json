@@ -265,6 +265,26 @@
   {
     "hierarchy": [
       "Data Protection",
+      "TrueCloud Backup Tasks"
+    ],
+    "synonyms": [
+      "Tasks",
+      "Cloud Backup",
+      "TrueCloud Backup Tasks"
+    ],
+    "requiredRoles": [],
+    "anchorRouterLink": [
+      "/data-protection",
+      "cloud-backup"
+    ],
+    "routerLink": null,
+    "anchor": "data-protection-truecloud-backup-tasks",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Data Protection",
       "Cloud Sync Tasks"
     ],
     "synonyms": [
@@ -1829,14 +1849,14 @@
       "Save Debug"
     ],
     "synonyms": [
-      "Save Debug"
+      "Advanced"
     ],
     "requiredRoles": [],
     "anchorRouterLink": [
       "/system/advanced"
     ],
     "routerLink": null,
-    "anchor": "system-advanced-save-debug",
+    "anchor": "save-debug",
     "triggerAnchor": null,
     "section": "ui"
   },

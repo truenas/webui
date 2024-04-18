@@ -25,7 +25,7 @@ import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxFileSizeModule } from 'app/modules/ix-file-size/ix-file-size.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
-import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
+import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
 import { TreeModule } from 'app/modules/ix-tree/tree.module';
 import { JobsModule } from 'app/modules/jobs/jobs.module';
 import { LayoutModule } from 'app/modules/layout/layout.module';
@@ -177,7 +177,7 @@ import { routing } from './system.routing';
     MatSlideToggleModule,
     AppLoaderModule,
     TestIdModule,
-    IxTable2Module,
+    IxTableModule,
     OauthButtonModule,
     SearchInput1Component,
     EmptyComponent,

@@ -23,13 +23,13 @@ import { ConfirmOptions } from 'app/interfaces/dialog.interface';
 import { ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
-import { ArrayDataProvider } from 'app/modules/ix-table2/classes/array-data-provider/array-data-provider';
-import { checkboxColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-checkbox/ix-cell-checkbox.component';
-import { dateColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-date/ix-cell-date.component';
-import { sizeColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-size/ix-cell-size.component';
-import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
-import { SortDirection } from 'app/modules/ix-table2/enums/sort-direction.enum';
-import { createTable } from 'app/modules/ix-table2/utils';
+import { ArrayDataProvider } from 'app/modules/ix-table/classes/array-data-provider/array-data-provider';
+import { checkboxColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-checkbox/ix-cell-checkbox.component';
+import { dateColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-date/ix-cell-date.component';
+import { sizeColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-size/ix-cell-size.component';
+import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
+import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
+import { createTable } from 'app/modules/ix-table/utils';
 import { SnapshotAddFormComponent } from 'app/pages/datasets/modules/snapshots/snapshot-add-form/snapshot-add-form.component';
 import { SnapshotBatchDeleteDialogComponent } from 'app/pages/datasets/modules/snapshots/snapshot-batch-delete-dialog/snapshot-batch-delete-dialog.component';
 import { snapshotPageEntered } from 'app/pages/datasets/modules/snapshots/store/snapshot.actions';
@@ -52,7 +52,7 @@ export interface ZfsSnapshotUi extends ZfsSnapshot {
 })
 export class SnapshotListComponent implements OnInit {
   protected readonly requiredRoles = [Role.SnapshotDelete];
-  datasetFilter = '';
+  filterString = '';
   dataProvider = new ArrayDataProvider<ZfsSnapshotUi>();
   snapshots: ZfsSnapshotUi[] = [];
   showExtraColumnsControl = new FormControl<boolean>(false);
@@ -130,8 +130,8 @@ export class SnapshotListComponent implements OnInit {
   });
 
   get pageTitle(): string {
-    if (this.datasetFilter.length) {
-      return this.translate.instant('Snapshots') + ': ' + this.datasetFilter;
+    if (this.filterString.length) {
+      return this.translate.instant('Snapshots') + ': ' + this.filterString;
     }
     return this.translate.instant('Snapshots');
   }
@@ -156,7 +156,7 @@ export class SnapshotListComponent implements OnInit {
     private slideInService: IxSlideInService,
     private route: ActivatedRoute,
   ) {
-    this.datasetFilter = this.route.snapshot.paramMap.get('dataset') || '';
+    this.filterString = this.route.snapshot.paramMap.get('dataset') || '';
   }
 
   ngOnInit(): void {
@@ -259,12 +259,12 @@ export class SnapshotListComponent implements OnInit {
   }
 
   protected onListFiltered(query: string): void {
-    this.datasetFilter = query;
+    this.filterString = query;
     this.dataProvider.setRows(this.snapshots.filter(this.filterSnapshot));
   }
 
   private filterSnapshot = (snapshot: ZfsSnapshotUi): boolean => {
-    return snapshot.name.includes(this.datasetFilter);
+    return snapshot.name.toLowerCase().includes(this.filterString);
   };
 
   private setDefaultSort(): void {

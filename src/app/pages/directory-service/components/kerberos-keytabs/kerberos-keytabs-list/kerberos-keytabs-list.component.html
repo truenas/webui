@@ -1,5 +1,5 @@
 <ix-page-header *ngIf="!inCard">
-  <ix-search-input1 (search)="onListFiltered($event)"></ix-search-input1>
+  <ix-search-input1 [value]="filterString" (search)="onListFiltered($event)"></ix-search-input1>
   <button *ixRequiresRoles="requiredRoles" mat-button color="primary" ixTest="add-kerberos-keytabs" (click)="doAdd()">
     {{ 'Add' | translate }}
   </button>
@@ -17,8 +17,8 @@
       </button>
     </div>
   </mat-toolbar>
-  <ix-table2
-    [ix-table2-empty]="!(dataProvider.currentPageCount$ | async)"
+  <ix-table
+    [ix-table-empty]="!(dataProvider.currentPageCount$ | async)"
     [emptyConfig]="emptyService.defaultEmptyConfig(dataProvider.emptyType$ | async)"
   >
     <thead
@@ -33,6 +33,6 @@
       [isLoading]="dataProvider.isLoading$ | async"
     >
     </tbody>
-  </ix-table2>
+  </ix-table>
   <ix-table-pager *ngIf="paginator" [dataProvider]="dataProvider"></ix-table-pager>
 </div>

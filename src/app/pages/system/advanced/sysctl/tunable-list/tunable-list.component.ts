@@ -4,18 +4,19 @@ import {
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { filter, tap } from 'rxjs';
+import {
+  filter, switchMap, tap,
+} from 'rxjs';
 import { Role } from 'app/enums/role.enum';
 import { Tunable } from 'app/interfaces/tunable.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
-import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
-import { AsyncDataProvider } from 'app/modules/ix-table2/classes/async-data-provider/async-data-provider';
-import { actionsColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
-import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
-import { yesNoColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-yesno/ix-cell-yesno.component';
-import { SortDirection } from 'app/modules/ix-table2/enums/sort-direction.enum';
-import { createTable } from 'app/modules/ix-table2/utils';
+import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
+import { actionsColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
+import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
+import { yesNoColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-yesno/ix-cell-yesno.component';
+import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
+import { createTable } from 'app/modules/ix-table/utils';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TunableFormComponent } from 'app/pages/system/advanced/sysctl/tunable-form/tunable-form.component';
 import { tunableListElements } from 'app/pages/system/advanced/sysctl/tunable-list/tunable-list.elements';
@@ -99,6 +100,9 @@ export class TunableListComponent implements OnInit {
     this.dataProvider = new AsyncDataProvider<Tunable>(tunables$);
     this.setDefaultSort();
     this.getTunables();
+    this.dataProvider.emptyType$.pipe(untilDestroyed(this)).subscribe(() => {
+      this.onListFiltered(this.filterString);
+    });
   }
 
   getTunables(): void {
@@ -129,26 +133,27 @@ export class TunableListComponent implements OnInit {
         message: this.translate.instant('Are you sure you want to delete "{name}"?', { name: tunable.var }),
         buttonText: this.translate.instant('Delete'),
       })
-      .pipe(filter(Boolean), untilDestroyed(this))
-      .subscribe(() => {
-        const jobDialogRef = this.matDialog.open(EntityJobComponent, {
-          data: {
-            title: this.translate.instant('Deleting...'),
-          },
-        });
-        jobDialogRef.componentInstance.setCall('tunable.delete', [tunable.id]);
-        jobDialogRef.componentInstance.submit();
-        jobDialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
-          this.getTunables();
-          this.dialogService.closeAllDialogs();
-          this.snackbar.success(this.translate.instant('Sysctl "{name}" deleted', { name: tunable.var }));
-        });
-        jobDialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((error) => {
-          jobDialogRef.close();
-          this.dialogService.closeAllDialogs();
-          this.dialogService.error(this.errorHandler.parseError(error));
-        });
-      });
+      .pipe(
+        filter(Boolean),
+        switchMap(() => {
+          return this.dialogService.jobDialog(
+            this.ws.job('tunable.delete', [tunable.id]),
+            {
+              title: this.translate.instant('Deleting...'),
+            },
+          )
+            .afterClosed()
+            .pipe(
+              tap(() => {
+                this.getTunables();
+                this.snackbar.success(this.translate.instant('Sysctl "{name}" deleted', { name: tunable.var }));
+              }),
+              this.errorHandler.catchError(),
+            );
+        }),
+        untilDestroyed(this),
+      )
+      .subscribe();
   }
 
   onListFiltered(query: string): void {

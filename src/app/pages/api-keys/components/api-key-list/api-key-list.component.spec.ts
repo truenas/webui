@@ -10,20 +10,21 @@ import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.u
 import { ApiKey } from 'app/interfaces/api-key.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
-import { IxTable2Harness } from 'app/modules/ix-table2/components/ix-table2/ix-table2.harness';
-import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
+import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
+import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
 import { SearchInput1Component } from 'app/modules/search-input1/search-input1.component';
 import { ApiKeyFormDialogComponent } from 'app/pages/api-keys/components/api-key-form-dialog/api-key-form-dialog.component';
 import { ApiKeyListComponent } from 'app/pages/api-keys/components/api-key-list/api-key-list.component';
 import { ApiKeyComponentStore } from 'app/pages/api-keys/store/api-key.store';
+import { LocaleService } from 'app/services/locale.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 describe('ApiKeyListComponent', () => {
   let spectator: Spectator<ApiKeyListComponent>;
   let loader: HarnessLoader;
-  let table: IxTable2Harness;
+  let table: IxTableHarness;
 
   const apiKeys = [
     {
@@ -47,7 +48,7 @@ describe('ApiKeyListComponent', () => {
     component: ApiKeyListComponent,
     imports: [
       AppLoaderModule,
-      IxTable2Module,
+      IxTableModule,
       SearchInput1Component,
       MockModule(PageHeaderModule),
     ],
@@ -57,6 +58,9 @@ describe('ApiKeyListComponent', () => {
     ],
     providers: [
       mockAuth(),
+      mockProvider(LocaleService, {
+        timezone: 'America/Los_Angeles',
+      }),
       ApiKeyComponentStore,
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
@@ -76,14 +80,14 @@ describe('ApiKeyListComponent', () => {
   beforeEach(async () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    table = await loader.getHarness(IxTable2Harness);
+    table = await loader.getHarness(IxTableHarness);
   });
 
   it('should show table rows', async () => {
     const expectedRows = [
       ['Name', 'Created Date', ''],
-      ['first-api-key', '2002-01-04 01:36:50', ''],
-      ['second-api-key', '2002-01-15 15:23:30', ''],
+      ['first-api-key', '2002-01-03 15:36:50', ''],
+      ['second-api-key', '2002-01-15 05:23:30', ''],
     ];
 
     const cells = await table.getCellTexts();

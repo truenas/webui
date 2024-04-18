@@ -13,11 +13,11 @@ import { EmptyType } from 'app/enums/empty-type.enum';
 import { Role, roleNames } from 'app/enums/role.enum';
 import { User } from 'app/interfaces/user.interface';
 import { EmptyService } from 'app/modules/empty/empty.service';
-import { ArrayDataProvider } from 'app/modules/ix-table2/classes/array-data-provider/array-data-provider';
-import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
-import { yesNoColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-yesno/ix-cell-yesno.component';
-import { SortDirection } from 'app/modules/ix-table2/enums/sort-direction.enum';
-import { createTable } from 'app/modules/ix-table2/utils';
+import { ArrayDataProvider } from 'app/modules/ix-table/classes/array-data-provider/array-data-provider';
+import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
+import { yesNoColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-yesno/ix-cell-yesno.component';
+import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
+import { createTable } from 'app/modules/ix-table/utils';
 import { userPageEntered, userRemoved } from 'app/pages/account/users/store/user.actions';
 import { selectUsers, selectUserState, selectUsersTotal } from 'app/pages/account/users/store/user.selectors';
 import { UserFormComponent } from 'app/pages/account/users/user-form/user-form.component';
@@ -129,7 +129,7 @@ export class UserListComponent implements OnInit {
     ).subscribe({
       next: (users) => {
         this.users = users;
-        this.createDataSource(users);
+        this.onListFiltered(this.filterString);
       },
       error: () => {
         this.users = [];
@@ -156,7 +156,7 @@ export class UserListComponent implements OnInit {
     this.createDataSource(this.users.filter((user) => {
       return user.username.toLowerCase().includes(this.filterString)
         || user.full_name.toLowerCase().includes(this.filterString)
-        || user.uid.toString().includes(this.filterString);
+        || user.uid.toString().toLowerCase().includes(this.filterString);
     }));
   }
 

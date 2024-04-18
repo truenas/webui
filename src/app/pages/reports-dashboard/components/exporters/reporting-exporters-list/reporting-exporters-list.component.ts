@@ -11,12 +11,12 @@ import { Role } from 'app/enums/role.enum';
 import { ReportingExporter } from 'app/interfaces/reporting-exporters.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
-import { ArrayDataProvider } from 'app/modules/ix-table2/classes/array-data-provider/array-data-provider';
-import { actionsColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
-import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
-import { toggleColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-toggle/ix-cell-toggle.component';
-import { SortDirection } from 'app/modules/ix-table2/enums/sort-direction.enum';
-import { createTable } from 'app/modules/ix-table2/utils';
+import { ArrayDataProvider } from 'app/modules/ix-table/classes/array-data-provider/array-data-provider';
+import { actionsColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
+import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
+import { toggleColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-toggle/ix-cell-toggle.component';
+import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
+import { createTable } from 'app/modules/ix-table/utils';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { ReportingExportersFormComponent } from 'app/pages/reports-dashboard/components/exporters/reporting-exporters-form/reporting-exporters-form.component';
 import { reportingExportersElements } from 'app/pages/reports-dashboard/components/exporters/reporting-exporters-list/reporting-exporters-list.elements';
@@ -136,7 +136,9 @@ export class ReportingExporterListComponent implements OnInit {
 
   onListFiltered(query: string): void {
     this.filterString = query.toLowerCase();
-    const filteredExporters = this.exporters.filter((exporter) => JSON.stringify(exporter).includes(query));
+    const filteredExporters = this.exporters.filter(
+      (exporter) => JSON.stringify(exporter).toLowerCase().includes(query),
+    );
     this.dataProvider.setRows(filteredExporters);
     this.cdr.markForCheck();
   }
@@ -145,7 +147,7 @@ export class ReportingExporterListComponent implements OnInit {
     this.ws.call('reporting.exporters.query').pipe(untilDestroyed(this)).subscribe({
       next: (exporters: ReportingExporter[]) => {
         this.exporters = exporters;
-        this.dataProvider.setRows(this.exporters);
+        this.onListFiltered(this.filterString);
         this.isLoading$.next(false);
         this.isNoData$.next(!this.exporters?.length);
         this.setDefaultSort();

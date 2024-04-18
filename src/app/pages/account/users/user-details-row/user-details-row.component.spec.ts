@@ -14,7 +14,7 @@ import { Preferences } from 'app/interfaces/preferences.interface';
 import { User } from 'app/interfaces/user.interface';
 import { AlertsModule } from 'app/modules/alerts/alerts.module';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
+import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import {
   DeleteUserDialogComponent,
@@ -55,7 +55,7 @@ describe('UserDetailsRowComponent', () => {
     component: UserDetailsRowComponent,
     imports: [
       MockModule(AlertsModule),
-      IxTable2Module,
+      IxTableModule,
     ],
     declarations: [
       UserFormComponent,

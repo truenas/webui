@@ -12,11 +12,11 @@ import { SmartTestTaskUi } from 'app/interfaces/smart-test.interface';
 import { Disk } from 'app/interfaces/storage.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
-import { AsyncDataProvider } from 'app/modules/ix-table2/classes/async-data-provider/async-data-provider';
-import { actionsColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
-import { relativeDateColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-relative-date/ix-cell-relative-date.component';
-import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
-import { createTable } from 'app/modules/ix-table2/utils';
+import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
+import { actionsColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
+import { relativeDateColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-relative-date/ix-cell-relative-date.component';
+import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
+import { createTable } from 'app/modules/ix-table/utils';
 import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
 import { SmartTaskFormComponent } from 'app/pages/data-protection/smart-task/smart-task-form/smart-task-form.component';
 import { smartTaskListElements } from 'app/pages/data-protection/smart-task/smart-task-list/smart-task-list.elements';
@@ -38,7 +38,7 @@ export class SmartTaskListComponent implements OnInit {
   smartTasks: SmartTestTaskUi[] = [];
   dataProvider: AsyncDataProvider<SmartTestTaskUi>;
   disks: Disk[] = [];
-  filterString: string;
+  filterString = '';
 
   columns = createTable<SmartTestTaskUi>([
     textColumn({
@@ -106,6 +106,9 @@ export class SmartTaskListComponent implements OnInit {
     );
     this.dataProvider = new AsyncDataProvider<SmartTestTaskUi>(smartTasks$);
     this.getSmartTasks();
+    this.dataProvider.emptyType$.pipe(untilDestroyed(this)).subscribe(() => {
+      this.onListFiltered(this.filterString);
+    });
   }
 
   getSmartTasks(): void {
@@ -123,7 +126,9 @@ export class SmartTaskListComponent implements OnInit {
   onListFiltered(query: string): void {
     this.filterString = query.toLowerCase();
     this.dataProvider.setRows(this.smartTasks.filter((smartTask) => {
-      return smartTask.desc.includes(this.filterString) || smartTask.type.includes(this.filterString);
+      return smartTask.desc.toLowerCase().includes(this.filterString)
+        || smartTask.type.toLowerCase().includes(this.filterString)
+        || smartTask.disksLabel.find((item) => item.includes(this.filterString));
     }));
   }
 

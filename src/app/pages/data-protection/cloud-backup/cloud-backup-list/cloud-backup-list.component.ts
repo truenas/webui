@@ -1,21 +1,277 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { CloudBackup } from 'app/interfaces/cloud-backup.interface';
+import { BreakpointObserver, BreakpointState, Breakpoints } from '@angular/cdk/layout';
+import {
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
+} from '@angular/core';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
+import {
+  filter, of, switchMap, tap,
+} from 'rxjs';
+import { JobState } from 'app/enums/job-state.enum';
+import { Role } from 'app/enums/role.enum';
+import { formatDistanceToNowShortened } from 'app/helpers/format-distance-to-now-shortened';
+import { WINDOW } from 'app/helpers/window.helper';
+import { CloudBackup, CloudBackupUpdate } from 'app/interfaces/cloud-backup.interface';
+import { Job } from 'app/interfaces/job.interface';
+import { DialogService } from 'app/modules/dialog/dialog.service';
+import { EmptyService } from 'app/modules/empty/empty.service';
+import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
+import { actionsColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
+import { stateButtonColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-state-button/ix-cell-state-button.component';
+import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
+import {
+  toggleColumn,
+} from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-toggle/ix-cell-toggle.component';
+import { yesNoColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-yesno/ix-cell-yesno.component';
+import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
+import { createTable } from 'app/modules/ix-table/utils';
+import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { CloudBackupFormComponent } from 'app/pages/data-protection/cloud-backup/cloud-backup-form/cloud-backup-form.component';
+import { cloudBackupListElements } from 'app/pages/data-protection/cloud-backup/cloud-backup-list/cloud-backup-list.elements';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
+import { WebSocketService } from 'app/services/ws.service';
 
+@UntilDestroy()
 @Component({
   selector: 'ix-cloud-backup-list',
   templateUrl: './cloud-backup-list.component.html',
   styleUrl: './cloud-backup-list.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class CloudBackupListComponent {
-  selectedBackup: CloudBackup;
+export class CloudBackupListComponent implements OnInit {
+  cloudBackups: CloudBackup[] = [];
+  isMobileView = false;
+  filterString = '';
+  dataProvider: AsyncDataProvider<CloudBackup>;
   showMobileDetails = false;
+  readonly requiredRoles = [Role.CloudBackupWrite];
+  protected readonly searchableElements = cloudBackupListElements;
 
-  constructor() {
-    this.selectedBackup = { description: 'test' } as CloudBackup;
+  columns = createTable<CloudBackup>([
+    textColumn({
+      title: this.translate.instant('Name'),
+      propertyName: 'description',
+      sortable: true,
+    }),
+    toggleColumn({
+      title: this.translate.instant('Enabled'),
+      propertyName: 'enabled',
+      onRowToggle: (row) => this.onChangeEnabledState(row),
+      requiredRoles: this.requiredRoles,
+    }),
+    yesNoColumn({
+      title: this.translate.instant('Snapshot'),
+      propertyName: 'snapshot',
+    }),
+    stateButtonColumn({
+      title: this.translate.instant('State'),
+      getValue: (row) => row?.job?.state,
+      getJob: (row) => row.job,
+      cssClass: 'state-button',
+    }),
+    textColumn({
+      title: this.translate.instant('Last Run'),
+      getValue: (row) => {
+        if (row.job?.time_finished) {
+          return formatDistanceToNowShortened(row.job?.time_finished.$date);
+        }
+        return this.translate.instant('N/A');
+      },
+    }),
+    actionsColumn({
+      cssClass: 'wide-actions',
+      actions: [
+        {
+          iconName: 'edit',
+          tooltip: this.translate.instant('Edit'),
+          onClick: (row) => this.openForm(row),
+        },
+        {
+          iconName: 'play_arrow',
+          tooltip: this.translate.instant('Run job'),
+          hidden: (row) => of(row.job?.state === JobState.Running),
+          onClick: (row) => this.runNow(row),
+          requiredRoles: this.requiredRoles,
+        },
+        {
+          iconName: 'delete',
+          tooltip: this.translate.instant('Delete'),
+          onClick: (row) => this.doDelete(row),
+          requiredRoles: this.requiredRoles,
+        },
+      ],
+    }),
+  ], {
+    rowTestId: (row) => 'cloud-backup-' + row.description,
+  });
+
+  constructor(
+    private cdr: ChangeDetectorRef,
+    private ws: WebSocketService,
+    private translate: TranslateService,
+    private chainedSlideInService: IxChainedSlideInService,
+    private dialogService: DialogService,
+    private errorHandler: ErrorHandlerService,
+    private snackbar: SnackbarService,
+    private appLoader: AppLoaderService,
+    private breakpointObserver: BreakpointObserver,
+    protected emptyService: EmptyService,
+    @Inject(WINDOW) private window: Window,
+  ) {}
+
+  ngOnInit(): void {
+    const cloudBackups$ = this.ws.call('cloud_backup.query').pipe(
+      tap((cloudBackups) => {
+        this.cloudBackups = cloudBackups;
+        this.dataProvider.expandedRow = this.isMobileView ? null : cloudBackups[0];
+        this.expanded(this.dataProvider.expandedRow);
+      }),
+    );
+    this.dataProvider = new AsyncDataProvider<CloudBackup>(cloudBackups$);
+    this.getCloudBackups();
+    this.initMobileView();
   }
 
   closeMobileDetails(): void {
     this.showMobileDetails = false;
+    this.dataProvider.expandedRow = null;
+    this.cdr.markForCheck();
+  }
+
+  setDefaultSort(): void {
+    this.dataProvider.setSorting({
+      active: 1,
+      direction: SortDirection.Asc,
+      propertyName: 'description',
+    });
+  }
+
+  getCloudBackups(): void {
+    this.dataProvider.load();
+  }
+
+  runNow(row: CloudBackup): void {
+    this.dialogService.confirm({
+      title: this.translate.instant('Run Now'),
+      message: this.translate.instant('Run «{name}» Cloud Backup now?', { name: row.description }),
+      hideCheckbox: true,
+    }).pipe(
+      filter(Boolean),
+      tap(() => this.updateRowJob(row, { ...row.job, state: JobState.Running })),
+      switchMap(() => this.ws.job('cloud_backup.sync', [row.id])),
+      untilDestroyed(this),
+    ).subscribe({
+      next: (job: Job) => {
+        this.snackbar.success(this.translate.instant('Cloud Backup «{name}» has started.', { name: row.description }));
+        this.updateRowJob(row, job);
+        this.cdr.markForCheck();
+      },
+      error: (error: unknown) => {
+        this.dialogService.error(this.errorHandler.parseError(error));
+        this.getCloudBackups();
+      },
+    });
+  }
+
+  openForm(row?: CloudBackup): void {
+    this.chainedSlideInService.open(CloudBackupFormComponent, true, row)
+      .pipe(
+        filter((response) => !!response.response),
+        untilDestroyed(this),
+      ).subscribe({
+        next: () => {
+          this.getCloudBackups();
+        },
+      });
+  }
+
+  doDelete(row: CloudBackup): void {
+    this.dialogService.confirm({
+      title: this.translate.instant('Confirmation'),
+      message: this.translate.instant('Delete Cloud Backup <b>"{name}"</b>?', {
+        name: row.description,
+      }),
+    }).pipe(
+      filter(Boolean),
+      switchMap(() => this.ws.call('cloud_backup.delete', [row.id]).pipe(this.appLoader.withLoader())),
+      untilDestroyed(this),
+    ).subscribe({
+      next: () => {
+        this.getCloudBackups();
+      },
+      error: (err) => {
+        this.dialogService.error(this.errorHandler.parseError(err));
+      },
+    });
+  }
+
+  onListFiltered(query: string): void {
+    this.filterString = query.toLowerCase();
+    this.dataProvider.setRows(this.cloudBackups.filter((task) => {
+      return task.description.includes(this.filterString);
+    }));
+  }
+
+  expanded(row: CloudBackup): void {
+    if (!row) {
+      return;
+    }
+
+    if (this.isMobileView) {
+      this.showMobileDetails = true;
+      this.cdr.markForCheck();
+
+      // TODO: Do not rely on querying DOM elements
+      // focus on details container
+      setTimeout(() => (this.window.document.getElementsByClassName('mobile-back-button')[0] as HTMLElement).focus(), 0);
+    }
+  }
+
+  private onChangeEnabledState(cloudBackup: CloudBackup): void {
+    this.ws
+      .call('cloud_backup.update', [cloudBackup.id, { enabled: !cloudBackup.enabled } as CloudBackupUpdate])
+      .pipe(untilDestroyed(this))
+      .subscribe({
+        next: () => {
+          this.getCloudBackups();
+        },
+        error: (err: unknown) => {
+          this.getCloudBackups();
+          this.dialogService.error(this.errorHandler.parseError(err));
+        },
+      });
+  }
+
+  private updateRowJob(row: CloudBackup, job: Job): void {
+    this.dataProvider.setRows(this.cloudBackups.map((task) => {
+      if (task.id === row.id) {
+        return {
+          ...task,
+          job,
+        };
+      }
+      return task;
+    }));
+  }
+
+  private initMobileView(): void {
+    this.breakpointObserver
+      .observe([Breakpoints.XSmall, Breakpoints.Small, Breakpoints.Medium])
+      .pipe(untilDestroyed(this))
+      .subscribe((state: BreakpointState) => {
+        if (state.matches) {
+          this.isMobileView = true;
+          if (this.dataProvider?.expandedRow) {
+            this.expanded(this.dataProvider.expandedRow);
+          } else {
+            this.closeMobileDetails();
+          }
+        } else {
+          this.isMobileView = false;
+        }
+        this.cdr.markForCheck();
+      });
   }
 }

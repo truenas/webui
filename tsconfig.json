@@ -32,6 +32,7 @@
   },
   "ts-node": {
     "experimentalSpecifierResolution": "node",
+    "require": ["tsconfig-paths/register"],
     "compilerOptions": {
       "lib": ["es2017"],
       "module": "commonjs",

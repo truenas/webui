@@ -8,6 +8,8 @@
 export enum WidgetType {
   Hostname = 'hostname',
   InterfaceIp = 'interface-ip',
+  Help = 'help',
+  Memory = 'Memory',
 }
 
 export enum SlotSize {

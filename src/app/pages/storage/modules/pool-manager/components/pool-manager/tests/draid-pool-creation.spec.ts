@@ -1,20 +1,19 @@
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatDialog } from '@angular/material/dialog';
 import { MatStepperModule } from '@angular/material/stepper';
+import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { GiB } from 'app/constants/bytes.constant';
 import { CoreComponents } from 'app/core/core-components.module';
+import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockEntityJobComponentRef } from 'app/core/testing/utils/mock-entity-job-component-ref.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { DiskType } from 'app/enums/disk-type.enum';
 import { CreateVdevLayout } from 'app/enums/v-dev-type.enum';
 import { EnclosureUi } from 'app/interfaces/enclosure.interface';
 import { UnusedDisk } from 'app/interfaces/storage.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import {
   PoolManagerComponent,
@@ -27,6 +26,7 @@ import {
   PoolManagerHarness,
 } from 'app/pages/storage/modules/pool-manager/components/pool-manager/tests/pool-manager.harness';
 import { PoolWizardNameValidationService } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/steps/1-general-wizard-step/pool-wizard-name-validation.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 describe('PoolManagerComponent – creating dRAID pool', () => {
   let spectator: Spectator<PoolManagerComponent>;
@@ -115,26 +115,13 @@ describe('PoolManagerComponent – creating dRAID pool', () => {
         mockCall('enclosure2.query', [] as EnclosureUi[]),
         mockCall('pool.query', []),
         mockCall('pool.dataset.encryption_algorithm_choices', {}),
+        mockJob('pool.create', fakeSuccessfulJob()),
       ]),
       mockProvider(PoolWizardNameValidationService, {
         validatePoolName: () => of(null),
       }),
-      mockProvider(DialogService, {
-        confirm: jest.fn(() => of(true)),
-      }),
-      mockProvider(MatDialog, {
-        open: jest.fn(() => {
-          return {
-            ...mockEntityJobComponentRef,
-            componentInstance: {
-              ...mockEntityJobComponentRef.componentInstance,
-              success: of(),
-            },
-            afterClosed: () => of(undefined),
-          };
-        }),
-      }),
       mockAuth(),
+      mockProvider(Router),
     ],
   });
 
@@ -176,16 +163,8 @@ describe('PoolManagerComponent – creating dRAID pool', () => {
 
     await wizard.clickCreatePoolButton();
 
-    const dialog = spectator.inject(MatDialog);
-
-    expect(dialog.open).toHaveBeenCalledWith(EntityJobComponent, {
-      disableClose: true,
-      data: {
-        title: 'Create Pool',
-      },
-    });
-
-    expect(mockEntityJobComponentRef.componentInstance.setCall).toHaveBeenCalledWith('pool.create', [{
+    expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
+    expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('pool.create', [{
       name: 'dRAID',
       allow_duplicate_serials: false,
       encryption: false,

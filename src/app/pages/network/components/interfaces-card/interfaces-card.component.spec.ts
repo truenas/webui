@@ -14,8 +14,8 @@ import {
 } from 'app/modules/interface-status-icon/interface-status-icon.component';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
-import { IxTable2Harness } from 'app/modules/ix-table2/components/ix-table2/ix-table2.harness';
-import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
+import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
+import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
 import { InterfaceFormComponent } from 'app/pages/network/components/interface-form/interface-form.component';
 import { InterfacesCardComponent } from 'app/pages/network/components/interfaces-card/interfaces-card.component';
 import {
@@ -29,7 +29,7 @@ import { WebSocketService } from 'app/services/ws.service';
 describe('InterfacesCardComponent', () => {
   let spectator: Spectator<InterfacesCardComponent>;
   let loader: HarnessLoader;
-  let table: IxTable2Harness;
+  let table: IxTableHarness;
   const interfaces = [
     {
       id: 'eno1',
@@ -67,7 +67,7 @@ describe('InterfacesCardComponent', () => {
   const createComponent = createComponentFactory({
     component: InterfacesCardComponent,
     imports: [
-      IxTable2Module,
+      IxTableModule,
     ],
     declarations: [
       IpAddressesCellComponent,
@@ -103,7 +103,7 @@ describe('InterfacesCardComponent', () => {
     spectator = createComponent();
     jest.spyOn(spectator.component.interfacesUpdated, 'emit');
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    table = await loader.getHarness(IxTable2Harness);
+    table = await loader.getHarness(IxTableHarness);
   });
 
   it('loads network interfaces on init', () => {

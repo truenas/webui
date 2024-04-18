@@ -17,11 +17,11 @@ import { Service, ServiceRow } from 'app/interfaces/service.interface';
 import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
-import { ArrayDataProvider } from 'app/modules/ix-table2/classes/array-data-provider/array-data-provider';
-import { actionsColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
-import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
-import { toggleColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-toggle/ix-cell-toggle.component';
-import { createTable } from 'app/modules/ix-table2/utils';
+import { ArrayDataProvider } from 'app/modules/ix-table/classes/array-data-provider/array-data-provider';
+import { actionsColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
+import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
+import { toggleColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-toggle/ix-cell-toggle.component';
+import { createTable } from 'app/modules/ix-table/utils';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { ServiceFtpComponent } from 'app/pages/services/components/service-ftp/service-ftp.component';
 import { ServiceNfsComponent } from 'app/pages/services/components/service-nfs/service-nfs.component';
@@ -147,12 +147,6 @@ export class ServicesComponent implements OnInit {
     }));
   }
 
-  private createDataSource(services: ServiceRow[] = []): void {
-    this.services = services;
-    this.dataProvider.setRows(services);
-    this.cdr.markForCheck();
-  }
-
   private getData(): void {
     this.loading = true;
     this.error = false;
@@ -166,7 +160,8 @@ export class ServicesComponent implements OnInit {
       untilDestroyed(this),
     ).subscribe({
       next: (services) => {
-        this.createDataSource(services);
+        this.services = services;
+        this.onListFiltered(this.filterString);
         this.loading = false;
         this.error = false;
         this.cdr.markForCheck();

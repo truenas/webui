@@ -8,7 +8,7 @@
     height: 100%;
   }
 
-  ix-table2 {
+  ix-table {
     height: 100%;
   }
 
@@ -45,6 +45,7 @@
 
   .table-container {
     flex: 2;
+    margin-right: 0;
     max-width: 100%;
 
     @media(max-width: $breakpoint-xs) {

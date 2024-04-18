@@ -1,0 +1,21 @@
+// Avoid using in widget components.
+// Instead rely on @media(max-width: $breakpoint-xs)
+$widget-group-width: 540px;
+$widget-group-height: 400px;
+
+.widgets {
+  display: grid;
+  gap: 8px;
+  grid-auto-rows: $widget-group-height;
+  grid-template-columns: repeat(auto-fit, $widget-group-width);
+  justify-content: center;
+
+  .widget-group {
+    height: 100%;
+    margin: 0;
+  }
+
+  @media (max-width: $widget-group-width) {
+    grid-template-columns: 1fr;
+  }
+}

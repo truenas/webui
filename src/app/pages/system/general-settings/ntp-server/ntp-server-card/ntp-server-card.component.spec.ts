@@ -8,8 +8,8 @@ import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.u
 import { NtpServer } from 'app/interfaces/ntp-server.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
-import { IxTable2Harness } from 'app/modules/ix-table2/components/ix-table2/ix-table2.harness';
-import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
+import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
+import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
 import { NtpServerCardComponent } from 'app/pages/system/general-settings/ntp-server/ntp-server-card/ntp-server-card.component';
 import { NtpServerFormComponent } from 'app/pages/system/general-settings/ntp-server/ntp-server-form/ntp-server-form.component';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -50,12 +50,12 @@ describe('NtpServerCardComponent', () => {
   let loader: HarnessLoader;
   let ws: WebSocketService;
   let slideInRef: IxSlideInService;
-  let table: IxTable2Harness;
+  let table: IxTableHarness;
 
   const createComponent = createComponentFactory({
     component: NtpServerCardComponent,
     imports: [
-      IxTable2Module,
+      IxTableModule,
     ],
     providers: [
       mockAuth(),
@@ -78,7 +78,7 @@ describe('NtpServerCardComponent', () => {
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     ws = spectator.inject(WebSocketService);
     slideInRef = spectator.inject(IxSlideInService);
-    table = await loader.getHarness(IxTable2Harness);
+    table = await loader.getHarness(IxTableHarness);
   });
 
   it('should show table rows', async () => {

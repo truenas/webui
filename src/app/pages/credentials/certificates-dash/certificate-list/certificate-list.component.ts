@@ -7,7 +7,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { isObject } from 'lodash';
 import {
-  filter, map, of, tap,
+  filter, map, of, switchMap, tap,
 } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
 import { helptextSystemCertificates } from 'app/helptext/system/certificates';
@@ -16,14 +16,13 @@ import { Job } from 'app/interfaces/job.interface';
 import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
-import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
-import { AsyncDataProvider } from 'app/modules/ix-table2/classes/async-data-provider/async-data-provider';
+import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import {
   actionsColumn,
-} from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
-import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
-import { SortDirection } from 'app/modules/ix-table2/enums/sort-direction.enum';
-import { createTable } from 'app/modules/ix-table2/utils';
+} from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
+import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
+import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
+import { createTable } from 'app/modules/ix-table/utils';
 import {
   CertificateEditComponent,
 } from 'app/pages/credentials/certificates-dash/certificate-edit/certificate-edit.component';
@@ -50,7 +49,6 @@ export class CertificateListComponent implements OnInit {
 
   protected readonly requiredRoles = [Role.FullAdmin];
 
-  filterString = '';
   dataProvider: AsyncDataProvider<Certificate>;
   certificates: Certificate[] = [];
   columns = createTable<Certificate>([
@@ -167,28 +165,22 @@ export class CertificateListComponent implements OnInit {
   }
 
   doDelete(certificate: Certificate): void {
-    const dialogRef = this.matDialog.open(ConfirmForceDeleteCertificateComponent, { data: certificate });
-    dialogRef
+    this.matDialog.open(ConfirmForceDeleteCertificateComponent, { data: certificate })
       .afterClosed()
-      .pipe(filter(Boolean), untilDestroyed(this))
-      .subscribe((data: { force: boolean }) => {
-        const jobDialogRef = this.matDialog.open(EntityJobComponent, {
-          data: {
-            title: this.translate.instant('Deleting...'),
-          },
-          disableClose: true,
-        });
-        jobDialogRef.componentInstance.setCall('certificate.delete', [certificate.id, data.force]);
-        jobDialogRef.componentInstance.submit();
-        jobDialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
-          jobDialogRef.close(true);
-          this.getCertificates();
-          this.certificateDeleted.emit();
-        });
-        jobDialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err) => {
-          jobDialogRef.close();
-          this.dialogService.error(this.errorHandler.parseError(err));
-        });
+      .pipe(
+        filter(Boolean),
+        switchMap((data: { force: boolean }) => {
+          return this.dialogService.jobDialog(
+            this.ws.job('certificate.delete', [certificate.id, data.force]),
+            { title: this.translate.instant('Deleting...') },
+          ).afterClosed();
+        }),
+        this.errorHandler.catchError(),
+        untilDestroyed(this),
+      )
+      .subscribe(() => {
+        this.getCertificates();
+        this.certificateDeleted.emit();
       });
   }
 
@@ -262,21 +254,19 @@ export class CertificateListComponent implements OnInit {
         cancelText: this.translate.instant('Cancel'),
         hideCheckbox: true,
       })
-      .pipe(filter(Boolean), untilDestroyed(this))
+      .pipe(
+        filter(Boolean),
+        switchMap(() => {
+          return this.dialogService.jobDialog(
+            this.ws.job('certificate.update', [certificate.id, { revoked: true }]),
+            { title: this.translate.instant('Revoking Certificate') },
+          ).afterClosed();
+        }),
+        this.errorHandler.catchError(),
+        untilDestroyed(this),
+      )
       .subscribe(() => {
-        const dialogRef = this.matDialog.open(EntityJobComponent, {
-          data: { title: this.translate.instant('Revoking Certificate') },
-        });
-        dialogRef.componentInstance.setCall('certificate.update', [certificate.id, { revoked: true }]);
-        dialogRef.componentInstance.submit();
-        dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
-          this.getCertificates();
-          this.matDialog.closeAll();
-        });
-        dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((failedJob) => {
-          this.matDialog.closeAll();
-          this.dialogService.error(this.errorHandler.parseError(failedJob));
-        });
+        this.getCertificates();
       });
   }
 }

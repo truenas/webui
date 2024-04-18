@@ -6,8 +6,8 @@ import { createComponentFactory } from '@ngneat/spectator/jest';
 import { MockModule } from 'ng-mocks';
 import { mockWebSocket, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
 import { Nfs3Session, Nfs4Session, NfsType } from 'app/interfaces/nfs-share.interface';
-import { IxTable2Harness } from 'app/modules/ix-table2/components/ix-table2/ix-table2.harness';
-import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
+import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
+import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
 import { SearchInput1Component } from 'app/modules/search-input1/search-input1.component';
@@ -16,7 +16,7 @@ import { NfsSessionListComponent } from './nfs-session-list.component';
 describe('NfsSessionListComponent', () => {
   let spectator: Spectator<NfsSessionListComponent>;
   let loader: HarnessLoader;
-  let table: IxTable2Harness;
+  let table: IxTableHarness;
 
   const nfs3Sessions = [{ ip: '10.238.238.162', export: '10.238.238.162:/mnt/tank/nfs' }] as Nfs3Session[];
 
@@ -47,7 +47,7 @@ describe('NfsSessionListComponent', () => {
     component: NfsSessionListComponent,
     imports: [
       AppLoaderModule,
-      IxTable2Module,
+      IxTableModule,
       MatButtonToggleModule,
       MockModule(PageHeaderModule),
       SearchInput1Component,
@@ -68,7 +68,7 @@ describe('NfsSessionListComponent', () => {
         },
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      table = await loader.getHarness(IxTable2Harness);
+      table = await loader.getHarness(IxTableHarness);
     });
 
     it('should show NFS 3 table rows', async () => {
@@ -96,7 +96,7 @@ describe('NfsSessionListComponent', () => {
         },
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      table = await loader.getHarness(IxTable2Harness);
+      table = await loader.getHarness(IxTableHarness);
     });
 
     it('shows NFS 4 table once is switched', async () => {

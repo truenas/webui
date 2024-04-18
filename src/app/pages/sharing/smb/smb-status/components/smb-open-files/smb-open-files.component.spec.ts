@@ -2,8 +2,8 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { Spectator, createComponentFactory } from '@ngneat/spectator/jest';
 import { SmbLockInfo, SmbOpenInfo } from 'app/interfaces/smb-status.interface';
-import { IxTable2Harness } from 'app/modules/ix-table2/components/ix-table2/ix-table2.harness';
-import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
+import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
+import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
 import { SmbOpenFilesComponent } from './smb-open-files.component';
 
 const locks = [
@@ -52,11 +52,11 @@ const locks = [
 describe('SmbOpenFilesComponent', () => {
   let spectator: Spectator<SmbOpenFilesComponent>;
   let loader: HarnessLoader;
-  let table: IxTable2Harness;
+  let table: IxTableHarness;
 
   const createComponent = createComponentFactory({
     component: SmbOpenFilesComponent,
-    imports: [IxTable2Module],
+    imports: [IxTableModule],
     providers: [],
   });
 
@@ -67,7 +67,7 @@ describe('SmbOpenFilesComponent', () => {
       },
     });
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    table = await loader.getHarness(IxTable2Harness);
+    table = await loader.getHarness(IxTableHarness);
   });
 
   it('should show table rows', async () => {

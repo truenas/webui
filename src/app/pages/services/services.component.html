@@ -1,14 +1,15 @@
 <ix-page-header>
   <ix-search-input1
+    [value]="filterString"
     [disabled]="loading"
     (search)="onListFiltered($event)"
   ></ix-search-input1>
 </ix-page-header>
 
 <mat-card [ixUiSearch]="searchableElements.elements.services">
-  <ix-table2
+  <ix-table
     class="table"
-    [ix-table2-empty]="!(dataProvider.currentPageCount$ | async)"
+    [ix-table-empty]="!(dataProvider.currentPageCount$ | async)"
     [emptyConfig]="emptyService.defaultEmptyConfig(emptyConfig)"
   >
     <thead
@@ -22,5 +23,5 @@
       [dataProvider]="dataProvider"
       [isLoading]="loading"
     ></tbody>
-  </ix-table2>
+  </ix-table>
 </mat-card>

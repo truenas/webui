@@ -10,8 +10,8 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { Catalog, CatalogTrain } from 'app/interfaces/catalog.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxTable2Harness } from 'app/modules/ix-table2/components/ix-table2/ix-table2.harness';
-import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
+import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
+import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
 import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
 import { SearchInput1Component } from 'app/modules/search-input1/search-input1.component';
 import { CatalogsComponent } from 'app/pages/apps/components/catalogs/catalogs.component';
@@ -52,7 +52,7 @@ describe('CatalogsComponent', () => {
     component: CatalogsComponent,
     imports: [
       CoreComponents,
-      IxTable2Module,
+      IxTableModule,
       MockModule(PageHeaderModule),
       SearchInput1Component,
     ],
@@ -86,7 +86,7 @@ describe('CatalogsComponent', () => {
       ['TRUENAS', 'https://github.com/truenas/charts.git', 'master', 'charts,community'],
     ];
 
-    const table = await loader.getHarness(IxTable2Harness);
+    const table = await loader.getHarness(IxTableHarness);
     const cells = await table.getCellTexts();
     expect(cells).toEqual(expectedRows);
   });

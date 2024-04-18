@@ -3,6 +3,13 @@
 
 :host {
   width: 100%;
+
+  &::ng-deep {
+    .cards .card {
+      @include details-card();
+      margin: 0;
+    }
+  }
 }
 
 .header {
@@ -50,4 +57,8 @@
       top: 1px;
     }
   }
+}
+
+.cards {
+  @include details-cards();
 }

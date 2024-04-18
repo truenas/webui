@@ -14,15 +14,15 @@ import { Bootenv } from 'app/interfaces/bootenv.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
-import { AsyncDataProvider } from 'app/modules/ix-table2/classes/async-data-provider/async-data-provider';
-import { actionsColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
-import { checkboxColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-checkbox/ix-cell-checkbox.component';
-import { dateColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-date/ix-cell-date.component';
-import { sizeColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-size/ix-cell-size.component';
-import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
-import { yesNoColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-yesno/ix-cell-yesno.component';
-import { SortDirection } from 'app/modules/ix-table2/enums/sort-direction.enum';
-import { createTable } from 'app/modules/ix-table2/utils';
+import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
+import { actionsColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
+import { checkboxColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-checkbox/ix-cell-checkbox.component';
+import { dateColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-date/ix-cell-date.component';
+import { sizeColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-size/ix-cell-size.component';
+import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
+import { yesNoColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-yesno/ix-cell-yesno.component';
+import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
+import { createTable } from 'app/modules/ix-table/utils';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { BootPoolDeleteDialogComponent } from 'app/pages/system/bootenv/boot-pool-delete-dialog/boot-pool-delete-dialog.component';
@@ -191,15 +191,18 @@ export class BootEnvironmentListComponent implements OnInit {
       }),
     );
     this.dataProvider = new AsyncDataProvider(request$);
-    this.dataProvider.load();
+    this.refresh();
     this.setDefaultSort();
+    this.dataProvider.emptyType$.pipe(untilDestroyed(this)).subscribe(() => {
+      this.filterUpdated(this.filterString);
+    });
   }
 
   handleSlideInClosed(slideInRef: IxSlideInRef<unknown>): void {
     slideInRef.slideInClosed$.pipe(
       filter(Boolean),
       untilDestroyed(this),
-    ).subscribe(() => this.dataProvider.load());
+    ).subscribe(() => this.refresh());
   }
 
   openBootenvStats(): void {
@@ -248,7 +251,7 @@ export class BootEnvironmentListComponent implements OnInit {
     }).afterClosed().pipe(
       filter(Boolean),
       untilDestroyed(this),
-    ).subscribe(() => this.dataProvider.load());
+    ).subscribe(() => this.refresh());
   }
 
   doActivate(bootenv: BootenvUi): void {
@@ -265,7 +268,7 @@ export class BootEnvironmentListComponent implements OnInit {
         );
       }),
       untilDestroyed(this),
-    ).subscribe(() => this.dataProvider.load());
+    ).subscribe(() => this.refresh());
   }
 
   toggleKeep(bootenv: BootenvUi): void {
@@ -283,7 +286,7 @@ export class BootEnvironmentListComponent implements OnInit {
           );
         }),
         untilDestroyed(this),
-      ).subscribe(() => this.dataProvider.load());
+      ).subscribe(() => this.refresh());
     } else {
       this.dialogService.confirm({
         title: this.translate.instant('Unkeep'),
@@ -298,7 +301,7 @@ export class BootEnvironmentListComponent implements OnInit {
           );
         }),
         untilDestroyed(this),
-      ).subscribe(() => this.dataProvider.load());
+      ).subscribe(() => this.refresh());
     }
   }
 
@@ -318,5 +321,9 @@ export class BootEnvironmentListComponent implements OnInit {
       propertyName: 'created',
       sortBy: (row) => row.created.$date,
     });
+  }
+
+  private refresh(): void {
+    this.dataProvider.load();
   }
 }

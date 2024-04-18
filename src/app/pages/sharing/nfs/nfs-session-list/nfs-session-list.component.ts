@@ -4,14 +4,14 @@ import {
 import { MatButtonToggleChange } from '@angular/material/button-toggle';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { map, tap } from 'rxjs';
+import { combineLatest, map, tap } from 'rxjs';
 import { stringToTitleCase } from 'app/helpers/string-to-title-case';
 import { Nfs3Session, Nfs4Session, NfsType } from 'app/interfaces/nfs-share.interface';
 import { EmptyService } from 'app/modules/empty/empty.service';
-import { AsyncDataProvider } from 'app/modules/ix-table2/classes/async-data-provider/async-data-provider';
-import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
-import { Column, ColumnComponent } from 'app/modules/ix-table2/interfaces/table-column.interface';
-import { createTable } from 'app/modules/ix-table2/utils';
+import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
+import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
+import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/table-column.interface';
+import { createTable } from 'app/modules/ix-table/utils';
 import { nfsSessionListElements } from 'app/pages/sharing/nfs/nfs-session-list/nfs-session-list.elements';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -126,6 +126,11 @@ export class NfsSessionListComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadData();
+
+    combineLatest([this.nfs3DataProvider.emptyType$, this.nfs4DataProvider.emptyType$])
+      .pipe(untilDestroyed(this)).subscribe(() => {
+        this.onListFiltered(this.filterString);
+      });
   }
 
   nfsTypeChanged(changedValue: MatButtonToggleChange): void {

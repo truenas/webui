@@ -13,18 +13,19 @@ import {
 import { Tunable } from 'app/interfaces/tunable.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
-import { IxTable2Harness } from 'app/modules/ix-table2/components/ix-table2/ix-table2.harness';
-import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
+import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
+import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
 import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
 import { SearchInput1Component } from 'app/modules/search-input1/search-input1.component';
 import { TunableFormComponent } from 'app/pages/system/advanced/sysctl/tunable-form/tunable-form.component';
 import { TunableListComponent } from 'app/pages/system/advanced/sysctl/tunable-list/tunable-list.component';
 import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 describe('TunableListComponent', () => {
   let spectator: Spectator<TunableListComponent>;
   let loader: HarnessLoader;
-  let table: IxTable2Harness;
+  let table: IxTableHarness;
 
   const tunables = [
     {
@@ -104,7 +105,7 @@ describe('TunableListComponent', () => {
   const createComponent = createComponentFactory({
     component: TunableListComponent,
     imports: [
-      IxTable2Module,
+      IxTableModule,
       MockModule(PageHeaderModule),
       SearchInput1Component,
     ],
@@ -114,6 +115,9 @@ describe('TunableListComponent', () => {
       }),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
+        jobDialog: jest.fn(() => of({
+          afterClosed: of(null),
+        })),
       }),
       mockWebSocket([
         mockCall('core.get_jobs'),
@@ -127,7 +131,7 @@ describe('TunableListComponent', () => {
   beforeEach(async () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    table = await loader.getHarness(IxTable2Harness);
+    table = await loader.getHarness(IxTableHarness);
   });
 
   it('should show table rows', async () => {
@@ -177,10 +181,14 @@ describe('TunableListComponent', () => {
     const deleteIcon = await table.getHarnessInCell(IxIconHarness.with({ name: 'delete' }), 1, 5);
     await deleteIcon.click();
 
-    expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({
+    const dialogService = spectator.inject(DialogService);
+    expect(dialogService.confirm).toHaveBeenCalledWith({
       buttonText: 'Delete',
       message: 'Are you sure you want to delete "kernel.hostname"?',
       title: 'Delete Sysctl',
     });
+
+    expect(dialogService.jobDialog).toHaveBeenCalled();
+    expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('tunable.delete', [12]);
   });
 });

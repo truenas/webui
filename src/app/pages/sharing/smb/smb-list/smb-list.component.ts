@@ -14,12 +14,12 @@ import { shared, helptextSharingSmb } from 'app/helptext/sharing';
 import { SmbShare } from 'app/interfaces/smb-share.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
-import { AsyncDataProvider } from 'app/modules/ix-table2/classes/async-data-provider/async-data-provider';
-import { actionsColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
-import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
-import { toggleColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-toggle/ix-cell-toggle.component';
-import { SortDirection } from 'app/modules/ix-table2/enums/sort-direction.enum';
-import { createTable } from 'app/modules/ix-table2/utils';
+import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
+import { actionsColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
+import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
+import { toggleColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-toggle/ix-cell-toggle.component';
+import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
+import { createTable } from 'app/modules/ix-table/utils';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SmbAclComponent } from 'app/pages/sharing/smb/smb-acl/smb-acl.component';
 import { SmbFormComponent } from 'app/pages/sharing/smb/smb-form/smb-form.component';
@@ -73,7 +73,7 @@ export class SmbListComponent implements OnInit {
             row.enabled = share.enabled;
           },
           error: (error: unknown) => {
-            this.dataProvider.load();
+            this.refresh();
             this.dialog.error(this.errorHandler.parseError(error));
           },
         });
@@ -88,7 +88,7 @@ export class SmbListComponent implements OnInit {
             const slideInRef = this.slideInService.open(SmbFormComponent, { data: { existingSmbShare: smbShare } });
             slideInRef.slideInClosed$
               .pipe(take(1), filter(Boolean), untilDestroyed(this))
-              .subscribe(() => this.dataProvider.load());
+              .subscribe(() => this.refresh());
           },
         },
         {
@@ -108,7 +108,7 @@ export class SmbListComponent implements OnInit {
                   this.appLoader.close();
                   const slideInRef = this.slideInService.open(SmbAclComponent, { data: shareAcl.share_name });
                   slideInRef.slideInClosed$.pipe(take(1), untilDestroyed(this)).subscribe(() => {
-                    this.dataProvider.load();
+                    this.refresh();
                   });
                 });
             }
@@ -149,7 +149,7 @@ export class SmbListComponent implements OnInit {
                   this.appLoader.withLoader(),
                   untilDestroyed(this),
                 ).subscribe({
-                  next: () => this.dataProvider.load(),
+                  next: () => this.refresh(),
                 });
               },
             });
@@ -180,7 +180,10 @@ export class SmbListComponent implements OnInit {
       untilDestroyed(this),
     );
     this.dataProvider = new AsyncDataProvider<SmbShare>(shares$);
-    this.dataProvider.load();
+    this.refresh();
+    this.dataProvider.emptyType$.pipe(untilDestroyed(this)).subscribe(() => {
+      this.onListFiltered(this.filterString);
+    });
   }
 
   setDefaultSort(): void {
@@ -195,7 +198,7 @@ export class SmbListComponent implements OnInit {
     const slideInRef = this.slideInService.open(SmbFormComponent);
     slideInRef.slideInClosed$.pipe(take(1), filter(Boolean), untilDestroyed(this)).subscribe({
       next: () => {
-        this.dataProvider.load();
+        this.refresh();
       },
     });
   }
@@ -203,7 +206,7 @@ export class SmbListComponent implements OnInit {
   onListFiltered(query: string): void {
     this.filterString = query.toLowerCase();
     const filteredExporters = this.smbShares.filter((share) => {
-      return JSON.stringify(share).includes(query);
+      return JSON.stringify(share).toLowerCase().includes(query);
     });
     this.dataProvider.setRows(filteredExporters);
     this.cdr.markForCheck();
@@ -220,5 +223,9 @@ export class SmbListComponent implements OnInit {
       title: helptextSharingSmb.action_edit_acl_dialog.title,
       message: this.translate.instant('The path <i>{path}</i> is in a locked dataset.', { path }),
     });
+  }
+
+  private refresh(): void {
+    this.dataProvider.load();
   }
 }

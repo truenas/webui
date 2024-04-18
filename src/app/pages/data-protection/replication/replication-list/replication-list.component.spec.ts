@@ -22,8 +22,8 @@ import { PeriodicSnapshotTask } from 'app/interfaces/periodic-snapshot-task.inte
 import { ReplicationTask } from 'app/interfaces/replication-task.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
-import { IxTable2Harness } from 'app/modules/ix-table2/components/ix-table2/ix-table2.harness';
-import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
+import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
+import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
 import { selectJob } from 'app/modules/jobs/store/job.selectors';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
@@ -107,13 +107,13 @@ const tasks = [{
 describe('ReplicationListComponent', () => {
   let spectator: Spectator<ReplicationListComponent>;
   let loader: HarnessLoader;
-  let table: IxTable2Harness;
+  let table: IxTableHarness;
 
   const createComponent = createComponentFactory({
     component: ReplicationListComponent,
     imports: [
       AppLoaderModule,
-      IxTable2Module,
+      IxTableModule,
       MockModule(PageHeaderModule),
       SearchInput1Component,
     ],
@@ -160,7 +160,7 @@ describe('ReplicationListComponent', () => {
   beforeEach(async () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    table = await loader.getHarness(IxTable2Harness);
+    table = await loader.getHarness(IxTableHarness);
   });
 
   it('should show table rows', async () => {

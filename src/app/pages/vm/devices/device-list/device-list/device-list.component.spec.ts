@@ -10,8 +10,8 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { VmDeviceType } from 'app/enums/vm.enum';
 import { VmDevice } from 'app/interfaces/vm-device.interface';
-import { IxTable2Harness } from 'app/modules/ix-table2/components/ix-table2/ix-table2.harness';
-import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
+import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
+import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
 import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
 import { SearchInput1Component } from 'app/modules/search-input1/search-input1.component';
 import { DeviceFormComponent } from 'app/pages/vm/devices/device-form/device-form.component';
@@ -26,7 +26,7 @@ import { WebSocketService } from 'app/services/ws.service';
 describe('DeviceListComponent', () => {
   let spectator: Spectator<DeviceListComponent>;
   let loader: HarnessLoader;
-  let table: IxTable2Harness;
+  let table: IxTableHarness;
   const devices = [
     {
       id: 1,
@@ -45,7 +45,7 @@ describe('DeviceListComponent', () => {
   const createComponent = createRoutingFactory({
     component: DeviceListComponent,
     imports: [
-      IxTable2Module,
+      IxTableModule,
       MockModule(PageHeaderModule),
       SearchInput1Component,
     ],
@@ -73,7 +73,7 @@ describe('DeviceListComponent', () => {
   beforeEach(async () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    table = await loader.getHarness(IxTable2Harness);
+    table = await loader.getHarness(IxTableHarness);
   });
 
   it('loads devices using virtual machine id from url', () => {

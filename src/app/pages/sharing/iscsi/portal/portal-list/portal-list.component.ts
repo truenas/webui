@@ -8,10 +8,10 @@ import { Role } from 'app/enums/role.enum';
 import { IscsiPortal } from 'app/interfaces/iscsi.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
-import { AsyncDataProvider } from 'app/modules/ix-table2/classes/async-data-provider/async-data-provider';
-import { actionsColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
-import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
-import { createTable } from 'app/modules/ix-table2/utils';
+import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
+import { actionsColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
+import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
+import { createTable } from 'app/modules/ix-table/utils';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { PortalFormComponent } from 'app/pages/sharing/iscsi/portal/portal-form/portal-form.component';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
@@ -75,7 +75,7 @@ export class PortalListComponent implements OnInit {
             const slideInRef = this.slideInService.open(PortalFormComponent, { data: row });
             slideInRef.slideInClosed$
               .pipe(filter(Boolean), untilDestroyed(this))
-              .subscribe(() => this.dataProvider.load());
+              .subscribe(() => this.refresh());
           },
         },
         {
@@ -91,7 +91,7 @@ export class PortalListComponent implements OnInit {
               switchMap(() => this.ws.call('iscsi.portal.delete', [row.id]).pipe(this.loader.withLoader())),
               untilDestroyed(this),
             ).subscribe({
-              next: () => this.dataProvider.load(),
+              next: () => this.refresh(),
               error: (error: unknown) => {
                 this.dialogService.error(this.errorHandler.parseError(error));
               },
@@ -126,18 +126,22 @@ export class PortalListComponent implements OnInit {
     );
 
     this.dataProvider = new AsyncDataProvider(portals$);
-    this.dataProvider.load();
+    this.refresh();
+    this.dataProvider.emptyType$.pipe(untilDestroyed(this)).subscribe(() => {
+      this.onListFiltered(this.filterString);
+    });
   }
 
   doAdd(): void {
     const slideInRef = this.slideInService.open(PortalFormComponent);
-    slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => this.dataProvider.load());
+    slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => this.refresh());
   }
 
   onListFiltered(query: string): void {
     this.filterString = query.toLowerCase();
     this.dataProvider.setRows(this.portals.filter((entry) => {
-      return [entry.comment, entry.discovery_authmethod].includes(this.filterString);
+      return entry.comment.toLowerCase().includes(this.filterString)
+        || entry.discovery_authmethod.toLowerCase().includes(this.filterString);
     }));
   }
 
@@ -145,5 +149,9 @@ export class PortalListComponent implements OnInit {
     this.columns = [...columns];
     this.cdr.detectChanges();
     this.cdr.markForCheck();
+  }
+
+  private refresh(): void {
+    this.dataProvider.load();
   }
 }

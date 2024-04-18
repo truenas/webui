@@ -1,5 +1,5 @@
 <ix-page-header>
-  <ix-search-input1 (search)="onListFiltered($event)"></ix-search-input1>
+  <ix-search-input1 [value]="filterString" (search)="onListFiltered($event)"></ix-search-input1>
   <mat-slide-toggle
     color="primary"
     ixTest="show-built-in-users"
@@ -21,8 +21,8 @@
 </ix-page-header>
 
 <div class="table-container" [ixUiSearch]="searchableElements.elements.list">
-  <ix-table2
-    [ix-table2-empty]="!(dataProvider.currentPageCount$ | async)"
+  <ix-table
+    [ix-table-empty]="!(dataProvider.currentPageCount$ | async)"
     [emptyConfig]="emptyConfigService.defaultEmptyConfig((emptyType$ | async))"
   >
     <thead
@@ -43,6 +43,6 @@
         ></ix-user-details-row>
       </ng-template>
     </tbody>
-  </ix-table2>
+  </ix-table>
   <ix-table-pager [dataProvider]="dataProvider"></ix-table-pager>
 </div>

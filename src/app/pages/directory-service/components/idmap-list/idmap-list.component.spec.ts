@@ -13,8 +13,8 @@ import { DirectoryServicesState } from 'app/interfaces/directory-services-state.
 import { Idmap } from 'app/interfaces/idmap.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
-import { IxTable2Harness } from 'app/modules/ix-table2/components/ix-table2/ix-table2.harness';
-import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
+import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
+import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
 import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
 import { SearchInput1Component } from 'app/modules/search-input1/search-input1.component';
 import { IdmapFormComponent } from 'app/pages/directory-service/components/idmap-form/idmap-form.component';
@@ -25,7 +25,7 @@ import { WebSocketService } from 'app/services/ws.service';
 describe('IdmapListComponent', () => {
   let spectator: Spectator<IdmapListComponent>;
   let loader: HarnessLoader;
-  let table: IxTable2Harness;
+  let table: IxTableHarness;
   let webSocket: WebSocketService;
 
   let servicesState: DirectoryServicesState;
@@ -58,7 +58,7 @@ describe('IdmapListComponent', () => {
   const createComponent = createComponentFactory({
     component: IdmapListComponent,
     imports: [
-      IxTable2Module,
+      IxTableModule,
       MockModule(PageHeaderModule),
       SearchInput1Component,
     ],
@@ -86,7 +86,7 @@ describe('IdmapListComponent', () => {
   beforeEach(async () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    table = await loader.getHarness(IxTable2Harness);
+    table = await loader.getHarness(IxTableHarness);
     webSocket = spectator.inject(WebSocketService);
 
     servicesState = {

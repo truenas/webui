@@ -19,7 +19,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule } from '@angular/router';
 import { FlexLayoutModule, FlexModule } from '@ngbracket/ngx-layout';
 import { TranslateModule } from '@ngx-translate/core';
-import { NgChartsModule } from 'ng2-charts';
+import { BaseChartDirective } from 'ng2-charts';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { CoreComponents } from 'app/core/core-components.module';
 import { FormatDateTimePipe } from 'app/core/pipes/format-datetime.pipe';
@@ -69,7 +69,7 @@ import { ZfsHealthCardComponent } from './components/dashboard-pool/zfs-health-c
     IxIconModule,
     MatProgressSpinnerModule,
     MatToolbarModule,
-    NgChartsModule,
+    BaseChartDirective,
     FlexLayoutModule,
     ReactiveFormsModule,
     LayoutModule,

@@ -103,8 +103,6 @@ describe('PoolsDashboardStore', () => {
         switch (method) {
           case 'pool.dataset.query':
             return cold('-a|', { a: rootDatasets });
-          case 'pool.query':
-            return cold('-a|', { a: pools });
           case 'disk.query':
             return cold('-a|', { a: [...disks] });
           case 'disk.temperature_alerts':
@@ -117,8 +115,15 @@ describe('PoolsDashboardStore', () => {
             throw new Error(`Unexpected method: ${method}`);
         }
       });
+      jest.spyOn(mockWebSocket, 'callAndSubscribe').mockImplementation((method: string) => {
+        if (method === 'pool.query') {
+          return cold('-a|', { a: pools });
+        }
+        throw new Error(`Unexpected method: ${method}`);
+      });
 
       spectator.service.loadDashboard();
+
       expectObservable(spectator.service.state$).toBe('abc', {
         a: {
           arePoolsLoading: true,

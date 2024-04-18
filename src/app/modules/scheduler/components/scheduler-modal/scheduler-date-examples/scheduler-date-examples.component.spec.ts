@@ -1,9 +1,11 @@
-import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
+import { createComponentFactory, Spectator, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-datetime.pipe';
+import { IxDateModule } from 'app/modules/ix-date/ix-date.module';
 import {
   CronSchedulePreview,
 } from 'app/modules/scheduler/classes/cron-schedule-preview/cron-schedule-preview';
+import { LocaleService } from 'app/services/locale.service';
 import { selectTimezone } from 'app/store/system-config/system-config.selectors';
 import { SchedulerDateExamplesComponent } from './scheduler-date-examples.component';
 
@@ -11,7 +13,13 @@ describe('SchedulerDateExamplesComponent', () => {
   let spectator: Spectator<SchedulerDateExamplesComponent>;
   const createComponent = createComponentFactory({
     component: SchedulerDateExamplesComponent,
+    imports: [
+      IxDateModule,
+    ],
     providers: [
+      mockProvider(LocaleService, {
+        timezone: 'America/New_York',
+      }),
       provideMockStore({
         selectors: [
           {
@@ -36,7 +44,7 @@ describe('SchedulerDateExamplesComponent', () => {
       },
     });
 
-    const examples = spectator.queryAll('.schedule-example').map((element) => element.textContent.trim());
+    const examples = spectator.queryAll('.date-spanner').map((element) => element.textContent.trim());
     expect(examples).toEqual([
       '2022-02-23 00:00:00',
       '2022-02-24 00:00:00',
@@ -57,7 +65,7 @@ describe('SchedulerDateExamplesComponent', () => {
       },
     });
 
-    const examples = spectator.queryAll('.schedule-example').map((element) => element.textContent);
+    const examples = spectator.queryAll('.date-spanner').map((element) => element.textContent);
     expect(examples).toHaveLength(spectator.component.maxExamples);
     expect(spectator.query('.only-first-results-message')).toExist();
   });

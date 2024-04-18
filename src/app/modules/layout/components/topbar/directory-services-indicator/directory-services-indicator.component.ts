@@ -58,6 +58,7 @@ export class DirectoryServicesIndicatorComponent implements OnInit, OnDestroy {
   }
 
   private loadDirectoryServicesStatus(): void {
+    // TODO: Sync endpoints
     this.ws.call('directoryservices.get_state').pipe(untilDestroyed(this)).subscribe((state) => {
       this.updateIconVisibility(state);
     });

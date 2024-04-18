@@ -13,11 +13,11 @@ import { EmptyType } from 'app/enums/empty-type.enum';
 import { Role, roleNames } from 'app/enums/role.enum';
 import { Group } from 'app/interfaces/group.interface';
 import { EmptyService } from 'app/modules/empty/empty.service';
-import { ArrayDataProvider } from 'app/modules/ix-table2/classes/array-data-provider/array-data-provider';
-import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
-import { yesNoColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-yesno/ix-cell-yesno.component';
-import { SortDirection } from 'app/modules/ix-table2/enums/sort-direction.enum';
-import { createTable } from 'app/modules/ix-table2/utils';
+import { ArrayDataProvider } from 'app/modules/ix-table/classes/array-data-provider/array-data-provider';
+import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
+import { yesNoColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-yesno/ix-cell-yesno.component';
+import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
+import { createTable } from 'app/modules/ix-table/utils';
 import { GroupFormComponent } from 'app/pages/account/groups/group-form/group-form.component';
 import { groupListElements } from 'app/pages/account/groups/group-list/group-list.elements';
 import { groupPageEntered, groupRemoved } from 'app/pages/account/groups/store/group.actions';
@@ -154,6 +154,7 @@ export class GroupListComponent implements OnInit {
     ).subscribe({
       next: (groups) => {
         this.groups = groups;
+        this.filterString = '';
         this.createDataSource(groups);
         this.cdr.markForCheck();
       },
