@@ -1,6 +1,6 @@
 import { Location } from '@angular/common';
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
-import { SortDirection } from 'app/modules/ix-table2/enums/sort-direction.enum';
+import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { UrlOptionsService } from 'app/services/url-options.service';
 
 describe('UrlOptionsService', () => {

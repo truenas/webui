@@ -8,7 +8,7 @@ import { ApiJobMethod } from 'app/interfaces/api/api-job-directory.interface';
 import { AuditEntry } from 'app/interfaces/audit/audit.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { ExportButtonComponent } from 'app/modules/export-button/components/export-button/export-button.component';
-import { SortDirection } from 'app/modules/ix-table2/enums/sort-direction.enum';
+import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { DownloadService } from 'app/services/download.service';
 import { WebSocketService } from 'app/services/ws.service';
 

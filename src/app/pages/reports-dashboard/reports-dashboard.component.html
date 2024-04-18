@@ -7,7 +7,7 @@
 <div
   *ngIf="visibleReports?.length && activeReports; else initialLoader"
   class="master-container"
-  [ixUiSearch]="searchableElements.reporting"
+  [ixUiSearch]="searchableElements.elements.reporting"
 >
   <cdk-virtual-scroll-viewport [itemSize]="325" [minBufferPx]="325" [maxBufferPx]="325">
     <div *cdkVirtualFor="let key of visibleReports; let i = index" class="report-container">

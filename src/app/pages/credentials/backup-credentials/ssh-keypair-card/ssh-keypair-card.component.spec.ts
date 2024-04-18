@@ -10,8 +10,8 @@ import { KeychainSshKeyPair } from 'app/interfaces/keychain-credential.interface
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
-import { IxTable2Harness } from 'app/modules/ix-table2/components/ix-table2/ix-table2.harness';
-import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
+import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
+import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
 import { SshKeypairCardComponent } from 'app/pages/credentials/backup-credentials/ssh-keypair-card/ssh-keypair-card.component';
 import { SshKeypairFormComponent } from 'app/pages/credentials/backup-credentials/ssh-keypair-form/ssh-keypair-form.component';
 import { DownloadService } from 'app/services/download.service';
@@ -22,7 +22,7 @@ import { WebSocketService } from 'app/services/ws.service';
 describe('SshKeypairCardComponent', () => {
   let spectator: Spectator<SshKeypairCardComponent>;
   let loader: HarnessLoader;
-  let table: IxTable2Harness;
+  let table: IxTableHarness;
 
   const credentials = [
     {
@@ -48,7 +48,7 @@ describe('SshKeypairCardComponent', () => {
   const createComponent = createComponentFactory({
     component: SshKeypairCardComponent,
     imports: [
-      IxTable2Module,
+      IxTableModule,
     ],
     providers: [
       mockWebSocket([
@@ -81,7 +81,7 @@ describe('SshKeypairCardComponent', () => {
   beforeEach(async () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    table = await loader.getHarness(IxTable2Harness);
+    table = await loader.getHarness(IxTableHarness);
   });
 
   it('checks page title', () => {

@@ -12,15 +12,15 @@
         id="add-cron"
         mat-button
         [ixTest]="['cron', 'add']"
-        [ixUiSearch]="searchableElements.addCronJob"
+        [ixUiSearch]="searchableElements.elements.addCronJob"
         (click)="onAdd()"
       >{{ 'Add' | translate }}</button>
     </div>
   </mat-toolbar-row>
 
-  <ix-table2
+  <ix-table
     class="table"
-    [ix-table2-empty]="!(dataProvider.currentPageCount$ | async)"
+    [ix-table-empty]="!(dataProvider.currentPageCount$ | async)"
     [emptyConfig]="emptyService.defaultEmptyConfig(dataProvider.emptyType$ | async)"
   >
     <thead
@@ -34,5 +34,5 @@
       [dataProvider]="dataProvider"
       [isLoading]="dataProvider.isLoading$ | async"
     ></tbody>
-  </ix-table2>
+  </ix-table>
 </mat-card>
