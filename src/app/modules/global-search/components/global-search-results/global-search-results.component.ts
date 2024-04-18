@@ -27,7 +27,6 @@ export class GlobalSearchResultsComponent implements OnChanges {
   @Input() isLoading = false;
   @Input() results: UiSearchableElement[] = [];
 
-  readonly resultLimit = 6;
   readonly initialResultsLimit = this.globalSearchSectionsProvider.globalSearchInitialLimit;
   readonly trackBySection: TrackByFunction<Option<GlobalSearchSection>> = (_, section) => section.value;
   readonly trackById: TrackByFunction<UiSearchableElement> = (_, item) => generateIdFromHierarchy(item.hierarchy);

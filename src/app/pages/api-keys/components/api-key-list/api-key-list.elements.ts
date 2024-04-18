@@ -5,8 +5,6 @@ export const apiKeysElements = {
   hierarchy: [T('API Keys')],
   anchorRouterLink: ['/apikeys'],
   elements: {
-    apiKeys: {
-      anchor: 'api-keys',
-    },
+    apiKeys: {},
   },
 } satisfies UiSearchableElement;

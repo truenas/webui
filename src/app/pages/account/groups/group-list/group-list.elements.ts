@@ -5,9 +5,7 @@ export const groupListElements = {
   hierarchy: [T('Credentials'), T('Groups')],
   anchorRouterLink: ['/credentials', 'groups'],
   elements: {
-    list: {
-      anchor: 'credentials-groups',
-    },
+    list: {},
     add: {
       hierarchy: [T('Add')],
       anchor: 'add-group',
