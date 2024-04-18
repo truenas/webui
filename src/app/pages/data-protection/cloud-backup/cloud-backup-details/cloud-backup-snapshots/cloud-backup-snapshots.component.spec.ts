@@ -74,8 +74,8 @@ describe('CloudBackupSnapshotsComponent', () => {
   it('handles restore functionality', async () => {
     const slideInService = spectator.inject(IxSlideInService);
 
-    const runNowButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'restore' }), 1, 1);
-    await runNowButton.click();
+    const restoreButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'restore' }), 1, 1);
+    await restoreButton.click();
 
     expect(slideInService.open).toHaveBeenCalledWith(CloudBackupRestoreFromSnapshotFormComponent, {
       data: {
