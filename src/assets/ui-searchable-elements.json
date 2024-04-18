@@ -3,6 +3,25 @@
     "hierarchy": [
       "Credentials",
       "Groups",
+      "Show Built-in Groups"
+    ],
+    "synonyms": [
+      "Groups"
+    ],
+    "requiredRoles": [],
+    "anchorRouterLink": [
+      "/credentials",
+      "groups"
+    ],
+    "routerLink": null,
+    "anchor": "show-built-in-groups",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Credentials",
+      "Groups",
       "Add"
     ],
     "synonyms": [
@@ -26,6 +45,7 @@
       "Groups"
     ],
     "synonyms": [
+      "Local Groups",
       "Groups"
     ],
     "requiredRoles": [],
@@ -35,6 +55,68 @@
     ],
     "routerLink": null,
     "anchor": "credentials-groups",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Credentials",
+      "Groups",
+      "Privileges",
+      "Add"
+    ],
+    "synonyms": [
+      "Privileges"
+    ],
+    "requiredRoles": [
+      "FULL_ADMIN"
+    ],
+    "anchorRouterLink": [
+      "/credentials",
+      "groups",
+      "privileges"
+    ],
+    "routerLink": null,
+    "anchor": "add-privilege",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Credentials",
+      "Groups",
+      "Privileges"
+    ],
+    "synonyms": [
+      "Privileges"
+    ],
+    "requiredRoles": [],
+    "anchorRouterLink": [
+      "/credentials",
+      "groups",
+      "privileges"
+    ],
+    "routerLink": null,
+    "anchor": "credentials-groups-privileges",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Credentials",
+      "Users",
+      "Show Built-in Users"
+    ],
+    "synonyms": [
+      "Users"
+    ],
+    "requiredRoles": [],
+    "anchorRouterLink": [
+      "/credentials",
+      "users"
+    ],
+    "routerLink": null,
+    "anchor": "show-built-in-users",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -65,6 +147,7 @@
       "Users"
     ],
     "synonyms": [
+      "Local Users",
       "Users"
     ],
     "requiredRoles": [],
@@ -212,6 +295,226 @@
   {
     "hierarchy": [
       "Credentials",
+      "Cloud Credentials"
+    ],
+    "synonyms": [
+      "Cloud Credentials"
+    ],
+    "requiredRoles": [],
+    "anchorRouterLink": [
+      "/credentials",
+      "backup-credentials"
+    ],
+    "routerLink": null,
+    "anchor": "cloud-credentials",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Credentials",
+      "Cloud Credentials",
+      "Add"
+    ],
+    "synonyms": [
+      "Cloud Credentials"
+    ],
+    "requiredRoles": [
+      "CLOUD_SYNC_WRITE"
+    ],
+    "anchorRouterLink": [
+      "/credentials",
+      "backup-credentials"
+    ],
+    "routerLink": null,
+    "anchor": "add-backup-credential",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Credentials",
+      "SSH Connections"
+    ],
+    "synonyms": [
+      "SSH Connections"
+    ],
+    "requiredRoles": [],
+    "anchorRouterLink": [
+      "/credentials",
+      "backup-credentials"
+    ],
+    "routerLink": null,
+    "anchor": "ssh-connections",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Credentials",
+      "SSH Connections",
+      "Add"
+    ],
+    "synonyms": [
+      "SSH Connections"
+    ],
+    "requiredRoles": [
+      "KEYCHAIN_CREDENTIAL_WRITE"
+    ],
+    "anchorRouterLink": [
+      "/credentials",
+      "backup-credentials"
+    ],
+    "routerLink": null,
+    "anchor": "add-ssh-connection",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Credentials",
+      "SSH Keypairs"
+    ],
+    "synonyms": [
+      "SSH Keypairs"
+    ],
+    "requiredRoles": [],
+    "anchorRouterLink": [
+      "/credentials",
+      "backup-credentials"
+    ],
+    "routerLink": null,
+    "anchor": "ssh-keypairs",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Credentials",
+      "SSH Keypairs",
+      "Add"
+    ],
+    "synonyms": [
+      "SSH Keypairs"
+    ],
+    "requiredRoles": [
+      "KEYCHAIN_CREDENTIAL_WRITE"
+    ],
+    "anchorRouterLink": [
+      "/credentials",
+      "backup-credentials"
+    ],
+    "routerLink": null,
+    "anchor": "add-ssh-keypair",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Credentials",
+      "Certificates",
+      "ACME DNS-Authenticators"
+    ],
+    "synonyms": [
+      "ACME DNS-Authenticators"
+    ],
+    "requiredRoles": [],
+    "anchorRouterLink": [
+      "/credentials",
+      "certificates"
+    ],
+    "routerLink": null,
+    "anchor": "acme-dns-authenticator-list",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Credentials",
+      "Certificates",
+      "ACME DNS-Authenticators",
+      "Add"
+    ],
+    "synonyms": [
+      "ACME DNS-Authenticators"
+    ],
+    "requiredRoles": [
+      "FULL_ADMIN"
+    ],
+    "anchorRouterLink": [
+      "/credentials",
+      "certificates"
+    ],
+    "routerLink": null,
+    "anchor": "add-acme-dns-authenticator",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Credentials",
+      "Certificates",
+      "Certificate Authorities"
+    ],
+    "synonyms": [
+      "Certificate Authorities"
+    ],
+    "requiredRoles": [],
+    "anchorRouterLink": [
+      "/credentials",
+      "certificates"
+    ],
+    "routerLink": null,
+    "anchor": "certificate-authority-list",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Credentials",
+      "Certificates",
+      "Certificate Authorities",
+      "Add"
+    ],
+    "synonyms": [
+      "Certificate Authorities"
+    ],
+    "requiredRoles": [
+      "FULL_ADMIN"
+    ],
+    "anchorRouterLink": [
+      "/credentials",
+      "certificates"
+    ],
+    "routerLink": null,
+    "anchor": "add-certificate-authority",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Credentials",
+      "Certificates",
+      "Add"
+    ],
+    "synonyms": [
+      "Certificates"
+    ],
+    "requiredRoles": [
+      "FULL_ADMIN"
+    ],
+    "anchorRouterLink": [
+      "/credentials",
+      "certificates"
+    ],
+    "routerLink": null,
+    "anchor": "add-certificate",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Credentials",
       "Certificates"
     ],
     "synonyms": [
@@ -224,6 +527,48 @@
     ],
     "routerLink": null,
     "anchor": "credentials-certificates",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Credentials",
+      "Certificates",
+      "Certificate Signing Requests"
+    ],
+    "synonyms": [
+      "CSRs",
+      "Certificate Signing Requests"
+    ],
+    "requiredRoles": [],
+    "anchorRouterLink": [
+      "/credentials",
+      "certificates"
+    ],
+    "routerLink": null,
+    "anchor": "csr-list",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Credentials",
+      "Certificates",
+      "Certificate Signing Requests",
+      "Add"
+    ],
+    "synonyms": [
+      "Certificate Signing Requests"
+    ],
+    "requiredRoles": [
+      "FULL_ADMIN"
+    ],
+    "anchorRouterLink": [
+      "/credentials",
+      "certificates"
+    ],
+    "routerLink": null,
+    "anchor": "add-csr",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -488,6 +833,27 @@
   {
     "hierarchy": [
       "Directory Services",
+      "Idmap",
+      "Add"
+    ],
+    "synonyms": [
+      "Idmap"
+    ],
+    "requiredRoles": [
+      "DIRECTORY_SERVICE_WRITE"
+    ],
+    "anchorRouterLink": [
+      "/directoryservice",
+      "idmap"
+    ],
+    "routerLink": null,
+    "anchor": "add-idmap",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Directory Services",
       "Idmap"
     ],
     "synonyms": [
@@ -506,6 +872,27 @@
   {
     "hierarchy": [
       "Directory Services",
+      "Kerberos Keytabs",
+      "Add"
+    ],
+    "synonyms": [
+      "Kerberos Keytabs"
+    ],
+    "requiredRoles": [
+      "DIRECTORY_SERVICE_WRITE"
+    ],
+    "anchorRouterLink": [
+      "/directoryservice",
+      "kerberoskeytabs"
+    ],
+    "routerLink": null,
+    "anchor": "add-kerberos-keytab",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Directory Services",
       "Kerberos Keytabs"
     ],
     "synonyms": [
@@ -518,6 +905,27 @@
     ],
     "routerLink": null,
     "anchor": "directory-services-kerberos-keytabs",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Directory Services",
+      "Kerberos Realms",
+      "Add"
+    ],
+    "synonyms": [
+      "Kerberos Realms"
+    ],
+    "requiredRoles": [
+      "DIRECTORY_SERVICE_WRITE"
+    ],
+    "anchorRouterLink": [
+      "/directoryservice",
+      "kerberosrealms"
+    ],
+    "routerLink": null,
+    "anchor": "add-kerberos-realm",
     "triggerAnchor": null,
     "section": "ui"
   },

@@ -29,6 +29,7 @@ import {
   ConfirmForceDeleteCertificateComponent,
 } from 'app/pages/credentials/certificates-dash/confirm-force-delete-dialog/confirm-force-delete-dialog.component';
 import { CsrAddComponent } from 'app/pages/credentials/certificates-dash/csr-add/csr-add.component';
+import { csrListElements } from 'app/pages/credentials/certificates-dash/csr-list/csr-list.elements';
 import { DownloadService } from 'app/services/download.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -43,6 +44,7 @@ import { WebSocketService } from 'app/services/ws.service';
 })
 export class CertificateSigningRequestsListComponent implements OnInit {
   protected readonly requiredRoles = [Role.FullAdmin];
+  protected readonly searchableElements = csrListElements;
 
   dataProvider: AsyncDataProvider<Certificate>;
   certificates: Certificate[] = [];

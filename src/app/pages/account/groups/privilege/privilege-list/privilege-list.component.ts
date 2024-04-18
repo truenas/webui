@@ -23,6 +23,7 @@ import { SearchProperty } from 'app/modules/search-input/types/search-property.i
 import { AdvancedSearchQuery, SearchQuery } from 'app/modules/search-input/types/search-query.interface';
 import { booleanProperty, searchProperties, textProperty } from 'app/modules/search-input/utils/search-properties.utils';
 import { PrivilegeFormComponent } from 'app/pages/account/groups/privilege/privilege-form/privilege-form.component';
+import { privilegesListElements } from 'app/pages/account/groups/privilege/privilege-list/privilege-list.elements';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -39,6 +40,7 @@ export class PrivilegeListComponent implements OnInit {
   protected dataProvider: ApiDataProvider<'privilege.query'>;
   protected readonly advancedSearchPlaceholder = this.translate.instant('Name ^ "Local" AND "Web Shell Access" = true');
   protected searchProperties: SearchProperty<Privilege>[] = [];
+  protected readonly searchableElements = privilegesListElements;
 
   columns = createTable<Privilege>([
     textColumn({

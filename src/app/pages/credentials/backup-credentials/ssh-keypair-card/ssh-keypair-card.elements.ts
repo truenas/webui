@@ -1,14 +1,16 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UiSearchableElement } from 'app/modules/global-search/interfaces/ui-searchable-element.interface';
 
-export const kerberosRealmsListElements = {
-  hierarchy: [T('Directory Services'), T('Kerberos Realms')],
-  anchorRouterLink: ['/directoryservice', 'kerberosrealms'],
+export const sshKeypairsCardElements = {
+  hierarchy: [T('Credentials'), T('SSH Keypairs')],
+  anchorRouterLink: ['/credentials', 'backup-credentials'],
   elements: {
-    kerberosRealms: {},
+    sshKeypairs: {
+      anchor: 'ssh-keypairs',
+    },
     add: {
       hierarchy: [T('Add')],
-      anchor: 'add-kerberos-realm',
+      anchor: 'add-ssh-keypair',
     },
   },
 } satisfies UiSearchableElement;
