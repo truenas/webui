@@ -12,6 +12,7 @@ import {
 import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
 import { mntPath } from 'app/enums/mnt-path.enum';
 import { Role } from 'app/enums/role.enum';
+import { helptextCloudBackup } from 'app/helptext/data-protection/cloud-backup/cloud-backup';
 import { CloudBackup, CloudBackupUpdate } from 'app/interfaces/cloud-backup.interface';
 import { CloudCredential } from 'app/interfaces/cloud-sync-task.interface';
 import { SelectOption, newOption } from 'app/interfaces/option.interface';
@@ -77,6 +78,7 @@ export class CloudBackupFormComponent implements OnInit {
 
   readonly newOption = newOption;
   readonly requiredRoles = [Role.CloudBackupWrite];
+  readonly helptext = helptextCloudBackup;
 
   constructor(
     private translate: TranslateService,

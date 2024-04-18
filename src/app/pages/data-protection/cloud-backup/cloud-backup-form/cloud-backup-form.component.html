@@ -5,12 +5,12 @@
       <div class="fieldsets">
         <ix-fieldset
           class="fieldset"
-          [title]="'Local' | translate"
+          [title]="helptext.fieldset_local | translate"
         >
           <ix-explorer
             formControlName="path"
-            [label]="'Source Path' | translate"
-            [tooltip]="'Select the directories or files to be sent to the cloud for backup.' | translate"
+            [label]="helptext.source_path_placeholder | translate"
+            [tooltip]="helptext.source_path_tooltip | translate"
             [required]="true"
             [multiple]="true"
             [nodeProvider]="fileNodeProvider"
@@ -18,65 +18,65 @@
         </ix-fieldset>
         <ix-fieldset
           class="fieldset"
-          [title]="'Remote' | translate"
+          [title]="helptext.fieldset_remote | translate"
         >
           <ix-cloud-credentials-select
             formControlName="credentials"
-            [label]="'Credentials' | translate"
-            [tooltip]="'Select the cloud storage provider credentials from the list of available Cloud Credentials.' | translate"
+            [label]="helptext.credentials_placeholder | translate"
+            [tooltip]="helptext.credentials_tooltip | translate"
             [required]="true"
           ></ix-cloud-credentials-select>
           <ix-select
             *ngIf="form.controls.bucket.enabled"
             formControlName="bucket"
-            [label]="'Bucket' | translate"
-            [tooltip]="'Select the name of container to use.' | translate"
+            [label]="helptext.bucket_placeholder | translate"
+            [tooltip]="helptext.bucket_tooltip | translate"
             [options]="bucketOptions$"
             [required]="true"
           ></ix-select>
           <ix-input
             *ngIf="form.controls.bucket_input.enabled"
             formControlName="bucket_input"
-            [label]="'New Bucket Name' | translate"
-            [tooltip]="'Input the name of container to use.' | translate"
+            [label]="helptext.bucket_input_placeholder | translate"
+            [tooltip]="helptext.bucket_input_tooltip | translate"
             [required]="true"
           ></ix-input>
           <ix-explorer
             *ngIf="form.controls.folder.enabled"
             formControlName="folder"
             root="/"
-            [label]="'Folder' | translate"
+            [label]="helptext.folder_placeholder | translate"
             [nodeProvider]="bucketNodeProvider"
             [required]="true"
           ></ix-explorer>
         </ix-fieldset>
         <ix-fieldset
           class="fieldset"
-          [title]="'Task Settings' | translate"
+          [title]="helptext.fieldset_task_settings | translate"
         >
           <ix-input
             formControlName="description"
-            [label]="'Description' | translate"
-            [tooltip]="'Enter a description of the Cloud Backup Task.' | translate"
+            [label]="helptext.description_placeholder | translate"
+            [tooltip]="helptext.description_tooltip | translate"
           ></ix-input>
           <ix-input
             formControlName="keep_last"
             type="number"
-            [label]="'Keep Last' | translate"
-            [tooltip]="'Enter the number of last kept backups.' | translate"
+            [label]="helptext.keep_last_placeholder | translate"
+            [tooltip]="helptext.keep_last_tooltip | translate"
             [required]="true"
           ></ix-input>
           <ix-input
             formControlName="password"
             type="password"
-            [label]="'Password' | translate"
-            [tooltip]="'Enter password.' | translate"
+            [label]="helptext.password_placeholder | translate"
+            [tooltip]="helptext.password_tooltip | translate"
             [required]="true"
           ></ix-input>
           <ix-scheduler
             formControlName="schedule"
-            [label]="'Schedule' | translate"
-            [tooltip]="'Select a schedule preset or choose <i>Custom</i> to setup custom schedule.' | translate"
+            [label]="helptext.schedule_placeholder | translate"
+            [tooltip]="helptext.schedule_tooltip | translate"
             [required]="true"
           ></ix-scheduler>
         </ix-fieldset>
