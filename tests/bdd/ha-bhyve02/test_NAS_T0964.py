@@ -123,7 +123,7 @@ def click_on_system_settings_on_the_left_sidebar_and_click_services(driver):
 
 
 @then('on the Service page, verify SMB service is started')
-def on_the_Service_page_verify_smb_service_is_started(driver):
+def on_the_service_page_verify_smb_service_is_started(driver):
     """on the Service page, verify SMB service is started."""
     assert wait_on_element(driver, 7, xpaths.services.title)
     assert wait_on_element(driver, 5, xpaths.services.smb_Service_Toggle, 'clickable')
@@ -154,7 +154,7 @@ def go_to_the_dashboard_and_click_initiate_failover_on_the_system_information_st
     """go to the Dashboard and click Initiate Failover on the System Information standby controller."""
     driver.find_element_by_xpath(xpaths.side_Menu.dashboard).click()
     assert wait_on_element(driver, 10, xpaths.dashboard.title)
-    time.sleep(10)
+    time.sleep(15)
     rsc.Trigger_Failover(driver)
 
 
