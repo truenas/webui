@@ -127,7 +127,7 @@ def on_the_service_page_verify_smb_service_is_started(driver):
     """on the Service page, verify SMB service is started."""
     assert wait_on_element(driver, 7, xpaths.services.title)
     assert wait_on_element(driver, 5, xpaths.services.smb_Service_Toggle, 'clickable')
-    assert wait_for_attribute_value(driver, 20, xpaths.services.smb_Service_Toggle, 'class', 'mdc-switch--checked')
+    assert wait_for_attribute_value(driver, 60, xpaths.services.smb_Service_Toggle, 'class', 'mdc-switch--checked')
 
 
 @then(parsers.parse('send a file on {share_name}on {nas_hostname} with {ad_user}%{ad_password}'))

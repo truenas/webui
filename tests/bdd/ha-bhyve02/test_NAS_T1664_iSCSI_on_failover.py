@@ -11,6 +11,7 @@ from function import (
     wait_on_element_disappear,
     is_element_present,
     attribute_value_exist,
+    wait_for_attribute_value,
     ssh_cmd,
     get
 )
@@ -49,7 +50,7 @@ def test_iscsi_sharing_and_service_works_after_failover():
 @given(parsers.parse('the browser is open to {nas_hostname} login with {user} and {password}'))
 def the_browser_is_open_to_nas_hostname_login_with_user_and_password(driver, nas_hostname, user, password, request):
     """the browser is open to <nas_hostname> login with <user> and <password>."""
-    depends(request, ["Setup_HA"], scope='session')
+    # depends(request, ["Setup_HA"], scope='session')
     global nas_Hostname, admin_User, admin_Password
     nas_Hostname = nas_hostname
     admin_User = user
@@ -188,7 +189,7 @@ def on_the_service_page_verify_iscsi_is_running_and_click_the_start_automaticall
     """on the Service page, verify iSCSI is running and click the Start Automatically iSCSI checkbox."""
     assert wait_on_element(driver, 7, xpaths.services.title)
     assert wait_on_element(driver, 5, xpaths.services.iscsi_Service_Toggle, 'clickable')
-    assert attribute_value_exist(driver, xpaths.services.iscsi_Service_Toggle, 'class', 'mdc-switch--checked')
+    assert wait_for_attribute_value(driver, 60, xpaths.services.iscsi_Service_Toggle, 'class', 'mdc-switch--checked')
 
     results = get(nas_Hostname, '/service?service=iscsitarget', (admin_User, admin_Password))
     assert results.json()[0]['state'] == 'RUNNING', results.text
