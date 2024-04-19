@@ -12,13 +12,14 @@ import { CredentialType } from 'app/interfaces/credential-type.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ChainedRef } from 'app/modules/ix-forms/components/ix-slide-in/chained-component-ref';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
-import { IxTable2Harness } from 'app/modules/ix-table2/components/ix-table2/ix-table2.harness';
-import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
+import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
+import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { AccessCardComponent } from 'app/pages/system/advanced/access/access-card/access-card.component';
 import { AccessFormComponent } from 'app/pages/system/advanced/access/access-form/access-form.component';
 import { AdvancedSettingsService } from 'app/pages/system/advanced/advanced-settings.service';
 import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
+import { LocaleService } from 'app/services/locale.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { selectPreferences } from 'app/store/preferences/preferences.selectors';
@@ -48,8 +49,11 @@ describe('AccessCardComponent', () => {
     }));
   const createComponent = createComponentFactory({
     component: AccessCardComponent,
-    imports: [AppLoaderModule, IxTable2Module, FakeFormatDateTimePipe],
+    imports: [AppLoaderModule, IxTableModule, FakeFormatDateTimePipe],
     providers: [
+      mockProvider(LocaleService, {
+        timezone: 'America/Los_Angeles',
+      }),
       mockWebSocket([
         mockCall('auth.sessions', sessions),
         mockCall('auth.terminate_session'),
@@ -132,14 +136,14 @@ describe('AccessCardComponent', () => {
   it('should show table rows', async () => {
     const expectedRows = [
       ['Username', 'Start session time', ''],
-      ['user-0', '2023-08-24 13:00:27', ''],
-      ['user-1', '2023-08-24 13:00:27', ''],
-      ['user-2', '2023-08-24 13:00:27', ''],
-      ['user-3', '2023-08-24 13:00:27', ''],
-      ['user-4', '2023-08-24 13:00:27', ''],
+      ['user-0', '2023-08-24 03:00:27', ''],
+      ['user-1', '2023-08-24 03:00:27', ''],
+      ['user-2', '2023-08-24 03:00:27', ''],
+      ['user-3', '2023-08-24 03:00:27', ''],
+      ['user-4', '2023-08-24 03:00:27', ''],
     ];
 
-    const table = await loader.getHarness(IxTable2Harness);
+    const table = await loader.getHarness(IxTableHarness);
     const cells = await table.getCellTexts();
     expect(cells).toEqual(expectedRows);
   });

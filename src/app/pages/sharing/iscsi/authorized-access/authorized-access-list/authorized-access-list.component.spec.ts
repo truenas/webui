@@ -11,8 +11,8 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
-import { IxTable2Harness } from 'app/modules/ix-table2/components/ix-table2/ix-table2.harness';
-import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
+import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
+import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SearchInput1Component } from 'app/modules/search-input1/search-input1.component';
 import { AuthorizedAccessFormComponent } from 'app/pages/sharing/iscsi/authorized-access/authorized-access-form/authorized-access-form.component';
@@ -33,12 +33,12 @@ const authAccess: IscsiAuthAccess[] = [
 describe('AuthorizedAccessListComponent', () => {
   let spectator: Spectator<AuthorizedAccessListComponent>;
   let loader: HarnessLoader;
-  let table: IxTable2Harness;
+  let table: IxTableHarness;
 
   const createComponent = createComponentFactory({
     component: AuthorizedAccessListComponent,
     imports: [
-      IxTable2Module,
+      IxTableModule,
       SearchInput1Component,
     ],
     providers: [
@@ -69,7 +69,7 @@ describe('AuthorizedAccessListComponent', () => {
   beforeEach(async () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    table = await loader.getHarness(IxTable2Harness);
+    table = await loader.getHarness(IxTableHarness);
   });
 
   it('shows accurate page title', () => {

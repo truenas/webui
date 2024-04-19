@@ -23,8 +23,8 @@ import { IxInputHarness } from 'app/modules/ix-forms/components/ix-input/ix-inpu
 import { IxSlideInComponent } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.component';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
-import { IxTable2Harness } from 'app/modules/ix-table2/components/ix-table2/ix-table2.harness';
-import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
+import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
+import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
 import { InterfaceFormComponent } from 'app/pages/network/components/interface-form/interface-form.component';
 import { InterfacesCardComponent } from 'app/pages/network/components/interfaces-card/interfaces-card.component';
 import {
@@ -55,7 +55,7 @@ describe('NetworkComponent', () => {
     imports: [
       ReactiveFormsModule,
       IxFormsModule,
-      IxTable2Module,
+      IxTableModule,
       FormsModule,
       MatInputModule,
     ],
@@ -144,7 +144,7 @@ describe('NetworkComponent', () => {
   });
 
   async function makeEdit(): Promise<void> {
-    const table = await loader.getHarness(IxTable2Harness);
+    const table = await loader.getHarness(IxTableHarness);
     const editIcon = await table.getHarnessInRow(IxIconHarness.with({ name: 'edit' }), 'eno1');
     await editIcon.click();
 

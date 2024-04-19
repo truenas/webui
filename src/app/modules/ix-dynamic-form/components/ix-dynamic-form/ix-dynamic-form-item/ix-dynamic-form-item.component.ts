@@ -3,14 +3,16 @@ import {
 } from '@angular/core';
 import { UntypedFormArray, UntypedFormGroup } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { Subject } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import { distinctUntilChanged, filter, map } from 'rxjs/operators';
 import { DynamicFormSchemaType } from 'app/enums/dynamic-form-schema-type.enum';
 import { ChartSchemaNode } from 'app/interfaces/chart-release.interface';
 import {
   AddListItemEvent, DeleteListItemEvent, DynamicFormSchemaList, DynamicFormSchemaNode,
 } from 'app/interfaces/dynamic-form-schema.interface';
+import { Option } from 'app/interfaces/option.interface';
 import { CustomUntypedFormField } from 'app/modules/ix-dynamic-form/components/ix-dynamic-form/classes/custom-untyped-form-field';
+import { SimpleAsyncComboboxProvider } from 'app/modules/ix-forms/classes/simple-async-combobox-provider';
 
 @UntilDestroy()
 @Component({
@@ -96,5 +98,9 @@ export class IxDynamicFormItemComponent implements OnInit {
 
   removeControlNext(event: DeleteListItemEvent): void {
     this.deleteListItem.emit(event);
+  }
+
+  getEnumTypeProvider(options$: Observable<Option[]>): SimpleAsyncComboboxProvider {
+    return new SimpleAsyncComboboxProvider(options$);
   }
 }

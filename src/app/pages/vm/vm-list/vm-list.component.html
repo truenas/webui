@@ -24,10 +24,10 @@
     </button>
   </ix-page-header>
 
-  <ix-table2
+  <ix-table
     class="table"
     [ixUiSearch]="searchableElements.elements.vm"
-    [ix-table2-empty]="!(dataProvider.currentPageCount$ | async)"
+    [ix-table-empty]="!(dataProvider.currentPageCount$ | async)"
     [emptyConfig]="emptyService.defaultEmptyConfig(dataProvider.emptyType$ | async)"
   >
     <thead
@@ -53,7 +53,7 @@
         <ix-vm-details-row [vm]="vm"></ix-vm-details-row>
       </ng-template>
     </tbody>
-  </ix-table2>
+  </ix-table>
   <ix-table-pager [dataProvider]="dataProvider"></ix-table-pager>
 </ng-container>
 

@@ -28,7 +28,7 @@ import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxDynamicFormModule } from 'app/modules/ix-dynamic-form/ix-dynamic-form.module';
 import { IxFileSizeModule } from 'app/modules/ix-file-size/ix-file-size.module';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
-import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
+import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
 import { LayoutModule } from 'app/modules/layout/layout.module';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
@@ -179,7 +179,7 @@ import { KubernetesStatusComponent } from './components/installed-apps/kubernete
     GalleryModule,
     LightboxModule,
     MarkdownModule,
-    IxTable2Module,
+    IxTableModule,
     LayoutModule,
     AppCatalogPipe,
     SearchInput1Component,

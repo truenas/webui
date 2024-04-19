@@ -27,7 +27,7 @@ export interface ConnectedMessage {
 }
 
 export interface ApiEvent<T = unknown> {
-  collection: ApiCallMethod | ApiJobMethod | keyof ApiEventDirectory;
+  collection: ApiCallMethod | ApiJobMethod | ApiEventMethod;
   fields: T;
   id: number | string;
   msg: IncomingApiMessageType.Changed
@@ -35,6 +35,14 @@ export interface ApiEvent<T = unknown> {
   | IncomingApiMessageType.Removed
   | IncomingApiMessageType.NoSub;
 }
+
+export type ApiEventMethod = keyof ApiEventDirectory;
+export type ApiEventResponseType<K extends ApiEventMethod = ApiEventMethod> = ApiEventDirectory[K]['response'];
+
+export type ApiEventTyped<
+  M extends ApiEventMethod = ApiEventMethod,
+  T extends ApiEventResponseType<M> = ApiEventResponseType<M>,
+> = ApiEvent<T>;
 
 export type IncomingWebSocketMessage =
   | PongMessage

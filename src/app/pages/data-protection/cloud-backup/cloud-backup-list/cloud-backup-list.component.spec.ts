@@ -3,7 +3,8 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatSlideToggleHarness } from '@angular/material/slide-toggle/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { MockModule } from 'ng-mocks';
+import { provideMockStore } from '@ngrx/store/testing';
+import { MockComponents, MockModule } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
@@ -12,22 +13,24 @@ import { CloudBackup } from 'app/interfaces/cloud-backup.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
-import { IxTable2Harness } from 'app/modules/ix-table2/components/ix-table2/ix-table2.harness';
-import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
+import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
+import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
 import { SearchInput1Component } from 'app/modules/search-input1/search-input1.component';
+import { CloudBackupDetailsComponent } from 'app/pages/data-protection/cloud-backup/cloud-backup-details/cloud-backup-details.component';
 import {
   CloudBackupFormComponent,
 } from 'app/pages/data-protection/cloud-backup/cloud-backup-form/cloud-backup-form.component';
 import { CloudBackupListComponent } from 'app/pages/data-protection/cloud-backup/cloud-backup-list/cloud-backup-list.component';
 import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
+import { selectAdvancedConfig, selectSystemConfigState } from 'app/store/system-config/system-config.selectors';
 
 describe('CloudBackupListComponent', () => {
   let spectator: Spectator<CloudBackupListComponent>;
   let loader: HarnessLoader;
-  let table: IxTable2Harness;
+  let table: IxTableHarness;
 
   const cloudBackups = [
     {
@@ -50,9 +53,15 @@ describe('CloudBackupListComponent', () => {
     component: CloudBackupListComponent,
     imports: [
       AppLoaderModule,
-      IxTable2Module,
+      IxTableModule,
       MockModule(PageHeaderModule),
       SearchInput1Component,
+    ],
+    declarations: [
+      MockComponents(
+        CloudBackupListComponent,
+        CloudBackupDetailsComponent,
+      ),
     ],
     providers: [
       mockAuth(),
@@ -70,13 +79,25 @@ describe('CloudBackupListComponent', () => {
           response: true,
         })),
       }),
+      provideMockStore({
+        selectors: [
+          {
+            selector: selectSystemConfigState,
+            value: {},
+          },
+          {
+            selector: selectAdvancedConfig,
+            value: {},
+          },
+        ],
+      }),
     ],
   });
 
   beforeEach(async () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    table = await loader.getHarness(IxTable2Harness);
+    table = await loader.getHarness(IxTableHarness);
   });
 
   it('shows form to edit an existing Cloud Backup when Edit button is pressed', async () => {

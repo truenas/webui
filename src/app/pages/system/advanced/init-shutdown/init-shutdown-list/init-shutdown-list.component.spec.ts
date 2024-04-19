@@ -9,8 +9,8 @@ import { InitShutdownScriptWhen } from 'app/enums/init-shutdown-script-when.enum
 import { InitShutdownScript } from 'app/interfaces/init-shutdown-script.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
-import { IxTable2Harness } from 'app/modules/ix-table2/components/ix-table2/ix-table2.harness';
-import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
+import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
+import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
 import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
 import { SearchInput1Component } from 'app/modules/search-input1/search-input1.component';
 import {
@@ -24,7 +24,7 @@ import { WebSocketService } from 'app/services/ws.service';
 
 describe('InitShutdownListComponent', () => {
   let spectator: Spectator<InitShutdownListComponent>;
-  let table: IxTable2Harness;
+  let table: IxTableHarness;
   const scripts = [
     {
       id: 1,
@@ -47,7 +47,7 @@ describe('InitShutdownListComponent', () => {
   const createComponent = createComponentFactory({
     component: InitShutdownListComponent,
     imports: [
-      IxTable2Module,
+      IxTableModule,
       MockModule(PageHeaderModule),
       SearchInput1Component,
     ],
@@ -69,7 +69,7 @@ describe('InitShutdownListComponent', () => {
   beforeEach(async () => {
     spectator = createComponent();
     const loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    table = await loader.getHarness(IxTable2Harness);
+    table = await loader.getHarness(IxTableHarness);
   });
 
   it('shows table rows', async () => {
