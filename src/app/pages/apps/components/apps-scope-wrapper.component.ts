@@ -5,6 +5,7 @@ import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.se
 import { KubernetesStore } from 'app/pages/apps/store/kubernetes-store.service';
 
 @Component({
+  selector: 'ix-apps-scope-wrapper',
   template: '<router-outlet></router-outlet>',
   providers: [
     AppsFilterStore,

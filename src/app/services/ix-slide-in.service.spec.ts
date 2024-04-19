@@ -16,6 +16,7 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 /** Simple component for testing IxSlideInComponent */
 @Component({
+  selector: 'ix-test',
   template: '<h1>{{text}}</h1>',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

@@ -15,6 +15,7 @@ import {
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-google-drive-provider-form',
   templateUrl: './google-drive-provider-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

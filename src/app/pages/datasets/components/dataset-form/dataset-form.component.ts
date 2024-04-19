@@ -41,6 +41,7 @@ import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-dataset-form',
   templateUrl: './dataset-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

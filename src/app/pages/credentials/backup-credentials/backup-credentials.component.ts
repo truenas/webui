@@ -4,6 +4,7 @@ import { backupCredentialsElements } from 'app/pages/credentials/backup-credenti
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-backup-credentials',
   templateUrl: './backup-credentials.component.html',
   styleUrls: ['./backup-credentials.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

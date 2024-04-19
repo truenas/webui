@@ -15,6 +15,7 @@ import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-kereberos-keytabs-form',
   templateUrl: './kerberos-keytabs-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

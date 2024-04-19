@@ -14,6 +14,7 @@ import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-cron-delete-dialog',
   templateUrl: './cron-delete-dialog.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

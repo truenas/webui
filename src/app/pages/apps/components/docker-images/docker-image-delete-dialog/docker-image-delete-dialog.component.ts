@@ -15,6 +15,7 @@ import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-docker-image-delete-dialog',
   templateUrl: './docker-image-delete-dialog.component.html',
   styleUrls: ['./docker-image-delete-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

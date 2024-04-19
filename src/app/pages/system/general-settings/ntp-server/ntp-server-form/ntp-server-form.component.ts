@@ -16,6 +16,7 @@ import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-ntp-server-form',
   templateUrl: './ntp-server-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

@@ -20,6 +20,7 @@ import { waitForAdvancedConfig } from 'app/store/system-config/system-config.sel
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-bootenv-stats-dialog',
   templateUrl: './bootenv-stats-dialog.component.html',
   styleUrls: ['./bootenv-stats-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

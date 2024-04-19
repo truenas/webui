@@ -14,6 +14,7 @@ import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-add-spn-dialog',
   templateUrl: './add-spn-dialog.component.html',
   styleUrls: ['./add-spn-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

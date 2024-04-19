@@ -40,6 +40,7 @@ interface BootenvUi extends Bootenv {
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-bootenv-list',
   templateUrl: './bootenv-list.component.html',
   styleUrls: ['./bootenv-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

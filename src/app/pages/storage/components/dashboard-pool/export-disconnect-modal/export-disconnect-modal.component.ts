@@ -26,6 +26,7 @@ import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-export-disconnect-modal',
   styleUrls: ['./export-disconnect-modal.component.scss'],
   templateUrl: './export-disconnect-modal.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,

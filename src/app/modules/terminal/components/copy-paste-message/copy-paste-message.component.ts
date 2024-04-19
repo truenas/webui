@@ -4,6 +4,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { helptextShell } from 'app/helptext/shell/shell';
 
 @Component({
+  selector: 'ix-copy-paste-message',
   templateUrl: './copy-paste-message.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

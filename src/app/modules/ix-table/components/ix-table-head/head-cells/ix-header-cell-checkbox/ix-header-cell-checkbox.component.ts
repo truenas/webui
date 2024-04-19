@@ -6,6 +6,7 @@ import { ColumnComponent } from 'app/modules/ix-table/interfaces/table-column.in
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-header-cell-checkbox',
   templateUrl: './ix-header-cell-checkbox.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

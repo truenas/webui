@@ -28,6 +28,7 @@ export interface SaveConfigDialogMessages {
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-save-config-dialog',
   templateUrl: './save-config-dialog.component.html',
   styleUrls: ['./save-config-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

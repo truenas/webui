@@ -20,6 +20,7 @@ import { advancedConfigUpdated } from 'app/store/system-config/system-config.act
 
 @UntilDestroy({ arrayName: 'subscriptions' })
 @Component({
+  selector: 'ix-console-form',
   templateUrl: './console-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

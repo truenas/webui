@@ -19,6 +19,7 @@ import { AppState } from 'app/store';
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-snapshot-batch-delete-dialog',
   templateUrl: './snapshot-batch-delete-dialog.component.html',
   styleUrls: ['./snapshot-batch-delete-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

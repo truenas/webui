@@ -65,6 +65,7 @@ interface ZvolFormData {
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-zvol-form',
   templateUrl: './zvol-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [CloudCredentialService],

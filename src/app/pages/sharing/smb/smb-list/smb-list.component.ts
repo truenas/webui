@@ -32,6 +32,7 @@ import { selectService } from 'app/store/services/services.selectors';
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-smb-list',
   templateUrl: './smb-list.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

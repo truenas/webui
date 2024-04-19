@@ -21,6 +21,7 @@ type DashboardFormValue = Record<string, boolean>;
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-dashboard-form',
   templateUrl: './dashboard-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

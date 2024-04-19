@@ -12,6 +12,7 @@ import { WebSocketConnectionService } from 'app/services/websocket-connection.se
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-config-reset',
   templateUrl: './config-reset.component.html',
   styleUrls: ['./config-reset.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
