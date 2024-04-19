@@ -30,6 +30,19 @@ $scrollbar-offset: 20px;
   }
 
   .details-container {
+    &::ng-deep table tbody tr {
+      &.expanded {
+        background-color: initial;
+
+        td:first-child::before {
+          background-color: initial;
+          content: none;
+        }
+      }
+    }
+  }
+
+  .details-container {
     color: var(--fg2);
     display: flex;
     flex: 1;
