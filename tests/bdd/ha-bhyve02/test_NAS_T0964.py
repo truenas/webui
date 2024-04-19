@@ -168,7 +168,6 @@ def on_the_initiate_failover_box_check_the_confirm_checkbox_then_click_failover(
 def wait_for_the_login_to_appear_and_ha_to_be_enable(driver):
     """wait for the login to appear and HA to be enable."""
     rsc.HA_Login_Status_Enable(driver)
-    time.sleep(20)
 
 
 @then(parsers.parse('at the login page, enter "{user}" and "{password}"'))

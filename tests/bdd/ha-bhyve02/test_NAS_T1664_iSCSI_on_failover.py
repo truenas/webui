@@ -288,7 +288,7 @@ def on_the_initiate_failover_box_check_the_confirm_checkbox_then_click_failover(
 def wait_for_the_login_to_appear_and_ha_to_be_enabled_login_with_user_and_password(driver, user, password):
     """wait for the login to appear and HA to be enabled, login with <user> and <password>."""
     rsc.HA_Login_Status_Enable(driver)
-    time.sleep(20)
+
     rsc.Login(driver, user, password)
 
 
