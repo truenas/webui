@@ -92,8 +92,8 @@ def when_the_pool_manager_page_open_input_system_for_pool_name(driver):
 @then('click the checkbox next to ada3, and press the right arrow under data vdev, click create')
 def click_the_checkbox_next_to_ada3_and_press_the_right_arrow_under_data_vdev_click_create(driver):
     """click the checkbox next to ada3, and press the right arrow under data vdev, click create."""
-    assert wait_on_element(driver, 7, '//mat-checkbox[@id="pool-manager__disks-ada3"]', 'clickable')
-    driver.find_element_by_xpath('//mat-checkbox[@id="pool-manager__disks-ada3"]').click()
+    assert wait_on_element(driver, 7, '//mat-checkbox[@id="pool-manager__disks-da3"]', 'clickable')
+    driver.find_element_by_xpath('//mat-checkbox[@id="pool-manager__disks-da3"]').click()
     assert wait_on_element(driver, 7, '//button[@id="vdev__add-button"]', 'clickable')
     driver.find_element_by_xpath('//button[@id="vdev__add-button"]').click()
     assert wait_on_element(driver, 7, '//mat-checkbox[@id="pool-manager__force-submit-checkbox"]', 'clickable')

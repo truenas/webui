@@ -118,8 +118,8 @@ def click_on_the_encryption_checkbox_then_confirm(driver):
 @then('click the ada2 checkbox, press the right arrow under Data VDevs')
 def click_the_ada2_checkbox_press_the_right_arrow_under_data_vdevs(driver):
     """click the ada2 checkbox, press the right arrow under Data VDevs."""
-    assert wait_on_element(driver, 5, '//mat-checkbox[@id="pool-manager__disks-ada2"]', 'clickable')
-    driver.find_element_by_xpath('//mat-checkbox[@id="pool-manager__disks-ada2"]').click()
+    assert wait_on_element(driver, 5, '//mat-checkbox[@id="pool-manager__disks-da2"]', 'clickable')
+    driver.find_element_by_xpath('//mat-checkbox[@id="pool-manager__disks-da2"]').click()
     assert wait_on_element(driver, 5, '//button[@id="vdev__add-button"]')
     driver.find_element_by_xpath('//button[@id="vdev__add-button"]').click()
 
