@@ -77,6 +77,7 @@ export class IxChainedSlideInService extends ComponentStore<ChainedSlideInState>
     };
   });
 
+  // TODO: Update second argument to options
   open(
     component: Type<unknown>,
     wide = false,

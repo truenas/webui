@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { ComponentStore } from '@ngrx/component-store';
-import { tap } from 'rxjs';
+import { Observable, of, tap } from 'rxjs';
 import { demoWidgets } from 'app/pages/dashboard/services/demo-widgets.constant';
 import { WidgetGroup } from 'app/pages/dashboard/types/widget-group.interface';
 
@@ -24,6 +24,7 @@ export interface DashboardState {
 @Injectable()
 export class DashboardStore extends ComponentStore<DashboardState> {
   readonly isLoading$ = this.select((state) => state.isLoading);
+  readonly groups$ = this.select((state) => state.groups);
 
   readonly entered = this.effect((trigger$) => {
     // TODO: Load data from user attributes.
@@ -35,10 +36,11 @@ export class DashboardStore extends ComponentStore<DashboardState> {
     );
   });
 
-  readonly save = this.effect<WidgetGroup[]>((groups$) => {
+  // eslint-disable-next-line unused-imports/no-unused-vars
+  save(groups: WidgetGroup[]): Observable<void> {
     // TODO: Save to user settings.
-    return groups$;
-  });
+    return of(undefined);
+  }
 
   // TODO: Demo code.
   private setDemoData(): void {

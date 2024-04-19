@@ -31,7 +31,7 @@ export enum WidgetGroupLayout {
 export interface WidgetGroup {
   layout: WidgetGroupLayout;
   slots: [
-    Widget | null,
+    (Widget | null)?,
     (Widget | null)?,
     (Widget | null)?,
     (Widget | null)?,

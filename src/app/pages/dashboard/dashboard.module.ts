@@ -10,6 +10,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { BaseChartDirective } from 'ng2-charts';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
+import { IxDropGridModule } from 'app/modules/ix-drop-grid/ix-drop-grid.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { LayoutModule } from 'app/modules/layout/layout.module';
@@ -60,6 +61,7 @@ import { widgetComponents } from 'app/pages/dashboard/widgets/all-widgets.consta
         opacity: '0.25',
       },
     }),
+    IxDropGridModule,
   ],
   declarations: [
     DashboardComponent,
