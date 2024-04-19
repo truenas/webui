@@ -1,8 +1,8 @@
 import {
   ChangeDetectionStrategy, Component, Input, TrackByFunction,
 } from '@angular/core';
-import { TrayConfig } from 'app/interfaces/enclosure-tray.interface';
 import { EnclosureUi } from 'app/interfaces/enclosure.interface';
+import { TrayConfig } from 'app/pages/system/enclosure/interfaces/enclosure-tray.interface';
 import { EnclosureStore } from 'app/pages/system/enclosure/services/enclosure.store';
 
 /** Example of an enclosure view implemented using an svg template */
