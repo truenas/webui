@@ -159,7 +159,11 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
         limitToSingleEnclosure: null,
       });
       const uniqueEnclosures = new Set<number>();
-      disksAfterFirstStep.forEach((disk) => uniqueEnclosures.add(disk.enclosure?.number));
+      disksAfterFirstStep.forEach((disk) => {
+        if (disk.enclosure) {
+          uniqueEnclosures.add(disk.enclosure.number);
+        }
+      });
       return uniqueEnclosures.size > 1;
     },
   );

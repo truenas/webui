@@ -18,7 +18,7 @@
         mat-button
         [ixTest]="['configure', 'ip-address']"
         [disabled]="dataProvider.isLoading$ | async"
-        [ixUiSearch]="searchableElements.configureAllowedAddresses"
+        [ixUiSearch]="searchableElements.elements.configureAllowedAddresses"
         (click)="onConfigure()"
       >
         {{ 'Configure' | translate }}

@@ -1,5 +1,5 @@
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
+import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { MockComponents } from 'ng-mocks';
 import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
@@ -14,8 +14,9 @@ import { SearchInputComponent } from 'app/modules/search-input/components/search
 import { SearchInputModule } from 'app/modules/search-input/search-input.module';
 import { AuditComponent } from 'app/pages/audit/components/audit/audit.component';
 import { LogDetailsPanelComponent } from 'app/pages/audit/components/log-details-panel/log-details-panel.component';
+import { LocaleService } from 'app/services/locale.service';
 import { WebSocketService } from 'app/services/ws.service';
-import { selectAdvancedConfig, selectTimezone } from 'app/store/system-config/system-config.selectors';
+import { selectAdvancedConfig } from 'app/store/system-config/system-config.selectors';
 
 describe('AuditComponent', () => {
   let spectator: Spectator<AuditComponent>;
@@ -26,9 +27,9 @@ describe('AuditComponent', () => {
     {
       audit_id: '1',
       timestamp: {
-        $date: 1702890820000,
+        $date: 1712932440770,
       },
-      message_timestamp: 1702890820,
+      message_timestamp: 1712932440,
       address: '10.220.2.21',
       username: 'Administrator',
       service: AuditService.Smb,
@@ -40,9 +41,9 @@ describe('AuditComponent', () => {
     {
       audit_id: '2',
       timestamp: {
-        $date: 1702894523000,
+        $date: 1712932952481,
       },
-      message_timestamp: 1702894523,
+      message_timestamp: 1712932952,
       address: '10.220.2.21',
       username: 'bob',
       service: AuditService.Smb,
@@ -70,6 +71,9 @@ describe('AuditComponent', () => {
       ),
     ],
     providers: [
+      mockProvider(LocaleService, {
+        timezone: 'America/Los_Angeles',
+      }),
       mockWebSocket([
         mockCall('audit.query', (params) => {
           if (params[0]['query-options'].count) {
@@ -83,10 +87,6 @@ describe('AuditComponent', () => {
       ]),
       provideMockStore({
         selectors: [
-          {
-            selector: selectTimezone,
-            value: 'UTC',
-          },
           {
             selector: selectAdvancedConfig,
             value: {
@@ -119,8 +119,8 @@ describe('AuditComponent', () => {
     await spectator.fixture.whenRenderingDone();
     expect(await table.getCellTexts()).toEqual([
       ['Service', 'User', 'Timestamp', 'Event', 'Event Data'],
-      ['SMB', 'Administrator', '2023-12-18 09:13:40', 'Authentication', 'Account: Administrator'],
-      ['SMB', 'bob', '2023-12-18 10:15:23', 'Create', 'File: test.txt'],
+      ['SMB', 'Administrator', '2024-04-12 07:34:00', 'Authentication', 'Account: Administrator'],
+      ['SMB', 'bob', '2024-04-12 07:42:32', 'Create', 'File: test.txt'],
     ]);
   });
 

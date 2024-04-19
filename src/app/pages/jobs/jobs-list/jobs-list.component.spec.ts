@@ -24,6 +24,7 @@ import { SearchInput1Component } from 'app/modules/search-input1/search-input1.c
 import { JobLogsRowComponent } from 'app/pages/jobs/job-logs-row/job-logs-row.component';
 import { JobNameComponent } from 'app/pages/jobs/job-name/job-name.component';
 import { DownloadService } from 'app/services/download.service';
+import { LocaleService } from 'app/services/locale.service';
 import { JobsListComponent } from './jobs-list.component';
 
 const fakeJobDataSource: Job[] = [{
@@ -82,6 +83,9 @@ describe('JobsListComponent', () => {
       FakeFormatDateTimePipe,
     ],
     providers: [
+      mockProvider(LocaleService, {
+        timezone: 'Europe/Kiev',
+      }),
       mockProvider(DialogService),
       mockProvider(MatSnackBar),
       mockWebSocket([
