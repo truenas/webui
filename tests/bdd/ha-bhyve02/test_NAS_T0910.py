@@ -3,9 +3,12 @@
 
 import reusableSeleniumCode as rsc
 import xpaths
-from function import wait_on_element, is_element_present, wait_on_element_disappear
-from selenium.webdriver.common.action_chains import ActionChains
-from selenium.webdriver.common.keys import Keys
+from function import (
+    wait_on_element,
+    is_element_present,
+    wait_on_element_disappear,
+    ssh_sudo
+)
 import time
 from pytest_bdd import (
     given,
@@ -150,25 +153,12 @@ def updated_value_should_be_visible(driver):
 @then('Open shell and run su user to become that user')
 def open_shell_and_run_su_user(driver):
     """Open shell and run su user to become that user."""
-    assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__Shell"]', 'clickable')
-    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Shell"]').click()
-    assert wait_on_element(driver, 7, '//span[@class="reverse-video terminal-cursor"]')
-    time.sleep(5)
-    actions = ActionChains(driver)
-    actions.send_keys('su ericbsd', Keys.ENTER)
-    actions.perform()
+    global sudo_results
+    cmd = 'ls /var/db/sudo'
+    sudo_results = ssh_sudo(cmd, nas_ip, 'ericbsd', 'testing')
 
 
 @then('User should be able to use Sudo')
 def user_should_be_able_to_use_sudo(driver):
     """User should be able to use Sudo."""
-    time.sleep(1)
-    actions = ActionChains(driver)
-    actions.send_keys('sudo ls /var/db/sudo', Keys.ENTER)
-    actions.perform()
-    time.sleep(1)
-    assert wait_on_element(driver, 7, '//span[contains(.,"Password:")]')
-    actions.send_keys('testing', Keys.ENTER)
-    actions.perform()
-    assert wait_on_element(driver, 7, '//span[contains(.,"lectured")]')
-    driver.find_element_by_xpath('//span[contains(.,"lectured")]')
+    assert "lectured" in sudo_results, str(sudo_results)
