@@ -66,35 +66,36 @@ def when_the_disks_page_appears_click_name_to_sort_in_alphabetical_order(driver)
     """when the Disks page appears, click name to sort in alphabetical order."""
     assert wait_on_element(driver, 7, '//div[contains(.,"Disks")]')
     assert wait_on_element(driver, 7, '//span[contains(.,"Name")]')
-    ada0 = ''
-    while ada0 != 'ada0':
+    disk0 = driver.find_element_by_xpath('(//datatable-body-cell[2]/div/div)[1]').text
+    if disk0 != 'da0':
         driver.find_element_by_xpath('//span[contains(.,"Name")]').click()
-        ada0 = driver.find_element_by_xpath('(//datatable-body-cell[2]/div/div)[1]').text
+        disk0 = driver.find_element_by_xpath('(//datatable-body-cell[2]/div/div)[1]').text
+    assert disk0 == 'da0'
 
 
 @then('when all disks appear in alphabetical order, click on the ada3 disk arrow')
 def when_all_disks_appear_in_alphabetical_order_click_on_the_ada3_disk_arrow(driver):
     """when all disks appear in alphabetical order, click on the ada3 disk arrow."""
     # Verify disk are sorted
-    disk_list = {1: 'ada0', 2: 'ada1', 3: 'ada2', 4: 'ada3'}
+    disk_list = {1: 'da0', 2: 'da1', 3: 'da2', 4: 'da3', 5: 'da4'}
     for num in list(disk_list.keys()):
         disk = driver.find_element_by_xpath(f'(//datatable-body-cell[2]/div/div)[{num}]').text
         assert disk == disk_list[num]
-    assert wait_on_element(driver, 7, '//a[@ix-auto="expander__ada3"]')
-    driver.find_element_by_xpath('//a[@ix-auto="expander__ada3"]').click()
+    assert wait_on_element(driver, 7, '//a[@ix-auto="expander__da3"]')
+    driver.find_element_by_xpath('//a[@ix-auto="expander__da3"]').click()
 
 
 @then('click the WIPE button')
 def click_the_wipe_button(driver):
     """click the WIPE button."""
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__WIPE_ada3_ada3"]')
-    driver.find_element_by_xpath('//button[@ix-auto="button__WIPE_ada3_ada3"]').click()
+    assert wait_on_element(driver, 7, '//button[@ix-auto="button__WIPE_da3_da3"]')
+    driver.find_element_by_xpath('//button[@ix-auto="button__WIPE_da3_da3"]').click()
 
 
 @then('The Wipe Disk ada3 widget should appear')
 def the_wipe_disk_ada3_widget_should_appear(driver):
     """The Wipe Disk ada3 widget should appear."""
-    assert wait_on_element(driver, 7, '//h1[contains(.,"Wipe Disk ada3")]')
+    assert wait_on_element(driver, 7, '//h1[contains(.,"Wipe Disk da3")]')
 
 
 @then('select the Quick Method and click WIPE')
@@ -110,7 +111,7 @@ def select_the_quick_method_and_click_wipe(driver):
 @then('check to confirm, and click continue')
 def check_to_confirm_and_click_continue(driver):
     """check to confirm, and click continue."""
-    assert wait_on_element(driver, 7, '//h1[contains(.,"Wipe Disk ada3")]')
+    assert wait_on_element(driver, 7, '//h1[contains(.,"Wipe Disk da3")]')
     driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__CONFIRM"]').click()
     driver.find_element_by_xpath('//button[@ix-auto="button__CONTINUE"]').click()
 
