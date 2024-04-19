@@ -1,4 +1,4 @@
-<mat-card id="access-card">
+<mat-card id="access-card" [ixUiSearch]="searchableElements.elements.access">
   <mat-toolbar-row>
     <h3>{{ 'Access' | translate }}</h3>
     <div class="actions action-icon">
@@ -16,7 +16,6 @@
         *ixRequiresRoles="requiredRoles"
         mat-button
         [ixTest]="['sessions', 'configure']"
-        [ixUiSearch]="searchableElements.elements.configureAccess"
         (click)="onConfigure()"
       >
         {{ 'Configure' | translate }}
@@ -26,7 +25,7 @@
 
   <mat-card-content>
     <mat-list>
-      <mat-list-item>
+      <mat-list-item [ixUiSearch]="searchableElements.elements.tokenLifetime">
         <span class="label">{{ 'Token Lifetime' | translate }}:</span>
         <span *ixWithLoadingState="tokenLifetime$ as tokenLifetime" class="value">
           {{ asDuration(tokenLifetime) }}

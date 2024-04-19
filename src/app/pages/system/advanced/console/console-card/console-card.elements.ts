@@ -5,9 +5,24 @@ export const consoleCardElements = {
   hierarchy: [T('System'), T('Advanced'), T('Console')],
   anchorRouterLink: ['/system', 'advanced'],
   elements: {
-    configure: {
-      hierarchy: [T('Configure')],
-      anchor: 'configure-console',
+    console: {
+      anchor: 'console-card',
+    },
+    consoleMenu: {
+      hierarchy: [T('Console Menu')],
+      synonyms: [T('Show Text Console without Password Prompt')],
+    },
+    serialConsole: {
+      hierarchy: [T('Enable Serial Console')],
+    },
+    serialPort: {
+      hierarchy: [T('Serial Port')],
+    },
+    serialSpeed: {
+      hierarchy: [T('Serial Speed')],
+    },
+    motd: {
+      hierarchy: [T('MOTD Banner')],
     },
   },
 } satisfies UiSearchableElement;

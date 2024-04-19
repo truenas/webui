@@ -1,4 +1,4 @@
-<mat-card>
+<mat-card [ixUiSearch]="searchableElements.elements.allowedIpAddresses">
   <mat-toolbar-row>
     <div fxFlex fxLayoutAlign="start center">
       <h3 class="card-title">
@@ -18,7 +18,6 @@
         mat-button
         [ixTest]="['configure', 'ip-address']"
         [disabled]="dataProvider.isLoading$ | async"
-        [ixUiSearch]="searchableElements.elements.configureAllowedAddresses"
         (click)="onConfigure()"
       >
         {{ 'Configure' | translate }}

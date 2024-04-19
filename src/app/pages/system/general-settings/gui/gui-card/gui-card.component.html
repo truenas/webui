@@ -1,4 +1,4 @@
-<mat-card>
+<mat-card [ixUiSearch]="searchableElements.elements.gui">
   <mat-toolbar-row>
     <h3>{{ helptext.guiTitle| translate }}</h3>
     <div class="actions action-icon">
@@ -6,7 +6,6 @@
         mat-button
         color="default"
         [ixTest]="['gui', 'settings']"
-        [ixUiSearch]="searchableElements.elements.configure"
         (click)="openSettings()"
       >
         {{ 'Settings' | translate }}
@@ -16,7 +15,7 @@
 
   <mat-card-content>
     <mat-list>
-      <mat-list-item>
+      <mat-list-item [ixUiSearch]="searchableElements.elements.theme">
         <span class="label">{{ 'Theme' | translate }}:</span>
         <span *ixWithLoadingState="preferences$ as preferences" class="value">
           {{ preferences.userTheme }}

@@ -1,4 +1,4 @@
-<mat-card>
+<mat-card [ixUiSearch]="searchableElements.elements.kernel">
   <mat-toolbar-row>
     <h3>{{ 'Kernel' | translate }}</h3>
     <div *ixWithLoadingState="debugKernel$ as debugKernel" class="actions action-icon">
@@ -6,7 +6,6 @@
         *ixRequiresRoles="requiredRoles"
         mat-button
         [ixTest]="['kernel', 'configure']"
-        [ixUiSearch]="searchableElements.elements.configure"
         (click)="onConfigurePressed(debugKernel)"
       >
         {{ 'Configure' | translate }}
@@ -16,7 +15,7 @@
 
   <mat-card-content>
     <mat-list>
-      <mat-list-item>
+      <mat-list-item [ixUiSearch]="searchableElements.elements.enableKernelDebug">
         <span class="label">{{ 'Enable Debug Kernel' | translate }}:</span>
         <span *ixWithLoadingState="debugKernel$ as debugKernel" class="value">
           {{ debugKernel ? ('Enabled' | translate) : ('Disabled' | translate) }}

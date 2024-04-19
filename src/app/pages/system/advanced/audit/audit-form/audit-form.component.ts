@@ -19,7 +19,6 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ChainedRef } from 'app/modules/ix-forms/components/ix-slide-in/chained-component-ref';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { auditFormElements } from 'app/pages/system/advanced/audit/audit-form/audit-form.elements';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
@@ -32,7 +31,6 @@ import { advancedConfigUpdated } from 'app/store/system-config/system-config.act
 })
 export class AuditFormComponent implements OnInit {
   protected readonly requiredRoles = [Role.SystemAuditWrite];
-  protected searchableElements = auditFormElements;
 
   isFormLoading = false;
 
