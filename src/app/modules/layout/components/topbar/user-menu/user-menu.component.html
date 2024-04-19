@@ -20,21 +20,18 @@
   </button>
 
   <mat-menu #userMenu="matMenu">
-    <ng-container *ixRequiresRoles="requiredRoles">
-      <button
-        *ngIf="user?.account_attributes.includes(AccountAttribute.Local)"
-        name="settings-change-password"
-        mat-menu-item
-        ixTest="change-password"
-        (click)="openChangePasswordDialog()"
-      >
-        <ix-icon name="dialpad"></ix-icon>
-        {{ 'Change Password' | translate }}
-      </button>
-    </ng-container>
+    <button
+      *ngIf="user?.account_attributes.includes(AccountAttribute.Local)"
+      name="settings-change-password"
+      mat-menu-item
+      ixTest="change-password"
+      (click)="openChangePasswordDialog()"
+    >
+      <ix-icon name="dialpad"></ix-icon>
+      {{ 'Change Password' | translate }}
+    </button>
 
     <button
-      *ixRequiresRoles="requiredRoles"
       name="settings-2fa"
       mat-menu-item
       ixTest="2fa"
