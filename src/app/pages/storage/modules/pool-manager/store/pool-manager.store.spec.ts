@@ -45,6 +45,10 @@ describe('PoolManagerStore', () => {
       devname: 'sdc',
       type: DiskType.Hdd,
       size: 2 * TiB,
+      enclosure: {
+        number: 2,
+        slot: 1,
+      },
     },
   ] as UnusedDisk[];
   const enclosures = [
