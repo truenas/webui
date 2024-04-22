@@ -8,6 +8,7 @@
           mat-button
           [ixTest]="['add', 'interface']"
           [disabled]="isHaEnabled"
+          [ixUiSearch]="searchableElements.add"
           (click)="onAddNew()"
         >
           {{ 'Add' | translate }}
@@ -15,7 +16,7 @@
       </div>
     </div>
   </mat-toolbar-row>
-  <ix-table class="interfaces-table">
+  <ix-table class="interfaces-table" [ixUiSearch]="searchableElements.interfaces">
     <thead
       ix-table-head
       [columns]="columns"

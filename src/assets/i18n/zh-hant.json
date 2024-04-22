@@ -1597,6 +1597,7 @@
   "Invalid value. Must be less than or equal to ": "",
   "Invalid value. Valid values are numbers followed by optional unit letters,  like <code>256k</code> or <code>1 G</code> or <code>2 MiB</code>.": "",
   "Invisible": "",
+  "Ipmi": "",
   "Is planned to be automatically destroyed at {datetime}": "",
   "Isolated GPU Device(s)": "",
   "Isolated GPU Devices": "",

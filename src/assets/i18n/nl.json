@@ -58,6 +58,7 @@
   "Include or exclude files and directories from the backup.": "",
   "Include/Exclude": "",
   "Included Paths": "",
+  "Ipmi": "",
   "Isolated GPU Devices": "",
   "Kerberos Keytabs": "",
   "Local Groups Name": "",

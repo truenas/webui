@@ -781,6 +781,7 @@
   "Invalid value. Must be greater than or equal to ": "",
   "Invalid value. Must be less than or equal to ": "",
   "Invisible": "",
+  "Ipmi": "",
   "Is planned to be automatically destroyed at {datetime}": "",
   "Isolated GPU Device(s)": "",
   "Isolated GPU Devices": "",

@@ -26,6 +26,7 @@ import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/
 import { createTable } from 'app/modules/ix-table/utils';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { InterfaceFormComponent } from 'app/pages/network/components/interface-form/interface-form.component';
+import { interfacesCardElements } from 'app/pages/network/components/interfaces-card/interfaces-card.elements';
 import {
   IpAddressesCellComponent,
 } from 'app/pages/network/components/interfaces-card/ip-addresses-cell/ip-addresses-cell.component';
@@ -45,6 +46,7 @@ import { networkInterfacesChanged } from 'app/store/network-interfaces/network-i
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class InterfacesCardComponent implements OnInit, OnChanges {
+  protected readonly searchableElements = interfacesCardElements.elements;
   @Input() isHaEnabled = false;
   @Output() interfacesUpdated = new EventEmitter<void>();
 
