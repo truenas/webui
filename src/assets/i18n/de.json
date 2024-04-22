@@ -1311,6 +1311,7 @@
   "Host name or IP address of the central key server.": "",
   "Host: {host}": "",
   "Hostname (TrueNAS Controller 2)": "",
+  "Hostname And Domain": "",
   "Hostname Database:": "",
   "Hostname or IP  address used to connect to the active side system. When the active side  is <i>LOCAL</i>, this defaults to the <i>SSH_CLIENT</i> environment  variable. When the active side is <i>REMOTE</i>, this defaults to the  SSH connection hostname.": "",
   "Hostname or IP address of SMTP server to use for sending this email.": "",
