@@ -1,21 +1,21 @@
 <mat-card class="card">
   <mat-card-content class="card-content">
     <div class="header">
-      <h3>{{ label | translate }}</h3>
+      <h3>{{ label() | translate }}</h3>
     </div>
 
-    <div class="container">
+    <div [class]="['container', size()]">
       <div
         [fittext]="true"
         [modelToWatch]="text"
         [activateOnResize]="true"
         [maxFontSize]="49"
-        [minFontSize]="5"
+        [minFontSize]="12"
       >
-        {{ text | translate }}
+        {{ text() | translate }}
 
         <div *ngIf="subText" class="sub-text">
-          {{ subText | translate }}
+          {{ subText() | translate }}
         </div>
       </div>
     </div>

@@ -1,4 +1,7 @@
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, input,
+} from '@angular/core';
+import { SlotSize } from 'app/pages/dashboard/types/widget.interface';
 
 @Component({
   selector: 'ix-widget-datapoint',
@@ -7,7 +10,8 @@ import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class WidgetDatapointComponent {
-  @Input() label: string;
-  @Input() text: string;
-  @Input() subText: string;
+  size = input.required<SlotSize>();
+  label = input<string>();
+  text = input<string>();
+  subText = input<string>();
 }

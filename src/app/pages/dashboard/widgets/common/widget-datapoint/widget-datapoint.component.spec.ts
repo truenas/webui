@@ -1,4 +1,5 @@
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
+import { SlotSize } from 'app/pages/dashboard/types/widget.interface';
 import { WidgetDatapointComponent } from 'app/pages/dashboard/widgets/common/widget-datapoint/widget-datapoint.component';
 
 describe('WidgetDatapointComponent', () => {
@@ -13,10 +14,14 @@ describe('WidgetDatapointComponent', () => {
   });
 
   beforeEach(() => {
-    spectator = createComponent();
-    spectator.setInput('label', label);
-    spectator.setInput('text', text);
-    spectator.setInput('subText', subText);
+    spectator = createComponent({
+      props: {
+        size: SlotSize.Half,
+        label,
+        text,
+        subText,
+      },
+    });
   });
 
   it(`it has label '${label}'`, () => {

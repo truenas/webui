@@ -1,3 +1,5 @@
+@import '../../../dashboard-variables';
+
 :host {
   display: flex;
   height: 100%;
@@ -20,14 +22,18 @@ mat-card {
     .container {
       align-items: center;
       display: flex;
-      height: 115px;
+      height: calc($widget-group-height / 3.5);
       justify-content: center;
       line-height: normal;
       margin: 12px 0;
-      overflow: overlay;
+      overflow: hidden;
       padding: 0 12px;
       text-align: center;
       width: 100%;
+
+      &.full {
+        height: calc($widget-group-height - 65px);
+      }
 
       .sub-text {
         display: inline-block;
