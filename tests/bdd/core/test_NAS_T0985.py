@@ -21,8 +21,8 @@ pytestmark = [pytest.mark.debug_test]
 
 
 @scenario('features/NAS-T985.feature', 'Create a pool call tank')
-def test_create_a_pool_call_tank_with(driver):
-    """Create a pool call tank with 2 disk."""
+def test_create_a_pool_call_tank(driver):
+    """Create a pool call tank."""
 
 
 @given('the browser is open, the FreeNAS URL and logged in')
