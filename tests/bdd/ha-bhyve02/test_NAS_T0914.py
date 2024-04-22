@@ -4,7 +4,12 @@
 import reusableSeleniumCode as rsc
 import xpaths
 import time
-from function import wait_on_element, is_element_present, wait_on_element_disappear
+from function import (
+    wait_on_element,
+    is_element_present,
+    wait_on_element_disappear,
+    ssh_cmd
+)
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.keys import Keys
 from pytest_bdd import (
@@ -161,24 +166,12 @@ def try_login_with_ssh(driver):
     class_attribute = element.get_attribute('class')
     if 'mat-checked' not in class_attribute:
         driver.find_element_by_xpath('//div[@ix-auto="overlay__SSH_Running"]').click()
-    assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__Shell"]')
-    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Shell"]').click()
-    assert wait_on_element(driver, 7, '//span[@class="reverse-video terminal-cursor"]')
-    time.sleep(4)
-    actions = ActionChains(driver)
-    actions.send_keys('ssh ericbsd@127.0.0.1', Keys.ENTER)
-    actions.perform()
-    if wait_on_element(driver, 4, '//span[contains(text(),"(yes/no/[fingerprint])?")]'):
-        actions = ActionChains(driver)
-        actions.send_keys('yes', Keys.ENTER)
-        actions.perform()
-    assert wait_on_element(driver, 4, '//span[contains(.,"password:")]')
-    actions = ActionChains(driver)
-    actions.send_keys('testing', Keys.ENTER)
-    actions.perform()
+    global ssh_result
+    ssh_result = ssh_cmd('beadm list', 'ericbsd', 'testing', nas_ip)
 
 
 @then('User should not be able to login')
 def user_should_not_be_able_to_login(driver):
     """User should not be able to login."""
-    assert wait_on_element(driver, 5, '//span[contains(.,"Permission") and contains(.,"denied,")]')
+    assert not ssh_result['result'], ssh_result['output']
+    assert 'default' not in ssh_result['output'], ssh_result['output']
