@@ -27,6 +27,8 @@ def test_edit_user_enable_permit_sudo(driver):
 @given(parsers.parse('The browser is open navigate to "{nas_url}"'))
 def the_browser_is_open_navigate_to_nas_url(driver, nas_url):
     """The browser is open navigate to "{nas_url}"."""
+    global nas_host
+    nas_host = nas_url
     if nas_url not in driver.current_url:
         driver.get(f"http://{nas_url}/ui/dashboard/")
         time.sleep(1)
@@ -155,7 +157,7 @@ def open_shell_and_run_su_user(driver):
     """Open shell and run su user to become that user."""
     global sudo_results
     cmd = 'ls /var/db/sudo'
-    sudo_results = ssh_sudo(cmd, nas_ip, 'ericbsd', 'testing')
+    sudo_results = ssh_sudo(cmd, nas_host, 'ericbsd', 'testing')
 
 
 @then('User should be able to use Sudo')
