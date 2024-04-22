@@ -43,6 +43,7 @@ import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-replication-list',
   templateUrl: './replication-list.component.html',
   styleUrls: ['./replication-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

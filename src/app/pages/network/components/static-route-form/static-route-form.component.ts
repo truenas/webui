@@ -17,6 +17,7 @@ import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-static-route-form',
   templateUrl: './static-route-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

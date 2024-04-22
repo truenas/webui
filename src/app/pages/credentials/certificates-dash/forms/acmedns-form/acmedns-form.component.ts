@@ -28,6 +28,7 @@ interface DnsAuthenticatorList {
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-acmedns-form',
   templateUrl: './acmedns-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

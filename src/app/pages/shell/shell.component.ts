@@ -3,6 +3,7 @@ import { TerminalConfiguration } from 'app/interfaces/terminal.interface';
 import { shellElements } from 'app/pages/shell/shell.elements';
 
 @Component({
+  selector: 'ix-shell',
   templateUrl: './shell.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

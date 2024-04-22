@@ -19,6 +19,7 @@ import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-service-snmp',
   templateUrl: './service-snmp.component.html',
   styleUrls: ['./service-snmp.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

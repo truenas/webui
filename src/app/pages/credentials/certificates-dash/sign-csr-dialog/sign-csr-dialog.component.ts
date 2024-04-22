@@ -15,6 +15,7 @@ import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-sign-csr-dialog',
   templateUrl: './sign-csr-dialog.component.html',
   styleUrls: ['./sign-csr-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

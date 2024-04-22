@@ -18,6 +18,7 @@ import { IxFileUploadService } from 'app/services/ix-file-upload.service';
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-upload-iso-dialog',
   templateUrl: './upload-iso-dialog.component.html',
   styleUrls: ['./upload-iso-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

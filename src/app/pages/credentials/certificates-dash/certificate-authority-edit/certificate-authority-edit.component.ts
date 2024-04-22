@@ -20,6 +20,7 @@ import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-certificate-authority-edit',
   templateUrl: './certificate-authority-edit.component.html',
   styleUrls: ['./certificate-authority-edit.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

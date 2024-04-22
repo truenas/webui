@@ -16,6 +16,7 @@ import {
 import { Observable, Subject, takeUntil } from 'rxjs';
 import { TreeNodeOutletDirective } from 'app/modules/ix-tree/directives/tree-node-outlet.directive';
 
+// eslint-disable-next-line @angular-eslint/use-component-selector
 @Component({
   template: '',
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -11,7 +11,7 @@ import { GlobalSearchResultsComponent } from './global-search-results.component'
 const mockedHelpElement = {
   hierarchy: ['Help Section Item'],
   section: GlobalSearchSection.Help,
-  targetHref: 'https://www.example.com/help',
+  targetHref: 'https://www.truenas.com/docs/scale/24.10/search/?query=test',
 };
 
 const mockedUiElement = {

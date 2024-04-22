@@ -56,6 +56,7 @@ import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-chart-wizard',
   templateUrl: './chart-wizard.component.html',
   styleUrls: ['./chart-wizard.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

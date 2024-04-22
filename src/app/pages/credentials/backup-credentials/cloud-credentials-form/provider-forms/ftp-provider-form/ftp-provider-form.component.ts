@@ -9,6 +9,7 @@ import {
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-ftp-provider-form',
   templateUrl: './ftp-provider-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

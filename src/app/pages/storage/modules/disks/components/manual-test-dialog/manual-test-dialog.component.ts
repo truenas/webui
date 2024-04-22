@@ -25,6 +25,7 @@ export interface ManualTestDialogParams {
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-manual-test-dialog',
   templateUrl: './manual-test-dialog.component.html',
   styleUrls: ['./manual-test-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
