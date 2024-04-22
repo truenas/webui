@@ -20,6 +20,7 @@ export interface DownloadKeyDialogParams {
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-download-key-dialog',
   templateUrl: './download-key-dialog.component.html',
   styleUrls: ['./download-key-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -15,6 +15,7 @@ import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-group-members',
   templateUrl: './group-members.component.html',
   styleUrls: ['./group-members.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -6,6 +6,7 @@ import { ConsoleMessagesStore } from 'app/modules/layout/components/console-foot
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-console-panel-dialog',
   templateUrl: './console-panel-dialog.component.html',
   styleUrls: ['./console-panel-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -16,6 +16,7 @@ import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { SchedulerModule } from 'app/modules/scheduler/scheduler.module';
 import { CronFormComponent } from 'app/pages/system/advanced/cron/cron-form/cron-form.component';
 import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
+import { LocaleService } from 'app/services/locale.service';
 import { UserService } from 'app/services/user.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { selectTimezone } from 'app/store/system-config/system-config.selectors';
@@ -54,6 +55,9 @@ describe('CronFormComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
+      mockProvider(LocaleService, {
+        timezone: 'America/New_York',
+      }),
       mockProvider(DialogService),
       mockWebSocket([
         mockCall('cronjob.create'),
@@ -96,7 +100,7 @@ describe('CronFormComponent', () => {
         'Run As User': 'root',
         'Hide Standard Output': true,
         'Hide Standard Error': true,
-        Schedule: '0-30 */2 2 * 2-3',
+        Schedule: '0 0 * * *',
         Enabled: true,
       });
 
@@ -108,10 +112,10 @@ describe('CronFormComponent', () => {
         description: 'Final cron job',
         enabled: true,
         schedule: {
-          minute: '0-30',
-          hour: '*/2',
-          dom: '2',
-          dow: 'tue,wed',
+          minute: '0',
+          hour: '0',
+          dom: '*',
+          dow: '*',
           month: '*',
         },
         stderr: true,

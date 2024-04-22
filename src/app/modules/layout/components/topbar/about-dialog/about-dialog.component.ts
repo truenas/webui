@@ -5,6 +5,7 @@ import { helptextAbout } from 'app/helptext/about';
 import { SystemGeneralService } from 'app/services/system-general.service';
 
 @Component({
+  selector: 'ix-about-dialog',
   templateUrl: './about-dialog.component.html',
   styleUrls: ['./about-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

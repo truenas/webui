@@ -16,6 +16,7 @@ import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { SchedulerModule } from 'app/modules/scheduler/scheduler.module';
 import { ScrubTaskFormComponent } from 'app/pages/data-protection/scrub-task/scrub-task-form/scrub-task-form.component';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { LocaleService } from 'app/services/locale.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { selectTimezone } from 'app/store/system-config/system-config.selectors';
 
@@ -46,6 +47,9 @@ describe('ScrubTaskFormComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
+      mockProvider(LocaleService, {
+        timezone: 'America/New_York',
+      }),
       mockAuth(),
       mockProvider(DialogService),
       mockWebSocket([

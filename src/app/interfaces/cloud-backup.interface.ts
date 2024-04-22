@@ -32,3 +32,21 @@ export interface CloudBackupSnapshot {
   time: string;
   paths: string[];
 }
+
+export enum SnapshotIncludeExclude {
+  IncludeEverything = 'includeEverything',
+  IncludeFromSubFolder = 'includeFromSubFolder',
+  ExcludePaths = 'excludePaths',
+  ExcludeByPattern = 'excludeByPattern',
+}
+
+export type CloudBackupRestoreParams = [
+  id: number,
+  snapshot_id: string,
+  subfolder: string,
+  destination_path: string,
+  {
+    exclude: string[];
+    include?: string[];
+  },
+];

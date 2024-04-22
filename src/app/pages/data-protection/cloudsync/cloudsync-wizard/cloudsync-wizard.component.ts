@@ -20,6 +20,7 @@ import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-cloudsync-wizard',
   templateUrl: './cloudsync-wizard.component.html',
   styleUrls: ['./cloudsync-wizard.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

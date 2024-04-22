@@ -14,6 +14,7 @@ import { AppsStore } from 'app/pages/apps/store/apps-store.service';
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-category-view',
   templateUrl: './category-view.component.html',
   styleUrls: ['./category-view.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

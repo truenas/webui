@@ -18,6 +18,7 @@ import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-create-dataset-dialog',
   templateUrl: './create-dataset-dialog.component.html',
   styleUrls: ['./create-dataset-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

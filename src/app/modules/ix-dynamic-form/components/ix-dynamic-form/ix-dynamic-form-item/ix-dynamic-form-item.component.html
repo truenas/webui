@@ -97,14 +97,14 @@
       [hideEmpty]="dynamicSchema.hideEmpty"
     ></ix-select>
 
-    <ix-input
+    <ix-combobox
       *ngIf="dynamicSchema.type === DynamicFormSchemaType.Enum"
       [formControlName]="dynamicSchema.controlName"
       [label]="dynamicSchema.title | translate"
-      [autocompleteOptions]="(dynamicSchema.options | async) || []"
+      [provider]="getEnumTypeProvider(dynamicSchema.options)"
       [tooltip]="dynamicSchema.tooltip | translate"
       [required]="dynamicSchema.required"
-    ></ix-input>
+    ></ix-combobox>
 
     <ix-explorer
       *ngIf="dynamicSchema.type === DynamicFormSchemaType.Explorer"

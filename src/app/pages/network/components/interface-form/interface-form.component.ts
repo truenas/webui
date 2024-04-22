@@ -51,6 +51,7 @@ import { networkInterfacesChanged } from 'app/store/network-interfaces/network-i
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-interface-form',
   templateUrl: './interface-form.component.html',
   styleUrls: ['./interface-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

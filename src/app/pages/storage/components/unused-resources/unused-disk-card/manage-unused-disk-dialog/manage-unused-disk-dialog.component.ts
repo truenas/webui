@@ -17,6 +17,7 @@ import { AddToPoolType, ManageUnusedDiskDialogResource } from 'app/pages/storage
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-manage-unused-disk-dialog',
   templateUrl: './manage-unused-disk-dialog.component.html',
   styleUrls: ['./manage-unused-disk-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

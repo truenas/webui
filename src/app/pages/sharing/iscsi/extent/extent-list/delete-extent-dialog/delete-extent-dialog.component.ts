@@ -13,6 +13,7 @@ import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-delete-extent-dialog',
   templateUrl: './delete-extent-dialog.component.html',
   styleUrls: ['./delete-extent-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

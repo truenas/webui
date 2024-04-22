@@ -28,6 +28,7 @@ import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-api-key-list',
   templateUrl: './api-key-list.component.html',
   styleUrls: ['./api-key-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

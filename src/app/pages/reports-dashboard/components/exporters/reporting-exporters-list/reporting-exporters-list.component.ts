@@ -26,6 +26,7 @@ import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-reporting-exporters-list',
   templateUrl: './reporting-exporters-list.component.html',
   styleUrls: ['./reporting-exporters-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

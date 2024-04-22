@@ -5,6 +5,7 @@ import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.u
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { DashboardStorageStore } from 'app/pages/dashboard-old/store/dashboard-storage-store.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 const mockDatasets = [
   {
@@ -29,11 +30,7 @@ describe('DashboardStorageStoreService', () => {
     service: DashboardStorageStore,
     providers: [
       mockWebSocket([
-        mockCall('pool.query', [
-          {
-            name: 'pool2',
-          } as Pool,
-        ]),
+        mockCall('pool.query', [{ name: 'pool2' }] as Pool[]),
         mockCall('pool.dataset.query', mockDatasets),
       ]),
     ],
@@ -46,6 +43,11 @@ describe('DashboardStorageStoreService', () => {
   });
 
   it('emits the correct state value', () => {
+    expect(spectator.inject(WebSocketService).callAndSubscribe).toHaveBeenCalledWith('pool.query');
+    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('pool.dataset.query', [
+      [], { extra: { retrieve_children: false } },
+    ]);
+
     testScheduler.run(({ expectObservable }) => {
       expectObservable(spectator.service.state$).toBe('b', {
         b: {

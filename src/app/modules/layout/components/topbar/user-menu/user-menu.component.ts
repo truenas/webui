@@ -5,7 +5,6 @@ import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { filter } from 'rxjs';
 import { AccountAttribute } from 'app/enums/account-attribute.enum';
-import { Role } from 'app/enums/role.enum';
 import { helptextTopbar } from 'app/helptext/topbar';
 import { AboutDialogComponent } from 'app/modules/layout/components/topbar/about-dialog/about-dialog.component';
 import {
@@ -21,7 +20,6 @@ import { AuthService } from 'app/services/auth/auth.service';
 })
 export class UserMenuComponent {
   readonly tooltips = helptextTopbar.mat_tooltips;
-  readonly requiredRoles = [Role.FullAdmin];
   loggedInUser$ = this.authService.user$.pipe(filter(Boolean));
 
   constructor(

@@ -22,6 +22,7 @@ import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-smart-test-result-list',
   templateUrl: './smart-test-result-list.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

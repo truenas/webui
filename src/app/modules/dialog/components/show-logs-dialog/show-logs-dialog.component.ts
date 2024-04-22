@@ -11,6 +11,7 @@ import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-show-logs-dialog',
   templateUrl: './show-logs-dialog.component.html',
   styleUrls: ['./show-logs-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

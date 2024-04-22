@@ -26,6 +26,7 @@ import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-tunable-list',
   templateUrl: './tunable-list.component.html',
   styleUrls: ['./tunable-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

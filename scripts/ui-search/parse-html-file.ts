@@ -1,23 +1,14 @@
-/* eslint-disable no-restricted-imports */
 import * as fs from 'fs';
 import * as cheerio from 'cheerio';
+import { AcceptedElems } from 'cheerio/lib/types';
+import { Role } from 'app/enums/role.enum';
+import { GlobalSearchSection } from 'app/modules/global-search/enums/global-search-section.enum';
+import { generateIdFromHierarchy } from 'app/modules/global-search/helpers/generate-id-from-hierarchy';
 import { UiSearchableElement } from 'app/modules/global-search/interfaces/ui-searchable-element.interface';
-import { TsExtraction } from './ts-extraction.enum';
-import { Role } from '../../src/app/enums/role.enum';
-import { GlobalSearchSection } from '../../src/app/modules/global-search/enums/global-search-section.enum';
-import { generateIdFromHierarchy } from '../../src/app/modules/global-search/helpers/generate-id-from-hierarchy';
-
-(global as unknown as { T: unknown }).T = (input: string) => input;
-(global as unknown as { Role: unknown }).Role = Role;
-
-function convertDataStringToDataObject(dataString: string): unknown {
-  // eslint-disable-next-line no-eval
-  return eval(`(${dataString})`);
-}
 
 export function parseHtmlFile(
   filePath: string,
-  elementConfig: string,
+  elementConfig: UiSearchableElement,
   componentProperties: Record<string, string>,
 ): UiSearchableElement[] {
   const htmlContent = fs.readFileSync(filePath, 'utf8');
@@ -27,18 +18,16 @@ export function parseHtmlFile(
   cheerioRoot$('[\\[ixUiSearch\\]]').each((_, element) => {
     const configKeysSplit = cheerioRoot$(element).attr('[ixuisearch]').split('.');
     const childKey = configKeysSplit[configKeysSplit.length - 1] as keyof UiSearchableElement;
-    const parentKey = configKeysSplit[configKeysSplit.length - 3] as keyof UiSearchableElement;
-    const configObject = convertDataStringToDataObject(elementConfig);
+    const parentKey = Object.keys(elementConfig)[0] as keyof UiSearchableElement;
 
-    let mergedElement;
-
-    if (
-      configKeysSplit?.[configKeysSplit.length - 2] as keyof UiSearchableElement === TsExtraction.ElementsConfig
-    ) {
-      mergedElement = mergeElementsData(cheerioRoot$, element, configObject, parentKey, childKey, componentProperties);
-    } else {
-      mergedElement = mergeElementsData(cheerioRoot$, element, configObject, childKey, null, componentProperties);
-    }
+    const mergedElement = createUiSearchableElement(
+      cheerioRoot$,
+      element,
+      elementConfig,
+      parentKey,
+      childKey,
+      componentProperties,
+    );
 
     if (mergedElement) {
       elements.push(mergedElement);
@@ -48,9 +37,10 @@ export function parseHtmlFile(
   return elements;
 }
 
-function mergeElementsData(
-  cheerioRoot$: cheerio.Root,
-  element: cheerio.Element,
+function createUiSearchableElement(
+  cheerioRoot$: (selector: string) => { attr: (attr: string) => string },
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  element: AcceptedElems<any>,
   elementConfig: UiSearchableElement,
   parentKey: keyof UiSearchableElement,
   childKey: keyof UiSearchableElement,
@@ -64,14 +54,14 @@ function mergeElementsData(
     const synonyms = [
       ...(parent?.synonyms || []),
       ...(child?.synonyms || []),
-      ...(parent?.hierarchy.slice(-1) || []),
+      ...(parent?.hierarchy?.slice(-1) || []),
     ];
     const anchorRouterLink = child?.anchorRouterLink || parent?.anchorRouterLink;
     const triggerAnchor = child?.triggerAnchor || parent?.triggerAnchor || null;
-    const routerLink = parseRouterLink(cheerioRoot$(element).attr('[routerlink]')) ?? null;
+    const routerLink = parseRouterLink(cheerioRoot$(element as string).attr('[routerlink]')) ?? null;
     let requiredRoles = child.requiredRoles || parent.requiredRoles || [];
 
-    const rolesAttrName = cheerioRoot$(element).attr('*ixrequiresroles') || '';
+    const rolesAttrName = cheerioRoot$(element as string).attr('*ixrequiresroles') || '';
 
     if (rolesAttrName) {
       requiredRoles = parseRoles(rolesAttrName);
@@ -91,8 +81,8 @@ function mergeElementsData(
       triggerAnchor,
       section: GlobalSearchSection.Ui,
     };
-  } catch (err) {
-    console.error(`Error extracting ${childKey}/${parentKey}`);
+  } catch (error) {
+    console.error(`Error extracting ${childKey}/${parentKey}`, error);
     return null;
   }
 }

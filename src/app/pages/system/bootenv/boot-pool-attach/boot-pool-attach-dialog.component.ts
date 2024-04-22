@@ -18,6 +18,7 @@ import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-boot-pool-attach-dialog',
   templateUrl: './boot-pool-attach-dialog.component.html',
   styleUrls: ['./boot-pool-attach-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

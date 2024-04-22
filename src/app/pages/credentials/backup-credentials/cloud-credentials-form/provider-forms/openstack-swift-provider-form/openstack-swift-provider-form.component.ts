@@ -9,6 +9,7 @@ import {
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-openstack-swift-provider-form',
   templateUrl: './openstack-swift-provider-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

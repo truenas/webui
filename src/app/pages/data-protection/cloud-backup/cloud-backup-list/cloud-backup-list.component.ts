@@ -123,7 +123,11 @@ export class CloudBackupListComponent implements OnInit {
 
   ngOnInit(): void {
     const cloudBackups$ = this.ws.call('cloud_backup.query').pipe(
-      tap((cloudBackups) => this.cloudBackups = cloudBackups),
+      tap((cloudBackups) => {
+        this.cloudBackups = cloudBackups;
+        this.dataProvider.expandedRow = this.isMobileView ? null : cloudBackups[0];
+        this.expanded(this.dataProvider.expandedRow);
+      }),
     );
     this.dataProvider = new AsyncDataProvider<CloudBackup>(cloudBackups$);
     this.getCloudBackups();
@@ -132,6 +136,8 @@ export class CloudBackupListComponent implements OnInit {
 
   closeMobileDetails(): void {
     this.showMobileDetails = false;
+    this.dataProvider.expandedRow = null;
+    this.cdr.markForCheck();
   }
 
   setDefaultSort(): void {
@@ -170,7 +176,7 @@ export class CloudBackupListComponent implements OnInit {
   }
 
   openForm(row?: CloudBackup): void {
-    this.chainedSlideInService.open(CloudBackupFormComponent, true, row)
+    this.chainedSlideInService.open(CloudBackupFormComponent, false, row)
       .pipe(
         filter((response) => !!response.response),
         untilDestroyed(this),

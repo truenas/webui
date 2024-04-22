@@ -21,6 +21,7 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-pools-dashboard',
   templateUrl: './pools-dashboard.component.html',
   styleUrls: ['./pools-dashboard.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -79,11 +80,6 @@ export class PoolsDashboardComponent implements OnInit {
       });
 
     this.store.loadDashboard();
-    this.store.listenForPoolUpdates()
-      .pipe(untilDestroyed(this))
-      .subscribe(() => {
-        this.store.loadDashboard();
-      });
 
     this.disks$.pipe(untilDestroyed(this)).subscribe((disks) => {
       for (const disk of disks) {

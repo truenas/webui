@@ -22,6 +22,7 @@ import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-global-two-factor-auth-form',
   templateUrl: './global-two-factor-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
