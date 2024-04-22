@@ -10,8 +10,6 @@ from function import (
     wait_on_element_disappear,
     ssh_cmd
 )
-from selenium.webdriver.common.action_chains import ActionChains
-from selenium.webdriver.common.keys import Keys
 from pytest_bdd import (
     given,
     scenario,
