@@ -1,0 +1,15 @@
+<div
+  *ngFor="let slotIndex of slotRange()"
+  [class]="['slot', 'slot' + slotIndex]"
+  [class.selected]="slotIndex === selectedSlot() && slotRange().length > 1"
+  [class.empty]="!slots()[slotIndex]"
+  (click)="selectedSlotChange.emit(slotIndex)"
+>
+  <ng-container *ngIf="slots()[slotIndex] as slot; else emptySlot">
+    <ng-container *ngComponentOutlet="slot.component; inputs: slot.inputs;" />
+  </ng-container>
+
+  <ng-template #emptySlot>
+    {{ 'Empty' | translate }}
+  </ng-template>
+</div>
