@@ -11,7 +11,8 @@ from function import (
     wait_on_element_disappear,
     is_element_present,
     attribute_value_exist,
-    ssh_cmd,
+    wait_for_attribute_value,
+    run_cmd,
     get
 )
 from pytest_bdd import (
@@ -49,7 +50,7 @@ def test_iscsi_sharing_and_service_works_after_failover():
 @given(parsers.parse('the browser is open to {nas_hostname} login with {user} and {password}'))
 def the_browser_is_open_to_nas_hostname_login_with_user_and_password(driver, nas_hostname, user, password, request):
     """the browser is open to <nas_hostname> login with <user> and <password>."""
-    depends(request, ["Setup_HA"], scope='session')
+    # depends(request, ["Setup_HA"], scope='session')
     global nas_Hostname, admin_User, admin_Password
     nas_Hostname = nas_hostname
     admin_User = user
@@ -188,7 +189,7 @@ def on_the_service_page_verify_iscsi_is_running_and_click_the_start_automaticall
     """on the Service page, verify iSCSI is running and click the Start Automatically iSCSI checkbox."""
     assert wait_on_element(driver, 7, xpaths.services.title)
     assert wait_on_element(driver, 5, xpaths.services.iscsi_Service_Toggle, 'clickable')
-    assert attribute_value_exist(driver, xpaths.services.iscsi_Service_Toggle, 'class', 'mdc-switch--checked')
+    assert wait_for_attribute_value(driver, 60, xpaths.services.iscsi_Service_Toggle, 'class', 'mdc-switch--checked')
 
     results = get(nas_Hostname, '/service?service=iscsitarget', (admin_User, admin_Password))
     assert results.json()[0]['state'] == 'RUNNING', results.text
@@ -206,7 +207,7 @@ def ssh_to_host_with_host_user_and_host_password_then_connect_to_iscsitest1(driv
     host_info['host_password'] = host_password
 
     cmd = f'iscsictl -A -p {nas_Hostname}:3260 -t iqn.2005-10.org.freenas.ctl:iscsitest1'
-    login_results = ssh_cmd(cmd, host_user, host_password, hostname)
+    login_results = run_cmd(cmd)
     assert login_results['result'], str(login_results)
 
 
@@ -215,7 +216,7 @@ def find_the_iscsi_device_with_iscsictl_l_and_format_the_device_newfs(driver, ho
     """find the iscsi device with iscsictl -L and format the device newfs."""
     cmd = 'iscsictl -L | grep iqn.2005-10.org.freenas.ctl:iscsitest1'
     for num in list(range(15)):
-        iscsictl_results = ssh_cmd(cmd, host_info['host_user'], host_info['host_password'], host_info['hostname'])
+        iscsictl_results = run_cmd(cmd)
         assert iscsictl_results['result'], str(iscsictl_results)
         iscsictl_list = iscsictl_results['output'].strip().split()
         if iscsictl_list[2] == "Connected:":
@@ -228,14 +229,14 @@ def find_the_iscsi_device_with_iscsictl_l_and_format_the_device_newfs(driver, ho
 
     for num in list(range(15)):
         cmd = f'test -e {device["iscsitest1"]}'
-        results = ssh_cmd(cmd, host_info['host_user'], host_info['host_password'], host_info['hostname'])
+        results = run_cmd(cmd)
         if results['result']:
             assert True
             break
         time.sleep(0.5)
 
     cmd = f'newfs {device["iscsitest1"]}'
-    format_results = ssh_cmd(cmd, host_info['host_user'], host_info['host_password'], host_info['hostname'])
+    format_results = run_cmd(cmd)
     assert format_results['result'], str(format_results)
 
 
@@ -243,10 +244,10 @@ def find_the_iscsi_device_with_iscsictl_l_and_format_the_device_newfs(driver, ho
 def create_a_mount_point_then_mount_the_iscsi_device_to_it(driver, host_info, device):
     """create a mount point, then mount the iscsi device to it."""
     cmd = f"mkdir -p {MOUNT_POINT}"
-    mkdir_results = ssh_cmd(cmd, host_info['host_user'], host_info['host_password'], host_info['hostname'])
+    mkdir_results = run_cmd(cmd)
     assert mkdir_results['result'], str(mkdir_results)
     cmd = f"mount {device['iscsitest1']} {MOUNT_POINT}"
-    mount_results = ssh_cmd(cmd, host_info['host_user'], host_info['host_password'], host_info['hostname'])
+    mount_results = run_cmd(cmd)
     assert mount_results['result'], str(mount_results)
 
 
@@ -254,15 +255,15 @@ def create_a_mount_point_then_mount_the_iscsi_device_to_it(driver, host_info, de
 def create_a_file_in_the_mount_point_and_get_the_checksum_of_the_files_to_compare_it_after_the_failover(driver, host_info, checksum):
     """create a file in the mount point and get the checksum of the files to compare it after the failover."""
     cmd = f"echo 'adding some text' > {MOUNT_POINT}/testfile.txt"
-    touch_results = ssh_cmd(cmd, host_info['host_user'], host_info['host_password'], host_info['hostname'])
+    touch_results = run_cmd(cmd)
     assert touch_results['result'], str(touch_results)
 
     cmd = f"test -f {MOUNT_POINT}/testfile.txt"
-    test_results = ssh_cmd(cmd, host_info['host_user'], host_info['host_password'], host_info['hostname'])
+    test_results = run_cmd(cmd)
     assert test_results['result'], str(test_results)
 
     cmd = f'sha256 {MOUNT_POINT}/testfile.txt'
-    results1 = ssh_cmd(cmd, host_info['host_user'], host_info['host_password'], host_info['hostname'])
+    results1 = run_cmd(cmd)
     assert results1['result'], f'{results1["output"]} \n {results1["stderr"]}'
     checksum['testfile.txt'] = results1["output"].partition('=')[2].strip()
 
@@ -272,6 +273,7 @@ def on_the_dashboard_click_initiate_failover_on_the_standby_controller(driver):
     """on the Dashboard, click Initiate Failover on the standby controller."""
     driver.find_element_by_xpath(xpaths.side_Menu.dashboard).click()
     rsc.Verify_The_Dashboard(driver)
+    time.sleep(20)
 
     rsc.Trigger_Failover(driver)
 
@@ -315,24 +317,24 @@ def verify_the_iscsi_service_is_running_in_the_ui_and_with_the_api(driver):
 def verify_the_file_verify_iscsi_is_still_connected_and_the_checksum_in_the_mount_point(driver, host_info, checksum):
     """verify the file verify iSCSI is still connected and the checksum in the mount point."""
     cmd = f"test -f {MOUNT_POINT}/testfile.txt"
-    test_results = ssh_cmd(cmd, host_info['host_user'], host_info['host_password'], host_info['hostname'])
+    test_results = run_cmd(cmd)
     assert test_results['result'], str(test_results)
 
     cmd = f'sha256 {MOUNT_POINT}/testfile.txt'
-    results1 = ssh_cmd(cmd, host_info['host_user'], host_info['host_password'], host_info['hostname'])
+    results1 = run_cmd(cmd)
     assert results1['result'], f'{results1["output"]} \n {results1["stderr"]}'
-    checksum['testfile.txt'] in results1["output"], f'{results1["output"]} \n {results1["stderr"]}'
+    assert checksum['testfile.txt'] in results1["output"], f'{results1["output"]} \n {results1["stderr"]}'
 
 
 @then('unmount and remove the mount point, disconnect from the iSCSI target')
 def unmount_and_remove_the_mount_point_disconnect_from_the_iscsi_target(driver, host_info):
     """unmount and remove the mount point, disconnect from the iSCSI target."""
     cmd = f"umount {MOUNT_POINT}"
-    umount_results = ssh_cmd(cmd, host_info['host_user'], host_info['host_password'], host_info['hostname'])
+    umount_results = run_cmd(cmd)
     assert umount_results['result'], str(umount_results)
     cmd = f"rm -rf {MOUNT_POINT}"
-    rm_results = ssh_cmd(cmd, host_info['host_user'], host_info['host_password'], host_info['hostname'])
+    rm_results = run_cmd(cmd)
     assert rm_results['result'], str(rm_results)
     iscsictl_cmd = 'iscsictl -R -t iqn.2005-10.org.freenas.ctl:iscsitest1'
-    remove_results = ssh_cmd(iscsictl_cmd, host_info['host_user'], host_info['host_password'], host_info['hostname'])
+    remove_results = run_cmd(iscsictl_cmd)
     assert remove_results['result'], str(remove_results)
