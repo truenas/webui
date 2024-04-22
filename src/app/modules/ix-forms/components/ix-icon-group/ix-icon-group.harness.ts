@@ -29,14 +29,14 @@ export class IxIconGroupHarness extends ComponentHarness implements IxFormContro
     return label.getLabel();
   }
 
-  async getValue(): Promise<number> {
-    // TODO: Infinite loop.
-    return this.getValue();
+  async getValue(): Promise<string> {
+    const selectedButton = this.locatorFor(MatButtonHarness.with({ selector: '.selected' }))();
+    return (await (await selectedButton).host()).getAttribute('aria-label');
   }
 
-  async setValue(value: number): Promise<void> {
-    const buttons = await this.getButtons();
-    return buttons[value - 1].click();
+  async setValue(value: string): Promise<void> {
+    const button = this.locatorFor(MatButtonHarness.with({ selector: `[aria-label="${value}"]` }))();
+    (await button)?.click();
   }
 
   async isDisabled(): Promise<boolean> {

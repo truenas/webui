@@ -12,7 +12,7 @@ import { UntilDestroy } from '@ngneat/until-destroy';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class IxIconGroupComponent implements ControlValueAccessor {
-  @Input() valueMap: Map<string, string>;
+  @Input({ required: true }) options: Map<string, string>;
   @Input() label: string;
   @Input() hint: string;
   @Input() tooltip: string;
@@ -33,7 +33,6 @@ export class IxIconGroupComponent implements ControlValueAccessor {
 
   writeValue(value: string): void {
     this.value = value;
-    console.info('writeValue', value);
     this.cdr.markForCheck();
   }
 
@@ -53,6 +52,5 @@ export class IxIconGroupComponent implements ControlValueAccessor {
   onValueChanged(value: string): void {
     this.value = value;
     this.onChange(this.value);
-    console.info('onValueChanged', value);
   }
 }
