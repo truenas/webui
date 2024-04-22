@@ -21,6 +21,7 @@ import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-dataset-quota-add-form',
   templateUrl: './dataset-quota-add-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

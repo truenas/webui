@@ -4,6 +4,7 @@ import { dataProtectionDashboardElements } from 'app/pages/data-protection/data-
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-data-protection-dashboard',
   templateUrl: './data-protection-dashboard.component.html',
   styleUrls: ['./data-protection-dashboard.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

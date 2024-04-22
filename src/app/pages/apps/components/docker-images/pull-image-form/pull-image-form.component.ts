@@ -14,6 +14,7 @@ import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-pull-image-form',
   templateUrl: './pull-image-form.component.html',
   styleUrls: ['./pull-image-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

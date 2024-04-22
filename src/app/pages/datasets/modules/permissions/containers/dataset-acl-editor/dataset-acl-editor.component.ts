@@ -31,6 +31,7 @@ import { UserService } from 'app/services/user.service';
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-dataset-acl-editor',
   templateUrl: 'dataset-acl-editor.component.html',
   styleUrls: ['./dataset-acl-editor.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -27,6 +27,7 @@ import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-cron-list',
   templateUrl: './cron-list.component.html',
   styleUrls: ['./cron-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

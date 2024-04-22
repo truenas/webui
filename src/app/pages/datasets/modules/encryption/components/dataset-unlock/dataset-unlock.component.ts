@@ -34,6 +34,7 @@ interface DatasetFormGroup {
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-dataset-unlock',
   templateUrl: './dataset-unlock.component.html',
   styleUrls: ['./dataset-unlock.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

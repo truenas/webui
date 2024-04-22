@@ -10,7 +10,7 @@ import { sub } from 'date-fns';
 import { utcToZonedTime } from 'date-fns-tz';
 import { Subscription, timer } from 'rxjs';
 import {
-  filter, map, skipWhile, take, throttleTime,
+  filter, map, skipWhile, throttleTime,
 } from 'rxjs/operators';
 import { KiB } from 'app/constants/bytes.constant';
 import { EmptyType } from 'app/enums/empty-type.enum';
@@ -18,8 +18,7 @@ import { LinkState, NetworkInterfaceAliasType } from 'app/enums/network-interfac
 import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { BaseNetworkInterface, NetworkInterfaceAlias } from 'app/interfaces/network-interface.interface';
-import { NetworkInterfaceUpdate, ReportingDatabaseError, ReportingNameAndId } from 'app/interfaces/reporting.interface';
-import { WebSocketError } from 'app/interfaces/websocket-error.interface';
+import { NetworkInterfaceUpdate, ReportingNameAndId } from 'app/interfaces/reporting.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { WidgetComponent } from 'app/pages/dashboard-old/components/widget/widget.component';
 import { ResourcesUsageStore } from 'app/pages/dashboard-old/store/resources-usage-store.service';
@@ -419,10 +418,10 @@ export class WidgetNetworkComponent extends WidgetComponent implements OnInit, A
           this.nicInfoMap.set(networkInterfaceName, { ...this.nicInfoMap.get(networkInterfaceName), chartData });
           this.cdr.markForCheck();
         },
-        error: (err: WebSocketError) => {
+        error: () => {
           this.nicInfoMap.set(networkInterfaceName, {
             ...this.nicInfoMap.get(networkInterfaceName),
-            emptyConfig: this.chartDataError(err, nic),
+            emptyConfig: this.chartDataError(),
           });
           this.cdr.markForCheck();
         },
@@ -430,35 +429,7 @@ export class WidgetNetworkComponent extends WidgetComponent implements OnInit, A
     });
   }
 
-  chartDataError(err: WebSocketError, nic: BaseNetworkInterface): EmptyConfig {
-    if (err.error === (ReportingDatabaseError.InvalidTimestamp as number)) {
-      const errorMessage = err.reason ? err.reason.replace('[EINVALIDRRDTIMESTAMP] ', '') : null;
-      const helpMessage = this.translate.instant('You can clear reporting database and start data collection immediately.');
-      return {
-        type: EmptyType.Errors,
-        large: false,
-        compact: false,
-        title: this.translate.instant('The reporting database is broken'),
-        button: {
-          label: this.translate.instant('Fix database'),
-          action: () => {
-            this.dialog.confirm({
-              title: this.translate.instant('The reporting database is broken'),
-              message: `${errorMessage}<br/>${helpMessage}`,
-              buttonText: this.translate.instant('Clear'),
-            }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
-              this.nicInfoMap.set(nic.state.name, {
-                ...this.nicInfoMap.get(nic.state.name),
-                emptyConfig: this.loadingEmptyConfig,
-              });
-              this.cdr.markForCheck();
-              this.ws.call('reporting.clear').pipe(take(1), untilDestroyed(this)).subscribe();
-            });
-          },
-        },
-      };
-    }
-
+  chartDataError(): EmptyConfig {
     return {
       type: EmptyType.Errors,
       large: false,

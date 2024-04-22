@@ -26,6 +26,7 @@ import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-active-directory',
   templateUrl: './active-directory.component.html',
   styleUrls: ['./active-directory.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

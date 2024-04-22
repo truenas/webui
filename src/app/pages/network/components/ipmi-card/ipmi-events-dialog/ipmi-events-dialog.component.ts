@@ -15,6 +15,7 @@ import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-ipmi-events-dialog',
   templateUrl: './ipmi-events-dialog.component.html',
   styleUrls: ['./ipmi-events-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

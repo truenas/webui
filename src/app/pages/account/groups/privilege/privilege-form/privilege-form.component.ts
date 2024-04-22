@@ -18,6 +18,7 @@ import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-privilege-form',
   templateUrl: './privilege-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

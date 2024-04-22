@@ -14,6 +14,7 @@ export interface StopVmDialogData {
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-stop-vm-dialog',
   templateUrl: './stop-vm-dialog.component.html',
   styleUrls: ['./stop-vm-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -3,6 +3,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { ErrorReport } from 'app/interfaces/error-report.interface';
 
 @Component({
+  selector: 'ix-multi-error-dialog',
   templateUrl: './multi-error-dialog.component.html',
   styleUrls: ['./multi-error-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

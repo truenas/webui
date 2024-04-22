@@ -55,6 +55,7 @@ import { selectService } from 'app/store/services/services.selectors';
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-smb-form',
   templateUrl: './smb-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

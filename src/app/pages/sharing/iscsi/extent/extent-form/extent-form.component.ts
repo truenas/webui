@@ -27,6 +27,7 @@ import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-extent-form',
   templateUrl: './extent-form.component.html',
   styleUrls: ['./extent-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

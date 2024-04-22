@@ -5,7 +5,6 @@ import { format } from 'date-fns-tz';
 import { of } from 'rxjs';
 import { FormatDateTimePipe } from 'app/core/pipes/format-datetime.pipe';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { Preferences } from 'app/interfaces/preferences.interface';
 import { ReportComponent } from 'app/pages/reports-dashboard/components/report/report.component';
 import { LegendDataWithStackedTotalHtml } from 'app/pages/reports-dashboard/interfaces/report.interface';
@@ -24,9 +23,6 @@ describe('ReportComponent', () => {
   const createComponent = createComponentFactory({
     component: ReportComponent,
     providers: [
-      mockWebSocket([
-        mockCall('reporting.clear'),
-      ]),
       mockProvider(FormatDateTimePipe, {
         transform: jest.fn((date) => {
           return format(typeof date === 'string' ? Date.parse(date) : date as number | Date, 'yyyy-MM-dd HH:mm:ss');

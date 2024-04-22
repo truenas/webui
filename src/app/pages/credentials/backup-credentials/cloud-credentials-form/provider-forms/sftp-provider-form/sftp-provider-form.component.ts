@@ -20,6 +20,7 @@ const newOption = 'NEW' as const;
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-sftp-provider-form',
   templateUrl: './sftp-provider-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

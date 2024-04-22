@@ -15,6 +15,7 @@ import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-device-delete-modal',
   styleUrls: ['./device-delete-modal.component.scss'],
   templateUrl: './device-delete-modal.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -21,6 +21,7 @@ import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-two-factor',
   templateUrl: './two-factor.component.html',
   styleUrls: ['./two-factor.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

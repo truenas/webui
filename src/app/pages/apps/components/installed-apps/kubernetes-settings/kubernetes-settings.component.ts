@@ -26,6 +26,7 @@ import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-kubernetes-settings',
   templateUrl: './kubernetes-settings.component.html',
   styleUrls: ['./kubernetes-settings.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
