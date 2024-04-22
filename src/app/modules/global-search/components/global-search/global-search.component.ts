@@ -1,15 +1,23 @@
+import { DOCUMENT } from '@angular/common';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, EventEmitter, OnInit, Output, ViewChild,
+  Component, ChangeDetectionStrategy, OnInit, ViewChild, ElementRef, ChangeDetectorRef,
+  Inject,
 } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
+import _ from 'lodash';
 import {
-  debounceTime, filter, switchMap, tap,
+  tap, debounceTime, filter, switchMap,
+  combineLatestWith,
+  distinctUntilChanged,
 } from 'rxjs';
+import { searchDelayConst } from 'app/modules/global-search/constants/delay.const';
 import { moveToNextFocusableElement, moveToPreviousFocusableElement } from 'app/modules/global-search/helpers/focus-helper';
 import { UiSearchableElement } from 'app/modules/global-search/interfaces/ui-searchable-element.interface';
 import { GlobalSearchSectionsProvider } from 'app/modules/global-search/services/global-search-sections.service';
+import { UiSearchDirectivesService } from 'app/modules/global-search/services/ui-search-directives.service';
+import { UiSearchProvider } from 'app/modules/global-search/services/ui-search.service';
 import { SidenavService } from 'app/services/sidenav.service';
 import { AppState } from 'app/store';
 import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
@@ -24,22 +32,24 @@ import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 export class GlobalSearchComponent implements OnInit {
   @ViewChild('searchInput') searchInput: ElementRef<HTMLInputElement>;
 
-  @Output() resetSearch = new EventEmitter<void>();
-
-  searchControl = new FormControl('');
+  searchControl = new FormControl<string>('');
   searchResults: UiSearchableElement[];
   isLoading = false;
   systemVersion: string;
 
   constructor(
     protected sidenavService: SidenavService,
+    private searchProvider: UiSearchProvider,
+    private searchDirectives: UiSearchDirectivesService,
     private globalSearchSectionsProvider: GlobalSearchSectionsProvider,
     private cdr: ChangeDetectorRef,
     private store$: Store<AppState>,
+    @Inject(DOCUMENT) private document: Document,
   ) {}
 
   ngOnInit(): void {
     this.getSystemVersion();
+    this.listenForSelectionChanges();
     this.listenForSearchChanges();
     this.setInitialSearchResults();
   }
@@ -73,7 +83,6 @@ export class GlobalSearchComponent implements OnInit {
 
   resetInput(): void {
     this.searchControl.reset();
-    this.resetSearch.emit();
   }
 
   private listenForSearchChanges(): void {
@@ -84,7 +93,7 @@ export class GlobalSearchComponent implements OnInit {
           this.setInitialSearchResults();
         }
       }),
-      debounceTime(150),
+      debounceTime(searchDelayConst),
       filter(Boolean),
       switchMap((term) => this.globalSearchSectionsProvider.getUiSectionResults(term)),
       untilDestroyed(this),
@@ -121,5 +130,19 @@ export class GlobalSearchComponent implements OnInit {
 
   private extractVersion(version: string): string {
     return version.match(/(\d+\.\d+)\.\d+-/)?.[1];
+  }
+
+  private listenForSelectionChanges(): void {
+    this.searchProvider.selectionChanged$.pipe(
+      combineLatestWith(this.searchDirectives.directiveAdded$.pipe(filter(Boolean))),
+      filter(([config]) => !!this.searchDirectives.get(config)),
+      distinctUntilChanged(([prevConfig], [nextConfig]) => _.isEqual(prevConfig, nextConfig)),
+      untilDestroyed(this),
+    ).subscribe(([config]) => {
+      this.resetInput();
+      this.document.querySelector<HTMLElement>('.ix-slide-in-background.open')?.click();
+      this.document.querySelector<HTMLElement>('.ix-slide-in2-background.open')?.click();
+      this.searchDirectives.get(config).highlight(config);
+    });
   }
 }
