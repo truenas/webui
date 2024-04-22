@@ -836,6 +836,10 @@ export class CloudsyncFormComponent {
       value.bwlimit = this.handleBwlimit(value.bwlimit);
     }
 
+    if (value.transfers === '') {
+      value.transfers = null;
+    }
+
     if (!this.formGroup.valid) {
       return;
     }
