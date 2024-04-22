@@ -59,6 +59,7 @@ function doSortCompare(a: number | string, b: number | string, isAsc: boolean): 
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-installed-apps',
   templateUrl: './installed-apps.component.html',
   styleUrls: ['./installed-apps.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

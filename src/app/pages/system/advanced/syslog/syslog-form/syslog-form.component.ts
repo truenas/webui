@@ -26,6 +26,7 @@ import { advancedConfigUpdated } from 'app/store/system-config/system-config.act
 
 @UntilDestroy({ arrayName: 'subscriptions' })
 @Component({
+  selector: 'ix-syslog-form',
   templateUrl: 'syslog-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

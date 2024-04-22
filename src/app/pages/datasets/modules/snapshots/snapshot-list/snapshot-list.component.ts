@@ -46,6 +46,7 @@ export interface ZfsSnapshotUi extends ZfsSnapshot {
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-snapshot-list',
   templateUrl: './snapshot-list.component.html',
   styleUrls: ['./snapshot-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

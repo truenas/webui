@@ -25,6 +25,7 @@ import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-network-configuration',
   templateUrl: './configuration.component.html',
   styleUrls: ['./configuration.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

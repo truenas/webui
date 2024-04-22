@@ -7,6 +7,7 @@ import { WINDOW } from 'app/helpers/window.helper';
 import { helptextTopbar } from 'app/helptext/topbar';
 
 @Component({
+  selector: 'ix-truecommand-signup-modal',
   templateUrl: './truecommand-signup-modal.component.html',
   styleUrls: ['./truecommand-signup-modal.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

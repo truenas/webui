@@ -26,6 +26,7 @@ import { advancedConfigUpdated } from 'app/store/system-config/system-config.act
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-audit-form',
   templateUrl: 'audit-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

@@ -1,5 +1,8 @@
 import { createServiceFactory, SpectatorService, mockProvider } from '@ngneat/spectator/jest';
+import { MockDirective } from 'ng-mocks';
 import { of, lastValueFrom } from 'rxjs';
+import { UiSearchDirective } from 'app/directives/common/ui-search.directive';
+import { UiSearchDirectivesService } from 'app/modules/global-search/services/ui-search-directives.service';
 import { UiSearchProvider } from 'app/modules/global-search/services/ui-search.service';
 import { AuthService } from 'app/services/auth/auth.service';
 
@@ -13,6 +16,7 @@ describe('UiSearchProvider with mocked uiElements', () => {
 
   const createService = createServiceFactory({
     service: UiSearchProvider,
+    declarations: [MockDirective(UiSearchDirective)],
   });
 
   describe('Full admin user checks', () => {
@@ -20,6 +24,7 @@ describe('UiSearchProvider with mocked uiElements', () => {
       spectator = createService({
         providers: [
           mockProvider(AuthService, { hasRole: () => of(true) }),
+          mockProvider(UiSearchDirectivesService),
         ],
       });
     });
@@ -55,6 +60,7 @@ describe('UiSearchProvider with mocked uiElements', () => {
       spectator = createService({
         providers: [
           mockProvider(AuthService, { hasRole: () => of(false) }),
+          mockProvider(UiSearchDirectivesService),
         ],
       });
     });
@@ -88,6 +94,7 @@ describe('UiSearchProvider with mocked uiElements', () => {
       spectator = createService({
         providers: [
           mockProvider(AuthService, { hasRole: () => of(true) }),
+          mockProvider(UiSearchDirectivesService),
         ],
       });
     });

@@ -35,6 +35,7 @@ import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-manual-update-form',
   templateUrl: './manual-update-form.component.html',
   styleUrls: ['manual-update-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

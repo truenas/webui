@@ -36,6 +36,7 @@ interface FormAclEntry {
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-smb-acl',
   templateUrl: './smb-acl.component.html',
   styleUrls: ['./smb-acl.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

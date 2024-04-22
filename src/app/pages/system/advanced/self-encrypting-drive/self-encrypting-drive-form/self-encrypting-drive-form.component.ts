@@ -25,7 +25,8 @@ export interface SedConfig {
 
 @UntilDestroy()
 @Component({
-  templateUrl: 'self-encrypting-drive-form.component.html',
+  selector: 'ix-self-encrypting-drive-form',
+  templateUrl: './self-encrypting-drive-form.component.html',
   styleUrls: ['./self-encrypting-drive-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

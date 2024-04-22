@@ -30,6 +30,7 @@ import { systemInfoUpdated } from 'app/store/system-info/system-info.actions';
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-localization-form',
   templateUrl: './localization-form.component.html',
   styleUrls: ['./localization-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

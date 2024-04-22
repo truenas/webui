@@ -24,6 +24,7 @@ import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-smart-task-form',
   templateUrl: './smart-task-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

@@ -15,6 +15,7 @@ import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-leave-domain-dialog',
   templateUrl: './leave-domain-dialog.component.html',
   styleUrls: ['./leave-domain-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

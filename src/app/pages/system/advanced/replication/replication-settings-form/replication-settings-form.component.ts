@@ -15,6 +15,7 @@ import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-replication-settings-form',
   templateUrl: 'replication-settings-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

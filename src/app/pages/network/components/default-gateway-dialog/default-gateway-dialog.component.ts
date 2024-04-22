@@ -17,6 +17,7 @@ import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-default-gateway-dialog',
   templateUrl: './default-gateway-dialog.component.html',
   styleUrls: ['./default-gateway-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

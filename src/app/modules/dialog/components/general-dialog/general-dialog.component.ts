@@ -19,6 +19,7 @@ export interface GeneralDialogConfig {
  * - use interface GeneralDialogConfig for general config
  */
 @Component({
+  selector: 'ix-general-dialog',
   templateUrl: './general-dialog.component.html',
   styleUrls: ['./general-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

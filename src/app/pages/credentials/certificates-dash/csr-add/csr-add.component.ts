@@ -31,6 +31,7 @@ import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-csr-add',
   templateUrl: './csr-add.component.html',
   styleUrls: ['./csr-add.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

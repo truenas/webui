@@ -18,6 +18,7 @@ import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-kmip',
   templateUrl: './kmip.component.html',
   styleUrls: ['./kmip.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

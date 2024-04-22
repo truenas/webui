@@ -12,6 +12,7 @@ import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-snapshot-clone-dialog',
   templateUrl: './snapshot-clone-dialog.component.html',
   styleUrls: ['./snapshot-clone-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

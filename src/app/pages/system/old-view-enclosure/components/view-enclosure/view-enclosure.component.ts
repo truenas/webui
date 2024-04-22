@@ -40,6 +40,7 @@ export enum EnclosureSelectorState {
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-view-enclosure',
   templateUrl: './view-enclosure.component.html',
   styleUrls: ['./view-enclosure.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
