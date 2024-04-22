@@ -20,6 +20,7 @@ import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-cron-form',
   templateUrl: './cron-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

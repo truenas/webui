@@ -26,6 +26,7 @@ import { haSettingsUpdated } from 'app/store/ha-info/ha-info.actions';
   arrayName: 'subscriptions',
 })
 @Component({
+  selector: 'ix-failover-settings',
   templateUrl: './failover-settings.component.html',
   styleUrls: ['./failover-settings.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -27,6 +27,7 @@ import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-certificate-edit',
   templateUrl: './certificate-edit.component.html',
   styleUrls: ['./certificate-edit.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

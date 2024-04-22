@@ -14,6 +14,7 @@ import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-license',
   templateUrl: './license.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

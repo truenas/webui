@@ -27,6 +27,7 @@ import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-import-pool',
   templateUrl: './import-pool.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

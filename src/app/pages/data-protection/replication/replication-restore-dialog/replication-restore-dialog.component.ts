@@ -14,6 +14,7 @@ import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-replication-restore-dialog',
   templateUrl: './replication-restore-dialog.component.html',
   styleUrls: ['./replication-restore-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

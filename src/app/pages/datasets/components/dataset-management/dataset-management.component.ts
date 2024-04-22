@@ -50,6 +50,7 @@ import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-dataset-management',
   templateUrl: './dataset-management.component.html',
   styleUrls: ['./dataset-management.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -25,6 +25,7 @@ import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-save-as-preset-modal',
   templateUrl: './save-as-preset-modal.component.html',
   styleUrls: ['./save-as-preset-modal.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

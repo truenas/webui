@@ -6,6 +6,7 @@ import {
 } from 'app/pages/system/alert-service/alert-service/alert-services/base-alert-service-form';
 
 @Component({
+  selector: 'ix-slack-service',
   templateUrl: './slack-service.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

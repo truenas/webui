@@ -11,6 +11,7 @@ import {
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-webdav-provider-form',
   templateUrl: './webdav-provider-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

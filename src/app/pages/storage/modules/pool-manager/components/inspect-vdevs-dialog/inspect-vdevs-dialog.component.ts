@@ -14,6 +14,7 @@ import {
 } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
 
 @Component({
+  selector: 'ix-inspect-vdevs-dialog',
   templateUrl: './inspect-vdevs-dialog.component.html',
   styleUrls: ['./inspect-vdevs-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

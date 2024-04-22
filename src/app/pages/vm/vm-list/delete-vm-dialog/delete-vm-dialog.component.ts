@@ -15,6 +15,7 @@ import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-delete-vm-dialog',
   templateUrl: './delete-vm-dialog.component.html',
   styleUrls: ['./delete-vm-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

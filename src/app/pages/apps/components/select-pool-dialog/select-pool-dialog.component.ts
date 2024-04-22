@@ -19,6 +19,7 @@ import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-select-pool-dialog',
   templateUrl: './select-pool-dialog.component.html',
   styleUrls: ['./select-pool-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

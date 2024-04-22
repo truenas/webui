@@ -32,6 +32,7 @@ import { jobsListElements } from 'app/pages/jobs/jobs-list/jobs-list.elements';
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-jobs-list',
   templateUrl: './jobs-list.component.html',
   styleUrls: ['./jobs-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
