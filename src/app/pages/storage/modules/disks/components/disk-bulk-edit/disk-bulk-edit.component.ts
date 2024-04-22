@@ -18,6 +18,7 @@ import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-disk-bulk-edit',
   templateUrl: 'disk-bulk-edit.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

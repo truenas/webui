@@ -5,6 +5,7 @@ import { Role } from 'app/enums/role.enum';
 import { Certificate } from 'app/interfaces/certificate.interface';
 
 @Component({
+  selector: 'ix-confirm-force-delete-certificate',
   templateUrl: './confirm-force-delete-dialog.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

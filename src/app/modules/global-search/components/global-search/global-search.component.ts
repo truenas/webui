@@ -5,6 +5,7 @@ import {
 } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Store } from '@ngrx/store';
 import {
   tap, debounceTime, filter, switchMap,
   combineLatestWith,
@@ -16,6 +17,8 @@ import { GlobalSearchSectionsProvider } from 'app/modules/global-search/services
 import { UiSearchDirectivesService } from 'app/modules/global-search/services/ui-search-directives.service';
 import { UiSearchProvider } from 'app/modules/global-search/services/ui-search.service';
 import { SidenavService } from 'app/services/sidenav.service';
+import { AppState } from 'app/store';
+import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 
 @UntilDestroy()
 @Component({
@@ -30,6 +33,7 @@ export class GlobalSearchComponent implements OnInit {
   searchControl = new FormControl<string>('');
   searchResults: UiSearchableElement[];
   isLoading = false;
+  systemVersion: string;
 
   constructor(
     protected sidenavService: SidenavService,
@@ -37,10 +41,12 @@ export class GlobalSearchComponent implements OnInit {
     private searchDirectives: UiSearchDirectivesService,
     private globalSearchSectionsProvider: GlobalSearchSectionsProvider,
     private cdr: ChangeDetectorRef,
+    private store$: Store<AppState>,
     @Inject(DOCUMENT) private document: Document,
   ) {}
 
   ngOnInit(): void {
+    this.getSystemVersion();
     this.listenForSelectionChanges();
     this.listenForSearchChanges();
     this.setInitialSearchResults();
@@ -92,7 +98,10 @@ export class GlobalSearchComponent implements OnInit {
     ).subscribe((searchResults) => {
       this.searchResults = [
         ...searchResults,
-        ...this.globalSearchSectionsProvider.getHelpSectionResults(this.searchControl.value),
+        ...this.globalSearchSectionsProvider.getHelpSectionResults(
+          this.searchControl.value,
+          this.extractVersion(this.systemVersion),
+        ),
       ];
       this.isLoading = false;
       this.cdr.markForCheck();
@@ -105,6 +114,20 @@ export class GlobalSearchComponent implements OnInit {
 
   private focusInputElement(): void {
     this.searchInput.nativeElement?.focus();
+  }
+
+  private getSystemVersion(): void {
+    this.store$.pipe(
+      waitForSystemInfo,
+      untilDestroyed(this),
+    )
+      .subscribe((systemInfo) => {
+        this.systemVersion = systemInfo.version;
+      });
+  }
+
+  private extractVersion(version: string): string {
+    return version.match(/(\d+\.\d+)\.\d+-/)?.[1];
   }
 
   private listenForSelectionChanges(): void {

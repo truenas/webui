@@ -16,6 +16,7 @@ import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-tunable-form',
   templateUrl: './tunable-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

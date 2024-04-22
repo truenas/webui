@@ -29,6 +29,7 @@ import { waitForPreferences } from 'app/store/preferences/preferences.selectors'
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-group-list',
   templateUrl: './group-list.component.html',
   styleUrls: ['./group-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

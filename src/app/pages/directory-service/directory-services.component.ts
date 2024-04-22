@@ -33,6 +33,7 @@ interface DataCard {
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-directory-services',
   templateUrl: './directory-services.component.html',
   styleUrls: ['./directory-services.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

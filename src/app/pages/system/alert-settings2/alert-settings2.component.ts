@@ -14,6 +14,7 @@ import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-alert-settings2',
   templateUrl: './alert-settings2.component.html',
   styleUrls: ['./alert-settings2.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

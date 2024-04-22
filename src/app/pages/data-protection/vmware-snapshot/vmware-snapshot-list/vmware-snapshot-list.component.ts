@@ -19,6 +19,7 @@ import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-vmware-snapshot-list',
   templateUrl: './vmware-snapshot-list.component.html',
   styleUrls: ['./vmware-snapshot-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

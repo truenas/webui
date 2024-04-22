@@ -12,6 +12,7 @@ import { TruecommandButtonComponent } from 'app/modules/truecommand/truecommand-
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-truecommand-status-modal',
   templateUrl: './truecommand-status-modal.component.html',
   styleUrls: ['./truecommand-status-modal.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

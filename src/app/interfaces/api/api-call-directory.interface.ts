@@ -688,7 +688,6 @@ export interface ApiCallDirectory {
   'replication.update': { params: [id: number, update: Partial<ReplicationCreate>]; response: ReplicationTask };
 
   // Reporting
-  'reporting.clear': { params: void; response: void };
   'reporting.exporters.create': { params: [CreateReportingExporter]; response: ReportingExporter };
   'reporting.exporters.delete': { params: [id: number]; response: boolean };
   'reporting.exporters.exporter_schemas': { params: void; response: ReportingExporterSchema[] };

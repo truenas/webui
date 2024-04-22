@@ -17,6 +17,7 @@ import { ErrorHandlerService } from 'app/services/error-handler.service';
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-lock-dataset-dialog',
   templateUrl: './lock-dataset-dialog.component.html',
   styleUrls: ['./lock-dataset-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -37,6 +37,7 @@ import { AppState } from 'app/store';
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-cloudsync-list',
   templateUrl: './cloudsync-list.component.html',
   styleUrls: ['./cloudsync-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

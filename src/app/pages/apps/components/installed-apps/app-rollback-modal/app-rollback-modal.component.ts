@@ -16,6 +16,7 @@ import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-app-rollback-modal',
   templateUrl: './app-rollback-modal.component.html',
   styleUrls: ['./app-rollback-modal.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -16,6 +16,7 @@ import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-manage-disk-sed-dialog',
   templateUrl: './manage-disk-sed-dialog.component.html',
   styleUrls: ['./manage-disk-sed-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

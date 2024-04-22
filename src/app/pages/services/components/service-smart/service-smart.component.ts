@@ -18,6 +18,7 @@ import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-service-smart',
   templateUrl: './service-smart.component.html',
   styleUrls: ['./service-smart.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

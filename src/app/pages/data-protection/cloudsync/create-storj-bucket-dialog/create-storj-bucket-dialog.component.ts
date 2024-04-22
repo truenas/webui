@@ -12,6 +12,7 @@ import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-create-storj-bucket-dialog',
   templateUrl: './create-storj-bucket-dialog.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

@@ -21,6 +21,7 @@ import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-disk-form',
   templateUrl: 'disk-form.component.html',
   styleUrls: ['disk-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

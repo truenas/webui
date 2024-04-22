@@ -30,6 +30,7 @@ import { ServicesState } from 'app/store/services/services.reducer';
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-nfs-form',
   templateUrl: './nfs-form.component.html',
   styleUrls: ['./nfs-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

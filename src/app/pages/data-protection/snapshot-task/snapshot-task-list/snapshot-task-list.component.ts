@@ -28,6 +28,7 @@ import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-snapshot-task-list',
   styleUrls: ['./snapshot-task-list.component.scss'],
   templateUrl: './snapshot-task-list.component.html',
   providers: [TaskService, StorageService],

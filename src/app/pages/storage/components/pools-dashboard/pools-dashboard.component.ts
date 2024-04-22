@@ -21,6 +21,7 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-pools-dashboard',
   templateUrl: './pools-dashboard.component.html',
   styleUrls: ['./pools-dashboard.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

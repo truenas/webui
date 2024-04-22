@@ -13,6 +13,7 @@ interface RestartDialogData {
 }
 
 @Component({
+  selector: 'ix-restart-smb-dialog',
   templateUrl: './restart-smb-dialog.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

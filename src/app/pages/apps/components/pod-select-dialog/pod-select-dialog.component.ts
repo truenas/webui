@@ -16,6 +16,7 @@ import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-pod-select-dialog',
   styleUrls: ['./pod-select-dialog.component.scss'],
   templateUrl: './pod-select-dialog.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -9,6 +9,7 @@ import {
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-azure-provider-form',
   templateUrl: './azure-provider-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
