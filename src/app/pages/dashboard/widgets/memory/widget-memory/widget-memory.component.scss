@@ -40,6 +40,14 @@
   flex-grow: 1;
   overflow: hidden;
 
+  &.half {
+    @extend %half-size;
+  }
+
+  &.quarter {
+    @extend %quarter-size;
+  }
+
   .stats {
     align-items: center;
     display: flex;
@@ -104,84 +112,6 @@
       flex-grow: 1;
     }
   }
-
-  &.half {
-    ngx-skeleton-loader &::ng-deep > span {
-      margin: 0;
-    }
-
-    .stats {
-      flex: 0 0 55%;
-
-      .legend {
-        margin-bottom: 10px;
-        row-gap: 5px;
-
-        ngx-skeleton-loader &::ng-deep > span {
-          height: 15px;
-        }
-      }
-
-      .total-memory {
-        font-size: 32px;
-      }
-
-      .memory-used-caption {
-        margin-bottom: 10px;
-      }
-    }
-
-    .chart {
-      flex: 0 0 26%;
-      padding: 0;
-    }
-  }
-
-  &.quarter {
-    ngx-skeleton-loader &::ng-deep > span {
-      margin: 3px 0;
-    }
-
-    .stats {
-      flex: 0 0 58%;
-
-      @media(max-width: $breakpoint-xs) {
-        flex: 0 0 68%;
-      }
-
-      .label,
-      .stats-item {
-        font-size: 12px;
-        margin-right: 4px;
-
-        @media(max-width: $breakpoint-xs) {
-          font-size: 10px;
-        }
-      }
-
-      .legend {
-        row-gap: 0;
-
-        ngx-skeleton-loader &::ng-deep > span {
-          height: 11px;
-        }
-      }
-
-      .total-memory,
-      .memory-used-caption {
-        display: none;
-      }
-    }
-
-    .chart {
-      flex: 0 0 35%;
-      padding: 0;
-
-      @media(max-width: $breakpoint-xs) {
-        flex: 0 0 25%;
-      }
-    }
-  }
 }
 
 .stats-item {
@@ -202,5 +132,83 @@
     margin-bottom: 1px;
     margin-right: 5px;
     width: 12px;
+  }
+}
+
+%half-size {
+  ngx-skeleton-loader::ng-deep > span {
+    margin: 0;
+  }
+
+  .stats {
+    flex: 0 0 55%;
+
+    .legend {
+      margin-bottom: 10px;
+      row-gap: 5px;
+
+      ngx-skeleton-loader::ng-deep > span {
+        height: 15px;
+      }
+    }
+
+    .total-memory {
+      font-size: 32px;
+    }
+
+    .memory-used-caption {
+      margin-bottom: 10px;
+    }
+  }
+
+  .chart {
+    flex: 0 0 26%;
+    padding: 0;
+  }
+}
+
+%quarter-size {
+  ngx-skeleton-loader::ng-deep > span {
+    margin: 3px 0;
+  }
+
+  .stats {
+    flex: 0 0 58%;
+
+    @media(max-width: $breakpoint-xs) {
+      flex: 0 0 68%;
+    }
+
+    .label,
+    .stats-item {
+      font-size: 12px;
+      margin-right: 4px;
+
+      @media(max-width: $breakpoint-xs) {
+        font-size: 10px;
+      }
+    }
+
+    .legend {
+      row-gap: 0;
+
+      ngx-skeleton-loader::ng-deep > span {
+        height: 11px;
+      }
+    }
+
+    .total-memory,
+    .memory-used-caption {
+      display: none;
+    }
+  }
+
+  .chart {
+    flex: 0 0 35%;
+    padding: 0;
+
+    @media(max-width: $breakpoint-xs) {
+      flex: 0 0 25%;
+    }
   }
 }
