@@ -8,9 +8,6 @@ export const interfacesCardElements = {
     interfaces: {
       hierarchy: [marker('Interfaces')],
     },
-    add: {
-      hierarchy: [marker('Add')],
-    },
   },
 
 } satisfies UiSearchableElement;

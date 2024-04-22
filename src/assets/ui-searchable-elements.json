@@ -636,118 +636,6 @@
   {
     "hierarchy": [
       "Network",
-      "Global Configuration",
-      "Hostname And Domain"
-    ],
-    "synonyms": [
-      "Hostname",
-      "Domain",
-      "Global Configuration"
-    ],
-    "requiredRoles": [],
-    "anchorRouterLink": [
-      "/network"
-    ],
-    "routerLink": null,
-    "anchor": "hostname-and-domain",
-    "triggerAnchor": "configure-global-network-configuration",
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "Network",
-      "Global Configuration",
-      "Service Announcement"
-    ],
-    "synonyms": [
-      "Global Configuration"
-    ],
-    "requiredRoles": [],
-    "anchorRouterLink": [
-      "/network"
-    ],
-    "routerLink": null,
-    "anchor": "service-announcement",
-    "triggerAnchor": "configure-global-network-configuration",
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "Network",
-      "Global Configuration",
-      "DNS Servers"
-    ],
-    "synonyms": [
-      "Global Configuration"
-    ],
-    "requiredRoles": [],
-    "anchorRouterLink": [
-      "/network"
-    ],
-    "routerLink": null,
-    "anchor": "dns-servers",
-    "triggerAnchor": "configure-global-network-configuration",
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "Network",
-      "Global Configuration",
-      "Default Gateway"
-    ],
-    "synonyms": [
-      "Gateway",
-      "Global Configuration"
-    ],
-    "requiredRoles": [],
-    "anchorRouterLink": [
-      "/network"
-    ],
-    "routerLink": null,
-    "anchor": "default-gateway",
-    "triggerAnchor": "configure-global-network-configuration",
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "Network",
-      "Global Configuration",
-      "Outbound Network"
-    ],
-    "synonyms": [
-      "Global Configuration"
-    ],
-    "requiredRoles": [],
-    "anchorRouterLink": [
-      "/network"
-    ],
-    "routerLink": null,
-    "anchor": "outbound-network",
-    "triggerAnchor": "configure-global-network-configuration",
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "Network",
-      "Add"
-    ],
-    "synonyms": [
-      "Network"
-    ],
-    "requiredRoles": [
-      "NETWORK_INTERFACE_WRITE"
-    ],
-    "anchorRouterLink": [
-      "/network"
-    ],
-    "routerLink": null,
-    "anchor": "add",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "Network",
       "Interfaces"
     ],
     "synonyms": [
@@ -782,57 +670,17 @@
   {
     "hierarchy": [
       "Network",
-      "Global Configuration",
-      "Settings"
+      "Global Configuration"
     ],
     "synonyms": [
-      "Settings",
-      "Global Configuration"
+      "Network"
     ],
     "requiredRoles": [],
     "anchorRouterLink": [
       "/network"
     ],
     "routerLink": null,
-    "anchor": "configure-global-network-configuration",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "Network",
-      "Global Configuration"
-    ],
-    "synonyms": [
-      "Global Configuration"
-    ],
-    "requiredRoles": [],
-    "anchorRouterLink": [
-      "/network"
-    ],
-    "routerLink": null,
-    "anchor": "network-global-configuration",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "Network",
-      "Global Configuration",
-      "Nameservers"
-    ],
-    "synonyms": [
-      "NS",
-      "DNS",
-      "Domain Name System",
-      "Global Configuration"
-    ],
-    "requiredRoles": [],
-    "anchorRouterLink": [
-      "/network"
-    ],
-    "routerLink": null,
-    "anchor": "nameservers",
+    "anchor": "global-configuration",
     "triggerAnchor": null,
     "section": "ui"
   },

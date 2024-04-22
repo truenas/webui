@@ -17,7 +17,6 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { ipv4Validator, ipv6Validator } from 'app/modules/ix-forms/validators/ip-validation';
-import { networkConfigurationFormElements } from 'app/pages/network/components/configuration/configuration.elements';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -32,7 +31,6 @@ import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class NetworkConfigurationComponent implements OnInit {
-  protected readonly searchableElements = networkConfigurationFormElements;
   protected readonly requiredRoles = [Role.FullAdmin];
 
   isFormLoading = false;
