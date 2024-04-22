@@ -1,32 +1,29 @@
-import { Widget } from 'app/pages/dashboard/types/widget.interface';
+import { SlotSize, Widget } from 'app/pages/dashboard/types/widget.interface';
 
 export enum WidgetGroupLayout {
-  /**
-   * [  1  ]
-   */
   Full = 'full',
 
   /**
-   * [1][2]
-   * [3][4]
+   * [0][1]
+   * [2][3]
    */
   Quarters = 'quarters',
 
   /**
-   * [  1  ]
-   * [2] [3]
+   * [  0  ]
+   * [1] [2]
    */
   HalfAndQuarters = 'half-and-quarters',
 
   /**
-   * [1] [2]
-   * [  3  ]
+   * [0] [1]
+   * [  2  ]
    */
   QuartersAndHalf = 'quarters-and-half',
 
   /**
+   * [  0  ]
    * [  1  ]
-   * [  2  ]
    */
   Halves = 'halves',
 }
@@ -34,12 +31,20 @@ export enum WidgetGroupLayout {
 export interface WidgetGroup {
   layout: WidgetGroupLayout;
   slots: [
-    Widget | null,
-    Widget | null,
-    Widget | null,
-    Widget | null,
+    (Widget | null)?,
+    (Widget | null)?,
+    (Widget | null)?,
+    (Widget | null)?,
   ];
 }
+
+export const layoutToSlotSizes = {
+  [WidgetGroupLayout.Full]: [SlotSize.Full],
+  [WidgetGroupLayout.Halves]: [SlotSize.Half, SlotSize.Half],
+  [WidgetGroupLayout.QuartersAndHalf]: [SlotSize.Quarter, SlotSize.Quarter, SlotSize.Half],
+  [WidgetGroupLayout.HalfAndQuarters]: [SlotSize.Half, SlotSize.Quarter, SlotSize.Quarter],
+  [WidgetGroupLayout.Quarters]: [SlotSize.Quarter, SlotSize.Quarter, SlotSize.Quarter, SlotSize.Quarter],
+};
 
 export const widgetGroupIcons = new Map<WidgetGroupLayout, string>([
   [WidgetGroupLayout.Full, 'ix:layout_full'],
