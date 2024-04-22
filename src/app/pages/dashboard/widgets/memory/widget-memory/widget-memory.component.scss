@@ -141,11 +141,11 @@
   }
 
   .stats {
-    flex: 0 0 55%;
+    flex: 0 0 60%;
 
     .legend {
-      margin-bottom: 10px;
-      row-gap: 5px;
+      margin-bottom: 0;
+      row-gap: 0;
 
       ngx-skeleton-loader::ng-deep > span {
         height: 15px;
@@ -153,23 +153,23 @@
     }
 
     .total-memory {
-      font-size: 32px;
+      font-size: 28px;
     }
 
     .memory-used-caption {
-      margin-bottom: 10px;
+      margin-bottom: 5px;
     }
   }
 
   .chart {
-    flex: 0 0 26%;
+    flex: 0 0 23%;
     padding: 0;
   }
 }
 
 %quarter-size {
   ngx-skeleton-loader::ng-deep > span {
-    margin: 3px 0;
+    margin: 5px 0;
   }
 
   .stats {
@@ -190,6 +190,7 @@
     }
 
     .legend {
+      margin-bottom: 0;
       row-gap: 0;
 
       ngx-skeleton-loader::ng-deep > span {
