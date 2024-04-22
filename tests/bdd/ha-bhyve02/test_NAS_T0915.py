@@ -27,6 +27,8 @@ def test_edit_user_enable_password(driver):
 @given(parsers.parse('The browser is open navigate to "{nas_url}"'))
 def the_browser_is_open_navigate_to_nas_url(driver, nas_url):
     """The browser is open navigate to "{nas_user}"."""
+    global nas_host
+    nas_host = nas_url
     if nas_url not in driver.current_url:
         driver.get(f"http://{nas_url}/ui/dashboard/")
         time.sleep(1)
@@ -165,7 +167,7 @@ def try_login_with_ssh(driver):
         driver.find_element_by_xpath('//div[@ix-auto="overlay__SSH_Running"]').click()
         time.sleep(4)
     global ssh_result
-    ssh_result = ssh_cmd('beadm list', 'ericbsd', 'testing', nas_ip)
+    ssh_result = ssh_cmd('beadm list', 'ericbsd', 'testing', nas_host)
 
 
 @then('User should be able to login')

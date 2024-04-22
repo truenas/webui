@@ -27,6 +27,8 @@ def test_edit_user_change_password(driver):
 @given(parsers.parse('The browser is open navigate to "{nas_url}"'))
 def the_browser_is_open_navigate_to_nas_url(driver, nas_url):
     """The browser is open navigate to "{nas_user}"."""
+    global nas_host
+    nas_host = nas_url
     if nas_url not in driver.current_url:
         driver.get(f"http://{nas_url}/ui/dashboard/")
         time.sleep(1)
@@ -137,7 +139,7 @@ def change_should_be_saved(driver):
 def log_out_and_try_to_log_back_in_with_the_old_password_for_that_user(driver):
     """Log out and try to log back in with the old password for that user."""
     global ssh_result
-    ssh_result = ssh_cmd('beadm list', 'ericbsd', 'testing', nas_ip)
+    ssh_result = ssh_cmd('beadm list', 'ericbsd', 'testing', nas_host)
 
 
 @then('User should not be able to log in ssh with the old password')
@@ -151,7 +153,7 @@ def user_should_not_be_able_to_log_in_ssh_with_the_old_password(driver):
 def try_to_log_back_in_ssh_with_the_new_password_for_that_user(driver):
     """Try to log back in ssh with the new password for that user."""
     global ssh_result
-    ssh_result = ssh_cmd('beadm list', 'ericbsd', 'testing1234', nas_ip)
+    ssh_result = ssh_cmd('beadm list', 'ericbsd', 'testing1234', nas_host)
 
 
 @then('User should be able to log in with new password')
