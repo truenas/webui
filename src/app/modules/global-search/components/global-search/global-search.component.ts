@@ -3,6 +3,7 @@ import {
 } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Store } from '@ngrx/store';
 import {
   debounceTime, filter, switchMap, tap,
 } from 'rxjs';
@@ -10,6 +11,8 @@ import { moveToNextFocusableElement, moveToPreviousFocusableElement } from 'app/
 import { UiSearchableElement } from 'app/modules/global-search/interfaces/ui-searchable-element.interface';
 import { GlobalSearchSectionsProvider } from 'app/modules/global-search/services/global-search-sections.service';
 import { SidenavService } from 'app/services/sidenav.service';
+import { AppState } from 'app/store';
+import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 
 @UntilDestroy()
 @Component({
@@ -26,14 +29,17 @@ export class GlobalSearchComponent implements OnInit {
   searchControl = new FormControl('');
   searchResults: UiSearchableElement[];
   isLoading = false;
+  systemVersion: string;
 
   constructor(
     protected sidenavService: SidenavService,
     private globalSearchSectionsProvider: GlobalSearchSectionsProvider,
     private cdr: ChangeDetectorRef,
+    private store$: Store<AppState>,
   ) {}
 
   ngOnInit(): void {
+    this.getSystemVersion();
     this.listenForSearchChanges();
     this.setInitialSearchResults();
   }
@@ -85,7 +91,10 @@ export class GlobalSearchComponent implements OnInit {
     ).subscribe((searchResults) => {
       this.searchResults = [
         ...searchResults,
-        ...this.globalSearchSectionsProvider.getHelpSectionResults(this.searchControl.value),
+        ...this.globalSearchSectionsProvider.getHelpSectionResults(
+          this.searchControl.value,
+          this.extractVersion(this.systemVersion),
+        ),
       ];
       this.isLoading = false;
       this.cdr.markForCheck();
@@ -98,5 +107,19 @@ export class GlobalSearchComponent implements OnInit {
 
   private focusInputElement(): void {
     this.searchInput.nativeElement?.focus();
+  }
+
+  private getSystemVersion(): void {
+    this.store$.pipe(
+      waitForSystemInfo,
+      untilDestroyed(this),
+    )
+      .subscribe((systemInfo) => {
+        this.systemVersion = systemInfo.version;
+      });
+  }
+
+  private extractVersion(version: string): string {
+    return version.match(/(\d+\.\d+)\.\d+-/)?.[1];
   }
 }
