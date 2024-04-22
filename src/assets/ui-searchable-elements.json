@@ -3007,6 +3007,25 @@
   },
   {
     "hierarchy": [
+      "Virtual Machines",
+      "Add"
+    ],
+    "synonyms": [
+      "Virtual Machines"
+    ],
+    "requiredRoles": [
+      "VM_WRITE"
+    ],
+    "anchorRouterLink": [
+      "/vm"
+    ],
+    "routerLink": null,
+    "anchor": "add",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
       "Virtual Machines"
     ],
     "synonyms": [
