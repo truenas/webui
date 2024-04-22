@@ -170,64 +170,48 @@ def active_directory_should_successfully_save_and_start_without_an_error(driver)
     time.sleep(5)
 
 
-@then('Navigate to Shell')
-def navigate_to_shell(driver):
-    """Navigate to Shell."""
-    element = driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Reporting"]')
-    driver.execute_script("arguments[0].scrollIntoView();", element)
+@then(parsers.parse('run "{cmd}" on the NAS with ssh'))
+def run_wbinfo_u_on_the_nas_with_ssh(driver, nas_ip, cmd):
+    """run "wbinfo -u" on the NAS with ssh."""
+    global results
+    results = ssh_cmd(cmd, 'root', 'testing', nas_ip)
+    assert results['result'], results['output']
+
+
+@then(parsers.parse('verify that "{ad_object}" is in wbinfo -u output'))
+def verify_that_ad_object_is_in_wbinfo_u_output(driver, ad_object):
+    """verify that "{ad_object}" is in wbinfo -u output."""
+    assert ad_object in results['output'], results['output']
     time.sleep(1)
-    assert wait_on_element(driver, 5, '//mat-list-item[@ix-auto="option__Shell"]', 'clickable')
-    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Shell"]').click()
 
 
-@then('The Shell page should open')
-def the_shell_should_should_open(driver):
-    """The Shell page should open."""
-    assert wait_on_element(driver, 5, '//span[@class="reverse-video terminal-cursor"]')
-    time.sleep(10)
+@then(parsers.parse('run "{cmd}" on the NAS with ssh'))
+def run_wbinfo_g_on_the_nas_with_ssh(driver, nas_ip, cmd):
+    """run "wbinfo -g" on the NAS with ssh."""
+    global results
+    results = ssh_cmd(cmd, 'root', 'testing', nas_ip)
+    assert results['result'], results['output']
 
 
-@then(parsers.parse('input "{cmd}"'))
-def input_wbinfo_u(driver, cmd):
-    """Input "wbinfo -u"."""
-    actions = ActionChains(driver)
-    actions.send_keys(cmd, Keys.ENTER)
-    actions.perform()
+@then(parsers.parse('verify that "{ad_object}" is in wbinfo -g output'))
+def verify_that_ad_object_is_in_wbinfo_g_output(driver, ad_object):
+    """verify that "{ad_object}" is in wbinfo -g output."""
+    assert ad_object in results['output'], results['output']
+    time.sleep(1)
 
 
-@then(parsers.parse('Verify that "{ad_object}" is in  wbinfo -u output'))
-def verify_that_ad_object_is_in__wbinfo_u_output(driver, ad_object):
-    """Verify that "{ad_object}" is in  wbinfo -u output."""
-    assert wait_on_element(driver, 15, f'//span[contains(.,"{ad_object}")]')
+@then(parsers.parse('run "{cmd}" on the NAS with ssh'))
+def run_wbinfo_t_on_the_nas_with_ssh(driver, nas_ip, cmd):
+    """run "wbinfo -t" on the NAS with ssh."""
+    global results
+    results = ssh_cmd(cmd, 'root', 'testing', nas_ip)
+    assert results['result'], results['output']
 
 
-@then(parsers.parse('Input "{cmd}"'))
-def input_wbinfo_g(driver, cmd):
-    """Input "wwbinfo -g"."""
-    actions = ActionChains(driver)
-    actions.send_keys(cmd, Keys.ENTER)
-    actions.perform()
-
-
-@then(parsers.parse('Verify that "{ad_object}" is in wbinfo -g output'))
-def verify_that_ad01domain_admin_is_in_wbinfo_g_output(driver, ad_object):
-    """Verify that "{ad_object}" is in wbinfo -g output."""
-    split_ad_object = ad_object.split()
-    assert wait_on_element(driver, 5, f'//span[contains(.,"{split_ad_object[0]}") and contains(.,"{split_ad_object[1]}")]')
-
-
-@then(parsers.parse('Input "{cmd}"'))
-def input_wbinfo_t(driver, cmd):
-    """Input "wbinfo -t"."""
-    actions = ActionChains(driver)
-    actions.send_keys(cmd, Keys.ENTER)
-    actions.perform()
-
-
-@then('Verify that the trust secret succeeded')
+@then('verify that the trust secret succeeded')
 def verify_that_the_trust_secret_succeeded(driver):
-    """Verify that the trust secret succeeded."""
-    assert wait_on_element(driver, 5, '//span[contains(.,"succeeded")]')
+    """verify that the trust secret succeeded."""
+    assert 'via RPC calls succeeded' in results['output'], results['output']
 
 
 @then(parsers.parse('ssh and input {tdbdump_command} before failover'))
