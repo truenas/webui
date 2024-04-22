@@ -154,7 +154,7 @@ def go_to_the_dashboard_and_click_initiate_failover_on_the_system_information_st
     """go to the Dashboard and click Initiate Failover on the System Information standby controller."""
     driver.find_element_by_xpath(xpaths.side_Menu.dashboard).click()
     assert wait_on_element(driver, 10, xpaths.dashboard.title)
-    time.sleep(20)
+    time.sleep(30)
     rsc.Trigger_Failover(driver)
 
 
