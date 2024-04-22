@@ -55,49 +55,16 @@
         class="group-container"
         [class.editing]="isEditing()"
       >
-        <div class="group-controls">
-          <div class="mobile-reorder-buttons">
-            <button
-              mat-icon-button
-              [attr.aria-label]="'Move widget up' | translate"
-              [ixTest]="['move-up', 'widget' + i]"
-              [disabled]="!canMoveUp(i)"
-              (click)="onMoveGroup(i, 1)"
-            >
-              <ix-icon name="mdi-menu-up"></ix-icon>
-            </button>
-            <button
-              mat-icon-button
-              [attr.aria-label]="'Move widget down' | translate"
-              [ixTest]="['move-down', 'widget' + i]"
-              [disabled]="!canMoveDown(i)"
-              (click)="onMoveGroup(i, -1)"
-            >
-              <ix-icon name="mdi-menu-down"></ix-icon>
-            </button>
-          </div>
-          <div class="drag-handle" ixDragHandle>
-            <ix-icon name="mdi-drag-horizontal"></ix-icon>
-          </div>
-          <div class="edit-and-delete">
-            <button
-              mat-icon-button
-              [attr.aria-label]="'Edit group' | translate"
-              [ixTest]="['edit-group', 'widget' + i]"
-              (click)="onEditGroup(group)"
-            >
-              <ix-icon name="edit"></ix-icon>
-            </button>
-            <button
-              mat-icon-button
-              [attr.aria-label]="'Delete group' | translate"
-              [ixTest]="['delete-group', 'widget' + i]"
-              (click)="onDeleteGroup(group)"
-            >
-              <ix-icon name="delete"></ix-icon>
-            </button>
-          </div>
-        </div>
+        <ix-widget-group-controls
+          class="controls"
+          [index]="i"
+          [totalGroups]="renderedGroups().length"
+          (moveUp)="onMoveGroup(i, -1)"
+          (moveDown)="onMoveGroup(i, 1)"
+          (edit)="onEditGroup(group)"
+          (delete)="onDeleteGroup(group)"
+        ></ix-widget-group-controls>
+
         <ix-widget-group
           class="group"
           [group]="group"
