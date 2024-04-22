@@ -1,8 +1,6 @@
 @import 'scss-imports/cssvars';
 @import '../../dashboard-variables';
 
-$animation-duration: 200ms;
-
 .groups {
   display: grid;
   gap: $widget-gap;
@@ -23,7 +21,7 @@ $animation-duration: 200ms;
     transform: scale(0.85) translate(0, 10px);
   }
 
-  .group-controls {
+  .controls {
     opacity: 1;
   }
 }
@@ -38,54 +36,6 @@ $animation-duration: 200ms;
   outline: 1px dashed transparent;
   position: relative;
   transition: outline $animation-duration;
-}
-
-.group-controls {
-  color: var(--fg2);
-  display: flex;
-  justify-content: space-between;
-  opacity: 0;
-  padding: 3px 3px 0;
-  position: absolute;
-  top: 0;
-  transition: opacity $animation-duration;
-  width: 100%;
-
-  .mobile-reorder-buttons {
-    align-self: flex-start;
-    display: flex;
-    visibility: hidden;
-
-    @media #{$media-lt-sm} {
-      column-gap: 5px;
-      pointer-events: auto;
-      visibility: visible;
-    }
-  }
-
-  .drag-handle {
-    cursor: grab;
-    height: 32px;
-    left: 50%;
-    line-height: 35px;
-    margin-left: -30px;
-    position: absolute;
-    top: 0;
-    width: 60px;
-
-    @media #{$media-gt-xs} {
-      display: block;
-    }
-  }
-
-  .edit-and-delete {
-    align-self: flex-end;
-    display: flex;
-
-    @media #{$media-lt-sm} {
-      column-gap: 5px;
-    }
-  }
 }
 
 .group {

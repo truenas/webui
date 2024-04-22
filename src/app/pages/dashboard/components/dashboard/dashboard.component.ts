@@ -1,7 +1,7 @@
 import {
   animate, group as groupAnimations, style, transition, trigger,
 } from '@angular/animations';
-import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
+import { moveItemInArray } from '@angular/cdk/drag-drop';
 import {
   ChangeDetectionStrategy, Component, OnInit, signal,
 } from '@angular/core';
@@ -82,16 +82,7 @@ export class DashboardComponent implements OnInit {
   protected onMoveGroup(index: number, direction: 1 | -1): void {
     this.renderedGroups.update((groups) => {
       const updatedGroups = [...groups];
-      moveItemInArray(updatedGroups, index, index - direction);
-      return updatedGroups;
-    });
-  }
-
-  // TODO:
-  protected onDrop(event: CdkDragDrop<WidgetGroup[]>): void {
-    this.renderedGroups.update((groups) => {
-      const updatedGroups = [...groups];
-      moveItemInArray(updatedGroups, event.previousIndex, event.currentIndex);
+      moveItemInArray(updatedGroups, index, index + direction);
       return updatedGroups;
     });
   }
@@ -104,14 +95,6 @@ export class DashboardComponent implements OnInit {
     this.renderedGroups.update((groups) => {
       return groups.filter((group) => group !== groupToRemove);
     });
-  }
-
-  protected canMoveUp(index: number): boolean {
-    return index > 0;
-  }
-
-  protected canMoveDown(index: number): boolean {
-    return index < this.renderedGroups().length - 1;
   }
 
   // TODO: Filter out fully empty groups somewhere.

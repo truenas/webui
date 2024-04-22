@@ -18,6 +18,9 @@ import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
 import { DashboardComponent } from 'app/pages/dashboard/components/dashboard/dashboard.component';
+import {
+  WidgetGroupControlsComponent,
+} from 'app/pages/dashboard/components/dashboard/widget-group-controls/widget-group-controls.component';
 import { WidgetErrorComponent } from 'app/pages/dashboard/components/widget-error/widget-error.component';
 import { WidgetGroupComponent } from 'app/pages/dashboard/components/widget-group/widget-group.component';
 import {
@@ -69,6 +72,7 @@ import { widgetComponents } from 'app/pages/dashboard/widgets/all-widgets.consta
     WidgetErrorComponent,
     WidgetGroupFormComponent,
     WidgetEditorGroupComponent,
+    WidgetGroupControlsComponent,
     ...widgetComponents,
   ],
   providers: [
