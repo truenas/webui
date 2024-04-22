@@ -156,6 +156,7 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
   }
 
   onWidgetReorder(newState: DashConfigItem[]): void {
+    this.renderedWidgets = newState;
     this.applyState(newState);
   }
 
