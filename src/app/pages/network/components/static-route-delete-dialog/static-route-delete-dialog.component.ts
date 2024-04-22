@@ -14,6 +14,7 @@ import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-static-route-delete-dialog',
   templateUrl: './static-route-delete-dialog.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

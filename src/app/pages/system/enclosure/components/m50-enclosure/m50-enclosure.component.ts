@@ -8,6 +8,7 @@ interface TrayConfig {
 }
 
 @Component({
+  selector: 'ix-m50-enclosure',
   templateUrl: './m50-enclosure.component.svg',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

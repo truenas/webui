@@ -10,6 +10,7 @@ import { DockerHubRateLimit } from 'app/interfaces/dockerhub-rate-limit.interfac
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-dockerhub-rate-info-dialog',
   templateUrl: './dockerhub-rate-limit-info-dialog.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

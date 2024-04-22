@@ -11,6 +11,7 @@ import {
 } from 'app/pages/datasets/modules/encryption/components/dataset-unlock/dataset-unlock.component';
 
 @Component({
+  selector: 'ix-unlock-summary-dialog',
   templateUrl: './unlock-summary-dialog.component.html',
   styleUrls: ['./unlock-summary-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

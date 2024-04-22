@@ -130,5 +130,4 @@ export interface ReportingData {
 
 export enum ReportingDatabaseError {
   FailedExport = 22,
-  InvalidTimestamp = 206,
 }

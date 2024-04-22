@@ -10,6 +10,7 @@ import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-resilver-progress',
   templateUrl: './resilver-progress.component.html',
   styleUrls: ['./resilver-progress.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

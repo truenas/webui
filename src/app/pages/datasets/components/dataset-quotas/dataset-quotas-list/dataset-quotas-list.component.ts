@@ -47,6 +47,7 @@ interface QuotaData {
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-dataset-quotas-list',
   templateUrl: './dataset-quotas-list.component.html',
   styleUrls: ['./dataset-quotas-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

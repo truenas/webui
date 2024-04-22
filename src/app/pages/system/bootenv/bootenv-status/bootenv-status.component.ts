@@ -33,6 +33,7 @@ export interface BootPoolActionEvent {
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-bootenv-status',
   templateUrl: './bootenv-status.component.html',
   styleUrls: ['./bootenv-status.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

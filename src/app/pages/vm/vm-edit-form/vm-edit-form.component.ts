@@ -34,6 +34,7 @@ import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-vm-edit-form',
   templateUrl: './vm-edit-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [CpuValidatorService],

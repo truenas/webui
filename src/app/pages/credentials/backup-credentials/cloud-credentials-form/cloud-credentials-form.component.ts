@@ -33,6 +33,7 @@ import { WebSocketService } from 'app/services/ws.service';
 // TODO: Form is partially backend driven and partially hardcoded on the frontend.
 @UntilDestroy()
 @Component({
+  selector: 'ix-cloud-credentials-form',
   templateUrl: './cloud-credentials-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

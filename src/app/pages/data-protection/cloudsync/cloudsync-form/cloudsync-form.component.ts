@@ -50,6 +50,7 @@ type FormValue = CloudSyncFormComponent['form']['value'];
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-cloudsync-form',
   templateUrl: './cloudsync-form.component.html',
   styleUrls: ['./cloudsync-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

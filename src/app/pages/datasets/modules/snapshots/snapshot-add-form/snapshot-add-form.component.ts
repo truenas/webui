@@ -31,6 +31,7 @@ import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-snapshot-add-form',
   templateUrl: './snapshot-add-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

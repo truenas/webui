@@ -51,6 +51,7 @@ import { ServicesState } from 'app/store/services/services.reducer';
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-iscsi-wizard',
   templateUrl: './iscsi-wizard.component.html',
   styleUrls: ['./iscsi-wizard.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

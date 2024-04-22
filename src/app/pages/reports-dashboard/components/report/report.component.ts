@@ -17,7 +17,7 @@ import {
   BehaviorSubject, Subscription, timer,
 } from 'rxjs';
 import {
-  delay, distinctUntilChanged, filter, skipWhile, switchMap, throttleTime,
+  delay, distinctUntilChanged, filter, skipWhile, throttleTime,
 } from 'rxjs/operators';
 import { toggleMenuDuration } from 'app/constants/toggle-menu-duration';
 import { FormatDateTimePipe } from 'app/core/pipes/format-datetime.pipe';
@@ -483,31 +483,6 @@ export class ReportComponent extends WidgetComponent implements OnInit, OnChange
         type: EmptyType.Errors,
         title: this.translate.instant('Error getting chart data'),
         message: err.reason,
-      };
-    }
-    if (err?.error === (ReportingDatabaseError.InvalidTimestamp as number)) {
-      this.report.errorConf = {
-        type: EmptyType.Errors,
-        title: this.translate.instant('The reporting database is broken'),
-        button: {
-          label: this.translate.instant('Fix database'),
-          action: () => {
-            const errorMessage = err.reason ? err.reason.replace('[EINVALIDRRDTIMESTAMP] ', '') : null;
-            const helpMessage = this.translate.instant('You can clear reporting database and start data collection immediately.');
-            const message = errorMessage ? `${errorMessage}<br>${helpMessage}` : helpMessage;
-            this.dialog.confirm({
-              title: this.translate.instant('The reporting database is broken'),
-              message,
-              buttonText: this.translate.instant('Clear'),
-            }).pipe(
-              filter(Boolean),
-              switchMap(() => this.ws.call('reporting.clear')),
-              untilDestroyed(this),
-            ).subscribe(() => {
-              this.window.location.reload();
-            });
-          },
-        },
       };
     }
   }

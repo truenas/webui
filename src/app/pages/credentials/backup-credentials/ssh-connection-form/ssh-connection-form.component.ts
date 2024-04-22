@@ -39,6 +39,7 @@ const sslCertificationError = 'ESSLCERTVERIFICATIONERROR';
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-ssh-connection-form',
   templateUrl: './ssh-connection-form.component.html',
   styleUrls: ['./ssh-connection-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -3,6 +3,7 @@ import { ChangeDetectionStrategy, Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 @Component({
+  selector: 'ix-key-created-dialog',
   templateUrl: './key-created-dialog.component.html',
   styleUrls: ['./key-created-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

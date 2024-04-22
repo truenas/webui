@@ -28,6 +28,7 @@ export interface ExtendDialogParams {
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-extend-dialog',
   templateUrl: './extend-dialog.component.html',
   styleUrls: ['./extend-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

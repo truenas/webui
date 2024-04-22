@@ -1,0 +1,5 @@
+// Avoid using specific sizes in widget components.
+// Instead rely on @media(max-width: $breakpoint-xs)
+$widget-group-width: 540px;
+$widget-group-height: 400px;
+$widget-gap: 10px;

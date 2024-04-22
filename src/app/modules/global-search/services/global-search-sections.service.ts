@@ -30,11 +30,11 @@ export class GlobalSearchSectionsProvider {
     return this.searchProvider.search(searchTerm, this.globalSearchMaximumLimit);
   }
 
-  getHelpSectionResults(searchTerm: string): UiSearchableElement[] {
+  getHelpSectionResults(searchTerm: string, appVersion: string): UiSearchableElement[] {
     return [
       {
         hierarchy: [this.translate.instant('Search Documentation for «{value}»', { value: searchTerm })],
-        targetHref: `https://www.truenas.com/docs/search/?query=${searchTerm}`,
+        targetHref: `https://www.truenas.com/docs/scale/${appVersion}/search/?query=${searchTerm}`,
         section: GlobalSearchSection.Help,
       },
     ];

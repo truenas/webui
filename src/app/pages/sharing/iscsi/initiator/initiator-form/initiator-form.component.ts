@@ -21,6 +21,7 @@ interface InitiatorItem {
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-initiator-form',
   templateUrl: './initiator-form.component.html',
   styleUrls: ['./initiator-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

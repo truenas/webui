@@ -1,6 +1,5 @@
-import { ChangeDetectionStrategy, Component, Inject } from '@angular/core';
-import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChainedRef } from 'app/modules/ix-forms/components/ix-slide-in/chained-component-ref';
 import { WidgetGroup } from 'app/pages/dashboard/types/widget-group.interface';
 
 @Component({
@@ -11,11 +10,13 @@ import { WidgetGroup } from 'app/pages/dashboard/types/widget-group.interface';
 })
 export class WidgetGroupFormComponent {
   constructor(
-    private slideInRef: IxSlideInRef<WidgetGroupFormComponent>,
-    @Inject(SLIDE_IN_DATA) private editingGroup: WidgetGroup | null = null,
+    private chainedRef: ChainedRef<WidgetGroup | null>,
   ) {}
 
   onSubmit(): void {
-    this.slideInRef.close({} as WidgetGroup);
+    this.chainedRef.close({
+      response: null,
+      error: false,
+    });
   }
 }

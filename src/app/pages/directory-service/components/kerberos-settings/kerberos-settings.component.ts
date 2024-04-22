@@ -14,6 +14,7 @@ import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-kerberos-settings',
   templateUrl: './kerberos-settings.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
