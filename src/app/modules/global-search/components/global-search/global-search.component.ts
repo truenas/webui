@@ -6,9 +6,11 @@ import {
 import { FormControl } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
+import _ from 'lodash';
 import {
   tap, debounceTime, filter, switchMap,
   combineLatestWith,
+  distinctUntilChanged,
 } from 'rxjs';
 import { searchDelayConst } from 'app/modules/global-search/constants/delay.const';
 import { moveToNextFocusableElement, moveToPreviousFocusableElement } from 'app/modules/global-search/helpers/focus-helper';
@@ -134,6 +136,7 @@ export class GlobalSearchComponent implements OnInit {
     this.searchProvider.selectionChanged$.pipe(
       combineLatestWith(this.searchDirectives.directiveAdded$.pipe(filter(Boolean))),
       filter(([config]) => !!this.searchDirectives.get(config)),
+      distinctUntilChanged(([prevConfig], [nextConfig]) => _.isEqual(prevConfig, nextConfig)),
       untilDestroyed(this),
     ).subscribe(([config]) => {
       this.resetInput();
