@@ -6,7 +6,7 @@ import { WidgetMemoryComponent } from 'app/pages/dashboard/widgets/memory/widget
 
 export const memoryWidget = dashboardWidget({
   name: T('Memory'),
-  supportedSizes: [SlotSize.Full],
+  supportedSizes: [SlotSize.Full, SlotSize.Half, SlotSize.Quarter],
   category: WidgetCategory.Memory,
   component: WidgetMemoryComponent,
   settingsComponent: null,
