@@ -32,7 +32,7 @@ export class IxIconGroupComponent implements ControlValueAccessor {
   onTouch: () => void = (): void => {};
 
   writeValue(value: string): void {
-    this.value = value;
+    this.value = this.options.has(value) ? value : null;
     this.cdr.markForCheck();
   }
 
@@ -50,7 +50,7 @@ export class IxIconGroupComponent implements ControlValueAccessor {
   }
 
   onValueChanged(value: string): void {
-    this.value = value;
+    this.writeValue(value);
     this.onChange(this.value);
   }
 }

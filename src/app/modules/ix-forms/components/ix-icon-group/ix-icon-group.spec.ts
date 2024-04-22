@@ -18,6 +18,10 @@ describe('IxIconGroupComponent', () => {
 
   beforeEach(() => {
     spectator = createComponent();
+    spectator.setInput('options', new Map([
+      ['edit', 'mdi-pencil'],
+      ['delete', 'mdi-delete'],
+    ]));
   });
 
   describe('setDisabledState()', () => {
@@ -34,7 +38,7 @@ describe('IxIconGroupComponent', () => {
       spectator.detectChanges();
       expect(spectator.query('button')).not.toBeDisabled();
     });
-    it('when called with true, buton is disabled', () => {
+    it('when called with true, button is disabled', () => {
       spectator.component.setDisabledState(true);
       spectator.detectChanges();
       expect(spectator.query('button')).toBeDisabled();
@@ -42,16 +46,21 @@ describe('IxIconGroupComponent', () => {
   });
 
   describe('writeValue()', () => {
-    // it('when called with 1, sets \'value\' to that value', () => {
-    //   spectator.component.writeValue(1);
-    //   expect(spectator.component.value).toBe(1);
-    // });
+    it('when called with edit, sets value to that value', () => {
+      spectator.component.writeValue('edit');
+      expect(spectator.component.value).toBe('edit');
+    });
+
+    it('when called with unexist value, resets value to null', () => {
+      spectator.component.writeValue('unexist');
+      expect(spectator.component.value).toBeNull();
+    });
   });
 
   describe('onValueChanged()', () => {
-    // it('when called with 4, sets \'value\' to be 4', () => {
-    //   spectator.component.onValueChanged(4);
-    //   expect(spectator.component.value).toBe(4);
-    // });
+    it('when called with delete, sets value to be delete', () => {
+      spectator.component.onValueChanged('delete');
+      expect(spectator.component.value).toBe('delete');
+    });
   });
 });
