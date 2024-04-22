@@ -29,6 +29,7 @@ import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-privilege-list',
   templateUrl: './privilege-list.component.html',
   styleUrls: ['./privilege-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

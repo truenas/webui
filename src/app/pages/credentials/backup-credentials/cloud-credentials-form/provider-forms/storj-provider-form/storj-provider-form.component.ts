@@ -9,6 +9,7 @@ import {
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-storj-provider-form',
   templateUrl: './storj-provider-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

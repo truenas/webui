@@ -1,18 +1,8 @@
-<ng-container *ngIf="demo === 0">
-  <div class="slot">
-    <ix-widget-hostname [size]="SlotSize.Quarter"></ix-widget-hostname>
-  </div>
-  <div class="slot">
-    <ix-widget-interface-ip [size]="SlotSize.Quarter" [settings]="{ interface: 'eno1' }"></ix-widget-interface-ip>
-  </div>
-</ng-container>
-<ng-container *ngIf="demo === 1">
-  <div class="slot">
-    <ix-widget-help [size]="SlotSize.Full"></ix-widget-help>
-  </div>
-</ng-container>
-<ng-container *ngIf="demo === 2">
-  <div class="slot full-height-demo">
-    <ix-widget-memory [size]="SlotSize.Full"></ix-widget-memory>
-  </div>
-</ng-container>
+<div
+  *ngFor="let slotIndex of slotRange()"
+  [class]="['slot', 'slot' + slotIndex]"
+>
+  <ng-container *ngIf="slots()[slotIndex] as slot">
+    <ng-container *ngComponentOutlet="slot.component; inputs: slot.inputs;" />
+  </ng-container>
+</div>

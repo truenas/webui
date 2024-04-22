@@ -24,6 +24,7 @@ import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-service-ftp',
   templateUrl: './service-ftp.component.html',
   styleUrls: ['./service-ftp.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

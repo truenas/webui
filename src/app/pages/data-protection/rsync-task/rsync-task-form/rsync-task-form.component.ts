@@ -27,6 +27,7 @@ import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-rsync-task-form',
   templateUrl: './rsync-task-form.component.html',
   styleUrls: ['./rsync-task-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

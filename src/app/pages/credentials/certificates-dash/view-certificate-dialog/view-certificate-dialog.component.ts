@@ -6,6 +6,7 @@ import {
 import { DownloadService } from 'app/services/download.service';
 
 @Component({
+  selector: 'ix-view-certificate-dialog',
   templateUrl: './view-certificate-dialog.component.html',
   styleUrls: ['./view-certificate-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

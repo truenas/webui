@@ -51,6 +51,7 @@
     class="widgets-wrapper"
     ixDropGrid
     [style.width]="optimalDesktopWidth"
+    [deprecatedSupportForOldDashboard]="true"
     [ixDropGridModel]="renderedWidgets"
     (ixDropGridModelChange)="onWidgetReorder($event)"
   >

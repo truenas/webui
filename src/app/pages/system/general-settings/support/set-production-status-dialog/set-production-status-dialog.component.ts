@@ -10,6 +10,7 @@ export interface SetProductionStatusDialogResult {
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-set-production-status-dialog',
   templateUrl: './set-production-status-dialog.component.html',
   styleUrls: ['./set-production-status-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

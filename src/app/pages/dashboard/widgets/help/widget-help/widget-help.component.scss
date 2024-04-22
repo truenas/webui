@@ -1,22 +1,21 @@
-:host {
-  display: block;
+.card {
   height: 100%;
+
+  .container {
+    padding-left: 21px;
+    padding-top: 12px;
+  }
 }
 
 .header {
-  font-size: 24px;
-  margin-left: 16px;
-  margin-top: 14px;
+  h3 {
+    font-size: 24px;
+  }
 }
 
 .copyright {
-  align-self: flex-end;
   font-size: 11px;
   text-align: center;
-}
-
-.container {
-  padding: 22px 22px 16px;
 }
 
 .line-item {

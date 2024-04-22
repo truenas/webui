@@ -23,6 +23,7 @@ import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-ssh-keypair-form',
   templateUrl: './ssh-keypair-form.component.html',
   styleUrls: ['./ssh-keypair-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -3,6 +3,7 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { BaseAlertServiceForm } from 'app/pages/system/alert-service/alert-service/alert-services/base-alert-service-form';
 
 @Component({
+  selector: 'ix-ops-genie-service',
   templateUrl: './ops-genie-service.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

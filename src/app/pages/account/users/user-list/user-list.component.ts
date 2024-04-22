@@ -29,6 +29,7 @@ import { waitForPreferences } from 'app/store/preferences/preferences.selectors'
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-user-list',
   templateUrl: './user-list.component.html',
   styleUrls: ['./user-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -3,6 +3,7 @@ import { MAT_SNACK_BAR_DATA } from '@angular/material/snack-bar';
 import { SnackbarConfig } from 'app/modules/snackbar/components/snackbar/snackbar-config.interface';
 
 @Component({
+  selector: 'ix-snackbar',
   templateUrl: './snackbar.component.html',
   styleUrls: ['./snackbar.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

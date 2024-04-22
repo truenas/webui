@@ -4,12 +4,13 @@ import {
 import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButton, MatButtonModule } from '@angular/material/button';
-import { MatCard } from '@angular/material/card';
+import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
 import { BaseChartDirective } from 'ng2-charts';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
+import { IxDropGridModule } from 'app/modules/ix-drop-grid/ix-drop-grid.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { LayoutModule } from 'app/modules/layout/layout.module';
@@ -51,6 +52,7 @@ import { WidgetDatapointComponent } from 'app/pages/dashboard/widgets/common/wid
     MatTooltipModule,
     BaseChartDirective,
     MatButtonModule,
+    MatCardContent,
     NgxSkeletonLoaderModule.forRoot({
       animation: false,
       theme: {
@@ -60,6 +62,7 @@ import { WidgetDatapointComponent } from 'app/pages/dashboard/widgets/common/wid
         opacity: '0.25',
       },
     }),
+    IxDropGridModule,
   ],
   declarations: [
     DashboardComponent,

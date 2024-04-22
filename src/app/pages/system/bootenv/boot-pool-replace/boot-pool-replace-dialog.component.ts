@@ -19,6 +19,7 @@ import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-boot-pool-replace-dialog',
   templateUrl: './boot-pool-replace-dialog.component.html',
   styleUrls: ['./boot-pool-replace-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

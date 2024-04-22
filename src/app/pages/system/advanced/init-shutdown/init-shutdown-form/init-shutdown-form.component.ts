@@ -20,6 +20,7 @@ import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy({ arrayName: 'subscriptions' })
 @Component({
+  selector: 'ix-init-shutdown-form',
   templateUrl: './init-shutdown-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

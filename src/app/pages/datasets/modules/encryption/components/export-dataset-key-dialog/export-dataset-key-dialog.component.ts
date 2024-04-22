@@ -17,6 +17,7 @@ import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-export-dataset-key-dialog',
   templateUrl: './export-dataset-key-dialog.component.html',
   styleUrls: ['./export-dataset-key-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

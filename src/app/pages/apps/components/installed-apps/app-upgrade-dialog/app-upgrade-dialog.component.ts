@@ -20,6 +20,7 @@ type Version = Omit<UpgradeSummary, 'upgrade_version' | 'image_update_available'
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-app-upgrade-dialog',
   styleUrls: ['./app-upgrade-dialog.component.scss'],
   templateUrl: './app-upgrade-dialog.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,

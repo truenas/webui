@@ -30,6 +30,7 @@ import { CatalogEditFormComponent } from './catalog-edit-form/catalog-edit-form.
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-catalogs',
   templateUrl: './catalogs.component.html',
   styleUrls: ['./catalogs.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

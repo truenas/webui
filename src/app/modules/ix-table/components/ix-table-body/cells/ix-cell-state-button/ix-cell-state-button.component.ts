@@ -22,6 +22,7 @@ interface RowState {
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-cell-state-button',
   templateUrl: './ix-cell-state-button.component.html',
   styleUrls: ['./ix-cell-state-button.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

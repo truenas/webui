@@ -21,7 +21,7 @@
       (input)="onChanged(ixInput.value)"
       (blur)="onTouch()"
     />
-    <span *ngIf="shouldShowResetInput() || loading" class="reset-input">
+    <span class="reset-input" [class.with-opacity]="shouldShowResetInput() && !isValueFromOptions(ixInput.value)">
       <mat-progress-spinner
         *ngIf="loading"
         class="loader"
@@ -30,10 +30,18 @@
       ></mat-progress-spinner>
 
       <ix-icon
-        *ngIf="shouldShowResetInput()"
+        *ngIf="shouldShowResetInput() && !isValueFromOptions(ixInput.value); else arrowIcon"
         name="mdi-close-circle"
         (click)="resetInput()"
       ></ix-icon>
+
+      <ng-template #arrowIcon>
+        <span class="mat-mdc-select-arrow" (click)="ixInput.focus()">
+          <svg viewBox="0 0 24 24" width="24px" height="24px" aria-hidden="true">
+            <path d="M7 10l5 5 5-5z"></path>
+          </svg>
+        </span>
+      </ng-template>
     </span>
 
     <mat-autocomplete

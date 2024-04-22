@@ -3,7 +3,8 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatSlideToggleHarness } from '@angular/material/slide-toggle/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { MockModule } from 'ng-mocks';
+import { provideMockStore } from '@ngrx/store/testing';
+import { MockComponents, MockModule } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
@@ -17,12 +18,14 @@ import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
 import { SearchInput1Component } from 'app/modules/search-input1/search-input1.component';
+import { CloudBackupDetailsComponent } from 'app/pages/data-protection/cloud-backup/cloud-backup-details/cloud-backup-details.component';
 import {
   CloudBackupFormComponent,
 } from 'app/pages/data-protection/cloud-backup/cloud-backup-form/cloud-backup-form.component';
 import { CloudBackupListComponent } from 'app/pages/data-protection/cloud-backup/cloud-backup-list/cloud-backup-list.component';
 import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
+import { selectAdvancedConfig, selectSystemConfigState } from 'app/store/system-config/system-config.selectors';
 
 describe('CloudBackupListComponent', () => {
   let spectator: Spectator<CloudBackupListComponent>;
@@ -54,6 +57,12 @@ describe('CloudBackupListComponent', () => {
       MockModule(PageHeaderModule),
       SearchInput1Component,
     ],
+    declarations: [
+      MockComponents(
+        CloudBackupListComponent,
+        CloudBackupDetailsComponent,
+      ),
+    ],
     providers: [
       mockAuth(),
       mockWebSocket([
@@ -70,6 +79,18 @@ describe('CloudBackupListComponent', () => {
           response: true,
         })),
       }),
+      provideMockStore({
+        selectors: [
+          {
+            selector: selectSystemConfigState,
+            value: {},
+          },
+          {
+            selector: selectAdvancedConfig,
+            value: {},
+          },
+        ],
+      }),
     ],
   });
 
@@ -85,7 +106,7 @@ describe('CloudBackupListComponent', () => {
 
     expect(spectator.inject(IxChainedSlideInService).open).toHaveBeenCalledWith(
       CloudBackupFormComponent,
-      true,
+      false,
       cloudBackups[0],
     );
   });
@@ -96,7 +117,7 @@ describe('CloudBackupListComponent', () => {
 
     expect(spectator.inject(IxChainedSlideInService).open).toHaveBeenCalledWith(
       CloudBackupFormComponent,
-      true,
+      false,
       undefined,
     );
   });

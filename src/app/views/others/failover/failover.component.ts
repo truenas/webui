@@ -14,6 +14,7 @@ import { passiveNodeReplaced } from 'app/store/system-info/system-info.actions';
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-failover',
   templateUrl: './failover.component.html',
   styleUrls: ['./failover.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

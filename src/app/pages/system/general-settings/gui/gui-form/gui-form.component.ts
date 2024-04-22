@@ -37,6 +37,7 @@ import { waitForGeneralConfig } from 'app/store/system-config/system-config.sele
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-gui-form',
   templateUrl: './gui-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

@@ -7,6 +7,7 @@ import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-eula',
   templateUrl: './eula.component.html',
   styleUrls: ['./eula.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -28,6 +28,7 @@ interface PodLogEvent {
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-pod-logs',
   templateUrl: './pod-logs.component.html',
   styleUrls: ['./pod-logs.component.scss'],
   providers: [ShellService],

@@ -1,6 +1,6 @@
-<ng-container *ixWithLoadingState="systemInfo$ as systemInfo">
-  <ix-widget-datapoint
-    [label]="name | translate"
-    [text]="systemInfo.hostname"
-  ></ix-widget-datapoint>
-</ng-container>
+<ix-widget-datapoint
+  *ixWithLoadingState="systemInfo$ as systemInfo"
+  [label]="name | translate"
+  [text]="systemInfo.hostname"
+></ix-widget-datapoint>
+
