@@ -3,6 +3,7 @@ import {
 } from '@angular/core';
 
 @Component({
+  selector: 'ix-widget',
   template: '',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

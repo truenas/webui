@@ -6,6 +6,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatStepperModule } from '@angular/material/stepper';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -25,6 +26,7 @@ import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
 import { SchedulerModule } from 'app/modules/scheduler/scheduler.module';
 import { SearchInput1Component } from 'app/modules/search-input1/search-input1.component';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
+import { CloudBackupRestoreFromSnapshotFormComponent } from 'app/pages/data-protection/cloud-backup/cloud-backup-details/cloud-backup-restore-form-snapshot-form/cloud-backup-restore-from-snapshot-form.component';
 import {
   CloudBackupFormComponent,
 } from 'app/pages/data-protection/cloud-backup/cloud-backup-form/cloud-backup-form.component';
@@ -125,6 +127,7 @@ import { SmartTaskListComponent } from './smart-task/smart-task-list/smart-task-
     CloudSyncProviderDescriptionComponent,
     SearchInput1Component,
     CoreComponents,
+    MatProgressSpinnerModule,
   ],
   declarations: [
     SnapshotTaskListComponent,
@@ -175,6 +178,7 @@ import { SmartTaskListComponent } from './smart-task/smart-task-list/smart-task-
     CloudBackupStatsComponent,
     CloudBackupSnapshotsComponent,
     CloudBackupFormComponent,
+    CloudBackupRestoreFromSnapshotFormComponent,
   ],
 })
 export class DataProtectionModule {}

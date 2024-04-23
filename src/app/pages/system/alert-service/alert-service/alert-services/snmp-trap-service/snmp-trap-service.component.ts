@@ -9,6 +9,7 @@ import { BaseAlertServiceForm } from 'app/pages/system/alert-service/alert-servi
 const disabledValue = 'disabled';
 
 @Component({
+  selector: 'ix-snmp-trap-service',
   templateUrl: './snmp-trap-service.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

@@ -15,6 +15,7 @@ import { WebSocketService } from 'app/services/ws.service';
   providedIn: 'root',
 })
 export class WidgetResourcesService {
+  // TODO: nosub is emitted for some reason
   readonly realtimeUpdates$ = this.ws.subscribe('reporting.realtime');
 
   readonly systemInfo$ = this.ws.call('webui.main.dashboard.sys_info').pipe(

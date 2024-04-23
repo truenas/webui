@@ -5,7 +5,10 @@ import {
   AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, ViewContainerRef,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { delay, take } from 'rxjs';
 import { GlobalSearchComponent } from 'app/modules/global-search/components/global-search/global-search.component';
+import { searchDelayConst } from 'app/modules/global-search/constants/delay.const';
+import { UiSearchProvider } from 'app/modules/global-search/services/ui-search.service';
 
 @UntilDestroy()
 @Component({
@@ -21,6 +24,7 @@ export class GlobalTriggerSearchComponent implements AfterViewInit {
     private cdr: ChangeDetectorRef,
     private overlay: Overlay,
     private viewContainerRef: ViewContainerRef,
+    private searchProvider: UiSearchProvider,
     @Inject(DOCUMENT) private document: Document,
   ) {}
 
@@ -47,10 +51,12 @@ export class GlobalTriggerSearchComponent implements AfterViewInit {
     }
 
     const searchResultsPortal = new ComponentPortal(GlobalSearchComponent, this.viewContainerRef);
-    const componentRef = this.overlayRef.attach(searchResultsPortal);
+    this.overlayRef.attach(searchResultsPortal);
     this.cdr.markForCheck();
 
-    componentRef.instance.resetSearch.pipe(untilDestroyed(this)).subscribe(() => this.detachOverlay());
+    this.searchProvider.selectionChanged$
+      .pipe(take(1), delay(searchDelayConst), untilDestroyed(this))
+      .subscribe(() => this.detachOverlay());
   }
 
   detachOverlay(): void {

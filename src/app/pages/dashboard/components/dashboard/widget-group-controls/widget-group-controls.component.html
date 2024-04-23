@@ -1,0 +1,43 @@
+<div class="mobile-reorder-buttons">
+  <button
+    mat-icon-button
+    [attr.aria-label]="'Move widget up' | translate"
+    [ixTest]="['move-up', 'widget' + index()]"
+    [disabled]="!canMoveUp()"
+    (click)="moveUp.emit()"
+  >
+    <ix-icon name="mdi-menu-up"></ix-icon>
+  </button>
+  <button
+    mat-icon-button
+    [attr.aria-label]="'Move widget down' | translate"
+    [ixTest]="['move-down', 'widget' + index()]"
+    [disabled]="!canMoveDown()"
+    (click)="moveDown.emit()"
+  >
+    <ix-icon name="mdi-menu-down"></ix-icon>
+  </button>
+</div>
+
+<div class="drag-handle" ixDragHandle>
+  <ix-icon name="mdi-drag-horizontal"></ix-icon>
+</div>
+
+<div class="edit-and-delete">
+  <button
+    mat-icon-button
+    [attr.aria-label]="'Edit group' | translate"
+    [ixTest]="['edit-group', 'widget' + index()]"
+    (click)="edit.emit()"
+  >
+    <ix-icon name="edit"></ix-icon>
+  </button>
+  <button
+    mat-icon-button
+    [attr.aria-label]="'Delete group' | translate"
+    [ixTest]="['delete-group', 'widget' + index()]"
+    (click)="delete.emit()"
+  >
+    <ix-icon name="delete"></ix-icon>
+  </button>
+</div>

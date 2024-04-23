@@ -21,6 +21,7 @@ import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-service-ssh',
   templateUrl: './service-ssh.component.html',
   styleUrls: ['./service-ssh.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

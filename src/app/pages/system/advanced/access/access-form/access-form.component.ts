@@ -24,6 +24,7 @@ import { selectGeneralConfig } from 'app/store/system-config/system-config.selec
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-access-form',
   templateUrl: 'access-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

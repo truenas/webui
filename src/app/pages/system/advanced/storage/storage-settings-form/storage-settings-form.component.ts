@@ -34,6 +34,7 @@ export interface StorageSettings {
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-storage-settings-form',
   templateUrl: './storage-settings-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

@@ -7,6 +7,7 @@ import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators
 import { BaseAlertServiceForm } from 'app/pages/system/alert-service/alert-service/alert-services/base-alert-service-form';
 
 @Component({
+  selector: 'ix-telegram-service',
   templateUrl: './telegram-service.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

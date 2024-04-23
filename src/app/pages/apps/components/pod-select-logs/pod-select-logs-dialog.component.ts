@@ -17,6 +17,7 @@ export type LogsDialogFormValue = PodSelectLogsDialogComponent['form']['value'];
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-pod-select-logs-dialog',
   templateUrl: './pod-select-logs-dialog.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

@@ -11,6 +11,7 @@ import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-reboot',
   templateUrl: './reboot.component.html',
   styleUrls: ['./reboot.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

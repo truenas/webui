@@ -10,6 +10,7 @@ import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-export-all-keys-dialog',
   templateUrl: './export-all-keys-dialog.component.html',
   styleUrls: ['./export-all-keys-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

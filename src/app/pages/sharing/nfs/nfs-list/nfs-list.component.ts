@@ -24,6 +24,7 @@ import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-nfs-list',
   templateUrl: './nfs-list.component.html',
   styleUrls: ['./nfs-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

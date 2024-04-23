@@ -9,6 +9,7 @@ import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-shutdown',
   templateUrl: './shutdown.component.html',
   styleUrls: ['./shutdown.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

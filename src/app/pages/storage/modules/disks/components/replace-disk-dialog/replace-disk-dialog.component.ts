@@ -25,6 +25,7 @@ export interface ReplaceDiskDialogData {
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-replace-disk-dialog',
   templateUrl: './replace-disk-dialog.component.html',
   styleUrls: ['./replace-disk-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

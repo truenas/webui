@@ -48,6 +48,7 @@ export interface DashboardNetworkInterfaceAlias extends NetworkInterfaceAlias {
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-dashboard',
   templateUrl: './dashboard.component.html',
   styleUrls: [
     '../widget/widget.component.scss',
@@ -155,6 +156,7 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
   }
 
   onWidgetReorder(newState: DashConfigItem[]): void {
+    this.renderedWidgets = newState;
     this.applyState(newState);
   }
 

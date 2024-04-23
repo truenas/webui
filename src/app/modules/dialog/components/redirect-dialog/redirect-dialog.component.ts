@@ -7,6 +7,7 @@ import {
 } from './redirect-dialog-data.interface';
 
 @Component({
+  selector: 'ix-redirect-dialog',
   templateUrl: './redirect-dialog.component.html',
   styleUrls: ['./redirect-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

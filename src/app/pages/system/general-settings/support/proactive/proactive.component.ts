@@ -21,11 +21,11 @@ import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
-  templateUrl: 'proactive.component.html',
+  selector: 'ix-proactive',
+  templateUrl: './proactive.component.html',
   styleUrls: ['./proactive.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-
 export class ProactiveComponent implements OnInit {
   protected readonly requiredRoles = [Role.FullAdmin];
 

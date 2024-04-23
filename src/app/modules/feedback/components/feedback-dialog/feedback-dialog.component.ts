@@ -16,6 +16,7 @@ import { SystemGeneralService } from 'app/services/system-general.service';
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-feedback-dialog',
   templateUrl: './feedback-dialog.component.html',
   styleUrls: ['./feedback-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
