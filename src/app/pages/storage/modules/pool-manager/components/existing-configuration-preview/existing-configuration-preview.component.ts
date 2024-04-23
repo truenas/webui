@@ -74,7 +74,7 @@ export class ExistingConfigurationPreviewComponent implements OnChanges {
     };
 
     let vdevTypes = Object.entries(VdevType);
-    if (/\bDRAID\b/.test(this.topology.data[0].type)) {
+    if (this.topology.data[0].type === TopologyItemType.Draid) {
       vdevTypes = vdevTypes.filter(([, type]) => type !== VdevType.Spare);
     }
     for (const [, value] of vdevTypes) {
