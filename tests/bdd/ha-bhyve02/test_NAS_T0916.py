@@ -153,7 +153,7 @@ def user_should_not_be_able_to_log_in_ssh_with_the_old_password(driver):
 def try_to_log_back_in_ssh_with_the_new_password_for_that_user(driver):
     """Try to log back in ssh with the new password for that user."""
     global ssh_result
-    ssh_result = ssh_cmd('beadm list', 'ericbsd', 'testing1234', nas_host)
+    ssh_result = ssh_cmd('beadm list', 'ericbsd', 'testing1', nas_host)
 
 
 @then('User should be able to log in with new password')

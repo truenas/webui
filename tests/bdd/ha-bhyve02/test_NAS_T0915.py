@@ -154,18 +154,6 @@ def updated_value_should_be_visible(driver):
 @then('Try login with ssh')
 def try_login_with_ssh(driver):
     """Try login with ssh."""
-    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Services"]').click()
-    assert wait_on_element(driver, 10, '//services')
-    # Scroll to SSH service
-    assert wait_on_element(driver, 10, '//button[@ix-auto="button__S3_Actions"]')
-    element = driver.find_element_by_xpath('//button[@ix-auto="button__S3_Actions"]')
-    driver.execute_script("arguments[0].scrollIntoView();", element)
-    time.sleep(1)
-    element = driver.find_element_by_xpath('//mat-slide-toggle[@ix-auto="slider__SSH_Running"]')
-    class_attribute = element.get_attribute('class')
-    if 'mat-checked' not in class_attribute:
-        driver.find_element_by_xpath('//div[@ix-auto="overlay__SSH_Running"]').click()
-        time.sleep(4)
     global ssh_result
     ssh_result = ssh_cmd('beadm list', 'ericbsd', 'testing', nas_host)
 
