@@ -564,6 +564,9 @@ thead.ui-treetable-thead tr {
 
 .value,
 .mat-mdc-list-item .value {
+  word-wrap: break-word;
+  white-space: pre-wrap;
+  word-break: break-word;
   font-weight: 500;
 }
 
