@@ -5,7 +5,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { ChartData, ChartOptions } from 'chart.js';
-import { map, take } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 import { GiB } from 'app/constants/bytes.constant';
 import { ThemeUtils } from 'app/core/classes/theme-utils/theme-utils';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
@@ -27,14 +27,12 @@ export class WidgetMemoryComponent {
 
   protected memory = toSignal(this.resources.realtimeUpdates$.pipe(
     map((update) => update.fields.virtual_memory),
-    take(1),
   ));
 
   protected isLoading = computed(() => !this.memory());
 
   protected arcSize = toSignal(this.resources.realtimeUpdates$.pipe(
     map((update) => update.fields.zfs?.arc_size),
-    take(1),
   ));
 
   stats = computed(() => {
