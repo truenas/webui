@@ -22,7 +22,7 @@ mat-card {
     .container {
       align-items: center;
       display: flex;
-      height: calc($widget-group-height / 3.5);
+      height: calc($widget-group-height * 0.3);
       justify-content: center;
       line-height: normal;
       margin: 12px 0;
@@ -32,7 +32,7 @@ mat-card {
       width: 100%;
 
       &.full {
-        height: calc($widget-group-height - 65px);
+        height: calc($widget-group-height * 0.8);
       }
 
       .sub-text {
