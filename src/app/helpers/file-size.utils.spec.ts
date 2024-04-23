@@ -24,6 +24,22 @@ describe('buildNormalizedFileSize with base 2', () => {
   it('converts 1024^5 bytes to 1 PiB with base 2', () => {
     expect(buildNormalizedFileSize(1024 ** 5)).toBe('1 PiB');
   });
+
+  it('converts 1024^6 bytes to 1 EiB with base 2', () => {
+    expect(buildNormalizedFileSize(1024 ** 6)).toBe('1 EiB');
+  });
+
+  it('converts 1024^7 bytes to 1 ZiB with base 2', () => {
+    expect(buildNormalizedFileSize(1024 ** 7)).toBe('1 ZiB');
+  });
+
+  it('converts 1024^8 bytes to 1 YiB with base 2', () => {
+    expect(buildNormalizedFileSize(1024 ** 8)).toBe('1 YiB');
+  });
+
+  it('converts 1024^9 bytes to 1024 YiB with base 2', () => {
+    expect(buildNormalizedFileSize(1024 ** 9)).toBe('1024 YiB');
+  });
 });
 
 describe('buildNormalizedFileSize with base 10', () => {
@@ -49,5 +65,21 @@ describe('buildNormalizedFileSize with base 10', () => {
 
   it('converts 1000^5 bits to 1 Pb with base 10', () => {
     expect(buildNormalizedFileSize(1000 ** 5, 'b', 10)).toBe('1 Pb');
+  });
+
+  it('converts 1000^6 bits to 1 Eb with base 10', () => {
+    expect(buildNormalizedFileSize(1000 ** 6, 'b', 10)).toBe('1 Eb');
+  });
+
+  it('converts 1000^7 bits to 1 Zb with base 10', () => {
+    expect(buildNormalizedFileSize(1000 ** 7, 'b', 10)).toBe('1 Zb');
+  });
+
+  it('converts 1000^8 bits to 1 Yb with base 10', () => {
+    expect(buildNormalizedFileSize(1000 ** 8, 'b', 10)).toBe('1 Yb');
+  });
+
+  it('converts 1000^9 bits to 1000 Yb with base 10', () => {
+    expect(buildNormalizedFileSize(1000 ** 9, 'b', 10)).toBe('1000 Yb');
   });
 });
