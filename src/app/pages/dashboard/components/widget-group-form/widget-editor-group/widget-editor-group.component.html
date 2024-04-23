@@ -1,9 +1,13 @@
 <div
   *ngFor="let slotIndex of slotRange()"
+  tabindex="0"
+  [attr.aria-role]="'button'"
+  [attr.aria-label]="'Slot {n}' | translate: { n: slotIndex + 1 }"
   [class]="['slot', 'slot' + slotIndex]"
   [class.selected]="slotIndex === selectedSlot() && slotRange().length > 1"
   [class.empty]="!slots()[slotIndex]"
   (click)="selectedSlotChange.emit(slotIndex)"
+  (keydown.enter)="selectedSlotChange.emit(slotIndex)"
 >
   <ng-container *ngIf="slots()[slotIndex] as slot; else emptySlot">
     <ng-container *ngComponentOutlet="slot.component; inputs: slot.inputs;" />
