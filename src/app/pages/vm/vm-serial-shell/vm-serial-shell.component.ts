@@ -6,6 +6,7 @@ import { TerminalConfiguration, TerminalConnectionData } from 'app/interfaces/te
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-vm-serial-shell',
   template: '<ix-terminal [conf]="this"></ix-terminal>',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

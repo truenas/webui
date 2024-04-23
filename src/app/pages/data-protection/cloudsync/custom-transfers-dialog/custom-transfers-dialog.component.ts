@@ -6,6 +6,7 @@ import { helptextCloudSync } from 'app/helptext/data-protection/cloudsync/clouds
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-custom-transfers-dialog',
   templateUrl: './custom-transfers-dialog.component.html',
   styleUrls: ['./custom-transfers-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

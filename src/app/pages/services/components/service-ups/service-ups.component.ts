@@ -21,6 +21,7 @@ import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-service-ups',
   templateUrl: './service-ups.component.html',
   styleUrls: ['./service-ups.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

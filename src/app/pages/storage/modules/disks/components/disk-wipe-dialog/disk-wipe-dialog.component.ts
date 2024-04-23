@@ -14,6 +14,7 @@ import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-disk-wipe-dialog',
   templateUrl: './disk-wipe-dialog.component.html',
   styleUrls: ['./disk-wipe-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

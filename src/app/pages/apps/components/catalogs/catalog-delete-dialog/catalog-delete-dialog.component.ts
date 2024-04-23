@@ -14,6 +14,7 @@ import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-catalog-delete-dialog',
   templateUrl: './catalog-delete-dialog.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

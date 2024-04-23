@@ -10,6 +10,7 @@ import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-sl
 
 /** Simple component for testing IxSlideInComponent */
 @Component({
+  selector: 'ix-test',
   template: '<h1>{{text}}</h1>',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

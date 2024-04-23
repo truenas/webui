@@ -10,6 +10,7 @@ import {
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-http-provider-form',
   templateUrl: './http-provider-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

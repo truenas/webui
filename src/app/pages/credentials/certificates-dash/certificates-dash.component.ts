@@ -4,6 +4,7 @@ import { certificatesDashElements } from 'app/pages/credentials/certificates-das
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-certificates-dash',
   templateUrl: './certificates-dash.component.html',
   styleUrls: ['./certificates-dash.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

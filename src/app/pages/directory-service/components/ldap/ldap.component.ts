@@ -20,6 +20,7 @@ import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-ldap',
   templateUrl: './ldap.component.html',
   styleUrls: ['./ldap.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

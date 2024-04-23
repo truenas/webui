@@ -17,6 +17,7 @@ import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-associated-target-form',
   templateUrl: './associated-target-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

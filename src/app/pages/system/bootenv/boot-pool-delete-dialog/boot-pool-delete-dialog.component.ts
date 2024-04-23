@@ -15,6 +15,7 @@ import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-boot-pool-delete-dialog',
   templateUrl: './boot-pool-delete-dialog.component.html',
   styleUrls: ['./boot-pool-delete-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

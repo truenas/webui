@@ -21,6 +21,7 @@ import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-scrub-task-form',
   templateUrl: './scrub-task-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

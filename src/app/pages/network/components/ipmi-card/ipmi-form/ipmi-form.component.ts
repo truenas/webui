@@ -31,6 +31,7 @@ import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-ipmi-form',
   templateUrl: './ipmi-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

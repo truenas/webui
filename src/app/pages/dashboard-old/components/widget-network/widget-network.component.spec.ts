@@ -40,7 +40,6 @@ describe('WidgetNetworkComponent', () => {
       mockAuth(),
       mockWebSocket([
         mockCall('reporting.netdata_get_data'),
-        mockCall('reporting.clear'),
       ]),
       mockProvider(SystemGeneralService, {
         isEnterprise: () => true,

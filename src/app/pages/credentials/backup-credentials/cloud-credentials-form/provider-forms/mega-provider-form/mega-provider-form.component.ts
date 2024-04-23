@@ -9,6 +9,7 @@ import {
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-mega-provider-form',
   templateUrl: './mega-provider-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

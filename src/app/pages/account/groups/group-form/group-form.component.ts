@@ -28,6 +28,7 @@ import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-group-form',
   templateUrl: './group-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

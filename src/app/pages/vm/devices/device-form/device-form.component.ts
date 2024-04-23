@@ -34,6 +34,7 @@ const specifyCustom = T('Specify custom');
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-device-form',
   templateUrl: './device-form.component.html',
   styleUrls: ['./device-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

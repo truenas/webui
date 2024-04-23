@@ -15,6 +15,7 @@ import { AppsByCategory, AppsStore } from 'app/pages/apps/store/apps-store.servi
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-available-apps',
   templateUrl: './available-apps.component.html',
   styleUrls: ['./available-apps.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

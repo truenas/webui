@@ -34,6 +34,7 @@ const customIdmapName = 'custom' as const;
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-idmap-form',
   templateUrl: './idmap-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

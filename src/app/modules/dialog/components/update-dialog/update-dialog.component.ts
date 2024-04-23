@@ -6,6 +6,7 @@ import { selectUpdateJob } from 'app/modules/jobs/store/job.selectors';
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-update-dialog',
   templateUrl: './update-dialog.component.html',
   styleUrls: ['./update-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

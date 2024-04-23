@@ -25,6 +25,7 @@ import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-docker-image-update-dialog',
   templateUrl: './docker-image-update-dialog.component.html',
   styleUrls: ['./docker-image-update-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

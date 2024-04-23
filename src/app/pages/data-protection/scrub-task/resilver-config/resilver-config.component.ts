@@ -21,6 +21,7 @@ import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-resilver-config',
   templateUrl: './resilver-config.component.html',
   styleUrls: ['./resilver-config.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

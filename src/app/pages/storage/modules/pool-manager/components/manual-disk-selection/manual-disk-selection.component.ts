@@ -28,6 +28,7 @@ export interface ManualDiskSelectionParams {
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-manual-disk-selection',
   templateUrl: './manual-disk-selection.component.html',
   styleUrls: ['./manual-disk-selection.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

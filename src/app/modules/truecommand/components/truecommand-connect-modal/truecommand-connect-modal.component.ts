@@ -21,6 +21,7 @@ export type TruecommandSignupModalResult = boolean | { deregistered: boolean };
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-truecommand-connect-modal',
   styleUrls: ['./truecommand-connect-modal.component.scss'],
   templateUrl: './truecommand-connect-modal.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,

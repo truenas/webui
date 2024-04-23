@@ -39,6 +39,7 @@ import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-certificate-authority-add',
   templateUrl: './certificate-authority-add.component.html',
   styleUrls: ['./certificate-authority-add.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

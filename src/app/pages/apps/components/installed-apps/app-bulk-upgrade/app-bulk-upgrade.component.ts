@@ -26,6 +26,7 @@ import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-app-bulk-upgrade',
   templateUrl: './app-bulk-upgrade.component.html',
   styleUrls: ['./app-bulk-upgrade.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
