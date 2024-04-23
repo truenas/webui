@@ -20,7 +20,8 @@
       </div>
       <div class="help" [hidden]="!section.help">
         <div class="title">{{ 'Section Help' | translate }}</div>
-        <div class="value"> {{ section.help }}</div>
+        <div class="value">
+          <pre>{{ section.help }}</pre>
       </div>
     </div>
   </ix-fieldset>
