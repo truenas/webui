@@ -2,7 +2,8 @@ import { Injectable } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import UiElementsJson from 'app/../assets/ui-searchable-elements.json';
 import {
-  Observable, filter, first, from, map, mergeMap, of, toArray,
+  BehaviorSubject,
+  Observable, filter, first, from, map, mergeMap, of, tap, toArray,
 } from 'rxjs';
 import { GlobalSearchProvider } from 'app/modules/global-search/interfaces/global-search-provider.interface';
 import { UiSearchableElement } from 'app/modules/global-search/interfaces/ui-searchable-element.interface';
@@ -14,7 +15,7 @@ import { AuthService } from 'app/services/auth/auth.service';
 export class UiSearchProvider implements GlobalSearchProvider {
   uiElements = UiElementsJson as UiSearchableElement[];
 
-  private translatedTerms = this.uiElements?.map((element) => {
+  private translatedTerms = this.uiElements.map((element) => {
     return {
       ...element,
       hierarchy: element.hierarchy.map((key) => this.translate.instant(key)),
@@ -22,10 +23,17 @@ export class UiSearchProvider implements GlobalSearchProvider {
     };
   });
 
+  private selectedElement$ = new BehaviorSubject<UiSearchableElement>(null);
+  selectionChanged$ = this.selectedElement$.asObservable().pipe(
+    filter(Boolean),
+    tap(() => this.selectedElement$.next(null)),
+  );
+
   constructor(
     private authService: AuthService,
     private translate: TranslateService,
-  ) {}
+  ) {
+  }
 
   search(term: string, limit: number): Observable<UiSearchableElement[]> {
     // sort results by showing hierarchy match first, then synonyms match
@@ -56,5 +64,9 @@ export class UiSearchProvider implements GlobalSearchProvider {
       }),
       toArray(),
     );
+  }
+
+  select(element: UiSearchableElement): void {
+    this.selectedElement$.next(element);
   }
 }

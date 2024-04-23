@@ -18,19 +18,19 @@ export class WidgetGroupComponent {
   group = input.required<WidgetGroup>();
 
   @HostBinding('class')
-  get layout(): string {
+  protected get layout(): string {
     return this.group().layout;
   }
 
-  slotSizes = computed(() => {
+  protected slotSizes = computed(() => {
     return layoutToSlotSizes[this.group().layout];
   });
 
-  slotRange = computed(() => {
+  protected slotRange = computed(() => {
     return [...Array(this.slotSizes().length).keys()];
   });
 
-  slots = computed(() => {
+  protected slots = computed(() => {
     return this.slotRange().map((slotIndex) => this.getSlotComponent(slotIndex));
   });
 

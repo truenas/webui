@@ -32,12 +32,12 @@ describe('WidgetGroupComponent', () => {
     });
 
     expect(spectator.queryAll('.slot')).toHaveLength(1);
-    expect(spectator.component.layout).toBe(WidgetGroupLayout.Full);
+    expect(spectator.fixture.nativeElement).toHaveClass('full');
 
     spectator.setInput('group', { layout: WidgetGroupLayout.Quarters, slots: [] });
 
     expect(spectator.queryAll('.slot')).toHaveLength(4);
-    expect(spectator.component.layout).toBe(WidgetGroupLayout.Quarters);
+    expect(spectator.fixture.nativeElement).toHaveClass('quarters');
   });
 
   it('renders widgets in correct slots and assigns their settings', () => {
