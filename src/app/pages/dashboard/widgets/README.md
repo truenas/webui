@@ -8,8 +8,11 @@
 
 ## Guidelines for widgets
 ### Fluid
-* Widgets should prefer to rely on `@container` queries for their layout.
-* However, if this is not possible, you can use `size` input.
+* You can use `size` property to adjust widget layout based on slot size.
+* However, do not rely on strict pixel sizes because they will change on mobile. 
+
+### Loading indicators
+* Prefer subtle skeletons.
 
 ### Real-time
 * Widgets should rely on subscriptions when possible.

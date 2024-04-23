@@ -1,28 +1,48 @@
-:host {
-  display: block;
+@import 'scss-imports/cssvars';
+
+.card {
   height: 100%;
+
+  .header {
+    padding-bottom: 0;
+  }
+
+  .container {
+    display: flex;
+    flex-direction: column;
+    padding-left: 21px;
+    row-gap: 20px;
+  }
+
+  .card-content {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    justify-content: space-between;
+  }
+
+  .copyright {
+    font-size: 11px;
+    margin-bottom: 18px;
+    padding-top: 0;
+    text-align: center;
+  }
 }
 
 .header {
-  font-size: 24px;
-  margin-left: 16px;
-  margin-top: 14px;
-}
-
-.copyright {
-  align-self: flex-end;
-  font-size: 11px;
-  text-align: center;
-}
-
-.container {
-  padding: 22px 22px 16px;
+  h3 {
+    font-size: 24px;
+  }
 }
 
 .line-item {
   display: flex;
   flex-direction: row;
-  margin: 20px;
+  margin: 0 20px;
+
+  @media #{$media-gt-xs} {
+    margin: 0;
+  }
 
   div {
     align-items: center;

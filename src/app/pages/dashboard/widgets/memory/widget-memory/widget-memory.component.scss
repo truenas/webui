@@ -1,11 +1,29 @@
 @import 'scss-imports/cssvars';
 
-:host {
+.card {
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
   height: 100%;
-  padding: 14px 8px 14px 16px;
+}
+
+.card-content {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding-bottom: 0;
+  padding-right: 10px;
+
+  .header {
+    padding-bottom: 0;
+    padding-right: 12px;
+  }
+
+  .container {
+    padding-left: 12px;
+    padding-right: 0;
+    padding-top: 0;
+  }
 }
 
 .header {
@@ -22,6 +40,14 @@
   flex-grow: 1;
   overflow: hidden;
 
+  &.half {
+    @extend %half-size;
+  }
+
+  &.quarter {
+    @extend %quarter-size;
+  }
+
   .stats {
     align-items: center;
     display: flex;
@@ -30,6 +56,7 @@
     justify-content: center;
 
     .total-memory {
+      color: var(--fg1);
       font-family: var(--font-family-body);
       font-size: 49px;
       font-weight: 400;
@@ -42,6 +69,7 @@
 
       .units {
         font-size: 50%;
+        margin-left: -6px;
       }
 
       .skeleton {
@@ -75,8 +103,8 @@
     flex: 0 0 55%;
     margin: 0;
     overflow: hidden;
-    padding-left: 21px;
-    padding-right: 32px;
+    padding-left: 24px;
+    padding-right: 35px;
     position: relative;
 
     .skeleton {
@@ -104,5 +132,84 @@
     margin-bottom: 1px;
     margin-right: 5px;
     width: 12px;
+  }
+}
+
+%half-size {
+  ngx-skeleton-loader::ng-deep > span {
+    margin: 0;
+  }
+
+  .stats {
+    flex: 0 0 60%;
+
+    .legend {
+      margin-bottom: 0;
+      row-gap: 0;
+
+      ngx-skeleton-loader::ng-deep > span {
+        height: 15px;
+      }
+    }
+
+    .total-memory {
+      font-size: 28px;
+    }
+
+    .memory-used-caption {
+      margin-bottom: 5px;
+    }
+  }
+
+  .chart {
+    flex: 0 0 23%;
+    padding: 0;
+  }
+}
+
+%quarter-size {
+  ngx-skeleton-loader::ng-deep > span {
+    margin: 5px 0;
+  }
+
+  .stats {
+    flex: 0 0 58%;
+
+    @media(max-width: $breakpoint-xs) {
+      flex: 0 0 68%;
+    }
+
+    .label,
+    .stats-item {
+      font-size: 12px;
+      margin-right: 4px;
+
+      @media(max-width: $breakpoint-xs) {
+        font-size: 10px;
+      }
+    }
+
+    .legend {
+      margin-bottom: 0;
+      row-gap: 0;
+
+      ngx-skeleton-loader::ng-deep > span {
+        height: 11px;
+      }
+    }
+
+    .total-memory,
+    .memory-used-caption {
+      display: none;
+    }
+  }
+
+  .chart {
+    flex: 0 0 35%;
+    padding: 0;
+
+    @media(max-width: $breakpoint-xs) {
+      flex: 0 0 25%;
+    }
   }
 }

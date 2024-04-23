@@ -1,0 +1,99 @@
+<ix-modal-header2 [requiredRoles]="requiredRoles" [title]="title" [loading]="isLoading"></ix-modal-header2>
+<mat-card>
+  <mat-card-content>
+    <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
+      <div class="fieldsets">
+        <ix-fieldset
+          class="fieldset"
+          [title]="helptext.fieldset_local | translate"
+        >
+          <ix-explorer
+            formControlName="path"
+            [label]="helptext.source_path_placeholder | translate"
+            [tooltip]="helptext.source_path_tooltip | translate"
+            [required]="true"
+            [multiple]="true"
+            [nodeProvider]="fileNodeProvider"
+          ></ix-explorer>
+        </ix-fieldset>
+        <ix-fieldset
+          class="fieldset"
+          [title]="helptext.fieldset_remote | translate"
+        >
+          <ix-cloud-credentials-select
+            formControlName="credentials"
+            [label]="helptext.credentials_placeholder | translate"
+            [tooltip]="helptext.credentials_tooltip | translate"
+            [required]="true"
+          ></ix-cloud-credentials-select>
+          <ix-select
+            *ngIf="form.controls.bucket.enabled"
+            formControlName="bucket"
+            [label]="helptext.bucket_placeholder | translate"
+            [tooltip]="helptext.bucket_tooltip | translate"
+            [options]="bucketOptions$"
+            [required]="true"
+          ></ix-select>
+          <ix-input
+            *ngIf="form.controls.bucket_input.enabled"
+            formControlName="bucket_input"
+            [label]="helptext.bucket_input_placeholder | translate"
+            [tooltip]="helptext.bucket_input_tooltip | translate"
+            [required]="true"
+          ></ix-input>
+          <ix-explorer
+            *ngIf="form.controls.folder.enabled"
+            formControlName="folder"
+            root="/"
+            [label]="helptext.folder_placeholder | translate"
+            [nodeProvider]="bucketNodeProvider"
+            [required]="true"
+          ></ix-explorer>
+        </ix-fieldset>
+        <ix-fieldset
+          class="fieldset"
+          [title]="helptext.fieldset_task_settings | translate"
+        >
+          <ix-input
+            formControlName="description"
+            [label]="helptext.description_placeholder | translate"
+            [tooltip]="helptext.description_tooltip | translate"
+          ></ix-input>
+          <ix-input
+            formControlName="keep_last"
+            type="number"
+            [label]="helptext.keep_last_placeholder | translate"
+            [tooltip]="helptext.keep_last_tooltip | translate"
+            [required]="true"
+          ></ix-input>
+          <ix-input
+            formControlName="password"
+            type="password"
+            [label]="helptext.password_placeholder | translate"
+            [tooltip]="helptext.password_tooltip | translate"
+            [required]="true"
+          ></ix-input>
+          <ix-scheduler
+            formControlName="schedule"
+            [label]="helptext.schedule_placeholder | translate"
+            [tooltip]="helptext.schedule_tooltip | translate"
+            [required]="true"
+          ></ix-scheduler>
+        </ix-fieldset>
+      </div>
+
+      <ix-form-actions>
+        <button
+          *ixRequiresRoles="requiredRoles"
+          mat-button
+          type="submit"
+          color="primary"
+          ixTest="save"
+          [disabled]="form.invalid || isLoading"
+        >
+          {{ 'Save' | translate }}
+        </button>
+      </ix-form-actions>
+    </form>
+  </mat-card-content>
+</mat-card>

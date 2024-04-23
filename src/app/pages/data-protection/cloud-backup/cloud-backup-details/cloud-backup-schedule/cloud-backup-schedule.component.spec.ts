@@ -1,5 +1,6 @@
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
+import { mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { CloudBackup } from 'app/interfaces/cloud-backup.interface';
 import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
 import { CloudBackupScheduleComponent } from 'app/pages/data-protection/cloud-backup/cloud-backup-details/cloud-backup-schedule/cloud-backup-schedule.component';
@@ -28,6 +29,7 @@ describe('CloudBackupScheduleComponent', () => {
       IxTableModule,
     ],
     providers: [
+      mockWebSocket(),
       mockProvider(TaskService, {
         getTaskCronDescription: jest.fn(() => 'At 00:00, only on Sunday'),
       }),

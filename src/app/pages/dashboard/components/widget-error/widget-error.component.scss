@@ -1,0 +1,33 @@
+:host {
+  display: block;
+  height: 100%;
+}
+
+.card {
+  color: var(--fg2);
+
+  display: flex;
+  flex-direction: column;
+  font-size: 13px;
+  height: 100%;
+  justify-content: center;
+}
+
+.icon {
+  color: var(--alt-bg1);
+  font-size: 100px;
+  height: 100px;
+  margin-bottom: 8px;
+  margin-top: -3px;
+  opacity: 1;
+  width: auto;
+}
+
+.message {
+  padding: 0 16px;
+  text-align: center;
+
+  &::first-letter {
+    text-transform: uppercase;
+  }
+}
