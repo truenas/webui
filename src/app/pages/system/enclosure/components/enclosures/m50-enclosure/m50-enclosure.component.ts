@@ -7,6 +7,7 @@ import { EnclosureStore } from 'app/pages/system/enclosure/services/enclosure.st
 
 /** Example of an enclosure view implemented using an svg template */
 @Component({
+  selector: 'ix-m50-enclosure',
   templateUrl: './m50-enclosure.component.svg',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

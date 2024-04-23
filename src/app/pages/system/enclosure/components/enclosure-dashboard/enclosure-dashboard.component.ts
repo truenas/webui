@@ -3,6 +3,7 @@ import { EnclosureUi } from 'app/interfaces/enclosure.interface';
 import { Disk } from 'app/interfaces/storage.interface';
 
 @Component({
+  selector: 'ix-enclosure-dashboard',
   templateUrl: './enclosure-dashboard.component.html',
   styleUrls: ['./enclosure-dashboard.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
