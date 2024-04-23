@@ -4,6 +4,7 @@ import { of } from 'rxjs';
 import { LoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import { SystemInfo } from 'app/interfaces/system-info.interface';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
+import { SlotSize } from 'app/pages/dashboard/types/widget.interface';
 import { WidgetDatapointComponent } from 'app/pages/dashboard/widgets/common/widget-datapoint/widget-datapoint.component';
 import { WidgetHostnameComponent } from 'app/pages/dashboard/widgets/network/widget-hostname/widget-hostname.component';
 
@@ -18,6 +19,9 @@ describe('WidgetHostnameComponent', () => {
 
   it('renders hostname for the current system', () => {
     spectator = createComponent({
+      props: {
+        size: SlotSize.Full,
+      },
       providers: [
         mockProvider(WidgetResourcesService, {
           systemInfo$: of({
