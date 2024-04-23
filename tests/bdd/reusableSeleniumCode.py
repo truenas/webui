@@ -27,6 +27,11 @@ def scroll_To(driver: classmethod, xpath: str):
     time.sleep(0.2)
 
 
+def click_on_element(driver: classmethod, xpath: str):
+    assert wait_on_element(driver, 5, xpath, 'clickable')
+    driver.find_element_by_xpath(xpath).click()
+
+
 def click_If_Element_Exist(driver: classmethod, xpath: str):
     if wait_on_element(driver, 5, xpath, 'clickable'):
         driver.find_element_by_xpath(xpath).click()

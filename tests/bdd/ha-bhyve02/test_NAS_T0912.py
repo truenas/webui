@@ -57,17 +57,14 @@ def you_should_see_the_dashboard(driver):
 @then('Click on the Accounts item in the left side menu')
 def click_on_the_accounts_item_in_the_left_side_menu(driver):
     """Click on the Accounts item in the left side menu."""
-    element = driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Accounts"]')
-    class_attribute = element.get_attribute('class')
-    if 'open' not in class_attribute:
-        driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Accounts"]').click()
+    rsc.click_on_element(driver, xpaths.sideMenu.accounts)
 
 
 @then('The Accounts menu should expand down')
 def the_accounts_menu_should_expand_down(driver):
     """The Accounts menu should expand down."""
     assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__Users"]', 'clickable')
-    element = driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Accounts"]')
+    element = driver.find_element_by_xpath(xpaths.sideMenu.accounts)
     class_attribute = element.get_attribute('class')
     assert 'open' in class_attribute, class_attribute
 
@@ -75,7 +72,7 @@ def the_accounts_menu_should_expand_down(driver):
 @then('Click on Users')
 def click_on_users(driver):
     """Click on Users."""
-    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Users"]').click()
+    rsc.click_on_element(driver, xpaths.sideMenu.users)
 
 
 @then('The Users page should open')

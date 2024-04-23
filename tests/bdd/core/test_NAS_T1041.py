@@ -200,12 +200,12 @@ def on_windows_shares_page_verify_the_smbuser_share_exist(driver):
 @then('click on Accounts on the side menu, click on Users')
 def click_on_accounts_on_the_side_menu_click_on_users(driver):
     """click on Accounts on the side menu, click on Users."""
-    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Accounts"]').click()
+    driver.find_element_by_xpath(xpaths.sideMenu.accounts).click()
     assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__Users"]')
-    element = driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Accounts"]')
+    element = driver.find_element_by_xpath(xpaths.sideMenu.accounts)
     class_attribute = element.get_attribute('class')
     assert 'open' in class_attribute, class_attribute
-    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Users"]').click()
+    rsc.click_on_element(driver, xpaths.sideMenu.users)
 
 
 @then('on the Users page click Add')

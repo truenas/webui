@@ -78,6 +78,8 @@ class sideMenu:
     """xpath for the menu on the left side"""
     root = '//span[contains(.,"root")]'
     dashboard = '//mat-list-item[@ix-auto="option__Dashboard"]'
+    accounts = '//mat-list-item[@ix-auto="option__Accounts"]'
+    users = '//mat-list-item[@ix-auto="option__Users"]'
     directory_services = '//mat-list-item[@ix-auto="option__Directory Services"]'
     directory_services_ldap = '//mat-list-item[@ix-auto="option__LDAP"]'
     directory_services_nis = '//mat-list-item[@ix-auto="option__NIS"]'

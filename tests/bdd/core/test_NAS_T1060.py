@@ -66,10 +66,9 @@ def the_browser_is_open_on_the_truenas_url_and_logged_in(driver, nas_ip, root_pa
 def on_the_dashboard_click_on_accounts_on_the_side_menu_click_on_users(driver):
     """on the dashboard, click on Accounts on the side menu, click on Users."""
     assert wait_on_element(driver, 10, '//li[contains(.,"Dashboard")]')
-    assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__Accounts"]')
-    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Accounts"]').click()
-    assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__Users"]')
-    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Users"]').click()
+    assert wait_on_element(driver, 7, xpaths.dashboard.system_information)
+    rsc.click_on_element(driver, xpaths.sideMenu.accounts)
+    rsc.click_on_element(driver, xpaths.sideMenu.users)
 
 
 @then('on the Users page should open, click on the Add Button')
