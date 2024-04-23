@@ -9,9 +9,14 @@ import { WidgetGroup } from 'app/pages/dashboard/types/widget-group.interface';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class WidgetGroupFormComponent {
+  protected group: WidgetGroup;
+  protected selectedSlot = 0;
+
   constructor(
-    private chainedRef: ChainedRef<WidgetGroup | null>,
-  ) {}
+    private chainedRef: ChainedRef<WidgetGroup>,
+  ) {
+    this.group = chainedRef.getData();
+  }
 
   onSubmit(): void {
     this.chainedRef.close({

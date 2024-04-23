@@ -1,0 +1,46 @@
+@import 'scss-imports/cssvars';
+@import '../../widget-group/widget-group-mixin';
+@import '../../../dashboard-variables';
+
+:host {
+  @include widget-group;
+  height: $widget-group-height;
+  width: $widget-group-width;
+
+  @media #{$media-lt-sm} {
+    height: $widget-group-height;
+    width: 100%;
+  }
+
+  .slot {
+    appearance: none;
+    border-style: none;
+    cursor: pointer;
+    height: 100%;
+    outline-color: transparent;
+    padding: 0;
+    transition: outline-color ease-in 250ms;
+
+    > * {
+      pointer-events: none;
+    }
+
+    &.selected {
+      outline: 2px solid var(--primary);
+    }
+
+    &:focus,
+    &.selected:focus {
+      outline: 2px solid var(--fg2);
+    }
+
+    &.empty {
+      align-items: center;
+      color: var(--fg2);
+      display: flex;
+      flex-direction: column;
+      font-size: 13px;
+      justify-content: center;
+    }
+  }
+}
