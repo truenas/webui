@@ -140,7 +140,7 @@ export function parseDraidVdevName(
     throw new Error('Invalid dRAID vdev name');
   }
 
-  const [, parityLevelNumber, dataDisks, spareDisk] = match;
+  const [, parityLevelNumber, dataDisks, , spareDisk] = match;
   let parityLevel = CreateVdevLayout.Draid1;
   if (parityLevelNumber === '2') {
     parityLevel = CreateVdevLayout.Draid2;
