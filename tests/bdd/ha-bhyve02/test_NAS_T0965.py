@@ -151,11 +151,6 @@ def the_service_page_should_open(driver):
 def if_the_smb_service_is_not_started_start_the_service(driver):
     """If the SMB service is not started start the service."""
     assert wait_on_element(driver, 7, '//services')
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__S3_Actions"]')
-    # Scroll to SMB service
-    element = driver.find_element_by_xpath('//button[@ix-auto="button__S3_Actions"]')
-    driver.execute_script("arguments[0].scrollIntoView();", element)
-    time.sleep(1)
     assert wait_on_element(driver, 7, '//div[@ix-auto="overlay__SMB_Running"]', 'clickable')
     value_exist = attribute_value_exist(driver, '//mat-slide-toggle[@ix-auto="slider__SMB_Running"]', 'class', 'mat-checked')
     if not value_exist:
