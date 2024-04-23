@@ -92,7 +92,7 @@ export class WidgetMemoryComponent {
         },
       },
       responsive: true,
-      maintainAspectRatio: false,
+      maintainAspectRatio: true,
       animation: false,
     };
   });
