@@ -1,23 +1,79 @@
 <ix-page-header [title]="'Dashboard' | translate">
   <button
+    *ngIf="!isEditing(); else editingButtons"
     mat-button
     color="primary"
     ixTest="configure-dashboard"
+    [disabled]="isLoading()"
     (click)="onConfigure()"
   >
     {{ 'Configure' | translate }}
   </button>
+
+  <ng-template #editingButtons>
+    <button
+      mat-button
+      class="add-button"
+      ixTest="add-group"
+      (click)="onAddGroup()"
+    >
+      {{ 'Add' | translate }}
+    </button>
+    <button
+      mat-button
+      color="primary"
+      ixTest="save"
+      (click)="onSave()"
+    >
+      {{ 'Save' | translate }}
+    </button>
+    <button
+      mat-button
+      ixTest="cancel"
+      (click)="onCancelConfigure()"
+    >
+      {{ 'Cancel' | translate }}
+    </button>
+  </ng-template>
 </ix-page-header>
 
-<div class="widgets">
-  <!-- TODO: When in edit mode, scale down widget group and show edit and delete buttons -->
-  <mat-card class="widget-group">
-    <ix-widget-group></ix-widget-group>
-  </mat-card>
-  <mat-card class="widget-group">
-    <ix-widget-group></ix-widget-group>
-  </mat-card>
-  <mat-card class="widget-group">
-    <ix-widget-group></ix-widget-group>
-  </mat-card>
+<div
+  class="groups"
+  ixDropGrid
+  [ixDropGridModel]="renderedGroups()"
+  (ixDropGridModelChange)="onGroupsReordered($event)"
+>
+  <ng-container *ngIf="renderedGroups().length > 0; else noWidgets">
+    <div
+      *ngFor="let group of renderedGroups(); index as i"
+      class="group-slot"
+      ixDropGridItem
+      @groupRemovedTrigger
+    >
+      <div
+        ixDrag
+        class="group-container"
+        [class.editing]="isEditing()"
+      >
+        <ix-widget-group-controls
+          class="controls"
+          [index]="i"
+          [totalGroups]="renderedGroups().length"
+          (moveUp)="onMoveGroup(i, -1)"
+          (moveDown)="onMoveGroup(i, 1)"
+          (edit)="onEditGroup(group)"
+          (delete)="onDeleteGroup(group)"
+        ></ix-widget-group-controls>
+
+        <ix-widget-group
+          class="group"
+          [group]="group"
+        ></ix-widget-group>
+      </div>
+    </div>
+  </ng-container>
+
+  <ng-template #noWidgets>
+
+  </ng-template>
 </div>

@@ -20,7 +20,7 @@ export enum SlotSize {
 
 export interface Widget {
   type: WidgetType;
-  settings: SomeWidgetSettings;
+  settings?: SomeWidgetSettings;
 }
 
-export type SomeWidgetSettings = object | null;
+export type SomeWidgetSettings = object;
