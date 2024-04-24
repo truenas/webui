@@ -1,21 +1,3 @@
-<ix-fieldset [formGroup]="form">
-  <div class="form-row">
-    <ix-select
-      formControlName="template"
-      [options]="templateOptions$"
-      [label]="'Template' | translate"
-      [tooltip]="'Select a template' | translate"
-    ></ix-select>
-
-    <ix-icon-group
-      formControlName="layout"
-      [options]="layoutsMap"
-      [label]="'Layouts' | translate"
-      [tooltip]="'Select a layout' | translate"
-    ></ix-icon-group>
-  </div>
-</ix-fieldset>
-
 <button
   *ngFor="let slotIndex of slotRange()"
   tabindex="0"
@@ -30,8 +12,8 @@
   <ng-container *ngIf="slots()[slotIndex] as slot; else emptySlot">
     <ng-container *ngComponentOutlet="slot.component; inputs: slot.inputs;" />
   </ng-container>
-</button>
 
-<ng-template #emptySlot>
-  {{ 'Empty' | translate }}
-</ng-template>
+  <ng-template #emptySlot>
+    {{ 'Empty' | translate }}
+  </ng-template>
+</button>

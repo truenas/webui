@@ -2,7 +2,25 @@
   [title]="'Widget Editor' | translate"
 ></ix-modal-header2>
 
-<form class="ix-form-container" (submit)="onSubmit()">
+<form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
+  <ix-fieldset>
+    <div class="form-row">
+      <ix-select
+        formControlName="template"
+        [options]="templateOptions$"
+        [label]="'Template' | translate"
+        [tooltip]="'Select a template' | translate"
+      ></ix-select>
+
+      <ix-icon-group
+        formControlName="layout"
+        [options]="layoutsMap"
+        [label]="'Layouts' | translate"
+        [tooltip]="'Select a layout' | translate"
+      ></ix-icon-group>
+    </div>
+  </ix-fieldset>
+
   <div class="editor-container">
     <ix-widget-editor-group
       [group]="group"

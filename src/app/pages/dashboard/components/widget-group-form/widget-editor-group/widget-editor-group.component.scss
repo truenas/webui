@@ -43,15 +43,4 @@
       justify-content: center;
     }
   }
-
-  .form-row {
-    display: flex;
-    gap: 8px;
-
-    ix-select,
-    ix-icon-group {
-      flex: 1 1 50%;
-      max-width: 50%;
-    }
-  }
 }

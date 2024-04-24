@@ -1,7 +1,5 @@
-import { HarnessLoader } from '@angular/cdk/testing';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { MockComponents } from 'ng-mocks';
-import { IxIconGroupHarness } from 'app/modules/ix-forms/components/ix-icon-group/ix-icon-group.harness';
 import { WidgetErrorComponent } from 'app/pages/dashboard/components/widget-error/widget-error.component';
 import {
   runWidgetGroupTestSuite,
@@ -18,7 +16,6 @@ runWidgetGroupTestSuite(WidgetEditorGroupComponent);
 
 describe('WidgetEditorGroupComponent - additions', () => {
   let spectator: Spectator<WidgetEditorGroupComponent>;
-  let loader: HarnessLoader;
   const createComponent = createComponentFactory({
     component: WidgetEditorGroupComponent,
     declarations: [
@@ -76,12 +73,5 @@ describe('WidgetEditorGroupComponent - additions', () => {
     const secondSlot = spectator.query('.slot:nth-child(2)');
     expect(secondSlot).toHaveText('Empty');
     expect(secondSlot).toHaveClass('empty');
-  });
-
-  it('checks layout selector', async () => {
-    const layoutSelector = await loader.getHarness(IxIconGroupHarness.with({ label: 'Layouts' }));
-    await layoutSelector.setValue(WidgetGroupLayout.Halves);
-
-    expect(await layoutSelector.getValue()).toEqual(WidgetGroupLayout.Halves);
   });
 });
