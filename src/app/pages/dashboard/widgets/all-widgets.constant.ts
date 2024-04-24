@@ -5,6 +5,7 @@ import { hostnameWidget } from 'app/pages/dashboard/widgets/network/widget-hostn
 import {
   interfaceIpWidget,
 } from 'app/pages/dashboard/widgets/network/widget-interface-ip/widget-interface-ip.definition';
+import { networkWidget } from 'app/pages/dashboard/widgets/network/widget-network/widget-network.definition';
 
 export const widgetComponents = [
   hostnameWidget.component,
@@ -12,6 +13,7 @@ export const widgetComponents = [
   interfaceIpWidget.settingsComponent,
   helpWidget.component,
   memoryWidget.component,
+  networkWidget.component,
 ];
 
 export const widgetRegistry = {
@@ -19,4 +21,5 @@ export const widgetRegistry = {
   [WidgetType.InterfaceIp]: interfaceIpWidget,
   [WidgetType.Help]: helpWidget,
   [WidgetType.Memory]: memoryWidget,
+  [WidgetType.Network]: networkWidget,
 };

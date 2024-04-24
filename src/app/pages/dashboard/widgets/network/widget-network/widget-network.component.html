@@ -1,0 +1,51 @@
+<mat-card class="card">
+  <mat-card-content class="card-content">
+    <div class="header">
+      <h3>{{ 'Network' | translate }}</h3>
+
+      <button
+        mat-icon-button
+        matTooltipPosition="above"
+        ixTest="network-reports"
+        [attr.aria-label]="'Network Reports' | translate"
+        [matTooltip]="'Network Reports' | translate"
+        [routerLink]="['/reportsdashboard', 'network']"
+      >
+        <ix-icon name="insert_chart"></ix-icon>
+      </button>
+    </div>
+
+    <div *appLet="interface$ | async as nic" [class]="['container', size()]">
+      <div class="nic-info">
+        <div class="info-header">
+          <h4 class="info-header-title">{{ nic.state.name }}</h4>
+        </div>
+        <div class="info-body">
+          <div class="info-list-item">
+            <span *ngIf="nic.state.link_state === LinkState.Up" class="icon up">
+              <ix-icon name="check_circle" [matTooltip]="nic.state.link_state"></ix-icon>
+            </span>
+            <span *ngIf="nic.state.link_state !== LinkState.Up" class="icon down">
+              <ix-icon name="cancel" [matTooltip]="nic.state.link_state"></ix-icon>
+            </span>
+            <span>{{ nic.state.link_state }}</span>
+          </div>
+        </div>
+      </div>
+      <div class="nic-chart">
+        <div class="chart-body">
+          <ix-view-chart-area
+            *ngIf="chartData; else emptyChart"
+            [data]="chartData"
+            [options]="chartOptions"
+          >
+          </ix-view-chart-area>
+        </div>
+      </div>
+    </div>
+  </mat-card-content>
+</mat-card>
+
+<ng-template #emptyChart>
+  {{ 'Empty' }}
+</ng-template>
