@@ -21,16 +21,11 @@
     padding: 0;
     transition: outline-color ease-in 250ms;
 
-    > * {
-      pointer-events: none;
-    }
-
     &.selected {
       outline: 2px solid var(--primary);
     }
 
-    &:focus,
-    &.selected:focus {
+    &:focus {
       outline: 2px solid var(--fg2);
     }
 
@@ -41,6 +36,10 @@
       flex-direction: column;
       font-size: 13px;
       justify-content: center;
+    }
+
+    .inert-container {
+      height: 100%;
     }
   }
 }

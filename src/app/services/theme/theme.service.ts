@@ -1,4 +1,5 @@
 import { Inject, Injectable } from '@angular/core';
+import { TinyColor } from '@ctrl/tinycolor';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { BehaviorSubject, Subject } from 'rxjs';
@@ -138,11 +139,11 @@ export class ThemeService {
     // Set multiple background color contrast options
     const contrastSrc = theme.bg2;
     const contrastPrimary = theme[primaryColor] as string;
-    const contrastDarker = this.utils.darken(contrastSrc, 5);
-    const contrastDarkest = this.utils.darken(contrastSrc, 10);
-    const contrastLighter = this.utils.lighten(contrastSrc, 5);
-    const contrastLightest = this.utils.lighten(contrastSrc, 10);
-    const primaryLightest = this.utils.lighten(contrastPrimary, 5);
+    const contrastDarker = new TinyColor(contrastSrc).darken(5).toHslString();
+    const contrastDarkest = new TinyColor(contrastSrc).darken(10).toHslString();
+    const contrastLighter = new TinyColor(contrastSrc).lighten(5).toHslString();
+    const contrastLightest = new TinyColor(contrastSrc).lighten(10).toHslString();
+    const primaryLightest = new TinyColor(contrastPrimary).lighten(5).toHslString();
 
     document.documentElement.style.setProperty('--contrast-darker', contrastDarker);
     document.documentElement.style.setProperty('--contrast-darkest', contrastDarkest);
@@ -161,10 +162,7 @@ export class ThemeService {
   }
 
   darkTest(css: string): boolean {
-    const rgb = this.utils.forceRgb(css);
-    const hsl = this.utils.rgbToHsl(rgb, false, false);
-
-    return hsl[2] < 50;
+    return new TinyColor(css).isDark();
   }
 
   isDarkTheme(name: string = this.activeTheme): boolean {
@@ -185,23 +183,8 @@ export class ThemeService {
     });
   }
 
-  getUtils(): ThemeUtils {
-    return this.utils;
-  }
-
-  /**
-   * Gets rgb background color by index
-   * @param index
-   * @returns rgb background color
-   */
-  getRgbBackgroundColorByIndex(index: number): number[] {
-    const bgColor = this.getColorPattern()[index];
-    const bgColorType = this.utils.getValueType(bgColor);
-
-    if (bgColorType === 'hex') {
-      return this.utils.hexToRgb(bgColor).rgb;
-    }
-    return this.utils.rgbToArray(bgColor);
+  getRgbBackgroundColorByIndex(index: number): string {
+    return this.getColorPattern()[index];
   }
 
   getActiveTheme(): Theme {

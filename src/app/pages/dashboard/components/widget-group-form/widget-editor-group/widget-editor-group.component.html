@@ -6,12 +6,16 @@
   [class]="['slot', 'slot' + slotIndex]"
   [class.selected]="slotIndex === selectedSlot() && slotRange().length > 1"
   [class.empty]="!slots()[slotIndex]"
-  (click)="selectedSlotChange.emit(slotIndex)"
-  (keydown.enter)="$event.preventDefault(); selectedSlotChange.emit(slotIndex)"
+  (click)="onSlotSelected($event, slotIndex)"
+  (keydown.enter)="onSlotSelected($event, slotIndex)"
 >
-  <ng-container *ngIf="slots()[slotIndex] as slot; else emptySlot">
+  <div
+    *ngIf="slots()[slotIndex] as slot; else emptySlot"
+    class="inert-container"
+    inert
+  >
     <ng-container *ngComponentOutlet="slot.component; inputs: slot.inputs;" />
-  </ng-container>
+  </div>
 
   <ng-template #emptySlot>
     {{ 'Empty' | translate }}
