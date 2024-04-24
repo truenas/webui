@@ -16,14 +16,15 @@ export class WidgetDatapointComponent {
   subText = input<string>();
 
   get maxFontSize(): number {
-    let fontSize = this.size() === SlotSize.Quarter ? 18 : 20;
+    const isQuarter = this.size() === SlotSize.Quarter;
+    let fontSize = isQuarter ? 18 : 20;
 
     if (this.text().length <= 15) {
-      fontSize = this.size() === SlotSize.Quarter ? 35 : 49;
+      fontSize = isQuarter ? 35 : 49;
     } else if (this.text().length <= 30) {
-      fontSize = this.size() === SlotSize.Quarter ? 25 : 30;
+      fontSize = isQuarter ? 25 : 30;
     } else if (this.text().length <= 40) {
-      fontSize = this.size() === SlotSize.Quarter ? 20 : 22;
+      fontSize = isQuarter ? 20 : 22;
     }
 
     return fontSize;
