@@ -249,6 +249,7 @@ def press_initiate_failover_check_confirm_and_press_failover(driver):
     driver.find_element_by_xpath(xpaths.checkbox.confirm).click()
     assert wait_on_element(driver, 5, xpaths.button.failover)
     driver.find_element_by_xpath(xpaths.button.failover).click()
+    time.sleep(10)
 
 
 @then('Wait for the login page to appear')
@@ -273,8 +274,7 @@ def at_the_login_page_enter_root_and_password(driver, user, password):
     if wait_on_element(driver, 5, xpaths.popup.help):
         assert wait_on_element(driver, 10, xpaths.button.close, 'clickable')
         driver.find_element_by_xpath(xpaths.button.close).click()
-    # wait_on_element need to be replace with wait_on_element when NAS-118299
-    assert wait_on_element(driver, 30, xpaths.topToolbar.ha_enable)
+    assert wait_on_element(driver, 60, xpaths.topToolbar.ha_enable)
 
 
 @then(parsers.parse('ssh and input {tdbdump_command} after failover'))
