@@ -3,9 +3,12 @@
 
 import reusableSeleniumCode as rsc
 import xpaths
-from function import wait_on_element, is_element_present, wait_on_element_disappear
-from selenium.webdriver.common.action_chains import ActionChains
-from selenium.webdriver.common.keys import Keys
+from function import (
+    wait_on_element,
+    is_element_present,
+    wait_on_element_disappear,
+    ssh_sudo
+)
 import time
 from pytest_bdd import (
     given,
@@ -24,6 +27,8 @@ def test_edit_user_enable_permit_sudo(driver):
 @given(parsers.parse('The browser is open navigate to "{nas_url}"'))
 def the_browser_is_open_navigate_to_nas_url(driver, nas_url):
     """The browser is open navigate to "{nas_url}"."""
+    global nas_host
+    nas_host = nas_url
     if nas_url not in driver.current_url:
         driver.get(f"http://{nas_url}/ui/dashboard/")
         time.sleep(1)
@@ -58,17 +63,14 @@ def you_should_see_the_dashboard(driver):
 @then('Click on the Accounts item in the left side menu')
 def click_on_the_accounts_item_in_the_left_side_menu(driver):
     """Click on the Accounts item in the left side menu."""
-    element = driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Accounts"]')
-    class_attribute = element.get_attribute('class')
-    if 'open' not in class_attribute:
-        driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Accounts"]').click()
+    rsc.click_on_element(driver, xpaths.sideMenu.accounts)
 
 
 @then('The Accounts menu should expand down')
 def the_accounts_menu_should_expand_down(driver):
     """The Accounts menu should expand down."""
     assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__Users"]', 'clickable')
-    element = driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Accounts"]')
+    element = driver.find_element_by_xpath(xpaths.sideMenu.accounts)
     class_attribute = element.get_attribute('class')
     assert 'open' in class_attribute, class_attribute
 
@@ -76,7 +78,7 @@ def the_accounts_menu_should_expand_down(driver):
 @then('Click on Users')
 def click_on_users(driver):
     """Click on Users."""
-    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Users"]').click()
+    rsc.click_on_element(driver, '//mat-list-item[@ix-auto="option__Users"]')
 
 
 @then('The Users page should open')
@@ -150,25 +152,12 @@ def updated_value_should_be_visible(driver):
 @then('Open shell and run su user to become that user')
 def open_shell_and_run_su_user(driver):
     """Open shell and run su user to become that user."""
-    assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__Shell"]', 'clickable')
-    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Shell"]').click()
-    assert wait_on_element(driver, 7, '//span[@class="reverse-video terminal-cursor"]')
-    time.sleep(5)
-    actions = ActionChains(driver)
-    actions.send_keys('su ericbsd', Keys.ENTER)
-    actions.perform()
+    global sudo_results
+    cmd = 'ls /var/db/sudo'
+    sudo_results = ssh_sudo(cmd, nas_host, 'ericbsd', 'testing')
 
 
 @then('User should be able to use Sudo')
 def user_should_be_able_to_use_sudo(driver):
     """User should be able to use Sudo."""
-    time.sleep(1)
-    actions = ActionChains(driver)
-    actions.send_keys('sudo ls /var/db/sudo', Keys.ENTER)
-    actions.perform()
-    time.sleep(1)
-    assert wait_on_element(driver, 7, '//span[contains(.,"Password:")]')
-    actions.send_keys('testing', Keys.ENTER)
-    actions.perform()
-    assert wait_on_element(driver, 7, '//span[contains(.,"lectured")]')
-    driver.find_element_by_xpath('//span[contains(.,"lectured")]')
+    assert "lectured" in sudo_results, str(sudo_results)

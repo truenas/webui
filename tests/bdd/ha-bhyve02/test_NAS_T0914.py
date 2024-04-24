@@ -4,9 +4,12 @@
 import reusableSeleniumCode as rsc
 import xpaths
 import time
-from function import wait_on_element, is_element_present, wait_on_element_disappear
-from selenium.webdriver.common.action_chains import ActionChains
-from selenium.webdriver.common.keys import Keys
+from function import (
+    wait_on_element,
+    is_element_present,
+    wait_on_element_disappear,
+    ssh_cmd
+)
 from pytest_bdd import (
     given,
     scenario,
@@ -24,6 +27,8 @@ def test_edit_user_disable_password(driver):
 @given(parsers.parse('The browser is open navigate to "{nas_url}"'))
 def the_browser_is_open_navigate_to_nas_url(driver, nas_url):
     """The browser is open navigate to "{nas_user}"."""
+    global nas_host
+    nas_host = nas_url
     if nas_url not in driver.current_url:
         driver.get(f"http://{nas_url}/ui/dashboard/")
         time.sleep(1)
@@ -58,17 +63,14 @@ def you_should_see_the_dashboard(driver):
 @then('Click on the Accounts item in the left side menu')
 def click_on_the_accounts_item_in_the_left_side_menu(driver):
     """Click on the Accounts item in the left side menu."""
-    element = driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Accounts"]')
-    class_attribute = element.get_attribute('class')
-    if 'open' not in class_attribute:
-        driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Accounts"]').click()
+    rsc.click_on_element(driver, xpaths.sideMenu.accounts)
 
 
 @then('The Accounts menu should expand down')
 def the_accounts_menu_should_expand_down(driver):
     """The Accounts menu should expand down."""
     assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__Users"]', 'clickable')
-    element = driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Accounts"]')
+    element = driver.find_element_by_xpath(xpaths.sideMenu.accounts)
     class_attribute = element.get_attribute('class')
     assert 'open' in class_attribute, class_attribute
 
@@ -76,7 +78,7 @@ def the_accounts_menu_should_expand_down(driver):
 @then('Click on Users')
 def click_on_users(driver):
     """Click on Users."""
-    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Users"]').click()
+    rsc.click_on_element(driver, xpaths.sideMenu.users)
 
 
 @then('The Users page should open')
@@ -150,35 +152,12 @@ def updated_value_should_be_visible(driver):
 @then('Try login with ssh')
 def try_login_with_ssh(driver):
     """Try login with ssh."""
-    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Services"]').click()
-    assert wait_on_element(driver, 10, '//services')
-    # Scroll to SSH service
-    assert wait_on_element(driver, 10, '//button[@ix-auto="button__S3_Actions"]')
-    element = driver.find_element_by_xpath('//button[@ix-auto="button__S3_Actions"]')
-    driver.execute_script("arguments[0].scrollIntoView();", element)
-    time.sleep(1)
-    element = driver.find_element_by_xpath('//mat-slide-toggle[@ix-auto="slider__SSH_Running"]')
-    class_attribute = element.get_attribute('class')
-    if 'mat-checked' not in class_attribute:
-        driver.find_element_by_xpath('//div[@ix-auto="overlay__SSH_Running"]').click()
-    assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__Shell"]')
-    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Shell"]').click()
-    assert wait_on_element(driver, 7, '//span[@class="reverse-video terminal-cursor"]')
-    time.sleep(4)
-    actions = ActionChains(driver)
-    actions.send_keys('ssh ericbsd@127.0.0.1', Keys.ENTER)
-    actions.perform()
-    if wait_on_element(driver, 4, '//span[contains(text(),"(yes/no/[fingerprint])?")]'):
-        actions = ActionChains(driver)
-        actions.send_keys('yes', Keys.ENTER)
-        actions.perform()
-    assert wait_on_element(driver, 4, '//span[contains(.,"password:")]')
-    actions = ActionChains(driver)
-    actions.send_keys('testing', Keys.ENTER)
-    actions.perform()
+    global ssh_result
+    ssh_result = ssh_cmd('beadm list', 'ericbsd', 'testing', nas_host)
 
 
 @then('User should not be able to login')
 def user_should_not_be_able_to_login(driver):
     """User should not be able to login."""
-    assert wait_on_element(driver, 5, '//span[contains(.,"Permission") and contains(.,"denied,")]')
+    assert not ssh_result['result'], ssh_result['output']
+    assert 'default' not in ssh_result['output'], ssh_result['output']
