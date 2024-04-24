@@ -1,0 +1,132 @@
+@import 'mixins/cards';
+
+:host {
+  height: 100%;
+  width: 100%;
+}
+
+ul {
+  margin: 0;
+  padding-left: 0;
+}
+
+.tile {
+  align-items: stretch;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  max-width: 100%;
+  min-height: 100%;
+  min-width: 100%;
+  place-content: stretch flex-start;
+  width: 100%;
+
+  .tile-content {
+    align-items: center;
+    box-sizing: border-box;
+    display: flex;
+    flex: 1 1 1e-9px;
+    flex-direction: row;
+    font-size: 12px;
+    place-content: center space-between;
+
+    .divider {
+      background-color: var(--lines);
+      height: 75%;
+      margin-right: 12px;
+      width: 1px;
+
+      &:nth-child(4) {
+        @media(max-width: $breakpoint-xs) {
+          display: none;
+        }
+      }
+    }
+
+    ul {
+      box-sizing: border-box;
+      display: flex;
+      flex: 1 1 100%;
+      flex-direction: column;
+      justify-content: center;
+
+      &:first-child {
+        text-align: center;
+      }
+
+      &:first-child,
+      &:nth-child(3) {
+        max-width: 25%;
+
+        @media(max-width: $breakpoint-xs) {
+          max-width: 50%;
+        }
+      }
+
+      &:nth-child(5) {
+        @media(max-width: $breakpoint-xs) {
+          display: none;
+        }
+      }
+    }
+
+    li {
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: row;
+      line-height: 20px;
+      overflow: hidden;
+      text-align: left;
+      white-space: nowrap;
+
+      .label {
+        margin-right: 6px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .dash {
+        width: 100%;
+      }
+    }
+
+    .title {
+      font-size: 20px;
+      white-space: nowrap;
+    }
+
+    .backup-actions {
+      font-size: 12px;
+      padding: 0 10px;
+    }
+  }
+
+  span.icon {
+    align-items: center;
+    cursor: default;
+    display: inline-flex;
+    height: 20px;
+    min-width: 20px;
+    user-select: none;
+    width: 20px;
+
+    &.error {
+      color: var(--red);
+    }
+
+    &.warn {
+      color: var(--orange);
+    }
+
+    &.safe {
+      color: var(--green);
+    }
+
+    .ix-icon {
+      font-size: 16px;
+      height: 16px;
+      width: 16px;
+    }
+  }
+}
