@@ -8,7 +8,7 @@ import {
 } from 'app/pages/system/advanced/init-shutdown/init-shutdown-list/init-shutdown-list.component';
 import { AlertServiceListComponent } from 'app/pages/system/alert-service/alert-service-list/alert-service-list.component';
 import { AlertSettingsComponent } from 'app/pages/system/alert-settings/alert-settings.component';
-import { M50EnclosureComponent } from 'app/pages/system/enclosure/components/m50-enclosure/m50-enclosure.component';
+import { EnclosureDashboardComponent } from 'app/pages/system/enclosure/components/enclosure-dashboard/enclosure-dashboard.component';
 import { FailoverSettingsComponent } from 'app/pages/system/failover-settings/failover-settings.component';
 import { GeneralSettingsComponent } from 'app/pages/system/general-settings/general-settings.component';
 import { SupportCardComponent } from 'app/pages/system/general-settings/support/support-card/support-card.component';
@@ -53,8 +53,8 @@ export const routes: Routes = [
       children: [
         {
           path: '',
-          component: M50EnclosureComponent,
-          data: { title: T('M50 View Enclosure'), breadcrumb: null },
+          component: EnclosureDashboardComponent,
+          data: { title: T('Enclosure Dashboard'), breadcrumb: null },
         },
       ],
     }, {

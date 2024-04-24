@@ -1,9 +1,11 @@
 import {
-  ChangeDetectionStrategy, Component, EventEmitter, Input, Output,
+  ChangeDetectionStrategy, Component, input, output,
 } from '@angular/core';
 import { FormBuilder } from '@ngneat/reactive-forms';
+import { TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
-import { WidgetGroup, WidgetGroupLayout, widgetGroupIcons } from 'app/pages/dashboard/types/widget-group.interface';
+import { WidgetGroupComponent } from 'app/pages/dashboard/components/widget-group/widget-group.component';
+import { WidgetGroupLayout, widgetGroupIcons } from 'app/pages/dashboard/types/widget-group.interface';
 
 /**
  * Similar to WidgetGroupComponent, but with slightly different behaviour:
@@ -13,20 +15,28 @@ import { WidgetGroup, WidgetGroupLayout, widgetGroupIcons } from 'app/pages/dash
  */
 @Component({
   selector: 'ix-widget-editor-group',
-  templateUrl: './widget-editor-group.component.html',
   styleUrls: ['./widget-editor-group.component.scss'],
+  templateUrl: './widget-editor-group.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class WidgetEditorGroupComponent {
-  @Input() group: WidgetGroup;
-  @Input() selection = 0;
-  @Output() selectionChange = new EventEmitter<number>();
+export class WidgetEditorGroupComponent extends WidgetGroupComponent {
+  readonly selectedSlot = input(0);
+
+  selectedSlotChange = output<number>();
+
   protected form = this.formBuilder.group({
     template: [''],
     layout: [WidgetGroupLayout.Full],
   });
   readonly layoutsMap = widgetGroupIcons;
+
+  // TODO: Implement template options
   templateOptions$ = of([]);
 
-  constructor(private formBuilder: FormBuilder) {}
+  constructor(
+    private formBuilder: FormBuilder,
+    translate: TranslateService,
+  ) {
+    super(translate);
+  }
 }

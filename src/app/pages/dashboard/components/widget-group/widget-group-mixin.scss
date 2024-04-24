@@ -1,0 +1,45 @@
+@import '../../dashboard-variables';
+
+@mixin widget-group {
+  display: grid;
+  grid-gap: $widget-gap;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  height: 100%;
+
+  &.full {
+    .slot0 {
+      grid-area: 1 / 1 / 3 / 3;
+    }
+  }
+
+  &.half-and-quarters {
+    .slot0 {
+      grid-area: 1 / 1 / 3 / 3;
+    }
+  }
+
+  &.quarters-and-half {
+    .slot2 {
+      grid-area: 2 / 1 / 3 / 3;
+    }
+  }
+
+  &.halves {
+    .slot0 {
+      grid-area: 1 / 1 / 1 / 3;
+    }
+
+    .slot1 {
+      grid-area: 2 / 1 / 2 / 3;
+    }
+  }
+
+  .slot {
+    height: 100%;
+
+    ::ng-deep mat-card {
+      margin: 0;
+    }
+  }
+}
