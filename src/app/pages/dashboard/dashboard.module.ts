@@ -4,12 +4,13 @@ import {
 import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButton, MatButtonModule } from '@angular/material/button';
-import { MatCard } from '@angular/material/card';
+import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
 import { BaseChartDirective } from 'ng2-charts';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
+import { IxDropGridModule } from 'app/modules/ix-drop-grid/ix-drop-grid.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { LayoutModule } from 'app/modules/layout/layout.module';
@@ -17,6 +18,9 @@ import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
 import { DashboardComponent } from 'app/pages/dashboard/components/dashboard/dashboard.component';
+import {
+  WidgetGroupControlsComponent,
+} from 'app/pages/dashboard/components/dashboard/widget-group-controls/widget-group-controls.component';
 import { WidgetErrorComponent } from 'app/pages/dashboard/components/widget-error/widget-error.component';
 import { WidgetGroupComponent } from 'app/pages/dashboard/components/widget-group/widget-group.component';
 import {
@@ -50,6 +54,7 @@ import { widgetComponents } from 'app/pages/dashboard/widgets/all-widgets.consta
     MatTooltipModule,
     BaseChartDirective,
     MatButtonModule,
+    MatCardContent,
     NgxSkeletonLoaderModule.forRoot({
       animation: false,
       theme: {
@@ -59,6 +64,7 @@ import { widgetComponents } from 'app/pages/dashboard/widgets/all-widgets.consta
         opacity: '0.25',
       },
     }),
+    IxDropGridModule,
   ],
   declarations: [
     DashboardComponent,
@@ -66,6 +72,7 @@ import { widgetComponents } from 'app/pages/dashboard/widgets/all-widgets.consta
     WidgetErrorComponent,
     WidgetGroupFormComponent,
     WidgetEditorGroupComponent,
+    WidgetGroupControlsComponent,
     ...widgetComponents,
   ],
   providers: [

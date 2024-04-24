@@ -1,17 +1,20 @@
 import { Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
-import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
+import { mockProvider, createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { TranslateModule } from '@ngx-translate/core';
+import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { WINDOW } from 'app/helpers/window.helper';
 import { GlobalSearchSection } from 'app/modules/global-search/enums/global-search-section.enum';
 import { UiSearchableElement } from 'app/modules/global-search/interfaces/ui-searchable-element.interface';
+import { UiSearchDirectivesService } from 'app/modules/global-search/services/ui-search-directives.service';
+import { UiSearchProvider } from 'app/modules/global-search/services/ui-search.service';
 import { GlobalSearchResultsComponent } from './global-search-results.component';
 
 const mockedHelpElement = {
   hierarchy: ['Help Section Item'],
   section: GlobalSearchSection.Help,
-  targetHref: 'https://www.example.com/help',
+  targetHref: 'https://www.truenas.com/docs/scale/24.10/search/?query=test',
 };
 
 const mockedUiElement = {
@@ -38,6 +41,12 @@ describe('GlobalSearchResultsComponent', () => {
     ],
     providers: [
       mockAuth(),
+      mockProvider(UiSearchDirectivesService, {
+        directiveAdded$: of(),
+      }),
+      mockProvider(UiSearchProvider, {
+        selectionChanged$: of(),
+      }),
     ],
   });
 
@@ -53,12 +62,13 @@ describe('GlobalSearchResultsComponent', () => {
     spectator.detectChanges();
 
     const navigateSpy = jest.spyOn(router, 'navigate').mockResolvedValue(true);
-    const emitSpy = jest.spyOn(spectator.component.selected, 'emit');
+    const searchProvider = spectator.inject(UiSearchProvider);
+    jest.spyOn(searchProvider, 'select').mockImplementation();
 
     spectator.click('.search-result');
 
     expect(navigateSpy).toHaveBeenCalledWith(mockResults[0].anchorRouterLink);
-    expect(emitSpy).toHaveBeenCalled();
+    expect(searchProvider.select).toHaveBeenCalledWith(mockResults[0]);
   }));
 
   it('should open link in new window on element clicked if "targetHref" specified', (() => {

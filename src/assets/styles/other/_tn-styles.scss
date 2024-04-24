@@ -911,7 +911,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   }
 
   .mat-mdc-card {
-    border-radius: 6px;
+    border-radius: 0;
   }
 
   // Scrollbars need separate rules for firefox and webkit

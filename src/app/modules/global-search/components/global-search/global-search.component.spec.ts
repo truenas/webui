@@ -6,6 +6,7 @@ import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterTestingModule } from '@angular/router/testing';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
+import { provideMockStore } from '@ngrx/store/testing';
 import { TranslateModule } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -17,6 +18,8 @@ import { GlobalSearchSection } from 'app/modules/global-search/enums/global-sear
 import { GlobalSearchSectionsProvider } from 'app/modules/global-search/services/global-search-sections.service';
 import { UiSearchProvider } from 'app/modules/global-search/services/ui-search.service';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
+import { SystemInfoState } from 'app/store/system-info/system-info.reducer';
+import { selectSystemInfoState } from 'app/store/system-info/system-info.selectors';
 
 const mockedSearchResults = [
   { hierarchy: ['Filtered Result 1'], requiredRoles: [Role.FullAdmin] },
@@ -46,6 +49,19 @@ describe('GlobalSearchComponent', () => {
       { provide: MatDialogRef, useValue: {} },
       mockProvider(UiSearchProvider, {
         search: jest.fn().mockReturnValue(of(mockedSearchResults)),
+        selectionChanged$: of(),
+      }),
+      provideMockStore({
+        selectors: [
+          {
+            selector: selectSystemInfoState,
+            value: {
+              systemInfo: {
+                version: 'TrueNAS-SCALE-24.10.0-MASTER-20240324-065034',
+              },
+            } as SystemInfoState,
+          },
+        ],
       }),
     ],
   });
@@ -55,7 +71,7 @@ describe('GlobalSearchComponent', () => {
     jest.clearAllMocks();
   });
 
-  it('should update search results for "Filtered" input', fakeAsync(() => {
+  it('should update search results for "Filtered" input & show help section', fakeAsync(() => {
     const inputElement = spectator.query('.search-input');
 
     const mockSearchMethod = spectator.inject(UiSearchProvider).search as unknown as jest.Mock;
@@ -78,7 +94,7 @@ describe('GlobalSearchComponent', () => {
       {
         hierarchy: ['Search Documentation for «{value}»'],
         section: GlobalSearchSection.Help,
-        targetHref: 'https://www.truenas.com/docs/search/?query=Filtered',
+        targetHref: 'https://www.truenas.com/docs/scale/24.10/search/?query=Filtered',
       },
     ]);
 
@@ -107,7 +123,7 @@ describe('GlobalSearchComponent', () => {
         {
           hierarchy: ['Search Documentation for «{value}»'],
           section: GlobalSearchSection.Help,
-          targetHref: 'https://www.truenas.com/docs/search/?query=Unknown',
+          targetHref: 'https://www.truenas.com/docs/scale/24.10/search/?query=Unknown',
         },
       ]);
       expect(spectator.component.searchResults).toHaveLength(1);

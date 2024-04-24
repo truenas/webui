@@ -1,10 +1,5 @@
+@import './widget-group-mixin';
+
 :host {
-  display: block;
-  height: 100%;
-}
-
-// TODO: Use css grid.
-
-.full-height-demo {
-  height: 100%;
+  @include widget-group;
 }

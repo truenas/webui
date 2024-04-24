@@ -1,9 +1,16 @@
-<ix-modal-header
+<ix-modal-header2
   [title]="'Widget Editor' | translate"
-></ix-modal-header>
+></ix-modal-header2>
 
 <form class="ix-form-container" (submit)="onSubmit()">
-  <ix-widget-editor-group></ix-widget-editor-group>
+  <div class="editor-container">
+    <ix-widget-editor-group
+      [group]="group"
+      [(selectedSlot)]="selectedSlot"
+    ></ix-widget-editor-group>
+  </div>
+
+  Selected slot: {{ selectedSlot }}
 
   <!-- TODO: Category dropdown, pull widget definitions from widgetRegistry and regroup by category -->
   <!-- TODO: Widget type dropdown -->
