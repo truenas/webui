@@ -2,7 +2,6 @@ import { Selection } from 'd3';
 import * as d3 from 'd3';
 import { Application, Container, DefaultRendererPlugins } from 'pixi.js';
 import { Subject } from 'rxjs';
-// import { Disk } from 'app/interfaces/storage.interface';
 import { SelectedEnclosureSlot } from 'app/interfaces/enclosure-old.interface';
 import { EnclosureVdev } from 'app/interfaces/enclosure.interface';
 import { Theme } from 'app/interfaces/theme.interface';
