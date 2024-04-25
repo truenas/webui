@@ -120,8 +120,7 @@ export class WebSocketService {
       return this.eventSubscribers.get(method);
     }
     const observable$ = new Observable((trigger: Subscriber<ApiEventTyped<K>>) => {
-      const subscriber$ = this.wsManager.buildSubscriber<K, ApiEventTyped<K>>(method);
-      const subscription = subscriber$.subscribe(trigger);
+      const subscription = this.wsManager.buildSubscriber<K, ApiEventTyped<K>>(method).subscribe(trigger);
       return () => {
         subscription.unsubscribe();
         this.eventSubscribers.delete(method);
