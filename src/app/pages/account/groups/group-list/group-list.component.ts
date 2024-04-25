@@ -57,7 +57,7 @@ export class GroupListComponent implements OnInit {
     }),
     yesNoColumn({
       title: this.translate.instant('Allows sudo commands'),
-      propertyName: 'sudo_commands',
+      getValue: (row) => !!row.sudo_commands?.length,
       sortable: true,
     }),
     yesNoColumn({
