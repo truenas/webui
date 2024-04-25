@@ -2,6 +2,7 @@ import {
   AfterContentInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, Input, OnDestroy, ViewChild,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { TinyColor } from '@ctrl/tinycolor';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
@@ -947,14 +948,14 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
   // Fine tuning visualizations.
   optimizeChassisOpacity(extractedEnclosure?: ChassisView): void {
     const css = document.documentElement.style.getPropertyValue('--contrast-darkest');
-    const hsl = this.themeUtils.hslToArray(css);
+    const hsl = new TinyColor(css).toHsl();
 
     let opacity;
     if (extractedEnclosure) {
-      opacity = hsl[2] < 60 ? 0.35 : 0.75;
+      opacity = hsl.l < 60 ? 0.35 : 0.75;
       extractedEnclosure.chassis.alpha = opacity;
     } else {
-      opacity = hsl[2] < 60 ? 0.25 : 0.75;
+      opacity = hsl.l < 60 ? 0.25 : 0.75;
       if (this.chassis?.front) {
         this.chassis?.front.setChassisOpacity(opacity);
       }
@@ -1181,11 +1182,11 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
       );
 
       // Convert color to rgb value
-      const cc = this.themeUtils.hexToRgb(this.theme.cyan);
+      const cyan = new TinyColor(this.theme.cyan);
       const animation = popmotion.keyframes({
         values: [
-          { borderWidth: 0, borderColor: `rgb(${cc.rgb[0]}, ${cc.rgb[1]}, ${cc.rgb[2]})` },
-          { borderWidth: 30, borderColor: `rgb(${cc.rgb[0]}, ${cc.rgb[1]}, ${cc.rgb[2]}, 0)` },
+          { borderWidth: 0, borderColor: cyan.toRgbString() },
+          { borderWidth: 30, borderColor: cyan.setAlpha(0).toRgbString() },
         ],
         duration: 1000,
         loop: Infinity,

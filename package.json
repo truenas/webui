@@ -64,6 +64,7 @@
     "@codemirror/state": "~6.4.1",
     "@codemirror/theme-one-dark": "~6.1.2",
     "@codemirror/view": "~6.24.1",
+    "@ctrl/tinycolor": "~4.1.0",
     "@lezer/common": "~1.2.1",
     "@lezer/generator": "~1.7.0",
     "@lezer/lr": "~1.4.0",

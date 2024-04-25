@@ -1,8 +1,8 @@
 import {
-  Gb, kb, Mb, Tb, Pb,
+  Gb, kb, Mb, Tb, Pb, Eb, Zb, Yb,
 } from 'app/constants/bits.constant';
 import {
-  GiB, KiB, MiB, PiB, TiB,
+  GiB, KiB, MiB, PiB, TiB, EiB, ZiB, YiB,
 } from 'app/constants/bytes.constant';
 
 export function normalizeFileSize(
@@ -25,8 +25,8 @@ export function buildNormalizedFileSize(
 function normalizeFileSizeBase2(value: number, baseUnit: 'b' | 'B'): [formatted: number, unit: string] {
   let formatted = value;
   let increment = 1;
-  while (formatted >= 1024) {
-    increment *= 1024;
+  while (formatted >= KiB && increment < YiB) {
+    increment *= KiB;
     formatted = value / increment;
   }
   formatted = Math.round((formatted + Number.EPSILON) * 100) / 100;
@@ -41,6 +41,12 @@ function normalizeFileSizeBase2(value: number, baseUnit: 'b' | 'B'): [formatted:
       return [formatted, 'Ti' + baseUnit];
     case PiB:
       return [formatted, 'Pi' + baseUnit];
+    case EiB:
+      return [formatted, 'Ei' + baseUnit];
+    case ZiB:
+      return [formatted, 'Zi' + baseUnit];
+    case YiB:
+      return [formatted, 'Yi' + baseUnit];
     default:
       return [formatted, baseUnit];
   }
@@ -49,8 +55,8 @@ function normalizeFileSizeBase2(value: number, baseUnit: 'b' | 'B'): [formatted:
 function normalizeFileSizeBase10(value: number, baseUnit: 'b' | 'B'): [formatted: number, unit: string] {
   let formatted = value;
   let increment = 1;
-  while (formatted >= 1000) {
-    increment *= 1000;
+  while (formatted >= kb && increment < Yb) {
+    increment *= kb;
     formatted = value / increment;
   }
   formatted = Math.round((formatted + Number.EPSILON) * 100) / 100;
@@ -65,6 +71,12 @@ function normalizeFileSizeBase10(value: number, baseUnit: 'b' | 'B'): [formatted
       return [formatted, 'T' + baseUnit];
     case Pb:
       return [formatted, 'P' + baseUnit];
+    case Eb:
+      return [formatted, 'E' + baseUnit];
+    case Zb:
+      return [formatted, 'Z' + baseUnit];
+    case Yb:
+      return [formatted, 'Y' + baseUnit];
     default:
       return [formatted, baseUnit];
   }

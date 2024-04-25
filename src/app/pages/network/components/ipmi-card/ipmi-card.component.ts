@@ -12,6 +12,7 @@ import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provi
 import { actionsColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
 import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { createTable } from 'app/modules/ix-table/utils';
+import { ipmiCardElements } from 'app/pages/network/components/ipmi-card/ipmi-card.elements';
 import {
   IpmiEventsDialogComponent,
 } from 'app/pages/network/components/ipmi-card/ipmi-events-dialog/ipmi-events-dialog.component';
@@ -27,6 +28,7 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class IpmiCardComponent implements OnInit {
+  protected readonly searchableElements = ipmiCardElements.elements;
   protected dataProvider: AsyncDataProvider<Ipmi>;
   columns = createTable<Ipmi>([
     textColumn({
