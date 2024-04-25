@@ -11,6 +11,7 @@ import { WidgetComponent } from 'app/pages/dashboard/types/widget-component.inte
 import { SlotSize } from 'app/pages/dashboard/types/widget.interface';
 import {
   WidgetInterfaceIpSettings,
+  interfaceIpWidget,
 } from 'app/pages/dashboard/widgets/network/widget-interface-ip/widget-interface-ip.definition';
 
 @Component({
@@ -22,6 +23,8 @@ import {
 export class WidgetInterfaceIpComponent implements WidgetComponent<WidgetInterfaceIpSettings> {
   size = input.required<SlotSize>();
   settings = input.required<WidgetInterfaceIpSettings>();
+
+  readonly name = interfaceIpWidget.name;
 
   protected ips = computed(() => {
     const interfaceId = this.settings().interface;

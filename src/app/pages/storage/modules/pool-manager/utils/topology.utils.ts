@@ -133,14 +133,14 @@ export function isDraidLayout(layout: CreateVdevLayout | TopologyItemType): bool
 export function parseDraidVdevName(
   vdevName: string,
 ): { layout: CreateVdevLayout; dataDisks: number; spareDisks: number } {
-  const regex = /draid(\d+):(\d)d:\dc:(\d)s/;
+  const regex = /draid(\d+):(\d+)d:(\d+)c:(\d+)s-(\d+)/;
   const match = vdevName.match(regex);
 
   if (!match) {
     throw new Error('Invalid dRAID vdev name');
   }
 
-  const [, parityLevelNumber, dataDisks, spareDisk] = match;
+  const [, parityLevelNumber, dataDisks, , spareDisk] = match;
   let parityLevel = CreateVdevLayout.Draid1;
   if (parityLevelNumber === '2') {
     parityLevel = CreateVdevLayout.Draid2;
