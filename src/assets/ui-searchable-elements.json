@@ -636,12 +636,9 @@
   {
     "hierarchy": [
       "Network",
-      "Nameservers"
+      "Interfaces"
     ],
     "synonyms": [
-      "NS",
-      "DNS",
-      "Domain Name System",
       "Network"
     ],
     "requiredRoles": [],
@@ -649,7 +646,78 @@
       "/network"
     ],
     "routerLink": null,
-    "anchor": "nameservers",
+    "anchor": "interfaces",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Network",
+      "Ipmi"
+    ],
+    "synonyms": [
+      "Network"
+    ],
+    "requiredRoles": [],
+    "anchorRouterLink": [
+      "/network"
+    ],
+    "routerLink": null,
+    "anchor": "ipmi",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Network",
+      "Global Configuration"
+    ],
+    "synonyms": [
+      "Network"
+    ],
+    "requiredRoles": [],
+    "anchorRouterLink": [
+      "/network"
+    ],
+    "routerLink": null,
+    "anchor": "global-configuration",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Network",
+      "Static Routes"
+    ],
+    "synonyms": [
+      "Network"
+    ],
+    "requiredRoles": [],
+    "anchorRouterLink": [
+      "/network"
+    ],
+    "routerLink": null,
+    "anchor": "static-routes",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Network",
+      "Static Routes",
+      "Add"
+    ],
+    "synonyms": [
+      "Network"
+    ],
+    "requiredRoles": [
+      "FULL_ADMIN"
+    ],
+    "anchorRouterLink": [
+      "/network"
+    ],
+    "routerLink": null,
+    "anchor": "add-static-route",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -2782,6 +2850,25 @@
     ],
     "routerLink": null,
     "anchor": "configure-2fa-secret",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Virtual Machines",
+      "Add"
+    ],
+    "synonyms": [
+      "Virtual Machines"
+    ],
+    "requiredRoles": [
+      "VM_WRITE"
+    ],
+    "anchorRouterLink": [
+      "/vm"
+    ],
+    "routerLink": null,
+    "anchor": "add",
     "triggerAnchor": null,
     "section": "ui"
   },
