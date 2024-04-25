@@ -66,7 +66,7 @@ export class DashboardStore extends ComponentStore<DashboardState> {
         this.setState({
           isLoading: false,
           globalError: '',
-          groups: this.getDashboardGroups(dashState),
+          groups: this.getDashboardGroups(dashState || []),
         });
       }),
       catchError((error) => {
