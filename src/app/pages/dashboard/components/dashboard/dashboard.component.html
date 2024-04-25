@@ -15,6 +15,7 @@
       mat-button
       class="add-button"
       ixTest="add-group"
+      [disabled]="isLoading()"
       (click)="onAddGroup()"
     >
       {{ 'Add' | translate }}
@@ -23,6 +24,7 @@
       mat-button
       color="primary"
       ixTest="save"
+      [disabled]="isLoading()"
       (click)="onSave()"
     >
       {{ 'Save' | translate }}
@@ -30,6 +32,7 @@
     <button
       mat-button
       ixTest="cancel"
+      [disabled]="isLoading()"
       (click)="onCancelConfigure()"
     >
       {{ 'Cancel' | translate }}

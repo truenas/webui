@@ -10,6 +10,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { WidgetGroupFormComponent } from 'app/pages/dashboard/components/widget-group-form/widget-group-form.component';
 import { DashboardStore } from 'app/pages/dashboard/services/dashboard.store';
 import { WidgetGroup, WidgetGroupLayout } from 'app/pages/dashboard/types/widget-group.interface';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 
 @UntilDestroy()
@@ -43,6 +44,7 @@ export class DashboardComponent implements OnInit {
   constructor(
     private dashboardStore: DashboardStore,
     private slideIn: IxChainedSlideInService,
+    private errorHandler: ErrorHandlerService,
   ) {}
 
   ngOnInit(): void {
@@ -101,7 +103,7 @@ export class DashboardComponent implements OnInit {
   protected onSave(): void {
     this.dashboardStore
       .save(this.renderedGroups())
-      .pipe(untilDestroyed(this))
+      .pipe(this.errorHandler.catchError(), untilDestroyed(this))
       .subscribe(() => {
         this.isEditing.set(false);
         // TODO: Handle errors.
