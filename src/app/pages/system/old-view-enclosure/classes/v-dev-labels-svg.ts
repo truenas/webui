@@ -2,11 +2,9 @@ import { Selection } from 'd3';
 import * as d3 from 'd3';
 import { Application, Container, DefaultRendererPlugins } from 'pixi.js';
 import { Subject } from 'rxjs';
-import {
-  EnclosureUiVdev,
-  SelectedEnclosureSlot,
-} from 'app/interfaces/enclosure.interface';
 // import { Disk } from 'app/interfaces/storage.interface';
+import { SelectedEnclosureSlot } from 'app/interfaces/enclosure-old.interface';
+import { EnclosureVdev } from 'app/interfaces/enclosure.interface';
 import { Theme } from 'app/interfaces/theme.interface';
 import { ChassisView } from 'app/pages/system/old-view-enclosure/classes/chassis-view';
 import {
@@ -142,14 +140,14 @@ export class VDevLabelsSvg {
 
   createVdevLabels(data: SelectedEnclosureSlot): void {
     const poolInfo = data.slotDetails.pool_info;
-    const vdevSlots: EnclosureUiVdev[] = poolInfo?.vdev_disks.length
+    const vdevSlots: EnclosureVdev[] = poolInfo?.vdev_disks.length
       ? poolInfo?.vdev_disks
       : [{
         enclosure_id: data.enclosureId,
         slot: data.slotNumber,
         dev: data.slotDetails.dev,
       }];
-    vdevSlots.forEach((vdevSlot: EnclosureUiVdev) => {
+    vdevSlots.forEach((vdevSlot: EnclosureVdev) => {
       // Ignore slots on non-selected enclosure
       if (vdevSlot.enclosure_id !== data.enclosureId) return;
 
