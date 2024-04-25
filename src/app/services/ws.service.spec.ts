@@ -45,8 +45,8 @@ describe('WebSocketService', () => {
     jest.spyOn(service.clearSubscriptions$, 'next');
 
     (service as unknown as {
-      subscriptions: Map<string, Observable<ApiEvent>>;
-    }).subscriptions = mockEventSubscriptions;
+      eventSubscribers: Map<string, Observable<ApiEvent>>;
+    }).eventSubscribers = mockEventSubscriptions;
 
     jest.clearAllMocks();
   });
