@@ -1,54 +1,79 @@
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
+import { MockComponents } from 'ng-mocks';
+import { WidgetErrorComponent } from 'app/pages/dashboard/components/widget-error/widget-error.component';
+import {
+  runWidgetGroupTestSuite,
+} from 'app/pages/dashboard/components/widget-group/tests/run-widget-group-test-suite.utils';
 import {
   WidgetEditorGroupComponent,
 } from 'app/pages/dashboard/components/widget-group-form/widget-editor-group/widget-editor-group.component';
+import { WidgetGroupLayout } from 'app/pages/dashboard/types/widget-group.interface';
+import { WidgetType } from 'app/pages/dashboard/types/widget.interface';
+import { WidgetHostnameComponent } from 'app/pages/dashboard/widgets/network/widget-hostname/widget-hostname.component';
+import {
+  WidgetInterfaceIpComponent,
+} from 'app/pages/dashboard/widgets/network/widget-interface-ip/widget-interface-ip.component';
 
-describe('WidgetEditorGroupComponent', () => {
-  // TODO:
-  // eslint-disable-next-line unused-imports/no-unused-vars
+runWidgetGroupTestSuite(WidgetEditorGroupComponent);
+
+describe('WidgetEditorGroupComponent - additions', () => {
   let spectator: Spectator<WidgetEditorGroupComponent>;
   const createComponent = createComponentFactory({
     component: WidgetEditorGroupComponent,
-    declarations: [],
+    declarations: [
+      MockComponents(
+        WidgetHostnameComponent,
+        WidgetInterfaceIpComponent,
+        WidgetErrorComponent,
+      ),
+    ],
   });
 
   beforeEach(() => {
-    spectator = createComponent();
-  });
-
-  // TODO:
-  /* eslint-disable jest/expect-expect */
-  it('renders correct group layout based on group layout field', () => {
-
-  });
-
-  it('renders widgets in correct slots and assigns their settings', () => {
-
+    spectator = createComponent({
+      props: {
+        group: {
+          layout: WidgetGroupLayout.Quarters,
+          slots: [
+            { type: WidgetType.Hostname },
+            { type: WidgetType.InterfaceIp },
+            { type: WidgetType.Hostname },
+            { type: WidgetType.Hostname },
+          ],
+        },
+      },
+    });
   });
 
   describe('selection', () => {
-    it('shows slot as selected when [selection] input is changed', () => {
+    it('shows slot as selected when [selectedSlot] input is changed', () => {
+      spectator.setInput('selectedSlot', 1);
 
+      expect(spectator.queryAll('.slot')[1]).toHaveClass('selected');
     });
 
-    it('shows slot as selected and emits selectionChange with slot number when slot is clicked', () => {
+    it('shows slot as selected and emits selectedSlotChange with slot number when slot is clicked', () => {
+      jest.spyOn(spectator.component.selectedSlotChange, 'emit');
 
+      spectator.click('.slot:nth-child(3)');
+
+      expect(spectator.component.selectedSlotChange.emit).toHaveBeenCalledWith(2);
     });
-  });
-
-  it('defaults to selecting first slot on init', () => {
-
   });
 
   it('renders "Empty" when widget slot is empty', () => {
+    spectator.setInput('group', {
+      layout: WidgetGroupLayout.Quarters,
+      slots: [
+        { type: WidgetType.Hostname },
+        null,
+        { type: WidgetType.Hostname },
+        { type: WidgetType.Hostname },
+      ],
+    });
 
-  });
-
-  it('renders "Empty" when widget does not support slot size', () => {
-
-  });
-
-  it('renders Unknown widget type "name" when widget is not recognized', () => {
-
+    const secondSlot = spectator.query('.slot:nth-child(2)');
+    expect(secondSlot).toHaveText('Empty');
+    expect(secondSlot).toHaveClass('empty');
   });
 });

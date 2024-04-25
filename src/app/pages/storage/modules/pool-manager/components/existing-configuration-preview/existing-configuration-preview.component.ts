@@ -73,7 +73,11 @@ export class ExistingConfigurationPreviewComponent implements OnChanges {
       special: _.cloneDeep(defaultCategory),
     };
 
-    for (const [, value] of Object.entries(VdevType)) {
+    let vdevTypes = Object.entries(VdevType);
+    if (this.topology.data[0].type === TopologyItemType.Draid) {
+      vdevTypes = vdevTypes.filter(([, type]) => type !== VdevType.Spare);
+    }
+    for (const [, value] of vdevTypes) {
       if (!topology[value]?.length) {
         continue;
       }

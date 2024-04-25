@@ -1,13 +1,8 @@
-:host {
-  display: block;
-  height: 100%;
-}
-
-.card {
+.wrapper {
   align-items: center;
+  background-color: var(--bg2);
   display: flex;
-  flex-direction: column;
   height: 100%;
   justify-content: center;
-  white-space: pre-line;
+  width: 100%;
 }

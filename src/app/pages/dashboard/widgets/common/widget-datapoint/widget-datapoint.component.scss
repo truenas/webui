@@ -1,0 +1,52 @@
+@import '../../../dashboard-variables';
+
+:host {
+  display: flex;
+  height: 100%;
+  width: 100%;
+}
+
+mat-card {
+  height: 100%;
+  width: 100%;
+
+  .card-content {
+    height: 100%;
+    width: 100%;
+
+    .header {
+      padding-bottom: 0;
+      padding-right: 12px;
+    }
+
+    .container {
+      align-items: center;
+      display: flex;
+      height: calc($widget-group-height * 0.3125);
+      justify-content: center;
+      line-height: normal;
+      margin: 12px 0;
+      overflow: hidden;
+      padding: 0 12px;
+      text-align: center;
+      width: 100%;
+
+      > div {
+        word-break: break-word;
+        word-wrap: break-word;
+      }
+
+      &.full {
+        height: calc($widget-group-height * 0.8);
+      }
+
+      .sub-text {
+        display: inline-block;
+        font-size: smaller;
+        transform: scale(0.75);
+        transform-origin: -15px 15px;
+        vertical-align: sub;
+      }
+    }
+  }
+}
