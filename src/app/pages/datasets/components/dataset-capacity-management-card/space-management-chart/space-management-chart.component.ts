@@ -1,6 +1,7 @@
 import {
   ChangeDetectionStrategy, Component, Input, OnChanges,
 } from '@angular/core';
+import { TinyColor } from '@ctrl/tinycolor';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { Color, ChartDataset, ChartOptions } from 'chart.js';
 import { DatasetType } from 'app/enums/dataset.enum';
@@ -82,10 +83,10 @@ export class SpaceManagementChartComponent implements OnChanges {
     };
 
     filteredData.forEach((usedDataset, index) => {
-      const bgRgb = this.themeService.getRgbBackgroundColorByIndex(index);
-      const backgroundColor = this.themeService.getUtils().rgbToString(bgRgb, 0.85);
+      const color = this.themeService.getRgbBackgroundColorByIndex(index);
+      const backgroundColor = new TinyColor(color).setAlpha(0.85).toHex8String();
       (ds.backgroundColor as Color[]).push(backgroundColor);
-      (ds.borderColor as Color[]).push(this.themeService.getUtils().rgbToString(bgRgb));
+      (ds.borderColor as Color[]).push(color);
       const keyDiskSpace = Object.keys(usedDataset)[0] as keyof DiskSpace;
 
       if (Object.values(DiskSpaceKey).includes(keyDiskSpace)) {

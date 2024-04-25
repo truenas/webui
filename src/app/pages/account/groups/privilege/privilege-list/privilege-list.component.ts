@@ -16,7 +16,7 @@ import { PaginationServerSide } from 'app/modules/ix-table/classes/api-data-prov
 import { SortingServerSide } from 'app/modules/ix-table/classes/api-data-provider/sorting-server-side.class';
 import { actionsColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
 import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
-import { yesNoColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-yesno/ix-cell-yesno.component';
+import { yesNoColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-yes-no/ix-cell-yes-no.component';
 import { TablePagination } from 'app/modules/ix-table/interfaces/table-pagination.interface';
 import { createTable } from 'app/modules/ix-table/utils';
 import { SearchProperty } from 'app/modules/search-input/types/search-property.interface';

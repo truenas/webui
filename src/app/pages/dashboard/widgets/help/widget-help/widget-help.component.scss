@@ -40,7 +40,7 @@
   flex-direction: row;
   margin: 0 20px;
 
-  @media #{$media-gt-xs} {
+  @media #{$media-lt-sm} {
     margin: 0;
   }
 
