@@ -668,7 +668,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
 
   // Similar to createEnclosure method. This just provides parent with images for enclosure selector strip
   createExtractedEnclosure(enclosureView: EnclosureView): void {
-    const rawEnclosure = this.systemState.enclosures[enclosureView.number];
+    const rawEnclosure = this.systemState.enclosures.find((enclosure) => enclosure.number === enclosureView.number);
     let extractedChassis: Chassis;
 
     switch (rawEnclosure.model) {
@@ -1179,7 +1179,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
   // Trigger to flash the lights
   toggleSlotStatus(kill?: boolean): void {
     const selectedEnclosure = this.selectedEnclosure;
-    const enclosureId = this.systemState.enclosures[selectedEnclosure.number].id;
+    const enclosureId = selectedEnclosure.id;
     const slot = this.selectedSlotNumber;
     const status = !this.identifyBtnRef && !kill ? EnclosureSlotStatus.Identify : EnclosureSlotStatus.Clear;
 
