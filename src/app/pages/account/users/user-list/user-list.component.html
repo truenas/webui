@@ -6,7 +6,7 @@
     [checked]="!hideBuiltinUsers"
     (change)="toggleBuiltins()"
   >
-    <label>{{ 'Show Built-in Users' | translate }}</label>
+    <label [ixUiSearch]="searchableElements.elements.showBuiltIn">{{ 'Show Built-in Users' | translate }}</label>
   </mat-slide-toggle>
   <button
     *ixRequiresRoles="requiredRoles"

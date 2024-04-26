@@ -9,7 +9,7 @@
     [checked]="!hideBuiltinGroups"
     (change)="toggleBuiltins()"
   >
-    <label>{{ 'Show Built-in Groups' | translate }}</label>
+    <label [ixUiSearch]="searchableElements.elements.showBuiltIn">{{ 'Show Built-in Groups' | translate }}</label>
   </mat-slide-toggle>
   <a
     mat-button

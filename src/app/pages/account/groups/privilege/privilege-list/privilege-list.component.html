@@ -12,7 +12,14 @@
       <button mat-button type="button" ixTest="search" (click)="onSearch(searchInput.query)">
         {{ 'Search' | translate }}
       </button>
-      <button *ixRequiresRoles="requiredRoles" mat-button ixTest="add-privilege" [color]="'primary'" (click)="openForm()">
+      <button
+        *ixRequiresRoles="requiredRoles"
+        mat-button
+        ixTest="add-privilege"
+        [color]="'primary'"
+        [ixUiSearch]="searchableElements.elements.add"
+        (click)="openForm()"
+      >
         {{ 'Add' | translate }}
       </button>
     </div>
@@ -23,6 +30,7 @@
   <ix-table
     [ix-table-empty]="!(dataProvider.currentPageCount$ | async)"
     [emptyConfig]="emptyService.defaultEmptyConfig(dataProvider.emptyType$ | async)"
+    [ixUiSearch]="searchableElements.elements.list"
   >
     <thead
       ix-table-head

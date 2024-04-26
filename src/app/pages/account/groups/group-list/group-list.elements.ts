@@ -5,10 +5,15 @@ export const groupListElements = {
   hierarchy: [T('Credentials'), T('Groups')],
   anchorRouterLink: ['/credentials', 'groups'],
   elements: {
-    list: {},
+    list: {
+      synonyms: [T('Local Groups')],
+    },
     add: {
       hierarchy: [T('Add')],
       anchor: 'add-group',
+    },
+    showBuiltIn: {
+      hierarchy: [T('Show Built-in Groups')],
     },
   },
 } satisfies UiSearchableElement;

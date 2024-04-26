@@ -30,6 +30,7 @@ import {
 import {
   CertificateAuthorityEditComponent,
 } from 'app/pages/credentials/certificates-dash/certificate-authority-edit/certificate-authority-edit.component';
+import { certificateAuthorityListElements } from 'app/pages/credentials/certificates-dash/certificate-authority-list/certificate-authority-list.elements';
 import {
   SignCsrDialogComponent,
 } from 'app/pages/credentials/certificates-dash/sign-csr-dialog/sign-csr-dialog.component';
@@ -49,6 +50,7 @@ export class CertificateAuthorityListComponent implements OnInit {
   @Output() certificateSigned = new EventEmitter<void>();
 
   protected readonly requiredRoles = [Role.FullAdmin];
+  protected readonly searchableElements = certificateAuthorityListElements;
 
   dataProvider: AsyncDataProvider<CertificateAuthority>;
   authorities: CertificateAuthority[] = [];

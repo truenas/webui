@@ -6,5 +6,9 @@ export const kerberosKeytabsListElements = {
   anchorRouterLink: ['/directoryservice', 'kerberoskeytabs'],
   elements: {
     kerberosKeytabs: {},
+    add: {
+      hierarchy: [T('Add')],
+      anchor: 'add-kerberos-keytab',
+    },
   },
 } satisfies UiSearchableElement;

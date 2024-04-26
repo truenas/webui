@@ -5,10 +5,15 @@ export const userListElements = {
   hierarchy: [T('Credentials'), T('Users')],
   anchorRouterLink: ['/credentials', 'users'],
   elements: {
-    list: {},
+    list: {
+      synonyms: [T('Local Users')],
+    },
     add: {
       hierarchy: [T('Add')],
       anchor: 'add-user',
+    },
+    showBuiltIn: {
+      hierarchy: [T('Show Built-in Users')],
     },
   },
 } satisfies UiSearchableElement;
