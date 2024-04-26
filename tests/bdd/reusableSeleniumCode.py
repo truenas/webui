@@ -48,11 +48,11 @@ def set_service_checkbox(driver: classmethod, service_name: str):
     Example:
         set_service_checkbox(driver, 'SMB')
     """
-    assert wait_on_element(driver, 7, f'//div[@ix-auto="overlay__{service_name}_Running"]', 'clickable')
-    value_exist = attribute_value_exist(driver, f'//mat-checkbox[@ix-auto="checkbox__{service_name}_Running"]', 'class',
+    assert wait_on_element(driver, 7, f'//*[@ix-auto="checkbox__{service_name}_Start Automatically"]', 'clickable')
+    value_exist = attribute_value_exist(driver, f'//*[@ix-auto="checkbox__{service_name}_Start Automatically"]', 'class',
                                         'mat-checkbox-checked')
     if not value_exist:
-        driver.find_element_by_xpath(f'//div[@ix-auto="overlay__{service_name}_Running"]').click()
+        driver.find_element_by_xpath(f'//*[@ix-auto="checkbox__{service_name}_Start Automatically"]').click()
 
 
 def set_service_toggle(driver: classmethod, service_name: str):
@@ -65,9 +65,9 @@ def set_service_toggle(driver: classmethod, service_name: str):
     Example:
         set_service_toggle(driver, 'SMB')
     """
-    assert wait_on_element(driver, 7, f'//div[@ix-auto="overlay__{service_name}_Running"]', 'clickable')
-    value_exist = attribute_value_exist(driver, f'//mat-slide-toggle[@ix-auto="slider__{service_name}_Running"]', 'class',
+    assert wait_on_element(driver, 7, f'//*[@ix-auto="overlay__{service_name}_Running"]', 'clickable')
+    value_exist = attribute_value_exist(driver, f'//*[@ix-auto="slider__{service_name}_Running"]', 'class',
                                         'mat-checked')
     if not value_exist:
-        driver.find_element_by_xpath(f'//div[@ix-auto="overlay__{service_name}_Running"]').click()
+        driver.find_element_by_xpath(f'//*[@ix-auto="overlay__{service_name}_Running"]').click()
         time.sleep(2)
