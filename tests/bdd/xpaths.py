@@ -108,4 +108,4 @@ class aws:
     delete_Button = aws_button('delete-objects-button')
     upload_Button = aws_button('upload-button')
     check_All_Checkbox = '//input[@type="checkbox" and @tabindex="-1"]'
-    create_The_Folder_Button = '//awsui-button[@class="createFolder-object-actions__actions-submit"]'
+    create_The_Folder_Button = '//button[contains(@class,"createFolder-object-actions__actions-submit")]'
