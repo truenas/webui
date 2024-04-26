@@ -194,14 +194,14 @@ def click_on_the_bucket_being_used_and_then_upload_a_file(driver):
     assert wait_on_element(driver, 10, '//div[contains(.,"Amazon S3")]')
     assert wait_on_element(driver, 5, f'//a[text()="{my_bucket}"]', 'clickable')
     driver.find_element_by_xpath(f'//a[text()="{my_bucket}"]').click()
-    assert wait_on_element(driver, 5, f'//h1[text()="{my_bucket}"]')
+    assert wait_on_element(driver, 5, xpaths.aws.folder_header(my_bucket))
     assert wait_on_element(driver, 5, xpaths.aws.upload_Button, 'clickable')
     rsc.click_If_Element_Exist(driver, xpaths.button.close_Popover)
 
     s3_client = boto3.client('s3')
     s3_client.upload_file('cloud_test.txt', my_bucket, 'cloud_test.txt')
     driver.refresh()
-    assert wait_on_element(driver, 5, f'//h1[text()="{my_bucket}"]')
+    assert wait_on_element(driver, 5, xpaths.aws.folder_header(my_bucket))
     assert wait_on_element(driver, 5, '//span[text()="cloud_test.txt"]', 'clickable')
     time.sleep(0.5)
 
@@ -240,7 +240,7 @@ def verify_the_file_is_copied_from_the_s3_bucket_into_the_dataset(driver, nas_ip
 def on_the_bucket_tab_create_a_folder_and_upload_a_file_in_it(driver):
     """on the bucket tab, create a folder, and upload a file in it."""
     driver.switch_to.window(driver.window_handles[1])
-    assert wait_on_element(driver, 5, f'//h1[text()="{my_bucket}"]')
+    assert wait_on_element(driver, 5, xpaths.aws.folder_header(my_bucket))
     assert wait_on_element(driver, 5, xpaths.aws.create_Folder_Button, 'clickable')
     driver.find_element_by_xpath(xpaths.aws.create_Folder_Button).click()
     assert wait_on_element(driver, 10, '//div[contains(.,"Create folder")]')
@@ -249,13 +249,13 @@ def on_the_bucket_tab_create_a_folder_and_upload_a_file_in_it(driver):
     assert wait_on_element(driver, 5, xpaths.aws.create_The_Folder_Button, 'clickable')
     rsc.scroll_To(driver, xpaths.aws.create_The_Folder_Button)
     driver.find_element_by_xpath(xpaths.aws.create_The_Folder_Button).click()
-    assert wait_on_element(driver, 10, f'//h1[text()="{my_bucket}"]')
+    assert wait_on_element(driver, 10, xpaths.aws.folder_header(my_bucket))
     assert wait_on_element(driver, 5, '//span[text()="my_folder/"]', 'clickable')
     s3_client = boto3.client('s3')
     s3_client.upload_file('cloud_test.txt', my_bucket, 'my_folder/cloud_test.txt')
     assert wait_on_element(driver, 5, '//span[text()="my_folder/"]', 'clickable')
     driver.find_element_by_xpath('//span[text()="my_folder/"]').click()
-    assert wait_on_element(driver, 5, '//h1[text()="my_folder/"]')
+    assert wait_on_element(driver, 5, xpaths.aws.folder_header("my_folder/"))
     assert wait_on_element(driver, 5, '//span[text()="cloud_test.txt"]', 'clickable')
 
 
@@ -344,10 +344,10 @@ def under_transfer_mode_select_move_click_save(driver):
 def on_the_bucket_add_a_file_in_the_folder(driver):
     """on the bucket add a file in the folder."""
     driver.switch_to.window(driver.window_handles[1])
-    assert wait_on_element(driver, 5, '//h1[text()="my_folder/"]')
+    assert wait_on_element(driver, 5, xpaths.aws.folder_header("my_folder/"))
     assert wait_on_element(driver, 5, f'//span[text()="{my_bucket}"]')
     driver.find_element_by_xpath(f'//span[text()="{my_bucket}"]').click()
-    assert wait_on_element(driver, 5, f'//h1[text()="{my_bucket}"]')
+    assert wait_on_element(driver, 5, xpaths.aws.folder_header(my_bucket))
     s3_client = boto3.client('s3')
     s3_client.upload_file('cloud_test.txt', my_bucket, 'cloud_test.txt')
     driver.refresh()
@@ -356,7 +356,7 @@ def on_the_bucket_add_a_file_in_the_folder(driver):
     s3_client.upload_file('cloud_test.txt', my_bucket, 'my_folder/cloud_test.txt')
     assert wait_on_element(driver, 5, '//span[text()="my_folder/"]', 'clickable')
     driver.find_element_by_xpath('//span[text()="my_folder/"]').click()
-    assert wait_on_element(driver, 5, '//h1[text()="my_folder/"]')
+    assert wait_on_element(driver, 5, xpaths.aws.folder_header("my_folder/"))
     assert wait_on_element(driver, 5, '//span[text()="cloud_test.txt"]', 'clickable')
 
 
@@ -371,11 +371,11 @@ def verify_all_files_are_moved_from_the_s3_bucket_to_the_dataset(driver, nas_ip)
     assert results['result'] is True
     driver.switch_to.window(driver.window_handles[1])
     driver.refresh()
-    assert wait_on_element(driver, 5, '//h1[text()="my_folder/"]')
+    assert wait_on_element(driver, 5, xpaths.aws.folder_header("my_folder/"))
     assert wait_on_element(driver, 5, f'//span[text()="{my_bucket}"]')
     assert not wait_on_element(driver, 1, '//span[text()="cloud_test.txt"]')
     driver.find_element_by_xpath(f'//span[text()="{my_bucket}"]').click()
-    assert wait_on_element(driver, 5, f'//h1[text()="{my_bucket}"]')
+    assert wait_on_element(driver, 5, xpaths.aws.folder_header(my_bucket))
     assert not wait_on_element(driver, 1, '//span[text()="cloud_test.txt"]', 'clickable')
 
 
@@ -400,12 +400,12 @@ def under_transfer_mode_select_sync_then_click_save(driver):
 def on_the_bucket_tab_upload_a_file(driver):
     """on the bucket tab, upload a file."""
     driver.switch_to.window(driver.window_handles[1])
-    assert wait_on_element(driver, 5, f'//h1[text()="{my_bucket}"]')
+    assert wait_on_element(driver, 5, xpaths.aws.folder_header(my_bucket))
     assert wait_on_element(driver, 5, xpaths.aws.upload_Button, 'clickable')
     s3_client = boto3.client('s3')
     s3_client.upload_file('cloud_test.txt', my_bucket, 'cloud_test.txt')
     driver.refresh()
-    assert wait_on_element(driver, 5, f'//h1[text()="{my_bucket}"]')
+    assert wait_on_element(driver, 5, xpaths.aws.folder_header(my_bucket))
     assert wait_on_element(driver, 5, '//span[text()="cloud_test.txt"]', 'clickable')
     time.sleep(1)
 
@@ -418,7 +418,7 @@ def verify_the_file_is_sync_from_the_s3_bucket_to_the_dataset(driver, nas_ip):
     assert results['result'] is True
     driver.switch_to.window(driver.window_handles[1])
     driver.refresh()
-    assert wait_on_element(driver, 5, f'//h1[text()="{my_bucket}"]')
+    assert wait_on_element(driver, 5, xpaths.aws.folder_header(my_bucket))
     assert wait_on_element(driver, 5, '//span[text()="cloud_test.txt"]', 'clickable')
 
 
@@ -428,7 +428,7 @@ def delete_the_file_from_the_s3_bucket_in_the_aws_web_console(driver):
     driver.switch_to.window(driver.window_handles[1])
     driver.refresh()
     time.sleep(0.5)
-    assert wait_on_element(driver, 5, f'//h1[text()="{my_bucket}"]')
+    assert wait_on_element(driver, 5, xpaths.aws.folder_header(my_bucket))
     assert wait_on_element(driver, 5, '//span[text()="cloud_test.txt"]', 'clickable')
     driver.find_element_by_xpath(xpaths.aws.check_All_Checkbox).click()
     assert wait_on_element(driver, 5, xpaths.aws.delete_Button, 'clickable')
@@ -442,7 +442,7 @@ def delete_the_file_from_the_s3_bucket_in_the_aws_web_console(driver):
     time.sleep(0.5)
     assert wait_on_element(driver, 5, '//awsui-button[@class="delete-objects__exit"]/button', 'clickable')
     driver.find_element_by_xpath('//awsui-button[@class="delete-objects__exit"]/button').click()
-    assert wait_on_element(driver, 5, f'//h1[text()="{my_bucket}"]')
+    assert wait_on_element(driver, 5, xpaths.aws.folder_header(my_bucket))
 
 
 @then('verify that the file is deleted on the NAS dataset')
@@ -458,7 +458,7 @@ def create_a_folder_and_upload_a_file_in_it(driver):
     """create a folder, and upload a file in it."""
     driver.switch_to.window(driver.window_handles[1])
     time.sleep(1)
-    assert wait_on_element(driver, 5, f'//h1[text()="{my_bucket}"]')
+    assert wait_on_element(driver, 5, xpaths.aws.folder_header(my_bucket))
     assert wait_on_element(driver, 5, xpaths.aws.create_Folder_Button, 'clickable')
     driver.find_element_by_xpath(xpaths.aws.create_Folder_Button).click()
     assert wait_on_element(driver, 10, '//div[contains(.,"Create folder")]')
@@ -467,13 +467,13 @@ def create_a_folder_and_upload_a_file_in_it(driver):
     assert wait_on_element(driver, 5, xpaths.aws.create_The_Folder_Button, 'clickable')
     rsc.scroll_To(driver, xpaths.aws.create_The_Folder_Button)
     driver.find_element_by_xpath(xpaths.aws.create_The_Folder_Button).click()
-    assert wait_on_element(driver, 5, f'//h1[text()="{my_bucket}"]')
+    assert wait_on_element(driver, 5, xpaths.aws.folder_header(my_bucket))
     assert wait_on_element(driver, 5, '//span[text()="my_folder/"]', 'clickable')
     s3_client = boto3.client('s3')
     s3_client.upload_file('cloud_test.txt', my_bucket, 'my_folder/cloud_test.txt')
     assert wait_on_element(driver, 5, '//span[text()="my_folder/"]', 'clickable')
     driver.find_element_by_xpath('//span[text()="my_folder/"]').click()
-    assert wait_on_element(driver, 5, '//h1[text()="my_folder/"]')
+    assert wait_on_element(driver, 5, xpaths.aws.folder_header("my_folder/"))
     assert wait_on_element(driver, 5, '//span[text()="cloud_test.txt"]', 'clickable')
 
 
@@ -491,10 +491,10 @@ def delete_the_folder_from_the_s3_bucket_in_the_aws_web_console(driver, nas_ip):
     driver.switch_to.window(driver.window_handles[1])
     driver.refresh()
     time.sleep(1)
-    assert wait_on_element(driver, 5, '//h1[text()="my_folder/"]')
+    assert wait_on_element(driver, 5, xpaths.aws.folder_header("my_folder/"))
     assert wait_on_element(driver, 5, f'//span[text()="{my_bucket}"]')
     driver.find_element_by_xpath(f'//span[text()="{my_bucket}"]').click()
-    assert wait_on_element(driver, 5, f'//h1[text()="{my_bucket}"]')
+    assert wait_on_element(driver, 5, xpaths.aws.folder_header(my_bucket))
     time.sleep(1)
     driver.find_element_by_xpath(xpaths.aws.check_All_Checkbox).click()
     assert wait_on_element(driver, 5, xpaths.aws.delete_Button, 'clickable')
@@ -508,7 +508,7 @@ def delete_the_folder_from_the_s3_bucket_in_the_aws_web_console(driver, nas_ip):
     time.sleep(0.5)
     assert wait_on_element(driver, 5, '//awsui-button[@class="delete-objects__exit"]/button', 'clickable')
     driver.find_element_by_xpath('//awsui-button[@class="delete-objects__exit"]/button').click()
-    assert wait_on_element(driver, 5, f'//h1[text()="{my_bucket}"]')
+    assert wait_on_element(driver, 5, xpaths.aws.folder_header(my_bucket))
     cmd = 'rm -r /mnt/tank/aws_share/my_folder'
     results = ssh_cmd(cmd, 'root', 'testing', nas_ip)
     assert results['result'] is True
@@ -587,7 +587,7 @@ def verify_the_file_appear_in_the_s3_bucket(driver):
     """verify the file appear in the S3 bucket."""
     driver.switch_to.window(driver.window_handles[1])
     driver.refresh()
-    assert wait_on_element(driver, 5, f'//h1[text()="{my_bucket}"]')
+    assert wait_on_element(driver, 5, xpaths.aws.folder_header(my_bucket))
     assert wait_on_element(driver, 5, '//span[text()="cloud_test.txt"]', 'clickable')
 
 
@@ -618,10 +618,10 @@ def verify_the_folder_appear_in_the_s3_bucket_with_the_file(driver):
     """verify the folder appear in the S3 bucket with the file."""
     driver.switch_to.window(driver.window_handles[1])
     driver.refresh()
-    assert wait_on_element(driver, 5, f'//h1[text()="{my_bucket}"]')
+    assert wait_on_element(driver, 5, xpaths.aws.folder_header(my_bucket))
     assert wait_on_element(driver, 5, '//span[text()="my_folder/"]', 'clickable')
     driver.find_element_by_xpath('//span[text()="my_folder/"]').click()
-    assert wait_on_element(driver, 5, '//h1[text()="my_folder/"]')
+    assert wait_on_element(driver, 5, xpaths.aws.folder_header("my_folder/"))
     assert wait_on_element(driver, 5, '//span[text()="cloud_test.txt"]', 'clickable')
 
 
@@ -630,7 +630,7 @@ def verify_the_file_appear_into_the_s3_bucket_and_is_removed_from_the_nas(driver
     """verify the file appear into the S3 bucket and is removed from the NAS."""
     driver.switch_to.window(driver.window_handles[1])
     driver.refresh()
-    assert wait_on_element(driver, 5, f'//h1[text()="{my_bucket}"]')
+    assert wait_on_element(driver, 5, xpaths.aws.folder_header(my_bucket))
     assert wait_on_element(driver, 5, '//span[text()="cloud_test.txt"]', 'clickable')
     cmd = 'test -f /mnt/tank/aws_share/cloud_test.txt'
     results = ssh_cmd(cmd, 'root', 'testing', nas_ip)
@@ -668,7 +668,7 @@ def on_the_bucket_tab_verify_the_file_is_deleted(driver):
     """on the bucket tab, verify the file is deleted."""
     driver.switch_to.window(driver.window_handles[1])
     driver.refresh()
-    assert wait_on_element(driver, 5, f'//h1[text()="{my_bucket}"]')
+    assert wait_on_element(driver, 5, xpaths.aws.folder_header(my_bucket))
     assert not wait_on_element(driver, 2, '//span[text()="cloud_test.txt"]', 'clickable')
 
 
@@ -702,12 +702,12 @@ def delete_the_folder_from_the_dataset_then_click_run_now(driver, nas_ip):
 def on_the_bucket_tab_verify_the_folder_is_deleted(driver):
     """on the bucket tab, verify the folder is deleted."""
     driver.switch_to.window(driver.window_handles[1])
-    assert wait_on_element(driver, 5, '//h1[text()="my_folder/"]')
+    assert wait_on_element(driver, 5, xpaths.aws.folder_header("my_folder/"))
     assert wait_on_element(driver, 5, f'//span[text()="{my_bucket}"]')
     driver.find_element_by_xpath(f'//span[text()="{my_bucket}"]').click()
-    assert wait_on_element(driver, 5, f'//h1[text()="{my_bucket}"]')
+    assert wait_on_element(driver, 5, xpaths.aws.folder_header(my_bucket))
     driver.refresh()
-    assert wait_on_element(driver, 5, f'//h1[text()="{my_bucket}"]')
+    assert wait_on_element(driver, 5, xpaths.aws.folder_header(my_bucket))
     assert not wait_on_element(driver, 1, '//span[text()="my_folder/"]', 'clickable')
     driver.close()
     driver.switch_to.window(driver.window_handles[0])

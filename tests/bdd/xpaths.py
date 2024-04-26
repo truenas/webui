@@ -43,6 +43,7 @@ class google_Drive:
     music_Folder = '//div[@data-tooltip="Google Drive Folder: music"]'
     move_To_Trash = '//div[text()="Move to trash?"]'
 
+
 class input:
     username = '//input[@ix-auto="input__Username"]'
     password = '//input[@ix-auto="input__Password"]'
@@ -94,6 +95,14 @@ class topToolbar:
 class aws:
     def aws_button(field):
         return f'(//button[@data-testid="{field}"])[1]'
+
+    def folder_header(folder_name: str):
+        """
+        xpath for the bucket header
+        :param folder_name: name of the bucket
+        :return: the xpath of the bucket header
+        """
+        return f'//h1[contains(.,"{folder_name}")]'
 
     create_Folder_Button = aws_button('create-folder-button')
     delete_Button = aws_button('delete-objects-button')
