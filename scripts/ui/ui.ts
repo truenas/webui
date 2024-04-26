@@ -154,6 +154,7 @@ program
   .command('remote')
   .description('Set the server WebUI communicates with')
   .option('-i, --ip <ip_address>', 'Sets IP address of your server')
+  .option('-f, --force', 'Forces IP Address to be used without preprocessing')
   .hook('preAction', () => {
     setMockEnabled(false);
     console.info('Disabling global mock due to remote change.');
@@ -161,7 +162,7 @@ program
   .action(() => {
     const remoteCommand = program.commands.find((command: Command) => command.name() === 'remote');
     const remoteOptions = commandOpts(remoteCommand);
-    remote(remoteCommand, remoteOptions.ip);
+    remote(remoteCommand, remoteOptions.ip, remoteOptions.force);
   });
 
 program.parse(process.argv);
@@ -206,7 +207,7 @@ function makePrintable(src: WebUiEnvironment, prefix: string) {
 
 function dispersalAsEnum(dispersal: string): EnclosureDispersalStrategy {
   if (dispersal.toLowerCase() === 'default' || dispersal.toLowerCase() === 'existing') {
-    return EnclosureDispersalStrategy[capitalize(dispersal) as keyof EnclosureDispersalStrategy];
+    return EnclosureDispersalStrategy[capitalize(dispersal) as keyof typeof EnclosureDispersalStrategy];
   } else {
     console.info(`ERROR: ${dispersal} is not a valid slot assignment`);
     process.exit(1);
@@ -215,7 +216,7 @@ function dispersalAsEnum(dispersal: string): EnclosureDispersalStrategy {
 
 function layoutAsEnum(layout: string): TopologyItemType {
   if (layout.toLowerCase() !== 'default') {
-    return TopologyItemType[capitalize(layout) as keyof TopologyItemType];
+    return TopologyItemType[capitalize(layout) as keyof typeof TopologyItemType];
   } else {
     console.info(`ERROR: ${layout} is not a valid VDEV layout`);
     process.exit(1);
@@ -752,10 +753,10 @@ function showRemote(options: ReportOptions): void {
   console.info(output);
 }
 
-function remote(command: Command, ip: string): void {
+function remote(command: Command, ip: string, force: boolean): void {
 
   const proxyConfigJson = './proxy.config.json';
-  const url = normalizeUrl(ip);
+  const url = force ? ip : normalizeUrl(ip);
 
   printCurrentConfig(proxyConfigJson);
 
