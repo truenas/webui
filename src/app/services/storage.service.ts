@@ -195,7 +195,10 @@ export class StorageService {
       }
 
       // Check Redundancy
-      if (this.hasZeroRedundancyLevelVdev(vdevs)) {
+      if (
+        [VdevType.Data, VdevType.Dedup, VdevType.Special].includes(category)
+        && this.hasZeroRedundancyLevelVdev(vdevs)
+      ) {
         warnings.push(TopologyWarning.NoRedundancy);
       }
     }
