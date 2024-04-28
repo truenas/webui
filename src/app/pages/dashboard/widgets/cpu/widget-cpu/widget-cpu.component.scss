@@ -1,0 +1,83 @@
+@import 'scss-imports/cssvars';
+
+.card {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.card-content {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding-bottom: 0;
+  padding-right: 10px;
+
+  .header {
+    padding-bottom: 0;
+    padding-right: 12px;
+  }
+
+  .container {
+    padding-left: 12px;
+    padding-right: 0;
+    padding-top: 0;
+  }
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+
+  h3 {
+    font-size: 24px;
+  }
+}
+
+.container {
+  display: flex;
+  flex-grow: 1;
+  overflow: hidden;
+  
+  .content {
+    width: 100%;
+
+    .cpu-model {
+      opacity: 0.5;
+      padding-bottom: 24px;
+      text-align: center;
+    }
+
+    .cpu-load-wrapper {
+      display: flex;
+    }
+
+    .chart-gauge {
+      align-items: center;
+      display: flex;
+      flex: 0 0 45%;
+      justify-content: center;
+    }
+
+    .cpu-data {
+      flex: 0 0 55%;
+
+      .mat-mdc-list-item {
+        border-bottom: none !important;
+      }
+
+      .skeleton {
+        display: block;
+        width: 100px;
+      }
+    }
+  }
+
+  .chart {
+    height: 100px;
+    margin-top: 30px;
+    padding-left: 24px;
+    padding-right: 24px;
+  }
+}

@@ -147,6 +147,7 @@
   "You can search both for local groups as well as groups from Active Directory. Press ENTER to separate entries.": "",
   "{comparator} (Range In)": "",
   "{comparator} (Range Not In)": "",
+  "{coreCount, plural, one {# core} other {# cores} }": "",
   "{n, plural, =0 {No errors} one {# Error} other {# Errors}}": "",
   "{type} widget does not support {size} size.": "",
   "{type} widget is not supported.": "",

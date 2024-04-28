@@ -12,6 +12,6 @@ export const widgetCategoryLabels = new Map<WidgetCategory, string>([
   [WidgetCategory.Network, T('Network')],
   [WidgetCategory.Help, T('Help')],
   [WidgetCategory.Cpu, T('CPU')],
-  [WidgetCategory.Cpu, T('Memory')],
+  [WidgetCategory.Memory, T('Memory')],
   [WidgetCategory.Storage, T('Storage')],
 ]);

@@ -2597,6 +2597,7 @@
   "{checked} exporter: {name}": "",
   "{comparator} (Range In)": "",
   "{comparator} (Range Not In)": "",
+  "{coreCount, plural, one {# core} other {# cores} }": "",
   "{n, plural, =0 {No errors} one {# Error} other {# Errors}}": "",
   "{n, plural, one {# docker image} other {# docker images}} has been deleted.": "",
   "{n, plural, one {# docker image} other {# docker images}} has been updated.": "",

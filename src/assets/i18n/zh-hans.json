@@ -237,6 +237,7 @@
   "{comparator} (Range In)": "",
   "{comparator} (Range Not In)": "",
   "{comparator} (Starts With)": "",
+  "{coreCount, plural, one {# core} other {# cores} }": "",
   "{days, plural, =1 {# day} other {# days}}": "",
   "{email} via {server}": "",
   "{failedCount} of {allCount, plural, =1 {# task} other {# tasks}} failed": "",
