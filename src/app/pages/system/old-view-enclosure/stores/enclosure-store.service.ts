@@ -6,7 +6,7 @@ import {
 } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { VdevType, TopologyItemType } from 'app/enums/v-dev-type.enum';
-import { EnclosureUi, EnclosureUiSlot } from 'app/interfaces/enclosure.interface';
+import { EnclosureOld, EnclosureOldSlot } from 'app/interfaces/enclosure-old.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import {
   Disk, TopologyDisk, TopologyItem,
@@ -19,9 +19,9 @@ import { WebSocketService } from 'app/services/ws.service';
 export interface EnclosureState {
   areEnclosuresLoading: boolean;
   areDisksLoading: boolean;
-  enclosures: EnclosureUi[];
+  enclosures: EnclosureOld[];
   selectedEnclosure?: string | null;
-  selectedEnclosureDisks?: EnclosureUiSlot[] | null;
+  selectedEnclosureDisks?: EnclosureOldSlot[] | null;
 }
 
 const initialState: EnclosureState = {
@@ -64,7 +64,7 @@ export class EnclosureStore extends ComponentStore<EnclosureState> {
   });
 
   updateState(): Observable<{
-    enclosures: EnclosureUi[];
+    enclosures: EnclosureOld[];
   }> {
     return forkJoin({
       enclosures: this.getEnclosures().pipe(
@@ -73,13 +73,13 @@ export class EnclosureStore extends ComponentStore<EnclosureState> {
     });
   }
 
-  getEnclosures(): Observable<EnclosureUi[]> {
-    return this.ws.call('enclosure2.query');
+  getEnclosures(): Observable<EnclosureOld[]> {
+    return this.ws.call('enclosure2.query') as unknown as Observable<EnclosureOld[]>;
   }
 
-  patchStateWithEnclosureData(): (source: Observable<EnclosureUi[]>) => Observable<EnclosureUi[]> {
-    return tapResponse<EnclosureUi[]>(
-      (enclosures: EnclosureUi[]) => {
+  patchStateWithEnclosureData(): (source: Observable<EnclosureOld[]>) => Observable<EnclosureOld[]> {
+    return tapResponse<EnclosureOld[]>(
+      (enclosures: EnclosureOld[]) => {
         const selectedEnclosure = enclosures.length ? enclosures[0].id : null;
         this.patchState({
           areEnclosuresLoading: false,
@@ -99,9 +99,9 @@ export class EnclosureStore extends ComponentStore<EnclosureState> {
   processData({
     enclosures,
   }: {
-    enclosures: EnclosureUi[];
+    enclosures: EnclosureOld[];
     selectedEnclosure: string;
-  }): Observable<EnclosureUi[]> {
+  }): Observable<EnclosureOld[]> {
     enclosures.map((enclosure, index) => {
       enclosure.number = index;
       return enclosure;
@@ -157,7 +157,7 @@ export class EnclosureStore extends ComponentStore<EnclosureState> {
     this.patchState((state) => {
       return {
         ...state,
-        enclosures: state.enclosures.map((enclosure: EnclosureUi) => {
+        enclosures: state.enclosures.map((enclosure: EnclosureOld) => {
           if (enclosure.id !== enclosureId) {
             return enclosure;
           }
@@ -171,11 +171,11 @@ export class EnclosureStore extends ComponentStore<EnclosureState> {
     });
   }
 
-  getPools(enclosure: EnclosureUi): string[] {
+  getPools(enclosure: EnclosureOld): string[] {
     if (!enclosure) return [];
     const pools = Object.entries(enclosure?.elements['Array Device Slot'])
-      .filter((entry: [string, EnclosureUiSlot]) => entry[1].pool_info !== null)
-      .map((keyValue: [string, EnclosureUiSlot]) => (keyValue[1]).pool_info?.pool_name);
+      .filter((entry: [string, EnclosureOldSlot]) => entry[1].pool_info !== null)
+      .map((keyValue: [string, EnclosureOldSlot]) => (keyValue[1]).pool_info?.pool_name);
     const uniquePools = new Set(pools);
     return Array.from(uniquePools);
   }
@@ -190,16 +190,16 @@ export class EnclosureStore extends ComponentStore<EnclosureState> {
     }
   }
 
-  updateSelectedEnclosureDisks(selectedEnclosure: EnclosureUi): void {
+  updateSelectedEnclosureDisks(selectedEnclosure: EnclosureOld): void {
     const disks = Object.entries(selectedEnclosure.elements['Array Device Slot'])
-      .map((keyValue: [string, EnclosureUiSlot]) => {
+      .map((keyValue: [string, EnclosureOldSlot]) => {
         return keyValue[1];
       });
 
     this.updateStateWithSelectedEnclosureDisks(disks);
   }
 
-  readonly updateStateWithSelectedEnclosureDisks = this.updater((state, selectedEnclosureDisks: EnclosureUiSlot[]) => {
+  readonly updateStateWithSelectedEnclosureDisks = this.updater((state, selectedEnclosureDisks: EnclosureOldSlot[]) => {
     return {
       ...state,
       selectedEnclosureDisks,
@@ -207,7 +207,7 @@ export class EnclosureStore extends ComponentStore<EnclosureState> {
   });
 
   readonly updateSelectedEnclosure = this.updater((state, selectedEnclosure: string) => {
-    const selected: EnclosureUi = state.enclosures.find((enclosure: EnclosureUi) => {
+    const selected: EnclosureOld = state.enclosures.find((enclosure: EnclosureOld) => {
       return enclosure.id === selectedEnclosure;
     });
     this.updateSelectedEnclosureDisks(selected);

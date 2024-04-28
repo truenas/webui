@@ -103,7 +103,7 @@ import { DockerHubRateLimit } from 'app/interfaces/dockerhub-rate-limit.interfac
 import {
   DsUncachedGroup, DsUncachedUser, LoggedInUser,
 } from 'app/interfaces/ds-cache.interface';
-import { EnclosureUi } from 'app/interfaces/enclosure.interface';
+import { DashboardEnclosure, Enclosure } from 'app/interfaces/enclosure.interface';
 import {
   FailoverConfig,
   FailoverUpdate,
@@ -440,9 +440,9 @@ export interface ApiCallDirectory {
   'disk.update': { params: [id: string, update: DiskUpdate]; response: Disk };
 
   // Enclosure
-  'enclosure2.query': { params: void; response: EnclosureUi[] };
-  'webui.enclosure.dashboard': { params: void; response: EnclosureUi[] };
-  'enclosure.update': { params: [enclosureId: string, update: { label: string }]; response: EnclosureUi };
+  'enclosure2.query': { params: void; response: Enclosure[] };
+  'webui.enclosure.dashboard': { params: void; response: DashboardEnclosure[] };
+  'enclosure.update': { params: [enclosureId: string, update: { label: string }]; response: Enclosure };
   'enclosure.set_slot_status': { params: [id: string, slot: number, status: EnclosureSlotStatus ]; response: void };
 
   // Failover

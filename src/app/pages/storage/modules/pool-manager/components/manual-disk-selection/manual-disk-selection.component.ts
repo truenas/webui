@@ -6,7 +6,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { combineLatest, map } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
 import { CreateVdevLayout } from 'app/enums/v-dev-type.enum';
-import { EnclosureUi } from 'app/interfaces/enclosure.interface';
+import { EnclosureOld } from 'app/interfaces/enclosure-old.interface';
 import { UnusedDisk } from 'app/interfaces/storage.interface';
 import {
   ManualSelectionVdev,
@@ -20,7 +20,7 @@ import { minDisksPerLayout } from 'app/pages/storage/modules/pool-manager/utils/
 
 export interface ManualDiskSelectionParams {
   layout: CreateVdevLayout;
-  enclosures: EnclosureUi[];
+  enclosures: EnclosureOld[];
   inventory: UnusedDisk[];
   vdevs: UnusedDisk[][];
   vdevsLimit: number | null;

@@ -1,7 +1,7 @@
 import {
-  ChangeDetectionStrategy, Component, Input, Type,
+  ChangeDetectionStrategy, Component, computed, input,
 } from '@angular/core';
-import { EnclosureUi } from 'app/interfaces/enclosure.interface';
+import { DashboardEnclosure, DashboardEnclosureSlot } from 'app/interfaces/enclosure.interface';
 import { enclosureComponentMap } from 'app/pages/system/enclosure/utils/enclosure-mappings';
 
 @Component({
@@ -11,29 +11,17 @@ import { enclosureComponentMap } from 'app/pages/system/enclosure/utils/enclosur
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class EnclosureOverviewComponent {
-  @Input() enclosure: EnclosureUi; // Enclosure Instance from enclosure-dashboard component
+  readonly enclosure = input.required<DashboardEnclosure>();
+  readonly selectedSlot = input.required<DashboardEnclosureSlot>();
 
-  /** TODO: Change the 'component' type here from one of the enclosures svg components based on
-   * which model applies using 'enclosure' input property. https://angular.io/guide/dynamic-component-loader
-   */
-  machine: { component: Type<unknown>; inputs: { enclosure: EnclosureUi } } = {
-    component: enclosureComponentMap['M50'],
-    inputs: {
-      enclosure: {
-        rackmount: true,
-        top_loaded: true,
-        front_slots: 50,
-        rear_slots: 8,
-        internal_slots: 4,
-        controller: true,
-        elements: {
-          'Array Device Slot': [],
-        },
-        id: 'm50',
-        label: 'M50',
-        model: 'M50',
-        name: 'M50',
+  readonly machine = computed(() => {
+    // TODO: Add error handling for missing models
+    return {
+      component: enclosureComponentMap['M50'], // TODO: this.enclosure().model
+      inputs: {
+        enclosure: this.enclosure(),
+        selectedSlot: this.selectedSlot(),
       },
-    },
-  };
+    };
+  });
 }

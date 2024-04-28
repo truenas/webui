@@ -1,6 +1,7 @@
 import {
-  ChangeDetectionStrategy, Component, EventEmitter, Input, Output,
+  ChangeDetectionStrategy, Component, computed, input, output, signal,
 } from '@angular/core';
+import { DashboardEnclosureSlot } from 'app/interfaces/enclosure.interface';
 
 @Component({
   // eslint-disable-next-line @angular-eslint/component-selector
@@ -9,10 +10,13 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DriveTrayComponent {
-  highlight: boolean;
-  @Input() slot: number;
-  @Input() empty: boolean;
-  @Input() selected: boolean;
-  @Input() diskName?: string;
-  @Output() selectDisk = new EventEmitter<string>();
+  readonly slot = input.required<DashboardEnclosureSlot>();
+  readonly selected = input.required<boolean>();
+
+  readonly traySelected = output();
+
+  readonly isEmpty = computed(() => !this.slot().pool_info);
+
+  // TODO: Try with CSS
+  readonly highlight = signal(false);
 }

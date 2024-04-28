@@ -4,7 +4,7 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { MockComponents } from 'ng-mocks';
 import { DndModule } from 'ngx-drag-drop';
 import { of } from 'rxjs';
-import { EnclosureUi } from 'app/interfaces/enclosure.interface';
+import { EnclosureOld } from 'app/interfaces/enclosure-old.interface';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TreeHarness } from 'app/modules/ix-tree/testing/tree.harness';
 import { TreeModule } from 'app/modules/ix-tree/tree.module';
@@ -75,7 +75,7 @@ describe('ManualSelectionDisksComponent', () => {
             number: 1,
             label: 'Enclosure 1',
           },
-        ] as EnclosureUi[],
+        ] as EnclosureOld[],
       },
     });
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
