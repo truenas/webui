@@ -15,6 +15,17 @@ import { ThemeService } from 'app/services/theme/theme.service';
 import { AppState } from 'app/store';
 import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 
+interface CpuParams {
+  usageMin: number;
+  usageMax: number;
+  usageMinThreads: number[];
+  usageMaxThreads: number[];
+  tempMin: number;
+  tempMax: number;
+  tempMinThreads: number[];
+  tempMaxThreads: number[];
+}
+
 @Component({
   selector: 'ix-widget-cpu',
   templateUrl: './widget-cpu.component.html',
@@ -50,12 +61,42 @@ export class WidgetCpuComponent {
   });
 
   protected highest = computed(() => {
-    // TODO
+    const cpuParams = this.getCpuParams();
+    if (cpuParams.usageMax) {
+      if (cpuParams.usageMaxThreads.length === 0) {
+        return this.translate.instant('{usage}% (All Threads)', { usage: cpuParams.usageMax });
+      }
+      if (cpuParams.usageMaxThreads.length === 1) {
+        return this.translate.instant('{usage}% (Thread #{thread})', {
+          usage: cpuParams.usageMax,
+          thread: cpuParams.usageMaxThreads.toString(),
+        });
+      }
+      return this.translate.instant('{usage}% ({threadCount} threads at {usage}%)', {
+        usage: cpuParams.usageMax,
+        threadCount: cpuParams.usageMaxThreads.length,
+      });
+    }
     return this.translate.instant('N/A');
   });
 
   protected hottest = computed(() => {
-    // TODO
+    const cpuParams = this.getCpuParams();
+    if (cpuParams.tempMax) {
+      if (cpuParams.tempMaxThreads.length === 0) {
+        return this.translate.instant('{temp}°C (All Threads)', { temp: cpuParams.tempMax });
+      }
+      if (cpuParams.tempMaxThreads.length === 1) {
+        return this.translate.instant('{temp}°C (Core #{core})', {
+          temp: cpuParams.tempMax,
+          thread: cpuParams.tempMaxThreads.toString(),
+        });
+      }
+      return this.translate.instant('{temp}°C ({coreCount} cores at {temp}°C)', {
+        temp: cpuParams.tempMax,
+        coreCount: cpuParams.tempMaxThreads.length,
+      });
+    }
     return this.translate.instant('N/A');
   });
 
@@ -63,7 +104,7 @@ export class WidgetCpuComponent {
     const data = this.parseCpuData(this.cpuData());
 
     return {
-      labels: Array.of(this.threadCount()).map((label) => label.toString()),
+      labels: Array.from({ length: this.threadCount() }, (_, i) => (i + 1).toString()),
       values: data.map((item, index) => ({
         data: item.slice(1) as number[],
         color: this.theme.getRgbBackgroundColorByIndex(index),
@@ -152,12 +193,59 @@ export class WidgetCpuComponent {
         const mod = threads.length % 2;
         const temperatureIndex = this.hyperthread ? Math.floor(i / 2 - mod) : i;
         if (cpuData.temperature_celsius?.[temperatureIndex]) {
-          temperatureValues.push(cpuData.temperature_celsius[temperatureIndex].toFixed(0));
+          temperatureValues.push(parseInt(cpuData.temperature_celsius[temperatureIndex].toFixed(0)));
         }
       }
     }
     temperatureColumn = temperatureColumn.concat(temperatureValues);
 
     return [usageColumn, temperatureColumn];
+  }
+
+  protected getCpuParams(): CpuParams {
+    const data = this.parseCpuData(this.cpuData());
+    const usage = data[0].slice(1) as number[];
+    const temps = data[1].slice(1) as number[];
+
+    const usageMin = usage?.length ? Number(Math.min(...usage).toFixed(0)) : 0;
+    const usageMax = usage?.length ? Number(Math.max(...usage).toFixed(0)) : 0;
+
+    const usageMinThreads = [];
+    const usageMaxThreads = [];
+    for (let i = 0; i < usage.length; i++) {
+      if (usage[i] === usageMin) {
+        usageMinThreads.push(Number(i.toFixed(0)));
+      }
+
+      if (usage[i] === usageMax) {
+        usageMaxThreads.push(Number(i.toFixed(0)));
+      }
+    }
+
+    const tempMin = temps?.length ? Number(Math.min(...temps).toFixed(0)) : 0;
+    const tempMax = temps?.length ? Number(Math.max(...temps).toFixed(0)) : 0;
+
+    const tempMinThreads = [];
+    const tempMaxThreads = [];
+    for (let i = 0; i < temps.length; i++) {
+      if (temps[i] === tempMin) {
+        tempMinThreads.push(Number(i.toFixed(0)));
+      }
+
+      if (temps[i] === tempMax) {
+        tempMaxThreads.push(Number(i.toFixed(0)));
+      }
+    }
+
+    return {
+      tempMin,
+      tempMax,
+      tempMinThreads,
+      tempMaxThreads,
+      usageMin,
+      usageMax,
+      usageMinThreads,
+      usageMaxThreads,
+    };
   }
 }
