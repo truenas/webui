@@ -1,21 +1,28 @@
 import {
   Component, ChangeDetectionStrategy,
 } from '@angular/core';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
+import { Observable } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
-import { JobState } from 'app/enums/job-state.enum';
 import { trackById } from 'app/helpers/track-by.utils';
+import { ApiJobMethod, ApiJobResponse } from 'app/interfaces/api/api-job-directory.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { abortJobPressed, jobPanelClosed } from 'app/modules/jobs/store/job.actions';
 import {
-  JobSlice, selectJobState, selectRunningJobsCount, selectWaitingJobsCount, selectFailedJobsCount, selectJobsPanelSlice,
+  JobSlice,
+  selectJobState,
+  selectRunningJobsCount,
+  selectWaitingJobsCount,
+  selectFailedJobsCount,
+  selectJobsPanelSlice,
+  selectJob,
 } from 'app/modules/jobs/store/job.selectors';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 
 @UntilDestroy()
 @Component({
@@ -40,7 +47,7 @@ export class JobsPanelComponent {
     private dialogRef: MatDialogRef<JobsPanelComponent>,
     private translate: TranslateService,
     private dialog: DialogService,
-    private matDialog: MatDialog,
+    private errorHandler: ErrorHandlerService,
   ) {}
 
   onAbort(job: Job): void {
@@ -59,20 +66,28 @@ export class JobsPanelComponent {
       });
   }
 
-  openEntityJobDialog(job: Job): void {
+  openJobDialog(job: Job): void {
     this.dialogRef.close();
-    let title = job.description ? job.description : job.method;
-    if (job.state === JobState.Running) {
-      title = this.translate.instant('Updating');
+    if (job.error) {
+      this.errorHandler.showErrorModal(job);
+      return;
     }
-    const dialogRef = this.matDialog.open(EntityJobComponent, {
-      data: { title },
-      hasBackdrop: true,
-    });
 
-    dialogRef.componentInstance.jobId = job.id;
-    dialogRef.componentInstance.autoCloseOnSuccess = true;
-    dialogRef.componentInstance.wsshow();
+    const title = job.description ? job.description : job.method;
+
+    this.dialog.jobDialog<ApiJobMethod, ApiJobResponse<ApiJobMethod>>(
+      this.store$.select(selectJob(job.id)) as Observable<Job<ApiJobResponse<ApiJobMethod>>>,
+      {
+        title,
+        canMinimize: true,
+      },
+    )
+      .afterClosed()
+      .pipe(
+        this.errorHandler.catchError(),
+        untilDestroyed(this),
+      )
+      .subscribe();
   }
 
   goToJobs(): void {

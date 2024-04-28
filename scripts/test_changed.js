@@ -1,0 +1,61 @@
+const { execSync } = require('child_process');
+const { existsSync, readdirSync } = require('fs');
+const path = require('path');
+
+/**
+ * Runs tests in immediate directory of changed files staged for the commit.
+ * Usage: yarn test:changed
+ */
+function getChangedDirectories() {
+  const output = execSync('git status --porcelain').toString();
+  const lines = output.split('\n');
+  const directories = new Set();
+
+  for (let line of lines) {
+    if (line.match(/^ [AM].*/)) {
+      const filePath = line.slice(3).trim();
+      const dir = filePath.substring(0, filePath.lastIndexOf('/'));
+      if (dir) {
+        directories.add(dir);
+      }
+    }
+  }
+  return [...directories];
+}
+
+function findTestFiles(directory) {
+  const testFiles = [];
+  const entries = readdirSync(directory, { withFileTypes: true });
+  for (let entry of entries) {
+    const entryPath = path.join(directory, entry.name);
+    if (entry.isDirectory()) {
+      testFiles.push(...findTestFiles(entryPath));
+    } else if (entry.isFile() && entry.name.match(/\.spec\.ts$/)) {
+      testFiles.push(entryPath);
+    }
+  }
+  return testFiles;
+}
+
+function runJestWithTestFiles(testFiles) {
+  if (testFiles.length > 0) {
+    try {
+      console.log('Running tests for collected test files...');
+      const result = execSync(`jest ${testFiles.join(' ')} --no-cache`, { stdio: 'inherit' });
+      console.log(result.toString());
+    } catch (error) {
+      console.error('Some tests failed.');
+    }
+  } else {
+    console.log('No tests to run.');
+  }
+}
+
+const directories = getChangedDirectories();
+const allTestFiles = [];
+
+directories.forEach(dir => {
+  allTestFiles.push(...findTestFiles(dir));
+});
+
+runJestWithTestFiles(allTestFiles);

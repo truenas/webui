@@ -2,10 +2,10 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { MAT_DIALOG_DATA, MatDialogRef, MatDialog } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockEntityJobComponentRef } from 'app/core/testing/utils/mock-entity-job-component-ref.utils';
 import { mockCall, mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { EncryptionKeyFormat } from 'app/enums/encryption-key-format.enum';
 import { Dataset } from 'app/interfaces/dataset.interface';
@@ -36,9 +36,10 @@ describe('EncryptionOptionsDialogComponent', () => {
     providers: [
       { provide: MAT_DIALOG_DATA, useValue: {} },
       mockProvider(MatDialogRef),
-      mockProvider(DialogService),
-      mockProvider(MatDialog, {
-        open: jest.fn(() => mockEntityJobComponentRef),
+      mockProvider(DialogService, {
+        jobDialog: jest.fn(() => ({
+          afterClosed: () => of(undefined),
+        })),
       }),
       mockWebSocket([
         mockJob('pool.dataset.change_key'),
@@ -82,7 +83,7 @@ describe('EncryptionOptionsDialogComponent', () => {
 
   it('loads dataset pbkdf2iters when dialog is opened', async () => {
     await setupTest();
-    expect(spectator.inject(WebSocketService).call)
+    expect(websocket.call)
       .toHaveBeenCalledWith('pool.dataset.query', [[['id', '=', 'pool/parent/child']]]);
     spectator.component.ngOnInit();
 
@@ -155,7 +156,7 @@ describe('EncryptionOptionsDialogComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(mockEntityJobComponentRef.componentInstance.setCall).toHaveBeenCalledWith(
+    expect(websocket.job).toHaveBeenCalledWith(
       'pool.dataset.change_key',
       ['pool/parent/child', { key, generate_key: false }],
     );
@@ -176,7 +177,7 @@ describe('EncryptionOptionsDialogComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(mockEntityJobComponentRef.componentInstance.setCall).toHaveBeenCalledWith(
+    expect(websocket.job).toHaveBeenCalledWith(
       'pool.dataset.change_key',
       ['pool/parent/child', { generate_key: true }],
     );
@@ -199,7 +200,7 @@ describe('EncryptionOptionsDialogComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(mockEntityJobComponentRef.componentInstance.setCall).toHaveBeenCalledWith(
+    expect(websocket.job).toHaveBeenCalledWith(
       'pool.dataset.change_key',
       ['pool/parent/child', { passphrase: '12345678', pbkdf2iters: 350001 }],
     );
