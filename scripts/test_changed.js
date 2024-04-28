@@ -4,6 +4,8 @@ const path = require('path');
 
 /**
  * Runs tests in immediate directory of changed files staged for the commit.
+ * It's less inclusive than `jest -o`, which tends to include too many files.
+ *
  * Usage: yarn test:changed
  */
 function getChangedDirectories() {
