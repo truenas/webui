@@ -6,18 +6,18 @@
 ></ix-label>
 
 <div class="icon-group" [attr.aria-label]="label">
-  @for (option of options; track option) {
+  @for (option of options | keyvalue; track option) {
   <button
     mat-icon-button
     type="button"
     [disabled]="isDisabled"
-    [ixTest]="[controlDirective.name, option[0]]"
-    [attr.aria-label]="option[0]"
-    [class.selected]="value === option[0]"
-    (click)="onValueChanged(option[0])"
+    [ixTest]="[controlDirective.name, option.key]"
+    [attr.aria-label]="option.key"
+    [class.selected]="value === option.key"
+    (click)="onValueChanged(option.key)"
     (blur)="onTouch()"
   >
-    <ix-icon [name]="option[1]"></ix-icon>
+    <ix-icon [name]="option.value"></ix-icon>
   </button>
   }
   @empty {
