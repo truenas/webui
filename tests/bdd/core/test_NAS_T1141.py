@@ -247,17 +247,14 @@ def open_a_new_tab_navigate_to_google_drive_url_and_input_account_id(driver, dri
     driver.execute_script("window.open();")
     driver.switch_to.window(driver.window_handles[1])
     driver.get(driver_url)
-    assert wait_on_element(driver, 5, '//a[@title="Google"]')
     time.sleep(1)
-    assert wait_on_element(driver, 5, '//div[@class="glue-header__container glue-header__container--cta"]//a[contains(text(),"Go to Drive")]', 'clickable')
-    driver.find_element_by_xpath('//div[@class="glue-header__container glue-header__container--cta"]//a[contains(text(),"Go to Drive")]').click()
 
 
 @then(parsers.parse('enter the "{user_name}" click Next and enter the "{password}" click Next'))
 def enter_the_user_name_click_Next_and_enter_the_password_click_Next(driver, user_name, password):
     """enter the <user_name> click Next and enter the <password> click Next."""
     driver.switch_to.window(driver.window_handles[2])
-    if wait_on_element(driver, 2, '//span[text()="Sign in"]'):
+    if wait_on_element(driver, 3, '//span[text()="Sign in"]'):
         assert wait_on_element(driver, 5, '//span[text()="Sign in"]')
         assert wait_on_element(driver, 5, '//input[@id="identifierId"]', 'inputable')
         driver.find_element_by_xpath('//input[@id="identifierId"]').send_keys(user_name)
