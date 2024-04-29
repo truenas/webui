@@ -6,6 +6,19 @@ import { GlobalSearchSection } from 'app/modules/global-search/enums/global-sear
 import { GlobalSearchSectionsProvider } from 'app/modules/global-search/services/global-search-sections.service';
 import { UiSearchProvider } from 'app/modules/global-search/services/ui-search.service';
 
+jest.mock('app/../assets/ui-searchable-elements.json', () => ([
+  {
+    hierarchy: ['search1'],
+    synonyms: [],
+    requiredRoles: [],
+    anchorRouterLink: [],
+    routerLink: null,
+    anchor: 'some-anchor',
+    triggerAnchor: null,
+    section: GlobalSearchSection.Ui,
+  },
+]), { virtual: true });
+
 describe('GlobalSearchSectionsProvider', () => {
   let spectator: SpectatorService<GlobalSearchSectionsProvider>;
   const mockLocalStorage = {
@@ -25,7 +38,9 @@ describe('GlobalSearchSectionsProvider', () => {
     ],
   });
 
-  beforeEach(() => spectator = createService());
+  beforeEach(() => {
+    spectator = createService();
+  });
 
   it('should fetch UI section results based on search term', () => {
     const searchTerm = 'test';
@@ -60,13 +75,27 @@ describe('GlobalSearchSectionsProvider', () => {
     }]);
   });
 
-  it('should retrieve recent searches from localStorage', () => {
-    const recentSearches = [{ hierarchy: ['search1'], targetHref: 'url1', section: '' }];
+  // ui-searchable-elements.json is mocked above
+  it('should retrieve recent searches from localStorage and remove outdated items from local storage if any', () => {
+    const recentSearches = [
+      {
+        hierarchy: ['search1'], // existing hierarchy
+        targetHref: 'url1',
+      },
+      {
+        hierarchy: ['search to be removed'], // non-existing hierarchy
+        targetHref: 'url2',
+      },
+    ];
     mockLocalStorage.getItem.mockReturnValue(JSON.stringify(recentSearches));
 
     const results = spectator.service.getRecentSearchesSectionResults();
 
     expect(mockLocalStorage.getItem).toHaveBeenCalledWith('recentSearches');
-    expect(results).toEqual(recentSearches);
+    expect(mockLocalStorage.setItem).toHaveBeenCalledWith('recentSearches', JSON.stringify([recentSearches[0]]));
+
+    expect(results).toEqual([
+      recentSearches[0],
+    ]);
   });
 });
