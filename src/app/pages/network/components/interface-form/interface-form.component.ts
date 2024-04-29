@@ -178,7 +178,7 @@ export class InterfaceFormComponent implements OnInit {
   }
 
   get canHaveAliases(): boolean {
-    return !this.form.value.ipv4_dhcp && !this.form.value.ipv6_auto;
+    return !this.form.value.ipv4_dhcp;
   }
 
   ngOnInit(): void {
