@@ -127,7 +127,7 @@ export class ErrorHandlerService implements ErrorHandler {
     return {
       title: errorJob.state,
       message: errorJob.error,
-      backtrace: errorJob.exception,
+      backtrace: errorJob.logs_excerpt || errorJob.exception,
     };
   }
 
@@ -173,7 +173,7 @@ export class ErrorHandlerService implements ErrorHandler {
       parsedError = {
         title: (this.translate?.instant('Error') || 'Error'),
         message: extractedError,
-        backtrace: errorJob.exception,
+        backtrace: errorJob.logs_path || errorJob.exception,
       };
     }
     return parsedError;

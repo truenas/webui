@@ -2,7 +2,6 @@ import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
-import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
@@ -10,10 +9,12 @@ import { EMPTY } from 'rxjs';
 import { switchMap, take } from 'rxjs/operators';
 import { Role } from 'app/enums/role.enum';
 import { SystemSecurityConfig } from 'app/interfaces/system-security-config.interface';
-import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ChainedRef } from 'app/modules/ix-forms/components/ix-slide-in/chained-component-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { FipsService } from 'app/services/fips.service';
+import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 
@@ -41,9 +42,11 @@ export class SystemSecurityFormComponent implements OnInit {
     private translate: TranslateService,
     private snackbar: SnackbarService,
     private chainedRef: ChainedRef<SystemSecurityConfig>,
-    private matDialog: MatDialog,
     private fips: FipsService,
     private store$: Store<AppState>,
+    private dialogService: DialogService,
+    private ws: WebSocketService,
+    private errorHandler: ErrorHandlerService,
   ) {
     this.systemSecurityConfig = this.chainedRef.getData();
   }
@@ -55,18 +58,22 @@ export class SystemSecurityFormComponent implements OnInit {
   }
 
   onSubmit(): void {
-    const dialogRef = this.matDialog.open(EntityJobComponent, {
-      data: { title: this.translate.instant('Saving settings') },
-      disableClose: true,
-    });
-    dialogRef.componentInstance.setCall('system.security.update', [this.form.value as SystemSecurityConfig]);
-    dialogRef.componentInstance.submit();
-    dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
-      this.promptForRestart();
-      this.chainedRef.close({ response: true, error: null });
-      dialogRef.close();
-      this.snackbar.success(this.translate.instant('System Security Settings Updated.'));
-    });
+    this.dialogService.jobDialog(
+      this.ws.job('system.security.update', [this.form.value as SystemSecurityConfig]),
+      {
+        title: this.translate.instant('Saving settings'),
+      },
+    )
+      .afterClosed()
+      .pipe(
+        this.errorHandler.catchError(),
+        untilDestroyed(this),
+      )
+      .subscribe(() => {
+        this.promptForRestart();
+        this.chainedRef.close({ response: true, error: null });
+        this.snackbar.success(this.translate.instant('System Security Settings Updated.'));
+      });
   }
 
   private initSystemSecurityForm(): void {
