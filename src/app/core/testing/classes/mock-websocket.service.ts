@@ -73,11 +73,14 @@ export class MockWebSocketService extends WebSocketService {
 
   mockCall<K extends ApiCallMethod>(method: K, response: CallResponseOrFactory<K>): void {
     const mockedImplementation = (_: K, params: ApiCallParams<K>): Observable<unknown> => {
+      let preparedResponse = response;
       if (response instanceof Function) {
-        return of(response(params));
+        preparedResponse = response(params);
       }
 
-      return of(response);
+      Object.freeze(preparedResponse);
+
+      return of(preparedResponse);
     };
 
     when(this.call).calledWith(method).mockImplementation(mockedImplementation);
@@ -107,10 +110,13 @@ export class MockWebSocketService extends WebSocketService {
         job = response;
       }
 
-      return {
+      job = {
         ...job,
         id: this.jobIdCounter,
-      } as Job<ApiJobResponse<M>>;
+      };
+
+      Object.freeze(job);
+      return job as Job<ApiJobResponse<M>>;
     };
     when(this.startJob).calledWith(method).mockReturnValue(of(this.jobIdCounter));
     when(this.startJob).calledWith(method, anyArgument).mockReturnValue(of(this.jobIdCounter));
