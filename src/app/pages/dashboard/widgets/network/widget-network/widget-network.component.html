@@ -15,37 +15,39 @@
       </button>
     </div>
 
-    <div *appLet="interface$ | async as nic" [class]="['container', size()]">
+    <div [class]="['container', size()]">
       <div class="nic-info">
         <div class="info-header">
-          <h4 class="info-header-title">{{ nic.state.name }}</h4>
+          <h4 class="info-header-title">{{ stats().name }}</h4>
         </div>
         <div class="info-body">
           <div class="info-list-item">
-            <span *ngIf="nic.state.link_state === LinkState.Up" class="icon up">
-              <ix-icon name="check_circle" [matTooltip]="nic.state.link_state"></ix-icon>
+            <span *ngIf="isLinkStateUp()" class="icon up">
+              <ix-icon name="check_circle" [matTooltip]="stats().state"></ix-icon>
             </span>
-            <span *ngIf="nic.state.link_state !== LinkState.Up" class="icon down">
-              <ix-icon name="cancel" [matTooltip]="nic.state.link_state"></ix-icon>
+            <span *ngIf="!isLinkStateUp()" class="icon down">
+              <ix-icon name="cancel" [matTooltip]="stats().state"></ix-icon>
             </span>
-            <span>{{ nic.state.link_state }}</span>
+            <span>{{ stats().state }}</span>
           </div>
         </div>
       </div>
       <div class="nic-chart">
         <div class="chart-body">
-          <ix-view-chart-area
-            *ngIf="chartData; else emptyChart"
-            [data]="chartData"
-            [options]="chartOptions"
-          >
-          </ix-view-chart-area>
+          <ngx-skeleton-loader
+            *ngIf="isLoading(); else chart"
+            class="skeleton"
+            [theme]="{ width: '100%', height: '200px', background: 'var(--alt-bg2)', opacity: 0.25 }"
+          ></ngx-skeleton-loader>
         </div>
       </div>
     </div>
   </mat-card-content>
 </mat-card>
 
-<ng-template #emptyChart>
-  {{ 'Empty' }}
+<ng-template #chart>
+  <ix-view-chart-area
+    [data]="chartData()"
+    [options]="chartOptions"
+  ></ix-view-chart-area>
 </ng-template>

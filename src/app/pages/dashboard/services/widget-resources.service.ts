@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
 import { shareReplay } from 'rxjs/operators';
-import { toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
+import { LoadingState, toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
+import { ReportingData, ReportingQueryParams } from 'app/interfaces/reporting.interface';
 import { WebSocketService } from 'app/services/ws.service';
 
 /**
@@ -27,6 +29,13 @@ export class WidgetResourcesService {
     toLoadingState(),
     shareReplay({ bufferSize: 1, refCount: true }),
   );
+
+  networkInterfaceUpdate(params: ReportingQueryParams): Observable<LoadingState<ReportingData[]>> {
+    return this.ws.call('reporting.netdata_get_data', [params[0], params[1]]).pipe(
+      toLoadingState(),
+      shareReplay({ bufferSize: 1, refCount: true }),
+    );
+  }
 
   constructor(
     private ws: WebSocketService,
