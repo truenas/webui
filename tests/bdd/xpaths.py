@@ -26,6 +26,7 @@ class aws:
     check_All_Checkbox = '//input[@type="checkbox" and @tabindex="-1"]'
     create_The_Folder_Button = '//button[contains(@class,"createFolder-object-actions__actions-submit")]'
     delete_Objects_Button = '//button[contains(@class,"delete-objects__actions-submit")]'
+    close = '//button[contains(@class,"delete-objects__exit")]'
 
 
 class breadcrumb:

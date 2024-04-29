@@ -440,8 +440,8 @@ def delete_the_file_from_the_s3_bucket_in_the_aws_web_console(driver):
     driver.find_element_by_xpath(xpaths.aws.delete_Objects_Button).click()
     assert wait_on_element(driver, 5, '//div[contains(.,"Delete objects: status")]')
     time.sleep(0.5)
-    assert wait_on_element(driver, 5, '//awsui-button[@class="delete-objects__exit"]/button', 'clickable')
-    driver.find_element_by_xpath('//awsui-button[@class="delete-objects__exit"]/button').click()
+    assert wait_on_element(driver, 5, xpaths.aws.close, 'clickable')
+    driver.find_element_by_xpath(xpaths.aws.close).click()
     assert wait_on_element(driver, 5, xpaths.aws.folder_header(my_bucket))
 
 
@@ -506,8 +506,8 @@ def delete_the_folder_from_the_s3_bucket_in_the_aws_web_console(driver, nas_ip):
     driver.find_element_by_xpath(xpaths.aws.delete_Objects_Button).click()
     assert wait_on_element(driver, 5, '//div[contains(.,"Delete objects: status")]')
     time.sleep(0.5)
-    assert wait_on_element(driver, 5, '//awsui-button[@class="delete-objects__exit"]/button', 'clickable')
-    driver.find_element_by_xpath('//awsui-button[@class="delete-objects__exit"]/button').click()
+    assert wait_on_element(driver, 5, xpaths.aws.close, 'clickable')
+    driver.find_element_by_xpath(xpaths.aws.close).click()
     assert wait_on_element(driver, 5, xpaths.aws.folder_header(my_bucket))
     cmd = 'rm -r /mnt/tank/aws_share/my_folder'
     results = ssh_cmd(cmd, 'root', 'testing', nas_ip)
