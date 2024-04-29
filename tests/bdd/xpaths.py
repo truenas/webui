@@ -8,6 +8,26 @@ class authorization:
     Grant_Access_To_Box_Button = '//button[@id="consent_accept_button"]'
 
 
+class aws:
+    def aws_button(field: str):
+        return f'(//button[@data-testid="{field}"])[1]'
+
+    def folder_header(folder_name: str):
+        """
+        xpath for the bucket header
+        :param folder_name: name of the bucket
+        :return: the xpath of the bucket header
+        """
+        return f'//h1[contains(.,"{folder_name}")]'
+
+    create_Folder_Button = aws_button('create-folder-button')
+    delete_Button = aws_button('delete-objects-button')
+    upload_Button = aws_button('upload-button')
+    check_All_Checkbox = '//input[@type="checkbox" and @tabindex="-1"]'
+    create_The_Folder_Button = '//button[contains(@class,"createFolder-object-actions__actions-submit")]'
+    delete_Objects_Button = '//button[contains(@class,"delete-objects__actions-submit")]'
+
+
 class breadcrumb:
     dashboard = '//a[text()="Dashboard"]'
 
@@ -90,22 +110,3 @@ class sideMenu:
 class topToolbar:
     ha_enable = '//mat-icon[@svgicon="ha_enabled"]'
     ha_disabled = '//mat-icon[contains(.,"ha_disabled")]'
-
-
-class aws:
-    def aws_button(field):
-        return f'(//button[@data-testid="{field}"])[1]'
-
-    def folder_header(folder_name: str):
-        """
-        xpath for the bucket header
-        :param folder_name: name of the bucket
-        :return: the xpath of the bucket header
-        """
-        return f'//h1[contains(.,"{folder_name}")]'
-
-    create_Folder_Button = aws_button('create-folder-button')
-    delete_Button = aws_button('delete-objects-button')
-    upload_Button = aws_button('upload-button')
-    check_All_Checkbox = '//input[@type="checkbox" and @tabindex="-1"]'
-    create_The_Folder_Button = '//button[contains(@class,"createFolder-object-actions__actions-submit")]'
