@@ -253,7 +253,7 @@ def open_a_new_tab_navigate_to_google_drive_url_and_input_account_id(driver, dri
 @then(parsers.parse('enter the "{user_name}" click Next and enter the "{password}" click Next'))
 def enter_the_user_name_click_Next_and_enter_the_password_click_Next(driver, user_name, password):
     """enter the <user_name> click Next and enter the <password> click Next."""
-    driver.switch_to.window(driver.window_handles[2])
+    driver.switch_to.window(driver.window_handles[1])
     if wait_on_element(driver, 3, '//span[text()="Sign in"]'):
         assert wait_on_element(driver, 5, '//span[text()="Sign in"]')
         assert wait_on_element(driver, 5, '//input[@id="identifierId"]', 'inputable')
@@ -428,7 +428,7 @@ def verify_all_files_are_moved_from_the_dataset_to_the_google_drive_test_folder(
     results = ssh_cmd(cmd, 'root', 'testing', nas_ip)
     assert results['result'] is False, results['output']
 
-    driver.switch_to.window(driver.window_handles[2])
+    driver.switch_to.window(driver.window_handles[1])
     time.sleep(1)
     driver.refresh()
     time.sleep(1)
@@ -491,7 +491,7 @@ def verify_all_files_are_sync_to_the_dataset_folder(driver, nas_ip):
 @then('on the Google Drive test folder tab, delete one file')
 def on_the_google_drive_test_folder_tab_delete_one_file(driver):
     """on the Google Drive test folder tab, delete one file."""
-    driver.switch_to.window(driver.window_handles[2])
+    driver.switch_to.window(driver.window_handles[1])
     assert wait_on_element(driver, 7, '//div[@data-tooltip="test" and @role="button"]')
     assert wait_on_element(driver, 5, xpaths.google_Drive.name_Sort, 'clickable')
     assert wait_on_element(driver, 5, '//div[@data-tooltip="Image: Gloomy_Forest_wallpaper_ForWallpapercom.jpg"]')
@@ -597,7 +597,7 @@ def select_push_as_the_direction_then_under_transfer_mode_select_sync(driver):
 @then('verify all files are sync to the Google Drive test folder tab')
 def verify_all_files_are_sync_to_the_google_drive_test_folder_tab(driver):
     """verify all files are sync to the Google Drive test folder tab."""
-    driver.switch_to.window(driver.window_handles[2])
+    driver.switch_to.window(driver.window_handles[1])
     time.sleep(1)
     driver.refresh()
     time.sleep(1)
