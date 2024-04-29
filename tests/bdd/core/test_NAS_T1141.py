@@ -369,7 +369,7 @@ def verify_all_files_are_moved_from_the_google_drive_test_folder_to_the_dataset(
     cmd = 'test -f /mnt/system/google_drive/music/Mr_Smith_Pequeñas_Guitarras.mp3'
     results = ssh_cmd(cmd, 'root', 'testing', nas_ip)
     assert results['result'] is True, results['output']
-    driver.switch_to.window(driver.window_handles[2])
+    driver.switch_to.window(driver.window_handles[1])
     time.sleep(1)
     driver.refresh()
     time.sleep(1)
@@ -548,7 +548,7 @@ def verify_the_file_is_removed_from_the_dataset_folder(driver, nas_ip):
 @then('on the Google Drive test folder tab, delete all file')
 def on_the_google_drive_test_folder_tab_delete_all_file(driver):
     """on the Google Drive test folder tab, delete all file."""
-    driver.switch_to.window(driver.window_handles[2])
+    driver.switch_to.window(driver.window_handles[1])
     assert wait_on_element(driver, 7, '//div[@data-tooltip="test" and @role="button"]')
     assert wait_on_element(driver, 5, xpaths.google_Drive.name_Sort, 'clickable')
     assert wait_on_element(driver, 5, xpaths.google_Drive.music_Folder, 'clickable')
@@ -628,7 +628,7 @@ def on_the_dataset_folder_delete_a_file(driver, nas_ip):
 @then('verify the file is removed from the Google Drive test folder tab')
 def verify_the_file_is_removed_from_the_google_drive_test_folder_tab(driver):
     """verify the file is removed from the Google Drive test folder tab."""
-    driver.switch_to.window(driver.window_handles[2])
+    driver.switch_to.window(driver.window_handles[1])
     # loop for 15 second or until music disappear
     timeout = time.time() + 15
     while timeout > time.time():
