@@ -295,7 +295,7 @@ describe('InterfaceFormComponent', () => {
       });
 
       aliasesList = await loader.getHarnessOrNull(IxListHarness.with({ label: 'Aliases' }));
-      expect(aliasesList).toBeNull();
+      expect(aliasesList).toBeTruthy();
     });
   });
 
