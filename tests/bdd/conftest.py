@@ -7,20 +7,22 @@ import string
 import time
 import xpaths
 from configparser import ConfigParser
-from function import get, post
+from function import (
+    get,
+    post,
+    wait_on_element,
+    wait_on_element_disappear,
+    is_element_present,
+    attribute_value_exist
+)
 from platform import system
 from selenium import webdriver
-from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 from selenium.common.exceptions import (
-    ElementClickInterceptedException,
-    NoSuchElementException,
-    TimeoutException
+    ElementClickInterceptedException
 )
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as ec
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.firefox.options import Options
 
 # random hostname
 hostname = f'uitest{"".join(random.choices(string.digits, k=3))}'
@@ -70,26 +72,19 @@ def iso_version():
 
 
 def browser():
-    profile = webdriver.FirefoxProfile()
-    profile.set_preference("browser.download.folderList", 2)
-    profile.set_preference("browser.download.dir", "/tmp")
-    # this is the place to add file type to autosave
-    # application/x-tar is use for .tar
-    # application/gzip is use for .tgz
-    profile.set_preference("browser.helperApps.neverAsk.saveToDisk", "application/x-tar,application/gzip,application/json")
-    profile.set_preference("browser.download.manager.showWhenStarting", False)
-    profile.set_preference("browser.download.alwaysOpenPanel", False)
-    # browser.link.open_newwindow is frozen 2 the only way to change it is like bellow
-    profile.DEFAULT_PREFERENCES["frozen"]["browser.link.open_newwindow"] = 3
-    binary = '/usr/bin/firefox' if system() == "Linux" else '/usr/local/bin/firefox'
-    firefox_capabilities = DesiredCapabilities.FIREFOX
-    firefox_capabilities['marionette'] = True
-    firefox_capabilities['firefox_profile'] = profile.encoded
-    firefox_capabilities['binary'] = binary
-    web_driver = webdriver.Firefox(capabilities=firefox_capabilities)
-    web_driver.set_window_size(1920, 1080)
-    # web_driver.implicitly_wait(2)
-    return web_driver
+    options = Options()
+    options.set_preference("browser.download.folderList", 2)
+    options.set_preference("browser.download.dir", "/tmp")
+    options.set_preference("browser.helperApps.neverAsk.saveToDisk", "application/x-tar,application/gzip")
+    options.set_preference("browser.download.manager.showWhenStarting", False)
+    options.set_preference("browser.link.open_newwindow", 3)
+    binary = '/snap/firefox/current/usr/lib/firefox/firefox' if system() == "Linux" else '/usr/local/bin/firefox'
+    geckodriver = '/snap/firefox/current/usr/lib/firefox/geckodriver' if system() == "Linux" else '/usr/local/bin/geckodriver'
+    options.binary_location = binary
+    driver = webdriver.Firefox(options=options, executable_path=geckodriver)
+    driver.set_window_size(1920, 1080)
+    driver.implicitly_wait(1)
+    return driver
 
 
 web_driver = browser()
@@ -126,7 +121,7 @@ def pytest_runtest_makereport(item):
         validation_error = '//h1[normalize-space(text())="ValidationErrors"]'
         call_error = '//h1[normalize-space(text())="CallError"]'
         # This looks for plugins install error box and will close the dialog.
-        if element_exist(error_xpath) or element_exist(failed_xpath) or element_exist(download_xpath) or element_exist(validation_error) or element_exist(call_error):
+        if is_element_present(web_driver, error_xpath) or is_element_present(web_driver, failed_xpath) or is_element_present(web_driver, download_xpath) or is_element_present(web_driver, validation_error) or is_element_present(web_driver, call_error):
             web_driver.find_element_by_xpath('//div[@ix-auto="button__backtrace-toggle"]').click()
             time.sleep(2)
             save_traceback(traceback_name)
@@ -140,7 +135,7 @@ def pytest_runtest_makereport(item):
                 ActionChains(web_driver).send_keys(Keys.ESCAPE).perform()
         save_screenshot(screenshot_name)
         # This looks for plugins install error box and will close the dialog.
-        if element_exist('//mat-dialog-container[contains(.,"Install") and contains(.,"Error")]'):
+        if is_element_present(web_driver, '//mat-dialog-container[contains(.,"Install") and contains(.,"Error")]'):
             try:
                 web_driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
             except ElementClickInterceptedException:
@@ -148,7 +143,7 @@ def pytest_runtest_makereport(item):
                 ActionChains(web_driver).send_keys(Keys.ESCAPE).perform()
 
         # To make sure we are not stuck on a combobox to stop other test to fail
-        if element_exist('//mat-option'):
+        if is_element_present(web_driver, '//mat-option'):
             ActionChains(web_driver).send_keys(Keys.TAB).perform()
         # If the current tab is not the initial tab close the tab
         # and switch to initial tab
@@ -183,72 +178,23 @@ def save_traceback(name):
     traceback_file.close()
 
 
-def element_exist(xpath):
-    try:
-        web_driver.find_element_by_xpath(xpath)
-        return True
-    except NoSuchElementException:
-        return False
-
-
-def wait_on_element(wait, xpath, condition=None):
-    if condition == 'clickable':
-        try:
-            WebDriverWait(web_driver, wait).until(ec.element_to_be_clickable((By.XPATH, xpath)))
-            return True
-        except TimeoutException:
-            return False
-    if condition == 'presence':
-        try:
-            WebDriverWait(web_driver, wait).until(ec.presence_of_element_located((By.XPATH, xpath)))
-            return True
-        except TimeoutException:
-            return False
-    else:
-        try:
-            WebDriverWait(web_driver, wait).until(ec.visibility_of_element_located((By.XPATH, xpath)))
-            return True
-        except TimeoutException:
-            return False
-
-
-def wait_on_element_disappear(wait, xpath):
-    timeout = time.time() + wait
-    while time.time() <= timeout:
-        if not element_exist(xpath):
-            return True
-        # this just to slow down the loop
-        time.sleep(0.1)
-    else:
-        return False
-
-
-def attribute_value_exist(xpath, attribute, value):
-    element = web_driver.find_element_by_xpath(xpath)
-    class_attribute = element.get_attribute(attribute)
-    if value in class_attribute:
-        return True
-    else:
-        return False
-
-
 def enable_failover():
     # make sure to scroll back up the mat-list-item
     element = web_driver.find_element_by_xpath('//span[contains(.,"root")]')
     web_driver.execute_script("arguments[0].scrollIntoView();", element)
     time.sleep(0.5)
     web_driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__System"]').click()
-    wait_on_element(5, '//mat-list-item[@ix-auto="option__Failover"]')
+    wait_on_element(web_driver, 5, '//mat-list-item[@ix-auto="option__Failover"]')
     web_driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Failover"]').click()
-    wait_on_element(5, '//h4[contains(.,"Failover Configuration")]')
+    wait_on_element(web_driver, 5, '//h4[contains(.,"Failover Configuration")]')
     element = web_driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Disable Failover"]')
     class_attribute = element.get_attribute('class')
     if 'mat-checkbox-checked' in class_attribute:
         web_driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Disable Failover"]').click()
-        wait_on_element(5, '//button[@ix-auto="button__SAVE"]')
+        wait_on_element(web_driver, 5, '//button[@ix-auto="button__SAVE"]')
         web_driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
-        wait_on_element(5, '//h1[contains(.,"Settings saved")]')
-        if element_exist('//button[@ix-auto="button__CLOSE"]'):
+        wait_on_element(web_driver, 5, '//h1[contains(.,"Settings saved")]')
+        if is_element_present(web_driver, '//button[@ix-auto="button__CLOSE"]'):
             web_driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
     time.sleep(1)
     # make sure to scroll back up the mat-list-item
@@ -256,7 +202,7 @@ def enable_failover():
     web_driver.execute_script("arguments[0].scrollIntoView();", element)
     time.sleep(0.5)
     web_driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
-    wait_on_element(90, '//mat-icon[@svgicon="ha_enabled"]')
+    wait_on_element(web_driver, 90, '//mat-icon[@svgicon="ha_enabled"]')
 
 
 def disable_active_directory():
@@ -273,36 +219,36 @@ def disable_active_directory():
 
 
 def disable_ldap():
-    wait_on_element(5, '//span[contains(.,"root")]')
+    wait_on_element(web_driver, 5, '//span[contains(.,"root")]')
     element = web_driver.find_element_by_xpath('//span[contains(.,"root")]')
     web_driver.execute_script("arguments[0].scrollIntoView();", element)
-    wait_on_element(7, '//mat-list-item[@ix-auto="option__Directory Services"]', 'clickable')
+    wait_on_element(web_driver, 7, '//mat-list-item[@ix-auto="option__Directory Services"]', 'clickable')
     web_driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Directory Services"]').click()
-    wait_on_element(7, '//mat-list-item[@ix-auto="option__LDAP"]', 'clickable')
+    wait_on_element(web_driver, 7, '//mat-list-item[@ix-auto="option__LDAP"]', 'clickable')
     web_driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__LDAP"]').click()
-    assert wait_on_element(5, '//li[span/a/text()="LDAP"]')
-    assert wait_on_element(5, '//div[contains(.,"Server Credentials")]')
+    assert wait_on_element(web_driver, 5, '//li[span/a/text()="LDAP"]')
+    assert wait_on_element(web_driver, 5, '//div[contains(.,"Server Credentials")]')
     wait_on_element(5, '//mat-checkbox[@ix-auto="checkbox__Enable"]', 'clickable')
-    value_exist = attribute_value_exist('//mat-checkbox[@ix-auto="checkbox__Enable"]', 'class', 'mat-checkbox-checked')
+    value_exist = attribute_value_exist(web_driver, '//mat-checkbox[@ix-auto="checkbox__Enable"]', 'class', 'mat-checkbox-checked')
     if value_exist:
         web_driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Enable"]').click()
         wait_on_element(5, '//button[@ix-auto="button__SAVE"]', 'clickable')
         web_driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
-        assert wait_on_element_disappear(60, '//h6[contains(.,"Please wait")]')
-        assert wait_on_element(7, '//div[contains(.,"Settings saved.")]')
+        assert wait_on_element_disappear(web_driver, 60, '//h6[contains(.,"Please wait")]')
+        assert wait_on_element(web_driver, 7, '//div[contains(.,"Settings saved.")]')
 
 
 def disable_nis():
     """click on Directory Services and select NIS, then disable NIS."""
     assert wait_on_element(5, xpaths.sideMenu.directory_services, 'clickable')
     web_driver.find_element_by_xpath(xpaths.sideMenu.directory_services).click()
-    assert wait_on_element(7, xpaths.sideMenu.directory_services_nis)
+    assert wait_on_element(web_driver, 7, xpaths.sideMenu.directory_services_nis)
     web_driver.find_element_by_xpath(xpaths.sideMenu.directory_services_nis).click()
-    assert wait_on_element(5, '//li[span/a/text()="NIS"]')
-    assert wait_on_element(5, '//h4[contains(.,"Network Information Service (NIS)")]')
-    assert wait_on_element(5, xpaths.checkbox.enable, 'clickable')
+    assert wait_on_element(web_driver, 5, '//li[span/a/text()="NIS"]')
+    assert wait_on_element(web_driver, 5, '//h4[contains(.,"Network Information Service (NIS)")]')
+    assert wait_on_element(web_driver, 5, xpaths.checkbox.enable, 'clickable')
     web_driver.find_element_by_xpath(xpaths.checkbox.enable).click()
     assert wait_on_element(5, xpaths.button.save, 'clickable')
     web_driver.find_element_by_xpath(xpaths.button.save).click()
-    assert wait_on_element_disappear(30, xpaths.popupTitle.please_wait)
-    assert wait_on_element(7, '//div[contains(.,"Settings saved.")]')
+    assert wait_on_element_disappear(web_driver, 30, xpaths.popup.please_wait)
+    assert wait_on_element(web_driver, 7, '//div[contains(.,"Settings saved.")]')
