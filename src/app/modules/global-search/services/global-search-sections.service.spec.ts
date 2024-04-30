@@ -87,7 +87,6 @@ describe('GlobalSearchSectionsProvider', () => {
         targetHref: 'url2',
       },
     ];
-    mockLocalStorage.getItem.mockReturnValue(JSON.stringify(recentSearches));
 
     const results = spectator.service.getRecentSearchesSectionResults();
 
