@@ -12,12 +12,10 @@ import { AuthService } from 'app/services/auth/auth.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
 
-export interface OldDashConfigItem {
+// we have external `DashConfigItem` in old dashboard, but it will be removed once we go ahead with new dashboard
+export interface OldDashboardConfigItem {
   name: WidgetName;
   identifier?: string;
-  rendered: boolean;
-  position?: number;
-  id?: string;
 }
 
 export interface DashboardState {
@@ -93,10 +91,10 @@ export class DashboardStore extends ComponentStore<DashboardState> {
     this.patchState((state) => ({ ...state, isLoading }));
   }
 
-  private getDashboardGroups(dashState: WidgetGroup[] | OldDashConfigItem[]): WidgetGroup[] {
+  private getDashboardGroups(dashState: WidgetGroup[] | OldDashboardConfigItem[]): WidgetGroup[] {
     return dashState.map((widget) => {
       if (!widget.hasOwnProperty('layout')) {
-        const oldDashboardWidget = widget as unknown as OldDashConfigItem;
+        const oldDashboardWidget = widget as unknown as OldDashboardConfigItem;
         return {
           layout: WidgetGroupLayout.Full,
           slots: [{
@@ -113,6 +111,7 @@ export class DashboardStore extends ComponentStore<DashboardState> {
   private getWidgetTypeFromOldDashboard(name: WidgetName): WidgetType {
     const unknownWidgetType = name as unknown as WidgetType;
 
+    // TODO: we have some widgets that are not yet implemented for the new dashboard
     switch (name) {
       case WidgetName.Help: return WidgetType.Help;
       case WidgetName.Memory: return WidgetType.Memory;
@@ -127,7 +126,7 @@ export class DashboardStore extends ComponentStore<DashboardState> {
     }
   }
 
-  private extractSettings(widget: OldDashConfigItem): SomeWidgetSettings {
+  private extractSettings(widget: OldDashboardConfigItem): SomeWidgetSettings {
     if (widget.identifier) {
       const [key, value] = widget.identifier.split(',');
 
