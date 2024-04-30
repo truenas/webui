@@ -6,5 +6,9 @@ export const kerberosRealmsListElements = {
   anchorRouterLink: ['/directoryservice', 'kerberosrealms'],
   elements: {
     kerberosRealms: {},
+    add: {
+      hierarchy: [T('Add')],
+      anchor: 'add-kerberos-realm',
+    },
   },
 } satisfies UiSearchableElement;

@@ -1,7 +1,7 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
@@ -10,7 +10,6 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockWebSocket, mockCall, mockJob } from 'app/core/testing/utils/mock-websocket.utils';
 import { Certificate } from 'app/interfaces/certificate.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
@@ -19,9 +18,9 @@ import { CertificateEditComponent } from 'app/pages/credentials/certificates-das
 import { ConfirmForceDeleteCertificateComponent } from 'app/pages/credentials/certificates-dash/confirm-force-delete-dialog/confirm-force-delete-dialog.component';
 import { CsrAddComponent } from 'app/pages/credentials/certificates-dash/csr-add/csr-add.component';
 import { CertificateSigningRequestsListComponent } from 'app/pages/credentials/certificates-dash/csr-list/csr-list.component';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { StorageService } from 'app/services/storage.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 const certificates = Array.from({ length: 10 }).map((_, index) => ({
   id: index + 1,
@@ -50,19 +49,6 @@ describe('CertificateSigningRequestsListComponent', () => {
   let loader: HarnessLoader;
   let table: IxTableHarness;
 
-  const mockDialogRef = {
-    componentInstance: {
-      setDescription: jest.fn(),
-      setCall: jest.fn(),
-      submit: jest.fn(),
-      success: of(fakeSuccessfulJob(true)),
-      failure: of(),
-      wspost: jest.fn(),
-    },
-    close: jest.fn(),
-    afterClosed: () => of(true),
-  } as unknown as MatDialogRef<EntityJobComponent>;
-
   const createComponent = createComponentFactory({
     component: CertificateSigningRequestsListComponent,
     imports: [
@@ -75,6 +61,9 @@ describe('CertificateSigningRequestsListComponent', () => {
       ]),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
+        jobDialog: jest.fn(() => ({
+          afterClosed: () => of(undefined),
+        })),
       }),
       mockProvider(IxSlideInService, {
         open: jest.fn(() => {
@@ -86,10 +75,11 @@ describe('CertificateSigningRequestsListComponent', () => {
         slideInClosed$: of(true),
       }),
       mockProvider(MatDialog, {
-        open: jest.fn(() => mockDialogRef),
+        open: jest.fn(() => ({
+          afterClosed: () => of({ force: false }),
+        })),
       }),
       mockProvider(StorageService),
-      mockProvider(ErrorHandlerService),
       mockAuth(),
     ],
   });
@@ -122,13 +112,15 @@ describe('CertificateSigningRequestsListComponent', () => {
     });
   });
 
-  it('opens delete dialog when "Delete" button is pressed', async () => {
+  it('deletes the CSR when Delete is pressed', async () => {
     const deleteButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'delete' }), 1, 2);
     await deleteButton.click();
 
     expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(ConfirmForceDeleteCertificateComponent, {
       data: certificates[0],
     });
+    expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
+    expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('certificate.delete', [1, false]);
   });
 
   it('should show table rows', async () => {

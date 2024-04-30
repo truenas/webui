@@ -2,67 +2,67 @@
   xmlns="http://www.w3.org/2000/svg"
   xmlns:xlink="http://www.w3.org/1999/xlink"
   width="585.843"
-  height="197.444" 
+  height="197.444"
   viewBox="0 0 585.843 197.444"
 >
   <g
-    id="M50_plain" 
-    data-name="M50 plain" 
+    id="M50_plain"
+    data-name="M50 plain"
     transform="translate(-2.1 -9.831)"
   >
-    <g 
-      id="enclosure" 
+    <g
+      id="enclosure"
       transform="translate(2.1 9.8)"
     >
-      <g 
-        id="chassis" 
+      <g
+        id="chassis"
         transform="translate(43.191)"
       >
-        <path 
-          id="drive_cage" 
-          d="M642.311,205.966H144.225a.965.965,0,0,1-.825-1.066V10.966a.965.965,0,0,1,.825-1.066H642.311a.965.965,0,0,1,.825,1.066V204.939C643.106,205.492,642.739,205.966,642.311,205.966Z" 
-          transform="translate(-143.4 -9.869)" 
+        <path
+          id="drive_cage"
+          d="M642.311,205.966H144.225a.965.965,0,0,1-.825-1.066V10.966a.965.965,0,0,1,.825-1.066H642.311a.965.965,0,0,1,.825,1.066V204.939C643.106,205.492,642.739,205.966,642.311,205.966Z"
+          transform="translate(-143.4 -9.869)"
           fill="#150b00"
         ></path>
       </g>
-      <g 
-        id="ears" 
+      <g
+        id="ears"
         transform="translate(0 0.122)"
       >
-        <g 
+        <g
           id="left-ear"
         >
-          <path 
-            id="Black" 
-            d="M44.92,206.27H6.62A1.915,1.915,0,0,1,5,204.177V12.293A1.915,1.915,0,0,1,6.62,10.2h38.3a1.915,1.915,0,0,1,1.62,2.093V204.177A1.893,1.893,0,0,1,44.92,206.27Z" 
-            transform="translate(-4.114 -10.2)" 
+          <path
+            id="Black"
+            d="M44.92,206.27H6.62A1.915,1.915,0,0,1,5,204.177V12.293A1.915,1.915,0,0,1,6.62,10.2h38.3a1.915,1.915,0,0,1,1.62,2.093V204.177A1.893,1.893,0,0,1,44.92,206.27Z"
+            transform="translate(-4.114 -10.2)"
             fill="#111"
           ></path>
-          <path 
-            id="Charcoal" 
-            d="M43.549,206.27H3.72c-.886,0-1.62-1.384-1.62-3.057V13.257c0-1.673.734-3.057,1.62-3.057H43.549c.886,0,1.62,1.384,1.62,3.057V203.213C45.169,204.886,44.435,206.27,43.549,206.27Z" 
-            transform="translate(-2.1 -10.2)" 
+          <path
+            id="Charcoal"
+            d="M43.549,206.27H3.72c-.886,0-1.62-1.384-1.62-3.057V13.257c0-1.673.734-3.057,1.62-3.057H43.549c.886,0,1.62,1.384,1.62,3.057V203.213C45.169,204.886,44.435,206.27,43.549,206.27Z"
+            transform="translate(-2.1 -10.2)"
             fill="#2d2d2d"
           ></path>
           <g
-            id="btnArray1Grp" 
-            data-name="Button Array 1 Group" 
+            id="btnArray1Grp"
+            data-name="Button Array 1 Group"
             transform="translate(7.565 18.096)"
           >
-            <g 
-              id="btnArray1Grp_topGrp" 
+            <g
+              id="btnArray1Grp_topGrp"
               data-name="Button Array 1 Group - Top Group"
             >
-              <text 
-                id="NMI" 
-                transform="translate(0 32.35)" 
-                fill="#e8e8e8" 
-                font-size="4" 
+              <text
+                id="NMI"
+                transform="translate(0 32.35)"
+                fill="#e8e8e8"
+                font-size="4"
                 font-family="ArialMT, Arial"
               >
                 <tspan x="0" y="0" >NMI</tspan>
               </text>
-              <circle 
+              <circle
                 id="btnArray1Grp_topGrp_nmiLed"
                 data-name="Button Array 1 Group - Top Group - Nmi Led"
                 cx="2.843"
@@ -82,7 +82,7 @@
                 data-name="Button Array 1 Group - Top Group - Power Led Group"
                 transform="translate(0.535)"
               >
-                <circle 
+                <circle
                   id="btnArray1Grp_topGrp_powerLed1"
                   data-name="Button Array 1 Group - Top Group - Power Led"
                   cx="5.074"
@@ -93,13 +93,13 @@
               </g>
             </g>
             <g
-              id="btnArray1Grp_bottomGrp" 
+              id="btnArray1Grp_bottomGrp"
               data-name="Button Array 1 Group - Bottom Group"
               transform="translate(0.505 45.208)"
             >
-              <text 
-                id="ID" 
-                transform="translate(2.128 30.557)" 
+              <text
+                id="ID"
+                transform="translate(2.128 30.557)"
                 fill="#e8e8e8"
                 font-size="4"
                 font-family="ArialMT, Arial"
@@ -120,15 +120,15 @@
                   fill="#d1d1d1"
                 ></circle>
               </g>
-              <path 
+              <path
                 id="btnArray1Grp_bottomGrp_downIcon"
                 data-name="Button Array 1 Group - Bottom Group - Down Icon"
                 d="M39.931,243.665a4.065,4.065,0,1,1-4.065-4.065,4.083,4.083,0,0,1,4.065,4.065m-.825,0a3.24,3.24,0,1,0-3.24,3.24,3.242,3.242,0,0,0,3.24-3.24m-5.685-.825,2.445,2.445,2.445-2.445-.581-.581-1.865,1.865L34,242.259Z"
-                transform="translate(-30.791 -232.784)" 
+                transform="translate(-30.791 -232.784)"
                 fill="#e8e8e8"
               ></path>
               <circle
-                id="btnArray1Grp_bottomGrp_downLed" 
+                id="btnArray1Grp_bottomGrp_downLed"
                 data-name="Button Array 1 Group - Bottom Group - Down Led"
                 cx="2.843"
                 cy="2.843"
@@ -152,9 +152,9 @@
                 data-name="Button Array 2 Group - Lan Leds Group - Led 1 Group"
               >
                 <path
-                  id="btnArray2Group_lanLedsGrp_led1Icon" 
-                  d="M104.765,153.351h1.5v.764h-.489v1.5h1.5v-1.5h-.489v-.764a.483.483,0,0,0-.489-.489h-1.5V152.1h.489v-1.5h-1.5v1.5h.489v.764h-1.5a.483.483,0,0,0-.489.489v.764H101.8v1.5h1.5v-1.5h-.489v-.764h1.5" 
-                  transform="translate(-101.8 -143.203)" 
+                  id="btnArray2Group_lanLedsGrp_led1Icon"
+                  d="M104.765,153.351h1.5v.764h-.489v1.5h1.5v-1.5h-.489v-.764a.483.483,0,0,0-.489-.489h-1.5V152.1h.489v-1.5h-1.5v1.5h.489v.764h-1.5a.483.483,0,0,0-.489.489v.764H101.8v1.5h1.5v-1.5h-.489v-.764h1.5"
+                  transform="translate(-101.8 -143.203)"
                   fill="#e8e8e8"
                 ></path>
                 <circle
@@ -278,99 +278,99 @@
                 data-name="NMI"
                 transform="translate(0 32.35)"
                 fill="#e8e8e8"
-                font-size="4" 
+                font-size="4"
                 font-family="ArialMT, Arial"
               >
                 <tspan x="0" y="0">NMI</tspan>
               </text>
               <circle
-                id="btnArray3Grp_topGrp_nmiLed" 
-                data-name="Button Array 3 Group - Top Group - Nmi Led" 
-                cx="2.843" 
-                cy="2.843" 
-                r="2.843" 
+                id="btnArray3Grp_topGrp_nmiLed"
+                data-name="Button Array 3 Group - Top Group - Nmi Led"
+                cx="2.843"
+                cy="2.843"
+                r="2.843"
                 transform="translate(2.768 22.497)"
               ></circle>
               <path
-                id="btnArray3Grp_topGrp_powerBtnIcon" 
-                data-name="Button Array 3 Group - Top Group - Power Button Icon" 
-                d="M1811.665,112.2a4.065,4.065,0,1,0,4.066,4.065A4.083,4.083,0,0,0,1811.665,112.2Zm0,7.305a3.24,3.24,0,1,1,3.24-3.24A3.242,3.242,0,0,1,1811.665,119.505Zm1.62-1.284a2.424,2.424,0,0,1-3.423-.275,2.452,2.452,0,0,1,.275-3.423l.367.367a1.984,1.984,0,0,0-.7,1.467,1.9,1.9,0,0,0,3.79,0,1.838,1.838,0,0,0-.7-1.467l.4-.4.275.275A2.49,2.49,0,0,1,1813.285,118.222Zm-1.314-1.589h-.55v-2.72h.55Z" 
-                transform="translate(-1806.054 -99.117)" 
+                id="btnArray3Grp_topGrp_powerBtnIcon"
+                data-name="Button Array 3 Group - Top Group - Power Button Icon"
+                d="M1811.665,112.2a4.065,4.065,0,1,0,4.066,4.065A4.083,4.083,0,0,0,1811.665,112.2Zm0,7.305a3.24,3.24,0,1,1,3.24-3.24A3.242,3.242,0,0,1,1811.665,119.505Zm1.62-1.284a2.424,2.424,0,0,1-3.423-.275,2.452,2.452,0,0,1,.275-3.423l.367.367a1.984,1.984,0,0,0-.7,1.467,1.9,1.9,0,0,0,3.79,0,1.838,1.838,0,0,0-.7-1.467l.4-.4.275.275A2.49,2.49,0,0,1,1813.285,118.222Zm-1.314-1.589h-.55v-2.72h.55Z"
+                transform="translate(-1806.054 -99.117)"
                 fill="#e8e8e8"
               ></path>
               <g
-                id="btnArray3Grp_topGrp_powerLed1Grp" 
-                data-name="utton Array 3 Group - Top Group - Power Led Group" 
+                id="btnArray3Grp_topGrp_powerLed1Grp"
+                data-name="utton Array 3 Group - Top Group - Power Led Group"
                 transform="translate(0.537)"
               >
                 <circle
-                  id="btnArray3Grp_topGrp_powerLed1" 
-                  data-name="Button Array 3 Group - Top Group - Power Led" 
-                  cx="5.074" 
-                  cy="5.074" 
-                  r="5.074" 
+                  id="btnArray3Grp_topGrp_powerLed1"
+                  data-name="Button Array 3 Group - Top Group - Power Led"
+                  cx="5.074"
+                  cy="5.074"
+                  r="5.074"
                   fill="#d1d1d1"
                 ></circle>
               </g>
             </g>
             <g
               id="btnArray3Grp_bottomGrp"
-              data-name="Button Array 3 Group - Bottom Group" 
+              data-name="Button Array 3 Group - Bottom Group"
               transform="translate(0.506 45.208)"
             >
               <text
-                id="ID-2" 
-                data-name="ID" 
-                transform="translate(2.126 30.557)" 
-                fill="#e8e8e8" 
-                font-size="4" 
+                id="ID-2"
+                data-name="ID"
+                transform="translate(2.126 30.557)"
+                fill="#e8e8e8"
+                font-size="4"
                 font-family="ArialMT, Arial"
               >
                 <tspan x="0" y="0">ID</tspan>
               </text>
               <g
                 id="btnArray3Grp_bottomGrp_idLed1Grp"
-                data-name="Button Array Button 3 Bottom Group - Id Led 1 Group" 
+                data-name="Button Array Button 3 Bottom Group - Id Led 1 Group"
                 transform="translate(0 16.323)"
               >
                 <circle
-                  id="btnArray3Grp_bottomGrp_idLed1" 
-                  data-name="Button Array 3 Group - Bottom Group - Id Led 1" 
-                  cx="5.074" 
-                  cy="5.074" 
-                  r="5.074" 
+                  id="btnArray3Grp_bottomGrp_idLed1"
+                  data-name="Button Array 3 Group - Bottom Group - Id Led 1"
+                  cx="5.074"
+                  cy="5.074"
+                  r="5.074"
                   fill="#d1d1d1"
                 ></circle>
               </g>
               <path
                 id="Path_774"
-                data-name="Path 774" 
+                data-name="Path 774"
                 d="M1815.631,243.665a4.065,4.065,0,1,1-4.065-4.065,4.083,4.083,0,0,1,4.065,4.065m-.825,0a3.24,3.24,0,1,0-3.24,3.24,3.242,3.242,0,0,0,3.24-3.24m-5.686-.825,2.445,2.445,2.445-2.445-.581-.581-1.865,1.865-1.865-1.865Z"
-                transform="translate(-1806.491 -232.784)" 
+                transform="translate(-1806.491 -232.784)"
                 fill="#e8e8e8"
               ></path>
-              <circle 
-                id="btnArray3Grp_bottomGrp_downLed" 
-                data-name="Button Array 3 Group - Bottom Group - Down Led" 
-                cx="2.843" 
-                cy="2.843" 
-                r="2.843" 
+              <circle
+                id="btnArray3Grp_bottomGrp_downLed"
+                data-name="Button Array 3 Group - Bottom Group - Down Led"
+                cx="2.843"
+                cy="2.843"
+                r="2.843"
                 transform="translate(2.262)"
               ></circle>
             </g>
           </g>
           <g
             id="btnArray4Group"
-            data-name="Button Array 4 Group" 
+            data-name="Button Array 4 Group"
             transform="translate(30.414 20.113)"
           >
             <g
-              id="btnArray4Group_lanLedsGrp" 
+              id="btnArray4Group_lanLedsGrp"
               data-name="Button Array 4 Group - Lan Leds Group"
               transform="translate(0.061 15.406)"
             >
-              <g 
-                id="btnArray4Group_lanLedsGrp_led1Grp" 
+              <g
+                id="btnArray4Group_lanLedsGrp_led1Grp"
                 data-name="Button Array 4 Group - Lan Leds Group - Led 1 Group"
               >
                 <path
@@ -379,12 +379,12 @@
                   transform="translate(-1877.5 -143.203)"
                   fill="#e8e8e8"
                 ></path>
-                <circle 
+                <circle
                   id="btnArray4Group_lanLedsGrp_led1"
                   cx="2.843"
-                  cy="2.843" 
-                  r="2.843" 
-                  transform="translate(0.061)" 
+                  cy="2.843"
+                  r="2.843"
+                  transform="translate(0.061)"
                   fill="#e8e8e8"
                 ></circle>
               </g>
@@ -400,37 +400,37 @@
                   fill="#e8e8e8"
                 ></path>
                 <circle
-                  id="btnArray4Group_lanLedsGrp_led2" 
-                  cx="2.843" 
-                  cy="2.843" 
-                  r="2.843" 
-                  transform="translate(0.061)" 
+                  id="btnArray4Group_lanLedsGrp_led2"
+                  cx="2.843"
+                  cy="2.843"
+                  r="2.843"
+                  transform="translate(0.061)"
                   fill="#e8e8e8"
                 ></circle>
               </g>
               <g
-                id="btnArray4Group_lanLedsGrp_led3Grp" 
-                data-name="Button Array 4 Group - Lan Leds Group - Led 3 Group" 
+                id="btnArray4Group_lanLedsGrp_led3Grp"
+                data-name="Button Array 4 Group - Lan Leds Group - Led 3 Group"
                 transform="translate(0 32.982)"
               >
-                <path 
-                  id="btnArray4Group_lanLedsGrp_led3Icon" 
+                <path
+                  id="btnArray4Group_lanLedsGrp_led3Icon"
                   d="M1880.465,261.351h1.5v.764h-.489v1.5h1.5v-1.5h-.489v-.764a.483.483,0,0,0-.489-.489h-1.5V260.1h.489v-1.5h-1.5v1.5h.489v.764h-1.5a.483.483,0,0,0-.489.489v.764h-.489v1.5h1.5v-1.528h-.489v-.764h1.5"
                   transform="translate(-1877.5 -251.172)"
                   fill="#e8e8e8"
                 ></path>
                 <circle
-                  id="btnArray4Group_lanLedsGrp_led3" 
+                  id="btnArray4Group_lanLedsGrp_led3"
                   cx="2.843"
-                  cy="2.843" 
-                  r="2.843" 
-                  transform="translate(0.061)" 
+                  cy="2.843"
+                  r="2.843"
+                  transform="translate(0.061)"
                   fill="#e8e8e8"
                 ></circle>
               </g>
               <g
                 id="btnArray4Group_lanLedsGrp_led4Grp"
-                data-name="Button Array 4 Group - Lan Leds Group - Led 4 Group" 
+                data-name="Button Array 4 Group - Lan Leds Group - Led 4 Group"
                 transform="translate(0 49.488)"
               >
                 <path
@@ -450,7 +450,7 @@
               </g>
             </g>
             <g
-              id="btnArray4Group_alertLedGrp" 
+              id="btnArray4Group_alertLedGrp"
               data-name="Button Array 4 Group - Alert Led Group"
             >
               <path
@@ -474,23 +474,20 @@
     <g
       [attr.id]="'drive-container'"
       class="drive-tray"
-      *ngFor="let tray of driveTrays; trackBy: trackTraysBy"
-      trackBy="trackTraysBy"
+      *ngFor="let slot of slots() | keyvalue; trackBy: trackByNumber"
       transform="translate(47.5 11)"
     >
       <g
         [attr.id]="'drive-wrapper'"
-        [attr.transform]="getDriveTrayTransformation(tray)"
+        [attr.transform]="getDriveTrayTransformation(slot.key)"
       >
         <g
-          ixDriveTray 
-          [selected]="tray.selected"
-          [diskName]="tray.diskName"
-          [empty]="tray.empty"
-          [slot]="tray.slot"
-          width="120" 
-          height="30" 
-          (selectDisk)="selectTray(tray)"
+          ixDriveTray
+          width="120"
+          height="30"
+          [selected]="selectedSlot() === slot.value"
+          [slot]="slot.value"
+          (traySelected)="onTraySelected(slot.value)"
         ></g>
       </g>
     </g>

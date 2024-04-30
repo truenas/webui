@@ -5,7 +5,9 @@ import {
   HostBinding,
   AfterViewInit, ChangeDetectionStrategy,
 } from '@angular/core';
+import { TinyColor } from '@ctrl/tinycolor';
 import { ChartDataset, ChartOptions } from 'chart.js';
+import { ThemeUtils } from 'app/core/classes/theme-utils/theme-utils';
 import { Theme } from 'app/interfaces/theme.interface';
 import { ThemeService } from 'app/services/theme/theme.service';
 import './rounded-doughnut.class';
@@ -94,7 +96,7 @@ export class GaugeChartComponent implements OnChanges, AfterViewInit {
   }
 
   private conversionColor(color: string): string {
-    const colorType = this.themeService.getUtils().getValueType(color);
+    const colorType = (new ThemeUtils()).getValueType(color);
     let resultColor = color;
     switch (colorType) {
       case 'cssVar': {
@@ -103,7 +105,7 @@ export class GaugeChartComponent implements OnChanges, AfterViewInit {
         return this.conversionColor(resultColor);
       }
       case 'rgba':
-        resultColor = this.themeService.getUtils().rgbToHex(color);
+        resultColor = new TinyColor(color).toHex8String();
         return resultColor;
     }
     return resultColor;

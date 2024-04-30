@@ -83,7 +83,11 @@
     <mat-toolbar-row>
       <h3>{{ card.title | translate }}</h3>
       <div class="actions action-icon">
-        <button mat-button color="default" [ixTest]="[card.title, 'settings']" (click)="card.onSettingsPressed()">
+        <button
+          mat-button color="default"
+          [ixTest]="[card.title, 'settings']"
+          (click)="card.onSettingsPressed()"
+        >
           {{ 'Settings' | translate }}
         </button>
       </div>

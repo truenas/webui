@@ -2,12 +2,12 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatDialog } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
+import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockEntityJobComponentRef } from 'app/core/testing/utils/mock-entity-job-component-ref.utils';
+import { mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { ProductType } from 'app/enums/product-type.enum';
 import { SystemSecurityConfig } from 'app/interfaces/system-security-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -18,6 +18,7 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import { SystemSecurityFormComponent } from 'app/pages/system/advanced/system-security/system-security-form/system-security-form.component';
 import { FipsService } from 'app/services/fips.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
+import { WebSocketService } from 'app/services/ws.service';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import { selectSystemInfo } from 'app/store/system-info/system-info.selectors';
 
@@ -47,9 +48,6 @@ describe('SystemSecurityFormComponent', () => {
         confirm: jest.fn(() => of()),
       }),
       mockProvider(SnackbarService),
-      mockProvider(MatDialog, {
-        open: jest.fn(() => mockEntityJobComponentRef),
-      }),
       mockProvider(SystemGeneralService, {
         getProductType: () => ProductType.Scale,
       }),
@@ -61,6 +59,14 @@ describe('SystemSecurityFormComponent', () => {
         promptForRestart: jest.fn(() => of(undefined)),
       }),
       mockAuth(),
+      mockProvider(DialogService, {
+        jobDialog: jest.fn(() => ({
+          afterClosed: () => of(undefined),
+        })),
+      }),
+      mockWebSocket([
+        mockJob('system.security.update', fakeSuccessfulJob()),
+      ]),
     ],
   });
 
@@ -79,7 +85,7 @@ describe('SystemSecurityFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(mockEntityJobComponentRef.componentInstance.setCall).toHaveBeenCalledWith('system.security.update', [{
+      expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('system.security.update', [{
         enable_fips: true,
       }]);
       expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith(

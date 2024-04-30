@@ -2,7 +2,7 @@ import {
   ChangeDetectionStrategy, Component, Inject, OnInit,
 } from '@angular/core';
 import { Validators } from '@angular/forms';
-import { MAT_DIALOG_DATA, MatDialogRef, MatDialog } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
@@ -16,7 +16,6 @@ import { DatasetChangeKeyParams } from 'app/interfaces/dataset-change-key.interf
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { matchOthersFgValidator } from 'app/modules/ix-forms/validators/password-validation/password-validation';
 import { findInTree } from 'app/modules/ix-tree/utils/find-in-tree.utils';
@@ -90,7 +89,6 @@ export class EncryptionOptionsDialogComponent implements OnInit {
     private formErrorHandler: FormErrorHandlerService,
     private errorHandler: ErrorHandlerService,
     private snackbar: SnackbarService,
-    private matDialog: MatDialog,
     @Inject(MAT_DIALOG_DATA) public data: EncryptionOptionsDialogData,
   ) {}
 
@@ -136,7 +134,7 @@ export class EncryptionOptionsDialogComponent implements OnInit {
       .pipe(this.loader.withLoader(), untilDestroyed(this))
       .subscribe({
         next: () => {
-          this.showSuccessDialog();
+          this.showSuccessMessage();
           this.dialogRef.close(true);
         },
         error: (error: WebSocketError) => {
@@ -159,32 +157,24 @@ export class EncryptionOptionsDialogComponent implements OnInit {
       body.pbkdf2iters = Number(values.pbkdf2iters);
     }
 
-    const jobDialogRef = this.matDialog.open(EntityJobComponent, {
-      data: {
-        title: this.translate.instant('Updating key type'),
-      },
-    });
-    jobDialogRef.componentInstance.setCall('pool.dataset.change_key', [this.data.dataset.id, body]);
-    jobDialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe({
-      next: () => {
-        jobDialogRef.close();
-        this.showSuccessDialog();
-        this.dialogRef.close(true);
-      },
-      error: (error: WebSocketError) => {
-        this.formErrorHandler.handleWsFormError(error, this.form);
-      },
-    });
-    jobDialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe({
-      next: (error) => {
-        jobDialogRef.close();
-        this.formErrorHandler.handleWsFormError(error, this.form);
-      },
-    });
-    jobDialogRef.componentInstance.submit();
+    this.dialog.jobDialog(
+      this.ws.job('pool.dataset.change_key', [this.data.dataset.id, body]),
+      { title: this.translate.instant('Updating key type') },
+    )
+      .afterClosed()
+      .pipe(untilDestroyed(this))
+      .subscribe({
+        next: () => {
+          this.showSuccessMessage();
+          this.dialogRef.close(true);
+        },
+        error: (error: WebSocketError) => {
+          this.formErrorHandler.handleWsFormError(error, this.form);
+        },
+      });
   }
 
-  private showSuccessDialog(): void {
+  private showSuccessMessage(): void {
     this.snackbar.success(this.translate.instant('Encryption Options Saved'));
   }
 

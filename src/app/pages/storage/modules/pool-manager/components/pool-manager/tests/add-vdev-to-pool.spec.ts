@@ -11,7 +11,7 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { DiskType } from 'app/enums/disk-type.enum';
 import { TopologyItemType } from 'app/enums/v-dev-type.enum';
-import { EnclosureUi } from 'app/interfaces/enclosure.interface';
+import { Enclosure } from 'app/interfaces/enclosure.interface';
 import { UnusedDisk } from 'app/interfaces/storage.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
@@ -128,7 +128,7 @@ describe('AddVdevsComponent – Add Vdev to existing pool', () => {
             type: DiskType.Hdd,
           },
         ] as UnusedDisk[]),
-        mockCall('enclosure2.query', [] as EnclosureUi[]),
+        mockCall('enclosure2.query', [] as Enclosure[]),
         mockCall('pool.query', []),
         mockCall('pool.dataset.encryption_algorithm_choices', {}),
         mockJob('pool.update', fakeSuccessfulJob()),

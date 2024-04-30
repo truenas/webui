@@ -3,6 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
+import { byText } from '@ngneat/spectator';
 import { mockProvider, createRoutingFactory, Spectator } from '@ngneat/spectator/jest';
 import { EffectsModule } from '@ngrx/effects';
 import { Store, StoreModule } from '@ngrx/store';
@@ -18,12 +19,13 @@ import { JobsPanelPageObject } from 'app/modules/jobs/components/jobs-panel/jobs
 import { JobEffects } from 'app/modules/jobs/store/job.effects';
 import { jobReducer, adapter, jobsInitialState } from 'app/modules/jobs/store/job.reducer';
 import { jobStateKey } from 'app/modules/jobs/store/job.selectors';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
 
 const runningJob = {
   id: 1,
-  method: 'cloudsync.sync',
+  method: 'pool.scrub',
   progress: {
     percent: 99,
     description: 'progress description',
@@ -44,8 +46,9 @@ const waitingJob = {
 } as Job;
 const failedJob = {
   id: 3,
-  method: 'cloudsync.sync',
+  method: 'replication.run',
   state: JobState.Failed,
+  error: 'Some error',
   time_started: {
     $date: 1632411439081,
   },
@@ -91,6 +94,9 @@ describe('JobsPanelComponent', () => {
     providers: [
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
+        jobDialog: jest.fn(() => ({
+          afterClosed: () => of(undefined),
+        })),
       }),
       mockWebSocket([
         mockCall('core.get_jobs', [runningJob, waitingJob, failedJob, transientRunningJob]),
@@ -153,5 +159,17 @@ describe('JobsPanelComponent', () => {
     await historyButton.click();
 
     expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/jobs']);
+  });
+
+  it('shows an error report when user clicks on a failed job', () => {
+    spectator.click(byText('replication.run'));
+
+    expect(spectator.inject(ErrorHandlerService).showErrorModal).toHaveBeenCalledWith(failedJob);
+  });
+
+  it('shows a job in progress dialog when user clicks on an active job', () => {
+    spectator.click(byText('pool.scrub'));
+
+    expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
   });
 });
