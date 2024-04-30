@@ -17,7 +17,7 @@ jest.mock('app/../assets/ui-searchable-elements.json', () => ([
     triggerAnchor: null,
     section: GlobalSearchSection.Ui,
   },
-]), { virtual: true });
+]));
 
 describe('GlobalSearchSectionsProvider', () => {
   let spectator: SpectatorService<GlobalSearchSectionsProvider>;
@@ -87,6 +87,8 @@ describe('GlobalSearchSectionsProvider', () => {
         targetHref: 'url2',
       },
     ];
+
+    mockLocalStorage.getItem.mockReturnValue(JSON.stringify(recentSearches));
 
     const results = spectator.service.getRecentSearchesSectionResults();
 
