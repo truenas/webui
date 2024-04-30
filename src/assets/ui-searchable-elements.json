@@ -238,6 +238,47 @@
   {
     "hierarchy": [
       "Applications",
+      "Installed",
+      "Settings"
+    ],
+    "synonyms": [
+      "Settings"
+    ],
+    "requiredRoles": [],
+    "anchorRouterLink": [
+      "/apps",
+      "installed"
+    ],
+    "routerLink": null,
+    "anchor": "app-settings",
+    "triggerAnchor": "app-settings",
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Applications",
+      "Installed",
+      "Settings",
+      "Advanced Settings"
+    ],
+    "synonyms": [
+      "Settings"
+    ],
+    "requiredRoles": [
+      "KUBERNETES_WRITE"
+    ],
+    "anchorRouterLink": [
+      "/apps",
+      "installed"
+    ],
+    "routerLink": null,
+    "anchor": "advanced-settings",
+    "triggerAnchor": "app-settings",
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Applications",
       "Installed"
     ],
     "synonyms": [
