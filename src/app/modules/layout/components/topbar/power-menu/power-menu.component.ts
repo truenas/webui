@@ -6,6 +6,7 @@ import { filter } from 'rxjs/operators';
 import { Role } from 'app/enums/role.enum';
 import { helptextTopbar } from 'app/helptext/topbar';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { powerMenuElements } from 'app/modules/layout/components/topbar/power-menu/power-menu.elements';
 import { AuthService } from 'app/services/auth/auth.service';
 import { WebSocketConnectionService } from 'app/services/websocket-connection.service';
 
@@ -16,9 +17,9 @@ import { WebSocketConnectionService } from 'app/services/websocket-connection.se
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PowerMenuComponent {
-  readonly tooltips = helptextTopbar.mat_tooltips;
-
+  protected readonly tooltips = helptextTopbar.mat_tooltips;
   protected readonly requiredRoles = [Role.FullAdmin];
+  protected searchableElements = powerMenuElements;
 
   constructor(
     private authService: AuthService,
