@@ -7,14 +7,14 @@ import {
   merge, Observable, of, Subject, Subscriber, throwError,
 } from 'rxjs';
 import {
-  filter, map, share, startWith, switchMap, take, takeUntil, takeWhile, tap,
+  filter, map, share, startWith, switchMap, take, takeUntil, tap,
 } from 'rxjs/operators';
 import { MockEnclosureUtils } from 'app/core/testing/utils/mock-enclosure.utils';
 import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
-import { JobState } from 'app/enums/job-state.enum';
 import { ResponseErrorType } from 'app/enums/response-error-type.enum';
 import { WebSocketErrorName } from 'app/enums/websocket-error-name.enum';
 import { applyApiEvent } from 'app/helpers/operators/apply-api-event.operator';
+import { observeJob } from 'app/helpers/operators/observe-job.operator';
 import { ApiCallAndSubscribeMethod, ApiCallAndSubscribeResponse } from 'app/interfaces/api/api-call-and-subscribe-directory.interface';
 import {
   ApiCallMethod,
@@ -101,15 +101,7 @@ export class WebSocketService {
           // Get job status here for jobs that complete too fast.
           this.call('core.get_jobs', [[['id', '=', jobId]]]).pipe(map((jobs) => jobs[0])),
         )
-          .pipe(
-            takeWhile((job) => !job.time_finished, true),
-            switchMap((job) => {
-              if (job.state === JobState.Failed) {
-                return throwError(() => job);
-              }
-              return of(job);
-            }),
-          );
+          .pipe(observeJob());
       }),
       takeUntil(this.clearSubscriptions$),
     ) as Observable<Job<ApiJobResponse<M>>>;

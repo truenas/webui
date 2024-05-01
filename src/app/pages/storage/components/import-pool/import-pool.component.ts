@@ -2,14 +2,13 @@ import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
-import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import {
   UntilDestroy, untilDestroyed,
 } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import {
-  Observable, UnaryFunction, map, of, pipe, switchMap,
+  Observable, map, of, switchMap,
 } from 'rxjs';
 import { JobState } from 'app/enums/job-state.enum';
 import { Role } from 'app/enums/role.enum';
@@ -20,8 +19,9 @@ import { Option } from 'app/interfaces/option.interface';
 import { PoolFindResult } from 'app/interfaces/pool-import.interface';
 import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -56,12 +56,13 @@ export class ImportPoolComponent implements OnInit {
     private fb: FormBuilder,
     private slideInRef: IxSlideInRef<ImportPoolComponent>,
     private ws: WebSocketService,
-    private matDialog: MatDialog,
     private errorHandler: ErrorHandlerService,
     private dialogService: DialogService,
     private translate: TranslateService,
     private cdr: ChangeDetectorRef,
     private router: Router,
+    private snackbar: SnackbarService,
+    private loader: AppLoaderService,
   ) { }
 
   ngOnInit(): void {
@@ -95,83 +96,44 @@ export class ImportPoolComponent implements OnInit {
   }
 
   onSubmit(): void {
-    this.isLoading = true;
-    const dialogRef = this.matDialog.open(
-      EntityJobComponent,
-      {
-        data: { title: this.translate.instant('Importing Pool') },
-        disableClose: true,
-      },
-    );
-    dialogRef.componentInstance.setDescription(this.translate.instant('Importing Pool...'));
-    dialogRef.componentInstance.setCall('pool.import_pool', [{ guid: this.formGroup.value.guid }]);
-    dialogRef.componentInstance.submit();
-    dialogRef.componentInstance.success.pipe(
-      this.checkIfUnlockNeeded(),
-      untilDestroyed(this),
-    ).subscribe({
-      next: ([datasets, shouldTryUnlocking]) => {
-        dialogRef.close(true);
-        this.isLoading = false;
+    this.dialogService.jobDialog(
+      this.ws.job('pool.import_pool', [{ guid: this.formGroup.value.guid }]),
+      { title: this.translate.instant('Importing Pool') },
+    )
+      .afterClosed()
+      .pipe(
+        switchMap(() => this.checkIfUnlockNeeded()),
+        this.errorHandler.catchError(),
+        untilDestroyed(this),
+      )
+      .subscribe(([datasets, shouldTryUnlocking]) => {
         this.slideInRef.close(true);
+        this.snackbar.success(this.translate.instant('Pool imported successfully.'));
         if (shouldTryUnlocking) {
           this.router.navigate(['/datasets', datasets[0].id, 'unlock']);
         }
-      },
-      error: (error: WebSocketError | Job) => {
-        this.dialogService.error(this.errorHandler.parseError(error));
-      },
-    });
-    dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe({
-      next: (failureData) => {
-        dialogRef.close(false);
-        this.isLoading = false;
-        this.errorReport(failureData);
-      },
-      error: (error: WebSocketError | Job) => {
-        this.dialogService.error(this.errorHandler.parseError(error));
-      },
-    });
+      });
   }
 
-  errorReport(error: Job | WebSocketError): void {
-    if ('reason' in error && error.reason && error.trace) {
-      this.dialogService.error({
-        title: this.translate.instant('Error importing pool'),
-        message: error.reason,
-        backtrace: error.trace?.formatted,
-      });
-    } else if ('exception' in error && error.error && error.exception) {
-      this.dialogService.error({
-        title: this.translate.instant('Error importing pool'),
-        message: error.error,
-        backtrace: error.exception,
-      });
-    } else {
-      console.error(error);
-    }
-  }
-
-  checkIfUnlockNeeded(): UnaryFunction<Observable<unknown>, Observable<[Dataset[], boolean]>> {
-    return pipe(
-      switchMap(() => {
-        return this.ws.call(
-          'pool.dataset.query',
-          [[['name', '=', this.importablePools.find((importablePool) => importablePool.guid === this.formGroup.value.guid).name]]],
-        );
-      }),
-      switchMap((poolDatasets): Observable<[Dataset[], boolean]> => {
-        if (poolDatasets[0].locked && poolDatasets[0].encryption_root === poolDatasets[0].id) {
-          return this.dialogService.confirm({
-            title: this.translate.instant('Unlock Pool'),
-            message: this.translate.instant('This pool has an encrypted root dataset which is locked. Do you want to unlock it?'),
-            hideCheckbox: true,
-          }).pipe(
-            map((confirmed) => [poolDatasets, confirmed]),
-          );
-        }
-        return of([poolDatasets, false]);
-      }),
-    );
+  checkIfUnlockNeeded(): Observable<[Dataset[], boolean]> {
+    return this.ws.call(
+      'pool.dataset.query',
+      [[['name', '=', this.importablePools.find((importablePool) => importablePool.guid === this.formGroup.value.guid).name]]],
+    )
+      .pipe(
+        this.loader.withLoader(),
+        switchMap((poolDatasets): Observable<[Dataset[], boolean]> => {
+          if (poolDatasets[0].locked && poolDatasets[0].encryption_root === poolDatasets[0].id) {
+            return this.dialogService.confirm({
+              title: this.translate.instant('Unlock Pool'),
+              message: this.translate.instant('This pool has an encrypted root dataset which is locked. Do you want to unlock it?'),
+              hideCheckbox: true,
+            }).pipe(
+              map((confirmed) => [poolDatasets, confirmed]),
+            );
+          }
+          return of([poolDatasets, false]);
+        }),
+      );
   }
 }

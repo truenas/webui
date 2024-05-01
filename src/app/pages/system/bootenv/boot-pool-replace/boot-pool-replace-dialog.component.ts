@@ -5,7 +5,7 @@ import {
   OnInit,
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
-import { MatDialogRef, MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { map } from 'rxjs/operators';
@@ -14,7 +14,8 @@ import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
 import { helptextSystemBootenv } from 'app/helptext/system/boot-env';
 import { UnusedDisk } from 'app/interfaces/storage.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
@@ -60,11 +61,12 @@ export class BootPoolReplaceDialogComponent implements OnInit {
   constructor(
     @Inject(MAT_DIALOG_DATA) public pk: string,
     private fb: FormBuilder,
-    private matDialog: MatDialog,
     private translate: TranslateService,
     private ws: WebSocketService,
     private dialogRef: MatDialogRef<BootPoolReplaceDialogComponent>,
     private dialogService: DialogService,
+    private errorHandler: ErrorHandlerService,
+    private snackbar: SnackbarService,
   ) {}
 
   ngOnInit(): void {
@@ -95,17 +97,18 @@ export class BootPoolReplaceDialogComponent implements OnInit {
     const oldDisk = this.pk;
     const { dev: newDisk } = this.form.value;
 
-    const dialogRef = this.matDialog.open(EntityJobComponent, {
-      data: {
-        disableClose: true,
-        title: this.translate.instant('Replacing Boot Pool Disk'),
-      },
-    });
-    dialogRef.componentInstance.setCall('boot.replace', [oldDisk, newDisk]);
-    dialogRef.componentInstance.submit();
-    dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
-      dialogRef.close();
-      this.dialogRef.close(true);
-    });
+    this.dialogService.jobDialog(
+      this.ws.job('boot.replace', [oldDisk, newDisk]),
+      { title: this.translate.instant('Replacing Boot Pool Disk') },
+    )
+      .afterClosed()
+      .pipe(
+        this.errorHandler.catchError(),
+        untilDestroyed(this),
+      )
+      .subscribe(() => {
+        this.dialogRef.close(true);
+        this.snackbar.success(this.translate.instant('Boot Pool Disk Replaced'));
+      });
   }
 }

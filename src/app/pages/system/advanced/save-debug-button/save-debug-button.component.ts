@@ -1,19 +1,16 @@
 import { DatePipe } from '@angular/common';
-import { HttpErrorResponse } from '@angular/common/http';
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { Store } from '@ngrx/store';
+import { select, Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
-import { EMPTY } from 'rxjs';
-import {
-  catchError, filter, switchMap, take, tap,
-} from 'rxjs/operators';
+import { Observable } from 'rxjs';
+import { filter, switchMap, take } from 'rxjs/operators';
+import { observeJob } from 'app/helpers/operators/observe-job.operator';
 import { helptextSystemAdvanced } from 'app/helptext/system/advanced';
+import { ApiJobMethod } from 'app/interfaces/api/api-job-directory.interface';
 import { Job } from 'app/interfaces/job.interface';
-import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
+import { selectJob } from 'app/modules/jobs/store/job.selectors';
 import { saveDebugElement } from 'app/pages/system/advanced/save-debug-button/save-debug-button.elements';
 import { DownloadService } from 'app/services/download.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
@@ -35,14 +32,29 @@ export class SaveDebugButtonComponent {
     private store$: Store<AppState>,
     private datePipe: DatePipe,
     private errorHandler: ErrorHandlerService,
-    private matDialog: MatDialog,
     private download: DownloadService,
     private translate: TranslateService,
     private dialogService: DialogService,
   ) {}
 
-  onSaveDebug(): void {
-    this.store$.pipe(
+  onSaveDebugClicked(): void {
+    this.dialogService
+      .confirm({
+        title: helptextSystemAdvanced.dialog_generate_debug_title,
+        message: helptextSystemAdvanced.dialog_generate_debug_message,
+        hideCheckbox: true,
+        buttonText: helptextSystemAdvanced.dialog_button_ok,
+      })
+      .pipe(
+        filter(Boolean),
+        switchMap(() => this.saveDebug()),
+        untilDestroyed(this),
+      )
+      .subscribe();
+  }
+
+  private saveDebug(): Observable<Blob> {
+    return this.store$.pipe(
       waitForSystemInfo,
       take(1),
       switchMap((systemInfo) => {
@@ -50,55 +62,20 @@ export class SaveDebugButtonComponent {
         const date = this.datePipe.transform(new Date(), 'yyyyMMddHHmmss');
         const mimeType = 'application/gzip';
         const fileName = `debug-${hostname}-${date}.tgz`;
-        return this.dialogService
-          .confirm({
-            title: helptextSystemAdvanced.dialog_generate_debug_title,
-            message: helptextSystemAdvanced.dialog_generate_debug_message,
-            hideCheckbox: true,
-            buttonText: helptextSystemAdvanced.dialog_button_ok,
-          })
-          .pipe(
-            filter(Boolean),
-            switchMap(() => this.ws.call('core.download', ['system.debug', [], fileName, true])),
-            tap(([jobId, url]) => {
-              const dialogRef = this.matDialog.open(EntityJobComponent, {
-                data: { title: this.translate.instant('Saving Debug') },
-                disableClose: true,
-              });
-              dialogRef.componentInstance.jobId = jobId;
-              dialogRef.componentInstance.wsshow();
-              dialogRef.componentInstance.success
-                .pipe(
-                  take(1), // TODO: Only needed because of https://ixsystems.atlassian.net/browse/NAS-117633
-                  switchMap(() => this.download.streamDownloadFile(url, fileName, mimeType)),
-                  untilDestroyed(this),
-                )
-                .subscribe({
-                  next: (blob) => {
-                    this.download.downloadBlob(blob, fileName);
-                    dialogRef.close();
-                  },
-                  error: (error: WebSocketError | HttpErrorResponse | Job) => {
-                    dialogRef.close();
-                    if (error instanceof HttpErrorResponse) {
-                      this.dialogService.error(this.errorHandler.parseHttpError(error));
-                    } else {
-                      this.dialogService.error(this.errorHandler.parseError(error));
-                    }
-                  },
-                });
-              dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((error) => {
-                this.matDialog.closeAll();
-                this.dialogService.error(this.errorHandler.parseError(error));
-              });
-            }),
-          );
+
+        return this.ws.call('core.download', ['system.debug', [], fileName, true]).pipe(
+          switchMap(([jobId, url]) => {
+            const job$ = this.store$.pipe(
+              select(selectJob(jobId)),
+              observeJob(),
+            ) as Observable<Job<ApiJobMethod>>;
+            return this.dialogService.jobDialog(job$, { title: this.translate.instant('Saving Debug') })
+              .afterClosed()
+              .pipe(switchMap(() => this.download.downloadUrl(url, fileName, mimeType)));
+          }),
+          this.errorHandler.catchError(),
+        );
       }),
-      catchError((error: WebSocketError | Job) => {
-        this.dialogService.error(this.errorHandler.parseError(error));
-        return EMPTY;
-      }),
-      untilDestroyed(this),
-    ).subscribe(() => {});
+    );
   }
 }
