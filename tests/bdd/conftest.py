@@ -83,7 +83,6 @@ def browser():
     options.binary_location = binary
     driver = webdriver.Firefox(options=options, executable_path=geckodriver)
     driver.set_window_size(1920, 1080)
-    driver.implicitly_wait(1)
     return driver
 
 
