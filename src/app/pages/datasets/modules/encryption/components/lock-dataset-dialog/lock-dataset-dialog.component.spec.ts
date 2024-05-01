@@ -2,15 +2,17 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { of } from 'rxjs';
+import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockEntityJobComponentRef } from 'app/core/testing/utils/mock-entity-job-component-ref.utils';
+import { mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { IxCheckboxHarness } from 'app/modules/ix-forms/components/ix-checkbox/ix-checkbox.harness';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
+import { WebSocketService } from 'app/services/ws.service';
 import { LockDatasetDialogComponent } from './lock-dataset-dialog.component';
 
 describe('LockDatasetDialogComponent', () => {
@@ -24,11 +26,15 @@ describe('LockDatasetDialogComponent', () => {
     ],
     providers: [
       mockAuth(),
-      mockProvider(MatDialog, {
-        open: jest.fn(() => mockEntityJobComponentRef),
-      }),
       mockProvider(MatDialogRef),
-      mockProvider(DialogService),
+      mockProvider(DialogService, {
+        jobDialog: jest.fn(() => ({
+          afterClosed: () => of(undefined),
+        })),
+      }),
+      mockWebSocket([
+        mockJob('pool.dataset.lock', fakeSuccessfulJob()),
+      ]),
       {
         provide: MAT_DIALOG_DATA,
         useValue: {
@@ -51,10 +57,9 @@ describe('LockDatasetDialogComponent', () => {
     const lockButton = await loader.getHarness(MatButtonHarness.with({ text: 'Lock' }));
     await lockButton.click();
 
-    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(EntityJobComponent, expect.anything());
-    expect(mockEntityJobComponentRef.componentInstance.setCall)
+    expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
+    expect(spectator.inject(WebSocketService).job)
       .toHaveBeenCalledWith('pool.dataset.lock', ['pool/dataset', { force_umount: true }]);
-    expect(mockEntityJobComponentRef.componentInstance.submit).toHaveBeenCalled();
     expect(spectator.inject(MatDialogRef).close).toHaveBeenCalled();
   });
 });

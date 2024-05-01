@@ -82,7 +82,7 @@ export class GlobalSearchComponent implements OnInit {
   }
 
   resetInput(): void {
-    this.searchControl.reset();
+    this.searchControl.setValue('');
   }
 
   private listenForSearchChanges(): void {

@@ -12,6 +12,7 @@ import { BaseChartDirective } from 'ng2-charts';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { CoreComponents } from 'app/core/core-components.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
+import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { IxDropGridModule } from 'app/modules/ix-drop-grid/ix-drop-grid.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
@@ -39,6 +40,23 @@ import { BackupTaskTileComponent } from 'app/pages/dashboard/widgets/backup/widg
 import { WidgetDatapointComponent } from 'app/pages/dashboard/widgets/common/widget-datapoint/widget-datapoint.component';
 
 @NgModule({
+  declarations: [
+    DashboardComponent,
+    WidgetGroupComponent,
+    WidgetErrorComponent,
+    WidgetGroupFormComponent,
+    WidgetEditorGroupComponent,
+    WidgetDatapointComponent,
+    WidgetGroupControlsComponent,
+    BackupTaskEmptyComponent,
+    BackupTaskActionsComponent,
+    BackupTaskTileComponent,
+    ...widgetComponents,
+  ],
+  providers: [
+    DashboardStore,
+    WidgetResourcesService,
+  ],
   imports: [
     IxFormsModule,
     ReactiveFormsModule,
@@ -71,23 +89,7 @@ import { WidgetDatapointComponent } from 'app/pages/dashboard/widgets/common/wid
       },
     }),
     IxDropGridModule,
-  ],
-  declarations: [
-    DashboardComponent,
-    WidgetGroupComponent,
-    WidgetErrorComponent,
-    WidgetGroupFormComponent,
-    WidgetEditorGroupComponent,
-    WidgetDatapointComponent,
-    BackupTaskTileComponent,
-    BackupTaskEmptyComponent,
-    BackupTaskActionsComponent,
-    WidgetGroupControlsComponent,
-    ...widgetComponents,
-  ],
-  providers: [
-    DashboardStore,
-    WidgetResourcesService,
+    EmptyComponent,
   ],
 })
 export class DashboardModule {

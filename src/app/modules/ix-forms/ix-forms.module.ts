@@ -35,6 +35,7 @@ import { CreateDatasetDialogComponent } from 'app/modules/ix-forms/components/ix
 import { IxExplorerComponent } from 'app/modules/ix-forms/components/ix-explorer/ix-explorer.component';
 import { IxFieldsetComponent } from 'app/modules/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxFileInputComponent } from 'app/modules/ix-forms/components/ix-file-input/ix-file-input.component';
+import { IxIconGroupComponent } from 'app/modules/ix-forms/components/ix-icon-group/ix-icon-group.component';
 import { IxInputComponent } from 'app/modules/ix-forms/components/ix-input/ix-input.component';
 import { IxIpInputWithNetmaskComponent } from 'app/modules/ix-forms/components/ix-ip-input-with-netmask/ix-ip-input-with-netmask.component';
 import { IxListItemComponent } from 'app/modules/ix-forms/components/ix-list/ix-list-item/ix-list-item.component';
@@ -127,6 +128,7 @@ import { WithManageCertificatesLinkComponent } from './components/with-manage-ce
     CreateDatasetDialogComponent,
     IxButtonGroupComponent,
     ReadOnlyComponent,
+    IxIconGroupComponent,
   ],
   exports: [
     IxErrorsComponent,
@@ -159,6 +161,7 @@ import { WithManageCertificatesLinkComponent } from './components/with-manage-ce
     IxStarRatingComponent,
     IxButtonGroupComponent,
     ReadOnlyComponent,
+    IxIconGroupComponent,
   ],
   providers: [
     IxFormatterService,

@@ -8,5 +8,8 @@ export const vmListElements = {
     vm: {
       synonyms: [T('VM'), T('Virtualization')],
     },
+    add: {
+      hierarchy: [T('Add')],
+    },
   },
 } satisfies UiSearchableElement;

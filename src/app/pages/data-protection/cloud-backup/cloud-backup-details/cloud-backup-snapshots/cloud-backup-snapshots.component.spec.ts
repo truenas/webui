@@ -12,7 +12,6 @@ import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-tabl
 import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
 import { CloudBackupRestoreFromSnapshotFormComponent } from 'app/pages/data-protection/cloud-backup/cloud-backup-details/cloud-backup-restore-form-snapshot-form/cloud-backup-restore-from-snapshot-form.component';
 import { CloudBackupSnapshotsComponent } from 'app/pages/data-protection/cloud-backup/cloud-backup-details/cloud-backup-snapshots/cloud-backup-snapshots.component';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { StorageService } from 'app/services/storage.service';
 
@@ -41,7 +40,6 @@ describe('CloudBackupSnapshotsComponent', () => {
         mockCall('cloud_backup.list_snapshots', cloudBackupSnapshots),
       ]),
       mockProvider(StorageService),
-      mockProvider(ErrorHandlerService),
       mockProvider(IxSlideInService, {
         open: jest.fn(() => {
           return { slideInClosed$: of(true) };

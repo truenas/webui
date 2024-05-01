@@ -7,13 +7,18 @@
       <div>
         <button
           mat-button
-          [ixTest]="'edit-enclosure-label-btn'"
-        >Edit Label</button>
+          ixTest="edit-enclosure-label"
+        >{{ 'Edit Label' | translate }}</button>
       </div>
     </div>
   </mat-card-header>
   <mat-card-content>
-    <ix-enclosure-overview [enclosure]="enclosure"></ix-enclosure-overview>
-    <ix-disk-overview [disk]="selectedDisk"></ix-disk-overview>
+    <!-- TODO: Loading indication -->
+    <ix-enclosure-overview
+      *ngIf="selectedEnclosure$ | async as selectedEnclosure"
+      [enclosure]="selectedEnclosure"
+      [selectedSlot]="selectedSlot$ | async"
+    ></ix-enclosure-overview>
+    <ix-disk-overview [slot]="selectedSlot$ | async"></ix-disk-overview>
   </mat-card-content>
 </mat-card>

@@ -13,6 +13,7 @@ import {
 import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { createTable } from 'app/modules/ix-table/utils';
+import { sshKeypairsCardElements } from 'app/pages/credentials/backup-credentials/ssh-keypair-card/ssh-keypair-card.elements';
 import {
   SshKeypairFormComponent,
 } from 'app/pages/credentials/backup-credentials/ssh-keypair-form/ssh-keypair-form.component';
@@ -30,6 +31,7 @@ import { WebSocketService } from 'app/services/ws.service';
 })
 export class SshKeypairCardComponent implements OnInit {
   protected readonly requiredRoles = [Role.KeychainCredentialWrite];
+  protected readonly searchableElements = sshKeypairsCardElements;
 
   dataProvider: AsyncDataProvider<KeychainSshKeyPair>;
   credentials: KeychainSshKeyPair[] = [];

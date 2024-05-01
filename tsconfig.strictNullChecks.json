@@ -527,7 +527,7 @@
     "./src/app/modules/ix-table/components/ix-table-body/cells/ix-cell-template/ix-cell-template.component.ts",
     "./src/app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component.ts",
     "./src/app/modules/ix-table/components/ix-table-body/cells/ix-cell-toggle/ix-cell-toggle.component.ts",
-    "./src/app/modules/ix-table/components/ix-table-body/cells/ix-cell-yesno/ix-cell-yesno.component.ts",
+    "./src/app/modules/ix-table/components/ix-table-body/cells/ix-cell-yes-no/ix-cell-yes-no.component.ts",
     "./src/app/modules/ix-table/components/ix-table-head/head-cells/ix-header-cell-text/ix-header-cell-text.component.ts",
     "./src/app/modules/ix-table/components/ix-table-pager-show-more/ix-table-pager-show-more.component.ts",
     "./src/app/modules/ix-table/components/ix-table-pager/ix-table-pager.component.ts",

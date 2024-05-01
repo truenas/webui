@@ -8,7 +8,9 @@
   <mat-card-content>
     <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
       <div class="two-columns">
-        <ix-fieldset [title]="helptext.hostname_and_domain | translate">
+        <ix-fieldset
+          [title]="helptext.hostname_and_domain | translate"
+        >
           <ix-input
             [formControlName]="hostname.fcName"
             [label]="hostname.label | translate"
@@ -48,7 +50,9 @@
             [tooltip]="domains.tooltip | translate"
           ></ix-chips>
         </ix-fieldset>
-        <ix-fieldset [title]="helptext.service_announcement | translate">
+        <ix-fieldset
+          [title]="helptext.service_announcement | translate"
+        >
           <ix-checkbox
             class="mt-field"
             [formControlName]="netbios.fcName"
@@ -71,7 +75,9 @@
       </div>
 
       <div class="two-columns">
-        <ix-fieldset [title]="helptext.nameservers | translate">
+        <ix-fieldset
+          [title]="helptext.nameservers | translate"
+        >
           <ix-input
             [formControlName]="nameserver1.fcName"
             [label]="nameserver1.label | translate"
@@ -90,7 +96,9 @@
             [tooltip]="nameserver3.tooltip | translate"
           ></ix-input>
         </ix-fieldset>
-        <ix-fieldset [title]="helptext.gateway | translate">
+        <ix-fieldset
+          [title]="helptext.gateway | translate"
+        >
           <ix-input
             [formControlName]="ipv4gateway.fcName"
             [label]="ipv4gateway.label | translate"
@@ -106,7 +114,9 @@
       </div>
 
       <div class="two-columns">
-        <ix-fieldset [title]="helptext.outbound_network | translate">
+        <ix-fieldset
+          [title]="helptext.outbound_network | translate"
+        >
           <ix-radio-group
             class="mt-field outbound-network-radio"
             [formControlName]="outboundNetworkActivity.fcName"
@@ -126,7 +136,9 @@
           ></ix-select>
         </ix-fieldset>
 
-        <ix-fieldset [title]="helptext.other | translate">
+        <ix-fieldset
+          [title]="helptext.other | translate"
+        >
           <ix-input
             [formControlName]="httpproxy.fcName"
             [label]="httpproxy.label | translate"

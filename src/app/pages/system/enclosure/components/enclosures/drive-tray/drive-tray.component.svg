@@ -7,10 +7,10 @@
   viewBox = "0 0 122 32"
 >
   <g
-    (click)="selectDisk.emit(diskName)"
+    (click)="traySelected.emit()"
     [attr.id]="'slot-' + slot + '-grp1'"
-    (mouseover)="highlight = true"
-    (mouseleave)="highlight = false"
+    (mouseover)="highlight.set(true)"
+    (mouseleave)="highlight.set(false)"
   >
     <rect
       [attr.id]="'tray-' + slot + '-g1-r1'"
@@ -23,7 +23,7 @@
       width="120"
       height="30"
       opacity="0.5"
-      [attr.fill]="highlight ? '#ff3' : '#2d2d2d'"
+      [attr.fill]="highlight() ? '#ff3' : '#2d2d2d'"
       transform="translate(2 0)"
     ></rect>
     <rect
@@ -40,9 +40,7 @@
       fill="#111"
       transform="translate(15 5)"
     ></rect>
-    <g
-      *ngIf="empty"
-    >
+    <g *ngIf="isEmpty()">
       <rect
         [attr.id]="'tray-' + slot + '-g1-r5'"
         width="14"
@@ -60,9 +58,7 @@
         transform="translate(15 8.25)"
       ></rect>
     </g>
-    <g
-      *ngIf="!empty"
-    >
+    <g *ngIf="!isEmpty()">
       <rect
         [attr.id]="'tray-' + slot + '-g1-r5'"
         width="14"
@@ -79,7 +75,7 @@
       ></rect>
     </g>
     <rect
-      *ngIf="selected"
+      *ngIf="selected()"
       [attr.id]="'tray-' + slot + '-g1-r7'"
       width="122"
       height="30"

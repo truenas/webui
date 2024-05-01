@@ -17,7 +17,6 @@ import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
 import { CertificateAuthorityAddComponent } from 'app/pages/credentials/certificates-dash/certificate-authority-add/certificate-authority-add.component';
 import { CertificateAuthorityEditComponent } from 'app/pages/credentials/certificates-dash/certificate-authority-edit/certificate-authority-edit.component';
 import { CertificateAuthorityListComponent } from 'app/pages/credentials/certificates-dash/certificate-authority-list/certificate-authority-list.component';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { StorageService } from 'app/services/storage.service';
 
@@ -67,7 +66,6 @@ describe('CertificateAuthorityListComponent', () => {
         })),
       }),
       mockProvider(StorageService),
-      mockProvider(ErrorHandlerService),
       mockAuth(),
     ],
   });

@@ -1,4 +1,4 @@
-import { EnclosureUi } from 'app/interfaces/enclosure.interface';
+import { EnclosureOld } from 'app/interfaces/enclosure-old.interface';
 import { MockEnclosure } from './mock-enclosure-template';
 
 export class MockM50 extends MockEnclosure {
@@ -8,7 +8,7 @@ export class MockM50 extends MockEnclosure {
   readonly model: string = 'M50';
 
   // Taken from an M60
-  override data: EnclosureUi = {
+  override data: EnclosureOld = {
     name: 'iX 4024Sp e001',
     model: this.model,
     controller: true,
@@ -264,7 +264,7 @@ export class MockM50 extends MockEnclosure {
       },
     },
     label: 'iX 4024Sp e001',
-  } as EnclosureUi;
+  } as EnclosureOld;
 
   constructor(number: number) {
     super(number);

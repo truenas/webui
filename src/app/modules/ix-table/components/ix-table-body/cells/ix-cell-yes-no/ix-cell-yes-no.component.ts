@@ -3,7 +3,7 @@ import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/table-c
 
 @Component({
   selector: 'ix-cell-yesno',
-  templateUrl: './ix-cell-yesno.component.html',
+  templateUrl: './ix-cell-yes-no.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class IxCellYesNoComponent<T> extends ColumnComponent<T> {}

@@ -19,4 +19,9 @@ export class WidgetEditorGroupComponent extends WidgetGroupComponent {
   readonly selectedSlot = input(0);
 
   selectedSlotChange = output<number>();
+
+  onSlotSelected(event: Event, slotIndex: number): void {
+    event.preventDefault();
+    this.selectedSlotChange.emit(slotIndex);
+  }
 }
