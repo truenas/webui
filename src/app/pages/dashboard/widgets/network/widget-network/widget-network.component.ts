@@ -1,20 +1,23 @@
 import {
-  Component, ChangeDetectionStrategy, OnInit, input,
+  Component, ChangeDetectionStrategy, input,
   computed,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { ChartData, ChartOptions } from 'chart.js';
-import { map } from 'rxjs';
-import { LinkState } from 'app/enums/network-interface.enum';
+import {
+  filter, map, shareReplay, skipWhile, switchMap,
+} from 'rxjs';
+import { KiB } from 'app/constants/bytes.constant';
+import { LinkState, NetworkInterfaceAliasType } from 'app/enums/network-interface.enum';
 import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
-import { ReportingData } from 'app/interfaces/reporting.interface';
+import { BaseNetworkInterface, NetworkInterfaceAlias } from 'app/interfaces/network-interface.interface';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
 import { WidgetComponent } from 'app/pages/dashboard/types/widget-component.interface';
 import { SlotSize } from 'app/pages/dashboard/types/widget.interface';
-import { minSizeToActiveTrafficArrowIcon } from 'app/pages/dashboard/widgets/network/widget-network/widget-network.const';
-import { WidgetNetworkInterfaceInfo } from 'app/pages/dashboard/widgets/network/widget-network/widget-network.interface';
+import { networkWidgetAspectRatio } from 'app/pages/dashboard/widgets/network/widget-network/widget-network.const';
+import { processNetworkInterfaces } from 'app/pages/dashboard/widgets/network/widget-network/widget-network.utils';
 import { LocaleService } from 'app/services/locale.service';
 import { ThemeService } from 'app/services/theme/theme.service';
 
@@ -25,64 +28,56 @@ import { ThemeService } from 'app/services/theme/theme.service';
   styleUrls: ['./widget-network.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class WidgetNetworkComponent implements WidgetComponent, OnInit {
+export class WidgetNetworkComponent implements WidgetComponent {
   size = input.required<SlotSize>();
-  readonly LinkState = LinkState;
 
-  protected interface = toSignal(this.resources.networkInterfaces$.pipe(
-    map((state) => state?.value?.filter((nic) => nic.state.link_state !== LinkState.Down)),
+  protected isLoading = computed(() => !this.interface() || !this.interfaceUsage() || !this.reportingData());
+
+  protected interface$ = this.resources.networkInterfaces$.pipe(
+    skipWhile((state) => state.isLoading),
+    map((state) => processNetworkInterfaces(state.value)),
+    filter((interfaces) => interfaces.length > 0),
     map(([firstInterface]) => firstInterface),
-  ));
+    shareReplay({ bufferSize: 1, refCount: true }),
+  );
 
-  protected interfaceData = toSignal(this.resources.realtimeUpdates$.pipe(
+  protected interface = toSignal(this.interface$);
+
+  protected interfaceUsage = toSignal(this.resources.realtimeUpdates$.pipe(
+    skipWhile(() => Boolean(!this.interface()?.name)),
     map((update) => update.fields.interfaces),
     map((interfaces) => interfaces?.[this.interface().name]),
+  ));
+
+  protected reportingData = toSignal(this.interface$.pipe(
+    filter(Boolean),
+    switchMap((networkInterface) => this.resources.networkInterfaceUpdate(networkInterface.name)),
+    map((response) => {
+      const updatedResponse = response[0];
+      (updatedResponse.data as number[][]).forEach((row, index) => {
+        // remove first column and convert kilobits/s to bytes
+        (updatedResponse.data as number[][])[index] = row.slice(1).map((value) => value * KiB);
+      });
+      return updatedResponse;
+    }),
   ));
 
   protected isLinkStateUp = computed(() => {
     return this.interface().state.link_state === LinkState.Up;
   });
-  // protected chartDataUpdates = toSignal();
 
-  protected isLoading = computed(() => !this.interface() || !this.interfaceData());
-  // protected serverTime = computed(() => {
-  //   return this.initialServerTime();
-  // });
-
-  protected stats = computed<WidgetNetworkInterfaceInfo>(() => {
-    const usageUpdate = this.interfaceData();
-
-    const nextUpdate: WidgetNetworkInterfaceInfo = {
-      name: this.interface().state.name,
-      ip: this.interface().aliases[0]?.address,
-      state: this.interface().state.link_state,
-      bitsIn: this.interfaceData().received_bytes_rate * 8,
-      bitsOut: this.interfaceData().sent_bytes_rate * 8,
-      bitsLastSent: 0,
-      bitsLastReceived: 0,
-    };
-
-    if (
-      usageUpdate.sent_bytes_rate !== undefined
-      && usageUpdate.sent_bytes_rate - nextUpdate.bitsLastSent > minSizeToActiveTrafficArrowIcon
-    ) {
-      nextUpdate.bitsLastSent = usageUpdate.sent_bytes_rate * 8;
-    }
-
-    if (
-      usageUpdate.received_bytes_rate !== undefined
-      && usageUpdate.received_bytes_rate - nextUpdate.bitsLastReceived > minSizeToActiveTrafficArrowIcon
-    ) {
-      nextUpdate.bitsLastReceived = usageUpdate.received_bytes_rate * 8;
-    }
-
-    return nextUpdate;
+  protected bitsIn = computed<number>(() => {
+    return this.interfaceUsage().received_bytes_rate * 8;
   });
 
-  chartData = computed<ChartData<'line'>>(() => {
+  protected bitsOut = computed<number>(() => {
+    return this.interfaceUsage().sent_bytes_rate * 8;
+  });
+
+  protected chartData = computed<ChartData<'line'>>(() => {
     const currentTheme = this.theme.currentTheme();
-    const response = {} as ReportingData;
-    const networkInterfaceName = this.stats().name;
+    const response = this.reportingData();
+    const networkInterfaceName = this.interface().name;
 
     const labels: number[] = (response.data as number[][]).map((_, index) => {
       return (response.start + index) * 1000;
@@ -114,9 +109,9 @@ export class WidgetNetworkComponent implements WidgetComponent, OnInit {
     };
   });
 
-  chartOptions: ChartOptions<'line'> = {
+  protected chartOptions: ChartOptions<'line'> = {
     responsive: true,
-    aspectRatio: 540 / 200,
+    aspectRatio: networkWidgetAspectRatio,
     maintainAspectRatio: true,
     animation: {
       duration: 0,
@@ -186,7 +181,22 @@ export class WidgetNetworkComponent implements WidgetComponent, OnInit {
     private theme: ThemeService,
   ) {}
 
-  ngOnInit(): void {
-    console.info('WidgetNetworkComponent initialized');
+  getIpAddress(nic: BaseNetworkInterface): string {
+    let ip = '–';
+    if (nic.state.aliases) {
+      const addresses = nic.state.aliases.filter((item: NetworkInterfaceAlias) => {
+        return [NetworkInterfaceAliasType.Inet, NetworkInterfaceAliasType.Inet6].includes(item.type);
+      });
+
+      if (addresses.length > 0) {
+        ip = `${addresses[0].address}/${addresses[0].netmask}`;
+
+        if (addresses.length >= 2) {
+          ip += ` (+${addresses.length - 1})`; /* show that interface has additional addresses */
+        }
+      }
+    }
+
+    return ip;
   }
 }
