@@ -2,18 +2,16 @@ import {
   ChangeDetectionStrategy, Component, Inject,
 } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { Role } from 'app/enums/role.enum';
 import { helptextVolumes } from 'app/helptext/storage/volumes/volume-list';
 import { Dataset } from 'app/interfaces/dataset.interface';
-import { Job } from 'app/interfaces/job.interface';
-import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -28,7 +26,7 @@ export class LockDatasetDialogComponent {
   forceCheckbox = new FormControl(false);
 
   constructor(
-    private matDialog: MatDialog,
+    private ws: WebSocketService,
     private errorHandler: ErrorHandlerService,
     private translate: TranslateService,
     private snackbar: SnackbarService,
@@ -41,34 +39,18 @@ export class LockDatasetDialogComponent {
     $event.preventDefault();
 
     const force = this.forceCheckbox.value;
-    const jobDialogRef = this.matDialog.open(EntityJobComponent, {
-      data: { title: helptextVolumes.lock_dataset_dialog.locking_dataset },
-      disableClose: true,
-    });
-    jobDialogRef.componentInstance.setDescription(
-      this.translate.instant('Locking dataset {datasetName}', { datasetName: this.dataset.name }),
-    );
-    jobDialogRef.componentInstance.setCall('pool.dataset.lock', [this.dataset.id, { force_umount: force }]);
-    jobDialogRef.componentInstance.submit();
-    jobDialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe({
-      next: () => {
-        jobDialogRef.close();
+    this.dialogService.jobDialog(
+      this.ws.job('pool.dataset.lock', [this.dataset.id, { force_umount: force }]),
+      { title: this.translate.instant(helptextVolumes.lock_dataset_dialog.locking_dataset) },
+    )
+      .afterClosed()
+      .pipe(
+        this.errorHandler.catchError(),
+        untilDestroyed(this),
+      )
+      .subscribe(() => {
         this.snackbar.success(this.translate.instant('Dataset locked'));
         this.dialogRef.close(true);
-      },
-      error: (error: WebSocketError | Job) => {
-        this.dialogService.error(this.errorHandler.parseError(error));
-      },
-    });
-    jobDialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe({
-      next: (job) => {
-        jobDialogRef.close();
-        this.dialogRef.close(true);
-        this.dialogService.error(this.errorHandler.parseError(job));
-      },
-      error: (error: WebSocketError | Job) => {
-        this.dialogService.error(this.errorHandler.parseError(error));
-      },
-    });
+      });
   }
 }

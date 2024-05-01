@@ -22,6 +22,12 @@ export const selectAllNonTransientJobs = createSelector(
   (jobs) => jobs.filter((job) => !job.transient),
 );
 
+/**
+ * Simply selects a job.
+ * By default, observable will not complete when job completes, nor will it throw on job failure.
+ *
+ * If you need this behaviour, add observeJob() operator.
+ */
 export const selectJob = (id: number): MemoizedSelector<object, Job> => createSelector(
   selectJobs,
   (jobs) => jobs.find((job) => job.id === id),

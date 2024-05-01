@@ -1,9 +1,9 @@
 import { DiskPowerLevel } from 'app/enums/disk-power-level.enum';
 import { DiskStandby } from 'app/enums/disk-standby.enum';
-import { EnclosureUi, EnclosureUiSlot } from 'app/interfaces/enclosure.interface';
+import { EnclosureOld, EnclosureOldSlot } from 'app/interfaces/enclosure-old.interface';
 import { MockEnclosure } from './mock-enclosure-template';
 
-const mockDiskDetail: EnclosureUiSlot = {
+const mockDiskDetail: EnclosureOldSlot = {
   descriptor: 'slot00',
   status: 'OK',
   dev: 'sda',
@@ -28,7 +28,7 @@ export class MockMini30Xl extends MockEnclosure {
   readonly model: string = 'TRUENAS-MINI-3.0-XL+';
 
   // TODO: Replace with actual output from a real machine
-  override data: EnclosureUi = {
+  override data: EnclosureOld = {
     name: 'iX 4024Sp e001',
     model: this.model,
     controller: true,
@@ -125,7 +125,7 @@ export class MockMini30Xl extends MockEnclosure {
       },
     },
     label: 'MINI-XL+',
-  } as EnclosureUi;
+  } as EnclosureOld;
 
   constructor(number: number) {
     super(number);

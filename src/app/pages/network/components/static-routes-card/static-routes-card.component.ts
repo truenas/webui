@@ -17,6 +17,7 @@ import {
   StaticRouteDeleteDialogComponent,
 } from 'app/pages/network/components/static-route-delete-dialog/static-route-delete-dialog.component';
 import { StaticRouteFormComponent } from 'app/pages/network/components/static-route-form/static-route-form.component';
+import { staticRoutesCardElements } from 'app/pages/network/components/static-routes-card/static-routes-card.elements';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -28,6 +29,7 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class StaticRoutesCardComponent implements OnInit {
+  protected readonly searchableElements = staticRoutesCardElements.elements;
   readonly requiredRoles = [Role.FullAdmin];
 
   dataProvider: AsyncDataProvider<StaticRoute>;

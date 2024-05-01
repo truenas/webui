@@ -13,6 +13,7 @@ import { actionsColumn } from 'app/modules/ix-table/components/ix-table-body/cel
 import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { createTable } from 'app/modules/ix-table/utils';
+import { acmeDnsAuthenticatorListElements } from 'app/pages/credentials/certificates-dash/acme-dns-authenticator-list/acme-dns-authenticator-list.elements';
 import { AcmednsFormComponent } from 'app/pages/credentials/certificates-dash/forms/acmedns-form/acmedns-form.component';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -26,6 +27,7 @@ import { WebSocketService } from 'app/services/ws.service';
 })
 export class AcmeDnsAuthenticatorListComponent implements OnInit {
   protected readonly requiredRoles = [Role.FullAdmin];
+  protected readonly searchableElements = acmeDnsAuthenticatorListElements;
 
   filterString = '';
   dataProvider: AsyncDataProvider<DnsAuthenticator>;

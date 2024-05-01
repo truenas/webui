@@ -157,7 +157,7 @@ export class WebSocketConnectionService {
     return this.ws$.multiplex(
       () => ({ id, name, msg: OutgoingApiMessageType.Sub }),
       () => ({ id, msg: OutgoingApiMessageType.UnSub }),
-      (message: R) => (message.collection === name),
+      (message: R) => (message.collection === name && message.msg !== IncomingApiMessageType.NoSub),
     ) as Observable<R>;
   }
 

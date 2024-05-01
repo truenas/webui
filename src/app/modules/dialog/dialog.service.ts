@@ -136,18 +136,13 @@ export class DialogService {
    *   this.ws.call('pool.create', [pool]),
    * )
    *  .afterClosed()
-   *  .pipe(untilDestroyed(this))
-   *  .subscribe({
-   *    next: (result) => {
-   *      // Job completed
-   *    },
-   *    complete: () => {
-   *      // Job dialog closed for any reason: job completed or dialog minimized.
-   *    },
-   *    error: (error) => {
-   *      // Job errored or aborted. Handle error.
-   *    },
-   * });
+   *  .pipe(
+   *    this.errorHandler.catchError(),
+   *    untilDestroyed(this),
+   *  )
+   *  .subscribe(() => {
+   *    // Job completed.
+   *  });
    * ```
    *
    * If you need more control over JobProgressDialogComponent, use it directly.

@@ -26,6 +26,7 @@ import { createTable } from 'app/modules/ix-table/utils';
 import {
   CertificateEditComponent,
 } from 'app/pages/credentials/certificates-dash/certificate-edit/certificate-edit.component';
+import { certificateListElements } from 'app/pages/credentials/certificates-dash/certificate-list/certificate-list.elements';
 import {
   ConfirmForceDeleteCertificateComponent,
 } from 'app/pages/credentials/certificates-dash/confirm-force-delete-dialog/confirm-force-delete-dialog.component';
@@ -48,6 +49,7 @@ export class CertificateListComponent implements OnInit {
   @Output() certificateDeleted = new EventEmitter<void>();
 
   protected readonly requiredRoles = [Role.FullAdmin];
+  protected readonly searchableElements = certificateListElements;
 
   dataProvider: AsyncDataProvider<Certificate>;
   certificates: Certificate[] = [];

@@ -2,12 +2,12 @@ import {
   ChangeDetectionStrategy, Component, computed, input,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
+import { TinyColor } from '@ctrl/tinycolor';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { ChartData, ChartOptions } from 'chart.js';
-import { map, take } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 import { GiB } from 'app/constants/bytes.constant';
-import { ThemeUtils } from 'app/core/classes/theme-utils/theme-utils';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
 import { SlotSize } from 'app/pages/dashboard/types/widget.interface';
 import { ThemeService } from 'app/services/theme/theme.service';
@@ -27,14 +27,12 @@ export class WidgetMemoryComponent {
 
   protected memory = toSignal(this.resources.realtimeUpdates$.pipe(
     map((update) => update.fields.virtual_memory),
-    take(1),
   ));
 
   protected isLoading = computed(() => !this.memory());
 
   protected arcSize = toSignal(this.resources.realtimeUpdates$.pipe(
     map((update) => update.fields.zfs?.arc_size),
-    take(1),
   ));
 
   stats = computed(() => {
@@ -66,8 +64,8 @@ export class WidgetMemoryComponent {
   chartData = computed<ChartData<'doughnut'>>(() => {
     const labels = this.stats().map((stat) => stat.name);
     const values = this.stats().map((stat) => stat.value);
-    const backgroundColors = this.stats().map((stat) => this.themeUtils.rgbToString(stat.color, 0.85));
-    const borderColors = this.stats().map((stat) => this.themeUtils.rgbToString(stat.color));
+    const backgroundColors = this.stats().map((stat) => new TinyColor(stat.color).setAlpha(0.85).toHex8String());
+    const borderColors = this.stats().map((stat) => stat.color);
 
     return {
       labels,
@@ -97,8 +95,6 @@ export class WidgetMemoryComponent {
     };
   });
 
-  private themeUtils = new ThemeUtils();
-
   constructor(
     private store$: Store<AppState>,
     private resources: WidgetResourcesService,
@@ -108,9 +104,5 @@ export class WidgetMemoryComponent {
 
   protected formatUnit(bytes: number): string {
     return (bytes / GiB).toFixed(1);
-  }
-
-  protected toRgb(color: number[]): string {
-    return this.themeUtils.rgbToString(color);
   }
 }

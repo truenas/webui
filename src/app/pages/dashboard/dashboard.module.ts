@@ -11,6 +11,7 @@ import { BaseChartDirective } from 'ng2-charts';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { ChartsModule } from 'app/modules/charts/charts.module';
+import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { InterfaceStatusIconComponent } from 'app/modules/interface-status-icon/interface-status-icon.component';
 import { IxDropGridModule } from 'app/modules/ix-drop-grid/ix-drop-grid.module';
 import { IxFileSizeModule } from 'app/modules/ix-file-size/ix-file-size.module';
@@ -34,8 +35,23 @@ import { routing } from 'app/pages/dashboard/dashboard.routing';
 import { DashboardStore } from 'app/pages/dashboard/services/dashboard.store';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
 import { widgetComponents } from 'app/pages/dashboard/widgets/all-widgets.constant';
+import { WidgetDatapointComponent } from 'app/pages/dashboard/widgets/common/widget-datapoint/widget-datapoint.component';
 
 @NgModule({
+  declarations: [
+    DashboardComponent,
+    WidgetGroupComponent,
+    WidgetErrorComponent,
+    WidgetGroupFormComponent,
+    WidgetEditorGroupComponent,
+    WidgetDatapointComponent,
+    WidgetGroupControlsComponent,
+    ...widgetComponents,
+  ],
+  providers: [
+    DashboardStore,
+    WidgetResourcesService,
+  ],
   imports: [
     IxFormsModule,
     ReactiveFormsModule,
@@ -68,22 +84,10 @@ import { widgetComponents } from 'app/pages/dashboard/widgets/all-widgets.consta
       },
     }),
     IxDropGridModule,
+    EmptyComponent,
     ChartsModule,
     InterfaceStatusIconComponent,
     IxFileSizeModule,
-  ],
-  declarations: [
-    DashboardComponent,
-    WidgetGroupComponent,
-    WidgetErrorComponent,
-    WidgetGroupFormComponent,
-    WidgetEditorGroupComponent,
-    WidgetGroupControlsComponent,
-    ...widgetComponents,
-  ],
-  providers: [
-    DashboardStore,
-    WidgetResourcesService,
   ],
 })
 export class DashboardModule {

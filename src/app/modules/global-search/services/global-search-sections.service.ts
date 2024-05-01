@@ -1,5 +1,6 @@
 import { Inject, Injectable } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
+import UiElementsJson from 'app/../assets/ui-searchable-elements.json';
 import { Observable } from 'rxjs';
 import { WINDOW } from 'app/helpers/window.helper';
 import { GlobalSearchSection } from 'app/modules/global-search/enums/global-search-section.enum';
@@ -41,6 +42,17 @@ export class GlobalSearchSectionsProvider {
   }
 
   getRecentSearchesSectionResults(): UiSearchableElement[] {
-    return JSON.parse(this.window.localStorage.getItem('recentSearches') || '[]');
+    const recentSearches = JSON.parse(this.window.localStorage.getItem('recentSearches') || '[]') as UiSearchableElement[];
+    const exitingHierarchies = new Set(UiElementsJson.map((item) => JSON.stringify(item.hierarchy)));
+
+    const validRecentSearches = recentSearches.filter((item) => {
+      return exitingHierarchies.has(JSON.stringify(item.hierarchy)) || item.hierarchy[0].startsWith('Search Documentation for');
+    });
+
+    if (recentSearches.length !== validRecentSearches.length) {
+      this.window.localStorage.setItem('recentSearches', JSON.stringify(validRecentSearches));
+    }
+
+    return validRecentSearches;
   }
 }

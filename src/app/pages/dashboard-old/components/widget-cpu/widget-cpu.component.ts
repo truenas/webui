@@ -3,6 +3,7 @@ import { DOCUMENT } from '@angular/common';
 import {
   Component, AfterViewInit, ElementRef, ChangeDetectionStrategy, ChangeDetectorRef, Inject,
 } from '@angular/core';
+import { TinyColor } from '@ctrl/tinycolor';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
@@ -14,7 +15,6 @@ import * as d3 from 'd3';
 import {
   filter, skipWhile, throttleTime,
 } from 'rxjs/operators';
-import { ThemeUtils } from 'app/core/classes/theme-utils/theme-utils';
 import { ScreenType } from 'app/enums/screen-type.enum';
 import { AllCpusUpdate } from 'app/interfaces/reporting.interface';
 import { Theme } from 'app/interfaces/theme.interface';
@@ -71,7 +71,6 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
   readonly ScreenType = ScreenType;
 
   protected currentTheme: Theme;
-  private utils: ThemeUtils;
 
   get isDesktop(): boolean {
     return this.screenType === ScreenType.Desktop;
@@ -92,8 +91,6 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
     @Inject(DOCUMENT) private document: Document,
   ) {
     super();
-
-    this.utils = new ThemeUtils();
 
     this.resourcesUsageStore$.cpuUsage$.pipe(
       throttleTime(500),
@@ -355,10 +352,10 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
         color = this.stripVar(this.currentTheme[cssVar]);
       }
 
-      const bgRgb = this.utils.convertToRgb((this.currentTheme[color as keyof Theme]) as string).rgb;
+      const backgroundColor = this.currentTheme[color as keyof Theme];
 
-      ds.backgroundColor = this.utils.rgbToString(bgRgb, 0.85);
-      ds.borderColor = this.utils.rgbToString(bgRgb);
+      ds.backgroundColor = new TinyColor(backgroundColor as string).setAlpha(0.85).toRgbString();
+      ds.borderColor = backgroundColor;
       datasets.push(ds);
     });
 
@@ -370,15 +367,9 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
   }
 
   getHighlightColor(opacity: number): string {
-    // Get highlight color
     const currentTheme = this.themeService.currentTheme();
     const txtColor = currentTheme.fg2;
-    const valueType = this.utils.getValueType(txtColor);
 
-    // convert to rgb
-    const rgb = valueType === 'hex' ? this.utils.hexToRgb(txtColor).rgb : this.utils.rgbToArray(txtColor);
-
-    // return rgba
-    return `rgba(${rgb[0]},${rgb[1]},${rgb[2]},${opacity})`;
+    return new TinyColor(txtColor).setAlpha(opacity).toRgbString();
   }
 }

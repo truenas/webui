@@ -13,6 +13,7 @@ import { actionsColumn } from 'app/modules/ix-table/components/ix-table-body/cel
 import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { createTable } from 'app/modules/ix-table/utils';
+import { sshConnectionsCardElements } from 'app/pages/credentials/backup-credentials/ssh-connection-card/ssh-connection-card.elements';
 import { SshConnectionFormComponent } from 'app/pages/credentials/backup-credentials/ssh-connection-form/ssh-connection-form.component';
 import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 import { KeychainCredentialService } from 'app/services/keychain-credential.service';
@@ -27,6 +28,7 @@ import { WebSocketService } from 'app/services/ws.service';
 })
 export class SshConnectionCardComponent implements OnInit {
   protected readonly requiredRoles = [Role.KeychainCredentialWrite];
+  protected readonly searchableElements = sshConnectionsCardElements;
 
   dataProvider: AsyncDataProvider<KeychainSshCredentials>;
   credentials: KeychainSshCredentials[] = [];

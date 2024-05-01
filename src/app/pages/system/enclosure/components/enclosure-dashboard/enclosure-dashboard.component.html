@@ -1,0 +1,24 @@
+<mat-card>
+  <mat-card-header>
+    <div class="header-wrapper">
+      <div>
+        <h3>Disks on [Enclosure Name]</h3>
+      </div>
+      <div>
+        <button
+          mat-button
+          ixTest="edit-enclosure-label"
+        >{{ 'Edit Label' | translate }}</button>
+      </div>
+    </div>
+  </mat-card-header>
+  <mat-card-content>
+    <!-- TODO: Loading indication -->
+    <ix-enclosure-overview
+      *ngIf="selectedEnclosure$ | async as selectedEnclosure"
+      [enclosure]="selectedEnclosure"
+      [selectedSlot]="selectedSlot$ | async"
+    ></ix-enclosure-overview>
+    <ix-disk-overview [slot]="selectedSlot$ | async"></ix-disk-overview>
+  </mat-card-content>
+</mat-card>

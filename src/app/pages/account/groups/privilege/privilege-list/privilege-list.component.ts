@@ -16,13 +16,14 @@ import { PaginationServerSide } from 'app/modules/ix-table/classes/api-data-prov
 import { SortingServerSide } from 'app/modules/ix-table/classes/api-data-provider/sorting-server-side.class';
 import { actionsColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
 import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
-import { yesNoColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-yesno/ix-cell-yesno.component';
+import { yesNoColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-yes-no/ix-cell-yes-no.component';
 import { TablePagination } from 'app/modules/ix-table/interfaces/table-pagination.interface';
 import { createTable } from 'app/modules/ix-table/utils';
 import { SearchProperty } from 'app/modules/search-input/types/search-property.interface';
 import { AdvancedSearchQuery, SearchQuery } from 'app/modules/search-input/types/search-query.interface';
 import { booleanProperty, searchProperties, textProperty } from 'app/modules/search-input/utils/search-properties.utils';
 import { PrivilegeFormComponent } from 'app/pages/account/groups/privilege/privilege-form/privilege-form.component';
+import { privilegesListElements } from 'app/pages/account/groups/privilege/privilege-list/privilege-list.elements';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -40,6 +41,7 @@ export class PrivilegeListComponent implements OnInit {
   protected dataProvider: ApiDataProvider<'privilege.query'>;
   protected readonly advancedSearchPlaceholder = this.translate.instant('Name ^ "Local" AND "Web Shell Access" = true');
   protected searchProperties: SearchProperty<Privilege>[] = [];
+  protected readonly searchableElements = privilegesListElements;
 
   columns = createTable<Privilege>([
     textColumn({

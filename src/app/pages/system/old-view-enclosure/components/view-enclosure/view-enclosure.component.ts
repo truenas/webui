@@ -12,7 +12,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { Observable, ReplaySubject, Subject } from 'rxjs';
 import { filter, takeUntil } from 'rxjs/operators';
-import { EnclosureUi, EnclosureUiElements } from 'app/interfaces/enclosure.interface';
+import { EnclosureOld, EnclosureOldElements } from 'app/interfaces/enclosure-old.interface';
 import { viewEnclosureElements } from 'app/pages/system/old-view-enclosure/components/view-enclosure/view-enclosure.elements';
 import { EnclosureEvent } from 'app/pages/system/old-view-enclosure/interfaces/enclosure-events.interface';
 import { ErrorMessage } from 'app/pages/system/old-view-enclosure/interfaces/error-message.interface';
@@ -102,8 +102,8 @@ export class ViewEnclosureComponent implements AfterViewInit, OnDestroy {
     return this.controller?.rackmount;
   }
 
-  get selectedEnclosure(): EnclosureUi {
-    return this.systemState?.enclosures.find((enclosure: EnclosureUi) => {
+  get selectedEnclosure(): EnclosureOld {
+    return this.systemState?.enclosures.find((enclosure: EnclosureOld) => {
       return enclosure.id === this.selectedEnclosureId;
     });
   }
@@ -117,9 +117,9 @@ export class ViewEnclosureComponent implements AfterViewInit, OnDestroy {
     return this.systemState.selectedEnclosure;
   }
 
-  get controller(): EnclosureUi | null {
+  get controller(): EnclosureOld | null {
     return this.systemState?.enclosures
-      ? this.systemState?.enclosures.find((enclosure: EnclosureUi) => enclosure.controller)
+      ? this.systemState?.enclosures.find((enclosure: EnclosureOld) => enclosure.controller)
       : null;
   }
 
@@ -275,7 +275,7 @@ export class ViewEnclosureComponent implements AfterViewInit, OnDestroy {
 
   extractVisualizations(): void {
     if (this.showEnclosureSelector) {
-      this.systemState.enclosures.forEach((enclosure: EnclosureUi) => {
+      this.systemState.enclosures.forEach((enclosure: EnclosureOld) => {
         if (this.systemState) {
           this.events.next({ name: 'CanvasExtract', data: enclosure, sender: this });
         }
@@ -297,7 +297,7 @@ export class ViewEnclosureComponent implements AfterViewInit, OnDestroy {
 
     views.unshift(disks);
     let matchIndex;
-    const selectedEnclosure = this.systemState?.enclosures.find((enclosure: EnclosureUi) => {
+    const selectedEnclosure = this.systemState?.enclosures.find((enclosure: EnclosureOld) => {
       return enclosure.id === this.selectedEnclosureId;
     });
     if (!selectedEnclosure) {
@@ -310,7 +310,7 @@ export class ViewEnclosureComponent implements AfterViewInit, OnDestroy {
       .filter((elementKey: string) => elementKey !== 'Array Device Slot')
       .forEach((key: string, index) => {
         const view: ViewConfig = {
-          name: key as keyof EnclosureUiElements,
+          name: key as keyof EnclosureOldElements,
           alias: '',
           icon: '',
           enclosureIndex: views.length,

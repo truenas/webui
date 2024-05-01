@@ -2,11 +2,12 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { of } from 'rxjs';
+import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockEntityJobComponentRef } from 'app/core/testing/utils/mock-entity-job-component-ref.utils';
-import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { UnusedDisk } from 'app/interfaces/storage.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
@@ -16,6 +17,7 @@ import {
   ReplaceDiskDialogData,
   ReplaceDiskDialogComponent,
 } from 'app/pages/storage/modules/disks/components/replace-disk-dialog/replace-disk-dialog.component';
+import { WebSocketService } from 'app/services/ws.service';
 
 describe('ReplaceDiskDialogComponent', () => {
   let spectator: Spectator<ReplaceDiskDialogComponent>;
@@ -31,13 +33,15 @@ describe('ReplaceDiskDialogComponent', () => {
         mockCall('disk.get_unused', [
           { devname: 'sdb', identifier: '{serial_lunid}BBBBB1', size: 10737418240 },
         ] as UnusedDisk[]),
+        mockJob('pool.replace', fakeSuccessfulJob()),
       ]),
       mockProvider(MatDialogRef),
-      mockProvider(DialogService),
-      mockProvider(SnackbarService),
-      mockProvider(MatDialog, {
-        open: () => mockEntityJobComponentRef,
+      mockProvider(DialogService, {
+        jobDialog: jest.fn(() => ({
+          afterClosed: () => of(undefined),
+        })),
       }),
+      mockProvider(SnackbarService),
       {
         provide: MAT_DIALOG_DATA,
         useValue: {
@@ -71,7 +75,8 @@ describe('ReplaceDiskDialogComponent', () => {
     const replaceButton = await loader.getHarness(MatButtonHarness.with({ text: 'Replace Disk' }));
     await replaceButton.click();
 
-    expect(mockEntityJobComponentRef.componentInstance.setCall).toHaveBeenCalledWith('pool.replace', [
+    expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
+    expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('pool.replace', [
       1,
       {
         disk: '{serial_lunid}BBBBB1',

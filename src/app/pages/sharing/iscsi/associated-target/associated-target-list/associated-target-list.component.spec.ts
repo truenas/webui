@@ -2,7 +2,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { Spectator, createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
-import { of, pipe } from 'rxjs';
+import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { IscsiExtent, IscsiTarget, IscsiTargetExtent } from 'app/interfaces/iscsi.interface';
@@ -13,11 +13,9 @@ import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
-import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SearchInput1Component } from 'app/modules/search-input1/search-input1.component';
 import { AssociatedTargetFormComponent } from 'app/pages/sharing/iscsi/associated-target/associated-target-form/associated-target-form.component';
 import { AssociatedTargetListComponent } from 'app/pages/sharing/iscsi/associated-target/associated-target-list/associated-target-list.component';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -52,12 +50,7 @@ describe('AssociatedTargetListComponent', () => {
     ],
     providers: [
       mockAuth(),
-      mockProvider(AppLoaderService),
-      mockProvider(ErrorHandlerService),
       mockProvider(EmptyService),
-      mockProvider(AppLoaderService, {
-        withLoader: jest.fn(() => pipe()),
-      }),
       mockWebSocket([
         mockCall('iscsi.targetextent.query', targetExtents),
         mockCall('iscsi.targetextent.delete'),

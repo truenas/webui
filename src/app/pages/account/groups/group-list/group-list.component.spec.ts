@@ -98,7 +98,7 @@ describe('GroupListComponent', () => {
 
     const expectedRows = [
       ['Group', 'GID', 'Builtin', 'Allows sudo commands', 'Samba Authentication', 'Roles'],
-      ['mock', '1000', 'Yes', 'Yes', 'Yes', 'N/A'],
+      ['mock', '1000', 'Yes', 'No', 'Yes', 'N/A'],
       ['fake', '1001', 'Yes', 'Yes', 'Yes', 'Full Admin'],
     ];
 

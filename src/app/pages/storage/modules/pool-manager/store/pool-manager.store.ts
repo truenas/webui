@@ -16,7 +16,7 @@ import {
 import { GiB } from 'app/constants/bytes.constant';
 import { DiskType } from 'app/enums/disk-type.enum';
 import { CreateVdevLayout, VdevType } from 'app/enums/v-dev-type.enum';
-import { EnclosureUi } from 'app/interfaces/enclosure.interface';
+import { EnclosureOld } from 'app/interfaces/enclosure-old.interface';
 import { UnusedDisk } from 'app/interfaces/storage.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ManualDiskSelectionComponent, ManualDiskSelectionParams } from 'app/pages/storage/modules/pool-manager/components/manual-disk-selection/manual-disk-selection.component';
@@ -70,7 +70,7 @@ export interface PoolManagerEnclosureSettings {
 
 export interface PoolManagerState {
   isLoading: boolean;
-  enclosures: EnclosureUi[];
+  enclosures: EnclosureOld[];
   name: string;
   nameErrors: ValidationErrors | null;
   encryption: string | null;
@@ -254,10 +254,11 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
     );
   });
 
-  loadStateInitialData(): Observable<[UnusedDisk[], EnclosureUi[]]> {
+  loadStateInitialData(): Observable<[UnusedDisk[], EnclosureOld[]]> {
     return forkJoin([
       this.ws.call('disk.get_unused'),
-      this.ws.call('enclosure2.query'),
+      // TODO: Broken. Missing number field.
+      this.ws.call('enclosure2.query') as unknown as Observable<EnclosureOld[]>,
     ]).pipe(
       tapResponse(
         ([allDisks, enclosures]) => {
