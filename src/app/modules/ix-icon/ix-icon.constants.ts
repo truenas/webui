@@ -41,4 +41,9 @@ export const ixSvgIcons = {
   logo_full_rgb: 'assets/customicons/ix_full_logo_rgb.svg',
   logo_full: 'assets/customicons/ix_full_logo.svg',
   enclosure: 'assets/customicons/enclosure.svg',
+  layout_quarters: 'assets/customicons/layout-4x25.svg',
+  layout_half_and_quarters: 'assets/customicons/layout-50-on-top.svg',
+  layout_quarters_and_half: 'assets/customicons/layout-50-on-bottom.svg',
+  layout_halves: 'assets/customicons/layout-50-50.svg',
+  layout_full: 'assets/customicons/layout-100.svg',
 };

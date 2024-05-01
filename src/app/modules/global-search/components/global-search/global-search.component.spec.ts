@@ -137,7 +137,7 @@ describe('GlobalSearchComponent', () => {
     spectator.component.resetInput();
     spectator.detectChanges();
 
-    expect(spectator.component.searchControl.value).toBeNull();
+    expect(spectator.component.searchControl.value).toBe('');
     expect(document.activeElement).toBe(spectator.query('input'));
   });
 });

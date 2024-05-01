@@ -4,9 +4,7 @@ import { WidgetErrorComponent } from 'app/pages/dashboard/components/widget-erro
 import {
   runWidgetGroupTestSuite,
 } from 'app/pages/dashboard/components/widget-group/tests/run-widget-group-test-suite.utils';
-import {
-  WidgetEditorGroupComponent,
-} from 'app/pages/dashboard/components/widget-group-form/widget-editor-group/widget-editor-group.component';
+import { WidgetEditorGroupComponent } from 'app/pages/dashboard/components/widget-group-form/widget-editor-group/widget-editor-group.component';
 import { WidgetGroupLayout } from 'app/pages/dashboard/types/widget-group.interface';
 import { WidgetType } from 'app/pages/dashboard/types/widget.interface';
 import { WidgetHostnameComponent } from 'app/pages/dashboard/widgets/network/widget-hostname/widget-hostname.component';
