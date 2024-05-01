@@ -8,5 +8,8 @@ export const scrubListElements = {
     tasks: {
       synonyms: [T('Tasks')],
     },
+    add: {
+      hierarchy: [T('Add')],
+    },
   },
 } satisfies UiSearchableElement;

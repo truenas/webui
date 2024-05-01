@@ -8,5 +8,8 @@ export const cloudBackupListElements = {
     tasks: {
       synonyms: [T('Tasks'), T('Cloud Backup')],
     },
+    add: {
+      hierarchy: [T('Add')],
+    },
   },
 } satisfies UiSearchableElement;

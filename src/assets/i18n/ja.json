@@ -3156,6 +3156,7 @@
   "Skip automatic detection of the Endpoint URL region. Set this only if AWS provider does not support regions.": "",
   "Slot": "",
   "Slot {n}": "",
+  "Smart": "",
   "Snapdev": "",
   "Snapshot": "",
   "Snapshot Delete": "",

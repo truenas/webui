@@ -1,7 +1,14 @@
 <ix-page-header>
   <ix-table-columns-selector [columns]="columns" (columnsChange)="columnsChange($event)"></ix-table-columns-selector>
 
-  <button *ixRequiresRoles="requiredRoles" mat-button color="primary" ixTest="add-task" (click)="onAdd()">
+  <button
+    *ixRequiresRoles="requiredRoles"
+    mat-button
+    color="primary"
+    ixTest="add-task"
+    [ixUiSearch]="searchableElements.elements.add"
+    (click)="onAdd()"
+  >
     {{ 'Add' | translate }}
   </button>
 </ix-page-header>

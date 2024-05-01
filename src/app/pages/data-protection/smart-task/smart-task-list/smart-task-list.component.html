@@ -3,7 +3,14 @@
 
   <ix-table-columns-selector [columns]="columns" (columnsChange)="columnsChange($event)"></ix-table-columns-selector>
 
-  <button *ixRequiresRoles="requiredRoles" mat-button color="primary" ixTest="add-smart-task" (click)="openForm()">
+  <button
+    *ixRequiresRoles="requiredRoles"
+    mat-button
+    color="primary"
+    ixTest="add-smart-task"
+    [ixUiSearch]="searchableElements.elements.add"
+    (click)="openForm()"
+  >
     {{ 'Add' | translate }}
   </button>
 </ix-page-header>

@@ -8,5 +8,8 @@ export const snapshotTaskListElements = {
     tasks: {
       synonyms: [T('Tasks')],
     },
+    add: {
+      hierarchy: [T('Add')],
+    },
   },
 } satisfies UiSearchableElement;
