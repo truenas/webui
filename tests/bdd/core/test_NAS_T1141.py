@@ -605,9 +605,9 @@ def on_the_dataset_folder_delete_a_file(driver, nas_ip):
 def verify_the_file_is_removed_from_the_google_drive_test_folder_tab(driver):
     """verify the file is removed from the Google Drive test folder tab."""
     driver.switch_to.window(driver.window_handles[1])
-    assert wait_on_element(driver, 7, '//div[@data-tooltip="test" and @role="button"]')
-    assert wait_on_element(driver, 7, xpaths.google_Drive.name_Sort)
-    assert wait_on_element(driver, 7, '//div[@data-tooltip="PDF: Explaining_BSD.pdf"]', 'clickable')
+    assert wait_on_element(driver, 10, '//div[@data-tooltip="test" and @role="button"]')
+    assert wait_on_element(driver, 15, xpaths.google_Drive.name_Sort)
+    assert wait_on_element(driver, 10, '//div[@data-tooltip="PDF: Explaining_BSD.pdf"]', 'clickable')
     assert wait_on_element_disappear(driver, 15, xpaths.google_Drive.music_Folder)
     # clean the test folder on box tab before closing the tab.
     assert wait_on_element(driver, 5, '//div[@data-tooltip="PDF: Explaining_BSD.pdf"]', 'clickable')
