@@ -11,20 +11,10 @@ import { AllCpusUpdate } from 'app/interfaces/reporting.interface';
 import { GaugeConfig, GaugeData } from 'app/modules/charts/components/view-chart-gauge/view-chart-gauge.component';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
 import { SlotSize } from 'app/pages/dashboard/types/widget.interface';
+import { CpuParams } from 'app/pages/dashboard/widgets/cpu/interfaces/cpu-params.interface';
 import { ThemeService } from 'app/services/theme/theme.service';
 import { AppState } from 'app/store';
 import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
-
-interface CpuParams {
-  usageMin: number;
-  usageMax: number;
-  usageMinThreads: number[];
-  usageMaxThreads: number[];
-  tempMin: number;
-  tempMax: number;
-  tempMinThreads: number[];
-  tempMaxThreads: number[];
-}
 
 @Component({
   selector: 'ix-widget-cpu',
