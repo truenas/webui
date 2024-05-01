@@ -580,12 +580,10 @@ def select_push_as_the_direction_then_under_transfer_mode_select_sync(driver):
 def verify_all_files_are_sync_to_the_google_drive_test_folder_tab(driver):
     """verify all files are sync to the Google Drive test folder tab."""
     driver.switch_to.window(driver.window_handles[1])
-    assert wait_on_element(driver, 7, '//div[@data-tooltip="test" and @role="button"]')
-    assert wait_on_element(driver, 7, xpaths.google_Drive.name_Sort)
-    assert wait_on_element(driver, 5, '//div[@data-tooltip="PDF: Explaining_BSD.pdf"]', 'clickable')
-    assert wait_on_element(driver, 5, xpaths.google_Drive.music_Folder, 'clickable')
-    time.sleep(1)
-    # Select
+    assert wait_on_element(driver, 10, '//div[@data-tooltip="test" and @role="button"]')
+    assert wait_on_element(driver, 15, xpaths.google_Drive.name_Sort)
+    assert wait_on_element(driver, 10, '//div[@data-tooltip="PDF: Explaining_BSD.pdf"]', 'clickable')
+    assert wait_on_element(driver, 10, xpaths.google_Drive.music_Folder, 'clickable')
     driver.find_element_by_xpath(xpaths.google_Drive.music_Folder).click()
     rsc.double_click(driver, xpaths.google_Drive.music_Folder)
     assert wait_on_element(driver, 5, '//div[@data-tooltip="music" and @role="button"]')
