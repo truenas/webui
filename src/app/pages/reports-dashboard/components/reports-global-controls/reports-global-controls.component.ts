@@ -9,6 +9,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { take } from 'rxjs';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { reportingGlobalControlsElements } from 'app/pages/reports-dashboard/components/reports-global-controls/reports-global-controls.elements';
 import { ReportTab, ReportType } from 'app/pages/reports-dashboard/interfaces/report-tab.interface';
 import { ReportsService } from 'app/pages/reports-dashboard/reports.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
@@ -37,6 +38,7 @@ export class ReportsGlobalControlsComponent implements OnInit {
   @Output() diskOptionsChanged = new EventEmitter<{ devices: string[]; metrics: string[] }>();
 
   readonly ReportType = ReportType;
+  readonly searchableElements = reportingGlobalControlsElements;
 
   constructor(
     private fb: FormBuilder,
@@ -57,6 +59,10 @@ export class ReportsGlobalControlsComponent implements OnInit {
 
   isActiveTab(tab: ReportTab): boolean {
     return this.activeTab?.value === tab.value;
+  }
+
+  typeTab(tab: ReportTab): ReportTab {
+    return tab;
   }
 
   private setupTabs(): void {
