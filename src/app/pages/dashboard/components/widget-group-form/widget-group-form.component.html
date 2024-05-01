@@ -24,11 +24,22 @@
   <div class="editor-container">
     <ix-widget-editor-group
       [group]="group"
-      [(selectedSlot)]="selectedSlot"
+      [selectedSlot]="selectedSlot"
+      (selectedSlotChange)="selectedSlotChanged($event)"
     ></ix-widget-editor-group>
   </div>
 
-  Selected slot: {{ selectedSlot }}
+  <div class="widget-options-container">
+    <ix-fieldset
+      [title]="'Widget {slot} Settings' | translate: { slot: selectedSlot + 1 }"
+    >
+      <ix-select
+        formControlName="category"
+        [options]="widgetCategoriesOptions"
+        [label]="'Widget Category' | translate"
+      ></ix-select>
+    </ix-fieldset>
+  </div>
 
   <!-- TODO: Category dropdown, pull widget definitions from widgetRegistry and regroup by category -->
   <!-- TODO: Widget type dropdown -->
