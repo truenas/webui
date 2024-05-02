@@ -63,7 +63,17 @@ export class WidgetNetworkComponent implements WidgetComponent {
   ));
 
   protected isLinkStateUp = computed(() => {
+    if (this.interfaceUsage().link_state) {
+      return this.interfaceUsage().link_state === LinkState.Up;
+    }
     return this.interface().state.link_state === LinkState.Up;
+  });
+
+  protected linkStateLabel = computed(() => {
+    if (this.interfaceUsage().link_state) {
+      return this.interfaceUsage().link_state.replace(/_/g, ' ');
+    }
+    return this.interface().state.link_state.replace(/_/g, ' ');
   });
 
   protected bitsIn = computed<number>(() => {

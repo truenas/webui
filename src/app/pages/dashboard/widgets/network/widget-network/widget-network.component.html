@@ -38,23 +38,23 @@
           <div class="info-column primary">
             <div *ngIf="!isLoading(); else skeleton" class="info-list-item state">
               <span *ngIf="isLinkStateUp()" class="icon-wrapper up">
-                <ix-icon name="check_circle" [matTooltip]="interface().state.link_state"></ix-icon>
+                <ix-icon name="check_circle" [matTooltip]="linkStateLabel()"></ix-icon>
               </span>
               <span *ngIf="!isLinkStateUp()" class="icon-wrapper down">
-                <ix-icon name="cancel" [matTooltip]="interface().state.link_state"></ix-icon>
+                <ix-icon name="cancel" [matTooltip]="linkStateLabel()"></ix-icon>
               </span>
-              <span>{{ interface().state.link_state }}</span>
+              <span>{{ linkStateLabel() }}</span>
             </div>
             <div *ngIf="!isLoading(); else skeleton" class="info-list-item traffic">
               <span class="icon-wrapper">
                 <ix-interface-status-icon [update]="interfaceUsage()"></ix-interface-status-icon>
               </span>
               <div class="in-out">
-                <div class="info-list-item">
+                <div class="info-list-item in">
                   <span>{{ 'In' | translate }}:</span>
                   <span>{{ bitsIn() | ixFileSize: { baseUnit: 'b', base: 10 } }}/s</span>
                 </div>
-                <div class="info-list-item">
+                <div class="info-list-item out">
                   <span>{{ 'Out' | translate }}:</span>
                   <span>{{ bitsOut() | ixFileSize: { baseUnit: 'b', base: 10 } }}/s</span>
                 </div>

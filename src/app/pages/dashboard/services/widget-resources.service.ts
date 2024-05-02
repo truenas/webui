@@ -44,7 +44,11 @@ export class WidgetResourcesService {
 
   readonly serverDateTime$ = timer(0, 10000).pipe(
     combineLatestWith(this.serverTime$),
-    map(([, serverTime]) => {
+    map(([tick, serverTime]) => {
+      if (tick === 0) {
+        // Skip first iteration
+        return serverTime;
+      }
       serverTime.setSeconds(serverTime.getSeconds() + 10000 / 1000);
       return serverTime;
     }),
