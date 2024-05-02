@@ -176,7 +176,7 @@
     "@types/glob": "~8.1.0",
     "@types/inquirer": "^8.0.0",
     "@types/js-yaml": "~4.0.8",
-    "@types/lodash": "4.14.195",
+    "@types/lodash": "4.17.0",
     "@types/node": "~10.12.7",
     "@types/pixi.js": "~4.7.1",
     "@typescript-eslint/eslint-plugin": "~6.18.1",

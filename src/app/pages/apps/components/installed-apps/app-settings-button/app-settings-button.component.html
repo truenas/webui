@@ -1,4 +1,9 @@
-<button mat-button ixTest="apps-settings" [matMenuTriggerFor]="menu">
+<button
+  mat-button
+  ixTest="apps-settings"
+  [matMenuTriggerFor]="menu"
+  [ixUiSearch]="searchableElements.elements.settings"
+>
   {{ 'Settings' | translate }}
   <ix-icon name="mdi-menu-down" class="menu-caret"></ix-icon>
 </button>
@@ -12,7 +17,13 @@
   >
     {{ 'Choose Pool' | translate }}
   </button>
-  <button *ixRequiresRoles="requiredRoles" mat-menu-item ixTest="advanced-settings" (click)="onAdvancedSettings()">
+  <button
+    *ixRequiresRoles="requiredRoles"
+    mat-menu-item
+    ixTest="advanced-settings"
+    [ixUiSearch]="searchableElements.elements.advancedSettings"
+    (click)="onAdvancedSettings()"
+  >
     {{ 'Advanced Settings' | translate }}
   </button>
   <ng-container *ngIf="!!(kubernetesStore.selectedPool$ | async)">
