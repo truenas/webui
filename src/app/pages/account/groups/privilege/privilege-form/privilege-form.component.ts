@@ -51,7 +51,7 @@ export class PrivilegeFormComponent implements OnInit {
 
   readonly rolesOptions$ = this.ws.call('privilege.roles').pipe(
     map((roles) => {
-      const sortedRoles = roles.sort((a, b) => {
+      const sortedRoles = roles.toSorted((a, b) => {
         // Show compound roles first, then sort by name.
         if (a.builtin === b.builtin) {
           return a.name.localeCompare(b.name);
