@@ -2534,6 +2534,7 @@
   "Who this ACL entry applies to, shown as a user name. Requires adding the user <i>Domain</i>.": "",
   "Widget Category": "",
   "Widget Editor": "",
+  "Widget Type": "",
   "Widget data is not available": "",
   "Widget {slot} Settings": "",
   "Widgets": "",
