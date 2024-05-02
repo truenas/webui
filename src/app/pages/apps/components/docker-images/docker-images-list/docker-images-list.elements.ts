@@ -6,5 +6,9 @@ export const dockerImagesListElements = {
   anchorRouterLink: ['/apps', 'installed', 'manage-container-images'],
   elements: {
     dockerImagesList: {},
+    pullImage: {
+      hierarchy: [T('Pull Image')],
+      synonyms: [T('Add Image')],
+    },
   },
 } satisfies UiSearchableElement;
