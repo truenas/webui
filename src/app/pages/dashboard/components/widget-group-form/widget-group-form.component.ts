@@ -34,7 +34,7 @@ export class WidgetGroupFormComponent {
     this.form.controls.layout.valueChanges
       .pipe(untilDestroyed(this))
       .subscribe((layout) => {
-        this.group.layout = layout;
+        this.group = { ...this.group, layout };
         this.cdr.markForCheck();
       });
   }
