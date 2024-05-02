@@ -2,13 +2,14 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatDialog } from '@angular/material/dialog';
+import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { of } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockEntityJobComponentRef } from 'app/core/testing/utils/mock-entity-job-component-ref.utils';
-import { mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { PoolStatus } from 'app/enums/pool-status.enum';
+import { Dataset } from 'app/interfaces/dataset.interface';
 import { PoolFindResult } from 'app/interfaces/pool-import.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxSelectHarness } from 'app/modules/ix-forms/components/ix-select/ix-select.harness';
@@ -51,13 +52,21 @@ describe('ImportPoolComponent', () => {
             status: PoolStatus.Online,
           }] as PoolFindResult[]),
         ),
+        mockCall('pool.dataset.query', [{
+          id: '/mnt/pewl',
+          locked: true,
+          encryption_root: '/mnt/pewl',
+        } as Dataset]),
       ]),
       mockProvider(IxSlideInRef),
-      mockProvider(DialogService),
-      mockProvider(MatDialog, {
-        open: () => mockEntityJobComponentRef,
+      mockProvider(DialogService, {
+        confirm: jest.fn(() => of(true)),
+        jobDialog: jest.fn(() => ({
+          afterClosed: () => of(undefined),
+        })),
       }),
       mockAuth(),
+      mockProvider(Router),
     ],
   });
 
@@ -89,6 +98,24 @@ describe('ImportPoolComponent', () => {
     const importButton = await loader.getHarness(MatButtonHarness.with({ text: 'Import' }));
     await importButton.click();
 
-    expect(mockEntityJobComponentRef.componentInstance.setCall).toHaveBeenCalledWith('pool.import_pool', [{ guid: 'pool_guid_1' }]);
+    expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
+    expect(ws.job).toHaveBeenCalledWith('pool.import_pool', [{ guid: 'pool_guid_1' }]);
+  });
+
+  it('checks if pool needs to be unlocked and prompts user to unlock it', async () => {
+    const form = await loader.getHarness(IxFormHarness);
+    await form.fillForm({
+      Pool: 'pool_name_1 | pool_guid_1',
+    });
+
+    const importButton = await loader.getHarness(MatButtonHarness.with({ text: 'Import' }));
+    await importButton.click();
+
+    expect(ws.call).toHaveBeenCalledWith('pool.dataset.query', [[['name', '=', 'pool_name_1']]]);
+    expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith(expect.objectContaining({
+      title: 'Unlock Pool',
+    }));
+
+    expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/datasets', '/mnt/pewl', 'unlock']);
   });
 });

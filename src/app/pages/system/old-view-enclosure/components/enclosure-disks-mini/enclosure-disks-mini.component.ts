@@ -5,7 +5,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { Point } from 'pixi.js';
-import { EnclosureUi, EnclosureUiSlot } from 'app/interfaces/enclosure.interface';
+import { EnclosureOld, EnclosureOldSlot } from 'app/interfaces/enclosure-old.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { Mini } from 'app/pages/system/old-view-enclosure/classes/hardware/mini';
 import { MiniX } from 'app/pages/system/old-view-enclosure/classes/hardware/mini-x';
@@ -37,12 +37,12 @@ export class EnclosureDisksMiniComponent extends EnclosureDisksComponent {
   }
 
   get totalDisks(): number {
-    const allSlots: [string, EnclosureUiSlot][] = this.asArray(
+    const allSlots: [string, EnclosureOldSlot][] = this.asArray(
       this.selectedEnclosure.elements['Array Device Slot'],
-    ) as [string, EnclosureUiSlot][];
+    ) as [string, EnclosureOldSlot][];
 
-    return allSlots.map((keyValue: [string, EnclosureUiSlot]) => keyValue[1])
-      .filter((slot: EnclosureUiSlot) => {
+    return allSlots.map((keyValue: [string, EnclosureOldSlot]) => keyValue[1])
+      .filter((slot: EnclosureOldSlot) => {
         return slot.dev !== null;
       }).length;
   }
@@ -89,7 +89,7 @@ export class EnclosureDisksMiniComponent extends EnclosureDisksComponent {
     console.error('Cannot create extracted enclosure for selector UI. MINI products do not support expansion shelves');
   }
 
-  override createEnclosure(enclosure: EnclosureUi = this.selectedEnclosure): void {
+  override createEnclosure(enclosure: EnclosureOld = this.selectedEnclosure): void {
     if (!this.enclosureViews || !this.selectedEnclosure) {
       console.warn('CANNOT CREATE MINI ENCLOSURE');
       return;

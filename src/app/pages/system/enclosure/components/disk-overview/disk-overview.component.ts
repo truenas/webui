@@ -1,5 +1,7 @@
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
-import { Disk } from 'app/interfaces/storage.interface';
+import {
+  ChangeDetectionStrategy, Component, input,
+} from '@angular/core';
+import { DashboardEnclosureSlot } from 'app/interfaces/enclosure.interface';
 
 @Component({
   selector: 'ix-disk-overview',
@@ -8,5 +10,5 @@ import { Disk } from 'app/interfaces/storage.interface';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DiskOverviewComponent {
-  @Input() disk: Disk;
+  slot = input.required<DashboardEnclosureSlot | null>();
 }

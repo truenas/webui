@@ -13,6 +13,7 @@ import { actionsColumn } from 'app/modules/ix-table/components/ix-table-body/cel
 import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { createTable } from 'app/modules/ix-table/utils';
+import { cloudCredentialsCardElements } from 'app/pages/credentials/backup-credentials/cloud-credentials-card/cloud-credentials-card.elements';
 import { CloudCredentialsFormComponent } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/cloud-credentials-form.component';
 import { CloudCredentialService } from 'app/services/cloud-credential.service';
 import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
@@ -28,6 +29,7 @@ import { WebSocketService } from 'app/services/ws.service';
 })
 export class CloudCredentialsCardComponent implements OnInit {
   protected readonly requiredRoles = [Role.CloudSyncWrite];
+  protected readonly searchableElements = cloudCredentialsCardElements;
 
   dataProvider: AsyncDataProvider<CloudSyncCredential>;
   providers = new Map<string, string>();

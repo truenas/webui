@@ -1,6 +1,5 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { EnclosureUi } from 'app/interfaces/enclosure.interface';
-import { Disk } from 'app/interfaces/storage.interface';
+import { EnclosureStore } from 'app/pages/system/enclosure/services/enclosure.store';
 
 @Component({
   selector: 'ix-enclosure-dashboard',
@@ -9,8 +8,12 @@ import { Disk } from 'app/interfaces/storage.interface';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class EnclosureDashboardComponent {
-  /** Get the enclosure data in this component using the `webui.enclosure.dashboard` endpoint
-   * (getEnclosure method from EnclosureService) */
-  enclosure: EnclosureUi;
-  selectedDisk: Disk;
+  readonly selectedEnclosure$ = this.enclosureStore.selectedEnclosure$;
+  readonly selectedSlot$ = this.enclosureStore.selectedSlot$;
+
+  constructor(
+    private enclosureStore: EnclosureStore,
+  ) {
+    this.enclosureStore.initiate();
+  }
 }

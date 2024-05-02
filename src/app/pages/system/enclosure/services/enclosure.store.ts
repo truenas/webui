@@ -1,28 +1,36 @@
 import { Injectable } from '@angular/core';
 import { ComponentStore } from '@ngrx/component-store';
 import { Observable, switchMap, tap } from 'rxjs';
-import { EnclosureUi, EnclosureUiSlot } from 'app/interfaces/enclosure.interface';
+import { map } from 'rxjs/operators';
+import { DashboardEnclosure, DashboardEnclosureSlot } from 'app/interfaces/enclosure.interface';
 import { WebSocketService } from 'app/services/ws.service';
 
 export interface EnclosureState {
-  enclosure: EnclosureUi[];
-  selectedDisk: EnclosureUiSlot;
+  enclosures: DashboardEnclosure[];
+  selectedEnclosureIndex: number;
+  selectedSlot: DashboardEnclosureSlot;
 }
 
 const initialState: EnclosureState = {
-  enclosure: undefined,
-  selectedDisk: undefined,
+  enclosures: [],
+  selectedEnclosureIndex: 0,
+  selectedSlot: undefined,
 };
 
 @Injectable()
 export class EnclosureStore extends ComponentStore<EnclosureState> {
+  readonly selectedSlot$ = this.state$.pipe(map((state) => state.selectedSlot));
+  readonly selectedEnclosure$ = this.state$.pipe(map((state) => {
+    return state.enclosures[state.selectedEnclosureIndex];
+  }));
+
   constructor(
     private ws: WebSocketService,
   ) {
-    super();
+    super(initialState);
   }
 
-  getEnclosure(): Observable<EnclosureUi[]> {
+  getEnclosure(): Observable<DashboardEnclosure[]> {
     return this.ws.call('webui.enclosure.dashboard');
   }
 
@@ -30,23 +38,26 @@ export class EnclosureStore extends ComponentStore<EnclosureState> {
     return origin$.pipe(
       tap(() => this.setState(initialState)),
       switchMap(() => this.getEnclosure()),
-      tap((enclosures: EnclosureUi[]) => {
-        this.setState((state) => {
-          return {
-            ...state,
-            enclosure: enclosures,
-          };
-        });
+      tap((enclosures: DashboardEnclosure[]) => {
+        this.patchState({ enclosures });
       }),
+      // TODO: Error handling
+      // TODO: Loading indication
     );
   });
 
-  selectDisk = this.updater((state, diskName: string) => {
-    const slots = Object.values(state.enclosure[0]?.elements['Array Device Slot']);
-
+  selectEnclosure = this.updater((state, index: number) => {
     return {
       ...state,
-      selectedDisk: slots.find((slot) => slot.name === diskName),
+      selectedEnclosureIndex: index,
+      selectedSlot: undefined,
+    };
+  });
+
+  selectSlot = this.updater((state, slot: DashboardEnclosureSlot) => {
+    return {
+      ...state,
+      selectedSlot: slot,
     };
   });
 }

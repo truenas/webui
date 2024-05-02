@@ -6,5 +6,9 @@ export const idMapElements = {
   anchorRouterLink: ['/directoryservice', 'idmap'],
   elements: {
     idMap: {},
+    add: {
+      hierarchy: [T('Add')],
+      anchor: 'add-idmap',
+    },
   },
 } satisfies UiSearchableElement;

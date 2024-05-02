@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
+import { TranslateModule } from '@ngx-translate/core';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
 import { DiskOverviewComponent } from 'app/pages/system/enclosure/components/disk-overview/disk-overview.component';
 import { EnclosureDashboardComponent } from 'app/pages/system/enclosure/components/enclosure-dashboard/enclosure-dashboard.component';
@@ -18,6 +19,7 @@ import { routing } from 'app/pages/system/system.routing';
     CommonModule,
     MatCardModule,
     MatButtonModule,
+    TranslateModule,
   ],
   declarations: [
     EnclosureDashboardComponent,

@@ -1,6 +1,13 @@
 <ix-page-header *ngIf="!inCard">
   <ix-search-input1 [value]="filterString" (search)="onListFiltered($event)"></ix-search-input1>
-  <button *ixRequiresRoles="requiredRoles" mat-button color="primary" ixTest="add-kerberos-realms" (click)="doAdd()">
+  <button
+    *ixRequiresRoles="requiredRoles"
+    mat-button
+    color="primary"
+    ixTest="add-kerberos-realms"
+    [ixUiSearch]="searchableElements.elements.add"
+    (click)="doAdd()"
+  >
     {{ 'Add' | translate }}
   </button>
 </ix-page-header>
@@ -12,7 +19,12 @@
       <ix-icon name="open_in_new"></ix-icon>
     </div>
     <div class="action">
-      <button *ixRequiresRoles="requiredRoles" mat-button ixTest="add-idmap" (click)="doAdd()">
+      <button
+        *ixRequiresRoles="requiredRoles"
+        mat-button
+        ixTest="add-idmap"
+        (click)="doAdd()"
+      >
         {{ 'Add' | translate }}
       </button>
     </div>
