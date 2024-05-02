@@ -1,5 +1,8 @@
-<mat-card class="card">
-  <ng-container *ixWithLoadingState="ips() as ips">
-    {{ ips }}
-  </ng-container>
-</mat-card>
+<div class="wrapper">
+  <ix-widget-datapoint
+    *ixWithLoadingState="ips() as ips"
+    [size]="size()"
+    [label]="name | translate"
+    [text]="ips"
+  ></ix-widget-datapoint>
+</div>

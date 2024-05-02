@@ -10,6 +10,7 @@ import {
   Output,
   ChangeDetectionStrategy,
 } from '@angular/core';
+import { TinyColor } from '@ctrl/tinycolor';
 import { UUID } from 'angular2-uuid';
 import { utcToZonedTime } from 'date-fns-tz';
 import Dygraph, { dygraphs } from 'dygraphs';
@@ -17,7 +18,6 @@ import { kb, Mb } from 'app/constants/bits.constant';
 import {
   GiB, KiB, MiB, TiB,
 } from 'app/constants/bytes.constant';
-import { ThemeUtils } from 'app/core/classes/theme-utils/theme-utils';
 import { ReportingGraphName } from 'app/enums/reporting.enum';
 import { buildNormalizedFileSize, normalizeFileSize } from 'app/helpers/file-size.utils';
 import { ReportingData } from 'app/interfaces/reporting.interface';
@@ -71,8 +71,6 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
 
   @Output() zoomChange = new EventEmitter<number[]>();
 
-  private utils: ThemeUtils = new ThemeUtils();
-
   constructor(
     public themeService: ThemeService,
     private reportsService: ReportsService,
@@ -91,14 +89,7 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
     const data = this.makeTimeAxis(this.data);
     const labels = data.shift();
     const fg2 = this.themeService.currentTheme().fg2;
-    const fg2Type = this.utils.getValueType(fg2);
-    let fg2Rgb;
-    if (fg2Type === 'hex') {
-      fg2Rgb = this.utils.hexToRgb(this.themeService.currentTheme().fg2).rgb;
-    } else {
-      fg2Rgb = this.utils.rgbToArray(fg2);
-    }
-    const gridLineColor = `rgba(${fg2Rgb[0]}, ${fg2Rgb[1]}, ${fg2Rgb[2]}, 0.25)`;
+    const gridLineColor = new TinyColor(fg2).setAlpha(0.25).toRgbString();
 
     const options: dygraphs.Options = {
       animatedZooms: true,

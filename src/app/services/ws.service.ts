@@ -4,17 +4,17 @@ import { TranslateService } from '@ngx-translate/core';
 import { UUID } from 'angular2-uuid';
 import { environment } from 'environments/environment';
 import {
-  merge, Observable, of, Subject, throwError,
+  merge, Observable, of, Subject, Subscriber, throwError,
 } from 'rxjs';
 import {
-  filter, map, share, startWith, switchMap, take, takeUntil, takeWhile, tap,
+  filter, map, share, startWith, switchMap, take, takeUntil, tap,
 } from 'rxjs/operators';
 import { MockEnclosureUtils } from 'app/core/testing/utils/mock-enclosure.utils';
 import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
-import { JobState } from 'app/enums/job-state.enum';
 import { ResponseErrorType } from 'app/enums/response-error-type.enum';
 import { WebSocketErrorName } from 'app/enums/websocket-error-name.enum';
 import { applyApiEvent } from 'app/helpers/operators/apply-api-event.operator';
+import { observeJob } from 'app/helpers/operators/observe-job.operator';
 import { ApiCallAndSubscribeMethod, ApiCallAndSubscribeResponse } from 'app/interfaces/api/api-call-and-subscribe-directory.interface';
 import {
   ApiCallMethod,
@@ -37,7 +37,7 @@ import { WebSocketConnectionService } from 'app/services/websocket-connection.se
   providedIn: 'root',
 })
 export class WebSocketService {
-  private readonly subscriptions = new Map<ApiEventMethod, Observable<ApiEventTyped>>();
+  private readonly eventSubscribers = new Map<ApiEventMethod, Observable<ApiEventTyped>>();
   clearSubscriptions$ = new Subject<void>();
   mockUtils: MockEnclosureUtils;
 
@@ -101,26 +101,23 @@ export class WebSocketService {
           // Get job status here for jobs that complete too fast.
           this.call('core.get_jobs', [[['id', '=', jobId]]]).pipe(map((jobs) => jobs[0])),
         )
-          .pipe(
-            takeWhile((job) => !job.time_finished, true),
-            switchMap((job) => {
-              if (job.state === JobState.Failed) {
-                return throwError(() => job);
-              }
-              return of(job);
-            }),
-          );
+          .pipe(observeJob());
       }),
       takeUntil(this.clearSubscriptions$),
     ) as Observable<Job<ApiJobResponse<M>>>;
   }
 
   subscribe<K extends ApiEventMethod = ApiEventMethod>(method: K): Observable<ApiEventTyped<K>> {
-    if (this.subscriptions.has(method)) {
-      return this.subscriptions.get(method);
+    if (this.eventSubscribers.has(method)) {
+      return this.eventSubscribers.get(method);
     }
-
-    const subscription$ = this.wsManager.buildSubscriber<K, ApiEventTyped<K>>(method).pipe(
+    const observable$ = new Observable((trigger: Subscriber<ApiEventTyped<K>>) => {
+      const subscription = this.wsManager.buildSubscriber<K, ApiEventTyped<K>>(method).subscribe(trigger);
+      return () => {
+        subscription.unsubscribe();
+        this.eventSubscribers.delete(method);
+      };
+    }).pipe(
       switchMap((apiEvent) => {
         const erroredEvent = apiEvent as unknown as ResultMessage;
         if (erroredEvent?.error) {
@@ -132,8 +129,9 @@ export class WebSocketService {
       share(),
       takeUntil(this.clearSubscriptions$),
     );
-    this.subscriptions.set(method, subscription$);
-    return subscription$;
+
+    this.eventSubscribers.set(method, observable$);
+    return observable$;
   }
 
   subscribeToLogs(name: string): Observable<ApiEvent<{ data: string }>> {
@@ -142,7 +140,7 @@ export class WebSocketService {
 
   clearSubscriptions(): void {
     this.clearSubscriptions$.next();
-    this.subscriptions.clear();
+    this.eventSubscribers.clear();
   }
 
   private callMethod<M extends ApiCallMethod>(method: M, params?: ApiCallParams<M>): Observable<ApiCallResponse<M>>;

@@ -3,7 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialog } from '@angular/material/dialog';
 import { Spectator, createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
-import { of, pipe } from 'rxjs';
+import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { IscsiAuthAccess } from 'app/interfaces/iscsi.interface';
@@ -13,11 +13,9 @@ import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-sli
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
-import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SearchInput1Component } from 'app/modules/search-input1/search-input1.component';
 import { AuthorizedAccessFormComponent } from 'app/pages/sharing/iscsi/authorized-access/authorized-access-form/authorized-access-form.component';
 import { AuthorizedAccessListComponent } from 'app/pages/sharing/iscsi/authorized-access/authorized-access-list/authorized-access-list.component';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -43,12 +41,7 @@ describe('AuthorizedAccessListComponent', () => {
     ],
     providers: [
       mockAuth(),
-      mockProvider(AppLoaderService),
-      mockProvider(ErrorHandlerService),
       mockProvider(EmptyService),
-      mockProvider(AppLoaderService, {
-        withLoader: jest.fn(() => pipe()),
-      }),
       mockWebSocket([
         mockCall('iscsi.auth.query', authAccess),
         mockCall('iscsi.auth.delete'),

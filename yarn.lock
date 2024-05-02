@@ -1701,6 +1701,11 @@
   resolved "https://registry.yarnpkg.com/@csstools/selector-specificity/-/selector-specificity-2.2.0.tgz#2cbcf822bf3764c9658c4d2e568bd0c0cb748016"
   integrity sha512-+OJ9konv95ClSTOJCmMZqpd5+YGsB2S+x6w3E1oaM8UuR5j8nTNHYSz8c9BEPGDOCMQYIEEGlVPj/VY64iTbGw==
 
+"@ctrl/tinycolor@~4.1.0":
+  version "4.1.0"
+  resolved "https://registry.yarnpkg.com/@ctrl/tinycolor/-/tinycolor-4.1.0.tgz#91a8f8120ffc9da2feb2a38f7862b300d5e9691a"
+  integrity sha512-WyOx8cJQ+FQus4Mm4uPIZA64gbk3Wxh0so5Lcii0aJifqwoVOlfFtorjLE0Hen4OYyHZMXDWqMmaQemBhgxFRQ==
+
 "@discoveryjs/json-ext@0.5.7":
   version "0.5.7"
   resolved "https://registry.yarnpkg.com/@discoveryjs/json-ext/-/json-ext-0.5.7.tgz#1d572bfbbe14b7704e0ba0f39b74815b84870d70"
@@ -11538,6 +11543,13 @@ ng2-charts@~6.0.0:
   integrity sha512-Hg45RDOoFoXSDya4U8t2IW2teKnXjy10zJVij65G/62Si+A5+uu8hKQKkBahxg67iTdpOwtyPGnQJ/chHVfFVA==
   dependencies:
     lodash-es "^4.17.15"
+    tslib "^2.3.0"
+
+ng2-fittext@~1.4.3:
+  version "1.4.3"
+  resolved "https://registry.yarnpkg.com/ng2-fittext/-/ng2-fittext-1.4.3.tgz#246c11a725b6bbc9c4531a4edad2e07185e73ec5"
+  integrity sha512-rz9feGpsoZed9M7vBqcMjYsIW5cwGrBpD6p5ppoaaQTEdFcMGTVLMiVxuZx5CSPdoW0zwcpgy9/ksfHcjkdfjw==
+  dependencies:
     tslib "^2.3.0"
 
 ngx-drag-drop@~16.0.0:

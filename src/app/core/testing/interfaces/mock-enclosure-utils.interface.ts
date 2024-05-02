@@ -1,11 +1,11 @@
-import { EnclosureUi } from 'app/interfaces/enclosure.interface';
+import { EnclosureOld } from 'app/interfaces/enclosure-old.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { Disk } from 'app/interfaces/storage.interface';
 import { AddEnclosureOptions, AddTopologyOptions, AddUnAssignedOptions } from './mock-storage-generator.interface';
 
 export interface MockEnclosureConfigItem {
   enabled: boolean;
-  query?: EnclosureUi[] | Disk[] | Pool; // A snapshot of the query data from real machine
+  query?: EnclosureOld[] | Disk[] | Pool; // A snapshot of the query data from real machine
 }
 
 /*

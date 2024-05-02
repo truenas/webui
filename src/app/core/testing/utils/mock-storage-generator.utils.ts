@@ -15,7 +15,7 @@ import { DiskType } from 'app/enums/disk-type.enum';
 import { PoolStatus } from 'app/enums/pool-status.enum';
 import { TopologyItemType, VdevType } from 'app/enums/v-dev-type.enum';
 import { TopologyItemStatus } from 'app/enums/vdev-status.enum';
-import { EnclosureUi, EnclosureUiPool, EnclosureUiSlot } from 'app/interfaces/enclosure.interface';
+import { EnclosureOld, EnclosureOldPool, EnclosureOldSlot } from 'app/interfaces/enclosure-old.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import {
   Disk,
@@ -55,7 +55,7 @@ import { MockR50 } from './enclosure-templates/mock-r50'; */
 export class MockStorageGenerator {
   poolState: Pool;
   disks: Disk[];
-  enclosures: EnclosureUi[] | null = null;
+  enclosures: EnclosureOld[] | null = null;
   private mockEnclosures: MockEnclosure[] = [];
 
   constructor(mockPool = true) {
@@ -774,11 +774,11 @@ export class MockStorageGenerator {
     return populated;
   }
 
-  private syncEnclosurePoolInfo(enclosures: EnclosureUi[]): EnclosureUi[] {
+  private syncEnclosurePoolInfo(enclosures: EnclosureOld[]): EnclosureOld[] {
     this.poolState?.topology.data.forEach((item: TopologyItem) => {
       if (item.type === TopologyItemType.Disk) {
         const stripeDisk: Disk = this.disks.find((dev: Disk) => dev.name === item.disk);
-        const enclosure: EnclosureUi = enclosures.find((enclosureUi: EnclosureUi) => {
+        const enclosure: EnclosureOld = enclosures.find((enclosureUi: EnclosureOld) => {
           return enclosureUi.id === stripeDisk.enclosure.id;
         });
         enclosure.elements['Array Device Slot'][stripeDisk.enclosure?.slot].pool_info = null;
@@ -786,10 +786,10 @@ export class MockStorageGenerator {
         item.children.forEach((child) => {
           const disk: Disk = this.disks.find((dev: Disk) => dev.name === child.disk);
           if (disk) {
-            const enclosure: EnclosureUi = enclosures.find((enclosureUi: EnclosureUi) => {
+            const enclosure: EnclosureOld = enclosures.find((enclosureUi: EnclosureOld) => {
               return enclosureUi.id === disk.enclosure.id;
             });
-            const poolInfo: EnclosureUiPool = {
+            const poolInfo: EnclosureOldPool = {
               pool_name: this.poolState.name,
               disk_status: child.status,
               vdev_name: item.name,
@@ -929,24 +929,24 @@ export class MockStorageGenerator {
     return disks;
   }
 
-  getEnclosureSlots(enclosureId: string): [string, EnclosureUiSlot][] {
-    const selectedEnclosure = this.enclosures.find((enclosure: EnclosureUi) => {
+  getEnclosureSlots(enclosureId: string): [string, EnclosureOldSlot][] {
+    const selectedEnclosure = this.enclosures.find((enclosure: EnclosureOld) => {
       return enclosure.id === enclosureId;
     });
 
     return Object.entries(selectedEnclosure.elements['Array Device Slot']);
   }
 
-  getEmptySlots(enclosureId: string): [string, EnclosureUiSlot][] {
+  getEmptySlots(enclosureId: string): [string, EnclosureOldSlot][] {
     return this.getEnclosureSlots(enclosureId)
-      .filter((keyValue: [string, EnclosureUiSlot]) => keyValue[1].status !== 'OK');
+      .filter((keyValue: [string, EnclosureOldSlot]) => keyValue[1].status !== 'OK');
   }
 
   getAllEmptySlots(): EnclosureIdAndSlot[] {
     let allEmptySlots: EnclosureIdAndSlot[] = [];
     this.mockEnclosures.forEach((mockEnclosure: MockEnclosure) => {
       const emptySlots: EnclosureIdAndSlot[] = mockEnclosure.getEmptySlots()
-        .map((keyValue: [string, EnclosureUiSlot]) => {
+        .map((keyValue: [string, EnclosureOldSlot]) => {
           return {
             number: 0, // TODO: Remove when Disk interface is updated
             id: mockEnclosure.data.id,

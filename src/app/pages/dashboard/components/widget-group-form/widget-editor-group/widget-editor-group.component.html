@@ -1,0 +1,23 @@
+<button
+  *ngFor="let slotIndex of slotRange()"
+  tabindex="0"
+  [attr.aria-label]="'Slot {n}' | translate: { n: slotIndex + 1 }"
+  [ixTest]="['slot', slotIndex]"
+  [class]="['slot', 'slot' + slotIndex]"
+  [class.selected]="slotIndex === selectedSlot() && slotRange().length > 1"
+  [class.empty]="!slots()[slotIndex]"
+  (click)="onSlotSelected($event, slotIndex)"
+  (keydown.enter)="onSlotSelected($event, slotIndex)"
+>
+  <div
+    *ngIf="slots()[slotIndex] as slot; else emptySlot"
+    class="inert-container"
+    inert
+  >
+    <ng-container *ngComponentOutlet="slot.component; inputs: slot.inputs;" />
+  </div>
+
+  <ng-template #emptySlot>
+    {{ 'Empty' | translate }}
+  </ng-template>
+</button>

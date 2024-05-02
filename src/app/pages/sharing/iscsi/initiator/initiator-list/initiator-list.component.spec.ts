@@ -5,7 +5,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { SpectatorRouting } from '@ngneat/spectator';
 import { mockProvider, createRoutingFactory } from '@ngneat/spectator/jest';
-import { of, pipe } from 'rxjs';
+import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { IscsiExtent, IscsiInitiatorGroup } from 'app/interfaces/iscsi.interface';
@@ -16,10 +16,8 @@ import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
-import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SearchInput1Component } from 'app/modules/search-input1/search-input1.component';
 import { InitiatorListComponent } from 'app/pages/sharing/iscsi/initiator/initiator-list/initiator-list.component';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -44,12 +42,7 @@ describe('InitiatorListComponent', () => {
     ],
     providers: [
       mockAuth(),
-      mockProvider(AppLoaderService),
-      mockProvider(ErrorHandlerService),
       mockProvider(EmptyService),
-      mockProvider(AppLoaderService, {
-        withLoader: jest.fn(() => pipe()),
-      }),
       mockWebSocket([
         mockCall('iscsi.initiator.query', initiators),
         mockCall('iscsi.initiator.delete'),

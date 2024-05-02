@@ -1,15 +1,19 @@
 import {
   animate, group as groupAnimations, style, transition, trigger,
 } from '@angular/animations';
-import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
+import { moveItemInArray } from '@angular/cdk/drag-drop';
 import {
   ChangeDetectionStrategy, Component, OnInit, signal,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
+import { EmptyType } from 'app/enums/empty-type.enum';
+import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { WidgetGroupFormComponent } from 'app/pages/dashboard/components/widget-group-form/widget-group-form.component';
 import { DashboardStore } from 'app/pages/dashboard/services/dashboard.store';
 import { WidgetGroup, WidgetGroupLayout } from 'app/pages/dashboard/types/widget-group.interface';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 
 @UntilDestroy()
@@ -40,9 +44,17 @@ export class DashboardComponent implements OnInit {
   // TODO: Prevent user from entering configuration mode while loading.
   readonly isLoading = toSignal(this.dashboardStore.isLoading$);
 
+  emptyDashboardConf: EmptyConfig = {
+    type: EmptyType.NoPageData,
+    large: true,
+    title: this.translate.instant('Dashboard is Empty!'),
+  };
+
   constructor(
     private dashboardStore: DashboardStore,
     private slideIn: IxChainedSlideInService,
+    private errorHandler: ErrorHandlerService,
+    private translate: TranslateService,
   ) {}
 
   ngOnInit(): void {
@@ -82,16 +94,7 @@ export class DashboardComponent implements OnInit {
   protected onMoveGroup(index: number, direction: 1 | -1): void {
     this.renderedGroups.update((groups) => {
       const updatedGroups = [...groups];
-      moveItemInArray(updatedGroups, index, index - direction);
-      return updatedGroups;
-    });
-  }
-
-  // TODO:
-  protected onDrop(event: CdkDragDrop<WidgetGroup[]>): void {
-    this.renderedGroups.update((groups) => {
-      const updatedGroups = [...groups];
-      moveItemInArray(updatedGroups, event.previousIndex, event.currentIndex);
+      moveItemInArray(updatedGroups, index, index + direction);
       return updatedGroups;
     });
   }
@@ -106,28 +109,15 @@ export class DashboardComponent implements OnInit {
     });
   }
 
-  protected canMoveUp(index: number): boolean {
-    return index > 0;
-  }
-
-  protected canMoveDown(index: number): boolean {
-    return index < this.renderedGroups().length - 1;
-  }
-
   // TODO: Filter out fully empty groups somewhere.
   protected onSave(): void {
-    this.dashboardStore
-      .save(this.renderedGroups())
-      .pipe(untilDestroyed(this))
-      .subscribe(() => {
-        this.isEditing.set(false);
-        // TODO: Handle errors.
-      });
+    this.dashboardStore.save(this.renderedGroups())
+      .pipe(this.errorHandler.catchError(), untilDestroyed(this))
+      .subscribe(() => this.isEditing.set(false));
   }
 
   private loadGroups(): void {
-    this.dashboardStore
-      .groups$
+    this.dashboardStore.groups$
       .pipe(untilDestroyed(this))
       .subscribe((groups) => {
         if (this.isEditing()) {

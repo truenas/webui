@@ -1,7 +1,7 @@
 import {
-  ChangeDetectionStrategy, Component, EventEmitter, Input, Output,
+  ChangeDetectionStrategy, Component, input, output,
 } from '@angular/core';
-import { WidgetGroup } from 'app/pages/dashboard/types/widget-group.interface';
+import { WidgetGroupComponent } from 'app/pages/dashboard/components/widget-group/widget-group.component';
 
 /**
  * Similar to WidgetGroupComponent, but with slightly different behaviour:
@@ -11,12 +11,17 @@ import { WidgetGroup } from 'app/pages/dashboard/types/widget-group.interface';
  */
 @Component({
   selector: 'ix-widget-editor-group',
-  templateUrl: './widget-editor-group.component.html',
   styleUrls: ['./widget-editor-group.component.scss'],
+  templateUrl: './widget-editor-group.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class WidgetEditorGroupComponent {
-  @Input() group: WidgetGroup;
-  @Input() selection = 0;
-  @Output() selectionChange = new EventEmitter<number>();
+export class WidgetEditorGroupComponent extends WidgetGroupComponent {
+  readonly selectedSlot = input(0);
+
+  selectedSlotChange = output<number>();
+
+  onSlotSelected(event: Event, slotIndex: number): void {
+    event.preventDefault();
+    this.selectedSlotChange.emit(slotIndex);
+  }
 }

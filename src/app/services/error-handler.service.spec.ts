@@ -3,6 +3,7 @@ import { Injector } from '@angular/core';
 import { createServiceFactory, mockProvider, SpectatorService } from '@ngneat/spectator/jest';
 import { TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
+import { JobState } from 'app/enums/job-state.enum';
 import { ResponseErrorType } from 'app/enums/response-error-type.enum';
 import { WebSocketErrorName } from 'app/enums/websocket-error-name.enum';
 import { Job } from 'app/interfaces/job.interface';
@@ -19,24 +20,28 @@ const wsError = {
   trace: {},
   extra: [],
 } as WebSocketError;
+
 const failedJob = {
   method: 'cloudsync.sync_onetime',
   description: null,
   error: 'DUMMY_ERROR',
   exception: 'EXCEPTION',
-  exc_info: {
-    repr: 'ValidationErrors()',
-    type: 'VALIDATION',
-    extra: [
-      [
-        'cloud_sync_sync_onetime.path',
-        'DUMMY_ERROR',
-        22,
-      ],
-    ],
-  },
-  state: 'FAILED',
+  exc_info: null,
+  logs_excerpt: 'LOGS',
+  state: JobState.Failed,
 } as Job;
+
+const excInfo = {
+  repr: 'ValidationErrors()',
+  type: 'VALIDATION',
+  extra: [
+    [
+      'cloud_sync_sync_onetime.path',
+      'DUMMY_ERROR',
+      22,
+    ],
+  ],
+};
 
 const httpError: HttpErrorResponse = {
   error: { name: 'This error' },
@@ -119,8 +124,21 @@ describe('ErrorHandlerService', () => {
       });
     });
 
-    it('logs job error', () => {
+    it('logs job errors', () => {
       spectator.service.handleError(failedJob);
+
+      expect(spectator.service.logToSentry).toHaveBeenCalledWith({
+        title: 'FAILED',
+        backtrace: 'LOGS',
+        message: 'DUMMY_ERROR',
+      });
+    });
+
+    it('logs job error for jobs with `extra` available', () => {
+      spectator.service.handleError({
+        ...failedJob,
+        exc_info: excInfo,
+      });
 
       expect(spectator.service.logToSentry).toHaveBeenCalledWith([{
         backtrace: 'EXCEPTION',
@@ -210,6 +228,19 @@ describe('ErrorHandlerService', () => {
 
     it('parses a failed job', () => {
       const errorReport = spectator.service.parseError(failedJob);
+
+      expect(errorReport).toEqual({
+        title: 'FAILED',
+        message: 'DUMMY_ERROR',
+        backtrace: 'LOGS',
+      });
+    });
+
+    it('parses a failed job with exc info', () => {
+      const errorReport = spectator.service.parseError({
+        ...failedJob,
+        exc_info: excInfo,
+      });
 
       expect(errorReport).toEqual([{
         title: 'Error: path',

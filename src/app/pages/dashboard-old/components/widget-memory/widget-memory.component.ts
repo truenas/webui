@@ -6,6 +6,7 @@ import {
   DomSanitizer, SafeStyle,
 } from '@angular/platform-browser';
 import { Router } from '@angular/router';
+import { TinyColor } from '@ctrl/tinycolor';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
@@ -15,7 +16,6 @@ import {
 import { ChartConfiguration } from 'chart.js/dist/types';
 import { filter, map, throttleTime } from 'rxjs/operators';
 import { GiB } from 'app/constants/bytes.constant';
-import { ThemeUtils } from 'app/core/classes/theme-utils/theme-utils';
 import { MemoryStatsEventData } from 'app/interfaces/events/memory-stats-event.interface';
 import { WidgetComponent } from 'app/pages/dashboard-old/components/widget/widget.component';
 import { WidgetMemoryData } from 'app/pages/dashboard-old/interfaces/widget-data.interface';
@@ -45,7 +45,6 @@ export class WidgetMemoryComponent extends WidgetComponent implements OnInit {
   colorPattern: string[];
   labels: string[] = [this.translate.instant('Free'), this.translate.instant('ZFS Cache'), this.translate.instant('Services')];
   memData: WidgetMemoryData;
-  private utils: ThemeUtils;
 
   constructor(
     public router: Router,
@@ -59,8 +58,6 @@ export class WidgetMemoryComponent extends WidgetComponent implements OnInit {
     private breakpointObserver: BreakpointObserver,
   ) {
     super();
-
-    this.utils = new ThemeUtils();
   }
 
   ngOnInit(): void {
@@ -180,10 +177,10 @@ export class WidgetMemoryComponent extends WidgetComponent implements OnInit {
 
     // Create the data...
     data.forEach((item, index) => {
-      const bgRgb = this.themeService.getRgbBackgroundColorByIndex(index);
+      const color = this.themeService.getRgbBackgroundColorByIndex(index);
 
-      (ds.backgroundColor as Color[]).push(this.utils.rgbToString(bgRgb, 0.85));
-      (ds.borderColor as Color[]).push(this.utils.rgbToString(bgRgb));
+      (ds.backgroundColor as Color[]).push(new TinyColor(color).setAlpha(0.85).toHex8String());
+      (ds.borderColor as Color[]).push(color);
     });
 
     datasets.push(ds);

@@ -1,9 +1,23 @@
 import { Injectable } from '@angular/core';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { ComponentStore } from '@ngrx/component-store';
-import { Observable, of, tap } from 'rxjs';
-import { demoWidgets } from 'app/pages/dashboard/services/demo-widgets.constant';
-import { WidgetGroup } from 'app/pages/dashboard/types/widget-group.interface';
+import {
+  EMPTY,
+  Observable, catchError, filter, finalize, map, switchMap, tap,
+} from 'rxjs';
+import { WidgetName } from 'app/enums/widget-name.enum';
+import { LoggedInUser } from 'app/interfaces/ds-cache.interface';
+import { WidgetGroup, WidgetGroupLayout } from 'app/pages/dashboard/types/widget-group.interface';
+import { SomeWidgetSettings, WidgetType } from 'app/pages/dashboard/types/widget.interface';
+import { AuthService } from 'app/services/auth/auth.service';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { WebSocketService } from 'app/services/ws.service';
+
+// we have external `DashConfigItem` in old dashboard, but it will be removed once we go ahead with new dashboard
+export interface OldDashboardConfigItem {
+  name: WidgetName;
+  identifier?: string;
+}
 
 export interface DashboardState {
   isLoading: boolean;
@@ -14,6 +28,12 @@ export interface DashboardState {
    */
   groups: WidgetGroup[];
 }
+
+export const initialState: DashboardState = {
+  isLoading: false,
+  globalError: '',
+  groups: [],
+};
 
 /**
  * This store ONLY manages loading and saving of the dashboard to/from user settings.
@@ -26,28 +46,98 @@ export class DashboardStore extends ComponentStore<DashboardState> {
   readonly isLoading$ = this.select((state) => state.isLoading);
   readonly groups$ = this.select((state) => state.groups);
 
+  constructor(
+    private authService: AuthService,
+    private ws: WebSocketService,
+    private errorHandler: ErrorHandlerService,
+  ) {
+    super(initialState);
+  }
+
   readonly entered = this.effect((trigger$) => {
-    // TODO: Load data from user attributes.
-    // TODO: Set isLoading flag, but do not clear previous state.
-    // TODO: If it's in old format, migrate to new format.
-    // TODO: Handle global errors like something network errors or something completely unexpected in user attributes.
     return trigger$.pipe(
-      tap(() => this.setDemoData()),
+      tap(() => this.toggleLoadingState(true)),
+      switchMap(() => this.authService.user$.pipe(
+        filter(Boolean),
+        map((user) => user.attributes.dashState),
+      )),
+      tap((dashState) => {
+        this.setState({
+          isLoading: false,
+          globalError: '',
+          groups: this.getDashboardGroups(dashState || []),
+        });
+      }),
+      catchError((error) => {
+        this.handleError(error);
+        return EMPTY;
+      }),
     );
   });
 
-  // eslint-disable-next-line unused-imports/no-unused-vars
-  save(groups: WidgetGroup[]): Observable<void> {
-    // TODO: Save to user settings.
-    return of(undefined);
+  save(groups: WidgetGroup[]): Observable<LoggedInUser> {
+    this.toggleLoadingState(true);
+
+    return this.ws.call('auth.set_attribute', ['dashState', groups]).pipe(
+      switchMap(() => this.authService.refetchUser()),
+      finalize(() => this.toggleLoadingState(false)),
+    );
   }
 
-  // TODO: Demo code.
-  private setDemoData(): void {
-    this.setState({
-      isLoading: false,
-      globalError: '',
-      groups: demoWidgets,
+  handleError(error: unknown): void {
+    this.errorHandler.showErrorModal(error);
+    this.toggleLoadingState(false);
+  }
+
+  toggleLoadingState(isLoading: boolean): void {
+    this.patchState((state) => ({ ...state, isLoading }));
+  }
+
+  private getDashboardGroups(dashState: WidgetGroup[] | OldDashboardConfigItem[]): WidgetGroup[] {
+    return dashState.map((widget) => {
+      if (!widget.hasOwnProperty('layout')) {
+        const oldDashboardWidget = widget as unknown as OldDashboardConfigItem;
+        return {
+          layout: WidgetGroupLayout.Full,
+          slots: [{
+            type: this.getWidgetTypeFromOldDashboard(oldDashboardWidget.name),
+            settings: this.extractSettings(oldDashboardWidget),
+          }],
+        };
+      }
+
+      return widget as WidgetGroup;
     });
+  }
+
+  private getWidgetTypeFromOldDashboard(name: WidgetName): WidgetType {
+    const unknownWidgetType = name as unknown as WidgetType;
+
+    // TODO: we have some widgets that are not yet implemented for the new dashboard
+    switch (name) {
+      case WidgetName.Help: return WidgetType.Help;
+      case WidgetName.Memory: return WidgetType.Memory;
+      case WidgetName.Interface: return WidgetType.InterfaceIp;
+      case WidgetName.Backup: return unknownWidgetType;
+      case WidgetName.Network: return unknownWidgetType;
+      case WidgetName.SystemInformation: return unknownWidgetType;
+      case WidgetName.Cpu: return unknownWidgetType;
+      case WidgetName.Storage: return unknownWidgetType;
+      case WidgetName.Pool: return unknownWidgetType;
+      default: return unknownWidgetType;
+    }
+  }
+
+  private extractSettings(widget: OldDashboardConfigItem): SomeWidgetSettings {
+    if (widget.identifier) {
+      const [key, value] = widget.identifier.split(',');
+
+      if (widget.name === WidgetName.Interface) {
+        return { interface: value };
+      }
+
+      return { [key]: value };
+    }
+    return {};
   }
 }

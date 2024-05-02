@@ -1,9 +1,31 @@
+@import 'scss-imports/cssvars';
+
 .card {
   height: 100%;
 
+  .header {
+    padding-bottom: 0;
+  }
+
   .container {
+    display: flex;
+    flex-direction: column;
     padding-left: 21px;
-    padding-top: 12px;
+    row-gap: 20px;
+  }
+
+  .card-content {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    justify-content: space-between;
+  }
+
+  .copyright {
+    font-size: 11px;
+    margin-bottom: 18px;
+    padding-top: 0;
+    text-align: center;
   }
 }
 
@@ -13,15 +35,14 @@
   }
 }
 
-.copyright {
-  font-size: 11px;
-  text-align: center;
-}
-
 .line-item {
   display: flex;
   flex-direction: row;
-  margin: 20px;
+  margin: 0 20px;
+
+  @media #{$media-lt-sm} {
+    margin: 0;
+  }
 
   div {
     align-items: center;

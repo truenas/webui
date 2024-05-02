@@ -2,8 +2,33 @@
   [title]="'Widget Editor' | translate"
 ></ix-modal-header2>
 
-<form class="ix-form-container" (submit)="onSubmit()">
-  <ix-widget-editor-group></ix-widget-editor-group>
+<form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
+  <ix-fieldset>
+    <div class="form-row">
+      <ix-select
+        formControlName="template"
+        [options]="templateOptions$"
+        [label]="'Template' | translate"
+        [tooltip]="'Select a template' | translate"
+      ></ix-select>
+
+      <ix-icon-group
+        formControlName="layout"
+        [options]="layoutsMap"
+        [label]="'Layouts' | translate"
+        [tooltip]="'Select a layout' | translate"
+      ></ix-icon-group>
+    </div>
+  </ix-fieldset>
+
+  <div class="editor-container">
+    <ix-widget-editor-group
+      [group]="group"
+      [(selectedSlot)]="selectedSlot"
+    ></ix-widget-editor-group>
+  </div>
+
+  Selected slot: {{ selectedSlot }}
 
   <!-- TODO: Category dropdown, pull widget definitions from widgetRegistry and regroup by category -->
   <!-- TODO: Widget type dropdown -->

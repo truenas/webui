@@ -31,7 +31,7 @@ describe('IxSlideToggleComponent', () => {
       spectator.detectChanges();
       expect(spectator.query('button')).not.toBeDisabled();
     });
-    it('when called with true, buton is disabled', () => {
+    it('when called with true, button is disabled', () => {
       spectator.component.setDisabledState(true);
       spectator.detectChanges();
       expect(spectator.query('button')).toBeDisabled();

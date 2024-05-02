@@ -135,9 +135,11 @@ export class IxDropGridDirective<T = unknown> extends CdkDropListGroup<IxDropGri
     this.source = null;
 
     if (this.sourceIndex !== this.targetIndex) {
-      moveItemInArray(this.ixDropGridModel, this.sourceIndex, this.targetIndex);
+      const newModel = [...this.ixDropGridModel];
 
-      this.ixDropGridModelChange.next(this.ixDropGridModel);
+      moveItemInArray(newModel, this.sourceIndex, this.targetIndex);
+
+      this.ixDropGridModelChange.next(newModel);
     }
   }
 
