@@ -52,5 +52,5 @@ export const helptextDevice = {
   resolution_tooltip: T('Select a screen resolution to use for VNC sessions.'),
   bind_tooltip: T('Select an IP address to use for VNC sessions.'),
   password_tooltip: T('Enter a VNC password to automatically pass to the VNC session.'),
-  web_tooltip: T('Set to enable connecting to the VNC web interface.'),
+  web_tooltip: T('Set to enable connecting to the SPICE web interface.'),
 };
