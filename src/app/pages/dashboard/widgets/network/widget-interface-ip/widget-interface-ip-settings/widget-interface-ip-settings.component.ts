@@ -1,10 +1,14 @@
 import {
-  ChangeDetectionStrategy, Component, OnInit, input,
+  ChangeDetectionStrategy, Component,
 } from '@angular/core';
-import { FormControl, Validators } from '@angular/forms';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { WidgetGroupFormStore } from 'app/pages/dashboard/components/widget-group-form/widget-group-form.store';
-import { WidgetSettingsComponent } from 'app/pages/dashboard/types/widget-component.interface';
+import {
+  FormControl, ValidationErrors, Validators,
+} from '@angular/forms';
+import { UntilDestroy } from '@ngneat/until-destroy';
+import {
+  Observable, distinctUntilChanged, map,
+} from 'rxjs';
+import { WidgetSettingsDirective } from 'app/pages/dashboard/types/widget-settings.directive';
 import {
   WidgetInterfaceIpSettings,
 } from 'app/pages/dashboard/widgets/network/widget-interface-ip/widget-interface-ip.definition';
@@ -15,27 +19,25 @@ import {
   templateUrl: './widget-interface-ip-settings.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class WidgetInterfaceIpSettingsComponent implements WidgetSettingsComponent<WidgetInterfaceIpSettings>, OnInit {
-  something: WidgetInterfaceIpSettings;
-  slotIndex = input.required<number>();
-  readonly interfaceIp = new FormControl(null as string, [Validators.required]);
+export class WidgetInterfaceIpSettingsComponent extends WidgetSettingsDirective<WidgetInterfaceIpSettings> {
+  readonly interfaceIp: FormControl<string> = new FormControl<string>(null as string, [Validators.required]);
 
-  constructor(
-    private widgetGroupFormStore: WidgetGroupFormStore,
-  ) {}
+  override getFormValidationErrors(): ValidationErrors {
+    this.interfaceIp.updateValueAndValidity();
+    return this.interfaceIp.errors;
+  }
 
-  ngOnInit(): void {
-    this.interfaceIp.valueChanges.pipe(
-      untilDestroyed(this),
-    ).subscribe({
-      next: (interfaceIp) => {
-        this.widgetGroupFormStore.setSettings({
-          slotIndex: this.slotIndex(),
-          settings: {
-            interface: interfaceIp,
-          } as WidgetInterfaceIpSettings,
-        });
-      },
+  override getFormUpdater(): Observable<WidgetInterfaceIpSettings> {
+    return this.interfaceIp.valueChanges.pipe(
+      map((interfaceIp) => ({ interface: interfaceIp })),
+      distinctUntilChanged(),
+    );
+  }
+
+  override updateSettingsInStore(): void {
+    this.widgetGroupFormStore.setSettings({
+      slotIndex: this.slotIndex(),
+      settings: { interface: this.interfaceIp.value },
     });
   }
 }

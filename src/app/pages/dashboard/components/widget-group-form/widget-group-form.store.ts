@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { ValidationErrors } from '@angular/forms';
 import { ComponentStore } from '@ngrx/component-store';
 import { cloneDeep } from 'lodash';
 import { Observable, tap } from 'rxjs';
@@ -11,6 +12,7 @@ export interface SlotConfig {
   category: WidgetCategory;
   type: WidgetType;
   settings: unknown;
+  validationErrors: ValidationErrors;
 }
 
 export interface WidgetGroupFormState {
@@ -26,10 +28,19 @@ const initialState: WidgetGroupFormState = {
 @Injectable()
 export class WidgetGroupFormStore extends ComponentStore<WidgetGroupFormState> {
   readonly layout$ = this.select((state) => state.layout);
+  readonly hasValidationErrors$ = this.select((state) => {
+    for (const slot of state.slots) {
+      if (slot.validationErrors) {
+        return true;
+      }
+    }
+    return false;
+  });
 
   constructor() {
     super();
     this.initialize();
+    this.setLayout(WidgetGroupLayout.Full);
   }
 
   readonly initialize = this.effect((trigger$: Observable<void>) => {
@@ -48,28 +59,28 @@ export class WidgetGroupFormStore extends ComponentStore<WidgetGroupFormState> {
     switch (layout) {
       case WidgetGroupLayout.Full:
         slots.push({
-          slotIndex: 0, settings: {}, category: null, type: null,
+          slotIndex: 0, settings: {}, category: null, type: null, validationErrors: null,
         });
         break;
       case WidgetGroupLayout.HalfAndQuarters:
       case WidgetGroupLayout.QuartersAndHalf:
         for (let i = 0; i < 3; i++) {
           slots.push({
-            slotIndex: i, settings: {}, category: null, type: null,
+            slotIndex: i, settings: {}, category: null, type: null, validationErrors: null,
           });
         }
         break;
       case WidgetGroupLayout.Halves:
         for (let i = 0; i < 2; i++) {
           slots.push({
-            slotIndex: i, settings: {}, category: null, type: null,
+            slotIndex: i, settings: {}, category: null, type: null, validationErrors: null,
           });
         }
         break;
       case WidgetGroupLayout.Quarters:
         for (let i = 0; i < 4; i++) {
           slots.push({
-            slotIndex: i, settings: {}, category: null, type: null,
+            slotIndex: i, settings: {}, category: null, type: null, validationErrors: null,
           });
         }
         break;
@@ -138,6 +149,29 @@ export class WidgetGroupFormStore extends ComponentStore<WidgetGroupFormState> {
       const newSlot = cloneDeep(slot);
       if (newSlot.slotIndex === slotIndex) {
         newSlot.settings = cloneDeep(settings);
+      }
+      slots.push(newSlot);
+    }
+
+    return {
+      layout,
+      slots,
+    };
+  });
+
+  readonly setValidationErrors = this.updater((
+    state: WidgetGroupFormState,
+    {
+      slotIndex,
+      errors,
+    }: { slotIndex: number; errors: ValidationErrors },
+  ): WidgetGroupFormState => {
+    const layout = state.layout;
+    const slots: SlotConfig[] = [];
+    for (const slot of state.slots) {
+      const newSlot = cloneDeep(slot);
+      if (newSlot.slotIndex === slotIndex) {
+        newSlot.validationErrors = cloneDeep(errors);
       }
       slots.push(newSlot);
     }

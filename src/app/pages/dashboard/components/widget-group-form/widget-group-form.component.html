@@ -64,6 +64,7 @@
       type="button"
       color="primary"
       [ixTest]="['add-widget-group-btn']"
+      [disabled]="(widgetGroupFormStore.hasValidationErrors$ | async)"
       (click)="onSubmit()"
     >{{ 'Save' | translate }}</button>
   </ix-form-actions>

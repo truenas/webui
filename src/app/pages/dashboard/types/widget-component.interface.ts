@@ -1,5 +1,6 @@
 import { InputSignal, Type } from '@angular/core';
 import { WidgetCategory } from 'app/pages/dashboard/types/widget-category.enum';
+import { WidgetSettingsDirective } from 'app/pages/dashboard/types/widget-settings.directive';
 import {
   SomeWidgetSettings, SlotSize,
 } from 'app/pages/dashboard/types/widget.interface';
@@ -18,13 +19,8 @@ export type WidgetComponent<Settings extends SomeWidgetSettings = null> =
     ? WidgetComponentWithoutSettings
     : WidgetComponentWithSettings<Settings>;
 
-export interface WidgetSettingsComponent<Settings extends SomeWidgetSettings = null> {
-  // TODO: Figure out how to communicate with parent component to read and write settings and get validation state.
-  something: Settings;
-}
-
 type WidgetSettingsComponentType<Settings> = Settings extends SomeWidgetSettings
-  ? WidgetSettingsComponent<Settings>
+  ? WidgetSettingsDirective<Settings>
   : null;
 
 export interface WidgetDefinition<

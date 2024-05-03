@@ -46,7 +46,7 @@ export class WidgetGroupFormComponent {
   constructor(
     protected chainedRef: ChainedRef<WidgetGroup>,
     private cdr: ChangeDetectorRef,
-    private widgetGroupFormStore: WidgetGroupFormStore,
+    protected widgetGroupFormStore: WidgetGroupFormStore,
   ) {
     this.setCategoryOptions();
     this.setInitialFormValues();
