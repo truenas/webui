@@ -63,7 +63,7 @@ export class ServiceNfsComponent implements OnInit {
     mountd_port: helptextServiceNfs.nfs_srv_mountd_port_tooltip,
     rpcstatd_port: helptextServiceNfs.nfs_srv_rpcstatd_port_tooltip,
     rpclockd_port: helptextServiceNfs.nfs_srv_rpclockd_port_tooltip,
-    userd_manage_gids: helptextServiceNfs.nfs_srv_16_tooltip,
+    userd_manage_gids: helptextServiceNfs.userd_manage_gids,
   };
 
   readonly ipChoices$ = this.ws.call('nfs.bindip_choices').pipe(choicesToOptions());
