@@ -12,9 +12,9 @@ import { helptextVolumeStatus } from 'app/helptext/storage/volumes/volume-status
 import { Option } from 'app/interfaces/option.interface';
 import { UnusedDisk } from 'app/interfaces/storage.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { SimpleAsyncComboboxProvider } from 'app/modules/ix-forms/classes/simple-async-combobox-provider';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 export interface ReplaceDiskDialogData {
@@ -52,6 +52,7 @@ export class ReplaceDiskDialogComponent implements OnInit {
     private snackbar: SnackbarService,
     @Inject(MAT_DIALOG_DATA) public data: ReplaceDiskDialogData,
     private dialogService: DialogService,
+    private errorHandler: ErrorHandlerService,
   ) {}
 
   ngOnInit(): void {
@@ -99,23 +100,24 @@ export class ReplaceDiskDialogComponent implements OnInit {
   }
 
   onSubmit(): void {
-    const jobDialogRef = this.matDialog.open(EntityJobComponent, {
-      data: { title: helptextVolumeStatus.replace_disk.title },
-      disableClose: true,
-    });
-    jobDialogRef.componentInstance.setDescription(helptextVolumeStatus.replace_disk.description);
-    jobDialogRef.componentInstance.setCall('pool.replace', [this.data.poolId, {
-      label: this.data.guid,
-      disk: this.form.value.replacement,
-      force: this.form.value.force,
-    }]);
-    jobDialogRef.componentInstance.submit();
-    jobDialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
-      jobDialogRef.close(true);
-      this.dialogRef.close(true);
-      this.snackbar.success(
-        this.translate.instant('Successfully replaced disk {disk}.', { disk: this.data.diskName }),
-      );
-    });
+    this.dialogService.jobDialog(
+      this.ws.job('pool.replace', [this.data.poolId, {
+        label: this.data.guid,
+        disk: this.form.value.replacement,
+        force: this.form.value.force,
+      }]),
+      { title: helptextVolumeStatus.replace_disk.title },
+    )
+      .afterClosed()
+      .pipe(
+        this.errorHandler.catchError(),
+        untilDestroyed(this),
+      )
+      .subscribe(() => {
+        this.dialogRef.close(true);
+        this.snackbar.success(
+          this.translate.instant('Successfully replaced disk {disk}.', { disk: this.data.diskName }),
+        );
+      });
   }
 }
