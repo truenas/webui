@@ -1,13 +1,14 @@
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component,
 } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { FormControl, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import {
-  Observable, of, tap,
+  Observable, filter, of, tap,
 } from 'rxjs';
 import { Option } from 'app/interfaces/option.interface';
 import { ChainedRef } from 'app/modules/ix-forms/components/ix-slide-in/chained-component-ref';
+import { WidgetGroupFormStore } from 'app/pages/dashboard/components/widget-group-form/widget-group-form.store';
 import { WidgetCategory } from 'app/pages/dashboard/types/widget-category.enum';
 import {
   WidgetGroup, WidgetGroupLayout, layoutToSlotSizes, widgetGroupIcons,
@@ -20,18 +21,21 @@ import { widgetRegistry } from 'app/pages/dashboard/widgets/all-widgets.constant
   selector: 'ix-widget-group-form',
   templateUrl: './widget-group-form.component.html',
   styleUrls: ['./widget-group-form.component.scss'],
+  providers: [
+    WidgetGroupFormStore,
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class WidgetGroupFormComponent {
   protected group: WidgetGroup;
   protected selectedSlot = 0;
-  protected form = this.formBuilder.group({
-    template: [''],
-    layout: [WidgetGroupLayout.Full],
-    category: [null as WidgetCategory],
-    type: [null as WidgetType],
-  });
-  readonly layoutsMap = widgetGroupIcons;
+
+  protected readonly template = new FormControl('');
+  protected readonly layout = new FormControl(WidgetGroupLayout.Full, [Validators.required]);
+  protected readonly category = new FormControl(null as WidgetCategory, [Validators.required]);
+  protected readonly type = new FormControl(null as WidgetType, [Validators.required]);
+  protected readonly layoutsMap = widgetGroupIcons;
+  protected readonly widgetRegistry = widgetRegistry;
 
   widgetCategoriesOptions$: Observable<Option[]>;
   widgetTypesOptions$: Observable<Option[]>;
@@ -40,27 +44,39 @@ export class WidgetGroupFormComponent {
   templateOptions$ = of([]);
 
   constructor(
-    private formBuilder: FormBuilder,
-    private chainedRef: ChainedRef<WidgetGroup>,
+    protected chainedRef: ChainedRef<WidgetGroup>,
     private cdr: ChangeDetectorRef,
+    private widgetGroupFormStore: WidgetGroupFormStore,
   ) {
     this.setCategoryOptions();
     this.setInitialFormValues();
     this.setupLayoutUpdates();
     this.setupCategoryUpdate();
+    this.setupTypeUpdate();
+  }
+
+  setupTypeUpdate(): void {
+    this.type.valueChanges.pipe(
+      filter(Boolean),
+      untilDestroyed(this),
+    ).subscribe({
+      next: (type) => {
+        this.widgetGroupFormStore.setType({ slotIndex: this.selectedSlot, type });
+      },
+    });
   }
 
   setInitialFormValues(): void {
     this.group = this.chainedRef.getData();
-    this.form.controls.layout.setValue(this.group.layout);
+    this.layout.setValue(this.group.layout);
   }
 
   setupLayoutUpdates(): void {
-    this.form.controls.layout.valueChanges.pipe(
+    this.layout.valueChanges.pipe(
       tap((layout) => {
+        this.widgetGroupFormStore.setLayout(layout);
         this.group = { ...this.group, layout };
-        this.form.controls.category.setValue(null);
-        this.setCategoryOptions();
+        this.resetSlot();
         this.cdr.markForCheck();
       }),
       untilDestroyed(this),
@@ -68,8 +84,10 @@ export class WidgetGroupFormComponent {
   }
 
   setupCategoryUpdate(): void {
-    this.form.controls.category.valueChanges.pipe(
+    this.category.valueChanges.pipe(
+      filter(Boolean),
       tap((category) => {
+        this.widgetGroupFormStore.setCategory({ slotIndex: this.selectedSlot, category });
         this.setWidgetTypeOptions(category);
       }),
       untilDestroyed(this),
@@ -78,6 +96,12 @@ export class WidgetGroupFormComponent {
 
   selectedSlotChanged(slotIndex: number): void {
     this.selectedSlot = slotIndex;
+    this.resetSlot();
+  }
+
+  resetSlot(): void {
+    this.category.setValue(null);
+    this.type.setValue(null);
     this.setCategoryOptions();
   }
 
@@ -92,7 +116,7 @@ export class WidgetGroupFormComponent {
   setCategoryOptions(): void {
     const widgets = Object.values(widgetRegistry);
     const categories = new Map<keyof typeof WidgetCategory, WidgetCategory>();
-    const layout = this.form.controls.layout.value;
+    const layout = this.layout.value;
     const slotIndex = this.selectedSlot;
     const slotSize = layoutToSlotSizes[layout][slotIndex];
     for (const widget of widgets) {
@@ -111,7 +135,7 @@ export class WidgetGroupFormComponent {
   }
 
   setWidgetTypeOptions(category: WidgetCategory): void {
-    const layout = this.form.controls.layout.value;
+    const layout = this.layout.value;
     const slotIndex = this.selectedSlot;
     const slotSize = layoutToSlotSizes[layout][slotIndex];
 
@@ -131,7 +155,7 @@ export class WidgetGroupFormComponent {
 
   onSubmit(): void {
     this.chainedRef.close({
-      response: null,
+      response: this.widgetGroupFormStore.state(),
       error: false,
     });
   }
