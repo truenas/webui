@@ -29,8 +29,8 @@ export class WidgetInterfaceIpSettingsComponent extends WidgetSettingsDirective<
 
   override getFormUpdater(): Observable<WidgetInterfaceIpSettings> {
     return this.interfaceIp.valueChanges.pipe(
-      map((interfaceIp) => ({ interface: interfaceIp })),
       distinctUntilChanged(),
+      map((interfaceIp) => ({ interface: interfaceIp })),
     );
   }
 
