@@ -7,6 +7,7 @@ import { ChartScaleQueryParams, ChartScaleResult } from 'app/interfaces/chart-re
 import { ChartRelease } from 'app/interfaces/chart-release.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
+import { AppsStatisticsService } from 'app/pages/apps/store/apps-statistics.service';
 import { AppsStore } from 'app/pages/apps/store/apps-store.service';
 import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.service';
 import { KubernetesStore } from 'app/pages/apps/store/kubernetes-store.service';
@@ -42,6 +43,7 @@ describe('InstalledAppsStore', () => {
         isLoading$: of(false),
         isKubernetesStarted$: of(true),
       }),
+      mockProvider(AppsStatisticsService),
     ],
   });
 

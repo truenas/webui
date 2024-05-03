@@ -16,7 +16,7 @@ import {
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import {
-  combineLatest, filter,
+  combineLatest, filter, Observable,
 } from 'rxjs';
 import { ChartReleaseStatus } from 'app/enums/chart-release-status.enum';
 import { EmptyType } from 'app/enums/empty-type.enum';
@@ -25,7 +25,7 @@ import { Role } from 'app/enums/role.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { helptextApps } from 'app/helptext/apps/apps';
 import { ChartScaleResult, ChartScaleQueryParams } from 'app/interfaces/chart-release-event.interface';
-import { ChartRelease } from 'app/interfaces/chart-release.interface';
+import { ChartRelease, ChartReleaseStats } from 'app/interfaces/chart-release.interface';
 import { CoreBulkResponse } from 'app/interfaces/core-bulk.interface';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { Job } from 'app/interfaces/job.interface';
@@ -36,6 +36,7 @@ import { AppBulkUpgradeComponent } from 'app/pages/apps/components/installed-app
 import { KubernetesSettingsComponent } from 'app/pages/apps/components/installed-apps/kubernetes-settings/kubernetes-settings.component';
 import { AppStatus } from 'app/pages/apps/enum/app-status.enum';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
+import { AppsStatisticsService } from 'app/pages/apps/store/apps-statistics.service';
 import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.service';
 import { KubernetesStore } from 'app/pages/apps/store/kubernetes-store.service';
 import { DialogService } from 'app/services/dialog.service';
@@ -151,6 +152,7 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
     private slideInService: IxSlideInService,
     private breakpointObserver: BreakpointObserver,
     private errorHandler: ErrorHandlerService,
+    private appsStats: AppsStatisticsService,
     @Inject(WINDOW) private window: Window,
   ) {
     this.router.events
@@ -444,6 +446,11 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
       }
     }
     return status;
+  }
+
+  // TODO: Rework this and getAppStatus above to be computed when dataSource is populated.
+  getAppStats(name: string): Observable<ChartReleaseStats> {
+    return this.appsStats.getStatsForApp(name);
   }
 
   sortChanged(sort: Sort, charts?: ChartRelease[]): void {

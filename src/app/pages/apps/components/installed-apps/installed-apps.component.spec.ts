@@ -33,6 +33,7 @@ import { AvailableAppsHeaderComponent } from 'app/pages/apps/components/availabl
 import { AvailableAppsComponent } from 'app/pages/apps/components/available-apps/available-apps.component';
 import { ChartWizardComponent } from 'app/pages/apps/components/chart-wizard/chart-wizard.component';
 import { AppsFilterStore } from 'app/pages/apps/store/apps-filter-store.service';
+import { AppsStatisticsService } from 'app/pages/apps/store/apps-statistics.service';
 import { AppsStore } from 'app/pages/apps/store/apps-store.service';
 import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.service';
 import { KubernetesStore } from 'app/pages/apps/store/kubernetes-store.service';
@@ -535,6 +536,7 @@ describe('Finding app', () => {
     providers: [
       KubernetesStore,
       InstalledAppsStore,
+      mockProvider(AppsStatisticsService),
       mockWebsocket([]),
       mockProvider(AppsStore, {
         isLoading$: of(false),
@@ -595,6 +597,7 @@ describe('Redirect to install app', () => {
     providers: [
       KubernetesStore,
       InstalledAppsStore,
+      mockProvider(AppsStatisticsService),
       mockWebsocket([
         mockJob('chart.release.create'),
         mockJob('chart.release.update'),
