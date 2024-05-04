@@ -24,6 +24,7 @@ export class GroupComboboxProvider implements IxComboboxProvider {
       const isInitialOptionInResults = options.find((option) => option.value === initialOption.value);
       return !isInitialOptionInResults;
     });
+    this.initialOptions = [];
     return [...options, ...missingInitialOptions];
   }
 
