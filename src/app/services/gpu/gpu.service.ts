@@ -29,7 +29,7 @@ export class GpuService {
    */
   getAllGpus(): Observable<Device[]> {
     if (!this.allGpus$) {
-      this.allGpus$ = this.ws.call('device.get_info', [DeviceType.Gpu]).pipe(
+      this.allGpus$ = this.ws.call('device.get_info', [{ type: DeviceType.Gpu }]).pipe(
         shareReplay({
           refCount: false,
           bufferSize: 1,

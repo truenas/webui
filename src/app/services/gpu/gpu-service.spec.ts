@@ -59,7 +59,7 @@ describe('GpuService', () => {
       const gpus = await firstValueFrom(spectator.service.getAllGpus());
 
       expect(gpus).toEqual(allGpus);
-      expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('device.get_info', [DeviceType.Gpu]);
+      expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('device.get_info', [{ type: DeviceType.Gpu }]);
     });
   });
 
