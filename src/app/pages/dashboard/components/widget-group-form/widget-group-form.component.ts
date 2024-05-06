@@ -230,11 +230,11 @@ export class WidgetGroupFormComponent implements AfterViewInit {
   }
 
   getLayoutSupportedWidgets(): SimpleWidget[] {
-    const widgetsEntires = Object.entries(widgetRegistry);
+    const widgetEntires = Object.entries(widgetRegistry);
     const layout = this.selectedLayout();
     const slotSize = layoutToSlotSizes[layout][this.selectedSlot()];
 
-    return widgetsEntires.filter(
+    return widgetEntires.filter(
       ([, widget]) => widget.supportedSizes.includes(slotSize),
     ).map(([type, widget]) => ({ ...widget, type: type as WidgetType }));
   }
