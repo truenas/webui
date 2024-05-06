@@ -614,7 +614,7 @@ class side_Menu:
     certificates = submenu_Anchor('Certificates')
     directory_Services = submenu_Anchor('Directory Services')
     apps = menu_Anchor('Apps')
-    system_Setting = menu_Anchor('System-menu')
+    system_Setting = menu_Anchor('System')
     general = submenu_Anchor('General')
     advanced = submenu_Anchor('Advanced')
     failover = submenu_Anchor('Failover')
