@@ -1,6 +1,6 @@
 import {
   AfterViewInit,
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Injector, ViewChild, ViewContainerRef, signal,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, Injector, ViewChild, ViewContainerRef, computed, signal,
 } from '@angular/core';
 import {
   FormBuilder, ValidationErrors, Validators,
@@ -45,9 +45,9 @@ export class WidgetGroupFormComponent implements AfterViewInit {
     type: [null as WidgetType, [Validators.required]],
   });
 
-  get hasErrors(): boolean {
+  hasErrors = computed<boolean>(() => {
     return this.form.invalid || !!this.validationErrors().some((errors) => !!Object.keys(errors).length);
-  }
+  });
 
   protected readonly layoutsMap = widgetGroupIcons;
   protected readonly widgetRegistry = widgetRegistry;
