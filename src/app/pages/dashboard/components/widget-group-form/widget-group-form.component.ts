@@ -17,7 +17,7 @@ import {
   WidgetGroup, WidgetGroupLayout, layoutToSlotSizes, widgetGroupIcons,
 } from 'app/pages/dashboard/types/widget-group.interface';
 import { WidgetSettingsRef } from 'app/pages/dashboard/types/widget-settings-ref.interface';
-import { WidgetType, widgetTypeLabels } from 'app/pages/dashboard/types/widget.interface';
+import { WidgetType } from 'app/pages/dashboard/types/widget.interface';
 import { widgetRegistry } from 'app/pages/dashboard/widgets/all-widgets.constant';
 
 interface SimpleWidget {
@@ -82,7 +82,7 @@ export class WidgetGroupFormComponent implements AfterViewInit {
 
     return of(Array.from(uniqTypes).map((type) => {
       return {
-        label: widgetTypeLabels.get(type) || type,
+        label: widgetRegistry[type].name,
         value: type,
       };
     }));

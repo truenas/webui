@@ -1,4 +1,3 @@
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { WidgetCategory } from 'app/pages/dashboard/types/widget-category.enum';
 
 /**
@@ -15,13 +14,6 @@ export enum WidgetType {
   Memory = 'memory',
   Cpu = 'cpu',
 }
-
-export const widgetTypeLabels = new Map<WidgetType, string>([
-  [WidgetType.Help, T('Help')],
-  [WidgetType.InterfaceIp, T('Interface')],
-  [WidgetType.Hostname, T('Hostname')],
-  [WidgetType.Memory, T('Memory')],
-]);
 
 export enum SlotSize {
   Full = 'full',
