@@ -651,7 +651,7 @@ class storage:
 
 
 class system_Dataset:
-    title = '//h3[contains(text(),"Storage Settings") and @class="ix-formtitle"]'
+    title = '//h3[contains(text(),"Storage Settings")]'
     pool_Select = '//mat-select[@data-test="select-pool"]'
 
     def pool_Option(pool_name):
