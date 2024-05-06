@@ -121,6 +121,7 @@ def click_the_interface_field_uncheck_dhcp_and_click_add_and_enter_ip_and_click_
 def please_wait_should_appear_while_settings_are_being_applied(driver):
     """"Please wait" should appear while settings are being applied."""
     assert wait_on_element_disappear(driver, 20, xpaths.progress.progressbar)
+    driver.refresh()
     assert wait_on_element(driver, 10, xpaths.network.title)
     assert wait_on_element(driver, 7, xpaths.network.interface_Row('enp1s0'))
 
