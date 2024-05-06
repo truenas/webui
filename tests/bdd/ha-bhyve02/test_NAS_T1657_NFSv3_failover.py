@@ -199,6 +199,7 @@ def verify_the_start_automatically_checkbox_is_checked_if_not_click_on_the_check
     value_exist = attribute_value_exist(driver, xpaths.services.nfs_autostart_toggle, 'class', 'mat-mdc-slide-toggle-checked')
     if not value_exist:
         driver.find_element_by_xpath(xpaths.services.nfs_autostart_toggle).click()
+        assert wait_on_element_disappear(driver, 30, xpaths.popup.please_Wait)
 
 
 @then(parsers.parse('create a mount point on {linux_host} with {linux_user} and {linux_password}'))

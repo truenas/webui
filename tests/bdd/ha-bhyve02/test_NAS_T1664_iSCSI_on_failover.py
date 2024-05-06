@@ -197,6 +197,7 @@ def on_the_service_page_verify_iscsi_is_running_and_click_the_start_automaticall
     value_exist = attribute_value_exist(driver, xpaths.services.iscsi_autostart_toggle, 'class', 'mat-mdc-slide-toggle-checked')
     if not value_exist:
         driver.find_element_by_xpath(xpaths.services.iscsi_autostart_toggle).click()
+        assert wait_on_element_disappear(driver, 30, xpaths.popup.please_Wait)
 
 
 @then(parsers.parse('SSH to {hostname} with {host_user} and {host_password} then connect to "iscsitest1"'))
