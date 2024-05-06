@@ -99,7 +99,7 @@ def on_the_services_page_verify_ssh_is_enabled(driver):
     """on the Services page, verify SSH is enabled."""
     assert wait_on_element(driver, 10, xpaths.services.title)
     assert wait_on_element(driver, 5, xpaths.services.ssh_edit_button, 'clickable')
-    assert attribute_value_exist(driver, xpaths.services.ssh_running_toggle, 'class', 'mdc-switch--checked')
+    assert attribute_value_exist(driver, xpaths.services.ssh_running_toggle, 'class', 'mat-mdc-slide-toggle-checked')
 
 
 @then('get the ssh host key again')
