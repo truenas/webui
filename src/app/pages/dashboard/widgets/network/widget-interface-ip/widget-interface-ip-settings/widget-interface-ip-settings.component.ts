@@ -21,15 +21,11 @@ export class WidgetInterfaceIpSettingsComponent implements WidgetInterfaceIpSett
   form = this.fb.group({
     interfaceIp: [null as string, [Validators.required]],
   });
-  slot: number;
 
   constructor(
     private widgetSettingsRef: WidgetSettingsRef,
     private fb: FormBuilder,
-  ) {
-    const data = this.widgetSettingsRef.getData();
-    this.slot = data.slot;
-  }
+  ) { }
 
   ngOnInit(): void {
     this.setCurrentSettings();
@@ -38,18 +34,18 @@ export class WidgetInterfaceIpSettingsComponent implements WidgetInterfaceIpSett
 
   private setCurrentSettings(): void {
     const settings = this.widgetSettingsRef.getData() as { slot: number; settings: WidgetInterfaceIpSettings };
-    if (!settings.settings) {
+    if (!settings?.settings) {
       return;
     }
     this.form.controls.interfaceIp.setValue(settings.settings.interface);
   }
 
   private setupSettingsUpdate(): void {
-    this.widgetSettingsRef.updateValidity(this.slot, this.getAllFormErrors());
+    this.widgetSettingsRef.updateValidity(this.getAllFormErrors());
     this.form.valueChanges.pipe(untilDestroyed(this)).subscribe({
       next: (settings) => {
-        this.widgetSettingsRef.updateSettings(this.slot, { interface: settings.interfaceIp });
-        this.widgetSettingsRef.updateValidity(this.slot, this.getAllFormErrors());
+        this.widgetSettingsRef.updateSettings({ interface: settings.interfaceIp });
+        this.widgetSettingsRef.updateValidity(this.getAllFormErrors());
       },
     });
   }

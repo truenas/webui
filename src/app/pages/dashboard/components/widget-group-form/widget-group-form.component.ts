@@ -186,26 +186,28 @@ export class WidgetGroupFormComponent implements AfterViewInit {
       providers: [
         {
           provide: WidgetSettingsRef,
-          useValue: {
-            getData: () => ({
-              slot: this.selectedSlot(),
-              settings: this.group.slots[this.selectedSlot()].settings,
-            }),
-            updateSettings: (slot: number, settings: object): void => {
+          useValue: new WidgetSettingsRef(
+            this.selectedSlot(),
+            this.group.slots[this.selectedSlot()].settings,
+            (slot: SlotPosition, settings: object): void => {
               this.group.slots[slot].settings = settings;
             },
-            updateValidity: (slot: number, errors: ValidationErrors[]): void => {
+            (slot: SlotPosition, errors: ValidationErrors[]): void => {
               if (!errors) {
                 this.validationErrors.update((previousErrors) => {
-                  return previousErrors.map((prevError, index) => (index === slot ? {} : prevError));
+                  return previousErrors.map(
+                    (prevError, index) => (index as SlotPosition === slot ? {} : prevError),
+                  );
                 });
                 return;
               }
               this.validationErrors.update((previousErrors) => {
-                return previousErrors.map((prevError, index) => (index === slot ? errors : prevError));
+                return previousErrors.map(
+                  (prevError, index) => (index as SlotPosition === slot ? errors : prevError),
+                );
               });
             },
-          } as WidgetSettingsRef,
+          ),
         },
       ],
     });
