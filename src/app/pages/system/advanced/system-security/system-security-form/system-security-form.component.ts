@@ -6,7 +6,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
-import { EMPTY } from 'rxjs';
+import { EMPTY, Observable } from 'rxjs';
 import { switchMap, take } from 'rxjs/operators';
 import { Role } from 'app/enums/role.enum';
 import { SystemSecurityConfig } from 'app/interfaces/system-security-config.interface';
@@ -59,8 +59,10 @@ export class SystemSecurityFormComponent implements OnInit {
     });
     dialogRef.componentInstance.setCall('system.security.update', [this.form.value as SystemSecurityConfig]);
     dialogRef.componentInstance.submit();
-    dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
-      this.promptForRestart();
+    dialogRef.componentInstance.success.pipe(
+      switchMap(() => this.promptForRestart()),
+      untilDestroyed(this),
+    ).subscribe(() => {
       this.slideInRef.close();
       dialogRef.close();
       this.snackbar.success(this.translate.instant('System Security Settings Updated.'));
@@ -72,8 +74,8 @@ export class SystemSecurityFormComponent implements OnInit {
     this.cdr.markForCheck();
   }
 
-  private promptForRestart(): void {
-    this.isHaLicensed$
+  private promptForRestart(): Observable<unknown> {
+    return this.isHaLicensed$
       .pipe(
         take(1),
         switchMap((isHaLicensed) => {
@@ -84,8 +86,6 @@ export class SystemSecurityFormComponent implements OnInit {
 
           return this.fips.promptForRestart();
         }),
-        untilDestroyed(this),
-      )
-      .subscribe();
+      );
   }
 }
