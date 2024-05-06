@@ -57,7 +57,7 @@ export class WidgetNetworkComponent implements WidgetComponent {
     map((response) => {
       const updatedResponse = response[0];
       (updatedResponse.data as number[][]).forEach((row, index) => {
-        // remove first column and convert kilobits/s to bytes
+        // remove first column and convert kilobits/s to bits/s
         (updatedResponse.data as number[][])[index] = row.slice(1).map((value) => value * kb);
       });
       return updatedResponse;

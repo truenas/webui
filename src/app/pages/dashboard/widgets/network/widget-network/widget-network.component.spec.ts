@@ -121,7 +121,7 @@ describe('WidgetNetworkComponent', () => {
     expect(spectator.query('.info-list-item.out')).toHaveText('Out:32.77 kb/s');
   });
 
-  it('shows a chart with cpu stats', () => {
+  it('shows a chart with network traffic', () => {
     const chart = spectator.query(ViewChartAreaComponent);
     expect(chart).not.toBeNull();
 
@@ -137,8 +137,8 @@ describe('WidgetNetworkComponent', () => {
           pointRadius: 0,
           tension: 0.2,
           data: [
-            { x: 1714583020000, y: 7913637.675008 },
-            { x: 1714583021000, y: 8937637.675008 },
+            { x: 1714583020000, y: 7728161.791999999 },
+            { x: 1714583021000, y: 8728161.792000001 },
           ],
         },
         {
@@ -150,8 +150,8 @@ describe('WidgetNetworkComponent', () => {
           pointRadius: 0,
           tension: 0.2,
           data: [
-            { x: 1714583020000, y: -1016143.2297472 },
-            { x: 1714583021000, y: -2040143.2297472 },
+            { x: 1714583020000, y: -992327.3728 },
+            { x: 1714583021000, y: -1992327.3728 },
           ],
         },
       ],
