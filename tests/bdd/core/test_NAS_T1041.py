@@ -256,21 +256,7 @@ def click_on_service_on_the_side_menu_the_service_page_should_open(driver):
 @then('if the SMB service is not started, start the service')
 def if_the_smb_service_is_not_started_start_the_service(driver):
     """if the SMB service is not started, start the service."""
-    if is_element_present(driver, '//li[@aria-label="page 4"]'):
-        assert wait_on_element(driver, 7, '//li[@aria-label="page 3"]', 'clickable')
-        driver.find_element_by_xpath('//li[@aria-label="page 3"]').click()
-    else:
-        # Scroll to SMB service
-        assert wait_on_element(driver, 7, '//div[@ix-auto="overlay__S3_Running"]')
-        element = driver.find_element_by_xpath('//button[@ix-auto="button__S3_Actions"]')
-        driver.execute_script("arguments[0].scrollIntoView();", element)
-        time.sleep(0.5)
-    assert wait_on_element(driver, 7, '//div[@ix-auto="overlay__SMB_Running"]', 'clickable')
-    value_exist = attribute_value_exist(driver, '//mat-slide-toggle[@ix-auto="slider__SMB_Running"]', 'class', 'mat-checked')
-    if not value_exist:
-        driver.find_element_by_xpath('//div[@ix-auto="overlay__SMB_Running"]').click()
-    # This sleep is to make sure the system ready for smbclient
-    time.sleep(2)
+    rsc.set_service_toggle(driver, 'SMB')
 
 
 @then(parsers.parse('send a file to the share with ip/"{smbname}" and "{user}"%password'))

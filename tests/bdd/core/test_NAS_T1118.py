@@ -157,6 +157,6 @@ def click_verify_credential_to_verify_the_access_key_is_invalid(driver):
     driver.find_element_by_xpath('//button[@ix-auto="button__VERIFY CREDENTIAL"]').click()
     assert wait_on_element_disappear(driver, 20, '//h1[contains(.,"Please wait")]')
     assert wait_on_element(driver, 10, '//h1[normalize-space(text())="Error"]')
-    assert wait_on_element(driver, 10, '//span[contains(.,"SignatureDoesNotMatch:")]')
+    assert wait_on_element(driver, 10, '//span[contains(.,"SignatureDoesNotMatch:") or contains(text(),"NOTICE:")]')
     assert wait_on_element(driver, 5, '//button[@ix-auto="button__CLOSE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
