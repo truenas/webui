@@ -21,6 +21,12 @@ export const demoWidgets: WidgetGroup[] = [
     ],
   },
   {
+    layout: WidgetGroupLayout.Full,
+    slots: [
+      { type: WidgetType.Cpu },
+    ],
+  },
+  {
     layout: WidgetGroupLayout.QuartersAndHalf,
     slots: [
       { type: WidgetType.Memory },

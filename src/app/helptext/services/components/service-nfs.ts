@@ -35,9 +35,9 @@ export const helptextServiceNfs = {
  href="https://linux.die.net/man/8/rpc.lockd"\
  target="_blank">rpc.lockd(8)</a>.'),
 
-  nfs_srv_16_tooltip: T('Set when a user is a member of more than 16 groups.\
- This assumes group membership is configured correctly\
- on the NFS server.'),
+  userd_manage_gids: T('Enable server-side management of group memberships. \
+ This option allows the server to determine group IDs based on server-side lookups rather than relying solely on the information provided by the NFS client. \
+ This can support more than 16 groups and provide more accurate group memberships.'),
 
   nfs_srv_mountd_log_tooltip: T('Set to log <a\
  href="https://man7.org/linux/man-pages/man8/mountd.8.html"\

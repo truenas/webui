@@ -110,10 +110,6 @@ export class ApplicationsService {
     return this.ws.subscribe('chart.release.query');
   }
 
-  getInstalledAppsStatisticsUpdates(): Observable<ApiEvent> {
-    return this.ws.subscribe('chart.release.statistics');
-  }
-
   getInstalledAppsStatusUpdates(): Observable<ApiEvent<Job<ChartScaleResult, ChartScaleQueryParams>>> {
     return this.ws.subscribe('core.get_jobs').pipe(
       filter((event: ApiEvent<Job<ChartScaleResult, ChartScaleQueryParams>>) => {

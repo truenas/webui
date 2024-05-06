@@ -5,6 +5,7 @@ import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButton, MatButtonModule } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
+import { MatListModule } from '@angular/material/list';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
 import { BaseChartDirective } from 'ng2-charts';
@@ -84,6 +85,8 @@ import { WidgetDatapointComponent } from 'app/pages/dashboard/widgets/common/wid
       },
     }),
     IxDropGridModule,
+    ChartsModule,
+    MatListModule,
     EmptyComponent,
     ChartsModule,
     InterfaceStatusIconComponent,

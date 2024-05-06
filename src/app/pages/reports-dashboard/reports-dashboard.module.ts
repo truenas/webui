@@ -5,6 +5,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatCardModule } from '@angular/material/card';
+import { MatDialogModule } from '@angular/material/dialog';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatToolbarModule } from '@angular/material/toolbar';
@@ -28,6 +29,9 @@ import { TestIdModule } from 'app/modules/test-id/test-id.module';
 import { ReportingExportersFormComponent } from 'app/pages/reports-dashboard/components/exporters/reporting-exporters-form/reporting-exporters-form.component';
 import { ReportingExporterListComponent } from 'app/pages/reports-dashboard/components/exporters/reporting-exporters-list/reporting-exporters-list.component';
 import { LineChartComponent } from 'app/pages/reports-dashboard/components/line-chart/line-chart.component';
+import {
+  NetdataDialogComponent,
+} from 'app/pages/reports-dashboard/components/reports-global-controls/netdata-dialog/netdata-dialog.component';
 import { ReportsDashboardComponent } from 'app/pages/reports-dashboard/reports-dashboard.component';
 import { routing } from 'app/pages/reports-dashboard/reports-dashboard.routing';
 import { PlotterService } from 'app/pages/reports-dashboard/services/plotter.service';
@@ -61,6 +65,7 @@ import { ReportsGlobalControlsComponent } from './components/reports-global-cont
     MatButtonToggleModule,
     MatSlideToggleModule,
     TestIdModule,
+    MatDialogModule,
     EmptyComponent,
     SearchInput1Component,
   ],
@@ -71,6 +76,7 @@ import { ReportsGlobalControlsComponent } from './components/reports-global-cont
     ReportingExporterListComponent,
     ReportsDashboardComponent,
     ReportsGlobalControlsComponent,
+    NetdataDialogComponent,
   ],
   providers: [
     FormatDateTimePipe,
