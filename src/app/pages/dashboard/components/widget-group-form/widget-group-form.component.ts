@@ -11,6 +11,7 @@ import {
 } from 'rxjs';
 import { Option } from 'app/interfaces/option.interface';
 import { ChainedRef } from 'app/modules/ix-forms/components/ix-slide-in/chained-component-ref';
+import { SlotPosition } from 'app/pages/dashboard/types/slot-position.enum';
 import { WidgetCategory, widgetCategoryLabels } from 'app/pages/dashboard/types/widget-category.enum';
 import {
   WidgetGroup, WidgetGroupLayout, layoutToSlotSizes, widgetGroupIcons,
@@ -34,7 +35,7 @@ interface SimpleWidget {
 })
 export class WidgetGroupFormComponent implements AfterViewInit {
   protected group: WidgetGroup;
-  protected selectedSlot = 0;
+  protected selectedSlot = signal(SlotPosition.First);
   @ViewChild('settingsContainer', { static: true, read: ViewContainerRef }) settingsContainer: ViewContainerRef;
 
   validationErrors = signal([
@@ -51,15 +52,22 @@ export class WidgetGroupFormComponent implements AfterViewInit {
     type: [null as WidgetType, [Validators.required]],
   });
 
-  hasErrors = computed<boolean>(() => {
-    return this.form.invalid || !!this.validationErrors().some((errors) => !!Object.keys(errors).length);
+  settingsHasErrors = computed<boolean>(() => {
+    return this.validationErrors().some((errors) => !!Object.keys(errors).length);
   });
 
   protected readonly layoutsMap = widgetGroupIcons;
   protected readonly widgetRegistry = widgetRegistry;
 
-  widgetCategoriesOptions$: Observable<Option[]>;
-  widgetTypesOptions$: Observable<Option[]>;
+  selectedLayout = signal(WidgetGroupLayout.Full);
+  selectedCategory = signal<WidgetCategory>(null);
+
+  widgetCategoriesOptions = computed<Observable<Option[]>>(() => {
+    return of(this.getCategoryOptions());
+  });
+  widgetTypesOptions = computed<Observable<Option[]>>(() => {
+    return of(this.getTypeOptions());
+  });
 
   // TODO: Implement template options
   templateOptions$ = of([]);
@@ -85,7 +93,7 @@ export class WidgetGroupFormComponent implements AfterViewInit {
     for (let i = 0; i < this.group.slots.length; i++) {
       this.selectedSlotChanged(i);
     }
-    this.selectedSlot = 0;
+    this.selectedSlot.set(SlotPosition.First);
   }
 
   ngAfterViewInit(): void {
@@ -93,17 +101,20 @@ export class WidgetGroupFormComponent implements AfterViewInit {
   }
 
   private refreshSettingsContainer(): void {
-    if (
-      !this.settingsContainer
-      || !this.group.slots[this.selectedSlot].type
-      || !widgetRegistry[this.group.slots[this.selectedSlot].type].settingsComponent
-    ) {
+    if (!this.settingsContainer) {
       return;
     }
     this.settingsContainer.remove();
     this.settingsContainer.clear();
+    if (
+      !this.group.slots[this.selectedSlot()].type
+      || !widgetRegistry[this.group.slots[this.selectedSlot()].type].settingsComponent
+    ) {
+      return;
+    }
+
     this.settingsContainer.createComponent(
-      widgetRegistry[this.group.slots[this.selectedSlot].type].settingsComponent,
+      widgetRegistry[this.group.slots[this.selectedSlot()].type].settingsComponent,
       { injector: this.getInjector() },
     );
   }
@@ -122,11 +133,11 @@ export class WidgetGroupFormComponent implements AfterViewInit {
     this.form.controls.category.valueChanges.pipe(
       filter(Boolean),
       tap((category) => {
-        if (!this.group.slots[this.selectedSlot]) {
-          this.group.slots[this.selectedSlot] = { category: null, type: null };
+        if (!this.group.slots[this.selectedSlot()]) {
+          this.group.slots[this.selectedSlot()] = { category: null, type: null };
         }
-        this.group.slots[this.selectedSlot].category = category;
-        this.setTypeOptions(category);
+        this.group.slots[this.selectedSlot()].category = category;
+        this.selectedCategory.set(category);
       }),
       untilDestroyed(this),
     ).subscribe();
@@ -138,7 +149,7 @@ export class WidgetGroupFormComponent implements AfterViewInit {
       untilDestroyed(this),
     ).subscribe({
       next: (type) => {
-        this.group.slots[this.selectedSlot].type = type;
+        this.group.slots[this.selectedSlot()].type = type;
         this.refreshSettingsContainer();
       },
     });
@@ -151,8 +162,8 @@ export class WidgetGroupFormComponent implements AfterViewInit {
           provide: WidgetSettingsRef,
           useValue: {
             getData: () => ({
-              slot: this.selectedSlot,
-              settings: this.group.slots[this.selectedSlot].settings,
+              slot: this.selectedSlot(),
+              settings: this.group.slots[this.selectedSlot()].settings,
             }),
             updateSettings: (slot: number, settings: object): void => {
               this.group.slots[slot].settings = settings;
@@ -174,52 +185,52 @@ export class WidgetGroupFormComponent implements AfterViewInit {
     });
   }
 
-  selectedSlotChanged(slotIndex: number): void {
-    this.selectedSlot = slotIndex;
+  selectedSlotChanged(slotIndex: SlotPosition): void {
+    this.selectedSlot.set(slotIndex);
     this.setSlotValues();
   }
 
   private setSlotValues(): void {
-    if (!this.group.slots[this.selectedSlot]) {
-      this.group.slots[this.selectedSlot] = { category: null, type: null };
+    if (!this.group.slots[this.selectedSlot()]) {
+      this.group.slots[this.selectedSlot()] = { category: null, type: null };
     }
-    this.setCategoryOptions();
-    this.form.controls.category.setValue(this.group.slots[this.selectedSlot].category);
-    this.form.controls.type.setValue(this.group.slots[this.selectedSlot].type);
+    this.form.controls.category.setValue(this.group.slots[this.selectedSlot()].category);
+    if (this.group.slots[this.selectedSlot()].category) {
+      this.form.controls.type.setValue(this.group.slots[this.selectedSlot()].type);
+    }
     this.refreshSettingsContainer();
   }
 
-  setCategoryOptions(): void {
+  getCategoryOptions(): Option[] {
     const layoutSupportedWidgets = this.getLayoutSupportedWidgets();
     const uniqCategories = new Set(layoutSupportedWidgets.map((widget) => widget.category));
 
-    this.widgetCategoriesOptions$ = of(Array.from(uniqCategories).map((category) => {
+    return Array.from(uniqCategories).map((category) => {
       return {
         label: widgetCategoryLabels.get(category) || category,
         value: category,
       };
-    }));
+    });
   }
 
-  setTypeOptions(category: WidgetCategory): void {
-    this.form.controls.type.setValue(null);
+  getTypeOptions(): Option[] {
     const layoutSupportedWidgets = this.getLayoutSupportedWidgets();
+    const category = this.selectedCategory();
     const categoryWidgets = layoutSupportedWidgets.filter((widget) => widget.category === category);
     const uniqTypes = new Set(categoryWidgets.map((widget) => widget.type));
 
-    const options = Array.from(uniqTypes).map((type) => {
+    return Array.from(uniqTypes).map((type) => {
       return {
         label: widgetTypeLabels.get(type) || type,
         value: type,
       };
     });
-    this.widgetTypesOptions$ = of(options);
   }
 
   getLayoutSupportedWidgets(): SimpleWidget[] {
     const widgetsEntires = Object.entries(widgetRegistry);
-    const layout = this.form.controls.layout.value;
-    const slotSize = layoutToSlotSizes[layout][this.selectedSlot];
+    const layout = this.selectedLayout();
+    const slotSize = layoutToSlotSizes[layout][this.selectedSlot()];
 
     return widgetsEntires.filter(
       ([, widget]) => widget.supportedSizes.includes(slotSize),
