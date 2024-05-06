@@ -46,11 +46,11 @@ export const helptextDevice = {
  assign a port when the VM is started, or set to a\
  fixed, preferred port number.'),
 
-  wait_placeholder: T('Delay VM Boot Until VNC Connects'),
-  wait_tooltip: T('Wait to start VM until VNC client connects.'),
+  wait_placeholder: T('Delay VM Boot Until SPICE Connects'),
+  wait_tooltip: T('Wait to start VM until SPICE client connects.'),
 
-  resolution_tooltip: T('Select a screen resolution to use for VNC sessions.'),
-  bind_tooltip: T('Select an IP address to use for VNC sessions.'),
-  password_tooltip: T('Enter a VNC password to automatically pass to the VNC session.'),
+  resolution_tooltip: T('Select a screen resolution to use for SPICE sessions.'),
+  bind_tooltip: T('Select an IP address to use for SPICE sessions.'),
+  password_tooltip: T('Enter a SPICE password to automatically pass to the SPICE session.'),
   web_tooltip: T('Set to enable connecting to the SPICE web interface.'),
 };
