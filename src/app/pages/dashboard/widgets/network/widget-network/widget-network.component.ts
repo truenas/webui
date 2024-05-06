@@ -9,7 +9,7 @@ import { ChartData, ChartOptions } from 'chart.js';
 import {
   filter, map, shareReplay, skipWhile, switchMap,
 } from 'rxjs';
-import { KiB } from 'app/constants/bytes.constant';
+import { kb } from 'app/constants/bits.constant';
 import { LinkState, NetworkInterfaceAliasType } from 'app/enums/network-interface.enum';
 import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
 import { BaseNetworkInterface, NetworkInterfaceAlias } from 'app/interfaces/network-interface.interface';
@@ -31,7 +31,9 @@ import { ThemeService } from 'app/services/theme/theme.service';
 export class WidgetNetworkComponent implements WidgetComponent {
   size = input.required<SlotSize>();
 
-  protected isLoading = computed(() => !this.interface() || !this.interfaceUsage() || !this.reportingData());
+  protected isLoading = computed(() => {
+    return !this.interface() || !this.interfaceUsage() || !this.reportingData() || !this.chartData();
+  });
 
   protected interface$ = this.resources.networkInterfaces$.pipe(
     skipWhile((state) => state.isLoading),
@@ -56,7 +58,7 @@ export class WidgetNetworkComponent implements WidgetComponent {
       const updatedResponse = response[0];
       (updatedResponse.data as number[][]).forEach((row, index) => {
         // remove first column and convert kilobits/s to bytes
-        (updatedResponse.data as number[][])[index] = row.slice(1).map((value) => value * KiB);
+        (updatedResponse.data as number[][])[index] = row.slice(1).map((value) => value * kb);
       });
       return updatedResponse;
     }),

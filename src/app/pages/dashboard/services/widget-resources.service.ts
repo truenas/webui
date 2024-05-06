@@ -37,25 +37,18 @@ export class WidgetResourcesService {
     shareReplay({ bufferSize: 1, refCount: true }),
   );
 
-  private readonly serverTime$ = this.store$.pipe(
+  readonly serverTime$ = this.store$.pipe(
     waitForSystemInfo,
     map((systemInfo) => new Date(systemInfo.datetime.$date)),
-  );
-
-  readonly serverDateTime$ = timer(0, 10000).pipe(
-    combineLatestWith(this.serverTime$),
-    map(([tick, serverTime]) => {
-      if (tick === 0) {
-        // Skip first iteration
-        return serverTime;
-      }
+    combineLatestWith(timer(0, 10000)),
+    map(([serverTime]) => {
       serverTime.setSeconds(serverTime.getSeconds() + 10000 / 1000);
       return serverTime;
     }),
   );
 
   networkInterfaceUpdate(interfaceName: string): Observable<ReportingData[]> {
-    return this.serverDateTime$.pipe(
+    return this.serverTime$.pipe(
       skipWhile(() => !interfaceName),
       switchMap((serverTime) => {
         return this.ws.call('reporting.netdata_get_data', [[{
