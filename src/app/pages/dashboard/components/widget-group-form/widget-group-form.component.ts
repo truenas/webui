@@ -63,10 +63,29 @@ export class WidgetGroupFormComponent implements AfterViewInit {
   selectedCategory = signal<WidgetCategory>(null);
 
   widgetCategoriesOptions = computed<Observable<Option[]>>(() => {
-    return of(this.getCategoryOptions());
+    const layoutSupportedWidgets = this.getLayoutSupportedWidgets();
+    const uniqCategories = new Set(layoutSupportedWidgets.map((widget) => widget.category));
+
+    return of(Array.from(uniqCategories).map((category) => {
+      return {
+        label: widgetCategoryLabels.get(category) || category,
+        value: category,
+      };
+    }));
   });
+
   widgetTypesOptions = computed<Observable<Option[]>>(() => {
-    return of(this.getTypeOptions());
+    const layoutSupportedWidgets = this.getLayoutSupportedWidgets();
+    const category = this.selectedCategory();
+    const categoryWidgets = layoutSupportedWidgets.filter((widget) => widget.category === category);
+    const uniqTypes = new Set(categoryWidgets.map((widget) => widget.type));
+
+    return of(Array.from(uniqTypes).map((type) => {
+      return {
+        label: widgetTypeLabels.get(type) || type,
+        value: type,
+      };
+    }));
   });
 
   // TODO: Implement template options
@@ -199,32 +218,6 @@ export class WidgetGroupFormComponent implements AfterViewInit {
       this.form.controls.type.setValue(this.group.slots[this.selectedSlot()].type);
     }
     this.refreshSettingsContainer();
-  }
-
-  getCategoryOptions(): Option[] {
-    const layoutSupportedWidgets = this.getLayoutSupportedWidgets();
-    const uniqCategories = new Set(layoutSupportedWidgets.map((widget) => widget.category));
-
-    return Array.from(uniqCategories).map((category) => {
-      return {
-        label: widgetCategoryLabels.get(category) || category,
-        value: category,
-      };
-    });
-  }
-
-  getTypeOptions(): Option[] {
-    const layoutSupportedWidgets = this.getLayoutSupportedWidgets();
-    const category = this.selectedCategory();
-    const categoryWidgets = layoutSupportedWidgets.filter((widget) => widget.category === category);
-    const uniqTypes = new Set(categoryWidgets.map((widget) => widget.type));
-
-    return Array.from(uniqTypes).map((type) => {
-      return {
-        label: widgetTypeLabels.get(type) || type,
-        value: type,
-      };
-    });
   }
 
   getLayoutSupportedWidgets(): SimpleWidget[] {
