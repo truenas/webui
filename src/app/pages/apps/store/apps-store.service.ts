@@ -7,7 +7,6 @@ import {
 } from 'rxjs';
 import { AppExtraCategory } from 'app/enums/app-extra-category.enum';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
-import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 
@@ -52,7 +51,6 @@ export class AppsStore extends ComponentStore<AppsState> {
   readonly availableApps$ = this.select((state) => state.availableApps);
 
   constructor(
-    private dialogService: DialogService,
     private errorHandler: ErrorHandlerService,
     private appsService: ApplicationsService,
   ) {

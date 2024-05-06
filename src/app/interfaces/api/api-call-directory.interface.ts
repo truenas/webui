@@ -426,7 +426,7 @@ export interface ApiCallDirectory {
   'cronjob.update': { params: [id: number, update: CronjobUpdate]; response: Cronjob };
 
   // Device
-  'device.get_info': { params: [DeviceType]; response: Device[] };
+  'device.get_info': { params: [{ type: DeviceType }]; response: Device[] };
 
   // Directory Services
   'directoryservices.get_state': { params: void; response: DirectoryServicesState };
