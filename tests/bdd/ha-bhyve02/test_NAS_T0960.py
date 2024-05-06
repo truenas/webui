@@ -146,8 +146,6 @@ def change_should_be_saved(driver):
 @then('Reopen the user edit page and ensure that the key was saved')
 def reopen_the_user_edit_page_and_ensure_that_the_key_was_saved(driver):
     """Reopen the user edit page and ensure that the key was saved."""
-    assert wait_on_element(driver, 5, xpaths.users.root_User, 'clickable')
-    driver.find_element_by_xpath(xpaths.users.root_User).click()
     assert wait_on_element(driver, 5, xpaths.users.root_Edit_Button, 'clickable')
     driver.find_element_by_xpath(xpaths.users.root_Edit_Button).click()
     assert wait_on_element(driver, 5, xpaths.add_User.edit_Title)

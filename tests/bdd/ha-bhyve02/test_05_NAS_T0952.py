@@ -121,9 +121,6 @@ def change_should_be_saved(driver):
 @then('open the drop down details pane for the user')
 def open_the_drop_down_details_pane_for_the_user(driver):
     """open the drop down details pane for the user."""
-    assert wait_on_element(driver, 5, xpaths.users.eric_User, 'clickable')
-    driver.find_element_by_xpath(xpaths.users.eric_User).click()
-    assert wait_on_element(driver, 7, xpaths.users.eric_Edit_Button, 'clickable')
     assert wait_on_element(driver, 5, xpaths.users.eric_Home_Directory)
 
 

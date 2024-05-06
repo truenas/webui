@@ -109,8 +109,6 @@ def the_user_edit_page_should_open_input_the_ssh_key_and_click_save(driver, ssh_
 def reopen_the_user_edit_page_and_verify_sshkey_was_saved(driver, ssh_key):
     """reopen the user edit page and verify sshkey was saved.."""
     assert wait_on_element(driver, 7, xpaths.users.title)
-    assert wait_on_element(driver, 10, xpaths.users.eric_User, 'clickable')
-    driver.find_element_by_xpath(xpaths.users.eric_User).click()
     assert wait_on_element(driver, 10, xpaths.users.eric_Edit_Button, 'clickable')
     driver.find_element_by_xpath(xpaths.users.eric_Edit_Button).click()
     assert wait_on_element(driver, 10, xpaths.add_User.edit_Title)

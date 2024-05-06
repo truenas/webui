@@ -87,6 +87,5 @@ def click_save_and_changes_should_be_saved_the_dropdown_details_pane_should_show
 
     assert wait_on_element_disappear(driver, 20, xpaths.progress.progressbar)
     assert wait_on_element(driver, 7, xpaths.users.title)
-    assert wait_on_element(driver, 10, xpaths.users.eric_User, 'clickable')
-    driver.find_element_by_xpath(xpaths.users.eric_User).click()
-    assert wait_on_element_disappear(driver, 10, '//h4[contains(.,"/nonexistent")]')
+    assert wait_on_element_disappear(driver, 10, '//dd[contains(text(),"/nonexistent")]')
+    assert wait_on_element(driver, 5, xpaths.users.eric_Home_Directory_Text)

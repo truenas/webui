@@ -86,7 +86,4 @@ def the_user_edit_page_should_open_change_the_user_shell_and_click_save(driver):
 def open_the_user_dropdown_and_verify_the_shell_value_has_changed(driver):
     """open the user dropdown, and verify the shell value has changed."""
     assert wait_on_element_disappear(driver, 20, xpaths.progress.progressbar)
-    assert wait_on_element(driver, 10, xpaths.users.title)
-    assert wait_on_element(driver, 10, xpaths.users.eric_User, 'clickable')
-    driver.find_element_by_xpath(xpaths.users.eric_User).click()
     assert wait_on_element(driver, 7, xpaths.users.user_Bash_Shell)

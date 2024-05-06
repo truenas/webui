@@ -95,8 +95,6 @@ def the_changes_should_be_saved(driver):
 def open_the_user_dropdown(driver):
     """open the user dropdown."""
     assert wait_on_element(driver, 7, xpaths.users.title, 'clickable')
-    assert wait_on_element(driver, 10, xpaths.users.eric_User, 'clickable')
-    driver.find_element_by_xpath(xpaths.users.eric_User).click()
     assert wait_on_element(driver, 7, xpaths.users.eric_Allowed_Sudo_Commands)
     element_text = driver.find_element_by_xpath(xpaths.users.eric_Allowed_Sudo_Commands).text
     assert element_text == 'ALL'

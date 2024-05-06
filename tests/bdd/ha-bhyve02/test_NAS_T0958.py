@@ -122,8 +122,6 @@ def change_should_be_saved(driver):
 @then('Reopen the user edit page and ensure that the additional Aux Group was saved')
 def reopen_the_user_edit_page_and_ensure_that_the_additional_aux_group_was_saved(driver):
     """Reopen the user edit page and ensure that the additional Aux Group was saved."""
-    assert wait_on_element(driver, 7, xpaths.users.eric_User, 'clickable')
-    driver.find_element_by_xpath(xpaths.users.eric_User).click()
     assert wait_on_element(driver, 5, xpaths.users.eric_Edit_Button, 'clickable')
     driver.find_element_by_xpath(xpaths.users.eric_Edit_Button).click()
     assert wait_on_element(driver, 5, xpaths.add_User.edit_Title)

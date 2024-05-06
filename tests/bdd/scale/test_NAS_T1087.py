@@ -89,7 +89,5 @@ def change_should_be_saved_open_the_user_dropdown_the_email_value_should_be_visi
     """change should be saved, open the user dropdown, the email value should be visible."""
     assert wait_on_element_disappear(driver, 15, xpaths.progress.progressbar)
     assert wait_on_element(driver, 7, xpaths.users.title)
-    assert wait_on_element(driver, 10, xpaths.users.eric_User, 'clickable')
-    driver.find_element_by_xpath(xpaths.users.eric_User).click()
     assert wait_on_element(driver, 7, xpaths.users.eric_Edit_Button)
     assert wait_on_element(driver, 7, f'//tr[contains(.,"ericbsd")]/following-sibling::tr//dd[contains(text(),"{users_email}")]')

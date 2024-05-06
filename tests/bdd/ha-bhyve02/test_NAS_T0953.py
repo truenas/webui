@@ -116,10 +116,7 @@ def click_save_the_change_should_be_saved(driver):
 @then('Open the user drop down to verify the user Disable Password is true')
 def open_the_user_drop_down_to_verify_the_user_disable_password_is_true(driver):
     """Open the user drop down to verify the user Disable Password is true."""
-    assert wait_on_element(driver, 5, xpaths.users.eric_User, 'clickable')
-    driver.find_element_by_xpath(xpaths.users.eric_User).click()
-    assert wait_on_element(driver, 7, xpaths.users.eric_Edit_Button)
-    driver.find_element_by_xpath(xpaths.users.eric_Password_Disable)
+    assert wait_on_element(driver, 7, xpaths.users.eric_Password_Disable)
 
 
 @then('Updated value should be visible')
