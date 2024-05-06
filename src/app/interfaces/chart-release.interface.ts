@@ -71,7 +71,11 @@ export interface ChartRelease {
   chart_schema: ChartSchema;
   history: Record<string, ChartReleaseVersion>;
   resources?: ChartResources;
-  stats?: ChartReleaseStats;
+}
+
+export interface ChartStatisticsUpdate {
+  id: string;
+  stats: ChartReleaseStats;
 }
 
 export interface ChartReleaseStats {

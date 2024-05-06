@@ -28,20 +28,20 @@
   ></ix-app-status-cell>
 </div>
 <div class="cell cell-cpu" [matTooltip]="'Percentage of total core utilization' | translate">
-  <span *ngIf="app.stats && app.stats.cpu !== undefined; else notAvailable">
-    {{ app.stats.cpu.toFixed(0) }}%
+  <span *ngIf="stats && stats.cpu !== undefined; else notAvailable">
+    {{ stats.cpu.toFixed(0) }}%
   </span>
 </div>
 <div class="cell cell-ram" [matTooltip]="'Memory usage of app' | translate">
-  <span *ngIf="app.stats && app.stats.memory !== undefined; else notAvailable">
-    {{ app.stats.memory | ixFileSize }}
+  <span *ngIf="stats && stats.memory !== undefined; else notAvailable">
+    {{ stats.memory | ixFileSize }}
   </span>
 </div>
 <div class="cell cell-network" [matTooltip]="'Incoming / Outgoing network traffic' | translate">
-  <span *ngIf="app.stats && app.stats.network?.incoming !== undefined; else notAvailable">
-    {{ app.stats.network.incoming | ixFileSize: { baseUnit: 'b', base: 10 } }}/s
+  <span *ngIf="stats && stats.network?.incoming !== undefined; else notAvailable">
+    {{ stats.network.incoming | ixFileSize: { baseUnit: 'b', base: 10 } }}/s
     -
-    {{ app.stats.network.outgoing | ixFileSize: { baseUnit: 'b', base: 10 } }}/s
+    {{ stats.network.outgoing | ixFileSize: { baseUnit: 'b', base: 10 } }}/s
   </span>
 </div>
 <div class="cell cell-update">
