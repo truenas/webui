@@ -54,8 +54,7 @@ def the_browser_is_open_navigate_to_the_scale_url_and_login(driver, nas_ip, root
 def on_the_dashboard_get_the_ssh_host_key(driver, root_password, nas_ip):
     """on the Dashboard, get the ssh host key."""
     global hostkey_before
-    assert wait_on_element(driver, 10, xpaths.dashboard.title)
-    assert wait_on_element(driver, 10, xpaths.dashboard.system_Info_Card_Title)
+    rsc.Verify_The_Dashboard(driver)
     results = ssh_cmd('ssh-keyscan 127.0.0.1', 'root', root_password, nas_ip)
     assert results['result'], results['output']
     hostkey_before = results['output']

@@ -59,7 +59,7 @@ def on_the_dashboard_click_network_on_the_left_sidebar(driver):
     assert wait_on_element(driver, 7, xpaths.dashboard.title)
     if wait_on_element(driver, 2, '//button[@ix-auto="button__I AGREE"]', 'clickable'):
         driver.find_element_by_xpath('//button[@ix-auto="button__I AGREE"]').click()
-    assert wait_on_element(driver, 10, xpaths.dashboard.system_Info_Card_Title)
+    assert wait_on_element(driver, 10, xpaths.dashboard.help_Card_Title)
     assert wait_on_element(driver, 5, xpaths.side_Menu.network, 'clickable')
     driver.find_element_by_xpath(xpaths.side_Menu.network).click()
     assert wait_on_element_disappear(driver, 20, xpaths.popup.please_Wait)

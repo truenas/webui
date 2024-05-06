@@ -51,8 +51,7 @@ def the_login_page_appear_enter_root_and_password(driver, admin_user, password):
 @then('you should see the dashboard and the System Information')
 def you_should_see_the_dashboard_and_the_system_information(driver):
     """you should see the dashboard and the System Information."""
-    assert wait_on_element(driver, 10, xpaths.dashboard.title)
-    assert wait_on_element(driver, 10, xpaths.dashboard.system_Info_Card_Title)
+    rsc.Verify_The_Dashboard(driver)
 
 
 @then('navigate to Storage')

@@ -48,8 +48,7 @@ def the_browser_is_open_the_truenas_url_and_logged_in(driver, nas_ip, root_passw
 @when('you should be on the dashboard')
 def you_should_be_on_the_dashboard(driver):
     """you should be on the dashboard."""
-    assert wait_on_element(driver, 10, xpaths.dashboard.title)
-    assert wait_on_element(driver, 10, xpaths.dashboard.system_Info_Card_Title)
+    rsc.Verify_The_Dashboard(driver)
 
 
 @then('click on the Credentials on the side menu, click on Local Users')

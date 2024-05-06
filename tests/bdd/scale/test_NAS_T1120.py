@@ -54,8 +54,7 @@ def the_browser_is_open_the_truenas_url_and_logged_in(driver, root_password, nas
 @when('on the dashboard, click on Shares on the left sidebar')
 def on_the_dashboard_click_on_shares_on_the_left_sidebar(driver):
     """on the dashboard, click on Shares on the left sidebar."""
-    assert wait_on_element(driver, 7, xpaths.dashboard.title)
-    assert wait_on_element(driver, 10, xpaths.dashboard.system_Info_Card_Title)
+    rsc.Verify_The_Dashboard(driver)
     assert wait_on_element(driver, 5, xpaths.side_Menu.shares, 'clickable')
     driver.find_element_by_xpath(xpaths.side_Menu.shares).click()
 
