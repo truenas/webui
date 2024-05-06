@@ -77,6 +77,9 @@ export class WidgetGroupFormComponent {
       next: (type) => {
         this.group.slots[this.selectedSlot].type = type;
         this.settingsContainer?.clear();
+        if (!widgetRegistry[type].settingsComponent) {
+          return;
+        }
         this.settingsContainer.createComponent(
           widgetRegistry[type].settingsComponent,
           { injector: this.getInjector() },
