@@ -1,5 +1,3 @@
-import { WidgetCategory } from 'app/pages/dashboard/types/widget-category.enum';
-
 /**
  * Note!
  * Before editing or removing a WidgetType,
@@ -23,7 +21,6 @@ export enum SlotSize {
 
 export interface Widget {
   type: WidgetType;
-  category: WidgetCategory;
   settings?: SomeWidgetSettings;
 }
 

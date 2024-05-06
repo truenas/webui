@@ -14,7 +14,13 @@ import { ChainedRef } from 'app/modules/ix-forms/components/ix-slide-in/chained-
 import { SlotPosition } from 'app/pages/dashboard/types/slot-position.enum';
 import { WidgetCategory, widgetCategoryLabels } from 'app/pages/dashboard/types/widget-category.enum';
 import {
-  WidgetGroup, WidgetGroupLayout, layoutToSlotSizes, widgetGroupIcons,
+  FormWidgetGroup,
+  WidgetGroup,
+  WidgetGroupLayout,
+  formWidgetGroupToWidgetGroup,
+  layoutToSlotSizes,
+  widgetGroupIcons,
+  widgetGroupToFormWidgetGroup,
 } from 'app/pages/dashboard/types/widget-group.interface';
 import { WidgetSettingsRef } from 'app/pages/dashboard/types/widget-settings-ref.interface';
 import { WidgetType } from 'app/pages/dashboard/types/widget.interface';
@@ -34,7 +40,7 @@ interface SimpleWidget {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class WidgetGroupFormComponent implements AfterViewInit {
-  protected group: WidgetGroup;
+  protected group: FormWidgetGroup;
   protected selectedSlot = signal(SlotPosition.First);
   @ViewChild('settingsContainer', { static: true, read: ViewContainerRef }) settingsContainer: ViewContainerRef;
 
@@ -103,11 +109,12 @@ export class WidgetGroupFormComponent implements AfterViewInit {
   }
 
   setInitialFormValues(): void {
-    this.group = this.chainedRef.getData();
-    if (!this.group) {
+    const widgetGroup = this.chainedRef.getData();
+    if (!widgetGroup) {
       this.group = { layout: WidgetGroupLayout.Full, slots: [{ category: null, type: null }] };
       return;
     }
+    this.group = widgetGroupToFormWidgetGroup(widgetGroup);
     this.form.controls.layout.setValue(this.group.layout);
     for (let i = 0; i < this.group.slots.length; i++) {
       this.selectedSlotChanged(i);
@@ -233,7 +240,7 @@ export class WidgetGroupFormComponent implements AfterViewInit {
   onSubmit(): void {
     // console.log('group', this.group);
     this.chainedRef.close({
-      response: this.group,
+      response: formWidgetGroupToWidgetGroup(this.group),
       error: false,
     });
   }
