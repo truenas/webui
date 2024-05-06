@@ -1,3 +1,6 @@
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
+import { WidgetCategory } from 'app/pages/dashboard/types/widget-category.enum';
+
 /**
  * Note!
  * Before editing or removing a WidgetType,
@@ -12,6 +15,13 @@ export enum WidgetType {
   Memory = 'memory',
 }
 
+export const widgetTypeLabels = new Map<WidgetType, string>([
+  [WidgetType.Help, T('Help')],
+  [WidgetType.InterfaceIp, T('Interface')],
+  [WidgetType.Hostname, T('Hostname')],
+  [WidgetType.Memory, T('Memory')],
+]);
+
 export enum SlotSize {
   Full = 'full',
   Half = 'half',
@@ -20,6 +30,7 @@ export enum SlotSize {
 
 export interface Widget {
   type: WidgetType;
+  category: WidgetCategory;
   settings?: SomeWidgetSettings;
 }
 

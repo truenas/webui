@@ -1,6 +1,5 @@
 import { InputSignal, Type } from '@angular/core';
 import { WidgetCategory } from 'app/pages/dashboard/types/widget-category.enum';
-import { WidgetSettingsDirective } from 'app/pages/dashboard/types/widget-settings.directive';
 import {
   SomeWidgetSettings, SlotSize,
 } from 'app/pages/dashboard/types/widget.interface';
@@ -20,7 +19,7 @@ export type WidgetComponent<Settings extends SomeWidgetSettings = null> =
     : WidgetComponentWithSettings<Settings>;
 
 type WidgetSettingsComponentType<Settings> = Settings extends SomeWidgetSettings
-  ? WidgetSettingsDirective<Settings>
+  ? Settings
   : null;
 
 export interface WidgetDefinition<

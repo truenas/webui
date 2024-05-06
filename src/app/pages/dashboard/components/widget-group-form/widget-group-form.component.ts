@@ -1,19 +1,21 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, Injector, ViewChild, ViewContainerRef, signal,
 } from '@angular/core';
-import { FormControl, Validators } from '@angular/forms';
+import {
+  FormBuilder, ValidationErrors, Validators,
+} from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import {
   Observable, filter, of, tap,
 } from 'rxjs';
 import { Option } from 'app/interfaces/option.interface';
 import { ChainedRef } from 'app/modules/ix-forms/components/ix-slide-in/chained-component-ref';
-import { WidgetGroupFormStore } from 'app/pages/dashboard/components/widget-group-form/widget-group-form.store';
-import { WidgetCategory } from 'app/pages/dashboard/types/widget-category.enum';
+import { WidgetCategory, widgetCategoryLabels } from 'app/pages/dashboard/types/widget-category.enum';
 import {
   WidgetGroup, WidgetGroupLayout, layoutToSlotSizes, widgetGroupIcons,
 } from 'app/pages/dashboard/types/widget-group.interface';
-import { WidgetType } from 'app/pages/dashboard/types/widget.interface';
+import { WidgetSettingsRef } from 'app/pages/dashboard/types/widget-settings-ref.interface';
+import { Widget, WidgetType, widgetTypeLabels } from 'app/pages/dashboard/types/widget.interface';
 import { widgetRegistry } from 'app/pages/dashboard/widgets/all-widgets.constant';
 
 @UntilDestroy()
@@ -21,19 +23,31 @@ import { widgetRegistry } from 'app/pages/dashboard/widgets/all-widgets.constant
   selector: 'ix-widget-group-form',
   templateUrl: './widget-group-form.component.html',
   styleUrls: ['./widget-group-form.component.scss'],
-  providers: [
-    WidgetGroupFormStore,
-  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class WidgetGroupFormComponent {
   protected group: WidgetGroup;
   protected selectedSlot = 0;
+  @ViewChild('settingsContainer', { static: true, read: ViewContainerRef }) settingsContainer: ViewContainerRef;
 
-  protected readonly template = new FormControl('');
-  protected readonly layout = new FormControl(WidgetGroupLayout.Full, [Validators.required]);
-  protected readonly category = new FormControl(null as WidgetCategory, [Validators.required]);
-  protected readonly type = new FormControl(null as WidgetType, [Validators.required]);
+  validationErrors = signal([
+    {} as ValidationErrors,
+    {} as ValidationErrors,
+    {} as ValidationErrors,
+    {} as ValidationErrors,
+  ]);
+
+  form = this.fb.group({
+    template: [''],
+    layout: [WidgetGroupLayout.Full as WidgetGroupLayout, [Validators.required]],
+    category: [null as WidgetCategory, [Validators.required]],
+    type: [null as WidgetType, [Validators.required]],
+  });
+
+  get hasErrors(): boolean {
+    return this.form.invalid || !!this.validationErrors().some((errors) => !!Object.keys(errors).length);
+  }
+
   protected readonly layoutsMap = widgetGroupIcons;
   protected readonly widgetRegistry = widgetRegistry;
 
@@ -46,7 +60,7 @@ export class WidgetGroupFormComponent {
   constructor(
     protected chainedRef: ChainedRef<WidgetGroup>,
     private cdr: ChangeDetectorRef,
-    protected widgetGroupFormStore: WidgetGroupFormStore,
+    private fb: FormBuilder,
   ) {
     this.setCategoryOptions();
     this.setInitialFormValues();
@@ -56,25 +70,68 @@ export class WidgetGroupFormComponent {
   }
 
   setupTypeUpdate(): void {
-    this.type.valueChanges.pipe(
+    this.form.controls.type.valueChanges.pipe(
       filter(Boolean),
       untilDestroyed(this),
     ).subscribe({
       next: (type) => {
-        this.widgetGroupFormStore.setType({ slotIndex: this.selectedSlot, type });
+        this.group.slots[this.selectedSlot].type = type;
+        this.settingsContainer?.clear();
+        this.settingsContainer.createComponent(
+          widgetRegistry[type].settingsComponent,
+          { injector: this.getInjector() },
+        );
       },
+    });
+  }
+
+  getInjector(): Injector {
+    return Injector.create({
+      providers: [
+        {
+          provide: WidgetSettingsRef,
+          useValue: {
+            getData: () => ({
+              slot: this.selectedSlot,
+              settings: this.group.slots[this.selectedSlot].settings,
+            }),
+            updateSettings: (slot: number, settings: object): void => {
+              this.group.slots[slot].settings = settings;
+            },
+            updateValidity: (slot: number, errors: ValidationErrors[]): void => {
+              if (!errors) {
+                this.validationErrors.update((previousErrors) => {
+                  return previousErrors.map((prevError, index) => (index === slot ? {} : prevError));
+                });
+                return;
+              }
+              this.validationErrors.update((previousErrors) => {
+                return previousErrors.map((prevError, index) => (index === slot ? errors : prevError));
+              });
+            },
+          } as WidgetSettingsRef,
+        },
+      ],
     });
   }
 
   setInitialFormValues(): void {
     this.group = this.chainedRef.getData();
-    this.layout.setValue(this.group.layout);
+    if (!this.group) {
+      this.group = { layout: WidgetGroupLayout.Full, slots: [{ category: null, type: null }] };
+      return;
+    }
+    this.form.controls.layout.setValue(this.group.layout);
+    for (let i = 0; i < this.group.slots.length; i++) {
+      this.selectedSlot = i;
+      this.form.controls.category.setValue(this.group.slots[i].category);
+      this.form.controls.type.setValue(this.group.slots[i].type);
+    }
   }
 
   setupLayoutUpdates(): void {
-    this.layout.valueChanges.pipe(
+    this.form.controls.layout.valueChanges.pipe(
       tap((layout) => {
-        this.widgetGroupFormStore.setLayout(layout);
         this.group = { ...this.group, layout };
         this.resetSlot();
         this.cdr.markForCheck();
@@ -84,10 +141,13 @@ export class WidgetGroupFormComponent {
   }
 
   setupCategoryUpdate(): void {
-    this.category.valueChanges.pipe(
+    this.form.controls.category.valueChanges.pipe(
       filter(Boolean),
       tap((category) => {
-        this.widgetGroupFormStore.setCategory({ slotIndex: this.selectedSlot, category });
+        if (!this.group.slots[this.selectedSlot]) {
+          this.group.slots[this.selectedSlot] = { category: null, type: null };
+        }
+        this.group.slots[this.selectedSlot].category = category;
         this.setWidgetTypeOptions(category);
       }),
       untilDestroyed(this),
@@ -100,62 +160,52 @@ export class WidgetGroupFormComponent {
   }
 
   resetSlot(): void {
-    this.category.setValue(null);
-    this.type.setValue(null);
+    this.form.controls.category.setValue(null);
+    this.form.controls.type.setValue(null);
     this.setCategoryOptions();
   }
 
-  getEnumKeyByEnumValue<T extends Record<string, string>>(
-    myEnum: T,
-    enumValue: string,
-  ): keyof T | null {
-    const keys = Object.keys(myEnum).filter((x) => myEnum[x] === enumValue);
-    return keys.length > 0 ? keys[0] : null;
-  }
-
   setCategoryOptions(): void {
-    const widgets = Object.values(widgetRegistry);
-    const categories = new Map<keyof typeof WidgetCategory, WidgetCategory>();
-    const layout = this.layout.value;
-    const slotIndex = this.selectedSlot;
-    const slotSize = layoutToSlotSizes[layout][slotIndex];
-    for (const widget of widgets) {
-      if (widget.supportedSizes.includes(slotSize)) {
-        const categoryName = this.getEnumKeyByEnumValue(WidgetCategory, widget.category);
-        categories.set(categoryName as keyof typeof WidgetCategory, widget.category);
-      }
-    }
-    this.widgetCategoriesOptions$ = of(
-      Array.from(categories.entries()).map(
-        ([key, value]) => {
-          return ({ label: key, value });
-        },
-      ),
-    );
-  }
+    const layoutSupportedWidgets = this.getLayoutSupportedWidgets() as Widget[];
+    const uniqCategories = new Set(layoutSupportedWidgets.map((widget) => widget.category));
 
-  setWidgetTypeOptions(category: WidgetCategory): void {
-    const layout = this.layout.value;
-    const slotIndex = this.selectedSlot;
-    const slotSize = layoutToSlotSizes[layout][slotIndex];
-
-    const sizeSuitedTypes = Object.values(WidgetType).filter((type) => {
-      const widget = widgetRegistry[type];
-      if (widget.category === category && widget.supportedSizes.includes(slotSize)) {
-        return true;
-      }
-
-      return false;
-    });
-
-    this.widgetTypesOptions$ = of(sizeSuitedTypes.map((type) => {
-      return { label: this.getEnumKeyByEnumValue(WidgetType, type), value: type };
+    this.widgetCategoriesOptions$ = of(Array.from(uniqCategories).map((category) => {
+      return {
+        label: widgetCategoryLabels.get(category) || category,
+        value: category,
+      };
     }));
   }
 
+  setWidgetTypeOptions(category: WidgetCategory): void {
+    this.form.controls.type.setValue(null);
+    const layoutSupportedWidgets = this.getLayoutSupportedWidgets() as Widget[];
+    const categoryWidgets = layoutSupportedWidgets.filter((widget) => widget.category === category);
+    const uniqTypes = new Set(categoryWidgets.map((widget) => widget.type));
+
+    const options = Array.from(uniqTypes).map((type) => {
+      return {
+        label: widgetTypeLabels.get(type) || type,
+        value: type,
+      };
+    });
+    this.widgetTypesOptions$ = of(options);
+  }
+
+  getLayoutSupportedWidgets(): { type: WidgetType; category: WidgetCategory; [key: string]: unknown }[] {
+    const widgetsEntires = Object.entries(widgetRegistry);
+    const layout = this.form.controls.layout.value;
+    const slotSize = layoutToSlotSizes[layout][this.selectedSlot];
+
+    return widgetsEntires.filter(
+      ([, widget]) => widget.supportedSizes.includes(slotSize),
+    ).map(([type, widget]) => ({ ...widget, type: type as WidgetType }));
+  }
+
   onSubmit(): void {
+    // console.log('group', this.group);
     this.chainedRef.close({
-      response: this.widgetGroupFormStore.state(),
+      response: this.group,
       error: false,
     });
   }

@@ -1,5 +1,7 @@
-<ix-input
-  [label]="'Interface IP' | translate"
-  [formControl]="interfaceIp"
-  [required]="true"
-></ix-input>
+<form [formGroup]="form">
+  <ix-input
+    formControlName="interfaceIp"
+    [label]="'Interface IP' | translate"
+    [required]="true"
+  ></ix-input>
+</form>

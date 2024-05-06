@@ -20,3 +20,7 @@ export const widgetRegistry = {
   [WidgetType.Help]: helpWidget,
   [WidgetType.Memory]: memoryWidget,
 };
+
+const widgets = Object.values(widgetRegistry);
+
+export type WidgetsType = typeof widgets;

@@ -1,14 +1,10 @@
 import {
-  ChangeDetectionStrategy, Component,
+  ChangeDetectionStrategy, Component, OnInit,
 } from '@angular/core';
-import {
-  FormControl, ValidationErrors, Validators,
-} from '@angular/forms';
-import { UntilDestroy } from '@ngneat/until-destroy';
-import {
-  Observable, distinctUntilChanged, map,
-} from 'rxjs';
-import { WidgetSettingsDirective } from 'app/pages/dashboard/types/widget-settings.directive';
+import { ValidationErrors, Validators } from '@angular/forms';
+import { FormBuilder } from '@ngneat/reactive-forms';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { WidgetSettingsRef } from 'app/pages/dashboard/types/widget-settings-ref.interface';
 import {
   WidgetInterfaceIpSettings,
 } from 'app/pages/dashboard/widgets/network/widget-interface-ip/widget-interface-ip.definition';
@@ -19,25 +15,53 @@ import {
   templateUrl: './widget-interface-ip-settings.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class WidgetInterfaceIpSettingsComponent extends WidgetSettingsDirective<WidgetInterfaceIpSettings> {
-  readonly interfaceIp: FormControl<string> = new FormControl<string>(null as string, [Validators.required]);
+export class WidgetInterfaceIpSettingsComponent implements WidgetInterfaceIpSettings, OnInit {
+  // TODO: forced implementation of settings object means this interface property has to be here. But it is not needed
+  interface: string;
+  form = this.fb.group({
+    interfaceIp: [null as string, [Validators.required]],
+  });
+  slot: number;
 
-  override getFormValidationErrors(): ValidationErrors {
-    this.interfaceIp.updateValueAndValidity();
-    return this.interfaceIp.errors;
+  constructor(
+    private widgetSettingsRef: WidgetSettingsRef,
+    private fb: FormBuilder,
+  ) {
+    const data = this.widgetSettingsRef.getData();
+    this.slot = data.slot;
   }
 
-  override getFormUpdater(): Observable<WidgetInterfaceIpSettings> {
-    return this.interfaceIp.valueChanges.pipe(
-      distinctUntilChanged(),
-      map((interfaceIp) => ({ interface: interfaceIp })),
-    );
+  ngOnInit(): void {
+    this.setCurrentSettings();
+    this.setupSettingsUpdate();
   }
 
-  override updateSettingsInStore(): void {
-    this.widgetGroupFormStore.setSettings({
-      slotIndex: this.slotIndex(),
-      settings: { interface: this.interfaceIp.value },
+  private setCurrentSettings(): void {
+    const settings = this.widgetSettingsRef.getData() as { slot: number; settings: WidgetInterfaceIpSettings };
+    if (!settings.settings) {
+      return;
+    }
+    this.form.controls.interfaceIp.setValue(settings.settings.interface);
+  }
+
+  private setupSettingsUpdate(): void {
+    this.widgetSettingsRef.updateValidity(this.slot, this.getAllFormErrors());
+    this.form.valueChanges.pipe(untilDestroyed(this)).subscribe({
+      next: (settings) => {
+        this.widgetSettingsRef.updateSettings(this.slot, settings);
+        this.widgetSettingsRef.updateValidity(this.slot, this.getAllFormErrors());
+      },
     });
+  }
+
+  private getAllFormErrors(): Record<string, ValidationErrors> {
+    let errorsByName: Record<string, ValidationErrors> = {};
+    const fields = ['interfaceIp'] as const;
+    for (const field of fields) {
+      if (this.form.controls[field].errors) {
+        errorsByName = { ...errorsByName, [field]: this.form.controls[field].errors };
+      }
+    }
+    return errorsByName;
   }
 }
