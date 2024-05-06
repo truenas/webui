@@ -1,7 +1,7 @@
 import {
   ChangeDetectionStrategy, Component, OnInit,
 } from '@angular/core';
-import { ValidationErrors, Validators } from '@angular/forms';
+import { Validators } from '@angular/forms';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { WidgetSettingsRef } from 'app/pages/dashboard/types/widget-settings-ref.interface';
@@ -20,8 +20,10 @@ export class WidgetInterfaceIpSettingsComponent implements WidgetInterfaceIpSett
   interface: string;
   form = this.fb.group({
     interfaceIp: [null as string, [Validators.required]],
+    name: [''],
   });
 
+  private readonly formFieldNames = ['interfaceIp'];
   constructor(
     private widgetSettingsRef: WidgetSettingsRef,
     private fb: FormBuilder,
@@ -41,23 +43,16 @@ export class WidgetInterfaceIpSettingsComponent implements WidgetInterfaceIpSett
   }
 
   private setupSettingsUpdate(): void {
-    this.widgetSettingsRef.updateValidity(this.getAllFormErrors());
+    this.widgetSettingsRef.updateValidity(
+      this.widgetSettingsRef.getAllFormErrors(this.form, this.formFieldNames),
+    );
     this.form.valueChanges.pipe(untilDestroyed(this)).subscribe({
       next: (settings) => {
         this.widgetSettingsRef.updateSettings({ interface: settings.interfaceIp });
-        this.widgetSettingsRef.updateValidity(this.getAllFormErrors());
+        this.widgetSettingsRef.updateValidity(
+          this.widgetSettingsRef.getAllFormErrors(this.form, this.formFieldNames),
+        );
       },
     });
-  }
-
-  private getAllFormErrors(): Record<string, ValidationErrors> {
-    let errorsByName: Record<string, ValidationErrors> = {};
-    const fields = ['interfaceIp'] as const;
-    for (const field of fields) {
-      if (this.form.controls[field].errors) {
-        errorsByName = { ...errorsByName, [field]: this.form.controls[field].errors };
-      }
-    }
-    return errorsByName;
   }
 }
