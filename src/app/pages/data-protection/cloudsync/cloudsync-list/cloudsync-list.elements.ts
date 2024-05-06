@@ -6,10 +6,11 @@ export const cloudSyncListElements = {
   anchorRouterLink: ['/data-protection', 'cloudsync'],
   elements: {
     tasks: {
-      synonyms: [T('Tasks')],
+      synonyms: [T('Data Protection'), T('Tasks')],
     },
     add: {
       hierarchy: [T('Add')],
+      synonyms: [T('Add Cloud Sync Task')],
     },
   },
 } satisfies UiSearchableElement;

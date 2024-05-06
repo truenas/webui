@@ -6,10 +6,11 @@ export const rsyncTaskListElements = {
   anchorRouterLink: ['/data-protection', 'rsync'],
   elements: {
     tasks: {
-      synonyms: [T('Tasks')],
+      synonyms: [T('Data Protection'), T('Tasks')],
     },
     add: {
       hierarchy: [T('Add')],
+      synonyms: [T('Add Rsync Task')],
     },
   },
 } satisfies UiSearchableElement;

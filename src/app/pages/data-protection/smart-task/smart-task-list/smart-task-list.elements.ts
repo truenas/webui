@@ -6,10 +6,11 @@ export const smartTaskListElements = {
   anchorRouterLink: ['/data-protection', 'smart'],
   elements: {
     tasks: {
-      synonyms: [T('Tasks'), T('Smart'), T('S.M.A.R.T.')],
+      synonyms: [T('Data Protection'), T('Tasks'), T('Smart'), T('S.M.A.R.T.')],
     },
     add: {
       hierarchy: [T('Add')],
+      synonyms: [T('Add Periodic S.M.A.R.T. Test'), T('Add Smart Test')],
     },
   },
 } satisfies UiSearchableElement;

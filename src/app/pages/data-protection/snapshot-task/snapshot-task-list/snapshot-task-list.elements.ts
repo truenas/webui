@@ -6,10 +6,11 @@ export const snapshotTaskListElements = {
   anchorRouterLink: ['/data-protection', 'snapshot'],
   elements: {
     tasks: {
-      synonyms: [T('Tasks')],
+      synonyms: [T('Data Protection'), T('Tasks')],
     },
     add: {
       hierarchy: [T('Add')],
+      synonyms: [T('Add Periodic Snapshot Task')],
     },
   },
 } satisfies UiSearchableElement;
