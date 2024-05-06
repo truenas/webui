@@ -16,8 +16,14 @@ import {
   WidgetGroup, WidgetGroupLayout, layoutToSlotSizes, widgetGroupIcons,
 } from 'app/pages/dashboard/types/widget-group.interface';
 import { WidgetSettingsRef } from 'app/pages/dashboard/types/widget-settings-ref.interface';
-import { Widget, WidgetType, widgetTypeLabels } from 'app/pages/dashboard/types/widget.interface';
+import { WidgetType, widgetTypeLabels } from 'app/pages/dashboard/types/widget.interface';
 import { widgetRegistry } from 'app/pages/dashboard/widgets/all-widgets.constant';
+
+interface SimpleWidget {
+  category: WidgetCategory;
+  type: WidgetType;
+  [key: string]: unknown;
+}
 
 @UntilDestroy()
 @Component({
@@ -184,7 +190,7 @@ export class WidgetGroupFormComponent implements AfterViewInit {
   }
 
   setCategoryOptions(): void {
-    const layoutSupportedWidgets = this.getLayoutSupportedWidgets() as Widget[];
+    const layoutSupportedWidgets = this.getLayoutSupportedWidgets();
     const uniqCategories = new Set(layoutSupportedWidgets.map((widget) => widget.category));
 
     this.widgetCategoriesOptions$ = of(Array.from(uniqCategories).map((category) => {
@@ -197,7 +203,7 @@ export class WidgetGroupFormComponent implements AfterViewInit {
 
   setTypeOptions(category: WidgetCategory): void {
     this.form.controls.type.setValue(null);
-    const layoutSupportedWidgets = this.getLayoutSupportedWidgets() as Widget[];
+    const layoutSupportedWidgets = this.getLayoutSupportedWidgets();
     const categoryWidgets = layoutSupportedWidgets.filter((widget) => widget.category === category);
     const uniqTypes = new Set(categoryWidgets.map((widget) => widget.type));
 
@@ -210,7 +216,7 @@ export class WidgetGroupFormComponent implements AfterViewInit {
     this.widgetTypesOptions$ = of(options);
   }
 
-  getLayoutSupportedWidgets(): { type: WidgetType; category: WidgetCategory; [key: string]: unknown }[] {
+  getLayoutSupportedWidgets(): SimpleWidget[] {
     const widgetsEntires = Object.entries(widgetRegistry);
     const layout = this.form.controls.layout.value;
     const slotSize = layoutToSlotSizes[layout][this.selectedSlot];
