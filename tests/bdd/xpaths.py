@@ -550,29 +550,35 @@ class progress:
 
 class services:
     title = '//h1[text()="Services"]'
-    CHECKBOX = '//mat-checkbox'
-    TOGGLE = '//button[@role="switch"]'
-    BUTTON = '//button[@aria-label="Edit"]'
 
     def service_Tr(serivce):
         return f'//tr[contains(.,"{serivce}")]'
 
+    def service_autostart(serivce: str) -> str:
+        return f'//*[@data-test="toggle-start-automatically-service-{serivce}-row-toggle"]'
+
+    def service_edit_button(serivce: str) -> str:
+        return f'//*[@data-test="button-service-{serivce}-edit-row-action"]'
+
+    def service_running(serivce: str) -> str:
+        return f'//*[@data-test="toggle-running-service-{serivce}-row-toggle"]'
+
     iscsi_Service = service_Tr('iSCSI')
-    iscsi_Service_Button = iscsi_Service + BUTTON
-    iscsi_Service_Checkbox = iscsi_Service + CHECKBOX
-    iscsi_Service_Toggle = iscsi_Service + TOGGLE
+    iscsi_edit_button = service_edit_button('iscsi')
+    iscsi_autostart_toggle = service_autostart('iscsi')
+    iscsi_running_toggle = service_running('iscsi')
     nfs_Service = service_Tr('NFS')
-    nfs_Service_Button = nfs_Service + BUTTON
-    nfs_Service_Checkbox = nfs_Service + CHECKBOX
-    nfs_Service_Toggle = nfs_Service + TOGGLE
+    nfs_edit_button = service_edit_button('nfs')
+    nfs_autostart_toggle = service_autostart('nfs')
+    nfs_running_toggle = service_running('nfs')
     smb_Service = service_Tr('SMB')
-    smb_Service_Button = smb_Service + BUTTON
-    smb_Service_Checkbox = smb_Service + CHECKBOX
-    smb_Service_Toggle = smb_Service + TOGGLE
+    smb_edit_button = service_edit_button('smb')
+    smb_autostart_toggle = service_autostart('smb')
+    smb_running_toggle = service_running('smb')
     ssh_Service = service_Tr('SSH')
-    ssh_Service_Button = ssh_Service + BUTTON
-    ssh_Service_Checkbox = ssh_Service + CHECKBOX
-    ssh_Service_Toggle = ssh_Service + TOGGLE
+    ssh_edit_button = service_edit_button('ssh')
+    ssh_autostart_toggle = service_autostart('ssh')
+    ssh_running_toggle = service_running('ssh')
 
 
 class sharing:
