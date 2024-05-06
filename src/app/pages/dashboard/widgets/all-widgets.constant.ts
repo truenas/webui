@@ -23,7 +23,3 @@ export const widgetRegistry = {
   [WidgetType.Memory]: memoryWidget,
   [WidgetType.Cpu]: cpuWidget,
 };
-
-const widgets = Object.values(widgetRegistry);
-
-export type WidgetsType = typeof widgets;
