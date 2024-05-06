@@ -149,6 +149,7 @@ export class WidgetGroupFormComponent implements AfterViewInit {
     this.form.controls.layout.valueChanges.pipe(
       tap((layout) => {
         this.group = { ...this.group, layout };
+        this.selectedLayout.set(layout);
         this.cdr.markForCheck();
       }),
       untilDestroyed(this),
@@ -240,7 +241,6 @@ export class WidgetGroupFormComponent implements AfterViewInit {
   }
 
   onSubmit(): void {
-    // console.log('group', this.group);
     this.chainedRef.close({
       response: formWidgetGroupToWidgetGroup(this.group),
       error: false,
