@@ -48,13 +48,7 @@
       <ng-container #settingsContainer></ng-container>
     </ix-fieldset>
   </div>
-  <ix-form-actions class="form-actions">
-    <button
-      mat-button
-      type="button"
-      [ixTest]="['cancel-add-widget-group-btn']"
-      (click)="chainedRef.close({ response: false, error: null })"
-    >{{ 'Cancel' | translate }}</button>
+  <ix-form-actions>
     <button
       mat-button
       type="submit"
@@ -62,5 +56,11 @@
       [ixTest]="['add-widget-group-btn']"
       [disabled]="hasErrors"
     >{{ 'Save' | translate }}</button>
+    <button
+      mat-button
+      type="button"
+      [ixTest]="['cancel-add-widget-group-btn']"
+      (click)="chainedRef.close({ response: false, error: null })"
+    >{{ 'Cancel' | translate }}</button>
   </ix-form-actions>
 </form>

@@ -1,4 +1,5 @@
 import {
+  AfterViewInit,
   ChangeDetectionStrategy, ChangeDetectorRef, Component, Injector, ViewChild, ViewContainerRef, signal,
 } from '@angular/core';
 import {
@@ -25,7 +26,7 @@ import { widgetRegistry } from 'app/pages/dashboard/widgets/all-widgets.constant
   styleUrls: ['./widget-group-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class WidgetGroupFormComponent {
+export class WidgetGroupFormComponent implements AfterViewInit {
   protected group: WidgetGroup;
   protected selectedSlot = 0;
   @ViewChild('settingsContainer', { static: true, read: ViewContainerRef }) settingsContainer: ViewContainerRef;
@@ -62,11 +63,67 @@ export class WidgetGroupFormComponent {
     private cdr: ChangeDetectorRef,
     private fb: FormBuilder,
   ) {
-    this.setCategoryOptions();
-    this.setInitialFormValues();
     this.setupLayoutUpdates();
     this.setupCategoryUpdate();
     this.setupTypeUpdate();
+    this.setInitialFormValues();
+  }
+
+  setInitialFormValues(): void {
+    this.group = this.chainedRef.getData();
+    if (!this.group) {
+      this.group = { layout: WidgetGroupLayout.Full, slots: [{ category: null, type: null }] };
+      return;
+    }
+    this.form.controls.layout.setValue(this.group.layout);
+    for (let i = 0; i < this.group.slots.length; i++) {
+      this.selectedSlotChanged(i);
+    }
+    this.selectedSlot = 0;
+  }
+
+  ngAfterViewInit(): void {
+    this.refreshSettingsContainer();
+  }
+
+  private refreshSettingsContainer(): void {
+    if (
+      !this.settingsContainer
+      || !this.group.slots[this.selectedSlot].type
+      || !widgetRegistry[this.group.slots[this.selectedSlot].type].settingsComponent
+    ) {
+      return;
+    }
+    this.settingsContainer.remove();
+    this.settingsContainer.clear();
+    this.settingsContainer.createComponent(
+      widgetRegistry[this.group.slots[this.selectedSlot].type].settingsComponent,
+      { injector: this.getInjector() },
+    );
+  }
+
+  setupLayoutUpdates(): void {
+    this.form.controls.layout.valueChanges.pipe(
+      tap((layout) => {
+        this.group = { ...this.group, layout };
+        this.cdr.markForCheck();
+      }),
+      untilDestroyed(this),
+    ).subscribe();
+  }
+
+  setupCategoryUpdate(): void {
+    this.form.controls.category.valueChanges.pipe(
+      filter(Boolean),
+      tap((category) => {
+        if (!this.group.slots[this.selectedSlot]) {
+          this.group.slots[this.selectedSlot] = { category: null, type: null };
+        }
+        this.group.slots[this.selectedSlot].category = category;
+        this.setTypeOptions(category);
+      }),
+      untilDestroyed(this),
+    ).subscribe();
   }
 
   setupTypeUpdate(): void {
@@ -76,14 +133,7 @@ export class WidgetGroupFormComponent {
     ).subscribe({
       next: (type) => {
         this.group.slots[this.selectedSlot].type = type;
-        this.settingsContainer?.clear();
-        if (!widgetRegistry[type].settingsComponent) {
-          return;
-        }
-        this.settingsContainer.createComponent(
-          widgetRegistry[type].settingsComponent,
-          { injector: this.getInjector() },
-        );
+        this.refreshSettingsContainer();
       },
     });
   }
@@ -118,54 +168,19 @@ export class WidgetGroupFormComponent {
     });
   }
 
-  setInitialFormValues(): void {
-    this.group = this.chainedRef.getData();
-    if (!this.group) {
-      this.group = { layout: WidgetGroupLayout.Full, slots: [{ category: null, type: null }] };
-      return;
-    }
-    this.form.controls.layout.setValue(this.group.layout);
-    for (let i = 0; i < this.group.slots.length; i++) {
-      this.selectedSlot = i;
-      this.form.controls.category.setValue(this.group.slots[i].category);
-      this.form.controls.type.setValue(this.group.slots[i].type);
-    }
-  }
-
-  setupLayoutUpdates(): void {
-    this.form.controls.layout.valueChanges.pipe(
-      tap((layout) => {
-        this.group = { ...this.group, layout };
-        this.resetSlot();
-        this.cdr.markForCheck();
-      }),
-      untilDestroyed(this),
-    ).subscribe();
-  }
-
-  setupCategoryUpdate(): void {
-    this.form.controls.category.valueChanges.pipe(
-      filter(Boolean),
-      tap((category) => {
-        if (!this.group.slots[this.selectedSlot]) {
-          this.group.slots[this.selectedSlot] = { category: null, type: null };
-        }
-        this.group.slots[this.selectedSlot].category = category;
-        this.setWidgetTypeOptions(category);
-      }),
-      untilDestroyed(this),
-    ).subscribe();
-  }
-
   selectedSlotChanged(slotIndex: number): void {
     this.selectedSlot = slotIndex;
-    this.resetSlot();
+    this.setSlotValues();
   }
 
-  resetSlot(): void {
-    this.form.controls.category.setValue(null);
-    this.form.controls.type.setValue(null);
+  private setSlotValues(): void {
+    if (!this.group.slots[this.selectedSlot]) {
+      this.group.slots[this.selectedSlot] = { category: null, type: null };
+    }
     this.setCategoryOptions();
+    this.form.controls.category.setValue(this.group.slots[this.selectedSlot].category);
+    this.form.controls.type.setValue(this.group.slots[this.selectedSlot].type);
+    this.refreshSettingsContainer();
   }
 
   setCategoryOptions(): void {
@@ -180,7 +195,7 @@ export class WidgetGroupFormComponent {
     }));
   }
 
-  setWidgetTypeOptions(category: WidgetCategory): void {
+  setTypeOptions(category: WidgetCategory): void {
     this.form.controls.type.setValue(null);
     const layoutSupportedWidgets = this.getLayoutSupportedWidgets() as Widget[];
     const categoryWidgets = layoutSupportedWidgets.filter((widget) => widget.category === category);

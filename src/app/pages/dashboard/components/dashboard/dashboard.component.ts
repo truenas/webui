@@ -75,7 +75,7 @@ export class DashboardComponent implements OnInit {
   protected onAddGroup(): void {
     const newGroup: WidgetGroup = {
       layout: WidgetGroupLayout.Full,
-      slots: [],
+      slots: [{ category: null, type: null }],
     };
 
     this.renderedGroups.update((groups) => [...groups, newGroup]);

@@ -48,7 +48,7 @@ export class WidgetInterfaceIpSettingsComponent implements WidgetInterfaceIpSett
     this.widgetSettingsRef.updateValidity(this.slot, this.getAllFormErrors());
     this.form.valueChanges.pipe(untilDestroyed(this)).subscribe({
       next: (settings) => {
-        this.widgetSettingsRef.updateSettings(this.slot, settings);
+        this.widgetSettingsRef.updateSettings(this.slot, { interface: settings.interfaceIp });
         this.widgetSettingsRef.updateValidity(this.slot, this.getAllFormErrors());
       },
     });
