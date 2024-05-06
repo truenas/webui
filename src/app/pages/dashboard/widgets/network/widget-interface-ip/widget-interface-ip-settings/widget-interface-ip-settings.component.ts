@@ -4,6 +4,7 @@ import {
 import { Validators } from '@angular/forms';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { WidgetSettingsComponent } from 'app/pages/dashboard/types/widget-component.interface';
 import { WidgetSettingsRef } from 'app/pages/dashboard/types/widget-settings-ref.interface';
 import {
   WidgetInterfaceIpSettings,
@@ -15,9 +16,7 @@ import {
   templateUrl: './widget-interface-ip-settings.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class WidgetInterfaceIpSettingsComponent implements WidgetInterfaceIpSettings, OnInit {
-  // TODO: forced implementation of settings object means this interface property has to be here. But it is not needed
-  interface: string;
+export class WidgetInterfaceIpSettingsComponent implements WidgetSettingsComponent<WidgetInterfaceIpSettings>, OnInit {
   form = this.fb.group({
     interfaceIp: [null as string, [Validators.required]],
     name: [''],
@@ -25,7 +24,7 @@ export class WidgetInterfaceIpSettingsComponent implements WidgetInterfaceIpSett
 
   private readonly formFieldNames = ['interfaceIp'];
   constructor(
-    private widgetSettingsRef: WidgetSettingsRef,
+    public widgetSettingsRef: WidgetSettingsRef<WidgetInterfaceIpSettings>,
     private fb: FormBuilder,
   ) { }
 
@@ -35,11 +34,11 @@ export class WidgetInterfaceIpSettingsComponent implements WidgetInterfaceIpSett
   }
 
   private setCurrentSettings(): void {
-    const settings = this.widgetSettingsRef.getData() as { slot: number; settings: WidgetInterfaceIpSettings };
-    if (!settings?.settings) {
+    const settings = this.widgetSettingsRef.getData();
+    if (!settings) {
       return;
     }
-    this.form.controls.interfaceIp.setValue(settings.settings.interface);
+    this.form.controls.interfaceIp.setValue(settings.interface);
   }
 
   private setupSettingsUpdate(): void {

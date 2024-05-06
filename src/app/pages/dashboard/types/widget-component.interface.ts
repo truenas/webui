@@ -1,5 +1,6 @@
 import { InputSignal, Type } from '@angular/core';
 import { WidgetCategory } from 'app/pages/dashboard/types/widget-category.enum';
+import { WidgetSettingsRef } from 'app/pages/dashboard/types/widget-settings-ref.interface';
 import {
   SomeWidgetSettings, SlotSize,
 } from 'app/pages/dashboard/types/widget.interface';
@@ -18,8 +19,12 @@ export type WidgetComponent<Settings extends SomeWidgetSettings = null> =
     ? WidgetComponentWithoutSettings
     : WidgetComponentWithSettings<Settings>;
 
+export interface WidgetSettingsComponent<Settings extends SomeWidgetSettings = null> {
+  widgetSettingsRef: WidgetSettingsRef<Settings>;
+}
+
 type WidgetSettingsComponentType<Settings> = Settings extends SomeWidgetSettings
-  ? Settings
+  ? WidgetSettingsComponent<Settings>
   : null;
 
 export interface WidgetDefinition<
