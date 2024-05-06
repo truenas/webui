@@ -11,6 +11,7 @@ export enum WidgetType {
   Help = 'help',
   Memory = 'memory',
   BackupTasks = 'backup-tasks',
+  Cpu = 'cpu',
 }
 
 export enum SlotSize {
