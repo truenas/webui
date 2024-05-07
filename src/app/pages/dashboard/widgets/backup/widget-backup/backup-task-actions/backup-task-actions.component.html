@@ -1,6 +1,11 @@
 <ng-container *ngIf="!!allCount(); else noAllCount">
   {{ 'Backup' | translate }}
-  <a *ixRequiresRoles="[Role.CloudSyncWrite]" class="backup-action" ixTest="cloud" (click)="addCloudSyncTask.emit()">
+  <a
+    *ixRequiresRoles="[Role.CloudSyncWrite]"
+    class="backup-action"
+    ixTest="cloud"
+    (click)="addCloudSyncTask.emit()"
+  >
     {{ 'to cloud' | translate }}
   </a>
   {{ 'or' | translate }}
