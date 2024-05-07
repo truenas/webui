@@ -1,15 +1,18 @@
 import {
-  AsyncPipe, NgComponentOutlet, NgForOf, NgIf,
+  CommonModule, NgComponentOutlet, PercentPipe,
 } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButton, MatButtonModule } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
+import { MatGridListModule } from '@angular/material/grid-list';
 import { MatListModule } from '@angular/material/list';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
 import { BaseChartDirective } from 'ng2-charts';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
+import { CoreComponents } from 'app/core/core-components.module';
+import { FormatDateTimePipe } from 'app/core/pipes/format-datetime.pipe';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { ChartsModule } from 'app/modules/charts/charts.module';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
@@ -50,6 +53,8 @@ import { WidgetDatapointComponent } from 'app/pages/dashboard/widgets/common/wid
   providers: [
     DashboardStore,
     WidgetResourcesService,
+    FormatDateTimePipe,
+    PercentPipe,
   ],
   imports: [
     IxFormsModule,
@@ -66,13 +71,13 @@ import { WidgetDatapointComponent } from 'app/pages/dashboard/widgets/common/wid
     routing,
     MatCard,
     IxIconModule,
-    NgIf,
-    NgForOf,
-    AsyncPipe,
+    CommonModule,
+    CoreComponents,
     MatTooltipModule,
     BaseChartDirective,
     MatButtonModule,
     MatCardContent,
+    MatGridListModule,
     NgxSkeletonLoaderModule.forRoot({
       animation: false,
       theme: {
