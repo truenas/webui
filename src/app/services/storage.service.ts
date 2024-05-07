@@ -8,9 +8,6 @@ import { Option } from 'app/interfaces/option.interface';
 import { Disk, TopologyItem } from 'app/interfaces/storage.interface';
 import { WebSocketService } from 'app/services/ws.service';
 
-const specialRedundancyCategories = [VdevType.Dedup, VdevType.Special];
-const redundancyCategories = [...specialRedundancyCategories, VdevType.Data];
-
 @Injectable()
 export class StorageService {
   protected diskResource = 'disk.query' as const;
@@ -155,7 +152,6 @@ export class StorageService {
     category: VdevType,
     vdevs: TopologyItem[],
     disks: Disk[],
-    dataVdevs?: TopologyItem[],
   ): string[] {
     const warnings: string[] = [];
     let isMixedVdevCapacity = false;
@@ -199,13 +195,11 @@ export class StorageService {
       }
 
       // Check Redundancy
-      if (redundancyCategories.includes(category) && this.hasZeroRedundancyLevelVdev(vdevs)) {
+      if (
+        [VdevType.Data, VdevType.Dedup, VdevType.Special].includes(category)
+        && this.hasZeroRedundancyLevelVdev(vdevs)
+      ) {
         warnings.push(TopologyWarning.NoRedundancy);
-      }
-
-      // Check that special & dedup VDEVs have same redundancy level as data VDEVs
-      if (specialRedundancyCategories.includes(category) && this.isSpecialRedundancyMismatch(vdevs, dataVdevs)) {
-        warnings.push(TopologyWarning.RedundancyMismatch);
       }
     }
 

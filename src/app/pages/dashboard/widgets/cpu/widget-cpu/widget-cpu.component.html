@@ -1,0 +1,83 @@
+<mat-card class="card">
+  <mat-card-content class="card-content">
+    <div class="header">
+      <h3>{{ 'CPU' | translate }}</h3>
+
+      <button
+        mat-icon-button
+        ixTest="cpu-go-to-reports"
+        matTooltipPosition="above"
+        [attr.aria-label]="'CPU Reports' | translate"
+        [matTooltip]="'CPU Reports' | translate"
+        [routerLink]="['/reportsdashboard', 'cpu']"
+      >
+        <ix-icon name="insert_chart"></ix-icon>
+      </button>
+    </div>
+
+    <div [class]="['container', size()]">
+      <div class="content">
+        <div class="cpu-model">
+          <span>{{ cpuModel() ? cpuModel() : ('Unknown CPU' | translate) }}</span>
+        </div>
+        <div class="cpu-load-wrapper">
+          <div class="chart-gauge">
+            <ngx-skeleton-loader
+              *ngIf="isLoading(); else gauge"
+              class="skeleton"
+              appearance="circle"
+              [theme]="{ width: '100%', height: '130px', 'aspect-ratio': '1', background: 'var(--alt-bg2)', opacity: 0.25 }"
+            ></ngx-skeleton-loader>
+            <ng-template #gauge>
+              <ix-view-chart-gauge [config]="cpuAvg()"></ix-view-chart-gauge>
+            </ng-template>
+          </div>
+          <mat-list class="cpu-data">
+            <mat-list-item>
+              <span class="label">
+                <strong>{{ 'Cores' | translate }}:</strong>
+              </span>
+              <ng-container *ngIf="!isLoading(); else skeleton">
+                {{ '{coreCount, plural, one {# core} other {# cores} }' | translate: { coreCount: coreCount() } }}
+              </ng-container>
+            </mat-list-item>
+            <mat-list-item>
+              <span class="label">
+                <strong>{{ 'Highest Usage' | translate }}:</strong>
+              </span>
+              <ng-container *ngIf="!isLoading(); else skeleton">
+                {{ highest() }}
+              </ng-container>
+            </mat-list-item>
+            <mat-list-item>
+              <span class="label">
+                <strong>{{ 'Hottest' | translate }}:</strong>
+              </span>
+              <ng-container *ngIf="!isLoading(); else skeleton">
+                {{ hottest() }}
+              </ng-container>
+            </mat-list-item>
+            <ng-template #skeleton>
+              <ngx-skeleton-loader class="skeleton"></ngx-skeleton-loader>
+            </ng-template>
+          </mat-list>
+        </div>
+        <div class="chart">
+          <ngx-skeleton-loader
+            *ngIf="isLoading(); else chart"
+            class="skeleton"
+            [theme]="{ width: '100%', height: '100px', background: 'var(--alt-bg2)', opacity: 0.25 }"
+          ></ngx-skeleton-loader>
+          <ng-template #chart>
+            <canvas
+              baseChart
+              type="bar"
+              [data]="chartData()"
+              [options]="chartOptions()"
+            ></canvas>
+          </ng-template>
+        </div>
+      </div>
+    </div>
+  </mat-card-content>
+</mat-card>

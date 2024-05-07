@@ -96,7 +96,14 @@ describe('TopologyCardComponent', () => {
           repeats: 1,
         }).addLogTopology(2, true, 2)
         .addCacheTopology(2, 2)
-        .addSpareTopology(3, 8);
+        .addSpareTopology(3, 8)
+        .addDedupTopology({
+          scenario: MockStorageScenario.NoRedundancy,
+          layout: TopologyItemType.Stripe,
+          diskSize: 4,
+          width: 1,
+          repeats: 0,
+        });
 
       spectator = createComponent({
         props: {
@@ -109,7 +116,7 @@ describe('TopologyCardComponent', () => {
     it('rendering VDEVs rows', () => {
       const captions = spectator.queryAll('.vdev-line b');
       const values = spectator.queryAll('.vdev-line .vdev-value');
-      expect(spectator.queryAll('.vdev-line .warning ix-icon')).toHaveLength(1);
+      expect(spectator.queryAll('.vdev-line .warning .ix-icon')).toHaveLength(1);
       expect(captions).toHaveLength(6);
       expect(values).toHaveLength(6);
 
@@ -132,7 +139,7 @@ describe('TopologyCardComponent', () => {
       expect(captions[1]).toHaveText('Metadata');
       expect(values[1]).toHaveText('1 x MIRROR | 3 wide | 4 TiB');
       expect(captions[5]).toHaveText('Dedup VDEVs');
-      expect(values[5]).toHaveText('VDEVs not assigned');
+      expect(values[5]).toHaveText('4 x DISK | 1 wide | 4 TiB');
     });
 
     it('rendering status icon', () => {

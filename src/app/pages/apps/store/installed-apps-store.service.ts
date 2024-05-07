@@ -1,7 +1,6 @@
 import { Injectable, OnDestroy } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { ComponentStore } from '@ngrx/component-store';
-import { isEqual } from 'lodash';
 import {
   EMPTY,
   Observable, Subscription, catchError, combineLatest, filter, of, switchMap, tap,
@@ -9,8 +8,9 @@ import {
 import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
 import { ApiEvent } from 'app/interfaces/api-message.interface';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
-import { ChartRelease, ChartReleaseStats } from 'app/interfaces/chart-release.interface';
+import { ChartRelease } from 'app/interfaces/chart-release.interface';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
+import { AppsStatisticsService } from 'app/pages/apps/store/apps-statistics.service';
 import { AppsStore } from 'app/pages/apps/store/apps-store.service';
 import { KubernetesStore } from 'app/pages/apps/store/kubernetes-store.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
@@ -31,13 +31,13 @@ export class InstalledAppsStore extends ComponentStore<InstalledAppsState> imple
   readonly installedApps$ = this.select((state) => state.installedApps);
   readonly isLoading$ = this.select((state) => state.isLoading);
   private installedAppsSubscription: Subscription;
-  private installedAppsStatisticsSubscription: Subscription;
 
   constructor(
     private appsService: ApplicationsService,
     private appsStore: AppsStore,
     private kubernetesStore: KubernetesStore,
     private errorHandler: ErrorHandlerService,
+    private appsStats: AppsStatisticsService,
   ) {
     super(initialState);
     this.initialize();
@@ -161,36 +161,6 @@ export class InstalledAppsStore extends ComponentStore<InstalledAppsState> imple
     ).subscribe();
   }
 
-  private subscribeToInstalledAppsStatisticsUpdates(): void {
-    if (this.installedAppsStatisticsSubscription) {
-      return;
-    }
-
-    this.installedAppsStatisticsSubscription = this.appsService.getInstalledAppsStatisticsUpdates().pipe(
-      tap((apiEvent: ApiEvent<{ id: string; stats: ChartReleaseStats }[]>) => {
-        if (apiEvent.msg === IncomingApiMessageType.Added) {
-          this.patchState((state) => {
-            return {
-              ...state,
-              installedApps: state.installedApps.map((app) => {
-                const appWithUpdatedStats = apiEvent.fields.find((item) => item.id === app.id);
-                if (appWithUpdatedStats && isEqual(appWithUpdatedStats.stats, app.stats)) {
-                  return app;
-                }
-
-                return {
-                  ...app,
-                  stats: appWithUpdatedStats?.stats || app.stats,
-                };
-              }),
-            };
-          });
-        }
-      }),
-      untilDestroyed(this),
-    ).subscribe();
-  }
-
   private loadInstalledApps(): Observable<unknown> {
     return this.kubernetesStore.isLoading$.pipe(
       filter((loading) => !loading),
@@ -207,7 +177,7 @@ export class InstalledAppsStore extends ComponentStore<InstalledAppsState> imple
             });
             if (isKubernetesStarted) {
               this.subscribeToInstalledAppsUpdates();
-              this.subscribeToInstalledAppsStatisticsUpdates();
+              this.appsStats.subscribeToUpdates();
             }
           }),
         ) : of([]);

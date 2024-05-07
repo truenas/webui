@@ -16,13 +16,13 @@
 <button
   *ngIf="tcStatus && tcStatus.status !== TrueCommandStatus.Connecting"
   mat-icon-button
-  id="tc-status"
   class="topbar-button-right truecommand-button"
   ixTest="truecommand-indicator"
   matBadgeSize="small"
   [matTooltip]="tooltips.tc_status | translate"
   [matBadge]="tcsStatusMatBadge"
   [ngClass]="[tcStatus.status]"
+  [ixUiSearch]="searchableElements.elements.trueCommand"
   (click)="handleClick()"
 >
   <ix-icon name="ix:logo_truecommand_white"></ix-icon>
