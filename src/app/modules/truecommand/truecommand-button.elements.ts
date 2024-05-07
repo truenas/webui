@@ -7,6 +7,7 @@ export const trueCommandElements = {
     trueCommand: {
       hierarchy: [T('Status of TrueCommand')],
       synonyms: [T('TrueCommand')],
+      anchor: 'tc-status',
     },
   },
 } satisfies UiSearchableElement;

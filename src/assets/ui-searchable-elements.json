@@ -182,7 +182,7 @@
     ],
     "requiredRoles": [],
     "routerLink": null,
-    "anchor": "status-of-truecommand",
+    "anchor": "tc-status",
     "triggerAnchor": null,
     "section": "ui"
   },
