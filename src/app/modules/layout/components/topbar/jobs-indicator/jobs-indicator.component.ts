@@ -7,6 +7,7 @@ import { helptextTopbar } from 'app/helptext/topbar';
 import { JobsPanelComponent } from 'app/modules/jobs/components/jobs-panel/jobs-panel.component';
 import { jobPanelClosed } from 'app/modules/jobs/store/job.actions';
 import { selectIsJobPanelOpen, selectRunningJobsCount } from 'app/modules/jobs/store/job.selectors';
+import { jobsElements } from 'app/modules/layout/components/topbar/jobs-indicator/jobs-indicator.elements';
 import { topbarDialogPosition } from 'app/modules/layout/components/topbar/topbar-dialog-position.constant';
 import { AppState } from 'app/store';
 import { jobIndicatorPressed } from 'app/store/topbar/topbar.actions';
@@ -22,6 +23,7 @@ export class JobsIndicatorComponent implements OnInit {
 
   jobBadgeCount$ = this.store$.select(selectRunningJobsCount);
   isJobPanelOpen$ = this.store$.select(selectIsJobPanelOpen);
+  protected readonly searchableElements = jobsElements;
 
   constructor(
     private matDialog: MatDialog,
