@@ -1,10 +1,14 @@
 import { Spectator, createComponentFactory } from '@ngneat/spectator/jest';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { BackupTaskActionsComponent } from './backup-task-actions.component';
 
 describe('BackupTaskActionsComponent', () => {
   let spectator: Spectator<BackupTaskActionsComponent>;
   const createComponent = createComponentFactory({
     component: BackupTaskActionsComponent,
+    providers: [
+      mockAuth(),
+    ],
   });
 
   beforeEach(() => {
