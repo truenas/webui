@@ -1,5 +1,6 @@
 import { Inject, Injectable } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import {
   BehaviorSubject, filter, Observable, repeat, Subject, switchMap, take,
@@ -18,7 +19,6 @@ import {
 } from 'app/interfaces/virtual-machine.interface';
 import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { StopVmDialogComponent, StopVmDialogData } from 'app/pages/vm/vm-list/stop-vm-dialog/stop-vm-dialog.component';
 import { DownloadService } from 'app/services/download.service';
@@ -182,34 +182,29 @@ export class VmService {
   }
 
   private doStopJob(vm: VirtualMachine, forceAfterTimeout: boolean): void {
-    const jobDialogRef = this.matDialog.open(
-      EntityJobComponent,
+    this.dialogService.jobDialog(
+      this.ws.job('vm.stop', [vm.id, {
+        force: false,
+        force_after_timeout: forceAfterTimeout,
+      }]),
       {
-        data: {
-          title: this.translate.instant('Stopping {rowName}', { rowName: vm.name }),
-        },
+        title: this.translate.instant('Stopping {rowName}', { rowName: vm.name }),
       },
-    );
-    jobDialogRef.componentInstance.setCall('vm.stop', [vm.id, {
-      force: false,
-      force_after_timeout: forceAfterTimeout,
-    }]);
-    jobDialogRef.componentInstance.submit();
-    jobDialogRef.componentInstance.success.pipe(take(1)).subscribe(() => {
-      jobDialogRef.close(false);
-      this.checkMemory();
-      this.refreshVmList$.next();
-      this.dialogService.info(
-        this.translate.instant('Finished'),
-        this.translate.instant(helptextVmList.stop_dialog.successMessage, { vmName: vm.name }),
-        true,
-      );
-    });
-    jobDialogRef.componentInstance.failure.pipe(take(1)).subscribe((error) => {
-      jobDialogRef.close(false);
-      this.refreshVmList$.next();
-      this.errorHandler.showErrorModal(error);
-    });
+    )
+      .afterClosed()
+      .pipe(
+        this.errorHandler.catchError(),
+        untilDestroyed(this),
+      )
+      .subscribe(() => {
+        this.checkMemory();
+        this.refreshVmList$.next();
+        this.dialogService.info(
+          this.translate.instant('Finished'),
+          this.translate.instant(helptextVmList.stop_dialog.successMessage, { vmName: vm.name }),
+          true,
+        );
+      });
   }
 
   private onMemoryError(vm: VirtualMachine): void {

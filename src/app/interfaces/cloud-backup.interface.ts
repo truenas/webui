@@ -45,7 +45,7 @@ export type CloudBackupRestoreParams = [
   snapshot_id: string,
   subfolder: string,
   destination_path: string,
-  {
+  settings: {
     exclude: string[];
     include?: string[];
   },

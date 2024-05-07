@@ -425,6 +425,47 @@
   {
     "hierarchy": [
       "Applications",
+      "Installed",
+      "Settings"
+    ],
+    "synonyms": [
+      "Settings"
+    ],
+    "requiredRoles": [],
+    "anchorRouterLink": [
+      "/apps",
+      "installed"
+    ],
+    "routerLink": null,
+    "anchor": "app-settings",
+    "triggerAnchor": "app-settings",
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Applications",
+      "Installed",
+      "Settings",
+      "Advanced Settings"
+    ],
+    "synonyms": [
+      "Settings"
+    ],
+    "requiredRoles": [
+      "KUBERNETES_WRITE"
+    ],
+    "anchorRouterLink": [
+      "/apps",
+      "installed"
+    ],
+    "routerLink": null,
+    "anchor": "advanced-settings",
+    "triggerAnchor": "app-settings",
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Applications",
       "Installed"
     ],
     "synonyms": [
@@ -1348,6 +1389,206 @@
     "routerLink": null,
     "anchor": "reporting-reporting-exporters",
     "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Reporting",
+      "Select Reporting"
+    ],
+    "synonyms": [
+      "Reporting"
+    ],
+    "requiredRoles": [],
+    "anchorRouterLink": [
+      "/reportsdashboard"
+    ],
+    "routerLink": null,
+    "anchor": "select-reporting",
+    "triggerAnchor": "select-reporting",
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Reporting",
+      "CPU"
+    ],
+    "synonyms": [
+      "Processor",
+      "Reporting"
+    ],
+    "requiredRoles": [],
+    "anchorRouterLink": [
+      "/reportsdashboard",
+      "cpu"
+    ],
+    "routerLink": null,
+    "anchor": "cpu",
+    "triggerAnchor": "select-reporting",
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Reporting",
+      "Disk"
+    ],
+    "synonyms": [
+      "Device",
+      "Reporting"
+    ],
+    "requiredRoles": [],
+    "anchorRouterLink": [
+      "/reportsdashboard",
+      "disk"
+    ],
+    "routerLink": null,
+    "anchor": "disk",
+    "triggerAnchor": "select-reporting",
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Reporting",
+      "Memory"
+    ],
+    "synonyms": [
+      "RAM",
+      "Reporting"
+    ],
+    "requiredRoles": [],
+    "anchorRouterLink": [
+      "/reportsdashboard",
+      "memory"
+    ],
+    "routerLink": null,
+    "anchor": "memory",
+    "triggerAnchor": "select-reporting",
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Reporting",
+      "Network"
+    ],
+    "synonyms": [
+      "Reporting"
+    ],
+    "requiredRoles": [],
+    "anchorRouterLink": [
+      "/reportsdashboard",
+      "network"
+    ],
+    "routerLink": null,
+    "anchor": "network",
+    "triggerAnchor": "select-reporting",
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Reporting",
+      "NFS"
+    ],
+    "synonyms": [
+      "Reporting"
+    ],
+    "requiredRoles": [],
+    "anchorRouterLink": [
+      "/reportsdashboard",
+      "nfs"
+    ],
+    "routerLink": null,
+    "anchor": "nfs",
+    "triggerAnchor": "select-reporting",
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Reporting",
+      "Partition"
+    ],
+    "synonyms": [
+      "Reporting"
+    ],
+    "requiredRoles": [],
+    "anchorRouterLink": [
+      "/reportsdashboard",
+      "partition"
+    ],
+    "routerLink": null,
+    "anchor": "partition",
+    "triggerAnchor": "select-reporting",
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Reporting",
+      "System"
+    ],
+    "synonyms": [
+      "Reporting"
+    ],
+    "requiredRoles": [],
+    "anchorRouterLink": [
+      "/reportsdashboard",
+      "system"
+    ],
+    "routerLink": null,
+    "anchor": "system",
+    "triggerAnchor": "select-reporting",
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Reporting",
+      "Target"
+    ],
+    "synonyms": [
+      "Reporting"
+    ],
+    "requiredRoles": [],
+    "anchorRouterLink": [
+      "/reportsdashboard",
+      "target"
+    ],
+    "routerLink": null,
+    "anchor": "target",
+    "triggerAnchor": "select-reporting",
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Reporting",
+      "UPS"
+    ],
+    "synonyms": [
+      "Reporting"
+    ],
+    "requiredRoles": [],
+    "anchorRouterLink": [
+      "/reportsdashboard",
+      "ups"
+    ],
+    "routerLink": null,
+    "anchor": "ups",
+    "triggerAnchor": "select-reporting",
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Reporting",
+      "ZFS"
+    ],
+    "synonyms": [
+      "Reporting"
+    ],
+    "requiredRoles": [],
+    "anchorRouterLink": [
+      "/reportsdashboard",
+      "zfs"
+    ],
+    "routerLink": null,
+    "anchor": "zfs",
+    "triggerAnchor": "select-reporting",
     "section": "ui"
   },
   {

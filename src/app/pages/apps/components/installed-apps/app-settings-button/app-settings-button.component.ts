@@ -10,6 +10,7 @@ import { Role } from 'app/enums/role.enum';
 import { helptextApps } from 'app/helptext/apps/apps';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { appSettingsButtonElements } from 'app/pages/apps/components/installed-apps/app-settings-button/app-settings-button.elements';
 import { KubernetesSettingsComponent } from 'app/pages/apps/components/installed-apps/kubernetes-settings/kubernetes-settings.component';
 import { SelectPoolDialogComponent } from 'app/pages/apps/components/select-pool-dialog/select-pool-dialog.component';
 import { KubernetesStore } from 'app/pages/apps/store/kubernetes-store.service';
@@ -26,6 +27,7 @@ import { WebSocketService } from 'app/services/ws.service';
 })
 export class AppSettingsButtonComponent {
   readonly officialCatalog = officialCatalog;
+  readonly searchableElements = appSettingsButtonElements;
 
   protected readonly requiredRoles = [Role.KubernetesWrite];
 

@@ -4,7 +4,7 @@ import { helptextGlobal } from 'app/helptext/global-helptext';
 export const helptextVmWizard = {
   os_tooltip: T('Choose the VM operating system type.'),
   name_tooltip: T('Enter an alphanumeric name for the virtual machine.'),
-  password_tooltip: T('Enter a password for the VNC display.'),
+  password_tooltip: T('Enter a password for the SPICE display.'),
   description_tooltip: T('Description (optional).'),
   time_tooltip: T('VM system time. Default is <i>Local</i>.'),
   bootloader_tooltip: T('Select <i>UEFI</i> for newer operating systems or\
@@ -15,8 +15,8 @@ export const helptextVmWizard = {
   autostart_tooltip: T('Set to start this VM when the system boots.'),
   enable_display_tooltip: T('Enable a Display (Virtual Network Computing) remote\
  connection. Requires <i>UEFI</i> booting.'),
-  display_bind_tooltip: T('Select an IP address to use for remote VNC sessions.\
- Note: this setting only applies if you are using a VNC client other than the TrueNAS WebUI.'),
+  display_bind_tooltip: T('Select an IP address to use for remote SPICE sessions.\
+ Note: this setting only applies if you are using a SPICE client other than the TrueNAS WebUI.'),
   vcpus_warning: T('The product of vCPUs, cores and threads must not exceed {maxVcpus} on this system.'),
   vcpus_tooltip: T('Number of virtual CPUs to allocate to the virtual\
  machine. The VM operating system\
