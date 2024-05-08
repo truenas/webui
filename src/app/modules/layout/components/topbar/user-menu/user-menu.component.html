@@ -5,6 +5,7 @@
     class="topbar-button-right"
     ixTest="user-menu"
     [matTooltip]="tooltips.settings | translate"
+    [ixUiSearch]="searchableElements.elements.userMenu"
     [matMenuTriggerFor]="userMenu"
   >
     <span
@@ -25,6 +26,7 @@
       name="settings-change-password"
       mat-menu-item
       ixTest="change-password"
+      [ixUiSearch]="searchableElements.elements.changePassword"
       (click)="openChangePasswordDialog()"
     >
       <ix-icon name="dialpad"></ix-icon>
@@ -52,12 +54,19 @@
       href="https://www.truenas.com/docs/"
       target="_blank"
       ixTest="guide"
+      [ixUiSearch]="searchableElements.elements.guide"
     >
       <ix-icon name="library_books"></ix-icon>
       {{ 'Guide' | translate }}
     </a>
 
-    <button name="settings-about" mat-menu-item ixTest="about" (click)="onShowAbout()">
+    <button
+      name="settings-about"
+      mat-menu-item
+      ixTest="about"
+      [ixUiSearch]="searchableElements.elements.about"
+      (click)="onShowAbout()"
+    >
       <ix-icon name="info_outline"></ix-icon>
       {{ 'About' | translate }}
     </button>

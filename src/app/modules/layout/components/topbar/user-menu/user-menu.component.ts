@@ -10,6 +10,7 @@ import { AboutDialogComponent } from 'app/modules/layout/components/topbar/about
 import {
   ChangePasswordDialogComponent,
 } from 'app/modules/layout/components/topbar/change-password-dialog/change-password-dialog.component';
+import { userMenuElements } from 'app/modules/layout/components/topbar/user-menu/user-menu.elements';
 import { AuthService } from 'app/services/auth/auth.service';
 
 @Component({
@@ -21,6 +22,7 @@ import { AuthService } from 'app/services/auth/auth.service';
 export class UserMenuComponent {
   readonly tooltips = helptextTopbar.mat_tooltips;
   loggedInUser$ = this.authService.user$.pipe(filter(Boolean));
+  protected searchableElements = userMenuElements;
 
   constructor(
     private matDialog: MatDialog,

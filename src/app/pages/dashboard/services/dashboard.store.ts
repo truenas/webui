@@ -7,6 +7,7 @@ import {
 } from 'rxjs';
 import { WidgetName } from 'app/enums/widget-name.enum';
 import { LoggedInUser } from 'app/interfaces/ds-cache.interface';
+import { demoWidgets } from 'app/pages/dashboard/services/demo-widgets.constant';
 import { WidgetCategory } from 'app/pages/dashboard/types/widget-category.enum';
 import { WidgetGroup, WidgetGroupLayout } from 'app/pages/dashboard/types/widget-group.interface';
 import { SomeWidgetSettings, WidgetType } from 'app/pages/dashboard/types/widget.interface';
@@ -64,10 +65,11 @@ export class DashboardStore extends ComponentStore<DashboardState> {
         map((user) => user.attributes.dashState),
       )),
       tap((dashState) => {
+        // TODO: Remove demoWidgets once active development of new dashboard is done
         this.setState({
           isLoading: false,
           globalError: '',
-          groups: this.getDashboardGroups(dashState || []),
+          groups: this.getDashboardGroups(dashState || demoWidgets),
         });
       }),
       catchError((error) => {

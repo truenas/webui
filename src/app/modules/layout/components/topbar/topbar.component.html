@@ -33,6 +33,7 @@
         class="topbar-button-right"
         ixTest="leave-feedback"
         [matTooltip]="'Send Feedback' | translate"
+        [ixUiSearch]="searchableElements.elements.sendFeedback"
         (click)="onFeedbackIndicatorPressed()"
       >
         <ix-icon name="mdi-emoticon"></ix-icon>
@@ -70,6 +71,7 @@
         [matBadge]="alertBadgeCount"
         [matBadgeHidden]="alertBadgeCount === 0"
         [matTooltip]="tooltips.alerts | translate"
+        [ixUiSearch]="searchableElements.elements.alerts"
         (click)="onAlertIndicatorPressed()"
       >
         <ix-icon name="notifications"></ix-icon>
