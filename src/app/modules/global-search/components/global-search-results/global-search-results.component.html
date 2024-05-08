@@ -1,14 +1,15 @@
 <mat-card *ngIf="!isLoading || results?.length" class="search-results-card">
-  <ng-container *ngFor="let section of availableSections; trackBy: trackBySection">
+  <ng-container *ngFor="let section of availableSections; trackBy: trackBySection; let sectionIndex = index">
     <h2 class="section">
       {{ section.label | translate }}
     </h2>
 
     <div *ngIf="getElementsBySection(section.value)?.length" class="section-content">
       <div
-        *ngFor="let result of getLimitedSectionResults(section.value); trackBy: trackById"
+        *ngFor="let result of getLimitedSectionResults(section.value); trackBy: trackById; let resultIndex = index"
         class="search-result"
         tabindex="0"
+        [class.highlight-result]="isSearchInputFocused && resultIndex === 0 && sectionIndex === 0"
         [ixTest]="['search-result', result.hierarchy.join('-')]"
         (click)="selectElement(result)"
         (keydown.enter)="selectElement(result)"

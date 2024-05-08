@@ -25,6 +25,7 @@ import { AuthService } from 'app/services/auth/auth.service';
 export class GlobalSearchResultsComponent implements OnChanges {
   @Input() searchTerm = '';
   @Input() isLoading = false;
+  @Input() isSearchInputFocused = false;
   @Input() results: UiSearchableElement[] = [];
 
   readonly initialResultsLimit = this.globalSearchSectionsProvider.globalSearchInitialLimit;
