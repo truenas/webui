@@ -29,7 +29,7 @@ def test_create_a_new_dataset_with_the_ldap_user_and_group_permissions():
 @given('the browser is open, the TrueNAS URL and logged in')
 def the_browser_is_open_the_truenas_url_and_logged_in(driver, nas_ip, root_password, request):
     """the browser is open, the TrueNAS URL and logged in."""
-    #depends(request, ['LDAP_SETUP', 'system_pool'], scope='session')
+    depends(request, ['LDAP_SETUP', 'system_pool'], scope='session')
     if nas_ip not in driver.current_url:
         driver.get(f"http://{nas_ip}")
         assert wait_on_element(driver, 10, xpaths.login.user_Input)
@@ -72,13 +72,14 @@ def on_the_add_dataset_slide_input_name_my_ad_dataset_and_share_type_smb(driver,
     assert wait_on_element_disappear(driver, 15, xpaths.progress.progressbar)
     assert wait_on_element(driver, 5, xpaths.add_Dataset.name_Textarea, 'inputable')
     driver.find_element_by_xpath(xpaths.add_Dataset.name_Textarea).clear()
-    driver.find_element_by_xpath(xpaths.add_Dataset.name_Textarea).send_keys(dataset_name)
-    assert wait_on_element(driver, 5, xpaths.add_Dataset.share_Type_Select)
+    driver.find_element_by_xpath(xpaths.add_Dataset.name_Textarea).send_keys('my_ldap_dataset')
+    assert wait_on_element(driver, 5, xpaths.add_Dataset.share_Type_Select, 'clickable')
     driver.find_element_by_xpath(xpaths.add_Dataset.share_Type_Select).click()
     assert wait_on_element(driver, 5, xpaths.add_Dataset.share_Type_SMB_Option, 'clickable')
     driver.find_element_by_xpath(xpaths.add_Dataset.share_Type_SMB_Option).click()
     time.sleep(1)
     rsc.Click_On_Element(driver, xpaths.add_Dataset.create_Smb_Checkbox)
+    time.sleep(1)
 
 
 @then(parsers.parse('click Save the "{dataset_name}" data should be created'))
