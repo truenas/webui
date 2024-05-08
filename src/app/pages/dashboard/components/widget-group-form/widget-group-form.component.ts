@@ -137,9 +137,28 @@ export class WidgetGroupFormComponent {
   }
 
   onSubmit(): void {
+    this.cleanWidgetGroup();
+    if (this.settingsHasErrors()) {
+      return;
+    }
     this.chainedRef.close({
       response: formWidgetGroupToWidgetGroup(this.group()),
       error: false,
+    });
+  }
+
+  cleanWidgetGroup(): void {
+    this.group.update((group) => {
+      const newGroup: FormWidgetGroup = { layout: group.layout, slots: [] };
+      const slotSizes = layoutToSlotSizes[group.layout];
+      for (let i = 0; i < layoutToSlotSizes[group.layout].length; i++) {
+        if (widgetRegistry[group.slots[i].type].supportedSizes.includes(slotSizes[i])) {
+          newGroup.slots.push(group.slots[i]);
+        } else {
+          newGroup.slots.push({ category: null, type: null });
+        }
+      }
+      return newGroup;
     });
   }
 
