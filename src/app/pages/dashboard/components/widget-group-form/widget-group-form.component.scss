@@ -30,3 +30,17 @@
   gap: 8px;
   justify-content: flex-end;
 }
+
+.category-type-wrapper {
+  display: flex;
+  gap: 10px;
+  width: 100%;
+}
+
+.category-select {
+  width: 50%;
+}
+
+.type-select {
+  width: 50%;
+}

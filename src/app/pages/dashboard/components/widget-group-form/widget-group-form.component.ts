@@ -82,12 +82,13 @@ export class WidgetGroupFormComponent implements AfterViewInit {
     const layoutSupportedWidgets = this.getLayoutSupportedWidgets();
     const uniqCategories = new Set(layoutSupportedWidgets.map((widget) => widget.category));
 
-    return of(Array.from(uniqCategories).map((category) => {
+    const options = Array.from(uniqCategories).map((category) => {
       return {
         label: widgetCategoryLabels.get(category) || category,
         value: category,
       };
-    }));
+    });
+    return of(options);
   });
 
   widgetTypesOptions = computed<Observable<Option[]>>(() => {
@@ -168,7 +169,6 @@ export class WidgetGroupFormComponent implements AfterViewInit {
 
   setupCategoryUpdate(): void {
     this.form.controls.category.valueChanges.pipe(
-      filter(Boolean),
       tap((category) => {
         this.group.update((group) => {
           const newGroup: FormWidgetGroup = { layout: group.layout, slots: [] };
