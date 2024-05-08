@@ -203,4 +203,4 @@ def change_nameservers_to_nameserver1_and_nameserve2_then_save(driver, nameserve
     assert wait_on_element(driver, 7, xpaths.button.save, 'clickable')
     driver.find_element_by_xpath(xpaths.button.save).click()
     assert wait_on_element_disappear(driver, 20, xpaths.progress.progressbar)
-    delete_dataset(nas_ip, ('root', root_password), 'system/my_ad_dataset')
+    #delete_dataset(nas_ip, ('root', root_password), 'system/my_ad_dataset')
