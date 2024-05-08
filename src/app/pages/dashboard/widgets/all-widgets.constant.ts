@@ -1,4 +1,5 @@
 import { WidgetType } from 'app/pages/dashboard/types/widget.interface';
+import { backupTasksWidget } from 'app/pages/dashboard/widgets/backup/widget-backup/widget-backup.definition';
 import { cpuWidget } from 'app/pages/dashboard/widgets/cpu/widget-cpu/widget-cpu.definition';
 import { helpWidget } from 'app/pages/dashboard/widgets/help/widget-help/widget-help.definition';
 import { memoryWidget } from 'app/pages/dashboard/widgets/memory/widget-memory/widget-memory.definition';
@@ -13,6 +14,7 @@ export const widgetComponents = [
   interfaceIpWidget.settingsComponent,
   helpWidget.component,
   memoryWidget.component,
+  backupTasksWidget.component,
   cpuWidget.component,
 ];
 
@@ -21,5 +23,6 @@ export const widgetRegistry = {
   [WidgetType.InterfaceIp]: interfaceIpWidget,
   [WidgetType.Help]: helpWidget,
   [WidgetType.Memory]: memoryWidget,
+  [WidgetType.BackupTasks]: backupTasksWidget,
   [WidgetType.Cpu]: cpuWidget,
 };
