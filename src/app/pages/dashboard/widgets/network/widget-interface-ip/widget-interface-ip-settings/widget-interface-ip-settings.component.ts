@@ -34,7 +34,7 @@ export class WidgetInterfaceIpSettingsComponent implements WidgetSettingsCompone
   }
 
   private setCurrentSettings(): void {
-    const settings = this.widgetSettingsRef.getData();
+    const settings = this.widgetSettingsRef.getSettings();
     if (!settings) {
       return;
     }

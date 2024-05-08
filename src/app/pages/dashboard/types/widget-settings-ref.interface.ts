@@ -7,7 +7,7 @@ export class WidgetSettingsRef<Settings> {
     private reportValidityUpdate: (errors: ValidationErrors) => void,
   ) {}
 
-  getData(): Settings {
+  getSettings(): Settings {
     return this.settings;
   }
 
