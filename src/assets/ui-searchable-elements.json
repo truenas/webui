@@ -838,9 +838,33 @@
   {
     "hierarchy": [
       "Data Protection",
+      "TrueCloud Backup Tasks",
+      "Add"
+    ],
+    "synonyms": [
+      "Add TrueCloud Backup Task",
+      "Add Cloud Backup",
+      "TrueCloud Backup Tasks"
+    ],
+    "requiredRoles": [
+      "CLOUD_BACKUP_WRITE"
+    ],
+    "anchorRouterLink": [
+      "/data-protection",
+      "cloud-backup"
+    ],
+    "routerLink": null,
+    "anchor": "add",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Data Protection",
       "TrueCloud Backup Tasks"
     ],
     "synonyms": [
+      "Data Protection",
       "Tasks",
       "Cloud Backup",
       "TrueCloud Backup Tasks"
@@ -858,9 +882,32 @@
   {
     "hierarchy": [
       "Data Protection",
+      "Cloud Sync Tasks",
+      "Add"
+    ],
+    "synonyms": [
+      "Add Cloud Sync Task",
+      "Cloud Sync Tasks"
+    ],
+    "requiredRoles": [
+      "CLOUD_SYNC_WRITE"
+    ],
+    "anchorRouterLink": [
+      "/data-protection",
+      "cloudsync"
+    ],
+    "routerLink": null,
+    "anchor": "add",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Data Protection",
       "Cloud Sync Tasks"
     ],
     "synonyms": [
+      "Data Protection",
       "Tasks",
       "Cloud Sync Tasks"
     ],
@@ -894,9 +941,33 @@
   {
     "hierarchy": [
       "Data Protection",
+      "Replication Tasks",
+      "Add"
+    ],
+    "synonyms": [
+      "Add Replication Task",
+      "Replication Tasks"
+    ],
+    "requiredRoles": [
+      "REPLICATION_TASK_WRITE",
+      "REPLICATION_TASK_WRITE_PULL"
+    ],
+    "anchorRouterLink": [
+      "/data-protection",
+      "replication"
+    ],
+    "routerLink": null,
+    "anchor": "add",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Data Protection",
       "Replication Tasks"
     ],
     "synonyms": [
+      "Data Protection",
       "Tasks",
       "Replication Tasks"
     ],
@@ -913,9 +984,32 @@
   {
     "hierarchy": [
       "Data Protection",
+      "Rsync Tasks",
+      "Add"
+    ],
+    "synonyms": [
+      "Add Rsync Task",
+      "Rsync Tasks"
+    ],
+    "requiredRoles": [
+      "FULL_ADMIN"
+    ],
+    "anchorRouterLink": [
+      "/data-protection",
+      "rsync"
+    ],
+    "routerLink": null,
+    "anchor": "add",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Data Protection",
       "Rsync Tasks"
     ],
     "synonyms": [
+      "Data Protection",
       "Tasks",
       "Rsync Tasks"
     ],
@@ -936,6 +1030,8 @@
       "Resilver Priority"
     ],
     "synonyms": [
+      "Data Protection",
+      "Scrub Tasks",
       "Resilver Priority"
     ],
     "requiredRoles": [],
@@ -952,9 +1048,32 @@
   {
     "hierarchy": [
       "Data Protection",
+      "Scrub Tasks",
+      "Add"
+    ],
+    "synonyms": [
+      "Add Scrub Task",
+      "Scrub Tasks"
+    ],
+    "requiredRoles": [
+      "FULL_ADMIN"
+    ],
+    "anchorRouterLink": [
+      "/data-protection",
+      "scrub"
+    ],
+    "routerLink": null,
+    "anchor": "add",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Data Protection",
       "Scrub Tasks"
     ],
     "synonyms": [
+      "Data Protection",
       "Tasks",
       "Scrub Tasks"
     ],
@@ -971,10 +1090,36 @@
   {
     "hierarchy": [
       "Data Protection",
+      "Periodic S.M.A.R.T. Tests",
+      "Add"
+    ],
+    "synonyms": [
+      "Add Periodic S.M.A.R.T. Test",
+      "Add Smart Test",
+      "Periodic S.M.A.R.T. Tests"
+    ],
+    "requiredRoles": [
+      "FULL_ADMIN"
+    ],
+    "anchorRouterLink": [
+      "/data-protection",
+      "smart"
+    ],
+    "routerLink": null,
+    "anchor": "add",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Data Protection",
       "Periodic S.M.A.R.T. Tests"
     ],
     "synonyms": [
+      "Data Protection",
       "Tasks",
+      "Smart",
+      "S.M.A.R.T.",
       "Periodic S.M.A.R.T. Tests"
     ],
     "requiredRoles": [],
@@ -990,9 +1135,32 @@
   {
     "hierarchy": [
       "Data Protection",
+      "Periodic Snapshot Tasks",
+      "Add"
+    ],
+    "synonyms": [
+      "Add Periodic Snapshot Task",
+      "Periodic Snapshot Tasks"
+    ],
+    "requiredRoles": [
+      "SNAPSHOT_TASK_WRITE"
+    ],
+    "anchorRouterLink": [
+      "/data-protection",
+      "snapshot"
+    ],
+    "routerLink": null,
+    "anchor": "add",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Data Protection",
       "Periodic Snapshot Tasks"
     ],
     "synonyms": [
+      "Data Protection",
       "Tasks",
       "Periodic Snapshot Tasks"
     ],

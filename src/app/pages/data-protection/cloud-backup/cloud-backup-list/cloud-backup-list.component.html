@@ -5,7 +5,8 @@
     *ixRequiresRoles="requiredRoles"
     mat-button
     color="primary"
-    [ixTest]="['replication-task', 'add']"
+    ixTest="add-task"
+    [ixUiSearch]="searchableElements.elements.add"
     (click)="openForm()"
   >
     {{ 'Add' | translate }}
