@@ -6,5 +6,11 @@ export const failoverElements = {
   anchorRouterLink: ['/system', 'failover'],
   elements: {
     failover: {},
+    syncToPeer: {
+      hierarchy: [T('Sync To Peer')],
+    },
+    syncFromPeer: {
+      hierarchy: [T('Sync From Peer')],
+    },
   },
 } satisfies UiSearchableElement;

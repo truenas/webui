@@ -1,7 +1,13 @@
 <ix-page-header>
   <ix-search-input1 [value]="filterString" (search)="filterUpdated($event)"></ix-search-input1>
 
-  <button *ixRequiresRoles="requiredRoles" mat-button ixTest="bootenv-stats" (click)="openBootenvStats()">
+  <button
+    *ixRequiresRoles="requiredRoles"
+    mat-button
+    ixTest="bootenv-stats"
+    [ixUiSearch]="searchableElements.elements.stats"
+    (click)="openBootenvStats()"
+  >
     {{ 'Stats/Settings' | translate }}
   </button>
 
@@ -13,6 +19,7 @@
     *ixRequiresRoles="requiredRoles"
     mat-button
     ixTest="bootenv-scrub"
+    [ixUiSearch]="searchableElements.elements.scrubBootPool"
     (click)="doScrub()"
   >
     {{ 'Scrub Boot Pool' | translate }}

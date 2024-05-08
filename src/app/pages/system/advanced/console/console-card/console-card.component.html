@@ -1,4 +1,4 @@
-<mat-card>
+<mat-card [ixUiSearch]="searchableElements.elements.console">
   <mat-toolbar-row>
     <h3>{{ 'Console' | translate }}</h3>
     <div class="actions action-icon">
@@ -6,7 +6,6 @@
         *ixRequiresRoles="requiredRoles"
         mat-button
         [ixTest]="['console', 'configure']"
-        [ixUiSearch]="searchableElements.elements.configure"
         (click)="onConfigurePressed()"
       >
         {{ 'Configure' | translate }}
@@ -16,31 +15,31 @@
 
   <mat-card-content>
     <mat-list>
-      <mat-list-item>
+      <mat-list-item [ixUiSearch]="searchableElements.elements.consoleMenu">
         <span class="label">{{ 'Show Text Console without Password Prompt' | translate }}:</span>
         <span *ixWithLoadingState="advancedConfig$ as advancedConfig" class="value">
           {{ advancedConfig.consolemenu ? ('Enabled' | translate) : ('Disabled' | translate) }}
         </span>
       </mat-list-item>
-      <mat-list-item>
+      <mat-list-item [ixUiSearch]="searchableElements.elements.serialConsole">
         <span class="label">{{ 'Enable Serial Console' | translate }}:</span>
         <span *ixWithLoadingState="advancedConfig$ as advancedConfig" class="value">
           {{ advancedConfig.serialconsole ? ('Enabled' | translate) : ('Disabled' | translate) }}
         </span>
       </mat-list-item>
-      <mat-list-item>
+      <mat-list-item [ixUiSearch]="searchableElements.elements.serialPort">
         <span class="label">{{ 'Serial Port' | translate }}:</span>
         <span *ixWithLoadingState="advancedConfig$ as advancedConfig" class="value">
           {{ advancedConfig.serialport || '–' }}
         </span>
       </mat-list-item>
-      <mat-list-item>
+      <mat-list-item [ixUiSearch]="searchableElements.elements.serialSpeed">
         <span class="label">{{ 'Serial Speed' | translate }}:</span>
         <span *ixWithLoadingState="advancedConfig$ as advancedConfig" class="value">
           {{ advancedConfig.serialspeed ? (advancedConfig.serialspeed + ' bps') : '–' }}
         </span>
       </mat-list-item>
-      <mat-list-item>
+      <mat-list-item [ixUiSearch]="searchableElements.elements.motd">
         <span class="label">{{ 'MOTD Banner' | translate }}:</span>
         <span *ixWithLoadingState="advancedConfig$ as advancedConfig" class="value">
           {{ advancedConfig.motd || '–' }}
