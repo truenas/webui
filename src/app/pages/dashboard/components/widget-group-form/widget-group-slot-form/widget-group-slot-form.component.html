@@ -1,0 +1,25 @@
+<form [formGroup]="form">
+  <div class="widget-options-container">
+    <ix-fieldset
+      [title]="'Widget {slot} Settings' | translate: { slot: slot().slotPosition + 1 }"
+    >
+      <div class="category-type-wrapper">
+        <ix-select
+          formControlName="category"
+          class="category-select"
+          [options]="widgetCategoriesOptions()"
+          [label]="'Widget Category' | translate"
+        ></ix-select>
+
+        <ix-select
+          *ngIf="slot().category"
+          formControlName="type"
+          class="type-select"
+          [options]="widgetTypesOptions()"
+          [label]="'Widget Type' | translate"
+        ></ix-select>
+      </div>
+      <ng-container #settingsContainer></ng-container>
+    </ix-fieldset>
+  </div>
+</form>

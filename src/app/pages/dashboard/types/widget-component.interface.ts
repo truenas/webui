@@ -5,12 +5,12 @@ import {
   SomeWidgetSettings, SlotSize,
 } from 'app/pages/dashboard/types/widget.interface';
 
-interface WidgetComponentWithSettings<Settings extends SomeWidgetSettings> {
+export interface WidgetComponentWithSettings<Settings extends SomeWidgetSettings> {
   size: InputSignal<SlotSize>;
   settings: InputSignal<Settings>;
 }
 
-interface WidgetComponentWithoutSettings {
+export interface WidgetComponentWithoutSettings {
   size: InputSignal<SlotSize>;
 }
 

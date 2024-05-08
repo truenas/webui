@@ -1,19 +1,16 @@
 import {
-  AfterViewInit,
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Injector, ViewChild, ViewContainerRef, computed, signal,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, signal,
 } from '@angular/core';
 import {
   FormBuilder, ValidationErrors, Validators,
 } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import {
-  Observable, filter, of, tap,
-} from 'rxjs';
-import { Option } from 'app/interfaces/option.interface';
+import { of, tap } from 'rxjs';
 import { ChainedRef } from 'app/modules/ix-forms/components/ix-slide-in/chained-component-ref';
 import { SlotPosition } from 'app/pages/dashboard/types/slot-position.enum';
-import { WidgetCategory, widgetCategoryLabels } from 'app/pages/dashboard/types/widget-category.enum';
+import { WidgetGroupSlot } from 'app/pages/dashboard/types/widget-group-slot.interface';
 import {
+  FormWidget,
   FormWidgetGroup,
   WidgetGroup,
   WidgetGroupLayout,
@@ -22,15 +19,8 @@ import {
   widgetGroupIcons,
   widgetGroupToFormWidgetGroup,
 } from 'app/pages/dashboard/types/widget-group.interface';
-import { WidgetSettingsRef } from 'app/pages/dashboard/types/widget-settings-ref.interface';
-import { WidgetType } from 'app/pages/dashboard/types/widget.interface';
+import { SlotSize } from 'app/pages/dashboard/types/widget.interface';
 import { widgetRegistry } from 'app/pages/dashboard/widgets/all-widgets.constant';
-
-interface SimpleWidget {
-  category: WidgetCategory;
-  type: WidgetType;
-  [key: string]: unknown;
-}
 
 @UntilDestroy()
 @Component({
@@ -39,12 +29,17 @@ interface SimpleWidget {
   styleUrls: ['./widget-group-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class WidgetGroupFormComponent implements AfterViewInit {
+export class WidgetGroupFormComponent {
   protected group = signal<FormWidgetGroup>(
     { layout: WidgetGroupLayout.Full, slots: [{ category: null, type: null }] } as FormWidgetGroup,
   );
-  protected selectedSlot = signal(SlotPosition.First);
-  @ViewChild('settingsContainer', { static: true, read: ViewContainerRef }) settingsContainer: ViewContainerRef;
+  protected selectedSlot = signal<WidgetGroupSlot<object>>({
+    slotPosition: 0,
+    slotSize: SlotSize.Full,
+    category: null,
+    type: null,
+    settings: undefined,
+  });
 
   validationErrors = signal([
     {} as ValidationErrors,
@@ -56,8 +51,6 @@ export class WidgetGroupFormComponent implements AfterViewInit {
   form = this.fb.group({
     template: [''],
     layout: [WidgetGroupLayout.Full as WidgetGroupLayout, [Validators.required]],
-    category: [null as WidgetCategory, [Validators.required]],
-    type: [null as WidgetType, [Validators.required]],
   });
 
   settingsHasErrors = computed<boolean>(() => {
@@ -76,34 +69,6 @@ export class WidgetGroupFormComponent implements AfterViewInit {
   protected readonly widgetRegistry = widgetRegistry;
 
   selectedLayout = signal(WidgetGroupLayout.Full);
-  selectedCategory = signal<WidgetCategory>(null);
-
-  widgetCategoriesOptions = computed<Observable<Option[]>>(() => {
-    const layoutSupportedWidgets = this.getLayoutSupportedWidgets();
-    const uniqCategories = new Set(layoutSupportedWidgets.map((widget) => widget.category));
-
-    const options = Array.from(uniqCategories).map((category) => {
-      return {
-        label: widgetCategoryLabels.get(category) || category,
-        value: category,
-      };
-    });
-    return of(options);
-  });
-
-  widgetTypesOptions = computed<Observable<Option[]>>(() => {
-    const layoutSupportedWidgets = this.getLayoutSupportedWidgets();
-    const category = this.selectedCategory();
-    const categoryWidgets = layoutSupportedWidgets.filter((widget) => widget.category === category);
-    const uniqTypes = new Set(categoryWidgets.map((widget) => widget.type));
-
-    return of(Array.from(uniqTypes).map((type) => {
-      return {
-        label: widgetRegistry[type].name,
-        value: type,
-      };
-    }));
-  });
 
   // TODO: Implement template options
   templateOptions$ = of([]);
@@ -114,8 +79,6 @@ export class WidgetGroupFormComponent implements AfterViewInit {
     private fb: FormBuilder,
   ) {
     this.setupLayoutUpdates();
-    this.setupCategoryUpdate();
-    this.setupTypeUpdate();
     this.setInitialFormValues();
   }
 
@@ -130,36 +93,26 @@ export class WidgetGroupFormComponent implements AfterViewInit {
     for (let i = 0; i < this.group().slots.length; i++) {
       this.selectedSlotChanged(i);
     }
-    this.selectedSlot.set(SlotPosition.First);
-  }
-
-  ngAfterViewInit(): void {
-    this.refreshSettingsContainer();
-  }
-
-  private refreshSettingsContainer(): void {
-    if (!this.settingsContainer) {
-      return;
-    }
-    this.settingsContainer.remove();
-    this.settingsContainer.clear();
-    if (
-      !this.group().slots[this.selectedSlot()].type
-      || !widgetRegistry[this.group().slots[this.selectedSlot()].type].settingsComponent
-    ) {
-      return;
-    }
-
-    this.settingsContainer.createComponent(
-      widgetRegistry[this.group().slots[this.selectedSlot()].type].settingsComponent,
-      { injector: this.getInjector() },
-    );
+    this.selectedSlotChanged(SlotPosition.First);
   }
 
   setupLayoutUpdates(): void {
     this.form.controls.layout.valueChanges.pipe(
       tap((layout) => {
-        this.group.update((group) => ({ ...group, layout }));
+        this.group.update((group) => {
+          const newGroup: FormWidgetGroup = {
+            layout,
+            slots: [],
+          };
+          for (let i = 0; i < layoutToSlotSizes[layout].length; i++) {
+            let slotConfig: FormWidget = group.slots[i];
+            if (!slotConfig) {
+              slotConfig = { category: null, type: null };
+            }
+            newGroup.slots.push(slotConfig);
+          }
+          return newGroup;
+        });
         this.selectedLayout.set(layout);
         this.cdr.markForCheck();
       }),
@@ -167,137 +120,52 @@ export class WidgetGroupFormComponent implements AfterViewInit {
     ).subscribe();
   }
 
-  setupCategoryUpdate(): void {
-    this.form.controls.category.valueChanges.pipe(
-      tap((category) => {
-        this.group.update((group) => {
-          const newGroup: FormWidgetGroup = { layout: group.layout, slots: [] };
-          for (let i = 0; i < layoutToSlotSizes[newGroup.layout].length; i++) {
-            if (i as SlotPosition === this.selectedSlot()) {
-              newGroup.slots.push({ category, type: null });
-            } else {
-              newGroup.slots.push(group.slots[i] || { category: null, type: null });
-            }
-          }
-          return newGroup;
-        });
-        this.form.controls.type.setValue(this.group().slots[this.selectedSlot()].type);
-
-        this.selectedCategory.set(category);
-      }),
-      untilDestroyed(this),
-    ).subscribe();
-  }
-
-  setupTypeUpdate(): void {
-    this.form.controls.type.valueChanges.pipe(
-      filter(Boolean),
-      untilDestroyed(this),
-    ).subscribe({
-      next: (type) => {
-        this.group.update((group) => {
-          const newGroup = { layout: group.layout, slots: [] } as FormWidgetGroup;
-          for (let i = 0; i < layoutToSlotSizes[newGroup.layout].length; i++) {
-            if (i as SlotPosition === this.selectedSlot()) {
-              newGroup.slots.push({ ...group.slots[i], type });
-            } else {
-              newGroup.slots.push(group.slots[i]);
-            }
-          }
-          return newGroup;
-        });
-        this.refreshSettingsContainer();
-      },
-    });
-  }
-
-  getInjector(): Injector {
-    return Injector.create({
-      providers: [
-        {
-          provide: WidgetSettingsRef,
-          useValue: new WidgetSettingsRef(
-            this.selectedSlot(),
-            this.group().slots[this.selectedSlot()].settings,
-            (slot: SlotPosition, settings: object): void => {
-              this.group.update((group) => {
-                const newGroup: FormWidgetGroup = { layout: group.layout, slots: [] };
-                for (let i = 0; i < layoutToSlotSizes[newGroup.layout].length; i++) {
-                  if (i as SlotPosition === slot) {
-                    newGroup.slots.push({ ...group.slots[i], settings });
-                  } else {
-                    newGroup.slots.push(group.slots[i]);
-                  }
-                }
-                return newGroup;
-              });
-            },
-            (slot: SlotPosition, errors: ValidationErrors[]): void => {
-              if (!errors) {
-                this.validationErrors.update((previousErrors) => {
-                  return previousErrors.map(
-                    (prevError, index) => (index as SlotPosition === slot ? {} : prevError),
-                  );
-                });
-                return;
-              }
-              this.validationErrors.update((previousErrors) => {
-                return previousErrors.map(
-                  (prevError, index) => (index as SlotPosition === slot ? errors : prevError),
-                );
-              });
-            },
-          ),
-        },
-      ],
-    });
-  }
-
   selectedSlotChanged(slotIndex: SlotPosition): void {
-    if (slotIndex === this.selectedSlot()) {
+    if (slotIndex === this.selectedSlot().slotPosition) {
       return;
     }
-    this.selectedSlot.set(slotIndex);
-    this.setSlotValues();
-  }
-
-  private setSlotValues(): void {
-    if (!this.group().slots[this.selectedSlot()]) {
-      this.group.update((group) => {
-        const newGroup: FormWidgetGroup = { layout: group.layout, slots: [] };
-        for (let i = 0; i < layoutToSlotSizes[newGroup.layout].length; i++) {
-          if (i as SlotPosition === this.selectedSlot()) {
-            newGroup.slots.push({ category: null, type: null });
-          } else {
-            newGroup.slots.push(group.slots[i] || { category: null, type: null });
-          }
-        }
-        return newGroup;
-      });
-    }
-    const category = this.group().slots[this.selectedSlot()].category;
-    this.form.controls.category.setValue(category);
-    if (category) {
-      this.form.controls.type.setValue(this.group().slots[this.selectedSlot()].type);
-    }
-    this.refreshSettingsContainer();
-  }
-
-  getLayoutSupportedWidgets(): SimpleWidget[] {
-    const widgetEntires = Object.entries(widgetRegistry);
-    const layout = this.selectedLayout();
-    const slotSize = layoutToSlotSizes[layout][this.selectedSlot()];
-
-    return widgetEntires.filter(
-      ([, widget]) => widget.supportedSizes.includes(slotSize),
-    ).map(([type, widget]) => ({ ...widget, type: type as WidgetType }));
+    this.selectedSlot.update(() => {
+      const group = this.group();
+      return {
+        slotPosition: slotIndex,
+        category: group.slots[slotIndex].category,
+        type: group.slots[slotIndex].type,
+        settings: group.slots[slotIndex].settings,
+        slotSize: layoutToSlotSizes[group.layout][slotIndex],
+      } as WidgetGroupSlot<object>;
+    });
   }
 
   onSubmit(): void {
-    // console.log('group', formWidgetGroupToWidgetGroup(this.group()));
     this.chainedRef.close({
       response: formWidgetGroupToWidgetGroup(this.group()),
       error: false,
+    });
+  }
+
+  updateSlotValidation([slotPosition, errors]: [SlotPosition, ValidationErrors]): void {
+    this.validationErrors.update((validaitonErrors) => {
+      const newErrors = [...validaitonErrors];
+      newErrors[slotPosition] = errors;
+      return newErrors;
+    });
+  }
+
+  updateSlotSettings(slot: WidgetGroupSlot<object>): void {
+    this.group.update((group) => {
+      const newGroup: FormWidgetGroup = { layout: group.layout, slots: [] };
+      for (let i = 0; i < layoutToSlotSizes[newGroup.layout].length; i++) {
+        if (i as SlotPosition === slot.slotPosition) {
+          newGroup.slots.push({
+            category: slot.category,
+            type: slot.type,
+            settings: slot.settings || undefined,
+          });
+        } else {
+          newGroup.slots.push(group.slots[i]);
+        }
+      }
+      return newGroup;
     });
   }
 }

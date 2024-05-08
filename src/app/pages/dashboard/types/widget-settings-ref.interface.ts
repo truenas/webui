@@ -1,12 +1,10 @@
 import { FormGroup, ValidationErrors } from '@angular/forms';
-import { SlotPosition } from 'app/pages/dashboard/types/slot-position.enum';
 
 export class WidgetSettingsRef<Settings> {
   constructor(
-    private slot: SlotPosition,
     private settings: Settings,
-    private reportSettingsUpdate: (slot: SlotPosition, settings: Settings) => void,
-    private reportValidityUpdate: (slot: SlotPosition, errors: ValidationErrors) => void,
+    private reportSettingsUpdate: (settings: Settings) => void,
+    private reportValidityUpdate: (errors: ValidationErrors) => void,
   ) {}
 
   getData(): Settings {
@@ -14,11 +12,11 @@ export class WidgetSettingsRef<Settings> {
   }
 
   updateSettings(settings: Settings): void {
-    this.reportSettingsUpdate(this.slot, settings);
+    this.reportSettingsUpdate(settings);
   }
 
   updateValidity(errors: ValidationErrors): void {
-    this.reportValidityUpdate(this.slot, errors);
+    this.reportValidityUpdate(errors);
   }
 
   getAllFormErrors(form: FormGroup, fields: string[]): Record<string, ValidationErrors> {
