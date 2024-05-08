@@ -32,6 +32,20 @@ export class GlobalSearchSectionsProvider {
   }
 
   getHelpSectionResults(searchTerm: string, appVersion: string): UiSearchableElement[] {
+    const documentationKeywords = new Set(['help', 'documentation', 'docs', 'guide', 'support']);
+    const normalizedSearchTerm = searchTerm.toLowerCase();
+    const isDocumentationKeyword = documentationKeywords.has(normalizedSearchTerm);
+
+    if (isDocumentationKeyword) {
+      return [
+        {
+          hierarchy: [this.translate.instant('Go to Documentation')],
+          targetHref: 'https://www.truenas.com/docs/search/',
+          section: GlobalSearchSection.Help,
+        },
+      ];
+    }
+
     return [
       {
         hierarchy: [this.translate.instant('Search Documentation for «{value}»', { value: searchTerm })],
