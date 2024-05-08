@@ -68,8 +68,6 @@ export class WidgetGroupFormComponent {
   protected readonly layoutsMap = widgetGroupIcons;
   protected readonly widgetRegistry = widgetRegistry;
 
-  selectedLayout = signal(WidgetGroupLayout.Full);
-
   // TODO: Implement template options
   templateOptions$ = of([]);
 
@@ -113,7 +111,9 @@ export class WidgetGroupFormComponent {
           }
           return newGroup;
         });
-        this.selectedLayout.set(layout);
+        if (this.selectedSlot().slotSize !== layoutToSlotSizes[layout][this.selectedSlot().slotPosition]) {
+          this.selectedSlotChanged(this.selectedSlot().slotPosition);
+        }
         this.cdr.markForCheck();
       }),
       untilDestroyed(this),
@@ -121,7 +121,10 @@ export class WidgetGroupFormComponent {
   }
 
   selectedSlotChanged(slotIndex: SlotPosition): void {
-    if (slotIndex === this.selectedSlot().slotPosition) {
+    if (
+      slotIndex === this.selectedSlot().slotPosition
+      && this.selectedSlot().slotSize === layoutToSlotSizes[this.group().layout][slotIndex]
+    ) {
       return;
     }
     this.selectedSlot.update(() => {
