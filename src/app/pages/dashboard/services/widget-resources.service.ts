@@ -4,7 +4,7 @@ import { sub } from 'date-fns';
 import { Observable, timer } from 'rxjs';
 import {
   combineLatestWith,
-  map, shareReplay, skipWhile, switchMap,
+  map, shareReplay, switchMap,
 } from 'rxjs/operators';
 import { toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import { ReportingData } from 'app/interfaces/reporting.interface';
@@ -49,7 +49,6 @@ export class WidgetResourcesService {
 
   networkInterfaceUpdate(interfaceName: string): Observable<ReportingData[]> {
     return this.serverTime$.pipe(
-      skipWhile(() => !interfaceName),
       switchMap((serverTime) => {
         return this.ws.call('reporting.netdata_get_data', [[{
           identifier: interfaceName,
