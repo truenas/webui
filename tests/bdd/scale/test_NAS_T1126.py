@@ -72,14 +72,12 @@ def on_the_add_dataset_slide_input_name_my_ad_dataset_and_share_type_smb(driver,
     assert wait_on_element_disappear(driver, 15, xpaths.progress.progressbar)
     assert wait_on_element(driver, 5, xpaths.add_Dataset.name_Textarea, 'inputable')
     driver.find_element_by_xpath(xpaths.add_Dataset.name_Textarea).clear()
-    driver.find_element_by_xpath(xpaths.add_Dataset.name_Textarea).send_keys('my_ldap_dataset')
+    driver.find_element_by_xpath(xpaths.add_Dataset.name_Textarea).send_keys(dataset_name)
     assert wait_on_element(driver, 5, xpaths.add_Dataset.share_Type_Select, 'clickable')
     driver.find_element_by_xpath(xpaths.add_Dataset.share_Type_Select).click()
     assert wait_on_element(driver, 5, xpaths.add_Dataset.share_Type_SMB_Option, 'clickable')
     driver.find_element_by_xpath(xpaths.add_Dataset.share_Type_SMB_Option).click()
-    time.sleep(1)
     rsc.Click_On_Element(driver, xpaths.add_Dataset.create_Smb_Checkbox)
-    time.sleep(1)
 
 
 @then(parsers.parse('click Save the "{dataset_name}" data should be created'))
