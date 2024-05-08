@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
-import { shareReplay } from 'rxjs/operators';
+import { map, shareReplay } from 'rxjs/operators';
+import { SystemUpdateStatus } from 'app/enums/system-update.enum';
 import { toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -26,6 +27,12 @@ export class WidgetResourcesService {
   readonly networkInterfaces$ = this.ws.call('interface.query').pipe(
     toLoadingState(),
     shareReplay({ bufferSize: 1, refCount: true }),
+  );
+
+  readonly updateAvailable$ = this.ws.call('update.check_available').pipe(
+    map((update) => update.status === SystemUpdateStatus.Available),
+    toLoadingState(),
+    shareReplay({ refCount: false, bufferSize: 1 }),
   );
 
   constructor(

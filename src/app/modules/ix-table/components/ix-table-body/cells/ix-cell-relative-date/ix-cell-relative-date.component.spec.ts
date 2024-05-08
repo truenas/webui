@@ -2,6 +2,7 @@ import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { Store } from '@ngrx/store';
 import { of } from 'rxjs';
+import { oneDay } from 'app/constants/time.constant';
 import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-datetime.pipe';
 import { IxCellRelativeDateComponent } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-relative-date/ix-cell-relative-date.component';
 import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
@@ -26,7 +27,7 @@ describe('IxCellRelativeDateComponent', () => {
   beforeEach(() => {
     spectator = createComponent();
     spectator.component.propertyName = 'dateField';
-    spectator.component.setRow({ dateField: new Date(new Date().getTime() - (24 * 60 * 60 * 10000)) });
+    spectator.component.setRow({ dateField: new Date(new Date().getTime() - (oneDay * 10)) });
     spectator.component.rowTestId = () => '';
     spectator.detectChanges();
   });

@@ -11,6 +11,8 @@ export enum WidgetType {
   Help = 'help',
   Memory = 'memory',
   Cpu = 'cpu',
+  SystemInfoActive = 'system-info-active',
+  SystemInfoPassive = 'system-info-passive',
 }
 
 export enum SlotSize {

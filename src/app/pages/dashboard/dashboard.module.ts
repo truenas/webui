@@ -9,7 +9,9 @@ import { MatListModule } from '@angular/material/list';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
 import { BaseChartDirective } from 'ng2-charts';
+import { ImgFallbackModule } from 'ngx-img-fallback';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
+import { CoreComponents } from 'app/core/core-components.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { ChartsModule } from 'app/modules/charts/charts.module';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
@@ -52,6 +54,7 @@ import { WidgetDatapointComponent } from 'app/pages/dashboard/widgets/common/wid
     WidgetResourcesService,
   ],
   imports: [
+    CoreComponents,
     IxFormsModule,
     ReactiveFormsModule,
     TranslateModule,
@@ -86,6 +89,8 @@ import { WidgetDatapointComponent } from 'app/pages/dashboard/widgets/common/wid
     ChartsModule,
     MatListModule,
     EmptyComponent,
+    MatListModule,
+    ImgFallbackModule,
   ],
 })
 export class DashboardModule {

@@ -20,6 +20,7 @@ import {
   DialogService,
 } from 'app/modules/dialog/dialog.service';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { getMiniImagePath } from 'app/pages/dashboard/widgets/system/widget-sys-info-local/widget-sys-info.utils';
 import { WidgetComponent } from 'app/pages/dashboard-old/components/widget/widget.component';
 import { ProductImageService } from 'app/services/product-image.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
@@ -32,6 +33,7 @@ import {
   selectCanFailover,
 } from 'app/store/ha-info/ha-info.selectors';
 import { selectIsIxHardware, waitForSystemFeatures } from 'app/store/system-info/system-info.selectors';
+import { oneDay } from 'app/constants/time.constant';
 
 @UntilDestroy()
 @Component({
@@ -226,7 +228,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
     } else {
       const product = this.productImgServ.getServerProduct(this.systemInfo.platform);
       this.productImage = product ? `/servers/${product}.png` : 'ix-original.svg';
-      this.productModel = product || '';
+      this.productModel = product;
       this.productEnclosure = ProductEnclosure.Rackmount;
     }
 
@@ -241,7 +243,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
       this.certified = true;
       return;
     }
-    this.productImage = this.productImgServ.getMiniImagePath(sysProduct) || '';
+    this.productImage = getMiniImagePath(sysProduct);
   }
 
   goToEnclosure(): void {
@@ -255,7 +257,6 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
    * limit the check to once a day
    */
   private checkForUpdate(): void {
-    const oneDay = 24 * 60 * 60 * 1000;
     if (
       sessionStorage.updateLastChecked
       && Number(sessionStorage.updateLastChecked) + oneDay > Date.now()

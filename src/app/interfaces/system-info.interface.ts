@@ -3,7 +3,7 @@ import { LicenseFeature } from 'app/enums/license-feature.enum';
 import { ApiDate, ApiTimestamp } from 'app/interfaces/api-date.interface';
 
 export interface SystemInfo {
-  platform: string;
+  platform: string; // Check if this presents in the API
   boottime: ApiTimestamp;
   buildtime: ApiTimestamp;
   cores: number;

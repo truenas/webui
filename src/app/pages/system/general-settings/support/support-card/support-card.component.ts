@@ -17,6 +17,7 @@ import { FeedbackDialogComponent } from 'app/modules/feedback/components/feedbac
 import { FeedbackType } from 'app/modules/feedback/interfaces/feedback.interface';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { getMiniImagePath, getServerProduct } from 'app/pages/dashboard/widgets/system/widget-sys-info-local/widget-sys-info.utils';
 import { LicenseComponent } from 'app/pages/system/general-settings/support/license/license.component';
 import { LicenseInfoInSupport } from 'app/pages/system/general-settings/support/license-info-in-support.interface';
 import { ProactiveComponent } from 'app/pages/system/general-settings/support/proactive/proactive.component';
@@ -32,6 +33,7 @@ import { ProductImageService } from 'app/services/product-image.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
+import { oneDay } from 'app/constants/time.constant';
 
 @UntilDestroy()
 @Component({
@@ -78,7 +80,7 @@ export class SupportCardComponent implements OnInit {
       this.systemInfo = { ...systemInfo };
       this.systemInfo.memory = (systemInfo.physmem / GiB).toFixed(0) + ' GiB';
       if (systemInfo.system_product?.includes('MINI')) {
-        const getImage = this.productImageService.getMiniImagePath(systemInfo.system_product);
+        const getImage = getMiniImagePath(systemInfo.system_product);
         if (this.productImageService.isRackmount(systemInfo.system_product)) {
           this.isProductImageRack = true;
           this.extraMargin = true;
@@ -130,16 +132,15 @@ export class SupportCardComponent implements OnInit {
   }
 
   daysTillExpiration(now: Date, then: Date): number {
-    const oneDay = 24 * 60 * 60 * 1000; // milliseconds in a day
     return Math.round((then.getTime() - now.getTime()) / (oneDay));
   }
 
   getServerImage(sysProduct: string): void {
-    const imagePath = this.productImageService.getServerProduct(sysProduct);
+    const product = getServerProduct(sysProduct);
 
-    if (imagePath) {
+    if (product) {
       this.isProductImageRack = true;
-      this.productImage = `/servers/${imagePath}.png`;
+      this.productImage = `/servers/${product}.png`;
     } else {
       this.productImage = 'ix-original-cropped.png';
       this.isProductImageRack = false;
