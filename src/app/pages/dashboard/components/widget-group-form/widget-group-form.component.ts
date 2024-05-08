@@ -40,19 +40,19 @@ export class WidgetGroupFormComponent {
     settings: undefined,
   });
 
-  validationErrors = signal([
+  protected validationErrors = signal([
     {} as ValidationErrors,
     {} as ValidationErrors,
     {} as ValidationErrors,
     {} as ValidationErrors,
   ]);
 
-  form = this.fb.group({
+  protected form = this.fb.group({
     template: [''],
     layout: [WidgetGroupLayout.Full as WidgetGroupLayout, [Validators.required]],
   });
 
-  settingsHasErrors = computed<boolean>(() => {
+  protected settingsHasErrors = computed<boolean>(() => {
     const slotsCount = layoutToSlotSizes[this.group().layout].length;
     let hasEmptySlot = false;
     for (let i = 0; i < slotsCount; i++) {
@@ -68,7 +68,7 @@ export class WidgetGroupFormComponent {
   protected readonly widgetRegistry = widgetRegistry;
 
   // TODO: Implement template options
-  templateOptions$ = of([]);
+  protected templateOptions$ = of([]);
 
   constructor(
     protected chainedRef: ChainedRef<WidgetGroup>,
@@ -79,7 +79,7 @@ export class WidgetGroupFormComponent {
     this.setInitialFormValues();
   }
 
-  setInitialFormValues(): void {
+  private setInitialFormValues(): void {
     const widgetGroup = this.chainedRef.getData();
     if (!widgetGroup) {
       this.group.set({ layout: WidgetGroupLayout.Full, slots: [{ category: null, type: null }] });
@@ -93,7 +93,7 @@ export class WidgetGroupFormComponent {
     this.selectedSlotChanged(SlotPosition.First);
   }
 
-  setupLayoutUpdates(): void {
+  private setupLayoutUpdates(): void {
     this.form.controls.layout.valueChanges.pipe(
       tap((layout) => {
         this.group.update((group) => {
@@ -117,7 +117,7 @@ export class WidgetGroupFormComponent {
     ).subscribe();
   }
 
-  selectedSlotChanged(slotIndex: SlotPosition): void {
+  protected selectedSlotChanged(slotIndex: SlotPosition): void {
     if (
       slotIndex === this.selectedSlot().slotPosition
       && this.selectedSlot().slotSize === layoutToSlotSizes[this.group().layout][slotIndex]
@@ -136,7 +136,7 @@ export class WidgetGroupFormComponent {
     });
   }
 
-  onSubmit(): void {
+  protected onSubmit(): void {
     this.cleanWidgetGroup();
     if (this.settingsHasErrors()) {
       return;
@@ -147,7 +147,7 @@ export class WidgetGroupFormComponent {
     });
   }
 
-  cleanWidgetGroup(): void {
+  private cleanWidgetGroup(): void {
     this.group.update((group) => {
       const newGroup: FormWidgetGroup = { layout: group.layout, slots: [] };
       const slotSizes = layoutToSlotSizes[group.layout];
@@ -162,7 +162,7 @@ export class WidgetGroupFormComponent {
     });
   }
 
-  updateSlotValidation([slotPosition, errors]: [SlotPosition, ValidationErrors]): void {
+  protected updateSlotValidation([slotPosition, errors]: [SlotPosition, ValidationErrors]): void {
     this.validationErrors.update((validaitonErrors) => {
       const newErrors = [...validaitonErrors];
       newErrors[slotPosition] = errors;
@@ -170,7 +170,7 @@ export class WidgetGroupFormComponent {
     });
   }
 
-  updateSlotSettings(slot: WidgetGroupSlot<object>): void {
+  protected updateSlotSettings(slot: WidgetGroupSlot<object>): void {
     this.group.update((group) => {
       const newGroup: FormWidgetGroup = { layout: group.layout, slots: [] };
       const slotsCount = Math.max(layoutToSlotSizes[newGroup.layout].length, group.slots.length);
