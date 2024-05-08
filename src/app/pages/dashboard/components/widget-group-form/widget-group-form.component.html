@@ -22,7 +22,7 @@
 
   <div class="editor-container">
     <ix-widget-editor-group
-      [group]="group"
+      [group]="group()"
       [selectedSlot]="selectedSlot()"
       (selectedSlotChange)="selectedSlotChanged($event)"
     ></ix-widget-editor-group>
@@ -39,7 +39,7 @@
       ></ix-select>
 
       <ix-select
-        *ngIf="group.slots[selectedSlot()]?.category"
+        *ngIf="group().slots[selectedSlot()]?.category"
         formControlName="type"
         [options]="widgetTypesOptions()"
         [label]="'Widget Type' | translate"
