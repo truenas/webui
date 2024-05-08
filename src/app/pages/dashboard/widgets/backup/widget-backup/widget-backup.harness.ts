@@ -5,7 +5,7 @@ export class WidgetBackupHarness extends ComponentHarness {
   static hostSelector = 'ix-widget-backup';
 
   async getHeader(): Promise<{ title: string; icon: string; message: string }> {
-    const title = await this.locatorForOptional('.card-title-text')();
+    const title = await this.locatorForOptional('.title h3')();
     const icon = await this.locatorForOptional(IxIconHarness.with({ selector: '.icon' }))();
     const message = await this.locatorForOptional('.status-container')();
     return {
@@ -21,7 +21,7 @@ export class WidgetBackupHarness extends ComponentHarness {
   }
 
   async getEmptyCardMessage(): Promise<string | null> {
-    const message = await this.locatorForOptional('.empty-card-content > .backup-actions')();
+    const message = await this.locatorForOptional('.empty-card-content .backup-actions')();
     return message ? (await message.text()).trim() : null;
   }
 
