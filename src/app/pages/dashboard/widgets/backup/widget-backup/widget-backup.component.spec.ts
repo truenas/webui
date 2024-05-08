@@ -17,8 +17,8 @@ import { RsyncTask } from 'app/interfaces/rsync-task.interface';
 import { BackupTaskActionsComponent } from 'app/pages/dashboard/widgets/backup/widget-backup/backup-task-actions/backup-task-actions.component';
 import { BackupTaskEmptyComponent } from 'app/pages/dashboard/widgets/backup/widget-backup/backup-task-empty/backup-task-empty.component';
 import { BackupTaskTileComponent } from 'app/pages/dashboard/widgets/backup/widget-backup/backup-task-tile/backup-task-tile.component';
-import { WidgetBackupComponent } from 'app/pages/dashboard-old/components/widget-backup/widget-backup.component';
-import { WidgetBackupHarness } from 'app/pages/dashboard-old/components/widget-backup/widget-backup.harness';
+import { WidgetBackupComponent } from 'app/pages/dashboard/widgets/backup/widget-backup/widget-backup.component';
+import { WidgetBackupHarness } from 'app/pages/dashboard/widgets/backup/widget-backup/widget-backup.harness';
 
 const currentDatetime = new Date();
 
