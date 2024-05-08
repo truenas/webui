@@ -9,7 +9,7 @@
         *ngFor="let result of getLimitedSectionResults(section.value); trackBy: trackById"
         class="search-result"
         tabindex="0"
-        [class.highlight-result]="isSearchInputFocused && isSameHierarchyResult(firstAvailableSearchResult, result)"
+        [class.highlighted-result]="isSearchInputFocused && isSameHierarchyResult(firstAvailableSearchResult, result)"
         [ixTest]="['search-result', result.hierarchy.join('-')]"
         (click)="selectElement(result)"
         (keydown.enter)="selectElement(result)"
