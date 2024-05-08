@@ -59,16 +59,15 @@ def navigate_to_system_settings_and_click_general(driver):
 @then('the General page should load')
 def the_support_page_license_information_should_load(driver):
     """the Support page License Information should load."""
-    assert wait_on_element(driver, 7, '//h1[contains(.,"General")]')
+    assert wait_on_element(driver, 7, xpaths.general.title)
 
 
 @then('under Support click Enter License the "License" box should open')
 def under_support_click_enter_license_the_license_box_should_open(driver):
     """under Support click Enter License the "License" box should open."""
-    assert wait_on_element(driver, 7, '//h3[contains(.,"Support")]')
-    assert wait_on_element(driver, 7, '//button[@id="update-license-btn"]', 'clickable')
-    driver.find_element_by_xpath('//button[@id="update-license-btn"]').click()
-    assert wait_on_element(driver, 7, '//h3[contains(.,"License")]')
+    assert wait_on_element(driver, 7, xpaths.general.support_title, 'clickable')
+    rsc.Click_On_Element(driver, xpaths.general.add_licence_button)
+    assert wait_on_element(driver, 7, xpaths.general.license_dialog_title)
 
 
 @then(parsers.parse('input the {license}, and click Save'))

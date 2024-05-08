@@ -387,6 +387,13 @@ class export_Disconnect_Pool:
     export_Disconnect_Button = '//mat-dialog-container//button[contains(.,"Export/Disconnect")]'
 
 
+class general:
+    title = '//h1[contains(text(),"General")]'
+    support_title = '//h3[contains(text(),"Support")]'
+    license_dialog_title = '//h1[contains(.,"License")]'
+    add_licence_button = '//*[@data-test="button-set-license"]'
+
+
 class global_Configuration:
     title = '//h3[contains(text(),"Edit Global Configuration")]'
     nameserver1_Input = '//ix-input[contains(.,"Nameserver 1")]//input'
