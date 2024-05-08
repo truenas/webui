@@ -29,6 +29,7 @@ import {
 export class WidgetStorageComponent {
   size = input.required<SlotSize>();
 
+  isLoading = computed(() => !this.pools() || !this.volumesData());
   poolsInfo = computed(() => {
     const volumesData = this.volumesData();
     const pools = this.pools();
@@ -261,7 +262,7 @@ export class WidgetStorageComponent {
   }
 
   private getFreeSpace(pool: Pool, volumes: VolumesData): string {
-    if (volumes.get(pool.name)?.avail == null) {
+    if (volumes.get(pool.name)?.avail === null) {
       return this.translate.instant('Unknown');
     }
 
