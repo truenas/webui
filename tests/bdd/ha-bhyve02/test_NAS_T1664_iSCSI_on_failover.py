@@ -272,7 +272,7 @@ def create_a_file_in_the_mount_point_and_get_the_checksum_of_the_files_to_compar
 @then('on the Dashboard, click Initiate Failover on the standby controller')
 def on_the_dashboard_click_initiate_failover_on_the_standby_controller(driver):
     """on the Dashboard, click Initiate Failover on the standby controller."""
-    driver.find_element_by_xpath(xpaths.side_Menu.dashboard).click()
+    rsc.Click_On_Element(driver, xpaths.side_Menu.old_dashboard)
     rsc.Verify_The_Dashboard(driver)
     time.sleep(20)
 

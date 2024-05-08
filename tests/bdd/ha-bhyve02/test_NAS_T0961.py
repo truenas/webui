@@ -200,8 +200,7 @@ def Please_wait_should_appear_while_settings_are_being_applied(driver):
 @then('navigate to the dashboard')
 def navigate_to_dashboard(driver):
     """navigate to The dashboard."""
-    assert wait_on_element(driver, 5, xpaths.side_Menu.dashboard, 'clickable')
-    driver.find_element_by_xpath(xpaths.side_Menu.dashboard).click()
+    rsc.Click_On_Element(driver, xpaths.side_Menu.old_dashboard)
     assert wait_on_element(driver, 10, xpaths.dashboard.system_Info_Card_Title)
 
 

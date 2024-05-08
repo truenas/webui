@@ -139,8 +139,7 @@ def Login_If_Not_On_Dashboard(driver, user, password):
         assert wait_on_element(driver, 5, xpaths.login.signin_Button, 'clickable')
         driver.find_element_by_xpath(xpaths.login.signin_Button).click()
     else:
-        assert wait_on_element(driver, 5, xpaths.side_Menu.dashboard, 'clickable')
-        driver.find_element_by_xpath(xpaths.side_Menu.dashboard).click()
+        Click_On_Element(driver, xpaths.side_Menu.old_dashboard)
 
 
 def Restart_SMB_Service(driver):

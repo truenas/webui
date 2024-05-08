@@ -390,8 +390,7 @@ def click_disable_failover_to_uncheck_it_click_save_and_confirm_changes(driver):
 @then('navigate to dashboard, wait for HA to be online')
 def navigate_to_dashboard_wait_for_ha_to_be_online(driver):
     """navigate to dashboard, wait for HA to be online."""
-    assert wait_on_element(driver, 7, xpaths.side_Menu.dashboard, 'clickable')
-    driver.find_element_by_xpath(xpaths.side_Menu.dashboard).click()
+    rsc.Click_On_Element(driver, xpaths.side_Menu.old_dashboard)
     rsc.Verify_The_Dashboard(driver)
     assert wait_on_element(driver, 240, xpaths.toolbar.ha_Enabled)
     assert wait_on_element(driver, 15, '//span[contains(.,"Hostname:") and contains(.,"truenas")]')
@@ -413,10 +412,7 @@ def enter_hostname_hostname_truenas_controller_2(driver, host1, host2):
 @then('navigate to dashboard, verify both contorler hostname')
 def navigate_to_dashboard_verify_both_contorler_hostname(driver):
     """navigate to dashboard, verify both contorler hostname."""
-    assert wait_on_element(driver, 7, xpaths.side_Menu.dashboard, 'clickable')
-    driver.find_element_by_xpath(xpaths.side_Menu.dashboard).click()
-    driver.refresh()
-    time.sleep(2)
+    rsc.Click_On_Element(driver, xpaths.side_Menu.old_dashboard)
     rsc.Verify_The_Dashboard(driver)
     assert wait_on_element(driver, 15, xpaths.toolbar.ha_Enabled)
     assert wait_on_element(driver, 15, '//span[contains(.,"Hostname:") and contains(.,"tn-bhyve06-nodea")]')

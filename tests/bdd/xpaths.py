@@ -617,6 +617,7 @@ class side_Menu:
 
     """xpath for the menu on the left side"""
     dashboard = menu_Anchor('Dashboard')
+    old_dashboard = menu_Anchor('Dashboard_(old)')
     storage = menu_Anchor('Storage')
     datasets = menu_Anchor('Datasets')
     shares = menu_Anchor('Shares')
