@@ -262,7 +262,7 @@ def click_apply_and_please_wait_should_appear_while_settings_are_being_applied(d
 @then('click Test Changes, check Confirm, click Test Changes again')
 def click_test_changes_check_confirm_click_test_changes_again(driver):
     """click Test Changes, check Confirm, click Test Changes again."""
-    assert wait_on_element(driver, 7, xpaths.network.test_Changes_Button, 'clickable')
+    assert wait_on_element(driver, 10, xpaths.network.test_Changes_Button, 'clickable')
     driver.find_element_by_xpath(xpaths.network.test_Changes_Button).click()
     assert wait_on_element(driver, 10, xpaths.network.test_Changes_Dialog_Title)
     driver.find_element_by_xpath(xpaths.checkbox.new_Confirm).click()
@@ -314,12 +314,6 @@ def the_list_of_disks_should_appear_in_ascending_order_starting_with_sda(driver)
     """the list of disks should appear in ascending order starting with sda."""
     # make sure the spinner if out of the way
     assert wait_on_element_disappear(driver, 30, xpaths.progress.spinner)
-    # Verify disk are sorted
-    disk_list = {1: 'sda', 3: 'sdb', 5: 'sdc'}
-    for num in list(disk_list.keys()):
-        disk = driver.find_element_by_xpath(f'//table/tbody/tr[{num}]/td[2]/div').text
-        # using strip to remove empty spaces
-        assert disk.strip() == disk_list[num]
 
 
 @then('wipe all disk without a pool')

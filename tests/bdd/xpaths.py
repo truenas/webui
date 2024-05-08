@@ -390,7 +390,7 @@ class export_Disconnect_Pool:
 class general:
     title = '//h1[contains(text(),"General")]'
     support_title = '//h3[contains(text(),"Support")]'
-    license_dialog_title = '//h1[contains(.,"License")]'
+    license_dialog_title = '//h3[contains(.,"License")]'
     add_licence_button = '//*[@data-test="button-set-license"]'
 
 
