@@ -18,7 +18,6 @@ import { emailValidator } from 'app/modules/ix-forms/validators/email-validation
 import { portRangeValidator } from 'app/modules/ix-forms/validators/range-validation/range-validation';
 import { OauthButtonType } from 'app/modules/oauth-button/interfaces/oauth-button.interface';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { emailFormElements } from 'app/pages/system/general-settings/email/email-form/email-form.elements';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -37,7 +36,6 @@ enum SendMethod {
 })
 export class EmailFormComponent implements OnInit {
   protected readonly requiredRoles = [Role.FullAdmin];
-  protected searchableElements = emailFormElements;
 
   sendMethodControl = new FormControl(SendMethod.Smtp);
 

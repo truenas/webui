@@ -5,14 +5,17 @@ export const accessCardElements = {
   hierarchy: [T('System'), T('Advanced'), T('Access')],
   anchorRouterLink: ['/system', 'advanced'],
   elements: {
-    configureAccess: {
-      hierarchy: [T('Configure')],
-      synonyms: [T('Configure Sessions')],
-      anchor: 'configure-access',
+    access: {
+      synonyms: [T('Configure Sessions'), T('Sessions')],
+      anchor: 'access-card',
     },
     terminateOtherSessions: {
       hierarchy: [T('Terminate Other Sessions')],
       synonyms: [T('Terminate Other User Sessions')],
+    },
+    tokenLifetime: {
+      hierarchy: [T('Token Lifetime')],
+      synonyms: [T('Session Token Lifetime')],
     },
   },
 } satisfies UiSearchableElement;

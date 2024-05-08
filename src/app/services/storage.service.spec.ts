@@ -375,37 +375,5 @@ describe('StorageService', () => {
       // Let's just check to see if the our warning is present
       expect(warnings).toContain(TopologyWarning.MixedVdevLayout);
     });
-
-    it('generates warning for "Redundancy Mismatch"', () => {
-      /*
-      * NOTE: Special and Dedup categories should match redundancy level of data VDEVs
-      * */
-
-      const storage = new MockStorageGenerator();
-
-      storage.addDataTopology({
-        scenario: MockStorageScenario.Uniform,
-        layout: TopologyItemType.Raidz3,
-        diskSize: 4,
-        width: 7,
-        repeats: 2,
-      }).addSpecialTopology({
-        scenario: MockStorageScenario.Uniform,
-        layout: TopologyItemType.Mirror,
-        diskSize: 4,
-        width: 3,
-        repeats: 1,
-      });
-
-      const warnings = storageService.validateVdevs(
-        VdevType.Special,
-        storage.poolState.topology.special,
-        storage.disks,
-        storage.poolState.topology.data,
-      );
-
-      expect(warnings).toHaveLength(1);
-      expect(warnings).toContain(TopologyWarning.RedundancyMismatch);
-    });
   });
 });

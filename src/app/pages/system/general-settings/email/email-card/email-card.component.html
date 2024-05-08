@@ -1,4 +1,4 @@
-<mat-card>
+<mat-card [ixUiSearch]="searchableElements.elements.email">
   <mat-toolbar-row>
     <h3>{{ 'Email' | translate }}</h3>
     <div class="actions action-icon">
@@ -6,7 +6,6 @@
         mat-button
         color="default"
         [ixTest]="['email', 'settings']"
-        [ixUiSearch]="searchableElements.elements.configure"
         (click)="openEmailSettings()"
       >
         {{ 'Settings' | translate }}
@@ -16,7 +15,7 @@
 
   <mat-card-content>
     <mat-list>
-      <mat-list-item>
+      <mat-list-item [ixUiSearch]="searchableElements.elements.sendMethod">
         <span class="label">{{ 'Send Mail Method' | translate }}:</span>
         <span *ixWithLoadingState="emailConfig$ as emailConfig" class="value">
           {{ !emailConfig?.oauth?.client_id ? helptext.send_mail_method.smtp.placeholder : helptext.send_mail_method.gmail.placeholder }}

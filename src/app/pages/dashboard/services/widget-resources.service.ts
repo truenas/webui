@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { sub } from 'date-fns';
-import { Observable, timer } from 'rxjs';
+import { Observable, timer, forkJoin } from 'rxjs';
 import {
   combineLatestWith,
   map, shareReplay, switchMap,
@@ -26,6 +26,14 @@ import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 export class WidgetResourcesService {
   // TODO: nosub is emitted for some reason
   readonly realtimeUpdates$ = this.ws.subscribe('reporting.realtime');
+
+  readonly backups$ = forkJoin([
+    this.ws.call('replication.query'),
+    this.ws.call('rsynctask.query'),
+    this.ws.call('cloudsync.query'),
+  ]).pipe(
+    shareReplay({ bufferSize: 1, refCount: true }),
+  );
 
   readonly systemInfo$ = this.ws.call('webui.main.dashboard.sys_info').pipe(
     toLoadingState(),

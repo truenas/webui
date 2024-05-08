@@ -27,6 +27,12 @@ export const demoWidgets: WidgetGroup[] = [
     ],
   },
   {
+    layout: WidgetGroupLayout.Full,
+    slots: [
+      { type: WidgetType.BackupTasks },
+    ],
+  },
+  {
     layout: WidgetGroupLayout.QuartersAndHalf,
     slots: [
       { type: WidgetType.Memory },
