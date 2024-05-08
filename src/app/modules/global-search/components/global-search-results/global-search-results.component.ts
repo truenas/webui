@@ -56,6 +56,10 @@ export class GlobalSearchResultsComponent implements OnChanges {
     );
   }
 
+  get firstAvailableSearchResult(): UiSearchableElement | null {
+    return this.availableSections.flatMap((section) => this.getLimitedSectionResults(section.value))[0];
+  }
+
   constructor(
     protected authService: AuthService,
     private searchProvider: UiSearchProvider,
@@ -100,6 +104,10 @@ export class GlobalSearchResultsComponent implements OnChanges {
 
   getElementsBySection(section: GlobalSearchSection): UiSearchableElement[] {
     return this.results.filter((element) => element?.section === section);
+  }
+
+  isSameHierarchyResult(a: UiSearchableElement, b: UiSearchableElement): boolean {
+    return isEqual(a.hierarchy, b.hierarchy);
   }
 
   private saveSearchResult(result: UiSearchableElement): void {
