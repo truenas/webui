@@ -24,6 +24,7 @@
     <ix-widget-editor-group
       [group]="group()"
       [selectedSlot]="selectedSlot().slotPosition"
+      [validationErrors]="validationErrors()"
       (selectedSlotChange)="selectedSlotChanged($event)"
     ></ix-widget-editor-group>
   </div>

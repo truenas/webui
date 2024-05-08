@@ -39,8 +39,25 @@
       justify-content: center;
     }
 
+    
+
     .inert-container {
       height: 100%;
     }
   }
+
+  .error {
+    align-items: center;
+    background: var(--bg2);
+    color: var(--fg2);
+    display: flex;
+    font-size: 13px;
+    height: 100%;
+    justify-content: center;
+  }
+
+  .error-icon {
+    margin-right: 5px;
+  }
 }
+
