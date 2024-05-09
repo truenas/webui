@@ -81,9 +81,7 @@ def input_the_share_name_then_click_to_enable(driver, share_name):
     driver.find_element_by_xpath(xpaths.smb.name_Input).click()
     driver.find_element_by_xpath(xpaths.smb.name_Input).clear()
     driver.find_element_by_xpath(xpaths.smb.name_Input).send_keys(share_name)
-    assert wait_on_element(driver, 5, xpaths.checkbox.enabled, 'clickable')
-    if not attribute_value_exist(driver, xpaths.checkbox.enabled, 'class', 'mat-mdc-checkbox-checked'):
-        driver.find_element_by_xpath(xpaths.checkbox.enable).click()
+    rsc.set_checkbox(driver, xpaths.checkbox.enabled)
 
 
 @then(parsers.parse('input "{description}" as the description, click Save'))

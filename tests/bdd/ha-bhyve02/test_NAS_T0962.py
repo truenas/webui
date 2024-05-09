@@ -210,6 +210,7 @@ def after_go_to_the_dashboard(driver):
     """after, go to the Dashboard."""
     rsc.Click_On_Element(driver, xpaths.side_Menu.old_dashboard)
     assert wait_on_element(driver, 10, xpaths.dashboard.title)
+    time.sleep(10)
 
 
 @then('click INITIATE FAILOVER, click the confirm checkbox, and press FAILOVER')

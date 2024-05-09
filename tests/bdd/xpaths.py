@@ -218,7 +218,7 @@ class certificates:
 
 
 class checkbox:
-    enabled = '//ix-checkbox[@formcontrolname="enabled"]//mat-checkbox'
+    enabled = '//*[@data-test="checkbox-enabled"]'
     enable = '//ix-checkbox[@formcontrolname="enable"]//mat-checkbox'
     old_Confirm = '//mat-checkbox[@ix-auto="checkbox__CONFIRM"]'
     new_Confirm = '//mat-checkbox[@data-test="checkbox-confirm"]'
@@ -368,10 +368,10 @@ class edit_Encryption:
 
 class edit_Permissions:
     title = '//h1[text()="Edit Permissions"]'
-    user_Combobox = '//ix-combobox[@formcontrolname="user"]//input'
-    user_Apply_Checkbox = '//mat-checkbox[contains(.,"Apply User")]'
-    group_Combobox = '//ix-combobox[@formcontrolname="group"]//input'
-    group_Apply_Checkbox = '//mat-checkbox[contains(.,"Apply Group")]'
+    user_Combobox = '//*[@data-test="input-uid"]'
+    user_Apply_Checkbox = '//*[@data-test="checkbox-apply-user"]'
+    group_Combobox = '//*[@data-test="input-gid"]'
+    group_Apply_Checkbox = '//*[@data-test="checkbox-apply-group"]'
 
 
 class error:
