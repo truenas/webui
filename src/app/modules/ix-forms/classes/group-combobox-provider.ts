@@ -6,6 +6,7 @@ import { IxComboboxProvider } from 'app/modules/ix-forms/components/ix-combobox/
 import { UserService } from 'app/services/user.service';
 
 export class GroupComboboxProvider implements IxComboboxProvider {
+  protected wereInitialOptionsAdded = false;
   protected page = 1;
   readonly pageSize = 50;
 
@@ -20,12 +21,14 @@ export class GroupComboboxProvider implements IxComboboxProvider {
   }
 
   mapOptions(options: Option[]): Option[] {
-    const missingInitialOptions = this.initialOptions.filter((initialOption) => {
-      const isInitialOptionInResults = options.find((option) => option.value === initialOption.value);
-      return !isInitialOptionInResults;
+    let filteredOptions = options.filter((option) => {
+      return !this.initialOptions.find((initialOption) => initialOption.value === option.value);
     });
-    this.initialOptions = [];
-    return [...options, ...missingInitialOptions];
+    if (!this.wereInitialOptionsAdded) {
+      filteredOptions = [...this.initialOptions, ...filteredOptions];
+      this.wereInitialOptionsAdded = true;
+    }
+    return filteredOptions;
   }
 
   groupQueryResToOptions(groups: Group[]): Option[] {
