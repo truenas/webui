@@ -22,6 +22,7 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import {
   AutotrimDialogComponent,
 } from 'app/pages/storage/components/dashboard-pool/zfs-health-card/autotrim-dialog/autotrim-dialog.component';
+import { zfsHealthCardElements } from 'app/pages/storage/components/dashboard-pool/zfs-health-card/zfs-health-card.elements';
 import { PoolsDashboardStore } from 'app/pages/storage/stores/pools-dashboard-store.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -35,6 +36,8 @@ import { WebSocketService } from 'app/services/ws.service';
 })
 export class ZfsHealthCardComponent implements OnChanges {
   @Input() pool: Pool;
+
+  protected readonly searchableElements = zfsHealthCardElements;
 
   scan: PoolScanUpdate;
   totalZfsErrors = 0;

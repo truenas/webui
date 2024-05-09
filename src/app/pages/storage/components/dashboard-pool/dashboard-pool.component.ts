@@ -14,6 +14,7 @@ import { StorageDashboardDisk } from 'app/interfaces/storage.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { dashboardPoolElements } from 'app/pages/storage/components/dashboard-pool/dashboard-pool.elements';
 import {
   ExportDisconnectModalComponent,
 } from 'app/pages/storage/components/dashboard-pool/export-disconnect-modal/export-disconnect-modal.component';
@@ -35,6 +36,7 @@ export class DashboardPoolComponent {
   @Input() disks: StorageDashboardDisk[];
 
   readonly requiredRoles = [Role.FullAdmin];
+  protected readonly searchableElements = dashboardPoolElements;
 
   constructor(
     private matDialog: MatDialog,

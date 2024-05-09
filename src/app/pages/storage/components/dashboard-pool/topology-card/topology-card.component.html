@@ -1,4 +1,4 @@
-<mat-card class="card">
+<mat-card class="card" [ixUiSearch]="searchableElements.elements.topology">
   <mat-card-header>
     <h3 mat-card-title>
       {{ 'Topology' | translate }}
@@ -8,6 +8,7 @@
     <button
       mat-button
       ixTest="manage-devices"
+      [ixUiSearch]="searchableElements.elements.manageDevices"
       (click)="router.navigate(['/storage', this.poolState.id, 'devices'])"
     >
       {{ 'Manage Devices' | translate }}
