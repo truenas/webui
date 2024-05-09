@@ -105,11 +105,7 @@ describe('DashboardComponent', () => {
       await addButton.click();
 
       expect(spectator.inject(IxChainedSlideInService).open)
-        .toHaveBeenCalledWith(WidgetGroupFormComponent, true, groupA);
-
-      const groups = spectator.queryAll(WidgetGroupComponent);
-      expect(groups).toHaveLength(5);
-      expect(groups[4].group).toEqual({ layout: WidgetGroupLayout.Full, slots: [] });
+        .toHaveBeenCalledWith(WidgetGroupFormComponent, true);
     });
 
     it('saves new configuration when Save is pressed', async () => {

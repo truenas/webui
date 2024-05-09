@@ -77,7 +77,7 @@ export class DashboardComponent implements OnInit {
       .open(WidgetGroupFormComponent, true)
       .pipe(untilDestroyed(this))
       .subscribe((response: ChainedComponentResponse) => {
-        if (response.response) {
+        if (response?.response) {
           this.renderedGroups.update((groups) => [...groups, response.response as WidgetGroup]);
         }
       });
