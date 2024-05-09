@@ -2,6 +2,7 @@ import { Renderer2, ElementRef } from '@angular/core';
 import { SpectatorService, createServiceFactory } from '@ngneat/spectator';
 import { mockProvider } from '@ngneat/spectator/jest';
 import { UiSearchDirective } from 'app/directives/common/ui-search.directive';
+import { WINDOW } from 'app/helpers/window.helper';
 import { UiSearchDirectivesService } from './ui-search-directives.service';
 
 describe('UiSearchDirectivesService', () => {
@@ -25,7 +26,12 @@ describe('UiSearchDirectivesService', () => {
     });
 
     it('should check register and unregister', () => {
-      const directive = new UiSearchDirective(renderer, elementRef, spectator.service);
+      const directive = new UiSearchDirective(
+        renderer,
+        elementRef,
+        spectator.service,
+        spectator.inject<Window>(WINDOW),
+      );
       directive.config = { anchor: 'anchor' };
 
       spectator.service.register(directive);
