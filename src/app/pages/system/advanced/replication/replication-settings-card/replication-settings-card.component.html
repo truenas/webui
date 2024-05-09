@@ -1,4 +1,4 @@
-<mat-card>
+<mat-card [ixUiSearch]="searchableElements.elements.replication">
   <mat-toolbar-row>
     <h3>{{ 'Replication' | translate }}</h3>
     <div class="actions action-icon">
@@ -6,7 +6,6 @@
         *ixRequiresRoles="requiredRoles"
         mat-button
         [ixTest]="['replication', 'configure']"
-        [ixUiSearch]="searchableElements.elements.configure"
         (click)="onConfigurePressed()"
       >
         {{ 'Configure' | translate }}
@@ -16,7 +15,7 @@
 
   <mat-card-content>
     <mat-list>
-      <mat-list-item>
+      <mat-list-item [ixUiSearch]="searchableElements.elements.replicationTasksLimit">
         <span class="label">{{ 'Replication Tasks Limit' | translate }}:</span>
         <span *ixWithLoadingState="taskLimit$ as taskLimit" class="value">
           {{ taskLimit || '–' }}

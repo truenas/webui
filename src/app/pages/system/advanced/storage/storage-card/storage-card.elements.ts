@@ -5,9 +5,14 @@ export const storageCardElements = {
   hierarchy: [T('System'), T('Advanced'), T('Storage')],
   anchorRouterLink: ['/system', 'advanced'],
   elements: {
-    configure: {
-      hierarchy: [T('Configure')],
-      anchor: 'configure-storage',
+    storage: {
+      anchor: 'storage-card',
+    },
+    systemPool: {
+      hierarchy: [T('System Data Pool')],
+    },
+    swapSize: {
+      hierarchy: [T('Swap Size')],
     },
   },
 } satisfies UiSearchableElement;

@@ -12,7 +12,6 @@
           [label]="'Send Mail Method' | translate"
           [formControl]="sendMethodControl"
           [options]="sendMethodOptions$"
-          [ixUiSearch]="searchableElements.elements.sendMethod"
         ></ix-radio-group>
 
         <ng-container *ngIf="isSmtp; else gmailOauth">
@@ -33,7 +32,6 @@
             formControlName="outgoingserver"
             [label]="'Outgoing Mail Server' | translate"
             [tooltip]="helptext.outgoingserver.tooltip | translate"
-            [ixUiSearch]="searchableElements.elements.outgoingServer"
           ></ix-input>
 
           <ix-input
