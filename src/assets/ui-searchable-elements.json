@@ -32,7 +32,7 @@
     "hierarchy": [
       "Toolbar",
       "Power Menu",
-      "LogOut"
+      "Log Out"
     ],
     "synonyms": [
       "Toolbar",
@@ -40,7 +40,7 @@
     ],
     "requiredRoles": [],
     "routerLink": null,
-    "anchor": "logout",
+    "anchor": "log-out",
     "triggerAnchor": "power-menu",
     "section": "ui"
   },

@@ -10,7 +10,7 @@ export const powerMenuElements = {
       anchor: 'power-menu',
     },
     logOut: {
-      hierarchy: [T('LogOut')],
+      hierarchy: [T('Log Out')],
     },
     restart: {
       hierarchy: [T('Restart')],

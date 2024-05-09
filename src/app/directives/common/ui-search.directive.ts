@@ -1,7 +1,9 @@
 import {
   Directive, Input, ElementRef, Renderer2, OnInit,
   OnDestroy,
+  Inject,
 } from '@angular/core';
+import { WINDOW } from 'app/helpers/window.helper';
 import { searchDelayConst } from 'app/modules/global-search/constants/delay.const';
 import { getSearchableElementId } from 'app/modules/global-search/helpers/get-searchable-element-id';
 import { UiSearchableElement } from 'app/modules/global-search/interfaces/ui-searchable-element.interface';
@@ -21,6 +23,7 @@ export class UiSearchDirective implements OnInit, OnDestroy {
     private renderer: Renderer2,
     private elementRef: ElementRef<HTMLElement>,
     private searchDirectives: UiSearchDirectivesService,
+    @Inject(WINDOW) private window: Window,
   ) {}
 
   ngOnInit(): void {
@@ -40,7 +43,7 @@ export class UiSearchDirective implements OnInit, OnDestroy {
 
   private tryHighlightAnchors(element: UiSearchableElement, attemptCount: number): void {
     if (this.elementRef.nativeElement) {
-      this.highlightAndClickElement(this.elementRef.nativeElement);
+      this.highlightAndClickElement(this.elementRef.nativeElement, !!element.triggerAnchor);
       if (this.elementRef.nativeElement.id !== element.anchor) {
         this.highlightElementAnchor(element.anchor);
       }
@@ -60,17 +63,24 @@ export class UiSearchDirective implements OnInit, OnDestroy {
     }, searchDelayConst * 1.5);
   }
 
-  private highlightAndClickElement(anchorRef: HTMLElement): void {
+  private highlightAndClickElement(anchorRef: HTMLElement, shouldClick = false): void {
     if (!anchorRef) return;
 
-    anchorRef.scrollIntoView({ behavior: 'smooth' });
+    const elementPosition = anchorRef.getBoundingClientRect().top + this.window.pageYOffset;
+    this.window.scrollTo({ top: elementPosition - 50, behavior: 'smooth' });
     anchorRef.focus();
-
     this.renderer.addClass(anchorRef, 'search-element-highlighted');
 
-    setTimeout(() => anchorRef.click(), searchDelayConst);
+    if (shouldClick) setTimeout(() => anchorRef.click(), searchDelayConst);
+
     setTimeout(
-      () => this.renderer.removeClass(anchorRef, 'search-element-highlighted'),
+      () => {
+        this.renderer.removeClass(anchorRef, 'search-element-highlighted');
+
+        if (!shouldClick) {
+          anchorRef.focus();
+        }
+      },
       searchDelayConst * 10,
     );
   }
