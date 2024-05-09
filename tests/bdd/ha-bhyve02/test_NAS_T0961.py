@@ -224,7 +224,7 @@ def verify_the_system_dataset_is_dozer_on_the_active_node(driver):
 @then('press Initiate Failover and confirm')
 def press_initiate_failover_and_confirm(driver):
     """press Initiate Failover and confirm."""
-    time.sleep(10)
+    time.sleep(20)
     rsc.Trigger_Failover(driver)
 
     rsc.Confirm_Failover(driver)
