@@ -235,11 +235,11 @@ def at_the_login_page_enter_user_and_password(driver, user, password):
 
 
 @then('on the Dashboard, wait for the Active Directory service')
-def on_the_dashboard_wait_for_the_active_Directory_service(driver):
+def on_the_dashboard_wait_for_the_active_directory_service(driver):
     """on the Dashboard, wait for the Active Directory service."""
     assert wait_on_element(driver, 60, xpaths.dashboard.title)
     assert wait_on_element(driver, 120, xpaths.dashboard.system_Info_Card_Title)
-    # Make sure HA is enable before going forward
+    # Make sure HA is enabled before going forward
     assert wait_on_element(driver, 180, xpaths.toolbar.ha_Enabled)
     # Wait for the directories service manager button
     assert wait_on_element(driver, 180, '//button[@id="dirservices-manager"]')
