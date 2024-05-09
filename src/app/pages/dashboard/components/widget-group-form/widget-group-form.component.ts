@@ -32,7 +32,7 @@ export class WidgetGroupFormComponent {
   protected group = signal<FormWidgetGroup>(
     { layout: WidgetGroupLayout.Full, slots: [{ category: null, type: null }] } as FormWidgetGroup,
   );
-  protected selectedSlot = signal<WidgetGroupSlot<object>>({
+  selectedSlot = signal<WidgetGroupSlot<object>>({
     slotPosition: 0,
     slotSize: SlotSize.Full,
     category: null,
@@ -117,7 +117,7 @@ export class WidgetGroupFormComponent {
     ).subscribe();
   }
 
-  protected selectedSlotChanged(slotIndex: SlotPosition): void {
+  selectedSlotChanged(slotIndex: SlotPosition): void {
     if (
       slotIndex === this.selectedSlot().slotPosition
       && this.selectedSlot().slotSize === layoutToSlotSizes[this.group().layout][slotIndex]
@@ -162,7 +162,7 @@ export class WidgetGroupFormComponent {
     });
   }
 
-  protected updateSlotValidation([slotPosition, errors]: [SlotPosition, ValidationErrors]): void {
+  updateSlotValidation([slotPosition, errors]: [SlotPosition, ValidationErrors]): void {
     this.validationErrors.update((validaitonErrors) => {
       const newErrors = [...validaitonErrors];
       newErrors[slotPosition] = errors;
@@ -170,7 +170,7 @@ export class WidgetGroupFormComponent {
     });
   }
 
-  protected updateSlotSettings(slot: WidgetGroupSlot<object>): void {
+  updateSlotSettings(slot: WidgetGroupSlot<object>): void {
     this.group.update((group) => {
       const newGroup: FormWidgetGroup = { layout: group.layout, slots: [] };
       const slotsCount = Math.max(layoutToSlotSizes[newGroup.layout].length, group.slots.length);
