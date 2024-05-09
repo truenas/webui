@@ -7,6 +7,7 @@
         <ix-select
           formControlName="category"
           class="category-select"
+          [required]="true"
           [options]="widgetCategoriesOptions()"
           [label]="'Widget Category' | translate"
         ></ix-select>
@@ -15,6 +16,7 @@
           *ngIf="slot().category"
           formControlName="type"
           class="type-select"
+          [required]="true"
           [options]="widgetTypesOptions()"
           [label]="'Widget Type' | translate"
         ></ix-select>

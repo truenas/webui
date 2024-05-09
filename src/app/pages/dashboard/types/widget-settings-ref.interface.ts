@@ -1,4 +1,4 @@
-import { FormGroup, ValidationErrors } from '@angular/forms';
+import { ValidationErrors } from '@angular/forms';
 
 export class WidgetSettingsRef<Settings> {
   constructor(
@@ -17,16 +17,5 @@ export class WidgetSettingsRef<Settings> {
 
   updateValidity(errors: ValidationErrors): void {
     this.reportValidityUpdate(errors);
-  }
-
-  getAllFormErrors(form: FormGroup, fields: string[]): Record<string, ValidationErrors> {
-    let errorsByName: Record<string, ValidationErrors> = {};
-    for (const field of fields) {
-      const field2 = field as keyof (typeof form.controls);
-      if (form.controls[field2].errors) {
-        errorsByName = { ...errorsByName, [field]: form.controls[field2].errors };
-      }
-    }
-    return errorsByName;
   }
 }

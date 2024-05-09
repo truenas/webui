@@ -4,6 +4,7 @@ import {
 import { Validators } from '@angular/forms';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { getAllFormErrors } from 'app/modules/ix-forms/utils/get-form-errors.utils';
 import { WidgetSettingsComponent } from 'app/pages/dashboard/types/widget-component.interface';
 import { WidgetSettingsRef } from 'app/pages/dashboard/types/widget-settings-ref.interface';
 import {
@@ -43,13 +44,13 @@ export class WidgetInterfaceIpSettingsComponent implements WidgetSettingsCompone
 
   private setupSettingsUpdate(): void {
     this.widgetSettingsRef.updateValidity(
-      this.widgetSettingsRef.getAllFormErrors(this.form, this.formFieldNames),
+      getAllFormErrors(this.form, this.formFieldNames),
     );
     this.form.valueChanges.pipe(untilDestroyed(this)).subscribe({
       next: (settings) => {
         this.widgetSettingsRef.updateSettings({ interface: settings.interfaceIp });
         this.widgetSettingsRef.updateValidity(
-          this.widgetSettingsRef.getAllFormErrors(this.form, this.formFieldNames),
+          getAllFormErrors(this.form, this.formFieldNames),
         );
       },
     });
