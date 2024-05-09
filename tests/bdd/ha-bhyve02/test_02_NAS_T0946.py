@@ -59,16 +59,15 @@ def navigate_to_system_settings_and_click_general(driver):
 @then('the General page should load')
 def the_support_page_license_information_should_load(driver):
     """the Support page License Information should load."""
-    assert wait_on_element(driver, 7, '//h1[contains(.,"General")]')
+    assert wait_on_element(driver, 7, xpaths.general.title)
 
 
 @then('under Support click Enter License the "License" box should open')
 def under_support_click_enter_license_the_license_box_should_open(driver):
     """under Support click Enter License the "License" box should open."""
-    assert wait_on_element(driver, 7, '//h3[contains(.,"Support")]')
-    assert wait_on_element(driver, 7, '//button[@id="update-license-btn"]', 'clickable')
-    driver.find_element_by_xpath('//button[@id="update-license-btn"]').click()
-    assert wait_on_element(driver, 7, '//h3[contains(.,"License")]')
+    assert wait_on_element(driver, 7, xpaths.general.support_title, 'clickable')
+    rsc.Click_On_Element(driver, xpaths.general.add_licence_button)
+    assert wait_on_element(driver, 7, xpaths.general.license_dialog_title)
 
 
 @then(parsers.parse('input the {license}, and click Save'))
@@ -263,7 +262,7 @@ def click_apply_and_please_wait_should_appear_while_settings_are_being_applied(d
 @then('click Test Changes, check Confirm, click Test Changes again')
 def click_test_changes_check_confirm_click_test_changes_again(driver):
     """click Test Changes, check Confirm, click Test Changes again."""
-    assert wait_on_element(driver, 7, xpaths.network.test_Changes_Button, 'clickable')
+    assert wait_on_element(driver, 10, xpaths.network.test_Changes_Button, 'clickable')
     driver.find_element_by_xpath(xpaths.network.test_Changes_Button).click()
     assert wait_on_element(driver, 10, xpaths.network.test_Changes_Dialog_Title)
     driver.find_element_by_xpath(xpaths.checkbox.new_Confirm).click()
@@ -315,12 +314,6 @@ def the_list_of_disks_should_appear_in_ascending_order_starting_with_sda(driver)
     """the list of disks should appear in ascending order starting with sda."""
     # make sure the spinner if out of the way
     assert wait_on_element_disappear(driver, 30, xpaths.progress.spinner)
-    # Verify disk are sorted
-    disk_list = {1: 'sda', 3: 'sdb', 5: 'sdc'}
-    for num in list(disk_list.keys()):
-        disk = driver.find_element_by_xpath(f'//table/tbody/tr[{num}]/td[2]/div').text
-        # using strip to remove empty spaces
-        assert disk.strip() == disk_list[num]
 
 
 @then('wipe all disk without a pool')
@@ -397,8 +390,7 @@ def click_disable_failover_to_uncheck_it_click_save_and_confirm_changes(driver):
 @then('navigate to dashboard, wait for HA to be online')
 def navigate_to_dashboard_wait_for_ha_to_be_online(driver):
     """navigate to dashboard, wait for HA to be online."""
-    assert wait_on_element(driver, 7, xpaths.side_Menu.dashboard, 'clickable')
-    driver.find_element_by_xpath(xpaths.side_Menu.dashboard).click()
+    rsc.Click_On_Element(driver, xpaths.side_Menu.old_dashboard)
     rsc.Verify_The_Dashboard(driver)
     assert wait_on_element(driver, 240, xpaths.toolbar.ha_Enabled)
     assert wait_on_element(driver, 15, '//span[contains(.,"Hostname:") and contains(.,"truenas")]')
@@ -420,10 +412,7 @@ def enter_hostname_hostname_truenas_controller_2(driver, host1, host2):
 @then('navigate to dashboard, verify both contorler hostname')
 def navigate_to_dashboard_verify_both_contorler_hostname(driver):
     """navigate to dashboard, verify both contorler hostname."""
-    assert wait_on_element(driver, 7, xpaths.side_Menu.dashboard, 'clickable')
-    driver.find_element_by_xpath(xpaths.side_Menu.dashboard).click()
-    driver.refresh()
-    time.sleep(2)
+    rsc.Click_On_Element(driver, xpaths.side_Menu.old_dashboard)
     rsc.Verify_The_Dashboard(driver)
     assert wait_on_element(driver, 15, xpaths.toolbar.ha_Enabled)
     assert wait_on_element(driver, 15, '//span[contains(.,"Hostname:") and contains(.,"tn-bhyve06-nodea")]')

@@ -139,8 +139,7 @@ def Login_If_Not_On_Dashboard(driver, user, password):
         assert wait_on_element(driver, 5, xpaths.login.signin_Button, 'clickable')
         driver.find_element_by_xpath(xpaths.login.signin_Button).click()
     else:
-        assert wait_on_element(driver, 5, xpaths.side_Menu.dashboard, 'clickable')
-        driver.find_element_by_xpath(xpaths.side_Menu.dashboard).click()
+        Click_On_Element(driver, xpaths.side_Menu.old_dashboard)
 
 
 def Restart_SMB_Service(driver):
@@ -255,7 +254,7 @@ def Verify_Element_Text(driver, xpath, value):
 
 def Verify_The_Dashboard(driver):
     assert wait_on_element(driver, 10, xpaths.dashboard.title)
-    assert wait_on_element(driver, 15, xpaths.dashboard.system_Info_Card_Title)
+    assert wait_on_element(driver, 15, xpaths.dashboard.help_Card_Title)
 
 
 def Wait_For_Inputable_And_Input_Value(driver, xpath, value):
