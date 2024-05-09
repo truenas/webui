@@ -6,7 +6,6 @@ import { IxComboboxProvider } from 'app/modules/ix-forms/components/ix-combobox/
 import { UserService } from 'app/services/user.service';
 
 export class GroupComboboxProvider implements IxComboboxProvider {
-  protected wereInitialOptionsAdded = false;
   protected page = 1;
   readonly pageSize = 50;
 
@@ -17,18 +16,14 @@ export class GroupComboboxProvider implements IxComboboxProvider {
     return this.userService.groupQueryDsCache(filterValue, false, offset)
       .pipe(
         map((groups) => this.groupQueryResToOptions(groups)),
+        map((options) => [...this.initialOptions, ...this.excludeInitialOptions(options)]),
       );
   }
 
-  mapOptions(options: Option[]): Option[] {
-    let filteredOptions = options.filter((option) => {
+  excludeInitialOptions(options: Option[]): Option[] {
+    return options.filter((option) => {
       return !this.initialOptions.find((initialOption) => initialOption.value === option.value);
     });
-    if (!this.wereInitialOptionsAdded) {
-      filteredOptions = [...this.initialOptions, ...filteredOptions];
-      this.wereInitialOptionsAdded = true;
-    }
-    return filteredOptions;
   }
 
   groupQueryResToOptions(groups: Group[]): Option[] {
@@ -43,12 +38,13 @@ export class GroupComboboxProvider implements IxComboboxProvider {
     return this.userService.groupQueryDsCache(filterValue, false, offset)
       .pipe(
         map((groups) => this.groupQueryResToOptions(groups)),
+        map((groups) => this.excludeInitialOptions(groups)),
       );
   }
 
   constructor(
     protected userService: UserService,
     private optionsValueField: 'group' | 'gid' | 'id' = 'group',
-    private initialOptions: Option[] = [],
+    protected initialOptions: Option[] = [],
   ) {}
 }
