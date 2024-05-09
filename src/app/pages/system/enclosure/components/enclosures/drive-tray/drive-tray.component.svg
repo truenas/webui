@@ -9,8 +9,6 @@
   <g
     (click)="traySelected.emit()"
     [attr.id]="'slot-' + slot + '-grp1'"
-    (mouseover)="highlight.set(true)"
-    (mouseleave)="highlight.set(false)"
   >
     <rect
       [attr.id]="'tray-' + slot + '-g1-r1'"
@@ -23,7 +21,7 @@
       width="120"
       height="30"
       opacity="0.5"
-      [attr.fill]="highlight() ? '#ff3' : '#2d2d2d'"
+      class="tray-background"
       transform="translate(2 0)"
     ></rect>
     <rect
