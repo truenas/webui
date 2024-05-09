@@ -41,7 +41,7 @@ describe('DashboardComponent', () => {
         save: jest.fn(() => of(undefined)),
       }),
       mockProvider(IxChainedSlideInService, {
-        open: jest.fn(() => of(undefined)),
+        open: jest.fn(() => of({ error: false, response: groupA })),
       }),
     ],
   });
