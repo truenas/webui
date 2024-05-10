@@ -7,6 +7,7 @@ export enum WidgetCategory {
   Memory = 'memory',
   Storage = 'storage',
   SystemInfo = 'system-information',
+  BackupTasks = 'backup-tasks',
 }
 
 export const widgetCategoryLabels = new Map<WidgetCategory, string>([
@@ -16,4 +17,5 @@ export const widgetCategoryLabels = new Map<WidgetCategory, string>([
   [WidgetCategory.Memory, T('Memory')],
   [WidgetCategory.Storage, T('Storage')],
   [WidgetCategory.SystemInfo, T('System Information')],
+  [WidgetCategory.BackupTasks, T('Backup Tasks')],
 ]);

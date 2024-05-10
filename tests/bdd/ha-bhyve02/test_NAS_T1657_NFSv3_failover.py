@@ -186,8 +186,8 @@ def click_on_system_settings_on_the_left_sidebar_and_click_services(driver):
 def on_the_service_page_verify_the_nfs_service_is_running_in_the_ui_and_with_the_api(driver):
     """on the Service page, verify the NFS service is running in the UI and with the API."""
     assert wait_on_element(driver, 7, xpaths.services.title)
-    assert wait_on_element(driver, 5, xpaths.services.nfs_Service_Toggle, 'clickable')
-    assert attribute_value_exist(driver, xpaths.services.nfs_Service_Toggle, 'class', 'mdc-switch--checked')
+    assert wait_on_element(driver, 5, xpaths.services.nfs_running_toggle, 'clickable')
+    assert attribute_value_exist(driver, xpaths.services.nfs_running_toggle, 'class', 'mat-mdc-slide-toggle-checked')
 
     results = get(nas_Hostname, "/service?service=nfs", (admin_User, admin_Password))
     assert results.json()[0]["state"] == "RUNNING", results.text
@@ -196,9 +196,10 @@ def on_the_service_page_verify_the_nfs_service_is_running_in_the_ui_and_with_the
 @then('verify the Start Automatically checkbox is checked. If not, click on the checkbox')
 def verify_the_start_automatically_checkbox_is_checked_if_not_click_on_the_checkbox(driver):
     """verify the Start Automatically checkbox is checked. If not, click on the checkbox."""
-    value_exist = attribute_value_exist(driver, xpaths.services.nfs_Service_Checkbox, 'class', 'mat-mdc-checkbox-checked')
+    value_exist = attribute_value_exist(driver, xpaths.services.nfs_autostart_toggle, 'class', 'mat-mdc-slide-toggle-checked')
     if not value_exist:
-        driver.find_element_by_xpath(xpaths.services.nfs_Service_Checkbox).click()
+        driver.find_element_by_xpath(xpaths.services.nfs_autostart_toggle).click()
+        assert wait_on_element_disappear(driver, 30, xpaths.popup.please_Wait)
 
 
 @then(parsers.parse('create a mount point on {linux_host} with {linux_user} and {linux_password}'))
@@ -301,8 +302,9 @@ def get_the_checksum_for_those_files_to_compare_it_after_the_failover(checksum):
 @then('go to the Dashboard and click Initiate Failover on the standby controller')
 def go_to_the_dashboard_and_click_initiate_failover_on_the_standby_controller(driver):
     """go to the Dashboard and click Initiate Failover on the standby controller."""
-    driver.find_element_by_xpath(xpaths.side_Menu.dashboard).click()
+    rsc.Click_On_Element(driver, xpaths.side_Menu.old_dashboard)
     assert wait_on_element(driver, 10, xpaths.dashboard.title)
+    time.sleep(10)
 
     rsc.Trigger_Failover(driver)
 
@@ -335,8 +337,8 @@ def once_on_the_dashboard_click_on_system_settings_and_click_services(driver):
 def verify_the_nfs_service_is_running_in_the_ui_and_with_the_api(driver):
     """verify the NFS service is RUNNING in the UI and with the API."""
     assert wait_on_element(driver, 7, xpaths.services.title)
-    assert wait_on_element(driver, 5, xpaths.services.nfs_Service_Toggle, 'clickable')
-    assert attribute_value_exist(driver, xpaths.services.nfs_Service_Toggle, 'class', 'mdc-switch--checked')
+    assert wait_on_element(driver, 5, xpaths.services.nfs_running_toggle, 'clickable')
+    assert attribute_value_exist(driver, xpaths.services.nfs_running_toggle, 'class', 'mat-mdc-slide-toggle-checked')
 
     results = get(nas_Hostname, "/service?service=nfs", (admin_User, admin_Password))
     assert results.json()[0]["state"] == "RUNNING", results.text

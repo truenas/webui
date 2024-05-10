@@ -6,5 +6,11 @@ export const bootListElements = {
   anchorRouterLink: ['/system', 'boot'],
   elements: {
     boot: {},
+    stats: {
+      hierarchy: [T('Stats/Settings')],
+    },
+    scrubBootPool: {
+      hierarchy: [T('Scrub Boot Pool')],
+    },
   },
 } satisfies UiSearchableElement;

@@ -3,6 +3,7 @@
 
 import os
 import pytest
+import reusableSeleniumCode as rsc
 import time
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.action_chains import ActionChains
@@ -71,8 +72,7 @@ def the_browser_is_open_navigate_to_the_scale_url_and_login(driver, nas_ip, root
 @when('on the dashboard click on Credentials and Local Users')
 def on_the_dashboard_click_on_credentials_and_local_users(driver):
     """on the dashboard click on Credentials and Local Users."""
-    assert wait_on_element(driver, 10, xpaths.dashboard.title)
-    assert wait_on_element(driver, 10, xpaths.dashboard.system_Info_Card_Title)
+    rsc.Verify_The_Dashboard(driver)
     assert wait_on_element(driver, 10, xpaths.side_Menu.credentials, 'clickable')
     driver.find_element_by_xpath(xpaths.side_Menu.credentials).click()
     assert wait_on_element(driver, 10, xpaths.side_Menu.local_User, 'clickable')

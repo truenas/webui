@@ -2,6 +2,7 @@
 """SCALE UI: feature tests."""
 
 import pytest
+import reusableSeleniumCode as rsc
 import xpaths
 from function import (
     wait_on_element,
@@ -44,8 +45,7 @@ def the_browser_is_open_the_truenas_url_and_logged_in(driver, nas_ip, root_passw
 @when('you should be on the dashboard, click on credentials and local accounts')
 def you_should_be_on_the_dashboard_click_on_credentials_and_local_accounts(driver):
     """you should be on the dashboard, click on credentials and local accounts."""
-    assert wait_on_element(driver, 10, xpaths.dashboard.title)
-    assert wait_on_element(driver, 10, xpaths.dashboard.system_Info_Card_Title)
+    rsc.Verify_The_Dashboard(driver)
     assert wait_on_element(driver, 10, xpaths.side_Menu.credentials, 'clickable')
     driver.find_element_by_xpath(xpaths.side_Menu.credentials).click()
     assert wait_on_element(driver, 10, xpaths.side_Menu.local_User, 'clickable')

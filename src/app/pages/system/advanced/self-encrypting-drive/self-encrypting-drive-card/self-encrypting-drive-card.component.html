@@ -1,4 +1,4 @@
-<mat-card>
+<mat-card [ixUiSearch]="searchableElements.elements.selfEncryptingDrive">
   <mat-toolbar-row>
     <h3>{{ 'Self-Encrypting Drive' | translate }}</h3>
     <div class="actions action-icon">
@@ -6,7 +6,6 @@
         *ixRequiresRoles="requiredRoles"
         mat-button
         [ixTest]="['self-encrypted-drive', 'configure']"
-        [ixUiSearch]="searchableElements.elements.configure"
         (click)="onConfigure()"
       >
         {{ 'Configure' | translate }}
@@ -16,13 +15,13 @@
 
   <mat-card-content>
     <mat-list>
-      <mat-list-item>
+      <mat-list-item [ixUiSearch]="searchableElements.elements.sedUser">
         <span class="label">{{ 'ATA Security User' | translate }}:</span>
         <span *ixWithLoadingState="sedConfig$ as sedConfig" class="value">
           {{ sedConfig.sedUser || '–' }}
         </span>
       </mat-list-item>
-      <mat-list-item>
+      <mat-list-item [ixUiSearch]="searchableElements.elements.sedPassword">
         <span class="label">{{ 'Password' | translate }}:</span>
         <span *ixWithLoadingState="sedConfig$ as sedConfig" class="value">
           {{ sedConfig.sedPassword }}

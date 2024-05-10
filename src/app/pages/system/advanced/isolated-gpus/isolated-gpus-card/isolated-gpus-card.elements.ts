@@ -5,9 +5,11 @@ export const isolatedGpusCardElements = {
   hierarchy: [T('System'), T('Advanced'), T('Isolated GPU Device(s)')],
   anchorRouterLink: ['/system', 'advanced'],
   elements: {
-    configure: {
-      hierarchy: [T('Configure')],
+    isolatedGpus: {
       anchor: 'configure-isolated-gpus',
+    },
+    isolatedGpuPciIds: {
+      hierarchy: [T('GPUs')],
     },
   },
 } satisfies UiSearchableElement;

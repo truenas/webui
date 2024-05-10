@@ -5,9 +5,11 @@ export const kernelCardElements = {
   hierarchy: [T('System'), T('Advanced'), T('Kernel')],
   anchorRouterLink: ['/system', 'advanced'],
   elements: {
-    configure: {
-      hierarchy: [T('Configure')],
-      anchor: 'configure-kernel',
+    kernel: {
+      anchor: 'kernel-card',
+    },
+    enableKernelDebug: {
+      hierarchy: [T('Enable Kernel Debug')],
     },
   },
 } satisfies UiSearchableElement;

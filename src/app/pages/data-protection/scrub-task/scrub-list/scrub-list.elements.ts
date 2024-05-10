@@ -6,7 +6,11 @@ export const scrubListElements = {
   anchorRouterLink: ['/data-protection', 'scrub'],
   elements: {
     tasks: {
-      synonyms: [T('Tasks')],
+      synonyms: [T('Data Protection'), T('Tasks')],
+    },
+    add: {
+      hierarchy: [T('Add')],
+      synonyms: [T('Add Scrub Task')],
     },
   },
 } satisfies UiSearchableElement;

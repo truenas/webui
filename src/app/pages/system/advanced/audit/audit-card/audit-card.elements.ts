@@ -5,9 +5,23 @@ export const auditCardElements = {
   hierarchy: [T('System'), T('Advanced'), T('Audit')],
   anchorRouterLink: ['/system', 'advanced'],
   elements: {
-    configure: {
-      hierarchy: [T('Configure')],
-      anchor: 'configure-audit',
+    audit: {
+      anchor: 'audit-card',
+    },
+    retention: {
+      hierarchy: [T('Retention')],
+    },
+    reservation: {
+      hierarchy: [T('Reservation')],
+    },
+    quota: {
+      hierarchy: [T('Quota')],
+    },
+    quotaFillWarning: {
+      hierarchy: [T('Quota Fill Warning')],
+    },
+    quotaFillCritical: {
+      hierarchy: [T('Quota Fill Critical')],
     },
   },
 } satisfies UiSearchableElement;

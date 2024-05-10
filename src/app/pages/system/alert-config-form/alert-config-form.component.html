@@ -1,53 +1,58 @@
 <mat-card class="form-card">
   <mat-progress-bar *ngIf="isFormLoading" mode="indeterminate"></mat-progress-bar>
-  <div class="mat-title">
-    <h3 *ngIf="selectedCategory"> {{ 'Category' | translate }}: </h3>
-    <div class="categories">
-      <button mat-button ixTest="categories" [matMenuTriggerFor]="categoriesMenu">
-        {{ selectedCategory?.title | translate }}
-        <ix-icon name="mdi-menu-down" class="menu-caret"></ix-icon>
-      </button>
-      <mat-menu #categoriesMenu="matMenu">
-        <button
-          *ngFor="let category of categories; let i = index; trackBy: trackById"
-          mat-menu-item
-          [ixTest]="['category', category.id]"
-          (click)="onCategoryChanged(category)"
-        >
-          <span>{{ category.title | translate }}</span>
+
+  <ix-empty *ngIf="!isFormLoading && !categories?.length" [conf]="noResponseConfig"></ix-empty>
+
+  <ng-container *ngIf="categories?.length">
+    <div class="mat-title">
+      <h3 *ngIf="selectedCategory"> {{ 'Category' | translate }}: </h3>
+      <div class="categories">
+        <button mat-button ixTest="categories" [matMenuTriggerFor]="categoriesMenu">
+          {{ selectedCategory?.title | translate }}
+          <ix-icon name="mdi-menu-down" class="menu-caret"></ix-icon>
         </button>
-      </mat-menu>
-    </div>
-  </div>
-  <form *ngIf="selectedCategory" (submit)="onSubmit()">
-    <ng-container *ngFor="let cls of selectedCategory.classes; trackBy: trackById">
-      <div class="class-row" [formGroup]="form.controls[cls.id]">
-        <span class="class-label">{{ cls.title | translate }}</span>
-        <ix-select
-          formControlName="level"
-          [label]="'Set Warning Level' | translate"
-          [required]="true"
-          [tooltip]="helptext.level_tooltip | translate"
-          [options]="levelOptions$"
-        ></ix-select>
-        <ix-select
-          formControlName="policy"
-          [label]="'Set Frequency' | translate"
-          [required]="true"
-          [tooltip]="helptext.policy_tooltip | translate"
-          [options]="policyOptions$"
-        ></ix-select>
+        <mat-menu #categoriesMenu="matMenu">
+          <button
+            *ngFor="let category of categories; let i = index; trackBy: trackById"
+            mat-menu-item
+            [ixTest]="['category', category.id]"
+            (click)="onCategoryChanged(category)"
+          >
+            <span>{{ category.title | translate }}</span>
+          </button>
+        </mat-menu>
       </div>
-    </ng-container>
-    <div class="form-actions">
-      <button
-        *ixRequiresRoles="requiredRoles"
-        mat-button
-        type="submit"
-        color="primary"
-        ixTest="save"
-        [disabled]="form.invalid || isFormLoading || !selectedCategory"
-      >{{ 'Save' | translate }}</button>
     </div>
-  </form>
+    <form *ngIf="selectedCategory" (submit)="onSubmit()">
+      <ng-container *ngFor="let cls of selectedCategory.classes; trackBy: trackById">
+        <div class="class-row" [formGroup]="form.controls[cls.id]">
+          <span class="class-label">{{ cls.title | translate }}</span>
+          <ix-select
+            formControlName="level"
+            [label]="'Set Warning Level' | translate"
+            [required]="true"
+            [tooltip]="helptext.level_tooltip | translate"
+            [options]="levelOptions$"
+          ></ix-select>
+          <ix-select
+            formControlName="policy"
+            [label]="'Set Frequency' | translate"
+            [required]="true"
+            [tooltip]="helptext.policy_tooltip | translate"
+            [options]="policyOptions$"
+          ></ix-select>
+        </div>
+      </ng-container>
+      <div class="form-actions">
+        <button
+          *ixRequiresRoles="requiredRoles"
+          mat-button
+          type="submit"
+          color="primary"
+          ixTest="save"
+          [disabled]="form.invalid || isFormLoading || !selectedCategory"
+        >{{ 'Save' | translate }}</button>
+      </div>
+    </form>
+  </ng-container>
 </mat-card>

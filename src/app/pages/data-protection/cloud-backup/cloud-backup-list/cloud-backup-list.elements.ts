@@ -6,7 +6,11 @@ export const cloudBackupListElements = {
   anchorRouterLink: ['/data-protection', 'cloud-backup'],
   elements: {
     tasks: {
-      synonyms: [T('Tasks'), T('Cloud Backup')],
+      synonyms: [T('Data Protection'), T('Tasks'), T('Cloud Backup')],
+    },
+    add: {
+      hierarchy: [T('Add')],
+      synonyms: [T('Add TrueCloud Backup Task'), T('Add Cloud Backup')],
     },
   },
 } satisfies UiSearchableElement;

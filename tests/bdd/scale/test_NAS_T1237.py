@@ -49,8 +49,7 @@ def the_browser_is_open_the_truenas_url_and_logged_in(driver, nas_ip, root_passw
 @when('you are on the dashboard click on Datasets in the side menu')
 def you_are_on_the_dashboard_click_on_datasets_in_the_side_menu(driver):
     """you are on the dashboard click on Datasets in the side menu."""
-    assert wait_on_element(driver, 7, xpaths.dashboard.title)
-    assert wait_on_element(driver, 5, xpaths.dashboard.system_Info_Card_Title)
+    rsc.Verify_The_Dashboard(driver)
     assert wait_on_element(driver, 5, xpaths.side_Menu.datasets, 'clickable')
     driver.find_element_by_xpath(xpaths.side_Menu.datasets).click()
 
@@ -205,12 +204,7 @@ def create_an_smb_share_with_path_mnttankrtacltest1share(driver, dataset1_path):
     driver.find_element_by_xpath(xpaths.smb.name_Input).click()
     driver.find_element_by_xpath(xpaths.smb.name_Input).clear()
     driver.find_element_by_xpath(xpaths.smb.name_Input).send_keys('rt-test')
-    assert wait_on_element(driver, 5, xpaths.checkbox.enabled, 'clickable')
-    checkbox_checked = attribute_value_exist(driver, xpaths.checkbox.enabled, 'class', 'mat-mdc-checkbox-checked')
-    if not checkbox_checked:
-        driver.find_element_by_xpath(xpaths.checkbox.enabled).click()
-    assert attribute_value_exist(driver, xpaths.checkbox.enabled, 'class', 'mat-mdc-checkbox-checked')
-    time.sleep(1)
+    rsc.set_checkbox(driver, xpaths.checkbox.enabled)
     assert wait_on_element(driver, 5, xpaths.smb.description_Input, 'inputable')
     driver.find_element_by_xpath(xpaths.smb.description_Input).clear()
     driver.find_element_by_xpath(xpaths.smb.description_Input).send_keys('rt-test')

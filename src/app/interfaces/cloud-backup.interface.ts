@@ -1,3 +1,4 @@
+import { ApiTimestamp } from 'app/interfaces/api-date.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { BwLimit, CloudCredential } from './cloud-sync-task.interface';
 import { Schedule } from './schedule.interface';
@@ -50,3 +51,14 @@ export type CloudBackupRestoreParams = [
     include?: string[];
   },
 ];
+
+export interface BackupTile {
+  title: string;
+  totalSend: number;
+  totalReceive: number;
+  failedSend: number;
+  failedReceive: number;
+  lastWeekSend: number;
+  lastWeekReceive: number;
+  lastSuccessfulTask: ApiTimestamp;
+}

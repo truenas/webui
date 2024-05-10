@@ -1,0 +1,56 @@
+:host {
+  height: 100%;
+  width: 100%;
+}
+
+.empty-card-content {
+  padding: 10px;
+  width: 100%;
+
+  .empty-message {
+    margin: 0 auto;
+    text-align: center;
+  }
+
+  .empty-icon {
+    align-items: center;
+    display: inline-flex;
+    font-size: 100px;
+    height: 100px;
+    opacity: 0.1;
+    width: auto;
+  }
+
+  .backup-actions {
+    font-size: 15px;
+    margin-bottom: 60px;
+    position: relative;
+    text-align: center;
+    z-index: 1;
+  }
+
+  .details-item {
+    display: flex;
+    justify-content: space-between;
+
+    .action {
+      margin-left: unset;
+      text-decoration: none;
+    }
+
+    a {
+      color: var(--primary);
+      cursor: pointer;
+    }
+  }
+}
+
+ngx-skeleton-loader {
+  width: 100%;
+}
+
+.loading-card-content {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}

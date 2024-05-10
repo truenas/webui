@@ -4,6 +4,7 @@
 import os
 import pytest
 import time
+import reusableSeleniumCode as rsc
 import xpaths
 from function import (
     wait_on_element,
@@ -49,8 +50,7 @@ def the_browser_is_open_the_truenas_url_and_logged_in(driver, nas_ip, root_passw
 @when('on the Dashboard, click Network on the left sidebar')
 def on_the_dashboard_click_network_on_the_left_sidebar(driver):
     """on the Dashboard, click Network on the left sidebar."""
-    assert wait_on_element(driver, 10, xpaths.dashboard.title)
-    assert wait_on_element(driver, 10, xpaths.dashboard.system_Info_Card_Title)
+    rsc.Verify_The_Dashboard(driver)
     assert wait_on_element(driver, 5, xpaths.side_Menu.network, 'clickable')
     driver.find_element_by_xpath(xpaths.side_Menu.network).click()
 

@@ -103,21 +103,22 @@ def on_the_service_page_click_the_start_automatically_ssh_checkbox(driver):
     """on the service page, click the Start Automatically SSH checkbox."""
     assert wait_on_element(driver, 5, xpaths.services.title)
     assert wait_on_element(driver, 5, xpaths.services.ssh_Service)
-    assert wait_on_element(driver, 5, xpaths.services.ssh_Service_Checkbox)
-    value_exist = attribute_value_exist(driver, xpaths.services.ssh_Service_Checkbox, 'class', 'mat-mdc-checkbox-checked')
+    assert wait_on_element(driver, 5, xpaths.services.ssh_autostart_toggle)
+    value_exist = attribute_value_exist(driver, xpaths.services.ssh_autostart_toggle, 'class', 'mat-mdc-slide-toggle-checked')
     if not value_exist:
-        driver.find_element_by_xpath(xpaths.services.ssh_Service_Checkbox).click()
+        driver.find_element_by_xpath(xpaths.services.ssh_autostart_toggle).click()
+        assert wait_on_element_disappear(driver, 30, xpaths.popup.please_Wait)
 
 
 @then('enable the SSH service the service should start without an error')
 def enable_the_ssh_service_the_service_should_start_without_an_error(driver):
     """enable the SSH service the service should start without an error."""
-    assert wait_on_element(driver, 5, xpaths.services.ssh_Service_Toggle, 'clickable')
-    value_exist = attribute_value_exist(driver, xpaths.services.ssh_Service_Toggle, 'class', 'mdc-switch--checked')
+    assert wait_on_element(driver, 5, xpaths.services.ssh_running_toggle, 'clickable')
+    value_exist = attribute_value_exist(driver, xpaths.services.ssh_running_toggle, 'class', 'mat-mdc-slide-toggle-checked')
     if not value_exist:
-        driver.find_element_by_xpath(xpaths.services.ssh_Service_Toggle).click()
-    assert wait_on_element_disappear(driver, 30, xpaths.progress.spinner)
-    assert wait_for_attribute_value(driver, 20, xpaths.services.ssh_Service_Toggle, 'class', 'mdc-switch--checked')
+        driver.find_element_by_xpath(xpaths.services.ssh_running_toggle).click()
+        assert wait_on_element_disappear(driver, 30, xpaths.popup.please_Wait)
+    assert wait_for_attribute_value(driver, 20, xpaths.services.ssh_running_toggle, 'class', 'mat-mdc-slide-toggle-checked')
 
 
 @then(parsers.parse('ssh to "{hostname}" with password should work'))

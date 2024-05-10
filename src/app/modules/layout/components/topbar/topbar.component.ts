@@ -14,6 +14,7 @@ import { UpdateDialogComponent } from 'app/modules/dialog/components/update-dial
 import { FeedbackDialogComponent } from 'app/modules/feedback/components/feedback-dialog/feedback-dialog.component';
 import { selectUpdateJob } from 'app/modules/jobs/store/job.selectors';
 import { topbarDialogPosition } from 'app/modules/layout/components/topbar/topbar-dialog-position.constant';
+import { toolBarElements } from 'app/modules/layout/components/topbar/topbar.elements';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { ThemeService } from 'app/services/theme/theme.service';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
@@ -35,6 +36,7 @@ export class TopbarComponent implements OnInit {
   systemWillRestart = false;
   updateNotificationSent = false;
   tooltips = helptextTopbar.mat_tooltips;
+  protected searchableElements = toolBarElements;
 
   alertBadgeCount$ = this.store$.select(selectImportantUnreadAlertsCount);
 
