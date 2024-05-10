@@ -6,15 +6,15 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { filter, map } from 'rxjs';
-import { ProductEnclosure } from 'app/enums/product-enclosure.enum';
 import { Role } from 'app/enums/role.enum';
 import { helptextSystemFailover } from 'app/helptext/system/failover';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { selectUpdateJobForPassiveNode } from 'app/modules/jobs/store/job.selectors';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
 import { SlotSize } from 'app/pages/dashboard/types/widget.interface';
-import { getServerProduct, getProductImage } from 'app/pages/dashboard/widgets/system/common/widget-sys-info.utils';
+import { getServerProduct, getProductImage, getProductEnclosure } from 'app/pages/dashboard/widgets/system/common/widget-sys-info.utils';
 import { AppState } from 'app/store';
-import { selectCanFailover, selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
+import { selectCanFailover, selectIsHaEnabled, selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import { selectIsIxHardware, selectIsEnterprise, selectEnclosureSupport } from 'app/store/system-info/system-info.selectors';
 
 @UntilDestroy()
@@ -31,8 +31,9 @@ export class WidgetSysInfoPassiveComponent {
   isIxHardware = toSignal(this.store$.select(selectIsIxHardware));
   isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
   isHaLicensed = toSignal(this.store$.select(selectIsHaLicensed));
+  isHaEnabled = toSignal(this.store$.select(selectIsHaEnabled));
   hasEnclosureSupport = toSignal(this.store$.select(selectEnclosureSupport));
-
+  isUpdateRunning = toSignal(this.store$.select(selectUpdateJobForPassiveNode));
   systemInfo = toSignal(this.resources.systemInfo$.pipe(map((sysInfo) => sysInfo.remote_info)));
 
   product = computed(() => {
@@ -53,8 +54,7 @@ export class WidgetSysInfoPassiveComponent {
     if (!this.hasEnclosureSupport()) {
       return null;
     }
-    // TODO: Update
-    return ProductEnclosure.Rackmount;
+    return getProductEnclosure(this.systemInfo().system_product);
   });
 
   isCertified = computed(() => {

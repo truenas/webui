@@ -26,14 +26,21 @@
 
         <div class="card-action-container">
           <button
-            *ixWithLoadingState="updateAvailable() as isAvailable"
+            *ngIf="isUpdateRunning()"
             mat-button
-            [color]="isAvailable ? 'default' : 'primary'"
+            color="primary"
+            [ixTest]="['widget-sysinfo', 'update-running']"
+            [disabled]="true"
+          >{{ 'Update in Progress' | translate }}</button>
+          <button
+            *ngIf="updateAvailable() && !isUpdateRunning()"
+            mat-button
+            color="primary"
             [ixTest]="['widget-sysinfo', 'update']"
             [routerLink]="['/system', 'update']"
           >
-            <ng-container *ngIf="isAvailable">{{ 'Updates Available' | translate }}</ng-container>
-            <ng-container *ngIf="!isAvailable">{{ 'Check for Updates' | translate }}</ng-container>
+            <ng-container *ngIf="updateAvailable()">{{ 'Updates Available' | translate }}</ng-container>
+            <ng-container *ngIf="!updateAvailable()">{{ 'Check for Updates' | translate }}</ng-container>
           </button>
         </div>
       </div>

@@ -26,16 +26,29 @@
 
         <div class="card-action-container">
           <button
-            *ixRequiresRoles="requiredRoles"
+            *ngIf="isUpdateRunning()"
             mat-button
-            class="simple-failover-btn"
-            ixTest="initiate-failover"
-            color="default"
-            [disabled]="isDisabled$ | async"
-            (click)="openDialog()"
-          >
-            {{ 'Initiate Failover' | translate }}
-          </button>
+            color="primary"
+            [ixTest]="['widget-sysinfo', 'update-running']"
+            [disabled]="true"
+          >{{ 'Update in Progress' | translate }}</button>
+          <ng-container *ngIf="!isUpdateRunning()">
+            <button
+              *ixRequiresRoles="requiredRoles"
+              mat-button
+              matTooltipPosition="above"
+              color="primary"
+              class="simple-failover-btn"
+              ixTest="initiate-failover"
+              [matTooltip]="'HA is Disabled' | translate"
+              [matTooltipDisabled]="isHaEnabled()"
+              [disabled]="isDisabled$ | async"
+              (click)="openDialog()"
+            >
+              <ix-icon *ngIf="!isHaEnabled()" name="mdi-alert"></ix-icon>
+              {{ 'Initiate Failover' | translate }}
+            </button>
+          </ng-container>
         </div>
       </div>
 

@@ -5,6 +5,7 @@ import {
 import { toSignal } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
+import { selectUpdateJobForActiveNode } from 'app/modules/jobs/store/job.selectors';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
 import { SlotSize } from 'app/pages/dashboard/types/widget.interface';
 import { getServerProduct, getProductImage, getProductEnclosure } from 'app/pages/dashboard/widgets/system/common/widget-sys-info.utils';
@@ -29,6 +30,7 @@ export class WidgetSysInfoActiveComponent {
   hasEnclosureSupport = toSignal(this.store$.select(selectEnclosureSupport));
   updateAvailable = toSignal(this.resources.updateAvailable$);
   systemInfo = toSignal(this.resources.systemInfo$);
+  isUpdateRunning = toSignal(this.store$.select(selectUpdateJobForActiveNode));
 
   product = computed(() => {
     if (!this.systemInfo()?.system_product) {
