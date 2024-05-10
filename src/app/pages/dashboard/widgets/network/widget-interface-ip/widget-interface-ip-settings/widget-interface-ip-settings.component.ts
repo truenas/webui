@@ -15,6 +15,7 @@ import {
 @Component({
   selector: 'ix-widget-interface-ip-settings',
   templateUrl: './widget-interface-ip-settings.component.html',
+  styleUrl: './widget-interface-ip-settings.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class WidgetInterfaceIpSettingsComponent implements WidgetSettingsComponent<WidgetInterfaceIpSettings>, OnInit {
