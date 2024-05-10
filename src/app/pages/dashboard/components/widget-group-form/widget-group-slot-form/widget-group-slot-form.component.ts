@@ -17,7 +17,6 @@ import {
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Observable, Subscription, of } from 'rxjs';
 import { Option } from 'app/interfaces/option.interface';
-import { getAllFormErrors } from 'app/modules/ix-forms/utils/get-form-errors.utils';
 import { SimpleWidget } from 'app/pages/dashboard/types/simple-widget.interface';
 import { WidgetCategory, widgetCategoryLabels } from 'app/pages/dashboard/types/widget-category.enum';
 import { WidgetGroupSlot } from 'app/pages/dashboard/types/widget-group-slot.interface';
@@ -80,25 +79,6 @@ export class WidgetGroupSlotFormComponent implements AfterViewInit, OnChanges {
   setupFormValueUpdates(): void {
     this.setupCategoryUpdates();
     this.setupTypeUpdates();
-    this.setupValidityUpdates();
-  }
-
-  setupValidityUpdates(): void {
-    this.form.valueChanges.pipe(untilDestroyed(this)).subscribe({
-      next: () => {
-        const allErrors = getAllFormErrors(this.form, ['category', 'type']);
-        if (!allErrors) {
-          return;
-        }
-        this.validityChange.emit([
-          this.slot().slotPosition,
-          {
-            ...this.settingsValidionErrors(),
-            ...allErrors,
-          },
-        ]);
-      },
-    });
   }
 
   setupCategoryUpdates(): void {
