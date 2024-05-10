@@ -104,6 +104,15 @@ export class WidgetGroupSlotFormComponent implements AfterViewInit, OnChanges {
   setupCategoryUpdates(): void {
     this.categorySubscription = this.form.controls.category.valueChanges.pipe(untilDestroyed(this)).subscribe({
       next: (category) => {
+        if (category === WidgetCategory.Empty) {
+          this.slot.update((slot) => {
+            return {
+              ...slot,
+              type: null,
+              settings: undefined,
+            } as WidgetGroupSlot<object>;
+          });
+        }
         this.updateSelectedCategory(category);
         this.settingsChange.emit(this.slot());
       },
