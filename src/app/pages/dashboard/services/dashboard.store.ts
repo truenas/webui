@@ -8,10 +8,8 @@ import {
 import { WidgetName } from 'app/enums/widget-name.enum';
 import { LoggedInUser } from 'app/interfaces/ds-cache.interface';
 import { demoWidgets } from 'app/pages/dashboard/services/demo-widgets.constant';
-import { WidgetCategory } from 'app/pages/dashboard/types/widget-category.enum';
 import { WidgetGroup, WidgetGroupLayout } from 'app/pages/dashboard/types/widget-group.interface';
 import { SomeWidgetSettings, WidgetType } from 'app/pages/dashboard/types/widget.interface';
-import { widgetRegistry } from 'app/pages/dashboard/widgets/all-widgets.constant';
 import { AuthService } from 'app/services/auth/auth.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -104,7 +102,6 @@ export class DashboardStore extends ComponentStore<DashboardState> {
         return {
           layout: WidgetGroupLayout.Full,
           slots: [{
-            category: this.getWidgetCategoryFromOldDashboard(oldDashboardWidget.name),
             type: this.getWidgetTypeFromOldDashboard(oldDashboardWidget.name),
             settings: this.extractSettings(oldDashboardWidget),
           }],
@@ -113,11 +110,6 @@ export class DashboardStore extends ComponentStore<DashboardState> {
 
       return widget as WidgetGroup;
     });
-  }
-
-  private getWidgetCategoryFromOldDashboard(name: WidgetName): WidgetCategory {
-    const type = this.getWidgetTypeFromOldDashboard(name);
-    return widgetRegistry[type].category;
   }
 
   private getWidgetTypeFromOldDashboard(name: WidgetName): WidgetType {

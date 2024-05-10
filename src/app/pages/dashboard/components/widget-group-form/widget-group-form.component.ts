@@ -72,17 +72,17 @@ export class WidgetGroupFormComponent {
   }
 
   private setInitialFormValues(): void {
-    const widgetGroup = this.chainedRef.getData();
+    const widgetGroup = widgetGroupToFormWidgetGroup(this.chainedRef.getData());
     if (!widgetGroup) {
       this.group.set({ layout: WidgetGroupLayout.Full, slots: [{ category: null, type: null }] });
       return;
     }
     this.group.set(widgetGroupToFormWidgetGroup(widgetGroup));
     this.form.controls.layout.setValue(this.group().layout);
-    for (let i = 0; i < this.group().slots.length; i++) {
-      this.selectedSlotChanged(i);
+    for (let slotPosition = 0; slotPosition < this.group().slots.length; slotPosition++) {
+      this.updateSelectedSlot(slotPosition);
     }
-    this.selectedSlotChanged(SlotPosition.First);
+    this.updateSelectedSlot(SlotPosition.First);
   }
 
   private setupLayoutUpdates(): void {
@@ -116,14 +116,18 @@ export class WidgetGroupFormComponent {
     ) {
       return;
     }
+    this.updateSelectedSlot(slotIndex);
+  }
+
+  updateSelectedSlot(slotPosition: SlotPosition): void {
     this.selectedSlot.update(() => {
       const group = this.group();
       return {
-        slotPosition: slotIndex,
-        category: group.slots[slotIndex].category,
-        type: group.slots[slotIndex].type,
-        settings: group.slots[slotIndex].settings,
-        slotSize: layoutToSlotSizes[group.layout][slotIndex],
+        slotPosition,
+        category: group.slots[slotPosition].category,
+        type: group.slots[slotPosition].type,
+        settings: group.slots[slotPosition].settings,
+        slotSize: layoutToSlotSizes[group.layout][slotPosition],
       } as WidgetGroupSlot<object>;
     });
   }
