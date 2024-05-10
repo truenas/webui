@@ -9,11 +9,10 @@ import {
 import { AlertServiceListComponent } from 'app/pages/system/alert-service/alert-service-list/alert-service-list.component';
 import { AlertSettingsComponent } from 'app/pages/system/alert-settings/alert-settings.component';
 import { EnclosureDashboardComponent } from 'app/pages/system/enclosure/components/enclosure-dashboard/enclosure-dashboard.component';
-import { JbofListComponent } from 'app/pages/system/enclosure/components/enclosure-dashboard/jbof-list/jbof-list.component';
 import { FailoverSettingsComponent } from 'app/pages/system/failover-settings/failover-settings.component';
 import { GeneralSettingsComponent } from 'app/pages/system/general-settings/general-settings.component';
 import { SupportCardComponent } from 'app/pages/system/general-settings/support/support-card/support-card.component';
-import { JbofListComponent as OldJbofListComponent } from 'app/pages/system/old-view-enclosure/components/jbof-list/jbof-list.component';
+import { JbofListComponent } from 'app/pages/system/old-view-enclosure/components/jbof-list/jbof-list.component';
 import { ViewEnclosureComponent } from 'app/pages/system/old-view-enclosure/components/view-enclosure/view-enclosure.component';
 import { ManualUpdateFormComponent } from 'app/pages/system/update/components/manual-update-form/manual-update-form.component';
 import { AdvancedSettingsComponent } from './advanced/advanced-settings.component';
@@ -57,11 +56,6 @@ export const routes: Routes = [
           component: EnclosureDashboardComponent,
           data: { title: T('Enclosure Dashboard'), breadcrumb: null },
         },
-        {
-          path: 'jbof',
-          component: JbofListComponent,
-          data: { title: T('NVMe-oF Expansion Shelves'), breadcrumb: null },
-        },
       ],
     }, {
       path: 'oldviewenclosure',
@@ -74,7 +68,7 @@ export const routes: Routes = [
         },
         {
           path: 'jbof',
-          component: OldJbofListComponent,
+          component: JbofListComponent,
           data: { title: T('NVMe-oF Expansion Shelves'), breadcrumb: null },
         },
       ],

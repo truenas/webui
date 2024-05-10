@@ -15,7 +15,7 @@ import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
-  selector: 'ix-old-jbof-form',
+  selector: 'ix-jbof-form',
   templateUrl: 'jbof-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
