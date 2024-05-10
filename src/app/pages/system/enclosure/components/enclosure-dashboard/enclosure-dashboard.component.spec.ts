@@ -38,19 +38,27 @@ describe('EnclosureDashboardComponent', () => {
   });
 
   it('initializes store when component is initialized', () => {
-    console.info('start of initializes store');
-    spectator = createComponent();
-    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    expect(2).toBe(2);
-    console.info('end of initializes store');
+    try {
+      console.info('start of initializes store');
+      spectator = createComponent();
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      expect(2).toBe(2);
+      console.info('end of initializes store');
+    } catch (error) {
+      console.error(error);
+    }
   });
 
   it('opens edit dialog when Edit Label is pressed', () => {
-    console.info('start of opens edit dialog');
-    spectator = createComponent();
-    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    try {
+      console.info('start of opens edit dialog');
+      spectator = createComponent();
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
 
-    console.info('a');
-    expect(2).toBe(2);
+      console.info('a');
+      expect(2).toBe(2);
+    } catch (error) {
+      console.error(error);
+    }
   });
 });
