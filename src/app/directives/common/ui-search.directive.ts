@@ -1,9 +1,7 @@
 import {
   Directive, Input, ElementRef, Renderer2, OnInit,
   OnDestroy,
-  Inject,
 } from '@angular/core';
-import { WINDOW } from 'app/helpers/window.helper';
 import { searchDelayConst } from 'app/modules/global-search/constants/delay.const';
 import { getSearchableElementId } from 'app/modules/global-search/helpers/get-searchable-element-id';
 import { UiSearchableElement } from 'app/modules/global-search/interfaces/ui-searchable-element.interface';
@@ -23,7 +21,6 @@ export class UiSearchDirective implements OnInit, OnDestroy {
     private renderer: Renderer2,
     private elementRef: ElementRef<HTMLElement>,
     private searchDirectives: UiSearchDirectivesService,
-    @Inject(WINDOW) private window: Window,
   ) {}
 
   ngOnInit(): void {
@@ -66,8 +63,7 @@ export class UiSearchDirective implements OnInit, OnDestroy {
   private highlightAndClickElement(anchorRef: HTMLElement, shouldClick = false): void {
     if (!anchorRef) return;
 
-    const elementPosition = anchorRef.getBoundingClientRect().top + this.window.pageYOffset;
-    this.window.scrollTo({ top: elementPosition - 50, behavior: 'smooth' });
+    anchorRef.scrollIntoView();
     anchorRef.focus();
     this.renderer.addClass(anchorRef, 'search-element-highlighted');
 
