@@ -15,11 +15,10 @@ import { DiskType } from 'app/enums/disk-type.enum';
 import { PoolStatus } from 'app/enums/pool-status.enum';
 import { TopologyItemType, VdevType } from 'app/enums/v-dev-type.enum';
 import { TopologyItemStatus } from 'app/enums/vdev-status.enum';
-import { EnclosureOld, EnclosureOldPool, EnclosureOldSlot } from 'app/interfaces/enclosure-old.interface';
+import { EnclosureOld, EnclosureOldSlot } from 'app/interfaces/enclosure-old.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import {
-  Disk,
-  EnclosureIdAndSlot,
+  Disk, EnclosureIdAndSlot,
   TopologyDisk,
   TopologyItem,
   TopologyItemStats,
@@ -775,38 +774,39 @@ export class MockStorageGenerator {
   }
 
   private syncEnclosurePoolInfo(enclosures: EnclosureOld[]): EnclosureOld[] {
-    this.poolState?.topology.data.forEach((item: TopologyItem) => {
-      if (item.type === TopologyItemType.Disk) {
-        const stripeDisk: Disk = this.disks.find((dev: Disk) => dev.name === item.disk);
-        const enclosure: EnclosureOld = enclosures.find((enclosureUi: EnclosureOld) => {
-          return enclosureUi.id === stripeDisk.enclosure.id;
-        });
-        enclosure.elements['Array Device Slot'][stripeDisk.enclosure?.slot].pool_info = null;
-      } else {
-        item.children.forEach((child) => {
-          const disk: Disk = this.disks.find((dev: Disk) => dev.name === child.disk);
-          if (disk) {
-            const enclosure: EnclosureOld = enclosures.find((enclosureUi: EnclosureOld) => {
-              return enclosureUi.id === disk.enclosure.id;
-            });
-            const poolInfo: EnclosureOldPool = {
-              pool_name: this.poolState.name,
-              disk_status: child.status,
-              vdev_name: item.name,
-              vdev_type: item.type,
-              vdev_disks: item.children.filter((unfilteredChild: TopologyDisk) => unfilteredChild.disk !== disk.name)
-                .map((sibling: TopologyDisk) => {
-                  return {
-                    enclosure_id: enclosure.id,
-                    slot: disk.enclosure.slot,
-                    dev: sibling.disk,
-                  };
-                }),
-            };
-            enclosure.elements['Array Device Slot'][disk.enclosure?.slot].pool_info = poolInfo;
-          }
-        });
-      }
+    this.poolState?.topology.data.forEach((_: TopologyItem) => {
+      // TODO: Broken due to enclosure API changes
+      // if (item.type === TopologyItemType.Disk) {
+      //   const stripeDisk: Disk = this.disks.find((dev: Disk) => dev.name === item.disk);
+      //   const enclosure: EnclosureOld = enclosures.find((enclosureUi: EnclosureOld) => {
+      //     return enclosureUi.id === stripeDisk.enclosure.id;
+      //   });
+      //   enclosure.elements['Array Device Slot'][stripeDisk.enclosure?.slot].pool_info = null;
+      // } else {
+      //   item.children.forEach((child) => {
+      //     const disk: Disk = this.disks.find((dev: Disk) => dev.name === child.disk);
+      //     if (disk) {
+      //       const enclosure: EnclosureOld = enclosures.find((enclosureUi: EnclosureOld) => {
+      //         return enclosureUi.id === disk.enclosure.id;
+      //       });
+      //       const poolInfo: EnclosureOldPool = {
+      //         pool_name: this.poolState.name,
+      //         disk_status: child.status,
+      //         vdev_name: item.name,
+      //         vdev_type: item.type,
+      //         vdev_disks: item.children.filter((unfilteredChild: TopologyDisk) => unfilteredChild.disk !== disk.name)
+      //           .map((sibling: TopologyDisk) => {
+      //             return {
+      //               enclosure_id: enclosure.id,
+      //               slot: disk.enclosure.slot,
+      //               dev: sibling.disk,
+      //             };
+      //           }),
+      //       };
+      //       enclosure.elements['Array Device Slot'][disk.enclosure?.slot].pool_info = poolInfo;
+      //     }
+      //   });
+      // }
     });
     return enclosures;
   }
@@ -875,12 +875,12 @@ export class MockStorageGenerator {
 
         // Update the disk data
         const updatedDisk: Disk = { ...disk }; // Object.assign({}, disk)
-        const enclosureAndSlot: EnclosureIdAndSlot = {
-          id: mockEnclosures[enclosureNumber].data.id,
-          slot: slotNumber,
-          number: 0, // TODO: Remove when Disk interface is updated
-        };
-        updatedDisk.enclosure = enclosureAndSlot;
+        // const enclosureAndSlot: EnclosureIdAndSlot = {
+        //   id: mockEnclosures[enclosureNumber].data.id,
+        //   slot: slotNumber,
+        //   number: 0, // TODO: Remove when Disk interface is updated
+        // };
+        // updatedDisk.enclosure = enclosureAndSlot;
         updatedDisks.push(updatedDisk);
       }
 
@@ -902,11 +902,11 @@ export class MockStorageGenerator {
   private existingDispersal(mockEnclosures: MockEnclosure[], disks: Disk[]): DispersedData {
     // When working with disks with enclosure data already assigned
     // eg. UI is pointed at a product that already has enclosure support
-    disks.forEach((disk: Disk) => {
-      if (!disk.enclosure) return;
-
-      const mockEnclosure = mockEnclosures[disk.enclosure.number];
-      mockEnclosure.addDiskToSlot(disk.name, disk.enclosure.slot);
+    disks.forEach((_: Disk) => {
+      // if (!disk.enclosure) return;
+      //
+      // const mockEnclosure = mockEnclosures[disk.enclosure.number];
+      // mockEnclosure.addDiskToSlot(disk.name, disk.enclosure.slot);
     });
 
     return {
@@ -972,11 +972,12 @@ export class MockStorageGenerator {
     };
   }
 
-  private removeDiskFromEnclosure(disk: Disk): this {
-    const mockEnclosureIndex: number = this.mockEnclosures.findIndex((mockEnclosure: MockEnclosure) => {
-      return mockEnclosure.data.number === disk.enclosure.number;
-    });
-    this.mockEnclosures[mockEnclosureIndex].removeDiskFromSlot(disk.name, disk.enclosure.slot);
+  private removeDiskFromEnclosure(_: Disk): this {
+    // TODO: Enclosure mapping is broken because of API changes.
+    // const mockEnclosureIndex: number = this.mockEnclosures.findIndex((mockEnclosure: MockEnclosure) => {
+    //   return mockEnclosure.data.number === disk.enclosure.number;
+    // });
+    // this.mockEnclosures[mockEnclosureIndex].removeDiskFromSlot(disk.name, disk.enclosure.slot);
 
     return this;
   }
