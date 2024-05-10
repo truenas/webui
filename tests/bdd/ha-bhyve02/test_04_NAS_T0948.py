@@ -41,8 +41,7 @@ def if_login_page_appear_enter_root_and_password(driver, user, password):
 @then('You should see the dashboard')
 def you_should_see_the_dashboard(driver):
     """You should see the dashboard."""
-    assert wait_on_element(driver, 10, xpaths.dashboard.title)
-    assert wait_on_element(driver, 10, xpaths.dashboard.system_Info_Card_Title)
+    rsc.Verify_The_Dashboard(driver)
 
 
 @then('Click on the Credentials item in the left side menu')
@@ -120,8 +119,7 @@ def change_should_be_saved(driver):
 @then('Open the user drop down to verify the shell was changed')
 def open_the_user_drop_down_to_verify_the_shell_was_changed(driver):
     """Open the user drop down to verify the shell was changed."""
-    assert wait_on_element(driver, 7, xpaths.users.eric_User, 'clickable')
-    driver.find_element_by_xpath(xpaths.users.eric_User).click()
+    pass
 
 
 @then('Updated value should be visible')

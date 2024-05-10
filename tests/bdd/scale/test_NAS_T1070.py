@@ -48,8 +48,7 @@ def the_browser_is_open_the_truenas_url_and_logged_in(driver, nas_ip, root_passw
 @when('you should be on the dashboard')
 def you_should_be_on_the_dashboard(driver):
     """you should be on the dashboard."""
-    assert wait_on_element(driver, 10, xpaths.dashboard.title)
-    assert wait_on_element(driver, 10, xpaths.dashboard.system_Info_Card_Title)
+    rsc.Verify_The_Dashboard(driver)
 
 
 @then('click on the Credentials on the side menu, click on Local Users')
@@ -96,8 +95,6 @@ def the_changes_should_be_saved(driver):
 def open_the_user_dropdown(driver):
     """open the user dropdown."""
     assert wait_on_element(driver, 7, xpaths.users.title, 'clickable')
-    assert wait_on_element(driver, 10, xpaths.users.eric_User, 'clickable')
-    driver.find_element_by_xpath(xpaths.users.eric_User).click()
     assert wait_on_element(driver, 7, xpaths.users.eric_Allowed_Sudo_Commands)
     element_text = driver.find_element_by_xpath(xpaths.users.eric_Allowed_Sudo_Commands).text
     assert element_text == 'ALL'

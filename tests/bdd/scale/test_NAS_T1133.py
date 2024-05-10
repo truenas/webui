@@ -29,7 +29,7 @@ def test_create_a_wheel_group_smb_share_and_verify_only_wheel_group_can_send_fil
 @given('the browser is open, the TrueNAS URL and logged in')
 def the_browser_is_open_the_truenas_url_and_logged_in(driver, nas_ip, root_password, request):
     """the browser is open, the TrueNAS URL and logged in."""
-    depends(request, ['755_dataset', 'LDAP_SMB'], scope='session')
+    depends(request, ['755_dataset'], scope='session')
     if nas_ip not in driver.current_url:
         driver.get(f"http://{nas_ip}")
         assert wait_on_element(driver, 10, xpaths.login.user_Input)
@@ -49,8 +49,7 @@ def the_browser_is_open_the_truenas_url_and_logged_in(driver, nas_ip, root_passw
 @when('you should be on the dashboard, click on Shares on the side menu')
 def you_should_be_on_the_dashboard_click_on_shares_on_the_side_menu(driver):
     """you should be on the dashboard, click on Shares on the side menu."""
-    assert wait_on_element(driver, 10, xpaths.dashboard.title)
-    assert wait_on_element(driver, 10, xpaths.dashboard.system_Info_Card_Title)
+    rsc.Verify_The_Dashboard(driver)
     assert wait_on_element(driver, 10, xpaths.side_Menu.shares, 'clickable')
     driver.find_element_by_xpath(xpaths.side_Menu.shares).click()
 
@@ -81,11 +80,7 @@ def input_wheelsmbshare_as_name_click_to_enable(driver, share_name):
     driver.find_element_by_xpath(xpaths.smb.name_Input).click()
     driver.find_element_by_xpath(xpaths.smb.name_Input).clear()
     driver.find_element_by_xpath(xpaths.smb.name_Input).send_keys(share_name)
-    assert wait_on_element(driver, 5, xpaths.checkbox.enabled, 'clickable')
-    checkbox_checked = attribute_value_exist(driver, xpaths.checkbox.enabled, 'class', 'mat-mdc-checkbox-checked')
-    if not checkbox_checked:
-        driver.find_element_by_xpath(xpaths.checkbox.enabled).click()
-    assert attribute_value_exist(driver, xpaths.checkbox.enabled, 'class', 'mat-mdc-checkbox-checked')
+    rsc.set_checkbox(driver, xpaths.checkbox.enabled)
 
 
 @then(parsers.parse('input "{description}" as description, and click save'))

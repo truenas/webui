@@ -188,15 +188,16 @@ def click_on_system_settings_on_the_left_sidebar_and_click_services(driver):
 def on_the_service_page_verify_iscsi_is_running_and_click_the_start_automatically_iscsi_checkbox(driver):
     """on the Service page, verify iSCSI is running and click the Start Automatically iSCSI checkbox."""
     assert wait_on_element(driver, 7, xpaths.services.title)
-    assert wait_on_element(driver, 5, xpaths.services.iscsi_Service_Toggle, 'clickable')
-    assert wait_for_attribute_value(driver, 60, xpaths.services.iscsi_Service_Toggle, 'class', 'mdc-switch--checked')
+    assert wait_on_element(driver, 5, xpaths.services.iscsi_running_toggle, 'clickable')
+    assert wait_for_attribute_value(driver, 60, xpaths.services.iscsi_running_toggle, 'class', 'mat-mdc-slide-toggle-checked')
 
     results = get(nas_Hostname, '/service?service=iscsitarget', (admin_User, admin_Password))
     assert results.json()[0]['state'] == 'RUNNING', results.text
 
-    value_exist = attribute_value_exist(driver, xpaths.services.iscsi_Service_Checkbox, 'class', 'mat-mdc-checkbox-checked')
+    value_exist = attribute_value_exist(driver, xpaths.services.iscsi_autostart_toggle, 'class', 'mat-mdc-slide-toggle-checked')
     if not value_exist:
-        driver.find_element_by_xpath(xpaths.services.iscsi_Service_Checkbox).click()
+        driver.find_element_by_xpath(xpaths.services.iscsi_autostart_toggle).click()
+        assert wait_on_element_disappear(driver, 30, xpaths.popup.please_Wait)
 
 
 @then(parsers.parse('SSH to {hostname} with {host_user} and {host_password} then connect to "iscsitest1"'))
@@ -271,7 +272,7 @@ def create_a_file_in_the_mount_point_and_get_the_checksum_of_the_files_to_compar
 @then('on the Dashboard, click Initiate Failover on the standby controller')
 def on_the_dashboard_click_initiate_failover_on_the_standby_controller(driver):
     """on the Dashboard, click Initiate Failover on the standby controller."""
-    driver.find_element_by_xpath(xpaths.side_Menu.dashboard).click()
+    rsc.Click_On_Element(driver, xpaths.side_Menu.old_dashboard)
     rsc.Verify_The_Dashboard(driver)
     time.sleep(20)
 
@@ -306,8 +307,8 @@ def once_on_the_dashboard_click_on_system_settings_and_click_services(driver):
 def verify_the_iscsi_service_is_running_in_the_ui_and_with_the_api(driver):
     """verify the iSCSI service is RUNNING in the UI and with the API."""
     assert wait_on_element(driver, 7, xpaths.services.title)
-    assert wait_on_element(driver, 5, xpaths.services.iscsi_Service_Toggle, 'clickable')
-    assert attribute_value_exist(driver, xpaths.services.iscsi_Service_Toggle, 'class', 'mdc-switch--checked')
+    assert wait_on_element(driver, 5, xpaths.services.iscsi_running_toggle, 'clickable')
+    assert attribute_value_exist(driver, xpaths.services.iscsi_running_toggle, 'class', 'mat-mdc-slide-toggle-checked')
 
     results = get(nas_Hostname, '/service?service=iscsitarget', (admin_User, admin_Password))
     assert results.json()[0]['state'] == 'RUNNING', results.text

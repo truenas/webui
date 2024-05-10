@@ -54,8 +54,7 @@ def the_browser_is_open_navigate_to_the_scale_url_and_login(driver, nas_ip, root
 def on_the_dashboard_get_the_ssh_host_key(driver, root_password, nas_ip):
     """on the Dashboard, get the ssh host key."""
     global hostkey_before
-    assert wait_on_element(driver, 10, xpaths.dashboard.title)
-    assert wait_on_element(driver, 10, xpaths.dashboard.system_Info_Card_Title)
+    rsc.Verify_The_Dashboard(driver)
     results = ssh_cmd('ssh-keyscan 127.0.0.1', 'root', root_password, nas_ip)
     assert results['result'], results['output']
     hostkey_before = results['output']
@@ -99,8 +98,8 @@ def on_the_dashboard_click_on_systems_settings_then_services(driver):
 def on_the_services_page_verify_ssh_is_enabled(driver):
     """on the Services page, verify SSH is enabled."""
     assert wait_on_element(driver, 10, xpaths.services.title)
-    assert wait_on_element(driver, 5, xpaths.services.ssh_Service_Button, 'clickable')
-    assert attribute_value_exist(driver, xpaths.services.ssh_Service_Toggle, 'class', 'mdc-switch--checked')
+    assert wait_on_element(driver, 5, xpaths.services.ssh_edit_button, 'clickable')
+    assert attribute_value_exist(driver, xpaths.services.ssh_running_toggle, 'class', 'mat-mdc-slide-toggle-checked')
 
 
 @then('get the ssh host key again')
