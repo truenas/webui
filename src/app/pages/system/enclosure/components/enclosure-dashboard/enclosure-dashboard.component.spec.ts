@@ -47,13 +47,16 @@ describe('EnclosureDashboardComponent', () => {
   });
 
   it('opens edit dialog when Edit Label is pressed', async () => {
+    console.info('a');
     jest.spyOn(spectator.inject(MatDialog), 'open').mockReturnValue({
       afterClosed: () => of('new label'),
     } as MatDialogRef<SetEnclosureLabelDialogComponent>);
 
+    console.info('b');
     const editLabel = await loader.getHarness(MatButtonHarness.with({ text: 'Edit Label' }));
     await editLabel.click();
 
+    console.info('c');
     expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(SetEnclosureLabelDialogComponent, {
       data: {
         currentLabel: 'Current label',
@@ -62,6 +65,7 @@ describe('EnclosureDashboardComponent', () => {
       },
     });
 
+    console.info('d');
     expect(spectator.inject(EnclosureStore).renameSelectedEnclosure).toHaveBeenCalledWith('new label');
   });
 });
