@@ -40,8 +40,11 @@ describe('EnclosureDashboardComponent', () => {
   beforeEach(() => {
   });
 
-  it.skip('initializes store when component is initialized', () => {
+  it('initializes store when component is initialized', () => {
+    spectator = createComponent();
+    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     expect(spectator.inject(EnclosureStore).initiate).toHaveBeenCalled();
+    console.info('end of first case');
   });
 
   it('opens edit dialog when Edit Label is pressed', async () => {
