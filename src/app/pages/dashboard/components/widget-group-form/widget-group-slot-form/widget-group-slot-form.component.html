@@ -11,7 +11,7 @@
         [label]="'Widget Category' | translate"
       ></ix-select>
       <ix-select
-        *ngIf="selectedCategory() !== WidgetCategory.Empty"
+        *ngIf="shouldShowType"
         class="half-width"
         formControlName="type"
         [required]="true"

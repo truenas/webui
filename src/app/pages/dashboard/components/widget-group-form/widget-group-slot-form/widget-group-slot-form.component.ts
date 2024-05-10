@@ -1,11 +1,13 @@
 import {
   AfterViewInit,
   ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
   Injector,
   OnChanges,
   ViewChild,
   ViewContainerRef,
+  WritableSignal,
   computed,
   input,
   output,
@@ -36,12 +38,16 @@ export class WidgetGroupSlotFormComponent implements AfterViewInit, OnChanges {
   slotConfig = input.required<WidgetGroupSlot<object>>();
   protected slot = signal<WidgetGroupSlot<object>>(null);
 
-  protected selectedCategory = signal(WidgetCategory.Empty);
+  protected selectedCategory: WritableSignal<WidgetCategory>;
 
   private categorySubscription: Subscription;
   private typeSubscription: Subscription;
 
   protected readonly WidgetCategory = WidgetCategory;
+
+  protected get shouldShowType(): boolean {
+    return this.selectedCategory != null && this.selectedCategory() !== WidgetCategory.Empty;
+  }
 
   @ViewChild('settingsContainer', { static: true, read: ViewContainerRef }) settingsContainer: ViewContainerRef;
   widgetCategoriesOptions = computed<Observable<Option[]>>(() => {
@@ -64,6 +70,9 @@ export class WidgetGroupSlotFormComponent implements AfterViewInit, OnChanges {
     const layoutSupportedWidgets = this.getLayoutSupportedWidgets();
     const category = this.selectedCategory();
     const categoryWidgets = layoutSupportedWidgets.filter((widget) => widget.category === category);
+    if (!categoryWidgets.length) {
+      return of([]);
+    }
     const uniqTypes = new Set(categoryWidgets.map((widget) => widget.type));
 
     const typeOptions = Array.from(uniqTypes).map((type) => {
@@ -81,7 +90,7 @@ export class WidgetGroupSlotFormComponent implements AfterViewInit, OnChanges {
     type: [null as WidgetType, [Validators.required]],
   });
 
-  constructor(private fb: FormBuilder) { }
+  constructor(private fb: FormBuilder, private cdr: ChangeDetectorRef) { }
 
   setupFormValueUpdates(): void {
     this.setupCategoryUpdates();
@@ -91,7 +100,7 @@ export class WidgetGroupSlotFormComponent implements AfterViewInit, OnChanges {
   setupCategoryUpdates(): void {
     this.categorySubscription = this.form.controls.category.valueChanges.pipe(untilDestroyed(this)).subscribe({
       next: (category) => {
-        this.selectedCategory.set(category);
+        this.updateSelectedCategory(category);
         this.settingsChange.emit(this.slot());
       },
     });
@@ -113,6 +122,15 @@ export class WidgetGroupSlotFormComponent implements AfterViewInit, OnChanges {
     });
   }
 
+  private updateSelectedCategory(category: WidgetCategory): void {
+    if (!this.selectedCategory) {
+      this.selectedCategory = signal<WidgetCategory>(category);
+    } else {
+      this.selectedCategory.set(category);
+    }
+    this.cdr.markForCheck();
+  }
+
   ngOnChanges(): void {
     this.setValuesFromInput();
   }
@@ -124,10 +142,15 @@ export class WidgetGroupSlotFormComponent implements AfterViewInit, OnChanges {
   setValuesFromInput(): void {
     this.clearUpdates();
     const slotConfig = this.slotConfig();
+
     this.slot.set(slotConfig);
+    if (!slotConfig.type) {
+      this.setupFormValueUpdates();
+      return;
+    }
     const category = widgetRegistry[slotConfig.type].category;
     this.form.controls.category.setValue(category);
-    this.selectedCategory.set(category);
+    this.updateSelectedCategory(category);
     this.form.controls.type.setValue(slotConfig.type);
     this.refreshSettingsContainer();
     this.setupFormValueUpdates();
@@ -194,11 +217,8 @@ export class WidgetGroupSlotFormComponent implements AfterViewInit, OnChanges {
   }
 
   getLayoutSupportedWidgets(): SimpleWidget[] {
-    const widgetEntires = Object.entries(widgetRegistry);
-    const slotSize = this.slotConfig().slotSize;
-
-    return widgetEntires.filter(
-      ([, widget]) => widget.supportedSizes.includes(slotSize),
+    return Object.entries(widgetRegistry).filter(
+      ([, widget]) => widget.supportedSizes.includes(this.slotConfig().slotSize),
     ).map(([type, widget]) => ({ ...widget, type: type as WidgetType }));
   }
 }
