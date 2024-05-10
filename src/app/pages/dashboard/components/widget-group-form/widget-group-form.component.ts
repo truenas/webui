@@ -53,15 +53,7 @@ export class WidgetGroupFormComponent {
   });
 
   protected settingsHasErrors = computed<boolean>(() => {
-    const slotsCount = layoutToSlotSizes[this.group().layout].length;
-    let hasEmptySlot = false;
-    for (let i = 0; i < slotsCount; i++) {
-      if (!this.group().slots[i]?.type) {
-        hasEmptySlot = true;
-        break;
-      }
-    }
-    return hasEmptySlot || this.validationErrors().some((errors) => !!Object.keys(errors).length);
+    return this.validationErrors().some((errors) => !!Object.keys(errors).length);
   });
 
   protected readonly layoutsMap = widgetGroupIcons;
