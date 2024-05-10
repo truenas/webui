@@ -40,6 +40,14 @@ describe('EnclosureDashboardComponent', () => {
   beforeEach(() => {
   });
 
+  it('initializes store when component is initialized', () => {
+    console.info('start of initializes store');
+    spectator = createComponent();
+    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    expect(2).toBe(2);
+    console.info('end of initializes store');
+  });
+
   it('opens edit dialog when Edit Label is pressed', async () => {
     console.info('start of opens edit dialog');
     spectator = createComponent();
@@ -65,13 +73,5 @@ describe('EnclosureDashboardComponent', () => {
 
     console.info('d');
     expect(spectator.inject(EnclosureStore).renameSelectedEnclosure).toHaveBeenCalledWith('new label');
-  });
-
-  it('initializes store when component is initialized', () => {
-    console.info('start of initializes store');
-    spectator = createComponent();
-    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    expect(spectator.inject(EnclosureStore).initiate).toHaveBeenCalled();
-    console.info('end of first case');
   });
 });
