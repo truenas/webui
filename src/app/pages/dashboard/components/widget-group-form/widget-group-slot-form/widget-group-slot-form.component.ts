@@ -110,7 +110,6 @@ export class WidgetGroupSlotFormComponent implements AfterViewInit, OnChanges {
             settings: undefined,
           };
         });
-        this.validityChange.emit([this.slot().slotPosition, {} as ValidationErrors]);
         this.refreshSettingsContainer();
         this.settingsChange.emit(this.slot());
       },
@@ -147,15 +146,21 @@ export class WidgetGroupSlotFormComponent implements AfterViewInit, OnChanges {
     }
     this.settingsContainer.remove();
     this.settingsContainer.clear();
+    const slotConfig = this.slot();
+    if (slotConfig) {
+      this.validityChange.emit([slotConfig.slotPosition, {} as ValidationErrors]);
+      this.settingsChange.emit({ ...slotConfig, settings: undefined });
+    }
+
     if (
-      !this.slot()?.type
-      || !widgetRegistry[this.slot().type as WidgetType].settingsComponent
+      !slotConfig?.type
+      || !widgetRegistry[slotConfig.type as WidgetType].settingsComponent
     ) {
       return;
     }
 
     this.settingsContainer.createComponent(
-      widgetRegistry[this.slot().type].settingsComponent,
+      widgetRegistry[slotConfig.type].settingsComponent,
       { injector: this.getInjector() },
     );
   }
