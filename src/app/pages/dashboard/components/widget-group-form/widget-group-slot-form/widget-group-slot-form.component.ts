@@ -18,6 +18,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Observable, Subscription, of } from 'rxjs';
 import { Option } from 'app/interfaces/option.interface';
 import { SimpleWidget } from 'app/pages/dashboard/types/simple-widget.interface';
+import { SlotPosition } from 'app/pages/dashboard/types/slot-position.enum';
 import { WidgetCategory, widgetCategoryLabels } from 'app/pages/dashboard/types/widget-category.enum';
 import { WidgetGroupSlot } from 'app/pages/dashboard/types/widget-group-slot.interface';
 import { WidgetSettingsRef } from 'app/pages/dashboard/types/widget-settings-ref.interface';
@@ -54,7 +55,7 @@ export class WidgetGroupSlotFormComponent implements AfterViewInit, OnChanges {
     return of([{ label: widgetCategoryLabels.get(WidgetCategory.Empty), value: WidgetCategory.Empty }, ...options]);
   });
 
-  validityChange = output<[number, ValidationErrors]>();
+  validityChange = output<[SlotPosition, ValidationErrors]>();
   settingsChange = output<WidgetGroupSlot<object>>();
 
   widgetTypesOptions = computed<Observable<Option[]>>(() => {
@@ -109,6 +110,7 @@ export class WidgetGroupSlotFormComponent implements AfterViewInit, OnChanges {
             settings: undefined,
           };
         });
+        this.validityChange.emit([this.slot().slotPosition, {} as ValidationErrors]);
         this.refreshSettingsContainer();
         this.settingsChange.emit(this.slot());
       },
