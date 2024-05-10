@@ -36,6 +36,7 @@
     ],
     "synonyms": [
       "Toolbar",
+      "Sign Out",
       "Power Menu"
     ],
     "requiredRoles": [],
@@ -52,6 +53,7 @@
     ],
     "synonyms": [
       "Toolbar",
+      "Reboot",
       "Power Menu"
     ],
     "requiredRoles": [
@@ -70,6 +72,8 @@
     ],
     "synonyms": [
       "Toolbar",
+      "Power Off",
+      "Turn Off",
       "Power Menu"
     ],
     "requiredRoles": [
