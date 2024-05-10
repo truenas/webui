@@ -8,7 +8,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { of, tap } from 'rxjs';
 import { ChainedRef } from 'app/modules/ix-forms/components/ix-slide-in/chained-component-ref';
 import {
-  FormWidgetGroup, widgetGroupToFormWidgetGroup, FormWidget, formWidgetGroupToWidgetGroup,
+  widgetGroupToFormWidgetGroup,
 } from 'app/pages/dashboard/types/form-widget-group.interface';
 import { SlotPosition } from 'app/pages/dashboard/types/slot-position.enum';
 import { WidgetGroupSlot } from 'app/pages/dashboard/types/widget-group-slot.interface';
@@ -18,7 +18,7 @@ import {
   layoutToSlotSizes,
   widgetGroupIcons,
 } from 'app/pages/dashboard/types/widget-group.interface';
-import { SlotSize } from 'app/pages/dashboard/types/widget.interface';
+import { SlotSize, Widget } from 'app/pages/dashboard/types/widget.interface';
 import { widgetRegistry } from 'app/pages/dashboard/widgets/all-widgets.constant';
 
 @UntilDestroy()
@@ -29,13 +29,12 @@ import { widgetRegistry } from 'app/pages/dashboard/widgets/all-widgets.constant
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class WidgetGroupFormComponent {
-  protected group = signal<FormWidgetGroup>(
-    { layout: WidgetGroupLayout.Full, slots: [{ category: null, type: null }] } as FormWidgetGroup,
+  protected group = signal<WidgetGroup>(
+    { layout: WidgetGroupLayout.Full, slots: [{ type: null }] } as WidgetGroup,
   );
   selectedSlot = signal<WidgetGroupSlot<object>>({
     slotPosition: 0,
     slotSize: SlotSize.Full,
-    category: null,
     type: null,
     settings: undefined,
   });
@@ -72,9 +71,9 @@ export class WidgetGroupFormComponent {
   }
 
   private setInitialFormValues(): void {
-    const widgetGroup = widgetGroupToFormWidgetGroup(this.chainedRef.getData());
+    const widgetGroup = this.chainedRef.getData();
     if (!widgetGroup) {
-      this.group.set({ layout: WidgetGroupLayout.Full, slots: [{ category: null, type: null }] });
+      this.group.set({ layout: WidgetGroupLayout.Full, slots: [{ type: null }] });
       return;
     }
     this.group.set(widgetGroupToFormWidgetGroup(widgetGroup));
@@ -89,12 +88,12 @@ export class WidgetGroupFormComponent {
     this.form.controls.layout.valueChanges.pipe(
       tap((layout) => {
         this.group.update((group) => {
-          const newGroup: FormWidgetGroup = { layout, slots: [] };
+          const newGroup: WidgetGroup = { layout, slots: [] };
           const slotsCount = Math.max(layoutToSlotSizes[layout].length, group.slots.length);
           for (let i = 0; i < slotsCount; i++) {
-            let slotConfig: FormWidget = group.slots[i];
+            let slotConfig: Widget = group.slots[i];
             if (!slotConfig) {
-              slotConfig = { category: null, type: null };
+              slotConfig = { type: null };
             }
             newGroup.slots.push(slotConfig);
           }
@@ -124,7 +123,7 @@ export class WidgetGroupFormComponent {
       const group = this.group();
       return {
         slotPosition,
-        category: group.slots[slotPosition].category,
+        category: widgetRegistry[group.slots[slotPosition].type].category,
         type: group.slots[slotPosition].type,
         settings: group.slots[slotPosition].settings,
         slotSize: layoutToSlotSizes[group.layout][slotPosition],
@@ -138,20 +137,20 @@ export class WidgetGroupFormComponent {
       return;
     }
     this.chainedRef.close({
-      response: formWidgetGroupToWidgetGroup(this.group()),
+      response: this.group(),
       error: false,
     });
   }
 
   private cleanWidgetGroup(): void {
     this.group.update((group) => {
-      const newGroup: FormWidgetGroup = { layout: group.layout, slots: [] };
+      const newGroup: WidgetGroup = { layout: group.layout, slots: [] };
       const slotSizes = layoutToSlotSizes[group.layout];
       for (let i = 0; i < slotSizes.length; i++) {
         if (widgetRegistry[group.slots[i].type]?.supportedSizes.includes(slotSizes[i])) {
           newGroup.slots.push(group.slots[i]);
         } else {
-          newGroup.slots.push({ category: null, type: null });
+          newGroup.slots.push({ type: null });
         }
       }
       return newGroup;
@@ -168,12 +167,11 @@ export class WidgetGroupFormComponent {
 
   updateSlotSettings(slot: WidgetGroupSlot<object>): void {
     this.group.update((group) => {
-      const newGroup: FormWidgetGroup = { layout: group.layout, slots: [] };
+      const newGroup: WidgetGroup = { layout: group.layout, slots: [] };
       const slotsCount = Math.max(layoutToSlotSizes[newGroup.layout].length, group.slots.length);
       for (let i = 0; i < slotsCount; i++) {
         if (i as SlotPosition === slot.slotPosition) {
           newGroup.slots.push({
-            category: slot.category,
             type: slot.type,
             settings: slot.settings || undefined,
           });

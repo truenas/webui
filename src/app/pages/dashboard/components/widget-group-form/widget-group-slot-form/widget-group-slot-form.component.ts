@@ -34,10 +34,12 @@ import { widgetRegistry } from 'app/pages/dashboard/widgets/all-widgets.constant
 })
 export class WidgetGroupSlotFormComponent implements AfterViewInit, OnChanges {
   slotConfig = input.required<WidgetGroupSlot<object>>();
-  slot = signal<WidgetGroupSlot<object>>(null);
-  categorySubscription: Subscription;
-  typeSubscription: Subscription;
-  settingsValidionErrors = signal({} as ValidationErrors);
+  protected slot = signal<WidgetGroupSlot<object>>(null);
+
+  protected selectedCategory = signal(WidgetCategory.Empty);
+
+  private categorySubscription: Subscription;
+  private typeSubscription: Subscription;
 
   protected readonly WidgetCategory = WidgetCategory;
 
@@ -60,16 +62,18 @@ export class WidgetGroupSlotFormComponent implements AfterViewInit, OnChanges {
 
   widgetTypesOptions = computed<Observable<Option[]>>(() => {
     const layoutSupportedWidgets = this.getLayoutSupportedWidgets();
-    const category = this.slot().category;
+    const category = this.selectedCategory();
     const categoryWidgets = layoutSupportedWidgets.filter((widget) => widget.category === category);
     const uniqTypes = new Set(categoryWidgets.map((widget) => widget.type));
 
-    return of(Array.from(uniqTypes).map((type) => {
+    const typeOptions = Array.from(uniqTypes).map((type) => {
       return {
         label: widgetRegistry[type].name,
         value: type,
       };
-    }));
+    });
+    this.form.controls.type.setValue(typeOptions[0].value);
+    return of(typeOptions);
   });
 
   form = this.fb.group({
@@ -87,14 +91,7 @@ export class WidgetGroupSlotFormComponent implements AfterViewInit, OnChanges {
   setupCategoryUpdates(): void {
     this.categorySubscription = this.form.controls.category.valueChanges.pipe(untilDestroyed(this)).subscribe({
       next: (category) => {
-        this.slot.update((slot) => {
-          return {
-            ...slot,
-            category,
-            type: null,
-            settings: undefined,
-          };
-        });
+        this.selectedCategory.set(category);
         this.settingsChange.emit(this.slot());
       },
     });
@@ -128,7 +125,9 @@ export class WidgetGroupSlotFormComponent implements AfterViewInit, OnChanges {
     this.clearUpdates();
     const slotConfig = this.slotConfig();
     this.slot.set(slotConfig);
-    this.form.controls.category.setValue(slotConfig.category);
+    const category = widgetRegistry[slotConfig.type].category;
+    this.form.controls.category.setValue(category);
+    this.selectedCategory.set(category);
     this.form.controls.type.setValue(slotConfig.type);
     this.refreshSettingsContainer();
     this.setupFormValueUpdates();
@@ -196,7 +195,7 @@ export class WidgetGroupSlotFormComponent implements AfterViewInit, OnChanges {
 
   getLayoutSupportedWidgets(): SimpleWidget[] {
     const widgetEntires = Object.entries(widgetRegistry);
-    const slotSize = this.slot().slotSize;
+    const slotSize = this.slotConfig().slotSize;
 
     return widgetEntires.filter(
       ([, widget]) => widget.supportedSizes.includes(slotSize),
