@@ -38,6 +38,8 @@ export class WidgetGroupSlotFormComponent implements AfterViewInit, OnChanges {
   typeSubscription: Subscription;
   settingsValidionErrors = signal({} as ValidationErrors);
 
+  protected readonly WidgetCategory = WidgetCategory;
+
   @ViewChild('settingsContainer', { static: true, read: ViewContainerRef }) settingsContainer: ViewContainerRef;
   widgetCategoriesOptions = computed<Observable<Option[]>>(() => {
     const layoutSupportedWidgets = this.getLayoutSupportedWidgets();
@@ -49,7 +51,7 @@ export class WidgetGroupSlotFormComponent implements AfterViewInit, OnChanges {
         value: category,
       };
     });
-    return of(options);
+    return of([{ label: widgetCategoryLabels.get(WidgetCategory.Empty), value: WidgetCategory.Empty }, ...options]);
   });
 
   validityChange = output<[number, ValidationErrors]>();

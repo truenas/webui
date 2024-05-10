@@ -144,7 +144,7 @@ export class WidgetGroupFormComponent {
       const newGroup: FormWidgetGroup = { layout: group.layout, slots: [] };
       const slotSizes = layoutToSlotSizes[group.layout];
       for (let i = 0; i < slotSizes.length; i++) {
-        if (widgetRegistry[group.slots[i].type].supportedSizes.includes(slotSizes[i])) {
+        if (widgetRegistry[group.slots[i].type]?.supportedSizes.includes(slotSizes[i])) {
           newGroup.slots.push(group.slots[i]);
         } else {
           newGroup.slots.push({ category: null, type: null });

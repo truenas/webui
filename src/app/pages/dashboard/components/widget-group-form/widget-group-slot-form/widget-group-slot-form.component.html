@@ -13,7 +13,7 @@
         ></ix-select>
 
         <ix-select
-          *ngIf="slot().category"
+          *ngIf="slot().category && slot().category !== WidgetCategory.Empty"
           formControlName="type"
           class="type-select"
           [required]="true"
