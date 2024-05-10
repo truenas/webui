@@ -46,7 +46,9 @@ export class WidgetGroupSlotFormComponent implements AfterViewInit, OnChanges {
   protected readonly WidgetCategory = WidgetCategory;
 
   protected get shouldShowType(): boolean {
-    return this.selectedCategory != null && this.selectedCategory() !== WidgetCategory.Empty;
+    return this.selectedCategory != null
+      ? this.selectedCategory() && this.selectedCategory() !== WidgetCategory.Empty
+      : false;
   }
 
   @ViewChild('settingsContainer', { static: true, read: ViewContainerRef }) settingsContainer: ViewContainerRef;
@@ -81,7 +83,9 @@ export class WidgetGroupSlotFormComponent implements AfterViewInit, OnChanges {
         value: type,
       };
     });
-    this.form.controls.type.setValue(typeOptions[0].value);
+    if (!this.form.controls.type.value) {
+      this.form.controls.type.setValue(typeOptions[0].value);
+    }
     return of(typeOptions);
   });
 
@@ -145,6 +149,9 @@ export class WidgetGroupSlotFormComponent implements AfterViewInit, OnChanges {
 
     this.slot.set(slotConfig);
     if (!slotConfig.type) {
+      this.form.controls.category.setValue(null);
+      this.updateSelectedCategory(null);
+      this.form.controls.type.setValue(null);
       this.setupFormValueUpdates();
       return;
     }

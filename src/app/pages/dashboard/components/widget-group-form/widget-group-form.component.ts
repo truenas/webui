@@ -52,7 +52,8 @@ export class WidgetGroupFormComponent {
   });
 
   protected settingsHasErrors = computed<boolean>(() => {
-    return this.validationErrors().some((errors) => !!Object.keys(errors).length);
+    const validationErrors = this.validationErrors().slice(0, layoutToSlotSizes[this.group().layout].length);
+    return validationErrors.some((errors) => !!Object.keys(errors).length);
   });
 
   protected readonly layoutsMap = widgetGroupIcons;
@@ -123,7 +124,6 @@ export class WidgetGroupFormComponent {
       const group = this.group();
       return {
         slotPosition,
-        category: widgetRegistry[group.slots[slotPosition].type].category,
         type: group.slots[slotPosition].type,
         settings: group.slots[slotPosition].settings,
         slotSize: layoutToSlotSizes[group.layout][slotPosition],
