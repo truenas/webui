@@ -8,11 +8,13 @@ import { Store } from '@ngrx/store';
 import { selectUpdateJobForActiveNode } from 'app/modules/jobs/store/job.selectors';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
 import { SlotSize } from 'app/pages/dashboard/types/widget.interface';
-import { getServerProduct, getProductImage, getProductEnclosure } from 'app/pages/dashboard/widgets/system/common/widget-sys-info.utils';
+import {
+  getServerProduct, getProductImage, getProductEnclosure, getSystemVersion,
+} from 'app/pages/dashboard/widgets/system/common/widget-sys-info.utils';
 import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import {
-  selectEnclosureSupport, selectIsEnterprise, selectIsIxHardware,
+  selectEnclosureSupport, selectIsCertified, selectIsEnterprise, selectIsIxHardware,
 } from 'app/store/system-info/system-info.selectors';
 
 @Component({
@@ -27,23 +29,18 @@ export class WidgetSysInfoActiveComponent {
   isIxHardware = toSignal(this.store$.select(selectIsIxHardware));
   isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
   isHaLicensed = toSignal(this.store$.select(selectIsHaLicensed));
+  isCertified = toSignal(this.store$.select(selectIsCertified));
   hasEnclosureSupport = toSignal(this.store$.select(selectEnclosureSupport));
+  isUpdateRunning = toSignal(this.store$.select(selectUpdateJobForActiveNode));
   updateAvailable = toSignal(this.resources.updateAvailable$);
   systemInfo = toSignal(this.resources.systemInfo$);
-  isUpdateRunning = toSignal(this.store$.select(selectUpdateJobForActiveNode));
 
   product = computed(() => {
-    if (!this.systemInfo()?.system_product) {
-      return '';
-    }
-    return getServerProduct(this.systemInfo().system_product);
+    return getServerProduct(this.systemInfo()?.system_product);
   });
 
   productImage = computed(() => {
-    if (!this.systemInfo()?.system_product || !this.isIxHardware()) {
-      return '';
-    }
-    return getProductImage(this.systemInfo().system_product);
+    return getProductImage(this.systemInfo()?.system_product);
   });
 
   productEnclosure = computed(() => {
@@ -53,20 +50,22 @@ export class WidgetSysInfoActiveComponent {
     return getProductEnclosure(this.systemInfo().system_product);
   });
 
-  isCertified = computed(() => {
-    return this.systemInfo()?.system_product?.includes('CERTIFIED');
-  });
-
   isUnsupportedHardware = computed(() => {
     return this.isEnterprise() && !this.productImage() && !this.isIxHardware();
   });
 
   systemVersion = computed(() => {
-    if (this.systemInfo()?.codename) {
-      this.systemInfo().version.replace('TrueNAS-SCALE', this.systemInfo().codename);
-    }
-    return this.systemInfo().version;
+    return getSystemVersion(this.systemInfo().version, this.systemInfo()?.codename);
   });
+
+  systemPlatform = computed(() => {
+    if (this.systemInfo().platform && this.isIxHardware()) {
+      return this.systemInfo().platform;
+    }
+    return 'Generic';
+  });
+
+  // TODO: Fix uptime counter
 
   constructor(
     private resources: WidgetResourcesService,

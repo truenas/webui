@@ -68,7 +68,7 @@
         <mat-list *ngIf="systemInfo() as systemInfo">
           <mat-list-item>
             <strong>{{ 'Platform' | translate }}:</strong>
-            <span>{{ systemInfo.platform && isIxHardware() ? systemInfo.platform : 'Generic' }}</span>
+            <span>{{ systemPlatform() }}</span>
           </mat-list-item>
           <mat-list-item>
             <strong>{{ 'Version' | translate }}:</strong>

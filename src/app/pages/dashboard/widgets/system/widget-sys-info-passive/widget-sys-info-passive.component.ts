@@ -12,10 +12,14 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { selectUpdateJobForPassiveNode } from 'app/modules/jobs/store/job.selectors';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
 import { SlotSize } from 'app/pages/dashboard/types/widget.interface';
-import { getServerProduct, getProductImage, getProductEnclosure } from 'app/pages/dashboard/widgets/system/common/widget-sys-info.utils';
+import {
+  getServerProduct, getProductImage, getProductEnclosure, getSystemVersion,
+} from 'app/pages/dashboard/widgets/system/common/widget-sys-info.utils';
 import { AppState } from 'app/store';
 import { selectCanFailover, selectIsHaEnabled, selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
-import { selectIsIxHardware, selectIsEnterprise, selectEnclosureSupport } from 'app/store/system-info/system-info.selectors';
+import {
+  selectIsIxHardware, selectIsEnterprise, selectEnclosureSupport, selectIsCertified,
+} from 'app/store/system-info/system-info.selectors';
 
 @UntilDestroy()
 @Component({
@@ -27,27 +31,22 @@ import { selectIsIxHardware, selectIsEnterprise, selectEnclosureSupport } from '
 export class WidgetSysInfoPassiveComponent {
   size = input.required<SlotSize>();
 
+  systemInfo = toSignal(this.resources.systemInfo$.pipe(map((sysInfo) => sysInfo.remote_info)));
   updateAvailable = toSignal(this.resources.updateAvailable$);
+  isCertified = toSignal(this.store$.select(selectIsCertified));
   isIxHardware = toSignal(this.store$.select(selectIsIxHardware));
   isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
   isHaLicensed = toSignal(this.store$.select(selectIsHaLicensed));
   isHaEnabled = toSignal(this.store$.select(selectIsHaEnabled));
   hasEnclosureSupport = toSignal(this.store$.select(selectEnclosureSupport));
   isUpdateRunning = toSignal(this.store$.select(selectUpdateJobForPassiveNode));
-  systemInfo = toSignal(this.resources.systemInfo$.pipe(map((sysInfo) => sysInfo.remote_info)));
 
   product = computed(() => {
-    if (!this.systemInfo()?.system_product) {
-      return '';
-    }
-    return getServerProduct(this.systemInfo().system_product);
+    return getServerProduct(this.systemInfo()?.system_product);
   });
 
   productImage = computed(() => {
-    if (!this.systemInfo()?.system_product) {
-      return '';
-    }
-    return getProductImage(this.systemInfo().system_product);
+    return getProductImage(this.systemInfo()?.system_product);
   });
 
   productEnclosure = computed(() => {
@@ -57,23 +56,18 @@ export class WidgetSysInfoPassiveComponent {
     return getProductEnclosure(this.systemInfo().system_product);
   });
 
-  isCertified = computed(() => {
-    return this.systemInfo()?.system_product?.includes('CERTIFIED');
-  });
-
   isUnsupportedHardware = computed(() => {
     return this.isEnterprise() && !this.productImage() && !this.isIxHardware();
   });
 
   systemVersion = computed(() => {
-    if (this.systemInfo()?.codename) {
-      this.systemInfo().version.replace('TrueNAS-SCALE', this.systemInfo().codename);
-    }
-    return this.systemInfo()?.version;
+    return getSystemVersion(this.systemInfo().version, this.systemInfo()?.codename);
   });
 
   protected readonly isDisabled$ = this.store$.select(selectCanFailover).pipe(map((canFailover) => !canFailover));
   protected readonly requiredRoles = [Role.FailoverWrite];
+
+  // TODO: Fix uptime counter
 
   constructor(
     private resources: WidgetResourcesService,

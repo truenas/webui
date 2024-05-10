@@ -32,6 +32,11 @@ export const selectIsIxHardware = createSelector(
   (state) => state.isIxHardware,
 );
 
+export const selectIsCertified = createSelector(
+  selectSystemInfo,
+  (systemInfo) => systemInfo?.system_product?.includes('CERTIFIED'),
+);
+
 export const selectProductType = createSelector(
   selectSystemInfoState,
   (state) => state.productType,
