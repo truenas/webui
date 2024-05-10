@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, computed } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { filter } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
 import {
   SetEnclosureLabelDialogComponent,
@@ -46,12 +47,11 @@ export class EnclosureDashboardComponent {
 
     this.matDialog.open(SetEnclosureLabelDialogComponent, { data: dialogConfig })
       .afterClosed()
-      .pipe(untilDestroyed(this))
+      .pipe(
+        filter(Boolean),
+        untilDestroyed(this),
+      )
       .subscribe((newLabel: string) => {
-        if (!newLabel) {
-          return;
-        }
-
         this.enclosureStore.renameSelectedEnclosure(newLabel);
       });
   }
