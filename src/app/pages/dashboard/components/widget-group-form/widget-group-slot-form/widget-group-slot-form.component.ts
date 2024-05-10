@@ -83,7 +83,7 @@ export class WidgetGroupSlotFormComponent implements AfterViewInit, OnChanges {
         value: type,
       };
     });
-    if (!this.form.controls.type.value) {
+    if (!this.form.controls.type.value || !Array.from(uniqTypes).includes(this.form.controls.type.value)) {
       this.form.controls.type.setValue(typeOptions[0].value);
     }
     return of(typeOptions);
