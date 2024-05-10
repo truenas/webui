@@ -1,0 +1,16 @@
+:host {
+  align-items: center;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 12px;
+  justify-content: center;
+
+  .product-image-placeholder {
+    display: flex;
+    min-height: 150px;
+    min-width: 150px;
+    place-content: center;
+    place-items: center;
+  }
+}

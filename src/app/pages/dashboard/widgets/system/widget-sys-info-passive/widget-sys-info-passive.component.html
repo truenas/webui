@@ -1,0 +1,94 @@
+<mat-card class="card">
+  <mat-card-content class="card-content">
+    <div [class]="['container', size()]">
+      <div class="content-left fn-theme-contrast-lighter">
+        <div class="product-logo-container">
+          <ng-container *ngIf="productImage(); else textOnly">
+            <ix-icon name="ix:logo_truenas_scale_full" [id]="product()"></ix-icon>
+          </ng-container>
+
+          <ng-template #textOnly>
+            <ix-icon name="ix:logo_truenas_scale_type" [id]="product()"></ix-icon>
+          </ng-template>
+        </div>
+
+        <ix-product-image
+          [product]="product()"
+          [productImage]="productImage()"
+          [isCertified]="isCertified()"
+          [hasEnclosureSupport]="hasEnclosureSupport()"
+          [isHaLicensed]="isHaLicensed()"
+          [isUnsupportedHardware]="isUnsupportedHardware()"
+          [isEnterprise]="isEnterprise()"
+        >
+          <span>{{ 'Standby' | translate }}</span>
+        </ix-product-image>
+
+        <div class="card-action-container">
+          <button
+            *ixRequiresRoles="requiredRoles"
+            mat-button
+            class="simple-failover-btn"
+            ixTest="initiate-failover"
+            color="default"
+            [disabled]="isDisabled$ | async"
+            (click)="openDialog()"
+          >
+            {{ 'Initiate Failover' | translate }}
+          </button>
+        </div>
+      </div>
+
+      <div class="content-right">
+        <div class="header">
+          <h3>{{ 'System Information' | translate }} <small>{{ 'standby' | translate }}</small></h3>
+        </div>
+
+        <div class="overview">
+          <strong>{{ 'Overview' | translate }}</strong>
+        </div>
+
+        <mat-list *ngIf="systemInfo() as systemInfo">
+          <mat-list-item>
+            <strong>{{ 'Platform' | translate }}:</strong>
+            <span>{{ systemInfo.platform && isIxHardware() ? systemInfo.platform : 'Generic' }}</span>
+          </mat-list-item>
+          <mat-list-item>
+            <strong>{{ 'Version' | translate }}:</strong>
+            <div class="copy-version">
+              <div class="copy-version-text" [matTooltip]="systemVersion()">
+                <span>{{ systemVersion() }}</span>
+              </div>
+              <ix-copy-btn [text]="systemVersion()"></ix-copy-btn>
+            </div>
+          </mat-list-item>
+
+          <mat-list-item *ngIf="systemInfo.license">
+            <strong>{{ 'License' | translate }}:</strong>
+            <span>{{
+              '{license} contract, expires {date}' | translate: {
+                license: systemInfo.license.contract_type | titlecase,
+                date: systemInfo.license.contract_end.$value,
+              }
+            }}</span>
+          </mat-list-item>
+
+          <mat-list-item *ngIf="systemInfo.system_serial && isIxHardware()">
+            <strong>{{ 'System Serial' | translate }}:</strong>
+            <span>{{ systemInfo.system_serial }}</span>
+          </mat-list-item>
+
+          <mat-list-item>
+            <strong>{{ 'Hostname' | translate }}:</strong>
+            <span>{{ systemInfo.hostname }}</span>
+          </mat-list-item>
+
+          <mat-list-item>
+            <strong>{{ 'Uptime' | translate }}:</strong>
+            <span>{{ systemInfo.uptime_seconds | uptime: (systemInfo.datetime.$date | formatDateTime:' ':'HH:mm') }}</span>
+          </mat-list-item>
+        </mat-list>
+      </div>
+    </div>
+  </mat-card-content>
+</mat-card>

@@ -25,6 +25,16 @@
 
   h3 {
     font-size: 24px;
+
+    small {
+      align-items: baseline;
+      display: inline-flex;
+      font-size: 75%;
+      font-weight: 600;
+      margin-left: 4px;
+      opacity: 0.5;
+      text-transform: lowercase;
+    }
   }
 }
 
@@ -60,10 +70,10 @@
 }
 
 .content-left {
-  flex: 1 0 40%;
-  max-width: 40%;
   display: flex;
+  flex: 1 0 40%;
   flex-direction: column;
+  max-width: 40%;
 }
 
 .content-right {
@@ -80,18 +90,14 @@
   padding: 16px 32px;
 }
 
-.product-image {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
+.card-action-container {
   align-items: center;
-  gap: 12px;
-  flex: 1;
-}
-
-.product-update {
   display: flex;
-  align-items: center;
   justify-content: center;
   padding: 16px 32px 32px;
+}
+
+.overview {
+  padding-left: 16px;
+  padding-right: 16px;
 }

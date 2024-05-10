@@ -37,10 +37,12 @@ import { DashboardStore } from 'app/pages/dashboard/services/dashboard.store';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
 import { widgetComponents } from 'app/pages/dashboard/widgets/all-widgets.constant';
 import { WidgetDatapointComponent } from 'app/pages/dashboard/widgets/common/widget-datapoint/widget-datapoint.component';
+import { ProductImageComponent } from 'app/pages/dashboard/widgets/system/common/product-image/product-image.component';
 
 @NgModule({
   declarations: [
     DashboardComponent,
+    ProductImageComponent,
     WidgetGroupComponent,
     WidgetErrorComponent,
     WidgetGroupFormComponent,

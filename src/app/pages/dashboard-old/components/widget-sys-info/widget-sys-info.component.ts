@@ -9,6 +9,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { filter, map, take } from 'rxjs/operators';
+import { oneDay } from 'app/constants/time.constant';
 import { JobState } from 'app/enums/job-state.enum';
 import { ProductEnclosure } from 'app/enums/product-enclosure.enum';
 import { SystemUpdateStatus } from 'app/enums/system-update.enum';
@@ -20,7 +21,7 @@ import {
   DialogService,
 } from 'app/modules/dialog/dialog.service';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
-import { getMiniImagePath } from 'app/pages/dashboard/widgets/system/widget-sys-info-local/widget-sys-info.utils';
+import { getMiniImagePath } from 'app/pages/dashboard/widgets/system/common/widget-sys-info.utils';
 import { WidgetComponent } from 'app/pages/dashboard-old/components/widget/widget.component';
 import { ProductImageService } from 'app/services/product-image.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
@@ -33,7 +34,6 @@ import {
   selectCanFailover,
 } from 'app/store/ha-info/ha-info.selectors';
 import { selectIsIxHardware, waitForSystemFeatures } from 'app/store/system-info/system-info.selectors';
-import { oneDay } from 'app/constants/time.constant';
 
 @UntilDestroy()
 @Component({

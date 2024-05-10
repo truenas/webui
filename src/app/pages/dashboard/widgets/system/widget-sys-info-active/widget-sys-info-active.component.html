@@ -12,37 +12,23 @@
           </ng-template>
         </div>
 
-        <div
-          class="product-image"
-          [ngClass]="productEnclosure()"
-          [class.truenas]="isEnterprise()"
-          [class.ix-logo]="productImage() === 'ix-original.svg'"
+        <ix-product-image
+          [product]="product()"
+          [productImage]="productImage()"
+          [isCertified]="isCertified()"
+          [hasEnclosureSupport]="hasEnclosureSupport()"
+          [isHaLicensed]="isHaLicensed()"
+          [isUnsupportedHardware]="isUnsupportedHardware()"
+          [isEnterprise]="isEnterprise()"
         >
-          <img
-            *ngIf="productImage(); else generic"
-            matTooltipPosition="above"
-            [matTooltip]="'View Enclosure' | translate"
-            [id]="product()"
-            [class.clickable]="hasEnclosureSupport()"
-            [matTooltipDisabled]="!hasEnclosureSupport()"
-            [src]="productImage()"
-            [src-fallback]="'assets/images/truenas_scale_ondark_favicon.png'"
-            (click)="goToEnclosure()"
-          />
+          <span>{{ 'Active' | translate }}</span>
+        </ix-product-image>
 
-          <div *ngIf="productImage() && isHaLicensed()">
-            <strong>({{ 'Active' | translate }})</strong>
-          </div>
-          <div *ngIf="isUnsupportedHardware()">
-            <strong>({{ 'Unsupported Hardware' | translate }})</strong>
-          </div>
-        </div>
-
-        <div class="product-update">
+        <div class="card-action-container">
           <button
             *ixWithLoadingState="updateAvailable() as isAvailable"
             mat-button
-            [color]="isAvailable ? 'primary' : 'default'"
+            [color]="isAvailable ? 'default' : 'primary'"
             [ixTest]="['widget-sysinfo', 'update']"
             [routerLink]="['/system', 'update']"
           >
@@ -68,7 +54,11 @@
           </button>
         </div>
 
-        <mat-list *appLet="systemInfo() as systemInfo">
+        <div class="overview">
+          <strong>{{ 'Overview' | translate }}</strong>
+        </div>
+
+        <mat-list *ngIf="systemInfo() as systemInfo">
           <mat-list-item>
             <strong>{{ 'Platform' | translate }}:</strong>
             <span>{{ systemInfo.platform && isIxHardware() ? systemInfo.platform : 'Generic' }}</span>
@@ -126,3 +116,4 @@
     name="ix:logo_freenas_certified"
   ></ix-icon>
 </ng-template>
+

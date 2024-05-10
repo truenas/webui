@@ -1,0 +1,33 @@
+<div class="product-image-placeholder">
+  <img
+    *ngIf="productImageSrc(); else generic"
+    matTooltipPosition="above"
+    [matTooltip]="'View Enclosure' | translate"
+    [id]="product()"
+    [class.clickable]="hasEnclosureSupport()"
+    [matTooltipDisabled]="!hasEnclosureSupport()"
+    [src]="productImageSrc()"
+    (click)="goToEnclosure()"
+  />
+</div>
+
+<div *ngIf="productImage() && isHaLicensed()">
+  <strong>(<ng-content></ng-content>)</strong>
+</div>
+
+<div *ngIf="isUnsupportedHardware()">
+  <strong>({{ 'Unsupported Hardware' | translate }})</strong>
+</div>
+
+<ng-template #generic>
+  <ix-icon
+    *ngIf="!isCertified() && !isHaLicensed()"
+    class="generic"
+    name="ix:logo_truenas_scale_mark"
+  ></ix-icon>
+  <ix-icon
+    *ngIf="isCertified() && !isHaLicensed()"
+    class="generic"
+    name="ix:logo_freenas_certified"
+  ></ix-icon>
+</ng-template>
