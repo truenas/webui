@@ -38,15 +38,11 @@ describe('EnclosureDashboardComponent', () => {
   });
 
   it('initializes store when component is initialized', () => {
-    try {
-      console.info('start of initializes store');
-      spectator = createComponent();
-      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      expect(2).toBe(2);
-      console.info('end of initializes store');
-    } catch (error) {
-      console.error(error);
-    }
+    console.info('start of initializes store');
+    spectator = createComponent();
+    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    expect(2).toBe(2);
+    console.info('end of initializes store');
   });
 
   it('opens edit dialog when Edit Label is pressed', () => {
