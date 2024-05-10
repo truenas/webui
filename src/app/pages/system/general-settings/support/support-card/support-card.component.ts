@@ -18,7 +18,7 @@ import { FeedbackDialogComponent } from 'app/modules/feedback/components/feedbac
 import { FeedbackType } from 'app/modules/feedback/interfaces/feedback.interface';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { getMiniImagePath, getServerProduct } from 'app/pages/dashboard/widgets/system/common/widget-sys-info.utils';
+import { getMiniImagePath, getServerProduct, isRackmount } from 'app/pages/dashboard/widgets/system/common/widget-sys-info.utils';
 import { LicenseComponent } from 'app/pages/system/general-settings/support/license/license.component';
 import { LicenseInfoInSupport } from 'app/pages/system/general-settings/support/license-info-in-support.interface';
 import { ProactiveComponent } from 'app/pages/system/general-settings/support/proactive/proactive.component';
@@ -30,7 +30,6 @@ import { supportCardElements } from 'app/pages/system/general-settings/support/s
 import { SystemInfoInSupport } from 'app/pages/system/general-settings/support/system-info-in-support.interface';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { ProductImageService } from 'app/services/product-image.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
@@ -70,7 +69,6 @@ export class SupportCardComponent implements OnInit {
     private store$: Store<AppState>,
     private snackbar: SnackbarService,
     private translate: TranslateService,
-    private productImageService: ProductImageService,
     private cdr: ChangeDetectorRef,
     private errorHandler: ErrorHandlerService,
   ) {}
@@ -81,7 +79,7 @@ export class SupportCardComponent implements OnInit {
       this.systemInfo.memory = (systemInfo.physmem / GiB).toFixed(0) + ' GiB';
       if (systemInfo.system_product?.includes('MINI')) {
         const getImage = getMiniImagePath(systemInfo.system_product);
-        if (this.productImageService.isRackmount(systemInfo.system_product)) {
+        if (isRackmount(systemInfo.system_product)) {
           this.isProductImageRack = true;
           this.extraMargin = true;
         } else {
