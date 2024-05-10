@@ -36,7 +36,7 @@ import { widgetRegistry } from 'app/pages/dashboard/widgets/all-widgets.constant
 })
 export class WidgetGroupSlotFormComponent implements AfterViewInit, OnChanges {
   slotConfig = input.required<WidgetGroupSlot<object>>();
-  protected slot = signal<WidgetGroupSlot<object>>(null);
+  slot = signal<WidgetGroupSlot<object>>(null);
 
   protected selectedCategory: WritableSignal<WidgetCategory>;
 

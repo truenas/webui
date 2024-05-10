@@ -7,9 +7,6 @@ import {
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { of, tap } from 'rxjs';
 import { ChainedRef } from 'app/modules/ix-forms/components/ix-slide-in/chained-component-ref';
-import {
-  widgetGroupToFormWidgetGroup,
-} from 'app/pages/dashboard/types/form-widget-group.interface';
 import { SlotPosition } from 'app/pages/dashboard/types/slot-position.enum';
 import { WidgetGroupSlot } from 'app/pages/dashboard/types/widget-group-slot.interface';
 import {
@@ -76,7 +73,7 @@ export class WidgetGroupFormComponent {
       this.group.set({ layout: WidgetGroupLayout.Full, slots: [{ type: null }] });
       return;
     }
-    this.group.set(widgetGroupToFormWidgetGroup(widgetGroup));
+    this.group.set(widgetGroup);
     this.form.controls.layout.setValue(this.group().layout);
     for (let slotPosition = 0; slotPosition < this.group().slots.length; slotPosition++) {
       this.updateSelectedSlot(slotPosition);

@@ -30,7 +30,6 @@ describe('WidgetGroupSlotComponent', () => {
         slotConfig: {
           slotPosition: SlotPosition.First,
           slotSize: SlotSize.Half,
-          category: WidgetCategory.Network,
           type: WidgetType.InterfaceIp,
           settings: { interface: '1' },
         },
@@ -46,7 +45,6 @@ describe('WidgetGroupSlotComponent', () => {
     expect(spectator.component.slot()).toEqual({
       slotPosition: SlotPosition.First,
       slotSize: SlotSize.Half,
-      category: WidgetCategory.Network,
       type: WidgetType.InterfaceIp,
       settings: { interface: '1' },
     } as WidgetGroupSlot<WidgetInterfaceIpSettings>);
@@ -58,11 +56,10 @@ describe('WidgetGroupSlotComponent', () => {
     spectator.detectChanges();
 
     expect(spectator.component.slot()).toEqual({
-      category: WidgetCategory.Memory,
       slotPosition: SlotPosition.First,
       slotSize: SlotSize.Half,
-      type: null,
       settings: undefined,
+      type: WidgetType.Memory,
     });
   });
 });

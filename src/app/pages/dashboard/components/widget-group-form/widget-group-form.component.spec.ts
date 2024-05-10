@@ -16,7 +16,6 @@ import { WidgetEditorGroupComponent } from 'app/pages/dashboard/components/widge
 import { WidgetGroupFormComponent } from 'app/pages/dashboard/components/widget-group-form/widget-group-form.component';
 import { WidgetGroupSlotFormComponent } from 'app/pages/dashboard/components/widget-group-form/widget-group-slot-form/widget-group-slot-form.component';
 import { SlotPosition } from 'app/pages/dashboard/types/slot-position.enum';
-import { WidgetCategory } from 'app/pages/dashboard/types/widget-category.enum';
 import { WidgetGroup, WidgetGroupLayout } from 'app/pages/dashboard/types/widget-group.interface';
 import { SlotSize, WidgetType } from 'app/pages/dashboard/types/widget.interface';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -107,7 +106,6 @@ describe('WidgetGroupFormComponent', () => {
     it('changes slot', () => {
       spectator.component.selectedSlotChanged(1);
       expect(spectator.component.selectedSlot()).toEqual({
-        category: WidgetCategory.Network,
         type: WidgetType.InterfaceIp,
         settings: {
           interface: '2',
@@ -126,7 +124,6 @@ describe('WidgetGroupFormComponent', () => {
     it('updates settings', async () => {
       spectator.component.updateSlotSettings({
         slotPosition: SlotPosition.First,
-        category: WidgetCategory.Network,
         type: WidgetType.InterfaceIp,
         settings: { interface: '5' },
         slotSize: SlotSize.Half,
