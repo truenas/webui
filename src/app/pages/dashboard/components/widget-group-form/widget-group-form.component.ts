@@ -57,7 +57,6 @@ export class WidgetGroupFormComponent {
   });
 
   protected readonly layoutsMap = widgetGroupIcons;
-  protected readonly widgetRegistry = widgetRegistry;
 
   // TODO: Implement template options
   protected templateOptions$ = of([]);
