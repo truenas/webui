@@ -30,7 +30,7 @@ export class UiSearchDirectivesService {
     return null;
   }
 
-  setPendingHighlightElement(element: UiSearchableElement): void {
+  setPendingUiHighlightElement(element: UiSearchableElement): void {
     this.pendingHighlightElement = element;
   }
 

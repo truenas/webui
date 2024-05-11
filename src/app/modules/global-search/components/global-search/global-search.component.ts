@@ -136,7 +136,7 @@ export class GlobalSearchComponent implements OnInit {
     this.searchProvider.selectionChanged$.pipe(
       tap((config) => {
         if (!this.searchDirectives.get(config)) {
-          this.searchDirectives.setPendingHighlightElement(config);
+          this.searchDirectives.setPendingUiHighlightElement(config);
         }
       }),
       combineLatestWith(this.searchDirectives.directiveAdded$.pipe(filter(Boolean))),
@@ -145,7 +145,7 @@ export class GlobalSearchComponent implements OnInit {
       untilDestroyed(this),
     ).subscribe(([config]) => {
       this.resetInput();
-      this.searchDirectives.setPendingHighlightElement(null);
+      this.searchDirectives.setPendingUiHighlightElement(null);
       this.document.querySelector<HTMLElement>('.ix-slide-in-background.open')?.click();
       this.document.querySelector<HTMLElement>('.ix-slide-in2-background.open')?.click();
       this.searchDirectives.get(config).highlight(config);

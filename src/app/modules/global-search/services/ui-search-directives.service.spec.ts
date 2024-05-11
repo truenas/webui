@@ -43,9 +43,9 @@ describe('UiSearchDirectivesService', () => {
       expect(spectator.service.get({ anchor: 'anchor' })).toEqual(directive);
     });
 
-    it('should check setPendingHighlightElement method', () => {
+    it('should check setPendingUiHighlightElement method', () => {
       const element = { anchor: 'anchor' };
-      spectator.service.setPendingHighlightElement(element);
+      spectator.service.setPendingUiHighlightElement(element);
       expect(spectator.service.pendingUiHighlightElement).toEqual(element);
     });
 
@@ -61,7 +61,7 @@ describe('UiSearchDirectivesService', () => {
 
     it('should check pendingUiHighlightElement getter', () => {
       const element = { anchor: 'anchor' };
-      spectator.service.setPendingHighlightElement(element);
+      spectator.service.setPendingUiHighlightElement(element);
       expect(spectator.service.pendingUiHighlightElement).toEqual(element);
     });
 
