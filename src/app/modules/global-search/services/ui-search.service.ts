@@ -14,6 +14,7 @@ import { AuthService } from 'app/services/auth/auth.service';
 })
 export class UiSearchProvider implements GlobalSearchProvider {
   uiElements = UiElementsJson as UiSearchableElement[];
+  protected pendingHighlightElement: UiSearchableElement;
 
   private translatedTerms = this.uiElements.map((element) => {
     return {
@@ -28,6 +29,10 @@ export class UiSearchProvider implements GlobalSearchProvider {
     filter(Boolean),
     tap(() => this.selectedElement$.next(null)),
   );
+
+  get pendingUiHighlightElement(): UiSearchableElement {
+    return this.pendingHighlightElement;
+  }
 
   constructor(
     private authService: AuthService,
@@ -68,5 +73,9 @@ export class UiSearchProvider implements GlobalSearchProvider {
 
   select(element: UiSearchableElement): void {
     this.selectedElement$.next(element);
+  }
+
+  setPendingHighlightElement(element: UiSearchableElement): void {
+    this.pendingHighlightElement = element;
   }
 }

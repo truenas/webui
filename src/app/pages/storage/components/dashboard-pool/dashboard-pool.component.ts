@@ -1,5 +1,6 @@
 import {
   ChangeDetectionStrategy, Component, Input,
+  OnChanges,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -10,8 +11,12 @@ import { Role } from 'app/enums/role.enum';
 import { helptextVolumes } from 'app/helptext/storage/volumes/volume-list';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { Pool } from 'app/interfaces/pool.interface';
+import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { StorageDashboardDisk } from 'app/interfaces/storage.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { searchDelayConst } from 'app/modules/global-search/constants/delay.const';
+import { UiSearchDirectivesService } from 'app/modules/global-search/services/ui-search-directives.service';
+import { UiSearchProvider } from 'app/modules/global-search/services/ui-search.service';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { dashboardPoolElements } from 'app/pages/storage/components/dashboard-pool/dashboard-pool.elements';
@@ -29,7 +34,7 @@ import { WebSocketService } from 'app/services/ws.service';
   styleUrls: ['./dashboard-pool.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class DashboardPoolComponent {
+export class DashboardPoolComponent implements OnChanges {
   @Input() pool: Pool;
   @Input() rootDataset: Dataset;
   @Input() isLoading: boolean;
@@ -47,7 +52,15 @@ export class DashboardPoolComponent {
     private ws: WebSocketService,
     private snackbar: SnackbarService,
     private store: PoolsDashboardStore,
+    private searchProvider: UiSearchProvider,
+    private searchDirectives: UiSearchDirectivesService,
   ) {}
+
+  ngOnChanges(changes: IxSimpleChanges<this>): void {
+    if (changes.isLoading || !this.isLoading) {
+      setTimeout(() => this.handlePendingGlobalSearchElement(), searchDelayConst * 2);
+    }
+  }
 
   onExport(): void {
     this.matDialog
@@ -110,5 +123,13 @@ export class DashboardPoolComponent {
 
   counter(i: number): number[] {
     return new Array<number>(i);
+  }
+
+  private handlePendingGlobalSearchElement(): void {
+    const pendingHighlightElement = this.searchProvider.pendingUiHighlightElement;
+
+    if (pendingHighlightElement) {
+      this.searchDirectives.get(pendingHighlightElement)?.highlight(pendingHighlightElement);
+    }
   }
 }
