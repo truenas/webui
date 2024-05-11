@@ -54,6 +54,19 @@ export class EnclosureStore extends ComponentStore<EnclosureState> {
     };
   });
 
+  renameSelectedEnclosure = this.updater((state, label: string) => {
+    const enclosures = [...state.enclosures];
+    enclosures[state.selectedEnclosureIndex] = {
+      ...enclosures[state.selectedEnclosureIndex],
+      label,
+    };
+
+    return {
+      ...state,
+      enclosures,
+    };
+  });
+
   selectSlot = this.updater((state, slot: DashboardEnclosureSlot) => {
     return {
       ...state,
