@@ -9,7 +9,12 @@ import { UiSearchableElement } from 'app/modules/global-search/interfaces/ui-sea
 })
 export class UiSearchDirectivesService {
   private directives = new Set<UiSearchDirective>();
+  protected pendingHighlightElement: UiSearchableElement;
   directiveAdded$ = new BehaviorSubject<UiSearchDirective>(null);
+
+  get pendingUiHighlightElement(): UiSearchableElement {
+    return this.pendingHighlightElement;
+  }
 
   size(): number {
     return this.directives.size;
@@ -23,6 +28,10 @@ export class UiSearchDirectivesService {
       }
     }
     return null;
+  }
+
+  setPendingHighlightElement(element: UiSearchableElement): void {
+    this.pendingHighlightElement = element;
   }
 
   register(directive: UiSearchDirective): void {

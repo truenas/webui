@@ -16,7 +16,6 @@ import { StorageDashboardDisk } from 'app/interfaces/storage.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { searchDelayConst } from 'app/modules/global-search/constants/delay.const';
 import { UiSearchDirectivesService } from 'app/modules/global-search/services/ui-search-directives.service';
-import { UiSearchProvider } from 'app/modules/global-search/services/ui-search.service';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { dashboardPoolElements } from 'app/pages/storage/components/dashboard-pool/dashboard-pool.elements';
@@ -42,6 +41,7 @@ export class DashboardPoolComponent implements OnChanges {
 
   readonly requiredRoles = [Role.FullAdmin];
   protected readonly searchableElements = dashboardPoolElements;
+  pendingHighlightElementTimer: number;
 
   constructor(
     private matDialog: MatDialog,
@@ -52,7 +52,6 @@ export class DashboardPoolComponent implements OnChanges {
     private ws: WebSocketService,
     private snackbar: SnackbarService,
     private store: PoolsDashboardStore,
-    private searchProvider: UiSearchProvider,
     private searchDirectives: UiSearchDirectivesService,
   ) {}
 
@@ -126,7 +125,7 @@ export class DashboardPoolComponent implements OnChanges {
   }
 
   private handlePendingGlobalSearchElement(): void {
-    const pendingHighlightElement = this.searchProvider.pendingUiHighlightElement;
+    const pendingHighlightElement = this.searchDirectives.pendingUiHighlightElement;
 
     if (pendingHighlightElement) {
       this.searchDirectives.get(pendingHighlightElement)?.highlight(pendingHighlightElement);
