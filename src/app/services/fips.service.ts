@@ -1,15 +1,14 @@
 import { Injectable } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
-import { untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable, of, switchMap } from 'rxjs';
 import {
   filter, tap,
 } from 'rxjs/operators';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 @Injectable({
   providedIn: 'root',
@@ -25,8 +24,9 @@ export class FipsService {
     private dialog: DialogService,
     private translate: TranslateService,
     private router: Router,
-    private matDialog: MatDialog,
     private snackbar: SnackbarService,
+    private ws: WebSocketService,
+    private errorHandler: ErrorHandlerService,
   ) {}
 
   promptForRestart(): Observable<unknown> {
@@ -64,7 +64,7 @@ export class FipsService {
     );
   }
 
-  promptForRemoteRestart(): Observable<boolean> {
+  promptForRemoteRestart(): Observable<unknown> {
     return of(this.isRemotePromptOpen).pipe(
       filter((isOpen) => !isOpen),
       switchMap(() => {
@@ -75,26 +75,27 @@ export class FipsService {
           buttonText: this.translate.instant('Restart Standby'),
         });
       }),
-      tap((approved) => {
+      switchMap((approved) => {
         this.isRemotePromptOpen = false;
         if (approved) {
-          this.restartRemote();
+          return of({});
         }
+        return this.restartRemote();
       }),
     );
   }
 
-  // TODO: Change to return Observable.
-  private restartRemote(): void {
-    const dialogRef = this.matDialog.open(EntityJobComponent, {
-      data: { title: this.translate.instant('Restarting Standby') },
-      disableClose: true,
-    });
-    dialogRef.componentInstance.setCall('failover.reboot.other_node');
-    dialogRef.componentInstance.submit();
-    dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
-      this.snackbar.success(this.translate.instant('System Security Settings Updated.'));
-      dialogRef.close();
-    });
+  private restartRemote(): Observable<unknown> {
+    return this.dialog.jobDialog(
+      this.ws.job('failover.reboot.other_node'),
+      { title: this.translate.instant('Restarting Standby') },
+    )
+      .afterClosed()
+      .pipe(
+        this.errorHandler.catchError(),
+        tap(() => {
+          this.snackbar.success(this.translate.instant('System Security Settings Updated.'));
+        }),
+      );
   }
 }
