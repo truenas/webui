@@ -3,7 +3,7 @@ import {
 } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButton, MatButtonModule } from '@angular/material/button';
+import { MatButtonModule } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { MatListModule } from '@angular/material/list';
@@ -37,6 +37,9 @@ import { routing } from 'app/pages/dashboard/dashboard.routing';
 import { DashboardStore } from 'app/pages/dashboard/services/dashboard.store';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
 import { widgetComponents } from 'app/pages/dashboard/widgets/all-widgets.constant';
+import { BackupTaskActionsComponent } from 'app/pages/dashboard/widgets/backup/widget-backup/backup-task-actions/backup-task-actions.component';
+import { BackupTaskEmptyComponent } from 'app/pages/dashboard/widgets/backup/widget-backup/backup-task-empty/backup-task-empty.component';
+import { BackupTaskTileComponent } from 'app/pages/dashboard/widgets/backup/widget-backup/backup-task-tile/backup-task-tile.component';
 import { WidgetDatapointComponent } from 'app/pages/dashboard/widgets/common/widget-datapoint/widget-datapoint.component';
 
 @NgModule({
@@ -48,6 +51,9 @@ import { WidgetDatapointComponent } from 'app/pages/dashboard/widgets/common/wid
     WidgetEditorGroupComponent,
     WidgetDatapointComponent,
     WidgetGroupControlsComponent,
+    BackupTaskEmptyComponent,
+    BackupTaskActionsComponent,
+    BackupTaskTileComponent,
     ...widgetComponents,
   ],
   providers: [
@@ -60,13 +66,12 @@ import { WidgetDatapointComponent } from 'app/pages/dashboard/widgets/common/wid
     IxFormsModule,
     ReactiveFormsModule,
     TranslateModule,
+    CoreComponents,
     AppLoaderModule,
     NgComponentOutlet,
     CommonDirectivesModule,
     LayoutModule,
-    MatButton,
     TestIdModule,
-    TranslateModule,
     PageHeaderModule,
     routing,
     MatCard,

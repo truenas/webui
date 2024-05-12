@@ -1,5 +1,7 @@
 import { Injectable } from '@angular/core';
-import { map, shareReplay, switchMap } from 'rxjs/operators';
+import {
+  forkJoin, map, shareReplay, switchMap,
+} from 'rxjs';
 import { toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { VolumeData, VolumesData } from 'app/interfaces/volume-data.interface';
@@ -19,6 +21,14 @@ import { WebSocketService } from 'app/services/ws.service';
 export class WidgetResourcesService {
   // TODO: nosub is emitted for some reason
   readonly realtimeUpdates$ = this.ws.subscribe('reporting.realtime');
+
+  readonly backups$ = forkJoin([
+    this.ws.call('replication.query'),
+    this.ws.call('rsynctask.query'),
+    this.ws.call('cloudsync.query'),
+  ]).pipe(
+    shareReplay({ bufferSize: 1, refCount: true }),
+  );
 
   readonly systemInfo$ = this.ws.call('webui.main.dashboard.sys_info').pipe(
     toLoadingState(),

@@ -5,9 +5,15 @@ export const sedCardElements = {
   hierarchy: [T('System'), T('Advanced'), T('Self-Encrypting Drive')],
   anchorRouterLink: ['/system', 'advanced'],
   elements: {
-    configure: {
-      hierarchy: [T('Configure')],
-      anchor: 'configure-sed',
+    selfEncryptingDrive: {
+      anchor: 'sed-card',
+    },
+    sedUser: {
+      hierarchy: [T('ATA Security User')],
+      synonyms: [T('SED User')],
+    },
+    sedPassword: {
+      hierarchy: [T('SED Password')],
     },
   },
 } satisfies UiSearchableElement;

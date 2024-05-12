@@ -10,6 +10,7 @@ export enum WidgetType {
   InterfaceIp = 'interface-ip',
   Help = 'help',
   Memory = 'memory',
+  BackupTasks = 'backup-tasks',
   Cpu = 'cpu',
   Storage = 'storage',
 }
