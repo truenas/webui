@@ -14,7 +14,13 @@
         </button>
       </ng-container>
 
-      <button *ixRequiresRoles="requiredRoles" mat-button [ixTest]="['export', pool.name]" (click)="onExport()">
+      <button
+        *ixRequiresRoles="requiredRoles"
+        mat-button
+        [ixTest]="['export', pool.name]"
+        [ixUiSearch]="searchableElements.elements.exportDisconnect"
+        (click)="onExport()"
+      >
         {{ 'Export/Disconnect' | translate }}
       </button>
 
@@ -22,6 +28,7 @@
         *ixRequiresRoles="requiredRoles"
         mat-button
         [ixTest]="['expand', pool.name]"
+        [ixUiSearch]="searchableElements.elements.expand"
         (click)="onExpand()"
       >
         {{ 'Expand' | translate }}

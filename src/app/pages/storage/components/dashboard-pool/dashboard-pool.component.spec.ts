@@ -1,6 +1,6 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { fakeAsync, tick } from '@angular/core/testing';
+import { fakeAsync, flush, tick } from '@angular/core/testing';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialog } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
@@ -75,6 +75,7 @@ describe('DashboardPoolComponent', () => {
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     tick();
     spectator.detectChanges();
+    flush();
   }));
 
   it('shows pool name', () => {

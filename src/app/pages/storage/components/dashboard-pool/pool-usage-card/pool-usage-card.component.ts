@@ -7,6 +7,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { PoolCardIconType } from 'app/enums/pool-card-icon-type.enum';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { Pool } from 'app/interfaces/pool.interface';
+import { usageCardElements } from 'app/pages/storage/components/dashboard-pool/pool-usage-card/pool-usage-card.elements';
 import { getPoolDisks } from 'app/pages/storage/modules/disks/utils/get-pool-disks.utils';
 import { ThemeService } from 'app/services/theme/theme.service';
 
@@ -26,6 +27,8 @@ export class PoolUsageCardComponent implements OnInit {
   chartLowCapacityColor: string;
   chartFillColor: string;
   chartBlankColor: string;
+
+  protected readonly searchableElements = usageCardElements;
 
   constructor(
     public themeService: ThemeService,
