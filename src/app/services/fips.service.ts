@@ -77,7 +77,7 @@ export class FipsService {
       }),
       switchMap((approved) => {
         this.isRemotePromptOpen = false;
-        if (approved) {
+        if (!approved) {
           return of({});
         }
         return this.restartRemote();
