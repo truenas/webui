@@ -14,7 +14,7 @@ import { getProductEnclosure, getSystemVersion } from 'app/pages/dashboard/widge
 import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import {
-  selectEnclosureSupport, selectIsCertified, selectIsEnterprise, selectIsIxHardware,
+  selectEnclosureSupport, selectIsEnterprise, selectIsIxHardware,
 } from 'app/store/system-info/system-info.selectors';
 
 @Component({
@@ -31,7 +31,6 @@ export class WidgetSysInfoActiveComponent {
   isIxHardware = toSignal(this.store$.select(selectIsIxHardware));
   isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
   isHaLicensed = toSignal(this.store$.select(selectIsHaLicensed));
-  isCertified = toSignal(this.store$.select(selectIsCertified));
   hasEnclosureSupport = toSignal(this.store$.select(selectEnclosureSupport));
   isUpdateRunning = toSignal(this.store$.select(selectUpdateJobForActiveNode));
   updateAvailable = toSignal(this.resources.updateAvailable$);
@@ -49,7 +48,7 @@ export class WidgetSysInfoActiveComponent {
   ));
 
   isLoaded = computed(() => {
-    return this.systemInfo();
+    return this.systemInfo() && this.systemUptime() && this.systemDatetime();
   });
 
   platform = computed(() => {

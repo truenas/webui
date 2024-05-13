@@ -18,7 +18,7 @@ import { getSystemVersion } from 'app/pages/dashboard/widgets/system/common/widg
 import { AppState } from 'app/store';
 import { selectCanFailover, selectIsHaEnabled, selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import {
-  selectIsIxHardware, selectIsEnterprise, selectEnclosureSupport, selectIsCertified,
+  selectIsIxHardware, selectIsEnterprise, selectEnclosureSupport,
 } from 'app/store/system-info/system-info.selectors';
 
 @UntilDestroy()
@@ -35,7 +35,6 @@ export class WidgetSysInfoPassiveComponent {
   protected readonly isDisabled$ = this.store$.select(selectCanFailover).pipe(map((canFailover) => !canFailover));
   protected readonly requiredRoles = [Role.FailoverWrite];
 
-  isCertified = toSignal(this.store$.select(selectIsCertified));
   isIxHardware = toSignal(this.store$.select(selectIsIxHardware));
   isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
   isHaLicensed = toSignal(this.store$.select(selectIsHaLicensed));
@@ -48,17 +47,17 @@ export class WidgetSysInfoPassiveComponent {
   version = toSignal(this.systemInfo$.pipe(map((sysInfo) => getSystemVersion(sysInfo.version, sysInfo.codename))));
   systemUptime = toSignal(this.systemInfo$.pipe(
     map((sysInfo) => sysInfo.uptime_seconds),
-    combineLatestWith(timer(0, 1000)),
+    combineLatestWith(timer(1000, 1000)),
     map(([uptime, interval]) => uptime + interval),
   ));
   systemDatetime = toSignal(this.systemInfo$.pipe(
     map((sysInfo) => sysInfo.datetime.$date),
-    combineLatestWith(timer(0, 1000)),
+    combineLatestWith(timer(1000, 1000)),
     map(([datetime, interval]) => datetime + (interval * 1000)),
   ));
 
   isLoaded = computed(() => {
-    return this.systemInfo();
+    return this.systemInfo() && this.systemUptime() && this.systemDatetime();
   });
 
   platform = computed(() => {

@@ -7,6 +7,7 @@ import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { MockComponent } from 'ng-mocks';
 import { ImgFallbackModule } from 'ngx-img-fallback';
+import { NgxSkeletonLoaderComponent } from 'ngx-skeleton-loader';
 import { of } from 'rxjs';
 import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-datetime.pipe';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -24,7 +25,6 @@ import {
   selectIsIxHardware, selectProductType,
   selectIsEnterprise,
   selectEnclosureSupport,
-  selectIsCertified,
 } from 'app/store/system-info/system-info.selectors';
 
 describe('WidgetSysInfoPassiveComponent', () => {
@@ -44,6 +44,7 @@ describe('WidgetSysInfoPassiveComponent', () => {
         },
       } as SystemLicense,
       system_serial: 'AA-00002',
+      system_product: 'Generic',
       hostname: 'test-hostname-b',
       uptime_seconds: 77.915545062,
       datetime: {
@@ -61,6 +62,7 @@ describe('WidgetSysInfoPassiveComponent', () => {
     declarations: [
       MockComponent(ProductImageComponent),
       MockComponent(IxIconComponent),
+      MockComponent(NgxSkeletonLoaderComponent),
       FakeFormatDateTimePipe,
     ],
     providers: [
@@ -85,10 +87,6 @@ describe('WidgetSysInfoPassiveComponent', () => {
           },
           {
             selector: selectIsIxHardware,
-            value: true,
-          },
-          {
-            selector: selectIsCertified,
             value: true,
           },
           {
@@ -119,6 +117,7 @@ describe('WidgetSysInfoPassiveComponent', () => {
       },
     });
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    jest.useFakeTimers();
   });
 
   it('checks title', () => {

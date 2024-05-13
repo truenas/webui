@@ -39,7 +39,7 @@ export class ProductImageComponent {
     return getProductEnclosure(this.systemProduct());
   });
 
-  isUnsupportedHardware = computed(() => this.isEnterprise() && !this.productImage() && !this.isIxHardware());
+  isUnsupportedHardware = computed(() => this.isEnterprise() && !this.isIxHardware());
 
   constructor(private router: Router) { }
 

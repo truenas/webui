@@ -53,4 +53,27 @@ describe('ProductImageComponent', () => {
     spectator.click('img');
     expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/system/oldviewenclosure']);
   });
+
+  it('should display image for F60 platform', () => {
+    spectator = createComponent({
+      props: {
+        systemProduct: 'TRUENAS-F60-HA',
+        isEnterprise: true,
+        hasEnclosureSupport: true,
+        isHaLicensed: true,
+        isIxHardware: true,
+      },
+    });
+
+    const image = spectator.query('img');
+
+    expect(image).toHaveId('F60');
+    expect(image).toHaveAttribute('src', 'assets/images/servers/F60.png');
+
+    expect(spectator.query('.product-image-text')).not.toHaveExactText('(Unsupported Hardware)');
+
+    expect(image).toHaveClass('clickable');
+    spectator.click('img');
+    expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/system/oldviewenclosure']);
+  });
 });

@@ -17,14 +17,6 @@
 </div>
 
 <ng-template #generic>
-  <ix-icon
-    *ngIf="!isCertified() && !isHaLicensed()"
-    class="generic"
-    name="ix:logo_truenas_scale_mark"
-  ></ix-icon>
-  <ix-icon
-    *ngIf="isCertified() && !isHaLicensed()"
-    class="generic"
-    name="ix:logo_freenas_certified"
-  ></ix-icon>
+  <ix-icon *ngIf="!isCertified()" name="ix:logo_truenas_scale_mark"></ix-icon>
+  <ix-icon *ngIf="isCertified() && !isHaLicensed()" name="ix:logo_freenas_certified"></ix-icon>
 </ng-template>

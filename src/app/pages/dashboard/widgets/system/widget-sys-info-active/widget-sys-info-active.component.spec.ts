@@ -7,6 +7,7 @@ import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { MockComponent } from 'ng-mocks';
 import { ImgFallbackModule } from 'ngx-img-fallback';
+import { NgxSkeletonLoaderComponent } from 'ngx-skeleton-loader';
 import { of } from 'rxjs';
 import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-datetime.pipe';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -24,7 +25,6 @@ import {
   selectIsIxHardware, selectProductType,
   selectIsEnterprise,
   selectEnclosureSupport,
-  selectIsCertified,
 } from 'app/store/system-info/system-info.selectors';
 
 describe('WidgetSysInfoActiveComponent', () => {
@@ -43,6 +43,7 @@ describe('WidgetSysInfoActiveComponent', () => {
       },
     } as SystemLicense,
     system_serial: 'AA-00001',
+    system_product: 'Generic',
     hostname: 'test-hostname-a',
     uptime_seconds: 83532.938532175,
     datetime: {
@@ -59,6 +60,7 @@ describe('WidgetSysInfoActiveComponent', () => {
     declarations: [
       MockComponent(ProductImageComponent),
       MockComponent(IxIconComponent),
+      MockComponent(NgxSkeletonLoaderComponent),
       FakeFormatDateTimePipe,
     ],
     providers: [
@@ -72,10 +74,6 @@ describe('WidgetSysInfoActiveComponent', () => {
           {
             selector: selectProductType,
             value: ProductType.Scale,
-          },
-          {
-            selector: selectIsCertified,
-            value: true,
           },
           {
             selector: selectIsEnterprise,
