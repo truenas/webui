@@ -9,7 +9,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { filter, map, take } from 'rxjs/operators';
-import { oneDay } from 'app/constants/time.constant';
+import { oneDayMillis } from 'app/constants/time.constant';
 import { JobState } from 'app/enums/job-state.enum';
 import { ProductEnclosure } from 'app/enums/product-enclosure.enum';
 import { SystemUpdateStatus } from 'app/enums/system-update.enum';
@@ -257,7 +257,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
   private checkForUpdate(): void {
     if (
       sessionStorage.updateLastChecked
-      && Number(sessionStorage.updateLastChecked) + oneDay > Date.now()
+      && Number(sessionStorage.updateLastChecked) + oneDayMillis > Date.now()
     ) {
       this.updateAvailable = sessionStorage.updateAvailable === 'true';
       return;

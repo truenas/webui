@@ -10,7 +10,7 @@ import _ from 'lodash';
 import { Observable, of, switchMap } from 'rxjs';
 import { filter, tap } from 'rxjs/operators';
 import { GiB } from 'app/constants/bytes.constant';
-import { oneDay } from 'app/constants/time.constant';
+import { oneDayMillis } from 'app/constants/time.constant';
 import { Role } from 'app/enums/role.enum';
 import { helptextSystemSupport as helptext } from 'app/helptext/system/support';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -130,7 +130,7 @@ export class SupportCardComponent implements OnInit {
   }
 
   daysTillExpiration(now: Date, then: Date): number {
-    return Math.round((then.getTime() - now.getTime()) / (oneDay));
+    return Math.round((then.getTime() - now.getTime()) / (oneDayMillis));
   }
 
   getServerImage(sysProduct: string): void {

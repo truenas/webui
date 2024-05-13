@@ -63,6 +63,13 @@
   gap: 8px;
 }
 
+mat-list-item {
+  ngx-skeleton-loader {
+    display: inline-flex;
+    flex: 1;
+  }
+}
+
 .container {
   display: flex;
   flex-grow: 1;

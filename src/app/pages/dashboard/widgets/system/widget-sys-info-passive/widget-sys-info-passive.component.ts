@@ -33,8 +33,10 @@ import {
 export class WidgetSysInfoPassiveComponent {
   size = input.required<SlotSize>();
 
-  systemInfo = toSignal(this.resources.systemInfo$.pipe(map((sysInfo) => sysInfo.remote_info)));
-  updateAvailable = toSignal(this.resources.updateAvailable$);
+  private readonly systemInfo$ = this.resources.systemInfo$.pipe(map((sysInfo) => sysInfo.remote_info));
+  protected readonly isDisabled$ = this.store$.select(selectCanFailover).pipe(map((canFailover) => !canFailover));
+  protected readonly requiredRoles = [Role.FailoverWrite];
+
   isCertified = toSignal(this.store$.select(selectIsCertified));
   isIxHardware = toSignal(this.store$.select(selectIsIxHardware));
   isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
@@ -42,23 +44,32 @@ export class WidgetSysInfoPassiveComponent {
   isHaEnabled = toSignal(this.store$.select(selectIsHaEnabled));
   hasEnclosureSupport = toSignal(this.store$.select(selectEnclosureSupport));
   isUpdateRunning = toSignal(this.store$.select(selectUpdateJobForPassiveNode));
-  systemUptime = toSignal(this.resources.systemInfo$.pipe(
-    map((sysInfo) => sysInfo.remote_info.uptime_seconds),
+
+  updateAvailable = toSignal(this.resources.updateAvailable$);
+  systemInfo = toSignal(this.systemInfo$);
+  hardwareProduct = toSignal(this.systemInfo$.pipe(map((sysInfo) => getServerProduct(sysInfo.system_product))));
+  productImage = toSignal(this.systemInfo$.pipe(map((sysInfo) => getProductImage(sysInfo.system_product))));
+  version = toSignal(this.systemInfo$.pipe(map((sysInfo) => getSystemVersion(sysInfo.version, sysInfo.codename))));
+  systemUptime = toSignal(this.systemInfo$.pipe(
+    map((sysInfo) => sysInfo.uptime_seconds),
     combineLatestWith(timer(0, 1000)),
     map(([uptime, interval]) => uptime + interval),
   ));
-  systemDatetime = toSignal(this.resources.systemInfo$.pipe(
-    map((sysInfo) => sysInfo.remote_info.datetime.$date),
+  systemDatetime = toSignal(this.systemInfo$.pipe(
+    map((sysInfo) => sysInfo.datetime.$date),
     combineLatestWith(timer(0, 1000)),
     map(([datetime, interval]) => datetime + (interval * 1000)),
   ));
 
-  product = computed(() => {
-    return getServerProduct(this.systemInfo()?.system_product);
+  isLoaded = computed(() => {
+    return this.systemInfo();
   });
 
-  productImage = computed(() => {
-    return getProductImage(this.systemInfo()?.system_product);
+  platform = computed(() => {
+    if (this.systemInfo()?.platform && this.isIxHardware()) {
+      return this.systemInfo().platform;
+    }
+    return 'Generic';
   });
 
   productEnclosure = computed(() => {
@@ -71,13 +82,6 @@ export class WidgetSysInfoPassiveComponent {
   isUnsupportedHardware = computed(() => {
     return this.isEnterprise() && !this.productImage() && !this.isIxHardware();
   });
-
-  systemVersion = computed(() => {
-    return getSystemVersion(this.systemInfo().version, this.systemInfo()?.codename);
-  });
-
-  protected readonly isDisabled$ = this.store$.select(selectCanFailover).pipe(map((canFailover) => !canFailover));
-  protected readonly requiredRoles = [Role.FailoverWrite];
 
   constructor(
     private resources: WidgetResourcesService,

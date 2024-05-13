@@ -29,6 +29,8 @@ import {
 export class WidgetSysInfoActiveComponent {
   size = input.required<SlotSize>();
 
+  private readonly systemInfo$ = this.resources.systemInfo$;
+
   isIxHardware = toSignal(this.store$.select(selectIsIxHardware));
   isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
   isHaLicensed = toSignal(this.store$.select(selectIsHaLicensed));
@@ -37,23 +39,29 @@ export class WidgetSysInfoActiveComponent {
   isUpdateRunning = toSignal(this.store$.select(selectUpdateJobForActiveNode));
   updateAvailable = toSignal(this.resources.updateAvailable$);
   systemInfo = toSignal(this.resources.systemInfo$);
-  systemUptime = toSignal(this.resources.systemInfo$.pipe(
+  version = toSignal(this.systemInfo$.pipe(map((sysInfo) => getSystemVersion(sysInfo.version, sysInfo.codename))));
+  hardwareProduct = toSignal(this.systemInfo$.pipe(map((sysInfo) => getServerProduct(sysInfo.system_product))));
+  productImage = toSignal(this.systemInfo$.pipe(map((sysInfo) => getProductImage(sysInfo.system_product))));
+  systemUptime = toSignal(this.systemInfo$.pipe(
     map((sysInfo) => sysInfo.uptime_seconds),
     combineLatestWith(timer(0, 1000)),
     map(([uptime, interval]) => uptime + interval),
   ));
-  systemDatetime = toSignal(this.resources.systemInfo$.pipe(
+  systemDatetime = toSignal(this.systemInfo$.pipe(
     map((sysInfo) => sysInfo.datetime.$date),
     combineLatestWith(timer(0, 1000)),
     map(([datetime, interval]) => datetime + (interval * 1000)),
   ));
 
-  product = computed(() => {
-    return getServerProduct(this.systemInfo()?.system_product);
+  isLoaded = computed(() => {
+    return this.systemInfo();
   });
 
-  productImage = computed(() => {
-    return getProductImage(this.systemInfo()?.system_product);
+  platform = computed(() => {
+    if (this.systemInfo()?.platform && this.isIxHardware()) {
+      return this.systemInfo().platform;
+    }
+    return 'Generic';
   });
 
   productEnclosure = computed(() => {
@@ -65,17 +73,6 @@ export class WidgetSysInfoActiveComponent {
 
   isUnsupportedHardware = computed(() => {
     return this.isEnterprise() && !this.productImage() && !this.isIxHardware();
-  });
-
-  systemVersion = computed(() => {
-    return getSystemVersion(this.systemInfo().version, this.systemInfo()?.codename);
-  });
-
-  systemPlatform = computed(() => {
-    if (this.systemInfo().platform && this.isIxHardware()) {
-      return this.systemInfo().platform;
-    }
-    return 'Generic';
   });
 
   constructor(
