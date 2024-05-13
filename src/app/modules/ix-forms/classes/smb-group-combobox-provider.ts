@@ -23,6 +23,7 @@ export class SmbGroupComboboxProvider extends GroupComboboxProvider {
     return this.userService.smbGroupQueryDsCache(filterValue, false, offset)
       .pipe(
         map((groups) => this.groupQueryResToOptions(groups)),
+        map((options) => [...this.initialOptions, ...this.excludeInitialOptions(options)]),
       );
   }
 
@@ -32,6 +33,7 @@ export class SmbGroupComboboxProvider extends GroupComboboxProvider {
     return this.userService.smbGroupQueryDsCache(filterValue, false, offset)
       .pipe(
         map((groups) => this.groupQueryResToOptions(groups)),
+        map((options) => this.excludeInitialOptions(options)),
       );
   }
 }
