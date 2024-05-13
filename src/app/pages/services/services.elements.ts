@@ -38,7 +38,7 @@ export const servicesElements = {
     },
     smart: {
       hierarchy: [T('S.M.A.R.T.')],
-      anchor: 'service-s.m.a.r.t.',
+      anchor: 'service-smart',
       synonyms: [T('Smart')],
     },
   },

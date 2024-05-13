@@ -97,7 +97,7 @@ export class ServicesComponent implements OnInit {
       ],
     }),
   ], {
-    rowTestId: (row) => 'service-' + row.name,
+    rowTestId: (row) => 'service-' + row.name.replace(/\./g, ''),
   });
 
   dataProvider = new ArrayDataProvider<ServiceRow>();
