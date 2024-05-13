@@ -37,6 +37,10 @@ export class GlobalSearchComponent implements OnInit {
   isLoading = false;
   systemVersion: string;
 
+  get isSearchInputFocused(): boolean {
+    return document.activeElement === this.searchInput?.nativeElement;
+  }
+
   constructor(
     protected sidenavService: SidenavService,
     private searchProvider: UiSearchProvider,
@@ -70,6 +74,11 @@ export class GlobalSearchComponent implements OnInit {
         break;
       case 'Enter':
         event.preventDefault();
+
+        if (this.isSearchInputFocused) {
+          moveToNextFocusableElement();
+          (this.document.activeElement as HTMLElement)?.click();
+        }
         break;
       default:
         if (event.key.length === 1 && !event.metaKey) {
