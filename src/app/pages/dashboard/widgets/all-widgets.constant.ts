@@ -7,6 +7,7 @@ import { hostnameWidget } from 'app/pages/dashboard/widgets/network/widget-hostn
 import {
   interfaceIpWidget,
 } from 'app/pages/dashboard/widgets/network/widget-interface-ip/widget-interface-ip.definition';
+import { networkWidget } from 'app/pages/dashboard/widgets/network/widget-network/widget-network.definition';
 import { storageWidget } from 'app/pages/dashboard/widgets/storage/widget-storage/widget-storage.definition';
 
 export const widgetComponents = [
@@ -15,6 +16,7 @@ export const widgetComponents = [
   interfaceIpWidget.settingsComponent,
   helpWidget.component,
   memoryWidget.component,
+  networkWidget.component,
   backupTasksWidget.component,
   cpuWidget.component,
   storageWidget.component,
@@ -25,6 +27,7 @@ export const widgetRegistry = {
   [WidgetType.InterfaceIp]: interfaceIpWidget,
   [WidgetType.Help]: helpWidget,
   [WidgetType.Memory]: memoryWidget,
+  [WidgetType.Network]: networkWidget,
   [WidgetType.BackupTasks]: backupTasksWidget,
   [WidgetType.Cpu]: cpuWidget,
   [WidgetType.Storage]: storageWidget,

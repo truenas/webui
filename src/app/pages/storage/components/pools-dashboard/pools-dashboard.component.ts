@@ -35,6 +35,7 @@ export class PoolsDashboardComponent implements OnInit {
   disks$ = this.store.disks$;
 
   rootDatasets: Record<string, Dataset> = {};
+  arePoolsLoading = true;
 
   entityEmptyConf: EmptyConfig = {
     type: EmptyType.NoPageData,
@@ -78,6 +79,10 @@ export class PoolsDashboardComponent implements OnInit {
         this.rootDatasets = rootDatasets;
         this.cdr.markForCheck();
       });
+
+    this.arePoolsLoading$.pipe(untilDestroyed(this)).subscribe((loading) => {
+      this.arePoolsLoading = loading;
+    });
 
     this.store.loadDashboard();
 

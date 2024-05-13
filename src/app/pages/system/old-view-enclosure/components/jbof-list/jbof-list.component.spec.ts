@@ -10,6 +10,8 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
+import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
+import { SearchInput1Component } from 'app/modules/search-input1/search-input1.component';
 import { JbosFormComponent } from 'app/pages/system/old-view-enclosure/components/jbof-form/jbof-form.component';
 import { JbofListComponent } from 'app/pages/system/old-view-enclosure/components/jbof-list/jbof-list.component';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -43,6 +45,8 @@ describe('JbofListComponent', () => {
     component: JbofListComponent,
     imports: [
       IxTableModule,
+      PageHeaderModule,
+      SearchInput1Component,
     ],
     providers: [
       mockWebSocket([

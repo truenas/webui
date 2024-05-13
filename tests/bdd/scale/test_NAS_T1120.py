@@ -54,8 +54,7 @@ def the_browser_is_open_the_truenas_url_and_logged_in(driver, root_password, nas
 @when('on the dashboard, click on Shares on the left sidebar')
 def on_the_dashboard_click_on_shares_on_the_left_sidebar(driver):
     """on the dashboard, click on Shares on the left sidebar."""
-    assert wait_on_element(driver, 7, xpaths.dashboard.title)
-    assert wait_on_element(driver, 10, xpaths.dashboard.system_Info_Card_Title)
+    rsc.Verify_The_Dashboard(driver)
     assert wait_on_element(driver, 5, xpaths.side_Menu.shares, 'clickable')
     driver.find_element_by_xpath(xpaths.side_Menu.shares).click()
 
@@ -87,9 +86,7 @@ def input_myadsmbshare_as_name_then_click_to_enable(driver, share_name):
     driver.find_element_by_xpath(xpaths.smb.name_Input).click()
     driver.find_element_by_xpath(xpaths.smb.name_Input).clear()
     driver.find_element_by_xpath(xpaths.smb.name_Input).send_keys(share_name)
-    assert wait_on_element(driver, 5, xpaths.checkbox.enabled, 'clickable')
-    if not attribute_value_exist(driver, xpaths.checkbox.enabled, 'class', 'mat-mdc-checkbox-checked'):
-        driver.find_element_by_xpath(xpaths.checkbox.enable).click()
+    rsc.set_checkbox(driver, xpaths.checkbox.enabled)
 
 
 @then(parsers.parse('input "{description}" as the description, click Save'))
@@ -130,8 +127,8 @@ def click_on_system_settings_on_the_left_sidebar_and_click_services(driver):
 def on_the_Service_page_verify_smb_service_is_started(driver):
     """on the Service page, verify SMB service is started."""
     assert wait_on_element(driver, 7, xpaths.services.title)
-    assert wait_on_element(driver, 5, xpaths.services.smb_Service_Toggle, 'clickable')
-    assert wait_for_attribute_value(driver, 20, xpaths.services.smb_Service_Toggle, 'class', 'mdc-switch--checked')
+    assert wait_on_element(driver, 5, xpaths.services.smb_running_toggle, 'clickable')
+    assert wait_for_attribute_value(driver, 20, xpaths.services.smb_running_toggle, 'class', 'mat-mdc-slide-toggle-checked')
 
 
 @then(parsers.parse('send a file to "{share_name}" with "{ad_user}"%"{ad_password}"'))
@@ -204,4 +201,4 @@ def change_nameservers_to_nameserver1_and_nameserve2_then_save(driver, nameserve
     assert wait_on_element(driver, 7, xpaths.button.save, 'clickable')
     driver.find_element_by_xpath(xpaths.button.save).click()
     assert wait_on_element_disappear(driver, 20, xpaths.progress.progressbar)
-    delete_dataset(nas_ip, ('root', root_password), 'system/my_ad_dataset')
+    #delete_dataset(nas_ip, ('root', root_password), 'system/my_ad_dataset')

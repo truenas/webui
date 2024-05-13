@@ -16,15 +16,14 @@ export class GroupComboboxProvider implements IxComboboxProvider {
     return this.userService.groupQueryDsCache(filterValue, false, offset)
       .pipe(
         map((groups) => this.groupQueryResToOptions(groups)),
+        map((options) => [...this.initialOptions, ...this.excludeInitialOptions(options)]),
       );
   }
 
-  mapOptions(options: Option[]): Option[] {
-    const missingInitialOptions = this.initialOptions.filter((initialOption) => {
-      const isInitialOptionInResults = options.find((option) => option.value === initialOption.value);
-      return !isInitialOptionInResults;
+  excludeInitialOptions(options: Option[]): Option[] {
+    return options.filter((option) => {
+      return !this.initialOptions.find((initialOption) => initialOption.value === option.value);
     });
-    return [...options, ...missingInitialOptions];
   }
 
   groupQueryResToOptions(groups: Group[]): Option[] {
@@ -39,12 +38,13 @@ export class GroupComboboxProvider implements IxComboboxProvider {
     return this.userService.groupQueryDsCache(filterValue, false, offset)
       .pipe(
         map((groups) => this.groupQueryResToOptions(groups)),
+        map((groups) => this.excludeInitialOptions(groups)),
       );
   }
 
   constructor(
     protected userService: UserService,
     private optionsValueField: 'group' | 'gid' | 'id' = 'group',
-    private initialOptions: Option[] = [],
+    protected initialOptions: Option[] = [],
   ) {}
 }

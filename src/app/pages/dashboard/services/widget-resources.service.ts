@@ -1,11 +1,16 @@
 import { Injectable } from '@angular/core';
+import { Store } from '@ngrx/store';
+import { sub } from 'date-fns';
 import {
-  forkJoin, map, shareReplay, switchMap,
+  forkJoin, shareReplay, switchMap, map, Observable, combineLatestWith, timer,
 } from 'rxjs';
 import { toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import { Dataset } from 'app/interfaces/dataset.interface';
-import { VolumeData, VolumesData } from 'app/interfaces/volume-data.interface';
+import { ReportingData } from 'app/interfaces/reporting.interface';
+import { VolumesData, VolumeData } from 'app/interfaces/volume-data.interface';
 import { WebSocketService } from 'app/services/ws.service';
+import { AppState } from 'app/store';
+import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 
 /**
  * This service provides data for widgets.
@@ -47,8 +52,34 @@ export class WidgetResourcesService {
     map((datasets) => this.parseVolumeData(datasets)),
   );
 
+  readonly serverTime$ = this.store$.pipe(
+    waitForSystemInfo,
+    map((systemInfo) => new Date(systemInfo.datetime.$date)),
+    combineLatestWith(timer(0, 10000)),
+    map(([serverTime]) => {
+      serverTime.setSeconds(serverTime.getSeconds() + 10000 / 1000);
+      return serverTime;
+    }),
+  );
+
+  networkInterfaceUpdate(interfaceName: string): Observable<ReportingData[]> {
+    return this.serverTime$.pipe(
+      switchMap((serverTime) => {
+        return this.ws.call('reporting.netdata_get_data', [[{
+          identifier: interfaceName,
+          name: 'interface',
+        }], {
+          end: Math.floor(serverTime.getTime() / 1000),
+          start: Math.floor(sub(serverTime, { hours: 1 }).getTime() / 1000),
+        }]);
+      }),
+      shareReplay({ bufferSize: 1, refCount: true }),
+    );
+  }
+
   constructor(
     private ws: WebSocketService,
+    private store$: Store<AppState>,
   ) {}
 
   private parseVolumeData(datasets: Dataset[]): VolumesData {

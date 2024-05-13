@@ -18,6 +18,7 @@ import {
   TopologyDisk,
   TopologyItem,
 } from 'app/interfaces/storage.interface';
+import { topologyCardElements } from 'app/pages/storage/components/dashboard-pool/topology-card/topology-card.elements';
 import { StorageService } from 'app/services/storage.service';
 
 interface TopologyState {
@@ -43,6 +44,7 @@ export class TopologyCardComponent implements OnInit, OnChanges {
   @Input() poolState: Pool;
   @Input() disks: StorageDashboardDisk[];
 
+  protected readonly searchableElements = topologyCardElements;
   notAssignedDev = this.translate.instant('VDEVs not assigned');
 
   topologyState: TopologyState = {
@@ -203,6 +205,7 @@ export class TopologyCardComponent implements OnInit, OnChanges {
     return this.poolState?.status === PoolStatus.Offline;
   }
 
+  // TODO: Unclear why this conversion is needed.
   dashboardDiskToDisk(dashDisk: StorageDashboardDisk): Disk {
     const output: EmptyDiskObject | Disk = {};
     const keys: string[] = Object.keys(dashDisk);

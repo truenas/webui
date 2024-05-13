@@ -125,11 +125,11 @@ export class MockEnclosureUtils {
   private mockDiskGetUnused(): ApiCallResponse<'disk.get_unused'> {
     return this.mockStorage.disks.filter((disk: Disk) => {
       return !Object.keys(disk).includes('pool') || typeof disk.pool === 'undefined' || disk.pool === null;
-    }).map((disk: Disk) => {
+    }).map((_: Disk) => {
       return {
-        ...disk,
-        partitions: [{ path: '' }],
-        exported_zpool: '',
+        // ...disk,
+        // partitions: [{ path: '' }],
+        // exported_zpool: '',
       } as UnusedDisk;
     });
   }
