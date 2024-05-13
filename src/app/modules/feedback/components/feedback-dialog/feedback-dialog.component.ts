@@ -6,7 +6,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import {
-  Observable, of, combineLatest,
+  Observable, of,
 } from 'rxjs';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { Option } from 'app/interfaces/option.interface';
@@ -64,12 +64,9 @@ export class FeedbackDialogComponent implements OnInit {
     this.isLoadingTypes = true;
     this.cdr.markForCheck();
 
-    combineLatest([
-      this.feedbackService.checkIfReviewAllowed(),
-      this.isEnterprise$,
-    ])
+    this.feedbackService.checkIfReviewAllowed()
       .pipe(untilDestroyed(this))
-      .subscribe(([isReviewAllowed, isEnterprise]) => {
+      .subscribe((isReviewAllowed) => {
         this.allowedTypes = [];
 
         if (isReviewAllowed) {
@@ -77,10 +74,6 @@ export class FeedbackDialogComponent implements OnInit {
         }
 
         this.allowedTypes.push(FeedbackType.Bug);
-
-        if (!isEnterprise) {
-          this.allowedTypes.push(FeedbackType.Suggestion);
-        }
 
         const allowedOptions = this.allowedTypes.map((type) => ({
           label: this.translate.instant(feedbackTypesLabels.get(type)),
