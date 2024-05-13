@@ -1665,7 +1665,7 @@
   "Fenced is not running.": "",
   "Fetch DataStores": "",
   "Fetching Encryption Summary": "",
-  "Fetching Encryption Summary for ": "",
+  "Fetching Encryption Summary for {dataset}": "",
   "Fetching data...": "",
   "Field is required": "",
   "File": "",
