@@ -32,7 +32,7 @@
  * 3️⃣. Provide config to the element [ixUiSearch]="singleSettingsExampleElements.theme"
  *
  * 4️⃣. Run the script to update `ui-searchable-elements.json`:
- * yarn extract-ui-searchable-elements
+ * yarn extract-ui-search-elements
  *
  * Explanations: 👇
  *
@@ -61,11 +61,11 @@ import { join } from 'path';
 import { UiSearchableElement } from 'app/modules/global-search/interfaces/ui-searchable-element.interface';
 import { extractComponentFileContent } from './extract-component-file-content';
 import { findComponentFiles } from './find-component-files';
-import { parseHtmlFile } from './parse-html-file';
+import { parseUiSearchElements } from './parse-ui-search-elements';
 
-let uiElements: UiSearchableElement[] = [];
+let uiSearchElements: UiSearchableElement[] = [];
 
-export async function extractUiSearchableElements(): Promise<void> {
+export async function extractUiSearchElements(): Promise<void> {
   try {
     const tsFiles = await findComponentFiles('src/**/*.elements.ts') || [];
 
@@ -73,18 +73,20 @@ export async function extractUiSearchableElements(): Promise<void> {
       const htmlComponentFilePath = elementsTsFilePath.replace('.elements.ts', '.component.html');
       const tsComponentFilePath = elementsTsFilePath.replace('.elements.ts', '.component.ts');
 
-      if (fs.existsSync(htmlComponentFilePath)) {
-        const elementConfig = require(join(__dirname, '../../', elementsTsFilePath)) as UiSearchableElement;
-        const componentProperties = extractComponentFileContent(tsComponentFilePath);
-        const elements = parseHtmlFile(htmlComponentFilePath, elementConfig, componentProperties);
-        uiElements = uiElements.concat(elements);
-      }
+      const elementConfig = require(join(__dirname, '../../', elementsTsFilePath)) as Record<string, UiSearchableElement>;
+      const componentProperties = extractComponentFileContent(tsComponentFilePath);
+      const uiSearchHtmlElements = parseUiSearchElements(htmlComponentFilePath, elementConfig, componentProperties);
+
+      uiSearchElements = uiSearchElements.concat([...uiSearchHtmlElements]);
     });
 
-    fs.writeFileSync('src/assets/ui-searchable-elements.json', JSON.stringify(uiElements, null, 2));
+    fs.writeFileSync(
+      'src/assets/ui-searchable-elements.json',
+      JSON.stringify(uiSearchElements, null, 2),
+    );
   } catch (err) {
     console.error('An error occurred:', err);
   }
 }
 
-extractUiSearchableElements();
+extractUiSearchElements();

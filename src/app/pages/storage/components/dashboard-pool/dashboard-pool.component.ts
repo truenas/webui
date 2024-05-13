@@ -41,7 +41,6 @@ export class DashboardPoolComponent implements OnChanges {
 
   readonly requiredRoles = [Role.FullAdmin];
   protected readonly searchableElements = dashboardPoolElements;
-  pendingHighlightElementTimer: number;
 
   constructor(
     private matDialog: MatDialog,
