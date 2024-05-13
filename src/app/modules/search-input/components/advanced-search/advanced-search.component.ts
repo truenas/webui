@@ -17,7 +17,6 @@ import { EditorState, StateEffect, StateField } from '@codemirror/state';
 import {
   EditorView, keymap, placeholder,
 } from '@codemirror/view';
-import { TranslateService } from '@ngx-translate/core';
 import { format } from 'date-fns';
 import { QueryFilters } from 'app/interfaces/query-api.interface';
 import { AdvancedSearchAutocompleteService } from 'app/modules/search-input/services/advanced-search-autocomplete.service';
@@ -61,7 +60,6 @@ export class AdvancedSearchComponent<T> implements OnInit {
     private queryToApi: QueryToApiService<T>,
     private advancedSearchAutocomplete: AdvancedSearchAutocompleteService<T>,
     private cdr: ChangeDetectorRef,
-    private translate: TranslateService,
   ) {}
 
   ngOnInit(): void {
