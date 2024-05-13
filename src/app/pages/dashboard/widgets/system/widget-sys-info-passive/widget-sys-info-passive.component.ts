@@ -14,9 +14,7 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { selectUpdateJobForPassiveNode } from 'app/modules/jobs/store/job.selectors';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
 import { SlotSize } from 'app/pages/dashboard/types/widget.interface';
-import {
-  getServerProduct, getProductImage, getProductEnclosure, getSystemVersion,
-} from 'app/pages/dashboard/widgets/system/common/widget-sys-info.utils';
+import { getSystemVersion } from 'app/pages/dashboard/widgets/system/common/widget-sys-info.utils';
 import { AppState } from 'app/store';
 import { selectCanFailover, selectIsHaEnabled, selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import {
@@ -47,8 +45,6 @@ export class WidgetSysInfoPassiveComponent {
 
   updateAvailable = toSignal(this.resources.updateAvailable$);
   systemInfo = toSignal(this.systemInfo$);
-  hardwareProduct = toSignal(this.systemInfo$.pipe(map((sysInfo) => getServerProduct(sysInfo.system_product))));
-  productImage = toSignal(this.systemInfo$.pipe(map((sysInfo) => getProductImage(sysInfo.system_product))));
   version = toSignal(this.systemInfo$.pipe(map((sysInfo) => getSystemVersion(sysInfo.version, sysInfo.codename))));
   systemUptime = toSignal(this.systemInfo$.pipe(
     map((sysInfo) => sysInfo.uptime_seconds),
@@ -72,17 +68,6 @@ export class WidgetSysInfoPassiveComponent {
     return 'Generic';
   });
 
-  productEnclosure = computed(() => {
-    if (!this.hasEnclosureSupport()) {
-      return null;
-    }
-    return getProductEnclosure(this.systemInfo().system_product);
-  });
-
-  isUnsupportedHardware = computed(() => {
-    return this.isEnterprise() && !this.productImage() && !this.isIxHardware();
-  });
-
   constructor(
     private resources: WidgetResourcesService,
     private dialog: DialogService,
@@ -101,12 +86,5 @@ export class WidgetSysInfoPassiveComponent {
     ).subscribe(() => {
       this.router.navigate(['/others/failover'], { skipLocationChange: true });
     });
-  }
-
-  goToEnclosure(): void {
-    if (!this.hasEnclosureSupport()) {
-      return;
-    }
-    this.router.navigate(['/system/oldviewenclosure']);
   }
 }

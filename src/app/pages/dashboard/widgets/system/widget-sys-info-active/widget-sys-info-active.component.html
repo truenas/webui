@@ -3,23 +3,15 @@
     <div [class]="['container', size()]">
       <div class="content-left fn-theme-contrast-lighter">
         <div class="product-logo-container">
-          <ng-container *ngIf="productImage(); else textOnly">
-            <ix-icon name="ix:logo_truenas_scale_full" [id]="hardwareProduct()"></ix-icon>
-          </ng-container>
-
-          <ng-template #textOnly>
-            <ix-icon name="ix:logo_truenas_scale_type" [id]="hardwareProduct()"></ix-icon>
-          </ng-template>
+          <ix-icon name="ix:logo_truenas_scale_type"></ix-icon>
         </div>
 
         <ix-product-image
-          [product]="hardwareProduct()"
-          [productImage]="productImage()"
-          [isCertified]="isCertified()"
+          [systemProduct]="systemInfo()?.system_product"
           [hasEnclosureSupport]="hasEnclosureSupport()"
           [isHaLicensed]="isHaLicensed()"
-          [isUnsupportedHardware]="isUnsupportedHardware()"
           [isEnterprise]="isEnterprise()"
+          [isIxHardware]="isIxHardware()"
         >
           <span>{{ 'Active' | translate }}</span>
         </ix-product-image>

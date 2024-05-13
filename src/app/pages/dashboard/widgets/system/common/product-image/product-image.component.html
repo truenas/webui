@@ -1,6 +1,6 @@
-<div class="product-image-placeholder">
+<div class="product-image-placeholder" [ngClass]="productEnclosure()">
   <img
-    *ngIf="productImageSrc(); else generic"
+    *ngIf="productImage(); else generic"
     matTooltipPosition="above"
     [matTooltip]="'View Enclosure' | translate"
     [id]="product()"

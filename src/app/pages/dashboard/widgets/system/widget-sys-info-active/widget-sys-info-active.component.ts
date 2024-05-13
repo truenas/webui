@@ -3,7 +3,6 @@ import {
   computed,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import {
   combineLatestWith, map, timer,
@@ -11,9 +10,7 @@ import {
 import { selectUpdateJobForActiveNode } from 'app/modules/jobs/store/job.selectors';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
 import { SlotSize } from 'app/pages/dashboard/types/widget.interface';
-import {
-  getServerProduct, getProductImage, getProductEnclosure, getSystemVersion,
-} from 'app/pages/dashboard/widgets/system/common/widget-sys-info.utils';
+import { getProductEnclosure, getSystemVersion } from 'app/pages/dashboard/widgets/system/common/widget-sys-info.utils';
 import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import {
@@ -40,8 +37,6 @@ export class WidgetSysInfoActiveComponent {
   updateAvailable = toSignal(this.resources.updateAvailable$);
   systemInfo = toSignal(this.resources.systemInfo$);
   version = toSignal(this.systemInfo$.pipe(map((sysInfo) => getSystemVersion(sysInfo.version, sysInfo.codename))));
-  hardwareProduct = toSignal(this.systemInfo$.pipe(map((sysInfo) => getServerProduct(sysInfo.system_product))));
-  productImage = toSignal(this.systemInfo$.pipe(map((sysInfo) => getProductImage(sysInfo.system_product))));
   systemUptime = toSignal(this.systemInfo$.pipe(
     map((sysInfo) => sysInfo.uptime_seconds),
     combineLatestWith(timer(0, 1000)),
@@ -71,20 +66,8 @@ export class WidgetSysInfoActiveComponent {
     return getProductEnclosure(this.systemInfo().system_product);
   });
 
-  isUnsupportedHardware = computed(() => {
-    return this.isEnterprise() && !this.productImage() && !this.isIxHardware();
-  });
-
   constructor(
     private resources: WidgetResourcesService,
     private store$: Store<AppState>,
-    private router: Router,
   ) {}
-
-  goToEnclosure(): void {
-    if (!this.hasEnclosureSupport()) {
-      return;
-    }
-    this.router.navigate(['/system/oldviewenclosure']);
-  }
 }
