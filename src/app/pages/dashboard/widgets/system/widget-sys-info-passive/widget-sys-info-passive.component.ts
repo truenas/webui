@@ -5,7 +5,9 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
-import { filter, map } from 'rxjs';
+import {
+  combineLatestWith, filter, map, timer,
+} from 'rxjs';
 import { Role } from 'app/enums/role.enum';
 import { helptextSystemFailover } from 'app/helptext/system/failover';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -40,6 +42,16 @@ export class WidgetSysInfoPassiveComponent {
   isHaEnabled = toSignal(this.store$.select(selectIsHaEnabled));
   hasEnclosureSupport = toSignal(this.store$.select(selectEnclosureSupport));
   isUpdateRunning = toSignal(this.store$.select(selectUpdateJobForPassiveNode));
+  systemUptime = toSignal(this.resources.systemInfo$.pipe(
+    map((sysInfo) => sysInfo.remote_info.uptime_seconds),
+    combineLatestWith(timer(0, 1000)),
+    map(([uptime, interval]) => uptime + interval),
+  ));
+  systemDatetime = toSignal(this.resources.systemInfo$.pipe(
+    map((sysInfo) => sysInfo.remote_info.datetime.$date),
+    combineLatestWith(timer(0, 1000)),
+    map(([datetime, interval]) => datetime + (interval * 1000)),
+  ));
 
   product = computed(() => {
     return getServerProduct(this.systemInfo()?.system_product);
@@ -66,8 +78,6 @@ export class WidgetSysInfoPassiveComponent {
 
   protected readonly isDisabled$ = this.store$.select(selectCanFailover).pipe(map((canFailover) => !canFailover));
   protected readonly requiredRoles = [Role.FailoverWrite];
-
-  // TODO: Fix uptime counter
 
   constructor(
     private resources: WidgetResourcesService,

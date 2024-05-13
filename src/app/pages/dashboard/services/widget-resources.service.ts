@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { sub } from 'date-fns';
-import { Observable, timer, forkJoin } from 'rxjs';
+import { Observable, forkJoin, interval } from 'rxjs';
 import {
   combineLatestWith,
   map, shareReplay, switchMap,
@@ -27,6 +27,7 @@ import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 export class WidgetResourcesService {
   // TODO: nosub is emitted for some reason
   readonly realtimeUpdates$ = this.ws.subscribe('reporting.realtime');
+  readonly refreshInteval$ = interval(10000);
 
   readonly backups$ = forkJoin([
     this.ws.call('replication.query'),
@@ -54,7 +55,7 @@ export class WidgetResourcesService {
   readonly serverTime$ = this.store$.pipe(
     waitForSystemInfo,
     map((systemInfo) => new Date(systemInfo.datetime.$date)),
-    combineLatestWith(timer(0, 10000)),
+    combineLatestWith(this.refreshInteval$),
     map(([serverTime]) => {
       serverTime.setSeconds(serverTime.getSeconds() + 10000 / 1000);
       return serverTime;

@@ -5,6 +5,9 @@ import {
 import { toSignal } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
+import {
+  combineLatestWith, map, timer,
+} from 'rxjs';
 import { selectUpdateJobForActiveNode } from 'app/modules/jobs/store/job.selectors';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
 import { SlotSize } from 'app/pages/dashboard/types/widget.interface';
@@ -34,6 +37,16 @@ export class WidgetSysInfoActiveComponent {
   isUpdateRunning = toSignal(this.store$.select(selectUpdateJobForActiveNode));
   updateAvailable = toSignal(this.resources.updateAvailable$);
   systemInfo = toSignal(this.resources.systemInfo$);
+  systemUptime = toSignal(this.resources.systemInfo$.pipe(
+    map((sysInfo) => sysInfo.uptime_seconds),
+    combineLatestWith(timer(0, 1000)),
+    map(([uptime, interval]) => uptime + interval),
+  ));
+  systemDatetime = toSignal(this.resources.systemInfo$.pipe(
+    map((sysInfo) => sysInfo.datetime.$date),
+    combineLatestWith(timer(0, 1000)),
+    map(([datetime, interval]) => datetime + (interval * 1000)),
+  ));
 
   product = computed(() => {
     return getServerProduct(this.systemInfo()?.system_product);
@@ -64,8 +77,6 @@ export class WidgetSysInfoActiveComponent {
     }
     return 'Generic';
   });
-
-  // TODO: Fix uptime counter
 
   constructor(
     private resources: WidgetResourcesService,
