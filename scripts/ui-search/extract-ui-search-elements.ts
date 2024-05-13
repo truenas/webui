@@ -54,6 +54,17 @@
   Example: check access card -> [ixUiSearch]="searchableElements.elements.configureAccess"
   In this case I set custom anchor `#configure-access`, so in the access-form.elements.ts -> we need to
   provide `triggerAnchor: 'configure-access',`
+
+  ### Manual Render Elements
+  You can add `manualRenderElements` to the config, which will force-add elements to the search result
+  It will not work without specifying the desired ID it can target on the UI
+  👀 see `src/app/pages/services/services.elements.ts` as an example
+
+  ### Pending Highlight Elements
+  We may have some configs which will be available after some loading indicator has been resolved
+  For this case there is `pendingHighlightElement` which can be used in
+  component to highlight search element when loading indicator resolved
+  👀 see `src/app/pages/storage/components/dashboard-pool/dashboard-pool.component.ts` as an example
  */
 
 import * as fs from 'fs';
