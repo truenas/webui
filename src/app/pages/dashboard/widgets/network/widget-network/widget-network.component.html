@@ -1,0 +1,105 @@
+<mat-card class="card">
+  <mat-card-content class="card-content">
+    <div class="header">
+      <h3>{{ 'Network' | translate }}</h3>
+
+      <button
+        mat-icon-button
+        matTooltipPosition="above"
+        ixTest="network-reports"
+        [attr.aria-label]="'Network Reports' | translate"
+        [matTooltip]="'Network Reports' | translate"
+        [routerLink]="['/reportsdashboard', 'network']"
+      >
+        <ix-icon name="insert_chart"></ix-icon>
+      </button>
+    </div>
+
+    <div [class]="['container', size()]">
+      <div class="nic-info">
+        <div class="info-header">
+          <ngx-skeleton-loader
+              *ngIf="isLoading(); else interfaceName"
+              class="skeleton"
+              [theme]="{
+                width: '30%',
+                height: '24px',
+                background: 'var(--alt-bg2)',
+                opacity: 0.25,
+                margin: '12px 0',
+              }"
+            ></ngx-skeleton-loader>
+
+          <ng-template #interfaceName>
+            <h4 class="info-header-title">{{ interface().name }}</h4>
+          </ng-template>
+        </div>
+        <div class="info-body">
+          <div class="info-column primary">
+            <div *ngIf="!isLoading(); else skeleton" class="info-list-item state">
+              <span *ngIf="isLinkStateUp()" class="icon-wrapper up">
+                <ix-icon name="check_circle" [matTooltip]="linkStateLabel()"></ix-icon>
+              </span>
+              <span *ngIf="!isLinkStateUp()" class="icon-wrapper down">
+                <ix-icon name="cancel" [matTooltip]="linkStateLabel()"></ix-icon>
+              </span>
+              <span>{{ linkStateLabel() }}</span>
+            </div>
+            <div *ngIf="!isLoading(); else skeleton" class="info-list-item traffic">
+              <span class="icon-wrapper">
+                <ix-interface-status-icon [update]="interfaceUsage()"></ix-interface-status-icon>
+              </span>
+              <div class="in-out">
+                <div class="info-list-item in">
+                  <span>{{ 'In' | translate }}:</span>
+                  <span>{{ bitsIn() | ixFileSize: { baseUnit: 'b', base: 10 } }}/s</span>
+                </div>
+                <div class="info-list-item out">
+                  <span>{{ 'Out' | translate }}:</span>
+                  <span>{{ bitsOut() | ixFileSize: { baseUnit: 'b', base: 10 } }}/s</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="info-column secondary">
+            <div *ngIf="!isLoading(); else skeleton" class="info-list-item">
+              <span>{{ 'Media Type' | translate }}:</span>
+              <span>{{ interface().state.active_media_type }}</span>
+            </div>
+            <div *ngIf="!isLoading(); else skeleton" class="info-list-item">
+              <span>{{ 'Media Subtype' | translate }}:</span>
+              <span>{{ interface().state.active_media_subtype }}</span>
+            </div>
+            <div *ngIf="!isLoading(); else skeleton" class="info-list-item">
+              <span>{{ 'IP Address' | translate }}:</span>
+              <span>{{ getIpAddress(interface()) }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="nic-chart">
+        <div class="chart-body">
+          <ngx-skeleton-loader
+            *ngIf="isLoading(); else chart"
+            class="skeleton"
+            [theme]="{
+              width: 'calc(100% - 12px)',
+              height: '200px',
+              background: 'var(--alt-bg2)',
+              opacity: 0.25,
+              margin: 0,
+            }"
+          ></ngx-skeleton-loader>
+        </div>
+      </div>
+    </div>
+  </mat-card-content>
+</mat-card>
+
+<ng-template #chart>
+  <ix-view-chart-area [data]="chartData()" [options]="chartOptions"></ix-view-chart-area>
+</ng-template>
+
+<ng-template #skeleton>
+  <ngx-skeleton-loader class="skeleton"></ngx-skeleton-loader>
+</ng-template>

@@ -218,7 +218,7 @@ class certificates:
 
 
 class checkbox:
-    enabled = '//ix-checkbox[@formcontrolname="enabled"]//mat-checkbox'
+    enabled = '//*[@data-test="checkbox-enabled"]'
     enable = '//ix-checkbox[@formcontrolname="enable"]//mat-checkbox'
     old_Confirm = '//mat-checkbox[@ix-auto="checkbox__CONFIRM"]'
     new_Confirm = '//mat-checkbox[@data-test="checkbox-confirm"]'
@@ -243,6 +243,7 @@ class common_Input():
 class dashboard:
     title = '//h1[contains(.,"Dashboard")]'
     system_Info_Card_Title = '//span[text()="System Information"]'
+    help_Card_Title = '//*[text()="TrueNAS Help"]'
     system_Information_Standby_Title = '//span[contains(.,"System Information Standby")]'
 
 
@@ -367,10 +368,10 @@ class edit_Encryption:
 
 class edit_Permissions:
     title = '//h1[text()="Edit Permissions"]'
-    user_Combobox = '//ix-combobox[@formcontrolname="user"]//input'
-    user_Apply_Checkbox = '//mat-checkbox[contains(.,"Apply User")]'
-    group_Combobox = '//ix-combobox[@formcontrolname="group"]//input'
-    group_Apply_Checkbox = '//mat-checkbox[contains(.,"Apply Group")]'
+    user_Combobox = '//*[@data-test="input-uid"]'
+    user_Apply_Checkbox = '//*[@data-test="checkbox-apply-user"]'
+    group_Combobox = '//*[@data-test="input-gid"]'
+    group_Apply_Checkbox = '//*[@data-test="checkbox-apply-group"]'
 
 
 class error:
@@ -384,6 +385,13 @@ class export_Disconnect_Pool:
     confirm_Checkbox = '//ix-checkbox[@formcontrolname="confirm"]//mat-checkbox'
     pool_Name_Input = '//ix-input[@formcontrolname="nameInput"]//input'
     export_Disconnect_Button = '//mat-dialog-container//button[contains(.,"Export/Disconnect")]'
+
+
+class general:
+    title = '//h1[contains(text(),"General")]'
+    support_title = '//h3[contains(text(),"Support")]'
+    license_dialog_title = '//h3[contains(.,"License")]'
+    add_licence_button = '//*[@data-test="button-set-license"]'
 
 
 class global_Configuration:
@@ -549,29 +557,35 @@ class progress:
 
 class services:
     title = '//h1[text()="Services"]'
-    CHECKBOX = '//mat-checkbox'
-    TOGGLE = '//button[@role="switch"]'
-    BUTTON = '//button[@aria-label="Edit"]'
 
     def service_Tr(serivce):
         return f'//tr[contains(.,"{serivce}")]'
 
+    def service_autostart(serivce: str) -> str:
+        return f'//*[@data-test="toggle-start-automatically-service-{serivce}-row-toggle"]'
+
+    def service_edit_button(serivce: str) -> str:
+        return f'//*[@data-test="button-service-{serivce}-edit-row-action"]'
+
+    def service_running(serivce: str) -> str:
+        return f'//*[@data-test="toggle-running-service-{serivce}-row-toggle"]'
+
     iscsi_Service = service_Tr('iSCSI')
-    iscsi_Service_Button = iscsi_Service + BUTTON
-    iscsi_Service_Checkbox = iscsi_Service + CHECKBOX
-    iscsi_Service_Toggle = iscsi_Service + TOGGLE
+    iscsi_edit_button = service_edit_button('iscsi')
+    iscsi_autostart_toggle = service_autostart('iscsi')
+    iscsi_running_toggle = service_running('iscsi')
     nfs_Service = service_Tr('NFS')
-    nfs_Service_Button = nfs_Service + BUTTON
-    nfs_Service_Checkbox = nfs_Service + CHECKBOX
-    nfs_Service_Toggle = nfs_Service + TOGGLE
+    nfs_edit_button = service_edit_button('nfs')
+    nfs_autostart_toggle = service_autostart('nfs')
+    nfs_running_toggle = service_running('nfs')
     smb_Service = service_Tr('SMB')
-    smb_Service_Button = smb_Service + BUTTON
-    smb_Service_Checkbox = smb_Service + CHECKBOX
-    smb_Service_Toggle = smb_Service + TOGGLE
+    smb_edit_button = service_edit_button('smb')
+    smb_autostart_toggle = service_autostart('smb')
+    smb_running_toggle = service_running('smb')
     ssh_Service = service_Tr('SSH')
-    ssh_Service_Button = ssh_Service + BUTTON
-    ssh_Service_Checkbox = ssh_Service + CHECKBOX
-    ssh_Service_Toggle = ssh_Service + TOGGLE
+    ssh_edit_button = service_edit_button('ssh')
+    ssh_autostart_toggle = service_autostart('ssh')
+    ssh_running_toggle = service_running('ssh')
 
 
 class sharing:
@@ -603,6 +617,7 @@ class side_Menu:
 
     """xpath for the menu on the left side"""
     dashboard = menu_Anchor('Dashboard')
+    old_dashboard = menu_Anchor('Dashboard_(old)')
     storage = menu_Anchor('Storage')
     datasets = menu_Anchor('Datasets')
     shares = menu_Anchor('Shares')
@@ -613,7 +628,7 @@ class side_Menu:
     certificates = submenu_Anchor('Certificates')
     directory_Services = submenu_Anchor('Directory Services')
     apps = menu_Anchor('Apps')
-    system_Setting = menu_Anchor('System_Settings')
+    system_Setting = menu_Anchor('System')
     general = submenu_Anchor('General')
     advanced = submenu_Anchor('Advanced')
     failover = submenu_Anchor('Failover')
@@ -644,7 +659,7 @@ class storage:
 
 
 class system_Dataset:
-    title = '//h3[contains(text(),"Storage Settings") and @class="ix-formtitle"]'
+    title = '//h3[contains(text(),"Storage Settings")]'
     pool_Select = '//mat-select[@data-test="select-pool"]'
 
     def pool_Option(pool_name):

@@ -1,28 +1,45 @@
 import * as fs from 'fs';
 import * as cheerio from 'cheerio';
-import { AcceptedElems } from 'cheerio/lib/types';
+import { uniq } from 'lodash';
 import { Role } from 'app/enums/role.enum';
 import { GlobalSearchSection } from 'app/modules/global-search/enums/global-search-section.enum';
 import { generateIdFromHierarchy } from 'app/modules/global-search/helpers/generate-id-from-hierarchy';
 import { UiSearchableElement } from 'app/modules/global-search/interfaces/ui-searchable-element.interface';
 
-export function parseHtmlFile(
-  filePath: string,
-  elementConfig: UiSearchableElement,
+export function parseUiSearchElements(
+  htmlComponentFilePath: string,
+  elementConfig: Record<string, UiSearchableElement>,
   componentProperties: Record<string, string>,
 ): UiSearchableElement[] {
-  const htmlContent = fs.readFileSync(filePath, 'utf8');
-  const cheerioRoot$ = cheerio.load(htmlContent);
+  const cheerioRoot$ = cheerio.load(fs.readFileSync(htmlComponentFilePath, 'utf8'));
   const elements: UiSearchableElement[] = [];
+  const parentKey = Object.keys(elementConfig)[0] as keyof UiSearchableElement;
+  const manualRenderElements = elementConfig[parentKey].manualRenderElements;
 
-  cheerioRoot$('[\\[ixUiSearch\\]]').each((_, element) => {
-    const configKeysSplit = cheerioRoot$(element).attr('[ixuisearch]').split('.');
+  if (manualRenderElements) {
+    Object.keys(manualRenderElements).forEach((childKey) => {
+      const mergedElement = createUiSearchElement(
+        cheerioRoot$,
+        null,
+        elementConfig,
+        parentKey,
+        childKey as keyof UiSearchableElement,
+        componentProperties,
+      );
+
+      if (mergedElement) {
+        elements.push(mergedElement);
+      }
+    });
+  }
+
+  cheerioRoot$('[\\[ixUiSearch\\]]').each((_, elementIdentifier) => {
+    const configKeysSplit = cheerioRoot$(elementIdentifier).attr('[ixuisearch]').split('.');
     const childKey = configKeysSplit[configKeysSplit.length - 1] as keyof UiSearchableElement;
-    const parentKey = Object.keys(elementConfig)[0] as keyof UiSearchableElement;
 
-    const mergedElement = createUiSearchableElement(
+    const mergedElement = createUiSearchElement(
       cheerioRoot$,
-      element,
+      elementIdentifier as unknown as string,
       elementConfig,
       parentKey,
       childKey,
@@ -34,13 +51,12 @@ export function parseHtmlFile(
     }
   });
 
-  return elements;
+  return uniq(elements);
 }
 
-function createUiSearchableElement(
+function createUiSearchElement(
   cheerioRoot$: (selector: string) => { attr: (attr: string) => string },
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  element: AcceptedElems<any>,
+  elementIdentifier: string,
   elementConfig: UiSearchableElement,
   parentKey: keyof UiSearchableElement,
   childKey: keyof UiSearchableElement,
@@ -48,7 +64,7 @@ function createUiSearchableElement(
 ): UiSearchableElement {
   try {
     const parent = (elementConfig?.[parentKey] || elementConfig) as UiSearchableElement;
-    const child = parent?.elements?.[childKey] || {};
+    const child = parent?.elements?.[childKey] || parent?.manualRenderElements?.[childKey] || {};
 
     const hierarchy = [...(parent?.hierarchy || []), ...(child?.hierarchy || [])];
     const synonyms = [
@@ -58,10 +74,10 @@ function createUiSearchableElement(
     ];
     const anchorRouterLink = child?.anchorRouterLink || parent?.anchorRouterLink;
     const triggerAnchor = child?.triggerAnchor || parent?.triggerAnchor || null;
-    const routerLink = parseRouterLink(cheerioRoot$(element as string).attr('[routerlink]')) ?? null;
+    const routerLink = parseRouterLink(cheerioRoot$(elementIdentifier).attr('[routerlink]')) ?? null;
     let requiredRoles = child.requiredRoles || parent.requiredRoles || [];
 
-    const rolesAttrName = cheerioRoot$(element as string).attr('*ixrequiresroles') || '';
+    const rolesAttrName = cheerioRoot$(elementIdentifier).attr('*ixrequiresroles') || '';
 
     if (rolesAttrName) {
       requiredRoles = parseRoles(rolesAttrName);

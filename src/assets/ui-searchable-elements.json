@@ -1783,6 +1783,159 @@
   {
     "hierarchy": [
       "System",
+      "Services",
+      "SMB"
+    ],
+    "synonyms": [
+      "Services"
+    ],
+    "requiredRoles": [],
+    "anchorRouterLink": [
+      "/system",
+      "services"
+    ],
+    "routerLink": null,
+    "anchor": "service-smb",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "System",
+      "Services",
+      "FTP"
+    ],
+    "synonyms": [
+      "Services"
+    ],
+    "requiredRoles": [],
+    "anchorRouterLink": [
+      "/system",
+      "services"
+    ],
+    "routerLink": null,
+    "anchor": "service-ftp",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "System",
+      "Services",
+      "iSCSI"
+    ],
+    "synonyms": [
+      "Services"
+    ],
+    "requiredRoles": [],
+    "anchorRouterLink": [
+      "/system",
+      "services"
+    ],
+    "routerLink": null,
+    "anchor": "service-iscsi",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "System",
+      "Services",
+      "NFS"
+    ],
+    "synonyms": [
+      "Services"
+    ],
+    "requiredRoles": [],
+    "anchorRouterLink": [
+      "/system",
+      "services"
+    ],
+    "routerLink": null,
+    "anchor": "service-nfs",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "System",
+      "Services",
+      "SNMP"
+    ],
+    "synonyms": [
+      "Services"
+    ],
+    "requiredRoles": [],
+    "anchorRouterLink": [
+      "/system",
+      "services"
+    ],
+    "routerLink": null,
+    "anchor": "service-snmp",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "System",
+      "Services",
+      "SSH"
+    ],
+    "synonyms": [
+      "Services"
+    ],
+    "requiredRoles": [],
+    "anchorRouterLink": [
+      "/system",
+      "services"
+    ],
+    "routerLink": null,
+    "anchor": "service-ssh",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "System",
+      "Services",
+      "UPS"
+    ],
+    "synonyms": [
+      "Services"
+    ],
+    "requiredRoles": [],
+    "anchorRouterLink": [
+      "/system",
+      "services"
+    ],
+    "routerLink": null,
+    "anchor": "service-ups",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "System",
+      "Services",
+      "S.M.A.R.T."
+    ],
+    "synonyms": [
+      "Smart",
+      "Services"
+    ],
+    "requiredRoles": [],
+    "anchorRouterLink": [
+      "/system",
+      "services"
+    ],
+    "routerLink": null,
+    "anchor": "service-smart",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "System",
       "Services"
     ],
     "synonyms": [
@@ -2136,6 +2289,208 @@
     ],
     "routerLink": null,
     "anchor": "system-shell",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Storage Dashboard",
+      "Export/Disconnect"
+    ],
+    "synonyms": [
+      "Export",
+      "Disconnect",
+      "Storage Dashboard"
+    ],
+    "requiredRoles": [
+      "FULL_ADMIN"
+    ],
+    "anchorRouterLink": [
+      "/storage"
+    ],
+    "routerLink": null,
+    "anchor": "export/disconnect",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Storage Dashboard",
+      "Expand"
+    ],
+    "synonyms": [
+      "Storage Dashboard"
+    ],
+    "requiredRoles": [
+      "FULL_ADMIN"
+    ],
+    "anchorRouterLink": [
+      "/storage"
+    ],
+    "routerLink": null,
+    "anchor": "expand",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Storage Dashboard",
+      "Disk Health"
+    ],
+    "synonyms": [
+      "Storage Dashboard"
+    ],
+    "requiredRoles": [],
+    "anchorRouterLink": [
+      "/storage"
+    ],
+    "routerLink": null,
+    "anchor": "disk-health",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Storage Dashboard",
+      "Manage Disks"
+    ],
+    "synonyms": [
+      "Storage Dashboard"
+    ],
+    "requiredRoles": [],
+    "anchorRouterLink": [
+      "/storage"
+    ],
+    "routerLink": [
+      "/storage",
+      "disks"
+    ],
+    "anchor": "manage-disks",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Storage Dashboard",
+      "Usage"
+    ],
+    "synonyms": [
+      "Storage Dashboard"
+    ],
+    "requiredRoles": [],
+    "anchorRouterLink": [
+      "/storage"
+    ],
+    "routerLink": null,
+    "anchor": "usage",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Storage Dashboard",
+      "Manage Datasets"
+    ],
+    "synonyms": [
+      "Storage Dashboard"
+    ],
+    "requiredRoles": [],
+    "anchorRouterLink": [
+      "/storage"
+    ],
+    "routerLink": [
+      "/",
+      "datasets",
+      "poolState.name"
+    ],
+    "anchor": "manage-datasets",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Storage Dashboard",
+      "Topology"
+    ],
+    "synonyms": [
+      "Storage Dashboard"
+    ],
+    "requiredRoles": [],
+    "anchorRouterLink": [
+      "/storage"
+    ],
+    "routerLink": null,
+    "anchor": "topology",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Storage Dashboard",
+      "Manage Devices"
+    ],
+    "synonyms": [
+      "Storage Dashboard"
+    ],
+    "requiredRoles": [],
+    "anchorRouterLink": [
+      "/storage"
+    ],
+    "routerLink": null,
+    "anchor": "manage-devices",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Storage Dashboard",
+      "ZFS Health"
+    ],
+    "synonyms": [
+      "Storage Dashboard"
+    ],
+    "requiredRoles": [],
+    "anchorRouterLink": [
+      "/storage"
+    ],
+    "routerLink": null,
+    "anchor": "zfs-health",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Storage Dashboard",
+      "Scrub"
+    ],
+    "synonyms": [
+      "Storage Dashboard"
+    ],
+    "requiredRoles": [
+      "REPORTING_WRITE"
+    ],
+    "anchorRouterLink": [
+      "/storage"
+    ],
+    "routerLink": null,
+    "anchor": "scrub",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Storage Dashboard",
+      "Auto TRIM"
+    ],
+    "synonyms": [
+      "Storage Dashboard"
+    ],
+    "requiredRoles": [],
+    "anchorRouterLink": [
+      "/storage"
+    ],
+    "routerLink": null,
+    "anchor": "auto-trim",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -3277,6 +3632,26 @@
     ],
     "routerLink": null,
     "anchor": "system-boot-boot-pool-status",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "System",
+      "View Enclosure",
+      "NVMe-oF Expansion Shelves"
+    ],
+    "synonyms": [
+      "NVMe-oF Expansion Shelves"
+    ],
+    "requiredRoles": [],
+    "anchorRouterLink": [
+      "/system",
+      "oldviewenclosure",
+      "jbof"
+    ],
+    "routerLink": null,
+    "anchor": "system-view-enclosure-nvme-of-expansion-shelves",
     "triggerAnchor": null,
     "section": "ui"
   },

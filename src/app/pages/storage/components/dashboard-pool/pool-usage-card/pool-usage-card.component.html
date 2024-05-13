@@ -1,11 +1,16 @@
-<mat-card class="card" fxLayout="column">
+<mat-card class="card" fxLayout="column" [ixUiSearch]="searchableElements.elements.usage">
   <mat-card-header>
     <h3 mat-card-title>
       {{ 'Usage' | translate }}
       <ix-pool-card-icon [type]="iconType" [tooltip]="iconTooltip"></ix-pool-card-icon>
     </h3>
 
-    <a mat-button [ixTest]="[poolState.name, 'manage-datasets']" [routerLink]="['/', 'datasets', poolState.name]">
+    <a
+      mat-button
+      [ixTest]="[poolState.name, 'manage-datasets']"
+      [routerLink]="['/', 'datasets', poolState.name]"
+      [ixUiSearch]="searchableElements.elements.manageDatasets"
+    >
       {{ 'Manage Datasets' | translate }}
     </a>
   </mat-card-header>

@@ -1221,9 +1221,8 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
   // Change enclosure name
   labelForm(): void {
     const enclosure: EnclosureOld = this.selectedEnclosure;
-    const currentLabel = enclosure.label !== enclosure.name ? enclosure.label : enclosure.model;
     const dialogConfig: SetEnclosureLabelDialogData = {
-      currentLabel,
+      currentLabel: enclosure.label || enclosure.name,
       defaultLabel: enclosure.name,
       enclosureId: enclosure.id,
     };

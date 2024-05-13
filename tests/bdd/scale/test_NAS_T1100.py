@@ -4,6 +4,7 @@
 import os
 import pytest
 import time
+import reusableSeleniumCode as rsc
 import xpaths
 from function import (
     wait_on_element,
@@ -69,8 +70,7 @@ def the_browser_is_open_the_truenas_url_and_logged_in(driver, nas_ip, root_passw
 @when('on the dashboard, click on the Accounts on the side menu, click on Users')
 def on_the_dashboard_click_on_the_accounts_on_the_side_menu_click_on_users(driver):
     """on the dashboard, click on the Accounts on the side menu, click on Users."""
-    assert wait_on_element(driver, 10, xpaths.dashboard.title)
-    assert wait_on_element(driver, 10, xpaths.dashboard.system_Info_Card_Title)
+    rsc.Verify_The_Dashboard(driver)
     assert wait_on_element(driver, 10, xpaths.side_Menu.credentials, 'clickable')
     driver.find_element_by_xpath(xpaths.side_Menu.credentials).click()
     assert wait_on_element(driver, 10, xpaths.side_Menu.local_User, 'clickable')
@@ -108,10 +108,8 @@ def the_root_user_edit_page_should_open_input_the_ssh_key_and_click_save(driver,
 
 @then('reopen the root user edit page and verify sshkey was saved.')
 def reopen_the_root_user_edit_page_and_verify_sshkey_was_saved(driver, ssh_key):
-    """reopen the root user edit page and verify sshkey was saved.."""
+    """reopen the root user edit page and verify sshkey was saved."""
     assert wait_on_element(driver, 7, xpaths.users.title)
-    assert wait_on_element(driver, 10, xpaths.users.root_User, 'clickable')
-    driver.find_element_by_xpath(xpaths.users.root_User).click()
     assert wait_on_element(driver, 10, xpaths.users.root_Edit_Button, 'clickable')
     driver.find_element_by_xpath(xpaths.users.root_Edit_Button).click()
     assert wait_on_element(driver, 10, xpaths.add_User.edit_Title)

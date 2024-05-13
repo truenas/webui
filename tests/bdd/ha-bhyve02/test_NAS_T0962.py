@@ -59,7 +59,7 @@ def on_the_dashboard_click_network_on_the_left_sidebar(driver):
     assert wait_on_element(driver, 7, xpaths.dashboard.title)
     if wait_on_element(driver, 2, '//button[@ix-auto="button__I AGREE"]', 'clickable'):
         driver.find_element_by_xpath('//button[@ix-auto="button__I AGREE"]').click()
-    assert wait_on_element(driver, 10, xpaths.dashboard.system_Info_Card_Title)
+    assert wait_on_element(driver, 10, xpaths.dashboard.help_Card_Title)
     assert wait_on_element(driver, 5, xpaths.side_Menu.network, 'clickable')
     driver.find_element_by_xpath(xpaths.side_Menu.network).click()
     assert wait_on_element_disappear(driver, 20, xpaths.popup.please_Wait)
@@ -208,9 +208,9 @@ def verify_that_the_trust_secret_succeeded(driver):
 @then('after, go to the Dashboard')
 def after_go_to_the_dashboard(driver):
     """after, go to the Dashboard."""
-    assert wait_on_element(driver, 10, xpaths.side_Menu.dashboard, 'clickable')
-    driver.find_element_by_xpath(xpaths.side_Menu.dashboard).click()
+    rsc.Click_On_Element(driver, xpaths.side_Menu.old_dashboard)
     assert wait_on_element(driver, 10, xpaths.dashboard.title)
+    time.sleep(20)
 
 
 @then('click INITIATE FAILOVER, click the confirm checkbox, and press FAILOVER')
@@ -235,11 +235,11 @@ def at_the_login_page_enter_user_and_password(driver, user, password):
 
 
 @then('on the Dashboard, wait for the Active Directory service')
-def on_the_dashboard_wait_for_the_active_Directory_service(driver):
+def on_the_dashboard_wait_for_the_active_directory_service(driver):
     """on the Dashboard, wait for the Active Directory service."""
     assert wait_on_element(driver, 60, xpaths.dashboard.title)
     assert wait_on_element(driver, 120, xpaths.dashboard.system_Info_Card_Title)
-    # Make sure HA is enable before going forward
+    # Make sure HA is enabled before going forward
     assert wait_on_element(driver, 180, xpaths.toolbar.ha_Enabled)
     # Wait for the directories service manager button
     assert wait_on_element(driver, 180, '//button[@id="dirservices-manager"]')
