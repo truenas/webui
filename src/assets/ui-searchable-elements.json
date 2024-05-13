@@ -32,15 +32,16 @@
     "hierarchy": [
       "Toolbar",
       "Power Menu",
-      "LogOut"
+      "Log Out"
     ],
     "synonyms": [
       "Toolbar",
+      "Sign Out",
       "Power Menu"
     ],
     "requiredRoles": [],
     "routerLink": null,
-    "anchor": "logout",
+    "anchor": "log-out",
     "triggerAnchor": "power-menu",
     "section": "ui"
   },
@@ -52,6 +53,7 @@
     ],
     "synonyms": [
       "Toolbar",
+      "Reboot",
       "Power Menu"
     ],
     "requiredRoles": [
@@ -70,6 +72,8 @@
     ],
     "synonyms": [
       "Toolbar",
+      "Power Off",
+      "Turn Off",
       "Power Menu"
     ],
     "requiredRoles": [

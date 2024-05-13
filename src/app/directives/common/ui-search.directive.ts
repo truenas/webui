@@ -40,7 +40,7 @@ export class UiSearchDirective implements OnInit, OnDestroy {
 
   private tryHighlightAnchors(element: UiSearchableElement, attemptCount: number): void {
     if (this.elementRef.nativeElement) {
-      this.highlightAndClickElement(this.elementRef.nativeElement);
+      this.highlightAndClickElement(this.elementRef.nativeElement, !!element.triggerAnchor);
       if (this.elementRef.nativeElement.id !== element.anchor) {
         this.highlightElementAnchor(element.anchor);
       }
@@ -60,18 +60,21 @@ export class UiSearchDirective implements OnInit, OnDestroy {
     }, searchDelayConst * 1.5);
   }
 
-  private highlightAndClickElement(anchorRef: HTMLElement): void {
+  private highlightAndClickElement(anchorRef: HTMLElement, shouldClick = false): void {
     if (!anchorRef) return;
 
-    anchorRef.scrollIntoView({ behavior: 'smooth' });
+    anchorRef.scrollIntoView();
     anchorRef.focus();
-
     this.renderer.addClass(anchorRef, 'search-element-highlighted');
 
-    setTimeout(() => anchorRef.click(), searchDelayConst);
-    setTimeout(
-      () => this.renderer.removeClass(anchorRef, 'search-element-highlighted'),
-      searchDelayConst * 15,
-    );
+    if (shouldClick) setTimeout(() => anchorRef.click(), searchDelayConst);
+
+    setTimeout(() => {
+      this.renderer.removeClass(anchorRef, 'search-element-highlighted');
+
+      if (!shouldClick) {
+        anchorRef.focus();
+      }
+    }, searchDelayConst * 15);
   }
 }

@@ -288,7 +288,7 @@ a.mat-mdc-button.mat-primary,
 button.mat-mdc-button.mat-primary {
   background-color: var(--primary) !important;
   color: var(--primary-txt) !important;
-  opacity: 1 !important;
+  opacity: 1;
 }
 
 a.mat-mdc-button.mat-primary:focus-visible,
@@ -833,7 +833,12 @@ body {
   .search-element-highlighted {
     animation: blinker 0.5s infinite !important;
     background-color: var(--contrast-darkest) !important;
+    box-shadow: 0 0 5px 5px var(--primary-lighter) !important;
     outline: 4px solid var(--primary) !important;
+
+    &.mat-primary {
+      outline: 4px solid var(--primary-txt) !important;
+    }
   }
 }
 
