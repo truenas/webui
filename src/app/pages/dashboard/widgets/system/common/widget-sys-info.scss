@@ -63,13 +63,6 @@
   gap: 8px;
 }
 
-mat-list-item {
-  ngx-skeleton-loader {
-    display: inline-flex;
-    flex: 1;
-  }
-}
-
 .container {
   display: flex;
   flex-grow: 1;
@@ -108,4 +101,19 @@ mat-list-item {
 .overview {
   padding-left: 16px;
   padding-right: 16px;
+}
+
+ix-product-image.passive {
+  opacity: 0.5;
+}
+
+.image-loader {
+  height: 150px;
+  margin: auto;
+  width: 150px;
+}
+
+.inline-loader {
+  display: inline-flex;
+  flex: 1;
 }

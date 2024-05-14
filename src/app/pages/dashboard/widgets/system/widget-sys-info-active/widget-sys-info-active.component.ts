@@ -27,6 +27,7 @@ export class WidgetSysInfoActiveComponent {
   size = input.required<SlotSize>();
 
   private readonly systemInfo$ = this.resources.systemInfo$;
+  private readonly refreshInterval$ = timer(0, 1000);
 
   isIxHardware = toSignal(this.store$.select(selectIsIxHardware));
   isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
@@ -38,12 +39,12 @@ export class WidgetSysInfoActiveComponent {
   version = toSignal(this.systemInfo$.pipe(map((sysInfo) => getSystemVersion(sysInfo.version, sysInfo.codename))));
   systemUptime = toSignal(this.systemInfo$.pipe(
     map((sysInfo) => sysInfo.uptime_seconds),
-    combineLatestWith(timer(0, 1000)),
+    combineLatestWith(this.refreshInterval$),
     map(([uptime, interval]) => uptime + interval),
   ));
   systemDatetime = toSignal(this.systemInfo$.pipe(
     map((sysInfo) => sysInfo.datetime.$date),
-    combineLatestWith(timer(0, 1000)),
+    combineLatestWith(this.refreshInterval$),
     map(([datetime, interval]) => datetime + (interval * 1000)),
   ));
 

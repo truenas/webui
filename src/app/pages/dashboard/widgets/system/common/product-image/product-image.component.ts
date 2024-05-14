@@ -27,13 +27,10 @@ export class ProductImageComponent {
   product = computed(() => getServerProduct(this.systemProduct()));
   productImage = computed(() => getProductImage(this.systemProduct()));
   productImageSrc = computed(() => {
-    if (!this.productImage() || !this.isIxHardware()) {
-      return 'assets/images/truenas_scale_ondark_favicon.png';
-    }
     return 'assets/images' + (this.productImage().startsWith('/') ? this.productImage() : ('/' + this.productImage()));
   });
   productEnclosure = computed(() => {
-    if (!this.hasEnclosureSupport()) {
+    if (!this.hasEnclosureSupport() || !this.systemProduct()) {
       return null;
     }
     return getProductEnclosure(this.systemProduct());

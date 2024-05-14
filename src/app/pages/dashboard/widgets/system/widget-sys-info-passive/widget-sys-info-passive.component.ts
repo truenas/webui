@@ -5,9 +5,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
-import {
-  combineLatestWith, filter, map, timer,
-} from 'rxjs';
+import { filter, map, timer } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
 import { helptextSystemFailover } from 'app/helptext/system/failover';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -32,6 +30,7 @@ export class WidgetSysInfoPassiveComponent {
   size = input.required<SlotSize>();
 
   private readonly systemInfo$ = this.resources.systemInfo$.pipe(map((sysInfo) => sysInfo.remote_info));
+  private readonly elapsedSecondsSinceInit = toSignal(timer(0, 1000), { initialValue: 0 });
   protected readonly isDisabled$ = this.store$.select(selectCanFailover).pipe(map((canFailover) => !canFailover));
   protected readonly requiredRoles = [Role.FailoverWrite];
 
@@ -45,16 +44,12 @@ export class WidgetSysInfoPassiveComponent {
   updateAvailable = toSignal(this.resources.updateAvailable$);
   systemInfo = toSignal(this.systemInfo$);
   version = toSignal(this.systemInfo$.pipe(map((sysInfo) => getSystemVersion(sysInfo.version, sysInfo.codename))));
-  systemUptime = toSignal(this.systemInfo$.pipe(
-    map((sysInfo) => sysInfo.uptime_seconds),
-    combineLatestWith(timer(1000, 1000)),
-    map(([uptime, interval]) => uptime + interval),
-  ));
-  systemDatetime = toSignal(this.systemInfo$.pipe(
-    map((sysInfo) => sysInfo.datetime.$date),
-    combineLatestWith(timer(1000, 1000)),
-    map(([datetime, interval]) => datetime + (interval * 1000)),
-  ));
+  systemUptime = computed(() => {
+    return this.systemInfo().uptime_seconds + this.elapsedSecondsSinceInit();
+  });
+  systemDatetime = computed(() => {
+    return this.systemInfo().datetime.$date + (this.elapsedSecondsSinceInit() * 1000);
+  });
 
   isLoaded = computed(() => {
     return this.systemInfo() && this.systemUptime() && this.systemDatetime();

@@ -7,7 +7,7 @@
         </div>
 
         <ix-product-image
-          [systemProduct]="systemInfo()?.system_product"
+          [systemProduct]="systemInfo()?.platform"
           [hasEnclosureSupport]="hasEnclosureSupport()"
           [isHaLicensed]="isHaLicensed()"
           [isEnterprise]="isEnterprise()"
@@ -103,6 +103,7 @@
 
 <ng-template #inlineLoader>
   <ngx-skeleton-loader
+    class="inline-loader"
     [theme]="{
       height: '20px',
       background: 'var(--alt-bg2)',

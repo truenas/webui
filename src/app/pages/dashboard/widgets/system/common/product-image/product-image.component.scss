@@ -12,6 +12,21 @@
     min-width: 150px;
     place-content: center;
     place-items: center;
+
+    ix-icon {
+      flex: 0 0 auto;
+      max-height: 150px;
+      max-width: 150px;
+    }
+
+    img {
+      height: auto;
+      max-width: 80%;
+
+      &.clickable {
+        cursor: pointer;
+      }
+    }
   }
 
   .product-image-text {
