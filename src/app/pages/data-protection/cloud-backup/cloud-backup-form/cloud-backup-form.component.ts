@@ -105,7 +105,7 @@ export class CloudBackupFormComponent implements OnInit {
       const targetCredentials = _.find(credentialsList, { id: credentialId });
       const targetProvider = _.find(providersList, { name: targetCredentials?.provider });
 
-      if (credentialId && targetProvider.buckets) {
+      if (credentialId && targetProvider?.buckets) {
         this.form.controls.folder.enable();
         this.loadBucketOptions(credentialId);
       } else if (credentialId) {
