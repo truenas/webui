@@ -4,7 +4,6 @@ import { EventEmitter } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialog } from '@angular/material/dialog';
-import { MatIconTestingModule } from '@angular/material/icon/testing';
 import { TreeComponent as BaseTreeComponent, TreeModel } from '@bugsplat/angular-tree-component';
 import { IDTypeDictionary } from '@bugsplat/angular-tree-component/lib/defs/api';
 import { FormControl } from '@ngneat/reactive-forms';
@@ -59,7 +58,6 @@ describe('IxExplorerComponent', () => {
     imports: [
       ReactiveFormsModule,
       FormsModule,
-      MatIconTestingModule,
     ],
     declarations: [
       MockComponent(IxErrorsComponent),
