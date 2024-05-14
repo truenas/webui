@@ -7,7 +7,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import _ from 'lodash';
 import {
-  Observable, combineLatest, map, of,
+  Observable, map, of,
 } from 'rxjs';
 import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
 import { Role } from 'app/enums/role.enum';
@@ -97,40 +97,37 @@ export class CloudBackupFormComponent implements OnInit {
     this.setFileNodeProvider();
     this.setBucketNodeProvider();
 
-    combineLatest([
-      this.cloudCredentialService.getCloudSyncCredentials(),
-      this.cloudCredentialService.getProviders(),
-      this.form.controls.credentials.valueChanges,
-    ]).pipe(untilDestroyed(this)).subscribe(([credentialsList, providersList, credentialId]) => {
-      const targetCredentials = _.find(credentialsList, { id: credentialId });
-      const targetProvider = _.find(providersList, { name: targetCredentials?.provider });
+    this.form.controls.credentials.valueChanges
+      .pipe(untilDestroyed(this))
+      .subscribe((credentialId) => {
+        if (credentialId) {
+          this.form.controls.folder.enable();
+          this.form.controls.bucket.enable();
+          this.loadBucketOptions(credentialId);
+          this.form.controls.bucket_input.disable();
+        } else {
+          this.form.controls.folder.disable();
+          this.form.controls.bucket.disable();
+          this.form.controls.bucket_input.disable();
+        }
+      });
 
-      if (credentialId && targetProvider.buckets) {
-        this.form.controls.folder.enable();
-        this.loadBucketOptions(credentialId);
-      } else if (credentialId) {
-        this.form.controls.folder.enable();
-        this.form.controls.bucket.disable();
-        this.form.controls.bucket_input.disable();
-      } else {
-        this.form.controls.folder.disable();
-        this.form.controls.bucket.disable();
-        this.form.controls.bucket_input.disable();
-      }
-    });
+    this.form.controls.bucket.valueChanges
+      .pipe(untilDestroyed(this))
+      .subscribe((value) => {
+        if (value === newOption) {
+          this.form.controls.bucket_input.enable();
+        } else {
+          this.form.controls.bucket_input.disable();
+        }
+        this.setBucketNodeProvider();
+      });
 
-    this.form.controls.bucket.valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {
-      if (value === newOption) {
-        this.form.controls.bucket_input.enable();
-      } else {
-        this.form.controls.bucket_input.disable();
-      }
-      this.setBucketNodeProvider();
-    });
-
-    this.form.controls.bucket_input.valueChanges.pipe(untilDestroyed(this)).subscribe(() => {
-      this.setBucketNodeProvider();
-    });
+    this.form.controls.bucket_input.valueChanges
+      .pipe(untilDestroyed(this))
+      .subscribe(() => {
+        this.setBucketNodeProvider();
+      });
 
     if (this.editingTask) {
       this.setTaskForEdit();
