@@ -116,6 +116,7 @@ describe('CloudBackupFormComponent', () => {
     it('adds a new cloud backup task when new form is saved', async () => {
       const form = await loader.getHarness(IxFormHarness);
       await form.fillForm({
+        'Source Path': '/mnt/my pool 2',
         Description: 'New Cloud Backup Task',
         Password: 'qwerty',
         Credentials: 'Storj iX (Storj)',
@@ -137,7 +138,7 @@ describe('CloudBackupFormComponent', () => {
         include: [],
         keep_last: 3,
         password: 'qwerty',
-        path: '/mnt',
+        path: '/mnt/my pool 2',
         post_script: '',
         pre_script: '',
         schedule: {
