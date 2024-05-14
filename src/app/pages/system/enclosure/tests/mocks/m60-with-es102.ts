@@ -4,7 +4,7 @@ import { EnclosureDiskStatus, EnclosureStatus } from 'app/enums/enclosure-slot-s
 import { VdevType } from 'app/enums/v-dev-type.enum';
 import { DashboardEnclosure } from 'app/interfaces/enclosure.interface';
 
-export const m60With12Es102DashboardEnclosure: DashboardEnclosure[] = [
+export const m60WithEs102DashboardEnclosure: DashboardEnclosure[] = [
   {
     name: 'iX 4024Ss e001',
     model: 'M60',

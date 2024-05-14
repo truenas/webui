@@ -11,7 +11,7 @@ import { IxInputHarness } from 'app/modules/ix-forms/components/ix-input/ix-inpu
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import {
   SetEnclosureLabelDialogComponent, SetEnclosureLabelDialogData,
-} from 'app/pages/system/enclosure/components/enclosure-dashboard/set-enclosure-label-dialog/set-enclosure-label-dialog.component';
+} from 'app/pages/system/enclosure/components/set-enclosure-label-dialog/set-enclosure-label-dialog.component';
 import { WebSocketService } from 'app/services/ws.service';
 
 describe('SetEnclosureLabelDialogComponent', () => {

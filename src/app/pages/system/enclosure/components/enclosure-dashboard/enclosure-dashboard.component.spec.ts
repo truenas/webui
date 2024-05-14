@@ -13,7 +13,7 @@ import {
 } from 'app/pages/system/enclosure/components/enclosure-dashboard/enclosure-dashboard.component';
 import {
   SetEnclosureLabelDialogComponent,
-} from 'app/pages/system/enclosure/components/enclosure-dashboard/set-enclosure-label-dialog/set-enclosure-label-dialog.component';
+} from 'app/pages/system/enclosure/components/set-enclosure-label-dialog/set-enclosure-label-dialog.component';
 import { EnclosureStore } from 'app/pages/system/enclosure/services/enclosure.store';
 
 describe('EnclosureDashboardComponent', () => {
