@@ -62,10 +62,12 @@ describe('WidgetGroupFormComponent', () => {
 
     it('checks layout selector', async () => {
       const layoutSelector = await loader.getHarness(IxIconGroupHarness.with({ label: 'Layouts' }));
+      const editor = spectator.query(WidgetEditorGroupComponent);
       expect(await layoutSelector.getValue()).toEqual(WidgetGroupLayout.Full);
-
+      expect(editor.group).toEqual({ layout: WidgetGroupLayout.Full, slots: [{ type: null }] });
       await layoutSelector.setValue(WidgetGroupLayout.Halves);
       expect(await layoutSelector.getValue()).toEqual(WidgetGroupLayout.Halves);
+      expect(editor.group).toEqual({ layout: WidgetGroupLayout.Halves, slots: [{ type: null }, { type: null }] });
     });
   });
 
