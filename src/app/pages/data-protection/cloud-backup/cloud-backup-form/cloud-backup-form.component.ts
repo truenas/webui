@@ -10,7 +10,6 @@ import {
   Observable, combineLatest, map, of,
 } from 'rxjs';
 import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
-import { mntPath } from 'app/enums/mnt-path.enum';
 import { Role } from 'app/enums/role.enum';
 import { helptextCloudBackup } from 'app/helptext/data-protection/cloud-backup/cloud-backup';
 import { CloudBackup, CloudBackupUpdate } from 'app/interfaces/cloud-backup.interface';
@@ -49,7 +48,7 @@ export class CloudBackupFormComponent implements OnInit {
   }
 
   form = this.fb.group({
-    path: [[mntPath], [Validators.required]],
+    path: [[] as string[], [Validators.required]],
     credentials: [null as number, [Validators.required]],
     schedule: [CronPresetValue.Daily, [Validators.required]],
     exclude: [[] as string[]],
