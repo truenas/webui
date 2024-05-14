@@ -40,6 +40,7 @@
   "Delete Cloud Backup <b>\"{name}\"</b>?": "",
   "Delete group": "",
   "Device removed": "",
+  "Disk Details for {disk}": "",
   "Disks on {enclosure}": "",
   "Docker Hub Rate Limit Warning": "",
   "Edit Expansion Shelve": "",

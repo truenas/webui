@@ -51,6 +51,7 @@
   "Delete Cloud Backup <b>\"{name}\"</b>?": "",
   "Delete group": "",
   "Device removed": "",
+  "Disk Details for {disk}": "",
   "Disks on {enclosure}": "",
   "Distributed Hot Spares": "",
   "Docker Hub Rate Limit Warning": "",

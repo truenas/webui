@@ -7,12 +7,14 @@ import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { MatTooltip } from '@angular/material/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
+import { IxFileSizeModule } from 'app/modules/ix-file-size/ix-file-size.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
 import { LayoutModule } from 'app/modules/layout/layout.module';
 import { SearchInput1Component } from 'app/modules/search-input1/search-input1.component';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
+import { DiskComponent } from 'app/pages/system/enclosure/components/disk-component/disk.component';
 import { DiskOverviewComponent } from 'app/pages/system/enclosure/components/disk-overview/disk-overview.component';
 import { EnclosureDashboardComponent } from 'app/pages/system/enclosure/components/enclosure-dashboard/enclosure-dashboard.component';
 import { JbofFormComponent } from 'app/pages/system/enclosure/components/enclosure-dashboard/jbof-list/jbof-form/jbof-form.component';
@@ -45,6 +47,7 @@ import { routing } from 'app/pages/system/system.routing';
     MatTooltip,
     IxFormsModule,
     ReactiveFormsModule,
+    IxFileSizeModule,
   ],
   declarations: [
     EnclosureDashboardComponent,
@@ -55,6 +58,7 @@ import { routing } from 'app/pages/system/system.routing';
     JbofListComponent,
     JbofFormComponent,
     SetEnclosureLabelDialogComponent,
+    DiskComponent,
   ],
   providers: [
     EnclosureStore,

@@ -75,6 +75,7 @@
   "Directory Service Read": "",
   "Directory Service Write": "",
   "Directory Services Groups": "",
+  "Disk Details for {disk}": "",
   "Disks on {enclosure}": "",
   "Distributed Hot Spares": "",
   "Docker Hub Rate Limit Warning": "",

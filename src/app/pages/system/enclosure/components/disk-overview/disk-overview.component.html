@@ -1,3 +1,73 @@
 <div class="container">
-  {{ slot() ? (slot().dev || slot().descriptor) : 'Slot not selected' }}
+  <div class="disk-details-header">
+    <span *ngIf="!slot()">{{ 'Disks Overview' | translate }}</span>
+    <ng-container *ngIf="slot()">
+      <button
+        mat-mini-fab
+        color="primary"
+        ixTest="close-details"
+        (click)="closeDetails()"
+      >
+        <ix-icon name="chevron_left"></ix-icon>
+      </button>
+      <span>
+        {{ 'Disk Details for {disk}' | translate : { disk: diskName } }}
+      </span>
+    </ng-container>
+  </div>
+  <div *ngIf="slot(); else overview" class="disk-details-container">
+    <div class="drive">
+      <ix-disk-ui [data]="{ name: diskName, type: slot().type }"></ix-disk-ui>
+
+      <div class="capacity">{{ slot().size | ixFileSize }}</div>
+      <div class="disk-actions">
+        <button
+          *ngIf="slot().supports_identify_light"
+          mat-button
+          color="primary"
+          ixTest="identify-drive"
+        >
+          {{ 'Identify Drive' | translate }}
+        </button>
+      </div>
+    </div>
+    <div class="details">
+      <div class="details-grid">
+        <div class="detail">
+          <div class="label">{{ 'Pool' | translate }}</div>
+          <div class="value">
+            {{ slot().pool_info?.pool_name || ('Disk not attached to any pools.' | translate) }}
+          </div>
+        </div>
+        <div class="detail">
+          <div class="label">{{ 'Model' | translate }}</div>
+          <div class="value">{{ slot().model }}</div>
+        </div>
+        <div class="detail">
+          <div class="label">{{ 'Serial' | translate }}</div>
+          <div class="value">{{ slot().serial }}</div>
+        </div>
+        <div class="detail">
+          <div class="label">{{ 'Status' | translate }}</div>
+          <div class="value">{{ slot().pool_info?.disk_status }}</div>
+        </div>
+        <div class="detail">
+          <div class="label">{{ 'Rotation Rate' | translate }}</div>
+          <div class="value">
+            <ng-container *ngIf="slot().rotationrate; else flash">
+              {{ slot().rotationrate }}{{ 'RPM' | translate }}
+            </ng-container>
+            <ng-template #flash>
+              {{ 'Not Available' | translate }}
+            </ng-template>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <ng-template #overview>
+    <div class="disk-overview">
+      {{ 'Slot not selected' }}
+    </div>
+  </ng-template>
 </div>

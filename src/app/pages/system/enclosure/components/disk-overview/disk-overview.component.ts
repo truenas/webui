@@ -2,6 +2,7 @@ import {
   ChangeDetectionStrategy, Component, input,
 } from '@angular/core';
 import { DashboardEnclosureSlot } from 'app/interfaces/enclosure.interface';
+import { EnclosureStore } from 'app/pages/system/enclosure/services/enclosure.store';
 
 @Component({
   selector: 'ix-disk-overview',
@@ -11,4 +12,16 @@ import { DashboardEnclosureSlot } from 'app/interfaces/enclosure.interface';
 })
 export class DiskOverviewComponent {
   slot = input.required<DashboardEnclosureSlot | null>();
+
+  get diskName(): string {
+    return this.slot().dev || this.slot().descriptor;
+  }
+
+  constructor(
+    private enclosureStore: EnclosureStore,
+  ) {}
+
+  closeDetails(): void {
+    this.enclosureStore.selectSlot(null);
+  }
 }
