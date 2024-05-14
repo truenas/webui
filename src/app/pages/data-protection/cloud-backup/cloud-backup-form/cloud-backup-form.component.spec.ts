@@ -117,7 +117,7 @@ describe('CloudBackupFormComponent', () => {
       const form = await loader.getHarness(IxFormHarness);
       await form.fillForm({
         'Source Path': '/mnt/my pool 2',
-        Description: 'New Cloud Backup Task',
+        Name: 'New Cloud Backup Task',
         Password: 'qwerty',
         Credentials: 'Storj iX (Storj)',
         'Keep Last': 3,
@@ -173,7 +173,7 @@ describe('CloudBackupFormComponent', () => {
       expect(await form.getValues()).toEqual({
         Bucket: '',
         Credentials: 'Storj iX (Storj)',
-        Description: 'sdf',
+        Name: 'sdf',
         Folder: '/My Folder',
         'Keep Last': '2',
         Password: '1234',
@@ -205,7 +205,7 @@ describe('CloudBackupFormComponent', () => {
     it('saves updated cloud backup task when form opened for edit is saved', async () => {
       const form = await loader.getHarness(IxFormHarness);
       await form.fillForm({
-        Description: 'Edited description',
+        Name: 'Edited description',
         Password: 'qwerty123',
         Bucket: 'bucket1',
         'Source Path': ['/mnt/path1', '/mnt/path2'],
