@@ -9,7 +9,7 @@ export enum ReportingGraphName {
   NfsStatBytes = 'nfsstatbytes', // deprecated
   Partition = 'df', // deprecated
   Processes = 'processes', // deprecated
-  Swap = 'swap',
+  Swap = 'swap', // removed https://ixsystems.atlassian.net/browse/NAS-128971
   SystemLoad = 'load',
   Target = 'ctl', // deprecated or unavailable
   Uptime = 'uptime',
