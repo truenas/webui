@@ -24,6 +24,7 @@
             formControlName="credentials"
             [label]="helptext.credentials_placeholder | translate"
             [tooltip]="helptext.credentials_tooltip | translate"
+            [filterByProviders]="[CloudSyncProviderName.Storj]"
             [required]="true"
           ></ix-cloud-credentials-select>
           <ix-select
