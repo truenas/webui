@@ -1,11 +1,16 @@
-<mat-card class="card">
+<mat-card class="card" [ixUiSearch]="searchableElements.elements.diskHealth">
   <mat-card-header>
     <h3 mat-card-title>
       {{ 'Disk Health' | translate }}
       <ix-pool-card-icon [type]="iconType" [tooltip]="iconTooltip"></ix-pool-card-icon>
     </h3>
 
-    <a mat-button ixTest="manage-disks" [routerLink]="['/storage', 'disks']">
+    <a
+      mat-button
+      ixTest="manage-disks"
+      [routerLink]="['/storage', 'disks']"
+      [ixUiSearch]="searchableElements.elements.manageDisks"
+    >
       {{ 'Manage Disks' | translate }}
     </a>
   </mat-card-header>

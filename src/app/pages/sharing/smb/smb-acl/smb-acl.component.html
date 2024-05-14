@@ -43,7 +43,7 @@
               ></ix-combobox>
 
               <ix-combobox
-                *ngIf="entry.controls.ae_who.value === nfsAclTag.UserGroup"
+                *ngIf="groupProvider && entry.controls.ae_who.value === nfsAclTag.UserGroup"
                 formControlName="group"
                 [label]="'Group' | translate"
                 [provider]="groupProvider"

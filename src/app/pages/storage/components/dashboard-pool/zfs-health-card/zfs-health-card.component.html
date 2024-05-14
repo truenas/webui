@@ -1,4 +1,4 @@
-<mat-card class="card" fxLayout="column">
+<mat-card class="card" fxLayout="column" [ixUiSearch]="searchableElements.elements.zfsHealth">
   <mat-card-header>
     <h3 mat-card-title>
       {{ 'ZFS Health' | translate }}
@@ -10,6 +10,7 @@
         *ixRequiresRoles="requiredRoles"
         mat-button
         ixTest="scrub"
+        [ixUiSearch]="searchableElements.elements.scrub"
         (click)="onStartScrub()"
       >
         {{ 'Scrub' | translate }}
@@ -75,7 +76,7 @@
       </a>
     </div>
 
-    <div class="details-item">
+    <div class="details-item" [ixUiSearch]="searchableElements.elements.autoTrim">
       <div class="label">{{ 'Auto TRIM' | translate }}:</div>
       <div class="value">
         {{ pool.autotrim.value === 'on' ? ('On' | translate) : ('Off' | translate) }}

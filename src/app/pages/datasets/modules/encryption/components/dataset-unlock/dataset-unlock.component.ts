@@ -23,6 +23,7 @@ import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.com
 import { UnlockSummaryDialogComponent } from 'app/pages/datasets/modules/encryption/components/unlock-summary-dialog/unlock-summary-dialog.component';
 import { AuthService } from 'app/services/auth/auth.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 interface DatasetFormGroup {
   key?: FormControl<string>;
@@ -73,6 +74,7 @@ export class DatasetUnlockComponent implements OnInit {
   private apiEndPoint: string;
 
   constructor(
+    private ws: WebSocketService,
     private formBuilder: FormBuilder,
     protected aroute: ActivatedRoute,
     private authService: AuthService,
@@ -113,70 +115,61 @@ export class DatasetUnlockComponent implements OnInit {
   }
 
   getEncryptionSummary(): void {
-    const dialogRef = this.matDialog.open(EntityJobComponent, {
-      data: { title: helptextUnlock.fetching_encryption_summary_title },
-      disableClose: true,
+    this.dialogService.jobDialog(
+      this.ws.job('pool.dataset.encryption_summary', [this.pk]),
+      {
+        title: this.translate.instant(helptextUnlock.fetching_encryption_summary_title),
+        description: this.translate.instant(helptextUnlock.fetching_encryption_summary_message, { dataset: this.pk }),
+      },
+    )
+      .afterClosed()
+      .pipe(
+        this.errorHandler.catchError(),
+        untilDestroyed(this),
+      )
+      .subscribe((job) => {
+        this.processSummary(job.result);
+      });
+  }
+
+  private processSummary(summary: DatasetEncryptionSummary[]): void {
+    if (!summary?.length) {
+      return;
+    }
+
+    summary.forEach((result, i) => {
+      const isPassphrase = result.key_format === DatasetEncryptionType.Passphrase;
+      if (this.form.controls.datasets.controls[i] === undefined) {
+        if (isPassphrase) {
+          this.form.controls.datasets.push(this.formBuilder.group({
+            name: [''],
+            passphrase: ['', [Validators.minLength(8)]],
+            is_passphrase: [true],
+          }) as FormGroup<DatasetFormGroup>);
+        } else {
+          this.form.controls.datasets.push(this.formBuilder.group({
+            name: [''],
+            key: ['', [Validators.minLength(64), Validators.maxLength(64)]],
+            file: [null as File[]],
+            is_passphrase: [false],
+          }) as FormGroup<DatasetFormGroup>);
+        }
+
+        (this.form.controls.datasets.controls[i].controls.file as FormControl)?.valueChanges.pipe(
+          switchMap((files: File[]) => (!files?.length ? of('') : from(files[0].text()))),
+          untilDestroyed(this),
+        ).subscribe((key) => {
+          (this.form.controls.datasets.controls[i].controls.key as FormControl).setValue(key);
+        });
+      }
+      this.form.controls.datasets.disable();
+      (this.form.controls.datasets.controls[i].controls.name as FormControl).setValue(result.name);
+      (this.form.controls.datasets.controls[i].controls.is_passphrase as FormControl).setValue(isPassphrase);
     });
-    dialogRef.componentInstance.setDescription(
-      this.translate.instant(helptextUnlock.fetching_encryption_summary_message) + this.pk,
+    this.hideFileInput = this.form.controls.datasets.value.every(
+      (dataset) => dataset.is_passphrase,
     );
-    dialogRef.componentInstance.setCall('pool.dataset.encryption_summary', [this.pk]);
-    dialogRef.componentInstance.submit();
-    dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe({
-      next: (job: Job<DatasetEncryptionSummary[]>) => {
-        if (!job) {
-          return;
-        }
-
-        dialogRef.close();
-        if (job.result && job.result.length > 0) {
-          for (let i = 0; i < job.result.length; i++) {
-            const result = job.result[i];
-            const isPassphrase = result.key_format === DatasetEncryptionType.Passphrase;
-            if (this.form.controls.datasets.controls[i] === undefined) {
-              if (isPassphrase) {
-                this.form.controls.datasets.push(this.formBuilder.group({
-                  name: [''],
-                  passphrase: ['', [Validators.minLength(8)]],
-                  is_passphrase: [true],
-                }) as FormGroup<DatasetFormGroup>);
-              } else {
-                this.form.controls.datasets.push(this.formBuilder.group({
-                  name: [''],
-                  key: ['', [Validators.minLength(64), Validators.maxLength(64)]],
-                  file: [null as File[]],
-                  is_passphrase: [false],
-                }) as FormGroup<DatasetFormGroup>);
-              }
-
-              (this.form.controls.datasets.controls[i].controls.file as FormControl)?.valueChanges.pipe(
-                switchMap((files: File[]) => (!files?.length ? of('') : from(files[0].text()))),
-                untilDestroyed(this),
-              ).subscribe((key) => {
-                (this.form.controls.datasets.controls[i].controls.key as FormControl).setValue(key);
-              });
-            }
-            this.form.controls.datasets.disable();
-            (this.form.controls.datasets.controls[i].controls.name as FormControl).setValue(result.name);
-            (this.form.controls.datasets.controls[i].controls.is_passphrase as FormControl).setValue(isPassphrase);
-          }
-          this.hideFileInput = this.form.controls.datasets.value.every(
-            (dataset) => dataset.is_passphrase,
-          );
-          this.form.controls.use_file.setValue(!this.hideFileInput);
-        }
-      },
-      error: this.handleError,
-    });
-    dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe({
-      next: (error) => {
-        if (error) {
-          dialogRef.close();
-          this.handleError(error);
-        }
-      },
-      error: this.handleError,
-    });
+    this.form.controls.use_file.setValue(!this.hideFileInput);
   }
 
   handleError = (error: WebSocketError | Job): void => {
@@ -248,7 +241,7 @@ export class DatasetUnlockComponent implements OnInit {
       disableClose: true,
     });
     dialogRef.componentInstance.setDescription(
-      this.translate.instant(helptextUnlock.fetching_encryption_summary_message) + this.pk,
+      this.translate.instant(helptextUnlock.fetching_encryption_summary_message, { dataset: this.pk }),
     );
 
     if (values.use_file) {

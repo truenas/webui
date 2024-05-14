@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+  ChangeDetectionStrategy, Component, OnInit,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
@@ -77,7 +77,6 @@ export class IscsiCardComponent implements OnInit {
     private ws: WebSocketService,
     private dialogService: DialogService,
     protected emptyService: EmptyService,
-    private cdr: ChangeDetectorRef,
     private store$: Store<ServicesState>,
   ) {}
 

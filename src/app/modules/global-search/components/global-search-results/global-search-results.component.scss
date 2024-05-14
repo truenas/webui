@@ -14,6 +14,7 @@
     left: 0;
     max-width: 100%;
     position: fixed;
+    width: 100%;
   }
 
   &::ng-deep {
@@ -80,6 +81,11 @@
     border-radius: 2px;
     cursor: pointer;
     padding: 13px 20px;
+
+    &.highlighted-result {
+      background-color: var(--bg1);
+      opacity: 0.8;
+    }
 
     &:hover {
       background-color: var(--bg1);

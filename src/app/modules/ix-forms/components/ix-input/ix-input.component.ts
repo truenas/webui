@@ -4,12 +4,10 @@ import {
   ChangeDetectorRef,
   Component,
   ElementRef,
-  EventEmitter,
   Input,
   OnChanges,
   OnDestroy,
   OnInit,
-  Output,
   ViewChild,
 } from '@angular/core';
 import {
@@ -42,11 +40,6 @@ export class IxInputComponent implements ControlValueAccessor, OnInit, OnChanges
   @Input() autocomplete = 'off';
   @Input() autocompleteOptions: Option[];
   @Input() maxLength = 524288;
-
-  /**
-   * @deprecated Avoid using. Use valueChanges.
-   */
-  @Output() inputBlur = new EventEmitter<unknown>();
 
   /** If formatted value returned by parseAndFormatInput has non-numeric letters
    * and input 'type' is a number, the input will stay empty on the form */
@@ -217,7 +210,6 @@ export class IxInputComponent implements ControlValueAccessor, OnInit, OnChanges
     }
 
     this.cdr.markForCheck();
-    this.inputBlur.emit();
   }
 
   onPasswordToggled(): void {

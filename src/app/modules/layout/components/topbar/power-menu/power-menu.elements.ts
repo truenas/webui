@@ -10,13 +10,16 @@ export const powerMenuElements = {
       anchor: 'power-menu',
     },
     logOut: {
-      hierarchy: [T('LogOut')],
+      hierarchy: [T('Log Out')],
+      synonyms: [T('Sign Out')],
     },
     restart: {
       hierarchy: [T('Restart')],
+      synonyms: [T('Reboot')],
     },
     shutDown: {
       hierarchy: [T('Shut Down')],
+      synonyms: [T('Power Off'), T('Turn Off')],
     },
   },
 } satisfies UiSearchableElement;
