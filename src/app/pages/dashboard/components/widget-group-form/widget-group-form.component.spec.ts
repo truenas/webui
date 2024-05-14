@@ -6,6 +6,7 @@ import { MatIconTestingModule } from '@angular/material/icon/testing';
 import { Spectator } from '@ngneat/spectator';
 import { mockProvider, createComponentFactory } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { IxIconGroupHarness } from 'app/modules/ix-forms/components/ix-icon-group/ix-icon-group.harness';
 import { ChainedRef } from 'app/modules/ix-forms/components/ix-slide-in/chained-component-ref';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
@@ -44,6 +45,7 @@ describe('WidgetGroupFormComponent', () => {
       MockComponent(WidgetGroupSlotFormComponent),
     ],
     providers: [
+      mockAuth(),
       mockProvider(ChainedRef, chainedComponentRef),
       mockProvider(IxSlideInService),
       mockProvider(FormErrorHandlerService),
