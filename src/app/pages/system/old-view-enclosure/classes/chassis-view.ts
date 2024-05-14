@@ -6,7 +6,6 @@ import {
 } from 'popmotion';
 import { Subject } from 'rxjs';
 import { filter } from 'rxjs/operators';
-import { ThemeUtils } from 'app/core/classes/theme-utils/theme-utils';
 import { DriveTray } from 'app/pages/system/old-view-enclosure/classes/drivetray';
 import {
   ChangeDriveTrayColorEvent,
@@ -75,13 +74,10 @@ export class ChassisView {
   initialized = false;
   loader: PIXI.loaders.Loader;
   autoPosition = true;
-  protected utils: ThemeUtils;
   gapX = 10;
   gapY = 2;
 
   constructor() {
-    this.utils = new ThemeUtils();
-
     this.container = new PIXI.Container();
     this.driveTrays = new PIXI.Container();
     this.events = new Subject<EnclosureEvent>();
