@@ -56,7 +56,9 @@ export class EnclosureStore extends ComponentStore<EnclosureState> {
     );
   });
 
-  selectEnclosure = this.updater((state, index: number) => {
+  selectEnclosure = this.updater((state, id: string) => {
+    const index = state.enclosures.findIndex((enclosure) => enclosure.id === id);
+
     return {
       ...state,
       selectedEnclosureIndex: index,

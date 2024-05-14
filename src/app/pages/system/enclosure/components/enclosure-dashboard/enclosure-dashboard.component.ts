@@ -30,7 +30,7 @@ export class EnclosureDashboardComponent {
         return;
       }
 
-      this.enclosureStore.selectEnclosure(Number(params.get('enclosure')));
+      this.enclosureStore.selectEnclosure(params.get('enclosure'));
       // TODO: Add error state for missing enclosure.
     });
   }

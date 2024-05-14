@@ -13,6 +13,12 @@ import {
 import { ElementsComponent } from './components/views/elements-view/elements.component';
 
 const routes: Routes = [
+  // Has to be above other items.
+  {
+    path: 'jbof',
+    component: JbofListComponent,
+    data: { title: T('NVMe-oF Expansion Shelves'), breadcrumb: null },
+  },
   {
     path: '',
     component: EnclosureDashboardComponent,
@@ -34,11 +40,6 @@ const routes: Routes = [
         data: { title: T('View Enclosure'), breadcrumb: null },
       },
     ],
-  },
-  {
-    path: 'jbof',
-    component: JbofListComponent,
-    data: { title: T('NVMe-oF Expansion Shelves'), breadcrumb: null },
   },
 ];
 
