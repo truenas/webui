@@ -110,8 +110,12 @@ describe('WidgetGroupFormComponent', () => {
     });
 
     it('changes slot', () => {
-      spectator.component.selectedSlotChanged(1);
-      expect(spectator.component.selectedSlot()).toEqual({
+      const editor = spectator.query(WidgetEditorGroupComponent);
+      editor.selectedSlotChange.emit(1);
+
+      spectator.detectChanges();
+      const slotForm = spectator.query(WidgetGroupSlotFormComponent);
+      expect(slotForm.slotConfig).toEqual({
         type: WidgetType.InterfaceIp,
         settings: {
           interface: '2',
@@ -122,18 +126,22 @@ describe('WidgetGroupFormComponent', () => {
     });
 
     it('disables button when slot has validation errors', async () => {
-      spectator.component.updateSlotValidation([SlotPosition.First, { interfaceIp: { required: true } }]);
+      const slotForm = spectator.query(WidgetGroupSlotFormComponent);
+      slotForm.validityChange.emit([SlotPosition.First, { interface: { required: true } }]);
+      spectator.detectChanges();
       const submitBtn = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       expect(await submitBtn.isDisabled()).toBe(true);
     });
 
     it('updates settings', async () => {
-      spectator.component.updateSlotSettings({
+      const slotForm = spectator.query(WidgetGroupSlotFormComponent);
+      slotForm.settingsChange.emit({
         slotPosition: SlotPosition.First,
         type: WidgetType.InterfaceIp,
         settings: { interface: '5' },
         slotSize: SlotSize.Half,
       });
+      spectator.detectChanges();
       const submitBtn = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await submitBtn.click();
 
