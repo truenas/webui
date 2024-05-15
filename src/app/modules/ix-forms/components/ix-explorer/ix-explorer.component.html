@@ -60,7 +60,7 @@
 
         <ng-template #folderIcon>
           <ng-container *ngIf="!node.data.isLock; else lockIcon">
-            <ix-icon *ngIf="node.data.isMountpoint" name="folder"></ix-icon>
+            <ix-icon *ngIf="node.data.isMountpoint" name="ix:dataset"></ix-icon>
             <ix-icon *ngIf="!node.data.isMountpoint" name="folder_open"></ix-icon>
           </ng-container>
         </ng-template>

@@ -14,7 +14,12 @@
     class="inert-container"
     inert
   >
-    <ng-container *ngComponentOutlet="slot.component; inputs: slot.inputs;" />
+    <div *ngIf="hasErrors(slotIndex); else component" class="error">
+      <ix-widget-error [message]="'Widget has errors' | translate"></ix-widget-error>
+    </div>
+    <ng-template #component>
+      <ng-container *ngComponentOutlet="slot.component; inputs: slot.inputs;" />
+    </ng-template>
   </div>
 
   <ng-template #emptySlot>

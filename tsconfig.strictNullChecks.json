@@ -222,7 +222,6 @@
     "./src/app/helptext/api-keys.ts",
     "./src/app/helptext/apps/apps.ts",
     "./src/app/helptext/data-protection/cloudsync/cloudsync.ts",
-    "./src/app/helptext/data-protection/data-protection-dashboard/data-protection-dashboard.ts",
     "./src/app/helptext/data-protection/replication/replication-wizard.ts",
     "./src/app/helptext/data-protection/replication/replication.ts",
     "./src/app/helptext/data-protection/rsync/rsync-form.ts",

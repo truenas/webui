@@ -27,7 +27,7 @@ export class WidgetInterfaceIpComponent implements WidgetComponent<WidgetInterfa
   readonly name = interfaceIpWidget.name;
 
   protected ips = computed(() => {
-    const interfaceId = this.settings().interface;
+    const interfaceId = this.settings()?.interface || '';
 
     return mapLoadedValue(this.interfaces(), (interfaces) => this.getIp4Addresses(interfaces, interfaceId));
   });

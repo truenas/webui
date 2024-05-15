@@ -1,6 +1,7 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
 export enum WidgetCategory {
+  Empty = 'empty',
   Network = 'network',
   Help = 'help',
   Cpu = 'cpu',
@@ -10,6 +11,7 @@ export enum WidgetCategory {
 }
 
 export const widgetCategoryLabels = new Map<WidgetCategory, string>([
+  [WidgetCategory.Empty, T('Empty')],
   [WidgetCategory.Network, T('Network')],
   [WidgetCategory.Help, T('Help')],
   [WidgetCategory.Cpu, T('CPU')],

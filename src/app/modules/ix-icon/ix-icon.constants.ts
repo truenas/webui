@@ -9,6 +9,7 @@ export const ixSvgIcons = {
   anti_lock: 'assets/customicons/anti-lock.svg',
   two_factor_auth: 'assets/customicons/2fa.svg',
   dataset: 'assets/customicons/dataset.svg',
+  dataset_root: 'assets/customicons/dataset_root.svg',
   ha_disabled: 'assets/customicons/ha_disabled.svg',
   ha_enabled: 'assets/customicons/ha_enabled.svg',
   ha_reconnecting: 'assets/customicons/ha_reconnecting.svg',
