@@ -4,6 +4,7 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { DashboardEnclosure } from 'app/interfaces/enclosure.interface';
 import {
   EnclosureHeaderComponent,
@@ -30,6 +31,7 @@ describe('EnclosureHeaderComponent', () => {
         } as DashboardEnclosure),
         renameSelectedEnclosure: jest.fn(),
       }),
+      mockAuth(),
     ],
   });
 
