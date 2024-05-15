@@ -130,7 +130,8 @@ describe('CloudBackupFormComponent', () => {
 
       expect(spectator.inject(WebSocketService).call).toHaveBeenLastCalledWith('cloud_backup.create', [{
         args: '',
-        attributes: { folder: '/' },
+        attributes: { folder: '/', bucket: 'path_to_bucket1' },
+        bwlimit: undefined,
         credentials: 2,
         description: 'New Cloud Backup Task',
         enabled: true,
@@ -218,6 +219,7 @@ describe('CloudBackupFormComponent', () => {
         args: '',
         attributes: {
           folder: '/My Folder',
+          bucket: 'path_to_bucket1',
         },
         bwlimit: undefined,
         credentials: 2,
