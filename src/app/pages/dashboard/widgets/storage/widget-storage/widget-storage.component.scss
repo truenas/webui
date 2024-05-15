@@ -54,14 +54,6 @@
     place-content: stretch flex-start;
     width: 100%;
 
-    &:hover,
-    &:focus,
-    &:active {
-      .tile-header-button {
-        display: inline-flex;
-      }
-    }
-
     .tile-header {
       align-items: center;
       box-sizing: border-box;
@@ -69,11 +61,6 @@
       flex-direction: row;
       min-width: 0;
       place-content: center flex-start;
-    }
-
-    .tile-header-button {
-      display: none;
-      flex-shrink: 0;
     }
 
     .tile-header-title {

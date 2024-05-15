@@ -24,19 +24,10 @@
         <mat-grid-tile *ngFor="let poolInfo of poolsInfo().slice(0, 6)" class="grid-tile">
           <div class="tile" [class.skimpy-tile]="isThreeTilesInColumn">
             <div class="tile-header">
-              <h4 class="tile-header-title">{{ poolInfo.name }}</h4>
-              <div class="tile-header-button">
-                <a
-                  mat-icon-button
-                  ixTest="pool-status"
-                  matTooltipPosition="above"
-                  [routerLink]="['/storage']"
-                  [attr.aria-label]="'Pool Status' | translate"
-                  [matTooltip]="'Pool Status' | translate"
-                >
-                  <ix-icon name="mdi-database"></ix-icon>
-                </a>
-              </div>
+              <h4
+                class="tile-header-title" 
+                [matTooltip]="poolInfo.name"
+              >{{ poolInfo.name }}</h4>
             </div>
             <div class="tile-content">
               <ul [style.max-width.%]="100 / getColumnsInTile(poolInfo.name)">
