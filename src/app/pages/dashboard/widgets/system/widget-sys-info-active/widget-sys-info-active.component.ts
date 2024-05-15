@@ -4,6 +4,7 @@ import {
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { Store } from '@ngrx/store';
+import { filter, map } from 'rxjs';
 import { selectUpdateJobForActiveNode } from 'app/modules/jobs/store/job.selectors';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
 import { SlotSize } from 'app/pages/dashboard/types/widget.interface';
@@ -30,7 +31,10 @@ export class WidgetSysInfoActiveComponent {
   isUpdateRunning = toSignal(this.store$.select(selectUpdateJobForActiveNode));
 
   updateAvailable = toSignal(this.resources.updateAvailable$);
-  systemInfo = toSignal(this.resources.systemInfo$);
+  systemInfo = toSignal(this.resources.systemInfo$.pipe(
+    filter((state) => !state.isLoading),
+    map((state) => state.value),
+  ));
   elapsedTenSecondsInterval = toSignal(this.resources.refreshInteval$);
 
   version = computed(() => getSystemVersion(this.systemInfo().version, this.systemInfo().codename));

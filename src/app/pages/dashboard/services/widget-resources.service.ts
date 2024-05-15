@@ -38,6 +38,7 @@ export class WidgetResourcesService {
   );
 
   readonly systemInfo$ = this.ws.call('webui.main.dashboard.sys_info').pipe(
+    toLoadingState(),
     shareReplay({ bufferSize: 1, refCount: true }),
   );
 

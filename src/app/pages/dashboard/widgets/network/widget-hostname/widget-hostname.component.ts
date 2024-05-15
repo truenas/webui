@@ -1,7 +1,6 @@
 import {
   ChangeDetectionStrategy, Component, input,
 } from '@angular/core';
-import { toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
 import { WidgetComponent } from 'app/pages/dashboard/types/widget-component.interface';
 import {
@@ -19,7 +18,7 @@ export class WidgetHostnameComponent implements WidgetComponent {
   size = input.required<SlotSize>();
   readonly name = hostnameWidget.name;
 
-  systemInfo$ = this.resources.systemInfo$.pipe(toLoadingState());
+  systemInfo$ = this.resources.systemInfo$;
 
   constructor(
     private resources: WidgetResourcesService,

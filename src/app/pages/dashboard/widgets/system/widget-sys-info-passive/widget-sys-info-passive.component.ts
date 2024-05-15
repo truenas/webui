@@ -41,7 +41,10 @@ export class WidgetSysInfoPassiveComponent {
 
   elapsedTenSecondsInterval = toSignal(this.resources.refreshInteval$);
   updateAvailable = toSignal(this.resources.updateAvailable$);
-  systemInfo = toSignal(this.resources.systemInfo$.pipe(map((sysInfo) => sysInfo.remote_info)));
+  systemInfo = toSignal(this.resources.systemInfo$.pipe(
+    filter((state) => !state.isLoading),
+    map((state) => state.value.remote_info),
+  ));
 
   version = computed(() => getSystemVersion(this.systemInfo().version, this.systemInfo().codename));
   uptime = computed(() => this.systemInfo().uptime_seconds + (this.elapsedTenSecondsInterval() * 10));

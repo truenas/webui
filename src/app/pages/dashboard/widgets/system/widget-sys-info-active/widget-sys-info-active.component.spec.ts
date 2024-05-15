@@ -13,6 +13,7 @@ import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-dat
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { Codename } from 'app/enums/codename.enum';
 import { ProductType } from 'app/enums/product-type.enum';
+import { LoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import { SystemLicense, SystemInfo } from 'app/interfaces/system-info.interface';
 import { selectUpdateJobForActiveNode } from 'app/modules/jobs/store/job.selectors';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
@@ -63,7 +64,11 @@ describe('WidgetSysInfoActiveComponent', () => {
     providers: [
       mockAuth(),
       mockProvider(WidgetResourcesService, {
-        systemInfo$: of(systemInfo),
+        systemInfo$: of({
+          isLoading: false,
+          error: null,
+          value: systemInfo,
+        } as LoadingState<SystemInfo>),
         updateAvailable$: of(true),
         refreshInteval$: of(0),
       }),

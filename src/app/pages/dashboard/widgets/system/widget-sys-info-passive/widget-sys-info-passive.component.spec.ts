@@ -14,6 +14,7 @@ import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-dat
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { Codename } from 'app/enums/codename.enum';
 import { ProductType } from 'app/enums/product-type.enum';
+import { LoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import { SystemLicense, SystemInfo } from 'app/interfaces/system-info.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { selectUpdateJobForPassiveNode } from 'app/modules/jobs/store/job.selectors';
@@ -70,7 +71,11 @@ describe('WidgetSysInfoPassiveComponent', () => {
       mockProvider(DialogService),
       mockProvider(Router),
       mockProvider(WidgetResourcesService, {
-        systemInfo$: of(systemInfo),
+        systemInfo$: of({
+          isLoading: false,
+          error: null,
+          value: systemInfo,
+        } as LoadingState<SystemInfo>),
         refreshInteval$: of(0),
         updateAvailable$: of(true),
       }),
