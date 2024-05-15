@@ -1,18 +1,31 @@
-import { TopologyItemStatus } from './vdev-status.enum';
-
 export enum EnclosureSlotStatus {
   Clear = 'CLEAR',
   Fault = 'FAULT',
   Identify = 'IDENTIFY',
 }
 
-export enum EnclosureSlotDiskStatus {
-  Available = 'AVAILABLE',
-  Fault = 'FAULT',
+export enum EnclosureStatus {
+  Ok = 'OK',
+  Invop = 'INVOP',
+  Info = 'INFO',
+  NonCrit = 'NON-CRIT',
+  Crit = 'CRIT',
+  Unrecov = 'UNRECOV',
+}
+
+export enum EnclosureDiskStatus {
+  Offline = 'OFFLINE',
+  Removed = 'REMOVED',
+  Faulted = 'FAULTED',
+  Split = 'SPLIT',
+  Unavail = 'UNAVAIL',
+  Degraded = 'DEGRADED',
+  Online = 'ONLINE',
+  Unknown = 'UNKNOWN',
 }
 
 // TODO: Find out what all element name possibilities are to complete the enum
-export enum EnclosureElementName {
+export enum EnclosureElementType {
   ArrayDeviceSlot = 'Array Device Slot',
   Enclosure = 'Enclosure',
   PowerSupply = 'Power Supply',
@@ -25,5 +38,3 @@ export enum EnclosureElementName {
   CurrentSensor = 'Current Sensor',
   DoorLock = 'Door Lock',
 }
-
-export type EnclosureSlotTopologyStatus = TopologyItemStatus | EnclosureSlotDiskStatus;

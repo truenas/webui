@@ -35,6 +35,7 @@ import {
   WidgetEditorGroupComponent,
 } from 'app/pages/dashboard/components/widget-group-form/widget-editor-group/widget-editor-group.component';
 import { WidgetGroupFormComponent } from 'app/pages/dashboard/components/widget-group-form/widget-group-form.component';
+import { WidgetGroupSlotFormComponent } from 'app/pages/dashboard/components/widget-group-form/widget-group-slot-form/widget-group-slot-form.component';
 import { routing } from 'app/pages/dashboard/dashboard.routing';
 import { DashboardStore } from 'app/pages/dashboard/services/dashboard.store';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
@@ -52,6 +53,7 @@ import { ProductImageComponent } from 'app/pages/dashboard/widgets/system/common
     WidgetGroupComponent,
     WidgetErrorComponent,
     WidgetGroupFormComponent,
+    WidgetGroupSlotFormComponent,
     WidgetEditorGroupComponent,
     WidgetDatapointComponent,
     WidgetGroupControlsComponent,

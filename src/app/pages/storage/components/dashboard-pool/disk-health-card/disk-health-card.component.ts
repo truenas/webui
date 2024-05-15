@@ -8,6 +8,7 @@ import { SmartTestResultPageType } from 'app/enums/smart-test-results-page-type.
 import { TemperatureUnit } from 'app/enums/temperature.enum';
 import { Pool } from 'app/interfaces/pool.interface';
 import { StorageDashboardDisk } from 'app/interfaces/storage.interface';
+import { diskHealthCardElements } from 'app/pages/storage/components/dashboard-pool/disk-health-card/disk-health-card.elements';
 import { getPoolDisks } from 'app/pages/storage/modules/disks/utils/get-pool-disks.utils';
 
 interface DiskState {
@@ -30,6 +31,8 @@ interface DiskState {
 export class DiskHealthCardComponent implements OnInit, OnChanges {
   @Input() poolState: Pool;
   @Input() disks: StorageDashboardDisk[] = [];
+
+  protected readonly searchableElements = diskHealthCardElements;
 
   SmartTestResultPageType = SmartTestResultPageType;
 

@@ -43,9 +43,6 @@ export const helptextLdap = {
   ldap_idmap_backend_tooltip: T('Backend used to map Windows security \
  identifiers (SIDs) to UNIX UIDs and GIDs. To configure the selected \
  backend, click <i>EDIT IDMAP</i>.'),
-  ldap_has_samba_schema_tooltip: T('Use Samba LDAP schema extensions to provide support for LDAP\
- authentication with SMB shares. DEPRECATED: Support for legacy samba schema for LDAP has been\
- deprecated and will be removed in a future TrueNAS version.'),
   ldap_auxiliary_parameters_tooltip: T('Additional options for <a\
  href="https://arthurdejong.org/nss-pam-ldapd/nslcd.conf.5"\
  target="_blank">nslcd.conf</a>.'),

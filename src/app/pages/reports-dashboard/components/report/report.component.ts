@@ -59,8 +59,6 @@ export class ReportComponent extends WidgetComponent implements OnInit, OnChange
   @Input() identifier?: string;
   @ViewChild(LineChartComponent, { static: false }) lineChart: LineChartComponent;
 
-  protected localTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-
   updateReport$ = new BehaviorSubject<IxSimpleChanges<this>>(null);
   fetchReport$ = new BehaviorSubject<FetchReportParams>(null);
   autoRefreshTimer: Subscription;
@@ -119,7 +117,6 @@ export class ReportComponent extends WidgetComponent implements OnInit, OnChange
       ReportingGraphName.Cpu,
       ReportingGraphName.Processes,
       ReportingGraphName.Uptime,
-      ReportingGraphName.Swap,
       ReportingGraphName.ZfsArcResult,
     ].includes(this.data?.name as ReportingGraphName);
   }

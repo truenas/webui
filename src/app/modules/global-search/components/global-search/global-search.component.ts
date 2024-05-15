@@ -37,6 +37,10 @@ export class GlobalSearchComponent implements OnInit {
   isLoading = false;
   systemVersion: string;
 
+  get isSearchInputFocused(): boolean {
+    return document.activeElement === this.searchInput?.nativeElement;
+  }
+
   constructor(
     protected sidenavService: SidenavService,
     private searchProvider: UiSearchProvider,
@@ -70,6 +74,11 @@ export class GlobalSearchComponent implements OnInit {
         break;
       case 'Enter':
         event.preventDefault();
+
+        if (this.isSearchInputFocused) {
+          moveToNextFocusableElement();
+          (this.document.activeElement as HTMLElement)?.click();
+        }
         break;
       default:
         if (event.key.length === 1 && !event.metaKey) {
@@ -134,12 +143,18 @@ export class GlobalSearchComponent implements OnInit {
 
   private listenForSelectionChanges(): void {
     this.searchProvider.selectionChanged$.pipe(
+      tap((config) => {
+        if (!this.searchDirectives.get(config)) {
+          this.searchDirectives.setPendingUiHighlightElement(config);
+        }
+      }),
       combineLatestWith(this.searchDirectives.directiveAdded$.pipe(filter(Boolean))),
       filter(([config]) => !!this.searchDirectives.get(config)),
       distinctUntilChanged(([prevConfig], [nextConfig]) => _.isEqual(prevConfig, nextConfig)),
       untilDestroyed(this),
     ).subscribe(([config]) => {
       this.resetInput();
+      this.searchDirectives.setPendingUiHighlightElement(null);
       this.document.querySelector<HTMLElement>('.ix-slide-in-background.open')?.click();
       this.document.querySelector<HTMLElement>('.ix-slide-in2-background.open')?.click();
       this.searchDirectives.get(config).highlight(config);

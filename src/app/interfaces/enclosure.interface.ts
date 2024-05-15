@@ -1,4 +1,6 @@
 import { Overwrite } from 'utility-types';
+import { DiskType } from 'app/enums/disk-type.enum';
+import { EnclosureStatus, EnclosureDiskStatus, EnclosureElementType } from 'app/enums/enclosure-slot-status.enum';
 import { VdevType } from 'app/enums/v-dev-type.enum';
 
 export interface Enclosure {
@@ -6,7 +8,7 @@ export interface Enclosure {
   model: string;
   controller: boolean;
   dmi: string;
-  status: string;
+  status: EnclosureStatus[];
   id: string;
   vendor: string;
   product: string;
@@ -41,20 +43,17 @@ export interface EnclosureSlotMetadata {
   slot: number;
 }
 
-export interface EnclosureElements {
-  'Array Device Slot': Record<number, EnclosureSlot>;
-  'SAS Expander'?: Record<number, EnclosureElement>;
-  'Enclosure'?: Record<number, EnclosureElement>;
-  'Temperature'?: Record<number, EnclosureElement>;
-  'Voltage Sensor'?: Record<number, EnclosureElement>;
-  'Cooling'?: Record<number, EnclosureElement>;
-}
+export type EnclosureElements = {
+  [key in EnclosureElementType]?: Record<number, EnclosureElement>;
+} & {
+  [EnclosureElementType.ArrayDeviceSlot]: Record<number, EnclosureSlot>;
+};
 
 export interface EnclosureElement {
   descriptor: string;
   status: string;
-  value: string;
-  value_raw: number;
+  value?: string;
+  value_raw?: number;
 }
 
 export type DashboardEnclosure = Overwrite<Enclosure, {
@@ -62,14 +61,15 @@ export type DashboardEnclosure = Overwrite<Enclosure, {
 }>;
 
 export interface DashboardEnclosureSlot {
+  drive_bay_number: number;
   descriptor: string;
-  status: string; // TODO: Enum?
+  status: string;
   dev: string;
   supports_identify_light: boolean;
   size: number;
   model: string;
   serial: string;
-  type: string; // TODO: Enum HDD,
+  type: DiskType;
   rotationrate: number;
   pool_info: EnclosureSlotPoolInfo | null;
 }
@@ -82,7 +82,7 @@ export interface EnclosureVdev {
 
 export interface EnclosureSlotPoolInfo {
   pool_name: string;
-  disk_status: string; // TODO: Enum: ONLINE,
+  disk_status: EnclosureDiskStatus;
   disk_read_errors: number;
   disk_write_errors: number;
   disk_checksum_errors: number;
@@ -92,5 +92,5 @@ export interface EnclosureSlotPoolInfo {
 }
 
 export type DashboardEnclosureElements = Overwrite<EnclosureElements, {
-  'Array Device Slot': Record<number, DashboardEnclosureSlot>;
+  [EnclosureElementType.ArrayDeviceSlot]: Record<number, DashboardEnclosureSlot>;
 }>;

@@ -19,7 +19,7 @@ export interface SetEnclosureLabelDialogData {
 
 @UntilDestroy()
 @Component({
-  selector: 'ix-set-enclosure-label-dialog',
+  selector: 'ix-old-set-enclosure-label-dialog',
   templateUrl: './set-enclosure-label-dialog.component.html',
   styleUrls: ['./set-enclosure-label-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

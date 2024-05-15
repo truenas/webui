@@ -117,10 +117,7 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy {
             ].includes(graphName);
             break;
           case ReportType.Memory:
-            condition = [
-              ReportingGraphName.Memory,
-              ReportingGraphName.Swap,
-            ].includes(graphName);
+            condition = [ReportingGraphName.Memory].includes(graphName);
             break;
           case ReportType.Network:
             condition = ReportingGraphName.NetworkInterface === graphName;

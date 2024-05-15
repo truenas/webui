@@ -9,7 +9,6 @@ export enum ReportingGraphName {
   NfsStatBytes = 'nfsstatbytes', // deprecated
   Partition = 'df', // deprecated
   Processes = 'processes', // deprecated
-  Swap = 'swap',
   SystemLoad = 'load',
   Target = 'ctl', // deprecated or unavailable
   Uptime = 'uptime',

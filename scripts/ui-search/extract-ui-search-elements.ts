@@ -32,7 +32,7 @@
  * 3️⃣. Provide config to the element [ixUiSearch]="singleSettingsExampleElements.theme"
  *
  * 4️⃣. Run the script to update `ui-searchable-elements.json`:
- * yarn extract-ui-searchable-elements
+ * yarn extract-ui-search-elements
  *
  * Explanations: 👇
  *
@@ -54,6 +54,17 @@
   Example: check access card -> [ixUiSearch]="searchableElements.elements.configureAccess"
   In this case I set custom anchor `#configure-access`, so in the access-form.elements.ts -> we need to
   provide `triggerAnchor: 'configure-access',`
+
+  ### Manual Render Elements
+  You can add `manualRenderElements` to the config, which will force-add elements to the search result
+  It will not work without specifying the desired ID it can target on the UI
+  👀 see `src/app/pages/services/services.elements.ts` as an example
+
+  ### Pending Highlight Elements
+  We may have some configs which will be available after some loading indicator has been resolved
+  For this case there is `pendingHighlightElement` which can be used in
+  component to highlight search element when loading indicator resolved
+  👀 see `src/app/pages/storage/components/dashboard-pool/dashboard-pool.component.ts` as an example
  */
 
 import * as fs from 'fs';
@@ -61,11 +72,11 @@ import { join } from 'path';
 import { UiSearchableElement } from 'app/modules/global-search/interfaces/ui-searchable-element.interface';
 import { extractComponentFileContent } from './extract-component-file-content';
 import { findComponentFiles } from './find-component-files';
-import { parseHtmlFile } from './parse-html-file';
+import { parseUiSearchElements } from './parse-ui-search-elements';
 
-let uiElements: UiSearchableElement[] = [];
+let uiSearchElements: UiSearchableElement[] = [];
 
-export async function extractUiSearchableElements(): Promise<void> {
+export async function extractUiSearchElements(): Promise<void> {
   try {
     const tsFiles = await findComponentFiles('src/**/*.elements.ts') || [];
 
@@ -73,18 +84,20 @@ export async function extractUiSearchableElements(): Promise<void> {
       const htmlComponentFilePath = elementsTsFilePath.replace('.elements.ts', '.component.html');
       const tsComponentFilePath = elementsTsFilePath.replace('.elements.ts', '.component.ts');
 
-      if (fs.existsSync(htmlComponentFilePath)) {
-        const elementConfig = require(join(__dirname, '../../', elementsTsFilePath)) as UiSearchableElement;
-        const componentProperties = extractComponentFileContent(tsComponentFilePath);
-        const elements = parseHtmlFile(htmlComponentFilePath, elementConfig, componentProperties);
-        uiElements = uiElements.concat(elements);
-      }
+      const elementConfig = require(join(__dirname, '../../', elementsTsFilePath)) as Record<string, UiSearchableElement>;
+      const componentProperties = extractComponentFileContent(tsComponentFilePath);
+      const uiSearchHtmlElements = parseUiSearchElements(htmlComponentFilePath, elementConfig, componentProperties);
+
+      uiSearchElements = uiSearchElements.concat([...uiSearchHtmlElements]);
     });
 
-    fs.writeFileSync('src/assets/ui-searchable-elements.json', JSON.stringify(uiElements, null, 2));
+    fs.writeFileSync(
+      'src/assets/ui-searchable-elements.json',
+      JSON.stringify(uiSearchElements, null, 2),
+    );
   } catch (err) {
     console.error('An error occurred:', err);
   }
 }
 
-extractUiSearchableElements();
+extractUiSearchElements();

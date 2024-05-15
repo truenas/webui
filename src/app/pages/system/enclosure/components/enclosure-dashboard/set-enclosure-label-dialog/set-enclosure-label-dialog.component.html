@@ -1,0 +1,30 @@
+<h1 matDialogTitle>{{ 'Change Enclosure Label' | translate }}</h1>
+
+<form [formGroup]="form" (submit)="onSubmit()">
+  <ix-input
+    formControlName="label"
+    [label]="enclosureLabel | translate"
+    [required]="!form.value.resetToDefault"
+  ></ix-input>
+
+  <ix-checkbox
+    formControlName="resetToDefault"
+    [label]="'Reset to default' | translate"
+  ></ix-checkbox>
+
+  <ix-form-actions>
+    <button mat-button type="button" ixTest="cancel" matDialogClose>
+      {{ 'Cancel' | translate }}
+    </button>
+
+    <button
+      mat-button
+      type="submit"
+      color="primary"
+      ixTest="save"
+      [disabled]="form.invalid"
+    >
+      {{ 'Save' | translate }}
+    </button>
+  </ix-form-actions>
+</form>

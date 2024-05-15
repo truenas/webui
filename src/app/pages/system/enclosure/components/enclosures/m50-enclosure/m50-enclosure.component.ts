@@ -2,6 +2,7 @@ import { KeyValue } from '@angular/common';
 import {
   ChangeDetectionStrategy, Component, computed, input, TrackByFunction,
 } from '@angular/core';
+import { EnclosureElementType } from 'app/enums/enclosure-slot-status.enum';
 import { DashboardEnclosure, DashboardEnclosureSlot } from 'app/interfaces/enclosure.interface';
 import { EnclosureComponent } from 'app/pages/system/enclosure/interfaces/enclosure-component.interface';
 import { EnclosureStore } from 'app/pages/system/enclosure/services/enclosure.store';
@@ -17,7 +18,7 @@ export class M50EnclosureComponent implements EnclosureComponent {
 
   readonly trackByNumber: TrackByFunction<KeyValue<string, DashboardEnclosureSlot>> = (_, slot) => slot.key;
 
-  readonly slots = computed(() => this.enclosure().elements['Array Device Slot']);
+  readonly slots = computed(() => this.enclosure().elements[EnclosureElementType.ArrayDeviceSlot]);
 
   getDriveTrayTransformation(slotNumber: string): string {
     const number = Number(slotNumber);

@@ -1,20 +1,18 @@
-<ng-template ixPageHeader>
-  <ix-page-header>
-    <ix-search-input1 [value]="filterString" (search)="onListFiltered($event)"></ix-search-input1>
-    <button
-      *ixRequiresRoles="requiredRoles"
-      mat-button
-      ixTest="add-jbof"
-      color="primary"
-      [disabled]="!canAddJbof"
-      [matTooltip]="'No available licensed Expansion Shelves ' | translate"
-      [matTooltipDisabled]="canAddJbof"
-      (click)="openForm()"
-    >
-      {{ 'Add' | translate }}
-    </button>
-  </ix-page-header>
-</ng-template>
+<ix-page-header>
+  <ix-search-input1 [value]="filterString" (search)="onListFiltered($event)"></ix-search-input1>
+  <button
+    *ixRequiresRoles="requiredRoles"
+    mat-button
+    ixTest="add-jbof"
+    color="primary"
+    [disabled]="!canAddJbof"
+    [matTooltip]="'No available licensed Expansion Shelves ' | translate"
+    [matTooltipDisabled]="canAddJbof"
+    (click)="openForm()"
+  >
+    {{ 'Add' | translate }}
+  </button>
+</ix-page-header>
 
 <div class="table-container" [ixUiSearch]="searchableElements.elements.jbof">
   <ix-table

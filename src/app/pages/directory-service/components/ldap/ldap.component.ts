@@ -50,7 +50,6 @@ export class LdapComponent implements OnInit {
     kerberos_principal: [''],
     timeout: [null as number],
     dns_timeout: [null as number],
-    has_samba_schema: [false],
     auxiliary_parameters: [''],
     schema: [''],
   });
@@ -125,7 +124,10 @@ export class LdapComponent implements OnInit {
         untilDestroyed(this),
       )
       .subscribe({
-        next: () => this.slideInRef.close(true),
+        next: () => {
+          this.snackbar.success(this.translate.instant('LDAP configuration updated'));
+          this.slideInRef.close(true);
+        },
         complete: () => {
           this.isLoading = false;
           this.cdr.markForCheck();

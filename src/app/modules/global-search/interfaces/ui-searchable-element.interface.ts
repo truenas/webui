@@ -12,4 +12,5 @@ export interface UiSearchableElement {
   routerLink?: string[];
   targetHref?: string;
   elements?: Record<string, UiSearchableElement>;
+  manualRenderElements?: Record<string, UiSearchableElement>;
 }
