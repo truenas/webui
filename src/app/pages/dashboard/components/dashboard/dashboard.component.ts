@@ -62,7 +62,6 @@ export class DashboardComponent implements OnInit {
     this.loadGroups();
   }
 
-  // TODO: Enter configuration mode. Probably store layout that is being edited in a new service.
   protected onConfigure(): void {
     this.isEditing.set(true);
   }
