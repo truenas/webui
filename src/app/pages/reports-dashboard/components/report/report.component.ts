@@ -116,7 +116,6 @@ export class ReportComponent extends WidgetComponent implements OnInit, OnChange
       ReportingGraphName.Cpu,
       ReportingGraphName.Processes,
       ReportingGraphName.Uptime,
-      ReportingGraphName.Swap,
       ReportingGraphName.ZfsArcResult,
     ].includes(this.data?.name as ReportingGraphName);
   }

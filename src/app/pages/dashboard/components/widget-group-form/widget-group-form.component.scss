@@ -19,3 +19,14 @@
     max-width: 50%;
   }
 }
+
+.widget-options-container {
+  padding: 16px 0;
+}
+
+.form-actions {
+  display: flex;
+  flex-direction: row-reverse;
+  gap: 8px;
+  justify-content: flex-end;
+}

@@ -12,9 +12,9 @@ import { EmptyType } from 'app/enums/empty-type.enum';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { WidgetGroupFormComponent } from 'app/pages/dashboard/components/widget-group-form/widget-group-form.component';
 import { DashboardStore } from 'app/pages/dashboard/services/dashboard.store';
-import { WidgetGroup, WidgetGroupLayout } from 'app/pages/dashboard/types/widget-group.interface';
+import { WidgetGroup } from 'app/pages/dashboard/types/widget-group.interface';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
+import { ChainedComponentResponse, IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 
 @UntilDestroy()
 @Component({
@@ -73,13 +73,14 @@ export class DashboardComponent implements OnInit {
   }
 
   protected onAddGroup(): void {
-    const newGroup: WidgetGroup = {
-      layout: WidgetGroupLayout.Full,
-      slots: [],
-    };
-
-    this.renderedGroups.update((groups) => [...groups, newGroup]);
-    this.onEditGroup(newGroup);
+    this.slideIn
+      .open(WidgetGroupFormComponent, true)
+      .pipe(untilDestroyed(this))
+      .subscribe((response: ChainedComponentResponse) => {
+        if (response.response) {
+          this.renderedGroups.update((groups) => [...groups, response.response as WidgetGroup]);
+        }
+      });
   }
 
   protected onEditGroup(group: WidgetGroup): void {
@@ -87,7 +88,6 @@ export class DashboardComponent implements OnInit {
       .open(WidgetGroupFormComponent, true, group)
       .pipe(untilDestroyed(this))
       .subscribe(() => {
-
       });
   }
 
