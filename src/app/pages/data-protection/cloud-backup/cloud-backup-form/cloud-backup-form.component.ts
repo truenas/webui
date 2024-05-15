@@ -218,7 +218,7 @@ export class CloudBackupFormComponent implements OnInit {
       path: [],
       credentials: (this.editingTask.credentials as CloudCredential).id,
       folder: this.editingTask.attributes.folder as string,
-      bucket: this.editingTask.attributes.bucket === newOption ? '' : this.editingTask.attributes.bucket as string,
+      bucket: this.editingTask.attributes.bucket === newOption ? '' : this.editingTask.attributes.bucket as string || '',
     });
 
     if (this.editingTask.include?.length) {
