@@ -23,6 +23,7 @@ export class ProductImageComponent {
   isHaLicensed = input.required<boolean>();
   isIxHardware = input.required<boolean>();
 
+  isUnsupportedHardware = computed(() => this.isEnterprise() && !this.isIxHardware() && !this.isHaLicensed());
   isCertified = computed(() => this.systemProduct()?.includes('CERTIFIED'));
   product = computed(() => getServerProduct(this.systemProduct()));
   productImage = computed(() => getProductImage(this.systemProduct()));
@@ -32,8 +33,6 @@ export class ProductImageComponent {
     }
     return getProductEnclosure(this.systemProduct());
   });
-
-  isUnsupportedHardware = computed(() => this.isEnterprise() && !this.isIxHardware());
 
   constructor(private router: Router) { }
 

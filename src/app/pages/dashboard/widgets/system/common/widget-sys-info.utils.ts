@@ -23,7 +23,7 @@ export function getProductImage(systemProduct: string): string {
     product = getServerProduct(systemProduct) ? `servers/${getServerProduct(systemProduct)}.png` : 'ix-original.svg';
   }
 
-  return `assets/images/${product}`;
+  return product ? `assets/images/${product}` : '';
 }
 
 export function isRackmount(systemProduct: string): boolean {

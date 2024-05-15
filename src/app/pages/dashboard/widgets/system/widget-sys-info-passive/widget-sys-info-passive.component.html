@@ -79,16 +79,22 @@
             </div>
           </mat-list-item>
 
-          <mat-list-item *ngIf="systemInfo()?.license">
+          <mat-list-item>
             <strong>{{ 'License' | translate }}:</strong>
-            <span>
-              {{ '{license} contract, expires {date}' | translate:
-                {
-                  license: systemInfo().license.contract_type | titlecase,
-                  date: systemInfo().license.contract_end.$value
-                }
-              }}
-            </span>
+            <ng-container *ngIf="isLoaded(); else inlineLoader">
+              <span *ngIf="systemInfo()?.license">
+                {{
+                  '{license} contract, expires {date}' | translate:
+                  {
+                    license: systemInfo().license.contract_type | titlecase,
+                    date: systemInfo().license.contract_end.$value,
+                  }
+                }}
+              </span>
+              <span *ngIf="!systemInfo()?.license">
+                {{ 'No License' | translate }}
+              </span>
+            </ng-container>
           </mat-list-item>
 
           <mat-list-item *ngIf="systemInfo()?.system_serial && isIxHardware()">

@@ -34,9 +34,9 @@ export class WidgetSysInfoActiveComponent {
   elapsedTenSecondsInterval = toSignal(this.resources.refreshInteval$);
 
   version = computed(() => getSystemVersion(this.systemInfo().version, this.systemInfo().codename));
-  uptime = computed(() => this.systemInfo().uptime_seconds + this.elapsedTenSecondsInterval());
-  datetime = computed(() => this.systemInfo().datetime.$date + (this.elapsedTenSecondsInterval() * 1000));
-  isLoaded = computed(() => this.systemInfo() && this.uptime() && this.datetime());
+  uptime = computed(() => this.systemInfo().uptime_seconds + (this.elapsedTenSecondsInterval() * 10));
+  datetime = computed(() => this.systemInfo().datetime.$date + (this.elapsedTenSecondsInterval() * 10 * 1000));
+  isLoaded = computed(() => this.systemInfo());
 
   constructor(
     private resources: WidgetResourcesService,
