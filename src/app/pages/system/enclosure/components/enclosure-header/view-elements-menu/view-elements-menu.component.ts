@@ -19,6 +19,7 @@ export class ViewElementsMenuComponent {
   readonly enclosure = input.required<DashboardEnclosure>();
 
   readonly views = computed<ViewOption[]>(() => {
+    const enclosure = this.enclosure();
     const supportedViews = [
       EnclosureElementType.ArrayDeviceSlot,
       EnclosureElementType.TemperatureSensors,
@@ -30,12 +31,12 @@ export class ViewElementsMenuComponent {
     ] as const;
 
     return supportedViews
-      .filter((view) => this.enclosure().elements[view])
+      .filter((view) => enclosure.elements[view])
       .map((view) => {
-        let href = `${this.enclosure().id}/${view}`;
+        let href = `${enclosure.id}/${view}`;
 
         if (view === EnclosureElementType.ArrayDeviceSlot) {
-          href = String(this.enclosure().id);
+          href = String(enclosure.id);
         }
 
         return {
