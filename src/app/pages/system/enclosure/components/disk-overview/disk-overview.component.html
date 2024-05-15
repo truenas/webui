@@ -67,7 +67,23 @@
   </div>
   <ng-template #overview>
     <div class="disk-overview">
-      {{ 'Slot not selected' }}
+      <div
+        *ngFor="let view of overviewInfo()"
+        class="tile"
+        [class.active]="currentView === view.name"
+      >
+        <div class="primary-number">{{ view.value }}</div>
+        <div class="title">{{ view.title }}</div>
+        <div class="subtitle">{{ view.subtitle }}</div>
+        <button
+          mat-button
+          color="default"
+          [ixTest]="['show', view.name]"
+          (click)="setCurrentView(view.name)"
+        >
+          {{ view.buttonLabel }}
+        </button>
+      </div>
     </div>
   </ng-template>
 </div>
