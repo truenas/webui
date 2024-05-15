@@ -1,6 +1,7 @@
 import {
   ChangeDetectionStrategy, Component, input, output,
 } from '@angular/core';
+import { ValidationErrors } from '@angular/forms';
 import { WidgetGroupComponent } from 'app/pages/dashboard/components/widget-group/widget-group.component';
 
 /**
@@ -17,11 +18,16 @@ import { WidgetGroupComponent } from 'app/pages/dashboard/components/widget-grou
 })
 export class WidgetEditorGroupComponent extends WidgetGroupComponent {
   readonly selectedSlot = input(0);
+  validationErrors = input.required<ValidationErrors[]>();
 
   selectedSlotChange = output<number>();
 
   onSlotSelected(event: Event, slotIndex: number): void {
     event.preventDefault();
     this.selectedSlotChange.emit(slotIndex);
+  }
+
+  hasErrors(index: number): boolean {
+    return !!Object.keys(this.validationErrors()[index]).length;
   }
 }
