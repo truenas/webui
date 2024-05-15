@@ -24,12 +24,12 @@ export class DatasetIconComponent {
 
   get name(): string {
     if (this.isRoot) {
-      return 'ix:dataset';
+      return 'ix:dataset_root';
     }
     if (this.isZvol) {
       return 'mdi-database';
     }
 
-    return 'folder';
+    return 'ix:dataset';
   }
 }
