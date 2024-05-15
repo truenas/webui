@@ -5,7 +5,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
-import { filter, map, timer } from 'rxjs';
+import { filter, map } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
 import { helptextSystemFailover } from 'app/helptext/system/failover';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -29,8 +29,6 @@ import {
 export class WidgetSysInfoPassiveComponent {
   size = input.required<SlotSize>();
 
-  private readonly systemInfo$ = this.resources.systemInfo$.pipe(map((sysInfo) => sysInfo.remote_info));
-  private readonly elapsedSecondsSinceInit = toSignal(timer(0, 1000), { initialValue: 0 });
   protected readonly isDisabled$ = this.store$.select(selectCanFailover).pipe(map((canFailover) => !canFailover));
   protected readonly requiredRoles = [Role.FailoverWrite];
 
@@ -41,26 +39,14 @@ export class WidgetSysInfoPassiveComponent {
   hasEnclosureSupport = toSignal(this.store$.select(selectEnclosureSupport));
   isUpdateRunning = toSignal(this.store$.select(selectUpdateJobForPassiveNode));
 
+  elapsedTenSecondsInterval = toSignal(this.resources.refreshInteval$);
   updateAvailable = toSignal(this.resources.updateAvailable$);
-  systemInfo = toSignal(this.systemInfo$);
-  version = toSignal(this.systemInfo$.pipe(map((sysInfo) => getSystemVersion(sysInfo.version, sysInfo.codename))));
-  systemUptime = computed(() => {
-    return this.systemInfo().uptime_seconds + this.elapsedSecondsSinceInit();
-  });
-  systemDatetime = computed(() => {
-    return this.systemInfo().datetime.$date + (this.elapsedSecondsSinceInit() * 1000);
-  });
+  systemInfo = toSignal(this.resources.systemInfo$.pipe(map((sysInfo) => sysInfo.remote_info)));
 
-  isLoaded = computed(() => {
-    return this.systemInfo() && this.systemUptime() && this.systemDatetime();
-  });
-
-  platform = computed(() => {
-    if (this.systemInfo()?.platform && this.isIxHardware()) {
-      return this.systemInfo().platform;
-    }
-    return 'Generic';
-  });
+  version = computed(() => getSystemVersion(this.systemInfo().version, this.systemInfo().codename));
+  uptime = computed(() => this.systemInfo().uptime_seconds + this.elapsedTenSecondsInterval());
+  datetime = computed(() => this.systemInfo().datetime.$date + (this.elapsedTenSecondsInterval() * 1000));
+  isLoaded = computed(() => this.systemInfo() && this.uptime() && this.datetime());
 
   constructor(
     private resources: WidgetResourcesService,

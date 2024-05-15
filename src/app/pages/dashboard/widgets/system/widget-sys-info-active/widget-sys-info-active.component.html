@@ -3,7 +3,7 @@
     <div [class]="['container', size()]">
       <div class="content-left fn-theme-contrast-lighter">
         <div class="product-logo-container">
-          <ix-icon name="ix:logo_truenas_scale_type"></ix-icon>
+          <ix-icon [name]="isIxHardware() ? 'ix:logo_truenas_scale_full' : 'ix:logo_truenas_scale_type'"></ix-icon>
         </div>
 
         <ix-product-image
@@ -60,13 +60,22 @@
         <mat-list>
           <mat-list-item>
             <strong>{{ 'Platform' | translate }}:</strong>
-            <span *ngIf="isLoaded(); else inlineLoader">{{ platform() }}</span>
+            <span *ngIf="isLoaded(); else inlineLoader">
+              <ng-container *ngIf="systemInfo()?.platform && isIxHardware(); else genericPlatform">
+                {{ systemInfo().platform }}
+              </ng-container>
+              <ng-template #genericPlatform>
+                {{ 'Generic' }}
+              </ng-template>
+            </span>
           </mat-list-item>
           <mat-list-item>
             <strong>{{ 'Version' | translate }}:</strong>
             <div *ngIf="isLoaded(); else inlineLoader" class="copy-version">
               <div class="copy-version-text" [matTooltip]="version()">
-                <span>{{ version() }}</span>
+                <span>
+                  {{ version() }}
+                </span>
               </div>
               <ix-copy-btn [text]="version()"></ix-copy-btn>
             </div>
@@ -74,28 +83,35 @@
 
           <mat-list-item *ngIf="systemInfo()?.license">
             <strong>{{ 'License' | translate }}:</strong>
-            <span>{{
-              '{license} contract, expires {date}' | translate: {
-                license: systemInfo().license.contract_type | titlecase,
-                date: systemInfo().license.contract_end.$value,
-              }
-            }}</span>
+            <span>
+              {{
+                '{license} contract, expires {date}' | translate:
+                {
+                  license: systemInfo().license.contract_type | titlecase,
+                  date: systemInfo().license.contract_end.$value,
+                }
+              }}
+            </span>
           </mat-list-item>
 
           <mat-list-item *ngIf="systemInfo()?.system_serial && isIxHardware()">
             <strong>{{ 'System Serial' | translate }}:</strong>
-            <span>{{ systemInfo().system_serial }}</span>
+            <span>
+              {{ systemInfo().system_serial }}
+            </span>
           </mat-list-item>
 
           <mat-list-item>
             <strong>{{ 'Hostname' | translate }}:</strong>
-            <span *ngIf="isLoaded(); else inlineLoader">{{ systemInfo().hostname }}</span>
+            <span *ngIf="isLoaded(); else inlineLoader">
+              {{ systemInfo().hostname }}
+            </span>
           </mat-list-item>
 
           <mat-list-item>
             <strong>{{ 'Uptime' | translate }}:</strong>
             <span *ngIf="isLoaded(); else inlineLoader">
-              {{ systemUptime() | uptime: (systemDatetime() | formatDateTime:' ':'HH:mm') }}
+              {{ uptime() | uptime: (datetime() | formatDateTime:' ':'HH:mm') }}
             </span>
           </mat-list-item>
         </mat-list>

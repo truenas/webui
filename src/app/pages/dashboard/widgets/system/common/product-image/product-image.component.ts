@@ -14,7 +14,7 @@ import { getProductEnclosure, getProductImage, getServerProduct } from 'app/page
 })
 export class ProductImageComponent {
   @HostBinding('class.ix-logo') get isIxLogo(): boolean {
-    return this.productImage() === 'ix-original.svg';
+    return this.productImage().includes('ix-original.svg');
   }
   @HostBinding('class.truenas')
   isEnterprise = input.required<boolean>();
@@ -26,9 +26,6 @@ export class ProductImageComponent {
   isCertified = computed(() => this.systemProduct()?.includes('CERTIFIED'));
   product = computed(() => getServerProduct(this.systemProduct()));
   productImage = computed(() => getProductImage(this.systemProduct()));
-  productImageSrc = computed(() => {
-    return 'assets/images' + (this.productImage().startsWith('/') ? this.productImage() : ('/' + this.productImage()));
-  });
   productEnclosure = computed(() => {
     if (!this.hasEnclosureSupport() || !this.systemProduct()) {
       return null;

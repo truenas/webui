@@ -30,9 +30,9 @@ describe('getServerProduct', () => {
 
 describe('getProductImage', () => {
   it('should return the correct image path for provided product', () => {
-    expect(getProductImage('TRUENAS-M40-HA')).toBe('/servers/M40.png');
-    expect(getProductImage('TRUENAS-MINI-R')).toBe('servers/MINI-R.png');
-    expect(getProductImage('FREENAS-MINI-XL')).toBe('freenas_mini_xl_cropped.png');
+    expect(getProductImage('TRUENAS-M40-HA')).toBe('assets/images/servers/M40.png');
+    expect(getProductImage('TRUENAS-MINI-R')).toBe('assets/images/servers/MINI-R.png');
+    expect(getProductImage('FREENAS-MINI-XL')).toBe('assets/images/freenas_mini_xl_cropped.png');
   });
 });
 

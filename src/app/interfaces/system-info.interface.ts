@@ -2,6 +2,7 @@ import { Codename } from 'app/enums/codename.enum';
 import { LicenseFeature } from 'app/enums/license-feature.enum';
 import { ApiDate, ApiTimestamp } from 'app/interfaces/api-date.interface';
 
+// TODO: Split mixed interface for system.info and webui.main.dashboard.sys_info
 export interface SystemInfo {
   platform: string;
   boottime: ApiTimestamp;

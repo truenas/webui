@@ -4,13 +4,10 @@ import {
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { Store } from '@ngrx/store';
-import {
-  combineLatestWith, map, timer,
-} from 'rxjs';
 import { selectUpdateJobForActiveNode } from 'app/modules/jobs/store/job.selectors';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
 import { SlotSize } from 'app/pages/dashboard/types/widget.interface';
-import { getProductEnclosure, getSystemVersion } from 'app/pages/dashboard/widgets/system/common/widget-sys-info.utils';
+import { getSystemVersion } from 'app/pages/dashboard/widgets/system/common/widget-sys-info.utils';
 import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import {
@@ -26,45 +23,20 @@ import {
 export class WidgetSysInfoActiveComponent {
   size = input.required<SlotSize>();
 
-  private readonly systemInfo$ = this.resources.systemInfo$;
-  private readonly refreshInterval$ = timer(0, 1000);
-
   isIxHardware = toSignal(this.store$.select(selectIsIxHardware));
   isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
   isHaLicensed = toSignal(this.store$.select(selectIsHaLicensed));
   hasEnclosureSupport = toSignal(this.store$.select(selectEnclosureSupport));
   isUpdateRunning = toSignal(this.store$.select(selectUpdateJobForActiveNode));
+
   updateAvailable = toSignal(this.resources.updateAvailable$);
   systemInfo = toSignal(this.resources.systemInfo$);
-  version = toSignal(this.systemInfo$.pipe(map((sysInfo) => getSystemVersion(sysInfo.version, sysInfo.codename))));
-  systemUptime = toSignal(this.systemInfo$.pipe(
-    map((sysInfo) => sysInfo.uptime_seconds),
-    combineLatestWith(this.refreshInterval$),
-    map(([uptime, interval]) => uptime + interval),
-  ));
-  systemDatetime = toSignal(this.systemInfo$.pipe(
-    map((sysInfo) => sysInfo.datetime.$date),
-    combineLatestWith(this.refreshInterval$),
-    map(([datetime, interval]) => datetime + (interval * 1000)),
-  ));
+  elapsedTenSecondsInterval = toSignal(this.resources.refreshInteval$);
 
-  isLoaded = computed(() => {
-    return this.systemInfo() && this.systemUptime() && this.systemDatetime();
-  });
-
-  platform = computed(() => {
-    if (this.systemInfo()?.platform && this.isIxHardware()) {
-      return this.systemInfo().platform;
-    }
-    return 'Generic';
-  });
-
-  productEnclosure = computed(() => {
-    if (!this.hasEnclosureSupport()) {
-      return null;
-    }
-    return getProductEnclosure(this.systemInfo().system_product);
-  });
+  version = computed(() => getSystemVersion(this.systemInfo().version, this.systemInfo().codename));
+  uptime = computed(() => this.systemInfo().uptime_seconds + this.elapsedTenSecondsInterval());
+  datetime = computed(() => this.systemInfo().datetime.$date + (this.elapsedTenSecondsInterval() * 1000));
+  isLoaded = computed(() => this.systemInfo() && this.uptime() && this.datetime());
 
   constructor(
     private resources: WidgetResourcesService,

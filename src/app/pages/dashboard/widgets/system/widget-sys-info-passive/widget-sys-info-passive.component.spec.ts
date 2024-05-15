@@ -1,12 +1,13 @@
 import { HarnessLoader, parallel } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { MatIconTestingModule } from '@angular/material/icon/testing';
 import { MatListModule } from '@angular/material/list';
 import { MatListItemHarness } from '@angular/material/list/testing';
+import { Router } from '@angular/router';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { MockComponent } from 'ng-mocks';
-import { ImgFallbackModule } from 'ngx-img-fallback';
 import { NgxSkeletonLoaderComponent } from 'ngx-skeleton-loader';
 import { of } from 'rxjs';
 import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-datetime.pipe';
@@ -14,7 +15,7 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { Codename } from 'app/enums/codename.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { SystemLicense, SystemInfo } from 'app/interfaces/system-info.interface';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { selectUpdateJobForPassiveNode } from 'app/modules/jobs/store/job.selectors';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
 import { SlotSize } from 'app/pages/dashboard/types/widget.interface';
@@ -22,7 +23,8 @@ import { ProductImageComponent } from 'app/pages/dashboard/widgets/system/common
 import { WidgetSysInfoPassiveComponent } from 'app/pages/dashboard/widgets/system/widget-sys-info-passive/widget-sys-info-passive.component';
 import { selectCanFailover, selectIsHaEnabled, selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import {
-  selectIsIxHardware, selectProductType,
+  selectIsIxHardware,
+  selectProductType,
   selectIsEnterprise,
   selectEnclosureSupport,
 } from 'app/store/system-info/system-info.selectors';
@@ -33,7 +35,7 @@ describe('WidgetSysInfoPassiveComponent', () => {
 
   const systemInfo = {
     remote_info: {
-      platform: 'TRUENAS-TEST-HA',
+      platform: 'TRUENAS-M40-HA',
       version: 'TrueNAS-SCALE-24.10.0-MASTER-20240301-233006',
       codename: Codename.ElectricEel,
       license: {
@@ -44,7 +46,6 @@ describe('WidgetSysInfoPassiveComponent', () => {
         },
       } as SystemLicense,
       system_serial: 'AA-00002',
-      system_product: 'Generic',
       hostname: 'test-hostname-b',
       uptime_seconds: 77.915545062,
       datetime: {
@@ -57,18 +58,20 @@ describe('WidgetSysInfoPassiveComponent', () => {
     component: WidgetSysInfoPassiveComponent,
     imports: [
       MatListModule,
-      ImgFallbackModule,
+      MatIconTestingModule,
     ],
     declarations: [
       MockComponent(ProductImageComponent),
-      MockComponent(IxIconComponent),
       MockComponent(NgxSkeletonLoaderComponent),
       FakeFormatDateTimePipe,
     ],
     providers: [
       mockAuth(),
+      mockProvider(DialogService),
+      mockProvider(Router),
       mockProvider(WidgetResourcesService, {
         systemInfo$: of(systemInfo),
+        refreshInteval$: of(0),
         updateAvailable$: of(true),
       }),
       provideMockStore({
@@ -117,7 +120,6 @@ describe('WidgetSysInfoPassiveComponent', () => {
       },
     });
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    jest.useFakeTimers();
   });
 
   it('checks title', () => {
@@ -128,12 +130,12 @@ describe('WidgetSysInfoPassiveComponent', () => {
     const matListItems = await loader.getAllHarnesses(MatListItemHarness);
     const items = await parallel(() => matListItems.map((item) => item.getFullText()));
     expect(items).toEqual([
-      'Platform:TRUENAS-TEST-HA',
-      'Version:ElectricEel-24.10.0-MASTER-20240301-233006',
-      'License:Best contract, expires 2025-01-01',
-      'System Serial:AA-00002',
-      'Hostname:test-hostname-b',
-      'Uptime:1 minute 17 seconds as of 2024-03-15 10:34:11',
+      'Platform: TRUENAS-M40-HA',
+      'Version: ElectricEel-24.10.0-MASTER-20240301-233006',
+      'License: Best contract, expires 2025-01-01',
+      'System Serial: AA-00002',
+      'Hostname: test-hostname-b',
+      'Uptime: 1 minute 17 seconds as of 2024-03-15 10:34:11',
     ]);
   });
 

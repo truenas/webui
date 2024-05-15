@@ -1,13 +1,13 @@
 <div class="product-image-placeholder" [ngClass]="productEnclosure()">
   <ng-container *ngIf="systemProduct(); else imageLoader">
     <img
-      *ngIf="productImage() || !isIxHardware(); else generic"
+      *ngIf="isIxHardware(); else generic"
       matTooltipPosition="above"
       [matTooltip]="'View Enclosure' | translate"
       [id]="product()"
       [class.clickable]="hasEnclosureSupport()"
       [matTooltipDisabled]="!hasEnclosureSupport()"
-      [src]="productImageSrc()"
+      [src]="productImage()"
       (click)="goToEnclosure()"
     />
   </ng-container>

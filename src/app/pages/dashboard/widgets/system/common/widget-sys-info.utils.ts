@@ -15,12 +15,15 @@ export function getProductImage(systemProduct: string): string {
     return '';
   }
 
+  let product: string;
+
   if (systemProduct.includes('MINI')) {
-    return getMiniImagePath(systemProduct);
+    product = getMiniImagePath(systemProduct);
+  } else {
+    product = getServerProduct(systemProduct) ? `servers/${getServerProduct(systemProduct)}.png` : 'ix-original.svg';
   }
 
-  const product = getServerProduct(systemProduct);
-  return product ? `/servers/${product}.png` : 'ix-original.svg';
+  return `assets/images/${product}`;
 }
 
 export function isRackmount(systemProduct: string): boolean {
@@ -32,6 +35,9 @@ export function isRackmount(systemProduct: string): boolean {
 }
 
 export function getProductEnclosure(systemProduct: string): ProductEnclosure {
+  if (!systemProduct) {
+    return null;
+  }
   if (systemProduct.includes('MINI')) {
     return ProductEnclosure.Tower;
   }
