@@ -10,6 +10,7 @@ import { MATERIAL_SANITY_CHECKS, MatNativeDateModule } from '@angular/material/c
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatExpansionModule } from '@angular/material/expansion';
+import { MatIconTestingModule } from '@angular/material/icon/testing';
 import { MatListModule } from '@angular/material/list';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
@@ -54,6 +55,7 @@ defineGlobalsInjections({
     MatSlideToggleModule,
     MatMenuModule,
     IxIconModule,
+    MatIconTestingModule,
     MatDatepickerModule,
     MatNativeDateModule,
     MatSelectModule,
