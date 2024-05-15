@@ -77,17 +77,27 @@ export class DashboardComponent implements OnInit {
       .open(WidgetGroupFormComponent, true)
       .pipe(untilDestroyed(this))
       .subscribe((response: ChainedComponentResponse) => {
-        if (response.response) {
-          this.renderedGroups.update((groups) => [...groups, response.response as WidgetGroup]);
+        if (!response.response) {
+          return;
         }
+
+        this.renderedGroups.update((groups) => [...groups, response.response as WidgetGroup]);
       });
   }
 
-  protected onEditGroup(group: WidgetGroup): void {
+  protected onEditGroup(i: number): void {
+    const editedGroup = this.renderedGroups()[i];
     this.slideIn
-      .open(WidgetGroupFormComponent, true, group)
+      .open(WidgetGroupFormComponent, true, editedGroup)
       .pipe(untilDestroyed(this))
-      .subscribe(() => {
+      .subscribe((response) => {
+        if (!response.response) {
+          return;
+        }
+
+        this.renderedGroups.update((groups) => {
+          return groups.map((group, index) => (index === i ? response.response as WidgetGroup : group));
+        });
       });
   }
 
@@ -109,7 +119,6 @@ export class DashboardComponent implements OnInit {
     });
   }
 
-  // TODO: Filter out fully empty groups somewhere.
   protected onSave(): void {
     this.dashboardStore.save(this.renderedGroups())
       .pipe(this.errorHandler.catchError(), untilDestroyed(this))

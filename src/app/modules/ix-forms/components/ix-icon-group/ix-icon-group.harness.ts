@@ -2,6 +2,7 @@ import {
   BaseHarnessFilters, ComponentHarness, HarnessPredicate, parallel,
 } from '@angular/cdk/testing';
 import { MatButtonHarness } from '@angular/material/button/testing';
+import { MatIconHarness } from '@angular/material/icon/testing';
 import { IxLabelHarness } from 'app/modules/ix-forms/components/ix-label/ix-label.harness';
 import { IxFormControlHarness } from 'app/modules/ix-forms/interfaces/ix-form-control-harness.interface';
 import { getErrorText } from 'app/modules/ix-forms/utils/harness.utils';
@@ -19,6 +20,7 @@ export class IxIconGroupHarness extends ComponentHarness implements IxFormContro
   }
 
   getButtons = this.locatorForAll(MatButtonHarness);
+  getIcons = this.locatorForAll(MatIconHarness.with({ ancestor: '.icon-group' }));
   getErrorText = getErrorText;
 
   async getLabelText(): Promise<string> {
@@ -29,9 +31,13 @@ export class IxIconGroupHarness extends ComponentHarness implements IxFormContro
     return label.getLabel();
   }
 
-  async getValue(): Promise<string> {
-    const selectedButton = this.locatorFor(MatButtonHarness.with({ selector: '.selected' }))();
-    return (await (await selectedButton).host()).getAttribute('aria-label');
+  async getValue(): Promise<string | undefined> {
+    const selectedButton = await this.locatorForOptional(MatButtonHarness.with({ selector: '.selected' }))();
+    if (!selectedButton) {
+      return '';
+    }
+
+    return (await selectedButton.host()).getAttribute('aria-label');
   }
 
   async setValue(value: string): Promise<void> {
