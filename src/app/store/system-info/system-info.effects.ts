@@ -96,7 +96,7 @@ export class SystemInfoEffects {
     }),
   ));
 
-  loadSystemProductType = createEffect(() => this.actions$.pipe(
+  loadProductType = createEffect(() => this.actions$.pipe(
     ofType(adminUiInitialized),
     mergeMap(() => {
       return this.ws.call('system.product_type').pipe(
