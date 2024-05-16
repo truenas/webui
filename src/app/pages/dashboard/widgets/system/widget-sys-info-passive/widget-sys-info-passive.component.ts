@@ -39,16 +39,18 @@ export class WidgetSysInfoPassiveComponent {
   hasEnclosureSupport = toSignal(this.store$.select(selectEnclosureSupport));
   isUpdateRunning = toSignal(this.store$.select(selectUpdateJobForPassiveNode));
 
-  elapsedTenSecondsInterval = toSignal(this.resources.refreshInteval$);
   updateAvailable = toSignal(this.resources.updateAvailable$);
   systemInfo = toSignal(this.resources.systemInfo$.pipe(
     filter((state) => !state.isLoading),
     map((state) => state.value.remote_info),
   ));
+  elapsedSeconds = toSignal(this.resources.fiveSecondsRefreshInteval$.pipe(
+    map((iteration) => (iteration ? iteration * 5 : 0)),
+  ));
 
   version = computed(() => getSystemVersion(this.systemInfo().version, this.systemInfo().codename));
-  uptime = computed(() => this.systemInfo().uptime_seconds + (this.elapsedTenSecondsInterval() * 10));
-  datetime = computed(() => this.systemInfo().datetime.$date + (this.elapsedTenSecondsInterval() * 10 * 1000));
+  uptime = computed(() => this.systemInfo().uptime_seconds + this.elapsedSeconds());
+  datetime = computed(() => this.systemInfo().datetime.$date + (this.elapsedSeconds() * 1000));
   isLoaded = computed(() => this.systemInfo());
 
   constructor(
@@ -56,7 +58,9 @@ export class WidgetSysInfoPassiveComponent {
     private dialog: DialogService,
     private store$: Store<AppState>,
     private router: Router,
-  ) {}
+  ) {
+    this.resources.refreshSystemInfo();
+  }
 
   openDialog(): void {
     this.dialog.confirm({

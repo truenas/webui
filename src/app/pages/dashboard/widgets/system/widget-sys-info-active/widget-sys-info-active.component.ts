@@ -35,15 +35,19 @@ export class WidgetSysInfoActiveComponent {
     filter((state) => !state.isLoading),
     map((state) => state.value),
   ));
-  elapsedTenSecondsInterval = toSignal(this.resources.refreshInteval$);
+  elapsedSeconds = toSignal(this.resources.fiveSecondsRefreshInteval$.pipe(
+    map((iteration) => (iteration ? iteration * 5 : 0)),
+  ));
 
   version = computed(() => getSystemVersion(this.systemInfo().version, this.systemInfo().codename));
-  uptime = computed(() => this.systemInfo().uptime_seconds + (this.elapsedTenSecondsInterval() * 10));
-  datetime = computed(() => this.systemInfo().datetime.$date + (this.elapsedTenSecondsInterval() * 10 * 1000));
+  uptime = computed(() => this.systemInfo().uptime_seconds + this.elapsedSeconds());
+  datetime = computed(() => this.systemInfo().datetime.$date + (this.elapsedSeconds() * 1000));
   isLoaded = computed(() => this.systemInfo());
 
   constructor(
     private resources: WidgetResourcesService,
     private store$: Store<AppState>,
-  ) {}
+  ) {
+    this.resources.refreshSystemInfo();
+  }
 }

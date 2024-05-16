@@ -5,7 +5,7 @@ import { SlotSize } from 'app/pages/dashboard/types/widget.interface';
 import { WidgetSysInfoPassiveComponent } from 'app/pages/dashboard/widgets/system/widget-sys-info-passive/widget-sys-info-passive.component';
 
 export const systemInfoPassiveWidget = dashboardWidget({
-  name: T('System Information Standby'),
+  name: T('System Information Standby Node'),
   supportedSizes: [SlotSize.Full],
   category: WidgetCategory.SystemInfo,
   component: WidgetSysInfoPassiveComponent,

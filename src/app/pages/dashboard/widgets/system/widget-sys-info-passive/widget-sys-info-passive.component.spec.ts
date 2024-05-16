@@ -9,7 +9,7 @@ import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { MockComponent } from 'ng-mocks';
 import { NgxSkeletonLoaderComponent } from 'ngx-skeleton-loader';
-import { of } from 'rxjs';
+import { BehaviorSubject, of } from 'rxjs';
 import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-datetime.pipe';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { Codename } from 'app/enums/codename.enum';
@@ -33,6 +33,7 @@ import {
 describe('WidgetSysInfoPassiveComponent', () => {
   let spectator: Spectator<WidgetSysInfoPassiveComponent>;
   let loader: HarnessLoader;
+  const fiveSecondsRefreshInteval$ = new BehaviorSubject<number>(0);
 
   const systemInfo = {
     remote_info: {
@@ -76,8 +77,8 @@ describe('WidgetSysInfoPassiveComponent', () => {
           error: null,
           value: systemInfo,
         } as LoadingState<SystemInfo>),
-        refreshInteval$: of(0),
         updateAvailable$: of(true),
+        fiveSecondsRefreshInteval$,
       }),
       provideMockStore({
         selectors: [
@@ -142,6 +143,13 @@ describe('WidgetSysInfoPassiveComponent', () => {
       'Hostname: test-hostname-b',
       'Uptime: 1 minute 17 seconds as of 2024-03-15 10:34:11',
     ]);
+  });
+
+  it('checks uptime and datetime changed over the time', async () => {
+    fiveSecondsRefreshInteval$.next(12);
+
+    const uptime = await loader.getHarness(MatListItemHarness.with({ text: /Uptime:/ }));
+    expect(await uptime.getFullText()).toBe('Uptime: 2 minutes 17 seconds as of 2024-03-15 10:35:11');
   });
 
   // TODO: Add more tests

@@ -45,6 +45,7 @@ import { BackupTaskEmptyComponent } from 'app/pages/dashboard/widgets/backup/wid
 import { BackupTaskTileComponent } from 'app/pages/dashboard/widgets/backup/widget-backup/backup-task-tile/backup-task-tile.component';
 import { WidgetDatapointComponent } from 'app/pages/dashboard/widgets/common/widget-datapoint/widget-datapoint.component';
 import { ProductImageComponent } from 'app/pages/dashboard/widgets/system/common/product-image/product-image.component';
+import { UptimePipe } from 'app/pages/dashboard/widgets/system/common/uptime.pipe';
 
 @NgModule({
   declarations: [
@@ -102,11 +103,11 @@ import { ProductImageComponent } from 'app/pages/dashboard/widgets/system/common
     ChartsModule,
     MatListModule,
     EmptyComponent,
-    MatListModule,
     ImgFallbackModule,
     ChartsModule,
     InterfaceStatusIconComponent,
     IxFileSizeModule,
+    UptimePipe,
   ],
 })
 export class DashboardModule {
