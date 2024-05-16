@@ -106,12 +106,15 @@ export class CloudBackupFormComponent implements OnInit {
     this.form.controls.credentials.valueChanges
       .pipe(untilDestroyed(this))
       .subscribe((credentialId) => {
+        if (credentialId !== (this.editingTask?.credentials as CloudCredential)?.id) {
+          this.form.controls.bucket.patchValue('');
+        }
+
         this.form.controls.bucket_input.disable();
 
         if (credentialId) {
           this.form.controls.folder.enable();
           this.form.controls.bucket.enable();
-          this.form.controls.bucket.patchValue('');
           this.loadBucketOptions(credentialId);
         } else {
           this.form.controls.folder.disable();
