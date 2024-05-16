@@ -19,6 +19,7 @@ import { selectUpdateJobForActiveNode } from 'app/modules/jobs/store/job.selecto
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
 import { SlotSize } from 'app/pages/dashboard/types/widget.interface';
 import { ProductImageComponent } from 'app/pages/dashboard/widgets/system/common/product-image/product-image.component';
+import { UptimePipe } from 'app/pages/dashboard/widgets/system/common/uptime.pipe';
 import { WidgetSysInfoActiveComponent } from 'app/pages/dashboard/widgets/system/widget-sys-info-active/widget-sys-info-active.component';
 import { selectIsHaLicensed, selectIsHaEnabled } from 'app/store/ha-info/ha-info.selectors';
 import {
@@ -56,6 +57,7 @@ describe('WidgetSysInfoActiveComponent', () => {
     imports: [
       MatListModule,
       MatIconTestingModule,
+      UptimePipe,
     ],
     declarations: [
       MockComponent(ProductImageComponent),

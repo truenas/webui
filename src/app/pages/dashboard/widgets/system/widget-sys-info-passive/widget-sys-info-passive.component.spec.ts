@@ -21,6 +21,7 @@ import { selectUpdateJobForPassiveNode } from 'app/modules/jobs/store/job.select
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
 import { SlotSize } from 'app/pages/dashboard/types/widget.interface';
 import { ProductImageComponent } from 'app/pages/dashboard/widgets/system/common/product-image/product-image.component';
+import { UptimePipe } from 'app/pages/dashboard/widgets/system/common/uptime.pipe';
 import { WidgetSysInfoPassiveComponent } from 'app/pages/dashboard/widgets/system/widget-sys-info-passive/widget-sys-info-passive.component';
 import { selectCanFailover, selectIsHaEnabled, selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import {
@@ -61,6 +62,7 @@ describe('WidgetSysInfoPassiveComponent', () => {
     imports: [
       MatListModule,
       MatIconTestingModule,
+      UptimePipe,
     ],
     declarations: [
       MockComponent(ProductImageComponent),
