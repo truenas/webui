@@ -125,7 +125,10 @@ export class CloudBackupListComponent implements OnInit {
     const cloudBackups$ = this.ws.call('cloud_backup.query').pipe(
       tap((cloudBackups) => {
         this.cloudBackups = cloudBackups;
-        this.dataProvider.expandedRow = this.isMobileView ? null : cloudBackups[0];
+        const selectedBackup = cloudBackups.find(
+          (cloudBackup) => cloudBackup.id === this.dataProvider?.expandedRow?.id,
+        );
+        this.dataProvider.expandedRow = this.isMobileView ? null : (selectedBackup || cloudBackups[0]);
         this.expanded(this.dataProvider.expandedRow);
       }),
     );
