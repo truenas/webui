@@ -22,7 +22,7 @@
           type="submit"
           color="primary"
           ixTest="save"
-          [disabled]="form.invalid || isFormLoading"
+          [disabled]="form.invalid || isFormLoading || !(poolOptions$ | async)"
         >
           {{ 'Save' | translate }}
         </button>
