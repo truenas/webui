@@ -19,8 +19,8 @@ export const helptextCloudBackup = {
 
   folder_placeholder: T('Folder'),
 
-  description_placeholder: T('Description'),
-  description_tooltip: T('Enter a description of the Cloud Backup Task.'),
+  name_placeholder: T('Name'),
+  name_tooltip: T('Enter a name of the Cloud Backup Task.'),
 
   keep_last_placeholder: T('Keep Last'),
   keep_last_tooltip: T('Enter the number of last kept backups.'),

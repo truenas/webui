@@ -91,7 +91,7 @@
   "Enclosure Read": "",
   "Enclosure Write": "",
   "Enter a SPICE password to automatically pass to the SPICE session.": "",
-  "Enter a description of the Cloud Backup Task.": "",
+  "Enter a name of the Cloud Backup Task.": "",
   "Enter a password for the SPICE display.": "",
   "Enter a shell glob pattern to match files and directories to exclude from the backup.": "",
   "Enter path for {label}.{multiple}": "",
