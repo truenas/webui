@@ -176,7 +176,7 @@ export class CloudBackupListComponent implements OnInit {
   }
 
   openForm(row?: CloudBackup): void {
-    this.chainedSlideInService.open(CloudBackupFormComponent, false, row)
+    this.chainedSlideInService.open(CloudBackupFormComponent, true, row)
       .pipe(
         filter((response) => !!response.response),
         untilDestroyed(this),
