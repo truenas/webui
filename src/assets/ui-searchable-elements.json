@@ -3337,26 +3337,6 @@
     "hierarchy": [
       "System",
       "Advanced",
-      "Storage",
-      "Swap Size"
-    ],
-    "synonyms": [
-      "Storage"
-    ],
-    "requiredRoles": [],
-    "anchorRouterLink": [
-      "/system",
-      "advanced"
-    ],
-    "routerLink": null,
-    "anchor": "swap-size",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "System",
-      "Advanced",
       "Sysctl"
     ],
     "synonyms": [

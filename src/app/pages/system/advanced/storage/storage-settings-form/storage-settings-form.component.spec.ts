@@ -21,7 +21,6 @@ import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { StorageSettingsFormComponent } from 'app/pages/system/advanced/storage/storage-settings-form/storage-settings-form.component';
 import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 import { selectServices } from 'app/store/services/services.selectors';
-import { selectAdvancedConfig } from 'app/store/system-config/system-config.selectors';
 
 describe('StorageSettingsFormComponent', () => {
   let spectator: Spectator<StorageSettingsFormComponent>;
@@ -56,12 +55,6 @@ describe('StorageSettingsFormComponent', () => {
       provideMockStore({
         selectors: [
           {
-            selector: selectAdvancedConfig,
-            value: {
-              swapondrive: 5,
-            },
-          },
-          {
             selector: selectServices,
             value: [{
               service: ServiceName.Cifs,
@@ -90,7 +83,6 @@ describe('StorageSettingsFormComponent', () => {
 
     expect(values).toEqual({
       'Select Pool': 'current-pool',
-      'Swap Size': '5',
     });
   });
 
@@ -98,7 +90,6 @@ describe('StorageSettingsFormComponent', () => {
     const form = await loader.getHarness(IxFormHarness);
     await form.fillForm({
       'Select Pool': 'new-pool',
-      'Swap Size': '4',
     });
     spectator.detectChanges();
 
@@ -108,7 +99,6 @@ describe('StorageSettingsFormComponent', () => {
     expect(ws.job).toHaveBeenCalledWith('systemdataset.update', [{
       pool: 'new-pool',
     }]);
-    expect(ws.call).toHaveBeenCalledWith('system.advanced.update', [{ swapondrive: 4 }]);
   });
 
   it('should warns user about restarting an SMB service when it is running and form is saved', async () => {
