@@ -46,18 +46,18 @@ export const helptextCloudBackup = {
 
   bwlimit_placeholder: T('Bandwidth Limit'),
   bwlimit_tooltip: T('A single bandwidth limit or bandwidth limit schedule in rclone format.\
-Separate entries by pressing <code>Enter</code>. Example: \
-<samp>08:00,512 12:00,10MB 13:00,512 18:00,30MB 23:00,off</samp>.\
-Units can be specified with a suffix of <samp>b</samp>,\
-<samp>k</samp> (default), <samp>M</samp>, or <samp>G</samp>.\
-See <a href="https://rclone.org/docs/#bwlimit-bandwidth-spec"\
-target="_blank">rclone --bwlimit</a>.'),
+ Separate entries by pressing <code>Enter</code>. Example: \
+ <samp>08:00,512 12:00,10MB 13:00,512 18:00,30MB 23:00,off</samp>.\
+ Units can be specified with a suffix of <samp>b</samp>,\
+ <samp>k</samp> (default), <samp>M</samp>, or <samp>G</samp>.\
+ See <a href="https://rclone.org/docs/#bwlimit-bandwidth-spec"\
+ target="_blank">rclone --bwlimit</a>.'),
 
   exclude_placeholder: T('Exclude'),
   exclude_tooltip: T('List of files and directories to exclude from sync.<br> \
-Separate entries by pressing <code>Enter</code>. See \
-<a href="https://rclone.org/filtering/" target="_blank">rclone filtering</a> \
-for more details about the <code>--exclude</code> option.'),
+ Separate entries by pressing <code>Enter</code>. See \
+ <a href="https://rclone.org/filtering/" target="_blank">rclone filtering</a> \
+ for more details about the <code>--exclude</code> option.'),
 
   keep_last_placeholder: T('Keep Last'),
   keep_last_tooltip: T('Enter the number of last kept backups.'),
