@@ -11,8 +11,5 @@ export const storageCardElements = {
     systemPool: {
       hierarchy: [T('System Data Pool')],
     },
-    swapSize: {
-      hierarchy: [T('Swap Size')],
-    },
   },
 } satisfies UiSearchableElement;
