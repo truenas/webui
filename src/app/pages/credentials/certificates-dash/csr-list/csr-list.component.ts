@@ -9,6 +9,7 @@ import {
 import { Role } from 'app/enums/role.enum';
 import { helptextSystemCertificates } from 'app/helptext/system/certificates';
 import { Certificate } from 'app/interfaces/certificate.interface';
+import { ConfirmForceDeleteDialogResponse } from 'app/interfaces/confirm-force-delete-dialog-config.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -27,9 +28,6 @@ import {
 import {
   CertificateEditComponent,
 } from 'app/pages/credentials/certificates-dash/certificate-edit/certificate-edit.component';
-import {
-  ConfirmForceDeleteCertificateComponent,
-} from 'app/pages/credentials/certificates-dash/confirm-force-delete-dialog/confirm-force-delete-dialog.component';
 import { CsrAddComponent } from 'app/pages/credentials/certificates-dash/csr-add/csr-add.component';
 import { csrListElements } from 'app/pages/credentials/certificates-dash/csr-list/csr-list.elements';
 import { DownloadService } from 'app/services/download.service';
@@ -144,21 +142,23 @@ export class CertificateSigningRequestsListComponent implements OnInit {
   }
 
   doDelete(certificate: Certificate): void {
-    this.matDialog
-      .open(ConfirmForceDeleteCertificateComponent, { data: certificate })
-      .afterClosed()
-      .pipe(
-        filter(Boolean),
-        switchMap((data: { force: boolean }) => {
-          return this.dialogService.jobDialog(
-            this.ws.job('certificate.delete', [certificate.id, data.force]),
-            { title: this.translate.instant('Deleting...') },
-          )
-            .afterClosed();
-        }),
-        this.errorHandler.catchError(),
-        untilDestroyed(this),
-      )
+    const confirmation$ = this.dialogService.confirmForceDelete({
+      title: this.translate.instant('Delete Certificate'),
+      message: this.translate.instant('Are you sure you want to delete "{cert}"?', { cert: certificate.name }),
+    });
+
+    confirmation$.pipe(
+      filter((value: ConfirmForceDeleteDialogResponse) => value.confirmed),
+      switchMap((value: ConfirmForceDeleteDialogResponse) => {
+        const jobDialog$ = this.dialogService.jobDialog(
+          this.ws.job('certificate.delete', [certificate.id, value.force]),
+          { title: this.translate.instant('Deleting...') },
+        );
+        return jobDialog$.afterClosed();
+      }),
+      this.errorHandler.catchError(),
+      untilDestroyed(this),
+    )
       .subscribe(() => {
         this.snackbar.success(this.translate.instant('CSR deleted'));
         this.getCertificates();

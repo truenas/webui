@@ -1,0 +1,31 @@
+<h1 matDialogTitle>{{ data.title | translate }}</h1>
+<form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
+  <p>
+    {{ data.message }}
+  </p>
+  <ix-checkbox
+    formControlName="force"
+    [label]="'Force' | translate"
+  ></ix-checkbox>
+
+  <ix-form-actions>
+    <button
+      mat-button
+      type="button"
+      ixTest="cancel"
+      (click)="onCancel()"
+    >
+      {{ 'Cancel' | translate }}
+    </button>
+
+    <button
+      *ixRequiresRoles="requiredRoles()"
+      mat-button
+      type="submit"
+      color="red"
+      ixTest="delete"
+    >
+      {{ 'Delete' | translate }}
+    </button>
+  </ix-form-actions>
+</form>

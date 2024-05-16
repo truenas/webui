@@ -5,6 +5,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { Observable, of } from 'rxjs';
 import { JobProgressDialogRef } from 'app/classes/job-progress-dialog-ref.class';
 import { ApiJobMethod, ApiJobResponse } from 'app/interfaces/api/api-job-directory.interface';
+import { ConfirmForceDeleteDialogConfig, ConfirmForceDeleteDialogResponse } from 'app/interfaces/confirm-force-delete-dialog-config.interface';
 import {
   ConfirmOptions,
   ConfirmOptionsWithSecondaryCheckbox,
@@ -13,6 +14,7 @@ import {
 import { ErrorReport } from 'app/interfaces/error-report.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { ConfirmDialogComponent } from 'app/modules/dialog/components/confirm-dialog/confirm-dialog.component';
+import { ConfirmForceDeleteDialogComponent } from 'app/modules/dialog/components/confirm-force-delete-dialog/confirm-force-delete-dialog.component';
 import { ErrorDialogComponent } from 'app/modules/dialog/components/error-dialog/error-dialog.component';
 import { FullScreenDialogComponent } from 'app/modules/dialog/components/full-screen-dialog/full-screen-dialog.component';
 import { GeneralDialogComponent, GeneralDialogConfig } from 'app/modules/dialog/components/general-dialog/general-dialog.component';
@@ -40,6 +42,15 @@ export class DialogService {
       data: options,
     })
       .afterClosed();
+  }
+
+  confirmForceDelete(confirmOptions: ConfirmForceDeleteDialogConfig): Observable<ConfirmForceDeleteDialogResponse> {
+    return this.matDialog.open(
+      ConfirmForceDeleteDialogComponent,
+      {
+        data: confirmOptions,
+      },
+    ).afterClosed();
   }
 
   error(error: ErrorReport | ErrorReport[]): Observable<boolean> {
