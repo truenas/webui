@@ -8,6 +8,7 @@ import { TranslateService } from '@ngx-translate/core';
 import _ from 'lodash';
 import {
   Observable, debounceTime, distinctUntilChanged, map, of,
+  switchMap,
 } from 'rxjs';
 import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
 import { Role } from 'app/enums/role.enum';
@@ -241,15 +242,21 @@ export class CloudBackupFormComponent implements OnInit {
     const payload = this.prepareData(this.form.value);
 
     this.isLoading = true;
-    let request$: Observable<unknown>;
 
-    if (this.isNew) {
-      request$ = this.ws.call('cloud_backup.create', [payload]);
-    } else {
-      request$ = this.ws.call('cloud_backup.update', [this.editingTask.id, payload]);
+    let createBucket$: Observable<unknown> = of(null);
+    if (!!this.form.value.bucket_input && this.form.value.bucket === newOption) {
+      createBucket$ = this.ws.call('cloudsync.create_bucket', [this.form.value.credentials, this.form.value.bucket_input]);
     }
 
-    request$.pipe(untilDestroyed(this)).subscribe({
+    createBucket$.pipe(
+      switchMap(() => {
+        if (this.isNew) {
+          return this.ws.call('cloud_backup.create', [payload]);
+        }
+        return this.ws.call('cloud_backup.update', [this.editingTask.id, payload]);
+      }),
+      untilDestroyed(this),
+    ).subscribe({
       next: (response: CloudBackup) => {
         if (this.isNew) {
           this.snackbar.success(this.translate.instant('Task created'));
@@ -271,7 +278,9 @@ export class CloudBackupFormComponent implements OnInit {
   private prepareData(formValue: FormValue): CloudBackupUpdate {
     const attributes: CloudBackupUpdate['attributes'] = {
       folder: formValue.folder,
-      bucket: formValue.bucket,
+      bucket: this.form.value.bucket_input && this.form.value.bucket === newOption
+        ? this.form.value.bucket_input
+        : formValue.bucket,
     };
 
     const value: CloudBackupUpdate = {

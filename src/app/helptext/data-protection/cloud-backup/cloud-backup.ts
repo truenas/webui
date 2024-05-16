@@ -15,7 +15,7 @@ export const helptextCloudBackup = {
   bucket_tooltip: T('Select the name of container to use.'),
 
   bucket_input_placeholder: T('New Bucket Name'),
-  bucket_input_tooltip: T('Input the name of container to use.'),
+  bucket_input_tooltip: T('Enter the name of the new bucket. Only lowercase letters, numbers, and hyphens are allowed.'),
 
   folder_placeholder: T('Folder'),
 
