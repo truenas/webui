@@ -43,23 +43,23 @@ describe('ConfirmForceDeleteDialogComponent', () => {
     const cancelBtn = await loader.getHarness(MatButtonHarness.with({ text: 'Cancel' }));
     await cancelBtn.click();
 
-    expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith(false);
+    expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith({ confirmed: false });
   });
 
   it('closes dialog with { force: false } when user presses Delete', async () => {
     const deleteBtn = await loader.getHarness(MatButtonHarness.with({ text: 'Delete' }));
     await deleteBtn.click();
 
-    expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith({ force: false });
+    expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith({ confirmed: true, force: false });
   });
 
-  it('closes dialog with { force: true } when user presses Delete with Force ticked', async () => {
+  it('closes dialog with { confirmed: true,  force: true } when user presses Delete with Force ticked', async () => {
     const forceCheckbox = await loader.getHarness(IxCheckboxHarness.with({ label: 'Force' }));
     await forceCheckbox.setValue(true);
 
     const deleteBtn = await loader.getHarness(MatButtonHarness.with({ text: 'Delete' }));
     await deleteBtn.click();
 
-    expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith({ force: true });
+    expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith({ confirmed: true, force: true });
   });
 });
