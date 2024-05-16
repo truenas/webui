@@ -1,8 +1,15 @@
-.lifetime-container {
-  display: flex;
-  gap: 10px;
+@import 'scss-imports/splitview';
 
-  * {
-    width: 100%;
+.fieldsets {
+  display: flex;
+  flex-wrap: wrap;
+
+  .fieldset {
+    width: 50%;
+
+    @media (max-width: $breakpoint-tablet) {
+      padding-bottom: 0;
+      width: 100%;
+    }
   }
 }

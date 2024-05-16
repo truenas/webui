@@ -50,7 +50,7 @@ describe('CloudBackupFormComponent', () => {
     bwlimit: [],
     include: [],
     exclude: [],
-    transfers: null,
+    transfers: 5,
     args: '',
     enabled: true,
     job: null,
@@ -171,7 +171,11 @@ describe('CloudBackupFormComponent', () => {
         Credentials: 'Storj iX (Storj)',
         'Keep Last': 3,
         Folder: '/',
+        Enabled: false,
+        Transfers: 22,
         Bucket: 'bucket1',
+        'Take Snapshot': true,
+        Exclude: ['/test'],
       });
 
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
@@ -183,8 +187,8 @@ describe('CloudBackupFormComponent', () => {
         bwlimit: undefined,
         credentials: 2,
         description: 'New Cloud Backup Task',
-        enabled: true,
-        exclude: [],
+        enabled: false,
+        exclude: ['/test'],
         include: [],
         keep_last: 3,
         password: 'qwerty',
@@ -198,8 +202,8 @@ describe('CloudBackupFormComponent', () => {
           minute: '0',
           month: '*',
         },
-        snapshot: false,
-        transfers: null,
+        snapshot: true,
+        transfers: 22,
       }]);
       expect(chainedComponentRef.close).toHaveBeenCalledWith({ response: existingTask, error: null });
     });
@@ -221,19 +225,27 @@ describe('CloudBackupFormComponent', () => {
     it('shows values for an existing cloud backup task when it is open for edit', async () => {
       const form = await loader.getHarness(IxFormHarness);
       expect(await form.getValues()).toEqual({
+        'Bandwidth Limit': [],
         Bucket: '',
         Credentials: 'Storj iX (Storj)',
+        Enabled: true,
+        Exclude: [],
         Name: 'sdf',
         Folder: '/My Folder',
         'Keep Last': '2',
         Password: '1234',
+        'Post-script': '',
+        'Pre-script': '',
         Schedule: 'Weekly (0 0 * * 0)  On Sundays at 00:00 (12:00 AM)',
         'Source Path': '/mnt/my pool',
+        'Take Snapshot': false,
+        Transfers: '5',
       });
 
       expect(spectator.component.form.value).toEqual({
         args: '',
         bucket: '',
+        bwlimit: [],
         credentials: 2,
         description: 'sdf',
         enabled: true,
@@ -241,14 +253,12 @@ describe('CloudBackupFormComponent', () => {
         folder: '/My Folder',
         keep_last: 2,
         password: '1234',
-        path: [
-          '/mnt/my pool',
-        ],
+        path: '/mnt/my pool',
         post_script: '',
         pre_script: '',
         schedule: '0 0 * * 0',
         snapshot: false,
-        transfers: null,
+        transfers: 5,
       });
     });
 
@@ -258,7 +268,7 @@ describe('CloudBackupFormComponent', () => {
         Name: 'Edited description',
         Password: 'qwerty123',
         Bucket: 'bucket1',
-        'Source Path': ['/mnt/path1', '/mnt/path2'],
+        'Source Path': '/mnt/path1',
       });
 
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
@@ -275,10 +285,10 @@ describe('CloudBackupFormComponent', () => {
         description: 'Edited description',
         enabled: true,
         exclude: [],
-        include: ['/path1/**', '/path2/**'],
+        include: [],
         keep_last: 2,
         password: 'qwerty123',
-        path: '/mnt',
+        path: '/mnt/path1',
         post_script: '',
         pre_script: '',
         schedule: {
@@ -289,7 +299,7 @@ describe('CloudBackupFormComponent', () => {
           month: '*',
         },
         snapshot: false,
-        transfers: null,
+        transfers: 5,
       }]);
       expect(chainedComponentRef.close).toHaveBeenCalledWith({ response: existingTask, error: null });
     });
