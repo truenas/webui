@@ -18,14 +18,17 @@ export interface CloudBackup {
   args: string;
   enabled: boolean;
   password: string;
-  credentials: CloudCredential | number;
+  credentials: CloudCredential;
   job: Job | null;
   locked: boolean;
-  bwlimit?: BwLimit;
+  bwlimit?: BwLimit[];
   keep_last?: number;
 }
 
-export type CloudBackupUpdate = Omit<CloudBackup, 'id' | 'job' | 'locked'>;
+export interface CloudBackupUpdate extends Omit<CloudBackup, 'id' | 'job' | 'locked' | 'bwlimit' | 'credentials'> {
+  credentials: number;
+  bwlimit: { time: string; bandwidth: string }[];
+}
 
 export interface CloudBackupSnapshot {
   id: string;

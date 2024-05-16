@@ -4,11 +4,19 @@ import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
 import { CloudBackupStatsComponent } from 'app/pages/data-protection/cloud-backup/cloud-backup-details/cloud-backup-stats/cloud-backup-stats.component';
 
 const testBackup = {
-  args: 'test',
   path: '/mnt/test',
   post_script: 'test',
   pre_script: 'test',
-} as CloudBackup;
+  attributes: {
+    folder: '/ix',
+    bucket: 'ixsystems',
+  },
+  transfers: 22,
+  keep_last: 5,
+  credentials: {
+    name: 'Storj',
+  },
+} as unknown as CloudBackup;
 
 describe('CloudBackupStatsComponent', () => {
   let spectator: Spectator<CloudBackupStatsComponent>;
@@ -36,10 +44,14 @@ describe('CloudBackupStatsComponent', () => {
 
   it('renders Details in card', () => {
     const chartExtra = spectator.query('mat-card-content').querySelectorAll('p');
-    expect(chartExtra).toHaveLength(4);
-    expect(chartExtra[0]).toHaveText('Args: test');
-    expect(chartExtra[1]).toHaveText('Path: /mnt/test');
-    expect(chartExtra[2]).toHaveText('Post Script: test');
-    expect(chartExtra[3]).toHaveText('Pre Script: test');
+    expect(chartExtra).toHaveLength(8);
+    expect(chartExtra[0]).toHaveText('Path: /mnt/test');
+    expect(chartExtra[1]).toHaveText('Credentials: Storj');
+    expect(chartExtra[2]).toHaveText('Bucket: ixsystems');
+    expect(chartExtra[3]).toHaveText('Folder: /ix');
+    expect(chartExtra[4]).toHaveText('Keep Last: 5');
+    expect(chartExtra[5]).toHaveText('Transfers: 22');
+    expect(chartExtra[6]).toHaveText('Post Script: test');
+    expect(chartExtra[7]).toHaveText('Pre Script: test');
   });
 });
