@@ -10,7 +10,7 @@ describe('EnclosureStore', () => {
     service: EnclosureStore,
     providers: [
       mockWebSocket([
-        mockCall('enclosure2.query'),
+        mockCall('webui.enclosure.dashboard'),
       ]),
     ],
   });
@@ -20,7 +20,7 @@ describe('EnclosureStore', () => {
     spectator.service.loadData();
   });
 
-  it('calls enclosure2.query when loading data', () => {
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('enclosure2.query');
+  it('calls webui.enclosure.dashboard when loading data', () => {
+    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('webui.enclosure.dashboard');
   });
 });

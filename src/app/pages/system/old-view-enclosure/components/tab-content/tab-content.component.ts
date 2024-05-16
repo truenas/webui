@@ -2,8 +2,7 @@ import {
   ChangeDetectionStrategy,
   Component, Input,
 } from '@angular/core';
-import { EnclosureOldSlot } from 'app/interfaces/enclosure-old.interface';
-import { EnclosureElement } from 'app/interfaces/enclosure.interface';
+import { DashboardEnclosureSlot, EnclosureElement } from 'app/interfaces/enclosure.interface';
 
 @Component({
   selector: 'ix-tab-content',
@@ -12,7 +11,7 @@ import { EnclosureElement } from 'app/interfaces/enclosure.interface';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TabContentComponent {
-  @Input() element: Record<number, EnclosureElement> | Record<number, EnclosureOldSlot>;
+  @Input() element: Record<number, EnclosureElement> | Record<number, DashboardEnclosureSlot>;
   get data(): EnclosureElement[] {
     return Object.entries(this.element).map((keyValue: [string, EnclosureElement]) => {
       return keyValue[1];
