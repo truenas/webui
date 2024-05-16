@@ -56,6 +56,7 @@ describe('JbofListComponent', () => {
       ]),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
+        confirmForceDelete: jest.fn(() => of({ confirmed: true, force: false })),
       }),
       mockProvider(IxSlideInService, {
         open: jest.fn(() => {
@@ -97,7 +98,11 @@ describe('JbofListComponent', () => {
     const deleteButton = await table.getHarnessInRow(IxIconHarness.with({ name: 'delete' }), 'description 2');
     await deleteButton.click();
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('jbof.delete', [2]);
+    expect(spectator.inject(DialogService).confirmForceDelete).toHaveBeenCalledWith({
+      title: 'Delete',
+      message: 'Are you sure you want to delete this item?',
+    });
+    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('jbof.delete', [2, false]);
   });
 
   it('enables Add button when existing are less than licensed', () => {

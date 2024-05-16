@@ -7,6 +7,7 @@ import {
   filter, forkJoin, map, switchMap, tap,
 } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
+import { ConfirmForceDeleteDialogResponse } from 'app/interfaces/confirm-force-delete-dialog-config.interface';
 import { Jbof } from 'app/interfaces/jbof.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
@@ -103,13 +104,14 @@ export class JbofListComponent implements OnInit {
   }
 
   doDelete(jbof: Jbof): void {
-    this.dialogService.confirm({
+    this.dialogService.confirmForceDelete({
       title: this.translate.instant('Delete'),
       message: this.translate.instant('Are you sure you want to delete this item?'),
-      buttonText: this.translate.instant('Delete'),
     }).pipe(
-      filter(Boolean),
-      switchMap(() => this.ws.call('jbof.delete', [jbof.id]).pipe(this.loader.withLoader())),
+      filter((value: ConfirmForceDeleteDialogResponse) => value.confirmed),
+      switchMap((value: ConfirmForceDeleteDialogResponse) => {
+        return this.ws.call('jbof.delete', [jbof.id, value.force]).pipe(this.loader.withLoader());
+      }),
       untilDestroyed(this),
     ).subscribe({
       next: () => this.getJbofs(),
