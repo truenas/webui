@@ -7,7 +7,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import _ from 'lodash';
 import {
-  Observable, combineLatest, map, of,
+  Observable, debounceTime, distinctUntilChanged, map, of,
 } from 'rxjs';
 import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
 import { Role } from 'app/enums/role.enum';
@@ -46,6 +46,12 @@ export class CloudBackupFormComponent implements OnInit {
       ? this.translate.instant('Add TrueCloud Backup Task')
       : this.translate.instant('Edit TrueCloud Backup Task');
   }
+
+  protected readonly newBucketOption = {
+    label: this.translate.instant('Add new'),
+    value: newOption,
+    disabled: false,
+  };
 
   form = this.fb.group({
     path: [[] as string[], [Validators.required]],
@@ -97,40 +103,46 @@ export class CloudBackupFormComponent implements OnInit {
     this.setFileNodeProvider();
     this.setBucketNodeProvider();
 
-    combineLatest([
-      this.cloudCredentialService.getCloudSyncCredentials(),
-      this.cloudCredentialService.getProviders(),
-      this.form.controls.credentials.valueChanges,
-    ]).pipe(untilDestroyed(this)).subscribe(([credentialsList, providersList, credentialId]) => {
-      const targetCredentials = _.find(credentialsList, { id: credentialId });
-      const targetProvider = _.find(providersList, { name: targetCredentials?.provider });
+    this.form.controls.credentials.valueChanges
+      .pipe(untilDestroyed(this))
+      .subscribe((credentialId) => {
+        if (credentialId !== (this.editingTask?.credentials as CloudCredential)?.id) {
+          this.form.controls.bucket.patchValue('');
+        }
 
-      if (credentialId && targetProvider?.buckets) {
-        this.form.controls.folder.enable();
-        this.loadBucketOptions(credentialId);
-      } else if (credentialId) {
-        this.form.controls.folder.enable();
-        this.form.controls.bucket.disable();
         this.form.controls.bucket_input.disable();
-      } else {
-        this.form.controls.folder.disable();
-        this.form.controls.bucket.disable();
-        this.form.controls.bucket_input.disable();
-      }
-    });
 
-    this.form.controls.bucket.valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {
-      if (value === newOption) {
-        this.form.controls.bucket_input.enable();
-      } else {
-        this.form.controls.bucket_input.disable();
-      }
-      this.setBucketNodeProvider();
-    });
+        if (credentialId) {
+          this.form.controls.folder.enable();
+          this.form.controls.bucket.enable();
+          this.loadBucketOptions(credentialId);
+        } else {
+          this.form.controls.folder.disable();
+          this.form.controls.bucket.disable();
+        }
+      });
 
-    this.form.controls.bucket_input.valueChanges.pipe(untilDestroyed(this)).subscribe(() => {
-      this.setBucketNodeProvider();
-    });
+    this.form.controls.bucket.valueChanges
+      .pipe(untilDestroyed(this))
+      .subscribe((value) => {
+        if (value === newOption) {
+          this.form.controls.bucket_input.patchValue('');
+          this.form.controls.bucket_input.enable();
+        } else {
+          this.form.controls.bucket_input.disable();
+        }
+        this.setBucketNodeProvider();
+      });
+
+    this.form.controls.bucket_input.valueChanges
+      .pipe(
+        debounceTime(300),
+        distinctUntilChanged(),
+        untilDestroyed(this),
+      )
+      .subscribe(() => {
+        this.setBucketNodeProvider();
+      });
 
     if (this.editingTask) {
       this.setTaskForEdit();
@@ -148,11 +160,7 @@ export class CloudBackupFormComponent implements OnInit {
             value: bucket.Path,
             disabled: !bucket.Enabled,
           }));
-          bucketOptions.unshift({
-            label: this.translate.instant('Add new'),
-            value: newOption,
-            disabled: false,
-          });
+          bucketOptions.unshift(this.newBucketOption);
           this.bucketOptions$ = of(bucketOptions);
           this.isLoading = false;
           this.form.controls.bucket.enable();
@@ -161,8 +169,7 @@ export class CloudBackupFormComponent implements OnInit {
         },
         error: () => {
           this.isLoading = false;
-          this.form.controls.bucket.disable();
-          this.form.controls.bucket_input.enable();
+          this.bucketOptions$ = of([this.newBucketOption]);
           this.cdr.markForCheck();
         },
       });
