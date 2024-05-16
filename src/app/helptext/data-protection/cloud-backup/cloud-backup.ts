@@ -12,12 +12,13 @@ export const helptextCloudBackup = {
   credentials_tooltip: T('Select the cloud storage provider credentials from the list of available Cloud Credentials.'),
 
   bucket_placeholder: T('Bucket'),
-  bucket_tooltip: T('Select the name of container to use.'),
+  bucket_tooltip: T('Select the bucket to store the backup data.'),
 
   bucket_input_placeholder: T('New Bucket Name'),
   bucket_input_tooltip: T('Enter the name of the new bucket. Only lowercase letters, numbers, and hyphens are allowed.'),
 
   folder_placeholder: T('Folder'),
+  folder_tooltip: T('Select the folder to store the backup data.'),
 
   name_placeholder: T('Name'),
   name_tooltip: T('Enter a name of the Cloud Backup Task.'),
