@@ -10,6 +10,7 @@ export const sshKeypairsCardElements = {
     },
     add: {
       hierarchy: [T('Add')],
+      synonyms: [T('Add SSH Keypair'), T('New SSH Keypair'), T('Create SSH Keypair'), T('SSH Keypair')],
       anchor: 'add-ssh-keypair',
     },
   },

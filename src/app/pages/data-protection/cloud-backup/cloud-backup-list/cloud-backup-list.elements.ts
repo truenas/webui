@@ -10,7 +10,15 @@ export const cloudBackupListElements = {
     },
     add: {
       hierarchy: [T('Add')],
-      synonyms: [T('Add TrueCloud Backup Task'), T('Add Cloud Backup')],
+      synonyms: [
+        T('Add TrueCloud Backup Task'),
+        T('Add Cloud Backup'),
+        T('Create TrueCloud Backup Task'),
+        T('Create Cloud Backup'),
+        T('New TrueCloud Backup Task'),
+        T('New Cloud Backup'),
+        T('Task'),
+      ],
     },
   },
 } satisfies UiSearchableElement;

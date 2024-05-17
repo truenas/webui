@@ -9,6 +9,12 @@ export const idMapElements = {
     add: {
       hierarchy: [T('Add')],
       anchor: 'add-idmap',
+      synonyms: [
+        T('Add Idmap'),
+        T('Create Idmap'),
+        T('New Idmap'),
+        T('Idmap'),
+      ],
     },
   },
 } satisfies UiSearchableElement;

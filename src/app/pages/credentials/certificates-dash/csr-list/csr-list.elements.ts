@@ -12,6 +12,16 @@ export const csrListElements = {
     add: {
       hierarchy: [T('Add')],
       anchor: 'add-csr',
+      synonyms: [
+        T('Create CSR'),
+        T('New CSR'),
+        T('Add CSR'),
+        T('Generate CSR'),
+        T('Create Certificate Signing Requests'),
+        T('New Certificate Signing Requests'),
+        T('Add Certificate Signing Requests'),
+        T('Generate Certificate Signing Requests'),
+      ],
     },
   },
 } satisfies UiSearchableElement;

@@ -10,7 +10,12 @@ export const scrubListElements = {
     },
     add: {
       hierarchy: [T('Add')],
-      synonyms: [T('Add Scrub Task')],
+      synonyms: [
+        T('Add Scrub Task'),
+        T('Create Scrub Task'),
+        T('New Scrub Task'),
+        T('Task'),
+      ],
     },
   },
 } satisfies UiSearchableElement;

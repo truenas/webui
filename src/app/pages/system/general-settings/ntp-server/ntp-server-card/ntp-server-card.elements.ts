@@ -11,6 +11,12 @@ export const ntpServerElements = {
     },
     addNtpServer: {
       hierarchy: [T('Add')],
+      synonyms: [
+        T('Add NTP Server'),
+        T('Create NTP Server'),
+        T('New NTP Server'),
+        T('NTP Server'),
+      ],
     },
   },
 } satisfies UiSearchableElement;

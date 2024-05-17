@@ -11,6 +11,12 @@ export const sysctlCardElements = {
     },
     addSysctl: {
       hierarchy: [T('Add')],
+      synonyms: [
+        T('Add Sysctl'),
+        T('Create Sysctl'),
+        T('New Sysctl'),
+        T('Sysctl'),
+      ],
     },
   },
 } satisfies UiSearchableElement;
