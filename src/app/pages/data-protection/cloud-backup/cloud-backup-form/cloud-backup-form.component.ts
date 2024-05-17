@@ -5,15 +5,14 @@ import { Validators } from '@angular/forms';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import _ from 'lodash';
 import {
-  Observable, combineLatest, map, of,
+  Observable, debounceTime, distinctUntilChanged, map, of,
 } from 'rxjs';
 import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
 import { Role } from 'app/enums/role.enum';
+import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
 import { helptextCloudBackup } from 'app/helptext/data-protection/cloud-backup/cloud-backup';
 import { CloudBackup, CloudBackupUpdate } from 'app/interfaces/cloud-backup.interface';
-import { CloudCredential } from 'app/interfaces/cloud-sync-task.interface';
 import { SelectOption, newOption } from 'app/interfaces/option.interface';
 import { ExplorerNodeData, TreeNode } from 'app/interfaces/tree-node.interface';
 import { TreeNodeProvider } from 'app/modules/ix-forms/components/ix-explorer/tree-node-provider.interface';
@@ -47,8 +46,14 @@ export class CloudBackupFormComponent implements OnInit {
       : this.translate.instant('Edit TrueCloud Backup Task');
   }
 
+  protected readonly newBucketOption = {
+    label: this.translate.instant('Add new'),
+    value: newOption,
+    disabled: false,
+  };
+
   form = this.fb.group({
-    path: [[] as string[], [Validators.required]],
+    path: ['', [Validators.required]],
     credentials: [null as number, [Validators.required]],
     schedule: [CronPresetValue.Daily, [Validators.required]],
     exclude: [[] as string[]],
@@ -56,6 +61,7 @@ export class CloudBackupFormComponent implements OnInit {
     post_script: [''],
     description: [''],
     snapshot: [false],
+    bwlimit: [[] as string[]],
     transfers: [null as number],
     args: [''],
     enabled: [true],
@@ -97,40 +103,46 @@ export class CloudBackupFormComponent implements OnInit {
     this.setFileNodeProvider();
     this.setBucketNodeProvider();
 
-    combineLatest([
-      this.cloudCredentialService.getCloudSyncCredentials(),
-      this.cloudCredentialService.getProviders(),
-      this.form.controls.credentials.valueChanges,
-    ]).pipe(untilDestroyed(this)).subscribe(([credentialsList, providersList, credentialId]) => {
-      const targetCredentials = _.find(credentialsList, { id: credentialId });
-      const targetProvider = _.find(providersList, { name: targetCredentials?.provider });
+    this.form.controls.credentials.valueChanges
+      .pipe(untilDestroyed(this))
+      .subscribe((credentialId) => {
+        if (credentialId !== this.editingTask?.credentials?.id) {
+          this.form.controls.bucket.patchValue('');
+        }
 
-      if (credentialId && targetProvider.buckets) {
-        this.form.controls.folder.enable();
-        this.loadBucketOptions(credentialId);
-      } else if (credentialId) {
-        this.form.controls.folder.enable();
-        this.form.controls.bucket.disable();
         this.form.controls.bucket_input.disable();
-      } else {
-        this.form.controls.folder.disable();
-        this.form.controls.bucket.disable();
-        this.form.controls.bucket_input.disable();
-      }
-    });
 
-    this.form.controls.bucket.valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {
-      if (value === newOption) {
-        this.form.controls.bucket_input.enable();
-      } else {
-        this.form.controls.bucket_input.disable();
-      }
-      this.setBucketNodeProvider();
-    });
+        if (credentialId) {
+          this.form.controls.folder.enable();
+          this.form.controls.bucket.enable();
+          this.loadBucketOptions(credentialId);
+        } else {
+          this.form.controls.folder.disable();
+          this.form.controls.bucket.disable();
+        }
+      });
 
-    this.form.controls.bucket_input.valueChanges.pipe(untilDestroyed(this)).subscribe(() => {
-      this.setBucketNodeProvider();
-    });
+    this.form.controls.bucket.valueChanges
+      .pipe(untilDestroyed(this))
+      .subscribe((value) => {
+        if (value === newOption) {
+          this.form.controls.bucket_input.patchValue('');
+          this.form.controls.bucket_input.enable();
+        } else {
+          this.form.controls.bucket_input.disable();
+        }
+        this.setBucketNodeProvider();
+      });
+
+    this.form.controls.bucket_input.valueChanges
+      .pipe(
+        debounceTime(300),
+        distinctUntilChanged(),
+        untilDestroyed(this),
+      )
+      .subscribe(() => {
+        this.setBucketNodeProvider();
+      });
 
     if (this.editingTask) {
       this.setTaskForEdit();
@@ -148,11 +160,7 @@ export class CloudBackupFormComponent implements OnInit {
             value: bucket.Path,
             disabled: !bucket.Enabled,
           }));
-          bucketOptions.unshift({
-            label: this.translate.instant('Add new'),
-            value: newOption,
-            disabled: false,
-          });
+          bucketOptions.unshift(this.newBucketOption);
           this.bucketOptions$ = of(bucketOptions);
           this.isLoading = false;
           this.form.controls.bucket.enable();
@@ -161,8 +169,7 @@ export class CloudBackupFormComponent implements OnInit {
         },
         error: () => {
           this.isLoading = false;
-          this.form.controls.bucket.disable();
-          this.form.controls.bucket_input.enable();
+          this.bucketOptions$ = of([this.newBucketOption]);
           this.cdr.markForCheck();
         },
       });
@@ -215,18 +222,16 @@ export class CloudBackupFormComponent implements OnInit {
     this.form.patchValue({
       ...this.editingTask,
       schedule: scheduleToCrontab(this.editingTask.schedule) as CronPresetValue,
-      path: [],
-      credentials: (this.editingTask.credentials as CloudCredential).id,
+      path: this.editingTask.path,
+      credentials: (this.editingTask.credentials).id,
       folder: this.editingTask.attributes.folder as string,
+      bucket: this.editingTask.attributes.bucket === newOption ? '' : this.editingTask.attributes.bucket as string || '',
+      bwlimit: (this.editingTask.bwlimit || []).map((bwlimit) => {
+        return bwlimit.bandwidth
+          ? `${bwlimit.time}, ${buildNormalizedFileSize(bwlimit.bandwidth, 'b', 10)}`
+          : `${bwlimit.time}, off`;
+      }),
     });
-
-    if (this.editingTask.include?.length) {
-      this.form.controls.path.setValue(
-        this.editingTask.include.map((path: string) => (`${this.editingTask.path}/${path.split('/')[1]}`)),
-      );
-    } else {
-      this.form.controls.path.setValue([this.editingTask.path]);
-    }
   }
 
   onSubmit(): void {
@@ -263,34 +268,20 @@ export class CloudBackupFormComponent implements OnInit {
   private prepareData(formValue: FormValue): CloudBackupUpdate {
     const attributes: CloudBackupUpdate['attributes'] = {
       folder: formValue.folder,
+      bucket: formValue.bucket,
     };
 
     const value: CloudBackupUpdate = {
       ...formValue,
       attributes,
       include: [],
-      path: undefined,
-      bwlimit: undefined,
+      bwlimit: formValue.bwlimit ? this.cloudCredentialService.prepareBwlimit(formValue.bwlimit) : undefined,
       schedule: crontabToSchedule(formValue.schedule),
     };
 
-    if (!formValue.path.length || !_.isArray(formValue.path)) {
-      value.path = '/';
-    } else if (formValue.path.length === 1) {
-      value.path = formValue.path[0];
-    } else {
-      value.include = [];
-      for (const dir of formValue.path) {
-        const directory = dir.split('/');
-        value.include.push('/' + directory[directory.length - 1] + '/**');
-      }
-      const directory = formValue.path[formValue.path.length - 1].split('/');
-      value.path = directory.slice(0, directory.length - 1).join('/');
-    }
-
-    delete (value as unknown as FormValue).folder;
-    delete (value as unknown as FormValue).bucket;
-    delete (value as unknown as FormValue).bucket_input;
+    (['folder', 'bucket', 'bucket_input'] as const).forEach((key) => {
+      delete (value as unknown as FormValue)[key];
+    });
 
     return value;
   }

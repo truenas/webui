@@ -92,7 +92,7 @@ describe('CloudBackupCardComponent', () => {
 
     expect(spectator.inject(IxChainedSlideInService).open).toHaveBeenCalledWith(
       CloudBackupFormComponent,
-      false,
+      true,
       cloudBackups[0],
     );
   });
@@ -103,7 +103,7 @@ describe('CloudBackupCardComponent', () => {
 
     expect(spectator.inject(IxChainedSlideInService).open).toHaveBeenCalledWith(
       CloudBackupFormComponent,
-      false,
+      true,
       undefined,
     );
   });
