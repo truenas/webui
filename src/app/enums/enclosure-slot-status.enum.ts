@@ -1,3 +1,5 @@
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
+
 export enum EnclosureSlotStatus {
   Clear = 'CLEAR',
   Fault = 'FAULT',
@@ -38,3 +40,17 @@ export enum EnclosureElementType {
   CurrentSensor = 'Current Sensor',
   DoorLock = 'Door Lock',
 }
+
+export const enclosureElementTypeLabels = new Map<EnclosureElementType, string>([
+  [EnclosureElementType.ArrayDeviceSlot, T('Disks')],
+  [EnclosureElementType.Enclosure, T('Enclosure')],
+  [EnclosureElementType.PowerSupply, T('Power Supply')],
+  [EnclosureElementType.Cooling, T('Cooling')],
+  [EnclosureElementType.TemperatureSensors, T('Temperature Sensors')],
+  [EnclosureElementType.EnclosureServicesControllerElectronics, T('Enclosure Services Controller Electronics')],
+  [EnclosureElementType.SasExpander, T('SAS Expander')],
+  [EnclosureElementType.SasConnector, T('SAS Connector')],
+  [EnclosureElementType.VoltageSensor, T('Voltage')],
+  [EnclosureElementType.CurrentSensor, T('Current Sensor')],
+  [EnclosureElementType.DoorLock, T('Door Lock')],
+]);

@@ -12,8 +12,8 @@ import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-tabl
 import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
 import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
 import { SearchInput1Component } from 'app/modules/search-input1/search-input1.component';
-import { JbofFormComponent } from 'app/pages/system/enclosure/components/enclosure-dashboard/jbof-list/jbof-form/jbof-form.component';
-import { JbofListComponent } from 'app/pages/system/enclosure/components/enclosure-dashboard/jbof-list/jbof-list.component';
+import { JbofFormComponent } from 'app/pages/system/enclosure/components/jbof-list/jbof-form/jbof-form.component';
+import { JbofListComponent } from 'app/pages/system/enclosure/components/jbof-list/jbof-list.component';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 

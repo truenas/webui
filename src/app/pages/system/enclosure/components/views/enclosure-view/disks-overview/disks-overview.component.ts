@@ -4,11 +4,11 @@ import {
 import { DashboardEnclosureSlot } from 'app/interfaces/enclosure.interface';
 
 @Component({
-  selector: 'ix-disk-overview',
-  templateUrl: './disk-overview.component.html',
-  styleUrls: ['./disk-overview.component.scss'],
+  selector: 'ix-disks-overview',
+  templateUrl: './disks-overview.component.html',
+  styleUrls: ['./disks-overview.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class DiskOverviewComponent {
+export class DisksOverviewComponent {
   slot = input.required<DashboardEnclosureSlot | null>();
 }

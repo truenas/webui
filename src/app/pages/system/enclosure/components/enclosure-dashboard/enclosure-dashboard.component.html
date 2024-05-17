@@ -7,43 +7,13 @@
   >
     {{ 'NVMe-oF Expansion Shelves' | translate }}
   </a>
-  <!-- TODO: Missing conditions -->
-  <button
-    mat-button
-    ixTest="elements-menu"
-    [matMenuTriggerFor]="elementsMenu"
-  >
-    {{ 'Elements' | translate }}
-    <ix-icon name="mdi-menu-down" class="menu-caret"></ix-icon>
-  </button>
-  <mat-menu #elementsMenu="matMenu"></mat-menu>
+  <ix-view-elements-menu
+    *ngIf="selectedEnclosure()"
+    [enclosure]="selectedEnclosure()"
+  ></ix-view-elements-menu>
 </ix-page-header>
 
 <mat-card *ngIf="selectedEnclosure()">
-  <mat-card-header>
-    <div class="header-wrapper">
-      <div>
-        <h3>{{ 'Disks on {enclosure}' | translate: { enclosure: enclosureLabel() } }}</h3>
-      </div>
-      <div>
-        <button
-          *ixRequiresRoles="requiredRoles"
-          mat-button
-          color="default"
-          ixTest="edit-label"
-          (click)="onEditLabel()"
-        >
-          {{ 'Edit Label' | translate }}
-        </button>
-      </div>
-    </div>
-  </mat-card-header>
-  <mat-card-content>
-    <!-- TODO: Loading indication -->
-    <ix-enclosure-overview
-      [enclosure]="selectedEnclosure()"
-      [selectedSlot]="selectedSlot$ | async"
-    ></ix-enclosure-overview>
-    <ix-disk-overview [slot]="selectedSlot$ | async"></ix-disk-overview>
-  </mat-card-content>
+  <!-- TODO: Loading indication -->
+  <router-outlet></router-outlet>
 </mat-card>
