@@ -6,7 +6,6 @@ import {
   Observable, catchError, filter, finalize, map, switchMap, tap,
 } from 'rxjs';
 import { WidgetName } from 'app/enums/widget-name.enum';
-import { LoggedInUser } from 'app/interfaces/ds-cache.interface';
 import { demoWidgets } from 'app/pages/dashboard/services/demo-widgets.constant';
 import { WidgetGroup, WidgetGroupLayout } from 'app/pages/dashboard/types/widget-group.interface';
 import { SomeWidgetSettings, WidgetType } from 'app/pages/dashboard/types/widget.interface';
@@ -77,11 +76,11 @@ export class DashboardStore extends ComponentStore<DashboardState> {
     );
   });
 
-  save(groups: WidgetGroup[]): Observable<LoggedInUser> {
+  save(groups: WidgetGroup[]): Observable<void> {
     this.toggleLoadingState(true);
 
     return this.ws.call('auth.set_attribute', ['dashState', groups]).pipe(
-      switchMap(() => this.authService.refetchUser()),
+      switchMap(() => this.authService.refreshUser()),
       finalize(() => this.toggleLoadingState(false)),
     );
   }

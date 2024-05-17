@@ -195,10 +195,6 @@ export class AuthService {
     );
   }
 
-  refetchUser(): Observable<LoggedInUser> {
-    return this.getLoggedInUserInformation();
-  }
-
   private processLoginResult(wasLoggedIn: boolean): Observable<LoginResult> {
     return of(wasLoggedIn).pipe(
       switchMap((loggedIn) => {

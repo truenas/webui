@@ -16,8 +16,8 @@ import { actionsColumn } from 'app/modules/ix-table/components/ix-table-body/cel
 import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { createTable } from 'app/modules/ix-table/utils';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
-import { JbofFormComponent } from 'app/pages/system/enclosure/components/enclosure-dashboard/jbof-list/jbof-form/jbof-form.component';
-import { jbofListElements } from 'app/pages/system/enclosure/components/enclosure-dashboard/jbof-list/jbof-list.elements';
+import { JbofFormComponent } from 'app/pages/system/enclosure/components/jbof-list/jbof-form/jbof-form.component';
+import { jbofListElements } from 'app/pages/system/enclosure/components/jbof-list/jbof-list.elements';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
