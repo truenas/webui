@@ -23,7 +23,7 @@ When it is set, system will rename the existing \
 directory/file path where the dataset should be mounted resulting in successful unlock of the dataset.'),
   dataset_passphrase_validation: [Validators.minLength(8)],
   fetching_encryption_summary_title: T('Fetching Encryption Summary'),
-  fetching_encryption_summary_message: T('Fetching Encryption Summary for '),
+  fetching_encryption_summary_message: T('Fetching Encryption Summary for {dataset}'),
   unlocking_datasets_title: T('Unlocking Datasets'),
   unlock_dataset_dialog: {
     title: T('Unlock Datasets'),

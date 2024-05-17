@@ -7,4 +7,39 @@ export const servicesElements = {
   elements: {
     services: {},
   },
+  manualRenderElements: {
+    smb: {
+      hierarchy: [T('SMB')],
+      anchor: 'service-smb',
+    },
+    ftp: {
+      hierarchy: [T('FTP')],
+      anchor: 'service-ftp',
+    },
+    iscsi: {
+      hierarchy: [T('iSCSI')],
+      anchor: 'service-iscsi',
+    },
+    nfs: {
+      hierarchy: [T('NFS')],
+      anchor: 'service-nfs',
+    },
+    snmp: {
+      hierarchy: [T('SNMP')],
+      anchor: 'service-snmp',
+    },
+    ssh: {
+      hierarchy: [T('SSH')],
+      anchor: 'service-ssh',
+    },
+    ups: {
+      hierarchy: [T('UPS')],
+      anchor: 'service-ups',
+    },
+    smart: {
+      hierarchy: [T('S.M.A.R.T.')],
+      anchor: 'service-smart',
+      synonyms: [T('Smart')],
+    },
+  },
 } satisfies UiSearchableElement;

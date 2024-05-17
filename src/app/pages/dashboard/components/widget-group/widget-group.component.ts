@@ -40,7 +40,7 @@ export class WidgetGroupComponent {
 
   private getSlotComponent(index: number): OutletParams {
     const widget = (this.group().slots || [])[index];
-    if (!widget) {
+    if (!widget?.type) {
       return null;
     }
 

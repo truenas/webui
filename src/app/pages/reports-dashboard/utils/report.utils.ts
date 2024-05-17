@@ -4,18 +4,6 @@ import {
 import { ReportingGraphName } from 'app/enums/reporting.enum';
 import { ReportingAggregationKeys, ReportingData } from 'app/interfaces/reporting.interface';
 
-export function formatInterfaceUnit(value: string): string {
-  if (value && value.split(' ', 2)[0] !== '0' && !value?.endsWith('/s')) {
-    if (Number.isNaN(Number(value[value.length - 1]))) {
-      let changedValue = value.substring(0, value.length - 1);
-      changedValue += ' ' + value[value.length - 1];
-      value = changedValue;
-    }
-    value += 'b/s';
-  }
-  return value;
-}
-
 // TODO: Messy. Nuke.
 export function formatData(data: ReportingData): ReportingData {
   if (data.name === (ReportingGraphName.NetworkInterface as string) && data.aggregations) {

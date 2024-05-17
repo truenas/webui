@@ -1,4 +1,3 @@
-import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import {
   createServiceFactory,
@@ -6,22 +5,27 @@ import {
   SpectatorService,
 } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
-import { mockEntityJobComponentRef } from 'app/core/testing/utils/mock-entity-job-component-ref.utils';
+import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
+import { mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FipsService } from 'app/services/fips.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 describe('FipsService', () => {
   let spectator: SpectatorService<FipsService>;
   const createService = createServiceFactory({
     service: FipsService,
     providers: [
-      mockProvider(MatDialog, {
-        open: jest.fn(() => mockEntityJobComponentRef),
-      }),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
+        jobDialog: jest.fn(() => ({
+          afterClosed: () => of({}),
+        })),
       }),
       mockProvider(Router),
+      mockWebSocket([
+        mockJob('failover.reboot.other_node', fakeSuccessfulJob()),
+      ]),
     ],
   });
 
@@ -64,8 +68,8 @@ describe('FipsService', () => {
           buttonText: 'Restart Standby',
         }),
       );
-      expect(mockEntityJobComponentRef.componentInstance.setCall).toHaveBeenCalledWith('failover.reboot.other_node');
-      expect(mockEntityJobComponentRef.componentInstance.submit).toHaveBeenCalled();
+      expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('failover.reboot.other_node');
+      expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
     });
   });
 });

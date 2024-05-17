@@ -1,5 +1,4 @@
-import { EventEmitter, Inject, Injectable } from '@angular/core';
-import { Store } from '@ngrx/store';
+import { EventEmitter, Injectable } from '@angular/core';
 import { fromUnixTime } from 'date-fns';
 import * as _ from 'lodash';
 import {
@@ -7,14 +6,12 @@ import {
 } from 'rxjs';
 import { map, shareReplay } from 'rxjs/operators';
 import { ProductType } from 'app/enums/product-type.enum';
-import { WINDOW } from 'app/helpers/window.helper';
 import { CertificateAuthority } from 'app/interfaces/certificate-authority.interface';
 import { Certificate } from 'app/interfaces/certificate.interface';
 import { Choices } from 'app/interfaces/choices.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { WebSocketService } from 'app/services/ws.service';
-import { AppState } from 'app/store';
 
 @Injectable({ providedIn: 'root' })
 export class SystemGeneralService {
@@ -59,8 +56,6 @@ export class SystemGeneralService {
 
   constructor(
     protected ws: WebSocketService,
-    @Inject(WINDOW) private window: Window,
-    private store$: Store<AppState>,
   ) {}
 
   getCertificateAuthorities(): Observable<CertificateAuthority[]> {

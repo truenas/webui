@@ -12,7 +12,6 @@ import { KeyframesProps } from 'popmotion';
 import { ValueReaction } from 'popmotion/lib/reactions/value';
 import { Subject } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
-import { ThemeUtils } from 'app/core/classes/theme-utils/theme-utils';
 import { EnclosureDiskStatus, EnclosureSlotStatus } from 'app/enums/enclosure-slot-status.enum';
 import { Role } from 'app/enums/role.enum';
 import { TopologyItemStatus } from 'app/enums/vdev-status.enum';
@@ -233,7 +232,6 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
   }
 
   theme: Theme;
-  protected themeUtils: ThemeUtils;
   currentView: string; // pools || status || expanders || details
   exitingView: string; // pools || status || expanders || details
 
@@ -261,7 +259,6 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
     protected matDialog: MatDialog,
     protected enclosureStore: EnclosureStore,
   ) {
-    this.themeUtils = new ThemeUtils();
     this.diskTemperatureService.listenForTemperatureUpdates();
 
     this.diskTemperatureService.temperature$.pipe(untilDestroyed(this)).subscribe((data) => {

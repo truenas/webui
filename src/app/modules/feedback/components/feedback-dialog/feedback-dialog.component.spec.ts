@@ -55,7 +55,7 @@ describe('FeedbackDialogComponent', () => {
 
   async function setupTest(): Promise<void> {
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    isReviewAllowed$.next(false);
+    isReviewAllowed$.next(true);
     isEnterprise$.next(false);
     typeButtonGroup = await loader.getHarness(IxButtonGroupHarness);
   }
@@ -86,14 +86,13 @@ describe('FeedbackDialogComponent', () => {
         expect(typeButtonGroup).toBeNull();
       });
 
-      it('shows Review, Bug and Suggestion on a non-enterprise system with reviews enabled', async () => {
+      it('shows Review and Bug on a non-enterprise system with reviews enabled', async () => {
         isReviewAllowed$.next(true);
         isEnterprise$.next(false);
 
         expect(await typeButtonGroup.getOptions()).toEqual([
           'Rate this page',
           'Report a bug',
-          'Suggest an improvement',
         ]);
       });
     });
@@ -112,7 +111,7 @@ describe('FeedbackDialogComponent', () => {
         expect(spectator.query(FileTicketLicensedComponent)).not.toExist();
       });
 
-      it('shows FileTicket form when Bug or Suggestion is selected on a non-enterprise system', async () => {
+      it('shows FileTicket form when Bug is selected on a non-enterprise system', async () => {
         await typeButtonGroup.setValue('Report a bug');
         spectator.detectChanges();
 
@@ -124,13 +123,10 @@ describe('FeedbackDialogComponent', () => {
         expect(spectator.query(FileReviewComponent)).not.toExist();
         expect(spectator.query(FileTicketLicensedComponent)).not.toExist();
 
-        await typeButtonGroup.setValue('Suggest an improvement');
-        spectator.detectChanges();
-
         visibleForm = spectator.query(FileTicketComponent);
         expect(visibleForm).toExist();
         expect(visibleForm.dialogRef).toBe(spectator.inject(MatDialogRef));
-        expect(visibleForm.type).toBe(FeedbackType.Suggestion);
+        expect(visibleForm.type).toBe(FeedbackType.Bug);
 
         expect(spectator.query(FileReviewComponent)).not.toExist();
         expect(spectator.query(FileTicketLicensedComponent)).not.toExist();

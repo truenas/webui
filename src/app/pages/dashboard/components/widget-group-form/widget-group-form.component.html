@@ -1,7 +1,6 @@
 <ix-modal-header2
   [title]="'Widget Editor' | translate"
 ></ix-modal-header2>
-
 <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
   <ix-fieldset>
     <div class="form-row">
@@ -23,15 +22,33 @@
 
   <div class="editor-container">
     <ix-widget-editor-group
-      [group]="group"
-      [(selectedSlot)]="selectedSlot"
+      [group]="group()"
+      [selectedSlot]="selectedSlot().slotPosition"
+      [validationErrors]="validationErrors()"
+      (selectedSlotChange)="selectedSlotChanged($event)"
     ></ix-widget-editor-group>
   </div>
 
-  Selected slot: {{ selectedSlot }}
-
-  <!-- TODO: Category dropdown, pull widget definitions from widgetRegistry and regroup by category -->
-  <!-- TODO: Widget type dropdown -->
-  <!-- TODO: Custom settings form if necessary for the selected widget type, like WidgetInterfaceIpSettingsComponent. -->
-  <!-- TODO: This component shouldn't care what are the details of settings that are being set for every widget. -->
+  <ix-widget-group-slot-form
+    *ngIf="selectedSlot()"
+    [slotConfig]="selectedSlot()"
+    (validityChange)="updateSlotValidation($event)"
+    (settingsChange)="updateSlotSettings($event)"
+  ></ix-widget-group-slot-form>
+  
+  <ix-form-actions>
+    <button
+      mat-button
+      type="submit"
+      color="primary"
+      [ixTest]="['add-widget-group-btn']"
+      [disabled]="settingsHasErrors() || form.invalid"
+    >{{ 'Save' | translate }}</button>
+    <button
+      mat-button
+      type="button"
+      [ixTest]="['cancel-add-widget-group-btn']"
+      (click)="chainedRef.close({ response: false, error: null })"
+    >{{ 'Cancel' | translate }}</button>
+  </ix-form-actions>
 </form>
