@@ -10,6 +10,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { WidgetGroupFormComponent } from 'app/pages/dashboard/components/widget-group-form/widget-group-form.component';
 import { DashboardStore } from 'app/pages/dashboard/services/dashboard.store';
 import { WidgetGroup } from 'app/pages/dashboard/types/widget-group.interface';
@@ -55,6 +56,7 @@ export class DashboardComponent implements OnInit {
     private slideIn: IxChainedSlideInService,
     private errorHandler: ErrorHandlerService,
     private translate: TranslateService,
+    private snackbar: SnackbarService,
   ) {}
 
   ngOnInit(): void {
@@ -121,7 +123,10 @@ export class DashboardComponent implements OnInit {
   protected onSave(): void {
     this.dashboardStore.save(this.renderedGroups())
       .pipe(this.errorHandler.catchError(), untilDestroyed(this))
-      .subscribe(() => this.isEditing.set(false));
+      .subscribe(() => {
+        this.isEditing.set(false);
+        this.snackbar.success(this.translate.instant('Dashboard settings saved'));
+      });
   }
 
   private loadGroups(): void {
