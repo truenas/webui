@@ -179,6 +179,25 @@
   {
     "hierarchy": [
       "Applications",
+      "Discover",
+      "Custom App"
+    ],
+    "synonyms": [
+      "Discover"
+    ],
+    "requiredRoles": [],
+    "anchorRouterLink": [
+      "/apps",
+      "available"
+    ],
+    "routerLink": null,
+    "anchor": "custom-app",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Applications",
       "Discover"
     ],
     "synonyms": [
@@ -193,6 +212,30 @@
     ],
     "routerLink": null,
     "anchor": "applications-discover",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Applications",
+      "Discover",
+      "Catalogs",
+      "Add"
+    ],
+    "synonyms": [
+      "Add Catalog",
+      "Catalogs"
+    ],
+    "requiredRoles": [
+      "CATALOG_WRITE"
+    ],
+    "anchorRouterLink": [
+      "/apps",
+      "available",
+      "catalogs"
+    ],
+    "routerLink": null,
+    "anchor": "add",
     "triggerAnchor": null,
     "section": "ui"
   },

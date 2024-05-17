@@ -6,5 +6,9 @@ export const catalogsElements = {
   anchorRouterLink: ['/apps', 'available', 'catalogs'],
   elements: {
     catalogs: {},
+    add: {
+      hierarchy: [T('Add')],
+      synonyms: [T('Add Catalog')],
+    },
   },
 } satisfies UiSearchableElement;
