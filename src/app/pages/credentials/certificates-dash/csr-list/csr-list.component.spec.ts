@@ -15,7 +15,6 @@ import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
 import { CertificateEditComponent } from 'app/pages/credentials/certificates-dash/certificate-edit/certificate-edit.component';
-import { ConfirmForceDeleteCertificateComponent } from 'app/pages/credentials/certificates-dash/confirm-force-delete-dialog/confirm-force-delete-dialog.component';
 import { CsrAddComponent } from 'app/pages/credentials/certificates-dash/csr-add/csr-add.component';
 import { CertificateSigningRequestsListComponent } from 'app/pages/credentials/certificates-dash/csr-list/csr-list.component';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -116,8 +115,14 @@ describe('CertificateSigningRequestsListComponent', () => {
     const deleteButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'delete' }), 1, 2);
     await deleteButton.click();
 
-    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(ConfirmForceDeleteCertificateComponent, {
-      data: certificates[0],
+    expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({
+      title: 'Delete Certificate',
+      message: `Are you sure you want to delete "${certificates[0].name}"?`,
+      hideCheckbox: true,
+      secondaryCheckbox: true,
+      secondaryCheckboxText: 'Force',
+      buttonColor: 'red',
+      buttonText: 'Delete',
     });
     expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
     expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('certificate.delete', [1, false]);

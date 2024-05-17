@@ -28,9 +28,6 @@ import {
 } from 'app/pages/credentials/certificates-dash/certificate-edit/certificate-edit.component';
 import { certificateListElements } from 'app/pages/credentials/certificates-dash/certificate-list/certificate-list.elements';
 import {
-  ConfirmForceDeleteCertificateComponent,
-} from 'app/pages/credentials/certificates-dash/confirm-force-delete-dialog/confirm-force-delete-dialog.component';
-import {
   CertificateAddComponent,
 } from 'app/pages/credentials/certificates-dash/forms/certificate-add/certificate-add.component';
 import { DownloadService } from 'app/services/download.service';
@@ -167,23 +164,42 @@ export class CertificateListComponent implements OnInit {
   }
 
   doDelete(certificate: Certificate): void {
-    this.matDialog.open(ConfirmForceDeleteCertificateComponent, { data: certificate })
-      .afterClosed()
-      .pipe(
-        filter(Boolean),
-        switchMap((data: { force: boolean }) => {
-          return this.dialogService.jobDialog(
-            this.ws.job('certificate.delete', [certificate.id, data.force]),
-            { title: this.translate.instant('Deleting...') },
-          ).afterClosed();
-        }),
-        this.errorHandler.catchError(),
-        untilDestroyed(this),
-      )
-      .subscribe(() => {
-        this.getCertificates();
-        this.certificateDeleted.emit();
-      });
+    this.dialogService.confirm({
+      title: this.translate.instant('Delete Certificate'),
+      message: this.translate.instant('Are you sure you want to delete "{name}"?', { name: certificate.name }),
+      hideCheckbox: true,
+      secondaryCheckbox: true,
+      buttonColor: 'red',
+      secondaryCheckboxText: this.translate.instant('Force'),
+      buttonText: this.translate.instant('Delete'),
+    }).pipe(
+      filter(
+        (confirmation: boolean | { confirmed: boolean; secondaryCheckbox: boolean }) => {
+          if (typeof confirmation === 'boolean') {
+            return confirmation;
+          }
+          return confirmation.confirmed;
+        },
+      ),
+      switchMap((confirmation: boolean | { confirmed: boolean; secondaryCheckbox: boolean }) => {
+        let force = false;
+        if (typeof confirmation !== 'boolean') {
+          force = confirmation.secondaryCheckbox;
+        }
+
+        const jobDialogRef = this.dialogService.jobDialog(
+          this.ws.job('certificate.delete', [certificate.id, force]),
+          { title: this.translate.instant('Deleting...') },
+        );
+
+        return jobDialogRef.afterClosed();
+      }),
+      this.errorHandler.catchError(),
+      untilDestroyed(this),
+    ).subscribe(() => {
+      this.getCertificates();
+      this.certificateDeleted.emit();
+    });
   }
 
   doDownload(certificate: Certificate): void {

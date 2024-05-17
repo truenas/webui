@@ -7,6 +7,7 @@ import {
   filter, forkJoin, map, switchMap, tap,
 } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
+import { ConfirmOptionsWithSecondaryCheckbox } from 'app/interfaces/dialog.interface';
 import { Jbof } from 'app/interfaces/jbof.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
@@ -106,10 +107,26 @@ export class JbofListComponent implements OnInit {
     this.dialogService.confirm({
       title: this.translate.instant('Delete'),
       message: this.translate.instant('Are you sure you want to delete this item?'),
+      hideCheckbox: true,
+      secondaryCheckbox: true,
+      secondaryCheckboxText: this.translate.instant('Force'),
       buttonText: this.translate.instant('Delete'),
-    }).pipe(
-      filter(Boolean),
-      switchMap(() => this.ws.call('jbof.delete', [jbof.id]).pipe(this.loader.withLoader())),
+      buttonColor: 'red',
+    } as ConfirmOptionsWithSecondaryCheckbox).pipe(
+      filter((confirmation: boolean | { confirmed: boolean; secondaryCheckbox: boolean }) => {
+        if (typeof confirmation === 'boolean') {
+          return confirmation;
+        }
+        return confirmation.confirmed;
+      }),
+      switchMap((confirmation: boolean | { confirmed: boolean; secondaryCheckbox: boolean }) => {
+        let force = false;
+        if (typeof confirmation !== 'boolean') {
+          force = confirmation.secondaryCheckbox;
+        }
+
+        return this.ws.call('jbof.delete', [jbof.id, force]).pipe(this.loader.withLoader());
+      }),
       untilDestroyed(this),
     ).subscribe({
       next: () => this.getJbofs(),

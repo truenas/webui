@@ -97,7 +97,17 @@ describe('JbofListComponent', () => {
     const deleteButton = await table.getHarnessInRow(IxIconHarness.with({ name: 'delete' }), 'description 2');
     await deleteButton.click();
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('jbof.delete', [2]);
+    expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({
+      title: 'Delete',
+      message: 'Are you sure you want to delete this item?',
+      hideCheckbox: true,
+      secondaryCheckbox: true,
+      secondaryCheckboxText: 'Force',
+      buttonText: 'Delete',
+      buttonColor: 'red',
+    });
+
+    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('jbof.delete', [2, false]);
   });
 
   it('enables Add button when existing are less than licensed', () => {

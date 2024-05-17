@@ -601,7 +601,6 @@
   "Apr": "apr",
   "Archive": "Archiveren",
   "Are you sure you want to abort the <b>{task}</b> task?": "Weet je zeker dat je de taak <b>{task}</b> wilt afbreken?",
-  "Are you sure you want to delete \"{cert}\"?": "Weet je zeker dat je \"{cert}\" wilt verwijderen?",
   "Are you sure you want to delete \"{name}\"?": "Weet je zeker dat je \"{name}\" wilt verwijderen?",
   "Are you sure you want to delete <b>{name}</b> Reporting Exporter?": "Weet u zeker dat u <b>{name}</b> Reporting Exporter wilt verwijderen?",
   "Are you sure you want to delete NFS Share <b>\"{path}\"</b>?": "Weet je zeker dat je NFS Share <b>\"{path}\"</b> wilt verwijderen?",

@@ -43,6 +43,7 @@
     class="mat-mdc-button mat-button mat-primary submit-button"
     ixTest="dialog-confirm"
     [disabled]="isDisabled()"
+    [color]="options.buttonColor || 'primary'"
     (click)="onSubmit()"
   >
     {{ options.buttonText | translate }}
