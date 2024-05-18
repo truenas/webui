@@ -30,6 +30,11 @@ import { CloudCredentialService } from 'app/services/cloud-credential.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
 
+export interface CloudCredentialFormInput {
+  providers: CloudSyncProviderName[];
+  existingCredential: CloudSyncCredential;
+}
+
 // TODO: Form is partially backend driven and partially hardcoded on the frontend.
 @UntilDestroy()
 @Component({
@@ -68,7 +73,7 @@ export class CloudCredentialsFormComponent implements OnInit {
     private translate: TranslateService,
     private snackbarService: SnackbarService,
     private cloudCredentialService: CloudCredentialService,
-    private chainedRef: ChainedRef<{ providers: CloudSyncProviderName[]; existingCredential: CloudSyncCredential }>,
+    private chainedRef: ChainedRef<CloudCredentialFormInput>,
   ) {
     const data = this.chainedRef.getData();
     this.existingCredential = data?.existingCredential;
