@@ -3,7 +3,7 @@
   "\n              It looks like your session has been inactive for more than {lifetime} seconds.<br>\n              For security reasons we will log you out at {time}.\n            ": "\n Parece que a sua sessão está inativa há mais de {lifetime} segundos.<br>\n              Por motivos de segurança, vamos terminar a sessão em {time}.\n            ",
   " Est. Usable Raw Capacity": "Est. Capacidade bruta utilizável",
   " When the <b>UPS Mode</b> is set to <i>slave</i>. Enter the open network port number of the UPS <i>Master</i> system. The default port is <i>3493</i>.": " Quando o <b>Modo UPS</b> está definido como <i>escravo</i>. Enter the open network port number of the UPS <i>Sistema </i> mestre. A porta predefinida é 3493.",
-  " bytes.": "butes",
+  " bytes.": "bytes",
   "... Make sure the TrueNAS system is powered on and connected to the network.": "... Certifique-se de que o sistema TrueNAS está ligado e conectado à rede.",
   "2FA": "2FA",
   "2FA has been configured for this account. Enter the OTP to continue.": "A 2FA foi configurada para esta conta. Introduza o OTP para continuar.",
