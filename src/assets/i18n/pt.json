@@ -139,7 +139,7 @@
   "Are you sure you want to delete the <b>{name}</b> SSH Connection?": "Tem a certeza de que pretende eliminar a ligação SSH <b>{name}</b>?",
   "Are you sure you want to delete the <b>{name}</b> certificate authority?": "Tem a certeza de que pretende eliminar a autoridade de certificação <b>{name}</b>?",
   "Are you sure you want to delete the <b>{name}</b>?": "Tem a certeza de que pretende eliminar o <b>{name}</b>?",
-  "Are you sure you want to deregister TrueCommand Cloud Service?"; "Tem a certeza de que pretende anular o registo do TrueCommand Cloud Service?",
+  "Are you sure you want to deregister TrueCommand Cloud Service?": "Tem a certeza de que pretende anular o registo do TrueCommand Cloud Service?",
   "Apps Service Not Configured": "Serviço de aplicações não configurado",
   "Apps Write": "Escrita de aplicações",
   "Are you sure you want to delete \"{name}\"?": "Tem a certeza de que pretende eliminar \"{name}\"?",
