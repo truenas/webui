@@ -47,6 +47,7 @@ export class CloudCredentialsFormComponent implements OnInit {
 
   isLoading = false;
   existingCredential: CloudSyncCredential;
+  limitProviders: CloudSyncProviderName[];
   providers: CloudSyncProvider[] = [];
   providerOptions = of<Option[]>([]);
   providerForm: BaseProviderFormComponent;
@@ -67,9 +68,11 @@ export class CloudCredentialsFormComponent implements OnInit {
     private translate: TranslateService,
     private snackbarService: SnackbarService,
     private cloudCredentialService: CloudCredentialService,
-    private chainedRef: ChainedRef<CloudSyncCredential>,
+    private chainedRef: ChainedRef<{ providers: CloudSyncProviderName[]; existingCredential: CloudSyncCredential }>,
   ) {
-    this.existingCredential = this.chainedRef.getData();
+    const data = this.chainedRef.getData();
+    this.existingCredential = data?.existingCredential;
+    this.limitProviders = data?.providers;
     // Has to be earlier than potential `setCredentialsForEdit` call
     this.setFormEvents();
   }
@@ -199,6 +202,9 @@ export class CloudCredentialsFormComponent implements OnInit {
       .pipe(untilDestroyed(this))
       .subscribe({
         next: ([providers, credentials]) => {
+          if (this.limitProviders?.length) {
+            providers = providers.filter((provider) => this.limitProviders.includes(provider.name));
+          }
           this.providers = providers;
           this.providerOptions = of(
             providers.map((provider) => ({

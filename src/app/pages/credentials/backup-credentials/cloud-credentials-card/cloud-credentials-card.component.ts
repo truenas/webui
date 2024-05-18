@@ -112,7 +112,13 @@ export class CloudCredentialsCardComponent implements OnInit {
   }
 
   doEdit(credential: CloudSyncCredential): void {
-    const close$ = this.chainedSlideinService.open(CloudCredentialsFormComponent, false, credential);
+    const close$ = this.chainedSlideinService.open(
+      CloudCredentialsFormComponent,
+      false,
+      {
+        existingCredentials: credential,
+      },
+    );
     close$.pipe(filter((response) => !!response.response), untilDestroyed(this)).subscribe(() => {
       this.getCredentials();
     });
