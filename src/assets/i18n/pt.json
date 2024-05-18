@@ -127,7 +127,7 @@
   "Apps Read": "Apps Read": "",
   "Apps Service Not Configured": "Serviço de aplicações não configurado",
   "Apps Write": "Escrita de aplicações",
-  "Are you sure you want to delete \"{name}\"?": "Tem a certeza de que pretende apagar \"{name}\"?"",
+  "Are you sure you want to delete \"{name}\"?": "Tem a certeza de que pretende apagar \"{name}\"?",
   "Are you sure you want to delete <b>{name}</b> Reporting Exporter?": "Tem a certeza de que pretende eliminar <b>{name}</b> Exportador de Relatórios?",
   "Are you sure you want to delete NFS Share <b>\"{path}\"</b>?": "Tem a certeza de que pretende eliminar a Partilha NFS <b>\"{path}\"</b>?",
   "Are you sure you want to delete SMB Share <b>\"{name}\"</b>?": "Tem a certeza de que pretende eliminar a partilha SMB <b>\"{path}\"</b>?",
