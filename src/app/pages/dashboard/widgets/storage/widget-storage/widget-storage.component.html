@@ -24,10 +24,15 @@
         <mat-grid-tile *ngFor="let poolInfo of poolsInfo().slice(0, 6)" class="grid-tile">
           <div class="tile" [class.skimpy-tile]="isThreeTilesInColumn">
             <div class="tile-header">
-              <h4
-                class="tile-header-title" 
-                [matTooltip]="poolInfo.name"
-              >{{ poolInfo.name }}</h4>
+              <h4 class="tile-header-title">
+                <span
+                  matTooltipPosition="above"
+                  [matTooltipPositionAtOrigin]="true"
+                  [matTooltip]="poolInfo.name"
+                >
+                  {{ poolInfo.name }}
+                </span>
+              </h4>
             </div>
             <div class="tile-content">
               <ul [style.max-width.%]="100 / getColumnsInTile(poolInfo.name)">

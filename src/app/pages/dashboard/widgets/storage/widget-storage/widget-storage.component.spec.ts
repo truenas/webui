@@ -7,6 +7,7 @@ import { BaseChartDirective } from 'ng2-charts';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { of } from 'rxjs';
 import { FormatDateTimePipe } from 'app/core/pipes/format-datetime.pipe';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { PoolScanFunction } from 'app/enums/pool-scan-function.enum';
 import { PoolScanState } from 'app/enums/pool-scan-state.enum';
 import { PoolStatus } from 'app/enums/pool-status.enum';
@@ -104,6 +105,7 @@ describe('WidgetStorageComponent', () => {
         }),
       }),
       mockProvider(PercentPipe),
+      mockAuth(),
     ],
   });
 
