@@ -1,7 +1,7 @@
 import { Overlay, OverlayRef, OverlayPositionBuilder } from '@angular/cdk/overlay';
 import { ComponentPortal } from '@angular/cdk/portal';
 import {
-  Directive, Input, AfterViewInit, ElementRef, HostListener, ComponentRef, OnChanges, OnDestroy,
+  Directive, AfterViewInit, ElementRef, HostListener, ComponentRef, OnChanges, OnDestroy, input,
 } from '@angular/core';
 import { TextLimiterTooltipComponent } from './text-limiter-tooltip/text-limiter-tooltip.component';
 
@@ -9,9 +9,9 @@ import { TextLimiterTooltipComponent } from './text-limiter-tooltip/text-limiter
   selector: '[textLimiter]',
 })
 export class TextLimiterDirective implements AfterViewInit, OnChanges, OnDestroy {
-  @Input() popup = true;
-  @Input() threshold: number;
-  @Input() content = '';
+  readonly popup = input(true);
+  readonly threshold = input.required<number>();
+  readonly content = input('');
 
   private overlayRef: OverlayRef;
 
@@ -19,8 +19,8 @@ export class TextLimiterDirective implements AfterViewInit, OnChanges, OnDestroy
 
   @HostListener('mouseenter')
   show(): void {
-    if (!this.popup) return;
-    if (this.text !== this.content) {
+    if (!this.popup()) return;
+    if (this.text !== this.content()) {
       // Create tooltip portal
       const tooltipPortal = new ComponentPortal(TextLimiterTooltipComponent);
 
@@ -28,13 +28,13 @@ export class TextLimiterDirective implements AfterViewInit, OnChanges, OnDestroy
       const tooltipRef: ComponentRef<TextLimiterTooltipComponent> = this.overlayRef.attach(tooltipPortal);
 
       // Pass content to tooltip component instance
-      tooltipRef.instance.text = this.content;
+      tooltipRef.instance.text = this.content();
     }
   }
 
   @HostListener('mouseout')
   hide(): void {
-    if (!this.popup) return;
+    if (!this.popup()) return;
     this.overlayRef.detach();
   }
 
@@ -74,15 +74,15 @@ export class TextLimiterDirective implements AfterViewInit, OnChanges, OnDestroy
   }
 
   truncate(str: string): string {
-    if (str?.length > this.threshold) {
-      const truncated = str.substring(0, Number(this.threshold) - 3);
+    if (str?.length > this.threshold()) {
+      const truncated = str.substring(0, Number(this.threshold()) - 3);
       return truncated + '...';
     }
     return str;
   }
 
   applyTruncate(): void {
-    this.text = this.truncate(this.content);
+    this.text = this.truncate(this.content());
     this.el.nativeElement.innerText = this.text;
   }
 }

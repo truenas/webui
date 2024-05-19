@@ -1,5 +1,5 @@
 <button
-  *ngIf="!jsonText || !isValidJson"
+  *ngIf="!jsonText() || !isValidJson()"
   mat-icon-button
   matTooltipPosition="above"
   ixTest="copy-to-clipboard"
@@ -10,7 +10,7 @@
 </button>
 
 <button
-  *ngIf="jsonText && isValidJson"
+  *ngIf="jsonText() && isValidJson()"
   mat-icon-button
   ixTest="copy-to-clipboard-menu"
   [matTooltip]="'Copy to Clipboard' | translate"

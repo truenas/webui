@@ -9,30 +9,30 @@
     </h3>
   </mat-card-header>
   <mat-card-content>
-    <ix-app-section-expand-collapse *ngIf="appMetadata?.hostMounts" id="hostMounts" [maxHeight]="maxHeight">
+    <ix-app-section-expand-collapse *ngIf="appMetadata()?.hostMounts" id="hostMounts" [maxHeight]="maxHeight()">
       <h4 class="card-subtitle">{{ 'Host Mounts' | translate }}</h4>
       <div class="details-list">
-        <div *ngFor="let item of appMetadata.hostMounts" class="details-item">
+        <div *ngFor="let item of appMetadata().hostMounts" class="details-item">
           <div class="label">{{ item.hostPath }}</div>
           <div class="value">{{ item.description }}</div>
         </div>
       </div>
     </ix-app-section-expand-collapse>
 
-    <ix-app-section-expand-collapse *ngIf="appMetadata?.capabilities" id="capabilities" [maxHeight]="maxHeight">
+    <ix-app-section-expand-collapse *ngIf="appMetadata()?.capabilities" id="capabilities" [maxHeight]="maxHeight()">
       <h4 class="card-subtitle">{{ 'Capabilities' | translate }}</h4>
       <div class="details-list">
-        <div *ngFor="let item of appMetadata.capabilities" class="details-item">
+        <div *ngFor="let item of appMetadata().capabilities" class="details-item">
           <div class="label">{{ item.name }}</div>
           <div class="value">{{ item.description }}</div>
         </div>
       </div>
     </ix-app-section-expand-collapse>
 
-    <ix-app-section-expand-collapse *ngIf="appMetadata?.runAsContext" id="runAsContext" [maxHeight]="maxHeight">
+    <ix-app-section-expand-collapse *ngIf="appMetadata()?.runAsContext" id="runAsContext" [maxHeight]="maxHeight()">
       <h4 class="card-subtitle">{{ 'Run As Context' | translate }}</h4>
       <div class="details-list">
-        <div *ngFor="let item of appMetadata.runAsContext" class="details-entry">
+        <div *ngFor="let item of appMetadata().runAsContext" class="details-entry">
           <div class="details-item">
             <div class="label">{{ 'UID' | translate }}:</div>
             <div class="value">{{ item.uid }}</div>

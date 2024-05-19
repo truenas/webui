@@ -1,6 +1,6 @@
 import {
   ChangeDetectionStrategy,
-  Component, EventEmitter, Input, Output,
+  Component, EventEmitter, input, Output,
 } from '@angular/core';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { MenuItem, MenuItemType, SubMenuItem } from 'app/interfaces/menu-item.interface';
@@ -14,7 +14,7 @@ import { NavigationService } from 'app/services/navigation/navigation.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class NavigationComponent {
-  @Input() isSidenavCollapsed = false;
+  readonly isSidenavCollapsed = input(false);
 
   @Output() menuToggled = new EventEmitter<[string, SubMenuItem[]]>();
   @Output() menuClosed = new EventEmitter<void>();
