@@ -2,11 +2,3 @@ nav {
   margin-bottom: 16px;
   margin-top: -32px;
 }
-
-:host ::ng-deep {
-  mat-tab-nav-panel {
-    .search-element-highlighted {
-      display: block;
-    }
-  }
-}
