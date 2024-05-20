@@ -8,6 +8,7 @@ import { forkJoin, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { AlertLevel } from 'app/enums/alert-level.enum';
 import { AlertPolicy } from 'app/enums/alert-policy.enum';
+import { EmptyType } from 'app/enums/empty-type.enum';
 import { Role } from 'app/enums/role.enum';
 import { trackById } from 'app/helpers/track-by.utils';
 import { helptextAlertSettings } from 'app/helptext/system/alert-settings';
@@ -26,6 +27,12 @@ import { WebSocketService } from 'app/services/ws.service';
 })
 export class AlertConfigFormComponent implements OnInit {
   protected readonly requiredRoles = [Role.FullAdmin];
+
+  noResponseConfig = {
+    type: EmptyType.Errors,
+    large: true,
+    title: this.translate.instant('Can not retrieve response'),
+  };
 
   categories: AlertCategory[] = [];
   selectedCategory: AlertCategory;

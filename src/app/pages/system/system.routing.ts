@@ -8,11 +8,10 @@ import {
 } from 'app/pages/system/advanced/init-shutdown/init-shutdown-list/init-shutdown-list.component';
 import { AlertServiceListComponent } from 'app/pages/system/alert-service/alert-service-list/alert-service-list.component';
 import { AlertSettingsComponent } from 'app/pages/system/alert-settings/alert-settings.component';
-import { EnclosureDashboardComponent } from 'app/pages/system/enclosure/components/enclosure-dashboard/enclosure-dashboard.component';
 import { FailoverSettingsComponent } from 'app/pages/system/failover-settings/failover-settings.component';
 import { GeneralSettingsComponent } from 'app/pages/system/general-settings/general-settings.component';
 import { SupportCardComponent } from 'app/pages/system/general-settings/support/support-card/support-card.component';
-import { JbofListComponent } from 'app/pages/system/old-view-enclosure/components/jbof-list/jbof-list.component';
+import { JbofListComponent as OldJbofListComponent } from 'app/pages/system/old-view-enclosure/components/jbof-list/jbof-list.component';
 import { ViewEnclosureComponent } from 'app/pages/system/old-view-enclosure/components/view-enclosure/view-enclosure.component';
 import { ManualUpdateFormComponent } from 'app/pages/system/update/components/manual-update-form/manual-update-form.component';
 import { AdvancedSettingsComponent } from './advanced/advanced-settings.component';
@@ -23,7 +22,7 @@ import { BootStatusListComponent } from './bootenv/bootenv-status/bootenv-status
 import { EulaComponent } from './general-settings/support/eula/eula.component';
 import { UpdateComponent } from './update/update.component';
 
-export const routes: Routes = [
+const routes: Routes = [
   {
     path: '',
     data: { title: T('System') },
@@ -50,13 +49,7 @@ export const routes: Routes = [
         breadcrumb: T('New View Enclosure'),
         icon: 'settings',
       },
-      children: [
-        {
-          path: '',
-          component: EnclosureDashboardComponent,
-          data: { title: T('Enclosure Dashboard'), breadcrumb: null },
-        },
-      ],
+      loadChildren: () => import('./enclosure/enclosure.module').then((module) => module.EnclosureModule),
     }, {
       path: 'oldviewenclosure',
       data: { title: T('View Enclosure'), breadcrumb: T('View Enclosure'), icon: 'settings' },
@@ -68,7 +61,7 @@ export const routes: Routes = [
         },
         {
           path: 'jbof',
-          component: JbofListComponent,
+          component: OldJbofListComponent,
           data: { title: T('NVMe-oF Expansion Shelves'), breadcrumb: null },
         },
       ],

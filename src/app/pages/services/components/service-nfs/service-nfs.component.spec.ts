@@ -98,7 +98,7 @@ describe('ServiceNfsComponent', () => {
       'rpc.lockd(8) bind port': '124',
       'rpc.statd(8) bind port': '124',
       'Allow non-root mount': false,
-      'Support >16 groups': false,
+      'Manage Groups Server-side': false,
     });
   });
 
@@ -111,7 +111,7 @@ describe('ServiceNfsComponent', () => {
       'NFSv3 ownership model for NFSv4': false,
       'NFSv4 DNS Domain': 'new-nfs-domain.com',
       'Allow non-root mount': true,
-      'Support >16 groups': true,
+      'Manage Groups Server-side': true,
       'mountd(8) bind port': 554,
       'rpc.statd(8) bind port': 562,
       'rpc.lockd(8) bind port': 510,
@@ -149,7 +149,7 @@ describe('ServiceNfsComponent', () => {
     });
   });
 
-  it('disables Support >16 groups when NFSv3 ownership model is on', async () => {
+  it('disables Manage Groups Server-side when NFSv3 ownership model is on', async () => {
     const form = await loader.getHarness(IxFormHarness);
     await form.fillForm({
       'Enabled Protocols': ['NFSv4'],
@@ -157,8 +157,8 @@ describe('ServiceNfsComponent', () => {
     });
 
     const controls = await form.getControlHarnessesDict();
-    const supportMoreThan16GroupsControl = controls['Support >16 groups'] as IxCheckboxHarness;
-    expect(await supportMoreThan16GroupsControl.isDisabled()).toBe(true);
+    const serverSideGroupsControl = controls['Manage Groups Server-side'] as IxCheckboxHarness;
+    expect(await serverSideGroupsControl.isDisabled()).toBe(true);
   });
 
   it('should open dialog form when add SPN button is pressed', async () => {

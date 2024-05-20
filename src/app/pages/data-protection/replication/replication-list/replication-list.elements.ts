@@ -6,7 +6,11 @@ export const replicationListElements = {
   anchorRouterLink: ['/data-protection', 'replication'],
   elements: {
     tasks: {
-      synonyms: [T('Tasks')],
+      synonyms: [T('Data Protection'), T('Tasks')],
+    },
+    add: {
+      hierarchy: [T('Add')],
+      synonyms: [T('Add Replication Task')],
     },
   },
 } satisfies UiSearchableElement;

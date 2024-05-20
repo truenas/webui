@@ -1,3 +1,4 @@
+import { ApiTimestamp } from 'app/interfaces/api-date.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { BwLimit, CloudCredential } from './cloud-sync-task.interface';
 import { Schedule } from './schedule.interface';
@@ -17,14 +18,17 @@ export interface CloudBackup {
   args: string;
   enabled: boolean;
   password: string;
-  credentials: CloudCredential | number;
+  credentials: CloudCredential;
   job: Job | null;
   locked: boolean;
-  bwlimit?: BwLimit;
+  bwlimit?: BwLimit[];
   keep_last?: number;
 }
 
-export type CloudBackupUpdate = Omit<CloudBackup, 'id' | 'job' | 'locked'>;
+export interface CloudBackupUpdate extends Omit<CloudBackup, 'id' | 'job' | 'locked' | 'bwlimit' | 'credentials'> {
+  credentials: number;
+  bwlimit: { time: string; bandwidth: string }[];
+}
 
 export interface CloudBackupSnapshot {
   id: string;
@@ -45,8 +49,19 @@ export type CloudBackupRestoreParams = [
   snapshot_id: string,
   subfolder: string,
   destination_path: string,
-  {
+  settings: {
     exclude: string[];
     include?: string[];
   },
 ];
+
+export interface BackupTile {
+  title: string;
+  totalSend: number;
+  totalReceive: number;
+  failedSend: number;
+  failedReceive: number;
+  lastWeekSend: number;
+  lastWeekReceive: number;
+  lastSuccessfulTask: ApiTimestamp;
+}

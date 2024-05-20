@@ -19,14 +19,12 @@
           [label]="'Syslog Level' | translate"
           [tooltip]="tooltips.sysloglevel | translate"
           [options]="levelOptions$"
-          [ixUiSearch]="searchableElements.elements.level"
         ></ix-select>
 
         <ix-input
           formControlName="syslogserver"
           [label]="'Syslog Server' | translate"
           [tooltip]="tooltips.syslogserver | translate"
-          [ixUiSearch]="searchableElements.elements.server"
         ></ix-input>
 
         <ix-select
@@ -34,7 +32,6 @@
           [label]="'Syslog Transport' | translate"
           [tooltip]="tooltips.syslog_transport | translate"
           [options]="transportOptions$"
-          [ixUiSearch]="searchableElements.elements.transport"
         ></ix-select>
 
         <ng-container *ngIf="isTlsTransport$ | async">
@@ -57,7 +54,6 @@
           formControlName="syslog_audit"
           [label]="'Include Audit Logs' | translate"
           [tooltip]="tooltips.syslog_audit | translate"
-          [ixUiSearch]="searchableElements.elements.includeAuditLogs"
         ></ix-checkbox>
       </ix-fieldset>
 

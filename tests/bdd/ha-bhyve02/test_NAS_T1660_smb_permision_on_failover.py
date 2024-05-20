@@ -180,9 +180,7 @@ def set_the_path_to_mntdozersmb1_and_input_the_smbtest1_as_name_then_click_to_en
     assert wait_on_element(driver, 5, xpaths.smb.name_Input, 'inputable')
     rsc.Click_Clear_Input(driver, xpaths.smb.name_Input, share_name)
 
-    assert wait_on_element(driver, 5, xpaths.checkbox.enabled, 'clickable')
-    if not attribute_value_exist(driver, xpaths.checkbox.enabled, 'class', 'mat-mdc-checkbox-checked'):
-        driver.find_element_by_xpath(xpaths.checkbox.enable).click()
+    rsc.set_checkbox(driver, xpaths.checkbox.enabled)
 
 
 @then('click Save if Restart SMB Service box appears, click Restart Service')
@@ -244,7 +242,7 @@ def create_a_file_with_root_in_mntdozersmb2_get_the_file_from_the_smbtest2_share
 @then('on the Dashboard, click Initiate Failover on the standby controller')
 def on_the_dashboard_click_initiate_failover_on_the_standby_controller(driver):
     """on the Dashboard, click Initiate Failover on the standby controller."""
-    driver.find_element_by_xpath(xpaths.side_Menu.dashboard).click()
+    rsc.Click_On_Element(driver, xpaths.side_Menu.old_dashboard)
     assert wait_on_element(driver, 10, xpaths.dashboard.title)
 
     rsc.Trigger_Failover(driver)

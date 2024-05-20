@@ -1,0 +1,85 @@
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  xmlns:xlink="http://www.w3.org/1999/xlink"
+  height="32"
+  overflow="visible"
+  width="122"
+  viewBox = "0 0 122 32"
+>
+  <g
+    (click)="traySelected.emit()"
+    [attr.id]="'slot-' + slot + '-grp1'"
+  >
+    <rect
+      [attr.id]="'tray-' + slot + '-g1-r1'"
+      width="122"
+      height="30"
+      fill="#111"
+    ></rect>
+    <rect
+      [attr.id]="'tray-' + slot + '-g1-r2'"
+      width="120"
+      height="30"
+      opacity="0.5"
+      class="tray-background"
+      transform="translate(2 0)"
+    ></rect>
+    <rect
+      [attr.id]="'tray-' + slot + '-g1-r3'"
+      width="15"
+      height="15.5"
+      fill="#111"
+      transform="translate(0 7.25)"
+    ></rect>
+    <rect
+      [attr.id]="'tray-' + slot + '-g1-r4'"
+      width="95"
+      height="20"
+      fill="#111"
+      transform="translate(15 5)"
+    ></rect>
+    <g *ngIf="isEmpty()">
+      <rect
+        [attr.id]="'tray-' + slot + '-g1-r5'"
+        width="14"
+        height="13.5"
+        fill="#d1d1d1"
+        opacity="0.5"
+        transform="translate(0 8.25)"
+      ></rect>
+      <rect
+        [attr.id]="'tray-' + slot + '-g1-r6'"
+        width="93"
+        height="13.5"
+        opacity="0.5"
+        fill="#d1d1d1"
+        transform="translate(15 8.25)"
+      ></rect>
+    </g>
+    <g *ngIf="!isEmpty()">
+      <rect
+        [attr.id]="'tray-' + slot + '-g1-r5'"
+        width="14"
+        height="13.5"
+        fill="#71bcfc"
+        transform="translate(0 8.25)"
+      ></rect>
+      <rect
+        [attr.id]="'tray-' + slot + '-g1-r6'"
+        width="93"
+        height="13.5"
+        fill="#71bcfc"
+        transform="translate(15 8.25)"
+      ></rect>
+    </g>
+    <rect
+      *ngIf="selected()"
+      [attr.id]="'tray-' + slot + '-g1-r7'"
+      width="122"
+      height="30"
+      opacity="0.5"
+      fill="none"
+      stroke="#ff3"
+    ></rect>
+  </g>
+</svg>

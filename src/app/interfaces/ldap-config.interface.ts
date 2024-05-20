@@ -9,7 +9,6 @@ export interface LdapConfig {
   disable_freenas_cache: boolean;
   dns_timeout: number;
   enable: boolean;
-  has_samba_schema: boolean;
   hostname: string[];
   id: number;
   kerberos_principal: string;

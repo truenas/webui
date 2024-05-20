@@ -6,6 +6,7 @@ import {
   Observable, catchError, filter, finalize, map, switchMap, tap,
 } from 'rxjs';
 import { WidgetName } from 'app/enums/widget-name.enum';
+import { demoWidgets } from 'app/pages/dashboard/services/demo-widgets.constant';
 import { WidgetGroup, WidgetGroupLayout } from 'app/pages/dashboard/types/widget-group.interface';
 import { SomeWidgetSettings, WidgetType } from 'app/pages/dashboard/types/widget.interface';
 import { AuthService } from 'app/services/auth/auth.service';
@@ -61,10 +62,11 @@ export class DashboardStore extends ComponentStore<DashboardState> {
         map((user) => user.attributes.dashState),
       )),
       tap((dashState) => {
+        // TODO: Remove demoWidgets once active development of new dashboard is done
         this.setState({
           isLoading: false,
           globalError: '',
-          groups: this.getDashboardGroups(dashState || []),
+          groups: this.getDashboardGroups(dashState || demoWidgets),
         });
       }),
       catchError((error) => {
@@ -78,6 +80,7 @@ export class DashboardStore extends ComponentStore<DashboardState> {
     this.toggleLoadingState(true);
 
     return this.ws.call('auth.set_attribute', ['dashState', groups]).pipe(
+      switchMap(() => this.authService.refreshUser()),
       finalize(() => this.toggleLoadingState(false)),
     );
   }
@@ -116,10 +119,10 @@ export class DashboardStore extends ComponentStore<DashboardState> {
       case WidgetName.Help: return WidgetType.Help;
       case WidgetName.Memory: return WidgetType.Memory;
       case WidgetName.Interface: return WidgetType.InterfaceIp;
-      case WidgetName.Backup: return unknownWidgetType;
-      case WidgetName.Network: return unknownWidgetType;
+      case WidgetName.Network: return WidgetType.Network;
+      case WidgetName.Backup: return WidgetType.BackupTasks;
+      case WidgetName.Cpu: return WidgetType.Cpu;
       case WidgetName.SystemInformation: return unknownWidgetType;
-      case WidgetName.Cpu: return unknownWidgetType;
       case WidgetName.Storage: return unknownWidgetType;
       case WidgetName.Pool: return unknownWidgetType;
       default: return unknownWidgetType;

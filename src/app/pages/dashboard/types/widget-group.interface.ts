@@ -48,8 +48,8 @@ export const layoutToSlotSizes = {
 
 export const widgetGroupIcons = new Map<WidgetGroupLayout, string>([
   [WidgetGroupLayout.Full, 'ix:layout_full'],
-  [WidgetGroupLayout.Quarters, 'ix:layout_quarters'],
-  [WidgetGroupLayout.Halves, 'ix:layout_halves'],
   [WidgetGroupLayout.HalfAndQuarters, 'ix:layout_half_and_quarters'],
+  [WidgetGroupLayout.Halves, 'ix:layout_halves'],
   [WidgetGroupLayout.QuartersAndHalf, 'ix:layout_quarters_and_half'],
+  [WidgetGroupLayout.Quarters, 'ix:layout_quarters'],
 ]);

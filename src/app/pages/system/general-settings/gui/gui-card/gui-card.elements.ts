@@ -5,9 +5,11 @@ export const guiCardElements = {
   hierarchy: [T('System'), T('General'), T('GUI')],
   anchorRouterLink: ['/system', 'general'],
   elements: {
-    configure: {
-      hierarchy: [T('Settings')],
-      anchor: 'configure-gui',
+    gui: {
+      anchor: 'gui-card',
+    },
+    theme: {
+      hierarchy: [T('Theme')],
     },
   },
 } satisfies UiSearchableElement;

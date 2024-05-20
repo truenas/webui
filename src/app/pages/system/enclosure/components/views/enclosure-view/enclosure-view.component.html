@@ -1,0 +1,12 @@
+<mat-card-header>
+  <ix-enclosure-header [title]="title()"></ix-enclosure-header>
+</mat-card-header>
+<mat-card-content>
+  <div class="container">
+    <ng-container
+      *ngComponentOutlet="machine().component; inputs: machine().inputs;"
+    ></ng-container>
+  </div>
+
+  <ix-disks-overview [slot]="selectedSlot()"></ix-disks-overview>
+</mat-card-content>

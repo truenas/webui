@@ -18,6 +18,7 @@ import {
   TopologyDisk,
   TopologyItem,
 } from 'app/interfaces/storage.interface';
+import { topologyCardElements } from 'app/pages/storage/components/dashboard-pool/topology-card/topology-card.elements';
 import { StorageService } from 'app/services/storage.service';
 
 interface TopologyState {
@@ -43,6 +44,7 @@ export class TopologyCardComponent implements OnInit, OnChanges {
   @Input() poolState: Pool;
   @Input() disks: StorageDashboardDisk[];
 
+  protected readonly searchableElements = topologyCardElements;
   notAssignedDev = this.translate.instant('VDEVs not assigned');
 
   topologyState: TopologyState = {
@@ -103,8 +105,8 @@ export class TopologyCardComponent implements OnInit, OnChanges {
     this.topologyWarningsState.log = this.parseDevsWarnings(topology.log, VdevType.Log);
     this.topologyWarningsState.cache = this.parseDevsWarnings(topology.cache, VdevType.Cache);
     this.topologyWarningsState.spare = this.parseDevsWarnings(topology.spare, VdevType.Spare);
-    this.topologyWarningsState.metadata = this.parseDevsWarnings(topology.special, VdevType.Special, topology.data);
-    this.topologyWarningsState.dedup = this.parseDevsWarnings(topology.dedup, VdevType.Dedup, topology.data);
+    this.topologyWarningsState.metadata = this.parseDevsWarnings(topology.special, VdevType.Special);
+    this.topologyWarningsState.dedup = this.parseDevsWarnings(topology.dedup, VdevType.Dedup);
 
     this.topologyState.data = this.parseDevs(topology.data, VdevType.Data, this.topologyWarningsState.data);
     this.topologyState.log = this.parseDevs(topology.log, VdevType.Log, this.topologyWarningsState.log);
@@ -167,12 +169,12 @@ export class TopologyCardComponent implements OnInit, OnChanges {
     return outputString;
   }
 
-  private parseDevsWarnings(vdevs: TopologyItem[], category: VdevType, dataVdevs?: TopologyItem[]): string {
+  private parseDevsWarnings(vdevs: TopologyItem[], category: VdevType): string {
     let outputString = '';
     const disks: Disk[] = this.disks.map((disk: StorageDashboardDisk) => {
       return this.dashboardDiskToDisk(disk);
     });
-    const warnings = this.storageService.validateVdevs(category, vdevs, disks, dataVdevs);
+    const warnings = this.storageService.validateVdevs(category, vdevs, disks);
     if (warnings.length === 1) {
       outputString = warnings[0];
     }
@@ -203,6 +205,7 @@ export class TopologyCardComponent implements OnInit, OnChanges {
     return this.poolState?.status === PoolStatus.Offline;
   }
 
+  // TODO: Unclear why this conversion is needed.
   dashboardDiskToDisk(dashDisk: StorageDashboardDisk): Disk {
     const output: EmptyDiskObject | Disk = {};
     const keys: string[] = Object.keys(dashDisk);

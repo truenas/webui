@@ -3,6 +3,7 @@ import { UiSearchableElement } from 'app/modules/global-search/interfaces/ui-sea
 
 export const resilverConfigElements = {
   hierarchy: [T('Data Protection'), T('Scrub Tasks'), T('Resilver Priority')],
+  synonyms: [T('Data Protection'), T('Scrub Tasks')],
   anchorRouterLink: ['/data-protection', 'scrub', 'priority'],
   elements: {
     priority: {},

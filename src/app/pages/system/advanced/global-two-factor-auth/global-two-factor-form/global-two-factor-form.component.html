@@ -12,18 +12,15 @@
           formControlName="enabled"
           [label]="'Enable Two Factor Authentication Globally' | translate"
           [warning]="twoFactorConfig.enabled ? '' : enableWarning"
-          [ixUiSearch]="searchableElements.elements.globallyEnabled"
         ></ix-checkbox>
         <ix-input
           formControlName="window"
           [label]="'Window' | translate"
           [type]="'number'"
-          [ixUiSearch]="searchableElements.elements.toleranceWindow"
         ></ix-input>
         <ix-checkbox
           formControlName="ssh"
           [label]="'Enable Two Factor Authentication for SSH' | translate"
-          [ixUiSearch]="searchableElements.elements.enableForSsh"
         ></ix-checkbox>
       </ix-fieldset>
 

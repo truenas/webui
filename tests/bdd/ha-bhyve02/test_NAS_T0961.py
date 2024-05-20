@@ -51,8 +51,7 @@ def the_login_page_appear_enter_root_and_password(driver, admin_user, password):
 @then('you should see the dashboard and the System Information')
 def you_should_see_the_dashboard_and_the_system_information(driver):
     """you should see the dashboard and the System Information."""
-    assert wait_on_element(driver, 10, xpaths.dashboard.title)
-    assert wait_on_element(driver, 10, xpaths.dashboard.system_Info_Card_Title)
+    rsc.Verify_The_Dashboard(driver)
 
 
 @then('navigate to Storage')
@@ -201,8 +200,7 @@ def Please_wait_should_appear_while_settings_are_being_applied(driver):
 @then('navigate to the dashboard')
 def navigate_to_dashboard(driver):
     """navigate to The dashboard."""
-    assert wait_on_element(driver, 5, xpaths.side_Menu.dashboard, 'clickable')
-    driver.find_element_by_xpath(xpaths.side_Menu.dashboard).click()
+    rsc.Click_On_Element(driver, xpaths.side_Menu.old_dashboard)
     assert wait_on_element(driver, 10, xpaths.dashboard.system_Info_Card_Title)
 
 
@@ -226,7 +224,7 @@ def verify_the_system_dataset_is_dozer_on_the_active_node(driver):
 @then('press Initiate Failover and confirm')
 def press_initiate_failover_and_confirm(driver):
     """press Initiate Failover and confirm."""
-    time.sleep(10)
+    time.sleep(20)
     rsc.Trigger_Failover(driver)
 
     rsc.Confirm_Failover(driver)

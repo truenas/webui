@@ -3,6 +3,7 @@ import { Observable } from 'rxjs';
 import {
   GiB, KiB, MiB, TiB,
 } from 'app/constants/bytes.constant';
+import { CloudSyncTaskUpdate } from 'app/interfaces/cloud-sync-task.interface';
 import { CloudSyncBucket, CloudSyncCredential } from 'app/interfaces/cloudsync-credential.interface';
 import { CloudSyncProvider } from 'app/interfaces/cloudsync-provider.interface';
 import { WebSocketService } from 'app/services/ws.service';
@@ -58,5 +59,31 @@ export class CloudCredentialService {
       return Number(data.slice(0, index)) * this.byteMap[unit];
     }
     return -1;
+  }
+
+  prepareBwlimit(bwlimit: string[]): CloudSyncTaskUpdate['bwlimit'] {
+    const bwlimtResult = [];
+
+    for (const limit of bwlimit) {
+      const sublimitArr = limit.split(/\s*,\s*/);
+      if (sublimitArr.length === 1 && bwlimit.length === 1 && !sublimitArr[0].includes(':')) {
+        sublimitArr.unshift('00:00');
+      }
+      if (sublimitArr[1] && sublimitArr[1] !== 'off') {
+        if (sublimitArr[1].endsWith('/s') || sublimitArr[1].endsWith('/S')) {
+          sublimitArr[1] = sublimitArr[1].substring(0, sublimitArr[1].length - 2);
+        }
+        if (this.getByte(sublimitArr[1]) !== -1) {
+          (sublimitArr[1] as number | string) = this.getByte(sublimitArr[1]).toFixed(0);
+        }
+      }
+      const subLimit = {
+        time: sublimitArr[0],
+        bandwidth: sublimitArr[1] === 'off' ? null : sublimitArr[1],
+      };
+
+      bwlimtResult.push(subLimit);
+    }
+    return bwlimtResult;
   }
 }

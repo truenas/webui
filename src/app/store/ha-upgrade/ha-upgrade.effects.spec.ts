@@ -1,11 +1,9 @@
-import { MatDialog } from '@angular/material/dialog';
 import { createServiceFactory, mockProvider, SpectatorService } from '@ngneat/spectator/jest';
 import { provideMockActions } from '@ngrx/effects/testing';
 import { provideMockStore } from '@ngrx/store/testing';
 import { firstValueFrom, of, ReplaySubject } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockEntityJobComponentRef } from 'app/core/testing/utils/mock-entity-job-component-ref.utils';
 import { mockCall, mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -27,6 +25,9 @@ describe('HaUpgradeEffects', () => {
     providers: [
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
+        jobDialog: jest.fn(() => ({
+          afterClosed: () => of({}),
+        })),
       }),
       mockWebSocket([
         mockCall('failover.upgrade_pending', true),
@@ -41,9 +42,6 @@ describe('HaUpgradeEffects', () => {
         ],
       }),
       provideMockActions(() => actions$),
-      mockProvider(MatDialog, {
-        open: jest.fn(() => mockEntityJobComponentRef),
-      }),
       mockAuth(),
     ],
   });
@@ -120,7 +118,8 @@ describe('HaUpgradeEffects', () => {
       actions$.next(updatePendingIndicatorPressed());
       await firstValueFrom(spectator.service.showUpgradePendingDialog$);
 
-      expect(mockEntityJobComponentRef.componentInstance.setCall).toHaveBeenCalledWith('failover.upgrade_finish');
+      expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
+      expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('failover.upgrade_finish');
 
       expect(await firstValueFrom(spectator.service.showUpgradePendingDialog$))
         .toEqual(failoverUpgradeFinished());

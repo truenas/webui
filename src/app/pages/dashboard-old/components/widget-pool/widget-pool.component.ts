@@ -241,11 +241,8 @@ export class WidgetPoolComponent extends WidgetComponent implements AfterViewIni
       if ((!currentName || currentName === 'unknown') && disks.length === 0) {
         this.currentDiskDetails = null;
       } else if (currentName && disks.length > 0 && currentName === disks[0].name) {
-        delete disks[0].enclosure;
         delete disks[0].name;
         delete disks[0].devname;
-        delete disks[0].multipath_name;
-        delete disks[0].multipath_member;
         delete disks[0].zfs_guid;
         this.currentDiskDetails = disks[0];
       }

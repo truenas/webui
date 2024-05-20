@@ -13,7 +13,7 @@
       matInput
       ixTest="global-search"
       class="search-input"
-      [placeholder]="'Search' | translate"
+      [placeholder]="'Search UI' | translate"
       [formControl]="searchControl"
       (keydown)="handleKeyDown($event)"
     />
@@ -27,6 +27,7 @@
     [searchTerm]="searchControl.value"
     [results]="searchResults"
     [isLoading]="isLoading"
+    [isSearchInputFocused]="isSearchInputFocused"
     (keydown)="handleKeyDown($event)"
   ></ix-global-search-results>
 </div>

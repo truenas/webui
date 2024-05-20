@@ -162,8 +162,10 @@ export class ChartWizardComponent implements OnInit, OnDestroy {
       .pipe(this.loader.withLoader(), untilDestroyed(this))
       .subscribe({
         next: (app) => {
-          app.schema = app.versions[app.latest_version].schema;
-          this.setChartForCreation(app);
+          this.setChartForCreation({
+            ...app,
+            schema: app.versions[app.latest_version].schema,
+          });
           this.afterAppLoaded();
         },
         error: (error: WebSocketError) => this.afterAppLoadError(error),

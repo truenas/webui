@@ -7,7 +7,6 @@ describe('ThemeUtils', () => {
     utils = new ThemeUtils();
   });
 
-  // Detect Value Type
   it('should detect value types', () => {
     const hex = '#ffffff';
     const rgb = 'rgb(0,0,0)';

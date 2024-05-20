@@ -1,4 +1,4 @@
-<mat-card>
+<mat-card [ixUiSearch]="searchableElements.elements.storage">
   <mat-toolbar-row>
     <h3>{{ 'Storage' | translate }}</h3>
     <div class="actions action-icon">
@@ -6,7 +6,6 @@
         *ixRequiresRoles="requiredRoles"
         mat-button
         [ixTest]="['storage', 'configure']"
-        [ixUiSearch]="searchableElements.elements.configure"
         (click)="onConfigurePressed()"
       >
         {{ 'Configure' | translate }}
@@ -15,17 +14,11 @@
   </mat-toolbar-row>
 
   <mat-card-content>
-    <mat-list>
+    <mat-list [ixUiSearch]="searchableElements.elements.systemPool">
       <mat-list-item>
         <span class="label">{{ 'System Dataset Pool' | translate }}:</span>
         <span *ixWithLoadingState="storageSettings$ as storageSettings" class="value">
           {{ storageSettings.systemDsPool }}
-        </span>
-      </mat-list-item>
-      <mat-list-item>
-        <span class="label">{{ 'Swap Size' | translate }}:</span>
-        <span *ixWithLoadingState="storageSettings$ as storageSettings" class="value">
-          {{ storageSettings.swapSize ? storageSettings.swapSize + ' GiB' : '-' }}
         </span>
       </mat-list-item>
     </mat-list>

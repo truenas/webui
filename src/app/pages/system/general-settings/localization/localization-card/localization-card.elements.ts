@@ -5,9 +5,24 @@ export const localizationCardElements = {
   hierarchy: [T('System'), T('General'), T('Localization')],
   anchorRouterLink: ['/system', 'general'],
   elements: {
-    configure: {
-      hierarchy: [T('Settings')],
-      anchor: 'configure-localization',
+    localization: {
+      anchor: 'localization-card',
+    },
+    language: {
+      hierarchy: [T('Language')],
+      synonyms: [T('Translate App')],
+    },
+    consoleKeyboardMap: {
+      hierarchy: [T('Console Keyboard Map')],
+    },
+    timezone: {
+      hierarchy: [T('Timezone')],
+    },
+    dateFormat: {
+      hierarchy: [T('Date Format')],
+    },
+    timeFormat: {
+      hierarchy: [T('Time Format')],
     },
   },
 } satisfies UiSearchableElement;

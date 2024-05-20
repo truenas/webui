@@ -20,6 +20,7 @@ import {
   TruecommandSignupModalComponent,
 } from 'app/modules/truecommand/components/truecommand-signup-modal/truecommand-signup-modal.component';
 import { TruecommandStatusModalComponent } from 'app/modules/truecommand/components/truecommand-status-modal/truecommand-status-modal.component';
+import { trueCommandElements } from 'app/modules/truecommand/truecommand-button.elements';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -33,6 +34,7 @@ import { WebSocketService } from 'app/services/ws.service';
 export class TruecommandButtonComponent implements OnInit {
   readonly TrueCommandStatus = TrueCommandStatus;
   tooltips = helptextTopbar.mat_tooltips;
+  protected searchableElements = trueCommandElements;
 
   tcStatus: TrueCommandConfig;
 

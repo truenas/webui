@@ -3,15 +3,21 @@ import {
 } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButton, MatButtonModule } from '@angular/material/button';
+import { MatButtonModule } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
+import { MatGridListModule } from '@angular/material/grid-list';
+import { MatListModule } from '@angular/material/list';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
 import { BaseChartDirective } from 'ng2-charts';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
+import { CoreComponents } from 'app/core/core-components.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
+import { ChartsModule } from 'app/modules/charts/charts.module';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
+import { InterfaceStatusIconComponent } from 'app/modules/interface-status-icon/interface-status-icon.component';
 import { IxDropGridModule } from 'app/modules/ix-drop-grid/ix-drop-grid.module';
+import { IxFileSizeModule } from 'app/modules/ix-file-size/ix-file-size.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { LayoutModule } from 'app/modules/layout/layout.module';
@@ -28,10 +34,14 @@ import {
   WidgetEditorGroupComponent,
 } from 'app/pages/dashboard/components/widget-group-form/widget-editor-group/widget-editor-group.component';
 import { WidgetGroupFormComponent } from 'app/pages/dashboard/components/widget-group-form/widget-group-form.component';
+import { WidgetGroupSlotFormComponent } from 'app/pages/dashboard/components/widget-group-form/widget-group-slot-form/widget-group-slot-form.component';
 import { routing } from 'app/pages/dashboard/dashboard.routing';
 import { DashboardStore } from 'app/pages/dashboard/services/dashboard.store';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
 import { widgetComponents } from 'app/pages/dashboard/widgets/all-widgets.constant';
+import { BackupTaskActionsComponent } from 'app/pages/dashboard/widgets/backup/widget-backup/backup-task-actions/backup-task-actions.component';
+import { BackupTaskEmptyComponent } from 'app/pages/dashboard/widgets/backup/widget-backup/backup-task-empty/backup-task-empty.component';
+import { BackupTaskTileComponent } from 'app/pages/dashboard/widgets/backup/widget-backup/backup-task-tile/backup-task-tile.component';
 import { WidgetDatapointComponent } from 'app/pages/dashboard/widgets/common/widget-datapoint/widget-datapoint.component';
 
 @NgModule({
@@ -40,9 +50,13 @@ import { WidgetDatapointComponent } from 'app/pages/dashboard/widgets/common/wid
     WidgetGroupComponent,
     WidgetErrorComponent,
     WidgetGroupFormComponent,
+    WidgetGroupSlotFormComponent,
     WidgetEditorGroupComponent,
     WidgetDatapointComponent,
     WidgetGroupControlsComponent,
+    BackupTaskEmptyComponent,
+    BackupTaskActionsComponent,
+    BackupTaskTileComponent,
     ...widgetComponents,
   ],
   providers: [
@@ -53,13 +67,12 @@ import { WidgetDatapointComponent } from 'app/pages/dashboard/widgets/common/wid
     IxFormsModule,
     ReactiveFormsModule,
     TranslateModule,
+    CoreComponents,
     AppLoaderModule,
     NgComponentOutlet,
     CommonDirectivesModule,
     LayoutModule,
-    MatButton,
     TestIdModule,
-    TranslateModule,
     PageHeaderModule,
     routing,
     MatCard,
@@ -71,6 +84,7 @@ import { WidgetDatapointComponent } from 'app/pages/dashboard/widgets/common/wid
     BaseChartDirective,
     MatButtonModule,
     MatCardContent,
+    MatGridListModule,
     NgxSkeletonLoaderModule.forRoot({
       animation: false,
       theme: {
@@ -81,7 +95,12 @@ import { WidgetDatapointComponent } from 'app/pages/dashboard/widgets/common/wid
       },
     }),
     IxDropGridModule,
+    ChartsModule,
+    MatListModule,
     EmptyComponent,
+    ChartsModule,
+    InterfaceStatusIconComponent,
+    IxFileSizeModule,
   ],
 })
 export class DashboardModule {

@@ -1,4 +1,4 @@
-<mat-card>
+<mat-card [ixUiSearch]="searchableElements.elements.audit">
   <mat-toolbar-row>
     <h3>{{ 'Audit' | translate }}</h3>
     <div class="actions action-icon">
@@ -6,7 +6,6 @@
         *ixRequiresRoles="requiredRoles"
         mat-button
         [ixTest]="['audit', 'configure']"
-        [ixUiSearch]="searchableElements.elements.configure"
         (click)="onConfigurePressed()"
       >
         {{ 'Configure' | translate }}
@@ -16,31 +15,31 @@
 
   <mat-card-content>
     <mat-list>
-      <mat-list-item>
+      <mat-list-item [ixUiSearch]="searchableElements.elements.retention">
         <span class="label">{{ 'Retention' | translate }}:</span>
         <span *ixWithLoadingState="auditConfig$ as auditConfig" class="value">
           {{ getEndValue(auditConfig.retention, '{value} days') }}
         </span>
       </mat-list-item>
-      <mat-list-item>
+      <mat-list-item [ixUiSearch]="searchableElements.elements.reservation">
         <span class="label">{{ 'Reservation' | translate }}:</span>
         <span *ixWithLoadingState="auditConfig$ as auditConfig" class="value">
           {{ getEndValue(auditConfig.reservation, '{value} GiB') }}
         </span>
       </mat-list-item>
-      <mat-list-item>
+      <mat-list-item [ixUiSearch]="searchableElements.elements.quota">
         <span class="label">{{ 'Quota' | translate }}:</span>
         <span *ixWithLoadingState="auditConfig$ as auditConfig" class="value">
           {{ getEndValue(auditConfig.quota, '{value} GiB') }}
         </span>
       </mat-list-item>
-      <mat-list-item>
+      <mat-list-item [ixUiSearch]="searchableElements.elements.quotaFillWarning">
         <span class="label">{{ 'Quota Fill Warning' | translate }}:</span>
         <span *ixWithLoadingState="auditConfig$ as auditConfig" class="value">
           {{ getEndValue(auditConfig.quota_fill_warning, '{value}%') }}
         </span>
       </mat-list-item>
-      <mat-list-item>
+      <mat-list-item [ixUiSearch]="searchableElements.elements.quotaFillCritical">
         <span class="label">{{ 'Quota Fill Critical' | translate }}:</span>
         <span *ixWithLoadingState="auditConfig$ as auditConfig" class="value">
           {{ getEndValue(auditConfig.quota_fill_critical, '{value}%') }}

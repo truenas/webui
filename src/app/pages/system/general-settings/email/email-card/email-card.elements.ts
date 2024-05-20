@@ -5,9 +5,12 @@ export const emailCardElements = {
   hierarchy: [T('System'), T('General'), T('Email')],
   anchorRouterLink: ['/system', 'general'],
   elements: {
-    configure: {
-      hierarchy: [T('Settings')],
-      anchor: 'configure-email',
+    email: {
+      anchor: 'email-card',
+    },
+    sendMethod: {
+      hierarchy: [T('Send Method')],
+      synonyms: [T('SMTP'), T('Gmail')],
     },
   },
 } satisfies UiSearchableElement;

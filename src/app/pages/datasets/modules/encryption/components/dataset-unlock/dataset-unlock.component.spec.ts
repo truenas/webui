@@ -24,15 +24,17 @@ describe('DatasetUnlockComponent', () => {
   let spectator: Spectator<DatasetUnlockComponent>;
   let loader: HarnessLoader;
 
+  const encryptionSummary = fakeSuccessfulJob([
+    { name: 'pool_name_1', key_format: DatasetEncryptionType.Default },
+    { name: 'pool_name_2', key_format: DatasetEncryptionType.Passphrase },
+  ] as DatasetEncryptionSummary[]);
+
   const mockDialogRef = {
     componentInstance: {
       setDescription: jest.fn(),
       setCall: jest.fn(),
       submit: jest.fn(),
-      success: of(fakeSuccessfulJob([
-        { name: 'pool_name_1', key_format: DatasetEncryptionType.Default },
-        { name: 'pool_name_2', key_format: DatasetEncryptionType.Passphrase },
-      ] as DatasetEncryptionSummary[])),
+      success: of(encryptionSummary),
       failure: of(),
       wspost: jest.fn(),
     },
@@ -47,7 +49,6 @@ describe('DatasetUnlockComponent', () => {
     ],
     providers: [
       mockAuth(),
-      mockProvider(DialogService),
       mockProvider(Router),
       mockProvider(ActivatedRoute, {
         snapshot: { params: { datasetId: 'pool_name_1' } },
@@ -55,7 +56,11 @@ describe('DatasetUnlockComponent', () => {
       mockWebSocket([
         mockJob('pool.dataset.encryption_summary'),
       ]),
-      mockProvider(DialogService),
+      mockProvider(DialogService, {
+        jobDialog: () => ({
+          afterClosed: () => of(encryptionSummary),
+        }),
+      }),
       mockProvider(MatDialog, {
         open: jest.fn(() => mockDialogRef),
       }),

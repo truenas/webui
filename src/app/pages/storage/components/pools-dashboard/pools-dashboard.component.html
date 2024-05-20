@@ -26,7 +26,7 @@
 </ix-page-header>
 
 <div [ixUiSearch]="searchableElements.elements.storageDashboard">
-  <ng-container *ngIf="arePoolsLoading$ | async">
+  <ng-container *ngIf="arePoolsLoading">
     <ix-dashboard-pool
       class="pool"
       [isLoading]="true"
@@ -38,13 +38,13 @@
     ></ix-dashboard-pool>
   </ng-container>
 
-  <ng-container *ngIf="isEmptyPools && !(arePoolsLoading$ | async)">
+  <ng-container *ngIf="isEmptyPools && !arePoolsLoading">
     <div class="entity-empty-wrapper">
       <ix-empty [conf]="entityEmptyConf" [requiredRoles]="requiredRoles"></ix-empty>
     </div>
   </ng-container>
 
-  <ng-container *ngIf="!isEmptyPools && !(arePoolsLoading$ | async)">
+  <ng-container *ngIf="!isEmptyPools && !arePoolsLoading">
     <ix-unused-resources
       *ngIf="!isEmptyPools"
       [pools]="pools$ | async"

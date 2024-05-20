@@ -1,24 +1,19 @@
-<mat-card>
-  <mat-card-header>
-    <div class="header-wrapper">
-      <div>
-        <h3>Disks on [Enclosure Name]</h3>
-      </div>
-      <div>
-        <button
-          mat-button
-          ixTest="edit-enclosure-label"
-        >{{ 'Edit Label' | translate }}</button>
-      </div>
-    </div>
-  </mat-card-header>
-  <mat-card-content>
-    <!-- TODO: Loading indication -->
-    <ix-enclosure-overview
-      *ngIf="selectedEnclosure$ | async as selectedEnclosure"
-      [enclosure]="selectedEnclosure"
-      [selectedSlot]="selectedSlot$ | async"
-    ></ix-enclosure-overview>
-    <ix-disk-overview [slot]="selectedSlot$ | async"></ix-disk-overview>
-  </mat-card-content>
+<ix-page-header>
+  <a
+    *ngIf="isJbofLicensed$ | async"
+    mat-button
+    ixTest="manage-expansion"
+    [routerLink]="['/', 'system', 'viewenclosure', 'jbof']"
+  >
+    {{ 'NVMe-oF Expansion Shelves' | translate }}
+  </a>
+  <ix-view-elements-menu
+    *ngIf="selectedEnclosure()"
+    [enclosure]="selectedEnclosure()"
+  ></ix-view-elements-menu>
+</ix-page-header>
+
+<mat-card *ngIf="selectedEnclosure()">
+  <!-- TODO: Loading indication -->
+  <router-outlet></router-outlet>
 </mat-card>

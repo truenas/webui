@@ -1,4 +1,4 @@
-<mat-card>
+<mat-card [ixUiSearch]="searchableElements.elements.localization">
   <mat-toolbar-row>
     <h3>{{ helptext.localeTitle | translate }}</h3>
     <div class="actions action-icon">
@@ -7,7 +7,6 @@
         mat-button
         color="default"
         [ixTest]="['localization', 'settings']"
-        [ixUiSearch]="searchableElements.elements.configure"
         (click)="openSettings(generalConfig)"
       >
         {{ 'Settings' | translate }}
@@ -17,7 +16,7 @@
 
   <mat-card-content>
     <mat-list>
-      <mat-list-item>
+      <mat-list-item [ixUiSearch]="searchableElements.elements.language">
         <span class="label">{{ helptext.stg_language.placeholder | translate }}:</span>
         <span *ixWithLoadingState="generalConfig$ as generalConfig" class="value">
           <ng-container *ixWithLoadingState="languages$ as languages">
@@ -25,25 +24,25 @@
           </ng-container>
         </span>
       </mat-list-item>
-      <mat-list-item>
+      <mat-list-item [ixUiSearch]="searchableElements.elements.dateFormat">
         <span class="label">{{ helptext.date_format.placeholder | translate }}:</span>
         <span *ixWithLoadingState="generalConfig$ as generalConfig" class="value">
           {{ localeService.getDateAndTime(generalConfig.timezone)?.[0] }}
         </span>
       </mat-list-item>
-      <mat-list-item>
+      <mat-list-item [ixUiSearch]="searchableElements.elements.timeFormat">
         <span class="label">{{ helptext.time_format.placeholder | translate }}:</span>
         <span *ixWithLoadingState="generalConfig$ as generalConfig" class="value">
           {{ localeService.getDateAndTime(generalConfig.timezone)?.[1] }}
         </span>
       </mat-list-item>
-      <mat-list-item>
+      <mat-list-item [ixUiSearch]="searchableElements.elements.timezone">
         <span class="label">{{ helptext.stg_timezone.placeholder | translate }}:</span>
         <span *ixWithLoadingState="generalConfig$ as generalConfig" class="value">
           {{ generalConfig.timezone }}
         </span>
       </mat-list-item>
-      <mat-list-item>
+      <mat-list-item [ixUiSearch]="searchableElements.elements.consoleKeyboardMap">
         <span class="label">{{ helptext.stg_kbdmap.placeholder | translate }}:</span>
         <span *ixWithLoadingState="generalConfig$ as generalConfig" class="value">
           <ng-container *ixWithLoadingState="mapChoices$ as mapChoices">

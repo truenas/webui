@@ -1,4 +1,4 @@
-<mat-card>
+<mat-card [ixUiSearch]="searchableElements.elements.syslog">
   <mat-toolbar-row>
     <h3>{{ 'Syslog' | translate }}</h3>
     <div class="actions action-icon">
@@ -6,7 +6,6 @@
         *ixRequiresRoles="requiredRoles"
         mat-button
         [ixTest]="['syslog', 'configure']"
-        [ixUiSearch]="searchableElements.elements.configure"
         (click)="onConfigurePressed()"
       >
         {{ 'Configure' | translate }}
@@ -16,31 +15,31 @@
 
   <mat-card-content>
     <mat-list>
-      <mat-list-item>
+      <mat-list-item [ixUiSearch]="searchableElements.elements.UseFQDNForLogging">
         <span class="label">{{ 'Use FQDN for Logging' | translate }}:</span>
         <span *ixWithLoadingState="advancedConfig$ as advancedConfig" class="value">
           {{ advancedConfig.fqdn_syslog ? ('Enabled' | translate) : ('Disabled' | translate) }}
         </span>
       </mat-list-item>
-      <mat-list-item>
+      <mat-list-item [ixUiSearch]="searchableElements.elements.level">
         <span class="label">{{ 'Syslog Level' | translate }}:</span>
         <span *ixWithLoadingState="advancedConfig$ as advancedConfig" class="value">
           {{ advancedConfig.sysloglevel | mapValue: syslogLevelLabels | translate }}
         </span>
       </mat-list-item>
-      <mat-list-item>
+      <mat-list-item [ixUiSearch]="searchableElements.elements.server">
         <span class="label">{{ 'Syslog Server' | translate }}:</span>
         <span *ixWithLoadingState="advancedConfig$ as advancedConfig" class="value">
           {{ advancedConfig.syslogserver }}
         </span>
       </mat-list-item>
-      <mat-list-item>
+      <mat-list-item [ixUiSearch]="searchableElements.elements.transport">
         <span class="label">{{ 'Syslog Transport' | translate }}:</span>
         <span *ixWithLoadingState="advancedConfig$ as advancedConfig" class="value">
           {{ advancedConfig.syslog_transport }}
         </span>
       </mat-list-item>
-      <mat-list-item>
+      <mat-list-item [ixUiSearch]="searchableElements.elements.includeAuditLogs">
         <span class="label">{{ 'Include Audit Logs' | translate }}:</span>
         <span *ixWithLoadingState="advancedConfig$ as advancedConfig" class="value">
           {{ advancedConfig.syslog_audit | yesNo }}

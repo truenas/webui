@@ -40,7 +40,6 @@ describe('LdapComponent', () => {
     kerberos_principal: 'principal1',
     timeout: 10,
     dns_timeout: 15,
-    has_samba_schema: true,
     auxiliary_parameters: 'param=25',
     schema: 'RFC2307',
   } as LdapConfig;
@@ -126,7 +125,6 @@ describe('LdapComponent', () => {
       'Kerberos Principal': 'principal1',
       'LDAP Timeout': '10',
       'DNS Timeout': '15',
-      'Samba Schema (DEPRECATED - see help text)': true,
       'Auxiliary Parameters': 'param=25',
       Schema: 'RFC2307',
     });

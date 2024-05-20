@@ -13,14 +13,12 @@
           [tooltip]="language.tooltip | translate"
           [provider]="language.provider"
           [required]="true"
-          [ixUiSearch]="searchableElements.elements.language"
         ></ix-combobox>
         <ix-select
           [label]="kbdMap.label | translate"
           [tooltip]="kbdMap.tooltip | translate"
           [options]="kbdMap.options"
           [formControlName]="kbdMap.fcName"
-          [ixUiSearch]="searchableElements.elements.consoleKeyboardMap"
         ></ix-select>
         <ix-combobox
           [formControlName]="timezone.fcName"
@@ -28,21 +26,18 @@
           [tooltip]="timezone.tooltip | translate"
           [provider]="timezone.provider"
           [required]="true"
-          [ixUiSearch]="searchableElements.elements.timezone"
         ></ix-combobox>
         <ix-select
           [label]="dateFormat.label | translate"
           [tooltip]="dateFormat.tooltip | translate"
           [options]="dateFormat.options"
           [formControlName]="dateFormat.fcName"
-          [ixUiSearch]="searchableElements.elements.dateFormat"
         ></ix-select>
         <ix-select
           [label]="timeFormat.label | translate"
           [tooltip]="timeFormat.tooltip | translate"
           [options]="timeFormat.options"
           [formControlName]="timeFormat.fcName"
-          [ixUiSearch]="searchableElements.elements.timeFormat"
         ></ix-select>
       </ix-fieldset>
 

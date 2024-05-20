@@ -1,0 +1,82 @@
+@import 'mixins/cards';
+
+.card {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+
+  h3 {
+    font-size: 24px;
+  }
+}
+
+.status-container {
+  align-items: center;
+  display: flex;
+  gap: 3px;
+  margin-left: 10px;
+
+  @media(max-width: $breakpoint-sm) {
+    display: none;
+  }
+
+  ix-icon {
+    font-size: 24px;
+    height: 24px;
+    width: 24px;
+  }
+
+  .healthy {
+    color: var(--green);
+  }
+
+  .warning {
+    color: var(--orange);
+  }
+}
+
+.card-content {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding-bottom: 0;
+  padding-right: 10px;
+
+  .header {
+    padding-right: 12px;
+
+    .title {
+      align-items: center;
+      display: flex;
+    }
+  }
+
+  .container {
+    padding-top: 0;
+
+    .container-content {
+      display: flex;
+      flex-direction: column;
+      height: calc(100% - 56px);
+      justify-content: space-between;
+
+      .banner {
+        background: var(--bg1);
+        opacity: 0.7;
+        padding: 8px;
+      }
+    }
+  }
+}
+
+mat-grid-tile {
+  background-color: var(--bg1);
+  border-radius: 2px;
+  opacity: 0.7;
+}

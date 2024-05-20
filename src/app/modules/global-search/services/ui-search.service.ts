@@ -38,14 +38,14 @@ export class UiSearchProvider implements GlobalSearchProvider {
   search(term: string, limit: number): Observable<UiSearchableElement[]> {
     // sort results by showing hierarchy match first, then synonyms match
     const sortedResults = this.translatedTerms.filter((item) => {
-      return item.synonyms.find((synonym) => synonym?.toLowerCase().startsWith(term.toLowerCase()))
-        || item.hierarchy[item.hierarchy.length - 1]?.toLowerCase().startsWith(term.toLowerCase());
+      return item.synonyms.find((synonym) => synonym?.toLowerCase().includes(term.toLowerCase()))
+        || item.hierarchy[item.hierarchy.length - 1]?.toLowerCase().includes(term.toLowerCase());
     }).sort((a, b) => {
-      const aHierarchyMatch = a.hierarchy[a.hierarchy.length - 1]?.toLowerCase().startsWith(term.toLowerCase()) ? 1 : 0;
-      const bHierarchyMatch = b.hierarchy[b.hierarchy.length - 1]?.toLowerCase().startsWith(term.toLowerCase()) ? 1 : 0;
+      const aHierarchyMatch = a.hierarchy[a.hierarchy.length - 1]?.toLowerCase().includes(term.toLowerCase()) ? 1 : 0;
+      const bHierarchyMatch = b.hierarchy[b.hierarchy.length - 1]?.toLowerCase().includes(term.toLowerCase()) ? 1 : 0;
 
-      const aSynonymMatch = a.synonyms.find((synonym) => synonym?.toLowerCase().startsWith(term.toLowerCase())) ? 1 : 0;
-      const bSynonymMatch = b.synonyms.find((synonym) => synonym?.toLowerCase().startsWith(term.toLowerCase())) ? 1 : 0;
+      const aSynonymMatch = a.synonyms.find((synonym) => synonym?.toLowerCase().includes(term.toLowerCase())) ? 1 : 0;
+      const bSynonymMatch = b.synonyms.find((synonym) => synonym?.toLowerCase().includes(term.toLowerCase())) ? 1 : 0;
 
       return bHierarchyMatch - aHierarchyMatch || aSynonymMatch - bSynonymMatch;
     }).slice(0, limit);
