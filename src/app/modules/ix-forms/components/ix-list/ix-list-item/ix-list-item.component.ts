@@ -1,6 +1,6 @@
 import {
   ChangeDetectionStrategy,
-  Component, EventEmitter, Input, Output,
+  Component, EventEmitter, input, Output,
 } from '@angular/core';
 
 @Component({
@@ -10,7 +10,7 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class IxListItemComponent {
-  @Input() canDelete = true;
+  readonly canDelete = input(true);
   @Output() delete = new EventEmitter<void>();
 
   deleteItem(): void {

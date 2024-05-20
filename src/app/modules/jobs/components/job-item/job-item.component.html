@@ -1,36 +1,36 @@
 <div
   class="job-item"
-  [class.abortable]="job?.state === JobState.Running && job?.abortable"
-  [class.interactive]="clickable"
-  [matTooltip]="job?.state === JobState.Failed ? job.error : null"
+  [class.abortable]="job()?.state === JobState.Running && job()?.abortable"
+  [class.interactive]="clickable()"
+  [matTooltip]="job()?.state === JobState.Failed ? job().error : null"
   [matTooltipPosition]="'left'"
 >
-  <div class="job-item-body" (click)="clickable && open()">
+  <div class="job-item-body" (click)="clickable() && open()">
     <div fxLayout="row" fxLayoutAlign="space-between baseline" fxLayoutGap="8px">
       <span class="job-description">
-        {{ job.description ? job.description : job.method }}
+        {{ job().description ? job().description : job().method }}
       </span>
-      <small *ngIf="job.state === JobState.Running" class="job-progress-percent">
-        {{ job.progress.percent || 0 | number: '1.2-2' }}%
+      <small *ngIf="job().state === JobState.Running" class="job-progress-percent">
+        {{ job().progress.percent || 0 | number: '1.2-2' }}%
       </small>
     </div>
 
     <mat-progress-bar
-      *ngIf="job.state === JobState.Running"
+      *ngIf="job().state === JobState.Running"
       class="job-progress"
-      [value]="job.progress.percent"
-      [mode]="job.progress.percent ? 'determinate' : 'indeterminate'"
+      [value]="job().progress.percent"
+      [mode]="job().progress.percent ? 'determinate' : 'indeterminate'"
     ></mat-progress-bar>
 
-    <div [ngSwitch]="job.state">
+    <div [ngSwitch]="job().state">
       <ng-container *ngSwitchCase="JobState.Running">
-        <div *ngIf="job?.progress?.description" class="job-progress-description">
-          {{ job.progress.description }}
+        <div *ngIf="job()?.progress?.description" class="job-progress-description">
+          {{ job().progress.description }}
         </div>
-        <div *ngIf="!job?.progress?.description" class="job-time">
+        <div *ngIf="!job()?.progress?.description" class="job-time">
           {{ 'Started' | translate }}:
           <strong>
-            {{ job.time_started?.$date ? (job.time_started.$date | formatDateTime) : '–' }}
+            {{ job().time_started?.$date ? (job().time_started.$date | formatDateTime) : '–' }}
           </strong>
         </div>
       </ng-container>
@@ -38,7 +38,7 @@
         <div class="job-time">
           {{ 'Waiting' | translate }}:
           <strong>
-            {{ job.time_started?.$date ? (job.time_started.$date | formatDateTime) : '–' }}
+            {{ job().time_started?.$date ? (job().time_started.$date | formatDateTime) : '–' }}
           </strong>
         </div>
       </ng-container>
@@ -46,18 +46,18 @@
         <div class="job-time">
           {{ 'Stopped' | translate }}:
           <strong>
-            {{ job.time_finished?.$date ? (job.time_finished.$date | formatDateTime) : '–' }}
+            {{ job().time_finished?.$date ? (job().time_finished.$date | formatDateTime) : '–' }}
           </strong>
         </div>
       </ng-container>
     </div>
 
-    <div *ngIf="job.credentials">
+    <div *ngIf="job().credentials">
       <div class="job-credentials">
         {{
           'Created by: {creationSource} ({creationType})' | translate: {
-            creationSource: getCredentialsCreationSource(job.credentials),
-            creationType: (job.credentials.type | mapValue: credentialTypeLabels | translate)
+            creationSource: getCredentialsCreationSource(job().credentials),
+            creationType: (job().credentials.type | mapValue: credentialTypeLabels | translate)
           }
         }}
       </div>
@@ -65,11 +65,11 @@
   </div>
 
   <button
-    *ngIf="job.state === JobState.Running && job.abortable"
+    *ngIf="job().state === JobState.Running && job().abortable"
     class="job-button-abort"
     mat-icon-button
     type="button"
-    [ixTest]="['abort', job.description, job.method]"
+    [ixTest]="['abort', job().description, job().method]"
     [matTooltip]="'Abort' | translate"
     (click)="abort()"
   >
@@ -77,35 +77,35 @@
   </button>
 
   <button
-    *ngIf="job.state === JobState.Waiting"
+    *ngIf="job().state === JobState.Waiting"
     mat-icon-button
     type="button"
-    [ixTest]="['waiting', job.description, job.method]"
+    [ixTest]="['waiting', job().description, job().method]"
     [disabled]="true"
   >
     <ix-icon name="schedule" class="job-icon-waiting"></ix-icon>
   </button>
 
   <button
-    *ngIf="job.state === JobState.Failed"
+    *ngIf="job().state === JobState.Failed"
     mat-icon-button
     type="button"
-    [ixTest]="['failed', job.description, job.method]"
+    [ixTest]="['failed', job().description, job().method]"
     [disabled]="true"
   >
     <ix-icon
       name="cancel"
       matTooltipPosition="left"
       class="job-icon-failed"
-      [matTooltip]="job.error"
+      [matTooltip]="job().error"
     ></ix-icon>
   </button>
 
   <button
-    *ngIf="job.state === JobState.Success"
+    *ngIf="job().state === JobState.Success"
     mat-icon-button
     type="button"
-    [ixTest]="['success', job.description, job.method]"
+    [ixTest]="['success', job().description, job().method]"
     [disabled]="true"
   >
     <ix-icon name="mdi-check-circle" class="job-icon-success"></ix-icon>

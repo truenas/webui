@@ -5,8 +5,7 @@ import {
   Component,
   ElementRef,
   ErrorHandler,
-  Inject,
-  Input,
+  Inject, input,
   OnChanges,
   OnInit,
   Optional,
@@ -40,13 +39,13 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class IxIconComponent extends MatIcon implements OnInit, OnChanges, AfterContentInit {
-  @Input() name: string;
+  readonly name = input<string>();
 
   override _elementRef: ElementRef<HTMLElement>;
 
   private get iconName(): string | undefined {
-    if (this.name) {
-      return this.name;
+    if (this.name()) {
+      return this.name();
     }
 
     if (this.iconLigature) {
@@ -84,7 +83,7 @@ export class IxIconComponent extends MatIcon implements OnInit, OnChanges, After
   }
 
   ngOnChanges(): void {
-    this.updateIcon(this.name);
+    this.updateIcon(this.name());
   }
 
   override ngOnInit(): void {

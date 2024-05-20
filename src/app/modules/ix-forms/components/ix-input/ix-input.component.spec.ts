@@ -28,6 +28,7 @@ describe('IxInputComponent', () => {
       MockComponent(IxErrorsComponent),
       MockComponent(IxLabelComponent),
       MockComponent(TooltipComponent),
+      MockComponent(IxIconComponent),
     ],
   });
 

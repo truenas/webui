@@ -6,24 +6,24 @@
 ></ix-icon>
 
 <div class="alert-body">
-  <h3 *ngIf="!alert.dismissed" [class]="['alert-level', alertLevelColor]">
-    {{ alertLevelLabel }}
+  <h3 *ngIf="!alert().dismissed" [class]="['alert-level', alertLevelColor]">
+    {{ levelLabel() }}
   </h3>
-  <h4 class="alert-message" [innerHTML]="alert.formatted"></h4>
-  <div *ngIf="isHaLicensed" class="alert-node">{{ alert.node }}</div>
+  <h4 class="alert-message" [innerHTML]="alert().formatted"></h4>
+  <div *ngIf="isHaLicensed()" class="alert-node">{{ alert().node }}</div>
   <div class="alert-time">
-    {{ alert.datetime.$date | formatDateTime }}
+    {{ alert().datetime.$date | formatDateTime }}
     <ng-container *ngIf="timezone$ | async as timezone">
       ({{ timezone }})
     </ng-container>
   </div>
 
   <a
-    *ngIf="alert.dismissed; else reopenLink"
+    *ngIf="alert().dismissed; else reopenLink"
     tabindex="0"
     role="button"
     class="action-link"
-    [ixTest]="[alert.key, 'reopen']"
+    [ixTest]="[alert().key, 'reopen']"
     (click)="onReopen()"
   >
     {{ 'Re-Open' | translate }}
@@ -33,7 +33,7 @@
       tabindex="0"
       role="button"
       class="action-link"
-      [ixTest]="[alert.key, 'dismiss']"
+      [ixTest]="[alert().key, 'dismiss']"
       (click)="onDismiss()"
     >
       {{ 'Dismiss' | translate }}

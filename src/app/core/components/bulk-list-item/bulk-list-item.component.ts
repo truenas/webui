@@ -1,8 +1,8 @@
+import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import {
-  ChangeDetectionStrategy,
-  Component, Input,
-} from '@angular/core';
-import { BulkListItem, BulkListItemState } from 'app/core/components/bulk-list-item/bulk-list-item.interface';
+  BulkListItem,
+  BulkListItemState,
+} from 'app/core/components/bulk-list-item/bulk-list-item.interface';
 
 @Component({
   selector: 'ix-bulk-list-item',
@@ -11,6 +11,7 @@ import { BulkListItem, BulkListItemState } from 'app/core/components/bulk-list-i
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class BulkListItemComponent<T> {
-  @Input() item: BulkListItem<T>;
+  readonly item = input.required<BulkListItem<T>>();
+
   readonly State = BulkListItemState;
 }
