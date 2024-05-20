@@ -1,6 +1,6 @@
 import {
-  Directive, ElementRef, Renderer2, OnInit,
-  OnDestroy, input,
+  Directive, Input, ElementRef, Renderer2, OnInit,
+  OnDestroy,
 } from '@angular/core';
 import { searchDelayConst } from 'app/modules/global-search/constants/delay.const';
 import { getSearchableElementId } from 'app/modules/global-search/helpers/get-searchable-element-id';
@@ -11,10 +11,10 @@ import { UiSearchDirectivesService } from 'app/modules/global-search/services/ui
   selector: '[ixUiSearch]',
 })
 export class UiSearchDirective implements OnInit, OnDestroy {
-  readonly config = input.required<UiSearchableElement>({ alias: 'ixUiSearch' });
+  @Input({ required: true, alias: 'ixUiSearch' }) config: UiSearchableElement;
 
   get id(): string {
-    return getSearchableElementId(this.config());
+    return getSearchableElementId(this.config);
   }
 
   constructor(
