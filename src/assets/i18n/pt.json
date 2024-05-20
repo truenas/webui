@@ -1217,7 +1217,7 @@
   "Plain (No Encryption)": "",
   "Please accept the terms of service for the given ACME Server.": "",
   "Please click the button below to create a pool.": "",
-  "Please describe:\n1. Steps to reproduce\n2. Expected Result\n3. Actual Result": "",
+  "Please describe:\n1. Steps to reproduce\n2. Expected Result\n3. Actual Result\n\nPlease use English for your report.": "",
   "Please specifies tag of the image": "",
   "Please specify a valid git repository uri.": "",
   "Please specify branch of git repository to use for the catalog.": "",
