@@ -17,7 +17,7 @@
   </div>
   <div *ngIf="slot(); else overview" class="disk-details-container">
     <div class="drive">
-      <ix-disk-ui [data]="{ name: diskName, type: slot().type }"></ix-disk-ui>
+      <ix-enclosure-disk [data]="{ name: diskName, type: slot().type }"></ix-enclosure-disk>
 
       <div class="capacity">{{ slot().size | ixFileSize }}</div>
       <div class="disk-actions">

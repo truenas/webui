@@ -14,7 +14,7 @@ import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
 import { LayoutModule } from 'app/modules/layout/layout.module';
 import { SearchInput1Component } from 'app/modules/search-input1/search-input1.component';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
-import { DiskComponent } from 'app/pages/system/enclosure/components/disk-component/disk.component';
+import { EnclosureDiskComponent } from 'app/pages/system/enclosure/components/disk-component/disk.component';
 import { DiskOverviewComponent } from 'app/pages/system/enclosure/components/disk-overview/disk-overview.component';
 import { EnclosureDashboardComponent } from 'app/pages/system/enclosure/components/enclosure-dashboard/enclosure-dashboard.component';
 import { JbofFormComponent } from 'app/pages/system/enclosure/components/enclosure-dashboard/jbof-list/jbof-form/jbof-form.component';
@@ -58,7 +58,7 @@ import { routing } from 'app/pages/system/system.routing';
     JbofListComponent,
     JbofFormComponent,
     SetEnclosureLabelDialogComponent,
-    DiskComponent,
+    EnclosureDiskComponent,
   ],
   providers: [
     EnclosureStore,
