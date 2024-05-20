@@ -1,0 +1,37 @@
+:host {
+  align-items: center;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 12px;
+  justify-content: center;
+
+  .product-image-placeholder {
+    display: flex;
+    min-height: 100px;
+    min-width: 150px;
+    place-content: center;
+    place-items: center;
+
+    ix-icon {
+      flex: 0 0 auto;
+      max-height: 150px;
+      max-width: 150px;
+    }
+
+    img {
+      height: auto;
+      max-width: 80%;
+
+      &.clickable {
+        cursor: pointer;
+      }
+    }
+  }
+
+  .product-image-text {
+    align-items: center;
+    display: inline-flex;
+    min-height: 24px;
+  }
+}

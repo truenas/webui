@@ -8,6 +8,8 @@ import {
   interfaceIpWidget,
 } from 'app/pages/dashboard/widgets/network/widget-interface-ip/widget-interface-ip.definition';
 import { networkWidget } from 'app/pages/dashboard/widgets/network/widget-network/widget-network.definition';
+import { systemInfoActiveWidget } from 'app/pages/dashboard/widgets/system/widget-sys-info-active/widget-sys-info-active.definition';
+import { systemInfoPassiveWidget } from 'app/pages/dashboard/widgets/system/widget-sys-info-passive/widget-sys-info-passive.definition';
 
 export const widgetComponents = [
   hostnameWidget.component,
@@ -18,6 +20,8 @@ export const widgetComponents = [
   networkWidget.component,
   backupTasksWidget.component,
   cpuWidget.component,
+  systemInfoActiveWidget.component,
+  systemInfoPassiveWidget.component,
 ];
 
 export const widgetRegistry = {
@@ -28,4 +32,6 @@ export const widgetRegistry = {
   [WidgetType.Network]: networkWidget,
   [WidgetType.BackupTasks]: backupTasksWidget,
   [WidgetType.Cpu]: cpuWidget,
+  [WidgetType.SystemInfoActive]: systemInfoActiveWidget,
+  [WidgetType.SystemInfoPassive]: systemInfoPassiveWidget,
 };

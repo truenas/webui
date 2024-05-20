@@ -1,5 +1,6 @@
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
+import { MockComponent } from 'ng-mocks';
 import { PoolCardIconType } from 'app/enums/pool-card-icon-type.enum';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
@@ -12,6 +13,9 @@ describe('PoolCardIconComponent', () => {
     imports: [
       IxFormsModule,
       ReactiveFormsModule,
+    ],
+    declarations: [
+      MockComponent(IxIconComponent),
     ],
   });
 

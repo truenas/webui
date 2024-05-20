@@ -9,6 +9,7 @@ import {
   Observable, debounceTime, distinctUntilChanged, map, of,
   switchMap,
 } from 'rxjs';
+import { CloudSyncProviderName } from 'app/enums/cloudsync-provider.enum';
 import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
 import { Role } from 'app/enums/role.enum';
 import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
@@ -84,6 +85,8 @@ export class CloudBackupFormComponent implements OnInit {
 
   readonly newOption = newOption;
   readonly requiredRoles = [Role.CloudBackupWrite];
+  protected readonly CloudSyncProviderName = CloudSyncProviderName;
+
   readonly helptext = helptextCloudBackup;
 
   constructor(

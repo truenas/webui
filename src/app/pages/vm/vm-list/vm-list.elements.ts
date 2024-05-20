@@ -10,6 +10,15 @@ export const vmListElements = {
     },
     add: {
       hierarchy: [T('Add')],
+      synonyms: [
+        T('Add VM'),
+        T('Create VM'),
+        T('New VM'),
+        T('VM'),
+        T('Add Virtual Machine'),
+        T('New Virtual Machine'),
+        T('Create Virtual Machine'),
+      ],
     },
   },
 } satisfies UiSearchableElement;

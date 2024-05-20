@@ -1,11 +1,16 @@
 import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { sub } from 'date-fns';
-import { Observable, timer, forkJoin } from 'rxjs';
+import {
+  Observable, Subject, forkJoin,
+  timer,
+} from 'rxjs';
 import {
   combineLatestWith,
-  map, shareReplay, switchMap,
+  debounceTime,
+  map, repeat, shareReplay, switchMap,
 } from 'rxjs/operators';
+import { SystemUpdateStatus } from 'app/enums/system-update.enum';
 import { toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import { ReportingData } from 'app/interfaces/reporting.interface';
 import { WebSocketService } from 'app/services/ws.service';
@@ -26,6 +31,8 @@ import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 export class WidgetResourcesService {
   // TODO: nosub is emitted for some reason
   readonly realtimeUpdates$ = this.ws.subscribe('reporting.realtime');
+  readonly fiveSecondsRefreshInteval$ = timer(0, 5000);
+  private readonly triggerRefreshSystemInfo$ = new Subject<void>();
 
   readonly backups$ = forkJoin([
     this.ws.call('replication.query'),
@@ -36,6 +43,8 @@ export class WidgetResourcesService {
   );
 
   readonly systemInfo$ = this.ws.call('webui.main.dashboard.sys_info').pipe(
+    repeat({ delay: () => this.triggerRefreshSystemInfo$ }),
+    debounceTime(300),
     toLoadingState(),
     shareReplay({ bufferSize: 1, refCount: true }),
   );
@@ -45,12 +54,18 @@ export class WidgetResourcesService {
     shareReplay({ bufferSize: 1, refCount: true }),
   );
 
+  readonly updateAvailable$ = this.ws.call('update.check_available').pipe(
+    map((update) => update.status === SystemUpdateStatus.Available),
+    toLoadingState(),
+    shareReplay({ refCount: false, bufferSize: 1 }),
+  );
+
   readonly serverTime$ = this.store$.pipe(
     waitForSystemInfo,
     map((systemInfo) => new Date(systemInfo.datetime.$date)),
-    combineLatestWith(timer(0, 10000)),
+    combineLatestWith(this.fiveSecondsRefreshInteval$),
     map(([serverTime]) => {
-      serverTime.setSeconds(serverTime.getSeconds() + 10000 / 1000);
+      serverTime.setSeconds(serverTime.getSeconds() + 5);
       return serverTime;
     }),
   );
@@ -74,4 +89,8 @@ export class WidgetResourcesService {
     private ws: WebSocketService,
     private store$: Store<AppState>,
   ) {}
+
+  refreshSystemInfo(): void {
+    this.triggerRefreshSystemInfo$.next();
+  }
 }

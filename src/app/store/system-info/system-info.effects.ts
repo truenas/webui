@@ -9,6 +9,7 @@ import { WebSocketService } from 'app/services/ws.service';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
 import {
   ixHardwareLoaded,
+  productTypeLoaded,
   systemFeaturesLoaded, systemHostIdLoaded, systemInfoLoaded, systemInfoUpdated, systemIsStableLoaded,
 } from 'app/store/system-info/system-info.actions';
 
@@ -90,6 +91,19 @@ export class SystemInfoEffects {
         catchError((error) => {
           console.error(error);
           return of(systemIsStableLoaded({ systemIsStable: false }));
+        }),
+      );
+    }),
+  ));
+
+  loadProductType = createEffect(() => this.actions$.pipe(
+    ofType(adminUiInitialized),
+    mergeMap(() => {
+      return this.ws.call('system.product_type').pipe(
+        map((productType) => productTypeLoaded({ productType })),
+        catchError((error) => {
+          console.error(error);
+          return of(productTypeLoaded({ productType: null }));
         }),
       );
     }),

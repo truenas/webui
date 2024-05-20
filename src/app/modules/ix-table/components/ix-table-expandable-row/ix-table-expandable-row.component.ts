@@ -1,5 +1,5 @@
 import {
-  Component, ChangeDetectionStrategy, Input,
+  Component, ChangeDetectionStrategy, input,
 } from '@angular/core';
 import { Option } from 'app/interfaces/option.interface';
 
@@ -10,5 +10,5 @@ import { Option } from 'app/interfaces/option.interface';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class IxTableExpandableRowComponent {
-  @Input() data: Option[];
+  readonly data = input<Option[]>();
 }

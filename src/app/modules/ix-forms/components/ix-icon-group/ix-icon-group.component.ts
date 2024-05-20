@@ -14,7 +14,6 @@ import { UntilDestroy } from '@ngneat/until-destroy';
 export class IxIconGroupComponent implements ControlValueAccessor {
   @Input({ required: true }) options: Map<string, string>;
   @Input() label: string;
-  @Input() hint: string;
   @Input() tooltip: string;
   @Input() required: boolean;
 
@@ -52,5 +51,9 @@ export class IxIconGroupComponent implements ControlValueAccessor {
   onValueChanged(value: string): void {
     this.writeValue(value);
     this.onChange(this.value);
+  }
+
+  protected keepOrder(): number {
+    return 0;
   }
 }

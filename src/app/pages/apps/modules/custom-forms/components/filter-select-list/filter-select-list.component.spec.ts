@@ -23,6 +23,7 @@ describe('FilterSelectListComponent', () => {
     ],
     declarations: [
       MockComponent(IxErrorsComponent),
+      MockComponent(IxIconComponent),
     ],
   });
 

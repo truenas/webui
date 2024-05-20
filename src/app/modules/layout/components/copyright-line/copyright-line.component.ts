@@ -1,4 +1,6 @@
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, input,
+} from '@angular/core';
 import { ProductType, productTypeLabels } from 'app/enums/product-type.enum';
 import { SystemGeneralService } from 'app/services/system-general.service';
 
@@ -9,7 +11,7 @@ import { SystemGeneralService } from 'app/services/system-general.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CopyrightLineComponent {
-  @Input() withIxLogo = false;
+  readonly withIxLogo = input(false);
 
   productType$ = this.systemGeneral.getProductType$;
   copyrightYear$ = this.systemGeneral.getCopyrightYear$;
