@@ -21,7 +21,6 @@ import { WidgetPoolNameSettings } from 'app/pages/dashboard/widgets/memory/widge
 export class WidgetPoolNameSettingsComponent implements WidgetSettingsComponent<WidgetPoolNameSettings>, OnInit {
   form = this.fb.group({
     pool: [null as string, [Validators.required]],
-    name: [''],
   });
 
   protected poolOptions$ = this.resources.poolList$

@@ -23,7 +23,6 @@ import {
 export class WidgetInterfaceIpSettingsComponent implements WidgetSettingsComponent<WidgetInterfaceIpSettings>, OnInit {
   form = this.fb.group({
     interface: [null as string, [Validators.required]],
-    name: [''],
   });
 
   protected networkInterfaceOptions$ = this.resources.networkInterfaces$

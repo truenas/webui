@@ -1,6 +1,7 @@
 import { WidgetType } from 'app/pages/dashboard/types/widget.interface';
 import { backupTasksWidget } from 'app/pages/dashboard/widgets/backup/widget-backup/widget-backup.definition';
 import { cpuWidget } from 'app/pages/dashboard/widgets/cpu/widget-cpu/widget-cpu.definition';
+import { arbitraryTextWidget } from 'app/pages/dashboard/widgets/custom/arbitrary-text/widget-arbitrary-text.definition';
 import { helpWidget } from 'app/pages/dashboard/widgets/help/widget-help/widget-help.definition';
 import { memoryWidget } from 'app/pages/dashboard/widgets/memory/widget-memory/widget-memory.definition';
 import { poolNameWidget } from 'app/pages/dashboard/widgets/memory/widget-pool-name/widget-pool-name.definition';
@@ -25,6 +26,8 @@ export const widgetComponents = [
   osVersionWidget.component,
   poolNameWidget.component,
   poolNameWidget.settingsComponent,
+  arbitraryTextWidget.component,
+  arbitraryTextWidget.settingsComponent,
 ];
 
 export const widgetRegistry = {
@@ -40,4 +43,5 @@ export const widgetRegistry = {
   [WidgetType.SystemInfoActive]: systemInfoActiveWidget,
   [WidgetType.SystemInfoPassive]: systemInfoPassiveWidget,
   [WidgetType.OsVersion]: osVersionWidget,
+  [WidgetType.ArbitraryText]: arbitraryTextWidget,
 };

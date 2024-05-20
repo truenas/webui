@@ -18,6 +18,7 @@ export enum WidgetType {
   SystemInfoPassive = 'system-info-passive',
   OsVersion = 'os-version',
   PoolName = 'pool-name',
+  ArbitraryText = 'arbitrary-text',
 }
 
 export enum SlotSize {
