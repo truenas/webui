@@ -1,11 +1,12 @@
-.header-wrapper {
+:host {
   align-items: center;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+  margin-bottom: 16px;
   width: 100%;
 }
 
-.mat-mdc-card-header {
-  padding: 16px;
+.title {
+  font-size: 23px;
 }

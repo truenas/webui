@@ -1,5 +1,6 @@
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
-import { Observable } from 'rxjs';
+import {
+  ChangeDetectionStrategy, Component, computed, input,
+} from '@angular/core';
 import { Role } from 'app/enums/role.enum';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { AuthService } from 'app/services/auth/auth.service';
@@ -11,14 +12,12 @@ import { AuthService } from 'app/services/auth/auth.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class IxModalHeaderComponent {
-  @Input() title: string;
-  @Input() loading: boolean;
-  @Input() disableClose = false;
-  @Input() requiredRoles: Role[] = [];
+  readonly title = input<string>();
+  readonly loading = input<boolean>();
+  readonly disableClose = input(false);
+  readonly requiredRoles = input<Role[]>([]);
 
-  get hasRequiredRoles(): Observable<boolean> {
-    return this.authService.hasRole(this.requiredRoles);
-  }
+  readonly hasRequiredRoles = computed(() => this.authService.hasRole(this.requiredRoles()));
 
   constructor(
     private slideInRef: IxSlideInRef<IxModalHeaderComponent>,

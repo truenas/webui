@@ -10,6 +10,7 @@ import _ from 'lodash';
 import { Observable, of, switchMap } from 'rxjs';
 import { filter, tap } from 'rxjs/operators';
 import { GiB } from 'app/constants/bytes.constant';
+import { oneDayMillis } from 'app/constants/time.constant';
 import { Role } from 'app/enums/role.enum';
 import { helptextSystemSupport as helptext } from 'app/helptext/system/support';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -17,6 +18,7 @@ import { FeedbackDialogComponent } from 'app/modules/feedback/components/feedbac
 import { FeedbackType } from 'app/modules/feedback/interfaces/feedback.interface';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { getMiniImagePath, getServerProduct, isRackmount } from 'app/pages/dashboard/widgets/system/common/widget-sys-info.utils';
 import { LicenseComponent } from 'app/pages/system/general-settings/support/license/license.component';
 import { LicenseInfoInSupport } from 'app/pages/system/general-settings/support/license-info-in-support.interface';
 import { ProactiveComponent } from 'app/pages/system/general-settings/support/proactive/proactive.component';
@@ -28,7 +30,6 @@ import { supportCardElements } from 'app/pages/system/general-settings/support/s
 import { SystemInfoInSupport } from 'app/pages/system/general-settings/support/system-info-in-support.interface';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { ProductImageService } from 'app/services/product-image.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
@@ -68,7 +69,6 @@ export class SupportCardComponent implements OnInit {
     private store$: Store<AppState>,
     private snackbar: SnackbarService,
     private translate: TranslateService,
-    private productImageService: ProductImageService,
     private cdr: ChangeDetectorRef,
     private errorHandler: ErrorHandlerService,
   ) {}
@@ -78,8 +78,8 @@ export class SupportCardComponent implements OnInit {
       this.systemInfo = { ...systemInfo };
       this.systemInfo.memory = (systemInfo.physmem / GiB).toFixed(0) + ' GiB';
       if (systemInfo.system_product?.includes('MINI')) {
-        const getImage = this.productImageService.getMiniImagePath(systemInfo.system_product);
-        if (this.productImageService.isRackmount(systemInfo.system_product)) {
+        const getImage = getMiniImagePath(systemInfo.system_product);
+        if (isRackmount(systemInfo.system_product)) {
           this.isProductImageRack = true;
           this.extraMargin = true;
         } else {
@@ -130,16 +130,15 @@ export class SupportCardComponent implements OnInit {
   }
 
   daysTillExpiration(now: Date, then: Date): number {
-    const oneDay = 24 * 60 * 60 * 1000; // milliseconds in a day
-    return Math.round((then.getTime() - now.getTime()) / (oneDay));
+    return Math.round((then.getTime() - now.getTime()) / (oneDayMillis));
   }
 
   getServerImage(sysProduct: string): void {
-    const imagePath = this.productImageService.getServerProduct(sysProduct);
+    const product = getServerProduct(sysProduct);
 
-    if (imagePath) {
+    if (product) {
       this.isProductImageRack = true;
-      this.productImage = `/servers/${imagePath}.png`;
+      this.productImage = `/servers/${product}.png`;
     } else {
       this.productImage = 'ix-original-cropped.png';
       this.isProductImageRack = false;

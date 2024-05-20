@@ -64,7 +64,7 @@
           [totalGroups]="renderedGroups().length"
           (moveUp)="onMoveGroup(i, -1)"
           (moveDown)="onMoveGroup(i, 1)"
-          (edit)="onEditGroup(group)"
+          (edit)="onEditGroup(i)"
           (delete)="onDeleteGroup(group)"
         ></ix-widget-group-controls>
 

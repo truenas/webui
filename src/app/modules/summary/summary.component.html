@@ -1,5 +1,5 @@
 <table ixTest="summary-table">
-  <ng-container *ngFor="let section of summary">
+  <ng-container *ngFor="let section of summary()">
     <tr
       *ngFor="let item of section; let i = index"
       class="summary-line"

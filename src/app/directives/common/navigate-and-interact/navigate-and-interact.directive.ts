@@ -1,5 +1,5 @@
 import {
-  Directive, HostListener, Input,
+  Directive, HostListener, input,
 } from '@angular/core';
 import { Router } from '@angular/router';
 import { UntilDestroy } from '@ngneat/until-destroy';
@@ -9,15 +9,15 @@ import { UntilDestroy } from '@ngneat/until-destroy';
   selector: '[ixNavigateAndInteract]',
 })
 export class NavigateAndInteractDirective {
-  @Input() navigateRoute: string[];
-  @Input() navigateHash: string;
+  readonly navigateRoute = input.required<string[]>();
+  readonly navigateHash = input.required<string>();
 
   constructor(private router: Router) {}
 
   @HostListener('click')
   onClick(): void {
-    this.router.navigate(this.navigateRoute, { fragment: this.navigateHash }).then(() => {
-      const htmlElement = document.getElementById(this.navigateHash);
+    this.router.navigate(this.navigateRoute(), { fragment: this.navigateHash() }).then(() => {
+      const htmlElement = document.getElementById(this.navigateHash());
       if (htmlElement) {
         this.handleHashScrollIntoView(htmlElement);
       }

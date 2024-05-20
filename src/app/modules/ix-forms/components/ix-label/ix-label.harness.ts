@@ -1,6 +1,7 @@
 import {
   BaseHarnessFilters, ComponentHarness, HarnessPredicate,
 } from '@angular/cdk/testing';
+import { IxTooltipHarness } from 'app/modules/tooltip/tooltip.harness';
 
 export interface IxLabelFilters extends BaseHarnessFilters {
   label: string;
@@ -8,6 +9,8 @@ export interface IxLabelFilters extends BaseHarnessFilters {
 
 export class IxLabelHarness extends ComponentHarness {
   static hostSelector = 'ix-label';
+
+  readonly getTooltip = this.locatorFor(IxTooltipHarness);
 
   static with(options: IxLabelFilters): HarnessPredicate<IxLabelHarness> {
     return new HarnessPredicate(IxLabelHarness, options)
@@ -21,5 +24,10 @@ export class IxLabelHarness extends ComponentHarness {
     }
 
     return label.text({ exclude: '.required' });
+  }
+
+  async isRequired(): Promise<boolean> {
+    const required = await this.locatorForOptional('.required')();
+    return Boolean(required);
   }
 }

@@ -1,8 +1,8 @@
-<ng-container *ngIf="!isRunning">
+<ng-container *ngIf="!isRunning()">
   <button
     *ixRequiresRoles="requiredRoles"
     mat-button
-    [ixTest]="['start', vm.id]"
+    [ixTest]="['start', vm().id]"
     (click)="doStart()"
   >
     <ix-icon name="play_arrow"></ix-icon>
@@ -10,11 +10,11 @@
   </button>
 </ng-container>
 
-<ng-container *ngIf="isRunning">
+<ng-container *ngIf="isRunning()">
   <button
     *ixRequiresRoles="requiredRoles"
     mat-button
-    [ixTest]="['stop', vm.id]"
+    [ixTest]="['stop', vm().id]"
     (click)="doStop()"
   >
     <ix-icon name="stop"></ix-icon>
@@ -22,11 +22,11 @@
   </button>
 </ng-container>
 
-<ng-container *ngIf="isRunning">
+<ng-container *ngIf="isRunning()">
   <button
     *ixRequiresRoles="requiredRoles"
     mat-button
-    [ixTest]="['restart', vm.id]"
+    [ixTest]="['restart', vm().id]"
     (click)="doRestart()"
   >
     <ix-icon name="replay"></ix-icon>
@@ -34,11 +34,11 @@
   </button>
 </ng-container>
 
-<ng-container *ngIf="isRunning">
+<ng-container *ngIf="isRunning()">
   <button
     *ixRequiresRoles="requiredRoles"
     mat-button
-    [ixTest]="['power_off', vm.id]"
+    [ixTest]="['power_off', vm().id]"
     (click)="doPowerOff()"
   >
     <ix-icon name="power_settings_new"></ix-icon>
@@ -48,7 +48,7 @@
 
 <button
   mat-button
-  [ixTest]="['edit', vm.id]"
+  [ixTest]="['edit', vm().id]"
   (click)="doEdit()"
 >
   <ix-icon name="edit"></ix-icon>
@@ -58,7 +58,7 @@
 <button
   *ixRequiresRoles="requiredRoles"
   mat-button
-  [ixTest]="['delete', vm.id]"
+  [ixTest]="['delete', vm().id]"
   (click)="doDelete()"
 >
   <ix-icon name="delete"></ix-icon>
@@ -67,7 +67,7 @@
 
 <button
   mat-button
-  [ixTest]="['devices', vm.id]"
+  [ixTest]="['devices', vm().id]"
   (click)="openDevices()"
 >
   <ix-icon name="device_hub"></ix-icon>
@@ -77,7 +77,7 @@
 <button
   *ixRequiresRoles="requiredRoles"
   mat-button
-  [ixTest]="['clone', vm.id]"
+  [ixTest]="['clone', vm().id]"
   (click)="doClone()"
 >
   <ix-icon name="filter_none"></ix-icon>
@@ -85,9 +85,9 @@
 </button>
 
 <button
-  *ngIf="showDisplayButton"
+  *ngIf="showDisplayButton()"
   mat-button
-  [ixTest]="['open_display', vm.id]"
+  [ixTest]="['open_display', vm().id]"
   (click)="openDisplay()"
 >
   <ix-icon name="settings_ethernet"></ix-icon>
@@ -95,9 +95,9 @@
 </button>
 
 <button
-  *ngIf="isRunning"
+  *ngIf="isRunning()"
   mat-button
-  [ixTest]="['open_serial_shell', vm.id]"
+  [ixTest]="['open_serial_shell', vm().id]"
   (click)="openSerialShell()"
 >
   <ix-icon name="keyboard_arrow_right"></ix-icon>
@@ -107,7 +107,7 @@
 <button
   *ixRequiresRoles="requiredReadRoles"
   mat-button
-  [ixTest]="['download_logs', vm.id]"
+  [ixTest]="['download_logs', vm().id]"
   (click)="downloadLogs()"
 >
   <ix-icon name="content_paste"></ix-icon>

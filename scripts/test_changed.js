@@ -14,7 +14,7 @@ function getChangedDirectories() {
   const directories = new Set();
 
   for (let line of lines) {
-    if (line.match(/^ [AM].*/)) {
+    if (line.match(/^ ?[AM].*/)) {
       const filePath = line.slice(3).trim();
       const dir = filePath.substring(0, filePath.lastIndexOf('/'));
       if (dir) {

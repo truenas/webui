@@ -1,0 +1,119 @@
+@import 'scss-imports/cssvars';
+
+.card {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.card-content {
+  display: flex;
+  flex-direction: row;
+  height: 100%;
+  padding-bottom: 0;
+  padding-right: 0;
+
+  .container {
+    padding: 0;
+  }
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+
+  h3 {
+    font-size: 24px;
+
+    small {
+      align-items: baseline;
+      display: inline-flex;
+      font-size: 75%;
+      font-weight: 600;
+      margin-left: 4px;
+      opacity: 0.5;
+      text-transform: lowercase;
+    }
+  }
+}
+
+.copy-version {
+  align-items: center;
+  display: flex;
+  flex: 1;
+  margin-right: -29px;
+  min-width: 0;
+
+  .copy-version-text {
+    display: inline-flex;
+    flex: 1;
+    max-width: 78%;
+    min-width: 0;
+
+    span {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+  }
+}
+
+::ng-deep mat-list-item .mat-mdc-list-item-unscoped-content {
+  gap: 8px;
+}
+
+.container {
+  display: flex;
+  flex-grow: 1;
+  overflow: hidden;
+}
+
+.content-left {
+  display: flex;
+  flex: 1 0 40%;
+  flex-direction: column;
+  max-width: 40%;
+}
+
+.content-right {
+  flex: 1 0 60%;
+  max-width: 60%;
+  padding: 0;
+
+  .header {
+    padding: 16px;
+  }
+}
+
+.product-logo-container {
+  min-height: 87px;
+  padding: 16px 32px;
+}
+
+.card-action-container {
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  padding: 16px 32px 32px;
+}
+
+.overview {
+  padding-left: 16px;
+  padding-right: 16px;
+}
+
+ix-product-image.passive {
+  opacity: 0.5;
+}
+
+.image-loader {
+  height: 150px;
+  margin: auto;
+  width: 150px;
+}
+
+.inline-loader {
+  display: inline-flex;
+  flex: 1;
+}

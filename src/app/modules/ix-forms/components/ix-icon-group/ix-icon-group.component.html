@@ -6,7 +6,7 @@
 ></ix-label>
 
 <div class="icon-group" [attr.aria-label]="label">
-  @for (option of options | keyvalue; track option) {
+  @for (option of options | keyvalue: keepOrder; track option) {
   <button
     mat-icon-button
     type="button"

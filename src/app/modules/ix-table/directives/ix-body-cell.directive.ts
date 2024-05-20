@@ -1,5 +1,5 @@
 import {
-  AfterViewInit,
+  AfterViewInit, ChangeDetectorRef,
   Directive,
   Input,
   ViewContainerRef,
@@ -14,7 +14,10 @@ export class IxTableBodyCellDirective<T> implements AfterViewInit {
   @Input() row: T;
   @Input() column: Column<T, ColumnComponent<T>>;
 
-  constructor(private viewContainer: ViewContainerRef) {}
+  constructor(
+    private viewContainer: ViewContainerRef,
+    private cdr: ChangeDetectorRef,
+  ) {}
 
   ngAfterViewInit(): void {
     this.createComponent();
@@ -34,6 +37,8 @@ export class IxTableBodyCellDirective<T> implements AfterViewInit {
       // TODO: Replace never.
       componentRef.instance[key] = this.column[key] as never;
     });
+
+    this.cdr.detectChanges();
   }
 
   static ngTemplateContextGuard<T>(

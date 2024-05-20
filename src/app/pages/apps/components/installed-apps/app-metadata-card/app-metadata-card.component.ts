@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, Input,
+  ChangeDetectionStrategy, Component, input,
 } from '@angular/core';
 import { AppMetadata } from 'app/interfaces/chart-release.interface';
 
@@ -10,6 +10,6 @@ import { AppMetadata } from 'app/interfaces/chart-release.interface';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AppMetadataCardComponent {
-  @Input() appMetadata: AppMetadata;
-  @Input() maxHeight = 250;
+  readonly appMetadata = input<AppMetadata>();
+  readonly maxHeight = input(250);
 }
