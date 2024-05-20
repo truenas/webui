@@ -216,6 +216,11 @@
       "Add"
     ],
     "synonyms": [
+      "Add Group",
+      "New Group",
+      "Create Group",
+      "Group",
+      "Add Local Group",
       "Groups"
     ],
     "requiredRoles": [
@@ -257,6 +262,10 @@
       "Add"
     ],
     "synonyms": [
+      "Add Privilege",
+      "New Privilege",
+      "Create Privilege",
+      "Privilege",
       "Privileges"
     ],
     "requiredRoles": [
@@ -318,6 +327,11 @@
       "Add"
     ],
     "synonyms": [
+      "Add User",
+      "New User",
+      "Create User",
+      "User",
+      "Add Local User",
       "Users"
     ],
     "requiredRoles": [
@@ -339,6 +353,9 @@
     ],
     "synonyms": [
       "Local Users",
+      "Users",
+      "User List",
+      "User Management",
       "Users"
     ],
     "requiredRoles": [],
@@ -549,6 +566,18 @@
       "Add"
     ],
     "synonyms": [
+      "Add Credential",
+      "Add Cloud Credential",
+      "Add Backup Credential",
+      "New Credential",
+      "New Could Credential",
+      "New Backup Credential",
+      "Create Credential",
+      "Create Cloud Credential",
+      "Create Backup Credential",
+      "Credential",
+      "Cloud Credential",
+      "Backup Credential",
       "Cloud Credentials"
     ],
     "requiredRoles": [
@@ -588,6 +617,10 @@
       "Add"
     ],
     "synonyms": [
+      "Add SSH Connection",
+      "New SSH Connection",
+      "Create SSH Connection",
+      "SSH Connection",
       "SSH Connections"
     ],
     "requiredRoles": [
@@ -627,6 +660,13 @@
       "Add"
     ],
     "synonyms": [
+      "Add SSH Keypair",
+      "New SSH Keypair",
+      "Create SSH Keypair",
+      "SSH Keypair",
+      "Add Key",
+      "New Key",
+      "Create Key",
       "SSH Keypairs"
     ],
     "requiredRoles": [
@@ -668,6 +708,13 @@
       "Add"
     ],
     "synonyms": [
+      "Add ACME DNS-Authenticator",
+      "New ACME DNS-Authenticator",
+      "Create ACME DNS-Authenticator",
+      "ACME DNS-Authenticator",
+      "Add DNS Authenticator",
+      "New DNS Authenticator",
+      "Create DNS Authenticator",
       "ACME DNS-Authenticators"
     ],
     "requiredRoles": [
@@ -709,6 +756,10 @@
       "Add"
     ],
     "synonyms": [
+      "Add Certificate Authority",
+      "New Certificate Authority",
+      "Create Certificate Authority",
+      "Certificate Authority",
       "Certificate Authorities"
     ],
     "requiredRoles": [
@@ -730,6 +781,10 @@
       "Add"
     ],
     "synonyms": [
+      "Create Certificate",
+      "New Certificate",
+      "Add Certificate",
+      "Generate Certificate",
       "Certificates"
     ],
     "requiredRoles": [
@@ -790,6 +845,14 @@
       "Add"
     ],
     "synonyms": [
+      "Create CSR",
+      "New CSR",
+      "Add CSR",
+      "Generate CSR",
+      "Create Certificate Signing Requests",
+      "New Certificate Signing Requests",
+      "Add Certificate Signing Requests",
+      "Generate Certificate Signing Requests",
       "Certificate Signing Requests"
     ],
     "requiredRoles": [
@@ -848,6 +911,11 @@
     "synonyms": [
       "Add TrueCloud Backup Task",
       "Add Cloud Backup",
+      "Create TrueCloud Backup Task",
+      "Create Cloud Backup",
+      "New TrueCloud Backup Task",
+      "New Cloud Backup",
+      "Task",
       "TrueCloud Backup Tasks"
     ],
     "requiredRoles": [
@@ -891,6 +959,9 @@
     ],
     "synonyms": [
       "Add Cloud Sync Task",
+      "Create Cloud Sync Task",
+      "New Cloud Sync Task",
+      "Task",
       "Cloud Sync Tasks"
     ],
     "requiredRoles": [
@@ -950,6 +1021,9 @@
     ],
     "synonyms": [
       "Add Replication Task",
+      "Create Replication Task",
+      "New Replication Task",
+      "Task",
       "Replication Tasks"
     ],
     "requiredRoles": [
@@ -993,6 +1067,9 @@
     ],
     "synonyms": [
       "Add Rsync Task",
+      "Create Rsync Task",
+      "New Rsync Task",
+      "Task",
       "Rsync Tasks"
     ],
     "requiredRoles": [
@@ -1057,6 +1134,9 @@
     ],
     "synonyms": [
       "Add Scrub Task",
+      "Create Scrub Task",
+      "New Scrub Task",
+      "Task",
       "Scrub Tasks"
     ],
     "requiredRoles": [
@@ -1100,6 +1180,12 @@
     "synonyms": [
       "Add Periodic S.M.A.R.T. Test",
       "Add Smart Test",
+      "Create Periodic S.M.A.R.T. Test",
+      "Create Smart Test",
+      "New Periodic S.M.A.R.T. Test",
+      "New Smart Test",
+      "Test",
+      "Smart",
       "Periodic S.M.A.R.T. Tests"
     ],
     "requiredRoles": [
@@ -1144,6 +1230,13 @@
     ],
     "synonyms": [
       "Add Periodic Snapshot Task",
+      "Create Periodic Snapshot Task",
+      "New Periodic Snapshot Task",
+      "Add Snapshot Task",
+      "Create Snapshot Task",
+      "New Snapshot Task",
+      "Snapshot",
+      "Task",
       "Periodic Snapshot Tasks"
     ],
     "requiredRoles": [
@@ -1237,6 +1330,10 @@
       "Add"
     ],
     "synonyms": [
+      "Add Idmap",
+      "Create Idmap",
+      "New Idmap",
+      "Idmap",
       "Idmap"
     ],
     "requiredRoles": [
@@ -1276,6 +1373,10 @@
       "Add"
     ],
     "synonyms": [
+      "Add Kerberos Keytab",
+      "Create Kerberos Keytab",
+      "New Kerberos Keytab",
+      "Kerberos Keytab",
       "Kerberos Keytabs"
     ],
     "requiredRoles": [
@@ -1315,6 +1416,10 @@
       "Add"
     ],
     "synonyms": [
+      "Add Kerberos Realm",
+      "Create Kerberos Realm",
+      "New Kerberos Realm",
+      "Kerberos Realm",
       "Kerberos Realms"
     ],
     "requiredRoles": [
@@ -2942,6 +3047,12 @@
     ],
     "synonyms": [
       "Add Cron Job",
+      "Add Cron Job",
+      "Create Cron Job",
+      "New Cron Job",
+      "Setup Cron Job",
+      "Cron Job",
+      "Cronjob",
       "Cron Jobs"
     ],
     "requiredRoles": [
@@ -3067,6 +3178,10 @@
     ],
     "synonyms": [
       "Add Init/Shutdown Script",
+      "Add Init/Shutdown Script",
+      "Create Init/Shutdown Script",
+      "New Init/Shutdown Script",
+      "Init/Shutdown Script",
       "Init/Shutdown Scripts"
     ],
     "requiredRoles": [
@@ -3364,6 +3479,17 @@
     "synonyms": [
       "Add Tunable",
       "Add Sysctl",
+      "Add Sysctl",
+      "Create Sysctl",
+      "New Sysctl",
+      "Sysctl",
+      "Kernel Parameters",
+      "Add Kernel Parameters",
+      "Create Kernel Parameters",
+      "New Kernel Parameters",
+      "Add Tunable",
+      "Create Tunable",
+      "New Tunable",
       "Sysctl"
     ],
     "requiredRoles": [
@@ -4030,6 +4156,11 @@
     ],
     "synonyms": [
       "Add NTP Server",
+      "Add NTP Server",
+      "Create NTP Server",
+      "New NTP Server",
+      "NTP Server",
+      "Time Server",
       "NTP Server"
     ],
     "requiredRoles": [
@@ -4243,6 +4374,13 @@
       "Add"
     ],
     "synonyms": [
+      "Add VM",
+      "Create VM",
+      "New VM",
+      "VM",
+      "Add Virtual Machine",
+      "New Virtual Machine",
+      "Create Virtual Machine",
       "Virtual Machines"
     ],
     "requiredRoles": [

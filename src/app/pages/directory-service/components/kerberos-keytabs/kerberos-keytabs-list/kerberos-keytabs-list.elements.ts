@@ -9,6 +9,12 @@ export const kerberosKeytabsListElements = {
     add: {
       hierarchy: [T('Add')],
       anchor: 'add-kerberos-keytab',
+      synonyms: [
+        T('Add Kerberos Keytab'),
+        T('Create Kerberos Keytab'),
+        T('New Kerberos Keytab'),
+        T('Kerberos Keytab'),
+      ],
     },
   },
 } satisfies UiSearchableElement;
