@@ -48,9 +48,9 @@ export function runWidgetGroupTestSuite<T extends WidgetGroupComponent>(componen
           group: {
             layout: WidgetGroupLayout.HalfAndQuarters,
             slots: [
-              { type: WidgetType.InterfaceIp, settings: { interface: 'eno1' } },
+              { type: WidgetType.Ipv4Address, settings: { interface: 'eno1' } },
               { type: WidgetType.Hostname },
-              { type: WidgetType.InterfaceIp, settings: { interface: 'eno2' } },
+              { type: WidgetType.Ipv4Address, settings: { interface: 'eno2' } },
               null,
             ],
           },

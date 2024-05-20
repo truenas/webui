@@ -4,7 +4,9 @@ import {
 import { Validators } from '@angular/forms';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { filter, map } from 'rxjs';
 import { getAllFormErrors } from 'app/modules/ix-forms/utils/get-form-errors.utils';
+import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
 import { WidgetSettingsComponent } from 'app/pages/dashboard/types/widget-component.interface';
 import { WidgetSettingsRef } from 'app/pages/dashboard/types/widget-settings-ref.interface';
 import {
@@ -20,14 +22,25 @@ import {
 })
 export class WidgetInterfaceIpSettingsComponent implements WidgetSettingsComponent<WidgetInterfaceIpSettings>, OnInit {
   form = this.fb.group({
-    interfaceIp: [null as string, [Validators.required]],
+    interface: [null as string, [Validators.required]],
     name: [''],
   });
 
-  private readonly formFieldNames = ['interfaceIp'];
+  protected networkInterfaceOptions$ = this.resources.networkInterfaces$
+    .pipe(
+      filter((state) => !!state.value && !state.isLoading),
+      map((state) => state.value),
+      map((interfaces) => interfaces.map((result) => ({
+        label: result.name,
+        value: result.id,
+      }))),
+    );
+
+  private readonly formFieldNames = ['interface'];
   constructor(
     public widgetSettingsRef: WidgetSettingsRef<WidgetInterfaceIpSettings>,
     private fb: FormBuilder,
+    private resources: WidgetResourcesService,
   ) { }
 
   ngOnInit(): void {
@@ -40,7 +53,7 @@ export class WidgetInterfaceIpSettingsComponent implements WidgetSettingsCompone
     if (!settings) {
       return;
     }
-    this.form.controls.interfaceIp.setValue(settings.interface);
+    this.form.controls.interface.setValue(settings.interface);
   }
 
   private setupSettingsUpdate(): void {
@@ -49,7 +62,7 @@ export class WidgetInterfaceIpSettingsComponent implements WidgetSettingsCompone
     );
     this.form.valueChanges.pipe(untilDestroyed(this)).subscribe({
       next: (settings) => {
-        this.widgetSettingsRef.updateSettings({ interface: settings.interfaceIp });
+        this.widgetSettingsRef.updateSettings({ interface: settings.interface });
         this.widgetSettingsRef.updateValidity(
           getAllFormErrors(this.form, this.formFieldNames),
         );

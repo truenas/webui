@@ -11,10 +11,19 @@ import {
 
 export interface WidgetInterfaceIpSettings {
   interface: string;
+  widgetName?: string;
 }
 
-export const interfaceIpWidget = dashboardWidget<WidgetInterfaceIpSettings>({
-  name: T('IPv4 Datapoint'),
+export const ipv4AddressWidget = dashboardWidget<WidgetInterfaceIpSettings>({
+  name: T('IPv4 Address'),
+  component: WidgetInterfaceIpComponent,
+  category: WidgetCategory.Network,
+  settingsComponent: WidgetInterfaceIpSettingsComponent,
+  supportedSizes: [SlotSize.Full, SlotSize.Half, SlotSize.Quarter],
+} as WidgetDefinition<WidgetInterfaceIpSettings, WidgetInterfaceIpComponent, WidgetInterfaceIpSettingsComponent>);
+
+export const ipv6AddressWidget = dashboardWidget<WidgetInterfaceIpSettings>({
+  name: T('IPv6 Address'),
   component: WidgetInterfaceIpComponent,
   category: WidgetCategory.Network,
   settingsComponent: WidgetInterfaceIpSettingsComponent,

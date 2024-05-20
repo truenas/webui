@@ -81,8 +81,8 @@ describe('WidgetGroupFormComponent', () => {
               getData: () => ({
                 layout: WidgetGroupLayout.Halves,
                 slots: [
-                  { type: WidgetType.InterfaceIp, settings: { interface: '1' } },
-                  { type: WidgetType.InterfaceIp, settings: { interface: '2' } },
+                  { type: WidgetType.Ipv4Address, settings: { interface: '1' } },
+                  { type: WidgetType.Ipv4Address, settings: { interface: '2' } },
                 ],
               }) as WidgetGroup,
               close: jest.fn(),
@@ -102,8 +102,8 @@ describe('WidgetGroupFormComponent', () => {
         response: {
           layout: WidgetGroupLayout.Halves,
           slots: [
-            { type: WidgetType.InterfaceIp, settings: { interface: '1' } },
-            { type: WidgetType.InterfaceIp, settings: { interface: '2' } },
+            { type: WidgetType.Ipv4Address, settings: { interface: '1' } },
+            { type: WidgetType.Ipv4Address, settings: { interface: '2' } },
           ],
         },
       });
@@ -116,7 +116,7 @@ describe('WidgetGroupFormComponent', () => {
       spectator.detectChanges();
       const slotForm = spectator.query(WidgetGroupSlotFormComponent);
       expect(slotForm.slotConfig).toEqual({
-        type: WidgetType.InterfaceIp,
+        type: WidgetType.Ipv4Address,
         settings: {
           interface: '2',
         },
@@ -137,7 +137,7 @@ describe('WidgetGroupFormComponent', () => {
       const slotForm = spectator.query(WidgetGroupSlotFormComponent);
       slotForm.settingsChange.emit({
         slotPosition: SlotPosition.First,
-        type: WidgetType.InterfaceIp,
+        type: WidgetType.Ipv4Address,
         settings: { interface: '5' },
         slotSize: SlotSize.Half,
       });
@@ -150,8 +150,8 @@ describe('WidgetGroupFormComponent', () => {
         response: {
           layout: WidgetGroupLayout.Halves,
           slots: [
-            { type: WidgetType.InterfaceIp, settings: { interface: '5' } },
-            { type: WidgetType.InterfaceIp, settings: { interface: '2' } },
+            { type: WidgetType.Ipv4Address, settings: { interface: '5' } },
+            { type: WidgetType.Ipv4Address, settings: { interface: '2' } },
           ],
         } as WidgetGroup,
       });

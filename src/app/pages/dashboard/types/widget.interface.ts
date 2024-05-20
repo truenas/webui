@@ -7,7 +7,8 @@
  */
 export enum WidgetType {
   Hostname = 'hostname',
-  InterfaceIp = 'interface-ip',
+  Ipv4Address = 'ipv4-address',
+  Ipv6Address = 'ipv6-address',
   Help = 'help',
   Memory = 'memory',
   Network = 'network',

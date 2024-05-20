@@ -58,7 +58,7 @@ export const demoWidgets: WidgetGroup[] = [
     slots: [
       { type: WidgetType.Hostname },
       {
-        type: WidgetType.InterfaceIp,
+        type: WidgetType.Ipv4Address,
         settings: {
           interface: 'eno1',
         },
@@ -69,7 +69,7 @@ export const demoWidgets: WidgetGroup[] = [
     layout: WidgetGroupLayout.Quarters,
     slots: [
       {
-        type: WidgetType.InterfaceIp,
+        type: WidgetType.Ipv4Address,
         settings: {
           interface: 'notExistent',
         },

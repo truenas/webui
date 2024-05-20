@@ -164,7 +164,7 @@ export class WidgetGroupSlotFormComponent implements AfterViewInit, OnChanges {
       this.setupFormValueUpdates();
       return;
     }
-    const category = widgetRegistry[slotConfig.type].category;
+    const category = widgetRegistry[slotConfig.type]?.category;
     this.form.controls.category.setValue(category);
     this.updateSelectedCategory(category);
     this.form.controls.type.setValue(slotConfig.type);
@@ -192,13 +192,13 @@ export class WidgetGroupSlotFormComponent implements AfterViewInit, OnChanges {
 
     if (
       !slotConfig?.type
-      || !widgetRegistry[slotConfig.type as WidgetType].settingsComponent
+      || !widgetRegistry[slotConfig.type as WidgetType]?.settingsComponent
     ) {
       return;
     }
 
     this.settingsContainer.createComponent(
-      widgetRegistry[slotConfig.type].settingsComponent,
+      widgetRegistry[slotConfig.type]?.settingsComponent,
       { injector: this.getInjector() },
     );
   }
