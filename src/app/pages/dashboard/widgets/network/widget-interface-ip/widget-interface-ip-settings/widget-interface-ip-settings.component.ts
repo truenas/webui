@@ -25,15 +25,14 @@ export class WidgetInterfaceIpSettingsComponent implements WidgetSettingsCompone
     interface: [null as string, [Validators.required]],
   });
 
-  protected networkInterfaceOptions$ = this.resources.networkInterfaces$
-    .pipe(
-      filter((state) => !!state.value && !state.isLoading),
-      map((state) => state.value),
-      map((interfaces) => interfaces.map((result) => ({
-        label: result.name,
-        value: result.id,
-      }))),
-    );
+  protected networkInterfaceOptions$ = this.resources.networkInterfaces$.pipe(
+    filter((state) => !!state.value && !state.isLoading),
+    map((state) => state.value),
+    map((interfaces) => interfaces.map((result) => ({
+      label: result.name,
+      value: result.id,
+    }))),
+  );
 
   private readonly formFieldNames = ['interface'];
   constructor(

@@ -23,15 +23,14 @@ export class WidgetPoolNameSettingsComponent implements WidgetSettingsComponent<
     pool: [null as string, [Validators.required]],
   });
 
-  protected poolOptions$ = this.resources.poolList$
-    .pipe(
-      filter((state) => !!state.value && !state.isLoading),
-      map((state) => state.value),
-      map((pools) => pools.map((result) => ({
-        label: result.name,
-        value: result.id,
-      }))),
-    );
+  protected poolOptions$ = this.resources.poolList$.pipe(
+    filter((state) => !!state.value && !state.isLoading),
+    map((state) => state.value),
+    map((pools) => (pools || []).map((result) => ({
+      label: result.name,
+      value: result.id,
+    }))),
+  );
 
   private readonly formFieldNames = ['pool'];
   constructor(

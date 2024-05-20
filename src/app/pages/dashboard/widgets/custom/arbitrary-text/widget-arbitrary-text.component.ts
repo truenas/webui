@@ -1,7 +1,6 @@
 import {
   ChangeDetectionStrategy, Component, input,
 } from '@angular/core';
-import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
 import { WidgetComponent } from 'app/pages/dashboard/types/widget-component.interface';
 import {
   SlotSize,
@@ -17,8 +16,4 @@ import { WidgetArbitraryTextSettings } from 'app/pages/dashboard/widgets/custom/
 export class WidgetArbitraryTextComponent implements WidgetComponent {
   size = input.required<SlotSize>();
   settings = input.required<WidgetArbitraryTextSettings>();
-
-  constructor(
-    private resources: WidgetResourcesService,
-  ) {}
 }
