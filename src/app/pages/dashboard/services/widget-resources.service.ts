@@ -12,6 +12,7 @@ import {
 } from 'rxjs/operators';
 import { SystemUpdateStatus } from 'app/enums/system-update.enum';
 import { toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
+import { Pool } from 'app/interfaces/pool.interface';
 import { ReportingData } from 'app/interfaces/reporting.interface';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
@@ -54,6 +55,11 @@ export class WidgetResourcesService {
     shareReplay({ bufferSize: 1, refCount: true }),
   );
 
+  readonly poolList$ = this.ws.call('pool.query').pipe(
+    toLoadingState(),
+    shareReplay({ bufferSize: 1, refCount: true }),
+  );
+
   readonly updateAvailable$ = this.ws.call('update.check_available').pipe(
     map((update) => update.status === SystemUpdateStatus.Available),
     toLoadingState(),
@@ -81,6 +87,12 @@ export class WidgetResourcesService {
           start: Math.floor(sub(serverTime, { hours: 1 }).getTime() / 1000),
         }]);
       }),
+      shareReplay({ bufferSize: 1, refCount: true }),
+    );
+  }
+
+  getPoolById(poolId: number): Observable<Pool[]> {
+    return this.ws.call('pool.query', [[['id', '=', +poolId]]]).pipe(
       shareReplay({ bufferSize: 1, refCount: true }),
     );
   }

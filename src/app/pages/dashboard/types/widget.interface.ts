@@ -16,6 +16,8 @@ export enum WidgetType {
   Cpu = 'cpu',
   SystemInfoActive = 'system-info-active',
   SystemInfoPassive = 'system-info-passive',
+  OsVersion = 'os-version',
+  PoolName = 'pool-name',
 }
 
 export enum SlotSize {
