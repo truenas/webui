@@ -664,6 +664,9 @@
       "New SSH Keypair",
       "Create SSH Keypair",
       "SSH Keypair",
+      "Add Key",
+      "New Key",
+      "Create Key",
       "SSH Keypairs"
     ],
     "requiredRoles": [
@@ -709,6 +712,9 @@
       "New ACME DNS-Authenticator",
       "Create ACME DNS-Authenticator",
       "ACME DNS-Authenticator",
+      "Add DNS Authenticator",
+      "New DNS Authenticator",
+      "Create DNS Authenticator",
       "ACME DNS-Authenticators"
     ],
     "requiredRoles": [
@@ -3046,6 +3052,7 @@
       "New Cron Job",
       "Setup Cron Job",
       "Cron Job",
+      "Cronjob",
       "Cron Jobs"
     ],
     "requiredRoles": [
@@ -3476,6 +3483,13 @@
       "Create Sysctl",
       "New Sysctl",
       "Sysctl",
+      "Kernel Parameters",
+      "Add Kernel Parameters",
+      "Create Kernel Parameters",
+      "New Kernel Parameters",
+      "Add Tunable",
+      "Create Tunable",
+      "New Tunable",
       "Sysctl"
     ],
     "requiredRoles": [
@@ -4146,6 +4160,7 @@
       "Create NTP Server",
       "New NTP Server",
       "NTP Server",
+      "Time Server",
       "NTP Server"
     ],
     "requiredRoles": [

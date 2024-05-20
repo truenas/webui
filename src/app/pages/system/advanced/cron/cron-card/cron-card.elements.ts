@@ -14,6 +14,7 @@ export const cronCardElements = {
         T('New Cron Job'),
         T('Setup Cron Job'),
         T('Cron Job'),
+        T('Cronjob'),
       ],
     },
   },
