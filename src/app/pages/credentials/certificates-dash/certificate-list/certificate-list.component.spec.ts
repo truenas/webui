@@ -16,7 +16,6 @@ import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
 import { CertificateEditComponent } from 'app/pages/credentials/certificates-dash/certificate-edit/certificate-edit.component';
-import { ConfirmForceDeleteCertificateComponent } from 'app/pages/credentials/certificates-dash/confirm-force-delete-dialog/confirm-force-delete-dialog.component';
 import { CertificateAddComponent } from 'app/pages/credentials/certificates-dash/forms/certificate-add/certificate-add.component';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { StorageService } from 'app/services/storage.service';
@@ -71,7 +70,7 @@ describe('CertificateListComponent', () => {
       ]),
       mockProvider(DialogService, {
         confirm: jest.fn(() => {
-          return of(true);
+          return of({ confirmed: true, secondaryCheckbox: true });
         }),
         jobDialog: jest.fn(() => ({
           afterClosed: jest.fn(() => of(undefined)),
@@ -132,8 +131,14 @@ describe('CertificateListComponent', () => {
     const deleteButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'delete' }), 1, 3);
     await deleteButton.click();
 
-    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(ConfirmForceDeleteCertificateComponent, {
-      data: certificates[0],
+    expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({
+      title: 'Delete Certificate',
+      message: `Are you sure you want to delete "${certificates[0].name}"?`,
+      hideCheckbox: true,
+      secondaryCheckbox: true,
+      secondaryCheckboxText: 'Force',
+      buttonColor: 'red',
+      buttonText: 'Delete',
     });
     expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
     expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('certificate.delete', [certificates[0].id, true]);

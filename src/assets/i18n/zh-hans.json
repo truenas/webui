@@ -831,7 +831,6 @@
   "Apr": "四月",
   "Archive": "存档",
   "Are you sure you want to abort the <b>{task}</b> task?": "您确定要中止 <b>{task}</b> 任务吗？",
-  "Are you sure you want to delete \"{cert}\"?": "您确定要删除 \"{cert}\"?",
   "Are you sure you want to delete \"{name}\"?": "您确定要删除 \"{name}\" 吗？",
   "Are you sure you want to delete <b>{name}</b> Reporting Exporter?": "您确定要删除 <b>{name}</b> 报告导出器吗？",
   "Are you sure you want to delete NFS Share <b>\"{path}\"</b>?": "您确定要删除 NFS 共享 <b>\"{path}\"</b> 吗？",

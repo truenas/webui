@@ -1,6 +1,5 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import {
@@ -9,6 +8,7 @@ import {
 import { Role } from 'app/enums/role.enum';
 import { helptextSystemCertificates } from 'app/helptext/system/certificates';
 import { Certificate } from 'app/interfaces/certificate.interface';
+import { DialogWithSecondaryCheckboxResult } from 'app/interfaces/dialog.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -27,9 +27,6 @@ import {
 import {
   CertificateEditComponent,
 } from 'app/pages/credentials/certificates-dash/certificate-edit/certificate-edit.component';
-import {
-  ConfirmForceDeleteCertificateComponent,
-} from 'app/pages/credentials/certificates-dash/confirm-force-delete-dialog/confirm-force-delete-dialog.component';
 import { CsrAddComponent } from 'app/pages/credentials/certificates-dash/csr-add/csr-add.component';
 import { csrListElements } from 'app/pages/credentials/certificates-dash/csr-list/csr-list.elements';
 import { DownloadService } from 'app/services/download.service';
@@ -92,7 +89,6 @@ export class CertificateSigningRequestsListComponent implements OnInit {
   });
 
   constructor(
-    private matDialog: MatDialog,
     private ws: WebSocketService,
     private slideInService: IxSlideInService,
     private translate: TranslateService,
@@ -144,25 +140,34 @@ export class CertificateSigningRequestsListComponent implements OnInit {
   }
 
   doDelete(certificate: Certificate): void {
-    this.matDialog
-      .open(ConfirmForceDeleteCertificateComponent, { data: certificate })
-      .afterClosed()
-      .pipe(
-        filter(Boolean),
-        switchMap((data: { force: boolean }) => {
-          return this.dialogService.jobDialog(
-            this.ws.job('certificate.delete', [certificate.id, data.force]),
-            { title: this.translate.instant('Deleting...') },
-          )
-            .afterClosed();
-        }),
-        this.errorHandler.catchError(),
-        untilDestroyed(this),
-      )
-      .subscribe(() => {
+    this.dialogService.confirm({
+      title: this.translate.instant('Delete Certificate'),
+      message: this.translate.instant('Are you sure you want to delete "{name}"?', { name: certificate.name }),
+      hideCheckbox: true,
+      secondaryCheckbox: true,
+      secondaryCheckboxText: this.translate.instant('Force'),
+      buttonColor: 'red',
+      buttonText: this.translate.instant('Delete'),
+    }).pipe(
+      filter((confirmation: DialogWithSecondaryCheckboxResult) => confirmation.confirmed),
+      switchMap((confirmation: DialogWithSecondaryCheckboxResult) => {
+        const force = confirmation.secondaryCheckbox;
+
+        const jobDialogRef = this.dialogService.jobDialog(
+          this.ws.job('certificate.delete', [certificate.id, force]),
+          { title: this.translate.instant('Deleting...') },
+        );
+
+        return jobDialogRef.afterClosed();
+      }),
+      this.errorHandler.catchError(),
+      untilDestroyed(this),
+    ).subscribe({
+      next: () => {
         this.snackbar.success(this.translate.instant('CSR deleted'));
         this.getCertificates();
-      });
+      },
+    });
   }
 
   doDownload(certificate: Certificate): void {
