@@ -7,6 +7,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { Application, Container } from 'pixi.js';
+import * as PIXI from 'pixi.js';
 import * as popmotion from 'popmotion';
 import { KeyframesProps } from 'popmotion';
 import { ValueReaction } from 'popmotion/lib/reactions/value';
