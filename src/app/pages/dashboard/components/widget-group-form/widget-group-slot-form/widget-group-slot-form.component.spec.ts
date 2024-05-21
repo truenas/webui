@@ -66,13 +66,13 @@ describe('WidgetGroupSlotComponent', () => {
 
     expect(
       await (await loader.getHarness(IxSelectHarness.with({ label: 'Widget Type' }))).getValue(),
-    ).toBe(widgetRegistry[WidgetType.PoolName].name);
+    ).toBe(widgetRegistry[WidgetType.Memory].name);
 
     expect(spectator.component.slot()).toEqual({
       slotPosition: SlotPosition.First,
       slotSize: SlotSize.Half,
       settings: undefined,
-      type: WidgetType.PoolName,
+      type: WidgetType.Memory,
     });
   });
 });
