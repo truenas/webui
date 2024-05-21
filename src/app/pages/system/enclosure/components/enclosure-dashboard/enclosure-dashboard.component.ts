@@ -1,58 +1,37 @@
-import { ChangeDetectionStrategy, Component, computed } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
-import { MatDialog } from '@angular/material/dialog';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { Role } from 'app/enums/role.enum';
-import {
-  SetEnclosureLabelDialogComponent,
-  SetEnclosureLabelDialogData,
-} from 'app/pages/system/enclosure/components/enclosure-dashboard/set-enclosure-label-dialog/set-enclosure-label-dialog.component';
 import { EnclosureStore } from 'app/pages/system/enclosure/services/enclosure.store';
-import { getEnclosureLabel } from 'app/pages/system/enclosure/utils/get-enclosure-label.utils';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
   selector: 'ix-enclosure-dashboard',
   templateUrl: './enclosure-dashboard.component.html',
-  styleUrls: ['./enclosure-dashboard.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  providers: [
+    EnclosureStore,
+  ],
 })
 export class EnclosureDashboardComponent {
-  protected readonly requiredRoles = [Role.FullAdmin];
-
-  readonly selectedSlot$ = this.enclosureStore.selectedSlot$;
   readonly isJbofLicensed$ = this.ws.call('jbof.licensed');
 
-  readonly selectedEnclosure = toSignal(this.enclosureStore.selectedEnclosure$);
-
-  readonly enclosureLabel = computed(() => getEnclosureLabel(this.selectedEnclosure()));
+  readonly selectedEnclosure = this.enclosureStore.selectedEnclosure;
 
   constructor(
     private enclosureStore: EnclosureStore,
-    private matDialog: MatDialog,
+    private route: ActivatedRoute,
     private ws: WebSocketService,
   ) {
     this.enclosureStore.initiate();
-  }
 
-  onEditLabel(): void {
-    const enclosure = this.selectedEnclosure();
-    const dialogConfig: SetEnclosureLabelDialogData = {
-      currentLabel: this.enclosureLabel(),
-      defaultLabel: enclosure.name,
-      enclosureId: enclosure.id,
-    };
+    this.route.paramMap.pipe(untilDestroyed(this)).subscribe((params) => {
+      if (!params.has('enclosure')) {
+        return;
+      }
 
-    this.matDialog.open(SetEnclosureLabelDialogComponent, { data: dialogConfig })
-      .afterClosed()
-      .pipe(untilDestroyed(this))
-      .subscribe((newLabel: string) => {
-        if (!newLabel) {
-          return;
-        }
-
-        this.enclosureStore.renameSelectedEnclosure(newLabel);
-      });
+      this.enclosureStore.selectEnclosure(params.get('enclosure'));
+      // TODO: Add error state for missing enclosure.
+    });
   }
 }

@@ -14,6 +14,8 @@ export enum WidgetType {
   BackupTasks = 'backup-tasks',
   Cpu = 'cpu',
   Storage = 'storage',
+  SystemInfoActive = 'system-info-active',
+  SystemInfoPassive = 'system-info-passive',
 }
 
 export enum SlotSize {

@@ -1,4 +1,5 @@
 import { createComponentFactory } from '@ngneat/spectator/jest';
+import { MockComponent } from 'ng-mocks';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import {
   PermissionsItemComponent,
@@ -11,6 +12,9 @@ import {
 describe('PermissionsItemComponent', () => {
   const createComponent = createComponentFactory({
     component: PermissionsItemComponent,
+    declarations: [
+      MockComponent(IxIconComponent),
+    ],
   });
 
   it('shows icon, name and permission string for permission item.', () => {

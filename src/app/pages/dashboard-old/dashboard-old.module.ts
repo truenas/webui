@@ -28,6 +28,7 @@ import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
 import { LayoutModule } from 'app/modules/layout/layout.module';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
+import { UptimePipe } from 'app/pages/dashboard/widgets/system/common/uptime.pipe';
 import { DashboardComponent } from 'app/pages/dashboard-old/components/dashboard/dashboard.component';
 import { DashboardFormComponent } from 'app/pages/dashboard-old/components/dashboard-form/dashboard-form.component';
 import { WidgetBackupComponent } from 'app/pages/dashboard-old/components/widget-backup/widget-backup.component';
@@ -40,9 +41,7 @@ import { WidgetNicComponent } from 'app/pages/dashboard-old/components/widget-ni
 import { WidgetPoolComponent } from 'app/pages/dashboard-old/components/widget-pool/widget-pool.component';
 import { WidgetPoolWrapperComponent } from 'app/pages/dashboard-old/components/widget-pool-wrapper/widget-pool-wrapper.component';
 import { WidgetStorageComponent } from 'app/pages/dashboard-old/components/widget-storage/widget-storage.component';
-import {
-  SimpleFailoverBtnComponent,
-} from 'app/pages/dashboard-old/components/widget-sys-info/simple-failover-btn.component';
+import { SimpleFailoverBtnComponent } from 'app/pages/dashboard-old/components/widget-sys-info/simple-failover-btn.component';
 import { WidgetSysInfoComponent } from 'app/pages/dashboard-old/components/widget-sys-info/widget-sys-info.component';
 import { routing } from 'app/pages/dashboard-old/dashboard-old.routing';
 import { DashboardStorageStore } from 'app/pages/dashboard-old/store/dashboard-storage-store.service';
@@ -80,6 +79,7 @@ import { ResourcesUsageStore } from 'app/pages/dashboard-old/store/resources-usa
     IxTableModule,
     EmptyComponent,
     InterfaceStatusIconComponent,
+    UptimePipe,
   ],
   declarations: [
     DashboardComponent,

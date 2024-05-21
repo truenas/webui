@@ -5,6 +5,18 @@ export const demoWidgets: WidgetGroup[] = [
   {
     layout: WidgetGroupLayout.Full,
     slots: [
+      { type: WidgetType.SystemInfoActive },
+    ],
+  },
+  {
+    layout: WidgetGroupLayout.Full,
+    slots: [
+      { type: WidgetType.SystemInfoPassive },
+    ],
+  },
+  {
+    layout: WidgetGroupLayout.Full,
+    slots: [
       { type: WidgetType.Help },
     ],
   },

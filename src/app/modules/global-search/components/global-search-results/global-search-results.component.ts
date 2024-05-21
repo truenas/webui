@@ -25,6 +25,7 @@ import { AuthService } from 'app/services/auth/auth.service';
 export class GlobalSearchResultsComponent implements OnChanges {
   @Input() searchTerm = '';
   @Input() isLoading = false;
+  @Input() isSearchInputFocused = false;
   @Input() results: UiSearchableElement[] = [];
 
   readonly initialResultsLimit = this.globalSearchSectionsProvider.globalSearchInitialLimit;
@@ -53,6 +54,10 @@ export class GlobalSearchResultsComponent implements OnChanges {
     return this.globalSearchSectionsProvider.searchSections.filter(
       (sectionOption) => uniqueSectionValues.has(sectionOption.value),
     );
+  }
+
+  get firstAvailableSearchResult(): UiSearchableElement | null {
+    return this.availableSections.flatMap((section) => this.getLimitedSectionResults(section.value))[0];
   }
 
   constructor(
@@ -99,6 +104,10 @@ export class GlobalSearchResultsComponent implements OnChanges {
 
   getElementsBySection(section: GlobalSearchSection): UiSearchableElement[] {
     return this.results.filter((element) => element?.section === section);
+  }
+
+  isSameHierarchyResult(a: UiSearchableElement, b: UiSearchableElement): boolean {
+    return isEqual(a.hierarchy, b.hierarchy);
   }
 
   private saveSearchResult(result: UiSearchableElement): void {

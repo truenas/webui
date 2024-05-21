@@ -6,7 +6,6 @@ import {
   Observable, catchError, filter, finalize, map, switchMap, tap,
 } from 'rxjs';
 import { WidgetName } from 'app/enums/widget-name.enum';
-import { LoggedInUser } from 'app/interfaces/ds-cache.interface';
 import { demoWidgets } from 'app/pages/dashboard/services/demo-widgets.constant';
 import { WidgetGroup, WidgetGroupLayout } from 'app/pages/dashboard/types/widget-group.interface';
 import { SomeWidgetSettings, WidgetType } from 'app/pages/dashboard/types/widget.interface';
@@ -77,11 +76,11 @@ export class DashboardStore extends ComponentStore<DashboardState> {
     );
   });
 
-  save(groups: WidgetGroup[]): Observable<LoggedInUser> {
+  save(groups: WidgetGroup[]): Observable<void> {
     this.toggleLoadingState(true);
 
     return this.ws.call('auth.set_attribute', ['dashState', groups]).pipe(
-      switchMap(() => this.authService.refetchUser()),
+      switchMap(() => this.authService.refreshUser()),
       finalize(() => this.toggleLoadingState(false)),
     );
   }
@@ -114,16 +113,16 @@ export class DashboardStore extends ComponentStore<DashboardState> {
 
   private getWidgetTypeFromOldDashboard(name: WidgetName): WidgetType {
     const unknownWidgetType = name as unknown as WidgetType;
-
     // TODO: we have some widgets that are not yet implemented for the new dashboard
     switch (name) {
       case WidgetName.Help: return WidgetType.Help;
       case WidgetName.Memory: return WidgetType.Memory;
       case WidgetName.Interface: return WidgetType.InterfaceIp;
+      case WidgetName.SystemInformation: return WidgetType.SystemInfoActive;
+      case WidgetName.SystemInformationStandby: return WidgetType.SystemInfoPassive;
       case WidgetName.Network: return WidgetType.Network;
       case WidgetName.Backup: return WidgetType.BackupTasks;
       case WidgetName.Cpu: return WidgetType.Cpu;
-      case WidgetName.SystemInformation: return unknownWidgetType;
       case WidgetName.Storage: return WidgetType.Storage;
       case WidgetName.Pool: return unknownWidgetType;
       default: return unknownWidgetType;

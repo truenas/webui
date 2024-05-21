@@ -39,6 +39,7 @@ describe('WidgetEditorGroupComponent - additions', () => {
             { type: WidgetType.Hostname },
           ],
         },
+        validationErrors: [{}, {}, {}, {}],
       },
     });
   });

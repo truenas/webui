@@ -9,6 +9,8 @@ import {
 } from 'app/pages/dashboard/widgets/network/widget-interface-ip/widget-interface-ip.definition';
 import { networkWidget } from 'app/pages/dashboard/widgets/network/widget-network/widget-network.definition';
 import { storageWidget } from 'app/pages/dashboard/widgets/storage/widget-storage/widget-storage.definition';
+import { systemInfoActiveWidget } from 'app/pages/dashboard/widgets/system/widget-sys-info-active/widget-sys-info-active.definition';
+import { systemInfoPassiveWidget } from 'app/pages/dashboard/widgets/system/widget-sys-info-passive/widget-sys-info-passive.definition';
 
 export const widgetComponents = [
   hostnameWidget.component,
@@ -20,6 +22,8 @@ export const widgetComponents = [
   backupTasksWidget.component,
   cpuWidget.component,
   storageWidget.component,
+  systemInfoActiveWidget.component,
+  systemInfoPassiveWidget.component,
 ];
 
 export const widgetRegistry = {
@@ -31,4 +35,6 @@ export const widgetRegistry = {
   [WidgetType.BackupTasks]: backupTasksWidget,
   [WidgetType.Cpu]: cpuWidget,
   [WidgetType.Storage]: storageWidget,
+  [WidgetType.SystemInfoActive]: systemInfoActiveWidget,
+  [WidgetType.SystemInfoPassive]: systemInfoPassiveWidget,
 };

@@ -1,6 +1,6 @@
 import {
   ChangeDetectionStrategy, ChangeDetectorRef,
-  Component, ElementRef, Input, OnDestroy, OnInit, TrackByFunction, ViewChild,
+  Component, ElementRef, input, OnDestroy, OnInit, TrackByFunction, ViewChild,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import {
@@ -16,7 +16,8 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class IxChainedSlideInComponent implements OnInit, OnDestroy {
-  @Input() id: string;
+  readonly id = input<string>();
+
   @ViewChild('componentWrapper') container: HTMLElement;
   protected components: ChainedComponentSerialized[];
   private element: HTMLElement;
@@ -33,7 +34,7 @@ export class IxChainedSlideInComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     // ensure id attribute exists
-    if (!this.id) {
+    if (!this.id()) {
       return;
     }
 

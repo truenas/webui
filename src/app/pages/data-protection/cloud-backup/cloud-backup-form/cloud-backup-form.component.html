@@ -12,10 +12,11 @@
             [label]="helptext.source_path_placeholder | translate"
             [tooltip]="helptext.source_path_tooltip | translate"
             [required]="true"
-            [multiple]="true"
+            [multiple]="false"
             [nodeProvider]="fileNodeProvider"
           ></ix-explorer>
         </ix-fieldset>
+
         <ix-fieldset
           class="fieldset"
           [title]="helptext.fieldset_remote | translate"
@@ -24,6 +25,7 @@
             formControlName="credentials"
             [label]="helptext.credentials_placeholder | translate"
             [tooltip]="helptext.credentials_tooltip | translate"
+            [filterByProviders]="[CloudSyncProviderName.Storj]"
             [required]="true"
           ></ix-cloud-credentials-select>
           <ix-select
@@ -56,8 +58,8 @@
         >
           <ix-input
             formControlName="description"
-            [label]="helptext.description_placeholder | translate"
-            [tooltip]="helptext.description_tooltip | translate"
+            [label]="helptext.name_placeholder | translate"
+            [tooltip]="helptext.name_tooltip | translate"
           ></ix-input>
           <ix-input
             formControlName="keep_last"
@@ -73,12 +75,66 @@
             [tooltip]="helptext.password_tooltip | translate"
             [required]="true"
           ></ix-input>
+        </ix-fieldset>
+
+        <ix-fieldset
+          class="fieldset"
+          [title]="helptext.fieldset_control | translate"
+        >
           <ix-scheduler
             formControlName="schedule"
             [label]="helptext.schedule_placeholder | translate"
             [tooltip]="helptext.schedule_tooltip | translate"
             [required]="true"
           ></ix-scheduler>
+          <ix-checkbox
+            formControlName="enabled"
+            [label]="helptext.enabled_placeholder | translate"
+            [tooltip]="helptext.enabled_tooltip | translate"
+          ></ix-checkbox>
+        </ix-fieldset>
+
+        <ix-fieldset
+          class="fieldset"
+          [title]="helptext.fieldset_advanced_options| translate"
+        >
+          <ix-checkbox
+            formControlName="snapshot"
+            [label]="helptext.snapshot_placeholder | translate"
+            [tooltip]="helptext.snapshot_tooltip | translate"
+          ></ix-checkbox>
+          <ix-textarea
+            formControlName="pre_script"
+            [label]="helptext.pre_script_placeholder | translate"
+            [tooltip]="helptext.pre_script_tooltip | translate"
+          ></ix-textarea>
+          <ix-textarea
+            formControlName="post_script"
+            [label]="helptext.post_script_placeholder | translate"
+            [tooltip]="helptext.post_script_tooltip | translate"
+          ></ix-textarea>
+          <ix-chips
+            formControlName="exclude"
+            [label]="helptext.exclude_placeholder | translate"
+            [tooltip]="helptext.exclude_tooltip | translate"
+          ></ix-chips>
+        </ix-fieldset>
+
+        <ix-fieldset
+          class="fieldset"
+          [title]="helptext.fieldset_advanced_remote_options | translate"
+        >
+          <ix-input
+            formControlName="transfers"
+            type="number"
+            [label]="helptext.transfers_placeholder | translate"
+            [tooltip]="helptext.transfers_tooltip | translate"
+          ></ix-input>
+          <ix-chips
+            formControlName="bwlimit"
+            [label]="helptext.bwlimit_placeholder | translate"
+            [tooltip]="helptext.bwlimit_tooltip | translate"
+          ></ix-chips>
         </ix-fieldset>
       </div>
 

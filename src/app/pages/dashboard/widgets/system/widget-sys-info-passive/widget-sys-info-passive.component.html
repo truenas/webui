@@ -1,0 +1,136 @@
+<mat-card class="card">
+  <mat-card-content class="card-content">
+    <div [class]="['container', size()]">
+      <div class="content-left fn-theme-contrast-lighter">
+        <div class="product-logo-container">
+          <ix-icon [name]="isIxHardware() ? 'ix:logo_truenas_scale_full' : 'ix:logo_truenas_scale_type'"></ix-icon>
+        </div>
+
+        <ix-product-image
+          class="passive"
+          [systemProduct]="systemInfo()?.platform"
+          [hasEnclosureSupport]="hasEnclosureSupport()"
+          [isHaLicensed]="isHaLicensed()"
+          [isEnterprise]="isEnterprise()"
+          [isIxHardware]="isIxHardware()"
+        >
+          <span>{{ 'Standby' | translate }}</span>
+        </ix-product-image>
+
+        <div class="card-action-container">
+          <button
+            *ngIf="isUpdateRunning()"
+            mat-button
+            color="primary"
+            [ixTest]="['widget-sysinfo', 'update-running']"
+            [disabled]="true"
+          >{{ 'Update in Progress' | translate }}</button>
+
+          <ng-container *ngIf="!isUpdateRunning()">
+            <button
+              *ixRequiresRoles="requiredRoles"
+              mat-button
+              matTooltipPosition="above"
+              color="primary"
+              class="simple-failover-btn"
+              ixTest="initiate-failover"
+              [matTooltip]="'HA is Disabled' | translate"
+              [matTooltipDisabled]="isHaEnabled()"
+              [disabled]="isDisabled$ | async"
+              (click)="openDialog()"
+            >
+              <ix-icon *ngIf="!isHaEnabled()" name="mdi-alert"></ix-icon>
+              {{ 'Initiate Failover' | translate }}
+            </button>
+          </ng-container>
+        </div>
+      </div>
+
+      <div class="content-right">
+        <div class="header">
+          <h3>{{ 'System Information' | translate }} <small>{{ 'standby' | translate }}</small></h3>
+        </div>
+
+        <div class="overview">
+          <strong>{{ 'Overview' | translate }}</strong>
+        </div>
+
+        <mat-list>
+          <mat-list-item>
+            <strong>{{ 'Platform' | translate }}:</strong>
+            <span *ngIf="isLoaded(); else inlineLoader">
+              <ng-container *ngIf="systemInfo()?.platform && isIxHardware(); else genericPlatform">
+                {{ systemInfo().platform }}
+              </ng-container>
+              <ng-template #genericPlatform>
+                {{ 'Generic' }}
+              </ng-template>
+            </span>
+          </mat-list-item>
+          <mat-list-item>
+            <strong>{{ 'Version' | translate }}:</strong>
+            <div *ngIf="isLoaded(); else inlineLoader" class="copy-version">
+              <div class="copy-version-text" [matTooltip]="version()">
+                <span>
+                  {{ version() }}
+                </span>
+              </div>
+              <ix-copy-btn [text]="version()"></ix-copy-btn>
+            </div>
+          </mat-list-item>
+
+          <mat-list-item>
+            <strong>{{ 'License' | translate }}:</strong>
+            <ng-container *ngIf="isLoaded(); else inlineLoader">
+              <span *ngIf="systemInfo()?.license">
+                {{
+                  '{license} contract, expires {date}' | translate:
+                  {
+                    license: systemInfo().license.contract_type | titlecase,
+                    date: systemInfo().license.contract_end.$value,
+                  }
+                }}
+              </span>
+              <span *ngIf="!systemInfo()?.license">
+                {{ 'No License' | translate }}
+              </span>
+            </ng-container>
+          </mat-list-item>
+
+          <mat-list-item *ngIf="systemInfo()?.system_serial && isIxHardware()">
+            <strong>{{ 'System Serial' | translate }}:</strong>
+            <span>
+              {{ systemInfo().system_serial }}
+            </span>
+          </mat-list-item>
+
+          <mat-list-item>
+            <strong>{{ 'Hostname' | translate }}:</strong>
+            <span *ngIf="isLoaded(); else inlineLoader">
+              {{ systemInfo().hostname }}
+            </span>
+          </mat-list-item>
+
+          <mat-list-item>
+            <strong>{{ 'Uptime' | translate }}:</strong>
+            <span *ngIf="isLoaded(); else inlineLoader">
+              {{ uptime() | uptime: (datetime() | formatDateTime:' ':'HH:mm') }}
+            </span>
+          </mat-list-item>
+        </mat-list>
+      </div>
+    </div>
+  </mat-card-content>
+</mat-card>
+
+<ng-template #inlineLoader>
+  <ngx-skeleton-loader
+    class="inline-loader"
+    [theme]="{
+      height: '20px',
+      background: 'var(--alt-bg2)',
+      opacity: 0.25,
+      margin: 0,
+    }"
+  ></ngx-skeleton-loader>
+</ng-template>

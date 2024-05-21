@@ -10,11 +10,12 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { WidgetGroupFormComponent } from 'app/pages/dashboard/components/widget-group-form/widget-group-form.component';
 import { DashboardStore } from 'app/pages/dashboard/services/dashboard.store';
-import { WidgetGroup, WidgetGroupLayout } from 'app/pages/dashboard/types/widget-group.interface';
+import { WidgetGroup } from 'app/pages/dashboard/types/widget-group.interface';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
+import { ChainedComponentResponse, IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 
 @UntilDestroy()
 @Component({
@@ -55,6 +56,7 @@ export class DashboardComponent implements OnInit {
     private slideIn: IxChainedSlideInService,
     private errorHandler: ErrorHandlerService,
     private translate: TranslateService,
+    private snackbar: SnackbarService,
   ) {}
 
   ngOnInit(): void {
@@ -62,7 +64,6 @@ export class DashboardComponent implements OnInit {
     this.loadGroups();
   }
 
-  // TODO: Enter configuration mode. Probably store layout that is being edited in a new service.
   protected onConfigure(): void {
     this.isEditing.set(true);
   }
@@ -73,21 +74,31 @@ export class DashboardComponent implements OnInit {
   }
 
   protected onAddGroup(): void {
-    const newGroup: WidgetGroup = {
-      layout: WidgetGroupLayout.Full,
-      slots: [],
-    };
+    this.slideIn
+      .open(WidgetGroupFormComponent, true)
+      .pipe(untilDestroyed(this))
+      .subscribe((response: ChainedComponentResponse) => {
+        if (!response.response) {
+          return;
+        }
 
-    this.renderedGroups.update((groups) => [...groups, newGroup]);
-    this.onEditGroup(newGroup);
+        this.renderedGroups.update((groups) => [...groups, response.response as WidgetGroup]);
+      });
   }
 
-  protected onEditGroup(group: WidgetGroup): void {
+  protected onEditGroup(i: number): void {
+    const editedGroup = this.renderedGroups()[i];
     this.slideIn
-      .open(WidgetGroupFormComponent, true, group)
+      .open(WidgetGroupFormComponent, true, editedGroup)
       .pipe(untilDestroyed(this))
-      .subscribe(() => {
+      .subscribe((response) => {
+        if (!response.response) {
+          return;
+        }
 
+        this.renderedGroups.update((groups) => {
+          return groups.map((group, index) => (index === i ? response.response as WidgetGroup : group));
+        });
       });
   }
 
@@ -109,11 +120,13 @@ export class DashboardComponent implements OnInit {
     });
   }
 
-  // TODO: Filter out fully empty groups somewhere.
   protected onSave(): void {
     this.dashboardStore.save(this.renderedGroups())
       .pipe(this.errorHandler.catchError(), untilDestroyed(this))
-      .subscribe(() => this.isEditing.set(false));
+      .subscribe(() => {
+        this.isEditing.set(false);
+        this.snackbar.success(this.translate.instant('Dashboard settings saved'));
+      });
   }
 
   private loadGroups(): void {

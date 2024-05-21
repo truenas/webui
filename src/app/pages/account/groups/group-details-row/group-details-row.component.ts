@@ -1,5 +1,5 @@
 import {
-  Component, ChangeDetectionStrategy, Input, EventEmitter, Output,
+  Component, ChangeDetectionStrategy, EventEmitter, Output, input,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
@@ -20,8 +20,8 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class GroupDetailsRowComponent {
-  @Input() group: Group;
-  @Input() colspan: number;
+  readonly group = input.required<Group>();
+  readonly colspan = input<number>();
   @Output() delete = new EventEmitter<number>();
 
   protected readonly Role = Role;
@@ -37,7 +37,7 @@ export class GroupDetailsRowComponent {
   }
 
   openGroupMembersForm(): void {
-    this.router.navigate(['/', 'credentials', 'groups', this.group.id, 'members']);
+    this.router.navigate(['/', 'credentials', 'groups', this.group().id, 'members']);
   }
 
   doDelete(group: Group): void {

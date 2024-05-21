@@ -1,0 +1,23 @@
+<mat-card-header>
+  <ix-enclosure-header [title]="title()"></ix-enclosure-header>
+</mat-card-header>
+<mat-card-content>
+  <ix-empty
+    *ngIf="!viewElements(); else table"
+    [conf]="noView"
+  ></ix-empty>
+  <ng-template #table>
+    <ix-table>
+      <thead
+        ix-table-head
+        [columns]="columns"
+        [dataProvider]="dataProvider()"
+      ></thead>
+      <tbody
+        ix-table-body
+        [columns]="columns"
+        [dataProvider]="dataProvider()"
+      ></tbody>
+    </ix-table>
+  </ng-template>
+</mat-card-content>
