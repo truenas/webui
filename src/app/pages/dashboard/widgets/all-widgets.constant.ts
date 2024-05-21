@@ -4,10 +4,10 @@ import { cpuWidget } from 'app/pages/dashboard/widgets/cpu/widget-cpu/widget-cpu
 import { arbitraryTextWidget } from 'app/pages/dashboard/widgets/custom/arbitrary-text/widget-arbitrary-text.definition';
 import { helpWidget } from 'app/pages/dashboard/widgets/help/widget-help/widget-help.definition';
 import { memoryWidget } from 'app/pages/dashboard/widgets/memory/widget-memory/widget-memory.definition';
-import { poolNameWidget } from 'app/pages/dashboard/widgets/memory/widget-pool-name/widget-pool-name.definition';
 import { hostnameWidget } from 'app/pages/dashboard/widgets/network/widget-hostname/widget-hostname.definition';
 import { ipv4AddressWidget, ipv6AddressWidget } from 'app/pages/dashboard/widgets/network/widget-interface-ip/widget-interface-ip.definition';
 import { networkWidget } from 'app/pages/dashboard/widgets/network/widget-network/widget-network.definition';
+import { poolNameWidget } from 'app/pages/dashboard/widgets/storage/widget-pool-name/widget-pool-name.definition';
 import { osVersionWidget } from 'app/pages/dashboard/widgets/system/widget-os-version/widget-os-version.definition';
 import { systemInfoActiveWidget } from 'app/pages/dashboard/widgets/system/widget-sys-info-active/widget-sys-info-active.definition';
 import { systemInfoPassiveWidget } from 'app/pages/dashboard/widgets/system/widget-sys-info-passive/widget-sys-info-passive.definition';

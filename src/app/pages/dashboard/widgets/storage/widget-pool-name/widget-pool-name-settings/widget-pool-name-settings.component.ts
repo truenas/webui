@@ -4,12 +4,12 @@ import {
 import { Validators } from '@angular/forms';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { filter, map } from 'rxjs';
+import { map } from 'rxjs';
 import { getAllFormErrors } from 'app/modules/ix-forms/utils/get-form-errors.utils';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
 import { WidgetSettingsComponent } from 'app/pages/dashboard/types/widget-component.interface';
 import { WidgetSettingsRef } from 'app/pages/dashboard/types/widget-settings-ref.interface';
-import { WidgetPoolNameSettings } from 'app/pages/dashboard/widgets/memory/widget-pool-name/widget-pool-name.definition';
+import { WidgetPoolNameSettings } from 'app/pages/dashboard/widgets/storage/widget-pool-name/widget-pool-name.definition';
 
 @UntilDestroy()
 @Component({
@@ -23,10 +23,8 @@ export class WidgetPoolNameSettingsComponent implements WidgetSettingsComponent<
     pool: [null as string, [Validators.required]],
   });
 
-  protected poolOptions$ = this.resources.poolList$.pipe(
-    filter((state) => !!state.value && !state.isLoading),
-    map((state) => state.value),
-    map((pools) => (pools || []).map((result) => ({
+  protected poolOptions$ = this.resources.pools$.pipe(
+    map(({ value }) => (value || []).map((result) => ({
       label: result.name,
       value: result.id,
     }))),

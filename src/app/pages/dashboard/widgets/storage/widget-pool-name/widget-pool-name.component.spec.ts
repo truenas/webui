@@ -4,7 +4,7 @@ import { of } from 'rxjs';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
 import { SlotSize } from 'app/pages/dashboard/types/widget.interface';
 import { WidgetDatapointComponent } from 'app/pages/dashboard/widgets/common/widget-datapoint/widget-datapoint.component';
-import { WidgetPoolNameComponent } from 'app/pages/dashboard/widgets/memory/widget-pool-name/widget-pool-name.component';
+import { WidgetPoolNameComponent } from 'app/pages/dashboard/widgets/storage/widget-pool-name/widget-pool-name.component';
 
 describe('WidgetPoolNameComponent', () => {
   let spectator: Spectator<WidgetPoolNameComponent>;

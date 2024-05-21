@@ -6,17 +6,17 @@ import {
   dashboardWidget,
 } from 'app/pages/dashboard/types/widget-component.interface';
 import { SlotSize } from 'app/pages/dashboard/types/widget.interface';
-import { WidgetPoolNameSettingsComponent } from 'app/pages/dashboard/widgets/memory/widget-pool-name/widget-pool-name-settings/widget-pool-name-settings.component';
-import { WidgetPoolNameComponent } from 'app/pages/dashboard/widgets/memory/widget-pool-name/widget-pool-name.component';
+import { WidgetPoolNameSettingsComponent } from 'app/pages/dashboard/widgets/storage/widget-pool-name/widget-pool-name-settings/widget-pool-name-settings.component';
+import { WidgetPoolNameComponent } from 'app/pages/dashboard/widgets/storage/widget-pool-name/widget-pool-name.component';
 
 export interface WidgetPoolNameSettings {
   poolId: string;
 }
 
 export const poolNameWidget = dashboardWidget({
-  name: T('Pool'),
+  name: T('Pool Name'),
   supportedSizes: [SlotSize.Quarter, SlotSize.Half, SlotSize.Full],
-  category: WidgetCategory.Memory,
+  category: WidgetCategory.Storage,
   component: WidgetPoolNameComponent,
   settingsComponent: WidgetPoolNameSettingsComponent as Type<WidgetSettingsComponent>,
 });

@@ -55,7 +55,7 @@ export class WidgetResourcesService {
     shareReplay({ bufferSize: 1, refCount: true }),
   );
 
-  readonly poolList$ = this.ws.call('pool.query').pipe(
+  readonly pools$ = this.ws.call('pool.query').pipe(
     toLoadingState(),
     shareReplay({ bufferSize: 1, refCount: true }),
   );
@@ -91,8 +91,9 @@ export class WidgetResourcesService {
     );
   }
 
-  getPoolById(poolId: number): Observable<Pool[]> {
+  getPoolById(poolId: number): Observable<Pool> {
     return this.ws.call('pool.query', [[['id', '=', +poolId]]]).pipe(
+      map((pools) => pools[0]),
       shareReplay({ bufferSize: 1, refCount: true }),
     );
   }

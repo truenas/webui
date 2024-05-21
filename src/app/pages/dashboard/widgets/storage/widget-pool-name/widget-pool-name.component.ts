@@ -8,7 +8,7 @@ import { WidgetComponent } from 'app/pages/dashboard/types/widget-component.inte
 import {
   SlotSize,
 } from 'app/pages/dashboard/types/widget.interface';
-import { WidgetPoolNameSettings, poolNameWidget } from 'app/pages/dashboard/widgets/memory/widget-pool-name/widget-pool-name.definition';
+import { WidgetPoolNameSettings, poolNameWidget } from 'app/pages/dashboard/widgets/storage/widget-pool-name/widget-pool-name.definition';
 
 @Component({
   selector: 'ix-widget-pool-name',
@@ -22,7 +22,7 @@ export class WidgetPoolNameComponent implements WidgetComponent {
 
   protected poolName = computed(() => {
     return this.resources.getPoolById(+this.settings().poolId).pipe(
-      map((pools) => pools[0].name),
+      map((pool) => pool.name),
       toLoadingState(),
     );
   });
