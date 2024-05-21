@@ -23,6 +23,12 @@ export const demoWidgets: WidgetGroup[] = [
   {
     layout: WidgetGroupLayout.Full,
     slots: [
+      { type: WidgetType.Storage },
+    ],
+  },
+  {
+    layout: WidgetGroupLayout.Full,
+    slots: [
       { type: WidgetType.Network },
     ],
   },
