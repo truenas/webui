@@ -41,25 +41,44 @@
         </div>
         <div class="detail">
           <div class="label">{{ 'Model' | translate }}</div>
-          <div class="value">{{ slot().model }}</div>
+          <div class="value">{{ slot().model || ('N/A' | translate) }}</div>
         </div>
         <div class="detail">
           <div class="label">{{ 'Serial' | translate }}</div>
-          <div class="value">{{ slot().serial }}</div>
+          <div class="value">{{ slot().serial || ('N/A' | translate) }}</div>
         </div>
         <div class="detail">
           <div class="label">{{ 'Status' | translate }}</div>
-          <div class="value">{{ slot().pool_info?.disk_status }}</div>
+          <div class="value">{{ slot().pool_info?.disk_status || ('N/A' | translate) }}</div>
+        </div>
+        <div class="detail">
+          <div class="label">{{ 'Adv. Power Mgmt.' | translate }}</div>
+          <div class="value">{{ 'N/A' | translate }}</div>
+        </div>
+        <div class="detail">
+          <div class="label">{{ 'S.M.A.R.T. Enabled' | translate }}</div>
+          <div class="value">{{ 'N/A' | translate }}</div>
+        </div>
+        <div class="detail">
+          <div class="label">{{ 'S.M.A.R.T. Options' | translate }}</div>
+          <div class="value">{{ 'N/A' | translate }}</div>
+        </div>
+        <div class="detail">
+          <div class="label">{{ 'Transfer Mode' | translate }}</div>
+          <div class="value">{{ 'N/A' | translate }}</div>
+        </div>
+        <div class="detail">
+          <div class="label">{{ 'HDD Standby' | translate }}</div>
+          <div class="value">{{ 'N/A' | translate }}</div>
+        </div>
+        <div class="detail">
+          <div class="label">{{ 'Description' | translate }}</div>
+          <div class="value">{{ 'N/A' | translate }}</div>
         </div>
         <div class="detail">
           <div class="label">{{ 'Rotation Rate' | translate }}</div>
           <div class="value">
-            <ng-container *ngIf="slot().rotationrate; else flash">
-              {{ slot().rotationrate }}{{ 'RPM' | translate }}
-            </ng-container>
-            <ng-template #flash>
-              {{ 'Not Available' | translate }}
-            </ng-template>
+            {{ slot().rotationrate ? ('{n} RPM' | translate: { n: slot().rotationrate }) : ('N/A' | translate) }}
           </div>
         </div>
       </div>
