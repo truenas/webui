@@ -28,7 +28,10 @@
     "allowEmptyCodegenFiles": true,
     "strictInjectionParameters": true,
     "strictTemplates": true,
-    "strictInputAccessModifiers": true
+    "strictInputAccessModifiers": true,
+    "extendedDiagnostics": {
+      "defaultCategory": "error"
+    }
   },
   "ts-node": {
     "experimentalSpecifierResolution": "node",

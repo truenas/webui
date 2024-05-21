@@ -19,6 +19,7 @@ import {
 import {
   delay, distinctUntilChanged, filter, skipWhile, throttleTime,
 } from 'rxjs/operators';
+import { oneDayMillis, oneHourMillis } from 'app/constants/time.constant';
 import { toggleMenuDuration } from 'app/constants/toggle-menu-duration';
 import { FormatDateTimePipe } from 'app/core/pipes/format-datetime.pipe';
 import { EmptyType } from 'app/enums/empty-type.enum';
@@ -57,8 +58,6 @@ export class ReportComponent extends WidgetComponent implements OnInit, OnChange
   @Input() report: Report;
   @Input() identifier?: string;
   @ViewChild(LineChartComponent, { static: false }) lineChart: LineChartComponent;
-
-  protected localTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
   updateReport$ = new BehaviorSubject<IxSimpleChanges<this>>(null);
   fetchReport$ = new BehaviorSubject<FetchReportParams>(null);
@@ -118,7 +117,6 @@ export class ReportComponent extends WidgetComponent implements OnInit, OnChange
       ReportingGraphName.Cpu,
       ReportingGraphName.Processes,
       ReportingGraphName.Uptime,
-      ReportingGraphName.Swap,
       ReportingGraphName.ZfsArcResult,
     ].includes(this.data?.name as ReportingGraphName);
   }
@@ -496,15 +494,15 @@ export class ReportComponent extends WidgetComponent implements OnInit, OnChange
   private getHalfPeriodMilliseconds(): number {
     switch (this.currentZoomLevel) {
       case ReportZoomLevel.Hour:
-        return (1 * 60 * 60 * 1000) / 2;
+        return (1 * oneHourMillis) / 2;
       case ReportZoomLevel.Day:
-        return (1 * 24 * 60 * 60 * 1000) / 2;
+        return (1 * oneDayMillis) / 2;
       case ReportZoomLevel.Week:
-        return (7 * 24 * 60 * 60 * 1000) / 2;
+        return (7 * oneDayMillis) / 2;
       case ReportZoomLevel.Month:
-        return (30 * 24 * 60 * 60 * 1000) / 2;
+        return (30 * oneDayMillis) / 2;
       case ReportZoomLevel.HalfYear:
-        return (365 * 24 * 60 * 60 * 1000) / 2;
+        return (365 * oneDayMillis) / 2;
       default:
         return 0;
     }

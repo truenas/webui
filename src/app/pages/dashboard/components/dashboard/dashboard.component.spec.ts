@@ -15,7 +15,7 @@ import { WidgetGroupComponent } from 'app/pages/dashboard/components/widget-grou
 import { WidgetGroupFormComponent } from 'app/pages/dashboard/components/widget-group-form/widget-group-form.component';
 import { DashboardStore } from 'app/pages/dashboard/services/dashboard.store';
 import { WidgetGroup, WidgetGroupLayout } from 'app/pages/dashboard/types/widget-group.interface';
-import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
+import { ChainedComponentResponse, IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 
 describe('DashboardComponent', () => {
   const groupA: WidgetGroup = { layout: WidgetGroupLayout.Full, slots: [] };
@@ -41,7 +41,7 @@ describe('DashboardComponent', () => {
         save: jest.fn(() => of(undefined)),
       }),
       mockProvider(IxChainedSlideInService, {
-        open: jest.fn(() => of(undefined)),
+        open: jest.fn(() => of({ error: false, response: groupA })),
       }),
     ],
   });
@@ -89,6 +89,23 @@ describe('DashboardComponent', () => {
         .toHaveBeenCalledWith(WidgetGroupFormComponent, true, groupA);
     });
 
+    it('updates a widget group after group is edited in WidgetGroupComponent', async () => {
+      const updatedGroup = { ...groupA, layout: WidgetGroupLayout.Halves };
+
+      jest.spyOn(spectator.inject(IxChainedSlideInService), 'open')
+        .mockReturnValue(of({ response: updatedGroup } as ChainedComponentResponse));
+
+      const editIcon = await loader.getHarness(IxIconHarness.with({ name: 'edit' }));
+      await editIcon.click();
+
+      const groups = spectator.queryAll(WidgetGroupComponent);
+      expect(groups).toHaveLength(4);
+      expect(groups[0].group).toEqual(updatedGroup);
+      expect(groups[1].group).toEqual(groupB);
+      expect(groups[2].group).toEqual(groupC);
+      expect(groups[3].group).toEqual(groupD);
+    });
+
     it('removes a widget when delete button is pressed', async () => {
       const deleteIcon = await loader.getHarness(IxIconHarness.with({ name: 'delete' }));
       await deleteIcon.click();
@@ -105,11 +122,7 @@ describe('DashboardComponent', () => {
       await addButton.click();
 
       expect(spectator.inject(IxChainedSlideInService).open)
-        .toHaveBeenCalledWith(WidgetGroupFormComponent, true, groupA);
-
-      const groups = spectator.queryAll(WidgetGroupComponent);
-      expect(groups).toHaveLength(5);
-      expect(groups[4].group).toEqual({ layout: WidgetGroupLayout.Full, slots: [] });
+        .toHaveBeenCalledWith(WidgetGroupFormComponent, true);
     });
 
     it('saves new configuration when Save is pressed', async () => {

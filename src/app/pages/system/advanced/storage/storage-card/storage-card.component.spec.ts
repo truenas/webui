@@ -3,7 +3,6 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatListItemHarness } from '@angular/material/list/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
@@ -14,7 +13,6 @@ import {
   StorageSettingsFormComponent,
 } from 'app/pages/system/advanced/storage/storage-settings-form/storage-settings-form.component';
 import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
-import { selectAdvancedConfig } from 'app/store/system-config/system-config.selectors';
 
 describe('StorageCardComponent', () => {
   let spectator: Spectator<StorageCardComponent>;
@@ -28,16 +26,6 @@ describe('StorageCardComponent', () => {
           pool: 'tank',
         } as SystemDatasetConfig),
       ]),
-      provideMockStore({
-        selectors: [
-          {
-            selector: selectAdvancedConfig,
-            value: {
-              swapondrive: 3,
-            },
-          },
-        ],
-      }),
       mockProvider(AdvancedSettingsService, {
         showFirstTimeWarningIfNeeded: jest.fn(() => of(true)),
       }),
@@ -58,7 +46,6 @@ describe('StorageCardComponent', () => {
 
     expect(itemTexts).toEqual([
       'System Dataset Pool: tank',
-      'Swap Size: 3 GiB',
     ]);
   });
 
@@ -72,7 +59,7 @@ describe('StorageCardComponent', () => {
     ).toHaveBeenCalledWith(
       StorageSettingsFormComponent,
       false,
-      { swapSize: 3, systemDsPool: 'tank' },
+      { systemDsPool: 'tank' },
     );
   });
 });

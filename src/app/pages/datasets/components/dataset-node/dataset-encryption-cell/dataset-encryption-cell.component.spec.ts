@@ -1,4 +1,5 @@
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
+import { MockComponent } from 'ng-mocks';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import {
@@ -9,6 +10,9 @@ describe('DatasetEncryptionCellComponent', () => {
   let spectator: Spectator<DatasetEncryptionCellComponent>;
   const createComponent = createComponentFactory({
     component: DatasetEncryptionCellComponent,
+    declarations: [
+      MockComponent(IxIconComponent),
+    ],
   });
 
   it('shows "Unencrypted" when dataset is not encrypted', () => {

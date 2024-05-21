@@ -1,0 +1,14 @@
+<div>
+  <h3 class="title">{{ title() }}</h3>
+</div>
+<div>
+  <button
+    *ixRequiresRoles="requiredRoles"
+    mat-button
+    color="default"
+    ixTest="edit-label"
+    (click)="onEditLabel()"
+  >
+    {{ 'Edit Label' | translate }}
+  </button>
+</div>

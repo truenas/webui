@@ -579,32 +579,6 @@ export class CloudSyncFormComponent implements OnInit {
     }
   }
 
-  prepareBwlimit(bwlimit: string[]): CloudSyncTaskUpdate['bwlimit'] {
-    const bwlimtArr = [];
-
-    for (const limit of bwlimit) {
-      const sublimitArr = limit.split(/\s*,\s*/);
-      if (sublimitArr.length === 1 && bwlimit.length === 1 && !sublimitArr[0].includes(':')) {
-        sublimitArr.unshift('00:00');
-      }
-      if (sublimitArr[1] && sublimitArr[1] !== 'off') {
-        if (sublimitArr[1].endsWith('/s') || sublimitArr[1].endsWith('/S')) {
-          sublimitArr[1] = sublimitArr[1].substring(0, sublimitArr[1].length - 2);
-        }
-        if (this.cloudCredentialService.getByte(sublimitArr[1]) !== -1) {
-          (sublimitArr[1] as number | string) = this.cloudCredentialService.getByte(sublimitArr[1]);
-        }
-      }
-      const subLimit = {
-        time: sublimitArr[0],
-        bandwidth: sublimitArr[1] === 'off' ? null : sublimitArr[1],
-      };
-
-      bwlimtArr.push(subLimit);
-    }
-    return bwlimtArr;
-  }
-
   prepareData(formValue: FormValue): CloudSyncTaskUpdate {
     const attributes: CloudSyncTaskUpdate['attributes'] = {};
 
@@ -613,7 +587,7 @@ export class CloudSyncFormComponent implements OnInit {
       attributes,
       include: [],
       path: undefined,
-      bwlimit: formValue.bwlimit ? this.prepareBwlimit(formValue.bwlimit) : undefined,
+      bwlimit: formValue.bwlimit ? this.cloudCredentialService.prepareBwlimit(formValue.bwlimit) : undefined,
       schedule: formValue.cloudsync_picker ? crontabToSchedule(formValue.cloudsync_picker) : {},
       snapshot: formValue.direction === Direction.Pull ? false : formValue.snapshot,
     };

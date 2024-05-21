@@ -15,7 +15,6 @@ import { helptextTruecloudBackup } from 'app/helptext/data-protection/truecloud-
 import {
   CloudBackup, CloudBackupRestoreParams, CloudBackupSnapshot, SnapshotIncludeExclude,
 } from 'app/interfaces/cloud-backup.interface';
-import { CloudCredential } from 'app/interfaces/cloud-sync-task.interface';
 import { DatasetCreate } from 'app/interfaces/dataset.interface';
 import { ExplorerNodeData, TreeNode } from 'app/interfaces/tree-node.interface';
 import { TreeNodeProvider } from 'app/modules/ix-forms/components/ix-explorer/tree-node-provider.interface';
@@ -138,7 +137,7 @@ export class CloudBackupRestoreFromSnapshotFormComponent implements OnInit {
   getBucketsNodeProvider(): TreeNodeProvider {
     return (node: TreeNode<ExplorerNodeData>) => {
       const data = {
-        credentials: (this.data.backup.credentials as CloudCredential).id,
+        credentials: this.data.backup?.credentials?.id,
         attributes: {
           folder: node.data.path,
         },

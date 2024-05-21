@@ -2,10 +2,10 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import {
-  Subject, combineLatest, map, switchMap,
+  Subject, map, switchMap,
 } from 'rxjs';
 import {
-  distinctUntilChanged, filter, shareReplay, startWith, tap,
+  filter, shareReplay, startWith, tap,
 } from 'rxjs/operators';
 import { Role } from 'app/enums/role.enum';
 import { toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
@@ -17,7 +17,6 @@ import {
 import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
-import { waitForAdvancedConfig } from 'app/store/system-config/system-config.selectors';
 
 @UntilDestroy()
 @Component({
@@ -28,27 +27,14 @@ import { waitForAdvancedConfig } from 'app/store/system-config/system-config.sel
 })
 export class StorageCardComponent {
   private readonly reloadConfig$ = new Subject<void>();
-  private storageSettings: { systemDsPool: string; swapSize: number };
+  private storageSettings: { systemDsPool: string };
   protected readonly searchableElements = storageCardElements;
   protected readonly requiredRoles = [Role.FullAdmin];
 
   readonly storageSettings$ = this.reloadConfig$.pipe(
     startWith(undefined),
-    switchMap(() => {
-      const pool$ = this.ws.call('systemdataset.config').pipe(
-        map((config) => config.pool),
-      );
-      const swapSize$ = this.store$.pipe(
-        waitForAdvancedConfig,
-        distinctUntilChanged((previous, current) => previous.swapondrive === current.swapondrive),
-        map((state) => state.swapondrive),
-      );
-      return combineLatest([
-        pool$,
-        swapSize$,
-      ]);
-    }),
-    map(([systemDsPool, swapSize]) => ({ systemDsPool, swapSize })),
+    switchMap(() => this.ws.call('systemdataset.config').pipe(map((config) => config.pool))),
+    map((systemDsPool) => ({ systemDsPool })),
     tap((config) => this.storageSettings = config),
     toLoadingState(),
     shareReplay({

@@ -5,9 +5,7 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
-import {
-  combineLatest, EMPTY, Observable, of,
-} from 'rxjs';
+import { EMPTY, Observable, of } from 'rxjs';
 import {
   catchError, filter, switchMap, tap,
 } from 'rxjs/operators';
@@ -28,7 +26,6 @@ import { advancedConfigUpdated } from 'app/store/system-config/system-config.act
 
 export interface StorageSettings {
   systemDsPool: string;
-  swapSize: number;
 }
 
 @UntilDestroy()
@@ -44,11 +41,6 @@ export class StorageSettingsFormComponent implements OnInit {
 
   form = this.fb.group({
     pool: ['', Validators.required],
-    swapondrive: [null as number, [
-      Validators.required,
-      this.ixValidator.withMessage(Validators.min(0), this.translate.instant('Minimum value is 0')),
-      this.ixValidator.withMessage(Validators.pattern('^[0-9]*$'), this.translate.instant('Only integers allowed')),
-    ]],
   });
 
   readonly poolOptions$ = this.ws.call('systemdataset.pool_choices').pipe(choicesToOptions());
@@ -77,33 +69,30 @@ export class StorageSettingsFormComponent implements OnInit {
   onSubmit(): void {
     const values = this.form.value;
     const { pool } = values;
-    const { swapondrive } = values;
     this.confirmSmbRestartIfNeeded().pipe(
       filter(Boolean),
       switchMap(() => {
         this.isFormLoading = true;
         this.cdr.markForCheck();
-        return combineLatest([
-          this.ws.job('systemdataset.update', [{ pool }]),
-          this.ws.call('system.advanced.update', [{ swapondrive: +swapondrive }]),
-        ]).pipe(
-          tap(([job]) => {
-            if (job.state !== JobState.Success) {
-              return;
-            }
-            this.isFormLoading = false;
-            this.store$.dispatch(advancedConfigUpdated());
-            this.cdr.markForCheck();
-            this.snackbar.success(this.translate.instant('System dataset updated.'));
-            this.chainedRef.close({ response: true, error: null });
-          }),
-          catchError((error: unknown) => {
-            this.isFormLoading = false;
-            this.formErrorHandler.handleWsFormError(error, this.form);
-            this.cdr.markForCheck();
-            return EMPTY;
-          }),
-        );
+        return this.ws.job('systemdataset.update', [{ pool }])
+          .pipe(
+            tap((job) => {
+              if (job.state !== JobState.Success) {
+                return;
+              }
+              this.isFormLoading = false;
+              this.store$.dispatch(advancedConfigUpdated());
+              this.cdr.markForCheck();
+              this.snackbar.success(this.translate.instant('System dataset updated.'));
+              this.chainedRef.close({ response: true, error: null });
+            }),
+            catchError((error: unknown) => {
+              this.isFormLoading = false;
+              this.formErrorHandler.handleWsFormError(error, this.form);
+              this.cdr.markForCheck();
+              return EMPTY;
+            }),
+          );
       }),
       untilDestroyed(this),
     ).subscribe();
@@ -112,7 +101,6 @@ export class StorageSettingsFormComponent implements OnInit {
   private loadFormData(): void {
     this.form.patchValue({
       pool: this.storageSettings.systemDsPool,
-      swapondrive: this.storageSettings.swapSize,
     });
     this.cdr.markForCheck();
   }

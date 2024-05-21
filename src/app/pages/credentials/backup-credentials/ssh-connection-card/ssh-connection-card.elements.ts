@@ -10,6 +10,7 @@ export const sshConnectionsCardElements = {
     },
     add: {
       hierarchy: [T('Add')],
+      synonyms: [T('Add SSH Connection'), T('New SSH Connection'), T('Create SSH Connection'), T('SSH Connection')],
       anchor: 'add-ssh-connection',
     },
   },

@@ -1,4 +1,6 @@
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, input,
+} from '@angular/core';
 import { ChartRelease } from 'app/interfaces/chart-release.interface';
 
 @Component({
@@ -8,5 +10,5 @@ import { ChartRelease } from 'app/interfaces/chart-release.interface';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AppNotesCardComponent {
-  @Input() app: ChartRelease;
+  readonly app = input.required<ChartRelease>();
 }

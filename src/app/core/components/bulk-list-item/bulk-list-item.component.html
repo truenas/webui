@@ -4,30 +4,30 @@
     fxLayout="row"
     fxLayoutAlign="center center"
   >
-    <ng-container [ngSwitch]="item.state">
+    <ng-container [ngSwitch]="item().state">
       <ix-icon
         *ngSwitchCase="State.Initial"
         name="radio_button_checked"
         class="initial"
-        [matTooltip]="item.message || 'Pending' | translate"
+        [matTooltip]="item().message || 'Pending' | translate"
       ></ix-icon>
       <mat-spinner
         *ngSwitchCase="State.Running"
         class="running"
         [diameter]="20"
-        [matTooltip]="item.message || 'Running' | translate"
+        [matTooltip]="item().message || 'Running' | translate"
       ></mat-spinner>
       <ix-icon
         *ngSwitchCase="State.Success"
         name="check_circle"
         class="success"
-        [matTooltip]="item.message || 'Success' | translate"
+        [matTooltip]="item().message || 'Success' | translate"
       ></ix-icon>
       <ix-icon
         *ngSwitchCase="State.Error"
         name="error"
         class="error"
-        [matTooltip]="item.message || 'Error' | translate"
+        [matTooltip]="item().message || 'Error' | translate"
       ></ix-icon>
     </ng-container>
   </div>

@@ -1,5 +1,5 @@
 import {
-  Component, Input, Output, EventEmitter, ChangeDetectionStrategy,
+  Component, Output, EventEmitter, ChangeDetectionStrategy, input,
 } from '@angular/core';
 import { JobState } from 'app/enums/job-state.enum';
 import { getCredentialsCreationSource } from 'app/helpers/get-credentials-creation-source.utils';
@@ -13,10 +13,12 @@ import { Job } from 'app/interfaces/job.interface';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class JobItemComponent {
-  @Input() job: Job;
-  @Input() clickable = false;
+  readonly job = input.required<Job>();
+  readonly clickable = input(false);
+
   @Output() aborted = new EventEmitter();
   @Output() opened = new EventEmitter();
+
   readonly JobState = JobState;
   readonly credentialTypeLabels = credentialTypeLabels;
   readonly getCredentialsCreationSource = getCredentialsCreationSource;
