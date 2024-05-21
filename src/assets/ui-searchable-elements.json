@@ -465,7 +465,6 @@
     ],
     "anchorRouterLink": [
       "/apps",
-      "installed",
       "manage-container-images"
     ],
     "routerLink": null,
@@ -484,7 +483,6 @@
     "requiredRoles": [],
     "anchorRouterLink": [
       "/apps",
-      "installed",
       "manage-container-images"
     ],
     "routerLink": null,
@@ -504,7 +502,8 @@
     "requiredRoles": [],
     "anchorRouterLink": [
       "/apps",
-      "installed"
+      "installed",
+      "*"
     ],
     "routerLink": null,
     "anchor": "app-settings",
@@ -526,7 +525,8 @@
     ],
     "anchorRouterLink": [
       "/apps",
-      "installed"
+      "installed",
+      "*"
     ],
     "routerLink": null,
     "anchor": "choose-pool",
@@ -549,7 +549,8 @@
     ],
     "anchorRouterLink": [
       "/apps",
-      "installed"
+      "installed",
+      "*"
     ],
     "routerLink": null,
     "anchor": "advanced-settings",
@@ -589,7 +590,8 @@
     "requiredRoles": [],
     "anchorRouterLink": [
       "/apps",
-      "installed"
+      "installed",
+      "*"
     ],
     "routerLink": null,
     "anchor": "node-ip",
@@ -609,7 +611,8 @@
     "requiredRoles": [],
     "anchorRouterLink": [
       "/apps",
-      "installed"
+      "installed",
+      "*"
     ],
     "routerLink": null,
     "anchor": "route-v4-interface",
@@ -629,7 +632,8 @@
     "requiredRoles": [],
     "anchorRouterLink": [
       "/apps",
-      "installed"
+      "installed",
+      "*"
     ],
     "routerLink": null,
     "anchor": "route-v4-gateway",

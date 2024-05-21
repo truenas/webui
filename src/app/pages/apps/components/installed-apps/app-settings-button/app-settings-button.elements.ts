@@ -3,7 +3,7 @@ import { UiSearchableElement } from 'app/modules/global-search/interfaces/ui-sea
 
 export const appSettingsButtonElements = {
   hierarchy: [T('Applications'), T('Installed'), T('Settings')],
-  anchorRouterLink: ['/apps', 'installed'],
+  anchorRouterLink: ['/apps', 'installed', '*'],
   triggerAnchor: 'app-settings',
   elements: {
     settings: {

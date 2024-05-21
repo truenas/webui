@@ -3,7 +3,7 @@ import { UiSearchableElement } from 'app/modules/global-search/interfaces/ui-sea
 
 export const dockerImagesListElements = {
   hierarchy: [T('Applications'), T('Manage Container Images')],
-  anchorRouterLink: ['/apps', 'installed', 'manage-container-images'],
+  anchorRouterLink: ['/apps', 'manage-container-images'],
   elements: {
     dockerImagesList: {},
     pullImage: {

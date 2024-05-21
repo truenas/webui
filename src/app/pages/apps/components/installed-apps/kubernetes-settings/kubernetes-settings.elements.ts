@@ -4,7 +4,7 @@ import { UiSearchableElement } from 'app/modules/global-search/interfaces/ui-sea
 export const kubernetesSettingsElements = {
   hierarchy: [T('Applications'), T('Installed'), T('Settings')],
   triggerAnchor: 'advanced-settings',
-  anchorRouterLink: ['/apps', 'installed'],
+  anchorRouterLink: ['/apps', 'installed', '*'],
   elements: {
     nodeIp: {
       hierarchy: [T('Node IP')],
