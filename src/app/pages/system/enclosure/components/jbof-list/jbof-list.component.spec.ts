@@ -55,7 +55,7 @@ describe('JbofListComponent', () => {
         mockCall('jbof.licensed', 1),
       ]),
       mockProvider(DialogService, {
-        confirm: jest.fn(() => of(true)),
+        confirm: jest.fn(() => of({ confirmed: true, secondaryCheckbox: false })),
       }),
       mockProvider(IxSlideInService, {
         open: jest.fn(() => {
