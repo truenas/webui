@@ -9,6 +9,7 @@ import { filter, map, tap } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
 import { helptextSystemCertificates } from 'app/helptext/system/certificates';
 import { Certificate } from 'app/interfaces/certificate.interface';
+import { DialogWithSecondaryCheckboxResult } from 'app/interfaces/dialog.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
@@ -26,9 +27,6 @@ import {
 import {
   CertificateEditComponent,
 } from 'app/pages/credentials/certificates-dash/certificate-edit/certificate-edit.component';
-import {
-  ConfirmForceDeleteCertificateComponent,
-} from 'app/pages/credentials/certificates-dash/confirm-force-delete-dialog/confirm-force-delete-dialog.component';
 import { CsrAddComponent } from 'app/pages/credentials/certificates-dash/csr-add/csr-add.component';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
@@ -143,28 +141,35 @@ export class CertificateSigningRequestsListComponent implements OnInit {
   }
 
   doDelete(certificate: Certificate): void {
-    const dialogRef = this.matDialog.open(ConfirmForceDeleteCertificateComponent, { data: certificate });
-    dialogRef
-      .afterClosed()
-      .pipe(filter(Boolean), untilDestroyed(this))
-      .subscribe((data: { force: boolean }) => {
-        const jobDialogRef = this.matDialog.open(EntityJobComponent, {
-          data: {
-            title: this.translate.instant('Deleting...'),
-          },
-          disableClose: true,
-        });
-        jobDialogRef.componentInstance.setCall('certificate.delete', [certificate.id, data.force]);
-        jobDialogRef.componentInstance.submit();
-        jobDialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
-          jobDialogRef.close(true);
-          this.getCertificates();
-        });
-        jobDialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err) => {
-          jobDialogRef.close();
-          this.dialogService.error(this.errorHandler.parseError(err));
-        });
+    this.dialogService.confirm({
+      title: this.translate.instant('Delete Certificate'),
+      message: this.translate.instant('Are you sure you want to delete "{name}"?', { name: certificate.name }),
+      hideCheckbox: true,
+      secondaryCheckbox: true,
+      secondaryCheckboxText: this.translate.instant('Force'),
+      buttonColor: 'red',
+      buttonText: this.translate.instant('Delete'),
+    }).pipe(
+      filter((confirmation: DialogWithSecondaryCheckboxResult) => confirmation.confirmed),
+      untilDestroyed(this),
+    ).subscribe(({ secondaryCheckbox: force }: DialogWithSecondaryCheckboxResult) => {
+      const jobDialogRef = this.matDialog.open(EntityJobComponent, {
+        data: {
+          title: this.translate.instant('Deleting...'),
+        },
+        disableClose: true,
       });
+      jobDialogRef.componentInstance.setCall('certificate.delete', [certificate.id, force]);
+      jobDialogRef.componentInstance.submit();
+      jobDialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
+        jobDialogRef.close(true);
+        this.getCertificates();
+      });
+      jobDialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err) => {
+        jobDialogRef.close();
+        this.dialogService.error(this.errorHandler.parseError(err));
+      });
+    });
   }
 
   doDownload(certificate: Certificate): void {

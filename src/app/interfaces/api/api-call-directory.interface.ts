@@ -557,7 +557,7 @@ export interface ApiCallDirectory {
   'jbof.query': { params: [QueryParams<Jbof>]; response: Jbof[] };
   'jbof.create': { params: [JbofUpdate]; response: Jbof };
   'jbof.update': { params: [id: number, update: JbofUpdate]; response: Jbof };
-  'jbof.delete': { params: [id: number]; response: boolean };
+  'jbof.delete': { params: [id: number, force: boolean]; response: boolean };
 
   // Kerberos
   'kerberos.config': { params: void; response: KerberosConfig };

@@ -10,13 +10,13 @@ import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockWebsocket, mockCall, mockJob } from 'app/core/testing/utils/mock-websocket.utils';
 import { Certificate } from 'app/interfaces/certificate.interface';
+import { DialogWithSecondaryCheckboxResult } from 'app/interfaces/dialog.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTable2Harness } from 'app/modules/ix-table2/components/ix-table2/ix-table2.harness';
 import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
 import { CertificateEditComponent } from 'app/pages/credentials/certificates-dash/certificate-edit/certificate-edit.component';
-import { ConfirmForceDeleteCertificateComponent } from 'app/pages/credentials/certificates-dash/confirm-force-delete-dialog/confirm-force-delete-dialog.component';
 import { CertificateAddComponent } from 'app/pages/credentials/certificates-dash/forms/certificate-add/certificate-add.component';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
@@ -132,11 +132,22 @@ describe('CertificateListComponent', () => {
   });
 
   it('opens delete dialog when "Delete" button is pressed', async () => {
+    const dialogService = spectator.inject(DialogService);
+    jest.spyOn(dialogService, 'confirm').mockImplementation(
+      () => of({ confirmed: true, secondaryCheckbox: false } as DialogWithSecondaryCheckboxResult),
+    );
+
     const deleteButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'delete' }), 1, 3);
     await deleteButton.click();
 
-    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(ConfirmForceDeleteCertificateComponent, {
-      data: certificates[0],
+    expect(dialogService.confirm).toHaveBeenCalledWith({
+      title: 'Delete Certificate',
+      message: `Are you sure you want to delete "${certificates[0].name}"?`,
+      hideCheckbox: true,
+      secondaryCheckbox: true,
+      buttonColor: 'red',
+      secondaryCheckboxText: 'Force',
+      buttonText: 'Delete',
     });
   });
 
