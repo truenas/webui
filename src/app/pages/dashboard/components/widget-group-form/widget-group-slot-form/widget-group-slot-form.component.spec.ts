@@ -35,7 +35,7 @@ describe('WidgetGroupSlotComponent', () => {
         slotConfig: {
           slotPosition: SlotPosition.First,
           slotSize: SlotSize.Half,
-          type: WidgetType.InterfaceIp,
+          type: WidgetType.Ipv4Address,
           settings: { interface: '1' },
         },
       },
@@ -46,14 +46,14 @@ describe('WidgetGroupSlotComponent', () => {
   it('shows entered values on the form fields', async () => {
     expect(spectator.component.form.value).toEqual({
       category: WidgetCategory.Network,
-      type: WidgetType.InterfaceIp,
+      type: WidgetType.Ipv4Address,
     });
     const typeSelect = await loader.getHarness(IxSelectHarness.with({ label: 'Widget Type' }));
-    expect(await typeSelect.getValue()).toBe(widgetRegistry[WidgetType.InterfaceIp].name);
+    expect(await typeSelect.getValue()).toBe(widgetRegistry[WidgetType.Ipv4Address].name);
     expect(spectator.component.slot()).toEqual({
       slotPosition: SlotPosition.First,
       slotSize: SlotSize.Half,
-      type: WidgetType.InterfaceIp,
+      type: WidgetType.Ipv4Address,
       settings: { interface: '1' },
     } as WidgetGroupSlot<WidgetInterfaceIpSettings>);
   });
