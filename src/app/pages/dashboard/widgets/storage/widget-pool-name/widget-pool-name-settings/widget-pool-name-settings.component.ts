@@ -24,7 +24,7 @@ export class WidgetPoolNameSettingsComponent implements WidgetSettingsComponent<
   });
 
   protected poolOptions$ = this.resources.pools$.pipe(
-    map(({ value }) => (value || []).map((result) => ({
+    map((pools) => pools.map((result) => ({
       label: result.name,
       value: result.id,
     }))),
