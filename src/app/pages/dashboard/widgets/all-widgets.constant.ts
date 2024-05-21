@@ -8,6 +8,7 @@ import { hostnameWidget } from 'app/pages/dashboard/widgets/network/widget-hostn
 import { ipv4AddressWidget, ipv6AddressWidget } from 'app/pages/dashboard/widgets/network/widget-interface-ip/widget-interface-ip.definition';
 import { networkWidget } from 'app/pages/dashboard/widgets/network/widget-network/widget-network.definition';
 import { poolNameWidget } from 'app/pages/dashboard/widgets/storage/widget-pool-name/widget-pool-name.definition';
+import { storageWidget } from 'app/pages/dashboard/widgets/storage/widget-storage/widget-storage.definition';
 import { osVersionWidget } from 'app/pages/dashboard/widgets/system/widget-os-version/widget-os-version.definition';
 import { systemInfoActiveWidget } from 'app/pages/dashboard/widgets/system/widget-sys-info-active/widget-sys-info-active.definition';
 import { systemInfoPassiveWidget } from 'app/pages/dashboard/widgets/system/widget-sys-info-passive/widget-sys-info-passive.definition';
@@ -21,6 +22,7 @@ export const widgetComponents = [
   networkWidget.component,
   backupTasksWidget.component,
   cpuWidget.component,
+  storageWidget.component,
   systemInfoActiveWidget.component,
   systemInfoPassiveWidget.component,
   osVersionWidget.component,
@@ -40,6 +42,7 @@ export const widgetRegistry = {
   [WidgetType.Network]: networkWidget,
   [WidgetType.BackupTasks]: backupTasksWidget,
   [WidgetType.Cpu]: cpuWidget,
+  [WidgetType.Storage]: storageWidget,
   [WidgetType.SystemInfoActive]: systemInfoActiveWidget,
   [WidgetType.SystemInfoPassive]: systemInfoPassiveWidget,
   [WidgetType.OsVersion]: osVersionWidget,

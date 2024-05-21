@@ -2,18 +2,14 @@ import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { sub } from 'date-fns';
 import {
-  Observable, Subject, forkJoin,
-  timer,
+  Observable, Subject, combineLatestWith, debounceTime, forkJoin, map, repeat, shareReplay, switchMap, timer,
 } from 'rxjs';
-import {
-  combineLatestWith,
-  debounceTime,
-  map, repeat, shareReplay, switchMap,
-} from 'rxjs/operators';
 import { SystemUpdateStatus } from 'app/enums/system-update.enum';
 import { toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
+import { Dataset } from 'app/interfaces/dataset.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { ReportingData } from 'app/interfaces/reporting.interface';
+import { VolumesData, VolumeData } from 'app/interfaces/volume-data.interface';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
@@ -55,9 +51,11 @@ export class WidgetResourcesService {
     shareReplay({ bufferSize: 1, refCount: true }),
   );
 
-  readonly pools$ = this.ws.call('pool.query').pipe(
-    toLoadingState(),
-    shareReplay({ bufferSize: 1, refCount: true }),
+  readonly pools$ = this.ws.callAndSubscribe('pool.query');
+
+  readonly volumesData$ = this.pools$.pipe(
+    switchMap(() => this.ws.call('pool.dataset.query', [[], { extra: { retrieve_children: false } }])),
+    map((datasets) => this.parseVolumeData(datasets)),
   );
 
   readonly updateAvailable$ = this.ws.call('update.check_available').pipe(
@@ -102,6 +100,25 @@ export class WidgetResourcesService {
     private ws: WebSocketService,
     private store$: Store<AppState>,
   ) {}
+
+  private parseVolumeData(datasets: Dataset[]): VolumesData {
+    const volumesData = new Map<string, VolumeData>();
+
+    datasets.forEach((dataset) => {
+      if (typeof dataset === undefined || !dataset) {
+        return;
+      }
+
+      volumesData.set(dataset.id, {
+        id: dataset.id,
+        avail: dataset.available.parsed,
+        name: dataset.name,
+        used: dataset.used.parsed,
+        used_pct: (dataset.used.parsed / (dataset.used.parsed + dataset.available.parsed) * 100).toFixed(0) + '%',
+      });
+    });
+    return volumesData;
+  }
 
   refreshSystemInfo(): void {
     this.triggerRefreshSystemInfo$.next();

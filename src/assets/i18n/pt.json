@@ -2808,7 +2808,6 @@
   "Apr": "Abr",
   "Archive": "Arquivo",
   "Are you sure you want to abort the <b>{task}</b> task?": "Tem certeza de que deseja eliminar a tarefa <b>{task}</b>?",
-  "Are you sure you want to delete \"{cert}\"?": "Tem certeza de que deseja eliminar \"{cert}\"?",
   "Are you sure you want to delete \"{name}\"?": "Tem a certeza de que pretende eliminar \"{name}\"?",
   "Are you sure you want to delete <b>{name}</b> Reporting Exporter?": "Tem a certeza de que pretende apagar <b>{name}</b> Exportador de relatórios?",
   "Are you sure you want to delete NFS Share <b>\"{path}\"</b>?": "Tem a certeza de que pretende eliminar a Partilha NFS <b>\"{path}\"</b>?",

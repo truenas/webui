@@ -124,7 +124,7 @@ export class DashboardStore extends ComponentStore<DashboardState> {
       case WidgetName.Backup: return WidgetType.BackupTasks;
       case WidgetName.Cpu: return WidgetType.Cpu;
       case WidgetName.Pool: return WidgetType.PoolName;
-      case WidgetName.Storage: return unknownWidgetType;
+      case WidgetName.Storage: return WidgetType.Storage;
       default: return unknownWidgetType;
     }
   }

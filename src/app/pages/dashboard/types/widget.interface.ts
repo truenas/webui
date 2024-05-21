@@ -14,6 +14,7 @@ export enum WidgetType {
   Network = 'network',
   BackupTasks = 'backup-tasks',
   Cpu = 'cpu',
+  Storage = 'storage',
   SystemInfoActive = 'system-info-active',
   SystemInfoPassive = 'system-info-passive',
   OsVersion = 'os-version',
