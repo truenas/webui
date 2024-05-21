@@ -92,6 +92,7 @@ describe('CloudBackupFormComponent', () => {
       mockWebSocket([
         mockCall('cloud_backup.create', existingTask),
         mockCall('cloud_backup.update', existingTask),
+        mockCall('cloudsync.create_bucket'),
       ]),
       mockProvider(IxChainedSlideInService, {
         open: jest.fn(() => of()),
@@ -111,6 +112,54 @@ describe('CloudBackupFormComponent', () => {
     beforeEach(() => {
       spectator = createComponent();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    });
+
+    it('adds a new cloud backup task and creates a new bucket', async () => {
+      const form = await loader.getHarness(IxFormHarness);
+      await form.fillForm({
+        'Source Path': '/mnt/my pool 2',
+        Name: 'Cloud Backup Task With New Bucket',
+        Password: 'qwerty',
+        Credentials: 'Storj iX (Storj)',
+        'Keep Last': 5,
+        Folder: '/',
+        Bucket: 'Add new',
+        'New Bucket Name': 'brand-new-bucket',
+      });
+
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      await saveButton.click();
+
+      expect(spectator.inject(WebSocketService).call).toHaveBeenNthCalledWith(1, 'cloudsync.create_bucket', [
+        2,
+        'brand-new-bucket',
+      ]);
+
+      expect(spectator.inject(WebSocketService).call).toHaveBeenNthCalledWith(2, 'cloud_backup.create', [{
+        args: '',
+        attributes: { folder: '/', bucket: 'brand-new-bucket' },
+        bwlimit: undefined,
+        credentials: 2,
+        description: 'Cloud Backup Task With New Bucket',
+        enabled: true,
+        exclude: [],
+        include: [],
+        keep_last: 5,
+        password: 'qwerty',
+        path: '/mnt/my pool 2',
+        post_script: '',
+        pre_script: '',
+        schedule: {
+          dom: '*',
+          dow: '*',
+          hour: '0',
+          minute: '0',
+          month: '*',
+        },
+        snapshot: false,
+        transfers: null,
+      }]);
+      expect(chainedComponentRef.close).toHaveBeenCalledWith({ response: existingTask, error: null });
     });
 
     it('adds a new cloud backup task when new form is saved', async () => {

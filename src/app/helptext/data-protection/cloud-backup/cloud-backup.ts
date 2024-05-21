@@ -15,16 +15,17 @@ export const helptextCloudBackup = {
   credentials_tooltip: T('Select the cloud storage provider credentials from the list of available Cloud Credentials.'),
 
   bucket_placeholder: T('Bucket'),
-  bucket_tooltip: T('Select the name of container to use.'),
+  bucket_tooltip: T('Select the bucket to store the backup data.'),
 
   enabled_placeholder: T('Enabled'),
   enabled_tooltip: T('Enable this TrueCloud Backup Task. Unset to disable this TrueCloud\
  Backup Task without deleting it.'),
 
   bucket_input_placeholder: T('New Bucket Name'),
-  bucket_input_tooltip: T('Input the name of container to use.'),
+  bucket_input_tooltip: T('Enter the name of the new bucket. Only lowercase letters, numbers, and hyphens are allowed.'),
 
   folder_placeholder: T('Folder'),
+  folder_tooltip: T('Select the folder to store the backup data.'),
 
   name_placeholder: T('Name'),
   name_tooltip: T('Enter a name of the TrueCloud Backup Task.'),
