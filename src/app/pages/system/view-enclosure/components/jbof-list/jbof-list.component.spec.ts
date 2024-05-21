@@ -90,10 +90,23 @@ describe('JbofListComponent', () => {
   });
 
   it('opens delete dialog when "Delete" button is pressed', async () => {
+    const dialogService = spectator.inject(DialogService);
+    jest.spyOn(dialogService, 'confirm').mockImplementation(
+      () => of({ confirmed: true, secondaryCheckbox: false }),
+    );
     const deleteButton = await table.getHarnessInRow(IxIconHarness.with({ name: 'delete' }), 'description 2');
     await deleteButton.click();
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('jbof.delete', [2]);
+    expect(dialogService.confirm).toHaveBeenCalledWith({
+      title: 'Delete',
+      message: 'Are you sure you want to delete this item?',
+      hideCheckbox: true,
+      secondaryCheckbox: true,
+      secondaryCheckboxText: 'Force',
+      buttonText: 'Delete',
+      buttonColor: 'red',
+    });
+    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('jbof.delete', [2, false]);
   });
 
   it('enables Add button when existing are less than licensed', () => {
