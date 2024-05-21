@@ -38,6 +38,7 @@ describe('WidgetOsVersionComponent', () => {
     const widget = spectator.query(MockComponent(WidgetDatapointComponent));
     expect(widget).toBeTruthy();
     expect(widget.text).toBe('TrueNAS-SCALE-24.10.0-MASTER-20240518-113154');
+    expect(widget.label).toBe('OS Version');
   });
 
   it('shows an error when OS Version cannot be determined', () => {

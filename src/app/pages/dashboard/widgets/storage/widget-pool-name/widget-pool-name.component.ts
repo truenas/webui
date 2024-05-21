@@ -1,7 +1,8 @@
 import {
   ChangeDetectionStrategy, Component, computed, input,
 } from '@angular/core';
-import { map } from 'rxjs';
+import { TranslateService } from '@ngx-translate/core';
+import { catchError, map, of } from 'rxjs';
 import { toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
 import { WidgetComponent } from 'app/pages/dashboard/types/widget-component.interface';
@@ -23,6 +24,7 @@ export class WidgetPoolNameComponent implements WidgetComponent {
   protected poolName = computed(() => {
     return this.resources.getPoolById(+this.settings().poolId).pipe(
       map((pool) => pool.name),
+      catchError(() => of(this.translate.instant('No Pool Selected'))),
       toLoadingState(),
     );
   });
@@ -30,6 +32,7 @@ export class WidgetPoolNameComponent implements WidgetComponent {
   readonly name = poolNameWidget.name;
 
   constructor(
+    private translate: TranslateService,
     private resources: WidgetResourcesService,
   ) {}
 }
