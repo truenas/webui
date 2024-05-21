@@ -10,6 +10,7 @@ export const groupListElements = {
     },
     add: {
       hierarchy: [T('Add')],
+      synonyms: [T('Add Group'), T('New Group'), T('Create Group'), T('Group'), T('Add Local Group')],
       anchor: 'add-group',
     },
     showBuiltIn: {

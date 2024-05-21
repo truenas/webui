@@ -3,6 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MAT_SNACK_BAR_DATA } from '@angular/material/snack-bar';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
+import { MockComponent } from 'ng-mocks';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { SnackbarConfig } from './snackbar-config.interface';
 import { SnackbarComponent } from './snackbar.component';
@@ -13,6 +14,9 @@ describe('SnackbarComponent', () => {
   let spectator: Spectator<SnackbarComponent>;
   const createComponent = createComponentFactory({
     component: SnackbarComponent,
+    declarations: [
+      MockComponent(IxIconComponent),
+    ],
     providers: [
       {
         provide: MAT_SNACK_BAR_DATA,

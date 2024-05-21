@@ -16,6 +16,11 @@ export const selectIsHaLicensed = createSelector(
   (state) => state.isHaLicensed,
 );
 
+export const selectIsHaEnabled = createSelector(
+  selectHaStatus,
+  (state) => state.hasHa,
+);
+
 export const selectIsUpgradePending = createSelector(
   selectHaInfoState,
   (state) => state.isUpgradePending,

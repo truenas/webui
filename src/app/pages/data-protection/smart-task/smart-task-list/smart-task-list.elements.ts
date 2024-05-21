@@ -10,7 +10,16 @@ export const smartTaskListElements = {
     },
     add: {
       hierarchy: [T('Add')],
-      synonyms: [T('Add Periodic S.M.A.R.T. Test'), T('Add Smart Test')],
+      synonyms: [
+        T('Add Periodic S.M.A.R.T. Test'),
+        T('Add Smart Test'),
+        T('Create Periodic S.M.A.R.T. Test'),
+        T('Create Smart Test'),
+        T('New Periodic S.M.A.R.T. Test'),
+        T('New Smart Test'),
+        T('Test'),
+        T('Smart'),
+      ],
     },
   },
 } satisfies UiSearchableElement;

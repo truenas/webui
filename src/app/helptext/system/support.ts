@@ -18,7 +18,7 @@ export const helptextSystemSupport = {
 
   bug: {
     message: {
-      placeholder: T('Please describe:\n1. Steps to reproduce\n2. Expected Result\n3. Actual Result'),
+      placeholder: T('Please describe:\n1. Steps to reproduce\n2. Expected Result\n3. Actual Result\n\nPlease use English for your report.'),
     },
   },
 

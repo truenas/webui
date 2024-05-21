@@ -1,8 +1,8 @@
-<ix-table-expandable-row [data]="getDetails(user)">
+<ix-table-expandable-row [data]="getDetails(user())">
   <button
     mat-button
-    [ixTest]="['edit', user.username]"
-    (click)="doEdit(user)"
+    [ixTest]="['edit', user().username]"
+    (click)="doEdit(user())"
   >
     <ix-icon name="edit"></ix-icon>
     <span>{{ 'Edit' | translate }}</span>
@@ -10,10 +10,10 @@
 
   <ng-container *ixRequiresRoles="[Role.AccountWrite]">
     <button
-      *ngIf="!user.builtin"
+      *ngIf="!user().builtin"
       mat-button
-      [ixTest]="['delete', user.username]"
-      (click)="doDelete(user)"
+      [ixTest]="['delete', user().username]"
+      (click)="doDelete(user())"
     >
       <ix-icon name="delete"></ix-icon>
       <span>{{ 'Delete' | translate }}</span>
@@ -22,8 +22,8 @@
 
   <button
     mat-button
-    [ixTest]="['logs', user.username]"
-    (click)="viewLogs(user)"
+    [ixTest]="['logs', user().username]"
+    (click)="viewLogs(user())"
   >
     <ix-icon name="receipt_long"></ix-icon>
     <span>{{ 'Audit Logs' | translate }}</span>

@@ -10,7 +10,16 @@ export const snapshotTaskListElements = {
     },
     add: {
       hierarchy: [T('Add')],
-      synonyms: [T('Add Periodic Snapshot Task')],
+      synonyms: [
+        T('Add Periodic Snapshot Task'),
+        T('Create Periodic Snapshot Task'),
+        T('New Periodic Snapshot Task'),
+        T('Add Snapshot Task'),
+        T('Create Snapshot Task'),
+        T('New Snapshot Task'),
+        T('Snapshot'),
+        T('Task'),
+      ],
     },
   },
 } satisfies UiSearchableElement;

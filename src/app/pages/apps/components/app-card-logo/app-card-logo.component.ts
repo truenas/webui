@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Input,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, input,
 } from '@angular/core';
 import { StateChange } from 'ng-lazyload-image';
 import { officialCatalog, appImagePlaceholder } from 'app/constants/catalog.constants';
@@ -12,7 +12,7 @@ import { LayoutService } from 'app/services/layout.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AppCardLogoComponent {
-  @Input() url: string;
+  readonly url = input<string>();
 
   wasLogoLoaded = false;
 
