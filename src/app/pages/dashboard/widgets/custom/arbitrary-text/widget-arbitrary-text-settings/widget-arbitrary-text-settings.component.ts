@@ -19,11 +19,12 @@ import { WidgetArbitraryTextSettings } from 'app/pages/dashboard/widgets/custom/
 export class WidgetArbitraryTextSettingsComponent implements
   WidgetSettingsComponent<WidgetArbitraryTextSettings>, OnInit {
   form = this.fb.group({
-    widgetTitle: [null as string, [Validators.required]],
-    widgetText: [null as string, [Validators.required]],
+    widgetTitle: [null as string, [Validators.required, Validators.maxLength(20)]],
+    widgetText: [null as string, [Validators.required, Validators.maxLength(130)]],
+    widgetSubText: [null as string, [Validators.maxLength(10)]],
   });
 
-  private readonly formFieldNames = ['widgetTitle', 'widgetText'];
+  private readonly formFieldNames = ['widgetTitle', 'widgetText', 'widgetSubText'];
   constructor(
     public widgetSettingsRef: WidgetSettingsRef<WidgetArbitraryTextSettings>,
     private fb: FormBuilder,
@@ -39,8 +40,9 @@ export class WidgetArbitraryTextSettingsComponent implements
     if (!settings) {
       return;
     }
-    this.form.controls.widgetTitle.setValue(settings.widgetTitle);
-    this.form.controls.widgetText.setValue(settings.widgetText);
+    this.form.controls.widgetTitle.setValue(settings.widgetTitle || null);
+    this.form.controls.widgetText.setValue(settings.widgetText || null);
+    this.form.controls.widgetSubText.setValue(settings?.widgetSubText || null);
   }
 
   private setupSettingsUpdate(): void {
@@ -49,7 +51,12 @@ export class WidgetArbitraryTextSettingsComponent implements
     );
     this.form.valueChanges.pipe(untilDestroyed(this)).subscribe({
       next: (settings) => {
-        this.widgetSettingsRef.updateSettings({ widgetText: settings.widgetText, widgetTitle: settings.widgetTitle });
+        this.widgetSettingsRef.updateSettings({
+          widgetTitle: settings.widgetTitle,
+          widgetText: settings.widgetText,
+          widgetSubText: settings.widgetSubText,
+        });
+
         this.widgetSettingsRef.updateValidity(
           getAllFormErrors(this.form, this.formFieldNames),
         );

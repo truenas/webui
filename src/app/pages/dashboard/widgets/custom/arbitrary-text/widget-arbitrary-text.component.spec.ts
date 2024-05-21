@@ -19,6 +19,7 @@ describe('WidgetArbitraryTextSettings', () => {
         settings: {
           widgetTitle: 'Widget Title',
           widgetText: 'Widget Text',
+          widgetSubText: 'Widget Subtext',
         },
         size: SlotSize.Quarter,
       },
@@ -28,7 +29,8 @@ describe('WidgetArbitraryTextSettings', () => {
   it('renders arbitrary text and title', () => {
     const widget = spectator.query(MockComponent(WidgetDatapointComponent));
     expect(widget).toBeTruthy();
-    expect(widget.text).toBe('Widget Text');
     expect(widget.label).toBe('Widget Title');
+    expect(widget.text).toBe('Widget Text');
+    expect(widget.subText).toBe('Widget Subtext');
   });
 });

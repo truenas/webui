@@ -10,6 +10,7 @@ import { WidgetArbitraryTextComponent } from 'app/pages/dashboard/widgets/custom
 export interface WidgetArbitraryTextSettings {
   widgetTitle: string;
   widgetText: string;
+  widgetSubText?: string;
 }
 
 export const arbitraryTextWidget = dashboardWidget<WidgetArbitraryTextSettings>({
