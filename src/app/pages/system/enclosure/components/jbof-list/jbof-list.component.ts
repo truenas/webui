@@ -7,7 +7,7 @@ import {
   filter, forkJoin, map, switchMap, tap,
 } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
-import { ConfirmOptionsWithSecondaryCheckbox } from 'app/interfaces/dialog.interface';
+import { DialogWithSecondaryCheckboxResult } from 'app/interfaces/dialog.interface';
 import { Jbof } from 'app/interfaces/jbof.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
@@ -112,18 +112,10 @@ export class JbofListComponent implements OnInit {
       secondaryCheckboxText: this.translate.instant('Force'),
       buttonText: this.translate.instant('Delete'),
       buttonColor: 'red',
-    } as ConfirmOptionsWithSecondaryCheckbox).pipe(
-      filter((confirmation: boolean | { confirmed: boolean; secondaryCheckbox: boolean }) => {
-        if (typeof confirmation === 'boolean') {
-          return confirmation;
-        }
-        return confirmation.confirmed;
-      }),
-      switchMap((confirmation: boolean | { confirmed: boolean; secondaryCheckbox: boolean }) => {
-        let force = false;
-        if (typeof confirmation !== 'boolean') {
-          force = confirmation.secondaryCheckbox;
-        }
+    }).pipe(
+      filter((confirmation: DialogWithSecondaryCheckboxResult) => confirmation.confirmed),
+      switchMap((confirmation: DialogWithSecondaryCheckboxResult) => {
+        const force = confirmation.secondaryCheckbox;
 
         return this.ws.call('jbof.delete', [jbof.id, force]).pipe(this.loader.withLoader());
       }),

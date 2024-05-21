@@ -12,6 +12,7 @@ import {
 import { Role } from 'app/enums/role.enum';
 import { helptextSystemCertificates } from 'app/helptext/system/certificates';
 import { Certificate } from 'app/interfaces/certificate.interface';
+import { DialogWithSecondaryCheckboxResult } from 'app/interfaces/dialog.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -173,19 +174,9 @@ export class CertificateListComponent implements OnInit {
       secondaryCheckboxText: this.translate.instant('Force'),
       buttonText: this.translate.instant('Delete'),
     }).pipe(
-      filter(
-        (confirmation: boolean | { confirmed: boolean; secondaryCheckbox: boolean }) => {
-          if (typeof confirmation === 'boolean') {
-            return confirmation;
-          }
-          return confirmation.confirmed;
-        },
-      ),
-      switchMap((confirmation: boolean | { confirmed: boolean; secondaryCheckbox: boolean }) => {
-        let force = false;
-        if (typeof confirmation !== 'boolean') {
-          force = confirmation.secondaryCheckbox;
-        }
+      filter((confirmation: DialogWithSecondaryCheckboxResult) => confirmation.confirmed),
+      switchMap((confirmation: DialogWithSecondaryCheckboxResult) => {
+        const force = confirmation.secondaryCheckbox;
 
         const jobDialogRef = this.dialogService.jobDialog(
           this.ws.job('certificate.delete', [certificate.id, force]),
