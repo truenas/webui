@@ -918,3 +918,9 @@ mat-list-item {
 div.mat-mdc-autocomplete-panel.mat-mdc-autocomplete-visible {
   margin: 5px 0;
 }
+
+mat-tab-nav-panel {
+  .search-element-highlighted {
+    display: block;
+  }
+}
