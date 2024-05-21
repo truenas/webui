@@ -19,8 +19,8 @@ export class UiSearchProvider implements GlobalSearchProvider {
   private translatedTerms = this.uiElements.map((element) => {
     return {
       ...element,
-      hierarchy: element.hierarchy.map((key) => this.translate.instant(key)),
-      synonyms: element.synonyms.map((key) => this.translate.instant(key)),
+      hierarchy: (element.hierarchy || []).map((key) => this.translate.instant(key)),
+      synonyms: (element.synonyms || []).map((key) => this.translate.instant(key)),
     };
   });
 
