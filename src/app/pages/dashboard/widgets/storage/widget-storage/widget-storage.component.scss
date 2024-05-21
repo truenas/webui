@@ -68,13 +68,13 @@
       font-size: 24px;
       line-height: 2;
       overflow: hidden;
+      padding-top: 8px;
       text-align: left;
       text-overflow: ellipsis;
       white-space: nowrap;
     }
 
     .tile-content {
-      align-items: center;
       box-sizing: border-box;
       display: flex;
       flex: 1 1 1e-9px;
@@ -147,6 +147,7 @@
     .tile-header-title {
       font-size: 20px !important;
       line-height: 1.8 !important;
+      padding-top: 0;
     }
   }
 
