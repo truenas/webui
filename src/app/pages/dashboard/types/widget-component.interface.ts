@@ -40,9 +40,9 @@ export interface WidgetDefinition<
 }
 
 /**
- * If you widget defines custom settings, supply settings in first generic argument.
+ * If your widget defines custom settings, supply settings in first generic argument.
  * ```
- * export const interfaceIpWidget = dashboardWidget<WidgetInterfaceIpSettings>({
+ * export const ipv4AddressWidget = dashboardWidget<WidgetInterfaceIpSettings>({
  *   name: T('IPv4 Datapoint'),
  *   component: WidgetInterfaceIpComponent,
  *   category: WidgetCategory.Network,

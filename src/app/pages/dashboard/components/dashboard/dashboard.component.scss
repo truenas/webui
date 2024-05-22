@@ -48,11 +48,17 @@
 }
 
 
-::ng-deep {
+:host ::ng-deep {
   .cdk-drag-placeholder {
     filter: alpha(opacity=33);
     opacity: 0.33;
     pointer-events: none;
+  }
+
+  mat-card-content .header h3 {
+    @media(max-width: 767px) {
+      font-size: 20px;
+    }
   }
 
   .cdk-drag-animating {

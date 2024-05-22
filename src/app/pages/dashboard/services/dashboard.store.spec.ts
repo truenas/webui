@@ -17,7 +17,7 @@ const initialGroups = [
     layout: WidgetGroupLayout.Halves,
     slots: [
       { type: WidgetType.Memory },
-      { type: WidgetType.InterfaceIp },
+      { type: WidgetType.Ipv4Address },
     ],
   },
 ];
@@ -64,7 +64,7 @@ describe('DashboardStore', () => {
           layout: WidgetGroupLayout.Halves,
           slots: [
             { type: WidgetType.Memory },
-            { type: WidgetType.InterfaceIp },
+            { type: WidgetType.Ipv4Address },
           ],
         },
       ],

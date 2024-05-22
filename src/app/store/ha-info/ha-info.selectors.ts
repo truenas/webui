@@ -29,6 +29,10 @@ export const selectIsUpgradePending = createSelector(
 export const selectCanFailover = createSelector(
   selectHaInfoState,
   ({ haStatus }) => {
+    if (!haStatus) {
+      return false;
+    }
+
     if (haStatus.hasHa) {
       return true;
     }
