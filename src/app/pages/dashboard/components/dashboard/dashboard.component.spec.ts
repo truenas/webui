@@ -146,6 +146,17 @@ describe('DashboardComponent', () => {
       expect(groups).toHaveLength(4);
       expect(groups[0].group).toEqual(groupA);
     });
+
+    it('reverts to loaded configuration when Escape is pressed', async () => {
+      const deleteIcon = await loader.getHarness(IxIconHarness.with({ name: 'delete' }));
+      await deleteIcon.click();
+
+      spectator.dispatchKeyboardEvent(spectator.debugElement, 'keydown', 'Escape');
+
+      const groups = spectator.queryAll(WidgetGroupComponent);
+      expect(groups).toHaveLength(4);
+      expect(groups[0].group).toEqual(groupA);
+    });
   });
 
   describe('configuration - moving', () => {
