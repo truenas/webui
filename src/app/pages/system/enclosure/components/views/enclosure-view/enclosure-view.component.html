@@ -3,10 +3,15 @@
 </mat-card-header>
 <mat-card-content>
   <div class="container">
-    <ng-container
-      *ngComponentOutlet="machine().component; inputs: machine().inputs;"
-    ></ng-container>
+    <div class="view-wrapper">
+      <ng-container
+        *ngComponentOutlet="dashboardView().component; inputs: dashboardView().inputs;"
+      ></ng-container>
+    </div>
   </div>
 
-  <ix-disks-overview [slot]="selectedSlot()"></ix-disks-overview>
+  <ix-disks-overview
+    [slot]="selectedSlot()" 
+    (viewChanged)="changeView($event)"
+  ></ix-disks-overview>
 </mat-card-content>

@@ -1,12 +1,12 @@
 import {
-  ChangeDetectionStrategy, Component, computed, input,
+  ChangeDetectionStrategy, Component, EventEmitter, Output, computed, input,
 } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { EnclosureDiskStatus } from 'app/enums/enclosure-slot-status.enum';
 import { DashboardEnclosure, DashboardEnclosureSlot } from 'app/interfaces/enclosure.interface';
 import { EnclosureStore } from 'app/pages/system/enclosure/services/enclosure.store';
 
-interface OverviewInfo {
+export interface OverviewInfo {
   name: 'pools' | 'failedDisks' | 'expanders';
   value: number;
   title: string;
@@ -21,6 +21,7 @@ interface OverviewInfo {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DisksOverviewComponent {
+  @Output() viewChanged = new EventEmitter<OverviewInfo['name']>();
   slot = input.required<DashboardEnclosureSlot | null>();
   currentView: OverviewInfo['name'] = 'pools';
 
@@ -42,6 +43,7 @@ export class DisksOverviewComponent {
 
   setCurrentView(viewName: OverviewInfo['name']): void {
     this.currentView = viewName;
+    this.viewChanged.emit(viewName);
   }
 
   private getOverviewInfo(enclosure: DashboardEnclosure): OverviewInfo[] {
