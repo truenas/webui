@@ -1653,6 +1653,34 @@
   {
     "hierarchy": [
       "Reporting",
+      "Reporting Exporters",
+      "Add"
+    ],
+    "synonyms": [
+      "Add Exporter",
+      "New Exporter",
+      "Create Exporter",
+      "Exporter",
+      "Add Reporting Exporter",
+      "New Reporting Exporter",
+      "Create Reporting Exporter",
+      "Reporting Exporters"
+    ],
+    "requiredRoles": [
+      "REPORTING_WRITE"
+    ],
+    "anchorRouterLink": [
+      "/reportsdashboard",
+      "exporters"
+    ],
+    "routerLink": null,
+    "anchor": "add",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Reporting",
       "Reporting Exporters"
     ],
     "synonyms": [
@@ -1682,7 +1710,7 @@
     ],
     "routerLink": null,
     "anchor": "select-reporting",
-    "triggerAnchor": "select-reporting",
+    "triggerAnchor": null,
     "section": "ui"
   },
   {
@@ -1692,6 +1720,8 @@
     ],
     "synonyms": [
       "Processor",
+      "CPU Stats",
+      "CPU Utilization",
       "Reporting"
     ],
     "requiredRoles": [],
@@ -1701,7 +1731,7 @@
     ],
     "routerLink": null,
     "anchor": "cpu",
-    "triggerAnchor": "select-reporting",
+    "triggerAnchor": null,
     "section": "ui"
   },
   {
@@ -1711,6 +1741,11 @@
     ],
     "synonyms": [
       "Device",
+      "Disks",
+      "Disk IO",
+      "Disk I/O",
+      "disk stats",
+      "disk writes",
       "Reporting"
     ],
     "requiredRoles": [],
@@ -1720,7 +1755,7 @@
     ],
     "routerLink": null,
     "anchor": "disk",
-    "triggerAnchor": "select-reporting",
+    "triggerAnchor": null,
     "section": "ui"
   },
   {
@@ -1730,6 +1765,10 @@
     ],
     "synonyms": [
       "RAM",
+      "Free RAM",
+      "Memory Usage",
+      "Memory Stats",
+      "Memory Utilization",
       "Reporting"
     ],
     "requiredRoles": [],
@@ -1739,7 +1778,7 @@
     ],
     "routerLink": null,
     "anchor": "memory",
-    "triggerAnchor": "select-reporting",
+    "triggerAnchor": null,
     "section": "ui"
   },
   {
@@ -1748,6 +1787,11 @@
       "Network"
     ],
     "synonyms": [
+      "Network Stats",
+      "Network Utilization",
+      "Network Usage",
+      "Traffic",
+      "Network Traffic",
       "Reporting"
     ],
     "requiredRoles": [],
@@ -1757,7 +1801,7 @@
     ],
     "routerLink": null,
     "anchor": "network",
-    "triggerAnchor": "select-reporting",
+    "triggerAnchor": null,
     "section": "ui"
   },
   {
@@ -1766,6 +1810,8 @@
       "NFS"
     ],
     "synonyms": [
+      "NFS Stats",
+      "NFS Utilization",
       "Reporting"
     ],
     "requiredRoles": [],
@@ -1775,7 +1821,7 @@
     ],
     "routerLink": null,
     "anchor": "nfs",
-    "triggerAnchor": "select-reporting",
+    "triggerAnchor": null,
     "section": "ui"
   },
   {
@@ -1784,6 +1830,9 @@
       "Partition"
     ],
     "synonyms": [
+      "Partitions",
+      "Partition Stats",
+      "Partition Utilization",
       "Reporting"
     ],
     "requiredRoles": [],
@@ -1793,7 +1842,7 @@
     ],
     "routerLink": null,
     "anchor": "partition",
-    "triggerAnchor": "select-reporting",
+    "triggerAnchor": null,
     "section": "ui"
   },
   {
@@ -1802,6 +1851,9 @@
       "System"
     ],
     "synonyms": [
+      "System Stats",
+      "System Utilization",
+      "Uptime",
       "Reporting"
     ],
     "requiredRoles": [],
@@ -1811,7 +1863,7 @@
     ],
     "routerLink": null,
     "anchor": "system",
-    "triggerAnchor": "select-reporting",
+    "triggerAnchor": null,
     "section": "ui"
   },
   {
@@ -1820,6 +1872,8 @@
       "Target"
     ],
     "synonyms": [
+      "Target Stats",
+      "Target Utilization",
       "Reporting"
     ],
     "requiredRoles": [],
@@ -1829,7 +1883,7 @@
     ],
     "routerLink": null,
     "anchor": "target",
-    "triggerAnchor": "select-reporting",
+    "triggerAnchor": null,
     "section": "ui"
   },
   {
@@ -1838,6 +1892,8 @@
       "UPS"
     ],
     "synonyms": [
+      "UPS Stats",
+      "UPS Utilization",
       "Reporting"
     ],
     "requiredRoles": [],
@@ -1847,7 +1903,7 @@
     ],
     "routerLink": null,
     "anchor": "ups",
-    "triggerAnchor": "select-reporting",
+    "triggerAnchor": null,
     "section": "ui"
   },
   {
@@ -1856,6 +1912,9 @@
       "ZFS"
     ],
     "synonyms": [
+      "ZFS Reports",
+      "ZFS Stats",
+      "ZFS Utilization",
       "Reporting"
     ],
     "requiredRoles": [],
@@ -1865,7 +1924,25 @@
     ],
     "routerLink": null,
     "anchor": "zfs",
-    "triggerAnchor": "select-reporting",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Reporting",
+      "Netdata"
+    ],
+    "synonyms": [
+      "View Netdata",
+      "Reporting"
+    ],
+    "requiredRoles": [],
+    "anchorRouterLink": [
+      "/reportsdashboard"
+    ],
+    "routerLink": null,
+    "anchor": "netdata",
+    "triggerAnchor": null,
     "section": "ui"
   },
   {
