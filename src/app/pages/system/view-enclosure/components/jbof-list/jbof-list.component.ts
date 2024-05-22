@@ -7,6 +7,7 @@ import {
   filter, forkJoin, map, switchMap, tap,
 } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
+import { DialogWithSecondaryCheckboxResult } from 'app/interfaces/dialog.interface';
 import { Jbof } from 'app/interfaces/jbof.interface';
 import { AsyncDataProvider } from 'app/modules/ix-table2/classes/async-data-provider/async-data-provider';
 import { actionsColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
@@ -100,10 +101,16 @@ export class JbofListComponent implements OnInit {
     this.dialogService.confirm({
       title: this.translate.instant('Delete'),
       message: this.translate.instant('Are you sure you want to delete this item?'),
+      hideCheckbox: true,
+      secondaryCheckbox: true,
+      secondaryCheckboxText: this.translate.instant('Force'),
       buttonText: this.translate.instant('Delete'),
+      buttonColor: 'red',
     }).pipe(
-      filter(Boolean),
-      switchMap(() => this.ws.call('jbof.delete', [jbof.id]).pipe(this.loader.withLoader())),
+      filter((confirmation: DialogWithSecondaryCheckboxResult) => confirmation.confirmed),
+      switchMap(({ secondaryCheckbox: force }: DialogWithSecondaryCheckboxResult) => {
+        return this.ws.call('jbof.delete', [jbof.id, force]).pipe(this.loader.withLoader());
+      }),
       untilDestroyed(this),
     ).subscribe({
       next: () => this.getJbofs(),
