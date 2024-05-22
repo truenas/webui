@@ -8,6 +8,7 @@ import { DatasetType } from 'app/enums/dataset.enum';
 import { Role } from 'app/enums/role.enum';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { datasetDetailsPanelElements } from 'app/pages/datasets/components/dataset-details-panel/dataset-details-panel.elements';
 import { DatasetFormComponent } from 'app/pages/datasets/components/dataset-form/dataset-form.component';
 import { ZvolFormComponent } from 'app/pages/datasets/components/zvol-form/zvol-form.component';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
@@ -26,6 +27,7 @@ export class DatasetDetailsPanelComponent {
   @Input() systemDataset: string;
 
   protected readonly requiredRoles = [Role.DatasetWrite];
+  protected readonly searchableElements = datasetDetailsPanelElements;
 
   selectedParentDataset$ = this.datasetStore.selectedParentDataset$;
 

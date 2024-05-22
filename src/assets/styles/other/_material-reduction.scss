@@ -835,6 +835,7 @@ body {
     background-color: var(--contrast-darkest) !important;
     box-shadow: 0 0 5px 5px var(--primary-lighter) !important;
     outline: 4px solid var(--primary) !important;
+    overflow: visible;
 
     &.mat-primary {
       outline: 4px solid var(--primary-txt) !important;
