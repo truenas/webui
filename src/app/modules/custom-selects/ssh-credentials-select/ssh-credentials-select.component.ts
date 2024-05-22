@@ -39,13 +39,11 @@ export class SshCredentialsSelectComponent extends IxSelectWithNewOption {
     );
   }
 
-  getValueFromChainedResponse(
-    result: ChainedComponentResponse,
-  ): IxSelectValue {
-    return (result.response as SshCredentials).id;
+  getValueFromChainedResponse(result: ChainedComponentResponse<SshCredentials>): IxSelectValue {
+    return result.response.id;
   }
 
-  getFormComponentType(): ComponentType<unknown> {
+  getFormComponentType(): ComponentType<SshConnectionFormComponent> {
     return SshConnectionFormComponent;
   }
 }
