@@ -46,7 +46,6 @@ import {
 import {
   CertificateDetailsComponent,
 } from 'app/pages/credentials/certificates-dash/certificate-details/certificate-details.component';
-import { ConfirmForceDeleteCertificateComponent } from 'app/pages/credentials/certificates-dash/confirm-force-delete-dialog/confirm-force-delete-dialog.component';
 import {
   CsrImportComponent,
 } from 'app/pages/credentials/certificates-dash/csr-add/steps/csr-import/csr-import.component';
@@ -104,7 +103,6 @@ import { CertificateSubjectComponent } from './certificates-dash/forms/common-st
     CertificateAuthorityAddComponent,
     CertificateAuthorityEditComponent,
     CertificateEditComponent,
-    ConfirmForceDeleteCertificateComponent,
     AcmednsFormComponent,
     SignCsrDialogComponent,
     ViewCertificateDialogComponent,

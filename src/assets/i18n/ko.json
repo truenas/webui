@@ -4444,7 +4444,6 @@
   "Apr": "4월",
   "Archive": "아카이브",
   "Are you sure you want to abort the <b>{task}</b> task?": "정말 <b>{task}</b> 작업을 중단하시겠습니까?",
-  "Are you sure you want to delete \"{cert}\"?": "\"{cert}\" 를 삭제하시겠습니까?",
   "Are you sure you want to delete address {ip}?": "{ip} 주소를 삭제하시겠습니까?",
   "Are you sure you want to delete group <b>\"{name}\"</b>?": "<b>\"{name}\"</b> 그룹을 삭제하시겠습니까?",
   "Are you sure you want to delete the <b>{address}</b> NTP Server?": "정말로 <b>{address}</b> NTP 서버를 삭제하시겠습니까?",
