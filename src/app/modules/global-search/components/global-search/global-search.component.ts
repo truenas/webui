@@ -81,7 +81,7 @@ export class GlobalSearchComponent implements OnInit {
         }
         break;
       default:
-        if (event.key.length === 1 && !event.metaKey) {
+        if (event.key.length === 1 && !event.metaKey && !this.isSearchInputFocused) {
           event.preventDefault();
           this.searchControl.setValue(this.searchControl.value + event.key);
           this.focusInputElement();
