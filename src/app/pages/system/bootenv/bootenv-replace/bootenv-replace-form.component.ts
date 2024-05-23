@@ -52,7 +52,6 @@ export class BootEnvReplaceFormComponent {
     entityForm.submitFunction = this.submitFunction;
   }
   submitFunction(entityForm) {
-    const payload = this.pk.substring(5, this.pk.length);
-    return this.ws.call('boot.replace', [payload, entityForm.dev]);
+    return this.ws.call('boot.replace', [this.pk, entityForm.dev]);
   }
 }
