@@ -9,7 +9,7 @@ export class FocusService {
     @Inject(DOCUMENT) private document: Document,
   ) {}
 
-    private lastFocusedElement: HTMLElement | null = null;
+    lastFocusedElement: HTMLElement | null = null;
 
     captureCurrentFocus(): void {
       this.lastFocusedElement = this.document.activeElement as HTMLElement;

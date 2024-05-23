@@ -69,6 +69,10 @@ export class GlobalSearchComponent implements OnInit {
         moveToPreviousFocusableElement();
         break;
       case 'Escape':
+        if (!this.searchControl.value.length) {
+          this.document.querySelector<HTMLElement>('.cdk-overlay-backdrop')?.click();
+          this.document.querySelector<HTMLElement>('ix-logo a')?.focus();
+        }
         this.resetInput();
         event.preventDefault();
         break;

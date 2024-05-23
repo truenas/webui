@@ -61,13 +61,6 @@ export class GlobalSearchTriggerComponent implements AfterViewInit {
 
   private detachOverlay(): void {
     this.overlayRef.detach();
-
-    const element = this.window.document.querySelector('ix-logo a');
-
-    if (element instanceof HTMLAnchorElement) {
-      element.focus();
-    }
-
     this.cdr.markForCheck();
   }
 }
