@@ -119,6 +119,7 @@
           *ngIf="checkQuotas"
           [ixTest]="[dataset.id, 'manage-user-quotas']"
           [routerLink]="['/', 'datasets', dataset.id, 'user-quotas']"
+          [ixUiSearch]="searchableElements.elements.manageUserQuotas"
         >
           {{ 'Manage User Quotas' | translate }}
         </a>
@@ -134,6 +135,7 @@
           *ngIf="checkQuotas"
           [ixTest]="[dataset.id, 'manage-group-quotas']"
           [routerLink]="['/', 'datasets', dataset.id, 'group-quotas']"
+          [ixUiSearch]="searchableElements.elements.manageGroupQuotas"
         >
           {{ 'Manage Group Quotas' | translate }}
         </a>
