@@ -4,7 +4,6 @@ import _ from 'lodash';
 import { filter } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
-import { rolesCardElements } from 'app/pages/datasets/components/roles-card/roles-card.elements';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
 import { ixApplications } from 'app/pages/datasets/utils/dataset.utils';
 import { NfsFormComponent } from 'app/pages/sharing/nfs/nfs-form/nfs-form.component';
@@ -25,7 +24,6 @@ export class RolesCardComponent {
 
   protected readonly nfsRequiredRoles = [Role.SharingNfsWrite, Role.SharingWrite];
   protected readonly smbRequiredRoles = [Role.SharingSmbWrite, Role.SharingWrite];
-  protected readonly searchableElements = rolesCardElements;
 
   get isApplications(): boolean {
     return this.dataset.name && this.dataset.name.endsWith(ixApplications);

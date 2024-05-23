@@ -21,10 +21,6 @@ export const dataProtectionCardElements = {
       hierarchy: [T('Manage Replication Tasks')],
       synonyms: [T('Replication Task Manager')],
     },
-    manageCloudSyncTasks: {
-      hierarchy: [T('Manage Cloud Sync Tasks')],
-      synonyms: [T('Cloud Sync Task Manager')],
-    },
     manageRsyncTasks: {
       hierarchy: [T('Manage Rsync Tasks')],
       synonyms: [T('Rsync Task Manager')],

@@ -1375,27 +1375,6 @@
   {
     "hierarchy": [
       "Datasets",
-      "Manage Cloud Sync Tasks"
-    ],
-    "synonyms": [
-      "Cloud Sync Task Manager",
-      "Datasets"
-    ],
-    "requiredRoles": [],
-    "anchorRouterLink": [
-      "/datasets"
-    ],
-    "routerLink": [
-      "/data-protection/cloudsync",
-      "dataset.id"
-    ],
-    "anchor": "manage-cloud-sync-tasks",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "Datasets",
       "Manage Rsync Tasks"
     ],
     "synonyms": [
@@ -1468,6 +1447,7 @@
     "synonyms": [
       "Add Volume",
       "Create Zvol",
+      "New Zvol",
       "Datasets"
     ],
     "requiredRoles": [
@@ -1489,6 +1469,7 @@
     "synonyms": [
       "Add Filesystem",
       "Create Dataset",
+      "New Dataset",
       "Datasets"
     ],
     "requiredRoles": [
@@ -1599,6 +1580,7 @@
     ],
     "synonyms": [
       "Dataset Permissions",
+      "ACL",
       "Datasets"
     ],
     "requiredRoles": [],
@@ -1623,48 +1605,6 @@
     ],
     "routerLink": null,
     "anchor": "datasets",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "Datasets",
-      "Create SMB Share"
-    ],
-    "synonyms": [
-      "Create Windows Share",
-      "Datasets"
-    ],
-    "requiredRoles": [
-      "SHARING_SMB_WRITE",
-      "SHARING_WRITE"
-    ],
-    "anchorRouterLink": [
-      "/datasets"
-    ],
-    "routerLink": null,
-    "anchor": "create-smb-share",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "Datasets",
-      "Create NFS Share"
-    ],
-    "synonyms": [
-      "Create Unix Share",
-      "Datasets"
-    ],
-    "requiredRoles": [
-      "SHARING_NFS_WRITE",
-      "SHARING_WRITE"
-    ],
-    "anchorRouterLink": [
-      "/datasets"
-    ],
-    "routerLink": null,
-    "anchor": "create-nfs-share",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -2601,6 +2541,30 @@
   {
     "hierarchy": [
       "Sharing",
+      "NFS",
+      "Create NFS Share"
+    ],
+    "synonyms": [
+      "Add NFS Share",
+      "New NFS Share",
+      "NFS"
+    ],
+    "requiredRoles": [
+      "SHARING_NFS_WRITE",
+      "SHARING_WRITE"
+    ],
+    "anchorRouterLink": [
+      "/sharing",
+      "nfs"
+    ],
+    "routerLink": null,
+    "anchor": "create-nfs-share",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Sharing",
       "NFS"
     ],
     "synonyms": [
@@ -2633,6 +2597,30 @@
     ],
     "routerLink": null,
     "anchor": "sharing-nfs-nfs-sessions",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Sharing",
+      "SMB",
+      "Create SMB Share"
+    ],
+    "synonyms": [
+      "Add SMB Share",
+      "New SMB Share",
+      "SMB"
+    ],
+    "requiredRoles": [
+      "SHARING_SMB_WRITE",
+      "SHARING_WRITE"
+    ],
+    "anchorRouterLink": [
+      "/sharing",
+      "smb"
+    ],
+    "routerLink": null,
+    "anchor": "create-smb-share",
     "triggerAnchor": null,
     "section": "ui"
   },
