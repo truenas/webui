@@ -6,5 +6,9 @@ export const smbListElements = {
   anchorRouterLink: ['/sharing', 'smb'],
   elements: {
     smbList: {},
+    createSmbShare: {
+      hierarchy: [T('Create SMB Share')],
+      synonyms: [T('Add SMB Share'), T('New SMB Share')],
+    },
   },
 } satisfies UiSearchableElement;
