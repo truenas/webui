@@ -13,10 +13,8 @@
     padding-left: 21px;
     row-gap: 20px;
 
-    &.full {
-      .icon-wrapper > a {
-        display: none;
-      }
+    &.full .icon-wrapper > a > span {
+      display: none;
     }
 
     &.half,
@@ -65,6 +63,7 @@
     max-width: 10%;
 
     .ix-icon {
+      color: var(--accent-txt);
       font-size: 2.5rem;
       height: 2.5rem;
       width: 2.5rem;
@@ -107,15 +106,9 @@
     max-width: 100%;
     text-align: center;
 
-    a {
-      ix-icon {
-        color: var(--accent-txt);
-      }
-
-      span {
-        display: block;
-        width: 100%;
-      }
+    a span {
+      display: block;
+      width: 100%;
     }
   }
 
