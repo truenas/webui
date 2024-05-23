@@ -4137,7 +4137,7 @@
       "System",
       "General",
       "GUI",
-      "IPv4 Address"
+      "IPv6 Address"
     ],
     "synonyms": [
       "Web Interface Address",
@@ -4149,7 +4149,7 @@
       "general"
     ],
     "routerLink": null,
-    "anchor": "ipv4-address",
+    "anchor": "ipv6-address",
     "triggerAnchor": null,
     "section": "ui"
   },

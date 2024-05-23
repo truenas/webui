@@ -33,7 +33,7 @@
           {{ generalConfig.ui_address.join(', ') }}
         </span>
       </mat-list-item>
-      <mat-list-item [ixUiSearch]="searchableElements.elements.ipv4Address">
+      <mat-list-item [ixUiSearch]="searchableElements.elements.ipv6Address">
         <span class="label">{{ helptext.ui_v6address.label | translate }}:</span>
         <span *ixWithLoadingState="generalConfig$ as generalConfig" class="value">
           {{ generalConfig.ui_v6address.join(', ') }}
