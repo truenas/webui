@@ -1,6 +1,4 @@
-import {
-  CommonModule, NgComponentOutlet, PercentPipe,
-} from '@angular/common';
+import { CommonModule, NgComponentOutlet } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -13,7 +11,6 @@ import { BaseChartDirective } from 'ng2-charts';
 import { ImgFallbackModule } from 'ngx-img-fallback';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { CoreComponents } from 'app/core/core-components.module';
-import { FormatDateTimePipe } from 'app/core/pipes/format-datetime.pipe';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { ChartsModule } from 'app/modules/charts/charts.module';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
@@ -67,15 +64,12 @@ import { UptimePipe } from 'app/pages/dashboard/widgets/system/common/uptime.pip
   providers: [
     DashboardStore,
     WidgetResourcesService,
-    FormatDateTimePipe,
-    PercentPipe,
   ],
   imports: [
     CoreComponents,
     IxFormsModule,
     ReactiveFormsModule,
     TranslateModule,
-    CoreComponents,
     AppLoaderModule,
     NgComponentOutlet,
     CommonDirectivesModule,
@@ -86,7 +80,6 @@ import { UptimePipe } from 'app/pages/dashboard/widgets/system/common/uptime.pip
     MatCard,
     IxIconModule,
     CommonModule,
-    CoreComponents,
     MatTooltipModule,
     BaseChartDirective,
     MatButtonModule,
@@ -106,7 +99,6 @@ import { UptimePipe } from 'app/pages/dashboard/widgets/system/common/uptime.pip
     MatListModule,
     EmptyComponent,
     ImgFallbackModule,
-    ChartsModule,
     InterfaceStatusIconComponent,
     IxFileSizeModule,
     UptimePipe,
