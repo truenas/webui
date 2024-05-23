@@ -25,7 +25,11 @@ describe('GlobalSearchTriggerComponent', () => {
       mockProvider(UiSearchProvider, {
         selectionChanged$: of(),
       }),
-      mockWindow(),
+      mockWindow({
+        document: {
+          querySelector: () => undefined as HTMLElement,
+        },
+      }),
     ],
   });
 
@@ -59,5 +63,14 @@ describe('GlobalSearchTriggerComponent', () => {
     spectator.click('input');
 
     expect(createdOverlay.attach).toHaveBeenCalledWith(expect.any(ComponentPortal));
+  });
+
+  it('hides overlay when Escape key is pressed', () => {
+    jest.spyOn(createdOverlay, 'detach');
+    spectator.click('input');
+
+    spectator.dispatchKeyboardEvent(document, 'keydown', 'Escape');
+
+    expect(createdOverlay.detach).toHaveBeenCalled();
   });
 });
