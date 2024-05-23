@@ -53,6 +53,7 @@ export class RYSNCConfigurationFormComponent {
         name: 'enabled',
         placeholder: helptext.rsyncmod_enabled_placeholder,
         tooltip: helptext.rsyncmod_enabled_tooltip,
+        value: false,
       }],
     },
     { name: 'spacer', label: false, width: '2%' },
