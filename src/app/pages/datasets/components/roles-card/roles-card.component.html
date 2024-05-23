@@ -59,7 +59,11 @@
       <div class="nfs-shares value">
         {{ 'Dataset is shared via NFS' | translate }}
       </div>
-      <a class="action" ixTest="manage-nfs-shares" [routerLink]="['/sharing/nfs']">
+      <a
+        class="action"
+        ixTest="manage-nfs-shares"
+        [routerLink]="['/sharing/nfs']"
+      >
         {{ 'Manage NFS Shares' | translate }}
       </a>
     </div>

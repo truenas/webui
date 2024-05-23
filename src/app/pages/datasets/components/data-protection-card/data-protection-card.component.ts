@@ -5,6 +5,7 @@ import { filter } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { dataProtectionCardElements } from 'app/pages/datasets/components/data-protection-card/data-protection-card.elements';
 import { SnapshotAddFormComponent } from 'app/pages/datasets/modules/snapshots/snapshot-add-form/snapshot-add-form.component';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
@@ -16,7 +17,8 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DataProtectionCardComponent {
-  readonly requiredRoles = [Role.SnapshotWrite];
+  protected readonly requiredRoles = [Role.SnapshotWrite];
+  protected readonly searchableElements = dataProtectionCardElements;
 
   @Input() dataset: DatasetDetails;
 

@@ -1,0 +1,11 @@
+@import 'scss-imports/cssvars';
+
+:host {
+  color: var(--alt-fg1);
+  display: inline-block;
+  pointer-events: none;
+
+  @media #{$media-lt-sm} {
+    display: none;
+  }
+}

@@ -12,6 +12,7 @@ import { Role } from 'app/enums/role.enum';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { datasetCapacityManagementElements } from 'app/pages/datasets/components/dataset-capacity-management-card/dataset-capacity-management-card.elements';
 import { DatasetCapacitySettingsComponent } from 'app/pages/datasets/components/dataset-capacity-management-card/dataset-capacity-settings/dataset-capacity-settings.component';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
@@ -28,7 +29,8 @@ import { WebSocketService } from 'app/services/ws.service';
 export class DatasetCapacityManagementCardComponent implements OnChanges, OnInit {
   @Input() dataset: DatasetDetails;
 
-  readonly requiredRoles = [Role.DatasetWrite];
+  protected readonly requiredRoles = [Role.DatasetWrite];
+  protected readonly searchableElements = datasetCapacityManagementElements;
 
   refreshQuotas$ = new Subject<void>();
   inheritedQuotasDataset: DatasetDetails;

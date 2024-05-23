@@ -1,4 +1,4 @@
-<div class="search-box" [class.hidden]="this.overlayRef?.hasAttached()">
+<div class="search-box" [class.hidden]="overlayRef?.hasAttached()">
   <ix-icon name="search" class="search-icon" (click)="showOverlay()"></ix-icon>
 
   <input
@@ -11,4 +11,10 @@
     (focus)="overlayRef.detach(); searchInput.blur(); showOverlay()"
     (blur)="overlayRef.detach()"
   />
+
+  <ix-keyboard-shortcut
+    class="shortcut"
+    key="/"
+    (keyPress)="showOverlay()"
+  ></ix-keyboard-shortcut>
 </div>
