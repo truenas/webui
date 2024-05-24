@@ -22,6 +22,7 @@ export class ProductImageComponent {
   hasEnclosureSupport = input.required<boolean>();
   isHaLicensed = input.required<boolean>();
   isIxHardware = input.required<boolean>();
+  showProductImageText = input<boolean>(true);
 
   isCertified = computed(() => this.systemProduct()?.includes('CERTIFIED'));
   product = computed(() => getServerProduct(this.systemProduct()));

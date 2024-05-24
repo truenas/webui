@@ -1,0 +1,18 @@
+<mat-card class="card">
+  <mat-card-content class="card-content">
+    <div class="header">
+      <h3>{{ name | translate }}</h3>
+    </div>
+
+    <div [class]="['container', size()]">
+      <ix-product-image
+        [systemProduct]="systemInfo()?.platform"
+        [hasEnclosureSupport]="hasEnclosureSupport()"
+        [isHaLicensed]="isHaLicensed()"
+        [isEnterprise]="isEnterprise()"
+        [isIxHardware]="isIxHardware()"
+        [showProductImageText]="false"
+      ></ix-product-image>
+    </div>
+  </mat-card-content>
+</mat-card>
