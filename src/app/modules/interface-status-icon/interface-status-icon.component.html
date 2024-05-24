@@ -1,15 +1,5 @@
 <ix-icon
-  *ngIf="update?.link_state === LinkState.Up; else disabledIcon"
-  #stateIcon
-  name="ix:network_upload_download"
-  class="state-info-icon"
+  [name]="isLinkUp() ? 'ix:network_upload_download' : 'ix:network_upload_download_disabled'"
   [id]="elementId"
-  [matTooltip]="tooltipText"
+  [matTooltip]="tooltipText()"
 ></ix-icon>
-
-<ng-template #disabledIcon>
-  <ix-icon
-    name="ix:network_upload_download_disabled"
-    class="state-info-icon"
-  ></ix-icon>
-</ng-template>
