@@ -35,7 +35,7 @@ export class WidgetSysInfoActiveComponent {
     filter((state) => !state.isLoading),
     map((state) => state.value),
   ));
-  elapsedSeconds = toSignal(this.resources.fiveSecondsRefreshInteval$.pipe(
+  elapsedSeconds = toSignal(this.resources.fiveSecondsRefreshInterval$.pipe(
     map((iteration) => (iteration ? iteration * 5 : 0)),
   ));
 

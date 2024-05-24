@@ -44,7 +44,7 @@ export class WidgetSysInfoPassiveComponent {
     filter((state) => !state.isLoading),
     map((state) => state.value.remote_info),
   ));
-  elapsedSeconds = toSignal(this.resources.fiveSecondsRefreshInteval$.pipe(
+  elapsedSeconds = toSignal(this.resources.fiveSecondsRefreshInterval$.pipe(
     map((iteration) => (iteration ? iteration * 5 : 0)),
   ));
 
