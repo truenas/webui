@@ -40,6 +40,8 @@ import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { searchDelayConst } from 'app/modules/global-search/constants/delay.const';
+import { UiSearchDirectivesService } from 'app/modules/global-search/services/ui-search-directives.service';
 import { TreeDataSource } from 'app/modules/ix-tree/tree-datasource';
 import { TreeFlattener } from 'app/modules/ix-tree/tree-flattener';
 import { datasetManagementElements } from 'app/pages/datasets/components/dataset-management/dataset-management.elements';
@@ -117,6 +119,7 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
     private errorHandler: ErrorHandlerService,
     private dialogService: DialogService,
     private breakpointObserver: BreakpointObserver,
+    private searchDirectives: UiSearchDirectivesService,
     @Inject(WINDOW) private window: Window,
   ) {
     this.router.events
@@ -178,6 +181,10 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
     this.isLoading$.pipe(untilDestroyed(this)).subscribe((isLoading) => {
       this.isLoading = isLoading;
       this.cdr.markForCheck();
+
+      if (!isLoading) {
+        setTimeout(() => this.handlePendingGlobalSearchElement(), searchDelayConst * 2);
+      }
     });
   }
 
@@ -331,5 +338,13 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
           },
         }),
     );
+  }
+
+  private handlePendingGlobalSearchElement(): void {
+    const pendingHighlightElement = this.searchDirectives.pendingUiHighlightElement;
+
+    if (pendingHighlightElement) {
+      this.searchDirectives.get(pendingHighlightElement)?.highlight(pendingHighlightElement);
+    }
   }
 }

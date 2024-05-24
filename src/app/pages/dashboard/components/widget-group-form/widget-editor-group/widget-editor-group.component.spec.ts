@@ -34,7 +34,7 @@ describe('WidgetEditorGroupComponent - additions', () => {
           layout: WidgetGroupLayout.Quarters,
           slots: [
             { type: WidgetType.Hostname },
-            { type: WidgetType.InterfaceIp },
+            { type: WidgetType.Ipv4Address },
             { type: WidgetType.Hostname },
             { type: WidgetType.Hostname },
           ],

@@ -7,6 +7,7 @@ import {
 import { SystemUpdateStatus } from 'app/enums/system-update.enum';
 import { toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import { Dataset } from 'app/interfaces/dataset.interface';
+import { Pool } from 'app/interfaces/pool.interface';
 import { ReportingData } from 'app/interfaces/reporting.interface';
 import { VolumesData, VolumeData } from 'app/interfaces/volume-data.interface';
 import { WebSocketService } from 'app/services/ws.service';
@@ -84,6 +85,13 @@ export class WidgetResourcesService {
           start: Math.floor(sub(serverTime, { hours: 1 }).getTime() / 1000),
         }]);
       }),
+      shareReplay({ bufferSize: 1, refCount: true }),
+    );
+  }
+
+  getPoolById(poolId: number): Observable<Pool> {
+    return this.ws.call('pool.query', [[['id', '=', +poolId]]]).pipe(
+      map((pools) => pools[0]),
       shareReplay({ bufferSize: 1, refCount: true }),
     );
   }

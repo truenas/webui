@@ -1,6 +1,7 @@
+import { Type } from '@angular/core';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { WidgetCategory } from 'app/pages/dashboard/types/widget-category.enum';
-import { dashboardWidget, WidgetDefinition } from 'app/pages/dashboard/types/widget-component.interface';
+import { WidgetSettingsComponent, dashboardWidget } from 'app/pages/dashboard/types/widget-component.interface';
 import { SlotSize } from 'app/pages/dashboard/types/widget.interface';
 import {
   WidgetInterfaceIpSettingsComponent,
@@ -11,12 +12,21 @@ import {
 
 export interface WidgetInterfaceIpSettings {
   interface: string;
+  widgetName?: string;
 }
 
-export const interfaceIpWidget = dashboardWidget<WidgetInterfaceIpSettings>({
-  name: T('IPv4 Datapoint'),
+export const ipv4AddressWidget = dashboardWidget({
+  name: T('IPv4 Address'),
   component: WidgetInterfaceIpComponent,
   category: WidgetCategory.Network,
-  settingsComponent: WidgetInterfaceIpSettingsComponent,
+  settingsComponent: WidgetInterfaceIpSettingsComponent as Type<WidgetSettingsComponent>,
   supportedSizes: [SlotSize.Full, SlotSize.Half, SlotSize.Quarter],
-} as WidgetDefinition<WidgetInterfaceIpSettings, WidgetInterfaceIpComponent, WidgetInterfaceIpSettingsComponent>);
+});
+
+export const ipv6AddressWidget = dashboardWidget({
+  name: T('IPv6 Address'),
+  component: WidgetInterfaceIpComponent,
+  category: WidgetCategory.Network,
+  settingsComponent: WidgetInterfaceIpSettingsComponent as Type<WidgetSettingsComponent>,
+  supportedSizes: [SlotSize.Full, SlotSize.Half, SlotSize.Quarter],
+});

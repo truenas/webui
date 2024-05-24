@@ -1,7 +1,13 @@
 <mat-card class="card">
   <mat-card-header>
     <h3 mat-card-title>{{ 'Data Protection' | translate }}</h3>
-    <button *ixRequiresRoles="requiredRoles" mat-button ixTest="create-snapshot" (click)="addSnapshot()">
+    <button
+      *ixRequiresRoles="requiredRoles"
+      mat-button
+      ixTest="create-snapshot"
+      [ixUiSearch]="searchableElements.elements.createSnapshot"
+      (click)="addSnapshot()"
+    >
       {{ 'Create Snapshot' | translate }}
     </button>
   </mat-card-header>
@@ -9,7 +15,12 @@
     <div class="details-item">
       <div class="label">{{ 'Total Snapshots' | translate }}:</div>
       <div class="total-snapshots value">{{ dataset.snapshot_count }}</div>
-      <a class="action" ixTest="manage-snapshots" [routerLink]="['/datasets/snapshots', dataset.id]">
+      <a
+        class="action"
+        ixTest="manage-snapshots"
+        [routerLink]="['/datasets/snapshots', dataset.id]"
+        [ixUiSearch]="searchableElements.elements.manageSnapshots"
+      >
         {{ 'Manage Snapshots' | translate }}
       </a>
     </div>
@@ -20,6 +31,7 @@
         class="action"
         ixTest="manage-snapshot-tasks"
         [routerLink]="['/data-protection/snapshot', dataset.id]"
+        [ixUiSearch]="searchableElements.elements.manageSnapshotTasks"
       >
         {{ 'Manage Snapshot Tasks' | translate }}
       </a>
@@ -33,6 +45,7 @@
         class="action"
         ixTest="manage-replication-tasks"
         [routerLink]="['/data-protection/replication', dataset.id]"
+        [ixUiSearch]="searchableElements.elements.manageReplicationTasks"
       >
         {{ 'Manage Replication Tasks' | translate }}
       </a>
@@ -53,7 +66,12 @@
     <div class="details-item">
       <div class="label">{{ 'Rsync Tasks' | translate }}:</div>
       <div class="rsync-tasks value">{{ dataset.rsync_tasks_count }}</div>
-      <a class="action" ixTest="manage-rsync-tasks" [routerLink]="['/data-protection/rsync', dataset.id]">
+      <a
+        class="action"
+        ixTest="manage-rsync-tasks"
+        [routerLink]="['/data-protection/rsync', dataset.id]"
+        [ixUiSearch]="searchableElements.elements.manageRsyncTasks"
+      >
         {{ 'Manage Rsync Tasks' | translate }}
       </a>
     </div>

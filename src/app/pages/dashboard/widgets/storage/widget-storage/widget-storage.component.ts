@@ -25,6 +25,7 @@ import {
   templateUrl: './widget-storage.component.html',
   styleUrl: './widget-storage.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  providers: [FormatDateTimePipe, PercentPipe],
 })
 export class WidgetStorageComponent {
   size = input.required<SlotSize>();
