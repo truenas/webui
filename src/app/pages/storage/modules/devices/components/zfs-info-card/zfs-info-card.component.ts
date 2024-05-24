@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, EventEmitter, Input, Output,
+  ChangeDetectionStrategy, Component, computed, input, output,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -8,13 +8,18 @@ import { filter, switchMap, tap } from 'rxjs/operators';
 import { Role } from 'app/enums/role.enum';
 import { VdevType, TopologyItemType } from 'app/enums/v-dev-type.enum';
 import { TopologyItemStatus } from 'app/enums/vdev-status.enum';
-import { Disk, isTopologyDisk, TopologyItem } from 'app/interfaces/storage.interface';
+import {
+  Disk, isTopologyDisk, TopologyItem, VDev,
+} from 'app/interfaces/storage.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import {
   ExtendDialogComponent, ExtendDialogParams,
 } from 'app/pages/storage/modules/devices/components/zfs-info-card/extend-dialog/extend-dialog.component';
+import {
+  RaidzExtendDialogComponent, RaidzExtendDialogParams,
+} from 'app/pages/storage/modules/devices/components/zfs-info-card/raidz-extend-dialog/raidz-extend-dialog.component';
 import { DevicesStore } from 'app/pages/storage/modules/devices/stores/devices-store.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -29,81 +34,71 @@ const raidzItems = [TopologyItemType.Raidz, TopologyItemType.Raidz1, TopologyIte
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ZfsInfoCardComponent {
-  @Input() topologyItem: TopologyItem;
-  @Input() topologyParentItem: TopologyItem;
-  @Input() disk: Disk;
-  @Input() topologyCategory: VdevType;
-  @Input() poolId: number;
-  @Input() hasTopLevelRaidz: boolean;
+  readonly topologyItem = input.required<TopologyItem>();
+  readonly topologyParentItem = input<TopologyItem>();
+  readonly disk = input<Disk>();
+  readonly topologyCategory = input<VdevType>();
+  readonly poolId = input.required<number>();
+  readonly hasTopLevelRaidz = input<boolean>();
 
-  @Output() deviceRemoved = new EventEmitter<void>();
+  readonly deviceRemoved = output();
 
   protected readonly Role = Role;
 
-  get isMirror(): boolean {
-    return this.topologyItem.type === TopologyItemType.Mirror;
-  }
+  readonly isMirror = computed(() => this.topologyItem().type === TopologyItemType.Mirror);
+  readonly isRaidz = computed(() => raidzItems.includes(this.topologyItem().type));
 
-  get isRaidzParent(): boolean {
-    return raidzItems.includes(this.topologyParentItem.type);
-  }
+  readonly isRaidzParent = computed(() => raidzItems.includes(this.topologyParentItem().type));
 
-  get isDraidOrMirrorParent(): boolean {
+  readonly isDraidOrMirrorParent = computed(() => {
     return [
       TopologyItemType.Mirror,
       TopologyItemType.Draid,
-    ].includes(this.topologyParentItem.type);
-  }
+    ].includes(this.topologyParentItem().type);
+  });
 
-  get isDisk(): boolean {
-    return isTopologyDisk(this.topologyItem);
-  }
+  readonly isDisk = computed(() => isTopologyDisk(this.topologyItem()));
 
-  get canExtendDisk(): boolean {
-    return !this.isDraidOrMirrorParent
-      && !this.isRaidzParent
-      && this.topologyItem.type === TopologyItemType.Disk
-      && (this.topologyCategory === VdevType.Data
-        || this.topologyCategory === VdevType.Dedup
-        || this.topologyCategory === VdevType.Special
-        || this.topologyCategory === VdevType.Log
-      ) && this.topologyItem.status !== TopologyItemStatus.Unavail;
-  }
+  readonly canExtendDisk = computed(() => {
+    return !this.isDraidOrMirrorParent()
+      && !this.isRaidzParent()
+      && this.topologyItem().type === TopologyItemType.Disk
+      && [VdevType.Data, VdevType.Dedup, VdevType.Special, VdevType.Log].includes(this.topologyCategory())
+      && this.topologyItem().status !== TopologyItemStatus.Unavail;
+  });
 
-  get canRemoveDisk(): boolean {
-    return !this.isDraidOrMirrorParent
-    && !this.isRaidzParent
-    && (!this.hasTopLevelRaidz
-    || this.topologyCategory === VdevType.Cache
-    || this.topologyCategory === VdevType.Log
-    || this.topologyCategory === VdevType.Spare);
-  }
+  readonly canRemoveDisk = computed(() => {
+    return !this.isDraidOrMirrorParent()
+      && !this.isRaidzParent()
+      && (
+        !this.hasTopLevelRaidz()
+        || [VdevType.Cache, VdevType.Log, VdevType.Spare].includes(this.topologyCategory())
+      );
+  });
 
-  get canRemoveVDEV(): boolean {
-    return !this.hasTopLevelRaidz
-    || this.topologyCategory === VdevType.Cache
-    || this.topologyCategory === VdevType.Log;
-  }
+  readonly canRemoveVdev = computed(() => {
+    return !this.hasTopLevelRaidz() || [VdevType.Cache, VdevType.Log].includes(this.topologyCategory());
+  });
 
-  get canDetachDisk(): boolean {
+  readonly canDetachDisk = computed(() => {
     return [
       TopologyItemType.Mirror,
       TopologyItemType.Replacing,
       TopologyItemType.Spare,
-    ].includes(this.topologyParentItem.type);
-  }
+    ].includes(this.topologyParentItem().type);
+  });
 
-  get canOfflineDisk(): boolean {
-    return this.topologyItem.status !== TopologyItemStatus.Offline
-      && ![VdevType.Spare, VdevType.Cache].includes(this.topologyCategory)
-      && this.topologyItem.status !== TopologyItemStatus.Unavail;
-  }
+  readonly canOfflineDisk = computed(() => {
+    return this.topologyItem().status !== TopologyItemStatus.Offline
+      && this.topologyItem().status !== TopologyItemStatus.Unavail
+      && ![VdevType.Spare, VdevType.Cache].includes(this.topologyCategory());
+  });
 
-  get canOnlineDisk(): boolean {
-    return this.topologyItem.status !== TopologyItemStatus.Online
-      && ![VdevType.Spare, VdevType.Cache].includes(this.topologyCategory)
-      && this.topologyItem.status !== TopologyItemStatus.Unavail;
-  }
+  readonly canOnlineDisk = computed(() => {
+    return this.topologyItem().status !== TopologyItemStatus.Online
+      && this.topologyItem().status !== TopologyItemStatus.Unavail
+      && ![VdevType.Spare, VdevType.Cache].includes(this.topologyCategory());
+  });
 
   constructor(
     private errorHandler: ErrorHandlerService,
@@ -119,12 +114,12 @@ export class ZfsInfoCardComponent {
   onOffline(): void {
     this.dialogService.confirm({
       title: this.translate.instant('Offline Disk'),
-      message: this.translate.instant('Offline disk {name}?', { name: this.disk?.devname || this.topologyItem.guid }),
+      message: this.translate.instant('Offline disk {name}?', { name: this.disk()?.devname || this.topologyItem().guid }),
       buttonText: this.translate.instant('Offline'),
     }).pipe(
       filter(Boolean),
       switchMap(() => {
-        return this.ws.call('pool.offline', [this.poolId, { label: this.topologyItem.guid }]).pipe(
+        return this.ws.call('pool.offline', [this.poolId(), { label: this.topologyItem().guid }]).pipe(
           this.loader.withLoader(),
           this.errorHandler.catchError(),
           tap(() => this.devicesStore.reloadList()),
@@ -138,12 +133,12 @@ export class ZfsInfoCardComponent {
   onOnline(): void {
     this.dialogService.confirm({
       title: this.translate.instant('Online Disk'),
-      message: this.translate.instant('Online disk {name}?', { name: this.disk?.devname || this.topologyItem.guid }),
+      message: this.translate.instant('Online disk {name}?', { name: this.disk()?.devname || this.topologyItem().guid }),
       buttonText: this.translate.instant('Online'),
     }).pipe(
       filter(Boolean),
       switchMap(() => {
-        return this.ws.call('pool.online', [this.poolId, { label: this.topologyItem.guid }]).pipe(
+        return this.ws.call('pool.online', [this.poolId(), { label: this.topologyItem().guid }]).pipe(
           this.loader.withLoader(),
           this.errorHandler.catchError(),
           tap(() => this.devicesStore.reloadList()),
@@ -156,12 +151,12 @@ export class ZfsInfoCardComponent {
   onDetach(): void {
     this.dialogService.confirm({
       title: this.translate.instant('Detach Disk'),
-      message: this.translate.instant('Detach disk {name}?', { name: this.disk?.devname || this.topologyItem.guid }),
+      message: this.translate.instant('Detach disk {name}?', { name: this.disk()?.devname || this.topologyItem().guid }),
       buttonText: this.translate.instant('Detach'),
     }).pipe(
       filter(Boolean),
       switchMap(() => {
-        return this.ws.call('pool.detach', [this.poolId, { label: this.topologyItem.guid }]).pipe(
+        return this.ws.call('pool.detach', [this.poolId(), { label: this.topologyItem().guid }]).pipe(
           this.loader.withLoader(),
           this.errorHandler.catchError(),
           tap(() => this.devicesStore.reloadList()),
@@ -176,14 +171,14 @@ export class ZfsInfoCardComponent {
       title: this.translate.instant('Remove device'),
       message: this.translate.instant(
         'Remove device {name}?',
-        { name: this.isDisk ? this.disk?.devname || this.topologyItem.guid : this.topologyItem.name },
+        { name: this.isDisk() ? this.disk()?.devname || this.topologyItem().guid : this.topologyItem().name },
       ),
       buttonText: this.translate.instant('Remove'),
     }).pipe(
       filter(Boolean),
       switchMap(() => {
         return this.dialogService.jobDialog(
-          this.ws.job('pool.remove', [this.poolId, { label: this.topologyItem.guid }]),
+          this.ws.job('pool.remove', [this.poolId(), { label: this.topologyItem().guid }]),
           { title: this.translate.instant('Remove device') },
         )
           .afterClosed()
@@ -200,9 +195,26 @@ export class ZfsInfoCardComponent {
   onExtend(): void {
     this.matDialog.open(ExtendDialogComponent, {
       data: {
-        poolId: this.poolId,
-        targetVdevGuid: this.topologyItem.guid,
+        poolId: this.poolId(),
+        targetVdevGuid: this.topologyItem().guid,
       } as ExtendDialogParams,
+    })
+      .afterClosed()
+      .pipe(
+        filter(Boolean),
+        untilDestroyed(this),
+      )
+      .subscribe(() => {
+        this.devicesStore.reloadList();
+      });
+  }
+
+  onRaidzExtend(): void {
+    this.matDialog.open(RaidzExtendDialogComponent, {
+      data: {
+        poolId: this.poolId(),
+        vdev: this.topologyItem() as VDev,
+      } as RaidzExtendDialogParams,
     })
       .afterClosed()
       .pipe(
