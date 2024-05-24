@@ -1,7 +1,13 @@
 import { Overlay, OverlayConfig, OverlayRef } from '@angular/cdk/overlay';
 import { ComponentPortal } from '@angular/cdk/portal';
 import {
-  AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, ViewContainerRef,
+  AfterViewInit,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  HostListener,
+  Inject,
+  ViewContainerRef,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { delay, take } from 'rxjs';
@@ -59,7 +65,11 @@ export class GlobalSearchTriggerComponent implements AfterViewInit {
       .subscribe(() => this.detachOverlay());
   }
 
+  @HostListener('document:keydown.escape')
   private detachOverlay(): void {
+    if (!this.overlayRef.hasAttached()) {
+      return;
+    }
     this.overlayRef.detach();
 
     const element = this.window.document.querySelector('ix-logo a');
