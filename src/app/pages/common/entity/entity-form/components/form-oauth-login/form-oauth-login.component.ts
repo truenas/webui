@@ -35,6 +35,9 @@ export class FormOauthLoginComponent implements Field {
   }
 
   doAuth(message: OauthJiraMessage): void {
+    if (message.origin !== 'https://www.truenas.com') {
+      return;
+    }
     const token = message.data as string;
     this.group.controls[this.config.name].setValue(token);
   }

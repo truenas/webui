@@ -285,6 +285,9 @@ export class EmailComponent implements OnDestroy {
             window.addEventListener('message', doAuth, false);
 
             function doAuth(message) {
+              if (message.origin !== 'https://www.truenas.com') {
+                return;
+              }
               if (message.data.oauth_portal) {
                 if (message.data.error) {
                   dialogService.errorReport(T('Error'), message.data.error);
