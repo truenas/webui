@@ -1,9 +1,10 @@
 import { NgModule } from '@angular/core';
 import { MatIconRegistry } from '@angular/material/icon';
-import { FakeMatIconRegistry } from '@angular/material/icon/testing';
+import { FakeMatIconRegistry, MatIconTestingModule } from '@angular/material/icon/testing';
 import { IxIconRegistry } from 'app/modules/ix-icon/ix-icon.service';
 
 @NgModule({
+  imports: [MatIconTestingModule],
   providers: [
     { provide: IxIconRegistry, useClass: FakeMatIconRegistry },
     { provide: MatIconRegistry, useClass: FakeMatIconRegistry },

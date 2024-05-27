@@ -32,7 +32,7 @@ import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 })
 export class InterfaceStatusIconComponent {
   update = input<NetworkInterfaceUpdate>();
-  @ViewChild(IxIconComponent) stateIcon: IxIconComponent;
+  @ViewChild('stateIcon') stateIcon: IxIconComponent;
 
   protected elementId: string;
   private minRate = KiB;
@@ -73,7 +73,7 @@ export class InterfaceStatusIconComponent {
   }
 
   updateStateInfoIcon(type: 'sent' | 'received'): void {
-    if (!this.stateIcon) {
+    if (!this.stateIcon?._elementRef?.nativeElement) {
       return;
     }
     const [inIcon, outIcon] = this.stateIcon._elementRef.nativeElement.querySelectorAll('.arrow');
