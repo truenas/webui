@@ -8,17 +8,17 @@ export const selectHaInfoState = createFeatureSelector<HaInfoState>(haInfoStateK
 
 export const selectHaStatus = createSelector(
   selectHaInfoState,
-  (state) => state.haStatus,
+  (state) => state?.haStatus,
 );
 
 export const selectIsHaLicensed = createSelector(
   selectHaInfoState,
-  (state) => state.isHaLicensed,
+  (state) => state?.isHaLicensed || false,
 );
 
 export const selectIsUpgradePending = createSelector(
   selectHaInfoState,
-  (state) => state.isUpgradePending,
+  (state) => state?.isUpgradePending || false,
 );
 
 export const selectCanFailover = createSelector(
