@@ -1245,6 +1245,9 @@ export class CloudCredentialsFormComponent {
         window.addEventListener('message', doAuth, false);
 
         function doAuth(message) {
+          if (message.origin !== 'https://www.truenas.com') {
+            return;
+          }
           window.removeEventListener('message', doAuth);
           if (message.data.oauth_portal) {
             if (message.data.error) {
