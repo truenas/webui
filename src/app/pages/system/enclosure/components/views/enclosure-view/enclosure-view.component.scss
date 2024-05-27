@@ -1,3 +1,9 @@
+:host ::ng-deep {
+  .mat-mdc-card {
+    margin: 0;
+  }
+}
+
 .container {
   align-items: center;
   background: black;
@@ -14,6 +20,8 @@
 }
 
 .horizontal-container {
+  background: var(--bg1);
+  column-gap: 5px;
   display: flex;
   width: 100%;
 }
