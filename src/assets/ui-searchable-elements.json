@@ -37,6 +37,11 @@
     "synonyms": [
       "Toolbar",
       "Sign Out",
+      "Logout",
+      "Logoff",
+      "End session",
+      "Exit",
+      "Drop session",
       "Power Menu"
     ],
     "requiredRoles": [],
@@ -90,6 +95,17 @@
       "Send Feedback"
     ],
     "synonyms": [
+      "Bug",
+      "Feature Request",
+      "Suggestion",
+      "Improvement",
+      "Review",
+      "Report Bug",
+      "Jira",
+      "Ticket",
+      "Issue",
+      "Defect",
+      "File Ticket",
       "Toolbar"
     ],
     "requiredRoles": [],
@@ -104,6 +120,7 @@
       "Alerts"
     ],
     "synonyms": [
+      "Notifications",
       "Toolbar"
     ],
     "requiredRoles": [],
@@ -135,6 +152,11 @@
     ],
     "synonyms": [
       "Toolbar",
+      "Update Password",
+      "Set new password",
+      "Reset password",
+      "New password",
+      "User password",
       "Settings Menu"
     ],
     "requiredRoles": [],
@@ -1838,6 +1860,11 @@
       "Jobs"
     ],
     "synonyms": [
+      "Jobs History",
+      "Completed Jobs",
+      "Failed Jobs",
+      "Jobs in progress",
+      "History",
       "Jobs"
     ],
     "requiredRoles": [],
@@ -1956,6 +1983,34 @@
   {
     "hierarchy": [
       "Reporting",
+      "Reporting Exporters",
+      "Add"
+    ],
+    "synonyms": [
+      "Add Exporter",
+      "New Exporter",
+      "Create Exporter",
+      "Exporter",
+      "Add Reporting Exporter",
+      "New Reporting Exporter",
+      "Create Reporting Exporter",
+      "Reporting Exporters"
+    ],
+    "requiredRoles": [
+      "REPORTING_WRITE"
+    ],
+    "anchorRouterLink": [
+      "/reportsdashboard",
+      "exporters"
+    ],
+    "routerLink": null,
+    "anchor": "add",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Reporting",
       "Reporting Exporters"
     ],
     "synonyms": [
@@ -1985,7 +2040,7 @@
     ],
     "routerLink": null,
     "anchor": "select-reporting",
-    "triggerAnchor": "select-reporting",
+    "triggerAnchor": null,
     "section": "ui"
   },
   {
@@ -1995,6 +2050,8 @@
     ],
     "synonyms": [
       "Processor",
+      "CPU Stats",
+      "CPU Utilization",
       "Reporting"
     ],
     "requiredRoles": [],
@@ -2004,7 +2061,7 @@
     ],
     "routerLink": null,
     "anchor": "cpu",
-    "triggerAnchor": "select-reporting",
+    "triggerAnchor": null,
     "section": "ui"
   },
   {
@@ -2014,6 +2071,11 @@
     ],
     "synonyms": [
       "Device",
+      "Disks",
+      "Disk IO",
+      "Disk I/O",
+      "disk stats",
+      "disk writes",
       "Reporting"
     ],
     "requiredRoles": [],
@@ -2023,7 +2085,7 @@
     ],
     "routerLink": null,
     "anchor": "disk",
-    "triggerAnchor": "select-reporting",
+    "triggerAnchor": null,
     "section": "ui"
   },
   {
@@ -2033,6 +2095,10 @@
     ],
     "synonyms": [
       "RAM",
+      "Free RAM",
+      "Memory Usage",
+      "Memory Stats",
+      "Memory Utilization",
       "Reporting"
     ],
     "requiredRoles": [],
@@ -2042,7 +2108,7 @@
     ],
     "routerLink": null,
     "anchor": "memory",
-    "triggerAnchor": "select-reporting",
+    "triggerAnchor": null,
     "section": "ui"
   },
   {
@@ -2051,6 +2117,11 @@
       "Network"
     ],
     "synonyms": [
+      "Network Stats",
+      "Network Utilization",
+      "Network Usage",
+      "Traffic",
+      "Network Traffic",
       "Reporting"
     ],
     "requiredRoles": [],
@@ -2060,7 +2131,7 @@
     ],
     "routerLink": null,
     "anchor": "network",
-    "triggerAnchor": "select-reporting",
+    "triggerAnchor": null,
     "section": "ui"
   },
   {
@@ -2069,6 +2140,8 @@
       "NFS"
     ],
     "synonyms": [
+      "NFS Stats",
+      "NFS Utilization",
       "Reporting"
     ],
     "requiredRoles": [],
@@ -2078,7 +2151,7 @@
     ],
     "routerLink": null,
     "anchor": "nfs",
-    "triggerAnchor": "select-reporting",
+    "triggerAnchor": null,
     "section": "ui"
   },
   {
@@ -2087,6 +2160,9 @@
       "Partition"
     ],
     "synonyms": [
+      "Partitions",
+      "Partition Stats",
+      "Partition Utilization",
       "Reporting"
     ],
     "requiredRoles": [],
@@ -2096,7 +2172,7 @@
     ],
     "routerLink": null,
     "anchor": "partition",
-    "triggerAnchor": "select-reporting",
+    "triggerAnchor": null,
     "section": "ui"
   },
   {
@@ -2105,6 +2181,9 @@
       "System"
     ],
     "synonyms": [
+      "System Stats",
+      "System Utilization",
+      "Uptime",
       "Reporting"
     ],
     "requiredRoles": [],
@@ -2114,7 +2193,7 @@
     ],
     "routerLink": null,
     "anchor": "system",
-    "triggerAnchor": "select-reporting",
+    "triggerAnchor": null,
     "section": "ui"
   },
   {
@@ -2123,6 +2202,8 @@
       "Target"
     ],
     "synonyms": [
+      "Target Stats",
+      "Target Utilization",
       "Reporting"
     ],
     "requiredRoles": [],
@@ -2132,7 +2213,7 @@
     ],
     "routerLink": null,
     "anchor": "target",
-    "triggerAnchor": "select-reporting",
+    "triggerAnchor": null,
     "section": "ui"
   },
   {
@@ -2141,6 +2222,8 @@
       "UPS"
     ],
     "synonyms": [
+      "UPS Stats",
+      "UPS Utilization",
       "Reporting"
     ],
     "requiredRoles": [],
@@ -2150,7 +2233,7 @@
     ],
     "routerLink": null,
     "anchor": "ups",
-    "triggerAnchor": "select-reporting",
+    "triggerAnchor": null,
     "section": "ui"
   },
   {
@@ -2159,6 +2242,9 @@
       "ZFS"
     ],
     "synonyms": [
+      "ZFS Reports",
+      "ZFS Stats",
+      "ZFS Utilization",
       "Reporting"
     ],
     "requiredRoles": [],
@@ -2168,7 +2254,25 @@
     ],
     "routerLink": null,
     "anchor": "zfs",
-    "triggerAnchor": "select-reporting",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Reporting",
+      "Netdata"
+    ],
+    "synonyms": [
+      "View Netdata",
+      "Reporting"
+    ],
+    "requiredRoles": [],
+    "anchorRouterLink": [
+      "/reportsdashboard"
+    ],
+    "routerLink": null,
+    "anchor": "netdata",
+    "triggerAnchor": null,
     "section": "ui"
   },
   {
@@ -2736,6 +2840,11 @@
       "Shell"
     ],
     "synonyms": [
+      "CLI",
+      "Terminal",
+      "Console",
+      "Command Line Interface",
+      "Prompt",
       "Shell"
     ],
     "requiredRoles": [],
@@ -3999,6 +4108,9 @@
       "Alert Services"
     ],
     "synonyms": [
+      "Alerts",
+      "Configure Notifications",
+      "Configure Alerts",
       "Alert Services"
     ],
     "requiredRoles": [],
@@ -4015,10 +4127,43 @@
   {
     "hierarchy": [
       "System",
+      "Alert Settings",
+      "Alert Services",
+      "Add"
+    ],
+    "synonyms": [
+      "Alerts",
+      "Configure Notifications",
+      "Configure Alerts",
+      "Alerts",
+      "Configure Alerts",
+      "Create Alert",
+      "Add Alert",
+      "New Alert",
+      "Notifications",
+      "Alert Services"
+    ],
+    "requiredRoles": [
+      "ALERT_LIST_WRITE"
+    ],
+    "anchorRouterLink": [
+      "/system",
+      "alert-settings",
+      "services"
+    ],
+    "routerLink": null,
+    "anchor": "add",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "System",
       "Boot Environments",
       "Stats/Settings"
     ],
     "synonyms": [
+      "Create boot environment",
       "Boot Environments"
     ],
     "requiredRoles": [
@@ -4040,6 +4185,7 @@
       "Scrub Boot Pool"
     ],
     "synonyms": [
+      "Create boot environment",
       "Boot Environments"
     ],
     "requiredRoles": [
@@ -4060,6 +4206,7 @@
       "Boot Environments"
     ],
     "synonyms": [
+      "Create boot environment",
       "Boot Environments"
     ],
     "requiredRoles": [],
@@ -4196,6 +4343,30 @@
       "System",
       "General",
       "Email",
+      "Configure"
+    ],
+    "synonyms": [
+      "Send Test Email",
+      "Config Email",
+      "Set email",
+      "Configure Email",
+      "Email"
+    ],
+    "requiredRoles": [],
+    "anchorRouterLink": [
+      "/system",
+      "general"
+    ],
+    "routerLink": null,
+    "anchor": "configure",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "System",
+      "General",
+      "Email",
       "Send Method"
     ],
     "synonyms": [
@@ -4268,6 +4439,191 @@
     ],
     "routerLink": null,
     "anchor": "theme",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "System",
+      "General",
+      "GUI",
+      "SSL Certificate"
+    ],
+    "synonyms": [
+      "GUI"
+    ],
+    "requiredRoles": [],
+    "anchorRouterLink": [
+      "/system",
+      "general"
+    ],
+    "routerLink": null,
+    "anchor": "ssl-certificate",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "System",
+      "General",
+      "GUI",
+      "IPv4 Address"
+    ],
+    "synonyms": [
+      "Web Interface Address",
+      "GUI"
+    ],
+    "requiredRoles": [],
+    "anchorRouterLink": [
+      "/system",
+      "general"
+    ],
+    "routerLink": null,
+    "anchor": "ipv4-address",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "System",
+      "General",
+      "GUI",
+      "IPv6 Address"
+    ],
+    "synonyms": [
+      "Web Interface Address",
+      "GUI"
+    ],
+    "requiredRoles": [],
+    "anchorRouterLink": [
+      "/system",
+      "general"
+    ],
+    "routerLink": null,
+    "anchor": "ipv6-address",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "System",
+      "General",
+      "GUI",
+      "HTTP Port"
+    ],
+    "synonyms": [
+      "Web Interface Port",
+      "GUI"
+    ],
+    "requiredRoles": [],
+    "anchorRouterLink": [
+      "/system",
+      "general"
+    ],
+    "routerLink": null,
+    "anchor": "http-port",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "System",
+      "General",
+      "GUI",
+      "HTTPS Port"
+    ],
+    "synonyms": [
+      "Web Interface Port",
+      "SSL Web Interface Port",
+      "GUI"
+    ],
+    "requiredRoles": [],
+    "anchorRouterLink": [
+      "/system",
+      "general"
+    ],
+    "routerLink": null,
+    "anchor": "https-port",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "System",
+      "General",
+      "GUI",
+      "SSL Protocols"
+    ],
+    "synonyms": [
+      "GUI"
+    ],
+    "requiredRoles": [],
+    "anchorRouterLink": [
+      "/system",
+      "general"
+    ],
+    "routerLink": null,
+    "anchor": "ssl-protocols",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "System",
+      "General",
+      "GUI",
+      "HTTPS Redirect"
+    ],
+    "synonyms": [
+      "GUI"
+    ],
+    "requiredRoles": [],
+    "anchorRouterLink": [
+      "/system",
+      "general"
+    ],
+    "routerLink": null,
+    "anchor": "https-redirect",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "System",
+      "General",
+      "GUI",
+      "Usage Collection"
+    ],
+    "synonyms": [
+      "GUI"
+    ],
+    "requiredRoles": [],
+    "anchorRouterLink": [
+      "/system",
+      "general"
+    ],
+    "routerLink": null,
+    "anchor": "usage-collection",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "System",
+      "General",
+      "GUI",
+      "Show Console Messages"
+    ],
+    "synonyms": [
+      "GUI"
+    ],
+    "requiredRoles": [],
+    "anchorRouterLink": [
+      "/system",
+      "general"
+    ],
+    "routerLink": null,
+    "anchor": "show-console-messages",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -4420,6 +4776,13 @@
       "Download File"
     ],
     "synonyms": [
+      "Export File",
+      "Export Configuration",
+      "Download Configuration",
+      "Export Config",
+      "Save Config",
+      "Download Config",
+      "Backup Config",
       "Manage Configuration"
     ],
     "requiredRoles": [
@@ -4442,6 +4805,12 @@
       "Upload File"
     ],
     "synonyms": [
+      "Import File",
+      "Import Configuration",
+      "Upload Configuration",
+      "Import Config",
+      "Upload Config",
+      "Restore Config",
       "Manage Configuration"
     ],
     "requiredRoles": [
@@ -4464,6 +4833,13 @@
       "Reset to Defaults"
     ],
     "synonyms": [
+      "Restore Defaults",
+      "Reset Defaults",
+      "Restore Default Config",
+      "Reset Default Config",
+      "Reset Config",
+      "Restore Config Defaults",
+      "Restore Default Configuration",
       "Manage Configuration"
     ],
     "requiredRoles": [
@@ -4571,6 +4947,9 @@
       "License"
     ],
     "synonyms": [
+      "Update License",
+      "Add License",
+      "License Update",
       "Support"
     ],
     "requiredRoles": [
@@ -4651,6 +5030,10 @@
       "Manual Update"
     ],
     "synonyms": [
+      "Install Manual Update File",
+      "Manual Update",
+      "Manual Upgrade",
+      "Upload Manual Update File",
       "Manual Update"
     ],
     "requiredRoles": [],
@@ -4667,9 +5050,17 @@
   {
     "hierarchy": [
       "System",
-      "Update"
+      "Update",
+      "Check for Updates"
     ],
     "synonyms": [
+      "Update",
+      "Upgrade",
+      "Update System",
+      "Update Software",
+      "Check for Updates",
+      "Check for Software Updates",
+      "Download Updates",
       "Update"
     ],
     "requiredRoles": [],
@@ -4678,7 +5069,33 @@
       "update"
     ],
     "routerLink": null,
-    "anchor": "system-update",
+    "anchor": "check-for-updates",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "System",
+      "Update",
+      "Release Notes"
+    ],
+    "synonyms": [
+      "Check Release Notes",
+      "Release Notes",
+      "View Release Notes",
+      "View Changelog",
+      "Changelog",
+      "Upgrade Release Notes",
+      "Update Release Notes",
+      "Update"
+    ],
+    "requiredRoles": [],
+    "anchorRouterLink": [
+      "/system",
+      "update"
+    ],
+    "routerLink": null,
+    "anchor": "release-notes",
     "triggerAnchor": null,
     "section": "ui"
   },

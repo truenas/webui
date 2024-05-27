@@ -68,10 +68,6 @@ export class GlobalSearchComponent implements OnInit {
         event.preventDefault();
         moveToPreviousFocusableElement();
         break;
-      case 'Escape':
-        this.resetInput();
-        event.preventDefault();
-        break;
       case 'Enter':
         event.preventDefault();
 
