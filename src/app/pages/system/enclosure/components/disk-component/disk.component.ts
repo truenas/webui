@@ -9,6 +9,7 @@ import { DiskType } from 'app/enums/disk-type.enum';
 })
 export class EnclosureDiskComponent {
   readonly data = input.required<{
+    // eslint-disable-next-line no-restricted-globals
     name: string;
     type?: DiskType;
   }>();

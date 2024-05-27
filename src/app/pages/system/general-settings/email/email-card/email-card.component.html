@@ -6,6 +6,7 @@
         mat-button
         color="default"
         [ixTest]="['email', 'settings']"
+        [ixUiSearch]="searchableElements.elements.settings"
         (click)="openEmailSettings()"
       >
         {{ 'Settings' | translate }}
