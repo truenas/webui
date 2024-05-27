@@ -7,7 +7,7 @@ import { UiSearchProvider } from 'app/modules/global-search/services/ui-search.s
 import { AuthService } from 'app/services/auth/auth.service';
 
 jest.mock('app/../assets/ui-searchable-elements.json', () => [
-  { hierarchy: ['Technology', 'Internet'], synonyms: ['Web'], requiredRoles: ['FullAdmin'] },
+  { hierarchy: ['Technology', 'Internet'], synonyms: ['Web', 'Programs'], requiredRoles: ['FullAdmin'] },
   { hierarchy: ['Technology', 'Programming'], synonyms: ['Coding'], requiredRoles: [] },
 ]);
 
@@ -103,6 +103,15 @@ describe('UiSearchProvider with mocked uiElements', () => {
       const results = await lastValueFrom(spectator.service.search(searchTerm, 10));
 
       expect(results).toHaveLength(0);
+    });
+
+    it('should first show hierarchy match and then synonyms', async () => {
+      const searchTerm = 'program';
+      const results = await lastValueFrom(spectator.service.search(searchTerm, 10));
+
+      expect(results).toHaveLength(2);
+      expect(results[0].hierarchy).toContain('Programming');
+      expect(results[1].synonyms).toContain('Programs');
     });
   });
 });

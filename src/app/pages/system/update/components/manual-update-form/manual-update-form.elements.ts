@@ -4,6 +4,7 @@ import { UiSearchableElement } from 'app/modules/global-search/interfaces/ui-sea
 export const systemManualUpdateFormElements = {
   hierarchy: [T('System'), T('Update'), T('Manual Update')],
   anchorRouterLink: ['/system', 'update', 'manualupdate'],
+  synonyms: [T('Install Manual Update File'), T('Manual Update'), T('Manual Upgrade'), T('Upload Manual Update File')],
   elements: {
     manualUpdate: {},
   },
