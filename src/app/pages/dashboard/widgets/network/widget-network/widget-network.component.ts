@@ -48,7 +48,7 @@ export class WidgetNetworkComponent implements WidgetComponent {
 
   protected interfaceUsage = toSignal(this.resources.realtimeUpdates$.pipe(
     skipWhile(() => Boolean(!this.interface()?.name)),
-    throttleTime(2000),
+    throttleTime(1000),
     map((update) => update.fields.interfaces),
     map((interfaces) => interfaces?.[this.interface().name]),
   ));
