@@ -8,6 +8,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { ChartData, ChartOptions } from 'chart.js';
 import {
   filter, map, shareReplay, skipWhile, switchMap,
+  throttleTime,
 } from 'rxjs';
 import { kb } from 'app/constants/bits.constant';
 import { LinkState, NetworkInterfaceAliasType } from 'app/enums/network-interface.enum';
@@ -47,6 +48,7 @@ export class WidgetNetworkComponent implements WidgetComponent {
 
   protected interfaceUsage = toSignal(this.resources.realtimeUpdates$.pipe(
     skipWhile(() => Boolean(!this.interface()?.name)),
+    throttleTime(2000),
     map((update) => update.fields.interfaces),
     map((interfaces) => interfaces?.[this.interface().name]),
   ));
