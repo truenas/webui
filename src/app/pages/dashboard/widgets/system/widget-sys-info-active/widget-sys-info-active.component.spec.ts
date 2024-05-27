@@ -139,13 +139,13 @@ describe('WidgetSysInfoActiveComponent', () => {
   it('checks Uptime changed over time', async () => {
     jest.useFakeTimers();
 
-    jest.advanceTimersByTime(60000);
+    jest.advanceTimersByTime(5000);
     refreshInterval$.next(1);
 
     spectator.detectChanges();
 
     const uptime = await loader.getHarness(MatListItemHarness.with({ text: /Uptime:/ }));
-    expect(await uptime.getFullText()).toBe('Uptime: 23 hours 13 minutes as of 2024-03-15 10:35:11');
+    expect(await uptime.getFullText()).toBe('Uptime: 23 hours 12 minutes as of 2024-03-15 10:34:16');
 
     jest.useRealTimers();
   });
