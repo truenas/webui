@@ -8,6 +8,11 @@ export const supportCardElements = {
     support: {},
     updateLicense: {
       hierarchy: [T('License')],
+      synonyms: [
+        T('Update License'),
+        T('Add License'),
+        T('License Update'),
+      ],
     },
     fileTicket: {
       hierarchy: [T('File Ticket')],
