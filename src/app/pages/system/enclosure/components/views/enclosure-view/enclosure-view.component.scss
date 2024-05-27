@@ -12,3 +12,12 @@
   justify-content: center;
   width: 100%;
 }
+
+.horizontal-container {
+  display: flex;
+  width: 100%;
+}
+
+.view-container {
+  flex-grow: 1;
+}

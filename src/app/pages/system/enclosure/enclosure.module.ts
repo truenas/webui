@@ -33,6 +33,7 @@ import {
   ElementsComponent,
 } from 'app/pages/system/enclosure/components/views/elements-view/elements.component';
 import { DisksOverviewComponent } from 'app/pages/system/enclosure/components/views/enclosure-view/disks-overview/disks-overview.component';
+import { IxEnclosureSelectorComponent } from 'app/pages/system/enclosure/components/views/enclosure-view/enclosure-selector/enclosure-selector.component';
 import { EnclosureViewComponent } from 'app/pages/system/enclosure/components/views/enclosure-view/enclosure-view.component';
 import { DriveTrayComponent } from 'app/pages/system/enclosure/components/views/enclosure-view/enclosures/drive-tray/drive-tray.component';
 import { M50EnclosureViewComponent } from 'app/pages/system/enclosure/components/views/enclosure-view/enclosures/m50-enclosure/m50-enclosure-view/m50-enclosure-view.component';
@@ -68,6 +69,7 @@ import { EnclosureStore } from 'app/pages/system/enclosure/services/enclosure.st
   declarations: [
     EnclosureDashboardComponent,
     DisksOverviewComponent,
+    IxEnclosureSelectorComponent,
     DriveTrayComponent,
     EnclosureViewComponent,
     M50EnclosureViewComponent,

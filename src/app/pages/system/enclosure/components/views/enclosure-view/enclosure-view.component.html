@@ -1,17 +1,28 @@
-<mat-card-header>
-  <ix-enclosure-header [title]="title()"></ix-enclosure-header>
-</mat-card-header>
-<mat-card-content>
-  <div class="container">
-    <div class="view-wrapper">
-      <ng-container
-        *ngComponentOutlet="dashboardView().component; inputs: dashboardView().inputs;"
-      ></ng-container>
-    </div>
+<div class="horizontal-container">
+  <div class="view-container">
+    <mat-card-header>
+      <ix-enclosure-header [title]="title()"></ix-enclosure-header>
+    </mat-card-header>
+    <mat-card-content>
+      <div class="container">
+        <div class="view-wrapper">
+          <ng-container
+            *ngComponentOutlet="dashboardView().component; inputs: dashboardView().inputs;"
+          ></ng-container>
+        </div>
+      </div>
+    
+      <ix-disks-overview
+        [slot]="selectedSlot()" 
+        (viewChanged)="changeView($event)"
+      ></ix-disks-overview>
+    </mat-card-content>
   </div>
-
-  <ix-disks-overview
-    [slot]="selectedSlot()" 
-    (viewChanged)="changeView($event)"
-  ></ix-disks-overview>
-</mat-card-content>
+  
+  <div>
+    <ix-enclosure-selector
+      [enclosures]="enclosures()"
+      (enclosureSelected)="enclosureSelected($event)"
+    ></ix-enclosure-selector>
+  </div>
+</div>

@@ -15,6 +15,7 @@ import { enclosureComponentMap } from 'app/pages/system/enclosure/utils/enclosur
 })
 export class EnclosureViewComponent {
   readonly enclosure = this.store.selectedEnclosure;
+  readonly enclosures = this.store.enclosures;
   readonly selectedSlot = this.store.selectedSlot;
   private readonly selectedView = signal<OverviewInfo['name']>('pools');
 
@@ -46,5 +47,9 @@ export class EnclosureViewComponent {
 
   changeView(viewName: OverviewInfo['name']): void {
     this.selectedView.set(viewName);
+  }
+
+  enclosureSelected(enclosureId: string): void {
+    this.store.selectEnclosure(enclosureId);
   }
 }
