@@ -6,5 +6,9 @@ export const nfsListElements = {
   anchorRouterLink: ['/sharing', 'nfs'],
   elements: {
     nfs: {},
+    createNfsShare: {
+      hierarchy: [T('Create NFS Share')],
+      synonyms: [T('Add NFS Share'), T('New NFS Share')],
+    },
   },
 } satisfies UiSearchableElement;

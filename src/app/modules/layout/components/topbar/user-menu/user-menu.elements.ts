@@ -11,6 +11,13 @@ export const userMenuElements = {
     },
     changePassword: {
       hierarchy: [T('Change Password')],
+      synonyms: [
+        T('Update Password'),
+        T('Set new password'),
+        T('Reset password'),
+        T('New password'),
+        T('User password'),
+      ],
     },
     guide: {
       hierarchy: [T('Guide')],

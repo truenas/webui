@@ -1,6 +1,4 @@
-import {
-  AsyncPipe, NgComponentOutlet, NgForOf, NgIf,
-} from '@angular/common';
+import { CommonModule, NgComponentOutlet } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -72,7 +70,6 @@ import { UptimePipe } from 'app/pages/dashboard/widgets/system/common/uptime.pip
     IxFormsModule,
     ReactiveFormsModule,
     TranslateModule,
-    CoreComponents,
     AppLoaderModule,
     NgComponentOutlet,
     CommonDirectivesModule,
@@ -82,9 +79,7 @@ import { UptimePipe } from 'app/pages/dashboard/widgets/system/common/uptime.pip
     routing,
     MatCard,
     IxIconModule,
-    NgIf,
-    NgForOf,
-    AsyncPipe,
+    CommonModule,
     MatTooltipModule,
     BaseChartDirective,
     MatButtonModule,
@@ -104,7 +99,6 @@ import { UptimePipe } from 'app/pages/dashboard/widgets/system/common/uptime.pip
     MatListModule,
     EmptyComponent,
     ImgFallbackModule,
-    ChartsModule,
     InterfaceStatusIconComponent,
     IxFileSizeModule,
     UptimePipe,

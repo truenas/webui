@@ -4,6 +4,7 @@ import { Router, NavigationEnd } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { WINDOW } from 'app/helpers/window.helper';
 import { AuthService } from 'app/services/auth/auth.service';
+import { DetectBrowserService } from 'app/services/detect-browser.service';
 
 @UntilDestroy()
 @Component({
@@ -17,6 +18,7 @@ export class AppComponent {
     public title: Title,
     private router: Router,
     private authService: AuthService,
+    private detectBrowser: DetectBrowserService,
     @Inject(WINDOW) private window: Window,
   ) {
     this.authService.isAuthenticated$.pipe(untilDestroyed(this)).subscribe((isAuthenticated) => {
@@ -26,7 +28,7 @@ export class AppComponent {
 
     this.setFavicon(this.window.matchMedia('(prefers-color-scheme: dark)').matches);
 
-    if (this.detectBrowser('Safari')) {
+    if (this.detectBrowser.matchesBrowser('Safari')) {
       document.body.className += ' safari-platform';
     }
 
@@ -71,18 +73,5 @@ export class AppComponent {
       link.href = path;
       document.getElementsByTagName('head')[0].appendChild(link);
     }
-  }
-
-  private detectBrowser(name: string): boolean {
-    const appName = navigator.appName;
-    const ua = navigator.userAgent;
-    const browserVersion = ua.match(/(opera|chrome|safari|firefox|msie)\/?\s*(\.?\d+(\.\d+)*)/i);
-    const versionMatch = ua.match(/version\/([.\d]+)/i);
-    if (browserVersion && versionMatch !== null) {
-      browserVersion[2] = versionMatch[1];
-    }
-    const browserName = browserVersion ? browserVersion[1] : appName;
-
-    return name === browserName;
   }
 }

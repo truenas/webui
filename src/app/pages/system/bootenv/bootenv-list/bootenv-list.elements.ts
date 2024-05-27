@@ -4,6 +4,7 @@ import { UiSearchableElement } from 'app/modules/global-search/interfaces/ui-sea
 export const bootListElements = {
   hierarchy: [T('System'), T('Boot Environments')],
   anchorRouterLink: ['/system', 'boot'],
+  synonyms: [T('Create boot environment')],
   elements: {
     boot: {},
     stats: {

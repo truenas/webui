@@ -11,16 +11,17 @@ import { TranslateModule } from '@ngx-translate/core';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { GlobalSearchComponent } from 'app/modules/global-search/components/global-search/global-search.component';
 import { GlobalSearchResultsComponent } from 'app/modules/global-search/components/global-search-results/global-search-results.component';
-import { GlobalTriggerSearchComponent } from 'app/modules/global-search/components/global-search-trigger/global-search-trigger.component';
+import { GlobalSearchTriggerComponent } from 'app/modules/global-search/components/global-search-trigger/global-search-trigger.component';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
+import { KeyboardShortcutComponent } from 'app/modules/keyboard-shortcut/keyboard-shortcut.component';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
 
 @NgModule({
   declarations: [
     GlobalSearchComponent,
     GlobalSearchResultsComponent,
-    GlobalTriggerSearchComponent,
+    GlobalSearchTriggerComponent,
   ],
   imports: [
     CommonModule,
@@ -37,7 +38,8 @@ import { TestIdModule } from 'app/modules/test-id/test-id.module';
     A11yModule,
     EmptyComponent,
     MatButtonModule,
+    KeyboardShortcutComponent,
   ],
-  exports: [GlobalSearchComponent, GlobalTriggerSearchComponent],
+  exports: [GlobalSearchComponent, GlobalSearchTriggerComponent],
 })
 export class GlobalSearchModule { }

@@ -6,5 +6,17 @@ export const reportingExportersElements = {
   anchorRouterLink: ['/reportsdashboard', 'exporters'],
   elements: {
     exporters: {},
+    add: {
+      hierarchy: [T('Add')],
+      synonyms: [
+        T('Add Exporter'),
+        T('New Exporter'),
+        T('Create Exporter'),
+        T('Exporter'),
+        T('Add Reporting Exporter'),
+        T('New Reporting Exporter'),
+        T('Create Reporting Exporter'),
+      ],
+    },
   },
 } satisfies UiSearchableElement;

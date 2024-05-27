@@ -91,7 +91,7 @@ describe('CloudCredentialsFormComponent', () => {
     },
   } as CloudSyncCredential;
 
-  const getData = jest.fn(() => fakeCloudSyncCredential);
+  const getData = jest.fn(() => ({ existingCredential: fakeCloudSyncCredential }));
   const chainedRef = {
     close: jest.fn(),
     getData: jest.fn(() => undefined),

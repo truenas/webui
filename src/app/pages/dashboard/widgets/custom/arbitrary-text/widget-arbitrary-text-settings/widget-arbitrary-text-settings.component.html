@@ -1,0 +1,19 @@
+<form [formGroup]="form">
+  <ix-input
+    class="half-width"
+    formControlName="widgetTitle"
+    [label]="'Widget Title' | translate"
+    [required]="true"
+  />
+  <ix-input
+    class="half-width"
+    formControlName="widgetText"
+    [label]="'Widget Text' | translate"
+    [required]="true"
+  />
+  <ix-input
+    class="half-width"
+    formControlName="widgetSubText"
+    [label]="'Widget Subtext' | translate"
+  />
+</form>

@@ -1,0 +1,8 @@
+<div class="wrapper">
+  <ix-widget-datapoint
+    *ixWithLoadingState="systemInfo$ as systemInfo"
+    [size]="size()"
+    [label]="name | translate"
+    [text]="systemInfo.version"
+  ></ix-widget-datapoint>
+</div>

@@ -25,8 +25,8 @@ export interface ChainedComponent {
   data: unknown;
 }
 
-export interface ChainedComponentResponse {
-  response: unknown;
+export interface ChainedComponentResponse<T = unknown> {
+  response: T;
   error: unknown;
 }
 

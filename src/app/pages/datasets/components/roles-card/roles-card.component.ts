@@ -22,8 +22,8 @@ export class RolesCardComponent {
   @Input() systemDataset: string;
   @Input() hasChildrenWithShares = false;
 
-  protected nfsRequiredRoles = [Role.SharingNfsWrite, Role.SharingWrite];
-  protected smbRequiredRoles = [Role.SharingSmbWrite, Role.SharingWrite];
+  protected readonly nfsRequiredRoles = [Role.SharingNfsWrite, Role.SharingWrite];
+  protected readonly smbRequiredRoles = [Role.SharingSmbWrite, Role.SharingWrite];
 
   get isApplications(): boolean {
     return this.dataset.name && this.dataset.name.endsWith(ixApplications);

@@ -1,8 +1,9 @@
 <form [formGroup]="form">
-  <ix-input
+  <ix-select
     class="half-width"
-    formControlName="interfaceIp"
-    [label]="'Interface IP' | translate"
+    formControlName="interface"
+    [label]="'Interface' | translate"
+    [options]="networkInterfaceOptions$"
     [required]="true"
-  ></ix-input>
+  ></ix-select>
 </form>

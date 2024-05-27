@@ -57,16 +57,25 @@ export class GlobalSearchSectionsProvider {
 
   getRecentSearchesSectionResults(): UiSearchableElement[] {
     const recentSearches = JSON.parse(this.window.localStorage.getItem('recentSearches') || '[]') as UiSearchableElement[];
-    const exitingHierarchies = new Set(UiElementsJson.map((item) => JSON.stringify(item.hierarchy)));
+    const exitingHierarchies = new Set(UiElementsJson.map((item) => {
+      return JSON.stringify(item.hierarchy.map((key) => this.translate.instant(key)));
+    }));
 
-    const validRecentSearches = recentSearches.filter((item) => {
-      return exitingHierarchies.has(JSON.stringify(item.hierarchy)) || item.hierarchy[0].startsWith('Search Documentation for');
-    });
+    const validRecentSearches = recentSearches.filter((item) => (
+      exitingHierarchies.has(JSON.stringify(item.hierarchy)) || item.hierarchy[0].startsWith('Search Documentation for')
+    ));
 
     if (recentSearches.length !== validRecentSearches.length) {
       this.window.localStorage.setItem('recentSearches', JSON.stringify(validRecentSearches));
     }
 
-    return validRecentSearches;
+    return validRecentSearches
+      .map((element) => {
+        return {
+          ...element,
+          hierarchy: (element.hierarchy || []).map((key) => this.translate.instant(key)),
+          synonyms: (element.synonyms || []).map((key) => this.translate.instant(key)),
+        };
+      });
   }
 }
