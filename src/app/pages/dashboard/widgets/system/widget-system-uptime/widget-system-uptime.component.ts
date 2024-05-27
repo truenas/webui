@@ -27,12 +27,21 @@ export class WidgetSystemUptimeComponent implements WidgetComponent {
     map((state) => state.value),
   ));
 
-  elapsedSeconds = toSignal(this.resources.fiveSecondsRefreshInterval$.pipe(
-    map((iteration) => (iteration ? iteration * 5 : 0)),
+  startTime = Date.now();
+
+  realElapsedSeconds = toSignal(this.resources.refreshInterval$.pipe(
+    map(() => {
+      return Math.floor((Date.now() - this.startTime) / 1000);
+    }),
   ));
 
-  uptime = computed(() => this.loadedSystemInfo().uptime_seconds + this.elapsedSeconds());
-  datetime = computed(() => this.loadedSystemInfo().datetime.$date + (this.elapsedSeconds() * 1000));
+  uptime = computed(() => {
+    return this.loadedSystemInfo().uptime_seconds + this.realElapsedSeconds();
+  });
+
+  datetime = computed(() => {
+    return this.loadedSystemInfo().datetime.$date + (this.realElapsedSeconds() * 1000);
+  });
 
   constructor(
     private resources: WidgetResourcesService,

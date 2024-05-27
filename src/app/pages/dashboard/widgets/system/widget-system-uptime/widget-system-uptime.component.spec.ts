@@ -12,7 +12,7 @@ import { WidgetSystemUptimeComponent } from 'app/pages/dashboard/widgets/system/
 
 describe('WidgetSystemUptimeComponent', () => {
   let spectator: Spectator<WidgetSystemUptimeComponent>;
-  const fiveSecondsRefreshInterval$ = new BehaviorSubject<number>(0);
+  const refreshInterval$ = new BehaviorSubject<number>(0);
 
   const createComponent = createComponentFactory({
     component: WidgetSystemUptimeComponent,
@@ -25,48 +25,76 @@ describe('WidgetSystemUptimeComponent', () => {
     ],
   });
 
-  it('renders System Uptime for the current system', () => {
-    spectator = createComponent({
-      props: {
-        size: SlotSize.Full,
-      },
-      providers: [
-        mockProvider(WidgetResourcesService, {
-          systemInfo$: of({
-            value: {
-              uptime_seconds: 83532.938532175,
-              datetime: {
-                $date: 1710491651000,
-              },
-            } as unknown as SystemInfo,
-            isLoading: false,
-            error: null,
-          } as LoadingState<SystemInfo>),
-          fiveSecondsRefreshInterval$,
-        }),
-      ],
+  describe('has successful response', () => {
+    beforeEach(() => {
+      spectator = createComponent({
+        props: {
+          size: SlotSize.Full,
+        },
+        providers: [
+          mockProvider(WidgetResourcesService, {
+            systemInfo$: of({
+              value: {
+                uptime_seconds: 83532.938532175,
+                datetime: {
+                  $date: 1710491651000,
+                },
+              } as unknown as SystemInfo,
+              isLoading: false,
+              error: null,
+            } as LoadingState<SystemInfo>),
+            refreshInterval$,
+          }),
+        ],
+      });
     });
 
-    const widget = spectator.query(MockComponent(WidgetDatapointComponent));
-    expect(widget).toBeTruthy();
-    expect(widget.text).toBe('23 hours 12 minutes as of 2024-03-15 10:34:11');
-    expect(widget.label).toBe('System Uptime');
+    it('renders System Uptime for the current system', () => {
+      const widget = spectator.query(MockComponent(WidgetDatapointComponent));
+      expect(widget).toBeTruthy();
+      expect(widget.text).toBe('23 hours 12 minutes as of 2024-03-15 10:34:11');
+      expect(widget.label).toBe('System Uptime');
+    });
+
+    it('checks uptime and datetime changed over time', () => {
+      jest.useFakeTimers();
+
+      const initialUptime = spectator.component.uptime();
+      const initialDatetime = spectator.component.datetime();
+
+      jest.advanceTimersByTime(5000);
+      refreshInterval$.next(1);
+
+      spectator.detectChanges();
+
+      const updatedUptime = spectator.component.uptime();
+      const updatedDatetime = spectator.component.datetime();
+
+      expect(updatedUptime).toBeGreaterThan(initialUptime);
+      expect(updatedDatetime).toBeGreaterThan(initialDatetime);
+
+      jest.useRealTimers();
+    });
   });
 
-  it('shows an error when System Uptime cannot be determined', () => {
-    spectator = createComponent({
-      providers: [
-        mockProvider(WidgetResourcesService, {
-          systemInfo$: of({
-            value: null,
-            isLoading: false,
-            error: new Error('Fatal error'),
-          } as LoadingState<SystemInfo>),
-          fiveSecondsRefreshInterval$,
-        }),
-      ],
+  describe('no successful response', () => {
+    beforeEach(() => {
+      spectator = createComponent({
+        providers: [
+          mockProvider(WidgetResourcesService, {
+            systemInfo$: of({
+              value: null,
+              isLoading: false,
+              error: new Error('Fatal error'),
+            } as LoadingState<SystemInfo>),
+            refreshInterval$,
+          }),
+        ],
+      });
     });
 
-    expect(spectator.fixture.nativeElement).toHaveExactTrimmedText('Error');
+    it('shows an error when System Uptime cannot be determined', () => {
+      expect(spectator.fixture.nativeElement).toHaveExactTrimmedText('Error');
+    });
   });
 });

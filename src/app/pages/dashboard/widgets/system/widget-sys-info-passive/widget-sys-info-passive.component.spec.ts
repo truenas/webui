@@ -34,7 +34,7 @@ import {
 describe('WidgetSysInfoPassiveComponent', () => {
   let spectator: Spectator<WidgetSysInfoPassiveComponent>;
   let loader: HarnessLoader;
-  const fiveSecondsRefreshInterval$ = new BehaviorSubject<number>(0);
+  const refreshInterval$ = new BehaviorSubject<number>(0);
 
   const systemInfo = {
     remote_info: {
@@ -80,7 +80,7 @@ describe('WidgetSysInfoPassiveComponent', () => {
           value: systemInfo,
         } as LoadingState<SystemInfo>),
         updateAvailable$: of(true),
-        fiveSecondsRefreshInterval$,
+        refreshInterval$,
       }),
       provideMockStore({
         selectors: [
@@ -147,12 +147,17 @@ describe('WidgetSysInfoPassiveComponent', () => {
     ]);
   });
 
-  it('checks uptime and datetime changed over the time', async () => {
-    fiveSecondsRefreshInterval$.next(12);
+  it('checks Uptime changed over time', async () => {
+    jest.useFakeTimers();
+
+    jest.advanceTimersByTime(60000);
+    refreshInterval$.next(1);
+
+    spectator.detectChanges();
 
     const uptime = await loader.getHarness(MatListItemHarness.with({ text: /Uptime:/ }));
     expect(await uptime.getFullText()).toBe('Uptime: 2 minutes 17 seconds as of 2024-03-15 10:35:11');
-  });
 
-  // TODO: Add more tests
+    jest.useRealTimers();
+  });
 });

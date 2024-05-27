@@ -31,7 +31,7 @@ import {
 describe('WidgetSysInfoActiveComponent', () => {
   let spectator: Spectator<WidgetSysInfoActiveComponent>;
   let loader: HarnessLoader;
-  const fiveSecondsRefreshInterval$ = new BehaviorSubject<number>(0);
+  const refreshInterval$ = new BehaviorSubject<number>(0);
 
   const systemInfo = {
     platform: 'TRUENAS-M40-HA',
@@ -73,7 +73,7 @@ describe('WidgetSysInfoActiveComponent', () => {
           value: systemInfo,
         } as LoadingState<SystemInfo>),
         updateAvailable$: of(true),
-        fiveSecondsRefreshInterval$,
+        refreshInterval$,
       }),
       provideMockStore({
         selectors: [
@@ -136,11 +136,18 @@ describe('WidgetSysInfoActiveComponent', () => {
     ]);
   });
 
-  it('checks uptime and datetime changed over the time', async () => {
-    fiveSecondsRefreshInterval$.next(12);
+  it('checks Uptime changed over time', async () => {
+    jest.useFakeTimers();
+
+    jest.advanceTimersByTime(60000);
+    refreshInterval$.next(1);
+
+    spectator.detectChanges();
 
     const uptime = await loader.getHarness(MatListItemHarness.with({ text: /Uptime:/ }));
     expect(await uptime.getFullText()).toBe('Uptime: 23 hours 13 minutes as of 2024-03-15 10:35:11');
+
+    jest.useRealTimers();
   });
 
   // TODO: Add more tests
