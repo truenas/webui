@@ -2,6 +2,7 @@ import 'jest-canvas-mock';
 import { InferInputSignals, Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
+import * as PIXI from 'pixi.js';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
@@ -12,6 +13,8 @@ import { EnclosureState, EnclosureStore } from 'app/pages/system/old-view-enclos
 import { DiskTemperatureService } from 'app/services/disk-temperature.service';
 import { PreferencesState } from 'app/store/preferences/preferences.reducer';
 import { selectPreferencesState } from 'app/store/preferences/preferences.selectors';
+
+Object.defineProperty(PIXI, '', {});
 
 describe('EnclosureDisksComponent', () => {
   let spectator: Spectator<EnclosureDisksComponent>;
