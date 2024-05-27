@@ -1,7 +1,111 @@
 .container {
-  align-items: center;
   display: flex;
+  flex-direction: column;
   height: 300px;
-  justify-content: center;
   width: 100%;
+}
+
+.disk-details-header {
+  align-items: center;
+  border-bottom: solid 1px var(--lines);
+  display: flex;
+  font-size: 1.15rem;
+  gap: 15px;
+  height: 50px;
+  padding: 12px 16px;
+
+  button {
+    height: 30px;
+    width: 30px;
+  }
+}
+
+.disk-details-container {
+  display: flex;
+  height: 100%;
+  overflow: auto;
+
+  .drive {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    justify-content: center;
+    width: 25%;
+
+    .capacity {
+      font-size: 120%;
+      font-weight: 500;
+    }
+  }
+
+  .details {
+    border-left: solid 1px var(--lines);
+    overflow: auto;
+    padding: 0 8px;
+    width: 75%;
+
+    .details-grid {
+      display: grid;
+      gap: 5px;
+      grid-template-columns: 1fr 1fr 1fr 1fr;
+    }
+
+    .detail {
+      margin: 8px 0;
+      text-align: left;
+    }
+    
+    .detail .label {
+      font-size: 100%;
+      font-weight: 500;
+    }
+    
+    .detail .value {
+      font-size: 120%;
+      font-weight: 300;
+      line-height: 85%;
+      text-align: left;
+      word-break: break-word;
+    }
+  }
+}
+
+.disk-overview {
+  display: flex;
+  height: 100%;
+
+  .tile {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: 100%;
+
+    &:not(:last-child) {
+      border-right: 1px solid var(--lines);
+    }
+
+    .primary-number {
+      font-size: 3.25rem;
+      font-weight: 100;
+    }
+    
+    .title {
+      font-size: 1rem;
+    }
+
+    .subtitle {
+      font-size: 0.65rem;
+      opacity: 0.85;
+    }
+
+    button {
+      margin: 16px;
+    }
+  }
+
+  .tile.active {
+    background-color: var(--contrast-darker);
+  }
 }

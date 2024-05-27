@@ -78,12 +78,12 @@ export class DashboardComponent implements OnInit {
     this.slideIn
       .open(WidgetGroupFormComponent, true)
       .pipe(untilDestroyed(this))
-      .subscribe((response: ChainedComponentResponse) => {
+      .subscribe((response: ChainedComponentResponse<WidgetGroup>) => {
         if (!response.response) {
           return;
         }
 
-        this.renderedGroups.update((groups) => [...groups, response.response as WidgetGroup]);
+        this.renderedGroups.update((groups) => [...groups, response.response]);
       });
   }
 
