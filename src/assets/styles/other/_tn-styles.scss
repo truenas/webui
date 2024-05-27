@@ -9,15 +9,15 @@ $standard-height: 40px;
 @import 'angular15';
 @import 'material-overrides';
 
-$ix-primary: mat.define-palette($md-primary);
-$ix-accent: mat.define-palette($md-accent);
+$ix-primary: mat.m2-define-palette($md-primary);
+$ix-accent: mat.m2-define-palette($md-accent);
 
-$ix-typography: mat.define-typography-config($body-1: mat.define-typography-level($font-size: 0.875rem,
+$ix-typography: mat.m2-define-typography-config($body-1: mat.m2-define-typography-level($font-size: 0.875rem,
 $font-family: var(--font-family-body),),
-$body-2: mat.define-typography-level($font-size: 0.875rem,
+$body-2: mat.m2-define-typography-level($font-size: 0.875rem,
 $font-family: var(--font-family-body),),);
 
-$ix-theme: mat.define-light-theme((
+$ix-theme: mat.m2-define-light-theme((
   color: (
     primary: $ix-primary,
     accent: $ix-accent,

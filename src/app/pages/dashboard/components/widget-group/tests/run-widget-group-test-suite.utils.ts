@@ -117,7 +117,7 @@ export function runWidgetGroupTestSuite<T extends WidgetGroupComponent>(componen
           group: {
             layout: WidgetGroupLayout.Quarters,
             slots: [
-              { type: WidgetType.Help },
+              { type: WidgetType.SystemInfoActive },
               null,
               null,
               null,
@@ -128,7 +128,7 @@ export function runWidgetGroupTestSuite<T extends WidgetGroupComponent>(componen
 
       const errorComponent = spectator.query(WidgetErrorComponent, { parentSelector: '.slot:nth-child(1)' });
       expect(errorComponent).toExist();
-      expect(errorComponent.message).toBe('help widget does not support quarter size.');
+      expect(errorComponent.message).toBe('system-info-active widget does not support quarter size.');
     });
   });
 }

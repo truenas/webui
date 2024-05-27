@@ -71,13 +71,7 @@ export class GlobalSearchTriggerComponent implements AfterViewInit {
       return;
     }
     this.overlayRef.detach();
-
-    const element = this.window.document.querySelector('ix-logo a');
-
-    if (element instanceof HTMLAnchorElement) {
-      element.focus();
-    }
-
+    this.window.document.querySelector<HTMLElement>('ix-logo a')?.focus();
     this.cdr.markForCheck();
   }
 }
