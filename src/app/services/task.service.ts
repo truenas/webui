@@ -153,7 +153,10 @@ export class TaskService {
   }
 
   getTaskNextTime(scheduleExpression: string): Date {
-    const schedule = cronParser.parseExpression(scheduleExpression, { iterator: true });
+    const schedule = cronParser.parseExpression(scheduleExpression, {
+      iterator: true,
+      tz: this.localeService.timezone,
+    });
 
     return schedule.next().value.toDate();
   }

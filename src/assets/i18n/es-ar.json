@@ -215,6 +215,7 @@
   "Box": "",
   "Bridge interface": "",
   "Browse to the path to be copied. Linux file path limits apply. Other operating systems can have different limits which might affect how they can be used as sources or destinations.": "",
+  "Browser time: {time}": "",
   "Bucket Name": "",
   "Bucket Policy Only": "",
   "Bulk Actions": "",

@@ -16,6 +16,7 @@ import { SchedulerModule } from 'app/modules/scheduler/scheduler.module';
 import { SmartTaskFormComponent } from 'app/pages/data-protection/smart-task/smart-task-form/smart-task-form.component';
 import { DialogService } from 'app/services/dialog.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { LocaleService } from 'app/services/locale.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { selectTimezone } from 'app/store/system-config/system-config.selectors';
 
@@ -45,6 +46,9 @@ describe('SmartTaskFormComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
+      mockProvider(LocaleService, {
+        timezone: 'America/New_York',
+      }),
       mockAuth(),
       DialogService,
       mockWebsocket([

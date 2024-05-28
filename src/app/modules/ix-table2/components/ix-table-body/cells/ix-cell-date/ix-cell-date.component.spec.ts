@@ -4,6 +4,7 @@ import { Store } from '@ngrx/store';
 import { of } from 'rxjs';
 import { IxCellDateComponent } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-date/ix-cell-date.component';
 import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
+import { LocaleService } from 'app/services/locale.service';
 
 interface TestTableData { dateField: Date }
 
@@ -14,6 +15,9 @@ describe('IxCellDateComponent', () => {
     component: IxCellDateComponent<TestTableData>,
     imports: [IxTable2Module],
     providers: [
+      mockProvider(LocaleService, {
+        timezone: 'America/Los_Angeles',
+      }),
       mockProvider(Store, {
         select: () => of(),
       }),
@@ -31,6 +35,6 @@ describe('IxCellDateComponent', () => {
   });
 
   it('shows default format datetime in template', () => {
-    expect(spectator.element.textContent.trim()).toBe('2023-07-12 09:10:00');
+    expect(spectator.element.textContent.trim()).toBe('2023-07-11 23:10:00');
   });
 });

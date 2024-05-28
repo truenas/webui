@@ -96,7 +96,7 @@
       {{ 'Date Created' | translate }}
     </th>
     <td *matCellDef="let bootenv; dataSource: dataSource" mat-cell>
-      {{ bootenv.created.$date | formatDateTime }}
+      <ix-date [date]="bootenv.created.$date"></ix-date>
     </td>
   </ng-container>
 

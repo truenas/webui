@@ -1,7 +1,9 @@
 import { Spectator, createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { UUID } from 'angular2-uuid';
+import { format } from 'date-fns-tz';
 import { of } from 'rxjs';
+import { FormatDateTimePipe } from 'app/core/pipes/format-datetime.pipe';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { Preferences } from 'app/interfaces/preferences.interface';
@@ -13,6 +15,7 @@ import { selectTimezone } from 'app/store/system-config/system-config.selectors'
 
 const fakeLegendData = {
   chartId: 'chart-uuid-selected-report',
+  x: Date.now(),
 } as unknown as LegendDataWithStackedTotalHtml;
 
 describe('ReportComponent', () => {
@@ -24,6 +27,11 @@ describe('ReportComponent', () => {
       mockWebsocket([
         mockCall('reporting.clear'),
       ]),
+      mockProvider(FormatDateTimePipe, {
+        transform: jest.fn((date) => {
+          return format(typeof date === 'string' ? Date.parse(date) : date as number | Date, 'yyyy-MM-dd HH:mm:ss');
+        }),
+      }),
       mockProvider(ReportsService, {
         legendEventEmitterObs$: of(fakeLegendData),
       }),

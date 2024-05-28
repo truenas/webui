@@ -41,7 +41,7 @@
         {{ 'Created Date' | translate }}
       </th>
       <td *matCellDef="let apiKey; dataSource: dataSource" mat-cell>
-        {{ apiKey.created_at.$date | formatDateTime }}
+        <ix-date [date]="apiKey.created_at.$date"></ix-date>
       </td>
     </ng-container>
 

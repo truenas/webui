@@ -11,6 +11,7 @@ import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { UUID } from 'angular2-uuid';
 import { add, isToday, sub } from 'date-fns';
+import { zonedTimeToUtc } from 'date-fns-tz';
 import _ from 'lodash';
 import {
   BehaviorSubject, Subscription, timer,
@@ -19,6 +20,7 @@ import {
   delay, distinctUntilChanged, filter, skipWhile, switchMap, throttleTime,
 } from 'rxjs/operators';
 import { toggleMenuDuration } from 'app/constants/toggle-menu-duration';
+import { FormatDateTimePipe } from 'app/core/pipes/format-datetime.pipe';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { ReportingGraphName } from 'app/enums/reporting.enum';
 import { WINDOW } from 'app/helpers/window.helper';
@@ -36,7 +38,6 @@ import { refreshInterval } from 'app/pages/reports-dashboard/reports.constants';
 import { ReportsService } from 'app/pages/reports-dashboard/reports.service';
 import { formatData } from 'app/pages/reports-dashboard/utils/report.utils';
 import { DialogService } from 'app/services/dialog.service';
-import { LocaleService } from 'app/services/locale.service';
 import { ThemeService } from 'app/services/theme/theme.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
@@ -55,6 +56,8 @@ export class ReportComponent extends WidgetComponent implements OnInit, OnChange
   @Input() report: Report;
   @Input() identifier?: string;
   @ViewChild(LineChartComponent, { static: false }) lineChart: LineChartComponent;
+
+  protected localTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
   updateReport$ = new BehaviorSubject<IxSimpleChanges<this>>(null);
   fetchReport$ = new BehaviorSubject<FetchReportParams>(null);
@@ -133,9 +136,9 @@ export class ReportComponent extends WidgetComponent implements OnInit, OnChange
   constructor(
     public translate: TranslateService,
     private ws: WebSocketService,
-    protected localeService: LocaleService,
     private dialog: DialogService,
     private store$: Store<AppState>,
+    private formatDateTimePipe: FormatDateTimePipe,
     private themeService: ThemeService,
     @Inject(WINDOW) private window: Window,
     @Inject(DOCUMENT) private document: Document,
@@ -239,7 +242,7 @@ export class ReportComponent extends WidgetComponent implements OnInit, OnChange
   }
 
   formatTime(stamp: number): string {
-    const result = this.localeService.formatDateTimeWithNoTz(new Date(stamp));
+    const result = this.formatDateTimePipe.transform(new Date(stamp));
     return result.toLowerCase() !== 'invalid date' ? result : null;
   }
 
@@ -355,6 +358,10 @@ export class ReportComponent extends WidgetComponent implements OnInit, OnChange
 
     const identifier = this.report.identifiers ? this.report.identifiers[0] : null;
     this.fetchReport$.next({ rrdOptions, identifier, report: this.report });
+  }
+
+  getDateFromString(timestamp: string): Date {
+    return zonedTimeToUtc(new Date(timestamp), this.timezone);
   }
 
   // Convert timespan to start/end options
