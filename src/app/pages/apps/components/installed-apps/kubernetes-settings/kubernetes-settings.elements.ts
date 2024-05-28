@@ -1,21 +1,19 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UiSearchableElement } from 'app/modules/global-search/interfaces/ui-searchable-element.interface';
 
-export const appSettingsButtonElements = {
+export const kubernetesSettingsElements = {
   hierarchy: [T('Applications'), T('Installed'), T('Settings')],
+  triggerAnchor: 'advanced-settings',
   anchorRouterLink: ['/apps', 'installed', '*'],
-  triggerAnchor: 'app-settings',
   elements: {
-    settings: {
-      anchor: 'app-settings',
+    nodeIp: {
+      hierarchy: [T('Node IP')],
     },
-    advancedSettings: {
-      hierarchy: [T('Advanced Settings')],
-      synonyms: [T('Kubernetes Settings')],
-      anchor: 'advanced-settings',
+    routeInterface: {
+      hierarchy: [T('Route v4 Interface')],
     },
-    choosePool: {
-      hierarchy: [T('Choose Pool')],
+    routeGateway: {
+      hierarchy: [T('Route v4 Gateway')],
     },
   },
 } satisfies UiSearchableElement;
