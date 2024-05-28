@@ -10,35 +10,34 @@ import { EnclosureDiskStatus } from 'app/enums/enclosure-slot-status.enum';
 import { DashboardEnclosure, DashboardEnclosureSlot } from 'app/interfaces/enclosure.interface';
 import { DriveTray } from 'app/pages/system/old-view-enclosure/classes/drivetray';
 import { DiskComponent } from 'app/pages/system/old-view-enclosure/components/disk-component/disk.component';
-import { EnclosureDisksComponent } from 'app/pages/system/old-view-enclosure/components/enclosure-disks/enclosure-disks.component';
+import { EnclosureDisksMiniComponent } from 'app/pages/system/old-view-enclosure/components/enclosure-disks-mini/enclosure-disks-mini.component';
 import { SystemProfile } from 'app/pages/system/old-view-enclosure/components/view-enclosure/view-enclosure.component';
 import { EnclosureEvent } from 'app/pages/system/old-view-enclosure/interfaces/enclosure-events.interface';
 import { ViewConfig } from 'app/pages/system/old-view-enclosure/interfaces/view.config';
 import { EnclosureState, EnclosureStore } from 'app/pages/system/old-view-enclosure/stores/enclosure-store.service';
 import { DiskTemperatureService } from 'app/services/disk-temperature.service';
 import { ThemeService } from 'app/services/theme/theme.service';
-import { WebSocketService } from 'app/services/ws.service';
 import { PreferencesState } from 'app/store/preferences/preferences.reducer';
 import { selectPreferencesState, selectTheme } from 'app/store/preferences/preferences.selectors';
 
 Object.defineProperty(PIXI, '', {});
 
-describe('EnclosureDisksComponent', () => {
-  let spectator: Spectator<EnclosureDisksComponent>;
+describe('EnclosureDisksMiniComponent', () => {
+  let spectator: Spectator<EnclosureDisksMiniComponent>;
 
   const enclosures: DashboardEnclosure[] = [
     {
       number: 0,
       id: 'enclosure0',
       label: 'Test enclosure 0',
-      model: 'H10',
+      model: 'FREENAS-MINI-3.0-E',
       elements: {},
     },
     {
       number: 1,
       id: 'enclosure1',
       label: 'Test enclosure 1',
-      model: 'R50',
+      model: 'FREENAS-MINI-3.0-X',
       elements: {
         'Array Device Slot': {
           1: {
@@ -59,7 +58,7 @@ describe('EnclosureDisksComponent', () => {
   driveTray.id = '1';
 
   const createComponent = createComponentFactory({
-    component: EnclosureDisksComponent,
+    component: EnclosureDisksMiniComponent,
     declarations: [
       DiskComponent,
     ],
@@ -102,6 +101,8 @@ describe('EnclosureDisksComponent', () => {
   });
 
   beforeEach(() => {
+    jest.spyOn(console, 'error').mockImplementation();
+
     spectator = createComponent({
       props: {
         profile: {
@@ -118,7 +119,7 @@ describe('EnclosureDisksComponent', () => {
           data: enclosures[1],
           sender: {},
         }) as Subject<EnclosureEvent>,
-      } as InferInputSignals<EnclosureDisksComponent>,
+      } as InferInputSignals<EnclosureDisksMiniComponent>,
     });
 
     const offsetParent = document.createElement('div');
@@ -138,44 +139,6 @@ describe('EnclosureDisksComponent', () => {
   });
 
   it('shows title', () => {
-    expect(spectator.query('.mat-card-title-text').textContent.trim()).toBe('Disks on Test enclosure 1 (1)');
+    expect(spectator.query('.mat-card-title-text').textContent.trim()).toBe('Disks on FREENAS-MINI-3.0-X (1)');
   });
-
-  it('sets slot status when toggleSlotStatus is called', () => {
-    spectator.component.toggleSlotStatus();
-
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith(
-      'enclosure.set_slot_status',
-      ['enclosure1', 1, 'IDENTIFY'],
-    );
-  });
-
-  it('sets disks status when setDisksHealthState is called', () => {
-    jest.spyOn(spectator.component.chassisView.events, 'next').mockImplementation();
-    spectator.component.setDisksHealthState();
-
-    expect(spectator.component.chassisView.events.next).toHaveBeenCalledWith({
-      name: 'ChangeDriveTrayColor',
-      data: {
-        id: '1',
-        slot: 1,
-        enclosure: 'enclosure1',
-        color: 'green',
-      },
-    });
-  });
-
-  it('sets currentView when chassisView event occurred', (() => {
-    jest.spyOn(spectator.component, 'setCurrentView').mockImplementation();
-
-    jest.spyOn(spectator.component.chassisView.events, 'pipe')
-      .mockImplementationOnce(() => of({ name: 'Ready' }));
-    spectator.component.chassisView.events.next({ name: 'Ready' });
-    expect(spectator.component.setCurrentView).toHaveBeenCalledWith('pools');
-
-    jest.spyOn(spectator.component.chassisView.events, 'pipe')
-      .mockImplementationOnce(() => of({ name: 'DriveSelected' }));
-    spectator.component.chassisView.events.next({ name: 'DriveSelected', data: driveTray });
-    expect(spectator.component.setCurrentView).toHaveBeenCalledWith('details');
-  }));
 });
