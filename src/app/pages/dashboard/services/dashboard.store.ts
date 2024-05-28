@@ -113,18 +113,18 @@ export class DashboardStore extends ComponentStore<DashboardState> {
 
   private getWidgetTypeFromOldDashboard(name: WidgetName): WidgetType {
     const unknownWidgetType = name as unknown as WidgetType;
-
     // TODO: we have some widgets that are not yet implemented for the new dashboard
     switch (name) {
       case WidgetName.Help: return WidgetType.Help;
       case WidgetName.Memory: return WidgetType.Memory;
-      case WidgetName.Interface: return WidgetType.InterfaceIp;
+      case WidgetName.Interface: return WidgetType.Ipv4Address;
+      case WidgetName.SystemInformation: return WidgetType.SystemInfoActive;
+      case WidgetName.SystemInformationStandby: return WidgetType.SystemInfoPassive;
       case WidgetName.Network: return WidgetType.Network;
       case WidgetName.Backup: return WidgetType.BackupTasks;
       case WidgetName.Cpu: return WidgetType.Cpu;
-      case WidgetName.SystemInformation: return unknownWidgetType;
-      case WidgetName.Storage: return unknownWidgetType;
-      case WidgetName.Pool: return unknownWidgetType;
+      case WidgetName.Pool: return WidgetType.PoolName;
+      case WidgetName.Storage: return WidgetType.Storage;
       default: return unknownWidgetType;
     }
   }

@@ -1,5 +1,7 @@
 import { NgForOf } from '@angular/common';
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, input,
+} from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { SummarySection } from 'app/modules/summary/summary.interface';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
@@ -17,5 +19,5 @@ import { TestIdModule } from 'app/modules/test-id/test-id.module';
   ],
 })
 export class SummaryComponent {
-  @Input() summary: SummarySection[];
+  readonly summary = input.required<SummarySection[]>();
 }

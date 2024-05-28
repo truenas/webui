@@ -2,7 +2,6 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatIconTestingModule } from '@angular/material/icon/testing';
 import { Spectator } from '@ngneat/spectator';
 import { mockProvider, createComponentFactory } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
@@ -38,7 +37,6 @@ describe('WidgetGroupFormComponent', () => {
       TestIdModule,
       IxFormsModule,
       ReactiveFormsModule,
-      MatIconTestingModule,
     ],
     declarations: [
       MockComponent(WidgetEditorGroupComponent),
@@ -81,8 +79,8 @@ describe('WidgetGroupFormComponent', () => {
               getData: () => ({
                 layout: WidgetGroupLayout.Halves,
                 slots: [
-                  { type: WidgetType.InterfaceIp, settings: { interface: '1' } },
-                  { type: WidgetType.InterfaceIp, settings: { interface: '2' } },
+                  { type: WidgetType.Ipv4Address, settings: { interface: '1' } },
+                  { type: WidgetType.Ipv4Address, settings: { interface: '2' } },
                 ],
               }) as WidgetGroup,
               close: jest.fn(),
@@ -102,8 +100,8 @@ describe('WidgetGroupFormComponent', () => {
         response: {
           layout: WidgetGroupLayout.Halves,
           slots: [
-            { type: WidgetType.InterfaceIp, settings: { interface: '1' } },
-            { type: WidgetType.InterfaceIp, settings: { interface: '2' } },
+            { type: WidgetType.Ipv4Address, settings: { interface: '1' } },
+            { type: WidgetType.Ipv4Address, settings: { interface: '2' } },
           ],
         },
       });
@@ -116,7 +114,7 @@ describe('WidgetGroupFormComponent', () => {
       spectator.detectChanges();
       const slotForm = spectator.query(WidgetGroupSlotFormComponent);
       expect(slotForm.slotConfig).toEqual({
-        type: WidgetType.InterfaceIp,
+        type: WidgetType.Ipv4Address,
         settings: {
           interface: '2',
         },
@@ -137,7 +135,7 @@ describe('WidgetGroupFormComponent', () => {
       const slotForm = spectator.query(WidgetGroupSlotFormComponent);
       slotForm.settingsChange.emit({
         slotPosition: SlotPosition.First,
-        type: WidgetType.InterfaceIp,
+        type: WidgetType.Ipv4Address,
         settings: { interface: '5' },
         slotSize: SlotSize.Half,
       });
@@ -150,8 +148,8 @@ describe('WidgetGroupFormComponent', () => {
         response: {
           layout: WidgetGroupLayout.Halves,
           slots: [
-            { type: WidgetType.InterfaceIp, settings: { interface: '5' } },
-            { type: WidgetType.InterfaceIp, settings: { interface: '2' } },
+            { type: WidgetType.Ipv4Address, settings: { interface: '5' } },
+            { type: WidgetType.Ipv4Address, settings: { interface: '2' } },
           ],
         } as WidgetGroup,
       });

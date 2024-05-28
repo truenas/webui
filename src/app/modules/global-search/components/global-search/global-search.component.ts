@@ -68,10 +68,6 @@ export class GlobalSearchComponent implements OnInit {
         event.preventDefault();
         moveToPreviousFocusableElement();
         break;
-      case 'Escape':
-        this.resetInput();
-        event.preventDefault();
-        break;
       case 'Enter':
         event.preventDefault();
 
@@ -81,7 +77,7 @@ export class GlobalSearchComponent implements OnInit {
         }
         break;
       default:
-        if (event.key.length === 1 && !event.metaKey) {
+        if (event.key.length === 1 && !event.metaKey && !this.isSearchInputFocused) {
           event.preventDefault();
           this.searchControl.setValue(this.searchControl.value + event.key);
           this.focusInputElement();

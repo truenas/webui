@@ -5,7 +5,7 @@ import {
 import { MatCheckboxChange } from '@angular/material/checkbox';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { TranslateService } from '@ngx-translate/core';
-import { ConfirmOptions, ConfirmOptionsWithSecondaryCheckbox } from 'app/interfaces/dialog.interface';
+import { ConfirmOptions, ConfirmOptionsWithSecondaryCheckbox, DialogWithSecondaryCheckboxResult } from 'app/interfaces/dialog.interface';
 
 @Component({
   selector: 'ix-confirm-dialog',
@@ -58,7 +58,7 @@ export class ConfirmDialogComponent {
       ? {
         confirmed: false,
         secondaryCheckbox: this.isSecondaryCheckboxChecked,
-      }
+      } as DialogWithSecondaryCheckboxResult
       : false;
 
     this.dialogRef.close(result);
@@ -69,7 +69,7 @@ export class ConfirmDialogComponent {
       ? {
         confirmed: true,
         secondaryCheckbox: this.isSecondaryCheckboxChecked,
-      }
+      } as DialogWithSecondaryCheckboxResult
       : true;
 
     this.dialogRef.close(result);

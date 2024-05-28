@@ -71,9 +71,12 @@ export class WidgetGroupComponent {
     }
 
     const inputs: Record<string, unknown> = { size: slotSize };
-    const hasSettings = definition.settingsComponent;
-    if (hasSettings) {
-      inputs.settings = widget.settings;
+
+    if (definition.settingsComponent) {
+      inputs.settings = {
+        ...widget.settings,
+        widgetName: definition.name,
+      };
     }
 
     return {

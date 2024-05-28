@@ -1,0 +1,34 @@
+.card {
+  height: 100%;
+
+  .card-content {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+}
+
+:host ::ng-deep {
+  .container {
+    align-items: center;
+    display: flex;
+    height: 100%;
+
+    img {
+      position: relative;
+      top: -5px;
+    }
+
+    &.half {
+      img {
+        width: 251px;
+      }
+    }
+
+    &.quarter {
+      img {
+        width: 80%;
+      }
+    }
+  }
+}

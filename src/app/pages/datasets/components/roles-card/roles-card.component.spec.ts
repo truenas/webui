@@ -1,12 +1,10 @@
 import { FormGroup } from '@angular/forms';
-import { MatIconTestingModule } from '@angular/material/icon/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { IscsiExtentType } from 'app/enums/iscsi.enum';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
-import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { RolesCardComponent } from 'app/pages/datasets/components/roles-card/roles-card.component';
 import { NfsFormComponent } from 'app/pages/sharing/nfs/nfs-form/nfs-form.component';
 import { SmbFormComponent } from 'app/pages/sharing/smb/smb-form/smb-form.component';
@@ -39,10 +37,6 @@ describe('RolesCardComponent', () => {
   let spectator: Spectator<RolesCardComponent>;
 
   const createComponent = createComponentFactory({
-    imports: [
-      IxIconModule,
-      MatIconTestingModule,
-    ],
     providers: [
       mockAuth(),
       mockWebSocket(),

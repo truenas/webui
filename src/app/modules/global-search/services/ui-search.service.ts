@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import UiElementsJson from 'app/../assets/ui-searchable-elements.json';
+import Fuse from 'fuse.js';
 import {
   BehaviorSubject,
   Observable, filter, first, from, map, mergeMap, of, tap, toArray,
@@ -18,9 +19,14 @@ export class UiSearchProvider implements GlobalSearchProvider {
   private translatedTerms = this.uiElements.map((element) => {
     return {
       ...element,
-      hierarchy: element.hierarchy.map((key) => this.translate.instant(key)),
-      synonyms: element.synonyms.map((key) => this.translate.instant(key)),
+      hierarchy: (element.hierarchy || []).map((key) => this.translate.instant(key)),
+      synonyms: (element.synonyms || []).map((key) => this.translate.instant(key)),
     };
+  });
+
+  private fuse = new Fuse(this.translatedTerms, {
+    keys: ['hierarchy', 'synonyms'],
+    threshold: 0.15,
   });
 
   private selectedElement$ = new BehaviorSubject<UiSearchableElement>(null);
@@ -37,20 +43,20 @@ export class UiSearchProvider implements GlobalSearchProvider {
 
   search(term: string, limit: number): Observable<UiSearchableElement[]> {
     // sort results by showing hierarchy match first, then synonyms match
-    const sortedResults = this.translatedTerms.filter((item) => {
-      return item.synonyms.find((synonym) => synonym?.toLowerCase().includes(term.toLowerCase()))
-        || item.hierarchy[item.hierarchy.length - 1]?.toLowerCase().includes(term.toLowerCase());
-    }).sort((a, b) => {
-      const aHierarchyMatch = a.hierarchy[a.hierarchy.length - 1]?.toLowerCase().includes(term.toLowerCase()) ? 1 : 0;
-      const bHierarchyMatch = b.hierarchy[b.hierarchy.length - 1]?.toLowerCase().includes(term.toLowerCase()) ? 1 : 0;
+    const fuzzySearchResults = this.fuse.search(term)
+      .map((result) => result.item)
+      .sort((a, b) => {
+        const aHierarchyMatch = a.hierarchy[a.hierarchy.length - 1]?.toLowerCase().includes(term.toLowerCase()) ? 1 : 0;
+        const bHierarchyMatch = b.hierarchy[b.hierarchy.length - 1]?.toLowerCase().includes(term.toLowerCase()) ? 1 : 0;
 
-      const aSynonymMatch = a.synonyms.find((synonym) => synonym?.toLowerCase().includes(term.toLowerCase())) ? 1 : 0;
-      const bSynonymMatch = b.synonyms.find((synonym) => synonym?.toLowerCase().includes(term.toLowerCase())) ? 1 : 0;
+        const aSynonymMatch = a.synonyms.find((synonym) => synonym?.toLowerCase().includes(term.toLowerCase())) ? 1 : 0;
+        const bSynonymMatch = b.synonyms.find((synonym) => synonym?.toLowerCase().includes(term.toLowerCase())) ? 1 : 0;
 
-      return bHierarchyMatch - aHierarchyMatch || aSynonymMatch - bSynonymMatch;
-    }).slice(0, limit);
+        return bHierarchyMatch - aHierarchyMatch || aSynonymMatch - bSynonymMatch;
+      })
+      .slice(0, limit);
 
-    return from(sortedResults).pipe(
+    return from(fuzzySearchResults).pipe(
       mergeMap((item) => {
         if (!item.requiredRoles.length) {
           return of(item);

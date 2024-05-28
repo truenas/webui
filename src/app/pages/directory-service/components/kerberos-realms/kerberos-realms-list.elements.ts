@@ -9,6 +9,12 @@ export const kerberosRealmsListElements = {
     add: {
       hierarchy: [T('Add')],
       anchor: 'add-kerberos-realm',
+      synonyms: [
+        T('Add Kerberos Realm'),
+        T('Create Kerberos Realm'),
+        T('New Kerberos Realm'),
+        T('Kerberos Realm'),
+      ],
     },
   },
 } satisfies UiSearchableElement;

@@ -10,7 +10,12 @@ export const replicationListElements = {
     },
     add: {
       hierarchy: [T('Add')],
-      synonyms: [T('Add Replication Task')],
+      synonyms: [
+        T('Add Replication Task'),
+        T('Create Replication Task'),
+        T('New Replication Task'),
+        T('Task'),
+      ],
     },
   },
 } satisfies UiSearchableElement;

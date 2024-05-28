@@ -1,4 +1,6 @@
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, input,
+} from '@angular/core';
 
 @Component({
   selector: 'ix-drag-handle',
@@ -7,5 +9,5 @@ import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DragHandleComponent {
-  @Input() showReorderHandle = false;
+  readonly showReorderHandle = input(false);
 }

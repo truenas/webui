@@ -75,4 +75,11 @@
   ::ng-deep input {
     padding-left: 30px;
   }
+
+  .shortcut {
+    opacity: 0.7;
+    position: absolute;
+    right: 9px;
+    top: -1px;
+  }
 }

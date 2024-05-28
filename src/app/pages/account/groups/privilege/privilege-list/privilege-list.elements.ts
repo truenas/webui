@@ -8,6 +8,7 @@ export const privilegesListElements = {
     list: {},
     add: {
       hierarchy: [T('Add')],
+      synonyms: [T('Add Privilege'), T('New Privilege'), T('Create Privilege'), T('Privilege')],
       anchor: 'add-privilege',
     },
   },

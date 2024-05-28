@@ -8,6 +8,14 @@ export const cronCardElements = {
   elements: {
     addCronJob: {
       hierarchy: [T('Add')],
+      synonyms: [
+        T('Add Cron Job'),
+        T('Create Cron Job'),
+        T('New Cron Job'),
+        T('Setup Cron Job'),
+        T('Cron Job'),
+        T('Cronjob'),
+      ],
     },
   },
 } satisfies UiSearchableElement;

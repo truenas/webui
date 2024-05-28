@@ -4,11 +4,11 @@
   fxLayoutAlign="space-between center"
 >
   <h3 class="ix-formtitle">
-    {{ title | translate }}
-    <ix-readonly-badge *ngIf="requiredRoles?.length && !(hasRequiredRoles | async)"></ix-readonly-badge>
+    {{ title() | translate }}
+    <ix-readonly-badge *ngIf="requiredRoles()?.length && !(hasRequiredRoles() | async)"></ix-readonly-badge>
   </h3>
 
-  <ng-container *ngIf="!disableClose">
+  <ng-container *ngIf="!disableClose()">
     <ix-icon
       tabindex="0"
       name="cancel"
@@ -19,4 +19,4 @@
   </ng-container>
 </div>
 
-<mat-progress-bar *ngIf="loading" mode="indeterminate"></mat-progress-bar>
+<mat-progress-bar *ngIf="loading()" mode="indeterminate"></mat-progress-bar>

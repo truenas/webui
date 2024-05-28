@@ -9,6 +9,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { filter, map, take } from 'rxjs/operators';
+import { oneDayMillis } from 'app/constants/time.constant';
 import { JobState } from 'app/enums/job-state.enum';
 import { ProductEnclosure } from 'app/enums/product-enclosure.enum';
 import { SystemUpdateStatus } from 'app/enums/system-update.enum';
@@ -20,8 +21,8 @@ import {
   DialogService,
 } from 'app/modules/dialog/dialog.service';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { getMiniImagePath, getServerProduct } from 'app/pages/dashboard/widgets/system/common/widget-sys-info.utils';
 import { WidgetComponent } from 'app/pages/dashboard-old/components/widget/widget.component';
-import { ProductImageService } from 'app/services/product-image.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { ThemeService } from 'app/services/theme/theme.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -97,7 +98,6 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
     public loader: AppLoaderService,
     public dialogService: DialogService,
     private store$: Store<AppState>,
-    private productImgServ: ProductImageService,
     private ws: WebSocketService,
     private cdr: ChangeDetectorRef,
     private breakpointObserver: BreakpointObserver,
@@ -224,9 +224,9 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
     } else if (this.systemInfo.platform.includes('CERTIFIED')) {
       this.certified = true;
     } else {
-      const product = this.productImgServ.getServerProduct(this.systemInfo.platform);
+      const product = getServerProduct(this.systemInfo.platform);
       this.productImage = product ? `/servers/${product}.png` : 'ix-original.svg';
-      this.productModel = product || '';
+      this.productModel = product;
       this.productEnclosure = ProductEnclosure.Rackmount;
     }
 
@@ -241,7 +241,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
       this.certified = true;
       return;
     }
-    this.productImage = this.productImgServ.getMiniImagePath(sysProduct) || '';
+    this.productImage = getMiniImagePath(sysProduct);
   }
 
   goToEnclosure(): void {
@@ -255,10 +255,9 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
    * limit the check to once a day
    */
   private checkForUpdate(): void {
-    const oneDay = 24 * 60 * 60 * 1000;
     if (
       sessionStorage.updateLastChecked
-      && Number(sessionStorage.updateLastChecked) + oneDay > Date.now()
+      && Number(sessionStorage.updateLastChecked) + oneDayMillis > Date.now()
     ) {
       this.updateAvailable = sessionStorage.updateAvailable === 'true';
       return;

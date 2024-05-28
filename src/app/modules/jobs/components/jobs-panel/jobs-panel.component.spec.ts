@@ -139,9 +139,9 @@ describe('JobsPanelComponent', () => {
     const jobs = jobPanel.getJobItemComponents;
 
     expect(jobs).toHaveLength(3);
-    expect(jobs[0].job).toEqual(runningJob);
-    expect(jobs[1].job).toEqual(waitingJob);
-    expect(jobs[2].job).toEqual(failedJob);
+    expect(jobs[0].job()).toEqual(runningJob);
+    expect(jobs[1].job()).toEqual(waitingJob);
+    expect(jobs[2].job()).toEqual(failedJob);
     expect(jobs[4]).toBeUndefined();
   });
 

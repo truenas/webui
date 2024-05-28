@@ -15,6 +15,7 @@ import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { GlobalSearchComponent } from 'app/modules/global-search/components/global-search/global-search.component';
 import { GlobalSearchResultsComponent } from 'app/modules/global-search/components/global-search-results/global-search-results.component';
 import { GlobalSearchSection } from 'app/modules/global-search/enums/global-search-section.enum';
+import * as focusHelper from 'app/modules/global-search/helpers/focus-helper';
 import { GlobalSearchSectionsProvider } from 'app/modules/global-search/services/global-search-sections.service';
 import { UiSearchProvider } from 'app/modules/global-search/services/ui-search.service';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
@@ -140,4 +141,24 @@ describe('GlobalSearchComponent', () => {
     expect(spectator.component.searchControl.value).toBe('');
     expect(document.activeElement).toBe(spectator.query('input'));
   });
+
+  it('handles keydown events', fakeAsync(() => {
+    jest.spyOn(focusHelper, 'moveToNextFocusableElement').mockImplementation();
+
+    const inputElement = spectator.query<HTMLInputElement>('.search-input');
+
+    'Filtered'.split('').forEach((symbol) => {
+      if (spectator.component.isSearchInputFocused) {
+        spectator.component.searchControl.setValue(spectator.component.searchControl.value + symbol);
+      }
+      spectator.dispatchKeyboardEvent(inputElement, 'keydown', symbol);
+    });
+    tick(150);
+    spectator.detectChanges();
+    expect(spectator.component.searchControl.value).toBe('Filtered');
+    expect(spectator.component.searchResults).toHaveLength(3);
+
+    spectator.dispatchKeyboardEvent(inputElement, 'keydown', 'Enter');
+    expect(focusHelper.moveToNextFocusableElement).toHaveBeenCalled();
+  }));
 });

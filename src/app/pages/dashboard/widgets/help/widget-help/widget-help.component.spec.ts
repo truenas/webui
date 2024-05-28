@@ -7,6 +7,7 @@ import { ProductType } from 'app/enums/product-type.enum';
 import { helptextAbout } from 'app/helptext/about';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { CopyrightLineComponent } from 'app/modules/layout/components/copyright-line/copyright-line.component';
+import { SlotSize } from 'app/pages/dashboard/types/widget.interface';
 import { WidgetHelpComponent } from 'app/pages/dashboard/widgets/help/widget-help/widget-help.component';
 import { SystemGeneralService } from 'app/services/system-general.service';
 
@@ -27,7 +28,11 @@ describe('WidgetHelpComponent', () => {
   });
 
   beforeEach(() => {
-    spectator = createComponent();
+    spectator = createComponent({
+      props: {
+        size: SlotSize.Full,
+      },
+    });
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
@@ -39,15 +44,21 @@ describe('WidgetHelpComponent', () => {
     const icons = await loader.getAllHarnesses(IxIconHarness);
     const [firstIcon, secondIcon, thirdIcon] = await parallel(() => icons.map((icon) => icon.getName()));
     const [firstLine, secondLine, thirdLine] = spectator.queryAll('.helptext');
+    const [firstHrefIconLine, secondHrefIconLine, thirdHrefIconLine] = spectator.queryAll('.icon-wrapper');
+
+    expect(spectator.query('.icon-wrapper a ix-icon')).toExist();
 
     expect(firstIcon).toBe('assignment');
     expect(firstLine.innerHTML).toBe(helptextAbout.docs);
+    expect(firstHrefIconLine.textContent).toBe('Docs');
 
     expect(secondIcon).toBe('group');
     expect(secondLine.innerHTML).toBe(helptextAbout.forums);
+    expect(secondHrefIconLine.textContent).toBe('Forums');
 
     expect(thirdIcon).toBe('mail');
     expect(thirdLine.innerHTML).toBe(helptextAbout.newsletter);
+    expect(thirdHrefIconLine.textContent).toBe('Newsletter');
   });
 
   it('renders copyright', () => {

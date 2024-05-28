@@ -8,6 +8,10 @@ export const emailCardElements = {
     email: {
       anchor: 'email-card',
     },
+    settings: {
+      hierarchy: [T('Configure')],
+      synonyms: [T('Send Test Email'), T('Config Email'), T('Set email'), T('Configure Email')],
+    },
     sendMethod: {
       hierarchy: [T('Send Method')],
       synonyms: [T('SMTP'), T('Gmail')],

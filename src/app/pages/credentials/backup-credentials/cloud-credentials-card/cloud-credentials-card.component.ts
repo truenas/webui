@@ -14,7 +14,7 @@ import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { createTable } from 'app/modules/ix-table/utils';
 import { cloudCredentialsCardElements } from 'app/pages/credentials/backup-credentials/cloud-credentials-card/cloud-credentials-card.elements';
-import { CloudCredentialsFormComponent } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/cloud-credentials-form.component';
+import { CloudCredentialFormInput, CloudCredentialsFormComponent } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/cloud-credentials-form.component';
 import { CloudCredentialService } from 'app/services/cloud-credential.service';
 import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -112,7 +112,13 @@ export class CloudCredentialsCardComponent implements OnInit {
   }
 
   doEdit(credential: CloudSyncCredential): void {
-    const close$ = this.chainedSlideinService.open(CloudCredentialsFormComponent, false, credential);
+    const close$ = this.chainedSlideinService.open(
+      CloudCredentialsFormComponent,
+      false,
+      {
+        existingCredential: credential,
+      } as CloudCredentialFormInput,
+    );
     close$.pipe(filter((response) => !!response.response), untilDestroyed(this)).subscribe(() => {
       this.getCredentials();
     });

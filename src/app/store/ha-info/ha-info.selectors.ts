@@ -16,6 +16,11 @@ export const selectIsHaLicensed = createSelector(
   (state) => state.isHaLicensed,
 );
 
+export const selectIsHaEnabled = createSelector(
+  selectHaStatus,
+  (state) => state.hasHa,
+);
+
 export const selectIsUpgradePending = createSelector(
   selectHaInfoState,
   (state) => state.isUpgradePending,
@@ -24,6 +29,10 @@ export const selectIsUpgradePending = createSelector(
 export const selectCanFailover = createSelector(
   selectHaInfoState,
   ({ haStatus }) => {
+    if (!haStatus) {
+      return false;
+    }
+
     if (haStatus.hasHa) {
       return true;
     }

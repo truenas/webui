@@ -113,6 +113,7 @@
     "eslint-plugin-sonarjs": "~0.17.0",
     "eslint-plugin-unicorn": "^43.0.1",
     "fontfaceobserver": "^2.3.0",
+    "fuse.js": "~7.0.0",
     "html2canvas": "~1.4.1",
     "ip-regex": "~4.3.0",
     "is-cidr": "~3.1.1",

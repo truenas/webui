@@ -49,6 +49,9 @@ export abstract class IxSelectWithNewOption implements OnInit, AfterViewInit {
   ): IxSelectValue;
   abstract getFormComponentType(): ComponentType<unknown>;
   abstract fetchOptions(): Observable<Option[]>;
+  getFormInputData(): Record<string, unknown> {
+    return undefined;
+  }
 
   ngAfterViewInit(): void {
     if (!this.ixSelect) {
@@ -60,7 +63,13 @@ export abstract class IxSelectWithNewOption implements OnInit, AfterViewInit {
       distinctUntilChanged(),
       filter(Boolean),
       filter((newValue: number | string) => newValue === addNewIxSelectValue),
-      switchMap(() => this.chainedSlideIn.open(this.getFormComponentType(), this.formComponentIsWide)),
+      switchMap(() => {
+        return this.chainedSlideIn.open(
+          this.getFormComponentType(),
+          this.formComponentIsWide,
+          this.getFormInputData(),
+        );
+      }),
       filter((response: ChainedComponentResponse) => !response.error),
       tap(
         (response) => this.ixSelect.controlDirective.control.setValue(

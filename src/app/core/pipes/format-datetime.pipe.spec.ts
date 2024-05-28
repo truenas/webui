@@ -52,4 +52,13 @@ describe('FormatDateTimePipe', () => {
     });
     expect(spectator.element).toHaveExactText('2023-06-20 06:55:04');
   });
+
+  it('omits date format if empty string is passed', () => {
+    spectator = createPipe('{{ inputValue | formatDateTime:" ":"HH:mm" }}', {
+      hostProps: {
+        inputValue,
+      },
+    });
+    expect(spectator.element).toHaveExactText('15:03');
+  });
 });
