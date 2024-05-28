@@ -2,12 +2,12 @@ import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { WidgetCategory } from 'app/pages/dashboard/types/widget-category.enum';
 import { dashboardWidget } from 'app/pages/dashboard/types/widget-component.interface';
 import { SlotSize } from 'app/pages/dashboard/types/widget.interface';
-import { WidgetHelpComponent } from 'app/pages/dashboard/widgets/help/widget-help/widget-help.component';
+import { WidgetSystemImageComponent } from 'app/pages/dashboard/widgets/system/widget-system-image/widget-system-image.component';
 
-export const helpWidget = dashboardWidget({
-  name: T('Help'),
+export const systemImageWidget = dashboardWidget({
+  name: T('System Image'),
   supportedSizes: [SlotSize.Full, SlotSize.Half, SlotSize.Quarter],
-  category: WidgetCategory.Help,
-  component: WidgetHelpComponent,
+  category: WidgetCategory.SystemInfo,
+  component: WidgetSystemImageComponent,
   settingsComponent: null,
 });

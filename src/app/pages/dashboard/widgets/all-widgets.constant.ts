@@ -12,6 +12,7 @@ import { storageWidget } from 'app/pages/dashboard/widgets/storage/widget-storag
 import { osVersionWidget } from 'app/pages/dashboard/widgets/system/widget-os-version/widget-os-version.definition';
 import { systemInfoActiveWidget } from 'app/pages/dashboard/widgets/system/widget-sys-info-active/widget-sys-info-active.definition';
 import { systemInfoPassiveWidget } from 'app/pages/dashboard/widgets/system/widget-sys-info-passive/widget-sys-info-passive.definition';
+import { systemImageWidget } from 'app/pages/dashboard/widgets/system/widget-system-image/widget-system-image.definition';
 import { systemUptimeWidget } from 'app/pages/dashboard/widgets/system/widget-system-uptime/widget-system-uptime.definition';
 
 export const widgetComponents = [
@@ -28,6 +29,7 @@ export const widgetComponents = [
   systemInfoPassiveWidget.component,
   osVersionWidget.component,
   systemUptimeWidget.component,
+  systemImageWidget.component,
   poolNameWidget.component,
   poolNameWidget.settingsComponent,
   arbitraryTextWidget.component,
@@ -49,5 +51,6 @@ export const widgetRegistry = {
   [WidgetType.SystemInfoPassive]: systemInfoPassiveWidget,
   [WidgetType.OsVersion]: osVersionWidget,
   [WidgetType.SystemUptime]: systemUptimeWidget,
+  [WidgetType.SystemImage]: systemImageWidget,
   [WidgetType.ArbitraryText]: arbitraryTextWidget,
 };

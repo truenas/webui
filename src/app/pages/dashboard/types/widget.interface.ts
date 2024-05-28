@@ -19,6 +19,7 @@ export enum WidgetType {
   SystemInfoPassive = 'system-info-passive',
   OsVersion = 'os-version',
   SystemUptime = 'system-uptime',
+  SystemImage = 'system-image',
   PoolName = 'pool-name',
   ArbitraryText = 'arbitrary-text',
 }
