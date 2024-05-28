@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatBadgeModule } from '@angular/material/badge';
@@ -19,15 +19,6 @@ import { TruecommandButtonComponent } from 'app/modules/truecommand/truecommand-
 import { TruecommandSignupModalComponent } from './components/truecommand-signup-modal/truecommand-signup-modal.component';
 
 @NgModule({
-  declarations: [
-    TruecommandButtonComponent,
-    TruecommandStatusModalComponent,
-    TruecommandConnectModalComponent,
-    TruecommandSignupModalComponent,
-  ],
-  exports: [
-    TruecommandButtonComponent,
-  ],
   imports: [
     CommonModule,
     ReactiveFormsModule,
@@ -40,11 +31,18 @@ import { TruecommandSignupModalComponent } from './components/truecommand-signup
     MatButtonModule,
     MatTooltipModule,
     IxFormsModule,
+    HttpClientModule,
     MatDialogModule,
     TestIdModule,
   ],
-  providers: [
-    provideHttpClient(withInterceptorsFromDi()),
+  declarations: [
+    TruecommandButtonComponent,
+    TruecommandStatusModalComponent,
+    TruecommandConnectModalComponent,
+    TruecommandSignupModalComponent,
+  ],
+  exports: [
+    TruecommandButtonComponent,
   ],
 })
 export class TruecommandModule { }

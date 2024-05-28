@@ -9,7 +9,7 @@
       "projectType": "application",
       "architect": {
         "build": {
-          "builder": "@angular/build:application",
+          "builder": "@angular-devkit/build-angular:browser-esbuild",
           "options": {
             "allowedCommonJsDependencies": [
               "is-cidr",
@@ -18,15 +18,11 @@
               "cron-parser",
               "cronstrue"
             ],
-            "outputPath": {
-              "base": "dist",
-              "browser": ""
-            },
+            "outputPath": "dist",
             "index": "src/index.html",
+            "main": "src/main.ts",
             "tsConfig": "src/tsconfig.app.json",
-            "polyfills": [
-              "src/polyfills.ts"
-            ],
+            "polyfills": "src/polyfills.ts",
             "assets": ["src/assets"],
             "stylePreprocessorOptions": {
               "includePaths": [
@@ -44,10 +40,10 @@
               "node_modules/pixi-filters/dist/pixi-filters.js"
             ],
             "extractLicenses": false,
+            "buildOptimizer": false,
             "sourceMap": true,
             "optimization": false,
-            "namedChunks": true,
-            "browser": "src/main.ts"
+            "namedChunks": true
           },
           "configurations": {
             "production": {
@@ -55,6 +51,8 @@
               "outputHashing": "all",
               "namedChunks": false,
               "extractLicenses": true,
+              "vendorChunk": false,
+              "buildOptimizer": true,
               "fileReplacements": [
                 {
                   "replace": "src/environments/environment.ts",
@@ -66,7 +64,7 @@
           "defaultConfiguration": ""
         },
         "serve": {
-          "builder": "@angular/build:dev-server",
+          "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
             "buildTarget": "truenas-scale-ui:build"
           },
@@ -77,7 +75,7 @@
           }
         },
         "extract-i18n": {
-          "builder": "@angular/build:extract-i18n",
+          "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
             "buildTarget": "truenas-scale-ui:build"
           }
