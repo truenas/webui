@@ -1,10 +1,8 @@
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatIconTestingModule } from '@angular/material/icon/testing';
 import { MatTooltip } from '@angular/material/tooltip';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
-import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { DatasetRolesCellComponent } from 'app/pages/datasets/components/dataset-node/dataset-roles-cell/dataset-roles-cell.component';
 
 describe('DatasetRolesCellComponent', () => {
@@ -13,10 +11,6 @@ describe('DatasetRolesCellComponent', () => {
 
   const createComponent = createComponentFactory({
     component: DatasetRolesCellComponent,
-    imports: [
-      IxIconModule,
-      MatIconTestingModule,
-    ],
   });
 
   async function setupTest(dataset: DatasetDetails, isSystemDataset = false): Promise<void> {
