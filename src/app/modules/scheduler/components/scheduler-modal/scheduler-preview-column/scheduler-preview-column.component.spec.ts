@@ -1,6 +1,5 @@
 import { HarnessLoader, parallel } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatCalendar } from '@angular/material/datepicker';
 import { MatCalendarHarness } from '@angular/material/datepicker/testing';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { format } from 'date-fns';
@@ -17,9 +16,6 @@ describe('SchedulerPreviewColumnComponent', () => {
 
   const createComponent = createComponentFactory({
     component: SchedulerPreviewColumnComponent,
-    imports: [
-      MatCalendar,
-    ],
     declarations: [
       MockComponent(SchedulerDateExamplesComponent),
       CrontabExplanationPipe,
@@ -27,11 +23,8 @@ describe('SchedulerPreviewColumnComponent', () => {
   });
 
   beforeEach(() => {
-    // TODO: Not sure why doNotFake is needed. Try removing after some Angular/Material upgrades.
     jest
-      .useFakeTimers({
-        doNotFake: ['queueMicrotask'],
-      })
+      .useFakeTimers()
       .setSystemTime(new Date('2022-02-22 16:28:00'));
 
     spectator = createComponent({
