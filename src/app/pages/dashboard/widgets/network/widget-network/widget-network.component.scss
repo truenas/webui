@@ -16,12 +16,6 @@
     padding-bottom: 0;
     padding-right: 12px;
   }
-
-  .container {
-    padding-left: 12px;
-    padding-right: 0;
-    padding-top: 0;
-  }
 }
 
 .header {
@@ -31,6 +25,11 @@
   h3 {
     font-size: 24px;
   }
+
+  &.half,
+  &.quarter {
+    display: none;
+  }
 }
 
 .container {
@@ -38,6 +37,68 @@
   flex-direction: column;
   flex-grow: 1;
   overflow: hidden;
+  padding: 0 0 12px 12px;
+
+  &.half {
+    flex-direction: row;
+    padding: 0 0 0 12px;
+
+    .nic-info {
+      flex: 1 1 30%;
+      max-width: 30%;
+      padding: 0;
+    }
+
+    .nic-chart {
+      flex: 1 1 70%;
+      max-width: 70%;
+    }
+  }
+
+  &.quarter {
+    padding: 0 0 0 12px;
+
+    .nic-info {
+      padding: 0;
+    }
+
+    .primary {
+      display: flex;
+      flex-direction: column-reverse;
+    }
+
+    .in-out {
+      .info-list-item {
+        font-size: 16px;
+
+        span:first-child {
+          font-weight: bold;
+          min-width: 44%;
+          text-align: right;
+        }
+      }
+    }
+
+    .info-list-item.traffic {
+      .icon-wrapper {
+        display: none !important;
+      }
+    }
+
+    .info-list-item.state {
+      flex-direction: row-reverse;
+      margin-top: 16px;
+      opacity: 0.75;
+      place-content: center center;
+    }
+  }
+
+  &.half,
+  &.quarter {
+    .secondary {
+      display: none !important;
+    }
+  }
 
   .chart {
     align-items: center;
@@ -157,5 +218,6 @@
 
 .in-out {
   display: flex;
+  flex: 1;
   flex-direction: column;
 }

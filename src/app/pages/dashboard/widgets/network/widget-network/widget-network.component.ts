@@ -2,12 +2,13 @@ import {
   Component, ChangeDetectionStrategy, input,
   computed,
 } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { ChartData, ChartOptions } from 'chart.js';
 import {
-  filter, map, shareReplay, skipWhile, switchMap,
+  filter, map,
+  switchMap,
 } from 'rxjs';
 import { kb } from 'app/constants/bits.constant';
 import { LinkState, NetworkInterfaceAliasType } from 'app/enums/network-interface.enum';
@@ -16,8 +17,8 @@ import { BaseNetworkInterface, NetworkInterfaceAlias } from 'app/interfaces/netw
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
 import { WidgetComponent } from 'app/pages/dashboard/types/widget-component.interface';
 import { SlotSize } from 'app/pages/dashboard/types/widget.interface';
-import { networkWidgetAspectRatio } from 'app/pages/dashboard/widgets/network/widget-network/widget-network.const';
-import { processNetworkInterfaces } from 'app/pages/dashboard/widgets/network/widget-network/widget-network.utils';
+import { WidgetInterfaceIpSettings } from 'app/pages/dashboard/widgets/network/widget-interface-ip/widget-interface-ip.definition';
+import { fullSizeNetworkWidgetAspectRatio, halfSizeNetworkWidgetAspectRatio } from 'app/pages/dashboard/widgets/network/widget-network/widget-network.const';
 import { LocaleService } from 'app/services/locale.service';
 import { ThemeService } from 'app/services/theme/theme.service';
 
@@ -28,32 +29,39 @@ import { ThemeService } from 'app/services/theme/theme.service';
   styleUrls: ['./widget-network.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class WidgetNetworkComponent implements WidgetComponent {
+export class WidgetNetworkComponent implements WidgetComponent<WidgetInterfaceIpSettings> {
   size = input.required<SlotSize>();
+  settings = input<WidgetInterfaceIpSettings>();
 
   protected isLoading = computed(() => {
-    return !this.interface() || !this.interfaceUsage() || !this.reportingData() || !this.chartData();
+    return !this.interfaces()
+      || !this.interface()
+      || !this.interfaceUsage()
+      || !this.reportingData()
+      || !this.chartData();
   });
 
-  protected interface$ = this.resources.networkInterfaces$.pipe(
-    skipWhile((state) => state.isLoading),
-    map((state) => processNetworkInterfaces(state.value)),
+  protected interfaces = toSignal(this.resources.networkInterfaces$.pipe(
+    filter((state) => !state.isLoading),
+    map((state) => state.value),
     filter((interfaces) => interfaces.length > 0),
-    map(([firstInterface]) => firstInterface),
-    shareReplay({ bufferSize: 1, refCount: true }),
-  );
-
-  protected interface = toSignal(this.interface$);
-
-  protected interfaceUsage = toSignal(this.resources.realtimeUpdates$.pipe(
-    skipWhile(() => Boolean(!this.interface()?.name)),
-    map((update) => update.fields.interfaces),
-    map((interfaces) => interfaces?.[this.interface().name]),
   ));
 
-  protected reportingData = toSignal(this.interface$.pipe(
+  protected interface = computed(() => {
+    return this.interfaces()?.find((nics) => nics.name === this.settings().interface);
+  });
+
+  protected interfaceUsage = toSignal(toObservable(this.interface).pipe(
     filter(Boolean),
-    switchMap((networkInterface) => this.resources.networkInterfaceUpdate(networkInterface.name)),
+    switchMap((nic) => this.resources.realtimeUpdates$.pipe(
+      map((update) => update.fields.interfaces[nic.name]),
+    )),
+  ));
+
+  protected reportingData = toSignal(toObservable(this.interface).pipe(
+    filter(Boolean),
+    switchMap((nic) => this.resources.networkInterfaceUpdate(nic.name)),
+    filter((response) => !!response.length),
     map((response) => {
       const updatedResponse = response[0];
       (updatedResponse.data as number[][]).forEach((row, index) => {
@@ -84,6 +92,18 @@ export class WidgetNetworkComponent implements WidgetComponent {
 
   protected bitsOut = computed<number>(() => {
     return this.interfaceUsage().sent_bytes_rate * 8;
+  });
+
+  protected networkWidgetAspectRatio = computed(() => {
+    return this.size() === SlotSize.Full ? fullSizeNetworkWidgetAspectRatio : halfSizeNetworkWidgetAspectRatio;
+  });
+
+  protected showChart = computed(() => {
+    return [SlotSize.Full, SlotSize.Half].includes(this.size());
+  });
+
+  protected showSecondaryInfo = computed(() => {
+    return [SlotSize.Full].includes(this.size());
   });
 
   protected chartData = computed<ChartData<'line'>>(() => {
@@ -121,70 +141,74 @@ export class WidgetNetworkComponent implements WidgetComponent {
     };
   });
 
-  protected chartOptions: ChartOptions<'line'> = {
-    responsive: true,
-    aspectRatio: networkWidgetAspectRatio,
-    maintainAspectRatio: true,
-    animation: {
-      duration: 0,
-    },
-    layout: {
-      padding: 0,
-    },
-    plugins: {
-      legend: {
-        align: 'end',
-        labels: {
-          boxWidth: 8,
-          usePointStyle: true,
-        },
+  protected chartOptions = computed<ChartOptions<'line'>>(() => {
+    const aspectRatio = this.networkWidgetAspectRatio();
+
+    return {
+      aspectRatio,
+      responsive: true,
+      maintainAspectRatio: true,
+      animation: {
+        duration: 0,
       },
-      tooltip: {
-        callbacks: {
-          label: (tooltipItem) => {
-            let label = tooltipItem.dataset.label || '';
-            if (label) {
-              label += ': ';
-            }
-            if (tooltipItem.parsed.y === 0) {
-              label += 0;
-            } else {
-              label = buildNormalizedFileSize(Math.abs(Number(tooltipItem.parsed.y)), 'b', 10);
-            }
-            return label + '/s';
+      layout: {
+        padding: 0,
+      },
+      plugins: {
+        legend: {
+          align: 'end',
+          labels: {
+            boxWidth: 8,
+            usePointStyle: true,
+          },
+        },
+        tooltip: {
+          callbacks: {
+            label: (tooltipItem) => {
+              let label = tooltipItem.dataset.label || '';
+              if (label) {
+                label += ': ';
+              }
+              if (tooltipItem.parsed.y === 0) {
+                label += 0;
+              } else {
+                label = buildNormalizedFileSize(Math.abs(Number(tooltipItem.parsed.y)), 'b', 10);
+              }
+              return label + '/s';
+            },
           },
         },
       },
-    },
-    scales: {
-      x: {
-        type: 'time',
-        time: {
-          unit: 'minute',
-          displayFormats: {
-            minute: 'HH:mm',
+      scales: {
+        x: {
+          type: 'time',
+          time: {
+            unit: 'minute',
+            displayFormats: {
+              minute: 'HH:mm',
+            },
+            tooltipFormat: `${this.localeService.dateFormat} ${this.localeService.timeFormat}`,
           },
-          tooltipFormat: `${this.localeService.dateFormat} ${this.localeService.timeFormat}`,
-        },
-        ticks: {
-          maxTicksLimit: 3,
-          maxRotation: 0,
-        },
-      },
-      y: {
-        position: 'right',
-        ticks: {
-          maxTicksLimit: 8,
-          callback: (value) => {
-            if (value === 0) {
-              return 0;
-            }
-            return buildNormalizedFileSize(Math.abs(Number(value)), 'b', 10) + '/s';
+          ticks: {
+            maxTicksLimit: 3,
+            maxRotation: 0,
           },
         },
+        y: {
+          position: 'right',
+          ticks: {
+            maxTicksLimit: 8,
+            callback: (value) => {
+              if (value === 0) {
+                return 0;
+              }
+              return buildNormalizedFileSize(Math.abs(Number(value)), 'b', 10) + '/s';
+            },
+          },
+        },
       },
-    },
-  };
+    };
+  });
 
   constructor(
     private resources: WidgetResourcesService,

@@ -1,6 +1,6 @@
 <mat-card class="card">
   <mat-card-content class="card-content">
-    <div class="header">
+    <div [class]="['header', size()]">
       <h3>{{ 'Network' | translate }}</h3>
 
       <button
@@ -45,23 +45,23 @@
               </span>
               <span>{{ linkStateLabel() }}</span>
             </div>
-            <div *ngIf="!isLoading(); else skeleton" class="info-list-item traffic">
-              <span class="icon-wrapper">
+            <div class="info-list-item traffic">
+              <span *ngIf="!isLoading()" class="icon-wrapper">
                 <ix-interface-status-icon [update]="interfaceUsage()"></ix-interface-status-icon>
               </span>
               <div class="in-out">
-                <div class="info-list-item in">
+                <div *ngIf="!isLoading(); else skeleton" class="info-list-item in">
                   <span>{{ 'In' | translate }}:</span>
                   <span>{{ bitsIn() | ixFileSize: { baseUnit: 'b', base: 10 } }}/s</span>
                 </div>
-                <div class="info-list-item out">
+                <div *ngIf="!isLoading(); else skeleton" class="info-list-item out">
                   <span>{{ 'Out' | translate }}:</span>
                   <span>{{ bitsOut() | ixFileSize: { baseUnit: 'b', base: 10 } }}/s</span>
                 </div>
               </div>
             </div>
           </div>
-          <div class="info-column secondary">
+          <div *ngIf="showSecondaryInfo()" class="info-column secondary">
             <div *ngIf="!isLoading(); else skeleton" class="info-list-item">
               <span>{{ 'Media Type' | translate }}:</span>
               <span>{{ interface().state.active_media_type }}</span>
@@ -77,7 +77,7 @@
           </div>
         </div>
       </div>
-      <div class="nic-chart">
+      <div *ngIf="showChart()" class="nic-chart">
         <div class="chart-body">
           <ngx-skeleton-loader
             *ngIf="isLoading(); else chart"
@@ -97,7 +97,7 @@
 </mat-card>
 
 <ng-template #chart>
-  <ix-view-chart-area [data]="chartData()" [options]="chartOptions"></ix-view-chart-area>
+  <ix-view-chart-area [data]="chartData()" [options]="chartOptions()"></ix-view-chart-area>
 </ng-template>
 
 <ng-template #skeleton>
