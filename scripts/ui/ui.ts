@@ -1,44 +1,45 @@
-import {environment} from '../../src/environments/environment';
-import {environmentTemplate} from './environment.template';
-import {environmentVersion} from "../../src/environments/environment.version";
-import {Command} from 'commander';
+/* eslint-disable */
+// TODO: Too many issues to fix.
 import fs from 'fs';
-import {EnclosureDispersalStrategy, MockStorageScenario} from "../../src/app/core/testing/enums/mock-storage.enum";
-import {WebUiEnvironment} from "../../src/environments/environment.interface";
+import { Command } from 'commander';
+import * as figlet from 'figlet';
 import inquirer from 'inquirer';
+import { EnclosureDispersalStrategy, MockStorageScenario } from 'app/core/testing/mock-enclosure/enums/mock-storage.enum';
 import {
   MockDiskOptions,
-  MockEnclosureConfig
-} from "../../src/app/core/testing/interfaces/mock-enclosure-utils.interface";
-import * as figlet from 'figlet';
-import {CreateVdevLayout, TopologyItemType} from "../../src/app/enums/v-dev-type.enum";
-import {AddEnclosureOptions} from "../../src/app/core/testing/interfaces/mock-storage-generator.interface";
-import {
-  mockDiskExamples,
-  mockEnclosureExamples,
-  mockExamples,
-  mockPoolExamples
-} from "./helptext";
-import {
-  CommandOptions,
-  ReportOptions,
-  Headers,
-} from './interfaces/ui-command.interface';
-import { ConfigGeneratorAnswers, ConfigLoaderAnswers } from './interfaces/mock-command.interface';
+  MockEnclosureConfig,
+} from 'app/core/testing/mock-enclosure/interfaces/mock-enclosure.interface';
+import { AddEnclosureOptions } from 'app/core/testing/mock-enclosure/interfaces/mock-storage-generator.interface';
 import {
   capitalize,
   commandOpts,
   generateHeaders,
   wrap,
-} from "./command-utils";
-import {mockConfigGeneratorQuestions, mockConfigLoaderQuestions} from "./mock-questions";
+} from './command-utils';
+import { environmentTemplate } from './environment.template';
+import {
+  mockDiskExamples,
+  mockEnclosureExamples,
+  mockExamples,
+  mockPoolExamples,
+} from './helptext';
+import { ConfigGeneratorAnswers, ConfigLoaderAnswers } from './interfaces/mock-command.interface';
+import {
+  CommandOptions,
+  ReportOptions,
+  Headers,
+} from './interfaces/ui-command.interface';
+import { mockConfigGeneratorQuestions, mockConfigLoaderQuestions } from './mock-questions';
+import { CreateVdevLayout, TopologyItemType } from '../../src/app/enums/v-dev-type.enum';
+import { environment } from '../../src/environments/environment';
+import { WebUiEnvironment } from '../../src/environments/environment.interface';
+import { environmentVersion } from '../../src/environments/environment.version';
 
 /*
 * Nice Header
 * */
 function banner(): string {
-  const content = figlet.textSync('TrueNAS WebUI');
-  return content;
+  return figlet.textSync('TrueNAS WebUI');
 }
 
 /*
@@ -46,7 +47,7 @@ function banner(): string {
 * */
 const environmentTs = './src/environments/environment.ts';
 const template = './scripts/ui/environment.template.ts';
-const originalEnvironment = {...environment};
+const originalEnvironment = { ...environment };
 const modelsFile = './scripts/ui//models.json';
 const models: CommandOptions = JSON.parse(fs.readFileSync(modelsFile, 'utf8'));
 const mockConfigDir = './src/assets/mock/configs/';
@@ -72,7 +73,6 @@ program
     const mockCommand = program.commands.find((command: Command) => command.name() === 'mock');
     const mockOptions = commandOpts(mockCommand);
     mockConfig(mockCommand, mockOptions);
-
   });
 
 program
@@ -171,7 +171,7 @@ program.parse(process.argv);
 * Reset Environment File
 * */
 function reset(): void {
-  const templateStr = fs.readFileSync( template, 'utf8');
+  const templateStr = fs.readFileSync(template, 'utf8');
   const result = templateStr.replace('const environmentTemplate', 'const environment');
   fs.writeFileSync(environmentTs, result, 'utf8');
 }
@@ -183,7 +183,7 @@ function saveEnvironment(): void {
   const imports = `import { EnclosureDispersalStrategy, MockStorageScenario } from "../app/core/testing/enums/mock-storage.enum";
 import { WebUiEnvironment } from "./environment.interface";
 import {TopologyItemType} from "../app/enums/v-dev-type.enum";\n
-`
+`;
 
   const prefix = 'export const environment: WebUiEnvironment = ';
   const result = makePrintable(environment, imports + prefix);
@@ -196,7 +196,7 @@ function makePrintable(src: WebUiEnvironment, prefix: string) {
   let output = prefix + '{\n';
 
   keys.forEach((key: keyof WebUiEnvironment) => {
-    let value: any = src[key] as unknown;
+    const value: any = src[key] as unknown;
     output += '  ' + key.toString() + ': ' + wrap(key.toString(), value) + ',\n';
   });
 
@@ -208,28 +208,25 @@ function makePrintable(src: WebUiEnvironment, prefix: string) {
 function dispersalAsEnum(dispersal: string): EnclosureDispersalStrategy {
   if (dispersal.toLowerCase() === 'default' || dispersal.toLowerCase() === 'existing') {
     return EnclosureDispersalStrategy[capitalize(dispersal) as keyof typeof EnclosureDispersalStrategy];
-  } else {
-    console.info(`ERROR: ${dispersal} is not a valid slot assignment`);
-    process.exit(1);
   }
+  console.info(`ERROR: ${dispersal} is not a valid slot assignment`);
+  process.exit(1);
 }
 
 function layoutAsEnum(layout: string): TopologyItemType {
   if (layout.toLowerCase() !== 'default') {
     return TopologyItemType[capitalize(layout) as keyof typeof TopologyItemType];
-  } else {
-    console.info(`ERROR: ${layout} is not a valid VDEV layout`);
-    process.exit(1);
   }
+  console.info(`ERROR: ${layout} is not a valid VDEV layout`);
+  process.exit(1);
 }
 
 function scenarioAsEnum(scenario: string): MockStorageScenario {
   if (scenario.toLowerCase() !== 'default' && scenario.toLowerCase() !== 'multi') {
     return MockStorageScenario[scenario as keyof MockStorageScenario];
-  } else {
-    console.info(`ERROR: ${scenario} is not a valid scenario`);
-    process.exit(1);
   }
+  console.info(`ERROR: ${scenario} is not a valid scenario`);
+  process.exit(1);
 }
 
 /*
@@ -250,7 +247,7 @@ function mockConfigGenerator(): void {
       let expansionModels: string[] = [];
       let dispersal = dispersalChoices[0];
       if (answers.mockEnclosure === mockEnclosureChoices[0]) {
-         expansionModels = answers.shelves.length
+        expansionModels = answers.shelves.length
           ? [].concat(answers.shelves.toUpperCase().split(','))
           : [];
         controllerModel = answers.controller.toUpperCase();
@@ -259,12 +256,12 @@ function mockConfigGenerator(): void {
 
       const enclosureOptions: AddEnclosureOptions = {
         controllerModel: models.controllers[controllerModel].model,
-        expansionModels: expansionModels,
+        expansionModels,
         dispersal: dispersalAsEnum(dispersal),
-      }
+      };
 
       // Setup disk stuff
-      let diskOptions: MockDiskOptions = {...environmentTemplate.mockConfig.diskOptions}
+      const diskOptions: MockDiskOptions = { ...environmentTemplate.mockConfig.diskOptions };
 
       if (answers.mockDisk === 'Yes') {
         diskOptions.enabled = true;
@@ -284,23 +281,23 @@ function mockConfigGenerator(): void {
       }
 
       // Put it all together in our config
-      let mockConfig: MockEnclosureConfig = {
+      const mockConfig: MockEnclosureConfig = {
         enabled: true,
         mockEnclosure: answers.mockEnclosure === mockEnclosureChoices[0],
-        enclosureOptions: enclosureOptions,
+        enclosureOptions,
         systemProduct: models.controllers[controllerModel].systemProduct as string,
-        diskOptions: diskOptions,
-      }
+        diskOptions,
+      };
 
-      if (answers.saveOrCancel === 'Save'){
+      if (answers.saveOrCancel === 'Save') {
         mockConfigReport({
-          showHeader : true,
+          showHeader: true,
           showFooter: true,
         }, mockConfig);
 
         console.info(`\nSaving configuration into ${filePath} with the following values.\n`);
 
-        const contents = JSON.stringify(mockConfig, null,'  ');
+        const contents = JSON.stringify(mockConfig, null, '  ');
         fs.writeFileSync(filePath, contents, 'utf8');
       } else {
         console.info('Aborting mock file generation. No file will be generated and environment remains unchanged');
@@ -312,7 +309,7 @@ function mockConfigGenerator(): void {
         saveEnvironment();
         console.info('Config loaded into environment');
       } else {
-        console.info('New configuration not to be loaded. Environment remains unchanged')
+        console.info('New configuration not to be loaded. Environment remains unchanged');
       }
     })
     .catch((error) => {
@@ -331,15 +328,15 @@ function mockConfigLoader(): void {
   const customDir = 'custom/';
 
   inquirer.prompt(mockConfigLoaderQuestions(mockConfigDir, includedDir, customDir))
-    .then((answers: ConfigLoaderAnswers) =>{
+    .then((answers: ConfigLoaderAnswers) => {
       const subDir = answers.location === 'custom'
         ? customDir + answers.customFile
-        : includedDir + answers.includedFile
+        : includedDir + answers.includedFile;
 
       loadMockConfigFile(mockConfigDir + subDir);
 
       mockConfigReport({
-        showHeader : true,
+        showHeader: true,
         showFooter: true,
       });
     })
@@ -359,12 +356,12 @@ function mockConfig(command: Command, options: CommandOptions): void {
     mockConfigLoader();
   }
 
-  for (let option in options) {
+  for (const option in options) {
     if (options.debug) {
       console.info({
-        option: option,
+        option,
         value: options[option],
-      })
+      });
     }
 
     switch (option) {
@@ -374,14 +371,14 @@ function mockConfig(command: Command, options: CommandOptions): void {
       case 'enable':
         setMockEnabled(true);
         mockConfigReport({
-          showHeader : true,
+          showHeader: true,
           showFooter: true,
         });
         break;
       case 'disable':
         setMockEnabled(false);
         mockConfigReport({
-          showHeader : true,
+          showHeader: true,
           showFooter: true,
         });
         break;
@@ -413,7 +410,7 @@ function mockConfigReport(options: ReportOptions, mockConfig: MockEnclosureConfi
   const pad = '\n';
   const diskOptions = mockConfig.diskOptions;
 
-  let report = `    * Global Mock: ${environment?.mockConfig?.enabled ? 'Enabled' : 'Disabled'}`
+  let report = `    * Global Mock: ${environment?.mockConfig?.enabled ? 'Enabled' : 'Disabled'}`;
 
   report += `\n    * Mock Enclosures: ${mockConfig.mockEnclosure ? 'Enabled' : 'Disabled'}`;
   if (mockConfig?.mockEnclosure) {
@@ -425,19 +422,19 @@ function mockConfigReport(options: ReportOptions, mockConfig: MockEnclosureConfi
 
   report += `\n    * Mock Unassigned Disks: ${diskOptions.enabled ? 'Enabled' : 'Disabled'}`;
   if (diskOptions.enabled) {
-    report += `\n      - Disk Size: ${diskOptions.unassignedOptions.diskSize} TB`
+    report += `\n      - Disk Size: ${diskOptions.unassignedOptions.diskSize} TB`;
 
-    report += `\n      - Repeats: ${diskOptions.unassignedOptions.repeats}`
+    report += `\n      - Repeats: ${diskOptions.unassignedOptions.repeats}`;
   }
 
-  report += `\n    * Mock Pools: ${diskOptions.mockPools ? 'Enabled' : 'Disabled'}`
+  report += `\n    * Mock Pools: ${diskOptions.mockPools ? 'Enabled' : 'Disabled'}`;
   if (diskOptions.mockPools) {
     report += `
       - Storage Scenario: ${diskOptions.topologyOptions.scenario}
       - VDEV Layout: ${diskOptions.topologyOptions.layout}
       - VDEV Width: ${diskOptions.topologyOptions.width}
       - VDEV Member Disk Size: ${diskOptions.topologyOptions.diskSize} TB
-      - VDEV Repeats: ${diskOptions.topologyOptions.repeats}`
+      - VDEV Repeats: ${diskOptions.topologyOptions.repeats}`;
   }
 
   const output = header + pad + file + report + pad + footer;
@@ -445,7 +442,6 @@ function mockConfigReport(options: ReportOptions, mockConfig: MockEnclosureConfi
   console.info(output);
 
   return output;
-
 }
 
 function setMockEnabled(value: boolean): void {
@@ -469,8 +465,8 @@ function showAvailableModels(options: ReportOptions, key: string): void {
   let report = '\n';
 
   modelKeys.forEach((model: string) => {
-    report += `    * ${model} \n`
-  })
+    report += `    * ${model} \n`;
+  });
 
   const headers: Headers = generateHeaders('available mock ' + key);
 
@@ -479,7 +475,7 @@ function showAvailableModels(options: ReportOptions, key: string): void {
 
   const output = header + report + footer;
 
-  console.info(output)
+  console.info(output);
 }
 
 function setMockDispersal(value: string): void {
@@ -498,8 +494,8 @@ function setMockShelves(value: string): void {
 
 function loadMockConfigFile(path: string): void {
   console.info('Locating mock configuration file...');
-  const configStr = fs.readFileSync( path, 'utf8');
-  let config = JSON.parse(configStr);
+  const configStr = fs.readFileSync(path, 'utf8');
+  const config = JSON.parse(configStr);
   if (typeof config.diskOptions === 'undefined') config.diskOptions = environment.mockConfig.diskOptions;
 
   environment.mockConfig = config;
@@ -518,12 +514,12 @@ function mock(command: Command, options: CommandOptions): void {
   } else if (options.config) {
     loadMockConfigFile(options.config);
   } else {
-    for (let option in options) {
+    for (const option in options) {
       if (options.debug) {
         console.info({
-          option: option,
+          option,
           value: options[option],
-        })
+        });
       }
 
       switch (option) {
@@ -569,7 +565,7 @@ function mock(command: Command, options: CommandOptions): void {
   }
 
   mockConfigReport({
-    showHeader : true,
+    showHeader: true,
     showFooter: true,
   });
 }
@@ -583,7 +579,7 @@ function setDiskOptionsEnabled(value: boolean): void {
 }
 
 function setUnassignedDiskSize(value: number | string): void {
-  const size: number = typeof value === 'string' ? Number(value) : value
+  const size: number = typeof value === 'string' ? Number(value) : value;
   environment.mockConfig.diskOptions.unassignedOptions.diskSize = size;
   saveEnvironment();
 }
@@ -595,7 +591,7 @@ function setUnassignedRepeats(value: number | string): void {
 }
 
 function mockDisks(command: Command, options: CommandOptions): void {
-  for (let option in options) {
+  for (const option in options) {
     switch (option) {
       case 'enable':
         setDiskOptionsEnabled(true);
@@ -610,14 +606,14 @@ function mockDisks(command: Command, options: CommandOptions): void {
         setUnassignedRepeats(options[option]);
         break;
       default:
-        const warning = `WARNING: you're using experimental flags.\nThe flag "${option}" has not been implemented yet`
+        const warning = `WARNING: you're using experimental flags.\nThe flag "${option}" has not been implemented yet`;
         console.info(warning);
         process.exit(0);
     }
   }
 
   mockConfigReport({
-    showHeader : true,
+    showHeader: true,
     showFooter: true,
   });
 }
@@ -631,7 +627,7 @@ function setMockPoolEnabled(value: boolean): void {
 }
 
 function setTopologyDiskSize(value: number | string): void {
-  const size: number = typeof value === 'string' ? Number(value) : value
+  const size: number = typeof value === 'string' ? Number(value) : value;
   environment.mockConfig.diskOptions.topologyOptions.diskSize = size;
   saveEnvironment();
 }
@@ -672,7 +668,7 @@ function setTopologyScenario(scenario: string): void {
 }
 
 function mockPool(command: Command, options: CommandOptions): void {
-  for (let option in options) {
+  for (const option in options) {
     switch (option) {
       case 'enable':
         setMockPoolEnabled(true);
@@ -696,14 +692,14 @@ function mockPool(command: Command, options: CommandOptions): void {
         setTopologyScenario(options[option]);
         break;
       default:
-        const warning = `WARNING: you're using experimental flags.\nThe flag "${option}" has not been implemented yet`
+        const warning = `WARNING: you're using experimental flags.\nThe flag "${option}" has not been implemented yet`;
         console.info(warning);
         process.exit(0);
     }
   }
 
   mockConfigReport({
-    showHeader : true,
+    showHeader: true,
     showFooter: true,
   });
 }
@@ -714,7 +710,7 @@ function mockPool(command: Command, options: CommandOptions): void {
 function normalizeUrl(url = ''): string {
   const parts = url.match(/^(?:https?:\/\/)?(?:[^@\n]+@)?([^:\/\n?]+)(?::([0-9]+))?/);
 
-  if (!parts || !parts.length) {
+  if (!parts?.length) {
     return;
   }
 
@@ -727,7 +723,7 @@ function normalizeUrl(url = ''): string {
 }
 
 function saveProxyConfig(file: string, url: string): void {
-  const data = fs.readFileSync(file + '.skel' , 'utf8');
+  const data = fs.readFileSync(file + '.skel', 'utf8');
   const result = data.replace(/\$SERVER\$/g, url);
   fs.writeFileSync(file, result, 'utf8');
 }
@@ -736,7 +732,6 @@ function printCurrentConfig(proxyConfigJson: string): void {
   const doesConfigExist = fs.existsSync(proxyConfigJson);
   if (!doesConfigExist) {
     console.info('No current config set.');
-    return;
   }
 }
 
@@ -754,7 +749,6 @@ function showRemote(options: ReportOptions): void {
 }
 
 function remote(command: Command, ip: string, force: boolean): void {
-
   const proxyConfigJson = './proxy.config.json';
   const url = force ? ip : normalizeUrl(ip);
 
