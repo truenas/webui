@@ -61,6 +61,7 @@ import { RoutePartsService } from './services/route-parts/route-parts.service';
     BrowserAnimationsModule,
     FlexLayoutModule,
     AppLoaderModule,
+    MatNativeDateModule,
     HttpClientModule,
     AppCommonModule,
     MatNativeDateModule,

@@ -19,6 +19,7 @@ import { AccessFormComponent } from 'app/pages/system/advanced/access/access-for
 import { AdvancedSettingsService } from 'app/pages/system/advanced/advanced-settings.service';
 import { DialogService } from 'app/services/dialog.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { LocaleService } from 'app/services/locale.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { selectPreferences } from 'app/store/preferences/preferences.selectors';
@@ -50,6 +51,9 @@ describe('AccessCardComponent', () => {
     component: AccessCardComponent,
     imports: [AppLoaderModule, IxTable2Module, FakeFormatDateTimePipe],
     providers: [
+      mockProvider(LocaleService, {
+        timezone: 'America/Los_Angeles',
+      }),
       mockWebsocket([
         mockCall('auth.sessions', sessions),
         mockCall('auth.terminate_session'),
@@ -130,11 +134,11 @@ describe('AccessCardComponent', () => {
   it('should show table rows', async () => {
     const expectedRows = [
       ['Username', 'Start session time', ''],
-      ['user-0', '2023-08-24 13:00:27', ''],
-      ['user-1', '2023-08-24 13:00:27', ''],
-      ['user-2', '2023-08-24 13:00:27', ''],
-      ['user-3', '2023-08-24 13:00:27', ''],
-      ['user-4', '2023-08-24 13:00:27', ''],
+      ['user-0', '2023-08-24 03:00:27', ''],
+      ['user-1', '2023-08-24 03:00:27', ''],
+      ['user-2', '2023-08-24 03:00:27', ''],
+      ['user-3', '2023-08-24 03:00:27', ''],
+      ['user-4', '2023-08-24 03:00:27', ''],
     ];
 
     const table = await loader.getHarness(IxTable2Harness);

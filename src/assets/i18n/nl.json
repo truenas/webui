@@ -12,6 +12,7 @@
   "Autostart": "",
   "Available Memory:": "",
   "Browse to an existing file. Create a new file by browsing to a dataset and appending /<i>'{'filename.ext'}'</i> to the path. Extents cannot be created inside a jail root directory.": "",
+  "Browser time: {time}": "",
   "Bulk Operations": "",
   "Caution: Allocating too much memory can slow the  system or prevent VMs from running.": "",
   "Change Settings and Clear Report History?": "",

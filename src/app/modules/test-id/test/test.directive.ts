@@ -87,6 +87,8 @@ export class TestDirective {
       case 'p':
       case 'span':
         return 'text';
+      case 'ix-date':
+        return tagName.replace('ix-', '');
       default:
         throw new Error(`Unknown element type: ${tagName}`);
     }

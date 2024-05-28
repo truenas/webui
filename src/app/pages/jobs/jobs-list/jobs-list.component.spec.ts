@@ -19,6 +19,7 @@ import { selectJobs, selectJobState } from 'app/modules/jobs/store/job.selectors
 import { LayoutModule } from 'app/modules/layout/layout.module';
 import { JobLogsRowComponent } from 'app/pages/jobs/job-logs-row/job-logs-row.component';
 import { DialogService } from 'app/services/dialog.service';
+import { LocaleService } from 'app/services/locale.service';
 import { StorageService } from 'app/services/storage.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { JobsListComponent } from './jobs-list.component';
@@ -75,6 +76,9 @@ describe('JobsListComponent', () => {
       FakeFormatDateTimePipe,
     ],
     providers: [
+      mockProvider(LocaleService, {
+        timezone: 'Europe/Kiev',
+      }),
       mockProvider(DialogService),
       mockProvider(MatSnackBar),
       mockWebsocket([
