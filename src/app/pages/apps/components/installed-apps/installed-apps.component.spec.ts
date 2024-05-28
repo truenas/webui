@@ -12,12 +12,12 @@ import { MockComponents, MockDeclaration, MockModule } from 'ng-mocks';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockEntityJobComponentRef } from 'app/core/testing/utils/mock-entity-job-component-ref.utils';
 import { mockCall, mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
 import { CatalogApp } from 'app/interfaces/catalog.interface';
 import { ChartRelease } from 'app/interfaces/chart-release.interface';
 import { KubernetesConfig } from 'app/interfaces/kubernetes-config.interface';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxDynamicFormModule } from 'app/modules/ix-dynamic-form/ix-dynamic-form.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
@@ -43,6 +43,7 @@ import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.se
 import { KubernetesStore } from 'app/pages/apps/store/kubernetes-store.service';
 import { AppCatalogPipe } from 'app/pages/apps/utils/app-catalog.pipe';
 import { AuthService } from 'app/services/auth/auth.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 const existingCatalogApp = {
   name: 'webdav',
@@ -396,8 +397,11 @@ describe('Install app', () => {
           error: null,
         }),
       ]),
-      mockProvider(MatDialog, {
-        open: jest.fn(() => mockEntityJobComponentRef),
+      mockProvider(MatDialog),
+      mockProvider(DialogService, {
+        jobDialog: jest.fn(() => ({
+          afterClosed: () => of({}),
+        })),
       }),
       {
         provide: ActivatedRoute,
@@ -459,7 +463,8 @@ describe('Install app', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Install' }));
     await saveButton.click();
 
-    expect(mockEntityJobComponentRef.componentInstance.setCall).toHaveBeenCalledWith(
+    expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
+    expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith(
       'chart.release.create',
       [{
         catalog: 'TRUENAS',
@@ -494,6 +499,5 @@ describe('Install app', () => {
         version: '1.0.9',
       }],
     );
-    expect(mockEntityJobComponentRef.componentInstance.submit).toHaveBeenCalled();
   });
 });

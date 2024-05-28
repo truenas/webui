@@ -26,7 +26,7 @@ export const selectAllNonTransientJobs = createSelector(
  * Simply selects a job.
  * By default, observable will not complete when job completes, nor will it throw on job failure.
  *
- * If you need this behaviour, add observeJob() operator.
+ * If you need this behaviour, add extra `observeJob()` operator after `select()`.
  */
 export const selectJob = (id: number): MemoizedSelector<object, Job> => createSelector(
   selectJobs,

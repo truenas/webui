@@ -12,7 +12,7 @@ import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { UploadIsoDialogComponent } from 'app/pages/vm/vm-wizard/upload-iso-dialog/upload-iso-dialog.component';
 import { FilesystemService } from 'app/services/filesystem.service';
-import { IxFileUploadService } from 'app/services/ix-file-upload.service';
+import { UploadService } from 'app/services/upload.service';
 
 describe('UploadIsoDialogComponent', () => {
   let spectator: Spectator<UploadIsoDialogComponent>;
@@ -26,7 +26,7 @@ describe('UploadIsoDialogComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
-      mockProvider(IxFileUploadService, {
+      mockProvider(UploadService, {
         upload: jest.fn(() => of(new HttpResponse({ status: 200 }))),
       }),
       mockProvider(FilesystemService, {
@@ -54,9 +54,11 @@ describe('UploadIsoDialogComponent', () => {
     const uploadButton = await loader.getHarness(MatButtonHarness.with({ text: 'Upload' }));
     await uploadButton.click();
 
-    expect(spectator.inject(IxFileUploadService).upload).toHaveBeenCalledWith(upload, 'filesystem.put', [
-      '/mnt/iso/new-windows.iso', { mode: 493 },
-    ]);
+    expect(spectator.inject(UploadService).upload).toHaveBeenCalledWith(expect.objectContaining({
+      file: upload,
+      method: 'filesystem.put',
+      params: ['/mnt/iso/new-windows.iso', { mode: 493 }],
+    }));
     expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith('/mnt/iso/new-windows.iso');
   });
 });
