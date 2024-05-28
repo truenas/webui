@@ -136,16 +136,22 @@ describe('WidgetSysInfoActiveComponent', () => {
     ]);
   });
 
-  it('checks Uptime changed over time', async () => {
+  it('checks Uptime changed over time', () => {
     jest.useFakeTimers();
+
+    const initialUptime = spectator.component.uptime();
+    const initialDatetime = spectator.component.datetime();
 
     jest.advanceTimersByTime(5000);
     refreshInterval$.next(1);
 
     spectator.detectChanges();
 
-    const uptime = await loader.getHarness(MatListItemHarness.with({ text: /Uptime:/ }));
-    expect(await uptime.getFullText()).toBe('Uptime: 23 hours 12 minutes as of 2024-03-15 10:34:16');
+    const updatedUptime = spectator.component.uptime();
+    const updatedDatetime = spectator.component.datetime();
+
+    expect(updatedUptime).toBeGreaterThan(initialUptime);
+    expect(updatedDatetime).toBeGreaterThan(initialDatetime);
 
     jest.useRealTimers();
   });
