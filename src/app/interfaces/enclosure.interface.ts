@@ -4,6 +4,7 @@ import { EnclosureStatus, EnclosureDiskStatus, EnclosureElementType } from 'app/
 import { VdevType } from 'app/enums/v-dev-type.enum';
 
 export interface Enclosure {
+  number?: number; // Provided by old UI
   name: string;
   model: string;
   controller: boolean;
