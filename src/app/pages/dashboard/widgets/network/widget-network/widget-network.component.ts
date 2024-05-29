@@ -7,8 +7,7 @@ import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { ChartData, ChartOptions } from 'chart.js';
 import {
-  filter, map,
-  switchMap,
+  filter, switchMap, throttleTime, map,
 } from 'rxjs';
 import { kb } from 'app/constants/bits.constant';
 import { LinkState, NetworkInterfaceAliasType, linkStateLabelMap } from 'app/enums/network-interface.enum';
@@ -43,6 +42,7 @@ export class WidgetNetworkComponent implements WidgetComponent<WidgetInterfaceIp
   protected interfaceUsage = toSignal(toObservable(this.interfaceId).pipe(
     filter(Boolean),
     switchMap((interfaceId) => this.resources.realtimeUpdates$.pipe(
+      throttleTime(1000),
       map((update) => update.fields.interfaces[interfaceId]),
     )),
   ));

@@ -1,6 +1,5 @@
 import { HarnessLoader, parallel } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatIconTestingModule } from '@angular/material/icon/testing';
 import { MatListModule } from '@angular/material/list';
 import { MatListItemHarness } from '@angular/material/list/testing';
 import { Spectator } from '@ngneat/spectator';
@@ -56,7 +55,6 @@ describe('WidgetSysInfoActiveComponent', () => {
     component: WidgetSysInfoActiveComponent,
     imports: [
       MatListModule,
-      MatIconTestingModule,
       UptimePipe,
     ],
     declarations: [

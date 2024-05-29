@@ -11,6 +11,8 @@ import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 
 describe('InterfaceStatusIconComponent', () => {
   let spectator: Spectator<InterfaceStatusIconComponent>;
+  let icon: IxIconComponent;
+
   const createComponent = createComponentFactory({
     component: InterfaceStatusIconComponent,
     declarations: [
@@ -19,38 +21,38 @@ describe('InterfaceStatusIconComponent', () => {
     ],
   });
 
-  beforeEach(() => {
-    spectator = createComponent();
-  });
+  function setupTest(update: NetworkInterfaceUpdate): void {
+    spectator = createComponent({
+      props: { update },
+    });
+    icon = spectator.query(IxIconComponent);
+  }
 
   describe('disabled', () => {
     it('shows disabled icon when link state is not Up', () => {
-      spectator.setInput('update', {
-        link_state: LinkState.Down,
-      } as NetworkInterfaceUpdate);
+      setupTest({ link_state: LinkState.Down } as NetworkInterfaceUpdate);
 
-      const icon = spectator.query(IxIconComponent);
       expect(icon.name).toBe('ix:network_upload_download_disabled');
     });
 
     it('shows disabled icon when link state is not available', () => {
-      const icon = spectator.query(IxIconComponent);
+      setupTest({ } as NetworkInterfaceUpdate);
+
       expect(icon.name).toBe('ix:network_upload_download_disabled');
     });
   });
 
   describe('enabled', () => {
     beforeEach(() => {
-      jest.spyOn(spectator.component, 'updateStateInfoIcon');
-      spectator.setInput('update', {
+      setupTest({
         link_state: LinkState.Up,
         sent_bytes_rate: 100 * kb,
         received_bytes_rate: 30 * Mb,
       } as NetworkInterfaceUpdate);
+      jest.spyOn(spectator.component, 'updateStateInfoIcon');
     });
 
     it('shows enabled icon when link state is Up', () => {
-      const icon = spectator.query(IxIconComponent);
       expect(icon.name).toBe('ix:network_upload_download');
     });
 
@@ -61,8 +63,13 @@ describe('InterfaceStatusIconComponent', () => {
     });
 
     it('updates state icon to mark arrow or arrows as active on network traffic', () => {
-      expect(spectator.component.updateStateInfoIcon).toHaveBeenCalledWith('sent');
+      spectator.setInput('update', {
+        link_state: LinkState.Up,
+        sent_bytes_rate: 50 * kb,
+        received_bytes_rate: 10 * Mb,
+      });
       expect(spectator.component.updateStateInfoIcon).toHaveBeenCalledWith('received');
+      expect(spectator.component.updateStateInfoIcon).toHaveBeenCalledWith('sent');
     });
   });
 });

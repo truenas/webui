@@ -1,5 +1,4 @@
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatIconTestingModule } from '@angular/material/icon/testing';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { DatasetType } from 'app/enums/dataset.enum';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
@@ -11,9 +10,6 @@ describe('DatasetIconComponent', () => {
   let ixIcon: IxIconHarness;
   const createComponent = createComponentFactory({
     component: DatasetIconComponent,
-    imports: [
-      MatIconTestingModule,
-    ],
   });
 
   async function setupTest(dataset: DatasetDetails): Promise<void> {

@@ -203,4 +203,8 @@ html .ix-dark {
   .mat-mdc-standard-chip {
     --mdc-chip-label-text-weight: 600;
   }
+
+  .mat-mdc-select-arrow svg {
+    fill: var(--fg2);
+  }
 }

@@ -26,4 +26,7 @@ export const helptextVolumeStatus = {
   },
   exported_pool_warning: helptextManager.exported_pool_warning,
 
+  raidzExtendMessage: T('The expanded vdev uses the pre-expanded parity ratio, which reduces the total vdev capacity. \
+To reset the vdev parity ratio and fully use the new capacity, manually rewrite all data in the vdev. \
+This process takes time and is irreversible.'),
 };
