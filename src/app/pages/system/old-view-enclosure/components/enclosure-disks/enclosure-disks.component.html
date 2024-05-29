@@ -421,7 +421,7 @@
             fxLayout="column"
             fxLayoutAlign="center center"
           >
-            <ix-disk-ui [data]="{ name: selectedDisk.name }"></ix-disk-ui>
+            <ix-disk-ui [data]="{ name: selectedDisk.dev, type: selectedDisk.type }"></ix-disk-ui>
 
             <!-- disk icon + labels -->
             <div class="capacity">{{ selectedSlot.size | ixFileSize }}</div>
@@ -494,7 +494,7 @@
                 </div>
               </div>
 
-              <div
+              <!-- <div
                 fxFlex="calc(25% - 16px)"
                 class="detail"
                 fxLayout="column"
@@ -574,7 +574,7 @@
                     {{ selectedDisk.description ? selectedDisk.description : 'None' }}
                   </div>
                 </div>
-              </div>
+              </div> -->
 
               <div
                 fxFlex="calc(50% - 16px)"

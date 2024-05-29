@@ -13,6 +13,7 @@
     *ixRequiresRoles="requiredRoles"
     mat-menu-item
     ixTest="choose-pool"
+    [ixUiSearch]="searchableElements.elements.choosePool"
     (click)="onChoosePool()"
   >
     {{ 'Choose Pool' | translate }}
@@ -36,7 +37,7 @@
       {{ 'Unset Pool' | translate }}
     </button>
   </ng-container>
-  <button mat-menu-item ixTest="container-images" [routerLink]="['/apps', 'installed', 'manage-container-images']">
+  <button mat-menu-item ixTest="container-images" [routerLink]="['/apps', 'manage-container-images']">
     {{ 'Manage Container Images' | translate }}
   </button>
 </mat-menu>

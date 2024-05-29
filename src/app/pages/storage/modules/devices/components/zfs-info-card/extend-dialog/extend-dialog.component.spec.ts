@@ -4,13 +4,15 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { of } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { UnusedDisk } from 'app/interfaces/storage.interface';
+import { UnusedDiskSelectComponent } from 'app/modules/custom-selects/unused-disk-select/unused-disk-select.component';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
-import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import {
   ExtendDialogComponent, ExtendDialogParams,
@@ -26,7 +28,7 @@ describe('ExtendDialogComponent', () => {
     imports: [
       IxFormsModule,
       ReactiveFormsModule,
-      AppLoaderModule,
+      UnusedDiskSelectComponent,
     ],
     providers: [
       mockAuth(),
@@ -51,6 +53,11 @@ describe('ExtendDialogComponent', () => {
       ]),
       mockProvider(MatDialogRef),
       mockProvider(SnackbarService),
+      mockProvider(DialogService, {
+        jobDialog: jest.fn(() => ({
+          afterClosed: () => of({}),
+        })),
+      }),
       {
         provide: MAT_DIALOG_DATA,
         useValue: {
@@ -75,33 +82,16 @@ describe('ExtendDialogComponent', () => {
     const extendButton = await loader.getHarness(MatButtonHarness.with({ text: 'Extend' }));
     await extendButton.click();
 
+    expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
     expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('pool.attach', [
       4,
       {
         new_disk: 'sde',
         target_vdev: 'vdev-guid',
+        allow_duplicate_serials: true,
       },
     ]);
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
     expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith(true);
-  });
-
-  it('sends submit request with allow_duplicate_serials = true when selected disk is listed as having duplicate serial', async () => {
-    const form = await loader.getHarness(IxFormHarness);
-    await form.fillForm({
-      'New Disk': 'sdf (9.1 TiB)',
-    });
-
-    const extendButton = await loader.getHarness(MatButtonHarness.with({ text: 'Extend' }));
-    await extendButton.click();
-
-    expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('pool.attach', [
-      4,
-      {
-        new_disk: 'sdf',
-        target_vdev: 'vdev-guid',
-        allow_duplicate_serials: true,
-      },
-    ]);
   });
 });

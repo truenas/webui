@@ -1,6 +1,9 @@
 import { NgIf } from '@angular/common';
 import {
-  ChangeDetectionStrategy, Component, Input, OnChanges, ViewChild,
+  ChangeDetectionStrategy, Component, ViewChild,
+  computed,
+  effect,
+  input,
 } from '@angular/core';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -27,52 +30,54 @@ import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
     IxIconModule,
   ],
 })
-export class InterfaceStatusIconComponent implements OnChanges {
-  @Input() update: NetworkInterfaceUpdate;
+export class InterfaceStatusIconComponent {
+  update = input<NetworkInterfaceUpdate>();
   @ViewChild('stateIcon') stateIcon: IxIconComponent;
-
-  readonly LinkState = LinkState;
 
   protected elementId: string;
   private minRate = KiB;
+
+  isLinkUp = computed(() => {
+    return this.update()?.link_state === LinkState.Up;
+  });
+
+  tooltipText = computed(() => {
+    const sent = this.formatBytes(this.update()?.sent_bytes_rate);
+    const received = this.formatBytes(this.update()?.received_bytes_rate);
+
+    if (!sent || !received) {
+      return this.translate.instant('N/A');
+    }
+
+    return this.translate.instant('Received: {received}/s Sent: {sent}/s', { sent, received });
+  });
 
   constructor(
     private translate: TranslateService,
   ) {
     this.elementId = `in-out${UUID.UUID()}`;
-  }
 
-  get tooltipText(): string {
-    const handleBytesResult = (bytes: number): string => {
-      if (bytes !== undefined && bytes !== null) {
-        return buildNormalizedFileSize(bytes * 8, 'b', 10);
+    effect(() => {
+      if (this.update()?.sent_bytes_rate > this.minRate) {
+        this.updateStateInfoIcon('sent');
       }
 
-      return this.translate.instant('N/A');
-    };
-
-    return this.translate.instant('Received: {received}/s Sent: {sent}/s', {
-      sent: handleBytesResult(this.update.sent_bytes_rate),
-      received: handleBytesResult(this.update.received_bytes_rate),
+      if (this.update()?.received_bytes_rate > this.minRate) {
+        this.updateStateInfoIcon('received');
+      }
     });
   }
 
-  ngOnChanges(): void {
-    if (this.update?.sent_bytes_rate > this.minRate) {
-      this.updateStateInfoIcon('sent');
-    }
-
-    if (this.update?.received_bytes_rate > this.minRate) {
-      this.updateStateInfoIcon('received');
-    }
+  private formatBytes(bytes: number): string {
+    return buildNormalizedFileSize(bytes * 8, 'b', 10);
   }
 
   updateStateInfoIcon(type: 'sent' | 'received'): void {
-    if (!this.stateIcon) {
+    if (!this.stateIcon?._elementRef?.nativeElement) {
       return;
     }
-    const arrowIcons = this.stateIcon._elementRef.nativeElement.querySelectorAll('.arrow');
-    const targetIconEl = type === 'sent' ? arrowIcons[0] : arrowIcons[1];
+    const [inIcon, outIcon] = this.stateIcon._elementRef.nativeElement.querySelectorAll('.arrow');
+    const targetIconEl = type === 'sent' ? inIcon : outIcon;
     if (!targetIconEl) {
       return;
     }

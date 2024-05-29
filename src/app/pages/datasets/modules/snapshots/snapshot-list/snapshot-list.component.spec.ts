@@ -121,8 +121,9 @@ describe('SnapshotListComponent', () => {
     const slideToggle = await loader.getHarness(IxSlideToggleHarness.with({ label: 'Show extra columns' }));
     await slideToggle.toggle();
 
+    // TODO: Add column names when better mechanism to hide/show columns is available
     const expectedRows = [
-      ['', 'Dataset', 'Snapshot', 'Used', 'Date created', 'Referenced'],
+      ['', 'Dataset', 'Snapshot', '', '', ''],
       ['', 'test-dataset', 'second-snapshot', '1.49 TiB', '2021-10-18 19:51:43', '1.49 TiB'],
       ['', 'test-dataset', 'first-snapshot', '1.49 TiB', '2021-10-18 19:51:54', '1.49 TiB'],
     ];

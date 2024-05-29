@@ -11,17 +11,20 @@
           formControlName="node_ip"
           [label]="'Node IP' | translate"
           [options]="nodeIpOptions$"
+          [ixUiSearch]="searchableElements.elements.nodeIp"
         ></ix-select>
 
         <ix-select
           formControlName="route_v4_interface"
           [label]="'Route v4 Interface' | translate"
           [options]="routeInterfaceOptions$"
+          [ixUiSearch]="searchableElements.elements.routeInterface"
         ></ix-select>
 
         <ix-input
           formControlName="route_v4_gateway"
           [label]="'Route v4 Gateway' | translate"
+          [ixUiSearch]="searchableElements.elements.routeGateway"
         ></ix-input>
 
         <ix-checkbox

@@ -1,4 +1,4 @@
-import { ComponentHarness, HarnessPredicate } from '@angular/cdk/testing';
+import { ComponentHarness, HarnessPredicate, parallel } from '@angular/cdk/testing';
 import { MatAutocompleteHarness, AutocompleteHarnessFilters } from '@angular/material/autocomplete/testing';
 import { MatInputHarness } from '@angular/material/input/testing';
 import { IxLabelHarness } from 'app/modules/ix-forms/components/ix-label/ix-label.harness';
@@ -20,10 +20,20 @@ export class IxComboboxHarness extends ComponentHarness implements IxFormControl
 
   getAutoCompleteHarness = this.locatorFor(MatAutocompleteHarness);
   getMatInputHarness = this.locatorFor(MatInputHarness);
+  getLabelHarness = this.locatorForOptional(IxLabelHarness);
   getErrorText = getErrorText;
 
+  async focusInput(): Promise<void> {
+    return (await this.getMatInputHarness()).focus();
+  }
+
+  async getAutocompleteOptions(): Promise<string[]> {
+    const options = await (await this.getAutoCompleteHarness()).getOptions();
+    return parallel(() => options.map((option) => option.getText()));
+  }
+
   async getLabelText(): Promise<string> {
-    const label = await this.locatorForOptional(IxLabelHarness)();
+    const label = await this.getLabelHarness();
     if (!label) {
       return '';
     }

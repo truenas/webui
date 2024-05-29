@@ -28,7 +28,7 @@ import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 export class WidgetResourcesService {
   // TODO: nosub is emitted for some reason
   readonly realtimeUpdates$ = this.ws.subscribe('reporting.realtime');
-  readonly fiveSecondsRefreshInteval$ = timer(0, 5000);
+  readonly refreshInterval$ = timer(0, 5000);
   private readonly triggerRefreshSystemInfo$ = new Subject<void>();
 
   readonly backups$ = forkJoin([
@@ -67,7 +67,7 @@ export class WidgetResourcesService {
   readonly serverTime$ = this.store$.pipe(
     waitForSystemInfo,
     map((systemInfo) => new Date(systemInfo.datetime.$date)),
-    combineLatestWith(this.fiveSecondsRefreshInteval$),
+    combineLatestWith(this.refreshInterval$),
     map(([serverTime]) => {
       serverTime.setSeconds(serverTime.getSeconds() + 5);
       return serverTime;

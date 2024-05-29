@@ -1,5 +1,6 @@
 import { ElementRef } from '@angular/core';
-import { EnclosureOld, SelectedEnclosureSlot } from 'app/interfaces/enclosure-old.interface';
+import { SelectedEnclosureSlot } from 'app/interfaces/enclosure-old.interface';
+import { DashboardEnclosure } from 'app/interfaces/enclosure.interface';
 import { Theme } from 'app/interfaces/theme.interface';
 import { DriveTray } from 'app/pages/system/old-view-enclosure/classes/drivetray';
 import { ErrorMessage } from 'app/pages/system/old-view-enclosure/interfaces/error-message.interface';
@@ -31,7 +32,7 @@ export interface EnclosureCanvasEvent {
   sender: unknown;
   data: {
     canvas: HTMLCanvasElement;
-    enclosureView: EnclosureOld;
+    enclosureView: DashboardEnclosure;
   };
 }
 
@@ -64,7 +65,7 @@ export interface LabelDrivesEvent {
 export interface CanvasExtractEvent {
   name: 'CanvasExtract';
   sender: unknown;
-  data: EnclosureOld;
+  data: DashboardEnclosure;
 }
 
 export interface EnclosureSelectedEvent {
