@@ -26,6 +26,11 @@ const routes: Routes = [
         pathMatch: 'full',
       },
       {
+        path: 'installed/manage-container-images',
+        redirectTo: 'manage-container-images',
+        pathMatch: 'full',
+      },
+      {
         path: 'installed',
         component: AppRouterOutletComponent,
         data: { breadcrumb: undefined },
@@ -62,12 +67,12 @@ const routes: Routes = [
               },
             ],
           },
-          {
-            path: 'manage-container-images',
-            component: DockerImagesListComponent,
-            data: { title: T('Manage Container Images') },
-          },
         ],
+      },
+      {
+        path: 'manage-container-images',
+        component: DockerImagesListComponent,
+        data: { title: T('Manage Container Images') },
       },
       {
         path: 'available',

@@ -8,5 +8,9 @@ export const availableAppsElements = {
     available: {
       synonyms: [T('Apps'), T('Applications')],
     },
+    customApp: {
+      hierarchy: [T('Custom App')],
+      anchor: 'custom-app',
+    },
   },
 } satisfies UiSearchableElement;

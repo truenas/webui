@@ -8,12 +8,12 @@ import { filter } from 'rxjs/operators';
 import { DiskType } from 'app/enums/disk-type.enum';
 import { Role } from 'app/enums/role.enum';
 import { Disk, TopologyDisk } from 'app/interfaces/storage.interface';
-import { DevicesStore } from 'app/pages/storage/modules/devices/stores/devices-store.service';
-import { DiskFormComponent } from 'app/pages/storage/modules/disks/components/disk-form/disk-form.component';
 import {
   ReplaceDiskDialogComponent,
   ReplaceDiskDialogData,
-} from 'app/pages/storage/modules/disks/components/replace-disk-dialog/replace-disk-dialog.component';
+} from 'app/pages/storage/modules/devices/components/disk-info-card/replace-disk-dialog/replace-disk-dialog.component';
+import { DevicesStore } from 'app/pages/storage/modules/devices/stores/devices-store.service';
+import { DiskFormComponent } from 'app/pages/storage/modules/disks/components/disk-form/disk-form.component';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()

@@ -3,20 +3,18 @@
 </h1>
 
 <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit($event)">
-  <ix-combobox
+  <ix-unused-disk-select
     formControlName="newDisk"
     [label]="'New Disk' | translate"
     [required]="true"
-    [provider]="disksProvider"
     [tooltip]="helptext.dialogFormFields.new_disk.tooltip | translate"
-  ></ix-combobox>
+  ></ix-unused-disk-select>
 
   <ix-form-actions>
     <button mat-button type="button" ixTest="cancel" [matDialogClose]="false">
       {{ 'Cancel' | translate }}
     </button>
     <button
-      *ixRequiresRoles="requiredRoles"
       mat-button
       type="submit"
       color="primary"

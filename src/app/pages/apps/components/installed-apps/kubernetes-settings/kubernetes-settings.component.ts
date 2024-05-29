@@ -20,6 +20,7 @@ import {
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { kubernetesSettingsElements } from 'app/pages/apps/components/installed-apps/kubernetes-settings/kubernetes-settings.elements';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -33,6 +34,7 @@ import { WebSocketService } from 'app/services/ws.service';
 })
 export class KubernetesSettingsComponent implements OnInit {
   protected readonly requiredRoles = [Role.KubernetesWrite];
+  readonly searchableElements = kubernetesSettingsElements;
 
   isFormLoading = false;
 

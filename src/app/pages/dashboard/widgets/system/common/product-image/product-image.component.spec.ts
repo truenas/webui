@@ -1,6 +1,5 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatIconTestingModule } from '@angular/material/icon/testing';
 import { Router } from '@angular/router';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
@@ -13,8 +12,6 @@ describe('ProductImageComponent', () => {
 
   const createComponent = createComponentFactory({
     component: ProductImageComponent,
-    imports: [MatIconTestingModule],
-    declarations: [],
     providers: [mockProvider(Router)],
   });
 

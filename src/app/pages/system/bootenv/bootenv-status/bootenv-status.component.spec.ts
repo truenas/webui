@@ -1,7 +1,6 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatDialogRef } from '@angular/material/dialog';
-import { MatIconTestingModule } from '@angular/material/icon/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { CoreComponents } from 'app/core/core-components.module';
 import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-datetime.pipe';
@@ -14,7 +13,6 @@ import { TopologyItemStatus } from 'app/enums/vdev-status.enum';
 import { PoolInstance } from 'app/interfaces/pool.interface';
 import { TopologyItem } from 'app/interfaces/storage.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { TreeHarness } from 'app/modules/ix-tree/testing/tree.harness';
 import { TreeModule } from 'app/modules/ix-tree/tree.module';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
@@ -70,8 +68,6 @@ describe('BootStatusListComponent', () => {
       AppLoaderModule,
       CoreComponents,
       TreeModule,
-      IxIconModule,
-      MatIconTestingModule,
     ],
     providers: [
       mockAuth(),

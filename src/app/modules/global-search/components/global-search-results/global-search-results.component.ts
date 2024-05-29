@@ -80,7 +80,11 @@ export class GlobalSearchResultsComponent implements OnChanges {
 
     const route = element.anchorRouterLink || element.routerLink;
     if (route?.length) {
-      this.router.navigate(route);
+      if (!route.includes('*')) {
+        this.router.navigate(route);
+      } else if (!this.router.url.startsWith(route.slice(0, -1).join('/'))) {
+        this.router.navigate(route.slice(0, -1));
+      }
     }
 
     if (element.targetHref) {

@@ -12,7 +12,8 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { Observable, ReplaySubject, Subject } from 'rxjs';
 import { filter, takeUntil } from 'rxjs/operators';
-import { EnclosureOld, EnclosureOldElements } from 'app/interfaces/enclosure-old.interface';
+import { EnclosureElementType } from 'app/enums/enclosure-slot-status.enum';
+import { DashboardEnclosure, DashboardEnclosureElements } from 'app/interfaces/enclosure.interface';
 import { viewEnclosureElements } from 'app/pages/system/old-view-enclosure/components/view-enclosure/view-enclosure.elements';
 import { EnclosureEvent } from 'app/pages/system/old-view-enclosure/interfaces/enclosure-events.interface';
 import { ErrorMessage } from 'app/pages/system/old-view-enclosure/interfaces/error-message.interface';
@@ -54,7 +55,7 @@ export class ViewEnclosureComponent implements AfterViewInit, OnDestroy {
   protected readonly searchableElements = viewEnclosureElements;
 
   currentView: ViewConfig = {
-    name: 'Array Device Slot',
+    name: EnclosureElementType.ArrayDeviceSlot,
     alias: 'Disks',
     icon: 'harddisk',
     enclosureIndex: 0,
@@ -102,8 +103,8 @@ export class ViewEnclosureComponent implements AfterViewInit, OnDestroy {
     return this.controller?.rackmount;
   }
 
-  get selectedEnclosure(): EnclosureOld {
-    return this.systemState?.enclosures.find((enclosure: EnclosureOld) => {
+  get selectedEnclosure(): DashboardEnclosure {
+    return this.systemState?.enclosures.find((enclosure) => {
       return enclosure.id === this.selectedEnclosureId;
     });
   }
@@ -117,9 +118,9 @@ export class ViewEnclosureComponent implements AfterViewInit, OnDestroy {
     return this.systemState.selectedEnclosure;
   }
 
-  get controller(): EnclosureOld | null {
+  get controller(): DashboardEnclosure | null {
     return this.systemState?.enclosures
-      ? this.systemState?.enclosures.find((enclosure: EnclosureOld) => enclosure.controller)
+      ? this.systemState?.enclosures.find((enclosure) => enclosure.controller)
       : null;
   }
 
@@ -275,7 +276,7 @@ export class ViewEnclosureComponent implements AfterViewInit, OnDestroy {
 
   extractVisualizations(): void {
     if (this.showEnclosureSelector) {
-      this.systemState.enclosures.forEach((enclosure: EnclosureOld) => {
+      this.systemState.enclosures.forEach((enclosure) => {
         if (this.systemState) {
           this.events.next({ name: 'CanvasExtract', data: enclosure, sender: this });
         }
@@ -288,7 +289,7 @@ export class ViewEnclosureComponent implements AfterViewInit, OnDestroy {
 
     const views: ViewConfig[] = [];
     const disks: ViewConfig = {
-      name: 'Array Device Slot',
+      name: EnclosureElementType.ArrayDeviceSlot,
       alias: 'Disks',
       icon: 'harddisk',
       enclosureIndex: 0,
@@ -297,7 +298,7 @@ export class ViewEnclosureComponent implements AfterViewInit, OnDestroy {
 
     views.unshift(disks);
     let matchIndex;
-    const selectedEnclosure = this.systemState?.enclosures.find((enclosure: EnclosureOld) => {
+    const selectedEnclosure = this.systemState?.enclosures.find((enclosure) => {
       return enclosure.id === this.selectedEnclosureId;
     });
     if (!selectedEnclosure) {
@@ -310,7 +311,7 @@ export class ViewEnclosureComponent implements AfterViewInit, OnDestroy {
       .filter((elementKey: string) => elementKey !== 'Array Device Slot')
       .forEach((key: string, index) => {
         const view: ViewConfig = {
-          name: key as keyof EnclosureOldElements,
+          name: key as keyof DashboardEnclosureElements,
           alias: '',
           icon: '',
           enclosureIndex: views.length,
