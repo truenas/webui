@@ -2,7 +2,8 @@ import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UiSearchableElement } from 'app/modules/global-search/interfaces/ui-searchable-element.interface';
 
 export const smbStatusElements = {
-  hierarchy: [T('Sharing'), T('SMB'), T('SMB Status')],
+  hierarchy: [T('Shares'), T('SMB'), T('SMB Status')],
+  synonyms: [T('Samba')],
   elements: {
     sessions: {
       anchorRouterLink: ['/sharing', 'smb', 'status', 'sessions'],

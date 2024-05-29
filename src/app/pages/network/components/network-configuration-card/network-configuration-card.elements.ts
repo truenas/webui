@@ -10,7 +10,8 @@ export const networkConfigurationCardElements = {
       synonyms: [T('Network Configuration'), T('Network Settings')],
     },
     nameServers: {
-      hierarchy: [T('Nameserver'), T('NS')],
+      hierarchy: [T('Nameserver')],
+      synonyms: [T('NS')],
     },
     settings: {
       hierarchy: [T('Global Configuration Settings')],
@@ -27,7 +28,6 @@ export const networkConfigurationCardElements = {
         T('DHCP'),
         T('Gateway'),
         T('Lan'),
-
       ],
     },
   },

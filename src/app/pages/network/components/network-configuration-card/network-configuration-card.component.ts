@@ -10,6 +10,8 @@ import { NetworkActivityType } from 'app/enums/network-activity-type.enum';
 import { NetworkConfiguration } from 'app/interfaces/network-configuration.interface';
 import { NetworkSummary } from 'app/interfaces/network-summary.interface';
 import { Option } from 'app/interfaces/option.interface';
+import { searchDelayConst } from 'app/modules/global-search/constants/delay.const';
+import { UiSearchDirectivesService } from 'app/modules/global-search/services/ui-search-directives.service';
 import { NetworkConfigurationComponent } from 'app/pages/network/components/configuration/configuration.component';
 import {
   networkConfigurationCardElements,
@@ -37,6 +39,7 @@ export class NetworkConfigurationCardComponent implements OnInit {
     private translate: TranslateService,
     private cdr: ChangeDetectorRef,
     private slideInService: IxSlideInService,
+    private searchDirectives: UiSearchDirectivesService,
     private actions$: Actions,
   ) {}
 
@@ -137,10 +140,19 @@ export class NetworkConfigurationCardComponent implements OnInit {
         this.isLoading = false; // TODO: Add loading indication in UI.
         this.summary = summary;
         this.config = config;
+        setTimeout(() => this.handlePendingGlobalSearchElement(), searchDelayConst * 2);
 
         this.cdr.markForCheck();
       });
 
     // TODO: Handle loading error
+  }
+
+  private handlePendingGlobalSearchElement(): void {
+    const pendingHighlightElement = this.searchDirectives.pendingUiHighlightElement;
+
+    if (pendingHighlightElement) {
+      this.searchDirectives.get(pendingHighlightElement)?.highlight(pendingHighlightElement);
+    }
   }
 }

@@ -16,6 +16,7 @@ import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provi
 import { actionsColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
 import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { createTable } from 'app/modules/ix-table/utils';
+import { iscsiCardElements } from 'app/pages/sharing/components/shares-dashboard/iscsi-card/iscsi-card.elements';
 import { IscsiWizardComponent } from 'app/pages/sharing/iscsi/iscsi-wizard/iscsi-wizard.component';
 import { TargetFormComponent } from 'app/pages/sharing/iscsi/target/target-form/target-form.component';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
@@ -38,6 +39,8 @@ export class IscsiCardComponent implements OnInit {
     Role.SharingIscsiWrite,
     Role.SharingWrite,
   ];
+
+  protected readonly searchableElements = iscsiCardElements;
 
   iscsiShares: IscsiTarget[] = [];
   dataProvider: AsyncDataProvider<IscsiTarget>;
