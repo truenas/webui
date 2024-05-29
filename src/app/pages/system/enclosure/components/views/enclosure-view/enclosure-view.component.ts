@@ -36,7 +36,7 @@ export class EnclosureViewComponent {
     const selectedSlot = this.selectedSlot();
     // TODO: Add error handling for missing models
     return {
-      component: enclosureComponentMap['M50'], // TODO: this.enclosure().model
+      component: enclosureComponentMap[this.enclosure().model],
       inputs: {
         enclosure,
         selectedSlot,
