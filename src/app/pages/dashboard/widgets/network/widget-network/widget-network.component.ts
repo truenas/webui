@@ -11,14 +11,16 @@ import {
   switchMap,
 } from 'rxjs';
 import { kb } from 'app/constants/bits.constant';
-import { LinkState, NetworkInterfaceAliasType } from 'app/enums/network-interface.enum';
+import { LinkState, NetworkInterfaceAliasType, linkStateLabelMap } from 'app/enums/network-interface.enum';
 import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
 import { BaseNetworkInterface, NetworkInterfaceAlias } from 'app/interfaces/network-interface.interface';
+import { mapLoadedValue } from 'app/modules/loader/directives/with-loading-state/map-loaded-value.utils';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
 import { WidgetComponent } from 'app/pages/dashboard/types/widget-component.interface';
 import { SlotSize } from 'app/pages/dashboard/types/widget.interface';
 import { WidgetInterfaceIpSettings } from 'app/pages/dashboard/widgets/network/widget-interface-ip/widget-interface-ip.definition';
 import { fullSizeNetworkWidgetAspectRatio, halfSizeNetworkWidgetAspectRatio } from 'app/pages/dashboard/widgets/network/widget-network/widget-network.const';
+import { getNetworkInterface } from 'app/pages/dashboard/widgets/network/widget-network/widget-network.utils';
 import { LocaleService } from 'app/services/locale.service';
 import { ThemeService } from 'app/services/theme/theme.service';
 
@@ -31,36 +33,45 @@ import { ThemeService } from 'app/services/theme/theme.service';
 })
 export class WidgetNetworkComponent implements WidgetComponent<WidgetInterfaceIpSettings> {
   size = input.required<SlotSize>();
-  settings = input<WidgetInterfaceIpSettings>();
+  settings = input.required<WidgetInterfaceIpSettings>();
+  private interfaces = toSignal(this.resources.networkInterfaces$, { initialValue: { isLoading: true } });
+  protected interfaceId = computed(() => this.settings()?.interface || '');
+  protected interface = computed(() => mapLoadedValue(
+    this.interfaces(),
+    (interfaces) => getNetworkInterface(interfaces, this.interfaceId()),
+  ));
+  protected interfaceUsage = toSignal(toObservable(this.interfaceId).pipe(
+    filter(Boolean),
+    switchMap((interfaceId) => this.resources.realtimeUpdates$.pipe(
+      map((update) => update.fields.interfaces[interfaceId]),
+    )),
+  ));
+
+  protected linkState = computed(() => {
+    return this.interfaceUsage() ? this.interfaceUsage().link_state : this.interface().value.state.link_state;
+  });
+  protected isLinkStateUp = computed(() => this.linkState() === LinkState.Up);
+  protected linkStateLabel = computed(() => linkStateLabelMap.get(this.linkState()));
+  protected bitsIn = computed(() => this.interfaceUsage().received_bytes_rate * 8);
+  protected bitsOut = computed(() => this.interfaceUsage().sent_bytes_rate * 8);
+
+  protected showChart = computed(() => [SlotSize.Full, SlotSize.Half].includes(this.size()));
+  protected isFullSize = computed(() => this.size() === SlotSize.Full);
+  protected networkWidgetAspectRatio = computed(() => {
+    return this.isFullSize() ? fullSizeNetworkWidgetAspectRatio : halfSizeNetworkWidgetAspectRatio;
+  });
 
   protected isLoading = computed(() => {
-    return !this.interfaces()
-      || !this.interface()
+    return this.interface().isLoading
+      || this.interfaces().isLoading
       || !this.interfaceUsage()
       || !this.reportingData()
       || !this.chartData();
   });
 
-  protected interfaces = toSignal(this.resources.networkInterfaces$.pipe(
-    filter((state) => !state.isLoading),
-    map((state) => state.value),
-    filter((interfaces) => interfaces.length > 0),
-  ));
-
-  protected interface = computed(() => {
-    return this.interfaces()?.find((nics) => nics.name === this.settings().interface);
-  });
-
-  protected interfaceUsage = toSignal(toObservable(this.interface).pipe(
+  protected reportingData = toSignal(toObservable(this.interfaceId).pipe(
     filter(Boolean),
-    switchMap((nic) => this.resources.realtimeUpdates$.pipe(
-      map((update) => update.fields.interfaces[nic.name]),
-    )),
-  ));
-
-  protected reportingData = toSignal(toObservable(this.interface).pipe(
-    filter(Boolean),
-    switchMap((nic) => this.resources.networkInterfaceUpdate(nic.name)),
+    switchMap((interfaceId) => this.resources.networkInterfaceUpdate(interfaceId)),
     filter((response) => !!response.length),
     map((response) => {
       const updatedResponse = response[0];
@@ -72,44 +83,10 @@ export class WidgetNetworkComponent implements WidgetComponent<WidgetInterfaceIp
     }),
   ));
 
-  protected isLinkStateUp = computed(() => {
-    if (this.interfaceUsage().link_state) {
-      return this.interfaceUsage().link_state === LinkState.Up;
-    }
-    return this.interface().state.link_state === LinkState.Up;
-  });
-
-  protected linkStateLabel = computed(() => {
-    if (this.interfaceUsage().link_state) {
-      return this.interfaceUsage().link_state.replace(/_/g, ' ');
-    }
-    return this.interface().state.link_state.replace(/_/g, ' ');
-  });
-
-  protected bitsIn = computed<number>(() => {
-    return this.interfaceUsage().received_bytes_rate * 8;
-  });
-
-  protected bitsOut = computed<number>(() => {
-    return this.interfaceUsage().sent_bytes_rate * 8;
-  });
-
-  protected networkWidgetAspectRatio = computed(() => {
-    return this.size() === SlotSize.Full ? fullSizeNetworkWidgetAspectRatio : halfSizeNetworkWidgetAspectRatio;
-  });
-
-  protected showChart = computed(() => {
-    return [SlotSize.Full, SlotSize.Half].includes(this.size());
-  });
-
-  protected showSecondaryInfo = computed(() => {
-    return [SlotSize.Full].includes(this.size());
-  });
-
   protected chartData = computed<ChartData<'line'>>(() => {
     const currentTheme = this.theme.currentTheme();
     const response = this.reportingData();
-    const networkInterfaceName = this.interface().name;
+    const networkInterfaceName = this.interfaceId();
 
     const labels: number[] = (response.data as number[][]).map((_, index) => {
       return (response.start + index) * 1000;

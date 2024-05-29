@@ -11,5 +11,5 @@ export const networkWidget = dashboardWidget({
   component: WidgetNetworkComponent,
   category: WidgetCategory.Network,
   settingsComponent: WidgetInterfaceIpSettingsComponent as Type<WidgetSettingsComponent>,
-  supportedSizes: [SlotSize.Full, SlotSize.Quarter, SlotSize.Half],
+  supportedSizes: [SlotSize.Full, SlotSize.Half, SlotSize.Quarter],
 });

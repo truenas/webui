@@ -1,6 +1,6 @@
 <mat-card class="card">
   <mat-card-content class="card-content">
-    <div [class]="['header', size()]">
+    <div *ngIf="isFullSize()" class="header">
       <h3>{{ 'Network' | translate }}</h3>
 
       <button
@@ -15,24 +15,10 @@
       </button>
     </div>
 
-    <div [class]="['container', size()]">
+    <div *ngIf="settings()?.interface; else configureWidgetTemplate" [class]="['container', size()]">
       <div class="nic-info">
         <div class="info-header">
-          <ngx-skeleton-loader
-              *ngIf="isLoading(); else interfaceName"
-              class="skeleton"
-              [theme]="{
-                width: '30%',
-                height: '24px',
-                background: 'var(--alt-bg2)',
-                opacity: 0.25,
-                margin: '12px 0',
-              }"
-            ></ngx-skeleton-loader>
-
-          <ng-template #interfaceName>
-            <h4 class="info-header-title">{{ interface().name }}</h4>
-          </ng-template>
+          <h3 *ixWithLoadingState="interface() as interface" class="info-header-title">{{ interface.name }}</h3>
         </div>
         <div class="info-body">
           <div class="info-column primary">
@@ -46,10 +32,10 @@
               <span>{{ linkStateLabel() }}</span>
             </div>
             <div class="info-list-item traffic">
-              <span *ngIf="!isLoading()" class="icon-wrapper">
+              <span *ngIf="!isLoading() && isFullSize()" class="icon-wrapper">
                 <ix-interface-status-icon [update]="interfaceUsage()"></ix-interface-status-icon>
               </span>
-              <div class="in-out">
+              <div class="in-out" [class.loading]="isLoading()">
                 <div *ngIf="!isLoading(); else skeleton" class="info-list-item in">
                   <span>{{ 'In' | translate }}:</span>
                   <span>{{ bitsIn() | ixFileSize: { baseUnit: 'b', base: 10 } }}/s</span>
@@ -61,18 +47,18 @@
               </div>
             </div>
           </div>
-          <div *ngIf="showSecondaryInfo()" class="info-column secondary">
+          <div *ngIf="isFullSize()" class="info-column secondary">
             <div *ngIf="!isLoading(); else skeleton" class="info-list-item">
               <span>{{ 'Media Type' | translate }}:</span>
-              <span>{{ interface().state.active_media_type }}</span>
+              <span>{{ interface().value.state.active_media_type }}</span>
             </div>
             <div *ngIf="!isLoading(); else skeleton" class="info-list-item">
               <span>{{ 'Media Subtype' | translate }}:</span>
-              <span>{{ interface().state.active_media_subtype }}</span>
+              <span>{{ interface().value.state.active_media_subtype }}</span>
             </div>
             <div *ngIf="!isLoading(); else skeleton" class="info-list-item">
               <span>{{ 'IP Address' | translate }}:</span>
-              <span>{{ getIpAddress(interface()) }}</span>
+              <span>{{ getIpAddress(interface().value) }}</span>
             </div>
           </div>
         </div>
@@ -83,11 +69,11 @@
             *ngIf="isLoading(); else chart"
             class="skeleton"
             [theme]="{
-              width: 'calc(100% - 12px)',
-              height: '200px',
+              width: 'calc(100% - 16px)',
+              height: '184px',
               background: 'var(--alt-bg2)',
               opacity: 0.25,
-              margin: 0,
+              margin: '8px 0 0',
             }"
           ></ngx-skeleton-loader>
         </div>
@@ -102,4 +88,14 @@
 
 <ng-template #skeleton>
   <ngx-skeleton-loader class="skeleton"></ngx-skeleton-loader>
+</ng-template>
+
+<ng-template #configureWidgetTemplate>
+  <div [class]="['empty', 'container', size()]">
+    <ix-icon class="icon" name="mdi-widgets"></ix-icon>
+    <h3>
+      <div>{{ 'Widget is not configured.' | translate }}</div>
+      <small>{{ 'Edit widget to choose network interface.' | translate }}</small>
+    </h3>
+  </div>
 </ng-template>

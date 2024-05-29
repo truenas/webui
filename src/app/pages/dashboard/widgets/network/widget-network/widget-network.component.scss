@@ -25,11 +25,6 @@
   h3 {
     font-size: 24px;
   }
-
-  &.half,
-  &.quarter {
-    display: none;
-  }
 }
 
 .container {
@@ -37,16 +32,35 @@
   flex-direction: column;
   flex-grow: 1;
   overflow: hidden;
-  padding: 0 0 12px 12px;
+
+  &.empty {
+    align-items: center;
+    place-content: center center;
+    text-align: center;
+
+    ix-icon {
+      font-size: 48px;
+    }
+
+    &.full {
+      padding: 0 16px 48px;
+    }
+  }
+
+  &.full {
+    padding: 0 0 0 16px;
+
+    .info-header {
+      padding-left: 0;
+    }
+  }
 
   &.half {
     flex-direction: row;
-    padding: 0 0 0 12px;
 
     .nic-info {
       flex: 1 1 30%;
       max-width: 30%;
-      padding: 0;
     }
 
     .nic-chart {
@@ -55,9 +69,11 @@
     }
   }
 
+  &.half,
   &.quarter {
-    padding: 0 0 0 12px;
+    padding: 0;
 
+    .info-body,
     .nic-info {
       padding: 0;
     }
@@ -65,38 +81,35 @@
     .primary {
       display: flex;
       flex-direction: column-reverse;
+      padding: 0 16px 24px;
     }
 
     .in-out {
+      flex: none;
+      margin: auto;
+
+      &.loading {
+        flex: 1;
+      }
+
       .info-list-item {
+        display: grid;
         font-size: 16px;
+        grid-template-columns: minmax(50px, 25%) minmax(100px, 75%);
 
         span:first-child {
           font-weight: bold;
-          min-width: 44%;
           text-align: right;
         }
       }
     }
 
-    .info-list-item.traffic {
-      .icon-wrapper {
-        display: none !important;
-      }
-    }
-
     .info-list-item.state {
       flex-direction: row-reverse;
-      margin-top: 16px;
+      gap: 4px;
+      margin-top: 12px;
       opacity: 0.75;
       place-content: center center;
-    }
-  }
-
-  &.half,
-  &.quarter {
-    .secondary {
-      display: none !important;
     }
   }
 
@@ -182,9 +195,13 @@
   }
 }
 
+.info-header {
+  padding: 16px;
+}
+
 .info-header-title {
   font-size: 24px;
-  line-height: 2;
+  line-height: 1.15;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
