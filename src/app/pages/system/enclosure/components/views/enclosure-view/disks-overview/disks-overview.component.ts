@@ -6,8 +6,14 @@ import { EnclosureDiskStatus } from 'app/enums/enclosure-slot-status.enum';
 import { DashboardEnclosure, DashboardEnclosureSlot } from 'app/interfaces/enclosure.interface';
 import { EnclosureStore } from 'app/pages/system/enclosure/services/enclosure.store';
 
+export enum EnclosureView {
+  Pools = 'pools',
+  FailedDisks = 'failedDisks',
+  Expanders = 'expanders',
+}
+
 export interface OverviewInfo {
-  name: 'pools' | 'failedDisks' | 'expanders';
+  name: EnclosureView;
   value: number;
   title: string;
   subtitle: string;
@@ -23,7 +29,7 @@ export interface OverviewInfo {
 export class DisksOverviewComponent {
   @Output() viewChanged = new EventEmitter<OverviewInfo['name']>();
   slot = input.required<DashboardEnclosureSlot | null>();
-  currentView: OverviewInfo['name'] = 'pools';
+  currentView: OverviewInfo['name'] = EnclosureView.Pools;
 
   readonly selectedEnclosure = this.enclosureStore.selectedEnclosure;
   readonly overviewInfo = computed(() => this.getOverviewInfo(this.selectedEnclosure()));
@@ -93,14 +99,14 @@ export class DisksOverviewComponent {
 
     const overviewInfo: OverviewInfo[] = [
       {
-        name: 'pools',
+        name: EnclosureView.Pools,
         value: poolsInfo.length,
         title: poolsTitle,
         subtitle: poolsSubtitle,
         buttonLabel: this.translate.instant('SHOW POOLS'),
       },
       {
-        name: 'failedDisks',
+        name: EnclosureView.FailedDisks,
         value: failsCount,
         title: failedDisksTitle,
         subtitle: failsSubtitle,
@@ -110,7 +116,7 @@ export class DisksOverviewComponent {
 
     if (expanders.length) {
       overviewInfo.push({
-        name: 'expanders',
+        name: EnclosureView.Expanders,
         value: expanders.length,
         title: expandersTitle,
         subtitle: this.translate.instant('on this enclosure.'),

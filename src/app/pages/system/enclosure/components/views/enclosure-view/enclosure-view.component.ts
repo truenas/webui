@@ -3,7 +3,7 @@ import {
   signal,
 } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-import { OverviewInfo } from 'app/pages/system/enclosure/components/views/enclosure-view/disks-overview/disks-overview.component';
+import { EnclosureView, OverviewInfo } from 'app/pages/system/enclosure/components/views/enclosure-view/disks-overview/disks-overview.component';
 import { EnclosureStore } from 'app/pages/system/enclosure/services/enclosure.store';
 import { enclosureComponentMap } from 'app/pages/system/enclosure/utils/enclosure-mappings';
 
@@ -17,7 +17,7 @@ export class EnclosureViewComponent {
   readonly enclosure = this.store.selectedEnclosure;
   readonly enclosures = this.store.enclosures;
   readonly selectedSlot = this.store.selectedSlot;
-  private readonly selectedView = signal<OverviewInfo['name']>('pools');
+  private readonly selectedView = signal<OverviewInfo['name']>(EnclosureView.Pools);
 
   protected readonly title = computed(() => {
     return this.translate.instant('Disks on {enclosure}', {
