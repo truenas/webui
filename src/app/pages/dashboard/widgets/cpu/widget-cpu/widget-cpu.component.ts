@@ -1,18 +1,15 @@
 import {
-  ChangeDetectionStrategy, Component, Signal, computed, input,
+  ChangeDetectionStrategy, Component, computed, input,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { TinyColor } from '@ctrl/tinycolor';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
-import { ChartData, ChartOptions } from 'chart.js';
 import { map } from 'rxjs/operators';
 import { AllCpusUpdate } from 'app/interfaces/reporting.interface';
-import { GaugeConfig, GaugeData } from 'app/modules/charts/components/view-chart-gauge/view-chart-gauge.component';
+import { GaugeData } from 'app/modules/charts/components/view-chart-gauge/view-chart-gauge.component';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
 import { SlotSize } from 'app/pages/dashboard/types/widget.interface';
 import { CpuParams } from 'app/pages/dashboard/widgets/cpu/interfaces/cpu-params.interface';
-import { ThemeService } from 'app/services/theme/theme.service';
 import { AppState } from 'app/store';
 import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 
@@ -36,19 +33,6 @@ export class WidgetCpuComponent {
   protected coreCount = computed(() => this.sysInfo().physical_cores);
   protected threadCount = computed(() => this.sysInfo().cores);
   protected hyperthread = computed(() => this.sysInfo().cores !== this.sysInfo().physical_cores);
-
-  protected cpuAvg: Signal<GaugeConfig> = computed(() => {
-    const data = ['Load', parseInt(this.cpuData().average.usage.toFixed(1))];
-    return {
-      label: false,
-      data,
-      units: '%',
-      diameter: 136,
-      fontSize: 28,
-      max: 100,
-      subtitle: this.translate.instant('Avg Usage'),
-    };
-  });
 
   protected highest = computed(() => {
     const cpuParams = this.getCpuParams();
@@ -90,80 +74,9 @@ export class WidgetCpuComponent {
     return this.translate.instant('N/A');
   });
 
-  stats = computed(() => {
-    const data = this.parseCpuData(this.cpuData());
-
-    return {
-      labels: Array.from({ length: this.threadCount() }, (_, i) => (i + 1).toString()),
-      values: data.map((item, index) => ({
-        data: item.slice(1) as number[],
-        color: this.theme.getRgbBackgroundColorByIndex(index),
-      })),
-    };
-  });
-
-  chartData = computed<ChartData<'bar'>>(() => {
-    const labels = this.stats().labels;
-    const values = this.stats().values;
-
-    return {
-      labels,
-      datasets: values.map((value) => ({
-        data: value.data,
-        borderWidth: 1,
-        maxBarThickness: 16,
-
-        backgroundColor: new TinyColor(value.color).setAlpha(0.85).toHex8String(),
-        borderColor: value.color,
-      })),
-    };
-  });
-
-  chartOptions = computed<ChartOptions<'bar'>>(() => {
-    const labels = this.stats().labels;
-
-    return {
-      interaction: {
-        intersect: false,
-      },
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: {
-        legend: {
-          display: false,
-        },
-        tooltip: {
-          enabled: false,
-        },
-      },
-      animation: {
-        duration: 0,
-      },
-      transitions: {
-        active: {
-          animation: {
-            duration: 0,
-          },
-        },
-      },
-      scales: {
-        x: {
-          type: 'category',
-          labels,
-        },
-        y: {
-          type: 'linear',
-          max: 100,
-          beginAtZero: true,
-        },
-      },
-    };
-  });
-
   constructor(
     private store$: Store<AppState>,
     private resources: WidgetResourcesService,
-    private theme: ThemeService,
     private translate: TranslateService,
   ) {}
 
