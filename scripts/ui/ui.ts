@@ -48,7 +48,7 @@ function banner(): string {
 const environmentTs = './src/environments/environment.ts';
 const template = './scripts/ui/environment.template.ts';
 const originalEnvironment = { ...environment };
-const modelsFile = './scripts/ui//models.json';
+const modelsFile = './scripts/ui/models.json';
 const models: CommandOptions = JSON.parse(fs.readFileSync(modelsFile, 'utf8'));
 const mockConfigDir = './src/assets/mock/configs/';
 
@@ -180,10 +180,14 @@ function reset(): void {
 * General environment file editing functions
 * */
 function saveEnvironment(): void {
-  const imports = `import { EnclosureDispersalStrategy, MockStorageScenario } from "../app/core/testing/enums/mock-storage.enum";
-import { WebUiEnvironment } from "./environment.interface";
-import {TopologyItemType} from "../app/enums/v-dev-type.enum";\n
-`;
+  const imports =
+`import {
+  EnclosureDispersalStrategy,
+  MockStorageScenario,
+} from 'app/core/testing/mock-enclosure/enums/mock-storage.enum';
+import { WebUiEnvironment } from './environment.interface';
+// eslint-disable-next-line no-restricted-imports
+import { TopologyItemType } from '../app/enums/v-dev-type.enum';\n\n`;
 
   const prefix = 'export const environment: WebUiEnvironment = ';
   const result = makePrintable(environment, imports + prefix);
@@ -209,24 +213,21 @@ function dispersalAsEnum(dispersal: string): EnclosureDispersalStrategy {
   if (dispersal.toLowerCase() === 'default' || dispersal.toLowerCase() === 'existing') {
     return EnclosureDispersalStrategy[capitalize(dispersal) as keyof typeof EnclosureDispersalStrategy];
   }
-  console.info(`ERROR: ${dispersal} is not a valid slot assignment`);
-  process.exit(1);
+  throw new Error(`${dispersal} is not a valid slot assignment`);
 }
 
 function layoutAsEnum(layout: string): TopologyItemType {
   if (layout.toLowerCase() !== 'default') {
     return TopologyItemType[capitalize(layout) as keyof typeof TopologyItemType];
   }
-  console.info(`ERROR: ${layout} is not a valid VDEV layout`);
-  process.exit(1);
+  throw new Error(`${layout} is not a valid VDEV layout`);
 }
 
 function scenarioAsEnum(scenario: string): MockStorageScenario {
   if (scenario.toLowerCase() !== 'default' && scenario.toLowerCase() !== 'multi') {
     return MockStorageScenario[scenario as keyof MockStorageScenario];
   }
-  console.info(`ERROR: ${scenario} is not a valid scenario`);
-  process.exit(1);
+  throw new Error(`${scenario} is not a valid scenario`);
 }
 
 /*
@@ -360,7 +361,7 @@ function mockConfig(command: Command, options: CommandOptions): void {
     if (options.debug) {
       console.info({
         option,
-        value: options[option],
+        value: options[option as keyof CommandOptions],
       });
     }
 
@@ -386,7 +387,7 @@ function mockConfig(command: Command, options: CommandOptions): void {
         mockConfigGenerator();
         break;
       default: {
-        console.info(options[option]);
+        console.info(options[option as keyof CommandOptions]);
         break;
       }
     }
@@ -460,7 +461,7 @@ function setMockModel(value: string): void {
   saveEnvironment();
 }
 
-function showAvailableModels(options: ReportOptions, key: string): void {
+function showAvailableModels(options: ReportOptions, key: keyof CommandOptions): void {
   const modelKeys = Object.keys(models[key]);
   let report = '\n';
 
@@ -518,7 +519,7 @@ function mock(command: Command, options: CommandOptions): void {
       if (options.debug) {
         console.info({
           option,
-          value: options[option],
+          value: options[option as keyof CommandOptions],
         });
       }
 
@@ -557,7 +558,7 @@ function mock(command: Command, options: CommandOptions): void {
           process.exit(0);
           break;
         default: {
-          console.info(options[option]);
+          console.info(options[option as keyof CommandOptions]);
           break;
         }
       }

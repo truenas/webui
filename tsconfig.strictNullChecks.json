@@ -10,12 +10,11 @@
     ]
   },
   "files": [
-    "./scripts/ui/check_env_file.ts",
+    "./scripts/ui/check-env-file.ts",
     "./scripts/ui/environment.template.ts",
     "./scripts/ui/helptext.ts",
     "./scripts/ui/interfaces/mock-command.interface.ts",
     "./scripts/ui/interfaces/ui-command.interface.ts",
-    "./scripts/ui/mock-questions.ts",
     "./src/app/constants/all-commands.constant.ts",
     "./src/app/constants/bits.constant.ts",
     "./src/app/constants/bytes.constant.ts",
