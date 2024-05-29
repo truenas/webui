@@ -5,10 +5,12 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
+import { GiB } from 'app/constants/bytes.constant';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { UnusedDisk } from 'app/interfaces/storage.interface';
+import { UnusedDiskSelectComponent } from 'app/modules/custom-selects/unused-disk-select/unused-disk-select.component';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
@@ -16,7 +18,7 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import {
   ReplaceDiskDialogData,
   ReplaceDiskDialogComponent,
-} from 'app/pages/storage/modules/disks/components/replace-disk-dialog/replace-disk-dialog.component';
+} from 'app/pages/storage/modules/devices/components/disk-info-card/replace-disk-dialog/replace-disk-dialog.component';
 import { WebSocketService } from 'app/services/ws.service';
 
 describe('ReplaceDiskDialogComponent', () => {
@@ -27,11 +29,12 @@ describe('ReplaceDiskDialogComponent', () => {
     imports: [
       IxFormsModule,
       ReactiveFormsModule,
+      UnusedDiskSelectComponent,
     ],
     providers: [
       mockWebSocket([
         mockCall('disk.get_unused', [
-          { devname: 'sdb', identifier: '{serial_lunid}BBBBB1', size: 10737418240 },
+          { devname: 'sdb', identifier: '{serial_lunid}BBBBB1', size: 10 * GiB },
         ] as UnusedDisk[]),
         mockJob('pool.replace', fakeSuccessfulJob()),
       ]),
@@ -68,7 +71,7 @@ describe('ReplaceDiskDialogComponent', () => {
   it('replaces a disk when the form is submitted', async () => {
     const form = await loader.getHarness(IxFormHarness);
     await form.fillForm({
-      'Member Disk': 'sdb - 10 GiB',
+      'Member Disk': 'sdb (10 GiB)',
       Force: true,
     });
 

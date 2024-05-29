@@ -12,6 +12,7 @@ import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { CoreComponents } from 'app/core/core-components.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { CastModule } from 'app/modules/cast/cast.module';
+import { UnusedDiskSelectComponent } from 'app/modules/custom-selects/unused-disk-select/unused-disk-select.component';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxFileSizeModule } from 'app/modules/ix-file-size/ix-file-size.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
@@ -27,6 +28,9 @@ import {
 } from 'app/pages/storage/modules/devices/components/disk-details-panel/disk-details-panel.component';
 import { DiskInfoCardComponent } from 'app/pages/storage/modules/devices/components/disk-info-card/disk-info-card.component';
 import {
+  ReplaceDiskDialogComponent,
+} from 'app/pages/storage/modules/devices/components/disk-info-card/replace-disk-dialog/replace-disk-dialog.component';
+import {
   HardwareDiskEncryptionComponent,
 } from 'app/pages/storage/modules/devices/components/hardware-disk-encryption/hardware-disk-encryption.component';
 import {
@@ -35,6 +39,9 @@ import {
 import { TopologyItemIconComponent } from 'app/pages/storage/modules/devices/components/topology-item-icon/topology-item-icon.component';
 import { TopologyItemNodeComponent } from 'app/pages/storage/modules/devices/components/topology-item-node/topology-item-node.component';
 import { VDevGroupNodeComponent } from 'app/pages/storage/modules/devices/components/vdev-group-node/vdev-group-node.component';
+import {
+  RaidzExtendDialogComponent,
+} from 'app/pages/storage/modules/devices/components/zfs-info-card/raidz-extend-dialog/raidz-extend-dialog.component';
 import { ZfsInfoCardComponent } from 'app/pages/storage/modules/devices/components/zfs-info-card/zfs-info-card.component';
 import { routes } from 'app/pages/storage/modules/devices/devices.routing';
 import { DevicesStore } from 'app/pages/storage/modules/devices/stores/devices-store.service';
@@ -70,6 +77,7 @@ import { ExtendDialogComponent } from './components/zfs-info-card/extend-dialog/
     TestIdModule,
     MatTooltipModule,
     SearchInput1Component,
+    UnusedDiskSelectComponent,
   ],
   declarations: [
     DevicesComponent,
@@ -83,6 +91,8 @@ import { ExtendDialogComponent } from './components/zfs-info-card/extend-dialog/
     TopologyItemNodeComponent,
     TopologyItemIconComponent,
     VDevGroupNodeComponent,
+    RaidzExtendDialogComponent,
+    ReplaceDiskDialogComponent,
   ],
   providers: [
     DevicesStore,
