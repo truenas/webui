@@ -12,12 +12,12 @@ import { SmbListComponent } from './smb/smb-list/smb-list.component';
 export const routes: Routes = [
   {
     path: '',
-    data: { title: T('Sharing') },
+    data: { title: T('Shares') },
     children: [
       {
         path: '',
         component: SharesDashboardComponent,
-        data: { title: T('Sharing'), breadcrumb: null },
+        data: { title: T('Shares'), breadcrumb: null },
       },
       {
         path: 'nfs',

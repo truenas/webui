@@ -831,7 +831,6 @@ body {
   }
 
   .search-element-highlighted {
-    animation: blinker 0.5s infinite !important;
     background-color: var(--contrast-darkest) !important;
     box-shadow: 0 0 5px 5px var(--primary-lighter) !important;
     outline: 4px solid var(--primary) !important;

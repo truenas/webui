@@ -1,12 +1,13 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UiSearchableElement } from 'app/modules/global-search/interfaces/ui-searchable-element.interface';
 
-export const poolManagerElements = {
-  hierarchy: [T('Storage'), T('Pool Creation Wizard')],
-  anchorRouterLink: ['/storage', 'create'],
+export const customAppButtonElements = {
+  hierarchy: [T('Applications'), T('Discover')],
+  anchorRouterLink: ['/apps', 'available'],
   elements: {
-    createPool: {
-      synonyms: [T('Storage')],
+    customApp: {
+      hierarchy: [T('Custom App')],
+      anchor: 'custom-app',
     },
   },
 } satisfies UiSearchableElement;

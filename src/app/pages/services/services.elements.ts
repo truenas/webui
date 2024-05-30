@@ -10,6 +10,7 @@ export const servicesElements = {
   manualRenderElements: {
     smb: {
       hierarchy: [T('SMB')],
+      synonyms: [T('Samba')],
       anchor: 'service-smb',
     },
     ftp: {
