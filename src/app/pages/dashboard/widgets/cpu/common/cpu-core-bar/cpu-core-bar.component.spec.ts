@@ -1,25 +1,24 @@
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
-import { MockComponent } from 'ng-mocks';
+import { ChartData } from 'chart.js';
+import { MockDirective } from 'ng-mocks';
+import { BaseChartDirective } from 'ng2-charts';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { of } from 'rxjs';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
-import { SlotSize } from 'app/pages/dashboard/types/widget.interface';
-import { CpuChartGaugeComponent } from 'app/pages/dashboard/widgets/cpu/common/cpu-chart-gauge/cpu-chart-gauge.component';
 import { CpuCoreBarComponent } from 'app/pages/dashboard/widgets/cpu/common/cpu-core-bar/cpu-core-bar.component';
-import { WidgetCpuComponent } from 'app/pages/dashboard/widgets/cpu/widget-cpu/widget-cpu.component';
+import { ThemeService } from 'app/services/theme/theme.service';
 import { selectSystemInfo } from 'app/store/system-info/system-info.selectors';
 
-describe('WidgetCpuComponent', () => {
-  let spectator: Spectator<WidgetCpuComponent>;
+describe('CpuCoreBarComponent', () => {
+  let spectator: Spectator<CpuCoreBarComponent>;
   const createComponent = createComponentFactory({
-    component: WidgetCpuComponent,
+    component: CpuCoreBarComponent,
     imports: [
       NgxSkeletonLoaderModule,
     ],
     declarations: [
-      MockComponent(CpuChartGaugeComponent),
-      MockComponent(CpuCoreBarComponent),
+      MockDirective(BaseChartDirective),
     ],
     providers: [
       mockProvider(
@@ -39,6 +38,9 @@ describe('WidgetCpuComponent', () => {
           }),
         },
       ),
+      mockProvider(ThemeService, {
+        getRgbBackgroundColorByIndex: () => [0, 0, 0],
+      }),
       provideMockStore({
         selectors: [
           {
@@ -55,22 +57,21 @@ describe('WidgetCpuComponent', () => {
   });
 
   beforeEach(() => {
-    spectator = createComponent({
-      props: {
-        size: SlotSize.Full,
-      },
+    spectator = createComponent();
+  });
+
+  it('shows a chart with cpu stats', () => {
+    const chart = spectator.query(BaseChartDirective);
+    expect(chart).not.toBeNull();
+    expect(chart.type).toBe('bar');
+
+    const data = chart.data as ChartData<'bar'>;
+    expect(data).toMatchObject({
+      labels: ['1', '2', '3', '4'],
+      datasets: [
+        { data: [6, 30, 70, 9] },
+        { data: [31, 31, 83, 83] },
+      ],
     });
-  });
-
-  it('shows cpu model', () => {
-    expect(spectator.query('.cpu-model')).toHaveText('Intel(R) Xeon(R) Silver 4210R CPU');
-  });
-
-  it('shows cpu stats for the system', () => {
-    const stats = spectator.queryAll('.cpu-data mat-list-item');
-    expect(stats).toHaveLength(3);
-    expect(stats[0]).toHaveText('Cores: 2 cores');
-    expect(stats[1]).toHaveText('Highest Usage: 70% (Thread #2)');
-    expect(stats[2]).toHaveText('Hottest: 83°C (2 cores at 83°C)');
   });
 });
