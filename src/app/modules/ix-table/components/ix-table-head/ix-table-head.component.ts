@@ -56,9 +56,11 @@ export class IxTableHeadComponent<T> implements AfterViewInit {
       direction = null;
     }
 
+    const sortBy = (this.columns[columnId].sortBy || this.columns[columnId].getValue) as (row: T) => string | number;
+
     this.dataProvider.setSorting({
       propertyName: this.columns[columnId].propertyName,
-      sortBy: this.columns[columnId].sortBy || this.columns[columnId].getValue as (row: T) => string | number,
+      sortBy,
       direction,
       active,
     });
