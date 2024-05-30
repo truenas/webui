@@ -19,6 +19,7 @@
     height: 100%;
     outline-color: transparent;
     padding: 0;
+    text-align: unset;
     transition: outline-color ease-in 250ms;
 
     &.selected {
@@ -39,7 +40,7 @@
       justify-content: center;
     }
 
-    
+
 
     .inert-container {
       height: 100%;
