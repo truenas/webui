@@ -1,3 +1,4 @@
+import { fakeAsync } from '@angular/core/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
@@ -96,65 +97,188 @@ describe('WidgetNetworkComponent', () => {
     ],
   });
 
-  beforeEach(() => {
-    spectator = createComponent({
-      props: {
-        size: SlotSize.Full,
-      },
+  describe('Full Size', () => {
+    beforeEach(() => {
+      spectator = createComponent({
+        props: {
+          size: SlotSize.Full,
+          settings: {
+            interface: 'ens1',
+          },
+        },
+      });
+    });
+
+    it('shows widget header', () => {
+      expect(spectator.query('.header')).toHaveText('Network');
+    });
+
+    it('shows interface name', () => {
+      expect(spectator.query('.info-header-title')).toHaveText('ens1');
+    });
+
+    it('shows interface state', fakeAsync(() => {
+      spectator.tick(1);
+      expect(spectator.query('.info-list-item.state')).toHaveText('LINK STATE UP');
+    }));
+
+    it('shows interface traffic', fakeAsync(() => {
+      spectator.tick(1);
+      expect(spectator.query('.info-list-item.in')).toHaveText('In:16.38 kb/s');
+      expect(spectator.query('.info-list-item.out')).toHaveText('Out:32.77 kb/s');
+    }));
+
+    it('shows a chart with network traffic', fakeAsync(() => {
+      spectator.tick(1);
+      const chart = spectator.query(ViewChartAreaComponent);
+      expect(chart).not.toBeNull();
+
+      const data = chart.data;
+      expect(data).toMatchObject({
+        datasets: [
+          {
+            pointBackgroundColor: 'blue',
+            backgroundColor: 'blue',
+            borderColor: 'blue',
+            fill: true,
+            label: 'Incoming [ens1]',
+            pointRadius: 0,
+            tension: 0.2,
+            data: [
+              { x: 1714583020000, y: 7728161.791999999 },
+              { x: 1714583021000, y: 8728161.792000001 },
+            ],
+          },
+          {
+            pointBackgroundColor: 'orange',
+            backgroundColor: 'orange',
+            borderColor: 'orange',
+            fill: true,
+            label: 'Outgoing [ens1]',
+            pointRadius: 0,
+            tension: 0.2,
+            data: [
+              { x: 1714583020000, y: -992327.3728 },
+              { x: 1714583021000, y: -1992327.3728 },
+            ],
+          },
+        ],
+      });
+    }));
+
+    it('shows a message to configure widget', () => {
+      spectator.setInput('settings', null);
+      expect(spectator.query('.icon')).toExist();
+      expect(spectator.query('h3 div')).toHaveText('Widget is not configured.');
+      expect(spectator.query('h3 small')).toHaveText('Edit widget to choose network interface.');
     });
   });
 
-  it('shows widget header', () => {
-    expect(spectator.query('.header')).toHaveText('Network');
-  });
-
-  it('shows interface name', () => {
-    expect(spectator.query('.info-header-title')).toHaveText('ens1');
-  });
-
-  it('shows interface state', () => {
-    expect(spectator.query('.info-list-item.state')).toHaveText('LINK STATE UP');
-  });
-
-  it('shows interface traffic', () => {
-    expect(spectator.query('.info-list-item.in')).toHaveText('In:16.38 kb/s');
-    expect(spectator.query('.info-list-item.out')).toHaveText('Out:32.77 kb/s');
-  });
-
-  it('shows a chart with network traffic', () => {
-    const chart = spectator.query(ViewChartAreaComponent);
-    expect(chart).not.toBeNull();
-
-    const data = chart.data;
-    expect(data).toMatchObject({
-      datasets: [
-        {
-          pointBackgroundColor: 'blue',
-          backgroundColor: 'blue',
-          borderColor: 'blue',
-          fill: true,
-          label: 'Incoming [ens1]',
-          pointRadius: 0,
-          tension: 0.2,
-          data: [
-            { x: 1714583020000, y: 7728161.791999999 },
-            { x: 1714583021000, y: 8728161.792000001 },
-          ],
+  describe('Half Size', () => {
+    beforeEach(() => {
+      spectator = createComponent({
+        props: {
+          size: SlotSize.Half,
+          settings: {
+            interface: 'ens1',
+          },
         },
-        {
-          pointBackgroundColor: 'orange',
-          backgroundColor: 'orange',
-          borderColor: 'orange',
-          fill: true,
-          label: 'Outgoing [ens1]',
-          pointRadius: 0,
-          tension: 0.2,
-          data: [
-            { x: 1714583020000, y: -992327.3728 },
-            { x: 1714583021000, y: -1992327.3728 },
-          ],
-        },
-      ],
+      });
     });
+
+    it('ensures no widget header is rendered', () => {
+      expect(spectator.query('.header')).toBeNull();
+    });
+
+    it('shows interface name', () => {
+      expect(spectator.query('.info-header-title')).toHaveText('ens1');
+    });
+
+    it('shows interface state', fakeAsync(() => {
+      spectator.tick(1);
+      expect(spectator.query('.info-list-item.state')).toHaveText('LINK STATE UP');
+    }));
+
+    it('shows interface traffic', fakeAsync(() => {
+      spectator.tick(1);
+      expect(spectator.query('.info-list-item.in')).toHaveText('In:16.38 kb/s');
+      expect(spectator.query('.info-list-item.out')).toHaveText('Out:32.77 kb/s');
+    }));
+
+    it('shows a chart with network traffic', fakeAsync(() => {
+      spectator.tick(1);
+      const chart = spectator.query(ViewChartAreaComponent);
+      expect(chart).not.toBeNull();
+
+      const data = chart.data;
+      expect(data).toMatchObject({
+        datasets: [
+          {
+            pointBackgroundColor: 'blue',
+            backgroundColor: 'blue',
+            borderColor: 'blue',
+            fill: true,
+            label: 'Incoming [ens1]',
+            pointRadius: 0,
+            tension: 0.2,
+            data: [
+              { x: 1714583020000, y: 7728161.791999999 },
+              { x: 1714583021000, y: 8728161.792000001 },
+            ],
+          },
+          {
+            pointBackgroundColor: 'orange',
+            backgroundColor: 'orange',
+            borderColor: 'orange',
+            fill: true,
+            label: 'Outgoing [ens1]',
+            pointRadius: 0,
+            tension: 0.2,
+            data: [
+              { x: 1714583020000, y: -992327.3728 },
+              { x: 1714583021000, y: -1992327.3728 },
+            ],
+          },
+        ],
+      });
+    }));
+  });
+
+  describe('Quarter Size', () => {
+    beforeEach(() => {
+      spectator = createComponent({
+        props: {
+          size: SlotSize.Quarter,
+          settings: {
+            interface: 'ens1',
+          },
+        },
+      });
+    });
+
+    it('ensures no widget header is rendered', () => {
+      expect(spectator.query('.header')).toBeNull();
+    });
+
+    it('shows interface name', () => {
+      expect(spectator.query('.info-header-title')).toHaveText('ens1');
+    });
+
+    it('shows interface state', fakeAsync(() => {
+      spectator.tick(1);
+      expect(spectator.query('.info-list-item.state')).toHaveText('LINK STATE UP');
+    }));
+
+    it('shows interface traffic', fakeAsync(() => {
+      spectator.tick(1);
+      expect(spectator.query('.info-list-item.in')).toHaveText('In:16.38 kb/s');
+      expect(spectator.query('.info-list-item.out')).toHaveText('Out:32.77 kb/s');
+    }));
+
+    it('ensures chart is not rendered', fakeAsync(() => {
+      spectator.tick(1);
+      const chart = spectator.query(ViewChartAreaComponent);
+      expect(chart).toBeNull();
+    }));
   });
 });

@@ -1,15 +1,17 @@
-import { marker } from '@biesbjerg/ngx-translate-extract-marker';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UiSearchableElement } from 'app/modules/global-search/interfaces/ui-searchable-element.interface';
 
 export const staticRoutesCardElements = {
-  hierarchy: [marker('Network')],
+  hierarchy: [T('Network')],
   anchorRouterLink: ['/network'],
   elements: {
     staticRoutes: {
-      hierarchy: [marker('Static Routes')],
+      hierarchy: [T('Static Routes')],
+      synonyms: [T('Routing'), T('Static Routing')],
     },
     add: {
-      hierarchy: [marker('Static Routes'), marker('Add')],
+      hierarchy: [T('Static Routes'), T('Add')],
+      synonyms: [T('Add Static Route'), T('Create Static Route'), T('New Static Route')],
       anchor: 'add-static-route',
     },
   },

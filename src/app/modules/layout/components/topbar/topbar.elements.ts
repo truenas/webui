@@ -6,9 +6,23 @@ export const toolBarElements = {
   elements: {
     sendFeedback: {
       hierarchy: [T('Send Feedback')],
+      synonyms: [
+        T('Bug'),
+        T('Feature Request'),
+        T('Suggestion'),
+        T('Improvement'),
+        T('Review'),
+        T('Report Bug'),
+        T('Jira'),
+        T('Ticket'),
+        T('Issue'),
+        T('Defect'),
+        T('File Ticket'),
+      ],
     },
     alerts: {
       hierarchy: [T('Alerts')],
+      synonyms: [T('Notifications')],
     },
   },
 } satisfies UiSearchableElement;

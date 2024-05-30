@@ -37,7 +37,15 @@ export class DiskTemperatureService implements OnDestroy {
   ) { }
 
   listenForTemperatureUpdates(): void {
-    this.websocket.call('disk.query', [[], { select: ['name', 'type'] }]).subscribe((disks) => {
+    this.websocket.call('webui.enclosure.dashboard').subscribe((enclosures) => {
+      const disks: Disk[] = [];
+      enclosures.forEach((enclosure) => {
+        Object.values(enclosure.elements['Array Device Slot']).forEach((element) => {
+          if (element.dev) {
+            disks.push({ name: element.dev } as Disk);
+          }
+        });
+      });
       this.disks = disks;
       if (this.subscribers > 0) this.start();
     });

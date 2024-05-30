@@ -176,7 +176,7 @@ export class SigninStore extends ComponentStore<SigninState> {
   }
 
   private checkIfManagedByTrueCommand(): Observable<boolean> {
-    return this.ws.call('truenas.managed_by_truecommand').pipe(
+    return of(false).pipe(
       tap((managedByTrueCommand) => this.patchState({ managedByTrueCommand })),
     );
   }

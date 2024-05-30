@@ -13,6 +13,7 @@ import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/
 import { toggleColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-toggle/ix-cell-toggle.component';
 import { createTable } from 'app/modules/ix-table/utils';
 import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
+import { scrubTaskCardElements } from 'app/pages/data-protection/scrub-task/scrub-task-card/scrub-task-card.elements';
 import { ScrubTaskFormComponent } from 'app/pages/data-protection/scrub-task/scrub-task-form/scrub-task-form.component';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -27,7 +28,8 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ScrubTaskCardComponent implements OnInit {
-  readonly requiredRoles = [Role.FullAdmin];
+  protected readonly requiredRoles = [Role.FullAdmin];
+  protected readonly uiSearchableElement = scrubTaskCardElements;
 
   dataProvider: AsyncDataProvider<PoolScrubTask>;
 

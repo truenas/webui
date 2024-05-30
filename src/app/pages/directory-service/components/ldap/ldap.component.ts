@@ -13,7 +13,6 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { ldapElements } from 'app/pages/directory-service/components/ldap/ldap.elements';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -27,7 +26,6 @@ import { WebSocketService } from 'app/services/ws.service';
 })
 export class LdapComponent implements OnInit {
   protected readonly requiredRoles = [Role.DirectoryServiceWrite];
-  protected readonly searchableElements = ldapElements;
 
   isLoading = false;
   isAdvancedMode = false;

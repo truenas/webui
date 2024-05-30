@@ -1,0 +1,15 @@
+<div
+  class="expanders full-stage dom-overlay"
+>
+  <div *ngIf="expanders()?.length">
+    <div *ngFor="let expander of expanders()"
+      class="expander-item"
+      [style.width]="(100 / expanders().length).toString() + '%'"
+    >
+      <div class="item primary-number">{{ expander?.status }}</div>
+      <div class="item title">{{ 'Expander Status' | translate }}</div>
+      <div *ngIf="expander.descriptor" class="item subtitle">{{ expander.descriptor }}</div>
+      <div *ngIf="!expander.descriptor" class="item subtitle">{{ 'No descriptor provided' | translate }}</div>
+    </div>
+  </div>
+</div>

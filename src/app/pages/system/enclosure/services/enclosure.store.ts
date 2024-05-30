@@ -32,6 +32,11 @@ export class EnclosureStore extends ComponentStore<EnclosureState> {
     { initialValue: undefined },
   );
 
+  readonly enclosures = toSignal(
+    this.state$.pipe(map((state) => state.enclosures)),
+    { initialValue: [] },
+  );
+
   readonly enclosureLabel = computed(() => getEnclosureLabel(this.selectedEnclosure()));
 
   constructor(

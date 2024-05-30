@@ -1,3 +1,5 @@
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
+
 export enum NetworkInterfaceType {
   Bridge = 'BRIDGE',
   LinkAggregation = 'LINK_AGGREGATION',
@@ -42,6 +44,12 @@ export enum LinkState {
   Down = 'LINK_STATE_DOWN',
   Unknown = 'LINK_STATE_UNKNOWN',
 }
+
+export const linkStateLabelMap = new Map<LinkState, string>([
+  [LinkState.Up, T('LINK STATE UP')],
+  [LinkState.Down, T('LINK STATE DOWN')],
+  [LinkState.Unknown, T('LINK STATE UNKNOWN')],
+]);
 
 export enum LacpduRate {
   Slow = 'SLOW',

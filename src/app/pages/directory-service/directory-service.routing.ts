@@ -5,7 +5,6 @@ import { ActiveDirectoryComponent } from 'app/pages/directory-service/components
 import { IdmapListComponent } from 'app/pages/directory-service/components/idmap-list/idmap-list.component';
 import { KerberosKeytabsListComponent } from 'app/pages/directory-service/components/kerberos-keytabs/kerberos-keytabs-list/kerberos-keytabs-list.component';
 import { KerberosRealmsListComponent } from 'app/pages/directory-service/components/kerberos-realms/kerberos-realms-list.component';
-import { LdapComponent } from './components/ldap/ldap.component';
 
 export const routes: Routes = [{
   path: '',
@@ -15,10 +14,6 @@ export const routes: Routes = [{
       path: '',
       redirectTo: '/credentials/directory-services',
       pathMatch: 'full',
-    }, {
-      path: 'ldap',
-      component: LdapComponent,
-      data: { title: T('LDAP'), breadcrumb: null, icon: 'device_hub' },
     }, {
       path: 'activedirectory',
       component: ActiveDirectoryComponent,

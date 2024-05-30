@@ -6,7 +6,7 @@ import { WidgetHelpComponent } from 'app/pages/dashboard/widgets/help/widget-hel
 
 export const helpWidget = dashboardWidget({
   name: T('Help'),
-  supportedSizes: [SlotSize.Full],
+  supportedSizes: [SlotSize.Full, SlotSize.Half, SlotSize.Quarter],
   category: WidgetCategory.Help,
   component: WidgetHelpComponent,
   settingsComponent: null,

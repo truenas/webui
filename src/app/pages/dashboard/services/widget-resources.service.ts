@@ -10,6 +10,7 @@ import { Dataset } from 'app/interfaces/dataset.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { ReportingData } from 'app/interfaces/reporting.interface';
 import { VolumesData, VolumeData } from 'app/interfaces/volume-data.interface';
+import { processNetworkInterfaces } from 'app/pages/dashboard/widgets/network/widget-network/widget-network.utils';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
@@ -28,7 +29,7 @@ import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 export class WidgetResourcesService {
   // TODO: nosub is emitted for some reason
   readonly realtimeUpdates$ = this.ws.subscribe('reporting.realtime');
-  readonly fiveSecondsRefreshInteval$ = timer(0, 5000);
+  readonly refreshInterval$ = timer(0, 5000);
   private readonly triggerRefreshSystemInfo$ = new Subject<void>();
 
   readonly backups$ = forkJoin([
@@ -47,6 +48,7 @@ export class WidgetResourcesService {
   );
 
   readonly networkInterfaces$ = this.ws.call('interface.query').pipe(
+    map((interfaces) => processNetworkInterfaces(interfaces)),
     toLoadingState(),
     shareReplay({ bufferSize: 1, refCount: true }),
   );
@@ -67,7 +69,7 @@ export class WidgetResourcesService {
   readonly serverTime$ = this.store$.pipe(
     waitForSystemInfo,
     map((systemInfo) => new Date(systemInfo.datetime.$date)),
-    combineLatestWith(this.fiveSecondsRefreshInteval$),
+    combineLatestWith(this.refreshInterval$),
     map(([serverTime]) => {
       serverTime.setSeconds(serverTime.getSeconds() + 5);
       return serverTime;
