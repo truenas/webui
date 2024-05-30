@@ -16,12 +16,6 @@
     padding-bottom: 0;
     padding-right: 12px;
   }
-
-  .container {
-    padding-left: 12px;
-    padding-right: 0;
-    padding-top: 0;
-  }
 }
 
 .header {
@@ -38,6 +32,86 @@
   flex-direction: column;
   flex-grow: 1;
   overflow: hidden;
+
+  &.empty {
+    align-items: center;
+    place-content: center center;
+    text-align: center;
+
+    ix-icon {
+      font-size: 48px;
+    }
+
+    &.full {
+      padding: 0 16px 48px;
+    }
+  }
+
+  &.full {
+    padding: 0 0 0 16px;
+
+    .info-header {
+      padding-left: 0;
+    }
+  }
+
+  &.half {
+    flex-direction: row;
+
+    .nic-info {
+      flex: 1 1 30%;
+      max-width: 30%;
+    }
+
+    .nic-chart {
+      flex: 1 1 70%;
+      max-width: 70%;
+    }
+  }
+
+  &.half,
+  &.quarter {
+    padding: 0;
+
+    .info-body,
+    .nic-info {
+      padding: 0;
+    }
+
+    .primary {
+      display: flex;
+      flex-direction: column-reverse;
+      padding: 0 16px 24px;
+    }
+
+    .in-out {
+      flex: none;
+      margin: auto;
+
+      &.loading {
+        flex: 1;
+      }
+
+      .info-list-item {
+        display: grid;
+        font-size: 16px;
+        grid-template-columns: minmax(50px, 25%) minmax(100px, 75%);
+
+        span:first-child {
+          font-weight: bold;
+          text-align: right;
+        }
+      }
+    }
+
+    .info-list-item.state {
+      flex-direction: row-reverse;
+      gap: 4px;
+      margin-top: 12px;
+      opacity: 0.75;
+      place-content: center center;
+    }
+  }
 
   .chart {
     align-items: center;
@@ -121,9 +195,13 @@
   }
 }
 
+.info-header {
+  padding: 16px;
+}
+
 .info-header-title {
   font-size: 24px;
-  line-height: 2;
+  line-height: 1.15;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -157,5 +235,6 @@
 
 .in-out {
   display: flex;
+  flex: 1;
   flex-direction: column;
 }
