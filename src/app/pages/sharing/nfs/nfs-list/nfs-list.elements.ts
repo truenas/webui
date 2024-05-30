@@ -8,7 +8,13 @@ export const nfsListElements = {
     nfs: {},
     createNfsShare: {
       hierarchy: [T('Create NFS Share')],
-      synonyms: [T('Add NFS Share'), T('New NFS Share')],
+      synonyms: [
+        T('Add NFS Share'),
+        T('New NFS Share'),
+        T('Create Share'),
+        T('Add Share'),
+        T('New Share'),
+      ],
     },
   },
 } satisfies UiSearchableElement;

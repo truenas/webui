@@ -6,7 +6,7 @@ export const diskListElements = {
   anchorRouterLink: ['/storage', 'disks'],
   elements: {
     disks: {
-      synonyms: [T('Storage')],
+      synonyms: [T('Manage Disks')],
     },
   },
 } satisfies UiSearchableElement;

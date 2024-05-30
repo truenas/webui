@@ -1432,6 +1432,7 @@
       "Create Snapshot"
     ],
     "synonyms": [
+      "Manage Datasets",
       "Take Snapshot"
     ],
     "requiredRoles": [
@@ -1451,6 +1452,7 @@
       "Manage Snapshots"
     ],
     "synonyms": [
+      "Manage Datasets",
       "Snapshot Manager"
     ],
     "requiredRoles": [],
@@ -1471,6 +1473,7 @@
       "Manage Snapshots Tasks"
     ],
     "synonyms": [
+      "Manage Datasets",
       "Snapshot Task Manager"
     ],
     "requiredRoles": [],
@@ -1491,6 +1494,7 @@
       "Manage Replication Tasks"
     ],
     "synonyms": [
+      "Manage Datasets",
       "Replication Task Manager"
     ],
     "requiredRoles": [],
@@ -1511,6 +1515,7 @@
       "Manage Rsync Tasks"
     ],
     "synonyms": [
+      "Manage Datasets",
       "Rsync Task Manager"
     ],
     "requiredRoles": [],
@@ -1531,6 +1536,7 @@
       "Manage User Quotas"
     ],
     "synonyms": [
+      "Manage Datasets",
       "User Quota Manager"
     ],
     "requiredRoles": [],
@@ -1553,6 +1559,7 @@
       "Manage Group Quotas"
     ],
     "synonyms": [
+      "Manage Datasets",
       "Group Quota Manager"
     ],
     "requiredRoles": [],
@@ -1575,6 +1582,7 @@
       "Add Zvol"
     ],
     "synonyms": [
+      "Manage Datasets",
       "Add Volume",
       "Create Zvol",
       "New Zvol"
@@ -1596,6 +1604,7 @@
       "Add Dataset"
     ],
     "synonyms": [
+      "Manage Datasets",
       "Add Filesystem",
       "Create Dataset",
       "New Dataset"
@@ -1617,6 +1626,7 @@
       "Dataset Details"
     ],
     "synonyms": [
+      "Manage Datasets",
       "Dataset Information"
     ],
     "requiredRoles": [],
@@ -1634,6 +1644,7 @@
       "Dataset Space Management"
     ],
     "synonyms": [
+      "Manage Datasets",
       "Dataset Capacity Management"
     ],
     "requiredRoles": [],
@@ -1651,6 +1662,7 @@
       "ZFS Encryption"
     ],
     "synonyms": [
+      "Manage Datasets",
       "Dataset ZFS Encryption"
     ],
     "requiredRoles": [],
@@ -1668,6 +1680,7 @@
       "Data Protection"
     ],
     "synonyms": [
+      "Manage Datasets",
       "Dataset Data Protection"
     ],
     "requiredRoles": [],
@@ -1685,6 +1698,7 @@
       "Roles"
     ],
     "synonyms": [
+      "Manage Datasets",
       "Dataset Roles"
     ],
     "requiredRoles": [],
@@ -1702,6 +1716,7 @@
       "Permissions"
     ],
     "synonyms": [
+      "Manage Datasets",
       "Dataset Permissions",
       "ACL"
     ],
@@ -1718,7 +1733,9 @@
     "hierarchy": [
       "Datasets"
     ],
-    "synonyms": [],
+    "synonyms": [
+      "Manage Datasets"
+    ],
     "requiredRoles": [],
     "anchorRouterLink": [
       "/datasets"
@@ -2607,7 +2624,15 @@
       "Shares",
       "iSCSI Wizard"
     ],
-    "synonyms": [],
+    "synonyms": [
+      "Add iSCSI",
+      "New iSCSI",
+      "Create iSCSI",
+      "iSCSI Share",
+      "Create Share",
+      "Add Share",
+      "New Share"
+    ],
     "requiredRoles": [],
     "anchorRouterLink": [
       "/sharing"
@@ -2622,6 +2647,7 @@
       "Shares"
     ],
     "synonyms": [
+      "Sharing",
       "Add Share",
       "New Share",
       "Create Share"
@@ -2788,7 +2814,10 @@
     ],
     "synonyms": [
       "Add NFS Share",
-      "New NFS Share"
+      "New NFS Share",
+      "Create Share",
+      "Add Share",
+      "New Share"
     ],
     "requiredRoles": [
       "SHARING_NFS_WRITE",
@@ -2846,7 +2875,10 @@
     "synonyms": [
       "Samba",
       "Add SMB Share",
-      "New SMB Share"
+      "New SMB Share",
+      "Create Share",
+      "Add Share",
+      "New Share"
     ],
     "requiredRoles": [
       "SHARING_SMB_WRITE",
@@ -3205,7 +3237,9 @@
       "Storage",
       "Disks"
     ],
-    "synonyms": [],
+    "synonyms": [
+      "Manage Disks"
+    ],
     "requiredRoles": [],
     "anchorRouterLink": [
       "/storage",
@@ -4894,24 +4928,6 @@
     ],
     "routerLink": null,
     "anchor": "file-ticket",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "System",
-      "View Enclosure",
-      "NVMe-oF Expansion Shelves"
-    ],
-    "synonyms": [],
-    "requiredRoles": [],
-    "anchorRouterLink": [
-      "/system",
-      "oldviewenclosure",
-      "jbof"
-    ],
-    "routerLink": null,
-    "anchor": "system-view-enclosure-nvme-of-expansion-shelves",
     "triggerAnchor": null,
     "section": "ui"
   },

@@ -9,7 +9,13 @@ export const smbListElements = {
     smbList: {},
     createSmbShare: {
       hierarchy: [T('Create SMB Share')],
-      synonyms: [T('Add SMB Share'), T('New SMB Share')],
+      synonyms:
+      [T('Add SMB Share'),
+        T('New SMB Share'),
+        T('Create Share'),
+        T('Add Share'),
+        T('New Share'),
+      ],
     },
   },
 } satisfies UiSearchableElement;

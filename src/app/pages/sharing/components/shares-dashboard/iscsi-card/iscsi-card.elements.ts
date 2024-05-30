@@ -7,6 +7,15 @@ export const iscsiCardElements = {
   elements: {
     wizard: {
       hierarchy: [T('iSCSI Wizard')],
+      synonyms: [
+        T('Add iSCSI'),
+        T('New iSCSI'),
+        T('Create iSCSI'),
+        T('iSCSI Share'),
+        T('Create Share'),
+        T('Add Share'),
+        T('New Share'),
+      ],
     },
     configure: {
       hierarchy: [T('Configure iSCSI')],

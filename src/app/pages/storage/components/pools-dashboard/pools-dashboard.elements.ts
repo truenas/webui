@@ -6,7 +6,13 @@ export const storageElements = {
   hierarchy: [T('Storage')],
   elements: {
     storageDashboard: {
-      synonyms: [T('Pools'), T('Storage Dashboard'), T('Disks'), T('Devices'), T('Datasets')],
+      synonyms: [
+        T('Pools'),
+        T('Storage Dashboard'),
+        T('Disks'),
+        T('Devices'),
+        T('Datasets'),
+      ],
     },
     importPool: {
       hierarchy: [T('Import Pool')],
