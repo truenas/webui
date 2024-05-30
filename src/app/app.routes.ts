@@ -89,7 +89,7 @@ export const rootRouterConfig: Routes = [
       {
         path: 'sharing',
         loadChildren: () => import('./pages/sharing/sharing.module').then((module) => module.SharingModule),
-        data: { title: T('Sharing'), breadcrumb: T('Sharing') },
+        data: { title: T('Shares'), breadcrumb: T('Shares') },
       },
       {
         path: 'datasets',

@@ -7,8 +7,8 @@ import { UiSearchProvider } from 'app/modules/global-search/services/ui-search.s
 import { AuthService } from 'app/services/auth/auth.service';
 
 jest.mock('app/../assets/ui-searchable-elements.json', () => [
-  { hierarchy: ['Technology', 'Internet'], synonyms: ['Web', 'Programs'], requiredRoles: ['FullAdmin'] },
   { hierarchy: ['Technology', 'Programming'], synonyms: ['Coding'], requiredRoles: [] },
+  { hierarchy: ['Technology', 'Internet'], synonyms: ['Web', 'Programs', 'PR'], requiredRoles: ['FullAdmin'] },
 ]);
 
 describe('UiSearchProvider with mocked uiElements', () => {
@@ -34,8 +34,8 @@ describe('UiSearchProvider with mocked uiElements', () => {
       const results = await lastValueFrom(spectator.service.search(searchTerm, 10));
 
       expect(results).toHaveLength(2);
-      expect(results[0].hierarchy).toContain('Internet');
-      expect(results[1].hierarchy).toContain('Programming');
+      expect(results[0].hierarchy).toContain('Programming');
+      expect(results[1].hierarchy).toContain('Internet');
     });
 
     it('should return fuzzy search results on specific term with a typo', async () => {
@@ -112,6 +112,24 @@ describe('UiSearchProvider with mocked uiElements', () => {
       expect(results).toHaveLength(2);
       expect(results[0].hierarchy).toContain('Programming');
       expect(results[1].synonyms).toContain('Programs');
+    });
+
+    it('should first show full match element', async () => {
+      const searchTerm = 'pr';
+      const results = await lastValueFrom(spectator.service.search(searchTerm, 10));
+
+      expect(results).toHaveLength(2);
+      expect(results[0].hierarchy).toEqual(['Technology', 'Internet']);
+      expect(results[1].hierarchy).toEqual(['Technology', 'Programming']);
+    });
+
+    it('should first show first letter match element', async () => {
+      const searchTerm = 'i';
+      const results = await lastValueFrom(spectator.service.search(searchTerm, 10));
+
+      expect(results).toHaveLength(2);
+      expect(results[0].hierarchy).toEqual(['Technology', 'Internet']);
+      expect(results[1].hierarchy).toEqual(['Technology', 'Programming']);
     });
   });
 });

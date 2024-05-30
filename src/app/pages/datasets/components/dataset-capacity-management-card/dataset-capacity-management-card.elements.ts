@@ -3,6 +3,7 @@ import { UiSearchableElement } from 'app/modules/global-search/interfaces/ui-sea
 
 export const datasetCapacityManagementElements = {
   hierarchy: [T('Datasets')],
+  synonyms: [T('Manage Datasets')],
   anchorRouterLink: ['/datasets'],
   elements: {
     manageUserQuotas: {

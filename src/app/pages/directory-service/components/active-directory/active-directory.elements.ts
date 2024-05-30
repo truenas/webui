@@ -3,6 +3,7 @@ import { UiSearchableElement } from 'app/modules/global-search/interfaces/ui-sea
 
 export const activeDirectoryElements = {
   hierarchy: [T('Directory Services'), T('Active Directory')],
+  synonyms: [T('AD')],
   anchorRouterLink: ['/directoryservice', 'activedirectory'],
   elements: {
     activeDirectory: {},
