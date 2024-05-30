@@ -48,24 +48,30 @@ export class CronCardComponent implements OnInit {
     textColumn({
       title: this.translate.instant('Users'),
       propertyName: 'user',
+      sortable: true,
     }),
     textColumn({
       title: this.translate.instant('Command'),
       propertyName: 'command',
+      sortable: true,
     }),
     textColumn({
       title: this.translate.instant('Description'),
       propertyName: 'description',
+      sortable: true,
     }),
     scheduleColumn({
       title: this.translate.instant('Schedule'),
       propertyName: 'schedule',
+      sortable: true,
     }),
     yesNoColumn({
       title: this.translate.instant('Enabled'),
       propertyName: 'enabled',
+      sortable: true,
     }),
     relativeDateColumn({
+      sortable: true,
       title: this.translate.instant('Next Run'),
       getValue: (row) => (row.enabled
         ? this.taskService.getTaskNextTime(row.cron_schedule)

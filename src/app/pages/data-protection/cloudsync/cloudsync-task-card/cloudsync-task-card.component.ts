@@ -53,13 +53,16 @@ export class CloudSyncTaskCardComponent implements OnInit {
     textColumn({
       title: this.translate.instant('Description'),
       propertyName: 'description',
+      sortable: true,
     }),
     textColumn({
       title: this.translate.instant('Frequency'),
       propertyName: 'frequency',
+      sortable: true,
     }),
     relativeDateColumn({
       title: this.translate.instant('Next Run'),
+      sortable: true,
       getValue: (row) => (row.enabled
         ? this.taskService.getTaskNextTime(scheduleToCrontab(row.schedule))
         : this.translate.instant('Disabled')),
@@ -67,18 +70,21 @@ export class CloudSyncTaskCardComponent implements OnInit {
     relativeDateColumn({
       title: this.translate.instant('Last Run'),
       getValue: (row) => row.job?.time_finished?.$date,
+      sortable: true,
     }),
     toggleColumn({
       title: this.translate.instant('Enabled'),
       propertyName: 'enabled',
       onRowToggle: (row: CloudSyncTaskUi) => this.onChangeEnabledState(row),
       requiredRoles: this.requiredRoles,
+      sortable: true,
     }),
     stateButtonColumn({
       title: this.translate.instant('State'),
       getValue: (row) => row.state.state,
       getJob: (row) => row.job,
       cssClass: 'state-button',
+      sortable: true,
     }),
     actionsColumn({
       cssClass: 'wide-actions',

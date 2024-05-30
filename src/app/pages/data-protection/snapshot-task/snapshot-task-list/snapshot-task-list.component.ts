@@ -46,14 +46,17 @@ export class SnapshotTaskListComponent implements OnInit {
     textColumn({
       title: this.translate.instant('Pool/Dataset'),
       propertyName: 'dataset',
+      sortable: true,
     }),
     textColumn({
       title: this.translate.instant('Recursive'),
       getValue: (row) => (row.recursive ? this.translate.instant('Yes') : this.translate.instant('No')),
+      sortable: true,
       propertyName: 'recursive',
     }),
     textColumn({
       title: this.translate.instant('Naming Schema'),
+      sortable: true,
       propertyName: 'naming_schema',
     }),
     textColumn({
@@ -76,7 +79,6 @@ export class SnapshotTaskListComponent implements OnInit {
     textColumn({
       hidden: true,
       title: this.translate.instant('Next Run'),
-      propertyName: 'next_run',
       getValue: (task) => {
         if (task.enabled) {
           return task.schedule
@@ -88,7 +90,6 @@ export class SnapshotTaskListComponent implements OnInit {
     }),
     textColumn({
       title: this.translate.instant('Last Run'),
-      propertyName: 'last_run',
       hidden: true,
       getValue: (row) => {
         if (row.state?.datetime?.$date) {
@@ -100,30 +101,35 @@ export class SnapshotTaskListComponent implements OnInit {
     textColumn({
       title: this.translate.instant('Keep snapshot for'),
       getValue: (row) => `${row.lifetime_value} ${row.lifetime_unit}(S)`.toLowerCase(),
-      propertyName: 'keepfor',
+      propertyName: 'lifetime_unit',
+      sortable: true,
       hidden: true,
     }),
     textColumn({
       title: this.translate.instant('Legacy'),
       hidden: true,
+      sortable: true,
       getValue: (row) => (row.legacy ? this.translate.instant('Yes') : this.translate.instant('No')),
       propertyName: 'legacy',
     }),
     textColumn({
       title: this.translate.instant('VMware Sync'),
       hidden: true,
+      sortable: true,
       getValue: (row) => (row.vmware_sync ? this.translate.instant('Yes') : this.translate.instant('No')),
       propertyName: 'vmware_sync',
     }),
     textColumn({
       title: this.translate.instant('Enabled'),
       propertyName: 'enabled',
+      sortable: true,
       getValue: (task) => (task.enabled ? this.translate.instant('Yes') : this.translate.instant('No')),
     }),
     stateButtonColumn({
       title: this.translate.instant('State'),
       getValue: (row) => row.state.state,
       cssClass: 'state-button',
+      sortable: true,
     }),
   ], {
     rowTestId: (row) => 'snapshot-task-' + row.dataset + '-' + row.naming_schema,

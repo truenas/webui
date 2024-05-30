@@ -24,18 +24,20 @@ export class SmbShareListComponent implements OnInit {
   shares: SmbShareInfo[] = [];
 
   columns = createTable<SmbShareInfo>([
-    textColumn({ title: this.translate.instant('Service'), propertyName: 'service' }),
-    textColumn({ title: this.translate.instant('Session ID'), propertyName: 'session_id' }),
-    textColumn({ title: this.translate.instant('Machine'), propertyName: 'machine' }),
-    textColumn({ title: this.translate.instant('Connected at'), propertyName: 'connected_at' }),
+    textColumn({ title: this.translate.instant('Service'), propertyName: 'service', sortable: true }),
+    textColumn({ title: this.translate.instant('Session ID'), propertyName: 'session_id', sortable: true }),
+    textColumn({ title: this.translate.instant('Machine'), propertyName: 'machine', sortable: true }),
+    textColumn({ title: this.translate.instant('Connected at'), propertyName: 'connected_at', sortable: true }),
     textColumn({
       title: this.translate.instant('Encryption'),
       propertyName: 'encryption',
+      sortable: true,
       getValue: (row) => row.encryption.cipher,
     }),
     textColumn({
       title: this.translate.instant('Signing'),
       propertyName: 'signing',
+      sortable: true,
       getValue: (row) => row.signing.cipher,
     }),
   ], {

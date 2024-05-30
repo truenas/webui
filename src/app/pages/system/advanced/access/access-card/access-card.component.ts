@@ -63,10 +63,12 @@ export class AccessCardComponent implements OnInit {
       title: this.translate.instant('Username'),
       propertyName: 'credentials_data',
       getValue: (row) => this.getUsername(row),
+      sortable: true,
     }),
     dateColumn({
       title: this.translate.instant('Start session time'),
       propertyName: 'created_at',
+      sortable: true,
     }),
     actionsColumn({
       actions: [

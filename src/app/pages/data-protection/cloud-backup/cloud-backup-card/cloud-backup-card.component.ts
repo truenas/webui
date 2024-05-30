@@ -56,21 +56,25 @@ export class CloudBackupCardComponent implements OnInit {
     toggleColumn({
       title: this.translate.instant('Enabled'),
       propertyName: 'enabled',
+      sortable: true,
       onRowToggle: (row) => this.onChangeEnabledState(row),
       requiredRoles: this.requiredRoles,
     }),
     yesNoColumn({
       title: this.translate.instant('Snapshot'),
       propertyName: 'snapshot',
+      sortable: true,
     }),
     stateButtonColumn({
       title: this.translate.instant('State'),
+      sortable: true,
       getValue: (row) => row?.job?.state,
       getJob: (row) => row.job,
       cssClass: 'state-button',
     }),
     textColumn({
       title: this.translate.instant('Last Run'),
+      sortable: true,
       getValue: (row) => {
         if (row.job?.time_finished) {
           return formatDistanceToNowShortened(row.job?.time_finished.$date);

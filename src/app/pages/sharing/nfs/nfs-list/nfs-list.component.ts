@@ -71,6 +71,7 @@ export class NfsListComponent implements OnInit {
     toggleColumn({
       title: this.translate.instant('Enabled'),
       propertyName: 'enabled',
+      sortable: true,
       onRowToggle: (row) => {
         this.ws.call('sharing.nfs.update', [row.id, { enabled: row.enabled }]).pipe(
           this.appLoader.withLoader(),

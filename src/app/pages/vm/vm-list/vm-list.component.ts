@@ -96,6 +96,7 @@ export class VmListComponent implements OnInit {
     textColumn({
       title: this.translate.instant('Memory Size'),
       hidden: true,
+      sortable: true,
       getValue: (row) => {
         return this.fileSizePipe.transform(row.memory * MiB);
       },

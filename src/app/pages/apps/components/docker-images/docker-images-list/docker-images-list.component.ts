@@ -65,7 +65,6 @@ export class DockerImagesListComponent implements OnInit {
     yesNoColumn({
       title: this.translate.instant('Update available'),
       propertyName: 'update_available',
-      sortBy: (row) => (row.update_available ? 1 : 0),
       sortable: true,
     }),
     actionsColumn({

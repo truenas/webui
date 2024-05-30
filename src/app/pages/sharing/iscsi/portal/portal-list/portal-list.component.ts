@@ -43,10 +43,12 @@ export class PortalListComponent implements OnInit {
     textColumn({
       title: this.translate.instant('Portal Group ID'),
       propertyName: 'id',
+      sortable: true,
     }),
     textColumn({
       title: this.translate.instant('Listen'),
       propertyName: 'listen',
+      sortable: true,
       getValue: (row) => {
         return row.listen.map((listenInterface) => {
           const listenIp = this.ipChoices?.get(listenInterface.ip) || listenInterface.ip;
@@ -57,14 +59,17 @@ export class PortalListComponent implements OnInit {
     textColumn({
       title: this.translate.instant('Description'),
       propertyName: 'comment',
+      sortable: true,
     }),
     textColumn({
       title: this.translate.instant('Discovery Auth Method'),
       propertyName: 'discovery_authmethod',
+      sortable: true,
     }),
     textColumn({
       title: this.translate.instant('Discovery Auth Group'),
       propertyName: 'discovery_authgroup',
+      sortable: true,
     }),
     actionsColumn({
       actions: [

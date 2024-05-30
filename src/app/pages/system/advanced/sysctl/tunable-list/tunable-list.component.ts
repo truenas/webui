@@ -56,11 +56,13 @@ export class TunableListComponent implements OnInit {
     }),
     textColumn({
       title: this.translate.instant('Description'),
+      sortable: true,
       propertyName: 'comment',
     }),
     yesNoColumn({
       title: this.translate.instant('Enabled'),
       propertyName: 'enabled',
+      sortable: true,
     }),
     actionsColumn({
       actions: [

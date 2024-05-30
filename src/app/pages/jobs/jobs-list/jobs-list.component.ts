@@ -60,7 +60,6 @@ export class JobsListComponent implements OnInit {
       propertyName: 'state',
       sortable: true,
       cssClass: 'state-button',
-      sortBy: (row) => row.state,
       getJob: (row) => row,
     }),
     textColumn({
@@ -72,11 +71,13 @@ export class JobsListComponent implements OnInit {
       title: this.translate.instant('Started'),
       propertyName: 'time_started',
       sortable: true,
+      sortBy: (job) => job.time_started as unknown as number,
     }),
     dateColumn({
       title: this.translate.instant('Finished'),
       propertyName: 'time_finished',
       sortable: true,
+      sortBy: (job) => job.time_finished as unknown as number,
     }),
   ], {
     rowTestId: (row) => 'job-' + row.id,

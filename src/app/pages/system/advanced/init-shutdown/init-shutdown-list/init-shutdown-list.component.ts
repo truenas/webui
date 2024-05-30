@@ -52,7 +52,7 @@ export class InitShutdownListComponent implements OnInit {
     textColumn({
       title: this.translate.instant('Description'),
       propertyName: 'comment',
-      sortable: false,
+      sortable: true,
     }),
     textColumn({
       title: this.translate.instant('When'),
@@ -66,7 +66,7 @@ export class InitShutdownListComponent implements OnInit {
     textColumn({
       title: this.translate.instant('Command/Script'),
       propertyName: 'script',
-      sortable: false,
+      sortable: true,
       getValue: (row) => (row.type === InitShutdownScriptType.Command ? row.command : row.script),
     }),
     yesNoColumn({

@@ -55,43 +55,49 @@ export class CloudSyncListComponent implements OnInit {
     textColumn({
       title: this.translate.instant('Description'),
       propertyName: 'description',
+      sortable: true,
     }),
     textColumn({
       title: this.translate.instant('Credential'),
-      propertyName: 'credential',
       hidden: true,
+      sortable: true,
       getValue: (task) => task.credentials.name,
     }),
     textColumn({
       title: this.translate.instant('Direction'),
       propertyName: 'direction',
+      sortable: true,
       hidden: true,
     }),
     textColumn({
       title: this.translate.instant('Transfer Mode'),
       propertyName: 'transfer_mode',
+      sortable: true,
       hidden: true,
     }),
     textColumn({
       title: this.translate.instant('Path'),
       propertyName: 'path',
+      sortable: true,
       hidden: true,
     }),
     textColumn({
       title: this.translate.instant('Schedule'),
       propertyName: 'schedule',
       hidden: true,
+      sortable: true,
       getValue: (task) => (task.enabled ? scheduleToCrontab(task.schedule) : this.translate.instant('Disabled')),
     }),
     textColumn({
       title: this.translate.instant('Frequency'),
       propertyName: 'frequency',
       getValue: (task) => this.taskService.getTaskCronDescription(scheduleToCrontab(task.schedule)),
+      sortable: true,
     }),
     textColumn({
       title: this.translate.instant('Next Run'),
-      propertyName: 'next_run',
       hidden: true,
+      sortable: true,
       getValue: (task) => {
         if (task.enabled) {
           return task.schedule
@@ -103,8 +109,8 @@ export class CloudSyncListComponent implements OnInit {
     }),
     textColumn({
       title: this.translate.instant('Last Run'),
-      propertyName: 'last_run',
       hidden: true,
+      sortable: true,
       getValue: (task) => {
         if (task.job?.time_finished?.$date) {
           return formatDistanceToNowShortened(task.job?.time_finished?.$date);
@@ -114,6 +120,7 @@ export class CloudSyncListComponent implements OnInit {
     }),
     stateButtonColumn({
       title: this.translate.instant('State'),
+      sortable: true,
       getValue: (row) => row.state.state,
       getJob: (row) => row.job,
       cssClass: 'state-button',
@@ -121,6 +128,7 @@ export class CloudSyncListComponent implements OnInit {
     textColumn({
       title: this.translate.instant('Enabled'),
       propertyName: 'enabled',
+      sortable: true,
       getValue: (task) => (task.enabled ? this.translate.instant('Yes') : this.translate.instant('No')),
     }),
   ], {

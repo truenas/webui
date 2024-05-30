@@ -35,6 +35,7 @@ export class CloudBackupSnapshotsComponent implements OnChanges {
     textColumn({
       title: this.translate.instant('Name'),
       propertyName: 'hostname',
+      sortable: true,
     }),
     actionsColumn({
       actions: [

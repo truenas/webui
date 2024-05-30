@@ -33,10 +33,12 @@ export class NfsSessionListComponent implements OnInit {
     textColumn({
       title: this.translate.instant('IP'),
       propertyName: 'ip',
+      sortable: true,
     }),
     textColumn({
       title: this.translate.instant('Export'),
       propertyName: 'export',
+      sortable: true,
     }),
   ], {
     rowTestId: (row) => 'nfs3-session-' + row.export + '-' + row.ip,
@@ -46,47 +48,57 @@ export class NfsSessionListComponent implements OnInit {
     textColumn({
       title: this.translate.instant('Name'),
       propertyName: 'name',
+      sortable: true,
     }),
     textColumn({
       title: this.translate.instant('Client ID'),
       propertyName: 'clientid',
+      sortable: true,
     }),
     textColumn({
       title: this.translate.instant('Address'),
       propertyName: 'address',
+      sortable: true,
     }),
     textColumn({
       title: this.translate.instant('Status'),
       propertyName: 'status',
+      sortable: true,
       getValue: (row) => stringToTitleCase(row.status),
     }),
     textColumn({
       title: this.translate.instant('Seconds From Last Renew'),
+      sortable: true,
       propertyName: 'seconds from last renew',
     }),
     textColumn({
       title: this.translate.instant('Minor Version'),
       propertyName: 'minor version',
+      sortable: true,
       hidden: true,
     }),
     textColumn({
       title: this.translate.instant('Implementation Domain'),
       hidden: true,
       propertyName: 'Implementation domain',
+      sortable: true,
     }),
     textColumn({
       title: this.translate.instant('Implementation Name'),
       hidden: true,
       propertyName: 'Implementation name',
+      sortable: true,
     }),
     textColumn({
       title: this.translate.instant('Callback State'),
       hidden: true,
       propertyName: 'callback state',
+      sortable: true,
     }),
     textColumn({
       title: this.translate.instant('Callback Address'),
       propertyName: 'callback address',
+      sortable: true,
       hidden: true,
     }),
   ], {
@@ -126,6 +138,10 @@ export class NfsSessionListComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    if (!this.activeNfsType) {
+      this.activeNfsType = NfsType.Nfs3;
+    }
+
     this.loadData();
 
     combineLatest([this.nfs3DataProvider.emptyType$, this.nfs4DataProvider.emptyType$])

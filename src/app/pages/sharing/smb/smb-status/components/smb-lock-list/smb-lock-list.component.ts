@@ -25,11 +25,12 @@ export class SmbLockListComponent implements OnInit {
   locks: SmbLockInfo[] = [];
   files: SmbOpenInfo[] = [];
   columns = createTable<SmbLockInfo>([
-    textColumn({ title: this.translate.instant('Path'), propertyName: 'service_path' }),
-    textColumn({ title: this.translate.instant('Filename'), propertyName: 'filename' }),
+    textColumn({ title: this.translate.instant('Path'), propertyName: 'service_path', sortable: true }),
+    textColumn({ title: this.translate.instant('Filename'), propertyName: 'filename', sortable: true }),
     textColumn({
       title: this.translate.instant('File ID'),
       propertyName: 'fileid',
+      sortable: true,
       getValue: (row) => {
         return Object.values(row.fileid).join(':');
       },
@@ -37,6 +38,7 @@ export class SmbLockListComponent implements OnInit {
     textColumn({
       title: this.translate.instant('Open Files'),
       propertyName: 'opens',
+      sortable: true,
       getValue: (row) => {
         return this.translate.instant('{n, plural, =0 {No open files} one {# open file} other {# open files}}', { n: Object.keys(row.opens).length });
       },
@@ -44,6 +46,7 @@ export class SmbLockListComponent implements OnInit {
     textColumn({
       title: this.translate.instant('Num Pending Deletes'),
       propertyName: 'num_pending_deletes',
+      sortable: true,
     }),
   ], {
     rowTestId: (row) => 'smb-lock-' + row.filename + '-' + row.fileid.devid + '-' + row.fileid.extid,

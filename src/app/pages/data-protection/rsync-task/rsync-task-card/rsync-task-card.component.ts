@@ -49,28 +49,34 @@ export class RsyncTaskCardComponent implements OnInit {
     textColumn({
       title: this.translate.instant('Path'),
       propertyName: 'path',
+      sortable: true,
     }),
     textColumn({
       title: this.translate.instant('Remote Host'),
       propertyName: 'remotehost',
+      sortable: true,
     }),
     textColumn({
       title: this.translate.instant('Frequency'),
+      sortable: true,
       getValue: (row) => this.taskService.getTaskCronDescription(scheduleToCrontab(row.schedule)),
     }),
     relativeDateColumn({
       title: this.translate.instant('Next Run'),
+      sortable: true,
       getValue: (row) => (row.enabled
         ? this.taskService.getTaskNextTime(scheduleToCrontab(row.schedule))
         : this.translate.instant('Disabled')),
     }),
     relativeDateColumn({
       title: this.translate.instant('Last Run'),
+      sortable: true,
       getValue: (row) => row.job?.time_finished?.$date,
     }),
     toggleColumn({
       title: this.translate.instant('Enabled'),
       propertyName: 'enabled',
+      sortable: true,
       requiredRoles: this.requiredRoles,
       onRowToggle: (row: RsyncTaskUi) => this.onChangeEnabledState(row),
     }),
@@ -78,6 +84,7 @@ export class RsyncTaskCardComponent implements OnInit {
       title: this.translate.instant('State'),
       getValue: (row) => row.state.state,
       getJob: (row) => row.job,
+      sortable: true,
       cssClass: 'state-button',
     }),
     actionsColumn({

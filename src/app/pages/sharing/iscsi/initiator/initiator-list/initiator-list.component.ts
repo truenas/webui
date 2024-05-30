@@ -41,10 +41,12 @@ export class InitiatorListComponent implements OnInit {
     textColumn({
       title: this.translate.instant('Group ID'),
       propertyName: 'id',
+      sortable: true,
     }),
     textColumn({
       title: this.translate.instant('Initiators'),
       propertyName: 'initiators',
+      sortable: true,
       getValue: (row) => {
         return row?.initiators?.length ? row.initiators.join(' ') : this.translate.instant('Allow all initiators');
       },
@@ -52,6 +54,7 @@ export class InitiatorListComponent implements OnInit {
     textColumn({
       title: this.translate.instant('Description'),
       propertyName: 'comment',
+      sortable: true,
     }),
     actionsColumn({
       actions: [

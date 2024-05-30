@@ -65,15 +65,18 @@ export class ReplicationListComponent implements OnInit {
     textColumn({
       title: this.translate.instant('Direction'),
       propertyName: 'direction',
+      sortable: true,
     }),
     textColumn({
       title: this.translate.instant('Transport'),
       propertyName: 'transport',
+      sortable: true,
       hidden: true,
     }),
     textColumn({
       title: this.translate.instant('SSH Connection'),
       hidden: true,
+      sortable: true,
       propertyName: 'ssh_credentials',
       getValue: (task) => {
         return task.ssh_credentials
@@ -84,25 +87,30 @@ export class ReplicationListComponent implements OnInit {
     textColumn({
       title: this.translate.instant('Source Dataset'),
       propertyName: 'source_datasets',
+      sortable: true,
       hidden: true,
     }),
     textColumn({
       title: this.translate.instant('Target Dataset'),
       propertyName: 'target_dataset',
+      sortable: true,
       hidden: true,
     }),
     textColumn({
       title: this.translate.instant('Recursive'),
       propertyName: 'recursive',
+      sortable: true,
       hidden: true,
     }),
     textColumn({
       title: this.translate.instant('Auto'),
       propertyName: 'auto',
+      sortable: true,
       hidden: true,
     }),
     textColumn({
       title: this.translate.instant('Last Run'),
+      sortable: true,
       getValue: (row) => {
         if (row.state?.datetime?.$date) {
           return formatDistanceToNowShortened(row.state?.datetime?.$date);
@@ -111,6 +119,7 @@ export class ReplicationListComponent implements OnInit {
       },
     }),
     stateButtonColumn({
+      sortable: true,
       title: this.translate.instant('State'),
       getValue: (row) => row.state.state,
       getJob: (row) => row.job,
@@ -118,12 +127,14 @@ export class ReplicationListComponent implements OnInit {
     }),
     toggleColumn({
       title: this.translate.instant('Enabled'),
+      sortable: true,
       propertyName: 'enabled',
       onRowToggle: (row) => this.onChangeEnabledState(row),
       requiredRoles: this.requiredRoles,
     }),
     textColumn({
       title: this.translate.instant('Last Snapshot'),
+      sortable: true,
       getValue: (task) => {
         return task.state.last_snapshot
           ? task.state.last_snapshot

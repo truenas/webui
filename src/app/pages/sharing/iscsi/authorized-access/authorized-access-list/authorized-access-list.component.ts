@@ -42,14 +42,17 @@ export class AuthorizedAccessListComponent implements OnInit {
     textColumn({
       title: this.translate.instant('Group ID'),
       propertyName: 'tag',
+      sortable: true,
     }),
     textColumn({
       title: this.translate.instant('User'),
       propertyName: 'user',
+      sortable: true,
     }),
     textColumn({
       title: this.translate.instant('Peer User'),
       propertyName: 'peeruser',
+      sortable: true,
     }),
     actionsColumn({
       actions: [

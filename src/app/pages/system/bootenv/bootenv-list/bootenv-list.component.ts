@@ -71,14 +71,14 @@ export class BootEnvironmentListComponent implements OnInit {
       cssClass: 'checkboxs-column',
     }),
     textColumn({
+      sortable: true,
       title: this.translate.instant('Name'),
       propertyName: 'name',
-      sortable: true,
     }),
     textColumn({
+      sortable: true,
       title: this.translate.instant('Active'),
       propertyName: 'active',
-      sortable: true,
       getValue: (row) => {
         switch (row.active) {
           case BootEnvironmentActive.Now:
@@ -106,6 +106,7 @@ export class BootEnvironmentListComponent implements OnInit {
     yesNoColumn({
       title: this.translate.instant('Keep'),
       propertyName: 'keep',
+      sortable: true,
       cssClass: 'keep-column',
     }),
     actionsColumn({

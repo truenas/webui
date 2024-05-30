@@ -48,27 +48,32 @@ export class ScrubListComponent implements OnInit {
     textColumn({
       title: this.translate.instant('Pool'),
       propertyName: 'pool_name',
+      sortable: true,
     }),
     textColumn({
       title: this.translate.instant('Threshold Days'),
       propertyName: 'threshold',
+      sortable: true,
     }),
     textColumn({
       title: this.translate.instant('Description'),
       propertyName: 'description',
+      sortable: true,
     }),
     scheduleColumn({
       title: this.translate.instant('Schedule'),
       propertyName: 'schedule',
+      sortable: true,
     }),
     textColumn({
       title: this.translate.instant('Frequency'),
       propertyName: 'schedule',
-      sortable: false,
+      sortable: true,
       getValue: (task) => this.crontabExplanation.transform(scheduleToCrontab(task.schedule)),
     }),
     relativeDateColumn({
       title: this.translate.instant('Next Run'),
+      sortable: true,
       getValue: (row) => (row.enabled
         ? this.taskService.getTaskNextTime(scheduleToCrontab(row.schedule))
         : this.translate.instant('Disabled')),
@@ -76,6 +81,7 @@ export class ScrubListComponent implements OnInit {
     yesNoColumn({
       title: this.translate.instant('Enabled'),
       propertyName: 'enabled',
+      sortable: true,
     }),
     actionsColumn({
       actions: [

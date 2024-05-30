@@ -57,47 +57,56 @@ export class RsyncTaskListComponent implements OnInit {
     textColumn({
       title: this.translate.instant('Path'),
       propertyName: 'path',
+      sortable: true,
     }),
     textColumn({
       title: this.translate.instant('Remote Host'),
       propertyName: 'remotehost',
+      sortable: true,
     }),
     textColumn({
       title: this.translate.instant('Remote SSH Port'),
       propertyName: 'remoteport',
       hidden: true,
+      sortable: true,
     }),
     textColumn({
       title: this.translate.instant('Remote Module Name'),
       propertyName: 'remotemodule',
+      sortable: true,
     }),
     textColumn({
       title: this.translate.instant('Remote Path'),
       propertyName: 'remotepath',
+      sortable: true,
       hidden: true,
     }),
     textColumn({
       title: this.translate.instant('Direction'),
       propertyName: 'direction',
+      sortable: true,
     }),
     scheduleColumn({
       title: this.translate.instant('Schedule'),
       propertyName: 'schedule',
+      sortable: true,
       hidden: true,
     }),
     textColumn({
       title: this.translate.instant('Frequency'),
       propertyName: 'schedule',
-      sortable: false,
+      sortable: true,
       getValue: (task) => this.crontabExplanation.transform(scheduleToCrontab(task.schedule)),
     }),
     relativeDateColumn({
       title: this.translate.instant('Next Run'),
+      sortable: true,
       getValue: (row) => (row.enabled
         ? this.taskService.getTaskNextTime(scheduleToCrontab(row.schedule))
         : this.translate.instant('Disabled')),
     }),
     relativeDateColumn({
+      sortable: true,
       title: this.translate.instant('Last Run'),
       getValue: (row) => row.job?.time_finished?.$date,
       hidden: true,
@@ -105,18 +114,22 @@ export class RsyncTaskListComponent implements OnInit {
     textColumn({
       title: this.translate.instant('Short Description'),
       propertyName: 'desc',
+      sortable: true,
     }),
     textColumn({
       title: this.translate.instant('User'),
       propertyName: 'user',
+      sortable: true,
     }),
     yesNoColumn({
       title: this.translate.instant('Delay Updates'),
       propertyName: 'delayupdates',
+      sortable: true,
       hidden: true,
     }),
     stateButtonColumn({
       title: this.translate.instant('Status'),
+      sortable: true,
       getValue: (row) => {
         if (!row.job) {
           return row.locked ? JobState.Locked : JobState.Pending;
@@ -130,6 +143,7 @@ export class RsyncTaskListComponent implements OnInit {
     yesNoColumn({
       title: this.translate.instant('Enabled'),
       propertyName: 'enabled',
+      sortable: true,
     }),
     actionsColumn({
       actions: [

@@ -53,6 +53,7 @@ export class ReportingExporterListComponent implements OnInit {
     toggleColumn({
       title: this.translate.instant('Enabled'),
       propertyName: 'enabled',
+      sortable: true,
       requiredRoles: this.requiredRoles,
       onRowToggle: (row, checked) => {
         this.appLoader.open(

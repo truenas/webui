@@ -28,6 +28,7 @@ export class SmbOpenFilesComponent implements OnChanges {
     textColumn({
       title: this.translate.instant('Server'),
       propertyName: 'server_id',
+      sortable: true,
       getValue: (row) => {
         return Object.values(row.server_id).join(':');
       },
@@ -35,11 +36,12 @@ export class SmbOpenFilesComponent implements OnChanges {
     textColumn({
       title: this.translate.instant('Username'),
       propertyName: 'uid',
+      sortable: true,
       getValue: (row) => {
         return `${row.username} (${row.uid})`;
       },
     }),
-    textColumn({ title: this.translate.instant('Opened at'), propertyName: 'opened_at' }),
+    textColumn({ title: this.translate.instant('Opened at'), propertyName: 'opened_at', sortable: true }),
   ], {
     rowTestId: (row) => 'smb-open-file-' + row.username + '-' + row.uid,
   });

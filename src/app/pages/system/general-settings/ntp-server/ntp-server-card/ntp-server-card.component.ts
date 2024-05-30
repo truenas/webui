@@ -35,26 +35,32 @@ export class NtpServerCardComponent implements OnInit {
     textColumn({
       title: this.translate.instant('Address'),
       propertyName: 'address',
+      sortable: true,
     }),
     yesNoColumn({
       title: this.translate.instant('Burst'),
       propertyName: 'burst',
+      sortable: true,
     }),
     yesNoColumn({
       title: this.translate.instant('IBurst'),
       propertyName: 'iburst',
+      sortable: true,
     }),
     yesNoColumn({
       title: this.translate.instant('Prefer'),
       propertyName: 'prefer',
+      sortable: true,
     }),
     textColumn({
       title: this.translate.instant('Min Poll'),
       propertyName: 'minpoll',
+      sortable: true,
     }),
     textColumn({
       title: this.translate.instant('Max Poll'),
       propertyName: 'maxpoll',
+      sortable: true,
     }),
     actionsColumn({
       actions: [

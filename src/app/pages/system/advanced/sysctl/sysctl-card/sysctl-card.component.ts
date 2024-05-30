@@ -38,18 +38,22 @@ export class SysctlCardComponent implements OnInit {
     textColumn({
       title: this.translate.instant('Var'),
       propertyName: 'var',
+      sortable: true,
     }),
     textColumn({
       title: this.translate.instant('Value'),
       propertyName: 'value',
+      sortable: true,
     }),
     yesNoColumn({
       title: this.translate.instant('Enabled'),
       propertyName: 'enabled',
+      sortable: true,
     }),
     textColumn({
       title: this.translate.instant('Description'),
       propertyName: 'comment',
+      sortable: true,
     }),
     actionsColumn({
       actions: [
