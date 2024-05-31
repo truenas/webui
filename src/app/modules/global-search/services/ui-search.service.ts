@@ -8,6 +8,7 @@ import {
 } from 'rxjs';
 import { GlobalSearchProvider } from 'app/modules/global-search/interfaces/global-search-provider.interface';
 import { UiSearchableElement } from 'app/modules/global-search/interfaces/ui-searchable-element.interface';
+import { sortSearchResults } from 'app/modules/global-search/services/utils/sort-search-results';
 import { AuthService } from 'app/services/auth/auth.service';
 
 @Injectable({
@@ -42,21 +43,10 @@ export class UiSearchProvider implements GlobalSearchProvider {
   }
 
   search(term: string, limit: number): Observable<UiSearchableElement[]> {
-    // sort results by showing hierarchy match first, then synonyms match
-    const fuzzySearchResults = this.fuse.search(term)
-      .map((result) => result.item)
-      .sort((a, b) => {
-        const aHierarchyMatch = a.hierarchy[a.hierarchy.length - 1]?.toLowerCase().includes(term.toLowerCase()) ? 1 : 0;
-        const bHierarchyMatch = b.hierarchy[b.hierarchy.length - 1]?.toLowerCase().includes(term.toLowerCase()) ? 1 : 0;
+    const fuzzySearchResults = this.fuse.search(term).map((result) => result.item);
+    const sortedResults = sortSearchResults(term, fuzzySearchResults).slice(0, limit);
 
-        const aSynonymMatch = a.synonyms.find((synonym) => synonym?.toLowerCase().includes(term.toLowerCase())) ? 1 : 0;
-        const bSynonymMatch = b.synonyms.find((synonym) => synonym?.toLowerCase().includes(term.toLowerCase())) ? 1 : 0;
-
-        return bHierarchyMatch - aHierarchyMatch || aSynonymMatch - bSynonymMatch;
-      })
-      .slice(0, limit);
-
-    return from(fuzzySearchResults).pipe(
+    return from(sortedResults).pipe(
       mergeMap((item) => {
         if (!item.requiredRoles.length) {
           return of(item);

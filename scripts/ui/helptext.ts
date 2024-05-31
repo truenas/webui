@@ -15,7 +15,7 @@ EXAMPLES:
   After finishing the guided install, it will create the file with the provided selections in src/assets/mock/configs
 
     % ui mock --generate OR ui m -g
-`
+`;
 
 export const mockEnclosureExamples = `
 EXAMPLES:
@@ -51,7 +51,7 @@ EXAMPLES:
 
     % ui mock-opt -e -m m50 -s 'es24,es24' -a default
 
-`
+`;
 
 export const mockDiskExamples = `
 The mock-disk command allows developers to mock unassigned disks
@@ -65,7 +65,7 @@ EXAMPLES:
   * Create 150 x 12TB disks that are not assigned to any pool using abbreviated syntax
 
   % ui md -s 12 -r 150
-`
+`;
 export const mockPoolExamples = `
 The mock-pool command allows developers to mock a single pool with data topology.
 This command offers some different options to update certain aspects of the pool
@@ -100,4 +100,4 @@ EXAMPLES:
   * Create vdevs with mixed widths (first vdev has one extra member disk. Subsequent vdevs honor the mock configuration settings)
 
   % ui mock-pool -v MixedVdevWidth -r 150
-`
+`;

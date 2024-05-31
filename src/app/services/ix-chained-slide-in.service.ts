@@ -103,6 +103,13 @@ export class IxChainedSlideInService extends ComponentStore<ChainedSlideInState>
     };
   });
 
+  closeAll = this.updater(() => {
+    this.focusOnTheCloseButton();
+    return {
+      components: new Map(),
+    };
+  });
+
   swapComponent = this.updater((state, swapInfo: IncomingChainedComponent) => {
     const newMap = new Map(state.components);
     const popped = newMap.get(swapInfo.swapComponentId);

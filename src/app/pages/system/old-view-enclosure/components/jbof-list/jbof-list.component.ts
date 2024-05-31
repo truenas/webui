@@ -17,7 +17,6 @@ import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/
 import { createTable } from 'app/modules/ix-table/utils';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { JbosFormComponent } from 'app/pages/system/old-view-enclosure/components/jbof-form/jbof-form.component';
-import { jbofListElements } from 'app/pages/system/old-view-enclosure/components/jbof-list/jbof-list.elements';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -30,7 +29,6 @@ import { WebSocketService } from 'app/services/ws.service';
 })
 export class JbofListComponent implements OnInit {
   protected readonly requiredRoles = [Role.JbofWrite];
-  protected readonly searchableElements = jbofListElements;
 
   filterString = '';
   jbofs: Jbof[] = [];

@@ -1,7 +1,3 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
-/* eslint-disable global-require */
-/* eslint-disable import/no-dynamic-require */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /**
  * This is the parser which is used to generate `ui-searchable-elements.json` file, where we collect all all UI elements
  * which will be shown in new "Global UI Search"
@@ -84,6 +80,7 @@ export async function extractUiSearchElements(): Promise<void> {
       const htmlComponentFilePath = elementsTsFilePath.replace('.elements.ts', '.component.html');
       const tsComponentFilePath = elementsTsFilePath.replace('.elements.ts', '.component.ts');
 
+      // eslint-disable-next-line @typescript-eslint/no-var-requires,global-require,import/no-dynamic-require
       const elementConfig = require(join(__dirname, '../../', elementsTsFilePath)) as Record<string, UiSearchableElement>;
       const componentProperties = extractComponentFileContent(tsComponentFilePath);
       const uiSearchHtmlElements = parseUiSearchElements(htmlComponentFilePath, elementConfig, componentProperties);

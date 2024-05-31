@@ -3,10 +3,16 @@ import { UiSearchableElement } from 'app/modules/global-search/interfaces/ui-sea
 
 export const storageElements = {
   anchorRouterLink: ['/storage'],
-  hierarchy: [T('Storage Dashboard')],
+  hierarchy: [T('Storage')],
   elements: {
     storageDashboard: {
-      synonyms: [T('Pools')],
+      synonyms: [
+        T('Pools'),
+        T('Storage Dashboard'),
+        T('Disks'),
+        T('Devices'),
+        T('Datasets'),
+      ],
     },
     importPool: {
       hierarchy: [T('Import Pool')],
@@ -14,6 +20,7 @@ export const storageElements = {
     },
     createPool: {
       hierarchy: [T('Create Pool')],
+      synonyms: [T('Add Pool'), T('New Pool'), T('Pool Wizard'), T('Pool Creation Wizard')],
     },
   },
 } satisfies UiSearchableElement;
