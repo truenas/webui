@@ -71,13 +71,13 @@ export class JobsListComponent implements OnInit {
       title: this.translate.instant('Started'),
       propertyName: 'time_started',
       sortable: true,
-      sortBy: (job) => job.time_started as unknown as number,
+      sortBy: (job) => +job.time_started,
     }),
     dateColumn({
       title: this.translate.instant('Finished'),
       propertyName: 'time_finished',
       sortable: true,
-      sortBy: (job) => job.time_finished as unknown as number,
+      sortBy: (job) => +job.time_finished,
     }),
   ], {
     rowTestId: (row) => 'job-' + row.id,
