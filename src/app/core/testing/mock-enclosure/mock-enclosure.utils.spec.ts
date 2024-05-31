@@ -1,4 +1,4 @@
-import { MockEnclosureUtils } from 'app/core/testing/utils/mock-enclosure.utils';
+import { MockEnclosureUtils } from 'app/core/testing/mock-enclosure/mock-enclosure.utils';
 import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
 import { ResultMessage } from 'app/interfaces/api-message.interface';
 import { EnclosureOld } from 'app/interfaces/enclosure-old.interface';

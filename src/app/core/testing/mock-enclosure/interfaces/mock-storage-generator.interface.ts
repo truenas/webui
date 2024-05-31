@@ -1,4 +1,4 @@
-import { EnclosureDispersalStrategy, MockStorageScenario } from 'app/core/testing/enums/mock-storage.enum';
+import { EnclosureDispersalStrategy, MockStorageScenario } from 'app/core/testing/mock-enclosure/enums/mock-storage.enum';
 import { TopologyItemType } from 'app/enums/v-dev-type.enum';
 import { EnclosureOld } from 'app/interfaces/enclosure-old.interface';
 import { Pool } from 'app/interfaces/pool.interface';
