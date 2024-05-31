@@ -37,8 +37,8 @@ export class JbosFormComponent implements OnInit {
 
   get title(): string {
     return this.isNew
-      ? this.translate.instant('Add Expansion Shelve')
-      : this.translate.instant('Edit Expansion Shelve');
+      ? this.translate.instant('Add Expansion Shelf')
+      : this.translate.instant('Edit Expansion Shelf');
   }
 
   constructor(
