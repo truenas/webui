@@ -2063,6 +2063,7 @@
   "NFSv4": "",
   "NFSv4 DNS Domain": "",
   "NIC To Attach": "",
+  "NICs do not match between nodes.": "",
   "NOTICE": "",
   "NS": "",
   "NTLMv1 Auth": "",

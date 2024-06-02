@@ -2582,6 +2582,7 @@
   "NFSv4 DNS Domain": "",
   "NIC": "",
   "NIC To Attach": "",
+  "NICs do not match between nodes.": "",
   "NOTICE": "",
   "NS": "",
   "NTLMv1 Auth": "",

@@ -1174,6 +1174,7 @@
   "NFSv4 DNS Domain": "",
   "NIC": "",
   "NIC To Attach": "",
+  "NICs do not match between nodes.": "",
   "NS": "",
   "NTP Server": "",
   "NTP Server Settings": "",
