@@ -56,9 +56,6 @@ import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
     SchedulerDateExamplesComponent,
     CrontabExplanationPipe,
   ],
-  providers: [
-    MatDatepickerModule,
-  ],
 })
 export class SchedulerModule {
 }
