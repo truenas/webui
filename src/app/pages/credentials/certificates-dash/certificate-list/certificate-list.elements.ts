@@ -8,6 +8,12 @@ export const certificateListElements = {
     add: {
       hierarchy: [T('Add')],
       anchor: 'add-certificate',
+      synonyms: [
+        T('Create Certificate'),
+        T('New Certificate'),
+        T('Add Certificate'),
+        T('Generate Certificate'),
+      ],
     },
   },
 } satisfies UiSearchableElement;

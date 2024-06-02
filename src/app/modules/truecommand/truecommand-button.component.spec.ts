@@ -1,7 +1,6 @@
 /* eslint-disable jest/no-conditional-expect */
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { MatIconTestingModule } from '@angular/material/icon/testing';
 import {
   Spectator, createComponentFactory, mockProvider, SpectatorFactory,
 } from '@ngneat/spectator/jest';
@@ -41,7 +40,6 @@ describe('TruecommandButtonComponent', () => {
       imports: [
         IxFormsModule,
         ReactiveFormsModule,
-        MatIconTestingModule,
       ],
       declarations: [
         TruecommandStatusModalComponent,

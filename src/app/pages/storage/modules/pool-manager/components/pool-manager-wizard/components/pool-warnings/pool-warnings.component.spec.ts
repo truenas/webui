@@ -55,7 +55,7 @@ describe('PoolWarningsComponent', () => {
   });
 
   it('checks allow non unique serial radio button', async () => {
-    const allowNonUniqueSerial = await loader.getHarness(IxRadioGroupHarness.with({ label: 'Allow non-unique serialed disks' }));
+    const allowNonUniqueSerial = await loader.getHarness(IxRadioGroupHarness.with({ label: 'Allow non-unique serialed disks (not recommended)' }));
     await allowNonUniqueSerial.setValue('Allow');
 
     expect(spectator.inject(PoolManagerStore).setDiskWarningOptions).toHaveBeenCalledWith({

@@ -1,6 +1,4 @@
-import {
-  AsyncPipe, NgComponentOutlet, NgForOf, NgIf,
-} from '@angular/common';
+import { CommonModule, NgComponentOutlet } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -10,6 +8,7 @@ import { MatListModule } from '@angular/material/list';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
 import { BaseChartDirective } from 'ng2-charts';
+import { ImgFallbackModule } from 'ngx-img-fallback';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { CoreComponents } from 'app/core/core-components.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
@@ -43,10 +42,13 @@ import { BackupTaskActionsComponent } from 'app/pages/dashboard/widgets/backup/w
 import { BackupTaskEmptyComponent } from 'app/pages/dashboard/widgets/backup/widget-backup/backup-task-empty/backup-task-empty.component';
 import { BackupTaskTileComponent } from 'app/pages/dashboard/widgets/backup/widget-backup/backup-task-tile/backup-task-tile.component';
 import { WidgetDatapointComponent } from 'app/pages/dashboard/widgets/common/widget-datapoint/widget-datapoint.component';
+import { ProductImageComponent } from 'app/pages/dashboard/widgets/system/common/product-image/product-image.component';
+import { UptimePipe } from 'app/pages/dashboard/widgets/system/common/uptime.pipe';
 
 @NgModule({
   declarations: [
     DashboardComponent,
+    ProductImageComponent,
     WidgetGroupComponent,
     WidgetErrorComponent,
     WidgetGroupFormComponent,
@@ -64,10 +66,10 @@ import { WidgetDatapointComponent } from 'app/pages/dashboard/widgets/common/wid
     WidgetResourcesService,
   ],
   imports: [
+    CoreComponents,
     IxFormsModule,
     ReactiveFormsModule,
     TranslateModule,
-    CoreComponents,
     AppLoaderModule,
     NgComponentOutlet,
     CommonDirectivesModule,
@@ -77,9 +79,7 @@ import { WidgetDatapointComponent } from 'app/pages/dashboard/widgets/common/wid
     routing,
     MatCard,
     IxIconModule,
-    NgIf,
-    NgForOf,
-    AsyncPipe,
+    CommonModule,
     MatTooltipModule,
     BaseChartDirective,
     MatButtonModule,
@@ -98,9 +98,10 @@ import { WidgetDatapointComponent } from 'app/pages/dashboard/widgets/common/wid
     ChartsModule,
     MatListModule,
     EmptyComponent,
-    ChartsModule,
+    ImgFallbackModule,
     InterfaceStatusIconComponent,
     IxFileSizeModule,
+    UptimePipe,
   ],
 })
 export class DashboardModule {

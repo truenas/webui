@@ -36,6 +36,7 @@ testem.log
 /typings
 package-lock.json
 .eslintcache
+.nx/cache
 
 # e2e
 /e2e/*.js

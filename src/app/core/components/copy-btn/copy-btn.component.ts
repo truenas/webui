@@ -1,4 +1,6 @@
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, computed, input,
+} from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 
@@ -9,12 +11,10 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CopyButtonComponent {
-  @Input() text: string;
-  @Input() jsonText: unknown;
+  readonly text = input.required<string>();
+  readonly jsonText = input<unknown>();
 
-  get isValidJson(): boolean {
-    return typeof this.jsonText === 'object';
-  }
+  readonly isValidJson = computed(() => typeof this.jsonText() === 'object');
 
   constructor(
     private snackbar: SnackbarService,
@@ -47,10 +47,10 @@ export class CopyButtonComponent {
   }
 
   copyToClipboard(): void {
-    this.handleCopyToClipboard(this.text).then(() => this.showSuccessMessage());
+    this.handleCopyToClipboard(this.text()).then(() => this.showSuccessMessage());
   }
 
   copyJsonToClipboard(): void {
-    this.handleCopyToClipboard(JSON.stringify(this.jsonText, null, 2)).then(() => this.showSuccessMessage());
+    this.handleCopyToClipboard(JSON.stringify(this.jsonText(), null, 2)).then(() => this.showSuccessMessage());
   }
 }

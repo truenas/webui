@@ -1,5 +1,5 @@
 import {
-  Component, ChangeDetectionStrategy, Input, EventEmitter, Output,
+  Component, ChangeDetectionStrategy, EventEmitter, Output, input,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
@@ -23,7 +23,7 @@ import { UrlOptionsService } from 'app/services/url-options.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UserDetailsRowComponent {
-  @Input() user: User;
+  readonly user = input.required<User>();
   @Output() delete = new EventEmitter<number>();
 
   protected readonly Role = Role;

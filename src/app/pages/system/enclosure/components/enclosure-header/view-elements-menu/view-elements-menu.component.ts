@@ -20,19 +20,9 @@ export class ViewElementsMenuComponent {
 
   readonly views = computed<ViewOption[]>(() => {
     const enclosure = this.enclosure();
-    const supportedViews = [
-      EnclosureElementType.ArrayDeviceSlot,
-      EnclosureElementType.TemperatureSensors,
-      EnclosureElementType.Cooling,
-      EnclosureElementType.VoltageSensor,
-      EnclosureElementType.PowerSupply,
-      EnclosureElementType.SasConnector,
-      EnclosureElementType.EnclosureServicesControllerElectronics,
-    ] as const;
 
-    return supportedViews
-      .filter((view) => enclosure.elements[view])
-      .map((view) => {
+    return Object.keys(enclosure.elements)
+      .map((view: EnclosureElementType) => {
         let href = `${enclosure.id}/${view}`;
 
         if (view === EnclosureElementType.ArrayDeviceSlot) {

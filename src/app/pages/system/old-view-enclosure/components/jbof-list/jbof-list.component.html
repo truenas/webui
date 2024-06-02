@@ -14,7 +14,7 @@
   </button>
 </ix-page-header>
 
-<div class="table-container" [ixUiSearch]="searchableElements.elements.jbof">
+<div class="table-container">
   <ix-table
     [ix-table-empty]="!(dataProvider.currentPageCount$ | async)"
     [emptyConfig]="emptyConfigService.defaultEmptyConfig(dataProvider.emptyType$ | async)"

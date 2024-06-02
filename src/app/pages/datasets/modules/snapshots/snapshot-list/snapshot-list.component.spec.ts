@@ -80,7 +80,7 @@ describe('SnapshotListComponent', () => {
           {
             selector: selectGeneralConfig,
             value: {
-              timezone: 'America/Alaska',
+              timezone: 'Europe/Kiev',
             },
           },
         ],
@@ -121,12 +121,10 @@ describe('SnapshotListComponent', () => {
     const slideToggle = await loader.getHarness(IxSlideToggleHarness.with({ label: 'Show extra columns' }));
     await slideToggle.toggle();
 
-    // TODO: Add column names when better mechanism to hide/show columns is available
-    // TODO: Add column values when sizeColumn and dateColumn will return values.
     const expectedRows = [
-      ['', 'Dataset', 'Snapshot', '', '', ''],
-      ['', 'test-dataset', 'second-snapshot', '', '', ''],
-      ['', 'test-dataset', 'first-snapshot', '', '', ''],
+      ['', 'Dataset', 'Snapshot', 'Used', 'Date created', 'Referenced'],
+      ['', 'test-dataset', 'second-snapshot', '1.49 TiB', '2021-10-18 19:51:43', '1.49 TiB'],
+      ['', 'test-dataset', 'first-snapshot', '1.49 TiB', '2021-10-18 19:51:54', '1.49 TiB'],
     ];
     expect(await table.getCellTexts()).toEqual(expectedRows);
   });

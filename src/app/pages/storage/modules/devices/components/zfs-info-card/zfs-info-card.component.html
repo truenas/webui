@@ -4,56 +4,55 @@
   </mat-card-header>
   <mat-card-content>
     <div>
-      <div *ngIf="topologyParentItem?.name" class="details-item">
+      <div *ngIf="topologyParentItem()?.name" class="details-item">
         <div class="label">{{ 'Parent' | translate }}:</div>
-        <div class="value">{{ topologyParentItem.name | uppercase }}</div>
+        <div class="value">{{ topologyParentItem().name | uppercase }}</div>
       </div>
       <div class="details-item">
         <div class="label">{{ 'Read Errors' | translate }}:</div>
-        <div class="value">{{ topologyItem.stats?.read_errors }}</div>
+        <div class="value">{{ topologyItem().stats?.read_errors }}</div>
       </div>
       <div class="details-item">
         <div class="label">{{ 'Write Errors' | translate }}:</div>
-        <div class="value">{{ topologyItem.stats?.write_errors }}</div>
+        <div class="value">{{ topologyItem().stats?.write_errors }}</div>
       </div>
       <div class="details-item">
         <div class="label">{{ 'Checksum Errors' | translate }}:</div>
-        <div class="value">{{ topologyItem.stats?.checksum_errors }}</div>
+        <div class="value">{{ topologyItem().stats?.checksum_errors }}</div>
       </div>
     </div>
   </mat-card-content>
-  <mat-card-actions *ngIf="isDisk">
-    <ng-container *ixRequiresRoles="[Role.FullAdmin]">
-      <ng-container *ngIf="canExtendDisk" [ngTemplateOutlet]="extend"></ng-container>
-    </ng-container>
+  <mat-card-actions *ngIf="isDisk()">
+    <ng-container *ngIf="canExtendDisk()" [ngTemplateOutlet]="extend"></ng-container>
+
+    <ng-container *ngIf="canRemoveDisk()" [ngTemplateOutlet]="remove"></ng-container>
 
     <ng-container *ixRequiresRoles="[Role.FullAdmin]">
-      <ng-container *ngIf="canRemoveDisk" [ngTemplateOutlet]="remove"></ng-container>
-    </ng-container>
-
-    <ng-container *ixRequiresRoles="[Role.FullAdmin]">
-      <button *ngIf="canDetachDisk" mat-button ixTest="detach" (click)="onDetach()">
+      <button *ngIf="canDetachDisk()" mat-button ixTest="detach" (click)="onDetach()">
         {{ 'Detach' | translate }}
       </button>
     </ng-container>
 
     <ng-container *ixRequiresRoles="[Role.FullAdmin]">
-      <button *ngIf="canOfflineDisk" mat-button ixTest="offline" (click)="onOffline()">
+      <button *ngIf="canOfflineDisk()" mat-button ixTest="offline" (click)="onOffline()">
         {{ 'Offline' | translate }}
       </button>
     </ng-container>
 
     <ng-container *ixRequiresRoles="[Role.FullAdmin]">
-      <button *ngIf="canOnlineDisk" mat-button ixTest="online" (click)="onOnline()">
+      <button *ngIf="canOnlineDisk()" mat-button ixTest="online" (click)="onOnline()">
         {{ 'Online' | translate }}
       </button>
     </ng-container>
   </mat-card-actions>
-  <mat-card-actions *ngIf="isMirror">
-    <ng-container *ixRequiresRoles="[Role.FullAdmin]">
-      <ng-container [ngTemplateOutlet]="extend"></ng-container>
-      <ng-container *ngIf="canRemoveVDEV" [ngTemplateOutlet]="remove"></ng-container>
-    </ng-container>
+  <mat-card-actions *ngIf="isMirror()">
+    <ng-container [ngTemplateOutlet]="extend"></ng-container>
+    <ng-container *ngIf="canRemoveVdev()" [ngTemplateOutlet]="remove"></ng-container>
+  </mat-card-actions>
+  <mat-card-actions *ngIf="isRaidz()">
+    <button *ixRequiresRoles="[Role.FullAdmin]" mat-button ixTest="extend" (click)="onRaidzExtend()">
+      {{ 'Extend' | translate }}
+    </button>
   </mat-card-actions>
 </mat-card>
 

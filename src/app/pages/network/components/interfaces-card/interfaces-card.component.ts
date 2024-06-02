@@ -7,13 +7,13 @@ import {
   OnChanges,
   OnInit,
   Output,
+  signal,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
-import _ from 'lodash';
 import { BehaviorSubject, of } from 'rxjs';
-import { filter, map } from 'rxjs/operators';
+import { filter, map, throttleTime } from 'rxjs/operators';
 import { NetworkInterfaceType } from 'app/enums/network-interface.enum';
 import { Role } from 'app/enums/role.enum';
 import { helptextInterfaces } from 'app/helptext/network/interfaces/interfaces-list';
@@ -56,7 +56,7 @@ export class InterfacesCardComponent implements OnInit, OnChanges {
 
   isLoading = false;
   dataProvider = new ArrayDataProvider<NetworkInterface>();
-  inOutUpdates: AllNetworkInterfacesUpdate;
+  inOutUpdates = signal<AllNetworkInterfacesUpdate>({});
 
   columns = createTable<NetworkInterface>([
     textColumn({
@@ -130,14 +130,17 @@ export class InterfacesCardComponent implements OnInit, OnChanges {
     this.interfacesStore$.state$.pipe(untilDestroyed(this)).subscribe((state) => {
       this.isLoading = state.isLoading;
       this.dataProvider.setRows(state.interfaces);
-      this.inOutUpdates = {};
+      this.inOutUpdates.set({});
       for (const nic of state.interfaces) {
-        this.inOutUpdates[nic.name] = {
-          link_state: nic.state?.link_state,
-          received_bytes_rate: 0,
-          sent_bytes_rate: 0,
-          speed: 0,
-        };
+        this.inOutUpdates.update((value) => {
+          value[nic.name] = {
+            link_state: nic.state?.link_state,
+            received_bytes_rate: 0,
+            sent_bytes_rate: 0,
+            speed: 0,
+          };
+          return value;
+        });
       }
       this.subscribeToUpdates();
 
@@ -202,19 +205,21 @@ export class InterfacesCardComponent implements OnInit, OnChanges {
   }
 
   private subscribeToUpdates(): void {
-    this.networkService.subscribeToInOutUpdates().pipe(untilDestroyed(this)).subscribe((updates) => {
-      if (!updates) {
-        return;
-      }
-      const newInOutUpdates = _.cloneDeep(this.inOutUpdates);
-      const updatedInterfaces = Object.keys(updates);
-      for (const nic of updatedInterfaces) {
-        newInOutUpdates[nic] = {
-          ...updates[nic],
-        };
-      }
-      this.inOutUpdates = newInOutUpdates;
-      this.cdr.markForCheck();
-    });
+    this.networkService.subscribeToInOutUpdates()
+      .pipe(
+        filter(Boolean),
+        throttleTime(1000),
+        untilDestroyed(this),
+      )
+      .subscribe((updates) => {
+        const updatedInterfaces = Object.keys(updates);
+        this.inOutUpdates.update((value) => {
+          for (const nic of updatedInterfaces) {
+            value[nic] = { ...updates[nic] };
+          }
+          return value;
+        });
+        this.cdr.markForCheck();
+      });
   }
 }

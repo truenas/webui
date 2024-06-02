@@ -31,21 +31,19 @@ export class SshCredentialsSelectComponent extends IxSelectWithNewOption {
   @Input() tooltip: string;
   @Input() required: boolean;
 
-  private keyChainCredsService = inject(KeychainCredentialService);
+  private keychainCredentialsService = inject(KeychainCredentialService);
 
   fetchOptions(): Observable<Option[]> {
-    return this.keyChainCredsService.getSshConnections().pipe(
+    return this.keychainCredentialsService.getSshConnections().pipe(
       idNameArrayToOptions(),
     );
   }
 
-  getValueFromChainedResponse(
-    result: ChainedComponentResponse,
-  ): IxSelectValue {
-    return (result.response as SshCredentials).id;
+  getValueFromChainedResponse(result: ChainedComponentResponse<SshCredentials>): IxSelectValue {
+    return result.response.id;
   }
 
-  getFormComponentType(): ComponentType<unknown> {
+  getFormComponentType(): ComponentType<SshConnectionFormComponent> {
     return SshConnectionFormComponent;
   }
 }

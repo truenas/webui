@@ -21,12 +21,14 @@ describe('Create UI Searchable Element Item', () => {
         elements: {
           add: {
             hierarchy: ['Add'],
+            synonyms: ['New Group'],
             anchor: 'add-group',
           },
         },
         manualRenderElements: {
           nonStaticElement: {
             hierarchy: ['Non-Static'],
+            synonyms: ['Manual Element'],
           },
         },
       },
@@ -37,7 +39,7 @@ describe('Create UI Searchable Element Item', () => {
     expect(parsedElements).toEqual([
       {
         hierarchy: ['Credentials', 'Groups', 'Non-Static'],
-        synonyms: ['Groups'],
+        synonyms: ['Manual Element'],
         requiredRoles: [],
         anchorRouterLink: ['/credentials', 'groups'],
         routerLink: null,
@@ -47,7 +49,7 @@ describe('Create UI Searchable Element Item', () => {
       },
       {
         hierarchy: ['Credentials', 'Groups', 'Add'],
-        synonyms: ['Groups'],
+        synonyms: ['New Group'],
         requiredRoles: ['SYSTEM_AUDIT_WRITE'],
         anchorRouterLink: ['/credentials', 'groups'],
         routerLink: ['/groups', 'add'],

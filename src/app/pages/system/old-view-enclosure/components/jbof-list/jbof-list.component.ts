@@ -7,6 +7,7 @@ import {
   filter, forkJoin, map, switchMap, tap,
 } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
+import { DialogWithSecondaryCheckboxResult } from 'app/interfaces/dialog.interface';
 import { Jbof } from 'app/interfaces/jbof.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
@@ -16,7 +17,6 @@ import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/
 import { createTable } from 'app/modules/ix-table/utils';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { JbosFormComponent } from 'app/pages/system/old-view-enclosure/components/jbof-form/jbof-form.component';
-import { jbofListElements } from 'app/pages/system/old-view-enclosure/components/jbof-list/jbof-list.elements';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -29,7 +29,6 @@ import { WebSocketService } from 'app/services/ws.service';
 })
 export class JbofListComponent implements OnInit {
   protected readonly requiredRoles = [Role.JbofWrite];
-  protected readonly searchableElements = jbofListElements;
 
   filterString = '';
   jbofs: Jbof[] = [];
@@ -107,9 +106,17 @@ export class JbofListComponent implements OnInit {
       title: this.translate.instant('Delete'),
       message: this.translate.instant('Are you sure you want to delete this item?'),
       buttonText: this.translate.instant('Delete'),
+      hideCheckbox: true,
+      buttonColor: 'red',
+      secondaryCheckbox: true,
+      secondaryCheckboxText: this.translate.instant('Force'),
     }).pipe(
-      filter(Boolean),
-      switchMap(() => this.ws.call('jbof.delete', [jbof.id]).pipe(this.loader.withLoader())),
+      filter((confirmation: DialogWithSecondaryCheckboxResult) => confirmation.confirmed),
+      switchMap((confirmation: DialogWithSecondaryCheckboxResult) => {
+        const force = confirmation.secondaryCheckbox;
+
+        return this.ws.call('jbof.delete', [jbof.id, force]).pipe(this.loader.withLoader());
+      }),
       untilDestroyed(this),
     ).subscribe({
       next: () => this.getJbofs(),

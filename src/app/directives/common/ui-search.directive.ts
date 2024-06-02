@@ -63,18 +63,18 @@ export class UiSearchDirective implements OnInit, OnDestroy {
   private highlightAndClickElement(anchorRef: HTMLElement, shouldClick = false): void {
     if (!anchorRef) return;
 
-    anchorRef.scrollIntoView();
-    anchorRef.focus();
     this.renderer.addClass(anchorRef, 'search-element-highlighted');
 
     if (shouldClick) setTimeout(() => anchorRef.click(), searchDelayConst);
 
     setTimeout(() => {
-      this.renderer.removeClass(anchorRef, 'search-element-highlighted');
+      anchorRef.focus();
+      anchorRef.scrollIntoView();
+      document.querySelector<HTMLElement>('.rightside-content-hold').scrollBy(0, -20);
+    }, searchDelayConst);
 
-      if (!shouldClick) {
-        anchorRef.focus();
-      }
+    setTimeout(() => {
+      this.renderer.removeClass(anchorRef, 'search-element-highlighted');
     }, searchDelayConst * 15);
   }
 }

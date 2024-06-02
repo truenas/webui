@@ -10,6 +10,7 @@ import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { CoreComponents } from 'app/core/core-components.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
+import { UnusedDiskSelectComponent } from 'app/modules/custom-selects/unused-disk-select/unused-disk-select.component';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
@@ -29,7 +30,6 @@ import {
 import {
   ManualTestDialogComponent,
 } from 'app/pages/storage/modules/disks/components/manual-test-dialog/manual-test-dialog.component';
-import { ReplaceDiskDialogComponent } from 'app/pages/storage/modules/disks/components/replace-disk-dialog/replace-disk-dialog.component';
 import { SmartTestResultListComponent } from 'app/pages/storage/modules/disks/components/smart-test-result-list/smart-test-result-list.component';
 import { routes } from 'app/pages/storage/modules/disks/disks.routing';
 
@@ -54,6 +54,7 @@ import { routes } from 'app/pages/storage/modules/disks/disks.routing';
     PageHeaderModule,
     LayoutModule,
     SearchInput1Component,
+    UnusedDiskSelectComponent,
   ],
   declarations: [
     DiskBulkEditComponent,
@@ -61,7 +62,6 @@ import { routes } from 'app/pages/storage/modules/disks/disks.routing';
     DiskListComponent,
     DiskWipeDialogComponent,
     ManualTestDialogComponent,
-    ReplaceDiskDialogComponent,
     SmartTestResultListComponent,
   ],
 })

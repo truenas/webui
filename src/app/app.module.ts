@@ -1,4 +1,4 @@
-import { HttpClientModule, HttpClient } from '@angular/common/http';
+import { HttpClient, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { NgModule, ErrorHandler } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatNativeDateModule } from '@angular/material/core';
@@ -55,13 +55,17 @@ import { AuthGuardService } from './services/auth/auth-guard.service';
 import { RoutePartsService } from './services/route-parts/route-parts.service';
 
 @NgModule({
-  imports: [
-    BrowserModule,
+  declarations: [
+    AppComponent,
+  ],
+  bootstrap: [
+    AppComponent,
+  ],
+  imports: [BrowserModule,
     BrowserAnimationsModule,
     FlexLayoutModule,
     AppLoaderModule,
     MatNativeDateModule,
-    HttpClientModule,
     MatNativeDateModule,
     TooltipModule,
     TranslateModule.forRoot({
@@ -122,11 +126,7 @@ import { RoutePartsService } from './services/route-parts/route-parts.service';
     TestIdModule,
     MarkdownModule.forRoot({ loader: HttpClient }),
     FeedbackModule,
-    DialogModule,
-  ],
-  declarations: [
-    AppComponent,
-  ],
+    DialogModule],
   providers: [
     RoutePartsService,
     FocusService,
@@ -150,9 +150,8 @@ import { RoutePartsService } from './services/route-parts/route-parts.service';
       useFactory: getWindow,
     },
     provideCharts(withDefaultRegisterables()),
-  ],
-  bootstrap: [
-    AppComponent,
+    provideHttpClient(withInterceptorsFromDi()),
   ],
 })
-export class AppModule {}
+export class AppModule {
+}

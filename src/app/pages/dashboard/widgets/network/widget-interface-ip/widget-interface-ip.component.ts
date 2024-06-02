@@ -11,7 +11,6 @@ import { WidgetComponent } from 'app/pages/dashboard/types/widget-component.inte
 import { SlotSize } from 'app/pages/dashboard/types/widget.interface';
 import {
   WidgetInterfaceIpSettings,
-  interfaceIpWidget,
 } from 'app/pages/dashboard/widgets/network/widget-interface-ip/widget-interface-ip.definition';
 
 @Component({
@@ -24,7 +23,13 @@ export class WidgetInterfaceIpComponent implements WidgetComponent<WidgetInterfa
   size = input.required<SlotSize>();
   settings = input.required<WidgetInterfaceIpSettings>();
 
-  readonly name = interfaceIpWidget.name;
+  protected interfaceType = computed(() => {
+    return this.widgetName().includes('v6') ? NetworkInterfaceAliasType.Inet6 : NetworkInterfaceAliasType.Inet;
+  });
+
+  protected widgetName = computed(() => {
+    return this.settings()?.widgetName || '';
+  });
 
   protected ips = computed(() => {
     const interfaceId = this.settings()?.interface || '';
@@ -48,7 +53,8 @@ export class WidgetInterfaceIpComponent implements WidgetComponent<WidgetInterfa
       return this.translate.instant('Network interface {interface} not found.', { interface: interfaceId });
     }
 
-    const ip4aliases = networkInterface.aliases.filter((alias) => alias.type === NetworkInterfaceAliasType.Inet);
+    const ip4aliases = networkInterface.aliases.filter((alias) => alias.type === this.interfaceType());
+
     if (!ip4aliases.length) {
       return this.translate.instant('N/A');
     }

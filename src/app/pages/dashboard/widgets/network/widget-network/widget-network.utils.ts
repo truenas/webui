@@ -64,3 +64,19 @@ export function processNetworkInterfaces(interfaces: NetworkInterface[]): Dashbo
 
   return dashboardNetworkInterfaces;
 }
+
+export function getNetworkInterface(
+  interfaces: DashboardNetworkInterface[],
+  interfaceId: string,
+): DashboardNetworkInterface {
+  if (!interfaceId) {
+    throw new Error('No network interface is selected. Edit widget settings to select one.');
+  }
+
+  const networkInterface = interfaces?.find((nics) => nics.name === interfaceId);
+  if (!networkInterface) {
+    throw new Error(`Network interface ${interfaceId} not found.`);
+  }
+
+  return networkInterface;
+}

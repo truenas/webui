@@ -83,6 +83,9 @@ export class FormatDateTimePipe implements PipeTransform {
       if (this.timeFormat) {
         this.timeFormat = this.timeFormat.replace(' A', ' aa');
       }
+      if (this.dateFormat === ' ') {
+        return format(localDate, this.timeFormat);
+      }
       return format(localDate, `${this.dateFormat} ${this.timeFormat}`);
     } catch {
       return 'Invalid date';

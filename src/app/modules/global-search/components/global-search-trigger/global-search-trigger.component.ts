@@ -1,11 +1,17 @@
 import { Overlay, OverlayConfig, OverlayRef } from '@angular/cdk/overlay';
 import { ComponentPortal } from '@angular/cdk/portal';
-import { DOCUMENT } from '@angular/common';
 import {
-  AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, ViewContainerRef,
+  AfterViewInit,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  HostListener,
+  Inject,
+  ViewContainerRef,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { delay, take } from 'rxjs';
+import { WINDOW } from 'app/helpers/window.helper';
 import { GlobalSearchComponent } from 'app/modules/global-search/components/global-search/global-search.component';
 import { searchDelayConst } from 'app/modules/global-search/constants/delay.const';
 import { UiSearchProvider } from 'app/modules/global-search/services/ui-search.service';
@@ -17,22 +23,22 @@ import { UiSearchProvider } from 'app/modules/global-search/services/ui-search.s
   styleUrls: ['./global-search-trigger.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class GlobalTriggerSearchComponent implements AfterViewInit {
-  overlayRef: OverlayRef;
+export class GlobalSearchTriggerComponent implements AfterViewInit {
+  protected overlayRef: OverlayRef;
 
   constructor(
     private cdr: ChangeDetectorRef,
     private overlay: Overlay,
     private viewContainerRef: ViewContainerRef,
     private searchProvider: UiSearchProvider,
-    @Inject(DOCUMENT) private document: Document,
+    @Inject(WINDOW) private window: Window,
   ) {}
 
   ngAfterViewInit(): void {
     this.prepareOverlay();
   }
 
-  prepareOverlay(): void {
+  private prepareOverlay(): void {
     const overlayConfig = new OverlayConfig({
       hasBackdrop: true,
       backdropClass: ['cdk-overlay-backdrop', 'cdk-overlay-dark-backdrop'],
@@ -45,7 +51,7 @@ export class GlobalTriggerSearchComponent implements AfterViewInit {
     this.overlayRef.backdropClick().pipe(untilDestroyed(this)).subscribe(() => this.detachOverlay());
   }
 
-  showOverlay(): void {
+  protected showOverlay(): void {
     if (this.overlayRef.hasAttached()) {
       return;
     }
@@ -59,15 +65,13 @@ export class GlobalTriggerSearchComponent implements AfterViewInit {
       .subscribe(() => this.detachOverlay());
   }
 
-  detachOverlay(): void {
-    this.overlayRef.detach();
-
-    const element = this.document.querySelector('ix-logo a');
-
-    if (element instanceof HTMLAnchorElement) {
-      element.focus();
+  @HostListener('document:keydown.escape')
+  private detachOverlay(): void {
+    if (!this.overlayRef.hasAttached()) {
+      return;
     }
-
+    this.overlayRef.detach();
+    this.window.document.querySelector<HTMLElement>('ix-logo a')?.focus();
     this.cdr.markForCheck();
   }
 }

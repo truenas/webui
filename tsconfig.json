@@ -16,7 +16,6 @@
     "useUnknownInCatchVariables": true,
     "module": "es2020",
     "target": "ES2022",
-    "allowSyntheticDefaultImports": true,
     "lib": [
       "es2023",
       "dom",
@@ -28,7 +27,10 @@
     "allowEmptyCodegenFiles": true,
     "strictInjectionParameters": true,
     "strictTemplates": true,
-    "strictInputAccessModifiers": true
+    "strictInputAccessModifiers": true,
+    "extendedDiagnostics": {
+      "defaultCategory": "error"
+    }
   },
   "ts-node": {
     "experimentalSpecifierResolution": "node",

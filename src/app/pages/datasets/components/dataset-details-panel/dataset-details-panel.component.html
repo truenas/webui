@@ -25,7 +25,13 @@
 
   <div class="add-buttons">
     <ng-container *ngIf="!dataset.locked && !isZvol">
-      <button *ixRequiresRoles="requiredRoles" mat-button ixTest="add-zvol" (click)="onAddZvol()">
+      <button
+        *ixRequiresRoles="requiredRoles"
+        mat-button
+        ixTest="add-zvol"
+        [ixUiSearch]="searchableElements.elements.addZvol"
+        (click)="onAddZvol()"
+      >
         {{ 'Add Zvol' | translate }}
       </button>
       <button
@@ -33,6 +39,7 @@
         mat-button
         color="primary"
         ixTest="add-dataset"
+        [ixUiSearch]="searchableElements.elements.addDataset"
         (click)="onAddDataset()"
       >
         {{ 'Add Dataset' | translate }}
@@ -43,25 +50,35 @@
 
 <div class="cards">
   <div class="scroll-window">
-    <ix-dataset-details-card [dataset]="dataset"></ix-dataset-details-card>
+    <ix-dataset-details-card
+      [ixUiSearch]="searchableElements.elements.datasetDetailsCard"
+      [dataset]="dataset"
+    ></ix-dataset-details-card>
     <ix-dataset-capacity-management-card
       *ngIf="isCapacityAllowed"
+      [ixUiSearch]="searchableElements.elements.datasetCapacityCard"
       [dataset]="dataset"
     ></ix-dataset-capacity-management-card>
     <ix-zfs-encryption-card
       *ngIf="isEncryptionAllowed"
       [dataset]="dataset"
+      [ixUiSearch]="searchableElements.elements.datasetZfsEncryptionCard"
       [parentDataset]="selectedParentDataset$ | async"
     ></ix-zfs-encryption-card>
-    <ix-data-protection-card [dataset]="dataset"></ix-data-protection-card>
+    <ix-data-protection-card
+      [dataset]="dataset"
+      [ixUiSearch]="searchableElements.elements.datasetDataProtectionCard"
+    ></ix-data-protection-card>
     <ix-roles-card
       *ngIf="datasetHasRoles"
       [dataset]="dataset"
       [hasChildrenWithShares]="datasetHasChildrenWithShares"
+      [ixUiSearch]="searchableElements.elements.datasetRolesCard"
       [systemDataset]="systemDataset"
     ></ix-roles-card>
     <ix-permissions-card
       *ngIf="hasPermissions && !dataset.locked"
+      [ixUiSearch]="searchableElements.elements.datasetPermissionsCard"
       [dataset]="dataset"
     ></ix-permissions-card>
   </div>

@@ -6,10 +6,18 @@ export const userListElements = {
   anchorRouterLink: ['/credentials', 'users'],
   elements: {
     list: {
-      synonyms: [T('Local Users')],
+      synonyms: [
+        T('Local Users'),
+        T('Users'),
+        T('User List'),
+        T('User Management'),
+        T('Admins'),
+        T('Administrators'),
+      ],
     },
     add: {
       hierarchy: [T('Add')],
+      synonyms: [T('Add User'), T('New User'), T('Create User'), T('User'), T('Add Local User')],
       anchor: 'add-user',
     },
     showBuiltIn: {

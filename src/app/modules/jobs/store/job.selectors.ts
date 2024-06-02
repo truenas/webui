@@ -77,5 +77,15 @@ export const selectJobsPanelSlice = createSelector(
 
 export const selectUpdateJob = createSelector(
   selectRunningJobs,
-  (jobs) => jobs.filter((job) => job.method === 'update.update' || job.method === 'failover.upgrade'),
+  (jobs: Job[]) => jobs.filter((job) => job.method === 'update.update' || job.method === 'failover.upgrade'),
+);
+
+export const selectUpdateJobForActiveNode = createSelector(
+  selectRunningJobs,
+  (jobs: Job[]) => jobs.find((job) => job.method === 'update.update'),
+);
+
+export const selectUpdateJobForPassiveNode = createSelector(
+  selectRunningJobs,
+  (jobs: Job[]) => jobs.find((job) => job.method === 'failover.upgrade'),
 );

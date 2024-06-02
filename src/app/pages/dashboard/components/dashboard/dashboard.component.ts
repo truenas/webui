@@ -3,7 +3,7 @@ import {
 } from '@angular/animations';
 import { moveItemInArray } from '@angular/cdk/drag-drop';
 import {
-  ChangeDetectionStrategy, Component, OnInit, signal,
+  ChangeDetectionStrategy, Component, HostListener, OnInit, signal,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -68,6 +68,7 @@ export class DashboardComponent implements OnInit {
     this.isEditing.set(true);
   }
 
+  @HostListener('document:keydown.escape')
   protected onCancelConfigure(): void {
     this.isEditing.set(false);
     this.renderedGroups.set(this.savedGroups());
@@ -77,12 +78,12 @@ export class DashboardComponent implements OnInit {
     this.slideIn
       .open(WidgetGroupFormComponent, true)
       .pipe(untilDestroyed(this))
-      .subscribe((response: ChainedComponentResponse) => {
+      .subscribe((response: ChainedComponentResponse<WidgetGroup>) => {
         if (!response.response) {
           return;
         }
 
-        this.renderedGroups.update((groups) => [...groups, response.response as WidgetGroup]);
+        this.renderedGroups.update((groups) => [...groups, response.response]);
       });
   }
 

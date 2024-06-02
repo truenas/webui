@@ -1,15 +1,15 @@
-<td [attr.colspan]="colspan">
+<td [attr.colspan]="colspan()">
   <ix-table-expandable-row>
-    <button mat-button [ixTest]="[group.group, 'members']" (click)="openGroupMembersForm()">
+    <button mat-button [ixTest]="[group().group, 'members']" (click)="openGroupMembersForm()">
       <ix-icon name="people"></ix-icon>
       <span>{{ 'Members' | translate }}</span>
     </button>
 
     <button
-      *ngIf="!group.builtin"
+      *ngIf="!group().builtin"
       mat-button
-      [ixTest]="[group.group, 'edit']"
-      (click)="doEdit(group)"
+      [ixTest]="[group().group, 'edit']"
+      (click)="doEdit(group())"
     >
       <ix-icon name="edit"></ix-icon>
       <span>{{ 'Edit' | translate }}</span>
@@ -17,10 +17,10 @@
 
     <ng-container *ixRequiresRoles="[Role.AccountWrite]">
       <button
-        *ngIf="!group.builtin"
+        *ngIf="!group().builtin"
         mat-button
-        [ixTest]="[group.group, 'delete']"
-        (click)="doDelete(group)"
+        [ixTest]="[group().group, 'delete']"
+        (click)="doDelete(group())"
       >
         <ix-icon name="delete"></ix-icon>
         <span>{{ 'Delete' | translate }}</span>

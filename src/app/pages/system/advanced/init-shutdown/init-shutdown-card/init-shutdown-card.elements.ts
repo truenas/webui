@@ -8,6 +8,12 @@ export const initShutdownCardElements = {
   elements: {
     addInitShutdownScript: {
       hierarchy: [T('Add')],
+      synonyms: [
+        T('Add Init/Shutdown Script'),
+        T('Create Init/Shutdown Script'),
+        T('New Init/Shutdown Script'),
+        T('Init/Shutdown Script'),
+      ],
     },
   },
 } satisfies UiSearchableElement;

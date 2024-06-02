@@ -89,6 +89,7 @@ html .ix-dark {
   --mat-stepper-header-label-text-font: var(--font-family-body2);
   --mat-stepper-header-label-text-size: 14px;
 
+  --mat-checkbox-label-text-color: var(--fg1);
   --mdc-checkbox-unselected-icon-color: var(--primary);
   --mdc-checkbox-selected-checkmark-color: var(--fg1);
   --mdc-checkbox-selected-focus-icon-color: var(--primary);
@@ -116,6 +117,10 @@ html .ix-dark {
   --mdc-outlined-button-label-text-color: var(--fg2);
 
   --mat-autocomplete-background-color: var(--bg2);
+
+  .mat-mdc-slide-toggle {
+    --mat-switch-label-text-color: var(--fg2);
+  }
 
   .mat-mdc-slide-toggle,
   .mat-mdc-checkbox {
@@ -202,5 +207,9 @@ html .ix-dark {
 
   .mat-mdc-standard-chip {
     --mdc-chip-label-text-weight: 600;
+  }
+
+  .mat-mdc-select-arrow svg {
+    fill: var(--fg2);
   }
 }

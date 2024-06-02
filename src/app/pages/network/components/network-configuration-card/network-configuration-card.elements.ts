@@ -7,6 +7,28 @@ export const networkConfigurationCardElements = {
   elements: {
     configuration: {
       hierarchy: [T('Global Configuration')],
+      synonyms: [T('Network Configuration'), T('Network Settings')],
+    },
+    nameServers: {
+      hierarchy: [T('Nameserver')],
+      synonyms: [T('NS')],
+    },
+    settings: {
+      hierarchy: [T('Global Configuration Settings')],
+      synonyms: [
+        T('Hostname'),
+        T('Domain'),
+        T('HTTP Proxy'),
+        T('Service Announcement'),
+        T('Additional Domains'),
+        T('Hostname Database'),
+        T('Outbound Network'),
+        T('Domain Name System'),
+        T('DNS Servers'),
+        T('DHCP'),
+        T('Gateway'),
+        T('Lan'),
+      ],
     },
   },
 } satisfies UiSearchableElement;

@@ -1,5 +1,6 @@
 import { SelectionModel } from '@angular/cdk/collections';
 import { BreakpointObserver, BreakpointState, Breakpoints } from '@angular/cdk/layout';
+import { Location } from '@angular/common';
 import {
   Component,
   ChangeDetectionStrategy,
@@ -161,6 +162,7 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
     private errorHandler: ErrorHandlerService,
     private appsStats: AppsStatisticsService,
     private store$: Store<AppState>,
+    private location: Location,
     @Inject(WINDOW) private window: Window,
   ) {
     this.router.events
@@ -490,23 +492,25 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
       return;
     }
 
-    let app: ChartRelease;
-    if (appId) {
-      app = this.dataSource.find((chart) => chart.id === appId);
-    }
+    const app = appId && this.dataSource.find((chart) => chart.id === appId);
     if (app) {
       this.selectedApp = app;
-    } else {
-      const [firstApp] = this.dataSource;
-      if (firstApp.catalog && firstApp.catalog_train && firstApp.id) {
-        this.router.navigate(['/apps', 'installed', firstApp.catalog, firstApp.catalog_train, firstApp.id]);
-      } else {
-        this.router.navigate(['/apps', 'installed']);
-      }
-
-      this.selectedApp = firstApp;
+      this.cdr.markForCheck();
+      return;
     }
 
+    this.selectFirstApp();
+  }
+
+  private selectFirstApp(): void {
+    const [firstApp] = this.dataSource;
+    if (firstApp.catalog && firstApp.catalog_train && firstApp.id) {
+      this.location.replaceState(['/apps', 'installed', firstApp.catalog, firstApp.catalog_train, firstApp.id].join('/'));
+    } else {
+      this.location.replaceState(['/apps', 'installed'].join('/'));
+    }
+
+    this.selectedApp = firstApp;
     this.cdr.markForCheck();
   }
 

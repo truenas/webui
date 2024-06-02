@@ -46,13 +46,15 @@ export class CloudCredentialsSelectComponent extends IxSelectWithNewOption {
     );
   }
 
-  getValueFromChainedResponse(
-    result: ChainedComponentResponse,
-  ): IxSelectValue {
-    return (result.response as CloudCredential).id;
+  getValueFromChainedResponse(result: ChainedComponentResponse<CloudCredential>): IxSelectValue {
+    return result.response.id;
   }
 
-  getFormComponentType(): ComponentType<unknown> {
+  getFormComponentType(): ComponentType<CloudCredentialsFormComponent> {
     return CloudCredentialsFormComponent;
+  }
+
+  override getFormInputData(): { providers: CloudSyncProviderName[] } {
+    return this.filterByProviders?.length ? { providers: this.filterByProviders } : undefined;
   }
 }

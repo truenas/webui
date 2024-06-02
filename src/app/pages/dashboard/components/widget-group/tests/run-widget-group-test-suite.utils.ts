@@ -48,9 +48,9 @@ export function runWidgetGroupTestSuite<T extends WidgetGroupComponent>(componen
           group: {
             layout: WidgetGroupLayout.HalfAndQuarters,
             slots: [
-              { type: WidgetType.InterfaceIp, settings: { interface: 'eno1' } },
+              { type: WidgetType.Ipv4Address, settings: { interface: 'eno1' } },
               { type: WidgetType.Hostname },
-              { type: WidgetType.InterfaceIp, settings: { interface: 'eno2' } },
+              { type: WidgetType.Ipv4Address, settings: { interface: 'eno2' } },
               null,
             ],
           },
@@ -117,7 +117,7 @@ export function runWidgetGroupTestSuite<T extends WidgetGroupComponent>(componen
           group: {
             layout: WidgetGroupLayout.Quarters,
             slots: [
-              { type: WidgetType.Help },
+              { type: WidgetType.SystemInfoActive },
               null,
               null,
               null,
@@ -128,7 +128,7 @@ export function runWidgetGroupTestSuite<T extends WidgetGroupComponent>(componen
 
       const errorComponent = spectator.query(WidgetErrorComponent, { parentSelector: '.slot:nth-child(1)' });
       expect(errorComponent).toExist();
-      expect(errorComponent.message).toBe('help widget does not support quarter size.');
+      expect(errorComponent.message).toBe('system-info-active widget does not support quarter size.');
     });
   });
 }

@@ -25,8 +25,8 @@ export interface ChainedComponent {
   data: unknown;
 }
 
-export interface ChainedComponentResponse {
-  response: unknown;
+export interface ChainedComponentResponse<T = unknown> {
+  response: T;
   error: unknown;
 }
 
@@ -100,6 +100,13 @@ export class IxChainedSlideInService extends ComponentStore<ChainedSlideInState>
     this.focusOnTheCloseButton();
     return {
       components: newMap,
+    };
+  });
+
+  closeAll = this.updater(() => {
+    this.focusOnTheCloseButton();
+    return {
+      components: new Map(),
     };
   });
 

@@ -6,6 +6,12 @@ import { GlobalSearchSection } from 'app/modules/global-search/enums/global-sear
 import { GlobalSearchSectionsProvider } from 'app/modules/global-search/services/global-search-sections.service';
 import { UiSearchProvider } from 'app/modules/global-search/services/ui-search.service';
 
+class MockTranslateService {
+  instant(key: string): string {
+    return key;
+  }
+}
+
 jest.mock('app/../assets/ui-searchable-elements.json', () => ([
   {
     hierarchy: ['search1'],
@@ -27,8 +33,9 @@ describe('GlobalSearchSectionsProvider', () => {
   };
   const createService = createServiceFactory({
     service: GlobalSearchSectionsProvider,
-    mocks: [TranslateService, UiSearchProvider],
+    mocks: [UiSearchProvider],
     providers: [
+      { provide: TranslateService, useClass: MockTranslateService },
       {
         provide: WINDOW,
         useValue: {
@@ -43,7 +50,7 @@ describe('GlobalSearchSectionsProvider', () => {
   });
 
   it('should fetch UI section results based on search term', () => {
-    const searchTerm = 'test';
+    const searchTerm = 'testone'; // fuzzy search should work
     const mockResults$ = of([{ hierarchy: ['Test one'], targetHref: '/root', section: GlobalSearchSection.Ui }]);
     spectator.inject(UiSearchProvider).search.mockReturnValue(mockResults$);
 
@@ -62,12 +69,11 @@ describe('GlobalSearchSectionsProvider', () => {
   it('should generate help section results based on search term and app version', () => {
     const searchTerm = 'feature';
     const appVersion = '24.10';
-    spectator.inject(TranslateService).instant.mockImplementation(() => `Search Documentation for «${searchTerm}»`);
 
     const results = spectator.service.getHelpSectionResults(searchTerm, appVersion);
 
     expect(results).toEqual([{
-      hierarchy: ['Search Documentation for «feature»'],
+      hierarchy: ['Search Documentation for «{value}»'],
       targetHref: 'https://www.truenas.com/docs/scale/24.10/search/?query=feature',
       section: GlobalSearchSection.Help,
     }]);
@@ -76,8 +82,6 @@ describe('GlobalSearchSectionsProvider', () => {
   it('should generate help section results based on special case search term', () => {
     const searchTerm = 'help';
     const appVersion = '24.10';
-    spectator.inject(TranslateService).instant.mockImplementation(() => 'Go to Documentation');
-
     const results = spectator.service.getHelpSectionResults(searchTerm, appVersion);
 
     expect(results).toEqual([{
@@ -108,7 +112,11 @@ describe('GlobalSearchSectionsProvider', () => {
     expect(mockLocalStorage.setItem).toHaveBeenCalledWith('recentSearches', JSON.stringify([recentSearches[0]]));
 
     expect(results).toEqual([
-      recentSearches[0],
+      {
+        hierarchy: ['search1'],
+        targetHref: 'url1',
+        synonyms: [],
+      },
     ]);
   });
 });

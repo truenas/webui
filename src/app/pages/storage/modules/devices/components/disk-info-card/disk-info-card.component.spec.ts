@@ -13,9 +13,9 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { DiskStandby } from 'app/enums/disk-standby.enum';
 import { DiskType } from 'app/enums/disk-type.enum';
 import { Disk, TopologyDisk } from 'app/interfaces/storage.interface';
+import { ReplaceDiskDialogComponent } from 'app/pages/storage/modules/devices/components/disk-info-card/replace-disk-dialog/replace-disk-dialog.component';
 import { DevicesStore } from 'app/pages/storage/modules/devices/stores/devices-store.service';
 import { DiskFormComponent } from 'app/pages/storage/modules/disks/components/disk-form/disk-form.component';
-import { ReplaceDiskDialogComponent } from 'app/pages/storage/modules/disks/components/replace-disk-dialog/replace-disk-dialog.component';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { DiskInfoCardComponent } from './disk-info-card.component';
 

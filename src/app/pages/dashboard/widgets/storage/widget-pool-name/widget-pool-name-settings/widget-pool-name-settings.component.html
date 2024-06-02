@@ -1,0 +1,9 @@
+<form [formGroup]="form">
+  <ix-select
+    class="half-width"
+    formControlName="pool"
+    [label]="'Pool' | translate"
+    [options]="poolOptions$"
+    [required]="true"
+  ></ix-select>
+</form>
