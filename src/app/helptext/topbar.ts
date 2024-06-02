@@ -17,6 +17,7 @@ export const helptextTopbar = {
     [FailoverDisabledReason.DisagreeVip]: T('Nodes Virtual IP states do not agree.'),
     [FailoverDisabledReason.MismatchDisks]: T('The TrueNAS controllers do not have the same quantity of disks.'),
     [FailoverDisabledReason.MismatchVersions]: T('TrueNAS software versions do not match between storage controllers.'),
+    [FailoverDisabledReason.MismatchNics]: T('NICs do not match between nodes.'),
     [FailoverDisabledReason.NoCriticalInterfaces]: T('No network interfaces are marked critical for failover.'),
     [FailoverDisabledReason.NoFenced]: T('Fenced is not running.'),
     [FailoverDisabledReason.NoJournalSync]: T('Thread responsible for syncing db transactions not running on this node.'),
