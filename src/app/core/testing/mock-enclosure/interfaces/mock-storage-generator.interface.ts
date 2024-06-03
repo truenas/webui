@@ -37,19 +37,3 @@ export interface AddTopologyOptions extends AddUnAssignedOptions {
   layout: TopologyItemType;
   width: number;
 }
-
-/**
- * @deprecated
- */
-export interface DispersedData {
-  enclosures: EnclosureOld[];
-  disks: Disk[];
-}
-
-/**
- * @deprecated
- */
-export interface AddEnclosureOptions {
-  controllerModel: string;
-  expansionModels: string[];
-}

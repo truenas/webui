@@ -20,6 +20,7 @@
         mat-button
         [ixTest]="['iscsi-share', 'configure']"
         [routerLink]="['/sharing', 'iscsi', 'configuration']"
+        [ixUiSearch]="searchableElements.elements.configure"
       >
         {{ 'Configure' | translate }}
       </button>
@@ -28,6 +29,7 @@
         *ixRequiresRoles="requiredRoles"
         mat-button
         [ixTest]="['iscsi-share', 'wizard']"
+        [ixUiSearch]="searchableElements.elements.wizard"
         (click)="openForm(null, true)"
       >
         {{ 'Wizard' | translate }}

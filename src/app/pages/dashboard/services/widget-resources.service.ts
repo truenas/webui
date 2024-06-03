@@ -10,6 +10,7 @@ import { Dataset } from 'app/interfaces/dataset.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { ReportingData } from 'app/interfaces/reporting.interface';
 import { VolumesData, VolumeData } from 'app/interfaces/volume-data.interface';
+import { processNetworkInterfaces } from 'app/pages/dashboard/widgets/network/widget-network/widget-network.utils';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
@@ -47,6 +48,7 @@ export class WidgetResourcesService {
   );
 
   readonly networkInterfaces$ = this.ws.call('interface.query').pipe(
+    map((interfaces) => processNetworkInterfaces(interfaces)),
     toLoadingState(),
     shareReplay({ bufferSize: 1, refCount: true }),
   );

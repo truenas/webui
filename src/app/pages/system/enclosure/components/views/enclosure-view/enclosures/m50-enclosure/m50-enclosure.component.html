@@ -1,0 +1,11 @@
+<div class="enclosure-view">
+  <ix-m50-enclosure-view
+    *ngIf="selectedView() !== 'expanders'"
+    [enclosure]="enclosure()"
+    [selectedSlot]="selectedSlot()"
+  ></ix-m50-enclosure-view>
+  <ix-sas-expander-status-view
+    *ngIf="selectedView() === 'expanders'"
+    [expanders]="expanders()"
+  ></ix-sas-expander-status-view>
+</div>

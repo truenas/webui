@@ -8,6 +8,7 @@ export enum FailoverDisabledReason {
   DisagreeVip = 'DISAGREE_VIP',
   MismatchDisks = 'MISMATCH_DISKS',
   MismatchVersions = 'MISMATCH_VERSIONS',
+  MismatchNics = 'MISMATCH_NICS',
   NoCriticalInterfaces = 'NO_CRITICAL_INTERFACES',
   NoFenced = 'NO_FENCED',
   NoJournalSync = 'NO_JOURNAL_SYNC',

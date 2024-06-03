@@ -1,10 +1,11 @@
 <mat-card class="card">
   <mat-toolbar-row>
     <h3>{{ 'Global Configuration' | translate }}</h3>
-    <button 
-      mat-button 
-      color="default" 
-      ixTest="network-settings" 
+    <button
+      mat-button
+      color="default"
+      ixTest="network-settings"
+      [ixUiSearch]="networkConfigurationCardElements.elements.settings"
       (click)="onSettingsClicked()"
     >
       {{ 'Settings' | translate }}
@@ -19,7 +20,10 @@
             class="list"
           >
             <div class="section-title">{{ 'Nameservers' | translate }}</div>
-            <mat-list-item *ngFor="let nameserver of nameservers">
+            <mat-list-item
+              *ngFor="let nameserver of nameservers"
+              [ixUiSearch]="networkConfigurationCardElements.elements.nameServers"
+            >
               <span class="label">{{ nameserver.label | translate }}:</span>
               <span class="value">
                 {{ nameserver.value | cast | translate }}

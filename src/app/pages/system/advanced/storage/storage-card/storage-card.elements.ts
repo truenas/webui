@@ -6,6 +6,7 @@ export const storageCardElements = {
   anchorRouterLink: ['/system', 'advanced'],
   elements: {
     storage: {
+      synonyms: [T('Disks'), T('Pools')],
       anchor: 'storage-card',
     },
     systemPool: {
