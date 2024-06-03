@@ -138,10 +138,6 @@ export class NfsSessionListComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    if (!this.activeNfsType) {
-      this.activeNfsType = NfsType.Nfs3;
-    }
-
     this.loadData();
 
     combineLatest([this.nfs3DataProvider.emptyType$, this.nfs4DataProvider.emptyType$])
