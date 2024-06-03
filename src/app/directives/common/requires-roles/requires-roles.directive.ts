@@ -3,6 +3,7 @@ import {
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { isEqual } from 'lodash';
+import { take } from 'rxjs';
 import { HasAccessDirective } from 'app/directives/common/has-access/has-access.directive';
 import { Role } from 'app/enums/role.enum';
 import { AuthService } from 'app/services/auth/auth.service';
@@ -26,11 +27,11 @@ export class RequiresRolesDirective extends HasAccessDirective {
       this.viewContainerRef.createEmbeddedView(this.templateRef);
       return;
     }
-    this.authService.hasRole(roles).pipe(untilDestroyed(this)).subscribe({
-      next: (hasRole) => {
-        this.ixHasAccess = hasRole;
-      },
-    });
+
+    this.authService
+      .hasRole(roles)
+      .pipe(take(1), untilDestroyed(this))
+      .subscribe((hasRole) => this.ixHasAccess = hasRole);
   }
 
   protected override cssClassList: string[] = [];
