@@ -1,7 +1,7 @@
+import { WebUiEnvironment } from 'environments/environment.interface';
 import {
   MockStorageScenario,
 } from 'app/core/testing/mock-enclosure/enums/mock-storage.enum';
-import { WebUiEnvironment } from 'environments/environment.interface';
 
 export const environment: WebUiEnvironment = {
   environmentVersion: '0.0.3',

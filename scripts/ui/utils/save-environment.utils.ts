@@ -31,10 +31,10 @@ export function updateEnvironment(newValues: DeepPartial<ConfigVariables>): void
 
   const configTemplate = getConfigTemplate();
   const configToWrite = configTemplate
-    .replace('$REMOTE$', JSON.stringify(valuesToWrite.remote))
-    .replace('$MOCK_ENABLED$', JSON.stringify(Boolean(valuesToWrite.mockConfig.enabled)))
-    .replace('$MOCK_CONTROLLER$', JSON.stringify(valuesToWrite.mockConfig.controllerModel))
-    .replace('$MOCK_EXPANSIONS$', JSON.stringify(valuesToWrite.mockConfig.expansionModels))
+    .replace('$REMOTE$', stringify(valuesToWrite.remote))
+    .replace('$MOCK_ENABLED$', stringify(Boolean(valuesToWrite.mockConfig.enabled)))
+    .replace('$MOCK_CONTROLLER$', stringify(valuesToWrite.mockConfig.controllerModel))
+    .replace('$MOCK_EXPANSIONS$', stringify(valuesToWrite.mockConfig.expansionModels))
     .replace('$MOCK_SCENARIO$', printEnum({
       enumName: 'MockStorageScenario',
       enum: MockStorageScenario,
@@ -42,6 +42,16 @@ export function updateEnvironment(newValues: DeepPartial<ConfigVariables>): void
     }));
 
   fs.writeFileSync(environmentTs, configToWrite, 'utf8');
+}
+
+/**
+ * Mostly JSON.stringify, but with single quotes for strings.
+ */
+function stringify(value: unknown): string {
+  if (typeof value === 'string') {
+    return `'${value}'`;
+  }
+  return JSON.stringify(value);
 }
 
 function printEnum(options: { enumName: string; enum: Record<string, string>; value: string }): string {
