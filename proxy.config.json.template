@@ -1,23 +1,23 @@
 {
     "/api/**": {
-        "target": "http://$SERVER$",
+        "target": "http://$REMOTE$",
         "secure": false,
         "changeOrigin": true,
-        "pathRewrite": {"^/api" : "http://$SERVER$/api"},
+        "pathRewrite": {"^/api" : "http://$REMOTE$/api"},
         "loglevel": "debug"
     },
     "/_upload": {
-        "target": "http://$SERVER$",
+        "target": "http://$REMOTE$",
         "secure": false,
         "changeOrigin": true,
-        "pathRewrite": {"^/_upload" : "http://$SERVER$:6000/_upload"},
+        "pathRewrite": {"^/_upload" : "http://$REMOTE$:6000/_upload"},
         "loglevel": "debug"
     },
     "/_download": {
-        "target": "http://$SERVER$",
+        "target": "http://$REMOTE$",
         "secure": false,
         "changeOrigin": true,
-        "pathRewrite": {"^/_download" : "http://$SERVER$:6000/_download"},
+        "pathRewrite": {"^/_download" : "http://$REMOTE$:6000/_download"},
         "loglevel": "debug"
     }
 }

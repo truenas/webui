@@ -1,0 +1,18 @@
+import {
+  MockStorageScenario,
+} from 'app/core/testing/mock-enclosure/enums/mock-storage.enum';
+import { WebUiEnvironment } from 'environments/environment.interface';
+
+export const environment: WebUiEnvironment = {
+  environmentVersion: '0.0.3',
+  remote: $REMOTE$,
+  port: 4200,
+  production: false,
+  sentryPublicDsn: 'https://7ac3e76fe2a94f77a58e1c38ea6b42d9@sentry.ixsystems.com/4',
+  mockConfig: {
+    enabled: $MOCK_ENABLED$,
+    controllerModel: $MOCK_CONTROLLER$,
+    expansionModels: $MOCK_EXPANSIONS$,
+    scenario: $MOCK_SCENARIO$,
+  },
+};

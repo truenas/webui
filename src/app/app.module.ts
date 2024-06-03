@@ -6,14 +6,14 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { PreloadAllModules, RouterModule } from '@angular/router';
+import { PreloadAllModules, Router, RouterModule } from '@angular/router';
 import { FlexLayoutModule } from '@ngbracket/ngx-layout';
 import { EffectsModule } from '@ngrx/effects';
 import { StoreRouterConnectingModule } from '@ngrx/router-store';
 import { StoreModule } from '@ngrx/store';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import {
-  TranslateModule, TranslateLoader, TranslateCompiler, MissingTranslationHandler,
+  TranslateModule, TranslateLoader, TranslateCompiler, MissingTranslationHandler, TranslateService,
 } from '@ngx-translate/core';
 import { environment } from 'environments/environment';
 import { provideCharts, withDefaultRegisterables } from 'ng2-charts';
@@ -27,6 +27,7 @@ import { NgxWebstorageModule } from 'ngx-webstorage';
 import { IcuMissingTranslationHandler } from 'app/core/classes/icu-missing-translation-handler';
 import { createTranslateLoader } from 'app/core/classes/icu-translations-loader';
 import { CoreComponents } from 'app/core/core-components.module';
+import { MockEnclosureWebsocketService } from 'app/core/testing/mock-enclosure/mock-enclosure-websocket.service';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { getWindow, WINDOW } from 'app/helpers/window.helper';
 import { DialogModule } from 'app/modules/dialog/dialog.module';
@@ -44,6 +45,7 @@ import { IxFileUploadService } from 'app/services/ix-file-upload.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { NavigationService } from 'app/services/navigation/navigation.service';
 import { ThemeService } from 'app/services/theme/theme.service';
+import { WebSocketConnectionService } from 'app/services/websocket-connection.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { rootEffects, rootReducers } from 'app/store';
 import { CustomRouterStateSerializer } from 'app/store/router/custom-router-serializer';
@@ -134,7 +136,6 @@ import { RoutePartsService } from './services/route-parts/route-parts.service';
     TwoFactorGuardService,
     NavigationService,
     AuthService,
-    WebSocketService,
     AppLoaderService,
     IxSlideInService,
     IxChainedSlideInService,
@@ -148,6 +149,17 @@ import { RoutePartsService } from './services/route-parts/route-parts.service';
     {
       provide: WINDOW,
       useFactory: getWindow,
+    },
+    {
+      provide: WebSocketService,
+      deps: [Router, WebSocketConnectionService, TranslateService],
+      useFactory: (router: Router, connection: WebSocketConnectionService, translate: TranslateService) => {
+        if (environment.mockConfig.enabled) {
+          return new MockEnclosureWebsocketService(router, connection, translate);
+        }
+
+        return new WebSocketService(router, connection, translate);
+      },
     },
     provideCharts(withDefaultRegisterables()),
   ],
