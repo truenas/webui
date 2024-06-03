@@ -26,7 +26,7 @@
             [disabled]="true"
           >{{ 'Update in Progress' | translate }}</button>
 
-          <ng-container *ngIf="!isUpdateRunning()">
+          <ng-container *ngIf="isHaLicensed() && !isUpdateRunning()">
             <button
               *ixRequiresRoles="requiredRoles"
               mat-button
@@ -119,6 +119,13 @@
           </mat-list-item>
         </mat-list>
       </div>
+    </div>
+    <div [class]="['empty', 'container', size()]">
+      <ix-icon class="icon" name="mdi-widgets"></ix-icon>
+      <h3>
+        <div>{{ 'The system is not licensed for HA.' | translate }}</div>
+        <small>{{ 'Configure dashboard to edit the widget.' | translate }}</small>
+      </h3>
     </div>
   </mat-card-content>
 </mat-card>

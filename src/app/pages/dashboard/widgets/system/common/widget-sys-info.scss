@@ -67,6 +67,28 @@
   display: flex;
   flex-grow: 1;
   overflow: hidden;
+
+  &.empty {
+    align-items: center;
+    background-color: color-mix(in srgb, var(--bg2), transparent 10%);
+    flex-direction: column;
+    height: 100%;
+    left: 0;
+    place-content: center center;
+    position: absolute;
+    text-align: center;
+    top: 0;
+    width: 100%;
+    z-index: 1000;
+
+    ix-icon {
+      font-size: 48px;
+    }
+
+    &.full {
+      padding: 0 16px 48px;
+    }
+  }
 }
 
 .content-left {
