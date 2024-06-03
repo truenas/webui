@@ -14,7 +14,7 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { FilesystemService } from 'app/services/filesystem.service';
-import { IxFileUploadService } from 'app/services/ix-file-upload.service';
+import { UploadService } from 'app/services/upload.service';
 
 @UntilDestroy()
 @Component({
@@ -39,7 +39,7 @@ export class UploadIsoDialogComponent {
     private errorHandler: ErrorHandlerService,
     private translate: TranslateService,
     private dialogRef: MatDialogRef<UploadIsoDialogComponent, string | null>,
-    private uploadService: IxFileUploadService,
+    private uploadService: UploadService,
     private loader: AppLoaderService,
     private dialogService: DialogService,
   ) {}
@@ -51,7 +51,11 @@ export class UploadIsoDialogComponent {
 
     this.loader.open();
 
-    this.uploadService.upload(file, 'filesystem.put', [uploadPath, { mode: 493 }])
+    this.uploadService.upload({
+      file,
+      method: 'filesystem.put',
+      params: [uploadPath, { mode: 493 }],
+    })
       .pipe(
         tap((event: HttpProgressEvent) => {
           if (event instanceof HttpResponse) {

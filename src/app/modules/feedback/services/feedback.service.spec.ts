@@ -17,16 +17,16 @@ import {
 import { ProductType } from 'app/enums/product-type.enum';
 import { FeedbackService } from 'app/modules/feedback/services/feedback.service';
 import { SnackbarComponent } from 'app/modules/snackbar/components/snackbar/snackbar.component';
-import { IxFileUploadService } from 'app/services/ix-file-upload.service';
 import { SentryService } from 'app/services/sentry.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
+import { UploadService } from 'app/services/upload.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { SystemInfoState } from 'app/store/system-info/system-info.reducer';
 import { selectSystemHostId, selectSystemInfoState } from 'app/store/system-info/system-info.selectors';
 
 describe('FeedbackService', () => {
   let spectator: SpectatorService<FeedbackService>;
-  let fileUploadService: IxFileUploadService;
+  let fileUploadService: UploadService;
 
   const newTicket = {
     ticket: 1,
@@ -71,7 +71,7 @@ describe('FeedbackService', () => {
       mockProvider(SentryService, {
         sessionId$: of('testSessionId'),
       }),
-      mockProvider(IxFileUploadService, {
+      mockProvider(UploadService, {
         upload: jest.fn(() => of(new HttpResponse({ status: 200 }))),
       }),
       mockProvider(MatSnackBar),
@@ -91,7 +91,7 @@ describe('FeedbackService', () => {
 
   beforeEach(() => {
     spectator = createService();
-    fileUploadService = spectator.inject(IxFileUploadService);
+    fileUploadService = spectator.inject(UploadService);
   });
 
   describe('getHostId', () => {
@@ -166,11 +166,15 @@ describe('FeedbackService', () => {
       expect(response).toEqual(newTicket);
 
       expect(spectator.service.takeScreenshot).toHaveBeenCalled();
-      expect(fileUploadService.upload).toHaveBeenCalledWith(fakeScreenshot, 'support.attach_ticket', [{
-        token: 'test-token',
-        ticket: 1,
-        filename: 'screenshot.png',
-      }]);
+      expect(fileUploadService.upload).toHaveBeenCalledWith(expect.objectContaining({
+        file: fakeScreenshot,
+        method: 'support.attach_ticket',
+        params: [{
+          token: 'test-token',
+          ticket: 1,
+          filename: 'screenshot.png',
+        }],
+      }));
     });
 
     it('takes a screenshot and uploads attachments', async () => {
@@ -196,21 +200,33 @@ describe('FeedbackService', () => {
       expect(spectator.service.takeScreenshot).toHaveBeenCalled();
 
       expect(fileUploadService.upload).toHaveBeenCalledTimes(3);
-      expect(fileUploadService.upload).toHaveBeenCalledWith(fakeScreenshot, 'support.attach_ticket', [{
-        token: 'test-token',
-        ticket: 1,
-        filename: 'screenshot.png',
-      }]);
-      expect(fileUploadService.upload).toHaveBeenCalledWith(file1, 'support.attach_ticket', [{
-        token: 'test-token',
-        ticket: 1,
-        filename: 'file1.png',
-      }]);
-      expect(fileUploadService.upload).toHaveBeenCalledWith(file2, 'support.attach_ticket', [{
-        token: 'test-token',
-        ticket: 1,
-        filename: 'file2.png',
-      }]);
+      expect(fileUploadService.upload).toHaveBeenCalledWith(expect.objectContaining({
+        file: fakeScreenshot,
+        method: 'support.attach_ticket',
+        params: [{
+          token: 'test-token',
+          ticket: 1,
+          filename: 'screenshot.png',
+        }],
+      }));
+      expect(fileUploadService.upload).toHaveBeenCalledWith(expect.objectContaining({
+        file: file1,
+        method: 'support.attach_ticket',
+        params: [{
+          token: 'test-token',
+          ticket: 1,
+          filename: 'file1.png',
+        }],
+      }));
+      expect(fileUploadService.upload).toHaveBeenCalledWith(expect.objectContaining({
+        file: file2,
+        method: 'support.attach_ticket',
+        params: [{
+          token: 'test-token',
+          ticket: 1,
+          filename: 'file2.png',
+        }],
+      }));
     });
   });
 
