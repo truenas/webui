@@ -30,10 +30,3 @@ export enum MockDiskType {
   'Nvme' = 'Nvme',
   'Ssd' = 'Ssd',
 }
-
-export enum EnclosureDispersalStrategy {
-  Min = 'min',
-  Max = 'max',
-  Default = 'default',
-  Existing = 'existing',
-}

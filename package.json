@@ -195,10 +195,6 @@
     "utility-types": "~3.10.0",
     "xterm": "~4.9.0",
     "xterm-addon-fit": "~0.4.0",
-    "zone.js": "~0.14.4",
-    "utility-types": "~3.10.0",
-    "xterm": "~4.9.0",
-    "xterm-addon-fit": "~0.4.0",
     "zone.js": "~0.14.4"
   },
   "lint-staged": {

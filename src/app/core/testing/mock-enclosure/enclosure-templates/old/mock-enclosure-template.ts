@@ -11,8 +11,6 @@ const mockDiskDetail: DashboardEnclosureSlot = {
   model: 'model',
   serial: 'serial',
   type: DiskType.Hdd,
-
-  // TODO:
   rotationrate: 10,
   drive_bay_number: 2,
   supports_identify_light: true,
