@@ -18,6 +18,8 @@ import { UiSearchableElement } from 'app/modules/global-search/interfaces/ui-sea
 import { GlobalSearchSectionsProvider } from 'app/modules/global-search/services/global-search-sections.service';
 import { UiSearchDirectivesService } from 'app/modules/global-search/services/ui-search-directives.service';
 import { UiSearchProvider } from 'app/modules/global-search/services/ui-search.service';
+import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { SidenavService } from 'app/services/sidenav.service';
 import { AppState } from 'app/store';
 import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
@@ -48,6 +50,8 @@ export class GlobalSearchComponent implements OnInit {
     private globalSearchSectionsProvider: GlobalSearchSectionsProvider,
     private cdr: ChangeDetectorRef,
     private store$: Store<AppState>,
+    private slideInService: IxSlideInService,
+    private chainedSlideInService: IxChainedSlideInService,
     @Inject(DOCUMENT) private document: Document,
   ) {}
 
@@ -77,7 +81,7 @@ export class GlobalSearchComponent implements OnInit {
         }
         break;
       default:
-        if (event.key.length === 1 && !event.metaKey) {
+        if (event.key.length === 1 && !event.metaKey && !this.isSearchInputFocused) {
           event.preventDefault();
           this.searchControl.setValue(this.searchControl.value + event.key);
           this.focusInputElement();
@@ -151,8 +155,7 @@ export class GlobalSearchComponent implements OnInit {
     ).subscribe(([config]) => {
       this.resetInput();
       this.searchDirectives.setPendingUiHighlightElement(null);
-      this.document.querySelector<HTMLElement>('.ix-slide-in-background.open')?.click();
-      this.document.querySelector<HTMLElement>('.ix-slide-in2-background.open')?.click();
+      [this.slideInService, this.chainedSlideInService].forEach((service) => service.closeAll());
       this.searchDirectives.get(config).highlight(config);
     });
   }

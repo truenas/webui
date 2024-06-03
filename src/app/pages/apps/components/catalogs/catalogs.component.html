@@ -10,7 +10,14 @@
     {{ 'Refresh All' | translate }}
   </button>
 
-  <button *ixRequiresRoles="requiredRoles" mat-button color="primary" ixTest="add-catalog" (click)="doAdd()">
+  <button
+    *ixRequiresRoles="requiredRoles"
+    mat-button
+    color="primary"
+    ixTest="add-catalog"
+    [ixUiSearch]="searchableElements.elements.add"
+    (click)="doAdd()"
+  >
     {{ 'Add Catalog' | translate }}
   </button>
 </ix-page-header>

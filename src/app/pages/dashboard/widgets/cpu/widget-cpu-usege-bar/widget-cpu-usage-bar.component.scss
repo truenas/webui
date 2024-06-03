@@ -1,0 +1,17 @@
+.wrapper {
+  align-items: center;
+  background-color: var(--bg2);
+  color: var(--fg2);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  justify-content: center;
+  padding-left: 15px;
+  padding-right: 15px;
+  width: 100%;
+
+  .bar {
+    height: 150px;
+    width: 100%;
+  }
+}

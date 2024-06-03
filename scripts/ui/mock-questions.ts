@@ -1,11 +1,11 @@
-import {QuestionCollection} from "inquirer";
-import fs from "fs";
-import {CommandOptions} from "./interfaces/ui-command.interface";
+import fs from 'fs';
+import { QuestionCollection } from 'inquirer';
+import { CommandOptions } from './interfaces/ui-command.interface';
 
 export function mockConfigLoaderQuestions(
   mockConfigDir: string,
   includedDir: string,
-  customDir: string
+  customDir: string,
 ): QuestionCollection {
   const locationChoices: string[] = ['included', 'custom'];
   const includedChoices: string[] = fs.readdirSync(mockConfigDir + includedDir).filter((fileName: string) => {
@@ -21,7 +21,7 @@ export function mockConfigLoaderQuestions(
       message: 'Would you like to load an included or a custom config?',
       type: 'list',
       choices: locationChoices,
-      default: 'included'
+      default: 'included',
     },
     {
       name: 'customFile',
@@ -55,7 +55,7 @@ export function mockConfigGeneratorQuestions(
   const mockDiskChoices: string[] = ['Yes', 'Skip'];
   const diskSizeChoices: string[] = ['2', '4', '6', '8', '12', '16', '18', '20'];
   const mockPoolChoices: string[] = ['Create Pool', 'Skip'];
-  const mockPoolLayoutChoices: string[] = ['Stripe', 'Mirror','Raidz1','Raidz2','Raidz3'];
+  const mockPoolLayoutChoices: string[] = ['Stripe', 'Mirror', 'Raidz1', 'Raidz2', 'Raidz3'];
   const mockPoolScenarioChoices: string[] = [
     'Uniform',
     'MixedDiskCapacity',
@@ -86,7 +86,7 @@ export function mockConfigGeneratorQuestions(
       type: 'list',
       choices: controllerChoices,
       default: 'M40',
-      when: ( answers ) => {
+      when: (answers) => {
         return answers.mockEnclosure === mockEnclosureChoices[0];
       },
     },
@@ -95,7 +95,7 @@ export function mockConfigGeneratorQuestions(
       message: 'Specify shelves (' + shelfChoices.toString() + '):',
       type: 'input',
       default: '',
-      when: ( answers ) => {
+      when: (answers) => {
         return answers.mockEnclosure === mockEnclosureChoices[0];
       },
     },
@@ -105,7 +105,7 @@ export function mockConfigGeneratorQuestions(
       type: 'list',
       choices: dispersalChoices,
       default: 'Default',
-      when: ( answers ) => {
+      when: (answers) => {
         return answers.mockEnclosure === mockEnclosureChoices[0];
       },
     },
@@ -122,7 +122,7 @@ export function mockConfigGeneratorQuestions(
       type: 'list',
       choices: diskSizeChoices,
       default: '4',
-      when: ( answers ) => {
+      when: (answers) => {
         return answers.mockDisk === 'Yes';
       },
     },
@@ -131,7 +131,7 @@ export function mockConfigGeneratorQuestions(
       message: 'How many devices?',
       type: 'input',
       default: '12',
-      when: ( answers ) => {
+      when: (answers) => {
         return answers.mockDisk === 'Yes';
       },
     },
@@ -148,7 +148,7 @@ export function mockConfigGeneratorQuestions(
       type: 'list',
       choices: diskSizeChoices,
       default: '2',
-      when: ( answers ) => {
+      when: (answers) => {
         return answers.mockPool === 'Create Pool';
       },
     },
@@ -158,7 +158,7 @@ export function mockConfigGeneratorQuestions(
       type: 'list',
       choices: mockPoolScenarioChoices,
       default: 'Uniform',
-      when: ( answers ) => {
+      when: (answers) => {
         return answers.mockPool === 'Create Pool';
       },
     },
@@ -168,7 +168,7 @@ export function mockConfigGeneratorQuestions(
       type: 'list',
       choices: mockPoolLayoutChoices,
       default: 'Mirror',
-      when: ( answers ) => {
+      when: (answers) => {
         return answers.mockPool === 'Create Pool';
       },
     },
@@ -177,7 +177,7 @@ export function mockConfigGeneratorQuestions(
       message: 'Choose a vdev width',
       type: 'input',
       default: '2',
-      when: ( answers ) => {
+      when: (answers) => {
         return answers.mockPool === 'Create Pool';
       },
     },
@@ -186,7 +186,7 @@ export function mockConfigGeneratorQuestions(
       message: 'How many VDEVs?',
       type: 'input',
       default: '2',
-      when: ( answers ) => {
+      when: (answers) => {
         return answers.mockPool === 'Create Pool';
       },
     },
@@ -204,5 +204,5 @@ export function mockConfigGeneratorQuestions(
       choices: saveChoices,
       default: 'save',
     },
-  ]
+  ];
 }

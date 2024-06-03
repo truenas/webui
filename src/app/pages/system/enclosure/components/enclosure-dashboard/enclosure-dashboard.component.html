@@ -13,7 +13,7 @@
   ></ix-view-elements-menu>
 </ix-page-header>
 
-<mat-card *ngIf="selectedEnclosure()">
+<ng-container *ngIf="selectedEnclosure()">
   <!-- TODO: Loading indication -->
   <router-outlet></router-outlet>
-</mat-card>
+</ng-container>

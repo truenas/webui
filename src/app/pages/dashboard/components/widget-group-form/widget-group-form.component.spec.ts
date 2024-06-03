@@ -2,7 +2,6 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatIconTestingModule } from '@angular/material/icon/testing';
 import { Spectator } from '@ngneat/spectator';
 import { mockProvider, createComponentFactory } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
@@ -38,7 +37,6 @@ describe('WidgetGroupFormComponent', () => {
       TestIdModule,
       IxFormsModule,
       ReactiveFormsModule,
-      MatIconTestingModule,
     ],
     declarations: [
       MockComponent(WidgetEditorGroupComponent),

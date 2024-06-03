@@ -10,7 +10,6 @@ import { MATERIAL_SANITY_CHECKS, MatNativeDateModule } from '@angular/material/c
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatExpansionModule } from '@angular/material/expansion';
-import { MatIconTestingModule } from '@angular/material/icon/testing';
 import { MatListModule } from '@angular/material/list';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
@@ -37,6 +36,7 @@ import { CommonDirectivesModule } from 'app/directives/common/common-directives.
 import { WINDOW } from 'app/helpers/window.helper';
 import { CastModule } from 'app/modules/cast/cast.module';
 import { IxFileSizeModule } from 'app/modules/ix-file-size/ix-file-size.module';
+import { IxIconTestingModule } from 'app/modules/ix-icon/ix-icon-testing.module';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
@@ -55,7 +55,7 @@ defineGlobalsInjections({
     MatSlideToggleModule,
     MatMenuModule,
     IxIconModule,
-    MatIconTestingModule,
+    IxIconTestingModule,
     MatDatepickerModule,
     MatNativeDateModule,
     MatSelectModule,

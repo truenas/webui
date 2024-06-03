@@ -9,7 +9,7 @@ import {
 import {
   filter, map, share, startWith, switchMap, take, takeUntil, tap,
 } from 'rxjs/operators';
-import { MockEnclosureUtils } from 'app/core/testing/utils/mock-enclosure.utils';
+import { MockEnclosureUtils } from 'app/core/testing/mock-enclosure/mock-enclosure.utils';
 import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
 import { ResponseErrorType } from 'app/enums/response-error-type.enum';
 import { WebSocketErrorName } from 'app/enums/websocket-error-name.enum';

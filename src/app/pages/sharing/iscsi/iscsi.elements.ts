@@ -2,7 +2,7 @@ import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UiSearchableElement } from 'app/modules/global-search/interfaces/ui-searchable-element.interface';
 
 export const iscsiElements = {
-  hierarchy: [T('Sharing'), T('iSCSI')],
+  hierarchy: [T('Shares'), T('iSCSI')],
   elements: {
     configuration: {
       hierarchy: [T('Target Global Configuration')],

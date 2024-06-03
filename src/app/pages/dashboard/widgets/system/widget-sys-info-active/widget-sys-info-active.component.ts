@@ -35,13 +35,18 @@ export class WidgetSysInfoActiveComponent {
     filter((state) => !state.isLoading),
     map((state) => state.value),
   ));
-  elapsedSeconds = toSignal(this.resources.fiveSecondsRefreshInteval$.pipe(
-    map((iteration) => (iteration ? iteration * 5 : 0)),
+
+  startTime = Date.now();
+
+  realElapsedSeconds = toSignal(this.resources.refreshInterval$.pipe(
+    map(() => {
+      return Math.floor((Date.now() - this.startTime) / 1000);
+    }),
   ));
 
   version = computed(() => getSystemVersion(this.systemInfo().version, this.systemInfo().codename));
-  uptime = computed(() => this.systemInfo().uptime_seconds + this.elapsedSeconds());
-  datetime = computed(() => this.systemInfo().datetime.$date + (this.elapsedSeconds() * 1000));
+  uptime = computed(() => this.systemInfo().uptime_seconds + this.realElapsedSeconds());
+  datetime = computed(() => this.systemInfo().datetime.$date + (this.realElapsedSeconds() * 1000));
   isLoaded = computed(() => this.systemInfo());
 
   constructor(

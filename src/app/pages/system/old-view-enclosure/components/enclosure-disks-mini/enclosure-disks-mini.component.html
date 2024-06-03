@@ -101,7 +101,7 @@
                     online: selectedEnclosure.elements['Array Device Slot'][i + 1].pool_info?.disk_status === 'ONLINE',
                     alert:
                       selectedEnclosure.elements['Array Device Slot'][i + 1].pool_info?.disk_status !== 'ONLINE' &&
-                      selectedEnclosure.elements['Array Device Slot'][i + 1].pool_info?.disk_status !== 'AVAILABLE'
+                      selectedEnclosure.elements['Array Device Slot'][i + 1].pool_info?.disk_status !== 'UNAVAIL'
                   }"
                 ></ix-icon>
               </div>
@@ -172,7 +172,7 @@
                 </ng-template>
               </li>
 
-              <li>
+              <!-- <li>
                 <strong>{{ 'Advanced Power Management' | translate }}:</strong>
                 &nbsp;&nbsp;&nbsp;{{ selectedDisk.advpowermgmt }}
               </li>
@@ -197,7 +197,7 @@
               <li>
                 <strong>{{ 'HDD Standby' | translate }}:</strong>
                 &nbsp;&nbsp;&nbsp;{{ selectedDisk.hddstandby }}
-              </li>
+              </li> -->
             </ul>
 
             <h3 class="header stats">{{ 'Stats' | translate }}</h3>
@@ -207,7 +207,7 @@
               fxLayoutAlign="center center"
             >
               <div>
-                <ix-disk-ui [data]="selectedDisk"></ix-disk-ui
+                <ix-disk-ui [data]="{ name: selectedDisk.dev, type: selectedDisk.type }"></ix-disk-ui
                 ><!-- disk icon + labels -->
                 <div class="capacity">{{ selectedSlot.size | ixFileSize }}</div>
               </div>
@@ -216,19 +216,19 @@
                   <li>
                     <strong>{{ 'Read Errors' | translate }}:</strong>
                     &nbsp;&nbsp;
-                    {{ selectedSlot.read_errors }}
+                    {{ selectedSlot.pool_info.disk_read_errors }}
                   </li>
 
                   <li>
                     <strong>{{ 'Write Errors' | translate }}:</strong>
                     &nbsp;&nbsp;
-                    {{ selectedSlot.write_errors }}
+                    {{ selectedSlot.pool_info.disk_write_errors }}
                   </li>
 
                   <li>
                     <strong>{{ 'Checksum Errors' | translate }}:</strong>
                     &nbsp;&nbsp;
-                    {{ selectedSlot.checksum_errors }}
+                    {{ selectedSlot.pool_info.disk_checksum_errors }}
                   </li>
                 </ul>
                 <ng-template #nostats>

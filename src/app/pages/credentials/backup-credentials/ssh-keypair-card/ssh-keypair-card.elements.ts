@@ -6,6 +6,7 @@ export const sshKeypairsCardElements = {
   anchorRouterLink: ['/credentials', 'backup-credentials'],
   elements: {
     sshKeypairs: {
+      synonyms: [T('Keypairs'), T('Public Key'), T('Private Key'), T('SSH Key')],
       anchor: 'ssh-keypairs',
     },
     add: {

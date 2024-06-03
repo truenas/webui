@@ -13,7 +13,7 @@
   </ng-container>
 </div>
 
-<div class="product-image-text">
+<div *ngIf="showProductImageText()" class="product-image-text">
   <strong *ngIf="productImage() && isHaLicensed()">(<ng-content></ng-content>)</strong>
   <strong *ngIf="isUnsupportedHardware()">({{ 'Unsupported Hardware' | translate }})</strong>
 </div>

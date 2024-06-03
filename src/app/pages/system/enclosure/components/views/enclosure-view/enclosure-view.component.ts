@@ -1,7 +1,9 @@
 import {
   ChangeDetectionStrategy, Component, computed,
+  signal,
 } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
+import { EnclosureView, OverviewInfo } from 'app/pages/system/enclosure/components/views/enclosure-view/disks-overview/disks-overview.component';
 import { EnclosureStore } from 'app/pages/system/enclosure/services/enclosure.store';
 import { enclosureComponentMap } from 'app/pages/system/enclosure/utils/enclosure-mappings';
 
@@ -13,7 +15,9 @@ import { enclosureComponentMap } from 'app/pages/system/enclosure/utils/enclosur
 })
 export class EnclosureViewComponent {
   readonly enclosure = this.store.selectedEnclosure;
+  readonly enclosures = this.store.enclosures;
   readonly selectedSlot = this.store.selectedSlot;
+  private readonly selectedView = signal<OverviewInfo['name']>(EnclosureView.Pools);
 
   protected readonly title = computed(() => {
     return this.translate.instant('Disks on {enclosure}', {
@@ -26,14 +30,26 @@ export class EnclosureViewComponent {
     private translate: TranslateService,
   ) {}
 
-  readonly machine = computed(() => {
+  readonly dashboardView = computed(() => {
+    const enclosure = this.enclosure();
+    const selectedView = this.selectedView();
+    const selectedSlot = this.selectedSlot();
     // TODO: Add error handling for missing models
     return {
-      component: enclosureComponentMap['M50'], // TODO: this.enclosure().model
+      component: enclosureComponentMap[this.enclosure().model],
       inputs: {
-        enclosure: this.enclosure(),
-        selectedSlot: this.selectedSlot(),
+        enclosure,
+        selectedSlot,
+        selectedView,
       },
     };
   });
+
+  changeView(viewName: OverviewInfo['name']): void {
+    this.selectedView.set(viewName);
+  }
+
+  enclosureSelected(enclosureId: string): void {
+    this.store.selectEnclosure(enclosureId);
+  }
 }
