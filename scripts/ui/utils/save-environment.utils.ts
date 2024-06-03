@@ -1,4 +1,4 @@
-import fs, { readFileSync } from 'fs';
+import fs, { existsSync, readFileSync } from 'fs';
 import { WebUiEnvironment } from 'environments/environment.interface';
 import { invert, merge } from 'lodash';
 import { DeepPartial } from 'utility-types';
@@ -54,10 +54,17 @@ export function getConfigTemplate(): string {
 }
 
 export function getCurrentConfigAsString(): string {
+  if (!existsSync(environmentTs)) {
+    return '';
+  }
   return readFileSync(environmentTs, 'utf8');
 }
 
 export function getCurrentConfig(): WebUiEnvironment {
+  if (!existsSync(environmentTs)) {
+    return {} as WebUiEnvironment;
+  }
+
   // eslint-disable-next-line max-len
   // eslint-disable-next-line @typescript-eslint/no-var-requires,@typescript-eslint/no-unsafe-member-access,global-require,import/no-dynamic-require
   return require(environmentTs).environment;
