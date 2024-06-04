@@ -35,7 +35,7 @@ function validateConfig(): void {
     process.exit(1);
   }
 
-  const hasRemotePlaceholder = currentConfig.includes('$REMOTE$');
+  const hasRemotePlaceholder = currentConfig.includes('_REMOTE_');
   if (hasRemotePlaceholder) {
     adviseToSetRemote();
   }

@@ -16,7 +16,7 @@ interface ConfigVariables {
 }
 
 const defaults: ConfigVariables = {
-  remote: '$REMOTE$',
+  remote: '_REMOTE_',
   mockConfig: {
     enabled: false,
     controllerModel: 'M40',
