@@ -1,20 +1,6 @@
 [
   {
     "hierarchy": [
-      "Toolbar",
-      "Status of TrueCommand"
-    ],
-    "synonyms": [
-      "TrueCommand"
-    ],
-    "requiredRoles": [],
-    "routerLink": null,
-    "anchor": "tc-status",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
       "System",
       "Shell"
     ],
@@ -223,6 +209,22 @@
   },
   {
     "hierarchy": [
+      "Data Protection"
+    ],
+    "synonyms": [
+      "Tasks"
+    ],
+    "requiredRoles": [],
+    "anchorRouterLink": [
+      "/data-protection"
+    ],
+    "routerLink": null,
+    "anchor": "data-protection",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
       "Credentials",
       "Directory Services",
       "Configure Active Directory"
@@ -279,17 +281,15 @@
   },
   {
     "hierarchy": [
-      "Data Protection"
+      "Toolbar",
+      "Status of TrueCommand"
     ],
     "synonyms": [
-      "Tasks"
+      "TrueCommand"
     ],
     "requiredRoles": [],
-    "anchorRouterLink": [
-      "/data-protection"
-    ],
     "routerLink": null,
-    "anchor": "data-protection",
+    "anchor": "tc-status",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -385,42 +385,6 @@
   {
     "hierarchy": [
       "System",
-      "Advanced"
-    ],
-    "synonyms": [
-      "Settings"
-    ],
-    "requiredRoles": [],
-    "anchorRouterLink": [
-      "/system",
-      "advanced"
-    ],
-    "routerLink": null,
-    "anchor": "system-advanced",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "System",
-      "General"
-    ],
-    "synonyms": [
-      "Settings"
-    ],
-    "requiredRoles": [],
-    "anchorRouterLink": [
-      "/system",
-      "general"
-    ],
-    "routerLink": null,
-    "anchor": "system-general",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "System",
       "Failover"
     ],
     "synonyms": [],
@@ -469,6 +433,42 @@
     ],
     "routerLink": null,
     "anchor": "sync-from-peer",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "System",
+      "General"
+    ],
+    "synonyms": [
+      "Settings"
+    ],
+    "requiredRoles": [],
+    "anchorRouterLink": [
+      "/system",
+      "general"
+    ],
+    "routerLink": null,
+    "anchor": "system-general",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "System",
+      "Advanced"
+    ],
+    "synonyms": [
+      "Settings"
+    ],
+    "requiredRoles": [],
+    "anchorRouterLink": [
+      "/system",
+      "advanced"
+    ],
+    "routerLink": null,
+    "anchor": "system-advanced",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -663,222 +663,6 @@
     ],
     "routerLink": null,
     "anchor": "credentials-backup-credentials",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "Toolbar",
-      "Send Feedback"
-    ],
-    "synonyms": [
-      "Bug",
-      "Feature Request",
-      "Suggestion",
-      "Improvement",
-      "Review",
-      "Report Bug",
-      "Jira",
-      "Ticket",
-      "Issue",
-      "Defect",
-      "File Ticket"
-    ],
-    "requiredRoles": [],
-    "routerLink": null,
-    "anchor": "send-feedback",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "Toolbar",
-      "Alerts"
-    ],
-    "synonyms": [
-      "Notifications"
-    ],
-    "requiredRoles": [],
-    "routerLink": null,
-    "anchor": "alerts",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "Credentials",
-      "Two-Factor Authentication"
-    ],
-    "synonyms": [],
-    "requiredRoles": [],
-    "anchorRouterLink": [
-      "/credentials",
-      "two-factor"
-    ],
-    "routerLink": null,
-    "anchor": "credentials-two-factor-authentication",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "Credentials",
-      "Two-Factor Authentication",
-      "Configure 2FA Secret"
-    ],
-    "synonyms": [],
-    "requiredRoles": [],
-    "anchorRouterLink": [
-      "/credentials",
-      "two-factor"
-    ],
-    "routerLink": null,
-    "anchor": "configure-2fa-secret",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "System",
-      "Boot",
-      "Boot Pool Status"
-    ],
-    "synonyms": [],
-    "requiredRoles": [],
-    "anchorRouterLink": [
-      "/system",
-      "boot",
-      "status"
-    ],
-    "routerLink": null,
-    "anchor": "system-boot-boot-pool-status",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "System",
-      "Boot Environments",
-      "Stats/Settings"
-    ],
-    "synonyms": [
-      "Create boot environment"
-    ],
-    "requiredRoles": [
-      "FULL_ADMIN"
-    ],
-    "anchorRouterLink": [
-      "/system",
-      "boot"
-    ],
-    "routerLink": null,
-    "anchor": "stats/settings",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "System",
-      "Boot Environments",
-      "Scrub Boot Pool"
-    ],
-    "synonyms": [
-      "Create boot environment"
-    ],
-    "requiredRoles": [
-      "FULL_ADMIN"
-    ],
-    "anchorRouterLink": [
-      "/system",
-      "boot"
-    ],
-    "routerLink": null,
-    "anchor": "scrub-boot-pool",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "System",
-      "Boot Environments"
-    ],
-    "synonyms": [
-      "Create boot environment"
-    ],
-    "requiredRoles": [],
-    "anchorRouterLink": [
-      "/system",
-      "boot"
-    ],
-    "routerLink": null,
-    "anchor": "system-boot-environments",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "System",
-      "Alert Settings",
-      "Alert Services"
-    ],
-    "synonyms": [
-      "Alerts",
-      "Configure Notifications",
-      "Configure Alerts"
-    ],
-    "requiredRoles": [],
-    "anchorRouterLink": [
-      "/system",
-      "alert-settings",
-      "services"
-    ],
-    "routerLink": null,
-    "anchor": "system-alert-settings-alert-services",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "System",
-      "Alert Settings",
-      "Alert Services",
-      "Add"
-    ],
-    "synonyms": [
-      "Alerts",
-      "Configure Notifications",
-      "Configure Alerts",
-      "Create Alert",
-      "Add Alert",
-      "New Alert",
-      "Notifications"
-    ],
-    "requiredRoles": [
-      "ALERT_LIST_WRITE"
-    ],
-    "anchorRouterLink": [
-      "/system",
-      "alert-settings",
-      "services"
-    ],
-    "routerLink": null,
-    "anchor": "add",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "System",
-      "Advanced",
-      "Save Debug"
-    ],
-    "synonyms": [],
-    "requiredRoles": [],
-    "anchorRouterLink": [
-      "/system/advanced"
-    ],
-    "routerLink": null,
-    "anchor": "save-debug",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -1088,6 +872,229 @@
   },
   {
     "hierarchy": [
+      "System",
+      "Boot",
+      "Boot Pool Status"
+    ],
+    "synonyms": [],
+    "requiredRoles": [],
+    "anchorRouterLink": [
+      "/system",
+      "boot",
+      "status"
+    ],
+    "routerLink": null,
+    "anchor": "system-boot-boot-pool-status",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "System",
+      "Boot Environments",
+      "Stats/Settings"
+    ],
+    "synonyms": [
+      "Create boot environment"
+    ],
+    "requiredRoles": [
+      "FULL_ADMIN"
+    ],
+    "anchorRouterLink": [
+      "/system",
+      "boot"
+    ],
+    "routerLink": null,
+    "anchor": "stats/settings",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "System",
+      "Boot Environments",
+      "Scrub Boot Pool"
+    ],
+    "synonyms": [
+      "Create boot environment"
+    ],
+    "requiredRoles": [
+      "FULL_ADMIN"
+    ],
+    "anchorRouterLink": [
+      "/system",
+      "boot"
+    ],
+    "routerLink": null,
+    "anchor": "scrub-boot-pool",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "System",
+      "Boot Environments"
+    ],
+    "synonyms": [
+      "Create boot environment"
+    ],
+    "requiredRoles": [],
+    "anchorRouterLink": [
+      "/system",
+      "boot"
+    ],
+    "routerLink": null,
+    "anchor": "system-boot-environments",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "System",
+      "Alert Settings",
+      "Alert Services"
+    ],
+    "synonyms": [
+      "Alerts",
+      "Configure Notifications",
+      "Configure Alerts"
+    ],
+    "requiredRoles": [],
+    "anchorRouterLink": [
+      "/system",
+      "alert-settings",
+      "services"
+    ],
+    "routerLink": null,
+    "anchor": "system-alert-settings-alert-services",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "System",
+      "Alert Settings",
+      "Alert Services",
+      "Add"
+    ],
+    "synonyms": [
+      "Alerts",
+      "Configure Notifications",
+      "Configure Alerts",
+      "Create Alert",
+      "Add Alert",
+      "New Alert",
+      "Notifications"
+    ],
+    "requiredRoles": [
+      "ALERT_LIST_WRITE"
+    ],
+    "anchorRouterLink": [
+      "/system",
+      "alert-settings",
+      "services"
+    ],
+    "routerLink": null,
+    "anchor": "add",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Credentials",
+      "Two-Factor Authentication"
+    ],
+    "synonyms": [],
+    "requiredRoles": [],
+    "anchorRouterLink": [
+      "/credentials",
+      "two-factor"
+    ],
+    "routerLink": null,
+    "anchor": "credentials-two-factor-authentication",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Credentials",
+      "Two-Factor Authentication",
+      "Configure 2FA Secret"
+    ],
+    "synonyms": [],
+    "requiredRoles": [],
+    "anchorRouterLink": [
+      "/credentials",
+      "two-factor"
+    ],
+    "routerLink": null,
+    "anchor": "configure-2fa-secret",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "System",
+      "Advanced",
+      "Save Debug"
+    ],
+    "synonyms": [],
+    "requiredRoles": [],
+    "anchorRouterLink": [
+      "/system/advanced"
+    ],
+    "routerLink": null,
+    "anchor": "save-debug",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Shares",
+      "SMB",
+      "Create SMB Share"
+    ],
+    "synonyms": [
+      "Samba",
+      "Add SMB Share",
+      "New SMB Share",
+      "Create Share",
+      "Add Share",
+      "New Share"
+    ],
+    "requiredRoles": [
+      "SHARING_SMB_WRITE",
+      "SHARING_WRITE"
+    ],
+    "anchorRouterLink": [
+      "/sharing",
+      "smb"
+    ],
+    "routerLink": null,
+    "anchor": "create-smb-share",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Shares",
+      "SMB"
+    ],
+    "synonyms": [
+      "Samba"
+    ],
+    "requiredRoles": [],
+    "anchorRouterLink": [
+      "/sharing",
+      "smb"
+    ],
+    "routerLink": null,
+    "anchor": "shares-smb",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
       "Shares",
       "SMB",
       "SMB Status",
@@ -1176,69 +1183,6 @@
   {
     "hierarchy": [
       "Shares",
-      "SMB",
-      "Create SMB Share"
-    ],
-    "synonyms": [
-      "Samba",
-      "Add SMB Share",
-      "New SMB Share",
-      "Create Share",
-      "Add Share",
-      "New Share"
-    ],
-    "requiredRoles": [
-      "SHARING_SMB_WRITE",
-      "SHARING_WRITE"
-    ],
-    "anchorRouterLink": [
-      "/sharing",
-      "smb"
-    ],
-    "routerLink": null,
-    "anchor": "create-smb-share",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "Shares",
-      "SMB"
-    ],
-    "synonyms": [
-      "Samba"
-    ],
-    "requiredRoles": [],
-    "anchorRouterLink": [
-      "/sharing",
-      "smb"
-    ],
-    "routerLink": null,
-    "anchor": "shares-smb",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "Shares",
-      "NFS",
-      "NFS Sessions"
-    ],
-    "synonyms": [],
-    "requiredRoles": [],
-    "anchorRouterLink": [
-      "/sharing",
-      "nfs",
-      "sessions"
-    ],
-    "routerLink": null,
-    "anchor": "shares-nfs-nfs-sessions",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "Shares",
       "NFS",
       "Create NFS Share"
     ],
@@ -1275,6 +1219,24 @@
     ],
     "routerLink": null,
     "anchor": "shares-nfs",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Shares",
+      "NFS",
+      "NFS Sessions"
+    ],
+    "synonyms": [],
+    "requiredRoles": [],
+    "anchorRouterLink": [
+      "/sharing",
+      "nfs",
+      "sessions"
+    ],
+    "routerLink": null,
+    "anchor": "shares-nfs-nfs-sessions",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -1576,6 +1538,38 @@
   {
     "hierarchy": [
       "Network",
+      "Ipmi"
+    ],
+    "synonyms": [],
+    "requiredRoles": [],
+    "anchorRouterLink": [
+      "/network"
+    ],
+    "routerLink": null,
+    "anchor": "ipmi",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Network",
+      "Show Events"
+    ],
+    "synonyms": [
+      "Show Ipmi Events"
+    ],
+    "requiredRoles": [],
+    "anchorRouterLink": [
+      "/network"
+    ],
+    "routerLink": null,
+    "anchor": "show-events",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Network",
       "Global Configuration Settings"
     ],
     "synonyms": [
@@ -1638,33 +1632,17 @@
   },
   {
     "hierarchy": [
-      "Network",
-      "Ipmi"
+      "Data Protection",
+      "VMware Snapshots"
     ],
     "synonyms": [],
     "requiredRoles": [],
     "anchorRouterLink": [
-      "/network"
+      "/data-protection",
+      "vmware-snapshots"
     ],
     "routerLink": null,
-    "anchor": "ipmi",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "Network",
-      "Show Events"
-    ],
-    "synonyms": [
-      "Show Ipmi Events"
-    ],
-    "requiredRoles": [],
-    "anchorRouterLink": [
-      "/network"
-    ],
-    "routerLink": null,
-    "anchor": "show-events",
+    "anchor": "data-protection-vmware-snapshots",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -1707,438 +1685,6 @@
     ],
     "routerLink": null,
     "anchor": "interfaces",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "Directory Services",
-      "Kerberos Realms",
-      "Add"
-    ],
-    "synonyms": [
-      "Add Kerberos Realm",
-      "Create Kerberos Realm",
-      "New Kerberos Realm",
-      "Kerberos Realm"
-    ],
-    "requiredRoles": [
-      "DIRECTORY_SERVICE_WRITE"
-    ],
-    "anchorRouterLink": [
-      "/directoryservice",
-      "kerberosrealms"
-    ],
-    "routerLink": null,
-    "anchor": "add-kerberos-realm",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "Directory Services",
-      "Kerberos Realms"
-    ],
-    "synonyms": [],
-    "requiredRoles": [],
-    "anchorRouterLink": [
-      "/directoryservice",
-      "kerberosrealms"
-    ],
-    "routerLink": null,
-    "anchor": "directory-services-kerberos-realms",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "Directory Services",
-      "Idmap",
-      "Add"
-    ],
-    "synonyms": [
-      "Add Idmap",
-      "Create Idmap",
-      "New Idmap"
-    ],
-    "requiredRoles": [
-      "DIRECTORY_SERVICE_WRITE"
-    ],
-    "anchorRouterLink": [
-      "/directoryservice",
-      "idmap"
-    ],
-    "routerLink": null,
-    "anchor": "add-idmap",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "Directory Services",
-      "Idmap"
-    ],
-    "synonyms": [],
-    "requiredRoles": [],
-    "anchorRouterLink": [
-      "/directoryservice",
-      "idmap"
-    ],
-    "routerLink": null,
-    "anchor": "directory-services-idmap",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "Directory Services",
-      "Active Directory"
-    ],
-    "synonyms": [
-      "AD"
-    ],
-    "requiredRoles": [],
-    "anchorRouterLink": [
-      "/directoryservice",
-      "activedirectory"
-    ],
-    "routerLink": null,
-    "anchor": "directory-services-active-directory",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "Datasets"
-    ],
-    "synonyms": [
-      "Manage Datasets"
-    ],
-    "requiredRoles": [],
-    "anchorRouterLink": [
-      "/datasets"
-    ],
-    "routerLink": null,
-    "anchor": "datasets",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "Datasets",
-      "Add Zvol"
-    ],
-    "synonyms": [
-      "Manage Datasets",
-      "Add Volume",
-      "Create Zvol",
-      "New Zvol"
-    ],
-    "requiredRoles": [
-      "DATASET_WRITE"
-    ],
-    "anchorRouterLink": [
-      "/datasets"
-    ],
-    "routerLink": null,
-    "anchor": "add-zvol",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "Datasets",
-      "Add Dataset"
-    ],
-    "synonyms": [
-      "Manage Datasets",
-      "Add Filesystem",
-      "Create Dataset",
-      "New Dataset"
-    ],
-    "requiredRoles": [
-      "DATASET_WRITE"
-    ],
-    "anchorRouterLink": [
-      "/datasets"
-    ],
-    "routerLink": null,
-    "anchor": "add-dataset",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "Datasets",
-      "Dataset Details"
-    ],
-    "synonyms": [
-      "Manage Datasets",
-      "Dataset Information"
-    ],
-    "requiredRoles": [],
-    "anchorRouterLink": [
-      "/datasets"
-    ],
-    "routerLink": null,
-    "anchor": "dataset-details",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "Datasets",
-      "Dataset Space Management"
-    ],
-    "synonyms": [
-      "Manage Datasets",
-      "Dataset Capacity Management"
-    ],
-    "requiredRoles": [],
-    "anchorRouterLink": [
-      "/datasets"
-    ],
-    "routerLink": null,
-    "anchor": "dataset-space-management",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "Datasets",
-      "ZFS Encryption"
-    ],
-    "synonyms": [
-      "Manage Datasets",
-      "Dataset ZFS Encryption"
-    ],
-    "requiredRoles": [],
-    "anchorRouterLink": [
-      "/datasets"
-    ],
-    "routerLink": null,
-    "anchor": "zfs-encryption",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "Datasets",
-      "Data Protection"
-    ],
-    "synonyms": [
-      "Manage Datasets",
-      "Dataset Data Protection"
-    ],
-    "requiredRoles": [],
-    "anchorRouterLink": [
-      "/datasets"
-    ],
-    "routerLink": null,
-    "anchor": "data-protection",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "Datasets",
-      "Roles"
-    ],
-    "synonyms": [
-      "Manage Datasets",
-      "Dataset Roles"
-    ],
-    "requiredRoles": [],
-    "anchorRouterLink": [
-      "/datasets"
-    ],
-    "routerLink": null,
-    "anchor": "roles",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "Datasets",
-      "Permissions"
-    ],
-    "synonyms": [
-      "Manage Datasets",
-      "Dataset Permissions",
-      "ACL"
-    ],
-    "requiredRoles": [],
-    "anchorRouterLink": [
-      "/datasets"
-    ],
-    "routerLink": null,
-    "anchor": "permissions",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "Datasets",
-      "Create Snapshot"
-    ],
-    "synonyms": [
-      "Manage Datasets",
-      "Take Snapshot"
-    ],
-    "requiredRoles": [
-      "SNAPSHOT_WRITE"
-    ],
-    "anchorRouterLink": [
-      "/datasets"
-    ],
-    "routerLink": null,
-    "anchor": "create-snapshot",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "Datasets",
-      "Manage Snapshots"
-    ],
-    "synonyms": [
-      "Manage Datasets",
-      "Snapshot Manager"
-    ],
-    "requiredRoles": [],
-    "anchorRouterLink": [
-      "/datasets"
-    ],
-    "routerLink": [
-      "/datasets/snapshots",
-      "dataset.id"
-    ],
-    "anchor": "manage-snapshots",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "Datasets",
-      "Manage Snapshots Tasks"
-    ],
-    "synonyms": [
-      "Manage Datasets",
-      "Snapshot Task Manager"
-    ],
-    "requiredRoles": [],
-    "anchorRouterLink": [
-      "/datasets"
-    ],
-    "routerLink": [
-      "/data-protection/snapshot",
-      "dataset.id"
-    ],
-    "anchor": "manage-snapshots-tasks",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "Datasets",
-      "Manage Replication Tasks"
-    ],
-    "synonyms": [
-      "Manage Datasets",
-      "Replication Task Manager"
-    ],
-    "requiredRoles": [],
-    "anchorRouterLink": [
-      "/datasets"
-    ],
-    "routerLink": [
-      "/data-protection/replication",
-      "dataset.id"
-    ],
-    "anchor": "manage-replication-tasks",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "Datasets",
-      "Manage Rsync Tasks"
-    ],
-    "synonyms": [
-      "Manage Datasets",
-      "Rsync Task Manager"
-    ],
-    "requiredRoles": [],
-    "anchorRouterLink": [
-      "/datasets"
-    ],
-    "routerLink": [
-      "/data-protection/rsync",
-      "dataset.id"
-    ],
-    "anchor": "manage-rsync-tasks",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "Data Protection",
-      "VMware Snapshots"
-    ],
-    "synonyms": [],
-    "requiredRoles": [],
-    "anchorRouterLink": [
-      "/data-protection",
-      "vmware-snapshots"
-    ],
-    "routerLink": null,
-    "anchor": "data-protection-vmware-snapshots",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "Datasets",
-      "Manage User Quotas"
-    ],
-    "synonyms": [
-      "Manage Datasets",
-      "User Quota Manager"
-    ],
-    "requiredRoles": [],
-    "anchorRouterLink": [
-      "/datasets"
-    ],
-    "routerLink": [
-      "/",
-      "datasets",
-      "dataset.id",
-      "user-quotas"
-    ],
-    "anchor": "manage-user-quotas",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "Datasets",
-      "Manage Group Quotas"
-    ],
-    "synonyms": [
-      "Manage Datasets",
-      "Group Quota Manager"
-    ],
-    "requiredRoles": [],
-    "anchorRouterLink": [
-      "/datasets"
-    ],
-    "routerLink": [
-      "/",
-      "datasets",
-      "dataset.id",
-      "group-quotas"
-    ],
-    "anchor": "manage-group-quotas",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -2259,6 +1805,133 @@
     ],
     "routerLink": null,
     "anchor": "data-protection-periodic-s.m.a.r.t.-tests",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Data Protection",
+      "Scrub Tasks",
+      "Adjust Scrub/Resilver Priority"
+    ],
+    "synonyms": [
+      "Adjust Scrub Priority",
+      "Adjust Resilver Priority"
+    ],
+    "requiredRoles": [
+      "FULL_ADMIN"
+    ],
+    "anchorRouterLink": [
+      "/data-protection"
+    ],
+    "routerLink": [
+      "/data-protection",
+      "scrub",
+      "priority"
+    ],
+    "anchor": "adjust-scrub/resilver-priority",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Data Protection",
+      "Scrub Tasks",
+      "Add"
+    ],
+    "synonyms": [
+      "Add Scrub Task",
+      "Create Scrub Task",
+      "New Scrub Task",
+      "Task"
+    ],
+    "requiredRoles": [
+      "FULL_ADMIN"
+    ],
+    "anchorRouterLink": [
+      "/data-protection",
+      "scrub"
+    ],
+    "routerLink": null,
+    "anchor": "add",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Data Protection",
+      "Scrub Tasks"
+    ],
+    "synonyms": [
+      "Tasks"
+    ],
+    "requiredRoles": [],
+    "anchorRouterLink": [
+      "/data-protection",
+      "scrub"
+    ],
+    "routerLink": null,
+    "anchor": "data-protection-scrub-tasks",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Data Protection",
+      "Scrub Tasks",
+      "Resilver Priority"
+    ],
+    "synonyms": [],
+    "requiredRoles": [],
+    "anchorRouterLink": [
+      "/data-protection",
+      "scrub",
+      "priority"
+    ],
+    "routerLink": null,
+    "anchor": "data-protection-scrub-tasks-resilver-priority",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Data Protection",
+      "Rsync Tasks",
+      "Add"
+    ],
+    "synonyms": [
+      "Add Rsync Task",
+      "Create Rsync Task",
+      "New Rsync Task",
+      "Task"
+    ],
+    "requiredRoles": [
+      "FULL_ADMIN"
+    ],
+    "anchorRouterLink": [
+      "/data-protection",
+      "rsync"
+    ],
+    "routerLink": null,
+    "anchor": "add",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Data Protection",
+      "Rsync Tasks"
+    ],
+    "synonyms": [
+      "Tasks"
+    ],
+    "requiredRoles": [],
+    "anchorRouterLink": [
+      "/data-protection",
+      "rsync"
+    ],
+    "routerLink": null,
+    "anchor": "data-protection-rsync-tasks",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -2429,107 +2102,136 @@
   },
   {
     "hierarchy": [
-      "Data Protection",
-      "Rsync Tasks",
+      "Directory Services",
+      "Kerberos Realms",
       "Add"
     ],
     "synonyms": [
-      "Add Rsync Task",
-      "Create Rsync Task",
-      "New Rsync Task",
-      "Task"
+      "Add Kerberos Realm",
+      "Create Kerberos Realm",
+      "New Kerberos Realm",
+      "Kerberos Realm"
     ],
     "requiredRoles": [
-      "FULL_ADMIN"
+      "DIRECTORY_SERVICE_WRITE"
     ],
     "anchorRouterLink": [
-      "/data-protection",
-      "rsync"
+      "/directoryservice",
+      "kerberosrealms"
     ],
     "routerLink": null,
-    "anchor": "add",
+    "anchor": "add-kerberos-realm",
     "triggerAnchor": null,
     "section": "ui"
   },
   {
     "hierarchy": [
-      "Data Protection",
-      "Rsync Tasks"
-    ],
-    "synonyms": [
-      "Tasks"
-    ],
-    "requiredRoles": [],
-    "anchorRouterLink": [
-      "/data-protection",
-      "rsync"
-    ],
-    "routerLink": null,
-    "anchor": "data-protection-rsync-tasks",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "Data Protection",
-      "Scrub Tasks",
-      "Adjust Scrub/Resilver Priority"
-    ],
-    "synonyms": [
-      "Adjust Scrub Priority",
-      "Adjust Resilver Priority"
-    ],
-    "requiredRoles": [
-      "FULL_ADMIN"
-    ],
-    "anchorRouterLink": [
-      "/data-protection"
-    ],
-    "routerLink": [
-      "/data-protection",
-      "scrub",
-      "priority"
-    ],
-    "anchor": "adjust-scrub/resilver-priority",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "Data Protection",
-      "Scrub Tasks",
-      "Resilver Priority"
+      "Directory Services",
+      "Kerberos Realms"
     ],
     "synonyms": [],
     "requiredRoles": [],
     "anchorRouterLink": [
-      "/data-protection",
-      "scrub",
-      "priority"
+      "/directoryservice",
+      "kerberosrealms"
     ],
     "routerLink": null,
-    "anchor": "data-protection-scrub-tasks-resilver-priority",
+    "anchor": "directory-services-kerberos-realms",
     "triggerAnchor": null,
     "section": "ui"
   },
   {
     "hierarchy": [
-      "Data Protection",
-      "Scrub Tasks",
+      "Directory Services",
+      "Idmap",
       "Add"
     ],
     "synonyms": [
-      "Add Scrub Task",
-      "Create Scrub Task",
-      "New Scrub Task",
-      "Task"
+      "Add Idmap",
+      "Create Idmap",
+      "New Idmap"
     ],
     "requiredRoles": [
-      "FULL_ADMIN"
+      "DIRECTORY_SERVICE_WRITE"
     ],
     "anchorRouterLink": [
-      "/data-protection",
-      "scrub"
+      "/directoryservice",
+      "idmap"
+    ],
+    "routerLink": null,
+    "anchor": "add-idmap",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Directory Services",
+      "Idmap"
+    ],
+    "synonyms": [],
+    "requiredRoles": [],
+    "anchorRouterLink": [
+      "/directoryservice",
+      "idmap"
+    ],
+    "routerLink": null,
+    "anchor": "directory-services-idmap",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Directory Services",
+      "Active Directory"
+    ],
+    "synonyms": [
+      "AD"
+    ],
+    "requiredRoles": [],
+    "anchorRouterLink": [
+      "/directoryservice",
+      "activedirectory"
+    ],
+    "routerLink": null,
+    "anchor": "directory-services-active-directory",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Applications",
+      "Installed"
+    ],
+    "synonyms": [
+      "Apps"
+    ],
+    "requiredRoles": [],
+    "anchorRouterLink": [
+      "/apps",
+      "installed"
+    ],
+    "routerLink": null,
+    "anchor": "applications-installed",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Applications",
+      "Discover",
+      "Catalogs",
+      "Add"
+    ],
+    "synonyms": [
+      "Add Catalog"
+    ],
+    "requiredRoles": [
+      "CATALOG_WRITE"
+    ],
+    "anchorRouterLink": [
+      "/apps",
+      "available",
+      "catalogs"
     ],
     "routerLink": null,
     "anchor": "add",
@@ -2538,19 +2240,55 @@
   },
   {
     "hierarchy": [
-      "Data Protection",
-      "Scrub Tasks"
+      "Applications",
+      "Discover",
+      "Catalogs"
+    ],
+    "synonyms": [],
+    "requiredRoles": [],
+    "anchorRouterLink": [
+      "/apps",
+      "available",
+      "catalogs"
+    ],
+    "routerLink": null,
+    "anchor": "applications-discover-catalogs",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Applications",
+      "Discover"
     ],
     "synonyms": [
-      "Tasks"
+      "Apps"
     ],
     "requiredRoles": [],
     "anchorRouterLink": [
-      "/data-protection",
-      "scrub"
+      "/apps",
+      "available"
     ],
     "routerLink": null,
-    "anchor": "data-protection-scrub-tasks",
+    "anchor": "applications-discover",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "System",
+      "Audit"
+    ],
+    "synonyms": [
+      "Logs"
+    ],
+    "requiredRoles": [],
+    "anchorRouterLink": [
+      "/system",
+      "audit"
+    ],
+    "routerLink": null,
+    "anchor": "system-audit",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -2851,33 +2589,320 @@
   },
   {
     "hierarchy": [
-      "System",
-      "Audit"
+      "Datasets"
     ],
     "synonyms": [
-      "Logs"
+      "Manage Datasets"
     ],
     "requiredRoles": [],
     "anchorRouterLink": [
-      "/system",
-      "audit"
+      "/datasets"
     ],
     "routerLink": null,
-    "anchor": "system-audit",
+    "anchor": "datasets",
     "triggerAnchor": null,
     "section": "ui"
   },
   {
     "hierarchy": [
-      "API Keys"
+      "Datasets",
+      "Create Snapshot"
     ],
-    "synonyms": [],
-    "requiredRoles": [],
+    "synonyms": [
+      "Manage Datasets",
+      "Take Snapshot"
+    ],
+    "requiredRoles": [
+      "SNAPSHOT_WRITE"
+    ],
     "anchorRouterLink": [
-      "/apikeys"
+      "/datasets"
     ],
     "routerLink": null,
-    "anchor": "api-keys",
+    "anchor": "create-snapshot",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Datasets",
+      "Manage Snapshots"
+    ],
+    "synonyms": [
+      "Manage Datasets",
+      "Snapshot Manager"
+    ],
+    "requiredRoles": [],
+    "anchorRouterLink": [
+      "/datasets"
+    ],
+    "routerLink": [
+      "/datasets/snapshots",
+      "dataset.id"
+    ],
+    "anchor": "manage-snapshots",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Datasets",
+      "Manage Snapshots Tasks"
+    ],
+    "synonyms": [
+      "Manage Datasets",
+      "Snapshot Task Manager"
+    ],
+    "requiredRoles": [],
+    "anchorRouterLink": [
+      "/datasets"
+    ],
+    "routerLink": [
+      "/data-protection/snapshot",
+      "dataset.id"
+    ],
+    "anchor": "manage-snapshots-tasks",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Datasets",
+      "Manage Replication Tasks"
+    ],
+    "synonyms": [
+      "Manage Datasets",
+      "Replication Task Manager"
+    ],
+    "requiredRoles": [],
+    "anchorRouterLink": [
+      "/datasets"
+    ],
+    "routerLink": [
+      "/data-protection/replication",
+      "dataset.id"
+    ],
+    "anchor": "manage-replication-tasks",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Datasets",
+      "Manage Rsync Tasks"
+    ],
+    "synonyms": [
+      "Manage Datasets",
+      "Rsync Task Manager"
+    ],
+    "requiredRoles": [],
+    "anchorRouterLink": [
+      "/datasets"
+    ],
+    "routerLink": [
+      "/data-protection/rsync",
+      "dataset.id"
+    ],
+    "anchor": "manage-rsync-tasks",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Datasets",
+      "Add Zvol"
+    ],
+    "synonyms": [
+      "Manage Datasets",
+      "Add Volume",
+      "Create Zvol",
+      "New Zvol"
+    ],
+    "requiredRoles": [
+      "DATASET_WRITE"
+    ],
+    "anchorRouterLink": [
+      "/datasets"
+    ],
+    "routerLink": null,
+    "anchor": "add-zvol",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Datasets",
+      "Add Dataset"
+    ],
+    "synonyms": [
+      "Manage Datasets",
+      "Add Filesystem",
+      "Create Dataset",
+      "New Dataset"
+    ],
+    "requiredRoles": [
+      "DATASET_WRITE"
+    ],
+    "anchorRouterLink": [
+      "/datasets"
+    ],
+    "routerLink": null,
+    "anchor": "add-dataset",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Datasets",
+      "Dataset Details"
+    ],
+    "synonyms": [
+      "Manage Datasets",
+      "Dataset Information"
+    ],
+    "requiredRoles": [],
+    "anchorRouterLink": [
+      "/datasets"
+    ],
+    "routerLink": null,
+    "anchor": "dataset-details",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Datasets",
+      "Dataset Space Management"
+    ],
+    "synonyms": [
+      "Manage Datasets",
+      "Dataset Capacity Management"
+    ],
+    "requiredRoles": [],
+    "anchorRouterLink": [
+      "/datasets"
+    ],
+    "routerLink": null,
+    "anchor": "dataset-space-management",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Datasets",
+      "ZFS Encryption"
+    ],
+    "synonyms": [
+      "Manage Datasets",
+      "Dataset ZFS Encryption"
+    ],
+    "requiredRoles": [],
+    "anchorRouterLink": [
+      "/datasets"
+    ],
+    "routerLink": null,
+    "anchor": "zfs-encryption",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Datasets",
+      "Data Protection"
+    ],
+    "synonyms": [
+      "Manage Datasets",
+      "Dataset Data Protection"
+    ],
+    "requiredRoles": [],
+    "anchorRouterLink": [
+      "/datasets"
+    ],
+    "routerLink": null,
+    "anchor": "data-protection",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Datasets",
+      "Roles"
+    ],
+    "synonyms": [
+      "Manage Datasets",
+      "Dataset Roles"
+    ],
+    "requiredRoles": [],
+    "anchorRouterLink": [
+      "/datasets"
+    ],
+    "routerLink": null,
+    "anchor": "roles",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Datasets",
+      "Permissions"
+    ],
+    "synonyms": [
+      "Manage Datasets",
+      "Dataset Permissions",
+      "ACL"
+    ],
+    "requiredRoles": [],
+    "anchorRouterLink": [
+      "/datasets"
+    ],
+    "routerLink": null,
+    "anchor": "permissions",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Datasets",
+      "Manage User Quotas"
+    ],
+    "synonyms": [
+      "Manage Datasets",
+      "User Quota Manager"
+    ],
+    "requiredRoles": [],
+    "anchorRouterLink": [
+      "/datasets"
+    ],
+    "routerLink": [
+      "/",
+      "datasets",
+      "dataset.id",
+      "user-quotas"
+    ],
+    "anchor": "manage-user-quotas",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Datasets",
+      "Manage Group Quotas"
+    ],
+    "synonyms": [
+      "Manage Datasets",
+      "Group Quota Manager"
+    ],
+    "requiredRoles": [],
+    "anchorRouterLink": [
+      "/datasets"
+    ],
+    "routerLink": [
+      "/",
+      "datasets",
+      "dataset.id",
+      "group-quotas"
+    ],
+    "anchor": "manage-group-quotas",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -3007,215 +3032,182 @@
   },
   {
     "hierarchy": [
-      "Applications",
-      "Installed"
+      "API Keys"
     ],
-    "synonyms": [
-      "Apps"
-    ],
+    "synonyms": [],
     "requiredRoles": [],
     "anchorRouterLink": [
-      "/apps",
-      "installed"
+      "/apikeys"
     ],
     "routerLink": null,
-    "anchor": "applications-installed",
+    "anchor": "api-keys",
     "triggerAnchor": null,
     "section": "ui"
   },
   {
     "hierarchy": [
-      "Applications",
-      "Discover",
-      "Catalogs",
-      "Add"
+      "Toolbar",
+      "Send Feedback"
     ],
     "synonyms": [
-      "Add Catalog"
+      "Bug",
+      "Feature Request",
+      "Suggestion",
+      "Improvement",
+      "Review",
+      "Report Bug",
+      "Jira",
+      "Ticket",
+      "Issue",
+      "Defect",
+      "File Ticket"
     ],
+    "requiredRoles": [],
+    "routerLink": null,
+    "anchor": "send-feedback",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Toolbar",
+      "Alerts"
+    ],
+    "synonyms": [
+      "Notifications"
+    ],
+    "requiredRoles": [],
+    "routerLink": null,
+    "anchor": "alerts",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Storage",
+      "Usage"
+    ],
+    "synonyms": [],
+    "requiredRoles": [],
+    "anchorRouterLink": [
+      "/storage"
+    ],
+    "routerLink": null,
+    "anchor": "usage",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Storage",
+      "Topology"
+    ],
+    "synonyms": [],
+    "requiredRoles": [],
+    "anchorRouterLink": [
+      "/storage"
+    ],
+    "routerLink": null,
+    "anchor": "topology",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Storage",
+      "Manage Devices"
+    ],
+    "synonyms": [],
+    "requiredRoles": [],
+    "anchorRouterLink": [
+      "/storage"
+    ],
+    "routerLink": null,
+    "anchor": "manage-devices",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Storage",
+      "ZFS Health"
+    ],
+    "synonyms": [],
+    "requiredRoles": [],
+    "anchorRouterLink": [
+      "/storage"
+    ],
+    "routerLink": null,
+    "anchor": "zfs-health",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Storage",
+      "Scrub"
+    ],
+    "synonyms": [],
     "requiredRoles": [
-      "CATALOG_WRITE"
+      "REPORTING_WRITE"
     ],
     "anchorRouterLink": [
-      "/apps",
-      "available",
-      "catalogs"
+      "/storage"
     ],
     "routerLink": null,
-    "anchor": "add",
+    "anchor": "scrub",
     "triggerAnchor": null,
     "section": "ui"
   },
   {
     "hierarchy": [
-      "Applications",
-      "Discover",
-      "Catalogs"
-    ],
-    "synonyms": [],
-    "requiredRoles": [],
-    "anchorRouterLink": [
-      "/apps",
-      "available",
-      "catalogs"
-    ],
-    "routerLink": null,
-    "anchor": "applications-discover-catalogs",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "Applications",
-      "Discover"
+      "Storage",
+      "Auto TRIM"
     ],
     "synonyms": [
-      "Apps"
+      "Edit Trim",
+      "Edit Auto TRIM"
     ],
     "requiredRoles": [],
     "anchorRouterLink": [
-      "/apps",
-      "available"
+      "/storage"
     ],
     "routerLink": null,
-    "anchor": "applications-discover",
+    "anchor": "auto-trim",
     "triggerAnchor": null,
     "section": "ui"
   },
   {
     "hierarchy": [
-      "Toolbar",
-      "Settings Menu"
+      "Storage",
+      "Disk Health"
     ],
     "synonyms": [],
     "requiredRoles": [],
-    "routerLink": null,
-    "anchor": "user-menu",
-    "triggerAnchor": "user-menu",
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "Toolbar",
-      "Settings Menu",
-      "Change Password"
+    "anchorRouterLink": [
+      "/storage"
     ],
-    "synonyms": [
-      "Update Password",
-      "Set new password",
-      "Reset password",
-      "New password",
-      "User password"
-    ],
-    "requiredRoles": [],
     "routerLink": null,
-    "anchor": "change-password",
-    "triggerAnchor": "user-menu",
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "Toolbar",
-      "Settings Menu",
-      "Guide"
-    ],
-    "synonyms": [],
-    "requiredRoles": [],
-    "routerLink": null,
-    "anchor": "guide",
-    "triggerAnchor": "user-menu",
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "Toolbar",
-      "Settings Menu",
-      "About"
-    ],
-    "synonyms": [],
-    "requiredRoles": [],
-    "routerLink": null,
-    "anchor": "about",
-    "triggerAnchor": "user-menu",
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "Toolbar",
-      "Jobs History"
-    ],
-    "synonyms": [],
-    "requiredRoles": [],
-    "routerLink": null,
-    "anchor": "jobs-history",
+    "anchor": "disk-health",
     "triggerAnchor": null,
     "section": "ui"
   },
   {
     "hierarchy": [
-      "Toolbar",
-      "Power Menu"
-    ],
-    "synonyms": [],
-    "requiredRoles": [],
-    "routerLink": null,
-    "anchor": "power-menu",
-    "triggerAnchor": "power-menu",
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "Toolbar",
-      "Power Menu",
-      "Log Out"
+      "System",
+      "View Enclosure"
     ],
     "synonyms": [
-      "Sign Out",
-      "Logout",
-      "Logoff",
-      "End session",
-      "Exit",
-      "Drop session"
+      "Enclosure"
     ],
     "requiredRoles": [],
-    "routerLink": null,
-    "anchor": "log-out",
-    "triggerAnchor": "power-menu",
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "Toolbar",
-      "Power Menu",
-      "Restart"
-    ],
-    "synonyms": [
-      "Reboot"
-    ],
-    "requiredRoles": [
-      "FULL_ADMIN"
+    "anchorRouterLink": [
+      "/system",
+      "oldviewenclosure"
     ],
     "routerLink": null,
-    "anchor": "restart",
-    "triggerAnchor": "power-menu",
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "Toolbar",
-      "Power Menu",
-      "Shut Down"
-    ],
-    "synonyms": [
-      "Power Off",
-      "Turn Off"
-    ],
-    "requiredRoles": [
-      "FULL_ADMIN"
-    ],
-    "routerLink": null,
-    "anchor": "shut-down",
-    "triggerAnchor": "power-menu",
+    "anchor": "system-view-enclosure",
+    "triggerAnchor": null,
     "section": "ui"
   },
   {
@@ -3243,24 +3235,6 @@
   {
     "hierarchy": [
       "System",
-      "View Enclosure"
-    ],
-    "synonyms": [
-      "Enclosure"
-    ],
-    "requiredRoles": [],
-    "anchorRouterLink": [
-      "/system",
-      "oldviewenclosure"
-    ],
-    "routerLink": null,
-    "anchor": "system-view-enclosure",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "System",
       "View Enclosure",
       "NVMe-oF Expansion Shelves"
     ],
@@ -3273,6 +3247,502 @@
     ],
     "routerLink": null,
     "anchor": "system-view-enclosure-nvme-of-expansion-shelves",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "System",
+      "General",
+      "NTP Server"
+    ],
+    "synonyms": [
+      "Add NTP Server"
+    ],
+    "requiredRoles": [],
+    "anchorRouterLink": [
+      "/system",
+      "general"
+    ],
+    "routerLink": null,
+    "anchor": "ntp-card",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "System",
+      "General",
+      "NTP Server",
+      "Add"
+    ],
+    "synonyms": [
+      "Add NTP Server",
+      "Create NTP Server",
+      "New NTP Server",
+      "Time Server"
+    ],
+    "requiredRoles": [
+      "FULL_ADMIN"
+    ],
+    "anchorRouterLink": [
+      "/system",
+      "general"
+    ],
+    "routerLink": null,
+    "anchor": "add",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "System",
+      "Support"
+    ],
+    "synonyms": [],
+    "requiredRoles": [],
+    "anchorRouterLink": [
+      "/system",
+      "support"
+    ],
+    "routerLink": null,
+    "anchor": "system-support",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "System",
+      "Support",
+      "License"
+    ],
+    "synonyms": [
+      "Update License",
+      "Add License",
+      "License Update"
+    ],
+    "requiredRoles": [
+      "FULL_ADMIN"
+    ],
+    "anchorRouterLink": [
+      "/system",
+      "support"
+    ],
+    "routerLink": null,
+    "anchor": "license",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "System",
+      "Support",
+      "File Ticket"
+    ],
+    "synonyms": [
+      "Rate this page"
+    ],
+    "requiredRoles": [],
+    "anchorRouterLink": [
+      "/system",
+      "support"
+    ],
+    "routerLink": null,
+    "anchor": "file-ticket",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "System",
+      "Support",
+      "Eula"
+    ],
+    "synonyms": [],
+    "requiredRoles": [],
+    "anchorRouterLink": [
+      "/system",
+      "support",
+      "eula"
+    ],
+    "routerLink": null,
+    "anchor": "system-support-eula",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "System",
+      "General",
+      "GUI"
+    ],
+    "synonyms": [],
+    "requiredRoles": [],
+    "anchorRouterLink": [
+      "/system",
+      "general"
+    ],
+    "routerLink": null,
+    "anchor": "gui-card",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "System",
+      "General",
+      "GUI",
+      "Theme"
+    ],
+    "synonyms": [],
+    "requiredRoles": [],
+    "anchorRouterLink": [
+      "/system",
+      "general"
+    ],
+    "routerLink": null,
+    "anchor": "theme",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "System",
+      "General",
+      "GUI",
+      "SSL Certificate"
+    ],
+    "synonyms": [],
+    "requiredRoles": [],
+    "anchorRouterLink": [
+      "/system",
+      "general"
+    ],
+    "routerLink": null,
+    "anchor": "ssl-certificate",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "System",
+      "General",
+      "GUI",
+      "IPv4 Address"
+    ],
+    "synonyms": [
+      "Web Interface Address"
+    ],
+    "requiredRoles": [],
+    "anchorRouterLink": [
+      "/system",
+      "general"
+    ],
+    "routerLink": null,
+    "anchor": "ipv4-address",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "System",
+      "General",
+      "GUI",
+      "IPv6 Address"
+    ],
+    "synonyms": [
+      "Web Interface Address"
+    ],
+    "requiredRoles": [],
+    "anchorRouterLink": [
+      "/system",
+      "general"
+    ],
+    "routerLink": null,
+    "anchor": "ipv6-address",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "System",
+      "General",
+      "GUI",
+      "HTTP Port"
+    ],
+    "synonyms": [
+      "Web Interface Port"
+    ],
+    "requiredRoles": [],
+    "anchorRouterLink": [
+      "/system",
+      "general"
+    ],
+    "routerLink": null,
+    "anchor": "http-port",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "System",
+      "General",
+      "GUI",
+      "HTTPS Port"
+    ],
+    "synonyms": [
+      "Web Interface Port",
+      "SSL Web Interface Port"
+    ],
+    "requiredRoles": [],
+    "anchorRouterLink": [
+      "/system",
+      "general"
+    ],
+    "routerLink": null,
+    "anchor": "https-port",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "System",
+      "General",
+      "GUI",
+      "SSL Protocols"
+    ],
+    "synonyms": [],
+    "requiredRoles": [],
+    "anchorRouterLink": [
+      "/system",
+      "general"
+    ],
+    "routerLink": null,
+    "anchor": "ssl-protocols",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "System",
+      "General",
+      "GUI",
+      "HTTPS Redirect"
+    ],
+    "synonyms": [],
+    "requiredRoles": [],
+    "anchorRouterLink": [
+      "/system",
+      "general"
+    ],
+    "routerLink": null,
+    "anchor": "https-redirect",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "System",
+      "General",
+      "GUI",
+      "Usage Collection"
+    ],
+    "synonyms": [],
+    "requiredRoles": [],
+    "anchorRouterLink": [
+      "/system",
+      "general"
+    ],
+    "routerLink": null,
+    "anchor": "usage-collection",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "System",
+      "General",
+      "GUI",
+      "Show Console Messages"
+    ],
+    "synonyms": [],
+    "requiredRoles": [],
+    "anchorRouterLink": [
+      "/system",
+      "general"
+    ],
+    "routerLink": null,
+    "anchor": "show-console-messages",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "System",
+      "General",
+      "Email"
+    ],
+    "synonyms": [],
+    "requiredRoles": [],
+    "anchorRouterLink": [
+      "/system",
+      "general"
+    ],
+    "routerLink": null,
+    "anchor": "email-card",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "System",
+      "General",
+      "Email",
+      "Configure"
+    ],
+    "synonyms": [
+      "Send Test Email",
+      "Config Email",
+      "Set email",
+      "Configure Email"
+    ],
+    "requiredRoles": [],
+    "anchorRouterLink": [
+      "/system",
+      "general"
+    ],
+    "routerLink": null,
+    "anchor": "configure",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "System",
+      "General",
+      "Email",
+      "Send Method"
+    ],
+    "synonyms": [
+      "SMTP",
+      "Gmail"
+    ],
+    "requiredRoles": [],
+    "anchorRouterLink": [
+      "/system",
+      "general"
+    ],
+    "routerLink": null,
+    "anchor": "send-method",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "System",
+      "General",
+      "Localization"
+    ],
+    "synonyms": [],
+    "requiredRoles": [],
+    "anchorRouterLink": [
+      "/system",
+      "general"
+    ],
+    "routerLink": null,
+    "anchor": "localization-card",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "System",
+      "General",
+      "Localization",
+      "Language"
+    ],
+    "synonyms": [
+      "Translate App"
+    ],
+    "requiredRoles": [],
+    "anchorRouterLink": [
+      "/system",
+      "general"
+    ],
+    "routerLink": null,
+    "anchor": "language",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "System",
+      "General",
+      "Localization",
+      "Date Format"
+    ],
+    "synonyms": [],
+    "requiredRoles": [],
+    "anchorRouterLink": [
+      "/system",
+      "general"
+    ],
+    "routerLink": null,
+    "anchor": "date-format",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "System",
+      "General",
+      "Localization",
+      "Time Format"
+    ],
+    "synonyms": [],
+    "requiredRoles": [],
+    "anchorRouterLink": [
+      "/system",
+      "general"
+    ],
+    "routerLink": null,
+    "anchor": "time-format",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "System",
+      "General",
+      "Localization",
+      "Timezone"
+    ],
+    "synonyms": [],
+    "requiredRoles": [],
+    "anchorRouterLink": [
+      "/system",
+      "general"
+    ],
+    "routerLink": null,
+    "anchor": "timezone",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "System",
+      "General",
+      "Localization",
+      "Console Keyboard Map"
+    ],
+    "synonyms": [],
+    "requiredRoles": [],
+    "anchorRouterLink": [
+      "/system",
+      "general"
+    ],
+    "routerLink": null,
+    "anchor": "console-keyboard-map",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -3616,41 +4086,6 @@
   {
     "hierarchy": [
       "System",
-      "Advanced",
-      "Isolated GPU Device(s)"
-    ],
-    "synonyms": [],
-    "requiredRoles": [],
-    "anchorRouterLink": [
-      "/system",
-      "advanced"
-    ],
-    "routerLink": null,
-    "anchor": "configure-isolated-gpus",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "System",
-      "Advanced",
-      "Isolated GPU Device(s)",
-      "GPUs"
-    ],
-    "synonyms": [],
-    "requiredRoles": [],
-    "anchorRouterLink": [
-      "/system",
-      "advanced"
-    ],
-    "routerLink": null,
-    "anchor": "gpus",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "System",
       "Init/Shutdown Scripts"
     ],
     "synonyms": [],
@@ -3693,7 +4128,7 @@
     "hierarchy": [
       "System",
       "Advanced",
-      "Global Two Factor Authentication"
+      "Isolated GPU Device(s)"
     ],
     "synonyms": [],
     "requiredRoles": [],
@@ -3702,7 +4137,7 @@
       "advanced"
     ],
     "routerLink": null,
-    "anchor": "global-two-factor-card",
+    "anchor": "configure-isolated-gpus",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -3710,61 +4145,17 @@
     "hierarchy": [
       "System",
       "Advanced",
-      "Global Two Factor Authentication",
-      "Global 2FA Enable"
+      "Isolated GPU Device(s)",
+      "GPUs"
     ],
-    "synonyms": [
-      "Enable Two Factor Authentication Globally",
-      "Two Factor Auth",
-      "2FA"
-    ],
+    "synonyms": [],
     "requiredRoles": [],
     "anchorRouterLink": [
       "/system",
       "advanced"
     ],
     "routerLink": null,
-    "anchor": "global-2fa-enable",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "System",
-      "Advanced",
-      "Global Two Factor Authentication",
-      "Window"
-    ],
-    "synonyms": [
-      "Tolerance Window"
-    ],
-    "requiredRoles": [],
-    "anchorRouterLink": [
-      "/system",
-      "advanced"
-    ],
-    "routerLink": null,
-    "anchor": "window",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "System",
-      "Advanced",
-      "Global Two Factor Authentication",
-      "SSH"
-    ],
-    "synonyms": [
-      "Enable Two Factor Authentication for SSH"
-    ],
-    "requiredRoles": [],
-    "anchorRouterLink": [
-      "/system",
-      "advanced"
-    ],
-    "routerLink": null,
-    "anchor": "ssh",
+    "anchor": "gpus",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -4108,607 +4499,80 @@
   },
   {
     "hierarchy": [
-      "Storage",
-      "ZFS Health"
+      "System",
+      "Advanced",
+      "Global Two Factor Authentication"
     ],
     "synonyms": [],
     "requiredRoles": [],
     "anchorRouterLink": [
-      "/storage"
+      "/system",
+      "advanced"
     ],
     "routerLink": null,
-    "anchor": "zfs-health",
+    "anchor": "global-two-factor-card",
     "triggerAnchor": null,
     "section": "ui"
   },
   {
     "hierarchy": [
-      "Storage",
-      "Scrub"
-    ],
-    "synonyms": [],
-    "requiredRoles": [
-      "REPORTING_WRITE"
-    ],
-    "anchorRouterLink": [
-      "/storage"
-    ],
-    "routerLink": null,
-    "anchor": "scrub",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "Storage",
-      "Auto TRIM"
+      "System",
+      "Advanced",
+      "Global Two Factor Authentication",
+      "Global 2FA Enable"
     ],
     "synonyms": [
-      "Edit Trim",
-      "Edit Auto TRIM"
+      "Enable Two Factor Authentication Globally",
+      "Two Factor Auth",
+      "2FA"
     ],
-    "requiredRoles": [],
-    "anchorRouterLink": [
-      "/storage"
-    ],
-    "routerLink": null,
-    "anchor": "auto-trim",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "Storage",
-      "Topology"
-    ],
-    "synonyms": [],
-    "requiredRoles": [],
-    "anchorRouterLink": [
-      "/storage"
-    ],
-    "routerLink": null,
-    "anchor": "topology",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "Storage",
-      "Manage Devices"
-    ],
-    "synonyms": [],
-    "requiredRoles": [],
-    "anchorRouterLink": [
-      "/storage"
-    ],
-    "routerLink": null,
-    "anchor": "manage-devices",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "Storage",
-      "Usage"
-    ],
-    "synonyms": [],
-    "requiredRoles": [],
-    "anchorRouterLink": [
-      "/storage"
-    ],
-    "routerLink": null,
-    "anchor": "usage",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "Storage",
-      "Disk Health"
-    ],
-    "synonyms": [],
-    "requiredRoles": [],
-    "anchorRouterLink": [
-      "/storage"
-    ],
-    "routerLink": null,
-    "anchor": "disk-health",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "System",
-      "Support"
-    ],
-    "synonyms": [],
     "requiredRoles": [],
     "anchorRouterLink": [
       "/system",
-      "support"
+      "advanced"
     ],
     "routerLink": null,
-    "anchor": "system-support",
+    "anchor": "global-2fa-enable",
     "triggerAnchor": null,
     "section": "ui"
   },
   {
     "hierarchy": [
       "System",
-      "Support",
-      "License"
+      "Advanced",
+      "Global Two Factor Authentication",
+      "Window"
     ],
     "synonyms": [
-      "Update License",
-      "Add License",
-      "License Update"
+      "Tolerance Window"
     ],
-    "requiredRoles": [
-      "FULL_ADMIN"
-    ],
+    "requiredRoles": [],
     "anchorRouterLink": [
       "/system",
-      "support"
+      "advanced"
     ],
     "routerLink": null,
-    "anchor": "license",
+    "anchor": "window",
     "triggerAnchor": null,
     "section": "ui"
   },
   {
     "hierarchy": [
       "System",
-      "Support",
-      "File Ticket"
+      "Advanced",
+      "Global Two Factor Authentication",
+      "SSH"
     ],
     "synonyms": [
-      "Rate this page"
+      "Enable Two Factor Authentication for SSH"
     ],
     "requiredRoles": [],
     "anchorRouterLink": [
       "/system",
-      "support"
+      "advanced"
     ],
     "routerLink": null,
-    "anchor": "file-ticket",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "System",
-      "Support",
-      "Eula"
-    ],
-    "synonyms": [],
-    "requiredRoles": [],
-    "anchorRouterLink": [
-      "/system",
-      "support",
-      "eula"
-    ],
-    "routerLink": null,
-    "anchor": "system-support-eula",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "System",
-      "General",
-      "NTP Server"
-    ],
-    "synonyms": [
-      "Add NTP Server"
-    ],
-    "requiredRoles": [],
-    "anchorRouterLink": [
-      "/system",
-      "general"
-    ],
-    "routerLink": null,
-    "anchor": "ntp-card",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "System",
-      "General",
-      "NTP Server",
-      "Add"
-    ],
-    "synonyms": [
-      "Add NTP Server",
-      "Create NTP Server",
-      "New NTP Server",
-      "Time Server"
-    ],
-    "requiredRoles": [
-      "FULL_ADMIN"
-    ],
-    "anchorRouterLink": [
-      "/system",
-      "general"
-    ],
-    "routerLink": null,
-    "anchor": "add",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "System",
-      "General",
-      "Localization"
-    ],
-    "synonyms": [],
-    "requiredRoles": [],
-    "anchorRouterLink": [
-      "/system",
-      "general"
-    ],
-    "routerLink": null,
-    "anchor": "localization-card",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "System",
-      "General",
-      "Localization",
-      "Language"
-    ],
-    "synonyms": [
-      "Translate App"
-    ],
-    "requiredRoles": [],
-    "anchorRouterLink": [
-      "/system",
-      "general"
-    ],
-    "routerLink": null,
-    "anchor": "language",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "System",
-      "General",
-      "Localization",
-      "Date Format"
-    ],
-    "synonyms": [],
-    "requiredRoles": [],
-    "anchorRouterLink": [
-      "/system",
-      "general"
-    ],
-    "routerLink": null,
-    "anchor": "date-format",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "System",
-      "General",
-      "Localization",
-      "Time Format"
-    ],
-    "synonyms": [],
-    "requiredRoles": [],
-    "anchorRouterLink": [
-      "/system",
-      "general"
-    ],
-    "routerLink": null,
-    "anchor": "time-format",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "System",
-      "General",
-      "Localization",
-      "Timezone"
-    ],
-    "synonyms": [],
-    "requiredRoles": [],
-    "anchorRouterLink": [
-      "/system",
-      "general"
-    ],
-    "routerLink": null,
-    "anchor": "timezone",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "System",
-      "General",
-      "Localization",
-      "Console Keyboard Map"
-    ],
-    "synonyms": [],
-    "requiredRoles": [],
-    "anchorRouterLink": [
-      "/system",
-      "general"
-    ],
-    "routerLink": null,
-    "anchor": "console-keyboard-map",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "System",
-      "General",
-      "GUI"
-    ],
-    "synonyms": [],
-    "requiredRoles": [],
-    "anchorRouterLink": [
-      "/system",
-      "general"
-    ],
-    "routerLink": null,
-    "anchor": "gui-card",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "System",
-      "General",
-      "GUI",
-      "Theme"
-    ],
-    "synonyms": [],
-    "requiredRoles": [],
-    "anchorRouterLink": [
-      "/system",
-      "general"
-    ],
-    "routerLink": null,
-    "anchor": "theme",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "System",
-      "General",
-      "GUI",
-      "SSL Certificate"
-    ],
-    "synonyms": [],
-    "requiredRoles": [],
-    "anchorRouterLink": [
-      "/system",
-      "general"
-    ],
-    "routerLink": null,
-    "anchor": "ssl-certificate",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "System",
-      "General",
-      "GUI",
-      "IPv4 Address"
-    ],
-    "synonyms": [
-      "Web Interface Address"
-    ],
-    "requiredRoles": [],
-    "anchorRouterLink": [
-      "/system",
-      "general"
-    ],
-    "routerLink": null,
-    "anchor": "ipv4-address",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "System",
-      "General",
-      "GUI",
-      "IPv6 Address"
-    ],
-    "synonyms": [
-      "Web Interface Address"
-    ],
-    "requiredRoles": [],
-    "anchorRouterLink": [
-      "/system",
-      "general"
-    ],
-    "routerLink": null,
-    "anchor": "ipv6-address",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "System",
-      "General",
-      "GUI",
-      "HTTP Port"
-    ],
-    "synonyms": [
-      "Web Interface Port"
-    ],
-    "requiredRoles": [],
-    "anchorRouterLink": [
-      "/system",
-      "general"
-    ],
-    "routerLink": null,
-    "anchor": "http-port",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "System",
-      "General",
-      "GUI",
-      "HTTPS Port"
-    ],
-    "synonyms": [
-      "Web Interface Port",
-      "SSL Web Interface Port"
-    ],
-    "requiredRoles": [],
-    "anchorRouterLink": [
-      "/system",
-      "general"
-    ],
-    "routerLink": null,
-    "anchor": "https-port",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "System",
-      "General",
-      "GUI",
-      "SSL Protocols"
-    ],
-    "synonyms": [],
-    "requiredRoles": [],
-    "anchorRouterLink": [
-      "/system",
-      "general"
-    ],
-    "routerLink": null,
-    "anchor": "ssl-protocols",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "System",
-      "General",
-      "GUI",
-      "HTTPS Redirect"
-    ],
-    "synonyms": [],
-    "requiredRoles": [],
-    "anchorRouterLink": [
-      "/system",
-      "general"
-    ],
-    "routerLink": null,
-    "anchor": "https-redirect",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "System",
-      "General",
-      "GUI",
-      "Usage Collection"
-    ],
-    "synonyms": [],
-    "requiredRoles": [],
-    "anchorRouterLink": [
-      "/system",
-      "general"
-    ],
-    "routerLink": null,
-    "anchor": "usage-collection",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "System",
-      "General",
-      "GUI",
-      "Show Console Messages"
-    ],
-    "synonyms": [],
-    "requiredRoles": [],
-    "anchorRouterLink": [
-      "/system",
-      "general"
-    ],
-    "routerLink": null,
-    "anchor": "show-console-messages",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "System",
-      "General",
-      "Email"
-    ],
-    "synonyms": [],
-    "requiredRoles": [],
-    "anchorRouterLink": [
-      "/system",
-      "general"
-    ],
-    "routerLink": null,
-    "anchor": "email-card",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "System",
-      "General",
-      "Email",
-      "Configure"
-    ],
-    "synonyms": [
-      "Send Test Email",
-      "Config Email",
-      "Set email",
-      "Configure Email"
-    ],
-    "requiredRoles": [],
-    "anchorRouterLink": [
-      "/system",
-      "general"
-    ],
-    "routerLink": null,
-    "anchor": "configure",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "System",
-      "General",
-      "Email",
-      "Send Method"
-    ],
-    "synonyms": [
-      "SMTP",
-      "Gmail"
-    ],
-    "requiredRoles": [],
-    "anchorRouterLink": [
-      "/system",
-      "general"
-    ],
-    "routerLink": null,
-    "anchor": "send-method",
+    "anchor": "ssh",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -4853,50 +4717,6 @@
     ],
     "routerLink": null,
     "anchor": "directory-services-kerberos-keytabs",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "Credentials",
-      "Groups",
-      "Privileges",
-      "Add"
-    ],
-    "synonyms": [
-      "Add Privilege",
-      "New Privilege",
-      "Create Privilege",
-      "Privilege"
-    ],
-    "requiredRoles": [
-      "FULL_ADMIN"
-    ],
-    "anchorRouterLink": [
-      "/credentials",
-      "groups",
-      "privileges"
-    ],
-    "routerLink": null,
-    "anchor": "add-privilege",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "Credentials",
-      "Groups",
-      "Privileges"
-    ],
-    "synonyms": [],
-    "requiredRoles": [],
-    "anchorRouterLink": [
-      "/credentials",
-      "groups",
-      "privileges"
-    ],
-    "routerLink": null,
-    "anchor": "credentials-groups-privileges",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -5073,6 +4893,186 @@
     "routerLink": null,
     "anchor": "custom-app",
     "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Credentials",
+      "Groups",
+      "Privileges",
+      "Add"
+    ],
+    "synonyms": [
+      "Add Privilege",
+      "New Privilege",
+      "Create Privilege",
+      "Privilege"
+    ],
+    "requiredRoles": [
+      "FULL_ADMIN"
+    ],
+    "anchorRouterLink": [
+      "/credentials",
+      "groups",
+      "privileges"
+    ],
+    "routerLink": null,
+    "anchor": "add-privilege",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Credentials",
+      "Groups",
+      "Privileges"
+    ],
+    "synonyms": [],
+    "requiredRoles": [],
+    "anchorRouterLink": [
+      "/credentials",
+      "groups",
+      "privileges"
+    ],
+    "routerLink": null,
+    "anchor": "credentials-groups-privileges",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Toolbar",
+      "Power Menu"
+    ],
+    "synonyms": [],
+    "requiredRoles": [],
+    "routerLink": null,
+    "anchor": "power-menu",
+    "triggerAnchor": "power-menu",
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Toolbar",
+      "Power Menu",
+      "Log Out"
+    ],
+    "synonyms": [
+      "Sign Out",
+      "Logout",
+      "Logoff",
+      "End session",
+      "Exit",
+      "Drop session"
+    ],
+    "requiredRoles": [],
+    "routerLink": null,
+    "anchor": "log-out",
+    "triggerAnchor": "power-menu",
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Toolbar",
+      "Power Menu",
+      "Restart"
+    ],
+    "synonyms": [
+      "Reboot"
+    ],
+    "requiredRoles": [
+      "FULL_ADMIN"
+    ],
+    "routerLink": null,
+    "anchor": "restart",
+    "triggerAnchor": "power-menu",
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Toolbar",
+      "Power Menu",
+      "Shut Down"
+    ],
+    "synonyms": [
+      "Power Off",
+      "Turn Off"
+    ],
+    "requiredRoles": [
+      "FULL_ADMIN"
+    ],
+    "routerLink": null,
+    "anchor": "shut-down",
+    "triggerAnchor": "power-menu",
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Toolbar",
+      "Jobs History"
+    ],
+    "synonyms": [],
+    "requiredRoles": [],
+    "routerLink": null,
+    "anchor": "jobs-history",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Toolbar",
+      "Settings Menu"
+    ],
+    "synonyms": [],
+    "requiredRoles": [],
+    "routerLink": null,
+    "anchor": "user-menu",
+    "triggerAnchor": "user-menu",
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Toolbar",
+      "Settings Menu",
+      "Change Password"
+    ],
+    "synonyms": [
+      "Update Password",
+      "Set new password",
+      "Reset password",
+      "New password",
+      "User password"
+    ],
+    "requiredRoles": [],
+    "routerLink": null,
+    "anchor": "change-password",
+    "triggerAnchor": "user-menu",
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Toolbar",
+      "Settings Menu",
+      "Guide"
+    ],
+    "synonyms": [],
+    "requiredRoles": [],
+    "routerLink": null,
+    "anchor": "guide",
+    "triggerAnchor": "user-menu",
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Toolbar",
+      "Settings Menu",
+      "About"
+    ],
+    "synonyms": [],
+    "requiredRoles": [],
+    "routerLink": null,
+    "anchor": "about",
+    "triggerAnchor": "user-menu",
     "section": "ui"
   },
   {
