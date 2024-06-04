@@ -9,29 +9,34 @@ import { EnclosureStore } from 'app/pages/system/enclosure/services/enclosure.st
 @Component({
   selector: 'ix-m50-enclosure-view',
   templateUrl: './m50-enclosure-view.component.svg',
+  styleUrl: './m50-enclosure-view.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class M50EnclosureViewComponent {
   readonly enclosure = input.required<DashboardEnclosure>();
   readonly selectedSlot = input.required<DashboardEnclosureSlot>();
+  protected readonly selectedSlotIndex = computed(() => {
+    const selectedSlot = this.selectedSlot();
+    if (!selectedSlot) {
+      return -1;
+    }
+    return selectedSlot.drive_bay_number - 1;
+  });
 
-  readonly trackByNumber: TrackByFunction<KeyValue<string, DashboardEnclosureSlot>> = (_, slot) => slot.key;
+  protected readonly trackByNumber: TrackByFunction<KeyValue<string, DashboardEnclosureSlot>> = (_, slot) => slot.key;
 
-  readonly slots = computed(() => this.enclosure().elements[EnclosureElementType.ArrayDeviceSlot]);
-
-  getDriveTrayTransformation(slotNumber: string): string {
-    const number = Number(slotNumber);
-    const xOffset = -0.001 + (((number - 1) % 4) * 125);
-    const yOffset = Math.floor((number - 1) / 4) * 33;
-    return `translate(${xOffset} ${yOffset})`;
-  }
+  protected readonly slots = computed<Record<number, DashboardEnclosureSlot>>(() => {
+    const enclosure = this.enclosure();
+    return enclosure.elements[EnclosureElementType.ArrayDeviceSlot];
+  });
 
   constructor(
     private enclosureStore: EnclosureStore,
-  ) {
-  }
+  ) { }
 
-  onTraySelected(slot: DashboardEnclosureSlot): void {
-    this.enclosureStore.selectSlot(slot);
+  protected onTraySelected(slotIndex: number): void {
+    const driveBayNumber = slotIndex + 1;
+    const slots = this.slots();
+    this.enclosureStore.selectSlot({ ...slots[driveBayNumber], drive_bay_number: driveBayNumber });
   }
 }
