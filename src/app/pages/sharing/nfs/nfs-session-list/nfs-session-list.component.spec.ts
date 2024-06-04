@@ -60,14 +60,18 @@ describe('NfsSessionListComponent', () => {
     ],
   });
 
-  describe('Default/Initial load', () => {
+  describe('NFS 3', () => {
     beforeEach(async () => {
-      spectator = createComponent();
+      spectator = createComponent({
+        props: {
+          activeNfsType: NfsType.Nfs3,
+        },
+      });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       table = await loader.getHarness(IxTableHarness);
     });
 
-    it('should show NFS 3 table rows on a default load', async () => {
+    it('should show NFS 3 table rows', async () => {
       const expectedRows = [
         [
           'IP',
@@ -84,60 +88,32 @@ describe('NfsSessionListComponent', () => {
     });
   });
 
-  describe('NFS 3', () => {
+  describe('NFS 4', () => {
     beforeEach(async () => {
       spectator = createComponent({
         props: {
-          activeNfsType: NfsType.Nfs3,
+          activeNfsType: NfsType.Nfs4,
         },
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       table = await loader.getHarness(IxTableHarness);
     });
 
-    describe('NFS 4', () => {
-      beforeEach(async () => {
-        spectator = createComponent({
-          props: {
-            activeNfsType: NfsType.Nfs4,
-          },
-        });
-        loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-        table = await loader.getHarness(IxTableHarness);
-      });
-
-      it('shows NFS 4 table once is switched', async () => {
-        const expectedRows = [
-          [
-            'Name',
-            'Client ID',
-            'Address',
-            'Status',
-            'Seconds From Last Renew',
-          ],
-          [
-            'Linux NFSv4.2 debian12-hv',
-            '6273260596088110000',
-            '192.168.40.247:790',
-            'Confirmed',
-            '45',
-          ],
-        ];
-
-        const cells = await table.getCellTexts();
-        expect(cells).toEqual(expectedRows);
-      });
-    });
-
-    it('should show NFS 3 table rows', async () => {
+    it('shows NFS 4 table once is switched', async () => {
       const expectedRows = [
         [
-          'IP',
-          'Export',
+          'Name',
+          'Client ID',
+          'Address',
+          'Status',
+          'Seconds From Last Renew',
         ],
         [
-          '10.238.238.162',
-          '10.238.238.162:/mnt/tank/nfs',
+          'Linux NFSv4.2 debian12-hv',
+          '6273260596088110000',
+          '192.168.40.247:790',
+          'Confirmed',
+          '45',
         ],
       ];
 
