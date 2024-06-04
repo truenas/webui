@@ -1,12 +1,12 @@
 import { environment } from 'environments/environment';
-import { MockEnclosureConfig } from 'app/core/testing/interfaces/mock-enclosure-utils.interface';
+import { MockEnclosureConfig } from 'app/core/testing/mock-enclosure/interfaces/mock-enclosure.interface';
+import { MockStorageGenerator } from 'app/core/testing/mock-enclosure/mock-storage-generator.utils';
+import { mockRootDataset } from 'app/core/testing/mock-enclosure/other-templates/root-dataset.template';
 import { ApiCallMethod, ApiCallResponse } from 'app/interfaces/api/api-call-directory.interface';
 import { ApiJobMethod } from 'app/interfaces/api/api-job-directory.interface';
 import { IncomingWebSocketMessage, ResultMessage } from 'app/interfaces/api-message.interface';
 import { Disk, UnusedDisk } from 'app/interfaces/storage.interface';
 import { SystemInfo } from 'app/interfaces/system-info.interface';
-import { MockStorageGenerator } from './mock-storage-generator.utils';
-import { mockRootDataset } from './other-templates/root-dataset.template';
 
 export class MockEnclosureUtils {
   mockConfig: MockEnclosureConfig = environment.mockConfig;

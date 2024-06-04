@@ -1,5 +1,5 @@
 import { TiB } from 'app/constants/bytes.constant';
-import { EnclosureDispersalStrategy, MockDiskType, MockStorageScenario } from 'app/core/testing/enums/mock-storage.enum';
+import { EnclosureDispersalStrategy, MockDiskType, MockStorageScenario } from 'app/core/testing/mock-enclosure/enums/mock-storage.enum';
 import {
   AddEnclosureOptions,
   AddTopologyOptions,
@@ -7,7 +7,7 @@ import {
   DispersedData,
   MockStorage,
   MockTopology,
-} from 'app/core/testing/interfaces/mock-storage-generator.interface';
+} from 'app/core/testing/mock-enclosure/interfaces/mock-storage-generator.interface';
 import { DiskBus } from 'app/enums/disk-bus.enum';
 import { DiskPowerLevel } from 'app/enums/disk-power-level.enum';
 import { DiskStandby } from 'app/enums/disk-standby.enum';

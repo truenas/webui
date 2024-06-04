@@ -74,10 +74,15 @@
     }
   }
 
-  .chart {
-    height: 100px;
-    margin-top: 30px;
-    padding-left: 24px;
-    padding-right: 24px;
+  .bar-wrapper {
+    display: flex;
+
+    .bar {
+      height: 100px;
+      margin-top: 30px;
+      padding-left: 24px;
+      padding-right: 24px;
+      width: 100%;
+    }
   }
 }

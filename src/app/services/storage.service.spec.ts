@@ -1,7 +1,7 @@
 import { GiB } from 'app/constants/bytes.constant';
-import { MockStorageScenario } from 'app/core/testing/enums/mock-storage.enum';
-import { AddTopologyOptions } from 'app/core/testing/interfaces/mock-storage-generator.interface';
-import { MockStorageGenerator } from 'app/core/testing/utils/mock-storage-generator.utils';
+import { MockStorageScenario } from 'app/core/testing/mock-enclosure/enums/mock-storage.enum';
+import { AddTopologyOptions } from 'app/core/testing/mock-enclosure/interfaces/mock-storage-generator.interface';
+import { MockStorageGenerator } from 'app/core/testing/mock-enclosure/mock-storage-generator.utils';
 import { VdevType, TopologyItemType, TopologyWarning } from 'app/enums/v-dev-type.enum';
 import { TopologyDisk, TopologyItem, VDev } from 'app/interfaces/storage.interface';
 import { StorageService } from 'app/services/storage.service';

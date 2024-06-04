@@ -1,4 +1,4 @@
-import { HttpClientModule, HttpClient } from '@angular/common/http';
+import { HttpClient, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { NgModule, ErrorHandler } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatNativeDateModule } from '@angular/material/core';
@@ -40,10 +40,10 @@ import { DisksUpdateService } from 'app/services/disks-update.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { FocusService } from 'app/services/focus.service';
 import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
-import { IxFileUploadService } from 'app/services/ix-file-upload.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { NavigationService } from 'app/services/navigation/navigation.service';
 import { ThemeService } from 'app/services/theme/theme.service';
+import { UploadService } from 'app/services/upload.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { rootEffects, rootReducers } from 'app/store';
 import { CustomRouterStateSerializer } from 'app/store/router/custom-router-serializer';
@@ -55,13 +55,17 @@ import { AuthGuardService } from './services/auth/auth-guard.service';
 import { RoutePartsService } from './services/route-parts/route-parts.service';
 
 @NgModule({
-  imports: [
-    BrowserModule,
+  declarations: [
+    AppComponent,
+  ],
+  bootstrap: [
+    AppComponent,
+  ],
+  imports: [BrowserModule,
     BrowserAnimationsModule,
     FlexLayoutModule,
     AppLoaderModule,
     MatNativeDateModule,
-    HttpClientModule,
     MatNativeDateModule,
     TooltipModule,
     TranslateModule.forRoot({
@@ -122,11 +126,7 @@ import { RoutePartsService } from './services/route-parts/route-parts.service';
     TestIdModule,
     MarkdownModule.forRoot({ loader: HttpClient }),
     FeedbackModule,
-    DialogModule,
-  ],
-  declarations: [
-    AppComponent,
-  ],
+    DialogModule],
   providers: [
     RoutePartsService,
     FocusService,
@@ -138,7 +138,7 @@ import { RoutePartsService } from './services/route-parts/route-parts.service';
     AppLoaderService,
     IxSlideInService,
     IxChainedSlideInService,
-    IxFileUploadService,
+    UploadService,
     DisksUpdateService,
     {
       provide: ErrorHandler,
@@ -150,9 +150,8 @@ import { RoutePartsService } from './services/route-parts/route-parts.service';
       useFactory: getWindow,
     },
     provideCharts(withDefaultRegisterables()),
-  ],
-  bootstrap: [
-    AppComponent,
+    provideHttpClient(withInterceptorsFromDi()),
   ],
 })
-export class AppModule {}
+export class AppModule {
+}
