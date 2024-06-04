@@ -120,7 +120,7 @@
         </mat-list>
       </div>
     </div>
-    <div [class]="['empty', 'container', size()]">
+    <div *ngIf="!isHaLicensed()" [class]="['empty', 'container', size()]">
       <ix-icon class="icon" name="mdi-widgets"></ix-icon>
       <h3>
         <div>{{ 'The system is not licensed for HA.' | translate }}</div>
