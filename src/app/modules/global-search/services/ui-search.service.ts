@@ -17,33 +17,23 @@ import { AuthService } from 'app/services/auth/auth.service';
 export class UiSearchProvider implements GlobalSearchProvider {
   uiElements = UiElementsJson as UiSearchableElement[];
 
-  private translatedTerms = this.uiElements.map((element) => {
-    return {
-      ...element,
-      hierarchy: (element.hierarchy || []).map((key) => this.translate.instant(key)),
-      synonyms: (element.synonyms || []).map((key) => this.translate.instant(key)),
-    };
-  });
-
-  private fuse = new Fuse(this.translatedTerms, {
-    keys: ['hierarchy', 'synonyms'],
-    threshold: 0.15,
-  });
-
   private selectedElement$ = new BehaviorSubject<UiSearchableElement>(null);
   selectionChanged$ = this.selectedElement$.asObservable().pipe(
     filter(Boolean),
     tap(() => this.selectedElement$.next(null)),
   );
 
+  fuseSearch: Fuse<UiSearchableElement> = this.generateFuseSearch();
+
   constructor(
     private authService: AuthService,
     private translate: TranslateService,
   ) {
+    this.translate.onLangChange.subscribe(() => this.fuseSearch = this.generateFuseSearch());
   }
 
   search(term: string, limit: number): Observable<UiSearchableElement[]> {
-    const fuzzySearchResults = this.fuse.search(term).map((result) => result.item);
+    const fuzzySearchResults = this.fuseSearch.search(term).map((result) => result.item);
     const sortedResults = sortSearchResults(term, fuzzySearchResults).slice(0, limit);
 
     return from(sortedResults).pipe(
@@ -64,5 +54,20 @@ export class UiSearchProvider implements GlobalSearchProvider {
 
   select(element: UiSearchableElement): void {
     this.selectedElement$.next(element);
+  }
+
+  private generateFuseSearch(): Fuse<UiSearchableElement> {
+    const terms = this.uiElements.map((element) => {
+      return {
+        ...element,
+        hierarchy: (element.hierarchy || []).map((key) => this.translate.instant(key)),
+        synonyms: (element.synonyms || []).map((key) => this.translate.instant(key)),
+      };
+    });
+
+    return new Fuse(terms, {
+      keys: ['hierarchy', 'synonyms'],
+      threshold: 0.15,
+    });
   }
 }
