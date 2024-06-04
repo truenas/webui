@@ -22,7 +22,7 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class NfsSessionListComponent implements OnInit {
-  @Input() activeNfsType: NfsType = NfsType.Nfs3;
+  @Input() activeNfsType: NfsType;
   protected readonly searchableElements = nfsSessionListElements;
 
   filterString = '';
@@ -126,6 +126,10 @@ export class NfsSessionListComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    if (!this.activeNfsType) {
+      this.activeNfsType = NfsType.Nfs3;
+    }
+
     this.loadData();
 
     combineLatest([this.nfs3DataProvider.emptyType$, this.nfs4DataProvider.emptyType$])
