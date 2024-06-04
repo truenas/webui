@@ -6,10 +6,9 @@ import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Spectator } from '@ngneat/spectator';
 import { mockProvider, createComponentFactory } from '@ngneat/spectator/jest';
-import { MockModule } from 'ng-mocks';
+import { MockComponent, MockModule } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockEntityJobComponentRef } from 'app/core/testing/utils/mock-entity-job-component-ref.utils';
 import { mockCall, mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { CatalogApp, CatalogAppVersion } from 'app/interfaces/catalog.interface';
 import { ChartFormValue, ChartRelease, ChartSchemaNodeConf } from 'app/interfaces/chart-release.interface';
@@ -26,6 +25,7 @@ import { DockerHubRateInfoDialogComponent } from 'app/pages/apps/components/dock
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { KubernetesStore } from 'app/pages/apps/store/kubernetes-store.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 const appVersion121 = {
   healthy: true,
@@ -268,9 +268,16 @@ describe('ChartWizardComponent', () => {
       IxDynamicFormModule,
       MockModule(PageHeaderModule),
     ],
+    declarations: [
+      MockComponent(DockerHubRateInfoDialogComponent),
+    ],
     providers: [
       mockProvider(IxSlideInService),
-      mockProvider(DialogService),
+      mockProvider(DialogService, {
+        jobDialog: jest.fn(() => ({
+          afterClosed: () => of({}),
+        })),
+      }),
       mockProvider(ApplicationsService, {
         getCatalogItem: jest.fn(() => of(existingCatalogApp)),
         getChartRelease: jest.fn(() => of([existingChartEdit])),
@@ -292,9 +299,7 @@ describe('ChartWizardComponent', () => {
       mockProvider(KubernetesStore, {
         selectedPool$: of('pool set'),
       }),
-      mockProvider(MatDialog, {
-        open: jest.fn(() => mockEntityJobComponentRef),
-      }),
+      mockProvider(MatDialog),
       mockProvider(IxSlideInRef),
       mockProvider(Router),
       mockAuth(),
@@ -347,7 +352,8 @@ describe('ChartWizardComponent', () => {
 
       spectator.component.onSubmit();
 
-      expect(spectator.component.dialogRef.componentInstance.setCall).toHaveBeenCalledWith(
+      expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
+      expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith(
         'chart.release.update',
         ['app_name', {
           values: {
@@ -355,7 +361,6 @@ describe('ChartWizardComponent', () => {
           },
         }],
       );
-      expect(mockEntityJobComponentRef.componentInstance.submit).toHaveBeenCalled();
     });
   });
 
@@ -435,7 +440,8 @@ describe('ChartWizardComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Install' }));
       await saveButton.click();
 
-      expect(mockEntityJobComponentRef.componentInstance.setCall).toHaveBeenCalledWith(
+      expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
+      expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith(
         'chart.release.create',
         [{
           catalog: 'TRUENAS',
@@ -454,7 +460,6 @@ describe('ChartWizardComponent', () => {
           version: '1.2.1',
         }],
       );
-      expect(mockEntityJobComponentRef.componentInstance.submit).toHaveBeenCalled();
     });
 
     it('updates form when app version is changed and schema is updated', async () => {

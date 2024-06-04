@@ -38,7 +38,6 @@
     "./src/app/core/pipes/yes-no.pipe.spec.ts",
     "./src/app/core/pipes/yes-no.pipe.ts",
     "./src/app/core/testing/classes/fake-translate.service.ts",
-    "./src/app/core/testing/mock-enclosure/enums/mock-storage.enum.ts",
     "./src/app/core/testing/mock-enclosure/interfaces/mock-enclosure.interface.ts",
     "./src/app/core/testing/mock-enclosure/interfaces/mock-storage-generator.interface.ts",
     "./src/app/core/testing/mock-enclosure/enclosure-templates/mock-e16.ts",
