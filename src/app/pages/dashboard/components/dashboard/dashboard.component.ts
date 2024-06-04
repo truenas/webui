@@ -8,6 +8,7 @@ import {
 import { toSignal } from '@angular/core/rxjs-interop';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import { filter } from 'rxjs';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -77,12 +78,8 @@ export class DashboardComponent implements OnInit {
   protected onAddGroup(): void {
     this.slideIn
       .open(WidgetGroupFormComponent, true)
-      .pipe(untilDestroyed(this))
+      .pipe(filter((response) => !response.response), untilDestroyed(this))
       .subscribe((response: ChainedComponentResponse<WidgetGroup>) => {
-        if (!response.response) {
-          return;
-        }
-
         this.renderedGroups.update((groups) => [...groups, response.response]);
       });
   }
@@ -91,14 +88,10 @@ export class DashboardComponent implements OnInit {
     const editedGroup = this.renderedGroups()[i];
     this.slideIn
       .open(WidgetGroupFormComponent, true, editedGroup)
-      .pipe(untilDestroyed(this))
-      .subscribe((response) => {
-        if (!response.response) {
-          return;
-        }
-
+      .pipe(filter((response) => !response.response), untilDestroyed(this))
+      .subscribe((response: ChainedComponentResponse<WidgetGroup>) => {
         this.renderedGroups.update((groups) => {
-          return groups.map((group, index) => (index === i ? response.response as WidgetGroup : group));
+          return groups.map((group, index) => (index === i ? response.response : group));
         });
       });
   }
@@ -128,6 +121,12 @@ export class DashboardComponent implements OnInit {
         this.isEditing.set(false);
         this.snackbar.success(this.translate.instant('Dashboard settings saved'));
       });
+  }
+
+  protected removeState(): void {
+    this.dashboardStore.clear().pipe(untilDestroyed(this)).subscribe(() => {
+      this.snackbar.success(this.translate.instant('Dashboard settings cleared'));
+    });
   }
 
   private loadGroups(): void {

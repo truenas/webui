@@ -3,10 +3,9 @@ import { UntilDestroy } from '@ngneat/until-destroy';
 import { ComponentStore } from '@ngrx/component-store';
 import {
   EMPTY,
-  Observable, catchError, filter, finalize, map, switchMap, tap,
+  Observable, catchError, delay, filter, finalize, map, switchMap, tap,
 } from 'rxjs';
 import { WidgetName } from 'app/enums/widget-name.enum';
-import { demoWidgets } from 'app/pages/dashboard/services/demo-widgets.constant';
 import { WidgetGroup, WidgetGroupLayout } from 'app/pages/dashboard/types/widget-group.interface';
 import { SomeWidgetSettings, WidgetType } from 'app/pages/dashboard/types/widget.interface';
 import { AuthService } from 'app/services/auth/auth.service';
@@ -57,16 +56,17 @@ export class DashboardStore extends ComponentStore<DashboardState> {
   readonly entered = this.effect((trigger$) => {
     return trigger$.pipe(
       tap(() => this.toggleLoadingState(true)),
+      switchMap(() => this.authService.refreshUser()),
       switchMap(() => this.authService.user$.pipe(
         filter(Boolean),
-        map((user) => user.attributes.dashState),
+        map((user) => user.attributes.dashState || []),
       )),
+      delay(1000),
       tap((dashState) => {
-        // TODO: Remove demoWidgets once active development of new dashboard is done
         this.setState({
           isLoading: false,
           globalError: '',
-          groups: this.getDashboardGroups(dashState || demoWidgets),
+          groups: this.getDashboardGroups(dashState),
         });
       }),
       catchError((error) => {
@@ -80,6 +80,15 @@ export class DashboardStore extends ComponentStore<DashboardState> {
     this.toggleLoadingState(true);
 
     return this.ws.call('auth.set_attribute', ['dashState', groups]).pipe(
+      switchMap(() => this.authService.refreshUser()),
+      finalize(() => this.toggleLoadingState(false)),
+    );
+  }
+
+  clear(): Observable<void> {
+    this.toggleLoadingState(true);
+
+    return this.ws.call('auth.set_attribute', ['dashState', null]).pipe(
       switchMap(() => this.authService.refreshUser()),
       finalize(() => this.toggleLoadingState(false)),
     );
@@ -112,8 +121,6 @@ export class DashboardStore extends ComponentStore<DashboardState> {
   }
 
   private getWidgetTypeFromOldDashboard(name: WidgetName): WidgetType {
-    const unknownWidgetType = name as unknown as WidgetType;
-    // TODO: we have some widgets that are not yet implemented for the new dashboard
     switch (name) {
       case WidgetName.Help: return WidgetType.Help;
       case WidgetName.Memory: return WidgetType.Memory;
@@ -125,7 +132,7 @@ export class DashboardStore extends ComponentStore<DashboardState> {
       case WidgetName.Cpu: return WidgetType.Cpu;
       case WidgetName.Pool: return WidgetType.PoolName;
       case WidgetName.Storage: return WidgetType.Storage;
-      default: return unknownWidgetType;
+      default: return name as unknown as WidgetType;
     }
   }
 
