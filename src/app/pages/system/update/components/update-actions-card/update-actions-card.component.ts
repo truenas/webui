@@ -255,24 +255,14 @@ export class UpdateActionsCardComponent implements OnInit {
         }
 
         if (!result.secondaryCheckbox) {
-          const dialogRef = this.matDialog.open(EntityJobComponent, { data: { title: this.updateTitle } });
-          dialogRef.componentInstance.setCall('update.download');
-          dialogRef.componentInstance.submit();
-          dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
-            dialogRef.close(false);
-            this.snackbar.success(this.translate.instant('Updates successfully downloaded'));
-            this.updateService.pendingUpdates();
-          });
-          dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((error) => {
-            this.dialogService.error(this.errorHandler.parseError(error));
-          });
+          this.downloadUpdates();
         } else {
           this.update();
         }
       });
   }
 
-  update(resume = false): void {
+  private update(resume = false): void {
     this.window.sessionStorage.removeItem('updateLastChecked');
     this.window.sessionStorage.removeItem('updateAvailable');
     this.sysGenService.updateRunningNoticeSent.emit();
@@ -367,5 +357,21 @@ export class UpdateActionsCardComponent implements OnInit {
       return;
     }
     this.dialogService.error(this.errorHandler.parseError(error));
+  }
+
+  private downloadUpdates(): void {
+    this.dialogService.jobDialog(
+      this.ws.job('update.download'),
+      { title: this.updateTitle },
+    )
+      .afterClosed()
+      .pipe(
+        this.errorHandler.catchError(),
+        untilDestroyed(this),
+      )
+      .subscribe(() => {
+        this.snackbar.success(this.translate.instant('Updates successfully downloaded'));
+        this.updateService.pendingUpdates();
+      });
   }
 }

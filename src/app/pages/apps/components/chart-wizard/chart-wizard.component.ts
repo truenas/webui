@@ -6,13 +6,13 @@ import {
   OnInit,
 } from '@angular/core';
 import { FormBuilder, FormControl, Validators } from '@angular/forms';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import _ from 'lodash';
 import {
-  BehaviorSubject, of, Subject, Subscription, timer,
+  BehaviorSubject, Observable, of, Subject, Subscription, timer,
 } from 'rxjs';
 import {
   debounceTime,
@@ -38,12 +38,11 @@ import {
   DeleteListItemEvent,
   DynamicWizardSchema,
 } from 'app/interfaces/dynamic-form-schema.interface';
+import { Job } from 'app/interfaces/job.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { CustomUntypedFormField } from 'app/modules/ix-dynamic-form/components/ix-dynamic-form/classes/custom-untyped-form-field';
-import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { forbiddenAsyncValues, forbiddenValuesError } from 'app/modules/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
@@ -72,7 +71,6 @@ export class ChartWizardComponent implements OnInit, OnDestroy {
   isNew = true;
   dynamicSection: DynamicWizardSchema[] = [];
   rootDynamicSection: DynamicWizardSchema[] = [];
-  dialogRef: MatDialogRef<EntityJobComponent>;
   subscription = new Subscription();
   chartSchema: ChartSchema['schema'];
 
@@ -110,7 +108,6 @@ export class ChartWizardComponent implements OnInit, OnDestroy {
 
   constructor(
     private formBuilder: FormBuilder,
-    private formErrorHandler: FormErrorHandlerService,
     private dialogService: DialogService,
     private appSchemaService: AppSchemaService,
     private matDialog: MatDialog,
@@ -229,17 +226,12 @@ export class ChartWizardComponent implements OnInit, OnDestroy {
   }
 
   saveData(data: ChartFormValues): void {
-    this.dialogRef = this.matDialog.open(EntityJobComponent, {
-      data: {
-        title: this.isNew ? helptextApps.installing : helptextApps.updating,
-      },
-      disableClose: true,
-    });
+    let job$: Observable<Job<ChartRelease>>;
 
     if (this.isNew) {
       const version = data.version;
       delete data.version;
-      this.dialogRef.componentInstance.setCall('chart.release.create', [
+      job$ = this.ws.job('chart.release.create', [
         {
           catalog: this.catalog,
           item: this.catalogApp.name,
@@ -251,20 +243,21 @@ export class ChartWizardComponent implements OnInit, OnDestroy {
       ]);
     } else {
       delete data.release_name;
-      this.dialogRef.componentInstance.setCall('chart.release.update', [
+      job$ = this.ws.job('chart.release.update', [
         this.config.release_name as string,
         { values: data },
       ]);
     }
 
-    this.dialogRef.componentInstance.submit();
-    this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => this.onSuccess());
-
-    this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((failedJob) => {
-      this.formErrorHandler.handleWsFormError(failedJob, this.form);
-      this.dialogRef.close();
-      this.cdr.markForCheck();
-    });
+    this.dialogService.jobDialog(job$, {
+      title: this.isNew ? helptextApps.installing : helptextApps.updating,
+    })
+      .afterClosed()
+      .pipe(
+        this.errorHandler.catchError(),
+        untilDestroyed(this),
+      )
+      .subscribe(() => this.onSuccess());
   }
 
   onSuccess(): void {

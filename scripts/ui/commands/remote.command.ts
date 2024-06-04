@@ -19,13 +19,13 @@ function normalizeUrl(url = ''): string {
 
 function saveProxyConfig(file: string, url: string): void {
   const data = fs.readFileSync(file + '.template', 'utf8');
-  const result = data.replace(/\$REMOTE\$/g, url);
+  const result = data.replace(/_REMOTE_/g, url);
   fs.writeFileSync(file, result, 'utf8');
 }
 
 function printCurrentRemote(): void {
   const environment = getCurrentConfig();
-  const remote = environment.remote === '$REMOTE$' ? 'Not set' : environment.remote;
+  const remote = environment.remote === '_REMOTE_' ? 'Not set' : environment.remote;
   const report = `Server URL: ${remote}`;
   console.info(report);
 }

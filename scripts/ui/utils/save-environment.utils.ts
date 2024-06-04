@@ -31,11 +31,11 @@ export function updateEnvironment(newValues: DeepPartial<ConfigVariables>): void
 
   const configTemplate = getConfigTemplate();
   const configToWrite = configTemplate
-    .replace('$REMOTE$', stringify(valuesToWrite.remote))
-    .replace('$MOCK_ENABLED$', stringify(Boolean(valuesToWrite.mockConfig.enabled)))
-    .replace('$MOCK_CONTROLLER$', stringify(valuesToWrite.mockConfig.controllerModel))
-    .replace('$MOCK_EXPANSIONS$', stringify(valuesToWrite.mockConfig.expansionModels))
-    .replace('$MOCK_SCENARIO$', printEnum({
+    .replace('_REMOTE_', stringify(valuesToWrite.remote))
+    .replace('_MOCK_ENABLED_', stringify(Boolean(valuesToWrite.mockConfig.enabled)))
+    .replace('_MOCK_CONTROLLER_', stringify(valuesToWrite.mockConfig.controllerModel))
+    .replace('_MOCK_EXPANSIONS_', stringify(valuesToWrite.mockConfig.expansionModels))
+    .replace('_MOCK_SCENARIO_', printEnum({
       enumName: 'MockStorageScenario',
       enum: MockStorageScenario,
       value: valuesToWrite.mockConfig.scenario,

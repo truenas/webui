@@ -44,4 +44,10 @@ program
     remoteCommand(options.ip, options.force);
   });
 
+// Show help message if no arguments are provided
+program
+  .action(() => {
+    program.help();
+  });
+
 program.parse(process.argv);

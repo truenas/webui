@@ -1,18 +1,17 @@
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { fakeFile } from 'app/core/testing/utils/fake-file.uitls';
-import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockEntityJobComponentRef } from 'app/core/testing/utils/mock-entity-job-component-ref.utils';
+import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFileInputHarness } from 'app/modules/ix-forms/components/ix-file-input/ix-file-input.harness';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { AuthService } from 'app/services/auth/auth.service';
+import { UploadService } from 'app/services/upload.service';
 import { UploadConfigDialogComponent } from './upload-config-dialog.component';
 
 describe('UploadConfigDialogComponent', () => {
@@ -25,12 +24,14 @@ describe('UploadConfigDialogComponent', () => {
       AppLoaderModule,
     ],
     providers: [
-      mockAuth(),
-      mockProvider(MatDialogRef),
       mockProvider(Router),
-      mockProvider(DialogService),
-      mockProvider(MatDialog, {
-        open: jest.fn(() => mockEntityJobComponentRef),
+      mockProvider(DialogService, {
+        jobDialog: jest.fn(() => ({
+          afterClosed: () => of({}),
+        })),
+      }),
+      mockProvider(UploadService, {
+        uploadAsJob: jest.fn(() => of(fakeSuccessfulJob())),
       }),
       mockProvider(AuthService, {
         authToken$: of('token'),
@@ -53,14 +54,8 @@ describe('UploadConfigDialogComponent', () => {
     const uploadButton = await loader.getHarness(MatButtonHarness.with({ text: 'Upload' }));
     await uploadButton.click();
 
-    expect(spectator.inject(MatDialog).open).toHaveBeenCalled();
-    const formData = new FormData();
-    formData.append('data', JSON.stringify({
-      method: 'config.upload',
-      params: [],
-    }));
-    formData.append('file', file);
-    expect(mockEntityJobComponentRef.componentInstance.wspost).toHaveBeenCalledWith('/_upload?auth_token=token', formData);
+    expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
+    expect(spectator.inject(UploadService).uploadAsJob).toHaveBeenCalledWith({ file, method: 'config.upload' });
     expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/others/reboot'], { skipLocationChange: true });
   });
 });

@@ -5,6 +5,7 @@ import { MockStorageScenario } from 'app/core/testing/mock-enclosure/enums/mock-
 import { MockEnclosureConfig } from 'app/core/testing/mock-enclosure/interfaces/mock-enclosure.interface';
 import { ApiCallResponse } from 'app/interfaces/api/api-call-directory.interface';
 import { DashboardEnclosure } from 'app/interfaces/enclosure.interface';
+import { SystemInfo } from 'app/interfaces/system-info.interface';
 
 export class MockStorageGenerator {
   private enclosures: DashboardEnclosure[];
@@ -20,6 +21,14 @@ export class MockStorageGenerator {
 
   webuiDashboardEnclosureResponse(): ApiCallResponse<'webui.enclosure.dashboard'> {
     return this.enclosures;
+  }
+
+  enhanceSystemInfoResponse(response: SystemInfo): SystemInfo {
+    return {
+      ...response,
+      system_product: this.config.controllerModel,
+      system_manufacturer: 'iXsystems',
+    };
   }
 
   private addEnclosure(model: string): void {

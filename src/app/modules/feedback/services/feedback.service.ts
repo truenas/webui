@@ -26,9 +26,9 @@ import {
   SimilarIssue,
 } from 'app/modules/feedback/interfaces/file-ticket.interface';
 import { SnackbarComponent } from 'app/modules/snackbar/components/snackbar/snackbar.component';
-import { IxFileUploadService } from 'app/services/ix-file-upload.service';
 import { SentryService } from 'app/services/sentry.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
+import { UploadService } from 'app/services/upload.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 import { SystemInfoState } from 'app/store/system-info/system-info.reducer';
@@ -51,7 +51,7 @@ export class FeedbackService {
     private store$: Store<AppState>,
     private systemGeneralService: SystemGeneralService,
     private sentryService: SentryService,
-    private fileUpload: IxFileUploadService,
+    private fileUpload: UploadService,
     private matSnackBar: MatSnackBar,
     private translate: TranslateService,
     private dialogService: DialogService,
@@ -361,11 +361,15 @@ export class FeedbackService {
     attachment: File;
     token?: string;
   }): Observable<boolean> {
-    return this.fileUpload.upload(attachment, 'support.attach_ticket', [{
-      token,
-      ticket: ticketId,
-      filename: attachment.name,
-    }]).pipe(
+    return this.fileUpload.upload({
+      file: attachment,
+      method: 'support.attach_ticket',
+      params: [{
+        token,
+        ticket: ticketId,
+        filename: attachment.name,
+      }],
+    }).pipe(
       filter((event) => event instanceof HttpResponse),
       take(1),
       map(() => true),

@@ -41,10 +41,10 @@ import { DisksUpdateService } from 'app/services/disks-update.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { FocusService } from 'app/services/focus.service';
 import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
-import { IxFileUploadService } from 'app/services/ix-file-upload.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { NavigationService } from 'app/services/navigation/navigation.service';
 import { ThemeService } from 'app/services/theme/theme.service';
+import { UploadService } from 'app/services/upload.service';
 import { WebSocketConnectionService } from 'app/services/websocket-connection.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { rootEffects, rootReducers } from 'app/store';
@@ -139,7 +139,7 @@ import { RoutePartsService } from './services/route-parts/route-parts.service';
     AppLoaderService,
     IxSlideInService,
     IxChainedSlideInService,
-    IxFileUploadService,
+    UploadService,
     DisksUpdateService,
     {
       provide: ErrorHandler,
