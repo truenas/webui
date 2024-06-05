@@ -20,6 +20,7 @@ import { EmptyService } from 'app/modules/empty/empty.service';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import { stateButtonColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-state-button/ix-cell-state-button.component';
 import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
+import { yesNoColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-yes-no/ix-cell-yes-no.component';
 import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/table-column.interface';
 import { createTable } from 'app/modules/ix-table/utils';
 import { selectJob } from 'app/modules/jobs/store/job.selectors';
@@ -125,11 +126,10 @@ export class CloudSyncListComponent implements OnInit {
       getJob: (row) => row.job,
       cssClass: 'state-button',
     }),
-    textColumn({
+    yesNoColumn({
       title: this.translate.instant('Enabled'),
       propertyName: 'enabled',
       sortable: true,
-      getValue: (task) => (task.enabled ? this.translate.instant('Yes') : this.translate.instant('No')),
     }),
   ], {
     rowTestId: (row) => 'cloudsync-task-' + row.description,
