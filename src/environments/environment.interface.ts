@@ -1,5 +1,6 @@
-/* eslint-disable no-restricted-imports */
-import { MockEnclosureConfig } from 'app/core/testing/mock-enclosure/interfaces/mock-enclosure.interface';
+import {
+  MockEnclosureConfig,
+} from 'app/core/testing/mock-enclosure/interfaces/mock-enclosure.interface';
 
 export interface WebUiEnvironment {
   environmentVersion: string;
