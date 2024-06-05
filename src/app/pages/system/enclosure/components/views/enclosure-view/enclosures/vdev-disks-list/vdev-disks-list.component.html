@@ -1,5 +1,10 @@
 <div
-  *ngIf="!selectedSlot().pool_info" 
+  *ngIf="!selectedSlot().dev" 
+  class="container"
+>{{ 'Empty drive cage' | translate }}</div>
+
+<div
+  *ngIf="selectedSlot().dev && !selectedSlot().pool_info" 
   class="container"
 >{{ 'No vdev info for this disk' | translate }}</div>
 
@@ -11,7 +16,7 @@
       *ngFor="let disk of selectedSlot().pool_info.vdev_disks"
       class="disk-name"
     >
-      <div class="disk-circle"></div>{{ disk.dev }}
+      <div class="disk-circle" [class.selected]="disk.dev === selectedSlot().dev"></div>{{ disk.dev }}
     </div>
   </div>
 </ng-container>

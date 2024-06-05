@@ -385,6 +385,7 @@
   "Edit group": "",
   "Edit widget to choose network interface.": "",
   "Editing interface will result in default gateway being removed, which may result in TrueNAS being inaccessible. You can provide new default gateway now:": "",
+  "Empty drive cage": "",
   "Enable FIPS": "",
   "Enable Integrated Metrics Server": "",
   "Enable Kernel Debug": "",

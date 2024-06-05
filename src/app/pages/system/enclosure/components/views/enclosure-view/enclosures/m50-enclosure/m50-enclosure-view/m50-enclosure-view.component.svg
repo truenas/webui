@@ -249,6 +249,7 @@
     <g
       class="drive-cage-container" 
       id="DRIVE_CAGE_0"
+      [class.empty]="isDriveCageEmpty(0)"
       [class.highlight]="selectedSlotIndex() === 0"
       (click)="onTraySelected(0)"
     >
@@ -296,6 +297,7 @@
     <g
       class="drive-cage-container"
       [class.highlight]="selectedSlotIndex() === 1"
+      [class.empty]="isDriveCageEmpty(1)"
       id="DRIVE_CAGE_1"
       (click)="onTraySelected(1)"
     >
@@ -343,6 +345,7 @@
     <g 
       class="drive-cage-container" 
       [class.highlight]="selectedSlotIndex() === 2"
+      [class.empty]="isDriveCageEmpty(2)"
       id="DRIVE_CAGE_2"
       (click)="onTraySelected(2)"
     >
@@ -390,6 +393,7 @@
     <g 
       class="drive-cage-container" 
       [class.highlight]="selectedSlotIndex() === 3"
+      [class.empty]="isDriveCageEmpty(3)"
       id="DRIVE_CAGE_3"
       (click)="onTraySelected(3)"
     >
@@ -436,6 +440,7 @@
     </g>
     <g 
       class="drive-cage-container" 
+      [class.empty]="isDriveCageEmpty(4)"
       id="DRIVE_CAGE_4"
       [class.highlight]="selectedSlotIndex() === 4"
       (click)="onTraySelected(4)"
@@ -485,6 +490,7 @@
       class="drive-cage-container" 
       [class.highlight]="selectedSlotIndex() === 5"
       id="DRIVE_CAGE_5"
+      [class.empty]="isDriveCageEmpty(5)"
       (click)="onTraySelected(5)"
     >
       <g>
@@ -531,6 +537,7 @@
     <g 
       class="drive-cage-container" 
       [class.highlight]="selectedSlotIndex() === 6"
+      [class.empty]="isDriveCageEmpty(6)"
       id="DRIVE_CAGE_6"
       (click)="onTraySelected(6)"
     >
@@ -578,6 +585,7 @@
     <g 
       [class.highlight]="selectedSlotIndex() === 7"
       class="drive-cage-container" 
+      [class.empty]="isDriveCageEmpty(7)"
       id="DRIVE_CAGE_7"
       (click)="onTraySelected(7)"
     >
@@ -625,6 +633,7 @@
     <g 
       class="drive-cage-container" 
       [class.highlight]="selectedSlotIndex() === 8"
+      [class.empty]="isDriveCageEmpty(8)"
       id="DRIVE_CAGE_8"
       (click)="onTraySelected(8)"
     >
@@ -672,6 +681,7 @@
     <g 
       class="drive-cage-container" 
       [class.highlight]="selectedSlotIndex() === 9"
+      [class.empty]="isDriveCageEmpty(9)"
       id="DRIVE_CAGE_9"
       (click)="onTraySelected(9)"
     >
@@ -719,6 +729,7 @@
     <g 
       class="drive-cage-container" 
       [class.highlight]="selectedSlotIndex() === 10"
+      [class.empty]="isDriveCageEmpty(10)"
       id="DRIVE_CAGE_10"
       (click)="onTraySelected(10)"
     >
@@ -766,6 +777,7 @@
     <g 
       class="drive-cage-container" 
       [class.highlight]="selectedSlotIndex() === 11"
+      [class.empty]="isDriveCageEmpty(11)"
       id="DRIVE_CAGE_11"
       (click)="onTraySelected(11)"
     >
@@ -812,6 +824,7 @@
     </g>
     <g 
       class="drive-cage-container" 
+      [class.empty]="isDriveCageEmpty(12)"
       [class.highlight]="selectedSlotIndex() === 12"
       id="DRIVE_CAGE_12"
       (click)="onTraySelected(12)"
@@ -860,6 +873,7 @@
     <g 
       class="drive-cage-container" 
       [class.highlight]="selectedSlotIndex() === 13"
+      [class.empty]="isDriveCageEmpty(13)"
       id="DRIVE_CAGE_13"
       (click)="onTraySelected(13)"
     >
@@ -907,6 +921,7 @@
     <g 
       class="drive-cage-container" 
       [class.highlight]="selectedSlotIndex() === 14"
+      [class.empty]="isDriveCageEmpty(14)"
       id="DRIVE_CAGE_14"
       (click)="onTraySelected(14)"
     >
@@ -954,6 +969,7 @@
     <g 
       class="drive-cage-container" 
       [class.highlight]="selectedSlotIndex() === 15"
+      [class.empty]="isDriveCageEmpty(15)"
       id="DRIVE_CAGE_15"
       (click)="onTraySelected(15)"
     >
@@ -1000,6 +1016,7 @@
     </g>
     <g 
       class="drive-cage-container" 
+      [class.empty]="isDriveCageEmpty(16)"
       [class.highlight]="selectedSlotIndex() === 16"
       id="DRIVE_CAGE_16"
       (click)="onTraySelected(16)"
@@ -1048,6 +1065,7 @@
     <g  
       [class.highlight]="selectedSlotIndex() === 17"
       class="drive-cage-container" 
+      [class.empty]="isDriveCageEmpty(17)"
       id="DRIVE_CAGE_17"
       (click)="onTraySelected(17)"
     >
@@ -1094,6 +1112,7 @@
     </g>
     <g 
       class="drive-cage-container" 
+      [class.empty]="isDriveCageEmpty(18)"
       [class.highlight]="selectedSlotIndex() === 18"
       id="DRIVE_CAGE_18"
       (click)="onTraySelected(18)"
@@ -1142,6 +1161,7 @@
     <g 
       class="drive-cage-container" 
       [class.highlight]="selectedSlotIndex() === 19"
+      [class.empty]="isDriveCageEmpty(19)"
       id="DRIVE_CAGE_19"
       (click)="onTraySelected(19)"
     >
@@ -1188,6 +1208,7 @@
     </g>
     <g 
       class="drive-cage-container" 
+      [class.empty]="isDriveCageEmpty(20)"
       [class.highlight]="selectedSlotIndex() === 20"
       id="DRIVE_CAGE_20"
       (click)="onTraySelected(20)"
@@ -1236,6 +1257,7 @@
     <g 
       class="drive-cage-container" 
       [class.highlight]="selectedSlotIndex() === 21"
+      [class.empty]="isDriveCageEmpty(21)"
       id="DRIVE_CAGE_21"
       (click)="onTraySelected(21)"
     >
@@ -1283,6 +1305,7 @@
     <g 
       class="drive-cage-container" 
       [class.highlight]="selectedSlotIndex() === 22"
+      [class.empty]="isDriveCageEmpty(22)"
       id="DRIVE_CAGE_22"
       (click)="onTraySelected(22)"
     >
@@ -1328,6 +1351,7 @@
       </g>
     </g>
     <g 
+      [class.empty]="isDriveCageEmpty(23)"
       class="drive-cage-container" 
       [class.highlight]="selectedSlotIndex() === 23"
       id="DRIVE_CAGE_23"

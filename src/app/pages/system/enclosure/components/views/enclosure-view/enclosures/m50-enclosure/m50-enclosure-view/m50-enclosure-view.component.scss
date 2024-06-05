@@ -180,12 +180,16 @@
   fill: #3a3a3a;
 }
 
-.drive-cage-container:hover .cls-6 {
-  fill: #ff3;
+.empty {
   opacity: 0.5;
 }
 
 .drive-cage-container.highlight .cls-6 {
   fill: #ff3;
   opacity: 1;
+}
+
+.drive-cage-container:hover .cls-6 {
+  fill: #ff3;
+  opacity: 0.5;
 }

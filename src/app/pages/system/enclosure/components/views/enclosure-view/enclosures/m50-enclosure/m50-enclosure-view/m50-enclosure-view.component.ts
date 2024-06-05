@@ -30,6 +30,12 @@ export class M50EnclosureViewComponent {
     return enclosure.elements[EnclosureElementType.ArrayDeviceSlot];
   });
 
+  protected isDriveCageEmpty(slotIndex: number): boolean {
+    const slots = this.slots();
+    const driveBayNumber = slotIndex + 1;
+    return slots[driveBayNumber].dev == null;
+  }
+
   constructor(
     private enclosureStore: EnclosureStore,
   ) { }
