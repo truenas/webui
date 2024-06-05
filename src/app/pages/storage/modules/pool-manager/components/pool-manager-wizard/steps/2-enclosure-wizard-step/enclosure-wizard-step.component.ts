@@ -31,14 +31,14 @@ export class EnclosureWizardStepComponent implements OnInit, OnChanges {
 
   form = this.formBuilder.group({
     dispersalStrategy: [DispersalStrategy.None],
-    limitToEnclosure: [null as number],
+    limitToEnclosure: [null as string | null],
   });
 
   protected enclosureOptions$ = this.store.enclosures$.pipe(
     map((enclosures) => {
       return enclosures.map((enclosure) => ({
         label: enclosure.label || enclosure.name,
-        value: enclosure.number,
+        value: enclosure.id,
       }));
     }),
   );

@@ -1,6 +1,6 @@
 import { GiB } from 'app/constants/bytes.constant';
 import { CreateVdevLayout } from 'app/enums/v-dev-type.enum';
-import { UnusedDisk } from 'app/interfaces/storage.interface';
+import { DetailsDisk } from 'app/interfaces/disk.interface';
 import { PoolManagerTopologyCategory } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
 import { categoryCapacity, vdevCapacity } from 'app/pages/storage/modules/pool-manager/utils/capacity.utils';
 
@@ -25,7 +25,7 @@ describe('vdevCapacity', () => {
     { size: 5 * GiB },
     { size: 7 * GiB },
     { size: 6 * GiB },
-  ] as UnusedDisk[];
+  ] as DetailsDisk[];
 
   it('stripe layout', () => {
     expect(vdevCapacity({

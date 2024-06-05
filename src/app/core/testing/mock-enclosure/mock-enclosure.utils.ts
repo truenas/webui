@@ -5,7 +5,7 @@ import { mockRootDataset } from 'app/core/testing/mock-enclosure/other-templates
 import { ApiCallMethod, ApiCallResponse } from 'app/interfaces/api/api-call-directory.interface';
 import { ApiJobMethod } from 'app/interfaces/api/api-job-directory.interface';
 import { IncomingWebSocketMessage, ResultMessage } from 'app/interfaces/api-message.interface';
-import { Disk, UnusedDisk } from 'app/interfaces/storage.interface';
+import { Disk, DetailsDisk } from 'app/interfaces/disk.interface';
 import { SystemInfo } from 'app/interfaces/system-info.interface';
 
 export class MockEnclosureUtils {
@@ -130,7 +130,7 @@ export class MockEnclosureUtils {
         // ...disk,
         // partitions: [{ path: '' }],
         // exported_zpool: '',
-      } as UnusedDisk;
+      } as DetailsDisk;
     });
   }
 }

@@ -1,7 +1,7 @@
 import { AddEnclosureOptions, AddTopologyOptions, AddUnAssignedOptions } from 'app/core/testing/mock-enclosure/interfaces/mock-storage-generator.interface';
+import { Disk } from 'app/interfaces/disk.interface';
 import { EnclosureOld } from 'app/interfaces/enclosure-old.interface';
 import { Pool } from 'app/interfaces/pool.interface';
-import { Disk } from 'app/interfaces/storage.interface';
 
 export interface MockEnclosureConfigItem {
   enabled: boolean;

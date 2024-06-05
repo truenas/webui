@@ -8,9 +8,9 @@ import {
 } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
 import { SmartTestResultPageType } from 'app/enums/smart-test-results-page-type.enum';
+import { Disk } from 'app/interfaces/disk.interface';
 import { QueryParams } from 'app/interfaces/query-api.interface';
 import { SmartTestResults, SmartTestResultsRow } from 'app/interfaces/smart-test.interface';
-import { Disk } from 'app/interfaces/storage.interface';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import { stateButtonColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-state-button/ix-cell-state-button.component';

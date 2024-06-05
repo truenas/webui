@@ -1,6 +1,6 @@
 import { byText, createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { DiskType } from 'app/enums/disk-type.enum';
-import { Disk } from 'app/interfaces/storage.interface';
+import { DetailsDisk } from 'app/interfaces/disk.interface';
 import {
   DiskInfoComponent,
 } from 'app/pages/storage/modules/pool-manager/components/manual-disk-selection/components/disk-info/disk-info.component';
@@ -16,12 +16,12 @@ describe('DiskInfoComponent', () => {
       props: {
         disk: {
           enclosure: {
-            slot: 1,
+            drive_bay_number: 1,
           },
           model: 'FR102-K',
           serial: '1234567890',
           type: DiskType.Hdd,
-        } as Disk,
+        } as DetailsDisk,
       },
     });
   });
@@ -35,7 +35,7 @@ describe('DiskInfoComponent', () => {
     spectator.setInput({
       disk: {
         enclosure: null,
-      } as Disk,
+      } as DetailsDisk,
     });
 
     expect(spectator.query('.container')).toHaveClass('no-slot');

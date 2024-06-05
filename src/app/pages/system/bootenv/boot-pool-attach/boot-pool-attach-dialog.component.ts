@@ -11,7 +11,7 @@ import { JobState } from 'app/enums/job-state.enum';
 import { Role } from 'app/enums/role.enum';
 import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
 import { helptextSystemBootenv } from 'app/helptext/system/boot-env';
-import { UnusedDisk } from 'app/interfaces/storage.interface';
+import { DetailsDisk } from 'app/interfaces/disk.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -31,7 +31,7 @@ export class BootPoolAttachDialogComponent implements OnInit {
     expand: [false],
   });
 
-  unusedDisks: UnusedDisk[] = [];
+  unusedDisks: DetailsDisk[] = [];
 
   dev = {
     fcName: 'dev' as const,

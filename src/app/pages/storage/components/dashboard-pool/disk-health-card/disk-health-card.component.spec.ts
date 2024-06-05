@@ -9,8 +9,8 @@ import { DiskBus } from 'app/enums/disk-bus.enum';
 import { DiskPowerLevel } from 'app/enums/disk-power-level.enum';
 import { DiskStandby } from 'app/enums/disk-standby.enum';
 import { DiskType } from 'app/enums/disk-type.enum';
+import { StorageDashboardDisk } from 'app/interfaces/disk.interface';
 import { Pool } from 'app/interfaces/pool.interface';
-import { StorageDashboardDisk } from 'app/interfaces/storage.interface';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DiskHealthCardComponent } from 'app/pages/storage/components/dashboard-pool/disk-health-card/disk-health-card.component';
 import { PoolCardIconComponent } from 'app/pages/storage/components/dashboard-pool/pool-card-icon/pool-card-icon.component';
@@ -25,17 +25,11 @@ const disks: StorageDashboardDisk[] = [
     devname: 'sdd',
     difference: 0,
     duplicate_serial: [],
-    enclosure: {
-      number: 0,
-      slot: 0,
-    },
     expiretime: '',
     hddstandby: DiskStandby.AlwaysOn,
     identifier: '{uuid}b3ba146f-1ab6-4a45-ae6b-37ea00baf0aa',
     informational: 0,
     model: 'VMware_Virtual_S',
-    multipath_member: '',
-    multipath_name: '',
     name: 'sdd',
     number: 2096,
     pool: 'lio',

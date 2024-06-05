@@ -11,7 +11,7 @@ import { SmartTestResultPageType } from 'app/enums/smart-test-results-page-type.
 import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
 import { stringToTitleCase } from 'app/helpers/string-to-title-case';
 import { Choices } from 'app/interfaces/choices.interface';
-import { Disk, UnusedDisk } from 'app/interfaces/storage.interface';
+import { Disk, DetailsDisk } from 'app/interfaces/disk.interface';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
@@ -138,7 +138,7 @@ export class DiskListComponent implements OnInit {
   }
 
   private disks: DiskUi[] = [];
-  private unusedDisks: UnusedDisk[] = [];
+  private unusedDisks: DetailsDisk[] = [];
   private smartDiskChoices: Choices = {};
 
   constructor(

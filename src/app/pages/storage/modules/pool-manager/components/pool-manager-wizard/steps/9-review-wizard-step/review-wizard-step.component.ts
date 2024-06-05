@@ -71,7 +71,7 @@ export class ReviewWizardStepComponent implements OnInit {
     }
 
     return this.state.enclosures.find((enclosure) => {
-      return enclosure.number === this.state.enclosureSettings.limitToSingleEnclosure;
+      return enclosure.id === this.state.enclosureSettings.limitToSingleEnclosure;
     })?.name;
   }
 
@@ -90,7 +90,10 @@ export class ReviewWizardStepComponent implements OnInit {
 
   onInspectVdevsPressed(): void {
     this.matDialog.open(InspectVdevsDialogComponent, {
-      data: this.state.topology,
+      data: {
+        topology: this.state.topology,
+        enclosures: this.state.enclosures,
+      },
       panelClass: 'inspect-vdevs-dialog',
     });
   }

@@ -6,8 +6,8 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { combineLatest, map } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
 import { CreateVdevLayout } from 'app/enums/v-dev-type.enum';
-import { EnclosureOld } from 'app/interfaces/enclosure-old.interface';
-import { UnusedDisk } from 'app/interfaces/storage.interface';
+import { DetailsDisk } from 'app/interfaces/disk.interface';
+import { Enclosure } from 'app/interfaces/enclosure.interface';
 import {
   ManualSelectionVdev,
 } from 'app/pages/storage/modules/pool-manager/components/manual-disk-selection/interfaces/manual-disk-selection.interface';
@@ -20,9 +20,9 @@ import { minDisksPerLayout } from 'app/pages/storage/modules/pool-manager/utils/
 
 export interface ManualDiskSelectionParams {
   layout: CreateVdevLayout;
-  enclosures: EnclosureOld[];
-  inventory: UnusedDisk[];
-  vdevs: UnusedDisk[][];
+  enclosures: Enclosure[];
+  inventory: DetailsDisk[];
+  vdevs: DetailsDisk[][];
   vdevsLimit: number | null;
 }
 
@@ -57,7 +57,7 @@ export class ManualDiskSelectionComponent implements OnInit {
   }));
 
   protected currentVdevs: ManualSelectionVdev[];
-  private oldVdevs: UnusedDisk[][] = [];
+  private oldVdevs: DetailsDisk[][] = [];
 
   constructor(
     @Inject(MAT_DIALOG_DATA) protected data: ManualDiskSelectionParams,

@@ -1,7 +1,8 @@
 import {
-  ChangeDetectionStrategy, Component, Input,
+  ChangeDetectionStrategy, Component, computed, input,
 } from '@angular/core';
 import { UntilDestroy } from '@ngneat/until-destroy';
+import { Enclosure } from 'app/interfaces/enclosure.interface';
 
 @UntilDestroy()
 @Component({
@@ -11,5 +12,7 @@ import { UntilDestroy } from '@ngneat/until-destroy';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class EnclosureWrapperComponent {
-  @Input() enclosure: number;
+  enclosure = input.required<Enclosure>();
+
+  protected label = computed(() => this.enclosure().label || this.enclosure().name);
 }

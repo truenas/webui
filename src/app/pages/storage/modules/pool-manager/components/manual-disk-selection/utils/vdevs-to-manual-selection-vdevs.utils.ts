@@ -1,11 +1,11 @@
 import { UUID } from 'angular2-uuid';
 import _ from 'lodash';
-import { UnusedDisk } from 'app/interfaces/storage.interface';
+import { DetailsDisk } from 'app/interfaces/disk.interface';
 import {
   ManualSelectionVdev,
 } from 'app/pages/storage/modules/pool-manager/components/manual-disk-selection/interfaces/manual-disk-selection.interface';
 
-export function vdevsToManualSelectionVdevs(vdevs: UnusedDisk[][]): ManualSelectionVdev[] {
+export function vdevsToManualSelectionVdevs(vdevs: DetailsDisk[][]): ManualSelectionVdev[] {
   return vdevs.map((vdev) => {
     const vdevId = UUID.UUID();
     return {
@@ -21,10 +21,10 @@ export function vdevsToManualSelectionVdevs(vdevs: UnusedDisk[][]): ManualSelect
   });
 }
 
-export function manualSelectionVdevsToVdevs(vdevs: ManualSelectionVdev[]): UnusedDisk[][] {
+export function manualSelectionVdevsToVdevs(vdevs: ManualSelectionVdev[]): DetailsDisk[][] {
   return vdevs.map((vdev) => {
     return vdev.disks.map((disk) => {
-      return _.omit(disk, ['vdevUuid', 'real_capacity']) as UnusedDisk;
+      return _.omit(disk, ['vdevUuid', 'real_capacity']) as DetailsDisk;
     });
   });
 }

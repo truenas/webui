@@ -15,10 +15,10 @@ import { DiskType } from 'app/enums/disk-type.enum';
 import { PoolStatus } from 'app/enums/pool-status.enum';
 import { TopologyItemType, VdevType } from 'app/enums/v-dev-type.enum';
 import { TopologyItemStatus } from 'app/enums/vdev-status.enum';
+import { Disk } from 'app/interfaces/disk.interface';
 import { EnclosureOld, EnclosureOldSlot } from 'app/interfaces/enclosure-old.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import {
-  Disk, EnclosureIdAndSlot,
   TopologyDisk,
   TopologyItem,
   TopologyItemStats,
@@ -621,8 +621,6 @@ export class MockStorageGenerator {
       size: this.terabytesToBytes(size),
       description: '',
       duplicate_serial: [],
-      multipath_member: '',
-      multipath_name: '',
       transfermode: 'Auto',
       hddstandby: DiskStandby.AlwaysOn,
       advpowermgmt: DiskPowerLevel.Disabled,
@@ -638,7 +636,6 @@ export class MockStorageGenerator {
       zfs_guid: '594160193876939323',
       bus: DiskBus.Spi,
       devname: name,
-      enclosure: null,
       supports_smart: null,
       pool: isAssigned ? this.poolState.name : null,
     };
@@ -940,23 +937,6 @@ export class MockStorageGenerator {
   getEmptySlots(enclosureId: string): [string, EnclosureOldSlot][] {
     return this.getEnclosureSlots(enclosureId)
       .filter((keyValue: [string, EnclosureOldSlot]) => keyValue[1].status !== 'OK');
-  }
-
-  getAllEmptySlots(): EnclosureIdAndSlot[] {
-    let allEmptySlots: EnclosureIdAndSlot[] = [];
-    this.mockEnclosures.forEach((mockEnclosure: MockEnclosure) => {
-      const emptySlots: EnclosureIdAndSlot[] = mockEnclosure.getEmptySlots()
-        .map((keyValue: [string, EnclosureOldSlot]) => {
-          return {
-            number: 0, // TODO: Remove when Disk interface is updated
-            id: mockEnclosure.data.id,
-            slot: parseInt(keyValue[0]),
-          };
-        });
-      allEmptySlots = allEmptySlots.concat(emptySlots);
-    });
-
-    return allEmptySlots;
   }
 
   private removeDisksFromEnclosures(removedDisks: Disk[]): DispersedData {

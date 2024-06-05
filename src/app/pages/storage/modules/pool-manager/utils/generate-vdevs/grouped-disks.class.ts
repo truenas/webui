@@ -1,5 +1,5 @@
 import { DiskType } from 'app/enums/disk-type.enum';
-import { UnusedDisk } from 'app/interfaces/storage.interface';
+import { DetailsDisk } from 'app/interfaces/disk.interface';
 import { DiskTypeSizeMap } from 'app/pages/storage/modules/pool-manager/interfaces/disk-type-size-map.interface';
 import { PoolManagerTopologyCategory } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
 import { getDiskTypeSizeMap } from 'app/pages/storage/modules/pool-manager/utils/get-disk-type-size-map.utils';
@@ -10,13 +10,13 @@ import { getDiskTypeSizeMap } from 'app/pages/storage/modules/pool-manager/utils
 export class GroupedDisks {
   private diskMap: DiskTypeSizeMap;
 
-  constructor(disks: UnusedDisk[]) {
+  constructor(disks: DetailsDisk[]) {
     this.diskMap = getDiskTypeSizeMap(disks);
   }
 
-  findSuitableDisks(category: PoolManagerTopologyCategory): UnusedDisk[] {
+  findSuitableDisks(category: PoolManagerTopologyCategory): DetailsDisk[] {
     if (category.treatDiskSizeAsMinimum) {
-      const matchingDisks: UnusedDisk[] = [];
+      const matchingDisks: DetailsDisk[] = [];
       [DiskType.Hdd, DiskType.Ssd].forEach((type) => {
         const disksByType = this.diskMap[type];
         for (const diskSize of Object.keys(disksByType)) {
@@ -31,7 +31,7 @@ export class GroupedDisks {
     return [...this.diskMap.HDD[category.diskSize] || [], ...this.diskMap.SSD[category.diskSize] || []];
   }
 
-  removeUsedDisks(usedDisks: UnusedDisk[]): void {
+  removeUsedDisks(usedDisks: DetailsDisk[]): void {
     const usedDiskNames = usedDisks.map((disk) => disk.devname);
     const newDiskMap = {} as DiskTypeSizeMap;
 

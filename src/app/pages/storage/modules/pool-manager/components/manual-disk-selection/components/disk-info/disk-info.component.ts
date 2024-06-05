@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
-import { Disk } from 'app/interfaces/storage.interface';
+import { DetailsDisk } from 'app/interfaces/disk.interface';
 
 @Component({
   selector: 'ix-disk-info',
@@ -8,5 +8,5 @@ import { Disk } from 'app/interfaces/storage.interface';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DiskInfoComponent {
-  @Input() disk: Disk;
+  @Input() disk: DetailsDisk;
 }
