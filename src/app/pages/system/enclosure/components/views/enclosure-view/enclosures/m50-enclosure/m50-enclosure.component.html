@@ -1,4 +1,9 @@
 <div class="enclosure-view">
+  <ng-container *ngIf="selectedSlot()">
+    <ix-disk-topology-description
+      [selectedSlot]="selectedSlot()"
+    ></ix-disk-topology-description>
+  </ng-container>
   <ix-m50-enclosure-view
     *ngIf="selectedView() !== 'expanders'"
     [enclosure]="enclosure()"
@@ -8,4 +13,10 @@
     *ngIf="selectedView() === 'expanders'"
     [expanders]="expanders()"
   ></ix-sas-expander-status-view>
+
+  <ng-container *ngIf="selectedSlot()">
+    <ix-vdev-disks-list
+      [selectedSlot]="selectedSlot()"
+    ></ix-vdev-disks-list>
+  </ng-container>
 </div>

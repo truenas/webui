@@ -1558,6 +1558,7 @@
   "No temperature data was reported by the system. There can be a number of reasons why this might occur. For troubleshooting tips please go here": "",
   "No unused disks": "",
   "No vdev info for disk.": "",
+  "No vdev info for this disk": "",
   "No warnings": "",
   "Node IP": "",
   "Node set allows setting NUMA nodes for multi NUMA processors when CPU set was defined. Better memory locality can be achieved by setting node set based on assigned CPU set. E.g. if cpus 0,1 belong to NUMA node 0 then setting nodeset to 0 will improve memory locality": "",

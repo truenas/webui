@@ -35,10 +35,11 @@ import {
 import { DisksOverviewComponent } from 'app/pages/system/enclosure/components/views/enclosure-view/disks-overview/disks-overview.component';
 import { IxEnclosureSelectorComponent } from 'app/pages/system/enclosure/components/views/enclosure-view/enclosure-selector/enclosure-selector.component';
 import { EnclosureViewComponent } from 'app/pages/system/enclosure/components/views/enclosure-view/enclosure-view.component';
-import { DriveTrayComponent } from 'app/pages/system/enclosure/components/views/enclosure-view/enclosures/drive-tray/drive-tray.component';
+import { DiskTopologyDescriptionComponent } from 'app/pages/system/enclosure/components/views/enclosure-view/enclosures/disk-topology-description/disk-topology-description.component';
 import { M50EnclosureViewComponent } from 'app/pages/system/enclosure/components/views/enclosure-view/enclosures/m50-enclosure/m50-enclosure-view/m50-enclosure-view.component';
 import { M50EnclosureComponent } from 'app/pages/system/enclosure/components/views/enclosure-view/enclosures/m50-enclosure/m50-enclosure.component';
 import { SasExpanderStatusViewComponent } from 'app/pages/system/enclosure/components/views/enclosure-view/enclosures/sas-expander-status-view/sas-expander-status-view.component';
+import { VdevDisksListComponent } from 'app/pages/system/enclosure/components/views/enclosure-view/enclosures/vdev-disks-list/vdev-disks-list.component';
 import { routing } from 'app/pages/system/enclosure/enclosure.routing';
 import { EnclosureStore } from 'app/pages/system/enclosure/services/enclosure.store';
 
@@ -69,14 +70,15 @@ import { EnclosureStore } from 'app/pages/system/enclosure/services/enclosure.st
   declarations: [
     EnclosureDashboardComponent,
     DisksOverviewComponent,
+    DiskTopologyDescriptionComponent,
     IxEnclosureSelectorComponent,
-    DriveTrayComponent,
     EnclosureViewComponent,
     M50EnclosureViewComponent,
     M50EnclosureComponent,
     JbofListComponent,
     SasExpanderStatusViewComponent,
     JbofFormComponent,
+    VdevDisksListComponent,
     SetEnclosureLabelDialogComponent,
     EnclosureDiskComponent,
     ElementsComponent,

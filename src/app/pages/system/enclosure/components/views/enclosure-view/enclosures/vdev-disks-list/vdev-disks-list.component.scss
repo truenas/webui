@@ -1,0 +1,22 @@
+.container {
+  align-items: center;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  justify-content: center;
+  min-width: 155px;
+}
+
+.disk-name {
+  display: inline-block;
+}
+
+.disk-circle {
+  background: rgb(87, 183, 196);
+  border-radius: 50%;
+  display: inline-block;
+  height: 5px;
+  margin-right: 5px;
+  width: 5px;
+}
