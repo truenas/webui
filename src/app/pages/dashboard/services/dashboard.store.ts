@@ -3,7 +3,7 @@ import { UntilDestroy } from '@ngneat/until-destroy';
 import { ComponentStore } from '@ngrx/component-store';
 import {
   EMPTY,
-  Observable, catchError, delay, filter, finalize, map, switchMap, tap,
+  Observable, catchError, filter, finalize, map, switchMap, tap,
 } from 'rxjs';
 import { WidgetName } from 'app/enums/widget-name.enum';
 import { WidgetGroup, WidgetGroupLayout } from 'app/pages/dashboard/types/widget-group.interface';
@@ -56,12 +56,10 @@ export class DashboardStore extends ComponentStore<DashboardState> {
   readonly entered = this.effect((trigger$) => {
     return trigger$.pipe(
       tap(() => this.toggleLoadingState(true)),
-      switchMap(() => this.authService.refreshUser()),
       switchMap(() => this.authService.user$.pipe(
         filter(Boolean),
-        map((user) => user.attributes.dashState || []),
+        map((user) => user.attributes.dashState),
       )),
-      delay(1000),
       tap((dashState) => {
         this.setState({
           isLoading: false,
@@ -88,7 +86,7 @@ export class DashboardStore extends ComponentStore<DashboardState> {
   clear(): Observable<void> {
     this.toggleLoadingState(true);
 
-    return this.ws.call('auth.set_attribute', ['dashState', null]).pipe(
+    return this.ws.call('auth.set_attribute', ['dashState', []]).pipe(
       switchMap(() => this.authService.refreshUser()),
       finalize(() => this.toggleLoadingState(false)),
     );

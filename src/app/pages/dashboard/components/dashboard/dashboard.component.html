@@ -1,12 +1,5 @@
 <ix-page-header [title]="'Dashboard' | translate" [loading]="isLoading()">
   <button
-    mat-button
-    color="primary"
-    ixTest="clear-dashboard-state"
-    (click)="removeState()"
-  >{{ 'Clear State' }}</button>
-
-  <button
     *ngIf="!isEditing(); else editingButtons"
     mat-button
     color="primary"
@@ -18,6 +11,15 @@
   </button>
 
   <ng-template #editingButtons>
+    <button
+      mat-button
+      ixTest="reset"
+      [disabled]="isLoading()"
+      (click)="onReset()"
+    >
+      {{ 'Reset' | translate }}
+    </button>
+
     <button
       mat-button
       class="add-button"
