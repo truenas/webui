@@ -285,9 +285,9 @@ export class CloudSyncListComponent implements OnInit {
   }
 
   onListFiltered(query: string): void {
-    this.filterString = query.toLowerCase();
+    this.filterString = query;
     this.dataProvider.setRows(this.cloudSyncTasks.filter((cloudSync) => {
-      return cloudSync.description.toLowerCase().includes(this.filterString);
+      return cloudSync.description.toLowerCase().includes(this.filterString.toLowerCase());
     }));
   }
 

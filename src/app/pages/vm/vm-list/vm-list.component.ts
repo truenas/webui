@@ -212,9 +212,9 @@ export class VmListComponent implements OnInit {
   }
 
   protected onListFiltered(query: string): void {
-    this.filterString = query.toLowerCase();
+    this.filterString = query;
     this.dataProvider.setRows(this.vmMachines.filter((vm) => {
-      return vm.name.toLowerCase().includes(this.filterString);
+      return vm.name.toLowerCase().includes(this.filterString.toLowerCase());
     }));
   }
 

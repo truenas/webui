@@ -272,13 +272,13 @@ export class DatasetQuotasListComponent implements OnInit {
   }
 
   onListFiltered(query: string): void {
-    this.filterString = query.toLowerCase();
+    this.filterString = query;
     this.createDataSource(
       this.quotas.filter((quota) => {
-        return quota.name?.toLowerCase().includes(this.filterString)
-        || quota.id?.toString()?.toLowerCase().includes(this.filterString)
-        || quota.quota?.toString()?.toLowerCase().includes(this.filterString)
-        || quota.obj_quota?.toString()?.toLowerCase().includes(this.filterString);
+        return quota.name?.toLowerCase().includes(this.filterString.toLowerCase())
+        || quota.id?.toString()?.toLowerCase().includes(this.filterString.toLowerCase())
+        || quota.quota?.toString()?.toLowerCase().includes(this.filterString.toLowerCase())
+        || quota.obj_quota?.toString()?.toLowerCase().includes(this.filterString.toLowerCase());
       }),
       EmptyType.NoSearchResults,
     );

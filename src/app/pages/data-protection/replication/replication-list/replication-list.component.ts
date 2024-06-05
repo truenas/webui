@@ -252,9 +252,9 @@ export class ReplicationListComponent implements OnInit {
   }
 
   onListFiltered(query: string): void {
-    this.filterString = query.toLowerCase();
+    this.filterString = query;
     this.dataProvider.setRows(this.replicationTasks.filter((task) => {
-      return task.name.toLowerCase().includes(this.filterString);
+      return task.name.toLowerCase().includes(this.filterString.toLowerCase());
     }));
   }
 

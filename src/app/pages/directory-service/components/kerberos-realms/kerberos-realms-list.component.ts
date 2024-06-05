@@ -152,12 +152,12 @@ export class KerberosRealmsListComponent implements OnInit {
   }
 
   onListFiltered(query: string): void {
-    this.filterString = query.toLowerCase();
+    this.filterString = query;
     this.dataProvider.setRows(this.kerberosRealsm.filter((idmap) => {
-      return idmap.realm.toLowerCase().includes(this.filterString)
-        || idmap.kdc_string.toLowerCase().includes(this.filterString)
-        || idmap.admin_server_string.toLowerCase().includes(this.filterString)
-        || idmap.kpasswd_server_string.toLowerCase().includes(this.filterString);
+      return idmap.realm.toLowerCase().includes(this.filterString.toLowerCase())
+        || idmap.kdc_string.toLowerCase().includes(this.filterString.toLowerCase())
+        || idmap.admin_server_string.toLowerCase().includes(this.filterString.toLowerCase())
+        || idmap.kpasswd_server_string.toLowerCase().includes(this.filterString.toLowerCase());
     }));
   }
 }

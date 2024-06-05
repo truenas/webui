@@ -153,11 +153,11 @@ export class UserListComponent implements OnInit {
   }
 
   onListFiltered(query: string): void {
-    this.filterString = query.toLowerCase();
+    this.filterString = query;
     this.createDataSource(this.users.filter((user) => {
-      return user.username.toLowerCase().includes(this.filterString)
-        || user.full_name.toLowerCase().includes(this.filterString)
-        || user.uid.toString().toLowerCase().includes(this.filterString);
+      return user.username.toLowerCase().includes(this.filterString.toLowerCase())
+        || user.full_name.toLowerCase().includes(this.filterString.toLowerCase())
+        || user.uid.toString().toLowerCase().includes(this.filterString.toLowerCase());
     }));
   }
 

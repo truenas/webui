@@ -135,9 +135,9 @@ export class DockerImagesListComponent implements OnInit {
   }
 
   protected onListFiltered(query: string): void {
-    this.filterString = query.toLowerCase();
+    this.filterString = query;
     this.dataProvider.setRows(this.containerImages.filter((image) => {
-      return image.repo_tags.join(', ').includes(this.filterString);
+      return image.repo_tags.join(', ').includes(this.filterString.toLowerCase());
     }));
   }
 

@@ -125,11 +125,11 @@ export class SmartTaskListComponent implements OnInit {
   }
 
   onListFiltered(query: string): void {
-    this.filterString = query.toLowerCase();
+    this.filterString = query;
     this.dataProvider.setRows(this.smartTasks.filter((smartTask) => {
-      return smartTask.desc.toLowerCase().includes(this.filterString)
-        || smartTask.type.toLowerCase().includes(this.filterString)
-        || smartTask.disksLabel.find((item) => item.includes(this.filterString));
+      return smartTask.desc.toLowerCase().includes(this.filterString.toLowerCase())
+        || smartTask.type.toLowerCase().includes(this.filterString.toLowerCase())
+        || smartTask.disksLabel.find((item) => item.includes(this.filterString.toLowerCase()));
     }));
   }
 

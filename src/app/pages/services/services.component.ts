@@ -141,9 +141,9 @@ export class ServicesComponent implements OnInit {
   }
 
   onListFiltered(query: string): void {
-    this.filterString = query.toLowerCase();
+    this.filterString = query;
     this.dataProvider.setRows(this.services.filter((service) => {
-      return service.name?.replace(/\./g, '')?.toLowerCase().includes(this.filterString);
+      return service.name?.replace(/\./g, '')?.toLowerCase().includes(this.filterString.toLowerCase());
     }));
   }
 

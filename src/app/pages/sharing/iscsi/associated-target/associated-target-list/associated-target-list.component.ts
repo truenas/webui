@@ -167,13 +167,14 @@ export class AssociatedTargetListComponent implements OnInit {
   }
 
   onListFiltered(query: string): void {
-    this.filterString = query.toLowerCase();
+    this.filterString = query;
     const extentNames = this.extents.map((extent) => ({ name: extent.name.toLowerCase(), id: extent.id }));
     const targetNames = this.targets.map((target) => ({ name: target.name.toLowerCase(), id: target.id }));
 
     this.dataProvider.setRows(this.targetExtents.filter((element) => {
       return [...targetNames, ...extentNames].some((item) => {
-        return (element.extent === item.id || element.target === item.id) && item.name.includes(this.filterString);
+        return (element.extent === item.id
+          || element.target === item.id) && item.name.includes(this.filterString.toLowerCase());
       });
     }));
   }

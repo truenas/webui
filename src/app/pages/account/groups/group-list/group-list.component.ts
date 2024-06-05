@@ -127,10 +127,10 @@ export class GroupListComponent implements OnInit {
   }
 
   onListFiltered(query: string): void {
-    this.filterString = query.toLowerCase();
+    this.filterString = query;
     this.createDataSource(this.groups.filter((group) => {
-      return group.group.toLowerCase().includes(this.filterString)
-        || group.gid.toString().toLowerCase().includes(this.filterString);
+      return group.group.toLowerCase().includes(this.filterString.toLowerCase())
+        || group.gid.toString().toLowerCase().includes(this.filterString.toLowerCase());
     }));
   }
 

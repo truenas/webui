@@ -129,9 +129,9 @@ export class TargetListComponent implements OnInit {
   }
 
   onListFiltered(query: string): void {
-    this.filterString = query.toLowerCase();
+    this.filterString = query;
     this.dataProvider.setRows(this.targets.filter((target) => {
-      return target.name.toLowerCase().includes(this.filterString);
+      return target.name.toLowerCase().includes(this.filterString.toLowerCase());
     }));
   }
 

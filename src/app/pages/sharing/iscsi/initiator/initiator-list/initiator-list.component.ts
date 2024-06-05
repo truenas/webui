@@ -118,10 +118,10 @@ export class InitiatorListComponent implements OnInit {
   }
 
   onListFiltered(query: string): void {
-    this.filterString = query.toLowerCase();
+    this.filterString = query;
     this.dataProvider.setRows(this.initiators.filter((entry) => {
-      return entry.comment.toLowerCase().includes(this.filterString)
-        || entry.initiators.join(' ').includes(this.filterString);
+      return entry.comment.toLowerCase().includes(this.filterString.toLowerCase())
+        || entry.initiators.join(' ').includes(this.filterString.toLowerCase());
     }));
   }
 

@@ -139,8 +139,8 @@ export class JobsListComponent implements OnInit {
   }
 
   private filterSnapshot = (job: Job): boolean => {
-    return job.method?.toLowerCase().includes(this.filterString)
-      || job.description?.toLowerCase().includes(this.filterString);
+    return job.method?.toLowerCase().includes(this.filterString.toLowerCase())
+      || job.description?.toLowerCase().includes(this.filterString.toLowerCase());
   };
 
   private setDefaultSort(): void {

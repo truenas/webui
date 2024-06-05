@@ -138,10 +138,10 @@ export class PortalListComponent implements OnInit {
   }
 
   onListFiltered(query: string): void {
-    this.filterString = query.toLowerCase();
+    this.filterString = query;
     this.dataProvider.setRows(this.portals.filter((entry) => {
-      return entry.comment.toLowerCase().includes(this.filterString)
-        || entry.discovery_authmethod.toLowerCase().includes(this.filterString);
+      return entry.comment.toLowerCase().includes(this.filterString.toLowerCase())
+        || entry.discovery_authmethod.toLowerCase().includes(this.filterString.toLowerCase());
     }));
   }
 

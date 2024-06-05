@@ -121,10 +121,10 @@ export class AuthorizedAccessListComponent implements OnInit {
   }
 
   onListFiltered(query: string): void {
-    this.filterString = query.toLowerCase();
+    this.filterString = query;
     this.dataProvider.setRows(this.authAccess.filter((entry) => {
-      return entry.peeruser.toLowerCase().includes(this.filterString)
-        || entry.user.toLowerCase().includes(this.filterString);
+      return entry.peeruser.toLowerCase().includes(this.filterString.toLowerCase())
+        || entry.user.toLowerCase().includes(this.filterString.toLowerCase());
     }));
   }
 

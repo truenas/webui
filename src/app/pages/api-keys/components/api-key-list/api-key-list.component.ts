@@ -115,9 +115,9 @@ export class ApiKeyListComponent implements OnInit {
   }
 
   onListFiltered(query: string): void {
-    this.filterString = query.toLowerCase();
+    this.filterString = query;
     this.createDataSource(this.apiKeys.filter((apiKey) => {
-      return apiKey.name.toLowerCase().includes(this.filterString);
+      return apiKey.name.toLowerCase().includes(this.filterString.toLowerCase());
     }));
   }
 

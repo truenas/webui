@@ -158,11 +158,11 @@ export class TunableListComponent implements OnInit {
   }
 
   onListFiltered(query: string): void {
-    this.filterString = query.toLowerCase();
+    this.filterString = query;
     this.dataProvider.setRows(this.tunables.filter((tunable) => {
-      return tunable.var.split('_').includes(this.filterString)
-      || tunable.value.includes(this.filterString)
-      || tunable.comment.includes(this.filterString);
+      return tunable.var.split('_').includes(this.filterString.toLowerCase())
+      || tunable.value.includes(this.filterString.toLowerCase())
+      || tunable.comment.includes(this.filterString.toLowerCase());
     }));
     this.cdr.markForCheck();
   }

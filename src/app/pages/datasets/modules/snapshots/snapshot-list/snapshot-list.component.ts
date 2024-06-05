@@ -265,7 +265,7 @@ export class SnapshotListComponent implements OnInit {
   }
 
   private filterSnapshot = (snapshot: ZfsSnapshotUi): boolean => {
-    return snapshot.name.toLowerCase().includes(this.filterString);
+    return snapshot.name.toLowerCase().includes(this.filterString.toLowerCase());
   };
 
   private setDefaultSort(): void {

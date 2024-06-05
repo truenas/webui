@@ -84,12 +84,12 @@ export class VmwareSnapshotListComponent implements OnInit {
   }
 
   onListFiltered(query: string): void {
-    this.filterString = query.toLowerCase();
+    this.filterString = query;
     this.dataProvider.setRows(this.snapshots.filter((snapshot) => {
-      return snapshot.hostname.toLowerCase().includes(this.filterString)
-      || snapshot.datastore.toLowerCase().includes(this.filterString)
-      || snapshot.filesystem.toLowerCase().includes(this.filterString)
-      || snapshot.username.toLowerCase().includes(this.filterString);
+      return snapshot.hostname.toLowerCase().includes(this.filterString.toLowerCase())
+      || snapshot.datastore.toLowerCase().includes(this.filterString.toLowerCase())
+      || snapshot.filesystem.toLowerCase().includes(this.filterString.toLowerCase())
+      || snapshot.username.toLowerCase().includes(this.filterString.toLowerCase());
     }));
   }
 

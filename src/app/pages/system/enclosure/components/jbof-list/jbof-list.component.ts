@@ -144,10 +144,10 @@ export class JbofListComponent implements OnInit {
   }
 
   onListFiltered(query: string): void {
-    this.filterString = query.toLowerCase();
+    this.filterString = query;
     this.dataProvider.setRows(this.jbofs.filter((jbof) => {
-      return jbof.mgmt_username.toLowerCase().includes(this.filterString)
-        || jbof.description.toLowerCase().includes(this.filterString);
+      return jbof.mgmt_username.toLowerCase().includes(this.filterString.toLowerCase())
+        || jbof.description.toLowerCase().includes(this.filterString.toLowerCase());
     }));
   }
 }

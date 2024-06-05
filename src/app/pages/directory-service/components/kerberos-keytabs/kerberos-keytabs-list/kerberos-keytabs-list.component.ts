@@ -125,9 +125,9 @@ export class KerberosKeytabsListComponent implements OnInit {
   }
 
   onListFiltered(query: string): void {
-    this.filterString = query.toLowerCase();
+    this.filterString = query;
     this.dataProvider.setRows(this.kerberosRealsm.filter((idmap) => {
-      return idmap.name.toLowerCase().includes(this.filterString);
+      return idmap.name.toLowerCase().includes(this.filterString.toLowerCase());
     }));
   }
 }

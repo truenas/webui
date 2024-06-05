@@ -211,9 +211,9 @@ export class CloudBackupListComponent implements OnInit {
   }
 
   onListFiltered(query: string): void {
-    this.filterString = query.toLowerCase();
+    this.filterString = query;
     this.dataProvider.setRows(this.cloudBackups.filter((task) => {
-      return task.description.includes(this.filterString);
+      return task.description.includes(this.filterString.toLowerCase());
     }));
   }
 
