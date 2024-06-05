@@ -2,9 +2,8 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatDialog } from '@angular/material/dialog';
 import { MatInputHarness } from '@angular/material/input/testing';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import {
   Spectator, createComponentFactory, createRoutingFactory, mockProvider,
 } from '@ngneat/spectator/jest';
@@ -12,15 +11,12 @@ import { MockComponents, MockDeclaration, MockModule } from 'ng-mocks';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockEntityJobComponentRef } from 'app/core/testing/utils/mock-entity-job-component-ref.utils';
 import { mockCall, mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
 import { CatalogApp } from 'app/interfaces/catalog.interface';
 import { ChartRelease } from 'app/interfaces/chart-release.interface';
 import { KubernetesConfig } from 'app/interfaces/kubernetes-config.interface';
-import { IxDynamicFormModule } from 'app/modules/ix-dynamic-form/ix-dynamic-form.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
-import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
 import { AppCardLogoComponent } from 'app/pages/apps/components/app-card-logo/app-card-logo.component';
 import { AppAvailableInfoCardComponent } from 'app/pages/apps/components/app-detail-view/app-available-info-card/app-available-info-card.component';
@@ -35,7 +31,6 @@ import { AvailableAppsComponent } from 'app/pages/apps/components/available-apps
 import {
   CustomAppButtonComponent,
 } from 'app/pages/apps/components/available-apps/custom-app-button/custom-app-button.component';
-import { ChartWizardComponent } from 'app/pages/apps/components/chart-wizard/chart-wizard.component';
 import { AppsFilterStore } from 'app/pages/apps/store/apps-filter-store.service';
 import { AppsStatisticsService } from 'app/pages/apps/store/apps-statistics.service';
 import { AppsStore } from 'app/pages/apps/store/apps-store.service';
@@ -353,147 +348,5 @@ describe('Redirect to install app', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Install' }));
     await saveButton.click();
     expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/apps', 'available', 'TRUENAS', 'community', 'webdav', 'install']);
-  });
-});
-
-// TODO: Why is this here?
-describe('Install app', () => {
-  let spectator: Spectator<ChartWizardComponent>;
-  let loader: HarnessLoader;
-
-  const createComponent = createComponentFactory({
-    component: ChartWizardComponent,
-    imports: [
-      IxFormsModule,
-      ReactiveFormsModule,
-      IxDynamicFormModule,
-      MockModule(PageHeaderModule),
-    ],
-    providers: [
-      KubernetesStore,
-      mockWebSocket([
-        mockJob('chart.release.create'),
-        mockJob('chart.release.update'),
-        mockCall('catalog.get_item_details', existingCatalogApp),
-        mockCall('chart.release.query', [{} as ChartRelease]),
-        mockCall('service.started', true),
-        mockCall('kubernetes.config', {
-          pool: 'my pool',
-          node_ip: '10.123.45.67',
-          route_v4_interface: 'enp0s7',
-          route_v4_gateway: '10.123.45.1',
-          configure_gpus: true,
-          servicelb: true,
-          cluster_cidr: '172.16.0.0/16',
-          service_cidr: '172.17.0.0/16',
-          cluster_dns_ip: '172.17.0.1',
-        } as KubernetesConfig),
-        mockCall('container.image.dockerhub_rate_limit', {
-          total_pull_limit: 13,
-          total_time_limit_in_secs: 21600,
-          remaining_pull_limit: 3,
-          remaining_time_limit_in_secs: 21600,
-          error: null,
-        }),
-      ]),
-      mockProvider(MatDialog, {
-        open: jest.fn(() => mockEntityJobComponentRef),
-      }),
-      {
-        provide: ActivatedRoute,
-        useValue: {
-          parent: { params: of({ appId: 'webdav', catalog: 'TRUENAS', train: 'community' }) },
-          routeConfig: { path: 'install' },
-        },
-      },
-      mockAuth(),
-    ],
-  });
-
-  beforeEach(() => {
-    spectator = createComponent();
-    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-  });
-
-  it('shows values for app when form is opened for create', async () => {
-    const form = await loader.getHarness(IxFormHarness);
-    const values = await form.getValues();
-
-    expect(values).toEqual({
-      'Application Name': 'webdav',
-      'Authentication Type': 'No Authentication',
-      CPU: '4000m',
-      'Enable HTTP': true,
-      'Enable HTTPS': false,
-      'Group ID': '666',
-      'HTTP Port': '30034',
-      'Host Network': false,
-      Memory: '8Gi',
-      'User ID': '666',
-      Version: '1.0.9',
-    });
-  });
-
-  it('creating when form is submitted', async () => {
-    const form = await loader.getHarness(IxFormHarness);
-    await form.fillForm({
-      'Application Name': 'appname',
-    });
-
-    const values = await form.getValues();
-
-    expect(values).toEqual({
-      'Application Name': 'appname',
-      'Authentication Type': 'No Authentication',
-      CPU: '4000m',
-      'Enable HTTP': true,
-      'Enable HTTPS': false,
-      'Group ID': '666',
-      'HTTP Port': '30034',
-      'Host Network': false,
-      Memory: '8Gi',
-      'User ID': '666',
-      Version: '1.0.9',
-    });
-
-    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Install' }));
-    await saveButton.click();
-
-    expect(mockEntityJobComponentRef.componentInstance.setCall).toHaveBeenCalledWith(
-      'chart.release.create',
-      [{
-        catalog: 'TRUENAS',
-        item: 'webdav',
-        release_name: 'appname',
-        train: 'community',
-        values: {
-          release_name: 'appname',
-          resources: {
-            limits: {
-              cpu: '4000m',
-              memory: '8Gi',
-            },
-          },
-          webdavConfig: {
-            authType: 'none',
-          },
-          webdavNetwork: {
-            hostNetwork: false,
-            http: true,
-            httpPort: 30034,
-            https: false,
-          },
-          webdavRunAs: {
-            group: 666,
-            user: 666,
-          },
-          webdavStorage: {
-            shares: [],
-          },
-        },
-        version: '1.0.9',
-      }],
-    );
-    expect(mockEntityJobComponentRef.componentInstance.submit).toHaveBeenCalled();
   });
 });
