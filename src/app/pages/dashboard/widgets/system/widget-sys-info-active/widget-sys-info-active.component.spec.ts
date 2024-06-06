@@ -1,5 +1,6 @@
 import { HarnessLoader, parallel } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatListModule } from '@angular/material/list';
 import { MatListItemHarness } from '@angular/material/list/testing';
 import { Spectator } from '@ngneat/spectator';
@@ -7,13 +8,14 @@ import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { MockComponent } from 'ng-mocks';
 import { NgxSkeletonLoaderComponent } from 'ngx-skeleton-loader';
-import { BehaviorSubject, of } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-datetime.pipe';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { Codename } from 'app/enums/codename.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { LoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import { SystemLicense, SystemInfo } from 'app/interfaces/system-info.interface';
+import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { selectUpdateJobForActiveNode } from 'app/modules/jobs/store/job.selectors';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
 import { SlotSize } from 'app/pages/dashboard/types/widget.interface';
@@ -51,6 +53,14 @@ describe('WidgetSysInfoActiveComponent', () => {
     },
   } as SystemInfo;
 
+  const systemInfo$ = new BehaviorSubject({
+    isLoading: false,
+    error: null,
+    value: systemInfo,
+  } as LoadingState<SystemInfo>);
+
+  const updateAvailable$ = new BehaviorSubject(true);
+
   const createComponent = createComponentFactory({
     component: WidgetSysInfoActiveComponent,
     imports: [
@@ -65,12 +75,8 @@ describe('WidgetSysInfoActiveComponent', () => {
     providers: [
       mockAuth(),
       mockProvider(WidgetResourcesService, {
-        systemInfo$: of({
-          isLoading: false,
-          error: null,
-          value: systemInfo,
-        } as LoadingState<SystemInfo>),
-        updateAvailable$: of(true),
+        systemInfo$,
+        updateAvailable$,
         refreshInterval$,
       }),
       provideMockStore({
@@ -152,6 +158,31 @@ describe('WidgetSysInfoActiveComponent', () => {
     expect(updatedDatetime).toBeGreaterThan(initialDatetime);
 
     jest.useRealTimers();
+  });
+
+  it('checks unlicensed system info rows', async () => {
+    systemInfo$.next({
+      isLoading: false,
+      error: null,
+      value: { ...systemInfo, license: null },
+    });
+    spectator.detectChanges();
+
+    const licenseListItem = await loader.getHarness(MatListItemHarness.with({ text: /License:/ }));
+    expect(await licenseListItem.getFullText()).toBe('License: No License');
+
+    const licenseButton = await loader.getHarness(IxIconHarness.with({ name: 'add_circle' }));
+    expect(await licenseButton.host()).toExist();
+  });
+
+  it('checks update button text', async () => {
+    updateAvailable$.next(false);
+    const checkUpdateButton = await loader.getHarness(MatButtonHarness.with({ text: /Check for Updates/ }));
+    expect(await checkUpdateButton.host()).toExist();
+
+    updateAvailable$.next(true);
+    const updateButton = await loader.getHarness(MatButtonHarness.with({ text: /Updates Available/ }));
+    expect(await updateButton.host()).toExist();
   });
 
   // TODO: Add more tests

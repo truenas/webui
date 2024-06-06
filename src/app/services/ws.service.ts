@@ -2,14 +2,12 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { UUID } from 'angular2-uuid';
-import { environment } from 'environments/environment';
 import {
   merge, Observable, of, Subject, Subscriber, throwError,
 } from 'rxjs';
 import {
   filter, map, share, startWith, switchMap, take, takeUntil, tap,
 } from 'rxjs/operators';
-import { MockEnclosureUtils } from 'app/core/testing/mock-enclosure/mock-enclosure.utils';
 import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
 import { ResponseErrorType } from 'app/enums/response-error-type.enum';
 import { WebSocketErrorName } from 'app/enums/websocket-error-name.enum';
@@ -39,14 +37,12 @@ import { WebSocketConnectionService } from 'app/services/websocket-connection.se
 export class WebSocketService {
   private readonly eventSubscribers = new Map<ApiEventMethod, Observable<ApiEventTyped>>();
   clearSubscriptions$ = new Subject<void>();
-  mockUtils: MockEnclosureUtils;
 
   constructor(
     protected router: Router,
     protected wsManager: WebSocketConnectionService,
     protected translate: TranslateService,
   ) {
-    if (environment.mockConfig && !environment?.production) this.mockUtils = new MockEnclosureUtils();
     this.wsManager.isConnected$?.subscribe((isConnected) => {
       if (!isConnected) {
         this.clearSubscriptions();
@@ -162,16 +158,6 @@ export class WebSocketService {
           return throwError(() => error);
         }
 
-        if (
-          this.mockUtils
-          && environment.mockConfig?.enabled
-          && this.mockUtils?.canMock
-          && data.msg === IncomingApiMessageType.Result
-        ) {
-          const mockResultMessage: ResultMessage = this.mockUtils.overrideMessage(data, method);
-          return of(mockResultMessage);
-        }
-
         return of(data);
       }),
 
@@ -202,6 +188,7 @@ export class WebSocketService {
     console.error('Error: ', error);
   }
 
+  // TODO: Probably doesn't belong here. Consider building something similar to interceptors.
   private enhanceError(error: WebSocketError, context: { method: string }): WebSocketError {
     if (error.errname === WebSocketErrorName.NoAccess) {
       return {

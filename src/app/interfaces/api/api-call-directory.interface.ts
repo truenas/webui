@@ -894,6 +894,7 @@ export interface ApiCallDirectory {
   'vmware.update': { params: [id: number, update: VmwareSnapshotUpdate]; response: VmwareSnapshot };
 
   // WebUI main
+  // TODO: Incorrect response definition here or for system.info.
   'webui.main.dashboard.sys_info': { params: void; response: SystemInfo };
 
   // WebUI Crypto
