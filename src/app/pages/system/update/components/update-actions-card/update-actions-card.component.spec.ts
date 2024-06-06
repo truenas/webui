@@ -72,6 +72,9 @@ describe('UpdateActionsCardComponent', () => {
           confirmed: true,
           secondaryCheckbox: true,
         })),
+        jobDialog: jest.fn(() => ({
+          afterClosed: () => of({}),
+        })),
       }),
       provideMockStore({
         selectors: [{
