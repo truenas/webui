@@ -844,7 +844,6 @@
   "Daily time range for the specific  periodic snapshots to replicate, in 15 minute increments. Snapshots created  after the <i>End</i> time will not be included in the replication.": "",
   "Dashboard (old)": "",
   "Dashboard is Empty!": "",
-  "Dashboard settings cleared": "",
   "Dashboard settings saved": "",
   "Data Devices": "",
   "Data Encipherment": "",

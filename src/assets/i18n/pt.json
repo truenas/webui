@@ -334,7 +334,6 @@
   "Daily time range for the specific  periodic snapshots to replicate, in 15 minute increments. Periodic snapshots  created before the <i>Begin</i> time will not be included in the replication.": "",
   "Daily time range for the specific  periodic snapshots to replicate, in 15 minute increments. Snapshots created  after the <i>End</i> time will not be included in the replication.": "",
   "Dashboard (old)": "",
-  "Dashboard settings cleared": "",
   "Data is identical in each disk. A mirror requires at least two disks, provides the most redundancy, and has the least capacity.": "",
   "Data transfer security. The connection is  authenticated with SSH. Data can be encrypted during transfer for  security or left unencrypted to maximize transfer speed. Encryption is  recommended, but can be disabled for increased speed on secure networks.": "",
   "Dataset Capacity Management": "",

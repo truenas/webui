@@ -13,15 +13,6 @@
   <ng-template #editingButtons>
     <button
       mat-button
-      ixTest="reset"
-      [disabled]="isLoading()"
-      (click)="onReset()"
-    >
-      {{ 'Reset' | translate }}
-    </button>
-
-    <button
-      mat-button
       class="add-button"
       ixTest="add-group"
       [disabled]="isLoading()"

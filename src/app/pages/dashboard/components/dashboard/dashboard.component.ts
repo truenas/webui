@@ -134,13 +134,6 @@ export class DashboardComponent implements OnInit {
       });
   }
 
-  protected onReset(): void {
-    this.dashboardStore.clear().pipe(untilDestroyed(this)).subscribe(() => {
-      this.isEditing.set(false);
-      this.snackbar.success(this.translate.instant('Dashboard settings cleared'));
-    });
-  }
-
   private loadGroups(): void {
     this.dashboardStore.groups$
       .pipe(untilDestroyed(this))
