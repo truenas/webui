@@ -30,37 +30,30 @@ export const miniSeries: Record<string, MiniSeries> = {
   mini: {
     pathImg: 'freenas_mini_cropped.png',
     images: [
-      'FREENAS-MINI-2.0',
-      'FREENAS-MINI-3.0-E',
-      'FREENAS-MINI-3.0-E+',
-      'TRUENAS-MINI-3.0-E',
-      'TRUENAS-MINI-3.0-E+',
+      'MINI-3.0-E',
+      'MINI-3.0-E+',
     ],
     isRackmount: false,
   },
   miniX: {
     pathImg: 'freenas_mini_x_cropped.png',
     images: [
-      'FREENAS-MINI-3.0-X',
-      'FREENAS-MINI-3.0-X+',
-      'TRUENAS-MINI-3.0-X',
-      'TRUENAS-MINI-3.0-X+',
+      'MINI-3.0-X',
+      'MINI-3.0-X+',
     ],
     isRackmount: false,
   },
   miniXL: {
     pathImg: 'freenas_mini_xl_cropped.png',
     images: [
-      'FREENAS-MINI-XL',
-      'FREENAS-MINI-3.0-XL+',
-      'TRUENAS-MINI-3.0-XL+',
+      'MINI-3.0-XL+',
     ],
     isRackmount: false,
   },
   miniR: {
     pathImg: 'servers/MINI-R.png',
     images: [
-      'TRUENAS-MINI-R',
+      'MINI-R',
     ],
     isRackmount: true,
   },

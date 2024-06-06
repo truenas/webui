@@ -40,8 +40,6 @@
     "./src/app/core/testing/classes/fake-translate.service.ts",
     "./src/app/core/testing/mock-enclosure/interfaces/mock-enclosure.interface.ts",
     "./src/app/core/testing/mock-enclosure/interfaces/mock-storage-generator.interface.ts",
-    "./src/app/core/testing/mock-enclosure/enclosure-templates/mock-e16.ts",
-    "./src/app/core/testing/mock-enclosure/enclosure-templates/mock-e24.ts",
     "./src/app/core/testing/mock-enclosure/enclosure-templates/mock-enclosure-template.ts",
     "./src/app/core/testing/mock-enclosure/enclosure-templates/mock-es102g2.ts",
     "./src/app/core/testing/mock-enclosure/enclosure-templates/mock-es12.ts",
