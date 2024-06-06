@@ -2476,7 +2476,7 @@
   "User account to which this ACL entry applies.": "",
   "User accounts have an ID greater than 1000 and system accounts have an ID equal to the default port number used by the service.": "",
   "User is lacking permissions to access WebUI.": "",
-  "User limit to Docker Hub has almost/or has been reached. Installation process may get stalled as images wouldn't be pulled. Current limit would be renewed in {seconds}. Application can still be installed.": "",
+  "User limit to Docker Hub has almost been reached or has already been reached. The installation process may stall as images cannot be pulled. The current limit will be renewed in about 6 hours. The application can still be staged for installation.": "",
   "User passed to <i>camcontrol security -u</i> to unlock SEDs": "",
   "User password": "",
   "User who controls the dataset. This user always has permissions to read or write the ACL and read or write attributes. Users created manually or imported from a directory service appear in the drop-down menu.": "",
