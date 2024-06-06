@@ -1,201 +1,46 @@
-import { MockEnclosure } from './mock-enclosure-template';
+import {
+  makeArrayDeviceSlots,
+} from 'app/core/testing/mock-enclosure/enclosure-templates/utils/make-array-device-slots.utils';
+import {
+  makeEnclosureElements,
+} from 'app/core/testing/mock-enclosure/enclosure-templates/utils/make-enclosure-elements.utils';
+import {
+  makeSasExpanders,
+} from 'app/core/testing/mock-enclosure/enclosure-templates/utils/make-sas-expanders.utils';
+import {
+  makeTemperatureSensors,
+} from 'app/core/testing/mock-enclosure/enclosure-templates/utils/make-temperature-sensors.utils';
+import {
+  makeVoltageSensors,
+} from 'app/core/testing/mock-enclosure/enclosure-templates/utils/make-voltage-sensors.utils';
+import { DashboardEnclosure } from 'app/interfaces/enclosure.interface';
 
-export class MockM40 extends MockEnclosure {
-  override readonly totalSlotsFront: number = 24;
-  override readonly totalSlotsRear: number = 0;
-  override readonly totalSlotsInternal: number = 0;
-
-  // data = {
-  //   id: '5b0bd6d1a308097f',
-  //   name: 'iX 4024Ss e001',
-  //   model: 'M Series',
-  //   controller: true,
-  //   elements: [
-  //     {
-  //       name: 'Array Device Slot',
-  //       descriptor: '',
-  //       header: [
-  //         'Descriptor',
-  //         'Status',
-  //         'Value',
-  //         'Device',
-  //       ],
-  //       elements: [],
-  //       has_slot_status: true,
-  //     },
-  //     {
-  //       name: 'Enclosure',
-  //       descriptor: '',
-  //       header: [
-  //         'Descriptor',
-  //         'Status',
-  //         'Value',
-  //       ],
-  //       elements: [
-  //         {
-  //           slot: 1,
-  //           data: {
-  //             Descriptor: '',
-  //             Status: 'OK',
-  //             Value: 'None',
-  //           },
-  //           name: 'Enclosure',
-  //           descriptor: '',
-  //           status: 'OK',
-  //           value: 'None',
-  //           value_raw: '0x1000000',
-  //         },
-  //         {
-  //           slot: 2,
-  //           data: {
-  //             Descriptor: '',
-  //             Status: 'Not installed',
-  //             Value: 'None',
-  //           },
-  //           name: 'Enclosure',
-  //           descriptor: '',
-  //           status: 'Not installed',
-  //           value: 'None',
-  //           value_raw: '0x5000000',
-  //         },
-  //       ],
-  //       has_slot_status: false,
-  //     },
-  //     {
-  //       name: 'SAS Expander',
-  //       descriptor: '',
-  //       header: [
-  //         'Descriptor',
-  //         'Status',
-  //         'Value',
-  //       ],
-  //       elements: [
-  //         {
-  //           slot: 1,
-  //           data: {
-  //             Descriptor: '',
-  //             Status: 'OK',
-  //             Value: 'None',
-  //           },
-  //           name: 'SAS Expander',
-  //           descriptor: '',
-  //           status: 'OK',
-  //           value: 'None',
-  //           value_raw: '0x1000000',
-  //         },
-  //       ],
-  //       has_slot_status: false,
-  //     },
-  //     {
-  //       name: 'Temperature Sensor',
-  //       descriptor: '',
-  //       header: [
-  //         'Descriptor',
-  //         'Status',
-  //         'Value',
-  //       ],
-  //       elements: [
-  //         {
-  //           slot: 1,
-  //           data: {
-  //             Descriptor: '',
-  //             Status: 'Unsupported',
-  //             Value: null,
-  //           },
-  //           name: 'Temperature Sensor',
-  //           descriptor: '',
-  //           status: 'Unsupported',
-  //           value: null,
-  //           value_raw: '0x0',
-  //         },
-  //         {
-  //           slot: 2,
-  //           data: {
-  //             Descriptor: '',
-  //             Status: 'OK',
-  //             Value: '34C',
-  //           },
-  //           name: 'Temperature Sensor',
-  //           descriptor: '',
-  //           status: 'OK',
-  //           value: '34C',
-  //           value_raw: '0x1003600',
-  //         },
-  //         {
-  //           slot: 3,
-  //           data: {
-  //             Descriptor: '',
-  //             Status: 'OK',
-  //             Value: '23C',
-  //           },
-  //           name: 'Temperature Sensor',
-  //           descriptor: '',
-  //           status: 'OK',
-  //           value: '23C',
-  //           value_raw: '0x1002b00',
-  //         },
-  //         {
-  //           slot: 4,
-  //           data: {
-  //             Descriptor: '',
-  //             Status: 'OK',
-  //             Value: '25C',
-  //           },
-  //           name: 'Temperature Sensor',
-  //           descriptor: '',
-  //           status: 'OK',
-  //           value: '25C',
-  //           value_raw: '0x1002d00',
-  //         },
-  //       ],
-  //       has_slot_status: false,
-  //     },
-  //     {
-  //       name: 'Voltage Sensor',
-  //       descriptor: '',
-  //       header: [
-  //         'Descriptor',
-  //         'Status',
-  //         'Value',
-  //       ],
-  //       elements: [
-  //         {
-  //           slot: 1,
-  //           data: {
-  //             Descriptor: '',
-  //             Status: 'OK',
-  //             Value: '5.04V',
-  //           },
-  //           name: 'Voltage Sensor',
-  //           descriptor: '',
-  //           status: 'OK',
-  //           value: '5.04V',
-  //           value_raw: '0x10001f8',
-  //         },
-  //         {
-  //           slot: 2,
-  //           data: {
-  //             Descriptor: '',
-  //             Status: 'OK',
-  //             Value: '12.12V',
-  //           },
-  //           name: 'Voltage Sensor',
-  //           descriptor: '',
-  //           status: 'OK',
-  //           value: '12.12V',
-  //           value_raw: '0x10004bc',
-  //         },
-  //       ],
-  //       has_slot_status: false,
-  //     },
-  //   ],
-  //   number: this.enclosureNumber,
-  //   label: 'iX 4024Ss e001',
-  // } as EnclosureUi;
-
-  constructor(number: number) {
-    super(number);
-    this.enclosureNumber = number;
-    this.enclosureInit();
-  }
-}
+export const mockM40 = {
+  name: 'iX 4024Sp c205',
+  model: 'M40',
+  controller: true,
+  dmi: 'TRUENAS-M40-HA',
+  status: ['OK'],
+  id: '5b0bd6d1a30714bf',
+  vendor: 'iX',
+  product: '4024Sp',
+  revision: 'c205',
+  bsg: '/dev/bsg/0:0:23:0',
+  sg: '/dev/sg25',
+  pci: '0:0:23:0',
+  rackmount: true,
+  top_loaded: false,
+  front_slots: 24,
+  rear_slots: 0,
+  internal_slots: 0,
+  label: 'M40',
+  elements: {
+    'Array Device Slot': makeArrayDeviceSlots(1, 24, {
+      supportsIdentifyLight: true,
+    }),
+    'SAS Expander': makeSasExpanders(26, 26),
+    Enclosure: makeEnclosureElements(28, 29),
+    'Temperature Sensors': makeTemperatureSensors(30, 32),
+    'Voltage Sensors': makeVoltageSensors(34, 35),
+  },
+} as DashboardEnclosure;

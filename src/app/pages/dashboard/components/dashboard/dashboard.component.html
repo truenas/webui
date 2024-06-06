@@ -4,6 +4,7 @@
     mat-button
     color="primary"
     ixTest="configure-dashboard"
+    [ixUiSearch]="searchableElements.elements.configure"
     [disabled]="isLoading()"
     (click)="onConfigure()"
   >
@@ -44,6 +45,7 @@
   class="groups"
   ixDropGrid
   [ixDropGridModel]="renderedGroups()"
+  [ixUiSearch]="searchableElements.elements.dashboard"
   (ixDropGridModelChange)="onGroupsReordered($event)"
 >
   <ng-container *ngIf="renderedGroups().length > 0; else noWidgets">
