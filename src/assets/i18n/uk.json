@@ -947,6 +947,7 @@
   "Set email": "",
   "Set new password": "",
   "Set the domain name to the username. Unset to prevent name collisions when Allow Trusted Domains is set and multiple domains use the same username.": "",
+  "Set to allow user to authenticate to Samba shares.": "",
   "Set to enable connecting to the SPICE web interface.": "",
   "Settings Menu": "",
   "Settings saved": "",

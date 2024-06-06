@@ -46,5 +46,5 @@ export const helptextUsers = {
  using password-based services until this option is unset. Locking an \
  account is only possible when <b>Disable Password</b> is <i>No</i> and \
  a <b>Password</b> has been created for the account.'),
-  user_form_smb_tooltip: T(''),
+  user_form_smb_tooltip: T('Set to allow user to authenticate to Samba shares.'),
 };

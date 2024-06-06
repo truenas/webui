@@ -2159,6 +2159,7 @@
   "Set new password:": "",
   "Set production status as active": "",
   "Set the domain name to the username. Unset to prevent name collisions when Allow Trusted Domains is set and multiple domains use the same username.": "",
+  "Set to allow user to authenticate to Samba shares.": "",
   "Set to automatically configure the IPv6. Only one interface can be configured this way.": "",
   "Set to enable connecting to the SPICE web interface.": "",
   "Set to enable the iSCSI extent.": "",
