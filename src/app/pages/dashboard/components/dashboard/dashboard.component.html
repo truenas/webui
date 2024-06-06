@@ -57,7 +57,7 @@
 >
   <ng-container *ngIf="renderedGroups().length > 0; else noWidgets">
     <div
-      *ngFor="let group of renderedGroups(); index as i"
+      *ngFor="let group of renderedGroups(); index as i; trackBy: trackByFn"
       class="group-slot"
       ixDropGridItem
       @groupRemovedTrigger

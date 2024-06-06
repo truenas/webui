@@ -56,6 +56,7 @@ export class DashboardStore extends ComponentStore<DashboardState> {
   readonly entered = this.effect((trigger$) => {
     return trigger$.pipe(
       tap(() => this.toggleLoadingState(true)),
+      switchMap(() => this.authService.refreshUser()),
       switchMap(() => this.authService.user$.pipe(
         filter(Boolean),
         map((user) => user.attributes.dashState),
