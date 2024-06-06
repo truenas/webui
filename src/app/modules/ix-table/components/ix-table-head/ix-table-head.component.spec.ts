@@ -25,6 +25,7 @@ const columns = createTable<TestTableData>([
   textColumn({
     title: 'Boolean Field',
     propertyName: 'booleanField',
+    disableSorting: true,
   }),
 ], {
   rowTestId: (row) => 'row' + row.numberField.toString(),
