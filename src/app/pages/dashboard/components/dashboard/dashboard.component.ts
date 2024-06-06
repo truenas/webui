@@ -11,6 +11,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { dashboardElements } from 'app/pages/dashboard/components/dashboard/dashboard.elements';
 import { WidgetGroupFormComponent } from 'app/pages/dashboard/components/widget-group-form/widget-group-form.component';
 import { DashboardStore } from 'app/pages/dashboard/services/dashboard.store';
 import { WidgetGroup } from 'app/pages/dashboard/types/widget-group.interface';
@@ -44,6 +45,7 @@ export class DashboardComponent implements OnInit {
   // TODO: If old data is available, show it while loading new data.
   // TODO: Prevent user from entering configuration mode while loading.
   readonly isLoading = toSignal(this.dashboardStore.isLoading$);
+  readonly searchableElements = dashboardElements;
 
   emptyDashboardConf: EmptyConfig = {
     type: EmptyType.NoPageData,

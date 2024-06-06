@@ -66,10 +66,7 @@ function createUiSearchElement(
     const parent = (elementConfig?.[parentKey] || elementConfig) as UiSearchableElement;
     const child = parent?.elements?.[childKey] || parent?.manualRenderElements?.[childKey] || {};
 
-    const hierarchy = [...new Set([
-      ...(parent?.hierarchy || []),
-      ...(child?.hierarchy || []),
-    ])];
+    const hierarchy = [...parent?.hierarchy || [], ...child?.hierarchy || []];
 
     const synonyms = [...new Set([
       ...(parent?.synonyms || []),
