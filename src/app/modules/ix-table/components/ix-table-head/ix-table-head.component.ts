@@ -34,7 +34,7 @@ export class IxTableHeadComponent<T> implements AfterViewInit {
   }
 
   onSort(columnId: number): void {
-    if (!this.displayedColumns[columnId]?.sortable) {
+    if (this.displayedColumns[columnId]?.disableSorting) {
       return;
     }
 

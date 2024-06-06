@@ -58,11 +58,9 @@ export class ReplicationTaskCardComponent implements OnInit {
     textColumn({
       title: this.translate.instant('Name'),
       propertyName: 'name',
-      sortable: true,
     }),
     textColumn({
       title: this.translate.instant('Last Snapshot'),
-      sortable: true,
       getValue: (task) => {
         return task.state.last_snapshot
           ? task.state.last_snapshot
@@ -72,19 +70,16 @@ export class ReplicationTaskCardComponent implements OnInit {
     toggleColumn({
       title: this.translate.instant('Enabled'),
       propertyName: 'enabled',
-      sortable: true,
       onRowToggle: (row: ReplicationTask) => this.onChangeEnabledState(row),
       requiredRoles: this.requiredRoles,
     }),
     stateButtonColumn({
       title: this.translate.instant('State'),
-      sortable: true,
       getValue: (row) => row.state.state,
       getJob: (row) => row.job,
       cssClass: 'state-button',
     }),
     relativeDateColumn({
-      sortable: true,
       title: this.translate.instant('Last Run'),
       getValue: (row) => row.state?.datetime?.$date,
     }),

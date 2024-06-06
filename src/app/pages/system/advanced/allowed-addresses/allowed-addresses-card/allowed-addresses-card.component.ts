@@ -44,7 +44,6 @@ export class AllowedAddressesCardComponent implements OnInit {
     textColumn({
       title: this.translate.instant('Address'),
       propertyName: 'address',
-      sortable: true,
     }),
     actionsColumn({
       actions: [

@@ -37,28 +37,23 @@ export class ScrubTaskCardComponent implements OnInit {
     textColumn({
       title: this.translate.instant('Pool'),
       propertyName: 'pool_name',
-      sortable: true,
     }),
     textColumn({
       title: this.translate.instant('Description'),
       propertyName: 'description',
-      sortable: true,
     }),
     textColumn({
       title: this.translate.instant('Frequency'),
-      sortable: true,
       getValue: (task) => this.taskService.getTaskCronDescription(scheduleToCrontab(task.schedule)),
     }),
     relativeDateColumn({
       title: this.translate.instant('Next Run'),
-      sortable: true,
       getValue: (row) => (row.enabled
         ? this.taskService.getTaskNextTime(scheduleToCrontab(row.schedule))
         : this.translate.instant('Disabled')),
     }),
     toggleColumn({
       title: this.translate.instant('Enabled'),
-      sortable: true,
       propertyName: 'enabled',
       requiredRoles: this.requiredRoles,
       onRowToggle: (row: PoolScrubTask) => this.onChangeEnabledState(row),

@@ -41,17 +41,14 @@ export class JbofListComponent implements OnInit {
     textColumn({
       title: this.translate.instant('Description'),
       propertyName: 'description',
-      sortable: true,
     }),
     textColumn({
       title: this.translate.instant('IPs'),
-      sortable: true,
       getValue: (row) => [row.mgmt_ip1, row.mgmt_ip2].filter(Boolean).join(', '),
     }),
     textColumn({
       title: this.translate.instant('Username'),
       propertyName: 'mgmt_username',
-      sortable: true,
     }),
     actionsColumn({
       actions: [

@@ -70,7 +70,6 @@ export class AuditComponent implements OnInit, OnDestroy {
   columns = createTable<AuditEntry>([
     textColumn({
       title: this.translate.instant('Service'),
-      sortable: true,
       propertyName: 'service',
       getValue: (row) => (auditServiceLabels.has(row.service)
         ? this.translate.instant(auditServiceLabels.get(row.service))
@@ -79,17 +78,15 @@ export class AuditComponent implements OnInit, OnDestroy {
     textColumn({
       title: this.translate.instant('User'),
       propertyName: 'username',
-      sortable: true,
     }),
     dateColumn({
       title: this.translate.instant('Timestamp'),
       propertyName: 'message_timestamp',
-      sortable: true,
       getValue: (row) => row.message_timestamp * 1000,
     }),
     textColumn({
       title: this.translate.instant('Event'),
-      sortable: true,
+      disableSorting: true,
       propertyName: 'event',
       getValue: (row) => (auditEventLabels.has(row.event)
         ? this.translate.instant(auditEventLabels.get(row.event))

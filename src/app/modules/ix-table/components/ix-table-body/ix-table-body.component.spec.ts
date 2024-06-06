@@ -37,12 +37,12 @@ const columns = createTable<TestTableData>([
   textColumn({
     title: 'Number Field',
     propertyName: 'numberField',
-    sortable: true,
+
   }),
   textColumn({
     title: 'String Field',
     propertyName: 'stringField',
-    sortable: true,
+
   }),
   yesNoColumn({
     title: 'Boolean Field',

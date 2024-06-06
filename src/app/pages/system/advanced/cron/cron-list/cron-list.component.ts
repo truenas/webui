@@ -43,34 +43,28 @@ export class CronListComponent implements OnInit {
     textColumn({
       title: this.translate.instant('Users'),
       propertyName: 'user',
-      sortable: true,
     }),
     textColumn({
       title: this.translate.instant('Command'),
       propertyName: 'command',
-      sortable: true,
     }),
     textColumn({
       title: this.translate.instant('Description'),
       propertyName: 'description',
-      sortable: true,
     }),
     textColumn({
       title: this.translate.instant('Schedule'),
       propertyName: 'schedule',
-      sortable: true,
       getValue: (task) => (task.enabled ? scheduleToCrontab(task.schedule) : this.translate.instant('Disabled')),
     }),
     textColumn({
       title: this.translate.instant('Enabled'),
-      sortable: true,
       propertyName: 'enabled',
       getValue: (task) => (task.enabled ? this.translate.instant('Yes') : this.translate.instant('No')),
     }),
     textColumn({
       title: this.translate.instant('Next Run'),
       hidden: true,
-      sortable: true,
       getValue: (task) => {
         if (task.enabled) {
           return task.schedule
@@ -81,14 +75,12 @@ export class CronListComponent implements OnInit {
       },
     }),
     textColumn({
-      sortable: true,
       title: this.translate.instant('Hide Stdout'),
       propertyName: 'stdout',
       getValue: (task) => (task.stdout ? this.translate.instant('Yes') : this.translate.instant('No')),
       hidden: true,
     }),
     textColumn({
-      sortable: true,
       title: this.translate.instant('Hide Stderr'),
       propertyName: 'stderr',
       getValue: (task) => (task.stderr ? this.translate.instant('Yes') : this.translate.instant('No')),

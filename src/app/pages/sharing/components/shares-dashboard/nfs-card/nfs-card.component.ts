@@ -42,17 +42,14 @@ export class NfsCardComponent implements OnInit {
     textColumn({
       title: this.translate.instant(helptextSharingNfs.column_path),
       propertyName: 'path',
-      sortable: true,
     }),
     textColumn({
       title: this.translate.instant(helptextSharingNfs.column_comment),
       propertyName: 'comment',
-      sortable: true,
     }),
     toggleColumn({
       title: this.translate.instant(helptextSharingNfs.column_enabled),
       propertyName: 'enabled',
-      sortable: true,
       onRowToggle: (row: NfsShare) => this.onChangeEnabledState(row),
       requiredRoles: this.requiredRoles,
     }),

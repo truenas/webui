@@ -24,22 +24,20 @@ export class SmbSessionListComponent implements OnInit {
   sessions: SmbSession[] = [];
 
   columns = createTable<SmbSession>([
-    textColumn({ title: this.translate.instant('Session ID'), propertyName: 'session_id', sortable: true }),
-    textColumn({ title: this.translate.instant('Hostname'), propertyName: 'hostname', sortable: true }),
-    textColumn({ title: this.translate.instant('Remote machine'), propertyName: 'remote_machine', sortable: true }),
-    textColumn({ title: this.translate.instant('Username'), propertyName: 'username', sortable: true }),
-    textColumn({ title: this.translate.instant('Groupname'), propertyName: 'groupname', sortable: true }),
-    textColumn({ title: this.translate.instant('UID'), propertyName: 'uid', sortable: true }),
-    textColumn({ title: this.translate.instant('GID'), propertyName: 'gid', sortable: true }),
-    textColumn({ title: this.translate.instant('Session dialect'), propertyName: 'session_dialect', sortable: true }),
+    textColumn({ title: this.translate.instant('Session ID'), propertyName: 'session_id' }),
+    textColumn({ title: this.translate.instant('Hostname'), propertyName: 'hostname' }),
+    textColumn({ title: this.translate.instant('Remote machine'), propertyName: 'remote_machine' }),
+    textColumn({ title: this.translate.instant('Username'), propertyName: 'username' }),
+    textColumn({ title: this.translate.instant('Groupname'), propertyName: 'groupname' }),
+    textColumn({ title: this.translate.instant('UID'), propertyName: 'uid' }),
+    textColumn({ title: this.translate.instant('GID'), propertyName: 'gid' }),
+    textColumn({ title: this.translate.instant('Session dialect'), propertyName: 'session_dialect' }),
     textColumn({
       title: this.translate.instant('Encryption'),
-      sortable: true,
       propertyName: 'encryption',
       getValue: (row) => row.encryption.cipher,
     }),
     textColumn({
-      sortable: true,
       title: this.translate.instant('Signing'),
       propertyName: 'signing',
       getValue: (row) => row.signing.cipher,

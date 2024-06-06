@@ -44,12 +44,10 @@ export class ExtentListComponent implements OnInit {
     textColumn({
       title: this.translate.instant('Extent Name'),
       propertyName: 'name',
-      sortable: true,
     }),
     textColumn({
       title: this.translate.instant('Device/File'),
       propertyName: 'path',
-      sortable: true,
       getValue: (extent) => {
         return extent.type === IscsiExtentType.Disk ? extent.disk : extent.path;
       },
@@ -57,22 +55,18 @@ export class ExtentListComponent implements OnInit {
     textColumn({
       title: this.translate.instant('Description'),
       propertyName: 'comment',
-      sortable: true,
     }),
     textColumn({
       title: this.translate.instant('Serial'),
       propertyName: 'serial',
-      sortable: true,
     }),
     textColumn({
       title: this.translate.instant('NAA'),
       propertyName: 'naa',
-      sortable: true,
     }),
     yesNoColumn({
       title: this.translate.instant('Enabled'),
       propertyName: 'enabled',
-      sortable: true,
     }),
     actionsColumn({
       actions: [

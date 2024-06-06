@@ -40,10 +40,8 @@ export class SnapshotTaskCardComponent implements OnInit {
     textColumn({
       title: this.translate.instant('Pool/Dataset'),
       propertyName: 'dataset',
-      sortable: true,
     }),
     textColumn({
-      sortable: true,
       propertyName: 'lifetime_unit',
       title: this.translate.instant('Keep for'),
       getValue: (row) => `${row.lifetime_value} ${row.lifetime_unit}(S)`.toLowerCase(),
@@ -51,23 +49,19 @@ export class SnapshotTaskCardComponent implements OnInit {
     textColumn({
       title: this.translate.instant('Frequency'),
       propertyName: 'frequency',
-      sortable: true,
       getValue: (row) => this.taskService.getTaskCronDescription(scheduleToCrontab(row.schedule)),
     }),
     relativeDateColumn({
       title: this.translate.instant('Next Run'),
-      sortable: true,
       getValue: (row) => (row.enabled
         ? this.taskService.getTaskNextTime(scheduleToCrontab(row.schedule))
         : this.translate.instant('Disabled')),
     }),
     relativeDateColumn({
       title: this.translate.instant('Last Run'),
-      sortable: true,
       getValue: (row) => row.state?.datetime?.$date,
     }),
     toggleColumn({
-      sortable: true,
       title: this.translate.instant('Enabled'),
       propertyName: 'enabled',
       requiredRoles: this.requiredRoles,
@@ -76,7 +70,6 @@ export class SnapshotTaskCardComponent implements OnInit {
     stateButtonColumn({
       title: this.translate.instant('State'),
       getValue: (row) => row.state.state,
-      sortable: true,
       cssClass: 'state-button',
     }),
     actionsColumn({

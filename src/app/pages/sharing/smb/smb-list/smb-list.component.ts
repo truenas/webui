@@ -50,22 +50,18 @@ export class SmbListComponent implements OnInit {
     textColumn({
       title: this.translate.instant('Name'),
       propertyName: 'name',
-      sortable: true,
     }),
     textColumn({
       title: this.translate.instant('Path'),
       propertyName: 'path_local',
-      sortable: true,
     }),
     textColumn({
       title: this.translate.instant('Description'),
       propertyName: 'comment',
-      sortable: true,
     }),
     toggleColumn({
       title: this.translate.instant('Enabled'),
       propertyName: 'enabled',
-      sortable: true,
       requiredRoles: this.requiredRoles,
       onRowToggle: (row) => {
         this.ws.call('sharing.smb.update', [row.id, { enabled: row.enabled }]).pipe(

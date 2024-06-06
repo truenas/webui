@@ -65,12 +65,10 @@ export class InterfacesCardComponent implements OnInit, OnChanges {
     textColumn({
       title: this.translate.instant('Name'),
       propertyName: 'name',
-      sortable: true,
     }),
     {
       type: IpAddressesCellComponent,
       title: this.translate.instant('IP Addresses'),
-      sortable: true,
       sortBy: (row) => row.aliases.map((alias) => alias.address).join(', '),
     },
     actionsColumn({

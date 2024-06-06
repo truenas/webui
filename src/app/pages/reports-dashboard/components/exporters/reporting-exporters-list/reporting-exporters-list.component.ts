@@ -43,17 +43,14 @@ export class ReportingExporterListComponent implements OnInit {
     textColumn({
       title: this.translate.instant('Name'),
       propertyName: 'name',
-      sortable: true,
     }),
     textColumn({
       title: this.translate.instant('Type'),
       propertyName: 'type',
-      sortable: true,
     }),
     toggleColumn({
       title: this.translate.instant('Enabled'),
       propertyName: 'enabled',
-      sortable: true,
       requiredRoles: this.requiredRoles,
       onRowToggle: (row, checked) => {
         this.appLoader.open(

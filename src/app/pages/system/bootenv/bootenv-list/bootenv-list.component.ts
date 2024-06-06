@@ -71,12 +71,10 @@ export class BootEnvironmentListComponent implements OnInit {
       cssClass: 'checkboxs-column',
     }),
     textColumn({
-      sortable: true,
       title: this.translate.instant('Name'),
       propertyName: 'name',
     }),
     textColumn({
-      sortable: true,
       title: this.translate.instant('Active'),
       propertyName: 'active',
       getValue: (row) => {
@@ -95,18 +93,15 @@ export class BootEnvironmentListComponent implements OnInit {
     dateColumn({
       title: this.translate.instant('Date Created'),
       propertyName: 'created',
-      sortable: true,
       sortBy: (row) => row.created.$date,
     }),
     sizeColumn({
       title: this.translate.instant('Space'),
       propertyName: 'rawspace',
-      sortable: true,
     }),
     yesNoColumn({
       title: this.translate.instant('Keep'),
       propertyName: 'keep',
-      sortable: true,
       cssClass: 'keep-column',
     }),
     actionsColumn({

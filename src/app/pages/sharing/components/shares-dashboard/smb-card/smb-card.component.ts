@@ -46,22 +46,18 @@ export class SmbCardComponent implements OnInit {
     textColumn({
       title: this.translate.instant(helptextSharingSmb.column_name),
       propertyName: 'name',
-      sortable: true,
     }),
     textColumn({
       title: this.translate.instant(helptextSharingSmb.column_path),
       propertyName: 'path_local',
-      sortable: true,
     }),
     textColumn({
       title: this.translate.instant(helptextSharingSmb.column_comment),
       propertyName: 'comment',
-      sortable: true,
     }),
     toggleColumn({
       title: this.translate.instant(helptextSharingSmb.column_enabled),
       propertyName: 'enabled',
-      sortable: true,
       onRowToggle: (row: SmbShare) => this.onChangeEnabledState(row),
       requiredRoles: this.requiredRoles,
     }),

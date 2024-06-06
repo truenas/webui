@@ -45,27 +45,22 @@ export class InitShutdownCardComponent implements OnInit {
       title: this.translate.instant('Command / Script'),
       propertyName: 'command',
       getValue: (row) => row.script || row.command,
-      sortable: true,
     }),
     textColumn({
       title: this.translate.instant('Description'),
       propertyName: 'comment',
-      sortable: true,
     }),
     textColumn({
       title: this.translate.instant('When'),
       propertyName: 'when',
-      sortable: true,
     }),
     yesNoColumn({
       title: this.translate.instant('Enabled'),
       propertyName: 'enabled',
-      sortable: true,
     }),
     textColumn({
       title: this.translate.instant('Timeout'),
       propertyName: 'timeout',
-      sortable: true,
     }),
     actionsColumn({
       actions: [

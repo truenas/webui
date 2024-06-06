@@ -46,11 +46,9 @@ export class ApiKeyListComponent implements OnInit {
     textColumn({
       title: this.translate.instant('Name'),
       propertyName: 'name',
-      sortable: true,
     }),
     dateColumn({
       title: this.translate.instant('Created Date'),
-      sortable: true,
       getValue: (row) => row.created_at.$date,
     }),
     actionsColumn({

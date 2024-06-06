@@ -44,18 +44,15 @@ export class DockerImagesListComponent implements OnInit {
     textColumn({
       title: this.translate.instant('Image ID'),
       propertyName: 'id',
-      sortable: true,
     }),
     textColumn({
       title: this.translate.instant('Tags'),
       propertyName: 'repo_tags',
-      sortable: true,
       getValue: (row) => row.repo_tags.join(', '),
     }),
     textColumn({
       title: this.translate.instant('Image Size'),
       propertyName: 'size',
-      sortable: true,
       getValue: (row) => {
         return row.size
           ? this.fileSizePipe.transform(row.size)
@@ -65,7 +62,6 @@ export class DockerImagesListComponent implements OnInit {
     yesNoColumn({
       title: this.translate.instant('Update available'),
       propertyName: 'update_available',
-      sortable: true,
     }),
     actionsColumn({
       actions: [
@@ -83,7 +79,6 @@ export class DockerImagesListComponent implements OnInit {
           onClick: (row) => this.doDelete([row]),
         },
       ],
-
     }),
   ], {
     rowTestId: (row) => 'container-image-' + row.id,

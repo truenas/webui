@@ -43,26 +43,21 @@ export class SmartTaskCardComponent implements OnInit {
     textColumn({
       title: this.translate.instant(helptextSmart.smartlist_column_disks),
       propertyName: 'disksLabel',
-      sortable: true,
     }),
     textColumn({
       title: this.translate.instant(helptextSmart.smartlist_column_type),
       propertyName: 'type',
-      sortable: true,
     }),
     textColumn({
       title: this.translate.instant(helptextSmart.smartlist_column_description),
       propertyName: 'desc',
-      sortable: true,
     }),
     textColumn({
       title: this.translate.instant(helptextSmart.smartlist_column_frequency),
-      sortable: true,
       getValue: (row) => this.taskService.getTaskCronDescription(row.cron_schedule),
     }),
     relativeDateColumn({
       title: this.translate.instant(helptextSmart.smartlist_column_next_run),
-      sortable: true,
       getValue: (row) => this.taskService.getTaskNextTime(row.cron_schedule) as unknown,
     }),
     actionsColumn({

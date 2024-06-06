@@ -43,7 +43,6 @@ export class InitShutdownListComponent implements OnInit {
     textColumn({
       title: this.translate.instant('Type'),
       propertyName: 'type',
-      sortable: true,
       getValue: (row) => {
         const typeLabel = initShutdownScriptTypeLabels.get(row.type);
         return this.translate.instant(typeLabel);
@@ -52,12 +51,10 @@ export class InitShutdownListComponent implements OnInit {
     textColumn({
       title: this.translate.instant('Description'),
       propertyName: 'comment',
-      sortable: true,
     }),
     textColumn({
       title: this.translate.instant('When'),
       propertyName: 'when',
-      sortable: true,
       getValue: (row) => {
         const whenLabel = initShutdownScriptWhenLabels.get(row.when);
         return this.translate.instant(whenLabel);
@@ -66,13 +63,11 @@ export class InitShutdownListComponent implements OnInit {
     textColumn({
       title: this.translate.instant('Command/Script'),
       propertyName: 'script',
-      sortable: true,
       getValue: (row) => (row.type === InitShutdownScriptType.Command ? row.command : row.script),
     }),
     yesNoColumn({
       title: this.translate.instant('Enabled'),
       propertyName: 'enabled',
-      sortable: true,
     }),
     actionsColumn({
       actions: [
