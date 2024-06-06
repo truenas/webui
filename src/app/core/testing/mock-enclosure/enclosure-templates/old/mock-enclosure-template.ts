@@ -1,29 +1,24 @@
 import { UUID } from 'angular2-uuid';
-import { DiskPowerLevel } from 'app/enums/disk-power-level.enum';
-import { DiskStandby } from 'app/enums/disk-standby.enum';
-import { EnclosureOld, EnclosureOldSlot } from 'app/interfaces/enclosure-old.interface';
+import { DiskType } from 'app/enums/disk-type.enum';
+import { DashboardEnclosure, DashboardEnclosureSlot } from 'app/interfaces/enclosure.interface';
 
-const mockDiskDetail: EnclosureOldSlot = {
+const mockDiskDetail: DashboardEnclosureSlot = {
   descriptor: 'slot00',
   status: 'OK',
   dev: 'sda',
   pool_info: null,
-  name: '',
   size: 1024,
   model: 'model',
   serial: 'serial',
-  advpowermgmt: DiskPowerLevel.Disabled,
-  togglesmart: false,
-  smartoptions: '',
-  transfermode: '',
-  hddstandby: DiskStandby.Minutes10,
-  description: 'description',
+  type: DiskType.Hdd,
   rotationrate: 10,
+  drive_bay_number: 2,
+  supports_identify_light: true,
 };
 
 export class MockEnclosure {
   readonly enclosureId = UUID.UUID();
-  data: EnclosureOld = {
+  data: DashboardEnclosure = {
     name: 'iX 4024Sp e001',
     model: 'BASE-CLASS',
     controller: true,
@@ -109,24 +104,22 @@ export class MockEnclosure {
       },
     },
     label: 'iX 4024Sp e001',
-  } as EnclosureOld;
+  } as DashboardEnclosure;
 
-  readonly slotTemplate: EnclosureOldSlot = {
+  readonly slotTemplate: DashboardEnclosureSlot = {
     ...mockDiskDetail,
     descriptor: 'SLOT 000,3FHY4B1T',
     status: 'OK',
     dev: 'sda',
     pool_info: null,
-    name: 'sda',
   };
 
-   readonly emptySlotTemplate: EnclosureOldSlot = {
+   readonly emptySlotTemplate: DashboardEnclosureSlot = {
      ...mockDiskDetail,
      descriptor: 'SLOT 000,3FHY4B1T',
      status: 'OK',
      dev: 'sda',
      pool_info: null,
-     name: 'sda',
    };
 
   enclosureNumber = 0;
@@ -154,7 +147,7 @@ export class MockEnclosure {
 
     // NEW
     // const slotKey: string = slotNumber.toString();
-    const slotValue: EnclosureOldSlot = {
+    const slotValue: DashboardEnclosureSlot = {
       ...mockDiskDetail,
       descriptor: 'SLOT 000,3FHY4B1T',
       status: 'OK',
@@ -178,7 +171,7 @@ export class MockEnclosure {
   }
 
   removeDiskFromSlot(diskName: string, slotNumber: number): this {
-    const element: EnclosureOldSlot = { ...this.emptySlotTemplate };
+    const element: DashboardEnclosureSlot = { ...this.emptySlotTemplate };
     /*
     element.slot = slotNumber;
     const elementData: EnclosureElementData = { ...this.emptySlotTemplate.data };
@@ -188,26 +181,25 @@ export class MockEnclosure {
     return this;
   }
 
-  protected addSlotToData(slotIndex: number, slot: EnclosureOldSlot): void {
+  protected addSlotToData(slotIndex: number, slot: DashboardEnclosureSlot): void {
     this.data.elements['Array Device Slot'][slotIndex] = slot;
   }
 
   enclosureInit(): void {
-    this.data.number = this.enclosureNumber;
     this.resetSlotsToEmpty();
   }
 
   resetSlotsToEmpty(): void {
     const emptySlots = this.generateEmptySlots();
-    emptySlots.forEach((keyValue: [string, EnclosureOldSlot]) => {
+    emptySlots.forEach((keyValue: [string, DashboardEnclosureSlot]) => {
       this.data.elements['Array Device Slot'][parseInt(keyValue[0])] = keyValue[1];
     });
   }
 
-  generateEmptySlots(totalSlots: number = this.totalSlotsFront): [string, EnclosureOldSlot][] {
-    const emptySlots: [string, EnclosureOldSlot][] = [];
+  generateEmptySlots(totalSlots: number = this.totalSlotsFront): [string, DashboardEnclosureSlot][] {
+    const emptySlots: [string, DashboardEnclosureSlot][] = [];
     for (let slotNumber = 1; slotNumber <= totalSlots; slotNumber++) {
-      const slotValue: EnclosureOldSlot = { ...this.emptySlotTemplate };
+      const slotValue: DashboardEnclosureSlot = { ...this.emptySlotTemplate };
       const slotKey = slotNumber.toString();
       emptySlots.push(this.processSlotTemplate([slotKey, slotValue]));
     }
@@ -215,32 +207,32 @@ export class MockEnclosure {
     return emptySlots;
   }
 
-  protected processSlotTemplate(element: [string, EnclosureOldSlot]): [string, EnclosureOldSlot] {
+  protected processSlotTemplate(element: [string, DashboardEnclosureSlot]): [string, DashboardEnclosureSlot] {
     // Subclasses can override this method to deal with whatever unique values
     // particular models may require. eg. minis have the original property
     return element;
   }
 
-  protected getSlots(): [string, EnclosureOldSlot][] {
+  protected getSlots(): [string, DashboardEnclosureSlot][] {
     // return (this.data.elements[0] as EnclosureElementsGroup).elements;
     return this.asSlotsArray(this.data.elements['Array Device Slot']);
   }
 
   getSlotByDiskName(diskName: string): number | null {
-    const slot: [string, EnclosureOldSlot] | undefined = this.getSlots()
-      .find((keyValue: [string, EnclosureOldSlot]) => keyValue[1].dev === diskName);
+    const slot: [string, DashboardEnclosureSlot] | undefined = this.getSlots()
+      .find((keyValue: [string, DashboardEnclosureSlot]) => keyValue[1].dev === diskName);
     return slot ? parseInt(slot[0]) : null;
   }
 
-  getPopulatedSlots(): [string, EnclosureOldSlot][] {
-    return this.getSlots().filter((keyValue: [string, EnclosureOldSlot]) => keyValue[1].status.includes('OK'));
+  getPopulatedSlots(): [string, DashboardEnclosureSlot][] {
+    return this.getSlots().filter((keyValue: [string, DashboardEnclosureSlot]) => keyValue[1].status.includes('OK'));
   }
 
-  getEmptySlots(): [string, EnclosureOldSlot][] {
-    return this.getSlots().filter((keyValue: [string, EnclosureOldSlot]) => keyValue[1].status === 'Not installed');
+  getEmptySlots(): [string, DashboardEnclosureSlot][] {
+    return this.getSlots().filter((keyValue: [string, DashboardEnclosureSlot]) => keyValue[1].status === 'Not installed');
   }
 
-  protected asSlotsArray(obj: object): [string, EnclosureOldSlot][] {
-    return Object.entries(obj) as [string, EnclosureOldSlot][];
+  protected asSlotsArray(obj: object): [string, DashboardEnclosureSlot][] {
+    return Object.entries(obj) as [string, DashboardEnclosureSlot][];
   }
 }

@@ -53,7 +53,7 @@ export interface EnclosureElement {
   descriptor: string;
   status: string;
   value?: string;
-  value_raw?: number;
+  value_raw?: number | string;
 }
 
 export type DashboardEnclosure = Overwrite<Enclosure, {

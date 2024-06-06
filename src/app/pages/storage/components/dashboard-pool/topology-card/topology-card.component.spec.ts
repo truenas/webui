@@ -1,9 +1,8 @@
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
-import { MockStorageScenario } from 'app/core/testing/mock-enclosure/enums/mock-storage.enum';
-import { diskToDashboardDisk } from 'app/core/testing/mock-enclosure/mock-storage-dashboard.utils';
-import { MockStorageGenerator } from 'app/core/testing/mock-enclosure/mock-storage-generator.utils';
+import { MockStorageScenarioOld } from 'app/core/testing/mock-enclosure/enums/mock-storage.enum';
+import { MockStorageGeneratorOld } from 'app/core/testing/mock-enclosure/mock-storage-generator-old.utils';
 import { mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { PoolCardIconType } from 'app/enums/pool-card-icon-type.enum';
 import { PoolStatus } from 'app/enums/pool-status.enum';
@@ -14,6 +13,9 @@ import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import {
   PoolCardIconComponent,
 } from 'app/pages/storage/components/dashboard-pool/pool-card-icon/pool-card-icon.component';
+import {
+  diskToDashboardDisk,
+} from 'app/pages/storage/components/dashboard-pool/topology-card/mock-storage-dashboard.utils';
 import {
   TopologyCardComponent,
 } from 'app/pages/storage/components/dashboard-pool/topology-card/topology-card.component';
@@ -38,17 +40,17 @@ describe('TopologyCardComponent', () => {
   describe('tests with Mixed Capacity', () => {
     beforeEach(() => {
       // Create storage object with empty topologies
-      const storage = new MockStorageGenerator();
+      const storage = new MockStorageGeneratorOld();
 
       // Add Topologies to Storage
       storage.addDataTopology({
-        scenario: MockStorageScenario.MixedVdevCapacity,
+        scenario: MockStorageScenarioOld.MixedVdevCapacity,
         layout: TopologyItemType.Raidz3,
         diskSize: 4,
         width: 7,
         repeats: 2,
       }).addSpecialTopology({
-        scenario: MockStorageScenario.MixedDiskCapacity,
+        scenario: MockStorageScenarioOld.MixedDiskCapacity,
         layout: TopologyItemType.Raidz2,
         diskSize: 4,
         width: 8,
@@ -78,18 +80,18 @@ describe('TopologyCardComponent', () => {
   describe('tests without Mixed Capacity', () => {
     beforeEach(() => {
       // Create storage object with empty topologies
-      const storage = new MockStorageGenerator();
+      const storage = new MockStorageGeneratorOld();
 
       // Add Topologies to Storage
       storage.addDataTopology({
-        scenario: MockStorageScenario.Uniform,
+        scenario: MockStorageScenarioOld.Uniform,
         layout: TopologyItemType.Raidz3,
         diskSize: 4,
         width: 7,
         repeats: 2,
       })
         .addSpecialTopology({
-          scenario: MockStorageScenario.Uniform,
+          scenario: MockStorageScenarioOld.Uniform,
           layout: TopologyItemType.Mirror,
           diskSize: 4,
           width: 3,
@@ -98,7 +100,7 @@ describe('TopologyCardComponent', () => {
         .addCacheTopology(2, 2)
         .addSpareTopology(3, 8)
         .addDedupTopology({
-          scenario: MockStorageScenario.NoRedundancy,
+          scenario: MockStorageScenarioOld.NoRedundancy,
           layout: TopologyItemType.Stripe,
           diskSize: 4,
           width: 1,
@@ -167,18 +169,18 @@ describe('TopologyCardComponent', () => {
   describe('tests with offline pools', () => {
     beforeEach(() => {
       // Create storage object with empty topologies
-      const storage = new MockStorageGenerator();
+      const storage = new MockStorageGeneratorOld();
 
       // Add Topologies to Storage
       storage.addDataTopology({
-        scenario: MockStorageScenario.Uniform,
+        scenario: MockStorageScenarioOld.Uniform,
         layout: TopologyItemType.Raidz3,
         diskSize: 4,
         width: 7,
         repeats: 2,
       })
         .addSpecialTopology({
-          scenario: MockStorageScenario.Uniform,
+          scenario: MockStorageScenarioOld.Uniform,
           layout: TopologyItemType.Mirror,
           diskSize: 4,
           width: 3,

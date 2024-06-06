@@ -1,25 +1,16 @@
-import { DiskPowerLevel } from 'app/enums/disk-power-level.enum';
-import { DiskStandby } from 'app/enums/disk-standby.enum';
-import { EnclosureOld, EnclosureOldSlot } from 'app/interfaces/enclosure-old.interface';
+import { DashboardEnclosure, DashboardEnclosureSlot } from 'app/interfaces/enclosure.interface';
 import { MockEnclosure } from './mock-enclosure-template';
 
-const mockDiskDetail: EnclosureOldSlot = {
+const mockDiskDetail = {
   descriptor: 'slot00',
   status: 'OK',
   dev: 'sda',
   pool_info: null,
-  name: '',
   size: 1024,
   model: 'model',
   serial: 'serial',
-  advpowermgmt: DiskPowerLevel.Disabled,
-  togglesmart: false,
-  smartoptions: '',
-  transfermode: '',
-  hddstandby: DiskStandby.Minutes10,
-  description: 'description',
   rotationrate: 10,
-};
+} as DashboardEnclosureSlot;
 
 export class MockEs102 extends MockEnclosure {
   override readonly totalSlotsFront: number = 102;
@@ -2018,7 +2009,7 @@ export class MockEs102 extends MockEnclosure {
       },
     },
     label: 'HGST H4102-J 3010',
-  } as EnclosureOld;
+  } as DashboardEnclosure;
 
   constructor(number: number) {
     super(number);

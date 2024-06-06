@@ -49,6 +49,7 @@ describe('EnclosureDisksComponent', () => {
               disk_status: EnclosureDiskStatus.Online,
             },
             dev: 'sda',
+            supports_identify_light: true,
           } as DashboardEnclosureSlot,
         },
       },
