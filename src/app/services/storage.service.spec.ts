@@ -1,7 +1,7 @@
-import { GiB } from 'app/constants/bytes.constant';
-import { MockStorageScenario } from 'app/core/testing/mock-enclosure/enums/mock-storage.enum';
+import { GiB, TiB } from 'app/constants/bytes.constant';
+import { MockStorageScenarioOld } from 'app/core/testing/mock-enclosure/enums/mock-storage.enum';
 import { AddTopologyOptions } from 'app/core/testing/mock-enclosure/interfaces/mock-storage-generator.interface';
-import { MockStorageGenerator } from 'app/core/testing/mock-enclosure/mock-storage-generator.utils';
+import { MockStorageGeneratorOld } from 'app/core/testing/mock-enclosure/mock-storage-generator-old.utils';
 import { VdevType, TopologyItemType, TopologyWarning } from 'app/enums/v-dev-type.enum';
 import { TopologyDisk, TopologyItem, VDev } from 'app/interfaces/storage.interface';
 import { StorageService } from 'app/services/storage.service';
@@ -66,9 +66,9 @@ describe('StorageService', () => {
   });
 
   describe('can check VDEV widths', () => {
-    const mockStorage = new MockStorageGenerator();
+    const mockStorage = new MockStorageGeneratorOld();
     const dataOptions: AddTopologyOptions = {
-      scenario: MockStorageScenario.Uniform,
+      scenario: MockStorageScenarioOld.Uniform,
       layout: TopologyItemType.Raidz2,
       diskSize: 8,
       width: 8,
@@ -103,16 +103,16 @@ describe('StorageService', () => {
   });
 
   describe('can check VDEV capacities', () => {
-    const mockStorage = new MockStorageGenerator();
+    const mockStorage = new MockStorageGeneratorOld();
     const dataOptions: AddTopologyOptions = {
-      scenario: MockStorageScenario.MixedVdevCapacity,
+      scenario: MockStorageScenarioOld.MixedVdevCapacity,
       layout: TopologyItemType.Mirror,
       diskSize: 2,
       width: 2,
       repeats: 2,
     };
     const dedupOptions: AddTopologyOptions = {
-      scenario: MockStorageScenario.Uniform,
+      scenario: MockStorageScenarioOld.Uniform,
       layout: TopologyItemType.Mirror,
       diskSize: 2,
       width: 2,
@@ -133,10 +133,10 @@ describe('StorageService', () => {
 
     it('detects VDEV capacity for category', () => {
       const capacities: number[] = Array.from(dataVdevCapacities);
-      expect(capacities[0]).toBe(mockStorage.terabytesToBytes(dataOptions.diskSize + 2));
+      expect(capacities[0]).toBe((dataOptions.diskSize + 2) * TiB);
 
       for (let index = 1; index < capacities.length; index++) {
-        expect(capacities[index]).toBe(mockStorage.terabytesToBytes(dataOptions.diskSize));
+        expect(capacities[index]).toBe(dataOptions.diskSize * TiB);
         expect(capacities[index]).toEqual(mockStorage.poolState.topology.data[index].stats.size);
       }
     });
@@ -159,24 +159,24 @@ describe('StorageService', () => {
   });
 
   describe('can check VDEV disk capacities in category', () => {
-    const mockStorage = new MockStorageGenerator();
+    const mockStorage = new MockStorageGeneratorOld();
     const configuredDiskSize = 4;
-    const generatedDiskSizeInBytes: number = mockStorage.terabytesToBytes(configuredDiskSize + 1);
+    const generatedDiskSizeInBytes: number = (configuredDiskSize + 1) * TiB;
 
     mockStorage.addDataTopology({
-      scenario: MockStorageScenario.MixedDiskCapacity,
+      scenario: MockStorageScenarioOld.MixedDiskCapacity,
       layout: TopologyItemType.Raidz1,
       diskSize: configuredDiskSize,
       width: 4,
       repeats: 1,
     }).addDedupTopology({
-      scenario: MockStorageScenario.MixedVdevCapacity,
+      scenario: MockStorageScenarioOld.MixedVdevCapacity,
       layout: TopologyItemType.Raidz1,
       diskSize: configuredDiskSize,
       width: 4,
       repeats: 2,
     }).addSpecialTopology({
-      scenario: MockStorageScenario.Uniform,
+      scenario: MockStorageScenarioOld.Uniform,
       layout: TopologyItemType.Raidz1,
       diskSize: configuredDiskSize,
       width: 4,
@@ -228,16 +228,16 @@ describe('StorageService', () => {
   });
 
   describe('detects mixed VDEV types', () => {
-    const mockStorage = new MockStorageGenerator();
+    const mockStorage = new MockStorageGeneratorOld();
 
     mockStorage.addDataTopology({
-      scenario: MockStorageScenario.MixedVdevLayout,
+      scenario: MockStorageScenarioOld.MixedVdevLayout,
       layout: TopologyItemType.Mirror,
       diskSize: 4,
       width: 2,
       repeats: 1,
     }).addSpecialTopology({
-      scenario: MockStorageScenario.Uniform,
+      scenario: MockStorageScenarioOld.Uniform,
       layout: TopologyItemType.Raidz1,
       diskSize: 4,
       width: 4,
@@ -271,10 +271,10 @@ describe('StorageService', () => {
     * */
 
     it('generates warning for "No Redundancy"', () => {
-      const stripeStorage = new MockStorageGenerator();
+      const stripeStorage = new MockStorageGeneratorOld();
 
       stripeStorage.addDataTopology({
-        scenario: MockStorageScenario.NoRedundancy,
+        scenario: MockStorageScenarioOld.NoRedundancy,
         layout: TopologyItemType.Stripe,
         diskSize: 4,
         width: 1,
@@ -292,10 +292,10 @@ describe('StorageService', () => {
     });
 
     it('generates warning for "Mixed VDEV Capacities"', () => {
-      const storage = new MockStorageGenerator();
+      const storage = new MockStorageGeneratorOld();
 
       storage.addDataTopology({
-        scenario: MockStorageScenario.MixedVdevCapacity,
+        scenario: MockStorageScenarioOld.MixedVdevCapacity,
         layout: TopologyItemType.Mirror,
         diskSize: 4,
         width: 2,
@@ -313,10 +313,10 @@ describe('StorageService', () => {
     });
 
     it('generates warning for "Mixed Disk Capacities"', () => {
-      const storage = new MockStorageGenerator();
+      const storage = new MockStorageGeneratorOld();
 
       storage.addDataTopology({
-        scenario: MockStorageScenario.MixedDiskCapacity,
+        scenario: MockStorageScenarioOld.MixedDiskCapacity,
         layout: TopologyItemType.Mirror,
         diskSize: 4,
         width: 2,
@@ -334,10 +334,10 @@ describe('StorageService', () => {
     });
 
     it('generates warning for "Mixed VDEV Width"', () => {
-      const storage = new MockStorageGenerator();
+      const storage = new MockStorageGeneratorOld();
 
       storage.addDataTopology({
-        scenario: MockStorageScenario.MixedVdevWidth,
+        scenario: MockStorageScenarioOld.MixedVdevWidth,
         layout: TopologyItemType.Mirror,
         diskSize: 4,
         width: 2,
@@ -355,10 +355,10 @@ describe('StorageService', () => {
     });
 
     it('generates warning for "Mixed VDEV Layouts"', () => {
-      const storage = new MockStorageGenerator();
+      const storage = new MockStorageGeneratorOld();
 
       storage.addDataTopology({
-        scenario: MockStorageScenario.MixedVdevLayout,
+        scenario: MockStorageScenarioOld.MixedVdevLayout,
         layout: TopologyItemType.Mirror,
         diskSize: 4,
         width: 2,
