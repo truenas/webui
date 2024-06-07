@@ -164,4 +164,21 @@ describe('GlobalSearchResultsComponent', () => {
     expect(sectionHeaders).toHaveLength(1);
     expect(sectionHeaders[0].textContent).toBe(' Recent Searches ');
   });
+
+  it('should remove element from recent searches and update local storage', () => {
+    const mockResults: UiSearchableElement[] = [mockedRecentSearchesElement];
+
+    localStorage.setItem('recentSearches', JSON.stringify(mockResults));
+    spectator.setInput('results', mockResults);
+    spectator.detectChanges();
+
+    const removeIcon = spectator.query('.icon');
+    const recentSearchRemovedSpy = jest.spyOn(spectator.component.recentSearchRemoved, 'emit');
+
+    spectator.click(removeIcon);
+
+    const updatedResults = JSON.parse(localStorage.getItem('recentSearches') || '[]') as UiSearchableElement[];
+    expect(updatedResults).toHaveLength(0);
+    expect(recentSearchRemovedSpy).toHaveBeenCalled();
+  });
 });

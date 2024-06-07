@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, Inject, Input, OnChanges, TrackByFunction,
+  ChangeDetectionStrategy, Component, EventEmitter, Inject, Input, OnChanges, Output, TrackByFunction,
 } from '@angular/core';
 import { Router } from '@angular/router';
 import { UntilDestroy } from '@ngneat/until-destroy';
@@ -28,6 +28,9 @@ export class GlobalSearchResultsComponent implements OnChanges {
   @Input() isSearchInputFocused = false;
   @Input() results: UiSearchableElement[] = [];
 
+  @Output() recentSearchRemoved = new EventEmitter<void>();
+
+  readonly GlobalSearchSection = GlobalSearchSection;
   readonly initialResultsLimit = this.globalSearchSectionsProvider.globalSearchInitialLimit;
   readonly trackBySection: TrackByFunction<Option<GlobalSearchSection>> = (_, section) => section.value;
   readonly trackById: TrackByFunction<UiSearchableElement> = (_, item) => generateIdFromHierarchy(item.hierarchy);
@@ -114,16 +117,20 @@ export class GlobalSearchResultsComponent implements OnChanges {
     return isEqual(a.hierarchy, b.hierarchy);
   }
 
-  private saveSearchResult(result: UiSearchableElement): void {
-    const existingResults = JSON.parse(
-      this.window.localStorage.getItem('recentSearches') || '[]',
-    ) as UiSearchableElement[];
+  removeRecentSearch(event: Event, result: UiSearchableElement): void {
+    event.stopPropagation();
 
+    const existingResults = JSON.parse(this.window.localStorage.getItem('recentSearches') || '[]') as UiSearchableElement[];
+    const updatedResults = existingResults.filter((item) => !isEqual(item.hierarchy, result.hierarchy));
+    localStorage.setItem('recentSearches', JSON.stringify(updatedResults));
+    this.recentSearchRemoved.emit();
+  }
+
+  private saveSearchResult(result: UiSearchableElement): void {
+    const existingResults = JSON.parse(this.window.localStorage.getItem('recentSearches') || '[]') as UiSearchableElement[];
     const existingIndex = findIndex(existingResults, (item) => isEqual(item.hierarchy, result.hierarchy));
 
-    if (existingIndex !== -1) {
-      existingResults.splice(existingIndex, 1);
-    }
+    if (existingIndex !== -1) existingResults.splice(existingIndex, 1);
 
     existingResults.unshift(result);
 
