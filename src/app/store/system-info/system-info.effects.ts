@@ -29,6 +29,7 @@ export class SystemInfoEffects {
     }),
   ));
 
+  // TODO: Too much logic on the frontend.
   loadSystemFeatures = createEffect(() => this.actions$.pipe(
     ofType(systemInfoLoaded),
     switchMap(({ systemInfo }) => {
@@ -43,7 +44,8 @@ export class SystemInfoEffects {
         return of(systemFeaturesLoaded({ systemFeatures: features }));
       }
 
-      if (profile.system_product.includes('FREENAS-MINI-3.0') || profile.system_product.includes('TRUENAS-')) {
+      // TODO: Likely incorrect.
+      if (profile.system_product.includes('TRUENAS-')) {
         features.enclosure = true;
       }
 

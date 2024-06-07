@@ -44,7 +44,6 @@
     "./src/app/core/testing/mock-enclosure/enclosure-templates/old/mock-m60.ts",
     "./src/app/core/testing/mock-enclosure/enclosure-templates/old/mock-mini-3.0-e+.ts",
     "./src/app/core/testing/mock-enclosure/enclosure-templates/old/mock-mini-3.0-x.ts",
-    "./src/app/core/testing/mock-enclosure/enclosure-templates/old/mock-mini-3.0-x+.ts",
     "./src/app/core/testing/mock-enclosure/enclosure-templates/old/mock-mini-3.0-xl+.ts",
     "./src/app/core/testing/mock-enclosure/enclosure-templates/old/mock-mini-r.ts",
     "./src/app/core/testing/mock-enclosure/enclosure-templates/old/mock-r10.ts",
