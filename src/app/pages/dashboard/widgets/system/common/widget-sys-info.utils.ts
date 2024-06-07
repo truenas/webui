@@ -7,7 +7,10 @@ export function getServerProduct(systemProduct: string): string {
 }
 
 export function getMiniImagePath(systemProduct: string): string {
-  return Object.values(miniSeries).find((series) => series.images.includes(systemProduct))?.pathImg;
+  const normalizedProduct = systemProduct
+    .replace('TRUENAS-', '')
+    .replace('FREENAS-', '');
+  return Object.values(miniSeries).find((series) => series.images.includes(normalizedProduct))?.pathImg;
 }
 
 export function getProductImage(systemProduct: string): string {

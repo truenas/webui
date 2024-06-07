@@ -30,14 +30,14 @@ describe('EnclosureDisksMiniComponent', () => {
       number: 0,
       id: 'enclosure0',
       label: 'Test enclosure 0',
-      model: 'FREENAS-MINI-3.0-E',
+      model: 'MINI-3.0-E',
       elements: {},
     },
     {
       number: 1,
       id: 'enclosure1',
       label: 'Test enclosure 1',
-      model: 'FREENAS-MINI-3.0-X',
+      model: 'MINI-3.0-X',
       elements: {
         'Array Device Slot': {
           1: {
@@ -139,6 +139,6 @@ describe('EnclosureDisksMiniComponent', () => {
   });
 
   it('shows title', () => {
-    expect(spectator.query('.mat-card-title-text').textContent.trim()).toBe('Disks on FREENAS-MINI-3.0-X (1)');
+    expect(spectator.query('.mat-card-title-text').textContent.trim()).toBe('Disks on MINI-3.0-X (1)');
   });
 });
