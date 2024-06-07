@@ -3,6 +3,7 @@ import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 export enum AuditService {
   Smb = 'SMB',
   Middleware = 'MIDDLEWARE',
+  Sudo = 'SUDO',
 }
 
 export enum AuditEvent {
@@ -26,6 +27,7 @@ export enum AuditEvent {
 export const auditServiceLabels = new Map<AuditService, string>([
   [AuditService.Smb, T('SMB')],
   [AuditService.Middleware, T('Middleware')],
+  [AuditService.Sudo, T('Sudo')],
 ]);
 
 export const auditEventLabels = new Map<AuditEvent, string>([
