@@ -9,8 +9,14 @@ export const dashboardElements = {
       synonyms: [T('Widgets')],
     },
     configure: {
-      hierarchy: [T('Configure')],
-      anchor: 'configure-dashboard',
+      hierarchy: [T('Configure Dashboard')],
+      synonyms: [
+        T('Update Dashboard'),
+        T('Home Widgets'),
+        T('Widgets'),
+        T('New Widget'),
+        T('Add Widget'),
+      ],
     },
   },
 } satisfies UiSearchableElement;
