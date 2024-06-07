@@ -6,7 +6,7 @@ export abstract class ColumnComponent<T> {
   cssClass?: string;
   rowTestId: (row: T) => string;
   sortBy?: (row: T) => string | number;
-  sortable?: boolean;
+  disableSorting?: boolean;
   getValue?: (row: T) => unknown;
   hidden = false;
 

@@ -40,7 +40,6 @@ export class KerberosKeytabsListComponent implements OnInit {
     textColumn({
       title: this.translate.instant('Name'),
       propertyName: 'name',
-      sortable: true,
     }),
     actionsColumn({
       actions: [

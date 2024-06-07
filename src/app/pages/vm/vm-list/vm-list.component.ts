@@ -59,11 +59,9 @@ export class VmListComponent implements OnInit {
     textColumn({
       title: this.translate.instant('Name'),
       propertyName: 'name',
-      sortable: true,
     }),
     toggleColumn({
       title: this.translate.instant('Running'),
-      sortable: true,
       requiredRoles: this.requiredRoles,
       getValue: (row) => row.status.state === VmState.Running,
       onRowToggle: (row) => this.vmService.toggleVmStatus(row),
@@ -72,25 +70,21 @@ export class VmListComponent implements OnInit {
       title: this.translate.instant('Start on Boot'),
       requiredRoles: this.requiredRoles,
       propertyName: 'autostart',
-      sortable: true,
       onRowToggle: (row) => this.vmService.toggleVmAutostart(row),
     }),
     textColumn({
       title: this.translate.instant('Virtual CPUs'),
       propertyName: 'vcpus',
-      sortable: true,
       hidden: true,
     }),
     textColumn({
       title: this.translate.instant('Cores'),
       propertyName: 'cores',
-      sortable: true,
       hidden: true,
     }),
     textColumn({
       title: this.translate.instant('Threads'),
       propertyName: 'threads',
-      sortable: true,
       hidden: true,
     }),
     textColumn({
@@ -103,31 +97,26 @@ export class VmListComponent implements OnInit {
     textColumn({
       title: this.translate.instant('Boot Loader Type'),
       propertyName: 'bootloader',
-      sortable: true,
       hidden: true,
     }),
     textColumn({
       title: this.translate.instant('System Clock'),
       propertyName: 'time',
-      sortable: true,
       hidden: true,
       getValue: (row) => vmTimeNames.get(row.time),
     }),
     textColumn({
       title: this.translate.instant('Display Port'),
-      sortable: true,
       hidden: true,
       getValue: (row) => this.getDisplayPort(row),
     }),
     textColumn({
       title: this.translate.instant('Description'),
       propertyName: 'description',
-      sortable: true,
       hidden: true,
     }),
     textColumn({
       title: this.translate.instant('Shutdown Timeout'),
-      sortable: true,
       hidden: true,
       getValue: (row) => `${row.shutdown_timeout} seconds`,
     }),
