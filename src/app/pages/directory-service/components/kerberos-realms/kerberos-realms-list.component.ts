@@ -43,22 +43,18 @@ export class KerberosRealmsListComponent implements OnInit {
     textColumn({
       title: this.translate.instant('Realm'),
       propertyName: 'realm',
-      sortable: true,
     }),
     textColumn({
       title: this.translate.instant('KDC'),
       propertyName: 'kdc_string',
-      sortable: true,
     }),
     textColumn({
       title: this.translate.instant('Admin Server'),
       propertyName: 'admin_server_string',
-      sortable: true,
     }),
     textColumn({
       title: this.translate.instant('Password Server'),
       propertyName: 'kpasswd_server_string',
-      sortable: true,
     }),
     actionsColumn({
       actions: [

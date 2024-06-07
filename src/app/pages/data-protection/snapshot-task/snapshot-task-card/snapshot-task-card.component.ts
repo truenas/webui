@@ -42,6 +42,7 @@ export class SnapshotTaskCardComponent implements OnInit {
       propertyName: 'dataset',
     }),
     textColumn({
+      propertyName: 'lifetime_unit',
       title: this.translate.instant('Keep for'),
       getValue: (row) => `${row.lifetime_value} ${row.lifetime_unit}(S)`.toLowerCase(),
     }),

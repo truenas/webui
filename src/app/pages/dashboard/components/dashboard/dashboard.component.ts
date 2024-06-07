@@ -66,6 +66,10 @@ export class DashboardComponent implements OnInit {
     this.loadGroups();
   }
 
+  protected trackByFn(index: number, group: WidgetGroup): string {
+    return group.layout + group.slots.map((slot) => slot.type).join();
+  }
+
   protected onConfigure(): void {
     this.isEditing.set(true);
   }
@@ -94,13 +98,13 @@ export class DashboardComponent implements OnInit {
     this.slideIn
       .open(WidgetGroupFormComponent, true, editedGroup)
       .pipe(untilDestroyed(this))
-      .subscribe((response) => {
+      .subscribe((response: ChainedComponentResponse<WidgetGroup>) => {
         if (!response.response) {
           return;
         }
 
         this.renderedGroups.update((groups) => {
-          return groups.map((group, index) => (index === i ? response.response as WidgetGroup : group));
+          return groups.map((group, index) => (index === i ? response.response : group));
         });
       });
   }

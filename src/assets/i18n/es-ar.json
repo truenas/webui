@@ -1944,6 +1944,7 @@
   "Successfully replaced disk {disk}.": "",
   "Successfully saved IPMI settings.": "",
   "Successfully saved {n, plural, one {Disk} other {Disks}} settings.": "",
+  "Sudo": "",
   "Sudo Enabled": "",
   "Suggest an improvement": "",
   "Support Read": "",
