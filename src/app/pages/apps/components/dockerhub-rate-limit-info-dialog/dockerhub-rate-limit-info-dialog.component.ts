@@ -1,11 +1,8 @@
 import {
-  ChangeDetectionStrategy, Component, Inject,
+  ChangeDetectionStrategy, Component,
 } from '@angular/core';
-import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { UntilDestroy } from '@ngneat/until-destroy';
-import { TranslateService } from '@ngx-translate/core';
 import { helptextApps } from 'app/helptext/apps/apps';
-import { DockerHubRateLimit } from 'app/interfaces/dockerhub-rate-limit.interface';
 
 @UntilDestroy()
 @Component({
@@ -15,15 +12,4 @@ import { DockerHubRateLimit } from 'app/interfaces/dockerhub-rate-limit.interfac
 })
 export class DockerHubRateInfoDialogComponent {
   helpText = helptextApps;
-
-  get warningText(): string {
-    return this.translate.instant(
-      this.helpText.dockerHubRateLimit.message,
-    );
-  }
-
-  constructor(
-    private translate: TranslateService,
-    @Inject(MAT_DIALOG_DATA) public data: DockerHubRateLimit,
-  ) {}
 }
