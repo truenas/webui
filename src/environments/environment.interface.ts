@@ -8,5 +8,5 @@ export interface WebUiEnvironment {
   port?: number;
   production: boolean;
   sentryPublicDsn: string;
-  mockConfig?: MockEnclosureConfig;
+  mockConfig: MockEnclosureConfig;
 }

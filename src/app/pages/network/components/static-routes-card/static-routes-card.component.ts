@@ -38,12 +38,10 @@ export class StaticRoutesCardComponent implements OnInit {
     textColumn({
       title: this.translate.instant('Destination'),
       propertyName: 'destination',
-      sortable: true,
     }),
     textColumn({
       title: this.translate.instant('Gateway'),
       propertyName: 'gateway',
-      sortable: true,
     }),
     actionsColumn({
       actions: [

@@ -73,12 +73,10 @@ export class BootEnvironmentListComponent implements OnInit {
     textColumn({
       title: this.translate.instant('Name'),
       propertyName: 'name',
-      sortable: true,
     }),
     textColumn({
       title: this.translate.instant('Active'),
       propertyName: 'active',
-      sortable: true,
       getValue: (row) => {
         switch (row.active) {
           case BootEnvironmentActive.Now:
@@ -95,13 +93,11 @@ export class BootEnvironmentListComponent implements OnInit {
     dateColumn({
       title: this.translate.instant('Date Created'),
       propertyName: 'created',
-      sortable: true,
       sortBy: (row) => row.created.$date,
     }),
     sizeColumn({
       title: this.translate.instant('Space'),
       propertyName: 'rawspace',
-      sortable: true,
     }),
     yesNoColumn({
       title: this.translate.instant('Keep'),
