@@ -2,7 +2,6 @@ import {
   ChangeDetectionStrategy, Component,
 } from '@angular/core';
 import { UntilDestroy } from '@ngneat/until-destroy';
-import { helptextApps } from 'app/helptext/apps/apps';
 
 @UntilDestroy()
 @Component({
@@ -10,6 +9,4 @@ import { helptextApps } from 'app/helptext/apps/apps';
   templateUrl: './dockerhub-rate-limit-info-dialog.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class DockerHubRateInfoDialogComponent {
-  helpText = helptextApps;
-}
+export class DockerHubRateInfoDialogComponent {}
