@@ -4,12 +4,15 @@
   flex: 1;
   flex-direction: column;
   gap: 12px;
+  height: 100%;
   justify-content: center;
+  overflow: hidden;
 
   .product-image-placeholder {
     display: flex;
     min-height: 100px;
     min-width: 150px;
+    overflow: hidden;
     place-content: center;
     place-items: center;
 
@@ -20,8 +23,9 @@
     }
 
     img {
-      height: auto;
-      max-width: 80%;
+      max-height: 100%;
+      max-width: 100%;
+      object-fit: contain;
 
       &.clickable {
         cursor: pointer;

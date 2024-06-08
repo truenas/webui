@@ -1,4 +1,5 @@
 import { mockM40 } from 'app/core/testing/mock-enclosure/enclosure-templates/mock-m40';
+import { mockMini30XPlus } from 'app/core/testing/mock-enclosure/enclosure-templates/mock-mini-3.0-x-plus';
 
 export const enclosureMocks = new Map([
   // ['E24', MockE24],
@@ -15,6 +16,7 @@ export const enclosureMocks = new Map([
   //
   // ['MINI-3.0-E+', MockMini30Eplus],
   // ['MINI-3.0-X', MockMini30X],
+  ['MINI-3.0-X+', mockMini30XPlus],
   // ['MINI-3.0-X+', MockMini30Xplus],
   // ['MINI-3.0-XL+', MockMini30Xl],
   // ['MINI-R', MockMiniR],
