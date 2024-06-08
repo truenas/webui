@@ -28,7 +28,7 @@ import {
 import { hasExportedPool, hasNonUniqueSerial } from 'app/pages/storage/modules/pool-manager/utils/disk.utils';
 import { isDraidLayout } from 'app/pages/storage/modules/pool-manager/utils/topology.utils';
 import { AppState } from 'app/store';
-import { waitForSystemFeatures } from 'app/store/system-info/system-info.selectors';
+import { selectHasEnclosureSupport } from 'app/store/system-info/system-info.selectors';
 
 @Injectable()
 export class PoolManagerValidationService {
@@ -48,7 +48,7 @@ export class PoolManagerValidationService {
     this.store.enclosureSettings$,
     combineLatest([
       this.store.hasMultipleEnclosuresAfterFirstStep$,
-      this.systemStore$.pipe(waitForSystemFeatures, map((features) => features.enclosure)),
+      this.systemStore$.select(selectHasEnclosureSupport),
     ]),
   ])
     .pipe(
