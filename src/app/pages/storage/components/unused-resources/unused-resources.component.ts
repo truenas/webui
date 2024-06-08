@@ -3,8 +3,8 @@ import {
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Subscription, debounceTime, distinctUntilChanged } from 'rxjs';
+import { DetailsDisk } from 'app/interfaces/disk.interface';
 import { Pool } from 'app/interfaces/pool.interface';
-import { UnusedDisk } from 'app/interfaces/storage.interface';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -17,7 +17,7 @@ import { WebSocketService } from 'app/services/ws.service';
 })
 export class UnusedResourcesComponent implements OnInit {
   @Input() pools: Pool[];
-  unusedDisks: UnusedDisk[] = [];
+  unusedDisks: DetailsDisk[] = [];
   diskQuerySubscription: Subscription;
 
   constructor(

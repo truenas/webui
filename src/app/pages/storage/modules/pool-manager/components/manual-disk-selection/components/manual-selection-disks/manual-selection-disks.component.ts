@@ -7,8 +7,8 @@ import { TranslateService } from '@ngx-translate/core';
 import { DndDropEvent } from 'ngx-drag-drop';
 import { BehaviorSubject, combineLatest } from 'rxjs';
 import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
-import { EnclosureOld } from 'app/interfaces/enclosure-old.interface';
-import { Disk } from 'app/interfaces/storage.interface';
+import { DetailsDisk } from 'app/interfaces/disk.interface';
+import { Enclosure } from 'app/interfaces/enclosure.interface';
 import { NestedTreeDataSource } from 'app/modules/ix-tree/nested-tree-datasource';
 import {
   ManualDiskSelectionFilters,
@@ -19,7 +19,7 @@ import {
 import { ManualDiskDragToggleStore } from 'app/pages/storage/modules/pool-manager/components/manual-disk-selection/store/manual-disk-drag-toggle.store';
 import { ManualDiskSelectionStore } from 'app/pages/storage/modules/pool-manager/components/manual-disk-selection/store/manual-disk-selection.store';
 
-interface EnclosureDisk extends Disk {
+interface EnclosureDisk extends DetailsDisk {
   children: [];
 }
 
@@ -41,7 +41,7 @@ const noEnclosureId = 'no-enclosure' as const;
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ManualSelectionDisksComponent implements OnInit {
-  @Input() enclosures: EnclosureOld[] = [];
+  @Input() enclosures: Enclosure[] = [];
 
   dataSource: NestedTreeDataSource<DiskOrGroup>;
   treeControl = new NestedTreeControl<DiskOrGroup, string>((node) => node.children, {
@@ -56,7 +56,7 @@ export class ManualSelectionDisksComponent implements OnInit {
     protected dragToggleStore$: ManualDiskDragToggleStore,
   ) {}
 
-  readonly isGroup = (i: number, node: DiskOrGroup): node is EnclosureGroup => 'group' in node;
+  readonly isGroup = (_: number, node: DiskOrGroup): node is EnclosureGroup => 'group' in node;
 
   isExpanded(group: DiskOrGroup): boolean {
     return this.treeControl.isExpanded(group);
@@ -66,8 +66,8 @@ export class ManualSelectionDisksComponent implements OnInit {
     this.createDataSource();
   }
 
-  asDisk(node: DiskOrGroup): Disk {
-    return node as Disk;
+  asDisk(node: DiskOrGroup): DetailsDisk {
+    return node as DetailsDisk;
   }
 
   asEnclosureGroup(node: DiskOrGroup): EnclosureGroup {
@@ -93,13 +93,12 @@ export class ManualSelectionDisksComponent implements OnInit {
       });
   }
 
-  private mapDisksToEnclosures(disks: Disk[], enclosures: EnclosureOld[]): DiskOrGroup[] {
+  private mapDisksToEnclosures(disks: DetailsDisk[], enclosures: Enclosure[]): DiskOrGroup[] {
     const disksInEnclosures = enclosures.map((enclosure) => {
       // Match behavior of enclosure-disks component
-      const currentLabel = enclosure.label !== enclosure.name ? enclosure.label : enclosure.model;
       return {
-        group: `${enclosure.number}: ${currentLabel}`,
-        identifier: String(enclosure.number),
+        group: enclosure.label || enclosure.name,
+        identifier: enclosure.id,
         children: [],
       };
     });
@@ -112,7 +111,7 @@ export class ManualSelectionDisksComponent implements OnInit {
     });
 
     disks.forEach((disk) => {
-      const enclosureId = disk.enclosure?.number !== undefined ? disk.enclosure?.number : noEnclosureId;
+      const enclosureId = disk.enclosure?.id !== undefined ? disk.enclosure?.id : noEnclosureId;
       const enclosure = disksInEnclosures.find((enclosureNode) => enclosureNode.identifier === String(enclosureId));
       if (!enclosure) {
         console.error('Enclosure not found', disk);
@@ -128,7 +127,7 @@ export class ManualSelectionDisksComponent implements OnInit {
     return disksInEnclosures;
   }
 
-  private filterDisks(disks: Disk[], filterValues: ManualDiskSelectionFilters): Disk[] {
+  private filterDisks(disks: DetailsDisk[], filterValues: ManualDiskSelectionFilters): DetailsDisk[] {
     return disks.filter((disk) => {
       const typeMatches = filterValues.diskType ? disk.type === filterValues.diskType : true;
       const sizeMatches = filterValues.diskSize

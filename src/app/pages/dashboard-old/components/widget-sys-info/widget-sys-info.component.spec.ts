@@ -28,7 +28,11 @@ import {
 } from 'app/store/ha-info/ha-info.selectors';
 import { PreferencesState } from 'app/store/preferences/preferences.reducer';
 import { selectPreferencesState } from 'app/store/preferences/preferences.selectors';
-import { selectSystemInfo, selectSystemFeatures, selectIsIxHardware } from 'app/store/system-info/system-info.selectors';
+import {
+  selectSystemInfo,
+  selectIsIxHardware,
+  selectHasEnclosureSupport,
+} from 'app/store/system-info/system-info.selectors';
 
 describe('WidgetSysInfoComponent', () => {
   let spectator: Spectator<WidgetSysInfoComponent>;
@@ -116,10 +120,8 @@ describe('WidgetSysInfoComponent', () => {
             } as SystemInfo,
           },
           {
-            selector: selectSystemFeatures,
-            value: {
-              enclosure: true,
-            },
+            selector: selectHasEnclosureSupport,
+            value: true,
           },
           {
             selector: selectIsIxHardware,

@@ -1,17 +1,17 @@
 import { DiskType } from 'app/enums/disk-type.enum';
 import { CreateVdevLayout, TopologyItemType, VdevType } from 'app/enums/v-dev-type.enum';
+import { DetailsDisk } from 'app/interfaces/disk.interface';
 import { DataPoolTopologyUpdate, PoolTopology, UpdatePoolTopology } from 'app/interfaces/pool.interface';
-import { Disk, UnusedDisk } from 'app/interfaces/storage.interface';
 import {
   PoolManagerTopology,
   PoolManagerTopologyCategory,
 } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
 
-export function topologyToDisks(topology: PoolManagerTopology): UnusedDisk[] {
+export function topologyToDisks(topology: PoolManagerTopology): DetailsDisk[] {
   return Object.values(topology).flatMap((category) => topologyCategoryToDisks(category));
 }
 
-export function topologyCategoryToDisks(topologyCategory: PoolManagerTopologyCategory): UnusedDisk[] {
+export function topologyCategoryToDisks(topologyCategory: PoolManagerTopologyCategory): DetailsDisk[] {
   return topologyCategory.vdevs.flat();
 }
 
@@ -47,7 +47,7 @@ export function topologyToPayload(topology: PoolManagerTopology): UpdatePoolTopo
   return payload;
 }
 
-export function poolTopologyToStoreTopology(topology: PoolTopology, disks: Disk[]): PoolManagerTopology {
+export function poolTopologyToStoreTopology(topology: PoolTopology, disks: DetailsDisk[]): PoolManagerTopology {
   const categories = Object.values(VdevType);
 
   const poolManagerTopology: PoolManagerTopology = Object.values(VdevType).reduce((topologySoFar, value) => {
@@ -105,11 +105,11 @@ export function poolTopologyToStoreTopology(topology: PoolTopology, disks: Disk[
                 size: topologyDisk.stats.size,
                 type: DiskType.Hdd,
                 devname: topologyDisk.disk,
-              } as UnusedDisk),
+              } as DetailsDisk),
             );
           }
           return [
-            { ...disks.find((disk) => disk.devname === topologyItem.disk) as UnusedDisk },
+            { ...disks.find((disk) => disk.devname === topologyItem.disk) },
           ];
         },
       ),

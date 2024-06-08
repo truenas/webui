@@ -6,19 +6,18 @@ import { BehaviorSubject, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { LicenseFeature } from 'app/enums/license-feature.enum';
 import { ProductType } from 'app/enums/product-type.enum';
-import { SystemFeatures } from 'app/interfaces/events/sys-info-event.interface';
 import { MenuItem, MenuItemType } from 'app/interfaces/menu-item.interface';
 import { AuthService } from 'app/services/auth/auth.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
-import { waitForSystemFeatures, waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
+import { selectHasEnclosureSupport, waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 
 @UntilDestroy()
 @Injectable()
 export class NavigationService {
-  readonly hasFailover$ = new BehaviorSubject(false);
-  readonly hasEnclosure$ = new BehaviorSubject(false);
+  readonly hasFailover$ = this.store$.select(selectIsHaLicensed);
+  readonly hasEnclosure$ = this.store$.select(selectHasEnclosureSupport);
   readonly hasVms$ = new BehaviorSubject(false);
   readonly hasApps$ = new BehaviorSubject(false);
 
@@ -145,22 +144,7 @@ export class NavigationService {
     private systemGeneralService: SystemGeneralService,
     private authService: AuthService,
   ) {
-    this.checkForFailoverSupport();
-    this.checkForEnclosureSupport();
     this.checkForEnterpriseLicenses();
-  }
-
-  private checkForFailoverSupport(): void {
-    this.store$.select(selectIsHaLicensed).pipe(untilDestroyed(this)).subscribe((hasFailover) => {
-      this.hasFailover$.next(hasFailover);
-    });
-  }
-
-  private checkForEnclosureSupport(): void {
-    this.store$.pipe(waitForSystemFeatures, untilDestroyed(this))
-      .subscribe((features: SystemFeatures) => {
-        this.hasEnclosure$.next(features.enclosure);
-      });
   }
 
   private checkForEnterpriseLicenses(): void {

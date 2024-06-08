@@ -1,6 +1,6 @@
 import { GiB } from 'app/constants/bytes.constant';
 import { DiskType } from 'app/enums/disk-type.enum';
-import { UnusedDisk } from 'app/interfaces/storage.interface';
+import { DetailsDisk } from 'app/interfaces/disk.interface';
 import { getDiskTypeSizeMap } from 'app/pages/storage/modules/pool-manager/utils/get-disk-type-size-map.utils';
 
 describe('getDiskTypeSizeMap', () => {
@@ -26,7 +26,7 @@ describe('getDiskTypeSizeMap', () => {
       size: 3 * GiB,
     };
 
-    const disks = [ssd1, ssd2, hdd1, hdd2, hdd3] as UnusedDisk[];
+    const disks = [ssd1, ssd2, hdd1, hdd2, hdd3] as DetailsDisk[];
 
     const diskMap = getDiskTypeSizeMap(disks);
     expect(diskMap).toEqual({

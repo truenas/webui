@@ -5,8 +5,8 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialog } from '@angular/material/dialog';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { DetailsDisk } from 'app/interfaces/disk.interface';
 import { Pool } from 'app/interfaces/pool.interface';
-import { UnusedDisk } from 'app/interfaces/storage.interface';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import {
   ManageUnusedDiskDialogComponent,
@@ -39,7 +39,7 @@ describe('UnusedDiskCardComponent', () => {
         unusedDisks: [
           { devname: 'sdb', identifier: '{serial_lunid}BBBBB1', size: 123456789 },
           { devname: 'sdc', identifier: '{uuid}7ad07324-f0e9-49a4-a7a4-92edd82a4929', size: 123456789 },
-        ] as UnusedDisk[],
+        ] as DetailsDisk[],
       },
     });
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
@@ -70,7 +70,7 @@ describe('UnusedDiskCardComponent', () => {
           unusedDisks: [
             { devname: 'sdb', identifier: '{serial_lunid}BBBBB1', size: 123456789 },
             { devname: 'sdc', identifier: '{uuid}7ad07324-f0e9-49a4-a7a4-92edd82a4929', size: 123456789 },
-          ] as UnusedDisk[],
+          ] as DetailsDisk[],
         },
       }),
     );

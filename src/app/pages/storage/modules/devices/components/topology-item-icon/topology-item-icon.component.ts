@@ -2,7 +2,8 @@ import {
   ChangeDetectionStrategy, Component, Input,
 } from '@angular/core';
 import { DiskType } from 'app/enums/disk-type.enum';
-import { Disk, isVdev, TopologyItem } from 'app/interfaces/storage.interface';
+import { Disk } from 'app/interfaces/disk.interface';
+import { isVdev, TopologyItem } from 'app/interfaces/storage.interface';
 
 @Component({
   selector: 'ix-topology-item-icon',

@@ -3,7 +3,7 @@ import { ComponentStore } from '@ngrx/component-store';
 import { UUID } from 'angular2-uuid';
 import _ from 'lodash';
 import { CreateVdevLayout } from 'app/enums/v-dev-type.enum';
-import { UnusedDisk } from 'app/interfaces/storage.interface';
+import { DetailsDisk } from 'app/interfaces/disk.interface';
 import {
   ManualSelectionDisk,
   ManualSelectionVdev,
@@ -12,7 +12,7 @@ import {
 export interface ManualDiskSelectionState {
   layout: CreateVdevLayout;
   vdevs: ManualSelectionVdev[];
-  inventory: UnusedDisk[];
+  inventory: DetailsDisk[];
 }
 
 const initialState: ManualDiskSelectionState = {
@@ -40,7 +40,7 @@ export class ManualDiskSelectionStore extends ComponentStore<ManualDiskSelection
 
   addDiskToVdev = this.updater((
     state: ManualDiskSelectionState,
-    vdevUpdate: { disk: UnusedDisk; vdev: ManualSelectionVdev },
+    vdevUpdate: { disk: DetailsDisk; vdev: ManualSelectionVdev },
   ) => {
     let vdevs = _.cloneDeep(state.vdevs);
     if (!vdevs.length) {

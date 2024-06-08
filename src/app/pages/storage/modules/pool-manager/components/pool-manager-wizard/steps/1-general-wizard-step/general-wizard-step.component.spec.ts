@@ -15,6 +15,7 @@ import {
   GeneralWizardStepComponent,
 } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/steps/1-general-wizard-step/general-wizard-step.component';
 import { PoolWizardNameValidationService } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/steps/1-general-wizard-step/pool-wizard-name-validation.service';
+import { DiskStore } from 'app/pages/storage/modules/pool-manager/store/disk.store';
 import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
 
 describe('GeneralWizardStepComponent', () => {
@@ -48,10 +49,12 @@ describe('GeneralWizardStepComponent', () => {
         confirm: jest.fn(() => of(true)),
       }),
       mockProvider(PoolManagerStore, {
-        allDisks$: of([]),
         startOver$,
         setGeneralOptions: jest.fn(),
         setDiskWarningOptions: jest.fn(),
+      }),
+      mockProvider(DiskStore, {
+        selectableDisks$: of([]),
       }),
     ],
   });

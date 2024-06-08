@@ -71,8 +71,8 @@
                     matTooltipPosition="above"
                     [matTooltip]="'View Enclosure' | translate"
                     [id]="productModel"
-                    [class.clickable]="enclosureSupport"
-                    [matTooltipDisabled]="!enclosureSupport"
+                    [class.clickable]="enclosureSupport$ | async"
+                    [matTooltipDisabled]="!(enclosureSupport$ | async)"
                     [src]="productImageSrc"
                     [src-fallback]="'assets/images/truenas_scale_ondark_favicon.png'"
                     (click)="goToEnclosure()"
@@ -80,14 +80,9 @@
 
                   <ng-template #generic>
                     <ix-icon
-                      *ngIf="!certified && !isHaLicensed"
+                      *ngIf="!isHaLicensed"
                       class="generic"
                       name="ix:logo_truenas_scale_mark"
-                    ></ix-icon>
-                    <ix-icon
-                      *ngIf="certified && !isHaLicensed"
-                      class="generic"
-                      name="ix:logo_freenas_certified"
                     ></ix-icon>
                   </ng-template>
                   <div *ngIf="productImage && isHaLicensed && !isPassive" class="ha-node-status">

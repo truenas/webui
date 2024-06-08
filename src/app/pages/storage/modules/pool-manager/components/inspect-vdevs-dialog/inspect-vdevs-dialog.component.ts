@@ -3,6 +3,7 @@ import {
 } from '@angular/core';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { CreateVdevLayout, VdevType, vdevTypeLabels } from 'app/enums/v-dev-type.enum';
+import { Enclosure } from 'app/interfaces/enclosure.interface';
 import {
   ManualSelectionVdev,
 } from 'app/pages/storage/modules/pool-manager/components/manual-disk-selection/interfaces/manual-disk-selection.interface';
@@ -26,7 +27,7 @@ export class InspectVdevsDialogComponent implements OnInit {
   protected layout: CreateVdevLayout;
 
   constructor(
-    @Inject(MAT_DIALOG_DATA) public topology: PoolManagerTopology,
+    @Inject(MAT_DIALOG_DATA) protected data: { topology: PoolManagerTopology; enclosures: Enclosure[] },
   ) {}
 
   getTypeLabel(type: VdevType): string {
@@ -40,14 +41,14 @@ export class InspectVdevsDialogComponent implements OnInit {
 
   selectType(type: VdevType): void {
     this.selectedType = type;
-    const selectedCategory = this.topology[type];
+    const selectedCategory = this.data.topology[type];
     this.layout = selectedCategory.layout;
     this.vdevs = vdevsToManualSelectionVdevs(selectedCategory.vdevs);
   }
 
   private setPresentTypes(): void {
-    this.presentTypes = Object.keys(this.topology).filter((type) => {
-      return this.topology[type as VdevType].vdevs.length > 0;
+    this.presentTypes = Object.keys(this.data.topology).filter((type) => {
+      return this.data.topology[type as VdevType].vdevs.length > 0;
     }) as VdevType[];
   }
 }

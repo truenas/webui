@@ -1,5 +1,5 @@
+import { Disk } from 'app/interfaces/disk.interface';
 import { Pool } from 'app/interfaces/pool.interface';
-import { Disk } from 'app/interfaces/storage.interface';
 
 export const existingPool = {
   id: 1,

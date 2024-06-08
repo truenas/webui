@@ -16,7 +16,6 @@ import { EnclosureDiskStatus, EnclosureSlotStatus } from 'app/enums/enclosure-sl
 import { Role } from 'app/enums/role.enum';
 import { TopologyItemStatus } from 'app/enums/vdev-status.enum';
 import {
-  DashboardEnclosure,
   DashboardEnclosureSlot,
   EnclosureElement,
 } from 'app/interfaces/enclosure.interface';
@@ -57,6 +56,7 @@ import {
   EnclosureEvent,
   LabelDrivesEvent,
 } from 'app/pages/system/old-view-enclosure/interfaces/enclosure-events.interface';
+import { OldEnclosure } from 'app/pages/system/old-view-enclosure/interfaces/old-enclosure.interface';
 import { ViewConfig } from 'app/pages/system/old-view-enclosure/interfaces/view.config';
 import { EnclosureState, EnclosureStore } from 'app/pages/system/old-view-enclosure/stores/enclosure-store.service';
 import { DiskTemperatureService, Temperature } from 'app/services/disk-temperature.service';
@@ -103,7 +103,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
   protected readonly requiredRoles = [Role.FullAdmin];
   showCaption = true;
   protected aborted = false;
-  enclosureViews: DashboardEnclosure[] = [];
+  enclosureViews: OldEnclosure[] = [];
   systemState: EnclosureState;
   selectedDisk: DashboardEnclosureSlot;
 
@@ -128,7 +128,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
   // Tracked by this component
   selectedSlotNumber: number | null = null;
 
-  get selectedEnclosure(): DashboardEnclosure {
+  get selectedEnclosure(): OldEnclosure {
     return this.systemState?.enclosures?.filter((enclosure) => {
       return enclosure.id === this.systemState.selectedEnclosure;
     })[0];
@@ -406,7 +406,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
   }
 
   // Recreates enclosure when switching between enclosures or front/rear/internal visualizations
-  loadEnclosure(enclosureView: DashboardEnclosure, view?: EnclosureLocation, update?: boolean): void {
+  loadEnclosure(enclosureView: OldEnclosure, view?: EnclosureLocation, update?: boolean): void {
     if (this.selectedSlotNumber > -1) {
       this.clearDisk();
     }
@@ -594,7 +594,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
   }
 
   // Similar to createEnclosure method. This just provides parent with images for enclosure selector strip
-  createExtractedEnclosure(enclosureView: DashboardEnclosure): void {
+  createExtractedEnclosure(enclosureView: OldEnclosure): void {
     const rawEnclosure = this.systemState.enclosures.find((enclosure) => enclosure.id === enclosureView.id);
     let extractedChassis: Chassis;
 
@@ -710,7 +710,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
   }
 
   // Helper for createExtractedEnclosure
-  extractEnclosure(enclosure: ChassisView, enclosureView: DashboardEnclosure): void {
+  extractEnclosure(enclosure: ChassisView, enclosureView: OldEnclosure): void {
     const canvas = (this.app.renderer.plugins as Record<string, CanvasExtract>).extract.canvas(enclosure.container);
     this.controllerEvent$.next({ name: 'EnclosureCanvas', data: { canvas, enclosureView }, sender: this });
     this.container.removeChild(enclosure.container);
@@ -1012,7 +1012,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
     const selectedEnclosure = this.selectedEnclosure;
     this.setDisksDisabled();
 
-    const paintSlots = (targetEnclosure: DashboardEnclosure): void => {
+    const paintSlots = (targetEnclosure: OldEnclosure): void => {
       const slots: [string, DashboardEnclosureSlot][] = this.asArray(
         targetEnclosure.elements['Array Device Slot'],
       ) as [string, DashboardEnclosureSlot][];

@@ -9,8 +9,8 @@ import { DiskStandby } from 'app/enums/disk-standby.enum';
 import { DiskType } from 'app/enums/disk-type.enum';
 import { ApiEvent } from 'app/interfaces/api-message.interface';
 import { Dataset } from 'app/interfaces/dataset.interface';
+import { Disk, DiskTemperatureAgg, StorageDashboardDisk } from 'app/interfaces/disk.interface';
 import { Pool } from 'app/interfaces/pool.interface';
-import { Disk, DiskTemperatureAgg, StorageDashboardDisk } from 'app/interfaces/storage.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { PoolsDashboardStore } from 'app/pages/storage/stores/pools-dashboard-store.service';
 import { StorageService } from 'app/services/storage.service';
@@ -29,17 +29,11 @@ const disk: Disk = {
   devname: 'sdd',
   difference: 0,
   duplicate_serial: [],
-  enclosure: {
-    number: 0,
-    slot: 0,
-  },
   expiretime: '',
   hddstandby: DiskStandby.AlwaysOn,
   identifier: '{uuid}b3ba146f-1ab6-4a45-ae6b-37ea00baf0aa',
   informational: 0,
   model: 'VMware_Virtual_S',
-  multipath_member: '',
-  multipath_name: '',
   name: 'sdd',
   number: 2096,
   pool: 'lio',
