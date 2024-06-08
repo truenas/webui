@@ -8,8 +8,9 @@ import { filter, switchMap, tap } from 'rxjs/operators';
 import { Role } from 'app/enums/role.enum';
 import { VdevType, TopologyItemType } from 'app/enums/v-dev-type.enum';
 import { TopologyItemStatus } from 'app/enums/vdev-status.enum';
+import { Disk } from 'app/interfaces/disk.interface';
 import {
-  Disk, isTopologyDisk, TopologyItem, VDev,
+  isTopologyDisk, TopologyItem, VDev,
 } from 'app/interfaces/storage.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';

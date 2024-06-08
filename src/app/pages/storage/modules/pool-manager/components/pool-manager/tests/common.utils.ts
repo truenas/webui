@@ -77,6 +77,7 @@ import {
 import {
   TopologyCategoryDescriptionPipe,
 } from 'app/pages/storage/modules/pool-manager/pipes/topology-category-description.pipe';
+import { DiskStore } from 'app/pages/storage/modules/pool-manager/store/disk.store';
 import {
   PoolManagerValidationService,
 } from 'app/pages/storage/modules/pool-manager/store/pool-manager-validation.service';
@@ -118,6 +119,7 @@ export const commonProviders = [
   PoolManagerStore,
   GenerateVdevsService,
   PoolManagerValidationService,
+  DiskStore,
   {
     provide: MatIconRegistry,
     useValue: createSpyObject(IxIconRegistry, {

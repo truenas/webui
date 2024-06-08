@@ -8,12 +8,9 @@ import {
   CreateVdevLayout, TopologyItemType, VdevType, vdevTypeLabels,
 } from 'app/enums/v-dev-type.enum';
 import { isTopologyLimitedToOneLayout } from 'app/helpers/storage.helper';
+import { DetailsDisk } from 'app/interfaces/disk.interface';
 import { PoolTopology } from 'app/interfaces/pool.interface';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
-import {
-  Disk,
-  UnusedDisk,
-} from 'app/interfaces/storage.interface';
 import { PoolManagerTopology, PoolManagerTopologyCategory } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
 
 const defaultCategory: PoolManagerTopologyCategory = {
@@ -39,7 +36,7 @@ export class ExistingConfigurationPreviewComponent implements OnChanges {
   @Input() name: string;
   @Input() topology: PoolTopology;
   @Input() size: number;
-  @Input() disks: Disk[];
+  @Input() disks: DetailsDisk[];
 
   VdevType = VdevType;
 
@@ -101,7 +98,7 @@ export class ExistingConfigurationPreviewComponent implements OnChanges {
         if (firstVdevType === TopologyItemType.Stripe) {
           const vdevDisk = this.disks.find((disk) => disk.devname === vdev.disk);
           allCategoryVdevsDisks.push(_.cloneDeep(vdevDisk));
-          poolManagerTopology[value].vdevs.push([_.cloneDeep(vdevDisk as UnusedDisk)]);
+          poolManagerTopology[value].vdevs.push([_.cloneDeep(vdevDisk)]);
         } else {
           const vdevDisks = [];
           for (const vdevDisk of vdev.children) {
@@ -109,7 +106,7 @@ export class ExistingConfigurationPreviewComponent implements OnChanges {
             allCategoryVdevsDisks.push(_.cloneDeep(fullDisk));
             vdevDisks.push(_.cloneDeep(fullDisk));
           }
-          poolManagerTopology[value].vdevs.push(vdevDisks as UnusedDisk[]);
+          poolManagerTopology[value].vdevs.push(vdevDisks);
         }
       }
       const firstDisk = _.cloneDeep(allCategoryVdevsDisks[0]);

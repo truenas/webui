@@ -38,7 +38,13 @@ describe('InspectVdevsDialogComponent', () => {
       mockProvider(MatDialogRef),
       {
         provide: MAT_DIALOG_DATA,
-        useValue: topology,
+        useValue: {
+          topology,
+          enclosures: [
+            { id: 'id1', name: 'ENC 1' },
+            { id: 'id2', name: 'ENC 2' },
+          ],
+        },
       },
     ],
   });

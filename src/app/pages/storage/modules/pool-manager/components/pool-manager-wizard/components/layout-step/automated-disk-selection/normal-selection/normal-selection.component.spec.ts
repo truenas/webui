@@ -7,7 +7,7 @@ import { of, Subject } from 'rxjs';
 import { TiB } from 'app/constants/bytes.constant';
 import { DiskType } from 'app/enums/disk-type.enum';
 import { CreateVdevLayout, VdevType } from 'app/enums/v-dev-type.enum';
-import { UnusedDisk } from 'app/interfaces/storage.interface';
+import { DetailsDisk } from 'app/interfaces/disk.interface';
 import { IxSelectHarness } from 'app/modules/ix-forms/components/ix-select/ix-select.harness';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import {
@@ -26,7 +26,7 @@ describe('NormalSelectionComponent', () => {
   let vdevsSelect: IxSelectHarness;
   let sizeSelect: IxSelectHarness;
 
-  const unusedDisks: UnusedDisk[] = [
+  const unusedDisks: DetailsDisk[] = [
     {
       devname: 'sdo',
       size: 12 * TiB,
@@ -77,7 +77,7 @@ describe('NormalSelectionComponent', () => {
       size: TiB,
       type: DiskType.Hdd,
     },
-  ] as UnusedDisk[];
+  ] as DetailsDisk[];
   const startOver$ = new Subject<void>();
   const resetStep$ = new Subject<void>();
 

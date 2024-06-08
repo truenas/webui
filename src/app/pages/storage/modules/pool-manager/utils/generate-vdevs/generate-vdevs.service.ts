@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { VdevType } from 'app/enums/v-dev-type.enum';
-import { UnusedDisk } from 'app/interfaces/storage.interface';
+import { DetailsDisk } from 'app/interfaces/disk.interface';
 import {
   PoolManagerTopology,
   PoolManagerTopologyCategory,
@@ -12,7 +12,7 @@ import {
 } from 'app/pages/storage/modules/pool-manager/utils/topology.utils';
 
 export type GeneratedVdevs = {
-  [type in VdevType]: UnusedDisk[][];
+  [type in VdevType]: DetailsDisk[][];
 };
 
 export type TypeAndCategory = [VdevType, PoolManagerTopologyCategory];
@@ -27,7 +27,7 @@ export class GenerateVdevsService {
     topology,
     maximizeDispersal,
   }: {
-    allowedDisks: UnusedDisk[];
+    allowedDisks: DetailsDisk[];
     topology: PoolManagerTopology;
     maximizeDispersal: boolean;
   }): GeneratedVdevs {
@@ -49,7 +49,7 @@ export class GenerateVdevsService {
         return;
       }
 
-      const vdevs: UnusedDisk[][] = [];
+      const vdevs: DetailsDisk[][] = [];
       for (let i = 0; i < category.vdevsNumber; i++) {
         vdevs.push(this.pickDisks(category, maximizeDispersal));
       }
@@ -60,11 +60,11 @@ export class GenerateVdevsService {
     return generatedVdevs;
   }
 
-  private excludeManualSelectionDisks(disks: UnusedDisk[], topology: PoolManagerTopology): UnusedDisk[] {
+  private excludeManualSelectionDisks(disks: DetailsDisk[], topology: PoolManagerTopology): DetailsDisk[] {
     const manualSelectionDisks = Object.values(topology).reduce((acc, category) => {
       if (!category.hasCustomDiskSelection) return acc;
       return topologyCategoryToDisks(category);
-    }, [] as UnusedDisk[]);
+    }, [] as DetailsDisk[]);
 
     return disks.filter((disk) => !manualSelectionDisks.includes(disk));
   }
@@ -72,18 +72,21 @@ export class GenerateVdevsService {
   /**
    * Sort by enclosure and slot, and if empty by devname
    */
-  private sortDisksByEnclosure(disks: UnusedDisk[]): UnusedDisk[] {
-    // Use large number to put disks without enclosure at the end
-    const largeNumber = Number.MAX_VALUE;
+  private sortDisksByEnclosure(disks: DetailsDisk[]): DetailsDisk[] {
     return disks.sort((a, b) => {
-      if (a.enclosure?.number === b.enclosure?.number) {
-        if (a.enclosure?.slot === b.enclosure?.slot) {
+      if (a.enclosure?.id === b.enclosure?.id) {
+        if (a.enclosure?.drive_bay_number === b.enclosure?.drive_bay_number) {
           return a.devname.localeCompare(b.devname);
         }
-        return (a.enclosure?.slot || 0) - (b.enclosure?.slot || 0);
+        return (a.enclosure?.drive_bay_number || 0) - (b.enclosure?.drive_bay_number || 0);
       }
 
-      return (a.enclosure?.number || largeNumber) - (b.enclosure?.number || largeNumber);
+      if (!a.enclosure || !b.enclosure) {
+        // Put disks without enclosure at the end
+        return a.enclosure ? -1 : 1;
+      }
+
+      return a.enclosure.id.localeCompare(b.enclosure.id);
     });
   }
 
@@ -104,7 +107,7 @@ export class GenerateVdevsService {
   private pickDisks(
     category: PoolManagerTopologyCategory,
     maximizeDispersal: boolean,
-  ): UnusedDisk[] {
+  ): DetailsDisk[] {
     const disksNeeded = category.width;
     const suitableDisks = this.groupedDisks.findSuitableDisks(category);
 
@@ -112,7 +115,7 @@ export class GenerateVdevsService {
       return [];
     }
 
-    let pickedDisks: UnusedDisk[] = [];
+    let pickedDisks: DetailsDisk[];
     if (maximizeDispersal) {
       pickedDisks = this.pickDisksWithDispersal(suitableDisks, disksNeeded);
     } else {
@@ -126,15 +129,15 @@ export class GenerateVdevsService {
   /**
    * Tries to pick disk from one enclosure, then from another, etc.
    */
-  private pickDisksWithDispersal(suitableDisks: UnusedDisk[], disksNeeded: number): UnusedDisk[] {
+  private pickDisksWithDispersal(suitableDisks: DetailsDisk[], disksNeeded: number): DetailsDisk[] {
     let remainingDisks = [...suitableDisks];
-    const pickedDisks: UnusedDisk[] = [];
+    const pickedDisks: DetailsDisk[] = [];
     while (pickedDisks.length < disksNeeded && remainingDisks.length > 0) {
       let nextEnclosure = this.enclosureList.next();
-      let pickedDisk: UnusedDisk;
+      let pickedDisk: DetailsDisk;
 
       do {
-        pickedDisk = remainingDisks.find((disk) => disk.enclosure?.number === nextEnclosure);
+        pickedDisk = remainingDisks.find((disk) => disk.enclosure?.id === nextEnclosure);
         if (!pickedDisk) nextEnclosure = this.enclosureList.next();
       } while (!pickedDisk);
 

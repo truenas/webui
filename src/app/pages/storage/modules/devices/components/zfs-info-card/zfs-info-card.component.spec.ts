@@ -12,8 +12,9 @@ import { DiskStandby } from 'app/enums/disk-standby.enum';
 import { DiskType } from 'app/enums/disk-type.enum';
 import { TopologyItemType, VdevType } from 'app/enums/v-dev-type.enum';
 import { TopologyItemStatus } from 'app/enums/vdev-status.enum';
+import { Disk } from 'app/interfaces/disk.interface';
 import {
-  Disk, TopologyDisk, VDev,
+  TopologyDisk, VDev,
 } from 'app/interfaces/storage.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import {

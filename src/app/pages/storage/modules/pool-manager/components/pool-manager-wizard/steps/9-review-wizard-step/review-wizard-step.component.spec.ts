@@ -53,7 +53,7 @@ describe('ReviewWizardStepComponent', () => {
     enclosures: [
       {
         name: 'ENC 1',
-        number: 1,
+        id: 'id1',
       },
     ],
     enclosureSettings: {
@@ -113,7 +113,10 @@ describe('ReviewWizardStepComponent', () => {
       await inspectButton.click();
 
       expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(InspectVdevsDialogComponent, {
-        data: state.topology,
+        data: {
+          topology: state.topology,
+          enclosures: state.enclosures,
+        },
         panelClass: 'inspect-vdevs-dialog',
       });
     });
@@ -166,7 +169,7 @@ describe('ReviewWizardStepComponent', () => {
         ...state,
         enclosureSettings: {
           maximizeEnclosureDispersal: false,
-          limitToSingleEnclosure: 1,
+          limitToSingleEnclosure: 'id1',
           dispersalStrategy: DispersalStrategy.LimitToSingle,
         },
       });

@@ -1,9 +1,9 @@
 import { TranslateService } from '@ngx-translate/core';
 import { DiskBus } from 'app/enums/disk-bus.enum';
-import { UnusedDisk } from 'app/interfaces/storage.interface';
+import { DetailsDisk } from 'app/interfaces/disk.interface';
 
 export function getNonUniqueSerialDisksWarning(
-  nonUniqueSerialDisks: UnusedDisk[],
+  nonUniqueSerialDisks: DetailsDisk[],
   translate: TranslateService,
 ): string {
   if (nonUniqueSerialDisks.every((disk) => disk.bus === DiskBus.Usb)) {

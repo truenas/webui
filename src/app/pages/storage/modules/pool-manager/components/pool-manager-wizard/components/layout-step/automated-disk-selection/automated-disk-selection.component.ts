@@ -6,9 +6,9 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { merge, of } from 'rxjs';
 import { filter, take } from 'rxjs/operators';
 import { CreateVdevLayout, vdevLayoutOptions, VdevType } from 'app/enums/v-dev-type.enum';
+import { DetailsDisk } from 'app/interfaces/disk.interface';
 import { SelectOption } from 'app/interfaces/option.interface';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
-import { UnusedDisk } from 'app/interfaces/storage.interface';
 import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
 import { hasDeepChanges, setValueIfNotSame } from 'app/pages/storage/modules/pool-manager/utils/form.utils';
 import { isDraidLayout } from 'app/pages/storage/modules/pool-manager/utils/topology.utils';
@@ -23,7 +23,7 @@ import { isDraidLayout } from 'app/pages/storage/modules/pool-manager/utils/topo
 export class AutomatedDiskSelectionComponent implements OnChanges {
   @Input() isStepActive: boolean;
   @Input() type: VdevType;
-  @Input() inventory: UnusedDisk[] = [];
+  @Input() inventory: DetailsDisk[] = [];
   @Input() canChangeLayout = false;
   @Input() limitLayouts: CreateVdevLayout[] = [];
 

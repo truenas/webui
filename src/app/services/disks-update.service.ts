@@ -4,7 +4,7 @@ import { UUID } from 'angular2-uuid';
 import { Subject, Subscription, switchMap } from 'rxjs';
 import { debounceTime, tap } from 'rxjs/operators';
 import { ApiEvent } from 'app/interfaces/api-message.interface';
-import { Disk } from 'app/interfaces/storage.interface';
+import { Disk } from 'app/interfaces/disk.interface';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()

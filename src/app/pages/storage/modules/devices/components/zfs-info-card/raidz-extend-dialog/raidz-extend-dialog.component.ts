@@ -7,8 +7,9 @@ import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { helptextVolumeStatus } from 'app/helptext/storage/volumes/volume-status';
+import { Disk, DetailsDisk } from 'app/interfaces/disk.interface';
 import { PoolAttachParams } from 'app/interfaces/pool.interface';
-import { Disk, VDev } from 'app/interfaces/storage.interface';
+import { VDev } from 'app/interfaces/storage.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DevicesStore } from 'app/pages/storage/modules/devices/stores/devices-store.service';
@@ -36,7 +37,7 @@ export class RaidzExtendDialogComponent {
 
   readonly minimumSize = signal<number>(0);
   readonly filterMinimumSizeFn = computed(() => {
-    return (disk: Disk) => disk.size >= this.minimumSize();
+    return (disk: DetailsDisk) => disk.size >= this.minimumSize();
   });
 
   constructor(

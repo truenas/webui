@@ -17,6 +17,7 @@ import { DashboardEnclosure, DashboardEnclosureElements } from 'app/interfaces/e
 import { viewEnclosureElements } from 'app/pages/system/old-view-enclosure/components/view-enclosure/view-enclosure.elements';
 import { EnclosureEvent } from 'app/pages/system/old-view-enclosure/interfaces/enclosure-events.interface';
 import { ErrorMessage } from 'app/pages/system/old-view-enclosure/interfaces/error-message.interface';
+import { OldEnclosure } from 'app/pages/system/old-view-enclosure/interfaces/old-enclosure.interface';
 import { ViewConfig } from 'app/pages/system/old-view-enclosure/interfaces/view.config';
 import { EnclosureState, EnclosureStore } from 'app/pages/system/old-view-enclosure/stores/enclosure-store.service';
 import { DisksUpdateService } from 'app/services/disks-update.service';
@@ -103,7 +104,7 @@ export class ViewEnclosureComponent implements AfterViewInit, OnDestroy {
     return this.controller?.rackmount;
   }
 
-  get selectedEnclosure(): DashboardEnclosure {
+  get selectedEnclosure(): OldEnclosure {
     return this.systemState?.enclosures.find((enclosure) => {
       return enclosure.id === this.selectedEnclosureId;
     });
