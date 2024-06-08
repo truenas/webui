@@ -28,6 +28,7 @@ describe('DashboardStore', () => {
     service: DashboardStore,
     providers: [
       mockProvider(AuthService, {
+        refreshUser: jest.fn(() => of(null)),
         user$: of({
           attributes: {
             dashState: initialGroups,

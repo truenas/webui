@@ -49,22 +49,18 @@ export class CatalogsComponent implements OnInit {
     textColumn({
       title: this.translate.instant('Name'),
       propertyName: 'label',
-      sortable: true,
     }),
     textColumn({
       title: this.translate.instant('Catalog URL'),
       propertyName: 'repository',
-      sortable: true,
     }),
     textColumn({
       title: this.translate.instant('Branch'),
       propertyName: 'branch',
-      sortable: true,
     }),
     textColumn({
       title: this.translate.instant('Preferred Trains'),
       propertyName: 'preferred_trains',
-      sortable: true,
     }),
   ], {
     rowTestId: (row) => 'catalog-' + row.label,

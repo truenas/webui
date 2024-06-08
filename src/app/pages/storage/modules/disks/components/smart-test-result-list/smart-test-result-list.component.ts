@@ -39,22 +39,18 @@ export class SmartTestResultListComponent implements OnInit {
     textColumn({
       title: this.translate.instant('Disk'),
       propertyName: 'disk',
-      sortable: true,
     }),
     textColumn({
       title: this.translate.instant('Description'),
       propertyName: 'description',
-      sortable: true,
     }),
     stateButtonColumn({
       title: this.translate.instant('Status'),
       propertyName: 'status',
-      sortable: true,
     }),
     textColumn({
       title: this.translate.instant('Remaining'),
       propertyName: 'remaining',
-      sortable: true,
       getValue: (row) => {
         return row.remaining || row.status_verbose;
       },
@@ -62,7 +58,6 @@ export class SmartTestResultListComponent implements OnInit {
     textColumn({
       title: this.translate.instant('Lifetime'),
       propertyName: 'lifetime',
-      sortable: true,
       getValue: (row) => {
         return row.lifetime || this.translate.instant('N/A');
       },
@@ -70,7 +65,6 @@ export class SmartTestResultListComponent implements OnInit {
     textColumn({
       title: this.translate.instant('Error'),
       propertyName: 'lba_of_first_error',
-      sortable: true,
       getValue: (row) => {
         return row.lba_of_first_error || this.translate.instant('No errors');
       },

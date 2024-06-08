@@ -68,12 +68,10 @@ export class DatasetQuotasListComponent implements OnInit {
         }
         return this.emptyValue;
       },
-      sortable: true,
     }),
     textColumn({
       title: this.translate.instant('ID'),
       propertyName: 'id',
-      sortable: true,
     }),
     textColumn({
       title: this.translate.instant('Data Quota'),
@@ -84,7 +82,6 @@ export class DatasetQuotasListComponent implements OnInit {
         }
         return this.emptyValue;
       },
-      sortable: true,
     }),
     textColumn({
       title: this.translate.instant('DQ Used'),
@@ -95,7 +92,6 @@ export class DatasetQuotasListComponent implements OnInit {
         }
         return this.emptyValue;
       },
-      sortable: true,
     }),
     textColumn({
       title: this.translate.instant('DQ % Used'),
@@ -106,19 +102,16 @@ export class DatasetQuotasListComponent implements OnInit {
         }
         return this.emptyValue;
       },
-      sortable: true,
     }),
     textColumn({
       title: this.translate.instant('Object Quota'),
       propertyName: 'obj_quota',
       getValue: (row) => row.obj_quota || this.emptyValue,
-      sortable: true,
     }),
     textColumn({
       title: this.translate.instant('OQ Used'),
       propertyName: 'obj_used',
       getValue: (row) => row.obj_used || this.emptyValue,
-      sortable: true,
     }),
     textColumn({
       title: this.translate.instant('OQ % Used'),
@@ -129,7 +122,6 @@ export class DatasetQuotasListComponent implements OnInit {
         }
         return this.emptyValue;
       },
-      sortable: true,
     }),
     actionsColumn({
       actions: [

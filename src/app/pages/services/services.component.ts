@@ -57,12 +57,10 @@ export class ServicesComponent implements OnInit {
     textColumn({
       title: this.translate.instant('Name'),
       propertyName: 'name',
-      sortable: true,
     }),
     toggleColumn({
       title: this.translate.instant('Running'),
       propertyName: 'state',
-      sortable: true,
       onRowToggle: (row) => this.toggleState(row),
       getValue: (row) => row.state === ServiceStatus.Running,
       dynamicRequiredRoles: (row) => of(this.servicesService.getRolesRequiredToManage(row.service)),
@@ -70,7 +68,6 @@ export class ServicesComponent implements OnInit {
     toggleColumn({
       title: this.translate.instant('Start Automatically'),
       propertyName: 'enable',
-      sortable: true,
       onRowToggle: (row) => this.enableToggle(row),
       dynamicRequiredRoles: (row) => of(this.servicesService.getRolesRequiredToManage(row.service)),
     }),

@@ -43,27 +43,22 @@ export class GroupListComponent implements OnInit {
     textColumn({
       title: this.translate.instant('Group'),
       propertyName: 'group',
-      sortable: true,
     }),
     textColumn({
       title: this.translate.instant('GID'),
       propertyName: 'gid',
-      sortable: true,
     }),
     yesNoColumn({
       title: this.translate.instant('Builtin'),
       propertyName: 'builtin',
-      sortable: true,
     }),
     yesNoColumn({
       title: this.translate.instant('Allows sudo commands'),
       getValue: (row) => !!row.sudo_commands?.length,
-      sortable: true,
     }),
     yesNoColumn({
       title: this.translate.instant('Samba Authentication'),
       propertyName: 'smb',
-      sortable: true,
     }),
     textColumn({
       title: this.translate.instant('Roles'),

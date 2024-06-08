@@ -46,7 +46,6 @@ export class AssociatedTargetListComponent implements OnInit {
     textColumn({
       title: this.translate.instant('Target'),
       propertyName: 'target',
-      sortable: true,
       getValue: (row) => {
         return find(this.targets, { id: row.target })?.name || row.target;
       },
@@ -54,12 +53,10 @@ export class AssociatedTargetListComponent implements OnInit {
     textColumn({
       title: this.translate.instant('LUN ID'),
       propertyName: 'lunid',
-      sortable: true,
     }),
     textColumn({
       title: this.translate.instant('Extent'),
       propertyName: 'extent',
-      sortable: true,
       getValue: (row) => {
         return find(this.extents, { id: row.extent })?.name || row.extent;
       },

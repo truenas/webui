@@ -42,17 +42,14 @@ export class TunableListComponent implements OnInit {
     textColumn({
       title: this.translate.instant('Variable'),
       propertyName: 'var',
-      sortable: true,
     }),
     textColumn({
       title: this.translate.instant('Value'),
       propertyName: 'value',
-      sortable: true,
     }),
     textColumn({
       title: this.translate.instant('Type'),
       propertyName: 'type',
-      sortable: true,
     }),
     textColumn({
       title: this.translate.instant('Description'),

@@ -1,4 +1,4 @@
-<ix-page-header [title]="'Dashboard' | translate">
+<ix-page-header [title]="'Dashboard' | translate" [loading]="isLoading()">
   <button
     *ngIf="!isEditing(); else editingButtons"
     mat-button
@@ -50,7 +50,7 @@
 >
   <ng-container *ngIf="renderedGroups().length > 0; else noWidgets">
     <div
-      *ngFor="let group of renderedGroups(); index as i"
+      *ngFor="let group of renderedGroups(); index as i; trackBy: trackByFn"
       class="group-slot"
       ixDropGridItem
       @groupRemovedTrigger

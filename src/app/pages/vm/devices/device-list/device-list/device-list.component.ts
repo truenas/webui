@@ -43,18 +43,15 @@ export class DeviceListComponent implements OnInit {
     textColumn({
       title: this.translate.instant('Device ID'),
       propertyName: 'id',
-      sortable: true,
     }),
     textColumn({
       title: this.translate.instant('Device'),
       propertyName: 'dtype',
-      sortable: true,
       getValue: (device) => this.getDeviceTypeLabel(device),
     }),
     textColumn({
       title: this.translate.instant('Order'),
       propertyName: 'order',
-      sortable: true,
     }),
     actionsColumn({}),
   ], {

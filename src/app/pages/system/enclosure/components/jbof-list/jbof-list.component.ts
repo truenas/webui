@@ -41,7 +41,6 @@ export class JbofListComponent implements OnInit {
     textColumn({
       title: this.translate.instant('Description'),
       propertyName: 'description',
-      sortable: true,
     }),
     textColumn({
       title: this.translate.instant('IPs'),
@@ -50,7 +49,6 @@ export class JbofListComponent implements OnInit {
     textColumn({
       title: this.translate.instant('Username'),
       propertyName: 'mgmt_username',
-      sortable: true,
     }),
     actionsColumn({
       actions: [

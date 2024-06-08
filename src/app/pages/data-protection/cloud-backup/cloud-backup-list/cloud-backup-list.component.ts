@@ -53,7 +53,6 @@ export class CloudBackupListComponent implements OnInit {
     textColumn({
       title: this.translate.instant('Name'),
       propertyName: 'description',
-      sortable: true,
     }),
     toggleColumn({
       title: this.translate.instant('Enabled'),

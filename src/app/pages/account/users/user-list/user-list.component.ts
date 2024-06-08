@@ -43,22 +43,18 @@ export class UserListComponent implements OnInit {
     textColumn({
       title: this.translate.instant('Username'),
       propertyName: 'username',
-      sortable: true,
     }),
     textColumn({
       title: this.translate.instant('UID'),
       propertyName: 'uid',
-      sortable: true,
     }),
     yesNoColumn({
       title: this.translate.instant('Builtin'),
       propertyName: 'builtin',
-      sortable: true,
     }),
     textColumn({
       title: this.translate.instant('Full Name'),
       propertyName: 'full_name',
-      sortable: true,
     }),
     textColumn({
       title: this.translate.instant('Roles'),

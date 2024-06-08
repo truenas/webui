@@ -36,27 +36,22 @@ export class VmwareSnapshotListComponent implements OnInit {
     textColumn({
       title: this.translate.instant('Hostname'),
       propertyName: 'hostname',
-      sortable: true,
     }),
     textColumn({
       title: this.translate.instant('Username'),
       propertyName: 'username',
-      sortable: true,
     }),
     textColumn({
       title: this.translate.instant('Filesystem'),
       propertyName: 'filesystem',
-      sortable: true,
     }),
     textColumn({
       title: this.translate.instant('Datastore'),
       propertyName: 'datastore',
-      sortable: true,
     }),
     textColumn({
       title: this.translate.instant('State'),
       propertyName: 'state',
-      sortable: true,
     }),
   ], {
     rowTestId: (row) => 'vmware-snapshot-' + row.hostname,

@@ -50,12 +50,10 @@ export class SmbListComponent implements OnInit {
     textColumn({
       title: this.translate.instant('Name'),
       propertyName: 'name',
-      sortable: true,
     }),
     textColumn({
       title: this.translate.instant('Path'),
       propertyName: 'path_local',
-      sortable: true,
     }),
     textColumn({
       title: this.translate.instant('Description'),

@@ -53,30 +53,26 @@ export class JobsListComponent implements OnInit {
   columns = createTable<Job>([
     textColumn({
       title: this.translate.instant('Name'),
-      sortable: true,
     }),
     stateButtonColumn({
       title: this.translate.instant('State'),
       propertyName: 'state',
-      sortable: true,
       cssClass: 'state-button',
-      sortBy: (row) => row.state,
       getJob: (row) => row,
     }),
     textColumn({
       title: this.translate.instant('ID'),
       propertyName: 'id',
-      sortable: true,
     }),
     dateColumn({
       title: this.translate.instant('Started'),
       propertyName: 'time_started',
-      sortable: true,
+      sortBy: (job) => +job.time_started,
     }),
     dateColumn({
       title: this.translate.instant('Finished'),
       propertyName: 'time_finished',
-      sortable: true,
+      sortBy: (job) => +job.time_finished,
     }),
   ], {
     rowTestId: (row) => 'job-' + row.id,

@@ -5,7 +5,7 @@
     [matTooltip]="column.title"
     (click)="onSort(idx)"
   >
-    <div class="title-container" [ngStyle]="{ cursor: column.sortable ? 'pointer' : 'auto' }">
+    <div class="title-container" [ngStyle]="{ cursor: !column.disableSorting ? 'pointer' : 'auto' }">
       <div class="title">
         <ng-template
           ix-header-cell
@@ -13,7 +13,7 @@
           [column]="column"
         ></ng-template>
       </div>
-      <div *ngIf="column.sortable">
+      <div *ngIf="!column.disableSorting">
         <ix-icon
           *ngIf="dataProvider.sorting.direction === SortDirection.Asc && dataProvider.sorting.active === idx"
           name="mdi-arrow-down">
