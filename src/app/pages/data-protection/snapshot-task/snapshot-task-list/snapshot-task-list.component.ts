@@ -76,7 +76,6 @@ export class SnapshotTaskListComponent implements OnInit {
     textColumn({
       hidden: true,
       title: this.translate.instant('Next Run'),
-      propertyName: 'next_run',
       getValue: (task) => {
         if (task.enabled) {
           return task.schedule
@@ -88,7 +87,6 @@ export class SnapshotTaskListComponent implements OnInit {
     }),
     textColumn({
       title: this.translate.instant('Last Run'),
-      propertyName: 'last_run',
       hidden: true,
       getValue: (row) => {
         if (row.state?.datetime?.$date) {
@@ -100,7 +98,7 @@ export class SnapshotTaskListComponent implements OnInit {
     textColumn({
       title: this.translate.instant('Keep snapshot for'),
       getValue: (row) => `${row.lifetime_value} ${row.lifetime_unit}(S)`.toLowerCase(),
-      propertyName: 'keepfor',
+      propertyName: 'lifetime_unit',
       hidden: true,
     }),
     textColumn({

@@ -1,9 +1,10 @@
-<ix-page-header [title]="'Dashboard' | translate">
+<ix-page-header [title]="'Dashboard' | translate" [loading]="isLoading()">
   <button
     *ngIf="!isEditing(); else editingButtons"
     mat-button
     color="primary"
     ixTest="configure-dashboard"
+    [ixUiSearch]="searchableElements.elements.configure"
     [disabled]="isLoading()"
     (click)="onConfigure()"
   >
@@ -44,11 +45,12 @@
   class="groups"
   ixDropGrid
   [ixDropGridModel]="renderedGroups()"
+  [ixUiSearch]="searchableElements.elements.dashboard"
   (ixDropGridModelChange)="onGroupsReordered($event)"
 >
   <ng-container *ngIf="renderedGroups().length > 0; else noWidgets">
     <div
-      *ngFor="let group of renderedGroups(); index as i"
+      *ngFor="let group of renderedGroups(); index as i; trackBy: trackByFn"
       class="group-slot"
       ixDropGridItem
       @groupRemovedTrigger
