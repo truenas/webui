@@ -85,7 +85,7 @@ import {
   GenerateVdevsService,
 } from 'app/pages/storage/modules/pool-manager/utils/generate-vdevs/generate-vdevs.service';
 import { selectAdvancedConfig } from 'app/store/system-config/system-config.selectors';
-import { selectSystemFeatures } from 'app/store/system-info/system-info.selectors';
+import { selectHasEnclosureSupport } from 'app/store/system-info/system-info.selectors';
 
 export const commonDeclarations = [
   ConfigurationPreviewComponent,
@@ -148,10 +148,8 @@ export const commonProviders = [
         } as AdvancedConfig,
       },
       {
-        selector: selectSystemFeatures,
-        value: {
-          enclosure: true,
-        },
+        selector: selectHasEnclosureSupport,
+        value: true,
       },
     ],
   }),

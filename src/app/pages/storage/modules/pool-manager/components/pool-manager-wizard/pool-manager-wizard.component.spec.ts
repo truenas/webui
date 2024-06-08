@@ -51,7 +51,7 @@ import {
 import { PoolManagerValidationService } from 'app/pages/storage/modules/pool-manager/store/pool-manager-validation.service';
 import { PoolManagerState, PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
 import { WebSocketService } from 'app/services/ws.service';
-import { selectSystemFeatures } from 'app/store/system-info/system-info.selectors';
+import { selectHasEnclosureSupport } from 'app/store/system-info/system-info.selectors';
 
 describe('PoolManagerWizardComponent', () => {
   let spectator: Spectator<PoolManagerWizardComponent>;
@@ -142,10 +142,8 @@ describe('PoolManagerWizardComponent', () => {
       provideMockStore({
         selectors: [
           {
-            selector: selectSystemFeatures,
-            value: {
-              enclosure: true,
-            },
+            selector: selectHasEnclosureSupport,
+            value: true,
           },
         ],
       }),

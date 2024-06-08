@@ -9,7 +9,7 @@ import {
 } from '@angular/core';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { Store } from '@ngrx/store';
+import { select, Store } from '@ngrx/store';
 import { Observable, ReplaySubject, Subject } from 'rxjs';
 import { filter, takeUntil } from 'rxjs/operators';
 import { EnclosureElementType } from 'app/enums/enclosure-slot-status.enum';
@@ -24,8 +24,8 @@ import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 import { selectTheme } from 'app/store/preferences/preferences.selectors';
 import {
+  selectHasEnclosureSupport,
   selectIsIxHardware,
-  waitForSystemFeatures,
   waitForSystemInfo,
 } from 'app/store/system-info/system-info.selectors';
 
@@ -213,8 +213,8 @@ export class ViewEnclosureComponent implements AfterViewInit, OnDestroy {
       this.isIxHardware = isIxHardware;
     });
 
-    this.store$.pipe(waitForSystemFeatures, untilDestroyed(this)).subscribe((systemFeatures) => {
-      this.supportedHardware = systemFeatures.enclosure;
+    this.store$.pipe(select(selectHasEnclosureSupport), untilDestroyed(this)).subscribe((hasEnclosure) => {
+      this.supportedHardware = hasEnclosure;
     });
 
     this.ws.call('jbof.licensed').pipe(untilDestroyed(this)).subscribe((licensed) => {

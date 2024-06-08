@@ -67,7 +67,7 @@ export class DashboardComponent implements OnInit {
   }
 
   protected trackByFn(index: number, group: WidgetGroup): string {
-    return group.layout + group.slots.map((slot) => slot.type).join();
+    return group.layout + group.slots.map((slot) => slot?.type).join();
   }
 
   protected onConfigure(): void {
