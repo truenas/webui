@@ -7,10 +7,7 @@ export function getServerProduct(systemProduct: string): string {
 }
 
 export function getMiniImagePath(systemProduct: string): string {
-  const normalizedProduct = systemProduct
-    .replace('TRUENAS-', '')
-    .replace('FREENAS-', '');
-  return Object.values(miniSeries).find((series) => series.images.includes(normalizedProduct))?.pathImg;
+  return Object.values(miniSeries).find((series) => series.images.includes(systemProduct))?.pathImg;
 }
 
 export function getProductImage(systemProduct: string): string {
@@ -29,6 +26,10 @@ export function getProductImage(systemProduct: string): string {
   return product ? `assets/images/${product}` : '';
 }
 
+/**
+ * @deprecated We should look at webui.enclosure.dashboard instead
+ * TODO: Update.
+ */
 export function isRackmount(systemProduct: string): boolean {
   if (systemProduct.includes('MINI')) {
     return !!Object.values(miniSeries)?.find((mini) => mini.images.includes(systemProduct))?.isRackmount;
