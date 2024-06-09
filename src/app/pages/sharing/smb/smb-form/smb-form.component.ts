@@ -87,6 +87,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
     'aapl_name_mangling',
     'recyclebin',
     'shadowcopy',
+    'auxsmbconf',
   ];
 
   isLoading = false;
@@ -207,6 +208,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
     durablehandle: [false],
     fsrvp: [false],
     path_suffix: [''],
+    auxsmbconf: [''],
     audit: this.formBuilder.group({
       enable: [false],
       watch_list: [[] as string[]],
