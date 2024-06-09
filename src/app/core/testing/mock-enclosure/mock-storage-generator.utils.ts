@@ -1,4 +1,4 @@
-import { enclosureMocks } from 'app/core/testing/mock-enclosure/enclosure-templates';
+import { enclosureMocks } from 'app/core/testing/mock-enclosure/enclosure-templates/enclosure-mocks';
 import { addDisksToMostSlots } from 'app/core/testing/mock-enclosure/enclosure-templates/utils/disk.utils';
 import { addPoolsToMostDisks } from 'app/core/testing/mock-enclosure/enclosure-templates/utils/pool.utils';
 import { MockStorageScenario } from 'app/core/testing/mock-enclosure/enums/mock-storage.enum';
@@ -40,7 +40,7 @@ export class MockStorageGenerator {
   }
 
   private addEnclosure(model: string): void {
-    const enclosure = enclosureMocks.get(model);
+    const enclosure = enclosureMocks.find((mock) => mock.model === model);
 
     if (!enclosure) {
       throw new Error(`Enclosure model ${model} not found in mock storage generator`);

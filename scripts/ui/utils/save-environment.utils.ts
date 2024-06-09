@@ -1,6 +1,8 @@
 import fs, { existsSync, readFileSync } from 'fs';
 import { WebUiEnvironment } from 'environments/environment.interface';
-import { invert, merge } from 'lodash';
+import {
+  invert, isArray, mergeWith,
+} from 'lodash';
 import { DeepPartial } from 'utility-types';
 import { MockStorageScenario } from 'app/core/testing/mock-enclosure/enums/mock-storage.enum';
 import { environmentTemplate, environmentTs } from './variables';
@@ -27,7 +29,9 @@ const defaults: ConfigVariables = {
 
 export function updateEnvironment(newValues: DeepPartial<ConfigVariables>): void {
   const currentConfig = getCurrentConfig();
-  const valuesToWrite = merge({}, defaults, currentConfig, newValues);
+  const valuesToWrite = mergeWith({}, defaults, currentConfig, newValues, (_, b) => {
+    return isArray(b) ? b : undefined;
+  });
 
   const configTemplate = getConfigTemplate();
   const configToWrite = configTemplate

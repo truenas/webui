@@ -16,11 +16,13 @@ export interface Enclosure {
   bsg: string;
   sg: string;
   pci: string;
+  top_slots: number;
   rackmount: boolean;
   top_loaded: boolean;
   front_slots: number;
   rear_slots: number;
   internal_slots: number;
+  front_loaded: boolean;
   elements: EnclosureElements;
   label: string;
 }
@@ -33,6 +35,10 @@ export interface EnclosureSlot {
   dev: string;
   supports_identify_light: boolean;
   original: EnclosureSlotMetadata;
+  is_front: boolean;
+  is_top: boolean;
+  is_rear: boolean;
+  is_internal: boolean;
 }
 
 export interface EnclosureSlotMetadata {
@@ -72,6 +78,10 @@ export interface DashboardEnclosureSlot {
   type?: DiskType;
   rotationrate?: number;
   pool_info: EnclosureSlotPoolInfo | null;
+  is_front: boolean;
+  is_top: boolean;
+  is_rear: boolean;
+  is_internal: boolean;
 }
 
 export interface EnclosureVdev {
