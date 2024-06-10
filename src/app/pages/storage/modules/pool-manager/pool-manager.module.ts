@@ -50,6 +50,7 @@ import {
   TopologyCategoryDescriptionPipe,
 } from 'app/pages/storage/modules/pool-manager/pipes/topology-category-description.pipe';
 import { routes } from 'app/pages/storage/modules/pool-manager/pool-manager.routing';
+import { DiskStore } from 'app/pages/storage/modules/pool-manager/store/disk.store';
 import { PoolManagerValidationService } from 'app/pages/storage/modules/pool-manager/store/pool-manager-validation.service';
 import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
 import { GenerateVdevsService } from 'app/pages/storage/modules/pool-manager/utils/generate-vdevs/generate-vdevs.service';
@@ -130,6 +131,7 @@ import { DataWizardStepComponent } from './components/pool-manager-wizard/steps/
     NormalSelectionComponent,
   ],
   providers: [
+    DiskStore,
     PoolManagerStore,
     AddVdevsStore,
     ManualDiskSelectionStore,

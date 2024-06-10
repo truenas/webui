@@ -3,7 +3,7 @@ import {
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { CreateVdevLayout, VdevType } from 'app/enums/v-dev-type.enum';
-import { UnusedDisk } from 'app/interfaces/storage.interface';
+import { DetailsDisk } from 'app/interfaces/disk.interface';
 import {
   PoolManagerStore,
   PoolManagerTopologyCategory,
@@ -24,7 +24,7 @@ export class LayoutStepComponent implements OnInit {
   @Input() canChangeLayout = false;
   @Input() limitLayouts: CreateVdevLayout[];
 
-  @Input() inventory: UnusedDisk[];
+  @Input() inventory: DetailsDisk[];
 
   protected topologyCategory: PoolManagerTopologyCategory;
 

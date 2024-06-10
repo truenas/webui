@@ -36,7 +36,6 @@ export const ixSvgIcons = {
   logo_truenas_scale_mark: 'assets/customicons/truenas_scale_logomark.svg',
   logo_truenas_scale_type_color: 'assets/customicons/truenas_scale_logotype_rgb.svg',
   logo_truenas_scale_type: 'assets/customicons/truenas_scale_logotype.svg',
-  logo_freenas_certified: 'assets/customicons/logo_certified.svg',
   logo_mark_rgb: 'assets/customicons/ix_logomark_rgb.svg',
   logo_mark: 'assets/customicons/ix_logomark.svg',
   logo_full_rgb: 'assets/customicons/ix_full_logo_rgb.svg',

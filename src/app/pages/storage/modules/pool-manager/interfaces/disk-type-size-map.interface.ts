@@ -1,8 +1,8 @@
 import { DiskType } from 'app/enums/disk-type.enum';
-import { UnusedDisk } from 'app/interfaces/storage.interface';
+import { DetailsDisk } from 'app/interfaces/disk.interface';
 
 export type DiskTypeSizeMap = {
   [type in DiskType]: DiskTypeSizeMapItem;
 };
 
-export type DiskTypeSizeMapItem = Record<string, UnusedDisk[]>;
+export type DiskTypeSizeMapItem = Record<string, DetailsDisk[]>;

@@ -4,7 +4,7 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { Subject } from 'rxjs';
 import { VdevType } from 'app/enums/v-dev-type.enum';
-import { UnusedDisk } from 'app/interfaces/storage.interface';
+import { DetailsDisk } from 'app/interfaces/disk.interface';
 import {
   CustomLayoutAppliedComponent,
 } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/components/layout-step/custom-layout-applied/custom-layout-applied.component';
@@ -33,7 +33,7 @@ describe('CustomLayoutAppliedComponent', () => {
         vdevs: [
           [{}],
           [{}],
-        ] as UnusedDisk[][],
+        ] as DetailsDisk[][],
       },
     });
 

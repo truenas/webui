@@ -26,6 +26,10 @@ export function getProductImage(systemProduct: string): string {
   return product ? `assets/images/${product}` : '';
 }
 
+/**
+ * @deprecated We should look at webui.enclosure.dashboard instead
+ * TODO: Update.
+ */
 export function isRackmount(systemProduct: string): boolean {
   if (systemProduct.includes('MINI')) {
     return !!Object.values(miniSeries)?.find((mini) => mini.images.includes(systemProduct))?.isRackmount;

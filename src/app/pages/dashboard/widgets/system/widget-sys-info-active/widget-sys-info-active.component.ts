@@ -12,7 +12,7 @@ import { getSystemVersion } from 'app/pages/dashboard/widgets/system/common/widg
 import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import {
-  selectEnclosureSupport, selectIsEnterprise, selectIsIxHardware,
+  selectHasEnclosureSupport, selectIsEnterprise, selectIsIxHardware,
 } from 'app/store/system-info/system-info.selectors';
 
 @Component({
@@ -27,7 +27,7 @@ export class WidgetSysInfoActiveComponent {
   isIxHardware = toSignal(this.store$.select(selectIsIxHardware));
   isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
   isHaLicensed = toSignal(this.store$.select(selectIsHaLicensed));
-  hasEnclosureSupport = toSignal(this.store$.select(selectEnclosureSupport));
+  hasEnclosureSupport = toSignal(this.store$.select(selectHasEnclosureSupport));
   isUpdateRunning = toSignal(this.store$.select(selectUpdateJobForActiveNode));
 
   updateAvailable = toSignal(this.resources.updateAvailable$);

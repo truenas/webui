@@ -32,7 +32,7 @@ import {
   selectIsHaLicensed,
   selectCanFailover,
 } from 'app/store/ha-info/ha-info.selectors';
-import { selectIsIxHardware, waitForSystemFeatures } from 'app/store/system-info/system-info.selectors';
+import { selectHasEnclosureSupport, selectIsIxHardware } from 'app/store/system-info/system-info.selectors';
 
 @UntilDestroy()
 @Component({
@@ -51,14 +51,13 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
   canFailover$ = this.store$.select(selectCanFailover);
   protected isHaLicensed = false;
   protected isHaEnabled = false;
-  protected enclosureSupport = false;
+  protected enclosureSupport$ = this.store$.select(selectHasEnclosureSupport);
 
   systemInfo: SystemInfo;
   isLoading = false;
   productImage = '';
   productModel = '';
   productEnclosure: ProductEnclosure;
-  certified = false;
   updateAvailable = false;
   isIxHardware = false;
   isUpdateRunning = false;
@@ -113,7 +112,6 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
   ngOnInit(): void {
     this.checkForUpdate();
     this.getSystemInfo();
-    this.getEnclosureSupport();
     this.getIsIxHardware();
     this.getIsHaLicensed();
     this.listenForHaStatus();
@@ -132,15 +130,6 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
       .subscribe((isIxHardware) => {
         this.isIxHardware = isIxHardware;
         this.setProductImage();
-        this.cdr.markForCheck();
-      });
-  }
-
-  getEnclosureSupport(): void {
-    this.store$
-      .pipe(waitForSystemFeatures, untilDestroyed(this))
-      .subscribe((features) => {
-        this.enclosureSupport = features.enclosure;
         this.cdr.markForCheck();
       });
   }
@@ -221,8 +210,6 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
 
     if (this.systemInfo.platform.includes('MINI')) {
       this.setMiniImage(this.systemInfo.platform);
-    } else if (this.systemInfo.platform.includes('CERTIFIED')) {
-      this.certified = true;
     } else {
       const product = getServerProduct(this.systemInfo.platform);
       this.productImage = product ? `/servers/${product}.png` : 'ix-original.svg';
@@ -236,18 +223,10 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, O
   setMiniImage(sysProduct: string): void {
     this.productEnclosure = ProductEnclosure.Tower;
 
-    if (sysProduct?.includes('CERTIFIED')) {
-      this.productImage = '';
-      this.certified = true;
-      return;
-    }
     this.productImage = getMiniImagePath(sysProduct);
   }
 
   goToEnclosure(): void {
-    if (!this.enclosureSupport) {
-      return;
-    }
     this.router.navigate(['/system/oldviewenclosure']);
   }
 

@@ -11,6 +11,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { dashboardElements } from 'app/pages/dashboard/components/dashboard/dashboard.elements';
 import { WidgetGroupFormComponent } from 'app/pages/dashboard/components/widget-group-form/widget-group-form.component';
 import { DashboardStore } from 'app/pages/dashboard/services/dashboard.store';
 import { WidgetGroup } from 'app/pages/dashboard/types/widget-group.interface';
@@ -44,6 +45,7 @@ export class DashboardComponent implements OnInit {
   // TODO: If old data is available, show it while loading new data.
   // TODO: Prevent user from entering configuration mode while loading.
   readonly isLoading = toSignal(this.dashboardStore.isLoading$);
+  readonly searchableElements = dashboardElements;
 
   emptyDashboardConf: EmptyConfig = {
     type: EmptyType.NoPageData,
@@ -62,6 +64,10 @@ export class DashboardComponent implements OnInit {
   ngOnInit(): void {
     this.dashboardStore.entered();
     this.loadGroups();
+  }
+
+  protected trackByFn(index: number, group: WidgetGroup): string {
+    return group.layout + group.slots.map((slot) => slot?.type).join();
   }
 
   protected onConfigure(): void {
@@ -92,13 +98,13 @@ export class DashboardComponent implements OnInit {
     this.slideIn
       .open(WidgetGroupFormComponent, true, editedGroup)
       .pipe(untilDestroyed(this))
-      .subscribe((response) => {
+      .subscribe((response: ChainedComponentResponse<WidgetGroup>) => {
         if (!response.response) {
           return;
         }
 
         this.renderedGroups.update((groups) => {
-          return groups.map((group, index) => (index === i ? response.response as WidgetGroup : group));
+          return groups.map((group, index) => (index === i ? response.response : group));
         });
       });
   }

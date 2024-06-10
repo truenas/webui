@@ -77,6 +77,7 @@ import {
 import {
   TopologyCategoryDescriptionPipe,
 } from 'app/pages/storage/modules/pool-manager/pipes/topology-category-description.pipe';
+import { DiskStore } from 'app/pages/storage/modules/pool-manager/store/disk.store';
 import {
   PoolManagerValidationService,
 } from 'app/pages/storage/modules/pool-manager/store/pool-manager-validation.service';
@@ -85,7 +86,7 @@ import {
   GenerateVdevsService,
 } from 'app/pages/storage/modules/pool-manager/utils/generate-vdevs/generate-vdevs.service';
 import { selectAdvancedConfig } from 'app/store/system-config/system-config.selectors';
-import { selectSystemFeatures } from 'app/store/system-info/system-info.selectors';
+import { selectHasEnclosureSupport } from 'app/store/system-info/system-info.selectors';
 
 export const commonDeclarations = [
   ConfigurationPreviewComponent,
@@ -118,6 +119,7 @@ export const commonProviders = [
   PoolManagerStore,
   GenerateVdevsService,
   PoolManagerValidationService,
+  DiskStore,
   {
     provide: MatIconRegistry,
     useValue: createSpyObject(IxIconRegistry, {
@@ -148,10 +150,8 @@ export const commonProviders = [
         } as AdvancedConfig,
       },
       {
-        selector: selectSystemFeatures,
-        value: {
-          enclosure: true,
-        },
+        selector: selectHasEnclosureSupport,
+        value: true,
       },
     ],
   }),

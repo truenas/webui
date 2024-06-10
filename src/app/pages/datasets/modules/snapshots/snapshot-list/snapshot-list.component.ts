@@ -98,33 +98,25 @@ export class SnapshotListComponent implements OnInit {
     textColumn({
       title: this.translate.instant('Dataset'),
       propertyName: 'dataset',
-      sortable: true,
     }),
     textColumn({
       title: this.translate.instant('Snapshot'),
       propertyName: 'snapshot_name',
-      sortable: true,
     }),
     sizeColumn({
       title: this.translate.instant('Used'),
-      sortable: true,
       hidden: !this.showExtraColumnsControl.value,
       getValue: (row) => row?.properties?.used?.parsed,
-      sortBy: (row) => row?.properties?.used?.parsed as string,
     }),
     dateColumn({
       title: this.translate.instant('Date created'),
-      sortable: true,
       hidden: !this.showExtraColumnsControl.value,
       getValue: (row) => row?.properties?.creation?.parsed.$date,
-      sortBy: (row) => row?.properties?.creation?.parsed.$date,
     }),
     sizeColumn({
       title: this.translate.instant('Referenced'),
-      sortable: true,
       hidden: !this.showExtraColumnsControl.value,
       getValue: (row) => row?.properties?.referenced?.parsed,
-      sortBy: (row) => row?.properties?.referenced?.parsed as string,
     }),
   ], {
     rowTestId: (row) => 'snapshot-' + row.id,
