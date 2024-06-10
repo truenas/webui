@@ -53,6 +53,13 @@ export class WidgetResourcesService {
     shareReplay({ bufferSize: 1, refCount: true }),
   );
 
+  readonly installedApps$ = this.ws.call('chart.release.query', [
+    [], { extra: { history: true, stats: true } },
+  ]).pipe(
+    toLoadingState(),
+    shareReplay({ bufferSize: 1, refCount: true }),
+  );
+
   readonly pools$ = this.ws.callAndSubscribe('pool.query');
 
   readonly volumesData$ = this.pools$.pipe(

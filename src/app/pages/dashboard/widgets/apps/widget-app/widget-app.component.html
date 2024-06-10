@@ -1,0 +1,59 @@
+<mat-card class="card">
+  <mat-card-content class="card-content">
+    <div class="header">
+      <h3>{{ 'Apps' | translate }}</h3>
+
+      <div class="controls">
+        <button
+          mat-icon-button
+          ixTest="apps-web-portal"
+          matTooltipPosition="above"
+          [attr.aria-label]="'Web Portal' | translate"
+          [matTooltip]="'Web Portal' | translate"
+        >
+          <ix-icon name="mdi-web"></ix-icon>
+        </button>
+
+        <button
+          mat-icon-button
+          ixTest="apps-restart"
+          matTooltipPosition="above"
+          [attr.aria-label]="'Restart App' | translate"
+          [matTooltip]="'Restart App' | translate"
+          (click)="onRestartApp()"
+        >
+          <ix-icon name="mdi-restart"></ix-icon>
+        </button>
+
+        <button
+          mat-icon-button
+          ixTest="apps-details"
+          matTooltipPosition="above"
+          [attr.aria-label]="'Check Full Details' | translate"
+          [matTooltip]="'Check Full Details' | translate"
+          [routerLink]="['/apps', 'installed']"
+        >
+          <ix-icon name="mdi-cog"></ix-icon>
+        </button>
+      </div>
+    </div>
+
+    <div
+      *ngIf="settings()?.appName; else configureWidgetTemplate"
+      class="['container', size()]"
+    >
+      <div>Apps Info</div>
+      <div>Server Time: {{ time() }}</div>
+    </div>
+  </mat-card-content>
+</mat-card>
+
+<ng-template #configureWidgetTemplate>
+  <div [class]="['empty', 'container', size()]">
+    <ix-icon class="icon" name="mdi-widgets"></ix-icon>
+    <h3>
+      <div>{{ 'Widget is not configured.' | translate }}</div>
+      <small>{{ 'Edit widget to choose an application.' | translate }}</small>
+    </h3>
+  </div>
+</ng-template>

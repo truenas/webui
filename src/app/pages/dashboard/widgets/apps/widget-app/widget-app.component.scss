@@ -1,0 +1,47 @@
+@import 'scss-imports/cssvars';
+
+.card {
+  height: 100%;
+
+  .header {
+    align-items: center;
+    display: flex;
+    justify-content: space-between;
+    padding-bottom: 0;
+    padding-right: 8px;
+  }
+
+  .card-content {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+
+  .controls {
+    align-items: center;
+    color: var(--fg2);
+    display: flex;
+    flex-direction: row;
+  }
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  overflow: hidden;
+
+  &.empty {
+    align-items: center;
+    place-content: center center;
+    text-align: center;
+
+    ix-icon {
+      font-size: 48px;
+    }
+
+    &.full {
+      padding: 0 16px 48px;
+    }
+  }
+}
