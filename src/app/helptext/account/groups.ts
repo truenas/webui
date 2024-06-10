@@ -23,5 +23,7 @@ export const helptextGroups = {
   allow_tooltip: T('<b>Not recommended.</b> Allow more than one group to\
  have the same group ID.'),
 
-  smb_tooltip: T('Set to allow group to be used for Samba permissions and authentication.'),
+  smb_tooltip: T('Makes the group available for permissions editors over SMB protocol (and the share ACL \
+    editor). It is not used for SMB authentication or determining the user session token or internal \
+    permissions checks.'),
 };
