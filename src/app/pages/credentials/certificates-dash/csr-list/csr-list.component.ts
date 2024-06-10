@@ -1,5 +1,7 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, EventEmitter, OnInit, Output,
+} from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import {
@@ -42,6 +44,8 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CertificateSigningRequestsListComponent implements OnInit {
+  @Output() certificateCreated = new EventEmitter<void>();
+
   protected readonly requiredRoles = [Role.FullAdmin];
   protected readonly searchableElements = csrListElements;
 
@@ -230,6 +234,7 @@ export class CertificateSigningRequestsListComponent implements OnInit {
   doCreateAcmeCert(csr: Certificate): void {
     const slideInRef = this.slideInService.open(CertificateAcmeAddComponent, { data: csr });
     slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
+      this.certificateCreated.emit();
       this.getCertificates();
     });
   }
