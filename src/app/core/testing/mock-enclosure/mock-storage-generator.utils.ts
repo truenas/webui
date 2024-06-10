@@ -27,13 +27,13 @@ export class MockStorageGenerator {
     return {
       ...response,
       platform: `TRUENAS-${this.config.controllerModel}`,
-      system_product: this.config.controllerModel,
+      system_product: `TRUENAS-${this.config.controllerModel}`,
       system_manufacturer: 'iXsystems',
       remote_info: response.remote_info
         ? {
           ...response.remote_info,
           platform: `TRUENAS-${this.config.controllerModel}`,
-          system_product: this.config.controllerModel,
+          system_product: `TRUENAS-${this.config.controllerModel}`,
         }
         : null,
     };

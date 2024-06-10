@@ -34,7 +34,7 @@ export class IxTableHeadComponent<T> implements AfterViewInit {
   }
 
   onSort(columnId: number): void {
-    if (!this.columns[columnId]?.sortable) {
+    if (this.displayedColumns[columnId]?.disableSorting) {
       return;
     }
 
@@ -56,9 +56,12 @@ export class IxTableHeadComponent<T> implements AfterViewInit {
       direction = null;
     }
 
+    const sortBy = (this.displayedColumns[columnId].sortBy
+      || this.displayedColumns[columnId].getValue) as (row: T) => string | number;
+
     this.dataProvider.setSorting({
-      propertyName: this.columns[columnId].propertyName,
-      sortBy: this.columns[columnId].sortBy,
+      propertyName: this.displayedColumns[columnId].propertyName,
+      sortBy,
       direction,
       active,
     });

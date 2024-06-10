@@ -1,7 +1,7 @@
-import { UnusedDisk } from 'app/interfaces/storage.interface';
+import { DetailsDisk } from 'app/interfaces/disk.interface';
 
 // TODO: Clear out unused properties
-export interface ManualSelectionDisk extends UnusedDisk {
+export interface ManualSelectionDisk extends DetailsDisk {
   vdevUuid: string;
 }
 

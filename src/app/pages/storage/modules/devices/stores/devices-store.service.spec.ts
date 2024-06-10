@@ -3,8 +3,8 @@ import { mockProvider } from '@ngneat/spectator/jest';
 import { firstValueFrom } from 'rxjs';
 import { TestScheduler } from 'rxjs/testing';
 import { getTestScheduler } from 'app/core/testing/utils/get-test-scheduler.utils';
+import { Disk } from 'app/interfaces/disk.interface';
 import { Pool } from 'app/interfaces/pool.interface';
-import { Disk } from 'app/interfaces/storage.interface';
 import { DevicesState, DevicesStore } from 'app/pages/storage/modules/devices/stores/devices-store.service';
 import { WebSocketService } from 'app/services/ws.service';
 

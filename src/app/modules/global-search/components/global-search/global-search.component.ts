@@ -94,6 +94,10 @@ export class GlobalSearchComponent implements OnInit {
     this.searchControl.setValue('');
   }
 
+  setInitialSearchResults(): void {
+    this.searchResults = this.globalSearchSectionsProvider.getRecentSearchesSectionResults();
+  }
+
   private listenForSearchChanges(): void {
     this.searchControl.valueChanges.pipe(
       tap((value) => {
@@ -117,10 +121,6 @@ export class GlobalSearchComponent implements OnInit {
       this.isLoading = false;
       this.cdr.markForCheck();
     });
-  }
-
-  private setInitialSearchResults(): void {
-    this.searchResults = this.globalSearchSectionsProvider.getRecentSearchesSectionResults();
   }
 
   private focusInputElement(): void {

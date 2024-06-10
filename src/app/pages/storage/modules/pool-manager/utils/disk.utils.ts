@@ -1,18 +1,18 @@
-import { UnusedDisk } from 'app/interfaces/storage.interface';
+import { DetailsDisk } from 'app/interfaces/disk.interface';
 
-export function hasNonUniqueSerial(disk: UnusedDisk): boolean {
+export function hasNonUniqueSerial(disk: DetailsDisk): boolean {
   return Boolean(disk.duplicate_serial?.length);
 }
 
-export function hasExportedPool(disk: UnusedDisk): boolean {
+export function hasExportedPool(disk: DetailsDisk): boolean {
   return Boolean(disk.exported_zpool);
 }
 
-export function filterAllowedDisks(allDisks: UnusedDisk[], options: {
+export function filterAllowedDisks(allDisks: DetailsDisk[], options: {
   allowNonUniqueSerialDisks: boolean;
   allowExportedPools: string[];
-  limitToSingleEnclosure: number | null;
-}): UnusedDisk[] {
+  limitToSingleEnclosure: string | null;
+}): DetailsDisk[] {
   return allDisks.filter((disk) => {
     if (hasNonUniqueSerial(disk) && !options.allowNonUniqueSerialDisks) {
       return false;
@@ -22,7 +22,7 @@ export function filterAllowedDisks(allDisks: UnusedDisk[], options: {
       return false;
     }
 
-    if (options.limitToSingleEnclosure !== null && disk.enclosure?.number !== options.limitToSingleEnclosure) {
+    if (options.limitToSingleEnclosure !== null && disk.enclosure?.id !== options.limitToSingleEnclosure) {
       return false;
     }
 

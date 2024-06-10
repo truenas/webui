@@ -6,7 +6,7 @@ import { MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
-import { UnusedDisk } from 'app/interfaces/storage.interface';
+import { DetailsDisk } from 'app/interfaces/disk.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
@@ -32,7 +32,7 @@ describe('BootPoolAttachDialogComponent', () => {
             name: 'sdb',
             size: 10737418240,
           },
-        ] as UnusedDisk[]),
+        ] as DetailsDisk[]),
         mockJob('boot.attach'),
       ]),
       mockProvider(FormErrorHandlerService),

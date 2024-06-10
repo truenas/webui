@@ -22,8 +22,9 @@ import { TopologyItemType } from 'app/enums/v-dev-type.enum';
 import { stringToTitleCase } from 'app/helpers/string-to-title-case';
 import { WINDOW } from 'app/helpers/window.helper';
 import { DeviceNestedDataNode, isVdevGroup } from 'app/interfaces/device-nested-data-node.interface';
+import { Disk } from 'app/interfaces/disk.interface';
 import {
-  Disk, isTopologyDisk, isVdev, TopologyDisk, TopologyItem,
+  isTopologyDisk, isVdev, TopologyDisk, TopologyItem,
 } from 'app/interfaces/storage.interface';
 import { NestedTreeDataSource } from 'app/modules/ix-tree/nested-tree-datasource';
 import { flattenTreeWithFilter } from 'app/modules/ix-tree/utils/flattern-tree-with-filter';

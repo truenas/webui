@@ -292,15 +292,6 @@ img.clickable,
 
   img {
     width: 60%;
-
-    &.certified-badge {
-      border-radius: 5px;
-      bottom: 30%;
-      height: 16%;
-      left: 54%;
-      position: absolute;
-      width: auto !important;
-    }
   }
 }
 
@@ -448,11 +439,6 @@ div.generic.alert .ix-icon {
 
 .xs.widget.generic-hardware .product-image.tower .ix-icon {
   margin-top: 48px;
-}
-
-.xs.widget.generic-hardware .product-image.tower .certified-badge {
-  bottom: -40%;
-  height: 25%;
 }
 
 .xs.widget .left {

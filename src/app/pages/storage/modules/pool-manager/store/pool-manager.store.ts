@@ -16,13 +16,14 @@ import {
 import { GiB } from 'app/constants/bytes.constant';
 import { DiskType } from 'app/enums/disk-type.enum';
 import { CreateVdevLayout, VdevType } from 'app/enums/v-dev-type.enum';
-import { EnclosureOld } from 'app/interfaces/enclosure-old.interface';
-import { UnusedDisk } from 'app/interfaces/storage.interface';
+import { DetailsDisk, DiskDetailsResponse } from 'app/interfaces/disk.interface';
+import { Enclosure } from 'app/interfaces/enclosure.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ManualDiskSelectionComponent, ManualDiskSelectionParams } from 'app/pages/storage/modules/pool-manager/components/manual-disk-selection/manual-disk-selection.component';
 import {
   DispersalStrategy,
 } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/steps/2-enclosure-wizard-step/enclosure-wizard-step.component';
+import { DiskStore } from 'app/pages/storage/modules/pool-manager/store/disk.store';
 import { categoryCapacity } from 'app/pages/storage/modules/pool-manager/utils/capacity.utils';
 import { filterAllowedDisks } from 'app/pages/storage/modules/pool-manager/utils/disk.utils';
 import {
@@ -45,7 +46,7 @@ export interface PoolManagerTopologyCategory {
   diskType: DiskType;
   vdevsNumber: number;
   treatDiskSizeAsMinimum: boolean;
-  vdevs: UnusedDisk[][];
+  vdevs: DetailsDisk[][];
   hasCustomDiskSelection: boolean;
 
   // Only used for data step when dRAID is selected.
@@ -63,18 +64,17 @@ interface PoolManagerDiskSettings {
 }
 
 export interface PoolManagerEnclosureSettings {
-  limitToSingleEnclosure: number | null;
+  limitToSingleEnclosure: string | null;
   maximizeEnclosureDispersal: boolean;
   dispersalStrategy: DispersalStrategy;
 }
 
 export interface PoolManagerState {
   isLoading: boolean;
-  enclosures: EnclosureOld[];
+  enclosures: Enclosure[];
   name: string;
   nameErrors: ValidationErrors | null;
   encryption: string | null;
-  allDisks: UnusedDisk[];
   diskSettings: PoolManagerDiskSettings;
   enclosureSettings: PoolManagerEnclosureSettings;
   topology: PoolManagerTopology;
@@ -102,7 +102,6 @@ const initialTopology = Object.values(VdevType).reduce((topology, value) => {
 
 export const initialState: PoolManagerState = {
   isLoading: false,
-  allDisks: [],
   enclosures: [],
   name: '',
   nameErrors: null,
@@ -131,7 +130,6 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
   readonly nameErrors$ = this.select((state) => state.nameErrors);
   readonly encryption$ = this.select((state) => state.encryption);
   readonly enclosures$ = this.select((state) => state.enclosures);
-  readonly allDisks$ = this.select((state) => state.allDisks);
   readonly topology$ = this.select((state) => state.topology);
   readonly diskSettings$ = this.select((state) => state.diskSettings);
   readonly enclosureSettings$ = this.select((state) => state.enclosureSettings);
@@ -141,27 +139,27 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
     (topology, swapondrive) => categoryCapacity(topology[VdevType.Data], swapondrive * GiB),
   );
   readonly allowedDisks$ = this.select(
-    this.allDisks$,
+    this.diskStore.selectableDisks$,
     this.diskSettings$,
     this.enclosureSettings$,
-    (allDisks, diskOptions, enclosureOptions) => filterAllowedDisks(allDisks, {
+    (unusedDisks, diskOptions, enclosureOptions) => filterAllowedDisks(unusedDisks, {
       ...diskOptions,
       ...enclosureOptions,
     }),
   );
 
   readonly hasMultipleEnclosuresAfterFirstStep$ = this.select(
-    this.allDisks$,
+    this.diskStore.selectableDisks$,
     this.diskSettings$,
-    (allDisks, diskOptions) => {
-      const disksAfterFirstStep = filterAllowedDisks(allDisks, {
+    (unusedDisks, diskOptions) => {
+      const disksAfterFirstStep = filterAllowedDisks(unusedDisks, {
         ...diskOptions,
         limitToSingleEnclosure: null,
       });
-      const uniqueEnclosures = new Set<number>();
+      const uniqueEnclosures = new Set<string>();
       disksAfterFirstStep.forEach((disk) => {
         if (disk.enclosure) {
-          uniqueEnclosures.add(disk.enclosure.number);
+          uniqueEnclosures.add(disk.enclosure.id);
         }
       });
       return uniqueEnclosures.size > 1;
@@ -205,7 +203,7 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
   );
 
   // TODO: Check if this needs to be optimized
-  getInventoryForStep(type: VdevType): Observable<UnusedDisk[]> {
+  getInventoryForStep(type: VdevType): Observable<DetailsDisk[]> {
     return this.select(
       this.allowedDisks$,
       this.topology$,
@@ -222,6 +220,7 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
   }
 
   constructor(
+    private diskStore: DiskStore,
     private ws: WebSocketService,
     private errorHandler: ErrorHandlerService,
     private dialogService: DialogService,
@@ -254,17 +253,15 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
     );
   });
 
-  loadStateInitialData(): Observable<[UnusedDisk[], EnclosureOld[]]> {
+  loadStateInitialData(): Observable<[Enclosure[], DiskDetailsResponse]> {
     return forkJoin([
-      this.ws.call('disk.get_unused'),
-      // TODO: Broken. Missing number field.
-      this.ws.call('enclosure2.query') as unknown as Observable<EnclosureOld[]>,
+      this.ws.call('enclosure2.query'),
+      this.diskStore.loadDisks(),
     ]).pipe(
       tapResponse(
-        ([allDisks, enclosures]) => {
+        ([enclosures]) => {
           this.patchState({
             isLoading: false,
-            allDisks,
             enclosures,
           });
         },
@@ -351,7 +348,7 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
     this.regenerateVdevs();
   }
 
-  setManualTopologyCategory(type: VdevType, vdevs: UnusedDisk[][]): void {
+  setManualTopologyCategory(type: VdevType, vdevs: DetailsDisk[][]): void {
     this.updateTopologyCategory(type, {
       vdevs,
       hasCustomDiskSelection: true,
@@ -415,9 +412,9 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
         of(state),
         this.getInventoryForStep(type).pipe(take(1)),
       ])),
-      switchMap(([state, inventoryForStep]: [PoolManagerState, UnusedDisk[]]) => {
+      switchMap(([state, inventoryForStep]: [PoolManagerState, DetailsDisk[]]) => {
         const usedDisks = topologyCategoryToDisks(state.topology[type]);
-        const inventory = _.differenceBy(inventoryForStep, usedDisks, (disk: UnusedDisk) => disk.devname);
+        const inventory = _.differenceBy(inventoryForStep, usedDisks, (disk: DetailsDisk) => disk.devname);
         const isVdevsLimitedToOne = type === VdevType.Spare || type === VdevType.Cache || type === VdevType.Log;
         return this.matDialog.open(ManualDiskSelectionComponent, {
           data: {
@@ -431,7 +428,7 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
         }).afterClosed();
       }),
       filter(Boolean),
-      tap((customVdevs: UnusedDisk[][]) => {
+      tap((customVdevs: DetailsDisk[][]) => {
         if (!customVdevs.length) {
           this.resetStep(type);
         } else {

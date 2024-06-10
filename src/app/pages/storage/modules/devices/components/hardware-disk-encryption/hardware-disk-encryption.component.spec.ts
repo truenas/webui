@@ -5,7 +5,8 @@ import {
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
-import { Disk, TopologyDisk } from 'app/interfaces/storage.interface';
+import { Disk } from 'app/interfaces/disk.interface';
+import { TopologyDisk } from 'app/interfaces/storage.interface';
 import {
   ManageDiskSedDialogComponent,
 } from 'app/pages/storage/modules/devices/components/hardware-disk-encryption/manage-disk-sed-dialog/manage-disk-sed-dialog.component';
