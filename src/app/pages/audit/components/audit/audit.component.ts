@@ -86,7 +86,6 @@ export class AuditComponent implements OnInit, OnDestroy {
     }),
     textColumn({
       title: this.translate.instant('Event'),
-      disableSorting: true,
       propertyName: 'event',
       getValue: (row) => (auditEventLabels.has(row.event)
         ? this.translate.instant(auditEventLabels.get(row.event))
@@ -94,6 +93,7 @@ export class AuditComponent implements OnInit, OnDestroy {
     }),
     textColumn({
       title: this.translate.instant('Event Data'),
+      disableSorting: true,
       getValue: (row) => this.translate.instant(this.getEventDataForLog(row)),
     }),
   ], {

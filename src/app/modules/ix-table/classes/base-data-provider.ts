@@ -6,8 +6,10 @@ import {
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { DataProvider } from 'app/modules/ix-table/interfaces/data-provider.interface';
+import { TableFilter } from 'app/modules/ix-table/interfaces/table-filter.interface';
 import { TablePagination } from 'app/modules/ix-table/interfaces/table-pagination.interface';
 import { TableSort } from 'app/modules/ix-table/interfaces/table-sort.interface';
+import { filterTableColumns } from 'app/modules/ix-table/utils';
 
 export class BaseDataProvider<T> implements DataProvider<T> {
   readonly emptyType$ = new BehaviorSubject<EmptyType>(EmptyType.Loading);
@@ -60,6 +62,12 @@ export class BaseDataProvider<T> implements DataProvider<T> {
     this.sorting = sorting;
     this.updateCurrentPage(this.allRows);
     this.controlsStateUpdated.emit();
+  }
+
+  setFilter(filter: TableFilter<T>): void {
+    const filteredRows = filterTableColumns(filter);
+    this.totalRows = filteredRows.length;
+    this.setRows(filteredRows);
   }
 
   setPagination(pagination: TablePagination): void {

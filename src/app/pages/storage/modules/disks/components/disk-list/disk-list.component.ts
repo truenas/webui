@@ -52,12 +52,12 @@ export class DiskListComponent implements OnInit {
       onRowCheck: (row, checked) => {
         this.disks.find((disk) => row.name === disk.name).selected = checked;
         this.dataProvider.setRows([]);
-        this.dataProvider.setRows(this.disks.filter(this.filterDisk));
+        this.onListFiltered(this.filterString);
       },
       onColumnCheck: (checked) => {
         this.disks.forEach((disk) => disk.selected = checked);
         this.dataProvider.setRows([]);
-        this.dataProvider.setRows(this.disks.filter(this.filterDisk));
+        this.onListFiltered(this.filterString);
       },
     }),
     textColumn({
@@ -134,7 +134,7 @@ export class DiskListComponent implements OnInit {
   }
 
   get selectedDisks(): DiskUi[] {
-    return this.disks.filter(this.filterDisk).filter((disk) => disk.selected);
+    return this.disks.filter((disk) => disk.selected);
   }
 
   private disks: DiskUi[] = [];
@@ -165,7 +165,7 @@ export class DiskListComponent implements OnInit {
           pool: this.getPoolColumn(disk),
           selected: false,
         }));
-        return this.disks.filter(this.filterDisk);
+        return this.disks;
       }),
     );
     this.dataProvider = new AsyncDataProvider(request$);
@@ -221,9 +221,9 @@ export class DiskListComponent implements OnInit {
     return !!this.unusedDisks.find((unusedDisk) => unusedDisk.name === disk.name);
   }
 
-  protected filterUpdated(query: string): void {
+  protected onListFiltered(query: string): void {
     this.filterString = query;
-    this.dataProvider.setRows(this.disks.filter(this.filterDisk));
+    this.dataProvider.setFilter({ list: this.disks, query, columnKeys: ['name', 'pool', 'serial'] });
   }
 
   protected columnsChange(columns: typeof this.columns): void {
@@ -231,12 +231,6 @@ export class DiskListComponent implements OnInit {
     this.cdr.detectChanges();
     this.cdr.markForCheck();
   }
-
-  private filterDisk = (disk: Disk): boolean => {
-    return disk.name.toLowerCase().includes(this.filterString.toLowerCase())
-      || disk.pool.toLowerCase().includes(this.filterString.toLowerCase())
-      || disk.serial.toLowerCase().includes(this.filterString.toLowerCase());
-  };
 
   private getPoolColumn(diskToCheck: Disk): string {
     const unusedDisk = this.unusedDisks.find((disk) => disk.devname === diskToCheck.devname);

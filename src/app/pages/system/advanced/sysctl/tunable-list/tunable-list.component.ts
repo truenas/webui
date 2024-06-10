@@ -156,11 +156,13 @@ export class TunableListComponent implements OnInit {
 
   onListFiltered(query: string): void {
     this.filterString = query.toLowerCase();
-    this.dataProvider.setRows(this.tunables.filter((tunable) => {
-      return tunable.var.split('_').includes(this.filterString)
-      || tunable.value.includes(this.filterString)
-      || tunable.comment.includes(this.filterString);
-    }));
+    this.dataProvider.setFilter({
+      query,
+      columnKeys: ['var', 'value', 'comment'],
+      preprocessMap: {
+        var: (varName: string) => varName.split('_').join(' '),
+      },
+    });
     this.cdr.markForCheck();
   }
 

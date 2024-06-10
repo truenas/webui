@@ -204,10 +204,10 @@ export class SmbListComponent implements OnInit {
 
   onListFiltered(query: string): void {
     this.filterString = query.toLowerCase();
-    const filteredExporters = this.smbShares.filter((share) => {
-      return JSON.stringify(share).toLowerCase().includes(query);
+    this.dataProvider.setFilter({
+      query,
+      columnKeys: Object.keys(this.smbShares[0]) as (keyof SmbShare)[],
     });
-    this.dataProvider.setRows(filteredExporters);
     this.cdr.markForCheck();
   }
 

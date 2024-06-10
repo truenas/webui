@@ -140,11 +140,14 @@ export class DeviceListComponent implements OnInit {
 
   onListFiltered(query: string): void {
     this.filterString = query.toLowerCase();
-    this.dataProvider.setRows(this.devices.filter((device) => {
-      const deviceTypeLabel = this.getDeviceTypeLabel(device);
-      return String(device.id).includes(this.filterString)
-        || deviceTypeLabel.toLowerCase().includes(this.filterString);
-    }));
+    this.dataProvider.setFilter({
+      list: this.devices,
+      query,
+      columnKeys: ['id', 'dtype'],
+      preprocessMap: {
+        dtype: (dtype: number) => this.getDeviceTypeLabel({ dtype } as unknown as VmDevice),
+      },
+    });
     this.cdr.markForCheck();
   }
 

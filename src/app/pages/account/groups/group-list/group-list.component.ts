@@ -123,10 +123,7 @@ export class GroupListComponent implements OnInit {
 
   onListFiltered(query: string): void {
     this.filterString = query.toLowerCase();
-    this.createDataSource(this.groups.filter((group) => {
-      return group.group.toLowerCase().includes(this.filterString)
-        || group.gid.toString().toLowerCase().includes(this.filterString);
-    }));
+    this.dataProvider.setFilter({ list: this.groups, query, columnKeys: ['group', 'gid'] });
   }
 
   handleDeletedGroup(id: number): void {
@@ -151,19 +148,15 @@ export class GroupListComponent implements OnInit {
       next: (groups) => {
         this.groups = groups;
         this.filterString = '';
-        this.createDataSource(groups);
+        this.onListFiltered(this.filterString);
         this.cdr.markForCheck();
       },
       error: () => {
-        this.createDataSource();
+        this.groups = [];
+        this.dataProvider.setRows(this.groups);
         this.cdr.markForCheck();
       },
     });
-  }
-
-  private createDataSource(groups: Group[] = []): void {
-    this.dataProvider.setRows(groups);
-    this.cdr.markForCheck();
   }
 
   private setDefaultSort(): void {

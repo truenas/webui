@@ -98,7 +98,7 @@ export class AlertServiceListComponent implements OnInit {
     this.dataProvider = new AsyncDataProvider<AlertService>(alertServices$);
     this.getAlertServices();
     this.dataProvider.emptyType$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.filterUpdated(this.filterString);
+      this.onListFiltered(this.filterString);
     });
   }
 
@@ -107,9 +107,9 @@ export class AlertServiceListComponent implements OnInit {
     slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => this.getAlertServices());
   }
 
-  protected filterUpdated(query: string): void {
+  protected onListFiltered(query: string): void {
     this.filterString = query;
-    this.dataProvider.setRows(this.alertServices.filter(this.filterAlertService));
+    this.dataProvider.setFilter({ list: this.alertServices, query, columnKeys: ['name', 'type', 'level'] });
   }
 
   protected columnsChange(columns: typeof this.columns): void {
@@ -117,12 +117,6 @@ export class AlertServiceListComponent implements OnInit {
     this.cdr.detectChanges();
     this.cdr.markForCheck();
   }
-
-  private filterAlertService = (alertService: AlertService): boolean => {
-    return alertService.name.toLowerCase().includes(this.filterString.toLowerCase())
-      || alertService.type.toLowerCase().includes(this.filterString.toLowerCase())
-      || alertService.level.toLowerCase().includes(this.filterString.toLowerCase());
-  };
 
   private editAlertService(row: AlertService): void {
     const slideInRef = this.slideInService.open(AlertServiceComponent, { data: row });
