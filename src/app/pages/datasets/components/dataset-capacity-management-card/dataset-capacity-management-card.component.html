@@ -8,12 +8,16 @@
         {{ 'Zvol Space Management' | translate }}
       </ng-container>
     </h3>
-    <button
-      *ixRequiresRoles="requiredRoles"
-      mat-button
-      ixTest="edit-quotas"
-      (click)="editDataset()"
-    >{{ 'Edit' | translate }}</button>
+    <ng-container
+     *ngIf="!isZvol"
+    >
+      <button
+        *ixRequiresRoles="requiredRoles"
+        mat-button
+        ixTest="edit-quotas"
+        (click)="editDataset()"
+      >{{ 'Edit' | translate }}</button>
+    </ng-container>
   </mat-card-header>
   <mat-card-content>
     <ix-space-management-chart [dataset]="dataset"></ix-space-management-chart>
@@ -106,7 +110,7 @@
       </div>
     </div>
 
-    <div class="details">
+    <div *ngIf="!isZvol" class="details">
       <div class="details-item">
         <div class="label">{{ 'User Quotas' | translate }}:</div>
         <ng-container *ngIf="checkQuotas; else noneTemplate">
