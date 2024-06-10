@@ -2,6 +2,7 @@ import { Command } from 'commander';
 import * as figlet from 'figlet';
 import { mockEnclosureCommand } from './commands/mock-enclosure.command';
 import { remoteCommand } from './commands/remote.command';
+import { resetCommand } from './commands/reset.command';
 import { updateEnvironment } from './utils/save-environment.utils';
 
 /*
@@ -16,6 +17,12 @@ const program: Command = new Command()
   .description('TrueNAS webui setup utility')
   .usage('(Call from root directory of repo via yarn)')
   .addHelpText('before', banner());
+
+program
+  .command('reset')
+  .name('reset')
+  .description('Reset config to default')
+  .action(() => resetCommand());
 
 program
   .command('mock-enclosure')

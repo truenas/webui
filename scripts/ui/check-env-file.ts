@@ -1,8 +1,5 @@
+import { adviseToSetRemote } from './utils/advise-to-set-remote';
 import { getConfigTemplate, getCurrentConfigAsString, updateEnvironment } from './utils/save-environment.utils';
-
-function adviseToSetRemote(): void {
-  console.info('No remote server set. Please set a remote server using the command: yarn ui remote -i <ip_address>');
-}
 
 function parseEnvironmentVersion(contents: string): string {
   const match = contents.match(/environmentVersion:\s*'([\d.]+)'/);
@@ -10,7 +7,7 @@ function parseEnvironmentVersion(contents: string): string {
 }
 
 function validateConfig(): void {
-  const currentConfig = getCurrentConfigAsString();
+  const currentConfig = getCurrentConfigAsString().trim();
   if (!currentConfig) {
     console.info('No current config set. Creating default config...');
     updateEnvironment({});
