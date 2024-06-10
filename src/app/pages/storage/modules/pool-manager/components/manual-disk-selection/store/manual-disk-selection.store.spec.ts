@@ -5,14 +5,14 @@ import { TiB } from 'app/constants/bytes.constant';
 import { getTestScheduler } from 'app/core/testing/utils/get-test-scheduler.utils';
 import { DiskType } from 'app/enums/disk-type.enum';
 import { CreateVdevLayout } from 'app/enums/v-dev-type.enum';
-import { UnusedDisk } from 'app/interfaces/storage.interface';
+import { DetailsDisk } from 'app/interfaces/disk.interface';
 import { ManualDiskSelectionStore } from 'app/pages/storage/modules/pool-manager/components/manual-disk-selection/store/manual-disk-selection.store';
 
 describe('ManualDiskSelectionStore', () => {
   let spectator: SpectatorService<ManualDiskSelectionStore>;
   let testScheduler: TestScheduler;
 
-  const unusedDisks: UnusedDisk[] = [
+  const unusedDisks: DetailsDisk[] = [
     {
       identifier: '{serial_lunid} 8HG7MZJH_5000cca2700de678',
       name: 'sdo',
@@ -21,10 +21,10 @@ describe('ManualDiskSelectionStore', () => {
       model: 'HUH721212AL4200',
       type: DiskType.Hdd,
       enclosure: {
-        number: 0,
-        slot: 1,
+        id: 'id0',
+        drive_bay_number: 1,
       },
-    } as UnusedDisk,
+    } as DetailsDisk,
     {
       identifier: '{serial_lunid} 8HG7MZJH_5000cca2700de679',
       name: 'sdp',
@@ -33,10 +33,10 @@ describe('ManualDiskSelectionStore', () => {
       model: 'HUH721212AL4201',
       type: DiskType.Hdd,
       enclosure: {
-        number: 0,
-        slot: 2,
+        id: 'id0',
+        drive_bay_number: 2,
       },
-    } as UnusedDisk,
+    } as DetailsDisk,
   ];
 
   const createService = createServiceFactory({

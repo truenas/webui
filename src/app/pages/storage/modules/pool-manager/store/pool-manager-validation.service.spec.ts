@@ -20,7 +20,7 @@ import {
   PoolManagerStore,
   PoolManagerTopologyCategory,
 } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
-import { selectSystemFeatures } from 'app/store/system-info/system-info.selectors';
+import { selectHasEnclosureSupport } from 'app/store/system-info/system-info.selectors';
 
 describe('PoolManagerValidationService', () => {
   describe('required steps validation', () => {
@@ -56,10 +56,8 @@ describe('PoolManagerValidationService', () => {
         provideMockStore({
           selectors: [
             {
-              selector: selectSystemFeatures,
-              value: {
-                enclosure: true,
-              },
+              selector: selectHasEnclosureSupport,
+              value: true,
             },
           ],
         }),
@@ -188,10 +186,8 @@ describe('PoolManagerValidationService', () => {
         provideMockStore({
           selectors: [
             {
-              selector: selectSystemFeatures,
-              value: {
-                enclosure: true,
-              },
+              selector: selectHasEnclosureSupport,
+              value: true,
             },
           ],
         }),
@@ -286,10 +282,8 @@ describe('PoolManagerValidationService', () => {
         provideMockStore({
           selectors: [
             {
-              selector: selectSystemFeatures,
-              value: {
-                enclosure: true,
-              },
+              selector: selectHasEnclosureSupport,
+              value: true,
             },
           ],
         }),
@@ -353,10 +347,8 @@ describe('PoolManagerValidationService', () => {
         provideMockStore({
           selectors: [
             {
-              selector: selectSystemFeatures,
-              value: {
-                enclosure: true,
-              },
+              selector: selectHasEnclosureSupport,
+              value: true,
             },
           ],
         }),

@@ -2,7 +2,7 @@ import { Injectable, OnDestroy } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { map, Observable, Subject } from 'rxjs';
 import { DiskType } from 'app/enums/disk-type.enum';
-import { Disk, DiskTemperatures } from 'app/interfaces/storage.interface';
+import { Disk, DiskTemperatures } from 'app/interfaces/disk.interface';
 import { Interval } from 'app/interfaces/timeout.interface';
 import { DisksUpdateService } from 'app/services/disks-update.service';
 import { WebSocketService } from 'app/services/ws.service';

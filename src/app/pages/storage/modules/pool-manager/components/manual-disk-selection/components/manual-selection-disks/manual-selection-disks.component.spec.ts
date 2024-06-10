@@ -4,7 +4,8 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { MockComponents } from 'ng-mocks';
 import { DndModule } from 'ngx-drag-drop';
 import { of } from 'rxjs';
-import { EnclosureOld } from 'app/interfaces/enclosure-old.interface';
+import { DetailsDisk } from 'app/interfaces/disk.interface';
+import { Enclosure } from 'app/interfaces/enclosure.interface';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TreeHarness } from 'app/modules/ix-tree/testing/tree.harness';
 import { TreeModule } from 'app/modules/ix-tree/tree.module';
@@ -52,8 +53,8 @@ describe('ManualSelectionDisksComponent', () => {
           {
             name: 'sda',
             enclosure: {
-              number: 1,
-              slot: 1,
+              id: 'id1',
+              drive_bay_number: 1,
             },
           },
           {
@@ -62,7 +63,7 @@ describe('ManualSelectionDisksComponent', () => {
           {
             name: 'sdc',
           },
-        ]),
+        ] as DetailsDisk[]),
       }),
     ],
   });
@@ -72,10 +73,10 @@ describe('ManualSelectionDisksComponent', () => {
       props: {
         enclosures: [
           {
-            number: 1,
+            id: 'id1',
             label: 'Enclosure 1',
           },
-        ] as EnclosureOld[],
+        ] as Enclosure[],
       },
     });
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
@@ -88,7 +89,7 @@ describe('ManualSelectionDisksComponent', () => {
     const nodes = await tree.getNodes();
 
     expect(nodes).toHaveLength(2);
-    expect(await nodes[0].getText()).toBe('1: Enclosure 1');
+    expect(await nodes[0].getText()).toBe('Enclosure 1');
     expect(await nodes[1].getText()).toBe('No enclosure');
 
     await nodes[0].expand();
@@ -106,7 +107,7 @@ describe('ManualSelectionDisksComponent', () => {
 
     const emptyCategories = spectator.queryAll('.group-row-empty');
     expect(emptyCategories).toHaveLength(1);
-    expect(emptyCategories[0]).toHaveText('1: Enclosure 1');
+    expect(emptyCategories[0]).toHaveText('Enclosure 1');
 
     const tree = await loader.getHarness(TreeHarness);
     const nodes = await tree.getNodes();

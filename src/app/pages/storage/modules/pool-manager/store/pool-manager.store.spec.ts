@@ -1,15 +1,17 @@
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { createServiceFactory, mockProvider, SpectatorService } from '@ngneat/spectator/jest';
-import { BehaviorSubject, firstValueFrom, of } from 'rxjs';
+import {
+  BehaviorSubject, firstValueFrom, of,
+} from 'rxjs';
 import { TiB } from 'app/constants/bytes.constant';
 import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { DiskType } from 'app/enums/disk-type.enum';
 import { CreateVdevLayout, VdevType } from 'app/enums/v-dev-type.enum';
-import { EnclosureOld } from 'app/interfaces/enclosure-old.interface';
+import { DetailsDisk } from 'app/interfaces/disk.interface';
 import { Enclosure } from 'app/interfaces/enclosure.interface';
-import { UnusedDisk } from 'app/interfaces/storage.interface';
 import { ManualDiskSelectionComponent, ManualDiskSelectionParams } from 'app/pages/storage/modules/pool-manager/components/manual-disk-selection/manual-disk-selection.component';
 import { DispersalStrategy } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/steps/2-enclosure-wizard-step/enclosure-wizard-step.component';
+import { DiskStore } from 'app/pages/storage/modules/pool-manager/store/disk.store';
 import {
   initialState, PoolManagerState, PoolManagerStore, PoolManagerTopologyCategory,
 } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
@@ -20,7 +22,7 @@ import { WebSocketService } from 'app/services/ws.service';
 
 describe('PoolManagerStore', () => {
   let spectator: SpectatorService<PoolManagerStore>;
-  let dialogReturnValue = [{}] as UnusedDisk[][];
+  let dialogReturnValue = [{}] as DetailsDisk[][];
 
   const disks = [
     {
@@ -28,8 +30,8 @@ describe('PoolManagerStore', () => {
       size: 2 * TiB,
       type: DiskType.Hdd,
       enclosure: {
-        number: 1,
-        slot: 1,
+        id: 'id1',
+        drive_bay_number: 1,
       },
       exported_zpool: 'expo',
     },
@@ -38,8 +40,8 @@ describe('PoolManagerStore', () => {
       size: 2 * TiB,
       type: DiskType.Ssd,
       enclosure: {
-        number: 1,
-        slot: 2,
+        id: 'id1',
+        drive_bay_number: 2,
       },
     },
     {
@@ -47,23 +49,25 @@ describe('PoolManagerStore', () => {
       type: DiskType.Hdd,
       size: 2 * TiB,
       enclosure: {
-        number: 2,
-        slot: 1,
+        id: 'id2',
+        drive_bay_number: 1,
       },
     },
-  ] as UnusedDisk[];
+  ] as DetailsDisk[];
   const enclosures = [
-    { name: 'Front', number: 1 },
-    { name: 'Back', number: 2 },
-  ] as EnclosureOld[];
+    { name: 'Front', id: 'id1' },
+    { name: 'Back', id: 'id2' },
+  ] as Enclosure[];
   const createService = createServiceFactory({
     service: PoolManagerStore,
     providers: [
       mockWebSocket([
-        mockCall('disk.get_unused', disks),
-        // TODO:
-        mockCall('enclosure2.query', enclosures as unknown as Enclosure[]),
+        mockCall('enclosure2.query', enclosures),
       ]),
+      mockProvider(DiskStore, {
+        loadDisks: () => of(disks),
+        selectableDisks$: of(disks),
+      }),
       mockProvider(MatDialog, {
         open: jest.fn(() => ({
           afterClosed: jest.fn(() => of(dialogReturnValue)),
@@ -86,7 +90,7 @@ describe('PoolManagerStore', () => {
     it('allowedDisks$ – returns loaded disks applying disk and enclosure settings', async () => {
       spectator.service.initialize();
       spectator.service.setEnclosureOptions({
-        limitToSingleEnclosure: 1,
+        limitToSingleEnclosure: 'id1',
         maximizeEnclosureDispersal: false,
         dispersalStrategy: DispersalStrategy.None,
       });
@@ -101,7 +105,7 @@ describe('PoolManagerStore', () => {
     it('inventory$ – returns all remaining unused disks', async () => {
       spectator.service.initialize();
       spectator.service.setEnclosureOptions({
-        limitToSingleEnclosure: 1,
+        limitToSingleEnclosure: 'id1',
         maximizeEnclosureDispersal: false,
         dispersalStrategy: DispersalStrategy.None,
       });
@@ -122,18 +126,16 @@ describe('PoolManagerStore', () => {
   });
 
   describe('initialize', () => {
-    it('loads disks and enclosures', async () => {
+    it('loads enclosures', async () => {
       spectator.service.initialize();
 
       const websocket = spectator.inject(WebSocketService);
-      expect(websocket.call).toHaveBeenCalledWith('disk.get_unused');
       expect(websocket.call).toHaveBeenCalledWith('enclosure2.query');
 
       expect(await firstValueFrom(spectator.service.state$)).toMatchObject({
         ...initialState,
         enclosures,
         isLoading: false,
-        allDisks: disks,
       });
     });
   });
@@ -145,7 +147,6 @@ describe('PoolManagerStore', () => {
       expect(await firstValueFrom(spectator.service.state$)).toMatchObject({
         ...initialState,
         enclosures,
-        allDisks: disks,
       });
     });
   });
@@ -169,7 +170,7 @@ describe('PoolManagerStore', () => {
 
     it('setEnclosureSettings – sets enclosure settings', async () => {
       const enclosureSettings = {
-        limitToSingleEnclosure: 5,
+        limitToSingleEnclosure: 'id5',
         maximizeEnclosureDispersal: false,
         dispersalStrategy: DispersalStrategy.None,
       };
@@ -197,7 +198,7 @@ describe('PoolManagerStore', () => {
 
   describe('methods - working with topology categories', () => {
     it('setManualTopologyCategory – sets manually configured vdevs for a category', async () => {
-      const manuallyConfiguredVdevs = [{}] as UnusedDisk[][];
+      const manuallyConfiguredVdevs = [{}] as DetailsDisk[][];
       spectator.service.setManualTopologyCategory(VdevType.Data, manuallyConfiguredVdevs);
 
       expect(await firstValueFrom(spectator.service.state$)).toMatchObject({
@@ -242,15 +243,15 @@ describe('PoolManagerStore', () => {
     });
 
     it('resetTopologyCategory – resets topology category', async () => {
-      spectator.service.setManualTopologyCategory(VdevType.Data, [{}] as UnusedDisk[][]);
+      spectator.service.setManualTopologyCategory(VdevType.Data, [{}] as DetailsDisk[][]);
       spectator.service.resetTopologyCategory(VdevType.Data);
 
       expect(await firstValueFrom(spectator.service.state$)).toMatchObject(initialState);
     });
 
     it('resetTopology – completely resets pool topology', async () => {
-      spectator.service.setManualTopologyCategory(VdevType.Data, [{}] as UnusedDisk[][]);
-      spectator.service.setManualTopologyCategory(VdevType.Log, [{}] as UnusedDisk[][]);
+      spectator.service.setManualTopologyCategory(VdevType.Data, [{}] as DetailsDisk[][]);
+      spectator.service.setManualTopologyCategory(VdevType.Log, [{}] as DetailsDisk[][]);
       spectator.service.resetTopology();
 
       expect(await firstValueFrom(spectator.service.state$)).toMatchObject(initialState);
@@ -276,7 +277,7 @@ describe('PoolManagerStore', () => {
     const inventory = [
       { devname: 'sda' },
       { devname: 'sdb' },
-    ] as UnusedDisk[];
+    ] as DetailsDisk[];
     it('opens manual selection dialog when one of the child components emits (manualSelectionClicked)', () => {
       Object.defineProperty(spectator.service, 'state$', { value: state$ });
       jest.spyOn(spectator.service, 'getInventoryForStep').mockReturnValue(of(inventory));

@@ -70,7 +70,7 @@ describe('EnclosureWizardStepComponent', () => {
   it('shows Enclosure dropdown once Limit to single group option is selected and updates store', async () => {
     spectator.component.form.patchValue({
       dispersalStrategy: DispersalStrategy.LimitToSingle,
-      limitToEnclosure: 55,
+      limitToEnclosure: 'id55',
     });
 
     const enclosureInput = await loader.getHarness(IxSelectHarness.with({ label: 'Enclosure' }));
@@ -78,7 +78,7 @@ describe('EnclosureWizardStepComponent', () => {
     expect(await enclosureInput.getOptionLabels()).toEqual(['Fake enclosure']);
 
     expect(spectator.inject(PoolManagerStore).setEnclosureOptions).toHaveBeenCalledWith({
-      limitToSingleEnclosure: 55,
+      limitToSingleEnclosure: 'id55',
       maximizeEnclosureDispersal: false,
       dispersalStrategy: DispersalStrategy.LimitToSingle,
     });

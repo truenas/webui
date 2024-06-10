@@ -5,18 +5,22 @@
     display: flex;
     flex-direction: column;
     height: 100%;
+
+    .container {
+      align-items: center;
+      display: flex;
+      height: 100%;
+      overflow: hidden;
+      padding: 6px;
+    }
   }
 }
 
 :host ::ng-deep {
   .container {
-    align-items: center;
-    display: flex;
-    height: 100%;
-
     img {
       position: relative;
-      top: -5px;
+      top: -4px;
     }
 
     &.half {

@@ -14,8 +14,9 @@ import { Role } from 'app/enums/role.enum';
 import { SmartTestResultStatus } from 'app/enums/smart-test-result-status.enum';
 import { SmartTestResultPageType } from 'app/enums/smart-test-results-page-type.enum';
 import { LoadingState, toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
+import { Disk } from 'app/interfaces/disk.interface';
 import { SmartTestResult } from 'app/interfaces/smart-test.interface';
-import { Disk, TopologyDisk } from 'app/interfaces/storage.interface';
+import { TopologyDisk } from 'app/interfaces/storage.interface';
 import {
   ManualTestDialogComponent, ManualTestDialogParams,
 } from 'app/pages/storage/modules/disks/components/manual-test-dialog/manual-test-dialog.component';

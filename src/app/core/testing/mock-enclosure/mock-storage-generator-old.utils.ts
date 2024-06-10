@@ -12,9 +12,9 @@ import { DiskType } from 'app/enums/disk-type.enum';
 import { PoolStatus } from 'app/enums/pool-status.enum';
 import { TopologyItemType, VdevType } from 'app/enums/v-dev-type.enum';
 import { TopologyItemStatus } from 'app/enums/vdev-status.enum';
+import { Disk } from 'app/interfaces/disk.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import {
-  Disk,
   TopologyDisk,
   TopologyItem,
   TopologyItemStats,
@@ -585,8 +585,6 @@ export class MockStorageGeneratorOld {
       size: size * TiB,
       description: '',
       duplicate_serial: [],
-      multipath_member: '',
-      multipath_name: '',
       transfermode: 'Auto',
       hddstandby: DiskStandby.AlwaysOn,
       advpowermgmt: DiskPowerLevel.Disabled,
@@ -602,7 +600,6 @@ export class MockStorageGeneratorOld {
       zfs_guid: '594160193876939323',
       bus: DiskBus.Spi,
       devname: name,
-      enclosure: null,
       supports_smart: null,
       pool: isAssigned ? this.poolState.name : null,
     };
