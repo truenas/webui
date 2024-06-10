@@ -41,44 +41,53 @@
   </ng-template>
 </ix-page-header>
 
-<div
+<ngx-skeleton-loader
+  *ngIf="isLoadingFirstTime(); else widgets"
   class="groups"
-  ixDropGrid
-  [ixDropGridModel]="renderedGroups()"
-  [ixUiSearch]="searchableElements.elements.dashboard"
-  (ixDropGridModelChange)="onGroupsReordered($event)"
->
-  <ng-container *ngIf="renderedGroups().length > 0; else noWidgets">
-    <div
-      *ngFor="let group of renderedGroups(); index as i; trackBy: trackByFn"
-      class="group-slot"
-      ixDropGridItem
-      @groupRemovedTrigger
-    >
+  [count]="6"
+  [theme]="{ background: 'var(--alt-bg2)', opacity: 0.25, margin: 0 }"
+></ngx-skeleton-loader>
+
+<ng-template #widgets>
+  <div
+    class="groups"
+    ixDropGrid
+    [ixDropGridModel]="renderedGroups()"
+    [ixUiSearch]="searchableElements.elements.dashboard"
+    (ixDropGridModelChange)="onGroupsReordered($event)"
+  >
+    <ng-container *ngIf="renderedGroups().length > 0; else noWidgets">
       <div
-        ixDrag
-        class="group-container"
-        [class.editing]="isEditing()"
+        *ngFor="let group of renderedGroups(); index as i; trackBy: trackByFn"
+        class="group-slot"
+        ixDropGridItem
+        @groupRemovedTrigger
       >
-        <ix-widget-group-controls
-          class="controls"
-          [index]="i"
-          [totalGroups]="renderedGroups().length"
-          (moveUp)="onMoveGroup(i, -1)"
-          (moveDown)="onMoveGroup(i, 1)"
-          (edit)="onEditGroup(i)"
-          (delete)="onDeleteGroup(group)"
-        ></ix-widget-group-controls>
+        <div
+          ixDrag
+          class="group-container"
+          [class.editing]="isEditing()"
+        >
+          <ix-widget-group-controls
+            class="controls"
+            [index]="i"
+            [totalGroups]="renderedGroups().length"
+            (moveUp)="onMoveGroup(i, -1)"
+            (moveDown)="onMoveGroup(i, 1)"
+            (edit)="onEditGroup(i)"
+            (delete)="onDeleteGroup(group)"
+          ></ix-widget-group-controls>
 
-        <ix-widget-group
-          class="group"
-          [group]="group"
-        ></ix-widget-group>
+          <ix-widget-group
+            class="group"
+            [group]="group"
+          ></ix-widget-group>
+        </div>
       </div>
-    </div>
-  </ng-container>
+    </ng-container>
+  </div>
+</ng-template>
 
-  <ng-template #noWidgets>
-    <ix-empty [conf]="emptyDashboardConf"></ix-empty>
-  </ng-template>
-</div>
+<ng-template #noWidgets>
+  <ix-empty [conf]="emptyDashboardConf"></ix-empty>
+</ng-template>
