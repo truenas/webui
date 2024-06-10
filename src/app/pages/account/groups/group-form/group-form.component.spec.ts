@@ -105,7 +105,7 @@ describe('GroupFormComponent', () => {
       const form = await loader.getHarness(IxFormHarness);
       await form.fillForm({
         Name: 'new',
-        'Samba Authentication': true,
+        'SMB Group': true,
         'Allow all sudo commands': true,
         'Allowed sudo commands with no password': ['ls'],
         'Allow Duplicate GIDs': true,
@@ -152,7 +152,7 @@ describe('GroupFormComponent', () => {
         'Allowed sudo commands': [],
         'Allow all sudo commands with no password': true,
         'Allowed sudo commands with no password': [],
-        'Samba Authentication': false,
+        'SMB Group': false,
         Privileges: ['Privilege 1'],
       });
     });
@@ -161,7 +161,7 @@ describe('GroupFormComponent', () => {
       const form = await loader.getHarness(IxFormHarness);
       await form.fillForm({
         Name: 'updated',
-        'Samba Authentication': true,
+        'SMB Group': true,
         'Allow all sudo commands with no password': false,
         Privileges: ['Privilege 1'],
       });
@@ -189,7 +189,7 @@ describe('GroupFormComponent', () => {
       const form = await loader.getHarness(IxFormHarness);
       await form.fillForm({
         Name: 'updated',
-        'Samba Authentication': true,
+        'SMB Group': true,
         'Allow all sudo commands with no password': false,
         Privileges: ['Privilege 2'],
       });
