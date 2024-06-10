@@ -4398,7 +4398,7 @@
   "User added": "",
   "User deleted": "",
   "User is lacking permissions to access WebUI.": "",
-  "User limit to Docker Hub has almost/or has been reached. Installation process may get stalled as images wouldn't be pulled. Current limit would be renewed in {seconds}. Application can still be installed.": "",
+  "User limit to Docker Hub has almost been reached or has already been reached. The installation process may stall as images cannot be pulled. The current limit will be renewed in about 6 hours. The application can still be staged for installation.": "",
   "User passed to <i>camcontrol security -u</i> to unlock SEDs": "",
   "User password": "",
   "User password. Must be at least 12 and no more than 16 characters long.": "",
