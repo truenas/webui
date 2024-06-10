@@ -4,7 +4,7 @@ import {
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { VdevType } from 'app/enums/v-dev-type.enum';
 import { helptextManager } from 'app/helptext/storage/volumes/manager/manager';
-import { UnusedDisk } from 'app/interfaces/storage.interface';
+import { DetailsDisk } from 'app/interfaces/disk.interface';
 import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
 
 @UntilDestroy()
@@ -16,7 +16,7 @@ import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/p
 })
 export class CustomLayoutAppliedComponent {
   @Input() type: VdevType;
-  @Input() vdevs: UnusedDisk[][];
+  @Input() vdevs: DetailsDisk[][];
 
   readonly manualDiskSelectionMessage = helptextManager.manual_disk_selection_message;
 

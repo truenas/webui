@@ -6,7 +6,8 @@ import {
   EventEmitter,
 } from '@angular/core';
 import { VdevType } from 'app/enums/v-dev-type.enum';
-import { Disk, isTopologyDisk, TopologyItem } from 'app/interfaces/storage.interface';
+import { Disk } from 'app/interfaces/disk.interface';
+import { isTopologyDisk, TopologyItem } from 'app/interfaces/storage.interface';
 
 @Component({
   selector: 'ix-disk-details-panel',

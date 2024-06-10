@@ -4,7 +4,7 @@ import { DashboardEnclosureSlot } from 'app/interfaces/enclosure.interface';
 export function makeArrayDeviceSlots(
   from: number,
   to: number,
-  options: {
+  options?: {
     supportsIdentifyLight?: boolean;
   },
 ): Record<number, DashboardEnclosureSlot> {
@@ -14,7 +14,7 @@ export function makeArrayDeviceSlots(
       descriptor: `slot${slot.toString().padStart(2, '0')}`,
       status: 'Not installed',
       dev: null,
-      supports_identify_light: options.supportsIdentifyLight ?? false,
+      supports_identify_light: options?.supportsIdentifyLight ?? false,
       size: null,
       model: null,
       serial: null,

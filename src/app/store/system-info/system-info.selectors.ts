@@ -12,16 +12,6 @@ export const selectSystemInfo = createSelector(
   (state) => state.systemInfo,
 );
 
-export const selectSystemFeatures = createSelector(
-  selectSystemInfoState,
-  (state) => state.systemFeatures,
-);
-
-export const selectEnclosureSupport = createSelector(
-  selectSystemFeatures,
-  (features) => features.enclosure,
-);
-
 export const selectSystemHostId = createSelector(
   selectSystemInfoState,
   (state) => state.systemHostId,
@@ -31,6 +21,11 @@ export const selectIsIxHardware = createSelector(
   selectSystemInfoState,
   (state) => state.isIxHardware,
 );
+
+/**
+ * At the moment it's an alias, but let's keep it separate to make it more explicit.
+ */
+export const selectHasEnclosureSupport = selectIsIxHardware;
 
 export const selectProductType = createSelector(
   selectSystemInfoState,
@@ -43,5 +38,3 @@ export const selectIsEnterprise = createSelector(
 );
 
 export const waitForSystemInfo = selectNotNull(selectSystemInfo);
-
-export const waitForSystemFeatures = selectNotNull(selectSystemFeatures);

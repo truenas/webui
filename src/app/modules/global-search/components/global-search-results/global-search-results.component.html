@@ -15,6 +15,15 @@
         (keydown.enter)="selectElement(result)"
       >
         <h3 class="title" [innerHTML]="processHierarchy(result.hierarchy, searchTerm)"></h3>
+        <ix-icon
+          *ngIf="result.section === GlobalSearchSection.RecentSearches"
+          tabindex="0"
+          name="close"
+          class="icon"
+          color="accent"
+          (click)="removeRecentSearch($event, result)"
+          (keydown.enter)="removeRecentSearch($event, result)"
+        ></ix-icon>
       </div>
 
       <button

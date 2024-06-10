@@ -7,12 +7,13 @@ import { BehaviorSubject, Subject, of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { EnclosureDiskStatus } from 'app/enums/enclosure-slot-status.enum';
-import { DashboardEnclosure, DashboardEnclosureSlot } from 'app/interfaces/enclosure.interface';
+import { DashboardEnclosureSlot } from 'app/interfaces/enclosure.interface';
 import { DriveTray } from 'app/pages/system/old-view-enclosure/classes/drivetray';
 import { DiskComponent } from 'app/pages/system/old-view-enclosure/components/disk-component/disk.component';
 import { EnclosureDisksMiniComponent } from 'app/pages/system/old-view-enclosure/components/enclosure-disks-mini/enclosure-disks-mini.component';
 import { SystemProfile } from 'app/pages/system/old-view-enclosure/components/view-enclosure/view-enclosure.component';
 import { EnclosureEvent } from 'app/pages/system/old-view-enclosure/interfaces/enclosure-events.interface';
+import { OldEnclosure } from 'app/pages/system/old-view-enclosure/interfaces/old-enclosure.interface';
 import { ViewConfig } from 'app/pages/system/old-view-enclosure/interfaces/view.config';
 import { EnclosureState, EnclosureStore } from 'app/pages/system/old-view-enclosure/stores/enclosure-store.service';
 import { DiskTemperatureService } from 'app/services/disk-temperature.service';
@@ -25,19 +26,19 @@ Object.defineProperty(PIXI, '', {});
 describe('EnclosureDisksMiniComponent', () => {
   let spectator: Spectator<EnclosureDisksMiniComponent>;
 
-  const enclosures: DashboardEnclosure[] = [
+  const enclosures: OldEnclosure[] = [
     {
       number: 0,
       id: 'enclosure0',
       label: 'Test enclosure 0',
-      model: 'FREENAS-MINI-3.0-E',
+      model: 'MINI-3.0-E',
       elements: {},
     },
     {
       number: 1,
       id: 'enclosure1',
       label: 'Test enclosure 1',
-      model: 'FREENAS-MINI-3.0-X',
+      model: 'MINI-3.0-X',
       elements: {
         'Array Device Slot': {
           1: {
@@ -51,7 +52,7 @@ describe('EnclosureDisksMiniComponent', () => {
         },
       },
     },
-  ] as DashboardEnclosure[];
+  ] as OldEnclosure[];
 
   const driveTray = new DriveTray('R50', new PIXI.loaders.Loader());
   driveTray.container = new PIXI.Container();
@@ -139,6 +140,6 @@ describe('EnclosureDisksMiniComponent', () => {
   });
 
   it('shows title', () => {
-    expect(spectator.query('.mat-card-title-text').textContent.trim()).toBe('Disks on FREENAS-MINI-3.0-X (1)');
+    expect(spectator.query('.mat-card-title-text').textContent.trim()).toBe('Disks on MINI-3.0-X (1)');
   });
 });

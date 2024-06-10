@@ -16,7 +16,7 @@ import { getSystemVersion } from 'app/pages/dashboard/widgets/system/common/widg
 import { AppState } from 'app/store';
 import { selectCanFailover, selectIsHaEnabled, selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import {
-  selectIsIxHardware, selectIsEnterprise, selectEnclosureSupport,
+  selectIsIxHardware, selectIsEnterprise, selectHasEnclosureSupport,
 } from 'app/store/system-info/system-info.selectors';
 
 @UntilDestroy()
@@ -36,7 +36,7 @@ export class WidgetSysInfoPassiveComponent {
   isEnterprise = toSignal(this.store$.select(selectIsEnterprise));
   isHaLicensed = toSignal(this.store$.select(selectIsHaLicensed));
   isHaEnabled = toSignal(this.store$.select(selectIsHaEnabled));
-  hasEnclosureSupport = toSignal(this.store$.select(selectEnclosureSupport));
+  hasEnclosureSupport = toSignal(this.store$.select(selectHasEnclosureSupport));
   isUpdateRunning = toSignal(this.store$.select(selectUpdateJobForPassiveNode));
 
   updateAvailable = toSignal(this.resources.updateAvailable$);

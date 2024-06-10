@@ -17,16 +17,15 @@ const columns = createTable<TestTableData>([
   textColumn({
     title: 'Number Field',
     propertyName: 'numberField',
-    sortable: true,
   }),
   textColumn({
     title: 'String Field',
     propertyName: 'stringField',
-    sortable: true,
   }),
   textColumn({
     title: 'Boolean Field',
     propertyName: 'booleanField',
+    disableSorting: true,
   }),
 ], {
   rowTestId: (row) => 'row' + row.numberField.toString(),

@@ -26,6 +26,7 @@ import {
   DatasetEncryptionSummaryQueryParams,
 } from 'app/interfaces/dataset-encryption-summary.interface';
 import { DatasetLockParams, DatasetUnlockParams, DatasetUnlockResult } from 'app/interfaces/dataset-lock.interface';
+import { DiskWipeParams } from 'app/interfaces/disk.interface';
 import { ExportParams } from 'app/interfaces/export-params.interface';
 import { FailoverUpgradeParams } from 'app/interfaces/failover.interface';
 import { FilesystemPutParams, FilesystemSetPermParams } from 'app/interfaces/filesystem-stat.interface';
@@ -47,7 +48,6 @@ import {
   PoolReplaceParams,
   UpdatePool,
 } from 'app/interfaces/pool.interface';
-import { DiskWipeParams } from 'app/interfaces/storage.interface';
 import { SystemDatasetConfig, SystemDatasetUpdate } from 'app/interfaces/system-dataset-config.interface';
 import { SystemSecurityConfig } from 'app/interfaces/system-security-config.interface';
 import { UpdateParams } from 'app/interfaces/system-update.interface';

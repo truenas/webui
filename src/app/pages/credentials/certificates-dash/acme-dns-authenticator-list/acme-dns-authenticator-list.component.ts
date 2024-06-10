@@ -36,12 +36,10 @@ export class AcmeDnsAuthenticatorListComponent implements OnInit {
     textColumn({
       title: this.translate.instant('Name'),
       propertyName: 'name',
-      sortable: true,
     }),
     textColumn({
       title: this.translate.instant('Authenticator'),
       propertyName: 'authenticator',
-      sortable: true,
     }),
     actionsColumn({
       actions: [

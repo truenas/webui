@@ -5,7 +5,7 @@ import { Subject } from 'rxjs';
 import { GiB } from 'app/constants/bytes.constant';
 import { DiskType } from 'app/enums/disk-type.enum';
 import { CreateVdevLayout, VdevType } from 'app/enums/v-dev-type.enum';
-import { UnusedDisk } from 'app/interfaces/storage.interface';
+import { DetailsDisk } from 'app/interfaces/disk.interface';
 import { IxSelectHarness } from 'app/modules/ix-forms/components/ix-select/ix-select.harness';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
@@ -55,7 +55,7 @@ describe('DraidSelectionComponent', () => {
           { type: DiskType.Ssd, size: 20 * GiB, name: 'disk6' },
           { type: DiskType.Ssd, size: 30 * GiB, name: 'disk7' },
           { type: DiskType.Ssd, size: 30 * GiB, name: 'disk8' },
-        ] as UnusedDisk[],
+        ] as DetailsDisk[],
         isStepActive: true,
       },
     });

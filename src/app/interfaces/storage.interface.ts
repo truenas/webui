@@ -1,12 +1,5 @@
-import { DiskBus } from 'app/enums/disk-bus.enum';
-import { DiskPowerLevel } from 'app/enums/disk-power-level.enum';
-import { DiskStandby } from 'app/enums/disk-standby.enum';
-import { DiskType } from 'app/enums/disk-type.enum';
-import { DiskWipeMethod } from 'app/enums/disk-wipe-method.enum';
 import { TopologyItemType } from 'app/enums/v-dev-type.enum';
 import { TopologyItemStatus } from 'app/enums/vdev-status.enum';
-import { Alert } from 'app/interfaces/alert.interface';
-import { SmartTestResult } from 'app/interfaces/smart-test.interface';
 import { ZfsProperty } from './zfs-property.interface';
 
 // As returned by pool.query under topology[<vdevtype>]
@@ -64,102 +57,9 @@ export interface TopologyItemStats {
   draid_parity?: number;
 }
 
-// Is currently part of disk.query but is soon to be deprecated
-// Anticipate enclosure number to be replaced by enclosure id (string)
 export interface EnclosureAndSlot {
-  number: number;
-  slot: number;
-}
-
-export interface EnclosureIdAndSlot {
-  id?: string;
-  number: number;
-  slot: number;
-}
-
-export interface Disk {
-  advpowermgmt: DiskPowerLevel;
-  bus: DiskBus;
-  critical: number;
-  description: string;
-  devname: string;
-  difference: number;
-  duplicate_serial: string[];
-  enclosure: EnclosureIdAndSlot; // TODO: Verify if number or id is included?
-  expiretime: string;
-  hddstandby: DiskStandby;
-  identifier: string;
-  informational: number;
-  lunid?: string;
-  model: string;
-  multipath_member: string;
-  multipath_name: string;
-  name: string;
-  number: number;
-  passwd?: string;
-  pool: string;
-  rotationrate: number;
-  serial: string;
-  size: number;
-  smartoptions: string;
-  subsystem: string;
-  supports_smart?: boolean;
-  togglesmart: boolean;
-  transfermode: string;
-  type: DiskType;
-  zfs_guid: string;
-  tests?: SmartTestResult[];
-}
-
-export interface StorageDashboardDisk extends Disk {
-  alerts: Alert[];
-  smartTestsRunning: number;
-  smartTestsFailed: number;
-  tempAggregates: TemperatureAgg;
-}
-
-/**
- * Additional disk query options
- */
-export interface ExtraDiskQueryOptions {
-  extra?: {
-    /**
-     * Will also include expired disks.
-     */
-    include_expired?: boolean;
-
-    /**
-     * Will not hide KMIP password for the disks.
-     */
-    passwords?: boolean;
-
-    /**
-     * Will join pool name for each disk.
-     */
-    pools?: boolean;
-  };
-}
-
-export interface DiskUpdate {
-  togglesmart?: boolean;
-  advpowermgmt?: DiskPowerLevel;
-  description?: string;
-  hddstandby?: DiskStandby;
-  passwd?: string;
-  smartoptions?: string;
-  critical?: number;
-  difference?: number;
-  informational?: number;
-  enclosure?: EnclosureAndSlot;
-  number?: number;
-  pool?: string;
-}
-
-export interface UnusedDisk extends Disk {
-  partitions: {
-    path: string;
-  }[];
-  exported_zpool: string;
+  drive_bay_number: number;
+  id: string; // Enclosure id.
 }
 
 /**
@@ -222,15 +122,6 @@ export interface ZfsProperties {
   written: ZfsProperty<string>;
   xattr: ZfsProperty<string>;
 }
-
-export type DiskWipeParams = [
-  disk: string,
-  method: DiskWipeMethod,
-];
-
-export type DiskTemperatures = Record<string, number | null>;
-
-export type DiskTemperatureAgg = Record<string, TemperatureAgg>;
 
 export interface TemperatureAgg {
   min: number;
