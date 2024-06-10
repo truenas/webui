@@ -58,17 +58,14 @@ export class CertificateAuthorityListComponent implements OnInit {
     textColumn({
       title: this.translate.instant('Name'),
       propertyName: 'name',
-      sortable: true,
     }),
     textColumn({
       title: this.translate.instant('Date'),
       propertyName: 'from',
-      sortable: true,
     }),
     textColumn({
       title: this.translate.instant('CN'),
       propertyName: 'common',
-      sortable: true,
     }),
     actionsColumn({
       actions: [

@@ -11,8 +11,8 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { DiskType } from 'app/enums/disk-type.enum';
 import { TopologyItemType } from 'app/enums/v-dev-type.enum';
+import { DetailsDisk } from 'app/interfaces/disk.interface';
 import { Enclosure } from 'app/interfaces/enclosure.interface';
-import { UnusedDisk } from 'app/interfaces/storage.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { AddVdevsComponent } from 'app/pages/storage/modules/pool-manager/components/add-vdevs/add-vdevs.component';
@@ -47,87 +47,91 @@ describe('AddVdevsComponent – Add Vdev to existing pool', () => {
       ...commonProviders,
       mockWebSocket([
         mockCall('pool.validate_name', true),
-        mockCall('disk.get_unused', [
-          {
-            devname: 'ada0',
-            size: 10 * GiB,
-            type: DiskType.Hdd,
-            enclosure: {
-              number: 1,
-              slot: 1,
+        mockCall('disk.details', {
+          used: [
+            {
+              devname: 'ada0',
+              size: 10 * GiB,
+              type: DiskType.Hdd,
+              enclosure: {
+                id: 'id1',
+                drive_bay_number: 1,
+              },
+              exported_zpool: 'oldpool',
             },
-            exported_zpool: 'oldpool',
-          },
-          {
-            devname: 'ada2',
-            size: 10 * GiB,
-            type: DiskType.Hdd,
-            enclosure: {
-              number: 1,
-              slot: 2,
+            {
+              devname: 'ada2',
+              size: 10 * GiB,
+              type: DiskType.Hdd,
+              enclosure: {
+                id: 'id1',
+                drive_bay_number: 2,
+              },
+              exported_zpool: 'oldpool',
             },
-            exported_zpool: 'oldpool',
-          },
-          {
-            devname: 'ada3',
-            size: 10 * GiB,
-            type: DiskType.Hdd,
-            enclosure: {
-              number: 1,
-              slot: 3,
+            {
+              devname: 'ada3',
+              size: 10 * GiB,
+              type: DiskType.Hdd,
+              enclosure: {
+                id: 'id1',
+                drive_bay_number: 3,
+              },
+              exported_zpool: 'oldpool',
             },
-            exported_zpool: 'oldpool',
-          },
-          {
-            devname: 'sda0',
-            size: 20 * GiB,
-            type: DiskType.Hdd,
-          },
-          {
-            devname: 'sda1',
-            size: 20 * GiB,
-            type: DiskType.Hdd,
-          },
-          {
-            devname: 'sda2',
-            size: 20 * GiB,
-            type: DiskType.Hdd,
-          },
-          {
-            devname: 'sda3',
-            size: 20 * GiB,
-            type: DiskType.Hdd,
-            enclosure: {
-              number: 2,
-              slot: 0,
+            {
+              devname: 'sda4',
+              size: 10 * GiB,
+              type: DiskType.Hdd,
+              enclosure: {
+                id: 'id3',
+                drive_bay_number: 1,
+              },
+              exported_zpool: 'anotherpool',
             },
-          },
-          {
-            devname: 'sda4',
-            size: 10 * GiB,
-            type: DiskType.Hdd,
-            enclosure: {
-              number: 3,
-              slot: 1,
+            {
+              devname: 'sda3',
+              size: 20 * GiB,
+              type: DiskType.Hdd,
+              enclosure: {
+                id: 'id2',
+                drive_bay_number: 0,
+              },
             },
-            exported_zpool: 'anotherpool',
-          },
-          {
-            devname: 'sda5',
-            size: 20 * GiB,
-            type: DiskType.Hdd,
-          },
-          {
-            devname: 'sda6',
-            size: 20 * GiB,
-            type: DiskType.Hdd,
-          },
-          {
-            devname: 'sda7',
-            size: 20 * GiB,
-            type: DiskType.Hdd,
-          },
-        ] as UnusedDisk[]),
+          ] as DetailsDisk[],
+          unused: [
+            {
+              devname: 'sda0',
+              size: 20 * GiB,
+              type: DiskType.Hdd,
+            },
+            {
+              devname: 'sda1',
+              size: 20 * GiB,
+              type: DiskType.Hdd,
+            },
+            {
+              devname: 'sda2',
+              size: 20 * GiB,
+              type: DiskType.Hdd,
+            },
+            {
+              devname: 'sda5',
+              size: 20 * GiB,
+              type: DiskType.Hdd,
+            },
+            {
+              devname: 'sda6',
+              size: 20 * GiB,
+              type: DiskType.Hdd,
+            },
+            {
+              devname: 'sda7',
+              size: 20 * GiB,
+              type: DiskType.Hdd,
+            },
+          ] as DetailsDisk[],
+        }),
         mockCall('enclosure2.query', [] as Enclosure[]),
         mockCall('pool.query', []),
         mockCall('pool.dataset.encryption_algorithm_choices', {}),

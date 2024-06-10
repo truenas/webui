@@ -1,4 +1,4 @@
-import { UnusedDisk } from 'app/interfaces/storage.interface';
+import { DetailsDisk } from 'app/interfaces/disk.interface';
 import {
   filterAllowedDisks,
   hasExportedPool,
@@ -7,30 +7,30 @@ import {
 
 describe('hasNonUniqueSerial', () => {
   it('return true if disk has duplicate serial', () => {
-    expect(hasNonUniqueSerial({ duplicate_serial: ['duplicate'] } as UnusedDisk)).toBe(true);
+    expect(hasNonUniqueSerial({ duplicate_serial: ['duplicate'] } as DetailsDisk)).toBe(true);
   });
 
   it('return false if disk does not have a duplicate serial', () => {
-    expect(hasNonUniqueSerial({ duplicate_serial: [] } as UnusedDisk)).toBe(false);
+    expect(hasNonUniqueSerial({ duplicate_serial: [] } as DetailsDisk)).toBe(false);
   });
 });
 
 describe('hasExportedPool', () => {
   it('returns true if disk has exported pool', () => {
-    expect(hasExportedPool({ exported_zpool: 'exported' } as UnusedDisk)).toBe(true);
+    expect(hasExportedPool({ exported_zpool: 'exported' } as DetailsDisk)).toBe(true);
   });
 
   it('returns false if disk has no exported pool', () => {
-    expect(hasExportedPool({ exported_zpool: null } as UnusedDisk)).toBe(false);
+    expect(hasExportedPool({ exported_zpool: null } as DetailsDisk)).toBe(false);
   });
 });
 
 describe('filterAllowedDisks', () => {
-  const normalDisk = { duplicate_serial: [] } as UnusedDisk;
-  const nonUniqueSerialDisk = { duplicate_serial: ['duplicate'] } as UnusedDisk;
-  const exportedPoolDisk = { duplicate_serial: [], exported_zpool: 'exported' } as UnusedDisk;
-  const anotherExportedPoolDisk = { duplicate_serial: [], exported_zpool: 'another' } as UnusedDisk;
-  const enclosureDisk = { duplicate_serial: [], enclosure: { number: 1 } } as UnusedDisk;
+  const normalDisk = { duplicate_serial: [] } as DetailsDisk;
+  const nonUniqueSerialDisk = { duplicate_serial: ['duplicate'] } as DetailsDisk;
+  const exportedPoolDisk = { duplicate_serial: [], exported_zpool: 'exported' } as DetailsDisk;
+  const anotherExportedPoolDisk = { duplicate_serial: [], exported_zpool: 'another' } as DetailsDisk;
+  const enclosureDisk = { duplicate_serial: [], enclosure: { id: 'id1' } } as DetailsDisk;
 
   const disks = [
     normalDisk,
@@ -38,7 +38,7 @@ describe('filterAllowedDisks', () => {
     exportedPoolDisk,
     anotherExportedPoolDisk,
     enclosureDisk,
-  ] as UnusedDisk[];
+  ] as DetailsDisk[];
 
   it('filters disks with non-unique serials when allowNonUniqueSerialDisks is false', () => {
     const filteredDisks = filterAllowedDisks(disks, {
@@ -74,7 +74,7 @@ describe('filterAllowedDisks', () => {
     const filteredDisks = filterAllowedDisks(disks, {
       allowNonUniqueSerialDisks: true,
       allowExportedPools: ['exported', 'another'],
-      limitToSingleEnclosure: 1,
+      limitToSingleEnclosure: 'id1',
     });
 
     expect(filteredDisks).toEqual([enclosureDisk]);

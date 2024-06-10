@@ -186,7 +186,6 @@ export class MockEnclosure {
   }
 
   enclosureInit(): void {
-    this.data.number = this.enclosureNumber;
     this.resetSlotsToEmpty();
   }
 

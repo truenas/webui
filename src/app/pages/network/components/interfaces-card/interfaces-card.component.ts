@@ -60,7 +60,6 @@ export class InterfacesCardComponent implements OnInit, OnChanges {
 
   columns = createTable<NetworkInterface>([
     textColumn({
-      // In-out column
       propertyName: 'state',
     }),
     textColumn({
@@ -70,6 +69,7 @@ export class InterfacesCardComponent implements OnInit, OnChanges {
     {
       type: IpAddressesCellComponent,
       title: this.translate.instant('IP Addresses'),
+      sortBy: (row) => row.aliases.map((alias) => alias.address).join(', '),
     },
     actionsColumn({
       actions: [

@@ -10,11 +10,18 @@ describe('EnclosureWrapperComponent', () => {
   });
 
   beforeEach(() => {
-    spectator = createHost('<ix-enclosure-wrapper [enclosure]="1">Test</ix-enclosure-wrapper>');
+    spectator = createHost('<ix-enclosure-wrapper [enclosure]="enclosure">Test</ix-enclosure-wrapper>', {
+      hostProps: {
+        enclosure: {
+          number: 1,
+          label: 'M40',
+        },
+      },
+    });
   });
 
-  it('shows enclosure number and content', () => {
-    expect(spectator.query('.enclosure-container')).toHaveText('1');
+  it('shows enclosure label', () => {
+    expect(spectator.query('.enclosure-container')).toHaveText('M40');
     expect(spectator.query('.content-container')).toHaveText('Test');
   });
 });

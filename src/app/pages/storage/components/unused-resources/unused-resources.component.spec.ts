@@ -2,8 +2,8 @@ import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { MockWebSocketService } from 'app/core/testing/classes/mock-websocket.service';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { DetailsDisk } from 'app/interfaces/disk.interface';
 import { Pool } from 'app/interfaces/pool.interface';
-import { UnusedDisk } from 'app/interfaces/storage.interface';
 import { UnusedDiskCardComponent } from 'app/pages/storage/components/unused-resources/unused-disk-card/unused-disk-card.component';
 import { UnusedResourcesComponent } from './unused-resources.component';
 
@@ -18,7 +18,7 @@ describe('UnusedResourcesComponent', () => {
         mockCall('disk.get_unused', [
           { devname: 'sdb', identifier: '{serial_lunid}BBBBB1' },
           { devname: 'sdc', identifier: '{uuid}7ad07324-f0e9-49a4-a7a4-92edd82a4929' },
-        ] as UnusedDisk[]),
+        ] as DetailsDisk[]),
       ]),
     ],
     declarations: [

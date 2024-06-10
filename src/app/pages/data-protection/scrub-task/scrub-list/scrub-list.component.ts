@@ -64,7 +64,6 @@ export class ScrubListComponent implements OnInit {
     textColumn({
       title: this.translate.instant('Frequency'),
       propertyName: 'schedule',
-      sortable: false,
       getValue: (task) => this.crontabExplanation.transform(scheduleToCrontab(task.schedule)),
     }),
     relativeDateColumn({

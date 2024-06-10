@@ -5,8 +5,9 @@ import { PoolStatus } from 'app/enums/pool-status.enum';
 import { TopologyItemType } from 'app/enums/v-dev-type.enum';
 import { TopologyItemStatus } from 'app/enums/vdev-status.enum';
 import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
+import { Disk } from 'app/interfaces/disk.interface';
 import {
-  Disk, TopologyDisk, TopologyItem,
+  TopologyDisk, TopologyItem,
 } from 'app/interfaces/storage.interface';
 
 @UntilDestroy()

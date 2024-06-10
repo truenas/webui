@@ -26,7 +26,7 @@ import { selectIsHaLicensed, selectIsHaEnabled } from 'app/store/ha-info/ha-info
 import {
   selectIsIxHardware, selectProductType,
   selectIsEnterprise,
-  selectEnclosureSupport,
+  selectHasEnclosureSupport,
 } from 'app/store/system-info/system-info.selectors';
 
 describe('WidgetSysInfoActiveComponent', () => {
@@ -90,7 +90,7 @@ describe('WidgetSysInfoActiveComponent', () => {
             value: true,
           },
           {
-            selector: selectEnclosureSupport,
+            selector: selectHasEnclosureSupport,
             value: true,
           },
           {

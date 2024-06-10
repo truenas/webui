@@ -14,7 +14,7 @@ import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import {
   selectIsIxHardware,
   selectIsEnterprise,
-  selectEnclosureSupport,
+  selectHasEnclosureSupport,
 } from 'app/store/system-info/system-info.selectors';
 
 describe('WidgetSystemImageComponent', () => {
@@ -45,7 +45,7 @@ describe('WidgetSystemImageComponent', () => {
             value: true,
           },
           {
-            selector: selectEnclosureSupport,
+            selector: selectHasEnclosureSupport,
             value: true,
           },
           {

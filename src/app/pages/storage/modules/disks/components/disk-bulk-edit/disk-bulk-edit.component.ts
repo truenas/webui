@@ -9,7 +9,7 @@ import { JobState } from 'app/enums/job-state.enum';
 import { Role } from 'app/enums/role.enum';
 import { translateOptions } from 'app/helpers/translate.helper';
 import { helptextDisks } from 'app/helptext/storage/disks/disks';
-import { Disk, DiskUpdate } from 'app/interfaces/storage.interface';
+import { Disk, DiskUpdate } from 'app/interfaces/disk.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';

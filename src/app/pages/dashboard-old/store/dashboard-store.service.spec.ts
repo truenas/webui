@@ -14,7 +14,7 @@ import { ResourcesUsageStore } from 'app/pages/dashboard-old/store/resources-usa
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import { PreferencesState } from 'app/store/preferences/preferences.reducer';
 import { selectPreferencesState } from 'app/store/preferences/preferences.selectors';
-import { selectSystemInfo, selectSystemFeatures } from 'app/store/system-info/system-info.selectors';
+import { selectHasEnclosureSupport, selectSystemInfo } from 'app/store/system-info/system-info.selectors';
 
 const mockDatasets = [
   {
@@ -57,10 +57,8 @@ describe('DashboardStoreService', () => {
             } as SystemInfo,
           },
           {
-            selector: selectSystemFeatures,
-            value: {
-              enclosure: true,
-            },
+            selector: selectHasEnclosureSupport,
+            value: true,
           },
           {
             selector: selectIsHaLicensed,

@@ -37,6 +37,7 @@
 
   .slot {
     height: 100%;
+    overflow: auto;
 
     ::ng-deep mat-card {
       margin: 0;
