@@ -27,7 +27,7 @@ export function filterTableColumns<T>(filter: TableFilter<T>): T[] {
   const filterString = query.toLowerCase();
   return list.filter((item) => {
     return columnKeys.some((columnKey) => {
-      let value = get(item, columnKey) as unknown;
+      let value = get(item, columnKey) as string | undefined;
       if (preprocessMap?.[columnKey]) {
         value = preprocessMap[columnKey]?.(value as T[keyof T]);
       }
