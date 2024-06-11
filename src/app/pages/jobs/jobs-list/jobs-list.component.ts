@@ -131,13 +131,8 @@ export class JobsListComponent implements OnInit {
 
   protected onListFiltered(query: string): void {
     this.filterString = query;
-    this.dataProvider.setRows(this.jobs.filter(this.filterSnapshot));
+    this.dataProvider.setFilter({ list: this.jobs, query, columnKeys: ['method', 'description'] });
   }
-
-  private filterSnapshot = (job: Job): boolean => {
-    return job.method?.toLowerCase().includes(this.filterString)
-      || job.description?.toLowerCase().includes(this.filterString);
-  };
 
   private setDefaultSort(): void {
     this.dataProvider.setSorting({

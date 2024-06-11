@@ -119,10 +119,13 @@ export class InitiatorListComponent implements OnInit {
 
   onListFiltered(query: string): void {
     this.filterString = query.toLowerCase();
-    this.dataProvider.setRows(this.initiators.filter((entry) => {
-      return entry.comment.toLowerCase().includes(this.filterString)
-        || entry.initiators.join(' ').includes(this.filterString);
-    }));
+    this.dataProvider.setFilter({
+      query,
+      columnKeys: ['comment', 'initiators'],
+      preprocessMap: {
+        initiators: (initiators: string[]) => initiators.join(' '),
+      },
+    });
   }
 
   columnsChange(columns: typeof this.columns): void {

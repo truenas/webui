@@ -61,12 +61,12 @@ export class BootEnvironmentListComponent implements OnInit {
       onRowCheck: (row, checked) => {
         this.bootenvs.find((bootenv) => row.id === bootenv.id).selected = checked;
         this.dataProvider.setRows([]);
-        this.dataProvider.setRows(this.bootenvs.filter(this.filterBootenv));
+        this.onListFiltered(this.filterString);
       },
       onColumnCheck: (checked) => {
         this.bootenvs.forEach((bootenv) => bootenv.selected = checked);
         this.dataProvider.setRows([]);
-        this.dataProvider.setRows(this.bootenvs.filter(this.filterBootenv));
+        this.onListFiltered(this.filterString);
       },
       cssClass: 'checkboxs-column',
     }),
@@ -154,7 +154,7 @@ export class BootEnvironmentListComponent implements OnInit {
   });
 
   get selectedBootenvs(): BootenvUi[] {
-    return this.bootenvs.filter(this.filterBootenv).filter((bootenv) => bootenv.selected);
+    return this.bootenvs.filter((bootenv) => bootenv.selected);
   }
 
   get selectionHasItems(): boolean {
@@ -184,14 +184,14 @@ export class BootEnvironmentListComponent implements OnInit {
           ...bootenv,
           selected: false,
         }));
-        return this.bootenvs.filter(this.filterBootenv);
+        return this.bootenvs;
       }),
     );
     this.dataProvider = new AsyncDataProvider(request$);
     this.refresh();
     this.setDefaultSort();
     this.dataProvider.emptyType$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.filterUpdated(this.filterString);
+      this.onListFiltered(this.filterString);
     });
   }
 
@@ -302,14 +302,10 @@ export class BootEnvironmentListComponent implements OnInit {
     }
   }
 
-  protected filterUpdated(query: string): void {
+  protected onListFiltered(query: string): void {
     this.filterString = query;
-    this.dataProvider.setRows(this.bootenvs.filter(this.filterBootenv));
+    this.dataProvider.setFilter({ list: this.bootenvs, query, columnKeys: ['name'] });
   }
-
-  private filterBootenv = (bootenv: BootenvUi): boolean => {
-    return bootenv.name.toLowerCase().includes(this.filterString.toLowerCase());
-  };
 
   private setDefaultSort(): void {
     this.dataProvider.setSorting({

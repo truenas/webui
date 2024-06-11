@@ -61,7 +61,7 @@ describe('AsyncDataProvider', () => {
     const dataProvider = new AsyncDataProvider<TestTableData>(request$);
     dataProvider.load();
 
-    dataProvider.setFilter({ query: 'c', columns: ['stringField'] });
+    dataProvider.setFilter({ query: 'c', columnKeys: ['stringField'] });
     expect(dataProvider.totalRows).toBe(1);
     expect(
       await firstValueFrom(dataProvider.currentPage$),
