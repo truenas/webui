@@ -133,8 +133,9 @@ export class ReportingExporterListComponent implements OnInit {
   }
 
   onListFiltered(query: string): void {
-    this.filterString = query.toLowerCase();
-    const filteredExporters = this.exporters.filter((exporter) => JSON.stringify(exporter).includes(query));
+    this.filterString = query;
+    const filteredExporters = this.exporters
+      .filter((exporter) => JSON.stringify(exporter).includes(query.toLowerCase()));
     this.dataProvider.setRows(filteredExporters);
     this.cdr.markForCheck();
   }

@@ -81,7 +81,7 @@ export class SmbLockListComponent implements OnInit {
       return [
         lock.filename,
         lock.service_path,
-      ].some((value) => value.toString().toLowerCase().includes(this.filterString));
+      ].some((value) => value.toString().toLowerCase().includes(this.filterString.toLowerCase()));
     }));
   }
 

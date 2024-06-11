@@ -149,7 +149,7 @@ export class NfsSessionListComponent implements OnInit {
   }
 
   onListFiltered(query: string): void {
-    this.filterString = query?.toString()?.toLowerCase();
+    this.filterString = query?.toString();
 
     if (this.activeNfsType === NfsType.Nfs3) {
       this.filterNfs3Data();
@@ -174,7 +174,7 @@ export class NfsSessionListComponent implements OnInit {
       return [
         session.export,
         session.ip,
-      ].some((value) => value.toString().toLowerCase().includes(this.filterString));
+      ].some((value) => value.toString().toLowerCase().includes(this.filterString.toLowerCase()));
     }));
   }
 
@@ -186,7 +186,7 @@ export class NfsSessionListComponent implements OnInit {
         session.address,
         session.status,
         session['seconds from last renew'],
-      ].some((value) => value.toString().toLowerCase().includes(this.filterString));
+      ].some((value) => value.toString().toLowerCase().includes(this.filterString.toLowerCase()));
     }));
   }
 }

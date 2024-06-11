@@ -175,9 +175,9 @@ export class CronListComponent implements OnInit {
   }
 
   onListFiltered(query: string): void {
-    this.filterString = query.toLowerCase();
+    this.filterString = query;
     this.dataProvider.setRows(this.cronjobs.filter((cronjob) => {
-      return [cronjob.user.toString()].includes(this.filterString);
+      return [cronjob.user.toLowerCase().toString()].includes(this.filterString.toLowerCase());
     }));
   }
 

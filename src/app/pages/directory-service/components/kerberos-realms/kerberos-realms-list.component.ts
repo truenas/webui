@@ -149,9 +149,9 @@ export class KerberosRealmsListComponent implements OnInit {
   }
 
   onListFiltered(query: string): void {
-    this.filterString = query.toLowerCase();
+    this.filterString = query;
     this.dataProvider.setRows(this.kerberosRealsm.filter((idmap) => {
-      return _.find(idmap, query);
+      return _.find(idmap, query.toLowerCase());
     }));
   }
 }

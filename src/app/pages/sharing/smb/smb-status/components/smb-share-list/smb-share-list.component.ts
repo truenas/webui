@@ -76,7 +76,7 @@ export class SmbShareListComponent implements OnInit {
         share.service,
         share.machine,
         share.connected_at,
-      ].some((value) => value.toString().toLowerCase().includes(this.filterString));
+      ].some((value) => value.toString().toLowerCase().includes(this.filterString.toLowerCase()));
     }));
   }
 

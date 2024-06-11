@@ -248,8 +248,8 @@ export class RsyncTaskListComponent implements OnInit {
   }
 
   private filterTask = (task: RsyncTask): boolean => {
-    return task.remotehost?.includes(this.filterString)
-      || task.path.includes(this.filterString)
-      || task.desc.includes(this.filterString);
+    return task.remotehost?.toLowerCase()?.includes(this.filterString.toLowerCase())
+      || task.path.toLowerCase()?.includes(this.filterString.toLowerCase())
+      || task.desc.toLowerCase()?.includes(this.filterString.toLowerCase());
   };
 }

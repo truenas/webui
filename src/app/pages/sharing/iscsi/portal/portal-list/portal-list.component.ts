@@ -135,9 +135,9 @@ export class PortalListComponent implements OnInit {
   }
 
   onListFiltered(query: string): void {
-    this.filterString = query.toLowerCase();
+    this.filterString = query;
     this.dataProvider.setRows(this.portals.filter((entry) => {
-      return [entry.comment, entry.discovery_authmethod].includes(this.filterString);
+      return [entry.comment, entry.discovery_authmethod].includes(this.filterString.toLowerCase());
     }));
   }
 

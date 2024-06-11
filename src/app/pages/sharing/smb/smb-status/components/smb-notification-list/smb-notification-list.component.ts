@@ -66,7 +66,7 @@ export class SmbNotificationListComponent implements OnInit {
         notification.filter,
         notification.subdir_filter,
         notification.creation_time,
-      ].some((value) => value.toString().toLowerCase().includes(this.filterString));
+      ].some((value) => value.toString().toLowerCase().includes(this.filterString.toLowerCase()));
     }));
   }
 

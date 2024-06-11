@@ -84,7 +84,7 @@ export class SmbSessionListComponent implements OnInit {
         session.uid,
         session.gid,
         session.session_dialect,
-      ].some((value) => value.toString().toLowerCase().includes(this.filterString));
+      ].some((value) => value.toString().toLowerCase().includes(this.filterString.toLowerCase()));
     }));
   }
 
