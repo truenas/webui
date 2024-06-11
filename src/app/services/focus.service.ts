@@ -38,6 +38,8 @@ export class FocusService {
     }
 
     focusFirstFocusableElement(element: HTMLElement): void {
+      if (!element) return;
+
       const focusableSelectors = [
         'a[href]', 'area[href]', 'input:not([disabled]):not([type="hidden"])',
         'select:not([disabled])', 'textarea:not([disabled])',
