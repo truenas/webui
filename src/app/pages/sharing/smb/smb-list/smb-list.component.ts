@@ -206,7 +206,7 @@ export class SmbListComponent implements OnInit {
     this.filterString = query.toLowerCase();
     this.dataProvider.setFilter({
       query,
-      columnKeys: Object.keys(this.smbShares[0]) as (keyof SmbShare)[],
+      columnKeys: !this.smbShares.length ? [] : Object.keys(this.smbShares[0]) as (keyof SmbShare)[],
     });
     this.cdr.markForCheck();
   }

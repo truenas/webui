@@ -138,7 +138,7 @@ export class ReportingExporterListComponent implements OnInit {
     this.dataProvider.setFilter({
       list: this.exporters,
       query,
-      columnKeys: Object.keys(this.exporters[0]) as (keyof ReportingExporter)[],
+      columnKeys: !this.exporters.length ? [] : Object.keys(this.exporters[0]) as (keyof ReportingExporter)[],
     });
     this.cdr.markForCheck();
   }

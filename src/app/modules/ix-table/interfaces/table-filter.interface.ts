@@ -2,5 +2,7 @@ export interface TableFilter<T> {
   query: string;
   columnKeys: (keyof T)[];
   list?: T[];
-  preprocessMap?: Partial<Record<keyof T, (value: T[keyof T]) => string>>;
+  preprocessMap?: {
+    [K in keyof T]?: (value: T[K]) => string;
+  };
 }

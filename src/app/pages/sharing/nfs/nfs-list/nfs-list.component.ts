@@ -169,7 +169,7 @@ export class NfsListComponent implements OnInit {
     this.filterString = query.toLowerCase();
     this.dataProvider.setFilter({
       query,
-      columnKeys: Object.keys(this.nfsShares[0]) as (keyof NfsShare)[],
+      columnKeys: !this.nfsShares.length ? [] : Object.keys(this.nfsShares[0]) as (keyof NfsShare)[],
     });
     this.cdr.markForCheck();
   }

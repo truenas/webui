@@ -132,7 +132,9 @@ export class SmartTestResultListComponent implements OnInit {
     this.filterString = query.toLowerCase();
     this.dataProvider.setFilter({
       query,
-      columnKeys: Object.keys(this.smartTestResults[0]) as (keyof SmartTestResultsRow)[],
+      columnKeys: !this.smartTestResults.length
+        ? []
+        : Object.keys(this.smartTestResults[0]) as (keyof SmartTestResultsRow)[],
     });
   }
 
