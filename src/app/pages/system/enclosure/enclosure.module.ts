@@ -36,6 +36,7 @@ import { DisksOverviewComponent } from 'app/pages/system/enclosure/components/vi
 import { IxEnclosureSelectorComponent } from 'app/pages/system/enclosure/components/views/enclosure-view/enclosure-selector/enclosure-selector.component';
 import { EnclosureViewComponent } from 'app/pages/system/enclosure/components/views/enclosure-view/enclosure-view.component';
 import { DiskTopologyDescriptionComponent } from 'app/pages/system/enclosure/components/views/enclosure-view/enclosures/disk-topology-description/disk-topology-description.component';
+import { EnclosureViewDirective } from 'app/pages/system/enclosure/components/views/enclosure-view/enclosures/enclosure-view/enclosure-view.directive';
 import { M50EnclosureComponent } from 'app/pages/system/enclosure/components/views/enclosure-view/enclosures/m50-enclosure/m50-enclosure.component';
 import { M50FrontViewComponent } from 'app/pages/system/enclosure/components/views/enclosure-view/enclosures/m50-enclosure/m50-front-view/m50-front-view.component';
 import { SasExpanderStatusViewComponent } from 'app/pages/system/enclosure/components/views/enclosure-view/enclosures/sas-expander-status-view/sas-expander-status-view.component';
@@ -75,6 +76,7 @@ import { EnclosureStore } from 'app/pages/system/enclosure/services/enclosure.st
     EnclosureViewComponent,
     M50FrontViewComponent,
     M50EnclosureComponent,
+    EnclosureViewDirective,
     JbofListComponent,
     SasExpanderStatusViewComponent,
     JbofFormComponent,
