@@ -2,7 +2,7 @@ import { Observable } from 'rxjs';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { BaseDataProvider } from 'app/modules/ix-table/classes/base-data-provider';
 import { TableFilter } from 'app/modules/ix-table/interfaces/table-filter.interface';
-import { filterTableColumns } from 'app/modules/ix-table/utils';
+import { filterTableRows } from 'app/modules/ix-table/utils';
 
 export class AsyncDataProvider<T> extends BaseDataProvider<T> {
   private loadedRows: T[] = [];
@@ -31,10 +31,7 @@ export class AsyncDataProvider<T> extends BaseDataProvider<T> {
   }
 
   override setFilter(filter: TableFilter<T>): void {
-    const filteredRows = filterTableColumns({
-      ...filter,
-      list: filter.list || this.loadedRows,
-    });
+    const filteredRows = filterTableRows({ ...filter, list: filter.list || this.loadedRows });
     this.totalRows = filteredRows.length;
     this.setRows(filteredRows);
   }

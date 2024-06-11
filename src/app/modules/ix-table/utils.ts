@@ -19,7 +19,7 @@ export function createTable<T>(
   return columns.map((column) => ({ ...column, rowTestId: (row) => convertStringToId(config.rowTestId(row)) }));
 }
 
-export function filterTableColumns<T>(filter: TableFilter<T>): T[] {
+export function filterTableRows<T>(filter: TableFilter<T>): T[] {
   const {
     list = [], query = '', columnKeys = [], preprocessMap,
   } = filter;
