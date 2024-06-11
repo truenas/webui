@@ -124,9 +124,9 @@ export class PrivilegeListComponent implements OnInit {
   }
 
   onListFiltered(query: string): void {
-    const filterString = query.toLowerCase();
+    const filterString = query;
     this.dataProvider.setRows(this.privileges.filter((privileges) => {
-      return privileges.name.toLowerCase().includes(filterString);
+      return privileges.name.toLowerCase().includes(filterString.toLowerCase());
     }));
   }
 

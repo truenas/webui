@@ -164,9 +164,9 @@ export class NfsListComponent implements OnInit {
   }
 
   onListFiltered(query: string): void {
-    this.filterString = query.toLowerCase();
+    this.filterString = query;
     const filteredExporters = this.nfsShares.filter((share) => {
-      return JSON.stringify(share).includes(query);
+      return JSON.stringify(share).includes(query.toLowerCase());
     });
     this.dataProvider.setRows(filteredExporters);
     this.cdr.markForCheck();

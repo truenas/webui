@@ -106,11 +106,11 @@ export class CatalogsComponent implements OnInit {
   }
 
   onListFiltered(query: string): void {
-    const filterString = query.toLowerCase();
+    const filterString = query;
     this.dataProvider.setRows(this.catalogs.filter((catalog) => {
-      return catalog.label.toLowerCase().includes(filterString)
-        || catalog.id.toLowerCase().includes(filterString)
-        || catalog.repository.toString().includes(filterString);
+      return catalog.label.toLowerCase().includes(filterString.toLowerCase())
+        || catalog.id.toLowerCase().includes(filterString.toLowerCase())
+        || catalog.repository.toString().includes(filterString.toLowerCase());
     }));
   }
 

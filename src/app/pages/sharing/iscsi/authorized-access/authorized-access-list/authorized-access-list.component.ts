@@ -118,9 +118,9 @@ export class AuthorizedAccessListComponent implements OnInit {
   }
 
   onListFiltered(query: string): void {
-    this.filterString = query.toLowerCase();
+    this.filterString = query;
     this.dataProvider.setRows(this.authAccess.filter((entry) => {
-      return [entry.peeruser, entry.tag, entry.user].includes(this.filterString);
+      return [entry.peeruser, entry.tag, entry.user].includes(this.filterString.toLowerCase());
     }));
   }
 

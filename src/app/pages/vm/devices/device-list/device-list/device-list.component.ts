@@ -142,11 +142,11 @@ export class DeviceListComponent implements OnInit {
   }
 
   onListFiltered(query: string): void {
-    this.filterString = query.toLowerCase();
+    this.filterString = query;
     this.dataProvider.setRows(this.devices.filter((device) => {
       const deviceTypeLabel = this.getDeviceTypeLabel(device);
-      return String(device.id).includes(this.filterString)
-        || deviceTypeLabel.toLowerCase().includes(this.filterString);
+      return String(device.id).includes(this.filterString.toLowerCase())
+        || deviceTypeLabel.toLowerCase().includes(this.filterString.toLowerCase());
     }));
     this.cdr.markForCheck();
   }
