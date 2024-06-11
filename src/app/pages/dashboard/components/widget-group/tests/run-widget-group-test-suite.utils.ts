@@ -1,5 +1,6 @@
 import { Type } from '@angular/core';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
+import { provideMockStore } from '@ngrx/store/testing';
 import { MockComponents } from 'ng-mocks';
 import { WidgetErrorComponent } from 'app/pages/dashboard/components/widget-error/widget-error.component';
 import { WidgetGroupComponent } from 'app/pages/dashboard/components/widget-group/widget-group.component';
@@ -10,6 +11,7 @@ import { WidgetHostnameComponent } from 'app/pages/dashboard/widgets/network/wid
 import {
   WidgetInterfaceIpComponent,
 } from 'app/pages/dashboard/widgets/network/widget-interface-ip/widget-interface-ip.component';
+import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 
 export function runWidgetGroupTestSuite<T extends WidgetGroupComponent>(component: Type<T>): void {
   describe(component.name, () => {
@@ -23,6 +25,16 @@ export function runWidgetGroupTestSuite<T extends WidgetGroupComponent>(componen
           WidgetHelpComponent,
           WidgetErrorComponent,
         ),
+      ],
+      providers: [
+        provideMockStore({
+          selectors: [
+            {
+              selector: selectIsHaLicensed,
+              value: true,
+            },
+          ],
+        }),
       ],
     });
 
