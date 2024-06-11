@@ -95,6 +95,14 @@ import {
 import { Device } from 'app/interfaces/device.interface';
 import { DirectoryServicesState } from 'app/interfaces/directory-services-state.interface';
 import {
+  Disk, DiskDetailsResponse,
+  DiskTemperatureAgg,
+  DiskTemperatures,
+  DiskUpdate,
+  ExtraDiskQueryOptions,
+  DetailsDisk, DiskDetailsParams,
+} from 'app/interfaces/disk.interface';
+import {
   AuthenticatorSchema,
   CreateDnsAuthenticator,
   DnsAuthenticator, UpdateDnsAuthenticator,
@@ -219,9 +227,6 @@ import {
   SshSemiAutomaticSetup,
 } from 'app/interfaces/ssh-connection-setup.interface';
 import { StaticRoute, UpdateStaticRoute } from 'app/interfaces/static-route.interface';
-import {
-  Disk, ExtraDiskQueryOptions, DiskTemperatures, DiskTemperatureAgg, DiskUpdate, UnusedDisk,
-} from 'app/interfaces/storage.interface';
 import { SystemGeneralConfig, SystemGeneralConfigUpdate } from 'app/interfaces/system-config.interface';
 import { SystemDatasetConfig } from 'app/interfaces/system-dataset-config.interface';
 import { SystemInfo } from 'app/interfaces/system-info.interface';
@@ -432,7 +437,8 @@ export interface ApiCallDirectory {
   'directoryservices.get_state': { params: void; response: DirectoryServicesState };
 
   // Disk
-  'disk.get_unused': { params: [joinPartitions?: boolean]; response: UnusedDisk[] };
+  'disk.details': { params: [params: DiskDetailsParams]; response: DiskDetailsResponse };
+  'disk.get_unused': { params: [joinPartitions?: boolean]; response: DetailsDisk[] };
   'disk.query': { params: QueryParams<Disk, ExtraDiskQueryOptions>; response: Disk[] };
   'disk.temperature_agg': { params: [disks: string[], days: number]; response: DiskTemperatureAgg };
   'disk.temperature_alerts': { params: [disks: string[]]; response: Alert[] };
@@ -894,6 +900,7 @@ export interface ApiCallDirectory {
   'vmware.update': { params: [id: number, update: VmwareSnapshotUpdate]; response: VmwareSnapshot };
 
   // WebUI main
+  // TODO: Incorrect response definition here or for system.info.
   'webui.main.dashboard.sys_info': { params: void; response: SystemInfo };
 
   // WebUI Crypto

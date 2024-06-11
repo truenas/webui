@@ -149,7 +149,7 @@ describe('DatasetCapacityManagementCardComponent', () => {
 
     it('shows header', () => {
       expect(spectator.query('mat-card-header h3')).toHaveText('Zvol Space Management');
-      expect(spectator.query('mat-card-header button')).toHaveText('Edit');
+      expect(spectator.query('mat-card-header button')).not.toExist();
     });
 
     it('shows SpaceManagementChartComponent', () => {
@@ -165,28 +165,23 @@ describe('DatasetCapacityManagementCardComponent', () => {
       expect(chartExtra[1].querySelector('.value')).toHaveText('2 KiB');
     });
 
-    it('shows details block', () => {
+    it('shows only space details block and not quotas', () => {
       const details = spectator.queryAll('.details');
-      expect(details).toHaveLength(2);
+      expect(details).toHaveLength(1);
 
-      let items = details[0].querySelectorAll('.details-item');
+      const items = details[0].querySelectorAll('.details-item');
       expect(items).toHaveLength(2);
       expect(items[0].querySelector('.label')).toHaveText('Space Available to Zvol:');
       expect(items[0].querySelector('.value')).toHaveText('2.6 GiB');
       expect(items[1].querySelector('.label')).toHaveText('Inherited Quotas:');
       expect(items[1].querySelector('.value')).toHaveText('16 MiB');
-
-      items = details[1].querySelectorAll('.details-item');
-      expect(items).toHaveLength(2);
-      expect(items[0]).toHaveText('User Quotas: None');
-      expect(items[1]).toHaveText('Group Quotas: None');
     });
   });
 
   beforeEach(() => {
     spectator = createComponent({
       props: {
-        dataset: datasetZvol,
+        dataset: datasetFilesystem,
       },
     });
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
@@ -197,6 +192,6 @@ describe('DatasetCapacityManagementCardComponent', () => {
     await editButton.click();
 
     expect(spectator.inject(IxSlideInService).open)
-      .toHaveBeenCalledWith(DatasetCapacitySettingsComponent, { data: datasetZvol, wide: true });
+      .toHaveBeenCalledWith(DatasetCapacitySettingsComponent, { data: datasetFilesystem, wide: true });
   });
 });

@@ -86,45 +86,37 @@ export class SnapshotListComponent implements OnInit {
       onRowCheck: (row, checked) => {
         this.snapshots.find((snapshot) => row.name === snapshot.name).selected = checked;
         this.dataProvider.setRows([]);
-        this.dataProvider.setRows(this.snapshots.filter(this.filterSnapshot));
+        this.onListFiltered(this.filterString);
       },
       onColumnCheck: (checked) => {
         this.snapshots.forEach((bootenv) => bootenv.selected = checked);
         this.dataProvider.setRows([]);
-        this.dataProvider.setRows(this.snapshots.filter(this.filterSnapshot));
+        this.onListFiltered(this.filterString);
       },
       cssClass: 'checkboxs-column',
     }),
     textColumn({
       title: this.translate.instant('Dataset'),
       propertyName: 'dataset',
-      sortable: true,
     }),
     textColumn({
       title: this.translate.instant('Snapshot'),
       propertyName: 'snapshot_name',
-      sortable: true,
     }),
     sizeColumn({
       title: this.translate.instant('Used'),
-      sortable: true,
       hidden: !this.showExtraColumnsControl.value,
       getValue: (row) => row?.properties?.used?.parsed,
-      sortBy: (row) => row?.properties?.used?.parsed as string,
     }),
     dateColumn({
       title: this.translate.instant('Date created'),
-      sortable: true,
       hidden: !this.showExtraColumnsControl.value,
       getValue: (row) => row?.properties?.creation?.parsed.$date,
-      sortBy: (row) => row?.properties?.creation?.parsed.$date,
     }),
     sizeColumn({
       title: this.translate.instant('Referenced'),
-      sortable: true,
       hidden: !this.showExtraColumnsControl.value,
       getValue: (row) => row?.properties?.referenced?.parsed,
-      sortBy: (row) => row?.properties?.referenced?.parsed as string,
     }),
   ], {
     rowTestId: (row) => 'snapshot-' + row.id,
@@ -138,9 +130,7 @@ export class SnapshotListComponent implements OnInit {
   }
 
   get selectedSnapshots(): ZfsSnapshotUi[] {
-    return this.snapshots
-      .filter(this.filterSnapshot)
-      .filter((snapshot) => snapshot.selected);
+    return this.snapshots.filter((snapshot) => snapshot.selected);
   }
 
   get selectionHasItems(): boolean {
@@ -191,11 +181,11 @@ export class SnapshotListComponent implements OnInit {
           ...snapshot,
           selected: false,
         }));
-        return this.snapshots.filter(this.filterSnapshot);
+        return this.snapshots;
       }),
       untilDestroyed(this),
-    ).subscribe((snapshots) => {
-      this.dataProvider.setRows(snapshots);
+    ).subscribe(() => {
+      this.onListFiltered(this.filterString);
       this.cdr.markForCheck();
     });
   }
@@ -261,12 +251,8 @@ export class SnapshotListComponent implements OnInit {
 
   protected onListFiltered(query: string): void {
     this.filterString = query;
-    this.dataProvider.setRows(this.snapshots.filter(this.filterSnapshot));
+    this.dataProvider.setFilter({ list: this.snapshots, query, columnKeys: ['name'] });
   }
-
-  private filterSnapshot = (snapshot: ZfsSnapshotUi): boolean => {
-    return snapshot.name.toLowerCase().includes(this.filterString);
-  };
 
   private setDefaultSort(): void {
     this.dataProvider.setSorting({

@@ -76,7 +76,6 @@ export class SnapshotTaskListComponent implements OnInit {
     textColumn({
       hidden: true,
       title: this.translate.instant('Next Run'),
-      propertyName: 'next_run',
       getValue: (task) => {
         if (task.enabled) {
           return task.schedule
@@ -88,7 +87,6 @@ export class SnapshotTaskListComponent implements OnInit {
     }),
     textColumn({
       title: this.translate.instant('Last Run'),
-      propertyName: 'last_run',
       hidden: true,
       getValue: (row) => {
         if (row.state?.datetime?.$date) {
@@ -100,7 +98,7 @@ export class SnapshotTaskListComponent implements OnInit {
     textColumn({
       title: this.translate.instant('Keep snapshot for'),
       getValue: (row) => `${row.lifetime_value} ${row.lifetime_unit}(S)`.toLowerCase(),
-      propertyName: 'keepfor',
+      propertyName: 'lifetime_unit',
       hidden: true,
     }),
     textColumn({
@@ -163,10 +161,10 @@ export class SnapshotTaskListComponent implements OnInit {
 
     this.getSnapshotTasks();
 
-    tasks$.pipe(take(1), untilDestroyed(this)).subscribe(() => this.filterUpdated(this.filterString));
+    tasks$.pipe(take(1), untilDestroyed(this)).subscribe(() => this.onListFiltered(this.filterString));
 
     this.dataProvider.emptyType$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.filterUpdated(this.filterString);
+      this.onListFiltered(this.filterString);
     });
   }
 
@@ -180,9 +178,9 @@ export class SnapshotTaskListComponent implements OnInit {
     this.cdr.markForCheck();
   }
 
-  filterUpdated(query: string): void {
+  onListFiltered(query: string): void {
     this.filterString = query;
-    this.dataProvider.setRows(this.snapshotTasks.filter(this.filterTask));
+    this.dataProvider.setFilter({ list: this.snapshotTasks, query, columnKeys: ['dataset', 'naming_schema'] });
   }
 
   doAdd(): void {
@@ -214,9 +212,4 @@ export class SnapshotTaskListComponent implements OnInit {
       },
     });
   }
-
-  private filterTask = (task: PeriodicSnapshotTaskUi): boolean => {
-    return task.dataset.toLowerCase().includes(this.filterString.toLowerCase())
-      || task.naming_schema.toLowerCase().includes(this.filterString.toLowerCase());
-  };
 }

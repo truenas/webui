@@ -8,8 +8,8 @@ import { MockComponents } from 'ng-mocks';
 import { BehaviorSubject, of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { CreateVdevLayout } from 'app/enums/v-dev-type.enum';
-import { EnclosureOld } from 'app/interfaces/enclosure-old.interface';
-import { UnusedDisk } from 'app/interfaces/storage.interface';
+import { DetailsDisk } from 'app/interfaces/disk.interface';
+import { Enclosure } from 'app/interfaces/enclosure.interface';
 import {
   ManualSelectionDisksComponent,
 } from 'app/pages/storage/modules/pool-manager/components/manual-disk-selection/components/manual-selection-disks/manual-selection-disks.component';
@@ -33,12 +33,12 @@ import {
 describe('ManualDiskSelectionComponent', () => {
   let spectator: Spectator<ManualDiskSelectionComponent>;
   let loader: HarnessLoader;
-  const inventory = [] as UnusedDisk[];
+  const inventory = [] as DetailsDisk[];
   const incomingVdevs = [
     [{ devname: 'sda' }, { devname: 'sdb' }],
     [{ devname: 'sdc' }, { devname: 'sdd' }],
-  ] as UnusedDisk[][];
-  const enclosures = [] as EnclosureOld[];
+  ] as DetailsDisk[][];
+  const enclosures = [] as Enclosure[];
   const storeVdevs$ = new BehaviorSubject<ManualSelectionVdev[]>(
     vdevsToManualSelectionVdevs(incomingVdevs),
   );

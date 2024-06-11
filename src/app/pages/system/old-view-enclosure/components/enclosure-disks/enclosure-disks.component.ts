@@ -16,7 +16,6 @@ import { EnclosureDiskStatus, EnclosureSlotStatus } from 'app/enums/enclosure-sl
 import { Role } from 'app/enums/role.enum';
 import { TopologyItemStatus } from 'app/enums/vdev-status.enum';
 import {
-  DashboardEnclosure,
   DashboardEnclosureSlot,
   EnclosureElement,
 } from 'app/interfaces/enclosure.interface';
@@ -26,9 +25,6 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ChassisView } from 'app/pages/system/old-view-enclosure/classes/chassis-view';
 import { DriveTray } from 'app/pages/system/old-view-enclosure/classes/drivetray';
 import { Chassis } from 'app/pages/system/old-view-enclosure/classes/hardware/chassis';
-import { E16 } from 'app/pages/system/old-view-enclosure/classes/hardware/e16';
-import { E24 } from 'app/pages/system/old-view-enclosure/classes/hardware/e24';
-import { E60 } from 'app/pages/system/old-view-enclosure/classes/hardware/e60';
 import { Es102 } from 'app/pages/system/old-view-enclosure/classes/hardware/es102';
 import { Es102G2 } from 'app/pages/system/old-view-enclosure/classes/hardware/es102g2';
 import { Es12 } from 'app/pages/system/old-view-enclosure/classes/hardware/es12';
@@ -60,6 +56,7 @@ import {
   EnclosureEvent,
   LabelDrivesEvent,
 } from 'app/pages/system/old-view-enclosure/interfaces/enclosure-events.interface';
+import { OldEnclosure } from 'app/pages/system/old-view-enclosure/interfaces/old-enclosure.interface';
 import { ViewConfig } from 'app/pages/system/old-view-enclosure/interfaces/view.config';
 import { EnclosureState, EnclosureStore } from 'app/pages/system/old-view-enclosure/stores/enclosure-store.service';
 import { DiskTemperatureService, Temperature } from 'app/services/disk-temperature.service';
@@ -106,7 +103,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
   protected readonly requiredRoles = [Role.FullAdmin];
   showCaption = true;
   protected aborted = false;
-  enclosureViews: DashboardEnclosure[] = [];
+  enclosureViews: OldEnclosure[] = [];
   systemState: EnclosureState;
   selectedDisk: DashboardEnclosureSlot;
 
@@ -131,7 +128,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
   // Tracked by this component
   selectedSlotNumber: number | null = null;
 
-  get selectedEnclosure(): DashboardEnclosure {
+  get selectedEnclosure(): OldEnclosure {
     return this.systemState?.enclosures?.filter((enclosure) => {
       return enclosure.id === this.systemState.selectedEnclosure;
     })[0];
@@ -220,15 +217,6 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
       default:
         return this.chassis.front;
     }
-  }
-
-  get hideIdentifyDrive(): boolean {
-    // TODO: Adapt the changes from https://ixsystems.atlassian.net/browse/NAS-127499
-    const selectedEnclosure = this.selectedEnclosure;
-    return [
-      'ES24N',
-      'TRUENAS-MINI-R',
-    ].includes(selectedEnclosure.model);
   }
 
   theme: Theme;
@@ -418,7 +406,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
   }
 
   // Recreates enclosure when switching between enclosures or front/rear/internal visualizations
-  loadEnclosure(enclosureView: DashboardEnclosure, view?: EnclosureLocation, update?: boolean): void {
+  loadEnclosure(enclosureView: OldEnclosure, view?: EnclosureLocation, update?: boolean): void {
     if (this.selectedSlotNumber > -1) {
       this.clearDisk();
     }
@@ -466,64 +454,48 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
     }
 
     switch (enclosure?.model) {
-      case 'TRUENAS-R10':
       case 'R10':
         this.chassis = new R10();
         break;
-      case 'TRUENAS-R20':
       case 'R20':
         this.chassis = new R20(true);
         break;
-      case 'TRUENAS-R20A':
       case 'R20A':
         this.chassis = new R20A(true);
         break;
-      case 'TRUENAS-R20B':
       case 'R20B':
         this.chassis = new R20B(true);
         break;
       case 'R30':
-      case 'TRUENAS-R30':
         this.chassis = new R30();
         break;
       case 'R40':
-      case 'TRUENAS-R40':
         this.chassis = new R40();
         break;
-      case 'TRUENAS-R50':
       case 'R50':
         this.chassis = new R50(true);
         this.showCaption = false;
         break;
-      case 'TRUENAS-R50B':
       case 'R50B':
         this.chassis = new R50B(true);
         this.showCaption = false;
         break;
-      case 'TRUENAS-R50BM':
       case 'R50BM':
         this.chassis = new R50Bm(true);
         this.showCaption = false;
         break;
       case 'M40':
       case 'M50':
-      case 'M60':
-      case 'M Series': {
+      case 'M60': {
         // We need to detect rear chassis. Not all M Series will have rear slots
         this.chassis = new M50(Object.entries(enclosure.elements['Array Device Slot']).length > 24);
         break;
       }
-      case 'X Series':
       case 'ES12':
         this.chassis = new Es12();
         break;
-      case 'TRUENAS-MINI-R':
+      case 'MINI-R':
         this.chassis = new MINIR();
-        break;
-      case 'Z Series':
-      case 'TRUENAS-Z20-HA-D':
-      case 'E16':
-        this.chassis = new E16();
         break;
       case 'ES24':
         this.chassis = new Es24();
@@ -531,17 +503,11 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
       case 'ES24F':
         this.chassis = new Es24F();
         break;
-      case 'E24':
-        this.chassis = new E24();
-        break;
       case 'ES60':
         this.chassis = new Es60();
         break;
       case 'ES60G2':
         this.chassis = new Es60G2();
-        break;
-      case 'E60':
-        this.chassis = new E60();
         break;
       case 'ES102':
         this.chassis = new Es102();
@@ -552,15 +518,11 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
         this.showCaption = false;
         break;
       case 'ES24N':
-      case 'TRUENAS-F100-HA':
       case 'F100':
-      case 'TRUENAS-F130-HA':
       case 'F130':
-      case 'TRUENAS-F60-HA':
       case 'F60':
         this.chassis = new F60();
         break;
-      case 'H Series':
       case 'H10':
         this.chassis = new H10();
         break;
@@ -632,67 +594,48 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
   }
 
   // Similar to createEnclosure method. This just provides parent with images for enclosure selector strip
-  createExtractedEnclosure(enclosureView: DashboardEnclosure): void {
+  createExtractedEnclosure(enclosureView: OldEnclosure): void {
     const rawEnclosure = this.systemState.enclosures.find((enclosure) => enclosure.id === enclosureView.id);
     let extractedChassis: Chassis;
 
     switch (rawEnclosure.model) {
-      case 'TRUENAS-R10':
       case 'R10':
         extractedChassis = new R10();
         break;
-      case 'TRUENAS-R20A':
       case 'R20A':
         extractedChassis = new R20A();
         break;
-      case 'TRUENAS-R20':
       case 'R20':
         extractedChassis = new R20();
         break;
-      case 'TRUENAS-R20B':
       case 'R20B':
         extractedChassis = new R20B();
         break;
       case 'R30':
-      case 'TRUENAS-R30':
         extractedChassis = new R30();
         break;
-      case 'TRUENAS-R40':
       case 'R40':
         extractedChassis = new R40();
         break;
-      case 'TRUENAS-R50':
       case 'R50':
         extractedChassis = new R50();
         break;
-      case 'TRUENAS-R50B':
       case 'R50B':
         extractedChassis = new R50B();
         break;
-      case 'TRUENAS-R50BM':
       case 'R50BM':
         extractedChassis = new R50Bm();
         break;
       case 'M40':
       case 'M50':
       case 'M60':
-      case 'M Series':
         extractedChassis = new M50();
         break;
-      case 'X Series':
       case 'ES12':
         extractedChassis = new Es12();
         break;
-      case 'TRUENAS-MINI-R':
+      case 'MINI-R':
         extractedChassis = new MINIR();
-        break;
-      case 'Z Series':
-      case 'TRUENAS-Z20-HA-D':
-      case 'E16':
-        extractedChassis = new E16();
-        break;
-      case 'E24':
-        extractedChassis = new E24();
         break;
       case 'ES24':
         extractedChassis = new Es24();
@@ -706,9 +649,6 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
       case 'ES60G2':
         extractedChassis = new Es60G2();
         break;
-      case 'E60':
-        extractedChassis = new E60();
-        break;
       case 'ES102':
         extractedChassis = new Es102();
         break;
@@ -716,15 +656,11 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
         extractedChassis = new Es102G2();
         break;
       case 'ES24N':
-      case 'TRUENAS-F100-HA':
       case 'F100':
-      case 'TRUENAS-F130-HA':
       case 'F130':
-      case 'TRUENAS-F60-HA':
       case 'F60':
         extractedChassis = new F60();
         break;
-      case 'H Series':
       case 'H10':
         extractedChassis = new H10();
         break;
@@ -774,7 +710,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
   }
 
   // Helper for createExtractedEnclosure
-  extractEnclosure(enclosure: ChassisView, enclosureView: DashboardEnclosure): void {
+  extractEnclosure(enclosure: ChassisView, enclosureView: OldEnclosure): void {
     const canvas = (this.app.renderer.plugins as Record<string, CanvasExtract>).extract.canvas(enclosure.container);
     this.controllerEvent$.next({ name: 'EnclosureCanvas', data: { canvas, enclosureView }, sender: this });
     this.container.removeChild(enclosure.container);
@@ -1076,7 +1012,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
     const selectedEnclosure = this.selectedEnclosure;
     this.setDisksDisabled();
 
-    const paintSlots = (targetEnclosure: DashboardEnclosure): void => {
+    const paintSlots = (targetEnclosure: OldEnclosure): void => {
       const slots: [string, DashboardEnclosureSlot][] = this.asArray(
         targetEnclosure.elements['Array Device Slot'],
       ) as [string, DashboardEnclosureSlot][];

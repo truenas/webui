@@ -1,5 +1,5 @@
 import { CreateVdevLayout, VdevType } from 'app/enums/v-dev-type.enum';
-import { UnusedDisk } from 'app/interfaces/storage.interface';
+import { DetailsDisk } from 'app/interfaces/disk.interface';
 import {
   PoolManagerTopology,
   PoolManagerTopologyCategory,
@@ -12,9 +12,9 @@ import {
 
 describe('topologyCategoryToDisks', () => {
   it('converts topology category to an array of disks', () => {
-    const disk1 = {} as UnusedDisk;
-    const disk2 = {} as UnusedDisk;
-    const disk3 = {} as UnusedDisk;
+    const disk1 = {} as DetailsDisk;
+    const disk2 = {} as DetailsDisk;
+    const disk3 = {} as DetailsDisk;
 
     const category = {
       vdevs: [
@@ -29,11 +29,11 @@ describe('topologyCategoryToDisks', () => {
 
 describe('topologyToDisks', () => {
   it('converts topology to an array of disks', () => {
-    const disk1 = {} as UnusedDisk;
-    const disk2 = {} as UnusedDisk;
-    const disk3 = {} as UnusedDisk;
-    const disk4 = {} as UnusedDisk;
-    const disk5 = {} as UnusedDisk;
+    const disk1 = {} as DetailsDisk;
+    const disk2 = {} as DetailsDisk;
+    const disk3 = {} as DetailsDisk;
+    const disk4 = {} as DetailsDisk;
+    const disk5 = {} as DetailsDisk;
 
     const topology = {
       [VdevType.Data]: {
@@ -56,13 +56,13 @@ describe('topologyToDisks', () => {
 
 describe('topologyToPayload', () => {
   it('converts store topology to websocket payload', () => {
-    const disk1 = { devname: 'ada1' } as UnusedDisk;
-    const disk2 = { devname: 'ada2' } as UnusedDisk;
-    const disk3 = { devname: 'ada3' } as UnusedDisk;
-    const disk4 = { devname: 'ada4' } as UnusedDisk;
-    const disk5 = { devname: 'ada5' } as UnusedDisk;
-    const disk6 = { devname: 'ada6' } as UnusedDisk;
-    const disk7 = { devname: 'ada7' } as UnusedDisk;
+    const disk1 = { devname: 'ada1' } as DetailsDisk;
+    const disk2 = { devname: 'ada2' } as DetailsDisk;
+    const disk3 = { devname: 'ada3' } as DetailsDisk;
+    const disk4 = { devname: 'ada4' } as DetailsDisk;
+    const disk5 = { devname: 'ada5' } as DetailsDisk;
+    const disk6 = { devname: 'ada6' } as DetailsDisk;
+    const disk7 = { devname: 'ada7' } as DetailsDisk;
 
     const topology = {
       [VdevType.Data]: {
@@ -100,10 +100,10 @@ describe('topologyToPayload', () => {
   });
 
   it('converts dRAID layout to websocket payload', () => {
-    const disk1 = { devname: 'ada1' } as UnusedDisk;
-    const disk2 = { devname: 'ada2' } as UnusedDisk;
-    const disk3 = { devname: 'ada3' } as UnusedDisk;
-    const disk4 = { devname: 'ada4' } as UnusedDisk;
+    const disk1 = { devname: 'ada1' } as DetailsDisk;
+    const disk2 = { devname: 'ada2' } as DetailsDisk;
+    const disk3 = { devname: 'ada3' } as DetailsDisk;
+    const disk4 = { devname: 'ada4' } as DetailsDisk;
 
     const topology = {
       [VdevType.Data]: {

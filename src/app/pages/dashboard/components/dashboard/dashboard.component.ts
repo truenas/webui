@@ -3,7 +3,7 @@ import {
 } from '@angular/animations';
 import { moveItemInArray } from '@angular/cdk/drag-drop';
 import {
-  ChangeDetectionStrategy, Component, HostListener, OnInit, signal,
+  ChangeDetectionStrategy, Component, HostListener, OnInit, computed, signal,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -11,6 +11,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { dashboardElements } from 'app/pages/dashboard/components/dashboard/dashboard.elements';
 import { WidgetGroupFormComponent } from 'app/pages/dashboard/components/widget-group-form/widget-group-form.component';
 import { DashboardStore } from 'app/pages/dashboard/services/dashboard.store';
 import { WidgetGroup } from 'app/pages/dashboard/types/widget-group.interface';
@@ -35,20 +36,19 @@ import { ChainedComponentResponse, IxChainedSlideInService } from 'app/services/
   ],
 })
 export class DashboardComponent implements OnInit {
+  readonly searchableElements = dashboardElements;
+  readonly isEditing = signal(false);
   readonly renderedGroups = signal<WidgetGroup[]>([]);
   readonly savedGroups = toSignal(this.dashboardStore.groups$);
-
-  readonly isEditing = signal(false);
-
-  // TODO: Use similar approach to loading as we have on Datasets
-  // TODO: If old data is available, show it while loading new data.
-  // TODO: Prevent user from entering configuration mode while loading.
   readonly isLoading = toSignal(this.dashboardStore.isLoading$);
+  readonly isLoadingFirstTime = computed(() => this.isLoading() && this.savedGroups() === null);
 
   emptyDashboardConf: EmptyConfig = {
     type: EmptyType.NoPageData,
     large: true,
-    title: this.translate.instant('Dashboard is Empty!'),
+    icon: 'view-dashboard',
+    title: this.translate.instant('Your dashboard is currently empty!'),
+    message: this.translate.instant('Start adding widgets to personalize it. Click on the "Configure" button to enter edit mode.'),
   };
 
   constructor(
@@ -62,6 +62,10 @@ export class DashboardComponent implements OnInit {
   ngOnInit(): void {
     this.dashboardStore.entered();
     this.loadGroups();
+  }
+
+  protected trackByFn(index: number, group: WidgetGroup): string {
+    return group.layout + group.slots.map((slot) => slot?.type).join();
   }
 
   protected onConfigure(): void {
@@ -92,13 +96,13 @@ export class DashboardComponent implements OnInit {
     this.slideIn
       .open(WidgetGroupFormComponent, true, editedGroup)
       .pipe(untilDestroyed(this))
-      .subscribe((response) => {
+      .subscribe((response: ChainedComponentResponse<WidgetGroup>) => {
         if (!response.response) {
           return;
         }
 
         this.renderedGroups.update((groups) => {
-          return groups.map((group, index) => (index === i ? response.response as WidgetGroup : group));
+          return groups.map((group, index) => (index === i ? response.response : group));
         });
       });
   }

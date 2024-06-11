@@ -43,27 +43,22 @@ export class GroupListComponent implements OnInit {
     textColumn({
       title: this.translate.instant('Group'),
       propertyName: 'group',
-      sortable: true,
     }),
     textColumn({
       title: this.translate.instant('GID'),
       propertyName: 'gid',
-      sortable: true,
     }),
     yesNoColumn({
       title: this.translate.instant('Builtin'),
       propertyName: 'builtin',
-      sortable: true,
     }),
     yesNoColumn({
       title: this.translate.instant('Allows sudo commands'),
       getValue: (row) => !!row.sudo_commands?.length,
-      sortable: true,
     }),
     yesNoColumn({
       title: this.translate.instant('Samba Authentication'),
       propertyName: 'smb',
-      sortable: true,
     }),
     textColumn({
       title: this.translate.instant('Roles'),
@@ -128,10 +123,7 @@ export class GroupListComponent implements OnInit {
 
   onListFiltered(query: string): void {
     this.filterString = query.toLowerCase();
-    this.createDataSource(this.groups.filter((group) => {
-      return group.group.toLowerCase().includes(this.filterString)
-        || group.gid.toString().toLowerCase().includes(this.filterString);
-    }));
+    this.dataProvider.setFilter({ list: this.groups, query, columnKeys: ['group', 'gid'] });
   }
 
   handleDeletedGroup(id: number): void {
@@ -156,19 +148,15 @@ export class GroupListComponent implements OnInit {
       next: (groups) => {
         this.groups = groups;
         this.filterString = '';
-        this.createDataSource(groups);
+        this.onListFiltered(this.filterString);
         this.cdr.markForCheck();
       },
       error: () => {
-        this.createDataSource();
+        this.groups = [];
+        this.dataProvider.setRows(this.groups);
         this.cdr.markForCheck();
       },
     });
-  }
-
-  private createDataSource(groups: Group[] = []): void {
-    this.dataProvider.setRows(groups);
-    this.cdr.markForCheck();
   }
 
   private setDefaultSort(): void {

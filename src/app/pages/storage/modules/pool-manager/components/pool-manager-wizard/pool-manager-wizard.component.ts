@@ -27,7 +27,7 @@ import { topologyToPayload } from 'app/pages/storage/modules/pool-manager/utils/
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
-import { waitForSystemFeatures } from 'app/store/system-info/system-info.selectors';
+import { selectHasEnclosureSupport } from 'app/store/system-info/system-info.selectors';
 
 @UntilDestroy()
 @Component({
@@ -58,10 +58,6 @@ export class PoolManagerWizardComponent implements OnInit, OnDestroy {
 
   get hasEncryption(): boolean {
     return Boolean(this.state.encryption);
-  }
-
-  get alreadyHasSpare(): boolean {
-    return Boolean(this.existingPool?.topology?.spare?.length);
   }
 
   constructor(
@@ -186,7 +182,7 @@ export class PoolManagerWizardComponent implements OnInit, OnDestroy {
   private checkEnclosureStepAvailability(): void {
     combineLatest([
       this.store.hasMultipleEnclosuresAfterFirstStep$,
-      this.systemStore$.pipe(waitForSystemFeatures, map((features) => features.enclosure)),
+      this.systemStore$.select(selectHasEnclosureSupport),
     ]).pipe(
       map(([hasMultipleEnclosures, hasEnclosureSupport]) => hasMultipleEnclosures && hasEnclosureSupport),
       untilDestroyed(this),

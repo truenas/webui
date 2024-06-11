@@ -44,18 +44,15 @@ export class DockerImagesListComponent implements OnInit {
     textColumn({
       title: this.translate.instant('Image ID'),
       propertyName: 'id',
-      sortable: true,
     }),
     textColumn({
       title: this.translate.instant('Tags'),
       propertyName: 'repo_tags',
-      sortable: true,
       getValue: (row) => row.repo_tags.join(', '),
     }),
     textColumn({
       title: this.translate.instant('Image Size'),
       propertyName: 'size',
-      sortable: true,
       getValue: (row) => {
         return row.size
           ? this.fileSizePipe.transform(row.size)
@@ -65,8 +62,6 @@ export class DockerImagesListComponent implements OnInit {
     yesNoColumn({
       title: this.translate.instant('Update available'),
       propertyName: 'update_available',
-      sortBy: (row) => (row.update_available ? 1 : 0),
-      sortable: true,
     }),
     actionsColumn({
       actions: [
@@ -84,7 +79,6 @@ export class DockerImagesListComponent implements OnInit {
           onClick: (row) => this.doDelete([row]),
         },
       ],
-
     }),
   ], {
     rowTestId: (row) => 'container-image-' + row.id,
@@ -136,9 +130,12 @@ export class DockerImagesListComponent implements OnInit {
 
   protected onListFiltered(query: string): void {
     this.filterString = query.toLowerCase();
-    this.dataProvider.setRows(this.containerImages.filter((image) => {
-      return image.repo_tags.join(', ').includes(this.filterString);
-    }));
+    this.dataProvider.setFilter({
+      query,
+      columnKeys: ['repo_tags'],
+      // eslint-disable-next-line @typescript-eslint/naming-convention
+      preprocessMap: { repo_tags: (tags: string[]) => tags.join(', ') },
+    });
   }
 
   private refresh(): void {

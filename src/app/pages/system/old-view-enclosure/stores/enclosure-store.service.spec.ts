@@ -1,6 +1,7 @@
 import { SpectatorService, createServiceFactory } from '@ngneat/spectator/jest';
 import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
-import { DashboardEnclosureSlot, DashboardEnclosure } from 'app/interfaces/enclosure.interface';
+import { DashboardEnclosureSlot } from 'app/interfaces/enclosure.interface';
+import { OldEnclosure } from 'app/pages/system/old-view-enclosure/interfaces/old-enclosure.interface';
 import { EnclosureStore } from 'app/pages/system/old-view-enclosure/stores/enclosure-store.service';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -41,7 +42,7 @@ describe('EnclosureStore', () => {
             } as DashboardEnclosureSlot,
           } as Record<number, DashboardEnclosureSlot>,
         },
-      } as DashboardEnclosure;
+      } as OldEnclosure;
       expect(spectator.service.getPools(enclosure)).toEqual(['pool_2', 'pool_3']);
     });
   });

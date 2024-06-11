@@ -8,8 +8,8 @@ import {
 } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
 import { helptextSmart } from 'app/helptext/data-protection/smart/smart';
+import { Disk } from 'app/interfaces/disk.interface';
 import { SmartTestTaskUi } from 'app/interfaces/smart-test.interface';
-import { Disk } from 'app/interfaces/storage.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
@@ -126,11 +126,7 @@ export class SmartTaskListComponent implements OnInit {
 
   onListFiltered(query: string): void {
     this.filterString = query.toLowerCase();
-    this.dataProvider.setRows(this.smartTasks.filter((smartTask) => {
-      return smartTask.desc.toLowerCase().includes(this.filterString)
-        || smartTask.type.toLowerCase().includes(this.filterString)
-        || smartTask.disksLabel.find((item) => item.includes(this.filterString));
-    }));
+    this.dataProvider.setFilter({ query, columnKeys: ['desc', 'type', 'disksLabel'] });
   }
 
   columnsChange(columns: typeof this.columns): void {

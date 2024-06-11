@@ -5,7 +5,7 @@ import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import {
-  filter, map, switchMap, tap,
+  filter, switchMap, tap,
 } from 'rxjs/operators';
 import { JobState } from 'app/enums/job-state.enum';
 import { Role } from 'app/enums/role.enum';
@@ -88,7 +88,6 @@ export class RsyncTaskListComponent implements OnInit {
     textColumn({
       title: this.translate.instant('Frequency'),
       propertyName: 'schedule',
-      sortable: false,
       getValue: (task) => this.crontabExplanation.transform(scheduleToCrontab(task.schedule)),
     }),
     relativeDateColumn({
@@ -156,8 +155,6 @@ export class RsyncTaskListComponent implements OnInit {
     rowTestId: (row) => 'rsync-task-' + row.path + '-' + row.remotehost,
   });
 
-  private allTasks: RsyncTask[] = [];
-
   constructor(
     private translate: TranslateService,
     private ws: WebSocketService,
@@ -176,22 +173,17 @@ export class RsyncTaskListComponent implements OnInit {
   ngOnInit(): void {
     this.filterString = this.route.snapshot.paramMap.get('dataset') || '';
 
-    const request$ = this.ws.call('rsynctask.query').pipe(
-      map((tasks) => {
-        this.allTasks = tasks;
-        return tasks.filter(this.filterTask);
-      }),
-    );
+    const request$ = this.ws.call('rsynctask.query');
     this.dataProvider = new AsyncDataProvider(request$);
     this.refresh();
     this.dataProvider.emptyType$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.filterUpdated(this.filterString);
+      this.onListFiltered(this.filterString);
     });
   }
 
-  protected filterUpdated(query: string): void {
+  protected onListFiltered(query: string): void {
     this.filterString = query;
-    this.dataProvider.setRows(this.allTasks.filter(this.filterTask));
+    this.dataProvider.setFilter({ query, columnKeys: ['path', 'desc'] });
   }
 
   protected columnsChange(columns: typeof this.columns): void {

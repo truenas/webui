@@ -9,9 +9,9 @@ import { filter } from 'rxjs/operators';
 import { CreateVdevLayout, VdevType } from 'app/enums/v-dev-type.enum';
 import { generateOptionsRange } from 'app/helpers/options.helper';
 import { helptextManager } from 'app/helptext/storage/volumes/manager/manager';
+import { DetailsDisk } from 'app/interfaces/disk.interface';
 import { Option, SelectOption } from 'app/interfaces/option.interface';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
-import { UnusedDisk } from 'app/interfaces/storage.interface';
 import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
 import {
   hasDeepChanges,
@@ -37,7 +37,7 @@ const maxDisksInDraidGroup = 255;
 export class DraidSelectionComponent implements OnInit, OnChanges {
   @Input() type: VdevType;
   @Input() layout: CreateVdevLayout.Draid1 | CreateVdevLayout.Draid2 | CreateVdevLayout.Draid3;
-  @Input() inventory: UnusedDisk[];
+  @Input() inventory: DetailsDisk[];
   @Input() isStepActive: boolean;
 
   readonly defaultDataDevicesPerGroup = 8;
@@ -58,7 +58,7 @@ export class DraidSelectionComponent implements OnInit, OnChanges {
   /**
    * Total number of disks to work with.
    */
-  private selectedDisks: UnusedDisk[] = [];
+  private selectedDisks: DetailsDisk[] = [];
 
   readonly helptext = helptextManager;
 
@@ -84,7 +84,7 @@ export class DraidSelectionComponent implements OnInit, OnChanges {
     this.listenForResetEvents();
   }
 
-  protected onDisksSelected(disks: UnusedDisk[]): void {
+  protected onDisksSelected(disks: DetailsDisk[]): void {
     this.selectedDisks = disks;
     this.updateDataDevicesOptions();
     this.updateChildrenOptions();

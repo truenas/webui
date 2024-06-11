@@ -8,7 +8,7 @@ import {
 } from '@ngneat/spectator/jest';
 import { BehaviorSubject } from 'rxjs';
 import { TiB } from 'app/constants/bytes.constant';
-import { UnusedDisk } from 'app/interfaces/storage.interface';
+import { DetailsDisk } from 'app/interfaces/disk.interface';
 import { UnusedDiskSelectComponent } from 'app/modules/custom-selects/unused-disk-select/unused-disk-select.component';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxCheckboxHarness } from 'app/modules/ix-forms/components/ix-checkbox/ix-checkbox.harness';
@@ -40,7 +40,7 @@ describe('UnusedDiskSelectComponent', () => {
       devname: 'exp1',
       exported_zpool: 'old-pool',
     },
-  ] as UnusedDisk[];
+  ] as DetailsDisk[];
 
   const mockCall$ = new BehaviorSubject(unusedDisks);
 
@@ -116,7 +116,7 @@ describe('UnusedDiskSelectComponent', () => {
   });
 
   it('uses diskFilteringFn when it is supplied', async () => {
-    spectator.setHostInput('diskFilteringFn', (disk: UnusedDisk) => disk.devname === 'da1');
+    spectator.setHostInput('diskFilteringFn', (disk: DetailsDisk) => disk.devname === 'da1');
 
     await combobox.focusInput();
     const options = await combobox.getAutocompleteOptions();
@@ -144,7 +144,7 @@ describe('UnusedDiskSelectComponent', () => {
           devname: 'dupe1',
           duplicate_serial: ['dupe2'],
         },
-      ] as UnusedDisk[]);
+      ] as DetailsDisk[]);
     });
 
     it('does not show disks with non-unique serials by default', async () => {

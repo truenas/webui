@@ -523,9 +523,7 @@ export class ChartWizardComponent implements OnInit, OnDestroy {
   private getDockerHubRateLimitInfo(): void {
     this.ws.call('container.image.dockerhub_rate_limit').pipe(untilDestroyed(this)).subscribe((info) => {
       if (info.remaining_pull_limit < 5) {
-        this.matDialog.open(DockerHubRateInfoDialogComponent, {
-          data: info,
-        });
+        this.matDialog.open(DockerHubRateInfoDialogComponent);
       }
     });
   }

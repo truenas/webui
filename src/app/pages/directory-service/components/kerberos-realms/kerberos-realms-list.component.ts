@@ -43,22 +43,18 @@ export class KerberosRealmsListComponent implements OnInit {
     textColumn({
       title: this.translate.instant('Realm'),
       propertyName: 'realm',
-      sortable: true,
     }),
     textColumn({
       title: this.translate.instant('KDC'),
       propertyName: 'kdc_string',
-      sortable: true,
     }),
     textColumn({
       title: this.translate.instant('Admin Server'),
       propertyName: 'admin_server_string',
-      sortable: true,
     }),
     textColumn({
       title: this.translate.instant('Password Server'),
       propertyName: 'kpasswd_server_string',
-      sortable: true,
     }),
     actionsColumn({
       actions: [
@@ -153,11 +149,9 @@ export class KerberosRealmsListComponent implements OnInit {
 
   onListFiltered(query: string): void {
     this.filterString = query.toLowerCase();
-    this.dataProvider.setRows(this.kerberosRealsm.filter((idmap) => {
-      return idmap.realm.toLowerCase().includes(this.filterString)
-        || idmap.kdc_string.toLowerCase().includes(this.filterString)
-        || idmap.admin_server_string.toLowerCase().includes(this.filterString)
-        || idmap.kpasswd_server_string.toLowerCase().includes(this.filterString);
-    }));
+    this.dataProvider.setFilter({
+      query,
+      columnKeys: ['realm', 'kdc_string', 'admin_server_string', 'kpasswd_server_string'],
+    });
   }
 }

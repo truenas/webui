@@ -7,7 +7,7 @@ import { filter, switchMap } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { DiskType } from 'app/enums/disk-type.enum';
 import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
-import { UnusedDisk } from 'app/interfaces/storage.interface';
+import { DetailsDisk } from 'app/interfaces/disk.interface';
 import { DiskTypeSizeMap } from 'app/pages/storage/modules/pool-manager/interfaces/disk-type-size-map.interface';
 import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
 import { getDiskTypeSizeMap } from 'app/pages/storage/modules/pool-manager/utils/get-disk-type-size-map.utils';
@@ -48,7 +48,7 @@ export class InventoryComponent implements OnInit {
     return buildNormalizedFileSize(Number(size));
   }
 
-  orderBySize(a: KeyValue<string, UnusedDisk[]>, b: KeyValue<string, UnusedDisk[]>): number {
+  orderBySize(a: KeyValue<string, DetailsDisk[]>, b: KeyValue<string, DetailsDisk[]>): number {
     return Number(a.key) - Number(b.key);
   }
 }

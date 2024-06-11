@@ -41,7 +41,6 @@ export class JbofListComponent implements OnInit {
     textColumn({
       title: this.translate.instant('Description'),
       propertyName: 'description',
-      sortable: true,
     }),
     textColumn({
       title: this.translate.instant('IPs'),
@@ -50,7 +49,6 @@ export class JbofListComponent implements OnInit {
     textColumn({
       title: this.translate.instant('Username'),
       propertyName: 'mgmt_username',
-      sortable: true,
     }),
     actionsColumn({
       actions: [
@@ -145,9 +143,6 @@ export class JbofListComponent implements OnInit {
 
   onListFiltered(query: string): void {
     this.filterString = query.toLowerCase();
-    this.dataProvider.setRows(this.jbofs.filter((jbof) => {
-      return jbof.mgmt_username.toLowerCase().includes(this.filterString)
-        || jbof.description.toLowerCase().includes(this.filterString);
-    }));
+    this.dataProvider.setFilter({ query, columnKeys: ['mgmt_username', 'description'] });
   }
 }

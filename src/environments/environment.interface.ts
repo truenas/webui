@@ -1,5 +1,6 @@
-/* eslint-disable no-restricted-imports */
-import { MockEnclosureConfig } from 'app/core/testing/mock-enclosure/interfaces/mock-enclosure.interface';
+import {
+  MockEnclosureConfig,
+} from 'app/core/testing/mock-enclosure/interfaces/mock-enclosure.interface';
 
 export interface WebUiEnvironment {
   environmentVersion: string;
@@ -7,5 +8,5 @@ export interface WebUiEnvironment {
   port?: number;
   production: boolean;
   sentryPublicDsn: string;
-  mockConfig?: MockEnclosureConfig;
+  mockConfig: MockEnclosureConfig;
 }

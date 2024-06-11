@@ -427,7 +427,7 @@
             <div class="capacity">{{ selectedSlot.size | ixFileSize }}</div>
             <div class="disk-actions">
               <button
-                *ngIf="!hideIdentifyDrive"
+                *ngIf="selectedDisk.supports_identify_light"
                 id="identify-btn"
                 mat-button
                 color="primary"

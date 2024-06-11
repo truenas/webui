@@ -33,7 +33,7 @@ export const helptextUsers = {
   user_form_auth_sshkey_tooltip: T('Enter or paste the <b>public</b> SSH key of the\
  user for any key-based authentication. <b>Do not paste the private key.</b>'),
   user_form_auth_pw_enable_tooltip: T('<i>Yes:</i> Disables the <b>Password</b> \
- fields and removes the password from the account. The account cannot \
+ fields. The account cannot \
  use password-based logins for services. For example, disabling the \
  password prevents using account credentials to log in to an SMB share \
  or open an SSH session on the system. The <b>Lock User</b> and \

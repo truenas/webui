@@ -50,12 +50,10 @@ export class SmbListComponent implements OnInit {
     textColumn({
       title: this.translate.instant('Name'),
       propertyName: 'name',
-      sortable: true,
     }),
     textColumn({
       title: this.translate.instant('Path'),
       propertyName: 'path_local',
-      sortable: true,
     }),
     textColumn({
       title: this.translate.instant('Description'),
@@ -206,10 +204,10 @@ export class SmbListComponent implements OnInit {
 
   onListFiltered(query: string): void {
     this.filterString = query.toLowerCase();
-    const filteredExporters = this.smbShares.filter((share) => {
-      return JSON.stringify(share).toLowerCase().includes(query);
+    this.dataProvider.setFilter({
+      query,
+      columnKeys: !this.smbShares.length ? [] : Object.keys(this.smbShares[0]) as (keyof SmbShare)[],
     });
-    this.dataProvider.setRows(filteredExporters);
     this.cdr.markForCheck();
   }
 

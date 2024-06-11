@@ -50,17 +50,14 @@ export class ElementsComponent {
       textColumn({
         title: this.translate.instant('Descriptor'),
         propertyName: 'descriptor',
-        sortable: true,
       }),
       textColumn({
         title: this.translate.instant('Status'),
         propertyName: 'status',
-        sortable: true,
       }),
       textColumn({
         title: this.translate.instant('Value'),
         propertyName: 'value',
-        sortable: true,
       }),
     ],
     {

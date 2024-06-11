@@ -43,22 +43,18 @@ export class UserListComponent implements OnInit {
     textColumn({
       title: this.translate.instant('Username'),
       propertyName: 'username',
-      sortable: true,
     }),
     textColumn({
       title: this.translate.instant('UID'),
       propertyName: 'uid',
-      sortable: true,
     }),
     yesNoColumn({
       title: this.translate.instant('Builtin'),
       propertyName: 'builtin',
-      sortable: true,
     }),
     textColumn({
       title: this.translate.instant('Full Name'),
       propertyName: 'full_name',
-      sortable: true,
     }),
     textColumn({
       title: this.translate.instant('Roles'),
@@ -134,14 +130,9 @@ export class UserListComponent implements OnInit {
       },
       error: () => {
         this.users = [];
-        this.createDataSource();
+        this.dataProvider.setRows(this.users);
       },
     });
-  }
-
-  createDataSource(users: User[] = []): void {
-    this.dataProvider.setRows(users);
-    this.cdr.markForCheck();
   }
 
   toggleBuiltins(): void {
@@ -154,11 +145,7 @@ export class UserListComponent implements OnInit {
 
   onListFiltered(query: string): void {
     this.filterString = query.toLowerCase();
-    this.createDataSource(this.users.filter((user) => {
-      return user.username.toLowerCase().includes(this.filterString)
-        || user.full_name.toLowerCase().includes(this.filterString)
-        || user.uid.toString().toLowerCase().includes(this.filterString);
-    }));
+    this.dataProvider.setFilter({ list: this.users, query, columnKeys: ['username', 'full_name', 'uid'] });
   }
 
   setDefaultSort(): void {

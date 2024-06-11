@@ -12,7 +12,7 @@ import { map } from 'rxjs/operators';
 import { Role } from 'app/enums/role.enum';
 import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
 import { helptextSystemBootenv } from 'app/helptext/system/boot-env';
-import { UnusedDisk } from 'app/interfaces/storage.interface';
+import { DetailsDisk } from 'app/interfaces/disk.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
@@ -26,7 +26,7 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class BootPoolReplaceDialogComponent implements OnInit {
-  unusedDisks: UnusedDisk[] = [];
+  unusedDisks: DetailsDisk[] = [];
 
   form = this.fb.group({
     dev: ['', Validators.required],
