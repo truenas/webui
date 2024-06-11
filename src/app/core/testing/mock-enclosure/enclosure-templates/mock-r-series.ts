@@ -77,12 +77,12 @@ export const mockR50 = makeEnclosure({
   model: 'R50',
   controller: true,
   rackmount: true,
-  front_slots: 48,
+  top_slots: 48,
   rear_slots: 4,
   elements: {
     'Array Device Slot': {
       ...makeArrayDeviceSlots(1, 48, {
-        is_front: true,
+        is_top: true,
       }),
       ...makeArrayDeviceSlots(49, 52, {
         is_rear: true,
