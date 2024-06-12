@@ -97,7 +97,7 @@ export class ResourcesUsageStore extends ComponentStore<ResourcesUsageState> {
           // Process LAGGs
           if (networkInterface.type === NetworkInterfaceType.LinkAggregation) {
             dashboardNetworkInterfaces[index].state.lagg_ports = networkInterface.lag_ports;
-            networkInterface.lag_ports.forEach((nic) => {
+            networkInterface.lag_ports.filter((nic) => Boolean(nicKeys[nic])).forEach((nic) => {
               // Consolidate addresses
               dashboardNetworkInterfaces[index].state.aliases.forEach((alias) => {
                 (alias as DashboardNetworkInterfaceAlias).interface = nic;

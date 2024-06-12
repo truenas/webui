@@ -179,6 +179,10 @@ mat-grid-list {
       height: 40px;
       line-height: 40px;
 
+      ix-interface-status-icon {
+        display: flex;
+      }
+
       .ix-icon {
         font-size: 28px;
         height: 28px;
