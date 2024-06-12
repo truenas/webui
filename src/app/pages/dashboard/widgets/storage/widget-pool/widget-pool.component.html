@@ -1,0 +1,74 @@
+<mat-card class="card">
+  <mat-card-content class="card-content">
+    <div class="header">
+      <h3>{{ name | translate }}</h3>
+
+      <button
+        mat-icon-button
+        ixTest="pool-reports"
+        matTooltipPosition="above"
+        [attr.aria-label]="'Disk Reports' | translate"
+        [matTooltip]="'Disk Reports' | translate"
+        [routerLink]="['/reportsdashboard', 'disk']"
+      >
+        <ix-icon name="insert_chart"></ix-icon>
+      </button>
+    </div>
+    <div [class]="['container', size()]">
+      <div *ngIf="!isLoading()" class="pool-info-wrapper">
+        <div class="pool-info-top">
+          <div class="left">
+            <h3 class="pool-name">{{ pool().name }}</h3>
+            <div class="divider"></div>
+            <div class="lines">
+              <div class="line">
+                <span class="label">{{ 'Data Topology' | translate }}:</span>
+                <span class="value">{{ dataTopology() }}</span>
+              </div>
+              <div class="line">
+                <span class="label">{{ 'Usable Capacity' | translate }}:</span>
+                <span class="value">{{ capacity() | ixFileSize }}</span>
+              </div>
+              <div class="line">
+                <span class="label">{{ 'Last Scrub Date' | translate }}:</span>
+                <span class="value">{{ (pool()?.scan?.end_time?.$date | formatDateTime) || '' }}</span>
+              </div>
+              <div class="line">
+                <span class="label">{{ 'Last Scan Duration' | translate }}:</span>
+                <span class="value">{{ scanDuration() }}</span>
+              </div>
+            </div>
+          </div>
+          <div class="right">
+            <ix-gauge-chart
+              [colorFill]="usedPercentage() === 0 ? chartBlankColor : isLowCapacity() ? chartLowCapacityColor : chartFillColor"
+              [colorBlank]="chartBlankColor"
+              [width]="150"
+              [height]="150"
+              [label]="usedPercentage() / 100 | percent: '1.0-1'"
+              [value]="usedPercentage() > 100 ? 100 : usedPercentage()"
+              [style]="isLowCapacity() ? 'color: var(--red);' : ''"
+            ></ix-gauge-chart>
+          </div>
+        </div>
+        <div class="pool-info-bottom">
+          <div>
+            <h2 class="value">{{ pool().status }}</h2>
+            <div class="divider"></div>
+            <h6 class="label">{{ 'Pool Status' | translate }}</h6>
+          </div>
+          <div>
+            <h2 class="value">{{ totalZfsErrors() }}</h2>
+            <div class="divider"></div>
+            <h6 class="label">{{ 'Disks w/ZFS Errors' | translate }}</h6>
+          </div>
+          <div>
+            <h2 class="value">{{ pool().scan.errors }}</h2>
+            <div class="divider"></div>
+            <h6 class="label">{{ 'Last Scan Errors' | translate }}</h6>
+          </div>
+        </div>
+      </div>
+    </div>
+  </mat-card-content>
+</mat-card>

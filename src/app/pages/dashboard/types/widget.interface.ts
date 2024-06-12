@@ -23,7 +23,7 @@ export enum WidgetType {
   OsVersion = 'os-version',
   SystemUptime = 'system-uptime',
   SystemImage = 'system-image',
-  PoolName = 'pool-name',
+  Pool = 'pool',
   ArbitraryText = 'arbitrary-text',
 }
 
