@@ -2041,6 +2041,8 @@
   "The following { n, plural, one {docker image} other {# docker images} } will be deleted. Are you sure you want to proceed?": "",
   "The following { n, plural, one {docker image} other {# docker images} } will be updated. Are you sure you want to proceed?": "",
   "The following { n, plural, one {snapshot} other {# snapshots} } will be deleted. Are you sure you want to proceed?": "",
+  "The length of the field should be at least {minLength}": "",
+  "The length of the field should be no more than {maxLength}": "",
   "The length of {field} should be at least {minLength}": "",
   "The length of {field} should be no more than {maxLength}": "",
   "The list is empty.": "",

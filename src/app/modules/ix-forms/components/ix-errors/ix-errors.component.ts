@@ -40,11 +40,15 @@ export class IxErrorsComponent implements OnChanges {
     },
     email: () => this.translate.instant('Value must be a valid email address'),
     minlength: (minLength: number) => this.translate.instant(
-      'The length of {field} should be at least {minLength}',
+      this.label
+        ? 'The length of {field} should be at least {minLength}'
+        : 'The length of the field should be at least {minLength}',
       { field: this.label, minLength },
     ),
     maxlength: (maxLength: number) => this.translate.instant(
-      'The length of {field} should be no more than {maxLength}',
+      this.label
+        ? 'The length of {field} should be no more than {maxLength}'
+        : 'The length of the field should be no more than {maxLength}',
       { field: this.label, maxLength },
     ),
     pattern: () => this.translate.instant('Invalid format or character'),

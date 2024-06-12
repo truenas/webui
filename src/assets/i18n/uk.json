@@ -1088,6 +1088,8 @@
   "The following issues were already reported.": "",
   "The following { n, plural, one {docker image} other {# docker images} } will be deleted. Are you sure you want to proceed?": "",
   "The following { n, plural, one {docker image} other {# docker images} } will be updated. Are you sure you want to proceed?": "",
+  "The length of the field should be at least {minLength}": "",
+  "The length of the field should be no more than {maxLength}": "",
   "The number of children must at the minimum accomodate the total number of disks required for the previous configuration options including parity drives.": "",
   "The system is not licensed for HA.": "",
   "The {name} service is {status}": "",
