@@ -1,5 +1,7 @@
 import { Injectable } from '@angular/core';
-import { Validators, AbstractControl, FormGroup } from '@angular/forms';
+import {
+  Validators, AbstractControl, FormGroup, ValidatorFn,
+} from '@angular/forms';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { parseString } from 'cron-parser';
 import _ from 'lodash';
@@ -425,19 +427,11 @@ export class AppSchemaService {
       altDefault = false;
     }
 
-    const nullValidator = Validators.nullValidator;
     const defaultValue = isNew && schema.default !== undefined ? schema.default : altDefault;
-    const isValidCrontab = this.checkIsValidCrontab(defaultValue?.toString());
-
-    const newFormControl = new CustomUntypedFormControl(defaultValue, [
-      schema.required ? Validators.required : nullValidator,
-      schema.max ? Validators.max(schema.max) : nullValidator,
-      schema.min ? Validators.min(schema.min) : nullValidator,
-      schema.max_length ? Validators.maxLength(schema.max_length) : nullValidator,
-      schema.min_length ? Validators.minLength(schema.min_length) : nullValidator,
-      schema.type === ChartSchemaType.Uri ? Validators.pattern(this.urlValidationService.urlRegex) : nullValidator,
-      schema.type === ChartSchemaType.String && schema.default && isValidCrontab ? cronValidator() : nullValidator,
-    ]);
+    const newFormControl = new CustomUntypedFormControl(
+      defaultValue,
+      this.buildSchemaControlValidator(defaultValue, schema),
+    );
 
     this.handleSchemaSubQuestions(payload, newFormControl);
 
@@ -459,7 +453,11 @@ export class AppSchemaService {
       month: '*',
     };
 
-    const newFormControl = new CustomUntypedFormControl(scheduleToCrontab(schema.default || defaultDaily));
+    const newFormControl = new CustomUntypedFormControl(
+      scheduleToCrontab(schema.default || defaultDaily),
+      this.buildSchemaControlValidator(defaultDaily, schema),
+    );
+
     formGroup.addControl(chartSchemaNode.variable, newFormControl);
   }
 
@@ -468,7 +466,11 @@ export class AppSchemaService {
       schema, isNew, path, subscription, formGroup, config, isParentImmutable, chartSchemaNode,
     } = payload;
 
-    formGroup.addControl(chartSchemaNode.variable, new CustomUntypedFormGroup({}));
+    formGroup.addControl(
+      chartSchemaNode.variable,
+      new CustomUntypedFormGroup({}, this.buildSchemaControlValidator({}, schema)),
+    );
+
     for (const attr of schema.attrs) {
       subscription.add(
         this.getNewFormControlChangesSubscription({
@@ -488,7 +490,10 @@ export class AppSchemaService {
       schema, isNew, subscription, formGroup, config, isParentImmutable, chartSchemaNode,
     } = payload;
 
-    formGroup.addControl(chartSchemaNode.variable, new CustomUntypedFormArray([]));
+    formGroup.addControl(
+      chartSchemaNode.variable,
+      new CustomUntypedFormArray([], this.buildSchemaControlValidator({}, schema)),
+    );
 
     if (config) {
       let items: ChartSchemaNode[] = [];
@@ -728,5 +733,20 @@ export class AppSchemaService {
     if (subquestion && !isNew && (isParentImmutable || schema.immutable || subquestion.schema.immutable)) {
       formField.disable();
     }
+  }
+
+  private buildSchemaControlValidator(defaultValue: unknown, schema: ChartSchemaNodeConf): ValidatorFn[] {
+    const nullValidator = Validators.nullValidator;
+    const isValidCrontab = this.checkIsValidCrontab(defaultValue?.toString());
+
+    return [
+      schema.required ? Validators.required : nullValidator,
+      schema.max ? Validators.max(schema.max) : nullValidator,
+      schema.min ? Validators.min(schema.min) : nullValidator,
+      schema.max_length ? Validators.maxLength(schema.max_length) : nullValidator,
+      schema.min_length ? Validators.minLength(schema.min_length) : nullValidator,
+      schema.type === ChartSchemaType.Uri ? Validators.pattern(this.urlValidationService.urlRegex) : nullValidator,
+      schema.type === ChartSchemaType.String && schema.default && isValidCrontab ? cronValidator() : nullValidator,
+    ];
   }
 }
