@@ -53,8 +53,8 @@ export class DisksOverviewComponent {
   }
 
   private getOverviewInfo(enclosure: DashboardEnclosure): OverviewInfo[] {
-    const slots = [...Object.values(enclosure.elements['Array Device Slot'])];
-    const expanders = [...Object.values(enclosure.elements['SAS Expander'])];
+    const slots = [...Object.values(enclosure.elements?.['Array Device Slot'] || {})];
+    const expanders = [...Object.values(enclosure.elements?.['SAS Expander'] || {})];
     const poolsInfo = [
       ...new Map(
         slots.filter((slot) => slot.pool_info).map((slot) => [slot.pool_info.pool_name, slot.pool_info]),
