@@ -29,6 +29,8 @@ export const mockM40 = {
   sg: '/dev/sg25',
   pci: '0:0:23:0',
   rackmount: true,
+  front_loaded: true,
+  top_slots: 0,
   top_loaded: false,
   front_slots: 24,
   rear_slots: 0,

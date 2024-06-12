@@ -29,3 +29,22 @@
 .view-container {
   flex-grow: 1;
 }
+
+.view-options-container {
+  align-items: end;
+  display: flex;
+  flex-direction: column;
+}
+
+.view-options-switch {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  width: 100%;
+}
+
+.enclosure-view {
+  display: flex;
+  justify-content: space-around;
+  width: 100%;
+}

@@ -5,12 +5,12 @@ import { EnclosureViewDirective } from 'app/pages/system/enclosure/components/vi
 
 @Component({
   selector: 'ix-m50-rear-view',
-  templateUrl: './m50-front-view.component.html',
+  templateUrl: './m50-rear-view.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class M50RearViewComponent extends EnclosureViewDirective {
   constructor() {
     super();
-    this.svgPath = 'assets/images/new-hardware/m50/m50-front.svg';
+    this.svgPath = 'assets/images/new-hardware/m50/m50-rear.svg';
   }
 }

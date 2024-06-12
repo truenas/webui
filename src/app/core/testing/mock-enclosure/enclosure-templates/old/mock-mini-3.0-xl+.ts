@@ -29,6 +29,8 @@ export class MockMini30Xl extends MockEnclosure {
     ],
     id: '5b0bd6d1a309b57f',
     vendor: 'iX',
+    front_loaded: true,
+    top_slots: 0,
     product: '4024Sp',
     revision: 'e001',
     bsg: '/dev/bsg/17:0:19:0',

@@ -6,6 +6,7 @@ import {
 import { EnclosureElementType } from 'app/enums/enclosure-slot-status.enum';
 import { DashboardEnclosure, DashboardEnclosureSlot } from 'app/interfaces/enclosure.interface';
 import { EnclosureStore } from 'app/pages/system/enclosure/services/enclosure.store';
+import { EnclosureSide } from 'app/pages/system/enclosure/utils/enclosure-mappings';
 
 interface MouseEventsHandlers {
   mouseoverHandler: () => void;
@@ -20,6 +21,7 @@ export class EnclosureViewDirective implements AfterViewInit {
   @ViewChild('mySvg') private viewSvg: ElementRef<HTMLObjectElement>;
   protected svgPath: string;
   readonly enclosure = input.required<DashboardEnclosure>();
+  readonly viewOption = input.required<EnclosureSide>();
   private previousSelectRect: SVGRectElement;
   readonly selectedSlot = input.required<DashboardEnclosureSlot>();
   protected readonly selectedSlotIndex = computed(() => {
@@ -30,6 +32,48 @@ export class EnclosureViewDirective implements AfterViewInit {
     return selectedSlot.drive_bay_number - 1;
   });
 
+  readonly viewSpecificSlots = computed(() => {
+    const enclosure = this.enclosure();
+    const viewOption = this.viewOption();
+    const allSlots = Object.values(enclosure.elements['Array Device Slot']);
+    const slots: Record<number, DashboardEnclosureSlot> = {};
+    let driveBayNumber = 1;
+    switch (viewOption) {
+      case EnclosureSide.Front:
+        for (let i = 0; i <= allSlots.length; i++) {
+          if (allSlots[i].is_front) {
+            slots[driveBayNumber] = { ...allSlots[i] };
+            driveBayNumber++;
+          }
+        }
+        break;
+      case EnclosureSide.Internal:
+        for (let i = 0; i <= allSlots.length; i++) {
+          if (allSlots[i].is_internal) {
+            slots[driveBayNumber] = { ...allSlots[i] };
+            driveBayNumber++;
+          }
+        }
+        break;
+      case EnclosureSide.Rear:
+        for (let i = 0; i <= allSlots.length; i++) {
+          if (allSlots[i].is_rear) {
+            slots[driveBayNumber] = { ...allSlots[i] };
+            driveBayNumber++;
+          }
+        }
+        break;
+      case EnclosureSide.Top:
+        for (let i = 0; i <= allSlots.length; i++) {
+          if (allSlots[i].is_top) {
+            slots[driveBayNumber] = { ...allSlots[i] };
+            driveBayNumber++;
+          }
+        }
+        break;
+    }
+    return slots;
+  });
   protected readonly trackByNumber: TrackByFunction<KeyValue<string, DashboardEnclosureSlot>> = (_, slot) => slot.key;
 
   protected readonly slots = computed<Record<number, DashboardEnclosureSlot>>(() => {

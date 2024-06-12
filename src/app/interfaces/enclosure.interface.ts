@@ -18,8 +18,10 @@ export interface Enclosure {
   pci: string;
   rackmount: boolean;
   top_loaded: boolean;
+  front_loaded: boolean;
   front_slots: number;
   rear_slots: number;
+  top_slots: number;
   internal_slots: number;
   elements: EnclosureElements;
   label: string;
@@ -71,6 +73,10 @@ export interface DashboardEnclosureSlot {
   supports_identify_light?: boolean;
   size?: number;
   model?: string;
+  is_top: boolean;
+  is_front: boolean;
+  is_rear: boolean;
+  is_internal: boolean;
   serial?: string;
   type?: DiskType;
   rotationrate?: number;

@@ -13,9 +13,38 @@
                   [selectedSlot]="selectedSlot()"
                 ></ix-disk-topology-description>
               </ng-container>
-              <ng-container
-                *ngComponentOutlet="dashboardView().component; inputs: dashboardView().inputs;"
-              ></ng-container>
+              <div class="view-options-container">
+                <ng-container
+                  *ngComponentOutlet="dashboardView().component; inputs: dashboardView().inputs;"
+                ></ng-container>
+                <div class="view-options-switch">
+                  <button
+                    *ngIf="enclosure().front_loaded"
+                    mat-button
+                    [ixTest]="['front', 'enclosure', 'btn']"
+                    (click)="selectedViewOption.set(EnclosureSide.Front)"
+                  >{{ 'Front' | translate }}</button>
+                  <button
+                    *ngIf="enclosure().top_loaded"
+                    mat-button
+                    [ixTest]="['top', 'enclosure', 'btn']"
+                    (click)="selectedViewOption.set(EnclosureSide.Top)"
+                  >{{ 'Top' | translate }}</button>
+                  <button
+                    *ngIf="enclosure().rear_slots"
+                    mat-button
+                    [ixTest]="['rear', 'enclosure', 'btn']"
+                    (click)="selectedViewOption.set(EnclosureSide.Rear)"
+                  >{{ 'Rear' | translate }}</button>
+                  <button
+                    *ngIf="enclosure().internal_slots"
+                    mat-button
+                    [ixTest]="['internal', 'enclosure', 'btn']"
+                    (click)="selectedViewOption.set(EnclosureSide.Internal)"
+                  >{{ 'Internal' | translate }}</button>
+                </div>
+              </div>
+              
               <ix-sas-expander-status-view
                 *ngIf="selectedView() === 'expanders'"
                 [expanders]="expanders()"
