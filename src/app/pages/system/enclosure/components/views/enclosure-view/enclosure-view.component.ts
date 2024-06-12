@@ -39,13 +39,11 @@ export class EnclosureViewComponent {
   readonly dashboardView = computed(() => {
     const enclosure = this.enclosure();
     const selectedViewOption = this.selectedViewOption();
-    const selectedSlot = this.selectedSlot();
     // TODO: Add error handling for missing models
     return {
       component: enclosureComponentMap[this.enclosure().model][selectedViewOption],
       inputs: {
         enclosure,
-        selectedSlot,
         viewOption: selectedViewOption,
       },
     };

@@ -1,9 +1,7 @@
-import { KeyValue } from '@angular/common';
 import {
-  AfterViewInit, ChangeDetectorRef, computed, Directive, ElementRef, inject, input, Renderer2, TrackByFunction,
+  AfterViewInit, ChangeDetectorRef, computed, Directive, ElementRef, inject, input, Renderer2,
   ViewChild,
 } from '@angular/core';
-import { EnclosureElementType } from 'app/enums/enclosure-slot-status.enum';
 import { DashboardEnclosure, DashboardEnclosureSlot } from 'app/interfaces/enclosure.interface';
 import { EnclosureStore } from 'app/pages/system/enclosure/services/enclosure.store';
 import { EnclosureSide } from 'app/pages/system/enclosure/utils/enclosure-mappings';
@@ -23,50 +21,42 @@ export class EnclosureViewDirective implements AfterViewInit {
   readonly enclosure = input.required<DashboardEnclosure>();
   readonly viewOption = input.required<EnclosureSide>();
   private previousSelectRect: SVGRectElement;
-  readonly selectedSlot = input.required<DashboardEnclosureSlot>();
-  protected readonly selectedSlotIndex = computed(() => {
-    const selectedSlot = this.selectedSlot();
-    if (!selectedSlot) {
-      return -1;
-    }
-    return selectedSlot.drive_bay_number - 1;
-  });
 
   readonly viewSpecificSlots = computed(() => {
     const enclosure = this.enclosure();
     const viewOption = this.viewOption();
-    const allSlots = Object.values(enclosure.elements['Array Device Slot']);
+    const allSlots = Object.entries(enclosure.elements['Array Device Slot']);
     const slots: Record<number, DashboardEnclosureSlot> = {};
     let driveBayNumber = 1;
     switch (viewOption) {
       case EnclosureSide.Front:
-        for (let i = 0; i <= allSlots.length; i++) {
-          if (allSlots[i].is_front) {
-            slots[driveBayNumber] = { ...allSlots[i] };
+        for (const slot of allSlots) {
+          if (slot[1].is_front) {
+            slots[driveBayNumber] = { ...slot[1], drive_bay_number: +slot[0] };
             driveBayNumber++;
           }
         }
         break;
       case EnclosureSide.Internal:
-        for (let i = 0; i <= allSlots.length; i++) {
-          if (allSlots[i].is_internal) {
-            slots[driveBayNumber] = { ...allSlots[i] };
+        for (const slot of allSlots) {
+          if (slot[1].is_internal) {
+            slots[driveBayNumber] = { ...slot[1], drive_bay_number: +slot[0] };
             driveBayNumber++;
           }
         }
         break;
       case EnclosureSide.Rear:
-        for (let i = 0; i <= allSlots.length; i++) {
-          if (allSlots[i].is_rear) {
-            slots[driveBayNumber] = { ...allSlots[i] };
+        for (const slot of allSlots) {
+          if (slot[1].is_rear) {
+            slots[driveBayNumber] = { ...slot[1], drive_bay_number: +slot[0] };
             driveBayNumber++;
           }
         }
         break;
       case EnclosureSide.Top:
-        for (let i = 0; i <= allSlots.length; i++) {
-          if (allSlots[i].is_top) {
-            slots[driveBayNumber] = { ...allSlots[i] };
+        for (const slot of allSlots) {
+          if (slot[1].is_top) {
+            slots[driveBayNumber] = { ...slot[1], drive_bay_number: +slot[0] };
             driveBayNumber++;
           }
         }
@@ -74,24 +64,13 @@ export class EnclosureViewDirective implements AfterViewInit {
     }
     return slots;
   });
-  protected readonly trackByNumber: TrackByFunction<KeyValue<string, DashboardEnclosureSlot>> = (_, slot) => slot.key;
-
-  protected readonly slots = computed<Record<number, DashboardEnclosureSlot>>(() => {
-    const enclosure = this.enclosure();
-    return enclosure.elements[EnclosureElementType.ArrayDeviceSlot];
-  });
-
-  protected isDriveCageEmpty(slotIndex: number): boolean {
-    const slots = this.slots();
-    const driveBayNumber = slotIndex + 1;
-    return slots[driveBayNumber].dev == null;
-  }
 
   private enclosureStore: EnclosureStore = inject(EnclosureStore);
   private renderer: Renderer2 = inject(Renderer2);
   private cdr: ChangeDetectorRef = inject(ChangeDetectorRef);
 
   ngAfterViewInit(): void {
+    this.enclosureStore.selectSlot(null);
     this.renderer.setAttribute(this.viewSvg.nativeElement, 'data', this.svgPath);
     this.cdr.markForCheck();
     const objElm = (this.viewSvg.nativeElement);
@@ -99,13 +78,13 @@ export class EnclosureViewDirective implements AfterViewInit {
       const groupsList = objElm.contentDocument.querySelectorAll<SVGGElement>('g');
 
       let driveCageNumber = 1;
-      const enclosure = this.enclosure();
+      const viewSpecificSlots = this.viewSpecificSlots();
       for (const group of groupsList) {
         if (!group.id.startsWith('DRIVE_CAGE_')) {
           continue;
         }
 
-        if (enclosure.elements['Array Device Slot'][driveCageNumber].dev == null) {
+        if (viewSpecificSlots[driveCageNumber].dev == null) {
           this.renderer.setStyle(group, 'opacity', '0.5');
         }
         const {
@@ -133,8 +112,9 @@ export class EnclosureViewDirective implements AfterViewInit {
     const selectRect = this.createSelectRect(gElement);
 
     const mouseoutHandler = ((slotNo: number, grpEl: SVGGElement, borderedRect: SVGRectElement): void => {
+      const viewSpecificSlots = this.viewSpecificSlots();
       this.renderer.removeChild(grpEl.parentNode, borderedRect);
-      if (this.enclosure().elements['Array Device Slot'][slotNo].dev == null) {
+      if (viewSpecificSlots[slotNo].dev == null) {
         return;
       }
       this.cdr.markForCheck();
@@ -152,7 +132,7 @@ export class EnclosureViewDirective implements AfterViewInit {
 
       this.previousSelectRect = selectRect;
       this.renderer.insertBefore(gElement.parentNode, selectRect, gElement);
-      this.onTraySelected(slotNo - 1);
+      this.onTraySelected(slotNo);
       this.cdr.markForCheck();
     }).bind(this, slotNumber);
 
@@ -192,9 +172,8 @@ export class EnclosureViewDirective implements AfterViewInit {
     return selectRect;
   }
 
-  protected onTraySelected(slotIndex: number): void {
-    const driveBayNumber = slotIndex + 1;
-    const slots = this.slots();
-    this.enclosureStore.selectSlot({ ...slots[driveBayNumber], drive_bay_number: driveBayNumber });
+  protected onTraySelected(slotNumber: number): void {
+    const viewSpecificSlots = this.viewSpecificSlots();
+    this.enclosureStore.selectSlot({ ...viewSpecificSlots[slotNumber] });
   }
 }

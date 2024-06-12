@@ -8,12 +8,12 @@
         <div class="container">
           <div class="view-wrapper">
             <div class="enclosure-view">
-              <ng-container *ngIf="selectedSlot()">
+              <ng-container *ngIf="selectedSlot() && selectedView() !== 'expanders'">
                 <ix-disk-topology-description
                   [selectedSlot]="selectedSlot()"
                 ></ix-disk-topology-description>
               </ng-container>
-              <div class="view-options-container">
+              <div *ngIf="selectedView() !== 'expanders'" class="view-options-container">
                 <ng-container
                   *ngComponentOutlet="dashboardView().component; inputs: dashboardView().inputs;"
                 ></ng-container>
@@ -49,7 +49,7 @@
                 *ngIf="selectedView() === 'expanders'"
                 [expanders]="expanders()"
               ></ix-sas-expander-status-view>
-              <ng-container *ngIf="selectedSlot()">
+              <ng-container *ngIf="selectedSlot() && selectedView() !== 'expanders'">
                 <ix-vdev-disks-list
                   [selectedSlot]="selectedSlot()"
                 ></ix-vdev-disks-list>
