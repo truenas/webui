@@ -974,6 +974,10 @@ export class EntityTableComponent<Row extends SomeRow = SomeRow> implements OnIn
     return UUID.UUID();
   }
 
+  getRowTestAttribute(row: Row): string {
+    return row.name || row.path || row.description || row.title || row.id;
+  }
+
   isPaddedAway(index: number): boolean {
     return !this.shouldApplyStickyOffset(index)
       && !(this.isLeftStickyColumnNo(index) && this.isTableOverflow());
