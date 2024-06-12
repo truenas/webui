@@ -9,12 +9,11 @@ import { PoolCardIconType } from 'app/enums/pool-card-icon-type.enum';
 import { PoolStatus } from 'app/enums/pool-status.enum';
 import { TopologyWarning, VdevType } from 'app/enums/v-dev-type.enum';
 import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
+import { Disk, StorageDashboardDisk } from 'app/interfaces/disk.interface';
 import { Pool, PoolTopology } from 'app/interfaces/pool.interface';
 import { SmartTestResult } from 'app/interfaces/smart-test.interface';
 import {
-  Disk,
   EnclosureAndSlot,
-  StorageDashboardDisk,
   TopologyDisk,
   TopologyItem,
 } from 'app/interfaces/storage.interface';

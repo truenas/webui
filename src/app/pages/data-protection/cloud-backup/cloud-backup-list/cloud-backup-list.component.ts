@@ -53,7 +53,6 @@ export class CloudBackupListComponent implements OnInit {
     textColumn({
       title: this.translate.instant('Name'),
       propertyName: 'description',
-      sortable: true,
     }),
     toggleColumn({
       title: this.translate.instant('Enabled'),
@@ -212,9 +211,7 @@ export class CloudBackupListComponent implements OnInit {
 
   onListFiltered(query: string): void {
     this.filterString = query.toLowerCase();
-    this.dataProvider.setRows(this.cloudBackups.filter((task) => {
-      return task.description.includes(this.filterString);
-    }));
+    this.dataProvider.setFilter({ query, columnKeys: ['description'] });
   }
 
   expanded(row: CloudBackup): void {

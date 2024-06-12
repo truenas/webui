@@ -7,7 +7,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { filter, tap } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
-import { vmDeviceTypeLabels } from 'app/enums/vm.enum';
+import { VmDeviceType, vmDeviceTypeLabels } from 'app/enums/vm.enum';
 import { VmDevice } from 'app/interfaces/vm-device.interface';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
@@ -43,18 +43,15 @@ export class DeviceListComponent implements OnInit {
     textColumn({
       title: this.translate.instant('Device ID'),
       propertyName: 'id',
-      sortable: true,
     }),
     textColumn({
       title: this.translate.instant('Device'),
       propertyName: 'dtype',
-      sortable: true,
       getValue: (device) => this.getDeviceTypeLabel(device),
     }),
     textColumn({
       title: this.translate.instant('Order'),
       propertyName: 'order',
-      sortable: true,
     }),
     actionsColumn({}),
   ], {
@@ -143,11 +140,14 @@ export class DeviceListComponent implements OnInit {
 
   onListFiltered(query: string): void {
     this.filterString = query.toLowerCase();
-    this.dataProvider.setRows(this.devices.filter((device) => {
-      const deviceTypeLabel = this.getDeviceTypeLabel(device);
-      return String(device.id).includes(this.filterString)
-        || deviceTypeLabel.toLowerCase().includes(this.filterString);
-    }));
+    this.dataProvider.setFilter({
+      list: this.devices,
+      query,
+      columnKeys: ['id', 'dtype'],
+      preprocessMap: {
+        dtype: (dtype: VmDeviceType) => this.getDeviceTypeLabel({ dtype } as VmDevice),
+      },
+    });
     this.cdr.markForCheck();
   }
 

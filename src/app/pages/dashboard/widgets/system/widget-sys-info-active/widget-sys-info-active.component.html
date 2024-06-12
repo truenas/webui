@@ -7,6 +7,7 @@
         </div>
 
         <ix-product-image
+          class="product-image"
           [systemProduct]="systemInfo()?.platform"
           [hasEnclosureSupport]="hasEnclosureSupport()"
           [isHaLicensed]="isHaLicensed()"
@@ -26,7 +27,7 @@
           >{{ 'Update in Progress' | translate }}</button>
 
           <button
-            *ngIf="updateAvailable() && !isUpdateRunning()"
+            *ngIf="!isUpdateRunning()"
             mat-button
             color="primary"
             [ixTest]="['widget-sysinfo', 'update']"
@@ -96,6 +97,15 @@
               </span>
               <span *ngIf="!systemInfo()?.license">
                 {{ 'No License' | translate }}
+                <a
+                  ixTest="add-license"
+                  mat-icon-button
+                  matTooltipPosition="above"
+                  [matTooltip]="'Add License' | translate"
+                  [routerLink]="['/system', 'support']"
+                >
+                  <ix-icon name="add_circle"></ix-icon>
+                </a>
               </span>
             </ng-container>
           </mat-list-item>

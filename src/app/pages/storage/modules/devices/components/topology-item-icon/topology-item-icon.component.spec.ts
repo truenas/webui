@@ -1,7 +1,8 @@
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { DiskType } from 'app/enums/disk-type.enum';
 import { TopologyItemType } from 'app/enums/v-dev-type.enum';
-import { Disk, TopologyDisk, VDev } from 'app/interfaces/storage.interface';
+import { Disk } from 'app/interfaces/disk.interface';
+import { TopologyDisk, VDev } from 'app/interfaces/storage.interface';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import {
   TopologyItemIconComponent,

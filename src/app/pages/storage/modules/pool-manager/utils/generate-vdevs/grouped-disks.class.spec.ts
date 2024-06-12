@@ -1,6 +1,6 @@
 import { GiB } from 'app/constants/bytes.constant';
 import { DiskType } from 'app/enums/disk-type.enum';
-import { UnusedDisk } from 'app/interfaces/storage.interface';
+import { DetailsDisk } from 'app/interfaces/disk.interface';
 import { PoolManagerTopologyCategory } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
 import { GroupedDisks } from 'app/pages/storage/modules/pool-manager/utils/generate-vdevs/grouped-disks.class';
 
@@ -29,7 +29,7 @@ describe('GroupedDisks', () => {
         type: DiskType.Hdd,
         size: 4 * GiB,
       },
-    ] as UnusedDisk[];
+    ] as DetailsDisk[];
 
     groupedDisks = new GroupedDisks(disks);
   });
@@ -63,7 +63,7 @@ describe('GroupedDisks', () => {
     it('removes disks matching them by devname', () => {
       groupedDisks.removeUsedDisks([
         { devname: 'sdb' },
-      ] as UnusedDisk[]);
+      ] as DetailsDisk[]);
 
       const disks = groupedDisks.findSuitableDisks({
         diskType: DiskType.Hdd,

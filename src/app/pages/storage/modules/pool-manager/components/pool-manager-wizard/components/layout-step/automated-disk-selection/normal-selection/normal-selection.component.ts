@@ -7,9 +7,9 @@ import { merge, of } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { CreateVdevLayout, VdevType } from 'app/enums/v-dev-type.enum';
 import { generateOptionsRange } from 'app/helpers/options.helper';
+import { DetailsDisk } from 'app/interfaces/disk.interface';
 import { Option, SelectOption } from 'app/interfaces/option.interface';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
-import { UnusedDisk } from 'app/interfaces/storage.interface';
 import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
 import {
   hasDeepChanges,
@@ -29,7 +29,7 @@ export class NormalSelectionComponent implements OnInit, OnChanges {
   @Input() type: VdevType;
   @Input() layout: CreateVdevLayout;
   @Input() isStepActive: boolean;
-  @Input() inventory: UnusedDisk[];
+  @Input() inventory: DetailsDisk[];
 
   form = this.formBuilder.group({
     width: [{ value: null as number, disabled: true }, Validators.required],
@@ -39,7 +39,7 @@ export class NormalSelectionComponent implements OnInit, OnChanges {
   protected widthOptions$ = of<SelectOption[]>([]);
   protected numberOptions$ = of<SelectOption[]>([]);
 
-  private selectedDisks: UnusedDisk[] = [];
+  private selectedDisks: DetailsDisk[] = [];
 
   constructor(
     private formBuilder: FormBuilder,
@@ -62,7 +62,7 @@ export class NormalSelectionComponent implements OnInit, OnChanges {
     return this.type === VdevType.Spare || this.type === VdevType.Cache || this.type === VdevType.Log;
   }
 
-  protected onDisksSelected(disks: UnusedDisk[]): void {
+  protected onDisksSelected(disks: DetailsDisk[]): void {
     this.selectedDisks = disks;
     this.updateWidthOptions();
     this.updateDisabledStatuses();

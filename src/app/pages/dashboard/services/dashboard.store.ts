@@ -32,7 +32,7 @@ export interface DashboardState {
 export const initialState: DashboardState = {
   isLoading: false,
   globalError: '',
-  groups: [],
+  groups: null,
 };
 
 /**
@@ -57,12 +57,13 @@ export class DashboardStore extends ComponentStore<DashboardState> {
   readonly entered = this.effect((trigger$) => {
     return trigger$.pipe(
       tap(() => this.toggleLoadingState(true)),
+      switchMap(() => this.authService.refreshUser()),
       switchMap(() => this.authService.user$.pipe(
         filter(Boolean),
         map((user) => user.attributes.dashState),
       )),
       tap((dashState) => {
-        // TODO: Remove demoWidgets once active development of new dashboard is done
+        // TODO: Convert demoWidgets into default template
         this.setState({
           isLoading: false,
           globalError: '',
@@ -112,8 +113,6 @@ export class DashboardStore extends ComponentStore<DashboardState> {
   }
 
   private getWidgetTypeFromOldDashboard(name: WidgetName): WidgetType {
-    const unknownWidgetType = name as unknown as WidgetType;
-    // TODO: we have some widgets that are not yet implemented for the new dashboard
     switch (name) {
       case WidgetName.Help: return WidgetType.Help;
       case WidgetName.Memory: return WidgetType.Memory;
@@ -125,7 +124,7 @@ export class DashboardStore extends ComponentStore<DashboardState> {
       case WidgetName.Cpu: return WidgetType.Cpu;
       case WidgetName.Pool: return WidgetType.PoolName;
       case WidgetName.Storage: return WidgetType.Storage;
-      default: return unknownWidgetType;
+      default: return name as unknown as WidgetType;
     }
   }
 

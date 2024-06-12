@@ -20,6 +20,7 @@ import { EmptyService } from 'app/modules/empty/empty.service';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import { stateButtonColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-state-button/ix-cell-state-button.component';
 import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
+import { yesNoColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-yes-no/ix-cell-yes-no.component';
 import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/table-column.interface';
 import { createTable } from 'app/modules/ix-table/utils';
 import { selectJob } from 'app/modules/jobs/store/job.selectors';
@@ -58,7 +59,6 @@ export class CloudSyncListComponent implements OnInit {
     }),
     textColumn({
       title: this.translate.instant('Credential'),
-      propertyName: 'credential',
       hidden: true,
       getValue: (task) => task.credentials.name,
     }),
@@ -90,7 +90,6 @@ export class CloudSyncListComponent implements OnInit {
     }),
     textColumn({
       title: this.translate.instant('Next Run'),
-      propertyName: 'next_run',
       hidden: true,
       getValue: (task) => {
         if (task.enabled) {
@@ -103,7 +102,6 @@ export class CloudSyncListComponent implements OnInit {
     }),
     textColumn({
       title: this.translate.instant('Last Run'),
-      propertyName: 'last_run',
       hidden: true,
       getValue: (task) => {
         if (task.job?.time_finished?.$date) {
@@ -118,10 +116,9 @@ export class CloudSyncListComponent implements OnInit {
       getJob: (row) => row.job,
       cssClass: 'state-button',
     }),
-    textColumn({
+    yesNoColumn({
       title: this.translate.instant('Enabled'),
       propertyName: 'enabled',
-      getValue: (task) => (task.enabled ? this.translate.instant('Yes') : this.translate.instant('No')),
     }),
   ], {
     rowTestId: (row) => 'cloudsync-task-' + row.description,
@@ -286,9 +283,7 @@ export class CloudSyncListComponent implements OnInit {
 
   onListFiltered(query: string): void {
     this.filterString = query.toLowerCase();
-    this.dataProvider.setRows(this.cloudSyncTasks.filter((cloudSync) => {
-      return cloudSync.description.toLowerCase().includes(this.filterString);
-    }));
+    this.dataProvider.setFilter({ query, columnKeys: ['description'] });
   }
 
   columnsChange(columns: typeof this.columns): void {

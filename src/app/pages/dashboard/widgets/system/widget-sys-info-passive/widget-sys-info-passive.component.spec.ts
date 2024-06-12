@@ -5,7 +5,7 @@ import { MatListItemHarness } from '@angular/material/list/testing';
 import { Router } from '@angular/router';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
-import { provideMockStore } from '@ngrx/store/testing';
+import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { MockComponent } from 'ng-mocks';
 import { NgxSkeletonLoaderComponent } from 'ngx-skeleton-loader';
 import { BehaviorSubject, of } from 'rxjs';
@@ -27,12 +27,13 @@ import {
   selectIsIxHardware,
   selectProductType,
   selectIsEnterprise,
-  selectEnclosureSupport,
+  selectHasEnclosureSupport,
 } from 'app/store/system-info/system-info.selectors';
 
 describe('WidgetSysInfoPassiveComponent', () => {
   let spectator: Spectator<WidgetSysInfoPassiveComponent>;
   let loader: HarnessLoader;
+  let store$: MockStore;
   const refreshInterval$ = new BehaviorSubject<number>(0);
 
   const systemInfo = {
@@ -91,7 +92,7 @@ describe('WidgetSysInfoPassiveComponent', () => {
             value: true,
           },
           {
-            selector: selectEnclosureSupport,
+            selector: selectHasEnclosureSupport,
             value: true,
           },
           {
@@ -126,6 +127,7 @@ describe('WidgetSysInfoPassiveComponent', () => {
       },
     });
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    store$ = spectator.inject(MockStore);
   });
 
   it('checks title', () => {
@@ -163,5 +165,14 @@ describe('WidgetSysInfoPassiveComponent', () => {
     expect(updatedDatetime).toBeGreaterThan(initialDatetime);
 
     jest.useRealTimers();
+  });
+
+  it('checks unlicensed HA system', () => {
+    store$.overrideSelector(selectIsHaLicensed, false);
+    store$.refreshState();
+    spectator.detectChanges();
+
+    expect(spectator.query('.container.empty div')).toHaveText('The system is not licensed for HA.');
+    expect(spectator.query('.container.empty small')).toHaveText('Configure dashboard to edit the widget.');
   });
 });

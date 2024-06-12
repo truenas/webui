@@ -4,8 +4,8 @@ import {
 import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { combineLatest, filter, tap } from 'rxjs';
+import { DetailsDisk } from 'app/interfaces/disk.interface';
 import { Pool } from 'app/interfaces/pool.interface';
-import { Disk } from 'app/interfaces/storage.interface';
 import { AddVdevsStore } from 'app/pages/storage/modules/pool-manager/components/add-vdevs/store/add-vdevs-store.service';
 import { PoolCreationWizardStep } from 'app/pages/storage/modules/pool-manager/enums/pool-creation-wizard-step.enum';
 import { PoolManagerTopology } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
@@ -21,7 +21,7 @@ import { poolTopologyToStoreTopology } from 'app/pages/storage/modules/pool-mana
 export class AddVdevsComponent implements OnInit {
   protected hasConfigurationPreview = true;
   protected existingPool: Pool = null;
-  protected poolDisks: Disk[] = [];
+  protected poolDisks: DetailsDisk[] = [];
   protected topology: PoolManagerTopology = null;
 
   constructor(

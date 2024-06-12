@@ -10,9 +10,10 @@ import {
   of, Observable, combineLatest, startWith,
 } from 'rxjs';
 import { helptextManager } from 'app/helptext/storage/volumes/manager/manager';
+import { DetailsDisk } from 'app/interfaces/disk.interface';
 import { Option } from 'app/interfaces/option.interface';
-import { UnusedDisk } from 'app/interfaces/storage.interface';
 import { getNonUniqueSerialDisksWarning } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/components/pool-warnings/get-non-unique-serial-disks';
+import { DiskStore } from 'app/pages/storage/modules/pool-manager/store/disk.store';
 import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
 import { hasNonUniqueSerial, hasExportedPool } from 'app/pages/storage/modules/pool-manager/utils/disk.utils';
 
@@ -31,10 +32,10 @@ export class PoolWarningsComponent implements OnInit {
 
   exportedPoolsWarning = this.translate.instant(helptextManager.manager_exportedDisksWarning);
 
-  nonUniqueSerialDisks: UnusedDisk[] = [];
+  nonUniqueSerialDisks: DetailsDisk[] = [];
   nonUniqueSerialDisksTooltip: string;
 
-  disksWithExportedPools: UnusedDisk[] = [];
+  disksWithExportedPools: DetailsDisk[] = [];
   exportedPoolsOptions$ = of<Option[]>([]);
   poolAndDisks = new Map<string, string[]>();
 
@@ -48,6 +49,7 @@ export class PoolWarningsComponent implements OnInit {
     private translate: TranslateService,
     private cdr: ChangeDetectorRef,
     private store: PoolManagerStore,
+    private diskStore: DiskStore,
   ) {}
 
   ngOnInit(): void {
@@ -67,7 +69,7 @@ export class PoolWarningsComponent implements OnInit {
   }
 
   private initUnsafeDisksWarnings(): void {
-    this.store.allDisks$.pipe(untilDestroyed(this)).subscribe((allDisks) => {
+    this.diskStore.selectableDisks$.pipe(untilDestroyed(this)).subscribe((allDisks) => {
       this.nonUniqueSerialDisks = allDisks.filter(hasNonUniqueSerial);
       this.disksWithExportedPools = allDisks.filter(hasExportedPool);
 

@@ -2,16 +2,13 @@ import { Injectable } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { ComponentStore, tapResponse } from '@ngrx/component-store';
 import {
-  forkJoin, Observable, of, Subject, tap,
+  forkJoin, Observable, Subject, tap,
 } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
-import { VdevType, TopologyItemType } from 'app/enums/v-dev-type.enum';
+import { map, switchMap } from 'rxjs/operators';
+import { Disk } from 'app/interfaces/disk.interface';
 import { DashboardEnclosure, DashboardEnclosureSlot } from 'app/interfaces/enclosure.interface';
-import { Pool } from 'app/interfaces/pool.interface';
-import {
-  Disk, TopologyDisk, TopologyItem,
-} from 'app/interfaces/storage.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { OldEnclosure } from 'app/pages/system/old-view-enclosure/interfaces/old-enclosure.interface';
 import { DisksUpdateService } from 'app/services/disks-update.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -19,7 +16,7 @@ import { WebSocketService } from 'app/services/ws.service';
 export interface EnclosureState {
   areEnclosuresLoading: boolean;
   areDisksLoading: boolean;
-  enclosures: DashboardEnclosure[];
+  enclosures: OldEnclosure[];
   selectedEnclosure?: string | null;
   selectedEnclosureDisks?: DashboardEnclosureSlot[] | null;
 }
@@ -64,7 +61,7 @@ export class EnclosureStore extends ComponentStore<EnclosureState> {
   });
 
   updateState(): Observable<{
-    enclosures: DashboardEnclosure[];
+    enclosures: OldEnclosure[];
   }> {
     return forkJoin({
       enclosures: this.getEnclosures().pipe(
@@ -73,12 +70,14 @@ export class EnclosureStore extends ComponentStore<EnclosureState> {
     });
   }
 
-  getEnclosures(): Observable<DashboardEnclosure[]> {
-    return this.ws.call('webui.enclosure.dashboard');
+  getEnclosures(): Observable<OldEnclosure[]> {
+    return this.ws.call('webui.enclosure.dashboard').pipe(
+      map((enclosure) => this.addEnclosureNumber(enclosure)),
+    );
   }
 
-  patchStateWithEnclosureData(): (source: Observable<DashboardEnclosure[]>) => Observable<DashboardEnclosure[]> {
-    return tapResponse<DashboardEnclosure[]>(
+  patchStateWithEnclosureData(): (source: Observable<OldEnclosure[]>) => Observable<OldEnclosure[]> {
+    return tapResponse(
       (enclosures) => {
         const selectedEnclosure = enclosures.length ? enclosures[0].id : null;
         this.patchState({
@@ -96,61 +95,13 @@ export class EnclosureStore extends ComponentStore<EnclosureState> {
     );
   }
 
-  processData({
-    enclosures,
-  }: {
-    enclosures: DashboardEnclosure[];
-    selectedEnclosure: string;
-  }): Observable<DashboardEnclosure[]> {
-    enclosures.map((enclosure, index) => {
-      enclosure.number = index;
-      return enclosure;
+  addEnclosureNumber(enclosures: DashboardEnclosure[]): OldEnclosure[] {
+    return enclosures.map((enclosure, index) => {
+      return {
+        ...enclosure,
+        number: index,
+      };
     });
-    return of(enclosures);
-  }
-
-  findVdevByDisk(disk: Disk, pool: Pool): { category: VdevType | null; vdev: TopologyItem | null } | null {
-    if (!disk || !pool) return null;
-
-    let topologyItem: TopologyItem | null = null;
-    let topologyCategory: VdevType | null;
-
-    const categories: VdevType[] = [
-      VdevType.Data,
-      VdevType.Cache,
-      VdevType.Spare,
-      VdevType.Special,
-      VdevType.Log,
-      VdevType.Dedup,
-    ];
-
-    categories.forEach((category: VdevType) => {
-      const found: TopologyItem = pool.topology[category].find((item: TopologyItem) => {
-        switch (item.type) {
-          case TopologyItemType.Disk:
-            return item.disk === disk.name;
-          case TopologyItemType.Spare:
-          case TopologyItemType.Mirror:
-          case TopologyItemType.Log:
-          case TopologyItemType.Stripe:
-          case TopologyItemType.Raidz1:
-          case TopologyItemType.Raidz2:
-          case TopologyItemType.Raidz3:
-          case TopologyItemType.Draid:
-            return item.children.find((device: TopologyDisk) => device.disk === disk.name);
-          default:
-            return false;
-        }
-      });
-      if (found) {
-        topologyItem = found;
-        topologyCategory = category;
-      }
-    });
-    return {
-      vdev: topologyItem,
-      category: topologyCategory,
-    };
   }
 
   updateLabel(enclosureId: string, label: string): void {
@@ -171,7 +122,7 @@ export class EnclosureStore extends ComponentStore<EnclosureState> {
     });
   }
 
-  getPools(enclosure: DashboardEnclosure): string[] {
+  getPools(enclosure: OldEnclosure): string[] {
     if (!enclosure) return [];
     const pools = Object.entries(enclosure?.elements['Array Device Slot'])
       .filter((entry) => entry[1].pool_info !== null)
@@ -190,7 +141,7 @@ export class EnclosureStore extends ComponentStore<EnclosureState> {
     }
   }
 
-  updateSelectedEnclosureDisks(selectedEnclosure: DashboardEnclosure): void {
+  updateSelectedEnclosureDisks(selectedEnclosure: OldEnclosure): void {
     const disks = Object.entries(selectedEnclosure.elements['Array Device Slot'])
       .map((keyValue) => keyValue[1]);
 

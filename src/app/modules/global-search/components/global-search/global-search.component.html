@@ -29,5 +29,6 @@
     [isLoading]="isLoading"
     [isSearchInputFocused]="isSearchInputFocused"
     (keydown)="handleKeyDown($event)"
+    (recentSearchRemoved)="setInitialSearchResults()"
   ></ix-global-search-results>
 </div>

@@ -48,32 +48,26 @@ export class IdmapListComponent implements OnInit {
     textColumn({
       title: this.translate.instant('Name'),
       propertyName: 'label',
-      sortable: true,
     }),
     textColumn({
       title: this.translate.instant('Backend'),
       propertyName: 'idmap_backend',
-      sortable: true,
     }),
     textColumn({
       title: this.translate.instant('DNS Domain Name'),
       propertyName: 'dns_domain_name',
-      sortable: true,
     }),
     textColumn({
       title: this.translate.instant('Range Low'),
       propertyName: 'range_low',
-      sortable: true,
     }),
     textColumn({
       title: this.translate.instant('Range High'),
       propertyName: 'range_high',
-      sortable: true,
     }),
     textColumn({
       title: this.translate.instant('Certificate'),
       propertyName: 'cert_name',
-      sortable: true,
     }),
     actionsColumn({
       actions: [
@@ -209,9 +203,6 @@ export class IdmapListComponent implements OnInit {
 
   onListFiltered(query: string): void {
     this.filterString = query.toLowerCase();
-    this.dataProvider.setRows(this.idmaps.filter((idmap) => {
-      return idmap.label.toLowerCase().includes(this.filterString)
-        || idmap.idmap_backend.toLowerCase().includes(this.filterString);
-    }));
+    this.dataProvider.setFilter({ query, columnKeys: ['label', 'idmap_backend'] });
   }
 }

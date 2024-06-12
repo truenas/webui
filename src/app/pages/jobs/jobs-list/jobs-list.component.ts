@@ -53,30 +53,26 @@ export class JobsListComponent implements OnInit {
   columns = createTable<Job>([
     textColumn({
       title: this.translate.instant('Name'),
-      sortable: true,
     }),
     stateButtonColumn({
       title: this.translate.instant('State'),
       propertyName: 'state',
-      sortable: true,
       cssClass: 'state-button',
-      sortBy: (row) => row.state,
       getJob: (row) => row,
     }),
     textColumn({
       title: this.translate.instant('ID'),
       propertyName: 'id',
-      sortable: true,
     }),
     dateColumn({
       title: this.translate.instant('Started'),
       propertyName: 'time_started',
-      sortable: true,
+      sortBy: (job) => +job.time_started,
     }),
     dateColumn({
       title: this.translate.instant('Finished'),
       propertyName: 'time_finished',
-      sortable: true,
+      sortBy: (job) => +job.time_finished,
     }),
   ], {
     rowTestId: (row) => 'job-' + row.id,
@@ -135,13 +131,8 @@ export class JobsListComponent implements OnInit {
 
   protected onListFiltered(query: string): void {
     this.filterString = query;
-    this.dataProvider.setRows(this.jobs.filter(this.filterSnapshot));
+    this.dataProvider.setFilter({ list: this.jobs, query, columnKeys: ['method', 'description'] });
   }
-
-  private filterSnapshot = (job: Job): boolean => {
-    return job.method?.toLowerCase().includes(this.filterString)
-      || job.description?.toLowerCase().includes(this.filterString);
-  };
 
   private setDefaultSort(): void {
     this.dataProvider.setSorting({

@@ -49,22 +49,18 @@ export class CatalogsComponent implements OnInit {
     textColumn({
       title: this.translate.instant('Name'),
       propertyName: 'label',
-      sortable: true,
     }),
     textColumn({
       title: this.translate.instant('Catalog URL'),
       propertyName: 'repository',
-      sortable: true,
     }),
     textColumn({
       title: this.translate.instant('Branch'),
       propertyName: 'branch',
-      sortable: true,
     }),
     textColumn({
       title: this.translate.instant('Preferred Trains'),
       propertyName: 'preferred_trains',
-      sortable: true,
     }),
   ], {
     rowTestId: (row) => 'catalog-' + row.label,
@@ -113,11 +109,7 @@ export class CatalogsComponent implements OnInit {
 
   onListFiltered(query: string): void {
     this.filterString = query.toLowerCase();
-    this.dataProvider.setRows(this.catalogs.filter((catalog) => {
-      return catalog.label.toLowerCase().includes(this.filterString)
-        || catalog.id.toLowerCase().includes(this.filterString)
-        || catalog.repository.toString().toLowerCase().includes(this.filterString);
-    }));
+    this.dataProvider.setFilter({ query, columnKeys: ['label', 'id', 'repository'] });
   }
 
   setDefaultSort(): void {

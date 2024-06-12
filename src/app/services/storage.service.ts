@@ -3,9 +3,10 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { GiB } from 'app/constants/bytes.constant';
 import { TopologyItemType, TopologyWarning, VdevType } from 'app/enums/v-dev-type.enum';
+import { Disk } from 'app/interfaces/disk.interface';
 import { FileSystemStat } from 'app/interfaces/filesystem-stat.interface';
 import { Option } from 'app/interfaces/option.interface';
-import { Disk, TopologyItem } from 'app/interfaces/storage.interface';
+import { TopologyItem } from 'app/interfaces/storage.interface';
 import { WebSocketService } from 'app/services/ws.service';
 
 @Injectable()

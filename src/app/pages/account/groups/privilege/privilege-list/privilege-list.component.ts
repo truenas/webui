@@ -47,26 +47,27 @@ export class PrivilegeListComponent implements OnInit {
     textColumn({
       title: this.translate.instant('Name'),
       propertyName: 'name',
-      sortable: true,
     }),
     textColumn({
       title: this.translate.instant('Roles'),
       getValue: (row) => row.roles.map((role) => {
         return roleNames.has(role) ? this.translate.instant(roleNames.get(role)) : role;
       }).join(', ') || this.translate.instant('N/A'),
+      disableSorting: true,
     }),
     textColumn({
       title: this.translate.instant('Local Groups'),
       getValue: (row) => row.local_groups.length,
+      disableSorting: true,
     }),
     textColumn({
       title: this.translate.instant('DS Groups'),
       getValue: (row) => row.ds_groups.length,
+      disableSorting: true,
     }),
     yesNoColumn({
       title: this.translate.instant('Web Shell Access'),
       propertyName: 'web_shell',
-      sortable: true,
     }),
     actionsColumn({
       actions: [

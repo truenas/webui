@@ -2,15 +2,14 @@ import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { EMPTY, of } from 'rxjs';
 import {
-  catchError, map, mergeMap, switchMap,
+  catchError, map, mergeMap,
 } from 'rxjs/operators';
-import { SystemFeatures } from 'app/interfaces/events/sys-info-event.interface';
 import { WebSocketService } from 'app/services/ws.service';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
 import {
   ixHardwareLoaded,
   productTypeLoaded,
-  systemFeaturesLoaded, systemHostIdLoaded, systemInfoLoaded, systemInfoUpdated, systemIsStableLoaded,
+  systemHostIdLoaded, systemInfoLoaded, systemInfoUpdated, systemIsStableLoaded,
 } from 'app/store/system-info/system-info.actions';
 
 @Injectable()
@@ -26,33 +25,6 @@ export class SystemInfoEffects {
           return EMPTY;
         }),
       );
-    }),
-  ));
-
-  loadSystemFeatures = createEffect(() => this.actions$.pipe(
-    ofType(systemInfoLoaded),
-    switchMap(({ systemInfo }) => {
-      const features: SystemFeatures = {
-        HA: false,
-        enclosure: false,
-      };
-      const profile = { ...systemInfo };
-
-      if (!profile.system_product) {
-        // Stick with defaults if value is null
-        return of(systemFeaturesLoaded({ systemFeatures: features }));
-      }
-
-      if (profile.system_product.includes('FREENAS-MINI-3.0') || profile.system_product.includes('TRUENAS-')) {
-        features.enclosure = true;
-      }
-
-      // HIGH AVAILABILITY SUPPORT
-      if (profile.license?.system_serial_ha || profile.system_product === 'BHYVE') {
-        features.HA = true;
-        return of(systemFeaturesLoaded({ systemFeatures: features }));
-      }
-      return of(systemFeaturesLoaded({ systemFeatures: features }));
     }),
   ));
 

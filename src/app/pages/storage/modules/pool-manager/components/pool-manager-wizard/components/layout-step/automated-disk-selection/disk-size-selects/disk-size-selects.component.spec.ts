@@ -6,7 +6,7 @@ import { Subject } from 'rxjs';
 import { GiB } from 'app/constants/bytes.constant';
 import { DiskType } from 'app/enums/disk-type.enum';
 import { VdevType } from 'app/enums/v-dev-type.enum';
-import { UnusedDisk } from 'app/interfaces/storage.interface';
+import { DetailsDisk } from 'app/interfaces/disk.interface';
 import { IxCheckboxHarness } from 'app/modules/ix-forms/components/ix-checkbox/ix-checkbox.harness';
 import { IxSelectHarness } from 'app/modules/ix-forms/components/ix-select/ix-select.harness';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
@@ -28,7 +28,7 @@ describe('DiskSizeSelectsComponent', () => {
     { type: DiskType.Hdd, size: 10 * GiB, name: 'disk2' },
     { type: DiskType.Hdd, size: 20 * GiB, name: 'disk3' },
     { type: DiskType.Ssd, size: 20 * GiB, name: 'disk4' },
-  ] as UnusedDisk[];
+  ] as DetailsDisk[];
 
   const createComponent = createComponentFactory({
     component: DiskSizeSelectsComponent,
@@ -116,7 +116,7 @@ describe('DiskSizeSelectsComponent', () => {
   });
 
   it('selects disk size and type if there only one option available', async () => {
-    const singleDisk = { type: DiskType.Hdd, size: 10 * GiB, name: 'disk1' } as UnusedDisk;
+    const singleDisk = { type: DiskType.Hdd, size: 10 * GiB, name: 'disk1' } as DetailsDisk;
     spectator.setInput('inventory', [singleDisk]);
 
     expect(await diskSizeSelect.getValue()).toBe('10 GiB (HDD)');

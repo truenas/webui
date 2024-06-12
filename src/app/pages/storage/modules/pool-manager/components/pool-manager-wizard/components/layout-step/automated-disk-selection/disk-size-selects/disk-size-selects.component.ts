@@ -9,9 +9,9 @@ import { filter } from 'rxjs/operators';
 import { DiskType } from 'app/enums/disk-type.enum';
 import { CreateVdevLayout, VdevType } from 'app/enums/v-dev-type.enum';
 import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
+import { DetailsDisk } from 'app/interfaces/disk.interface';
 import { SelectOption } from 'app/interfaces/option.interface';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
-import { UnusedDisk } from 'app/interfaces/storage.interface';
 import { DiskTypeSizeMap } from 'app/pages/storage/modules/pool-manager/interfaces/disk-type-size-map.interface';
 import { SizeAndType } from 'app/pages/storage/modules/pool-manager/interfaces/size-and-type.interface';
 import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
@@ -27,9 +27,9 @@ import { getDiskTypeSizeMap } from 'app/pages/storage/modules/pool-manager/utils
 export class DiskSizeSelectsComponent implements OnChanges {
   @Input({ required: true }) layout: CreateVdevLayout;
   @Input({ required: true }) type: VdevType;
-  @Input({ required: true }) inventory: UnusedDisk[];
+  @Input({ required: true }) inventory: DetailsDisk[];
   @Input() isStepActive = false;
-  @Output() disksSelected = new EventEmitter<UnusedDisk[]>();
+  @Output() disksSelected = new EventEmitter<DetailsDisk[]>();
 
   protected diskSizeAndTypeOptions$ = of<SelectOption[]>([]);
 
@@ -135,7 +135,7 @@ export class DiskSizeSelectsComponent implements OnChanges {
     });
   }
 
-  private getSuitableDisks(): UnusedDisk[] {
+  private getSuitableDisks(): DetailsDisk[] {
     if (!this.selectedDiskSize) {
       return [];
     }

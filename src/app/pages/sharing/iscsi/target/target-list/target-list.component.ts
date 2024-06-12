@@ -40,12 +40,10 @@ export class TargetListComponent implements OnInit {
     textColumn({
       title: this.translate.instant('Target Name'),
       propertyName: 'name',
-      sortable: true,
     }),
     textColumn({
       title: this.translate.instant('Target Alias'),
       propertyName: 'alias',
-      sortable: true,
     }),
     actionsColumn({
       actions: [
@@ -130,9 +128,7 @@ export class TargetListComponent implements OnInit {
 
   onListFiltered(query: string): void {
     this.filterString = query.toLowerCase();
-    this.dataProvider.setRows(this.targets.filter((target) => {
-      return target.name.toLowerCase().includes(this.filterString);
-    }));
+    this.dataProvider.setFilter({ query, columnKeys: ['name'] });
   }
 
   columnsChange(columns: typeof this.columns): void {

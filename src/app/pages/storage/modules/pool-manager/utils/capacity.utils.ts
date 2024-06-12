@@ -1,6 +1,6 @@
 import { CreateVdevLayout } from 'app/enums/v-dev-type.enum';
 import { assertUnreachable } from 'app/helpers/assert-unreachable.utils';
-import { UnusedDisk } from 'app/interfaces/storage.interface';
+import { DetailsDisk } from 'app/interfaces/disk.interface';
 import { PoolManagerTopologyCategory } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
 
 export function categoryCapacity(topologyCategory: PoolManagerTopologyCategory, swapOnDrive: number): number {
@@ -18,7 +18,7 @@ export function categoryCapacity(topologyCategory: PoolManagerTopologyCategory, 
 export function vdevCapacity({
   vdev, layout, swapOnDrive, draidDataDisks, draidSpareDisks,
 }: {
-  vdev: UnusedDisk[];
+  vdev: DetailsDisk[];
   layout: CreateVdevLayout;
   swapOnDrive: number;
   draidDataDisks?: number;

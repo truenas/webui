@@ -62,7 +62,6 @@ export class WidgetResourcesService {
 
   readonly updateAvailable$ = this.ws.call('update.check_available').pipe(
     map((update) => update.status === SystemUpdateStatus.Available),
-    toLoadingState(),
     shareReplay({ refCount: false, bufferSize: 1 }),
   );
 

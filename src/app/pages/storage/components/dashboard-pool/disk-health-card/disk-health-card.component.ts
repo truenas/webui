@@ -6,8 +6,8 @@ import { TranslateService } from '@ngx-translate/core';
 import { PoolCardIconType } from 'app/enums/pool-card-icon-type.enum';
 import { SmartTestResultPageType } from 'app/enums/smart-test-results-page-type.enum';
 import { TemperatureUnit } from 'app/enums/temperature.enum';
+import { StorageDashboardDisk } from 'app/interfaces/disk.interface';
 import { Pool } from 'app/interfaces/pool.interface';
-import { StorageDashboardDisk } from 'app/interfaces/storage.interface';
 import { diskHealthCardElements } from 'app/pages/storage/components/dashboard-pool/disk-health-card/disk-health-card.elements';
 import { getPoolDisks } from 'app/pages/storage/modules/disks/utils/get-pool-disks.utils';
 

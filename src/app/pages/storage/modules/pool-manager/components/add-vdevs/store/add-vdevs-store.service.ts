@@ -1,11 +1,13 @@
 import { Injectable } from '@angular/core';
 import { ComponentStore, tapResponse } from '@ngrx/component-store';
 import _ from 'lodash';
-import { filter, switchMap, tap } from 'rxjs';
+import {
+  combineLatest, filter, switchMap, tap,
+} from 'rxjs';
+import { map } from 'rxjs/operators';
 import { Pool, PoolTopology } from 'app/interfaces/pool.interface';
-import { Disk } from 'app/interfaces/storage.interface';
-import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { DiskStore } from 'app/pages/storage/modules/pool-manager/store/disk.store';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -13,13 +15,11 @@ export interface AddVdevsState {
   pool: Pool;
   topology: PoolTopology;
   isLoading: boolean;
-  poolDisks: Disk[];
 }
 
 const initialState: AddVdevsState = {
   pool: null,
   topology: null,
-  poolDisks: [],
   isLoading: false,
 };
 
@@ -27,9 +27,17 @@ const initialState: AddVdevsState = {
 export class AddVdevsStore extends ComponentStore<AddVdevsState> {
   readonly isLoading$ = this.select((state) => state.isLoading);
   readonly pool$ = this.select((state) => state.pool);
-  readonly poolDisks$ = this.select((state) => state.poolDisks);
+  readonly poolDisks$ = combineLatest([
+    this.pool$.pipe(filter(Boolean)),
+    this.diskStore.usedDisks$,
+  ]).pipe(
+    map(([pool, usedDisks]) => {
+      return usedDisks.filter((disk) => disk.imported_zpool === pool.name);
+    }),
+  );
 
   constructor(
+    private diskStore: DiskStore,
     private ws: WebSocketService,
     private dialogService: DialogService,
     private errorHandler: ErrorHandlerService,
@@ -53,10 +61,11 @@ export class AddVdevsStore extends ComponentStore<AddVdevsState> {
       switchMap((poolId) => {
         return this.ws.call('pool.query', [[['id', '=', +poolId]]]);
       }),
-      tapResponse<Pool[]>(
-        (pools: Pool[]) => {
+      tapResponse(
+        (pools) => {
           this.patchState({
             pool: _.cloneDeep(pools[0]),
+            isLoading: false,
           });
         },
         (error: unknown) => {
@@ -67,30 +76,6 @@ export class AddVdevsStore extends ComponentStore<AddVdevsState> {
         },
       ),
       filter((pools) => !!pools),
-      switchMap((pools: Pool[]) => this.ws.call(
-        'disk.query',
-        [
-          [['pool', '=', pools[0].name]],
-          { extra: { pools: true } },
-        ],
-      )),
-      tapResponse<Disk[], WebSocketError>(
-        (disks: Disk[]) => {
-          this.setState((state: AddVdevsState): AddVdevsState => {
-            return {
-              ...state,
-              poolDisks: _.cloneDeep(disks),
-              isLoading: false,
-            };
-          });
-        },
-        (error) => {
-          this.patchState({
-            isLoading: false,
-          });
-          this.dialogService.error(this.errorHandler.parseError(error));
-        },
-      ),
     );
   });
 }

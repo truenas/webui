@@ -4,7 +4,6 @@ import { EnclosureStatus, EnclosureDiskStatus, EnclosureElementType } from 'app/
 import { VdevType } from 'app/enums/v-dev-type.enum';
 
 export interface Enclosure {
-  number?: number; // Provided by old UI
   name: string;
   model: string;
   controller: boolean;
@@ -54,7 +53,7 @@ export interface EnclosureElement {
   descriptor: string;
   status: string;
   value?: string;
-  value_raw?: number;
+  value_raw?: number | string;
 }
 
 export type DashboardEnclosure = Overwrite<Enclosure, {

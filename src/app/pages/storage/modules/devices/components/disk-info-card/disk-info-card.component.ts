@@ -7,7 +7,8 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { filter } from 'rxjs/operators';
 import { DiskType } from 'app/enums/disk-type.enum';
 import { Role } from 'app/enums/role.enum';
-import { Disk, TopologyDisk } from 'app/interfaces/storage.interface';
+import { Disk } from 'app/interfaces/disk.interface';
+import { TopologyDisk } from 'app/interfaces/storage.interface';
 import {
   ReplaceDiskDialogComponent,
   ReplaceDiskDialogData,

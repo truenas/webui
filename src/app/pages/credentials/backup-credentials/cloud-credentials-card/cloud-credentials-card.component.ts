@@ -38,13 +38,11 @@ export class CloudCredentialsCardComponent implements OnInit {
     textColumn({
       title: this.translate.instant('Name'),
       propertyName: 'name',
-      sortable: true,
     }),
     textColumn({
       title: this.translate.instant('Provider'),
       propertyName: 'provider',
       getValue: (row) => this.providers.get(row.provider) || row.provider,
-      sortable: true,
     }),
     actionsColumn({
       actions: [

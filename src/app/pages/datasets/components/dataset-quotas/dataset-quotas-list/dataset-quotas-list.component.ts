@@ -68,12 +68,10 @@ export class DatasetQuotasListComponent implements OnInit {
         }
         return this.emptyValue;
       },
-      sortable: true,
     }),
     textColumn({
       title: this.translate.instant('ID'),
       propertyName: 'id',
-      sortable: true,
     }),
     textColumn({
       title: this.translate.instant('Data Quota'),
@@ -84,7 +82,6 @@ export class DatasetQuotasListComponent implements OnInit {
         }
         return this.emptyValue;
       },
-      sortable: true,
     }),
     textColumn({
       title: this.translate.instant('DQ Used'),
@@ -95,7 +92,6 @@ export class DatasetQuotasListComponent implements OnInit {
         }
         return this.emptyValue;
       },
-      sortable: true,
     }),
     textColumn({
       title: this.translate.instant('DQ % Used'),
@@ -106,19 +102,16 @@ export class DatasetQuotasListComponent implements OnInit {
         }
         return this.emptyValue;
       },
-      sortable: true,
     }),
     textColumn({
       title: this.translate.instant('Object Quota'),
       propertyName: 'obj_quota',
       getValue: (row) => row.obj_quota || this.emptyValue,
-      sortable: true,
     }),
     textColumn({
       title: this.translate.instant('OQ Used'),
       propertyName: 'obj_used',
       getValue: (row) => row.obj_used || this.emptyValue,
-      sortable: true,
     }),
     textColumn({
       title: this.translate.instant('OQ % Used'),
@@ -129,7 +122,6 @@ export class DatasetQuotasListComponent implements OnInit {
         }
         return this.emptyValue;
       },
-      sortable: true,
     }),
     actionsColumn({
       actions: [
@@ -236,14 +228,6 @@ export class DatasetQuotasListComponent implements OnInit {
     this.cdr.markForCheck();
   };
 
-  createDataSource(quotas: DatasetQuota[] = [], emptyType = EmptyType.NoPageData): void {
-    if (!quotas.length) {
-      this.emptyType = emptyType;
-    }
-    this.dataProvider.setRows(quotas);
-    this.cdr.markForCheck();
-  }
-
   checkInvalidQuotas(): void {
     this.ws.call(
       'pool.dataset.get_quota',
@@ -273,15 +257,11 @@ export class DatasetQuotasListComponent implements OnInit {
 
   onListFiltered(query: string): void {
     this.filterString = query.toLowerCase();
-    this.createDataSource(
-      this.quotas.filter((quota) => {
-        return quota.name?.toLowerCase().includes(this.filterString)
-        || quota.id?.toString()?.toLowerCase().includes(this.filterString)
-        || quota.quota?.toString()?.toLowerCase().includes(this.filterString)
-        || quota.obj_quota?.toString()?.toLowerCase().includes(this.filterString);
-      }),
-      EmptyType.NoSearchResults,
-    );
+    this.dataProvider.setFilter({ list: this.quotas, query, columnKeys: ['name', 'id', 'quota', 'obj_quota'] });
+
+    if (!this.dataProvider.totalRows) {
+      this.emptyType = EmptyType.NoSearchResults;
+    }
   }
 
   removeInvalidQuotas(): void {
