@@ -84,6 +84,7 @@ export class IxErrorsComponent implements OnChanges {
         });
 
         this.messages = newErrors.filter((message) => !!message);
+        this.control.markAllAsTouched();
 
         this.cdr.markForCheck();
       });
