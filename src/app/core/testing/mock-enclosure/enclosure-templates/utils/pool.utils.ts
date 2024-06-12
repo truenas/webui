@@ -4,12 +4,11 @@ import { VdevType } from 'app/enums/v-dev-type.enum';
 import { DashboardEnclosure } from 'app/interfaces/enclosure.interface';
 
 // TODO: Only creates single disk vdevs in the same pool. Improve.
-export function addPoolsToMostDisks(enclosures: DashboardEnclosure[]): DashboardEnclosure[] {
-  const percentageOfDisksToAssignToPools = 0.8;
+export function addPoolsToDisks(enclosures: DashboardEnclosure[], percentageToAdd: number): DashboardEnclosure[] {
   const totalDisks = countSlotsBy(enclosures, (slot) => Boolean(slot.dev));
 
   return mapSlots(enclosures, (slot, i) => {
-    if (i > totalDisks * percentageOfDisksToAssignToPools) {
+    if (i > totalDisks * percentageToAdd) {
       return slot;
     }
 
