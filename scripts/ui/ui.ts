@@ -3,7 +3,8 @@ import * as figlet from 'figlet';
 import { mockEnclosureCommand } from './commands/mock-enclosure.command';
 import { remoteCommand } from './commands/remote.command';
 import { resetCommand } from './commands/reset.command';
-import { updateEnvironment } from './utils/save-environment.utils';
+import { checkEnvironment } from './utils/check-environment';
+import { updateEnvironment } from './utils/save-environment';
 
 /*
 * Nice Header
@@ -19,6 +20,12 @@ const program: Command = new Command()
   .addHelpText('before', banner());
 
 program
+  .command('check-env')
+  .name('check-env')
+  .description('Validate environeent.ts file')
+  .action(() => checkEnvironment());
+
+program
   .command('reset')
   .name('reset')
   .description('Reset config to default')
@@ -30,6 +37,7 @@ program
   .alias('me')
   .description('Configure enclosure mocking functionality')
   .action(async () => {
+    checkEnvironment();
     await mockEnclosureCommand();
   });
 
@@ -39,6 +47,7 @@ program
   .option('-i, --ip <ip_address>', 'Sets IP address of your server')
   .option('-f, --force', 'Forces IP Address to be used without preprocessing')
   .action((options: { ip: string; force?: boolean }) => {
+    checkEnvironment();
     if (options.ip) {
       updateEnvironment({
         mockConfig: {

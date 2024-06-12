@@ -1,12 +1,16 @@
-import { adviseToSetRemote } from './utils/advise-to-set-remote';
-import { getConfigTemplate, getCurrentConfigAsString, updateEnvironment } from './utils/save-environment.utils';
+import { adviseToSetRemote } from './advise-to-set-remote';
+import {
+  getConfigTemplate,
+  getCurrentConfigAsString,
+  updateEnvironment,
+} from './save-environment';
 
 function parseEnvironmentVersion(contents: string): string {
   const match = contents.match(/environmentVersion:\s*'([\d.]+)'/);
   return match ? match[1] : '';
 }
 
-function validateConfig(): void {
+export function checkEnvironment(): void {
   const currentConfig = getCurrentConfigAsString().trim();
   if (!currentConfig) {
     console.info('No current config set. Creating default config...');
@@ -28,7 +32,7 @@ function validateConfig(): void {
   if (currentVersion !== supportedVersion) {
     console.error(`
   Environment version mismatch. Current: ${currentVersion}, Supported: ${supportedVersion}.
-  Either update environment file manually or remove it to generate a new one.`);
+  Either update environment file manually or use "yarn ui reset" to reset to defaults.`);
     process.exit(1);
   }
 
@@ -37,5 +41,3 @@ function validateConfig(): void {
     adviseToSetRemote();
   }
 }
-
-validateConfig();
