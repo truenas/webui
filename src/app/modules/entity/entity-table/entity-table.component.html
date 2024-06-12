@@ -374,7 +374,7 @@
                   color="primary"
                   class="checkbox"
                   [id]="'checkbox__' + getRowIdentifier(element)"
-                  [ixTest]="getRowIdentifier(element)"
+                  [ixTest]="[column, router.url, getRowTestAttribute(element)]"
                   [disabled]="currentColumns?.[i]?.disabled"
                   [(ngModel)]="element[column]"
                   (change)="checkboxChanged(element)"
