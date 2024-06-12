@@ -80,12 +80,7 @@ export class VmwareSnapshotListComponent implements OnInit {
 
   onListFiltered(query: string): void {
     this.filterString = query.toLowerCase();
-    this.dataProvider.setRows(this.snapshots.filter((snapshot) => {
-      return snapshot.hostname.toLowerCase().includes(this.filterString)
-      || snapshot.datastore.toLowerCase().includes(this.filterString)
-      || snapshot.filesystem.toLowerCase().includes(this.filterString)
-      || snapshot.username.toLowerCase().includes(this.filterString);
-    }));
+    this.dataProvider.setFilter({ query, columnKeys: ['hostname', 'datastore', 'filesystem', 'username'] });
   }
 
   getSnapshotsData(): void {

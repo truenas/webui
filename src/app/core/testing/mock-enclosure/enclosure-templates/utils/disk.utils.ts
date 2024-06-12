@@ -3,12 +3,11 @@ import { countSlots, mapSlots } from 'app/core/testing/mock-enclosure/enclosure-
 import { DiskType } from 'app/enums/disk-type.enum';
 import { DashboardEnclosure, DashboardEnclosureSlot } from 'app/interfaces/enclosure.interface';
 
-export function addDisksToMostSlots(enclosures: DashboardEnclosure[]): DashboardEnclosure[] {
-  const percentageOfSlotsToAddTo = 0.8;
+export function addDisksToSlots(enclosures: DashboardEnclosure[], percentageToAdd: number): DashboardEnclosure[] {
   const totalSlots = countSlots(enclosures);
 
   return mapSlots(enclosures, (slot, i) => {
-    if (i > totalSlots * percentageOfSlotsToAddTo) {
+    if (i > totalSlots * percentageToAdd) {
       return slot;
     }
 

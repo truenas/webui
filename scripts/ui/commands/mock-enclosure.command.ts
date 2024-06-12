@@ -6,7 +6,7 @@ import {
   mockStorageScenarioLabels,
 } from 'app/core/testing/mock-enclosure/enums/mock-storage.enum';
 // eslint-disable-next-line no-restricted-imports
-import { getCurrentConfig, updateEnvironment } from '../utils/save-environment.utils';
+import { getCurrentConfig, updateEnvironment } from '../utils/save-environment';
 
 interface Answers {
   controllerModel: string;

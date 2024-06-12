@@ -45,7 +45,11 @@ export function updateEnvironment(newValues: DeepPartial<ConfigVariables>): void
       value: valuesToWrite.mockConfig.scenario,
     }));
 
-  fs.writeFileSync(environmentTs, configToWrite, 'utf8');
+  writeToEnvironment(configToWrite);
+}
+
+export function writeToEnvironment(value: string): void {
+  fs.writeFileSync(environmentTs, value, 'utf8');
 }
 
 /**

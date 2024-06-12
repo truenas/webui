@@ -73,14 +73,10 @@ export class SmbShareListComponent implements OnInit {
 
   onListFiltered(query: string): void {
     this.filterString = query?.toString()?.toLowerCase();
-    this.dataProvider.setRows(this.shares.filter((share) => {
-      return [
-        share.session_id,
-        share.service,
-        share.machine,
-        share.connected_at,
-      ].some((value) => value.toString().toLowerCase().includes(this.filterString));
-    }));
+    this.dataProvider.setFilter({
+      query,
+      columnKeys: ['session_id', 'service', 'machine', 'connected_at'],
+    });
   }
 
   columnsChange(columns: typeof this.columns): void {

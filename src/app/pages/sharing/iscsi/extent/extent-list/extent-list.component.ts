@@ -129,9 +129,7 @@ export class ExtentListComponent implements OnInit {
 
   onListFiltered(query: string): void {
     this.filterString = query.toLowerCase();
-    this.dataProvider.setRows(this.extents.filter((extent) => {
-      return extent.name.toLowerCase().includes(this.filterString);
-    }));
+    this.dataProvider.setFilter({ query, columnKeys: ['name'] });
   }
 
   columnsChange(columns: typeof this.columns): void {

@@ -579,7 +579,6 @@
     "./src/app/pages/apps/components/app-router-outlet/app-router-outlet.component.ts",
     "./src/app/pages/apps/components/app-section-expand-collapse/app-section-expand-collapse.component.ts",
     "./src/app/pages/apps/components/docker-images/test/fake-docker-images.ts",
-    "./src/app/pages/apps/components/dockerhub-rate-limit-info-dialog/dockerhub-rate-limit-info-dialog.component.ts",
     "./src/app/pages/apps/enum/app-status.enum.ts",
     "./src/app/pages/apps/enum/kubernetes-status.enum.ts",
     "./src/app/pages/apps/modules/custom-forms/components/filter-select-list/filter-select-list.component.ts",

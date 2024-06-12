@@ -80,12 +80,7 @@ export class SmbLockListComponent implements OnInit {
 
   onListFiltered(query: string): void {
     this.filterString = query?.toString()?.toLowerCase();
-    this.dataProvider.setRows(this.locks.filter((lock) => {
-      return [
-        lock.filename,
-        lock.service_path,
-      ].some((value) => value.toString().toLowerCase().includes(this.filterString));
-    }));
+    this.dataProvider.setFilter({ query, columnKeys: ['filename', 'service_path'] });
   }
 
   columnsChange(columns: typeof this.columns): void {

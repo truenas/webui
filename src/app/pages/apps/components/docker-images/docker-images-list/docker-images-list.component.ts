@@ -130,9 +130,12 @@ export class DockerImagesListComponent implements OnInit {
 
   protected onListFiltered(query: string): void {
     this.filterString = query.toLowerCase();
-    this.dataProvider.setRows(this.containerImages.filter((image) => {
-      return image.repo_tags.join(', ').includes(this.filterString);
-    }));
+    this.dataProvider.setFilter({
+      query,
+      columnKeys: ['repo_tags'],
+      // eslint-disable-next-line @typescript-eslint/naming-convention
+      preprocessMap: { repo_tags: (tags: string[]) => tags.join(', ') },
+    });
   }
 
   private refresh(): void {

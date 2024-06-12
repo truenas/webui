@@ -32,7 +32,7 @@ export interface DashboardState {
 export const initialState: DashboardState = {
   isLoading: false,
   globalError: '',
-  groups: [],
+  groups: null,
 };
 
 /**

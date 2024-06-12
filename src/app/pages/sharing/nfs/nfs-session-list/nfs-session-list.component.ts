@@ -182,23 +182,18 @@ export class NfsSessionListComponent implements OnInit {
   }
 
   private filterNfs3Data(): void {
-    this.nfs3DataProvider.setRows((this.sessions as Nfs3Session[]).filter((session: Nfs3Session) => {
-      return [
-        session.export,
-        session.ip,
-      ].some((value) => value.toString().toLowerCase().includes(this.filterString));
-    }));
+    this.nfs3DataProvider.setFilter({
+      list: this.sessions as Nfs3Session[],
+      query: this.filterString,
+      columnKeys: ['export', 'ip'],
+    });
   }
 
   private filterNfs4Data(): void {
-    this.nfs4DataProvider.setRows((this.sessions as Nfs4Session['info'][]).filter((session: Nfs4Session['info']) => {
-      return [
-        session.name,
-        session.clientid,
-        session.address,
-        session.status,
-        session['seconds from last renew'],
-      ].some((value) => value.toString().toLowerCase().includes(this.filterString));
-    }));
+    this.nfs4DataProvider.setFilter({
+      list: this.sessions as Nfs4Session['info'][],
+      query: this.filterString,
+      columnKeys: ['name', 'clientid', 'address', 'status', 'seconds from last renew'],
+    });
   }
 }

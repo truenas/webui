@@ -180,9 +180,7 @@ export class CronListComponent implements OnInit {
 
   onListFiltered(query: string): void {
     this.filterString = query.toLowerCase();
-    this.dataProvider.setRows(this.cronjobs.filter((cronjob) => {
-      return cronjob.user.toString().toLowerCase().includes(this.filterString);
-    }));
+    this.dataProvider.setFilter({ query, columnKeys: ['user'] });
   }
 
   columnsChange(columns: typeof this.columns): void {
