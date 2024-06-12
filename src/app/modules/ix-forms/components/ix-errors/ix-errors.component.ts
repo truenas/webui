@@ -33,7 +33,7 @@ export class IxErrorsComponent implements OnChanges {
     max: (max: number) => this.translate.instant('Maximum value is {max}', { max }),
     required: () => {
       if (this.label) {
-        return this.translate.instant('{field} is required', { field: this.label });
+        return this.translate.instant('{field} is required', { field: this.label || this.translate.instant('Field') });
       }
 
       return this.translate.instant('Field is required');
