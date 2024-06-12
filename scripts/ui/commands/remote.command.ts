@@ -1,6 +1,6 @@
 import fs from 'fs';
 // eslint-disable-next-line no-restricted-imports
-import { getCurrentConfig, updateEnvironment } from '../utils/save-environment.utils';
+import { getCurrentConfig, updateEnvironment } from '../utils/save-environment';
 
 function normalizeUrl(url = ''): string {
   const parts = url.match(/^(?:https?:\/\/)?(?:[^@\n]+@)?([^:/\n?]+)(?::([0-9]+))?/);

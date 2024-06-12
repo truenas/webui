@@ -10,6 +10,7 @@ import { ExportButtonComponent } from 'app/modules/export-button/components/expo
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
+import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { SearchInputComponent } from 'app/modules/search-input/components/search-input/search-input.component';
 import { SearchInputModule } from 'app/modules/search-input/search-input.module';
 import { AuditComponent } from 'app/pages/audit/components/audit/audit.component';
@@ -68,6 +69,7 @@ describe('AuditComponent', () => {
         LogDetailsPanelComponent,
         ExportButtonComponent,
         FakeProgressBarComponent,
+        PageHeaderComponent,
       ),
     ],
     providers: [
