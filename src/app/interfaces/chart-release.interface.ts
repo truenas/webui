@@ -154,6 +154,7 @@ export interface ChartSchemaNodeConf {
   default?: unknown;
   enum?: ChartSchemaEnum[];
   required?: boolean;
+  empty?: boolean;
   value?: string;
   max_length?: number;
   min_length?: number;

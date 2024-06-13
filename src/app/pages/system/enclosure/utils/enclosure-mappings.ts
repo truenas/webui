@@ -1,6 +1,18 @@
 import { ComponentType } from '@angular/cdk/portal';
-import { M50EnclosureComponent } from 'app/pages/system/enclosure/components/views/enclosure-view/enclosures/m50-enclosure/m50-enclosure.component';
-import { EnclosureComponent } from 'app/pages/system/enclosure/interfaces/enclosure-component.interface';
+import { EnclosureViewDirective } from 'app/pages/system/enclosure/components/views/enclosure-view/enclosures/enclosure-view/enclosure-view.directive';
+import { M50FrontViewComponent } from 'app/pages/system/enclosure/components/views/enclosure-view/enclosures/m50-enclosure/m50-front-view/m50-front-view.component';
+import { M50RearViewComponent } from 'app/pages/system/enclosure/components/views/enclosure-view/enclosures/m50-enclosure/m50-rear-view/m50-rear-view.component';
+
+export enum EnclosureSide {
+  Front = 'front',
+  Rear = 'rear',
+  Top = 'top',
+  Internal = 'internal',
+}
+
+export type EnclosureViewOptions = {
+  [key in EnclosureSide]?: ComponentType<EnclosureViewDirective>;
+};
 
 /**
  * A map for assigning enclosure-view components to enclosure model names. This map will handle expansion shelves
@@ -21,6 +33,6 @@ import { EnclosureComponent } from 'app/pages/system/enclosure/interfaces/enclos
  * M50 -> M50EnclosureComponent
  * M50EnclosureComponent is expected to handle front/rear views and provide buttons to switch between the two views.
  */
-export const enclosureComponentMap: Record<string, ComponentType<EnclosureComponent>> = {
-  M50: M50EnclosureComponent,
+export const enclosureComponentMap: Record<string, EnclosureViewOptions> = {
+  M50: { front: M50FrontViewComponent, rear: M50RearViewComponent },
 };

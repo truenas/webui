@@ -65,11 +65,12 @@ export class GlobalSearchComponent implements OnInit {
   handleKeyDown(event: KeyboardEvent): void {
     switch (event.key) {
       case 'ArrowDown':
-        event.preventDefault();
-        if (this.isSearchInputFocused) {
+      case 'Tab':
+        if (!event.shiftKey) {
+          event.preventDefault();
+          if (this.isSearchInputFocused) moveToNextFocusableElement();
           moveToNextFocusableElement();
         }
-        moveToNextFocusableElement();
         break;
       case 'ArrowUp':
         event.preventDefault();
@@ -77,7 +78,6 @@ export class GlobalSearchComponent implements OnInit {
         break;
       case 'Enter':
         event.preventDefault();
-
         if (this.isSearchInputFocused) {
           moveToNextFocusableElement();
           (this.document.activeElement as HTMLElement)?.click();

@@ -17,6 +17,7 @@ export const mockM40 = makeEnclosure({
   model: 'M40',
   controller: true,
   rackmount: true,
+  front_loaded: true,
   front_slots: 24,
   elements: {
     'Array Device Slot': makeArrayDeviceSlots(1, 24, {
@@ -34,6 +35,7 @@ export const mockM50 = makeEnclosure({
   model: 'M50',
   controller: true,
   rackmount: true,
+  front_loaded: true,
   front_slots: 24,
   rear_slots: 4,
   elements: {
