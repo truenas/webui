@@ -23,6 +23,10 @@ const fakeDeviceSlot: DashboardEnclosureSlot = {
   is_internal: false,
   type: DiskType.Hdd,
   rotationrate: 7200,
+  is_front: true,
+  is_rear: false,
+  is_top: false,
+  is_internal: false,
   pool_info: {
     pool_name: 'test pool',
     disk_status: EnclosureDiskStatus.Online,

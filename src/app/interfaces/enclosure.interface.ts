@@ -35,6 +35,10 @@ export interface EnclosureSlot {
   dev: string;
   supports_identify_light: boolean;
   original: EnclosureSlotMetadata;
+  is_front: boolean;
+  is_top: boolean;
+  is_rear: boolean;
+  is_internal: boolean;
 }
 
 export interface EnclosureSlotMetadata {

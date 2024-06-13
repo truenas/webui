@@ -6,15 +6,14 @@ import {
   ChangeDetectorRef,
   Component,
   HostListener,
-  Inject,
   ViewContainerRef,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { delay, take } from 'rxjs';
-import { WINDOW } from 'app/helpers/window.helper';
 import { GlobalSearchComponent } from 'app/modules/global-search/components/global-search/global-search.component';
 import { searchDelayConst } from 'app/modules/global-search/constants/delay.const';
 import { UiSearchProvider } from 'app/modules/global-search/services/ui-search.service';
+import { FocusService } from 'app/services/focus.service';
 
 @UntilDestroy()
 @Component({
@@ -31,7 +30,7 @@ export class GlobalSearchTriggerComponent implements AfterViewInit {
     private overlay: Overlay,
     private viewContainerRef: ViewContainerRef,
     private searchProvider: UiSearchProvider,
-    @Inject(WINDOW) private window: Window,
+    private focusService: FocusService,
   ) {}
 
   ngAfterViewInit(): void {
@@ -71,7 +70,7 @@ export class GlobalSearchTriggerComponent implements AfterViewInit {
       return;
     }
     this.overlayRef.detach();
-    this.window.document.querySelector<HTMLElement>('ix-logo a')?.focus();
+    this.focusService.focusFirstFocusableElement(document.querySelector<HTMLElement>('.rightside-content-hold'));
     this.cdr.markForCheck();
   }
 }

@@ -1,8 +1,9 @@
-import { enclosureMocks } from 'app/core/testing/mock-enclosure/enclosure-templates';
-import { addDisksToMostSlots } from 'app/core/testing/mock-enclosure/enclosure-templates/utils/disk.utils';
-import { addPoolsToMostDisks } from 'app/core/testing/mock-enclosure/enclosure-templates/utils/pool.utils';
+import { enclosureMocks } from 'app/core/testing/mock-enclosure/enclosure-templates/enclosure-mocks';
+import { addDisksToSlots } from 'app/core/testing/mock-enclosure/enclosure-templates/utils/disk.utils';
+import { addPoolsToDisks } from 'app/core/testing/mock-enclosure/enclosure-templates/utils/pool.utils';
 import { MockStorageScenario } from 'app/core/testing/mock-enclosure/enums/mock-storage.enum';
 import { MockEnclosureConfig } from 'app/core/testing/mock-enclosure/interfaces/mock-enclosure.interface';
+import { assertUnreachable } from 'app/helpers/assert-unreachable.utils';
 import { ApiCallResponse } from 'app/interfaces/api/api-call-directory.interface';
 import { DashboardEnclosure } from 'app/interfaces/enclosure.interface';
 import { SystemInfo } from 'app/interfaces/system-info.interface';
@@ -40,7 +41,7 @@ export class MockStorageGenerator {
   }
 
   private addEnclosure(model: string): void {
-    const enclosure = enclosureMocks.get(model);
+    const enclosure = enclosureMocks.find((mock) => mock.model === model);
 
     if (!enclosure) {
       throw new Error(`Enclosure model ${model} not found in mock storage generator`);
@@ -50,13 +51,19 @@ export class MockStorageGenerator {
   }
 
   private handleMockingScenario(scenario: MockStorageScenario): void {
-    if (scenario === MockStorageScenario.AllSlotsEmpty) {
-      return;
-    }
-
-    if (scenario === MockStorageScenario.FillSomeSlots) {
-      this.enclosures = addDisksToMostSlots(this.enclosures);
-      this.enclosures = addPoolsToMostDisks(this.enclosures);
+    switch (scenario) {
+      case MockStorageScenario.AllSlotsEmpty:
+        return;
+      case MockStorageScenario.FillSomeSlots:
+        this.enclosures = addDisksToSlots(this.enclosures, 0.8);
+        this.enclosures = addPoolsToDisks(this.enclosures, 0.8);
+        return;
+      case MockStorageScenario.FillAllSlots:
+        this.enclosures = addDisksToSlots(this.enclosures, 1);
+        this.enclosures = addPoolsToDisks(this.enclosures, 1);
+        return;
+      default:
+        assertUnreachable(scenario);
     }
   }
 }
