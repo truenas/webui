@@ -37,9 +37,9 @@ export class AvailableAppsComponent implements OnInit {
   isFiltering$ = this.appsFilterStore.isFiltering$;
 
   constructor(
+    protected router: Router,
     protected applicationsStore: AppsStore,
     protected appsFilterStore: AppsFilterStore,
-    private router: Router,
   ) { }
 
   ngOnInit(): void {
