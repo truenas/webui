@@ -1,7 +1,7 @@
 import { CredentialType, Credentials } from 'app/interfaces/credential-type.interface';
 
 export function getCredentialsCreationSource(credentials: Credentials): string {
-  if (credentials.type in [CredentialType.UnixSocket, CredentialType.LoginPassword, CredentialType.Token]) {
+  if ([CredentialType.UnixSocket, CredentialType.LoginPassword, CredentialType.Token].includes(credentials.type)) {
     return credentials.data.username;
   }
   if (credentials.type === CredentialType.ApiKey) {
