@@ -15,7 +15,7 @@
         {{ enclosure.model }} ({{ i }})
       </div>
       <div *ngIf="enclosures()[i]?.label !== enclosures()[i].name">
-        {{ enclosures()[i]}}.label ({{ i }})
+        {{ enclosures()[i].label }} ({{ i }})
       </div>
     </div>
     <ng-template #emptysquare><div class="enclosure-selector-item empty"></div></ng-template>

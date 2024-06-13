@@ -160,7 +160,7 @@
               {{ enclosure.model }} ({{ i }})
             </div>
             <div *ngIf="systemState.enclosures[i]?.label !== systemState.enclosures[i].name">
-              {{ systemState.enclosures[enclosure.number]}}.label ({{ i }})
+              {{ systemState.enclosures[enclosure.number].label }} ({{ i }})
             </div>
           </div>
           <ng-template #emptysquare><div class="enclosure-selector-item empty"></div></ng-template>
