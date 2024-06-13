@@ -5,7 +5,7 @@ import {
 import { TranslateService } from '@ngx-translate/core';
 import { EnclosureView, OverviewInfo } from 'app/pages/system/enclosure/components/views/enclosure-view/disks-overview/disks-overview.component';
 import { EnclosureStore } from 'app/pages/system/enclosure/services/enclosure.store';
-import { enclosureComponentMap } from 'app/pages/system/enclosure/utils/enclosure-mappings';
+import { EnclosureSide, enclosureComponentMap } from 'app/pages/system/enclosure/utils/enclosure-mappings';
 
 @Component({
   selector: 'ix-enclosure-view',
@@ -17,7 +17,13 @@ export class EnclosureViewComponent {
   readonly enclosure = this.store.selectedEnclosure;
   readonly enclosures = this.store.enclosures;
   readonly selectedSlot = this.store.selectedSlot;
-  private readonly selectedView = signal<OverviewInfo['name']>(EnclosureView.Pools);
+  readonly EnclosureSide = EnclosureSide;
+  protected readonly selectedView = signal<OverviewInfo['name']>(EnclosureView.Pools);
+
+  protected readonly expanders = computed(() => {
+    const expanders = this.enclosure().elements['SAS Expander'];
+    return Object.values(expanders);
+  });
 
   protected readonly title = computed(() => {
     return this.translate.instant('Disks on {enclosure}', {
@@ -32,18 +38,23 @@ export class EnclosureViewComponent {
 
   readonly dashboardView = computed(() => {
     const enclosure = this.enclosure();
-    const selectedView = this.selectedView();
-    const selectedSlot = this.selectedSlot();
+    const selectedViewOption = this.selectedViewOption();
     // TODO: Add error handling for missing models
     return {
-      component: enclosureComponentMap[this.enclosure().model],
+      component: enclosureComponentMap[this.enclosure().model][selectedViewOption],
       inputs: {
         enclosure,
-        selectedSlot,
-        selectedView,
+        viewOption: selectedViewOption,
       },
     };
   });
+
+  readonly frontOrTopLoadedEnclosure = computed(() => {
+    const enclosure = this.enclosure();
+    return enclosure.top_loaded ? EnclosureSide.Top : EnclosureSide.Front;
+  });
+
+  readonly selectedViewOption = signal(this.frontOrTopLoadedEnclosure());
 
   changeView(viewName: OverviewInfo['name']): void {
     this.selectedView.set(viewName);
