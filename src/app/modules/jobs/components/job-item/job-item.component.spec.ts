@@ -53,6 +53,7 @@ describe('JobItemComponent', () => {
                   username: 'root',
                 },
               },
+              username: 'root',
             },
           },
           state: JobState.Failed,
