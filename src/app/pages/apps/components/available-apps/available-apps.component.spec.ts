@@ -23,7 +23,6 @@ import { AppAvailableInfoCardComponent } from 'app/pages/apps/components/app-det
 import { AppDetailViewComponent } from 'app/pages/apps/components/app-detail-view/app-detail-view.component';
 import { AppDetailsHeaderComponent } from 'app/pages/apps/components/app-detail-view/app-details-header/app-details-header.component';
 import { AppDetailsSimilarComponent } from 'app/pages/apps/components/app-detail-view/app-details-similar/app-details-similar.component';
-import { AppHelmChartCardComponent } from 'app/pages/apps/components/app-detail-view/app-helm-chart-card/app-helm-chart-card.component';
 import { AppResourcesCardComponent } from 'app/pages/apps/components/app-detail-view/app-resources-card/app-resources-card.component';
 import { AppCardComponent } from 'app/pages/apps/components/available-apps/app-card/app-card.component';
 import { AvailableAppsHeaderComponent } from 'app/pages/apps/components/available-apps/available-apps-header/available-apps-header.component';
@@ -300,7 +299,6 @@ describe('Redirect to install app', () => {
       MockComponents(
         AppResourcesCardComponent,
         AppAvailableInfoCardComponent,
-        AppHelmChartCardComponent,
         AppCardLogoComponent,
         AppDetailsSimilarComponent,
       ),
