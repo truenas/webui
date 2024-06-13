@@ -8,6 +8,7 @@ export const mockEs12 = makeEnclosure({
   controller: false,
   rackmount: true,
   front_slots: 12,
+  front_loaded: true,
   elements: {
     'Array Device Slot': makeArrayDeviceSlots(1, 12, {
       supportsIdentifyLight: true,
@@ -21,6 +22,7 @@ export const mockEs24 = makeEnclosure({
   controller: false,
   rackmount: true,
   front_slots: 24,
+  front_loaded: true,
   elements: {
     'Array Device Slot': makeArrayDeviceSlots(1, 24, {
       supportsIdentifyLight: true,
@@ -44,6 +46,7 @@ export const mockEs60 = makeEnclosure({
   controller: false,
   rackmount: true,
   front_slots: 60,
+  front_loaded: true,
   elements: {
     'Array Device Slot': makeArrayDeviceSlots(1, 60, {
       supportsIdentifyLight: true,

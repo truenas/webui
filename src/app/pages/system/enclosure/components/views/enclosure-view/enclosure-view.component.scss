@@ -8,7 +8,7 @@
   align-items: center;
   background: black;
   display: flex;
-  height: 300px;
+  height: 400px;
   justify-content: center;
   width: 100%;
 }
@@ -28,4 +28,24 @@
 
 .view-container {
   flex-grow: 1;
+}
+
+.view-options-container {
+  align-items: end;
+  display: flex;
+  flex-direction: column;
+}
+
+.view-options-switch {
+  display: flex;
+  flex-direction: row;
+  gap: 5px;
+  justify-content: center;
+  width: 100%;
+}
+
+.enclosure-view {
+  display: flex;
+  justify-content: space-around;
+  width: 100%;
 }

@@ -22,7 +22,7 @@ export function makeEnclosure(settings: MockEnclosureSettings): DashboardEnclosu
     dmi: `TRUENAS-${settings.model}`,
     label: settings.model,
     status: [EnclosureStatus.Ok],
-    id: '5b0bd6d1a30714bf',
+    id: `5b0bd6d1a30714bf_${settings.model}`,
     vendor: 'iX',
     product: '4024Sp',
     revision: 'c205',

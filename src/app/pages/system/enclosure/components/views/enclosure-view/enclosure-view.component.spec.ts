@@ -9,18 +9,20 @@ import { EnclosureHeaderComponent } from 'app/pages/system/enclosure/components/
 import { DisksOverviewComponent, EnclosureView } from 'app/pages/system/enclosure/components/views/enclosure-view/disks-overview/disks-overview.component';
 import { IxEnclosureSelectorComponent } from 'app/pages/system/enclosure/components/views/enclosure-view/enclosure-selector/enclosure-selector.component';
 import { EnclosureViewComponent } from 'app/pages/system/enclosure/components/views/enclosure-view/enclosure-view.component';
-import { M50EnclosureComponent } from 'app/pages/system/enclosure/components/views/enclosure-view/enclosures/m50-enclosure/m50-enclosure.component';
+import { DiskTopologyDescriptionComponent } from 'app/pages/system/enclosure/components/views/enclosure-view/enclosures/disk-topology-description/disk-topology-description.component';
+import { M50FrontViewComponent } from 'app/pages/system/enclosure/components/views/enclosure-view/enclosures/m50-enclosure/m50-front-view/m50-front-view.component';
+import { VdevDisksListComponent } from 'app/pages/system/enclosure/components/views/enclosure-view/enclosures/vdev-disks-list/vdev-disks-list.component';
 import { EnclosureStore } from 'app/pages/system/enclosure/services/enclosure.store';
 
 const fakeDeviceSlot: DashboardEnclosureSlot = {
   descriptor: 'slot00',
   status: 'OK',
   model: 'HUH721212AL4200',
-  dev: 'sdb',
   is_front: true,
+  is_internal: false,
   is_rear: false,
   is_top: false,
-  is_internal: false,
+  dev: 'sdb',
   pool_info: {
     pool_name: 'sanity',
     disk_status: EnclosureDiskStatus.Online,
@@ -784,7 +786,9 @@ describe('EnclosureViewComponent', () => {
   const createComponent = createComponentFactory({
     component: EnclosureViewComponent,
     declarations: [
-      MockComponent(M50EnclosureComponent),
+      MockComponent(M50FrontViewComponent),
+      MockComponent(VdevDisksListComponent),
+      MockComponent(DiskTopologyDescriptionComponent),
       MockComponent(DisksOverviewComponent),
       MockComponent(IxEnclosureSelectorComponent),
       MockComponent(EnclosureHeaderComponent),
@@ -818,6 +822,6 @@ describe('EnclosureViewComponent', () => {
     expect(selector).toExist();
   });
   it('renders m50 enclosure', () => {
-    expect(spectator.query(M50EnclosureComponent)).toExist();
+    expect(spectator.query(M50FrontViewComponent)).toExist();
   });
 });
