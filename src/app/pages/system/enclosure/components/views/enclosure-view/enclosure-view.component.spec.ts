@@ -17,6 +17,10 @@ const fakeDeviceSlot: DashboardEnclosureSlot = {
   status: 'OK',
   model: 'HUH721212AL4200',
   dev: 'sdb',
+  is_front: true,
+  is_rear: false,
+  is_top: false,
+  is_internal: false,
   pool_info: {
     pool_name: 'sanity',
     disk_status: EnclosureDiskStatus.Online,
