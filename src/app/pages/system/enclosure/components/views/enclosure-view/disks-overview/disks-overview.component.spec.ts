@@ -17,6 +17,10 @@ const fakeDeviceSlot: DashboardEnclosureSlot = {
   size: 15 * 1024 ** 2,
   model: 'HUH721212AL4200',
   serial: '8HG7MW3H',
+  is_top: false,
+  is_front: true,
+  is_rear: false,
+  is_internal: false,
   type: DiskType.Hdd,
   rotationrate: 7200,
   pool_info: {
