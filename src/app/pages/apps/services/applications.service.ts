@@ -161,9 +161,6 @@ export class ApplicationsService {
     if (filters && !filters.categories?.length) {
       delete filters.categories;
     }
-    if (filters && !filters.catalogs?.length) {
-      delete filters.catalogs;
-    }
     if (filters && !filters.sort?.length) {
       delete filters.sort;
     }
@@ -172,9 +169,6 @@ export class ApplicationsService {
     }
 
     const firstOption: QueryFilters<AvailableApp> = [];
-    if (filters.catalogs?.length) {
-      firstOption.push(['catalog', 'in', filters.catalogs]);
-    }
 
     if (filters.categories?.includes(AppExtraCategory.Recommended)) {
       firstOption.push(['recommended', '=', true]);

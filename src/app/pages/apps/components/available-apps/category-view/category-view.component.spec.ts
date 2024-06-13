@@ -37,7 +37,6 @@ describe('CategoryViewComponent', () => {
       }),
       mockProvider(AppsFilterStore, {
         filterValues$: of({
-          catalogs: [],
           sort: null,
           categories: [],
         }),
@@ -53,12 +52,10 @@ describe('CategoryViewComponent', () => {
       mockProvider(AppsStore, {
         appsCategories$: of(['storage', 'crypto', 'media', 'torrent', 'new-and-updated']),
         availableApps$: of([{
-          catalog: 'TRUENAS',
           categories: ['storage', 'crypto', 'new-and-updated'],
           last_update: { $date: 452 },
           name: 'chia',
         }, {
-          catalog: 'TEST',
           categories: ['media', 'torrent', 'new-and-updated'],
           last_update: { $date: 343 },
           name: 'qbittorent',
@@ -83,7 +80,6 @@ describe('CategoryViewComponent', () => {
     expect(store$.applyFilters).toHaveBeenCalledWith({
       categories: ['new-and-updated'],
       sort: null,
-      catalogs: [],
     });
   });
 

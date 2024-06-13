@@ -21,7 +21,6 @@ describe('AppsFilterStore', () => {
     filter: {
       categories: [],
       sort: null,
-      catalogs: [],
     },
     searchQuery: '',
     isLoading: false,
@@ -127,7 +126,6 @@ describe('AppsFilterStore', () => {
     });
     testScheduler.run(({ expectObservable }) => {
       spectator.service.applyFilters({
-        catalogs: [],
         categories: ['media'],
         sort: AppsFiltersSort.Name,
       });
@@ -153,32 +151,6 @@ describe('AppsFilterStore', () => {
     });
   });
 
-  it('returns the correct searched apps with the catalog sorting', () => {
-    testScheduler.run(({ expectObservable }) => {
-      expectObservable(spectator.service.isFilterApplied$).toBe('a', {
-        a: false,
-      });
-    });
-    testScheduler.run(({ expectObservable }) => {
-      spectator.service.applyFilters({
-        catalogs: [],
-        categories: ['media'],
-        sort: AppsFiltersSort.Catalog,
-      });
-      expectObservable(spectator.service.searchedApps$).toBe('b', {
-        b: [{
-          category: 'TRUENAS',
-          title: 'TRUENAS',
-          totalApps: 2,
-          apps: [...availableApps],
-        }],
-      });
-      expectObservable(spectator.service.isFilterApplied$).toBe('a', {
-        a: true,
-      });
-    });
-  });
-
   it('returns the correct searched and filtered apps with the update sorting', () => {
     testScheduler.run(({ expectObservable }) => {
       expectObservable(spectator.service.isFilterApplied$).toBe('a', {
@@ -187,7 +159,6 @@ describe('AppsFilterStore', () => {
     });
     testScheduler.run(({ expectObservable }) => {
       spectator.service.applyFilters({
-        catalogs: [],
         categories: ['media'],
         sort: AppsFiltersSort.LastUpdate,
       });
@@ -218,13 +189,11 @@ describe('AppsFilterStore', () => {
     testScheduler.run(({ expectObservable }) => {
       spectator.service.applyFilters({
         categories: ['storage'],
-        catalogs: ['TRUENAS'],
         sort: AppsFiltersSort.Name,
       });
       expectObservable(spectator.service.filterValues$).toBe('a', {
         a: {
           categories: ['storage'],
-          catalogs: ['TRUENAS'],
           sort: AppsFiltersSort.Name,
         } as AppsFiltersValues,
       });

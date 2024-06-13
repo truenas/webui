@@ -21,7 +21,6 @@ import { AppRollbackModalComponent } from 'app/pages/apps/components/installed-a
 import { AppUpgradeDialogComponent } from 'app/pages/apps/components/installed-apps/app-upgrade-dialog/app-upgrade-dialog.component';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.service';
-import { AppCatalogPipe } from 'app/pages/apps/utils/app-catalog.pipe';
 import { RedirectService } from 'app/services/redirect.service';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -68,7 +67,6 @@ describe('AppInfoCardComponent', () => {
 
   const createComponent = createComponentFactory({
     component: AppInfoCardComponent,
-    imports: [AppCatalogPipe],
     declarations: [
       MockComponents(
         AppCardLogoComponent,

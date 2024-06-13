@@ -583,8 +583,6 @@
     "./src/app/pages/apps/enum/kubernetes-status.enum.ts",
     "./src/app/pages/apps/modules/custom-forms/components/filter-select-list/filter-select-list.component.ts",
     "./src/app/pages/apps/modules/custom-forms/components/filter-select-list/filter-select-list.harness.ts",
-    "./src/app/pages/apps/utils/app-catalog.pipe.spec.ts",
-    "./src/app/pages/apps/utils/app-catalog.pipe.ts",
     "./src/app/pages/apps/utils/get-clean-link.spec.ts",
     "./src/app/pages/apps/utils/get-clean-link.ts",
     "./src/app/pages/audit/components/event-data-details-card/event-data-details-card.component.ts",

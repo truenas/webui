@@ -20,7 +20,6 @@ import {
 import { SelectPoolDialogComponent } from 'app/pages/apps/components/select-pool-dialog/select-pool-dialog.component';
 import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.service';
 import { KubernetesStore } from 'app/pages/apps/store/kubernetes-store.service';
-import { AppCatalogPipe } from 'app/pages/apps/utils/app-catalog.pipe';
 import { AuthService } from 'app/services/auth/auth.service';
 
 describe('AppDetailsHeaderComponent', () => {
@@ -41,7 +40,7 @@ describe('AppDetailsHeaderComponent', () => {
 
   const createComponent = createComponentFactory({
     component: AppDetailsHeaderComponent,
-    imports: [AppCatalogPipe, ViewContainerRef],
+    imports: [ViewContainerRef],
     declarations: [
       MockComponent(AppCardLogoComponent),
     ],

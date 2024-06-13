@@ -72,7 +72,6 @@ import { PodSelectDialogComponent } from 'app/pages/apps/components/pod-select-d
 import { PodSelectLogsDialogComponent } from 'app/pages/apps/components/pod-select-logs/pod-select-logs-dialog.component';
 import { SelectPoolDialogComponent } from 'app/pages/apps/components/select-pool-dialog/select-pool-dialog.component';
 import { CustomFormsModule } from 'app/pages/apps/modules/custom-forms/custom-forms.module';
-import { AppCatalogPipe } from 'app/pages/apps/utils/app-catalog.pipe';
 import { AppCardLogoComponent } from './components/app-card-logo/app-card-logo.component';
 import { AppAvailableInfoCardComponent } from './components/app-detail-view/app-available-info-card/app-available-info-card.component';
 import { AppDetailViewComponent } from './components/app-detail-view/app-detail-view.component';
@@ -177,7 +176,6 @@ import { KubernetesStatusComponent } from './components/installed-apps/kubernete
     MarkdownModule,
     IxTableModule,
     LayoutModule,
-    AppCatalogPipe,
     SearchInput1Component,
     EmptyComponent,
     MatSort,
