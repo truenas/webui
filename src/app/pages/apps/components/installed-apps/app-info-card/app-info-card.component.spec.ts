@@ -131,10 +131,6 @@ describe('AppInfoCardComponent', () => {
         label: 'App Version:',
         value: '3.2.1',
       },
-      {
-        label: 'Chart Version:',
-        value: '1.2.3',
-      },
       // TODO: https://ixsystems.atlassian.net/browse/NAS-121706
       {
         label: 'Last Updated:',
@@ -148,10 +144,6 @@ describe('AppInfoCardComponent', () => {
       {
         label: 'Developer:',
         value: 'N/A',
-      },
-      {
-        label: 'Catalog:',
-        value: 'TrueNAS',
       },
       {
         label: 'Train:',
