@@ -740,7 +740,7 @@ export class AppSchemaService {
     const isValidCrontab = this.checkIsValidCrontab(defaultValue?.toString());
 
     return [
-      (schema.required || !schema.empty) ? Validators.required : nullValidator,
+      (schema.required || (!schema.empty && schema.empty !== undefined)) ? Validators.required : nullValidator,
       schema.max ? Validators.max(schema.max) : nullValidator,
       schema.min ? Validators.min(schema.min) : nullValidator,
       schema.max_length ? Validators.maxLength(schema.max_length) : nullValidator,
