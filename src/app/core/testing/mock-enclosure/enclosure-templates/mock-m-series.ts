@@ -35,6 +35,7 @@ export const mockM50 = makeEnclosure({
   model: 'M50',
   controller: true,
   rackmount: true,
+  front_loaded: true,
   front_slots: 24,
   rear_slots: 4,
   elements: {

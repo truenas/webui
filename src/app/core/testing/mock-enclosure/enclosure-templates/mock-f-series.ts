@@ -8,6 +8,7 @@ export const mockF60 = makeEnclosure({
   controller: true,
   rackmount: true,
   front_slots: 24,
+  front_loaded: true,
   elements: {
     'Array Device Slot': makeArrayDeviceSlots(1, 24, {
       supportsIdentifyLight: true,
