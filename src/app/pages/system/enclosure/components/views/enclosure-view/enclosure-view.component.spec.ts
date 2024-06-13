@@ -23,10 +23,6 @@ const fakeDeviceSlot: DashboardEnclosureSlot = {
   is_rear: false,
   is_top: false,
   dev: 'sdb',
-  is_front: true,
-  is_rear: false,
-  is_top: false,
-  is_internal: false,
   pool_info: {
     pool_name: 'sanity',
     disk_status: EnclosureDiskStatus.Online,
