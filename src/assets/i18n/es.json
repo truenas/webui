@@ -4017,6 +4017,8 @@
   "The group which controls the dataset. This group has the same permissions as granted to the <i>group@</i> <i>Who</i>. Groups created manually or imported from a directory service appear in the drop-down menu.": "",
   "The hostname or IP address of the LDAP server.  Separate entries by pressing <code>Enter</code>.": "",
   "The imported pool contains encrypted datasets, unlock them now?": "",
+  "The length of the field should be at least {minLength}": "",
+  "The length of the field should be no more than {maxLength}": "",
   "The length of {field} should be at least {minLength}": "",
   "The length of {field} should be no more than {maxLength}": "",
   "The lifetime of the CA specified in days.": "",

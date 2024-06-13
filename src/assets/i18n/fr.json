@@ -684,6 +684,8 @@
   "Terminate Other User Sessions": "",
   "Test": "",
   "The expanded vdev uses the pre-expanded parity ratio, which reduces the total vdev capacity. To reset the vdev parity ratio and fully use the new capacity, manually rewrite all data in the vdev. This process takes time and is irreversible.": "",
+  "The length of the field should be at least {minLength}": "",
+  "The length of the field should be no more than {maxLength}": "",
   "The system is not licensed for HA.": "",
   "This view is not available for this enclosure.": "",
   "Ticket": "",
