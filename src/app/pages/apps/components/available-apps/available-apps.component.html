@@ -50,6 +50,7 @@
           *ngFor="let app of apps; trackBy: trackByAppId"
           [app]="app"
           [routerLink]="['/apps', 'available', app.catalog, app.train, app.name]"
+          (keyup.enter)="router.navigate(['/apps', 'available', app.catalog, app.train, app.name])"
         ></ix-app-card>
       </div>
     </ng-container>

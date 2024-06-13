@@ -3,6 +3,7 @@ import {
 } from '@angular/core';
 import {
   ActivatedRoute,
+  Router,
 } from '@angular/router';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import {
@@ -25,6 +26,7 @@ export class CategoryViewComponent implements OnInit, OnDestroy {
   isLoading$ = this.applicationsStore.isLoading$;
 
   constructor(
+    protected router: Router,
     private applicationsStore: AppsStore,
     private route: ActivatedRoute,
     private appsFilterStore: AppsFilterStore,
