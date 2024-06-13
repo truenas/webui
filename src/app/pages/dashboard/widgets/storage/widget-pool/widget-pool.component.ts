@@ -1,10 +1,10 @@
 import {
-  ChangeDetectionStrategy, Component, OnInit, computed, input,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, computed, input,
 } from '@angular/core';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { TranslateService } from '@ngx-translate/core';
 import { formatDuration } from 'date-fns';
-import { filter, switchMap } from 'rxjs';
+import { filter, switchMap, tap } from 'rxjs';
 import { PoolStatus } from 'app/enums/pool-status.enum';
 import { TopologyWarning, VdevType } from 'app/enums/v-dev-type.enum';
 import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
@@ -27,6 +27,7 @@ const maxPct = 80;
 export class WidgetPoolComponent implements WidgetComponent, OnInit {
   size = input.required<SlotSize>();
   settings = input.required<WidgetPoolSettings>();
+  poolExists = true;
 
   protected chartLowCapacityColor: string;
   protected chartFillColor: string;
@@ -37,6 +38,10 @@ export class WidgetPoolComponent implements WidgetComponent, OnInit {
   protected pool = toSignal(toObservable(this.poolId).pipe(
     filter(Boolean),
     switchMap((poolId) => this.resources.getPoolById(+poolId)),
+    tap((pool) => {
+      this.poolExists = !!pool;
+      this.cdr.markForCheck();
+    }),
   ));
 
   protected rootDataset = toSignal(toObservable(this.pool).pipe(
@@ -49,7 +54,8 @@ export class WidgetPoolComponent implements WidgetComponent, OnInit {
     switchMap((pool) => this.resources.getDisksByPoolId(pool.name)),
   ));
 
-  protected isLoading = computed(() => !this.pool() || !this.rootDataset());
+  protected isPoolLoading = computed(() => !this.pool());
+  protected isDatasetLoading = computed(() => !this.rootDataset());
   protected isDisksLoading = computed(() => !this.disks());
 
   protected isLowCapacity = computed(() => {
@@ -103,6 +109,7 @@ export class WidgetPoolComponent implements WidgetComponent, OnInit {
     private resources: WidgetResourcesService,
     private translate: TranslateService,
     private storageService: StorageService,
+    private cdr: ChangeDetectorRef,
   ) {}
 
   ngOnInit(): void {

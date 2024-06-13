@@ -1,5 +1,6 @@
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
+import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { of } from 'rxjs';
 import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-datetime.pipe';
 import { Pool } from 'app/interfaces/pool.interface';
@@ -13,6 +14,9 @@ describe('WidgetPoolComponent', () => {
   let spectator: Spectator<WidgetPoolComponent>;
   const createComponent = createComponentFactory({
     component: WidgetPoolComponent,
+    imports: [
+      NgxSkeletonLoaderModule,
+    ],
     declarations: [
       MockComponent(GaugeChartComponent),
       FakeFormatDateTimePipe,
@@ -65,7 +69,7 @@ describe('WidgetPoolComponent', () => {
   });
 
   it('shows pool name', () => {
-    const poolName = spectator.query('.pool-name');
-    expect(poolName.textContent).toBe('Pool 1');
+    const poolName = spectator.query('.pool-name').textContent.trim();
+    expect(poolName).toBe('Pool 1');
   });
 });

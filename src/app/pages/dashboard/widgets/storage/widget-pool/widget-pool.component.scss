@@ -55,6 +55,10 @@
         font-size: 13px;
         gap: 10px;
 
+        .line {
+          display: flex;
+        }
+
         .label {
           font-weight: bold;
         }
@@ -96,4 +100,9 @@
       }
     }
   }
+}
+
+.skeleton {
+  display: inline-flex;
+  width: 120px;
 }

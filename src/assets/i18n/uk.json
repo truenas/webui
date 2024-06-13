@@ -786,6 +786,7 @@
   "Pool Scrub Write": "",
   "Pool Wizard": "",
   "Pool created successfully": "",
+  "Pool does not exist": "",
   "Pool imported successfully.": "",
   "Pool updated successfully": "",
   "Pool {name} is {status}.": "",
