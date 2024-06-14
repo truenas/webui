@@ -2301,45 +2301,6 @@
   {
     "hierarchy": [
       "Reporting",
-      "NFS"
-    ],
-    "synonyms": [
-      "NFS Stats",
-      "NFS Utilization"
-    ],
-    "requiredRoles": [],
-    "anchorRouterLink": [
-      "/reportsdashboard",
-      "nfs"
-    ],
-    "routerLink": null,
-    "anchor": "nfs",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "Reporting",
-      "Partition"
-    ],
-    "synonyms": [
-      "Partitions",
-      "Partition Stats",
-      "Partition Utilization"
-    ],
-    "requiredRoles": [],
-    "anchorRouterLink": [
-      "/reportsdashboard",
-      "partition"
-    ],
-    "routerLink": null,
-    "anchor": "partition",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "Reporting",
       "System"
     ],
     "synonyms": [
@@ -2354,25 +2315,6 @@
     ],
     "routerLink": null,
     "anchor": "system",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "Reporting",
-      "Target"
-    ],
-    "synonyms": [
-      "Target Stats",
-      "Target Utilization"
-    ],
-    "requiredRoles": [],
-    "anchorRouterLink": [
-      "/reportsdashboard",
-      "target"
-    ],
-    "routerLink": null,
-    "anchor": "target",
     "triggerAnchor": null,
     "section": "ui"
   },
