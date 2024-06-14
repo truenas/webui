@@ -95,9 +95,8 @@ export class EnclosureViewDirective implements AfterViewInit {
         }
 
         if (slots[slotIndex].pool_info?.pool_name) {
-          const poolColoredRect = this.getColoredPoolHighlight(
+          const poolColoredRect = this.createColoredPoolHighlight(
             group,
-            slots[slotIndex].pool_info.pool_name,
             slots[slotIndex].drive_bay_number,
           );
           this.renderer.insertBefore(group.parentNode, poolColoredRect, group.nextElementSibling);
@@ -158,7 +157,7 @@ export class EnclosureViewDirective implements AfterViewInit {
     };
   }
 
-  getColoredPoolHighlight(gElement: SVGGElement, poolName: string, slotNumber: number): SVGRectElement {
+  createColoredPoolHighlight(gElement: SVGGElement, slotNumber: number): SVGRectElement {
     const highlightRect = this.renderer.createElement('rect', 'http://www.w3.org/2000/svg') as SVGRectElement;
     const gRect = gElement.getBBox();
 
@@ -199,7 +198,7 @@ export class EnclosureViewDirective implements AfterViewInit {
     this.renderer.setAttribute(selectRect, 'x', `${gRect.x}`);
     this.renderer.setAttribute(selectRect, 'y', `${gRect.y}`);
     this.renderer.setAttribute(selectRect, 'stroke', '#ff3');
-    this.renderer.setAttribute(selectRect, 'stroke-width', '5px');
+    this.renderer.setAttribute(selectRect, 'stroke-width', '10px');
     this.renderer.setAttribute(selectRect, 'id', 'select');
     return selectRect;
   }
