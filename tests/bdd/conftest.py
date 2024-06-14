@@ -104,7 +104,12 @@ def pytest_runtest_makereport(item):
         if (report.skipped and xfail) or (report.failed and not xfail):
             screenshot_name = f'screenshot/{report.nodeid.partition("[")[0].replace("::", "_")}.png'
             # look if there is a Error window
-            if is_element_present(web_driver, '//h1[contains(.,"Error")]') or is_element_present(web_driver, '//h1[contains(.,"FAILED")]'):
+            errors = [
+                is_element_present(web_driver, '//h1[contains(text(),"Error")]'),
+                is_element_present(web_driver, '//h1[contains(text(),"FAILED")]'),
+                is_element_present(web_driver, '//h1[contains(text(),"VALIDATION")]')
+            ]
+            if any(errors):
                 web_driver.find_element_by_xpath('//ix-icon[@fonticon="add_circle_outline"]').click()
                 time.sleep(2)
                 traceback_name = f'screenshot/{report.nodeid.partition("[")[0].replace("::", "_")}_error.txt'
