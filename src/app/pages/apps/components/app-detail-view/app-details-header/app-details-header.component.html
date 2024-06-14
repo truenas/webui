@@ -38,14 +38,6 @@
 </div>
 
 <div class="app-info" fxFlex="240px">
-  <div class="app-list-item catalog-container">
-    <ngx-skeleton-loader *ngIf="isLoading$ | async; else catalog"></ngx-skeleton-loader>
-    <ng-template #catalog>
-      <ng-container *ngIf="app?.catalog">
-        {{ "{catalog} Catalog" | translate: { catalog: app.catalog | appCatalog } }}
-      </ng-container>
-    </ng-template>
-  </div>
   <div class="app-list-item">
     <span class="label">{{ 'App Version' | translate }}:</span>
     <ngx-skeleton-loader *ngIf="isLoading$ | async; else latestAppVersion"></ngx-skeleton-loader>

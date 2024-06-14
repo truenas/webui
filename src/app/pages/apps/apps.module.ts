@@ -76,7 +76,6 @@ import { AppCatalogPipe } from 'app/pages/apps/utils/app-catalog.pipe';
 import { AppCardLogoComponent } from './components/app-card-logo/app-card-logo.component';
 import { AppAvailableInfoCardComponent } from './components/app-detail-view/app-available-info-card/app-available-info-card.component';
 import { AppDetailViewComponent } from './components/app-detail-view/app-detail-view.component';
-import { AppHelmChartCardComponent } from './components/app-detail-view/app-helm-chart-card/app-helm-chart-card.component';
 import { AppResourcesCardComponent } from './components/app-detail-view/app-resources-card/app-resources-card.component';
 import { AppRouterOutletComponent } from './components/app-router-outlet/app-router-outlet.component';
 import { AppSectionExpandCollapseComponent } from './components/app-section-expand-collapse/app-section-expand-collapse.component';
@@ -117,7 +116,6 @@ import { KubernetesStatusComponent } from './components/installed-apps/kubernete
     AppNotesCardComponent,
     KubernetesSettingsComponent,
     AppResourcesCardComponent,
-    AppHelmChartCardComponent,
     AppsScopeWrapperComponent,
     AppAvailableInfoCardComponent,
     PodLogsComponent,

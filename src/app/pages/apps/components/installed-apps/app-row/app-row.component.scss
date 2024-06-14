@@ -9,7 +9,7 @@
   display: grid;
   font-weight: 500;
   grid-gap: 8px;
-  grid-template-columns: 40px minmax(165px, auto) minmax(100px, 120px) 55px 55px 85px 85px 40px;
+  grid-template-columns: 45px minmax(160px, auto) minmax(100px, 120px) 50px 55px 85px 85px 40px;
   min-height: 48px;
   min-width: fit-content;
   padding: 0;
@@ -107,7 +107,6 @@
       background: linear-gradient(90deg, var(--bg2) 0%, var(--bg2) calc(100% - 11px), transparent 100%);
       display: inline-flex;
       margin: 1px;
-      padding-left: 15px;
       padding-right: 15px;
     }
   }
