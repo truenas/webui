@@ -4,7 +4,7 @@ import { ComponentStore } from '@ngrx/component-store';
 import randomColor from 'randomcolor';
 import { Observable, switchMap, tap } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { DashboardEnclosure, DashboardEnclosureSlot, DashboardEnclosureSlotWithPoolColors } from 'app/interfaces/enclosure.interface';
+import { DashboardEnclosure, DashboardEnclosureSlot, DashboardEnclosureSlotColored } from 'app/interfaces/enclosure.interface';
 import { getEnclosureLabel } from 'app/pages/system/enclosure/utils/get-enclosure-label.utils';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -63,7 +63,12 @@ export class EnclosureStore extends ComponentStore<EnclosureState> {
             if (poolName && !poolColors.has(poolName)) {
               poolColors.set(poolName, randomColor({ luminosity: 'dark' }));
             }
-            (slotData as DashboardEnclosureSlotWithPoolColors).poolHighlightColor = poolColors.get(poolName);
+            (slotData as DashboardEnclosureSlotColored).poolHighlightColor = poolColors.get(poolName);
+            if (slotData.status === 'OK') {
+              (slotData as DashboardEnclosureSlotColored).diskHighlightColor = 'green';
+            } else {
+              (slotData as DashboardEnclosureSlotColored).diskHighlightColor = 'red';
+            }
           }
         }
         this.patchState({ enclosures });

@@ -2,7 +2,7 @@ import {
   AfterViewInit, ChangeDetectorRef, computed, Directive, ElementRef, inject, input, OnChanges, Renderer2,
   ViewChild,
 } from '@angular/core';
-import { DashboardEnclosure, DashboardEnclosureSlotWithPoolColors } from 'app/interfaces/enclosure.interface';
+import { DashboardEnclosure, DashboardEnclosureSlotColored } from 'app/interfaces/enclosure.interface';
 import { EnclosureView } from 'app/pages/system/enclosure/components/views/enclosure-view/disks-overview/disks-overview.component';
 import { EnclosureStore } from 'app/pages/system/enclosure/services/enclosure.store';
 import { EnclosureSide } from 'app/pages/system/enclosure/utils/enclosure-mappings';
@@ -23,43 +23,27 @@ export class EnclosureViewDirective implements AfterViewInit, OnChanges {
   readonly enclosureSide = input.required<EnclosureSide>();
   readonly enclosureView = input.required<EnclosureView>();
   private previousSelectRect: SVGRectElement;
+  private isViewReady = false;
 
   readonly viewSpecificSlots = computed(() => {
     const enclosure = this.enclosure();
     const viewOption = this.enclosureSide();
     const allSlots = Object.entries(enclosure.elements['Array Device Slot']);
-    const slots: Record<number, DashboardEnclosureSlotWithPoolColors> = {};
+    const slots: Record<number, DashboardEnclosureSlotColored> = {};
+    const boxSideToFlagMap: { [key in EnclosureSide]: 'is_front' | 'is_internal' | 'is_rear' | 'is_top' } = {
+      [EnclosureSide.Front]: 'is_front',
+      [EnclosureSide.Internal]: 'is_internal',
+      [EnclosureSide.Rear]: 'is_rear',
+      [EnclosureSide.Top]: 'is_top',
+    };
 
-    switch (viewOption) {
-      case EnclosureSide.Front:
-        for (const slot of allSlots) {
-          if (slot[1].is_front) {
-            slots[+slot[0]] = { ...slot[1], drive_bay_number: +slot[0] };
-          }
-        }
-        break;
-      case EnclosureSide.Internal:
-        for (const slot of allSlots) {
-          if (slot[1].is_internal) {
-            slots[+slot[0]] = { ...slot[1], drive_bay_number: +slot[0] };
-          }
-        }
-        break;
-      case EnclosureSide.Rear:
-        for (const slot of allSlots) {
-          if (slot[1].is_rear) {
-            slots[+slot[0]] = { ...slot[1], drive_bay_number: +slot[0] };
-          }
-        }
-        break;
-      case EnclosureSide.Top:
-        for (const slot of allSlots) {
-          if (slot[1].is_top) {
-            slots[+slot[0]] = { ...slot[1], drive_bay_number: +slot[0] };
-          }
-        }
-        break;
+    const flagProp = boxSideToFlagMap[viewOption];
+    for (const slot of allSlots) {
+      if (slot[1][flagProp]) {
+        slots[+slot[0]] = { ...slot[1], drive_bay_number: +slot[0] };
+      }
     }
+
     return slots;
   });
 
@@ -68,10 +52,13 @@ export class EnclosureViewDirective implements AfterViewInit, OnChanges {
   private cdr: ChangeDetectorRef = inject(ChangeDetectorRef);
 
   ngOnChanges(): void {
-    this.ngAfterViewInit();
+    if (this.isViewReady) {
+      this.ngAfterViewInit();
+    }
   }
 
   ngAfterViewInit(): void {
+    this.isViewReady = true;
     this.enclosureStore.selectSlot(null);
     this.renderer.setAttribute(this.viewSvg.nativeElement, 'data', this.svgPath);
     this.cdr.markForCheck();
@@ -100,22 +87,10 @@ export class EnclosureViewDirective implements AfterViewInit, OnChanges {
           this.renderer.setStyle(group, 'opacity', '0.5');
         }
 
-        if (this.enclosureView() === EnclosureView.Pools && slots[slotIndex].pool_info?.pool_name) {
-          const poolColoredRect = this.createColoredPoolHighlight(
-            group,
-            slots[slotIndex].drive_bay_number,
-          );
-          this.renderer.insertBefore(group.parentNode, poolColoredRect, group.nextElementSibling);
-        }
+        this.addPoolColoredRect(group, slots[slotIndex].pool_info?.pool_name, slotIndex + 1);
 
-        if (this.enclosureView() === EnclosureView.FailedDisks) {
-          const diskStatusRect = this.createDiskStatusRect(
-            group,
-            slots[slotIndex].status === 'OK',
-            slots[slotIndex].drive_bay_number,
-          );
-          this.renderer.insertBefore(group.parentNode, diskStatusRect, group.nextElementSibling);
-        }
+        this.addDiskStatusRect(group, slotIndex + 1);
+
         const {
           mouseoverHandler,
           mouseoutHandler,
@@ -133,19 +108,40 @@ export class EnclosureViewDirective implements AfterViewInit, OnChanges {
     };
   }
 
-  createDiskStatusRect(gElement: SVGGElement, isStatusOk: boolean, slotNumber: number): SVGRectElement {
+  addPoolColoredRect(gElement: SVGGElement, poolName: string, slotNumber: number): void {
+    if (this.enclosureView() === EnclosureView.Pools && poolName) {
+      const poolColoredRect = this.createColoredPoolHighlight(
+        gElement,
+        slotNumber,
+      );
+      this.renderer.insertBefore(gElement.parentNode, poolColoredRect, gElement.nextElementSibling);
+    }
+  }
+
+  addDiskStatusRect(gElement: SVGGElement, slotNumber: number): void {
+    if (this.enclosureView() === EnclosureView.FailedDisks) {
+      const diskStatusRect = this.createDiskStatusRect(
+        gElement,
+        slotNumber,
+      );
+      this.renderer.insertBefore(gElement.parentNode, diskStatusRect, gElement.nextElementSibling);
+    }
+  }
+
+  createDiskStatusRect(gElement: SVGGElement, slotNumber: number): SVGRectElement {
     const highlightRect = this.renderer.createElement('rect', 'http://www.w3.org/2000/svg') as SVGRectElement;
     const gRect = gElement.getBBox();
+    const viewSpecificSlots = this.viewSpecificSlots();
 
     this.renderer.setAttribute(highlightRect, 'width', `${gRect.width}`);
     this.renderer.setAttribute(highlightRect, 'height', `${gRect.height}`);
     this.renderer.setAttribute(highlightRect, 'x', `${gRect.x}`);
     this.renderer.setAttribute(highlightRect, 'y', `${gRect.y}`);
-    this.renderer.setAttribute(highlightRect, 'stroke', isStatusOk ? 'green' : 'red');
+    this.renderer.setAttribute(highlightRect, 'stroke', viewSpecificSlots[slotNumber].diskHighlightColor);
     this.renderer.setAttribute(highlightRect, 'stroke-width', '5px');
     this.renderer.setAttribute(highlightRect, 'opacity', '0.3');
     this.renderer.setAttribute(highlightRect, 'pointer-events', 'none');
-    this.renderer.setAttribute(highlightRect, 'fill', isStatusOk ? 'green' : 'red');
+    this.renderer.setAttribute(highlightRect, 'fill', viewSpecificSlots[slotNumber].diskHighlightColor);
     this.renderer.setAttribute(highlightRect, 'id', `highlight_pool_${slotNumber}`);
     return highlightRect;
   }
