@@ -139,7 +139,8 @@ def pytest_runtest_makereport(item):
                         web_driver.find_element_by_xpath('//ix-icon[@id="ix-close-icon"]').click()
                     except ElementClickInterceptedException:
                         pass
-            if 'T0962' in screenshot_name or 'T0964' in screenshot_name or 'T1120' in screenshot_name or 'T1104' in screenshot_name:
+            substrings = ('T0962', 'T0964', 'T1120', 'T1104')
+            if any(sub in screenshot_name for sub in substrings):
                 disable_active_directory()
 
 
