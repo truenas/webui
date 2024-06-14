@@ -10,5 +10,5 @@ export const systemInfoPassiveWidget = dashboardWidget({
   category: WidgetCategory.SystemInfo,
   component: WidgetSysInfoPassiveComponent,
   settingsComponent: null,
-  hidden: (hiddenService) => hiddenService.isHidden(WidgetType.SystemInfoPassive),
+  visible: (visibleWidgetsService) => visibleWidgetsService.isVisible(WidgetType.SystemInfoPassive),
 });

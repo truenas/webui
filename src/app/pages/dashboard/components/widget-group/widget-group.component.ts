@@ -3,7 +3,7 @@ import {
 } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { WidgetErrorComponent } from 'app/pages/dashboard/components/widget-error/widget-error.component';
-import { HiddenWidgetsService } from 'app/pages/dashboard/services/hidden-widgets.service';
+import { VisibleWidgetsService } from 'app/pages/dashboard/services/visible-widgets.service';
 import { layoutToSlotSizes, WidgetGroup } from 'app/pages/dashboard/types/widget-group.interface';
 import { widgetRegistry } from 'app/pages/dashboard/widgets/all-widgets.constant';
 
@@ -37,7 +37,7 @@ export class WidgetGroupComponent {
 
   constructor(
     private translate: TranslateService,
-    private hiddenService: HiddenWidgetsService,
+    private visibleWidgetsService: VisibleWidgetsService,
   ) {}
 
   private getSlotComponent(index: number): OutletParams {
@@ -62,7 +62,7 @@ export class WidgetGroupComponent {
       };
     }
 
-    if (definition.hidden && definition.hidden(this.hiddenService)) {
+    if (definition.visible && !definition.visible(this.visibleWidgetsService)) {
       return null;
     }
 

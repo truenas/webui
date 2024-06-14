@@ -1,5 +1,5 @@
 import { InputSignal, Type } from '@angular/core';
-import { HiddenWidgetsService } from 'app/pages/dashboard/services/hidden-widgets.service';
+import { VisibleWidgetsService } from 'app/pages/dashboard/services/visible-widgets.service';
 import { WidgetCategory } from 'app/pages/dashboard/types/widget-category.enum';
 import { WidgetSettingsRef } from 'app/pages/dashboard/types/widget-settings-ref.interface';
 import {
@@ -38,7 +38,7 @@ export interface WidgetDefinition<
   category: WidgetCategory;
   component: Type<Component>;
   settingsComponent: SettingsComponent extends null ? null : Type<SettingsComponent>;
-  hidden?: (hiddenService: HiddenWidgetsService) => boolean;
+  visible?: (visibleWidgetsService: VisibleWidgetsService) => boolean;
 }
 
 /**
@@ -50,7 +50,7 @@ export interface WidgetDefinition<
  *   category: WidgetCategory.Network,
  *   settingsComponent: WidgetInterfaceIpSettingsComponent,
  *   supportedSizes: [SlotSize.Full, SlotSize.Half, SlotSize.Quarter],
- *   hidden: (hiddenService) => hiddenService.isHidden(WidgetType.Ipv4Address),
+ *   visible: (visibleWidgetsService) => visibleWidgetsService.isVisible(WidgetType.Ipv4Address),
  * });
  * ```
  */

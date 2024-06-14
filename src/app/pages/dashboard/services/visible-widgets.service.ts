@@ -9,7 +9,7 @@ import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 @Injectable({
   providedIn: 'root',
 })
-export class HiddenWidgetsService {
+export class VisibleWidgetsService {
   readonly hiddenWidgets = toSignal(this.store$.select(selectIsHaLicensed).pipe(
     map((isHaLicensed) => {
       const widgets: WidgetType[] = [];
@@ -24,7 +24,7 @@ export class HiddenWidgetsService {
     private store$: Store<AppState>,
   ) {}
 
-  isHidden(type: WidgetType): boolean {
-    return this.hiddenWidgets().includes(type);
+  isVisible(type: WidgetType): boolean {
+    return !this.hiddenWidgets().includes(type);
   }
 }

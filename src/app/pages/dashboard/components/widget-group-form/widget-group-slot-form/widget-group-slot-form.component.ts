@@ -19,7 +19,7 @@ import {
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Observable, Subscription, of } from 'rxjs';
 import { Option } from 'app/interfaces/option.interface';
-import { HiddenWidgetsService } from 'app/pages/dashboard/services/hidden-widgets.service';
+import { VisibleWidgetsService } from 'app/pages/dashboard/services/visible-widgets.service';
 import { SimpleWidget } from 'app/pages/dashboard/types/simple-widget.interface';
 import { SlotPosition } from 'app/pages/dashboard/types/slot-position.enum';
 import { WidgetCategory, widgetCategoryLabels } from 'app/pages/dashboard/types/widget-category.enum';
@@ -97,7 +97,7 @@ export class WidgetGroupSlotFormComponent implements AfterViewInit, OnChanges {
 
   constructor(
     private fb: FormBuilder,
-    private hiddenService: HiddenWidgetsService,
+    private visibleWidgetsService: VisibleWidgetsService,
     private cdr: ChangeDetectorRef,
   ) { }
 
@@ -239,7 +239,7 @@ export class WidgetGroupSlotFormComponent implements AfterViewInit, OnChanges {
 
   getLayoutSupportedWidgets(): SimpleWidget[] {
     return Object.entries(widgetRegistry)
-      .filter(([, widget]) => !(widget.hidden && widget.hidden(this.hiddenService)))
+      .filter(([, widget]) => !widget.visible || widget.visible(this.visibleWidgetsService))
       .filter(([, widget]) => widget.supportedSizes.includes(this.slotConfig().slotSize))
       .map(([type, widget]) => ({ ...widget, type: type as WidgetType }));
   }
