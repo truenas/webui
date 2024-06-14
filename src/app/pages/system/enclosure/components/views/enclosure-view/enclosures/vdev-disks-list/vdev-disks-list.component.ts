@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
-import { DashboardEnclosureSlot } from 'app/interfaces/enclosure.interface';
+import { DashboardEnclosureSlotWithPoolColors } from 'app/interfaces/enclosure.interface';
 
 @Component({
   selector: 'ix-vdev-disks-list',
@@ -8,5 +8,5 @@ import { DashboardEnclosureSlot } from 'app/interfaces/enclosure.interface';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class VdevDisksListComponent {
-  selectedSlot = input.required<DashboardEnclosureSlot>();
+  selectedSlot = input.required<DashboardEnclosureSlotWithPoolColors>();
 }

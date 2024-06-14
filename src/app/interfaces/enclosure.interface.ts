@@ -85,8 +85,9 @@ export interface DashboardEnclosureSlot {
   type?: DiskType;
   rotationrate?: number;
   pool_info: EnclosureSlotPoolInfo | null;
-  poolHighlightColor?: string;
 }
+
+export type DashboardEnclosureSlotWithPoolColors = DashboardEnclosureSlot & { poolHighlightColor?: string };
 
 export interface EnclosureVdev {
   enclosure_id: string;

@@ -2,7 +2,7 @@ import {
   AfterViewInit, ChangeDetectorRef, computed, Directive, ElementRef, inject, input, Renderer2,
   ViewChild,
 } from '@angular/core';
-import { DashboardEnclosure, DashboardEnclosureSlot } from 'app/interfaces/enclosure.interface';
+import { DashboardEnclosure, DashboardEnclosureSlotWithPoolColors } from 'app/interfaces/enclosure.interface';
 import { EnclosureView } from 'app/pages/system/enclosure/components/views/enclosure-view/disks-overview/disks-overview.component';
 import { EnclosureStore } from 'app/pages/system/enclosure/services/enclosure.store';
 import { EnclosureSide } from 'app/pages/system/enclosure/utils/enclosure-mappings';
@@ -28,7 +28,7 @@ export class EnclosureViewDirective implements AfterViewInit {
     const enclosure = this.enclosure();
     const viewOption = this.enclosureSide();
     const allSlots = Object.entries(enclosure.elements['Array Device Slot']);
-    const slots: Record<number, DashboardEnclosureSlot> = {};
+    const slots: Record<number, DashboardEnclosureSlotWithPoolColors> = {};
 
     switch (viewOption) {
       case EnclosureSide.Front:
