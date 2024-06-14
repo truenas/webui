@@ -4,13 +4,13 @@ import {
 import { EnclosureViewDirective } from 'app/pages/system/enclosure/components/views/enclosure-view/enclosures/enclosure-view/enclosure-view.directive';
 
 @Component({
-  selector: 'ix-m50-rear-view',
-  templateUrl: './m50-rear-view.component.html',
+  selector: 'ix-mseries-rear-view',
+  templateUrl: './mseries-rear-view.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class M50RearViewComponent extends EnclosureViewDirective {
+export class MSeriesRearViewComponent extends EnclosureViewDirective {
   constructor() {
     super();
-    this.svgPath = 'assets/images/new-hardware/m50/m50-rear.svg';
+    this.svgPath = 'assets/images/new-hardware/mseries/mseries-rear.svg';
   }
 }

@@ -27,37 +27,33 @@ export class EnclosureViewDirective implements AfterViewInit {
     const viewOption = this.viewOption();
     const allSlots = Object.entries(enclosure.elements['Array Device Slot']);
     const slots: Record<number, DashboardEnclosureSlot> = {};
-    let driveBayNumber = 1;
+
     switch (viewOption) {
       case EnclosureSide.Front:
         for (const slot of allSlots) {
           if (slot[1].is_front) {
-            slots[driveBayNumber] = { ...slot[1], drive_bay_number: +slot[0] };
-            driveBayNumber++;
+            slots[+slot[0]] = { ...slot[1], drive_bay_number: +slot[0] };
           }
         }
         break;
       case EnclosureSide.Internal:
         for (const slot of allSlots) {
           if (slot[1].is_internal) {
-            slots[driveBayNumber] = { ...slot[1], drive_bay_number: +slot[0] };
-            driveBayNumber++;
+            slots[+slot[0]] = { ...slot[1], drive_bay_number: +slot[0] };
           }
         }
         break;
       case EnclosureSide.Rear:
         for (const slot of allSlots) {
           if (slot[1].is_rear) {
-            slots[driveBayNumber] = { ...slot[1], drive_bay_number: +slot[0] };
-            driveBayNumber++;
+            slots[+slot[0]] = { ...slot[1], drive_bay_number: +slot[0] };
           }
         }
         break;
       case EnclosureSide.Top:
         for (const slot of allSlots) {
           if (slot[1].is_top) {
-            slots[driveBayNumber] = { ...slot[1], drive_bay_number: +slot[0] };
-            driveBayNumber++;
+            slots[+slot[0]] = { ...slot[1], drive_bay_number: +slot[0] };
           }
         }
         break;
@@ -77,21 +73,40 @@ export class EnclosureViewDirective implements AfterViewInit {
     this.viewSvg.nativeElement.onload = () => {
       const groupsList = objElm.contentDocument.querySelectorAll<SVGGElement>('g');
 
-      let driveCageNumber = 1;
       const viewSpecificSlots = this.viewSpecificSlots();
+      const slotsEntries = Object.entries(viewSpecificSlots);
+      const slots = slotsEntries.sort((a, b) => {
+        if (a[0] > b[0]) {
+          return 1;
+        }
+        if (a[0] < b[0]) {
+          return -1;
+        }
+        return 0;
+      }).map((entry) => entry[1]);
+      let slotIndex = 0;
       for (const group of groupsList) {
         if (!group.id.startsWith('DRIVE_CAGE_')) {
           continue;
         }
 
-        if (viewSpecificSlots[driveCageNumber].dev == null) {
+        if (slots[slotIndex].dev == null) {
           this.renderer.setStyle(group, 'opacity', '0.5');
+        }
+
+        if (slots[slotIndex].pool_info?.pool_name) {
+          const poolColoredRect = this.getColoredPoolHighlight(
+            group,
+            slots[slotIndex].pool_info.pool_name,
+            slots[slotIndex].drive_bay_number,
+          );
+          this.renderer.insertBefore(group.parentNode, poolColoredRect, group.nextElementSibling);
         }
         const {
           mouseoverHandler,
           mouseoutHandler,
           clickHandler,
-        } = this.getMouseEventsHandlers(driveCageNumber, group);
+        } = this.getMouseEventsHandlers(slots[slotIndex].drive_bay_number, group);
 
         group.addEventListener('mouseover', mouseoverHandler);
 
@@ -99,7 +114,7 @@ export class EnclosureViewDirective implements AfterViewInit {
 
         group.addEventListener('click', clickHandler);
 
-        driveCageNumber++;
+        slotIndex++;
       }
     };
   }
@@ -141,6 +156,23 @@ export class EnclosureViewDirective implements AfterViewInit {
       mouseoverHandler,
       clickHandler,
     };
+  }
+
+  getColoredPoolHighlight(gElement: SVGGElement, poolName: string, slotNumber: number): SVGRectElement {
+    const highlightRect = this.renderer.createElement('rect', 'http://www.w3.org/2000/svg') as SVGRectElement;
+    const gRect = gElement.getBBox();
+
+    this.renderer.setAttribute(highlightRect, 'width', `${gRect.width}`);
+    this.renderer.setAttribute(highlightRect, 'height', `${gRect.height}`);
+    this.renderer.setAttribute(highlightRect, 'x', `${gRect.x}`);
+    this.renderer.setAttribute(highlightRect, 'y', `${gRect.y}`);
+    this.renderer.setAttribute(highlightRect, 'stroke', this.viewSpecificSlots()[slotNumber].poolHighlightColor);
+    this.renderer.setAttribute(highlightRect, 'stroke-width', '5px');
+    this.renderer.setAttribute(highlightRect, 'opacity', '0.3');
+    this.renderer.setAttribute(highlightRect, 'pointer-events', 'none');
+    this.renderer.setAttribute(highlightRect, 'fill', this.viewSpecificSlots()[slotNumber].poolHighlightColor);
+    this.renderer.setAttribute(highlightRect, 'id', `highlight_pool_${slotNumber}`);
+    return highlightRect;
   }
 
   createHighlightRect(gElement: SVGGElement, slotNumber: number): SVGRectElement {

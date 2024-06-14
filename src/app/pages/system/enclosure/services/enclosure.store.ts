@@ -1,6 +1,7 @@
 import { computed, Injectable } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ComponentStore } from '@ngrx/component-store';
+import randomColor from 'randomcolor';
 import { Observable, switchMap, tap } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { DashboardEnclosure, DashboardEnclosureSlot } from 'app/interfaces/enclosure.interface';
@@ -54,6 +55,17 @@ export class EnclosureStore extends ComponentStore<EnclosureState> {
       tap(() => this.setState(initialState)),
       switchMap(() => this.getEnclosure()),
       tap((enclosures: DashboardEnclosure[]) => {
+        const poolColors = new Map<string, string>();
+        for (const enclosure of enclosures) {
+          const slotKeyValues = Object.entries(enclosure.elements['Array Device Slot']);
+          for (const [, slotData] of slotKeyValues) {
+            const poolName = slotData?.pool_info?.pool_name;
+            if (poolName && !poolColors.has(poolName)) {
+              poolColors.set(poolName, randomColor({ luminosity: 'dark' }));
+            }
+            slotData.poolHighlightColor = poolColors.get(poolName);
+          }
+        }
         this.patchState({ enclosures });
       }),
       // TODO: Error handling

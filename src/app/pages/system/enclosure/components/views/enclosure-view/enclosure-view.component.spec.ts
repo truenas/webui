@@ -10,7 +10,7 @@ import { DisksOverviewComponent, EnclosureView } from 'app/pages/system/enclosur
 import { IxEnclosureSelectorComponent } from 'app/pages/system/enclosure/components/views/enclosure-view/enclosure-selector/enclosure-selector.component';
 import { EnclosureViewComponent } from 'app/pages/system/enclosure/components/views/enclosure-view/enclosure-view.component';
 import { DiskTopologyDescriptionComponent } from 'app/pages/system/enclosure/components/views/enclosure-view/enclosures/disk-topology-description/disk-topology-description.component';
-import { M50FrontViewComponent } from 'app/pages/system/enclosure/components/views/enclosure-view/enclosures/m50-enclosure/m50-front-view/m50-front-view.component';
+import { MSeriesFrontViewComponent } from 'app/pages/system/enclosure/components/views/enclosure-view/enclosures/mseries-enclosure/mseries-front-view/mseries-front-view.component';
 import { VdevDisksListComponent } from 'app/pages/system/enclosure/components/views/enclosure-view/enclosures/vdev-disks-list/vdev-disks-list.component';
 import { EnclosureStore } from 'app/pages/system/enclosure/services/enclosure.store';
 
@@ -786,7 +786,7 @@ describe('EnclosureViewComponent', () => {
   const createComponent = createComponentFactory({
     component: EnclosureViewComponent,
     declarations: [
-      MockComponent(M50FrontViewComponent),
+      MockComponent(MSeriesFrontViewComponent),
       MockComponent(VdevDisksListComponent),
       MockComponent(DiskTopologyDescriptionComponent),
       MockComponent(DisksOverviewComponent),
@@ -822,6 +822,6 @@ describe('EnclosureViewComponent', () => {
     expect(selector).toExist();
   });
   it('renders m50 enclosure', () => {
-    expect(spectator.query(M50FrontViewComponent)).toExist();
+    expect(spectator.query(MSeriesFrontViewComponent)).toExist();
   });
 });

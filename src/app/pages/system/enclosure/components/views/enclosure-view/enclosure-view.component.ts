@@ -40,8 +40,12 @@ export class EnclosureViewComponent {
     const enclosure = this.enclosure();
     const selectedViewOption = this.selectedViewOption();
     // TODO: Add error handling for missing models
+    let model = this.enclosure().model;
+    if (!model.toLowerCase().startsWith('mini') && model.toLowerCase().startsWith('m')) {
+      model = 'M-Series';
+    }
     return {
-      component: enclosureComponentMap[this.enclosure().model][selectedViewOption],
+      component: enclosureComponentMap[model][selectedViewOption],
       inputs: {
         enclosure,
         viewOption: selectedViewOption,

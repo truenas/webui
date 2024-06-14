@@ -16,7 +16,11 @@
       *ngFor="let disk of selectedSlot()?.pool_info.vdev_disks"
       class="disk-name"
     >
-      <div class="disk-circle" [class.selected]="disk.dev === selectedSlot()?.dev"></div>{{ disk.dev }}
+      <div
+        class="disk-circle" 
+        [style.background]="selectedSlot().poolHighlightColor" 
+        [class.selected]="disk.dev === selectedSlot()?.dev"
+      ></div>{{ disk.dev }}
     </div>
   </div>
 </ng-container>
