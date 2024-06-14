@@ -16,12 +16,26 @@ from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.common.exceptions import ElementClickInterceptedException
-from selenium.webdriver.firefox.firefox_binary import FirefoxBinary
 from selenium.webdriver.firefox.options import Options
 
 # To avoid hostname need to be unique so using the PID should avoid this
 pid = str(os.getpid())
 hostname = f'uitest{pid}'
+
+
+def get_config_value(key: str) -> str:
+    """
+    This function return the value of the given key in environment or config.cfg file.
+    """
+    if os.environ.get(f'nas_{key}'):
+        return os.environ.get(f'nas_{key}')
+    elif os.path.exists('config.cfg'):
+        configs = ConfigParser()
+        configs.read('config.cfg')
+        os.environ[f'nas_{key}'] = configs['NAS_CONFIG']['key']
+        return configs['DEFAULT'][key]
+    else:
+        return 'none'
 
 
 @pytest.fixture
@@ -31,40 +45,22 @@ def nas_hostname():
 
 @pytest.fixture
 def nas_ip():
-    if os.environ.get("nas_ip"):
-        return os.environ.get("nas_ip")
-    elif os.path.exists('config.cfg'):
-        configs = ConfigParser()
-        configs.read('config.cfg')
-        os.environ["nas_ip"] = configs['NAS_CONFIG']['ip']
-        return configs['NAS_CONFIG']['ip']
-    else:
-        return 'none'
+    return get_config_value('ip')
+
+
+@pytest.fixture
+def nas_ip2():
+    return get_config_value('ip2')
+
+
+@pytest.fixture
+def nas_vip():
+    return get_config_value('vip')
 
 
 @pytest.fixture
 def root_password():
-    if os.environ.get("nas_password"):
-        return os.environ.get("nas_password")
-    elif os.path.exists('config.cfg'):
-        configs = ConfigParser()
-        configs.read('config.cfg')
-        os.environ["nas_password"] = configs['NAS_CONFIG']['password']
-        return configs['NAS_CONFIG']['password']
-    else:
-        return 'none'
-
-
-@pytest.fixture
-def iso_version():
-    if os.environ.get("nas_version"):
-        return os.environ.get("nas_version")
-    elif os.path.exists('config.cfg'):
-        configs = ConfigParser()
-        configs.read('config.cfg')
-        return configs['NAS_CONFIG']['version']
-    else:
-        return 'none'
+    return get_config_value('password')
 
 
 def browser():
@@ -103,7 +99,7 @@ def pytest_runtest_makereport(item):
     """
     outcome = yield
     report = outcome.get_result()
-    if report.when == 'call' or report.when == "setup":
+    if report.when in ['call', 'setup', 'teardown']:
         xfail = hasattr(report, 'wasxfail')
         if (report.skipped and xfail) or (report.failed and not xfail):
             screenshot_name = f'screenshot/{report.nodeid.partition("[")[0].replace("::", "_")}.png'
@@ -147,14 +143,18 @@ def save_screenshot(name):
 
 
 def save_traceback(name):
-    traceback_file = open(name, 'w')
-    traceback_file.writelines(web_driver.find_element_by_xpath('//div[@id="err-bt-text"]').text)
-    traceback_file.close()
+    with open(name, 'w') as traceback_file:
+        traceback_file.writelines(web_driver.find_element_by_xpath('//div[@id="err-bt-text"]').text)
 
 
 def disable_active_directory():
+    ip = (
+        os.environ.get("nas_ip")
+        if os.environ.get("nas_vip") == 'none'
+        else os.environ.get("nas_vip")
+    )
     if 'ad_user' in os.environ and 'ad_password' in os.environ:
-        results = get(os.environ.get("nas_ip"), '/activedirectory/get_state/', ('root', os.environ.get("nas_password")))
+        results = get(ip, '/activedirectory/get_state/', ('root', os.environ.get("nas_password")))
         assert results.status_code == 200, results.text
         if results.json() != 'DISABLED':
             payload = {
