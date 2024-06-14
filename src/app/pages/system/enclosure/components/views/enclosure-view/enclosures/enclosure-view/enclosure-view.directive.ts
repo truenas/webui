@@ -3,6 +3,7 @@ import {
   ViewChild,
 } from '@angular/core';
 import { DashboardEnclosure, DashboardEnclosureSlot } from 'app/interfaces/enclosure.interface';
+import { EnclosureView } from 'app/pages/system/enclosure/components/views/enclosure-view/disks-overview/disks-overview.component';
 import { EnclosureStore } from 'app/pages/system/enclosure/services/enclosure.store';
 import { EnclosureSide } from 'app/pages/system/enclosure/utils/enclosure-mappings';
 
@@ -19,12 +20,13 @@ export class EnclosureViewDirective implements AfterViewInit {
   @ViewChild('mySvg') private viewSvg: ElementRef<HTMLObjectElement>;
   protected svgPath: string;
   readonly enclosure = input.required<DashboardEnclosure>();
-  readonly viewOption = input.required<EnclosureSide>();
+  readonly enclosureSide = input.required<EnclosureSide>();
+  readonly enclosureView = input.required<EnclosureView>();
   private previousSelectRect: SVGRectElement;
 
   readonly viewSpecificSlots = computed(() => {
     const enclosure = this.enclosure();
-    const viewOption = this.viewOption();
+    const viewOption = this.enclosureSide();
     const allSlots = Object.entries(enclosure.elements['Array Device Slot']);
     const slots: Record<number, DashboardEnclosureSlot> = {};
 
@@ -76,10 +78,10 @@ export class EnclosureViewDirective implements AfterViewInit {
       const viewSpecificSlots = this.viewSpecificSlots();
       const slotsEntries = Object.entries(viewSpecificSlots);
       const slots = slotsEntries.sort((a, b) => {
-        if (a[0] > b[0]) {
+        if (+a[0] > +b[0]) {
           return 1;
         }
-        if (a[0] < b[0]) {
+        if (+a[0] < +b[0]) {
           return -1;
         }
         return 0;
@@ -94,12 +96,21 @@ export class EnclosureViewDirective implements AfterViewInit {
           this.renderer.setStyle(group, 'opacity', '0.5');
         }
 
-        if (slots[slotIndex].pool_info?.pool_name) {
+        if (this.enclosureView() === EnclosureView.Pools && slots[slotIndex].pool_info?.pool_name) {
           const poolColoredRect = this.createColoredPoolHighlight(
             group,
             slots[slotIndex].drive_bay_number,
           );
           this.renderer.insertBefore(group.parentNode, poolColoredRect, group.nextElementSibling);
+        }
+
+        if (this.enclosureView() === EnclosureView.FailedDisks) {
+          const diskStatusRect = this.createDiskStatusRect(
+            group,
+            slots[slotIndex].status === 'OK',
+            slots[slotIndex].drive_bay_number,
+          );
+          this.renderer.insertBefore(group.parentNode, diskStatusRect, group.nextElementSibling);
         }
         const {
           mouseoverHandler,
@@ -116,6 +127,23 @@ export class EnclosureViewDirective implements AfterViewInit {
         slotIndex++;
       }
     };
+  }
+
+  createDiskStatusRect(gElement: SVGGElement, isStatusOk: boolean, slotNumber: number): SVGRectElement {
+    const highlightRect = this.renderer.createElement('rect', 'http://www.w3.org/2000/svg') as SVGRectElement;
+    const gRect = gElement.getBBox();
+
+    this.renderer.setAttribute(highlightRect, 'width', `${gRect.width}`);
+    this.renderer.setAttribute(highlightRect, 'height', `${gRect.height}`);
+    this.renderer.setAttribute(highlightRect, 'x', `${gRect.x}`);
+    this.renderer.setAttribute(highlightRect, 'y', `${gRect.y}`);
+    this.renderer.setAttribute(highlightRect, 'stroke', isStatusOk ? 'green' : 'red');
+    this.renderer.setAttribute(highlightRect, 'stroke-width', '5px');
+    this.renderer.setAttribute(highlightRect, 'opacity', '0.3');
+    this.renderer.setAttribute(highlightRect, 'pointer-events', 'none');
+    this.renderer.setAttribute(highlightRect, 'fill', isStatusOk ? 'green' : 'red');
+    this.renderer.setAttribute(highlightRect, 'id', `highlight_pool_${slotNumber}`);
+    return highlightRect;
   }
 
   getMouseEventsHandlers(

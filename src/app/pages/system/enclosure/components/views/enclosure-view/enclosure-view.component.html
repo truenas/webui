@@ -14,9 +14,16 @@
                 ></ix-disk-topology-description>
               </ng-container>
               <div *ngIf="selectedView() !== 'expanders'" class="view-options-container">
-                <ng-container
-                  *ngComponentOutlet="dashboardView().component; inputs: dashboardView().inputs;"
-                ></ng-container>
+                <ng-container *ngIf="selectedView() === 'pools'">
+                  <ng-container
+                    *ngComponentOutlet="dashboardView().component; inputs: dashboardView().inputs;"
+                  ></ng-container>
+                </ng-container>
+                <ng-container *ngIf="selectedView() === 'failedDisks'">
+                  <ng-container
+                    *ngComponentOutlet="dashboardView().component; inputs: dashboardView().inputs;"
+                  ></ng-container>
+                </ng-container>
                 <div class="view-options-switch">
                   <button
                     *ngIf="enclosure().front_loaded"

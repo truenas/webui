@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, computed,
+  ChangeDetectionStrategy, Component, ViewChild, computed,
   signal,
 } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
@@ -20,6 +20,7 @@ export class EnclosureViewComponent {
   readonly EnclosureSide = EnclosureSide;
   protected readonly selectedView = signal<OverviewInfo['name']>(EnclosureView.Pools);
 
+  @ViewChild('enclosure') enclosureView: Element;
   protected readonly expanders = computed(() => {
     const expanders = this.enclosure().elements['SAS Expander'];
     return Object.values(expanders);
@@ -38,17 +39,19 @@ export class EnclosureViewComponent {
 
   readonly dashboardView = computed(() => {
     const enclosure = this.enclosure();
-    const selectedViewOption = this.selectedViewOption();
+    const selectedView = this.selectedView();
+    const selectedSide = this.selectedViewOption();
     // TODO: Add error handling for missing models
     let model = this.enclosure().model;
     if (!model.toLowerCase().startsWith('mini') && model.toLowerCase().startsWith('m')) {
       model = 'M-Series';
     }
     return {
-      component: enclosureComponentMap[model][selectedViewOption],
+      component: enclosureComponentMap[model][selectedSide],
       inputs: {
         enclosure,
-        viewOption: selectedViewOption,
+        enclosureSide: selectedSide,
+        enclosureView: selectedView,
       },
     };
   });
