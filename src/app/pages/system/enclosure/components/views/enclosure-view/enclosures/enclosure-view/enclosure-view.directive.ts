@@ -1,5 +1,5 @@
 import {
-  AfterViewInit, ChangeDetectorRef, computed, Directive, ElementRef, inject, input, Renderer2,
+  AfterViewInit, ChangeDetectorRef, computed, Directive, ElementRef, inject, input, OnChanges, Renderer2,
   ViewChild,
 } from '@angular/core';
 import { DashboardEnclosure, DashboardEnclosureSlotWithPoolColors } from 'app/interfaces/enclosure.interface';
@@ -16,7 +16,7 @@ interface MouseEventsHandlers {
 @Directive({
   selector: '[enclosureView]',
 })
-export class EnclosureViewDirective implements AfterViewInit {
+export class EnclosureViewDirective implements AfterViewInit, OnChanges {
   @ViewChild('mySvg') private viewSvg: ElementRef<HTMLObjectElement>;
   protected svgPath: string;
   readonly enclosure = input.required<DashboardEnclosure>();
@@ -66,6 +66,10 @@ export class EnclosureViewDirective implements AfterViewInit {
   private enclosureStore: EnclosureStore = inject(EnclosureStore);
   private renderer: Renderer2 = inject(Renderer2);
   private cdr: ChangeDetectorRef = inject(ChangeDetectorRef);
+
+  ngOnChanges(): void {
+    this.ngAfterViewInit();
+  }
 
   ngAfterViewInit(): void {
     this.enclosureStore.selectSlot(null);
