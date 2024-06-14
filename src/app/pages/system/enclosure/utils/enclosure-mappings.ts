@@ -1,4 +1,5 @@
 import { ComponentType } from '@angular/cdk/portal';
+import { MSeriesModel } from 'app/constants/server-series.constant';
 import { EnclosureViewDirective } from 'app/pages/system/enclosure/components/views/enclosure-view/enclosures/enclosure-view/enclosure-view.directive';
 import { MSeriesFrontViewComponent } from 'app/pages/system/enclosure/components/views/enclosure-view/enclosures/mseries-enclosure/mseries-front-view/mseries-front-view.component';
 import { MSeriesRearViewComponent } from 'app/pages/system/enclosure/components/views/enclosure-view/enclosures/mseries-enclosure/mseries-rear-view/mseries-rear-view.component';
@@ -34,5 +35,8 @@ export type EnclosureViewOptions = {
  * M50EnclosureComponent is expected to handle front/rear views and provide buttons to switch between the two views.
  */
 export const enclosureComponentMap: Record<string, EnclosureViewOptions> = {
-  'M-Series': { front: MSeriesFrontViewComponent, rear: MSeriesRearViewComponent },
+  [MSeriesModel.M30]: { front: MSeriesFrontViewComponent, rear: MSeriesRearViewComponent },
+  [MSeriesModel.M40]: { front: MSeriesFrontViewComponent, rear: MSeriesRearViewComponent },
+  [MSeriesModel.M50]: { front: MSeriesFrontViewComponent, rear: MSeriesRearViewComponent },
+  [MSeriesModel.M60]: { front: MSeriesFrontViewComponent, rear: MSeriesRearViewComponent },
 };
