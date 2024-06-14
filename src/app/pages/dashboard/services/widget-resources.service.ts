@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
 import { Store } from '@ngrx/store';
 import { sub } from 'date-fns';
 import {
@@ -11,11 +10,9 @@ import { Dataset } from 'app/interfaces/dataset.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { ReportingData } from 'app/interfaces/reporting.interface';
 import { VolumesData, VolumeData } from 'app/interfaces/volume-data.interface';
-import { WidgetType } from 'app/pages/dashboard/types/widget.interface';
 import { processNetworkInterfaces } from 'app/pages/dashboard/widgets/network/widget-network/widget-network.utils';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
-import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 
 /**
@@ -99,16 +96,6 @@ export class WidgetResourcesService {
       shareReplay({ bufferSize: 1, refCount: true }),
     );
   }
-
-  readonly hiddenWidgets = toSignal(this.store$.select(selectIsHaLicensed).pipe(
-    map((isHaLicensed) => {
-      const widgets: WidgetType[] = [];
-      if (!isHaLicensed) {
-        widgets.push(WidgetType.SystemInfoPassive);
-      }
-      return widgets;
-    }),
-  ));
 
   constructor(
     private ws: WebSocketService,

@@ -3,7 +3,7 @@ import {
 } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { WidgetErrorComponent } from 'app/pages/dashboard/components/widget-error/widget-error.component';
-import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
+import { HiddenWidgetsService } from 'app/pages/dashboard/services/hidden-widgets.service';
 import { layoutToSlotSizes, WidgetGroup } from 'app/pages/dashboard/types/widget-group.interface';
 import { widgetRegistry } from 'app/pages/dashboard/widgets/all-widgets.constant';
 
@@ -37,16 +37,12 @@ export class WidgetGroupComponent {
 
   constructor(
     private translate: TranslateService,
-    private widgetResourcesService: WidgetResourcesService,
+    private hiddenService: HiddenWidgetsService,
   ) {}
 
   private getSlotComponent(index: number): OutletParams {
     const widget = (this.group().slots || [])[index];
     if (!widget?.type) {
-      return null;
-    }
-
-    if (this.widgetResourcesService.hiddenWidgets().includes(widget.type)) {
       return null;
     }
 
@@ -64,6 +60,10 @@ export class WidgetGroupComponent {
           message: this.translate.instant('{type} widget is not supported.', { type: widget.type }),
         },
       };
+    }
+
+    if (definition.hidden && definition.hidden(this.hiddenService)) {
+      return null;
     }
 
     const supportedSizes = definition.supportedSizes;
