@@ -24,9 +24,6 @@ export class ReportsService {
   private diskMetrics$ = new BehaviorSubject<Option[]>([]);
   private hasUps = false;
   private hasDiskTemperature = false;
-  private hasTarget = false;
-  private hasNfs = false;
-  private hasPartitions = false;
 
   private legendEventEmitter$ = new Subject<LegendDataWithStackedTotalHtml>();
   readonly legendEventEmitterObs$ = this.legendEventEmitter$.asObservable();
@@ -40,18 +37,6 @@ export class ReportsService {
   ) {
     this.ws.call('reporting.netdata_graphs').subscribe((reportingGraphs) => {
       this.hasUps = reportingGraphs.some((graph) => graph.name.startsWith(ReportingGraphName.Ups));
-      this.hasTarget = reportingGraphs.some((graph) => {
-        return graph.name === ReportingGraphName.Target;
-      });
-      this.hasNfs = reportingGraphs.some((graph) => {
-        return [
-          ReportingGraphName.NfsStat,
-          ReportingGraphName.NfsStatBytes,
-        ].includes(graph.name);
-      });
-      this.hasPartitions = reportingGraphs.some((graph) => {
-        return graph.name === ReportingGraphName.Partition;
-      });
       this.reportingGraphs$.next(reportingGraphs);
     });
 
@@ -115,18 +100,6 @@ export class ReportsService {
     return Array.from(reportTypeLabels)
       .filter(([value]) => {
         if (value === ReportType.Ups && !this.hasUps) {
-          return false;
-        }
-
-        if (value === ReportType.Target && !this.hasTarget) {
-          return false;
-        }
-
-        if (value === ReportType.Partition && !this.hasPartitions) {
-          return false;
-        }
-
-        if (value === ReportType.Nfs && !this.hasNfs) {
           return false;
         }
 

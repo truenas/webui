@@ -7,6 +7,7 @@ export const mockMini3E = makeEnclosure({
   model: 'MINI-3.0-E',
   controller: true,
   rackmount: false,
+  front_loaded: true,
   front_slots: 4,
   internal_slots: 2,
   elements: {
@@ -32,6 +33,7 @@ export const mockMini3X = makeEnclosure({
   controller: true,
   rackmount: false,
   front_slots: 7,
+  front_loaded: true,
   elements: {
     'Array Device Slot': makeArrayDeviceSlots(1, 7, {
       is_front: true,
@@ -49,6 +51,7 @@ export const mockMini3Xl = makeEnclosure({
   model: 'MINI-3.0-XL',
   controller: true,
   rackmount: false,
+  front_loaded: true,
   front_slots: 9,
   internal_slots: 1,
   elements: {
@@ -67,6 +70,7 @@ export const mockMiniR = makeEnclosure({
   model: 'MINI-R',
   controller: true,
   rackmount: true,
+  front_loaded: true,
   front_slots: 12,
   elements: {
     'Array Device Slot': makeArrayDeviceSlots(1, 12, {

@@ -52,9 +52,10 @@ export class DisksOverviewComponent {
     this.viewChanged.emit(viewName);
   }
 
+  // TODO: Break apart.
   private getOverviewInfo(enclosure: DashboardEnclosure): OverviewInfo[] {
-    const slots = [...Object.values(enclosure.elements['Array Device Slot'])];
-    const expanders = [...Object.values(enclosure.elements['SAS Expander'])];
+    const slots = [...Object.values(enclosure.elements?.['Array Device Slot'] || {})];
+    const expanders = [...Object.values(enclosure.elements?.['SAS Expander'] || {})];
     const poolsInfo = [
       ...new Map(
         slots.filter((slot) => slot.pool_info).map((slot) => [slot.pool_info.pool_name, slot.pool_info]),
@@ -119,6 +120,7 @@ export class DisksOverviewComponent {
         name: EnclosureView.Expanders,
         value: expanders.length,
         title: expandersTitle,
+        // TODO: Avoid breaking strings apart.
         subtitle: this.translate.instant('on this enclosure.'),
         buttonLabel: this.translate.instant('SHOW EXPANDER STATUS'),
       });

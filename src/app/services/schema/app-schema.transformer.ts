@@ -40,7 +40,7 @@ export function buildCommonSchemaBase(payload: Partial<CommonSchemaTransform>): 
   return {
     controlName: chartSchemaNode.variable,
     title: chartSchemaNode.label,
-    required: schema.required,
+    required: schema.required || (!schema.empty && schema.empty !== undefined),
     editable: schema.editable,
     tooltip: chartSchemaNode.description,
   };

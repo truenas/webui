@@ -35,16 +35,6 @@ export const reportingGlobalControlsElements = {
       synonyms: [T('Network Stats'), T('Network Utilization'), T('Network Usage'), T('Traffic'), T('Network Traffic')],
       anchorRouterLink: ['/reportsdashboard', 'network'],
     },
-    [ReportType.Nfs]: {
-      hierarchy: [T('NFS')],
-      synonyms: [T('NFS Stats'), T('NFS Utilization')],
-      anchorRouterLink: ['/reportsdashboard', 'nfs'],
-    },
-    [ReportType.Partition]: {
-      hierarchy: [T('Partition')],
-      synonyms: [T('Partitions'), T('Partition Stats'), T('Partition Utilization')],
-      anchorRouterLink: ['/reportsdashboard', 'partition'],
-    },
     [ReportType.System]: {
       hierarchy: [T('System')],
       synonyms: [T('System Stats'), T('System Utilization'), T('Uptime')],
