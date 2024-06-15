@@ -1,6 +1,7 @@
 import { signal } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 import { Spectator, createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
+import { provideMockStore } from '@ngrx/store/testing';
 import { MockComponent } from 'ng-mocks';
 import { EnclosureDiskStatus } from 'app/enums/enclosure-slot-status.enum';
 import { VdevType } from 'app/enums/v-dev-type.enum';
@@ -13,6 +14,8 @@ import { DiskTopologyDescriptionComponent } from 'app/pages/system/enclosure/com
 import { MSeriesFrontViewComponent } from 'app/pages/system/enclosure/components/views/enclosure-view/enclosures/mseries-enclosure/mseries-front-view/mseries-front-view.component';
 import { VdevDisksListComponent } from 'app/pages/system/enclosure/components/views/enclosure-view/enclosures/vdev-disks-list/vdev-disks-list.component';
 import { EnclosureStore } from 'app/pages/system/enclosure/services/enclosure.store';
+import { ThemeService } from 'app/services/theme/theme.service';
+import { selectTheme } from 'app/store/preferences/preferences.selectors';
 
 const fakeDeviceSlot: DashboardEnclosureSlot = {
   descriptor: 'slot00',
@@ -797,6 +800,20 @@ describe('EnclosureViewComponent', () => {
       MatCardModule,
     ],
     providers: [
+      mockProvider(ThemeService, {
+        currentTheme: jest.fn(() => ({
+          accentColors: ['blue', 'orange'],
+          blue: 'blue',
+          orange: 'orange',
+          green: 'green',
+        })),
+      }),
+      provideMockStore({
+        selectors: [{
+          selector: selectTheme,
+          value: {},
+        }],
+      }),
       mockProvider(EnclosureStore, {
         selectedEnclosure: signal({ ...enclosures[0] }),
         enclosures: signal(enclosures),
