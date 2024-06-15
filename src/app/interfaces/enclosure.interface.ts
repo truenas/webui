@@ -88,7 +88,7 @@ export interface DashboardEnclosureSlot {
 }
 
 export type DashboardEnclosureSlotColored =
-  DashboardEnclosureSlot & { poolHighlightColor?: string; diskHighlightColor?: string };
+  DashboardEnclosureSlot & { highlightColor?: string };
 
 export interface EnclosureVdev {
   enclosure_id: string;

@@ -3,7 +3,6 @@ import {
   ViewChild,
 } from '@angular/core';
 import { DashboardEnclosure, DashboardEnclosureSlotColored } from 'app/interfaces/enclosure.interface';
-import { EnclosureView } from 'app/pages/system/enclosure/components/views/enclosure-view/disks-overview/disks-overview.component';
 import { EnclosureStore } from 'app/pages/system/enclosure/services/enclosure.store';
 import { EnclosureSide } from 'app/pages/system/enclosure/utils/enclosure-mappings';
 
@@ -21,7 +20,6 @@ export class EnclosureViewDirective implements AfterViewInit, OnChanges {
   protected svgPath: string;
   readonly enclosure = input.required<DashboardEnclosure>();
   readonly enclosureSide = input.required<EnclosureSide>();
-  readonly enclosureView = input.required<EnclosureView>();
   private previousSelectRect: SVGRectElement;
   private isViewReady = false;
 
@@ -87,9 +85,9 @@ export class EnclosureViewDirective implements AfterViewInit, OnChanges {
           this.renderer.setStyle(group, 'opacity', '0.5');
         }
 
-        this.addPoolColoredRect(group, slots[slotIndex].pool_info?.pool_name, slotIndex + 1);
-
-        this.addDiskStatusRect(group, slotIndex + 1);
+        if (slots[slotIndex].highlightColor != null) {
+          this.addTintRect(group, slots[slotIndex].drive_bay_number);
+        }
 
         const {
           mouseoverHandler,
@@ -108,42 +106,12 @@ export class EnclosureViewDirective implements AfterViewInit, OnChanges {
     };
   }
 
-  addPoolColoredRect(gElement: SVGGElement, poolName: string, slotNumber: number): void {
-    if (this.enclosureView() === EnclosureView.Pools && poolName) {
-      const poolColoredRect = this.createColoredPoolHighlight(
-        gElement,
-        slotNumber,
-      );
-      this.renderer.insertBefore(gElement.parentNode, poolColoredRect, gElement.nextElementSibling);
-    }
-  }
-
-  addDiskStatusRect(gElement: SVGGElement, slotNumber: number): void {
-    if (this.enclosureView() === EnclosureView.FailedDisks) {
-      const diskStatusRect = this.createDiskStatusRect(
-        gElement,
-        slotNumber,
-      );
-      this.renderer.insertBefore(gElement.parentNode, diskStatusRect, gElement.nextElementSibling);
-    }
-  }
-
-  createDiskStatusRect(gElement: SVGGElement, slotNumber: number): SVGRectElement {
-    const highlightRect = this.renderer.createElement('rect', 'http://www.w3.org/2000/svg') as SVGRectElement;
-    const gRect = gElement.getBBox();
-    const viewSpecificSlots = this.viewSpecificSlots();
-
-    this.renderer.setAttribute(highlightRect, 'width', `${gRect.width}`);
-    this.renderer.setAttribute(highlightRect, 'height', `${gRect.height}`);
-    this.renderer.setAttribute(highlightRect, 'x', `${gRect.x}`);
-    this.renderer.setAttribute(highlightRect, 'y', `${gRect.y}`);
-    this.renderer.setAttribute(highlightRect, 'stroke', viewSpecificSlots[slotNumber].diskHighlightColor);
-    this.renderer.setAttribute(highlightRect, 'stroke-width', '5px');
-    this.renderer.setAttribute(highlightRect, 'opacity', '0.3');
-    this.renderer.setAttribute(highlightRect, 'pointer-events', 'none');
-    this.renderer.setAttribute(highlightRect, 'fill', viewSpecificSlots[slotNumber].diskHighlightColor);
-    this.renderer.setAttribute(highlightRect, 'id', `highlight_pool_${slotNumber}`);
-    return highlightRect;
+  addTintRect(gElement: SVGGElement, slotNumber: number): void {
+    const poolColoredRect = this.createTintRect(
+      gElement,
+      slotNumber,
+    );
+    this.renderer.insertBefore(gElement.parentNode, poolColoredRect, gElement.nextElementSibling);
   }
 
   getMouseEventsHandlers(
@@ -167,16 +135,16 @@ export class EnclosureViewDirective implements AfterViewInit, OnChanges {
       this.cdr.markForCheck();
     }).bind(this, gElement, highlightRect);
 
-    const clickHandler = ((slotNo: number) => {
+    const clickHandler = ((slotNo: number, selectHighlightRect: SVGRectElement) => {
       if (this.previousSelectRect) {
         this.renderer.removeChild(gElement.parentNode, this.previousSelectRect);
       }
 
-      this.previousSelectRect = selectRect;
-      this.renderer.insertBefore(gElement.parentNode, selectRect, gElement);
+      this.previousSelectRect = selectHighlightRect;
+      this.renderer.insertBefore(gElement.parentNode, selectHighlightRect, gElement);
       this.onTraySelected(slotNo);
       this.cdr.markForCheck();
-    }).bind(this, slotNumber);
+    }).bind(this, slotNumber, selectRect);
 
     return {
       mouseoutHandler,
@@ -185,7 +153,7 @@ export class EnclosureViewDirective implements AfterViewInit, OnChanges {
     };
   }
 
-  createColoredPoolHighlight(gElement: SVGGElement, slotNumber: number): SVGRectElement {
+  createTintRect(gElement: SVGGElement, slotNumber: number): SVGRectElement {
     const highlightRect = this.renderer.createElement('rect', 'http://www.w3.org/2000/svg') as SVGRectElement;
     const gRect = gElement.getBBox();
 
@@ -193,12 +161,10 @@ export class EnclosureViewDirective implements AfterViewInit, OnChanges {
     this.renderer.setAttribute(highlightRect, 'height', `${gRect.height}`);
     this.renderer.setAttribute(highlightRect, 'x', `${gRect.x}`);
     this.renderer.setAttribute(highlightRect, 'y', `${gRect.y}`);
-    this.renderer.setAttribute(highlightRect, 'stroke', this.viewSpecificSlots()[slotNumber].poolHighlightColor);
-    this.renderer.setAttribute(highlightRect, 'stroke-width', '5px');
     this.renderer.setAttribute(highlightRect, 'opacity', '0.3');
     this.renderer.setAttribute(highlightRect, 'pointer-events', 'none');
-    this.renderer.setAttribute(highlightRect, 'fill', this.viewSpecificSlots()[slotNumber].poolHighlightColor);
-    this.renderer.setAttribute(highlightRect, 'id', `highlight_pool_${slotNumber}`);
+    this.renderer.setAttribute(highlightRect, 'fill', this.viewSpecificSlots()[slotNumber].highlightColor);
+    this.renderer.setAttribute(highlightRect, 'id', `highlight_tint_${slotNumber}`);
     return highlightRect;
   }
 
