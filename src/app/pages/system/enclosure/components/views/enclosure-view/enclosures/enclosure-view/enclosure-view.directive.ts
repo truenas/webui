@@ -38,7 +38,7 @@ export class EnclosureViewDirective implements AfterViewInit, OnChanges {
     const flagProp = boxSideToFlagMap[viewOption];
     for (const slot of allSlots) {
       if (slot[1][flagProp]) {
-        slots[+slot[0]] = { ...slot[1], drive_bay_number: +slot[0] };
+        slots[+slot[0]] = { ...slot[1] };
       }
     }
 
