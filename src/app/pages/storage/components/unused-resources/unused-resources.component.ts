@@ -2,7 +2,9 @@ import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnInit,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { Subscription, debounceTime, distinctUntilChanged } from 'rxjs';
+import {
+  Subscription, debounceTime, distinctUntilChanged,
+} from 'rxjs';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
@@ -18,6 +20,8 @@ import { WebSocketService } from 'app/services/ws.service';
 export class UnusedResourcesComponent implements OnInit {
   @Input() pools: Pool[];
   unusedDisks: DetailsDisk[] = [];
+  noPoolsDisks: DetailsDisk[] = [];
+  exportedPoolsDisks: DetailsDisk[] = [];
   diskQuerySubscription: Subscription;
 
   constructor(
@@ -32,8 +36,13 @@ export class UnusedResourcesComponent implements OnInit {
   }
 
   updateUnusedDisks(): void {
-    this.ws.call('disk.get_unused').pipe(this.errorHandler.catchError(), untilDestroyed(this)).subscribe((disks) => {
-      this.unusedDisks = disks;
+    this.ws.call('disk.details').pipe(
+      this.errorHandler.catchError(),
+      untilDestroyed(this),
+    ).subscribe((diskDetails) => {
+      this.unusedDisks = diskDetails.unused;
+      this.noPoolsDisks = diskDetails.unused;
+      this.exportedPoolsDisks = diskDetails.used.filter((disk) => disk.exported_zpool);
       this.cdr.markForCheck();
     });
   }

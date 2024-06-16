@@ -15,7 +15,8 @@ import {
 })
 export class UnusedDiskCardComponent {
   @Input() pools: Pool[];
-  @Input() unusedDisks: DetailsDisk[];
+  @Input() title: string;
+  @Input() disks: DetailsDisk[];
 
   readonly requiredRoles = [Role.FullAdmin];
 
@@ -27,7 +28,7 @@ export class UnusedDiskCardComponent {
     this.matDialog.open(ManageUnusedDiskDialogComponent, {
       data: {
         pools: this.pools,
-        unusedDisks: this.unusedDisks,
+        unusedDisks: this.disks,
       },
       width: '600px',
     });
