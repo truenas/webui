@@ -40,6 +40,7 @@ import { CleanLinkPipe } from './pipes/clean-link.pipe';
     CommonDirectivesModule,
     TestIdModule,
     MatMenuModule,
+    MapValuePipe,
   ],
   declarations: [
     TextLimiterDirective,
@@ -47,7 +48,6 @@ import { CleanLinkPipe } from './pipes/clean-link.pipe';
     TextLimiterTooltipComponent,
     FormatDateTimePipe,
     CopyButtonComponent,
-    MapValuePipe,
     YesNoPipe,
     BulkListItemComponent,
     CleanLinkPipe,
@@ -66,10 +66,10 @@ import { CleanLinkPipe } from './pipes/clean-link.pipe';
     TextLimiterDirective,
     IxDetailsHeightDirective,
     FormatDateTimePipe,
-    MapValuePipe,
     YesNoPipe,
     CleanLinkPipe,
     ScheduleToCrontabPipe,
+    MapValuePipe,
   ],
   providers: [
     StorageService,

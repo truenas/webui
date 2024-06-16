@@ -9,6 +9,7 @@ import { Pipe, PipeTransform } from '@angular/core';
 @Pipe({
   name: 'mapValue',
   pure: true,
+  standalone: true,
 })
 export class MapValuePipe implements PipeTransform {
   transform<T, R>(value: T, map: Map<T, R>): R {

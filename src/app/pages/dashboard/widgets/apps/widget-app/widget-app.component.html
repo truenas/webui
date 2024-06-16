@@ -1,7 +1,7 @@
 <mat-card class="card">
-  <mat-card-content class="card-content">
+  <mat-card-content *ixWithLoadingState="application() as app" class="card-content">
     <div class="header">
-      <h3>{{ 'Apps' | translate }}</h3>
+      <h3>{{ 'App' | translate }}</h3>
 
       <div class="controls">
         <button
@@ -40,10 +40,49 @@
 
     <div
       *ngIf="settings()?.appName; else configureWidgetTemplate"
-      class="['container', size()]"
+      [class]="['container', size()]"
     >
-      <div>Apps Info</div>
-      <div>Server Time: {{ time() }}</div>
+      <div class="app-header-row">
+        <ix-app-card-logo [url]="app?.chart_metadata?.icon"></ix-app-card-logo>
+
+        <div class="app-info">
+          <div class="header">
+            <h3 class="name">{{ app.name }}</h3>
+            <div class="version">v{{ app.chart_metadata?.appVersion }}</div>
+          </div>
+          <div class="status">
+            <div>
+              <ix-icon name="mdi-check-circle"></ix-icon>
+              <span>{{ app.status | titlecase }}</span>
+            </div>
+            <div>
+              <ix-icon name="mdi-check-circle"></ix-icon>
+              <span>{{
+                app.update_available || app.container_images_update_available
+                ? ('Update available' | translate)
+                : ('Up to date' | translate)
+              }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="app-stats">
+        <div class="app-stats-row">
+          <div class="slot square">
+            <h3 *ixWithLoadingState="stats() as stats">{{ stats.cpu.toFixed(0) }}<small>%</small></h3>
+            <strong>{{ 'CPU Usage' | translate }}</strong>
+          </div>
+          <div class="slot rectangle">Chart</div>
+        </div>
+        <div class="app-stats-row">
+          <div class="slot square">
+            <h3 *ixWithLoadingState="stats() as stats">{{ stats.memory | ixFileSize }}</h3>
+            <strong>{{ 'Memory Usage' | translate }}</strong>
+          </div>
+          <div class="slot rectangle">Chart</div>
+        </div>
+      </div>
     </div>
   </mat-card-content>
 </mat-card>

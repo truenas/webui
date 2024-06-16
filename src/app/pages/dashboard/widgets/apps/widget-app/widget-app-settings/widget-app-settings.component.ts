@@ -24,12 +24,13 @@ export class WidgetAppSettingsComponent implements WidgetSettingsComponent<Widge
   });
 
   protected installedApps$ = this.resources.installedApps$.pipe(
-    filter((state) => !!state.value && !state.isLoading),
-    map((state) => state.value),
-    map((apps) => apps.map((result) => ({
-      label: result.name,
-      value: result.id,
-    }))),
+    filter((state) => !state.isLoading),
+    map((state) => {
+      return (state.value || []).map((result) => ({
+        label: result.name,
+        value: result.id,
+      }));
+    }),
   );
 
   private readonly formFieldNames = ['appName'];

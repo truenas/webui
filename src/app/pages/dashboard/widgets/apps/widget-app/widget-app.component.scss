@@ -7,8 +7,7 @@
     align-items: center;
     display: flex;
     justify-content: space-between;
-    padding-bottom: 0;
-    padding-right: 8px;
+    padding: 16px 8px 0 16px;
   }
 
   .card-content {
@@ -31,6 +30,11 @@
   flex-grow: 1;
   overflow: hidden;
 
+  &.full {
+    padding-bottom: 8px;
+    padding-top: 8px;
+  }
+
   &.empty {
     align-items: center;
     place-content: center center;
@@ -43,5 +47,93 @@
     &.full {
       padding: 0 16px 48px;
     }
+  }
+}
+
+ix-app-card-logo {
+  align-items: center;
+  aspect-ratio: 2;
+  background: var(--bg1);
+  display: inline-flex;
+  flex: 1 1 30%;
+  max-width: 30%;
+  padding: 0;
+  place-content: center center;
+}
+
+.app-info {
+  background: var(--bg1);
+  display: inline-flex;
+  flex: 1 1 70%;
+  flex-direction: column;
+  max-width: 70%;
+
+  .header {
+    border-bottom: 1px solid var(--lines);
+    display: flex;
+    justify-content: space-between;
+    padding: 8px;
+  }
+
+  .status {
+    font-size: 16px;
+    font-weight: bold;
+    padding: 8px;
+
+    ix-icon {
+      display: inline-flex;
+      line-height: 24px;
+    }
+
+    div {
+      align-items: center;
+      display: flex;
+      gap: 8px;
+      justify-content: flex-start;
+    }
+  }
+}
+
+.app-header-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.app-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 4px 8px;
+}
+
+.app-stats-row {
+  display: flex;
+  flex: 1;
+  gap: 8px;
+
+  h3 {
+    font-size: 1.45em;
+  }
+}
+
+.slot {
+  background: var(--bg1);
+  display: inline-flex;
+
+  &.square {
+    align-items: center;
+    aspect-ratio: 1;
+    flex: 1 1 20%;
+    flex-direction: column;
+    justify-content: space-evenly;
+    max-width: 20%;
+  }
+
+  &.rectangle {
+    align-items: center;
+    aspect-ratio: 4;
+    flex: 1 1 80%;
+    max-width: 80%;
+    place-content: center center;
   }
 }

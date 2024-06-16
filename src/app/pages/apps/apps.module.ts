@@ -107,7 +107,6 @@ import { KubernetesStatusComponent } from './components/installed-apps/kubernete
     CatalogAddFormComponent,
     AppCardComponent,
     AppDetailViewComponent,
-    AppCardLogoComponent,
     AppRouterOutletComponent,
     AppInfoCardComponent,
     AppRowComponent,
@@ -125,7 +124,6 @@ import { KubernetesStatusComponent } from './components/installed-apps/kubernete
     PodSelectDialogComponent,
     PodSelectLogsDialogComponent,
     AppUpgradeDialogComponent,
-    AppStatusCellComponent,
     AppDetailsHeaderComponent,
     AppBulkUpgradeComponent,
     AppRollbackModalComponent,
@@ -187,6 +185,8 @@ import { KubernetesStatusComponent } from './components/installed-apps/kubernete
     MatSort,
     MatColumnDef,
     MatSortHeader,
+    AppCardLogoComponent,
+    AppStatusCellComponent,
   ],
 })
 export class AppsModule { }

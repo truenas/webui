@@ -23,6 +23,7 @@ import { LayoutModule } from 'app/modules/layout/layout.module';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
+import { AppCardLogoComponent } from 'app/pages/apps/components/app-card-logo/app-card-logo.component';
 import { DashboardComponent } from 'app/pages/dashboard/components/dashboard/dashboard.component';
 import {
   WidgetGroupControlsComponent,
@@ -106,6 +107,7 @@ import { UptimePipe } from 'app/pages/dashboard/widgets/system/common/uptime.pip
     InterfaceStatusIconComponent,
     IxFileSizeModule,
     UptimePipe,
+    AppCardLogoComponent,
   ],
 })
 export class DashboardModule {

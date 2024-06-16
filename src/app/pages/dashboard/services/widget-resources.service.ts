@@ -2,10 +2,11 @@ import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { sub } from 'date-fns';
 import {
-  Observable, Subject, combineLatestWith, debounceTime, forkJoin, map, repeat, shareReplay, switchMap, timer,
+  Observable, Subject, combineLatestWith, debounceTime, filter, forkJoin, map, repeat, shareReplay, switchMap, timer,
 } from 'rxjs';
 import { SystemUpdateStatus } from 'app/enums/system-update.enum';
 import { toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
+import { ChartRelease, ChartReleaseStats } from 'app/interfaces/chart-release.interface';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { ReportingData } from 'app/interfaces/reporting.interface';
@@ -29,6 +30,14 @@ import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 export class WidgetResourcesService {
   // TODO: nosub is emitted for some reason
   readonly realtimeUpdates$ = this.ws.subscribe('reporting.realtime');
+  readonly appStatsUpdates$ = this.ws.subscribe('chart.release.statistics').pipe(
+    map((event) => {
+      return event.fields.reduce((acc, { id, stats }) => {
+        acc[id] = stats;
+        return acc;
+      }, {} as Record<string, ChartReleaseStats>);
+    }),
+  );
   readonly refreshInterval$ = timer(0, 5000);
   private readonly triggerRefreshSystemInfo$ = new Subject<void>();
 
@@ -101,6 +110,26 @@ export class WidgetResourcesService {
     return this.ws.call('pool.query', [[['id', '=', +poolId]]]).pipe(
       map((pools) => pools[0]),
       shareReplay({ bufferSize: 1, refCount: true }),
+    );
+  }
+
+  getApp(appName: string): Observable<ChartRelease> {
+    return this.ws.call(
+      'chart.release.query',
+      [
+        [['name', '=', appName]],
+        { extra: { history: true, stats: true } },
+      ],
+    ).pipe(
+      map((apps) => apps[0]),
+      shareReplay({ bufferSize: 1, refCount: true }),
+    );
+  }
+
+  getAppStats(appName: string): Observable<ChartReleaseStats> {
+    return this.appStatsUpdates$.pipe(
+      filter((stats) => Boolean(appName && stats[appName])),
+      map((stats) => stats[appName]),
     );
   }
 
