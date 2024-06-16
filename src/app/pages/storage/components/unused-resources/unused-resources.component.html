@@ -4,11 +4,13 @@
     [title]="'Unused Disks' | translate"
     [pools]="pools"
     [disks]="noPoolsDisks"
+    (addToStorage)="addUnusedDisksToStorage()"
   ></ix-unused-disk-card>
   <ix-unused-disk-card
     class="unused-resources"
     [title]="'Disks with exported pools' | translate"
     [pools]="pools"
     [disks]="exportedPoolsDisks"
+    (addToStorage)="addUnusedDisksToStorage()"
   ></ix-unused-disk-card>
 </div>

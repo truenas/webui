@@ -2,9 +2,16 @@
 
 <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
   <div mat-dialog-content>
-    <h4>{{ 'Unassigned Disks' | translate }}</h4>
+    <h4>{{ 'Unused Disks' | translate }}</h4>
     <ul class="unused-disks">
-      <li *ngFor="let disk of groupedDisks">
+      <li *ngFor="let disk of noPoolsDisks">
+        {{ disk.formattedDisk }}
+      </li>
+    </ul>
+
+    <h4>{{ 'Disks with exported pools' | translate }}</h4>
+    <ul class="unused-disks">
+      <li *ngFor="let disk of exportedPoolsDisks">
         {{ disk.formattedDisk }}
         <ix-warning
           *ngIf="disk.exportedPool"
