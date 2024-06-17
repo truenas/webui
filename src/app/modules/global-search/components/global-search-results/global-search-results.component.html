@@ -1,41 +1,44 @@
 <mat-card *ngIf="!isLoading || results?.length" class="search-results-card">
-  <ng-container *ngFor="let section of availableSections; trackBy: trackBySection">
+  <ng-container *ngFor="let section of availableSections; trackBy: trackBySection;">
     <h2 class="section">
       {{ section.label | translate }}
     </h2>
 
     <div *ngIf="getElementsBySection(section.value)?.length" class="section-content">
-      <div
-        *ngFor="let result of getLimitedSectionResults(section.value); trackBy: trackById"
-        class="search-result"
-        tabindex="0"
-        [class.highlighted-result]="isSearchInputFocused && isSameHierarchyResult(firstAvailableSearchResult, result)"
-        [ixTest]="['search-result', result.hierarchy.join('-')]"
-        (click)="selectElement(result)"
-        (keydown.enter)="selectElement(result)"
-      >
-        <h3 class="title" [innerHTML]="processHierarchy(result.hierarchy, searchTerm)"></h3>
-        <ix-icon
-          *ngIf="result.section === GlobalSearchSection.RecentSearches"
-          tabindex="0"
-          name="close"
-          class="icon"
-          color="accent"
-          (click)="removeRecentSearch($event, result)"
-          (keydown.enter)="removeRecentSearch($event, result)"
-        ></ix-icon>
-      </div>
+      <ng-container *ngIf="getLimitedSectionResults(section.value) as sectionResults">
+        <div
+          *ngFor="let result of sectionResults; trackBy: trackById; let i = index;"
+          class="search-result"
+          [attr.tabindex]="result.section === GlobalSearchSection.RecentSearches ? i + 1 : 0"
+          [class.highlighted-result]="isSearchInputFocused && isSameHierarchyResult(firstAvailableSearchResult, result)"
+          [ixTest]="['search-result', result.hierarchy.join('-')]"
+          (click)="selectElement(result)"
+          (keydown.enter)="selectElement(result)"
+        >
+          <h3 class="title" [innerHTML]="processHierarchy(result.hierarchy, searchTerm)"></h3>
+          <ix-icon
+            *ngIf="result.section === GlobalSearchSection.RecentSearches"
+            name="close"
+            class="icon"
+            color="accent"
+            [attr.tabindex]="sectionResults.length + i + 1"
+            (click)="removeRecentSearch($event, result)"
+            (keydown.enter)="removeRecentSearch($event, result)"
+          ></ix-icon>
+        </div>
 
-      <button
-        *ngIf="getElementsBySection(section.value)?.length > initialResultsLimit"
-        class="toggle-show-more"
-        mat-button
-        ixTest="toggle-show-all-results"
-        (click)="toggleShowAll(section.value)"
-        (keydown.enter)="toggleShowAll(section.value)"
-      >
-        {{ showAll[section.value] ? ('View Less' | translate) : ('View More' | translate) }}
-      </button>
+        <button
+          *ngIf="getElementsBySection(section.value)?.length > initialResultsLimit"
+          class="toggle-show-more"
+          mat-button
+          ixTest="toggle-show-all-results"
+          [attr.tabindex]="sectionResults[0].section === GlobalSearchSection.RecentSearches ? sectionResults.length * 2 + 1 : 0"
+          (click)="toggleShowAll(section.value)"
+          (keydown.enter)="toggleShowAll(section.value)"
+        >
+          {{ showAll[section.value] ? ('View Less' | translate) : ('View More' | translate) }}
+        </button>
+      </ng-container>
     </div>
 
     <ng-container *ngIf="!getElementsBySection(section.value)?.length">
