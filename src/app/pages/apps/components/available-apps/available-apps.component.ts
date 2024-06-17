@@ -69,7 +69,6 @@ export class AvailableAppsComponent implements OnInit {
   applyCategoryFilter(category: string): void {
     this.appsFilterStore.applyFilters({
       categories: [category],
-      catalogs: [],
       sort: null,
     });
   }

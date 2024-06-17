@@ -4,7 +4,6 @@ import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { AppsScopeWrapperComponent } from 'app/pages/apps/components/apps-scope-wrapper.component';
 import { AvailableAppsComponent } from 'app/pages/apps/components/available-apps/available-apps.component';
 import { CategoryViewComponent } from 'app/pages/apps/components/available-apps/category-view/category-view.component';
-import { CatalogsComponent } from 'app/pages/apps/components/catalogs/catalogs.component';
 import { ChartWizardComponent } from 'app/pages/apps/components/chart-wizard/chart-wizard.component';
 import { DockerImagesListComponent } from 'app/pages/apps/components/docker-images/docker-images-list/docker-images-list.component';
 import { InstalledAppsComponent } from 'app/pages/apps/components/installed-apps/installed-apps.component';
@@ -79,12 +78,6 @@ const routes: Routes = [
         component: AppRouterOutletComponent,
         data: { breadcrumb: T('Discover') },
         children: [
-          {
-            path: 'catalogs',
-            pathMatch: 'full',
-            component: CatalogsComponent,
-            data: { title: T('Catalogs') },
-          },
           {
             path: '',
             component: AvailableAppsComponent,

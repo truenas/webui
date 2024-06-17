@@ -35,7 +35,6 @@ import { AppsStatisticsService } from 'app/pages/apps/store/apps-statistics.serv
 import { AppsStore } from 'app/pages/apps/store/apps-store.service';
 import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.service';
 import { KubernetesStore } from 'app/pages/apps/store/kubernetes-store.service';
-import { AppCatalogPipe } from 'app/pages/apps/utils/app-catalog.pipe';
 import { AuthService } from 'app/services/auth/auth.service';
 
 const existingCatalogApp = {
@@ -233,7 +232,6 @@ describe('Finding app', () => {
     imports: [
       IxFormsModule,
       ReactiveFormsModule,
-      AppCatalogPipe,
       MockModule(PageHeaderModule),
     ],
     declarations: [
@@ -291,7 +289,6 @@ describe('Redirect to install app', () => {
     component: AppDetailViewComponent,
     imports: [
       NgxSkeletonLoaderModule,
-      AppCatalogPipe,
       MockModule(PageHeaderModule),
     ],
     declarations: [

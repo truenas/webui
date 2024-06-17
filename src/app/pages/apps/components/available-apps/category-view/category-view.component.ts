@@ -37,7 +37,6 @@ export class CategoryViewComponent implements OnInit, OnDestroy {
     this.pageTitle$.next(category.replace(/-/g, ' '));
     this.appsFilterStore.applyFilters({
       categories: [category],
-      catalogs: [],
       sort: null,
     });
   }
@@ -47,6 +46,6 @@ export class CategoryViewComponent implements OnInit, OnDestroy {
   }
 
   trackByAppId(id: number, app: AvailableApp): string {
-    return `${app.catalog}-${app.train}-${app.name}`;
+    return `${app.latest_version}-${app.train}-${app.name}`;
   }
 }
