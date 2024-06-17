@@ -2,8 +2,10 @@ import {
   animate, group as groupAnimations, style, transition, trigger,
 } from '@angular/animations';
 import { moveItemInArray } from '@angular/cdk/drag-drop';
+import { DOCUMENT } from '@angular/common';
 import {
-  ChangeDetectionStrategy, Component, HostListener, OnInit, computed, signal,
+  ChangeDetectionStrategy, Component, ElementRef, HostListener,
+  Inject, OnInit, QueryList, ViewChildren, computed, signal,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -36,6 +38,8 @@ import { ChainedComponentResponse, IxChainedSlideInService } from 'app/services/
   ],
 })
 export class DashboardComponent implements OnInit {
+  @ViewChildren('groupElement', { read: ElementRef }) groupElements!: QueryList<ElementRef>;
+
   readonly searchableElements = dashboardElements;
   readonly isEditing = signal(false);
   readonly renderedGroups = signal<WidgetGroup[]>([]);
@@ -57,6 +61,7 @@ export class DashboardComponent implements OnInit {
     private errorHandler: ErrorHandlerService,
     private translate: TranslateService,
     private snackbar: SnackbarService,
+    @Inject(DOCUMENT) private document: Document,
   ) {}
 
   ngOnInit(): void {
@@ -69,12 +74,12 @@ export class DashboardComponent implements OnInit {
   }
 
   protected onConfigure(): void {
-    this.isEditing.set(true);
+    this.updateIsEditingState(true);
   }
 
   @HostListener('document:keydown.escape')
   protected onCancelConfigure(): void {
-    this.isEditing.set(false);
+    this.updateIsEditingState(false);
     this.renderedGroups.set(this.savedGroups());
   }
 
@@ -129,7 +134,7 @@ export class DashboardComponent implements OnInit {
     this.dashboardStore.save(this.renderedGroups())
       .pipe(this.errorHandler.catchError(), untilDestroyed(this))
       .subscribe(() => {
-        this.isEditing.set(false);
+        this.updateIsEditingState(false);
         this.snackbar.success(this.translate.instant('Dashboard settings saved'));
       });
   }
@@ -144,5 +149,25 @@ export class DashboardComponent implements OnInit {
 
         this.renderedGroups.set(groups);
       });
+  }
+
+  private updateIsEditingState(value: boolean): void {
+    this.isEditing.set(value);
+    this.updateElementsAvailability();
+  }
+
+  private updateElementsAvailability(): void {
+    const groupElements = this.document.querySelectorAll('.group *');
+    groupElements.forEach((element) => {
+      if (element instanceof HTMLButtonElement || element instanceof HTMLAnchorElement) {
+        if (this.isEditing()) {
+          element.setAttribute('tabindex', '-1');
+          element.style.pointerEvents = 'none';
+        } else {
+          element.removeAttribute('tabindex');
+          element.style.pointerEvents = 'auto';
+        }
+      }
+    });
   }
 }
