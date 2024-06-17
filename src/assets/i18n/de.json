@@ -475,7 +475,6 @@
   "Changing dataset permission mode can severely affect existing permissions.": "",
   "Changing global 2FA settings might cause user secrets to reset. Which means users will have to reconfigure their 2FA. Are you sure you want to continue?": "",
   "Changing settings below will result in Kubernetes cluster re-initialization deleting installed apps and their data.": "",
-  "Chart Version": "",
   "Check Alerts for more details.": "",
   "Check Available Apps": "",
   "Check for Software Updates": "",

@@ -1837,7 +1837,6 @@
   "Changing to a nightly train is one-way. Changing back to a stable train is not supported! ": "Перехід на нічний поїзд необоротний. Зворотний перехід на стабільний поїзд не підтримується!",
   "Channel": "Канал",
   "Channel {n}": "Канал {n}",
-  "Chart Version": "Версія діаграми",
   "Check Alerts for more details.": "Щоб дізнатися більше, перевірте сповіщення.",
   "Check Available Apps": "Перевірити доступні додатки",
   "Check Interval": "Інтервал перевірки",
