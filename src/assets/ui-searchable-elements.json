@@ -409,47 +409,6 @@
   {
     "hierarchy": [
       "Applications",
-      "Discover",
-      "Catalogs",
-      "Add"
-    ],
-    "synonyms": [
-      "Add Catalog"
-    ],
-    "requiredRoles": [
-      "CATALOG_WRITE"
-    ],
-    "anchorRouterLink": [
-      "/apps",
-      "available",
-      "catalogs"
-    ],
-    "routerLink": null,
-    "anchor": "add",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "Applications",
-      "Discover",
-      "Catalogs"
-    ],
-    "synonyms": [],
-    "requiredRoles": [],
-    "anchorRouterLink": [
-      "/apps",
-      "available",
-      "catalogs"
-    ],
-    "routerLink": null,
-    "anchor": "applications-discover-catalogs",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "Applications",
       "Manage Container Images",
       "Pull Image"
     ],
