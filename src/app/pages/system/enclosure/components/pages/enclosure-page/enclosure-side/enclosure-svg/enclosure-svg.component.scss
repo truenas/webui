@@ -1,0 +1,39 @@
+:host {
+  display: block;
+}
+
+.svg-container {
+  &.static {
+    pointer-events: none;
+  }
+
+  ::ng-deep {
+    [id^='DRIVE_CAGE_'] {
+      cursor: pointer;
+    }
+
+    .overlay-rect {
+      fill: transparent;
+      pointer-events: none;
+
+      &.hover {
+        // TODO: Theme variables
+        // TODO: Change styles to something better
+        // TODO: CSS transitions
+        stroke: #ff3;
+        stroke-dasharray: 5 10;
+        stroke-width: 5px;
+      }
+
+      &.selected {
+        stroke: #ff3;
+        stroke-dasharray: none;
+        stroke-width: 5px;
+      }
+
+      &.tinted {
+        fill-opacity: 0.25;
+      }
+    }
+  }
+}
