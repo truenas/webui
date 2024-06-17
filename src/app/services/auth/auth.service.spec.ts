@@ -10,6 +10,7 @@ import * as rxjs from 'rxjs';
 import { firstValueFrom, of } from 'rxjs';
 import { TestScheduler } from 'rxjs/testing';
 import { MockWebSocketService } from 'app/core/testing/classes/mock-websocket.service';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
 import { LoginResult } from 'app/enums/login-result.enum';
@@ -48,6 +49,7 @@ describe('AuthService', () => {
       NgxWebstorageModule.forRoot(),
     ],
     providers: [
+      mockAuth(),
       mockProvider(LocalStorageService),
       mockWebSocket([
         mockCall('auth.me', authMeUser),
@@ -194,7 +196,8 @@ describe('AuthService', () => {
       await firstValueFrom(spectator.service.refreshUser());
     }
 
-    it('returns false when there is no user object', async () => {
+    it('returns false when user does not have required role', async () => {
+      await setUserRoles([Role.SharingSmbRead]);
       expect(await firstValueFrom(spectator.service.hasRole([Role.AlertListRead]))).toBe(false);
     });
 
