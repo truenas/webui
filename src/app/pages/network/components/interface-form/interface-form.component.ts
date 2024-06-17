@@ -97,7 +97,7 @@ export class InterfaceFormComponent implements OnInit {
     failover_critical: [false],
     failover_group: [null as number],
 
-    mtu: [this.defaultMtu, rangeValidator(1492, 9216)],
+    mtu: [this.defaultMtu, rangeValidator(68, 9216)],
 
     // Aliases
     aliases: this.formBuilder.array<NetworkInterfaceFormAlias>([]),

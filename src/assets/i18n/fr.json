@@ -1478,7 +1478,6 @@
   "Changing to a nightly train is one-way. Changing back to a stable train is not supported! ": "Le changement pour un canal de nuit (nightly ) est à sens unique. Le retour à un train stable n'est pas pris en charge ! ",
   "Channel": "Canal",
   "Channel {n}": "Canal {n}",
-  "Chart Version": "Version du graphique",
   "Check Alerts for more details.": "Vérifiez les alertes pour plus de détails.",
   "Check Available Apps": "Vérifier les applications disponibles",
   "Check Interval": "Cochez l'intervalle",
