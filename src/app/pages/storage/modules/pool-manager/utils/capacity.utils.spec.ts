@@ -14,7 +14,7 @@ describe('categoryCapacity', () => {
       ],
     } as PoolManagerTopologyCategory;
 
-    expect(categoryCapacity(category, 2 * GiB)).toEqual(5 * GiB);
+    expect(categoryCapacity(category)).toEqual(5 * GiB);
   });
 });
 
@@ -31,7 +31,6 @@ describe('vdevCapacity', () => {
     expect(vdevCapacity({
       vdev,
       layout: CreateVdevLayout.Stripe,
-      swapOnDrive: 2 * GiB,
     })).toEqual(16 * GiB);
   });
 
@@ -39,7 +38,6 @@ describe('vdevCapacity', () => {
     expect(vdevCapacity({
       vdev,
       layout: CreateVdevLayout.Mirror,
-      swapOnDrive: 2 * GiB,
     })).toEqual(GiB);
   });
 
@@ -47,7 +45,6 @@ describe('vdevCapacity', () => {
     expect(vdevCapacity({
       vdev,
       layout: CreateVdevLayout.Raidz1,
-      swapOnDrive: 2 * GiB,
     })).toEqual(4 * GiB);
   });
 
@@ -55,7 +52,6 @@ describe('vdevCapacity', () => {
     expect(vdevCapacity({
       vdev,
       layout: CreateVdevLayout.Raidz2,
-      swapOnDrive: 2 * GiB,
     })).toEqual(3 * GiB);
   });
 
@@ -63,7 +59,6 @@ describe('vdevCapacity', () => {
     expect(vdevCapacity({
       vdev,
       layout: CreateVdevLayout.Raidz3,
-      swapOnDrive: 2 * GiB,
     })).toEqual(2 * GiB);
   });
 
@@ -71,7 +66,6 @@ describe('vdevCapacity', () => {
     expect(vdevCapacity({
       vdev,
       layout: CreateVdevLayout.Draid1,
-      swapOnDrive: 2 * GiB,
       draidDataDisks: 2,
       draidSpareDisks: 1,
     }) / GiB).toBeCloseTo(2.67);
@@ -81,7 +75,6 @@ describe('vdevCapacity', () => {
     expect(vdevCapacity({
       vdev,
       layout: CreateVdevLayout.Draid2,
-      swapOnDrive: 2 * GiB,
       draidDataDisks: 2,
       draidSpareDisks: 1,
     }) / GiB).toBeCloseTo(2);
@@ -91,7 +84,6 @@ describe('vdevCapacity', () => {
     expect(vdevCapacity({
       vdev,
       layout: CreateVdevLayout.Draid3,
-      swapOnDrive: 2 * GiB,
       draidDataDisks: 2,
       draidSpareDisks: 1,
     }) / GiB).toBeCloseTo(1.6);
