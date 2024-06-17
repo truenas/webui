@@ -83,6 +83,7 @@ export class GlobalSearchComponent implements OnInit {
         break;
       case 'Enter':
         event.preventDefault();
+
         if (this.isSearchInputFocused) {
           moveToNextFocusableElement();
           (this.document.activeElement as HTMLElement)?.click();
