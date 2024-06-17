@@ -138,6 +138,7 @@
   "Apply updates and reboot system after downloading.": "",
   "Arbitrary Text": "",
   "At least one module must be defined in <a                href=\"https://www.samba.org/ftp/rsync/rsyncd.conf.html\"                target=\"_blank\">rsyncd.conf(5)</a> of the rsync                server or in the <b>Rsync Modules</b> of another                system.": "",
+  "Attaching Disk to Boot Pool": "",
   "Audit Settings": "",
   "AuthVersion": "",
   "Backup Config": "",

@@ -434,6 +434,7 @@
   "Attach debug": "",
   "Attach images (optional)": "",
   "Attaches privileges to the group. Only needed if you need users in this group access  to TrueNAS API or WebUI.": "",
+  "Attaching Disk to Boot Pool": "",
   "Attachments not uploaded": "",
   "Attention": "",
   "Audit": "",
