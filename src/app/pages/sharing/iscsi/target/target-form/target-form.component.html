@@ -106,7 +106,7 @@
           type="submit"
           color="primary"
           ixTest="save"
-          [disabled]="form.invalid || isLoading || (form.statusChanges | async) === 'PENDING'"
+          [disabled]="form.invalid || isLoading || ((form.statusChanges | async) === 'PENDING' && form.controls.name.touched)"
         >
           {{ 'Save' | translate }}
         </button>
