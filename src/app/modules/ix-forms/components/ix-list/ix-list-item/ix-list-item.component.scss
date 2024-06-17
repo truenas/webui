@@ -1,6 +1,8 @@
 :host {
   background: rgba(0, 0, 0, 0.1);
-  margin-bottom: 10px;
+  border: 1.5px solid var(--lines);
+  margin: 10px 0;
+  padding: 5px 10px 0;
 }
 
 .list-item {
