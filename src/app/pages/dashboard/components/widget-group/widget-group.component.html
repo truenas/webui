@@ -3,6 +3,8 @@
   [class]="['slot', 'slot' + slotIndex]"
 >
   <ng-container *ngIf="slots()[slotIndex] as slot">
-    <ng-container *ngComponentOutlet="slot.component; inputs: slot.inputs;" />
+    <ng-container *ngIf="slot.isVisible$ | async">
+      <ng-container *ngComponentOutlet="slot.component; inputs: slot.inputs;" />
+    </ng-container>
   </ng-container>
 </div>

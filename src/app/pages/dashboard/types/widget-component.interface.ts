@@ -1,5 +1,6 @@
 import { InputSignal, Type } from '@angular/core';
-import { VisibleWidgetsService } from 'app/pages/dashboard/services/visible-widgets.service';
+import { Store } from '@ngrx/store';
+import { Observable } from 'rxjs';
 import { WidgetCategory } from 'app/pages/dashboard/types/widget-category.enum';
 import { WidgetSettingsRef } from 'app/pages/dashboard/types/widget-settings-ref.interface';
 import {
@@ -28,6 +29,9 @@ type WidgetSettingsComponentType<Settings> = Settings extends SomeWidgetSettings
   ? WidgetSettingsComponent<Settings>
   : null;
 
+export type WidgetVisibilityProvider = Store;
+export type WidgetVisibilityDepsType = Map<Type<WidgetVisibilityProvider>, WidgetVisibilityProvider>;
+
 export interface WidgetDefinition<
   Settings extends SomeWidgetSettings | null,
   Component extends WidgetComponent<Settings>,
@@ -38,7 +42,10 @@ export interface WidgetDefinition<
   category: WidgetCategory;
   component: Type<Component>;
   settingsComponent: SettingsComponent extends null ? null : Type<SettingsComponent>;
-  visible?: (visibleWidgetsService: VisibleWidgetsService) => boolean;
+  visibility?: {
+    deps: Type<WidgetVisibilityProvider>[];
+    isVisible$: (deps: WidgetVisibilityDepsType) => Observable<boolean>;
+  };
 }
 
 /**
@@ -50,7 +57,10 @@ export interface WidgetDefinition<
  *   category: WidgetCategory.Network,
  *   settingsComponent: WidgetInterfaceIpSettingsComponent,
  *   supportedSizes: [SlotSize.Full, SlotSize.Half, SlotSize.Quarter],
- *   visible: (visibleWidgetsService) => visibleWidgetsService.isVisible(WidgetType.Ipv4Address),
+ *   visibility: {
+ *     deps: [Store],
+ *     isVisible$: (deps) => deps.get(Store).select(selectIsHaLicensed),
+ *   },
  * });
  * ```
  */

@@ -1,8 +1,10 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
+import { Store } from '@ngrx/store';
 import { WidgetCategory } from 'app/pages/dashboard/types/widget-category.enum';
 import { dashboardWidget } from 'app/pages/dashboard/types/widget-component.interface';
-import { SlotSize, WidgetType } from 'app/pages/dashboard/types/widget.interface';
+import { SlotSize } from 'app/pages/dashboard/types/widget.interface';
 import { WidgetSysInfoPassiveComponent } from 'app/pages/dashboard/widgets/system/widget-sys-info-passive/widget-sys-info-passive.component';
+import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 
 export const systemInfoPassiveWidget = dashboardWidget({
   name: T('System Information Standby Node'),
@@ -10,5 +12,8 @@ export const systemInfoPassiveWidget = dashboardWidget({
   category: WidgetCategory.SystemInfo,
   component: WidgetSysInfoPassiveComponent,
   settingsComponent: null,
-  visible: (visibleWidgetsService) => visibleWidgetsService.isVisible(WidgetType.SystemInfoPassive),
+  visibility: {
+    deps: [Store],
+    isVisible$: (deps) => deps.get(Store).select(selectIsHaLicensed),
+  },
 });

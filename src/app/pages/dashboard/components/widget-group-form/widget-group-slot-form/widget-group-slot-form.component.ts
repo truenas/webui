@@ -3,26 +3,34 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
+  EnvironmentInjector,
   Injector,
   OnChanges,
+  OnInit,
+  Signal,
   ViewChild,
   ViewContainerRef,
   WritableSignal,
   computed,
+  inject,
   input,
   output,
+  runInInjectionContext,
   signal,
 } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import {
   FormBuilder, ValidationErrors, Validators,
 } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { Observable, Subscription, of } from 'rxjs';
+import {
+  Observable, Subscription, combineLatest, map, of, switchMap,
+} from 'rxjs';
 import { Option } from 'app/interfaces/option.interface';
-import { VisibleWidgetsService } from 'app/pages/dashboard/services/visible-widgets.service';
 import { SimpleWidget } from 'app/pages/dashboard/types/simple-widget.interface';
 import { SlotPosition } from 'app/pages/dashboard/types/slot-position.enum';
 import { WidgetCategory, widgetCategoryLabels } from 'app/pages/dashboard/types/widget-category.enum';
+import { WidgetVisibilityDepsType } from 'app/pages/dashboard/types/widget-component.interface';
 import { WidgetGroupSlot } from 'app/pages/dashboard/types/widget-group-slot.interface';
 import { WidgetSettingsRef } from 'app/pages/dashboard/types/widget-settings-ref.interface';
 import { WidgetType } from 'app/pages/dashboard/types/widget.interface';
@@ -35,7 +43,7 @@ import { widgetRegistry } from 'app/pages/dashboard/widgets/all-widgets.constant
   styleUrl: './widget-group-slot-form.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class WidgetGroupSlotFormComponent implements AfterViewInit, OnChanges {
+export class WidgetGroupSlotFormComponent implements OnInit, AfterViewInit, OnChanges {
   slotConfig = input.required<WidgetGroupSlot<object>>();
   slot = signal<WidgetGroupSlot<object>>(null);
 
@@ -90,14 +98,17 @@ export class WidgetGroupSlotFormComponent implements AfterViewInit, OnChanges {
     return of(typeOptions);
   });
 
+  getLayoutSupportedWidgets: Signal<SimpleWidget[]>;
+
   form = this.fb.group({
     category: [null as WidgetCategory, [Validators.required]],
     type: [null as WidgetType, [Validators.required]],
   });
 
+  private environmentInjector = inject(EnvironmentInjector);
+
   constructor(
     private fb: FormBuilder,
-    private visibleWidgetsService: VisibleWidgetsService,
     private cdr: ChangeDetectorRef,
   ) { }
 
@@ -151,6 +162,27 @@ export class WidgetGroupSlotFormComponent implements AfterViewInit, OnChanges {
 
   ngOnChanges(): void {
     this.setValuesFromInput();
+  }
+
+  ngOnInit(): void {
+    runInInjectionContext(this.environmentInjector, () => {
+      this.getLayoutSupportedWidgets = toSignal(of(Object.entries(widgetRegistry)).pipe(
+        switchMap((widgets) => {
+          const visibilityList = widgets.map(([, widget]) => {
+            if (widget.visibility) {
+              const deps: WidgetVisibilityDepsType = new Map();
+              widget.visibility.deps.forEach((service) => deps.set(service, inject(service)));
+              return widget.visibility.isVisible$(deps);
+            }
+            return of(true);
+          });
+          return combineLatest([of(widgets), combineLatest(visibilityList)]);
+        }),
+        map(([widgets, visibilityList]) => widgets.filter((_, idx) => visibilityList[idx])),
+        map((widgets) => widgets.filter(([, widget]) => widget.supportedSizes.includes(this.slotConfig().slotSize))),
+        map((widgets) => widgets.map(([type, widget]) => ({ ...widget, type: type as WidgetType }))),
+      ));
+    });
   }
 
   ngAfterViewInit(): void {
@@ -235,12 +267,5 @@ export class WidgetGroupSlotFormComponent implements AfterViewInit, OnChanges {
         },
       ],
     });
-  }
-
-  getLayoutSupportedWidgets(): SimpleWidget[] {
-    return Object.entries(widgetRegistry)
-      .filter(([, widget]) => !widget.visible || widget.visible(this.visibleWidgetsService))
-      .filter(([, widget]) => widget.supportedSizes.includes(this.slotConfig().slotSize))
-      .map(([type, widget]) => ({ ...widget, type: type as WidgetType }));
   }
 }
