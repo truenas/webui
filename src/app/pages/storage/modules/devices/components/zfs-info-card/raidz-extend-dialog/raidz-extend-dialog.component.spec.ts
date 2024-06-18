@@ -40,18 +40,21 @@ describe('RaidzExtendDialogComponent', () => {
       mockAuth(),
       mockWebSocket([
         mockJob('pool.attach', fakeSuccessfulJob()),
-        mockCall('disk.get_unused', [
-          {
-            devname: 'sde',
-            name: 'sde',
-            size: 12 * TiB,
-          },
-          {
-            devname: 'sdf',
-            name: 'sdf',
-            size: 10 * TiB,
-          },
-        ] as DetailsDisk[]),
+        mockCall('disk.details', {
+          unused: [
+            {
+              devname: 'sde',
+              name: 'sde',
+              size: 12 * TiB,
+            },
+            {
+              devname: 'sdf',
+              name: 'sdf',
+              size: 10 * TiB,
+            },
+          ] as DetailsDisk[],
+          used: [],
+        }),
       ]),
       mockProvider(MatDialogRef),
       mockProvider(SnackbarService),
