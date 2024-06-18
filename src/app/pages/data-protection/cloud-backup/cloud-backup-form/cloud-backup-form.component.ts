@@ -231,7 +231,7 @@ export class CloudBackupFormComponent implements OnInit {
       credentials: (this.editingTask.credentials).id,
       folder: this.editingTask.attributes.folder as string,
       bucket: this.editingTask.attributes.bucket === newOption ? '' : this.editingTask.attributes.bucket as string || '',
-      bwlimit: (this.editingTask.bwlimit || []).map((bwlimit) => {
+      bwlimit: this.editingTask.bwlimit.map((bwlimit) => {
         return bwlimit.bandwidth
           ? `${bwlimit.time}, ${buildNormalizedFileSize(bwlimit.bandwidth, 'B', 2)}/s`
           : `${bwlimit.time}, off`;
