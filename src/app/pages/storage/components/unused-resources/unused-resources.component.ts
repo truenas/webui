@@ -21,7 +21,6 @@ import { WebSocketService } from 'app/services/ws.service';
 })
 export class UnusedResourcesComponent implements OnInit {
   @Input() pools: Pool[];
-  unusedDisks: DetailsDisk[] = [];
   noPoolsDisks: DetailsDisk[] = [];
   exportedPoolsDisks: DetailsDisk[] = [];
   diskQuerySubscription: Subscription;
@@ -43,7 +42,6 @@ export class UnusedResourcesComponent implements OnInit {
       this.errorHandler.catchError(),
       untilDestroyed(this),
     ).subscribe((diskDetails) => {
-      this.unusedDisks = diskDetails.unused;
       this.noPoolsDisks = diskDetails.unused;
       this.exportedPoolsDisks = diskDetails.used.filter((disk) => disk.exported_zpool);
       this.cdr.markForCheck();
@@ -63,11 +61,19 @@ export class UnusedResourcesComponent implements OnInit {
       });
   }
 
-  protected addUnusedDisksToStorage(): void {
+  protected addNoPoolDisksToStorage(): void {
+    this.addUnusedDisksToStorage(this.noPoolsDisks);
+  }
+
+  protected addExportedPoolDisksToStorage(): void {
+    this.addUnusedDisksToStorage(this.exportedPoolsDisks);
+  }
+
+  private addUnusedDisksToStorage(disks: DetailsDisk[]): void {
     this.matDialog.open(ManageUnusedDiskDialogComponent, {
       data: {
         pools: this.pools,
-        unusedDisks: [...this.noPoolsDisks, ...this.exportedPoolsDisks],
+        unusedDisks: [...disks],
       },
       width: '600px',
     });
