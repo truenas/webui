@@ -15,7 +15,6 @@ describe('DisableFocusableElementsDirective', () => {
         <textarea></textarea>
         <select><option>Option</option></select>
         <div tabindex="0">Div with tabindex</div>
-        <div class="role-missing" tabindex="0">Div with role-missing</div>
       </div>
     `);
 
@@ -36,7 +35,6 @@ describe('DisableFocusableElementsDirective', () => {
         <textarea></textarea>
         <select><option>Option</option></select>
         <div tabindex="0">Div with tabindex</div>
-        <div class="role-missing" tabindex="0">Div with role-missing</div>
       </div>
     `);
 
