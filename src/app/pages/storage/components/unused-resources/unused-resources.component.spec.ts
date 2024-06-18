@@ -51,5 +51,15 @@ describe('UnusedResourcesComponent', () => {
     spectator.detectChanges();
 
     expect(spectator.queryAll('ix-unused-disk-card')).toHaveLength(0);
+    spectator.inject(MockWebSocketService).mockCall('disk.details', {
+      used: [],
+      unused: [
+        { devname: 'sdc', identifier: '{uuid}7ad07324-f0e9-49a4-a7a4-92edd82a4929' },
+      ] as DetailsDisk[],
+    });
+    spectator.component.ngOnInit();
+    spectator.detectChanges();
+
+    expect(spectator.queryAll('ix-unused-disk-card')).toHaveLength(1);
   });
 });
