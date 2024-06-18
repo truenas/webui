@@ -39,13 +39,9 @@ export class DisableFocusableElementsDirective implements OnChanges {
 
       if (tabIndex === -1) {
         this.renderer.setAttribute(element, 'disabled', 'true');
-      } else if (!this.hasRoleMissingParent(element)) {
+      } else if (element.closest('.role-missing') === null) {
         this.renderer.removeAttribute(element, 'disabled');
       }
     });
-  }
-
-  private hasRoleMissingParent(element: HTMLElement): boolean {
-    return element.closest('.role-missing') !== null;
   }
 }
