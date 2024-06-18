@@ -527,7 +527,7 @@ export class CloudSyncFormComponent implements OnInit {
       cloudsync_picker: scheduleToCrontab(this.editingTask.schedule) as CronPresetValue,
       credentials: this.editingTask.credentials.id,
       encryption: this.editingTask.encryption,
-      bwlimit: (this.editingTask.bwlimit || []).map((bwlimit) => {
+      bwlimit: this.editingTask.bwlimit.map((bwlimit) => {
         return bwlimit.bandwidth
           ? `${bwlimit.time}, ${buildNormalizedFileSize(bwlimit.bandwidth, 'B', 2)}/s`
           : `${bwlimit.time}, off`;
