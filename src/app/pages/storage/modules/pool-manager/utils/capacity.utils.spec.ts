@@ -14,7 +14,7 @@ describe('categoryCapacity', () => {
       ],
     } as PoolManagerTopologyCategory;
 
-    expect(categoryCapacity(category)).toEqual(5 * GiB);
+    expect(categoryCapacity(category)).toEqual(11 * GiB);
   });
 });
 
@@ -31,35 +31,35 @@ describe('vdevCapacity', () => {
     expect(vdevCapacity({
       vdev,
       layout: CreateVdevLayout.Stripe,
-    })).toEqual(16 * GiB);
+    })).toEqual(26 * GiB);
   });
 
   it('mirror layout', () => {
     expect(vdevCapacity({
       vdev,
       layout: CreateVdevLayout.Mirror,
-    })).toEqual(GiB);
+    })).toEqual(3 * GiB);
   });
 
   it('raidz1 layout', () => {
     expect(vdevCapacity({
       vdev,
       layout: CreateVdevLayout.Raidz1,
-    })).toEqual(4 * GiB);
+    })).toEqual(12 * GiB);
   });
 
   it('raidz2 layout', () => {
     expect(vdevCapacity({
       vdev,
       layout: CreateVdevLayout.Raidz2,
-    })).toEqual(3 * GiB);
+    })).toEqual(9 * GiB);
   });
 
   it('raidz3 layout', () => {
     expect(vdevCapacity({
       vdev,
       layout: CreateVdevLayout.Raidz3,
-    })).toEqual(2 * GiB);
+    })).toEqual(6 * GiB);
   });
 
   it('draid1 layout', () => {
@@ -68,7 +68,7 @@ describe('vdevCapacity', () => {
       layout: CreateVdevLayout.Draid1,
       draidDataDisks: 2,
       draidSpareDisks: 1,
-    }) / GiB).toBeCloseTo(2.67);
+    }) / GiB).toBeCloseTo(8);
   });
 
   it('draid2 layout', () => {
@@ -77,7 +77,7 @@ describe('vdevCapacity', () => {
       layout: CreateVdevLayout.Draid2,
       draidDataDisks: 2,
       draidSpareDisks: 1,
-    }) / GiB).toBeCloseTo(2);
+    }) / GiB).toBeCloseTo(6);
   });
 
   it('draid3 layout', () => {
@@ -86,6 +86,6 @@ describe('vdevCapacity', () => {
       layout: CreateVdevLayout.Draid3,
       draidDataDisks: 2,
       draidSpareDisks: 1,
-    }) / GiB).toBeCloseTo(1.6);
+    }) / GiB).toBeCloseTo(4.8);
   });
 });
