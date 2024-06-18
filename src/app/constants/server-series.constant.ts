@@ -11,6 +11,12 @@ export enum MSeriesModel {
   M60 = 'M60',
 }
 
+export enum ES24Model {
+  Es24F = 'ES24F',
+  Es24 = 'ES24',
+  Es24N = 'ES24N',
+}
+
 export const mSeries = [
   'M30',
   'M40',
