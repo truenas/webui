@@ -18,6 +18,7 @@ import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
 import { mntPath } from 'app/enums/mnt-path.enum';
 import { Role } from 'app/enums/role.enum';
 import { TransferMode, transferModeNames } from 'app/enums/transfer-mode.enum';
+import { prepareBwlimit } from 'app/helpers/bwlimit.utils';
 import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextCloudSync } from 'app/helptext/data-protection/cloudsync/cloudsync';
@@ -526,9 +527,9 @@ export class CloudSyncFormComponent implements OnInit {
       cloudsync_picker: scheduleToCrontab(this.editingTask.schedule) as CronPresetValue,
       credentials: this.editingTask.credentials.id,
       encryption: this.editingTask.encryption,
-      bwlimit: this.editingTask.bwlimit.map((bwlimit) => {
+      bwlimit: (this.editingTask.bwlimit || []).map((bwlimit) => {
         return bwlimit.bandwidth
-          ? `${bwlimit.time}, ${buildNormalizedFileSize(bwlimit.bandwidth, 'b', 10)}`
+          ? `${bwlimit.time}, ${buildNormalizedFileSize(bwlimit.bandwidth, 'B', 10)}`
           : `${bwlimit.time}, off`;
       }),
     });
@@ -587,7 +588,7 @@ export class CloudSyncFormComponent implements OnInit {
       attributes,
       include: [],
       path: undefined,
-      bwlimit: formValue.bwlimit ? this.cloudCredentialService.prepareBwlimit(formValue.bwlimit) : undefined,
+      bwlimit: formValue.bwlimit ? prepareBwlimit(formValue.bwlimit) : undefined,
       schedule: formValue.cloudsync_picker ? crontabToSchedule(formValue.cloudsync_picker) : {},
       snapshot: formValue.direction === Direction.Pull ? false : formValue.snapshot,
     };
