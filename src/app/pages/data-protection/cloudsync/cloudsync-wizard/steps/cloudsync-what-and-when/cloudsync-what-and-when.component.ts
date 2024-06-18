@@ -522,7 +522,7 @@ export class CloudsyncWhatAndWhenComponent implements OnInit, OnChanges {
           sublimitArr[1] = sublimitArr[1].substring(0, sublimitArr[1].length - 2);
         }
         if (this.cloudCredentialService.getByte(sublimitArr[1]) !== -1) {
-          (sublimitArr[1] as number | string) = this.cloudCredentialService.getByte(sublimitArr[1]);
+          (sublimitArr[1] as number | string) = this.cloudCredentialService.getByte(sublimitArr[1]).toFixed(0);
         }
       }
       const subLimit = {
