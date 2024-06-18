@@ -588,7 +588,7 @@ export class CloudSyncFormComponent implements OnInit {
       attributes,
       include: [],
       path: undefined,
-      bwlimit: formValue.bwlimit ? prepareBwlimit(formValue.bwlimit) : undefined,
+      bwlimit: prepareBwlimit(formValue.bwlimit),
       schedule: formValue.cloudsync_picker ? crontabToSchedule(formValue.cloudsync_picker) : {},
       snapshot: formValue.direction === Direction.Pull ? false : formValue.snapshot,
     };

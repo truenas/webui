@@ -288,7 +288,7 @@ export class CloudBackupFormComponent implements OnInit {
       ...formValue,
       attributes,
       include: [],
-      bwlimit: formValue.bwlimit ? prepareBwlimit(formValue.bwlimit) : undefined,
+      bwlimit: prepareBwlimit(formValue.bwlimit),
       schedule: crontabToSchedule(formValue.schedule),
     };
 

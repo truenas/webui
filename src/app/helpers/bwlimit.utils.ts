@@ -38,7 +38,11 @@ function getByte(data: string): number {
 }
 
 export function prepareBwlimit(bwlimit: string[]): BwLimitUpdate[] {
-  const bwlimtResult = [];
+  const bwlimtResult: BwLimitUpdate[] = [];
+
+  if (!bwlimit?.length) {
+    return bwlimtResult;
+  }
 
   for (const limit of bwlimit) {
     const sublimitArr = limit.split(/\s*,\s*/);
@@ -53,7 +57,7 @@ export function prepareBwlimit(bwlimit: string[]): BwLimitUpdate[] {
         sublimitArr[1] = getByte(sublimitArr[1]).toFixed(0);
       }
     }
-    const subLimit = {
+    const subLimit: BwLimitUpdate = {
       time: sublimitArr[0],
       bandwidth: sublimitArr[1] === 'off' ? null : sublimitArr[1],
     };
