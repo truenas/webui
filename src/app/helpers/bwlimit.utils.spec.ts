@@ -14,7 +14,7 @@ describe('prepareBwlimit', () => {
   });
 
   it('should convert bandwidth to bytes if it ends with "/s"', () => {
-    const bwlimit: string[] = ['10MB/s'];
+    const bwlimit: string[] = ['10M'];
     const result = prepareBwlimit(bwlimit);
     expect(result).toEqual([{ time: '00:00', bandwidth: '10485760' }]);
   });
