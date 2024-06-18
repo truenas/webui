@@ -15,10 +15,14 @@ describe('UnusedResourcesComponent', () => {
     providers: [
       mockAuth(),
       mockWebSocket([
-        mockCall('disk.get_unused', [
-          { devname: 'sdb', identifier: '{serial_lunid}BBBBB1' },
-          { devname: 'sdc', identifier: '{uuid}7ad07324-f0e9-49a4-a7a4-92edd82a4929' },
-        ] as DetailsDisk[]),
+        mockCall('disk.details', {
+          used: [
+            { devname: 'sdb', identifier: '{serial_lunid}BBBBB1', exported_zpool: 'pool' },
+          ] as DetailsDisk[],
+          unused: [
+            { devname: 'sdc', identifier: '{uuid}7ad07324-f0e9-49a4-a7a4-92edd82a4929' },
+          ] as DetailsDisk[],
+        }),
       ]),
     ],
     declarations: [
@@ -37,15 +41,15 @@ describe('UnusedResourcesComponent', () => {
     });
   });
 
-  it('shows an \'Unassigned Disks\' card when exists unused disks', () => {
-    expect(spectator.query('ix-unused-disk-card')).toBeVisible();
+  it('shows an \'Unused Disks\' card when exists unused disks', () => {
+    expect(spectator.queryAll('ix-unused-disk-card')).toHaveLength(2);
   });
 
   it('hides an \'Unassigned Disks\' card when does not exist unused disks', () => {
-    spectator.inject(MockWebSocketService).mockCall('disk.get_unused', []);
+    spectator.inject(MockWebSocketService).mockCall('disk.details', { used: [], unused: [] });
     spectator.component.ngOnInit();
     spectator.detectChanges();
 
-    expect(spectator.query('ix-unused-disk-card')).not.toBeVisible();
+    expect(spectator.queryAll('ix-unused-disk-card')).toHaveLength(0);
   });
 });
