@@ -240,8 +240,8 @@ describe('CloudsyncFormComponent', () => {
       expect(spectator.inject(WebSocketService).call).toHaveBeenLastCalledWith('cloudsync.update', [1, {
         attributes: { folder: mntPath },
         bwlimit: [
-          { time: '9:00' },
-          { bandwidth: 2097152, time: '12:30' },
+          { bandwidth: undefined, time: '9:00' },
+          { bandwidth: '2097152', time: '12:30' },
         ],
         create_empty_src_dirs: true,
         credentials: 2,
