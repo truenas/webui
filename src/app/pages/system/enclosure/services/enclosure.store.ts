@@ -78,6 +78,10 @@ export class EnclosureStore extends ComponentStore<EnclosureState> {
   selectEnclosure = this.updater((state, id: string) => {
     const index = state.enclosures.findIndex((enclosure) => enclosure.id === id);
 
+    if (index === state.selectedEnclosureIndex) {
+      return state;
+    }
+
     return {
       ...state,
       selectedEnclosureIndex: index,
@@ -115,6 +119,10 @@ export class EnclosureStore extends ComponentStore<EnclosureState> {
   });
 
   selectSide = this.updater((state, side: EnclosureSide) => {
+    if (side === state.selectedSide) {
+      return state;
+    }
+
     return {
       ...state,
       selectedSide: side,

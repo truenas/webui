@@ -8,15 +8,11 @@
   }
 
   ::ng-deep {
-    [id^='DRIVE_CAGE_'] {
-      cursor: pointer;
-    }
-
     .overlay-rect {
+      cursor: pointer;
       fill: transparent;
-      pointer-events: none;
 
-      &.hover {
+      &:hover {
         // TODO: Theme variables
         // TODO: Change styles to something better
         // TODO: CSS transitions

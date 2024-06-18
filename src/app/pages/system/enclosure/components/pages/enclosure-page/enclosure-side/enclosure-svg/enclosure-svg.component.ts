@@ -65,7 +65,7 @@ export class EnclosureSvgComponent {
     }
 
     const driveTrays = this.svgContainer().nativeElement.querySelectorAll<SVGGElement>('svg g[id^="DRIVE_CAGE_"]');
-    this.overlayRects = {};
+    this.clearOverlays();
 
     // TODO: Unclear if input change will trigger re-render.
     driveTrays.forEach((tray) => {
@@ -74,13 +74,15 @@ export class EnclosureSvgComponent {
         return;
       }
 
+      this.addOverlay(slot, tray);
+
       if (this.enableMouseEvents()) {
         // TODO: Check if not removing events manually leads to memory leaks.
-        this.addMouseEvents(slot, tray);
+        this.addClickEvent(slot);
       }
 
       if (this.slotTintFn()) {
-        this.addTint(slot, tray);
+        this.addTint(slot);
       }
     });
   });
@@ -96,33 +98,12 @@ export class EnclosureSvgComponent {
     this.renderer.addClass(slotOverlay, 'selected');
   });
 
-  private addMouseEvents(slot: DashboardEnclosureSlot, tray: SVGGElement): void {
-    const overlay = this.getOverlayRect(slot, tray);
-
-    tray.addEventListener('mouseover', () => this.renderer.addClass(overlay, 'hover'));
-    tray.addEventListener('mouseout', () => this.renderer.removeClass(overlay, 'hover'));
-    tray.addEventListener('click', () => this.selectedSlot.set(slot));
+  private clearOverlays(): void {
+    Object.values(this.overlayRects).forEach((overlay) => overlay.remove());
+    this.overlayRects = {};
   }
 
-  private addTint(slot: DashboardEnclosureSlot, tray: SVGGElement): void {
-    const overlay = this.getOverlayRect(slot, tray);
-
-    this.renderer.removeClass(overlay, 'tinted');
-
-    const slotTint = this.slotTintFn()(slot);
-    if (!slotTint) {
-      return;
-    }
-
-    this.renderer.addClass(overlay, 'tinted');
-    this.renderer.setStyle(overlay, 'fill', slotTint);
-  }
-
-  private getOverlayRect(slot: DashboardEnclosureSlot, tray: SVGGElement): SVGRectElement {
-    if (this.overlayRects[slot.drive_bay_number]) {
-      return this.overlayRects[slot.drive_bay_number];
-    }
-
+  private addOverlay(slot: DashboardEnclosureSlot, tray: SVGGElement): void {
     const overlayRect = this.renderer.createElement('rect', 'http://www.w3.org/2000/svg') as SVGRectElement;
     this.renderer.appendChild(tray.parentNode, overlayRect);
     const trayRect = tray.getBBox();
@@ -134,7 +115,25 @@ export class EnclosureSvgComponent {
     this.renderer.setAttribute(overlayRect, 'y', `${trayRect.y}`);
 
     this.overlayRects[slot.drive_bay_number] = overlayRect;
-    return overlayRect;
+  }
+
+  private addClickEvent(slot: DashboardEnclosureSlot): void {
+    const overlay = this.overlayRects[slot.drive_bay_number];
+    overlay.addEventListener('click', () => this.selectedSlot.set(slot));
+  }
+
+  private addTint(slot: DashboardEnclosureSlot): void {
+    const overlay = this.overlayRects[slot.drive_bay_number];
+
+    this.renderer.removeClass(overlay, 'tinted');
+
+    const slotTint = this.slotTintFn()(slot);
+    if (!slotTint) {
+      return;
+    }
+
+    this.renderer.addClass(overlay, 'tinted');
+    this.renderer.setStyle(overlay, 'fill', slotTint);
   }
 
   private getSlotForTray(tray: SVGGElement): DashboardEnclosureSlot {
