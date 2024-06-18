@@ -19,29 +19,36 @@ export class DisableFocusableElementsDirective implements OnChanges {
 
   ngOnChanges(changes: IxSimpleChanges<this>): void {
     if (changes.disableFocusableElements) {
-      timer(0).pipe(take(1), untilDestroyed(this)).subscribe(() => {
-        if (this.disableFocusableElements) {
-          this.updateElementTabIndexProperty(-1);
-        } else {
-          this.updateElementTabIndexProperty(0);
-        }
-      });
+      this.updateFocusableElements();
     }
   }
 
-  private updateElementTabIndexProperty(tabIndex: number): void {
-    const focusableElements = this.elementRef.nativeElement.querySelectorAll(
+  private updateFocusableElements(): void {
+    timer(0).pipe(take(1), untilDestroyed(this)).subscribe(() => {
+      const tabIndex = this.disableFocusableElements ? -1 : 0;
+      this.updateTabIndex(tabIndex);
+    });
+  }
+
+  private updateTabIndex(tabIndex: number): void {
+    const focusableElements = this.getFocusableElements();
+    focusableElements.forEach((element) => {
+      this.renderer.setAttribute(element, 'tabindex', tabIndex.toString());
+      this.updateDisabledAttribute(element, tabIndex);
+    });
+  }
+
+  private getFocusableElements(): NodeListOf<HTMLElement> {
+    return this.elementRef.nativeElement.querySelectorAll(
       'a, button, input, textarea, select, [tabindex]',
     );
+  }
 
-    focusableElements.forEach((element: HTMLElement) => {
-      this.renderer.setAttribute(element, 'tabindex', tabIndex.toString());
-
-      if (tabIndex === -1) {
-        this.renderer.setAttribute(element, 'disabled', 'true');
-      } else if (element.closest('.role-missing') === null) {
-        this.renderer.removeAttribute(element, 'disabled');
-      }
-    });
+  private updateDisabledAttribute(element: HTMLElement, tabIndex: number): void {
+    if (tabIndex === -1) {
+      this.renderer.setAttribute(element, 'disabled', 'true');
+    } else if (!element.closest('.role-missing')) {
+      this.renderer.removeAttribute(element, 'disabled');
+    }
   }
 }
