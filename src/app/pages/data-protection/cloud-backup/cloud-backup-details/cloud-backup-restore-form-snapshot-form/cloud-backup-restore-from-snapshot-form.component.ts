@@ -140,6 +140,7 @@ export class CloudBackupRestoreFromSnapshotFormComponent implements OnInit {
         credentials: this.data.backup?.credentials?.id,
         attributes: {
           folder: node.data.path,
+          bucket: this.data.backup.attributes.bucket,
         },
         args: '',
       };

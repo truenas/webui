@@ -11,6 +11,7 @@ import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import { actionsColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
+import { relativeDateColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-relative-date/ix-cell-relative-date.component';
 import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { createTable } from 'app/modules/ix-table/utils';
 import { CloudBackupRestoreFromSnapshotFormComponent } from 'app/pages/data-protection/cloud-backup/cloud-backup-details/cloud-backup-restore-form-snapshot-form/cloud-backup-restore-from-snapshot-form.component';
@@ -32,8 +33,12 @@ export class CloudBackupSnapshotsComponent implements OnChanges {
   dataProvider: AsyncDataProvider<CloudBackupSnapshot>;
 
   columns = createTable<CloudBackupSnapshot>([
+    relativeDateColumn({
+      title: this.translate.instant('Snapshot Time'),
+      getValue: (row) => row.time.$date,
+    }),
     textColumn({
-      title: this.translate.instant('Name'),
+      title: this.translate.instant('Hostname'),
       propertyName: 'hostname',
     }),
     actionsColumn({
