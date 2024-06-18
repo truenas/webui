@@ -32,9 +32,16 @@ export interface CloudBackupUpdate extends Omit<CloudBackup, 'id' | 'job' | 'loc
 
 export interface CloudBackupSnapshot {
   id: string;
+  short_id: string;
   hostname: string;
-  time: string;
   paths: string[];
+  parent: string;
+  username: string;
+  time: {
+    $date: number;
+  };
+  tree: string;
+  program_version: string;
 }
 
 export enum SnapshotIncludeExclude {

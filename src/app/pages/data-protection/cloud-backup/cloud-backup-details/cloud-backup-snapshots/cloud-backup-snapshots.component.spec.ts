@@ -15,13 +15,20 @@ import { CloudBackupSnapshotsComponent } from 'app/pages/data-protection/cloud-b
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { StorageService } from 'app/services/storage.service';
 
-const cloudBackupSnapshots = [
+const cloudBackupSnapshots: CloudBackupSnapshot[] = [
   {
     id: 'first',
     hostname: 'UA',
-    time: '2021-09-01T00:00:00Z',
+    time: {
+      $date: 1718638850000,
+    },
     paths: ['/mnt/nmnmn'],
-  } as CloudBackupSnapshot,
+    short_id: '',
+    parent: '',
+    username: '',
+    tree: '',
+    program_version: '',
+  },
 ];
 
 describe('CloudBackupSnapshotsComponent', () => {
