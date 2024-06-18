@@ -46,7 +46,7 @@ export function prepareBwlimit(bwlimit: string[]): BwLimitUpdate[] {
       sublimitArr.unshift('00:00');
     }
     if (sublimitArr[1] && sublimitArr[1] !== 'off') {
-      if (sublimitArr[1].endsWith('/s') || sublimitArr[1].endsWith('/S')) {
+      if (sublimitArr[1].toLowerCase().endsWith('/s')) {
         sublimitArr[1] = sublimitArr[1].substring(0, sublimitArr[1].length - 2);
       }
       if (getByte(sublimitArr[1]) !== -1) {

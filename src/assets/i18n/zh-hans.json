@@ -5,6 +5,7 @@
   "2FA": "",
   "<a href=\"https://docs.aws.amazon.com/AmazonS3/latest/dev/WebsiteEndpoints.html\"  target=\"_blank\">S3 API endpoint URL</a>. When using AWS, the endpoint  field can be empty to use the default endpoint for the region, and  available buckets are automatically fetched. Refer to the AWS  Documentation for a list of  <a href=\"https://docs.aws.amazon.com/general/latest/gr/rande.html#s3_website_region_endpoints\"  target=\"_blank\">Simple Storage Service Website Endpoints</a>.": "",
   "<i>Yes:</i> Disables the <b>Password</b>  fields. The account cannot  use password-based logins for services. For example, disabling the  password prevents using account credentials to log in to an SMB share  or open an SSH session on the system. The <b>Lock User</b> and  <b>Permit Sudo</b> options are also removed.<br><br>  <i>No:</i> Requires adding a <b>Password</b> to the account. The  account can use the saved <b>Password</b> to authenticate with  password-based services.": "",
+  "A single bandwidth limit or bandwidth limit schedule in rclone format. Separate entries by pressing <code>Enter</code>. Example:  <samp>08:00,512</samp> <samp>12:00,10MB</samp> <samp>13:00,512</samp>  <samp>18:00,30MB</samp> <samp>23:00,off</samp>. Units can be specified with a suffix of <samp>b</samp> (default), <samp>k</samp>, <samp>M</samp>, or <samp>G</samp>. See <a href=\"https://rclone.org/docs/#bwlimit-bandwidth-spec\" target=\"_blank\">rclone --bwlimit</a>.": "",
   "ACL": "",
   "ACME Certificate Created": "",
   "ACME DNS-Authenticator": "",
