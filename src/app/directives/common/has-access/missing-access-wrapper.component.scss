@@ -25,6 +25,11 @@
   button {
     cursor: none;
     pointer-events: none;
+
+    &:disabled {
+      color: var(--mdc-icon-button-icon-color);
+      opacity: 1;
+    }
   }
 
   .mat-mdc-checkbox,
