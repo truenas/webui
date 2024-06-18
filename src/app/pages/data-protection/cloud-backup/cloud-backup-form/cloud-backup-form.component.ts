@@ -61,7 +61,7 @@ export class CloudBackupFormComponent implements OnInit {
     exclude: [[] as string[]],
     pre_script: [''],
     post_script: [''],
-    description: [''],
+    description: ['', [Validators.required]],
     snapshot: [false],
     bwlimit: [[] as string[]],
     transfers: [null as number],
