@@ -21,7 +21,6 @@ export interface AdvancedConfig {
   serialconsole: boolean;
   serialport: string;
   serialspeed: string;
-  swapondrive: number;
   syslog_tls_certificate: number;
   syslog_transport: SyslogTransport;
   syslog_audit: boolean;
