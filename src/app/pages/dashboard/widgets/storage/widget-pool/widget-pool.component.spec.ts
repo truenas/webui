@@ -3,6 +3,7 @@ import { MockComponent } from 'ng-mocks';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { of } from 'rxjs';
 import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-datetime.pipe';
+import { mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { PoolStatus } from 'app/enums/pool-status.enum';
 import { TopologyItemType } from 'app/enums/v-dev-type.enum';
 import { Disk } from 'app/interfaces/disk.interface';
@@ -25,6 +26,7 @@ describe('WidgetPoolComponent', () => {
       FakeFormatDateTimePipe,
     ],
     providers: [
+      mockWebSocket([]),
       mockProvider(ThemeService, {
         currentTheme: jest.fn(() => ({
           bg1: 'bg1',
