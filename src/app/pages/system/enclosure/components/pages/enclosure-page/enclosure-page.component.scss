@@ -1,0 +1,17 @@
+:host {
+  display: flex;
+  gap: 5px;
+
+  ::ng-deep .mat-mdc-card {
+    margin: 0;
+  }
+
+  .container {
+    height: 400px;
+    padding: 0;
+  }
+}
+
+.view-container {
+  flex-grow: 1;
+}
