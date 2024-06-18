@@ -113,6 +113,10 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
     return !this.existingSmbShare;
   }
 
+  get isAsyncValidatorPending(): boolean {
+    return this.form.controls.name.status === 'PENDING' && this.form.controls.name.touched;
+  }
+
   readonly treeNodeProvider = this.filesystemService.getFilesystemNodeProvider({
     directoriesOnly: true,
     includeSnapshots: false,
