@@ -52,7 +52,7 @@ def test_verify_enabling_sudo_for_group_works():
 @given('the browser is open, navigate to the SCALE URL, and login')
 def the_browser_is_open_navigate_to_the_scale_url_and_login(driver, nas_ip, root_password):
     """the browser is open, navigate to the SCALE URL, and login."""
-    create_group(nas_ip, root_password, 'qatest')
+    create_group(nas_ip, ('root', root_password), 'qatest')
     if nas_ip not in driver.current_url:
         driver.get(f"http://{nas_ip}")
         assert wait_on_element(driver, 10, xpaths.login.user_Input)
