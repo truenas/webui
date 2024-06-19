@@ -1,3 +1,9 @@
+:host ::ng-deep {
+  ix-list.form-error {
+    padding: 0 10px;
+  }
+}
+
 .disabled {
   cursor: not-allowed;
   opacity: var(--disabled-opacity);
@@ -6,10 +12,6 @@
 
 .indent {
   padding-left: 16px;
-}
-
-.list {
-  margin: 0 16px;
 }
 
 .label {
