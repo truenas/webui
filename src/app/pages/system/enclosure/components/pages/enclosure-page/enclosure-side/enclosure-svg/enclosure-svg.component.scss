@@ -1,0 +1,35 @@
+:host {
+  display: block;
+}
+
+.svg-container {
+  &.static {
+    pointer-events: none;
+  }
+
+  ::ng-deep {
+    .overlay-rect {
+      cursor: pointer;
+      fill: transparent;
+
+      &:hover {
+        // TODO: Theme variables
+        // TODO: Change styles to something better
+        // TODO: CSS transitions
+        stroke: #ff3;
+        stroke-dasharray: 5 10;
+        stroke-width: 5px;
+      }
+
+      &.selected {
+        stroke: #ff3;
+        stroke-dasharray: none;
+        stroke-width: 5px;
+      }
+
+      &.tinted {
+        fill-opacity: 0.25;
+      }
+    }
+  }
+}

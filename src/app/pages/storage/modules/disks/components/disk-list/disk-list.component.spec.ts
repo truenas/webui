@@ -108,7 +108,7 @@ describe('DiskListComponent', () => {
       }),
       mockWebSocket([
         mockCall('disk.query', fakeDisks),
-        mockCall('disk.get_unused', fakeUnusedDisks),
+        mockCall('disk.details', { unused: [], used: fakeUnusedDisks }),
         mockCall('smart.test.disk_choices', fakeSmartDiskChoices),
       ]),
     ],
