@@ -34,22 +34,25 @@ describe('ExtendDialogComponent', () => {
       mockAuth(),
       mockWebSocket([
         mockJob('pool.attach', fakeSuccessfulJob()),
-        mockCall('disk.get_unused', [
-          {
-            devname: 'sde',
-            name: 'sde',
-            size: 12000138625024,
-            duplicate_serial: [],
-          },
-          {
-            devname: 'sdf',
-            name: 'sdf',
-            size: 10000138625024,
-            duplicate_serial: [
-              'sdf',
-            ],
-          },
-        ] as DetailsDisk[]),
+        mockCall('disk.details', {
+          unused: [
+            {
+              devname: 'sde',
+              name: 'sde',
+              size: 12000138625024,
+              duplicate_serial: [],
+            },
+            {
+              devname: 'sdf',
+              name: 'sdf',
+              size: 10000138625024,
+              duplicate_serial: [
+                'sdf',
+              ],
+            },
+          ] as DetailsDisk[],
+          used: [],
+        }),
       ]),
       mockProvider(MatDialogRef),
       mockProvider(SnackbarService),
