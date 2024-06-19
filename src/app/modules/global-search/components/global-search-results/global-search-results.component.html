@@ -12,6 +12,7 @@
           [attr.tabindex]="result.section === GlobalSearchSection.RecentSearches ? i + 1 : 0"
           [class.highlighted-result]="isSearchInputFocused && isSameHierarchyResult(firstAvailableSearchResult, result)"
           [ixTest]="['search-result', result.hierarchy.join('-')]"
+          [attr.aria-label]="result.hierarchy[result.hierarchy.length - 1]"
           (click)="selectElement(result)"
           (keydown.enter)="selectElement(result)"
         >
@@ -22,6 +23,7 @@
             class="icon"
             color="accent"
             [attr.tabindex]="sectionResults.length + i + 1"
+            [attr.aria-label]="'Remove {value} from recent searches' | translate:{ value: result.hierarchy[result.hierarchy.length - 1] }"
             (click)="removeRecentSearch($event, result)"
             (keydown.enter)="removeRecentSearch($event, result)"
           ></ix-icon>
