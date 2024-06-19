@@ -37,6 +37,7 @@ import { selectService } from 'app/store/services/services.selectors';
 })
 export class SmbCardComponent implements OnInit {
   requiredRoles = [Role.SharingSmbWrite, Role.SharingWrite];
+  changedEnabled = new Map<number, boolean>([]);
 
   service$ = this.store$.select(selectService(ServiceName.Cifs));
 
@@ -190,16 +191,26 @@ export class SmbCardComponent implements OnInit {
 
   private onChangeEnabledState(row: SmbShare): void {
     const param = 'enabled';
+    this.changedEnabled.set(row.id, !row[param]);
+    this.updateEnabledFields();
 
     this.ws.call('sharing.smb.update', [row.id, { [param]: !row[param] }]).pipe(untilDestroyed(this)).subscribe({
       next: () => {
+        this.changedEnabled.delete(row.id);
         this.getSmbShares();
       },
       error: (error: unknown) => {
+        this.changedEnabled.delete(row.id);
         this.getSmbShares();
         this.dialogService.error(this.errorHandler.parseError(error));
       },
     });
+  }
+
+  private updateEnabledFields(): void {
+    this.dataProvider.setRows(this.smbShares.map((smbShare) => (
+      this.changedEnabled.has(smbShare.id) ? { ...smbShare, enabled: this.changedEnabled.get(smbShare.id) } : smbShare
+    )));
   }
 
   private updateEnabledFieldVisibility(hidden: boolean): void {
