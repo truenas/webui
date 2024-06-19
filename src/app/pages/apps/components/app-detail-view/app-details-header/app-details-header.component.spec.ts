@@ -57,11 +57,7 @@ describe('AppDetailsHeaderComponent', () => {
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
-      mockAuth({
-        attributes: {
-          appsAgreement: true,
-        },
-      }),
+      mockAuth(),
       mockWebSocket([
         mockCall('auth.set_attribute'),
       ]),
