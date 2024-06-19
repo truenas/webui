@@ -1,6 +1,5 @@
 # coding=utf-8
 """SCALE UI: feature tests."""
-
 import os
 import pytest
 import reusableSeleniumCode as rsc
@@ -15,7 +14,8 @@ from function import (
     ssh_sudo,
     setup_ssh_agent,
     create_key,
-    add_ssh_key
+    add_ssh_key,
+    create_group
 )
 from pytest_bdd import (
     given,
@@ -27,8 +27,8 @@ from pytest_dependency import depends
 
 
 localHome = os.path.expanduser('~')
-dotsshPath = localHome + '/.ssh'
-keyPath = localHome + '/.ssh/ui_test_id_rsa'
+dotsshPath = f'{localHome}/.ssh'
+keyPath = f'{localHome}/.ssh/ui_test_id_rsa'
 
 setup_ssh_agent()
 if os.path.isdir(dotsshPath) is False:
@@ -43,6 +43,11 @@ def ssh_key():
     ssh_key_file = open(f'{keyPath}.pub', 'r')
     return ssh_key_file.read().strip()
 
+
+@pytest.fixture(scope='module', autouse=True)
+def create_qatest_group(nas_ip, root_password):
+    create_group(nas_ip, root_password, 'qatest')
+    
 
 @scenario('features/NAS-T1253.feature', 'Verify enabling sudo for group works')
 def test_verify_enabling_sudo_for_group_works():
@@ -73,6 +78,24 @@ def the_browser_is_open_navigate_to_the_scale_url_and_login(driver, nas_ip, root
 def on_the_dashboard_click_on_credentials_and_local_users(driver):
     """on the dashboard click on Credentials and Local Users."""
     rsc.Verify_The_Dashboard(driver)
+    # Create
+    # assert wait_on_element(driver, 10, xpaths.side_Menu.credentials, 'clickable')
+    # driver.find_element_by_xpath(xpaths.side_Menu.credentials).click()
+    # assert wait_on_element(driver, 10, xpaths.side_Menu.local_Group, 'clickable')
+    # driver.find_element_by_xpath(xpaths.side_Menu.local_Group).click()
+    # assert wait_on_element(driver, 10, xpaths.groups.title)
+    # assert wait_on_element(driver, 10, xpaths.button.add, 'clickable')
+    # driver.find_element_by_xpath(xpaths.button.add).click()
+    # assert wait_on_element(driver, 7, xpaths.add_Group.title)
+    # assert wait_on_element(driver, 7, xpaths.add_Group.name_Input, 'inputable')
+    # driver.find_element_by_xpath(xpaths.add_Group.name_Input).clear()
+    # driver.find_element_by_xpath(xpaths.add_Group.name_Input).send_keys('qatest')
+    # assert wait_on_element(driver, 7, xpaths.button.save, 'clickable')
+    # driver.find_element_by_xpath(xpaths.button.save).click()
+    # assert wait_on_element_disappear(driver, 20, xpaths.progress.progressbar)
+    # assert wait_on_element(driver, 10, xpaths.groups.title)
+    # assert wait_on_element(driver, 10, xpaths.groups.qetest_Name)
+
     assert wait_on_element(driver, 10, xpaths.side_Menu.credentials, 'clickable')
     driver.find_element_by_xpath(xpaths.side_Menu.credentials).click()
     assert wait_on_element(driver, 10, xpaths.side_Menu.local_User, 'clickable')
@@ -128,7 +151,7 @@ def create_new_qetestuser_user_add_to_qatest_group(driver, ssh_key):
 
 
 @then('verify user can ssh in and cannot sudo')
-def verify_user_can_ssh_in_and_cannot_sudo(driver, nas_ip):
+def verify_user_can_ssh_in_and_cannot_sudo(nas_ip):
     """verify user can ssh in and cannot sudo."""
     global sudo_results
     cmd = 'ls /'
@@ -169,7 +192,7 @@ def check_the_enable_sudo_box_and_click_save(driver):
 
 
 @then('ssh in with qetest user and try to sudo')
-def ssh_in_with_qetest_user_and_try_to_sudo(driver, nas_ip):
+def ssh_in_with_qetest_user_and_try_to_sudo(nas_ip):
     """ssh in with qetest user and try to sudo."""
     cmd = 'ls /'
     sudo_results2 = ssh_sudo(cmd, nas_ip, 'qetestuser', 'testing')
