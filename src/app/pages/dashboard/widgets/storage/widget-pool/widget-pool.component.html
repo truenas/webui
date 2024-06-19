@@ -21,8 +21,10 @@
       <div class="pool-info-wrapper">
         <div class="pool-info-top">
           <div class="left">
-            <h3 *ngIf="!isPoolLoading(); else skeleton" class="pool-name">
-              {{ pool().name }}
+            <h3 class="pool-name">
+              <ng-container *ngIf="!isPoolLoading(); else skeleton">
+                {{ pool().name }}
+              </ng-container>
             </h3>
             <div class="divider"></div>
             <div class="lines">
@@ -38,13 +40,13 @@
                   {{ capacity() | ixFileSize }}
                 </span>
               </div>
-              <div class="line">
+              <div *ngIf="isDatasetLoading() || pool().scan?.end_time?.$date" class="line">
                 <span class="label">{{ 'Last Scrub Date' | translate }}:</span>
                 <span *ngIf="!isDatasetLoading(); else skeleton" class="value">
-                  {{ (pool()?.scan?.end_time?.$date | formatDateTime) || '' }}
+                  {{ pool().scan.end_time.$date | formatDateTime }}
                 </span>
               </div>
-              <div class="line">
+              <div *ngIf="isDatasetLoading() || scanDuration()" class="line">
                 <span class="label">{{ 'Last Scan Duration' | translate }}:</span>
                 <span *ngIf="!isDatasetLoading(); else skeleton" class="value">
                   {{ scanDuration() }}
@@ -93,7 +95,7 @@
           <div>
             <h2 class="value">
               <ng-container *ngIf="!isPoolLoading(); else skeleton">
-                {{ pool().scan.errors }}
+                {{ pool().scan?.errors || 0 }}
               </ng-container>
             </h2>
             <div class="divider"></div>

@@ -113,7 +113,7 @@ export class WidgetPoolComponent implements WidgetComponent, OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.chartBlankColor = this.themeService.currentTheme().bg1;
+    this.chartBlankColor = this.themeService.currentTheme().bg2;
     this.chartFillColor = this.themeService.currentTheme().primary;
     this.chartLowCapacityColor = this.themeService.currentTheme().red;
   }
