@@ -40,6 +40,11 @@
   .mat-mdc-menu-item-text {
     opacity: 0.25;
 
+    &:disabled {
+      color: var(--mdc-icon-button-icon-color);
+      opacity: 1;
+    }
+
     + .role-missing-icon {
       bottom: 5px;
       right: 0;
