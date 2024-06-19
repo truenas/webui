@@ -74,11 +74,6 @@ describe('EnclosureSvgComponent', () => {
     spectator.detectChanges();
   }));
 
-  afterAll(() => {
-    // eslint-disable-next-line @typescript-eslint/naming-convention
-    delete (SVGElement.prototype as unknown as { getBBox: () => void }).getBBox;
-  });
-
   it('loads svg and shows it using svgUrl and SvgCacheService service', () => {
     expect(spectator.query('.svg-container')).toHaveDescendant('svg');
     expect(spectator.query('.svg-container svg')).toHaveDescendant('g[id="Drives"]');
