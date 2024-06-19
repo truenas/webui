@@ -42,11 +42,6 @@ add_ssh_key(keyPath)
 def ssh_key():
     ssh_key_file = open(f'{keyPath}.pub', 'r')
     return ssh_key_file.read().strip()
-
-
-@pytest.fixture(scope='module', autouse=True)
-def create_qatest_group(nas_ip, root_password):
-    create_group(nas_ip, root_password, 'qatest')
     
 
 @scenario('features/NAS-T1253.feature', 'Verify enabling sudo for group works')
@@ -55,8 +50,9 @@ def test_verify_enabling_sudo_for_group_works():
 
 
 @given('the browser is open, navigate to the SCALE URL, and login')
-def the_browser_is_open_navigate_to_the_scale_url_and_login(driver, nas_ip, root_password, request):
+def the_browser_is_open_navigate_to_the_scale_url_and_login(driver, nas_ip, root_password):
     """the browser is open, navigate to the SCALE URL, and login."""
+    create_group(nas_ip, root_password, 'qatest')
     if nas_ip not in driver.current_url:
         driver.get(f"http://{nas_ip}")
         assert wait_on_element(driver, 10, xpaths.login.user_Input)
@@ -77,24 +73,6 @@ def the_browser_is_open_navigate_to_the_scale_url_and_login(driver, nas_ip, root
 def on_the_dashboard_click_on_credentials_and_local_users(driver):
     """on the dashboard click on Credentials and Local Users."""
     rsc.Verify_The_Dashboard(driver)
-    # Create
-    # assert wait_on_element(driver, 10, xpaths.side_Menu.credentials, 'clickable')
-    # driver.find_element_by_xpath(xpaths.side_Menu.credentials).click()
-    # assert wait_on_element(driver, 10, xpaths.side_Menu.local_Group, 'clickable')
-    # driver.find_element_by_xpath(xpaths.side_Menu.local_Group).click()
-    # assert wait_on_element(driver, 10, xpaths.groups.title)
-    # assert wait_on_element(driver, 10, xpaths.button.add, 'clickable')
-    # driver.find_element_by_xpath(xpaths.button.add).click()
-    # assert wait_on_element(driver, 7, xpaths.add_Group.title)
-    # assert wait_on_element(driver, 7, xpaths.add_Group.name_Input, 'inputable')
-    # driver.find_element_by_xpath(xpaths.add_Group.name_Input).clear()
-    # driver.find_element_by_xpath(xpaths.add_Group.name_Input).send_keys('qatest')
-    # assert wait_on_element(driver, 7, xpaths.button.save, 'clickable')
-    # driver.find_element_by_xpath(xpaths.button.save).click()
-    # assert wait_on_element_disappear(driver, 20, xpaths.progress.progressbar)
-    # assert wait_on_element(driver, 10, xpaths.groups.title)
-    # assert wait_on_element(driver, 10, xpaths.groups.qetest_Name)
-
     assert wait_on_element(driver, 10, xpaths.side_Menu.credentials, 'clickable')
     driver.find_element_by_xpath(xpaths.side_Menu.credentials).click()
     assert wait_on_element(driver, 10, xpaths.side_Menu.local_User, 'clickable')
