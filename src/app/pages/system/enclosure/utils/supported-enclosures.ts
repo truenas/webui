@@ -1,5 +1,5 @@
 import {
-  ES102Model, ES24Model, ES60Model, FSeriesModel, MSeriesModel,
+  ES102Model, ES24Model, ES60Model, FSeriesModel, HSeriesModel, MSeriesModel,
 } from 'app/constants/server-series.constant';
 
 export enum EnclosureSide {
@@ -38,6 +38,10 @@ const eS102G2 = {
   [EnclosureSide.Top]: 'assets/images/new-hardware/es102g2/es102g2-top.svg',
 };
 
+const hSeries = {
+  [EnclosureSide.Front]: 'assets/images/new-hardware/hseries/hseries-front.svg',
+};
+
 export const supportedEnclosures: Record<string, EnclosureViews> = {
   [MSeriesModel.M30]: mSeries,
   [MSeriesModel.M40]: mSeries,
@@ -50,5 +54,6 @@ export const supportedEnclosures: Record<string, EnclosureViews> = {
   [FSeriesModel.F60]: fSeries,
   [FSeriesModel.F100]: fSeries,
   [FSeriesModel.F130]: fSeries,
-
+  [HSeriesModel.H10]: hSeries,
+  [HSeriesModel.H20]: hSeries,
 };
