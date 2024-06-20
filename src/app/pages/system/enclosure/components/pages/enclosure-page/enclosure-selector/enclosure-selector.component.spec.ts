@@ -1,4 +1,8 @@
-import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import {
+  createComponentFactory,
+  mockProvider,
+  Spectator,
+} from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
 import {
   EnclosureSelectorComponent,
@@ -49,9 +53,10 @@ describe('EnclosureSelectorComponent', () => {
     expect(enclosureElements[1]).not.toHaveClass('active');
   });
 
-  it('selects another enclosure when user clicks on it', () => {
+  it('has a link to navigate to an enclosure', () => {
     const enclosureElements = spectator.queryAll('.enclosure');
-    spectator.click(enclosureElements[1]);
-    expect(spectator.inject(EnclosureStore).selectEnclosure).toHaveBeenCalledWith('2');
+
+    expect(enclosureElements[0]).toHaveAttribute('href', '/system/viewenclosure/1');
+    expect(enclosureElements[1]).toHaveAttribute('href', '/system/viewenclosure/2');
   });
 });

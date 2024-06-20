@@ -3,7 +3,7 @@
   class="enclosure"
   [class.active]="enclosure.id === selectedEnclosure()"
   [ixTest]="['select-enclosure', enclosure.model]"
-  (click)="selectEnclosure(enclosure.id)"
+  [routerLink]="['/system', 'viewenclosure', enclosure.id]"
 >
   <!-- TODO: Slots were colored in old enclosure -->
   <!-- TODO: Add skeleton -->
