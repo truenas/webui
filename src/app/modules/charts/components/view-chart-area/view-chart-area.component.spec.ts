@@ -3,7 +3,6 @@ import {
   createComponentFactory, Spectator,
 } from '@ngneat/spectator/jest';
 import { ChartData, ChartDataset } from 'chart.js';
-import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { ViewChartAreaComponent } from 'app/modules/charts/components/view-chart-area/view-chart-area.component';
 
 describe('ViewChartAreaComponent', () => {
@@ -66,16 +65,6 @@ describe('ViewChartAreaComponent', () => {
   it('should render chart when data arrives', () => {
     const data = { labels: [], datasets: [] } as ChartData<'line'>;
     spectator.setInput('data', data);
-
-    // Manually trigger change detection
-    spectator.component.ngOnChanges({
-      data: {
-        currentValue: data,
-        previousValue: null,
-        firstChange: true,
-        isFirstChange: () => true,
-      },
-    } as IxSimpleChanges<ViewChartAreaComponent>);
 
     // Make sure expected values are present after input is set
     expect(spectator.component.data).toBeTruthy();

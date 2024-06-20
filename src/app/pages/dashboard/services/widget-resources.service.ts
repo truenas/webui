@@ -1,8 +1,9 @@
-import { Injectable } from '@angular/core';
+import { Injectable, signal } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { sub } from 'date-fns';
 import {
-  Observable, Subject, combineLatestWith, debounceTime, filter, forkJoin, map, repeat, shareReplay, switchMap, timer,
+  Observable, Subject, combineLatestWith, debounceTime, filter,
+  forkJoin, map, repeat, shareReplay, switchMap, tap, timer,
 } from 'rxjs';
 import { SystemUpdateStatus } from 'app/enums/system-update.enum';
 import { toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
@@ -37,9 +38,18 @@ export class WidgetResourcesService {
         return acc;
       }, {} as Record<string, ChartReleaseStats>);
     }),
+    tap((incomingStats) => {
+      this.cachedAppStats.update((cachedStats) => {
+        Object.entries(incomingStats).forEach(([appName, appStats]) => {
+          return cachedStats[appName] = (cachedStats[appName] || []).concat(appStats);
+        });
+        return cachedStats;
+      });
+    }),
   );
   readonly refreshInterval$ = timer(0, 5000);
   private readonly triggerRefreshSystemInfo$ = new Subject<void>();
+  cachedAppStats = signal<Record<string, ChartReleaseStats[]>>({});
 
   readonly backups$ = forkJoin([
     this.ws.call('replication.query'),
@@ -66,7 +76,6 @@ export class WidgetResourcesService {
     [], { extra: { history: true, stats: true } },
   ]).pipe(
     toLoadingState(),
-    shareReplay({ bufferSize: 1, refCount: true }),
   );
 
   readonly pools$ = this.ws.callAndSubscribe('pool.query');

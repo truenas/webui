@@ -9,7 +9,6 @@ import { InterfaceStatusIconComponent } from 'app/modules/interface-status-icon/
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
 import { SlotSize } from 'app/pages/dashboard/types/widget.interface';
 import { WidgetNetworkComponent } from 'app/pages/dashboard/widgets/network/widget-network/widget-network.component';
-import { LocaleService } from 'app/services/locale.service';
 import { ThemeService } from 'app/services/theme/theme.service';
 
 describe('WidgetNetworkComponent', () => {
@@ -93,7 +92,6 @@ describe('WidgetNetworkComponent', () => {
           orange: 'orange',
         })),
       }),
-      mockProvider(LocaleService),
     ],
   });
 

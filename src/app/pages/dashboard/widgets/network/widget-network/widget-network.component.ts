@@ -5,13 +5,12 @@ import {
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { ChartData, ChartOptions } from 'chart.js';
+import { ChartData } from 'chart.js';
 import {
   filter, switchMap, throttleTime, map,
 } from 'rxjs';
 import { kb } from 'app/constants/bits.constant';
 import { LinkState, NetworkInterfaceAliasType, linkStateLabelMap } from 'app/enums/network-interface.enum';
-import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
 import { BaseNetworkInterface, NetworkInterfaceAlias } from 'app/interfaces/network-interface.interface';
 import { mapLoadedValue } from 'app/modules/loader/directives/with-loading-state/map-loaded-value.utils';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
@@ -20,7 +19,6 @@ import { SlotSize } from 'app/pages/dashboard/types/widget.interface';
 import { WidgetInterfaceIpSettings } from 'app/pages/dashboard/widgets/network/widget-interface-ip/widget-interface-ip.definition';
 import { fullSizeNetworkWidgetAspectRatio, halfSizeNetworkWidgetAspectRatio } from 'app/pages/dashboard/widgets/network/widget-network/widget-network.const';
 import { getNetworkInterface } from 'app/pages/dashboard/widgets/network/widget-network/widget-network.utils';
-import { LocaleService } from 'app/services/locale.service';
 import { ThemeService } from 'app/services/theme/theme.service';
 
 @UntilDestroy()
@@ -57,7 +55,7 @@ export class WidgetNetworkComponent implements WidgetComponent<WidgetInterfaceIp
 
   protected showChart = computed(() => [SlotSize.Full, SlotSize.Half].includes(this.size()));
   protected isFullSize = computed(() => this.size() === SlotSize.Full);
-  protected networkWidgetAspectRatio = computed(() => {
+  protected aspectRatio = computed(() => {
     return this.isFullSize() ? fullSizeNetworkWidgetAspectRatio : halfSizeNetworkWidgetAspectRatio;
   });
 
@@ -118,78 +116,8 @@ export class WidgetNetworkComponent implements WidgetComponent<WidgetInterfaceIp
     };
   });
 
-  protected chartOptions = computed<ChartOptions<'line'>>(() => {
-    const aspectRatio = this.networkWidgetAspectRatio();
-
-    return {
-      aspectRatio,
-      responsive: true,
-      maintainAspectRatio: true,
-      animation: {
-        duration: 0,
-      },
-      layout: {
-        padding: 0,
-      },
-      plugins: {
-        legend: {
-          align: 'end',
-          labels: {
-            boxWidth: 8,
-            usePointStyle: true,
-          },
-        },
-        tooltip: {
-          callbacks: {
-            label: (tooltipItem) => {
-              let label = tooltipItem.dataset.label || '';
-              if (label) {
-                label += ': ';
-              }
-              if (tooltipItem.parsed.y === 0) {
-                label += 0;
-              } else {
-                label = buildNormalizedFileSize(Math.abs(Number(tooltipItem.parsed.y)), 'b', 10);
-              }
-              return label + '/s';
-            },
-          },
-        },
-      },
-      scales: {
-        x: {
-          type: 'time',
-          time: {
-            unit: 'minute',
-            displayFormats: {
-              minute: 'HH:mm',
-            },
-            tooltipFormat: `${this.localeService.dateFormat} ${this.localeService.timeFormat}`,
-          },
-          ticks: {
-            maxTicksLimit: 3,
-            maxRotation: 0,
-          },
-        },
-        y: {
-          position: 'right',
-          ticks: {
-            maxTicksLimit: 8,
-            callback: (value) => {
-              if (value === 0) {
-                return 0;
-              }
-              return buildNormalizedFileSize(Math.abs(Number(value)), 'b', 10) + '/s';
-            },
-          },
-        },
-      },
-    };
-  });
-
   constructor(
     private resources: WidgetResourcesService,
-    private localeService: LocaleService,
     private translate: TranslateService,
     private theme: ThemeService,
   ) {}

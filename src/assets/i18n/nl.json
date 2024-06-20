@@ -1,5 +1,6 @@
 {
   "": "",
+  "1m Average": "",
   "2FA": "",
   "<a href=\"https://docs.aws.amazon.com/AmazonS3/latest/dev/WebsiteEndpoints.html\"  target=\"_blank\">S3 API endpoint URL</a>. When using AWS, the endpoint  field can be empty to use the default endpoint for the region, and  available buckets are automatically fetched. Refer to the AWS  Documentation for a list of  <a href=\"https://docs.aws.amazon.com/general/latest/gr/rande.html#s3_website_region_endpoints\"  target=\"_blank\">Simple Storage Service Website Endpoints</a>.": "",
   "<i>Yes:</i> Disables the <b>Password</b>  fields. The account cannot  use password-based logins for services. For example, disabling the  password prevents using account credentials to log in to an SMB share  or open an SSH session on the system. The <b>Lock User</b> and  <b>Permit Sudo</b> options are also removed.<br><br>  <i>No:</i> Requires adding a <b>Password</b> to the account. The  account can use the saved <b>Password</b> to authenticate with  password-based services.": "",
@@ -270,6 +271,7 @@
   "Nameserver": "",
   "Netdata": "",
   "Network Configuration": "",
+  "Network I/O": "",
   "Network Interface Card": "",
   "Network Settings": "",
   "Network Stats": "",
