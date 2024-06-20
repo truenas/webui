@@ -1,24 +1,26 @@
-<button
-  *ngIf="enclosure().front_loaded"
-  mat-button
-  [ixTest]="['front', 'enclosure']"
-  (click)="onSideChange(EnclosureSide.Front)"
->{{ 'Front' | translate }}</button>
-<button
-  *ngIf="enclosure().top_loaded"
-  mat-button
-  [ixTest]="['top', 'enclosure']"
-  (click)="onSideChange(EnclosureSide.Top)"
->{{ 'Top' | translate }}</button>
-<button
-  *ngIf="enclosure().rear_slots"
-  mat-button
-  [ixTest]="['rear', 'enclosure']"
-  (click)="onSideChange(EnclosureSide.Rear)"
->{{ 'Rear' | translate }}</button>
-<button
-  *ngIf="enclosure().internal_slots"
-  mat-button
-  [ixTest]="['internal', 'enclosure']"
-  (click)="onSideChange(EnclosureSide.Internal)"
->{{ 'Internal' | translate }}</button>
+<ng-container *ngIf="hasMoreThanOneSide()">
+  <button
+    *ngIf="enclosure().front_loaded"
+    mat-button
+    [ixTest]="['front', 'side']"
+    (click)="onSideChange(EnclosureSide.Front)"
+  >{{ 'Front' | translate }}</button>
+  <button
+    *ngIf="enclosure().top_loaded"
+    mat-button
+    [ixTest]="['top', 'side']"
+    (click)="onSideChange(EnclosureSide.Top)"
+  >{{ 'Top' | translate }}</button>
+  <button
+    *ngIf="enclosure().rear_slots"
+    mat-button
+    [ixTest]="['rear', 'side']"
+    (click)="onSideChange(EnclosureSide.Rear)"
+  >{{ 'Rear' | translate }}</button>
+  <button
+    *ngIf="enclosure().internal_slots"
+    mat-button
+    [ixTest]="['internal', 'side']"
+    (click)="onSideChange(EnclosureSide.Internal)"
+  >{{ 'Internal' | translate }}</button>
+</ng-container>

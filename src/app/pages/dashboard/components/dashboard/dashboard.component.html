@@ -72,6 +72,7 @@
             class="controls"
             [index]="i"
             [totalGroups]="renderedGroups().length"
+            [disableFocusableElements]="!isEditing()"
             (moveUp)="onMoveGroup(i, -1)"
             (moveDown)="onMoveGroup(i, 1)"
             (edit)="onEditGroup(i)"
@@ -80,6 +81,7 @@
 
           <ix-widget-group
             class="group"
+            [disableFocusableElements]="isEditing()"
             [group]="group"
           ></ix-widget-group>
         </div>
