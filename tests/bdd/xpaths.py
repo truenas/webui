@@ -593,7 +593,7 @@ class services:
 
 
 class sharing:
-    title = '//h1[text()="Sharing"]'
+    title = '//h1[text()="Shares"]'
     smb_Panel_Title = '//h3[contains(text(),"Windows (SMB) Shares")]'
     smb_Add_Button = '//*[@data-test="button-smb-share-add"]'
     smb_Service_Status = '//mat-toolbar-row[contains(.,"Windows (SMB) Shares")]//span[contains(text(),"RUNNING")]'
