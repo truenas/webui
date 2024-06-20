@@ -1,6 +1,6 @@
-.enclosure-selector {
-  background-color: var(--bg2);
+:host {
   color: var(--fg2);
+  display: block;
   height: 100%;
   overflow: auto;
   position: relative;
@@ -8,15 +8,21 @@
 }
 
 .enclosure {
-  border-bottom: solid 1px #333;
-  border-left: solid 4px rgba(0, 0, 0, 0);
+  background-color: var(--bg2);
+  border: 1px solid var(--lines);
+  border-bottom-width: 0;
+  border-left: solid 4px transparent;
   cursor: pointer;
-  min-height: 164px;
-  padding: 12px 0 24px;
+  display: block;
+  padding: 12px 0 16px;
   text-align: center;
 
   &:hover {
-    background-color: rgba(255, 255, 255, 0.1);
+    background-color: var(--alt-bg1);
+  }
+
+  &:last-child {
+    border-bottom-width: 1px;
   }
 
   &.active {
@@ -25,9 +31,5 @@
 
   .enclosure-image {
     margin: 10px 16px;
-  }
-
-  > div {
-    margin-bottom: 16px;
   }
 }

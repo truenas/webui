@@ -85,7 +85,6 @@
             (delete)="removeNetworkControl(i)"
           >
             <ix-ip-input-with-netmask
-              class="list-item"
               [required]="true"
               [formControlName]="i"
               [label]="'Network' | translate"
@@ -106,7 +105,6 @@
             (delete)="removeHostControl(i)"
           >
             <ix-input
-              class="list-item"
               [required]="true"
               [formControlName]="i"
               [label]="'Authorized Hosts and IP addresses' | translate"

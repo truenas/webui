@@ -148,9 +148,10 @@ export const helptextCloudSync = {
   bwlimit_placeholder: T('Bandwidth Limit'),
   bwlimit_tooltip: T('A single bandwidth limit or bandwidth limit schedule in rclone format.\
  Separate entries by pressing <code>Enter</code>. Example: \
- <samp>08:00,512 12:00,10MB 13:00,512 18:00,30MB 23:00,off</samp>.\
- Units can be specified with a suffix of <samp>b</samp>,\
- <samp>k</samp> (default), <samp>M</samp>, or <samp>G</samp>.\
+ <samp>08:00,512</samp> <samp>12:00,10MB</samp> <samp>13:00,512</samp> \
+ <samp>18:00,30MB</samp> <samp>23:00,off</samp>.\
+ Units can be specified with a suffix of <samp>b</samp> (default),\
+ <samp>k</samp>, <samp>M</samp>, or <samp>G</samp>.\
  See <a href="https://rclone.org/docs/#bwlimit-bandwidth-spec"\
  target="_blank">rclone --bwlimit</a>.'),
 

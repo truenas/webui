@@ -46,7 +46,7 @@ export class RequiresRolesDirective extends HasAccessDirective {
   }
 
   constructor(
-    protected override templateRef: TemplateRef<unknown>,
+    protected override templateRef: TemplateRef<HTMLElement>,
     protected override viewContainerRef: ViewContainerRef,
     private authService: AuthService,
   ) {

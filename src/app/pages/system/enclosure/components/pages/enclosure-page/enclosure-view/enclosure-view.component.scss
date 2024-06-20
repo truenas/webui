@@ -1,5 +1,4 @@
 :host {
-  background: var(--bg1);
   column-gap: 5px;
   display: flex;
   height: 100%;
@@ -16,7 +15,7 @@
   display: flex;
   flex-direction: column;
   flex-grow: 1;
-  margin-bottom: 15px;
+  margin-bottom: 5%;
   margin-top: 15px;
   row-gap: 12px;
 
@@ -24,6 +23,7 @@
     align-items: center;
     display: flex;
     flex: 1;
+    margin-top: calc(5% + 35px);
     overflow: hidden;
 
     .enclosure-image {

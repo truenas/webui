@@ -7,6 +7,7 @@ import { MatDialogClose, MatDialogTitle } from '@angular/material/dialog';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { MatTooltip } from '@angular/material/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
+import { CoreComponents } from 'app/core/core-components.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { IxFileSizeModule } from 'app/modules/ix-file-size/ix-file-size.module';
@@ -30,7 +31,7 @@ import {
   ElementsPageComponent,
 } from 'app/pages/system/enclosure/components/pages/elements-page/elements-page.component';
 import { EnclosurePageComponent } from 'app/pages/system/enclosure/components/pages/enclosure-page/enclosure-page.component';
-import { IxEnclosureSelectorComponent } from 'app/pages/system/enclosure/components/pages/enclosure-page/enclosure-selector/enclosure-selector.component';
+import { EnclosureSelectorComponent } from 'app/pages/system/enclosure/components/pages/enclosure-page/enclosure-selector/enclosure-selector.component';
 import {
   EnclosureSideComponent,
 } from 'app/pages/system/enclosure/components/pages/enclosure-page/enclosure-side/enclosure-side.component';
@@ -77,12 +78,13 @@ import { SvgCacheService } from 'app/pages/system/enclosure/services/svg-cache.s
     MatDialogClose,
     MatDialogTitle,
     EmptyComponent,
+    CoreComponents,
   ],
   declarations: [
     EnclosureDashboardComponent,
     DisksOverviewComponent,
     DiskTopologyDescriptionComponent,
-    IxEnclosureSelectorComponent,
+    EnclosureSelectorComponent,
     EnclosurePageComponent,
     JbofListComponent,
     SasExpanderStatusViewComponent,
