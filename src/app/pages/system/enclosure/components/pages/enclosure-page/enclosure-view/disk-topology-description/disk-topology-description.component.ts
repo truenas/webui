@@ -1,4 +1,7 @@
-import { ChangeDetectionStrategy, Component, input } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, input,
+} from '@angular/core';
+import { vdevTypeLabels } from 'app/enums/v-dev-type.enum';
 import { DashboardEnclosureSlot } from 'app/interfaces/enclosure.interface';
 
 @Component({
@@ -9,4 +12,6 @@ import { DashboardEnclosureSlot } from 'app/interfaces/enclosure.interface';
 })
 export class DiskTopologyDescriptionComponent {
   selectedSlot = input.required<DashboardEnclosureSlot>();
+
+  protected readonly vdevTypeLabels = vdevTypeLabels;
 }
