@@ -9,6 +9,6 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MissingAccessWrapperComponent {
-  @Input() template: TemplateRef<unknown>;
+  @Input() template: TemplateRef<HTMLElement>;
   @Input() class: string;
 }

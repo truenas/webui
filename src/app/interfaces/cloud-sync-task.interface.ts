@@ -16,6 +16,11 @@ export interface BwLimit {
   bandwidth: number;
 }
 
+export interface BwLimitUpdate {
+  time: string;
+  bandwidth: string;
+}
+
 export interface CloudSyncTask {
   args: string;
   attributes: Record<string, string | number | boolean>;
@@ -46,7 +51,7 @@ export interface CloudSyncTask {
 
 export interface CloudSyncTaskUpdate extends Omit<CloudSyncTask, 'id' | 'job' | 'locked' | 'credentials' | 'encryption_salt' | 'args' | 'filename_encryption' | 'bwlimit'> {
   credentials: number;
-  bwlimit: { time: string; bandwidth: string }[];
+  bwlimit: BwLimitUpdate[];
 }
 
 export interface CloudSyncTaskUi extends CloudSyncTask {

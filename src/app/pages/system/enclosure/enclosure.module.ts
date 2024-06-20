@@ -30,7 +30,7 @@ import {
   ElementsPageComponent,
 } from 'app/pages/system/enclosure/components/pages/elements-page/elements-page.component';
 import { EnclosurePageComponent } from 'app/pages/system/enclosure/components/pages/enclosure-page/enclosure-page.component';
-import { IxEnclosureSelectorComponent } from 'app/pages/system/enclosure/components/pages/enclosure-page/enclosure-selector/enclosure-selector.component';
+import { EnclosureSelectorComponent } from 'app/pages/system/enclosure/components/pages/enclosure-page/enclosure-selector/enclosure-selector.component';
 import {
   EnclosureSideComponent,
 } from 'app/pages/system/enclosure/components/pages/enclosure-page/enclosure-side/enclosure-side.component';
@@ -82,7 +82,7 @@ import { SvgCacheService } from 'app/pages/system/enclosure/services/svg-cache.s
     EnclosureDashboardComponent,
     DisksOverviewComponent,
     DiskTopologyDescriptionComponent,
-    IxEnclosureSelectorComponent,
+    EnclosureSelectorComponent,
     EnclosurePageComponent,
     JbofListComponent,
     SasExpanderStatusViewComponent,
