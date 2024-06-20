@@ -525,7 +525,7 @@ export class CloudsyncFormComponent implements OnInit {
       encryption: this.editingTask.encryption,
       bwlimit: this.editingTask.bwlimit.map((bwlimit) => {
         return bwlimit.bandwidth
-          ? `${bwlimit.time}, ${buildNormalizedFileSize(bwlimit.bandwidth, 'b', 10)}`
+          ? `${bwlimit.time}, ${buildNormalizedFileSize(bwlimit.bandwidth, 'B', 2)}/s`
           : `${bwlimit.time}, off`;
       }),
     });
