@@ -19,6 +19,7 @@
           <h3 class="title" [innerHTML]="processHierarchy(result.hierarchy, searchTerm)"></h3>
           <ix-icon
             *ngIf="result.section === GlobalSearchSection.RecentSearches"
+            role="button"
             name="close"
             class="icon"
             color="accent"
