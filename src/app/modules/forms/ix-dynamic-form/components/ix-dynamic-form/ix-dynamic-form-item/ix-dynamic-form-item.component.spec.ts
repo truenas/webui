@@ -29,6 +29,7 @@ import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label
 import { IxListItemComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list-item/ix-list-item.component';
 import { IxListComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
+import { CastPipe } from 'app/modules/pipes/cast/cast.pipe';
 
 const dynamicForm = new FormGroup({
   dict: new FormGroup({
@@ -150,6 +151,7 @@ describe('IxDynamicFormItemComponent', () => {
       MockComponent(IxCheckboxComponent),
       MockComponent(IxIpInputWithNetmaskComponent),
       MockComponent(IxExplorerComponent),
+      CastPipe,
     ],
   });
 
