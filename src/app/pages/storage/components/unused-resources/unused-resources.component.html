@@ -1,7 +1,18 @@
-<div *ngIf="unusedDisks.length" class="cards">
+<div class="cards">
   <ix-unused-disk-card
+    *ngIf="noPoolsDisks.length"
     class="unused-resources"
+    [title]="'Unused Disks' | translate"
     [pools]="pools"
-    [unusedDisks]="unusedDisks"
+    [disks]="noPoolsDisks"
+    (addToStorage)="addNoPoolDisksToStorage()"
+  ></ix-unused-disk-card>
+  <ix-unused-disk-card
+    *ngIf="exportedPoolsDisks.length"
+    class="unused-resources"
+    [title]="'Disks with exported pools' | translate"
+    [pools]="pools"
+    [disks]="exportedPoolsDisks"
+    (addToStorage)="addExportedPoolDisksToStorage()"
   ></ix-unused-disk-card>
 </div>

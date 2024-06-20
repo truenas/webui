@@ -3,13 +3,13 @@
 </h1>
 <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
   <ix-fieldset>
-    <ix-select
-      [formControlName]="dev.fcName"
-      [label]="dev.label | translate"
-      [tooltip]="dev.tooltip | translate"
-      [options]="dev.options"
+    <ix-unused-disk-select
+      formControlName="dev"
+      valueField="name"
+      [label]="helptextSystemBootenv.dev_placeholder | translate"
+      [tooltip]="helptextSystemBootenv.dev_tooltip"
       [required]="true"
-    ></ix-select>
+    ></ix-unused-disk-select>
     <ix-checkbox
       [formControlName]="expand.fcName"
       [label]="expand.label | translate"
@@ -34,3 +34,4 @@
     </button>
   </ix-form-actions>
 </form>
+<ix-fake-progress-bar *ngIf="isFormLoading"></ix-fake-progress-bar>

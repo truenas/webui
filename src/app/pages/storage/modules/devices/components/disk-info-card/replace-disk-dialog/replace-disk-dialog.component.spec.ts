@@ -33,9 +33,12 @@ describe('ReplaceDiskDialogComponent', () => {
     ],
     providers: [
       mockWebSocket([
-        mockCall('disk.get_unused', [
-          { devname: 'sdb', identifier: '{serial_lunid}BBBBB1', size: 10 * GiB },
-        ] as DetailsDisk[]),
+        mockCall('disk.details', {
+          unused: [
+            { devname: 'sdb', identifier: '{serial_lunid}BBBBB1', size: 10 * GiB },
+          ] as DetailsDisk[],
+          used: [],
+        }),
         mockJob('pool.replace', fakeSuccessfulJob()),
       ]),
       mockProvider(MatDialogRef),

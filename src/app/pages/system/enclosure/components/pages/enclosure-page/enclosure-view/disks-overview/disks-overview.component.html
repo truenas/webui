@@ -1,0 +1,84 @@
+<div class="container">
+  <div class="disk-details-header">
+    <span *ngIf="!selectedSlot()">{{ 'Disks Overview' | translate }}</span>
+    <ng-container *ngIf="selectedSlot()">
+      <button
+        mat-mini-fab
+        color="primary"
+        ixTest="close-details"
+        (click)="closeDetails()"
+      >
+        <ix-icon name="chevron_left"></ix-icon>
+      </button>
+      <span>
+        {{ 'Disk Details for {disk}' | translate : { disk: diskName } }}
+      </span>
+    </ng-container>
+  </div>
+  <div *ngIf="selectedSlot(); else overview" class="disk-details-container">
+    <div class="drive">
+      <ix-enclosure-disk [data]="{ name: diskName, type: selectedSlot().type }"></ix-enclosure-disk>
+
+      <div class="capacity">{{ selectedSlot().size | ixFileSize }}</div>
+      <div class="disk-actions">
+        <button
+          *ngIf="selectedSlot().supports_identify_light"
+          mat-button
+          color="primary"
+          ixTest="identify-drive"
+        >
+          {{ 'Identify Drive' | translate }}
+        </button>
+      </div>
+    </div>
+    <div class="details">
+      <div class="details-grid">
+        <div class="detail">
+          <div class="label">{{ 'Pool' | translate }}</div>
+          <div class="value">
+            {{ selectedSlot().pool_info?.pool_name || ('Disk not attached to any pools.' | translate) }}
+          </div>
+        </div>
+        <div class="detail">
+          <div class="label">{{ 'Model' | translate }}</div>
+          <div class="value">{{ selectedSlot().model || ('N/A' | translate) }}</div>
+        </div>
+        <div class="detail">
+          <div class="label">{{ 'Serial' | translate }}</div>
+          <div class="value">{{ selectedSlot().serial || ('N/A' | translate) }}</div>
+        </div>
+        <div class="detail">
+          <div class="label">{{ 'Status' | translate }}</div>
+          <div class="value">{{ selectedSlot().pool_info?.disk_status || ('N/A' | translate) }}</div>
+        </div>
+        <div class="detail">
+          <div class="label">{{ 'Rotation Rate' | translate }}</div>
+          <div class="value">
+            {{ selectedSlot().rotationrate ? ('{n} RPM' | translate: { n: selectedSlot().rotationrate }) : ('N/A' | translate) }}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <ng-template #overview>
+    <div class="disk-overview">
+      <div
+        *ngFor="let view of overviewInfo()"
+        class="tile"
+        [class.active]="selectedView() === view.name"
+      >
+        <div class="primary-number">{{ view.value }}</div>
+        <div class="title">{{ view.title }}</div>
+        <div class="subtitle">{{ view.subtitle }}</div>
+        <button
+          mat-button
+          color="default"
+          [ixTest]="['show', view.name]"
+          (click)="setCurrentView(view.name)"
+        >
+          {{ view.buttonLabel }}
+        </button>
+      </div>
+    </div>
+  </ng-template>
+</div>

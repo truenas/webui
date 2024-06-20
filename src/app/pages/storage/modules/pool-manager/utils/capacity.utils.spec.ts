@@ -14,7 +14,7 @@ describe('categoryCapacity', () => {
       ],
     } as PoolManagerTopologyCategory;
 
-    expect(categoryCapacity(category, 2 * GiB)).toEqual(5 * GiB);
+    expect(categoryCapacity(category)).toEqual(11 * GiB);
   });
 });
 
@@ -31,69 +31,61 @@ describe('vdevCapacity', () => {
     expect(vdevCapacity({
       vdev,
       layout: CreateVdevLayout.Stripe,
-      swapOnDrive: 2 * GiB,
-    })).toEqual(16 * GiB);
+    })).toEqual(26 * GiB);
   });
 
   it('mirror layout', () => {
     expect(vdevCapacity({
       vdev,
       layout: CreateVdevLayout.Mirror,
-      swapOnDrive: 2 * GiB,
-    })).toEqual(GiB);
+    })).toEqual(3 * GiB);
   });
 
   it('raidz1 layout', () => {
     expect(vdevCapacity({
       vdev,
       layout: CreateVdevLayout.Raidz1,
-      swapOnDrive: 2 * GiB,
-    })).toEqual(4 * GiB);
+    })).toEqual(12 * GiB);
   });
 
   it('raidz2 layout', () => {
     expect(vdevCapacity({
       vdev,
       layout: CreateVdevLayout.Raidz2,
-      swapOnDrive: 2 * GiB,
-    })).toEqual(3 * GiB);
+    })).toEqual(9 * GiB);
   });
 
   it('raidz3 layout', () => {
     expect(vdevCapacity({
       vdev,
       layout: CreateVdevLayout.Raidz3,
-      swapOnDrive: 2 * GiB,
-    })).toEqual(2 * GiB);
+    })).toEqual(6 * GiB);
   });
 
   it('draid1 layout', () => {
     expect(vdevCapacity({
       vdev,
       layout: CreateVdevLayout.Draid1,
-      swapOnDrive: 2 * GiB,
       draidDataDisks: 2,
       draidSpareDisks: 1,
-    }) / GiB).toBeCloseTo(2.67);
+    }) / GiB).toBeCloseTo(8);
   });
 
   it('draid2 layout', () => {
     expect(vdevCapacity({
       vdev,
       layout: CreateVdevLayout.Draid2,
-      swapOnDrive: 2 * GiB,
       draidDataDisks: 2,
       draidSpareDisks: 1,
-    }) / GiB).toBeCloseTo(2);
+    }) / GiB).toBeCloseTo(6);
   });
 
   it('draid3 layout', () => {
     expect(vdevCapacity({
       vdev,
       layout: CreateVdevLayout.Draid3,
-      swapOnDrive: 2 * GiB,
       draidDataDisks: 2,
       draidSpareDisks: 1,
-    }) / GiB).toBeCloseTo(1.6);
+    }) / GiB).toBeCloseTo(4.8);
   });
 });

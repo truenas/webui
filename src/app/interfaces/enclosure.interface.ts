@@ -18,8 +18,10 @@ export interface Enclosure {
   pci: string;
   rackmount: boolean;
   top_loaded: boolean;
+  front_loaded: boolean;
   front_slots: number;
   rear_slots: number;
+  top_slots: number;
   internal_slots: number;
   elements: EnclosureElements;
   label: string;
@@ -33,6 +35,10 @@ export interface EnclosureSlot {
   dev: string;
   supports_identify_light: boolean;
   original: EnclosureSlotMetadata;
+  is_front: boolean;
+  is_top: boolean;
+  is_rear: boolean;
+  is_internal: boolean;
 }
 
 export interface EnclosureSlotMetadata {
@@ -61,6 +67,9 @@ export type DashboardEnclosure = Overwrite<Enclosure, {
 }>;
 
 export interface DashboardEnclosureSlot {
+  /**
+   * `drive_bay_number` is not an index and starts from 1
+   */
   drive_bay_number?: number;
   descriptor: string;
   status: string;
@@ -68,6 +77,10 @@ export interface DashboardEnclosureSlot {
   supports_identify_light?: boolean;
   size?: number;
   model?: string;
+  is_top: boolean;
+  is_front: boolean;
+  is_rear: boolean;
+  is_internal: boolean;
   serial?: string;
   type?: DiskType;
   rotationrate?: number;

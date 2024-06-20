@@ -3,6 +3,7 @@ import { backupTasksWidget } from 'app/pages/dashboard/widgets/backup/widget-bac
 import { cpuWidget } from 'app/pages/dashboard/widgets/cpu/widget-cpu/widget-cpu.definition';
 import { cpuTemperatureBarWidget } from 'app/pages/dashboard/widgets/cpu/widget-cpu-temperature-bar/widget-cpu-temperature-bar.definition';
 import { cpuUsageGaugeWidget } from 'app/pages/dashboard/widgets/cpu/widget-cpu-usage-gauge/widget-cpu-usage-gauge.definition';
+import { cpuUsageRecentWidget } from 'app/pages/dashboard/widgets/cpu/widget-cpu-usage-recent/widget-cpu-usage-recent.definition';
 import { cpuUsageBarWidget } from 'app/pages/dashboard/widgets/cpu/widget-cpu-usege-bar/widget-cpu-usage-bar.definition';
 import { arbitraryTextWidget } from 'app/pages/dashboard/widgets/custom/arbitrary-text/widget-arbitrary-text.definition';
 import { helpWidget } from 'app/pages/dashboard/widgets/help/widget-help/widget-help.definition';
@@ -28,6 +29,7 @@ export const widgetComponents = [
   backupTasksWidget.component,
   cpuWidget.component,
   cpuUsageGaugeWidget.component,
+  cpuUsageRecentWidget.component,
   cpuUsageBarWidget.component,
   cpuTemperatureBarWidget.component,
   storageWidget.component,
@@ -53,6 +55,7 @@ export const widgetRegistry = {
   [WidgetType.BackupTasks]: backupTasksWidget,
   [WidgetType.Cpu]: cpuWidget,
   [WidgetType.CpuUsageGauge]: cpuUsageGaugeWidget,
+  [WidgetType.CpuUsageRecentWidget]: cpuUsageRecentWidget,
   [WidgetType.CpuUsageBar]: cpuUsageBarWidget,
   [WidgetType.CpuTemperatureBar]: cpuTemperatureBarWidget,
   [WidgetType.Storage]: storageWidget,

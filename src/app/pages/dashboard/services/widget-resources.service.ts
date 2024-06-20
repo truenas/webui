@@ -76,6 +76,20 @@ export class WidgetResourcesService {
     }),
   );
 
+  cpuUpdate(minutes = 1): Observable<ReportingData[]> {
+    return this.serverTime$.pipe(
+      switchMap((serverTime) => {
+        return this.ws.call('reporting.netdata_get_data', [[{
+          name: 'cpu',
+        }], {
+          end: Math.floor(serverTime.getTime() / 1000),
+          start: Math.floor(sub(serverTime, { minutes }).getTime() / 1000),
+        }]);
+      }),
+      shareReplay({ bufferSize: 1, refCount: true }),
+    );
+  }
+
   networkInterfaceUpdate(interfaceName: string): Observable<ReportingData[]> {
     return this.serverTime$.pipe(
       switchMap((serverTime) => {

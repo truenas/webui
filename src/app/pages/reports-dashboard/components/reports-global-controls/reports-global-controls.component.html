@@ -50,16 +50,7 @@
         <div *ngIf="tab.value === 'network'" [ixUiSearch]="searchableElements.elements.network">
           <ng-container *ngTemplateOutlet="matMenuItem; context: { tab }"></ng-container>
         </div>
-        <div *ngIf="tab.value === 'nfs'" [ixUiSearch]="searchableElements.elements.nfs">
-          <ng-container *ngTemplateOutlet="matMenuItem; context: { tab }"></ng-container>
-        </div>
-        <div *ngIf="tab.value === 'partition'" [ixUiSearch]="searchableElements.elements.partition">
-          <ng-container *ngTemplateOutlet="matMenuItem; context: { tab }"></ng-container>
-        </div>
         <div *ngIf="tab.value === 'system'" [ixUiSearch]="searchableElements.elements.system">
-          <ng-container *ngTemplateOutlet="matMenuItem; context: { tab }"></ng-container>
-        </div>
-        <div *ngIf="tab.value === 'target'" [ixUiSearch]="searchableElements.elements.target">
           <ng-container *ngTemplateOutlet="matMenuItem; context: { tab }"></ng-container>
         </div>
         <div *ngIf="tab.value === 'ups'" [ixUiSearch]="searchableElements.elements.ups">

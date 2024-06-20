@@ -6,10 +6,8 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { of } from 'rxjs';
-import { JobState } from 'app/enums/job-state.enum';
+import { switchMap } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
-import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
 import { helptextSystemBootenv } from 'app/helptext/system/boot-env';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -25,6 +23,7 @@ import { WebSocketService } from 'app/services/ws.service';
 })
 export class BootPoolAttachDialogComponent implements OnInit {
   isFormLoading = false;
+  protected helptextSystemBootenv = helptextSystemBootenv;
 
   form = this.fb.group({
     dev: ['', Validators.required],
@@ -32,13 +31,6 @@ export class BootPoolAttachDialogComponent implements OnInit {
   });
 
   unusedDisks: DetailsDisk[] = [];
-
-  dev = {
-    fcName: 'dev' as const,
-    label: this.translate.instant(helptextSystemBootenv.dev_placeholder),
-    tooltip: this.translate.instant(helptextSystemBootenv.dev_tooltip),
-    options: of([]),
-  };
 
   expand = {
     fcName: 'expand',
@@ -59,31 +51,11 @@ export class BootPoolAttachDialogComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.loadUnusedDisks();
     this.setupWarningForExportedPools();
   }
 
-  loadUnusedDisks(): void {
-    this.ws.call('disk.get_unused').pipe(untilDestroyed(this)).subscribe((unusedDisks) => {
-      this.unusedDisks = unusedDisks;
-      const unusedDisksOptions = unusedDisks.map((disk) => {
-        const size = buildNormalizedFileSize(disk.size);
-        let label = `${disk.name} - ${size}`;
-        if (disk.exported_zpool) {
-          label += ` (${disk.exported_zpool})`;
-        }
-
-        return {
-          label,
-          value: disk.name,
-        };
-      });
-      this.dev.options = of(unusedDisksOptions);
-    });
-  }
-
   setupWarningForExportedPools(): void {
-    this.form.controls[this.dev.fcName].valueChanges.pipe(untilDestroyed(this)).subscribe(
+    this.form.controls.dev.valueChanges.pipe(untilDestroyed(this)).subscribe(
       this.warnForExportedPools.bind(this),
     );
   }
@@ -106,22 +78,23 @@ export class BootPoolAttachDialogComponent implements OnInit {
     this.isFormLoading = true;
 
     const { dev, expand } = this.form.value;
-    this.ws.job('boot.attach', [dev, { expand }]).pipe(untilDestroyed(this)).subscribe({
-      next: (job) => {
-        if (job.state !== JobState.Success) {
-          return;
-        }
-
+    this.dialogService.jobDialog(
+      this.ws.job('boot.attach', [dev, { expand }]),
+      { title: this.translate.instant('Attaching Disk to Boot Pool') },
+    ).afterClosed().pipe(
+      switchMap(() => {
         this.isFormLoading = false;
         this.cdr.markForCheck();
-        this.dialogService.info(
+        return this.dialogService.info(
           helptextSystemBootenv.attach_dialog.title,
           `<i>${dev}</i> ${helptextSystemBootenv.attach_dialog.message}`,
           true,
-        )
-          .pipe(untilDestroyed(this)).subscribe(() => {
-            this.dialogRef.close(true);
-          });
+        );
+      }),
+      untilDestroyed(this),
+    ).subscribe({
+      next: () => {
+        this.dialogRef.close(true);
       },
       error: (error: unknown) => {
         this.isFormLoading = false;

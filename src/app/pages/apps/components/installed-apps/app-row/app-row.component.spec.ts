@@ -8,7 +8,6 @@ import { ChartRelease, ChartReleaseStats } from 'app/interfaces/chart-release.in
 import { AppRowComponent } from 'app/pages/apps/components/installed-apps/app-row/app-row.component';
 import { AppStatusCellComponent } from 'app/pages/apps/components/installed-apps/app-status-cell/app-status-cell.component';
 import { AppStatus } from 'app/pages/apps/enum/app-status.enum';
-import { AppCatalogPipe } from 'app/pages/apps/utils/app-catalog.pipe';
 
 describe('AppRowComponent', () => {
   let spectator: Spectator<AppRowComponent>;
@@ -32,7 +31,7 @@ describe('AppRowComponent', () => {
 
   const createComponent = createComponentFactory({
     component: AppRowComponent,
-    imports: [ImgFallbackModule, AppCatalogPipe],
+    imports: [ImgFallbackModule],
     declarations: [
       MockComponents(AppStatusCellComponent),
     ],
@@ -50,7 +49,6 @@ describe('AppRowComponent', () => {
   it('shows app name, logo and catalog', () => {
     expect(spectator.query('.app-logo img')).toHaveAttribute('src', 'https://image/');
     expect(spectator.query('.app-name')).toHaveText('app_name');
-    expect(spectator.query('.app-catalog')).toHaveText('TrueNAS');
   });
 
   it('shows app status', () => {

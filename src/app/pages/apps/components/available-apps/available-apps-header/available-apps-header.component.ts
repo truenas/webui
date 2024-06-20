@@ -8,10 +8,9 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import {
   BehaviorSubject,
-  debounceTime, distinctUntilChanged, filter, map, Observable, of, take, tap,
+  debounceTime, distinctUntilChanged, filter, map, Observable, of, take,
 } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
-import { singleArrayToOptions } from 'app/helpers/operators/options.operators';
 import { helptextApps } from 'app/helptext/apps/apps';
 import { AppsFiltersSort } from 'app/interfaces/apps-filters-values.interface';
 import { Option } from 'app/interfaces/option.interface';
@@ -34,7 +33,6 @@ export class AvailableAppsHeaderComponent implements OnInit, AfterViewInit {
   protected readonly requiredRoles = [Role.AppsWrite];
 
   form = this.fb.group({
-    catalogs: [[] as string[]],
     sort: [null as AppsFiltersSort],
     categories: [[] as string[]],
   });
@@ -45,21 +43,11 @@ export class AvailableAppsHeaderComponent implements OnInit, AfterViewInit {
   availableApps$ = this.applicationsStore.availableApps$;
   areLoaded$ = new BehaviorSubject(false);
   installedApps$ = this.installedAppsStore.installedApps$;
-  catalogs$ = this.applicationsStore.catalogs$.pipe(
-    tap((catalogs) => {
-      if (this.isFirstLoad) {
-        this.isFirstLoad = false;
-        this.form.controls.catalogs.patchValue(catalogs);
-      }
-    }),
-  );
   isFilterApplied$ = this.appsFilterStore.isFilterApplied$;
   appsCategories: string[] = [];
-  catalogsOptions$ = this.catalogs$.pipe(singleArrayToOptions());
   sortOptions$: Observable<Option[]> = of([
     { label: this.translate.instant('Category'), value: null },
     { label: this.translate.instant('App Name'), value: AppsFiltersSort.Name },
-    { label: this.translate.instant('Catalog Name'), value: AppsFiltersSort.Catalog },
     { label: this.translate.instant('Updated Date'), value: AppsFiltersSort.LastUpdate },
   ]);
   categoriesProvider$: ChipsProvider = (query: string) => this.applicationsStore.appsCategories$.pipe(
@@ -94,9 +82,6 @@ export class AvailableAppsHeaderComponent implements OnInit, AfterViewInit {
       next: (filterValues) => {
         if (filterValues.categories?.length) {
           this.form.controls.categories.setValue(filterValues.categories, { emitEvent: false });
-        }
-        if (filterValues.catalogs?.length) {
-          this.form.controls.catalogs.setValue(filterValues.catalogs, { emitEvent: false });
         }
         if (filterValues.sort) {
           this.form.controls.sort.setValue(filterValues.sort, { emitEvent: false });
@@ -157,7 +142,6 @@ export class AvailableAppsHeaderComponent implements OnInit, AfterViewInit {
 
   applyFilters(): void {
     this.appsFilterStore.applyFilters({
-      catalogs: this.form.value.catalogs || [],
       sort: this.form.value.sort || null,
       categories: (this.form.value.categories || this.appsCategories),
     });
