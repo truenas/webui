@@ -146,6 +146,10 @@ export class IxSlideIn2Component implements OnInit, OnDestroy {
               this.componentInfo.close$.next(response);
               this.componentInfo.close$.complete();
               this.closeSlideIn();
+
+              if (response) {
+                this.chainedSlideInService.setLatestCloseResponse(response);
+              }
             },
             swap: (component: Type<unknown>, wide = false, incomingComponentData?: unknown) => {
               this.chainedSlideInService.swapComponent({

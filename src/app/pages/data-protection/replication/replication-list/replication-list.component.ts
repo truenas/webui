@@ -5,7 +5,9 @@ import {
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { filter, switchMap, tap } from 'rxjs';
+import {
+  filter, switchMap, tap,
+} from 'rxjs';
 import { JobState } from 'app/enums/job-state.enum';
 import { Role } from 'app/enums/role.enum';
 import { formatDistanceToNowShortened } from 'app/helpers/format-distance-to-now-shortened';
@@ -212,22 +214,14 @@ export class ReplicationListComponent implements OnInit {
 
   openForm(row?: ReplicationTask): void {
     if (row) {
-      this.chainedSlideInService.open(ReplicationFormComponent, true, row)
-        .pipe(
-          filter((response) => !!response.response),
-          untilDestroyed(this),
-        ).subscribe({
-          next: () => {
-            this.getReplicationTasks();
-          },
-        });
+      this.chainedSlideInService.open(ReplicationFormComponent, true, row);
     } else {
-      this.chainedSlideInService.open(ReplicationWizardComponent, true)
-        .pipe(
-          filter((response) => !!response.response),
-          untilDestroyed(this),
-        ).subscribe(() => this.getReplicationTasks());
+      this.chainedSlideInService.open(ReplicationWizardComponent, true);
     }
+
+    this.chainedSlideInService.getLatestCloseResponse().pipe(untilDestroyed(this)).subscribe(() => {
+      this.getReplicationTasks();
+    });
   }
 
   doDelete(row: ReplicationTask): void {

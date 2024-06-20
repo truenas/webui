@@ -168,11 +168,11 @@ export class ReplicationTaskCardComponent implements OnInit {
   }
 
   addReplicationTask(): void {
-    const closer$ = this.chainedSlideInService.open(ReplicationWizardComponent, true);
-    closer$.pipe(
-      filter((response) => !!response.response),
-      untilDestroyed(this),
-    ).subscribe(() => this.getReplicationTasks());
+    this.chainedSlideInService.open(ReplicationWizardComponent, true);
+
+    this.chainedSlideInService.getLatestCloseResponse().pipe(untilDestroyed(this)).subscribe(() => {
+      this.getReplicationTasks();
+    });
   }
 
   editReplicationTask(row: ReplicationTask): void {

@@ -3,7 +3,7 @@ import { Injectable, Type } from '@angular/core';
 import { ComponentStore } from '@ngrx/component-store';
 import { UUID } from 'angular2-uuid';
 import {
-  Observable, Subject, take, tap, timer,
+  Observable, Subject, filter, first, take, tap, timer,
 } from 'rxjs';
 import { FocusService } from 'app/services/focus.service';
 
@@ -45,6 +45,9 @@ export class IxChainedSlideInService extends ComponentStore<ChainedSlideInState>
   readonly components$: Observable<ChainedComponentSerialized[]> = this.select(
     (state) => this.mapToSerializedArray(state.components),
   );
+
+  // Added to handle latest response for cases where we swap component, which ends previous slide in subscription
+  private latestCloseResponse$ = new Subject<ChainedComponentResponse>();
 
   readonly isTopComponentWide$ = this.select((state) => {
     return !!(this.mapToSerializedArray(state.components).pop()?.wide);
@@ -136,6 +139,17 @@ export class IxChainedSlideInService extends ComponentStore<ChainedSlideInState>
         data: componentInfo.data,
       } as ChainedComponentSerialized;
     });
+  }
+
+  setLatestCloseResponse(response: ChainedComponentResponse): void {
+    this.latestCloseResponse$.next(response);
+  }
+
+  getLatestCloseResponse(): Observable<ChainedComponentResponse> {
+    return this.latestCloseResponse$.pipe(
+      filter((response) => !!response.response),
+      first(),
+    );
   }
 
   private focusOnTheCloseButton(): void {

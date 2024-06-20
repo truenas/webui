@@ -131,7 +131,7 @@ export class CloudSyncTaskCardComponent implements OnInit {
     private errorHandler: ErrorHandlerService,
     private ws: WebSocketService,
     private dialogService: DialogService,
-    private slideIn: IxChainedSlideInService,
+    private chainedSlideInService: IxChainedSlideInService,
     private cdr: ChangeDetectorRef,
     private taskService: TaskService,
     private store$: Store<AppState>,
@@ -175,18 +175,15 @@ export class CloudSyncTaskCardComponent implements OnInit {
   }
 
   onAdd(): void {
-    this.slideIn.open(CloudSyncWizardComponent, true).pipe(
-      filter((response) => !!response.response),
-      untilDestroyed(this),
-    ).subscribe({
-      next: () => {
-        this.getCloudSyncTasks();
-      },
+    this.chainedSlideInService.open(CloudSyncWizardComponent, true);
+
+    this.chainedSlideInService.getLatestCloseResponse().pipe(untilDestroyed(this)).subscribe(() => {
+      this.getCloudSyncTasks();
     });
   }
 
   onEdit(row?: CloudSyncTaskUi): void {
-    const closer$ = this.slideIn.open(CloudSyncFormComponent, true, row);
+    const closer$ = this.chainedSlideInService.open(CloudSyncFormComponent, true, row);
     closer$.pipe(
       filter((response) => !!response.response),
       untilDestroyed(this),

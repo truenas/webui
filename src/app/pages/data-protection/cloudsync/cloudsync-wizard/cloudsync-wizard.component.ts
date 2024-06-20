@@ -8,7 +8,7 @@ import {
 } from 'rxjs';
 import { cloudSyncProviderNameMap } from 'app/enums/cloudsync-provider.enum';
 import { Role } from 'app/enums/role.enum';
-import { CloudSyncTask, CloudSyncTaskUpdate } from 'app/interfaces/cloud-sync-task.interface';
+import { CloudSyncTask, CloudSyncTaskUi, CloudSyncTaskUpdate } from 'app/interfaces/cloud-sync-task.interface';
 import { CloudSyncCredential } from 'app/interfaces/cloudsync-credential.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ChainedRef } from 'app/modules/ix-forms/components/ix-slide-in/chained-component-ref';
@@ -37,7 +37,7 @@ export class CloudSyncWizardComponent {
   existingCredential: CloudSyncCredential;
 
   constructor(
-    private chainedRef: ChainedRef<unknown>,
+    private chainedRef: ChainedRef<CloudSyncTaskUi>,
     private ws: WebSocketService,
     private snackbarService: SnackbarService,
     private cdr: ChangeDetectorRef,
