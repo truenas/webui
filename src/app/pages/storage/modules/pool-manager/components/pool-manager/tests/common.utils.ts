@@ -3,8 +3,6 @@ import { MatIconRegistry } from '@angular/material/icon';
 import { createSpyObject, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { EMPTY, of } from 'rxjs';
-import { GiB } from 'app/constants/bytes.constant';
-import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -85,7 +83,6 @@ import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/p
 import {
   GenerateVdevsService,
 } from 'app/pages/storage/modules/pool-manager/utils/generate-vdevs/generate-vdevs.service';
-import { selectAdvancedConfig } from 'app/store/system-config/system-config.selectors';
 import { selectHasEnclosureSupport } from 'app/store/system-info/system-info.selectors';
 
 export const commonDeclarations = [
@@ -143,12 +140,6 @@ export const commonProviders = [
   }),
   provideMockStore({
     selectors: [
-      {
-        selector: selectAdvancedConfig,
-        value: {
-          swapondrive: 2 * GiB,
-        } as AdvancedConfig,
-      },
       {
         selector: selectHasEnclosureSupport,
         value: true,

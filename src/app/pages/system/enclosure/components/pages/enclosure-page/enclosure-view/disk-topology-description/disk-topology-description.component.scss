@@ -1,0 +1,27 @@
+.container {
+  align-items: center;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  justify-content: center;
+  min-width: 105px;
+}
+
+h1 {
+  font-weight: 600;
+  margin-bottom: 5px;
+}
+
+span {
+  font-size: 1rem;
+}
+
+.title {
+  font-weight: 500;
+}
+
+.value {
+  font-weight: 400;
+  margin-left: 5px;
+}

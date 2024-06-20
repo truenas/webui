@@ -205,7 +205,7 @@ describe('InterfaceFormComponent', () => {
           Description: 'LAG',
           DHCP: true,
           'Link Aggregation Protocol': 'LACP',
-          MTU: 1600,
+          MTU: 1024,
           'Transmit Hash Policy': 'LAYER2+3',
           'LACPDU Rate': 'SLOW',
           'Link Aggregation Interfaces': ['enp0s3'],
@@ -225,7 +225,7 @@ describe('InterfaceFormComponent', () => {
         lacpdu_rate: LacpduRate.Slow,
         lag_ports: ['enp0s3'],
         lag_protocol: LinkAggregationProtocol.Lacp,
-        mtu: 1600,
+        mtu: 1024,
         xmit_hash_policy: XmitHashPolicy.Layer2Plus3,
       }]);
 

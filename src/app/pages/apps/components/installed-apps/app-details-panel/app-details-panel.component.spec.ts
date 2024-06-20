@@ -7,7 +7,6 @@ import { AppDetailsPanelComponent } from 'app/pages/apps/components/installed-ap
 import { AppHistoryCardComponent } from 'app/pages/apps/components/installed-apps/app-history-card/app-history-card.component';
 import { AppInfoCardComponent } from 'app/pages/apps/components/installed-apps/app-info-card/app-info-card.component';
 import { AppMetadataCardComponent } from 'app/pages/apps/components/installed-apps/app-metadata-card/app-metadata-card.component';
-import { AppNotesCardComponent } from 'app/pages/apps/components/installed-apps/app-notes-card/app-notes-card.component';
 
 describe('AppDetailsPanelComponent', () => {
   let spectator: Spectator<AppDetailsPanelComponent>;
@@ -41,7 +40,6 @@ describe('AppDetailsPanelComponent', () => {
         AppInfoCardComponent,
         AppContainersCardComponent,
         AppHistoryCardComponent,
-        AppNotesCardComponent,
         AppMetadataCardComponent,
       ),
     ],
@@ -72,10 +70,6 @@ describe('AppDetailsPanelComponent', () => {
     const appHistoryCard = spectator.query(AppHistoryCardComponent);
     expect(appHistoryCard).toBeTruthy();
     expect(appHistoryCard.app).toStrictEqual(app);
-
-    const appNotesCard = spectator.query(AppNotesCardComponent);
-    expect(appNotesCard).toBeTruthy();
-    expect(appNotesCard.app).toStrictEqual(app);
 
     const appMetadataCard = spectator.query(AppMetadataCardComponent);
     expect(appMetadataCard).toBeTruthy();

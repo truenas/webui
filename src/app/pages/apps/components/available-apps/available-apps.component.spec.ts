@@ -23,7 +23,6 @@ import { AppAvailableInfoCardComponent } from 'app/pages/apps/components/app-det
 import { AppDetailViewComponent } from 'app/pages/apps/components/app-detail-view/app-detail-view.component';
 import { AppDetailsHeaderComponent } from 'app/pages/apps/components/app-detail-view/app-details-header/app-details-header.component';
 import { AppDetailsSimilarComponent } from 'app/pages/apps/components/app-detail-view/app-details-similar/app-details-similar.component';
-import { AppHelmChartCardComponent } from 'app/pages/apps/components/app-detail-view/app-helm-chart-card/app-helm-chart-card.component';
 import { AppResourcesCardComponent } from 'app/pages/apps/components/app-detail-view/app-resources-card/app-resources-card.component';
 import { AppCardComponent } from 'app/pages/apps/components/available-apps/app-card/app-card.component';
 import { AvailableAppsHeaderComponent } from 'app/pages/apps/components/available-apps/available-apps-header/available-apps-header.component';
@@ -36,7 +35,6 @@ import { AppsStatisticsService } from 'app/pages/apps/store/apps-statistics.serv
 import { AppsStore } from 'app/pages/apps/store/apps-store.service';
 import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.service';
 import { KubernetesStore } from 'app/pages/apps/store/kubernetes-store.service';
-import { AppCatalogPipe } from 'app/pages/apps/utils/app-catalog.pipe';
 import { AuthService } from 'app/services/auth/auth.service';
 
 const existingCatalogApp = {
@@ -234,7 +232,6 @@ describe('Finding app', () => {
     imports: [
       IxFormsModule,
       ReactiveFormsModule,
-      AppCatalogPipe,
       MockModule(PageHeaderModule),
     ],
     declarations: [
@@ -292,7 +289,6 @@ describe('Redirect to install app', () => {
     component: AppDetailViewComponent,
     imports: [
       NgxSkeletonLoaderModule,
-      AppCatalogPipe,
       MockModule(PageHeaderModule),
     ],
     declarations: [
@@ -300,7 +296,6 @@ describe('Redirect to install app', () => {
       MockComponents(
         AppResourcesCardComponent,
         AppAvailableInfoCardComponent,
-        AppHelmChartCardComponent,
         AppCardLogoComponent,
         AppDetailsSimilarComponent,
       ),

@@ -138,7 +138,7 @@ describe('CloudBackupFormComponent', () => {
       expect(spectator.inject(WebSocketService).call).toHaveBeenNthCalledWith(2, 'cloud_backup.create', [{
         args: '',
         attributes: { folder: '/', bucket: 'brand-new-bucket' },
-        bwlimit: undefined,
+        bwlimit: [],
         credentials: 2,
         description: 'Cloud Backup Task With New Bucket',
         enabled: true,
@@ -184,7 +184,7 @@ describe('CloudBackupFormComponent', () => {
       expect(spectator.inject(WebSocketService).call).toHaveBeenLastCalledWith('cloud_backup.create', [{
         args: '',
         attributes: { folder: '/', bucket: 'path_to_bucket1' },
-        bwlimit: undefined,
+        bwlimit: [],
         credentials: 2,
         description: 'New Cloud Backup Task',
         enabled: false,
@@ -269,6 +269,7 @@ describe('CloudBackupFormComponent', () => {
         Password: 'qwerty123',
         Bucket: 'bucket1',
         'Source Path': '/mnt/path1',
+        'Bandwidth Limit': ['00:00,10G', '12:00,20M', '18:00,10K', '20:00,off'],
       });
 
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
@@ -280,7 +281,24 @@ describe('CloudBackupFormComponent', () => {
           folder: '/My Folder',
           bucket: 'path_to_bucket1',
         },
-        bwlimit: undefined,
+        bwlimit: [
+          {
+            bandwidth: '10737418240',
+            time: '00:00',
+          },
+          {
+            bandwidth: '20971520',
+            time: '12:00',
+          },
+          {
+            bandwidth: '10240',
+            time: '18:00',
+          },
+          {
+            bandwidth: null,
+            time: '20:00',
+          },
+        ],
         credentials: 2,
         description: 'Edited description',
         enabled: true,

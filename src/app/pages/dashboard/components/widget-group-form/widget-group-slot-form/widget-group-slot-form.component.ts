@@ -112,6 +112,7 @@ export class WidgetGroupSlotFormComponent implements AfterViewInit, OnChanges {
               settings: undefined,
             } as WidgetGroupSlot<object>;
           });
+          this.refreshSettingsContainer();
         }
         this.updateSelectedCategory(category);
         this.settingsChange.emit(this.slot());

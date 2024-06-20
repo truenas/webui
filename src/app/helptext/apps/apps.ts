@@ -275,4 +275,9 @@ export const helptextApps = {
       tooltip: T('Please specifies tag of the image'),
     },
   },
+  dockerHubRateLimit: {
+    message: T('User limit to Docker Hub has almost been reached or has already been reached. The installation\
+     process may stall as images cannot be pulled. The current limit will be renewed in {seconds}. The application\
+      can still be staged for installation.'),
+  },
 };

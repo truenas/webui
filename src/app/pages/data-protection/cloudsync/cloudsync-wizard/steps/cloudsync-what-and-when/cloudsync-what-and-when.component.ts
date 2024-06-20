@@ -16,6 +16,7 @@ import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
 import { mntPath } from 'app/enums/mnt-path.enum';
 import { Role } from 'app/enums/role.enum';
 import { TransferMode, transferModeNames } from 'app/enums/transfer-mode.enum';
+import { prepareBwlimit } from 'app/helpers/bwlimit.utils';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextCloudSync } from 'app/helptext/data-protection/cloudsync/cloudsync';
 import { CloudSyncTaskUpdate } from 'app/interfaces/cloud-sync-task.interface';
@@ -170,7 +171,7 @@ export class CloudSyncWhatAndWhenComponent implements OnInit, OnChanges {
       attributes,
       include: undefined,
       path: undefined,
-      bwlimit: formValue.bwlimit ? this.prepareBwlimit(formValue.bwlimit) : undefined,
+      bwlimit: prepareBwlimit(formValue.bwlimit),
       schedule: formValue.cloudsync_picker ? crontabToSchedule(formValue.cloudsync_picker) : {},
       snapshot: formValue.direction === Direction.Pull ? false : formValue.snapshot,
     } as CloudSyncTaskUpdate;
@@ -506,32 +507,6 @@ export class CloudSyncWhatAndWhenComponent implements OnInit, OnChanges {
         }),
       );
     };
-  }
-
-  private prepareBwlimit(bwlimit: string[]): CloudSyncTaskUpdate['bwlimit'] {
-    const bwlimtArr = [];
-
-    for (const limit of bwlimit) {
-      const sublimitArr = limit.split(/\s*,\s*/);
-      if (sublimitArr.length === 1 && bwlimit.length === 1 && !sublimitArr[0].includes(':')) {
-        sublimitArr.unshift('00:00');
-      }
-      if (sublimitArr[1] && sublimitArr[1] !== 'off') {
-        if (sublimitArr[1].endsWith('/s') || sublimitArr[1].endsWith('/S')) {
-          sublimitArr[1] = sublimitArr[1].substring(0, sublimitArr[1].length - 2);
-        }
-        if (this.cloudCredentialService.getByte(sublimitArr[1]) !== -1) {
-          (sublimitArr[1] as number | string) = this.cloudCredentialService.getByte(sublimitArr[1]);
-        }
-      }
-      const subLimit = {
-        time: sublimitArr[0],
-        bandwidth: sublimitArr[1] === 'off' ? null : sublimitArr[1],
-      };
-
-      bwlimtArr.push(subLimit);
-    }
-    return bwlimtArr;
   }
 
   private enableRemoteExplorer(): void {

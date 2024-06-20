@@ -35,19 +35,17 @@
     z-index: 1;
   }
 
-  .catalog {
+  .train {
     background-color: var(--bg1);
     border: 1px solid var(--lines);
+    color: var(--primary);
     font-family: var(--font-family-header);
     font-size: 1.1em;
     font-weight: bold;
-    margin-top: 2px;
+    margin-top: 15px;
     padding: 0 10px;
     text-align: center;
-
-    &.catalog-official {
-      color: var(--primary);
-    }
+    text-transform: capitalize;
   }
 }
 
@@ -74,9 +72,14 @@
   }
 
   .description {
+    -webkit-box-orient: vertical;
+    display: inline-box;
     font-size: 1.2em;
+    -webkit-line-clamp: 4;
     line-height: 1.2em;
-    margin-bottom: 10px;
+    margin-bottom: 0;
+    overflow: hidden;
+    white-space: normal;
     word-break: break-word;
   }
 

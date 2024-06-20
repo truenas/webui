@@ -32,6 +32,10 @@ export class TargetFormComponent implements OnInit {
     return !this.editingTarget;
   }
 
+  get isAsyncValidatorPending(): boolean {
+    return this.form.controls.name.status === 'PENDING' && this.form.controls.name.touched;
+  }
+
   get title(): string {
     return this.isNew
       ? this.translate.instant('Add ISCSI Target')

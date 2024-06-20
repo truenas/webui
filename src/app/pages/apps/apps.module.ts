@@ -47,17 +47,6 @@ import {
   AppDetailsSimilarComponent,
 } from 'app/pages/apps/components/app-detail-view/app-details-similar/app-details-similar.component';
 import { AppsScopeWrapperComponent } from 'app/pages/apps/components/apps-scope-wrapper.component';
-import {
-  CatalogAddFormComponent,
-} from 'app/pages/apps/components/catalogs/catalog-add-form/catalog-add-form.component';
-import { CatalogDeleteDialogComponent } from 'app/pages/apps/components/catalogs/catalog-delete-dialog/catalog-delete-dialog.component';
-import {
-  CatalogEditFormComponent,
-} from 'app/pages/apps/components/catalogs/catalog-edit-form/catalog-edit-form.component';
-import { CatalogsComponent } from 'app/pages/apps/components/catalogs/catalogs.component';
-import {
-  ManageCatalogSummaryDialogComponent,
-} from 'app/pages/apps/components/catalogs/manage-catalog-summary/manage-catalog-summary-dialog.component';
 import { ChartWizardComponent } from 'app/pages/apps/components/chart-wizard/chart-wizard.component';
 import { DockerImageDeleteDialogComponent } from 'app/pages/apps/components/docker-images/docker-image-delete-dialog/docker-image-delete-dialog.component';
 import { DockerImageUpdateDialogComponent } from 'app/pages/apps/components/docker-images/docker-image-update-dialog/docker-image-update-dialog.component';
@@ -76,11 +65,9 @@ import { PodSelectDialogComponent } from 'app/pages/apps/components/pod-select-d
 import { PodSelectLogsDialogComponent } from 'app/pages/apps/components/pod-select-logs/pod-select-logs-dialog.component';
 import { SelectPoolDialogComponent } from 'app/pages/apps/components/select-pool-dialog/select-pool-dialog.component';
 import { CustomFormsModule } from 'app/pages/apps/modules/custom-forms/custom-forms.module';
-import { AppCatalogPipe } from 'app/pages/apps/utils/app-catalog.pipe';
 import { AppCardLogoComponent } from './components/app-card-logo/app-card-logo.component';
 import { AppAvailableInfoCardComponent } from './components/app-detail-view/app-available-info-card/app-available-info-card.component';
 import { AppDetailViewComponent } from './components/app-detail-view/app-detail-view.component';
-import { AppHelmChartCardComponent } from './components/app-detail-view/app-helm-chart-card/app-helm-chart-card.component';
 import { AppResourcesCardComponent } from './components/app-detail-view/app-resources-card/app-resources-card.component';
 import { AppRouterOutletComponent } from './components/app-router-outlet/app-router-outlet.component';
 import { AppSectionExpandCollapseComponent } from './components/app-section-expand-collapse/app-section-expand-collapse.component';
@@ -93,7 +80,6 @@ import { AppContainersCardComponent } from './components/installed-apps/app-cont
 import { AppDetailsPanelComponent } from './components/installed-apps/app-details-panel/app-details-panel.component';
 import { AppHistoryCardComponent } from './components/installed-apps/app-history-card/app-history-card.component';
 import { AppMetadataCardComponent } from './components/installed-apps/app-metadata-card/app-metadata-card.component';
-import { AppNotesCardComponent } from './components/installed-apps/app-notes-card/app-notes-card.component';
 import { AppStatusCellComponent } from './components/installed-apps/app-status-cell/app-status-cell.component';
 import { AppUpgradeDialogComponent } from './components/installed-apps/app-upgrade-dialog/app-upgrade-dialog.component';
 import { InstalledAppsComponent } from './components/installed-apps/installed-apps.component';
@@ -104,11 +90,7 @@ import { KubernetesStatusComponent } from './components/installed-apps/kubernete
     InstalledAppsComponent,
     AvailableAppsComponent,
     AvailableAppsHeaderComponent,
-    CatalogsComponent,
     ChartWizardComponent,
-    ManageCatalogSummaryDialogComponent,
-    CatalogEditFormComponent,
-    CatalogAddFormComponent,
     AppCardComponent,
     AppDetailViewComponent,
     AppCardLogoComponent,
@@ -118,10 +100,8 @@ import { KubernetesStatusComponent } from './components/installed-apps/kubernete
     AppDetailsPanelComponent,
     AppContainersCardComponent,
     AppHistoryCardComponent,
-    AppNotesCardComponent,
     KubernetesSettingsComponent,
     AppResourcesCardComponent,
-    AppHelmChartCardComponent,
     AppsScopeWrapperComponent,
     AppAvailableInfoCardComponent,
     PodLogsComponent,
@@ -140,7 +120,6 @@ import { KubernetesStatusComponent } from './components/installed-apps/kubernete
     AppMetadataCardComponent,
     AppSectionExpandCollapseComponent,
     CategoryViewComponent,
-    CatalogDeleteDialogComponent,
     CustomAppButtonComponent,
     KubernetesStatusComponent,
     DockerImagesListComponent,
@@ -183,7 +162,6 @@ import { KubernetesStatusComponent } from './components/installed-apps/kubernete
     MarkdownModule,
     IxTableModule,
     LayoutModule,
-    AppCatalogPipe,
     SearchInput1Component,
     EmptyComponent,
     MatSort,

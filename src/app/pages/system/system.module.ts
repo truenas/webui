@@ -22,6 +22,9 @@ import { CommonDirectivesModule } from 'app/directives/common/common-directives.
 import { OauthButtonModule } from 'app/modules/buttons/oauth-button/oauth-button.module';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { EntityModule } from 'app/modules/entity/entity.module';
+import {
+  UnusedDiskSelectComponent,
+} from 'app/modules/forms/custom-selects/unused-disk-select/unused-disk-select.component';
 import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
@@ -177,6 +180,7 @@ import { routing } from './system.routing';
     TestIdModule,
     IxTableModule,
     OauthButtonModule,
+    UnusedDiskSelectComponent,
     SearchInput1Component,
     EmptyComponent,
     IxFileSizePipe,

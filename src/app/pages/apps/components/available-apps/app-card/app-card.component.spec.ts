@@ -7,13 +7,11 @@ import { ChartRelease } from 'app/interfaces/chart-release.interface';
 import { AppCardLogoComponent } from 'app/pages/apps/components/app-card-logo/app-card-logo.component';
 import { AppCardComponent } from 'app/pages/apps/components/available-apps/app-card/app-card.component';
 import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.service';
-import { AppCatalogPipe } from 'app/pages/apps/utils/app-catalog.pipe';
 
 describe('AppCardComponent', () => {
   let spectator: Spectator<AppCardComponent>;
   const createComponent = createComponentFactory({
     component: AppCardComponent,
-    imports: [AppCatalogPipe],
     declarations: [
       MockComponent(AppCardLogoComponent),
     ],
@@ -57,12 +55,8 @@ describe('AppCardComponent', () => {
     expect(description).toHaveExactText('Use your computer to help SETI@home search for extraterrestrial intelligence.');
   });
 
-  it('shows catalog name', () => {
-    expect(spectator.query('.catalog')).toHaveText('TrueNAS');
-  });
-
   it('shows train name', () => {
-    expect(spectator.query('.train')).toHaveExactText('Train: charts');
+    expect(spectator.query('.train')).toHaveText('charts');
   });
 
   it('shows app version', () => {

@@ -49,7 +49,7 @@ export class IxComboboxHarness extends ComponentHarness implements IxFormControl
    * @param optionLabel label of the option that is to be assigned
    */
   async setValue(optionLabel: string): Promise<void> {
-    const harness = (await this.getAutoCompleteHarness());
+    const harness = await this.getAutoCompleteHarness();
     await harness.focus();
     await harness.selectOption({ text: optionLabel });
   }

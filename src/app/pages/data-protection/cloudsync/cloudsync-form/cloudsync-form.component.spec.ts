@@ -206,7 +206,7 @@ describe('CloudSyncFormComponent', () => {
     it('shows values for an existing cloudsync task when it is open for edit', () => {
       expect(spectator.component.form.value).toEqual({
         acknowledge_abuse: false,
-        bwlimit: ['13:00, 1.02 kb', '15:00, off'],
+        bwlimit: ['13:00, 1 KiB/s', '15:00, off'],
         cloudsync_picker: '0 0 * * 0',
         create_empty_src_dirs: true,
         credentials: 2,
@@ -246,7 +246,7 @@ describe('CloudSyncFormComponent', () => {
         attributes: { folder: mntPath },
         bwlimit: [
           { bandwidth: undefined, time: '9:00' },
-          { bandwidth: '2097152', time: '12:30' },
+          { bandwidth: '2048', time: '12:30' },
         ],
         create_empty_src_dirs: true,
         credentials: 2,

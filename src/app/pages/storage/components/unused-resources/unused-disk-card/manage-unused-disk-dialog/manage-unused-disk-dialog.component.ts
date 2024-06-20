@@ -65,8 +65,30 @@ export class ManageUnusedDiskDialogComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) public resource: ManageUnusedDiskDialogResource,
   ) {}
 
-  get groupedDisks(): { formattedDisk: string; exportedPool: string }[] {
-    const diskInfoFormats = this.resource.unusedDisks.map((disk) => {
+  get noPoolsDisks(): { formattedDisk: string }[] {
+    const diskInfoFormats = this.resource.unusedDisks.filter((disk) => {
+      return !disk.exported_zpool;
+    }).map((disk) => {
+      return {
+        detailedDisk: `${buildNormalizedFileSize(disk.size)} ${disk.subsystem === 'nvme' ? disk.subsystem.toUpperCase() : disk.type}`,
+        exportedPool: disk.exported_zpool,
+      };
+    });
+    const groupDisks = _.groupBy(diskInfoFormats, (diskDetailsWithPoolName) => {
+      return diskDetailsWithPoolName.detailedDisk + diskDetailsWithPoolName.exportedPool;
+    });
+    return Object.keys(groupDisks).map((format: string) => {
+      return {
+        formattedDisk: `${groupDisks[format][0].detailedDisk} x ${groupDisks[format].length}`,
+        exportedPool: groupDisks[format][0].exportedPool,
+      };
+    });
+  }
+
+  get exportedPoolsDisks(): { formattedDisk: string; exportedPool: string }[] {
+    const diskInfoFormats = this.resource.unusedDisks.filter((disk) => {
+      return disk.exported_zpool;
+    }).map((disk) => {
       return {
         detailedDisk: `${buildNormalizedFileSize(disk.size)} ${disk.subsystem === 'nvme' ? disk.subsystem.toUpperCase() : disk.type}`,
         exportedPool: disk.exported_zpool,

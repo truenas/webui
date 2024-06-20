@@ -69,25 +69,38 @@ const afterIntString = [[{
     required: true,
     title: 'Label Input Int With Default',
     type: 'input',
+    editable: undefined,
+    tooltip: undefined,
   }, {
     controlName: 'variable_input_string_with_default',
     inputType: 'password',
     required: false,
     type: 'input',
+    editable: undefined,
+    title: undefined,
+    tooltip: undefined,
   }, {
     controlName: 'variable_input_int_without_default',
     inputType: 'number',
     title: 'Label Input Int Without Default',
     type: 'input',
+    editable: undefined,
+    required: false,
+    tooltip: undefined,
   }, {
     controlName: 'variable_input_string_without_default',
     title: 'Label Input String Without Default',
     type: 'input',
+    editable: undefined,
+    inputType: undefined,
+    required: false,
+    tooltip: undefined,
   }] as DynamicFormSchemaInput[],
   controlName: 'variable_dict',
   tooltip: 'Description Dict',
   title: 'Label Dict',
   type: 'dict',
+  editable: undefined,
 }]] as DynamicFormSchemaDict[][];
 
 const beforeEnum = [{
@@ -171,12 +184,18 @@ const afterBoolean = [[{
   controlName: 'variable_boolean',
   title: 'Label Boolean',
   type: 'checkbox',
+  editable: undefined,
+  required: false,
+  tooltip: undefined,
 }, {
   controlName: 'variable_subquestion_boolean',
   dependsOn: ['variable_boolean'],
   indent: true,
   title: 'Label Subquestion Boolean',
   type: 'checkbox',
+  editable: undefined,
+  required: false,
+  tooltip: undefined,
 }]] as DynamicFormSchemaCheckbox[][];
 
 const beforeUri = [{
@@ -192,6 +211,10 @@ const afterUri = [[{
   controlName: 'variable_uri',
   title: 'Label Uri',
   type: 'uri',
+  editable: undefined,
+  inputType: undefined,
+  required: false,
+  tooltip: undefined,
 }]] as DynamicFormSchemaUri[][];
 
 const beforeCron = [{
@@ -213,6 +236,9 @@ const afterCron = [[{
   controlName: 'variable_cron',
   title: 'Label Cron',
   type: 'cron',
+  editable: undefined,
+  required: false,
+  tooltip: undefined,
 }]] as DynamicFormSchemaCron[][];
 
 const beforePath = [{
@@ -227,6 +253,9 @@ const afterPath = [[{
   controlName: 'variable_path',
   title: 'Label Path',
   type: 'input',
+  editable: undefined,
+  required: false,
+  tooltip: undefined,
 }]] as DynamicFormSchemaInput[][];
 
 const beforeList = [{
@@ -262,11 +291,18 @@ const afterList = [[{
     controlName: 'item_list_1',
     title: '',
     type: 'input',
+    editable: undefined,
+    inputType: undefined,
+    required: false,
+    tooltip: undefined,
   }, {
     controlName: 'item_list_2',
     inputType: 'number',
     title: '',
     type: 'input',
+    editable: undefined,
+    required: false,
+    tooltip: undefined,
   }],
   itemsSchema: [
     { label: '', schema: { type: 'string' }, variable: 'item_list_1' },
@@ -277,6 +313,10 @@ const afterList = [[{
     { item_list_1: 'prefilled_1', item_list_2: 2 },
   ],
   type: 'list',
+  dependsOn: undefined,
+  editable: undefined,
+  required: false,
+  tooltip: undefined,
 }]] as DynamicFormSchemaList[][];
 
 const beforeIpaddr = [{
@@ -292,6 +332,9 @@ const afterIpaddr = [[{
   controlName: 'staticIP',
   title: 'Static IP',
   type: 'ipaddr',
+  editable: undefined,
+  required: false,
+  tooltip: undefined,
 }]] as DynamicFormSchemaIpaddr[][];
 
 const beforeHidden = [{

@@ -480,7 +480,15 @@ describe('ChartWizardComponent', () => {
     });
 
     it('shows Docker Hub Rate Limit Info Dialog when remaining_pull_limit is less then 5', () => {
-      expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(DockerHubRateInfoDialogComponent);
+      expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(DockerHubRateInfoDialogComponent, {
+        data: {
+          total_pull_limit: 13,
+          total_time_limit_in_secs: 21600,
+          remaining_pull_limit: 3,
+          remaining_time_limit_in_secs: 21600,
+          error: null,
+        },
+      });
     });
   });
 });

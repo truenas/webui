@@ -1,6 +1,6 @@
 import * as inquirer from 'inquirer';
 import type { QuestionCollection } from 'inquirer';
-import { enclosureMocks } from 'app/core/testing/mock-enclosure/enclosure-templates';
+import { enclosureMocks } from 'app/core/testing/mock-enclosure/enclosure-templates/enclosure-mocks';
 import {
   MockStorageScenario,
   mockStorageScenarioLabels,
@@ -54,15 +54,19 @@ function getMockQuestions(): QuestionCollection {
       name: 'controllerModel',
       message: 'Select a controller model',
       type: 'list',
-      choices: Array.from(enclosureMocks.keys()).filter((model) => !model.startsWith('E')),
+      choices: enclosureMocks
+        .filter((mock) => mock.controller)
+        .map((mock) => mock.model),
     },
     {
       name: 'expansionModels',
       message: () => {
-        const shelves = Array.from(enclosureMocks.keys()).filter((model) => model.startsWith('E'));
+        const shelves = enclosureMocks
+          .filter((mock) => !mock.controller)
+          .map((mock) => mock.model);
         return `What expansion shelves would you like to use?
-        \n Enter zero or more answers separated with a comma.
-        \n Available options: ${shelves.join(', ')}`;
+Enter zero or more answers separated with a comma.
+Available options: ${shelves.join(', ')}:\n`;
       },
       type: 'input',
       default: '',

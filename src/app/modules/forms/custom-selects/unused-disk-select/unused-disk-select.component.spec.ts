@@ -21,28 +21,34 @@ describe('UnusedDiskSelectComponent', () => {
   let loader: HarnessLoader;
   let combobox: IxComboboxHarness;
   const formControl = new FormControl('');
-  const unusedDisks = [
-    {
-      name: 'da0',
-      size: 2 * TiB,
-      devname: 'da0',
-      identifier: '{disk}ABCD',
-    },
-    {
-      name: 'da1',
-      size: 20 * TiB,
-      devname: 'da1',
-      identifier: '{disk}FGHJ',
-    },
-    {
-      name: 'exp1',
-      size: 10 * TiB,
-      devname: 'exp1',
-      exported_zpool: 'old-pool',
-    },
-  ] as DetailsDisk[];
+  const diskDetails = {
+    unused: [
+      {
+        name: 'da0',
+        size: 2 * TiB,
+        devname: 'da0',
+        identifier: '{disk}ABCD',
+      },
 
-  const mockCall$ = new BehaviorSubject(unusedDisks);
+      {
+        name: 'exp1',
+        size: 10 * TiB,
+        devname: 'exp1',
+        exported_zpool: 'old-pool',
+      },
+    ] as DetailsDisk[],
+    used: [
+      {
+        name: 'da1',
+        size: 20 * TiB,
+        devname: 'da1',
+        exported_zpool: 'pool',
+        identifier: '{disk}FGHJ',
+      },
+    ],
+  };
+
+  const mockCall$ = new BehaviorSubject(diskDetails);
 
   const createHost = createHostFactory({
     component: UnusedDiskSelectComponent,
@@ -88,20 +94,20 @@ describe('UnusedDiskSelectComponent', () => {
     const options = await combobox.getAutocompleteOptions();
     expect(options).toEqual([
       'da0 (2 TiB)',
-      'da1 (20 TiB)',
+      'da1 (20 TiB) (pool)',
       'exp1 (10 TiB) (old-pool)',
     ]);
   });
 
   it('writes disk name in value in formControl by default', async () => {
-    await combobox.setValue('da1 (20 TiB)');
+    await combobox.setValue('da1 (20 TiB) (pool)');
 
     expect(formControl.value).toBe('da1');
   });
 
   it('writes another value from unused disk in formControl when valueField is used', async () => {
     spectator.setHostInput('valueField', 'identifier');
-    await combobox.setValue('da1 (20 TiB)');
+    await combobox.setValue('da1 (20 TiB) (pool)');
 
     expect(formControl.value).toBe('{disk}FGHJ');
   });
@@ -121,7 +127,7 @@ describe('UnusedDiskSelectComponent', () => {
     await combobox.focusInput();
     const options = await combobox.getAutocompleteOptions();
     expect(options).toEqual([
-      'da1 (20 TiB)',
+      'da1 (20 TiB) (pool)',
     ]);
   });
 
@@ -136,15 +142,18 @@ describe('UnusedDiskSelectComponent', () => {
 
   describe('non-unique serialed disks', () => {
     beforeEach(() => {
-      mockCall$.next([
-        ...unusedDisks,
-        {
-          name: 'dupe1',
-          size: 5 * TiB,
-          devname: 'dupe1',
-          duplicate_serial: ['dupe2'],
-        },
-      ] as DetailsDisk[]);
+      mockCall$.next({
+        unused: [
+          ...diskDetails.unused,
+          {
+            name: 'dupe1',
+            size: 5 * TiB,
+            devname: 'dupe1',
+            duplicate_serial: ['dupe2'],
+          },
+        ] as DetailsDisk[],
+        used: [...diskDetails.used],
+      });
     });
 
     it('does not show disks with non-unique serials by default', async () => {
@@ -152,7 +161,7 @@ describe('UnusedDiskSelectComponent', () => {
       const options = await combobox.getAutocompleteOptions();
       expect(options).toEqual([
         'da0 (2 TiB)',
-        'da1 (20 TiB)',
+        'da1 (20 TiB) (pool)',
         'exp1 (10 TiB) (old-pool)',
       ]);
     });
@@ -175,7 +184,7 @@ describe('UnusedDiskSelectComponent', () => {
       const options = await combobox.getAutocompleteOptions();
       expect(options).toEqual([
         'da0 (2 TiB)',
-        'da1 (20 TiB)',
+        'da1 (20 TiB) (pool)',
         'dupe1 (5 TiB)',
         'exp1 (10 TiB) (old-pool)',
       ]);

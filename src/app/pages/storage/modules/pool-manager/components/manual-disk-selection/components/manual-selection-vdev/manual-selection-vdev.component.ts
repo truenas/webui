@@ -5,7 +5,7 @@ import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { keyBy } from 'lodash';
 import { DndDropEvent } from 'ngx-drag-drop';
-import { GiB, MiB } from 'app/constants/bytes.constant';
+import { MiB } from 'app/constants/bytes.constant';
 import { CreateVdevLayout } from 'app/enums/v-dev-type.enum';
 import { Enclosure } from 'app/interfaces/enclosure.interface';
 import {
@@ -28,7 +28,6 @@ export class ManualSelectionVdevComponent implements OnChanges {
   @Input() vdev: ManualSelectionVdev;
   @Input() layout: CreateVdevLayout;
   @Input() editable = false;
-  @Input() swapondrive = 2;
 
   @Input() set enclosures(enclosures: Enclosure[]) {
     this.enclosureById = keyBy(enclosures, 'id');
@@ -102,7 +101,6 @@ export class ManualSelectionVdevComponent implements OnChanges {
     this.sizeEstimation = vdevCapacity({
       vdev: vdev.disks,
       layout: this.layout,
-      swapOnDrive: this.swapondrive * GiB,
     });
   }
 

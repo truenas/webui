@@ -6,6 +6,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { Ng2FittextModule } from 'ng2-fittext';
 import { NgxPopperjsModule } from 'ngx-popperjs';
 import { AutofocusDirective } from 'app/directives/common/autofocus/autofocus.directive';
+import { DisableFocusableElementsDirective } from 'app/directives/common/disable-focusable-elements/disable-focusable-elements.directive';
 import { HasAccessDirective } from 'app/directives/common/has-access/has-access.directive';
 import { MissingAccessWrapperComponent } from 'app/directives/common/has-access/missing-access-wrapper.component';
 import { HasRoleDirective } from 'app/directives/common/has-role/has-role.directive';
@@ -37,6 +38,7 @@ import { LetDirective } from './app-let.directive';
     IfNightlyDirective,
     HasRoleDirective,
     HasAccessDirective,
+    DisableFocusableElementsDirective,
     MissingAccessWrapperComponent,
     RequiresRolesDirective,
     AutofocusDirective,
@@ -51,6 +53,7 @@ import { LetDirective } from './app-let.directive';
     IfNightlyDirective,
     HasRoleDirective,
     HasAccessDirective,
+    DisableFocusableElementsDirective,
     MissingAccessWrapperComponent,
     RequiresRolesDirective,
     AutofocusDirective,

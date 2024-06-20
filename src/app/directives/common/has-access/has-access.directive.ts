@@ -41,7 +41,7 @@ export class HasAccessDirective {
   }
 
   constructor(
-    protected templateRef: TemplateRef<unknown>,
+    protected templateRef: TemplateRef<HTMLElement>,
     protected viewContainerRef: ViewContainerRef,
   ) { }
 }

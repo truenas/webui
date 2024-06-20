@@ -16,7 +16,6 @@ import { ErrorHandlerService } from 'app/services/error-handler.service';
 export const filterInitialValues: AppsFiltersValues = {
   categories: [],
   sort: null,
-  catalogs: [],
 };
 
 export interface AppsFilterState {
@@ -62,9 +61,6 @@ export class AppsFilterStore extends ComponentStore<AppsFilterState> {
 
       if (state.filter.sort === AppsFiltersSort.Name) {
         return this.sortAppsByName(filteredApps);
-      }
-      if (state.filter.sort === AppsFiltersSort.Catalog) {
-        return this.sortAppsByCatalog(filteredApps);
       }
       if (state.filter.sort === AppsFiltersSort.LastUpdate) {
         return this.sortAppsByLastUpdate(filteredApps);
@@ -216,25 +212,6 @@ export class AppsFilterStore extends ComponentStore<AppsFilterState> {
         apps: appsSortedByFirstLetter,
         totalApps: appsSortedByFirstLetter.length,
         category: firstLetter,
-      });
-    });
-
-    return appsByCategory;
-  }
-
-  private sortAppsByCatalog(filteredApps: AvailableApp[]): AppsByCategory[] {
-    const appsByCategory: AppsByCategory[] = [];
-
-    const catalogs = [...new Set<string>(filteredApps.map((app) => app.catalog))].sort((a, b) => a.localeCompare(b));
-
-    catalogs.forEach((catalog) => {
-      const appsSortedByCatalog = filteredApps.filter((app) => app.catalog === catalog);
-
-      appsByCategory.push({
-        title: catalog,
-        apps: appsSortedByCatalog,
-        totalApps: appsSortedByCatalog.length,
-        category: catalog,
       });
     });
 

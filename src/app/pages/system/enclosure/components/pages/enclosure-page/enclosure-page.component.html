@@ -1,0 +1,26 @@
+<div class="view-container">
+  <mat-card>
+    <mat-card-header>
+      <ix-enclosure-header [title]="title()"></ix-enclosure-header>
+    </mat-card-header>
+    <mat-card-content>
+      <!-- TODO: Loading state -->
+      <div *ngIf="enclosure()" class="container">
+        <ix-sas-expander-status-view
+          *ngIf="isExpandersView(); else enclosureView"
+          [enclosure]="enclosure()"
+        ></ix-sas-expander-status-view>
+
+        <ng-template #enclosureView>
+          <ix-enclosure-view [enclosure]="enclosure()"></ix-enclosure-view>
+        </ng-template>
+      </div>
+
+      <ix-disks-overview></ix-disks-overview>
+    </mat-card-content>
+  </mat-card>
+</div>
+
+<div class="selector-container">
+  <ix-enclosure-selector></ix-enclosure-selector>
+</div>

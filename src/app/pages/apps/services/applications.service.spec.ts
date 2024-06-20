@@ -14,7 +14,6 @@ describe('ApplicationsService', () => {
 
   const appsRequestPayload = [
     [
-      ['catalog', 'in', ['catalog1', 'catalog2']],
       ['recommended', '=', true],
       [
         'OR', [
@@ -50,7 +49,6 @@ describe('ApplicationsService', () => {
     });
 
     filters = {
-      catalogs: ['catalog1', 'catalog2'],
       sort: AppsFiltersSort.LastUpdate,
       categories: ['category1', 'category2', AppExtraCategory.Recommended],
     };

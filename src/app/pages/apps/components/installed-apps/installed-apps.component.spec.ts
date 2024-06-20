@@ -26,7 +26,6 @@ import { AppsStatisticsService } from 'app/pages/apps/store/apps-statistics.serv
 import { AppsStore } from 'app/pages/apps/store/apps-store.service';
 import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.service';
 import { KubernetesStore } from 'app/pages/apps/store/kubernetes-store.service';
-import { AppCatalogPipe } from 'app/pages/apps/utils/app-catalog.pipe';
 import { selectAdvancedConfig, selectSystemConfigState } from 'app/store/system-config/system-config.selectors';
 
 describe('InstalledAppsComponent', () => {
@@ -48,7 +47,6 @@ describe('InstalledAppsComponent', () => {
     imports: [
       IxFormsModule,
       ReactiveFormsModule,
-      AppCatalogPipe,
       MatTableModule,
       MockModule(PageHeaderModule),
     ],
