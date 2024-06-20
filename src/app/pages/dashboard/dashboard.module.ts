@@ -44,6 +44,7 @@ import { BackupTaskTileComponent } from 'app/pages/dashboard/widgets/backup/widg
 import { WidgetDatapointComponent } from 'app/pages/dashboard/widgets/common/widget-datapoint/widget-datapoint.component';
 import { CpuChartGaugeComponent } from 'app/pages/dashboard/widgets/cpu/common/cpu-chart-gauge/cpu-chart-gauge.component';
 import { CpuCoreBarComponent } from 'app/pages/dashboard/widgets/cpu/common/cpu-core-bar/cpu-core-bar.component';
+import { GaugeChartComponent } from 'app/pages/dashboard/widgets/storage/widget-pool/gauge-chart/gauge-chart.component';
 import { ProductImageComponent } from 'app/pages/dashboard/widgets/system/common/product-image/product-image.component';
 import { UptimePipe } from 'app/pages/dashboard/widgets/system/common/uptime.pipe';
 
@@ -63,6 +64,7 @@ import { UptimePipe } from 'app/pages/dashboard/widgets/system/common/uptime.pip
     BackupTaskEmptyComponent,
     BackupTaskActionsComponent,
     BackupTaskTileComponent,
+    GaugeChartComponent,
     ...widgetComponents,
   ],
   providers: [
