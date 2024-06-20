@@ -173,6 +173,31 @@ const middlewareEntries = {
   } as AuditEntry,
 };
 
+const sudoEntries = {
+  accept: {
+    service: AuditService.Sudo,
+    event: AuditEvent.Accept,
+    event_data: {
+      sudo: {
+        accept: {
+          command: '/bin/ls',
+        },
+      },
+    },
+  } as AuditEntry,
+  reject: {
+    service: AuditService.Sudo,
+    event: AuditEvent.Reject,
+    event_data: {
+      sudo: {
+        reject: {
+          command: '/bin/ps',
+        },
+      },
+    },
+  } as AuditEntry,
+};
+
 function fakeInstant(key: string, interpolateParams: Record<string, unknown> = {}): string {
   Object.entries(interpolateParams).forEach(([param, value]) => {
     key = key.replace(`{${param}}`, String(value));
@@ -250,6 +275,16 @@ describe('get important data from log', () => {
 
     it('returns value for MethodCall type', () => {
       expect(getLogImportantData(middlewareEntries.methodCall, translate)).toBe('Delete files');
+    });
+  });
+
+  describe('Sudo audit entries', () => {
+    it('returns value for Accept type', () => {
+      expect(getLogImportantData(sudoEntries.accept, translate)).toBe('Command: /bin/ls');
+    });
+
+    it('returns value for Reject type', () => {
+      expect(getLogImportantData(sudoEntries.reject, translate)).toBe('Command: /bin/ps');
     });
   });
 });
