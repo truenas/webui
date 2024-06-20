@@ -1,29 +1,19 @@
-<div
-  #navigation
-  fxFlex="240px"
-  fxFlex.lt-lg="180px"
-  class="enclosure-selector"
+<a
+  *ngFor="let enclosure of enclosures(); let i = index"
+  class="enclosure"
+  [class.active]="enclosure.id === selectedEnclosure()"
+  [ixTest]="['select-enclosure', enclosure.model]"
+  (click)="selectEnclosure(enclosure.id)"
 >
-  <ng-container *ngFor="let enclosure of enclosures(); let i = index">
-    <div
-      *ngIf="enclosures().length; else emptySquare"
-      [class]="['enclosure', 'enclosure-'+ enclosure.id]"
-      [class.active]="enclosure.id === selectedEnclosure()"
-      (click)="selectEnclosure(enclosure.id)"
-    >
-      <!-- TODO: Slots were colored in old enclosure -->
-      <ix-enclosure-side
-        class="enclosure-image"
-        [enclosure]="enclosure"
-        [enableMouseEvents]="false"
-      ></ix-enclosure-side>
+  <!-- TODO: Slots were colored in old enclosure -->
+  <!-- TODO: Add skeleton -->
+  <ix-enclosure-side
+    class="enclosure-image"
+    [enclosure]="enclosure"
+    [enableMouseEvents]="false"
+  ></ix-enclosure-side>
 
-      <div class="enclosure-label">
-        {{ enclosure.label || enclosure.model }} ({{ i }})
-      </div>
-    </div>
-    <ng-template #emptySquare>
-      <div class="enclosure-selector-item empty"></div>
-    </ng-template>
-  </ng-container>
-</div>
+  <div class="enclosure-label">
+    {{ enclosure.label || enclosure.model }} ({{ i + 1 }})
+  </div>
+</a>

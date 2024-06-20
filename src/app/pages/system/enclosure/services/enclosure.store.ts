@@ -1,12 +1,13 @@
 import { computed, Injectable } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ComponentStore } from '@ngrx/component-store';
-import { Observable, switchMap, tap } from 'rxjs';
+import { switchMap, tap } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { DashboardEnclosure, DashboardEnclosureSlot } from 'app/interfaces/enclosure.interface';
 import { EnclosureView } from 'app/pages/system/enclosure/types/enclosure-view.enum';
 import { getEnclosureLabel } from 'app/pages/system/enclosure/utils/get-enclosure-label.utils';
 import { EnclosureSide } from 'app/pages/system/enclosure/utils/supported-enclosures';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 export interface EnclosureState {
@@ -55,22 +56,22 @@ export class EnclosureStore extends ComponentStore<EnclosureState> {
 
   constructor(
     private ws: WebSocketService,
+    private errorHandler: ErrorHandlerService,
   ) {
     super(initialState);
-  }
-
-  getEnclosure(): Observable<DashboardEnclosure[]> {
-    return this.ws.call('webui.enclosure.dashboard');
   }
 
   initiate = this.effect((origin$) => {
     return origin$.pipe(
       tap(() => this.setState(initialState)),
-      switchMap(() => this.getEnclosure()),
-      tap((enclosures: DashboardEnclosure[]) => {
-        this.patchState({ enclosures });
+      switchMap(() => {
+        return this.ws.call('webui.enclosure.dashboard').pipe(
+          tap((enclosures: DashboardEnclosure[]) => {
+            this.patchState({ enclosures });
+          }),
+          this.errorHandler.catchError(),
+        );
       }),
-      // TODO: Error handling
       // TODO: Loading indication
     );
   });

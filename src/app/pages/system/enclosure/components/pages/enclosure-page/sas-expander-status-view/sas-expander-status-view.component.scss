@@ -1,15 +1,13 @@
 :host {
-  width: 100%;
+  align-items: center;
+  display: flex;
+  gap: 10px;
+  height: 100%;
+  justify-content: space-evenly;
+  margin: 0 20px;
 }
 
-.expanders {
-  .expander-item {
-    display: inline-block;
-    width: 100%;
-  }
-}
-
-.item {
+.expander {
   text-align: center;
 }
 
@@ -19,8 +17,8 @@
   width: 100%;
 }
 
-.primary-number {
-  font-size: 3.25rem;
+.status-value {
+  font-size: 4.25rem;
   font-weight: 100;
 }
 
@@ -28,7 +26,7 @@
   font-size: 1rem;
 }
 
-.subtitle {
-  font-size: 0.65rem;
+.descriptor {
+  font-size: 0.75rem;
   opacity: 0.85;
 }

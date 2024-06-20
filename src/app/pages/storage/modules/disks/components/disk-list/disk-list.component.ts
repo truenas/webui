@@ -153,7 +153,12 @@ export class DiskListComponent implements OnInit {
 
   ngOnInit(): void {
     const request$ = forkJoin([
-      this.ws.call('disk.get_unused'),
+      this.ws.call('disk.details').pipe(
+        map((diskDetails) => [
+          ...diskDetails.unused,
+          ...diskDetails.used.filter((disk) => disk.exported_zpool),
+        ]),
+      ),
       this.ws.call('smart.test.disk_choices'),
       this.ws.call('disk.query', [[], { extra: { pools: true, passwords: true } }]),
     ]).pipe(

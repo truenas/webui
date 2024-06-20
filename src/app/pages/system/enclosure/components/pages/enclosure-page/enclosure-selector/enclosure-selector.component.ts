@@ -9,7 +9,7 @@ import { EnclosureStore } from 'app/pages/system/enclosure/services/enclosure.st
   styleUrl: './enclosure-selector.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class IxEnclosureSelectorComponent {
+export class EnclosureSelectorComponent {
   readonly enclosures = this.store.enclosures;
 
   readonly selectedEnclosure = computed(() => this.store.selectedEnclosure().id);

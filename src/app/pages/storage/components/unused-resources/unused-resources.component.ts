@@ -1,10 +1,14 @@
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnInit,
 } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { Subscription, debounceTime, distinctUntilChanged } from 'rxjs';
+import {
+  Subscription, debounceTime, distinctUntilChanged,
+} from 'rxjs';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
 import { Pool } from 'app/interfaces/pool.interface';
+import { ManageUnusedDiskDialogComponent } from 'app/pages/storage/components/unused-resources/unused-disk-card/manage-unused-disk-dialog/manage-unused-disk-dialog.component';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -17,13 +21,15 @@ import { WebSocketService } from 'app/services/ws.service';
 })
 export class UnusedResourcesComponent implements OnInit {
   @Input() pools: Pool[];
-  unusedDisks: DetailsDisk[] = [];
+  noPoolsDisks: DetailsDisk[] = [];
+  exportedPoolsDisks: DetailsDisk[] = [];
   diskQuerySubscription: Subscription;
 
   constructor(
     private ws: WebSocketService,
     private errorHandler: ErrorHandlerService,
     private cdr: ChangeDetectorRef,
+    private matDialog: MatDialog,
   ) { }
 
   ngOnInit(): void {
@@ -32,8 +38,12 @@ export class UnusedResourcesComponent implements OnInit {
   }
 
   updateUnusedDisks(): void {
-    this.ws.call('disk.get_unused').pipe(this.errorHandler.catchError(), untilDestroyed(this)).subscribe((disks) => {
-      this.unusedDisks = disks;
+    this.ws.call('disk.details').pipe(
+      this.errorHandler.catchError(),
+      untilDestroyed(this),
+    ).subscribe((diskDetails) => {
+      this.noPoolsDisks = diskDetails.unused;
+      this.exportedPoolsDisks = diskDetails.used.filter((disk) => disk.exported_zpool);
       this.cdr.markForCheck();
     });
   }
@@ -49,6 +59,24 @@ export class UnusedResourcesComponent implements OnInit {
       .subscribe(() => {
         this.updateUnusedDisks();
       });
+  }
+
+  protected addNoPoolDisksToStorage(): void {
+    this.addUnusedDisksToStorage(this.noPoolsDisks);
+  }
+
+  protected addExportedPoolDisksToStorage(): void {
+    this.addUnusedDisksToStorage(this.exportedPoolsDisks);
+  }
+
+  private addUnusedDisksToStorage(disks: DetailsDisk[]): void {
+    this.matDialog.open(ManageUnusedDiskDialogComponent, {
+      data: {
+        pools: this.pools,
+        unusedDisks: [...disks],
+      },
+      width: '600px',
+    });
   }
 
   private unsubscribeFromDiskQuery(): void {

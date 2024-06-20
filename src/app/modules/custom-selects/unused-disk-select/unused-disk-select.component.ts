@@ -74,7 +74,15 @@ export class UnusedDiskSelectComponent implements OnInit, AfterViewInit {
     return getNonUniqueSerialDisksWarning(this.nonUniqueSerialDisks(), this.translate);
   });
 
-  private unusedDisks$ = this.ws.call('disk.get_unused').pipe(shareReplay({ bufferSize: 1, refCount: true }));
+  private unusedDisks$ = this.ws.call('disk.details').pipe(
+    map((diskDetails) => {
+      return [
+        ...diskDetails.unused,
+        ...diskDetails.used.filter((disk) => disk.exported_zpool),
+      ];
+    }),
+    shareReplay({ bufferSize: 1, refCount: true }),
+  );
 
   protected allowDuplicateSerials = new FormControl(false);
 
