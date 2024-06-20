@@ -1,9 +1,9 @@
 <mat-card id="email-card">
   <mat-toolbar-row>
     <h3>{{ 'System Security' | translate }}</h3>
-    <div *ixRequiresRoles="requiredRoles" class="actions action-icon">
+    <div *ixWithLoadingState="systemSecurityConfig$ as systemSecurityConfig" class="actions action-icon">
       <button
-        *ixWithLoadingState="systemSecurityConfig$ as systemSecurityConfig"
+        *ixRequiresRoles="requiredRoles"
         mat-button
         color="default"
         [ixTest]="['system-security', 'settings']"

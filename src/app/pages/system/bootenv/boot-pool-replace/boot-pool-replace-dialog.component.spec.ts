@@ -9,6 +9,7 @@ import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
+import { UnusedDiskSelectComponent } from 'app/modules/custom-selects/unused-disk-select/unused-disk-select.component';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
@@ -23,16 +24,21 @@ describe('BootPoolReplaceDialogComponent', () => {
     component: BootPoolReplaceDialogComponent,
     imports: [
       IxFormsModule,
+      UnusedDiskSelectComponent,
       ReactiveFormsModule,
     ],
     providers: [
       mockWebSocket([
-        mockCall('disk.get_unused', [
-          {
-            name: 'sdb',
-            size: 10737418240,
-          },
-        ] as DetailsDisk[]),
+        mockCall('disk.details', {
+          unused: [
+            {
+              name: 'sdb',
+              devname: 'sdb',
+              size: 10737418240,
+            },
+          ] as DetailsDisk[],
+          used: [],
+        }),
         mockJob('boot.replace', fakeSuccessfulJob()),
       ]),
       mockProvider(DialogService, {
@@ -57,7 +63,7 @@ describe('BootPoolReplaceDialogComponent', () => {
   it('sends an update payload to websocket when save is pressed', async () => {
     const form = await loader.getHarness(IxFormHarness);
     await form.fillForm({
-      'Member Disk': 'sdb - 10 GiB',
+      'Member Disk': 'sdb (10 GiB)',
     });
 
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));

@@ -1,0 +1,31 @@
+<div class="left-column">
+  <ix-disk-topology-description
+    *ngIf="selectedSlot()"
+    [selectedSlot]="selectedSlot()"
+  ></ix-disk-topology-description>
+</div>
+
+<div class="enclosure-container">
+  <div class="image-container">
+    <ix-enclosure-side
+      class="enclosure-image"
+      [enclosure]="enclosure()"
+      [side]="selectedSide()"
+      [slotTintFn]="slotTintFn()"
+      [selectedSlot]="selectedSlot()"
+      (selectedSlotChange)="onSlotSelected($event)"
+    ></ix-enclosure-side>
+  </div>
+
+  <ix-enclosure-side-switch
+    class="side-switch"
+    [enclosure]="enclosure()"
+  ></ix-enclosure-side-switch>
+</div>
+
+<div class="right-column">
+  <ix-vdev-disks-list
+    *ngIf="selectedSlot()"
+    [selectedSlot]="selectedSlot()"
+  ></ix-vdev-disks-list>
+</div>

@@ -7,10 +7,10 @@ import {
 import {
   JbofListComponent,
 } from 'app/pages/system/enclosure/components/jbof-list/jbof-list.component';
+import { ElementsPageComponent } from 'app/pages/system/enclosure/components/pages/elements-page/elements-page.component';
 import {
-  EnclosureViewComponent,
-} from 'app/pages/system/enclosure/components/views/enclosure-view/enclosure-view.component';
-import { ElementsComponent } from './components/views/elements-view/elements.component';
+  EnclosurePageComponent,
+} from 'app/pages/system/enclosure/components/pages/enclosure-page/enclosure-page.component';
 
 const routes: Routes = [
   // Has to be above other items.
@@ -26,17 +26,17 @@ const routes: Routes = [
     children: [
       {
         path: '',
-        component: EnclosureViewComponent,
+        component: EnclosurePageComponent,
         data: { title: T('View Enclosure'), breadcrumb: null },
       },
       {
         path: ':enclosure',
-        component: EnclosureViewComponent,
+        component: EnclosurePageComponent,
         data: { title: T('View Enclosure'), breadcrumb: null },
       },
       {
         path: ':enclosure/:view',
-        component: ElementsComponent,
+        component: ElementsPageComponent,
         data: { title: T('View Enclosure'), breadcrumb: null },
       },
     ],

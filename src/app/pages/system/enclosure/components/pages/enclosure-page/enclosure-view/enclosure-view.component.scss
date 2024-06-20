@@ -1,0 +1,36 @@
+:host {
+  column-gap: 5px;
+  display: flex;
+  height: 100%;
+  width: 100%;
+}
+
+.left-column,
+.right-column {
+  flex: 1 1 25%;
+  max-width: 200px;
+}
+
+.enclosure-container {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  margin-bottom: 5%;
+  margin-top: 15px;
+  row-gap: 12px;
+
+  .image-container {
+    align-items: center;
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+
+    .enclosure-image {
+      flex: 1;
+    }
+  }
+
+  .side-switch {
+    flex-shrink: 0;
+  }
+}

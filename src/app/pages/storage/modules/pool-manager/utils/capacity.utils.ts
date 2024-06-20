@@ -3,12 +3,11 @@ import { assertUnreachable } from 'app/helpers/assert-unreachable.utils';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
 import { PoolManagerTopologyCategory } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
 
-export function categoryCapacity(topologyCategory: PoolManagerTopologyCategory, swapOnDrive: number): number {
+export function categoryCapacity(topologyCategory: PoolManagerTopologyCategory): number {
   return topologyCategory.vdevs.reduce((sum, vdev) => {
     return sum + vdevCapacity({
       vdev,
       layout: topologyCategory.layout,
-      swapOnDrive,
       draidDataDisks: topologyCategory.draidDataDisks,
       draidSpareDisks: topologyCategory.draidSpareDisks,
     });
@@ -16,11 +15,10 @@ export function categoryCapacity(topologyCategory: PoolManagerTopologyCategory, 
 }
 
 export function vdevCapacity({
-  vdev, layout, swapOnDrive, draidDataDisks, draidSpareDisks,
+  vdev, layout, draidDataDisks, draidSpareDisks,
 }: {
   vdev: DetailsDisk[];
   layout: CreateVdevLayout;
-  swapOnDrive: number;
   draidDataDisks?: number;
   draidSpareDisks?: number;
 }): number {
@@ -30,7 +28,7 @@ export function vdevCapacity({
 
   const smallestDiskSize = vdev.reduce((smallest, disk) => {
     return smallest.size < disk.size ? smallest : disk;
-  }).size - swapOnDrive;
+  }).size;
 
   const totalSize = smallestDiskSize * vdev.length;
 
@@ -68,7 +66,7 @@ export function vdevCapacity({
         size: smallestDiskSize,
       });
     case CreateVdevLayout.Stripe:
-      return vdev.reduce((sum, disk) => sum + disk.size - swapOnDrive, 0);
+      return vdev.reduce((sum, disk) => sum + disk.size, 0);
     default:
       assertUnreachable(layout);
       return 0;

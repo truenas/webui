@@ -10,10 +10,8 @@ import {
   forkJoin, Observable, of, Subject,
 } from 'rxjs';
 import {
-  filter,
-  map, switchMap, take, tap,
+  filter, switchMap, take, tap,
 } from 'rxjs/operators';
-import { GiB } from 'app/constants/bytes.constant';
 import { DiskType } from 'app/enums/disk-type.enum';
 import { CreateVdevLayout, VdevType } from 'app/enums/v-dev-type.enum';
 import { DetailsDisk, DiskDetailsResponse } from 'app/interfaces/disk.interface';
@@ -37,7 +35,6 @@ import {
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
-import { waitForAdvancedConfig } from 'app/store/system-config/system-config.selectors';
 
 export interface PoolManagerTopologyCategory {
   layout: CreateVdevLayout;
@@ -135,8 +132,7 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
   readonly enclosureSettings$ = this.select((state) => state.enclosureSettings);
   readonly totalUsableCapacity$ = this.select(
     this.topology$,
-    this.settingsStore$.pipe(waitForAdvancedConfig, map((config) => config.swapondrive)),
-    (topology, swapondrive) => categoryCapacity(topology[VdevType.Data], swapondrive * GiB),
+    (topology) => categoryCapacity(topology[VdevType.Data]),
   );
   readonly allowedDisks$ = this.select(
     this.diskStore.selectableDisks$,
