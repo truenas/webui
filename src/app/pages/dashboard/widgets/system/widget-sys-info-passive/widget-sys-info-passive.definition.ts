@@ -1,7 +1,7 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { Store } from '@ngrx/store';
 import { WidgetCategory } from 'app/pages/dashboard/types/widget-category.enum';
-import { dashboardWidget } from 'app/pages/dashboard/types/widget-component.interface';
+import { WidgetVisibilityDepsType, dashboardWidget } from 'app/pages/dashboard/types/widget-component.interface';
 import { SlotSize } from 'app/pages/dashboard/types/widget.interface';
 import { WidgetSysInfoPassiveComponent } from 'app/pages/dashboard/widgets/system/widget-sys-info-passive/widget-sys-info-passive.component';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
@@ -14,6 +14,6 @@ export const systemInfoPassiveWidget = dashboardWidget({
   settingsComponent: null,
   visibility: {
     deps: [Store],
-    isVisible$: (deps) => deps.get(Store).select(selectIsHaLicensed),
+    isVisible$: (deps) => ((deps as WidgetVisibilityDepsType<Store>).get(Store)).select(selectIsHaLicensed),
   },
 });

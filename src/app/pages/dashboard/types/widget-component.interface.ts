@@ -1,5 +1,4 @@
 import { InputSignal, Type } from '@angular/core';
-import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
 import { WidgetCategory } from 'app/pages/dashboard/types/widget-category.enum';
 import { WidgetSettingsRef } from 'app/pages/dashboard/types/widget-settings-ref.interface';
@@ -29,13 +28,13 @@ type WidgetSettingsComponentType<Settings> = Settings extends SomeWidgetSettings
   ? WidgetSettingsComponent<Settings>
   : null;
 
-export type WidgetVisibilityProvider = Store;
-export type WidgetVisibilityDepsType = Map<Type<WidgetVisibilityProvider>, WidgetVisibilityProvider>;
+export type WidgetVisibilityDepsType<T = unknown> = Map<Type<T>, T>;
 
 export interface WidgetDefinition<
   Settings extends SomeWidgetSettings | null,
   Component extends WidgetComponent<Settings>,
   SettingsComponent extends WidgetSettingsComponentType<Settings>,
+  WidgetVisibilityProvider = unknown,
 > {
   name: string;
   supportedSizes: SlotSize[];
@@ -44,7 +43,7 @@ export interface WidgetDefinition<
   settingsComponent: SettingsComponent extends null ? null : Type<SettingsComponent>;
   visibility?: {
     deps: Type<WidgetVisibilityProvider>[];
-    isVisible$: (deps: WidgetVisibilityDepsType) => Observable<boolean>;
+    isVisible$: (deps: WidgetVisibilityDepsType<WidgetVisibilityProvider>) => Observable<boolean>;
   };
 }
 

@@ -106,6 +106,7 @@ export class WidgetGroupSlotFormComponent implements OnInit, AfterViewInit, OnCh
   });
 
   private environmentInjector = inject(EnvironmentInjector);
+  private widgetRegistryEntries = Object.entries(widgetRegistry);
 
   constructor(
     private fb: FormBuilder,
@@ -166,20 +167,10 @@ export class WidgetGroupSlotFormComponent implements OnInit, AfterViewInit, OnCh
 
   ngOnInit(): void {
     runInInjectionContext(this.environmentInjector, () => {
-      this.getLayoutSupportedWidgets = toSignal(of(Object.entries(widgetRegistry)).pipe(
-        switchMap((widgets) => {
-          const visibilityList = widgets.map(([, widget]) => {
-            if (widget.visibility) {
-              const deps: WidgetVisibilityDepsType = new Map();
-              widget.visibility.deps.forEach((service) => deps.set(service, inject(service)));
-              return widget.visibility.isVisible$(deps);
-            }
-            return of(true);
-          });
-          return combineLatest([of(widgets), combineLatest(visibilityList)]);
-        }),
-        map(([widgets, visibilityList]) => widgets.filter((_, idx) => visibilityList[idx])),
-        map((widgets) => widgets.filter(([, widget]) => widget.supportedSizes.includes(this.slotConfig().slotSize))),
+      this.getLayoutSupportedWidgets = toSignal(of(this.widgetRegistryEntries).pipe(
+        switchMap((widgets) => combineLatest(this.getVisibilityList(widgets))),
+        map(([widgets, visibilityList]) => this.filterHiddenWidgets(widgets, visibilityList)),
+        map((widgets) => this.filterUnsupportedWidgets(widgets)),
         map((widgets) => widgets.map(([type, widget]) => ({ ...widget, type: type as WidgetType }))),
       ));
     });
@@ -213,6 +204,33 @@ export class WidgetGroupSlotFormComponent implements OnInit, AfterViewInit, OnCh
     this.categorySubscription?.unsubscribe();
     this.typeSubscription?.unsubscribe();
     this.settingsContainer?.clear();
+  }
+
+  private getVisibilityList(
+    widgets: typeof this.widgetRegistryEntries,
+  ): [Observable<typeof this.widgetRegistryEntries>, Observable<boolean[]>] {
+    const visibilityList = widgets.map(([, widget]) => {
+      if (widget.visibility) {
+        const deps: WidgetVisibilityDepsType = new Map();
+        widget.visibility.deps.forEach((service) => deps.set(service, inject(service)));
+        return widget.visibility.isVisible$(deps);
+      }
+      return of(true);
+    });
+    return [of(widgets), combineLatest(visibilityList)];
+  }
+
+  private filterHiddenWidgets(
+    widgets: typeof this.widgetRegistryEntries,
+    visibilityList: boolean[],
+  ): typeof this.widgetRegistryEntries {
+    return widgets.filter((_, idx) => visibilityList[idx]);
+  }
+
+  private filterUnsupportedWidgets(
+    widgets: typeof this.widgetRegistryEntries,
+  ): typeof this.widgetRegistryEntries {
+    return widgets.filter(([, widget]) => widget.supportedSizes.includes(this.slotConfig().slotSize));
   }
 
   private refreshSettingsContainer(): void {

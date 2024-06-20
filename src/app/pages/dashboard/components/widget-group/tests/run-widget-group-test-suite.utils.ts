@@ -11,6 +11,7 @@ import { WidgetHostnameComponent } from 'app/pages/dashboard/widgets/network/wid
 import {
   WidgetInterfaceIpComponent,
 } from 'app/pages/dashboard/widgets/network/widget-interface-ip/widget-interface-ip.component';
+import { WidgetSysInfoPassiveComponent } from 'app/pages/dashboard/widgets/system/widget-sys-info-passive/widget-sys-info-passive.component';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 
 export function runWidgetGroupTestSuite<T extends WidgetGroupComponent>(component: Type<T>): void {
@@ -24,6 +25,7 @@ export function runWidgetGroupTestSuite<T extends WidgetGroupComponent>(componen
           WidgetInterfaceIpComponent,
           WidgetHelpComponent,
           WidgetErrorComponent,
+          WidgetSysInfoPassiveComponent,
         ),
       ],
       providers: [
@@ -31,7 +33,7 @@ export function runWidgetGroupTestSuite<T extends WidgetGroupComponent>(componen
           selectors: [
             {
               selector: selectIsHaLicensed,
-              value: true,
+              value: false,
             },
           ],
         }),
@@ -101,6 +103,23 @@ export function runWidgetGroupTestSuite<T extends WidgetGroupComponent>(componen
       expect(slots).toHaveLength(2);
       expect(slots[0].children).toHaveLength(0);
       expect(slots[1].children).not.toHaveLength(0);
+    });
+
+    it('leaves a slot empty when widget is not visible', () => {
+      spectator = createComponent({
+        props: {
+          group: {
+            layout: WidgetGroupLayout.Full,
+            slots: [
+              { type: WidgetType.SystemInfoPassive },
+            ],
+          },
+        },
+      });
+
+      const slots = spectator.queryAll('.slot');
+      expect(slots).toHaveLength(1);
+      expect(slots[0].children).toHaveLength(0);
     });
 
     it('renders error when widget is not recognized', () => {
