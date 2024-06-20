@@ -22,17 +22,21 @@ import { MarkdownModule } from 'ngx-markdown';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { CoreComponents } from 'app/core/core-components.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
-import { CastModule } from 'app/modules/cast/cast.module';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { EntityModule } from 'app/modules/entity/entity.module';
-import { IxDynamicFormModule } from 'app/modules/ix-dynamic-form/ix-dynamic-form.module';
-import { IxFileSizeModule } from 'app/modules/ix-file-size/ix-file-size.module';
+import { IxDynamicFormModule } from 'app/modules/forms/ix-dynamic-form/ix-dynamic-form.module';
+import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
+import { ToolbarSliderComponent } from 'app/modules/forms/toolbar-slider/toolbar-slider.component';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
 import { LayoutModule } from 'app/modules/layout/layout.module';
+import { BulkListItemComponent } from 'app/modules/lists/bulk-list-item/bulk-list-item.component';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
-import { SearchInput1Component } from 'app/modules/search-input1/search-input1.component';
+import { CleanLinkPipe } from 'app/modules/pipes/clean-link/clean-link.pipe';
+import { FormatDateTimePipe } from 'app/modules/pipes/format-date-time/format-datetime.pipe';
+import { IxFileSizePipe } from 'app/modules/pipes/ix-file-size/ix-file-size.pipe';
+import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 import { TerminalModule } from 'app/modules/terminal/terminal.module';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
 import { AppsRoutingModule } from 'app/pages/apps/apps-routing.module';
@@ -161,7 +165,6 @@ import { KubernetesStatusComponent } from './components/installed-apps/kubernete
     FormsModule,
     MatDialogModule,
     MatMenuModule,
-    IxFileSizeModule,
     ImgFallbackModule,
     NgxSkeletonLoaderModule,
     IxIconModule,
@@ -171,7 +174,6 @@ import { KubernetesStatusComponent } from './components/installed-apps/kubernete
     AppLoaderModule,
     CommonDirectivesModule,
     MatExpansionModule,
-    CastModule,
     TerminalModule,
     MatTooltipModule,
     MatMenuModule,
@@ -187,6 +189,12 @@ import { KubernetesStatusComponent } from './components/installed-apps/kubernete
     MatSort,
     MatColumnDef,
     MatSortHeader,
+    ToolbarSliderComponent,
+    FormatDateTimePipe,
+    MapValuePipe,
+    CleanLinkPipe,
+    BulkListItemComponent,
+    IxFileSizePipe,
   ],
 })
 export class AppsModule { }

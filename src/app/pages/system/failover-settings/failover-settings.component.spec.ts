@@ -10,9 +10,9 @@ import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.u
 import { helptextSystemFailover } from 'app/helptext/system/failover';
 import { DialogModule } from 'app/modules/dialog/dialog.module';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
-import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
-import { SearchInput1Component } from 'app/modules/search-input1/search-input1.component';
+import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
+import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
+import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { FailoverSettingsComponent } from 'app/pages/system/failover-settings/failover-settings.component';
 import { WebSocketConnectionService } from 'app/services/websocket-connection.service';

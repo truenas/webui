@@ -1,11 +1,7 @@
 import { ThemeUtils } from 'app/core/classes/theme-utils/theme-utils';
 
 describe('ThemeUtils', () => {
-  let utils: ThemeUtils;
-
-  beforeEach(() => {
-    utils = new ThemeUtils();
-  });
+  const utils = new ThemeUtils();
 
   it('should detect value types', () => {
     const hex = '#ffffff';

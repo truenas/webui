@@ -9,12 +9,12 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
-import { IxFileSizeModule } from 'app/modules/ix-file-size/ix-file-size.module';
-import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
+import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
+import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
 import { LayoutModule } from 'app/modules/layout/layout.module';
-import { SearchInput1Component } from 'app/modules/search-input1/search-input1.component';
+import { IxFileSizePipe } from 'app/modules/pipes/ix-file-size/ix-file-size.pipe';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
 import { EnclosureDiskComponent } from 'app/pages/system/enclosure/components/disk-component/disk.component';
 import { EnclosureDashboardComponent } from 'app/pages/system/enclosure/components/enclosure-dashboard/enclosure-dashboard.component';
@@ -61,10 +61,10 @@ import { EnclosureStore } from 'app/pages/system/enclosure/services/enclosure.st
     MatTooltip,
     IxFormsModule,
     ReactiveFormsModule,
-    IxFileSizeModule,
     MatDialogClose,
     MatDialogTitle,
     EmptyComponent,
+    IxFileSizePipe,
   ],
   declarations: [
     EnclosureDashboardComponent,

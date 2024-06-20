@@ -19,22 +19,25 @@ import { FlexLayoutModule } from '@ngbracket/ngx-layout';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { CoreComponents } from 'app/core/core-components.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
-import { CastModule } from 'app/modules/cast/cast.module';
+import { OauthButtonModule } from 'app/modules/buttons/oauth-button/oauth-button.module';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { EntityModule } from 'app/modules/entity/entity.module';
-import { IxFileSizeModule } from 'app/modules/ix-file-size/ix-file-size.module';
-import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
+import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
+import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
 import { TreeModule } from 'app/modules/ix-tree/tree.module';
 import { JobsModule } from 'app/modules/jobs/jobs.module';
 import { LayoutModule } from 'app/modules/layout/layout.module';
+import { BulkListItemComponent } from 'app/modules/lists/bulk-list-item/bulk-list-item.component';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
-import { OauthButtonModule } from 'app/modules/oauth-button/oauth-button.module';
+import { FormatDateTimePipe } from 'app/modules/pipes/format-date-time/format-datetime.pipe';
+import { IxFileSizePipe } from 'app/modules/pipes/ix-file-size/ix-file-size.pipe';
+import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
+import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
 import { SchedulerModule } from 'app/modules/scheduler/scheduler.module';
-import { SearchInput1Component } from 'app/modules/search-input1/search-input1.component';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
-import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
+import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
 import { AccessCardComponent } from 'app/pages/system/advanced/access/access-card/access-card.component';
 import { AccessFormComponent } from 'app/pages/system/advanced/access/access-form/access-form.component';
 import { AdvancedSettingsComponent } from 'app/pages/system/advanced/advanced-settings.component';
@@ -140,7 +143,6 @@ import { routing } from './system.routing';
 @NgModule({
   imports: [
     AppLoaderModule,
-    CastModule,
     CommonDirectivesModule,
     CommonModule,
     CoreComponents,
@@ -151,7 +153,6 @@ import { routing } from './system.routing';
     IxFormsModule,
     TreeModule,
     SchedulerModule,
-    IxFileSizeModule,
     JobsModule,
     MatCardModule,
     IxIconModule,
@@ -167,7 +168,6 @@ import { routing } from './system.routing';
     MatButtonModule,
     ReactiveFormsModule,
     routing,
-    TooltipModule,
     TranslateModule,
     MatDialogModule,
     LayoutModule,
@@ -179,6 +179,12 @@ import { routing } from './system.routing';
     OauthButtonModule,
     SearchInput1Component,
     EmptyComponent,
+    IxFileSizePipe,
+    TooltipComponent,
+    FormatDateTimePipe,
+    MapValuePipe,
+    BulkListItemComponent,
+    YesNoPipe,
   ],
   declarations: [
     AdvancedSettingsComponent,

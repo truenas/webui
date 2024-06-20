@@ -6,8 +6,8 @@ import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { SystemDatasetConfig } from 'app/interfaces/system-dataset-config.interface';
+import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
 import { TreeModule } from 'app/modules/ix-tree/tree.module';
-import { SearchInput1Component } from 'app/modules/search-input1/search-input1.component';
 import { DatasetsManagementComponent } from 'app/pages/datasets/components/dataset-management/dataset-management.component';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
 

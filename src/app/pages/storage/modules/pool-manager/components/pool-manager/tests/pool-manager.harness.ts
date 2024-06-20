@@ -6,7 +6,7 @@ import {
   getControlValues, getDisabledStates,
   indexControlsByLabel, IxFormBasicValueType, SupportedFormControlHarness,
   supportedFormControlSelectors,
-} from 'app/modules/ix-forms/testing/control-harnesses.helpers';
+} from 'app/modules/forms/ix-forms/testing/control-harnesses.helpers';
 import { ConfigurationPreviewHarness } from 'app/pages/storage/modules/pool-manager/components/configuration-preview/configuration-preview.harness';
 import { ExistingConfigurationPreviewHarness } from 'app/pages/storage/modules/pool-manager/components/existing-configuration-preview/existing-configuration-preview.harness';
 import { NewDevicesConfigurationPreviewHarness } from 'app/pages/storage/modules/pool-manager/components/new-devices/new-devices-configuration-preview.harness';

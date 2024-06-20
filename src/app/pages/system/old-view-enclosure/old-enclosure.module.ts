@@ -14,17 +14,16 @@ import { FlexLayoutModule } from '@ngbracket/ngx-layout';
 import { TranslateModule } from '@ngx-translate/core';
 import { CoreComponents } from 'app/core/core-components.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
-import { CastModule } from 'app/modules/cast/cast.module';
 import { EntityModule } from 'app/modules/entity/entity.module';
-import { IxFileSizeModule } from 'app/modules/ix-file-size/ix-file-size.module';
-import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
+import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
+import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
 import { LayoutModule } from 'app/modules/layout/layout.module';
 import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
-import { SearchInput1Component } from 'app/modules/search-input1/search-input1.component';
+import { IxFileSizePipe } from 'app/modules/pipes/ix-file-size/ix-file-size.pipe';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
-import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
+import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
 import { DiskComponent } from 'app/pages/system/old-view-enclosure/components/disk-component/disk.component';
 import { EnclosureDisksComponent } from 'app/pages/system/old-view-enclosure/components/enclosure-disks/enclosure-disks.component';
 import { EnclosureDisksMiniComponent } from 'app/pages/system/old-view-enclosure/components/enclosure-disks-mini/enclosure-disks-mini.component';
@@ -44,8 +43,6 @@ import { EnclosureStore } from './stores/enclosure-store.service';
     TranslateModule,
     FlexLayoutModule,
     EntityModule,
-    TooltipModule,
-    CastModule,
     IxIconModule,
     PageHeaderModule,
     MatProgressSpinnerModule,
@@ -53,7 +50,6 @@ import { EnclosureStore } from './stores/enclosure-store.service';
     MatTableModule,
     MatCardModule,
     MatToolbarModule,
-    IxFileSizeModule,
     LayoutModule,
     MatButtonModule,
     MatMenuModule,
@@ -66,6 +62,8 @@ import { EnclosureStore } from './stores/enclosure-store.service';
     CommonDirectivesModule,
     IxTableModule,
     SearchInput1Component,
+    IxFileSizePipe,
+    TooltipComponent,
   ],
   declarations: [
     ViewEnclosureComponent,

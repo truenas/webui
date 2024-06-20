@@ -24,10 +24,10 @@ import { SshConnectionSetup } from 'app/interfaces/ssh-connection-setup.interfac
 import { SshCredentials } from 'app/interfaces/ssh-credentials.interface';
 import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { ChainedRef } from 'app/modules/ix-forms/components/ix-slide-in/chained-component-ref';
-import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
-import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
-import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
+import { ChainedRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/chained-component-ref';
+import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
+import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
+import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';

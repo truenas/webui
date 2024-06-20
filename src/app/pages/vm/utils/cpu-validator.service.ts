@@ -8,7 +8,7 @@ import {
   catchError, map, shareReplay,
 } from 'rxjs/operators';
 import { helptextVmWizard } from 'app/helptext/vm/vm-wizard/vm-wizard';
-import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
+import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 /**

@@ -6,11 +6,12 @@ import { TranslateModule } from '@ngx-translate/core';
 import { CoreComponents } from 'app/core/core-components.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { EntityModule } from 'app/modules/entity/entity.module';
+import { ToolbarSliderComponent } from 'app/modules/forms/toolbar-slider/toolbar-slider.component';
 import { LayoutModule } from 'app/modules/layout/layout.module';
 import { CopyPasteMessageComponent } from 'app/modules/terminal/components/copy-paste-message/copy-paste-message.component';
 import { TerminalComponent } from 'app/modules/terminal/components/terminal/terminal.component';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
-import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
+import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
 
 @NgModule({
   imports: [
@@ -20,10 +21,11 @@ import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
     CoreComponents,
     CommonDirectivesModule,
     MatButtonModule,
-    TooltipModule,
     LayoutModule,
     TestIdModule,
     MatDialogModule,
+    ToolbarSliderComponent,
+    TooltipComponent,
   ],
   declarations: [
     TerminalComponent,

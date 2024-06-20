@@ -29,7 +29,7 @@
     "prepare": "husky install",
     "ui": "cd $(git rev-parse --show-toplevel) && yarn run --silent ts-node ./scripts/ui/ui.ts",
     "strict-null-checks": "node_modules/typescript/bin/tsc --project tsconfig.strictNullChecks.json",
-    "compile-grammar": "lezer-generator --typeScript --noTerms src/app/modules/search-input/services/query-parser/query.grammar -o src/app/modules/search-input/services/query-parser/query-grammar.ts"
+    "compile-grammar": "lezer-generator --typeScript --noTerms src/app/modules/forms/search-input/services/query-parser/query.grammar -o src/app/modules/forms/search-input/services/query-parser/query-grammar.ts"
   },
   "repository": {
     "type": "git",

@@ -12,16 +12,18 @@ import { ImgFallbackModule } from 'ngx-img-fallback';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { CoreComponents } from 'app/core/core-components.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
+import { CopyButtonComponent } from 'app/modules/buttons/copy-button/copy-button.component';
 import { ChartsModule } from 'app/modules/charts/charts.module';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
+import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
 import { InterfaceStatusIconComponent } from 'app/modules/interface-status-icon/interface-status-icon.component';
 import { IxDropGridModule } from 'app/modules/ix-drop-grid/ix-drop-grid.module';
-import { IxFileSizeModule } from 'app/modules/ix-file-size/ix-file-size.module';
-import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { LayoutModule } from 'app/modules/layout/layout.module';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
+import { FormatDateTimePipe } from 'app/modules/pipes/format-date-time/format-datetime.pipe';
+import { IxFileSizePipe } from 'app/modules/pipes/ix-file-size/ix-file-size.pipe';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
 import { DashboardComponent } from 'app/pages/dashboard/components/dashboard/dashboard.component';
 import {
@@ -104,8 +106,10 @@ import { UptimePipe } from 'app/pages/dashboard/widgets/system/common/uptime.pip
     EmptyComponent,
     ImgFallbackModule,
     InterfaceStatusIconComponent,
-    IxFileSizeModule,
     UptimePipe,
+    FormatDateTimePipe,
+    IxFileSizePipe,
+    CopyButtonComponent,
   ],
 })
 export class DashboardModule {

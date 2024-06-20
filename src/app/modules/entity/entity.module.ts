@@ -7,7 +7,6 @@ import { MatSliderModule } from '@angular/material/slider';
 import { FlexModule } from '@ngbracket/ngx-layout';
 import { TranslateModule } from '@ngx-translate/core';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
-import { ToolbarSliderComponent } from 'app/modules/entity/entity-toolbar/components/toolbar-slider/toolbar-slider.component';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
 
@@ -25,10 +24,6 @@ import { TestIdModule } from 'app/modules/test-id/test-id.module';
   ],
   declarations: [
     EntityJobComponent,
-    ToolbarSliderComponent,
-  ],
-  exports: [
-    ToolbarSliderComponent,
   ],
 })
 export class EntityModule { }

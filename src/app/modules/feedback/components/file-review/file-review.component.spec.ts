@@ -10,8 +10,8 @@ import { of } from 'rxjs';
 import { fakeFile } from 'app/core/testing/utils/fake-file.uitls';
 import { FileReviewComponent } from 'app/modules/feedback/components/file-review/file-review.component';
 import { FeedbackService } from 'app/modules/feedback/services/feedback.service';
-import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
-import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
+import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
+import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 
 describe('FileReviewComponent', () => {
   let spectator: Spectator<FileReviewComponent>;

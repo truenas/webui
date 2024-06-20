@@ -3,7 +3,7 @@ import { Subscription } from 'rxjs';
 import { ChartFormValue, ChartSchemaNode, ChartSchemaNodeConf } from 'app/interfaces/chart-release.interface';
 import { AddListItemEvent, DynamicFormSchemaNode } from 'app/interfaces/dynamic-form-schema.interface';
 import { HierarchicalObjectMap } from 'app/interfaces/hierarhical-object-map.interface';
-import { CustomUntypedFormGroup } from 'app/modules/ix-dynamic-form/components/ix-dynamic-form/classes/custom-untyped-form-group';
+import { CustomUntypedFormGroup } from 'app/modules/forms/ix-dynamic-form/components/ix-dynamic-form/classes/custom-untyped-form-group';
 
 export interface FormControlPayload {
   chartSchemaNode: ChartSchemaNode;

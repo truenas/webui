@@ -1,0 +1,17 @@
+<div class="toolbar-slider">
+  {{ label() }}:
+  <mat-slider
+    [ixTest]="label()"
+    [min]="min()"
+    [max]="max()"
+    [step]="step()"
+  >
+    <input
+      #sliderInput
+      matSliderThumb
+      ixTest="toolbar-slider"
+      [value]="value()"
+      (change)="onChange(sliderInput.value)"
+    />
+  </mat-slider>
+</div>

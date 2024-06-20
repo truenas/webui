@@ -13,6 +13,7 @@ import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.u
 import { JobState } from 'app/enums/job-state.enum';
 import { Job } from 'app/interfaces/job.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
 import { IxEmptyRowHarness } from 'app/modules/ix-table/components/ix-empty-row/ix-empty-row.component.harness';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
@@ -20,7 +21,6 @@ import { jobsInitialState, JobsState } from 'app/modules/jobs/store/job.reducer'
 import { selectJobs, selectJobState } from 'app/modules/jobs/store/job.selectors';
 import { LayoutModule } from 'app/modules/layout/layout.module';
 import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
-import { SearchInput1Component } from 'app/modules/search-input1/search-input1.component';
 import { JobLogsRowComponent } from 'app/pages/jobs/job-logs-row/job-logs-row.component';
 import { JobNameComponent } from 'app/pages/jobs/job-name/job-name.component';
 import { DownloadService } from 'app/services/download.service';

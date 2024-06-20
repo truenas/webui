@@ -7,16 +7,15 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { MockComponent } from 'ng-mocks';
-import { IxInputHarness } from 'app/modules/ix-forms/components/ix-input/ix-input.harness';
-import { IxSelectHarness } from 'app/modules/ix-forms/components/ix-select/ix-select.harness';
-import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
+import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
+import { IxSelectHarness } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.harness';
+import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
 import {
   SchedulerModalConfig,
 } from 'app/modules/scheduler/components/scheduler-modal/scheduler-modal-config.interface';
 import {
   SchedulerPreviewColumnComponent,
 } from 'app/modules/scheduler/components/scheduler-modal/scheduler-preview-column/scheduler-preview-column.component';
-import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
 import { selectTimezone } from 'app/store/system-config/system-config.selectors';
 import { SchedulerModalComponent } from './scheduler-modal.component';
 
@@ -28,7 +27,6 @@ describe('SchedulerModalComponent', () => {
     imports: [
       IxFormsModule,
       ReactiveFormsModule,
-      TooltipModule,
     ],
     providers: [
       mockProvider(MatDialogRef),

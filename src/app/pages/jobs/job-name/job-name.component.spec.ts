@@ -2,9 +2,9 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory } from '@ngneat/spectator/jest';
-import { CopyButtonComponent } from 'app/core/components/copy-btn/copy-btn.component';
 import { JobState } from 'app/enums/job-state.enum';
 import { Job } from 'app/interfaces/job.interface';
+import { CopyButtonComponent } from 'app/modules/buttons/copy-button/copy-button.component';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { JobNameComponent } from 'app/pages/jobs/job-name/job-name.component';
 

@@ -17,8 +17,8 @@ import { KubernetesConfig, KubernetesConfigUpdate } from 'app/interfaces/kuberne
 import {
   DialogService,
 } from 'app/modules/dialog/dialog.service';
-import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
-import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
+import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { kubernetesSettingsElements } from 'app/pages/apps/components/installed-apps/kubernetes-settings/kubernetes-settings.elements';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';

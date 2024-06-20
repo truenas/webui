@@ -1,9 +1,9 @@
 import { ComponentHarness, HarnessPredicate } from '@angular/cdk/testing';
 import { MatSelectHarness, SelectHarnessFilters } from '@angular/material/select/testing';
 import * as cronParser from 'cron-parser';
-import { IxLabelHarness } from 'app/modules/ix-forms/components/ix-label/ix-label.harness';
-import { IxFormControlHarness } from 'app/modules/ix-forms/interfaces/ix-form-control-harness.interface';
-import { getErrorText } from 'app/modules/ix-forms/utils/harness.utils';
+import { IxLabelHarness } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.harness';
+import { IxFormControlHarness } from 'app/modules/forms/ix-forms/interfaces/ix-form-control-harness.interface';
+import { getErrorText } from 'app/modules/forms/ix-forms/utils/harness.utils';
 import { SchedulerModalHarness } from 'app/modules/scheduler/components/scheduler-modal/scheduler-modal.harness';
 
 export interface SchedulerFilters extends SelectHarnessFilters {

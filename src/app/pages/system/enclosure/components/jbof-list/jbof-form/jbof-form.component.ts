@@ -7,10 +7,10 @@ import { TranslateService } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
 import { Jbof, JbofUpdate } from 'app/interfaces/jbof.interface';
-import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
-import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
-import { ipv4Validator } from 'app/modules/ix-forms/validators/ip-validation';
+import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in.token';
+import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
+import { ipv4Validator } from 'app/modules/forms/ix-forms/validators/ip-validation';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()

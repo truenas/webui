@@ -4,7 +4,7 @@ import { TranslateService } from '@ngx-translate/core';
 import _ from 'lodash';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { helptextSystemCertificates } from 'app/helptext/system/certificates';
-import { emailValidator } from 'app/modules/ix-forms/validators/email-validation/email-validation';
+import { emailValidator } from 'app/modules/forms/ix-forms/validators/email-validation/email-validation';
 import { SummaryProvider, SummarySection } from 'app/modules/summary/summary.interface';
 import { SystemGeneralService } from 'app/services/system-general.service';
 
