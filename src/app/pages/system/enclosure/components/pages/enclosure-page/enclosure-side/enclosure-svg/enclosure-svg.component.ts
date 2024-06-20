@@ -87,17 +87,6 @@ export class EnclosureSvgComponent {
     });
   });
 
-  private highlightSelectedSlot = effect(() => {
-    Object.values(this.overlayRects).forEach((overlay) => overlay.classList.remove('selected'));
-
-    if (!this.selectedSlot()) {
-      return;
-    }
-
-    const slotOverlay = this.overlayRects[this.selectedSlot().drive_bay_number];
-    this.renderer.addClass(slotOverlay, 'selected');
-  });
-
   private clearOverlays(): void {
     Object.values(this.overlayRects).forEach((overlay) => overlay.remove());
     this.overlayRects = {};
