@@ -20,7 +20,7 @@ const cloudBackupSnapshots: CloudBackupSnapshot[] = [
     id: 'first',
     hostname: 'UA',
     time: {
-      $date: 1718638850000,
+      $date: new Date().getTime() - 50000,
     },
     paths: ['/mnt/nmnmn'],
     short_id: '',
@@ -93,7 +93,7 @@ describe('CloudBackupSnapshotsComponent', () => {
   it('should show table rows', async () => {
     const expectedRows = [
       ['Snapshot Time', 'Hostname', ''],
-      ['1 day ago', 'UA', ''],
+      ['1 min. ago', 'UA', ''],
     ];
 
     const cells = await table.getCellTexts();
