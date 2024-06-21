@@ -2,7 +2,6 @@ import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
 import { Router } from '@angular/router';
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
@@ -37,29 +36,27 @@ import { selectService } from 'app/store/services/services.selectors';
 })
 export class SmbCardComponent implements OnInit {
   requiredRoles = [Role.SharingSmbWrite, Role.SharingWrite];
-  changedEnabled = new Map<number, boolean>([]);
 
   service$ = this.store$.select(selectService(ServiceName.Cifs));
 
   smbShares: SmbShare[] = [];
   dataProvider: AsyncDataProvider<SmbShare>;
-  title = T('Windows (SMB) Shares');
 
   columns = createTable<SmbShare>([
     textColumn({
-      title: helptextSharingSmb.column_name,
+      title: this.translate.instant(helptextSharingSmb.column_name),
       propertyName: 'name',
     }),
     textColumn({
-      title: helptextSharingSmb.column_path,
+      title: this.translate.instant(helptextSharingSmb.column_path),
       propertyName: 'path_local',
     }),
     textColumn({
-      title: helptextSharingSmb.column_comment,
+      title: this.translate.instant(helptextSharingSmb.column_comment),
       propertyName: 'comment',
     }),
     toggleColumn({
-      title: helptextSharingSmb.column_enabled,
+      title: this.translate.instant(helptextSharingSmb.column_enabled),
       propertyName: 'enabled',
       onRowToggle: (row: SmbShare) => this.onChangeEnabledState(row),
       requiredRoles: this.requiredRoles,
@@ -191,26 +188,16 @@ export class SmbCardComponent implements OnInit {
 
   private onChangeEnabledState(row: SmbShare): void {
     const param = 'enabled';
-    this.changedEnabled.set(row.id, !row[param]);
-    this.updateEnabledFields();
 
     this.ws.call('sharing.smb.update', [row.id, { [param]: !row[param] }]).pipe(untilDestroyed(this)).subscribe({
       next: () => {
-        this.changedEnabled.delete(row.id);
         this.getSmbShares();
       },
       error: (error: unknown) => {
-        this.changedEnabled.delete(row.id);
         this.getSmbShares();
         this.dialogService.error(this.errorHandler.parseError(error));
       },
     });
-  }
-
-  private updateEnabledFields(): void {
-    this.dataProvider.setRows(this.smbShares.map((smbShare) => (
-      this.changedEnabled.has(smbShare.id) ? { ...smbShare, enabled: this.changedEnabled.get(smbShare.id) } : smbShare
-    )));
   }
 
   private updateEnabledFieldVisibility(hidden: boolean): void {
