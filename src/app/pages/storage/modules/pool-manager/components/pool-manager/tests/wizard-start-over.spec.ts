@@ -12,7 +12,9 @@ import { Enclosure } from 'app/interfaces/enclosure.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxRadioGroupHarness } from 'app/modules/forms/ix-forms/components/ix-radio-group/ix-radio-group.harness';
 import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
+import { CastPipe } from 'app/modules/pipes/cast/cast.pipe';
 import { IxFileSizePipe } from 'app/modules/pipes/ix-file-size/ix-file-size.pipe';
+import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 import {
   PoolManagerComponent,
 } from 'app/pages/storage/modules/pool-manager/components/pool-manager/pool-manager.component';
@@ -35,6 +37,8 @@ describe('PoolManagerComponent – start over functionality', () => {
       ReactiveFormsModule,
       MatStepperModule,
       IxFileSizePipe,
+      MapValuePipe,
+      CastPipe,
     ],
     declarations: [
       ...commonDeclarations,

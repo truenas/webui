@@ -1,14 +1,14 @@
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
-import { CoreComponents } from 'app/core/core-components.module';
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
 import { FailoverStatus } from 'app/enums/failover-status.enum';
+import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 import { FailoverStatusComponent } from 'app/views/sessions/signin/failover-status/failover-status.component';
 
 describe('FailoverStatusComponent', () => {
   let spectator: Spectator<FailoverStatusComponent>;
   const createComponent = createComponentFactory({
     component: FailoverStatusComponent,
-    imports: [CoreComponents],
+    imports: [MapValuePipe],
   });
 
   beforeEach(() => {
