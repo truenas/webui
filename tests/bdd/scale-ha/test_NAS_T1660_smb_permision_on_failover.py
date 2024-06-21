@@ -197,7 +197,7 @@ def click_save_if_restart_smb_service_box_appears_click_restart_service(driver):
 def send_a_file_to_the_smbtest1_share_and_verify_the_file_exist_and_get_the_acl_permission_of_smbtest1(nas_vip, acl_Permission_Data, share_name, share_Dataset_Data):
     """send a file to the smbtest1 share and verify the file exist and get the acl permission of smbtest1."""
     run_cmd('touch testfile.txt')
-    results = run_cmd(f'smbclient //{nas_vip}/{share_name} -U ericbsd%testing1 -c "put testfile.txt testfile.txt"')
+    results = run_cmd(f'smbclient //{nas_vip}/{share_name} -U ericbsd%testing -c "put testfile.txt testfile.txt"')
     assert results['result'], results['output']
 
     results = post(nas_vip, '/filesystem/stat/', (admin_User, admin_Password), f'{share_Dataset_Data[share_name]}/testfile.txt')
@@ -212,7 +212,7 @@ def send_a_file_to_the_smbtest1_share_and_verify_the_file_exist_and_get_the_acl_
 @then(parsers.parse('try to send a file to the {share_name} share and verify it failed and get the acl permission of smbtest2'))
 def try_to_send_a_file_to_the_smbtest2_share_and_verify_it_failed_and_get_the_acl_permission_of_smbtest2(nas_vip, acl_Permission_Data, share_name, share_Dataset_Data):
     """try to send a file to the smbtest2 share and verify it failed and get the acl permission of smbtest2."""
-    results = run_cmd(f'smbclient //{nas_vip}/{share_name} -U ericbsd%testing1 -c "put testfile.txt testfile.txt"')
+    results = run_cmd(f'smbclient //{nas_vip}/{share_name} -U ericbsd%testing -c "put testfile.txt testfile.txt"')
     assert results['result'] is False, results['output']
     assert 'NT_STATUS_ACCESS_DENIED' in results['output']
     run_cmd('rm testfile.txt')
@@ -230,7 +230,7 @@ def create_a_file_with_root_in_mntdozersmb2_get_the_file_from_the_smbtest2_share
     middlewared_log = ssh_cmd(cmd, admin_User, admin_Password, nas_vip)
     assert middlewared_log['result'] is True, str(middlewared_log)
 
-    results = run_cmd(f'smbclient //{nas_vip}/{share_name} -U ericbsd%testing1 -c "get testfile.txt testfile.txt"')
+    results = run_cmd(f'smbclient //{nas_vip}/{share_name} -U ericbsd%testing -c "get testfile.txt testfile.txt"')
     assert results['result'], results['output']
 
     results = post(nas_vip, '/filesystem/stat/', (admin_User, admin_Password), f'{share_Dataset_Data[share_name]}/testfile.txt')
@@ -275,7 +275,7 @@ def verify_the_first_file_still_exist_in_smbtest1_dataset(share_name, share_Data
 def verify_you_still_can_write_on_smbtest1_and_verify_the_permission(nas_vip, acl_Permission_Data, share_name, share_Dataset_Data):
     """verify you still can write on smbtest1 and verify the permission."""
     run_cmd('touch testfile2.txt')
-    results = run_cmd(f'smbclient //{nas_vip}/{share_name} -U ericbsd%testing1 -c "put testfile2.txt testfile2.txt"')
+    results = run_cmd(f'smbclient //{nas_vip}/{share_name} -U ericbsd%testing -c "put testfile2.txt testfile2.txt"')
     assert results['result'], results['output']
 
     results = post(nas_vip, '/filesystem/getacl/', (admin_User, admin_Password), {'path': share_Dataset_Data[share_name]})
@@ -293,7 +293,7 @@ def verify_the_test_file_still_exist_in_smbtest2_dataset(share_name, share_Datas
 @then(parsers.parse('verify you still cant write on {share_name} and verify the permission is still read only for ericbsd'))
 def verify_you_still_cant_write_on_smbtest2_and_verify_the_permission_is_still_read_only_for_ericbsd(nas_vip, acl_Permission_Data, share_name, share_Dataset_Data):
     """verify you still cant write on smbtest2 and verify the permission is still read only for ericbsd."""
-    results = run_cmd(f'smbclient //{nas_vip}/{share_name} -U ericbsd%testing1 -c "put testfile2.txt testfile2.txt"')
+    results = run_cmd(f'smbclient //{nas_vip}/{share_name} -U ericbsd%testing -c "put testfile2.txt testfile2.txt"')
     assert results['result'] is False, results['output']
     assert 'NT_STATUS_ACCESS_DENIED' in results['output']
     run_cmd('rm testfile2.txt')

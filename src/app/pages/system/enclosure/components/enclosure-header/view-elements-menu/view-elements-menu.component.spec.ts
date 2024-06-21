@@ -1,7 +1,7 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatMenuHarness } from '@angular/material/menu/testing';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import {
   createRoutingFactory,
   SpectatorRouting,
@@ -56,7 +56,7 @@ describe('ViewElementsMenuComponent', () => {
     const items = await menu.getItems();
     await items[0].click();
 
-    expect(router.navigate).toHaveBeenCalledWith(['enclosure-id'], { relativeTo: expect.any(ActivatedRoute) });
+    expect(router.navigate).toHaveBeenCalledWith(['/system/viewenclosure', 'enclosure-id']);
   });
 
   it('takes user to a corresponding elements view when other items are selected', async () => {
@@ -67,6 +67,6 @@ describe('ViewElementsMenuComponent', () => {
     const items = await menu.getItems();
     await items[1].click();
 
-    expect(router.navigate).toHaveBeenCalledWith(['enclosure-id/Cooling'], { relativeTo: expect.any(ActivatedRoute) });
+    expect(router.navigate).toHaveBeenCalledWith(['/system/viewenclosure', 'enclosure-id', 'Cooling']);
   });
 });
