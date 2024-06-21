@@ -20,7 +20,7 @@ const cloudBackupSnapshots: CloudBackupSnapshot[] = [
     id: 'first',
     hostname: 'UA',
     time: {
-      $date: 1718638850000,
+      $date: new Date().getTime() - 50000,
     },
     paths: ['/mnt/nmnmn'],
     short_id: '',
@@ -79,7 +79,7 @@ describe('CloudBackupSnapshotsComponent', () => {
   it('handles restore functionality', async () => {
     const slideInService = spectator.inject(IxSlideInService);
 
-    const restoreButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'restore' }), 1, 1);
+    const restoreButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'restore' }), 1, 2);
     await restoreButton.click();
 
     expect(slideInService.open).toHaveBeenCalledWith(CloudBackupRestoreFromSnapshotFormComponent, {
@@ -92,8 +92,8 @@ describe('CloudBackupSnapshotsComponent', () => {
 
   it('should show table rows', async () => {
     const expectedRows = [
-      ['Name', ''],
-      ['UA', ''],
+      ['Snapshot Time', 'Hostname', ''],
+      ['1 min. ago', 'UA', ''],
     ];
 
     const cells = await table.getCellTexts();
