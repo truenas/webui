@@ -7,6 +7,7 @@ import { chain } from 'lodash';
 import { filter } from 'rxjs/operators';
 import { RoutePartsService, RoutePart } from 'app/services/route-parts/route-parts.service';
 
+// TODO: Bad. Redo.
 const noLinksRoutes = ['/credentials', '/reportsdashboard', '/system'];
 
 @UntilDestroy()

@@ -45,6 +45,6 @@ export class ProductImageComponent {
     if (!this.hasEnclosureSupport()) {
       return;
     }
-    this.router.navigate(['/system/oldviewenclosure']);
+    this.router.navigate(['/system/viewenclosure']);
   }
 }

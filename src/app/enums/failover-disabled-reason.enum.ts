@@ -1,3 +1,5 @@
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
+
 export enum FailoverDisabledReason {
   NoVolume = 'NO_VOLUME',
   NoVip = 'NO_VIP',
@@ -19,6 +21,8 @@ export enum FailoverDisabledReason {
   NoCarrierOnHeartbeat = 'NO_CARRIER_ON_HEARTBEAT',
   LocalFipsRebootRequired = 'LOC_FIPS_REBOOT_REQ',
   RemoteFipsRebootRequired = 'REM_FIPS_REBOOT_REQ',
+  LocalDatasetMigrationInProgress = 'LOC_SYSTEM_DATASET_MIGRATION_IN_PROGRESS',
+  RemoteDatasetMigrationInProgress = 'REM_SYSTEM_DATASET_MIGRATION_IN_PROGRESS',
 }
 
 export const failoverAllowedReasons = [
@@ -26,3 +30,28 @@ export const failoverAllowedReasons = [
   FailoverDisabledReason.LocalFipsRebootRequired,
   FailoverDisabledReason.RemoteFipsRebootRequired,
 ];
+
+export const failoverDisabledReasonLabels = new Map<FailoverDisabledReason, string>([
+  [FailoverDisabledReason.NoVolume, T('No pools are configured.')],
+  [FailoverDisabledReason.NoVip, T('No interfaces configured with Virtual IP.')],
+  [FailoverDisabledReason.NoSystemReady, T('Other TrueNAS controller has not finished booting.')],
+  [FailoverDisabledReason.NoPong, T('Other TrueNAS controller cannot be reached.')],
+  [FailoverDisabledReason.NoFailover, T('Failover is administratively disabled.')],
+  [FailoverDisabledReason.NoLicense, T('Other TrueNAS controller has no license.')],
+  [FailoverDisabledReason.DisagreeVip, T('Nodes Virtual IP states do not agree.')],
+  [FailoverDisabledReason.MismatchDisks, T('The TrueNAS controllers do not have the same quantity of disks.')],
+  [FailoverDisabledReason.MismatchVersions, T('TrueNAS software versions do not match between storage controllers.')],
+  [FailoverDisabledReason.MismatchNics, T('Network interfaces do not match between storage controllers.')],
+  [FailoverDisabledReason.NoCriticalInterfaces, T('No network interfaces are marked critical for failover.')],
+  [FailoverDisabledReason.NoFenced, T('Fenced is not running.')],
+  [FailoverDisabledReason.NoJournalSync, T('Thread responsible for syncing db transactions not running on this node.')],
+  [FailoverDisabledReason.RemNoJournalSync, T('Thread responsible for syncing db transactions not running on other node.')],
+  [FailoverDisabledReason.RemFailoverOngoing, T('Other node is currently processing a failover event.')],
+  [FailoverDisabledReason.LocFailoverOngoing, T('This node is currently processing a failover event.')],
+  [FailoverDisabledReason.NoHeartbeatIface, T('Local heartbeat interface does not exist.')],
+  [FailoverDisabledReason.NoCarrierOnHeartbeat, T('Local heartbeat interface is down.')],
+  [FailoverDisabledReason.LocalFipsRebootRequired, T('Reboot of this node is required for FIPS changes.')],
+  [FailoverDisabledReason.RemoteFipsRebootRequired, T('Reboot of the other node is required for FIPS changes.')],
+  [FailoverDisabledReason.LocalDatasetMigrationInProgress, T('This node is currently configuring the system dataset.')],
+  [FailoverDisabledReason.RemoteDatasetMigrationInProgress, T('Other node is currently configuring the system dataset.')],
+]);

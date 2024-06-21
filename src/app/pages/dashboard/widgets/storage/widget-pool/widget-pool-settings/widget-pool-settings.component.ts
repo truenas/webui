@@ -9,16 +9,16 @@ import { getAllFormErrors } from 'app/modules/forms/ix-forms/utils/get-form-erro
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
 import { WidgetSettingsComponent } from 'app/pages/dashboard/types/widget-component.interface';
 import { WidgetSettingsRef } from 'app/pages/dashboard/types/widget-settings-ref.interface';
-import { WidgetPoolNameSettings } from 'app/pages/dashboard/widgets/storage/widget-pool-name/widget-pool-name.definition';
+import { WidgetPoolSettings } from 'app/pages/dashboard/widgets/storage/widget-pool/widget-pool.definition';
 
 @UntilDestroy()
 @Component({
-  selector: 'ix-widget-pool-name-settings',
-  templateUrl: './widget-pool-name-settings.component.html',
-  styleUrl: './widget-pool-name-settings.component.scss',
+  selector: 'ix-widget-pool-settings',
+  templateUrl: './widget-pool-settings.component.html',
+  styleUrl: './widget-pool-settings.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class WidgetPoolNameSettingsComponent implements WidgetSettingsComponent<WidgetPoolNameSettings>, OnInit {
+export class WidgetPoolSettingsComponent implements WidgetSettingsComponent<WidgetPoolSettings>, OnInit {
   form = this.fb.group({
     pool: [null as string, [Validators.required]],
   });
@@ -32,7 +32,7 @@ export class WidgetPoolNameSettingsComponent implements WidgetSettingsComponent<
 
   private readonly formFieldNames = ['pool'];
   constructor(
-    public widgetSettingsRef: WidgetSettingsRef<WidgetPoolNameSettings>,
+    public widgetSettingsRef: WidgetSettingsRef<WidgetPoolSettings>,
     private fb: FormBuilder,
     private resources: WidgetResourcesService,
   ) { }
