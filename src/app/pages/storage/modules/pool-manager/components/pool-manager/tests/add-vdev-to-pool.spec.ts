@@ -5,7 +5,6 @@ import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { GiB } from 'app/constants/bytes.constant';
-import { CoreComponents } from 'app/core/core-components.module';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
@@ -15,6 +14,7 @@ import { DetailsDisk } from 'app/interfaces/disk.interface';
 import { Enclosure } from 'app/interfaces/enclosure.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
+import { IxFileSizePipe } from 'app/modules/pipes/ix-file-size/ix-file-size.pipe';
 import { AddVdevsComponent } from 'app/pages/storage/modules/pool-manager/components/add-vdevs/add-vdevs.component';
 import { AddVdevsStore } from 'app/pages/storage/modules/pool-manager/components/add-vdevs/store/add-vdevs-store.service';
 import { existingPool, existingPoolDisks } from 'app/pages/storage/modules/pool-manager/components/pool-manager/tests/add-vdev-to-pool-data';
@@ -38,7 +38,7 @@ describe('AddVdevsComponent – Add Vdev to existing pool', () => {
       IxFormsModule,
       ReactiveFormsModule,
       MatStepperModule,
-      CoreComponents,
+      IxFileSizePipe,
     ],
     declarations: [
       ...commonDeclarations,

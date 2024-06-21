@@ -12,6 +12,7 @@ import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-dat
 import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { JobState } from 'app/enums/job-state.enum';
 import { Job } from 'app/interfaces/job.interface';
+import { CopyButtonComponent } from 'app/modules/buttons/copy-button/copy-button.component';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
 import { IxEmptyRowHarness } from 'app/modules/ix-table/components/ix-empty-row/ix-empty-row.component.harness';
@@ -76,6 +77,7 @@ describe('JobsListComponent', () => {
       MockModule(PageHeaderModule),
       SearchInput1Component,
       MatButtonToggleGroup,
+      CopyButtonComponent,
     ],
     declarations: [
       JobNameComponent,

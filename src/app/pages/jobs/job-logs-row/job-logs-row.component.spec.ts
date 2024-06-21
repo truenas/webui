@@ -37,7 +37,7 @@ describe('JobLogsRowComponent', () => {
 
   const createHost = createHostFactory({
     component: JobLogsRowComponent,
-    declarations: [
+    imports: [
       CopyButtonComponent,
     ],
   });

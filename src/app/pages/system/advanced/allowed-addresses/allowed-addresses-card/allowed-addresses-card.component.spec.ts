@@ -12,6 +12,7 @@ import { ChainedRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ch
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
+import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
 import { AdvancedSettingsService } from 'app/pages/system/advanced/advanced-settings.service';
 import { AllowedAddressesCardComponent } from 'app/pages/system/advanced/allowed-addresses/allowed-addresses-card/allowed-addresses-card.component';
 import { AllowedAddressesFormComponent } from 'app/pages/system/advanced/allowed-addresses/allowed-addresses-form/allowed-addresses-form.component';
@@ -33,6 +34,7 @@ describe('AllowedAddressesCardComponent', () => {
     component: AllowedAddressesCardComponent,
     imports: [
       IxTableModule,
+      TooltipComponent,
     ],
     providers: [
       mockAuth(),

@@ -5,7 +5,6 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
-import { CoreComponents } from 'app/core/core-components.module';
 import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-datetime.pipe';
 import { MockWebSocketService } from 'app/core/testing/classes/mock-websocket.service';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -17,6 +16,8 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
+import { IxFileSizePipe } from 'app/modules/pipes/ix-file-size/ix-file-size.pipe';
+import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { selectAdvancedConfig } from 'app/store/system-config/system-config.selectors';
@@ -43,7 +44,8 @@ describe('BootenvStatsDialogComponent', () => {
       AppLoaderModule,
       IxFormsModule,
       ReactiveFormsModule,
-      CoreComponents,
+      MapValuePipe,
+      IxFileSizePipe,
     ],
     providers: [
       mockProvider(DialogService),

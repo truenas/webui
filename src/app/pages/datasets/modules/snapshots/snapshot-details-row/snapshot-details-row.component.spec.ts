@@ -15,6 +15,7 @@ import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
 import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { IxFileSizePipe } from 'app/modules/pipes/ix-file-size/ix-file-size.pipe';
 import { SnapshotCloneDialogComponent } from 'app/pages/datasets/modules/snapshots/snapshot-clone-dialog/snapshot-clone-dialog.component';
 import { SnapshotDetailsRowComponent } from 'app/pages/datasets/modules/snapshots/snapshot-details-row/snapshot-details-row.component';
 import { SnapshotRollbackDialogComponent } from 'app/pages/datasets/modules/snapshots/snapshot-rollback-dialog/snapshot-rollback-dialog.component';
@@ -33,6 +34,7 @@ describe('SnapshotDetailsRowComponent', () => {
       IxFormsModule,
       ReactiveFormsModule,
       IxTableModule,
+      IxFileSizePipe,
     ],
     declarations: [
       FakeFormatDateTimePipe,

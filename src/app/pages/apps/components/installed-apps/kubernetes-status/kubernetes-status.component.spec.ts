@@ -1,7 +1,7 @@
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
-import { CoreComponents } from 'app/core/core-components.module';
+import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 import { KubernetesStatusComponent } from 'app/pages/apps/components/installed-apps/kubernetes-status/kubernetes-status.component';
 import { KubernetesStatus } from 'app/pages/apps/enum/kubernetes-status.enum';
 import { KubernetesStore } from 'app/pages/apps/store/kubernetes-store.service';
@@ -11,7 +11,7 @@ describe('KubernetesStatusComponent', () => {
 
   const createComponent = createComponentFactory({
     component: KubernetesStatusComponent,
-    imports: [CoreComponents],
+    imports: [MapValuePipe],
   });
 
   function setupTest(status: KubernetesStatus): void {

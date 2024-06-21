@@ -28,7 +28,7 @@ describe('AppAvailableInfoCardComponent', () => {
 
   const createComponent = createComponentFactory({
     component: AppAvailableInfoCardComponent,
-    declarations: [
+    imports: [
       CleanLinkPipe,
     ],
     providers: [

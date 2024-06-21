@@ -14,6 +14,7 @@ import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-tabl
 import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
+import { IxFileSizePipe } from 'app/modules/pipes/ix-file-size/ix-file-size.pipe';
 import { VmWizardComponent } from 'app/pages/vm/vm-wizard/vm-wizard.component';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
@@ -55,6 +56,7 @@ describe('VmListComponent', () => {
       IxTableModule,
       MockModule(PageHeaderModule),
       SearchInput1Component,
+      IxFileSizePipe,
     ],
     declarations: [],
     providers: [

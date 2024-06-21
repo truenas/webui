@@ -2,6 +2,7 @@ import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { GiB } from 'app/constants/bytes.constant';
 import { DiskType } from 'app/enums/disk-type.enum';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
+import { IxFileSizePipe } from 'app/modules/pipes/ix-file-size/ix-file-size.pipe';
 import {
   DiskIconComponent,
 } from 'app/pages/storage/modules/pool-manager/components/manual-disk-selection/components/disk-icon/disk-icon.component';
@@ -10,6 +11,9 @@ describe('DiskIconComponent', () => {
   let spectator: Spectator<DiskIconComponent>;
   const createComponent = createComponentFactory({
     component: DiskIconComponent,
+    imports: [
+      IxFileSizePipe,
+    ],
   });
 
   beforeEach(() => {

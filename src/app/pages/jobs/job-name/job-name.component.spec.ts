@@ -28,7 +28,7 @@ describe('JobNameComponent', () => {
 
   const createComponent = createComponentFactory({
     component: JobNameComponent,
-    declarations: [
+    imports: [
       CopyButtonComponent,
     ],
   });

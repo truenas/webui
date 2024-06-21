@@ -8,7 +8,6 @@ import {
 } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
-import { CoreComponents } from 'app/core/core-components.module';
 import { MockWebSocketService } from 'app/core/testing/classes/mock-websocket.service';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -19,6 +18,7 @@ import { NfsAcl } from 'app/interfaces/acl.interface';
 import { FileSystemStat } from 'app/interfaces/filesystem-stat.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
+import { CastPipe } from 'app/modules/pipes/cast/cast.pipe';
 import {
   AclEditorListComponent,
 } from 'app/pages/datasets/modules/permissions/components/acl-editor-list/acl-editor-list.component';
@@ -83,7 +83,7 @@ describe('DatasetAclEditorComponent', () => {
     component: DatasetAclEditorComponent,
     imports: [
       IxFormsModule,
-      CoreComponents,
+      CastPipe,
       ReactiveFormsModule,
     ],
     declarations: [

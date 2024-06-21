@@ -16,6 +16,7 @@ import {
 import {
   SchedulerPreviewColumnComponent,
 } from 'app/modules/scheduler/components/scheduler-modal/scheduler-preview-column/scheduler-preview-column.component';
+import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
 import { selectTimezone } from 'app/store/system-config/system-config.selectors';
 import { SchedulerModalComponent } from './scheduler-modal.component';
 
@@ -27,6 +28,7 @@ describe('SchedulerModalComponent', () => {
     imports: [
       IxFormsModule,
       ReactiveFormsModule,
+      TooltipComponent,
     ],
     providers: [
       mockProvider(MatDialogRef),

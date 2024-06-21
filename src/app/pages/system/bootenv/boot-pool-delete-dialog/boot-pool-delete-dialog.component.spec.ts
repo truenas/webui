@@ -45,8 +45,6 @@ describe('BootPoolDeleteDialogComponent', () => {
       AppLoaderModule,
       ReactiveFormsModule,
       IxFormsModule,
-    ],
-    declarations: [
       BulkListItemComponent,
     ],
     providers: [
