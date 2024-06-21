@@ -1,6 +1,5 @@
 # coding=utf-8
 """SCALE UI: feature tests."""
-
 import os
 import pytest
 import reusableSeleniumCode as rsc
@@ -15,7 +14,8 @@ from function import (
     ssh_sudo,
     setup_ssh_agent,
     create_key,
-    add_ssh_key
+    add_ssh_key,
+    create_group
 )
 from pytest_bdd import (
     given,
@@ -27,8 +27,8 @@ from pytest_dependency import depends
 
 
 localHome = os.path.expanduser('~')
-dotsshPath = localHome + '/.ssh'
-keyPath = localHome + '/.ssh/ui_test_id_rsa'
+dotsshPath = f'{localHome}/.ssh'
+keyPath = f'{localHome}/.ssh/ui_test_id_rsa'
 
 setup_ssh_agent()
 if os.path.isdir(dotsshPath) is False:
@@ -42,7 +42,7 @@ add_ssh_key(keyPath)
 def ssh_key():
     ssh_key_file = open(f'{keyPath}.pub', 'r')
     return ssh_key_file.read().strip()
-
+    
 
 @scenario('features/NAS-T1253.feature', 'Verify enabling sudo for group works')
 def test_verify_enabling_sudo_for_group_works():
@@ -50,9 +50,9 @@ def test_verify_enabling_sudo_for_group_works():
 
 
 @given('the browser is open, navigate to the SCALE URL, and login')
-def the_browser_is_open_navigate_to_the_scale_url_and_login(driver, nas_ip, root_password, request):
+def the_browser_is_open_navigate_to_the_scale_url_and_login(driver, nas_ip, root_password):
     """the browser is open, navigate to the SCALE URL, and login."""
-    depends(request, ['Set_Group', 'Setup_SSH'], scope='session')
+    create_group(nas_ip, ('root', root_password), 'qatest')
     if nas_ip not in driver.current_url:
         driver.get(f"http://{nas_ip}")
         assert wait_on_element(driver, 10, xpaths.login.user_Input)
@@ -128,7 +128,7 @@ def create_new_qetestuser_user_add_to_qatest_group(driver, ssh_key):
 
 
 @then('verify user can ssh in and cannot sudo')
-def verify_user_can_ssh_in_and_cannot_sudo(driver, nas_ip):
+def verify_user_can_ssh_in_and_cannot_sudo(nas_ip):
     """verify user can ssh in and cannot sudo."""
     global sudo_results
     cmd = 'ls /'
@@ -169,7 +169,7 @@ def check_the_enable_sudo_box_and_click_save(driver):
 
 
 @then('ssh in with qetest user and try to sudo')
-def ssh_in_with_qetest_user_and_try_to_sudo(driver, nas_ip):
+def ssh_in_with_qetest_user_and_try_to_sudo(nas_ip):
     """ssh in with qetest user and try to sudo."""
     cmd = 'ls /'
     sudo_results2 = ssh_sudo(cmd, nas_ip, 'qetestuser', 'testing')

@@ -1,0 +1,18 @@
+:host {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  position: relative;
+}
+
+.label {
+  font-family: var(--font-family-body);
+  font-size: 30px;
+  font-weight: bold;
+  left: 50%;
+  letter-spacing: -1px;
+  margin-left: 2px;
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}

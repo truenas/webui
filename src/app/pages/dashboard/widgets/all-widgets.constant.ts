@@ -11,7 +11,7 @@ import { memoryWidget } from 'app/pages/dashboard/widgets/memory/widget-memory/w
 import { hostnameWidget } from 'app/pages/dashboard/widgets/network/widget-hostname/widget-hostname.definition';
 import { ipv4AddressWidget, ipv6AddressWidget } from 'app/pages/dashboard/widgets/network/widget-interface-ip/widget-interface-ip.definition';
 import { networkWidget } from 'app/pages/dashboard/widgets/network/widget-network/widget-network.definition';
-import { poolNameWidget } from 'app/pages/dashboard/widgets/storage/widget-pool-name/widget-pool-name.definition';
+import { poolWidget } from 'app/pages/dashboard/widgets/storage/widget-pool/widget-pool.definition';
 import { storageWidget } from 'app/pages/dashboard/widgets/storage/widget-storage/widget-storage.definition';
 import { osVersionWidget } from 'app/pages/dashboard/widgets/system/widget-os-version/widget-os-version.definition';
 import { systemInfoActiveWidget } from 'app/pages/dashboard/widgets/system/widget-sys-info-active/widget-sys-info-active.definition';
@@ -38,15 +38,15 @@ export const widgetComponents = [
   osVersionWidget.component,
   systemUptimeWidget.component,
   systemImageWidget.component,
-  poolNameWidget.component,
-  poolNameWidget.settingsComponent,
+  poolWidget.component,
+  poolWidget.settingsComponent,
   arbitraryTextWidget.component,
   arbitraryTextWidget.settingsComponent,
 ];
 
 export const widgetRegistry = {
   [WidgetType.Hostname]: hostnameWidget,
-  [WidgetType.PoolName]: poolNameWidget,
+  [WidgetType.Pool]: poolWidget,
   [WidgetType.Ipv4Address]: ipv4AddressWidget,
   [WidgetType.Ipv6Address]: ipv6AddressWidget,
   [WidgetType.Help]: helpWidget,

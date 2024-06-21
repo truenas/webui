@@ -45,12 +45,12 @@ export const mockEs60 = makeEnclosure({
   model: 'ES60',
   controller: false,
   rackmount: true,
-  front_slots: 60,
-  front_loaded: true,
+  top_slots: 60,
+  top_loaded: true,
   elements: {
     'Array Device Slot': makeArrayDeviceSlots(1, 60, {
       supportsIdentifyLight: true,
-      is_front: true,
+      is_top: true,
     }),
   },
 });
@@ -64,11 +64,12 @@ export const mockEs102 = makeEnclosure({
   model: 'ES102',
   controller: false,
   rackmount: true,
-  front_slots: 102,
+  top_slots: 102,
+  top_loaded: true,
   elements: {
     'Array Device Slot': makeArrayDeviceSlots(1, 102, {
       supportsIdentifyLight: true,
-      is_front: true,
+      is_top: true,
     }),
   },
 });

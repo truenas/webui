@@ -7,6 +7,7 @@ import {
 import { SystemUpdateStatus } from 'app/enums/system-update.enum';
 import { toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import { Dataset } from 'app/interfaces/dataset.interface';
+import { Disk } from 'app/interfaces/disk.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { ReportingData } from 'app/interfaces/reporting.interface';
 import { VolumesData, VolumeData } from 'app/interfaces/volume-data.interface';
@@ -107,6 +108,20 @@ export class WidgetResourcesService {
   getPoolById(poolId: number): Observable<Pool> {
     return this.ws.call('pool.query', [[['id', '=', +poolId]]]).pipe(
       map((pools) => pools[0]),
+      shareReplay({ bufferSize: 1, refCount: true }),
+    );
+  }
+
+  getDatasetById(datasetId: string): Observable<Dataset> {
+    return this.ws.call('pool.dataset.query', [[['id', '=', datasetId]]]).pipe(
+      map((response) => response[0]),
+      shareReplay({ bufferSize: 1, refCount: true }),
+    );
+  }
+
+  getDisksByPoolId(poolId: string): Observable<Disk[]> {
+    return this.ws.call('disk.query', [[], { extra: { pools: true } }]).pipe(
+      map((response) => response.filter((disk: Disk) => disk.pool === poolId)),
       shareReplay({ bufferSize: 1, refCount: true }),
     );
   }
