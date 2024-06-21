@@ -1,4 +1,6 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component,
+} from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { EnclosureStore } from 'app/pages/system/enclosure/services/enclosure.store';
@@ -25,13 +27,15 @@ export class EnclosureDashboardComponent {
   ) {
     this.enclosureStore.initiate();
 
-    this.route.paramMap.pipe(untilDestroyed(this)).subscribe((params) => {
-      if (!params.has('enclosure')) {
-        return;
-      }
+    this.route.paramMap
+      .pipe(untilDestroyed(this))
+      .subscribe((params) => {
+        const enclosure = params.get('enclosure');
+        if (!enclosure) {
+          return;
+        }
 
-      this.enclosureStore.selectEnclosure(params.get('enclosure'));
-      // TODO: Add error state for missing enclosure.
-    });
+        this.enclosureStore.selectEnclosure(enclosure);
+      });
   }
 }

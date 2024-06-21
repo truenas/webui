@@ -57,7 +57,7 @@ describe('ProductImageComponent', () => {
 
       expect(image).toHaveClass('clickable');
       spectator.click('img');
-      expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/system/oldviewenclosure']);
+      expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/system/viewenclosure']);
     });
 
     it('should display image for F60 platform', () => {
@@ -80,7 +80,7 @@ describe('ProductImageComponent', () => {
 
       expect(image).toHaveClass('clickable');
       spectator.click('img');
-      expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/system/oldviewenclosure']);
+      expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/system/viewenclosure']);
     });
   });
 });
