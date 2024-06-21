@@ -7,7 +7,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { ChartData } from 'chart.js';
 import {
-  distinctUntilChanged, filter, map, shareReplay, tap,
+  distinctUntilChanged, filter, map, shareReplay,
 } from 'rxjs';
 import { chartStatusIcons } from 'app/enums/chart-release-status.enum';
 import { toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
@@ -40,7 +40,6 @@ export class WidgetAppComponent implements WidgetComponent<WidgetAppSettings> {
   });
   stats = computed(() => {
     return this.resources.getAppStats(this.appName()).pipe(
-      tap((stats) => console.info('stats', stats)),
       distinctUntilChanged(),
       toLoadingState(),
       shareReplay({ bufferSize: 1, refCount: true }),
