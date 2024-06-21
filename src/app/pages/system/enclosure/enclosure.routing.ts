@@ -19,8 +19,17 @@ const routes: Routes = [
     component: JbofListComponent,
     data: { title: T('NVMe-oF Expansion Shelves'), breadcrumb: null },
   },
+  // The routes below are defined in this specific way below for a reason.
+  // It avoids flashes when user navigates from /system/viewenclosure to /system/viewenclosure/
+  // and it allows EnclosureDashboardComponent to have enclosure param available to it.
   {
     path: '',
+    pathMatch: 'full',
+    data: { title: T('View Enclosure'), breadcrumb: null },
+    redirectTo: '/system/viewenclosure/',
+  },
+  {
+    path: ':enclosure',
     component: EnclosureDashboardComponent,
     data: { title: T('View Enclosure'), breadcrumb: null },
     children: [
@@ -30,12 +39,7 @@ const routes: Routes = [
         data: { title: T('View Enclosure'), breadcrumb: null },
       },
       {
-        path: ':enclosure',
-        component: EnclosurePageComponent,
-        data: { title: T('View Enclosure'), breadcrumb: null },
-      },
-      {
-        path: ':enclosure/:view',
+        path: ':view',
         component: ElementsPageComponent,
         data: { title: T('View Enclosure'), breadcrumb: null },
       },

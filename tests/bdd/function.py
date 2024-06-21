@@ -280,7 +280,7 @@ def make_bytes(item):
         return b''.join([make_bytes(i) for i in item])
 
     # We should get here, but if we do we need a better solution
-    raise TypeError('Cannot easily cast type {} to bytes'.format(type(item)))
+    raise TypeError(f'Cannot easily cast type {type(item)} to bytes')
 
 
 def word_xor(data, key):
@@ -371,7 +371,7 @@ def service_Start(hostname, auth, service_name):
     Example:
         - service_Start('00.00.00.00', ('admin', 'admin'), 'smb')
     """
-    results = post(hostname, f'/service/start/', auth, {"service": service_name})
+    results = post(hostname, '/service/start/', auth, {"service": service_name})
     assert results.status_code == 200, results.text
 
 
@@ -391,3 +391,22 @@ def delete_dataset(hostname: str, auth: tuple, dataset_name: str):
 
 def save_screenshot(driver, name):
     driver.save_screenshot(name)
+
+
+def create_group(ip: str, auth: tuple, group_name: str) -> None:
+    """
+    This method creates the given group by API call
+
+    :param ip: IP of the TrueNAS server
+    :param auth: (username, password) tuple
+    :param group_name: Name of the group to create
+    :return: Response object
+
+    Example:
+        - create_group('00.00.00.00', ('admin', 'admin'), 'group1')
+    """
+    payload = {
+        "name": group_name
+    }
+    response = post(ip, '/group', auth, payload)
+    assert response.status_code == 200, response.text

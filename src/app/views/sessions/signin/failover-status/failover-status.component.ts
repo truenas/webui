@@ -2,10 +2,9 @@ import {
   ChangeDetectionStrategy, Component, Input, OnChanges,
 } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
+import { FailoverDisabledReason, failoverDisabledReasonLabels } from 'app/enums/failover-disabled-reason.enum';
 import { FailoverStatus } from 'app/enums/failover-status.enum';
 import { helptextGlobal } from 'app/helptext/global-helptext';
-import { helptextTopbar } from 'app/helptext/topbar';
 
 @Component({
   selector: 'ix-failover-status',
@@ -18,7 +17,7 @@ export class FailoverStatusComponent implements OnChanges {
   @Input() failoverIps: string[] = [];
   @Input() disabledReasons: FailoverDisabledReason[];
 
-  reasonText = helptextTopbar.ha_disabled_reasons;
+  readonly disabledReasonLabels = failoverDisabledReasonLabels;
   statusMessage = this.translate.instant('Checking HA status');
 
   statusDescriptions: { [status in FailoverStatus]: string } = {

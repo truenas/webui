@@ -16,7 +16,7 @@
 
   <ul *ngIf="failoverDisabledReasons.length" class="disabled-reasons">
     <li *ngFor="let reason of failoverDisabledReasons">
-      {{ disabledReasonExplanations[reason] | translate }}
+      {{ reason | mapValue: disabledReasonExplanations | translate }}
     </li>
   </ul>
 </div>

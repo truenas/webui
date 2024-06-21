@@ -17,14 +17,14 @@ export class EnclosureSideComponent {
   readonly slotTintFn = input<(slot: DashboardEnclosureSlot | null) => string>();
   readonly selectedSlot = model<DashboardEnclosureSlot | null>(null);
 
-  readonly sideSlots = computed(() => {
-    return Object.values(this.enclosure().elements[EnclosureElementType.ArrayDeviceSlot]);
-  });
-
   /**
    * When side is not provided will default to showing front or top, depending on what's available.
    */
   readonly side = input<EnclosureSide>(undefined);
+
+  readonly sideSlots = computed(() => {
+    return Object.values(this.enclosure().elements[EnclosureElementType.ArrayDeviceSlot]);
+  });
 
   readonly shownSide = computed(() => {
     if (this.side() !== undefined) {

@@ -45,8 +45,8 @@ const routes: Routes = [
     }, {
       path: 'viewenclosure',
       data: {
-        title: T('New View Enclosure'),
-        breadcrumb: T('New View Enclosure'),
+        title: T('View Enclosure'),
+        breadcrumb: null,
         icon: 'settings',
       },
       loadChildren: () => import('./enclosure/enclosure.module').then((module) => module.EnclosureModule),

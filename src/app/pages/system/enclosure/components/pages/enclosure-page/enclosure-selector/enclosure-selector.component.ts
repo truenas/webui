@@ -17,8 +17,4 @@ export class EnclosureSelectorComponent {
   constructor(
     private store: EnclosureStore,
   ) {}
-
-  protected selectEnclosure(enclosureId: string): void {
-    this.store.selectEnclosure(enclosureId);
-  }
 }
