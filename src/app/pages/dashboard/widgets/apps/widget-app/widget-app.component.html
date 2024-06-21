@@ -5,11 +5,13 @@
 
       <div class="controls">
         <button
+          *ngIf="app?.portals"
           mat-icon-button
           ixTest="apps-web-portal"
           matTooltipPosition="above"
           [attr.aria-label]="'Web Portal' | translate"
           [matTooltip]="'Web Portal' | translate"
+          (click)="openWebPortal(app)"
         >
           <ix-icon name="mdi-web"></ix-icon>
         </button>
@@ -20,7 +22,7 @@
           matTooltipPosition="above"
           [attr.aria-label]="'Restart App' | translate"
           [matTooltip]="'Restart App' | translate"
-          (click)="onRestartApp()"
+          (click)="onRestartApp(app)"
         >
           <ix-icon name="mdi-restart"></ix-icon>
         </button>
@@ -29,19 +31,16 @@
           mat-icon-button
           ixTest="apps-details"
           matTooltipPosition="above"
-          [attr.aria-label]="'Check Full Details' | translate"
-          [matTooltip]="'Check Full Details' | translate"
-          [routerLink]="['/apps', 'installed']"
+          [attr.aria-label]="'Check App Details' | translate"
+          [matTooltip]="'Check App Details' | translate"
+          [routerLink]="['/apps', 'installed', app.catalog, app.catalog_train, app.id]"
         >
           <ix-icon name="mdi-cog"></ix-icon>
         </button>
       </div>
     </div>
 
-    <div
-      *ngIf="settings()?.appName; else configureWidgetTemplate"
-      [class]="['container', size()]"
-    >
+    <div [class]="['container', size()]">
       <div class="app-header-row">
         <ix-app-card-logo [url]="app?.chart_metadata?.icon"></ix-app-card-logo>
 
@@ -52,13 +51,14 @@
           </div>
           <div class="status">
             <div>
-              <ix-icon name="mdi-check-circle"></ix-icon>
+              <!-- TODO: Update app status on change -->
+              <ix-icon [name]="app.status | mapValue: appStatusIcons"></ix-icon>
               <span>{{ app.status | titlecase }}</span>
             </div>
-            <div>
-              <ix-icon name="mdi-check-circle"></ix-icon>
+            <div *appLet="app.update_available || app.container_images_update_available as hasUpdate">
+              <ix-icon [name]="hasUpdate ? 'mdi-alert-circle' : 'mdi-check-circle'"></ix-icon>
               <span>{{
-                app.update_available || app.container_images_update_available
+                hasUpdate
                 ? ('Update available' | translate)
                 : ('Up to date' | translate)
               }}</span>
@@ -71,7 +71,10 @@
         <div class="app-stats-row">
           <div class="slot square">
             <div>
-              <h3 *ixWithLoadingState="stats() as stats">{{ stats.cpu.toFixed(0) }}<small>%</small></h3>
+              <h3>
+                <span *ixWithLoadingState="stats() as stats">{{ stats.cpu.toFixed(0) }}</span>
+                <small>%</small>
+              </h3>
               <div><strong>{{ 'CPU Usage' | translate }}</strong></div>
             </div>
           </div>
@@ -103,8 +106,11 @@
         </div>
         <div class="app-stats-row">
           <div class="slot square">
-            <div>
-              <h3 *ixWithLoadingState="stats() as stats">{{ stats.memory | ixFileSize }}</h3>
+            <div *ixWithLoadingState="stats() as stats">
+              <h3 *appLet="splitMemory(stats.memory | ixFileSize) as memory">
+                <span>{{ memory[0] }}</span>
+                <small>{{ memory[1] }}</small>
+              </h3>
               <div><strong>{{ 'Memory Usage' | translate }}</strong></div>
             </div>
           </div>
@@ -128,13 +134,3 @@
     </div>
   </mat-card-content>
 </mat-card>
-
-<ng-template #configureWidgetTemplate>
-  <div [class]="['empty', 'container', size()]">
-    <ix-icon class="icon" name="mdi-widgets"></ix-icon>
-    <h3>
-      <div>{{ 'Widget is not configured.' | translate }}</div>
-      <small>{{ 'Edit widget to choose an application.' | translate }}</small>
-    </h3>
-  </div>
-</ng-template>

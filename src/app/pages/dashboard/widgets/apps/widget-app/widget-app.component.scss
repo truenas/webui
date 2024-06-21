@@ -1,5 +1,17 @@
 @import 'scss-imports/cssvars';
 
+:host ::ng-deep ix-with-loading-state-error {
+  align-items: center;
+  display: flex;
+  flex: 1;
+  font-size: 24px;
+  font-weight: bold;
+  height: 100%;
+  place-content: center center;
+  text-align: center;
+  width: 100%;
+}
+
 .card {
   height: 100%;
 
@@ -7,7 +19,7 @@
     align-items: baseline;
     display: flex;
     justify-content: space-between;
-    padding: 16px 8px 0 16px;
+    padding: 16px 8px 8px 16px;
   }
 
   .card-content {
@@ -78,7 +90,7 @@ ix-app-card-logo {
   .status {
     font-size: 16px;
     font-weight: bold;
-    padding: 8px;
+    padding: 8px 12px;
 
     ix-icon {
       display: inline-flex;
@@ -88,7 +100,7 @@ ix-app-card-logo {
     div {
       align-items: center;
       display: flex;
-      gap: 8px;
+      gap: 6px;
       justify-content: flex-start;
     }
   }
@@ -97,13 +109,13 @@ ix-app-card-logo {
 .app-header-row {
   display: flex;
   gap: 8px;
-  margin-bottom: 4px;
+  margin-bottom: 6px;
 }
 
 .app-stats {
   display: flex;
   flex-direction: column;
-  gap: 4px 8px;
+  gap: 6px 8px;
 }
 
 .app-stats-row {
@@ -157,7 +169,27 @@ ix-app-card-logo {
     color: var(--fg2);
   }
 
+  small {
+    font-weight: 500;
+    opacity: 0.75;
+  }
+
   .in-out {
     font-size: 12px;
+  }
+}
+
+.ix-icon {
+  &.mdi-check-circle {
+    color: var(--green);
+  }
+
+  &.mdi-progress-wrench,
+  &.mdi-alert-circle {
+    color: var(--yellow);
+  }
+
+  &.mdi-stop-circle {
+    color: var(--red);
   }
 }

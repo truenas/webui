@@ -1,11 +1,15 @@
 import { Injectable } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import {
+  EMPTY,
   Observable, OperatorFunction, filter, map, pipe,
+  switchMap,
 } from 'rxjs';
 import { ixChartApp } from 'app/constants/catalog.constants';
 import { AppExtraCategory } from 'app/enums/app-extra-category.enum';
+import { ChartReleaseStatus } from 'app/enums/chart-release-status.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
+import { observeJob } from 'app/helpers/operators/observe-job.operator';
 import { ApiEvent } from 'app/interfaces/api-message.interface';
 import { UpgradeSummary } from 'app/interfaces/application.interface';
 import { AppsFiltersValues } from 'app/interfaces/apps-filters-values.interface';
@@ -141,6 +145,21 @@ export class ApplicationsService {
 
   stopApplication(name: string): Observable<Job<ChartScaleResult>> {
     return this.ws.job('chart.release.scale', [name, { replica_count: 0 }]);
+  }
+
+  restartApplication(app: ChartRelease): Observable<Job<ChartScaleResult>> {
+    switch (app.status) {
+      case ChartReleaseStatus.Active:
+        return this.stopApplication(app.name).pipe(
+          observeJob(),
+          switchMap(() => this.startApplication(app.name)),
+        );
+      case ChartReleaseStatus.Stopped:
+        return this.startApplication(app.name);
+      case ChartReleaseStatus.Deploying:
+      default:
+        return EMPTY;
+    }
   }
 
   convertDateToRelativeDate(date: Date): string {

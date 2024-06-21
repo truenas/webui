@@ -130,7 +130,12 @@ export class WidgetResourcesService {
         { extra: { history: true, stats: true } },
       ],
     ).pipe(
-      map((apps) => apps[0]),
+      map((apps) => {
+        if (apps.length === 0) {
+          throw new Error(`App «${appName}» not found. Configure widget to choose another app.`);
+        }
+        return apps[0];
+      }),
       shareReplay({ bufferSize: 1, refCount: true }),
     );
   }
