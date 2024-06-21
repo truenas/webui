@@ -1,4 +1,4 @@
-import { Disk, StorageDashboardDisk } from 'app/interfaces/storage.interface';
+import { Disk, StorageDashboardDisk } from 'app/interfaces/disk.interface';
 
 export function diskToDashboardDisk(disk: Disk): StorageDashboardDisk {
   return {

@@ -8,11 +8,9 @@ import { MockModule } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
-import { DiskPowerLevel } from 'app/enums/disk-power-level.enum';
-import { DiskStandby } from 'app/enums/disk-standby.enum';
 import { SmartTestResultPageType } from 'app/enums/smart-test-results-page-type.enum';
 import { Choices } from 'app/interfaces/choices.interface';
-import { Disk, UnusedDisk } from 'app/interfaces/storage.interface';
+import { Disk, DetailsDisk } from 'app/interfaces/disk.interface';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
 import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
@@ -74,18 +72,12 @@ describe('DiskListComponent', () => {
     name: 'sdb',
     serial: 'serial2',
     size: 5368709120,
-    description: 'description2',
-    transfermode: 'Auto',
-    hddstandby: DiskStandby.AlwaysOn,
-    advpowermgmt: DiskPowerLevel.Disabled,
-    togglesmart: false,
-    smartoptions: '',
     model: 'Virtual_Disk',
     rotationrate: null,
     type: 'HDD',
     exported_zpool: 'test pool',
     devname: 'sdb',
-  }] as UnusedDisk[];
+  }] as DetailsDisk[];
 
   const fakeSmartDiskChoices: Choices = {
     identifier1: 'sda',
@@ -116,7 +108,7 @@ describe('DiskListComponent', () => {
       }),
       mockWebSocket([
         mockCall('disk.query', fakeDisks),
-        mockCall('disk.get_unused', fakeUnusedDisks),
+        mockCall('disk.details', { unused: [], used: fakeUnusedDisks }),
         mockCall('smart.test.disk_choices', fakeSmartDiskChoices),
       ]),
     ],

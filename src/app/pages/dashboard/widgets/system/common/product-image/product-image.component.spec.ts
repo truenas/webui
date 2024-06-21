@@ -34,25 +34,6 @@ describe('ProductImageComponent', () => {
       expect(await icon.getName()).toBe('logo_truenas_scale_mark');
       expect(spectator.query('.product-image-text')).toHaveExactText('(Unsupported Hardware)');
     });
-
-    it('should display logo for certified platform', async () => {
-      spectator = createComponent({
-        props: {
-          systemProduct: 'Generic-CERTIFIED',
-          isEnterprise: false,
-          hasEnclosureSupport: false,
-          isHaLicensed: false,
-          isIxHardware: false,
-        },
-      });
-
-      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      const icon = await loader.getHarness(IxIconHarness);
-
-      expect(spectator.query('img')).not.toExist();
-      expect(await icon.getName()).toBe('logo_freenas_certified');
-      expect(spectator.query('.product-image-text')).not.toHaveExactText('(Unsupported Hardware)');
-    });
   });
 
   describe('iX Hardware', () => {
@@ -76,7 +57,7 @@ describe('ProductImageComponent', () => {
 
       expect(image).toHaveClass('clickable');
       spectator.click('img');
-      expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/system/oldviewenclosure']);
+      expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/system/viewenclosure']);
     });
 
     it('should display image for F60 platform', () => {
@@ -99,7 +80,7 @@ describe('ProductImageComponent', () => {
 
       expect(image).toHaveClass('clickable');
       spectator.click('img');
-      expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/system/oldviewenclosure']);
+      expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/system/viewenclosure']);
     });
   });
 });

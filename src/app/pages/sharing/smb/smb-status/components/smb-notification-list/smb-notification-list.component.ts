@@ -63,14 +63,10 @@ export class SmbNotificationListComponent implements OnInit {
 
   onListFiltered(query: string): void {
     this.filterString = query?.toString()?.toLowerCase();
-    this.dataProvider.setRows(this.notifications.filter((notification) => {
-      return [
-        notification.path,
-        notification.filter,
-        notification.subdir_filter,
-        notification.creation_time,
-      ].some((value) => value.toString().toLowerCase().includes(this.filterString));
-    }));
+    this.dataProvider.setFilter({
+      query,
+      columnKeys: ['path', 'filter', 'subdir_filter', 'creation_time'],
+    });
   }
 
   columnsChange(columns: typeof this.columns): void {

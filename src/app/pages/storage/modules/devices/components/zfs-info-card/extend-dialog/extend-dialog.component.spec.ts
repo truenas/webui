@@ -8,7 +8,7 @@ import { of } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
-import { UnusedDisk } from 'app/interfaces/storage.interface';
+import { DetailsDisk } from 'app/interfaces/disk.interface';
 import { UnusedDiskSelectComponent } from 'app/modules/custom-selects/unused-disk-select/unused-disk-select.component';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
@@ -34,22 +34,25 @@ describe('ExtendDialogComponent', () => {
       mockAuth(),
       mockWebSocket([
         mockJob('pool.attach', fakeSuccessfulJob()),
-        mockCall('disk.get_unused', [
-          {
-            devname: 'sde',
-            name: 'sde',
-            size: 12000138625024,
-            duplicate_serial: [],
-          },
-          {
-            devname: 'sdf',
-            name: 'sdf',
-            size: 10000138625024,
-            duplicate_serial: [
-              'sdf',
-            ],
-          },
-        ] as UnusedDisk[]),
+        mockCall('disk.details', {
+          unused: [
+            {
+              devname: 'sde',
+              name: 'sde',
+              size: 12000138625024,
+              duplicate_serial: [],
+            },
+            {
+              devname: 'sdf',
+              name: 'sdf',
+              size: 10000138625024,
+              duplicate_serial: [
+                'sdf',
+              ],
+            },
+          ] as DetailsDisk[],
+          used: [],
+        }),
       ]),
       mockProvider(MatDialogRef),
       mockProvider(SnackbarService),

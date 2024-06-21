@@ -9,6 +9,7 @@ import { SystemUpdateStatus } from 'app/enums/system-update.enum';
 import { toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import { ChartRelease, ChartReleaseStats } from 'app/interfaces/chart-release.interface';
 import { Dataset } from 'app/interfaces/dataset.interface';
+import { Disk } from 'app/interfaces/disk.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { ReportingData } from 'app/interfaces/reporting.interface';
 import { VolumesData, VolumeData } from 'app/interfaces/volume-data.interface';
@@ -100,6 +101,20 @@ export class WidgetResourcesService {
     }),
   );
 
+  cpuUpdate(minutes = 1): Observable<ReportingData[]> {
+    return this.serverTime$.pipe(
+      switchMap((serverTime) => {
+        return this.ws.call('reporting.netdata_get_data', [[{
+          name: 'cpu',
+        }], {
+          end: Math.floor(serverTime.getTime() / 1000),
+          start: Math.floor(sub(serverTime, { minutes }).getTime() / 1000),
+        }]);
+      }),
+      shareReplay({ bufferSize: 1, refCount: true }),
+    );
+  }
+
   networkInterfaceUpdate(interfaceName: string): Observable<ReportingData[]> {
     return this.serverTime$.pipe(
       switchMap((serverTime) => {
@@ -118,6 +133,20 @@ export class WidgetResourcesService {
   getPoolById(poolId: number): Observable<Pool> {
     return this.ws.call('pool.query', [[['id', '=', +poolId]]]).pipe(
       map((pools) => pools[0]),
+      shareReplay({ bufferSize: 1, refCount: true }),
+    );
+  }
+
+  getDatasetById(datasetId: string): Observable<Dataset> {
+    return this.ws.call('pool.dataset.query', [[['id', '=', datasetId]]]).pipe(
+      map((response) => response[0]),
+      shareReplay({ bufferSize: 1, refCount: true }),
+    );
+  }
+
+  getDisksByPoolId(poolId: string): Observable<Disk[]> {
+    return this.ws.call('disk.query', [[], { extra: { pools: true } }]).pipe(
+      map((response) => response.filter((disk: Disk) => disk.pool === poolId)),
       shareReplay({ bufferSize: 1, refCount: true }),
     );
   }
@@ -144,6 +173,7 @@ export class WidgetResourcesService {
     return this.appStatsUpdates$.pipe(
       filter((stats) => Boolean(appName && stats[appName])),
       map((stats) => stats[appName]),
+      shareReplay({ bufferSize: 1, refCount: true }),
     );
   }
 

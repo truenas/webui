@@ -7,6 +7,7 @@ import { MatDialogClose, MatDialogTitle } from '@angular/material/dialog';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { MatTooltip } from '@angular/material/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
+import { CoreComponents } from 'app/core/core-components.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { IxFileSizeModule } from 'app/modules/ix-file-size/ix-file-size.module';
@@ -27,20 +28,32 @@ import {
 import { JbofFormComponent } from 'app/pages/system/enclosure/components/jbof-list/jbof-form/jbof-form.component';
 import { JbofListComponent } from 'app/pages/system/enclosure/components/jbof-list/jbof-list.component';
 import {
+  ElementsPageComponent,
+} from 'app/pages/system/enclosure/components/pages/elements-page/elements-page.component';
+import { EnclosurePageComponent } from 'app/pages/system/enclosure/components/pages/enclosure-page/enclosure-page.component';
+import { EnclosureSelectorComponent } from 'app/pages/system/enclosure/components/pages/enclosure-page/enclosure-selector/enclosure-selector.component';
+import {
+  EnclosureSideComponent,
+} from 'app/pages/system/enclosure/components/pages/enclosure-page/enclosure-side/enclosure-side.component';
+import {
+  EnclosureSvgComponent,
+} from 'app/pages/system/enclosure/components/pages/enclosure-page/enclosure-side/enclosure-svg/enclosure-svg.component';
+import { DiskTopologyDescriptionComponent } from 'app/pages/system/enclosure/components/pages/enclosure-page/enclosure-view/disk-topology-description/disk-topology-description.component';
+import { DisksOverviewComponent } from 'app/pages/system/enclosure/components/pages/enclosure-page/enclosure-view/disks-overview/disks-overview.component';
+import {
+  EnclosureSideSwitchComponent,
+} from 'app/pages/system/enclosure/components/pages/enclosure-page/enclosure-view/enclosure-side-switch/enclosure-side-switch.component';
+import {
+  EnclosureViewComponent,
+} from 'app/pages/system/enclosure/components/pages/enclosure-page/enclosure-view/enclosure-view.component';
+import { SasExpanderStatusViewComponent } from 'app/pages/system/enclosure/components/pages/enclosure-page/sas-expander-status-view/sas-expander-status-view.component';
+import { VdevDisksListComponent } from 'app/pages/system/enclosure/components/pages/enclosure-page/vdev-disks-list/vdev-disks-list.component';
+import {
   SetEnclosureLabelDialogComponent,
 } from 'app/pages/system/enclosure/components/set-enclosure-label-dialog/set-enclosure-label-dialog.component';
-import {
-  ElementsComponent,
-} from 'app/pages/system/enclosure/components/views/elements-view/elements.component';
-import { DisksOverviewComponent } from 'app/pages/system/enclosure/components/views/enclosure-view/disks-overview/disks-overview.component';
-import { IxEnclosureSelectorComponent } from 'app/pages/system/enclosure/components/views/enclosure-view/enclosure-selector/enclosure-selector.component';
-import { EnclosureViewComponent } from 'app/pages/system/enclosure/components/views/enclosure-view/enclosure-view.component';
-import { DriveTrayComponent } from 'app/pages/system/enclosure/components/views/enclosure-view/enclosures/drive-tray/drive-tray.component';
-import { M50EnclosureViewComponent } from 'app/pages/system/enclosure/components/views/enclosure-view/enclosures/m50-enclosure/m50-enclosure-view/m50-enclosure-view.component';
-import { M50EnclosureComponent } from 'app/pages/system/enclosure/components/views/enclosure-view/enclosures/m50-enclosure/m50-enclosure.component';
-import { SasExpanderStatusViewComponent } from 'app/pages/system/enclosure/components/views/enclosure-view/enclosures/sas-expander-status-view/sas-expander-status-view.component';
 import { routing } from 'app/pages/system/enclosure/enclosure.routing';
 import { EnclosureStore } from 'app/pages/system/enclosure/services/enclosure.store';
+import { SvgCacheService } from 'app/pages/system/enclosure/services/svg-cache.service';
 
 @NgModule({
   imports: [
@@ -65,26 +78,31 @@ import { EnclosureStore } from 'app/pages/system/enclosure/services/enclosure.st
     MatDialogClose,
     MatDialogTitle,
     EmptyComponent,
+    CoreComponents,
   ],
   declarations: [
     EnclosureDashboardComponent,
     DisksOverviewComponent,
-    IxEnclosureSelectorComponent,
-    DriveTrayComponent,
-    EnclosureViewComponent,
-    M50EnclosureViewComponent,
-    M50EnclosureComponent,
+    DiskTopologyDescriptionComponent,
+    EnclosureSelectorComponent,
+    EnclosurePageComponent,
     JbofListComponent,
     SasExpanderStatusViewComponent,
     JbofFormComponent,
+    VdevDisksListComponent,
     SetEnclosureLabelDialogComponent,
     EnclosureDiskComponent,
-    ElementsComponent,
+    ElementsPageComponent,
     EnclosureHeaderComponent,
     ViewElementsMenuComponent,
+    EnclosureSvgComponent,
+    EnclosureSideSwitchComponent,
+    EnclosureViewComponent,
+    EnclosureSideComponent,
   ],
   providers: [
     EnclosureStore,
+    SvgCacheService,
   ],
 })
 export class EnclosureModule {}

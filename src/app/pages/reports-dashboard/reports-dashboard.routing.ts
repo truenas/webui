@@ -47,12 +47,6 @@ export const routes: Routes = [
     component: ReportsDashboardComponent,
   },
   {
-    path: 'target',
-    pathMatch: 'full',
-    data: { title: T('Target'), breadcrumb: T('Target') },
-    component: ReportsDashboardComponent,
-  },
-  {
     path: 'ups',
     pathMatch: 'full',
     data: { title: T('UPS'), breadcrumb: T('UPS') },

@@ -101,7 +101,8 @@ class advanced:
     system_Dataset_Pool_Card = '//h3[contains(text(),"Storage")]'
     system_Dataset_Pool_Configure_Button = '//mat-card[contains(.,"System Dataset Pool")]//button[contains(.,"Configure")]'
 
-    def system_Dataset_Pool_Pool(pool_name):
+    @staticmethod
+    def system_Dataset_Pool_Pool(pool_name: str) -> str:
         return f'//div[contains(.,"System Dataset Pool:")]//span[contains(text(),"{pool_name}")]'
 
 
@@ -261,13 +262,16 @@ class dataset:
     unlock_Pool_Icon = '//ix-dataset-node[contains(.,"encrypted_pool")]//ix-icon[@fonticon="mdi-lock-open-variant"]'
     return_To_Pool_List_Button = '//button[contains(.,"Return to pool list")]'
 
-    def pool_Tree_Name(pool_name):
+    @staticmethod
+    def pool_Tree_Name(pool_name: str) -> str:
         return f'//span[text()=" {pool_name} " and contains(@class,"name")]'
 
-    def pool_Selected(pool_name):
+    @staticmethod
+    def pool_Selected(pool_name: str) -> str:
         return f'//span[text()="{pool_name}" and contains(@class,"own-name")]'
 
-    def pool_Tree(pool_name):
+    @staticmethod
+    def pool_Tree(pool_name: str) -> str:
         return f'//ix-dataset-node[contains(.,"{pool_name}")]/div'
 
     def dataset_Name(dataset_name):
@@ -506,10 +510,10 @@ class network:
     test_Changes_Button = '//*[@data-test="button-test-changes"]'
     test_Changes_Dialog_Title = '//h1[contains(text(),"Test Changes")]'
 
-    def interface_Row(interface):
+    def interface_Row(interface: str) -> str:
         return f'//td[contains(.,"{interface}")]'
 
-    def interface_Edit_Button(interface) -> str:
+    def interface_Edit_Button(interface: str) -> str:
         return f'//*[@data-test="button-interface-{interface}-edit-row-action"]'
 
 
@@ -589,7 +593,7 @@ class services:
 
 
 class sharing:
-    title = '//h1[text()="Sharing"]'
+    title = '//h1[text()="Shares"]'
     smb_Panel_Title = '//h3[contains(text(),"Windows (SMB) Shares")]'
     smb_Add_Button = '//*[@data-test="button-smb-share-add"]'
     smb_Service_Status = '//mat-toolbar-row[contains(.,"Windows (SMB) Shares")]//span[contains(text(),"RUNNING")]'

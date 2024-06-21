@@ -5,7 +5,7 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { MockComponents } from 'ng-mocks';
 import { of, Subject } from 'rxjs';
 import { CreateVdevLayout, VdevType } from 'app/enums/v-dev-type.enum';
-import { UnusedDisk } from 'app/interfaces/storage.interface';
+import { DetailsDisk } from 'app/interfaces/disk.interface';
 import { IxSelectHarness } from 'app/modules/ix-forms/components/ix-select/ix-select.harness';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import {
@@ -28,7 +28,7 @@ describe('AutomatedDiskSelection', () => {
 
   let layoutSelect: IxSelectHarness;
 
-  const inventory: UnusedDisk[] = [] as UnusedDisk[];
+  const inventory: DetailsDisk[] = [] as DetailsDisk[];
 
   const createComponent = createComponentFactory({
     component: AutomatedDiskSelectionComponent,

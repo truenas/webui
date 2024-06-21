@@ -1,0 +1,8 @@
+<!-- TODO: Skeleton for loading state -->
+<div
+  *ngIf="svg()"
+  #svgContainer
+  class="svg-container"
+  [class.static]="!enableMouseEvents()"
+  [innerHTML]="svg()"
+></div>

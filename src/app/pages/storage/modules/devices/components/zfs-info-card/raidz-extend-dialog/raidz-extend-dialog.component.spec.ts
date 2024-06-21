@@ -11,7 +11,8 @@ import { TiB } from 'app/constants/bytes.constant';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
-import { UnusedDisk, VDev } from 'app/interfaces/storage.interface';
+import { DetailsDisk } from 'app/interfaces/disk.interface';
+import { VDev } from 'app/interfaces/storage.interface';
 import { UnusedDiskSelectComponent } from 'app/modules/custom-selects/unused-disk-select/unused-disk-select.component';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxComboboxHarness } from 'app/modules/ix-forms/components/ix-combobox/ix-combobox.harness';
@@ -39,18 +40,21 @@ describe('RaidzExtendDialogComponent', () => {
       mockAuth(),
       mockWebSocket([
         mockJob('pool.attach', fakeSuccessfulJob()),
-        mockCall('disk.get_unused', [
-          {
-            devname: 'sde',
-            name: 'sde',
-            size: 12 * TiB,
-          },
-          {
-            devname: 'sdf',
-            name: 'sdf',
-            size: 10 * TiB,
-          },
-        ] as UnusedDisk[]),
+        mockCall('disk.details', {
+          unused: [
+            {
+              devname: 'sde',
+              name: 'sde',
+              size: 12 * TiB,
+            },
+            {
+              devname: 'sdf',
+              name: 'sdf',
+              size: 10 * TiB,
+            },
+          ] as DetailsDisk[],
+          used: [],
+        }),
       ]),
       mockProvider(MatDialogRef),
       mockProvider(SnackbarService),

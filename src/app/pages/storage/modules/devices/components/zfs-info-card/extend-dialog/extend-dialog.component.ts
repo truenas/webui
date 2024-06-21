@@ -7,8 +7,8 @@ import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { helptextVolumeStatus } from 'app/helptext/storage/volumes/volume-status';
+import { DetailsDisk } from 'app/interfaces/disk.interface';
 import { PoolAttachParams } from 'app/interfaces/pool.interface';
-import { UnusedDisk } from 'app/interfaces/storage.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
@@ -33,7 +33,7 @@ export class ExtendDialogComponent {
 
   readonly helptext = helptextVolumeStatus;
 
-  unusedDisks: UnusedDisk[] = [];
+  unusedDisks: DetailsDisk[] = [];
 
   constructor(
     private formBuilder: FormBuilder,

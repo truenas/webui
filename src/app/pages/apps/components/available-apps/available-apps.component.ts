@@ -41,9 +41,9 @@ export class AvailableAppsComponent implements OnInit {
   isFiltering$ = this.appsFilterStore.isFiltering$;
 
   constructor(
+    protected router: Router,
     protected applicationsStore: AppsStore,
     protected appsFilterStore: AppsFilterStore,
-    private router: Router,
   ) { }
 
   ngOnInit(): void {
@@ -69,7 +69,6 @@ export class AvailableAppsComponent implements OnInit {
   applyCategoryFilter(category: string): void {
     this.appsFilterStore.applyFilters({
       categories: [category],
-      catalogs: [],
       sort: null,
     });
   }

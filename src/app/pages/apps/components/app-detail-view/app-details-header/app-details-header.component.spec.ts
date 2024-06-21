@@ -20,7 +20,6 @@ import {
 import { SelectPoolDialogComponent } from 'app/pages/apps/components/select-pool-dialog/select-pool-dialog.component';
 import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.service';
 import { KubernetesStore } from 'app/pages/apps/store/kubernetes-store.service';
-import { AppCatalogPipe } from 'app/pages/apps/utils/app-catalog.pipe';
 import { AuthService } from 'app/services/auth/auth.service';
 
 describe('AppDetailsHeaderComponent', () => {
@@ -41,7 +40,7 @@ describe('AppDetailsHeaderComponent', () => {
 
   const createComponent = createComponentFactory({
     component: AppDetailsHeaderComponent,
-    imports: [AppCatalogPipe, ViewContainerRef],
+    imports: [ViewContainerRef],
     declarations: [
       MockComponent(AppCardLogoComponent),
     ],
@@ -58,11 +57,7 @@ describe('AppDetailsHeaderComponent', () => {
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
-      mockAuth({
-        attributes: {
-          appsAgreement: true,
-        },
-      }),
+      mockAuth(),
       mockWebSocket([
         mockCall('auth.set_attribute'),
       ]),
@@ -153,24 +148,20 @@ describe('AppDetailsHeaderComponent', () => {
     });
 
     describe('other elements', () => {
-      it('shows app catalog', () => {
-        expect(spectator.query('.catalog-container')).toHaveText('TrueNAS Catalog');
-      });
-
       it('shows app version', () => {
-        expect(spectator.queryAll('.app-list-item')[1]).toHaveText('App Version: 1.0.0');
+        expect(spectator.queryAll('.app-list-item')[0]).toHaveText('App Version: 1.0.0');
       });
 
       it('shows app keywords', () => {
-        expect(spectator.queryAll('.app-list-item')[2]).toHaveText('Keywords: aliens, ufo');
+        expect(spectator.queryAll('.app-list-item')[1]).toHaveText('Keywords: aliens, ufo');
       });
 
       it('shows app train', () => {
-        expect(spectator.queryAll('.app-list-item')[3]).toHaveText('Train: stable');
+        expect(spectator.queryAll('.app-list-item')[2]).toHaveText('Train: stable');
       });
 
       it('shows app homepage', () => {
-        expect(spectator.queryAll('.app-list-item')[4]).toHaveText('Homepage:seti.org');
+        expect(spectator.queryAll('.app-list-item')[3]).toHaveText('Homepage:seti.org');
       });
 
       it('shows app description', () => {

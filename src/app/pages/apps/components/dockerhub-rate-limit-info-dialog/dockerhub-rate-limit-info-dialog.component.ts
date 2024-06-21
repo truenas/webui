@@ -1,5 +1,6 @@
 import {
-  ChangeDetectionStrategy, Component, Inject,
+  ChangeDetectionStrategy, Component,
+  Inject,
 } from '@angular/core';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { UntilDestroy } from '@ngneat/until-destroy';

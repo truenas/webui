@@ -19,8 +19,8 @@ import {
 import { shareReplay, startWith } from 'rxjs/operators';
 import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
 import { helptextVolumeStatus } from 'app/helptext/storage/volumes/volume-status';
+import { DetailsDisk } from 'app/interfaces/disk.interface';
 import { Option } from 'app/interfaces/option.interface';
-import { UnusedDisk } from 'app/interfaces/storage.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { SimpleAsyncComboboxProvider } from 'app/modules/ix-forms/classes/simple-async-combobox-provider';
 import { IxComboboxComponent } from 'app/modules/ix-forms/components/ix-combobox/ix-combobox.component';
@@ -60,21 +60,29 @@ export class UnusedDiskSelectComponent implements OnInit, AfterViewInit {
   /**
    * Optional function to filter disks in addition to default select's behaviour.
    */
-  readonly diskFilteringFn = input<(disk: UnusedDisk) => boolean>();
+  readonly diskFilteringFn = input<(disk: DetailsDisk) => boolean>();
   readonly label = input<string>();
   readonly required = input<boolean>();
   readonly tooltip = input<string>();
   // TODO: It may be better to allow for object to be written as value.
-  readonly valueField = input<keyof UnusedDisk>('name');
+  readonly valueField = input<keyof DetailsDisk>('name');
 
-  readonly unusedDisks = signal<UnusedDisk[]>([]);
+  readonly unusedDisks = signal<DetailsDisk[]>([]);
   readonly nonUniqueSerialDisks = computed(() => this.unusedDisks().filter(hasNonUniqueSerial));
 
   readonly nonUniqueSerialDisksTooltip = computed(() => {
     return getNonUniqueSerialDisksWarning(this.nonUniqueSerialDisks(), this.translate);
   });
 
-  private unusedDisks$ = this.ws.call('disk.get_unused').pipe(shareReplay({ bufferSize: 1, refCount: true }));
+  private unusedDisks$ = this.ws.call('disk.details').pipe(
+    map((diskDetails) => {
+      return [
+        ...diskDetails.unused,
+        ...diskDetails.used.filter((disk) => disk.exported_zpool),
+      ];
+    }),
+    shareReplay({ bufferSize: 1, refCount: true }),
+  );
 
   protected allowDuplicateSerials = new FormControl(false);
 
@@ -130,15 +138,15 @@ export class UnusedDiskSelectComponent implements OnInit, AfterViewInit {
   }
 
   private filterShownDisks(
-    unusedDisks: UnusedDisk[],
+    unusedDisks: DetailsDisk[],
     {
       allowDuplicateSerials,
       filteringFn,
     }: {
       allowDuplicateSerials: boolean;
-      filteringFn: (disk: UnusedDisk) => boolean;
+      filteringFn: (disk: DetailsDisk) => boolean;
     },
-  ): UnusedDisk[] {
+  ): DetailsDisk[] {
     return unusedDisks.filter((disk) => {
       if (hasNonUniqueSerial(disk) && !allowDuplicateSerials) {
         return false;
@@ -148,7 +156,7 @@ export class UnusedDiskSelectComponent implements OnInit, AfterViewInit {
     });
   }
 
-  private mapDisksToOptions(unusedDisks: UnusedDisk[], valueField: keyof UnusedDisk): Option[] {
+  private mapDisksToOptions(unusedDisks: DetailsDisk[], valueField: keyof DetailsDisk): Option[] {
     return unusedDisks
       .map((disk) => {
         const exportedPool = disk.exported_zpool ? `(${disk.exported_zpool})` : '';

@@ -20,7 +20,7 @@
         <div class="vdev-container">
           <ix-enclosure-wrapper
             *ngFor="let enclosureDisks of enclosuresDisks | keyvalue"
-            [enclosure]="enclosureDisks.key"
+            [enclosure]="enclosureById[enclosureDisks.key]"
           >
             <div class="disk-icons">
               <ix-disk-icon

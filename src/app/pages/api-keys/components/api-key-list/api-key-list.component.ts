@@ -113,9 +113,7 @@ export class ApiKeyListComponent implements OnInit {
 
   onListFiltered(query: string): void {
     this.filterString = query.toLowerCase();
-    this.createDataSource(this.apiKeys.filter((apiKey) => {
-      return apiKey.name.toLowerCase().includes(this.filterString);
-    }));
+    this.dataProvider.setFilter({ list: this.apiKeys, query, columnKeys: ['name'] });
   }
 
   openApiKeyForm(row?: ApiKey): void {
@@ -137,7 +135,8 @@ export class ApiKeyListComponent implements OnInit {
         this.cdr.markForCheck();
       },
       error: () => {
-        this.createDataSource();
+        this.apiKeys = [];
+        this.dataProvider.setRows(this.apiKeys);
         this.cdr.markForCheck();
       },
     });
@@ -162,11 +161,6 @@ export class ApiKeyListComponent implements OnInit {
       },
       complete: () => this.loader.close(),
     });
-  }
-
-  private createDataSource(apiKeys: ApiKey[] = []): void {
-    this.dataProvider.setRows(apiKeys);
-    this.cdr.markForCheck();
   }
 
   private setDefaultSort(): void {

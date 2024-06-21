@@ -24,7 +24,6 @@ export class ProductImageComponent {
   isIxHardware = input.required<boolean>();
   showProductImageText = input<boolean>(true);
 
-  isCertified = computed(() => this.systemProduct()?.includes('CERTIFIED'));
   product = computed(() => getServerProduct(this.systemProduct()));
   productImage = computed(() => getProductImage(this.systemProduct()));
   productEnclosure = computed(() => {
@@ -46,6 +45,6 @@ export class ProductImageComponent {
     if (!this.hasEnclosureSupport()) {
       return;
     }
-    this.router.navigate(['/system/oldviewenclosure']);
+    this.router.navigate(['/system/viewenclosure']);
   }
 }

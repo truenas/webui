@@ -65,8 +65,12 @@ export class GlobalSearchComponent implements OnInit {
   handleKeyDown(event: KeyboardEvent): void {
     switch (event.key) {
       case 'ArrowDown':
-        event.preventDefault();
-        moveToNextFocusableElement();
+      case 'Tab':
+        if (!event.shiftKey) {
+          event.preventDefault();
+          if (this.isSearchInputFocused) moveToNextFocusableElement();
+          moveToNextFocusableElement();
+        }
         break;
       case 'ArrowUp':
         event.preventDefault();
@@ -74,7 +78,6 @@ export class GlobalSearchComponent implements OnInit {
         break;
       case 'Enter':
         event.preventDefault();
-
         if (this.isSearchInputFocused) {
           moveToNextFocusableElement();
           (this.document.activeElement as HTMLElement)?.click();
@@ -92,6 +95,10 @@ export class GlobalSearchComponent implements OnInit {
 
   resetInput(): void {
     this.searchControl.setValue('');
+  }
+
+  setInitialSearchResults(): void {
+    this.searchResults = this.globalSearchSectionsProvider.getRecentSearchesSectionResults();
   }
 
   private listenForSearchChanges(): void {
@@ -117,10 +124,6 @@ export class GlobalSearchComponent implements OnInit {
       this.isLoading = false;
       this.cdr.markForCheck();
     });
-  }
-
-  private setInitialSearchResults(): void {
-    this.searchResults = this.globalSearchSectionsProvider.getRecentSearchesSectionResults();
   }
 
   private focusInputElement(): void {

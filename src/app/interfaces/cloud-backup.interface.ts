@@ -1,6 +1,6 @@
 import { ApiTimestamp } from 'app/interfaces/api-date.interface';
 import { Job } from 'app/interfaces/job.interface';
-import { BwLimit, CloudCredential } from './cloud-sync-task.interface';
+import { BwLimit, BwLimitUpdate, CloudCredential } from './cloud-sync-task.interface';
 import { Schedule } from './schedule.interface';
 
 export interface CloudBackup {
@@ -27,14 +27,21 @@ export interface CloudBackup {
 
 export interface CloudBackupUpdate extends Omit<CloudBackup, 'id' | 'job' | 'locked' | 'bwlimit' | 'credentials'> {
   credentials: number;
-  bwlimit: { time: string; bandwidth: string }[];
+  bwlimit: BwLimitUpdate[];
 }
 
 export interface CloudBackupSnapshot {
   id: string;
+  short_id: string;
   hostname: string;
-  time: string;
   paths: string[];
+  parent: string;
+  username: string;
+  time: {
+    $date: number;
+  };
+  tree: string;
+  program_version: string;
 }
 
 export enum SnapshotIncludeExclude {

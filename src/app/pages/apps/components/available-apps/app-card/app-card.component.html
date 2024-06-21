@@ -11,11 +11,10 @@
 
   <ix-app-card-logo [url]="app.icon_url"></ix-app-card-logo>
 
-  <div
-    class="catalog"
-    [class.catalog-official]="app.catalog === officialCatalog"
-  >
-    {{ app.catalog | appCatalog }}
+  <div>
+    <div class="train">
+      {{ app.train || ('N/A' | translate) }}
+    </div>
   </div>
 </div>
 
@@ -26,8 +25,4 @@
   </div>
 
   <div class="description">{{ description }}</div>
-
-  <div class="meta">
-    <div class="train">{{ 'Train: {train}' | translate: { train: app.train || ('N/A' | translate) } }}</div>
-  </div>
 </div>

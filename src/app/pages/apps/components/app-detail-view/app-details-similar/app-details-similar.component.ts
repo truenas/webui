@@ -1,6 +1,7 @@
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnChanges,
 } from '@angular/core';
+import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { BehaviorSubject } from 'rxjs';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
@@ -22,6 +23,7 @@ export class AppDetailsSimilarComponent implements OnChanges {
   private readonly maxSimilarApps = 6;
 
   constructor(
+    protected router: Router,
     private appService: ApplicationsService,
     private cdr: ChangeDetectorRef,
   ) { }

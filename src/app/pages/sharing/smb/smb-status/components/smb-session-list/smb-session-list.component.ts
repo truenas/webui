@@ -77,18 +77,10 @@ export class SmbSessionListComponent implements OnInit {
 
   onListFiltered(query: string): void {
     this.filterString = query?.toString()?.toLowerCase();
-    this.dataProvider.setRows(this.sessions.filter((session) => {
-      return [
-        session.session_id,
-        session.hostname,
-        session.remote_machine,
-        session.username,
-        session.groupname,
-        session.uid,
-        session.gid,
-        session.session_dialect,
-      ].some((value) => value.toString().toLowerCase().includes(this.filterString));
-    }));
+    this.dataProvider.setFilter({
+      query,
+      columnKeys: ['server_id', 'hostname', 'remote_machine', 'username', 'groupname', 'uid', 'gid', 'session_dialect'],
+    });
   }
 
   columnsChange(columns: typeof this.columns): void {

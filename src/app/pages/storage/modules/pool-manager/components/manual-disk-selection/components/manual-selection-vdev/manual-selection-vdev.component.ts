@@ -3,9 +3,11 @@ import {
 } from '@angular/core';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import { keyBy } from 'lodash';
 import { DndDropEvent } from 'ngx-drag-drop';
-import { GiB, MiB } from 'app/constants/bytes.constant';
+import { MiB } from 'app/constants/bytes.constant';
 import { CreateVdevLayout } from 'app/enums/v-dev-type.enum';
+import { Enclosure } from 'app/interfaces/enclosure.interface';
 import {
   ManualSelectionDisk,
   ManualSelectionVdev,
@@ -26,16 +28,20 @@ export class ManualSelectionVdevComponent implements OnChanges {
   @Input() vdev: ManualSelectionVdev;
   @Input() layout: CreateVdevLayout;
   @Input() editable = false;
-  @Input() swapondrive = 2;
 
+  @Input() set enclosures(enclosures: Enclosure[]) {
+    this.enclosureById = keyBy(enclosures, 'id');
+  }
+
+  protected enclosureById: Record<string, Enclosure> = {};
   protected sizeEstimation = 0;
 
-  vdevErrorMessage = '';
-  mixesDisksOfDifferentSizes = false;
+  protected vdevErrorMessage = '';
+  protected mixesDisksOfDifferentSizes = false;
 
-  enclosuresDisks = new Map<number, ManualSelectionDisk[]>();
-  nonEnclosureDisks: ManualSelectionDisk[] = [];
-  minDisks = minDisksPerLayout;
+  protected enclosuresDisks = new Map<string, ManualSelectionDisk[]>();
+  protected nonEnclosureDisks: ManualSelectionDisk[] = [];
+  protected minDisks = minDisksPerLayout;
 
   get spansEnclosures(): boolean {
     return !!this.enclosuresDisks.size
@@ -95,7 +101,6 @@ export class ManualSelectionVdevComponent implements OnChanges {
     this.sizeEstimation = vdevCapacity({
       vdev: vdev.disks,
       layout: this.layout,
-      swapOnDrive: this.swapondrive * GiB,
     });
   }
 
@@ -107,12 +112,12 @@ export class ManualSelectionVdevComponent implements OnChanges {
     }
 
     for (const disk of this.vdev.disks) {
-      if (disk.enclosure?.number || disk.enclosure?.number === 0) {
-        let enclosureDisks = this.enclosuresDisks.get(disk.enclosure.number);
+      if (disk.enclosure?.id) {
+        let enclosureDisks = this.enclosuresDisks.get(disk.enclosure.id);
         if (!enclosureDisks) {
           enclosureDisks = [];
         }
-        this.enclosuresDisks.set(disk.enclosure.number, [...enclosureDisks, disk]);
+        this.enclosuresDisks.set(disk.enclosure.id, [...enclosureDisks, disk]);
       } else {
         this.nonEnclosureDisks.push(disk);
       }

@@ -1,5 +1,4 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
-import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
 import { helptextGlobal } from 'app/helptext/global-helptext';
 
 export const helptextTopbar = {
@@ -7,28 +6,6 @@ export const helptextTopbar = {
   ha_status_text_enabled: T('HA Enabled'),
   ha_is_enabled: T('HA is enabled'),
   ha_status_text_disabled: T('HA Disabled'),
-  ha_disabled_reasons: {
-    [FailoverDisabledReason.NoVolume]: T('No pools are configured.'),
-    [FailoverDisabledReason.NoVip]: T('No interfaces configured with Virtual IP.'),
-    [FailoverDisabledReason.NoSystemReady]: T('Other TrueNAS controller has not finished booting.'),
-    [FailoverDisabledReason.NoPong]: T('Other TrueNAS controller cannot be reached.'),
-    [FailoverDisabledReason.NoFailover]: T('Failover is administratively disabled.'),
-    [FailoverDisabledReason.NoLicense]: T('Other TrueNAS controller has no license.'),
-    [FailoverDisabledReason.DisagreeVip]: T('Nodes Virtual IP states do not agree.'),
-    [FailoverDisabledReason.MismatchDisks]: T('The TrueNAS controllers do not have the same quantity of disks.'),
-    [FailoverDisabledReason.MismatchVersions]: T('TrueNAS software versions do not match between storage controllers.'),
-    [FailoverDisabledReason.MismatchNics]: T('Network interfaces do not match between storage controllers.'),
-    [FailoverDisabledReason.NoCriticalInterfaces]: T('No network interfaces are marked critical for failover.'),
-    [FailoverDisabledReason.NoFenced]: T('Fenced is not running.'),
-    [FailoverDisabledReason.NoJournalSync]: T('Thread responsible for syncing db transactions not running on this node.'),
-    [FailoverDisabledReason.RemNoJournalSync]: T('Thread responsible for syncing db transactions not running on other node.'),
-    [FailoverDisabledReason.RemFailoverOngoing]: T('Other node is currently processing a failover event.'),
-    [FailoverDisabledReason.LocFailoverOngoing]: T('This node is currently processing a failover event.'),
-    [FailoverDisabledReason.NoHeartbeatIface]: T('Local heartbeat interface does not exist.'),
-    [FailoverDisabledReason.NoCarrierOnHeartbeat]: T('Local heartbeat interface is down.'),
-    [FailoverDisabledReason.LocalFipsRebootRequired]: T('Reboot of this node is required for FIPS changes.'),
-    [FailoverDisabledReason.RemoteFipsRebootRequired]: T('Reboot of the other node is required for FIPS changes.'),
-  },
   updateRunning_dialog: {
     title: T('Update in Progress'),
     message: helptextGlobal.sysUpdateMessage,

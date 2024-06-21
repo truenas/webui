@@ -5,31 +5,32 @@ import { MatCheckboxHarness } from '@angular/material/checkbox/testing';
 import { Spectator } from '@ngneat/spectator';
 import { mockProvider, createComponentFactory } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
-import { UnusedDisk } from 'app/interfaces/storage.interface';
+import { DetailsDisk } from 'app/interfaces/disk.interface';
 import { IxRadioGroupHarness } from 'app/modules/ix-forms/components/ix-radio-group/ix-radio-group.harness';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { PoolWarningsComponent } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/components/pool-warnings/pool-warnings.component';
+import { DiskStore } from 'app/pages/storage/modules/pool-manager/store/disk.store';
 import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
 
 const duplicateSerialDisk = {
   identifier: '{uuid}bb73faf5-6d50-4af9-ae30-bc8ba0cf8694',
   duplicate_serial: ['sdb', 'sdc'],
   devname: 'sda',
-} as UnusedDisk;
+} as DetailsDisk;
 
 const exportedPoolDisk = {
   identifier: '{uuid}bb73faf5-6d50-4af9-ae30-bc8ba0cf8695',
   duplicate_serial: [],
   exported_zpool: 'FAKE_POOL',
   devname: 'sdb',
-} as UnusedDisk;
+} as DetailsDisk;
 
 const duplicateSerialAndExportedPoolDisk = {
   identifier: '{uuid}bb73faf5-6d50-4af9-ae30-bc8ba0cf866',
   duplicate_serial: ['sdb'],
   exported_zpool: 'MOCK_POOL',
   devname: 'sdc',
-} as UnusedDisk;
+} as DetailsDisk;
 
 describe('PoolWarningsComponent', () => {
   let spectator: Spectator<PoolWarningsComponent>;
@@ -43,8 +44,10 @@ describe('PoolWarningsComponent', () => {
     ],
     providers: [
       mockProvider(PoolManagerStore, {
-        allDisks$: of([duplicateSerialDisk, exportedPoolDisk, duplicateSerialAndExportedPoolDisk]),
         setDiskWarningOptions: jest.fn(),
+      }),
+      mockProvider(DiskStore, {
+        selectableDisks$: of([duplicateSerialDisk, exportedPoolDisk, duplicateSerialAndExportedPoolDisk]),
       }),
     ],
   });

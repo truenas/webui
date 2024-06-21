@@ -3,7 +3,8 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockComponent, MockDirective } from 'ng-mocks';
-import { of } from 'rxjs';
+import { NgxSkeletonLoaderComponent } from 'ngx-skeleton-loader';
+import { BehaviorSubject, of } from 'rxjs';
 import { IxDropGridDirective } from 'app/modules/ix-drop-grid/ix-drop-grid.directive';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
@@ -22,6 +23,9 @@ describe('DashboardComponent', () => {
   const groupB: WidgetGroup = { layout: WidgetGroupLayout.Halves, slots: [] };
   const groupC: WidgetGroup = { layout: WidgetGroupLayout.QuartersAndHalf, slots: [] };
   const groupD: WidgetGroup = { layout: WidgetGroupLayout.HalfAndQuarters, slots: [] };
+  const defaultGroups = [groupA, groupB, groupC, groupD];
+  const groups$ = new BehaviorSubject(defaultGroups);
+  const isLoading$ = new BehaviorSubject(false);
 
   let spectator: Spectator<DashboardComponent>;
   let loader: HarnessLoader;
@@ -30,13 +34,14 @@ describe('DashboardComponent', () => {
     declarations: [
       WidgetGroupControlsComponent,
       PageHeaderComponent,
+      MockComponent(NgxSkeletonLoaderComponent),
       MockComponent(WidgetGroupComponent),
       MockDirective(IxDropGridDirective),
     ],
     providers: [
       mockProvider(DashboardStore, {
-        groups$: of([groupA, groupB, groupC, groupD]),
-        isLoading$: of(false),
+        groups$,
+        isLoading$,
         entered: jest.fn(),
         save: jest.fn(() => of(undefined)),
       }),
@@ -59,6 +64,18 @@ describe('DashboardComponent', () => {
   describe('loading', () => {
     it('initializes store when user enters the dashboard', () => {
       expect(spectator.inject(DashboardStore).entered).toHaveBeenCalled();
+    });
+
+    it('shows skeleton loader when loading for first time', () => {
+      isLoading$.next(true);
+      groups$.next(null);
+      spectator.detectChanges();
+      expect(spectator.query(NgxSkeletonLoaderComponent)).toExist();
+
+      groups$.next(defaultGroups);
+      isLoading$.next(false);
+      spectator.detectChanges();
+      expect(spectator.query(NgxSkeletonLoaderComponent)).not.toExist();
     });
 
     it('renders widgets that were loaded', () => {

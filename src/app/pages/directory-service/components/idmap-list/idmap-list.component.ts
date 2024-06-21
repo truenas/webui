@@ -203,9 +203,6 @@ export class IdmapListComponent implements OnInit {
 
   onListFiltered(query: string): void {
     this.filterString = query.toLowerCase();
-    this.dataProvider.setRows(this.idmaps.filter((idmap) => {
-      return idmap.label.toLowerCase().includes(this.filterString)
-        || idmap.idmap_backend.toLowerCase().includes(this.filterString);
-    }));
+    this.dataProvider.setFilter({ query, columnKeys: ['label', 'idmap_backend'] });
   }
 }

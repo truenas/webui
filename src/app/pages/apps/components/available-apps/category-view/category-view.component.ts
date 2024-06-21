@@ -3,6 +3,7 @@ import {
 } from '@angular/core';
 import {
   ActivatedRoute,
+  Router,
 } from '@angular/router';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import {
@@ -25,6 +26,7 @@ export class CategoryViewComponent implements OnInit, OnDestroy {
   isLoading$ = this.applicationsStore.isLoading$;
 
   constructor(
+    protected router: Router,
     private applicationsStore: AppsStore,
     private route: ActivatedRoute,
     private appsFilterStore: AppsFilterStore,
@@ -35,7 +37,6 @@ export class CategoryViewComponent implements OnInit, OnDestroy {
     this.pageTitle$.next(category.replace(/-/g, ' '));
     this.appsFilterStore.applyFilters({
       categories: [category],
-      catalogs: [],
       sort: null,
     });
   }
@@ -45,6 +46,6 @@ export class CategoryViewComponent implements OnInit, OnDestroy {
   }
 
   trackByAppId(id: number, app: AvailableApp): string {
-    return `${app.catalog}-${app.train}-${app.name}`;
+    return `${app.latest_version}-${app.train}-${app.name}`;
   }
 }

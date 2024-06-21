@@ -161,10 +161,10 @@ export class SnapshotTaskListComponent implements OnInit {
 
     this.getSnapshotTasks();
 
-    tasks$.pipe(take(1), untilDestroyed(this)).subscribe(() => this.filterUpdated(this.filterString));
+    tasks$.pipe(take(1), untilDestroyed(this)).subscribe(() => this.onListFiltered(this.filterString));
 
     this.dataProvider.emptyType$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.filterUpdated(this.filterString);
+      this.onListFiltered(this.filterString);
     });
   }
 
@@ -178,9 +178,9 @@ export class SnapshotTaskListComponent implements OnInit {
     this.cdr.markForCheck();
   }
 
-  filterUpdated(query: string): void {
+  onListFiltered(query: string): void {
     this.filterString = query;
-    this.dataProvider.setRows(this.snapshotTasks.filter(this.filterTask));
+    this.dataProvider.setFilter({ list: this.snapshotTasks, query, columnKeys: ['dataset', 'naming_schema'] });
   }
 
   doAdd(): void {
@@ -212,9 +212,4 @@ export class SnapshotTaskListComponent implements OnInit {
       },
     });
   }
-
-  private filterTask = (task: PeriodicSnapshotTaskUi): boolean => {
-    return task.dataset.toLowerCase().includes(this.filterString.toLowerCase())
-      || task.naming_schema.toLowerCase().includes(this.filterString.toLowerCase());
-  };
 }

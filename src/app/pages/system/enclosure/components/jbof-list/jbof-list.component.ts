@@ -143,9 +143,6 @@ export class JbofListComponent implements OnInit {
 
   onListFiltered(query: string): void {
     this.filterString = query.toLowerCase();
-    this.dataProvider.setRows(this.jbofs.filter((jbof) => {
-      return jbof.mgmt_username.toLowerCase().includes(this.filterString)
-        || jbof.description.toLowerCase().includes(this.filterString);
-    }));
+    this.dataProvider.setFilter({ query, columnKeys: ['mgmt_username', 'description'] });
   }
 }

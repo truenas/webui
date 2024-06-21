@@ -53,6 +53,7 @@
       [formArrayName]="dynamicSchema.controlName"
       [default]="dynamicSchema.default"
       [itemsSchema]="dynamicSchema.itemsSchema"
+      [required]="dynamicSchema.required"
       [isEditMode]="isEditMode"
       [canAdd]="!isAllListControlsDisabled"
       [formArray]="getFormArray"
@@ -65,7 +66,6 @@
       >
         <ix-dynamic-form-item
           *ngFor="let item of dynamicSchema.items"
-          class="list"
           [dynamicSchema]="item"
           [dynamicForm]="element | cast"
           [isEditMode]="isEditMode"

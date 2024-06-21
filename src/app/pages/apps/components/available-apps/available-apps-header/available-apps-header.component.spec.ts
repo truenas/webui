@@ -26,7 +26,6 @@ describe('AvailableAppsHeaderComponent', () => {
   let spectator: Spectator<AvailableAppsHeaderComponent>;
   let loader: HarnessLoader;
   let searchInput: MatInputHarness;
-  let catalogsItems: IxFilterSelectListHarness;
   let sortItems: IxFilterSelectListHarness;
   let categoriesSelect: IxChipsHarness;
   let appsFilterStore: AppsFilterStore;
@@ -50,7 +49,6 @@ describe('AvailableAppsHeaderComponent', () => {
       mockProvider(AppsFilterStore, {
         isFilterApplied$: of(false),
         filterValues$: of({
-          catalogs: ['TRUENAS'],
           sort: null,
           categories: ['storage', 'crypto', 'media', 'torrent'],
         }),
@@ -61,18 +59,15 @@ describe('AvailableAppsHeaderComponent', () => {
       mockProvider(AppsStore, {
         isLoading$: of(false),
         availableApps$: of([{
-          catalog: 'TRUENAS',
           categories: ['storage', 'crypto'],
           last_update: { $date: 452 },
           name: 'chia',
         }, {
-          catalog: 'TEST',
           categories: ['media', 'torrent'],
           last_update: { $date: 343 },
           name: 'qbittorent',
         }] as AvailableApp[]),
         appsCategories$: of(['storage', 'crypto', 'media', 'torrent']),
-        catalogs$: of(['TRUENAS', 'TEST']),
       }),
       mockProvider(DialogService, {
         jobDialog: jest.fn(() => ({
@@ -90,8 +85,7 @@ describe('AvailableAppsHeaderComponent', () => {
     await filtersButton.click();
 
     searchInput = await loader.getHarness(MatInputHarness.with({ placeholder: 'Search' }));
-    catalogsItems = (await loader.getAllHarnesses(IxFilterSelectListHarness))[0];
-    sortItems = (await loader.getAllHarnesses(IxFilterSelectListHarness))[1];
+    sortItems = (await loader.getAllHarnesses(IxFilterSelectListHarness))[0];
     categoriesSelect = await loader.getHarness(IxChipsHarness);
     appsFilterStore = spectator.inject(AppsFilterStore);
   });
@@ -101,7 +95,6 @@ describe('AvailableAppsHeaderComponent', () => {
 
     expect(numbers[0]).toHaveText('2'); // available apps
     expect(numbers[1]).toHaveText('3'); // installed apps
-    expect(numbers[2]).toHaveText('2'); // installed catalogs
   });
 
   it('calls applySearchQuery when user types in the search input', async () => {
@@ -109,26 +102,10 @@ describe('AvailableAppsHeaderComponent', () => {
     expect(appsFilterStore.applySearchQuery).toHaveBeenLastCalledWith('search string');
   });
 
-  it('calls applyFilters when user selects catalogs', async () => {
-    await catalogsItems.setValue(['TRUENAS']);
-
-    expect(appsFilterStore.applyFilters).toHaveBeenLastCalledWith({
-      catalogs: ['TRUENAS'],
-      sort: null,
-      categories: [
-        'storage',
-        'crypto',
-        'media',
-        'torrent',
-      ],
-    });
-  });
-
   it('calls applyFilters when user selects sort', async () => {
     await sortItems.setValue(['Updated Date']);
 
     expect(appsFilterStore.applyFilters).toHaveBeenLastCalledWith({
-      catalogs: ['TRUENAS', 'TEST'],
       sort: AppsFiltersSort.LastUpdate,
       categories: [
         'storage',
@@ -143,7 +120,6 @@ describe('AvailableAppsHeaderComponent', () => {
     await categoriesSelect.selectSuggestionValue('storage');
 
     expect(appsFilterStore.applyFilters).toHaveBeenLastCalledWith({
-      catalogs: ['TRUENAS', 'TEST'],
       sort: null,
       categories: ['storage'],
     });

@@ -1,26 +1,26 @@
-import { UnusedDisk } from 'app/interfaces/storage.interface';
+import { DetailsDisk } from 'app/interfaces/disk.interface';
 
 export class EnclosureList {
   lastUsedEnclosure = 0;
 
-  private readonly enclosureNumbers: number[];
+  private readonly enclosureIds: (string | undefined)[];
 
   constructor(
-    disks: UnusedDisk[],
+    disks: DetailsDisk[],
   ) {
-    this.enclosureNumbers = this.getEnclosureNumbers(disks);
+    this.enclosureIds = this.getEnclosureIds(disks);
   }
 
-  next(): number {
-    const next = this.enclosureNumbers[this.lastUsedEnclosure];
-    this.lastUsedEnclosure = (this.lastUsedEnclosure + 1) % this.enclosureNumbers.length;
+  next(): string | undefined {
+    const next = this.enclosureIds[this.lastUsedEnclosure];
+    this.lastUsedEnclosure = (this.lastUsedEnclosure + 1) % this.enclosureIds.length;
     return next;
   }
 
-  private getEnclosureNumbers(disks: UnusedDisk[]): number[] {
-    const enclosures = new Set<number>();
+  private getEnclosureIds(disks: DetailsDisk[]): (string | undefined)[] {
+    const enclosures = new Set<string | undefined>();
     for (const disk of disks) {
-      enclosures.add(disk.enclosure?.number);
+      enclosures.add(disk.enclosure?.id);
     }
     return [...enclosures];
   }

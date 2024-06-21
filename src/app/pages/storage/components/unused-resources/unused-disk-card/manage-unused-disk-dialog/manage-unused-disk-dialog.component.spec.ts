@@ -7,8 +7,8 @@ import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { PoolStatus } from 'app/enums/pool-status.enum';
+import { DetailsDisk } from 'app/interfaces/disk.interface';
 import { Pool } from 'app/interfaces/pool.interface';
-import { UnusedDisk } from 'app/interfaces/storage.interface';
 import { IxRadioGroupHarness } from 'app/modules/ix-forms/components/ix-radio-group/ix-radio-group.harness';
 import { IxSelectHarness } from 'app/modules/ix-forms/components/ix-select/ix-select.harness';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
@@ -42,7 +42,7 @@ describe('ManageUnusedDiskDialogComponent', () => {
           unusedDisks: [
             { devname: 'sdb', size: 102400000, identifier: '{serial_lunid}BBBBB1' },
             { devname: 'sdc', size: 204800000, identifier: '{uuid}7ad07324-f0e9-49a4-a7a4-92edd82a4929' },
-          ] as UnusedDisk[],
+          ] as DetailsDisk[],
         } as ManageUnusedDiskDialogResource,
       },
       mockProvider(MatDialogRef),

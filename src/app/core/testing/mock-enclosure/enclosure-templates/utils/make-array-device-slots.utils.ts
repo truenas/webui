@@ -6,6 +6,10 @@ export function makeArrayDeviceSlots(
   to: number,
   options: {
     supportsIdentifyLight?: boolean;
+    is_front?: boolean;
+    is_top?: boolean;
+    is_rear?: boolean;
+    is_internal?: boolean;
   },
 ): Record<number, DashboardEnclosureSlot> {
   const slots = range(from, to + 1).map((slot) => {
@@ -21,6 +25,10 @@ export function makeArrayDeviceSlots(
       type: null,
       rotationrate: null,
       pool_info: null,
+      is_front: options.is_front ?? false,
+      is_top: options.is_top ?? false,
+      is_rear: options.is_rear ?? false,
+      is_internal: options.is_internal ?? false,
     };
   });
 

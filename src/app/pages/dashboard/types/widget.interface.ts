@@ -16,6 +16,7 @@ export enum WidgetType {
   BackupTasks = 'backup-tasks',
   Cpu = 'cpu',
   CpuUsageGauge = 'cpu-usage-gauge',
+  CpuUsageRecentWidget = 'cpu-usage-recent',
   CpuUsageBar = 'cpu-usage-bar',
   CpuTemperatureBar = 'cpu-temperature-bar',
   Storage = 'storage',
@@ -24,7 +25,7 @@ export enum WidgetType {
   OsVersion = 'os-version',
   SystemUptime = 'system-uptime',
   SystemImage = 'system-image',
-  PoolName = 'pool-name',
+  Pool = 'pool',
   ArbitraryText = 'arbitrary-text',
 }
 

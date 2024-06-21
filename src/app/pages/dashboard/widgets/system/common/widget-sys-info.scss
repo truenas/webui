@@ -79,7 +79,7 @@
     text-align: center;
     top: 0;
     width: 100%;
-    z-index: 1000;
+    z-index: 2;
 
     ix-icon {
       font-size: 48px;
@@ -89,6 +89,10 @@
       padding: 0 16px 48px;
     }
   }
+}
+
+.product-image {
+  margin: 0 20px;
 }
 
 .content-left {

@@ -1,7 +1,7 @@
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { GiB } from 'app/constants/bytes.constant';
 import { DiskType } from 'app/enums/disk-type.enum';
-import { Disk } from 'app/interfaces/storage.interface';
+import { DetailsDisk } from 'app/interfaces/disk.interface';
 import {
   DiskIconComponent,
 } from 'app/pages/storage/modules/pool-manager/components/manual-disk-selection/components/disk-icon/disk-icon.component';
@@ -19,7 +19,7 @@ describe('DiskIconComponent', () => {
           name: 'sda',
           size: 2 * GiB,
           type: DiskType.Hdd,
-        } as Disk,
+        } as DetailsDisk,
       },
     });
   });
@@ -40,7 +40,7 @@ describe('DiskIconComponent', () => {
     spectator.setInput('disk', {
       type: DiskType.Ssd,
       size: 2 * GiB,
-    } as Disk);
+    } as DetailsDisk);
 
     expect(spectator.query('#ssd')).toExist();
   });
