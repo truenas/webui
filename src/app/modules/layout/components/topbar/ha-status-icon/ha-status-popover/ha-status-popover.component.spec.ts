@@ -1,10 +1,10 @@
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
+import { CoreComponents } from 'app/core/core-components.module';
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
 import {
   HaStatusPopoverComponent,
 } from 'app/modules/layout/components/topbar/ha-status-icon/ha-status-popover/ha-status-popover.component';
-import { CoreComponents } from 'app/core/core-components.module';
 
 describe('HaStatusPopoverComponent', () => {
   let spectator: Spectator<HaStatusPopoverComponent>;
