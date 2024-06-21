@@ -128,7 +128,7 @@ describe('CronListComponent', () => {
     expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('cronjob.run', [1]);
   });
 
-  it('shows form to edit an existing interface when Edit button is pressed', async () => {
+  it('shows form to edit an existing cron when Edit button is pressed', async () => {
     await table.clickToggle(0);
 
     const editButton = await loader.getHarness(MatButtonHarness.with({ text: 'Edit' }));

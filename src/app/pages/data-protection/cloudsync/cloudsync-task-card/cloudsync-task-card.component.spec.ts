@@ -127,6 +127,7 @@ describe('CloudSyncTaskCardComponent', () => {
       }),
       mockProvider(IxChainedSlideInService, {
         open: jest.fn(() => of()),
+        getLatestCloseResponse: jest.fn(() => of(null)),
       }),
       mockProvider(IxSlideInRef),
       mockProvider(IxSlideInService, {

@@ -90,6 +90,7 @@ describe('CloudSyncListComponent', () => {
     providers: [
       mockProvider(IxChainedSlideInService, {
         open: jest.fn(() => of()),
+        getLatestCloseResponse: jest.fn(() => of(null)),
       }),
       mockAuth(),
       mockWebSocket([

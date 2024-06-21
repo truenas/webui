@@ -140,6 +140,7 @@ describe('ReplicationListComponent', () => {
       ]),
       mockProvider(IxChainedSlideInService, {
         open: jest.fn(() => of()),
+        getLatestCloseResponse: jest.fn(() => of(null)),
       }),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
