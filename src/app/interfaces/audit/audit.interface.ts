@@ -2,6 +2,7 @@ import { AuditEvent, AuditService } from 'app/enums/audit.enum';
 import { ApiTimestamp } from 'app/interfaces/api-date.interface';
 import { MiddlewareAuditEntry } from 'app/interfaces/audit/middleware-audit-entry.interface';
 import { SmbAuditEntry } from 'app/interfaces/audit/smb-audit-entry.interface';
+import { SudoAuditEntry } from 'app/interfaces/audit/sudo-audit-entry.interface';
 import { QueryFilters, QueryOptions } from 'app/interfaces/query-api.interface';
 
 export interface AuditQueryParams {
@@ -29,7 +30,7 @@ export interface AuditConfig {
   quota_fill_critical: number;
 }
 
-export type AuditEntry = SmbAuditEntry | MiddlewareAuditEntry;
+export type AuditEntry = SmbAuditEntry | MiddlewareAuditEntry | SudoAuditEntry;
 
 export interface AuditVersions {
   major: number;
