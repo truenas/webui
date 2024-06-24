@@ -1,25 +1,31 @@
 export function moveToNextFocusableElement(): void {
+  const container = document.querySelector('.search-box-wrapper');
+
   const focusableElements = Array.from(
-    document.querySelectorAll('a[href], button, textarea, input, select, [tabindex]:not([tabindex="-1"])'),
+    container.querySelectorAll('a[href], button, textarea, input, select, [tabindex]:not([tabindex="-1"])'),
   ).filter(
     (element: HTMLElement) => !(element as HTMLButtonElement).disabled && element.tabIndex >= 0,
   );
 
-  const currentIndex = focusableElements.indexOf(document.activeElement);
-  const nextIndex = (currentIndex + 1) % focusableElements.length;
+  const sortedFocusableElements = focusableElements.sort((a: HTMLElement, b: HTMLElement) => a.tabIndex - b.tabIndex);
+  const currentIndex = sortedFocusableElements.indexOf(document.activeElement as HTMLElement);
+  const nextIndex = (currentIndex + 1) % sortedFocusableElements.length;
 
-  (focusableElements[nextIndex] as HTMLElement)?.focus();
+  (sortedFocusableElements[nextIndex] as HTMLElement)?.focus();
 }
 
 export function moveToPreviousFocusableElement(): void {
+  const container = document.querySelector('.search-box-wrapper');
+
   const focusableElements = Array.from(
-    document.querySelectorAll('a[href], button, textarea, input, select, [tabindex]:not([tabindex="-1"])'),
+    container.querySelectorAll('a[href], button, textarea, input, select, [tabindex]:not([tabindex="-1"])'),
   ).filter(
     (element: HTMLElement) => !(element as HTMLButtonElement).disabled && element.tabIndex >= 0,
   );
 
-  const currentIndex = focusableElements.indexOf(document.activeElement);
-  const previousIndex = (currentIndex - 1 + focusableElements.length) % focusableElements.length;
+  const sortedFocusableElements = focusableElements.sort((a: HTMLElement, b: HTMLElement) => a.tabIndex - b.tabIndex);
+  const currentIndex = sortedFocusableElements.indexOf(document.activeElement as HTMLElement);
+  const previousIndex = (currentIndex - 1 + sortedFocusableElements.length) % sortedFocusableElements.length;
 
-  (focusableElements[previousIndex] as HTMLElement)?.focus();
+  (sortedFocusableElements[previousIndex] as HTMLElement)?.focus();
 }
