@@ -5,7 +5,7 @@ import {
 import { TranslateService } from '@ngx-translate/core';
 import { Observable, of, switchMap } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
+import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { GpuService } from 'app/services/gpu/gpu.service';
 
 @Injectable({

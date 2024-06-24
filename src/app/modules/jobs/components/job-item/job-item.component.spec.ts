@@ -4,6 +4,7 @@ import { JobState } from 'app/enums/job-state.enum';
 import { CredentialType } from 'app/interfaces/credential-type.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { JobItemComponent } from 'app/modules/jobs/components/job-item/job-item.component';
+import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 
 describe('JobItemComponent', () => {
   let spectator: Spectator<JobItemComponent>;
@@ -12,6 +13,9 @@ describe('JobItemComponent', () => {
     component: JobItemComponent,
     declarations: [
       FakeFormatDateTimePipe,
+    ],
+    imports: [
+      MapValuePipe,
     ],
   });
 

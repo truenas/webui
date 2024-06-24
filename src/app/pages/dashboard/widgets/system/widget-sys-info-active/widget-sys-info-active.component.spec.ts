@@ -15,6 +15,7 @@ import { Codename } from 'app/enums/codename.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { LoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import { SystemLicense, SystemInfo } from 'app/interfaces/system-info.interface';
+import { CopyButtonComponent } from 'app/modules/buttons/copy-button/copy-button.component';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { selectUpdateJobForActiveNode } from 'app/modules/jobs/store/job.selectors';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
@@ -66,6 +67,7 @@ describe('WidgetSysInfoActiveComponent', () => {
     imports: [
       MatListModule,
       UptimePipe,
+      CopyButtonComponent,
     ],
     declarations: [
       MockComponent(ProductImageComponent),

@@ -21,10 +21,10 @@ import { WINDOW } from 'app/helpers/window.helper';
 import { helptextSystemSupport as helptext } from 'app/helptext/system/support';
 import { FeedbackDialogComponent } from 'app/modules/feedback/components/feedback-dialog/feedback-dialog.component';
 import { FeedbackService } from 'app/modules/feedback/services/feedback.service';
-import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
-import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
-import { emailValidator } from 'app/modules/ix-forms/validators/email-validation/email-validation';
-import { ImageValidatorService } from 'app/modules/ix-forms/validators/image-validator/image-validator.service';
+import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
+import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
+import { emailValidator } from 'app/modules/forms/ix-forms/validators/email-validation/email-validation';
+import { ImageValidatorService } from 'app/modules/forms/ix-forms/validators/image-validator/image-validator.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()

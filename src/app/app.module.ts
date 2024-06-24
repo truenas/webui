@@ -34,7 +34,6 @@ import { DialogModule } from 'app/modules/dialog/dialog.module';
 import { FeedbackModule } from 'app/modules/feedback/feedback.module';
 import { SnackbarModule } from 'app/modules/snackbar/snackbar.module';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
-import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
 import { AuthService } from 'app/services/auth/auth.service';
 import { TwoFactorGuardService } from 'app/services/auth/two-factor-guard.service';
 import { DisksUpdateService } from 'app/services/disks-update.service';
@@ -63,13 +62,13 @@ import { RoutePartsService } from './services/route-parts/route-parts.service';
   bootstrap: [
     AppComponent,
   ],
-  imports: [BrowserModule,
+  imports: [
+    BrowserModule,
     BrowserAnimationsModule,
     FlexLayoutModule,
     AppLoaderModule,
     MatNativeDateModule,
     MatNativeDateModule,
-    TooltipModule,
     TranslateModule.forRoot({
       defaultLanguage: 'en',
       loader: {
@@ -128,7 +127,8 @@ import { RoutePartsService } from './services/route-parts/route-parts.service';
     TestIdModule,
     MarkdownModule.forRoot({ loader: HttpClient }),
     FeedbackModule,
-    DialogModule],
+    DialogModule,
+  ],
   providers: [
     RoutePartsService,
     FocusService,
@@ -165,5 +165,4 @@ import { RoutePartsService } from './services/route-parts/route-parts.service';
     provideHttpClient(withInterceptorsFromDi()),
   ],
 })
-export class AppModule {
-}
+export class AppModule {}

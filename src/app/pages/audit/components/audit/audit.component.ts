@@ -23,6 +23,16 @@ import { Option } from 'app/interfaces/option.interface';
 import { QueryFilters } from 'app/interfaces/query-api.interface';
 import { User } from 'app/interfaces/user.interface';
 import { EmptyService } from 'app/modules/empty/empty.service';
+import { SearchProperty } from 'app/modules/forms/search-input/types/search-property.interface';
+import {
+  AdvancedSearchQuery,
+  SearchQuery,
+} from 'app/modules/forms/search-input/types/search-query.interface';
+import {
+  dateProperty,
+  searchProperties,
+  textProperty,
+} from 'app/modules/forms/search-input/utils/search-properties.utils';
 import { AuditApiDataProvider } from 'app/modules/ix-table/classes/api-data-provider/audit-api-data-provider';
 import { PaginationServerSide } from 'app/modules/ix-table/classes/api-data-provider/pagination-server-side.class';
 import { SortingServerSide } from 'app/modules/ix-table/classes/api-data-provider/sorting-server-side.class';
@@ -31,16 +41,6 @@ import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/
 import { SortDirection } from 'app/modules/ix-table/enums/sort-direction.enum';
 import { TablePagination } from 'app/modules/ix-table/interfaces/table-pagination.interface';
 import { createTable } from 'app/modules/ix-table/utils';
-import { SearchProperty } from 'app/modules/search-input/types/search-property.interface';
-import {
-  AdvancedSearchQuery,
-  SearchQuery,
-} from 'app/modules/search-input/types/search-query.interface';
-import {
-  dateProperty,
-  searchProperties,
-  textProperty,
-} from 'app/modules/search-input/utils/search-properties.utils';
 import { auditElements } from 'app/pages/audit/components/audit/audit.elements';
 import { getLogImportantData } from 'app/pages/audit/utils/get-log-important-data.utils';
 import { UrlOptionsService } from 'app/services/url-options.service';

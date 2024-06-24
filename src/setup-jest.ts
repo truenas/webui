@@ -34,8 +34,6 @@ import { Observable } from 'rxjs';
 import { IcuMissingTranslationHandler } from 'app/core/classes/icu-missing-translation-handler';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { WINDOW } from 'app/helpers/window.helper';
-import { CastModule } from 'app/modules/cast/cast.module';
-import { IxFileSizeModule } from 'app/modules/ix-file-size/ix-file-size.module';
 import { IxIconTestingModule } from 'app/modules/ix-icon/ix-icon-testing.module';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
@@ -64,7 +62,6 @@ defineGlobalsInjections({
     MatProgressBarModule,
     MatTooltipModule,
     MatCardModule,
-    IxFileSizeModule,
     MatListModule,
     MatToolbarModule,
     MatBadgeModule,
@@ -73,7 +70,6 @@ defineGlobalsInjections({
     MatButtonModule,
     RouterModule.forRoot([]),
     CommonDirectivesModule,
-    CastModule,
     SnackbarModule,
     TestIdModule,
     TranslateModule.forRoot({

@@ -11,8 +11,8 @@ import { Role } from 'app/enums/role.enum';
 import { helptextAcl } from 'app/helptext/storage/volumes/datasets/dataset-acl';
 import { Acl } from 'app/interfaces/acl.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { GroupComboboxProvider } from 'app/modules/ix-forms/classes/group-combobox-provider';
-import { UserComboboxProvider } from 'app/modules/ix-forms/classes/user-combobox-provider';
+import { GroupComboboxProvider } from 'app/modules/forms/ix-forms/classes/group-combobox-provider';
+import { UserComboboxProvider } from 'app/modules/forms/ix-forms/classes/user-combobox-provider';
 import {
   SaveAsPresetModalComponent,
 } from 'app/pages/datasets/modules/permissions/components/save-as-preset-modal/save-as-preset-modal.component';

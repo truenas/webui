@@ -15,11 +15,11 @@ import {
   filter, map, Observable, of, pairwise, startWith,
 } from 'rxjs';
 import { appImagePlaceholder } from 'app/constants/catalog.constants';
-import { BulkListItem, BulkListItemState } from 'app/core/components/bulk-list-item/bulk-list-item.interface';
 import { Role } from 'app/enums/role.enum';
 import { UpgradeSummary } from 'app/interfaces/application.interface';
 import { ChartRelease, ChartReleaseUpgradeParams } from 'app/interfaces/chart-release.interface';
 import { Option } from 'app/interfaces/option.interface';
+import { BulkListItem, BulkListItemState } from 'app/modules/lists/bulk-list-item/bulk-list-item.interface';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { WebSocketService } from 'app/services/ws.service';

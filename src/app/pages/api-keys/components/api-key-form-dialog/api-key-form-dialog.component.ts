@@ -7,7 +7,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Role } from 'app/enums/role.enum';
 import { helptextApiKeys } from 'app/helptext/api-keys';
 import { ApiKey, UpdateApiKeyRequest } from 'app/interfaces/api-key.interface';
-import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
+import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import {
   KeyCreatedDialogComponent,

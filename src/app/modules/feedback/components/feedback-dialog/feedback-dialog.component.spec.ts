@@ -15,8 +15,9 @@ import {
 } from 'app/modules/feedback/components/file-ticket-licensed/file-ticket-licensed.component';
 import { FeedbackType } from 'app/modules/feedback/interfaces/feedback.interface';
 import { FeedbackService } from 'app/modules/feedback/services/feedback.service';
-import { IxButtonGroupHarness } from 'app/modules/ix-forms/components/ix-button-group/ix-button-group.harness';
-import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
+import { IxButtonGroupHarness } from 'app/modules/forms/ix-forms/components/ix-button-group/ix-button-group.harness';
+import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
+import { CastPipe } from 'app/modules/pipes/cast/cast.pipe';
 import { SystemGeneralService } from 'app/services/system-general.service';
 
 describe('FeedbackDialogComponent', () => {
@@ -32,6 +33,7 @@ describe('FeedbackDialogComponent', () => {
     imports: [
       IxFormsModule,
       ReactiveFormsModule,
+      CastPipe,
     ],
     declarations: [
       MockComponents(

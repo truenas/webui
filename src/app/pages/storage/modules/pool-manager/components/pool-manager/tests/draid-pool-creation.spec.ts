@@ -5,7 +5,6 @@ import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { GiB } from 'app/constants/bytes.constant';
-import { CoreComponents } from 'app/core/core-components.module';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
@@ -14,7 +13,10 @@ import { CreateVdevLayout } from 'app/enums/v-dev-type.enum';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
 import { Enclosure } from 'app/interfaces/enclosure.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
+import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
+import { CastPipe } from 'app/modules/pipes/cast/cast.pipe';
+import { IxFileSizePipe } from 'app/modules/pipes/ix-file-size/ix-file-size.pipe';
+import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 import {
   PoolManagerComponent,
 } from 'app/pages/storage/modules/pool-manager/components/pool-manager/pool-manager.component';
@@ -37,7 +39,9 @@ describe('PoolManagerComponent – creating dRAID pool', () => {
       IxFormsModule,
       ReactiveFormsModule,
       MatStepperModule,
-      CoreComponents,
+      IxFileSizePipe,
+      MapValuePipe,
+      CastPipe,
     ],
     declarations: [
       ...commonDeclarations,

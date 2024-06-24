@@ -1,8 +1,8 @@
 import { createHostFactory, SpectatorHost } from '@ngneat/spectator/jest';
-import { CopyButtonComponent } from 'app/core/components/copy-btn/copy-btn.component';
 import { JobState } from 'app/enums/job-state.enum';
 import { ResponseErrorType } from 'app/enums/response-error-type.enum';
 import { Job } from 'app/interfaces/job.interface';
+import { CopyButtonComponent } from 'app/modules/buttons/copy-button/copy-button.component';
 import { JobLogsRowComponent } from 'app/pages/jobs/job-logs-row/job-logs-row.component';
 
 const fakeJob: Job = {
@@ -37,7 +37,7 @@ describe('JobLogsRowComponent', () => {
 
   const createHost = createHostFactory({
     component: JobLogsRowComponent,
-    declarations: [
+    imports: [
       CopyButtonComponent,
     ],
   });

@@ -1,8 +1,8 @@
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { BehaviorSubject, of } from 'rxjs';
-import { CleanLinkPipe } from 'app/core/pipes/clean-link.pipe';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
+import { CleanLinkPipe } from 'app/modules/pipes/clean-link/clean-link.pipe';
 import { AppAvailableInfoCardComponent } from 'app/pages/apps/components/app-detail-view/app-available-info-card/app-available-info-card.component';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 
@@ -28,7 +28,7 @@ describe('AppAvailableInfoCardComponent', () => {
 
   const createComponent = createComponentFactory({
     component: AppAvailableInfoCardComponent,
-    declarations: [
+    imports: [
       CleanLinkPipe,
     ],
     providers: [

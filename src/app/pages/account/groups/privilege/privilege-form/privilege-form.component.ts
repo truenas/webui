@@ -10,10 +10,10 @@ import { Role, roleNames } from 'app/enums/role.enum';
 import { helptextPrivilege } from 'app/helptext/account/priviledge';
 import { Group } from 'app/interfaces/group.interface';
 import { Privilege, PrivilegeUpdate } from 'app/interfaces/privilege.interface';
-import { ChipsProvider } from 'app/modules/ix-forms/components/ix-chips/chips-provider';
-import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
-import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
+import { ChipsProvider } from 'app/modules/forms/ix-forms/components/ix-chips/chips-provider';
+import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in.token';
+import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()

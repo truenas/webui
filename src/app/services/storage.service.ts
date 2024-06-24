@@ -9,7 +9,7 @@ import { Option } from 'app/interfaces/option.interface';
 import { TopologyItem } from 'app/interfaces/storage.interface';
 import { WebSocketService } from 'app/services/ws.service';
 
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class StorageService {
   protected diskResource = 'disk.query' as const;
 

@@ -29,15 +29,15 @@ import { Option } from 'app/interfaces/option.interface';
 import { Schedule } from 'app/interfaces/schedule.interface';
 import {
   CustomUntypedFormArray,
-} from 'app/modules/ix-dynamic-form/components/ix-dynamic-form/classes/custom-untped-form-array';
+} from 'app/modules/forms/ix-dynamic-form/components/ix-dynamic-form/classes/custom-untped-form-array';
 import {
   CustomUntypedFormControl,
-} from 'app/modules/ix-dynamic-form/components/ix-dynamic-form/classes/custom-untped-form-control';
+} from 'app/modules/forms/ix-dynamic-form/components/ix-dynamic-form/classes/custom-untped-form-control';
 import {
   CustomUntypedFormField,
-} from 'app/modules/ix-dynamic-form/components/ix-dynamic-form/classes/custom-untyped-form-field';
-import { CustomUntypedFormGroup } from 'app/modules/ix-dynamic-form/components/ix-dynamic-form/classes/custom-untyped-form-group';
-import { cronValidator } from 'app/modules/ix-forms/validators/cron-validation';
+} from 'app/modules/forms/ix-dynamic-form/components/ix-dynamic-form/classes/custom-untyped-form-field';
+import { CustomUntypedFormGroup } from 'app/modules/forms/ix-dynamic-form/components/ix-dynamic-form/classes/custom-untyped-form-group';
+import { cronValidator } from 'app/modules/forms/ix-forms/validators/cron-validation';
 import { crontabToSchedule } from 'app/modules/scheduler/utils/crontab-to-schedule.utils';
 import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
 import { FilesystemService } from 'app/services/filesystem.service';

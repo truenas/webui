@@ -11,7 +11,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { QrCodeModule } from 'ng-qrcode';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
-import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
+import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
 import { QrViewerComponent } from 'app/pages/two-factor-auth/components/two-factor/qr-viewer/qr-viewer.component';

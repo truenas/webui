@@ -3,7 +3,7 @@ import {
 } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { helptextSystemCloudcredentials as helptext } from 'app/helptext/system/cloud-credentials';
-import { OauthButtonType } from 'app/modules/oauth-button/interfaces/oauth-button.interface';
+import { OauthButtonType } from 'app/modules/buttons/oauth-button/interfaces/oauth-button.interface';
 
 export interface OauthProviderData {
   client_id: string;

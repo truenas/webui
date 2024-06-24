@@ -16,7 +16,7 @@ import { helptextDatasetForm } from 'app/helptext/storage/volumes/datasets/datas
 import { Dataset, DatasetCreate, DatasetUpdate } from 'app/interfaces/dataset.interface';
 import {
   forbiddenValues,
-} from 'app/modules/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
+} from 'app/modules/forms/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
 import { datasetNameTooLong } from 'app/pages/datasets/components/dataset-form/utils/name-length-validation';
 import { SmbValidationService } from 'app/pages/sharing/smb/smb-form/smb-validator.service';
 

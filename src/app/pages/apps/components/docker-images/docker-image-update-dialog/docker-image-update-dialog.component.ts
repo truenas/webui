@@ -11,7 +11,6 @@ import {
 } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { latestVersion } from 'app/constants/catalog.constants';
-import { BulkListItem, BulkListItemState } from 'app/core/components/bulk-list-item/bulk-list-item.interface';
 import { JobState } from 'app/enums/job-state.enum';
 import { Role } from 'app/enums/role.enum';
 import { helptextApps } from 'app/helptext/apps/apps';
@@ -21,6 +20,7 @@ import {
 import { CoreBulkResponse } from 'app/interfaces/core-bulk.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { Option } from 'app/interfaces/option.interface';
+import { BulkListItem, BulkListItemState } from 'app/modules/lists/bulk-list-item/bulk-list-item.interface';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()

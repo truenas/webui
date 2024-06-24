@@ -5,10 +5,11 @@ import { MatListItemHarness } from '@angular/material/list/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
-import { CoreComponents } from 'app/core/core-components.module';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { SyslogLevel, SyslogTransport } from 'app/enums/syslog.enum';
 import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
+import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
+import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
 import { AdvancedSettingsService } from 'app/pages/system/advanced/advanced-settings.service';
 import { SyslogCardComponent } from 'app/pages/system/advanced/syslog/syslog-card/syslog-card.component';
 import { SyslogFormComponent } from 'app/pages/system/advanced/syslog/syslog-form/syslog-form.component';
@@ -21,7 +22,8 @@ describe('SyslogCardComponent', () => {
   const createComponent = createComponentFactory({
     component: SyslogCardComponent,
     imports: [
-      CoreComponents,
+      MapValuePipe,
+      YesNoPipe,
     ],
     providers: [
       mockAuth(),

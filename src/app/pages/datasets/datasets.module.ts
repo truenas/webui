@@ -16,16 +16,17 @@ import { BaseChartDirective } from 'ng2-charts';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { CoreComponents } from 'app/core/core-components.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
+import { CopyButtonComponent } from 'app/modules/buttons/copy-button/copy-button.component';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { EntityModule } from 'app/modules/entity/entity.module';
-import { IxFileSizeModule } from 'app/modules/ix-file-size/ix-file-size.module';
-import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
+import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
+import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
 import { TreeModule } from 'app/modules/ix-tree/tree.module';
 import { LayoutModule } from 'app/modules/layout/layout.module';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
-import { SearchInput1Component } from 'app/modules/search-input1/search-input1.component';
+import { IxFileSizePipe } from 'app/modules/pipes/ix-file-size/ix-file-size.pipe';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
 import { DataProtectionCardComponent } from 'app/pages/datasets/components/data-protection-card/data-protection-card.component';
 import { DatasetDetailsCardComponent } from 'app/pages/datasets/components/dataset-details-card/dataset-details-card.component';
@@ -67,7 +68,6 @@ import { DatasetNodeComponent } from './components/dataset-node/dataset-node.com
     MatTooltipModule,
     MatSortModule,
     MatSlideToggleModule,
-    IxFileSizeModule,
     MatRippleModule,
     MatProgressSpinnerModule,
     PermissionsModule,
@@ -90,6 +90,8 @@ import { DatasetNodeComponent } from './components/dataset-node/dataset-node.com
     IxTableModule,
     MatButton,
     MatIconButton,
+    IxFileSizePipe,
+    CopyButtonComponent,
   ],
   declarations: [
     DatasetsManagementComponent,

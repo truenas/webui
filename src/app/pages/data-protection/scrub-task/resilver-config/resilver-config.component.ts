@@ -11,7 +11,7 @@ import { Weekday } from 'app/enums/weekday.enum';
 import { helptextResilver } from 'app/helptext/storage/resilver/resilver';
 import { ResilverConfigUpdate } from 'app/interfaces/resilver-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
+import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { resilverConfigElements } from 'app/pages/data-protection/scrub-task/resilver-config/resilver-config.elements';
 import { CalendarService } from 'app/services/calendar.service';

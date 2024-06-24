@@ -11,16 +11,17 @@ import { TranslateModule } from '@ngx-translate/core';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { CoreComponents } from 'app/core/core-components.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
-import { CastModule } from 'app/modules/cast/cast.module';
-import { UnusedDiskSelectComponent } from 'app/modules/custom-selects/unused-disk-select/unused-disk-select.component';
+import { CopyButtonComponent } from 'app/modules/buttons/copy-button/copy-button.component';
 import { EntityModule } from 'app/modules/entity/entity.module';
-import { IxFileSizeModule } from 'app/modules/ix-file-size/ix-file-size.module';
-import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
+import { UnusedDiskSelectComponent } from 'app/modules/forms/custom-selects/unused-disk-select/unused-disk-select.component';
+import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
+import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { TreeModule } from 'app/modules/ix-tree/tree.module';
 import { LayoutModule } from 'app/modules/layout/layout.module';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
-import { SearchInput1Component } from 'app/modules/search-input1/search-input1.component';
+import { CastPipe } from 'app/modules/pipes/cast/cast.pipe';
+import { IxFileSizePipe } from 'app/modules/pipes/ix-file-size/ix-file-size.pipe';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
 import { DevicesComponent } from 'app/pages/storage/modules/devices/components/devices/devices.component';
 import {
@@ -69,15 +70,16 @@ import { ExtendDialogComponent } from './components/zfs-info-card/extend-dialog/
     RouterModule.forChild(routes),
     TranslateModule,
     CoreComponents,
-    CastModule,
     AppLoaderModule,
-    IxFileSizeModule,
     LayoutModule,
     CommonDirectivesModule,
     TestIdModule,
     MatTooltipModule,
     SearchInput1Component,
     UnusedDiskSelectComponent,
+    CastPipe,
+    IxFileSizePipe,
+    CopyButtonComponent,
   ],
   declarations: [
     DevicesComponent,

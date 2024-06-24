@@ -5,6 +5,7 @@ import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { filter, Observable } from 'rxjs';
 import { map, switchMap, take } from 'rxjs/operators';
+import { observeJob } from 'app/helpers/operators/observe-job.operator';
 import { ApiJobMethod, ApiJobResponse } from 'app/interfaces/api/api-job-directory.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { selectJob } from 'app/modules/jobs/store/job.selectors';
@@ -56,7 +57,8 @@ export class UploadService {
       .pipe(
         filter((event) => event instanceof HttpResponse),
         switchMap((response: HttpResponse<{ job_id: number }>) => {
-          return this.store$.select(selectJob(response.body.job_id)) as Observable<Job<ApiJobResponse<M>>>;
+          return this.store$.select(selectJob(response.body.job_id))
+            .pipe(observeJob()) as Observable<Job<ApiJobResponse<M>>>;
         }),
       );
   }

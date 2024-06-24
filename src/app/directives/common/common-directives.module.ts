@@ -3,7 +3,6 @@ import { NgModule } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { Ng2FittextModule } from 'ng2-fittext';
 import { NgxPopperjsModule } from 'ngx-popperjs';
 import { AutofocusDirective } from 'app/directives/common/autofocus/autofocus.directive';
@@ -19,8 +18,8 @@ import { NewFeatureIndicatorService } from 'app/directives/common/new-feature-in
 import { RequiresRolesDirective } from 'app/directives/common/requires-roles/requires-roles.directive';
 import { StepActivationDirective } from 'app/directives/common/step-activation.directive';
 import { UiSearchDirective } from 'app/directives/common/ui-search.directive';
-import { CastModule } from 'app/modules/cast/cast.module';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
+import { CastPipe } from 'app/modules/pipes/cast/cast.pipe';
 import { LetDirective } from './app-let.directive';
 
 @NgModule({
@@ -31,8 +30,8 @@ import { LetDirective } from './app-let.directive';
     IxIconModule,
     MatButtonModule,
     NgxPopperjsModule,
-    CastModule,
     Ng2FittextModule,
+    CastPipe,
   ],
   declarations: [
     LetDirective,

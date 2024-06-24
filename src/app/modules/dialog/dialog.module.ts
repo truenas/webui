@@ -10,6 +10,7 @@ import { FlexModule } from '@ngbracket/ngx-layout';
 import { TranslateModule } from '@ngx-translate/core';
 import { CoreComponents } from 'app/core/core-components.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
+import { CopyButtonComponent } from 'app/modules/buttons/copy-button/copy-button.component';
 import { ConfirmDialogComponent } from 'app/modules/dialog/components/confirm-dialog/confirm-dialog.component';
 import { ErrorDialogComponent } from 'app/modules/dialog/components/error-dialog/error-dialog.component';
 import { FullScreenDialogComponent } from 'app/modules/dialog/components/full-screen-dialog/full-screen-dialog.component';
@@ -29,7 +30,7 @@ import {
   StartServiceDialogComponent,
 } from 'app/modules/dialog/components/start-service-dialog/start-service-dialog.component';
 import { UpdateDialogComponent } from 'app/modules/dialog/components/update-dialog/update-dialog.component';
-import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
+import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { JobsModule } from 'app/modules/jobs/jobs.module';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
@@ -55,6 +56,7 @@ import { TestIdModule } from 'app/modules/test-id/test-id.module';
     IxFormsModule,
     ReactiveFormsModule,
     JobsModule,
+    CopyButtonComponent,
   ],
   declarations: [
     ConfirmDialogComponent,
