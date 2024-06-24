@@ -60,6 +60,8 @@ jobs:
         uses: ./.github/actions/prepare
       - name: Build
         run: yarn build:prod:aot
+      - name: Check strict null checks
+        run: yarn strict-null-checks
 
   lint:
     name: Validate code style
