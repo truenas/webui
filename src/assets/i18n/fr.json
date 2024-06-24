@@ -657,7 +657,7 @@
   "Translate App": "",
   "TrueCommand Read": "",
   "TrueCommand Write": "",
-  "TrueNAS recommends that the sync setting always  be left to the default of \"Standard\" or increased to \"Always\". The \"Disabled\" setting should  not be used in production and only where data roll back by few seconds  in case of crash or power loss is not a concern.": "TrueNAS recommande que le paramètre de synchronisation soit toujours laissé par défaut sur \"Standard"\ ou augmenté sur \"Toujours"\. Le paramètre \"Désactivé"\ ne doit pas être utilisé en production et uniquement lorsque la restauration des données de quelques secondes en cas de panne ou de coupure de courant n'est pas un problème.",
+  "TrueNAS recommends that the sync setting always  be left to the default of \"Standard\" or increased to \"Always\". The \"Disabled\" setting should  not be used in production and only where data roll back by few seconds  in case of crash or power loss is not a concern.": "TrueNAS recommande que le paramètre de synchronisation soit toujours laissé par défaut sur \"Standard\" ou augmenté sur \"Toujours\". Le paramètre \"Désactivé\" ne doit pas être utilisé en production et uniquement lorsque la restauration des données de quelques secondes en cas de panne ou de coupure de courant n'est pas un problème.",
   "Turn Off": "",
   "UI": "",
   "UPS Stats": "",
