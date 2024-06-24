@@ -28,7 +28,7 @@
 .mat-mdc-card {
   background-color: var(--bg2);
   color: var(--fg2);
-  padding: 0 0 32px !important;
+  padding: 0 0 18px !important;
 }
 
 .mat-mdc-card .mat-mdc-card-content > div {
@@ -39,8 +39,16 @@
   padding: 0 16px;
 }
 
+.ix-logo {
+  text-align: center;
+
+  img {
+    height: 40px;
+  }
+}
+
 .form-container {
-  margin-bottom: 28px;
+  margin-bottom: 20px;
   padding: 20px 32px 8px;
 }
 
