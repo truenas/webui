@@ -11,21 +11,21 @@
     .overlay-rect {
       cursor: pointer;
       fill: transparent;
-      transition: stroke 0.2s ease, stroke-width 0.2s ease-in-out, stroke-dasharray 0.2s ease-in-out, fill-opacity 0.2s ease-in-out, filter 0.2s ease-in-out;
-      fill-opacity: 0.3;
       fill: var(--black);
+      fill-opacity: 0.3;
+      transition: stroke 0.2s ease, stroke-width 0.2s ease-in-out, stroke-dasharray 0.2s ease-in-out, fill-opacity 0.2s ease-in-out, filter 0.2s ease-in-out;
 
       &:hover {
+        fill: var(--primary) !important;
         stroke: var(--primary);
         stroke-width: 4px;
-        fill: var(--primary) !important;
       }
 
       &.selected {
+        filter: brightness(1.5);
         stroke: var(--primary);
         stroke-dasharray: none;
         stroke-width: 4px;
-        filter: brightness(1.5);
 
         &.tinted {
           fill: var(--primary) !important;
