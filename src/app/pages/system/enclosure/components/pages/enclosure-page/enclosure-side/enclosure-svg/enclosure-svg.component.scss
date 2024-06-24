@@ -4,8 +4,8 @@
   display: block;
 
   @media (max-width: $breakpoint-md) {
-    max-width: 600px;
     margin: 0 auto;
+    max-width: 600px;
   }
 }
 

@@ -5,8 +5,8 @@
   gap: 5px;
 
   @media (max-width: $breakpoint-md) {
-    flex-wrap: wrap;
     flex-direction: column-reverse;
+    flex-wrap: wrap;
 
     ::ng-deep {
       .selector-container {

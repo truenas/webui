@@ -44,8 +44,8 @@
   row-gap: 12px;
 
   @media (max-width: $breakpoint-md) {
-    margin-top: 10px;
     margin-bottom: 0;
+    margin-top: 10px;
   }
 
   .image-container {

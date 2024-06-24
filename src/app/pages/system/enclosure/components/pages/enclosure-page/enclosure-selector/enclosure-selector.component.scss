@@ -11,13 +11,13 @@
   @media (max-width: $breakpoint-md) {
     display: flex;
     flex-wrap: nowrap;
-    width: 100%;
-    overflow: auto;
     gap: 5px;
+    overflow: auto;
+    width: 100%;
 
     ix-enclosure-side {
-      width: 40vw;
       max-width: 200px;
+      width: 40vw;
     }
   }
 }
