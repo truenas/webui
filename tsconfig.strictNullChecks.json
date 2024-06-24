@@ -742,7 +742,6 @@
     "./src/app/views/sessions/signin/snackbar/insecure-connection.component.ts",
     "./src/environments/environment.interface.ts",
     "./src/environments/environment.prod.ts",
-    "./src/environments/environment.ts",
     "./src/polyfills.ts"
   ],
   "include": [],
