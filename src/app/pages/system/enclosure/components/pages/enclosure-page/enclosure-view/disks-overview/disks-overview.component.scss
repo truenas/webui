@@ -1,8 +1,13 @@
+@import 'scss-imports/cssvars';
+
 .container {
   display: flex;
   flex-direction: column;
-  height: 300px;
   width: 100%;
+
+  @media (min-width: $breakpoint-md) {
+    height: 300px;
+  }
 }
 
 .disk-details-header {
@@ -25,6 +30,10 @@
   height: 100%;
   overflow: auto;
 
+  @media (max-width: $breakpoint-md) {
+    flex-wrap: wrap;
+  }
+
   .drive {
     align-items: center;
     display: flex;
@@ -32,6 +41,11 @@
     gap: 10px;
     justify-content: center;
     width: 25%;
+
+    @media (max-width: $breakpoint-md) {
+      width: 100%;
+      margin-top: 10px;
+    }
 
     .capacity {
       font-size: 120%;
@@ -45,6 +59,11 @@
     padding: 0 8px;
     width: 75%;
 
+    @media (max-width: $breakpoint-md) {
+      width: 100%;
+      margin-top: 20px;
+    }
+
     .details-grid {
       display: grid;
       gap: 5px;
@@ -55,12 +74,12 @@
       margin: 8px 0;
       text-align: left;
     }
-    
+
     .detail .label {
       font-size: 100%;
       font-weight: 500;
     }
-    
+
     .detail .value {
       font-size: 120%;
       font-weight: 300;
@@ -74,6 +93,10 @@
 .disk-overview {
   display: flex;
   height: 100%;
+
+  @media (max-width: $breakpoint-xs) {
+    flex-wrap: wrap;
+  }
 
   .tile {
     align-items: center;
@@ -90,7 +113,7 @@
       font-size: 3.25rem;
       font-weight: 100;
     }
-    
+
     .title {
       font-size: 1rem;
     }
