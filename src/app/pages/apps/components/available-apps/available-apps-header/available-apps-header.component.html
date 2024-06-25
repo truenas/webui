@@ -5,7 +5,14 @@
     [formControl]="searchControl"
     [placeholder]="'Search' | translate"
   ></ix-input>
-  <div class="filters-btn">
+  <div class="actions">
+    <a
+      mat-button
+      ixTest="show-all"
+      [routerLink]="['/apps/available', AppExtraCategory.All]"
+    >
+      {{ 'Show All' | translate }}
+    </a>
     <button
       mat-button
       ixTest="filter"
