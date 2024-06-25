@@ -448,6 +448,7 @@
   "Discovery Authentication Group": "",
   "Discovery Authentication Method": "",
   "Disk Details for {disk}": "",
+  "Disk Details for {disk} ({descriptor})": "",
   "Disk I/O": "",
   "Disk IO": "",
   "Disk Tests": "",

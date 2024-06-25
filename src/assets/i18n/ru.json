@@ -705,6 +705,7 @@
   "Discover Apps": "",
   "Disk Description": "",
   "Disk Details for {disk}": "",
+  "Disk Details for {disk} ({descriptor})": "",
   "Disk I/O": "",
   "Disk IO": "",
   "Disk Info": "",

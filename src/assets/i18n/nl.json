@@ -159,6 +159,7 @@
   "Descriptor": "",
   "Device removed": "",
   "Disk Details for {disk}": "",
+  "Disk Details for {disk} ({descriptor})": "",
   "Disk I/O": "",
   "Disk IO": "",
   "Disk Tests": "",

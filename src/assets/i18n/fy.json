@@ -1304,6 +1304,7 @@
   "Disk Description": "",
   "Disk Details": "",
   "Disk Details for {disk}": "",
+  "Disk Details for {disk} ({descriptor})": "",
   "Disk Health": "",
   "Disk I/O": "",
   "Disk IO": "",
