@@ -10,6 +10,8 @@
 }
 
 .svg-container {
+  fill-opacity: 0.3;
+
   &.static {
     pointer-events: none;
   }
@@ -19,7 +21,6 @@
       cursor: pointer;
       fill: transparent;
       fill: var(--black);
-      fill-opacity: 0.3;
       transition: stroke 0.2s ease, stroke-width 0.2s ease-in-out, stroke-dasharray 0.2s ease-in-out, fill-opacity 0.2s ease-in-out, filter 0.2s ease-in-out;
 
       &:hover {
