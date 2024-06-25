@@ -68,8 +68,6 @@ export class EnclosureStore extends ComponentStore<EnclosureState> {
   }
 
   initiate = this.effect((origin$) => {
-    this.patchState({ isLoading: true });
-
     return origin$.pipe(
       tap(() => this.setState(initialState)),
       switchMap(() => {
@@ -79,9 +77,7 @@ export class EnclosureStore extends ComponentStore<EnclosureState> {
           }),
           this.errorHandler.catchError(),
           finalize(() => {
-            setTimeout(() => {
-              this.patchState({ isLoading: false });
-            }, 1000);
+            this.patchState({ isLoading: false });
           }),
         );
       }),
