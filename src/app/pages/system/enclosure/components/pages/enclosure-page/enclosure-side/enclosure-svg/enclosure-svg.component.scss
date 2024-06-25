@@ -1,5 +1,12 @@
+@import 'scss-imports/cssvars';
+
 :host {
   display: block;
+
+  @media (max-width: $breakpoint-md) {
+    margin: 0 auto;
+    max-width: 600px;
+  }
 }
 
 .svg-container {
