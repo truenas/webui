@@ -7,6 +7,7 @@ import { MatDialogClose, MatDialogTitle } from '@angular/material/dialog';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 import { MatTooltip } from '@angular/material/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
+import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
@@ -79,6 +80,7 @@ import { SvgCacheService } from 'app/pages/system/enclosure/services/svg-cache.s
     EmptyComponent,
     IxFileSizePipe,
     MapValuePipe,
+    NgxSkeletonLoaderModule,
   ],
   declarations: [
     EnclosureDashboardComponent,

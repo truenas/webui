@@ -12,6 +12,7 @@ import {
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { DashboardEnclosureSlot } from 'app/interfaces/enclosure.interface';
+import { EnclosureStore } from 'app/pages/system/enclosure/services/enclosure.store';
 import { SvgCacheService } from 'app/pages/system/enclosure/services/svg-cache.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 
@@ -28,6 +29,7 @@ export class EnclosureSvgComponent {
   readonly enableMouseEvents = input(true);
   readonly slotTintFn = input<(slot: DashboardEnclosureSlot) => string>();
   readonly selectedSlot = model<DashboardEnclosureSlot | null>(null);
+  readonly isLoading = this.store.isLoading;
 
   protected svg = signal<SafeHtml | undefined>(undefined);
   protected svgContainer = viewChild<ElementRef<HTMLElement>>('svgContainer');
@@ -39,6 +41,7 @@ export class EnclosureSvgComponent {
     private svgLoader: SvgCacheService,
     private errorHandler: ErrorHandlerService,
     private sanitizer: DomSanitizer,
+    private store: EnclosureStore,
   ) {}
 
   // TODO: Consider building and using asyncComputed.
