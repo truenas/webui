@@ -1,13 +1,15 @@
 import {
   Component, ChangeDetectionStrategy, input,
   computed,
+  signal,
 } from '@angular/core';
-import { toObservable, toSignal } from '@angular/core/rxjs-interop';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { ChartData } from 'chart.js';
 import {
-  distinctUntilChanged, filter, map, shareReplay,
+  distinctUntilChanged, shareReplay,
+  tap,
 } from 'rxjs';
 import { chartStatusIcons } from 'app/enums/chart-release-status.enum';
 import { toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
@@ -40,31 +42,29 @@ export class WidgetAppComponent implements WidgetComponent<WidgetAppSettings> {
   });
   stats = computed(() => {
     return this.resources.getAppStats(this.appName()).pipe(
+      tap((realtimeStats) => {
+        this.cachedNetworkStats.update((cachedStats) => {
+          return [...cachedStats, Object.values(realtimeStats.network)];
+        });
+      }),
       distinctUntilChanged(),
       toLoadingState(),
       shareReplay({ bufferSize: 1, refCount: true }),
     );
   });
 
-  protected networkCachedStats$ = toObservable(this.resources.cachedAppStats).pipe(
-    filter((cache) => Boolean(!Object.keys(cache).length || !this.appName())),
-    map((cache) => cache[this.appName()] || []),
-    map((appStats) => appStats.map((item) => [item.network.incoming, item.network.outgoing])),
-  );
+  initialNetworkStats = Array.from({ length: 60 }, () => ([0, 0]));
+  cachedNetworkStats = signal<number[][]>([]);
 
-  protected networkStats = computed(() => {
-    const cache = this.resources.cachedAppStats();
-    const name = this.appName();
-
-    return cache[name] || [];
+  networkStats = computed(() => {
+    const cachedStats = this.cachedNetworkStats();
+    return [...this.initialNetworkStats, ...cachedStats].slice(-60);
   });
 
   protected networkChartData = computed<ChartData<'line'>>(() => {
     const currentTheme = this.theme.currentTheme();
-    const data = this.networkStats().map((item) => [item.network.incoming, item.network.outgoing]);
+    const data = this.networkStats();
     const labels: number[] = data.map((_, index) => (0 + index) * 1000);
-
-    console.info('data', data);
 
     return {
       datasets: [
@@ -114,7 +114,6 @@ export class WidgetAppComponent implements WidgetComponent<WidgetAppSettings> {
   }
 
   openWebPortal(app: ChartRelease): void {
-    console.info('openWebPortal', app);
     this.redirect.openWindow(app.portals['web_portal'][0]);
   }
 

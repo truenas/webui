@@ -98,6 +98,7 @@
               <small>{{ '1m Average' | translate }}</small>
             </div>
             <ix-network-chart
+              *ngIf="networkChartData()"
               [showLegend]="false"
               [data]="networkChartData()"
               [aspectRatio]="3"
@@ -108,7 +109,7 @@
           <div class="slot square">
             <div *ixWithLoadingState="stats() as stats">
               <h3 *appLet="splitMemory(stats.memory | ixFileSize) as memory">
-                <span>{{ memory[0] }}</span>
+                <span>{{ memory[0].toFixed(0) }}</span>
                 <small>{{ memory[1] }}</small>
               </h3>
               <div><strong>{{ 'Memory Usage' | translate }}</strong></div>
@@ -118,12 +119,23 @@
             <div class="chart-info">
               <h4>{{ 'Disk I/O' | translate }}</h4>
               <div class="in-out">
-                <div>{{ 'In' | translate }}: 30 MBps</div>
-                <div>{{ 'Out' | translate }}: 100 MBps</div>
+                <div>
+                  <span>{{ 'In' | translate }}:</span>
+                  <span *ixWithLoadingState="stats() as stats">
+                    {{ stats.network.incoming | ixFileSize: { baseUnit: 'b', base: 10 } }}/s
+                  </span>
+                </div>
+                <div>
+                  <span>{{ 'Out' | translate }}:</span>
+                  <span *ixWithLoadingState="stats() as stats">
+                    {{ stats.network.outgoing | ixFileSize: { baseUnit: 'b', base: 10 } }}/s
+                  </span>
+                </div>
               </div>
               <small>{{ '1m Average' | translate }}</small>
             </div>
             <ix-network-chart
+              *ngIf="networkChartData()"
               [showLegend]="false"
               [data]="networkChartData()"
               [aspectRatio]="3"
