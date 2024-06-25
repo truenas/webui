@@ -8,6 +8,7 @@ import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { Service } from 'app/interfaces/service.interface';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
+import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 import { ServiceStateButtonComponent } from 'app/pages/sharing/components/shares-dashboard/service-state-button/service-state-button.component';
 
 describe('ServiceStateButtonComponent', () => {
@@ -16,6 +17,9 @@ describe('ServiceStateButtonComponent', () => {
 
   const createComponent = createComponentFactory({
     component: ServiceStateButtonComponent,
+    imports: [
+      MapValuePipe,
+    ],
     declarations: [
       MockComponent(IxIconComponent),
       MockDirective(MatTooltip),

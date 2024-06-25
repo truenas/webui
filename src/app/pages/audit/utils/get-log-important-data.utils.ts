@@ -5,6 +5,7 @@ import { assertUnreachable } from 'app/helpers/assert-unreachable.utils';
 import { AuditEntry } from 'app/interfaces/audit/audit.interface';
 import { MiddlewareAuditEntry } from 'app/interfaces/audit/middleware-audit-entry.interface';
 import { SmbAuditEntry } from 'app/interfaces/audit/smb-audit-entry.interface';
+import { SudoAuditEntry } from 'app/interfaces/audit/sudo-audit-entry.interface';
 import { credentialTypeLabels } from 'app/interfaces/credential-type.interface';
 
 export function getLogImportantData(log: AuditEntry, translate: TranslateService): string {
@@ -14,6 +15,8 @@ export function getLogImportantData(log: AuditEntry, translate: TranslateService
       return getMiddlewareLogImportantData(log, translate);
     case AuditService.Smb:
       return getSmbLogImportantData(log, translate);
+    case AuditService.Sudo:
+      return getSudoLogImportantData(log, translate);
     default:
       assertUnreachable(service);
       return ' - ';
@@ -39,6 +42,19 @@ function getMiddlewareLogImportantData(log: MiddlewareAuditEntry, translate: Tra
         credentials: credentialType ? translate.instant(credentialTypeKey) : credentialType,
       });
     }
+    default:
+      assertUnreachable(event);
+      return ' - ';
+  }
+}
+
+function getSudoLogImportantData(log: SudoAuditEntry, translate: TranslateService): string {
+  const event = log.event;
+  switch (event) {
+    case AuditEvent.Accept:
+      return translate.instant(T('Command: {command}'), { command: log.event_data?.sudo.accept.command });
+    case AuditEvent.Reject:
+      return translate.instant(T('Command: {command}'), { command: log.event_data?.sudo.reject.command });
     default:
       assertUnreachable(event);
       return ' - ';

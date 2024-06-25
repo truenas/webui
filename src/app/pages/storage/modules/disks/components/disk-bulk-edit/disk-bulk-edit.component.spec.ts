@@ -12,11 +12,10 @@ import { DiskStandby } from 'app/enums/disk-standby.enum';
 import { CoreBulkQuery, CoreBulkResponse } from 'app/interfaces/core-bulk.interface';
 import { Disk } from 'app/interfaces/disk.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
-import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
-import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
+import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
+import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
 import { WebSocketService } from 'app/services/ws.service';
 import { DiskBulkEditComponent } from './disk-bulk-edit.component';
 
@@ -54,7 +53,6 @@ describe('DiskBulkEditComponent', () => {
     imports: [
       IxFormsModule,
       ReactiveFormsModule,
-      TooltipModule,
     ],
     providers: [
       mockAuth(),

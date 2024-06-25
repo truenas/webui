@@ -6,6 +6,7 @@ import { of } from 'rxjs';
 import { NetworkInterfaceType, NetworkInterfaceAliasType, LinkState } from 'app/enums/network-interface.enum';
 import { ViewChartAreaComponent } from 'app/modules/charts/components/view-chart-area/view-chart-area.component';
 import { InterfaceStatusIconComponent } from 'app/modules/interface-status-icon/interface-status-icon.component';
+import { IxFileSizePipe } from 'app/modules/pipes/ix-file-size/ix-file-size.pipe';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
 import { SlotSize } from 'app/pages/dashboard/types/widget.interface';
 import { WidgetNetworkComponent } from 'app/pages/dashboard/widgets/network/widget-network/widget-network.component';
@@ -15,7 +16,10 @@ describe('WidgetNetworkComponent', () => {
   let spectator: Spectator<WidgetNetworkComponent>;
   const createComponent = createComponentFactory({
     component: WidgetNetworkComponent,
-    imports: [NgxSkeletonLoaderModule],
+    imports: [
+      NgxSkeletonLoaderModule,
+      IxFileSizePipe,
+    ],
     declarations: [
       MockComponent(ViewChartAreaComponent),
       MockComponent(InterfaceStatusIconComponent),

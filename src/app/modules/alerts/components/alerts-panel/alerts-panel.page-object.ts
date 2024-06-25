@@ -1,5 +1,4 @@
-import { Spectator } from '@ngneat/spectator';
-import { byText } from '@ngneat/spectator/jest';
+import { byText, Spectator } from '@ngneat/spectator/jest';
 import { queryAllNestedDirectives } from 'app/core/testing/utils/query-all-nested-directives.utils';
 import { AlertComponent } from 'app/modules/alerts/components/alert/alert.component';
 import { AlertsPanelComponent } from 'app/modules/alerts/components/alerts-panel/alerts-panel.component';

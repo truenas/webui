@@ -6,8 +6,9 @@ import { MockComponents } from 'ng-mocks';
 import { of, Subject } from 'rxjs';
 import { CreateVdevLayout, VdevType } from 'app/enums/v-dev-type.enum';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
-import { IxSelectHarness } from 'app/modules/ix-forms/components/ix-select/ix-select.harness';
-import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
+import { IxSelectHarness } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.harness';
+import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
+import { CastPipe } from 'app/modules/pipes/cast/cast.pipe';
 import {
   AutomatedDiskSelectionComponent,
 } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/components/layout-step/automated-disk-selection/automated-disk-selection.component';
@@ -35,6 +36,7 @@ describe('AutomatedDiskSelection', () => {
     imports: [
       ReactiveFormsModule,
       IxFormsModule,
+      CastPipe,
     ],
     declarations: [
       MockComponents(

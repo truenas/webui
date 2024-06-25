@@ -4,7 +4,7 @@ import { CodeEditorLanguage } from 'app/enums/code-editor-language.enum';
 import { DynamicFormSchemaType } from 'app/enums/dynamic-form-schema-type.enum';
 import { ChartSchemaNode } from 'app/interfaces/chart-release.interface';
 import { Option } from 'app/interfaces/option.interface';
-import { TreeNodeProvider } from 'app/modules/ix-forms/components/ix-explorer/tree-node-provider.interface';
+import { TreeNodeProvider } from 'app/modules/forms/ix-forms/components/ix-explorer/tree-node-provider.interface';
 
 export interface DynamicFormSchema {
   name: string;

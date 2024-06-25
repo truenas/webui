@@ -18,6 +18,7 @@ import { ProductType } from 'app/enums/product-type.enum';
 import { SystemUpdateStatus } from 'app/enums/system-update.enum';
 import { SystemInfo, SystemLicense } from 'app/interfaces/system-info.interface';
 import { SystemUpdate } from 'app/interfaces/system-update.interface';
+import { CopyButtonComponent } from 'app/modules/buttons/copy-button/copy-button.component';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { UptimePipe } from 'app/pages/dashboard/widgets/system/common/uptime.pipe';
 import { SimpleFailoverBtnComponent } from 'app/pages/dashboard-old/components/widget-sys-info/simple-failover-btn.component';
@@ -81,6 +82,7 @@ describe('WidgetSysInfoComponent', () => {
       MatGridListModule,
       ImgFallbackModule,
       UptimePipe,
+      CopyButtonComponent,
     ],
     declarations: [
       MockComponent(DragHandleComponent),

@@ -8,8 +8,8 @@ import _ from 'lodash';
 import { GiB } from 'app/constants/bytes.constant';
 import { helptextDatasetForm } from 'app/helptext/storage/volumes/datasets/dataset-form';
 import { Dataset, DatasetCreate } from 'app/interfaces/dataset.interface';
-import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
-import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
+import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
+import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 
 const warning = 80;
 const critical = 95;

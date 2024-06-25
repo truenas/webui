@@ -5,6 +5,7 @@ import { officialCatalog } from 'app/constants/catalog.constants';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { ChartReleaseStatus } from 'app/enums/chart-release-status.enum';
 import { ChartRelease, ChartReleaseStats } from 'app/interfaces/chart-release.interface';
+import { IxFileSizePipe } from 'app/modules/pipes/ix-file-size/ix-file-size.pipe';
 import { AppRowComponent } from 'app/pages/apps/components/installed-apps/app-row/app-row.component';
 import { AppStatusCellComponent } from 'app/pages/apps/components/installed-apps/app-status-cell/app-status-cell.component';
 import { AppStatus } from 'app/pages/apps/enum/app-status.enum';
@@ -31,7 +32,10 @@ describe('AppRowComponent', () => {
 
   const createComponent = createComponentFactory({
     component: AppRowComponent,
-    imports: [ImgFallbackModule],
+    imports: [
+      ImgFallbackModule,
+      IxFileSizePipe,
+    ],
     declarations: [
       MockComponents(AppStatusCellComponent),
     ],

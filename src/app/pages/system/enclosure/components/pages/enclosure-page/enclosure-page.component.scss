@@ -1,6 +1,20 @@
+@import 'scss-imports/cssvars';
+
 :host {
   display: flex;
   gap: 5px;
+
+  @media (max-width: $breakpoint-md) {
+    flex-direction: column-reverse;
+    flex-wrap: wrap;
+
+    ::ng-deep {
+      .selector-container {
+        display: grid;
+        overflow: auto;
+      }
+    }
+  }
 
   ::ng-deep .mat-mdc-card {
     margin: 0;

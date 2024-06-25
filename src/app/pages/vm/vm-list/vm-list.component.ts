@@ -14,7 +14,6 @@ import { helptextVmWizard } from 'app/helptext/vm/vm-wizard/vm-wizard';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { VirtualMachine } from 'app/interfaces/virtual-machine.interface';
 import { EmptyService } from 'app/modules/empty/empty.service';
-import { IxFileSizePipe } from 'app/modules/ix-file-size/ix-file-size.pipe';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
 import { textColumn } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import {
@@ -22,6 +21,7 @@ import {
 } from 'app/modules/ix-table/components/ix-table-body/cells/ix-cell-toggle/ix-cell-toggle.component';
 import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/table-column.interface';
 import { createTable } from 'app/modules/ix-table/utils';
+import { IxFileSizePipe } from 'app/modules/pipes/ix-file-size/ix-file-size.pipe';
 import { vmListElements } from 'app/pages/vm/vm-list/vm-list.elements';
 import { VmWizardComponent } from 'app/pages/vm/vm-wizard/vm-wizard.component';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';

@@ -8,11 +8,13 @@ import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
-import { UnusedDiskSelectComponent } from 'app/modules/custom-selects/unused-disk-select/unused-disk-select.component';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
-import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
-import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
+import {
+  UnusedDiskSelectComponent,
+} from 'app/modules/forms/custom-selects/unused-disk-select/unused-disk-select.component';
+import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
+import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
+import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { WebSocketService } from 'app/services/ws.service';
 import { BootPoolAttachDialogComponent } from './boot-pool-attach-dialog.component';
 

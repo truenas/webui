@@ -4,7 +4,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { Observable, of } from 'rxjs';
 import { map, shareReplay } from 'rxjs/operators';
 import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
-import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
+import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 /**

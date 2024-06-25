@@ -16,8 +16,8 @@ import { DatasetChangeKeyParams } from 'app/interfaces/dataset-change-key.interf
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
-import { matchOthersFgValidator } from 'app/modules/ix-forms/validators/password-validation/password-validation';
+import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
+import { matchOthersFgValidator } from 'app/modules/forms/ix-forms/validators/password-validation/password-validation';
 import { findInTree } from 'app/modules/ix-tree/utils/find-in-tree.utils';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';

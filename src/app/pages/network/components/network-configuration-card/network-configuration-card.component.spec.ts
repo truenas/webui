@@ -9,6 +9,7 @@ import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.u
 import { NetworkActivityType } from 'app/enums/network-activity-type.enum';
 import { NetworkConfiguration } from 'app/interfaces/network-configuration.interface';
 import { NetworkSummary } from 'app/interfaces/network-summary.interface';
+import { CastPipe } from 'app/modules/pipes/cast/cast.pipe';
 import { NetworkConfigurationComponent } from 'app/pages/network/components/configuration/configuration.component';
 import { NetworkConfigurationCardComponent } from 'app/pages/network/components/network-configuration-card/network-configuration-card.component';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -19,7 +20,9 @@ describe('NetworkConfigurationCardComponent', () => {
   let loader: HarnessLoader;
   const createComponent = createComponentFactory({
     component: NetworkConfigurationCardComponent,
-    imports: [],
+    imports: [
+      CastPipe,
+    ],
     providers: [
       mockWebSocket([
         mockCall('network.configuration.config', {

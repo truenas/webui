@@ -17,11 +17,11 @@ import { Option } from 'app/interfaces/option.interface';
 import { QueryFilter } from 'app/interfaces/query-api.interface';
 import { SmbSharesecAce } from 'app/interfaces/smb-share.interface';
 import { User } from 'app/interfaces/user.interface';
-import { SmbGroupComboboxProvider } from 'app/modules/ix-forms/classes/smb-group-combobox-provider';
-import { SmbUserComboboxProvider } from 'app/modules/ix-forms/classes/smb-user-combobox-provider';
-import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
-import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
+import { SmbGroupComboboxProvider } from 'app/modules/forms/ix-forms/classes/smb-group-combobox-provider';
+import { SmbUserComboboxProvider } from 'app/modules/forms/ix-forms/classes/smb-user-combobox-provider';
+import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in.token';
+import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { UserService } from 'app/services/user.service';
 import { WebSocketService } from 'app/services/ws.service';
 

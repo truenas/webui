@@ -4,8 +4,8 @@
       <div class="title-wrapper">
         <div [ixTest]="['tooltip', 'title']">
           <h5 class="tooltip-title">
-            {{ 'Help' | translate }}{{ header ? ': ' : '' }}
-            <i>{{ header ? (header | translate) : '' }}</i>
+            {{ 'Help' | translate }}{{ header() ? ': ' : '' }}
+            <i>{{ header() ? (header() | translate) : '' }}</i>
           </h5>
         </div>
       </div>
@@ -21,7 +21,7 @@
     <div
       class="tooltip-message"
       ixTest="tooltip-message"
-      [innerHTML]="message | translate"
+      [innerHTML]="message() | translate"
     ></div>
   </popper-content>
 
@@ -29,7 +29,7 @@
     class="tooltip-icon"
     name="help_outline"
     popperAppendTo="body"
-    [ixTest]="['tooltip', header]"
+    [ixTest]="['tooltip', header()]"
     [popperTrigger]="'click' | cast"
     [popper]="popperTooltip"
     [popperShowOnStart]="false"

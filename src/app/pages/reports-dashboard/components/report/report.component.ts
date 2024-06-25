@@ -21,7 +21,6 @@ import {
 } from 'rxjs/operators';
 import { oneDayMillis, oneHourMillis } from 'app/constants/time.constant';
 import { toggleMenuDuration } from 'app/constants/toggle-menu-duration';
-import { FormatDateTimePipe } from 'app/core/pipes/format-datetime.pipe';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { ReportingGraphName } from 'app/enums/reporting.enum';
 import { WINDOW } from 'app/helpers/window.helper';
@@ -29,6 +28,7 @@ import { ReportingData, ReportingDatabaseError } from 'app/interfaces/reporting.
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { FormatDateTimePipe } from 'app/modules/pipes/format-date-time/format-datetime.pipe';
 import { WidgetComponent } from 'app/pages/dashboard-old/components/widget/widget.component';
 import { LineChartComponent } from 'app/pages/reports-dashboard/components/line-chart/line-chart.component';
 import { ReportStepDirection } from 'app/pages/reports-dashboard/enums/report-step-direction.enum';

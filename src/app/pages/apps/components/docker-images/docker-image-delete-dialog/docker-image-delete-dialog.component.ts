@@ -6,11 +6,11 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
 import { filter } from 'rxjs/operators';
-import { BulkListItem, BulkListItemState } from 'app/core/components/bulk-list-item/bulk-list-item.interface';
 import { Role } from 'app/enums/role.enum';
 import { ContainerImage, DeleteContainerImageParams } from 'app/interfaces/container-image.interface';
 import { CoreBulkResponse } from 'app/interfaces/core-bulk.interface';
 import { Job } from 'app/interfaces/job.interface';
+import { BulkListItem, BulkListItemState } from 'app/modules/lists/bulk-list-item/bulk-list-item.interface';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()

@@ -87,9 +87,8 @@ export class SigninStore extends ComponentStore<SigninState> {
         this.checkIfAdminPasswordSet(),
         this.checkIfManagedByTrueCommand(),
         this.loadFailoverStatus(),
-        this.updateService.hardRefreshIfNeeded(),
-        // TODO: This is a hack to keep existing code working. Ideally it shouldn't be here.
-        this.systemGeneralService.loadProductType(),
+        // TODO: Temporarily disabled https://ixsystems.atlassian.net/browse/NAS-129710
+        // this.updateService.hardRefreshIfNeeded(),
       ]).pipe(
         switchMap(() => this.authService.loginWithToken()),
         tap((loginResult) => {
@@ -116,6 +115,10 @@ export class SigninStore extends ComponentStore<SigninState> {
     }),
     // Wait for user to be loaded
     switchMap(() => this.authService.user$.pipe(filter(Boolean))),
+    switchMap(() => {
+      // TODO: This is a hack to keep existing code working. Ideally it shouldn't be here.
+      return this.systemGeneralService.loadProductType();
+    }),
     switchMap(() => from(this.router.navigateByUrl(this.getRedirectUrl()))),
     tap(() => {
       if (this.failoverStatusSubscription && !this.failoverStatusSubscription.closed) {

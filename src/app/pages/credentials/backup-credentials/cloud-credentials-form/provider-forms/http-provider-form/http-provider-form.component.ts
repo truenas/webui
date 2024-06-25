@@ -3,7 +3,7 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { BehaviorSubject } from 'rxjs';
 import { CloudCredential } from 'app/interfaces/cloud-sync-task.interface';
-import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
+import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
 import {
   BaseProviderFormComponent,
 } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/provider-forms/base-provider-form';

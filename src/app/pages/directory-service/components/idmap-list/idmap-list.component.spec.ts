@@ -12,11 +12,11 @@ import { ActiveDirectoryConfig } from 'app/interfaces/active-directory-config.in
 import { DirectoryServicesState } from 'app/interfaces/directory-services-state.interface';
 import { Idmap } from 'app/interfaces/idmap.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
 import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
-import { SearchInput1Component } from 'app/modules/search-input1/search-input1.component';
 import { IdmapFormComponent } from 'app/pages/directory-service/components/idmap-form/idmap-form.component';
 import { IdmapListComponent } from 'app/pages/directory-service/components/idmap-list/idmap-list.component';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';

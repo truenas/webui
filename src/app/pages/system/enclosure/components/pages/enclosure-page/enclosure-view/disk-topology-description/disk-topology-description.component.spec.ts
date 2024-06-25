@@ -1,8 +1,8 @@
 import { byText } from '@ngneat/spectator';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
-import { MapValuePipe } from 'app/core/pipes/map-value.pipe';
 import { VdevType } from 'app/enums/v-dev-type.enum';
 import { DashboardEnclosureSlot } from 'app/interfaces/enclosure.interface';
+import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 import {
   DiskTopologyDescriptionComponent,
 } from 'app/pages/system/enclosure/components/pages/enclosure-page/enclosure-view/disk-topology-description/disk-topology-description.component';
@@ -11,7 +11,7 @@ describe('DiskTopologyDescriptionComponent', () => {
   let spectator: Spectator<DiskTopologyDescriptionComponent>;
   const createComponent = createComponentFactory({
     component: DiskTopologyDescriptionComponent,
-    declarations: [
+    imports: [
       MapValuePipe,
     ],
   });

@@ -10,8 +10,8 @@ import { IscsiAuthMethod } from 'app/enums/iscsi.enum';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { helptextSharingIscsi } from 'app/helptext/sharing';
 import { newOption } from 'app/interfaces/option.interface';
-import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
-import { ipv4Validator } from 'app/modules/ix-forms/validators/ip-validation';
+import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
+import { ipv4Validator } from 'app/modules/forms/ix-forms/validators/ip-validation';
 import { IscsiWizardComponent } from 'app/pages/sharing/iscsi/iscsi-wizard/iscsi-wizard.component';
 import { IscsiService } from 'app/services/iscsi.service';
 

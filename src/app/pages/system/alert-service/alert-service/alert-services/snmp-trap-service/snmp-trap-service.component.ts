@@ -3,7 +3,7 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { AlertServiceEdit } from 'app/interfaces/alert-service.interface';
-import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
+import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { BaseAlertServiceForm } from 'app/pages/system/alert-service/alert-service/alert-services/base-alert-service-form';
 
 const disabledValue = 'disabled';

@@ -1,6 +1,7 @@
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { DatasetType } from 'app/enums/dataset.enum';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
+import { IxFileSizePipe } from 'app/modules/pipes/ix-file-size/ix-file-size.pipe';
 import { DatasetIconComponent } from 'app/pages/datasets/components/dataset-icon/dataset-icon.component';
 import {
   DatasetEncryptionCellComponent,
@@ -25,6 +26,9 @@ describe('DatasetNodeComponent', () => {
   } as DatasetDetails;
   const createComponent = createComponentFactory({
     component: DatasetNodeComponent,
+    imports: [
+      IxFileSizePipe,
+    ],
     declarations: [
       DatasetIconComponent,
       DatasetEncryptionCellComponent,

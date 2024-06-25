@@ -22,6 +22,8 @@ export enum AuditEvent {
   SetQuota = 'SET_QUOTA',
   Authentication = 'AUTHENTICATION',
   MethodCall = 'METHOD_CALL',
+  Accept = 'ACCEPT',
+  Reject = 'REJECT',
 }
 
 export const auditServiceLabels = new Map<AuditService, string>([
@@ -46,4 +48,6 @@ export const auditEventLabels = new Map<AuditEvent, string>([
   [AuditEvent.SetQuota, T('Set Quota')],
   [AuditEvent.Authentication, T('Authentication')],
   [AuditEvent.MethodCall, T('Method Call')],
+  [AuditEvent.Accept, T('Accept')],
+  [AuditEvent.Reject, T('Reject')],
 ]);

@@ -4,7 +4,7 @@ import { createHostFactory, SpectatorHost } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
 import { Observable, of } from 'rxjs';
 import { Option } from 'app/interfaces/option.interface';
-import { IxErrorsComponent } from 'app/modules/ix-forms/components/ix-errors/ix-errors.component';
+import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { FilterSelectListComponent } from 'app/pages/apps/modules/custom-forms/components/filter-select-list/filter-select-list.component';
 

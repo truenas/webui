@@ -5,9 +5,9 @@ import {
 } from '@angular/core';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
-import { MapValuePipe } from 'app/core/pipes/map-value.pipe';
 import { ChartScaleQueryParams, ChartScaleResult } from 'app/interfaces/chart-release-event.interface';
 import { Job } from 'app/interfaces/job.interface';
+import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 import { AppStatus, appStatusLabels } from 'app/pages/apps/enum/app-status.enum';
 
 @Component({

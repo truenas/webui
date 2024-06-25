@@ -27,9 +27,7 @@
         {{ 'Data Written' | translate }}
       </span>
       <span class="legend-value">
-        {{
-          dataset.usedbydataset.parsed | ixFileSize
-        }}
+        {{ dataset.usedbydataset.parsed | ixFileSize }}
         <ng-container *ngIf="dataset.usedbydataset.parsed">
           ({{ dataset.usedbydataset.parsed / dataset.used.parsed | percent }})
         </ng-container>

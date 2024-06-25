@@ -19,6 +19,7 @@ import { AlertEffects } from 'app/modules/alerts/store/alert.effects';
 import { alertReducer } from 'app/modules/alerts/store/alert.reducer';
 import { alertStateKey } from 'app/modules/alerts/store/alert.selectors';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
+import { FormatDateTimePipe } from 'app/modules/pipes/format-date-time/format-datetime.pipe';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
 
 @NgModule({
@@ -39,6 +40,7 @@ import { TestIdModule } from 'app/modules/test-id/test-id.module';
     MatRippleModule,
     CoreComponents,
     TestIdModule,
+    FormatDateTimePipe,
   ],
   declarations: [
     AlertsPanelComponent,

@@ -11,8 +11,8 @@ import {
 import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextAcl } from 'app/helptext/storage/volumes/datasets/dataset-acl';
 import { PosixAclItem } from 'app/interfaces/acl.interface';
-import { GroupComboboxProvider } from 'app/modules/ix-forms/classes/group-combobox-provider';
-import { UserComboboxProvider } from 'app/modules/ix-forms/classes/user-combobox-provider';
+import { GroupComboboxProvider } from 'app/modules/forms/ix-forms/classes/group-combobox-provider';
+import { UserComboboxProvider } from 'app/modules/forms/ix-forms/classes/user-combobox-provider';
 import { DatasetAclEditorStore } from 'app/pages/datasets/modules/permissions/stores/dataset-acl-editor.store';
 import { UserService } from 'app/services/user.service';
 

@@ -6,7 +6,7 @@ import { Role } from 'app/enums/role.enum';
 import { TransportMode } from 'app/enums/transport-mode.enum';
 import { ReplicationTask } from 'app/interfaces/replication-task.interface';
 import { ExplorerNodeData, TreeNode } from 'app/interfaces/tree-node.interface';
-import { TreeNodeProvider } from 'app/modules/ix-forms/components/ix-explorer/tree-node-provider.interface';
+import { TreeNodeProvider } from 'app/modules/forms/ix-forms/components/ix-explorer/tree-node-provider.interface';
 import { AuthService } from 'app/services/auth/auth.service';
 import { WebSocketService } from 'app/services/ws.service';
 

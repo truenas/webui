@@ -9,12 +9,12 @@ import { finalize } from 'rxjs';
 import { MiB } from 'app/constants/bytes.constant';
 import { TicketType, ticketAcceptedFiles } from 'app/enums/file-ticket.enum';
 import { helptextSystemSupport as helptext } from 'app/helptext/system/support';
+import { OauthButtonType } from 'app/modules/buttons/oauth-button/interfaces/oauth-button.interface';
 import { FeedbackDialogComponent } from 'app/modules/feedback/components/feedback-dialog/feedback-dialog.component';
 import { FeedbackType } from 'app/modules/feedback/interfaces/feedback.interface';
 import { FeedbackService } from 'app/modules/feedback/services/feedback.service';
-import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
-import { ImageValidatorService } from 'app/modules/ix-forms/validators/image-validator/image-validator.service';
-import { OauthButtonType } from 'app/modules/oauth-button/interfaces/oauth-button.interface';
+import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
+import { ImageValidatorService } from 'app/modules/forms/ix-forms/validators/image-validator/image-validator.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()

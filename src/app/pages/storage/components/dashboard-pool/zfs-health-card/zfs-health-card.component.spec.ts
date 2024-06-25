@@ -8,7 +8,6 @@ import {
 } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
 import { of, Subject } from 'rxjs';
-import { CoreComponents } from 'app/core/core-components.module';
 import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-datetime.pipe';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
@@ -22,6 +21,7 @@ import { PoolScrubTask } from 'app/interfaces/pool-scrub.interface';
 import { Pool, PoolScanUpdate } from 'app/interfaces/pool.interface';
 import { PoolScan } from 'app/interfaces/resilver-job.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 import { PoolCardIconComponent } from 'app/pages/storage/components/dashboard-pool/pool-card-icon/pool-card-icon.component';
 import {
   AutotrimDialogComponent,
@@ -67,7 +67,7 @@ describe('ZfsHealthCardComponent', () => {
   const createComponent = createComponentFactory({
     component: ZfsHealthCardComponent,
     imports: [
-      CoreComponents,
+      MapValuePipe,
     ],
     providers: [
       mockProvider(PoolsDashboardStore),

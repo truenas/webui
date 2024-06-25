@@ -8,13 +8,14 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
 import { CoreComponents } from 'app/core/core-components.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
-import { ExportButtonModule } from 'app/modules/export-button/export-button.module';
-import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
+import { CopyButtonComponent } from 'app/modules/buttons/copy-button/copy-button.component';
+import { ExportButtonComponent } from 'app/modules/buttons/export-button/export-button.component';
+import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
+import { SearchInputModule } from 'app/modules/forms/search-input/search-input.module';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
 import { LayoutModule } from 'app/modules/layout/layout.module';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
-import { SearchInputModule } from 'app/modules/search-input/search-input.module';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
 import { AuditComponent } from 'app/pages/audit/components/audit/audit.component';
 import { routing } from './audit.routing';
@@ -40,9 +41,10 @@ import { MetadataDetailsCardComponent } from './components/metadata-details-card
     CoreComponents,
     CoreComponents,
     MatTooltipModule,
-    ExportButtonModule,
     CommonDirectivesModule,
     routing,
+    ExportButtonComponent,
+    CopyButtonComponent,
   ],
   exports: [],
   declarations: [
