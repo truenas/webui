@@ -150,6 +150,13 @@ export class AppsFilterStore extends ComponentStore<AppsFilterState> {
       });
     }
 
+    if (filter.categories.some((category) => category.includes(AppExtraCategory.All))) {
+      request$ = this.appsService.getLatestApps({
+        ...filter,
+        categories: undefined,
+      });
+    }
+
     request$.pipe(untilDestroyed(this)).subscribe({
       next: (filteredApps) => {
         this.patchState((state: AppsFilterState): AppsFilterState => {
