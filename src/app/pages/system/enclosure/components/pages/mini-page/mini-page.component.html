@@ -1,0 +1,25 @@
+<mat-card class="card">
+  <mat-card-header>
+    <h3 class="header">
+      {{ 'Disks on {enclosure}' | translate:{ enclosure: enclosureLabel() } }}
+    </h3>
+  </mat-card-header>
+  <mat-card-content>
+    <!-- TODO: Loading state -->
+    <div class="container">
+      <div class="enclosure-column">
+        <ix-mini-pools [slots]="slots()"></ix-mini-pools>
+        <ix-mini-enclosure></ix-mini-enclosure>
+      </div>
+      <div class="details-column">
+        @if (selectedSlot()) {
+          <ix-mini-drive-details></ix-mini-drive-details>
+          <ix-mini-drive-stats [slot]="selectedSlot()"></ix-mini-drive-stats>
+        } @else {
+          <ix-mini-disks-overview [slots]="slots()"></ix-mini-disks-overview>
+          <ix-mini-drive-temperatures></ix-mini-drive-temperatures>
+        }
+      </div>
+    </div>
+  </mat-card-content>
+</mat-card>

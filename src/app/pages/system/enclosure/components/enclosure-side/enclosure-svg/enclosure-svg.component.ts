@@ -17,6 +17,8 @@ import { DashboardEnclosureSlot } from 'app/interfaces/enclosure.interface';
 import { SvgCacheService } from 'app/pages/system/enclosure/services/svg-cache.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 
+export type TintingFunction = (slot: DashboardEnclosureSlot | null) => string | null;
+
 @UntilDestroy()
 @Component({
   selector: 'ix-enclosure-svg',
@@ -28,7 +30,7 @@ export class EnclosureSvgComponent implements OnDestroy {
   readonly svgUrl = input.required<string>();
   readonly slots = input<DashboardEnclosureSlot[]>();
   readonly enableMouseEvents = input(true);
-  readonly slotTintFn = input<(slot: DashboardEnclosureSlot) => string>();
+  readonly slotTintFn = input<TintingFunction>();
   readonly selectedSlot = model<DashboardEnclosureSlot | null>(null);
 
   private keyDownListener: () => void;
@@ -79,7 +81,7 @@ export class EnclosureSvgComponent implements OnDestroy {
       return;
     }
 
-    const driveTrays = this.svgContainer().nativeElement.querySelectorAll<SVGGElement>('svg g[id^="DRIVE_CAGE_"]');
+    const driveTrays = this.svgContainer().nativeElement.querySelectorAll<SVGGElement>('svg [id^="DRIVE_CAGE_"]');
     this.clearOverlays();
 
     // TODO: Unclear if input change will trigger re-render.

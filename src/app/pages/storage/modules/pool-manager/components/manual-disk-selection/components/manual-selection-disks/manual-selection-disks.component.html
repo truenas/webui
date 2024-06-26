@@ -32,7 +32,9 @@
             <ix-disk-icon
               class="disk-icon"
               dndDragImageRef
-              [disk]="asDisk(disk)"
+              [name]="asDisk(disk).name"
+              [size]="asDisk(disk).size"
+              [type]="asDisk(disk).type"
             ></ix-disk-icon>
 
             <ix-disk-info

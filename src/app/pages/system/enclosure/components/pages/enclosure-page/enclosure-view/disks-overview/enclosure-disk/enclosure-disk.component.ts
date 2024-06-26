@@ -3,8 +3,8 @@ import { DiskType } from 'app/enums/disk-type.enum';
 
 @Component({
   selector: 'ix-enclosure-disk',
-  templateUrl: './disk.component.html',
-  styleUrls: ['./disk.component.scss'],
+  templateUrl: './enclosure-disk.component.html',
+  styleUrls: ['./enclosure-disk.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class EnclosureDiskComponent {

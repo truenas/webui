@@ -1,0 +1,42 @@
+<div class="slots-and-numbers">
+  @for (slot of slots(); track slot.drive_bay_number; let index = $index) {
+    <div class="slot">
+      <span class="slot-number">{{ index + 1 }}</span>
+      <span class="slot-contents">
+        {{ slot.dev || ('Empty' | translate) }}
+      </span>
+    </div>
+  }
+</div>
+
+<div class="enclosure">
+  <ix-enclosure-side
+    [enclosure]="enclosure()"
+    [slotTintFn]="poolTint"
+    [selectedSlot]="selectedSlot()"
+    (selectedSlotChange)="onSlotSelected($event)"
+  ></ix-enclosure-side>
+</div>
+
+<div class="disk-status">
+  @for (slot of slots(); track slot.drive_bay_number; let index = $index) {
+    <div class="slot">
+      <div class="slot-status">
+        <!-- TODO: Incorrect check -->
+        @if (slot.status === 'OK' || !slot.dev) {
+          <ix-icon
+            name="check_circle"
+            class="status-icon status-ok"
+            [class.status-empty]="!slot.dev"
+          ></ix-icon>
+        } @else {
+          <ix-icon
+            name="error"
+            class="status-icon status-error"
+          ></ix-icon>
+        }
+        {{ slot.status }}
+      </div>
+    </div>
+  }
+</div>

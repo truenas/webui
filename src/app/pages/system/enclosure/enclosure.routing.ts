@@ -11,6 +11,7 @@ import { ElementsPageComponent } from 'app/pages/system/enclosure/components/pag
 import {
   EnclosurePageComponent,
 } from 'app/pages/system/enclosure/components/pages/enclosure-page/enclosure-page.component';
+import { MiniPageComponent } from 'app/pages/system/enclosure/components/pages/mini-page/mini-page.component';
 
 const routes: Routes = [
   // Has to be above other items.
@@ -36,6 +37,11 @@ const routes: Routes = [
       {
         path: '',
         component: EnclosurePageComponent,
+        data: { title: T('View Enclosure'), breadcrumb: null },
+      },
+      {
+        path: 'mini',
+        component: MiniPageComponent,
         data: { title: T('View Enclosure'), breadcrumb: null },
       },
       {
