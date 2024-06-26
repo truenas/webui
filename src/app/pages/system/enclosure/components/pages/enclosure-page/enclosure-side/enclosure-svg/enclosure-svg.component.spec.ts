@@ -183,5 +183,36 @@ describe('EnclosureSvgComponent', () => {
         expect(spectator.query('.svg-container').classList).toContain('static');
       });
     });
+
+    describe('Interaction Listeners and Keyboard Navigation', () => {
+      it('updates selectedSlot model when user clicks on a slot', () => {
+        jest.spyOn(spectator.component.selectedSlot, 'set');
+        const overlays = spectator.queryAll<SVGRectElement>('.overlay-rect');
+        overlays[1].dispatchEvent(new MouseEvent('click'));
+
+        expect(spectator.component.selectedSlot.set).toHaveBeenCalledWith({ drive_bay_number: 2 });
+      });
+
+      it('navigates to the correct slot on arrow key press', () => {
+        const overlays = spectator.queryAll<SVGRectElement>('.overlay-rect');
+        overlays[0].focus();
+        overlays[0].dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowRight' }));
+        expect(document.activeElement).toBe(overlays[1]);
+      });
+
+      it('selects the slot on enter key press', () => {
+        jest.spyOn(spectator.component.selectedSlot, 'set');
+
+        const overlays = spectator.queryAll<SVGRectElement>('.overlay-rect');
+        overlays[0].dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter' }));
+        expect(spectator.component.selectedSlot.set).toHaveBeenCalledWith({ drive_bay_number: 1 });
+      });
+
+      it('updates tabindex and aria-label attributes', () => {
+        const overlays = spectator.queryAll<SVGRectElement>('.overlay-rect');
+        expect(overlays[0].getAttribute('tabindex')).toBe('0');
+        expect(overlays[0].getAttribute('aria-label')).toContain('Disk Details for');
+      });
+    });
   });
 });
