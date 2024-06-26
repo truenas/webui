@@ -787,6 +787,7 @@ export interface ApiCallDirectory {
   'system.advanced.update': { params: [Partial<AdvancedConfigUpdate>]; response: AdvancedConfig };
   'system.advanced.update_gpu_pci_ids': { params: [isolated_gpu_pci_ids: string[]]; response: void };
   'system.build_time': { params: void; response: ApiTimestamp };
+  'system.boot_id': { params: void; response: string };
   'system.environment': { params: void; response: SystemEnvironment };
   'system.general.config': { params: void; response: SystemGeneralConfig };
   'system.general.kbdmap_choices': { params: void; response: Choices };
