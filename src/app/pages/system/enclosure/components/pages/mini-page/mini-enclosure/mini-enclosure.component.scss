@@ -1,0 +1,49 @@
+:host {
+  display: flex;
+  gap: 12px;
+  justify-content: space-evenly;
+}
+
+.slots-and-numbers {
+  padding-top: 20px;
+
+  .slot-number {
+    background-color: var(--primary);
+    border-radius: 50%;
+    color: var(--fg1);
+    font-size: 11px;
+    margin-right: 3px;
+    padding: 4px 7px;
+    vertical-align: 1px;
+  }
+
+  .slot {
+    margin-bottom: 12px;
+    white-space: nowrap;
+  }
+}
+
+.disk-status {
+  padding-top: 20px;
+
+  .slot {
+    margin-bottom: 7px;
+  }
+}
+
+.status-icon {
+  margin-bottom: 4px;
+  vertical-align: middle;
+
+  &.status-ok {
+    color: var(--green);
+  }
+
+  &.status-empty {
+    color: var(--accent);
+  }
+
+  &.status-error {
+    color: var(--red);
+  }
+}

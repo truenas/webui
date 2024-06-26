@@ -6,12 +6,12 @@ import { DashboardEnclosure, DashboardEnclosureSlot } from 'app/interfaces/enclo
 export function addDisksToSlots(enclosures: DashboardEnclosure[], percentageToAdd: number): DashboardEnclosure[] {
   const totalSlots = countSlots(enclosures);
 
-  return mapSlots(enclosures, (slot, i) => {
-    if (i > totalSlots * percentageToAdd) {
+  return mapSlots(enclosures, ({ slot, index }) => {
+    if (index > totalSlots * percentageToAdd) {
       return slot;
     }
 
-    return addDisk(slot, i);
+    return addDisk(slot, index);
   });
 }
 

@@ -11,7 +11,7 @@ interface ConfigVariables {
   remote: string;
   mockConfig: {
     enabled: boolean;
-    controllerModel: string;
+    controllerModel: string | null;
     expansionModels: string[];
     scenario: MockStorageScenario;
   };
@@ -21,7 +21,7 @@ const defaults: ConfigVariables = {
   remote: '_REMOTE_',
   mockConfig: {
     enabled: false,
-    controllerModel: 'M40',
+    controllerModel: null,
     expansionModels: [],
     scenario: MockStorageScenario.FillSomeSlots,
   },

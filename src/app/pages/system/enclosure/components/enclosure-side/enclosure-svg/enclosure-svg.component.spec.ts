@@ -4,7 +4,7 @@ import { of } from 'rxjs';
 import { DashboardEnclosureSlot } from 'app/interfaces/enclosure.interface';
 import {
   EnclosureSvgComponent,
-} from 'app/pages/system/enclosure/components/pages/enclosure-page/enclosure-side/enclosure-svg/enclosure-svg.component';
+} from 'app/pages/system/enclosure/components/enclosure-side/enclosure-svg/enclosure-svg.component';
 import { SvgCacheService } from 'app/pages/system/enclosure/services/svg-cache.service';
 
 describe('EnclosureSvgComponent', () => {

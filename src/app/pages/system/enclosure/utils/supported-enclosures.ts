@@ -1,6 +1,4 @@
-import {
-  ES102Model, ES24Model, ES60Model, FSeriesModel, HSeriesModel, MSeriesModel,
-} from 'app/constants/server-series.constant';
+import { EnclosureModel } from 'app/enums/enclosure-model.enum';
 
 export enum EnclosureSide {
   Front = 'front',
@@ -14,12 +12,12 @@ export type EnclosureViews = {
 };
 
 const fSeries = {
-  [EnclosureSide.Front]: 'assets/images/new-hardware/fseries/fseries-front.svg',
+  [EnclosureSide.Front]: 'assets/images/new-hardware/f-series/f-series-front.svg',
 };
 
 const mSeries = {
-  [EnclosureSide.Front]: 'assets/images/new-hardware/mseries/mseries-front.svg',
-  [EnclosureSide.Rear]: 'assets/images/new-hardware/mseries/mseries-rear.svg',
+  [EnclosureSide.Front]: 'assets/images/new-hardware/m-series/m-series-front.svg',
+  [EnclosureSide.Rear]: 'assets/images/new-hardware/m-series/m-series-rear.svg',
 };
 
 const eS24F = {
@@ -39,21 +37,40 @@ const eS102G2 = {
 };
 
 const hSeries = {
-  [EnclosureSide.Front]: 'assets/images/new-hardware/hseries/hseries-front.svg',
+  [EnclosureSide.Front]: 'assets/images/new-hardware/h-series/h-series-front.svg',
+};
+
+const mini3E = {
+  [EnclosureSide.Front]: 'assets/images/new-hardware/minis/mini-3-e-front.svg',
+};
+
+const mini3X = {
+  [EnclosureSide.Front]: 'assets/images/new-hardware/minis/mini-3-x-front.svg',
+};
+
+const mini3Xl = {
+  [EnclosureSide.Front]: 'assets/images/new-hardware/minis/mini-3-xl-front.svg',
 };
 
 export const supportedEnclosures: Record<string, EnclosureViews> = {
-  [MSeriesModel.M30]: mSeries,
-  [MSeriesModel.M40]: mSeries,
-  [MSeriesModel.M50]: mSeries,
-  [MSeriesModel.M60]: mSeries,
-  [ES24Model.Es24F]: eS24F,
-  [ES24Model.Es24N]: eS24N,
-  [ES60Model.Es60G2]: eS60G2,
-  [ES102Model.Es102G2]: eS102G2,
-  [FSeriesModel.F60]: fSeries,
-  [FSeriesModel.F100]: fSeries,
-  [FSeriesModel.F130]: fSeries,
-  [HSeriesModel.H10]: hSeries,
-  [HSeriesModel.H20]: hSeries,
+  [EnclosureModel.M30]: mSeries,
+  [EnclosureModel.M40]: mSeries,
+  [EnclosureModel.M50]: mSeries,
+  [EnclosureModel.M60]: mSeries,
+  [EnclosureModel.Es24F]: eS24F,
+  [EnclosureModel.Es24N]: eS24N,
+  [EnclosureModel.Es60]: eS60G2,
+  [EnclosureModel.Es60G2]: eS60G2,
+  [EnclosureModel.Es102]: eS102G2,
+  [EnclosureModel.Es102G2]: eS102G2,
+  [EnclosureModel.F60]: fSeries,
+  [EnclosureModel.F100]: fSeries,
+  [EnclosureModel.F130]: fSeries,
+  [EnclosureModel.H10]: hSeries,
+  [EnclosureModel.H20]: hSeries,
+  [EnclosureModel.Mini3E]: mini3E,
+  [EnclosureModel.Mini3EPlus]: mini3E,
+  [EnclosureModel.Mini3X]: mini3X,
+  [EnclosureModel.Mini3XPlus]: mini3X,
+  [EnclosureModel.Mini3XlPlus]: mini3Xl,
 };

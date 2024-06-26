@@ -5,6 +5,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { Point } from 'pixi.js';
+import { EnclosureModel } from 'app/enums/enclosure-model.enum';
 import { DashboardEnclosureSlot } from 'app/interfaces/enclosure.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { Mini } from 'app/pages/system/old-view-enclosure/classes/hardware/mini';
@@ -85,15 +86,15 @@ export class EnclosureDisksMiniComponent extends EnclosureDisksComponent {
     }
 
     switch (enclosure.model) {
-      case 'MINI-3.0-E':
-      case 'MINI-3.0-E+':
+      case EnclosureModel.Mini3E:
+      case EnclosureModel.Mini3EPlus:
         this.chassis = new Mini();
         break;
-      case 'MINI-3.0-X':
-      case 'MINI-3.0-X+':
+      case EnclosureModel.Mini3X:
+      case EnclosureModel.Mini3XPlus:
         this.chassis = new MiniX();
         break;
-      case 'MINI-3.0-XL+':
+      case EnclosureModel.Mini3XlPlus:
         this.chassis = new MiniXlPlus();
         break;
       default:

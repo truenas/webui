@@ -6,12 +6,12 @@ import { DndModule } from 'ngx-drag-drop';
 import { of } from 'rxjs';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
 import { Enclosure } from 'app/interfaces/enclosure.interface';
+import {
+  DiskIconComponent,
+} from 'app/modules/disk-icon/disk-icon.component';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TreeHarness } from 'app/modules/ix-tree/testing/tree.harness';
 import { TreeModule } from 'app/modules/ix-tree/tree.module';
-import {
-  DiskIconComponent,
-} from 'app/pages/storage/modules/pool-manager/components/manual-disk-selection/components/disk-icon/disk-icon.component';
 import {
   DiskInfoComponent,
 } from 'app/pages/storage/modules/pool-manager/components/manual-disk-selection/components/disk-info/disk-info.component';

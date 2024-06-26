@@ -1,3 +1,4 @@
+import { EnclosureModel } from 'app/enums/enclosure-model.enum';
 import { DashboardEnclosure } from 'app/interfaces/enclosure.interface';
 
 interface MiniSeries {
@@ -6,7 +7,7 @@ interface MiniSeries {
   isRackmount: boolean;
 }
 
-export const unsupportedEnclosureMockModel = 'no-series';
+export const unsupportedEnclosureMockModel = 'no-series' as EnclosureModel;
 
 export const unsupportedEnclosureMock = {
   model: unsupportedEnclosureMockModel,
@@ -15,53 +16,21 @@ export const unsupportedEnclosureMock = {
   },
 } as DashboardEnclosure;
 
-export enum MSeriesModel {
-  M30 = 'M30',
-  M40 = 'M40',
-  M50 = 'M50',
-  M60 = 'M60',
-}
-
-export enum ES24Model {
-  Es24F = 'ES24F',
-  Es24 = 'ES24',
-  Es24N = 'ES24N',
-}
-
-export enum ES60Model {
-  Es60 = 'ES60',
-  Es60G2 = 'ES60G2',
-}
-
-export enum ES102Model {
-  Es102 = 'ES102',
-  Es102G2 = 'ES102G2',
-}
-
 export const mSeries = [
-  'M30',
-  'M40',
-  'M50',
-  'M60',
+  EnclosureModel.M30,
+  EnclosureModel.M40,
+  EnclosureModel.M50,
+  EnclosureModel.M60,
 ];
-
-export enum XSeriesModel {
-  X10 = 'X10',
-  X20 = 'X20',
-}
 
 export const xSeries = [
-  'X10',
-  'X20',
+  EnclosureModel.X10,
+  EnclosureModel.X20,
 ];
 
-export enum ZSeriesModel {
-  Z20 = 'Z20',
-  Z30 = 'Z30',
-  Z35 = 'Z35',
-  Z50 = 'Z50',
-}
-
+/**
+ * @deprecated
+ */
 export const zSeries = [
   'Z20',
   'Z30',
@@ -69,51 +38,27 @@ export const zSeries = [
   'Z50',
 ];
 
-export enum RSeriesModel {
-  R10 = 'R10',
-  R20 = 'R20',
-  R20A = 'R20A',
-  R20B = 'R20B',
-  R30 = 'R30',
-  R40 = 'R40',
-  R50 = 'R50',
-  R50B = 'R50B',
-  // eslint-disable-next-line @typescript-eslint/naming-convention
-  R50BM = 'R50BM',
-}
-
 export const rSeries = [
-  'R10',
-  'R20',
-  'R20A',
-  'R20B',
-  'R30',
-  'R40',
-  'R50',
-  'R50B',
-  'R50BM',
+  EnclosureModel.R10,
+  EnclosureModel.R20,
+  EnclosureModel.R20A,
+  EnclosureModel.R20B,
+  EnclosureModel.R30,
+  EnclosureModel.R40,
+  EnclosureModel.R50,
+  EnclosureModel.R50B,
+  EnclosureModel.R50BM,
 ];
-
-export enum FSeriesModel {
-  F60 = 'F60',
-  F100 = 'F100',
-  F130 = 'F130',
-}
 
 export const fSeries = [
-  'F60',
-  'F100',
-  'F130',
+  EnclosureModel.F60,
+  EnclosureModel.F100,
+  EnclosureModel.F130,
 ];
 
-export enum HSeriesModel {
-  H10 = 'H10',
-  H20 = 'H20',
-}
-
 export const hSeries = [
-  'H10',
-  'H20',
+  EnclosureModel.H10,
+  EnclosureModel.H20,
 ];
 
 export const serverSeries = [
