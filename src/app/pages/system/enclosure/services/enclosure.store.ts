@@ -77,7 +77,9 @@ export class EnclosureStore extends ComponentStore<EnclosureState> {
           }),
           this.errorHandler.catchError(),
           finalize(() => {
-            this.patchState({ isLoading: false });
+            setTimeout(() => {
+              this.patchState({ isLoading: false });
+            }, 1000);
           }),
         );
       }),
