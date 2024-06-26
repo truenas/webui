@@ -5,6 +5,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatDialogClose, MatDialogTitle } from '@angular/material/dialog';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatTooltip } from '@angular/material/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
@@ -81,6 +82,7 @@ import { SvgCacheService } from 'app/pages/system/enclosure/services/svg-cache.s
     IxFileSizePipe,
     MapValuePipe,
     NgxSkeletonLoaderModule,
+    MatProgressBarModule,
   ],
   declarations: [
     EnclosureDashboardComponent,

@@ -18,6 +18,7 @@ import { AppState } from 'app/store';
 export class EnclosurePageComponent {
   readonly enclosure = this.store.selectedEnclosure;
   readonly selectedView = this.store.selectedView;
+  readonly isLoading = this.store.isLoading;
 
   protected readonly isExpandersView = computed(() => {
     return this.selectedView() === EnclosureView.Expanders;
