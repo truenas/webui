@@ -7,7 +7,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import {
-  tap, map, filter, switchMap,
+  tap, map, filter, switchMap, BehaviorSubject,
 } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
@@ -37,7 +37,7 @@ import { selectService } from 'app/store/services/services.selectors';
 })
 export class SmbCardComponent implements OnInit {
   requiredRoles = [Role.SharingSmbWrite, Role.SharingWrite];
-  changedEnabled = new Map<number, boolean>([]);
+  changeEnabledIds$ = new BehaviorSubject<Set<number>>(new Set());
 
   service$ = this.store$.select(selectService(ServiceName.Cifs));
 
@@ -83,6 +83,7 @@ export class SmbCardComponent implements OnInit {
           iconName: 'edit',
           tooltip: this.translate.instant('Edit'),
           onClick: (row) => this.openForm(row),
+          disabled: (row) => this.changeEnabledIds$.pipe(map((ids) => ids.has(row.id))),
         },
         {
           iconName: 'delete',
@@ -190,27 +191,20 @@ export class SmbCardComponent implements OnInit {
   }
 
   private onChangeEnabledState(row: SmbShare): void {
+    this.changeEnabledIds$.next(this.changeEnabledIds$.getValue().add(row.id));
     const param = 'enabled';
-    this.changedEnabled.set(row.id, !row[param]);
-    this.updateEnabledFields();
 
     this.ws.call('sharing.smb.update', [row.id, { [param]: !row[param] }]).pipe(untilDestroyed(this)).subscribe({
       next: () => {
-        this.changedEnabled.delete(row.id);
+        this.changeEnabledIds$.getValue().delete(row.id);
         this.getSmbShares();
       },
       error: (error: unknown) => {
-        this.changedEnabled.delete(row.id);
+        this.changeEnabledIds$.getValue().delete(row.id);
         this.getSmbShares();
         this.dialogService.error(this.errorHandler.parseError(error));
       },
     });
-  }
-
-  private updateEnabledFields(): void {
-    this.dataProvider.setRows(this.smbShares.map((smbShare) => (
-      this.changedEnabled.has(smbShare.id) ? { ...smbShare, enabled: this.changedEnabled.get(smbShare.id) } : smbShare
-    )));
   }
 
   private updateEnabledFieldVisibility(hidden: boolean): void {
