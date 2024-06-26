@@ -1,35 +1,34 @@
-import { fakeAsync } from '@angular/core/testing';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
-import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { ViewChartAreaComponent } from 'app/modules/charts/components/view-chart-area/view-chart-area.component';
-import { WidgetNetworkComponent } from 'app/pages/dashboard-old/components/widget-network/widget-network.component';
+import { NetworkChartComponent } from 'app/pages/dashboard/widgets/network/common/network-chart/network-chart.component';
 import { LocaleService } from 'app/services/locale.service';
 
 describe('NetworkChartComponent', () => {
-  let spectator: Spectator<WidgetNetworkComponent>;
+  let spectator: Spectator<NetworkChartComponent>;
   const createComponent = createComponentFactory({
-    component: WidgetNetworkComponent,
-    imports: [NgxSkeletonLoaderModule],
-    declarations: [
-      MockComponent(ViewChartAreaComponent),
-    ],
+    component: NetworkChartComponent,
+    declarations: [MockComponent(ViewChartAreaComponent)],
     providers: [
-      mockProvider(LocaleService),
+      mockProvider(LocaleService, {
+        timeFormat: 'HH:mm',
+        dateFormat: 'MM-DD',
+      }),
     ],
+    detectChanges: false,
   });
 
   beforeEach(() => {
-    spectator = createComponent({
-      props: {},
-    });
+    spectator = createComponent();
   });
 
-  it('shows a chart with network traffic', fakeAsync(() => {
-    spectator.tick(1);
+  it('shows a chart with network traffic', () => {
+    spectator.setInput('data', { datasets: [], labels: [] });
+    spectator.detectChanges();
+
     const chart = spectator.query(ViewChartAreaComponent);
-    expect(chart).not.toBeNull();
+    expect(chart).toBeTruthy();
 
     const data = chart.data;
     expect(data).toMatchObject({
@@ -62,5 +61,5 @@ describe('NetworkChartComponent', () => {
         },
       ],
     });
-  }));
+  });
 });

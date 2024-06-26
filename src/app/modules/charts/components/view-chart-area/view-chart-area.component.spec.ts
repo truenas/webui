@@ -1,8 +1,14 @@
 import 'jest-canvas-mock';
+import { fakeAsync } from '@angular/core/testing';
 import {
   createComponentFactory, Spectator,
 } from '@ngneat/spectator/jest';
-import { ChartData, ChartDataset } from 'chart.js';
+import {
+  CategoryScale, Chart, ChartData,
+  ChartDataset, LinearScale, LineController,
+  LineElement,
+  PointElement,
+} from 'chart.js';
 import { ViewChartAreaComponent } from 'app/modules/charts/components/view-chart-area/view-chart-area.component';
 
 describe('ViewChartAreaComponent', () => {
@@ -50,25 +56,28 @@ describe('ViewChartAreaComponent', () => {
 
   beforeEach(() => {
     spectator = createComponent();
+    Chart.register(LineController, CategoryScale, LinearScale, PointElement, LineElement);
   });
 
   /*
    * Test Methods
    * */
 
-  it('should not handle more than 8 data points', () => {
-    const data = generateChartData(9, 2);
+  it('should handle more than 8 data points and show maximum sources', fakeAsync(() => {
+    const data = generateChartData(10, 2);
     expect(spectator.component.maxSources).toBe(8);
-    expect(() => spectator.setInput('data', data)).toThrow();
-  });
+
+    spectator.setInput('data', data);
+    expect(spectator.component.data().datasets).toHaveLength(8);
+  }));
 
   it('should render chart when data arrives', () => {
     const data = { labels: [], datasets: [] } as ChartData<'line'>;
     spectator.setInput('data', data);
 
     // Make sure expected values are present after input is set
-    expect(spectator.component.data).toBeTruthy();
-    expect(spectator.component.canvas).toBeTruthy();
+    expect(spectator.component.data()).toEqual({ datasets: [], labels: [] });
+    expect(spectator.component.canvas().nativeElement).toBeTruthy();
     expect(spectator.component.chart).toBeTruthy();
     expect(spectator.component.chart.data).toMatchObject(data);
   });

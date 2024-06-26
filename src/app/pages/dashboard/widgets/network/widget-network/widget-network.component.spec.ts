@@ -4,11 +4,11 @@ import { MockComponent } from 'ng-mocks';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { of } from 'rxjs';
 import { NetworkInterfaceType, NetworkInterfaceAliasType, LinkState } from 'app/enums/network-interface.enum';
-import { ViewChartAreaComponent } from 'app/modules/charts/components/view-chart-area/view-chart-area.component';
 import { InterfaceStatusIconComponent } from 'app/modules/interface-status-icon/interface-status-icon.component';
 import { IxFileSizePipe } from 'app/modules/pipes/ix-file-size/ix-file-size.pipe';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
 import { SlotSize } from 'app/pages/dashboard/types/widget.interface';
+import { NetworkChartComponent } from 'app/pages/dashboard/widgets/network/common/network-chart/network-chart.component';
 import { WidgetNetworkComponent } from 'app/pages/dashboard/widgets/network/widget-network/widget-network.component';
 import { ThemeService } from 'app/services/theme/theme.service';
 
@@ -21,7 +21,7 @@ describe('WidgetNetworkComponent', () => {
       IxFileSizePipe,
     ],
     declarations: [
-      MockComponent(ViewChartAreaComponent),
+      MockComponent(NetworkChartComponent),
       MockComponent(InterfaceStatusIconComponent),
     ],
     providers: [
@@ -132,7 +132,7 @@ describe('WidgetNetworkComponent', () => {
 
     it('shows a chart with network traffic', fakeAsync(() => {
       spectator.tick(1);
-      const chart = spectator.query(ViewChartAreaComponent);
+      const chart = spectator.query(NetworkChartComponent);
       expect(chart).not.toBeNull();
 
       const data = chart.data;
@@ -209,7 +209,7 @@ describe('WidgetNetworkComponent', () => {
 
     it('shows a chart with network traffic', fakeAsync(() => {
       spectator.tick(1);
-      const chart = spectator.query(ViewChartAreaComponent);
+      const chart = spectator.query(NetworkChartComponent);
       expect(chart).not.toBeNull();
 
       const data = chart.data;
@@ -279,7 +279,7 @@ describe('WidgetNetworkComponent', () => {
 
     it('ensures chart is not rendered', fakeAsync(() => {
       spectator.tick(1);
-      const chart = spectator.query(ViewChartAreaComponent);
+      const chart = spectator.query(NetworkChartComponent);
       expect(chart).toBeNull();
     }));
   });

@@ -1,3 +1,4 @@
+import { CommonModule } from '@angular/common';
 import {
   Component, OnDestroy, ElementRef, ChangeDetectionStrategy,
   input,
@@ -15,11 +16,13 @@ import 'chartjs-adapter-date-fns';
   templateUrl: './view-chart-area.component.html',
   styleUrls: ['./view-chart-area.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [CommonModule],
 })
 export class ViewChartAreaComponent implements OnDestroy {
   canvas = viewChild.required<ElementRef<HTMLCanvasElement>>('canvas');
   data = input.required<ChartData<'line'>>();
-  options = input.required<ChartOptions<'line'>>();
+  options = input<ChartOptions<'line'>>();
   height = input<number>(192);
 
   chart: Chart;
@@ -33,13 +36,11 @@ export class ViewChartAreaComponent implements OnDestroy {
 
   constructor() {
     effect(() => {
-      if (!this.data() || !this.options()) {
-        return;
+      if (this.options() || !this.chart) {
+        this.render();
       }
 
-      if (!this.chart) {
-        this.render();
-      } else {
+      if (this.data() && this.chart) {
         this.chart.data = this.data();
         this.chart.update();
       }
@@ -52,7 +53,7 @@ export class ViewChartAreaComponent implements OnDestroy {
     }
 
     if (this.data().datasets.length > this.maxSources) {
-      throw new Error('ERROR: Maximum Sources Exceeded. Line/Area charts have a hard limit of 8 data sources');
+      this.data().datasets = this.data().datasets.slice(0, this.maxSources);
     }
 
     this.chart = new Chart(this.canvas().nativeElement, this.config());

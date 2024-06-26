@@ -61,7 +61,6 @@ export class WidgetNetworkComponent implements WidgetComponent<WidgetInterfaceIp
 
   protected isLoading = computed(() => {
     return this.interface().isLoading
-      || this.interfaces().isLoading
       || !this.interfaceUsage()
       || !this.reportingData()
       || !this.chartData();

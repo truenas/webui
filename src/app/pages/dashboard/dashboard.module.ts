@@ -13,7 +13,8 @@ import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { CoreComponents } from 'app/core/core-components.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { CopyButtonComponent } from 'app/modules/buttons/copy-button/copy-button.component';
-import { ChartsModule } from 'app/modules/charts/charts.module';
+import { ViewChartAreaComponent } from 'app/modules/charts/components/view-chart-area/view-chart-area.component';
+import { ViewChartGaugeComponent } from 'app/modules/charts/components/view-chart-gauge/view-chart-gauge.component';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
 import { InterfaceStatusIconComponent } from 'app/modules/interface-status-icon/interface-status-icon.component';
@@ -107,7 +108,6 @@ import { UptimePipe } from 'app/pages/dashboard/widgets/system/common/uptime.pip
       },
     }),
     IxDropGridModule,
-    ChartsModule,
     MatListModule,
     EmptyComponent,
     ImgFallbackModule,
@@ -118,6 +118,8 @@ import { UptimePipe } from 'app/pages/dashboard/widgets/system/common/uptime.pip
     IxFileSizePipe,
     CopyButtonComponent,
     MapValuePipe,
+    ViewChartAreaComponent,
+    ViewChartGaugeComponent,
   ],
 })
 export class DashboardModule {

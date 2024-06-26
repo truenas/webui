@@ -3,7 +3,6 @@ import {
   computed,
   signal,
 } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { ChartData } from 'chart.js';
@@ -35,7 +34,7 @@ export class WidgetAppComponent implements WidgetComponent<WidgetAppSettings> {
   protected readonly appStatusIcons = chartStatusIcons;
   size = input.required<SlotSize>();
   settings = input.required<WidgetAppSettings>();
-  time = toSignal(this.resources.serverTime$);
+
   appName = computed(() => this.settings().appName);
   application = computed(() => {
     return this.resources.getApp(this.appName()).pipe(toLoadingState());
