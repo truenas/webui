@@ -5,6 +5,8 @@ import { EnclosureDiskStatus, EnclosureElementType } from 'app/enums/enclosure-s
 import { VdevType } from 'app/enums/v-dev-type.enum';
 import { DashboardEnclosure, DashboardEnclosureSlot } from 'app/interfaces/enclosure.interface';
 import { EnclosureDiskComponent } from 'app/pages/system/enclosure/components/disk-component/disk.component';
+import { DisksOverviewDetailsComponent } from 'app/pages/system/enclosure/components/pages/enclosure-page/enclosure-view/disks-overview/disks-overview-details/disks-overview-details.component';
+import { DisksOverviewTilesComponent } from 'app/pages/system/enclosure/components/pages/enclosure-page/enclosure-view/disks-overview/disks-overview-tiles/disks-overview-tiles.component';
 import { DisksOverviewComponent } from 'app/pages/system/enclosure/components/pages/enclosure-page/enclosure-view/disks-overview/disks-overview.component';
 import { EnclosureStore } from 'app/pages/system/enclosure/services/enclosure.store';
 import { EnclosureView } from 'app/pages/system/enclosure/types/enclosure-view.enum';
@@ -72,10 +74,12 @@ describe('DisksOverviewComponent', () => {
     ],
     declarations: [
       MockComponent(EnclosureDiskComponent),
+      DisksOverviewTilesComponent,
+      DisksOverviewDetailsComponent,
     ],
   });
 
-  describe('details', () => {
+  describe('overview details', () => {
     beforeEach(() => {
       spectator = createComponent();
     });
@@ -110,7 +114,7 @@ describe('DisksOverviewComponent', () => {
     });
   });
 
-  describe('overview', () => {
+  describe('overview tiles', () => {
     beforeEach(() => {
       spectator = createComponent({
         providers: [
@@ -123,7 +127,7 @@ describe('DisksOverviewComponent', () => {
       });
     });
 
-    it('shows overview', () => {
+    it('shows tiles', () => {
       const overview = spectator.queryAll('.disk-overview .tile').map((tile) => {
         return {
           number: tile.querySelector('.primary-number')?.textContent?.trim() || null,

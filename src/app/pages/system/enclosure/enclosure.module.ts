@@ -39,6 +39,8 @@ import {
   EnclosureSvgComponent,
 } from 'app/pages/system/enclosure/components/pages/enclosure-page/enclosure-side/enclosure-svg/enclosure-svg.component';
 import { DiskTopologyDescriptionComponent } from 'app/pages/system/enclosure/components/pages/enclosure-page/enclosure-view/disk-topology-description/disk-topology-description.component';
+import { DisksOverviewDetailsComponent } from 'app/pages/system/enclosure/components/pages/enclosure-page/enclosure-view/disks-overview/disks-overview-details/disks-overview-details.component';
+import { DisksOverviewTilesComponent } from 'app/pages/system/enclosure/components/pages/enclosure-page/enclosure-view/disks-overview/disks-overview-tiles/disks-overview-tiles.component';
 import { DisksOverviewComponent } from 'app/pages/system/enclosure/components/pages/enclosure-page/enclosure-view/disks-overview/disks-overview.component';
 import {
   EnclosureSideSwitchComponent,
@@ -83,6 +85,8 @@ import { SvgCacheService } from 'app/pages/system/enclosure/services/svg-cache.s
   declarations: [
     EnclosureDashboardComponent,
     DisksOverviewComponent,
+    DisksOverviewDetailsComponent,
+    DisksOverviewTilesComponent,
     DiskTopologyDescriptionComponent,
     EnclosureSelectorComponent,
     EnclosurePageComponent,

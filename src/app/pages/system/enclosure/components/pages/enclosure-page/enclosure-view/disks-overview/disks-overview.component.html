@@ -15,7 +15,7 @@
       </span>
     </ng-container>
   </div>
-  <div *ngIf="selectedSlot(); else overview" class="disk-details-container">
+  <div *ngIf="selectedSlot(); else overviewTiles" class="disk-details-container">
     <div class="drive">
       <ix-enclosure-disk [data]="{ name: diskName, type: selectedSlot().type }"></ix-enclosure-disk>
 
@@ -31,105 +31,9 @@
         </button>
       </div>
     </div>
-    <div class="details">
-      <div class="details-grid">
-        <div class="detail">
-          <div class="label">{{ 'Pool' | translate }}</div>
-          <div class="value">
-            {{ selectedSlot().pool_info?.pool_name || ('Disk not attached to any pools.' | translate) }}
-          </div>
-        </div>
-        <div class="detail">
-          <div class="label">{{ 'Model' | translate }}</div>
-          <div class="value">{{ selectedSlot().model || ('N/A' | translate) }}</div>
-        </div>
-        <div class="detail">
-          <div class="label">{{ 'Serial' | translate }}</div>
-          <div class="value">{{ selectedSlot().serial || ('N/A' | translate) }}</div>
-        </div>
-        <div class="detail">
-          <div class="label">{{ 'Status' | translate }}</div>
-          <div class="value">{{ selectedSlot().pool_info?.disk_status || ('N/A' | translate) }}</div>
-        </div>
-        <div class="detail">
-          <div class="label">{{ 'Rotation Rate' | translate }}</div>
-          <div class="value">
-            {{ selectedSlot().rotationrate ? ('{n} RPM' | translate: { n: selectedSlot().rotationrate }) : ('N/A' | translate) }}
-          </div>
-        </div>
-      </div>
-    </div>
+    <ix-disks-overview-details class="details"></ix-disks-overview-details>
   </div>
-  <ng-template #overview>
-    <div class="disk-overview">
-      <div class="tile" [class.active]="selectedView() === EnclosureView.Pools">
-        <div class="primary-number">{{ poolsInfo().length }}</div>
-        <div class="title">{{ '{n, plural, one {Pool in Enclosure} other {Pools in Enclosure}}' | translate: { n: poolsInfo().length } }}</div>
-        <div class="subtitle">
-          <ng-container *ngIf="unhealthyPoolsInfo().length === 0">
-            {{ 'All pools are online.' | translate }}
-          </ng-container>
-          <ng-container *ngIf="unhealthyPoolsInfo().length === 1">
-            {{ 'Pool {name} is {status}.' | translate: {
-              name: unhealthyPoolsInfo()[0].pool_name,
-              status: unhealthyPoolsInfo()[0].disk_status,
-            } }}
-          </ng-container>
-          <ng-container *ngIf="unhealthyPoolsInfo().length > 1">
-            {{ '{name} and {n, plural, one {# other pool} other {# other pools}} are not healthy.' | translate: {
-              name: unhealthyPoolsInfo()[0].pool_name,
-              n: unhealthyPoolsInfo().length - 1,
-            } }}
-          </ng-container>
-        </div>
-        <button
-          mat-button
-          color="default"
-          [ixTest]="['show', EnclosureView.Pools]"
-          (click)="setCurrentView(EnclosureView.Pools)"
-        >
-          {{ 'SHOW POOLS' | translate }}
-        </button>
-      </div>
-      <div class="tile" [class.active]="selectedView() === EnclosureView.DiskStatus">
-        <div class="primary-number">{{ failsCount() }}</div>
-        <div class="title">{{ '{n, plural, one {Failed Disk} other {Failed Disks}}' | translate: { n: failsCount() } }}</div>
-        <div class="subtitle">
-          <ng-container *ngIf="failedPoolsInfo().length === 0">
-            {{ 'All disks healthy.' | translate }}
-          </ng-container>
-          <ng-container *ngIf="failedPoolsInfo().length === 1">
-            {{ 'Check {name}.' | translate: { name: failedPoolsInfo()[0].vdev_name } }}
-          </ng-container>
-          <ng-container *ngIf="failedPoolsInfo().length > 1">
-            {{ 'Check {name} and {n, plural, one {# other disk} other {# other disks}}.' | translate: {
-              name: failedPoolsInfo()[0].vdev_name,
-              n: failedPoolsInfo().length - 1,
-            } }}
-          </ng-container>
-        </div>
-        <button
-          mat-button
-          color="default"
-          [ixTest]="['show', EnclosureView.DiskStatus]"
-          (click)="setCurrentView(EnclosureView.DiskStatus)"
-        >
-          {{ 'SHOW STATUS' | translate }}
-        </button>
-      </div>
-      <div *ngIf="expanders().length" class="tile" [class.active]="selectedView() === EnclosureView.Expanders">
-        <div class="primary-number">{{ expanders().length }}</div>
-        <div class="title">{{ '{n, plural, one {SAS Expander} other {SAS Expanders}}' | translate: { n: expanders().length} }}</div>
-        <div class="subtitle"> {{ 'on this enclosure.' | translate }} </div>
-        <button
-          mat-button
-          color="default"
-          [ixTest]="['show', EnclosureView.Expanders]"
-          (click)="setCurrentView(EnclosureView.Expanders)"
-        >
-          {{ 'SHOW EXPANDER STATUS' | translate }}
-        </button>
-      </div>
-    </div>
+  <ng-template #overviewTiles>
+    <ix-disks-overview-tiles></ix-disks-overview-tiles>
   </ng-template>
 </div>
