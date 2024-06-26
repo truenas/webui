@@ -1,8 +1,17 @@
+@import 'scss-imports/cssvars';
+
 :host {
   display: block;
+
+  @media (max-width: $breakpoint-md) {
+    margin: 0 auto;
+    max-width: 600px;
+  }
 }
 
 .svg-container {
+  fill-opacity: 0.3;
+
   &.static {
     pointer-events: none;
   }
@@ -11,24 +20,24 @@
     .overlay-rect {
       cursor: pointer;
       fill: transparent;
+      fill: var(--black);
+      transition: stroke 0.2s ease, stroke-width 0.2s ease-in-out, stroke-dasharray 0.2s ease-in-out, fill-opacity 0.2s ease-in-out, filter 0.2s ease-in-out;
 
       &:hover {
-        // TODO: Theme variables
-        // TODO: Change styles to something better
-        // TODO: CSS transitions
-        stroke: #ff3;
-        stroke-dasharray: 5 10;
-        stroke-width: 5px;
+        fill: var(--primary) !important;
+        stroke: var(--primary);
+        stroke-width: 4px;
       }
 
       &.selected {
-        stroke: #ff3;
+        filter: brightness(1.5);
+        stroke: var(--primary);
         stroke-dasharray: none;
-        stroke-width: 5px;
-      }
+        stroke-width: 4px;
 
-      &.tinted {
-        fill-opacity: 0.25;
+        &.tinted {
+          fill: var(--primary) !important;
+        }
       }
     }
   }

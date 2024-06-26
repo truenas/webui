@@ -322,6 +322,7 @@
     "./src/app/interfaces/failover.interface.ts",
     "./src/app/interfaces/field-relation.interface.ts",
     "./src/app/interfaces/file-record.interface.ts",
+
     "./src/app/interfaces/filesystem-stat.interface.ts",
     "./src/app/interfaces/ftp-config.interface.ts",
     "./src/app/interfaces/group.interface.ts",
@@ -739,7 +740,6 @@
     "./src/app/views/sessions/signin/snackbar/insecure-connection.component.ts",
     "./src/environments/environment.interface.ts",
     "./src/environments/environment.prod.ts",
-    "./src/environments/environment.ts",
     "./src/polyfills.ts"
   ],
   "include": [],
