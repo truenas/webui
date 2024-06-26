@@ -3,7 +3,7 @@ import { EnclosureModel } from 'app/enums/enclosure-model.enum';
 
 export interface MockEnclosureConfig {
   enabled: boolean;
-  controllerModel: EnclosureModel;
+  controllerModel: EnclosureModel | null;
   expansionModels: EnclosureModel[];
   scenario: MockStorageScenario;
 }
