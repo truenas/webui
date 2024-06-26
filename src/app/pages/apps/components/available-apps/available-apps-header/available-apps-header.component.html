@@ -5,7 +5,14 @@
     [formControl]="searchControl"
     [placeholder]="'Search' | translate"
   ></ix-input>
-  <div class="filters-btn">
+  <div class="actions">
+    <a
+      mat-button
+      ixTest="show-all"
+      [routerLink]="['/apps/available', AppExtraCategory.All]"
+    >
+      {{ 'Show All' | translate }}
+    </a>
     <button
       mat-button
       ixTest="filter"
@@ -40,7 +47,13 @@
   <div class="header-number">
     <div class="header-number-title">{{ 'Available Apps' | translate }}</div>
     <a class="header-link" ixTest="refresh-charts">
-      <h2 *ngIf="areLoaded$ | async; else loader">{{ (availableApps$ | async).length }}</h2>
+      <a
+        *ngIf="areLoaded$ | async; else loader"
+        ixTest="available-apps"
+        [routerLink]="['/apps/available', AppExtraCategory.All]"
+      >
+        <h2>{{ (availableApps$ | async).length }}</h2>
+      </a>
       <a
         *ixRequiresRoles="requiredRoles"
         ixTest="refresh-charts"

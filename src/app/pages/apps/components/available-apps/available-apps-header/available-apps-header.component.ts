@@ -10,6 +10,7 @@ import {
   BehaviorSubject,
   debounceTime, distinctUntilChanged, filter, map, Observable, of, take,
 } from 'rxjs';
+import { AppExtraCategory } from 'app/enums/app-extra-category.enum';
 import { Role } from 'app/enums/role.enum';
 import { helptextApps } from 'app/helptext/apps/apps';
 import { AppsFiltersSort } from 'app/interfaces/apps-filters-values.interface';
@@ -56,6 +57,8 @@ export class AvailableAppsHeaderComponent implements OnInit, AfterViewInit {
       return categories.filter((category) => category.trim().toLowerCase().includes(query.trim().toLowerCase()));
     }),
   );
+
+  readonly AppExtraCategory = AppExtraCategory;
 
   constructor(
     private fb: FormBuilder,
