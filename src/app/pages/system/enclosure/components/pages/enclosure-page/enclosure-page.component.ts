@@ -1,12 +1,12 @@
 import {
-  ChangeDetectionStrategy, Component, computed,
+  ChangeDetectionStrategy, Component, computed, effect,
 } from '@angular/core';
+import { Router } from '@angular/router';
 import { UntilDestroy } from '@ngneat/until-destroy';
-import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
+import { EnclosureModel } from 'app/enums/enclosure-model.enum';
 import { EnclosureStore } from 'app/pages/system/enclosure/services/enclosure.store';
 import { EnclosureView } from 'app/pages/system/enclosure/types/enclosure-view.enum';
-import { AppState } from 'app/store';
 
 @UntilDestroy()
 @Component({
@@ -30,9 +30,29 @@ export class EnclosurePageComponent {
     });
   });
 
+  protected readonly redirectOnMinis = effect(() => {
+    if (!this.enclosure()) {
+      return;
+    }
+
+    const minisWithOwnPage = [
+      EnclosureModel.Mini3E,
+      EnclosureModel.Mini3EPlus,
+      EnclosureModel.Mini3X,
+      EnclosureModel.Mini3XPlus,
+      EnclosureModel.Mini3XlPlus,
+    ];
+
+    if (!minisWithOwnPage.includes(this.enclosure().model)) {
+      return;
+    }
+
+    this.router.navigate(['/system', 'viewenclosure', this.enclosure().id, 'mini']);
+  }, { allowSignalWrites: true });
+
   constructor(
     private store: EnclosureStore,
     private translate: TranslateService,
-    protected store$: Store<AppState>,
+    private router: Router,
   ) {}
 }

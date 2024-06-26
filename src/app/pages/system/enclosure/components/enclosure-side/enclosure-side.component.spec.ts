@@ -3,7 +3,7 @@ import {
 } from '@angular/core';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
-import { MSeriesModel } from 'app/constants/server-series.constant';
+import { EnclosureModel } from 'app/enums/enclosure-model.enum';
 import { EnclosureElementType } from 'app/enums/enclosure-slot-status.enum';
 import {
   DashboardEnclosure,
@@ -12,7 +12,7 @@ import {
 } from 'app/interfaces/enclosure.interface';
 import {
   EnclosureSideComponent,
-} from 'app/pages/system/enclosure/components/pages/enclosure-page/enclosure-side/enclosure-side.component';
+} from 'app/pages/system/enclosure/components/enclosure-side/enclosure-side.component';
 import { EnclosureSide, supportedEnclosures } from 'app/pages/system/enclosure/utils/supported-enclosures';
 
 // TODO: Not properly supported in ng-mocks yet https://github.com/help-me-mom/ng-mocks/issues/8634
@@ -49,7 +49,7 @@ describe('EnclosureSideComponent', () => {
           2: { drive_bay_number: 2 } as DashboardEnclosureSlot,
         },
       } as DashboardEnclosureElements,
-      model: MSeriesModel.M40,
+      model: EnclosureModel.M40,
     } as DashboardEnclosure,
     selectedSlot: { drive_bay_number: 1 } as DashboardEnclosureSlot,
     side: EnclosureSide.Rear,

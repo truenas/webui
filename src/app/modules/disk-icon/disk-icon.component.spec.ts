@@ -1,11 +1,10 @@
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { GiB } from 'app/constants/bytes.constant';
 import { DiskType } from 'app/enums/disk-type.enum';
-import { DetailsDisk } from 'app/interfaces/disk.interface';
-import { IxFileSizePipe } from 'app/modules/pipes/ix-file-size/ix-file-size.pipe';
 import {
   DiskIconComponent,
-} from 'app/pages/storage/modules/pool-manager/components/manual-disk-selection/components/disk-icon/disk-icon.component';
+} from 'app/modules/disk-icon/disk-icon.component';
+import { IxFileSizePipe } from 'app/modules/pipes/ix-file-size/ix-file-size.pipe';
 
 describe('DiskIconComponent', () => {
   let spectator: Spectator<DiskIconComponent>;
@@ -19,11 +18,9 @@ describe('DiskIconComponent', () => {
   beforeEach(() => {
     spectator = createComponent({
       props: {
-        disk: {
-          name: 'sda',
-          size: 2 * GiB,
-          type: DiskType.Hdd,
-        } as DetailsDisk,
+        name: 'sda',
+        size: 2 * GiB,
+        type: DiskType.Hdd,
       },
     });
   });
@@ -41,10 +38,10 @@ describe('DiskIconComponent', () => {
   });
 
   it('shows SSD icon when type is SSD', () => {
-    spectator.setInput('disk', {
+    spectator.setInput({
       type: DiskType.Ssd,
       size: 2 * GiB,
-    } as DetailsDisk);
+    });
 
     expect(spectator.query('#ssd')).toExist();
   });

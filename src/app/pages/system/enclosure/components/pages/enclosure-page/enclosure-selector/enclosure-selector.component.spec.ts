@@ -5,11 +5,11 @@ import {
 } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
 import {
+  EnclosureSideComponent,
+} from 'app/pages/system/enclosure/components/enclosure-side/enclosure-side.component';
+import {
   EnclosureSelectorComponent,
 } from 'app/pages/system/enclosure/components/pages/enclosure-page/enclosure-selector/enclosure-selector.component';
-import {
-  EnclosureSideComponent,
-} from 'app/pages/system/enclosure/components/pages/enclosure-page/enclosure-side/enclosure-side.component';
 import { EnclosureStore } from 'app/pages/system/enclosure/services/enclosure.store';
 
 describe('EnclosureSelectorComponent', () => {

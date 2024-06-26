@@ -2,9 +2,10 @@ import {
   makeArrayDeviceSlots,
 } from 'app/core/testing/mock-enclosure/enclosure-templates/utils/make-array-device-slots.utils';
 import { makeEnclosure } from 'app/core/testing/mock-enclosure/enclosure-templates/utils/make-enclosure.utils';
+import { EnclosureModel } from 'app/enums/enclosure-model.enum';
 
 export const mockEs12 = makeEnclosure({
-  model: 'ES12',
+  model: EnclosureModel.Es12,
   controller: false,
   rackmount: true,
   front_slots: 12,
@@ -18,7 +19,7 @@ export const mockEs12 = makeEnclosure({
 });
 
 export const mockEs24 = makeEnclosure({
-  model: 'ES24',
+  model: EnclosureModel.Es24,
   controller: false,
   rackmount: true,
   front_slots: 24,
@@ -33,16 +34,16 @@ export const mockEs24 = makeEnclosure({
 
 export const mockEs24F = makeEnclosure({
   ...mockEs24,
-  model: 'ES24F',
+  model: EnclosureModel.Es24F,
 });
 
 export const mockEs24N = makeEnclosure({
   ...mockEs24,
-  model: 'ES24N',
+  model: EnclosureModel.Es24N,
 });
 
 export const mockEs60 = makeEnclosure({
-  model: 'ES60',
+  model: EnclosureModel.Es60,
   controller: false,
   rackmount: true,
   top_slots: 60,
@@ -57,11 +58,11 @@ export const mockEs60 = makeEnclosure({
 
 export const mockEs60G2 = makeEnclosure({
   ...mockEs60,
-  model: 'ES60G2',
+  model: EnclosureModel.Es60G2,
 });
 
 export const mockEs102 = makeEnclosure({
-  model: 'ES102',
+  model: EnclosureModel.Es102,
   controller: false,
   rackmount: true,
   top_slots: 102,
@@ -76,5 +77,5 @@ export const mockEs102 = makeEnclosure({
 
 export const mockEs102G2 = makeEnclosure({
   ...mockEs102,
-  model: 'ES102G2',
+  model: EnclosureModel.Es102G2,
 });

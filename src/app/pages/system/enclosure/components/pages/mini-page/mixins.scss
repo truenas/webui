@@ -1,0 +1,26 @@
+@mixin section-title {
+  border-bottom: 1px solid var(--lines);
+  font-weight: 500;
+  margin-bottom: 12px;
+  padding-bottom: 7px;
+}
+
+@mixin item-list {
+  li {
+    margin-bottom: 5px;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  .item-name {
+    display: inline;
+    font-weight: bold;
+    margin-right: 5px;
+  }
+
+  .item-value {
+    display: inline;
+  }
+}

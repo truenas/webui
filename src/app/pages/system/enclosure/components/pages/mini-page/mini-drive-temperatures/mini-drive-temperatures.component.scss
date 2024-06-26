@@ -1,0 +1,5 @@
+@import '../mixins';
+
+h3 {
+  @include section-title;
+}

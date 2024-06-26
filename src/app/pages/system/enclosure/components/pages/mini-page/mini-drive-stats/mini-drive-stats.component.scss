@@ -1,0 +1,20 @@
+@import '../mixins';
+
+h3 {
+  @include section-title;
+}
+
+ul {
+  @include item-list;
+  padding-left: 28px;
+}
+
+.columns {
+  align-items: center;
+  display: flex;
+  gap: 14px;
+
+  .disk-icon {
+    margin-top: 8px;
+  }
+}

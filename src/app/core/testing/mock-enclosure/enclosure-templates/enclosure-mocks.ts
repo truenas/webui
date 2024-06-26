@@ -9,7 +9,7 @@ import { mockF100, mockF130, mockF60 } from 'app/core/testing/mock-enclosure/enc
 import { mockM40, mockM50, mockM60 } from 'app/core/testing/mock-enclosure/enclosure-templates/mock-m-series';
 import {
   mockMini3E,
-  mockMini3EPlus, mockMini3X, mockMini3Xl,
+  mockMini3EPlus, mockMini3X, mockMini3XlPlus,
   mockMini3XPlus, mockMiniR,
 } from 'app/core/testing/mock-enclosure/enclosure-templates/mock-minis';
 import {
@@ -34,7 +34,7 @@ export const enclosureMocks: DashboardEnclosure[] = [
   mockMini3EPlus,
   mockMini3X,
   mockMini3XPlus,
-  mockMini3Xl,
+  mockMini3XlPlus,
   mockMiniR,
 
   mockR10,

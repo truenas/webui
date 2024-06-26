@@ -3,8 +3,12 @@ import {
 } from '@angular/core';
 import { EnclosureElementType } from 'app/enums/enclosure-slot-status.enum';
 import { DashboardEnclosure, DashboardEnclosureSlot } from 'app/interfaces/enclosure.interface';
-import { supportedEnclosures, EnclosureSide } from 'app/pages/system/enclosure/utils/supported-enclosures';
+import {
+  TintingFunction,
+} from 'app/pages/system/enclosure/components/enclosure-side/enclosure-svg/enclosure-svg.component';
+import { EnclosureSide, supportedEnclosures } from 'app/pages/system/enclosure/utils/supported-enclosures';
 
+// TODO: It may be a good idea to make this into a separate module.
 @Component({
   selector: 'ix-enclosure-side',
   templateUrl: './enclosure-side.component.html',
@@ -14,7 +18,7 @@ import { supportedEnclosures, EnclosureSide } from 'app/pages/system/enclosure/u
 export class EnclosureSideComponent {
   readonly enclosure = input.required<DashboardEnclosure>();
   readonly enableMouseEvents = input(true);
-  readonly slotTintFn = input<(slot: DashboardEnclosureSlot | null) => string>();
+  readonly slotTintFn = input<TintingFunction>();
   readonly selectedSlot = model<DashboardEnclosureSlot | null>(null);
 
   /**
