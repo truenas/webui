@@ -9,7 +9,6 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
-import { CoreComponents } from 'app/core/core-components.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { IxTableEmptyRowComponent } from 'app/modules/ix-table/components/ix-empty-row/ix-empty-row.component';
@@ -58,7 +57,6 @@ import { IxTableColumnsSelectorComponent } from './components/ix-table-columns-s
     TranslateModule,
     CommonDirectivesModule,
     TestIdModule,
-    CoreComponents,
     IxDateModule,
     MatMenuModule,
     MatDividerModule,
