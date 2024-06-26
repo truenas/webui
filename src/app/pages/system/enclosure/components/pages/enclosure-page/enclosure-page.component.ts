@@ -4,6 +4,7 @@ import {
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
+import { unsupportedEnclosureMockModel } from 'app/constants/server-series.constant';
 import { EnclosureStore } from 'app/pages/system/enclosure/services/enclosure.store';
 import { EnclosureView } from 'app/pages/system/enclosure/types/enclosure-view.enum';
 import { AppState } from 'app/store';
@@ -18,6 +19,7 @@ import { AppState } from 'app/store';
 export class EnclosurePageComponent {
   readonly enclosure = this.store.selectedEnclosure;
   readonly selectedView = this.store.selectedView;
+  readonly isSupportedEnclosure = computed(() => this.enclosure().model !== unsupportedEnclosureMockModel);
 
   protected readonly isExpandersView = computed(() => {
     return this.selectedView() === EnclosureView.Expanders;

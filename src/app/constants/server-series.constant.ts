@@ -1,8 +1,19 @@
+import { DashboardEnclosure } from 'app/interfaces/enclosure.interface';
+
 interface MiniSeries {
   pathImg: string;
   images: string[];
   isRackmount: boolean;
 }
+
+export const unsupportedEnclosureMockModel = 'no-series';
+
+export const unsupportedEnclosureMock = {
+  model: unsupportedEnclosureMockModel,
+  elements: {
+    'Array Device Slot': {},
+  },
+} as DashboardEnclosure;
 
 export enum MSeriesModel {
   M30 = 'M30',

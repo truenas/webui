@@ -185,6 +185,7 @@
   "Enable server-side management of group memberships.  This option allows the server to determine group IDs based on server-side lookups rather than relying solely on the information provided by the NFS client.  This can support more than 16 groups and provide more accurate group memberships.": "",
   "Enable this TrueCloud Backup Task. Unset to disable this TrueCloud Backup Task without deleting it.": "",
   "Enclosure Services Controller Electronics": "",
+  "Enclosure is not supported": "",
   "End session": "",
   "Enter a SPICE password to automatically pass to the SPICE session.": "",
   "Enter a list of chat IDs separated by space, comma or semicolon.  To find your chat ID send a message to the bot, group or channel and visit  <a href=\"https://api.telegram.org/bot(BOT_TOKEN)/getUpdates\"  target=\"_blank\">https://api.telegram.org/bot(BOT_TOKEN)/getUpdates</a>.": "",
