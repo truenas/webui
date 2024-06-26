@@ -1,6 +1,6 @@
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { DiskType } from 'app/enums/disk-type.enum';
-import { EnclosureDiskComponent } from 'app/pages/system/enclosure/components/disk-component/disk.component';
+import { EnclosureDiskComponent } from 'app/pages/system/enclosure/components/pages/enclosure-page/enclosure-view/disks-overview/enclosure-disk/enclosure-disk.component';
 
 describe('EnclosureDiskComponent', () => {
   let spectator: Spectator<EnclosureDiskComponent>;

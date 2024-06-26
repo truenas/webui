@@ -1,0 +1,10 @@
+@import '../mixins';
+
+:host {
+  display: block;
+  margin-bottom: 26px;
+}
+
+h3 {
+  @include section-title;
+}

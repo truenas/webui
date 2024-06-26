@@ -18,8 +18,8 @@
     "test:ci": "jest --runInBand",
     "test:pr": "yarn run check-env && echo 'Setting up temporary environment file...\\n' && yarn run ui remote -i 'headless.local' && jest --coverage --maxWorkers=2",
     "test:changed": "node scripts/test_changed.js",
-    "lint": "ng lint && stylelint 'src/**/*.scss' && markuplint 'src/**/*.html'",
-    "lint:fix": "ng lint --fix && stylelint --fix 'src/**/*.scss' && markuplint --fix 'src/**/*.html'",
+    "lint": "ng lint && stylelint 'src/**/*.scss'",
+    "lint:fix": "ng lint --fix && stylelint --fix 'src/**/*.scss'",
     "clean:dist": "rimraf dist",
     "clean:coverage": "rimraf coverage",
     "reinstall": "rimraf yarn.lock; rimraf node_modules; yarn cache clean -f; yarn install",
@@ -201,7 +201,6 @@
     "*.{ts,html}": [
       "eslint --cache --fix"
     ],
-    "*.html": "markuplint",
     "*.scss": "stylelint --fix"
   }
 }

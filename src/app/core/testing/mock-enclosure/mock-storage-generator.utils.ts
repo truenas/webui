@@ -3,6 +3,7 @@ import { addDisksToSlots } from 'app/core/testing/mock-enclosure/enclosure-templ
 import { addPoolsToDisks } from 'app/core/testing/mock-enclosure/enclosure-templates/utils/pool.utils';
 import { MockStorageScenario } from 'app/core/testing/mock-enclosure/enums/mock-storage.enum';
 import { MockEnclosureConfig } from 'app/core/testing/mock-enclosure/interfaces/mock-enclosure.interface';
+import { EnclosureModel } from 'app/enums/enclosure-model.enum';
 import { assertUnreachable } from 'app/helpers/assert-unreachable.utils';
 import { ApiCallResponse } from 'app/interfaces/api/api-call-directory.interface';
 import { DashboardEnclosure } from 'app/interfaces/enclosure.interface';
@@ -40,7 +41,7 @@ export class MockStorageGenerator {
     };
   }
 
-  private addEnclosure(model: string): void {
+  private addEnclosure(model: EnclosureModel): void {
     const enclosure = enclosureMocks.find((mock) => mock.model === model);
 
     if (!enclosure) {
