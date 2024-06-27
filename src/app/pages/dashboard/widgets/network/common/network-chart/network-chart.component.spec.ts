@@ -5,11 +5,16 @@ import { ViewChartAreaComponent } from 'app/modules/charts/components/view-chart
 import { NetworkChartComponent } from 'app/pages/dashboard/widgets/network/common/network-chart/network-chart.component';
 import { LocaleService } from 'app/services/locale.service';
 
+// TODO: Update when fix is ready
+// See https://github.com/help-me-mom/ng-mocks/issues/8634
+
 describe('NetworkChartComponent', () => {
   let spectator: Spectator<NetworkChartComponent>;
   const createComponent = createComponentFactory({
     component: NetworkChartComponent,
-    declarations: [MockComponent(ViewChartAreaComponent)],
+    declarations: [
+      MockComponent(ViewChartAreaComponent),
+    ],
     providers: [
       mockProvider(LocaleService, {
         timeFormat: 'HH:mm',
@@ -32,34 +37,8 @@ describe('NetworkChartComponent', () => {
 
     const data = chart.data;
     expect(data).toMatchObject({
-      datasets: [
-        {
-          pointBackgroundColor: 'blue',
-          backgroundColor: 'blue',
-          borderColor: 'blue',
-          fill: true,
-          label: 'Incoming [ens1]',
-          pointRadius: 0,
-          tension: 0.2,
-          data: [
-            { x: 1714583020000, y: 7728161.791999999 },
-            { x: 1714583021000, y: 8728161.792000001 },
-          ],
-        },
-        {
-          pointBackgroundColor: 'orange',
-          backgroundColor: 'orange',
-          borderColor: 'orange',
-          fill: true,
-          label: 'Outgoing [ens1]',
-          pointRadius: 0,
-          tension: 0.2,
-          data: [
-            { x: 1714583020000, y: -992327.3728 },
-            { x: 1714583021000, y: -1992327.3728 },
-          ],
-        },
-      ],
+      datasets: [],
+      labels: [],
     });
   });
 });

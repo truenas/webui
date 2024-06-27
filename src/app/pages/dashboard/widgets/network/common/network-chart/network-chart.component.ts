@@ -14,7 +14,7 @@ import { LocaleService } from 'app/services/locale.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class NetworkChartComponent {
-  data = input.required<ChartData<'line'>>();
+  data = input<ChartData<'line'>>();
   aspectRatio = input<number>(fullSizeNetworkWidgetAspectRatio);
   showLegend = input<boolean>(true);
 

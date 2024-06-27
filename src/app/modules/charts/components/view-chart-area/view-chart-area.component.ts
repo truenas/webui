@@ -1,13 +1,16 @@
 import { CommonModule } from '@angular/common';
 import {
-  Component, OnDestroy, ElementRef, ChangeDetectionStrategy,
+  Component, OnDestroy, ChangeDetectionStrategy,
   input,
   computed,
   effect,
-  viewChild,
+  ViewChild,
+  ElementRef,
 } from '@angular/core';
 import {
-  Chart, ChartData, ChartOptions, ChartConfiguration,
+  Chart, ChartOptions,
+  ChartConfiguration,
+  ChartData,
 } from 'chart.js';
 import 'chartjs-adapter-date-fns';
 
@@ -20,7 +23,9 @@ import 'chartjs-adapter-date-fns';
   imports: [CommonModule],
 })
 export class ViewChartAreaComponent implements OnDestroy {
-  canvas = viewChild.required<ElementRef<HTMLCanvasElement>>('canvas');
+  // TODO: Replace when ng-mocks get viewChild support
+  // See https://github.com/help-me-mom/ng-mocks/issues/8634
+  @ViewChild('canvas') canvas: ElementRef<HTMLCanvasElement>;
   data = input.required<ChartData<'line'>>();
   options = input<ChartOptions<'line'>>();
   height = input<number>(192);
@@ -56,7 +61,7 @@ export class ViewChartAreaComponent implements OnDestroy {
       this.data().datasets = this.data().datasets.slice(0, this.maxSources);
     }
 
-    this.chart = new Chart(this.canvas().nativeElement, this.config());
+    this.chart = new Chart(this.canvas.nativeElement, this.config());
   }
 
   ngOnDestroy(): void {
