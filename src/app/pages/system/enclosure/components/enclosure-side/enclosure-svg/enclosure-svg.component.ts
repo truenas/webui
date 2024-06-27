@@ -16,6 +16,7 @@ import {
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import { delay } from 'rxjs';
 import { DashboardEnclosureSlot } from 'app/interfaces/enclosure.interface';
 import { SvgCacheService } from 'app/pages/system/enclosure/services/svg-cache.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
@@ -32,7 +33,7 @@ export type TintingFunction = (slot: DashboardEnclosureSlot | null) => string | 
     trigger('svgTransition', [
       transition(':enter', [
         style({ opacity: 0, height: '*' }),
-        animate('200ms ease-in', style({ opacity: 1, height: '*' })),
+        animate('300ms ease-in', style({ opacity: 1, height: '*' })),
       ]),
     ]),
   ],
@@ -47,7 +48,7 @@ export class EnclosureSvgComponent implements OnDestroy {
   private keyDownListener: () => void;
   private clickListener: () => void;
 
-  protected svg = signal<SafeHtml | undefined>(undefined);
+  svg = signal<SafeHtml | undefined>(undefined);
   protected svgContainer = viewChild<ElementRef<HTMLElement>>('svgContainer');
 
   private overlayRects: Record<number, SVGRectElement> = {};
@@ -76,11 +77,11 @@ export class EnclosureSvgComponent implements OnDestroy {
       .loadSvg(this.svgUrl())
       .pipe(
         this.errorHandler.catchError(),
+        delay(0),
         untilDestroyed(this),
       )
       .subscribe((svg) => {
-        // This ensures that template had time to switch to undefined.
-        setTimeout(() => this.svg.set(this.sanitizer.bypassSecurityTrustHtml(svg)), 200);
+        this.svg.set(this.sanitizer.bypassSecurityTrustHtml(svg));
       });
   }, { allowSignalWrites: true });
 
