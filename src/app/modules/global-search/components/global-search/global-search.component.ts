@@ -12,6 +12,7 @@ import {
   combineLatestWith,
   distinctUntilChanged,
 } from 'rxjs';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { searchDelayConst } from 'app/modules/global-search/constants/delay.const';
 import { moveToNextFocusableElement, moveToPreviousFocusableElement } from 'app/modules/global-search/helpers/focus-helper';
 import { UiSearchableElement } from 'app/modules/global-search/interfaces/ui-searchable-element.interface';
@@ -52,6 +53,7 @@ export class GlobalSearchComponent implements OnInit {
     private store$: Store<AppState>,
     private slideInService: IxSlideInService,
     private chainedSlideInService: IxChainedSlideInService,
+    private dialogService: DialogService,
     @Inject(DOCUMENT) private document: Document,
   ) {}
 
@@ -105,6 +107,13 @@ export class GlobalSearchComponent implements OnInit {
 
   setInitialSearchResults(): void {
     this.searchResults = this.globalSearchSectionsProvider.getRecentSearchesSectionResults();
+  }
+
+  closeAllBackdrops(): void {
+    [this.slideInService, this.chainedSlideInService].forEach((service) => service.closeAll());
+
+    this.sidenavService.closeSecondaryMenu();
+    this.dialogService.closeAllDialogs();
   }
 
   private listenForSearchChanges(): void {
@@ -164,8 +173,8 @@ export class GlobalSearchComponent implements OnInit {
     ).subscribe(([config]) => {
       this.resetInput();
       this.searchDirectives.setPendingUiHighlightElement(null);
-      [this.slideInService, this.chainedSlideInService].forEach((service) => service.closeAll());
       this.searchDirectives.get(config).highlight(config);
+      this.closeAllBackdrops();
     });
   }
 }
