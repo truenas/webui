@@ -26,7 +26,6 @@ import {
 import { NgxWebstorageModule } from 'ngx-webstorage';
 import { IcuMissingTranslationHandler } from 'app/core/classes/icu-missing-translation-handler';
 import { createTranslateLoader } from 'app/core/classes/icu-translations-loader';
-import { CoreComponents } from 'app/core/core-components.module';
 import { MockEnclosureWebsocketService } from 'app/core/testing/mock-enclosure/mock-enclosure-websocket.service';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { getWindow, WINDOW } from 'app/helpers/window.helper';
@@ -92,7 +91,6 @@ import { RoutePartsService } from './services/route-parts/route-parts.service';
       bindToComponentInputs: true,
     }),
     NgxPopperjsModule.forRoot({ appendTo: 'body', hideOnScroll: true }),
-    CoreComponents,
     MatSnackBarModule,
     CommonDirectivesModule,
     NgxWebstorageModule.forRoot(),

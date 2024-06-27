@@ -33,7 +33,7 @@ describe('DashboardComponent', () => {
     component: DashboardComponent,
     declarations: [
       WidgetGroupControlsComponent,
-      PageHeaderComponent,
+      MockComponent(PageHeaderComponent),
       MockComponent(NgxSkeletonLoaderComponent),
       MockComponent(WidgetGroupComponent),
       MockDirective(IxDropGridDirective),

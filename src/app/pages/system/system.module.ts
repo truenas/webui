@@ -17,7 +17,6 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { FlexLayoutModule } from '@ngbracket/ngx-layout';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { CoreComponents } from 'app/core/core-components.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { OauthButtonModule } from 'app/modules/buttons/oauth-button/oauth-button.module';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
@@ -148,7 +147,6 @@ import { routing } from './system.routing';
     AppLoaderModule,
     CommonDirectivesModule,
     CommonModule,
-    CoreComponents,
     OldEnclosureModule,
     EntityModule,
     FlexLayoutModule,

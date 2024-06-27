@@ -9,7 +9,6 @@ import { MatSortModule } from '@angular/material/sort';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
-import { CoreComponents } from 'app/core/core-components.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { CopyButtonComponent } from 'app/modules/buttons/copy-button/copy-button.component';
 import { EntityModule } from 'app/modules/entity/entity.module';
@@ -26,7 +25,6 @@ import { JobsListComponent } from './jobs-list/jobs-list.component';
 
 @NgModule({
   imports: [
-    CoreComponents,
     EntityModule,
     CommonModule,
     IxIconModule,
