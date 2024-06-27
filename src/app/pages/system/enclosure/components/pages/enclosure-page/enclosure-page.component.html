@@ -6,7 +6,10 @@
       </mat-card-header>
 
       <mat-card-content>
-        <ix-fake-progress-bar *ngIf="isLoading()" [loading]="isLoading()"></ix-fake-progress-bar>
+        <ix-fake-progress-bar
+          *ngIf="isLoading() as loading"
+          [loading]="loading"
+        ></ix-fake-progress-bar>
 
         <div class="container">
           <ix-sas-expander-status-view
