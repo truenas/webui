@@ -3,9 +3,12 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatDialog } from '@angular/material/dialog';
 import { MatMenuHarness } from '@angular/material/menu/testing';
 import { Router } from '@angular/router';
-import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import {
+  createComponentFactory, mockProvider, Spectator,
+} from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
-import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { of } from 'rxjs';
+import { dummyUser } from 'app/core/testing/utils/mock-auth.utils';
 import { mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { AboutDialogComponent } from 'app/modules/layout/components/topbar/about-dialog/about-dialog.component';
@@ -13,6 +16,8 @@ import {
   ChangePasswordDialogComponent,
 } from 'app/modules/layout/components/topbar/change-password-dialog/change-password-dialog.component';
 import { UserMenuComponent } from 'app/modules/layout/components/topbar/user-menu/user-menu.component';
+import { AuthService } from 'app/services/auth/auth.service';
+import { WebSocketConnectionService } from 'app/services/websocket-connection.service';
 
 describe('UserMenuComponent', () => {
   let spectator: Spectator<UserMenuComponent>;
@@ -25,8 +30,12 @@ describe('UserMenuComponent', () => {
     ],
     providers: [
       mockProvider(MatDialog),
-      mockAuth(),
       mockWebSocket(),
+      mockProvider(AuthService, {
+        logout: jest.fn(() => of()),
+        user$: of(dummyUser),
+      }),
+      mockProvider(WebSocketConnectionService),
     ],
   });
 
@@ -82,6 +91,16 @@ describe('UserMenuComponent', () => {
       expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(AboutDialogComponent, {
         disableClose: true,
       });
+    });
+
+    it('has a Log Out menu item that logs user out when pressed', async () => {
+      const logout = await menu.getItems({ text: /Log Out$/ });
+      await logout[0].click();
+      const authService = spectator.inject(AuthService);
+      jest.spyOn(authService, 'logout');
+
+      expect(authService.logout).toHaveBeenCalled();
+      expect(authService.clearAuthToken).toHaveBeenCalled();
     });
 
     it('has an 2fa menu item that redirects user to TwoFactorComponent when clicked', async () => {

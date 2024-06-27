@@ -9,10 +9,6 @@ export const powerMenuElements = {
     powerMenu: {
       anchor: 'power-menu',
     },
-    logOut: {
-      hierarchy: [T('Log Out')],
-      synonyms: [T('Sign Out'), T('Logout'), T('Logoff'), T('End session'), T('Exit'), T('Drop session')],
-    },
     restart: {
       hierarchy: [T('Restart')],
       synonyms: [T('Reboot')],
