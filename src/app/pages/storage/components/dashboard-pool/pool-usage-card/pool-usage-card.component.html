@@ -1,4 +1,4 @@
-<mat-card class="card" fxLayout="column" [ixUiSearch]="searchableElements.elements.usage">
+<mat-card class="card" [ixUiSearch]="searchableElements.elements.usage">
   <mat-card-header>
     <h3 mat-card-title>
       {{ 'Usage' | translate }}
@@ -14,12 +14,8 @@
     </a>
   </mat-card-header>
 
-  <mat-card-content
-    fxLayout="row"
-    fxFlex="100"
-    fxLayoutAlign="space-around center"
-  >
-    <div class="left" fxLayout="column" fxLayoutAlign="center center">
+  <mat-card-content class="card-content">
+    <div class="left">
       <ix-gauge-chart
         [colorFill]="usedPercentage === 0 ? chartBlankColor : isLowCapacity ? chartLowCapacityColor : chartFillColor"
         [colorBlank]="chartBlankColor"
@@ -36,17 +32,17 @@
       </div>
     </div>
 
-    <div class="right" fxLayout="column" fxLayoutAlign="center center">
-      <div class="captions" fxLayout="column">
-        <span class="capacity-caption" fxLayoutAlign="start center">
+    <div class="right">
+      <div class="captions">
+        <div class="capacity-caption">
           <b>{{ 'Usable Capacity' | translate }}:</b>
           <span class="value-caption">
             {{ capacity | ixFileSize }}
           </span>
-        </span>
+        </div>
         <ul class="list-caption">
           <li class="item-caption">
-            <span class="used-caption" fxLayoutAlign="start center">
+            <span class="used-caption">
               <b>{{ 'Used' | translate }}:</b>
               <span class="value-caption">
                 {{ (rootDataset?.used.parsed | ixFileSize) || ('Unknown' | translate) }}
@@ -54,7 +50,7 @@
             </span>
           </li>
           <li class="item-caption">
-            <span class="available-caption" fxLayoutAlign="start center">
+            <span class="available-caption">
               <b>{{ 'Available' | translate }}:</b>
               <span class="value-caption">
                 {{ (rootDataset?.available.parsed | ixFileSize) || ('Unknown' | translate) }}

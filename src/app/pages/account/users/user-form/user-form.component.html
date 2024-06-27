@@ -3,7 +3,7 @@
 <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
   <ix-fieldset [title]="'Identification' | translate">
     <div class="columns">
-      <div fxFlex="50%">
+      <div>
         <ix-input
           formControlName="full_name"
           [label]="'Full Name' | translate"
@@ -25,7 +25,7 @@
         ></ix-input>
       </div>
 
-      <div fxFlex="50%">
+      <div>
         <ix-slide-toggle
           formControlName="password_disabled"
           [label]="'Disable Password' | translate"
@@ -55,7 +55,7 @@
 
   <ix-fieldset [title]="'User ID and Groups' | translate">
     <div class="columns">
-      <div fxFlex="50%">
+      <div>
         <ix-input
           formControlName="uid"
           type="number"
@@ -71,7 +71,7 @@
         ></ix-slide-toggle>
       </div>
 
-      <div fxFlex="50%">
+      <div>
         <ix-chips
           formControlName="groups"
           [label]="'Auxiliary Groups' | translate"
@@ -94,7 +94,7 @@
   <mat-divider></mat-divider>
 
   <div class="columns">
-    <div fxFlex="50%">
+    <div>
       <ix-fieldset [title]="'Directories and Permissions' | translate">
         <ix-explorer
           formControlName="home"
@@ -117,7 +117,7 @@
       </ix-fieldset>
     </div>
 
-    <div fxFlex="50%">
+    <div>
       <ix-fieldset [title]="'Authentication' | translate">
         <ix-textarea
           formControlName="sshpubkey"

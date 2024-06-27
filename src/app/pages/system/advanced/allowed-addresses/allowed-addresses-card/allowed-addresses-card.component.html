@@ -1,16 +1,14 @@
 <mat-card [ixUiSearch]="searchableElements.elements.allowedIpAddresses">
   <mat-toolbar-row>
-    <div fxFlex fxLayoutAlign="start center">
-      <h3 class="card-title">
-        {{ 'Allowed IP Addresses' | translate }}
-      </h3>
+    <h3 class="card-title">
+      {{ 'Allowed IP Addresses' | translate }}
 
       <ix-tooltip
         class="tooltip"
         [header]="'Allowed IP Addresses' | translate"
         [message]="'IP addresses and networks that are allowed to use API and UI. If this list is empty, then all IP addresses are allowed to use API and UI.' | translate"
       ></ix-tooltip>
-    </div>
+    </h3>
 
     <div class="actions action-icon">
       <button
