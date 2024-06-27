@@ -9,7 +9,6 @@ import { RouterModule } from '@angular/router';
 import { FlexLayoutModule } from '@ngbracket/ngx-layout';
 import { TranslateModule } from '@ngx-translate/core';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
-import { CoreComponents } from 'app/core/core-components.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { CopyButtonComponent } from 'app/modules/buttons/copy-button/copy-button.component';
 import { EntityModule } from 'app/modules/entity/entity.module';
@@ -69,7 +68,6 @@ import { ExtendDialogComponent } from './components/zfs-info-card/extend-dialog/
     ReactiveFormsModule,
     RouterModule.forChild(routes),
     TranslateModule,
-    CoreComponents,
     AppLoaderModule,
     LayoutModule,
     CommonDirectivesModule,

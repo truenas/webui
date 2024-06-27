@@ -6,6 +6,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { Ng2FittextModule } from 'ng2-fittext';
 import { NgxPopperjsModule } from 'ngx-popperjs';
 import { AutofocusDirective } from 'app/directives/common/autofocus/autofocus.directive';
+import { IxDetailsHeightDirective } from 'app/directives/common/details-height/details-height.directive';
 import { DisableFocusableElementsDirective } from 'app/directives/common/disable-focusable-elements/disable-focusable-elements.directive';
 import { HasAccessDirective } from 'app/directives/common/has-access/has-access.directive';
 import { MissingAccessWrapperComponent } from 'app/directives/common/has-access/missing-access-wrapper.component';
@@ -17,6 +18,10 @@ import { NewFeatureIndicatorDirective } from 'app/directives/common/new-feature-
 import { NewFeatureIndicatorService } from 'app/directives/common/new-feature-indicator/new-feature-indicator.service';
 import { RequiresRolesDirective } from 'app/directives/common/requires-roles/requires-roles.directive';
 import { StepActivationDirective } from 'app/directives/common/step-activation.directive';
+import {
+  TextLimiterTooltipComponent,
+} from 'app/directives/common/text-limiter/text-limiter-tooltip/text-limiter-tooltip.component';
+import { TextLimiterDirective } from 'app/directives/common/text-limiter/text-limiter.directive';
 import { UiSearchDirective } from 'app/directives/common/ui-search.directive';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { CastPipe } from 'app/modules/pipes/cast/cast.pipe';
@@ -47,6 +52,9 @@ import { LetDirective } from './app-let.directive';
     NewFeatureIndicatorWrapperComponent,
     NewFeatureIndicatorDirective,
     UiSearchDirective,
+    IxDetailsHeightDirective,
+    TextLimiterDirective,
+    TextLimiterTooltipComponent,
   ],
   exports: [
     LetDirective,
@@ -63,6 +71,8 @@ import { LetDirective } from './app-let.directive';
     NewFeatureIndicatorDirective,
     UiSearchDirective,
     Ng2FittextModule,
+    IxDetailsHeightDirective,
+    TextLimiterDirective,
   ],
   providers: [
     NewFeatureIndicatorService,

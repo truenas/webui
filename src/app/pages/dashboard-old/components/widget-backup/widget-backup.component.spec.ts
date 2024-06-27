@@ -4,7 +4,6 @@ import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory } from '@ngneat/spectator/jest';
 import { format } from 'date-fns-tz';
 import { MockComponent } from 'ng-mocks';
-import { DragHandleComponent } from 'app/core/components/drag-handle/drag-handle.component';
 import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-datetime.pipe';
 import { MockWebSocketService } from 'app/core/testing/classes/mock-websocket.service';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -14,6 +13,7 @@ import { JobState } from 'app/enums/job-state.enum';
 import { CloudSyncTask } from 'app/interfaces/cloud-sync-task.interface';
 import { ReplicationTask } from 'app/interfaces/replication-task.interface';
 import { RsyncTask } from 'app/interfaces/rsync-task.interface';
+import { DragHandleComponent } from 'app/pages/dashboard-old/components/drag-handle/drag-handle.component';
 import { WidgetBackupComponent } from 'app/pages/dashboard-old/components/widget-backup/widget-backup.component';
 import { WidgetBackupHarness } from 'app/pages/dashboard-old/components/widget-backup/widget-backup.harness';
 

@@ -11,7 +11,6 @@ import { RouterModule } from '@angular/router';
 import { FlexLayoutModule } from '@ngbracket/ngx-layout';
 import { TranslateModule } from '@ngx-translate/core';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
-import { CoreComponents } from 'app/core/core-components.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
@@ -43,7 +42,6 @@ import { SigninComponent } from './signin/signin.component';
     FlexLayoutModule,
     TranslateModule,
     RouterModule.forChild(sessionsRoutes),
-    CoreComponents,
     IxFormsModule,
     MatInputModule,
     CommonDirectivesModule,

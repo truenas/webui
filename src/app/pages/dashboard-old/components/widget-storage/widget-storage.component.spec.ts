@@ -6,10 +6,10 @@ import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { of } from 'rxjs';
-import { DragHandleComponent } from 'app/core/components/drag-handle/drag-handle.component';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
+import { DragHandleComponent } from 'app/pages/dashboard-old/components/drag-handle/drag-handle.component';
 import { WidgetStorageComponent } from 'app/pages/dashboard-old/components/widget-storage/widget-storage.component';
 import { DashboardStorageStore } from 'app/pages/dashboard-old/store/dashboard-storage-store.service';
 

@@ -4,10 +4,10 @@ import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
-import { DragHandleComponent } from 'app/core/components/drag-handle/drag-handle.component';
 import { ProductType } from 'app/enums/product-type.enum';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { CopyrightLineComponent } from 'app/modules/layout/components/copyright-line/copyright-line.component';
+import { DragHandleComponent } from 'app/pages/dashboard-old/components/drag-handle/drag-handle.component';
 import { WidgetHelpComponent } from 'app/pages/dashboard-old/components/widget-help/widget-help.component';
 import { SystemGeneralService } from 'app/services/system-general.service';
 

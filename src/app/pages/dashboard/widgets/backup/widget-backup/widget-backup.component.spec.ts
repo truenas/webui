@@ -5,7 +5,6 @@ import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { format } from 'date-fns-tz';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
-import { DragHandleComponent } from 'app/core/components/drag-handle/drag-handle.component';
 import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-datetime.pipe';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { Direction } from 'app/enums/direction.enum';
@@ -20,6 +19,7 @@ import { BackupTaskEmptyComponent } from 'app/pages/dashboard/widgets/backup/wid
 import { BackupTaskTileComponent } from 'app/pages/dashboard/widgets/backup/widget-backup/backup-task-tile/backup-task-tile.component';
 import { WidgetBackupComponent } from 'app/pages/dashboard/widgets/backup/widget-backup/widget-backup.component';
 import { WidgetBackupHarness } from 'app/pages/dashboard/widgets/backup/widget-backup/widget-backup.harness';
+import { DragHandleComponent } from 'app/pages/dashboard-old/components/drag-handle/drag-handle.component';
 
 const currentDatetime = new Date();
 

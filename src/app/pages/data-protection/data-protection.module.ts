@@ -13,7 +13,6 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule } from '@angular/router';
 import { FlexLayoutModule } from '@ngbracket/ngx-layout';
 import { TranslateModule } from '@ngx-translate/core';
-import { CoreComponents } from 'app/core/core-components.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { CloudCredentialsSelectModule } from 'app/modules/forms/custom-selects/cloud-credentials-select/cloud-credentials-select.module';
@@ -126,7 +125,6 @@ import { SmartTaskListComponent } from './smart-task/smart-task-list/smart-task-
     MatDividerModule,
     CloudSyncProviderDescriptionComponent,
     SearchInput1Component,
-    CoreComponents,
     MatProgressSpinnerModule,
   ],
   declarations: [

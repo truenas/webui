@@ -6,7 +6,6 @@ import { MatCardModule } from '@angular/material/card';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
-import { CoreComponents } from 'app/core/core-components.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { CopyButtonComponent } from 'app/modules/buttons/copy-button/copy-button.component';
 import { ExportButtonComponent } from 'app/modules/buttons/export-button/export-button.component';
@@ -38,8 +37,6 @@ import { MetadataDetailsCardComponent } from './components/metadata-details-card
     IxTableModule,
     AppLoaderModule,
     SearchInputModule,
-    CoreComponents,
-    CoreComponents,
     MatTooltipModule,
     CommonDirectivesModule,
     routing,
