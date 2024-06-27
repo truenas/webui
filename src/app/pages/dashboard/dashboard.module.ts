@@ -10,7 +10,6 @@ import { TranslateModule } from '@ngx-translate/core';
 import { BaseChartDirective } from 'ng2-charts';
 import { ImgFallbackModule } from 'ngx-img-fallback';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
-import { CoreComponents } from 'app/core/core-components.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { CopyButtonComponent } from 'app/modules/buttons/copy-button/copy-button.component';
 import { ChartsModule } from 'app/modules/charts/charts.module';
@@ -74,7 +73,6 @@ import { UptimePipe } from 'app/pages/dashboard/widgets/system/common/uptime.pip
     WidgetResourcesService,
   ],
   imports: [
-    CoreComponents,
     IxFormsModule,
     ReactiveFormsModule,
     TranslateModule,

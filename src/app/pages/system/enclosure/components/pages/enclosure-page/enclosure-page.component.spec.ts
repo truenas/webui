@@ -1,47 +1,105 @@
-import { MatProgressBar } from '@angular/material/progress-bar';
+import { signal } from '@angular/core';
+import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { MockComponent } from 'ng-mocks';
-import { EnclosureHeaderComponent } from 'app/pages/system/enclosure/components/enclosure-header/enclosure-header.component';
-import { EnclosureSelectorComponent } from 'app/pages/system/enclosure/components/pages/enclosure-page/enclosure-selector/enclosure-selector.component';
-import { DisksOverviewComponent } from 'app/pages/system/enclosure/components/pages/enclosure-page/enclosure-view/disks-overview/disks-overview.component';
-import { EnclosureViewComponent } from 'app/pages/system/enclosure/components/pages/enclosure-page/enclosure-view/enclosure-view.component';
+import { MockComponents } from 'ng-mocks';
+import { unsupportedEnclosureMock } from 'app/constants/server-series.constant';
+import { EnclosureModel } from 'app/enums/enclosure-model.enum';
+import { DashboardEnclosure } from 'app/interfaces/enclosure.interface';
+import {
+  EnclosureHeaderComponent,
+} from 'app/pages/system/enclosure/components/enclosure-header/enclosure-header.component';
+import {
+  EnclosurePageComponent,
+} from 'app/pages/system/enclosure/components/pages/enclosure-page/enclosure-page.component';
+import {
+  EnclosureSelectorComponent,
+} from 'app/pages/system/enclosure/components/pages/enclosure-page/enclosure-selector/enclosure-selector.component';
+import {
+  DisksOverviewComponent,
+} from 'app/pages/system/enclosure/components/pages/enclosure-page/enclosure-view/disks-overview/disks-overview.component';
+import {
+  EnclosureViewComponent,
+} from 'app/pages/system/enclosure/components/pages/enclosure-page/enclosure-view/enclosure-view.component';
+import {
+  SasExpanderStatusViewComponent,
+} from 'app/pages/system/enclosure/components/pages/enclosure-page/sas-expander-status-view/sas-expander-status-view.component';
 import { EnclosureStore } from 'app/pages/system/enclosure/services/enclosure.store';
 import { EnclosureView } from 'app/pages/system/enclosure/types/enclosure-view.enum';
-import { EnclosurePageComponent } from './enclosure-page.component';
 
 describe('EnclosurePageComponent', () => {
   let spectator: Spectator<EnclosurePageComponent>;
+  const selectedView = signal(EnclosureView.Expanders);
+  const selectedEnclosure = signal({ id: '123' } as DashboardEnclosure);
   const createComponent = createComponentFactory({
     component: EnclosurePageComponent,
     declarations: [
-      MockComponent(DisksOverviewComponent),
-      MockComponent(EnclosureSelectorComponent),
-      MockComponent(EnclosureHeaderComponent),
-      MockComponent(EnclosureViewComponent),
-      MockComponent(MatProgressBar),
+      MockComponents(
+        SasExpanderStatusViewComponent,
+        EnclosureViewComponent,
+        DisksOverviewComponent,
+        EnclosureSelectorComponent,
+        EnclosureHeaderComponent,
+      ),
+    ],
+    providers: [
+      mockProvider(Router),
+      mockProvider(EnclosureStore, {
+        selectedEnclosure,
+        selectedView,
+        enclosureLabel: () => 'M40',
+      }),
     ],
   });
 
-  describe('supported enclosure model', () => {
-    beforeEach(() => {
-      spectator = createComponent({
-        providers: [
-          mockProvider(EnclosureStore, {
-            selectedEnclosure: jest.fn(() => ({ model: 'M50', label: 'Enclosure 1' })),
-            selectedView: jest.fn(() => EnclosureView.Pools),
-            enclosureLabel: jest.fn(() => 'Enclosure 1'),
-            isLoading: jest.fn(() => false),
-          }),
-        ],
-      });
-    });
+  beforeEach(() => {
+    spectator = createComponent();
+  });
 
-    it('should display the supported enclosure view when model is supported', () => {
-      expect(spectator.query(EnclosureViewComponent)).toBeTruthy();
-      expect(spectator.query(EnclosureHeaderComponent)).toBeTruthy();
-      expect(spectator.query(EnclosureSelectorComponent)).toBeTruthy();
-      expect(spectator.query(MatProgressBar)).toBeFalsy();
-      expect(spectator.query('.not-supported')).toBeFalsy();
-    });
+  it('shows expander status for expander view', () => {
+    const expanderView = spectator.query(SasExpanderStatusViewComponent);
+    expect(expanderView).toExist();
+  });
+
+  it('shows enclosure view when it is selected', () => {
+    selectedView.set(EnclosureView.Pools);
+    spectator.detectChanges();
+
+    expect(spectator.query(EnclosureViewComponent)).toExist();
+  });
+
+  it('shows enclosure selector', () => {
+    expect(spectator.query(EnclosureSelectorComponent)).toExist();
+  });
+
+  it('shows disks overview', () => {
+    expect(spectator.query(DisksOverviewComponent)).toExist();
+  });
+
+  it('redirects to a separate MINI page when selected enclosure is a MINI', () => {
+    selectedEnclosure.set({
+      id: '123',
+      model: EnclosureModel.Mini3X,
+    } as DashboardEnclosure);
+    spectator.detectChanges();
+
+    expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/system', 'viewenclosure', '123', 'mini']);
+  });
+
+  it('should display the supported enclosure view when model is supported', () => {
+    selectedView.set(EnclosureView.Pools);
+    expect(spectator.query(EnclosureViewComponent)).toBeTruthy();
+    expect(spectator.query(EnclosureHeaderComponent)).toBeTruthy();
+    expect(spectator.query(EnclosureSelectorComponent)).toBeTruthy();
+    expect(spectator.query('.not-supported')).toBeFalsy();
+  });
+
+  it('should display the unsupported enclosure message when model is not supported', () => {
+    selectedEnclosure.set(unsupportedEnclosureMock);
+    spectator.detectChanges();
+    expect(spectator.query('.not-supported')).toBeTruthy();
+    expect(spectator.query('.not-supported h2').textContent).toBe('Enclosure is not supported');
+    expect(spectator.query(EnclosureViewComponent)).toBeFalsy();
+    expect(spectator.query(EnclosureHeaderComponent)).toBeFalsy();
+    expect(spectator.query(EnclosureSelectorComponent)).toBeFalsy();
   });
 });

@@ -4,12 +4,12 @@ import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
-import { DragHandleComponent } from 'app/core/components/drag-handle/drag-handle.component';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { Pool } from 'app/interfaces/pool.interface';
 import { VolumeData } from 'app/interfaces/volume-data.interface';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
+import { DragHandleComponent } from 'app/pages/dashboard-old/components/drag-handle/drag-handle.component';
 import { WidgetPoolComponent } from 'app/pages/dashboard-old/components/widget-pool/widget-pool.component';
 import { ResourcesUsageStore } from 'app/pages/dashboard-old/store/resources-usage-store.service';
 

@@ -13,7 +13,6 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
 import { ImgFallbackModule } from 'ngx-img-fallback';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
-import { CoreComponents } from 'app/core/core-components.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { CopyButtonComponent } from 'app/modules/buttons/copy-button/copy-button.component';
 import { ChartsModule } from 'app/modules/charts/charts.module';
@@ -31,6 +30,7 @@ import { TestIdModule } from 'app/modules/test-id/test-id.module';
 import { UptimePipe } from 'app/pages/dashboard/widgets/system/common/uptime.pipe';
 import { DashboardComponent } from 'app/pages/dashboard-old/components/dashboard/dashboard.component';
 import { DashboardFormComponent } from 'app/pages/dashboard-old/components/dashboard-form/dashboard-form.component';
+import { DragHandleComponent } from 'app/pages/dashboard-old/components/drag-handle/drag-handle.component';
 import { WidgetBackupComponent } from 'app/pages/dashboard-old/components/widget-backup/widget-backup.component';
 import { WidgetControllerComponent } from 'app/pages/dashboard-old/components/widget-controller/widget-controller.component';
 import { WidgetCpuComponent } from 'app/pages/dashboard-old/components/widget-cpu/widget-cpu.component';
@@ -50,7 +50,6 @@ import { ResourcesUsageStore } from 'app/pages/dashboard-old/store/resources-usa
 
 @NgModule({
   imports: [
-    CoreComponents,
     CommonModule,
     CommonDirectivesModule,
     ReactiveFormsModule,
@@ -97,6 +96,7 @@ import { ResourcesUsageStore } from 'app/pages/dashboard-old/store/resources-usa
     WidgetNetworkComponent,
     WidgetStorageComponent,
     SimpleFailoverBtnComponent,
+    DragHandleComponent,
   ],
   providers: [
     ResourcesUsageStore,

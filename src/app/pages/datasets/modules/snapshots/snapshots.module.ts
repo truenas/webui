@@ -18,7 +18,6 @@ import { EffectsModule } from '@ngrx/effects';
 import { StoreModule } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
-import { CoreComponents } from 'app/core/core-components.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
@@ -45,7 +44,6 @@ import { SnapshotBatchDeleteDialogComponent } from './snapshot-batch-delete-dial
   imports: [
     CommonDirectivesModule,
     CommonModule,
-    CoreComponents,
     EffectsModule.forFeature([SnapshotEffects]),
     EntityModule,
     IxFormsModule,

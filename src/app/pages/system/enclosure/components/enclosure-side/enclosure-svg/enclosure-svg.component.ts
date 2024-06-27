@@ -1,4 +1,7 @@
 import {
+  animate, style, transition, trigger,
+} from '@angular/animations';
+import {
   ChangeDetectionStrategy,
   Component,
   effect,
@@ -14,7 +17,6 @@ import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { DashboardEnclosureSlot } from 'app/interfaces/enclosure.interface';
-import { EnclosureStore } from 'app/pages/system/enclosure/services/enclosure.store';
 import { SvgCacheService } from 'app/pages/system/enclosure/services/svg-cache.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 
@@ -26,6 +28,14 @@ export type TintingFunction = (slot: DashboardEnclosureSlot | null) => string | 
   templateUrl: './enclosure-svg.component.html',
   styleUrls: ['./enclosure-svg.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  animations: [
+    trigger('svgTransition', [
+      transition(':enter', [
+        style({ opacity: 0, height: '*' }),
+        animate('200ms ease-in', style({ opacity: 1, height: '*' })),
+      ]),
+    ]),
+  ],
 })
 export class EnclosureSvgComponent implements OnDestroy {
   readonly svgUrl = input.required<string>();
@@ -33,7 +43,6 @@ export class EnclosureSvgComponent implements OnDestroy {
   readonly enableMouseEvents = input(true);
   readonly slotTintFn = input<TintingFunction>();
   readonly selectedSlot = model<DashboardEnclosureSlot | null>(null);
-  readonly isLoading = this.store.isLoading;
 
   private keyDownListener: () => void;
   private clickListener: () => void;
@@ -48,7 +57,6 @@ export class EnclosureSvgComponent implements OnDestroy {
     private svgLoader: SvgCacheService,
     private errorHandler: ErrorHandlerService,
     private sanitizer: DomSanitizer,
-    private store: EnclosureStore,
     private translate: TranslateService,
   ) {}
 
@@ -72,10 +80,7 @@ export class EnclosureSvgComponent implements OnDestroy {
       )
       .subscribe((svg) => {
         // This ensures that template had time to switch to undefined.
-        // TODO: Not pretty, rework somehow.
-        setTimeout(() => {
-          this.svg.set(this.sanitizer.bypassSecurityTrustHtml(svg));
-        });
+        setTimeout(() => this.svg.set(this.sanitizer.bypassSecurityTrustHtml(svg)), 200);
       });
   }, { allowSignalWrites: true });
 

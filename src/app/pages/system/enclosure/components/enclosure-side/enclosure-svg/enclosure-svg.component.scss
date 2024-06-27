@@ -11,6 +11,7 @@
 
 .svg-container {
   fill-opacity: 0.3;
+  transition: all 0.5s ease-in-out;
 
   &.static {
     pointer-events: none;

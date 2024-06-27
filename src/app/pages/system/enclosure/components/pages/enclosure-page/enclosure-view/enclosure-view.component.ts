@@ -58,14 +58,13 @@ export class EnclosureViewComponent {
   }
 
   // TODO: Pool colors need to stay consistent across multiple enclosures, so this needs to be moved to store.
-  // TODO: See if we can use css variables for colors instead of setting a specific color.
   private poolTint(): TintingFunction {
     const poolColors = new Map<string, string>();
     return (slot: DashboardEnclosureSlot) => {
       const poolName = slot.pool_info?.pool_name;
       if (poolName) {
         if (!poolColors.has(poolName)) {
-          poolColors.set(poolName, this.theme().accentColors[Object.entries(poolColors).length]);
+          poolColors.set(poolName, 'var(--primary)');
         }
         return poolColors.get(poolName);
       }

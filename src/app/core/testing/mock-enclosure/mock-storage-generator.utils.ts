@@ -1,3 +1,4 @@
+import { unsupportedEnclosureMock } from 'app/constants/server-series.constant';
 import { enclosureMocks } from 'app/core/testing/mock-enclosure/enclosure-templates/enclosure-mocks';
 import { addDisksToSlots } from 'app/core/testing/mock-enclosure/enclosure-templates/utils/disk.utils';
 import { addPoolsToDisks } from 'app/core/testing/mock-enclosure/enclosure-templates/utils/pool.utils';
@@ -42,11 +43,7 @@ export class MockStorageGenerator {
   }
 
   private addEnclosure(model: EnclosureModel): void {
-    const enclosure = enclosureMocks.find((mock) => mock.model === model);
-
-    if (!enclosure) {
-      throw new Error(`Enclosure model ${model} not found in mock storage generator`);
-    }
+    const enclosure = enclosureMocks.find((mock) => mock.model === model) || unsupportedEnclosureMock;
 
     this.enclosures.push(enclosure);
   }
