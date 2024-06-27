@@ -2,7 +2,7 @@ import { computed, Injectable } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ComponentStore } from '@ngrx/component-store';
 import { switchMap, tap } from 'rxjs';
-import { finalize, map } from 'rxjs/operators';
+import { delay, finalize, map } from 'rxjs/operators';
 import { DashboardEnclosure, DashboardEnclosureSlot } from 'app/interfaces/enclosure.interface';
 import { EnclosureView } from 'app/pages/system/enclosure/types/enclosure-view.enum';
 import { getEnclosureLabel } from 'app/pages/system/enclosure/utils/get-enclosure-label.utils';
@@ -76,6 +76,7 @@ export class EnclosureStore extends ComponentStore<EnclosureState> {
             this.patchState({ enclosures });
           }),
           this.errorHandler.catchError(),
+          delay(100),
           finalize(() => {
             this.patchState({ isLoading: false });
           }),
