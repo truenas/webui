@@ -4,9 +4,7 @@ import {
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import {
-  Observable, filter, map,
-} from 'rxjs';
+import { filter, map } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
 import { CloudBackup, CloudBackupSnapshot } from 'app/interfaces/cloud-backup.interface';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
@@ -33,7 +31,6 @@ export class CloudBackupSnapshotsComponent implements OnChanges {
   readonly requiredRoles = [Role.CloudBackupWrite];
 
   dataProvider: AsyncDataProvider<CloudBackupSnapshot>;
-  cloudBackupSnapshots$: Observable<CloudBackupSnapshot[]>;
 
   columns = createTable<CloudBackupSnapshot>([
     relativeDateColumn({
