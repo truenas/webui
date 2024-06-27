@@ -5,13 +5,14 @@ import {
 } from 'lodash';
 import { DeepPartial } from 'utility-types';
 import { MockStorageScenario } from 'app/core/testing/mock-enclosure/enums/mock-storage.enum';
+import { EnclosureModel } from 'app/enums/enclosure-model.enum';
 import { environmentTemplate, environmentTs } from './variables';
 
 interface ConfigVariables {
   remote: string;
   mockConfig: {
     enabled: boolean;
-    controllerModel: string | null;
+    controllerModel: string;
     expansionModels: string[];
     scenario: MockStorageScenario;
   };
@@ -21,7 +22,7 @@ const defaults: ConfigVariables = {
   remote: '_REMOTE_',
   mockConfig: {
     enabled: false,
-    controllerModel: null,
+    controllerModel: EnclosureModel.M40,
     expansionModels: [],
     scenario: MockStorageScenario.FillSomeSlots,
   },
@@ -37,8 +38,16 @@ export function updateEnvironment(newValues: DeepPartial<ConfigVariables>): void
   const configToWrite = configTemplate
     .replace('_REMOTE_', stringify(valuesToWrite.remote))
     .replace('_MOCK_ENABLED_', stringify(Boolean(valuesToWrite.mockConfig.enabled)))
-    .replace('_MOCK_CONTROLLER_', stringify(valuesToWrite.mockConfig.controllerModel))
-    .replace('_MOCK_EXPANSIONS_', stringify(valuesToWrite.mockConfig.expansionModels))
+    .replace('_MOCK_CONTROLLER_', printEnum({
+      enumName: 'EnclosureModel',
+      enum: EnclosureModel,
+      value: valuesToWrite.mockConfig.controllerModel,
+    }))
+    .replace('_MOCK_EXPANSIONS_', printEnumArray({
+      enumName: 'EnclosureModel',
+      enum: EnclosureModel,
+      values: valuesToWrite.mockConfig.expansionModels,
+    }))
     .replace('_MOCK_SCENARIO_', printEnum({
       enumName: 'MockStorageScenario',
       enum: MockStorageScenario,
@@ -60,6 +69,10 @@ function stringify(value: unknown): string {
     return `'${value}'`;
   }
   return JSON.stringify(value);
+}
+
+function printEnumArray(options: { enumName: string; enum: Record<string, string>; values: string[] }): string {
+  return `[${options.values.map((value) => printEnum({ enumName: options.enumName, enum: options.enum, value })).join(', ')}]`;
 }
 
 function printEnum(options: { enumName: string; enum: Record<string, string>; value: string }): string {
