@@ -16,6 +16,7 @@ export const rsyncTaskListElements = {
         T('New Rsync Task'),
         T('Task'),
       ],
+      anchor: 'add-rsync',
     },
   },
 } satisfies UiSearchableElement;
