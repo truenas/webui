@@ -1,26 +1,35 @@
-<div class="view-container">
-  <mat-card>
-    <mat-card-header>
-      <ix-enclosure-header [title]="title()"></ix-enclosure-header>
-    </mat-card-header>
-    <mat-card-content>
-      <!-- TODO: Loading state -->
-      <div *ngIf="enclosure()" class="container">
-        <ix-sas-expander-status-view
-          *ngIf="isExpandersView(); else enclosureView"
-          [enclosure]="enclosure()"
-        ></ix-sas-expander-status-view>
+<ng-container *ngIf="isSupportedEnclosure(); else unsupportedEnclosure">
+  <div class="view-container">
+    <mat-card>
+      <mat-card-header>
+        <ix-enclosure-header [title]="title()"></ix-enclosure-header>
+      </mat-card-header>
+      <mat-card-content>
+        <!-- TODO: Loading state -->
+        <div *ngIf="enclosure()" class="container">
+          <ix-sas-expander-status-view
+            *ngIf="isExpandersView(); else enclosureView"
+            [enclosure]="enclosure()"
+          ></ix-sas-expander-status-view>
 
-        <ng-template #enclosureView>
-          <ix-enclosure-view [enclosure]="enclosure()"></ix-enclosure-view>
-        </ng-template>
-      </div>
+          <ng-template #enclosureView>
+            <ix-enclosure-view [enclosure]="enclosure()"></ix-enclosure-view>
+          </ng-template>
+        </div>
 
-      <ix-disks-overview></ix-disks-overview>
-    </mat-card-content>
-  </mat-card>
-</div>
+        <ix-disks-overview></ix-disks-overview>
+      </mat-card-content>
+    </mat-card>
+  </div>
 
-<div class="selector-container">
-  <ix-enclosure-selector></ix-enclosure-selector>
-</div>
+  <div class="selector-container">
+    <ix-enclosure-selector></ix-enclosure-selector>
+  </div>
+</ng-container>
+
+<ng-template #unsupportedEnclosure>
+  <div class="not-supported">
+    <ix-icon name="error"></ix-icon>
+    <h2>{{ 'Enclosure is not supported' | translate }}</h2>
+  </div>
+</ng-template>
