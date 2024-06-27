@@ -14,8 +14,8 @@ import {
 } from 'app/core/testing/mock-enclosure/enclosure-templates/utils/make-voltage-sensors.utils';
 import { EnclosureModel } from 'app/enums/enclosure-model.enum';
 
-export const mockM40 = makeEnclosure({
-  model: EnclosureModel.M40,
+export const mockM30 = makeEnclosure({
+  model: EnclosureModel.M30,
   controller: true,
   rackmount: true,
   front_loaded: true,
@@ -30,6 +30,11 @@ export const mockM40 = makeEnclosure({
     'Temperature Sensors': makeTemperatureSensors(30, 32),
     'Voltage Sensor': makeVoltageSensors(34, 35),
   },
+});
+
+export const mockM40 = makeEnclosure({
+  ...mockM30,
+  model: EnclosureModel.M40,
 });
 
 export const mockM50 = makeEnclosure({
