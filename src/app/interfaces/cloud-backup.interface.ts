@@ -62,6 +62,23 @@ export type CloudBackupRestoreParams = [
   },
 ];
 
+export enum CloudBackupSnapshotDirectoryFileType {
+  File = 'file',
+  Dir = 'dir',
+}
+
+export type CloudBackupSnapshotDirectoryParams = [
+  id: number,
+  snapshot_id: string,
+  path: string,
+];
+
+export interface CloudBackupSnapshotDirectoryListing {
+  name: string;
+  path: string;
+  type: CloudBackupSnapshotDirectoryFileType;
+}
+
 export interface BackupTile {
   title: string;
   totalSend: number;
