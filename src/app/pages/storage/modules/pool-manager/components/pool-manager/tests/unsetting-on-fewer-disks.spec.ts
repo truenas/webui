@@ -5,14 +5,16 @@ import { MatStepperModule } from '@angular/material/stepper';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { GiB } from 'app/constants/bytes.constant';
-import { CoreComponents } from 'app/core/core-components.module';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { DiskType } from 'app/enums/disk-type.enum';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
 import { Enclosure } from 'app/interfaces/enclosure.interface';
-import { IxRadioGroupHarness } from 'app/modules/ix-forms/components/ix-radio-group/ix-radio-group.harness';
-import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
+import { IxRadioGroupHarness } from 'app/modules/forms/ix-forms/components/ix-radio-group/ix-radio-group.harness';
+import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
+import { CastPipe } from 'app/modules/pipes/cast/cast.pipe';
+import { IxFileSizePipe } from 'app/modules/pipes/ix-file-size/ix-file-size.pipe';
+import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 import {
   PoolManagerComponent,
 } from 'app/pages/storage/modules/pool-manager/components/pool-manager/pool-manager.component';
@@ -34,7 +36,9 @@ describe('PoolManagerComponent – unsetting on fewer disks', () => {
       IxFormsModule,
       ReactiveFormsModule,
       MatStepperModule,
-      CoreComponents,
+      IxFileSizePipe,
+      MapValuePipe,
+      CastPipe,
     ],
     declarations: [
       ...commonDeclarations,

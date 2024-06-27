@@ -11,7 +11,7 @@ import { Role } from 'app/enums/role.enum';
 import { helptextSystemBootenv } from 'app/helptext/system/boot-env';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
+import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()

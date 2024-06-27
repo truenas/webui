@@ -13,7 +13,7 @@ import { Role } from 'app/enums/role.enum';
 import { CertificateAuthorityUpdate } from 'app/interfaces/certificate-authority.interface';
 import { CertificateProfile } from 'app/interfaces/certificate.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { SummarySection } from 'app/modules/summary/summary.interface';
 import {

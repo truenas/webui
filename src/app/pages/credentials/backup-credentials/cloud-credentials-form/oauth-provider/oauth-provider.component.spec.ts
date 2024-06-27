@@ -6,9 +6,9 @@ import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { mockWindow } from 'app/core/testing/utils/mock-window.utils';
 import { WINDOW } from 'app/helpers/window.helper';
 import { OauthMessage } from 'app/interfaces/oauth-message.interface';
-import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
-import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
-import { OauthButtonModule } from 'app/modules/oauth-button/oauth-button.module';
+import { OauthButtonModule } from 'app/modules/buttons/oauth-button/oauth-button.module';
+import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
+import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import {
   OauthProviderComponent, OauthProviderData,
 } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/oauth-provider/oauth-provider.component';

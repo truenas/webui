@@ -9,7 +9,7 @@ import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.u
 import { CloudSyncCredential } from 'app/interfaces/cloudsync-credential.interface';
 import { CloudSyncProvider } from 'app/interfaces/cloudsync-provider.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import { IxTableModule } from 'app/modules/ix-table/ix-table.module';

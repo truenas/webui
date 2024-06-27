@@ -11,7 +11,7 @@ import { EncryptionKeyFormat } from 'app/enums/encryption-key-format.enum';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { helptextDatasetForm } from 'app/helptext/storage/volumes/datasets/dataset-form';
 import { Dataset, DatasetCreate } from 'app/interfaces/dataset.interface';
-import { matchOthersFgValidator } from 'app/modules/ix-forms/validators/password-validation/password-validation';
+import { matchOthersFgValidator } from 'app/modules/forms/ix-forms/validators/password-validation/password-validation';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()

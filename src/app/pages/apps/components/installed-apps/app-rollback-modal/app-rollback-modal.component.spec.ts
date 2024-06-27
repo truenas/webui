@@ -9,9 +9,9 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { ChartRelease, ChartReleaseVersion } from 'app/interfaces/chart-release.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxSelectHarness } from 'app/modules/ix-forms/components/ix-select/ix-select.harness';
-import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
-import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
+import { IxSelectHarness } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.harness';
+import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
+import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { AppRollbackModalComponent } from 'app/pages/apps/components/installed-apps/app-rollback-modal/app-rollback-modal.component';
 import { WebSocketService } from 'app/services/ws.service';
 

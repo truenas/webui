@@ -4,7 +4,7 @@ import {
 } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
 import { NetworkInterfaceType } from 'app/enums/network-interface.enum';
-import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
+import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 
 @Injectable()
 export class InterfaceNameValidatorService {

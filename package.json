@@ -18,8 +18,8 @@
     "test:ci": "jest --runInBand",
     "test:pr": "yarn run check-env && echo 'Setting up temporary environment file...\\n' && yarn run ui remote -i 'headless.local' && jest --coverage --maxWorkers=2",
     "test:changed": "node scripts/test_changed.js",
-    "lint": "ng lint && stylelint 'src/**/*.scss' && markuplint 'src/**/*.html'",
-    "lint:fix": "ng lint --fix && stylelint --fix 'src/**/*.scss' && markuplint --fix 'src/**/*.html'",
+    "lint": "ng lint && stylelint 'src/**/*.scss'",
+    "lint:fix": "ng lint --fix && stylelint --fix 'src/**/*.scss'",
     "clean:dist": "rimraf dist",
     "clean:coverage": "rimraf coverage",
     "reinstall": "rimraf yarn.lock; rimraf node_modules; yarn cache clean -f; yarn install",
@@ -29,7 +29,7 @@
     "prepare": "husky install",
     "ui": "cd $(git rev-parse --show-toplevel) && yarn run --silent ts-node ./scripts/ui/ui.ts",
     "strict-null-checks": "node_modules/typescript/bin/tsc --project tsconfig.strictNullChecks.json",
-    "compile-grammar": "lezer-generator --typeScript --noTerms src/app/modules/search-input/services/query-parser/query.grammar -o src/app/modules/search-input/services/query-parser/query-grammar.ts"
+    "compile-grammar": "lezer-generator --typeScript --noTerms src/app/modules/forms/search-input/services/query-parser/query.grammar -o src/app/modules/forms/search-input/services/query-parser/query-grammar.ts"
   },
   "repository": {
     "type": "git",
@@ -201,7 +201,6 @@
     "*.{ts,html}": [
       "eslint --cache --fix"
     ],
-    "*.html": "markuplint",
     "*.scss": "stylelint --fix"
   }
 }

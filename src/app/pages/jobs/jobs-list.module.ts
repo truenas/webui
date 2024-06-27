@@ -11,11 +11,13 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
 import { CoreComponents } from 'app/core/core-components.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
+import { CopyButtonComponent } from 'app/modules/buttons/copy-button/copy-button.component';
 import { EntityModule } from 'app/modules/entity/entity.module';
+import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
 import { LayoutModule } from 'app/modules/layout/layout.module';
-import { SearchInput1Component } from 'app/modules/search-input1/search-input1.component';
+import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
 import { JobLogsRowComponent } from 'app/pages/jobs/job-logs-row/job-logs-row.component';
 import { JobNameComponent } from 'app/pages/jobs/job-name/job-name.component';
@@ -43,6 +45,8 @@ import { JobsListComponent } from './jobs-list/jobs-list.component';
     MatButtonToggleModule,
     TestIdModule,
     SearchInput1Component,
+    MapValuePipe,
+    CopyButtonComponent,
   ],
   declarations: [JobsListComponent, JobLogsRowComponent, JobNameComponent],
 })

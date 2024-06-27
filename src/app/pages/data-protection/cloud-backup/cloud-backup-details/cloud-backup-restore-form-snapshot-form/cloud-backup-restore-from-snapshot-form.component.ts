@@ -17,10 +17,10 @@ import {
 } from 'app/interfaces/cloud-backup.interface';
 import { DatasetCreate } from 'app/interfaces/dataset.interface';
 import { ExplorerNodeData, TreeNode } from 'app/interfaces/tree-node.interface';
-import { TreeNodeProvider } from 'app/modules/ix-forms/components/ix-explorer/tree-node-provider.interface';
-import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
-import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
+import { TreeNodeProvider } from 'app/modules/forms/ix-forms/components/ix-explorer/tree-node-provider.interface';
+import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in.token';
+import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { WebSocketService } from 'app/services/ws.service';

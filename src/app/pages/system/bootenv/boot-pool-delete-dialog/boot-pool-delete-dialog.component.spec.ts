@@ -4,15 +4,15 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { BulkListItemComponent } from 'app/core/components/bulk-list-item/bulk-list-item.component';
 import { MockWebSocketService } from 'app/core/testing/classes/mock-websocket.service';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { CoreBulkQuery, CoreBulkResponse } from 'app/interfaces/core-bulk.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
-import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
+import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
+import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
+import { BulkListItemComponent } from 'app/modules/lists/bulk-list-item/bulk-list-item.component';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { BootPoolDeleteDialogComponent } from 'app/pages/system/bootenv/boot-pool-delete-dialog/boot-pool-delete-dialog.component';
@@ -45,8 +45,6 @@ describe('BootPoolDeleteDialogComponent', () => {
       AppLoaderModule,
       ReactiveFormsModule,
       IxFormsModule,
-    ],
-    declarations: [
       BulkListItemComponent,
     ],
     providers: [

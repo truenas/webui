@@ -4,7 +4,6 @@ import { Store, StoreModule } from '@ngrx/store';
 import { ngMocks } from 'ng-mocks';
 import { firstValueFrom } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { FormatDateTimePipe } from 'app/core/pipes/format-datetime.pipe';
 import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-datetime.pipe';
 import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { AlertLevel } from 'app/enums/alert-level.enum';
@@ -14,6 +13,7 @@ import { AlertPageObject } from 'app/modules/alerts/components/alert/alert.page-
 import { AlertEffects } from 'app/modules/alerts/store/alert.effects';
 import { adapter, alertReducer, alertsInitialState } from 'app/modules/alerts/store/alert.reducer';
 import { alertStateKey, selectAlerts } from 'app/modules/alerts/store/alert.selectors';
+import { FormatDateTimePipe } from 'app/modules/pipes/format-date-time/format-datetime.pipe';
 import { WebSocketService } from 'app/services/ws.service';
 import { systemConfigReducer, SystemConfigState } from 'app/store/system-config/system-config.reducer';
 import { systemConfigStateKey } from 'app/store/system-config/system-config.selectors';

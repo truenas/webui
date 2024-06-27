@@ -22,18 +22,17 @@ import { TranslateModule } from '@ngx-translate/core';
 import { BaseChartDirective } from 'ng2-charts';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { CoreComponents } from 'app/core/core-components.module';
-import { FormatDateTimePipe } from 'app/core/pipes/format-datetime.pipe';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
-import { CastModule } from 'app/modules/cast/cast.module';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { EntityModule } from 'app/modules/entity/entity.module';
-import { IxFileSizeModule } from 'app/modules/ix-file-size/ix-file-size.module';
-import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
+import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { LayoutModule } from 'app/modules/layout/layout.module';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
+import { FormatDateTimePipe } from 'app/modules/pipes/format-date-time/format-datetime.pipe';
+import { IxFileSizePipe } from 'app/modules/pipes/ix-file-size/ix-file-size.pipe';
+import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
-import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
 import { PoolCardIconComponent } from 'app/pages/storage/components/dashboard-pool/pool-card-icon/pool-card-icon.component';
 import { GaugeChartComponent } from 'app/pages/storage/components/dashboard-pool/pool-usage-card/gauge-chart/gauge-chart.component';
 import { PoolUsageCardComponent } from 'app/pages/storage/components/dashboard-pool/pool-usage-card/pool-usage-card.component';
@@ -75,15 +74,12 @@ import { ZfsHealthCardComponent } from './components/dashboard-pool/zfs-health-c
     LayoutModule,
     MatFormFieldModule,
     MatOptionModule,
-    TooltipModule,
-    IxFileSizeModule,
     FlexModule,
     MatCheckboxModule,
     MatSelectModule,
     MatMenuModule,
     MatDividerModule,
     MatDialogModule,
-    CastModule,
     MatInputModule,
     CommonDirectivesModule,
     CoreComponents,
@@ -94,6 +90,9 @@ import { ZfsHealthCardComponent } from './components/dashboard-pool/zfs-health-c
     TestIdModule,
     AppLoaderModule,
     EmptyComponent,
+    IxFileSizePipe,
+    FormatDateTimePipe,
+    MapValuePipe,
   ],
   declarations: [
     PoolsDashboardComponent,

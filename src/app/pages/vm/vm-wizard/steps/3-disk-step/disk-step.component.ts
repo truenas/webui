@@ -9,7 +9,7 @@ import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
 import { choicesToOptions, singleArrayToOptions } from 'app/helpers/operators/options.operators';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextVmWizard } from 'app/helptext/vm/vm-wizard/vm-wizard';
-import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
+import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
 import { SummaryProvider, SummarySection } from 'app/modules/summary/summary.interface';
 import { FreeSpaceValidatorService } from 'app/pages/vm/utils/free-space-validator.service';
 import { WebSocketService } from 'app/services/ws.service';

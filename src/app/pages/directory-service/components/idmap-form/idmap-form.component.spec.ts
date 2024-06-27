@@ -17,13 +17,13 @@ import { IdmapBackendOptions, IdmapBackendParameter } from 'app/interfaces/idmap
 import { Idmap } from 'app/interfaces/idmap.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EntityModule } from 'app/modules/entity/entity.module';
-import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
+import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import {
   WithManageCertificatesLinkComponent,
-} from 'app/modules/ix-forms/components/with-manage-certificates-link/with-manage-certificates-link.component';
-import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
-import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
+} from 'app/modules/forms/ix-forms/components/with-manage-certificates-link/with-manage-certificates-link.component';
+import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
+import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { IdmapFormComponent } from 'app/pages/directory-service/components/idmap-form/idmap-form.component';
 import { IdmapService } from 'app/services/idmap.service';

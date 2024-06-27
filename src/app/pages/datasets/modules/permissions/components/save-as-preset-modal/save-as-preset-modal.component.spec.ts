@@ -9,8 +9,8 @@ import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.u
 import { AclType } from 'app/enums/acl-type.enum';
 import { Acl, AclTemplateByPath } from 'app/interfaces/acl.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxInputHarness } from 'app/modules/ix-forms/components/ix-input/ix-input.harness';
-import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
+import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
+import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { SaveAsPresetModalComponent } from 'app/pages/datasets/modules/permissions/components/save-as-preset-modal/save-as-preset-modal.component';
 import { SaveAsPresetModalConfig } from 'app/pages/datasets/modules/permissions/interfaces/save-as-preset-modal-config.interface';

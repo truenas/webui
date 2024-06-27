@@ -1,0 +1,35 @@
+<h3>{{ 'Stats' | translate }}</h3>
+
+<div class="columns">
+  @if (slot().dev) {
+    <div class="disk-icon">
+      <ix-disk-icon
+        [name]="slot().dev"
+        [type]="slot().type"
+        [size]="slot().size"
+      ></ix-disk-icon>
+    </div>
+  }
+  <div class="stats">
+    @if (!slot().pool_info) {
+      <div class="no-pool">
+        {{ 'Must be part of the pool to check errors.' | translate }}
+      </div>
+    } @else {
+      <ul>
+        <li class="item">
+          <div class="item-name">{{ 'Read Errors:' | translate }}</div>
+          <div class="item-value">{{ slot().pool_info.disk_read_errors | number }}</div>
+        </li>
+        <li class="item">
+          <div class="item-name">{{ 'Write Errors:' | translate }}</div>
+          <div class="item-value">{{ slot().pool_info.disk_write_errors | number }}</div>
+        </li>
+        <li class="item">
+          <div class="item-name">{{ 'Checksum Errors:' | translate }}</div>
+          <div class="item-value">{{ slot().pool_info.disk_checksum_errors | number }}</div>
+        </li>
+      </ul>
+    }
+  </div>
+</div>

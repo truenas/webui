@@ -30,7 +30,7 @@ import { ReplicationCreate, ReplicationTask } from 'app/interfaces/replication-t
 import { Schedule } from 'app/interfaces/schedule.interface';
 import { CreateZfsSnapshot, ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { ChainedRef } from 'app/modules/ix-forms/components/ix-slide-in/chained-component-ref';
+import { ChainedRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/chained-component-ref';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { crontabToSchedule } from 'app/modules/scheduler/utils/crontab-to-schedule.utils';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';

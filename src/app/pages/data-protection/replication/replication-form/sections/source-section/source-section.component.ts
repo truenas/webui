@@ -10,7 +10,7 @@ import { SnapshotNamingOption, snapshotNamingOptionNames } from 'app/enums/snaps
 import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextReplication } from 'app/helptext/data-protection/replication/replication';
 import { ReplicationCreate, ReplicationTask } from 'app/interfaces/replication-task.interface';
-import { TreeNodeProvider } from 'app/modules/ix-forms/components/ix-explorer/tree-node-provider.interface';
+import { TreeNodeProvider } from 'app/modules/forms/ix-forms/components/ix-explorer/tree-node-provider.interface';
 import { crontabToSchedule } from 'app/modules/scheduler/utils/crontab-to-schedule.utils';
 import { CronPresetValue } from 'app/modules/scheduler/utils/get-default-crontab-presets.utils';
 import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';

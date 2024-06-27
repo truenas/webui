@@ -15,6 +15,7 @@ import { Acl, NfsAcl, PosixAcl } from 'app/interfaces/acl.interface';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { FileSystemStat } from 'app/interfaces/filesystem-stat.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { CastPipe } from 'app/modules/pipes/cast/cast.pipe';
 import {
   ViewNfsPermissionsComponent,
 } from 'app/pages/datasets/modules/permissions/components/view-nfs-permissions/view-nfs-permissions.component';
@@ -48,6 +49,9 @@ describe('PermissionsCardComponent', () => {
   let loader: HarnessLoader;
   const createComponent = createComponentFactory({
     component: PermissionsCardComponent,
+    imports: [
+      CastPipe,
+    ],
     declarations: [
       MockComponent(ViewPosixPermissionsComponent),
       MockComponent(ViewNfsPermissionsComponent),

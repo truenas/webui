@@ -11,8 +11,8 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { SystemInfo } from 'app/interfaces/system-info.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxCheckboxHarness } from 'app/modules/ix-forms/components/ix-checkbox/ix-checkbox.harness';
-import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
+import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.harness';
+import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import {
   SaveConfigDialogComponent,

@@ -5,10 +5,10 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { DatasetCaseSensitivity, DatasetPreset } from 'app/enums/dataset.enum';
 import { ZfsPropertySource } from 'app/enums/zfs-property-source.enum';
 import { Dataset } from 'app/interfaces/dataset.interface';
-import { IxFieldsetHarness } from 'app/modules/ix-forms/components/ix-fieldset/ix-fieldset.harness';
-import { IxInputHarness } from 'app/modules/ix-forms/components/ix-input/ix-input.harness';
-import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
-import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
+import { IxFieldsetHarness } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.harness';
+import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
+import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
+import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import {
   NameAndOptionsSectionComponent,
 } from 'app/pages/datasets/components/dataset-form/sections/name-and-options-section/name-and-options-section.component';

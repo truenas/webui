@@ -24,7 +24,7 @@ export class ThemeService {
   allThemes: Theme[] = allThemes;
   loadTheme$ = new Subject<string>();
 
-  private utils: ThemeUtils;
+  private utils = new ThemeUtils();
 
   get isDefaultTheme(): boolean {
     return this.activeTheme === this.defaultTheme;
@@ -34,8 +34,6 @@ export class ThemeService {
     private store$: Store<AppState>,
     @Inject(WINDOW) private window: Window,
   ) {
-    this.utils = new ThemeUtils();
-
     this.loadTheme$.subscribe(() => {
       const savedTheme = this.window.sessionStorage.getItem('theme') || defaultTheme.name;
 

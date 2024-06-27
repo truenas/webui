@@ -1,8 +1,8 @@
 import { Location } from '@angular/common';
 import { Injectable } from '@angular/core';
+import { AdvancedSearchQuery, BasicSearchQuery, SearchQuery } from 'app/modules/forms/search-input/types/search-query.interface';
 import { TablePagination } from 'app/modules/ix-table/interfaces/table-pagination.interface';
 import { TableSort } from 'app/modules/ix-table/interfaces/table-sort.interface';
-import { AdvancedSearchQuery, BasicSearchQuery, SearchQuery } from 'app/modules/search-input/types/search-query.interface';
 
 export interface UrlOptions<T> {
   sorting?: TableSort<T>;

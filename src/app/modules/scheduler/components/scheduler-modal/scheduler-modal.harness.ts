@@ -2,7 +2,7 @@ import { ComponentHarness, parallel } from '@angular/cdk/testing';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatCheckboxHarness } from '@angular/material/checkbox/testing';
 import { DayOfTheWeekRange, MonthRange } from 'cron-parser/types';
-import { IxInputHarness } from 'app/modules/ix-forms/components/ix-input/ix-input.harness';
+import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
 
 export class SchedulerModalHarness extends ComponentHarness {
   static hostSelector = 'ix-scheduler-modal';

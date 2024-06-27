@@ -1,7 +1,7 @@
 import { createComponentFactory, Spectator, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-datetime.pipe';
-import { IxDateModule } from 'app/modules/ix-date/ix-date.module';
+import { IxDateModule } from 'app/modules/pipes/ix-date/ix-date.module';
 import {
   CronSchedulePreview,
 } from 'app/modules/scheduler/classes/cron-schedule-preview/cron-schedule-preview';

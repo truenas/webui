@@ -15,7 +15,7 @@ import { VirtualMachine, VirtualMachineUpdate } from 'app/interfaces/virtual-mac
 import { VmDevice, VmDeviceUpdate } from 'app/interfaces/vm-device.interface';
 import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { SummarySection } from 'app/modules/summary/summary.interface';
 import { VmGpuService } from 'app/pages/vm/utils/vm-gpu.service';

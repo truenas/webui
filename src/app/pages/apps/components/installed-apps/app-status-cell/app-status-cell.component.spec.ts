@@ -1,8 +1,8 @@
 import { createHostFactory, SpectatorHost } from '@ngneat/spectator/jest';
-import { CoreComponents } from 'app/core/core-components.module';
 import { JobState } from 'app/enums/job-state.enum';
 import { ChartScaleQueryParams, ChartScaleResult } from 'app/interfaces/chart-release-event.interface';
 import { Job } from 'app/interfaces/job.interface';
+import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 import { AppStatusCellComponent } from 'app/pages/apps/components/installed-apps/app-status-cell/app-status-cell.component';
 import { AppStatus } from 'app/pages/apps/enum/app-status.enum';
 
@@ -11,7 +11,9 @@ describe('AppStatusCellComponent', () => {
 
   const createHost = createHostFactory({
     component: AppStatusCellComponent,
-    imports: [CoreComponents],
+    imports: [
+      MapValuePipe,
+    ],
   });
 
   function setupTest(

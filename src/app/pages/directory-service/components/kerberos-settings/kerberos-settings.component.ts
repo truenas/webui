@@ -7,8 +7,8 @@ import { Role } from 'app/enums/role.enum';
 import { helptextKerberosSettings } from 'app/helptext/directory-service/kerberos-settings';
 import { KerberosConfigUpdate } from 'app/interfaces/kerberos-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
-import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
+import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
 

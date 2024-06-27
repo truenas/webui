@@ -7,8 +7,8 @@ import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.u
 import { AlertLevel } from 'app/enums/alert-level.enum';
 import { AlertPolicy } from 'app/enums/alert-policy.enum';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
-import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
+import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
+import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { AlertConfigFormComponent } from 'app/pages/system/alert-config-form/alert-config-form.component';
 import { WebSocketService } from 'app/services/ws.service';

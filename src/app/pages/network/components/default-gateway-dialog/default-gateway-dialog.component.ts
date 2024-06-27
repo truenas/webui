@@ -10,8 +10,8 @@ import { toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import { helptextNetworkConfiguration } from 'app/helptext/network/configuration/configuration';
 import { helptextIpmi } from 'app/helptext/network/ipmi/ipmi';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
-import { ipv4Validator } from 'app/modules/ix-forms/validators/ip-validation';
+import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
+import { ipv4Validator } from 'app/modules/forms/ix-forms/validators/ip-validation';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
 

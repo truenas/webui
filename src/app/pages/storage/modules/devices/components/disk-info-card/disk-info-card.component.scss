@@ -3,7 +3,7 @@
 .card {
   @include details-card();
 
-  ix-copy-btn {
+  ix-copy-button {
     height: 24px;
     width: 24px;
   }

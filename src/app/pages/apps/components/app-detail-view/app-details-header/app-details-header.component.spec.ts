@@ -13,6 +13,7 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { CleanLinkPipe } from 'app/modules/pipes/clean-link/clean-link.pipe';
 import { AppCardLogoComponent } from 'app/pages/apps/components/app-card-logo/app-card-logo.component';
 import {
   AppDetailsHeaderComponent,
@@ -40,7 +41,10 @@ describe('AppDetailsHeaderComponent', () => {
 
   const createComponent = createComponentFactory({
     component: AppDetailsHeaderComponent,
-    imports: [ViewContainerRef],
+    imports: [
+      ViewContainerRef,
+      CleanLinkPipe,
+    ],
     declarations: [
       MockComponent(AppCardLogoComponent),
     ],

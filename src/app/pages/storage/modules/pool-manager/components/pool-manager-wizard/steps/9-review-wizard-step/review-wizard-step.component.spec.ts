@@ -7,11 +7,12 @@ import {
 } from '@ngneat/spectator/jest';
 import { BehaviorSubject, of } from 'rxjs';
 import { GiB } from 'app/constants/bytes.constant';
-import { CoreComponents } from 'app/core/core-components.module';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { DiskType } from 'app/enums/disk-type.enum';
 import { CreateVdevLayout, VdevType } from 'app/enums/v-dev-type.enum';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { IxFileSizePipe } from 'app/modules/pipes/ix-file-size/ix-file-size.pipe';
+import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 import {
   InspectVdevsDialogComponent,
 } from 'app/pages/storage/modules/pool-manager/components/inspect-vdevs-dialog/inspect-vdevs-dialog.component';
@@ -65,7 +66,8 @@ describe('ReviewWizardStepComponent', () => {
   const createComponent = createComponentFactory({
     component: ReviewWizardStepComponent,
     imports: [
-      CoreComponents,
+      IxFileSizePipe,
+      MapValuePipe,
     ],
     declarations: [
       TopologyCategoryDescriptionPipe,

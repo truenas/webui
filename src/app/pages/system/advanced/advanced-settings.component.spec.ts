@@ -2,8 +2,8 @@ import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { MockComponents, MockModule } from 'ng-mocks';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
 import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
-import { SearchInput1Component } from 'app/modules/search-input1/search-input1.component';
 import { AccessCardComponent } from 'app/pages/system/advanced/access/access-card/access-card.component';
 import { AdvancedSettingsComponent } from 'app/pages/system/advanced/advanced-settings.component';
 import {

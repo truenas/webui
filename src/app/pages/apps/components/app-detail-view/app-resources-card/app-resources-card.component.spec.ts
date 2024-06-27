@@ -3,6 +3,7 @@ import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { BehaviorSubject, of } from 'rxjs';
 import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
+import { IxFileSizePipe } from 'app/modules/pipes/ix-file-size/ix-file-size.pipe';
 import { AppResourcesCardComponent } from 'app/pages/apps/components/app-detail-view/app-resources-card/app-resources-card.component';
 import { KubernetesStore } from 'app/pages/apps/store/kubernetes-store.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -15,6 +16,9 @@ describe('AppResourcesCardComponent', () => {
 
   const createComponent = createComponentFactory({
     component: AppResourcesCardComponent,
+    imports: [
+      IxFileSizePipe,
+    ],
     providers: [
       mockWebSocket([
         mockCall('pool.dataset.get_instance', {

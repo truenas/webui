@@ -7,9 +7,9 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { throwError } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
-import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
-import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
-import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
+import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
+import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
+import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { ChangePasswordDialogComponent } from 'app/modules/layout/components/topbar/change-password-dialog/change-password-dialog.component';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { WebSocketService } from 'app/services/ws.service';

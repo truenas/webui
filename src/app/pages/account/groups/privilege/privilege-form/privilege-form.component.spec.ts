@@ -8,11 +8,11 @@ import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.u
 import { Role } from 'app/enums/role.enum';
 import { Group } from 'app/interfaces/group.interface';
 import { Privilege, PrivilegeRole } from 'app/interfaces/privilege.interface';
-import { IxSelectHarness } from 'app/modules/ix-forms/components/ix-select/ix-select.harness';
-import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
-import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
-import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
+import { IxSelectHarness } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.harness';
+import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in.token';
+import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
+import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { PrivilegeFormComponent } from 'app/pages/account/groups/privilege/privilege-form/privilege-form.component';
 import { WebSocketService } from 'app/services/ws.service';
 

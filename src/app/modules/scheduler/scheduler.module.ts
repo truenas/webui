@@ -9,9 +9,9 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatSelectModule } from '@angular/material/select';
 import { TranslateModule } from '@ngx-translate/core';
 import { CoreComponents } from 'app/core/core-components.module';
-import { IxDateModule } from 'app/modules/ix-date/ix-date.module';
-import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
+import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
+import { IxDateModule } from 'app/modules/pipes/ix-date/ix-date.module';
 import { SchedulerComponent } from 'app/modules/scheduler/components/scheduler/scheduler.component';
 import {
   SchedulerDateExamplesComponent,
@@ -24,7 +24,7 @@ import {
 } from 'app/modules/scheduler/components/scheduler-modal/scheduler-preview-column/scheduler-preview-column.component';
 import { CrontabExplanationPipe } from 'app/modules/scheduler/pipes/crontab-explanation.pipe';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
-import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
+import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
 
 @NgModule({
   imports: [
@@ -32,7 +32,6 @@ import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
     TranslateModule,
     ReactiveFormsModule,
     IxDateModule,
-    TooltipModule,
     IxFormsModule,
     FormsModule,
     MatSelectModule,
@@ -44,6 +43,7 @@ import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
     MatCheckboxModule,
     CoreComponents,
     TestIdModule,
+    TooltipComponent,
   ],
   exports: [
     SchedulerComponent,

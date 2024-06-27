@@ -11,7 +11,7 @@ import { Role } from 'app/enums/role.enum';
 import { CloudSyncTask, CloudSyncTaskUpdate } from 'app/interfaces/cloud-sync-task.interface';
 import { CloudSyncCredential } from 'app/interfaces/cloudsync-credential.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { ChainedRef } from 'app/modules/ix-forms/components/ix-slide-in/chained-component-ref';
+import { ChainedRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/chained-component-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { CloudSyncWhatAndWhenComponent } from 'app/pages/data-protection/cloudsync/cloudsync-wizard/steps/cloudsync-what-and-when/cloudsync-what-and-when.component';
 import { CloudCredentialService } from 'app/services/cloud-credential.service';

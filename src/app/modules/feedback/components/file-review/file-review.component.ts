@@ -10,8 +10,8 @@ import { ticketAcceptedFiles } from 'app/enums/file-ticket.enum';
 import { helptextSystemSupport as helptext } from 'app/helptext/system/support';
 import { FeedbackDialogComponent } from 'app/modules/feedback/components/feedback-dialog/feedback-dialog.component';
 import { FeedbackService } from 'app/modules/feedback/services/feedback.service';
-import { ImageValidatorService } from 'app/modules/ix-forms/validators/image-validator/image-validator.service';
-import { rangeValidator } from 'app/modules/ix-forms/validators/range-validation/range-validation';
+import { ImageValidatorService } from 'app/modules/forms/ix-forms/validators/image-validator/image-validator.service';
+import { rangeValidator } from 'app/modules/forms/ix-forms/validators/range-validation/range-validation';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 
 export const maxRatingValue = 5;

@@ -8,7 +8,7 @@ import { Role } from 'app/enums/role.enum';
 import { helptextApps } from 'app/helptext/apps/apps';
 import { PullContainerImageParams } from 'app/interfaces/container-image.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
 

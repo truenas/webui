@@ -17,6 +17,8 @@ import { JobsPanelComponent } from 'app/modules/jobs/components/jobs-panel/jobs-
 import { JobEffects } from 'app/modules/jobs/store/job.effects';
 import { jobReducer } from 'app/modules/jobs/store/job.reducer';
 import { jobStateKey } from 'app/modules/jobs/store/job.selectors';
+import { FormatDateTimePipe } from 'app/modules/pipes/format-date-time/format-datetime.pipe';
+import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
 
 @NgModule({
@@ -35,6 +37,8 @@ import { TestIdModule } from 'app/modules/test-id/test-id.module';
     MatDialogModule,
     MatProgressSpinnerModule,
     TestIdModule,
+    FormatDateTimePipe,
+    MapValuePipe,
   ],
   declarations: [JobItemComponent, JobsPanelComponent],
   exports: [JobItemComponent, JobsPanelComponent],

@@ -18,9 +18,9 @@ import { CloudSyncCredential, CloudSyncCredentialUpdate } from 'app/interfaces/c
 import { CloudSyncProvider } from 'app/interfaces/cloudsync-provider.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { ChainedRef } from 'app/modules/ix-forms/components/ix-slide-in/chained-component-ref';
-import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
-import { forbiddenValues } from 'app/modules/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
+import { ChainedRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/chained-component-ref';
+import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
+import { forbiddenValues } from 'app/modules/forms/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import {
   BaseProviderFormComponent,

@@ -6,7 +6,7 @@ import {
 } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { of, tap } from 'rxjs';
-import { ChainedRef } from 'app/modules/ix-forms/components/ix-slide-in/chained-component-ref';
+import { ChainedRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/chained-component-ref';
 import { SlotPosition } from 'app/pages/dashboard/types/slot-position.enum';
 import { WidgetGroupSlot } from 'app/pages/dashboard/types/widget-group-slot.interface';
 import {

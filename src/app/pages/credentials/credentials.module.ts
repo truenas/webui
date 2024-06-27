@@ -15,12 +15,14 @@ import { FlexLayoutModule } from '@ngbracket/ngx-layout';
 import { TranslateModule } from '@ngx-translate/core';
 import { CoreComponents } from 'app/core/core-components.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
+import { CopyButtonComponent } from 'app/modules/buttons/copy-button/copy-button.component';
+import { OauthButtonModule } from 'app/modules/buttons/oauth-button/oauth-button.module';
 import { EntityModule } from 'app/modules/entity/entity.module';
-import { IxDynamicFormModule } from 'app/modules/ix-dynamic-form/ix-dynamic-form.module';
+import { IxDynamicFormModule } from 'app/modules/forms/ix-dynamic-form/ix-dynamic-form.module';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { IxTableModule } from 'app/modules/ix-table/ix-table.module';
 import { LayoutModule } from 'app/modules/layout/layout.module';
-import { OauthButtonModule } from 'app/modules/oauth-button/oauth-button.module';
+import { FormatDateTimePipe } from 'app/modules/pipes/format-date-time/format-datetime.pipe';
 import { SummaryComponent } from 'app/modules/summary/summary.component';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
 import {
@@ -173,6 +175,8 @@ import { CertificateSubjectComponent } from './certificates-dash/forms/common-st
     OauthButtonModule,
     CloudSyncProviderDescriptionComponent,
     SummaryComponent,
+    FormatDateTimePipe,
+    CopyButtonComponent,
   ],
 })
 export class CredentialsModule { }

@@ -4,7 +4,7 @@ import {
 import { Validators } from '@angular/forms';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { getAllFormErrors } from 'app/modules/ix-forms/utils/get-form-errors.utils';
+import { getAllFormErrors } from 'app/modules/forms/ix-forms/utils/get-form-errors.utils';
 import { WidgetSettingsComponent } from 'app/pages/dashboard/types/widget-component.interface';
 import { WidgetSettingsRef } from 'app/pages/dashboard/types/widget-settings-ref.interface';
 import { WidgetArbitraryTextSettings } from 'app/pages/dashboard/widgets/custom/arbitrary-text/widget-arbitrary-text.definition';

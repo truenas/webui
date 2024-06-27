@@ -45,7 +45,7 @@ import { Dataset, DatasetCreate, DatasetUpdate } from 'app/interfaces/dataset.in
 import { Option } from 'app/interfaces/option.interface';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
+import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
 import { DatasetFormService } from 'app/pages/datasets/components/dataset-form/utils/dataset-form.service';
 import {
   specialSmallBlockSizeOptions,

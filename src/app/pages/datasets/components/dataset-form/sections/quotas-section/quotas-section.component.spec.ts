@@ -3,9 +3,9 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { GiB } from 'app/constants/bytes.constant';
-import { IxCheckboxHarness } from 'app/modules/ix-forms/components/ix-checkbox/ix-checkbox.harness';
-import { IxFieldsetHarness } from 'app/modules/ix-forms/components/ix-fieldset/ix-fieldset.harness';
-import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
+import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.harness';
+import { IxFieldsetHarness } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.harness';
+import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
 import {
   QuotasSectionComponent,
 } from 'app/pages/datasets/components/dataset-form/sections/quotas-section/quotas-section.component';

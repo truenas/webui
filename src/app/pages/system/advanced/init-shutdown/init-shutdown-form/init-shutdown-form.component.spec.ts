@@ -11,10 +11,10 @@ import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.u
 import { InitShutdownScriptType } from 'app/enums/init-shutdown-script-type.enum';
 import { InitShutdownScriptWhen } from 'app/enums/init-shutdown-script-when.enum';
 import { InitShutdownScript } from 'app/interfaces/init-shutdown-script.interface';
-import { ChainedRef } from 'app/modules/ix-forms/components/ix-slide-in/chained-component-ref';
-import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
-import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
-import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
+import { ChainedRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/chained-component-ref';
+import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
+import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
+import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { InitShutdownFormComponent } from 'app/pages/system/advanced/init-shutdown/init-shutdown-form/init-shutdown-form.component';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';

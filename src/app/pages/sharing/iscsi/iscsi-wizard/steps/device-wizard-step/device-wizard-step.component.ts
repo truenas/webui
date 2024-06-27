@@ -8,7 +8,7 @@ import { IscsiExtentType, IscsiExtentUsefor } from 'app/enums/iscsi.enum';
 import { choicesToOptions, idNameArrayToOptions } from 'app/helpers/operators/options.operators';
 import { helptextSharingIscsi } from 'app/helptext/sharing';
 import { newOption } from 'app/interfaces/option.interface';
-import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
+import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
 import { IscsiWizardComponent } from 'app/pages/sharing/iscsi/iscsi-wizard/iscsi-wizard.component';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { IscsiService } from 'app/services/iscsi.service';

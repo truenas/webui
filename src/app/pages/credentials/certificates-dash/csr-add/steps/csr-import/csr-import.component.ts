@@ -6,7 +6,7 @@ import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import _ from 'lodash';
 import { helptextSystemCertificates } from 'app/helptext/system/certificates';
-import { matchOthersFgValidator } from 'app/modules/ix-forms/validators/password-validation/password-validation';
+import { matchOthersFgValidator } from 'app/modules/forms/ix-forms/validators/password-validation/password-validation';
 import { SummaryProvider, SummarySection } from 'app/modules/summary/summary.interface';
 import { getCertificatePreview } from 'app/pages/credentials/certificates-dash/utils/get-certificate-preview.utils';
 

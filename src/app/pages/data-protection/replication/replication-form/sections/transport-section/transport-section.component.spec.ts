@@ -10,12 +10,12 @@ import { NetcatMode } from 'app/enums/netcat-mode.enum';
 import { TransportMode } from 'app/enums/transport-mode.enum';
 import { KeychainCredential } from 'app/interfaces/keychain-credential.interface';
 import { ReplicationTask } from 'app/interfaces/replication-task.interface';
-import { SshCredentialsSelectModule } from 'app/modules/custom-selects/ssh-credentials-select/ssh-credentials-select.module';
-import { IxCheckboxHarness } from 'app/modules/ix-forms/components/ix-checkbox/ix-checkbox.harness';
-import { IxFieldsetHarness } from 'app/modules/ix-forms/components/ix-fieldset/ix-fieldset.harness';
-import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
-import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
+import { SshCredentialsSelectModule } from 'app/modules/forms/custom-selects/ssh-credentials-select/ssh-credentials-select.module';
+import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.harness';
+import { IxFieldsetHarness } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.harness';
+import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in.token';
+import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
 import {
   TransportSectionComponent,
 } from 'app/pages/data-protection/replication/replication-form/sections/transport-section/transport-section.component';

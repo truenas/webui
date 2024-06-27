@@ -1,9 +1,9 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { isValid } from 'date-fns';
-import { FormatDateTimePipe } from 'app/core/pipes/format-datetime.pipe';
 import { formatDistanceToNowShortened } from 'app/helpers/format-distance-to-now-shortened';
 import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/table-column.interface';
+import { FormatDateTimePipe } from 'app/modules/pipes/format-date-time/format-datetime.pipe';
 
 @Component({
   selector: 'ix-cell-relative-date',

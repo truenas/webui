@@ -1,8 +1,8 @@
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
-import { CoreComponents } from 'app/core/core-components.module';
 import { ProductType } from 'app/enums/product-type.enum';
 import { CopyrightLineComponent } from 'app/modules/layout/components/copyright-line/copyright-line.component';
+import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 import { SystemGeneralService } from 'app/services/system-general.service';
 
 describe('CopyrightLineComponent', () => {
@@ -10,7 +10,7 @@ describe('CopyrightLineComponent', () => {
   const createComponent = createComponentFactory({
     component: CopyrightLineComponent,
     imports: [
-      CoreComponents,
+      MapValuePipe,
     ],
     providers: [
       mockProvider(SystemGeneralService, {

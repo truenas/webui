@@ -6,8 +6,8 @@ import {
   merge, Observable, Subject, timer,
 } from 'rxjs';
 import { filter, take } from 'rxjs/operators';
-import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
-import { IxSlideInComponent } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.component';
+import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { IxSlideInComponent } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in.component';
 import { FocusService } from 'app/services/focus.service';
 
 @UntilDestroy()

@@ -14,7 +14,7 @@ import { helptextReplication } from 'app/helptext/data-protection/replication/re
 import { helptextGlobal } from 'app/helptext/global-helptext';
 import { newOption } from 'app/interfaces/option.interface';
 import { ReplicationCreate, ReplicationTask } from 'app/interfaces/replication-task.interface';
-import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
+import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
 
 @UntilDestroy()
 @Component({

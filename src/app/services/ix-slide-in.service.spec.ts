@@ -8,9 +8,9 @@ import { Router } from '@angular/router';
 import {
   createServiceFactory, mockProvider, SpectatorService, createComponentFactory, Spectator,
 } from '@ngneat/spectator/jest';
-import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
-import { IxSlideInComponent } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.component';
-import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
+import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { IxSlideInComponent } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in.component';
+import { SLIDE_IN_DATA } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { DiskFormComponent } from 'app/pages/storage/modules/disks/components/disk-form/disk-form.component';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 

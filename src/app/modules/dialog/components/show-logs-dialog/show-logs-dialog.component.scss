@@ -5,7 +5,7 @@
     &:hover,
     &:focus,
     &:active {
-      ix-copy-btn {
+      ix-copy-button {
         opacity: 1;
         visibility: visible;
       }
@@ -23,7 +23,7 @@
       }
     }
 
-    ix-copy-btn {
+    ix-copy-button {
       bottom: 0;
       opacity: 0;
       position: absolute;

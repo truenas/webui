@@ -17,8 +17,8 @@ import { ServiceName } from 'app/enums/service-name.enum';
 import { helptextDatasetForm } from 'app/helptext/storage/volumes/datasets/dataset-form';
 import { Dataset, DatasetCreate, DatasetUpdate } from 'app/interfaces/dataset.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
+import { IxSlideInRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/forms/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import {
   EncryptionSectionComponent,

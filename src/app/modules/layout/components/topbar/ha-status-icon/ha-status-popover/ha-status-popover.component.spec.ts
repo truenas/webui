@@ -1,16 +1,16 @@
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
-import { CoreComponents } from 'app/core/core-components.module';
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
 import {
   HaStatusPopoverComponent,
 } from 'app/modules/layout/components/topbar/ha-status-icon/ha-status-popover/ha-status-popover.component';
+import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 
 describe('HaStatusPopoverComponent', () => {
   let spectator: Spectator<HaStatusPopoverComponent>;
   const createComponent = createComponentFactory({
     component: HaStatusPopoverComponent,
-    imports: [CoreComponents],
+    imports: [MapValuePipe],
   });
 
   it('shows status when HA is enabled', () => {

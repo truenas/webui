@@ -2,9 +2,11 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { GiB } from 'app/constants/bytes.constant';
-import { CoreComponents } from 'app/core/core-components.module';
 import { DiskType } from 'app/enums/disk-type.enum';
 import { CreateVdevLayout, VdevType } from 'app/enums/v-dev-type.enum';
+import { CastPipe } from 'app/modules/pipes/cast/cast.pipe';
+import { IxFileSizePipe } from 'app/modules/pipes/ix-file-size/ix-file-size.pipe';
+import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 import {
   ConfigurationPreviewComponent,
 } from 'app/pages/storage/modules/pool-manager/components/configuration-preview/configuration-preview.component';
@@ -22,7 +24,9 @@ describe('ConfigurationPreviewComponent', () => {
   const createComponent = createComponentFactory({
     component: ConfigurationPreviewComponent,
     imports: [
-      CoreComponents,
+      IxFileSizePipe,
+      MapValuePipe,
+      CastPipe,
     ],
     declarations: [
       TopologyCategoryDescriptionPipe,
