@@ -91,10 +91,6 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy {
   }
 
   updateActiveTab(tab: ReportTab): void {
-    // Change the URL without reloading page/component
-    // the old fashioned way
-    this.window.history.replaceState({}, '', `/reportsdashboard/${tab.value}`);
-
     this.activateTab(tab);
 
     if (tab.value === ReportType.Disk) {
