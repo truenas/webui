@@ -7,8 +7,6 @@ import { Role } from 'app/enums/role.enum';
 import { helptextTopbar } from 'app/helptext/topbar';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { powerMenuElements } from 'app/modules/layout/components/topbar/power-menu/power-menu.elements';
-import { AuthService } from 'app/services/auth/auth.service';
-import { WebSocketConnectionService } from 'app/services/websocket-connection.service';
 
 @UntilDestroy()
 @Component({
@@ -22,18 +20,10 @@ export class PowerMenuComponent {
   protected searchableElements = powerMenuElements;
 
   constructor(
-    private authService: AuthService,
     private translate: TranslateService,
     private dialogService: DialogService,
     private router: Router,
-    private wsManager: WebSocketConnectionService,
   ) { }
-
-  onSignOut(): void {
-    this.authService.logout().pipe(untilDestroyed(this)).subscribe();
-    this.authService.clearAuthToken();
-    this.wsManager.isClosed$ = true;
-  }
 
   onReboot(): void {
     this.dialogService.confirm({

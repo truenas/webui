@@ -11,17 +11,6 @@
 </button>
 <mat-menu #powerMenu="matMenu">
   <button
-    name="power-log-out"
-    mat-menu-item
-    ixTest="log-out"
-    [ixUiSearch]="searchableElements.elements.logOut"
-    (click)="onSignOut()"
-  >
-    <ix-icon name="exit_to_app"></ix-icon>
-    {{ 'Log Out' | translate }}
-  </button>
-
-  <button
     *ixRequiresRoles="requiredRoles"
     name="power-restart"
     mat-menu-item
