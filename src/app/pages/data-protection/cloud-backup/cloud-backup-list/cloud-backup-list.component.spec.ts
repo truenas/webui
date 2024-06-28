@@ -133,6 +133,8 @@ describe('CloudBackupListComponent', () => {
     });
 
     expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('cloud_backup.sync', [1]);
+
+    expect(spectator.component.dataProvider.expandedRow).toEqual(cloudBackups[0]);
   });
 
   it('deletes a Cloud Backup with confirmation when Delete button is pressed', async () => {
