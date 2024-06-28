@@ -30,7 +30,7 @@ import { WebSocketService } from 'app/services/ws.service';
 
 const minAllowedRange = 1000;
 const maxAllowedRange = 2147483647;
-const customIdmapName = 'custom' as const;
+const customIdmapName = 'custom';
 
 @UntilDestroy()
 @Component({

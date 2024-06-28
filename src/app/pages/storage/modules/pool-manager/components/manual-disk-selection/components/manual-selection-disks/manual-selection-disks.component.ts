@@ -31,7 +31,7 @@ interface EnclosureGroup {
 
 type DiskOrGroup = EnclosureDisk | EnclosureGroup;
 
-const noEnclosureId = 'no-enclosure' as const;
+const noEnclosureId = 'no-enclosure';
 
 @UntilDestroy()
 @Component({

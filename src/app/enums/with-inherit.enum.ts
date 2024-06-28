@@ -1,3 +1,3 @@
 export type WithInherit<T> = T | typeof inherit;
 
-export const inherit = 'INHERIT' as const;
+export const inherit = 'INHERIT';

@@ -176,11 +176,11 @@ export class TrainService {
             this.updateService.releaseNotesUrl$.next(update.release_notes_url);
           }
         }
-        if (currentTrainDescription && currentTrainDescription.includes('[release]')) {
+        if (currentTrainDescription?.includes('[release]')) {
           this.releaseTrain$.next(true);
           this.preReleaseTrain$.next(false);
           this.nightlyTrain$.next(false);
-        } else if (currentTrainDescription.includes('[prerelease]')) {
+        } else if (currentTrainDescription?.includes('[prerelease]')) {
           this.releaseTrain$.next(false);
           this.preReleaseTrain$.next(true);
           this.nightlyTrain$.next(false);

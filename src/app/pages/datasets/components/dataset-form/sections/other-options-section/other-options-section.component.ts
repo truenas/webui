@@ -212,7 +212,7 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
     }
 
     this.store$.pipe(waitForSystemInfo, untilDestroyed(this)).subscribe((systemInfo) => {
-      if (!systemInfo.license || !systemInfo.license.features.includes(LicenseFeature.Dedup)) {
+      if (!systemInfo.license?.features.includes(LicenseFeature.Dedup)) {
         return;
       }
 

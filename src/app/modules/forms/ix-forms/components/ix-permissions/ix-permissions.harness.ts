@@ -99,8 +99,8 @@ export class IxPermissionsHarness extends ComponentHarness implements IxFormCont
         .then(() => {
           resolve();
         })
-        .catch((errors) => {
-          reject(errors);
+        .catch((errors: unknown) => {
+          reject(new Error(`Promise rejected with errors: ${String(errors)}`));
         });
     });
   }

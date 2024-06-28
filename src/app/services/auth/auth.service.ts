@@ -207,7 +207,7 @@ export class AuthService {
         // Check if user has access to webui.
         return this.getLoggedInUserInformation().pipe(
           switchMap((user) => {
-            if (!user.privilege || !user.privilege.webui_access) {
+            if (!user.privilege?.webui_access) {
               this.isLoggedIn$.next(false);
               return of(LoginResult.NoAccess);
             }
