@@ -4,7 +4,7 @@ import {
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { filter } from 'rxjs';
+import { filter, map } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
 import { CloudBackup, CloudBackupSnapshot } from 'app/interfaces/cloud-backup.interface';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
@@ -67,8 +67,10 @@ export class CloudBackupSnapshotsComponent implements OnChanges {
       return;
     }
 
-    const cloudBackupSnapshots$ = this.ws.call('cloud_backup.list_snapshots', [this.backup.id])
-      .pipe(untilDestroyed(this));
+    const cloudBackupSnapshots$ = this.ws.call('cloud_backup.list_snapshots', [this.backup.id]).pipe(
+      map((snapshots) => [...snapshots].sort((a, b) => b.time.$date - a.time.$date)),
+      untilDestroyed(this),
+    );
     this.dataProvider = new AsyncDataProvider<CloudBackupSnapshot>(cloudBackupSnapshots$);
     this.getCloudBackupSnapshots();
   }
