@@ -4,10 +4,11 @@ import { DiskType } from 'app/enums/disk-type.enum';
 import { EnclosureDiskStatus, EnclosureElementType } from 'app/enums/enclosure-slot-status.enum';
 import { VdevType } from 'app/enums/v-dev-type.enum';
 import { DashboardEnclosure, DashboardEnclosureSlot } from 'app/interfaces/enclosure.interface';
-import { EnclosureDiskComponent } from 'app/pages/system/enclosure/components/disk-component/disk.component';
+import { IxFileSizePipe } from 'app/modules/pipes/ix-file-size/ix-file-size.pipe';
 import { DisksOverviewDetailsComponent } from 'app/pages/system/enclosure/components/pages/enclosure-page/enclosure-view/disks-overview/disks-overview-details/disks-overview-details.component';
 import { DisksOverviewTilesComponent } from 'app/pages/system/enclosure/components/pages/enclosure-page/enclosure-view/disks-overview/disks-overview-tiles/disks-overview-tiles.component';
 import { DisksOverviewComponent } from 'app/pages/system/enclosure/components/pages/enclosure-page/enclosure-view/disks-overview/disks-overview.component';
+import { EnclosureDiskComponent } from 'app/pages/system/enclosure/components/pages/enclosure-page/enclosure-view/disks-overview/enclosure-disk/enclosure-disk.component';
 import { EnclosureStore } from 'app/pages/system/enclosure/services/enclosure.store';
 import { EnclosureView } from 'app/pages/system/enclosure/types/enclosure-view.enum';
 
@@ -66,6 +67,9 @@ describe('DisksOverviewComponent', () => {
 
   const createComponent = createComponentFactory({
     component: DisksOverviewComponent,
+    imports: [
+      IxFileSizePipe,
+    ],
     providers: [
       mockProvider(EnclosureStore, {
         selectedEnclosure: () => fakeSelectedEnclosure,
