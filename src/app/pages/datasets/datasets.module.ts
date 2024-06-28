@@ -14,7 +14,6 @@ import { FlexLayoutModule } from '@ngbracket/ngx-layout';
 import { TranslateModule } from '@ngx-translate/core';
 import { BaseChartDirective } from 'ng2-charts';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
-import { CoreComponents } from 'app/core/core-components.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { CopyButtonComponent } from 'app/modules/buttons/copy-button/copy-button.component';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
@@ -80,7 +79,6 @@ import { DatasetNodeComponent } from './components/dataset-node/dataset-node.com
     MatDialogModule,
     EntityModule,
     NgxSkeletonLoaderModule,
-    CoreComponents,
     AppLoaderModule,
     SnapshotsModule,
     TestIdModule,

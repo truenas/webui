@@ -14,7 +14,6 @@ import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { DndModule } from 'ngx-drag-drop';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
-import { CoreComponents } from 'app/core/core-components.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { DiskIconComponent } from 'app/modules/disk-icon/disk-icon.component';
 import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
@@ -87,7 +86,6 @@ import { DataWizardStepComponent } from './components/pool-manager-wizard/steps/
     CommonModule,
     TestIdModule,
     AppLoaderModule,
-    CoreComponents,
     NgxSkeletonLoaderModule,
     MatCheckboxModule,
     MatListModule,
