@@ -480,6 +480,7 @@
   "Drives and IDs registered to the Microsoft account.  Selecting a drive also fills the <i>Drive ID</i> field.": "",
   "Drop session": "",
   "Dropbox": "",
+  "Dry run completed.": "",
   "Edit Trim": "",
   "Edit widget to choose network interface.": "",
   "Editing interface will result in default gateway being removed, which may result in TrueNAS being inaccessible. You can provide new default gateway now:": "",

@@ -381,6 +381,7 @@
   "Drive reserved for inserting into DATA pool VDEVs when an active drive has failed.": "",
   "Drop session": "",
   "Dropbox": "",
+  "Dry run completed.": "",
   "Each disk stores data. A stripe requires at least one disk and has no data redundancy.": "",
   "Edit ACL": "",
   "Edit Expansion Shelf": "",
