@@ -201,7 +201,7 @@ describe('ServiceSmbComponent', () => {
       'File Mask': '0666',
       'Directory Mask': '0777',
       'Bind IP Addresses': ['1.1.1.1', '2.2.2.2'],
-      'Transport Encryption Behavior': 'Default – follow upstream / TruNAS default',
+      'Transport Encryption Behavior': 'Default – follow upstream / TrueNAS default',
     });
 
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));

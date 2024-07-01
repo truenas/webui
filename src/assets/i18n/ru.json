@@ -616,7 +616,7 @@
   "Default Checksum Warning": "",
   "Default Route": "",
   "Default TrueNAS controller": "",
-  "Default – follow upstream / TruNAS default": "",
+  "Default – follow upstream / TrueNAS default": "",
   "Defect": "",
   "Define a length of time to retain the snapshot on this system. After the   time expires, the snapshot is removed. Snapshots which have been replicated   to other systems are not affected.": "",
   "Define a number of minutes for <a href=\"https://linux.die.net/man/8/smartd\" target=\"_blank\">smartd</a> to wake up and check if any tests are configured to run.": "",

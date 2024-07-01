@@ -317,7 +317,7 @@
   "Dataset «{name}» updated.": "",
   "De-duplication tables are stored on this special VDEV type. These VDEVs must be sized to X GiB for each X TiB of general storage.": "",
   "Debugs may contain log files with personal information such as usernames or other identifying information about your system.": "",
-  "Default – follow upstream / TruNAS default": "",
+  "Default – follow upstream / TrueNAS default": "",
   "Defect": "",
   "Define whether the control channel,  data channel, both channels, or neither channel of an FTP  session must occur over SSL/TLS. The policies are described  <a href=\"http://www.proftpd.org/docs/directives/configuration_full.html#TLSREQUIRED\" target=\"_blank\">here</a>": "",
   "Delay VM Boot Until SPICE Connects": "",
