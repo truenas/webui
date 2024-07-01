@@ -77,8 +77,15 @@ export const helptextCloudSync = {
   transfer_mode_warning_move: T('<b>MOVE</b>: After files are <i><u>copied</u></i> from the source to the destination, they are\
  <i><u>deleted</u></i> from the source. Files with the same names on the destination are <i><u>overwritten</u></i>.'),
 
-  snapshot_placeholder: T('Take Snapshot'),
-  snapshot_tooltip: T('Set to take a snapshot of the dataset before a <i>PUSH</i>.'),
+  snapshot_placeholder: T('Use Snapshot'),
+  snapshot_tooltip: T('This option ensures data consistency by creating a snapshot at the\
+ start of the backup or synchronization task. The process involves the following steps:</br></br>\
+ 1. Snapshot Creation: A snapshot of the current state is taken at the moment the task is initiated.</br></br>\
+ 2. Backup/Sync Operation: The task utilizes the snapshot contents to perform the backup or synchronization,\
+ ensuring that the data remains consistent and unchanged during the operation.</br></br>\
+ 3. Snapshot Removal: Once the task is completed, the snapshot is automatically removed to save storage space.</br></br>\
+ This mechanism guarantees that the backup or synchronization task captures an exact state of your\
+ data at the start, even if changes occur during the process.'),
 
   pre_script_placeholder: T('Pre-script'),
   pre_script_tooltip: T('Script to execute before running sync.'),
