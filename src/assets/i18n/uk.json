@@ -420,7 +420,6 @@
   "Enter a password for the SPICE display.": "",
   "Enter a shell glob pattern to match files and directories to exclude from the backup.": "",
   "Enter a unique name for the dataset. The dataset name length is calculated by adding the length of this field's value and the length of the parent path field value. The length of 'Parent Path' and 'Name' added together cannot exceed 200 characters. Because of this length validation on this field accounts for the parent path as well. Furthermore, the maximum nested directory levels allowed is 50. You can't create a dataset that's at the 51st level in the directory hierarchy after you account for the nested levels in the parent path.": "",
-  "Enter a valid IPv4 or IPv6 address.": "",
   "Enter path for {label}.{multiple}": "",
   "Enter the name of the new bucket. Only lowercase letters, numbers, and hyphens are allowed.": "",
   "Enter the number of last kept backups.": "",

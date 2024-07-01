@@ -116,13 +116,7 @@ export class PortalWizardStepComponent implements OnInit {
 
   addAddress(): void {
     this.form.controls.listen.push(
-      this.fb.control('', [
-        this.validatorsService.withMessage(
-          ipValidator('all'),
-          this.translate.instant('Enter a valid IPv4 or IPv6 address.'),
-        ),
-        Validators.required,
-      ]),
+      this.fb.control('', [Validators.required, ipValidator('all')]),
     );
   }
 
