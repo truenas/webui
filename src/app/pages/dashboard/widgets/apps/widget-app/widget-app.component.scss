@@ -2,11 +2,13 @@
 
 :host ::ng-deep ix-with-loading-state-error {
   align-items: center;
+  box-sizing: border-box;
   display: flex;
   flex: 1;
   font-size: 24px;
   font-weight: bold;
   height: 100%;
+  padding: 16px;
   place-content: center center;
   text-align: center;
   width: 100%;
@@ -15,10 +17,20 @@
 .card {
   height: 100%;
 
+  ::ng-deep > ix-with-loading-state-loader {
+    align-items: center;
+    box-sizing: border-box;
+    display: flex;
+    height: 100%;
+    justify-content: center;
+    width: 100%;
+  }
+
   .header {
-    align-items: baseline;
+    align-items: center;
     display: flex;
     justify-content: space-between;
+    min-height: 54px;
     padding: 16px 8px 8px 16px;
   }
 
@@ -80,14 +92,18 @@ ix-app-card-logo {
   flex-direction: column;
   max-width: 70%;
 
-  .header {
+  .app-header {
+    align-items: baseline;
     border-bottom: 1px solid var(--lines);
     display: flex;
     justify-content: space-between;
+    min-height: 48px;
     padding: 8px;
   }
 
   .status {
+    display: flex;
+    flex-direction: column;
     font-size: 16px;
     font-weight: bold;
     padding: 8px 12px;
@@ -103,6 +119,12 @@ ix-app-card-logo {
       gap: 6px;
       justify-content: flex-start;
     }
+
+    ::ng-deep ix-with-loading-state-loader {
+      height: 24px;
+      margin-bottom: 4px;
+      margin-top: 4px;
+    }
   }
 }
 
@@ -110,6 +132,7 @@ ix-app-card-logo {
   display: flex;
   gap: 8px;
   margin-bottom: 6px;
+  min-height: 112px;
 }
 
 .app-stats {
@@ -177,6 +200,12 @@ ix-app-card-logo {
   .in-out {
     font-size: 12px;
   }
+
+  .in-out-row {
+    align-items: center;
+    display: flex;
+    gap: 8px;
+  }
 }
 
 .ix-icon {
@@ -191,5 +220,12 @@ ix-app-card-logo {
 
   &.mdi-stop-circle {
     color: var(--red);
+  }
+}
+
+.chart-graph {
+  .skeleton {
+    display: flex;
+    padding: 4px;
   }
 }

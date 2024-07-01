@@ -36,16 +36,17 @@ export class ViewChartAreaComponent implements OnDestroy {
   config = computed<ChartConfiguration>(() => {
     const data = this.data();
     const options = this.options();
+
     return { type: 'line', data, options };
   });
 
   constructor() {
     effect(() => {
-      if (this.options() || !this.chart) {
+      if (this.options() && !this.chart) {
         this.render();
       }
 
-      if (this.data() && this.chart) {
+      if (this.options() && this.data() && this.chart) {
         this.chart.data = this.data();
         this.chart.update();
       }
@@ -53,7 +54,7 @@ export class ViewChartAreaComponent implements OnDestroy {
   }
 
   render(): void {
-    if (!this.data()) {
+    if (!this.data() || !this.options()) {
       return;
     }
 

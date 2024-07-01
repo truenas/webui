@@ -7,7 +7,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { ChartData } from 'chart.js';
 import {
-  distinctUntilChanged, shareReplay,
+  shareReplay,
   tap,
 } from 'rxjs';
 import { chartStatusIcons } from 'app/enums/chart-release-status.enum';
@@ -43,10 +43,9 @@ export class WidgetAppComponent implements WidgetComponent<WidgetAppSettings> {
     return this.resources.getAppStats(this.appName()).pipe(
       tap((realtimeStats) => {
         this.cachedNetworkStats.update((cachedStats) => {
-          return [...cachedStats, Object.values(realtimeStats.network)];
+          return [...cachedStats, Object.values(realtimeStats.network)].slice(-60);
         });
       }),
-      distinctUntilChanged(),
       toLoadingState(),
       shareReplay({ bufferSize: 1, refCount: true }),
     );
