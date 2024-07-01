@@ -9,6 +9,7 @@ import { SlotSize } from 'app/pages/dashboard/types/widget.interface';
 import { WidgetDatapointComponent } from 'app/pages/dashboard/widgets/common/widget-datapoint/widget-datapoint.component';
 import { UptimePipe } from 'app/pages/dashboard/widgets/system/common/uptime.pipe';
 import { WidgetSystemUptimeComponent } from 'app/pages/dashboard/widgets/system/widget-system-uptime/widget-system-uptime.component';
+import { LocaleService } from 'app/services/locale.service';
 
 describe('WidgetSystemUptimeComponent', () => {
   let spectator: Spectator<WidgetSystemUptimeComponent>;
@@ -32,6 +33,9 @@ describe('WidgetSystemUptimeComponent', () => {
           size: SlotSize.Full,
         },
         providers: [
+          mockProvider(LocaleService, {
+            getDateAndTime: () => ['2024-03-15', '10:34:11'],
+          }),
           mockProvider(WidgetResourcesService, {
             systemInfo$: of({
               value: {
@@ -81,6 +85,9 @@ describe('WidgetSystemUptimeComponent', () => {
     beforeEach(() => {
       spectator = createComponent({
         providers: [
+          mockProvider(LocaleService, {
+            getDateAndTime: () => ['2024-03-15', '10:34:11'],
+          }),
           mockProvider(WidgetResourcesService, {
             systemInfo$: of({
               value: null,

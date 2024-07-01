@@ -13,6 +13,7 @@ import { selectUpdateJobForPassiveNode } from 'app/modules/jobs/store/job.select
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
 import { SlotSize } from 'app/pages/dashboard/types/widget.interface';
 import { getSystemVersion } from 'app/pages/dashboard/widgets/system/common/widget-sys-info.utils';
+import { LocaleService } from 'app/services/locale.service';
 import { AppState } from 'app/store';
 import { selectCanFailover, selectIsHaEnabled, selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import {
@@ -55,14 +56,19 @@ export class WidgetSysInfoPassiveComponent {
 
   version = computed(() => getSystemVersion(this.systemInfo().version, this.systemInfo().codename));
   uptime = computed(() => this.systemInfo().uptime_seconds + this.realElapsedSeconds());
-  datetime = computed(() => this.systemInfo().datetime.$date + (this.realElapsedSeconds() * 1000));
+  datetime = computed(() => {
+    const [dateValue, timeValue] = this.localeService.getDateAndTime(this.systemInfo().timezone);
+    return new Date(`${dateValue} ${timeValue}`).getTime() + (this.realElapsedSeconds() * 1000);
+  });
   isLoaded = computed(() => this.systemInfo());
 
+  // this.localeService.getDateAndTime(generalConfig.timezone)?.[0]
   constructor(
     private resources: WidgetResourcesService,
     private dialog: DialogService,
     private store$: Store<AppState>,
     private router: Router,
+    private localeService: LocaleService,
   ) {
     this.resources.refreshSystemInfo();
   }
