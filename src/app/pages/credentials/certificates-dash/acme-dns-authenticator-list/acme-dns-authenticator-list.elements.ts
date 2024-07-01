@@ -9,9 +9,8 @@ export const acmeDnsAuthenticatorListElements = {
       anchor: 'acme-dns-authenticator-list',
     },
     add: {
-      hierarchy: [T('Add')],
+      hierarchy: [T('Add ACME DNS-Authenticator')],
       synonyms: [
-        T('Add ACME DNS-Authenticator'),
         T('New ACME DNS-Authenticator'),
         T('Create ACME DNS-Authenticator'),
         T('ACME DNS-Authenticator'),
