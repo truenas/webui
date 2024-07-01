@@ -209,6 +209,7 @@
   "Enter a name of the TrueCloud Backup Task.": "",
   "Enter a password for the SPICE display.": "",
   "Enter a shell glob pattern to match files and directories to exclude from the backup.": "",
+  "Enter a valid IPv4 or IPv6 address.": "",
   "Enter the name of the new bucket. Only lowercase letters, numbers, and hyphens are allowed.": "",
   "Enter the number of last kept backups.": "",
   "Eula": "",

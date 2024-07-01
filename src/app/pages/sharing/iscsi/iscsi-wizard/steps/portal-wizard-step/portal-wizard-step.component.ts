@@ -11,7 +11,7 @@ import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { helptextSharingIscsi } from 'app/helptext/sharing';
 import { newOption } from 'app/interfaces/option.interface';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
-import { ipv4Validator } from 'app/modules/forms/ix-forms/validators/ip-validation';
+import { ipValidator } from 'app/modules/forms/ix-forms/validators/ip-validation';
 import { IscsiWizardComponent } from 'app/pages/sharing/iscsi/iscsi-wizard/iscsi-wizard.component';
 import { IscsiService } from 'app/services/iscsi.service';
 
@@ -117,7 +117,10 @@ export class PortalWizardStepComponent implements OnInit {
   addAddress(): void {
     this.form.controls.listen.push(
       this.fb.control('', [
-        this.validatorsService.withMessage(ipv4Validator(), this.translate.instant('Enter a valid IPv4 address.')),
+        this.validatorsService.withMessage(
+          ipValidator('all'),
+          this.translate.instant('Enter a valid IPv4 or IPv6 address.'),
+        ),
         Validators.required,
       ]),
     );
