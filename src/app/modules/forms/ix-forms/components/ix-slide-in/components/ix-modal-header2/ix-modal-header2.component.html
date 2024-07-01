@@ -1,9 +1,9 @@
 <div
   class="ix-slidein-title-bar"
   fxLayout="row"
-  [fxLayoutAlign]="componentsSize > 1 ? 'left center' : 'space-between center'"
+  [fxLayoutAlign]="componentsSize() > 1 ? 'left center' : 'space-between center'"
 >
-  <ng-container *ngIf="componentsSize > 1 && !disableClose">
+  <ng-container *ngIf="componentsSize() > 1 && !disableClose">
     <button
       mat-icon-button
       id="ix-close-icon"
@@ -18,7 +18,7 @@
     {{ title | translate }}
     <ix-readonly-badge *ngIf="requiredRoles?.length && !(hasRequiredRoles | async)"></ix-readonly-badge>
   </h3>
-  <ng-container *ngIf="componentsSize <= 1 && !disableClose">
+  <ng-container *ngIf="componentsSize() <= 1 && !disableClose">
     <button
       mat-icon-button
       id="ix-close-icon"
