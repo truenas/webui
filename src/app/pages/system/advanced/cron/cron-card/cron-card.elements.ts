@@ -8,6 +8,7 @@ export const cronCardElements = {
   elements: {
     addCronJob: {
       hierarchy: [T('Add')],
+      anchor: 'add-cron-job',
       synonyms: [
         T('Add Cron Job'),
         T('Create Cron Job'),

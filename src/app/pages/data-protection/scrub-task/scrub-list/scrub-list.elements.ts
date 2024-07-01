@@ -16,6 +16,7 @@ export const scrubListElements = {
         T('New Scrub Task'),
         T('Task'),
       ],
+      anchor: 'add-scrub',
     },
   },
 } satisfies UiSearchableElement;

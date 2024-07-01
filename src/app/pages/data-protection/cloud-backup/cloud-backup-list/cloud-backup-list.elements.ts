@@ -10,6 +10,7 @@ export const cloudBackupListElements = {
     },
     add: {
       hierarchy: [T('Add')],
+      anchor: 'add-cloud-backup',
       synonyms: [
         T('Add TrueCloud Backup Task'),
         T('Add Cloud Backup'),

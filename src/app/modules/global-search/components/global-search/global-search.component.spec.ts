@@ -11,6 +11,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { Role } from 'app/enums/role.enum';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { GlobalSearchComponent } from 'app/modules/global-search/components/global-search/global-search.component';
 import { GlobalSearchResultsComponent } from 'app/modules/global-search/components/global-search-results/global-search-results.component';
@@ -19,6 +20,8 @@ import * as focusHelper from 'app/modules/global-search/helpers/focus-helper';
 import { GlobalSearchSectionsProvider } from 'app/modules/global-search/services/global-search-sections.service';
 import { UiSearchProvider } from 'app/modules/global-search/services/ui-search.service';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { SidenavService } from 'app/services/sidenav.service';
 import { SystemInfoState } from 'app/store/system-info/system-info.reducer';
 import { selectSystemInfoState } from 'app/store/system-info/system-info.selectors';
 
@@ -51,6 +54,15 @@ describe('GlobalSearchComponent', () => {
       mockProvider(UiSearchProvider, {
         search: jest.fn().mockReturnValue(of(mockedSearchResults)),
         selectionChanged$: of(),
+      }),
+      mockProvider(IxSlideInService, {
+        closeAll: jest.fn(),
+      }),
+      mockProvider(SidenavService, {
+        closeSecondaryMenu: jest.fn(),
+      }),
+      mockProvider(DialogService, {
+        closeAllDialogs: jest.fn(),
       }),
       provideMockStore({
         selectors: [
@@ -161,4 +173,16 @@ describe('GlobalSearchComponent', () => {
     spectator.dispatchKeyboardEvent(inputElement, 'keydown', 'Enter');
     expect(focusHelper.moveToNextFocusableElement).toHaveBeenCalled();
   }));
+
+  it('should close all backdrops', () => {
+    const slideInService = spectator.inject(IxSlideInService);
+    const sidenavService = spectator.inject(SidenavService);
+    const dialogService = spectator.inject(DialogService);
+
+    spectator.component.closeAllBackdrops();
+
+    expect(slideInService.closeAll).toHaveBeenCalled();
+    expect(sidenavService.closeSecondaryMenu).toHaveBeenCalled();
+    expect(dialogService.closeAllDialogs).toHaveBeenCalled();
+  });
 });

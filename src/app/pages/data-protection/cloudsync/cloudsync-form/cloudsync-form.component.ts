@@ -29,7 +29,6 @@ import { newOption, SelectOption } from 'app/interfaces/option.interface';
 import { ExplorerNodeData, TreeNode } from 'app/interfaces/tree-node.interface';
 import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { TreeNodeProvider } from 'app/modules/forms/ix-forms/components/ix-explorer/tree-node-provider.interface';
 import { addNewIxSelectValue } from 'app/modules/forms/ix-forms/components/ix-select/ix-select-with-new-option.directive';
 import { ChainedRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/chained-component-ref';
@@ -664,28 +663,15 @@ export class CloudSyncFormComponent implements OnInit {
 
   onDryRun(): void {
     const payload = this.prepareData(this.form.value);
-    const dialogRef = this.matDialog.open(EntityJobComponent, {
-      data: { title: helptextCloudSync.job_dialog_title_dry_run },
-      disableClose: true,
-    });
-    dialogRef.componentInstance.setCall('cloudsync.sync_onetime', [payload, { dry_run: true }]);
-    dialogRef.componentInstance.showAbortButton = true;
-    dialogRef.componentInstance.showRealtimeLogs = true;
-    dialogRef.componentInstance.hideProgressValue = true;
-    dialogRef.componentInstance.aborted.pipe(untilDestroyed(this)).subscribe(() => {
-      dialogRef.componentInstance.showCloseButton = true;
-    });
-    dialogRef.componentInstance.submit();
-    dialogRef.componentInstance.aborted.pipe(untilDestroyed(this)).subscribe(() => {
-      dialogRef.componentInstance.showCloseButton = true;
-    });
-    dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
-      dialogRef.componentInstance.showCloseButton = true;
-    });
-    dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err) => {
-      this.matDialog.closeAll();
-      this.errorHandler.handleWsFormError(err, this.form);
-    });
+    this.dialog.jobDialog(
+      this.ws.job('cloudsync.sync_onetime', [payload, { dry_run: true }]),
+      { title: this.translate.instant(helptextCloudSync.job_dialog_title_dry_run) },
+    )
+      .afterClosed()
+      .pipe(untilDestroyed(this))
+      .subscribe(() => {
+        this.snackbar.success(this.translate.instant('Dry run completed.'));
+      });
   }
 
   onSubmit(): void {

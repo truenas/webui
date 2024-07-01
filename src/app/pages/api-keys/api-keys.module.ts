@@ -9,7 +9,6 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatSortModule } from '@angular/material/sort';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
-import { CoreComponents } from 'app/core/core-components.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
@@ -35,8 +34,6 @@ import { ApiKeyComponentStore } from './store/api-key.store';
     ClipboardModule,
     EntityModule,
     CommonDirectivesModule,
-    CoreComponents,
-    TranslateModule,
     IxFormsModule,
     MatButtonModule,
     MatCardModule,

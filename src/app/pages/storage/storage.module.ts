@@ -21,7 +21,6 @@ import { FlexLayoutModule, FlexModule } from '@ngbracket/ngx-layout';
 import { TranslateModule } from '@ngx-translate/core';
 import { BaseChartDirective } from 'ng2-charts';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
-import { CoreComponents } from 'app/core/core-components.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { EntityModule } from 'app/modules/entity/entity.module';
@@ -82,7 +81,6 @@ import { ZfsHealthCardComponent } from './components/dashboard-pool/zfs-health-c
     MatDialogModule,
     MatInputModule,
     CommonDirectivesModule,
-    CoreComponents,
     MatProgressBarModule,
     NgxSkeletonLoaderModule,
     LayoutModule,

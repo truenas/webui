@@ -11,7 +11,6 @@ import { RouterModule } from '@angular/router';
 import { EffectsModule } from '@ngrx/effects';
 import { StoreModule } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
-import { CoreComponents } from 'app/core/core-components.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { AlertComponent } from 'app/modules/alerts/components/alert/alert.component';
 import { AlertsPanelComponent } from 'app/modules/alerts/components/alerts-panel/alerts-panel.component';
@@ -38,7 +37,6 @@ import { TestIdModule } from 'app/modules/test-id/test-id.module';
     MatTooltipModule,
     CommonDirectivesModule,
     MatRippleModule,
-    CoreComponents,
     TestIdModule,
     FormatDateTimePipe,
   ],

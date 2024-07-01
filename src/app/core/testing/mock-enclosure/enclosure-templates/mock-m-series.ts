@@ -12,9 +12,10 @@ import {
 import {
   makeVoltageSensors,
 } from 'app/core/testing/mock-enclosure/enclosure-templates/utils/make-voltage-sensors.utils';
+import { EnclosureModel } from 'app/enums/enclosure-model.enum';
 
-export const mockM40 = makeEnclosure({
-  model: 'M40',
+export const mockM30 = makeEnclosure({
+  model: EnclosureModel.M30,
   controller: true,
   rackmount: true,
   front_loaded: true,
@@ -31,8 +32,13 @@ export const mockM40 = makeEnclosure({
   },
 });
 
+export const mockM40 = makeEnclosure({
+  ...mockM30,
+  model: EnclosureModel.M40,
+});
+
 export const mockM50 = makeEnclosure({
-  model: 'M50',
+  model: EnclosureModel.M50,
   controller: true,
   rackmount: true,
   front_loaded: true,
@@ -54,5 +60,5 @@ export const mockM50 = makeEnclosure({
 
 export const mockM60 = makeEnclosure({
   ...mockM50,
-  model: 'M60',
+  model: EnclosureModel.M60,
 });

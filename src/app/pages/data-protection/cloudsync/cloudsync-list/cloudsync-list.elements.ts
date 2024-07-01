@@ -38,6 +38,7 @@ export const cloudSyncListElements = {
         T('New Cloud Sync Task'),
         T('Task'),
       ],
+      anchor: 'add-cloudsync',
     },
   },
 } satisfies UiSearchableElement;

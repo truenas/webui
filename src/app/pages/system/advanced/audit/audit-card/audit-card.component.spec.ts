@@ -4,7 +4,6 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatListItemHarness } from '@angular/material/list/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
-import { CoreComponents } from 'app/core/core-components.module';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { AdvancedSettingsService } from 'app/pages/system/advanced/advanced-settings.service';
@@ -17,9 +16,6 @@ describe('AuditCardComponent', () => {
   let loader: HarnessLoader;
   const createComponent = createComponentFactory({
     component: AuditCardComponent,
-    imports: [
-      CoreComponents,
-    ],
     providers: [
       mockAuth(),
       mockProvider(IxChainedSlideInService, {

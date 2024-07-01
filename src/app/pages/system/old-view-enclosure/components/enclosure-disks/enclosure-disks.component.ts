@@ -1,5 +1,12 @@
 import {
-  AfterContentInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, Input, OnDestroy, ViewChild,
+  AfterContentInit,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  ElementRef,
+  Input,
+  OnDestroy,
+  ViewChild,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { TinyColor } from '@ctrl/tinycolor';
@@ -12,13 +19,11 @@ import { KeyframesProps } from 'popmotion';
 import { ValueReaction } from 'popmotion/lib/reactions/value';
 import { Subject } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
+import { EnclosureModel } from 'app/enums/enclosure-model.enum';
 import { EnclosureDiskStatus, EnclosureSlotStatus } from 'app/enums/enclosure-slot-status.enum';
 import { Role } from 'app/enums/role.enum';
 import { TopologyItemStatus } from 'app/enums/vdev-status.enum';
-import {
-  DashboardEnclosureSlot,
-  EnclosureElement,
-} from 'app/interfaces/enclosure.interface';
+import { DashboardEnclosureSlot, EnclosureElement } from 'app/interfaces/enclosure.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { Theme } from 'app/interfaces/theme.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -454,76 +459,76 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
     }
 
     switch (enclosure?.model) {
-      case 'R10':
+      case EnclosureModel.R10:
         this.chassis = new R10();
         break;
-      case 'R20':
+      case EnclosureModel.R20:
         this.chassis = new R20(true);
         break;
-      case 'R20A':
+      case EnclosureModel.R20A:
         this.chassis = new R20A(true);
         break;
-      case 'R20B':
+      case EnclosureModel.R20B:
         this.chassis = new R20B(true);
         break;
-      case 'R30':
+      case EnclosureModel.R30:
         this.chassis = new R30();
         break;
-      case 'R40':
+      case EnclosureModel.R40:
         this.chassis = new R40();
         break;
-      case 'R50':
+      case EnclosureModel.R50:
         this.chassis = new R50(true);
         this.showCaption = false;
         break;
-      case 'R50B':
+      case EnclosureModel.R50B:
         this.chassis = new R50B(true);
         this.showCaption = false;
         break;
-      case 'R50BM':
+      case EnclosureModel.R50BM:
         this.chassis = new R50Bm(true);
         this.showCaption = false;
         break;
-      case 'M40':
-      case 'M50':
-      case 'M60': {
+      case EnclosureModel.M40:
+      case EnclosureModel.M50:
+      case EnclosureModel.M60: {
         // We need to detect rear chassis. Not all M Series will have rear slots
         this.chassis = new M50(Object.entries(enclosure.elements['Array Device Slot']).length > 24);
         break;
       }
-      case 'ES12':
+      case EnclosureModel.Es12:
         this.chassis = new Es12();
         break;
-      case 'MINI-R':
+      case EnclosureModel.MiniR:
         this.chassis = new MINIR();
         break;
-      case 'ES24':
+      case EnclosureModel.Es24:
         this.chassis = new Es24();
         break;
-      case 'ES24F':
+      case EnclosureModel.Es24F:
         this.chassis = new Es24F();
         break;
-      case 'ES60':
+      case EnclosureModel.Es60:
         this.chassis = new Es60();
         break;
-      case 'ES60G2':
+      case EnclosureModel.Es60G2:
         this.chassis = new Es60G2();
         break;
-      case 'ES102':
+      case EnclosureModel.Es102:
         this.chassis = new Es102();
         this.showCaption = false;
         break;
-      case 'ES102G2':
+      case EnclosureModel.Es102G2:
         this.chassis = new Es102G2();
         this.showCaption = false;
         break;
-      case 'ES24N':
-      case 'F100':
-      case 'F130':
-      case 'F60':
+      case EnclosureModel.Es24N:
+      case EnclosureModel.F100:
+      case EnclosureModel.F130:
+      case EnclosureModel.F60:
         this.chassis = new F60();
         break;
-      case 'H10':
+      case EnclosureModel.H10:
         this.chassis = new H10();
         break;
       default:
@@ -599,69 +604,69 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
     let extractedChassis: Chassis;
 
     switch (rawEnclosure.model) {
-      case 'R10':
+      case EnclosureModel.R10:
         extractedChassis = new R10();
         break;
-      case 'R20A':
+      case EnclosureModel.R20A:
         extractedChassis = new R20A();
         break;
-      case 'R20':
+      case EnclosureModel.R20:
         extractedChassis = new R20();
         break;
-      case 'R20B':
+      case EnclosureModel.R20B:
         extractedChassis = new R20B();
         break;
-      case 'R30':
+      case EnclosureModel.R30:
         extractedChassis = new R30();
         break;
-      case 'R40':
+      case EnclosureModel.R40:
         extractedChassis = new R40();
         break;
-      case 'R50':
+      case EnclosureModel.R50:
         extractedChassis = new R50();
         break;
-      case 'R50B':
+      case EnclosureModel.R50B:
         extractedChassis = new R50B();
         break;
-      case 'R50BM':
+      case EnclosureModel.R50BM:
         extractedChassis = new R50Bm();
         break;
-      case 'M40':
-      case 'M50':
-      case 'M60':
+      case EnclosureModel.M40:
+      case EnclosureModel.M50:
+      case EnclosureModel.M60:
         extractedChassis = new M50();
         break;
-      case 'ES12':
+      case EnclosureModel.Es12:
         extractedChassis = new Es12();
         break;
-      case 'MINI-R':
+      case EnclosureModel.MiniR:
         extractedChassis = new MINIR();
         break;
-      case 'ES24':
+      case EnclosureModel.Es24:
         extractedChassis = new Es24();
         break;
-      case 'ES24F':
+      case EnclosureModel.Es24F:
         extractedChassis = new Es24F();
         break;
-      case 'ES60':
+      case EnclosureModel.Es60:
         extractedChassis = new Es60();
         break;
-      case 'ES60G2':
+      case EnclosureModel.Es60G2:
         extractedChassis = new Es60G2();
         break;
-      case 'ES102':
+      case EnclosureModel.Es102:
         extractedChassis = new Es102();
         break;
-      case 'ES102G2':
+      case EnclosureModel.Es102G2:
         extractedChassis = new Es102G2();
         break;
-      case 'ES24N':
-      case 'F100':
-      case 'F130':
-      case 'F60':
+      case EnclosureModel.Es24N:
+      case EnclosureModel.F100:
+      case EnclosureModel.F130:
+      case EnclosureModel.F60:
         extractedChassis = new F60();
         break;
-      case 'H10':
+      case EnclosureModel.H10:
         extractedChassis = new H10();
         break;
       default:

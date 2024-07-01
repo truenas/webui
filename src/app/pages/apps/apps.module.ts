@@ -20,7 +20,6 @@ import { LazyLoadImageModule } from 'ng-lazyload-image';
 import { ImgFallbackModule } from 'ngx-img-fallback';
 import { MarkdownModule } from 'ngx-markdown';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
-import { CoreComponents } from 'app/core/core-components.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { EntityModule } from 'app/modules/entity/entity.module';
@@ -135,7 +134,6 @@ import { KubernetesStatusComponent } from './components/installed-apps/kubernete
     ReactiveFormsModule,
     EntityModule,
     MatCardModule,
-    CoreComponents,
     MatSelectModule,
     MatCheckboxModule,
     MatProgressSpinnerModule,

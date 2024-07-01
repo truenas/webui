@@ -5,10 +5,10 @@ import { DashboardEnclosure } from 'app/interfaces/enclosure.interface';
 
 // TODO: Only creates single disk vdevs in the same pool. Improve.
 export function addPoolsToDisks(enclosures: DashboardEnclosure[], percentageToAdd: number): DashboardEnclosure[] {
-  const totalDisks = countSlotsBy(enclosures, (slot) => Boolean(slot.dev));
+  return mapSlots(enclosures, ({ slot, enclosure, index }) => {
+    const totalDisks = countSlotsBy([enclosure], ({ dev }) => Boolean(dev));
 
-  return mapSlots(enclosures, (slot, i) => {
-    if (i > totalDisks * percentageToAdd) {
+    if (index >= totalDisks * percentageToAdd) {
       return slot;
     }
 

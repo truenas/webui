@@ -12,7 +12,6 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { FlexLayoutModule } from '@ngbracket/ngx-layout';
 import { TranslateModule } from '@ngx-translate/core';
-import { CoreComponents } from 'app/core/core-components.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
@@ -57,7 +56,6 @@ import { EnclosureStore } from './stores/enclosure-store.service';
     MatTooltipModule,
     ReactiveFormsModule,
     IxFormsModule,
-    CoreComponents,
     TestIdModule,
     CommonDirectivesModule,
     IxTableModule,

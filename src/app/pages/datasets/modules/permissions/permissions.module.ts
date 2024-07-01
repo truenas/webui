@@ -10,7 +10,6 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
-import { CoreComponents } from 'app/core/core-components.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
@@ -70,7 +69,6 @@ import { StripAclModalComponent } from './components/strip-acl-modal/strip-acl-m
     MatButtonModule,
     MatDialogModule,
     NgxSkeletonLoaderModule,
-    CoreComponents,
     TestIdModule,
     CommonDirectivesModule,
     EmptyComponent,

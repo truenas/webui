@@ -162,12 +162,16 @@ export class CloudBackupListComponent implements OnInit {
     }).pipe(
       filter(Boolean),
       tap(() => this.updateRowJob(row, { ...row.job, state: JobState.Running })),
+      tap(() => this.snackbar.success(this.translate.instant('Cloud Backup «{name}» has started.', { name: row.description }))),
       switchMap(() => this.ws.job('cloud_backup.sync', [row.id])),
       untilDestroyed(this),
     ).subscribe({
       next: (job: Job) => {
-        this.snackbar.success(this.translate.instant('Cloud Backup «{name}» has started.', { name: row.description }));
         this.updateRowJob(row, job);
+        // Update expanded row to call child ngOnChanges method & update snapshots list
+        if (job.state === JobState.Success && this.dataProvider.expandedRow?.id === row.id) {
+          this.dataProvider.expandedRow = { ...row };
+        }
         this.cdr.markForCheck();
       },
       error: (error: unknown) => {

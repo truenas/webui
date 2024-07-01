@@ -15,21 +15,22 @@ import { CloudBackupSnapshotsComponent } from 'app/pages/data-protection/cloud-b
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { StorageService } from 'app/services/storage.service';
 
-const cloudBackupSnapshots: CloudBackupSnapshot[] = [
+const cloudBackupSnapshots = [
   {
     id: 'first',
-    hostname: 'UA',
+    hostname: 'older',
     time: {
-      $date: new Date().getTime() - 50000,
+      $date: new Date().getTime() - 500000,
     },
-    paths: ['/mnt/nmnmn'],
-    short_id: '',
-    parent: '',
-    username: '',
-    tree: '',
-    program_version: '',
   },
-];
+  {
+    id: 'second',
+    hostname: 'recent',
+    time: {
+      $date: new Date().getTime() - 30000,
+    },
+  },
+] as CloudBackupSnapshot[];
 
 describe('CloudBackupSnapshotsComponent', () => {
   let spectator: Spectator<CloudBackupSnapshotsComponent>;
@@ -85,7 +86,7 @@ describe('CloudBackupSnapshotsComponent', () => {
     expect(slideInService.open).toHaveBeenCalledWith(CloudBackupRestoreFromSnapshotFormComponent, {
       data: {
         backup: { id: 1 } as CloudBackup,
-        snapshot: cloudBackupSnapshots[0],
+        snapshot: cloudBackupSnapshots[1],
       },
     });
   });
@@ -93,7 +94,8 @@ describe('CloudBackupSnapshotsComponent', () => {
   it('should show table rows', async () => {
     const expectedRows = [
       ['Snapshot Time', 'Hostname', ''],
-      ['1 min. ago', 'UA', ''],
+      ['1 min. ago', 'recent', ''],
+      ['8 min. ago', 'older', ''],
     ];
 
     const cells = await table.getCellTexts();
