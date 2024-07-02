@@ -164,7 +164,7 @@ export class AuditComponent implements OnInit, OnDestroy {
 
     this.searchQuery = query;
 
-    if (query && query.isBasicQuery) {
+    if (query?.isBasicQuery) {
       const term = `(?i)${query.query || ''}`;
       const params = new ParamsBuilder<AuditEntry>()
         .filter('event', '~', term)

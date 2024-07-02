@@ -166,7 +166,7 @@ export class PrivilegeListComponent implements OnInit {
 
     this.searchQuery = query;
 
-    if (query && query.isBasicQuery) {
+    if (query?.isBasicQuery) {
       const term = `(?i)${query.query || ''}`;
       const params = new ParamsBuilder<Privilege>()
         .filter('name', '~', term)
@@ -175,7 +175,7 @@ export class PrivilegeListComponent implements OnInit {
       this.dataProvider.setParams(params);
     }
 
-    if (query && !query.isBasicQuery) {
+    if (!query?.isBasicQuery) {
       this.dataProvider.setParams(
         [(query as AdvancedSearchQuery<Privilege>).filters],
       );

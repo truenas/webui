@@ -26,7 +26,7 @@ export class RolesCardComponent {
   protected readonly smbRequiredRoles = [Role.SharingSmbWrite, Role.SharingWrite];
 
   get isApplications(): boolean {
-    return this.dataset.name && this.dataset.name.endsWith(ixApplications);
+    return this.dataset?.name?.endsWith(ixApplications);
   }
 
   get appsNames(): string {

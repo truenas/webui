@@ -124,7 +124,7 @@ export class FeedbackService {
           observer.next(file);
           observer.complete();
         }, type);
-      }).catch((error) => {
+      }).catch((error: unknown) => {
         observer.error(error);
       });
     });
