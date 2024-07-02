@@ -48,7 +48,7 @@ export class EnclosureSvgComponent implements OnDestroy {
   private keyDownListener: () => void;
   private clickListener: () => void;
 
-  svg = signal<SafeHtml | undefined>(undefined);
+  protected svg = signal<SafeHtml | undefined>(undefined);
   protected svgContainer = viewChild<ElementRef<HTMLElement>>('svgContainer');
 
   private overlayRects: Record<number, SVGRectElement> = {};
