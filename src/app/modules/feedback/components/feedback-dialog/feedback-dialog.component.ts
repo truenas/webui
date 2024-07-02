@@ -48,7 +48,7 @@ export class FeedbackDialogComponent implements OnInit {
     this.loadFeedbackTypes();
   }
 
-  onIsLoadingChange(newValue: boolean): void {
+  protected onIsLoadingChange(newValue: boolean): void {
     this.isLoading = newValue;
 
     if (newValue) {
