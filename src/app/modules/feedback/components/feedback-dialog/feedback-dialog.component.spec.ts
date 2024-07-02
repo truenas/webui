@@ -147,20 +147,6 @@ describe('FeedbackDialogComponent', () => {
         expect(spectator.query(FileReviewComponent)).not.toExist();
         expect(spectator.query(FileTicketComponent)).not.toExist();
       });
-
-      it('disables dialog close when loading is set to true', async () => {
-        await typeButtonGroup.setValue('Report a bug');
-        spectator.detectChanges();
-
-        const visibleForm = spectator.query(FileTicketComponent);
-        expect(visibleForm.dialogRef).toBe(spectator.inject(MatDialogRef));
-
-        spectator.component.onIsLoadingChange(true);
-        expect(visibleForm.dialogRef.disableClose).toBe(true);
-
-        spectator.component.onIsLoadingChange(false);
-        expect(visibleForm.dialogRef.disableClose).toBe(false);
-      });
     });
   });
 
