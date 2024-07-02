@@ -108,6 +108,10 @@ ix-app-card-logo {
     font-weight: bold;
     padding: 8px 12px;
 
+    ix-app-update-cell {
+      gap: 8px;
+    }
+
     ::ng-deep ix-with-loading-state-loader {
       height: 24px;
       margin-bottom: 4px;

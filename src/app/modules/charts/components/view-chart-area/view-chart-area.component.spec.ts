@@ -68,6 +68,7 @@ describe('ViewChartAreaComponent', () => {
     expect(spectator.component.maxSources).toBe(8);
 
     spectator.setInput('data', data);
+    spectator.setInput('options', { });
     expect(spectator.component.data().datasets).toHaveLength(8);
   }));
 

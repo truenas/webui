@@ -2,11 +2,10 @@
   align-items: center;
   box-sizing: border-box;
   display: flex;
-  gap: 8px;
-
+  gap: 4px;
 
   ix-icon {
     display: inline-flex;
-    line-height: 24px;
+    line-height: 1;
   }
 }

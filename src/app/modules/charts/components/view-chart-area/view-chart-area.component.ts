@@ -43,7 +43,7 @@ export class ViewChartAreaComponent implements OnDestroy {
 
   constructor() {
     effect(() => {
-      if (this.data() && this.options() && !this.chart) {
+      if (this.data() && !this.chart) {
         this.render();
       }
 

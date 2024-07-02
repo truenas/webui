@@ -1,12 +1,17 @@
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
-import { of } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { ChartReleaseStatus } from 'app/enums/chart-release-status.enum';
+import { ApiEvent } from 'app/interfaces/api-message.interface';
+import { ChartScaleResult, ChartScaleQueryParams } from 'app/interfaces/chart-release-event.interface';
 import { ChartRelease } from 'app/interfaces/chart-release.interface';
+import { Job } from 'app/interfaces/job.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFileSizePipe } from 'app/modules/pipes/ix-file-size/ix-file-size.pipe';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 import { AppCardLogoComponent } from 'app/pages/apps/components/app-card-logo/app-card-logo.component';
+import { AppStatusCellComponent } from 'app/pages/apps/components/installed-apps/app-status-cell/app-status-cell.component';
+import { AppUpdateCellComponent } from 'app/pages/apps/components/installed-apps/app-update-cell/app-update-cell.component';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
 import { SlotSize } from 'app/pages/dashboard/types/widget.interface';
@@ -40,6 +45,8 @@ describe('WidgetAppComponent', () => {
     component: WidgetAppComponent,
     imports: [MapValuePipe, IxFileSizePipe],
     declarations: [
+      MockComponent(AppStatusCellComponent),
+      MockComponent(AppUpdateCellComponent),
       MockComponent(AppCardLogoComponent),
       MockComponent(NetworkChartComponent),
     ],
@@ -60,6 +67,9 @@ describe('WidgetAppComponent', () => {
       mockProvider(RedirectService),
       mockProvider(ApplicationsService, {
         restartApplication: jest.fn(() => of(true)),
+        getInstalledAppsStatusUpdates: jest.fn(() => {
+          return of() as Observable<ApiEvent<Job<ChartScaleResult, ChartScaleQueryParams>>>;
+        }),
       }),
       mockProvider(DialogService, {
         jobDialog: jest.fn(() => ({
