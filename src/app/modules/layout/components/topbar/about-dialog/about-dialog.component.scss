@@ -31,7 +31,16 @@
 }
 
 .line-item {
+  display: flex;
   margin: 20px 10px;
+
+  > *:first-child {
+    flex: 1 1 10%;
+  }
+
+  > *:last-child {
+    flex: 1 1 90%;
+  }
 }
 
 .bullet-icon {

@@ -14,6 +14,11 @@
     height: 100%;
   }
 
+  .content {
+    display: flex;
+    flex-direction: column;
+  }
+
   .details-item {
     margin: 8px 0;
   }

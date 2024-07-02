@@ -1,5 +1,5 @@
 <ng-container [ngSwitch]="true">
-  <div *ngSwitchCase="!isActiveDirectoryEnabled && !isLdapEnabled" fxLayout="column" fxLayoutAlign="center center" class="everything-disabled">
+  <div *ngSwitchCase="!isActiveDirectoryEnabled && !isLdapEnabled" class="everything-disabled">
     <ix-empty [conf]="noDirectoryServicesConfig"></ix-empty>
     <div class="actions">
       <button

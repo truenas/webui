@@ -6,6 +6,7 @@ $scrollbar-offset: 20px;
   .container {
     display: flex;
     flex-direction: row;
+    gap: 16px;
     width: 100%;
 
     &::ng-deep table tbody tr {
