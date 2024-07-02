@@ -42,6 +42,22 @@
     display: flex;
     justify-content: center;
   }
+
+  .left {
+    flex: 1 1 40%;
+    justify-content: flex-end;
+
+    .gauge {
+      margin-left: unset;
+      margin-right: 8px;
+    }
+  }
+
+  .right {
+    display: flex;
+    flex: 1 1 60%;
+    flex-direction: column;
+  }
 }
 
 .link {

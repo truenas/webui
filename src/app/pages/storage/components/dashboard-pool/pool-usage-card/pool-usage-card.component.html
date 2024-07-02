@@ -17,6 +17,7 @@
   <mat-card-content class="card-content">
     <div class="left">
       <ix-gauge-chart
+        class="gauge"
         [colorFill]="usedPercentage === 0 ? chartBlankColor : isLowCapacity ? chartLowCapacityColor : chartFillColor"
         [colorBlank]="chartBlankColor"
         [width]="150"
