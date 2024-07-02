@@ -436,11 +436,12 @@ body * {
   box-direction: normal;
   box-orient: horizontal;
   display: flex;
-  flex-align: center;
   flex-direction: row;
   height: 48px;
   padding: 0 16px 0 0;
   position: relative;
+  white-space: normal;
+  word-wrap: break-word;
   z-index: 99;
 }
 
