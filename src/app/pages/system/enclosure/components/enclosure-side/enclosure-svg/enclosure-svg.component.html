@@ -1,8 +1,22 @@
-<!-- TODO: Skeleton for loading state -->
+<ngx-skeleton-loader
+  *ngIf="!svg()"
+  fxFlex
+  [animation]="false"
+  [theme]="{
+    height: enableMouseEvents() ? '66px' : '10px',
+    marginBottom: 0,
+    background: 'var(--alt-bg2)',
+    opacity: 0.25
+  }"
+  [count]="3"
+  @svgTransition
+></ngx-skeleton-loader>
+
 <div
   *ngIf="svg()"
   #svgContainer
   class="svg-container"
   [class.static]="!enableMouseEvents()"
   [innerHTML]="svg()"
+  @svgTransition
 ></div>

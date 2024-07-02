@@ -23,12 +23,13 @@
 }
 
 .enclosure {
+  align-items: flex-end;
   background-color: var(--bg2);
   border: 1px solid var(--lines);
   border-bottom-width: 0;
   border-left: solid 4px transparent;
   cursor: pointer;
-  display: block;
+  display: grid;
   padding: 12px 0 16px;
   text-align: center;
 
