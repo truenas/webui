@@ -128,6 +128,10 @@ export class IxChainedSlideInService extends ComponentStore<ChainedSlideInState>
       close$,
       isComponentAlive: true,
     });
+    newMap.set(swapInfo.swapComponentId, {
+      ...popped,
+      isComponentAlive: false,
+    });
     this.focusOnTheCloseButton();
     return {
       components: newMap,
