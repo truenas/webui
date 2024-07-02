@@ -12,6 +12,7 @@ import { mapToOptions } from 'app/helpers/options.helper';
 import { Option } from 'app/interfaces/option.interface';
 import { FeedbackType, feedbackTypesLabels } from 'app/modules/feedback/interfaces/feedback.interface';
 import { FeedbackService } from 'app/modules/feedback/services/feedback.service';
+import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 
 @UntilDestroy()
@@ -39,6 +40,7 @@ export class FeedbackDialogComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private systemGeneralService: SystemGeneralService,
     protected dialogRef: MatDialogRef<FeedbackDialogComponent>,
+    private loader: AppLoaderService,
     @Inject(MAT_DIALOG_DATA) private requestedType: FeedbackType,
   ) {}
 
@@ -49,11 +51,11 @@ export class FeedbackDialogComponent implements OnInit {
   protected onIsLoadingChange(newValue: boolean): void {
     this.isLoading = newValue;
 
-    // Do not let user switch to a different component because it stops active jobs.
-    // TODO: Decide if we want to prevent dialog from being closed for the same reason.
     if (newValue) {
+      this.loader.open();
       this.typeControl.disable();
     } else {
+      this.loader.close();
       this.typeControl.enable();
     }
 
