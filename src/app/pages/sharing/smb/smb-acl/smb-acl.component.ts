@@ -5,7 +5,7 @@ import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import {
-  concatMap, forkJoin, from, Observable, of,
+  concatMap, forkJoin, from, map, Observable, of,
 } from 'rxjs';
 import { NfsAclTag, smbAclTagLabels } from 'app/enums/nfs-acl.enum';
 import { Role } from 'app/enums/role.enum';
@@ -141,16 +141,26 @@ export class SmbAclComponent implements OnInit {
 
   private loadSmbAcl(shareName: string): void {
     this.isLoading = true;
-    this.ws.call('sharing.smb.getacl', [{ share_name: shareName }])
-      .pipe(untilDestroyed(this))
+    forkJoin([
+      this.ws.call('sharing.smb.getacl', [{ share_name: shareName }]),
+      this.userService.smbUserQueryDsCache().pipe(map((users) => users.map((user) => user.uid))),
+    ]).pipe(untilDestroyed(this))
       .subscribe({
-        next: (shareAcl) => {
+        next: ([shareAcl, userIds]) => {
           this.shareAclName = shareAcl.share_name;
           shareAcl.share_acl.forEach((ace, i) => {
             this.addAce();
+
+            let aeWho: FormAclEntry['ae_who'];
+            if (ace.ae_who_id?.id_type === NfsAclTag.Both) {
+              aeWho = userIds.includes(ace.ae_who_id.id) ? NfsAclTag.User : NfsAclTag.UserGroup;
+            } else {
+              aeWho = ace.ae_who_id?.id_type || ace.ae_who_str as NfsAclTag.Everyone;
+            }
+
             this.form.controls.entries.at(i).patchValue({
               ae_who_sid: ace.ae_who_sid,
-              ae_who: ace.ae_who_id?.id_type || ace.ae_who_str as NfsAclTag.Everyone,
+              ae_who: aeWho,
               ae_perm: ace.ae_perm,
               ae_type: ace.ae_type,
               group: ace.ae_who_id?.id_type !== NfsAclTag.Everyone ? ace.ae_who_id?.id : null,

@@ -39,6 +39,7 @@
                 formControlName="user"
                 [label]="'User' | translate"
                 [provider]="userProvider"
+                [allowCustomValue]="true"
                 [required]="true"
               ></ix-combobox>
 
@@ -47,6 +48,7 @@
                 formControlName="group"
                 [label]="'Group' | translate"
                 [provider]="groupProvider"
+                [allowCustomValue]="true"
                 [required]="true"
               ></ix-combobox>
             </div>

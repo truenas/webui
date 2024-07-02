@@ -6,6 +6,7 @@ export enum NfsAclTag {
   Everyone = 'everyone@',
   User = 'USER',
   UserGroup = 'GROUP',
+  Both = 'BOTH',
 }
 
 export const nfsAclTagLabels = new Map<NfsAclTag, string>([
