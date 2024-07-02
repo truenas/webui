@@ -5039,6 +5039,5 @@
   "{service} Service is not currently running. Start the service now?": "Le service {service} n'est pas en cours d'exécution. Démarrer le service maintenant ?",
   "{size} {type} at {location}": "{size} {type} à {location}",
   "{type} at {location}": "{type} à {location}",
-  "{used} of {total} ({used_pct})": "{used} de {total} ({used_pct})",
-  "{version} is available!": "{version} est disponible !"
+  "{used} of {total} ({used_pct})": "{used} de {total} ({used_pct})"
 }

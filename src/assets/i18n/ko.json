@@ -4516,7 +4516,6 @@
   "{usage}% (Thread #{thread})": "",
   "{usage}% ({threadCount} threads at {usage}%)": "",
   "{used} of {total} ({used_pct})": "",
-  "{version} is available!": "",
   "{view} on {enclosure}": "",
   " Est. Usable Raw Capacity": " 예상 사용 가능 용량",
   " When the <b>UPS Mode</b> is set to <i>slave</i>. Enter the open network port number of the UPS <i>Master</i> system. The default port is <i>3493</i>.": " <b>UPS 모드</b>가 <i>slave</i>로 설정된 경우, UPS <i>Master</i> 시스템의 열린 네트워크 포트 번호를 입력하세요. 기본 포트 번호는 <i>3493</i>입니다.",

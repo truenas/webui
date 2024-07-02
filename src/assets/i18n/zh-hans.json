@@ -5039,6 +5039,5 @@
   "{serviceName} service failed to start.": "{serviceName} 服务未能启动。",
   "{serviceName} service failed to stop.": "{serviceName} 服务未能停止。",
   "{service} Service is not currently running. Start the service now?": "{service} 服务目前并未运行。现在启动它？",
-  "{used} of {total} ({used_pct})": "{used} 的 {total} ({used_pct})",
-  "{version} is available!": "{version} 可用！"
+  "{used} of {total} ({used_pct})": "{used} 的 {total} ({used_pct})"
 }

@@ -53,22 +53,18 @@
               v{{ app.chart_metadata?.appVersion }}
             </div>
           </div>
-          <div class="status">
-            <div *ixWithLoadingState="application() as app">
-              <!-- TODO: Update app status on change -->
-              <ix-icon [name]="app.status | mapValue: appStatusIcons"></ix-icon>
-              <span>{{ app.status | titlecase }}</span>
-            </div>
-            <div *ixWithLoadingState="application() as app">
-              <ng-container *appLet="app.update_available || app.container_images_update_available as hasUpdate">
-                <ix-icon [name]="hasUpdate ? 'mdi-alert-circle' : 'mdi-check-circle'"></ix-icon>
-                <span>{{
-                  hasUpdate
-                  ? ('Update available' | translate)
-                  : ('Up to date' | translate)
-                }}</span>
-              </ng-container>
-            </div>
+          <div class="app-status">
+            <ix-app-status-cell
+              *ixWithLoadingState="application() as app"
+              [app]="app"
+              [job]="appJob()"
+              [showIcon]="true"
+            ></ix-app-status-cell>
+            <ix-app-update-cell
+              *ixWithLoadingState="application() as app"
+              [app]="app"
+              [showIcon]="true"
+            ></ix-app-update-cell>
           </div>
         </div>
       </div>

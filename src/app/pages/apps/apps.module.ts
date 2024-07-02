@@ -57,6 +57,7 @@ import { AppInfoCardComponent } from 'app/pages/apps/components/installed-apps/a
 import { AppRollbackModalComponent } from 'app/pages/apps/components/installed-apps/app-rollback-modal/app-rollback-modal.component';
 import { AppRowComponent } from 'app/pages/apps/components/installed-apps/app-row/app-row.component';
 import { AppSettingsButtonComponent } from 'app/pages/apps/components/installed-apps/app-settings-button/app-settings-button.component';
+import { AppUpdateCellComponent } from 'app/pages/apps/components/installed-apps/app-update-cell/app-update-cell.component';
 import { KubernetesSettingsComponent } from 'app/pages/apps/components/installed-apps/kubernetes-settings/kubernetes-settings.component';
 import { PodLogsComponent } from 'app/pages/apps/components/installed-apps/pod-logs/pod-logs.component';
 import { PodShellComponent } from 'app/pages/apps/components/installed-apps/pod-shell/pod-shell.component';
@@ -165,6 +166,7 @@ import { KubernetesStatusComponent } from './components/installed-apps/kubernete
     MatSortHeader,
     AppCardLogoComponent,
     AppStatusCellComponent,
+    AppUpdateCellComponent,
     ToolbarSliderComponent,
     FormatDateTimePipe,
     MapValuePipe,

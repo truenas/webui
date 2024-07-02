@@ -3,7 +3,6 @@
   [class.logo-loaded]="wasLogoLoaded()"
 >
   <img
-    *ngIf="url()"
     class="logo"
     [offset]="800"
     [lazyLoad]="url()"
@@ -11,6 +10,4 @@
     [scrollTarget]="scrollTarget"
     (onStateChange)="onLogoLoaded($event)"
   >
-
-  <div class="logo-placeholder"></div>
 </div>

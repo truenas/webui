@@ -1,3 +1,6 @@
+@if(showIcon()) {
+  <ix-icon [name]="status() | mapValue: appStatusIcons"></ix-icon>
+}
 <span [matTooltip]="job()?.progress?.description">
-  {{ appStatus() | mapValue: appStatusLabels | translate }}
+  {{ status() | mapValue: appStatusLabels | translate }}
 </span>

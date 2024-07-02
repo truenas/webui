@@ -4914,7 +4914,6 @@
   "{usage}% (Thread #{thread})": "",
   "{usage}% ({threadCount} threads at {usage}%)": "",
   "{used} of {total} ({used_pct})": "",
-  "{version} is available!": "",
   "{view} on {enclosure}": "",
   " seconds.": " sekund",
   "% of all cores": "% użycia wszytskich rdzeni",

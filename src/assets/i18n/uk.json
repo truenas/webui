@@ -5039,6 +5039,5 @@
   "{service} Service is not currently running. Start the service now?": "{service} Сервіс наразі не працює. Запустити послугу зараз?",
   "{size} {type} at {location}": "{size} {type} у {location}",
   "{type} at {location}": "{type} у {location}",
-  "{used} of {total} ({used_pct})": "{used} {total} ({user_pct})",
-  "{version} is available!": "{version} доступна!"
+  "{used} of {total} ({used_pct})": "{used} {total} ({user_pct})"
 }

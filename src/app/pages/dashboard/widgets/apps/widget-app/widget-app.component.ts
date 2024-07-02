@@ -3,17 +3,21 @@ import {
   computed,
   signal,
 } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { ChartData } from 'chart.js';
 import {
+  filter,
+  map,
   shareReplay,
   tap,
+  throttleTime,
 } from 'rxjs';
-import { chartStatusIcons } from 'app/enums/chart-release-status.enum';
 import { toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import { ChartRelease } from 'app/interfaces/chart-release.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { appStatusIcons } from 'app/pages/apps/enum/app-status.enum';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
 import { WidgetComponent } from 'app/pages/dashboard/types/widget-component.interface';
@@ -31,7 +35,7 @@ import { ThemeService } from 'app/services/theme/theme.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class WidgetAppComponent implements WidgetComponent<WidgetAppSettings> {
-  protected readonly appStatusIcons = chartStatusIcons;
+  readonly appStatusIcons = appStatusIcons;
   size = input.required<SlotSize>();
   settings = input.required<WidgetAppSettings>();
 
@@ -39,8 +43,13 @@ export class WidgetAppComponent implements WidgetComponent<WidgetAppSettings> {
   application = computed(() => {
     return this.resources.getApp(this.appName()).pipe(toLoadingState());
   });
+  appJob = toSignal(this.appService.getInstalledAppsStatusUpdates().pipe(
+    filter((event) => event?.fields?.arguments[0] === this.appName()),
+    map((event) => event.fields),
+  ));
   stats = computed(() => {
     return this.resources.getAppStats(this.appName()).pipe(
+      throttleTime(300),
       tap((realtimeStats) => {
         this.cachedNetworkStats.update((cachedStats) => {
           return [...cachedStats, Object.values(realtimeStats.network)].slice(-60);
@@ -101,7 +110,6 @@ export class WidgetAppComponent implements WidgetComponent<WidgetAppSettings> {
   ) {}
 
   onRestartApp(app: ChartRelease): void {
-    console.info('onRestartApp', app);
     this.dialogService.jobDialog(
       this.appService.restartApplication(app),
       { title: app.name, canMinimize: true },

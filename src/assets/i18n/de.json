@@ -3478,7 +3478,6 @@
   "{usage}% (Thread #{thread})": "",
   "{usage}% ({threadCount} threads at {usage}%)": "",
   "{used} of {total} ({used_pct})": "",
-  "{version} is available!": "",
   "{view} on {enclosure}": "",
   " When the <b>UPS Mode</b> is set to <i>slave</i>. Enter the open network port number of the UPS <i>Master</i> system. The default port is <i>3493</i>.": " Wenn der <b>USV Modus</b> auf <i>Slave</i> eingestellt wurde. Geben Sie den im Netz erreichbaren Netzwerkport des USV <i>Master</i> Systems ein. Der Standardport hierfür ist <i>3493</i>.",
   " seconds.": " Sekunden.",

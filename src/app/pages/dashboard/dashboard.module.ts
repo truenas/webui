@@ -27,6 +27,8 @@ import { IxFileSizePipe } from 'app/modules/pipes/ix-file-size/ix-file-size.pipe
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
 import { AppCardLogoComponent } from 'app/pages/apps/components/app-card-logo/app-card-logo.component';
+import { AppStatusCellComponent } from 'app/pages/apps/components/installed-apps/app-status-cell/app-status-cell.component';
+import { AppUpdateCellComponent } from 'app/pages/apps/components/installed-apps/app-update-cell/app-update-cell.component';
 import { DashboardComponent } from 'app/pages/dashboard/components/dashboard/dashboard.component';
 import {
   WidgetGroupControlsComponent,
@@ -112,6 +114,8 @@ import { UptimePipe } from 'app/pages/dashboard/widgets/system/common/uptime.pip
     InterfaceStatusIconComponent,
     UptimePipe,
     AppCardLogoComponent,
+    AppStatusCellComponent,
+    AppUpdateCellComponent,
     FormatDateTimePipe,
     IxFileSizePipe,
     CopyButtonComponent,

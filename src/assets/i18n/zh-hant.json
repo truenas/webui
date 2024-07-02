@@ -4113,7 +4113,6 @@
   "{usage}% (Thread #{thread})": "",
   "{usage}% ({threadCount} threads at {usage}%)": "",
   "{used} of {total} ({used_pct})": "",
-  "{version} is available!": "",
   "{view} on {enclosure}": "",
   " seconds.": " 秒。",
   "% of all cores": "% 於所有核心",

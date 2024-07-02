@@ -3,7 +3,10 @@ import {
   ChangeDetectionStrategy, Component, inject, input,
   signal,
 } from '@angular/core';
-import { LazyLoadImageModule, StateChange } from 'ng-lazyload-image';
+import {
+  IntersectionObserverHooks,
+  LAZYLOAD_IMAGE_HOOKS, LazyLoadImageModule, StateChange,
+} from 'ng-lazyload-image';
 import { officialCatalog, appImagePlaceholder } from 'app/constants/catalog.constants';
 import { LayoutService } from 'app/services/layout.service';
 
@@ -14,6 +17,7 @@ import { LayoutService } from 'app/services/layout.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [NgIf, LazyLoadImageModule],
+  providers: [{ provide: LAZYLOAD_IMAGE_HOOKS, useClass: IntersectionObserverHooks }],
 })
 export class AppCardLogoComponent {
   readonly url = input<string>();

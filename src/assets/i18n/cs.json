@@ -4540,7 +4540,6 @@
   "{usage}% (Thread #{thread})": "",
   "{usage}% ({threadCount} threads at {usage}%)": "",
   "{used} of {total} ({used_pct})": "",
-  "{version} is available!": "",
   "{view} on {enclosure}": "",
   " When the <b>UPS Mode</b> is set to <i>slave</i>. Enter the open network port number of the UPS <i>Master</i> system. The default port is <i>3493</i>.": " Pokud je <b>UPS mód</b> ve stavu <i>slave</i>. Vložte otevřený port UPS <i>Master</i> systému. Výchozí port je <i>3493</i>.",
   "% of all cores": "% ze všech jader",

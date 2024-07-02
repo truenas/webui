@@ -4752,7 +4752,6 @@
   "{usage}% (Thread #{thread})": "",
   "{usage}% ({threadCount} threads at {usage}%)": "",
   "{used} of {total} ({used_pct})": "",
-  "{version} is available!": "",
   "{view} on {enclosure}": "",
   "% of all cores": "% de todos los núcleos",
   "(24 Hours)": "(24 horas)",

@@ -5039,6 +5039,5 @@
   "{type} VDEVs": "{type} VDEVs",
   "{type} at {location}": "{type} met {location}",
   "{type} | {vdevWidth} wide | ": "{type} | {vdevWidth} breed |",
-  "{used} of {total} ({used_pct})": "{used} van {total} ({used_pct})",
-  "{version} is available!": "{version} is beschikbaar!"
+  "{used} of {total} ({used_pct})": "{used} van {total} ({used_pct})"
 }

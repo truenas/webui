@@ -4942,7 +4942,6 @@
   "{usage}% (Thread #{thread})": "",
   "{usage}% ({threadCount} threads at {usage}%)": "",
   "{used} of {total} ({used_pct})": "",
-  "{version} is available!": "",
   "{view} on {enclosure}": "",
   " When the <b>UPS Mode</b> is set to <i>slave</i>. Enter the open network port number of the UPS <i>Master</i> system. The default port is <i>3493</i>.": " Quando o <b>Modo UPS</b> é configurado para <i>slave</i>. Insira o número da porta aberta do Sistema UPS <i>Mestre</i> . A porta padrão é <i>3493</i>.",
   " seconds.": " segundos.",

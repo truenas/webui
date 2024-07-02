@@ -5039,6 +5039,5 @@
   "{tasks, plural, =1 {# send task} other {# send tasks}}": "{tasks, plural, =1 {# tarefa enviada} other {# tarefas enviadas}}",
   "{type} at {location}": "{type} no {location}",
   "{type} | {vdevWidth} wide | ": "{type} | {vdevWidth} largo | ",
-  "{used} of {total} ({used_pct})": "{used} de {total} ({used_pct})",
-  "{version} is available!": "{version} está disponível!"
+  "{used} of {total} ({used_pct})": "{used} de {total} ({used_pct})"
 }
