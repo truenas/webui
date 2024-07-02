@@ -8,6 +8,7 @@ import { ChartRelease, ChartReleaseStats } from 'app/interfaces/chart-release.in
 import { IxFileSizePipe } from 'app/modules/pipes/ix-file-size/ix-file-size.pipe';
 import { AppRowComponent } from 'app/pages/apps/components/installed-apps/app-row/app-row.component';
 import { AppStatusCellComponent } from 'app/pages/apps/components/installed-apps/app-status-cell/app-status-cell.component';
+import { AppUpdateCellComponent } from 'app/pages/apps/components/installed-apps/app-update-cell/app-update-cell.component';
 import { AppStatus } from 'app/pages/apps/enum/app-status.enum';
 
 describe('AppRowComponent', () => {
@@ -37,7 +38,7 @@ describe('AppRowComponent', () => {
       IxFileSizePipe,
     ],
     declarations: [
-      MockComponents(AppStatusCellComponent),
+      MockComponents(AppStatusCellComponent, AppUpdateCellComponent),
     ],
     providers: [
       mockAuth(),
@@ -58,11 +59,12 @@ describe('AppRowComponent', () => {
   it('shows app status', () => {
     const statusCell = spectator.query(AppStatusCellComponent);
     expect(statusCell).toBeTruthy();
-    expect(statusCell.appStatus).toBe(status);
   });
 
-  it('is shows app up to date status', () => {
-    expect(spectator.query('.cell-update')).toHaveText('Up to date');
+  it('shows app updates', () => {
+    const updateCell = spectator.query(AppUpdateCellComponent);
+    expect(updateCell).toBeTruthy();
+    expect(updateCell.hasUpdate).toBeFalsy();
   });
 
   it('shows app usages statistics', () => {

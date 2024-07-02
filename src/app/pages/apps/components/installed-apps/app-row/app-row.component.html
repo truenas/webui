@@ -18,9 +18,8 @@
 </div>
 <div class="cell cell-status">
   <ix-app-status-cell
+    [app]="app"
     [job]="job"
-    [appStatus]="status"
-    [inProgress]="inProgress"
     (click)="statusPressed(); $event.stopPropagation()"
   ></ix-app-status-cell>
 </div>
@@ -42,14 +41,7 @@
   </span>
 </div>
 <div class="cell cell-update">
-  <ng-container *ngIf="hasUpdates; else upToDate">
-    <span>{{ 'Update available' | translate }}</span>
-    <ix-icon
-      name="mdi-alert-circle"
-      matTooltipPosition="above"
-      [matTooltip]="'{version} is available!' | translate: { version: app.human_latest_version }"
-    ></ix-icon>
-  </ng-container>
+  <ix-app-update-cell [app]="app" [showIcon]="true"></ix-app-update-cell>
 </div>
 <div *ixRequiresRoles="requiredRoles" class="cell cell-action">
   <button
@@ -75,10 +67,6 @@
     <ix-icon name="mdi-stop"></ix-icon>
   </button>
 </div>
-
-<ng-template #upToDate>
-  {{ 'Up to date' | translate }}
-</ng-template>
 
 <ng-template #notAvailable>
   {{ 'N/A' | translate }}

@@ -15,7 +15,8 @@ import { ImgFallbackModule } from 'ngx-img-fallback';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { CopyButtonComponent } from 'app/modules/buttons/copy-button/copy-button.component';
-import { ChartsModule } from 'app/modules/charts/charts.module';
+import { ViewChartAreaComponent } from 'app/modules/charts/components/view-chart-area/view-chart-area.component';
+import { ViewChartGaugeComponent } from 'app/modules/charts/components/view-chart-gauge/view-chart-gauge.component';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
@@ -68,7 +69,6 @@ import { ResourcesUsageStore } from 'app/pages/dashboard-old/store/resources-usa
     EntityModule,
     TranslateModule,
     IxDropGridModule,
-    ChartsModule,
     LayoutModule,
     TestIdModule,
     NgxSkeletonLoaderModule,
@@ -80,6 +80,8 @@ import { ResourcesUsageStore } from 'app/pages/dashboard-old/store/resources-usa
     IxFileSizePipe,
     FormatDateTimePipe,
     CopyButtonComponent,
+    ViewChartAreaComponent,
+    ViewChartGaugeComponent,
   ],
   declarations: [
     DashboardComponent,

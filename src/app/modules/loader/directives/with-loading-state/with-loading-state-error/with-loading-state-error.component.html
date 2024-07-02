@@ -1,1 +1,5 @@
-{{ 'Error' | translate }}
+<ng-container *ngIf="errorMessage; else defaultText">{{ errorMessage | translate }}</ng-container>
+
+<ng-template #defaultText>
+  {{ 'Error' | translate }}
+</ng-template>

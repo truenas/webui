@@ -1,3 +1,4 @@
+import { CommonModule } from '@angular/common';
 import {
   Component, AfterViewInit, Input, OnChanges, ChangeDetectionStrategy,
 } from '@angular/core';
@@ -25,6 +26,8 @@ export interface GaugeConfig {
   selector: 'ix-view-chart-gauge',
   templateUrl: './view-chart-gauge.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [CommonModule],
 })
 export class ViewChartGaugeComponent implements AfterViewInit, OnChanges {
   subtitle = '';

@@ -1,0 +1,9 @@
+<form [formGroup]="form">
+  <ix-select
+    class="half-width"
+    formControlName="appName"
+    [label]="'Application' | translate"
+    [options]="installedApps$"
+    [required]="true"
+  ></ix-select>
+</form>
