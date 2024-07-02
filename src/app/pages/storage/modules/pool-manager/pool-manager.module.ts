@@ -14,8 +14,8 @@ import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { DndModule } from 'ngx-drag-drop';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
-import { CoreComponents } from 'app/core/core-components.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
+import { DiskIconComponent } from 'app/modules/disk-icon/disk-icon.component';
 import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { TreeModule } from 'app/modules/ix-tree/tree.module';
@@ -29,7 +29,6 @@ import { AddVdevsStore } from 'app/pages/storage/modules/pool-manager/components
 import { ConfigurationPreviewComponent } from 'app/pages/storage/modules/pool-manager/components/configuration-preview/configuration-preview.component';
 import { ExistingConfigurationPreviewComponent } from 'app/pages/storage/modules/pool-manager/components/existing-configuration-preview/existing-configuration-preview.component';
 import { InventoryComponent } from 'app/pages/storage/modules/pool-manager/components/inventory/inventory.component';
-import { DiskIconComponent } from 'app/pages/storage/modules/pool-manager/components/manual-disk-selection/components/disk-icon/disk-icon.component';
 import { DiskInfoComponent } from 'app/pages/storage/modules/pool-manager/components/manual-disk-selection/components/disk-info/disk-info.component';
 import { EnclosureWrapperComponent } from 'app/pages/storage/modules/pool-manager/components/manual-disk-selection/components/enclosure-wrapper/enclosure-wrapper.component';
 import { ManualSelectionVdevComponent } from 'app/pages/storage/modules/pool-manager/components/manual-disk-selection/components/manual-selection-vdev/manual-selection-vdev.component';
@@ -87,7 +86,6 @@ import { DataWizardStepComponent } from './components/pool-manager-wizard/steps/
     CommonModule,
     TestIdModule,
     AppLoaderModule,
-    CoreComponents,
     NgxSkeletonLoaderModule,
     MatCheckboxModule,
     MatListModule,
@@ -96,13 +94,13 @@ import { DataWizardStepComponent } from './components/pool-manager-wizard/steps/
     CastPipe,
     IxFileSizePipe,
     MapValuePipe,
+    DiskIconComponent,
   ],
   declarations: [
     PoolManagerComponent,
     ConfigurationPreviewComponent,
     InventoryComponent,
     PoolManagerWizardComponent,
-    DiskIconComponent,
     EnclosureWrapperComponent,
     DiskInfoComponent,
     ManualSelectionVdevComponent,

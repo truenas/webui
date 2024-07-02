@@ -2,9 +2,10 @@ import {
   makeArrayDeviceSlots,
 } from 'app/core/testing/mock-enclosure/enclosure-templates/utils/make-array-device-slots.utils';
 import { makeEnclosure } from 'app/core/testing/mock-enclosure/enclosure-templates/utils/make-enclosure.utils';
+import { EnclosureModel } from 'app/enums/enclosure-model.enum';
 
 export const mockR10 = makeEnclosure({
-  model: 'R10',
+  model: EnclosureModel.R10,
   controller: true,
   rackmount: true,
   front_loaded: true,
@@ -17,7 +18,7 @@ export const mockR10 = makeEnclosure({
 });
 
 export const mockR20 = makeEnclosure({
-  model: 'R20',
+  model: EnclosureModel.R20,
   controller: true,
   rackmount: true,
   front_loaded: true,
@@ -37,16 +38,16 @@ export const mockR20 = makeEnclosure({
 
 export const mockR20A = makeEnclosure({
   ...mockR20,
-  model: 'R20A',
+  model: EnclosureModel.R20A,
 });
 
 export const mockR20B = makeEnclosure({
   ...mockR20,
-  model: 'R20B',
+  model: EnclosureModel.R20B,
 });
 
 export const mockR30 = makeEnclosure({
-  model: 'R30',
+  model: EnclosureModel.R30,
   controller: true,
   rackmount: true,
   front_loaded: true,
@@ -65,7 +66,7 @@ export const mockR30 = makeEnclosure({
 });
 
 export const mockR40 = makeEnclosure({
-  model: 'R40',
+  model: EnclosureModel.R40,
   controller: true,
   rackmount: true,
   front_slots: 48,
@@ -77,7 +78,7 @@ export const mockR40 = makeEnclosure({
 });
 
 export const mockR50 = makeEnclosure({
-  model: 'R50',
+  model: EnclosureModel.R50,
   controller: true,
   rackmount: true,
   top_loaded: true,
@@ -97,10 +98,10 @@ export const mockR50 = makeEnclosure({
 
 export const mockR50B = makeEnclosure({
   ...mockR50,
-  model: 'R50B',
+  model: EnclosureModel.R50B,
 });
 
 export const mockR50Bm = makeEnclosure({
   ...mockR50,
-  model: 'R50BM',
+  model: EnclosureModel.R50BM,
 });

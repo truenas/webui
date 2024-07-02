@@ -1,11 +1,12 @@
 import { Overwrite } from 'utility-types';
 import { DiskType } from 'app/enums/disk-type.enum';
+import { EnclosureModel } from 'app/enums/enclosure-model.enum';
 import { EnclosureStatus, EnclosureDiskStatus, EnclosureElementType } from 'app/enums/enclosure-slot-status.enum';
 import { VdevType } from 'app/enums/v-dev-type.enum';
 
 export interface Enclosure {
   name: string;
-  model: string;
+  model: EnclosureModel;
   controller: boolean;
   dmi: string;
   status: EnclosureStatus[];
@@ -72,7 +73,7 @@ export interface DashboardEnclosureSlot {
    */
   drive_bay_number?: number;
   descriptor: string;
-  status: string;
+  status: EnclosureStatus;
   dev: string;
   supports_identify_light?: boolean;
   size?: number;

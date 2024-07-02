@@ -21,10 +21,12 @@
 .search-filters {
   width: 100%;
 
-  .filters-btn {
+  .actions {
     display: flex;
+    gap: 10px;
     justify-content: flex-end;
 
+    a,
     button {
       background-color: transparent;
       color: var(--primary) !important;

@@ -1,12 +1,26 @@
 import {
-  ChangeDetectionStrategy, Component, computed, HostBinding, input, Type,
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  EnvironmentInjector,
+  HostBinding,
+  inject,
+  input,
+  runInInjectionContext,
+  Type,
 } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
+import { Observable, of } from 'rxjs';
 import { WidgetErrorComponent } from 'app/pages/dashboard/components/widget-error/widget-error.component';
+import { WidgetVisibilityDepsType } from 'app/pages/dashboard/types/widget-component.interface';
 import { layoutToSlotSizes, WidgetGroup } from 'app/pages/dashboard/types/widget-group.interface';
 import { widgetRegistry } from 'app/pages/dashboard/widgets/all-widgets.constant';
 
-type OutletParams = { component: Type<unknown>; inputs: Record<string, unknown> } | null;
+type OutletParams = {
+  component: Type<unknown>;
+  inputs: Record<string, unknown>;
+  isVisible$: Observable<boolean>;
+} | null;
 
 @Component({
   selector: 'ix-widget-group',
@@ -34,6 +48,8 @@ export class WidgetGroupComponent {
     return this.slotRange().map((slotIndex) => this.getSlotComponent(slotIndex));
   });
 
+  private environmentInjector = inject(EnvironmentInjector);
+
   constructor(
     private translate: TranslateService,
   ) {}
@@ -50,6 +66,7 @@ export class WidgetGroupComponent {
       return null;
     }
 
+    let isVisible$ = of(true);
     const definition = widgetRegistry[widget.type];
     if (!definition) {
       return {
@@ -57,7 +74,16 @@ export class WidgetGroupComponent {
         inputs: {
           message: this.translate.instant('{type} widget is not supported.', { type: widget.type }),
         },
+        isVisible$,
       };
+    }
+
+    if (definition.visibility) {
+      const deps: WidgetVisibilityDepsType = new Map();
+      runInInjectionContext(this.environmentInjector, () => {
+        definition.visibility.deps.forEach((service) => deps.set(service, inject(service)));
+      });
+      isVisible$ = definition.visibility.isVisible$(deps);
     }
 
     const supportedSizes = definition.supportedSizes;
@@ -67,6 +93,7 @@ export class WidgetGroupComponent {
         inputs: {
           message: this.translate.instant('{type} widget does not support {size} size.', { type: widget.type, size: slotSize }),
         },
+        isVisible$,
       };
     }
 
@@ -82,6 +109,7 @@ export class WidgetGroupComponent {
     return {
       inputs,
       component: definition.component,
+      isVisible$,
     };
   }
 }

@@ -1,0 +1,54 @@
+<h3>
+  @if (selectedSlot().dev) {
+    {{ 'Drive Details {disk}' | translate: { disk: selectedSlot().dev } }}
+  } @else {
+    {{ 'Drive Details' | translate }}
+  }
+  <a
+    class="close"
+    mat-icon-button
+    ixTest="close-details"
+    (click)="onClosePressed()"
+  >
+    <ix-icon name="close"></ix-icon>
+  </a>
+</h3>
+
+<ul class="overview">
+  <li class="item">
+    <div class="item-name">{{ 'Pool:' | translate }}</div>
+    <div class="item-value">
+      {{ selectedSlot().pool_info?.pool_name || ('Disk not attached to any pools.' | translate) }}
+    </div>
+  </li>
+
+  <li class="item">
+    <div class="item-name">{{ 'Vdev:' | translate }}</div>
+    <div class="item-value">
+      {{ selectedSlot().pool_info?.vdev_name || ('Unassigned' | translate) }}
+    </div>
+  </li>
+
+  @if (selectedSlot().model) {
+    <li class="item">
+      <div class="item-name">{{ 'Model:' | translate }}</div>
+      <div class="item-value">{{ selectedSlot().model }}</div>
+    </li>
+  }
+
+  @if (selectedSlot().serial) {
+    <li class="item">
+      <div class="item-name">{{ 'Serial:' | translate }}</div>
+      <div class="item-value">{{ selectedSlot().serial }}</div>
+    </li>
+  }
+
+  @if (selectedSlot().rotationrate) {
+    <li class="item">
+      <div class="item-name">{{ 'Rotation Rate:' | translate }}</div>
+      <div class="item-value">
+        {{ '{rate} RPM' | translate: { rate: selectedSlot().rotationrate } }}
+      </div>
+    </li>
+  }
+</ul>

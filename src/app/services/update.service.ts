@@ -2,14 +2,13 @@ import { Inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { WINDOW } from 'app/helpers/window.helper';
-import { ApiTimestamp } from 'app/interfaces/api-date.interface';
 import { WebSocketService } from 'app/services/ws.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class UpdateService {
-  private lastSeenBuiltTime: number;
+  private lastSeenBootId: string;
 
   constructor(
     private ws: WebSocketService,
@@ -19,16 +18,16 @@ export class UpdateService {
   /**
    * Hard refresh is needed to load new html and js after the update.
    */
-  hardRefreshIfNeeded(): Observable<unknown> {
-    return this.ws.call('system.build_time').pipe(
-      tap((buildTime: ApiTimestamp) => {
-        if (!this.lastSeenBuiltTime) {
+  hardRefreshIfNeeded(): Observable<string> {
+    return this.ws.call('system.boot_id').pipe(
+      tap((bootId) => {
+        if (!this.lastSeenBootId) {
           // First boot.
-          this.lastSeenBuiltTime = buildTime.$date;
+          this.lastSeenBootId = bootId;
           return;
         }
 
-        if (this.lastSeenBuiltTime === buildTime.$date) {
+        if (this.lastSeenBootId === bootId) {
           // No update.
           return;
         }

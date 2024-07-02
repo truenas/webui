@@ -21,7 +21,6 @@ import { FlexLayoutModule } from '@ngbracket/ngx-layout';
 import { EffectsModule } from '@ngrx/effects';
 import { StoreModule } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
-import { CoreComponents } from 'app/core/core-components.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
@@ -44,7 +43,6 @@ import { UserDetailsRowComponent } from './user-details-row/user-details-row.com
   imports: [
     CommonDirectivesModule,
     CommonModule,
-    CoreComponents,
     EffectsModule.forFeature([UserEffects]),
     EntityModule,
     IxFormsModule,

@@ -1,24 +1,25 @@
 import { TiB } from 'app/constants/bytes.constant';
 import { countSlots, mapSlots } from 'app/core/testing/mock-enclosure/enclosure-templates/utils/slots.utils';
 import { DiskType } from 'app/enums/disk-type.enum';
+import { EnclosureStatus } from 'app/enums/enclosure-slot-status.enum';
 import { DashboardEnclosure, DashboardEnclosureSlot } from 'app/interfaces/enclosure.interface';
 
 export function addDisksToSlots(enclosures: DashboardEnclosure[], percentageToAdd: number): DashboardEnclosure[] {
   const totalSlots = countSlots(enclosures);
 
-  return mapSlots(enclosures, (slot, i) => {
-    if (i > totalSlots * percentageToAdd) {
+  return mapSlots(enclosures, ({ slot, index }) => {
+    if (index > totalSlots * percentageToAdd) {
       return slot;
     }
 
-    return addDisk(slot, i);
+    return addDisk(slot, index);
   });
 }
 
 function addDisk(slot: DashboardEnclosureSlot, i: number): DashboardEnclosureSlot {
   return {
     ...slot,
-    status: 'OK',
+    status: EnclosureStatus.Ok,
     type: DiskType.Hdd,
     dev: generateDiskName(i),
     size: 10 * TiB,

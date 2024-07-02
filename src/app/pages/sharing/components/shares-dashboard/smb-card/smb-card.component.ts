@@ -6,10 +6,11 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import {
-  tap, map, filter, switchMap,
+  tap, map, filter, switchMap, BehaviorSubject,
 } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
+import { LoadingMap, accumulateLoadingState } from 'app/helpers/operators/accumulate-loading-state.helper';
 import { helptextSharingSmb } from 'app/helptext/sharing/smb/smb';
 import { SmbShare, SmbSharesec } from 'app/interfaces/smb-share.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -36,6 +37,7 @@ import { selectService } from 'app/store/services/services.selectors';
 })
 export class SmbCardComponent implements OnInit {
   requiredRoles = [Role.SharingSmbWrite, Role.SharingWrite];
+  loadingMap$ = new BehaviorSubject<LoadingMap>(new Map());
 
   service$ = this.store$.select(selectService(ServiceName.Cifs));
 
@@ -79,6 +81,7 @@ export class SmbCardComponent implements OnInit {
         {
           iconName: 'edit',
           tooltip: this.translate.instant('Edit'),
+          disabled: (row) => this.loadingMap$.pipe(map((ids) => ids.get(row.id))),
           onClick: (row) => this.openForm(row),
         },
         {
@@ -189,7 +192,10 @@ export class SmbCardComponent implements OnInit {
   private onChangeEnabledState(row: SmbShare): void {
     const param = 'enabled';
 
-    this.ws.call('sharing.smb.update', [row.id, { [param]: !row[param] }]).pipe(untilDestroyed(this)).subscribe({
+    this.ws.call('sharing.smb.update', [row.id, { [param]: !row[param] }]).pipe(
+      accumulateLoadingState(row.id, this.loadingMap$),
+      untilDestroyed(this),
+    ).subscribe({
       next: () => {
         this.getSmbShares();
       },

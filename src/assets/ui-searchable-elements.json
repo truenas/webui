@@ -27,26 +27,6 @@
     "hierarchy": [
       "Toolbar",
       "Power Menu",
-      "Log Out"
-    ],
-    "synonyms": [
-      "Sign Out",
-      "Logout",
-      "Logoff",
-      "End session",
-      "Exit",
-      "Drop session"
-    ],
-    "requiredRoles": [],
-    "routerLink": null,
-    "anchor": "log-out",
-    "triggerAnchor": "power-menu",
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
-      "Toolbar",
-      "Power Menu",
       "Restart"
     ],
     "synonyms": [
@@ -170,6 +150,26 @@
     "requiredRoles": [],
     "routerLink": null,
     "anchor": "about",
+    "triggerAnchor": "user-menu",
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Toolbar",
+      "Settings Menu",
+      "Log Out"
+    ],
+    "synonyms": [
+      "Sign Out",
+      "Logout",
+      "Logoff",
+      "End session",
+      "Exit",
+      "Drop session"
+    ],
+    "requiredRoles": [],
+    "routerLink": null,
+    "anchor": "log-out",
     "triggerAnchor": "user-menu",
     "section": "ui"
   },
@@ -1001,7 +1001,7 @@
       "cloud-backup"
     ],
     "routerLink": null,
-    "anchor": "add",
+    "anchor": "add-cloud-backup",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -1044,7 +1044,7 @@
       "cloudsync"
     ],
     "routerLink": null,
-    "anchor": "add",
+    "anchor": "add-cloudsync",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -1122,7 +1122,7 @@
       "replication"
     ],
     "routerLink": null,
-    "anchor": "add",
+    "anchor": "add-replication",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -1164,7 +1164,7 @@
       "rsync"
     ],
     "routerLink": null,
-    "anchor": "add",
+    "anchor": "add-rsync",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -1224,7 +1224,7 @@
       "scrub"
     ],
     "routerLink": null,
-    "anchor": "add",
+    "anchor": "add-scrub",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -1298,7 +1298,7 @@
       "smart"
     ],
     "routerLink": null,
-    "anchor": "add",
+    "anchor": "add-smart-test",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -1369,7 +1369,7 @@
       "snapshot"
     ],
     "routerLink": null,
-    "anchor": "add",
+    "anchor": "add-snapshot-task",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -2135,7 +2135,7 @@
       "exporters"
     ],
     "routerLink": null,
-    "anchor": "add",
+    "anchor": "add-reporting-exporter",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -3496,7 +3496,7 @@
       "advanced"
     ],
     "routerLink": null,
-    "anchor": "add",
+    "anchor": "add-cron-job",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -3616,7 +3616,7 @@
       "advanced"
     ],
     "routerLink": null,
-    "anchor": "add",
+    "anchor": "add-init-shutdown-script",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -3897,7 +3897,7 @@
       "advanced"
     ],
     "routerLink": null,
-    "anchor": "add",
+    "anchor": "add-sysctl",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -4071,7 +4071,7 @@
       "services"
     ],
     "routerLink": null,
-    "anchor": "add",
+    "anchor": "add-alert-service",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -4761,7 +4761,7 @@
       "general"
     ],
     "routerLink": null,
-    "anchor": "add",
+    "anchor": "add-ntp-server",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -4982,7 +4982,7 @@
       "/vm"
     ],
     "routerLink": null,
-    "anchor": "add",
+    "anchor": "add-vm",
     "triggerAnchor": null,
     "section": "ui"
   },

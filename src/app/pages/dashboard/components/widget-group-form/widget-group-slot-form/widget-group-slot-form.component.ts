@@ -3,25 +3,34 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
+  EnvironmentInjector,
   Injector,
   OnChanges,
+  OnInit,
+  Signal,
   ViewChild,
   ViewContainerRef,
   WritableSignal,
   computed,
+  inject,
   input,
   output,
+  runInInjectionContext,
   signal,
 } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import {
   FormBuilder, ValidationErrors, Validators,
 } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { Observable, Subscription, of } from 'rxjs';
+import {
+  Observable, Subscription, combineLatest, map, of, switchMap,
+} from 'rxjs';
 import { Option } from 'app/interfaces/option.interface';
 import { SimpleWidget } from 'app/pages/dashboard/types/simple-widget.interface';
 import { SlotPosition } from 'app/pages/dashboard/types/slot-position.enum';
 import { WidgetCategory, widgetCategoryLabels } from 'app/pages/dashboard/types/widget-category.enum';
+import { WidgetVisibilityDepsType } from 'app/pages/dashboard/types/widget-component.interface';
 import { WidgetGroupSlot } from 'app/pages/dashboard/types/widget-group-slot.interface';
 import { WidgetSettingsRef } from 'app/pages/dashboard/types/widget-settings-ref.interface';
 import { WidgetType } from 'app/pages/dashboard/types/widget.interface';
@@ -34,7 +43,7 @@ import { widgetRegistry } from 'app/pages/dashboard/widgets/all-widgets.constant
   styleUrl: './widget-group-slot-form.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class WidgetGroupSlotFormComponent implements AfterViewInit, OnChanges {
+export class WidgetGroupSlotFormComponent implements OnInit, AfterViewInit, OnChanges {
   slotConfig = input.required<WidgetGroupSlot<object>>();
   slot = signal<WidgetGroupSlot<object>>(null);
 
@@ -89,12 +98,20 @@ export class WidgetGroupSlotFormComponent implements AfterViewInit, OnChanges {
     return of(typeOptions);
   });
 
+  getLayoutSupportedWidgets: Signal<SimpleWidget[]>;
+
   form = this.fb.group({
     category: [null as WidgetCategory, [Validators.required]],
     type: [null as WidgetType, [Validators.required]],
   });
 
-  constructor(private fb: FormBuilder, private cdr: ChangeDetectorRef) { }
+  private environmentInjector = inject(EnvironmentInjector);
+  private widgetRegistryEntries = Object.entries(widgetRegistry);
+
+  constructor(
+    private fb: FormBuilder,
+    private cdr: ChangeDetectorRef,
+  ) { }
 
   setupFormValueUpdates(): void {
     this.setupCategoryUpdates();
@@ -149,6 +166,17 @@ export class WidgetGroupSlotFormComponent implements AfterViewInit, OnChanges {
     this.setValuesFromInput();
   }
 
+  ngOnInit(): void {
+    runInInjectionContext(this.environmentInjector, () => {
+      this.getLayoutSupportedWidgets = toSignal(of(this.widgetRegistryEntries).pipe(
+        switchMap((widgets) => combineLatest(this.getVisibilityList(widgets))),
+        map(([widgets, visibilityList]) => this.filterHiddenWidgets(widgets, visibilityList)),
+        map((widgets) => this.filterUnsupportedWidgets(widgets)),
+        map((widgets) => widgets.map(([type, widget]) => ({ ...widget, type: type as WidgetType }))),
+      ));
+    });
+  }
+
   ngAfterViewInit(): void {
     this.refreshSettingsContainer();
   }
@@ -177,6 +205,33 @@ export class WidgetGroupSlotFormComponent implements AfterViewInit, OnChanges {
     this.categorySubscription?.unsubscribe();
     this.typeSubscription?.unsubscribe();
     this.settingsContainer?.clear();
+  }
+
+  private getVisibilityList(
+    widgets: typeof this.widgetRegistryEntries,
+  ): [Observable<typeof this.widgetRegistryEntries>, Observable<boolean[]>] {
+    const visibilityList = widgets.map(([, widget]) => {
+      if (widget.visibility) {
+        const deps: WidgetVisibilityDepsType = new Map();
+        widget.visibility.deps.forEach((service) => deps.set(service, inject(service)));
+        return widget.visibility.isVisible$(deps);
+      }
+      return of(true);
+    });
+    return [of(widgets), combineLatest(visibilityList)];
+  }
+
+  private filterHiddenWidgets(
+    widgets: typeof this.widgetRegistryEntries,
+    visibilityList: boolean[],
+  ): typeof this.widgetRegistryEntries {
+    return widgets.filter((_, idx) => visibilityList[idx]);
+  }
+
+  private filterUnsupportedWidgets(
+    widgets: typeof this.widgetRegistryEntries,
+  ): typeof this.widgetRegistryEntries {
+    return widgets.filter(([, widget]) => widget.supportedSizes.includes(this.slotConfig().slotSize));
   }
 
   private refreshSettingsContainer(): void {
@@ -231,11 +286,5 @@ export class WidgetGroupSlotFormComponent implements AfterViewInit, OnChanges {
         },
       ],
     });
-  }
-
-  getLayoutSupportedWidgets(): SimpleWidget[] {
-    return Object.entries(widgetRegistry).filter(
-      ([, widget]) => widget.supportedSizes.includes(this.slotConfig().slotSize),
-    ).map(([type, widget]) => ({ ...widget, type: type as WidgetType }));
   }
 }

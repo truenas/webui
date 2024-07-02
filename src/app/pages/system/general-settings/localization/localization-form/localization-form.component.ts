@@ -9,7 +9,6 @@ import { Store } from '@ngrx/store';
 import _ from 'lodash';
 import { Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { Role } from 'app/enums/role.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { helptextSystemGeneral as helptext } from 'app/helptext/system/general';
 import { LocalizationSettings } from 'app/interfaces/localization-settings.interface';
@@ -36,8 +35,6 @@ import { systemInfoUpdated } from 'app/store/system-info/system-info.actions';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LocalizationFormComponent implements OnInit {
-  protected readonly requiredRoles = [Role.FullAdmin];
-
   fieldsetTitle = helptext.localeTitle;
 
   isFormLoading = false;

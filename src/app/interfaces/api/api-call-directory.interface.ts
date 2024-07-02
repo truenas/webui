@@ -62,7 +62,13 @@ import {
   ChartReleaseUpgradeParams,
 } from 'app/interfaces/chart-release.interface';
 import { Choices } from 'app/interfaces/choices.interface';
-import { CloudBackup, CloudBackupSnapshot, CloudBackupUpdate } from 'app/interfaces/cloud-backup.interface';
+import {
+  CloudBackup,
+  CloudBackupSnapshot,
+  CloudBackupSnapshotDirectoryListing,
+  CloudBackupSnapshotDirectoryParams,
+  CloudBackupUpdate,
+} from 'app/interfaces/cloud-backup.interface';
 import {
   CloudSyncDirectoryListing,
   CloudSyncListDirectoryParams,
@@ -389,6 +395,7 @@ export interface ApiCallDirectory {
   'cloud_backup.create': { params: [CloudBackupUpdate]; response: CloudBackup };
   'cloud_backup.delete': { params: [id: number]; response: boolean };
   'cloud_backup.list_snapshots': { params: [id: number]; response: CloudBackupSnapshot[] };
+  'cloud_backup.list_snapshot_directory': { params: CloudBackupSnapshotDirectoryParams; response: CloudBackupSnapshotDirectoryListing[] };
   'cloud_backup.query': { params: [id?: QueryParams<CloudBackup>]; response: CloudBackup[] };
   'cloud_backup.update': { params: [id: number, update: CloudBackupUpdate]; response: CloudBackup };
 
@@ -787,6 +794,7 @@ export interface ApiCallDirectory {
   'system.advanced.update': { params: [Partial<AdvancedConfigUpdate>]; response: AdvancedConfig };
   'system.advanced.update_gpu_pci_ids': { params: [isolated_gpu_pci_ids: string[]]; response: void };
   'system.build_time': { params: void; response: ApiTimestamp };
+  'system.boot_id': { params: void; response: string };
   'system.environment': { params: void; response: SystemEnvironment };
   'system.general.config': { params: void; response: SystemGeneralConfig };
   'system.general.kbdmap_choices': { params: void; response: Choices };

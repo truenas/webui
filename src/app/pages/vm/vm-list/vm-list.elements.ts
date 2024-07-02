@@ -10,6 +10,7 @@ export const vmListElements = {
     },
     add: {
       hierarchy: [T('Add')],
+      anchor: 'add-vm',
       synonyms: [
         T('Add VM'),
         T('Create VM'),

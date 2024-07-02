@@ -1,0 +1,14 @@
+@import '../mixins';
+
+:host {
+  display: block;
+  margin-bottom: 30px;
+}
+
+h3 {
+  @include section-title;
+}
+
+.overview {
+  @include item-list;
+}

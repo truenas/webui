@@ -8,7 +8,6 @@ import {
 } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { MockModule } from 'ng-mocks';
-import { CoreComponents } from 'app/core/core-components.module';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { ServiceName, serviceNames } from 'app/enums/service-name.enum';
@@ -55,7 +54,6 @@ describe('ServicesComponent', () => {
   const createComponent = createComponentFactory({
     component: ServicesComponent,
     imports: [
-      CoreComponents,
       FormsModule,
       MockModule(PageHeaderModule),
       SearchInput1Component,

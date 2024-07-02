@@ -87,8 +87,7 @@ export class SigninStore extends ComponentStore<SigninState> {
         this.checkIfAdminPasswordSet(),
         this.checkIfManagedByTrueCommand(),
         this.loadFailoverStatus(),
-        // TODO: Temporarily disabled https://ixsystems.atlassian.net/browse/NAS-129710
-        // this.updateService.hardRefreshIfNeeded(),
+        this.updateService.hardRefreshIfNeeded(),
       ]).pipe(
         switchMap(() => this.authService.loginWithToken()),
         tap((loginResult) => {
@@ -179,7 +178,7 @@ export class SigninStore extends ComponentStore<SigninState> {
   }
 
   private checkIfManagedByTrueCommand(): Observable<boolean> {
-    return of(false).pipe(
+    return this.ws.call('truenas.managed_by_truecommand').pipe(
       tap((managedByTrueCommand) => this.patchState({ managedByTrueCommand })),
     );
   }

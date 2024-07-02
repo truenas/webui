@@ -2,9 +2,10 @@ import {
   makeArrayDeviceSlots,
 } from 'app/core/testing/mock-enclosure/enclosure-templates/utils/make-array-device-slots.utils';
 import { makeEnclosure } from 'app/core/testing/mock-enclosure/enclosure-templates/utils/make-enclosure.utils';
+import { EnclosureModel } from 'app/enums/enclosure-model.enum';
 
 export const mockMini3E = makeEnclosure({
-  model: 'MINI-3.0-E',
+  model: EnclosureModel.Mini3E,
   controller: true,
   rackmount: false,
   front_loaded: true,
@@ -15,7 +16,7 @@ export const mockMini3E = makeEnclosure({
       ...makeArrayDeviceSlots(1, 4, {
         is_front: true,
       }),
-      ...makeArrayDeviceSlots(5, 7, {
+      ...makeArrayDeviceSlots(5, 6, {
         is_internal: true,
       }),
     },
@@ -25,11 +26,11 @@ export const mockMini3E = makeEnclosure({
 // eslint-disable-next-line @typescript-eslint/naming-convention
 export const mockMini3EPlus = makeEnclosure({
   ...mockMini3E,
-  model: 'MINI-3.0-E+',
+  model: EnclosureModel.Mini3EPlus,
 });
 
 export const mockMini3X = makeEnclosure({
-  model: 'MINI-3.0-X',
+  model: EnclosureModel.Mini3X,
   controller: true,
   rackmount: false,
   front_slots: 7,
@@ -44,11 +45,11 @@ export const mockMini3X = makeEnclosure({
 // eslint-disable-next-line @typescript-eslint/naming-convention
 export const mockMini3XPlus = makeEnclosure({
   ...mockMini3X,
-  model: 'MINI-3.0-X+',
+  model: EnclosureModel.Mini3XPlus,
 });
 
-export const mockMini3Xl = makeEnclosure({
-  model: 'MINI-3.0-XL',
+export const mockMini3XlPlus = makeEnclosure({
+  model: EnclosureModel.Mini3XlPlus,
   controller: true,
   rackmount: false,
   front_loaded: true,
@@ -59,7 +60,7 @@ export const mockMini3Xl = makeEnclosure({
       ...makeArrayDeviceSlots(1, 9, {
         is_front: true,
       }),
-      ...makeArrayDeviceSlots(10, 11, {
+      ...makeArrayDeviceSlots(10, 10, {
         is_internal: true,
       }),
     },
@@ -67,7 +68,7 @@ export const mockMini3Xl = makeEnclosure({
 });
 
 export const mockMiniR = makeEnclosure({
-  model: 'MINI-R',
+  model: EnclosureModel.MiniR,
   controller: true,
   rackmount: true,
   front_loaded: true,

@@ -12,7 +12,6 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { FlexLayoutModule } from '@ngbracket/ngx-layout';
 import { TranslateModule } from '@ngx-translate/core';
-import { CoreComponents } from 'app/core/core-components.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { EntityModule } from 'app/modules/entity/entity.module';
@@ -43,7 +42,6 @@ import { ReportsGlobalControlsComponent } from './components/reports-global-cont
 @NgModule({
   imports: [
     CommonModule,
-    CoreComponents,
     ReactiveFormsModule,
     IxFormsModule,
     IxDynamicFormModule,

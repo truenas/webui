@@ -16,6 +16,7 @@ export const replicationListElements = {
         T('New Replication Task'),
         T('Task'),
       ],
+      anchor: 'add-replication',
     },
   },
 } satisfies UiSearchableElement;

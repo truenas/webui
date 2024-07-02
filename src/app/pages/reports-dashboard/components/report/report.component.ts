@@ -23,11 +23,9 @@ import { oneDayMillis, oneHourMillis } from 'app/constants/time.constant';
 import { toggleMenuDuration } from 'app/constants/toggle-menu-duration';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { ReportingGraphName } from 'app/enums/reporting.enum';
-import { WINDOW } from 'app/helpers/window.helper';
 import { ReportingData, ReportingDatabaseError } from 'app/interfaces/reporting.interface';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { WebSocketError } from 'app/interfaces/websocket-error.interface';
-import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormatDateTimePipe } from 'app/modules/pipes/format-date-time/format-datetime.pipe';
 import { WidgetComponent } from 'app/pages/dashboard-old/components/widget/widget.component';
 import { LineChartComponent } from 'app/pages/reports-dashboard/components/line-chart/line-chart.component';
@@ -40,7 +38,6 @@ import { refreshInterval } from 'app/pages/reports-dashboard/reports.constants';
 import { ReportsService } from 'app/pages/reports-dashboard/reports.service';
 import { formatData } from 'app/pages/reports-dashboard/utils/report.utils';
 import { ThemeService } from 'app/services/theme/theme.service';
-import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 import { selectTheme, waitForPreferences } from 'app/store/preferences/preferences.selectors';
 import { selectTimezone } from 'app/store/system-config/system-config.selectors';
@@ -134,12 +131,9 @@ export class ReportComponent extends WidgetComponent implements OnInit, OnChange
 
   constructor(
     public translate: TranslateService,
-    private ws: WebSocketService,
-    private dialog: DialogService,
     private store$: Store<AppState>,
     private formatDateTimePipe: FormatDateTimePipe,
     private themeService: ThemeService,
-    @Inject(WINDOW) private window: Window,
     @Inject(DOCUMENT) private document: Document,
     private reportsService: ReportsService,
     private cdr: ChangeDetectorRef,
@@ -238,6 +232,7 @@ export class ReportComponent extends WidgetComponent implements OnInit, OnChange
     if (!this.isReady) {
       setTimeout(() => {
         this.isReady = true;
+        this.cdr.markForCheck();
       }, 1000);
     }
   }

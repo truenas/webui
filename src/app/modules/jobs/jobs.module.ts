@@ -9,7 +9,6 @@ import { RouterModule } from '@angular/router';
 import { EffectsModule } from '@ngrx/effects';
 import { StoreModule } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
-import { CoreComponents } from 'app/core/core-components.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { JobItemComponent } from 'app/modules/jobs/components/job-item/job-item.component';
@@ -24,7 +23,6 @@ import { TestIdModule } from 'app/modules/test-id/test-id.module';
 @NgModule({
   imports: [
     CommonModule,
-    CoreComponents,
     StoreModule.forFeature(jobStateKey, jobReducer),
     EffectsModule.forFeature([JobEffects]),
     CommonDirectivesModule,

@@ -1,3 +1,5 @@
+@import 'scss-imports/cssvars';
+
 :host {
   color: var(--fg2);
   display: block;
@@ -5,15 +7,29 @@
   overflow: auto;
   position: relative;
   width: 240px;
+
+  @media (max-width: $breakpoint-md) {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 5px;
+    overflow: auto;
+    width: 100%;
+
+    ix-enclosure-side {
+      max-width: 200px;
+      width: 40vw;
+    }
+  }
 }
 
 .enclosure {
+  align-items: flex-end;
   background-color: var(--bg2);
   border: 1px solid var(--lines);
   border-bottom-width: 0;
   border-left: solid 4px transparent;
   cursor: pointer;
-  display: block;
+  display: grid;
   padding: 12px 0 16px;
   text-align: center;
 

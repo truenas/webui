@@ -17,6 +17,7 @@ export const smartTaskListElements = {
     },
     add: {
       hierarchy: [T('Add')],
+      anchor: 'add-smart-test',
       synonyms: [
         T('Add Periodic S.M.A.R.T. Test'),
         T('Add Smart Test'),

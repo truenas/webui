@@ -7,7 +7,6 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { provideMockStore } from '@ngrx/store/testing';
 import { MockModule } from 'ng-mocks';
 import { of } from 'rxjs';
-import { CoreComponents } from 'app/core/core-components.module';
 import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-datetime.pipe';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
@@ -36,7 +35,6 @@ describe('SnapshotListComponent', () => {
   const createComponent = createComponentFactory({
     component: SnapshotListComponent,
     imports: [
-      CoreComponents,
       IxTableModule,
       MockModule(LayoutModule),
       MockModule(PageHeaderModule),
