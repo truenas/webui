@@ -4,6 +4,7 @@ import {
 import { toSignal } from '@angular/core/rxjs-interop';
 import { Store } from '@ngrx/store';
 import { filter, map } from 'rxjs';
+import { EnclosureStatus } from 'app/enums/enclosure-slot-status.enum';
 import { DashboardEnclosure, DashboardEnclosureSlot } from 'app/interfaces/enclosure.interface';
 import {
   TintingFunction,
@@ -53,7 +54,7 @@ export class EnclosureViewComponent {
 
   private diskStatusTint(): TintingFunction {
     return (slot: DashboardEnclosureSlot) => {
-      return slot?.status === 'OK' ? 'green' : 'red';
+      return slot?.status === EnclosureStatus.Ok ? 'green' : 'red';
     };
   }
 
