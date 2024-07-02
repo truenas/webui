@@ -13,7 +13,7 @@ import { AuthService } from 'app/services/auth/auth.service';
 import { WebSocketConnectionService } from 'app/services/websocket-connection.service';
 import { WebSocketService } from 'app/services/ws.service';
 
-const dummyUser = {
+export const dummyUser = {
   privilege: {
     roles: {
       $set: [Role.FullAdmin],

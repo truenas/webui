@@ -8,11 +8,14 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { CloudSyncProviderName } from 'app/enums/cloudsync-provider.enum';
 import { Direction } from 'app/enums/direction.enum';
+import { JobState } from 'app/enums/job-state.enum';
 import { mntPath } from 'app/enums/mnt-path.enum';
 import { TransferMode } from 'app/enums/transfer-mode.enum';
 import { CloudSyncTaskUi } from 'app/interfaces/cloud-sync-task.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { CloudCredentialsSelectModule } from 'app/modules/forms/custom-selects/cloud-credentials-select/cloud-credentials-select.module';
+import {
+  CloudCredentialsSelectModule,
+} from 'app/modules/forms/custom-selects/cloud-credentials-select/cloud-credentials-select.module';
 import { ChainedRef } from 'app/modules/forms/ix-forms/components/ix-slide-in/chained-component-ref';
 import { IxFormsModule } from 'app/modules/forms/ix-forms/ix-forms.module';
 import { SchedulerModule } from 'app/modules/scheduler/scheduler.module';
@@ -70,7 +73,7 @@ describe('CloudSyncFormComponent', () => {
     frequency: 'At 00:00, only on Sunday',
     next_run_time: 'Disabled',
     next_run: 'Disabled',
-    state: { state: 'PENDING' },
+    state: { state: JobState.Pending },
   } as CloudSyncTaskUi;
 
   let loader: HarnessLoader;
@@ -94,7 +97,11 @@ describe('CloudSyncFormComponent', () => {
     ],
     providers: [
       mockAuth(),
-      mockProvider(DialogService),
+      mockProvider(DialogService, {
+        jobDialog: jest.fn(() => ({
+          afterClosed: jest.fn(() => of(true)),
+        })),
+      }),
       mockWebSocket([
         mockCall('cloudsync.create', existingTask),
         mockCall('cloudsync.update', existingTask),
@@ -230,6 +237,7 @@ describe('CloudSyncFormComponent', () => {
     });
 
     it('saves updated cloudsync task when form opened for edit is saved', async () => {
+      // TODO: Rewrite to interact with controls instead of setting form directly.
       spectator.component.form.patchValue({
         description: 'Edited description',
         direction: Direction.Pull,

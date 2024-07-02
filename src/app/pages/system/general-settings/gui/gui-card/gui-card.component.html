@@ -3,6 +3,7 @@
     <h3>{{ helptext.guiTitle| translate }}</h3>
     <div class="actions action-icon">
       <button
+        *ixRequiresRoles="requiredRoles"
         mat-button
         color="default"
         [ixTest]="['gui', 'settings']"

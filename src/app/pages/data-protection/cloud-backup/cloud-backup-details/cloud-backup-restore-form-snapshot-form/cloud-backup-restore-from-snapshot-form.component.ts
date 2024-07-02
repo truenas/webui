@@ -9,11 +9,16 @@ import { TranslateService } from '@ngx-translate/core';
 import { map, of } from 'rxjs';
 import { DatasetPreset } from 'app/enums/dataset.enum';
 import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
+import { mntPath } from 'app/enums/mnt-path.enum';
 import { Role } from 'app/enums/role.enum';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextTruecloudBackup } from 'app/helptext/data-protection/truecloud-backup/cloudsync';
 import {
-  CloudBackup, CloudBackupRestoreParams, CloudBackupSnapshot, SnapshotIncludeExclude,
+  CloudBackup,
+  CloudBackupRestoreParams,
+  CloudBackupSnapshot,
+  CloudBackupSnapshotDirectoryFileType,
+  SnapshotIncludeExclude,
 } from 'app/interfaces/cloud-backup.interface';
 import { DatasetCreate } from 'app/interfaces/dataset.interface';
 import { ExplorerNodeData, TreeNode } from 'app/interfaces/tree-node.interface';
@@ -33,11 +38,11 @@ import { WebSocketService } from 'app/services/ws.service';
 })
 export class CloudBackupRestoreFromSnapshotFormComponent implements OnInit {
   readonly requiredRoles = [Role.CloudBackupWrite];
-
+  readonly mntPath = mntPath;
   readonly helptext = helptextTruecloudBackup;
 
   fileNodeProvider: TreeNodeProvider;
-  bucketNodeProvider: TreeNodeProvider;
+  snapshotNodeProvider: TreeNodeProvider;
 
   readonly includeExcludeOptions = new Map<SnapshotIncludeExclude, string>([
     [SnapshotIncludeExclude.IncludeEverything, this.translate.instant('Include everything')],
@@ -56,7 +61,7 @@ export class CloudBackupRestoreFromSnapshotFormComponent implements OnInit {
     includeExclude: [SnapshotIncludeExclude.IncludeEverything, Validators.required],
     excludedPaths: [[] as string[], Validators.required],
     excludePattern: [null as string | null, Validators.required],
-    subFolder: ['/'],
+    subFolder: [mntPath],
     includedPaths: [[] as string[]],
   });
 
@@ -92,7 +97,7 @@ export class CloudBackupRestoreFromSnapshotFormComponent implements OnInit {
 
   ngOnInit(): void {
     this.setFileNodeProvider();
-    this.setBucketNodeProvider();
+    this.setSnapshotNodeProvider();
     this.disableHiddenFields();
     this.listenForFormChanges();
   }
@@ -134,26 +139,20 @@ export class CloudBackupRestoreFromSnapshotFormComponent implements OnInit {
       });
   }
 
-  getBucketsNodeProvider(): TreeNodeProvider {
+  getSnapshotNodeProvider(): TreeNodeProvider {
     return (node: TreeNode<ExplorerNodeData>) => {
-      const data = {
-        credentials: this.data.backup?.credentials?.id,
-        attributes: {
-          folder: node.data.path,
-          bucket: this.data.backup.attributes.bucket,
-        },
-        args: '',
-      };
-
-      return this.ws.call('cloudsync.list_directory', [data]).pipe(
+      return this.ws.call(
+        'cloud_backup.list_snapshot_directory',
+        [this.data.backup.id, this.data.snapshot?.id, node.data.path],
+      ).pipe(
         map((listing) => {
           const nodes: ExplorerNodeData[] = [];
 
           listing.forEach((file) => {
-            if (file.IsDir) {
+            if (file.type === CloudBackupSnapshotDirectoryFileType.Dir && file.path !== node.data.path) {
               nodes.push({
-                path: `${data.attributes.folder}/${file.Name}`.replace(/\/+/g, '/'),
-                name: file.Name,
+                path: file.path,
+                name: file.name,
                 type: ExplorerNodeType.Directory,
                 hasChildren: true,
               });
@@ -196,8 +195,8 @@ export class CloudBackupRestoreFromSnapshotFormComponent implements OnInit {
     this.fileNodeProvider = this.filesystemService.getFilesystemNodeProvider({ directoriesOnly: true });
   }
 
-  private setBucketNodeProvider(): void {
-    this.bucketNodeProvider = this.getBucketsNodeProvider();
+  private setSnapshotNodeProvider(): void {
+    this.snapshotNodeProvider = this.getSnapshotNodeProvider();
   }
 
   private disableHiddenFields(): void {

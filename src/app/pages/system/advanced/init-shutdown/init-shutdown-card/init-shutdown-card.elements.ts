@@ -8,6 +8,7 @@ export const initShutdownCardElements = {
   elements: {
     addInitShutdownScript: {
       hierarchy: [T('Add')],
+      anchor: 'add-init-shutdown-script',
       synonyms: [
         T('Add Init/Shutdown Script'),
         T('Create Init/Shutdown Script'),

@@ -5,6 +5,7 @@ import { MatListItemHarness } from '@angular/material/list/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { GuiCardComponent } from 'app/pages/system/general-settings/gui/gui-card/gui-card.component';
 import { GuiFormComponent } from 'app/pages/system/general-settings/gui/gui-form/gui-form.component';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -17,6 +18,7 @@ describe('GuiCardComponent', () => {
   const createComponent = createComponentFactory({
     component: GuiCardComponent,
     providers: [
+      mockAuth(),
       provideMockStore({
         selectors: [
           {

@@ -132,6 +132,7 @@ export function ipv6Validator(): ValidatorFn {
 }
 
 // Used only on sharing/iscsi/portal/portal-form
+// TODO: Check what difference with ipv4or6Validator
 export function ipValidator(type: string = 'ipv4' || 'ipv6' || 'all'): ValidatorFn {
   const ipv4Regex = ipRegex.v4();
   const ipv6Regex = ipRegex.v6();

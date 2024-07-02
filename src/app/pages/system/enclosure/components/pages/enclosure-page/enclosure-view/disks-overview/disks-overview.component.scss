@@ -58,77 +58,10 @@
     overflow: auto;
     padding: 0 8px;
     width: 75%;
-
+    
     @media (max-width: $breakpoint-md) {
       margin-top: 20px;
       width: 100%;
     }
-
-    .details-grid {
-      display: grid;
-      gap: 5px;
-      grid-template-columns: 1fr 1fr 1fr 1fr;
-    }
-
-    .detail {
-      margin: 8px 0;
-      text-align: left;
-    }
-
-    .detail .label {
-      font-size: 100%;
-      font-weight: 500;
-    }
-
-    .detail .value {
-      font-size: 120%;
-      font-weight: 300;
-      line-height: 85%;
-      text-align: left;
-      word-break: break-word;
-    }
-  }
-}
-
-.disk-overview {
-  display: flex;
-  height: 100%;
-
-  @media (max-width: $breakpoint-xs) {
-    flex-wrap: wrap;
-  }
-
-  .tile {
-    align-items: center;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    width: 100%;
-
-    &:not(:last-child) {
-      border-right: 1px solid var(--lines);
-    }
-
-    .primary-number {
-      font-size: 3.25rem;
-      font-weight: 100;
-    }
-
-    .title {
-      font-size: 1rem;
-    }
-
-    .subtitle {
-      font-size: 0.65rem;
-      opacity: 0.85;
-    }
-
-    button {
-      margin: 16px;
-    }
-  }
-
-  .tile.active {
-    background-color: var(--contrast-darker);
   }
 }

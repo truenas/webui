@@ -11,6 +11,7 @@ export const sysctlCardElements = {
     },
     addSysctl: {
       hierarchy: [T('Add')],
+      anchor: 'add-sysctl',
       synonyms: [
         T('Add Sysctl'),
         T('Create Sysctl'),
