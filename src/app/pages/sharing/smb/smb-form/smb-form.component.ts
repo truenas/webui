@@ -45,7 +45,7 @@ import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { RestartSmbDialogComponent } from 'app/pages/sharing/smb/smb-form/restart-smb-dialog/restart-smb-dialog.component';
 import { SmbValidationService } from 'app/pages/sharing/smb/smb-form/smb-validator.service';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { DatasetService } from 'app/services/dataset-service/dataset.service';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { UserService } from 'app/services/user.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -199,7 +199,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
     private ws: WebSocketService,
     private matDialog: MatDialog,
     private dialogService: DialogService,
-    private errorHandler: ErrorHandlerService,
+    private datasetService: DatasetService,
     private translate: TranslateService,
     private router: Router,
     private userService: UserService,
@@ -443,7 +443,13 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
       request$ = this.ws.call('sharing.smb.update', [this.existingSmbShare.id, smbShare]);
     }
 
-    request$.pipe(
+    this.datasetService.rootLevelDatasetWarning(smbShare.path).pipe(
+      filter(Boolean),
+      tap(() => {
+        this.isLoading = true;
+        this.cdr.markForCheck();
+      }),
+      switchMap(() => request$),
       switchMap((smbShareResponse) => this.restartCifsServiceIfNecessary().pipe(
         map(() => smbShareResponse),
       )),

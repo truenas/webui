@@ -1241,6 +1241,7 @@
   "Yandex": "",
   "Yesterday": "",
   "You are using an insecure connection. <a href=\"{url}\">Switch to HTTPS</a> for secure access.": "",
+  "You configure the root-level dataset. Are you sure you want to continue?": "",
   "You do not have the permissions to access the requested information. If you think this was a mistake, please contact your system administrator.": "",
   "You may enter a specific IP address (e.g., 192.168.1.1) for individual access, or use an  IP address with a subnet mask (e.g., 192.168.1.0/24) to define a range of addresses.": "",
   "Your dashboard is currently empty!": "",
