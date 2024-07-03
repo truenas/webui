@@ -81,7 +81,7 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
   emptyConf = computed<EmptyConfig>(() => {
     const error = this.error();
 
-    if (error?.error) {
+    if (error?.reason) {
       return {
         type: EmptyType.Errors,
         large: true,
