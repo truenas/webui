@@ -121,10 +121,11 @@ export class SmbAclComponent implements OnInit {
     this.form.controls.entries.removeAt(index);
   }
 
-  async onSubmit(): Promise<void> {
+  onSubmit(): void {
     this.isLoading = true;
 
-    of(await this.getAclEntriesFromForm())
+    of(undefined)
+      .pipe(mergeMap(() => this.getAclEntriesFromForm()))
       .pipe(mergeMap((acl) => this.ws.call('sharing.smb.setacl', [{ share_name: this.shareAclName, share_acl: acl }])))
       .pipe(untilDestroyed(this))
       .subscribe({
