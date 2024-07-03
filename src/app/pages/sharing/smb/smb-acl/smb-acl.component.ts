@@ -4,8 +4,9 @@ import {
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import _ from 'lodash';
 import {
-  concatMap, forkJoin, from, map, Observable, of,
+  concatMap, firstValueFrom, forkJoin, map, mergeMap, Observable, of, from,
 } from 'rxjs';
 import { NfsAclTag, smbAclTagLabels } from 'app/enums/nfs-acl.enum';
 import { Role } from 'app/enums/role.enum';
@@ -30,8 +31,8 @@ interface FormAclEntry {
   ae_who: NfsAclTag.Everyone | NfsAclTag.UserGroup | NfsAclTag.User | null;
   ae_perm: SmbSharesecPermission;
   ae_type: SmbSharesecType;
-  user: number | null;
-  group: number | null;
+  user: string | number | null;
+  group: string | number | null;
 }
 
 @UntilDestroy()
@@ -121,11 +122,11 @@ export class SmbAclComponent implements OnInit {
     this.form.controls.entries.removeAt(index);
   }
 
-  onSubmit(): void {
+  async onSubmit(): Promise<void> {
     this.isLoading = true;
-    const acl = this.getAclEntriesFromForm();
 
-    this.ws.call('sharing.smb.setacl', [{ share_name: this.shareAclName, share_acl: acl }])
+    of(await this.getAclEntriesFromForm())
+      .pipe(mergeMap((acl) => this.ws.call('sharing.smb.setacl', [{ share_name: this.shareAclName, share_acl: acl }])))
       .pipe(untilDestroyed(this))
       .subscribe({
         next: () => {
@@ -153,6 +154,7 @@ export class SmbAclComponent implements OnInit {
             this.addAce();
 
             let aeWho: FormAclEntry['ae_who'];
+
             if (ace.ae_who_id?.id_type === NfsAclTag.Both) {
               aeWho = userIds.includes(ace.ae_who_id.id) ? NfsAclTag.User : NfsAclTag.UserGroup;
             } else {
@@ -177,22 +179,32 @@ export class SmbAclComponent implements OnInit {
       });
   }
 
-  private getAclEntriesFromForm(): SmbSharesecAce[] {
-    return this.form.value.entries.map((ace) => {
-      const whoId = ace.ae_who === NfsAclTag.UserGroup ? ace.group : ace.user;
+  private async getAclEntriesFromForm(): Promise<SmbSharesecAce[]> {
+    const results = [] as SmbSharesecAce[];
+    for (const ace of this.form.value.entries) {
+      const whoIdOrName = ace.ae_who === NfsAclTag.UserGroup ? ace.group : ace.user;
 
       const result = { ae_perm: ace.ae_perm, ae_type: ace.ae_type } as SmbSharesecAce;
 
-      if (ace.ae_who !== this.nfsAclTag.Everyone) {
-        result.ae_who_id = { id_type: ace.ae_who, id: whoId };
-      }
-
       if (ace.ae_who === NfsAclTag.Everyone) {
         result.ae_who_sid = 'S-1-1-0';
-      }
+      } else {
+        let id: number;
+        if (_.isNumber(whoIdOrName)) {
+          id = Number(whoIdOrName);
+        } else if (ace.ae_who === NfsAclTag.UserGroup) {
+          id = (await firstValueFrom(this.userService.getGroupByName(whoIdOrName.toString())))
+            .gr_gid;
+        } else {
+          id = (await firstValueFrom(this.userService.getUserByName(whoIdOrName.toString())))
+            .pw_uid;
+        }
 
-      return result;
-    });
+        result.ae_who_id = { id_type: ace.ae_who, id };
+      }
+      results.push(result);
+    }
+    return results;
   }
 
   private initialValueDataFromAce(
