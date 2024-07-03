@@ -208,10 +208,9 @@
     "hierarchy": [
       "Credentials",
       "Groups",
-      "Add"
+      "Add Group"
     ],
     "synonyms": [
-      "Add Group",
       "New Group",
       "Create Group",
       "Group",
@@ -252,10 +251,9 @@
       "Credentials",
       "Groups",
       "Privileges",
-      "Add"
+      "Add Privilege"
     ],
     "synonyms": [
-      "Add Privilege",
       "New Privilege",
       "Create Privilege",
       "Privilege"
@@ -312,10 +310,9 @@
     "hierarchy": [
       "Credentials",
       "Users",
-      "Add"
+      "Add User"
     ],
     "synonyms": [
-      "Add User",
       "New User",
       "Create User",
       "User",
@@ -634,11 +631,10 @@
     "hierarchy": [
       "Credentials",
       "Cloud Credentials",
-      "Add"
+      "Add Cloud Credential"
     ],
     "synonyms": [
       "Add Credential",
-      "Add Cloud Credential",
       "Add Backup Credential",
       "New Credential",
       "New Could Credential",
@@ -682,10 +678,9 @@
     "hierarchy": [
       "Credentials",
       "SSH Connections",
-      "Add"
+      "Add SSH Connection"
     ],
     "synonyms": [
-      "Add SSH Connection",
       "New SSH Connection",
       "Create SSH Connection",
       "SSH Connection"
@@ -727,10 +722,9 @@
     "hierarchy": [
       "Credentials",
       "SSH Keypairs",
-      "Add"
+      "Add SSH Keypair"
     ],
     "synonyms": [
-      "Add SSH Keypair",
       "New SSH Keypair",
       "Create SSH Keypair",
       "SSH Keypair",
@@ -772,10 +766,9 @@
       "Credentials",
       "Certificates",
       "ACME DNS-Authenticators",
-      "Add"
+      "Add ACME DNS-Authenticator"
     ],
     "synonyms": [
-      "Add ACME DNS-Authenticator",
       "New ACME DNS-Authenticator",
       "Create ACME DNS-Authenticator",
       "ACME DNS-Authenticator",
@@ -817,10 +810,9 @@
       "Credentials",
       "Certificates",
       "Certificate Authorities",
-      "Add"
+      "Add Certificate Authority"
     ],
     "synonyms": [
-      "Add Certificate Authority",
       "New Certificate Authority",
       "Create Certificate Authority",
       "Certificate Authority"
@@ -841,12 +833,11 @@
     "hierarchy": [
       "Credentials",
       "Certificates",
-      "Add"
+      "Add Certificate"
     ],
     "synonyms": [
       "Create Certificate",
       "New Certificate",
-      "Add Certificate",
       "Generate Certificate"
     ],
     "requiredRoles": [
@@ -901,12 +892,11 @@
       "Credentials",
       "Certificates",
       "Certificate Signing Requests",
-      "Add"
+      "Add CSR"
     ],
     "synonyms": [
       "Create CSR",
       "New CSR",
-      "Add CSR",
       "Generate CSR",
       "Create Certificate Signing Requests",
       "New Certificate Signing Requests",
@@ -982,10 +972,9 @@
     "hierarchy": [
       "Data Protection",
       "TrueCloud Backup Tasks",
-      "Add"
+      "Add TrueCloud Backup Task"
     ],
     "synonyms": [
-      "Add TrueCloud Backup Task",
       "Add Cloud Backup",
       "Create TrueCloud Backup Task",
       "Create Cloud Backup",
@@ -1028,10 +1017,9 @@
     "hierarchy": [
       "Data Protection",
       "Cloud Sync Tasks",
-      "Add"
+      "Add Cloud Sync Task"
     ],
     "synonyms": [
-      "Add Cloud Sync Task",
       "Create Cloud Sync Task",
       "New Cloud Sync Task",
       "Task"
@@ -1105,10 +1093,9 @@
     "hierarchy": [
       "Data Protection",
       "Replication Tasks",
-      "Add"
+      "Add Replication Task"
     ],
     "synonyms": [
-      "Add Replication Task",
       "Create Replication Task",
       "New Replication Task",
       "Task"
@@ -1148,10 +1135,9 @@
     "hierarchy": [
       "Data Protection",
       "Rsync Tasks",
-      "Add"
+      "Add Rsync Task"
     ],
     "synonyms": [
-      "Add Rsync Task",
       "Create Rsync Task",
       "New Rsync Task",
       "Task"
@@ -1208,10 +1194,9 @@
     "hierarchy": [
       "Data Protection",
       "Scrub Tasks",
-      "Add"
+      "Add Scrub Task"
     ],
     "synonyms": [
-      "Add Scrub Task",
       "Create Scrub Task",
       "New Scrub Task",
       "Task"
@@ -1275,7 +1260,7 @@
     "hierarchy": [
       "Data Protection",
       "Periodic S.M.A.R.T. Tests",
-      "Add"
+      "Add S.M.A.R.T. Test"
     ],
     "synonyms": [
       "Add Periodic S.M.A.R.T. Test",
@@ -1349,13 +1334,12 @@
     "hierarchy": [
       "Data Protection",
       "Periodic Snapshot Tasks",
-      "Add"
+      "Add Snapshot Task"
     ],
     "synonyms": [
       "Add Periodic Snapshot Task",
       "Create Periodic Snapshot Task",
       "New Periodic Snapshot Task",
-      "Add Snapshot Task",
       "Create Snapshot Task",
       "New Snapshot Task",
       "Snapshot",
@@ -1730,10 +1714,9 @@
     "hierarchy": [
       "Directory Services",
       "Idmap",
-      "Add"
+      "Add Idmap"
     ],
     "synonyms": [
-      "Add Idmap",
       "Create Idmap",
       "New Idmap"
     ],
@@ -1769,10 +1752,9 @@
     "hierarchy": [
       "Directory Services",
       "Kerberos Keytabs",
-      "Add"
+      "Add Kerberos Keytab"
     ],
     "synonyms": [
-      "Add Kerberos Keytab",
       "Create Kerberos Keytab",
       "New Kerberos Keytab",
       "Kerberos Keytab"
@@ -1809,10 +1791,9 @@
     "hierarchy": [
       "Directory Services",
       "Kerberos Realms",
-      "Add"
+      "Add Kerberos Realm"
     ],
     "synonyms": [
-      "Add Kerberos Realm",
       "Create Kerberos Realm",
       "New Kerberos Realm",
       "Kerberos Realm"
@@ -2080,10 +2061,9 @@
     "hierarchy": [
       "Network",
       "Static Routes",
-      "Add"
+      "Add Static Route"
     ],
     "synonyms": [
-      "Add Static Route",
       "Create Static Route",
       "New Static Route"
     ],
@@ -2116,14 +2096,13 @@
     "hierarchy": [
       "Reporting",
       "Reporting Exporters",
-      "Add"
+      "Add Reporting Exporter"
     ],
     "synonyms": [
       "Add Exporter",
       "New Exporter",
       "Create Exporter",
       "Exporter",
-      "Add Reporting Exporter",
       "New Reporting Exporter",
       "Create Reporting Exporter"
     ],
@@ -3478,10 +3457,9 @@
       "System",
       "Advanced",
       "Cron Jobs",
-      "Add"
+      "Add Cron Job"
     ],
     "synonyms": [
-      "Add Cron Job",
       "Create Cron Job",
       "New Cron Job",
       "Setup Cron Job",
@@ -3600,10 +3578,9 @@
       "System",
       "Advanced",
       "Init/Shutdown Scripts",
-      "Add"
+      "Add Init/Shutdown Script"
     ],
     "synonyms": [
-      "Add Init/Shutdown Script",
       "Create Init/Shutdown Script",
       "New Init/Shutdown Script",
       "Init/Shutdown Script"
@@ -3875,11 +3852,10 @@
       "System",
       "Advanced",
       "Sysctl",
-      "Add"
+      "Add Sysctl"
     ],
     "synonyms": [
       "Add Tunable",
-      "Add Sysctl",
       "Create Sysctl",
       "New Sysctl",
       "Kernel Parameters",
@@ -4051,14 +4027,13 @@
       "System",
       "Alert Settings",
       "Alert Services",
-      "Add"
+      "Add Alert"
     ],
     "synonyms": [
       "Alerts",
       "Configure Notifications",
       "Configure Alerts",
       "Create Alert",
-      "Add Alert",
       "New Alert",
       "Notifications"
     ],
@@ -4247,13 +4222,12 @@
       "System",
       "General",
       "Email",
-      "Configure"
+      "Configure Email"
     ],
     "synonyms": [
       "Send Test Email",
       "Config Email",
-      "Set email",
-      "Configure Email"
+      "Set email"
     ],
     "requiredRoles": [],
     "anchorRouterLink": [
@@ -4261,7 +4235,7 @@
       "general"
     ],
     "routerLink": null,
-    "anchor": "configure",
+    "anchor": "configure-email",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -4745,10 +4719,9 @@
       "System",
       "General",
       "NTP Server",
-      "Add"
+      "Add NTP Server"
     ],
     "synonyms": [
-      "Add NTP Server",
       "Create NTP Server",
       "New NTP Server",
       "Time Server"
@@ -4964,10 +4937,9 @@
   {
     "hierarchy": [
       "Virtual Machines",
-      "Add"
+      "Add VM"
     ],
     "synonyms": [
-      "Add VM",
       "Create VM",
       "New VM",
       "VM",

@@ -7,10 +7,9 @@ export const idMapElements = {
   elements: {
     idMap: {},
     add: {
-      hierarchy: [T('Add')],
+      hierarchy: [T('Add Idmap')],
       anchor: 'add-idmap',
       synonyms: [
-        T('Add Idmap'),
         T('Create Idmap'),
         T('New Idmap'),
         T('Idmap'),

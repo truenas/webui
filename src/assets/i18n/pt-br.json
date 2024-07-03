@@ -4400,6 +4400,7 @@
   "Type of Microsoft acount. Logging in to a Microsoft account  automatically chooses the correct account type.": "",
   "UDP port number on the system receiving  SNMP trap notifications. The default is <i>162</i>.": "",
   "UI": "",
+  "UI Search Result: {result}": "",
   "UID": "",
   "UNASSIGNED": "",
   "UNIX (NFS) Shares": "",

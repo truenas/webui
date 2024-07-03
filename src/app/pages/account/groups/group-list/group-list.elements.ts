@@ -9,8 +9,8 @@ export const groupListElements = {
       synonyms: [T('Local Groups')],
     },
     add: {
-      hierarchy: [T('Add')],
-      synonyms: [T('Add Group'), T('New Group'), T('Create Group'), T('Group'), T('Add Local Group')],
+      hierarchy: [T('Add Group')],
+      synonyms: [T('New Group'), T('Create Group'), T('Group'), T('Add Local Group')],
       anchor: 'add-group',
     },
     showBuiltIn: {
