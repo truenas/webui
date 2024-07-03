@@ -1,11 +1,11 @@
 import { Location } from '@angular/common';
 import { Router } from '@angular/router';
-import { RouterTestingModule } from '@angular/router/testing';
 import { createRoutingFactory, SpectatorRouting, mockProvider } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { SystemDatasetConfig } from 'app/interfaces/system-dataset-config.interface';
+import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { SearchInput1Component } from 'app/modules/forms/search-input1/search-input1.component';
 import { TreeModule } from 'app/modules/ix-tree/tree.module';
 import { DatasetsManagementComponent } from 'app/pages/datasets/components/dataset-management/dataset-management.component';
@@ -18,7 +18,7 @@ describe('DatasetsManagementComponent', () => {
 
   const createComponent = createRoutingFactory({
     component: DatasetsManagementComponent,
-    imports: [RouterTestingModule, TreeModule, SearchInput1Component],
+    imports: [TreeModule, SearchInput1Component, EmptyComponent],
     providers: [
       mockAuth(),
       mockWebSocket([
@@ -30,6 +30,7 @@ describe('DatasetsManagementComponent', () => {
         selectedBranch$: of(false),
         isLoading$: of(false),
         selectDatasetById: () => {},
+        error$: of(null),
       }),
     ],
   });
