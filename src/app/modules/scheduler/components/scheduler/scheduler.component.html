@@ -29,7 +29,7 @@
         *ngIf="customCrontab"
         class="schedule-option"
         [value]="customCrontab"
-        [ixTest]="[controlDirective.name, 'presets', customCrontab]"
+        [ixTest]="[controlDirective.name, 'presets', 'custom']"
         (onSelectionChange)="onOptionSelectionChange($event)"
       >
         {{ 'Custom' | translate }}
@@ -41,7 +41,7 @@
       <mat-option
         class="schedule-option"
         [value]="customValue"
-        [ixTest]="[controlDirective.name, 'presets', customValue]"
+        [ixTest]="[controlDirective.name, 'create-custom']"
         (onSelectionChange)="onOptionSelectionChange($event)"
       >
         {{ 'Create' | translate }}
