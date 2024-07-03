@@ -227,11 +227,16 @@ def disable_ldap():
     web_driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__LDAP"]').click()
     assert wait_on_element(web_driver, 5, '//li[span/a/text()="LDAP"]')
     assert wait_on_element(web_driver, 5, '//div[contains(.,"Server Credentials")]')
-    wait_on_element(5, '//mat-checkbox[@ix-auto="checkbox__Enable"]', 'clickable')
-    value_exist = attribute_value_exist(web_driver, '//mat-checkbox[@ix-auto="checkbox__Enable"]', 'class', 'mat-checkbox-checked')
+    assert wait_on_element(web_driver, 5, '//mat-checkbox[@ix-auto="checkbox__Enable"]', 'clickable')
+    value_exist = attribute_value_exist(
+        web_driver,
+        '//mat-checkbox[@ix-auto="checkbox__Enable"]',
+        'class',
+        'mat-checkbox-checked'
+    )
     if value_exist:
         web_driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Enable"]').click()
-        wait_on_element(5, '//button[@ix-auto="button__SAVE"]', 'clickable')
+        wait_on_element(web_driver, 5, '//button[@ix-auto="button__SAVE"]', 'clickable')
         web_driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
         assert wait_on_element_disappear(web_driver, 60, '//h6[contains(.,"Please wait")]')
         assert wait_on_element(web_driver, 7, '//div[contains(.,"Settings saved.")]')
@@ -239,7 +244,7 @@ def disable_ldap():
 
 def disable_nis():
     """click on Directory Services and select NIS, then disable NIS."""
-    assert wait_on_element(5, xpaths.sideMenu.directory_services, 'clickable')
+    assert wait_on_element(web_driver, 5, xpaths.sideMenu.directory_services, 'clickable')
     web_driver.find_element_by_xpath(xpaths.sideMenu.directory_services).click()
     assert wait_on_element(web_driver, 7, xpaths.sideMenu.directory_services_nis)
     web_driver.find_element_by_xpath(xpaths.sideMenu.directory_services_nis).click()
@@ -247,7 +252,7 @@ def disable_nis():
     assert wait_on_element(web_driver, 5, '//h4[contains(.,"Network Information Service (NIS)")]')
     assert wait_on_element(web_driver, 5, xpaths.checkbox.enable, 'clickable')
     web_driver.find_element_by_xpath(xpaths.checkbox.enable).click()
-    assert wait_on_element(5, xpaths.button.save, 'clickable')
+    assert wait_on_element(web_driver, 5, xpaths.button.save, 'clickable')
     web_driver.find_element_by_xpath(xpaths.button.save).click()
     assert wait_on_element_disappear(web_driver, 30, xpaths.popup.please_wait)
     assert wait_on_element(web_driver, 7, '//div[contains(.,"Settings saved.")]')
