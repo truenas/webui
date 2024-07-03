@@ -65,7 +65,7 @@ describe('IxModalHeader2Component', () => {
     expect(icon.name()).toBe('cancel');
   });
 
-  it('shows a working back button when more than 1 component is in the queue', async () => {
+  it('shows a working back button when only 1 component is in the queue', async () => {
     components$.next([{
       id: 'id',
       component: CloudSyncWizardComponent,
