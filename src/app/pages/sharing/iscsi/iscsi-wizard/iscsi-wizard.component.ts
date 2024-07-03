@@ -81,7 +81,7 @@ export class IscsiWizardComponent implements OnInit {
       filesize: [0, [Validators.required]],
       disk: [null as string, [Validators.required]],
       dataset: ['', [Validators.required]],
-      volsize: [0, [Validators.required]],
+      volsize: [null as number, [Validators.required]],
       usefor: [IscsiExtentUsefor.Vmware, [Validators.required]],
       target: [newOption as typeof newOption | number, [Validators.required]],
     }),

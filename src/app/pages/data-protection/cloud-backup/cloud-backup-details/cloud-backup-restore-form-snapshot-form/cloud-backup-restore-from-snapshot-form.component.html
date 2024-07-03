@@ -18,11 +18,10 @@
         <ix-explorer
           *ngIf="isExcludePathsSelected"
           formControlName="excludedPaths"
-          root="/"
           [required]="true"
           [tooltip]="helptext.tooltips.excluded_paths"
           [label]="'Excluded Paths' | translate"
-          [nodeProvider]="bucketNodeProvider"
+          [nodeProvider]="snapshotNodeProvider"
           [multiple]="true"
         ></ix-explorer>
 
@@ -37,19 +36,18 @@
         <ix-explorer
           *ngIf="isIncludeFromSubfolderSelected"
           formControlName="subFolder"
-          root="/"
           [required]="true"
           [label]="'Subfolder' | translate"
-          [nodeProvider]="bucketNodeProvider"
+          [nodeProvider]="snapshotNodeProvider"
           [tooltip]="helptext.tooltips.sub_folder"
         ></ix-explorer>
 
         <ix-explorer
           *ngIf="isIncludeFromSubfolderSelected"
           formControlName="includedPaths"
-          [root]="form.controls.subFolder.value || '/'"
+          [root]="form.controls.subFolder.value || mntPath"
           [label]="'Included Paths' | translate"
-          [nodeProvider]="bucketNodeProvider"
+          [nodeProvider]="snapshotNodeProvider"
           [tooltip]="helptext.tooltips.included_paths"
           [multiple]="true"
         ></ix-explorer>

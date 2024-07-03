@@ -1,4 +1,5 @@
 import { LogLevel } from 'app/enums/log-level.enum';
+import { SmbEncryption } from 'app/enums/smb-encryption.enum';
 
 export interface SmbConfig {
   aapl_extensions: boolean;
@@ -21,6 +22,7 @@ export interface SmbConfig {
   syslog: boolean;
   unixcharset: string;
   workgroup: string;
+  encryption: SmbEncryption;
 }
 
 export type SmbConfigUpdate = {
