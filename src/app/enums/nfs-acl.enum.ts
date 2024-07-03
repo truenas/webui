@@ -6,7 +6,7 @@ export enum NfsAclTag {
   Everyone = 'everyone@',
   User = 'USER',
   UserGroup = 'GROUP',
-  Both = 'BOTH',
+  Both = 'BOTH', // middleware returns `ID_TYPE_BOTH` when it is not possible to determine whether an AD entity is a user or a group
 }
 
 export const nfsAclTagLabels = new Map<NfsAclTag, string>([
