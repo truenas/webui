@@ -5,6 +5,7 @@ import { MockComponents } from 'ng-mocks';
 import { unsupportedEnclosureMock } from 'app/constants/server-series.constant';
 import { EnclosureModel } from 'app/enums/enclosure-model.enum';
 import { DashboardEnclosure } from 'app/interfaces/enclosure.interface';
+import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import {
   EnclosureHeaderComponent,
 } from 'app/pages/system/enclosure/components/enclosure-header/enclosure-header.component';
@@ -30,6 +31,7 @@ describe('EnclosurePageComponent', () => {
   let spectator: Spectator<EnclosurePageComponent>;
   const selectedView = signal(EnclosureView.Expanders);
   const selectedEnclosure = signal({ id: '123' } as DashboardEnclosure);
+  const isLoading = signal(true);
   const createComponent = createComponentFactory({
     component: EnclosurePageComponent,
     declarations: [
@@ -39,6 +41,7 @@ describe('EnclosurePageComponent', () => {
         DisksOverviewComponent,
         EnclosureSelectorComponent,
         EnclosureHeaderComponent,
+        FakeProgressBarComponent,
       ),
     ],
     providers: [
@@ -46,6 +49,7 @@ describe('EnclosurePageComponent', () => {
       mockProvider(EnclosureStore, {
         selectedEnclosure,
         selectedView,
+        isLoading,
         enclosureLabel: () => 'M40',
       }),
     ],
@@ -53,6 +57,12 @@ describe('EnclosurePageComponent', () => {
 
   beforeEach(() => {
     spectator = createComponent();
+  });
+
+  it('should not show progress bar when not loading', () => {
+    isLoading.set(false);
+    spectator.detectChanges();
+    expect(spectator.query(FakeProgressBarComponent)).toBeFalsy();
   });
 
   it('shows expander status for expander view', () => {
@@ -87,6 +97,8 @@ describe('EnclosurePageComponent', () => {
 
   it('should display the supported enclosure view when model is supported', () => {
     selectedView.set(EnclosureView.Pools);
+    spectator.detectChanges();
+
     expect(spectator.query(EnclosureViewComponent)).toBeTruthy();
     expect(spectator.query(EnclosureHeaderComponent)).toBeTruthy();
     expect(spectator.query(EnclosureSelectorComponent)).toBeTruthy();
@@ -96,6 +108,7 @@ describe('EnclosurePageComponent', () => {
   it('should display the unsupported enclosure message when model is not supported', () => {
     selectedEnclosure.set(unsupportedEnclosureMock);
     spectator.detectChanges();
+
     expect(spectator.query('.not-supported')).toBeTruthy();
     expect(spectator.query('.not-supported h2').textContent).toBe('Enclosure is not supported');
     expect(spectator.query(EnclosureViewComponent)).toBeFalsy();

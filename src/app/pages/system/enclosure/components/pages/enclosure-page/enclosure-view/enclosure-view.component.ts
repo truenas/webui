@@ -4,6 +4,7 @@ import {
 import { toSignal } from '@angular/core/rxjs-interop';
 import { Store } from '@ngrx/store';
 import { filter, map } from 'rxjs';
+import { EnclosureStatus } from 'app/enums/enclosure-slot-status.enum';
 import { DashboardEnclosure, DashboardEnclosureSlot } from 'app/interfaces/enclosure.interface';
 import {
   TintingFunction,
@@ -53,19 +54,18 @@ export class EnclosureViewComponent {
 
   private diskStatusTint(): TintingFunction {
     return (slot: DashboardEnclosureSlot) => {
-      return slot?.status === 'OK' ? 'green' : 'red';
+      return slot?.status === EnclosureStatus.Ok ? 'green' : 'red';
     };
   }
 
   // TODO: Pool colors need to stay consistent across multiple enclosures, so this needs to be moved to store.
-  // TODO: See if we can use css variables for colors instead of setting a specific color.
   private poolTint(): TintingFunction {
     const poolColors = new Map<string, string>();
     return (slot: DashboardEnclosureSlot) => {
       const poolName = slot.pool_info?.pool_name;
       if (poolName) {
         if (!poolColors.has(poolName)) {
-          poolColors.set(poolName, this.theme().accentColors[Object.entries(poolColors).length]);
+          poolColors.set(poolName, 'var(--primary)');
         }
         return poolColors.get(poolName);
       }

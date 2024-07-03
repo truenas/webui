@@ -1,4 +1,7 @@
 import {
+  animate, style, transition, trigger,
+} from '@angular/animations';
+import {
   ChangeDetectionStrategy,
   Component,
   effect,
@@ -13,6 +16,7 @@ import {
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import { delay } from 'rxjs';
 import { DashboardEnclosureSlot } from 'app/interfaces/enclosure.interface';
 import { SvgCacheService } from 'app/pages/system/enclosure/services/svg-cache.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
@@ -25,6 +29,14 @@ export type TintingFunction = (slot: DashboardEnclosureSlot | null) => string | 
   templateUrl: './enclosure-svg.component.html',
   styleUrls: ['./enclosure-svg.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  animations: [
+    trigger('svgTransition', [
+      transition(':enter', [
+        style({ opacity: 0, height: '*' }),
+        animate('300ms ease-in', style({ opacity: 1, height: '*' })),
+      ]),
+    ]),
+  ],
 })
 export class EnclosureSvgComponent implements OnDestroy {
   readonly svgUrl = input.required<string>();
@@ -65,14 +77,11 @@ export class EnclosureSvgComponent implements OnDestroy {
       .loadSvg(this.svgUrl())
       .pipe(
         this.errorHandler.catchError(),
+        delay(0),
         untilDestroyed(this),
       )
       .subscribe((svg) => {
-        // This ensures that template had time to switch to undefined.
-        // TODO: Not pretty, rework somehow.
-        setTimeout(() => {
-          this.svg.set(this.sanitizer.bypassSecurityTrustHtml(svg));
-        });
+        this.svg.set(this.sanitizer.bypassSecurityTrustHtml(svg));
       });
   }, { allowSignalWrites: true });
 

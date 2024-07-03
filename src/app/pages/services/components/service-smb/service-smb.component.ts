@@ -9,7 +9,9 @@ import { of, Subscription } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { LogLevel } from 'app/enums/log-level.enum';
 import { Role } from 'app/enums/role.enum';
+import { SmbEncryption, smbEncryptionLabels } from 'app/enums/smb-encryption.enum';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
+import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextServiceSmb } from 'app/helptext/services/components/service-smb';
 import { SmbConfigUpdate } from 'app/interfaces/smb-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -59,6 +61,7 @@ export class ServiceSmbComponent implements OnInit {
     bindip: [[] as string[], []],
     aapl_extensions: [false, []],
     multichannel: [false, []],
+    encryption: [SmbEncryption.Default],
   });
 
   readonly requiredRoles = [Role.SharingSmbWrite];
@@ -100,6 +103,7 @@ export class ServiceSmbComponent implements OnInit {
     ),
   );
   readonly bindIpAddressOptions$ = this.ws.call('smb.bindip_choices').pipe(choicesToOptions());
+  readonly encryptionOptions$ = of(mapToOptions(smbEncryptionLabels, this.translate));
 
   constructor(
     private ws: WebSocketService,

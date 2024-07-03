@@ -70,6 +70,7 @@ describe('IscsiWizardComponent', () => {
         mockCall('iscsi.portal.listen_ip_choices', {
           '0.0.0.0': '0.0.0.0',
           '192.168.1.3': '192.168.1.3',
+          '::': '::',
         }),
         mockCall('pool.dataset.create', { id: 'my pool/test_zvol' } as Dataset),
         mockCall('iscsi.extent.create', { id: 11 } as IscsiExtent),
@@ -119,7 +120,7 @@ describe('IscsiWizardComponent', () => {
 
     await form.fillForm(
       {
-        'IP Address': '192.168.1.3',
+        'IP Address': '::',
         'Discovery Authentication Method': 'CHAP',
         'Discovery Authentication Group': 'Create New',
         'Group ID': 1234,
@@ -159,7 +160,7 @@ describe('IscsiWizardComponent', () => {
       comment: 'test-name',
       discovery_authgroup: 12,
       discovery_authmethod: 'CHAP',
-      listen: [{ ip: '192.168.1.3' }],
+      listen: [{ ip: '::' }],
     }]);
 
     expect(spectator.inject(WebSocketService).call).toHaveBeenNthCalledWith(12, 'iscsi.initiator.create', [{
