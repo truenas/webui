@@ -22,6 +22,7 @@
           matTooltipPosition="above"
           [attr.aria-label]="'Restart App' | translate"
           [matTooltip]="'Restart App' | translate"
+          [disabled]="appRestarting()"
           (click)="onRestartApp(app)"
         >
           <ix-icon name="mdi-restart"></ix-icon>
@@ -42,7 +43,7 @@
 
     <div [class]="['container', size()]">
       <div class="app-header-row">
-        <ix-app-card-logo [url]="(application() | async).value?.chart_metadata?.icon"></ix-app-card-logo>
+        <ix-app-card-logo [url]="(application() | async)?.value?.chart_metadata?.icon"></ix-app-card-logo>
 
         <div class="app-info">
           <div class="app-header">
@@ -72,7 +73,7 @@
       <div class="app-stats">
         <div class="app-stats-row">
           <div class="slot square">
-            <div>
+            <div class="cpu-usage">
               <h3 *ixWithLoadingState="stats() as stats">
                 <span>{{ stats.cpu.toFixed(0) }}</span>
                 <small>%</small>
@@ -106,7 +107,7 @@
         </div>
         <div class="app-stats-row">
           <div class="slot square">
-            <div>
+            <div class="memory-usage">
               <h3>
                 <ng-container *ixWithLoadingState="stats() as stats">
                   <ng-container *appLet="splitMemory(stats.memory | ixFileSize) as memory">
@@ -122,6 +123,7 @@
           </div>
           <div class="slot rectangle">
             <div class="chart-info">
+              <!-- TODO: Replace network data with disk data when it is available -->
               <h4>{{ 'Disk I/O' | translate }}</h4>
               <div class="in-out">
                 <div class="in-out-row">

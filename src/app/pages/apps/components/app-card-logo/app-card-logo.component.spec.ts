@@ -18,6 +18,10 @@ describe('AppCardLogoComponent', () => {
     });
   });
 
+  it('shows default image', () => {
+    expect(spectator.query('img')).toHaveAttribute('src', 'assets/images/truenas_scale_ondark_favicon.png');
+  });
+
   it('shows app logo', () => {
     expect(spectator.query(LazyLoadImageDirective).lazyImage).toBe('https://www.seti.org/logo.png');
   });

@@ -324,6 +324,8 @@
   "App": "",
   "App Name": "",
   "App Version": "",
+  "App is restarted": "",
+  "App is restarting": "",
   "Appdefaults Auxiliary Parameters": "",
   "Append <i>@realm</i> to <i>cn</i> in LDAP queries for both groups and users when User CN is set).": "",
   "Append Data": "",

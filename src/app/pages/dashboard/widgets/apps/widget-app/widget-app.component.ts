@@ -17,13 +17,12 @@ import {
 } from 'rxjs';
 import { toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import { ChartRelease, ChartReleaseStats } from 'app/interfaces/chart-release.interface';
-import { DialogService } from 'app/modules/dialog/dialog.service';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
 import { WidgetComponent } from 'app/pages/dashboard/types/widget-component.interface';
 import { SlotSize } from 'app/pages/dashboard/types/widget.interface';
 import { WidgetAppSettings } from 'app/pages/dashboard/widgets/apps/widget-app/widget-app.definition';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { RedirectService } from 'app/services/redirect.service';
 import { ThemeService } from 'app/services/theme/theme.service';
 
@@ -58,8 +57,9 @@ export class WidgetAppComponent implements WidgetComponent<WidgetAppSettings> {
       shareReplay({ bufferSize: 1, refCount: true }),
     );
   });
+  appRestarting = signal<boolean>(false);
 
-  initialNetworkStats = Array.from({ length: 60 }, () => ([0, 0]));
+  protected readonly initialNetworkStats = Array.from({ length: 60 }, () => ([0, 0]));
   cachedNetworkStats = signal<number[][]>([]);
 
   networkStats = computed(() => {
@@ -104,18 +104,19 @@ export class WidgetAppComponent implements WidgetComponent<WidgetAppSettings> {
     private translate: TranslateService,
     private redirect: RedirectService,
     private appService: ApplicationsService,
-    private dialogService: DialogService,
-    private errorHandler: ErrorHandlerService,
+    private snackbar: SnackbarService,
   ) {}
 
   onRestartApp(app: ChartRelease): void {
-    this.dialogService.jobDialog(
-      this.appService.restartApplication(app),
-      { title: app.name, canMinimize: true },
-    )
-      .afterClosed()
-      .pipe(this.errorHandler.catchError(), untilDestroyed(this))
-      .subscribe();
+    this.appRestarting.set(true);
+    this.snackbar.success(this.translate.instant('App is restarting'));
+
+    this.appService.restartApplication(app)
+      .pipe(untilDestroyed(this))
+      .subscribe(() => {
+        this.appRestarting.set(false);
+        this.snackbar.success(this.translate.instant('App is restarted'));
+      });
   }
 
   openWebPortal(app: ChartRelease): void {
