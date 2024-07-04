@@ -12,10 +12,6 @@ import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/table-c
 export class IxCellActionsComponent<T> extends ColumnComponent<T> {
   actions: IconActionConfig<T>[];
   Role = Role;
-
-  getAriaLabel(row: T): string {
-    return this.ariaLabels(row).join(' ');
-  }
 }
 
 export function actionsColumn<T>(

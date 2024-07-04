@@ -21,10 +21,6 @@ export class IxCellToggleComponent<T> extends ColumnComponent<T> {
   onSlideToggleChanged(event: MatSlideToggleChange): void {
     this.onRowToggle(this.row, event.checked);
   }
-
-  getAriaLabel(row: T): string {
-    return this.ariaLabels(row).join(' ');
-  }
 }
 
 export function toggleColumn<T>(options: Partial<IxCellToggleComponent<T>>): Column<T, IxCellToggleComponent<T>> {

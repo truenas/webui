@@ -18,10 +18,6 @@ export class IxCellCheckboxComponent<T> extends ColumnComponent<T> {
   onCheckboxChange(event: MatCheckboxChange): void {
     this.onRowCheck(this.row, event.checked);
   }
-
-  getAriaLabel(row: T): string {
-    return this.ariaLabels(row).join(' ');
-  }
 }
 
 export function checkboxColumn<T>(

@@ -16,11 +16,15 @@ export abstract class ColumnComponent<T> {
   }
 
   protected row: T;
+
   getRow(): T {
     return this.row;
   }
   setRow(row: T): void {
     this.row = row;
+  }
+  getAriaLabel(row: T): string {
+    return this.ariaLabels(row)?.join(' ') || this.title;
   }
   dataProvider?: DataProvider<T>;
 }
