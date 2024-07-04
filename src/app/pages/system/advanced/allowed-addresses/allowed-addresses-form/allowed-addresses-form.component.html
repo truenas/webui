@@ -16,6 +16,7 @@
       >
         <ix-list-item
           *ngFor="let network of form.controls.addresses.controls; let i = index"
+          [label]="'Allowed IP Addresses' | translate"
           (delete)="removeAddress(i)"
         >
           <ix-input

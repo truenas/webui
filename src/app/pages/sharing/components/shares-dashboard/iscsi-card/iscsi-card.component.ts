@@ -71,6 +71,7 @@ export class IscsiCardComponent implements OnInit {
     }),
   ], {
     rowTestId: (row) => 'card-iscsi-target-' + row.name,
+    ariaLabels: (row) => [row.name, this.translate.instant('iSCSI Target')],
   });
 
   constructor(

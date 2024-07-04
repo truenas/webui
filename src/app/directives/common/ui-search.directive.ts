@@ -17,6 +17,20 @@ export class UiSearchDirective implements OnInit, OnDestroy {
     return getSearchableElementId(this.config);
   }
 
+  get ariaLabel(): string {
+    const hierarchyItem = this.config.hierarchy?.[this.config.hierarchy.length - 1] || '';
+    const isSingleWord = hierarchyItem.trim().split(/\s+/).length === 1;
+
+    if (isSingleWord && this.config.synonyms?.length > 0) {
+      return this.config.synonyms.reduce((best, synonym) => {
+        const synonymWordCount = synonym.trim().split(/\s+/).length;
+        const bestWordCount = best.trim().split(/\s+/).length;
+        return synonymWordCount > bestWordCount ? synonym : best;
+      }, hierarchyItem);
+    }
+    return hierarchyItem;
+  }
+
   constructor(
     private renderer: Renderer2,
     private elementRef: ElementRef<HTMLElement>,
@@ -26,6 +40,7 @@ export class UiSearchDirective implements OnInit, OnDestroy {
   ngOnInit(): void {
     if (this.id) {
       this.renderer.setAttribute(this.elementRef.nativeElement, 'id', this.id);
+      this.renderer.setAttribute(this.elementRef.nativeElement, 'aria-label', this.ariaLabel);
     }
     this.searchDirectives.register(this);
   }

@@ -2,7 +2,7 @@ import {
   ChangeDetectionStrategy, Component, input, model,
 } from '@angular/core';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { EnclosureElementType } from 'app/enums/enclosure-slot-status.enum';
+import { EnclosureElementType, EnclosureStatus } from 'app/enums/enclosure-slot-status.enum';
 import {
   DashboardEnclosure,
   DashboardEnclosureElements,
@@ -35,17 +35,17 @@ describe('MiniEnclosureComponent', () => {
       [EnclosureElementType.ArrayDeviceSlot]: {
         1: {
           dev: 'ada1',
-          status: 'OK',
+          status: EnclosureStatus.Ok,
           is_front: true,
         } as DashboardEnclosureSlot,
         2: {
           dev: 'ada2',
-          status: 'ERROR',
+          status: EnclosureStatus.Crit,
           is_front: true,
         } as DashboardEnclosureSlot,
         3: {
           dev: null,
-          status: 'OK',
+          status: EnclosureStatus.Ok,
           is_front: true,
         } as DashboardEnclosureSlot,
       },

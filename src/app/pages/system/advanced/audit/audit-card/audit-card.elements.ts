@@ -8,6 +8,11 @@ export const auditCardElements = {
     audit: {
       anchor: 'audit-card',
     },
+    configure: {
+      anchor: 'audit-settings',
+      hierarchy: [T('Configure Audit')],
+      synonyms: [T('Audit Settings')],
+    },
     retention: {
       hierarchy: [T('Retention')],
     },

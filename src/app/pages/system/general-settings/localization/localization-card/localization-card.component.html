@@ -10,6 +10,7 @@
         mat-button
         color="default"
         [ixTest]="['localization', 'settings']"
+        [ixUiSearch]="searchableElements.elements.settings"
         (click)="openSettings(generalConfig)"
       >
         {{ 'Settings' | translate }}

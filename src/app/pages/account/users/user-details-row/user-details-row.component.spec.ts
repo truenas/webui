@@ -106,6 +106,13 @@ describe('UserDetailsRowComponent', () => {
     );
   });
 
+  it('does not show Delete button for an immutable user', async () => {
+    spectator.setInput('user', { ...dummyUser, immutable: true });
+
+    const deleteButton = await loader.getHarnessOrNull(MatButtonHarness.with({ text: /Delete/ }));
+    expect(deleteButton).toBeNull();
+  });
+
   it('should open DeleteUserDialog when Delete button is pressed', async () => {
     const deleteButton = await loader.getHarness(MatButtonHarness.with({ text: /Delete/ }));
     await deleteButton.click();

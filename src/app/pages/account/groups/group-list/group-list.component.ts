@@ -68,6 +68,7 @@ export class GroupListComponent implements OnInit {
     }),
   ], {
     rowTestId: (row) => 'group-' + row.group,
+    ariaLabels: (row) => [row.group, this.translate.instant('Group')],
   });
 
   hideBuiltinGroups = true;

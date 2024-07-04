@@ -9,9 +9,8 @@ export const certificateAuthorityListElements = {
       anchor: 'certificate-authority-list',
     },
     add: {
-      hierarchy: [T('Add')],
+      hierarchy: [T('Add Certificate Authority')],
       synonyms: [
-        T('Add Certificate Authority'),
         T('New Certificate Authority'),
         T('Create Certificate Authority'),
         T('Certificate Authority'),

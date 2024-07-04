@@ -100,6 +100,7 @@ export class InterfacesCardComponent implements OnInit, OnChanges {
     }),
   ], {
     rowTestId: (row) => 'interface-' + row.name,
+    ariaLabels: (row) => [row.name, this.translate.instant('Interface')],
   });
 
   readonly helptext = helptextInterfaces;

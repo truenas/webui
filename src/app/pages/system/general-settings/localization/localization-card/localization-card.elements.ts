@@ -8,6 +8,10 @@ export const localizationCardElements = {
     localization: {
       anchor: 'localization-card',
     },
+    settings: {
+      anchor: 'localization-card',
+      hierarchy: [T('Localization Settings')],
+    },
     language: {
       hierarchy: [T('Language')],
       synonyms: [T('Translate App')],

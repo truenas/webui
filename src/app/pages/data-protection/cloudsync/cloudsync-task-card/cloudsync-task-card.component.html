@@ -11,6 +11,7 @@
         *ixRequiresRoles="requiredRoles"
         mat-button
         [ixTest]="['cloudsync-task', 'add']"
+        [attr.aria-label]="'Add Cloud Sync Task' | translate"
         (click)="onAdd()"
       >
         {{ 'Add' | translate }}

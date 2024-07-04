@@ -42,6 +42,7 @@ describe('IxCellStateButtonComponent', () => {
     } as TestTableData);
     spectator.component.getJob = (row) => row.job;
     spectator.component.rowTestId = () => '';
+    spectator.component.ariaLabels = () => ['Label 1', 'Label 2'];
     spectator.detectChanges();
 
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
@@ -85,5 +86,10 @@ describe('IxCellStateButtonComponent', () => {
 
     const button = await loader.getHarness(MatButtonHarness);
     expect(await button.hasHarness(IxIconHarness.with({ name: 'mdi-alert' }))).toBeTruthy();
+  });
+
+  it('gets aria label correctly', () => {
+    const ariaLabel = spectator.component.getAriaLabel(spectator.component.getRow());
+    expect(ariaLabel).toBe('Label 1 Label 2');
   });
 });

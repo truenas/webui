@@ -9,5 +9,10 @@ export const allowedAddressesCardElements = {
       hierarchy: [T('Allowed IP Addressed')],
       anchor: 'allowed-addresses-card',
     },
+    configure: {
+      anchor: 'allowed-addresses-settings',
+      hierarchy: [T('Configure Allowed IP Addresses')],
+      synonyms: [T('Allowed IP Addresses Settings')],
+    },
   },
 } satisfies UiSearchableElement;

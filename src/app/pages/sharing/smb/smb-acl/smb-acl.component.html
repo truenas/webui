@@ -20,6 +20,7 @@
           <ix-list-item
             *ngFor="let entry of form.controls.entries.controls; let i = index"
             [formGroupName]="i"
+            [label]="'ACL Entries' | translate"
             (delete)="removeAce(i)"
           >
             <div *ngIf="entry.controls.ae_who_sid.value" class="entry-row">
