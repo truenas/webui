@@ -9,6 +9,7 @@
             *ixRequiresRoles="action?.dynamicRequiredRoles ? (action.dynamicRequiredRoles(row) | async) : action.requiredRoles"
             mat-icon-button
             [ixTest]="[rowTestId(row), action.iconName, 'row-action']"
+            [attr.aria-label]="(action.dynamicTooltip ? (action.dynamicTooltip(row) | async) : action.tooltip || '') + ' ' + getAriaLabel(row)"
             [disabled]="action.disabled ? (action.disabled(row) | async) : false"
             (click)="$event.stopPropagation(); action.onClick(row)"
           >
@@ -26,6 +27,7 @@
           *ngIf="action.hidden ? !(action.hidden(row) | async) : true"
           mat-icon-button
           [ixTest]="[rowTestId(row), action.iconName, 'row-action']"
+          [attr.aria-label]="(action.dynamicTooltip ? (action.dynamicTooltip(row) | async) : action.tooltip || '') + ' ' + getAriaLabel(row)"
           [disabled]="action.disabled ? (action.disabled(row) | async) : false"
           (click)="$event.stopPropagation(); action.onClick(row)"
         >

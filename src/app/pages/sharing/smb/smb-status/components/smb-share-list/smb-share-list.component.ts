@@ -40,6 +40,7 @@ export class SmbShareListComponent implements OnInit {
     }),
   ], {
     rowTestId: (row) => 'smb-share-' + row.server_id.unique_id + '-' + row.machine,
+    ariaLabels: (row) => [row.machine, this.translate.instant('SMB Share')],
   });
 
   constructor(

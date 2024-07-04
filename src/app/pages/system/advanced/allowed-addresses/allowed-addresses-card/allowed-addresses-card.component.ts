@@ -57,6 +57,7 @@ export class AllowedAddressesCardComponent implements OnInit {
     }),
   ], {
     rowTestId: (row) => 'allowed-address-' + row.address,
+    ariaLabels: (row) => [row.address, this.translate.instant('Allowed Address')],
   });
 
   constructor(

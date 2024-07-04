@@ -56,6 +56,10 @@ export class IxCellStateButtonComponent<T> extends ColumnComponent<T> {
     return this.translate.instant('No logs available');
   }
 
+  protected getAriaLabel(row: T): string {
+    return this.ariaLabels(row).join(' ');
+  }
+
   protected onButtonClick(): void {
     const state = (this.row as RowState).state;
 

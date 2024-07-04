@@ -71,6 +71,7 @@ export class SmartTestResultListComponent implements OnInit {
     }),
   ], {
     rowTestId: (row) => `smart-test-result-${row.disk}-${row.num}`,
+    ariaLabels: (row) => [row.disk, this.translate.instant('Smart Test Result')],
   });
 
   get hiddenColumns(): Column<SmartTestResultsRow, ColumnComponent<SmartTestResultsRow>>[] {

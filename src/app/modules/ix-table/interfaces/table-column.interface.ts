@@ -5,6 +5,7 @@ export abstract class ColumnComponent<T> {
   title: string;
   cssClass?: string;
   rowTestId: (row: T) => string;
+  ariaLabels: (row: T) => string[];
   sortBy?: (row: T) => string | number;
   disableSorting?: boolean;
   getValue?: (row: T) => unknown;
