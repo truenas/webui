@@ -10,10 +10,9 @@ export const sysctlCardElements = {
       anchor: 'sysctl',
     },
     addSysctl: {
-      hierarchy: [T('Add')],
+      hierarchy: [T('Add Sysctl')],
       anchor: 'add-sysctl',
       synonyms: [
-        T('Add Sysctl'),
         T('Create Sysctl'),
         T('New Sysctl'),
         T('Sysctl'),
