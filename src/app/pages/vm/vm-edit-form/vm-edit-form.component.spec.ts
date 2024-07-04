@@ -207,6 +207,43 @@ describe('VmEditFormComponent', () => {
     expect(spectator.inject(IxSlideInRef).close).toHaveBeenCalled();
   });
 
+  it('sends cpu_model as null when CPU Mode is not Custom', async () => {
+    await form.fillForm({
+      Name: 'Edited',
+      Description: 'New description',
+      'Memory Size': '258 mb',
+      'CPU Model': 'EPYC',
+      'CPU Mode': 'Host Passthrough',
+      'Minimum Memory Size': '257 mb',
+    });
+
+    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+    await saveButton.click();
+
+    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('vm.update', [4, {
+      autostart: true,
+      bootloader: VmBootloader.Uefi,
+      cores: 2,
+      cpu_mode: VmCpuMode.HostPassthrough,
+      cpu_model: null,
+      cpuset: '0-3,8-11',
+      description: 'New description',
+      ensure_display_device: true,
+      hide_from_msr: false,
+      hyperv_enlightenments: false,
+      memory: 258,
+      min_memory: 257,
+      name: 'Edited',
+      nodeset: '0-1',
+      pin_vcpus: false,
+      shutdown_timeout: 90,
+      threads: 3,
+      time: VmTime.Local,
+      vcpus: 1,
+    }]);
+    expect(spectator.inject(IxSlideInRef).close).toHaveBeenCalled();
+  });
+
   it('updates GPU devices when form is edited and saved', async () => {
     await form.fillForm({
       GPUs: ['Intel Arc'],
