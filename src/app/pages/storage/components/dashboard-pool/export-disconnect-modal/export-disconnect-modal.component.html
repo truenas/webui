@@ -78,12 +78,14 @@
     <ix-fieldset>
       <ix-checkbox
         formControlName="destroy"
-        [label]="helptext.exportDialog.destroy | translate"
+        [label]="helptext.exportDialog.destroy.label | translate"
+        [tooltip]="helptext.exportDialog.destroy.tooltip | translate"
       ></ix-checkbox>
 
       <ix-checkbox
         formControlName="cascade"
-        [label]="helptext.exportDialog.cascade | translate"
+        [label]="helptext.exportDialog.cascade.label | translate"
+        [tooltip]="helptext.exportDialog.cascade.tooltip | translate"
       ></ix-checkbox>
 
       <ix-checkbox
