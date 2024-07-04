@@ -7,9 +7,9 @@ export const nfsListElements = {
   elements: {
     nfs: {},
     createNfsShare: {
-      hierarchy: [T('Create NFS Share')],
+      hierarchy: [T('Add NFS Share')],
       synonyms: [
-        T('Add NFS Share'),
+        T('Create NFS Share'),
         T('New NFS Share'),
         T('Create Share'),
         T('Add Share'),
