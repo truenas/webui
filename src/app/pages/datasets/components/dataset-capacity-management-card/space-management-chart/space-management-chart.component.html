@@ -47,14 +47,10 @@
             {{ 'Children' | translate }}
           </span>
           <span class="legend-value">
-            {{
-            dataset.usedbychildren.parsed
-            | ixFileSize
+            {{dataset.usedbychildren.parsed| ixFileSize
             }}
             @if (dataset.usedbychildren.parsed) {
-              ({{
-              dataset.usedbychildren.parsed / dataset.used.parsed | percent
-              }})
+              ({{ dataset.usedbychildren.parsed / dataset.used.parsed | percent }})
             }
           </span>
         </div>

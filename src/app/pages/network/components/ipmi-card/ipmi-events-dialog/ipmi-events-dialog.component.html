@@ -3,9 +3,7 @@
 <div mat-dialog-content class="events-container">
   @if ((events.length || isLoading)) {
     @for (event of events; track trackById($index, event)) {
-      <div
-        class="event"
-        >
+      <div class="event">
         <div class="event-header">
           <div>{{ getEventDate(event) | formatDateTime }}</div>
           <div>

@@ -23,6 +23,7 @@
         [label]="'Generate Key' | translate"
         [tooltip]="tooltips.generate_key | translate"
       ></ix-checkbox>
+
       @if (!(isSetToGenerateKey$ | async)) {
         <ix-textarea
           formControlName="key"
@@ -38,11 +39,13 @@
         [label]="'Passphrase' | translate"
         [tooltip]="tooltips.passphrase | translate"
       ></ix-input>
+
       <ix-input
         formControlName="confirm_passphrase"
         type="password"
         [label]="'Confirm Passphrase' | translate"
       ></ix-input>
+
       <ix-input
         formControlName="pbkdf2iters"
         type="number"
