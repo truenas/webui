@@ -10,6 +10,7 @@
     <mat-select
       [required]="required"
       [disabled]="isDisabled"
+      [aria-label]="label"
       [ixTest]="[controlDirective.name, 'presets']"
       [(ngModel)]="crontab"
       (blur)="onTouched()"
@@ -19,6 +20,7 @@
         class="schedule-option"
         [ixTest]="[controlDirective.name, 'presets', preset.label]"
         [value]="preset.value"
+        [attr.aria-label]="preset.label"
         (onSelectionChange)="onOptionSelectionChange($event)"
       >
         {{ preset.label | translate }}

@@ -79,6 +79,7 @@ export class InitShutdownCardComponent implements OnInit {
     }),
   ], {
     rowTestId: (row) => 'card-init-shutdown-' + row.command + '-' + row.when,
+    ariaLabels: (row) => [row.command, this.translate.instant('Init/Shutdown Script')],
   });
 
   constructor(

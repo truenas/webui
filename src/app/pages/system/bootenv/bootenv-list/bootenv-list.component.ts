@@ -151,6 +151,7 @@ export class BootEnvironmentListComponent implements OnInit {
     }),
   ], {
     rowTestId: (row) => `bootenv-${row.name}`,
+    ariaLabels: (row) => [row.name, this.translate.instant('Boot Environment')],
   });
 
   get selectedBootenvs(): BootenvUi[] {

@@ -8,6 +8,11 @@ export const consoleCardElements = {
     console: {
       anchor: 'console-card',
     },
+    configure: {
+      anchor: 'console-settings',
+      hierarchy: [T('Configure Console')],
+      synonyms: [T('Console Settings')],
+    },
     consoleMenu: {
       hierarchy: [T('Console Menu')],
       synonyms: [T('Show Text Console without Password Prompt')],
