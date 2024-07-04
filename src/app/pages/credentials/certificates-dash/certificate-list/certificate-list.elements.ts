@@ -6,12 +6,11 @@ export const certificateListElements = {
   anchorRouterLink: ['/credentials', 'certificates'],
   elements: {
     add: {
-      hierarchy: [T('Add')],
+      hierarchy: [T('Add Certificate')],
       anchor: 'add-certificate',
       synonyms: [
         T('Create Certificate'),
         T('New Certificate'),
-        T('Add Certificate'),
         T('Generate Certificate'),
       ],
     },

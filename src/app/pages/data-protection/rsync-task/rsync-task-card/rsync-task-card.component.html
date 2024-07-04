@@ -11,6 +11,7 @@
         *ixRequiresRoles="requiredRoles"
         mat-button
         [ixTest]="['rsync-task', 'add']"
+        [attr.aria-label]="'Add Rsync Task' | translate"
         (click)="openForm()"
       >
         {{ 'Add' | translate }}

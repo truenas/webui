@@ -7,10 +7,9 @@ export const kerberosRealmsListElements = {
   elements: {
     kerberosRealms: {},
     add: {
-      hierarchy: [T('Add')],
+      hierarchy: [T('Add Kerberos Realm')],
       anchor: 'add-kerberos-realm',
       synonyms: [
-        T('Add Kerberos Realm'),
         T('Create Kerberos Realm'),
         T('New Kerberos Realm'),
         T('Kerberos Realm'),

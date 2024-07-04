@@ -125,6 +125,7 @@ export class SnapshotTaskListComponent implements OnInit {
     }),
   ], {
     rowTestId: (row) => 'snapshot-task-' + row.dataset + '-' + row.naming_schema,
+    ariaLabels: (row) => [row.dataset, this.translate.instant('Snapshot Task')],
   });
 
   get emptyConfigService(): EmptyService {

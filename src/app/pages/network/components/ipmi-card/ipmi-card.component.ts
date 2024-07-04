@@ -51,6 +51,7 @@ export class IpmiCardComponent implements OnInit {
     }),
   ], {
     rowTestId: (row) => 'ipmi-' + row.channel + '-' + row.ip_address,
+    ariaLabels: (row) => [row.ip_address, this.translate.instant('IPMI')],
   });
 
   protected readonly hasIpmi$ = this.ws.call('ipmi.is_loaded');

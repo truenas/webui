@@ -40,7 +40,7 @@
           (add)="onAdd()"
         >
           <ng-container *ngFor="let item of listen; let i = index">
-            <ix-list-item (delete)="onDelete(i)">
+            <ix-list-item [label]="'IP Address' | translate" (delete)="onDelete(i)">
               <ix-select
                 [formControlName]="i"
                 [label]="labels.ip | translate"

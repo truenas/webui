@@ -122,6 +122,7 @@ export class VmListComponent implements OnInit {
     }),
   ], {
     rowTestId: (row) => 'virtual-machine-' + row.name,
+    ariaLabels: (row) => [row.name, this.translate.instant('Virtual Machine')],
   });
 
   get hiddenColumns(): Column<VirtualMachine, ColumnComponent<VirtualMachine>>[] {
