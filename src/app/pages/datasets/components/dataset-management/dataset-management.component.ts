@@ -16,7 +16,9 @@ import {
   Inject,
   TrackByFunction,
   HostBinding,
+  computed,
 } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import {
   ActivatedRoute, NavigationStart, Router,
 } from '@angular/router';
@@ -74,20 +76,39 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
   ixTreeHeaderWidth: number | null = null;
   treeWidthChange$ = new Subject<ResizedEvent>();
 
-  entityEmptyConf: EmptyConfig = {
-    type: EmptyType.NoPageData,
-    large: true,
-    title: this.translate.instant('No Datasets'),
-    message: `${this.translate.instant(
-      "It seems you haven't configured pools yet.",
-    )} ${this.translate.instant(
-      'Please click the button below to create a pool.',
-    )}`,
-    button: {
-      label: this.translate.instant('Create pool'),
-      action: () => this.createPool(),
-    },
-  };
+  error = toSignal(this.datasetStore.error$);
+
+  emptyConf = computed<EmptyConfig>(() => {
+    const error = this.error();
+
+    if (error?.reason) {
+      return {
+        type: EmptyType.Errors,
+        large: true,
+        title: this.translate.instant('Failed to load datasets'),
+        message: this.translate.instant(error.reason || error?.error?.toString()),
+        button: {
+          label: this.translate.instant('Retry'),
+          action: () => this.datasetStore.loadDatasets(),
+        },
+      };
+    }
+
+    return {
+      type: EmptyType.NoPageData,
+      large: true,
+      title: this.translate.instant('No Datasets'),
+      message: `${this.translate.instant(
+        "It seems you haven't configured pools yet.",
+      )} ${this.translate.instant(
+        'Please click the button below to create a pool.',
+      )}`,
+      button: {
+        label: this.translate.instant('Create pool'),
+        action: () => this.createPool(),
+      },
+    };
+  });
 
   private readonly scrollSubject = new Subject<number>();
 

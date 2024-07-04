@@ -1,12 +1,8 @@
 <div
   *ngIf="!isLoading && dataSource?.data.length === 0; else datasetContainer"
-  class="entity-empty-wrapper"
-  fxFlex="100%"
-  fxLayout="row"
-  fxLayoutAlign="center center"
-  fxLayoutGap="32px"
+  class="empty-wrapper"
 >
-  <ix-empty [conf]="entityEmptyConf" [requiredRoles]="requiredRoles"></ix-empty>
+  <ix-empty [conf]="emptyConf()" [requiredRoles]="requiredRoles"></ix-empty>
 </div>
 
 <ng-template #datasetContainer [ixUiSearch]="searchableElements.elements.datasets">
