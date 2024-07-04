@@ -21,6 +21,7 @@
         *ixRequiresRoles="requiredRoles"
         mat-button
         [ixTest]="['scrub-task', 'add']"
+        [attr.aria-label]="'Add Scrub Task' | translate"
         (click)="openForm()"
       >
         {{ 'Add' | translate }}

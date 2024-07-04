@@ -140,13 +140,6 @@ export const rootRouterConfig: Routes = [
         path: 'system/audit',
         loadChildren: () => import('./pages/audit/audit.module').then((module) => module.AuditModule),
       },
-      {
-        path: 'errors',
-        children: [{
-          path: 'unauthorized',
-          loadChildren: () => import('./pages/unauthorized/unauthorized.module').then((module) => module.UnauthorizedModule),
-        }],
-      },
     ],
   },
   {

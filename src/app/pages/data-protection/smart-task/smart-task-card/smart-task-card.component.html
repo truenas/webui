@@ -11,6 +11,7 @@
         *ixRequiresRoles="requiredRoles"
         mat-button
         [ixTest]="['smart-task', 'add']"
+        [attr.aria-label]="'Add S.M.A.R.T. Test' | translate"
         (click)="openForm()"
       >{{ 'Add' | translate }}</button>
     </div>

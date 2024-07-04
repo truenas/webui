@@ -56,6 +56,7 @@
     mat-button
     ixTest="abort"
     [disabled]="isAbortingJob"
+    [attr.aria-label]="'Abort Job' | translate"
     (click)="abortJob()"
   >
     {{ isAbortingJob ? ('Aborting...' | translate) : ('Abort' | translate) }}
@@ -67,6 +68,7 @@
     mat-icon-button
     mat-dialog-close="close"
     ixTest="close"
+    [aria-label]="'Hide Job' | translate: { jobMethod: job.method }"
   >
     <ix-icon name="remove"></ix-icon>
   </button>

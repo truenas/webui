@@ -1,14 +1,15 @@
 <div
   class="ix-slidein-title-bar"
   fxLayout="row"
-  [fxLayoutAlign]="componentsSize > 1 ? 'left center' : 'space-between center'"
+  [fxLayoutAlign]="componentsSize() > 1 ? 'left center' : 'space-between center'"
 >
-  <ng-container *ngIf="componentsSize > 1 && !disableClose">
+  <ng-container *ngIf="componentsSize() > 1 && !disableClose">
     <button
       mat-icon-button
       id="ix-close-icon"
       [ixTest]="['close-slide-in']"
       [matTooltip]="tooltip"
+      [attr.aria-label]="'Close {formType} Form' | translate: { formType: title }"
       (click)="close()"
     >
       <ix-icon name="mdi-chevron-left" ></ix-icon>
@@ -18,12 +19,13 @@
     {{ title | translate }}
     <ix-readonly-badge *ngIf="requiredRoles?.length && !(hasRequiredRoles | async)"></ix-readonly-badge>
   </h3>
-  <ng-container *ngIf="componentsSize <= 1 && !disableClose">
+  <ng-container *ngIf="componentsSize() <= 1 && !disableClose">
     <button
       mat-icon-button
       id="ix-close-icon"
       [ixTest]="['close-slide-in']"
       [matTooltip]="tooltip"
+      [attr.aria-label]="'Close {formType} Form' | translate: { formType: title }"
       (click)="close()"
     >
       <ix-icon name="cancel" (keydown.enter)="close()"></ix-icon>

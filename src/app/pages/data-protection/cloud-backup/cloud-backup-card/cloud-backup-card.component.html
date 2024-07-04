@@ -11,6 +11,7 @@
         *ixRequiresRoles="requiredRoles"
         mat-button
         [ixTest]="['cloud-backup', 'add']"
+        [attr.aria-label]="'Add TrueCloud Backup Task' | translate"
         (click)="openForm()"
       >
         {{ 'Add' | translate }}

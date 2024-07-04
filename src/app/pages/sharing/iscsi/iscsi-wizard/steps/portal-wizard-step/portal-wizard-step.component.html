@@ -59,6 +59,7 @@
     >
       <ix-list-item
         *ngFor="let network of form.controls.listen.controls; let i = index"
+        [label]="helptextSharingIscsi.portal_form_placeholder_ip | translate"
         (delete)="removeAddress(i)"
       >
         <ix-select

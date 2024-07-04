@@ -8,6 +8,11 @@ export const globalTwoFactorCardElements = {
     globalTwoFA: {
       anchor: 'global-two-factor-card',
     },
+    configure: {
+      anchor: 'global-two-factor-settings',
+      hierarchy: [T('Configure Global Two Factor Authentication')],
+      synonyms: [T('Global Two Factor Authentication Settings'), T('2FA Settings')],
+    },
     globallyEnabled: {
       hierarchy: [T('Global 2FA Enable')],
       synonyms: [T('Enable Two Factor Authentication Globally'), T('Two Factor Auth'), T('2FA')],

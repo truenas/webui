@@ -120,6 +120,7 @@ export class SnapshotListComponent implements OnInit {
     }),
   ], {
     rowTestId: (row) => 'snapshot-' + row.id,
+    ariaLabels: (row) => [row.name, this.translate.instant('Snapshot')],
   });
 
   get pageTitle(): string {

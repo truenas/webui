@@ -82,6 +82,7 @@
         >
           <ix-list-item
             *ngFor="let network of form.controls.networks.controls; let i = index"
+            [label]="'Networks' | translate"
             (delete)="removeNetworkControl(i)"
           >
             <ix-ip-input-with-netmask
@@ -102,6 +103,7 @@
         >
           <ix-list-item
             *ngFor="let network of form.controls.hosts.controls; let i = index"
+            [label]="'Hosts' | translate"
             (delete)="removeHostControl(i)"
           >
             <ix-input

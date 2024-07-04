@@ -9,10 +9,9 @@ export const cloudCredentialsCardElements = {
       anchor: 'cloud-credentials',
     },
     add: {
-      hierarchy: [T('Add')],
+      hierarchy: [T('Add Cloud Credential')],
       synonyms: [
         T('Add Credential'),
-        T('Add Cloud Credential'),
         T('Add Backup Credential'),
         T('New Credential'),
         T('New Could Credential'),

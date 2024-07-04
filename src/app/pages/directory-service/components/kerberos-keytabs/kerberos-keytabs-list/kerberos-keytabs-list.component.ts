@@ -79,6 +79,7 @@ export class KerberosKeytabsListComponent implements OnInit {
     }),
   ], {
     rowTestId: (row) => 'kerberos-keytab-' + row.name,
+    ariaLabels: (row) => [row.name, this.translate.instant('Kerberos Keytab')],
   });
 
   constructor(

@@ -76,6 +76,7 @@ export class TunableListComponent implements OnInit {
     }),
   ], {
     rowTestId: (row) => 'tunable-' + row.var + '-' + row.value,
+    ariaLabels: (row) => [row.var, this.translate.instant('Tunable')],
   });
 
   constructor(

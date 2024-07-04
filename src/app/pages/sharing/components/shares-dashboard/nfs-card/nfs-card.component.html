@@ -19,6 +19,7 @@
         *ixRequiresRoles="requiredRoles"
         mat-button
         [ixTest]="['nfs-share', 'add']"
+        [attr.aria-label]="'Add NFS Share' | translate"
         (click)="openForm()"
       >
         {{ 'Add' | translate }}

@@ -8,6 +8,11 @@ export const kernelCardElements = {
     kernel: {
       anchor: 'kernel-card',
     },
+    configure: {
+      anchor: 'kernel-settings',
+      hierarchy: [T('Configure Kernel')],
+      synonyms: [T('Kernel Settings')],
+    },
     enableKernelDebug: {
       hierarchy: [T('Enable Kernel Debug')],
     },
