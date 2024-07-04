@@ -208,10 +208,9 @@
     "hierarchy": [
       "Credentials",
       "Groups",
-      "Add"
+      "Add Group"
     ],
     "synonyms": [
-      "Add Group",
       "New Group",
       "Create Group",
       "Group",
@@ -252,10 +251,9 @@
       "Credentials",
       "Groups",
       "Privileges",
-      "Add"
+      "Add Privilege"
     ],
     "synonyms": [
-      "Add Privilege",
       "New Privilege",
       "Create Privilege",
       "Privilege"
@@ -312,10 +310,9 @@
     "hierarchy": [
       "Credentials",
       "Users",
-      "Add"
+      "Add User"
     ],
     "synonyms": [
-      "Add User",
       "New User",
       "Create User",
       "User",
@@ -634,11 +631,10 @@
     "hierarchy": [
       "Credentials",
       "Cloud Credentials",
-      "Add"
+      "Add Cloud Credential"
     ],
     "synonyms": [
       "Add Credential",
-      "Add Cloud Credential",
       "Add Backup Credential",
       "New Credential",
       "New Could Credential",
@@ -682,10 +678,9 @@
     "hierarchy": [
       "Credentials",
       "SSH Connections",
-      "Add"
+      "Add SSH Connection"
     ],
     "synonyms": [
-      "Add SSH Connection",
       "New SSH Connection",
       "Create SSH Connection",
       "SSH Connection"
@@ -727,10 +722,9 @@
     "hierarchy": [
       "Credentials",
       "SSH Keypairs",
-      "Add"
+      "Add SSH Keypair"
     ],
     "synonyms": [
-      "Add SSH Keypair",
       "New SSH Keypair",
       "Create SSH Keypair",
       "SSH Keypair",
@@ -772,10 +766,9 @@
       "Credentials",
       "Certificates",
       "ACME DNS-Authenticators",
-      "Add"
+      "Add ACME DNS-Authenticator"
     ],
     "synonyms": [
-      "Add ACME DNS-Authenticator",
       "New ACME DNS-Authenticator",
       "Create ACME DNS-Authenticator",
       "ACME DNS-Authenticator",
@@ -817,10 +810,9 @@
       "Credentials",
       "Certificates",
       "Certificate Authorities",
-      "Add"
+      "Add Certificate Authority"
     ],
     "synonyms": [
-      "Add Certificate Authority",
       "New Certificate Authority",
       "Create Certificate Authority",
       "Certificate Authority"
@@ -841,12 +833,11 @@
     "hierarchy": [
       "Credentials",
       "Certificates",
-      "Add"
+      "Add Certificate"
     ],
     "synonyms": [
       "Create Certificate",
       "New Certificate",
-      "Add Certificate",
       "Generate Certificate"
     ],
     "requiredRoles": [
@@ -901,12 +892,11 @@
       "Credentials",
       "Certificates",
       "Certificate Signing Requests",
-      "Add"
+      "Add CSR"
     ],
     "synonyms": [
       "Create CSR",
       "New CSR",
-      "Add CSR",
       "Generate CSR",
       "Create Certificate Signing Requests",
       "New Certificate Signing Requests",
@@ -982,10 +972,9 @@
     "hierarchy": [
       "Data Protection",
       "TrueCloud Backup Tasks",
-      "Add"
+      "Add TrueCloud Backup Task"
     ],
     "synonyms": [
-      "Add TrueCloud Backup Task",
       "Add Cloud Backup",
       "Create TrueCloud Backup Task",
       "Create Cloud Backup",
@@ -1028,10 +1017,9 @@
     "hierarchy": [
       "Data Protection",
       "Cloud Sync Tasks",
-      "Add"
+      "Add Cloud Sync Task"
     ],
     "synonyms": [
-      "Add Cloud Sync Task",
       "Create Cloud Sync Task",
       "New Cloud Sync Task",
       "Task"
@@ -1105,10 +1093,9 @@
     "hierarchy": [
       "Data Protection",
       "Replication Tasks",
-      "Add"
+      "Add Replication Task"
     ],
     "synonyms": [
-      "Add Replication Task",
       "Create Replication Task",
       "New Replication Task",
       "Task"
@@ -1148,10 +1135,9 @@
     "hierarchy": [
       "Data Protection",
       "Rsync Tasks",
-      "Add"
+      "Add Rsync Task"
     ],
     "synonyms": [
-      "Add Rsync Task",
       "Create Rsync Task",
       "New Rsync Task",
       "Task"
@@ -1208,10 +1194,9 @@
     "hierarchy": [
       "Data Protection",
       "Scrub Tasks",
-      "Add"
+      "Add Scrub Task"
     ],
     "synonyms": [
-      "Add Scrub Task",
       "Create Scrub Task",
       "New Scrub Task",
       "Task"
@@ -1275,7 +1260,7 @@
     "hierarchy": [
       "Data Protection",
       "Periodic S.M.A.R.T. Tests",
-      "Add"
+      "Add S.M.A.R.T. Test"
     ],
     "synonyms": [
       "Add Periodic S.M.A.R.T. Test",
@@ -1349,13 +1334,12 @@
     "hierarchy": [
       "Data Protection",
       "Periodic Snapshot Tasks",
-      "Add"
+      "Add Snapshot Task"
     ],
     "synonyms": [
       "Add Periodic Snapshot Task",
       "Create Periodic Snapshot Task",
       "New Periodic Snapshot Task",
-      "Add Snapshot Task",
       "Create Snapshot Task",
       "New Snapshot Task",
       "Snapshot",
@@ -1730,10 +1714,9 @@
     "hierarchy": [
       "Directory Services",
       "Idmap",
-      "Add"
+      "Add Idmap"
     ],
     "synonyms": [
-      "Add Idmap",
       "Create Idmap",
       "New Idmap"
     ],
@@ -1769,10 +1752,9 @@
     "hierarchy": [
       "Directory Services",
       "Kerberos Keytabs",
-      "Add"
+      "Add Kerberos Keytab"
     ],
     "synonyms": [
-      "Add Kerberos Keytab",
       "Create Kerberos Keytab",
       "New Kerberos Keytab",
       "Kerberos Keytab"
@@ -1809,10 +1791,9 @@
     "hierarchy": [
       "Directory Services",
       "Kerberos Realms",
-      "Add"
+      "Add Kerberos Realm"
     ],
     "synonyms": [
-      "Add Kerberos Realm",
       "Create Kerberos Realm",
       "New Kerberos Realm",
       "Kerberos Realm"
@@ -2080,10 +2061,9 @@
     "hierarchy": [
       "Network",
       "Static Routes",
-      "Add"
+      "Add Static Route"
     ],
     "synonyms": [
-      "Add Static Route",
       "Create Static Route",
       "New Static Route"
     ],
@@ -2116,14 +2096,13 @@
     "hierarchy": [
       "Reporting",
       "Reporting Exporters",
-      "Add"
+      "Add Reporting Exporter"
     ],
     "synonyms": [
       "Add Exporter",
       "New Exporter",
       "Create Exporter",
       "Exporter",
-      "Add Reporting Exporter",
       "New Reporting Exporter",
       "Create Reporting Exporter"
     ],
@@ -2715,10 +2694,10 @@
     "hierarchy": [
       "Shares",
       "NFS",
-      "Create NFS Share"
+      "Add NFS Share"
     ],
     "synonyms": [
-      "Add NFS Share",
+      "Create NFS Share",
       "New NFS Share",
       "Create Share",
       "Add Share",
@@ -2733,7 +2712,7 @@
       "nfs"
     ],
     "routerLink": null,
-    "anchor": "create-nfs-share",
+    "anchor": "add-nfs-share",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -2775,11 +2754,11 @@
     "hierarchy": [
       "Shares",
       "SMB",
-      "Create SMB Share"
+      "Add SMB Share"
     ],
     "synonyms": [
       "Samba",
-      "Add SMB Share",
+      "Create SMB Share",
       "New SMB Share",
       "Create Share",
       "Add Share",
@@ -2794,7 +2773,7 @@
       "smb"
     ],
     "routerLink": null,
-    "anchor": "create-smb-share",
+    "anchor": "add-smb-share",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -3207,6 +3186,28 @@
       "System",
       "Advanced",
       "Access",
+      "Configure Access"
+    ],
+    "synonyms": [
+      "Access Settings"
+    ],
+    "requiredRoles": [
+      "AUTH_SESSIONS_WRITE"
+    ],
+    "anchorRouterLink": [
+      "/system",
+      "advanced"
+    ],
+    "routerLink": null,
+    "anchor": "access-settings",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "System",
+      "Advanced",
+      "Access",
       "Token Lifetime"
     ],
     "synonyms": [
@@ -3261,6 +3262,27 @@
     "hierarchy": [
       "System",
       "Advanced",
+      "Configure Allowed IP Addresses"
+    ],
+    "synonyms": [
+      "Allowed IP Addresses Settings"
+    ],
+    "requiredRoles": [
+      "FULL_ADMIN"
+    ],
+    "anchorRouterLink": [
+      "/system",
+      "advanced"
+    ],
+    "routerLink": null,
+    "anchor": "allowed-addresses-settings",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "System",
+      "Advanced",
       "Audit"
     ],
     "synonyms": [],
@@ -3271,6 +3293,28 @@
     ],
     "routerLink": null,
     "anchor": "audit-card",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "System",
+      "Advanced",
+      "Audit",
+      "Configure Audit"
+    ],
+    "synonyms": [
+      "Audit Settings"
+    ],
+    "requiredRoles": [
+      "SYSTEM_AUDIT_WRITE"
+    ],
+    "anchorRouterLink": [
+      "/system",
+      "advanced"
+    ],
+    "routerLink": null,
+    "anchor": "audit-settings",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -3386,6 +3430,28 @@
       "System",
       "Advanced",
       "Console",
+      "Configure Console"
+    ],
+    "synonyms": [
+      "Console Settings"
+    ],
+    "requiredRoles": [
+      "FULL_ADMIN"
+    ],
+    "anchorRouterLink": [
+      "/system",
+      "advanced"
+    ],
+    "routerLink": null,
+    "anchor": "console-settings",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "System",
+      "Advanced",
+      "Console",
       "Console Menu"
     ],
     "synonyms": [
@@ -3478,10 +3544,9 @@
       "System",
       "Advanced",
       "Cron Jobs",
-      "Add"
+      "Add Cron Job"
     ],
     "synonyms": [
-      "Add Cron Job",
       "Create Cron Job",
       "New Cron Job",
       "Setup Cron Job",
@@ -3530,6 +3595,29 @@
     ],
     "routerLink": null,
     "anchor": "global-two-factor-card",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "System",
+      "Advanced",
+      "Global Two Factor Authentication",
+      "Configure Global Two Factor Authentication"
+    ],
+    "synonyms": [
+      "Global Two Factor Authentication Settings",
+      "2FA Settings"
+    ],
+    "requiredRoles": [
+      "FULL_ADMIN"
+    ],
+    "anchorRouterLink": [
+      "/system",
+      "advanced"
+    ],
+    "routerLink": null,
+    "anchor": "global-two-factor-settings",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -3600,10 +3688,9 @@
       "System",
       "Advanced",
       "Init/Shutdown Scripts",
-      "Add"
+      "Add Init/Shutdown Script"
     ],
     "synonyms": [
-      "Add Init/Shutdown Script",
       "Create Init/Shutdown Script",
       "New Init/Shutdown Script",
       "Init/Shutdown Script"
@@ -3658,6 +3745,28 @@
       "System",
       "Advanced",
       "Isolated GPU Device(s)",
+      "Configure Isolated GPU Devices"
+    ],
+    "synonyms": [
+      "Isolated GPU Devices Settings"
+    ],
+    "requiredRoles": [
+      "FULL_ADMIN"
+    ],
+    "anchorRouterLink": [
+      "/system",
+      "advanced"
+    ],
+    "routerLink": null,
+    "anchor": "isolated-gpus-settings",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "System",
+      "Advanced",
+      "Isolated GPU Device(s)",
       "GPUs"
     ],
     "synonyms": [],
@@ -3693,6 +3802,28 @@
       "System",
       "Advanced",
       "Kernel",
+      "Configure Kernel"
+    ],
+    "synonyms": [
+      "Kernel Settings"
+    ],
+    "requiredRoles": [
+      "FULL_ADMIN"
+    ],
+    "anchorRouterLink": [
+      "/system",
+      "advanced"
+    ],
+    "routerLink": null,
+    "anchor": "kernel-settings",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "System",
+      "Advanced",
+      "Kernel",
       "Enable Kernel Debug"
     ],
     "synonyms": [],
@@ -3720,6 +3851,28 @@
     ],
     "routerLink": null,
     "anchor": "replication-card",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "System",
+      "Advanced",
+      "Replication",
+      "Configure Replication"
+    ],
+    "synonyms": [
+      "Replication Settings"
+    ],
+    "requiredRoles": [
+      "REPLICATION_TASK_CONFIG_WRITE"
+    ],
+    "anchorRouterLink": [
+      "/system",
+      "advanced"
+    ],
+    "routerLink": null,
+    "anchor": "replication-settings",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -3771,6 +3924,28 @@
     ],
     "routerLink": null,
     "anchor": "sed-card",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "System",
+      "Advanced",
+      "Self-Encrypting Drive",
+      "Configure Self-Encrypting Drive"
+    ],
+    "synonyms": [
+      "Self-Encrypting Drive Settings"
+    ],
+    "requiredRoles": [
+      "FULL_ADMIN"
+    ],
+    "anchorRouterLink": [
+      "/system",
+      "advanced"
+    ],
+    "routerLink": null,
+    "anchor": "sed-settings",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -3837,6 +4012,28 @@
       "System",
       "Advanced",
       "Storage",
+      "Configure Storage"
+    ],
+    "synonyms": [
+      "Storage Settings"
+    ],
+    "requiredRoles": [
+      "FULL_ADMIN"
+    ],
+    "anchorRouterLink": [
+      "/system",
+      "advanced"
+    ],
+    "routerLink": null,
+    "anchor": "storage-settings",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "System",
+      "Advanced",
+      "Storage",
       "System Data Pool"
     ],
     "synonyms": [],
@@ -3875,11 +4072,10 @@
       "System",
       "Advanced",
       "Sysctl",
-      "Add"
+      "Add Sysctl"
     ],
     "synonyms": [
       "Add Tunable",
-      "Add Sysctl",
       "Create Sysctl",
       "New Sysctl",
       "Kernel Parameters",
@@ -3931,6 +4127,28 @@
     ],
     "routerLink": null,
     "anchor": "syslog-card",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "System",
+      "Advanced",
+      "Syslog",
+      "Configure Syslog"
+    ],
+    "synonyms": [
+      "Syslog Settings"
+    ],
+    "requiredRoles": [
+      "FULL_ADMIN"
+    ],
+    "anchorRouterLink": [
+      "/system",
+      "advanced"
+    ],
+    "routerLink": null,
+    "anchor": "syslog-settings",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -4051,14 +4269,13 @@
       "System",
       "Alert Settings",
       "Alert Services",
-      "Add"
+      "Add Alert"
     ],
     "synonyms": [
       "Alerts",
       "Configure Notifications",
       "Configure Alerts",
       "Create Alert",
-      "Add Alert",
       "New Alert",
       "Notifications"
     ],
@@ -4247,13 +4464,12 @@
       "System",
       "General",
       "Email",
-      "Configure"
+      "Configure Email"
     ],
     "synonyms": [
       "Send Test Email",
       "Config Email",
-      "Set email",
-      "Configure Email"
+      "Set email"
     ],
     "requiredRoles": [],
     "anchorRouterLink": [
@@ -4261,7 +4477,7 @@
       "general"
     ],
     "routerLink": null,
-    "anchor": "configure",
+    "anchor": "email-settings",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -4318,6 +4534,26 @@
     ],
     "routerLink": null,
     "anchor": "gui-card",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "System",
+      "General",
+      "GUI",
+      "GUI Settings"
+    ],
+    "synonyms": [],
+    "requiredRoles": [
+      "FULL_ADMIN"
+    ],
+    "anchorRouterLink": [
+      "/system",
+      "general"
+    ],
+    "routerLink": null,
+    "anchor": "gui-settings",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -4515,6 +4751,24 @@
       "System",
       "General",
       "Localization"
+    ],
+    "synonyms": [],
+    "requiredRoles": [],
+    "anchorRouterLink": [
+      "/system",
+      "general"
+    ],
+    "routerLink": null,
+    "anchor": "localization-card",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "System",
+      "General",
+      "Localization",
+      "Localization Settings"
     ],
     "synonyms": [],
     "requiredRoles": [],
@@ -4745,10 +4999,9 @@
       "System",
       "General",
       "NTP Server",
-      "Add"
+      "Add NTP Server"
     ],
     "synonyms": [
-      "Add NTP Server",
       "Create NTP Server",
       "New NTP Server",
       "Time Server"
@@ -4964,10 +5217,9 @@
   {
     "hierarchy": [
       "Virtual Machines",
-      "Add"
+      "Add VM"
     ],
     "synonyms": [
-      "Add VM",
       "Create VM",
       "New VM",
       "VM",

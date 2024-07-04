@@ -53,6 +53,7 @@ export class CloudBackupSnapshotsComponent implements OnChanges {
     }),
   ], {
     rowTestId: (row) => 'cloud-backup-snapshot-' + row.hostname,
+    ariaLabels: (row) => [row.hostname, this.translate.instant('Cloud Backup Snapshot')],
   });
 
   constructor(

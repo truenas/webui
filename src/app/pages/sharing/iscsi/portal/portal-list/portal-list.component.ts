@@ -103,6 +103,7 @@ export class PortalListComponent implements OnInit {
     }),
   ], {
     rowTestId: (row) => 'iscsi-portal-' + row.comment,
+    ariaLabels: (row) => [row.comment, this.translate.instant('Portal')],
   });
 
   constructor(

@@ -94,6 +94,7 @@ export class KerberosRealmsListComponent implements OnInit {
     }),
   ], {
     rowTestId: (row) => 'kerberos-realm-' + row.realm,
+    ariaLabels: (row) => [row.realm, this.translate.instant('Kerberos Realm')],
   });
 
   constructor(

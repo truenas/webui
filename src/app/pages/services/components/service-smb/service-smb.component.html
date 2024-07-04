@@ -51,6 +51,13 @@
         ></ix-select>
 
         <ix-select
+          formControlName="encryption"
+          [label]="'Transport Encryption Behavior' | translate"
+          [options]="encryptionOptions$"
+          [required]="true"
+        ></ix-select>
+
+        <ix-select
           formControlName="loglevel"
           [label]="'Log Level' | translate"
           [tooltip]="tooltips.loglevel | translate"

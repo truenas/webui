@@ -19,6 +19,7 @@ import { EnclosureView } from 'app/pages/system/enclosure/types/enclosure-view.e
 export class EnclosurePageComponent {
   readonly enclosure = this.store.selectedEnclosure;
   readonly selectedView = this.store.selectedView;
+  readonly isLoading = this.store.isLoading;
   readonly isSupportedEnclosure = computed(() => this.enclosure().model !== unsupportedEnclosureMockModel);
 
   protected readonly isExpandersView = computed(() => {

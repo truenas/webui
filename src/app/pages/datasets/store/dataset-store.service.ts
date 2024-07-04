@@ -28,7 +28,6 @@ const initialState: DatasetTreeState = {
 })
 export class DatasetTreeStore extends ComponentStore<DatasetTreeState> {
   readonly isLoading$ = this.select((state) => state.isLoading);
-  // TODO
   readonly error$ = this.select((state) => state.error);
   readonly datasets$ = this.select((state) => state.datasets);
   readonly selectedBranch$ = this.select((state) => {

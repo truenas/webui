@@ -14,6 +14,10 @@ export const guiCardElements = {
     sslCertificate: {
       hierarchy: [T('SSL Certificate')],
     },
+    settings: {
+      anchor: 'gui-settings',
+      hierarchy: [T('GUI Settings')],
+    },
     ipv4Address: {
       hierarchy: [T('IPv4 Address')],
       synonyms: [T('Web Interface Address')],

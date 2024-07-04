@@ -8,6 +8,11 @@ export const isolatedGpusCardElements = {
     isolatedGpus: {
       anchor: 'configure-isolated-gpus',
     },
+    configure: {
+      anchor: 'isolated-gpus-settings',
+      hierarchy: [T('Configure Isolated GPU Devices')],
+      synonyms: [T('Isolated GPU Devices Settings')],
+    },
     isolatedGpuPciIds: {
       hierarchy: [T('GPUs')],
     },
