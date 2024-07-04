@@ -1,6 +1,7 @@
 <div class="title">{{ 'POSIX Permissions' | translate }}</div>
 
-<ix-permissions-item
-  *ngFor="let item of permissionItems"
-  [item]="item"
-></ix-permissions-item>
+@for (item of permissionItems; track item) {
+  <ix-permissions-item
+    [item]="item"
+  ></ix-permissions-item>
+}

@@ -30,23 +30,31 @@
         >
           {{ 'Search' | translate }}
         </button>
-        <ng-container *ngIf="isMobileView" [ngTemplateOutlet]="exportButton"></ng-container>
+        @if (isMobileView) {
+          <ng-container [ngTemplateOutlet]="exportButton"></ng-container>
+        }
       </div>
     </div>
-    <ng-container *ngIf="!isMobileView" [ngTemplateOutlet]="exportButton"></ng-container>
+    @if (!isMobileView) {
+      <ng-container [ngTemplateOutlet]="exportButton"></ng-container>
+    }
   </div>
 </mat-card>
 
 <div class="container" fxLayoutGap="16px">
   <div class="table-container" [class.mobile-hidden]="showMobileDetails && dataProvider.expandedRow">
-    <ng-container *ngIf="!isMobileView" [ngTemplateOutlet]="thead"></ng-container>
+    @if (!isMobileView) {
+      <ng-container [ngTemplateOutlet]="thead"></ng-container>
+    }
 
     <ix-table
       [ixUiSearch]="searchableElements.elements.audit"
       [ix-table-empty]="!(dataProvider.currentPageCount$ | async)"
       [emptyConfig]="emptyService.defaultEmptyConfig(dataProvider.emptyType$ | async)"
     >
-      <ng-container *ngIf="isMobileView" [ngTemplateOutlet]="thead"></ng-container>
+      @if (isMobileView) {
+        <ng-container [ngTemplateOutlet]="thead"></ng-container>
+      }
       <tbody
         ix-table-body
         detailsRowIdentifier="audit_id"
@@ -75,29 +83,31 @@
     ></ix-table-pager>
   </div>
 
-  <div
-    *ngIf="dataProvider.expandedRow"
-    ixDetailsHeight="rightside-content-hold"
-    class="details-container"
-    [class.details-container-mobile]="showMobileDetails"
-  >
-    <ix-log-details-panel
-      [log]="dataProvider.expandedRow"
-      (hide)="closeMobileDetails()"
-    ></ix-log-details-panel>
-  </div>
+  @if (dataProvider.expandedRow) {
+    <div
+      ixDetailsHeight="rightside-content-hold"
+      class="details-container"
+      [class.details-container-mobile]="showMobileDetails"
+    >
+      <ix-log-details-panel
+        [log]="dataProvider.expandedRow"
+        (hide)="closeMobileDetails()"
+      ></ix-log-details-panel>
+    </div>
+  }
 </div>
 
 <ng-template #exportButton>
-  <ix-export-button
-    *ngIf="dataProvider.totalRows"
-    jobMethod="audit.export"
-    downloadMethod="audit.download_report"
-    [addReportNameArgument]="true"
-    [searchQuery]="searchQuery"
-    [sorting]="dataProvider.sorting"
-    [defaultFilters]="basicQueryFilters"
-  ></ix-export-button>
+  @if (dataProvider.totalRows) {
+    <ix-export-button
+      jobMethod="audit.export"
+      downloadMethod="audit.download_report"
+      [addReportNameArgument]="true"
+      [searchQuery]="searchQuery"
+      [sorting]="dataProvider.sorting"
+      [defaultFilters]="basicQueryFilters"
+    ></ix-export-button>
+  }
 </ng-template>
 
 <ng-template #thead>

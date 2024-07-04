@@ -2,15 +2,16 @@
   <mat-card-header>
     <h3 mat-card-title>{{ 'ZFS Encryption' | translate }}</h3>
 
-    <a
-      *ngIf="canEdit"
-      mat-button
-      ixTest="edit"
-      (click)="onEditPressed()"
-    >
-      {{ 'Edit' | translate }}
-    </a>
-    <ng-container *ngIf="canUnlock">
+    @if (canEdit) {
+      <a
+        mat-button
+        ixTest="edit"
+        (click)="onEditPressed()"
+      >
+        {{ 'Edit' | translate }}
+      </a>
+    }
+    @if (canUnlock) {
       <a
         *ixRequiresRoles="[Role.FullAdmin]"
         mat-button
@@ -20,21 +21,21 @@
       >
         {{ 'Unlock' | translate }}
       </a>
-    </ng-container>
+    }
   </mat-card-header>
   <mat-card-content>
     <div class="details-item">
       <div class="label">{{ 'Current State' | translate }}:</div>
       <div class="value">{{ currentStateLabel }}</div>
     </div>
-    <ng-container *ngIf="dataset.encrypted">
+    @if (dataset.encrypted) {
       <div class="details-item">
         <div class="label">{{ 'Encryption Root' | translate }}:</div>
-
-        <div *ngIf="isEncryptionRoot; else notEncryptionRoot" class="value">
-          {{ 'Yes' | translate }}
-        </div>
-        <ng-template #notEncryptionRoot>
+        @if (isEncryptionRoot) {
+          <div class="value">
+            {{ 'Yes' | translate }}
+          </div>
+        } @else {
           <div class="value">/{{ dataset.encryption_root }}</div>
           <a
             class="action"
@@ -43,7 +44,7 @@
           >
             {{ 'Go To Encryption Root' | translate }}
           </a>
-        </ng-template>
+        }
       </div>
       <div class="details-item">
         <div class="label">{{ 'Type' | translate }}:</div>
@@ -55,30 +56,35 @@
         <div class="label">{{ 'Algorithm' | translate }}:</div>
         <div class="value">{{ dataset.encryption_algorithm?.value }}</div>
       </div>
-    </ng-container>
+    }
   </mat-card-content>
-  <mat-card-actions *ngIf="dataset.encrypted && isEncryptionRoot && !this.dataset.locked">
-    <ng-container *ixRequiresRoles="[Role.FullAdmin]">
-      <button
-        *ngIf="canExportKey && isRoot"
-        mat-button
-        ixTest="export-all-keys"
-        (click)="onExportAllKeys()"
-      >
-        {{ 'Export All Keys' | translate }}
-      </button>
-    </ng-container>
-
-    <ng-container *ixRequiresRoles="[Role.FullAdmin]">
-      <button *ngIf="canExportKey" mat-button ixTest="export-key" (click)="onExportKey()">
-        {{ 'Export Key' | translate }}
-      </button>
-    </ng-container>
-
-    <ng-container *ixRequiresRoles="[Role.FullAdmin]">
-      <button *ngIf="hasPassphrase" mat-button ixTest="lock" (click)="onLock()">
-        {{ 'Lock' | translate }}
-      </button>
-    </ng-container>
-  </mat-card-actions>
+  @if (dataset.encrypted && isEncryptionRoot && !this.dataset.locked) {
+    <mat-card-actions>
+      <ng-container *ixRequiresRoles="[Role.FullAdmin]">
+        @if (canExportKey && isRoot) {
+          <button
+            mat-button
+            ixTest="export-all-keys"
+            (click)="onExportAllKeys()"
+          >
+            {{ 'Export All Keys' | translate }}
+          </button>
+        }
+      </ng-container>
+      <ng-container *ixRequiresRoles="[Role.FullAdmin]">
+        @if (canExportKey) {
+          <button mat-button ixTest="export-key" (click)="onExportKey()">
+            {{ 'Export Key' | translate }}
+          </button>
+        }
+      </ng-container>
+      <ng-container *ixRequiresRoles="[Role.FullAdmin]">
+        @if (hasPassphrase) {
+          <button mat-button ixTest="lock" (click)="onLock()">
+            {{ 'Lock' | translate }}
+          </button>
+        }
+      </ng-container>
+    </mat-card-actions>
+  }
 </mat-card>

@@ -1,35 +1,33 @@
 <h1 matDialogTitle>{{ 'Clone to New Dataset' | translate }}</h1>
-<form
-  *ngIf="!wasDatasetCloned; else successMessage"
-  class="ix-form-container"
-  [formGroup]="form"
-  (submit)="onSubmit()"
->
-  <ix-input
-    formControlName="dataset_dst"
-    [label]="'Dataset Name' | translate"
-    [required]="true"
-    [tooltip]="tooltips.dataset_dst | translate"
-  ></ix-input>
-
-  <ix-form-actions>
-    <button
-      *ixRequiresRoles="requiredRoles"
-      mat-button
-      type="submit"
-      color="primary"
-      ixTest="clone"
-      [disabled]="form.invalid"
-    >
-      {{ 'Clone' | translate }}
-    </button>
-
-    <button mat-button type="button" ixTest="cancel" matDialogClose>
-      {{ 'Cancel' | translate }}
-    </button>
-  </ix-form-actions>
-</form>
-<ng-template #successMessage>
+@if (!wasDatasetCloned) {
+  <form
+    class="ix-form-container"
+    [formGroup]="form"
+    (submit)="onSubmit()"
+  >
+    <ix-input
+      formControlName="dataset_dst"
+      [label]="'Dataset Name' | translate"
+      [required]="true"
+      [tooltip]="tooltips.dataset_dst | translate"
+    ></ix-input>
+    <ix-form-actions>
+      <button
+        *ixRequiresRoles="requiredRoles"
+        mat-button
+        type="submit"
+        color="primary"
+        ixTest="clone"
+        [disabled]="form.invalid"
+      >
+        {{ 'Clone' | translate }}
+      </button>
+      <button mat-button type="button" ixTest="cancel" matDialogClose>
+        {{ 'Cancel' | translate }}
+      </button>
+    </ix-form-actions>
+  </form>
+} @else {
   <p>{{ 'Dataset {name} was created.' | translate: { name: datasetName } }}</p>
 
   <ix-form-actions>
@@ -43,9 +41,8 @@
     >
       {{ 'Go to Datasets' | translate }}
     </a>
-
     <button mat-button type="button" ixTest="close" matDialogClose>
       {{ 'Close' | translate }}
     </button>
   </ix-form-actions>
-</ng-template>
+}

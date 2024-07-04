@@ -1,26 +1,22 @@
-<div
-  *ngIf="!isLoading && dataSource?.data.length === 0; else datasetContainer"
-  class="empty-wrapper"
->
-  <ix-empty [conf]="emptyConf()" [requiredRoles]="requiredRoles"></ix-empty>
-</div>
-
-<ng-template #datasetContainer [ixUiSearch]="searchableElements.elements.datasets">
+@if (!isLoading && dataSource?.data.length === 0) {
+  <div class="empty-wrapper">
+    <ix-empty [conf]="emptyConf()" [requiredRoles]="requiredRoles"></ix-empty>
+  </div>
+} @else {
   <div class="container" fxLayoutGap="16px">
     <div class="table-container">
-      <ix-fake-progress-bar
-        *ngIf="!showMobileDetails"
-        class="loader-bar"
-        [loading]="isLoading$ | async"
-      ></ix-fake-progress-bar>
-
+      @if (!showMobileDetails) {
+        <ix-fake-progress-bar
+          class="loader-bar"
+          [loading]="isLoading$ | async"
+        ></ix-fake-progress-bar>
+      }
       <div class="item-search">
         <ix-search-input1
           [disabled]="!dataSource?.data.length"
           (search)="onSearch($event)"
         ></ix-search-input1>
       </div>
-
       <div
         #ixTreeHeader
         class="sticky-header"
@@ -110,21 +106,24 @@
       </div>
     </div>
 
-    <div
-      *ngIf="selectedDataset$ | async as dataset"
-      ixDetailsHeight="rightside-content-hold"
-      class="details-container"
-      [class.details-container-mobile]="showMobileDetails"
-    >
-      <ix-fake-progress-bar
-        *ngIf="showMobileDetails"
-        class="loader-bar"
-        [loading]="isLoading$ | async"
-      ></ix-fake-progress-bar>
-      <ix-dataset-details-panel
-        [dataset]="dataset"
-        [systemDataset]="systemDataset"
-      ></ix-dataset-details-panel>
-    </div>
+    @if (selectedDataset$ | async; as dataset) {
+      <div
+        ixDetailsHeight="rightside-content-hold"
+        class="details-container"
+        [class.details-container-mobile]="showMobileDetails"
+        >
+        @if (showMobileDetails) {
+          <ix-fake-progress-bar
+            class="loader-bar"
+            [loading]="isLoading$ | async"
+          ></ix-fake-progress-bar>
+        }
+        <ix-dataset-details-panel
+          [dataset]="dataset"
+          [systemDataset]="systemDataset"
+        ></ix-dataset-details-panel>
+      </div>
+    }
   </div>
-</ng-template>
+}
+

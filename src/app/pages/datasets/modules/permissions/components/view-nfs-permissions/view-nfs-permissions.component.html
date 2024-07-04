@@ -3,51 +3,59 @@
 </div>
 
 <cdk-accordion>
-  <cdk-accordion-item
-    *ngFor="let aclItem of acl.acl; let i = index"
-    #accordionItem="cdkAccordionItem"
-    class="accordion-item"
-    [class.expanded]="accordionItem.expanded"
-  >
-    <ix-permissions-item
-      class="accordion-item-header"
-      [item]="permissionItems[i]"
-      (click)="accordionItem.toggle()"
-    ></ix-permissions-item>
-    <div *ngIf="permissionDetails[i] as details" class="permission-details">
-      <div class="details-section">
-        <div class="details-title">
-          {{
-            details.arePermissionsBasic
+  @for (aclItem of acl.acl; track aclItem; let i = $index) {
+    <cdk-accordion-item
+      #accordionItem="cdkAccordionItem"
+      class="accordion-item"
+      [class.expanded]="accordionItem.expanded"
+    >
+      <ix-permissions-item
+        class="accordion-item-header"
+        [item]="permissionItems[i]"
+        (click)="accordionItem.toggle()"
+      ></ix-permissions-item>
+      @if (permissionDetails[i]; as details) {
+        <div class="permission-details">
+          <div class="details-section">
+            <div class="details-title">
+              {{
+              details.arePermissionsBasic
               ? ('Permissions Basic' | translate)
               : ('Permissions Advanced' | translate)
-          }}
+              }}
+            </div>
+            <ul class="details-items">
+              @for (permission of details.permissions; track permission) {
+                <li
+                  class="details-item"
+                >
+                  <ix-icon class="icon" name="check_circle"></ix-icon>
+                  {{ permission }}
+                </li>
+              }
+            </ul>
+          </div>
+          @if (details.flags.length) {
+            <div class="details-section">
+              <div class="details-title">
+                {{
+                  details.areFlagsBasic
+                    ? ('Flags Basic' | translate)
+                    : ('Flags Advanced' | translate)
+                }}
+              </div>
+              <ul class="details-items">
+                @for (flag of details.flags; track flag) {
+                  <li class="details-item">
+                    <ix-icon class="icon" name="check_circle"></ix-icon>
+                    {{ flag }}
+                  </li>
+                }
+              </ul>
+            </div>
+          }
         </div>
-        <ul class="details-items">
-          <li
-            *ngFor="let permission of details.permissions"
-            class="details-item"
-          >
-            <ix-icon class="icon" name="check_circle"></ix-icon>
-            {{ permission }}
-          </li>
-        </ul>
-      </div>
-      <div *ngIf="details.flags.length" class="details-section">
-        <div class="details-title">
-          {{
-            details.areFlagsBasic
-              ? ('Flags Basic' | translate)
-              : ('Flags Advanced' | translate)
-          }}
-        </div>
-        <ul class="details-items">
-          <li *ngFor="let flag of details.flags" class="details-item">
-            <ix-icon class="icon" name="check_circle"></ix-icon>
-            {{ flag }}
-          </li>
-        </ul>
-      </div>
-    </div>
-  </cdk-accordion-item>
+      }
+    </cdk-accordion-item>
+  }
 </cdk-accordion>
