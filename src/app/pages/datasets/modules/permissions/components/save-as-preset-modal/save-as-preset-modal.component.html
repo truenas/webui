@@ -11,13 +11,17 @@
             <div class="preset-name">{{ preset.name }}</div>
             <div class="preset-type">{{ preset.acltype }}</div>
 
-            <span
+            <button
               *ngIf="!preset.builtin"
+              ixTest="remove-preset"
+              type="button"
+              mat-icon-button
               class="preset-remove"
+              [attr.aria-label]="'Remove preset' | translate"
               (click)="onRemovePreset(preset)"
             >
               <ix-icon name="cancel"></ix-icon>
-            </span>
+            </button>
           </div>
         </ng-container>
       </div>
