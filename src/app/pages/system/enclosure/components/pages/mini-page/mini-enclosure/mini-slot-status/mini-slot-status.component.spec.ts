@@ -23,7 +23,7 @@ describe('MiniSlotStatusComponent', () => {
       },
     });
 
-    expect(spectator.query('ix-icon')).toHaveAttribute('name', 'check_circle');
+    expect(spectator.query('ix-icon')).toHaveAttribute('name', 'mdi-circle-outline');
     expect(spectator.query('ix-icon')).toHaveClass('status-empty');
     expect(spectator.fixture.nativeElement).toHaveText('Empty');
   });
