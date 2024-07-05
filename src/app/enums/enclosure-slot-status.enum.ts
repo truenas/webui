@@ -26,6 +26,17 @@ export enum EnclosureDiskStatus {
   Unknown = 'UNKNOWN',
 }
 
+export const enclosureDiskStatusLabels = new Map<EnclosureDiskStatus, string>([
+  [EnclosureDiskStatus.Offline, T('Offline')],
+  [EnclosureDiskStatus.Removed, T('Removed')],
+  [EnclosureDiskStatus.Faulted, T('Faulted')],
+  [EnclosureDiskStatus.Split, T('Split')],
+  [EnclosureDiskStatus.Unavail, T('Unavailable')],
+  [EnclosureDiskStatus.Degraded, T('Degraded')],
+  [EnclosureDiskStatus.Online, T('Online')],
+  [EnclosureDiskStatus.Unknown, T('Unknown')],
+]);
+
 // TODO: Find out what all element name possibilities are to complete the enum
 export enum EnclosureElementType {
   ArrayDeviceSlot = 'Array Device Slot',

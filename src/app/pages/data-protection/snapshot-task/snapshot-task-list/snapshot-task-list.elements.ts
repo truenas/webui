@@ -9,12 +9,12 @@ export const snapshotTaskListElements = {
       synonyms: [T('Data Protection'), T('Tasks')],
     },
     add: {
-      hierarchy: [T('Add')],
+      hierarchy: [T('Add Snapshot Task')],
+      anchor: 'add-snapshot-task',
       synonyms: [
         T('Add Periodic Snapshot Task'),
         T('Create Periodic Snapshot Task'),
         T('New Periodic Snapshot Task'),
-        T('Add Snapshot Task'),
         T('Create Snapshot Task'),
         T('New Snapshot Task'),
         T('Snapshot'),

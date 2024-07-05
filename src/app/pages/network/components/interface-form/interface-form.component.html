@@ -8,14 +8,15 @@
   <mat-card-content>
     <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
       <ix-fieldset [title]="'Interface Settings' | translate">
-        <ix-select
-          *ngIf="isNew"
-          formControlName="type"
-          [label]="'Type' | translate"
-          [required]="true"
-          [options]="interfaceTypes$"
-          [tooltip]="helptext.int_type_tooltip | translate"
-        ></ix-select>
+        @if (isNew) {
+          <ix-select
+            formControlName="type"
+            [label]="'Type' | translate"
+            [required]="true"
+            [options]="interfaceTypes$"
+            [tooltip]="helptext.int_type_tooltip | translate"
+          ></ix-select>
+        }
 
         <ix-input
           formControlName="name"
@@ -44,104 +45,115 @@
         ></ix-checkbox>
       </ix-fieldset>
 
-      <ix-fieldset *ngIf="isBridge" [title]="'Bridge Settings' | translate">
-        <ix-select
-          formControlName="bridge_members"
-          [multiple]="true"
-          [label]="'Bridge Members' | translate"
-          [options]="bridgeMembers$"
-          [tooltip]="helptext.bridge_members_tooltip | translate"
-        ></ix-select>
+      @if (isBridge) {
+        <ix-fieldset [title]="'Bridge Settings' | translate">
+          <ix-select
+            formControlName="bridge_members"
+            [multiple]="true"
+            [label]="'Bridge Members' | translate"
+            [options]="bridgeMembers$"
+            [tooltip]="helptext.bridge_members_tooltip | translate"
+          ></ix-select>
 
-        <ix-checkbox
-          formControlName="enable_learning"
-          [label]="'Enable Learning' | translate"
-          [tooltip]="helptext.enable_learning_tooltip | translate"
-        ></ix-checkbox>
-      </ix-fieldset>
+          <ix-checkbox
+            formControlName="enable_learning"
+            [label]="'Enable Learning' | translate"
+            [tooltip]="helptext.enable_learning_tooltip | translate"
+          ></ix-checkbox>
+        </ix-fieldset>
+      }
 
-      <ix-fieldset *ngIf="isLag" [title]="'Link Aggregation' | translate">
-        <ix-select
-          formControlName="lag_protocol"
-          [label]="'Link Aggregation Protocol' | translate"
-          [options]="lagProtocols$"
-          [required]="true"
-        ></ix-select>
+      @if (isLag) {
+        <ix-fieldset [title]="'Link Aggregation' | translate">
+          <ix-select
+            formControlName="lag_protocol"
+            [label]="'Link Aggregation Protocol' | translate"
+            [options]="lagProtocols$"
+            [required]="true"
+          ></ix-select>
 
-        <ix-select
-          *ngIf="isLacpLag || isLoadBalanceLag"
-          formControlName="xmit_hash_policy"
-          [label]="'Transmit Hash Policy' | translate"
-          [required]="true"
-          [options]="xmitHashPolicies$"
-        ></ix-select>
+          @if (isLacpLag || isLoadBalanceLag) {
+            <ix-select
+              formControlName="xmit_hash_policy"
+              [label]="'Transmit Hash Policy' | translate"
+              [required]="true"
+              [options]="xmitHashPolicies$"
+            ></ix-select>
+          }
 
-        <ix-select
-          *ngIf="isLacpLag"
-          formControlName="lacpdu_rate"
-          [label]="'LACPDU Rate' | translate"
-          [required]="true"
-          [options]="lacpduRates$"
-        ></ix-select>
+          @if (isLacpLag) {
+            <ix-select
+              formControlName="lacpdu_rate"
+              [label]="'LACPDU Rate' | translate"
+              [required]="true"
+              [options]="lacpduRates$"
+            ></ix-select>
+          }
 
-        <ix-select
-          *ngIf="!isFailover"
-          formControlName="lag_ports"
-          [label]="'Link Aggregation Interfaces' | translate"
-          [multiple]="true"
-          [options]="lagPorts$"
-          [required]="true"
-          [tooltip]="helptext.lagg_interfaces_tooltip | translate"
-        ></ix-select>
-        <ix-ordered-listbox
-          *ngIf="isFailover"
-          formControlName="lag_ports"
-          [label]="'Link Aggregation Interfaces' | translate"
-          [options]="lagPorts$"
-          [required]="true"
-          [tooltip]="helptext.lagg_interfaces_failover_tooltip | translate"
-        ></ix-ordered-listbox>
-      </ix-fieldset>
+          @if (isFailover) {
+            <ix-ordered-listbox
+              formControlName="lag_ports"
+              [label]="'Link Aggregation Interfaces' | translate"
+              [options]="lagPorts$"
+              [required]="true"
+              [tooltip]="helptext.lagg_interfaces_failover_tooltip | translate"
+            ></ix-ordered-listbox>
+          } @else {
+            <ix-select
+              formControlName="lag_ports"
+              [label]="'Link Aggregation Interfaces' | translate"
+              [multiple]="true"
+              [options]="lagPorts$"
+              [required]="true"
+              [tooltip]="helptext.lagg_interfaces_tooltip | translate"
+            ></ix-select>
+          }
+        </ix-fieldset>
+      }
 
-      <ix-fieldset *ngIf="isVlan" [title]="'VLAN Settings' | translate">
-        <ix-select
-          formControlName="vlan_parent_interface"
-          [label]="'Parent Interface' | translate"
-          [required]="true"
-          [options]="vlanParentInterfaces$"
-          [tooltip]="helptext.vlan_pint_tooltip | translate"
-        ></ix-select>
+      @if (isVlan) {
+        <ix-fieldset [title]="'VLAN Settings' | translate">
+          <ix-select
+            formControlName="vlan_parent_interface"
+            [label]="'Parent Interface' | translate"
+            [required]="true"
+            [options]="vlanParentInterfaces$"
+            [tooltip]="helptext.vlan_pint_tooltip | translate"
+          ></ix-select>
 
-        <ix-input
-          formControlName="vlan_tag"
-          type="number"
-          [label]="'VLAN Tag' | translate"
-          [tooltip]="helptext.vlan_tag_tooltip | translate"
-          [required]="true"
-        ></ix-input>
+          <ix-input
+            formControlName="vlan_tag"
+            type="number"
+            [label]="'VLAN Tag' | translate"
+            [tooltip]="helptext.vlan_tag_tooltip | translate"
+            [required]="true"
+          ></ix-input>
 
-        <ix-select
-          formControlName="vlan_pcp"
-          [label]="'Priority Code Point' | translate"
-          [tooltip]="helptext.vlan_pcp_tooltip | translate"
-          [options]="vlanPcpOptions$"
-        ></ix-select>
-      </ix-fieldset>
+          <ix-select
+            formControlName="vlan_pcp"
+            [label]="'Priority Code Point' | translate"
+            [tooltip]="helptext.vlan_pcp_tooltip | translate"
+            [options]="vlanPcpOptions$"
+          ></ix-select>
+        </ix-fieldset>
+      }
 
-      <ix-fieldset *ngIf="isHaLicensed" [title]="'Failover' | translate">
-        <ix-checkbox
-          formControlName="failover_critical"
-          [label]="'Critical' | translate"
-          [tooltip]="helptext.failover_critical_tooltip | translate"
-        ></ix-checkbox>
+      @if (isHaLicensed) {
+        <ix-fieldset [title]="'Failover' | translate">
+          <ix-checkbox
+            formControlName="failover_critical"
+            [label]="'Critical' | translate"
+            [tooltip]="helptext.failover_critical_tooltip | translate"
+          ></ix-checkbox>
 
-        <ix-select
-          formControlName="failover_group"
-          [label]="'Failover Group' | translate"
-          [options]="failoverGroups$"
-          [tooltip]="helptext.failover_group_tooltip | translate"
-        ></ix-select>
-      </ix-fieldset>
+          <ix-select
+            formControlName="failover_group"
+            [label]="'Failover Group' | translate"
+            [options]="failoverGroups$"
+            [tooltip]="helptext.failover_group_tooltip | translate"
+          ></ix-select>
+        </ix-fieldset>
+      }
 
       <ix-fieldset [title]="'Other Settings' | translate">
         <ix-input
@@ -151,48 +163,50 @@
           [tooltip]="helptext.mtu_tooltip | translate"
         ></ix-input>
 
-        <ix-list
-          *ngIf="canHaveAliases"
-          formArrayName="aliases"
-          [empty]="form.controls.aliases.controls.length === 0"
-          [label]="'Aliases' | translate"
-          [formArray]="form.get('aliases')"
-          (add)="addAlias()"
-        >
-          <ix-list-item
-            *ngFor="let network of form.controls.aliases.controls; let i = index"
-            [formGroupName]="i"
-            (delete)="removeAlias(i)"
+        @if (canHaveAliases) {
+          <ix-list
+            formArrayName="aliases"
+            [empty]="form.controls.aliases.controls.length === 0"
+            [label]="'Aliases' | translate"
+            [formArray]="form.get('aliases')"
+            (add)="addAlias()"
           >
-            <div class="alias">
-              <ix-ip-input-with-netmask
-                class="alias-ip"
-                formControlName="address"
-                [label]="('IP Address' | translate) + ipLabelSuffix"
-                [required]="true"
-                [tooltip]="helptext.alias_address_tooltip | translate"
-              ></ix-ip-input-with-netmask>
+            @for (network of form.controls.aliases.controls; track network; let i = $index) {
+              <ix-list-item
+                [formGroupName]="i"
+                [label]="'Aliases' | translate"
+                (delete)="removeAlias(i)"
+              >
+                <div class="alias">
+                  <ix-ip-input-with-netmask
+                    class="alias-ip"
+                    formControlName="address"
+                    [label]="('IP Address' | translate) + ipLabelSuffix"
+                    [required]="true"
+                    [tooltip]="helptext.alias_address_tooltip | translate"
+                  ></ix-ip-input-with-netmask>
 
-              <ng-container *ngIf="isHaLicensed">
-                <ix-input
-                  formControlName="failover_address"
-                  [label]="('IP Address' | translate) + failoverLabelSuffix"
-                  [required]="true"
-                  [tooltip]="helptext.failover_alias_address_tooltip | translate"
-                ></ix-input>
+                  @if (isHaLicensed) {
+                    <ix-input
+                      formControlName="failover_address"
+                      [label]="('IP Address' | translate) + failoverLabelSuffix"
+                      [required]="true"
+                      [tooltip]="helptext.failover_alias_address_tooltip | translate"
+                    ></ix-input>
+                    <ix-input
+                      formControlName="failover_virtual_address"
+                      [label]="'Virtual IP Address (Failover Address)' | translate"
+                      [required]="true"
+                      [tooltip]="helptext.failover_virtual_alias_address_tooltip | translate"
+                    ></ix-input>
+                  }
 
-                <ix-input
-                  formControlName="failover_virtual_address"
-                  [label]="'Virtual IP Address (Failover Address)' | translate"
-                  [required]="true"
-                  [tooltip]="helptext.failover_virtual_alias_address_tooltip | translate"
-                ></ix-input>
-              </ng-container>
-
-              <ix-errors [control]="network"></ix-errors>
-            </div>
-          </ix-list-item>
-        </ix-list>
+                  <ix-errors [control]="network"></ix-errors>
+                </div>
+              </ix-list-item>
+            }
+          </ix-list>
+        }
       </ix-fieldset>
 
       <ix-form-actions>

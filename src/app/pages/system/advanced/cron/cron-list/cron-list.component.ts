@@ -88,6 +88,7 @@ export class CronListComponent implements OnInit {
     }),
   ], {
     rowTestId: (row) => 'cron-' + row.command + '-' + row.description,
+    ariaLabels: (row) => [row.command, this.translate.instant('Cron Job')],
   });
 
   get hiddenColumns(): Column<CronjobRow, ColumnComponent<CronjobRow>>[] {

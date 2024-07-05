@@ -1,25 +1,27 @@
-<mat-card *ngIf="hasIpmi$ | async" [ixUiSearch]="searchableElements.ipmi">
-  <mat-toolbar-row>
-    <h3>IPMI</h3>
+@if (hasIpmi$ | async) {
+  <mat-card [ixUiSearch]="searchableElements.ipmi">
+    <mat-toolbar-row>
+      <h3>IPMI</h3>
 
-    <button
-      mat-button
-      class="actions"
-      ixTest="show-events"
-      [ixUiSearch]="searchableElements.showEvents"
-      (click)="onOpenEvents()"
-    >{{ 'Show Events' | translate }}</button>
-  </mat-toolbar-row>
+      <button
+        mat-button
+        class="actions"
+        ixTest="show-events"
+        [ixUiSearch]="searchableElements.showEvents"
+        (click)="onOpenEvents()"
+      >{{ 'Show Events' | translate }}</button>
+    </mat-toolbar-row>
 
-  <ix-table
-    [ix-table-empty]="!(dataProvider.currentPageCount$ | async)"
-    [emptyConfig]="emptyService.defaultEmptyConfig(dataProvider.emptyType$ | async)"
-  >
-    <tbody
-      ix-table-body
-      [columns]="columns"
-      [dataProvider]="dataProvider"
-      [isLoading]="dataProvider.isLoading$ | async"
-    ></tbody>
-  </ix-table>
-</mat-card>
+    <ix-table
+      [ix-table-empty]="!(dataProvider.currentPageCount$ | async)"
+      [emptyConfig]="emptyService.defaultEmptyConfig(dataProvider.emptyType$ | async)"
+    >
+      <tbody
+        ix-table-body
+        [columns]="columns"
+        [dataProvider]="dataProvider"
+        [isLoading]="dataProvider.isLoading$ | async"
+      ></tbody>
+    </ix-table>
+  </mat-card>
+}

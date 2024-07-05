@@ -10,12 +10,11 @@ export const csrListElements = {
       synonyms: [T('CSRs')],
     },
     add: {
-      hierarchy: [T('Add')],
+      hierarchy: [T('Add CSR')],
       anchor: 'add-csr',
       synonyms: [
         T('Create CSR'),
         T('New CSR'),
-        T('Add CSR'),
         T('Generate CSR'),
         T('Create Certificate Signing Requests'),
         T('New Certificate Signing Requests'),

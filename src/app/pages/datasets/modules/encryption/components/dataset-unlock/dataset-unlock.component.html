@@ -1,15 +1,16 @@
 <mat-card class="form-card">
   <mat-card-content>
     <form class="ix-form-container" [formGroup]="form" (submit)="onSave()">
-      <ix-radio-group
-        *ngIf="!hideFileInput"
-        formControlName="use_file"
-        [label]="helptext.unlock_key_file_placeholder | translate"
-        [tooltip]="helptext.unlock_key_file_tooltip | translate"
-        [options]="useFileOptions$"
-      ></ix-radio-group>
+      @if (!hideFileInput) {
+        <ix-radio-group
+          formControlName="use_file"
+          [label]="helptext.unlock_key_file_placeholder | translate"
+          [tooltip]="helptext.unlock_key_file_tooltip | translate"
+          [options]="useFileOptions$"
+        ></ix-radio-group>
+      }
 
-      <ng-container *ngIf="useFile">
+      @if (useFile) {
         <ix-checkbox
           formControlName="unlock_children"
           [label]="helptext.unlock_children_placeholder | translate"
@@ -21,9 +22,7 @@
           [tooltip]="helptext.upload_key_file_tooltip | translate"
           [required]="true"
         ></ix-file-input>
-      </ng-container>
-
-      <ng-container *ngIf="!useFile">
+      } @else {
         <ix-list
           formArrayName="datasets"
           [empty]="form.controls.datasets.controls.length === 0"
@@ -31,35 +30,36 @@
           [canAdd]="false"
           [formArray]="form.get('datasets')"
         >
-          <ix-list-item
-            *ngFor="let dataset of form.controls.datasets.controls; let i = index"
-            [formGroupName]="i"
-            [canDelete]="false"
-          >
-            <div>
-              <strong> {{'Dataset' | translate }}: </strong>
-              {{ dataset.value.name }}
-            </div>
-            <ix-textarea
-              *ngIf="!dataset.value.is_passphrase"
-              formControlName="key"
-              [label]="helptext.dataset_key_placeholder | translate"
-              [tooltip]="helptext.dataset_key_placeholder | translate"
-            ></ix-textarea>
-            <ix-file-input
-              *ngIf="!dataset.value.is_passphrase"
-              formControlName="file"
-            ></ix-file-input>
-            <ix-input
-              *ngIf="dataset.value.is_passphrase"
-              formControlName="passphrase"
-              type="password"
-              [label]="helptext.dataset_passphrase_placeholder | translate"
-              [tooltip]="helptext.dataset_passphrase_tooltip | translate"
-            ></ix-input>
-          </ix-list-item>
+          @for (dataset of form.controls.datasets.controls; track dataset; let i = $index) {
+            <ix-list-item
+              [formGroupName]="i"
+              [canDelete]="false"
+            >
+              <div>
+                <strong> {{'Dataset' | translate }}: </strong>
+                {{ dataset.value.name }}
+              </div>
+              @if (dataset.value.is_passphrase) {
+                <ix-input
+                  formControlName="passphrase"
+                  type="password"
+                  [label]="helptext.dataset_passphrase_placeholder | translate"
+                  [tooltip]="helptext.dataset_passphrase_tooltip | translate"
+                ></ix-input>
+              } @else {
+                <ix-textarea
+                  formControlName="key"
+                  [label]="helptext.dataset_key_placeholder | translate"
+                  [tooltip]="helptext.dataset_key_placeholder | translate"
+                ></ix-textarea>
+                <ix-file-input
+                  formControlName="file"
+                ></ix-file-input>
+              }
+            </ix-list-item>
+          }
         </ix-list>
-      </ng-container>
+      }
 
       <ix-checkbox
         formControlName="force"

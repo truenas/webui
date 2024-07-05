@@ -9,13 +9,13 @@ export const rsyncTaskListElements = {
       synonyms: [T('Data Protection'), T('Tasks')],
     },
     add: {
-      hierarchy: [T('Add')],
+      hierarchy: [T('Add Rsync Task')],
       synonyms: [
-        T('Add Rsync Task'),
         T('Create Rsync Task'),
         T('New Rsync Task'),
         T('Task'),
       ],
+      anchor: 'add-rsync',
     },
   },
 } satisfies UiSearchableElement;

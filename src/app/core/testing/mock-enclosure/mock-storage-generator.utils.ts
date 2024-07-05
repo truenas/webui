@@ -1,6 +1,10 @@
+import { unsupportedEnclosureMock } from 'app/constants/server-series.constant';
 import { enclosureMocks } from 'app/core/testing/mock-enclosure/enclosure-templates/enclosure-mocks';
 import { addDisksToSlots } from 'app/core/testing/mock-enclosure/enclosure-templates/utils/disk.utils';
-import { addPoolsToDisks } from 'app/core/testing/mock-enclosure/enclosure-templates/utils/pool.utils';
+import {
+  addPoolsToDisks,
+  randomizeDiskStatuses,
+} from 'app/core/testing/mock-enclosure/enclosure-templates/utils/pool.utils';
 import { MockStorageScenario } from 'app/core/testing/mock-enclosure/enums/mock-storage.enum';
 import { MockEnclosureConfig } from 'app/core/testing/mock-enclosure/interfaces/mock-enclosure.interface';
 import { EnclosureModel } from 'app/enums/enclosure-model.enum';
@@ -42,11 +46,7 @@ export class MockStorageGenerator {
   }
 
   private addEnclosure(model: EnclosureModel): void {
-    const enclosure = enclosureMocks.find((mock) => mock.model === model);
-
-    if (!enclosure) {
-      throw new Error(`Enclosure model ${model} not found in mock storage generator`);
-    }
+    const enclosure = enclosureMocks.find((mock) => mock.model === model) || unsupportedEnclosureMock;
 
     this.enclosures.push(enclosure);
   }
@@ -62,6 +62,11 @@ export class MockStorageGenerator {
       case MockStorageScenario.FillAllSlots:
         this.enclosures = addDisksToSlots(this.enclosures, 1);
         this.enclosures = addPoolsToDisks(this.enclosures, 1);
+        return;
+      case MockStorageScenario.DiskStatuses:
+        this.enclosures = addDisksToSlots(this.enclosures, 0.8);
+        this.enclosures = addPoolsToDisks(this.enclosures, 0.8);
+        this.enclosures = randomizeDiskStatuses(this.enclosures);
         return;
       default:
         assertUnreachable(scenario);

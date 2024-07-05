@@ -9,13 +9,13 @@ export const scrubListElements = {
       synonyms: [T('Data Protection'), T('Tasks')],
     },
     add: {
-      hierarchy: [T('Add')],
+      hierarchy: [T('Add Scrub Task')],
       synonyms: [
-        T('Add Scrub Task'),
         T('Create Scrub Task'),
         T('New Scrub Task'),
         T('Task'),
       ],
+      anchor: 'add-scrub',
     },
   },
 } satisfies UiSearchableElement;

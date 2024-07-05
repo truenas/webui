@@ -7,7 +7,6 @@ import { of } from 'rxjs';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { PowerMenuComponent } from 'app/modules/layout/components/topbar/power-menu/power-menu.component';
 import { AuthService } from 'app/services/auth/auth.service';
-import { WebSocketConnectionService } from 'app/services/websocket-connection.service';
 
 describe('PowerMenuComponent', () => {
   let spectator: Spectator<PowerMenuComponent>;
@@ -18,13 +17,11 @@ describe('PowerMenuComponent', () => {
     providers: [
       mockProvider(AuthService, {
         hasRole: jest.fn(() => of(true)),
-        logout: jest.fn(() => of()),
       }),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
       mockProvider(Router),
-      mockProvider(WebSocketConnectionService),
     ],
   });
 
@@ -33,13 +30,6 @@ describe('PowerMenuComponent', () => {
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     menu = await loader.getHarness(MatMenuHarness);
     await menu.open();
-  });
-
-  it('has a Log Out menu item that logs user out when pressed', async () => {
-    const logout = await menu.getItems({ text: /Log Out$/ });
-    await logout[0].click();
-
-    expect(spectator.inject(AuthService).logout).toHaveBeenCalled();
   });
 
   it('has a Restart menu item that restarts system after confirmation', async () => {

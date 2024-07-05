@@ -7,9 +7,9 @@ export const cronCardElements = {
   anchorRouterLink: ['/system', 'advanced'],
   elements: {
     addCronJob: {
-      hierarchy: [T('Add')],
+      hierarchy: [T('Add Cron Job')],
+      anchor: 'add-cron-job',
       synonyms: [
-        T('Add Cron Job'),
         T('Create Cron Job'),
         T('New Cron Job'),
         T('Setup Cron Job'),

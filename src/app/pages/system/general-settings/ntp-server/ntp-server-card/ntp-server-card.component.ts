@@ -62,6 +62,7 @@ export class NtpServerCardComponent implements OnInit {
           iconName: 'edit',
           tooltip: this.translate.instant('Edit'),
           onClick: (row) => this.doEdit(row),
+          requiredRoles: this.requiredRoles,
         },
         {
           iconName: 'delete',
@@ -73,6 +74,7 @@ export class NtpServerCardComponent implements OnInit {
     }),
   ], {
     rowTestId: (row) => 'ntp-server-' + row.address + '-' + row.minpoll + '-' + row.maxpoll,
+    ariaLabels: (row) => [row.address, this.translate.instant('NTP Server')],
   });
 
   constructor(

@@ -8,6 +8,11 @@ export const replicationSettingsCardElements = {
     replication: {
       anchor: 'replication-card',
     },
+    configure: {
+      anchor: 'replication-settings',
+      hierarchy: [T('Configure Replication')],
+      synonyms: [T('Replication Settings')],
+    },
     replicationTasksLimit: {
       hierarchy: [T('Replication Tasks Limit')],
     },

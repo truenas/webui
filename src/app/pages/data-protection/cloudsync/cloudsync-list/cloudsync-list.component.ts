@@ -122,6 +122,7 @@ export class CloudSyncListComponent implements OnInit {
     }),
   ], {
     rowTestId: (row) => 'cloudsync-task-' + row.description,
+    ariaLabels: (row) => [row.description, this.translate.instant('Cloud Sync Task')],
   });
 
   get hiddenColumns(): Column<CloudSyncTaskUi, ColumnComponent<CloudSyncTaskUi>>[] {

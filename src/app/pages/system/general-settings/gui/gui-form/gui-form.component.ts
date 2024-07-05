@@ -13,7 +13,6 @@ import { combineLatest, of } from 'rxjs';
 import {
   filter, switchMap, takeUntil, tap,
 } from 'rxjs/operators';
-import { Role } from 'app/enums/role.enum';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { WINDOW } from 'app/helpers/window.helper';
 import { helptextSystemGeneral as helptext } from 'app/helptext/system/general';
@@ -41,8 +40,6 @@ import { waitForGeneralConfig } from 'app/store/system-config/system-config.sele
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class GuiFormComponent {
-  protected readonly requiredRoles = [Role.FullAdmin];
-
   isFormLoading = true;
   configData: SystemGeneralConfig;
 

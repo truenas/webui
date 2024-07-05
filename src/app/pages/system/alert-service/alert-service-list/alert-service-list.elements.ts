@@ -8,12 +8,12 @@ export const alertServiceListElements = {
   elements: {
     alertServiceList: {},
     add: {
-      hierarchy: [T('Add')],
+      hierarchy: [T('Add Alert')],
+      anchor: 'add-alert-service',
       synonyms: [
         T('Alerts'),
         T('Configure Alerts'),
         T('Create Alert'),
-        T('Add Alert'),
         T('New Alert'),
         T('Notifications'),
       ],

@@ -76,6 +76,7 @@ export class JobsListComponent implements OnInit {
     }),
   ], {
     rowTestId: (row) => 'job-' + row.id,
+    ariaLabels: (row) => [row.description, this.translate.instant('Job')],
   });
 
   emptyType$: Observable<EmptyType> = combineLatest([

@@ -70,5 +70,19 @@
       <ix-icon name="info_outline"></ix-icon>
       {{ 'About' | translate }}
     </button>
+
+    <!-- Inline styles because mat-menu contents are rendered outside of the component -->
+    <mat-divider style="margin: 5px 0;"></mat-divider>
+
+    <button
+      name="power-log-out"
+      mat-menu-item
+      ixTest="log-out"
+      [ixUiSearch]="searchableElements.elements.logOut"
+      (click)="onSignOut()"
+    >
+      <ix-icon name="exit_to_app"></ix-icon>
+      {{ 'Log Out' | translate }}
+    </button>
   </mat-menu>
 </div>

@@ -9,6 +9,11 @@ export const storageCardElements = {
       synonyms: [T('Disks'), T('Pools')],
       anchor: 'storage-card',
     },
+    configure: {
+      anchor: 'storage-settings',
+      hierarchy: [T('Configure Storage')],
+      synonyms: [T('Storage Settings')],
+    },
     systemPool: {
       hierarchy: [T('System Data Pool')],
     },

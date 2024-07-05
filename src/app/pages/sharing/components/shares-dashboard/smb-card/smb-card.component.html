@@ -19,6 +19,7 @@
         *ixRequiresRoles="requiredRoles"
         mat-button
         [ixTest]="['smb-share', 'add']"
+        [attr.aria-label]="'Add SMB Share' | translate"
         (click)="openForm()"
       >
         {{ 'Add' | translate }}

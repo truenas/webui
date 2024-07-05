@@ -1,5 +1,6 @@
 import {
   AfterViewInit, ChangeDetectionStrategy, Component, Input,
+  signal,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
@@ -21,7 +22,7 @@ export class IxModalHeader2Component implements AfterViewInit {
   @Input() loading: boolean;
   @Input() disableClose = false;
   @Input() requiredRoles: Role[] = [];
-  componentsSize = 1;
+  componentsSize = signal(1);
 
   get hasRequiredRoles(): Observable<boolean> {
     return this.authService.hasRole(this.requiredRoles);
@@ -40,7 +41,7 @@ export class IxModalHeader2Component implements AfterViewInit {
     this.chainedSlideIn.components$.pipe(
       untilDestroyed(this),
     ).subscribe((components) => {
-      this.componentsSize = components.length;
+      this.componentsSize.set(components.length);
       if (components.length > 1) {
         this.tooltip = this.translate.instant('Go back to the previous form');
       } else {

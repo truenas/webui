@@ -31,13 +31,13 @@ export const cloudSyncListElements = {
       ],
     },
     add: {
-      hierarchy: [T('Add')],
+      hierarchy: [T('Add Cloud Sync Task')],
       synonyms: [
-        T('Add Cloud Sync Task'),
         T('Create Cloud Sync Task'),
         T('New Cloud Sync Task'),
         T('Task'),
       ],
+      anchor: 'add-cloudsync',
     },
   },
 } satisfies UiSearchableElement;

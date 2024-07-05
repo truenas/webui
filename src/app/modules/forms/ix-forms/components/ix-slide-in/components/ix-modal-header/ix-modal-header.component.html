@@ -9,6 +9,8 @@
       tabindex="0"
       name="cancel"
       id="ix-close-icon"
+      type="button"
+      [attr.aria-label]="'Close {formType} Form' | translate: { formType: title }"
       (click)="close()"
       (keydown.enter)="close()"
     ></ix-icon>

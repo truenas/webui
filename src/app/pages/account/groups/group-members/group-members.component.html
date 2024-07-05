@@ -1,34 +1,39 @@
 <mat-card class="form-card">
-  <mat-progress-bar
-    *ngIf="isFormLoading"
-    mode="indeterminate"
-  ></mat-progress-bar>
+  @if (isFormLoading) {
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  }
 
-  <mat-card-title *ngIf="group?.group">
-    {{ 'Manage members of {name} group' | translate: { name: group.group } }}
-    <ix-readonly-badge *ngIf="requiredRoles?.length && !(hasRequiredRoles | async)"></ix-readonly-badge>
-  </mat-card-title>
+  @if (group?.group) {
+    <mat-card-title>
+      {{ 'Manage members of {name} group' | translate: { name: group.group } }}
+      @if (requiredRoles?.length && !(hasRequiredRoles | async)) {
+        <ix-readonly-badge></ix-readonly-badge>
+      }
+    </mat-card-title>
+  }
 
   <mat-card-content>
-    <div *ngIf="users.length" class="padding-16">
-      <ix-dual-listbox
-        minHeight="55vh"
-        maxHeight="55vh"
-        [items]="users"
-        [title1]="'All users' | translate"
-        [title2]="'Group members' | translate"
-        [(selectedItems)]="selectedMembers"
-      >
-        <ng-template #templateItem let-item>
-          <ix-icon
-            matListItemIcon
-            name="mdi-account"
-            class="icon account"
-          ></ix-icon>
-          <span matListItemLine>{{ item.username }}</span>
-        </ng-template>
-      </ix-dual-listbox>
-    </div>
+    @if (users.length) {
+      <div class="padding-16">
+        <ix-dual-listbox
+          minHeight="55vh"
+          maxHeight="55vh"
+          [items]="users"
+          [title1]="'All users' | translate"
+          [title2]="'Group members' | translate"
+          [(selectedItems)]="selectedMembers"
+        >
+          <ng-template #templateItem let-item>
+            <ix-icon
+              matListItemIcon
+              name="mdi-account"
+              class="icon account"
+            ></ix-icon>
+            <span matListItemLine>{{ item.username }}</span>
+          </ng-template>
+        </ix-dual-listbox>
+      </div>
+    }
   </mat-card-content>
 
   <mat-card-actions>

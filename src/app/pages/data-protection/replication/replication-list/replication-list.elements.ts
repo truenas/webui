@@ -9,13 +9,13 @@ export const replicationListElements = {
       synonyms: [T('Data Protection'), T('Tasks')],
     },
     add: {
-      hierarchy: [T('Add')],
+      hierarchy: [T('Add Replication Task')],
       synonyms: [
-        T('Add Replication Task'),
         T('Create Replication Task'),
         T('New Replication Task'),
         T('Task'),
       ],
+      anchor: 'add-replication',
     },
   },
 } satisfies UiSearchableElement;

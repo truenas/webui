@@ -311,7 +311,7 @@ export class WidgetStorageComponent extends WidgetComponent implements OnInit {
   }
 
   getFreeSpace(pool: Pool): string {
-    if (this.volumes.get(pool.name)?.avail == null) {
+    if (this.volumes?.get(pool.name)?.avail == null) {
       return this.translate.instant('Unknown');
     }
 

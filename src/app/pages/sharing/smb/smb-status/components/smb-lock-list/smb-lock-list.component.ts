@@ -47,6 +47,7 @@ export class SmbLockListComponent implements OnInit {
     }),
   ], {
     rowTestId: (row) => 'smb-lock-' + row.filename + '-' + row.fileid.devid + '-' + row.fileid.extid,
+    ariaLabels: (row) => [row.filename, this.translate.instant('SMB Lock')],
   });
 
   constructor(

@@ -7,13 +7,13 @@ export const reportingExportersElements = {
   elements: {
     exporters: {},
     add: {
-      hierarchy: [T('Add')],
+      hierarchy: [T('Add Reporting Exporter')],
+      anchor: 'add-reporting-exporter',
       synonyms: [
         T('Add Exporter'),
         T('New Exporter'),
         T('Create Exporter'),
         T('Exporter'),
-        T('Add Reporting Exporter'),
         T('New Reporting Exporter'),
         T('Create Reporting Exporter'),
       ],

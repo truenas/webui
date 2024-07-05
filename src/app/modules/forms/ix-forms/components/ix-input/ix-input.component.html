@@ -45,6 +45,7 @@
     type="button"
     class="toggle_pw"
     [ixTest]="['toggle-password', controlDirective.name]"
+    [attr.aria-label]="showPassword ? ('Hide Password' | translate) : ('Show Password' | translate)"
     (click)="onPasswordToggled()"
   >
     <ix-icon

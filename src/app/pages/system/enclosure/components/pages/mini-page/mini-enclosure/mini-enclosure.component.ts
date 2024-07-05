@@ -27,6 +27,7 @@ export class MiniEnclosureComponent {
     // For Minis view, selecting an empty slot is akin to unselecting the slot.
     if (!slot.dev) {
       this.store.selectSlot(null);
+      return;
     }
 
     this.store.selectSlot(slot);

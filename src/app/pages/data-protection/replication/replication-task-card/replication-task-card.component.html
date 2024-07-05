@@ -11,6 +11,7 @@
         *ixRequiresRoles="requiredRoles"
         mat-button
         [ixTest]="['replication-task', 'add']"
+        [attr.aria-label]="'Add Replication Task' | translate"
         (click)="addReplicationTask()"
       >
         {{ 'Add' | translate }}

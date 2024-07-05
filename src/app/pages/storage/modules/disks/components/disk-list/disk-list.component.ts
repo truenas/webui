@@ -127,6 +127,7 @@ export class DiskListComponent implements OnInit {
     }),
   ], {
     rowTestId: (row) => `disk-${row.name}`,
+    ariaLabels: (row) => [row.name, this.translate.instant('Disk')],
   });
 
   get hiddenColumns(): Column<DiskUi, ColumnComponent<DiskUi>>[] {

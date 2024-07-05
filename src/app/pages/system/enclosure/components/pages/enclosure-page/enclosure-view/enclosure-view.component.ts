@@ -10,6 +10,7 @@ import {
 } from 'app/pages/system/enclosure/components/enclosure-side/enclosure-svg/enclosure-svg.component';
 import { EnclosureStore } from 'app/pages/system/enclosure/services/enclosure.store';
 import { EnclosureView } from 'app/pages/system/enclosure/types/enclosure-view.enum';
+import { diskStatusTint } from 'app/pages/system/enclosure/utils/disk-status-tint.utils';
 import { ThemeService } from 'app/services/theme/theme.service';
 import { AppState } from 'app/store';
 import { selectTheme } from 'app/store/preferences/preferences.selectors';
@@ -45,27 +46,20 @@ export class EnclosureViewComponent {
 
   readonly slotTintFn = computed(() => {
     if (this.selectedView() === EnclosureView.DiskStatus) {
-      return this.diskStatusTint();
+      return diskStatusTint;
     }
 
     return this.poolTint();
   });
 
-  private diskStatusTint(): TintingFunction {
-    return (slot: DashboardEnclosureSlot) => {
-      return slot?.status === 'OK' ? 'green' : 'red';
-    };
-  }
-
   // TODO: Pool colors need to stay consistent across multiple enclosures, so this needs to be moved to store.
-  // TODO: See if we can use css variables for colors instead of setting a specific color.
   private poolTint(): TintingFunction {
     const poolColors = new Map<string, string>();
     return (slot: DashboardEnclosureSlot) => {
       const poolName = slot.pool_info?.pool_name;
       if (poolName) {
         if (!poolColors.has(poolName)) {
-          poolColors.set(poolName, this.theme().accentColors[Object.entries(poolColors).length]);
+          poolColors.set(poolName, 'var(--primary)');
         }
         return poolColors.get(poolName);
       }

@@ -7,9 +7,9 @@ export const initShutdownCardElements = {
   anchorRouterLink: ['/system', 'advanced'],
   elements: {
     addInitShutdownScript: {
-      hierarchy: [T('Add')],
+      hierarchy: [T('Add Init/Shutdown Script')],
+      anchor: 'add-init-shutdown-script',
       synonyms: [
-        T('Add Init/Shutdown Script'),
         T('Create Init/Shutdown Script'),
         T('New Init/Shutdown Script'),
         T('Init/Shutdown Script'),

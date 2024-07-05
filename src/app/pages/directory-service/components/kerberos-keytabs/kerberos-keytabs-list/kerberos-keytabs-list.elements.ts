@@ -7,10 +7,9 @@ export const kerberosKeytabsListElements = {
   elements: {
     kerberosKeytabs: {},
     add: {
-      hierarchy: [T('Add')],
+      hierarchy: [T('Add Kerberos Keytab')],
       anchor: 'add-kerberos-keytab',
       synonyms: [
-        T('Add Kerberos Keytab'),
         T('Create Kerberos Keytab'),
         T('New Kerberos Keytab'),
         T('Kerberos Keytab'),
