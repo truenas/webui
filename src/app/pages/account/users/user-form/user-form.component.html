@@ -189,14 +189,15 @@
     >
       {{ 'Save' | translate }}
     </button>
-    <button
-      *ngIf="!isNewUser"
-      mat-button
-      type="button"
-      ixTest="download-keys"
-      (click)="onDownloadSshPublicKey()"
-    >
-      {{ 'Download Authorized Keys' | translate }}
-    </button>
+    @if (!isNewUser) {
+      <button
+        mat-button
+        type="button"
+        ixTest="download-keys"
+        (click)="onDownloadSshPublicKey()"
+      >
+        {{ 'Download Authorized Keys' | translate }}
+      </button>
+    }
   </ix-form-actions>
 </form>

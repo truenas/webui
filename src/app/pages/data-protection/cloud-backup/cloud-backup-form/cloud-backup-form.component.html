@@ -28,30 +28,33 @@
             [filterByProviders]="[CloudSyncProviderName.Storj]"
             [required]="true"
           ></ix-cloud-credentials-select>
-          <ix-select
-            *ngIf="form.controls.bucket.enabled"
-            formControlName="bucket"
-            [label]="helptext.bucket_placeholder | translate"
-            [tooltip]="helptext.bucket_tooltip | translate"
-            [options]="bucketOptions$"
-            [required]="true"
-          ></ix-select>
-          <ix-input
-            *ngIf="form.controls.bucket_input.enabled"
-            formControlName="bucket_input"
-            [label]="helptext.bucket_input_placeholder | translate"
-            [tooltip]="helptext.bucket_input_tooltip | translate"
-            [required]="true"
-          ></ix-input>
-          <ix-explorer
-            *ngIf="form.controls.folder.enabled"
-            formControlName="folder"
-            root="/"
-            [label]="helptext.folder_placeholder | translate"
-            [tooltip]="helptext.folder_tooltip | translate"
-            [nodeProvider]="bucketNodeProvider"
-            [required]="true"
-          ></ix-explorer>
+          @if (form.controls.bucket.enabled) {
+            <ix-select
+              formControlName="bucket"
+              [label]="helptext.bucket_placeholder | translate"
+              [tooltip]="helptext.bucket_tooltip | translate"
+              [options]="bucketOptions$"
+              [required]="true"
+            ></ix-select>
+          }
+          @if (form.controls.bucket_input.enabled) {
+            <ix-input
+              formControlName="bucket_input"
+              [label]="helptext.bucket_input_placeholder | translate"
+              [tooltip]="helptext.bucket_input_tooltip | translate"
+              [required]="true"
+            ></ix-input>
+          }
+          @if (form.controls.folder.enabled) {
+            <ix-explorer
+              formControlName="folder"
+              root="/"
+              [label]="helptext.folder_placeholder | translate"
+              [tooltip]="helptext.folder_tooltip | translate"
+              [nodeProvider]="bucketNodeProvider"
+              [required]="true"
+            ></ix-explorer>
+          }
         </ix-fieldset>
         <ix-fieldset
           class="fieldset"

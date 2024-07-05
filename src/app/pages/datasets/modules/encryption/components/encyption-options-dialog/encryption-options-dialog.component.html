@@ -2,13 +2,14 @@
   {{ 'Edit Encryption Options for {dataset}' | translate: { dataset: data.dataset.id } }}
 </h1>
 <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
-  <ix-checkbox
-    *ngIf="canInherit"
-    formControlName="inherit_encryption"
-    [label]="'Inherit encryption properties from parent' | translate"
-  ></ix-checkbox>
+  @if (canInherit) {
+    <ix-checkbox
+      formControlName="inherit_encryption"
+      [label]="'Inherit encryption properties from parent' | translate"
+    ></ix-checkbox>
+  }
 
-  <ng-container *ngIf="!(isInheriting$ | async)">
+  @if (!(isInheriting$ | async)) {
     <ix-select
       formControlName="encryption_type"
       [label]="'Encryption Type' | translate"
@@ -16,23 +17,22 @@
       [options]="encryptionTypeOptions$"
       [required]="true"
     ></ix-select>
-
-    <ng-container *ngIf="isKey$ | async; else passphraseFields">
+    @if (isKey$ | async) {
       <ix-checkbox
         formControlName="generate_key"
         [label]="'Generate Key' | translate"
         [tooltip]="tooltips.generate_key | translate"
       ></ix-checkbox>
 
-      <ix-textarea
-        *ngIf="!(isSetToGenerateKey$ | async)"
-        formControlName="key"
-        [label]="'Key' | translate"
-        [required]="true"
-        [tooltip]="tooltips.key | translate"
-      ></ix-textarea>
-    </ng-container>
-    <ng-template #passphraseFields>
+      @if (!(isSetToGenerateKey$ | async)) {
+        <ix-textarea
+          formControlName="key"
+          [label]="'Key' | translate"
+          [required]="true"
+          [tooltip]="tooltips.key | translate"
+        ></ix-textarea>
+      }
+    } @else {
       <ix-input
         formControlName="passphrase"
         type="password"
@@ -52,8 +52,8 @@
         [label]="'pbkdf2iters' | translate"
         [tooltip]="tooltips.pbkdf2iters | translate"
       ></ix-input>
-    </ng-template>
-  </ng-container>
+    }
+  }
   <ix-input
     formControlName="algorithm"
     [label]="'Algorithm' | translate"

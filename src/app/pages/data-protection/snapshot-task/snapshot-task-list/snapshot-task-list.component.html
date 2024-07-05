@@ -38,13 +38,17 @@
       [isLoading]="dataProvider.isLoading$ | async"
     >
       <ng-template let-task ix-table-details-row [dataProvider]="dataProvider">
-        <dl *ngIf="hiddenColumns.length" class="table-hidden-columns">
-          <div *ngFor="let column of hiddenColumns">
-            <b>{{ column.title | translate }}:</b>
-            <span>{{ column?.getValue?.(task) || task[column.propertyName] }}</span>
-          </div>
-          <mat-divider></mat-divider>
-        </dl>
+        @if (hiddenColumns.length) {
+          <dl class="table-hidden-columns">
+            @for (column of hiddenColumns; track column) {
+              <div>
+                <b>{{ column.title | translate }}:</b>
+                <span>{{ column?.getValue?.(task) || task[column.propertyName] }}</span>
+              </div>
+            }
+            <mat-divider></mat-divider>
+          </dl>
+        }
 
         <div class="table-details-row-actions">
           <button

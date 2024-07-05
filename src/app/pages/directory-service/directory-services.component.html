@@ -1,58 +1,63 @@
-<ng-container [ngSwitch]="true">
-  <div *ngSwitchCase="!isActiveDirectoryEnabled && !isLdapEnabled" fxLayout="column" fxLayoutAlign="center center" class="everything-disabled">
-    <ix-empty [conf]="noDirectoryServicesConfig"></ix-empty>
-    <div class="actions">
-      <button
-        *ixRequiresRoles="requiredRoles"
-        mat-button
-        ixTest="configure-active-directory"
-        [ixUiSearch]="searchableElements.elements.configureActiveDirectory"
-        (click)="openActiveDirectoryForm()"
-      >
-        {{ 'Configure Active Directory' | translate }}
-      </button>
-      <button
-        *ixRequiresRoles="requiredRoles"
-        mat-button
-        ixTest="configure-ldap"
-        [ixUiSearch]="searchableElements.elements.configureLdap"
-        (click)="openLdapForm()"
-      >
-        {{ 'Configure LDAP' | translate }}
-      </button>
+@switch (true) {
+  @case (!isActiveDirectoryEnabled && !isLdapEnabled) {
+    <div fxLayout="column" fxLayoutAlign="center center" class="everything-disabled">
+      <ix-empty [conf]="noDirectoryServicesConfig"></ix-empty>
+      <div class="actions">
+        <button
+          *ixRequiresRoles="requiredRoles"
+          mat-button
+          ixTest="configure-active-directory"
+          [ixUiSearch]="searchableElements.elements.configureActiveDirectory"
+          (click)="openActiveDirectoryForm()"
+        >
+          {{ 'Configure Active Directory' | translate }}
+        </button>
+        <button
+          *ixRequiresRoles="requiredRoles"
+          mat-button
+          ixTest="configure-ldap"
+          [ixUiSearch]="searchableElements.elements.configureLdap"
+          (click)="openLdapForm()"
+        >
+          {{ 'Configure LDAP' | translate }}
+        </button>
+      </div>
     </div>
-  </div>
+  }
 
-  <div
-    *ngSwitchCase="isActiveDirectoryEnabled"
-    class="services"
-    [ixUiSearch]="searchableElements.elements.directoryServices"
-  >
-    <ng-container *ngTemplateOutlet="dataCard; context: { card: activeDirectoryDataCard }"></ng-container>
-    <mat-card>
-      <mat-toolbar-row><h3>{{ 'LDAP' | translate }}</h3></mat-toolbar-row>
-      <mat-card-content>
-        <div class="disabled-message">
-          <p>{{ 'LDAP is disabled.' | translate }}</p>
-          <p>{{ 'To enable disable Active Directory first.' | translate }}</p>
-        </div>
-      </mat-card-content>
-    </mat-card>
-  </div>
+  @case (isActiveDirectoryEnabled) {
+    <div
+      class="services"
+      [ixUiSearch]="searchableElements.elements.directoryServices"
+    >
+      <ng-container *ngTemplateOutlet="dataCard; context: { card: activeDirectoryDataCard }"></ng-container>
+      <mat-card>
+        <mat-toolbar-row><h3>{{ 'LDAP' | translate }}</h3></mat-toolbar-row>
+        <mat-card-content>
+          <div class="disabled-message">
+            <p>{{ 'LDAP is disabled.' | translate }}</p>
+            <p>{{ 'To enable disable Active Directory first.' | translate }}</p>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  }
 
-  <div *ngSwitchCase="isLdapEnabled" class="services">
-    <mat-card>
-      <mat-toolbar-row><h3>{{ 'Active Directory' | translate }}</h3></mat-toolbar-row>
-      <mat-card-content>
-        <div class="disabled-message">
-          <p>{{ 'Active Directory is disabled.' | translate }}</p>
-          <p>{{ 'To enable disable LDAP first.' | translate }}</p>
-        </div>
-      </mat-card-content>
-    </mat-card>
-    <ng-container *ngTemplateOutlet="dataCard; context: { card: ldapDataCard }"></ng-container>
-  </div>
-</ng-container>
+  @case (isLdapEnabled) {
+    <div class="services">
+      <mat-card>
+        <mat-toolbar-row><h3>{{ 'Active Directory' | translate }}</h3></mat-toolbar-row>
+        <mat-card-content>
+          <div class="disabled-message">
+            <p>{{ 'Active Directory is disabled.' | translate }}</p>
+            <p>{{ 'To enable disable LDAP first.' | translate }}</p>
+          </div>
+        </mat-card-content>
+      </mat-card>
+      <ng-container *ngTemplateOutlet="dataCard; context: { card: ldapDataCard }"></ng-container>
+    </div>
+  }
+}
 
 <cdk-accordion-item
   #expansionPanel="cdkAccordionItem"
@@ -62,12 +67,13 @@
   <h3 class="header">
     {{ 'Advanced Settings' | translate }}
 
-    <button
-      *ngIf="!expansionPanel.expanded"
-      mat-button
-      ixTest="show-advanced-settings"
-      (click)="onAdvancedSettingsOpened(expansionPanel)"
-    >{{ 'Show' | translate }}</button>
+    @if (!expansionPanel.expanded) {
+      <button
+        mat-button
+        ixTest="show-advanced-settings"
+        (click)="onAdvancedSettingsOpened(expansionPanel)"
+      >{{ 'Show' | translate }}</button>
+    }
   </h3>
 
   <div class="advanced-settings-cards">
@@ -79,27 +85,30 @@
 </cdk-accordion-item>
 
 <ng-template #dataCard let-card="card">
-  <mat-card *ngIf="typeCard(card) as card">
-    <mat-toolbar-row>
-      <h3>{{ card.title | translate }}</h3>
-      <div class="actions action-icon">
-        <button
-          mat-button color="default"
-          [ixTest]="[card.title, 'settings']"
-          (click)="card.onSettingsPressed()"
-        >
-          {{ 'Settings' | translate }}
-        </button>
-      </div>
-    </mat-toolbar-row>
-
-    <mat-card-content>
-      <mat-list>
-        <mat-list-item *ngFor="let item of card.items" class="card-list-item">
-          <span class="label">{{ item.label | translate }}:</span>
-          <span class="value">{{ item.value || ('None' | translate) }}</span>
-        </mat-list-item>
-      </mat-list>
-    </mat-card-content>
-  </mat-card>
+  @if (typeCard(card); as card) {
+    <mat-card>
+      <mat-toolbar-row>
+        <h3>{{ card.title | translate }}</h3>
+        <div class="actions action-icon">
+          <button
+            mat-button color="default"
+            [ixTest]="[card.title, 'settings']"
+            (click)="card.onSettingsPressed()"
+          >
+            {{ 'Settings' | translate }}
+          </button>
+        </div>
+      </mat-toolbar-row>
+      <mat-card-content>
+        <mat-list>
+          @for (item of card.items; track item) {
+            <mat-list-item class="card-list-item">
+              <span class="label">{{ item.label | translate }}:</span>
+              <span class="value">{{ item.value || ('None' | translate) }}</span>
+            </mat-list-item>
+          }
+        </mat-list>
+      </mat-card-content>
+    </mat-card>
+  }
 </ng-template>
