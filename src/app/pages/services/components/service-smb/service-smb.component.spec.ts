@@ -7,6 +7,7 @@ import { createRoutingFactory, mockProvider, Spectator } from '@ngneat/spectator
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { SmbEncryption } from 'app/enums/smb-encryption.enum';
 import { SmbConfig } from 'app/interfaces/smb-config.interface';
 import { User } from 'app/interfaces/user.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -57,6 +58,7 @@ describe('ServiceSmbComponent', () => {
           next_rid: 0,
           multichannel: false,
           netbiosname_local: 'truenas',
+          encryption: SmbEncryption.Negotiate,
         } as SmbConfig),
         mockCall('smb.unixcharset_choices', {
           'UTF-8': 'UTF-8',
@@ -137,6 +139,7 @@ describe('ServiceSmbComponent', () => {
       'NTLMv1 Auth': false,
       'NetBIOS Alias': [],
       'NetBIOS Name': 'truenas',
+      'Transport Encryption Behavior': 'Negotiate – only encrypt transport if explicitly requested by the SMB client',
       Multichannel: false,
       'UNIX Charset': 'UTF-8',
       'Use Syslog Only': false,
@@ -179,6 +182,7 @@ describe('ServiceSmbComponent', () => {
       syslog: false,
       multichannel: false,
       unixcharset: 'UTF-8',
+      encryption: SmbEncryption.Negotiate,
     }]);
   });
 
@@ -197,6 +201,7 @@ describe('ServiceSmbComponent', () => {
       'File Mask': '0666',
       'Directory Mask': '0777',
       'Bind IP Addresses': ['1.1.1.1', '2.2.2.2'],
+      'Transport Encryption Behavior': 'Default – follow upstream / TrueNAS default',
     });
 
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
@@ -223,6 +228,7 @@ describe('ServiceSmbComponent', () => {
       syslog: true,
       multichannel: false,
       unixcharset: 'UTF-16',
+      encryption: SmbEncryption.Default,
     }]);
   });
 });

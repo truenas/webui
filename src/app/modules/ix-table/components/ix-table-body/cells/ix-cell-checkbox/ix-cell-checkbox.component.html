@@ -2,6 +2,7 @@
   color="primary"
   [ixTest]="[title, rowTestId(row), 'row-checkbox']"
   [checked]="checked"
+  [aria-label]="(checked ? ('Uncheck' | translate) : ('Check' | translate)) + ' ' + getAriaLabel(row)"
   (change)="onCheckboxChange($event)"
   (click)="$event.stopPropagation()"
 ></mat-checkbox>

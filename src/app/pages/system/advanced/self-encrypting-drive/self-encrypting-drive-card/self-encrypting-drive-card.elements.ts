@@ -8,6 +8,11 @@ export const sedCardElements = {
     selfEncryptingDrive: {
       anchor: 'sed-card',
     },
+    configure: {
+      anchor: 'sed-settings',
+      hierarchy: [T('Configure Self-Encrypting Drive')],
+      synonyms: [T('Self-Encrypting Drive Settings')],
+    },
     sedUser: {
       hierarchy: [T('ATA Security User')],
       synonyms: [T('SED User')],

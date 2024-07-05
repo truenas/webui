@@ -44,6 +44,7 @@ export class SmbSessionListComponent implements OnInit {
     }),
   ], {
     rowTestId: (row) => 'smb-session-' + row.session_id,
+    ariaLabels: (row) => [row.hostname, this.translate.instant('SMB Session')],
   });
 
   constructor(

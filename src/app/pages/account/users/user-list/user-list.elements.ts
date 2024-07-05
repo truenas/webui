@@ -16,8 +16,8 @@ export const userListElements = {
       ],
     },
     add: {
-      hierarchy: [T('Add')],
-      synonyms: [T('Add User'), T('New User'), T('Create User'), T('User'), T('Add Local User')],
+      hierarchy: [T('Add User')],
+      synonyms: [T('New User'), T('Create User'), T('User'), T('Add Local User')],
       anchor: 'add-user',
     },
     showBuiltIn: {

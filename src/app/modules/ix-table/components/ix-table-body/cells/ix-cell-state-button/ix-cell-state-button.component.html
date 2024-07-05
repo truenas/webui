@@ -6,6 +6,7 @@
     [ixTest]="[title, rowTestId(row), 'row-state']"
     [ngClass]="getButtonClass()"
     [matTooltip]="tooltip"
+    [attr.aria-label]="getAriaLabel(row)"
     (click)="$event.stopPropagation(); onButtonClick()"
   >
     {{ state }}

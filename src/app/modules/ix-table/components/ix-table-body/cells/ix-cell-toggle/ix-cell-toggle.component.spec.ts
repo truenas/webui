@@ -24,6 +24,7 @@ describe('IxCellToggleComponent', () => {
     spectator.component.setRow({ booleanField: true });
     spectator.component.onRowToggle = jest.fn();
     spectator.component.rowTestId = (row) => row.booleanField.toString();
+    spectator.component.ariaLabels = () => ['Label 1', 'Label 2'];
     spectator.detectChanges();
 
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
@@ -38,5 +39,10 @@ describe('IxCellToggleComponent', () => {
     expect(await toggle.isChecked()).toBe(false);
 
     expect(spectator.component.onRowToggle).toHaveBeenCalledWith({ booleanField: true }, false);
+  });
+
+  it('gets aria label correctly', () => {
+    const ariaLabel = spectator.component.getAriaLabel(spectator.component.getRow());
+    expect(ariaLabel).toBe('Label 1 Label 2');
   });
 });

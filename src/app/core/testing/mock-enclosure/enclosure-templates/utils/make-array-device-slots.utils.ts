@@ -1,4 +1,5 @@
 import { keyBy, range } from 'lodash';
+import { EnclosureStatus } from 'app/enums/enclosure-slot-status.enum';
 import { DashboardEnclosureSlot } from 'app/interfaces/enclosure.interface';
 
 export function makeArrayDeviceSlots(
@@ -16,7 +17,7 @@ export function makeArrayDeviceSlots(
     return {
       drive_bay_number: slot,
       descriptor: `slot${slot.toString().padStart(2, '0')}`,
-      status: 'Not installed',
+      status: EnclosureStatus.Ok,
       dev: null,
       supports_identify_light: options.supportsIdentifyLight ?? false,
       size: null,

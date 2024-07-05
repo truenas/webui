@@ -16,6 +16,7 @@
         *ixRequiresRoles="requiredRoles"
         mat-button
         [ixTest]="['sessions', 'configure']"
+        [ixUiSearch]="searchableElements.elements.configure"
         (click)="onConfigure()"
       >
         {{ 'Configure' | translate }}

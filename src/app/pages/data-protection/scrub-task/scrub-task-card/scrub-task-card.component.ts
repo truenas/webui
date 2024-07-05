@@ -75,6 +75,7 @@ export class ScrubTaskCardComponent implements OnInit {
     }),
   ], {
     rowTestId: (row) => 'card-scrub-task-' + row.pool + '-' + row.description,
+    ariaLabels: (row) => [row.pool.toString(), row.description, this.translate.instant('Scrub Task')],
   });
 
   constructor(

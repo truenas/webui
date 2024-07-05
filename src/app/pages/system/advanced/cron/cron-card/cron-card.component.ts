@@ -95,6 +95,7 @@ export class CronCardComponent implements OnInit {
     }),
   ], {
     rowTestId: (row) => 'card-cron-' + row.command + '-' + row.user,
+    ariaLabels: (row) => [row.command, this.translate.instant('Cron Job')],
   });
 
   constructor(

@@ -58,6 +58,7 @@ export class AcmeDnsAuthenticatorListComponent implements OnInit {
     }),
   ], {
     rowTestId: (row) => 'amce-dns-' + row.name,
+    ariaLabels: (row) => [row.name, this.translate.instant('ACME DNS Authenticator')],
   });
 
   constructor(
