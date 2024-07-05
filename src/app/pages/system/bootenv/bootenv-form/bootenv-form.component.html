@@ -6,7 +6,7 @@
       class="ix-form-container"
       [formGroup]="formGroup"
       (submit)="onSubmit()"
-      >
+    >
       <ix-fieldset [title]="'Settings' | translate">
         <ix-input
           formControlName="name"
@@ -34,7 +34,7 @@
           color="primary"
           ixTest="save"
           [disabled]="formGroup.invalid || isFormLoading"
-          >
+        >
           {{ 'Save' | translate }}
         </button>
       </ix-form-actions>

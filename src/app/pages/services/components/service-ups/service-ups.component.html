@@ -19,25 +19,6 @@
             [tooltip]="tooltips.mode | translate"
           ></ix-select>
 
-          @if (!isMasterMode) {
-            <ix-input
-              formControlName="remotehost"
-              [label]="labels.remotehost | translate"
-              [tooltip]="tooltips.remotehost | translate"
-              [required]="true"
-            ></ix-input>
-          }
-
-          @if (!isMasterMode) {
-            <ix-input
-              formControlName="remoteport"
-              type="number"
-              [label]="labels.remoteport | translate"
-              [tooltip]="tooltips.remoteport | translate"
-              [required]="true"
-            ></ix-input>
-          }
-
           @if (isMasterMode) {
             <ix-combobox
               formControlName="driver"
@@ -46,6 +27,21 @@
               [provider]="providers.driver"
               [required]="true"
             ></ix-combobox>
+          } @else {
+            <ix-input
+              formControlName="remotehost"
+              [label]="labels.remotehost | translate"
+              [tooltip]="tooltips.remotehost | translate"
+              [required]="true"
+            ></ix-input>
+
+            <ix-input
+              formControlName="remoteport"
+              type="number"
+              [label]="labels.remoteport | translate"
+              [tooltip]="tooltips.remoteport | translate"
+              [required]="true"
+            ></ix-input>
           }
 
           <ix-combobox

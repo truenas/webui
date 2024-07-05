@@ -50,11 +50,11 @@
       class="tree"
       [ixDataSource]="dataSource"
       [ixTreeControl]="treeControl"
-      >
+    >
       <ix-tree-node
         *treeNodeDef="let topologyItem; dataSource: dataSource"
         [treeNodeDefDataSource]="dataSource"
-        >
+      >
         <span class="spacer" treeNodeToggle></span>
         <ix-bootenv-node-item
           [node]="topologyItem"
@@ -67,7 +67,7 @@
       <ix-nested-tree-node
         *treeNodeDef="let topologyItem; dataSource: dataSource; when: hasNestedChild"
         [treeNodeDefDataSource]="dataSource"
-        >
+      >
         <div class="nested-tree-root-node">
           <button
             mat-icon-button
@@ -75,7 +75,7 @@
             [ixTest]="['toggle-row', topologyItem.guid]"
             [attr.aria-label]="'Toggle {row}' | translate: { row: topologyItem.guid }"
             (click)="$event.preventDefault()"
-            >
+          >
             @if (treeControl.isExpanded(topologyItem)) {
               <ix-icon name="expand_more"></ix-icon>
             }

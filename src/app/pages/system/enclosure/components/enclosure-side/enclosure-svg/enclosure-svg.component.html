@@ -1,18 +1,3 @@
-@if (!svg()) {
-  <ngx-skeleton-loader
-    fxFlex
-    [animation]="false"
-  [theme]="{
-    height: enableMouseEvents() ? '66px' : '10px',
-    marginBottom: 0,
-    background: 'var(--alt-bg2)',
-    opacity: 0.25
-  }"
-    [count]="3"
-    @svgTransition
-  ></ngx-skeleton-loader>
-}
-
 @if (svg()) {
   <div
     #svgContainer
@@ -21,4 +6,17 @@
     [innerHTML]="svg()"
     @svgTransition
   ></div>
+} @else {
+  <ngx-skeleton-loader
+    fxFlex
+    [animation]="false"
+    [theme]="{
+      height: enableMouseEvents() ? '66px' : '10px',
+      marginBottom: 0,
+      background: 'var(--alt-bg2)',
+      opacity: 0.25
+    }"
+    [count]="3"
+    @svgTransition
+  ></ngx-skeleton-loader>
 }

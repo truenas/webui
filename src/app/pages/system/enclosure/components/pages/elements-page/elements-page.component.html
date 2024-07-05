@@ -3,9 +3,7 @@
 </mat-card-header>
 <mat-card-content>
   @if (!viewElements()) {
-    <ix-empty
-      [conf]="noView"
-    ></ix-empty>
+    <ix-empty [conf]="noView"></ix-empty>
   } @else {
     <ix-table>
       <thead

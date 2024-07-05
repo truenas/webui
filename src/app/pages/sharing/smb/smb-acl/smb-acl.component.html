@@ -54,17 +54,17 @@
                     [label]="'Group' | translate"
                     [provider]="groupProvider"
                     [allowCustomValue]="true"
-                [required]="true"
-              ></ix-combobox>
+                    [required]="true"
+                  ></ix-combobox>
 
-              <!-- TODO: Delete after the backend has support for distinguishing user from group -->
-              <ix-combobox
-                *ngIf="bothProvider && entry.controls.ae_who.value === nfsAclTag.Both"
-                formControlName="both"
-                [label]="'Unknown' | translate"
-                [provider]="bothProvider"
-                [allowCustomValue]="true"
-                [required]="true"
+                  <!-- TODO: Delete after the backend has support for distinguishing user from group -->
+                  <ix-combobox
+                    *ngIf="bothProvider && entry.controls.ae_who.value === nfsAclTag.Both"
+                    formControlName="both"
+                    [label]="'Unknown' | translate"
+                    [provider]="bothProvider"
+                    [allowCustomValue]="true"
+                    [required]="true"
                   ></ix-combobox>
                 }
               </div>
@@ -72,6 +72,7 @@
               <div class="entry-row">
                 <ix-errors [control]="entry"></ix-errors>
               </div>
+
               <div class="entry-row">
                 <ix-select
                   formControlName="ae_perm"

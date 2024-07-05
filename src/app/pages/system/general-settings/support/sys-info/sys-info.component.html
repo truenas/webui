@@ -1,7 +1,7 @@
 @if (hasLicense && licenseInfo) {
   <div
     class="sys-license-wrapper"
-    >
+  >
     <div class="sys-info-row">
       <span class="label">{{ 'Customer Name' | translate }}:</span>
       <span class="value">{{ licenseInfo.customer_name }}</span>
@@ -16,8 +16,7 @@
     </div>
     <div class="sys-info-row">
       <span class="label">{{ 'Expiration Date' | translate }}:</span>
-      <span class="value"
-        >{{ licenseInfo.expiration_date }}
+      <span class="value">{{ licenseInfo.expiration_date }}
         @if (licenseInfo.daysLeftinContract > 0) {
           <span>
             ({{ 'expires in {n, plural, one {# day} other {# days} }' | translate: { n: licenseInfo.daysLeftinContract } }})

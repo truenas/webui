@@ -2,7 +2,7 @@
   class="system-card"
   gdArea="system-card"
   [ixUiSearch]="searchableElements.elements.support"
-  >
+>
   <mat-toolbar-row class="title-bar">
     <h3>{{ 'Support' | translate }}</h3>
   </mat-toolbar-row>
@@ -15,14 +15,14 @@
         fxLayoutAlign="space-evenly center"
         [fxLayout.xs]="isProductImageRack ? 'column' : 'row wrap'"
         [fxLayout.gt-md]="isProductImageRack ? 'column' : 'row wrap'"
-        >
+      >
         <div
           class="product-image"
           [fxFlex.gt-md]="isProductImageRack ? 'calc(200px - 32px)' : '40%'"
           [fxFlex.gt-xs]="isProductImageRack ? 'calc(40% - 32px)' : '40%'"
           [fxFlex.xs]="isProductImageRack ? 'calc(200px - 32px)' : '40%'"
           [style.background-image]="'url(' + productImageSrc + ')'"
-          >
+        >
           <img class="invisible" [src]="productImageSrc" />
         </div>
 

@@ -77,11 +77,13 @@
           [label]="'Drag & drop disks to add or remove them' | translate"
         ></ix-label>
       }
+
       @if (vdevErrorMessage) {
         <div class="error">
           {{ vdevErrorMessage | translate }}
         </div>
       }
+
       @if (mixesDisksOfDifferentSizes) {
         <div class="error">
           {{ 'Mixing disks of different sizes in a vdev is not recommended.' | translate }}

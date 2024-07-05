@@ -21,16 +21,19 @@
             [required]="true"
             [tooltip]="helptext.fromemail.tooltip | translate"
           ></ix-input>
+
           <ix-input
             formControlName="fromname"
             [label]="'From Name' | translate"
             [tooltip]="helptext.fromname.tooltip | translate"
           ></ix-input>
+
           <ix-input
             formControlName="outgoingserver"
             [label]="'Outgoing Mail Server' | translate"
             [tooltip]="helptext.outgoingserver.tooltip | translate"
           ></ix-input>
+
           <ix-input
             formControlName="port"
             type="number"
@@ -38,17 +41,20 @@
             [required]="true"
             [tooltip]="helptext.port.tooltip | translate"
           ></ix-input>
+
           <ix-select
             formControlName="security"
             [label]="'Security' | translate"
             [tooltip]="helptext.security.tooltip | translate"
             [options]="securityOptions$"
           ></ix-select>
+
           <ix-checkbox
             formControlName="smtp"
             [label]="'SMTP Authentication' | translate"
             [tooltip]="helptext.auth.smtp.tooltip | translate"
           ></ix-checkbox>
+
           @if (hasSmtpAuthentication) {
             <ix-input
               formControlName="user"
@@ -56,6 +62,7 @@
               [required]="true"
               [tooltip]="helptext.user.tooltip | translate"
             ></ix-input>
+
             <ix-input
               formControlName="pass"
               type="password"
@@ -76,15 +83,12 @@
           <ix-oauth-button
             testId="login-to-gmail"
             [oauthType]="oauthType.Gmail"
-          [oauthUrl]="'https://truenas.com/oauth/gmail?origin='"
-          [isLoggedIn]="hasOauthAuthorization"
-          (loggedIn)="onLoggedIn($event)"
-        ></ix-oauth-button>
-      
-}
+            [oauthUrl]="'https://truenas.com/oauth/gmail?origin='"
+            [isLoggedIn]="hasOauthAuthorization"
+            (loggedIn)="onLoggedIn($event)"
+          ></ix-oauth-button>
+      }
       </ix-fieldset>
-
-      
 
       <div class="form-actions">
         <button
@@ -104,7 +108,7 @@
           type="button"
           ixTest="send-test-mail"
           (click)="onSendTestEmailPressed()"
-          >
+        >
           {{ 'Send Test Mail' | translate }}
         </button>
       </div>

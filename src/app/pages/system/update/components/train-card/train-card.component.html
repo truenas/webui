@@ -3,7 +3,7 @@
     <mat-spinner
       class="update-spinner"
       [diameter]="40"
-      >
+    >
     </mat-spinner>
   }
   <form class="ix-form-container" [formGroup]="form">
@@ -16,9 +16,7 @@
       ></ix-checkbox>
     </div>
     @if (trains.length > 1) {
-      <div
-        class="train-card-row train-select-row"
-        >
+      <div class="train-card-row train-select-row">
         <ix-select
           formControlName="train"
           [label]="'Train' | translate"
@@ -33,7 +31,7 @@
           matTooltip="Refresh"
           ixTest="refresh"
           (click)="trainService.check()"
-          >
+        >
           <ix-icon name="refresh"></ix-icon>
         </button>
       </div>
@@ -53,7 +51,7 @@
           [matTooltip]="'Refresh' | translate"
           [disabled]="!checkable || isUpdateRunning"
           (click)="trainService.check()"
-          >
+        >
           <ix-icon name="refresh"></ix-icon>
         </button>
       </div>

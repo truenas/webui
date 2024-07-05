@@ -1,4 +1,13 @@
-@if (!isUpdateRunning) {
+@if (isUpdateRunning) {
+  <mat-card>
+    <div>
+      <ix-icon name="warning"></ix-icon>
+      <span class="update-running-msg">
+        {{ isHaLicensed ? sysUpdateMessage : sysUpdateMessage + sysUpdateMsgPt2 }}
+      </span>
+    </div>
+  </mat-card>
+} @else {
   <mat-card>
     <div class="buttons-container">
       @if (showDownloadUpdateButton$ | async) {
@@ -8,7 +17,7 @@
           ixTest="download-updates"
           [disabled]="isDownloadUpdatesButtonDisabled$ | async"
           (click)="downloadUpdate()"
-          >
+        >
           {{ 'Download Updates' | translate }}
         </button>
       }
@@ -18,7 +27,7 @@
           mat-button
           ixTest="apply-pending-update"
           (click)="applyPendingUpdate()"
-          >
+        >
           {{ 'Apply Pending update' | translate }}
         </button>
       }
@@ -27,7 +36,7 @@
         mat-button
         ixTest="install-manual-update"
         (click)="manualUpdate()"
-        >
+      >
         {{ 'Install Manual Update File' | translate }}
       </button>
     </div>
@@ -36,15 +45,5 @@
         {{ generalUpdateError }}
       </p>
     }
-  </mat-card>
-}
-@if (isUpdateRunning) {
-  <mat-card>
-    <div>
-      <ix-icon name="warning"></ix-icon>
-      <span class="update-running-msg">
-        {{ isHaLicensed ? sysUpdateMessage : sysUpdateMessage + sysUpdateMsgPt2 }}
-      </span>
-    </div>
   </mat-card>
 }

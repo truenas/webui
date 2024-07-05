@@ -7,7 +7,7 @@
         [errorMessage]="getTopLevelErrorForStep(PoolCreationWizardStep.General)"
         [hasError]="!!getTopLevelErrorForStep(PoolCreationWizardStep.General)"
         (activate)="onStepActivated(PoolCreationWizardStep.General)"
-        >
+      >
         <ng-template matStepLabel>
           <div class="step-header">
             {{ 'General Info' | translate }}
@@ -109,7 +109,7 @@
           [errorMessage]="getTopLevelErrorForStep(PoolCreationWizardStep.Spare)"
           [hasError]="!!getTopLevelErrorForStep(PoolCreationWizardStep.Spare) && getWasStepActivated(PoolCreationWizardStep.Spare)"
           (activate)="onStepActivated(PoolCreationWizardStep.Spare)"
-          >
+        >
           <ng-template matStepLabel>
             <div class="step-header">
               {{ 'Spare' | translate }}

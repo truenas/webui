@@ -12,43 +12,42 @@
   <ix-icon name="clear"></ix-icon>
 </button>
 
-<div *ngIf="isLoadingTypes; else typesLoaded" class="placeholder">
-  <ngx-skeleton-loader [count]="3"></ngx-skeleton-loader>
-</div>
-
-<ng-template #typesLoaded>
-  <ix-button-group
-    *ngIf="allowedTypes.length > 1"
-    class="feedback-type"
-    [formControl]="typeControl"
-    [label]="'I would like to' | translate"
-    [options]="feedbackTypeOptions$"
-    [inlineFields]="true"
-    [attr.aria-label]="'Feedback Type' | translate"
-  ></ix-button-group>
-
-  <ix-file-review
-    *ngIf="isReview; else fileTicket"
-    [dialogRef]="dialogRef"
-    [isLoading]="isLoading"
-    (isLoadingChange)="onIsLoadingChange($event)"
-  ></ix-file-review>
-
-  <ng-template #fileTicket>
-    <ix-file-ticket-licensed
-      *ngIf="isEnterprise$ | async; else nonEnterpriseTicket"
+@if (isLoadingTypes) {
+  <div class="placeholder">
+    <ngx-skeleton-loader [count]="3"></ngx-skeleton-loader>
+  </div>
+} @else {
+  @if (allowedTypes.length > 1) {
+    <ix-button-group
+      class="feedback-type"
+      [formControl]="typeControl"
+      [label]="'I would like to' | translate"
+      [options]="feedbackTypeOptions$"
+      [inlineFields]="true"
+      [attr.aria-label]="'Feedback Type' | translate"
+    ></ix-button-group>
+  }
+  @if (isReview) {
+    <ix-file-review
       [dialogRef]="dialogRef"
       [isLoading]="isLoading"
       (isLoadingChange)="onIsLoadingChange($event)"
-    ></ix-file-ticket-licensed>
-  </ng-template>
+    ></ix-file-review>
+  } @else {
+    @if (isEnterprise$ | async) {
+      <ix-file-ticket-licensed
+        [dialogRef]="dialogRef"
+        [isLoading]="isLoading"
+        (isLoadingChange)="onIsLoadingChange($event)"
+      ></ix-file-ticket-licensed>
+    } @else {
+      <ix-file-ticket
+        [type]="typeControl.value | cast"
+        [dialogRef]="dialogRef"
+        [isLoading]="isLoading"
+        (isLoadingChange)="onIsLoadingChange($event)"
+      ></ix-file-ticket>
+    }
+  }
+}
 
-  <ng-template #nonEnterpriseTicket>
-    <ix-file-ticket
-      [type]="typeControl.value | cast"
-      [dialogRef]="dialogRef"
-      [isLoading]="isLoading"
-      (isLoadingChange)="onIsLoadingChange($event)"
-    ></ix-file-ticket>
-  </ng-template>
-</ng-template>

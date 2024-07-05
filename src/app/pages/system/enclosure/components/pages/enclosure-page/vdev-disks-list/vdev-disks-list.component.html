@@ -1,23 +1,15 @@
 @if (!selectedSlot()?.dev) {
-  <div
-    class="container"
-  >{{ 'Empty drive cage' | translate }}</div>
+  <div class="container">{{ 'Empty drive cage' | translate }}</div>
 }
 
 @if (selectedSlot()?.dev && !selectedSlot()?.pool_info) {
-  <div
-    class="container"
-  >{{ 'No vdev info for this disk' | translate }}</div>
+  <div class="container">{{ 'No vdev info for this disk' | translate }}</div>
 }
 
 @if (selectedSlot()?.pool_info?.vdev_disks?.length) {
-  <div
-    class="container"
-    >
+  <div class="container">
     @for (disk of selectedSlot()?.pool_info.vdev_disks; track disk) {
-      <div
-        class="disk-name"
-        >
+      <div class="disk-name">
         <div
           class="disk-circle"
           [class.selected]="disk.dev === selectedSlot()?.dev"

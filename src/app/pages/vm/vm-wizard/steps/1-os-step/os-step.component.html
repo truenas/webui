@@ -7,12 +7,13 @@
     [tooltip]="helptext.os_tooltip | translate"
   ></ix-select>
 
-  <ix-checkbox
-    *ngIf="form.controls.os.value === VmOs.Windows"
-    formControlName="hyperv_enlightenments"
-    [label]="'Enable Hyper-V Enlightenments' | translate"
-    [tooltip]="helptext.hyperv_enlightenments_tooltip | translate"
-  ></ix-checkbox>
+  @if (form.controls.os.value === VmOs.Windows) {
+    <ix-checkbox
+      formControlName="hyperv_enlightenments"
+      [label]="'Enable Hyper-V Enlightenments' | translate"
+      [tooltip]="helptext.hyperv_enlightenments_tooltip | translate"
+    ></ix-checkbox>
+  }
 
   <ix-input
     formControlName="name"
@@ -62,7 +63,7 @@
     [tooltip]="helptext.enable_display_tooltip | translate"
   ></ix-checkbox>
 
-  <ng-container *ngIf="form.value.enable_display">
+  @if (form.value.enable_display) {
     <ix-select
       formControlName="bind"
       [label]="'Bind' | translate"
@@ -78,7 +79,7 @@
       [required]="true"
       [tooltip]="helptext.password_tooltip | translate"
     ></ix-input>
-  </ng-container>
+  }
 
   <ix-form-actions>
     <button

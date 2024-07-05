@@ -12,7 +12,7 @@
     [tooltip]="helptext.hdd_type_tooltip | translate"
   ></ix-select>
 
-  <ng-container *ngIf="isCreatingNewDisk">
+  @if (isCreatingNewDisk) {
     <ix-select
       formControlName="datastore"
       [label]="'Zvol Location' | translate"
@@ -28,16 +28,15 @@
       [parse]="formatter.memorySizeParsing"
       [tooltip]="helptext.volsize_tooltip | translate"
     ></ix-input>
-  </ng-container>
-
-  <ix-select
-    *ngIf="!isCreatingNewDisk"
-    formControlName="hdd_path"
-    [label]="'Select Existing Zvol' | translate"
-    [options]="hddPathOptions$"
-    [required]="true"
-    [tooltip]="helptext.hdd_path_tooltip | translate"
-  ></ix-select>
+  } @else {
+    <ix-select
+      formControlName="hdd_path"
+      [label]="'Select Existing Zvol' | translate"
+      [options]="hddPathOptions$"
+      [required]="true"
+      [tooltip]="helptext.hdd_path_tooltip | translate"
+    ></ix-select>
+  }
 
   <ix-form-actions>
     <button

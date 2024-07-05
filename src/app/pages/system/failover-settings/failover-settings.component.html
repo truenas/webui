@@ -34,7 +34,7 @@
           color="primary"
           ixTest="save"
           [disabled]="form.invalid || isLoading"
-          >
+        >
           {{ submitButtonText$ | async }}
         </button>
 
@@ -46,7 +46,7 @@
           [disabled]="isLoading"
           [ixUiSearch]="searchableElements.elements.syncToPeer"
           (click)="onSyncToPeerPressed()"
-          >
+        >
           {{ 'Sync To Peer' | translate }}
         </button>
 
@@ -58,7 +58,7 @@
           [disabled]="isLoading"
           [ixUiSearch]="searchableElements.elements.syncFromPeer"
           (click)="onSyncFromPeerPressed()"
-          >
+        >
           {{ 'Sync From Peer' | translate }}
         </button>
       </div>

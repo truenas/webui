@@ -4,38 +4,42 @@
     <span [innerHTML]="options.message | translate"></span>
   </div>
 
-  <span *ngIf="options.secondaryCheckbox">
-    <mat-checkbox
-      class="confirm-checkbox secondary-checkbox"
-      ixTest="secondary-confirmation"
-      [(ngModel)]="isSecondaryCheckboxChecked"
-    >
-      <span id="confirm-label">{{ options.secondaryCheckboxText | translate }}</span>
-    </mat-checkbox>
-  </span>
+  @if (options.secondaryCheckbox) {
+    <span>
+      <mat-checkbox
+        class="confirm-checkbox secondary-checkbox"
+        ixTest="secondary-confirmation"
+        [(ngModel)]="isSecondaryCheckboxChecked"
+      >
+        <span id="confirm-label">{{ options.secondaryCheckboxText | translate }}</span>
+      </mat-checkbox>
+    </span>
+  }
 </div>
 
 <ix-form-actions mat-dialog-actions class="form-actions">
-  <mat-checkbox
-    *ngIf="!options.hideCheckbox"
-    color="primary"
-    name="confirm_checkbox"
-    class="confirm-checkbox"
-    ixTest="confirm"
-    (change)="toggleSubmit($event)"
-  >
-    {{ options.confirmationCheckboxText | translate }}
-  </mat-checkbox>
-  <button
-    *ngIf="!options.hideCancel"
-    mat-button
-    name="cancel_button"
-    class="mat-mdc-button mat-button mat-accent cancel-button"
-    ixTest="dialog-cancel"
-    (click)="onCancel()"
-  >
-    {{ options.cancelText | translate }}
-  </button>
+  @if (!options.hideCheckbox) {
+    <mat-checkbox
+      color="primary"
+      name="confirm_checkbox"
+      class="confirm-checkbox"
+      ixTest="confirm"
+      (change)="toggleSubmit($event)"
+    >
+      {{ options.confirmationCheckboxText | translate }}
+    </mat-checkbox>
+  }
+  @if (!options.hideCancel) {
+    <button
+      mat-button
+      name="cancel_button"
+      class="mat-mdc-button mat-button mat-accent cancel-button"
+      ixTest="dialog-cancel"
+      (click)="onCancel()"
+    >
+      {{ options.cancelText | translate }}
+    </button>
+  }
   <button
     mat-button
     name="ok_button"

@@ -4,7 +4,7 @@
     class="ix-form-container"
     [formGroup]="form"
     (submit)="onSubmit()"
-    >
+  >
     <div class="status-item">
       <span class="status-name"> {{ 'Boot Pool Condition' | translate }}: </span>
       <span class="status-value">
@@ -53,7 +53,7 @@
         color="primary"
         ixTest="update-interval"
         [disabled]="form.invalid"
-        >
+      >
         {{ 'Update Interval' | translate }}
       </button>
     </ix-form-actions>

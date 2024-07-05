@@ -40,8 +40,8 @@
       </ng-container>
       <ng-container *ngIf="failedDisks().length > 1">
         {{ 'Check {name} and {n, plural, one {# other disk} other {# other disks}}.' | translate: {
-        name: failedDisks()[0].dev,
-        n: failedDisks().length - 1,
+          name: failedDisks()[0].dev,
+          n: failedDisks().length - 1,
         } }}
       }
     </div>
@@ -50,7 +50,7 @@
       color="default"
       [ixTest]="['show', EnclosureView.DiskStatus]"
       (click)="setCurrentView(EnclosureView.DiskStatus)"
-      >
+    >
       {{ 'SHOW STATUS' | translate }}
     </button>
   </div>
@@ -64,7 +64,7 @@
         color="default"
         [ixTest]="['show', EnclosureView.Expanders]"
         (click)="setCurrentView(EnclosureView.Expanders)"
-        >
+      >
         {{ 'SHOW EXPANDER STATUS' | translate }}
       </button>
     </div>
