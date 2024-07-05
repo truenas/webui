@@ -1,6 +1,6 @@
 @switch (true) {
   @case (!isActiveDirectoryEnabled && !isLdapEnabled) {
-    <div fxLayout="column" fxLayoutAlign="center center" class="everything-disabled">
+    <div class="everything-disabled">
       <ix-empty [conf]="noDirectoryServicesConfig"></ix-empty>
       <div class="actions">
         <button
