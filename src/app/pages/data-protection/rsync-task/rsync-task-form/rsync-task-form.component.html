@@ -45,23 +45,20 @@
             [hideEmpty]="true"
           ></ix-select>
 
-          <ng-container *ngIf="isModuleMode; else sshFields">
+          @if (isModuleMode) {
             <ix-input
               formControlName="remotehost"
               [label]="'Remote Host' | translate"
               [required]="true"
               [tooltip]="helptext.rsync_remotehost_tooltip | translate"
             ></ix-input>
-
             <ix-input
               formControlName="remotemodule"
               [label]="'Remote Module Name' | translate"
               [tooltip]="helptext.rsync_remotemodule_tooltip | translate"
               [required]="true"
             ></ix-input>
-          </ng-container>
-
-          <ng-template #sshFields>
+          } @else {
             <ix-select
               formControlName="sshconnectmode"
               [label]="'Connect using:' | translate"
@@ -70,21 +67,20 @@
               [hideEmpty]="true"
             ></ix-select>
 
-            <ng-container *ngIf="isSshConnectionPrivateMode; else keyChainFields">
+            @if (isSshConnectionPrivateMode) {
               <ix-input
                 formControlName="remotehost"
                 [label]="'Remote Host' | translate"
                 [required]="true"
                 [tooltip]="helptext.rsync_remotehost_tooltip | translate"
               ></ix-input>
-
-              <ix-slide-toggle
-                *ngIf="isRemoteHostSpecified"
-                formControlName="ssh_keyscan"
-                [label]="'SSH Keyscan' | translate"
-                [tooltip]="helptext.ssh_keyscan_tooltip | translate"
-              ></ix-slide-toggle>
-
+              @if (isRemoteHostSpecified) {
+                <ix-slide-toggle
+                  formControlName="ssh_keyscan"
+                  [label]="'SSH Keyscan' | translate"
+                  [tooltip]="helptext.ssh_keyscan_tooltip | translate"
+                ></ix-slide-toggle>
+              }
               <ix-input
                 formControlName="remoteport"
                 type="number"
@@ -92,28 +88,26 @@
                 [required]="true"
                 [tooltip]="helptext.rsync_remoteport_tooltip | translate"
               ></ix-input>
-            </ng-container>
-
-            <ng-template #keyChainFields>
+            } @else {
               <ix-ssh-credentials-select
                 formControlName="ssh_credentials"
                 [label]="'SSH Connection' | translate"
                 [tooltip]="helptext.rsync_ssh_credentials_tooltip | translate"
                 [required]="true"
               ></ix-ssh-credentials-select>
-            </ng-template>
+            }
 
             <ix-input
               formControlName="remotepath"
               [label]="'Remote Path' | translate"
             ></ix-input>
-
             <ix-checkbox
               formControlName="validate_rpath"
               [label]="'Validate Remote Path' | translate"
               [tooltip]="helptext.rsync_validate_rpath_tooltip | translate"
             ></ix-checkbox>
-          </ng-template>
+          }
+
         </ix-fieldset>
 
         <ix-fieldset class="fieldset" [title]="'Schedule' | translate">

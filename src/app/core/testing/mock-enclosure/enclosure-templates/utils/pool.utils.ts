@@ -31,3 +31,20 @@ export function addPoolsToDisks(enclosures: DashboardEnclosure[], percentageToAd
     };
   });
 }
+
+export function randomizeDiskStatuses(enclosures: DashboardEnclosure[]): DashboardEnclosure[] {
+  const allStatuses = Object.values(EnclosureDiskStatus);
+  return mapSlots(enclosures, ({ slot, index }) => {
+    if (!slot.pool_info) {
+      return slot;
+    }
+
+    return {
+      ...slot,
+      pool_info: {
+        ...slot.pool_info,
+        disk_status: allStatuses[index % allStatuses.length],
+      },
+    };
+  });
+}

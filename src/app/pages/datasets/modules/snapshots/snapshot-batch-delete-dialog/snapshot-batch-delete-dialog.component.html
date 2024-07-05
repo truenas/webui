@@ -1,74 +1,84 @@
 <h1 matDialogTitle>{{ 'Delete' | translate }}</h1>
-<form
-  *ngIf="!isJobCompleted; else errorOrSuccess"
-  class="ix-form-container"
-  [formGroup]="form"
-  (submit)="onSubmit()"
->
-  <p>
-    <strong>
-      {{ 'The following { n, plural, one {snapshot} other {# snapshots} } will be deleted. Are you sure you want to proceed?' | translate: { n: total } }}
-    </strong>
-  </p>
+@if (!isJobCompleted) {
+  <form
+    class="ix-form-container"
+    [formGroup]="form"
+    (submit)="onSubmit()"
+  >
+    <p>
+      <strong>
+        {{ 'The following { n, plural, one {snapshot} other {# snapshots} } will be deleted. Are you sure you want to proceed?' | translate: { n: total } }}
+      </strong>
+    </p>
 
-  <mat-accordion multi displayMode="flat">
-    <mat-expansion-panel
-      *ngFor="let dataset of dialogData.datasets"
-      expanded
-      class="mat-elevation-z0"
-    >
-      <mat-expansion-panel-header>
-        <mat-panel-title>
-          <strong>{{ dataset }}</strong>
-          <span>
-            ({{
-              '{ n, plural, one {# snapshot} other {# snapshots} }' | translate: { n: dialogData.snapshots[dataset].length }
-            }})
-          </span>
-        </mat-panel-title>
-      </mat-expansion-panel-header>
+    <mat-accordion multi displayMode="flat">
+      @for (dataset of dialogData.datasets; track dataset) {
+        <mat-expansion-panel
+          expanded
+          class="mat-elevation-z0"
+          >
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              <strong>{{ dataset }}</strong>
+              <span>
+                ({{
+                '{ n, plural, one {# snapshot} other {# snapshots} }' | translate: { n: dialogData.snapshots[dataset].length }
+                }})
+              </span>
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+          <ul>
+            @for (snapshot of dialogData.snapshots[dataset]; track snapshot) {
+              <li>
+                {{ snapshot }}
+              </li>
+            }
+          </ul>
+        </mat-expansion-panel>
+      }
+    </mat-accordion>
 
-      <ul>
-        <li *ngFor="let snapshot of dialogData.snapshots[dataset]">
-          {{ snapshot }}
-        </li>
-      </ul>
-    </mat-expansion-panel>
-  </mat-accordion>
+    <div class="form-actions">
+      <ix-checkbox
+        formControlName="confirm"
+        [label]="'Confirm' | translate"
+        [required]="true"
+      ></ix-checkbox>
 
-  <div class="form-actions">
-    <ix-checkbox
-      formControlName="confirm"
-      [label]="'Confirm' | translate"
-      [required]="true"
-    ></ix-checkbox>
-
-    <div class="form-buttons">
-      <div
-        [matTooltip]="'Snapshots must not have dependent clones' | translate"
-        [matTooltipDisabled]="!hasClones"
-      >
-        <button
-          *ixRequiresRoles="requiredRoles"
-          mat-button
-          type="submit"
-          color="primary"
-          ixTest="delete"
-          [disabled]="form.invalid || hasClones"
+      <div class="form-buttons">
+        <div
+          [matTooltip]="'Snapshots must not have dependent clones' | translate"
+          [matTooltipDisabled]="!hasClones"
         >
-          {{ 'Delete' | translate }}
+          <button
+            *ixRequiresRoles="requiredRoles"
+            mat-button
+            type="submit"
+            color="primary"
+            ixTest="delete"
+            [disabled]="form.invalid || hasClones"
+          >
+            {{ 'Delete' | translate }}
+          </button>
+        </div>
+        <button mat-button type="button" matDialogClose ixTest="cancel">
+          {{ 'Cancel' | translate }}
         </button>
       </div>
-      <button mat-button type="button" matDialogClose ixTest="cancel">
-        {{ 'Cancel' | translate }}
-      </button>
     </div>
-  </div>
-</form>
-
-<ng-template #errorOrSuccess>
-  <div *ngIf="jobErrors.length; then errorMessage; else successMessage"></div>
-
+  </form>
+} @else {
+  @if (jobErrors.length) {
+    <p class="result-message">
+      {{ 'Warning: {n} of {total} snapshots could not be deleted.' | translate: { n: jobErrors.length, total } }}
+    </p>
+    <p>{{ getErrorMessage() }}</p>
+  } @else {
+    <p class="result-message">
+      {{ 'Deleted {n, plural, one {# snapshot} other {# snapshots}}' | translate:
+      { n: jobSuccess.length} }}
+    </p>
+  }
   <ix-form-actions>
     <a
       mat-button
@@ -84,18 +94,7 @@
       {{ 'Close' | translate }}
     </button>
   </ix-form-actions>
-</ng-template>
+}
 
-<ng-template #successMessage>
-  <p class="result-message">
-    {{ 'Deleted {n, plural, one {# snapshot} other {# snapshots}}' | translate:
-    { n: jobSuccess.length} }}
-  </p>
-</ng-template>
 
-<ng-template #errorMessage>
-  <p class="result-message">
-    {{ 'Warning: {n} of {total} snapshots could not be deleted.' | translate: { n: jobErrors.length, total } }}
-  </p>
-  <p>{{ getErrorMessage() }}</p>
-</ng-template>
+

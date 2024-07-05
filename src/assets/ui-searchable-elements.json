@@ -1696,22 +1696,6 @@
   },
   {
     "hierarchy": [
-      "Datasets"
-    ],
-    "synonyms": [
-      "Manage Datasets"
-    ],
-    "requiredRoles": [],
-    "anchorRouterLink": [
-      "/datasets"
-    ],
-    "routerLink": null,
-    "anchor": "datasets",
-    "triggerAnchor": null,
-    "section": "ui"
-  },
-  {
-    "hierarchy": [
       "Directory Services",
       "Idmap",
       "Add Idmap"

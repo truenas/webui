@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
+import { MatButton } from '@angular/material/button';
 import { RouterModule } from '@angular/router';
 import { FlexModule } from '@ngbracket/ngx-layout';
 import { TranslateModule } from '@ngx-translate/core';
@@ -22,6 +23,7 @@ import { NewPageBadgeComponent } from './is-new-indicator/new-page-badge.compone
     CommonDirectivesModule,
     TestIdModule,
     AppLoaderModule,
+    MatButton,
   ],
   declarations: [
     BreadcrumbComponent,

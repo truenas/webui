@@ -5,12 +5,11 @@
   [ixTest]="['select-enclosure', enclosure.model]"
   [routerLink]="['/system', 'viewenclosure', enclosure.id]"
 >
-  <!-- TODO: Slots were colored in old enclosure -->
-  <!-- TODO: Add skeleton -->
   <ix-enclosure-side
     class="enclosure-image"
     [enclosure]="enclosure"
     [enableMouseEvents]="false"
+    [slotTintFn]="diskStatusTint"
   ></ix-enclosure-side>
 
   <div class="enclosure-label">

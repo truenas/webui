@@ -12,6 +12,10 @@
 }
 
 .everything-disabled {
+  .actions {
+    justify-content: center;
+  }
+
   button {
     &:last-child {
       margin-right: 0;

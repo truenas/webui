@@ -68,6 +68,9 @@ import {
 import {
   MiniEnclosureComponent,
 } from 'app/pages/system/enclosure/components/pages/mini-page/mini-enclosure/mini-enclosure.component';
+import {
+  MiniSlotStatusComponent,
+} from 'app/pages/system/enclosure/components/pages/mini-page/mini-enclosure/mini-slot-status/mini-slot-status.component';
 import { MiniPageComponent } from 'app/pages/system/enclosure/components/pages/mini-page/mini-page.component';
 import {
   MiniPoolsComponent,
@@ -135,6 +138,7 @@ import { SvgCacheService } from 'app/pages/system/enclosure/services/svg-cache.s
     MiniDriveTemperaturesComponent,
     MiniPoolsComponent,
     MiniEnclosureComponent,
+    MiniSlotStatusComponent,
   ],
   providers: [
     EnclosureStore,

@@ -9,12 +9,13 @@
     [tooltip]="tooltips.name | translate"
   ></ix-input>
 
-  <ix-checkbox
-    *ngIf="!isNew"
-    formControlName="reset"
-    [label]="'Reset' | translate"
-    [tooltip]="tooltips.reset | translate"
-  ></ix-checkbox>
+  @if (!isNew) {
+    <ix-checkbox
+      formControlName="reset"
+      [label]="'Reset' | translate"
+      [tooltip]="tooltips.reset | translate"
+    ></ix-checkbox>
+  }
 
   <ix-form-actions>
     <button mat-button type="button" ixTest="cancel" matDialogClose>
