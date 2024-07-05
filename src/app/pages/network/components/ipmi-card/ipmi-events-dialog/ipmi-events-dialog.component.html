@@ -1,38 +1,37 @@
 <ix-fake-progress-bar [loading]="isLoading"></ix-fake-progress-bar>
 <h1 mat-dialog-title>{{ 'IPMI Events' | translate }}</h1>
 <div mat-dialog-content class="events-container">
-  <ng-container *ngIf="(events.length || isLoading); else empty">
-    <div
-      *ngFor="let event of events; trackBy: trackById"
-      class="event"
-    >
-      <div class="event-header">
-        <div>{{ getEventDate(event) | formatDateTime }}</div>
-        <div>
-          {{ event.name }}
-          &mdash;
-          {{ event.event_direction }}
+  @if ((events.length || isLoading)) {
+    @for (event of events; track trackById($index, event)) {
+      <div class="event">
+        <div class="event-header">
+          <div>{{ getEventDate(event) | formatDateTime }}</div>
+          <div>
+            {{ event.name }}
+            &mdash;
+            {{ event.event_direction }}
+          </div>
+        </div>
+        <div class="event-description">
+          {{ event.event }}
         </div>
       </div>
-      <div class="event-description">
-        {{ event.event }}
-      </div>
-    </div>
-  </ng-container>
-  <ng-template #empty>
+    }
+  } @else {
     <ix-empty [conf]="emptyConfig"></ix-empty>
-  </ng-template>
+  }
 </div>
 <ix-form-actions mat-dialog-actions class="form-actions">
-  <button
-    *ngIf="canClear"
-    mat-button
-    color="warn"
-    ixTest="clear"
-    (click)="onClear()"
-  >
-    {{ 'Clear' | translate }}
-  </button>
+  @if (canClear) {
+    <button
+      mat-button
+      color="warn"
+      ixTest="clear"
+      (click)="onClear()"
+    >
+      {{ 'Clear' | translate }}
+    </button>
+  }
   <button
     mat-button
     mat-dialog-close

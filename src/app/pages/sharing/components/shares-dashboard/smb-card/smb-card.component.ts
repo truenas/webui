@@ -94,6 +94,7 @@ export class SmbCardComponent implements OnInit {
     }),
   ], {
     rowTestId: (row) => 'card-smb-share-' + row.name,
+    ariaLabels: (row) => [row.name, this.translate.instant('SMB Share')],
   });
 
   constructor(

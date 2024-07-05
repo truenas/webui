@@ -158,6 +158,7 @@ export class SmbListComponent implements OnInit {
     }),
   ], {
     rowTestId: (row) => 'smb-' + row.name,
+    ariaLabels: (row) => [row.name, this.translate.instant('SMB Share')],
   });
 
   constructor(

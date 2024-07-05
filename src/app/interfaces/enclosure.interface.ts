@@ -73,8 +73,7 @@ export interface DashboardEnclosureSlot {
    */
   drive_bay_number?: number;
   descriptor: string;
-  // TODO: Introduce enum
-  status: string;
+  status: EnclosureStatus;
   dev: string;
   supports_identify_light?: boolean;
   size?: number;

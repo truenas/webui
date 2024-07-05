@@ -1,6 +1,6 @@
 import {
   ChangeDetectionStrategy,
-  Component, EventEmitter, input, Output,
+  Component, EventEmitter, Input, input, Output,
 } from '@angular/core';
 
 @Component({
@@ -11,6 +11,7 @@ import {
 })
 export class IxListItemComponent {
   readonly canDelete = input(true);
+  @Input() label?: string;
   @Output() delete = new EventEmitter<void>();
 
   deleteItem(): void {

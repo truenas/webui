@@ -87,6 +87,7 @@ export class PrivilegeListComponent implements OnInit {
     }),
   ], {
     rowTestId: (row) => 'privilege-' + row.name,
+    ariaLabels: (row) => [row.name, this.translate.instant('Privilege')],
   });
 
   searchQuery: SearchQuery<Privilege>;

@@ -8,7 +8,10 @@ import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/table-c
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class IxCellDateComponent<T> extends ColumnComponent<T> {
-  get date(): number | Date {
+  get date(): number | null | Date {
+    if (this.value === null) {
+      return null;
+    }
     if ((this.value as ApiTimestamp)?.$date) {
       return (this.value as ApiTimestamp).$date;
     }

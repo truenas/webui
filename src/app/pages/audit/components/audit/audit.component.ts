@@ -98,6 +98,7 @@ export class AuditComponent implements OnInit, OnDestroy {
     }),
   ], {
     rowTestId: (row) => 'audit-' + row.service + '-' + row.username + '-' + row.event,
+    ariaLabels: (row) => [row.service, row.username, row.event, this.translate.instant('Audit Entry')],
   });
 
   protected searchProperties: SearchProperty<AuditEntry>[] = [];

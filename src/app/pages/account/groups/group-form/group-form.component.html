@@ -54,12 +54,13 @@
           [tooltip]="tooltips.smb"
         ></ix-checkbox>
 
-        <ix-checkbox
-          *ngIf="isNew"
-          formControlName="allowDuplicateGid"
-          [label]="'Allow Duplicate GIDs' | translate"
-          [tooltip]="tooltips.allowDuplicateGid"
-        ></ix-checkbox>
+        @if (isNew) {
+          <ix-checkbox
+            formControlName="allowDuplicateGid"
+            [label]="'Allow Duplicate GIDs' | translate"
+            [tooltip]="tooltips.allowDuplicateGid"
+          ></ix-checkbox>
+        }
       </ix-fieldset>
 
       <ix-form-actions>

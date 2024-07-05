@@ -2,7 +2,8 @@ import { computed, Injectable } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ComponentStore } from '@ngrx/component-store';
 import { switchMap, tap } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { delay, finalize, map } from 'rxjs/operators';
+import { EnclosureElementType } from 'app/enums/enclosure-slot-status.enum';
 import { DashboardEnclosure, DashboardEnclosureSlot } from 'app/interfaces/enclosure.interface';
 import { EnclosureView } from 'app/pages/system/enclosure/types/enclosure-view.enum';
 import { getEnclosureLabel } from 'app/pages/system/enclosure/utils/get-enclosure-label.utils';
@@ -12,6 +13,7 @@ import { WebSocketService } from 'app/services/ws.service';
 
 export interface EnclosureState {
   enclosures: DashboardEnclosure[];
+  isLoading: boolean;
   selectedEnclosureIndex: number;
   selectedSlot: DashboardEnclosureSlot;
   selectedView: EnclosureView;
@@ -19,6 +21,7 @@ export interface EnclosureState {
 }
 
 const initialState: EnclosureState = {
+  isLoading: true,
   enclosures: [],
   selectedEnclosureIndex: 0,
   selectedSlot: undefined,
@@ -28,6 +31,10 @@ const initialState: EnclosureState = {
 
 @Injectable()
 export class EnclosureStore extends ComponentStore<EnclosureState> {
+  readonly isLoading = toSignal(
+    this.state$.pipe(map((state) => state.isLoading)),
+    { initialValue: initialState.isLoading },
+  );
   readonly selectedSlot = toSignal(
     this.state$.pipe(map((state) => state.selectedSlot)),
     { initialValue: initialState.selectedSlot },
@@ -38,6 +45,10 @@ export class EnclosureStore extends ComponentStore<EnclosureState> {
     })),
     { initialValue: undefined },
   );
+  readonly selectedEnclosureSlots = computed(() => {
+    const slots = this.selectedEnclosure()?.elements?.[EnclosureElementType.ArrayDeviceSlot] || {};
+    return Object.values(slots);
+  });
   readonly selectedView = toSignal(
     this.state$.pipe(map((state) => state.selectedView)),
     { initialValue: initialState.selectedView },
@@ -70,9 +81,12 @@ export class EnclosureStore extends ComponentStore<EnclosureState> {
             this.patchState({ enclosures });
           }),
           this.errorHandler.catchError(),
+          delay(100),
+          finalize(() => {
+            this.patchState({ isLoading: false });
+          }),
         );
       }),
-      // TODO: Loading indication
     );
   });
 

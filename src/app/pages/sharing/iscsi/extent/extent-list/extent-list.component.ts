@@ -90,6 +90,7 @@ export class ExtentListComponent implements OnInit {
     }),
   ], {
     rowTestId: (row) => 'iscsi-extent-' + row.name,
+    ariaLabels: (row) => [row.name, this.translate.instant('iSCSI Extent')],
   });
 
   constructor(

@@ -8,25 +8,27 @@
       [required]="true"
     ></ix-select>
 
-    <ix-combobox
-      *ngIf="isUserTag"
-      formControlName="user"
-      [label]="'User' | translate"
-      [tooltip]="tooltips.user | translate"
-      [provider]="userProvider"
-      [allowCustomValue]="true"
-      [required]="true"
-    ></ix-combobox>
+    @if (isUserTag) {
+      <ix-combobox
+        formControlName="user"
+        [label]="'User' | translate"
+        [tooltip]="tooltips.user | translate"
+        [provider]="userProvider"
+        [allowCustomValue]="true"
+        [required]="true"
+      ></ix-combobox>
+    }
 
-    <ix-combobox
-      *ngIf="isGroupTag"
-      formControlName="group"
-      [label]="'Group' | translate"
-      [tooltip]="tooltips.group | translate"
-      [provider]="groupProvider"
-      [allowCustomValue]="true"
-      [required]="true"
-    ></ix-combobox>
+    @if (isGroupTag) {
+      <ix-combobox
+        formControlName="group"
+        [label]="'Group' | translate"
+        [tooltip]="tooltips.group | translate"
+        [provider]="groupProvider"
+        [allowCustomValue]="true"
+        [required]="true"
+      ></ix-combobox>
+    }
 
     <ix-checkbox-list
       formControlName="permissions"

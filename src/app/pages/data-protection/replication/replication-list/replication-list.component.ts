@@ -131,6 +131,7 @@ export class ReplicationListComponent implements OnInit {
     }),
   ], {
     rowTestId: (row) => 'replication-task-' + row.name,
+    ariaLabels: (row) => [row.name, this.translate.instant('Replication Task')],
   });
 
   get hiddenColumns(): Column<ReplicationTask, ColumnComponent<ReplicationTask>>[] {

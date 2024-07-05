@@ -1,4 +1,3 @@
-
 <div class="disk-overview">
   <div class="tile" [class.active]="selectedView() === EnclosureView.Pools">
     <div class="primary-number">{{ poolsInfo().length }}</div>
@@ -30,19 +29,19 @@
     </button>
   </div>
   <div class="tile" [class.active]="selectedView() === EnclosureView.DiskStatus">
-    <div class="primary-number">{{ failsCount() }}</div>
-    <div class="title">{{ '{n, plural, one {Failed Disk} other {Failed Disks}}' | translate: { n: failsCount() } }}</div>
+    <div class="primary-number">{{ failedDisks().length }}</div>
+    <div class="title">{{ '{n, plural, one {Failed Disk} other {Failed Disks}}' | translate: { n: failedDisks().length } }}</div>
     <div class="subtitle">
-      <ng-container *ngIf="failedPoolsInfo().length === 0">
+      <ng-container *ngIf="failedDisks().length === 0">
         {{ 'All disks healthy.' | translate }}
       </ng-container>
-      <ng-container *ngIf="failedPoolsInfo().length === 1">
-        {{ 'Check {name}.' | translate: { name: failedPoolsInfo()[0].vdev_name } }}
+      <ng-container *ngIf="failedDisks().length === 1">
+        {{ 'Check {name}.' | translate: { name: failedDisks()[0].dev } }}
       </ng-container>
-      <ng-container *ngIf="failedPoolsInfo().length > 1">
+      <ng-container *ngIf="failedDisks().length > 1">
         {{ 'Check {name} and {n, plural, one {# other disk} other {# other disks}}.' | translate: {
-          name: failedPoolsInfo()[0].vdev_name,
-          n: failedPoolsInfo().length - 1,
+          name: failedDisks()[0].dev,
+          n: failedDisks().length - 1,
         } }}
       </ng-container>
     </div>

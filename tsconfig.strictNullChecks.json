@@ -706,8 +706,6 @@
     "./src/app/pages/system/old-view-enclosure/interfaces/theme-changed-event.interface.ts",
     "./src/app/pages/system/old-view-enclosure/interfaces/view.config.ts",
     "./src/app/pages/two-factor-auth/components/two-factor/qr-viewer/qr-viewer.component.ts",
-    "./src/app/pages/unauthorized/unauthorized.routing.ts",
-    "./src/app/pages/unauthorized/unauthorized/unauthorized.component.ts",
     "./src/app/pages/vm/devices/device-list/device-details/device-details.component.spec.ts",
     "./src/app/pages/vm/devices/device-list/device-details/device-details.component.ts",
     "./src/app/pages/vm/utils/by-vm-pci-slots.spec.ts",

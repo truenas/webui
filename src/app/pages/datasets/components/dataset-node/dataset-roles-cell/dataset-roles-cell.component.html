@@ -1,55 +1,55 @@
-<ng-container *ngIf="isSystemDataset">
+@if (isSystemDataset) {
   <ix-icon
     name="ix:logo_truenas_scale_mark"
     [matTooltip]="'This dataset is used by the system' | translate"
   ></ix-icon>
-</ng-container>
+}
 
-<ng-container *ngIf="dataset.apps?.length || isApplications">
-  <ix-icon
-    *ngIf="!isApplications"
-    name="apps"
-    [matTooltip]="'This dataset is used by: {apps}' | translate: { apps: appsNames }"
-  ></ix-icon>
+@if (dataset.apps?.length || isApplications) {
+  @if (isApplications) {
+    <ix-icon
+      name="apps"
+      [matTooltip]="'This dataset is used to store Kubernetes config and other container related data' | translate"
+    ></ix-icon>
+  } @else {
+    <ix-icon
+      name="apps"
+      [matTooltip]="'This dataset is used by: {apps}' | translate: { apps: appsNames }"
+    ></ix-icon>
+  }
+}
 
-  <ix-icon
-    *ngIf="isApplications"
-    name="apps"
-    [matTooltip]="'This dataset is used to store Kubernetes config and other container related data' | translate"
-  ></ix-icon>
-</ng-container>
-
-<ng-container *ngIf="dataset.vms?.length">
+@if (dataset.vms?.length) {
   <ix-icon
     name="computer"
     [matTooltip]="'This dataset is used by: {vms}' | translate: { vms: vmsNames }"
   ></ix-icon>
-</ng-container>
+}
 
-<ng-container *ngIf="hasShares">
+@if (hasShares) {
   <ix-icon
     name="share"
     [matTooltip]="'This dataset has children with shares' | translate"
   ></ix-icon>
-</ng-container>
+}
 
-<ng-container *ngIf="dataset.smb_shares?.length">
+@if (dataset.smb_shares?.length) {
   <ix-icon
     name="ix:smb_share"
     [matTooltip]="'Dataset is shared via SMB' | translate"
   ></ix-icon>
-</ng-container>
+}
 
-<ng-container *ngIf="dataset.nfs_shares?.length">
+@if (dataset.nfs_shares?.length) {
   <ix-icon
     name="ix:nfs_share"
     [matTooltip]="'Dataset is shared via NFS' | translate"
   ></ix-icon>
-</ng-container>
+}
 
-<ng-container *ngIf="dataset.iscsi_shares?.length">
+@if (dataset.iscsi_shares?.length) {
   <ix-icon
     name="ix:iscsi_share"
     [matTooltip]="'Dataset is shared via iSCSI' | translate"
   ></ix-icon>
-</ng-container>
+}
