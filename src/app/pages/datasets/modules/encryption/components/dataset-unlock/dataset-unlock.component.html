@@ -39,7 +39,7 @@
                 <strong> {{'Dataset' | translate }}: </strong>
                 {{ dataset.value.name }}
               </div>
-              @if (!dataset.value.is_passphrase) {
+              @if (dataset.value.is_passphrase) {
                 <ix-input
                   formControlName="passphrase"
                   type="password"

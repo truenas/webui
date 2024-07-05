@@ -90,7 +90,7 @@
             ></ix-select>
           }
 
-          @if (!isFailover) {
+          @if (isFailover) {
             <ix-ordered-listbox
               formControlName="lag_ports"
               [label]="'Link Aggregation Interfaces' | translate"
