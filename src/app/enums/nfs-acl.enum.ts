@@ -20,6 +20,7 @@ export const nfsAclTagLabels = new Map<NfsAclTag, string>([
 export const smbAclTagLabels = new Map<NfsAclTag, string>([
   [NfsAclTag.User, T('User')],
   [NfsAclTag.UserGroup, T('Group')],
+  [NfsAclTag.Both, T('Unknown')],
   [NfsAclTag.Everyone, T('everyone@')],
 ]);
 
