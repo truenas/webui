@@ -1,5 +1,5 @@
 <ix-date
-  *ngIf="!!date; else noDate"
+  *ngIf="date; else noDate"
   [ixTest]="[title, rowTestId(row), 'row-date']"
   [date]="date"
 ></ix-date>
