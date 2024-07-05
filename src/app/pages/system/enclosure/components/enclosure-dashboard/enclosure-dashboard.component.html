@@ -15,6 +15,6 @@
   }
 </ix-page-header>
 
-<ng-container *ngIf="selectedEnclosure()">
+@if (selectedEnclosure()) {
   <router-outlet></router-outlet>
 }

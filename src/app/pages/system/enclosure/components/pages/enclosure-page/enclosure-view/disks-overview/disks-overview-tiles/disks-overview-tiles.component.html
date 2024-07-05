@@ -5,14 +5,12 @@
     <div class="subtitle">
       @if (unhealthyPoolsInfo().length === 0) {
         {{ 'All pools are online.' | translate }}
-      }
-      @if (unhealthyPoolsInfo().length === 1) {
+      } @else if (unhealthyPoolsInfo().length === 1) {
         {{ 'Pool {name} is {status}.' | translate: {
         name: unhealthyPoolsInfo()[0].pool_name,
         status: unhealthyPoolsInfo()[0].disk_status,
         } }}
-      }
-      @if (unhealthyPoolsInfo().length > 1) {
+      } @else if (unhealthyPoolsInfo().length > 1) {
         {{ '{name} and {n, plural, one {# other pool} other {# other pools}} are not healthy.' | translate: {
         name: unhealthyPoolsInfo()[0].pool_name,
         n: unhealthyPoolsInfo().length - 1,
@@ -24,7 +22,7 @@
       color="default"
       [ixTest]="['show', EnclosureView.Pools]"
       (click)="setCurrentView(EnclosureView.Pools)"
-      >
+    >
       {{ 'SHOW POOLS' | translate }}
     </button>
   </div>
@@ -32,13 +30,11 @@
     <div class="primary-number">{{ failedDisks().length }}</div>
     <div class="title">{{ '{n, plural, one {Failed Disk} other {Failed Disks}}' | translate: { n: failedDisks().length } }}</div>
     <div class="subtitle">
-      <ng-container *ngIf="failedDisks().length === 0">
+      @if (failedDisks().length === 0) {
         {{ 'All disks healthy.' | translate }}
-      </ng-container>
-      <ng-container *ngIf="failedDisks().length === 1">
+      } @else if (failedDisks().length === 1) {
         {{ 'Check {name}.' | translate: { name: failedDisks()[0].dev } }}
-      </ng-container>
-      <ng-container *ngIf="failedDisks().length > 1">
+      } @else if (failedDisks().length > 1) {
         {{ 'Check {name} and {n, plural, one {# other disk} other {# other disks}}.' | translate: {
           name: failedDisks()[0].dev,
           n: failedDisks().length - 1,
