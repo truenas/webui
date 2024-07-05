@@ -35,4 +35,7 @@ export const ixSvgIcons = {
   ssd: 'assets/customicons/ix-ssd.svg',
   ssd_mirror: 'assets/customicons/ix-ssd-mirror.svg',
   two_factor_auth: 'assets/customicons/2fa.svg',
+  smb_share: 'assets/customicons/smb-share.svg',
+  iscsi_share: 'assets/customicons/iscsi-share.svg',
+  nfs_share: 'assets/customicons/nfs-share.svg',
 };
