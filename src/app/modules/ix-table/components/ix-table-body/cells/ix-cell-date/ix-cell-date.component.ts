@@ -9,7 +9,7 @@ import { Column, ColumnComponent } from 'app/modules/ix-table/interfaces/table-c
 })
 export class IxCellDateComponent<T> extends ColumnComponent<T> {
   get date(): number | null | Date {
-    if (this.value === null) {
+    if (!this.value) {
       return null;
     }
     if ((this.value as ApiTimestamp)?.$date) {

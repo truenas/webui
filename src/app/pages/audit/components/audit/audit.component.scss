@@ -3,6 +3,10 @@
 
 @include tree-node-with-details-container;
 
+.container {
+  gap: 16px;
+}
+
 :host ::ng-deep {
   ix-empty-row {
     height: 100%;

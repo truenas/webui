@@ -54,11 +54,8 @@
   <div class="show-results-content">
     @if (!endedTests) {
       <div class="progress-bar-panel">
-        <div
-          fxLayout="row"
-          fxLayoutAlign="space-between baseline"
-          fxLayoutGap="8px"
-        >
+        <div>
+
           <span>smart.test.progress</span>
           <small>
             {{ progressTotalPercent || 0 | percent: '1.2-2' }}

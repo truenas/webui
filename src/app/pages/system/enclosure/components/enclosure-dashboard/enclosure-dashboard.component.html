@@ -15,7 +15,6 @@
   }
 </ix-page-header>
 
-@if (selectedEnclosure()) {
-  <!-- TODO: Loading indication -->
+<ng-container *ngIf="selectedEnclosure()">
   <router-outlet></router-outlet>
 }
