@@ -46,10 +46,10 @@ export class FeedbackDialogComponent implements OnInit {
     this.loadFeedbackTypes();
   }
 
-  onIsLoadingChange(newValue: boolean): void {
-    this.isLoading = newValue;
+  onIsLoadingChange(isLoading: boolean): void {
+    this.isLoading = isLoading;
 
-    if (newValue) {
+    if (isLoading) {
       this.typeControl.disable();
       this.dialogRef.disableClose = true;
     } else {
