@@ -1,9 +1,10 @@
 <mat-card class="card" [ixUiSearch]="searchableElements.elements.manualUpdate">
   <mat-card-content>
-    <mat-progress-bar
-      *ngIf="isFormLoading$ | async"
-      mode="indeterminate"
-    ></mat-progress-bar>
+    @if (isFormLoading$ | async) {
+      <mat-progress-bar
+        mode="indeterminate"
+      ></mat-progress-bar>
+    }
 
     <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
       <ix-fieldset>
@@ -20,21 +21,23 @@
           [acceptedFiles]="'.tar,.update'"
         ></ix-file-input>
 
-        <ix-select
-          *ngIf="!isHaLicensed"
-          formControlName="filelocation"
-          [label]="helptext.filelocation.placeholder | translate"
-          [tooltip]="helptext.filelocation.tooltip | translate"
-          [options]="fileLocationOptions$"
-          [required]="true"
-        ></ix-select>
+        @if (!isHaLicensed) {
+          <ix-select
+            formControlName="filelocation"
+            [label]="helptext.filelocation.placeholder | translate"
+            [tooltip]="helptext.filelocation.tooltip | translate"
+            [options]="fileLocationOptions$"
+            [required]="true"
+          ></ix-select>
+        }
 
-        <ix-checkbox
-          *ngIf="!isHaLicensed && systemService.isEnterprise"
-          formControlName="rebootAfterManualUpdate"
-          [label]="helptext.rebootAfterManualUpdate.placeholder | translate"
-          [tooltip]="helptext.rebootAfterManualUpdate.tooltip | translate"
-        ></ix-checkbox>
+        @if (!isHaLicensed && systemService.isEnterprise) {
+          <ix-checkbox
+            formControlName="rebootAfterManualUpdate"
+            [label]="helptext.rebootAfterManualUpdate.placeholder | translate"
+            [tooltip]="helptext.rebootAfterManualUpdate.tooltip | translate"
+          ></ix-checkbox>
+        }
       </ix-fieldset>
 
       <div class="form-actions">
@@ -45,7 +48,7 @@
           color="primary"
           ixTest="apply-update"
           [disabled]="form.invalid || (isFormLoading$ | async)"
-        >
+          >
           {{ 'Apply Update' | translate }}
         </button>
       </div>

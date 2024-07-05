@@ -1,64 +1,61 @@
 <h1 matDialogTitle>{{ 'Stats/Settings' | translate }}</h1>
-<form
-  *ngIf="state"
-  class="ix-form-container"
-  [formGroup]="form"
-  (submit)="onSubmit()"
->
-  <div class="status-item">
-    <span class="status-name"> {{ 'Boot Pool Condition' | translate }}: </span>
-    <span class="status-value">
-      {{ condition | mapValue: poolStatusLabels | translate }}
-      <ng-container *ngIf="condition === PoolStatus.Degraded">
-        {{ 'Check Alerts for more details.' | translate }}
-      </ng-container>
-    </span>
-  </div>
-  <div class="status-item">
-    <span class="status-name"> {{ 'Size' | translate }}: </span>
-    <span class="status-value">
-      {{ state?.size | ixFileSize }}
-    </span>
-  </div>
-  <div class="status-item">
-    <span class="status-name"> {{ 'Used' | translate }}: </span>
-    <span class="status-value">
-      {{ state?.allocated | ixFileSize }}
-    </span>
-  </div>
-  <div class="status-item">
-    <span class="status-name"> {{ 'Last Scrub Run' | translate }}: </span>
-    <span class="status-value">
-      <ng-container *ngIf="state.scan?.end_time; else noScanTime">
-        {{ state.scan.end_time.$date | formatDateTime }}
-      </ng-container>
-      <ng-template #noScanTime>
-        {{ 'Never' | translate }}
-      </ng-template>
-    </span>
-  </div>
-
-  <ix-input
-    formControlName="interval"
-    type="number"
-    [label]="'Scrub interval (in days)' | translate"
-    [required]="true"
-  ></ix-input>
-
-  <ix-form-actions>
-    <button mat-button type="button" matDialogClose ixTest="close">
-      {{ 'Close' | translate }}
-    </button>
-
-    <button
-      *ixRequiresRoles="[Role.FullAdmin]"
-      mat-button
-      type="submit"
-      color="primary"
-      ixTest="update-interval"
-      [disabled]="form.invalid"
+@if (state) {
+  <form
+    class="ix-form-container"
+    [formGroup]="form"
+    (submit)="onSubmit()"
     >
-      {{ 'Update Interval' | translate }}
-    </button>
-  </ix-form-actions>
-</form>
+    <div class="status-item">
+      <span class="status-name"> {{ 'Boot Pool Condition' | translate }}: </span>
+      <span class="status-value">
+        {{ condition | mapValue: poolStatusLabels | translate }}
+        @if (condition === PoolStatus.Degraded) {
+          {{ 'Check Alerts for more details.' | translate }}
+        }
+      </span>
+    </div>
+    <div class="status-item">
+      <span class="status-name"> {{ 'Size' | translate }}: </span>
+      <span class="status-value">
+        {{ state?.size | ixFileSize }}
+      </span>
+    </div>
+    <div class="status-item">
+      <span class="status-name"> {{ 'Used' | translate }}: </span>
+      <span class="status-value">
+        {{ state?.allocated | ixFileSize }}
+      </span>
+    </div>
+    <div class="status-item">
+      <span class="status-name"> {{ 'Last Scrub Run' | translate }}: </span>
+      <span class="status-value">
+        @if (state.scan?.end_time) {
+          {{ state.scan.end_time.$date | formatDateTime }}
+        } @else {
+          {{ 'Never' | translate }}
+        }
+      </span>
+    </div>
+    <ix-input
+      formControlName="interval"
+      type="number"
+      [label]="'Scrub interval (in days)' | translate"
+      [required]="true"
+    ></ix-input>
+    <ix-form-actions>
+      <button mat-button type="button" matDialogClose ixTest="close">
+        {{ 'Close' | translate }}
+      </button>
+      <button
+        *ixRequiresRoles="[Role.FullAdmin]"
+        mat-button
+        type="submit"
+        color="primary"
+        ixTest="update-interval"
+        [disabled]="form.invalid"
+        >
+        {{ 'Update Interval' | translate }}
+      </button>
+    </ix-form-actions>
+  </form>
+}

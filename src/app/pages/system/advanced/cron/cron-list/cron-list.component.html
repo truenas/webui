@@ -13,7 +13,7 @@
   [ix-table-empty]="!(dataProvider.currentPageCount$ | async)"
   [ixUiSearch]="searchableElements.elements.cron"
   [emptyConfig]="emptyService.defaultEmptyConfig(dataProvider.emptyType$ | async)"
->
+  >
   <thead
     ix-table-head
     [columns]="columns"
@@ -26,13 +26,17 @@
     [isLoading]="dataProvider.isLoading$ | async"
   >
     <ng-template let-cronjob ix-table-details-row [dataProvider]="dataProvider">
-      <dl *ngIf="hiddenColumns.length" class="table-hidden-columns">
-        <div *ngFor="let column of hiddenColumns">
-          <b>{{ column.title | translate }}:</b>
-          <span>{{ column?.getValue?.(cronjob) || cronjob[column.propertyName] }}</span>
-        </div>
-        <mat-divider></mat-divider>
-      </dl>
+      @if (hiddenColumns.length) {
+        <dl class="table-hidden-columns">
+          @for (column of hiddenColumns; track column) {
+            <div>
+              <b>{{ column.title | translate }}:</b>
+              <span>{{ column?.getValue?.(cronjob) || cronjob[column.propertyName] }}</span>
+            </div>
+          }
+          <mat-divider></mat-divider>
+        </dl>
+      }
 
       <div class="table-details-row-actions">
         <button

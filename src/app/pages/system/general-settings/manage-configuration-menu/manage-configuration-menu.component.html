@@ -6,7 +6,7 @@
   ixTest="manage-configuration-menu"
   [matMenuTriggerFor]="menu"
   [ixUiSearch]="searchableElements.elements.manageConfiguration"
->
+  >
   {{ 'Manage Configuration' | translate }}
   <ix-icon name="mdi-menu-down" class="menu-caret"></ix-icon>
 </button>
@@ -18,7 +18,7 @@
     ixTest="download-configuration"
     [ixUiSearch]="searchableElements.elements.downloadFile"
     (click)="onDownloadConfig()"
-  >
+    >
     {{ 'Download File' | translate }}
   </button>
   <button
@@ -27,18 +27,18 @@
     ixTest="upload-configuration"
     [ixUiSearch]="searchableElements.elements.uploadFile"
     (click)="onUploadConfig()"
-  >
+    >
     {{ 'Upload File' | translate }}
   </button>
-  <ng-container *ngIf="isSysAdmin$ | async">
+  @if (isSysAdmin$ | async) {
     <button
       *ixRequiresRoles="[Role.FullAdmin]"
       mat-menu-item
       ixTest="reset-configuration"
       [ixUiSearch]="searchableElements.elements.resetToDefaults"
       (click)="onResetDefaults()"
-    >
+      >
       {{ 'Reset to Defaults' | translate }}
     </button>
-  </ng-container>
+  }
 </mat-menu>

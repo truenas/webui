@@ -2,28 +2,31 @@
 
 <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
   <div mat-dialog-content>
-    <ng-container *ngIf="noPoolsDisks.length">
+    @if (noPoolsDisks.length) {
       <h4>{{ 'Unused Disks' | translate }}</h4>
       <ul class="unused-disks">
-        <li *ngFor="let disk of noPoolsDisks">
-          {{ disk.formattedDisk }}
-        </li>
+        @for (disk of noPoolsDisks; track disk) {
+          <li>{{ disk.formattedDisk }}</li>
+        }
       </ul>
-    </ng-container>
-    
-    <ng-container *ngIf="exportedPoolsDisks.length">
+    }
+
+    @if (exportedPoolsDisks.length) {
       <h4>{{ 'Disks with exported pools' | translate }}</h4>
       <ul class="unused-disks">
-        <li *ngFor="let disk of exportedPoolsDisks">
-          {{ disk.formattedDisk }}
-          <ix-warning
-            *ngIf="disk.exportedPool"
-            class="inline-warning"
-            [message]="getWarningText(disk.exportedPool)"
-          ></ix-warning>
-        </li>
+        @for (disk of exportedPoolsDisks; track disk) {
+          <li>
+            {{ disk.formattedDisk }}
+            @if (disk.exportedPool) {
+              <ix-warning
+                class="inline-warning"
+                [message]="getWarningText(disk.exportedPool)"
+              ></ix-warning>
+            }
+          </li>
+        }
       </ul>
-    </ng-container>
+    }
 
     <ix-fieldset>
       <ix-radio-group
@@ -33,13 +36,14 @@
       >
       </ix-radio-group>
 
-      <ix-select
-        *ngIf="isExistingMode"
-        formControlName="pool"
-        [label]="'Existing Pool' | translate"
-        [required]="true"
-        [options]="poolOptions$"
-      ></ix-select>
+      @if (isExistingMode) {
+        <ix-select
+          formControlName="pool"
+          [label]="'Existing Pool' | translate"
+          [required]="true"
+          [options]="poolOptions$"
+        ></ix-select>
+      }
     </ix-fieldset>
   </div>
 

@@ -1,22 +1,24 @@
-<ngx-skeleton-loader
-  *ngIf="!svg()"
-  fxFlex
-  [animation]="false"
+@if (!svg()) {
+  <ngx-skeleton-loader
+    fxFlex
+    [animation]="false"
   [theme]="{
     height: enableMouseEvents() ? '66px' : '10px',
     marginBottom: 0,
     background: 'var(--alt-bg2)',
     opacity: 0.25
   }"
-  [count]="3"
-  @svgTransition
-></ngx-skeleton-loader>
+    [count]="3"
+    @svgTransition
+  ></ngx-skeleton-loader>
+}
 
-<div
-  *ngIf="svg()"
-  #svgContainer
-  class="svg-container"
-  [class.static]="!enableMouseEvents()"
-  [innerHTML]="svg()"
-  @svgTransition
-></div>
+@if (svg()) {
+  <div
+    #svgContainer
+    class="svg-container"
+    [class.static]="!enableMouseEvents()"
+    [innerHTML]="svg()"
+    @svgTransition
+  ></div>
+}

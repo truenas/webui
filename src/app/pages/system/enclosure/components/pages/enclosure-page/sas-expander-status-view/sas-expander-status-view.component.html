@@ -1,9 +1,14 @@
-<div
-  *ngFor="let expander of expanders()"
-  class="expander"
->
-  <div class="status-value">{{ expander.status }}</div>
-  <div class="title">{{ 'Expander Status' | translate }}</div>
-  <div *ngIf="expander.descriptor" class="descriptor">{{ expander.descriptor }}</div>
-  <div *ngIf="!expander.descriptor" class="descriptor">{{ 'No descriptor provided' | translate }}</div>
-</div>
+@for (expander of expanders(); track expander) {
+  <div
+    class="expander"
+    >
+    <div class="status-value">{{ expander.status }}</div>
+    <div class="title">{{ 'Expander Status' | translate }}</div>
+    @if (expander.descriptor) {
+      <div class="descriptor">{{ expander.descriptor }}</div>
+    }
+    @if (!expander.descriptor) {
+      <div class="descriptor">{{ 'No descriptor provided' | translate }}</div>
+    }
+  </div>
+}

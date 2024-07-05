@@ -2,7 +2,9 @@
   {{ 'Export/disconnect pool: {pool}' | translate: { pool: pool.name } }}
 </h1>
 
-<mat-progress-bar *ngIf="isFormLoading" mode="indeterminate"></mat-progress-bar>
+@if (isFormLoading) {
+  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+}
 
 <form
   class="ix-form-container"
@@ -11,69 +13,79 @@
 >
   <div mat-dialog-content class="export-disconnect-modal-content">
     <div class="warnings-block">
-      <p
-        *ngIf="showSysDatasetWarning"
-        class="full-width"
-        [innerHTML]="helptext.exportDialog.warningSysDataset | translate"
-      ></p>
+      @if (showSysDatasetWarning) {
+        <p
+          class="full-width"
+          [innerHTML]="helptext.exportDialog.warningSysDataset | translate"
+        ></p>
+      }
 
-      <p
-        *ngIf="showPoolDetachWarning"
-        class="full-width"
-        [innerHTML]="helptext.exportDialog.warning | translate: { pool: pool.name }"
-      ></p>
+      @if (showPoolDetachWarning) {
+        <p
+          class="full-width"
+          [innerHTML]="helptext.exportDialog.warning | translate: { pool: pool.name }"
+        ></p>
+      }
 
-      <p
-        *ngIf="showUnknownStatusDetachWarning"
-        class="full-width"
-        [innerHTML]="helptext.exportDialog.unknownState | translate: { pool: pool.name }"
-      ></p>
+      @if (showUnknownStatusDetachWarning) {
+        <p
+          class="full-width"
+          [innerHTML]="helptext.exportDialog.unknownState | translate: { pool: pool.name }"
+        ></p>
+      }
     </div>
 
-    <div
-      *ngIf="attachments.length || process.knownProcesses.length || process.unknownProcesses.length"
-      class="full-width pool-summary"
-    >
-      <div *ngIf="attachments.length" class="attachments">
-        {{ 'These services depend on pool {name} and will be disrupted if the pool is detached:' | translate: { name: pool.name } }}
-
-        <ul class="services">
-          <li *ngFor="let service of attachments">
-            <span class="service-name">{{ service.type }}:</span>
-            <ul class="service-attachments">
-              <ng-container *ngFor="let attachment of service.attachments">
-                <li *ngFor="let item of attachment.split(',')">
-                  {{ item }}
+    @if (attachments.length || process.knownProcesses.length || process.unknownProcesses.length) {
+      <div class="full-width pool-summary">
+        @if (attachments.length) {
+          <div class="attachments">
+            {{ 'These services depend on pool {name} and will be disrupted if the pool is detached:' | translate: { name: pool.name } }}
+            <ul class="services">
+              @for (service of attachments; track service) {
+                <li>
+                  <span class="service-name">{{ service.type }}:</span>
+                  <ul class="service-attachments">
+                    @for (attachment of service.attachments; track attachment) {
+                      @for (item of attachment.split(','); track item) {
+                        <li>{{ item }}</li>
+                      }
+                    }
+                  </ul>
                 </li>
-              </ng-container>
+              }
             </ul>
-          </li>
-        </ul>
-      </div>
+          </div>
+        }
 
-      <div *ngIf="process.knownProcesses.length" class="known-processes">
-        {{ 'These running processes are using {name}:' | translate: { name: pool.name } }}
-        <ul>
-          <li *ngFor="let process of process.knownProcesses">
-            {{ process.name }}
-          </li>
-        </ul>
-      </div>
+        @if (process.knownProcesses.length) {
+          <div class="known-processes">
+            {{ 'These running processes are using {name}:' | translate: { name: pool.name } }}
+            <ul>
+              @for (process of process.knownProcesses; track process) {
+                <li>{{ process.name }}</li>
+              }
+            </ul>
+          </div>
+        }
 
-      <div *ngIf="process.unknownProcesses.length" class="unknown-processes">
-        {{ 'These unknown processes are using the pool:' }}
-        <ul>
-          <li *ngFor="let process of process.unknownProcesses">
-            {{ process.pid || ('Unknown PID' | translate) }} -
-            {{ process.cmdline?.substring(0, 40) }}
-          </li>
-        </ul>
-
-        <div class="process-will-be-terminated">
-          {{ 'WARNING: These unknown processes will be terminated while exporting the pool.' | translate }}
-        </div>
+        @if (process.unknownProcesses.length) {
+          <div class="unknown-processes">
+            {{ 'These unknown processes are using the pool:' | translate }}
+            <ul>
+              @for (process of process.unknownProcesses; track process) {
+                <li>
+                  {{ process.pid || ('Unknown PID' | translate) }} -
+                  {{ process.cmdline?.substring(0, 40) }}
+                </li>
+              }
+            </ul>
+            <div class="process-will-be-terminated">
+              {{ 'WARNING: These unknown processes will be terminated while exporting the pool.' | translate }}
+            </div>
+          </div>
+        }
       </div>
-    </div>
+    }
 
     <ix-fieldset>
       <ix-checkbox
@@ -92,11 +104,12 @@
         [required]="true"
       ></ix-checkbox>
 
-      <ix-input
-        *ngIf="form.value.destroy"
-        formControlName="nameInput"
-        [label]="helptext.exportDialog.enterName | translate: { pool: pool.name }"
-      ></ix-input>
+      @if (form.value.destroy) {
+        <ix-input
+          formControlName="nameInput"
+          [label]="helptext.exportDialog.enterName | translate: { pool: pool.name }"
+        ></ix-input>
+      }
     </ix-fieldset>
   </div>
 

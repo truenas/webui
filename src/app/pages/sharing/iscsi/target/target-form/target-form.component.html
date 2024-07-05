@@ -36,17 +36,18 @@
               [formArray]="form.get('auth_networks')"
               (add)="addNetwork()"
             >
-              <ix-list-item
-                *ngFor="let entry of form.controls.auth_networks.controls; let i = index"
-                [label]="helptext.auth_network.placeholder | translate"
-                (delete)="deleteNetwork(i)"
-              >
-                <ix-ip-input-with-netmask
-                  [formControlName]="i"
-                  [label]="'Network' | translate"
-                  [required]="true"
-                ></ix-ip-input-with-netmask>
-              </ix-list-item>
+              @for (entry of form.controls.auth_networks.controls; track entry; let i = $index) {
+                <ix-list-item
+                  [label]="helptext.auth_network.placeholder | translate"
+                  (delete)="deleteNetwork(i)"
+                >
+                  <ix-ip-input-with-netmask
+                    [formControlName]="i"
+                    [label]="'Network' | translate"
+                    [required]="true"
+                  ></ix-ip-input-with-netmask>
+                </ix-list-item>
+              }
             </ix-list>
           </ix-fieldset>
         </div>
@@ -60,42 +61,43 @@
               [label]="'Add groups' | translate"
               (add)="addGroup()"
             >
-              <ix-list-item
-                *ngFor="let entry of form.controls.groups.controls; let i = index"
-                [label]="'Groups' | translate"
-                [formGroupName]="i"
-                (delete)="deleteGroup(i)"
-              >
-                <ix-select
-                  formControlName="portal"
-                  [label]="helptext.target_form_placeholder_portal | translate"
-                  [options]="portals$"
-                  [tooltip]="helptext.target_form_tooltip_portal | translate"
-                  [required]="true"
-                ></ix-select>
+              @for (entry of form.controls.groups.controls; track entry; let i = $index) {
+                <ix-list-item
+                  [label]="'Groups' | translate"
+                  [formGroupName]="i"
+                  (delete)="deleteGroup(i)"
+                >
+                  <ix-select
+                    formControlName="portal"
+                    [label]="helptext.target_form_placeholder_portal | translate"
+                    [options]="portals$"
+                    [tooltip]="helptext.target_form_tooltip_portal | translate"
+                    [required]="true"
+                  ></ix-select>
 
-                <ix-select
-                  formControlName="initiator"
-                  [label]="helptext.target_form_placeholder_initiator | translate"
-                  [options]="initiators$"
-                  [tooltip]="helptext.target_form_tooltip_initiator | translate"
-                ></ix-select>
+                  <ix-select
+                    formControlName="initiator"
+                    [label]="helptext.target_form_placeholder_initiator | translate"
+                    [options]="initiators$"
+                    [tooltip]="helptext.target_form_tooltip_initiator | translate"
+                  ></ix-select>
 
-                <ix-select
-                  formControlName="authmethod"
-                  [label]="helptext.target_form_placeholder_authmethod | translate"
-                  [options]="authmethods$"
-                  [tooltip]="helptext.target_form_tooltip_authmethod | translate"
-                  [required]="true"
-                ></ix-select>
+                  <ix-select
+                    formControlName="authmethod"
+                    [label]="helptext.target_form_placeholder_authmethod | translate"
+                    [options]="authmethods$"
+                    [tooltip]="helptext.target_form_tooltip_authmethod | translate"
+                    [required]="true"
+                  ></ix-select>
 
-                <ix-select
-                  formControlName="auth"
-                  [label]="helptext.target_form_placeholder_auth | translate"
-                  [options]="auths$"
-                  [tooltip]="helptext.target_form_tooltip_auth | translate"
-                ></ix-select>
-              </ix-list-item>
+                  <ix-select
+                    formControlName="auth"
+                    [label]="helptext.target_form_placeholder_auth | translate"
+                    [options]="auths$"
+                    [tooltip]="helptext.target_form_tooltip_auth | translate"
+                  ></ix-select>
+                </ix-list-item>
+              }
             </ix-list>
           </ix-fieldset>
         </div>

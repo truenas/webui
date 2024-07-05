@@ -17,63 +17,61 @@
         <div class="value">
           {{ totalResults | number }}
         </div>
-        <a
-          *ngIf="totalResults"
-          class="action"
-          ixTest="view-all-test-results"
-          [routerLink]="[
-            '/storage',
-            'disks',
-            'smartresults',
-            SmartTestResultPageType.Disk,
-            topologyDisk.disk
-          ]"
-        >
-          {{ 'View All Test Results' | translate }}
-        </a>
+        @if (totalResults) {
+          <a
+            class="action"
+            ixTest="view-all-test-results"
+            [routerLink]="[
+              '/storage',
+              'disks',
+              'smartresults',
+              SmartTestResultPageType.Disk,
+              topologyDisk.disk
+            ]"
+          >
+            {{ 'View All Test Results' | translate }}
+          </a>
+        }
       </ng-container>
     </div>
 
-    <div
-      *ngIf="lastResultsInCategory$ | async as lastResultsInCategory"
-      class="results-by-category"
-    >
-      <div
-        *ngFor="let resultInCategory of lastResultsInCategory"
-        class="details-item"
-      >
-        <div class="label">
-          {{ 'Last {result} Test' | translate: { result: resultInCategory.description } }}:
-        </div>
-        <div class="value">{{ resultInCategory.status }}</div>
+    @if (lastResultsInCategory$ | async; as lastResultsInCategory) {
+      <div class="results-by-category">
+        @for (resultInCategory of lastResultsInCategory; track resultInCategory) {
+          <div class="details-item">
+            <div class="label">
+              {{ 'Last {result} Test' | translate: { result: resultInCategory.description } }}:
+            </div>
+            <div class="value">{{ resultInCategory.status }}</div>
+          </div>
+        }
       </div>
-    </div>
+    }
 
-    <div
-      *ngIf="disk?.togglesmart; else smartDisabledForDisk"
-      class="details-item"
-    >
-      <div class="label">{{ 'S.M.A.R.T. Tasks' | translate }}:</div>
-      <ng-container *ixWithLoadingState="smartTasksCount$ as smartTasksCount">
-        <div class="value">
-          {{ tasksMessage | translate: { n: smartTasksCount } }}
-        </div>
-        <a class="action" ixTest="manage-smart-tasks" [routerLink]="['/data-protection', 'smart']">
-          {{ 'Manage S.M.A.R.T. Tasks' | translate }}
-        </a>
-      </ng-container>
-    </div>
-
-    <ng-template #smartDisabledForDisk>
+    @if (disk?.togglesmart) {
+      <div class="details-item">
+        <div class="label">{{ 'S.M.A.R.T. Tasks' | translate }}:</div>
+        <ng-container *ixWithLoadingState="smartTasksCount$ as smartTasksCount">
+          <div class="value">
+            {{ tasksMessage | translate: { n: smartTasksCount } }}
+          </div>
+          <a class="action" ixTest="manage-smart-tasks" [routerLink]="['/data-protection', 'smart']">
+            {{ 'Manage S.M.A.R.T. Tasks' | translate }}
+          </a>
+        </ng-container>
+      </div>
+    } @else {
       <div class="details-item">
         <div class="label">{{ 'S.M.A.R.T. Tasks' | translate }}:</div>
         <div class="value">{{ 'Disabled in Disk Settings' | translate }}</div>
       </div>
-    </ng-template>
+    }
 
-    <div *ngIf="disk?.smartoptions" class="details-item">
-      <div class="label">{{ 'S.M.A.R.T. Options' | translate }}:</div>
-      <div class="value">{{ disk.smartoptions }}</div>
-    </div>
+    @if (disk?.smartoptions) {
+      <div class="details-item">
+        <div class="label">{{ 'S.M.A.R.T. Options' | translate }}:</div>
+        <div class="value">{{ disk.smartoptions }}</div>
+      </div>
+    }
   </mat-card-content>
 </mat-card>

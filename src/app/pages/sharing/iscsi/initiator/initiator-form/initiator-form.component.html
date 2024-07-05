@@ -1,8 +1,9 @@
 <mat-card class="form-card" [ixUiSearch]="searchableElements.elements.addInitiator">
-  <mat-progress-bar
-    *ngIf="isFormLoading"
-    mode="indeterminate"
-  ></mat-progress-bar>
+  @if (isFormLoading) {
+    <mat-progress-bar
+      mode="indeterminate"
+    ></mat-progress-bar>
+  }
   <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
     <mat-card-content>
       <div class="card-content">
@@ -11,49 +12,53 @@
             formControlName="all"
             [label]="helptext.all_placeholder_initiators | translate"
           ></ix-checkbox>
-          <div *ngIf="!isAllowAll" class="add-container">
-            <ix-input
-              formControlName="new_initiator"
-              [label]="helptext.initiator_form_placeholder_initiators | translate"
-              [tooltip]="helptext.initiator_form_tooltip_initiators | translate"
-            ></ix-input>
-            <button
-              mat-flat-button
-              ixTest="add-initiator"
-              type="button"
-              [disabled]="isFormLoading"
-              (click)="onAddInitiator()"
-            >
-              <ix-icon name="add"></ix-icon>
-            </button>
-          </div>
+          @if (!isAllowAll) {
+            <div class="add-container">
+              <ix-input
+                formControlName="new_initiator"
+                [label]="helptext.initiator_form_placeholder_initiators | translate"
+                [tooltip]="helptext.initiator_form_tooltip_initiators | translate"
+              ></ix-input>
+              <button
+                mat-flat-button
+                ixTest="add-initiator"
+                type="button"
+                [disabled]="isFormLoading"
+                (click)="onAddInitiator()"
+              >
+                <ix-icon name="add"></ix-icon>
+              </button>
+            </div>
+          }
         </div>
 
-        <ix-dual-listbox
-          *ngIf="!isAllowAll"
-          minHeight="55vh"
-          maxHeight="55vh"
-          [items]="allInitiators"
-          [title1]="'Connected Initiators' | translate"
-          [title2]="'Allowed Initiators' | translate"
-          [(selectedItems)]="selectedInitiators"
-        >
-          <ng-template #templateItem let-item>
-            <span matListItemLine>{{ item.name }}</span>
-          </ng-template>
-        </ix-dual-listbox>
+        @if (!isAllowAll) {
+          <ix-dual-listbox
+            minHeight="55vh"
+            maxHeight="55vh"
+            [items]="allInitiators"
+            [title1]="'Connected Initiators' | translate"
+            [title2]="'Allowed Initiators' | translate"
+            [(selectedItems)]="selectedInitiators"
+          >
+            <ng-template #templateItem let-item>
+              <span matListItemLine>{{ item.name }}</span>
+            </ng-template>
+          </ix-dual-listbox>
+        }
 
-        <button
-          *ngIf="!isAllowAll"
-          mat-flat-button
-          type="button"
-          ixTest="refresh"
-          [disabled]="isFormLoading"
-          (click)="getConnectedInitiators()"
-        >
-          <ix-icon name="refresh"></ix-icon>
-          {{ 'REFRESH' }}
-        </button>
+        @if (!isAllowAll) {
+          <button
+            mat-flat-button
+            type="button"
+            ixTest="refresh"
+            [disabled]="isFormLoading"
+            (click)="getConnectedInitiators()"
+          >
+            <ix-icon name="refresh"></ix-icon>
+            {{ 'Refresh' | translate }}
+          </button>
+        }
 
         <ix-input
           formControlName="comment"

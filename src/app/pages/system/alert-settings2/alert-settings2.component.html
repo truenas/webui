@@ -8,8 +8,7 @@
 
 <ng-container>
   <div class="wizard-container">
-    <ng-container *ngFor="let category of categories">
-
+    @for (category of categories; track category) {
       <mat-card class="card-container" [id]="category.id">
         <mat-toolbar-row>
           <h3>{{ category.title | translate }}</h3>
@@ -18,42 +17,41 @@
               *ixRequiresRoles="requiredRoles"
               mat-button
               [ixTest]="[category.id, '-class-', 'configure']"
-            >
+              >
               {{ 'Configure' | translate }}
             </button>
           </div>
         </mat-toolbar-row>
-
         <mat-card-content>
           <mat-list>
-            <mat-list-item *ngFor="let cls of category.classes">
-              <div class="list-item">
+            @for (cls of category.classes; track cls) {
+              <mat-list-item>
+                <div class="list-item">
+                  <div class="wrapper title">
+                    <div class="column-header">{{ 'Alert' | translate }}</div>
+                    <div class="column-cell">{{ cls.title | translate }}</div>
+                  </div>
 
-                <div class="wrapper title">
-                  <div class="column-header">{{ 'Alert' | translate }}</div>
-                  <div class="column-cell">{{ cls.title | translate }}</div>
-                </div>
+                  <div class="wrapper state-button">
+                    <div class="column-header">{{ 'Severity Level' | translate }}</div>
+                    <div class="column-cell">
+                      <ix-icon class="icon" [name]="getIconName(getLevel(cls))" [style.color]="getLevelColor(getLevel(cls))"/>{{ getLevel(cls) }}
+                    </div>
+                  </div>
 
-                <div class="wrapper state-button">
-                  <div class="column-header">{{ 'Severity Level' | translate }}</div>
-                  <div class="column-cell">
-                    <ix-icon class="icon" [name]="getIconName(getLevel(cls))" [style.color]="getLevelColor(getLevel(cls))"/>{{ getLevel(cls) }}
+                  <div class="wrapper freq">
+                    <div class="column-header">{{ 'Frequency' | translate }}</div>
+                    <div
+                      class="column-cell"
+                    >{{ getPolicy(cls) }}</div>
                   </div>
                 </div>
-
-                <div class="wrapper freq">
-                  <div class="column-header">{{ 'Frequency' | translate }}</div>
-                  <div
-                    class="column-cell"
-                  >{{ getPolicy(cls) }}</div>
-                </div>
-
-              </div>
-            </mat-list-item>
+              </mat-list-item>
+            }
           </mat-list>
         </mat-card-content>
       </mat-card>
-    </ng-container>
+    }
 
   </div>
   <div class="search-container">
@@ -64,16 +62,14 @@
         [placeholder]="'Search Alert Categories' | translate"
         [autocompleteOptions]="searchOptions"
       ></ix-input>
-      <ng-container
-        *ngFor="let category of categories"
-      >
+      @for (category of categories; track category) {
         <div
           class="section"
           (click)="categoryClick(category.id)"
         >
           {{ category.title | translate }}
         </div>
-      </ng-container>
+      }
     </div>
   </div>
 </ng-container>

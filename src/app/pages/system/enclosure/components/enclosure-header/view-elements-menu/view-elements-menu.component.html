@@ -1,21 +1,22 @@
 <!-- TODO: Original code has `isRackmount` condition -->
-<ng-container *ngIf="views().length > 1">
+@if (views().length > 1) {
   <button
     mat-button
     ixTest="elements-menu"
     [matMenuTriggerFor]="elementsMenu"
-  >
+    >
     {{ 'Elements' | translate }}
     <ix-icon name="mdi-menu-down" class="menu-caret"></ix-icon>
   </button>
   <mat-menu #elementsMenu="matMenu">
-    <button
-      *ngFor="let view of views()"
-      mat-menu-item
-      [ixTest]="view.label"
-      (click)="changeView(view)"
-    >
-      {{ view.label }}
-    </button>
+    @for (view of views(); track view) {
+      <button
+        mat-menu-item
+        [ixTest]="view.label"
+        (click)="changeView(view)"
+        >
+        {{ view.label }}
+      </button>
+    }
   </mat-menu>
-</ng-container>
+}

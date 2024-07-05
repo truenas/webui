@@ -14,26 +14,23 @@
           [options]="sendMethodOptions$"
         ></ix-radio-group>
 
-        <ng-container *ngIf="isSmtp; else gmailOauth">
+        @if (isSmtp) {
           <ix-input
             formControlName="fromemail"
             [label]="'From Email' | translate"
             [required]="true"
             [tooltip]="helptext.fromemail.tooltip | translate"
           ></ix-input>
-
           <ix-input
             formControlName="fromname"
             [label]="'From Name' | translate"
             [tooltip]="helptext.fromname.tooltip | translate"
           ></ix-input>
-
           <ix-input
             formControlName="outgoingserver"
             [label]="'Outgoing Mail Server' | translate"
             [tooltip]="helptext.outgoingserver.tooltip | translate"
           ></ix-input>
-
           <ix-input
             formControlName="port"
             type="number"
@@ -41,58 +38,53 @@
             [required]="true"
             [tooltip]="helptext.port.tooltip | translate"
           ></ix-input>
-
           <ix-select
             formControlName="security"
             [label]="'Security' | translate"
             [tooltip]="helptext.security.tooltip | translate"
             [options]="securityOptions$"
           ></ix-select>
-
           <ix-checkbox
             formControlName="smtp"
             [label]="'SMTP Authentication' | translate"
             [tooltip]="helptext.auth.smtp.tooltip | translate"
           ></ix-checkbox>
-
-          <ng-container *ngIf="hasSmtpAuthentication">
+          @if (hasSmtpAuthentication) {
             <ix-input
               formControlName="user"
               [label]="'Username' | translate"
               [required]="true"
               [tooltip]="helptext.user.tooltip | translate"
             ></ix-input>
-
             <ix-input
               formControlName="pass"
               type="password"
               [label]="'Password' | translate"
               [tooltip]="helptext.pass.tooltip | translate"
             ></ix-input>
-          </ng-container>
-        </ng-container>
-      </ix-fieldset>
-
-      <ng-template #gmailOauth>
-        <div class="oauth-message">
-          <ng-container *ngIf="hasOauthAuthorization; else logInToGmail">
-            <ix-icon name="check_circle"></ix-icon>
-            {{ 'Gmail credentials have been applied.' | translate }}
-          </ng-container>
-          <ng-template #logInToGmail>
-            <ix-icon name="info"></ix-icon>
-            {{ 'Log in to Gmail to set up Oauth credentials.' | translate }}
-          </ng-template>
-        </div>
-
-        <ix-oauth-button
-          testId="login-to-gmail"
-          [oauthType]="oauthType.Gmail"
+          }
+        } @else {
+          <div class="oauth-message">
+            @if (hasOauthAuthorization) {
+              <ix-icon name="check_circle"></ix-icon>
+              {{ 'Gmail credentials have been applied.' | translate }}
+            } @else {
+              <ix-icon name="info"></ix-icon>
+              {{ 'Log in to Gmail to set up Oauth credentials.' | translate }}
+            }
+          </div>
+          <ix-oauth-button
+            testId="login-to-gmail"
+            [oauthType]="oauthType.Gmail"
           [oauthUrl]="'https://truenas.com/oauth/gmail?origin='"
           [isLoggedIn]="hasOauthAuthorization"
           (loggedIn)="onLoggedIn($event)"
         ></ix-oauth-button>
-      </ng-template>
+      
+}
+      </ix-fieldset>
+
+      
 
       <div class="form-actions">
         <button
@@ -112,7 +104,7 @@
           type="button"
           ixTest="send-test-mail"
           (click)="onSendTestEmailPressed()"
-        >
+          >
           {{ 'Send Test Mail' | translate }}
         </button>
       </div>

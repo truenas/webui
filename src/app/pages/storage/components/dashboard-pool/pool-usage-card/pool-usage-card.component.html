@@ -29,11 +29,13 @@
         [value]="usedPercentage > 100 ? 100 : usedPercentage"
         [style]="isLowCapacity ? 'color: var(--red);' : ''"
       ></ix-gauge-chart>
-      <div *ngIf="isLowCapacity" fxLayout="row" class="warning-container">
-        <span>
-          <b>{{ 'Warning' | translate }}:</b> {{ 'Low Capacity' | translate }}
-        </span>
-      </div>
+      @if (isLowCapacity) {
+        <div fxLayout="row" class="warning-container">
+          <span>
+            <b>{{ 'Warning' | translate }}:</b> {{ 'Low Capacity' | translate }}
+          </span>
+        </div>
+      }
     </div>
 
     <div class="right" fxLayout="column" fxLayoutAlign="center center">

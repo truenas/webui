@@ -4,11 +4,12 @@
   </div>
   <div class="cell cell-status" [style.background-color]="statusColor">
     <span>{{ topologyItem.status }}</span>
-    <ix-icon
-      *ngIf="!isDisk && !isMirror && poolInstance?.status_detail"
-      name="mdi-information-outline"
-      [matTooltip]="poolInstance.status_detail"
-    ></ix-icon>
+    @if (!isDisk && !isMirror && poolInstance?.status_detail) {
+      <ix-icon
+        name="mdi-information-outline"
+        [matTooltip]="poolInstance.status_detail"
+      ></ix-icon>
+    }
   </div>
   <div class="cell">
     <span>{{ topologyItem?.stats?.read_errors || 0 }}</span>
@@ -23,31 +24,36 @@
     <span>{{ errors }}</span>
   </div>
   <div class="cell cell-actions">
-    <button
-      *ngIf="isDisk || isMirror"
-      mat-icon-button
-      aria-label="Actions"
-      [ixTest]="[ownName, 'actions']"
-      [matMenuTriggerFor]="menu"
-    >
-      <ix-icon name="more_vert"></ix-icon>
-    </button>
+    @if (isDisk || isMirror) {
+      <button
+        mat-icon-button
+        aria-label="Actions"
+        [ixTest]="[ownName, 'actions']"
+        [matMenuTriggerFor]="menu"
+        >
+        <ix-icon name="more_vert"></ix-icon>
+      </button>
+    }
     <mat-menu #menu="matMenu">
       <button *ixRequiresRoles="requiredRoles" mat-menu-item ixTest="replace" (click)="replace()">
         <ix-icon name="mdi-file-replace"></ix-icon>
         <span>{{ 'Replace' | translate }}</span>
       </button>
       <ng-container *ixRequiresRoles="requiredRoles">
-        <button *ngIf="isDisk && oneDisk" mat-menu-item ixTest="attach" (click)="attach()">
-          <ix-icon name="mdi-attachment-plus"></ix-icon>
-          <span>{{ 'Attach' | translate }}</span>
-        </button>
+        @if (isDisk && oneDisk) {
+          <button mat-menu-item ixTest="attach" (click)="attach()">
+            <ix-icon name="mdi-attachment-plus"></ix-icon>
+            <span>{{ 'Attach' | translate }}</span>
+          </button>
+        }
       </ng-container>
       <ng-container *ixRequiresRoles="requiredRoles">
-        <button *ngIf="isMirror" mat-menu-item ixTest="detach" (click)="detach()">
-          <ix-icon name="mdi-attachment-minus"></ix-icon>
-          <span>{{ 'Detach' | translate }}</span>
-        </button>
+        @if (isMirror) {
+          <button mat-menu-item ixTest="detach" (click)="detach()">
+            <ix-icon name="mdi-attachment-minus"></ix-icon>
+            <span>{{ 'Detach' | translate }}</span>
+          </button>
+        }
       </ng-container>
     </mat-menu>
   </div>

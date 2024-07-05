@@ -1,19 +1,21 @@
 <ix-page-header>
-  <a
-    *ngIf="isJbofLicensed$ | async"
-    mat-button
-    ixTest="manage-expansion"
-    [routerLink]="['/', 'system', 'viewenclosure', 'jbof']"
-  >
-    {{ 'NVMe-oF Expansion Shelves' | translate }}
-  </a>
-  <ix-view-elements-menu
-    *ngIf="selectedEnclosure()"
-    [enclosure]="selectedEnclosure()"
-  ></ix-view-elements-menu>
+  @if (isJbofLicensed$ | async) {
+    <a
+      mat-button
+      ixTest="manage-expansion"
+      [routerLink]="['/', 'system', 'viewenclosure', 'jbof']"
+      >
+      {{ 'NVMe-oF Expansion Shelves' | translate }}
+    </a>
+  }
+  @if (selectedEnclosure()) {
+    <ix-view-elements-menu
+      [enclosure]="selectedEnclosure()"
+    ></ix-view-elements-menu>
+  }
 </ix-page-header>
 
-<ng-container *ngIf="selectedEnclosure()">
+@if (selectedEnclosure()) {
   <!-- TODO: Loading indication -->
   <router-outlet></router-outlet>
-</ng-container>
+}

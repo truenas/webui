@@ -1,6 +1,8 @@
 <mat-card class="card" [ixUiSearch]="searchableElements.elements.failover">
   <mat-card-content>
-    <mat-progress-bar *ngIf="isLoading" mode="indeterminate"></mat-progress-bar>
+    @if (isLoading) {
+      <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    }
 
     <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
       <ix-fieldset [title]="'Failover Configuration' | translate">
@@ -32,7 +34,7 @@
           color="primary"
           ixTest="save"
           [disabled]="form.invalid || isLoading"
-        >
+          >
           {{ submitButtonText$ | async }}
         </button>
 
@@ -44,7 +46,7 @@
           [disabled]="isLoading"
           [ixUiSearch]="searchableElements.elements.syncToPeer"
           (click)="onSyncToPeerPressed()"
-        >
+          >
           {{ 'Sync To Peer' | translate }}
         </button>
 
@@ -56,7 +58,7 @@
           [disabled]="isLoading"
           [ixUiSearch]="searchableElements.elements.syncFromPeer"
           (click)="onSyncFromPeerPressed()"
-        >
+          >
           {{ 'Sync From Peer' | translate }}
         </button>
       </div>

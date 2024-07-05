@@ -1,8 +1,9 @@
 <div class="left-column">
-  <ix-disk-topology-description
-    *ngIf="selectedSlot()"
-    [selectedSlot]="selectedSlot()"
-  ></ix-disk-topology-description>
+  @if (selectedSlot()) {
+    <ix-disk-topology-description
+      [selectedSlot]="selectedSlot()"
+    ></ix-disk-topology-description>
+  }
 </div>
 
 <div class="enclosure-container">
@@ -24,8 +25,9 @@
 </div>
 
 <div class="right-column">
-  <ix-vdev-disks-list
-    *ngIf="selectedSlot()"
-    [selectedSlot]="selectedSlot()"
-  ></ix-vdev-disks-list>
+  @if (selectedSlot()) {
+    <ix-vdev-disks-list
+      [selectedSlot]="selectedSlot()"
+    ></ix-vdev-disks-list>
+  }
 </div>

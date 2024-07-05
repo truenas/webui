@@ -9,34 +9,34 @@
     (search)="onListFiltered($event)"
   ></ix-search-input1>
 
-  <ng-container *ngIf="activeNfsType === NfsType.Nfs3">
+  @if (activeNfsType === NfsType.Nfs3) {
     <ng-container
       *ngTemplateOutlet="nfsColumnsSelector; context: { dataProvider: nfs3DataProvider, columns: nfs3Columns }"
     ></ng-container>
-  </ng-container>
+  }
 
-  <ng-container *ngIf="activeNfsType === NfsType.Nfs4">
+  @if (activeNfsType === NfsType.Nfs4) {
     <ng-container
       *ngTemplateOutlet="nfsColumnsSelector; context: { dataProvider: nfs4DataProvider, columns: nfs4Columns }"
     ></ng-container>
-  </ng-container>
+  }
 
   <button mat-button color="primary" ixTest="refresh-data" (click)="loadData()">
     {{ 'Refresh' | translate }}
   </button>
 </ix-page-header>
 
-<ng-container *ngIf="activeNfsType === NfsType.Nfs3">
+@if (activeNfsType === NfsType.Nfs3) {
   <ng-container
     *ngTemplateOutlet="nfsTable; context: { dataProvider: nfs3DataProvider, columns: nfs3Columns }"
   ></ng-container>
-</ng-container>
+}
 
-<ng-container *ngIf="activeNfsType === NfsType.Nfs4">
+@if (activeNfsType === NfsType.Nfs4) {
   <ng-container
     *ngTemplateOutlet="nfsTable; context: { dataProvider: nfs4DataProvider, columns: nfs4Columns }"
   ></ng-container>
-</ng-container>
+}
 
 <ng-template #nfsColumnsSelector let-dataProvider="dataProvider" let-columns="columns">
   <ix-table-columns-selector

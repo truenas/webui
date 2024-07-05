@@ -2,27 +2,38 @@
   <mat-card-header>
     <h3 mat-card-title>{{ 'Unassigned Disks' | translate }}</h3>
   </mat-card-header>
-  <mat-card-content *ngIf="!(isLoading$| async); else loading">
-    <ng-container *ngIf="hasDisks$ | async; else noDisks">
-      <div *ngFor="let item of sizeDisksMap[DiskType.Hdd] | keyvalue: orderBySize">
-        <div *ngIf="item.value" class="details-item">
-          <ix-icon name="ix:hdd"></ix-icon>
-          <div class="label">{{ getFilesize(item.key) }} </div>
-          <div class="value"> × {{ item.value.length }}</div>
-        </div>
-      </div>
-      <div *ngFor="let item of sizeDisksMap[DiskType.Ssd] | keyvalue: orderBySize">
-        <div *ngIf="item.value" class="details-item">
-          <ix-icon name="ix:ssd"></ix-icon>
-          <div class="label">{{ getFilesize(item.key) }} </div>
-          <div class="value"> × {{ item.value.length }}</div>
-        </div>
-      </div>
-    </ng-container>
-    <ng-template #noDisks>
-      {{ 'No disks available.' | translate }}
-    </ng-template>
-  </mat-card-content>
+  @if (!(isLoading$| async)) {
+    <mat-card-content>
+      @if (hasDisks$ | async) {
+        @for (item of sizeDisksMap[DiskType.Hdd] | keyvalue: orderBySize; track item) {
+          <div>
+            @if (item.value) {
+              <div class="details-item">
+                <ix-icon name="ix:hdd"></ix-icon>
+                <div class="label">{{ getFilesize(item.key) }} </div>
+                <div class="value"> × {{ item.value.length }}</div>
+              </div>
+            }
+          </div>
+        }
+        @for (item of sizeDisksMap[DiskType.Ssd] | keyvalue: orderBySize; track item) {
+          <div>
+            @if (item.value) {
+              <div class="details-item">
+                <ix-icon name="ix:ssd"></ix-icon>
+                <div class="label">{{ getFilesize(item.key) }} </div>
+                <div class="value"> × {{ item.value.length }}</div>
+              </div>
+            }
+          </div>
+        }
+      } @else {
+        {{ 'No disks available.' | translate }}
+      }
+    </mat-card-content>
+  } @else {
+    <div class="loading">{{ 'Loading disks...' | translate }}</div>
+  }
 </mat-card>
 
 <ng-template #loading>

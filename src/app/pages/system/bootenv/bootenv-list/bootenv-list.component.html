@@ -7,7 +7,7 @@
     ixTest="bootenv-stats"
     [ixUiSearch]="searchableElements.elements.stats"
     (click)="openBootenvStats()"
-  >
+    >
     {{ 'Stats/Settings' | translate }}
   </button>
 
@@ -21,39 +21,39 @@
     ixTest="bootenv-scrub"
     [ixUiSearch]="searchableElements.elements.scrubBootPool"
     (click)="doScrub()"
-  >
+    >
     {{ 'Scrub Boot Pool' | translate }}
   </button>
 </ix-page-header>
 
-<div
-  *ngIf="selectedBootenvs.length"
-  class="batch-actions-toolbar"
->
-  <div class="title">
-    <strong>{{ 'Batch Operations' | translate }}</strong>
-  </div>
-
-  <div class="actions">
-    <button
-      *ixRequiresRoles="requiredRoles"
-      mat-button
-      ixTest="delete"
-      [disabled]="!selectionHasItems"
-      (click)="doDelete(selectedBootenvs)"
+@if (selectedBootenvs.length) {
+  <div
+    class="batch-actions-toolbar"
     >
-      <ix-icon name="delete"></ix-icon>
-      {{ 'Delete' | translate }}
-    </button>
+    <div class="title">
+      <strong>{{ 'Batch Operations' | translate }}</strong>
+    </div>
+    <div class="actions">
+      <button
+        *ixRequiresRoles="requiredRoles"
+        mat-button
+        ixTest="delete"
+        [disabled]="!selectionHasItems"
+        (click)="doDelete(selectedBootenvs)"
+        >
+        <ix-icon name="delete"></ix-icon>
+        {{ 'Delete' | translate }}
+      </button>
+    </div>
   </div>
-</div>
+}
 
 <ix-table
   class="table"
   [ix-table-empty]="!(dataProvider.currentPageCount$ | async)"
   [emptyConfig]="emptyService.defaultEmptyConfig(dataProvider.emptyType$ | async)"
   [ixUiSearch]="searchableElements.elements.boot"
->
+  >
   <thead
     ix-table-head
     [columns]="columns"
@@ -64,7 +64,7 @@
     [columns]="columns"
     [dataProvider]="dataProvider"
     [isLoading]="dataProvider.isLoading$ | async"
-  >
+    >
   </tbody>
 </ix-table>
 <ix-table-pager [dataProvider]="dataProvider"></ix-table-pager>
