@@ -5,7 +5,7 @@
   @if (!(isLoading$| async)) {
     <mat-card-content>
       @if (hasDisks$ | async) {
-        @for (item of sizeDisksMap[DiskType.Hdd] | keyvalue: orderBySize; track item) {
+        @for (item of sizeDisksMap[DiskType.Hdd] | keyvalue: orderBySize; track item.key) {
           <div>
             @if (item.value) {
               <div class="details-item">
@@ -16,7 +16,7 @@
             }
           </div>
         }
-        @for (item of sizeDisksMap[DiskType.Ssd] | keyvalue: orderBySize; track item) {
+        @for (item of sizeDisksMap[DiskType.Ssd] | keyvalue: orderBySize; track item.key) {
           <div>
             @if (item.value) {
               <div class="details-item">

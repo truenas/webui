@@ -5,7 +5,7 @@
   <mat-card-content>
     <div>
 
-      @for (category of topology$ | async | keyvalue; track category) {
+      @for (category of topology$ | async | keyvalue; track category.key) {
         <div class="details-item">
           <span class="label">
             {{ category.key | mapValue: vdevTypeLabels | translate }}:

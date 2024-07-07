@@ -47,7 +47,7 @@
                   <ul class="service-attachments">
                     @for (attachment of service.attachments; track attachment) {
                       @for (item of attachment.split(','); track item) {
-                        <li>{{ item }}</li>
+                        <li> {{ item }}</li>
                       }
                     }
                   </ul>
@@ -62,7 +62,7 @@
             {{ 'These running processes are using {name}:' | translate: { name: pool.name } }}
             <ul>
               @for (process of process.knownProcesses; track process) {
-                <li>{{ process.name }}</li>
+                <li> {{ process.name }}</li>
               }
             </ul>
           </div>

@@ -20,7 +20,7 @@
     <h4>{{ 'Topology Summary' | translate }}</h4>
 
     @if (nonEmptyTopologyCategories.length) {
-      @for (category of nonEmptyTopologyCategories; track category) {
+      @for (category of nonEmptyTopologyCategories; track category[0]) {
         <div class="summary-item">
           <div class="label">
             {{ category[0] | mapValue: vdevTypeLabels | translate }}
@@ -63,7 +63,7 @@
   @if (poolCreationErrors?.length) {
     <div>
       <h4>{{ 'Warnings' | translate }}</h4>
-      @for (error of poolCreationErrors; track error) {
+      @for (error of poolCreationErrors; track error.severity + error.text) {
         <div>
           <div [class]="[error.severity, 'summary-item']">
             {{ error.text }}

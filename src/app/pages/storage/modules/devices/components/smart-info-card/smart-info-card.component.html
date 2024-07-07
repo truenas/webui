@@ -38,7 +38,7 @@
 
     @if (lastResultsInCategory$ | async; as lastResultsInCategory) {
       <div class="results-by-category">
-        @for (resultInCategory of lastResultsInCategory; track resultInCategory) {
+        @for (resultInCategory of lastResultsInCategory; track resultInCategory.description) {
           <div class="details-item">
             <div class="label">
               {{ 'Last {result} Test' | translate: { result: resultInCategory.description } }}:

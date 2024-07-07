@@ -17,7 +17,7 @@
     <div class="spacer-bottom">
       <ix-warning [message]="exportedPoolsWarning"></ix-warning>
       <ix-label [label]="'Select disks you want to use' | translate"></ix-label>
-      @for (item of poolAndDisks | keyvalue; track item) {
+      @for (item of poolAndDisks | keyvalue; track item.key) {
         <mat-checkbox
           [ixTest]="[item.key, 'exported_pool']"
           [value]="item.key"

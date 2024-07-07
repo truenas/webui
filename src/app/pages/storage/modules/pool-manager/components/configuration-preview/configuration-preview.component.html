@@ -8,7 +8,7 @@
         <div class="label">{{ 'Name' | translate }}:</div>
         <div class="value">{{ (name$ | async) || unknownProp }}</div>
       </div>
-      @for (category of topology$ | async | keyvalue; track category) {
+      @for (category of topology$ | async | keyvalue; track category.key) {
         <div class="details-item">
           <div class="label">
             {{ category.key | mapValue: vdevTypeLabels | translate }}:
