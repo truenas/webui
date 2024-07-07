@@ -8,23 +8,23 @@
   </mat-toolbar-row>
 
   <div class="mat-mdc-card-content">
-    <div
-      class="container"
-      fxLayoutGap="16px"
-      fxLayout.lt-lg="row wrap"
-      fxLayoutAlign="space-evenly center"
-      [fxLayout.xs]="isProductImageRack ? 'column' : 'row wrap'"
-      [fxLayout.gt-md]="isProductImageRack ? 'column' : 'row wrap'"
-    >
       <div
-        class="product-image"
-        [fxFlex.gt-md]="isProductImageRack ? 'calc(200px - 32px)' : '40%'"
-        [fxFlex.gt-xs]="isProductImageRack ? 'calc(40% - 32px)' : '40%'"
-        [fxFlex.xs]="isProductImageRack ? 'calc(200px - 32px)' : '40%'"
-        [style.background-image]="'url(' + productImageSrc + ')'"
+        class="container"
+        fxLayoutGap="16px"
+        fxLayout.lt-lg="row wrap"
+        fxLayoutAlign="space-evenly center"
+        [fxLayout.xs]="isProductImageRack ? 'column' : 'row wrap'"
+        [fxLayout.gt-md]="isProductImageRack ? 'column' : 'row wrap'"
       >
-        <img class="invisible" [src]="productImageSrc" />
-      </div>
+        <div
+          class="product-image"
+          [fxFlex.gt-md]="isProductImageRack ? 'calc(200px - 32px)' : '40%'"
+          [fxFlex.gt-xs]="isProductImageRack ? 'calc(40% - 32px)' : '40%'"
+          [fxFlex.xs]="isProductImageRack ? 'calc(200px - 32px)' : '40%'"
+          [style.background-image]="'url(' + productImageSrc + ')'"
+        >
+          <img class="invisible" [src]="productImageSrc" />
+        </div>
 
       <div
         *ngIf="systemInfo"

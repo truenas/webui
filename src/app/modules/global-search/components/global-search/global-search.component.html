@@ -18,9 +18,11 @@
       (keydown)="handleKeyDown($event)"
     />
 
-    <span *ngIf="searchControl.value" class="reset-icon reset-input" (click)="resetInput()">
-      <ix-icon name="mdi-close-circle"></ix-icon>
-    </span>
+    @if (searchControl.value) {
+      <span class="reset-icon reset-input" (click)="resetInput()">
+        <ix-icon name="mdi-close-circle"></ix-icon>
+      </span>
+    }
   </div>
 
   <ix-global-search-results

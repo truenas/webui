@@ -5,18 +5,22 @@
     [required]="true"
     [readonly]="isAddingVdevs"
   ></ix-input>
-  <ix-checkbox
-    *ngIf="!isAddingVdevs"
-    formControlName="encryption"
-    [label]="'Encryption' | translate"
-  ></ix-checkbox>
-  <ix-select
-    *ngIf="form.controls.encryption.value && !isAddingVdevs"
-    formControlName="encryptionStandard"
-    [label]="'Encryption Standard' | translate"
-    [options]="encryptionAlgorithmOptions$"
-    [required]="true"
-  ></ix-select>
+
+  @if (!isAddingVdevs) {
+    <ix-checkbox
+      formControlName="encryption"
+      [label]="'Encryption' | translate"
+    ></ix-checkbox>
+  }
+
+  @if (form.controls.encryption.value && !isAddingVdevs) {
+    <ix-select
+      formControlName="encryptionStandard"
+      [label]="'Encryption Standard' | translate"
+      [options]="encryptionAlgorithmOptions$"
+      [required]="true"
+    ></ix-select>
+  }
 
   <ix-pool-warnings></ix-pool-warnings>
 

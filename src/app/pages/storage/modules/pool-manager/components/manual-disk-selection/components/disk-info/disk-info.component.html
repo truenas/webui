@@ -2,10 +2,12 @@
   class="container"
   [class.no-slot]="!disk.enclosure"
 >
-  <div *ngIf="disk.enclosure" class="item">
-    <div class="label">{{ 'Slot' | translate }}:</div>
-    <div class="value">{{ disk.enclosure.drive_bay_number }}</div>
-  </div>
+  @if (disk.enclosure) {
+    <div class="item">
+      <div class="label">{{ 'Slot' | translate }}:</div>
+      <div class="value">{{ disk.enclosure.drive_bay_number }}</div>
+    </div>
+  }
   <div class="item model">
     <div class="label">{{ 'Model' | translate }}:</div>
     <div class="value">{{ disk.model }}</div>

@@ -28,4 +28,6 @@
     </button>
   </ix-form-actions>
 </form>
-<ix-fake-progress-bar *ngIf="isFormLoading"></ix-fake-progress-bar>
+@if (isFormLoading) {
+  <ix-fake-progress-bar></ix-fake-progress-bar>
+}

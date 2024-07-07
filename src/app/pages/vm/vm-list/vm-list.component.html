@@ -1,4 +1,4 @@
-<ng-container *ngIf="hasVirtualizationSupport$ | async; else vmNotSupported">
+@if (hasVirtualizationSupport$ | async) {
   <ix-page-header>
     <div *ixWithLoadingState="availableMemory$ as availableMemory" class="vm-summary">
       <strong>{{ 'Available Memory' | translate }}:</strong>
@@ -43,25 +43,27 @@
       [isLoading]="dataProvider.isLoading$ | async"
     >
       <ng-template let-vm ix-table-details-row [dataProvider]="dataProvider">
-        <dl *ngIf="hiddenColumns.length" class="table-hidden-columns">
-          <div *ngFor="let column of hiddenColumns">
-            <b>{{ column.title | translate }}:</b>
-            <span>{{ column?.getValue?.(vm) || vm[column.propertyName] }}</span>
-          </div>
-          <mat-divider></mat-divider>
-        </dl>
-
+        @if (hiddenColumns.length) {
+          <dl class="table-hidden-columns">
+            @for (column of hiddenColumns; track column) {
+              <div>
+                <b>{{ column.title | translate }}:</b>
+                <span>{{ column?.getValue?.(vm) || vm[column.propertyName] }}</span>
+              </div>
+            }
+            <mat-divider></mat-divider>
+          </dl>
+        }
         <ix-vm-details-row [vm]="vm"></ix-vm-details-row>
       </ng-template>
     </tbody>
   </ix-table>
   <ix-table-pager [dataProvider]="dataProvider"></ix-table-pager>
-</ng-container>
-
-<ng-template #vmNotSupported>
+} @else {
   <mat-card>
     <mat-card-content>
       <ix-empty [conf]="vmNotSupportedConfig"></ix-empty>
     </mat-card-content>
   </mat-card>
-</ng-template>
+}
+

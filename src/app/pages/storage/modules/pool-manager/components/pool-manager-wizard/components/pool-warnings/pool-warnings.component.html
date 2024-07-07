@@ -1,29 +1,34 @@
 <ng-container [formGroup]="form">
-  <div *ngIf="nonUniqueSerialDisks.length" class="spacer-top">
-    <ix-warning [message]="nonUniqueSerialDisksTooltip"></ix-warning>
-    <ix-radio-group
-      formControlName="allowNonUniqueSerialDisks"
-      [label]="'Allow non-unique serialed disks (not recommended)' | translate"
-      [tooltip]="nonUniqueSerialDisksTooltip"
-      [required]="true"
-      [options]="allowNonUniqueSerialDisksOptions$"
-      [inlineFields]="true"
-    ></ix-radio-group>
-  </div>
+  @if (nonUniqueSerialDisks.length) {
+    <div class="spacer-top">
+      <ix-warning [message]="nonUniqueSerialDisksTooltip"></ix-warning>
+      <ix-radio-group
+        formControlName="allowNonUniqueSerialDisks"
+        [label]="'Allow non-unique serialed disks (not recommended)' | translate"
+        [tooltip]="nonUniqueSerialDisksTooltip"
+        [required]="true"
+        [options]="allowNonUniqueSerialDisksOptions$"
+        [inlineFields]="true"
+      ></ix-radio-group>
+    </div>
+  }
 
-  <div *ngIf="disksWithExportedPools.length" class="spacer-bottom">
-    <ix-warning [message]="exportedPoolsWarning"></ix-warning>
-    <ix-label [label]="'Select disks you want to use' | translate"></ix-label>
-    <mat-checkbox
-      *ngFor="let item of poolAndDisks | keyvalue"
-      [ixTest]="[item.key, 'exported_pool']"
-      [value]="item.key"
-      (change)="checkboxChanged($event)"
-    >
-      <div class="label">
-        <strong class="pool-name">{{ item.key }}</strong>
-        <small class="disk-name">{{ item.value.join(', ') }}</small>
-      </div>
-    </mat-checkbox>
-  </div>
+  @if (disksWithExportedPools.length) {
+    <div class="spacer-bottom">
+      <ix-warning [message]="exportedPoolsWarning"></ix-warning>
+      <ix-label [label]="'Select disks you want to use' | translate"></ix-label>
+      @for (item of poolAndDisks | keyvalue; track item.key) {
+        <mat-checkbox
+          [ixTest]="[item.key, 'exported_pool']"
+          [value]="item.key"
+          (change)="checkboxChanged($event)"
+        >
+          <div class="label">
+            <strong class="pool-name">{{ item.key }}</strong>
+            <small class="disk-name">{{ item.value.join(', ') }}</small>
+          </div>
+        </mat-checkbox>
+      }
+    </div>
+  }
 </ng-container>

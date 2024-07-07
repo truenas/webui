@@ -22,11 +22,12 @@
     [tooltip]="helptext.nic_attach_tooltip | translate"
   ></ix-select>
 
-  <ix-checkbox
-    *ngIf="isVirtio"
-    formControlName="trust_guest_rx_filters"
-    [label]="'Trust Guest Filters' | translate"
-  ></ix-checkbox>
+  @if (isVirtio) {
+    <ix-checkbox
+      formControlName="trust_guest_rx_filters"
+      [label]="'Trust Guest Filters' | translate"
+    ></ix-checkbox>
+  }
 
   <ix-form-actions>
     <button

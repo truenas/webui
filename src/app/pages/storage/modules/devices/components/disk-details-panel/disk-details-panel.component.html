@@ -41,7 +41,7 @@
       (deviceRemoved)="onCloseMobileDetails()"
     ></ix-zfs-info-card>
 
-    <ng-container *ngIf="isTopologyDisk && hasTopologyItemDisk">
+    @if (isTopologyDisk && hasTopologyItemDisk) {
       <ix-hardware-disk-encryption
         [topologyDisk]="topologyItem | cast"
       ></ix-hardware-disk-encryption>
@@ -50,13 +50,13 @@
         [topologyDisk]="topologyItem | cast"
         [disk]="disk"
       ></ix-smart-info-card>
-    </ng-container>
+    }
 
-    <ng-container *ngIf="isTopologyDisk">
+    @if (isTopologyDisk) {
       <ix-disk-info-card
         [topologyDisk]="topologyItem | cast"
         [disk]="disk"
       ></ix-disk-info-card>
-    </ng-container>
+    }
   </div>
 </div>

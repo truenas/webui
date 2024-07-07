@@ -55,7 +55,7 @@
             ></ix-input>
           </ix-fieldset>
 
-          <ng-container *ngIf="isAdvancedMode">
+          @if (isAdvancedMode) {
             <ix-fieldset [title]="'Access' | translate">
               <ix-checkbox
                 formControlName="defaultroot"
@@ -75,13 +75,14 @@
                 [tooltip]="helptext.onlyanonymous_tooltip | translate"
               ></ix-checkbox>
 
-              <ix-explorer
-                *ngIf="isAnonymousLoginAllowed$ | async"
-                formControlName="anonpath"
-                [label]="'Path' | translate"
-                [tooltip]="helptext.anonpath_tooltip | translate"
-                [nodeProvider]="treeNodeProvider"
-              ></ix-explorer>
+              @if (isAnonymousLoginAllowed$ | async) {
+                <ix-explorer
+                  formControlName="anonpath"
+                  [label]="'Path' | translate"
+                  [tooltip]="helptext.anonpath_tooltip | translate"
+                  [nodeProvider]="treeNodeProvider"
+                ></ix-explorer>
+              }
 
               <ix-checkbox
                 formControlName="onlylocal"
@@ -107,188 +108,189 @@
                 [tooltip]="helptext.dirmask_tooltip | translate"
               ></ix-permissions>
             </ix-fieldset>
-          </ng-container>
+          }
         </div>
-        <div *ngIf="isAdvancedMode" class="column">
-          <ix-fieldset title="TLS">
-            <ix-checkbox
-              formControlName="tls"
-              [label]="'Enable TLS' | translate"
-              [tooltip]="helptext.tls_tooltip | translate"
-            ></ix-checkbox>
+        @if (isAdvancedMode) {
+          <div class="column">
+            <ix-fieldset title="TLS">
+              <ix-checkbox
+                formControlName="tls"
+                [label]="'Enable TLS' | translate"
+                [tooltip]="helptext.tls_tooltip | translate"
+              ></ix-checkbox>
 
-            <ng-container *ngIf="isTlsEnabled$ | async">
-              <ix-with-manage-certificates-link>
+              @if (isTlsEnabled$ | async) {
+                <ix-with-manage-certificates-link>
+                  <ix-select
+                    formControlName="ssltls_certificate"
+                    [label]="'Certificate' | translate"
+                    [tooltip]="helptext.ssltls_certificate_tooltip | translate"
+                    [required]="true"
+                    [options]="certificates$"
+                  ></ix-select>
+                </ix-with-manage-certificates-link>
+
                 <ix-select
-                  formControlName="ssltls_certificate"
-                  [label]="'Certificate' | translate"
-                  [tooltip]="helptext.ssltls_certificate_tooltip | translate"
-                  [required]="true"
-                  [options]="certificates$"
+                  formControlName="tls_policy"
+                  [label]="'TLS Policy' | translate"
+                  [tooltip]="helptext.tls_policy_tooltip | translate"
+                  [options]="tlsPolicyOptions$"
                 ></ix-select>
-              </ix-with-manage-certificates-link>
 
-              <ix-select
-                formControlName="tls_policy"
-                [label]="'TLS Policy' | translate"
-                [tooltip]="helptext.tls_policy_tooltip | translate"
-                [options]="tlsPolicyOptions$"
-              ></ix-select>
+                <ix-checkbox
+                  formControlName="tls_opt_allow_client_renegotiations"
+                  [label]="'TLS Allow Client Renegotiations' | translate"
+                  [tooltip]="helptext.tls_opt_allow_client_renegotiations_tooltip| translate"
+                ></ix-checkbox>
+
+                <ix-checkbox
+                  formControlName="tls_opt_allow_dot_login"
+                  [label]="'TLS Allow Dot Login' | translate"
+                  [tooltip]="helptext.tls_opt_allow_dot_login_tooltip | translate"
+                ></ix-checkbox>
+
+                <ix-checkbox
+                  formControlName="tls_opt_allow_per_user"
+                  [label]="'TLS Allow Per User' | translate"
+                  [tooltip]="helptext.tls_opt_allow_per_user_tooltip | translate"
+                ></ix-checkbox>
+
+                <ix-checkbox
+                  formControlName="tls_opt_common_name_required"
+                  [label]="'TLS Common Name Required' | translate"
+                  [tooltip]="helptext.tls_opt_common_name_required_tooltip | translate"
+                ></ix-checkbox>
+
+                <ix-checkbox
+                  formControlName="tls_opt_enable_diags"
+                  [label]="'TLS Enable Diagnostics' | translate"
+                  [tooltip]="helptext.tls_opt_enable_diags_tooltip | translate"
+                ></ix-checkbox>
+
+                <ix-checkbox
+                  formControlName="tls_opt_export_cert_data"
+                  [label]="'TLS Export Certificate Data' | translate"
+                  [tooltip]="helptext.tls_opt_export_cert_data_tooltip | translate"
+                ></ix-checkbox>
+
+                <ix-checkbox
+                  formControlName="tls_opt_no_empty_fragments"
+                  [label]="'TLS No Empty Fragments' | translate"
+                  [tooltip]="helptext.tls_opt_no_empty_fragments_tooltip | translate"
+                ></ix-checkbox>
+
+                <ix-checkbox
+                  formControlName="tls_opt_no_session_reuse_required"
+                  [label]="'TLS No Session Reuse Required' | translate"
+                  [tooltip]="helptext.tls_opt_no_session_reuse_required_tooltip | translate"
+                ></ix-checkbox>
+
+                <ix-checkbox
+                  formControlName="tls_opt_stdenvvars"
+                  [label]="'TLS Export Standard Vars' | translate"
+                  [tooltip]="helptext.tls_opt_stdenvvars_tooltip | translate"
+                ></ix-checkbox>
+
+                <ix-checkbox
+                  formControlName="tls_opt_dns_name_required"
+                  [label]="'TLS DNS Name Required' | translate"
+                  [tooltip]="helptext.tls_opt_dns_name_required_tooltip | translate"
+                ></ix-checkbox>
+
+                <ix-checkbox
+                  formControlName="tls_opt_ip_address_required"
+                  [label]="'TLS IP Address Required' | translate"
+                  [tooltip]="helptext.tls_opt_ip_address_required_tooltip | translate"
+                ></ix-checkbox>
+              }
+            </ix-fieldset>
+            <ix-fieldset [title]="'Other Options' | translate">
+              <ix-input
+                formControlName="passiveportsmin"
+                type="number"
+                [label]="'Minimum Passive Port' | translate"
+                [tooltip]="helptext.passiveportsmin_tooltip | translate"
+              ></ix-input>
+
+              <ix-input
+                formControlName="passiveportsmax"
+                type="number"
+                [label]="'Maximum Passive Port' | translate"
+                [tooltip]="helptext.passiveportsmax_tooltip | translate"
+              ></ix-input>
 
               <ix-checkbox
-                formControlName="tls_opt_allow_client_renegotiations"
-                [label]="'TLS Allow Client Renegotiations' | translate"
-                [tooltip]="helptext.tls_opt_allow_client_renegotiations_tooltip| translate"
+                formControlName="fxp"
+                [label]="'Enable FXP' | translate"
+                [tooltip]="helptext.fxp_tooltip | translate"
               ></ix-checkbox>
 
               <ix-checkbox
-                formControlName="tls_opt_allow_dot_login"
-                [label]="'TLS Allow Dot Login' | translate"
-                [tooltip]="helptext.tls_opt_allow_dot_login_tooltip | translate"
+                formControlName="resume"
+                [label]="'Allow Transfer Resumption' | translate"
+                [tooltip]="helptext.resume_tooltip | translate"
               ></ix-checkbox>
 
               <ix-checkbox
-                formControlName="tls_opt_allow_per_user"
-                [label]="'TLS Allow Per User' | translate"
-                [tooltip]="helptext.tls_opt_allow_per_user_tooltip | translate"
+                formControlName="reversedns"
+                [label]="'Perform Reverse DNS Lookups' | translate"
+                [tooltip]="helptext.reversedns_tooltip | translate"
               ></ix-checkbox>
 
-              <ix-checkbox
-                formControlName="tls_opt_common_name_required"
-                [label]="'TLS Common Name Required' | translate"
-                [tooltip]="helptext.tls_opt_common_name_required_tooltip | translate"
-              ></ix-checkbox>
+              <ix-input
+                formControlName="masqaddress"
+                [label]="'Masquerade Address' | translate"
+                [tooltip]="helptext.masqaddress_tooltip | translate"
+              ></ix-input>
 
-              <ix-checkbox
-                formControlName="tls_opt_enable_diags"
-                [label]="'TLS Enable Diagnostics' | translate"
-                [tooltip]="helptext.tls_opt_enable_diags_tooltip | translate"
-              ></ix-checkbox>
+              <ix-textarea
+                formControlName="banner"
+                [label]="'Display Login' | translate"
+                [tooltip]="helptext.banner_tooltip | translate"
+              ></ix-textarea>
 
-              <ix-checkbox
-                formControlName="tls_opt_export_cert_data"
-                [label]="'TLS Export Certificate Data' | translate"
-                [tooltip]="helptext.tls_opt_export_cert_data_tooltip | translate"
-              ></ix-checkbox>
+              <ix-textarea
+                formControlName="options"
+                [label]="'Auxiliary Parameters' | translate"
+                [tooltip]="helptext.options_tooltip | translate"
+              ></ix-textarea>
+            </ix-fieldset>
 
-              <ix-checkbox
-                formControlName="tls_opt_no_empty_fragments"
-                [label]="'TLS No Empty Fragments' | translate"
-                [tooltip]="helptext.tls_opt_no_empty_fragments_tooltip | translate"
-              ></ix-checkbox>
+            <ix-fieldset [title]="'Bandwidth' | translate">
+              <ix-input
+                formControlName="localuserbw"
+                [label]="helptext.localuserbw_placeholder | translate"
+                [tooltip]="helptext.userbw_tooltip | translate"
+                [format]="iecFormatter.memorySizeFormatting"
+                [parse]="kibParser"
+              ></ix-input>
 
-              <ix-checkbox
-                formControlName="tls_opt_no_session_reuse_required"
-                [label]="'TLS No Session Reuse Required' | translate"
-                [tooltip]="helptext.tls_opt_no_session_reuse_required_tooltip | translate"
-              ></ix-checkbox>
+              <ix-input
+                formControlName="localuserdlbw"
+                [label]="'Local User Download Bandwidth' | translate"
+                [tooltip]="helptext.userbw_tooltip | translate"
+                [format]="iecFormatter.memorySizeFormatting"
+                [parse]="kibParser"
+              ></ix-input>
 
-              <ix-checkbox
-                formControlName="tls_opt_stdenvvars"
-                [label]="'TLS Export Standard Vars' | translate"
-                [tooltip]="helptext.tls_opt_stdenvvars_tooltip | translate"
-              ></ix-checkbox>
+              <ix-input
+                formControlName="anonuserbw"
+                [label]="'Anonymous User Upload Bandwidth' | translate"
+                [tooltip]="helptext.userbw_tooltip | translate"
+                [format]="iecFormatter.memorySizeFormatting"
+                [parse]="kibParser"
+              ></ix-input>
 
-              <ix-checkbox
-                formControlName="tls_opt_dns_name_required"
-                [label]="'TLS DNS Name Required' | translate"
-                [tooltip]="helptext.tls_opt_dns_name_required_tooltip | translate"
-              ></ix-checkbox>
-
-              <ix-checkbox
-                formControlName="tls_opt_ip_address_required"
-                [label]="'TLS IP Address Required' | translate"
-                [tooltip]="helptext.tls_opt_ip_address_required_tooltip | translate"
-              ></ix-checkbox>
-            </ng-container>
-          </ix-fieldset>
-
-          <ix-fieldset [title]="'Other Options' | translate">
-            <ix-input
-              formControlName="passiveportsmin"
-              type="number"
-              [label]="'Minimum Passive Port' | translate"
-              [tooltip]="helptext.passiveportsmin_tooltip | translate"
-            ></ix-input>
-
-            <ix-input
-              formControlName="passiveportsmax"
-              type="number"
-              [label]="'Maximum Passive Port' | translate"
-              [tooltip]="helptext.passiveportsmax_tooltip | translate"
-            ></ix-input>
-
-            <ix-checkbox
-              formControlName="fxp"
-              [label]="'Enable FXP' | translate"
-              [tooltip]="helptext.fxp_tooltip | translate"
-            ></ix-checkbox>
-
-            <ix-checkbox
-              formControlName="resume"
-              [label]="'Allow Transfer Resumption' | translate"
-              [tooltip]="helptext.resume_tooltip | translate"
-            ></ix-checkbox>
-
-            <ix-checkbox
-              formControlName="reversedns"
-              [label]="'Perform Reverse DNS Lookups' | translate"
-              [tooltip]="helptext.reversedns_tooltip | translate"
-            ></ix-checkbox>
-
-            <ix-input
-              formControlName="masqaddress"
-              [label]="'Masquerade Address' | translate"
-              [tooltip]="helptext.masqaddress_tooltip | translate"
-            ></ix-input>
-
-            <ix-textarea
-              formControlName="banner"
-              [label]="'Display Login' | translate"
-              [tooltip]="helptext.banner_tooltip | translate"
-            ></ix-textarea>
-
-            <ix-textarea
-              formControlName="options"
-              [label]="'Auxiliary Parameters' | translate"
-              [tooltip]="helptext.options_tooltip | translate"
-            ></ix-textarea>
-          </ix-fieldset>
-
-          <ix-fieldset [title]="'Bandwidth' | translate">
-            <ix-input
-              formControlName="localuserbw"
-              [label]="helptext.localuserbw_placeholder | translate"
-              [tooltip]="helptext.userbw_tooltip | translate"
-              [format]="iecFormatter.memorySizeFormatting"
-              [parse]="kibParser"
-            ></ix-input>
-
-            <ix-input
-              formControlName="localuserdlbw"
-              [label]="'Local User Download Bandwidth' | translate"
-              [tooltip]="helptext.userbw_tooltip | translate"
-              [format]="iecFormatter.memorySizeFormatting"
-              [parse]="kibParser"
-            ></ix-input>
-
-            <ix-input
-              formControlName="anonuserbw"
-              [label]="'Anonymous User Upload Bandwidth' | translate"
-              [tooltip]="helptext.userbw_tooltip | translate"
-              [format]="iecFormatter.memorySizeFormatting"
-              [parse]="kibParser"
-            ></ix-input>
-
-            <ix-input
-              formControlName="anonuserdlbw"
-              [label]="'Anonymous User Download Bandwidth' | translate"
-              [tooltip]="helptext.userbw_tooltip | translate"
-              [format]="iecFormatter.memorySizeFormatting"
-              [parse]="kibParser"
-            ></ix-input>
-          </ix-fieldset>
-        </div>
+              <ix-input
+                formControlName="anonuserdlbw"
+                [label]="'Anonymous User Download Bandwidth' | translate"
+                [tooltip]="helptext.userbw_tooltip | translate"
+                [format]="iecFormatter.memorySizeFormatting"
+                [parse]="kibParser"
+              ></ix-input>
+            </ix-fieldset>
+          </div>
+        }
       </div>
 
       <ix-form-actions>
@@ -303,21 +305,20 @@
           {{ 'Save' | translate }}
         </button>
 
-        <button
-          *ngIf="isAdvancedMode; else basicModeButton"
-          mat-button
-          type="button"
-          ixTest="toggle-advanced-options"
-          (click)="onToggleAdvancedOptions()"
-        >
-          {{ 'Basic Options' | translate }}
-        </button>
-
-        <ng-template #basicModeButton>
+        @if (isAdvancedMode) {
+          <button
+            mat-button
+            type="button"
+            ixTest="toggle-advanced-options"
+            (click)="onToggleAdvancedOptions()"
+          >
+            {{ 'Basic Options' | translate }}
+          </button>
+        } @else {
           <button mat-button type="button" ixTest="toggle-advanced-options" (click)="onToggleAdvancedOptions()">
             {{ 'Advanced Options' | translate }}
           </button>
-        </ng-template>
+        }
       </ix-form-actions>
     </form>
   </mat-card-content>

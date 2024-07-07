@@ -18,14 +18,15 @@
         ({{ 'Separate values with commas, and without spaces.' | translate }})
       </div>
 
-      <ix-input
-        *ngIf="!config.hideMinutes"
-        class="input"
-        formControlName="minutes"
-        [required]="true"
-        [label]="'Minutes' | translate"
-        [tooltip]="tooltips.minutes | translate"
-      ></ix-input>
+      @if (!config.hideMinutes) {
+        <ix-input
+          class="input"
+          formControlName="minutes"
+          [required]="true"
+          [label]="'Minutes' | translate"
+          [tooltip]="tooltips.minutes | translate"
+        ></ix-input>
+      }
 
       <ix-input
         class="input"
@@ -47,30 +48,31 @@
         [tooltip]="tooltips.days | translate"
       ></ix-input>
 
-      <div
-        *ngIf="hasOrConditionExplanation$ | async"
-        class="or-condition-explanation"
-      >
-        <div class="line"></div>
-
-        <div class="or-label">
-          {{ 'or' | translate }}
-          <ix-tooltip [message]="tooltips.orTooltip | translate"></ix-tooltip>
+      @if (hasOrConditionExplanation$ | async) {
+        <div
+          class="or-condition-explanation"
+        >
+          <div class="line"></div>
+          <div class="or-label">
+            {{ 'or' | translate }}
+            <ix-tooltip [message]="tooltips.orTooltip | translate"></ix-tooltip>
+          </div>
+          <div class="line"></div>
         </div>
-        <div class="line"></div>
-      </div>
+      }
       <h5 class="days-of-week-header">{{ 'Days of Week' | translate }}</h5>
 
       <div class="weekdays" formGroupName="weekdays">
-        <mat-checkbox
-          *ngFor="let weekday of weekdays"
-          color="primary"
-          class="weekend"
-          [ixTest]="['scheduler', weekday.label]"
-          [formControlName]="weekday.value"
-        >
-          {{ weekday.label | translate }}
-        </mat-checkbox>
+        @for (weekday of weekdays; track weekday) {
+          <mat-checkbox
+            color="primary"
+            class="weekend"
+            [ixTest]="['scheduler', weekday.label]"
+            [formControlName]="weekday.value"
+          >
+            {{ weekday.label | translate }}
+          </mat-checkbox>
+        }
       </div>
     </section>
 
@@ -78,15 +80,16 @@
       <h4>{{ 'Months' | translate }}</h4>
 
       <div class="months" formArrayName="months">
-        <mat-checkbox
-          *ngFor="let month of months"
-          color="primary"
-          class="month"
-          [ixTest]="['scheduler', month.label]"
-          [formControlName]="month.value"
-        >
-          {{ month.label | translate }}
-        </mat-checkbox>
+        @for (month of months; track month) {
+          <mat-checkbox
+            color="primary"
+            class="month"
+            [ixTest]="['scheduler', month.label]"
+            [formControlName]="month.value"
+          >
+            {{ month.label | translate }}
+          </mat-checkbox>
+        }
       </div>
     </section>
 

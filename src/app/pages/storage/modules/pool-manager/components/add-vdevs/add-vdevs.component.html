@@ -6,17 +6,19 @@
   </div>
   <div class="sidebar">
     <div class="details-container">
-      <ix-existing-configuration-preview
-        *ngIf="hasConfigurationPreview && !!existingPool"
-        [name]="existingPool?.name"
-        [topology]="existingPool?.topology"
-        [disks]="poolDisks"
-        [size]="existingPool?.size"
-      ></ix-existing-configuration-preview>
+      @if (hasConfigurationPreview && !!existingPool) {
+        <ix-existing-configuration-preview
+          [name]="existingPool?.name"
+          [topology]="existingPool?.topology"
+          [disks]="poolDisks"
+          [size]="existingPool?.size"
+        ></ix-existing-configuration-preview>
+      }
 
-      <ix-new-devices-preview
-        *ngIf="hasConfigurationPreview"
-      ></ix-new-devices-preview>
+      @if (hasConfigurationPreview) {
+        <ix-new-devices-preview
+        ></ix-new-devices-preview>
+      }
 
       <ix-inventory></ix-inventory>
     </div>

@@ -14,17 +14,18 @@
         [tooltip]="helpText.allowed_ip_addresses.tooltip"
         (add)="addAddress()"
       >
-        <ix-list-item
-          *ngFor="let network of form.controls.addresses.controls; let i = index"
-          [label]="'Allowed IP Addresses' | translate"
-          (delete)="removeAddress(i)"
-        >
-          <ix-input
-            [formControlName]="i"
-            [label]="'IP Address/Subnet' | translate"
-            [required]="true"
-          ></ix-input>
-        </ix-list-item>
+        @for (network of form.controls.addresses.controls; track network; let i = $index) {
+          <ix-list-item
+            [label]="'Allowed IP Addresses' | translate"
+            (delete)="removeAddress(i)"
+          >
+            <ix-input
+              [formControlName]="i"
+              [label]="'IP Address/Subnet' | translate"
+              [required]="true"
+            ></ix-input>
+          </ix-list-item>
+        }
       </ix-list>
 
       <ix-form-actions>

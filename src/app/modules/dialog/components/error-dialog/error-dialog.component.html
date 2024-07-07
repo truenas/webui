@@ -6,27 +6,32 @@
   <div #errorMessageWrapper id="err-message-wrapper" class="err-message-wrapper">
     <span [innerHTML]="message"></span>
   </div>
-  <div
-    *ngIf="backtrace"
-    class="more-info"
-    (click)="toggleOpen()"
-  >
-    <ix-icon *ngIf="isCloseMoreInfo" name="add_circle_outline"></ix-icon>
-    <ix-icon *ngIf="!isCloseMoreInfo" name="remove_circle_outline"></ix-icon>
-    <span>{{ 'More info...' | translate }}</span>
-  </div>
-  <div
-    *ngIf="backtrace"
-    #errorBtPanel
-    id="err-bt-panel"
-    class="backtrace-panel"
-    [class.open]="!isCloseMoreInfo"
-  >
-    <div #errorBtText class="textarea scrolled-down" id="err-bt-text" readonly matInput>
-      {{ 'Error' | translate }}: {{ backtrace }}
+  @if (backtrace) {
+    <div
+      class="more-info"
+      (click)="toggleOpen()"
+    >
+      @if (isCloseMoreInfo) {
+        <ix-icon name="add_circle_outline"></ix-icon>
+      } @else {
+        <ix-icon name="remove_circle_outline"></ix-icon>
+      }
+      <span>{{ 'More info...' | translate }}</span>
     </div>
-    <ix-copy-button [text]="backtrace"></ix-copy-button>
-  </div>
+  }
+  @if (backtrace) {
+    <div
+      #errorBtPanel
+      id="err-bt-panel"
+      class="backtrace-panel"
+      [class.open]="!isCloseMoreInfo"
+    >
+      <div #errorBtText class="textarea scrolled-down" id="err-bt-text" readonly matInput>
+        {{ 'Error' | translate }}: {{ backtrace }}
+      </div>
+      <ix-copy-button [text]="backtrace"></ix-copy-button>
+    </div>
+  }
 </div>
 <div mat-dialog-actions>
   <button
@@ -37,13 +42,15 @@
   >
     {{ 'Close' | translate }}
   </button>
-  <button
-    *ngIf="logs"
-    mat-button
-    class="mat-mdc-button mat-button mat-primary"
-    ixTest="download-logs"
-    (click)="downloadLogs()"
-  >
-    {{ 'Download Logs' | translate }}
-  </button>
+
+  @if (logs) {
+    <button
+      mat-button
+      class="mat-mdc-button mat-button mat-primary"
+      ixTest="download-logs"
+      (click)="downloadLogs()"
+    >
+      {{ 'Download Logs' | translate }}
+    </button>
+  }
 </div>

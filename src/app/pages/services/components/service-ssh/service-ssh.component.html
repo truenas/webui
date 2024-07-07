@@ -37,50 +37,52 @@
         ></ix-checkbox>
       </ix-fieldset>
 
-      <ix-fieldset *ngIf="!isBasicMode">
-        <ix-select
-          formControlName="bindiface"
-          [label]="'Bind Interfaces' | translate"
-          [tooltip]="tooltips.bindiface | translate"
-          [multiple]="true"
-          [options]="bindInterfaces$"
-        ></ix-select>
+      @if (!isBasicMode) {
+        <ix-fieldset>
+          <ix-select
+            formControlName="bindiface"
+            [label]="'Bind Interfaces' | translate"
+            [tooltip]="tooltips.bindiface | translate"
+            [multiple]="true"
+            [options]="bindInterfaces$"
+          ></ix-select>
 
-        <ix-checkbox
-          formControlName="compression"
-          [label]="'Compress Connections' | translate"
-          [tooltip]="tooltips.compression | translate"
-        ></ix-checkbox>
+          <ix-checkbox
+            formControlName="compression"
+            [label]="'Compress Connections' | translate"
+            [tooltip]="tooltips.compression | translate"
+          ></ix-checkbox>
 
-        <ix-select
-          formControlName="sftp_log_level"
-          emptyValue=""
-          [label]="'SFTP Log Level' | translate"
-          [tooltip]="tooltips.sftp_log_level | translate"
-          [options]="sftpLogLevels$"
-        ></ix-select>
+          <ix-select
+            formControlName="sftp_log_level"
+            emptyValue=""
+            [label]="'SFTP Log Level' | translate"
+            [tooltip]="tooltips.sftp_log_level | translate"
+            [options]="sftpLogLevels$"
+          ></ix-select>
 
-        <ix-select
-          formControlName="sftp_log_facility"
-          [label]="'SFTP Log Facility' | translate"
-          [tooltip]="tooltips.sftp_log_facility | translate"
-          [options]="sftpLogFacilities$"
-        ></ix-select>
+          <ix-select
+            formControlName="sftp_log_facility"
+            [label]="'SFTP Log Facility' | translate"
+            [tooltip]="tooltips.sftp_log_facility | translate"
+            [options]="sftpLogFacilities$"
+          ></ix-select>
 
-        <ix-select
-          formControlName="weak_ciphers"
-          [label]="'Weak Ciphers' | translate"
-          [tooltip]="tooltips.weak_ciphers | translate"
-          [multiple]="true"
-          [options]="sshWeakCiphers$"
-        ></ix-select>
+          <ix-select
+            formControlName="weak_ciphers"
+            [label]="'Weak Ciphers' | translate"
+            [tooltip]="tooltips.weak_ciphers | translate"
+            [multiple]="true"
+            [options]="sshWeakCiphers$"
+          ></ix-select>
 
-        <ix-textarea
-          formControlName="options"
-          [label]="'Auxiliary Parameters' | translate"
-          [tooltip]="tooltips.options | translate"
-        ></ix-textarea>
-      </ix-fieldset>
+          <ix-textarea
+            formControlName="options"
+            [label]="'Auxiliary Parameters' | translate"
+            [tooltip]="tooltips.options | translate"
+          ></ix-textarea>
+        </ix-fieldset>
+      }
 
       <ix-form-actions>
         <button

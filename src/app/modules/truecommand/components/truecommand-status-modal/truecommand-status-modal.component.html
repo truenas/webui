@@ -2,33 +2,37 @@
 <mat-divider></mat-divider>
 <div mat-dialog-content class="tc-dialog-content">
   <div id="status">
-    <ix-icon
-      *ngIf="tc.status === TrueCommandStatus.Connected"
-      class="status-connected"
-      name="check_circle"
-    ></ix-icon>
-    <ix-icon
-      *ngIf="tc.status === TrueCommandStatus.Failed"
-      class="status-failed"
-      name="cancel"
-    ></ix-icon>
-    <ix-icon
-      *ngIf="tc.status === TrueCommandStatus.Disabled"
-      class="status-disabled"
-      name="pause_circle_filled"
-    ></ix-icon>
+    @if (tc.status === TrueCommandStatus.Connected) {
+      <ix-icon
+        class="status-connected"
+        name="check_circle"
+      ></ix-icon>
+    }
+    @if (tc.status === TrueCommandStatus.Failed) {
+      <ix-icon
+        class="status-failed"
+        name="cancel"
+      ></ix-icon>
+    }
+    @if (tc.status === TrueCommandStatus.Disabled) {
+      <ix-icon
+        class="status-disabled"
+        name="pause_circle_filled"
+      ></ix-icon>
+    }
     <span>{{ tc.status | translate }}</span>
   </div>
-  <div *ngIf="tc.status_reason" id="error">
-    {{ tc.status_reason | translate }}
-  </div>
-  <div
-    *ngIf="tc.status === TrueCommandStatus.Connected && tc.remote_ip_address"
-    id="tc-ip"
-  >
-    <ix-icon name="ix:logo_truecommand_blue" class="tc-icon"></ix-icon>
-    <span>{{ tc.remote_ip_address }}</span>
-  </div>
+  @if (tc.status_reason) {
+    <div id="error">
+      {{ tc.status_reason | translate }}
+    </div>
+  }
+  @if (tc.status === TrueCommandStatus.Connected && tc.remote_ip_address) {
+    <div id="tc-ip">
+      <ix-icon name="ix:logo_truecommand_blue" class="tc-icon"></ix-icon>
+      <span>{{ tc.remote_ip_address }}</span>
+    </div>
+  }
 </div>
 <div mat-dialog-actions>
   <button
@@ -45,9 +49,9 @@
     color="primary"
     class="tc-action-button"
     ixTest="go-to-truecommand"
-    [disabled]="!tc.remote_url || tc.status !== 'CONNECTED'"
+    [disabled]="!tc.remote_url || tc.status !== TrueCommandStatus.Connected"
     (click)="goToTrueCommand()"
   >
-    {{ 'TrueCommand' | translate }}
+    {{ 'TrueCommand' }}
   </button>
 </div>

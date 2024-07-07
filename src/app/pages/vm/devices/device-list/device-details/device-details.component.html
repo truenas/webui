@@ -5,9 +5,11 @@
   </span>
 </h1>
 <div mat-dialog-content class="attributes">
-  <div *ngFor="let attribute of attributes">
-    {{ attribute[0] }}: {{ attribute[1] }}
-  </div>
+  @for (attribute of attributes; track attribute) {
+    <div>
+      {{ attribute[0] }}: {{ attribute[1] }}
+    </div>
+  }
 </div>
 <div mat-dialog-actions>
   &nbsp;

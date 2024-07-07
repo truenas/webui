@@ -1,18 +1,17 @@
-<a
-  *ngFor="let enclosure of enclosures(); let i = index"
-  class="enclosure"
-  [class.active]="enclosure.id === selectedEnclosure()"
-  [ixTest]="['select-enclosure', enclosure.model]"
-  [routerLink]="['/system', 'viewenclosure', enclosure.id]"
->
-  <ix-enclosure-side
-    class="enclosure-image"
-    [enclosure]="enclosure"
-    [enableMouseEvents]="false"
-    [slotTintFn]="diskStatusTint"
-  ></ix-enclosure-side>
-
-  <div class="enclosure-label">
-    {{ enclosure.label || enclosure.model }} ({{ i + 1 }})
-  </div>
-</a>
+@for (enclosure of enclosures(); track enclosure; let i = $index) {
+  <a
+    class="enclosure"
+    [class.active]="enclosure.id === selectedEnclosure()"
+    [ixTest]="['select-enclosure', enclosure.model]"
+    [routerLink]="['/system', 'viewenclosure', enclosure.id]"
+  >
+    <ix-enclosure-side
+      class="enclosure-image"
+      [enclosure]="enclosure"
+      [enableMouseEvents]="false"[slotTintFn]="diskStatusTint"
+    ></ix-enclosure-side>
+    <div class="enclosure-label">
+      {{ enclosure.label || enclosure.model }} ({{ i + 1 }})
+    </div>
+  </a>
+}
